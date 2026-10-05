@@ -162,9 +162,13 @@ def one (D : Doc) (s : String) (i : Nat) : RightsDoc × List VE.Formula :=
 def noRights (X : RightsDoc) : Bool :=
   X.rs.isEmpty && X.limits.isEmpty && X.bars.isEmpty && (sourceLines X).isEmpty
 def allStrict (X : RightsDoc) : Bool := X.soft.T.nodes.all (fun N => N.mode == .strict && N.alterable.isEmpty)
+/-- Every generated decision predicate of the soft document within `MAX_IDENTIFIER_BYTES` (soft-norms 6.4): the
+    limit the soft decoder's `primeVocabulary` and Python's chain check enforce on every soft document, and the
+    rights chain's `validateRights` on its elaboration (composition-s2.md 1.8 and fixture M16, DRI ruling 2). -/
+def namesFit (X : RightsDoc) : Bool := (VE.SoftNorms.decisionNames X.soft).all (·.utf8ByteSize ≤ 64)
 def chainWF : Chain → RightsDoc → Bool
   | .rights, X => WellFormedRights X
-  | .soft, X => noRights X && WellFormedSoft X.soft
+  | .soft, X => noRights X && namesFit X && WellFormedSoft X.soft
   | .norms, X => noRights X && allStrict X && WellFormedSoft X.soft
 def sideWF (D : Doc) (X : RightsDoc × List VE.Formula) : Bool :=
   chainWF D.chain X.1 &&
@@ -531,7 +535,7 @@ theorem chain_soft (c : Chain) (X : RightsDoc) (h : chainWF c X = true) : WellFo
   | rights => exact VE.Rights.correlate_wellFormed X h
   | soft =>
     simp only [chainWF, Bool.and_eq_true] at h
-    rw [(correlate_noRights X h.1).1]; exact h.2
+    rw [(correlate_noRights X h.1.1).1]; exact h.2
   | norms =>
     simp only [chainWF, Bool.and_eq_true] at h
     rw [(correlate_noRights X h.1.1).1]; exact h.2

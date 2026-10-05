@@ -1,0 +1,38 @@
+ 02:56:36 up 1 day, 15 min,  1 user,  load average: 10.78, 15.26, 16.12
+soften: wall 0.000003 s, cpu 0.000000 s
+nodes 2, regulated 62, definitions 0, colliding 0
+stratumNodes: wall 0.000006 s, cpu 0.000000 s
+order: wall 0.002447 s, cpu 0.000000 s
+syms: wall 0.002935 s, cpu 0.010000 s
+syms 62
+envAt 0: wall 0.001991 s, cpu 0.000000 s
+size: wall 0.002555 s, cpu 0.000000 s
+check (W1, height by recursion): wall 0.002910 s, cpu 0.000000 s
+checkW1: wall 0.002352 s, cpu 0.010000 s
+semanticCheck: wall 0.012440 s, cpu 0.010000 s
+WellFormed soften: wall 0.014959 s, cpu 0.010000 s
+softPremises: wall 0.000003 s, cpu 0.000000 s
+selects' every node: wall 0.000005 s, cpu 0.000000 s
+defaultPos every regulated: wall 0.000007 s, cpu 0.000000 s
+strictPos every regulated: wall 0.000012 s, cpu 0.000000 s
+targets: wall 0.175064 s, cpu 0.180000 s
+layersOf: wall 0.002724 s, cpu 0.000000 s
+targetsIn: wall 0.000066 s, cpu 0.000000 s
+targets = targetsIn: true
+background: wall 0.002663 s, cpu 0.000000 s
+generatedSizes: wall 0.005137 s, cpu 0.000000 s
+derivedSizes: wall 0.000020 s, cpu 0.000000 s
+checkSoft: wall 0.195981 s, cpu 0.200000 s
+checkSoftOnce: wall 0.030081 s, cpu 0.030000 s
+checkSoft = checkSoftOnce: true
+softSemanticCheck: wall 1.258583 s, cpu 1.260000 s
+softSemanticCheckOnce: wall 0.021788 s, cpu 0.020000 s
+softSemanticCheck = softSemanticCheckOnce: true
+checkRights: wall 0.000049 s, cpu 0.000000 s
+rightsSemanticCheck: wall 0.006923 s, cpu 0.010000 s
+validateRights: wall 1.473501 s, cpu 1.470000 s
+validateRightsOnce: wall 0.064251 s, cpu 0.070000 s
+validateRights = validateRightsOnce: true
+chainTextSpec: wall 1.682095 s, cpu 1.680000 s
+chainText: wall 0.069459 s, cpu 0.070000 s
+chainTextSpec = chainText: true

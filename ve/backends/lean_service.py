@@ -3,14 +3,14 @@
 Stage 1 of docs/spec/SEMANTICS-MIGRATION-PLAN.md. The service speaks JSON lines: a
 handshake line, then one response line per request line. A request is one batch of
 cases for one mode, and each result is exactly what the one-shot runner for that mode
-prints for the case (`lean/VE/Service/Protocol.lean`). Nothing in `ve` calls this
-module yet: no Python semantics is switched.
+prints for the case (`lean/VE/Service/Protocol.lean`). `relay.py` is its one caller in `ve`;
+since lean-first batch 1 every statement-layer route is a mode of this service.
 
 Failure classes:
 
 * A deterministic rejection of a whole request by the service (its budget, a batch the
-  restricted decoder rejects) raises `ResourceLimit` or `VEError`, as the one-shot
-  runners' exit-2 diagnostics would; the process stays up. Such a request error is bound
+  restricted decoder rejects) raises the exception of the service's `code` with its text
+  (`relay.rejection`); the process stays up. Such a request error is bound
   like a response, to the nonce, the mode and every case digest; one without that
   binding is operational.
 * Anything operational (wall-clock timeout, crash, end of output, garbage, a response
@@ -30,12 +30,22 @@ Every field must also be well formed (`lean_service_schema/`, compiled by
 `service_schema.py`). Content that preserves binding, such as the targets inside one
 norms result, is the service's responsibility and is not checked here.
 
-Supervision: an address-space limit on the process, a per-batch timeout (5 s
-interactive, 60 s for batch callers), recycling after a number of requests or above
-an RSS threshold, and a small pool. The wall-clock defaults (5 s per request, 30 s to
-start) are guards, not work limits; `VE_LEAN_SERVICE_TIMEOUT` and
-`VE_LEAN_SERVICE_STARTUP_TIMEOUT` replace them (the test suite raises them to its hang
-guard, so machine load cannot fail a test).
+Supervision: an address-space limit on the process, a deadline per request, recycling
+after a number of requests or above an RSS threshold, and a small pool.
+
+Deadlines (docs/LEAN-FIRST-PLAN.md, F4). A request's deadline is its operation's
+(`DEADLINES`): CPU seconds of the service process, a base per case plus a share per MiB of cases,
+measured where the platform reports a process's CPU time (`/proc`) and otherwise read as
+wall-clock seconds. Load on the host therefore does not stop a request; a request that needs
+more CPU than its deadline is `CheckerUnavailable` naming its mode, and is not retried, since
+the same request needs the same work. A request that is given a `timeout` has that wall-clock
+limit instead, as before. Every request also has a wall-clock cap, `WALL_FACTOR` times its CPU
+deadline, for a process that stops being scheduled.
+
+The wall-clock guards are not work limits: `VE_LEAN_SERVICE_TIMEOUT` replaces the wall-clock
+cap of a request without a `timeout` (and, where the CPU time is not reported, its deadline),
+and `VE_LEAN_SERVICE_STARTUP_TIMEOUT` the 30 s a process has to start; the test suite raises
+both to its hang guard, so machine load cannot fail a test.
 """
 from __future__ import annotations
 
@@ -65,8 +75,6 @@ MAX_LINE_BYTES = 16 * 1024 * 1024
 MAX_CASES = 4096
 BATCH_CASES = 256
 BATCH_BYTES = 4 * 1024 * 1024
-INTERACTIVE_TIMEOUT = 5.0
-BATCH_TIMEOUT = 60.0
 STARTUP_TIMEOUT = 30.0
 ADDRESS_SPACE = 4 << 30
 MAX_RSS = 2 << 30
@@ -76,8 +84,57 @@ MAX_RESPONSE_BYTES = 1 << 30
 ENVELOPE_BYTES = 1024
 
 
+# CPU seconds by mode: (base per case, per MiB of cases); each case is one operation. The core modes
+# kept a flat 5 s per request before; their measured CPU is 0.5–1.6 ms per case at the median and
+# about 0.8 ms per KiB of environment re-sent with each case (LEAN-FIRST-PLAN 3.3, 3.4), so 5 s per
+# case plus 30 s per MiB is far above any measured request. The statement-layer routes keep their one-shot
+# callers' limits as the base (120 s, reports and quantity 60 s, alternatives and risk 180 s,
+# discourse 300 s) with a share per MiB above their measured CPU: about 1.3 s per MiB for soft
+# norms, 100 s per MiB for the rights chain (2.2–2.9 s per 28 KiB document). The readings
+# route's share is the exception: the UDHR document needs about 2,300 s per MiB (3.5), and
+# its deadline (120 s plus 240 s per MiB) keeps it unavailable until F5 is built.
+_CORE = (5.0, 30.0)
+DEADLINES: dict[str, tuple[float, float]] = {
+    **{mode: _CORE for mode in ("evaluate", "check-certificate", "order", "route", "norms", "english",
+                                "environment", "model", "check", "identity", "parse", "graph", "readings",
+                                "bundle", "family-norms")},
+    "soft-norms": (120.0, 120.0), "rights": (120.0, 1000.0), "speech-acts": (120.0, 120.0),
+    "reports": (60.0, 60.0), "alternatives": (180.0, 180.0), "risk": (180.0, 180.0),
+    "risk-eval": (60.0, 60.0), "quantity": (60.0, 60.0), "norm-defaults": (120.0, 120.0),
+    "discourse": (300.0, 300.0), "readings-route": (120.0, 240.0), "diagnose": (120.0, 120.0),
+}
+WALL_FACTOR = 10.0
+_MIB = 1 << 20
+
+
+def deadline(mode: str, size: int, cases: int = 1) -> float:
+    """CPU seconds a request of `mode` with `cases` cases in `size` bytes may use (`DEADLINES`)."""
+    base, per_mib = DEADLINES[mode]
+    return base * max(cases, 1) + per_mib * size / _MIB
+
+
+def _cpu_seconds(pid: int) -> float | None:
+    """CPU time (user and system) of process `pid`, or None where /proc does not report it."""
+    try:
+        with open(f"/proc/{pid}/stat", "rb") as f:
+            fields = f.read().rsplit(b")", 1)[1].split()
+    except (OSError, IndexError):
+        return None
+    # Fields 14 and 15 (utime, stime) are the 12th and 13th after the command name.
+    return (int(fields[11]) + int(fields[12])) / os.sysconf("SC_CLK_TCK")
+
+
 class _Failure(Exception):
     """An operational failure of one process; the supervisor restarts it."""
+
+
+class _Deadline:
+    """When a request must be answered: by `wall` (monotonic), and, if `cpu` is set, before
+    the process has used `cpu` more seconds of CPU than `start` (its CPU time at the request)."""
+    __slots__ = ("wall", "cpu", "start", "mode")
+
+    def __init__(self, wall: float, cpu: float | None = None, start: float | None = None, mode: str = ""):
+        self.wall, self.cpu, self.start, self.mode = wall, cpu, start, mode
 
 
 def configured_seconds(variable: str, default: float) -> float:
@@ -99,7 +156,13 @@ def configured_seconds(variable: str, default: float) -> float:
     return seconds
 
 
-def _decode_json(line: bytes) -> object:
+def _decode_json(line: bytes | str) -> object:
+    """A checker's JSON output (this service, the one-shot Lean runners, the Rust JSONL checker):
+    bytes that are not UTF-8, duplicate fields, non-finite constants and strings that are not
+    Unicode text (a `\\ud800` escape decodes to a lone surrogate, which no Lean or Rust string
+    holds) and numbers no float holds (`_json_float`) raise ValueError, and so does nesting beyond
+    Python's recursion limit (otherwise a RecursionError): every way the bytes are no answer is a
+    ValueError. Bytes are decoded as strict UTF-8 here; json.loads alone would guess UTF-16 or UTF-32."""
     def unique(pairs):
         result = {}
         for key, value in pairs:
@@ -111,8 +174,23 @@ def _decode_json(line: bytes) -> object:
     def invalid_constant(value):
         raise ValueError(f"invalid JSON number {value}")
 
-    return json.loads(line, object_pairs_hook=unique, parse_constant=invalid_constant,
-                      parse_int=_json_integer)
+    text = line.decode("utf-8") if isinstance(line, (bytes, bytearray)) else line
+    try:
+        value = json.loads(text, object_pairs_hook=unique, parse_constant=invalid_constant,
+                           parse_int=_json_integer, parse_float=_json_float)
+    except RecursionError:
+        raise ValueError("JSON nesting exceeds the runtime limit") from None
+    pending = [value]
+    while pending:
+        item = pending.pop()
+        if type(item) is str:
+            item.encode("utf-8")  # UnicodeEncodeError, a ValueError, on a lone surrogate
+        elif type(item) is list:
+            pending.extend(item)
+        elif type(item) is dict:
+            pending.extend(item)
+            pending.extend(item.values())
+    return value
 
 
 def _json_integer(digits: str) -> int | Decimal:
@@ -123,6 +201,16 @@ def _json_integer(digits: str) -> int | Decimal:
         # Python's decimal-digit guard is an implementation limit, not a JSON or
         # Lean limit. Decimal preserves the value without disabling that guard.
         return Decimal(digits)
+
+
+def _json_float(text: str) -> float:
+    """A JSON number with a fraction or exponent, as its nearest float. `json` reads an
+    exponent beyond the float range as infinity (`1e999`) or zero (`1e-999`) without calling
+    `parse_constant`: such a number is ValueError, never a value it is not."""
+    value = float(text)
+    if not math.isfinite(value) or (value == 0 and re.split("[eE]", text)[0].strip("-+0.")):
+        raise ValueError(f"JSON number {text} is outside the float range")
+    return value
 
 
 _JSON_WHITESPACE = " \t\r\n"
@@ -193,16 +281,42 @@ def request_context(nonce: str, mode: str, cases_text: str, count: int,
 _hashes: dict[tuple, str] = {}
 
 
+_HEX64 = re.compile(r"[0-9a-f]{64}")
+
+
 def executable_sha256(path: Path) -> str:
-    """SHA-256 of the executable file, cached while its filesystem identity is unchanged."""
+    """SHA-256 of the executable file, cached while its filesystem identity (device, inode, size,
+    modification and change times) is unchanged: in this process, and across processes in the sidecar
+    `<executable>.sha256-cache` (docs/LEAN-FIRST-PLAN.md section 4: hashing the 180 MiB service binary cost
+    every CLI process about 0.2 s of CPU). Any write to the executable changes its change time, so a
+    replaced or edited binary is hashed again; a sidecar that cannot be read or written is ignored."""
     st = path.stat()
     key = (str(path), st.st_dev, st.st_ino, st.st_size, st.st_mtime_ns, st.st_ctime_ns)
     if key not in _hashes:
-        digest = hashlib.sha256()
-        with path.open("rb") as f:
-            for block in iter(lambda: f.read(1 << 20), b""):
-                digest.update(block)
-        _hashes[key] = digest.hexdigest()
+        sidecar = path.with_name(path.name + ".sha256-cache")
+        try:
+            cached = json.loads(sidecar.read_text())
+        except (OSError, ValueError):
+            cached = None
+        if (type(cached) is dict and cached.get("key") == list(key) and type(cached.get("sha256")) is str
+                and _HEX64.fullmatch(cached["sha256"])):
+            _hashes[key] = cached["sha256"]
+        else:
+            digest = hashlib.sha256()
+            with path.open("rb") as f:
+                for block in iter(lambda: f.read(1 << 20), b""):
+                    digest.update(block)
+            _hashes[key] = digest.hexdigest()
+            written = None
+            try:
+                with tempfile.NamedTemporaryFile("w", dir=sidecar.parent, prefix=sidecar.name,
+                                                 delete=False) as out:
+                    written = out.name
+                    json.dump({"key": list(key), "sha256": _hashes[key]}, out)
+                os.replace(written, sidecar)
+            except OSError:
+                if written is not None:
+                    Path(written).unlink(missing_ok=True)
     return _hashes[key]
 
 
@@ -331,7 +445,7 @@ class LeanService:
             self._buffer.clear()
             self._served, self._recycle = 0, False
             self.stats["starts"] += 1
-            line = self._read_line(time.monotonic() + startup)
+            line = self._read_line(_Deadline(time.monotonic() + startup))
             handshake = _decode_json(line)
             try:
                 check_handshake(handshake)
@@ -371,6 +485,23 @@ class LeanService:
                 self._stderr = None
             self._buffer.clear()
 
+    def cpu_seconds(self) -> float | None:
+        """CPU time the current process has used, where the platform reports it."""
+        return None if self._proc is None else _cpu_seconds(self._proc.pid)
+
+    def stderr(self, start: int = 0) -> tuple[int, str]:
+        """The current process's standard error from byte `start` on, and its length: what a
+        one-shot runner would have printed there (Lean's `PANIC` messages, for example)."""
+        if self._stderr is None:
+            return 0, ""
+        try:
+            self._stderr.seek(0, os.SEEK_END)
+            size = self._stderr.tell()
+            self._stderr.seek(min(start, size))
+            return size, self._stderr.read().decode(errors="replace")
+        except (OSError, ValueError):
+            return 0, ""
+
     def _stderr_tail(self) -> str:
         if self._stderr is None:
             return ""
@@ -384,16 +515,31 @@ class LeanService:
 
     # Framing
 
-    def _write_all(self, data: bytes, deadline: float) -> None:
+    def _wait(self, deadline: _Deadline, what: str) -> float:
+        """Seconds to wait before `deadline` is checked again; raises once it has passed. A CPU
+        deadline is checked at least as often as the process could have used up what is left of
+        it (it runs one thread)."""
+        remaining = deadline.wall - time.monotonic()
+        if remaining <= 0:
+            raise _Failure(f"timeout {what}" + (f" (mode {deadline.mode})" if deadline.mode else ""))
+        if deadline.cpu is None:
+            return remaining
+        used = _cpu_seconds(self._proc.pid)
+        if used is not None and used - deadline.start > deadline.cpu:
+            self._stop(graceful=False)
+            raise CheckerUnavailable(
+                f"CheckerUnavailable: the Lean service mode {deadline.mode} used more than its deadline "
+                f"of {deadline.cpu:.6g} s of CPU", operation=deadline.mode, backend="lean")
+        left = deadline.cpu if used is None else deadline.cpu - (used - deadline.start)
+        return min(remaining, max(left, 0.01))
+
+    def _write_all(self, data: bytes, deadline: _Deadline) -> None:
         fd = self._proc.stdin.fileno()
         view = memoryview(data)
         with selectors.DefaultSelector() as sel:
             sel.register(fd, selectors.EVENT_WRITE)
             while view:
-                remaining = deadline - time.monotonic()
-                if remaining <= 0:
-                    raise _Failure("timeout writing the request")
-                if not sel.select(remaining):
+                if not sel.select(self._wait(deadline, "writing the request")):
                     continue
                 try:
                     written = os.write(fd, view)
@@ -403,7 +549,7 @@ class LeanService:
                     raise _Failure(f"service input closed: {exc}") from None
                 view = view[written:]
 
-    def _read_line(self, deadline: float) -> bytes:
+    def _read_line(self, deadline: _Deadline) -> bytes:
         fd = self._proc.stdout.fileno()
         with selectors.DefaultSelector() as sel:
             sel.register(fd, selectors.EVENT_READ)
@@ -415,10 +561,7 @@ class LeanService:
                     return line
                 if len(self._buffer) > MAX_RESPONSE_BYTES:
                     raise _Failure("response line exceeds the size limit")
-                remaining = deadline - time.monotonic()
-                if remaining <= 0:
-                    raise _Failure("timeout waiting for the response")
-                if not sel.select(remaining):
+                if not sel.select(self._wait(deadline, "waiting for the response")):
                     continue
                 try:
                     chunk = os.read(fd, 1 << 20)
@@ -433,9 +576,23 @@ class LeanService:
         return ('{"id":' + json.dumps(nonce) + ',"mode":' + json.dumps(mode) + ',"budget":'
                 + json.dumps(budget, separators=(",", ":")) + ',"cases":' + cases_text + "}\n").encode()
 
-    def _roundtrip(self, mode: str, cases_text: str, count: int, timeout: float,
+    def _deadline(self, mode: str, size: int, cases: int, timeout: float | None) -> _Deadline:
+        """The request's deadline: `timeout` wall-clock seconds when given, else its mode's
+        CPU deadline (`deadline`) with the wall-clock cap; wall-clock alone where the CPU time
+        of the process is not reported."""
+        now = time.monotonic()
+        if timeout is not None:
+            return _Deadline(now + timeout, mode=mode)
+        cpu = deadline(mode, size, cases)
+        start = _cpu_seconds(self._proc.pid)
+        if start is None:
+            return _Deadline(now + configured_seconds("VE_LEAN_SERVICE_TIMEOUT", cpu), mode=mode)
+        cap = configured_seconds("VE_LEAN_SERVICE_TIMEOUT", WALL_FACTOR * cpu)
+        return _Deadline(now + cap, cpu, start, mode)
+
+    def _roundtrip(self, mode: str, cases_text: str, count: int, timeout: float | None,
                    nonce: str, line: bytes, texts: list[str] | None) -> tuple[bytes, dict]:
-        deadline = time.monotonic() + timeout
+        deadline = self._deadline(mode, len(cases_text.encode()), count, timeout)
         self._write_all(line, deadline)
         raw = self._read_line(deadline)
         try:
@@ -476,9 +633,10 @@ class LeanService:
         """
         if mode not in MODES:
             raise VEError(f"unknown Lean service mode {mode!r}")
+        timeout = self.timeout if timeout is None else timeout
         if timeout is None:
-            timeout = (self.timeout if self.timeout is not None else
-                       configured_seconds("VE_LEAN_SERVICE_TIMEOUT", INTERACTIVE_TIMEOUT))
+            # The wall-clock cap's setting is refused before any process starts when it is not seconds.
+            configured_seconds("VE_LEAN_SERVICE_TIMEOUT", WALL_FACTOR)
         if budget is None:
             budget = {"cases": max(count, 1), "bytes": len(cases_text.encode())}
         with self._lock:
@@ -533,19 +691,22 @@ class LeanService:
                   "bytes": self.batch_bytes if size <= self.batch_bytes else MAX_LINE_BYTES - ENVELOPE_BYTES}
         _, response = self.exchange(mode, cases_text, len(chunk), timeout=timeout, budget=budget, texts=chunk)
         if response.get("status") == "error":
-            message = str(response.get("error", ""))
-            if message.startswith("ResourceLimit"):
-                raise ResourceLimit(message)
-            raise VEError(message)
-        return [bound["result"] for bound in response["results"]]
+            from .relay import rejection  # relay.py builds on this client
+            raise rejection(response["code"], response["error"])
+        return response["results"]
+
+    def run_bound(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
+        """The bound entries for `cases`, in order: each runner result with, beside a rejection,
+        its `code` (and `generator`). Batches above the adapter caps (256 cases or 4 MiB) are
+        split into several requests; each is one timeout unit."""
+        entries: list = []
+        for chunk in self._chunks(_texts(cases)):
+            entries.extend(self._run_chunk(mode, chunk, timeout))
+        return entries
 
     def run(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
-        """The runner results for `cases`, in order. Batches above the adapter caps (256
-        cases or 4 MiB) are split into several requests; each is one timeout unit."""
-        results: list = []
-        for chunk in self._chunks(_texts(cases)):
-            results.extend(self._run_chunk(mode, chunk, timeout))
-        return results
+        """The runner results for `cases`, in order (`run_bound` without the bindings)."""
+        return [entry["result"] for entry in self.run_bound(mode, cases, timeout=timeout)]
 
 
 def _texts(cases: list) -> list[str]:
@@ -581,9 +742,12 @@ class LeanServicePool:
             self._idle.put(service)
 
     def run(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
+        return [entry["result"] for entry in self.run_bound(mode, cases, timeout=timeout)]
+
+    def run_bound(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
         chunks = list(self._services[0]._chunks(_texts(cases), parts=len(self._services)))
         if len(chunks) <= 1:
-            return self._on_idle(lambda service: service.run(mode, cases, timeout=timeout))
+            return self._on_idle(lambda service: service.run_bound(mode, cases, timeout=timeout))
         answers: list = [None] * len(chunks)
         pending = iter(range(len(chunks)))
         claim = threading.Lock()

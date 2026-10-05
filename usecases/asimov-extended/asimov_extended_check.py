@@ -1,7 +1,7 @@
 """Runs VE on every case of the asimov-extended use case and compares with the answer key.
 
 `python usecases/asimov-extended/asimov_extended_check.py` writes `results.json` and prints the
-comparison with `answer-key.json`. VE's Lean route (`ve_risk_route`) decides
+comparison with `answer-key.json`. VE's Lean risk route (service mode `risk`) decides
 every record; the comparison reads the answer key only after every result is
 computed. What runs (PLAN.md sections 7, 8 and 10):
 
@@ -16,11 +16,11 @@ computed. What runs (PLAN.md sections 7, 8 and 10):
 """
 from __future__ import annotations
 
+import atexit
 import json
 import multiprocessing
 import os
 import random
-import subprocess
 import sys
 import time
 from collections import Counter
@@ -35,27 +35,28 @@ import asimov_extended_cases as cases  # noqa: E402
 import asimov_extended_reading as reading  # noqa: E402
 from asimov_extended_cases import HARMS, REPO  # noqa: E402
 from ve.ast import Not, _Decoder  # noqa: E402
+from ve.backends.lean_service import DEFAULT_EXECUTABLE, LeanServicePool  # noqa: E402
 from ve.entailment import prove_entailment  # noqa: E402
 from ve.environment import Environment  # noqa: E402
 from ve.norms import _bind  # noqa: E402
 
-BINARY = REPO / "lean" / ".lake" / "build" / "bin" / "ve_risk_route"
+SERVICE = DEFAULT_EXECUTABLE
 WORKERS = int(os.environ.get("ASIMOV_EXTENDED_WORKERS", min(12, os.cpu_count() or 1)))
+# One Lean service per worker; each starts at its first request.
+POOL = LeanServicePool(size=WORKERS)
+atexit.register(POOL.close)
 CHUNK = 4
 PROVER_STEPS = 20000
 SAMPLE, SEED = 300, 2026
 
 
 def route(batch):
-    out = subprocess.run([str(BINARY), "-"], input=json.dumps(batch), text=True, capture_output=True,
-                         check=False, timeout=3600)
-    if out.returncode != 0 and not out.stdout:
-        raise RuntimeError(out.stderr)
-    return json.loads(out.stdout)
+    """The risk route's rows for `batch` (service mode `risk`), rejections included."""
+    return POOL.run("risk", batch)
 
 
 def run(batch):
-    """Every case through the Lean route, in chunks on parallel processes, results in order."""
+    """Every case through the Lean route, in chunks on the parallel services, results in order."""
     chunks = [batch[i:i + CHUNK] for i in range(0, len(batch), CHUNK)]
     with ThreadPoolExecutor(WORKERS) as pool:
         return [result for chunk in pool.map(route, chunks) for result in chunk]
@@ -297,13 +298,8 @@ def _conflict_job(job):
     return name, result, packages
 
 
-def compute(sample=SAMPLE):
-    env = cases.environment()
-    ext_rules, base_rules = cases.norms(True), cases.norms(False)
-    records = cases.all_records()
-    timing = {}
-
-    start = time.time()
+def document_section(env, ext_rules, base_rules, timing):
+    """Both conflict checks (in parallel) and the extended policy's followability."""
     jobs = [("ext", env, ext_rules), ("base", env, base_rules)]
     with multiprocessing.get_context("fork").Pool(min(len(jobs), WORKERS)) as pool:
         done = {name: (result, packages) for name, result, packages in pool.map(_conflict_job, jobs)}
@@ -313,13 +309,12 @@ def compute(sample=SAMPLE):
     start = time.time()
     follow = [followable(env, ext_rules, ext_packages, k) for k in ("S:j", "P:P8 all-break-zeroth")]
     timing["followability_seconds"] = round(time.time() - start, 1)
-    document = {"ext_conflict": ext_conflict, "base_conflict": done["base"][0], "ext_followable": follow}
+    return {"ext_conflict": ext_conflict, "base_conflict": done["base"][0], "ext_followable": follow}
 
-    # The mutants run beside the decisions and the sample.
-    mutant_pool = multiprocessing.get_context("fork").Pool(5)
-    mutant_jobs = mutant_pool.starmap_async(mutant, [(m, env, ext_rules) for m in ("M1", "M2", "M3", "M4", "M5")])
-    mutant_start = time.time()
 
+def records_section(env, base_rules, ext_rules, records, timing):
+    """Lean's base and extended decisions of every record, with the independent reading's
+    agreement. Returns the per-record results and the decisions."""
     start = time.time()
     lean = both(env, base_rules, ext_rules, records)
     timing["decisions_seconds"] = round(time.time() - start, 1)
@@ -331,7 +326,12 @@ def compute(sample=SAMPLE):
         per_record[name] = {"base": base, "ext": ext, "category": category(base.get("clear"), ext.get("clear")),
                             "independent_agrees": {side: agrees(lean[side][name], independent[name][side])
                                                    for side in ("base", "ext")}}
+    return per_record, lean
 
+
+def sampled_section(env, base_rules, ext_rules, sample, timing):
+    """The seeded sample decided by Lean and read independently. Returns the specs, Lean's
+    decisions and the sampled result."""
     start = time.time()
     specs = sampled(sample)
     sample_lean = both(env, base_rules, ext_rules, specs)
@@ -339,21 +339,43 @@ def compute(sample=SAMPLE):
     disagreements = [k for k in specs for side in ("base", "ext")
                      if not agrees(sample_lean[side][k], sample_reading[k][side])]
     timing["sampled_seconds"] = round(time.time() - start, 1)
+    result = {"records": len(specs), "seed": SEED, "lean_vs_reading_disagreements": sorted(set(disagreements)),
+              "base_clear": sum(bool(sample_lean["base"][k]["clear"]) for k in specs),
+              "ext_clear": sum(bool(sample_lean["ext"][k]["clear"]) for k in specs),
+              **properties(specs, sample_lean)}
+    return specs, sample_lean, result
+
+
+MUTANTS = ("M1", "M2", "M3", "M4", "M5")
+
+
+def compute(sample=SAMPLE):
+    """The whole run: the sections, with the mutants beside the decisions and the sample
+    (tests/test_asimov_extended.py checks each section on its own)."""
+    env = cases.environment()
+    ext_rules, base_rules = cases.norms(True), cases.norms(False)
+    records = cases.all_records()
+    timing = {}
+    document = document_section(env, ext_rules, base_rules, timing)
+
+    # The mutants run beside the decisions and the sample.
+    mutant_pool = multiprocessing.get_context("fork").Pool(5)
+    mutant_jobs = mutant_pool.starmap_async(mutant, [(m, env, ext_rules) for m in MUTANTS])
+    mutant_start = time.time()
+
+    per_record, lean = records_section(env, base_rules, ext_rules, records, timing)
+    specs, sample_lean, sampled_result = sampled_section(env, base_rules, ext_rules, sample, timing)
 
     start = time.time()
     deny = {"records": permission_default(env, base_rules, ext_rules, records, lean),
             "sampled": permission_default(env, base_rules, ext_rules, specs, sample_lean)}
     timing["permission_default_seconds"] = round(time.time() - start, 1)
-    mutants = dict(zip(("M1", "M2", "M3", "M4", "M5"), mutant_jobs.get()))
+    mutants = dict(zip(MUTANTS, mutant_jobs.get()))
     mutant_pool.close()
     mutant_pool.join()
     for result in mutants.values():
         result.pop("seconds")
     timing["mutants_done_after_seconds"] = round(time.time() - mutant_start, 1)
-    sampled_result = {"records": len(specs), "seed": SEED, "lean_vs_reading_disagreements": sorted(set(disagreements)),
-                      "base_clear": sum(bool(sample_lean["base"][k]["clear"]) for k in specs),
-                      "ext_clear": sum(bool(sample_lean["ext"][k]["clear"]) for k in specs),
-                      **properties(specs, sample_lean)}
     return {"document": document, "records": per_record, "mutants": mutants, "sampled": sampled_result,
             "permission_default_deny": deny, "timing": timing}
 

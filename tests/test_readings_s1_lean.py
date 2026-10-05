@@ -12,38 +12,31 @@ from __future__ import annotations
 
 import copy
 import json
-import shutil
-import subprocess
 from pathlib import Path
 
 import pytest
 
-from subprocesses import HANG_TIMEOUT
+from tests import lean_routes
+
 from ve.readings_s1 import wire
 from ve.wire import digest
 from tests.test_norms import environment, obligation, permission
 
 ROOT = Path(__file__).resolve().parents[1]
-LEAN = ROOT / "lean/.lake/build/bin/ve_readings_route"
+LEAN = "ve_readings_route"  # its service mode, through tests/lean_routes.py
 SOFT_PROFILES = ("norms@0", "readings@1", "relational-fol@0", "soft-norms@0")
 
 
 @pytest.fixture(scope="module")
 def lean():
-    if not LEAN.exists():
-        lake = shutil.which("lake")
-        if lake is None:
-            pytest.skip("lake is required for the readings Lean route")
-        built = subprocess.run([lake, "build", "ve_readings_route"], cwd=ROOT / "lean", capture_output=True,
-                               text=True, timeout=1800)
-        assert built.returncode == 0, built.stdout + built.stderr
+    if not lean_routes.SERVICE.exists():
+        pytest.skip("the Lean service has not been built")
     return LEAN
 
 
 def run(executable, cases):
     # The restricted Lean JSON input has no null: an absent value is omitted, as `ve/readings_route.py` sends it.
-    result = subprocess.run([str(executable), "-"], input=json.dumps(wire(cases)), text=True,
-                            capture_output=True, timeout=HANG_TIMEOUT)
+    result = lean_routes.completed(executable, wire(cases))
     assert result.returncode in (0, 1), result.stderr
     rows = json.loads(result.stdout)
     assert len(rows) == len(cases)
@@ -149,6 +142,42 @@ def test_k1_strict_witness_does_not_separate(lean):
     document, _ = k1_document(raw, situation=entry(M0, "strict", Q0, True))
     row = validate(lean, raw, document)
     assert row == {"id": "v", "status": "error", "error": "distinguishing model does not separate readings"}
+
+
+def test_outcome_probe_through_two_layers(lean):
+    """Lean-first plan F5d: a probe whose outcome reads a layer symbol whose meaning reads another one.
+
+    `avoid_required` (the readings) reads `warn_required`, whose fixed rule reads `help_required`, whose fixed rule
+    reads the base predicate `asks`. The witness's value is true only when the expansion table expands each
+    symbol's meaning under the symbols before it (`expAt_expEntries`). The asserted unit reads `warn_required`, so
+    it is typed over the complete environment, which admission computes once per document (`chainText_eq`)."""
+    raw = env_k()
+    raw["vocabulary"]["predicates"]["warn_required"] = obligation(
+        "deny", None, act="{0} warn {1}", args=("agent", "user"))
+    asks = ["binary", "asks", ["var", 1], ["var", 0]]
+    helps = ["binary", "help_required", ["var", 1], ["var", 0]]
+    warns = ["binary", "warn_required", ["var", 1], ["var", 0]]
+    base = {**M0, "relations": {"asks": [["a", "u"]]}}
+    sigma = entry(base, "nested", Q0, True)
+    sid = situation_id(raw, sigma)
+    rs1 = reading_set("rs1", "u1", [
+        reading("nested", norm("avoid-when-warning", "avoid_required", True, guard=warns), {"never": sid}),
+        reading("never", norm("avoid-never", "avoid_required", True, guard=["bottom"]), {"nested": sid})],
+        {sid: sigma})
+    units = [{"id": "u1"}, {"id": "u2", "kind": "norm", "content": norm("help-when-asked", "help_required", True,
+                                                                          guard=asks)},
+             {"id": "u3", "kind": "norm", "content": norm("warn-when-helping", "warn_required", True, guard=helps)},
+             {"id": "u4", "kind": "asserted", "content": ["forall", "agent", ["forall", "user",
+                                                                              ["implies", asks, warns]]]}]
+    document = {"units": units, "reading_sets": [rs1]}
+    row = validate(lean, raw, document)
+    assert row["status"] == "ok", row
+    pair = row["sets"][0]["pairs"][0]["pair"]
+    assert pair == {"situation": sid, "witness": "nested", "separated": True, "witness_admissible": True,
+                    "witness_value": True, "other_admissible": True, "other_value": False}
+    separate = run(lean, [{"id": "s", "kind": "readings-separate", "environment": raw, "document": document,
+                           "set": "rs1", "situation": sid, "other": "never"}])[0]
+    assert separate["status"] == "ok" and separate["pair"] == pair
 
 
 def test_k2b_base_outside_the_author_vocabulary(lean):
@@ -338,16 +367,10 @@ def rs9(raw, strict, default=None):
 
 
 def agreed(lean, raw, document):
-    """Lean's row, after checking that Python regenerates it byte for byte (4.1 rule 3)."""
-    from ve.errors import VEError
-    from ve.readings_route import rights_findings
-    from ve.readings_s1 import answer
+    """Lean's row, after checking that the route relays it: the row itself, or its diagnostic with Lean's text
+    (lean-first batch 3: no Python regeneration is compared with it)."""
     row = {k: v for k, v in validate(lean, raw, document).items() if k != "id"}
-    try:
-        python = {"status": "ok", **answer(raw, document, chain_findings=rights_findings)}
-    except VEError as exc:
-        python = {"status": "error", "error": exc.message if hasattr(exc, "message") else str(exc)}
-    assert python == row
+    assert _route(raw, document, None) == row
     return row
 
 
@@ -386,7 +409,7 @@ SAME_LINE = {
 @pytest.mark.parametrize("variant", sorted(SAME_LINE))
 def test_line_order_compares_lines_decoded(lean, variant):
     """Lean's line order holds decoded lines (`SourceLine`): a line written again with a default field spelled
-    out is the same line listed twice, and Python says so with Lean's text."""
+    out is the same line listed twice, and the route says so with Lean's text."""
     raw = env_rights()
     document = {"units": [{"id": "u9"}],
                 "reading_sets": [rs9(raw, r9_right([r9_line("strict"), SAME_LINE[variant]]))]}
@@ -426,8 +449,8 @@ DEFAULTED_UNITS = {
 
 @pytest.mark.parametrize("variant", sorted(DEFAULTED_UNITS))
 def test_rights_units_read_with_lean_defaults(lean, variant):
-    """A field Lean's rights decoder reads as optional (absent and null alike on its wire) is read so by Python's
-    regeneration too: an absent decider inherits, is missing, or (a bar's) is accepted, as Lean decides."""
+    """A field Lean's rights decoder reads as optional (absent and null alike on its wire): an absent decider
+    inherits, is missing, or (a bar's) is accepted, as Lean decides, and the route relays it."""
     raw = env_rights()
     content, expected = DEFAULTED_UNITS[variant]
     kind = next(iter(content))
@@ -454,9 +477,8 @@ EXPLICIT_NULL_RIGHTS = {
 
 @pytest.mark.parametrize("variant", sorted(EXPLICIT_NULL_RIGHTS))
 def test_explicit_null_is_absent_in_rights_candidates(lean, variant):
-    """Lean's input has no null (`wire` omits it), so an explicit null is the field's default to Lean. Python's
-    regeneration reads the document the same way: the candidate is admitted by both, with the same answer, rather
-    than refused by Python alone (a `CheckerUnavailable` on the route)."""
+    """Lean's input has no null (`wire` omits it), so an explicit null is the field's default to Lean: the
+    candidate is admitted, and the route relays the answer."""
     raw = env_rights()
     row = agreed(lean, raw, {"units": [{"id": "u9"}], "reading_sets": [rs9(raw, EXPLICIT_NULL_RIGHTS[variant])]})
     assert row["status"] == "ok", row
@@ -569,30 +591,19 @@ ENVIRONMENT_NULLS = [(name, path) for name, (make, _, _) in NULL_ENVIRONMENTS.it
                                                       and p not in set(_fields(make())))]]
 
 
-def _python_answer(raw, document):
-    from ve.errors import VEError
-    from ve.readings_route import rights_findings
-    from ve.readings_s1 import answer
-    try:
-        return {"status": "ok", **answer(raw, document, chain_findings=rights_findings)}
-    except VEError as exc:
-        return {"status": "error", "error": exc.message if hasattr(exc, "message") else str(exc)}
-
-
 def _known_text_difference(name, path):
-    """The cases whose environment, without the field, Lean and Python refuse with different texts: the route is
-    `CheckerUnavailable` on them, with the null exactly as without the field, and admits nothing. Not this finding's
-    class and not changed: a required field missing (the environment decoders' texts differ: `fields do not match`
-    against `Incorrect fields`, `invalid signature` against `Undeclared predicate argument sort`), and a candidate's
-    content made ill-typed by the environment (Lean's content decoder refuses it before any candidate label, or with
-    its code, `UnknownSymbol: `, before the text: the malformed-contents limitation of the earlier rechecks)."""
+    """The cases whose environment, without the field, Lean and Python's regeneration refused with different texts,
+    so that the route was `CheckerUnavailable` on them until lean-first batch 3 deleted the regeneration: a required
+    field missing (the environment decoders' texts differed: `fields do not match` against `Incorrect fields`,
+    `invalid signature` against `Undeclared predicate argument sort`), and a candidate's content made ill-typed by
+    the environment (Lean's content decoder refuses it before any candidate label, or with its code). The route now
+    raises Lean's diagnostic on each (`docs/lean-first/b3/DELTA.md`, `availability`); Lean refuses every one."""
     required = (path[-1] in ("arguments", "description") or path[:2] == ("vocabulary", "sorts") and len(path) == 3
                 or name == "norms" and len(path) <= 2 and path not in (("profiles",), ("vocabulary", "soft"),
                                                                        ("vocabulary", "rights"))
                 or name == "rights" and path == ("vocabulary",))
     ill_typed = path in (("vocabulary", "predicates", "avoid_required"),
-                         ("vocabulary", "predicates", "avoid_required", "regulated")) and name != "norms" or \
-        name == "rights" and path == ("vocabulary", "predicates", "arbitrary_arrest")
+                         ("vocabulary", "predicates", "avoid_required", "regulated")) and name != "norms"
     return required or ill_typed
 
 
@@ -613,15 +624,11 @@ def _route(lean_path_environment, document, unit_kind):
 
 @pytest.mark.parametrize("name,path", ENVIRONMENT_NULLS, ids=lambda v: v if type(v) is str else ".".join(map(str, v)))
 def test_explicit_null_is_absent_in_the_environment(lean, name, path):
-    """Review finding B (compose-s1-loop): Python decoded the raw environment while Lean receives it through `wire`,
-    so `vocabulary.soft: null`, `vocabulary.rights: null` or a predicate's `regulated: null` was `ok` for Lean,
-    refused by Python, and `CheckerUnavailable` on the route. Every S1 entry point now reads the environment as
-    Lean does: each field of each environment, at every depth, and each optional field it leaves out, written as
-    null, is the field absent to Lean, to Python's regeneration and to the route (`ve/readings_route.py`, Rust's
-    replay included), and outside the pinned text differences the route answers Lean's row or raises Lean's
-    diagnostic. The class covers `vocabulary.rights.protected` and `alters` (optional to Lean's rights decoder, so
-    to Python's now), a null `profiles` (Lean's text, not a Python `KeyError`) and a right's line on a predicate
-    whose `regulated` is null (Lean's `UnknownSymbol`, not a Python `AttributeError`)."""
+    """Review finding B (compose-s1-loop): each field of each environment, at every depth, and each optional field
+    it leaves out, written as null, is the field absent to Lean and to the route (`ve/readings_route.py`), and the
+    route answers Lean's row or raises Lean's diagnostic. The class covers `vocabulary.rights.protected` and
+    `alters`, a null `profiles` (Lean's text) and a right's line on a predicate whose `regulated` is null (Lean's
+    `UnknownSymbol`). The cases Python's regeneration once refused with another text are refused by Lean."""
     from ve.errors import VEError
     make, make_document, unit_kind = NULL_ENVIRONMENTS[name]
     nulled = _nulled(make(), path)
@@ -634,16 +641,24 @@ def test_explicit_null_is_absent_in_the_environment(lean, name, path):
         document = make_document(make())
     row = {k: v for k, v in validate(lean, nulled, document).items() if k != "id"}
     assert row == {k: v for k, v in validate(lean, absent, document).items() if k != "id"}
-    python = _python_answer(nulled, document)
-    assert python == _python_answer(absent, document)
     routed = _route(nulled, document, unit_kind)
     assert routed == _route(absent, document, unit_kind)
+    assert routed == row
     if _known_text_difference(name, path):
-        assert row["status"] == "error" and python["status"] == "error" and python != row, (row, python)
-        assert routed == "CheckerUnavailable"
-    else:
-        assert python == row
-        assert routed == row
+        assert row["status"] == "error", row
+
+
+def test_a_text_that_differed_only_by_the_code_prefix_gets_leans_diagnostic(lean):
+    """Lean-first batch 0, `DELTA.md` A1 (`availability`): the rights document over an environment without
+    `arbitrary_arrest` was `CheckerUnavailable` on the route, Python writing `Unknown predicate ...` and Lean
+    `UnknownSymbol: Unknown predicate ...`. Python's text is Lean's now, so the route rejects with it."""
+    make, make_document, unit_kind = NULL_ENVIRONMENTS["rights"]
+    absent = wire(_nulled(make(), ("vocabulary", "predicates", "arbitrary_arrest")))
+    document = make_document(make())
+    text = "UnknownSymbol: Unknown predicate 'arbitrary_arrest' under rs9@1:0"
+    assert {k: v for k, v in validate(lean, absent, document).items() if k != "id"} == {"status": "error",
+                                                                                       "error": text}
+    assert _route(absent, document, unit_kind) == {"status": "error", "error": text}
 
 
 def test_environment_nulls_cover_the_reported_fields():
@@ -651,7 +666,7 @@ def test_environment_nulls_cover_the_reported_fields():
     for case in (("soft", ("vocabulary", "soft")), ("soft", ("vocabulary", "rights")),
                  ("rights", ("vocabulary", "rights", "protected")), ("rights", ("vocabulary", "rights", "alters")),
                  ("soft", ("profiles",)), ("rights", ("vocabulary", "predicates", "arrest_permitted", "regulated"))):
-        assert case in ENVIRONMENT_NULLS and not _known_text_difference(*case)
+        assert case in ENVIRONMENT_NULLS
 
 
 def test_other_kinds_go_to_the_lower_route(lean):

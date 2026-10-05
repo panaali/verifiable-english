@@ -22,6 +22,7 @@ wall-clock waits (the test suite sets it to its hang guard). Run
 | Lean forbidden tokens | In staged files under `lean/`: every whole word the staged `lean/audit.py` forbids (today `sorry`, `sorryAx`, `admit`, `axiom`, `unsafe`, `native_decide`, `implemented_by`, `partial`, `opaque`, `extern`), in comments and strings too, as the audit does. In other staged `.lean` files: `sorry`, `sorryAx`, `admit` or `axiom` in code | the staged `lean/audit.py` |
 | frozen files | A staged change to a file listed in `lean/VE/Route/frozen-sources.sha256` unless the staged inventory records the staged file's SHA-256; a deleted file that is still listed; a new `lean/VE/**/*.lean` module that is not listed; a changed `lean/Main.lean` that no longer matches `MAIN_BASE` in `lean/VE/Route/frozen.py`. A staged inventory or `frozen.py` re-checks every entry | `lean/VE/Route/frozen.py` rules |
 | wire contract | When wire contract sources or the generated English table change, `tools/wire_contract.py --check` must pass on a staged snapshot within 30 s (`VE_PRECOMMIT_TIMEOUT` replaces it; a value that is not a positive number of seconds blocks) | staged `ve/`, `tools/wire_contract.py`, `lean/audit.py`, and `docs/spec/soft-norms-wire-table.md` |
+| English grammar | When an English fixed-rule source, the generator, or a Lean file under `lean/VE/Grammar/` or `lean/VE/EnglishGrammar/` changes, `tools/english_grammar_gen.py`'s checks must pass on the staged blobs: each generated table equals its source, the lock file `ve/english_grammar/LOCK.json` holds every hashed file's SHA-256, every Lean file of those directories is classified, and a hash that differs from HEAD's lock comes with a new `actions_version` (docs/spec/english-lean-s2.md 2.9) | staged `ve/english_grammar/`, `tools/english_grammar_gen.py`, `lean/VE/Grammar/`, `lean/VE/EnglishGrammar/` |
 
 A Lean header is in the plain layout when it is one `import A.B.C` per line at
 column 0 (ASCII name parts, nothing else on the line), with only blank lines,
@@ -68,7 +69,7 @@ Only part of what a bypass skips is checked again before a merge. The gate
 and the test suite, which runs `lean/VE/Route/frozen.py`. **Nothing downstream
 scans for secrets**, and the layer checkers (`tools/check_python_layers.py`,
 `tools/check_lean_imports.py`, `tools/check_rust_deps.py`) run only from
-`tools/select_tests.py`, not in the gate. After a bypass, run
+`tools/select_tests.py`, when their inputs change, not in the gate. After a bypass, run
 `tools/hooks/pre-commit` by hand once the commit's content is staged again (for
 example after `git reset --soft HEAD~1`), or run those checkers directly.
 

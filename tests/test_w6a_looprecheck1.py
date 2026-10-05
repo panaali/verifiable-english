@@ -10,6 +10,8 @@ import re
 
 import pytest
 
+from tests import lean_routes
+
 from tests.test_units_lean_w6a import LEAN, lean, quantity, rust
 from tests.test_w6a_review_regressions import label, named, raw_environment
 from ve import ast
@@ -23,7 +25,7 @@ from ve.units import (SPACES, decimal_exact, elaborate_quantity, erased_environm
                       quantity_countermodel, render_coordinate)
 
 ROOT = Path(__file__).resolve().parents[1]
-pytestmark = pytest.mark.skipif(not LEAN.exists(), reason="build the Lean ve_quantity runner first")
+pytestmark = pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="build the Lean service first")
 
 
 def rejected_three_ways(raw, message):

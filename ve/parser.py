@@ -88,7 +88,7 @@ class _Parser:
         if text == "-0" or (self.i + len(text) < len(self.s) and self.s[self.i + len(text)].isdigit()):
             self.error("non-canonical integer numeral", start)
         self.i = match.end()
-        return int(text)
+        return ast.numeral_value(text)
 
     def term(self, depth: int = 1):
         start = self.i
@@ -385,7 +385,7 @@ def parse_with_metadata(env: Any, source: str | bytes) -> ParseResult:
 
 
 def _parse_lean(env: Any, source: str | bytes, python) -> ParseResult:
-    from .backends.lean_runner import run
+    from .backends.relay import decide
     from .backends.validation import decided, key
     if "definitions@0" in env.profiles:
         # The definitions@0 surface sugar (`no`, `every ... that is`, `iff`,
@@ -411,7 +411,7 @@ def _parse_lean(env: Any, source: str | bytes, python) -> ParseResult:
         return "canonical" not in row or row["canonical"] == print_document(env, result.document)
 
     return decided(python, cache,
-                   lambda: run("parse", [{"id": "parse", "environment": env.to_dict(), "source": text}])[0],
+                   lambda: decide("parse", [{"id": "parse", "environment": env.to_dict(), "source": text}])[0],
                    same, "a source")
 
 

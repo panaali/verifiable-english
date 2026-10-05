@@ -14,7 +14,7 @@ import tomllib
 import pytest
 
 from subprocesses import HANG_TIMEOUT
-from tools import gate
+from tools import gate, nested_pytest
 
 
 def empty_result():
@@ -26,7 +26,12 @@ def events():
             "selected": ["tests/a.py::test_a", "tests/b.py::test_b"],
             "deselected": [], "collection_reports": [],
             "tests": {"tests/a.py::test_a": {"outcome": "passed"},
-                      "tests/b.py::test_b": {"outcome": "passed"}}}
+                      "tests/b.py::test_b": {"outcome": "passed"}},
+            "workers": {"gw0": ["tests/a.py::test_a", "tests/b.py::test_b"]}}
+
+
+# The gate's two pytest runs: the serial collection, then the suite under xdist.
+PYTEST_STAGES = ("Python collection", "Python suite")
 
 
 @pytest.mark.parametrize("change,reason", [
@@ -55,10 +60,10 @@ def test_pytest_plugin_observes_collection_bypasses(tmp_path, body, conftest):
     if conftest:
         (tmp_path / "conftest.py").write_text(conftest)
     output = tmp_path / "events.json"
-    env = {**os.environ, "VE_GATE_PYTEST_RESULT": str(output),
-           "PYTHONPATH": str(gate.ROOT)}
-    run = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p",
-                          "tools.gate_pytest", "-o", "addopts=", str(tmp_path)],
+    env = nested_pytest.environment(os.environ, VE_GATE_PYTEST_RESULT=str(output),
+                                    PYTHONPATH=str(gate.ROOT))
+    run = subprocess.run(nested_pytest.command(["-q", "-p", "tools.gate_pytest", "-o", "addopts=",
+                                                str(tmp_path)]),
                          cwd=gate.ROOT, env=env, capture_output=True, text=True)
     assert run.returncode in (0, 5), run.stdout + run.stderr
     observed = json.loads(output.read_text())
@@ -240,7 +245,7 @@ def test_poisoned_ambient_environment_leaves_gate_result_unchanged(tmp_path, mon
 
         def fake_command(args, *, env, stage, cwd=None):
             seen.append({"args": args, "cwd": str(cwd), "env": dict(env), "stage": stage})
-            if stage == "Python suite":
+            if stage in PYTEST_STAGES:
                 Path(env["VE_GATE_PYTEST_RESULT"]).write_text(json.dumps(events()))
             return versions.get(stage, "")
 
@@ -586,7 +591,7 @@ def test_gate_resets_record_uses_own_binary_and_checks_source_at_end(
             return str(tmp_path / ".venv")
         if stage == "native Rust tests":
             return "test result: ok. 2 passed; 0 failed; 0 ignored;"
-        if stage == "Python suite":
+        if stage in PYTEST_STAGES:
             Path(env["VE_GATE_PYTEST_RESULT"]).write_text(json.dumps(events()))
         return ""
 

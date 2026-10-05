@@ -1,15 +1,19 @@
 {
   "$id": "check-certificate.json",
   "$comment": "Mode check-certificate: CertificateWire.runCaseReported.",
-  "row": {"anyOf": [
-    {"$ref": "common.json#/$defs/case_error_valid"},
-    {"$ref": "common.json#/$defs/error_valid"},
-    {"$ref": "#/$defs/certificate"}]},
+  "row": {
+    "anyOf": [
+      {"$ref": "common.json#/$defs/case_error_valid"},
+      {"$ref": "common.json#/$defs/error_valid"},
+      {"$ref": "#/$defs/certificate"}
+    ]
+  },
   "$defs": {
-    "certificate": {"type": "object", "required": ["id", "status", "valid"], "additionalProperties": false,
-      "properties": {
-        "id": {"type": "string", "x-equals": "/id"},
-        "status": {"const": "ok"},
-        "valid": {"type": "boolean"}}}
+    "certificate": {
+      "additionalProperties": false,
+      "properties": {"id": {"type": "string", "x-equals": "/id"}, "status": {"const": "ok"}, "valid": {"type": "boolean"}},
+      "required": ["id", "status", "valid"],
+      "type": "object"
+    }
   }
 }

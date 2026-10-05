@@ -1,91 +1,205 @@
 {
   "$id": "norms.json",
   "$comment": "Mode norms: Norms.Run.runCaseReported. A case on the norms path (Norms.Run.usesNormsPath) is answered by the norms runner; every other case is delegated unchanged to route.",
-  "row": {"x-select": [
-    {"when": {"$ref": "#/$defs/norms_path"}, "then": {"anyOf": [
-      {"$ref": "common.json#/$defs/case_error"},
-      {"$ref": "common.json#/$defs/error"},
-      {"x-select": [
-        {"when": {"$ref": "#/$defs/kind/admission"}, "then": {"$ref": "common.json#/$defs/admission"}},
-        {"when": {"$ref": "#/$defs/kind/background"}, "then": {"$ref": "route.json#/$defs/background"}},
-        {"when": {"$ref": "route.json#/$defs/kind/evaluate"}, "then": {"$ref": "route.json#/$defs/evaluate"}},
-        {"when": {"$ref": "route.json#/$defs/kind/countermodel"}, "then": {"$ref": "route.json#/$defs/countermodel"}},
-        {"when": {"$ref": "route.json#/$defs/kind/certificate"}, "then": {"$ref": "route.json#/$defs/certificate"}},
-        {"when": {"$ref": "#/$defs/kind/norms-elaborate"}, "then": {"$ref": "#/$defs/norms-elaborate"}},
-        {"when": {"$ref": "#/$defs/kind/norms-certificate"}, "then": {"$ref": "#/$defs/norms-certificate"}},
-        {"when": {"allOf": [{"$ref": "#/$defs/kind/norms-conflict"}, {"required": ["witness"]}]},
-         "then": {"$ref": "#/$defs/norms-witness"}},
-        {"when": {"$ref": "#/$defs/kind/norms-conflict"}, "then": {"$ref": "#/$defs/norms-conflict"}}]}]}},
-    {"when": true, "then": {"$ref": "route.json#/row"}}]},
+  "row": {
+    "x-select": [
+      {
+        "then": {
+          "anyOf": [
+            {"$ref": "common.json#/$defs/case_error"},
+            {"$ref": "common.json#/$defs/error"},
+            {
+              "x-select": [
+                {"then": {"$ref": "common.json#/$defs/admission"}, "when": {"$ref": "#/$defs/kind/admission"}},
+                {"then": {"$ref": "route.json#/$defs/background"}, "when": {"$ref": "#/$defs/kind/background"}},
+                {
+                  "then": {"$ref": "route.json#/$defs/evaluate"},
+                  "when": {"$ref": "route.json#/$defs/kind/evaluate"}
+                },
+                {
+                  "then": {"$ref": "route.json#/$defs/countermodel"},
+                  "when": {"$ref": "route.json#/$defs/kind/countermodel"}
+                },
+                {
+                  "then": {"$ref": "route.json#/$defs/certificate"},
+                  "when": {"$ref": "route.json#/$defs/kind/certificate"}
+                },
+                {"then": {"$ref": "#/$defs/norms-elaborate"}, "when": {"$ref": "#/$defs/kind/norms-elaborate"}},
+                {
+                  "then": {"$ref": "#/$defs/norms-certificate"},
+                  "when": {"$ref": "#/$defs/kind/norms-certificate"}
+                },
+                {
+                  "then": {"$ref": "#/$defs/norms-witness"},
+                  "when": {"allOf": [{"$ref": "#/$defs/kind/norms-conflict"}, {"required": ["witness"]}]}
+                },
+                {"then": {"$ref": "#/$defs/norms-conflict"}, "when": {"$ref": "#/$defs/kind/norms-conflict"}}
+              ]
+            }
+          ]
+        },
+        "when": {"$ref": "#/$defs/norms_path"}
+      },
+      {"then": {"$ref": "route.json#/row"}, "when": true}
+    ]
+  },
   "$defs": {
-    "norms_path": {"$comment": "Norms.Run.usesNormsPath (a regulated predicate, a norms field, a norms-* kind or a unit with norm content) or Plain.layered (a reports@0 or soft-norms@0 environment).",
-      "type": "object", "anyOf": [
-        {"required": ["norms"]},
-        {"required": ["environment"], "properties": {"environment": {
-          "type": "object", "required": ["profiles"], "properties": {"profiles": {
-            "type": "array", "contains": {"enum": ["reports@0", "soft-norms@0"]}}}}}},
-        {"required": ["kind"], "properties": {"kind": {"type": "string", "pattern": "norms-.*"}}},
-        {"required": ["environment"], "properties": {"environment": {
-          "type": "object", "required": ["vocabulary"], "properties": {"vocabulary": {
-            "type": "object", "required": ["predicates"], "properties": {"predicates": {
-              "type": "object", "not": {"additionalProperties": {"not": {"type": "object", "required": ["regulated"]}}}}}}}}}},
-        {"required": ["document"], "properties": {"document": {
-          "type": "object", "required": ["units"], "properties": {"units": {
-            "type": "array", "contains": {"type": "object", "required": ["content"], "properties": {"content": {
-              "type": "object", "required": ["norm"]}}}}}}}}]},
     "kind": {
-      "admission": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "admission"}}},
-      "background": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "background"}}},
-      "norms-elaborate": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "norms-elaborate"}}},
-      "norms-certificate": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "norms-certificate"}}},
-      "norms-conflict": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "norms-conflict"}}}},
-    "norms-elaborate": {"$comment": "Norms.Wire.regenerated: one layer (order entry, premise) per regulated predicate; Background in generator order; one conflict target per layer, then per profile pair. These lists are the service's (Lean invariants and Python parity in tests/test_lean_service_schema.py).",
-      "type": "object", "required": ["id", "status", "order", "background", "premises", "conflict_targets", "fragment"],
+      "admission": {"properties": {"kind": {"const": "admission"}}, "required": ["kind"], "type": "object"},
+      "background": {"properties": {"kind": {"const": "background"}}, "required": ["kind"], "type": "object"},
+      "norms-certificate": {"properties": {"kind": {"const": "norms-certificate"}}, "required": ["kind"], "type": "object"},
+      "norms-conflict": {"properties": {"kind": {"const": "norms-conflict"}}, "required": ["kind"], "type": "object"},
+      "norms-elaborate": {"properties": {"kind": {"const": "norms-elaborate"}}, "required": ["kind"], "type": "object"}
+    },
+    "norms-certificate": {
       "additionalProperties": false,
       "properties": {
-        "id": {"type": "string", "x-equals": "/id"},
-        "status": {"const": "ok"},
-        "order": {"$ref": "common.json#/$defs/strings"},
-        "background": {"type": "array", "items": {
-          "type": "object", "required": ["generator", "ast"], "additionalProperties": false,
-          "properties": {
-            "generator": {"enum": ["flags", "definitions", "literals", "profile"]},
-            "ast": {"$ref": "common.json#/$defs/generated_formula"}}}},
-        "premises": {"type": "array", "items": {
-          "type": "object", "required": ["label", "ast"], "additionalProperties": false,
-          "properties": {
-            "label": {"type": "string", "pattern": "layer:norms:.*"},
-            "ast": {"$ref": "common.json#/$defs/generated_formula"}}}},
-        "conflict_targets": {"type": "array", "items": {
-          "type": "object", "required": ["target", "sorts", "ast"], "additionalProperties": false,
-          "properties": {
-            "target": {"type": "string"},
-            "sorts": {"$ref": "common.json#/$defs/strings"},
-            "ast": {"$ref": "common.json#/$defs/generated_formula"}}}},
-        "fragment": {"type": "boolean"}}},
-    "norms-certificate": {"type": "object", "required": ["id", "status", "valid", "background", "layers"],
-      "additionalProperties": false,
-      "properties": {
-        "id": {"type": "string", "x-equals": "/id"},
-        "status": {"const": "ok"},
-        "valid": {"type": "boolean"},
         "background": {"$ref": "common.json#/$defs/nat"},
-        "layers": {"$ref": "common.json#/$defs/nat"}}},
-    "norms-witness": {"$comment": "Norms.Replay.witnessFrom: the requested target; the regenerated targets are the service's.",
-      "type": "object", "required": ["id", "status", "verdict", "target", "targets"], "additionalProperties": false,
+        "id": {"type": "string", "x-equals": "/id"},
+        "layers": {"$ref": "common.json#/$defs/nat"},
+        "status": {"const": "ok"},
+        "valid": {"type": "boolean"}
+      },
+      "required": ["id", "status", "valid", "background", "layers"],
+      "type": "object"
+    },
+    "norms-conflict": {
+      "$comment": "Norms.Flagged.replayConflict (norms_flagged_conflict_free; the verdict, its detail and the targets are the service's).",
+      "additionalProperties": false,
       "properties": {
+        "detail": {"type": "string"},
         "id": {"type": "string", "x-equals": "/id"},
         "status": {"const": "ok"},
-        "verdict": {"enum": ["CONFLICT", "UNKNOWN"]},
-        "target": {"type": "string", "x-equals": "/witness/target"},
-        "targets": {"$ref": "common.json#/$defs/strings"}}},
-    "norms-conflict": {"$comment": "Norms.Replay.replayConflict (the verdict, its detail and the targets are the service's).",
-      "type": "object", "required": ["id", "status", "verdict", "targets"], "additionalProperties": false,
-      "properties": {
-        "id": {"type": "string", "x-equals": "/id"},
-        "status": {"const": "ok"},
-        "verdict": {"enum": ["CONFLICT-FREE", "UNKNOWN"]},
         "targets": {"$ref": "common.json#/$defs/strings"},
-        "detail": {"type": "string"}}}
+        "verdict": {"enum": ["CONFLICT-FREE", "UNKNOWN"]}
+      },
+      "required": ["id", "status", "verdict", "targets"],
+      "type": "object"
+    },
+    "norms-elaborate": {
+      "$comment": "Norms.Wire.regenerated: one layer (order entry, premise) per regulated predicate; Background in generator order; one conflict target per layer, then per profile pair. These lists are the service's (Lean invariants and Python parity in tests/test_lean_service_schema.py).",
+      "additionalProperties": false,
+      "properties": {
+        "background": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "ast": {"$ref": "common.json#/$defs/generated_formula"},
+              "generator": {"enum": ["flags", "definitions", "literals", "profile"]}
+            },
+            "required": ["generator", "ast"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "conflict_targets": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "ast": {"$ref": "common.json#/$defs/generated_formula"},
+              "sorts": {"$ref": "common.json#/$defs/strings"},
+              "target": {"type": "string"}
+            },
+            "required": ["target", "sorts", "ast"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "fragment": {"type": "boolean"},
+        "id": {"type": "string", "x-equals": "/id"},
+        "order": {"$ref": "common.json#/$defs/strings"},
+        "premises": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "ast": {"$ref": "common.json#/$defs/generated_formula"},
+              "label": {"pattern": "layer:norms:.*", "type": "string"}
+            },
+            "required": ["label", "ast"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "order", "background", "premises", "conflict_targets", "fragment"],
+      "type": "object"
+    },
+    "norms-witness": {
+      "$comment": "Norms.Flagged.witnessFrom (norms_flagged_witness_sound): the requested target; the regenerated targets are the service's.",
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "x-equals": "/id"},
+        "status": {"const": "ok"},
+        "target": {"type": "string", "x-equals": "/witness/target"},
+        "targets": {"$ref": "common.json#/$defs/strings"},
+        "verdict": {"enum": ["CONFLICT", "UNKNOWN"]}
+      },
+      "required": ["id", "status", "verdict", "target", "targets"],
+      "type": "object"
+    },
+    "norms_path": {
+      "$comment": "Norms.Run.usesNormsPath (a regulated predicate, a norms field, a norms-* kind or a unit with norm content) or Plain.layered (a profile of Plain.statementLayers: reports@0, soft-norms@0, rights@0 or speech-acts@0).",
+      "anyOf": [
+        {"required": ["norms"]},
+        {
+          "properties": {
+            "environment": {
+              "properties": {
+                "profiles": {
+                  "contains": {"enum": ["reports@0", "soft-norms@0", "rights@0", "speech-acts@0"]},
+                  "type": "array"
+                }
+              },
+              "required": ["profiles"],
+              "type": "object"
+            }
+          },
+          "required": ["environment"]
+        },
+        {"properties": {"kind": {"pattern": "norms-.*", "type": "string"}}, "required": ["kind"]},
+        {
+          "properties": {
+            "environment": {
+              "properties": {
+                "vocabulary": {
+                  "properties": {
+                    "predicates": {
+                      "not": {"additionalProperties": {"not": {"required": ["regulated"], "type": "object"}}},
+                      "type": "object"
+                    }
+                  },
+                  "required": ["predicates"],
+                  "type": "object"
+                }
+              },
+              "required": ["vocabulary"],
+              "type": "object"
+            }
+          },
+          "required": ["environment"]
+        },
+        {
+          "properties": {
+            "document": {
+              "properties": {
+                "units": {
+                  "contains": {
+                    "properties": {"content": {"required": ["norm"], "type": "object"}},
+                    "required": ["content"],
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": ["units"],
+              "type": "object"
+            }
+          },
+          "required": ["document"]
+        }
+      ],
+      "type": "object"
+    }
   }
 }

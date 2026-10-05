@@ -9,28 +9,33 @@ name = VE inward-only imports (reviewed legacy edges)
 type = layers
 layers =
     ve.argument_fixtures:ve_experiments
-    ve.__main__:ve.adapters:ve.admission:ve.argument:ve.attacks:ve.authoring:ve.backends:ve.bundle:ve.check:ve.document:ve.equivalence:ve.norm_admission:ve.norm_defaults:ve.norm_defaults_contract:ve.norm_defaults_english:ve.norm_defaults_route:ve.norm_strict:ve.openterms:ve.propose:ve.readings:ve.search:ve.stream_audit:ve.vacuity:ve.assist:ve.discourse:ve.quantity_admission:ve.reports_route:ve.risk:ve.rights_route:ve.soft_route:ve.speech_document:ve.readings_route:ve.readings_s1
-    ve.english:ve.english_phrases:ve.english_vocabulary:ve.fluent:ve.fol:ve.grammar:ve.natural:ve.norm_english:ve.parser:ve.printer:ve.surface:ve.lexicon:ve.report_english:ve.speech_english:ve.readings_english
+    ve.__main__:ve.adapters:ve.admission:ve.argument:ve.attacks:ve.authoring:ve.backends:ve.bundle:ve.check:ve.document:ve.equivalence:ve.norm_admission:ve.norm_defaults:ve.norm_defaults_contract:ve.norm_defaults_english:ve.norm_defaults_route:ve.norm_strict:ve.openterms:ve.propose:ve.readings:ve.search:ve.stream_audit:ve.vacuity:ve.assist:ve.discourse:ve.quantity_admission:ve.reports_route:ve.risk:ve.rights_route:ve.soft_route:ve.speech_document:ve.readings_route:ve.readings_s1:ve.readings_sup:ve.readings_verdicts:ve.readings_s2_wording
+    ve.english:ve.english_grammar:ve.english_phrases:ve.english_vocabulary:ve.fluent:ve.fol:ve.grammar:ve.natural:ve.norm_english:ve.parser:ve.printer:ve.surface:ve.lexicon:ve.report_english:ve.speech_english:ve.readings_english:ve.readings_s2_english
     ve.background:ve.closure:ve.definitions:ve.entailment:ve.evaluate:ve.norms:ve.order:ve.profiles:ve.alternatives:ve.reports:ve.rights:ve.softnorms:ve.softnorms_contract:ve.norms_contract:ve.speech_acts:ve.units
     ve.ast:ve.environment:ve.errors:ve.identity:ve.limits:ve.model:ve.wire:ve.wire_contract:ve.assurance
 ignore_imports =
-    ve.alternatives -> ve.backends.lean
+    ve.alternatives -> ve.backends.relay
     ve.assist.cli -> ve_experiments.assist_haiku
     ve.ast -> ve.backends.dispatch
-    ve.ast -> ve.backends.lean_runner
+    ve.ast -> ve.backends.relay
     ve.ast -> ve.backends.rust_jsonl
     ve.ast -> ve.surface.nary
     ve.background -> ve.backends.dispatch
     ve.background -> ve.backends.lean_runner
     ve.background -> ve.backends.lean_service
+    ve.background -> ve.backends.relay
     ve.background -> ve.backends.validation
     ve.closure -> ve.surface.registry
     ve.definitions -> ve.backends.dispatch
     ve.definitions -> ve.backends.lean_runner
+    ve.definitions -> ve.backends.relay
     ve.definitions -> ve.backends.validation
     ve.english -> ve.argument
+    ve.english -> ve.backends.dispatch
+    ve.english -> ve.backends.english_lean
     ve.entailment -> ve.backends.dispatch
     ve.entailment -> ve.backends.lean_runner
+    ve.entailment -> ve.backends.relay
     ve.environment -> ve.backends.dispatch
     ve.environment -> ve.backends.validation
     ve.environment -> ve.definitions
@@ -40,6 +45,7 @@ ignore_imports =
     ve.environment -> ve.units
     ve.evaluate -> ve.backends.dispatch
     ve.evaluate -> ve.backends.lean_runner
+    ve.evaluate -> ve.backends.relay
     ve.evaluate -> ve.backends.rust_jsonl
     ve.model -> ve.backends.dispatch
     ve.model -> ve.backends.validation
@@ -47,11 +53,11 @@ ignore_imports =
     ve.model -> ve.definitions
     ve.model -> ve.evaluate
     ve.norms -> ve.backends.dispatch
-    ve.norms -> ve.backends.lean_runner
+    ve.norms -> ve.backends.relay
     ve.norms -> ve.backends.validation
     ve.norms -> ve.search
     ve.parser -> ve.backends.dispatch
-    ve.parser -> ve.backends.lean_runner
+    ve.parser -> ve.backends.relay
     ve.parser -> ve.backends.validation
     ve.reports -> ve.admission
     ve.rights -> ve.search

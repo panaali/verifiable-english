@@ -606,10 +606,8 @@ def runDocument (w : W6Env) (id : String) (j : Json) : Except String Json := do
     ("report_id", .str reportId), ("environment_id", .str w.environmentId),
     ("kinds", Json.arr (res.doc.units.map (fun u => renderKind u.kind)).toArray)])
 
-/-- The `document` case kind of `ve_quantity`. -/
+/-- The `document` case kind of the quantity route (`ve_service` mode `quantity`). -/
 def extension : Extension := fun w id kind j =>
   if kind == "document" then runDocument w id j else noExtension w id kind j
-
-def main (paths : List String) : IO UInt32 := VE.Time.Wire.main paths extension
 
 end VE.Time.Document

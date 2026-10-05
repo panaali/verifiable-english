@@ -10,14 +10,12 @@ and triples of `multi_fault_cases()` (tier A, the oracle being the fault of leas
 from __future__ import annotations
 
 import json
-import shutil
-import subprocess
 from pathlib import Path
 
 import pytest
 
+from tests import lean_routes
 from conformance.soft_norms import multi_fault_base, multi_fault_cases, multi_faults
-from tests.subprocesses import HANG_TIMEOUT
 from tests.test_soft_norms_lean import env, norm
 from ve.wire import canonical_json
 
@@ -30,21 +28,15 @@ INHERITED = {"2.3", "4.2a", "4.13b", "4.13d", "5.7", "5.8a", "6.10b"}
 
 @pytest.fixture(scope="module")
 def built():
-    if not (BIN / "ve_diagnose").exists() or not (BIN / "ve_soft_norms_route").exists():
-        lake = shutil.which("lake")
-        if lake is None:
-            pytest.skip("lake is required for ve_diagnose and ve_soft_norms_route")
-        result = subprocess.run([lake, "build", "ve_diagnose", "ve_soft_norms_route"], cwd=ROOT / "lean",
-                                capture_output=True, text=True, timeout=HANG_TIMEOUT)
-        assert result.returncode == 0, result.stdout + result.stderr
+    if not (BIN / "ve_service").exists():
+        pytest.skip("the Lean service has not been built")
     return BIN
 
 
-def call(binary, args, cases):
-    result = subprocess.run([str(binary), *args, "-"], input=json.dumps(cases), text=True, capture_output=True,
-                            timeout=HANG_TIMEOUT)
-    assert result.returncode in (0, 1), result.stderr
-    rows = json.loads(result.stdout)
+def call(route, args, cases):
+    """The rows of the service mode that replaced the one-shot `route` (`ve_diagnose` with its unit in
+    `args`, or `ve_soft_norms_route`)."""
+    rows = lean_routes.diagnose(args[0], cases) if route == "ve_diagnose" else lean_routes.rows(route, cases)
     assert len(rows) == len(cases)
     return rows
 
@@ -59,8 +51,8 @@ def both(bin_dir, sources, size=100):
     rows = []
     for start in range(0, len(sources), size):
         batch = cases(sources[start:start + size])
-        engine = call(bin_dir / "ve_diagnose", ["soft-norms@0"], batch)
-        legacy = call(bin_dir / "ve_soft_norms_route", [], batch)
+        engine = call("ve_diagnose", ["soft-norms@0"], batch)
+        legacy = call("ve_soft_norms_route", [], batch)
         assert all(row["status"] == "ok" for row in engine)
         rows += zip(engine, legacy)
     return rows
@@ -182,7 +174,7 @@ def test_tier_a_pairs_and_triples(built):
 
 
 def test_adapter_rejects_other_case_kinds(built):
-    rows = call(built / "ve_diagnose", ["soft-norms@0"], [{"id": "x", "kind": "evaluation"}])
+    rows = call("ve_diagnose", ["soft-norms@0"], [{"id": "x", "kind": "evaluation"}])
     assert rows == [{"id": "x", "status": "error",
                      "error": "UnsupportedProfile: case kind evaluation has no wire contract input"}]
 
@@ -234,14 +226,14 @@ def test_s3_pre_norm_defaults_profile(built):
 # What Python's legacy validator does with each profile absent from the Lean soft route
 # (s3-pre.md and s4-pre.md). The rights and speech-act differences are now closed.
 PYTHON_ONLY_LEGACY = {
-    "alternatives@0": ("SOFT_UNSUPPORTED_PROFILE", "alternatives@0 with soft-norms@0"),
+    "alternatives@0": ("SOFT_UNSUPPORTED_PROFILE", "UnsupportedProfile: alternatives@0 with soft-norms@0"),
     "norm-defaults@0": ("SOFT_UNSUPPORTED_PROFILE",
                         "UnsupportedProfile: norm-defaults@0 documents are checked through fill (ve.norm_defaults)"),
-    "reports@0": ("SOFT_UNSUPPORTED_PROFILE", "reports@0 with norms@0 layers"),
+    "reports@0": ("SOFT_UNSUPPORTED_PROFILE", "UnsupportedProfile: reports@0 with norms@0 layers"),
     # S3-pre: the rights route strips `rights@0` before the soft table, as Lean's does, so the soft route
     # alone refuses it at 3.2 with the Lean route's text (it accepted before the fix).
     "rights@0": ("SOFT_UNSUPPORTED_PROFILE", "UnsupportedProfile: Unsupported profile rights@0"),
-    "risk@0": ("SOFT_UNSUPPORTED_PROFILE", "risk@0 requires alternatives@0"),
+    "risk@0": ("SOFT_UNSUPPORTED_PROFILE", "UnsupportedProfile: risk@0 requires alternatives@0"),
     "speech-acts@0": ("SOFT_UNSUPPORTED_PROFILE", "UnsupportedProfile: Unsupported profile speech-acts@0"),
 }
 

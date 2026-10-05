@@ -24,7 +24,6 @@ from __future__ import annotations
 
 from copy import deepcopy
 import json
-import os
 from pathlib import Path
 import random
 import shutil
@@ -33,26 +32,20 @@ import subprocess
 import pytest
 
 from subprocesses import HANG_TIMEOUT
-from tests.lean_service_corpus import corpus
+from tests.lean_build import lean_build
+from tests.lean_service_corpus import ERROR_REQUESTS, corpus
 from tests.test_lean_service import fake
 from ve.backends.lean_service import CheckerUnavailable, LeanService, case_digest, case_texts, request_context
 from ve.backends.service_schema import DIRECTORY, MODES, Compiler, Context, Invalid, check_response
 
 ROOT = Path(__file__).resolve().parents[1]
-BIN = ROOT / "lean/.lake/build/bin"
 COMMON = json.loads((DIRECTORY / "common.json").read_text())["$defs"]
 
 
 @pytest.fixture(scope="module")
 def executables():
-    lake = shutil.which("lake")
-    if lake is None and not (BIN / "ve_response_decode").exists():
-        pytest.skip("lake is not available")
-    if lake is not None and not os.environ.get("VE_LEAN_PREBUILT"):
-        build = subprocess.run([lake, "build", "ve_service", "ve_response_decode"], cwd=ROOT / "lean",
-                               capture_output=True, text=True, timeout=HANG_TIMEOUT)
-        assert build.returncode == 0, build.stdout + build.stderr
-    return BIN / "ve_service", BIN / "ve_response_decode"
+    bin_ = lean_build("ve_service", "ve_response_decode")
+    return bin_ / "ve_service", bin_ / "ve_response_decode"
 
 
 def _text(value):
@@ -91,18 +84,6 @@ def genuine(executables):
                 exchanges.append((mode, request, response))
         assert service.stats["retries"] == 0
     return exchanges
-
-
-# Request errors of every kind: (mode, cases text, count, budget).
-ERROR_REQUESTS = [
-    ("evaluate", '[{"id":"a","ast":[]},{"id":"b","ast":[]}]', 2, {"cases": 1}),
-    ("route", '[{"id":"a","kind":"evaluate"}]', 1, {"bytes": 3}),
-    ("evaluate", '[{},{}]', 2, {"steps": 1}),
-    ("order", '[{"id":1,}]', 1, None),
-    ("check-certificate", '[{"id":null}, {"id":"b"}]', 2, None),
-    ("english", '[{"cases":[],}]', 1, None),
-    ("norms", '{}', 0, {"cases": 1}),
-]
 
 
 @pytest.fixture(scope="module")
@@ -190,7 +171,7 @@ def test_genuine_request_errors_are_bound_and_accepted(genuine_errors, executabl
     """mig1d recheck: every request error echoes the request's mode and its case digests
     (`null` for a cases text that does not split), and the schemas and the Lean decoders
     accept each one against its request."""
-    assert all(set(response) == {"id", "status", "mode", "digests", "error"} and response["mode"] == mode
+    assert all(set(response) == {"id", "status", "mode", "digests", "error", "code"} and response["mode"] == mode
                and response["digests"] == request["digests"] for mode, request, response in genuine_errors)
     assert any(request["digests"] is None for _, request, _ in genuine_errors)
     assert any(request["digests"] and request["cases"] is None for _, request, _ in genuine_errors)
@@ -370,6 +351,64 @@ def fuzz(genuine, genuine_errors, executables):
     items += kind_items(genuine) + label_items(genuine) + depth_items(genuine)
     items += error_items(genuine_errors, rng)
     return items, lean_verdicts(executables[1], items)
+
+
+# Each field dropped, emptied ("" [] {}), nulled and retyped (7, true, a string): build checklist line 4.
+_DROP = object()
+FIELD_FAULTS = {"drop": _DROP, "empty-text": "", "empty-array": [], "empty-object": {}, "null": None,
+                "number": 7, "true": True, "text": "x"}
+
+
+def field_faults(response):
+    """Every field of `response` (a list through its first element, results to depth 4 below the
+    bound entry) dropped, emptied, nulled and retyped."""
+    def nodes(value, path=()):
+        yield path, value
+        if len(path) < 7:
+            if isinstance(value, dict):
+                for key, item in value.items():
+                    yield from nodes(item, path + (key,))
+            elif isinstance(value, list) and value:
+                yield from nodes(value[0], path + (0,))
+    out = []
+    for path, value in nodes(response):
+        if not path:
+            continue
+        for new in FIELD_FAULTS.values():
+            if new is _DROP:
+                if isinstance(path[-1], str):
+                    copy = deepcopy(response)
+                    node = copy
+                    for step in path[:-1]:
+                        node = node[step]
+                    del node[path[-1]]
+                    out.append(copy)
+            elif not (type(new) is type(value) and new == value):
+                out.append(_replace(response, path, new))
+    return out
+
+
+def test_every_field_dropped_emptied_nulled_and_retyped_agrees_with_lean(genuine, genuine_errors, executables):
+    """Table-driven over one genuine response of each mode, case kind and outcome (and every request
+    error): the schema accepts a mutant exactly when the Lean decoders do, and refuses every drop or
+    null of the binding (nonce, mode, index, digest, a rejection's code and text)."""
+    shapes = {}
+    for mode, request, response in singles(genuine):
+        case, row = request["cases"][0], response["results"][0]["result"]
+        kind = case.get("kind", "evaluate") if isinstance(case, dict) else "?"
+        shapes.setdefault((mode, kind, row.get("status"), "case_index" in row), (mode, request, response))
+    items = [(mode, request, field_faults(response)) for mode, request, response in
+             [*shapes.values(), *genuine_errors]]
+    verdicts = assert_agreement(executables[1], items)
+    assert 0 < sum(v == "accept" for v in verdicts) < len(verdicts) // 10
+    for mode, request, response in [*shapes.values(), *genuine_errors]:
+        bound = response["results"][0] if response.get("status") != "error" else None
+        binding = [("id",), ("mode",)] + ([("results", 0, "index"), ("results", 0, "digest")] if bound else [])
+        if bound is None or bound["result"].get("status") == "error":
+            binding += [("results", 0, "code"), ("results", 0, "result", "error")] if bound else [("code",), ("error",)]
+        for path in binding:
+            for new in (None, ""):
+                assert schema_verdict(mode, request, _replace(response, path, new)) != "accept", (mode, path, new)
 
 
 def test_mutated_genuine_responses_agree_with_lean_decoders(fuzz, executables):

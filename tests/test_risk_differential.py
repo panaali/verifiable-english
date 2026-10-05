@@ -18,15 +18,17 @@ from pathlib import Path
 
 import pytest
 
+from tests import lean_routes
+
 from conformance.risk import cell_env
-from subprocesses import HANG_TIMEOUT
+from tests.subprocesses import HANG_TIMEOUT
 
 ROOT = Path(__file__).resolve().parents[1]
-LEAN = ROOT / "lean/.lake/build/bin/ve_risk_eval"
+LEAN = "ve_risk_eval"  # its service mode, through tests/lean_routes.py
 RUST = ROOT / "rust/target/release/ve"
 
-pytestmark = pytest.mark.skipif(not (LEAN.exists() and RUST.exists()),
-                                reason="ve_risk_eval or the Rust binary is not built")
+pytestmark = pytest.mark.skipif(not (lean_routes.SERVICE.exists() and RUST.exists()),
+                                reason="the Lean service or the Rust binary is not built")
 
 D = "dimensionless"
 SHARDS = 4
@@ -155,12 +157,18 @@ def shard(seed):
     return boxes, conditions, kinds
 
 
-def lean_eval(boxes, conditions):
+def lean_cases(boxes, conditions):
+    """The `risk-eval` input for the boxes and their conditions (also replayed by
+    tools/lean_output_diff.py)."""
     env = cell_env()
-    cases = [{"environment": env, "quantities": [{"name": n, "tag": D, "lo": lo, "hi": hi}
-                                                 for n, (lo, hi) in box.items()],
-              "conditions": rows} for box, rows in zip(boxes, conditions)]
-    out = subprocess.run([str(LEAN)], input=json.dumps(cases), text=True, capture_output=True, timeout=HANG_TIMEOUT)
+    return [{"environment": env, "quantities": [{"name": n, "tag": D, "lo": lo, "hi": hi}
+                                                for n, (lo, hi) in box.items()],
+             "conditions": rows} for box, rows in zip(boxes, conditions)]
+
+
+def lean_eval(boxes, conditions):
+    cases = lean_cases(boxes, conditions)
+    out = lean_routes.completed(LEAN, cases)
     assert out.returncode == 0, out.stderr
     rows = json.loads(out.stdout)
     assert all(r["status"] == "ok" for r in rows), rows[:1]

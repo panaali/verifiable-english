@@ -226,7 +226,8 @@ def evaluate(env: Any, value: Document | Any, model: FiniteModel, *, max_evaluat
     model = _validate_model(env, model)
     from .ast import _to_data
     from .backends.dispatch import execute
-    from .backends.lean_runner import evaluation_case, run as lean_run
+    from .backends.lean_runner import evaluation_case
+    from .backends.relay import decide
     from .backends.rust_jsonl import run as rust_run, rust_environment, soft_case
 
     case = {"id": "evaluate", "kind": "evaluate-budgeted", "environment": rust_environment(env), **soft_case(env),
@@ -263,7 +264,7 @@ def evaluate(env: Any, value: Document | Any, model: FiniteModel, *, max_evaluat
         if result.status == "ResourceLimit":
             return result
         mode, request = evaluation_case(env, "evaluate", case["ast"], model.to_dict())
-        value = all(lean_run(mode, [request])[0]["values"])
+        value = all(decide(mode, [request])[0]["values"])
         if value != result.value:
             raise CheckerUnavailable("CheckerUnavailable: Lean and Rust evaluation disagree")
         return result
