@@ -54,7 +54,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 17636,
+    "total_lines": 17775,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
@@ -186,7 +186,10 @@
        "reason": "norm-defaults@0 W2 admission decoder over E‴; the full file is pinned conservatively"},
       {"file": "lean/VE/Readings/Wire.lean", "lines": 651, "sha256": "677f5ceb4a01d7d42a9f611a3b759e3eb5101504055e595092e917ad879c21fb",
        "ranges": [[1, 651]], "declarations": ["decodeEnvironment", "decodeContent", "decodeReading", "decodeSet", "decodeDocument", "decodeKey", "decodeTables", "decodeProbe", "decodeSituation", "admitReadings", "replayPair", "replaySeparate"],
-       "reason": "readings@1 S1 decoder: environment on the three chains, W2 units and active reading sets, situations, keys and probes; the full file is pinned conservatively"}
+       "reason": "readings@1 S1 decoder: environment on the three chains, W2 units and active reading sets, situations, keys and probes; the full file is pinned conservatively"},
+      {"file": "lean/VE/EnglishGrammar/Encode.lean", "lines": 139, "sha256": "5fd6c65cffd9bb85b6cbd47a5069b68702599e4454399c16f8044538dd24f223",
+       "ranges": [[1, 139]], "declarations": ["typedCheck", "typedDocument", "optString", "optFields", "Env.decode"],
+       "reason": "english-lean S2 (docs/spec/english-lean-s2.md 2.3, 2.10): Env.decode reads the environment and an English vocabulary overlay into the reader's Env; typedDocument decides check_document's verdict through the standalone typing service's decoders; the full file is pinned conservatively"}
     ],
     "other_json": {
       "lean/EnglishLeanBenchMain.lean": "measurement only: the ve_english_lean_bench executable of the english-lean G1a measurement and the lexer differential reads grammars, sentences and sources from a JSON file and prints JSON rows; no admission path, service mode or record reads it",
@@ -215,6 +218,7 @@
       "lean/VE/Order/TableauChecks.lean": "executable regressions (#eval checks); not on any runner path",
       "lean/VE/Route/Checks.lean": "executable regressions (#eval checks); not on any runner path",
       "lean/ResponseDecode.lean": "test-only service response oracle; no executable production path or theorem imports it",
+      "lean/VE/EnglishGrammar/ReadExamples.lean": "fixtures only: #guard checks of docs/spec/english-lean-s2.md section 8 build environment JSON for Env.decode; no runner path",
       "lean/RiskEvalMain.lean": "test-only differential harness ve_risk_eval (risk.md 8.3): decodes its case envelope, then calls the pinned risk decoders; no production path or theorem imports it",
       "lean/VE/Service/EnglishRun.lean": "stage-1 service copy of the English runner; additive dispatch, not yet on an assurance operation path",
       "lean/VE/Service/Protocol.lean": "stage-1 service request decoder and dispatcher; additive and not yet on an assurance operation path",
