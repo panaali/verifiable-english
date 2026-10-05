@@ -161,6 +161,10 @@ inductive Shape where
   | node (comment : Option String) (keywords : List Shape)
   /-- Rendered as `s`; the Lean function `decide` must agree with `s` on every value. -/
   | lean (name : String) (s : Shape) (decide : Json → Bool)
+  /-- Rendered and checked as `s`: a value the runner copies from the request (`why` says which),
+  so its fields are the request's, not an encoder's; the encoder theorems
+  (`ResponseShape.Encoders`) leave it to the client's validation (`ResponseShape.Skeleton`). -/
+  | copied (why : String) (s : Shape)
   deriving Inhabited
 
 /-- An entry of a file's `$defs`: a schema, or a group of named schemas (`kind/admission`). -/
@@ -192,6 +196,8 @@ def enumS (vs : List String) : Shape := .enum (strs vs)
 def constS (v : String) : Shape := .const (.str v)
 /-- `s`, decided beside it by the Lean function `f` (a runner's decoder or dispatch test). -/
 def decidedBy (name : String) (f : Json → Bool) (s : Shape) : Shape := .lean name s f
+/-- `s`, a value copied from the request (`Shape.copied`). -/
+def copied (why : String) (s : Shape) : Shape := .copied why s
 
 /-- A request case whose `kind` is `k`. -/
 def kindIs (k : String) : Shape := n [obj, .required ["kind"], props [("kind", constS k)]]
@@ -267,6 +273,7 @@ def render (file : String) : Nat → Shape → Except String Json
     | .rows x => pure (Json.mkObj [("x-rows", ← go x)])
     | .row => pure (Json.mkObj [("x-row", .bool true)])
     | .lean _ x _ => go x
+    | .copied _ x => go x
     | .node comment keywords => do
       let mut out : List (String × Json) := comment.toList.map fun c => ("$comment", Json.str c)
       for k in keywords do
@@ -409,6 +416,7 @@ def qualify (file : String) : Nat → Shape → Shape
     | .rows x => .rows (q x)
     | .node comment keywords => .node comment (keywords.map q)
     | .lean name x f => .lean name (q x) f
+    | .copied why x => .copied why (q x)
     | other => other
 
 def File.qualified (f : File) : File :=
@@ -571,6 +579,7 @@ def check (files : List File) : Nat → Shape → Ctx → Counters → Json → 
     | .row => match ctx.row with
       | some x => go x { value := ctx.value, index := ctx.index } [] value
       | none => throw (.broken "x-row outside x-rows")
+    | .copied _ x => go x ctx counters value
     | .lean name x decide => do
       if ctx.inside.contains name then return ← go x ctx counters value
       let ctx := { ctx with inside := name :: ctx.inside }

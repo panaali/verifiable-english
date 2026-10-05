@@ -1,0 +1,132 @@
+import ResponseShape.Encoders.Common
+
+/-! The `soft-norms` mode (`SoftNorms.Run.runCaseReported`) against `soft-norms.json#/row`. A case
+off the soft path is the norms mode's runner, whose rows are rows of this mode (`hnorms`). -/
+
+namespace ResponseShape.Encoders.SoftNorms
+open Lean ResponseShape ResponseShape.Skeletons
+open VE.SoftNorms VE.SoftNorms.Wire VE.SoftNorms.Run
+
+/-- Every soft premise label is a nonempty `soft:...` label (so `bgEntry` gives it a `label`). -/
+theorem softLabelled_nonempty (D : SoftDoc) : ∀ x ∈ softLabelled D, x.1.isEmpty = false := by
+  intro x hx
+  simp only [softLabelled, List.mem_append, List.mem_map] at hx
+  rcases hx with hx | ⟨⟨M, N⟩, _, rfl⟩
+  · have := List.of_mem_zip hx
+    simp only [excLabels, List.mem_flatMap] at this
+    obtain ⟨⟨N, _, h⟩, _⟩ := this
+    split at h
+    · simp only [List.mem_append, List.mem_map, List.mem_range] at h
+      rcases h with ⟨i, _, h⟩ | ⟨i, _, h⟩ <;> (rw [← h]; simp +decide [isEmpty_append, toString])
+    · cases h
+  · simp +decide [cohLabel, isEmpty_append, toString]
+
+theorem elaborate_fits (id : String) (D : SoftDoc) (env : Json) :
+    Fits Γ (skel% "soft-norms.json#/$defs/elaborate") (VE.Route.Wire.ok id (regenerated D env)) := by
+  unfold VE.Route.Wire.ok regenerated bgEntry
+  fits
+  all_goals (exfalso; rename_i x hx h; have := softLabelled_nonempty D x hx; simp_all)
+
+/-- A pair's status and detail: a detail exactly beside a weighing point or UNKNOWN. -/
+def Classified (r : PairStatus × String) : Prop :=
+  (r.1 = .rankResolved ∨ r.1 = .disjoint) ∧ r.2.isEmpty = true ∨
+    (r.1 = .weighingPoint ∨ r.1 = .unknown) ∧ r.2.isEmpty = false
+
+theorem classify_ok (src : SoftSource) (environment norms pairs : Json) (M N : SoftNode) :
+    OkP Classified (classify src environment norms pairs M N) := by
+  unfold classify
+  okfits
+  all_goals simp +decide [Classified]
+
+theorem pairs_fits (id : String) (src : SoftSource) (environment norms pairs : Json) (l : List (String × Json))
+    (h : pairsResult src environment norms pairs = .ok l) :
+    Fits Γ (skel% "soft-norms.json#/$defs/pairs") (VE.Route.Wire.ok id l) := by
+  unfold pairsResult at h
+  revert h
+  apply OkP.bind
+  intro rows hrows
+  have hrows := OkP.mapM (Q := fun (r : String × PairStatus × Json) => ∃ M N detail, Classified (r.2.1, detail) ∧
+      r.2.2 = Json.mkObj ([("pair", toJson [M.name, N.name]), ("label", .str (cohLabel M N)),
+        ("status", .str r.2.1.text)] ++ (if detail.isEmpty then [] else [("detail", .str detail)])))
+    (f := fun (MN : SoftNode × SoftNode) => do
+      let (st, detail) ← classify src environment norms pairs MN.1 MN.2
+      pure (cohLabel MN.1 MN.2, st, Json.mkObj ([("pair", toJson [MN.1.name, MN.2.name]),
+        ("label", .str (cohLabel MN.1 MN.2)), ("status", .str st.text)] ++
+        (if detail.isEmpty then [] else [("detail", .str detail)]))))
+    (xs := collidingPairs src.D) (fun ⟨M, N⟩ _ => by
+      apply OkP.bind
+      intro ⟨st, detail⟩ hc
+      exact OkP.pure ⟨M, N, detail, classify_ok src environment norms pairs M N _ hc, rfl⟩) rows hrows
+  apply OkP.pure
+  unfold VE.Route.Wire.ok
+  fits
+  rename_i r hr
+  obtain ⟨M, N, detail, hc, he⟩ := hrows r hr
+  simp only [Classified] at hc
+  rw [he]
+  rcases hc with ⟨hs | hs, hd⟩ | ⟨hs | hs, hd⟩ <;> simp only [hs, hd, PairStatus.text] <;> fits
+
+/-- Not conflict-free: some target's certificate is missing or fails, which `firstFailure` names. -/
+theorem firstFailure_of_not_free (j : Json) (res : SoftConflictReplay) (h : replaySoftConflict j = .ok res)
+    (hf : res.conflictFree = false) : (firstFailure res).isSome = true := by
+  unfold replaySoftConflict at h
+  obtain ⟨env, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨src, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  cases h
+  simp only [SoftConflictReplay.conflictFree, softConflictFreeCheck, List.length_map, beq_self_eq_true,
+    Bool.true_and, List.all_eq_false] at hf
+  obtain ⟨⟨t, c⟩, hm, hc⟩ := hf
+  simp only [firstFailure, Option.isSome_map]
+  rw [List.find?_isSome]
+  exact ⟨(t, c), hm, by cases c <;> simp_all⟩
+
+theorem runSoftKind_fits (id kind : String) (j : Json) :
+    OkFits Γ Skeletons.softNorms (runSoftKind id kind j) := by
+  unfold runSoftKind
+  simp only []
+  okfits
+  all_goals (try simp only [VE.Route.Wire.ok])
+  all_goals fits
+  · fits_as "soft-norms.json#/$defs/elaborate"
+    exact elaborate_fits _ _ _
+  · fits_as "soft-norms.json#/$defs/pairs"
+    exact pairs_fits _ _ _ _ _ _ ‹_›
+  -- Not conflict-free with no failing target: impossible (`firstFailure_of_not_free`).
+  all_goals
+    exfalso
+    have := firstFailure_of_not_free j _ ‹replaySoftConflict j = .ok _› (by simp_all)
+    simp_all
+
+theorem admission_fits (id reportId : String) (res : Admission.Admitted) :
+    Fits Γ (skel% "soft-norms.json#/$defs/admission") (encodeAdmitted id reportId res) := by
+  unfold encodeAdmitted VE.Route.Wire.ok
+  fits
+  all_goals exact Common.claimJson_fits _
+
+/-- The norms mode's rows are rows of this mode. -/
+theorem of_norms {v : Json} (h : Fits Γ Skeletons.norms v) : Fits Γ Skeletons.softNorms v := by
+  refine Fits.altSub ?_ h
+  alt_sub
+
+theorem runCase_fits (hnorms : ∀ j, OkFits Γ Skeletons.norms (VE.Norms.Run.runCase j)) (j : Json) :
+    OkFits Γ Skeletons.softNorms (runCase j) := by
+  unfold runCase
+  okfits
+  · unfold runAdmission
+    okfits
+    fits_as "soft-norms.json#/$defs/admission"
+    exact admission_fits _ _ _
+  · exact OkP.of (hnorms j) fun _ => of_norms
+  · exact runSoftKind_fits _ _ _
+
+theorem runCaseReported_fits (hnorms : ∀ j, OkFits Γ Skeletons.norms (VE.Norms.Run.runCase j))
+    (hnormsReported : ∀ j, Fits Γ Skeletons.norms (VE.Norms.Run.runCaseReported j)) (j : Json) :
+    Fits Γ Skeletons.softNorms (runCaseReported j) := by
+  unfold runCaseReported
+  split
+  · split
+    · exact runCase_fits hnorms j _ ‹_›
+    · fits
+  · exact of_norms (hnormsReported j)
+
+end ResponseShape.Encoders.SoftNorms
