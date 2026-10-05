@@ -232,7 +232,9 @@ def test_a_replayed_error_not_naming_the_request_is_unavailable(k1, genuine_erro
 # -- the Rust JSON-lines transport: the same containment for its error records
 
 def _rust(monkeypatch, tmp_path, stdout: bytes, returncode: int):
+    # The Rust checker is a persistent process that reads one case line (lean-first b2, F6).
     binary = checker(tmp_path, stdout, returncode)
+    binary.write_text(binary.read_text().replace("cat > /dev/null", "head -n 1 > /dev/null"))
     monkeypatch.setenv("VE_RUST_JSONL", str(binary))
     monkeypatch.setenv("VE_RUST_SHA256", hashlib.sha256(binary.read_bytes()).hexdigest())
     return rust_jsonl.run({"id": "c", "kind": "evaluate"}, timeout=HANG_TIMEOUT)

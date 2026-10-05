@@ -378,9 +378,14 @@ def test_chunks_fit_their_byte_budget(service_executable):
     chunks = list(service._chunks(texts))
     assert [t for chunk in chunks for t in chunk] == texts
     assert all(len(("[" + ",".join(chunk) + "]").encode()) <= 3000 for chunk in chunks if len(chunk) > 1)
+    # Cases go with environment handles (lean-first b2): their requests are the chunks of the texts sent.
+    sent = list(service._chunks(service._sent("evaluate", CASES[:40])))
+    assert all(len(("[" + ",".join(item.text for item in chunk) + "]").encode()) <= 3000
+               for chunk in sent if len(chunk) > 1)
     with service:
         assert [r["id"] for r in service.run("evaluate", CASES[:40])] == [c["id"] for c in CASES[:40]]
-        assert service.stats["requests"] == len(chunks) and service.stats["restarts"] == 0
+        assert service.stats["requests"] == len(sent) and service.stats["restarts"] == 0
+        assert service.stats["handle_resends"] == 0
 
 
 def test_build_mismatch_is_refused(service_executable):
