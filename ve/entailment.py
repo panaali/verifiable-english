@@ -766,7 +766,8 @@ def _lean_replay_record(replay, nodes: int, max_steps: int) -> EntailmentCertifi
 def _check_certificate_lean(env, premises, conclusion, certificate, max_steps) -> EntailmentCertificateCheck:
     """Validate inputs and bindings as Python does, then replay in Lean."""
     from .ast import _to_data
-    from .backends.lean_runner import route_mode, run
+    from .backends.lean_runner import route_mode
+    from .backends.relay import decide
     if getattr(env, "alternatives", None) is not None:
         return EntailmentCertificateCheck(False, "InvalidCertificate", 0,
                                           "alternatives@0 requires the Lean checker")
@@ -792,7 +793,7 @@ def _check_certificate_lean(env, premises, conclusion, certificate, max_steps) -
         mode, case = "order", {**case, "kind": "certificate"}
     else:
         mode = "check-certificate"
-    return _lean_replay_record(lambda: run(mode, [case])[0]["valid"], nodes, max_steps)
+    return _lean_replay_record(lambda: decide(mode, [case])[0]["valid"], nodes, max_steps)
 
 
 def _check_certificate_python(env: Any, premises: Sequence[Any], conclusion: Any,

@@ -162,7 +162,7 @@ def source_layer(path: str) -> int | None:
     if parts[0] in {"ve_experiments", "experiments", "usecases", "paper"}:
         return 5
     if parts[0] == "tools":
-        if p.name in {"layer_policy.py", "select_tests.py", "mutation_check.py",
+        if p.name in {"layer_policy.py", "select_tests.py", "mutation_check.py", "nested_pytest.py",
                       "check_python_layers.py", "check_lean_imports.py",
                       "check_rust_deps.py", "test_layer_policy.py", "lean_header_imports.lean"}:
             return 1  # changing the policy invalidates every selection

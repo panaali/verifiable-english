@@ -683,9 +683,9 @@ def manifest_bindings(executable, mode, kinds):
             and set(binding.get("kinds", ())) == set(kinds)]
 
 
-def lean_row_problem(case, row, index, response=LEAN_ENVELOPE, counts=None):
+def lean_row_problem(case, row, index, response=LEAN_ENVELOPE, counts=None, coded=False):
     from ve.backends.lean import row_problem
-    return row_problem(case, row, index, response, counts)
+    return row_problem(case, row, index, response, counts, coded=coded)
 
 
 def route_row_problem(case, row, index):
@@ -757,9 +757,12 @@ def route_row_check(name):
     (`closed_row_problem`)."""
     fields, own = LEAN_ROUTE_FIELDS[name], ROUTES[name].own
     error_fields = (own.field,) if own else ()
+    # The one-shot reader takes a code only from a route whose rows name one (`identity_problem`).
+    coded = own is not None and own.field == "code"
 
     def check(case, row, index):
-        problem = lean_row_problem(case, row, index, fields) or closed_row_problem(row, fields, error_fields, ())
+        problem = (lean_row_problem(case, row, index, fields, coded=coded)
+                   or closed_row_problem(row, fields, error_fields, ()))
         if problem or own is None or row["status"] != "error" or "id" not in row:
             return problem
         code = row.get(own.field)

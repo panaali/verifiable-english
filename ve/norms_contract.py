@@ -130,7 +130,7 @@ def syntax_walk(node, count=0, depth=1, term=False):
         raise Refused("b", f"Unknown AST tag or incorrect arity: {tag!r}")
     if tag == "var":
         if type(node[1]) is not int or not 0 <= node[1] <= MAX_INDEX:
-            raise Refused("b", "Invalid variable index")
+            raise Refused("b", "UnboundVariable: Invalid variable index")
         return count
     if tag in ("const", "top", "bottom"):
         return count
