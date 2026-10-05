@@ -186,3 +186,7 @@ definition body or AST node has a name or tag.
   for them.
 - Requests that a use case's own script builds (its `.ve` documents as admission graphs, certificates whose
   premises the script derives, the eligibility and safety-framework cases): the excluded files above name each.
+- English in Lean (`conformance/english-lean/`): its engine, lexer and lexicon vectors are excluded. No route reads
+  English through Lean yet (`english.admission` is Python's; `docs/spec/english-lean-integration.md`), so there is
+  no surface to compare them on. The English-in-Lean tests check them Python against Lean. A surface belongs here
+  once its Lean service route exists (English-in-Lean S2).

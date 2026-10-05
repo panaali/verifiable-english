@@ -35,6 +35,13 @@ EXCLUDED = {
     "conformance/*-report.json": ("artifact", "a generated report"),
     "conformance/fuzz-summary.json": ("artifact", "the v0 fuzzer's summary"),
     "conformance/english-before-after.json": ("no-input", "English renderings before and after a change"),
+    "conformance/english-lean/corpus-seal.json": ("artifact", "hashes sealing the English-in-Lean corpora"),
+    "conformance/english-lean/engine.json": (
+        "no-input", "English-in-Lean grammar-engine vectors (tests/test_english_lean_engine.py); no route reads them yet"),
+    "conformance/english-lean/lexer.json": (
+        "no-input", "English-in-Lean lexer vectors (tests/test_english_lean_lexer.py); no route reads them yet"),
+    "conformance/english-lean/lexicon.json": (
+        "no-input", "English-in-Lean lexicon-validity cases (tests/test_english_lean_lexicon.py); no route reads them yet"),
     "conformance/wire.json": ("no-input", "raw-text cases of the restricted JSON reader (tests/test_wire.py); "
                                           "the fuzzer's inputs are parsed JSON"),
     "conformance/wire-contract/engine*.json": ("no-input", "the wire-contract engine's own test vectors"),
