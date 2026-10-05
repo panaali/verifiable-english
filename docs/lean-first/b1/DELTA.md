@@ -33,7 +33,13 @@ passed (one load-only failure, `test_w6a_limit_generator.py`'s three seeds, is R
 load 40; they pass alone, as recorded before this batch). The changes after `7e4f3a4c` (the per-case deadline,
 the digest cache, two tests) were run with their files; the final run is below.
 
-FINAL_SUITE
+**Final run at `74b5d2a9`** (four chunks, `-n 12`, load 25–41): 8,795 passed, 6 skipped, 2 failed; both failures
+are load-only and pass alone (`test_precommit_hook.py::test_large_staged_change_stays_under_ten_seconds`, its
+10 s bound; `test_w6a_limit_generator.py::…[0]`, Rust's 5 s JSONL limit), as recorded before this batch.
+`test_gate_collection.py` passes after `tools/gate_collection.py --write` (8,768 IDs: 7 renamed with the
+rebound manifest bindings, 31 new). Outside pytest: `lake build`, `lean/audit.py`, `lean/VE/Route/frozen.py`,
+`tools/wire_contract.py --check`, `tools/check_lean_imports.py`, `tools/check_python_layers.py` and
+`tools/relay_lint.py` pass.
 
 Test changes are transport only (a route's executable became its service mode) except: `test_runner_errors`
 (the `diagnose` mode answers an unknown unit with an error row where the one-shot exited 2; no usage error
