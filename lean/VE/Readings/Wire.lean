@@ -527,9 +527,15 @@ def attachmentText (D : Doc) : Option String :=
 def candidatesOf (D : Doc) : List (ReadingSet × Nat) :=
   D.sets.flatMap (fun R => (List.range R.candidates.length).map (fun i => (R, i)))
 
+/-- Candidate i of R is pending: it has no content, so no document of its own to check (4.4) or read. -/
+def pendingAt (R : ReadingSet) (i : Nat) : Bool := (R.candidates[i]?.bind (·.content)).isNone
+
+/-- The candidates with content, in source order: the only ones whose document admission builds. -/
+def activeOf (D : Doc) : List (ReadingSet × Nat) := (candidatesOf D).filter (fun c => !pendingAt c.1 c.2)
+
 /-- 4.4 for candidate i of R, X its document: none for a pending candidate. -/
 def candidateText (c : Chain) (R : ReadingSet) (i : Nat) (X : RightsDoc × List VE.Formula) : Option String :=
-  if (R.candidates[i]?.bind (·.content)).isNone then none
+  if pendingAt R i then none
   else (chainText c X).map (· ++ s!" under {R.id}@{R.version}:{i}")
 
 /-- The checks of 4.1 before the candidates', in order. -/
@@ -555,21 +561,24 @@ def stageOf {α γ β ε : Type} (build : α → γ) (f : α → γ → Option �
     | some e => .error e
     | none => .ok (g a X))
 
-/-- Every candidate's document `one D s i`, one entry per candidate of every set in source order: the request's
-    table, which the rows, the pairs and the findings read. -/
+/-- Every candidate's document `one D s i`, one entry per candidate with content of every set in source order:
+    the request's table, which the rows, the pairs and the findings read. A pending candidate has no entry
+    (`onesOf_active`): 4.4 skips it, and so do the rows, the pairs and the findings. -/
 def onesOf (D : Doc) : List ((String × Nat) × (RightsDoc × List VE.Formula)) :=
-  (candidatesOf D).map (fun c => ((c.1.id, c.2), one D c.1.id c.2))
+  (activeOf D).map (fun c => ((c.1.id, c.2), one D c.1.id c.2))
 
-/-- Admission's candidate stage as run: each candidate in source order, its document built once, checked (4.4)
-    and kept; the first diagnostic stops the stage, so no later candidate's document is built. What it keeps is
-    the request's table `onesOf D` (`candidateStage_eq`). The entries are plain values: a table of `Thunk`s cost
-    5–8% more CPU on the UDHR pilot's first set (batch 3b DELTA, review round). -/
+/-- Admission's candidate stage as run: each candidate with content in source order, its document built once,
+    checked (4.4) and kept; the first diagnostic stops the stage, so no later candidate's document is built, and a
+    pending candidate's never is (it has no diagnostic: building 119 pending documents cost 1.2–1.4 s of CPU, batch
+    3b looprecheck B). What it keeps is the request's table `onesOf D` (`candidateStage_eq`). The entries are plain
+    values: a table of `Thunk`s cost 5–8% more CPU on the UDHR pilot's first set (batch 3b DELTA, review round). -/
 @[noinline] def candidateStage (D : Doc) : Except String (List ((String × Nat) × (RightsDoc × List VE.Formula))) :=
   stageOf (fun c => one D c.1.id c.2) (fun c X => candidateText D.chain c.1 c.2 X) (fun c X => ((c.1.id, c.2), X))
-    (candidatesOf D)
+    (activeOf D)
 
-/-- Candidate i of set s's document, read from the table `t`. The table holds every candidate of every set
-    (`onesOf_holds`), so `one D s i` itself is built only for a pair outside it, which no caller asks for. -/
+/-- Candidate i of set s's document, read from the table `t`. The table holds every candidate with content of
+    every set (`onesOf_holds`), so `one D s i` itself is built only for a pending candidate, which only a
+    `readings-separate` request naming it asks for, once, before it is refused. -/
 @[noinline] def oneOf (D : Doc) (t : List ((String × Nat) × (RightsDoc × List VE.Formula))) (s : String)
     (i : Nat) : RightsDoc × List VE.Formula :=
   match t.lookup (s, i) with
@@ -612,11 +621,38 @@ theorem oneOf_eq (D : Doc) (s : String) (i : Nat) : oneOf D (onesOf D) s i = one
     rfl
   · rfl
 
-/-- The table holds every candidate of every set. -/
-theorem onesOf_holds (D : Doc) (R : ReadingSet) (hR : R ∈ D.sets) (i : Nat) (hi : i < R.candidates.length) :
-    ((onesOf D).lookup (R.id, i)).isSome :=
+/-- The table holds every candidate with content of every set. -/
+theorem onesOf_holds (D : Doc) (R : ReadingSet) (hR : R ∈ D.sets) (i : Nat) (hi : i < R.candidates.length)
+    (hp : pendingAt R i = false) : ((onesOf D).lookup (R.id, i)).isSome :=
   lookup_isSome_of_mem (List.mem_map.mpr
-    ⟨(R, i), List.mem_flatMap.mpr ⟨R, hR, List.mem_map.mpr ⟨i, List.mem_range.mpr hi, rfl⟩⟩, rfl⟩)
+    ⟨(R, i), List.mem_filter.mpr ⟨List.mem_flatMap.mpr ⟨R, hR, List.mem_map.mpr ⟨i, List.mem_range.mpr hi, rfl⟩⟩,
+      by simp [hp]⟩, rfl⟩)
+
+/-- The table holds no pending candidate: each entry is a candidate with content of a set of D. -/
+theorem onesOf_active (D : Doc) : ∀ e ∈ onesOf D, ∃ R ∈ D.sets, R.id = e.1.1 ∧ pendingAt R e.1.2 = false := by
+  intro e he
+  obtain ⟨c, hc, rfl⟩ := List.mem_map.mp he
+  obtain ⟨hc, hp⟩ := List.mem_filter.mp hc
+  obtain ⟨R, hR, hi⟩ := List.mem_flatMap.mp hc
+  obtain ⟨i, -, rfl⟩ := List.mem_map.mp hi
+  exact ⟨R, hR, rfl, by simpa using hp⟩
+
+/-- Leaving out elements without an answer leaves the first answer. -/
+theorem firstSome_filter {α β : Type} (p : α → Bool) (f : α → Option β) (h : ∀ a, p a = false → f a = none) :
+    ∀ l : List α, firstSome (l.filter p) f = firstSome l f
+  | [] => rfl
+  | a :: l => by
+    have ih := firstSome_filter p f h l
+    unfold firstSome at ih ⊢
+    cases hp : p a
+    · rw [List.filter_cons_of_neg (by simp [hp]), List.findSome?_cons, h a hp, ih]
+    · rw [List.filter_cons_of_pos hp, List.findSome?_cons, List.findSome?_cons, ih]
+
+/-- A pending candidate has no diagnostic of 4.4, so admission need not build its document. -/
+theorem firstSome_activeOf (D : Doc) :
+    firstSome (activeOf D) (fun c => candidateText D.chain c.1 c.2 (one D c.1.id c.2)) =
+      firstSome (candidatesOf D) (fun c => candidateText D.chain c.1 c.2 (one D c.1.id c.2)) :=
+  firstSome_filter _ _ (fun c hc => by simp [candidateText, show pendingAt c.1 c.2 = true by simpa using hc]) _
 
 /-- A stage answers the first diagnostic, or keeps every element's `g`. -/
 theorem stageOf_eq {α γ β ε : Type} (build : α → γ) (f : α → γ → Option ε) (g : α → γ → β) : ∀ l : List α,
@@ -640,8 +676,8 @@ theorem candidateStage_eq (D : Doc) : candidateStage D =
     | some e => .error e
     | none => .ok (onesOf D) := by
   unfold candidateStage
-  rw [stageOf_eq]
-  cases firstSome (candidatesOf D) (fun c => candidateText D.chain c.1 c.2 (one D c.1.id c.2)) <;> rfl
+  rw [stageOf_eq, ← firstSome_activeOf]
+  cases firstSome (activeOf D) (fun c => candidateText D.chain c.1 c.2 (one D c.1.id c.2)) <;> rfl
 
 theorem candidateStage_ok {D : Doc} {t : List ((String × Nat) × (RightsDoc × List VE.Formula))}
     (h : candidateStage D = .ok t) :
@@ -720,7 +756,7 @@ theorem wellFormedDoc_of_admissionText (re : ReadingsEnvironment) (D : Doc) (h :
     intro R hR i hi
     have h2 := firstSome_eq_none hsets (R, i) (List.mem_flatMap.mpr ⟨R, hR, List.mem_map.mpr ⟨i, hi, rfl⟩⟩)
     simp only [candidateText] at h2
-    by_cases hc : (R.candidates[i]?.bind (·.content)).isNone = true
+    by_cases hc : pendingAt R i = true
     · exact Or.inl hc
     · rw [if_neg hc, Option.map_eq_none_iff] at h2
       exact Or.inr (sideWF_of_chainText D _ h2)

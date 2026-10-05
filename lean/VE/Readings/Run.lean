@@ -214,17 +214,45 @@ def setFindingsSpec (a : Admitted) (R : ReadingSet) : List String :=
      else if (decisionOnly a.D R.id j i).isSome then [decisionOnlyText R.id j i] else []) ++
     (if (actOnly a.D R.id i j).isSome then [s!"SeparatedByActOnly: {R.id}: {i}, {j}"] else [])))
 
-/-- 4.6, each candidate's document read from the request's table. -/
+/-- Candidate i of set s has no content: neither finding of 4.6 holds for a pair with it. -/
+def pendingIn (D : Doc) (s : String) (i : Nat) : Bool := ((candidate D s i).bind (·.content)).isNone
+
+/-- 4.6, each candidate's document read from the request's table, which holds no pending candidate's: a pair
+    with a pending candidate has no finding (`pairFindings_pending`) and its sides are not read. -/
 def setFindings (a : Admitted) (R : ReadingSet) : List String :=
   let n := R.candidates.length
   let X := a.side R.id
-  (List.range n).flatMap (fun i => ((List.range n).filter (i < ·)).flatMap (fun j =>
+  (List.range n).flatMap (fun i => if pendingIn a.D R.id i then [] else
+    ((List.range n).filter (i < ·)).flatMap (fun j => if pendingIn a.D R.id j then [] else
     (if (decisionOnlyOf a.D R.id i j (X i) (X j)).isSome then [decisionOnlyText R.id i j]
      else if (decisionOnlyOf a.D R.id j i (X j) (X i)).isSome then [decisionOnlyText R.id j i] else []) ++
     (if (actOnlyOf a.D R.id i j (X i) (X j)).isSome then [s!"SeparatedByActOnly: {R.id}: {i}, {j}"] else [])))
 
+theorem pairFindings_pending (D : Doc) (s : String) (i j : Nat) (h : (pendingIn D s i || pendingIn D s j) = true)
+    (Xi Xj : VE.Rights.RightsDoc × List VE.Formula) :
+    decisionOnlyOf D s i j Xi Xj = none ∧ decisionOnlyOf D s j i Xj Xi = none ∧ actOnlyOf D s i j Xi Xj = none := by
+  unfold pendingIn at h
+  unfold decisionOnlyOf actOnlyOf
+  cases hi : (candidate D s i).bind (·.content) <;> cases hj : (candidate D s j).bind (·.content) <;>
+    simp_all
+
 theorem setFindings_eq (a : Admitted) (R : ReadingSet) : setFindings a R = setFindingsSpec a R := by
   simp only [setFindings, setFindingsSpec, decisionOnly, actOnly, Admitted.side_eq]
+  congr 1
+  funext i
+  split
+  · rename_i hi
+    symm
+    refine List.flatMap_eq_nil_iff.mpr (fun j _ => ?_)
+    obtain ⟨h1, h2, h3⟩ := pairFindings_pending a.D R.id i j (by simp [hi]) (one a.D R.id i) (one a.D R.id j)
+    simp [h1, h2, h3]
+  · congr 1
+    funext j
+    split
+    · rename_i hj
+      obtain ⟨h1, h2, h3⟩ := pairFindings_pending a.D R.id i j (by simp [hj]) (one a.D R.id i) (one a.D R.id j)
+      simp [h1, h2, h3]
+    · rfl
 
 def validateResult (a : Admitted) : Except String (List (String × Json)) := do
   let sets := a.D.sets.filter contentBearing

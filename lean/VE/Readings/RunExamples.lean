@@ -1,12 +1,14 @@
 import VE.Readings.Scan
 import VE.Readings.Examples
+import VE.Readings.Wire
 
 /-! How much of the other reading's side the route's pair check evaluates, as build-time checks (`#guard`).
 `Run.lean`'s `pairFacts` runs `otherScan` in `Id`; here it runs in a state monad that counts its two kinds of
 evaluation: a completion's admissibility (`sideValidOf`) and its value (`sideValueOf`). Each count is pinned below the
 `2 ^ cells` completions that evaluating every completion would cost, and each answer is `separates`'s. The
 fixtures are `Examples.lean`'s environment K with set `rs1` = {0: strict `S`, 1: default `Df`}: the default
-reading owns one key, `excepted no-deception`, with one cell per user. -/
+reading owns one key, `excepted no-deception`, with one cell per user. Last, which candidates' documents admission
+builds into the request's table (K15, a pending candidate). -/
 namespace VE.Readings.RunExamples
 open VE.Readings
 open VE.Readings.Examples
@@ -49,5 +51,13 @@ def σWrong : Situation String := sit m4 [] [] (.outcome "avoid_required" ["a", 
 is; the pair is separated. -/
 #guard scanned K14 "rs1" 0 1 (sit m1 [] [] q0 true) == ((false, false), (2, 0))
 #guard separates K14 "rs1" 0 1 (sit m1 [] [] q0 true)
+
+/-! K15: admission builds no pending candidate's document (batch 3b looprecheck B; `onesOf_active`). The request's
+table holds the strict candidate alone, and the stage admits the document as 4.4 over every candidate does. -/
+def K15 : Doc := docK [.set rs15]
+#guard (Wire.onesOf K15).map (·.1) == [("rs1", 0)]
+#guard (Wire.candidateStage K15).toOption.map (·.map (·.1)) == some [("rs1", 0)]
+#guard (Wire.candidatesOf K15).length == 2 &&
+  (Wire.firstSome (Wire.candidatesOf K15) (fun c => Wire.candidateText K15.chain c.1 c.2 (one K15 c.1.id c.2))).isNone
 
 end VE.Readings.RunExamples
