@@ -85,3 +85,47 @@ def compare(lines, row, *, witnesses=True):
     if row["findings"] != findings:
         problems.append(("findings", findings, row["findings"]))
     return problems
+
+
+def generated(executable=route.LEAN_ROUTE, *, trees=1000, searched=200, seed=0):
+    """The report on the spec 8 differential's generated trees (`norm_defaults_differential.case`):
+    with each tree's situation for all `trees` (a translation document half of the time, with
+    a `completions` block citing one deny or allow predicate a quarter of the time), and
+    through Python's search evidence for the first `searched`."""
+    import random
+    from conformance import norm_defaults_differential as differential
+    cases, expected, kinds = [], [], []
+    for index in range(trees):
+        rng = random.Random(f"report:{seed + index}")
+        domain = ("a", "b", "c") if rng.random() < 0.3 else ("a", "b")
+        env, rules, situation = differential.case(seed + index, profiled=True, domain=domain)
+        doc = nd.UnspecifiedDocument(env, rules)
+        translation = rng.random() < 0.5
+        fields, completions = {"translation": translation}, None
+        decided = [p for p in doc.filled.order if doc.completion(p) != "unspecified"]
+        if decided and rng.random() < 0.25:
+            block = {rng.choice(decided): {"cites": ["u1"], "reason": "the source states it"}}
+            fields.update(completions=block, unit_ids=["u1", "u2"])
+            completions = nd.validate_completions(doc, block, {"u1", "u2"})
+        cases.append(report_case(doc, model=situation, **fields))
+        expected.append(nd.report(doc, model=situation, translation=translation, completions=completions))
+        kinds.append("situation")
+        if index < searched:
+            lines, evidence = search_evidence(doc, translation=translation, completions=completions)
+            cases.append(report_case(doc, evidence=evidence, **fields))
+            expected.append(lines)
+            kinds.append("searched")
+    rows = []
+    for start in range(0, len(cases), 500):
+        rows.extend(route.run_cases(cases[start:start + 500], executable))
+    mismatches, counts = [], {}
+    for index, (lines, row, kind) in enumerate(zip(expected, rows, kinds)):
+        for line in lines:
+            key = f"{kind}:{line.reached}"
+            counts[key] = counts.get(key, 0) + 1
+            if line.grounding:
+                key = f"{kind}:{line.grounding.split(':')[0]}"
+                counts[key] = counts.get(key, 0) + 1
+        if problems := compare(lines, row):
+            mismatches.append((index, kind, problems))
+    return {"cases": len(cases), "counts": counts, "mismatches": mismatches}
