@@ -5,7 +5,7 @@
     "type": "object", "required": ["corpus", "authority", "case", "op", "source_sha256", "outcome"],
     "additionalProperties": false,
     "properties": {
-      "corpus": {"enum": ["probe", "conformance", "pilots", "readings"]},
+      "corpus": {"enum": ["probe", "conformance", "pilots", "readings", "discourse"]},
       "authority": {"$ref": "#/$defs/text"},
       "case": {"$ref": "#/$defs/text"},
       "op": {"$ref": "#/$defs/text"},
@@ -15,7 +15,8 @@
       {"if": {"properties": {"corpus": {"const": "conformance"}}}, "then": {"$ref": "#/$defs/conformance"}},
       {"if": {"properties": {"corpus": {"const": "probe"}}}, "then": {"$ref": "#/$defs/probe"}},
       {"if": {"properties": {"corpus": {"const": "pilots"}}}, "then": {"$ref": "#/$defs/pilots"}},
-      {"if": {"properties": {"corpus": {"const": "readings"}}}, "then": {"$ref": "#/$defs/readings"}}]
+      {"if": {"properties": {"corpus": {"const": "readings"}}}, "then": {"$ref": "#/$defs/readings"}},
+      {"if": {"properties": {"corpus": {"const": "discourse"}}}, "then": {"$ref": "#/$defs/discourse"}}]
   },
   "$defs": {
     "text": {"type": "string", "minLength": 1},
@@ -167,6 +168,17 @@
           {"type": "object", "required": ["returned"], "additionalProperties": false,
            "properties": {"returned": {"type": "object", "required": ["status", "content_bearing"],
                                        "properties": {"status": {"const": "ok"}, "content_bearing": {"type": "boolean"}}}}},
+          {"type": "object", "required": ["raised"], "additionalProperties": false,
+           "properties": {"raised": {"$ref": "#/$defs/error"}}}]}}},
+
+    "discourse": {"$comment": "`_discourse_case`: `check_document` or `render_document` of one discourse corpus entry, the digest of the entry the source, `outcome` (mig3 2.4) of the call.",
+      "properties": {
+        "authority": {"const": "default"},
+        "op": {"enum": ["document_check", "document_render"]},
+        "source_sha256": {"$ref": "#/$defs/digest"},
+        "outcome": {"anyOf": [
+          {"type": "object", "required": ["returned"], "additionalProperties": false,
+           "properties": {"returned": {"type": ["object", "string"]}}},
           {"type": "object", "required": ["raised"], "additionalProperties": false,
            "properties": {"raised": {"$ref": "#/$defs/error"}}}]}}}
   }

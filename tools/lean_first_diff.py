@@ -28,6 +28,11 @@ Corpora (``--corpus``, default all):
   differential (`tests/test_readings_s1_differential.py`, the search's situations recorded)
   and on every environment-null case of `tests/test_readings_s1_lean.py` (batch 3). The
   documents are generated once, by this checkout, into a file both sides read.
+* ``discourse``: every `ve-document@2` text of `docs/lean-first/discourse-corpus.json.gz` (the
+  documents the discourse tests write, captured at batch 4's base by
+  `docs/lean-first/b4/capture_discourse.py`), each written with the sibling files its imports name
+  to its own scratch directory, through `check_document` and `render_document` (under the default
+  authority, `--workers` processes).
 
 A record is ``{"corpus", "authority", "case", "op", "source_sha256", "outcome"}``; the outcome is
 ``{"returned": <public record>}`` or ``{"raised": <error record>}``, as mig3's recorder writes
@@ -48,12 +53,13 @@ line must be one the recorder writes (`record_problem`, the schema `tools/lean_f
 each corpus's fields, authorities and sources, each operation's outcome, a rejection's complete
 diagnostic), and the records of one corpus file must name one digest; an empty, partial or retyped
 outcome is no acceptance. Then, for every corpus and authority
-it checks (``--corpus``, ``--authority``, default all; the pilots and the readings corpus have the
-one authority ``default``), each side must hold a record of every case of the corpus as this
-checkout defines it (`expected_cases`: the conformance files' case ids, the probe matrix's frozen
-baseline, the pilot documents, the readings corpus's cases), through every operation the case
-requires (a conformance case: `CONFORMANCE_OPS`, given the outcomes recorded for it; a probe case:
-its operation; a pilot: ``document_check``; a readings case: ``readings_validate``),
+it checks (``--corpus``, ``--authority``, default all; the pilots, the readings corpus and the
+discourse corpus have the one authority ``default``), each side must hold a record of every case of
+the corpus as this checkout defines it (`expected_cases`: the conformance files' case ids, the probe
+matrix's frozen baseline, the pilot documents, the readings corpus's cases, the discourse corpus's
+ids), through every operation the case requires (a conformance case: `CONFORMANCE_OPS`, given the
+outcomes recorded for it; a probe case: its operation; a pilot: ``document_check``; a readings case:
+``readings_validate``; a discourse document: `DISCOURSE_OPS`),
 and nothing else, some of its records must be available, and it must hold both an
 acceptance and a rejection (every corpus holds both kinds of input). A record unavailable on
 both sides is no evidence either (class ``unavailable``, whatever its texts): it is accepted only
@@ -71,10 +77,12 @@ both outcomes are exactly the listed ones. Exit 0 when every difference is liste
 from __future__ import annotations
 
 import argparse
+import base64
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 import dataclasses
 from functools import cache
+import gzip
 import hashlib
 import json
 import os
@@ -83,7 +91,9 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-CORPORA = ("probe", "conformance", "pilots", "readings")
+CORPORA = ("probe", "conformance", "pilots", "readings", "discourse")
+DISCOURSE = Path("docs/lean-first/discourse-corpus.json.gz")
+DISCOURSE_OPS = ("document_check", "document_render")
 AUTHORITIES = ("python", "lean")
 CONFORMANCE = ("evaluation", "parser", "identity", "validation", "closure", "countermodels")
 DROPPED = frozenset({"checker_build", "record_id"})
@@ -319,6 +329,40 @@ def readings_records(path: Path):
                "outcome": outcome(lambda: validate(case["environment"], units, document["reading_sets"]))}
 
 
+def _discourse_case(item):
+    """`check_document` and `render_document` of one corpus document (in a pool worker)."""
+    scratch, entry = item
+    from ve.document import check_document, render_document
+    directory = Path(scratch) / entry["id"]
+    directory.mkdir(parents=True, exist_ok=True)
+    for name, data in entry["files"].items():
+        try:
+            (directory / name).write_bytes(base64.b64decode(data))
+        except OSError:
+            pass  # a name no file can have stays absent, as it was in the test that wrote it
+    path = directory / "document.ve.md"
+    path.write_bytes(base64.b64decode(entry["document"]))
+    source = hashlib.sha256(json.dumps(entry, sort_keys=True).encode()).hexdigest()
+    return [{"case": entry["id"], "op": op, "source_sha256": source, "authority": "default",
+             "outcome": outcome(lambda: call(path))}
+            for op, call in zip(DISCOURSE_OPS, (check_document, render_document))]
+
+
+def discourse_corpus(root: Path) -> list[dict]:
+    """The entries of the discourse corpus file of the checkout `root`."""
+    return json.loads(gzip.decompress((root / DISCOURSE).read_bytes()))
+
+
+def discourse_records(scratch: Path, workers: int):
+    """The discourse corpus, read from this tool's checkout, recorded with the child's `ve`."""
+    import multiprocessing
+    corpus = discourse_corpus(ROOT)
+    os.environ.pop("VE_AUTHORITY", None)
+    with multiprocessing.get_context("fork").Pool(workers) as pool:
+        for rows in pool.imap(_discourse_case, [(str(scratch), entry) for entry in corpus], chunksize=8):
+            yield from rows
+
+
 def pilot_check(root: Path, path: Path, env: dict) -> dict:
     """The outcome of `ve document check` of `path` in the checkout `root`."""
     try:
@@ -355,6 +399,10 @@ def child(args) -> int:
                 for record in pilot_records(root, Path(args.out).with_suffix(".pilots"), args.workers):
                     write({"corpus": corpus, **record})
                 continue
+            if corpus == "discourse":
+                for record in discourse_records(Path(args.out).with_suffix(".discourse"), args.workers):
+                    write({"corpus": corpus, **record})
+                continue
             for authority in args.authority:
                 os.environ["VE_AUTHORITY"] = authority
                 produce = probe_records if corpus == "probe" else conformance_records
@@ -387,7 +435,7 @@ class Unusable(Exception):
 
 
 def authorities_of(corpus: str, authorities=AUTHORITIES) -> tuple[str, ...]:
-    return ("default",) if corpus in ("pilots", "readings") else tuple(authorities)
+    return ("default",) if corpus in ("pilots", "readings", "discourse") else tuple(authorities)
 
 
 def only(op: str):
@@ -398,7 +446,8 @@ def only(op: str):
 def expected_cases(root: Path, corpora=CORPORA, authorities=AUTHORITIES) -> dict[tuple[str, str], dict]:
     """Every case each (corpus, authority) of a complete recording holds, from this checkout's
     corpora, not from a recording: the conformance files' case ids, the cells and named probes of
-    the probe matrix's frozen baseline, and the pilot documents. Each case maps to its operations:
+    the probe matrix's frozen baseline, the pilot documents, the readings corpus's cases and the
+    discourse corpus's entries. Each case maps to its operations:
     a function of the outcomes a recording holds for the case (`{op: outcome}`) giving the set of
     operations it must hold, since a conformance case's later operations run only on what its
     earlier ones returned (`conformance_ops`)."""
@@ -414,6 +463,8 @@ def expected_cases(root: Path, corpora=CORPORA, authorities=AUTHORITIES) -> dict
                 f"{section}/{name}": only(section) for section in PROBE_SECTIONS for name in baseline[section]}
         elif corpus == "readings":
             cases[corpus] = {name: only("readings_validate") for name in readings_cases()}
+        elif corpus == "discourse":
+            cases[corpus] = {entry["id"]: (lambda held: set(DISCOURSE_OPS)) for entry in discourse_corpus(root)}
         else:
             cases[corpus] = {name: only("document_check") for name, _, _ in pilot_documents(root)}
     return {(corpus, authority): cases[corpus] for corpus in corpora
@@ -462,7 +513,7 @@ def record_problem(row) -> str | None:
 
 def _source_group(key: tuple) -> tuple:
     """The records that read one corpus file: a conformance file, the probe matrix, a pilot document,
-    the readings corpus."""
+    the readings corpus, a discourse corpus entry."""
     corpus, _, case, _ = key
     return {"conformance": (corpus, case.split("/")[0]), "probe": (corpus,), "readings": (corpus,)}.get(
         corpus, (corpus, case))

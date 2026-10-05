@@ -1,7 +1,6 @@
 #![forbid(unsafe_code)]
-//! VE profiles over the kernel: evaluation, routes, countermodel search, order, units, risk
-//! and discourse.
-mod discourse;
+//! VE profiles over the kernel: evaluation, routes, countermodel search, order, units and
+//! risk.
 mod eval;
 mod order;
 mod risk;
@@ -9,7 +8,6 @@ mod route;
 mod search;
 mod units;
 
-pub use discourse::{ELABORATED_DOCUMENT, elaborated_document_case};
 #[cfg(feature = "bench-internals")]
 #[doc(hidden)]
 pub use eval::EvaluationKernel;
