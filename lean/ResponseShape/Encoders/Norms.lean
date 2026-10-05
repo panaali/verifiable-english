@@ -25,7 +25,7 @@ theorem certificate_fits (profiles : List String) (environment stripped : Json) 
   okfits
   all_goals (try simp only [VE.Route.Wire.ok])
   all_goals first
-    | exact OkP.of (Route.runOrder_fits _ _ _ _ _ _) fun _ => of_route
+    | with_reducible exact OkP.of (Route.runOrder_fits _ _ _ _ _ _) fun _ => of_route
     | fits
 
 theorem plain_fits (j : Json) : OkFits Γ Skeletons.norms (Plain.run j) := by
@@ -45,7 +45,7 @@ theorem runCase_fits (j : Json) : OkFits Γ Skeletons.norms (runCase j) := by
   all_goals first
     | (unfold runAdmission; okfits; exact admission_fits _ _ _)
     | with_reducible exact plain_fits _
-    | exact OkP.of (Route.runCase_fits _) fun _ => of_route
+    | with_reducible exact OkP.of (Route.runCase_fits _) fun _ => of_route
     | fits
 
 theorem runCaseReported_fits (j : Json) : Fits Γ Skeletons.norms (runCaseReported j) := by

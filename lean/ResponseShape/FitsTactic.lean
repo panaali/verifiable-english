@@ -38,7 +38,7 @@ macro "lits_simp" : tactic =>
 
 /-- A hypothesis `(match x with ...) = some v` of a `filterMap` element: one case per branch. -/
 macro "elem_cases" : tactic =>
-  `(tactic|(try (rename_i h; split at h <;> (try simp only [Option.some.injEq, reduceCtorEq, List.mem_map, List.not_mem_nil] at h) <;> (try obtain ⟨_, _, h⟩ := h) <;> (try subst_vars))))
+  `(tactic|(first | (rename_i h; split at h <;> (try simp only [Option.some.injEq, reduceCtorEq, List.mem_map, List.not_mem_nil] at h) <;> (try obtain ⟨_, _, h⟩ := h) <;> (try subst_vars)) | (try subst_vars)))
 
 /-- Through a runner's `do` block: binds (keeping `x = .ok a`), conditions, matches and join
 points, down to each `pure` (left as a `Fits` goal) or `throw`. -/

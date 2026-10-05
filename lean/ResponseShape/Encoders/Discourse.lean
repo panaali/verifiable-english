@@ -73,11 +73,11 @@ theorem runCase_fits (j : Json) : OkFits Γ Skeletons.discourse (runCase j) := b
   simp only []
   okfits
   all_goals first
-    | exact OkP.of (Route.runCase_fits _) fun _ => of_route
+    | with_reducible exact OkP.of (Route.runCase_fits _) fun _ => of_route
     | (refine OkP.of (encodeAdmission_fits _ _ ?_) fun _ h => Fits.ofAlt (by alt_mem) h
        exact admitDiscourse_references _ _ _ _ _ _ ‹_›)
-    | exact OkP.of (resolve_fits _ _ _ _ _) fun _ h => Fits.ofAlt (by alt_mem) h
-    | exact OkP.of (joint_fits _ _ _ _ _) fun _ h => Fits.altSub (by alt_sub) h
+    | with_reducible exact OkP.of (resolve_fits _ _ _ _ _) fun _ h => Fits.ofAlt (by alt_mem) h
+    | with_reducible exact OkP.of (joint_fits _ _ _ _ _) fun _ h => Fits.altSub (by alt_sub) h
     | (simp only [VE.Route.Wire.ok]; fits)
 
 theorem runCaseReported_fits (j : Json) : Fits Γ Skeletons.discourse (runCaseReported j) := by

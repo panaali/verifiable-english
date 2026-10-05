@@ -29,7 +29,7 @@ theorem runCase_fits (j : Json) : OkFits Γ Skeletons.normDefaults (runCase j) :
   simp only []
   okfits
   all_goals first
-    | exact OkP.of (Norms.runCase_fits _) fun _ => of_norms
+    | with_reducible exact OkP.of (Norms.runCase_fits _) fun _ => of_norms
     | skip
   all_goals (try simp only [VE.Route.Wire.ok, encodeAdmitted, Wire.regeneratedU, VE.Norms.Wire.regenerated])
   all_goals fits
