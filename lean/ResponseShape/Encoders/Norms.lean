@@ -84,7 +84,7 @@ theorem runCase_fits (j : Json) (hj : CaseWF j)
         assumption))
     | skip
   all_goals kind_norm
-  all_goals (try contradiction)
+  all_goals (try contra)
   all_goals (try simp only [VE.Route.Wire.ok, Flagged.regenerated, Wire.regenerated, List.map_cons, List.map_nil,
     String.reduceBEq])
   all_goals first

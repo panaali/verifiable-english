@@ -68,15 +68,42 @@ theorem reportJson_fits (r : VE.Graph.Report) :
 end ResponseShape.Encoders.Common
 
 namespace ResponseShape
+open Lean Meta Elab Tactic in
+/-- The hypothesis whose type is `lhs = Except.ok _` with `lhs` an application of `fn` whose
+argument `i` is the string `arg` (found by its form, never by unfolding the runners). -/
+def findOkHyp (fn : Name) (arity : Nat) (argIdx : Nat) (arg : String) : TacticM (Option Expr) := withMainContext do
+  for d in ← getLCtx do
+    if d.isImplementationDetail then continue
+    let ty := (← instantiateMVars d.type).consumeMData
+    let some (_, l, r) := ty.eq? | continue
+    let l := l.consumeMData
+    unless l.isAppOfArity fn arity && r.consumeMData.isAppOfArity ``Except.ok 3 do continue
+    if argIdx < arity then
+      unless FitsTactic.strLit? l.getAppArgs[argIdx]! == some arg do continue
+    return some d.toExpr
+  return none
 
+open Lean Meta Elab Tactic in
 /-- In a runner that read its id (`stringField j "id"`) and its kind (`Route.Run.caseKind j`): the
-kind the case has (`KindRead`), split into a case with that `kind` string and one without a kind
-(read as `evaluate`), the runner's tests of the kind evaluated (`kind_norm`). -/
-macro "read_kind" : tactic =>
-  `(tactic|(obtain ⟨_, hobj⟩ := Encoders.Common.stringField_obj ‹VE.Bridge.stringField _ "id" = .ok _›
-            have hK := Encoders.Common.caseKind_read hobj ‹VE.Route.Run.caseKind _ = .ok _›
-            rcases hK with hK | ⟨hK, hd⟩
-            all_goals (try subst hd)
-            all_goals kind_norm))
+kind the case has (`KindRead`, from `hobj : j.getObjVal? "id" = .ok _`), split into a case with
+that `kind` string and one without a kind (read as `evaluate`), the runner's tests of the kind
+evaluated (`kind_norm`). The runner's facts are found by their form, never by unfolding. -/
+elab "read_kind" : tactic => do
+  withMainContext do
+    let some hid ← findOkHyp ``VE.Bridge.stringField 2 1 "id" | throwError "read_kind: no id read"
+    let hobjE ← mkAppM ``Encoders.Common.stringField_obj #[hid]
+    let (_, g) ← (← getMainGoal).note `hobjE hobjE
+    replaceMainGoal [g]
+  evalTactic (← `(tactic| obtain ⟨_, $(mkIdent `hobj):ident⟩ := $(mkIdent `hobjE):ident))
+  withMainContext do
+    let some hk ← findOkHyp ``VE.Route.Run.caseKind 1 1 "" | throwError "read_kind: no kind read"
+    let some ho ← findOkHyp ``Lean.Json.getObjVal? 2 1 "id" | throwError "read_kind: not an object"
+    let hK ← mkAppM ``Encoders.Common.caseKind_read #[ho, hk]
+    let (_, g) ← (← getMainGoal).note `hK hK
+    replaceMainGoal [g]
+  let hKi := mkIdent `hK
+  evalTactic (← `(tactic| rcases $hKi:ident with $hKi:ident | ⟨$hKi:ident, hd⟩))
+  evalTactic (← `(tactic| all_goals (try subst hd)))
+  evalTactic (← `(tactic| all_goals kind_norm))
 
 end ResponseShape

@@ -41,7 +41,7 @@ theorem runCase_fits (j : Json) (hp : usesSpeechPath j = true) : OkFits j Skelet
   all_goals first
     | (exfalso; simp_all; done)
     | read_kind
-  all_goals (try contradiction)
+  all_goals (try contra)
   all_goals first
     | fits_from elaborate_fits _ _
     | ((try simp only [VE.Route.Wire.ok]); fits)
