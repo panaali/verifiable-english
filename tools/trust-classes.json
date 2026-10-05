@@ -16,6 +16,31 @@
     "main"
    ]
   },
+  "EnglishLeanBenchMain.lean": {
+   "G[V]": [
+    "EnglishLeanBench.arr",
+    "EnglishLeanBench.cpuNanos",
+    "EnglishLeanBench.grammar",
+    "EnglishLeanBench.lexMain",
+    "EnglishLeanBench.nat",
+    "EnglishLeanBench.prepareTime",
+    "EnglishLeanBench.rule",
+    "EnglishLeanBench.runOne",
+    "EnglishLeanBench.sentences",
+    "EnglishLeanBench.str",
+    "EnglishLeanBench.sym",
+    "EnglishLeanBench.terminal",
+    "EnglishLeanBench.timeBatch",
+    "EnglishLeanBench.timeOne",
+    "EnglishLeanBench.tok",
+    "EnglishLeanBench.tokJson",
+    "EnglishLeanBench.verdictName",
+    "main"
+   ],
+   "G[R]": [
+    "EnglishLeanBench.rejectJson"
+   ]
+  },
   "Iceberg.lean": {
    "P": [
     "Iceberg.Process",
@@ -1025,6 +1050,11 @@
    ],
    "C": [
     "VE.Closure.Formula.check"
+   ]
+  },
+  "VE/Compose/Adjoin.lean": {
+   "G[V]": [
+    "VE.Compose.adjoinOne"
    ]
   },
   "VE/Compose/Content.lean": {
@@ -2245,6 +2275,188 @@
     "VE.English.coreSurface"
    ]
   },
+  "VE/EnglishGrammar/EngineExamples.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.EngineExamples.G1",
+    "VE.EnglishGrammar.EngineExamples.G17",
+    "VE.EnglishGrammar.EngineExamples.G1ab",
+    "VE.EnglishGrammar.EngineExamples.G1c",
+    "VE.EnglishGrammar.EngineExamples.G1swap",
+    "VE.EnglishGrammar.EngineExamples.G2",
+    "VE.EnglishGrammar.EngineExamples.G20",
+    "VE.EnglishGrammar.EngineExamples.G3",
+    "VE.EnglishGrammar.EngineExamples.G4",
+    "VE.EnglishGrammar.EngineExamples.G5",
+    "VE.EnglishGrammar.EngineExamples.G6",
+    "VE.EnglishGrammar.EngineExamples.GA",
+    "VE.EnglishGrammar.EngineExamples.GA4",
+    "VE.EnglishGrammar.EngineExamples.N",
+    "VE.EnglishGrammar.EngineExamples.a",
+    "VE.EnglishGrammar.EngineExamples.actNum",
+    "VE.EnglishGrammar.EngineExamples.actSum",
+    "VE.EnglishGrammar.EngineExamples.actSum3",
+    "VE.EnglishGrammar.EngineExamples.b",
+    "VE.EnglishGrammar.EngineExamples.big",
+    "VE.EnglishGrammar.EngineExamples.c",
+    "VE.EnglishGrammar.EngineExamples.docName",
+    "VE.EnglishGrammar.EngineExamples.g16",
+    "VE.EnglishGrammar.EngineExamples.g7trees",
+    "VE.EnglishGrammar.EngineExamples.gr",
+    "VE.EnglishGrammar.EngineExamples.kidRule",
+    "VE.EnglishGrammar.EngineExamples.lf",
+    "VE.EnglishGrammar.EngineExamples.m2input",
+    "VE.EnglishGrammar.EngineExamples.mu1",
+    "VE.EnglishGrammar.EngineExamples.mu10",
+    "VE.EnglishGrammar.EngineExamples.mu2",
+    "VE.EnglishGrammar.EngineExamples.mu9",
+    "VE.EnglishGrammar.EngineExamples.nd",
+    "VE.EnglishGrammar.EngineExamples.numeralOf",
+    "VE.EnglishGrammar.EngineExamples.outName",
+    "VE.EnglishGrammar.EngineExamples.pu",
+    "VE.EnglishGrammar.EngineExamples.rl",
+    "VE.EnglishGrammar.EngineExamples.sigA",
+    "VE.EnglishGrammar.EngineExamples.tyA",
+    "VE.EnglishGrammar.EngineExamples.valueOf",
+    "VE.EnglishGrammar.EngineExamples.ws",
+    "VE.EnglishGrammar.EngineExamples.x",
+    "VE.EnglishGrammar.EngineExamples.z"
+   ]
+  },
+  "VE/EnglishGrammar/Examples.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.Examples.F",
+    "VE.EnglishGrammar.Examples.F2",
+    "VE.EnglishGrammar.Examples.LF",
+    "VE.EnglishGrammar.Examples.clsA",
+    "VE.EnglishGrammar.Examples.clsR",
+    "VE.EnglishGrammar.Examples.conds",
+    "VE.EnglishGrammar.Examples.dropN",
+    "VE.EnglishGrammar.Examples.e27",
+    "VE.EnglishGrammar.Examples.recorded",
+    "VE.EnglishGrammar.Examples.setN",
+    "VE.EnglishGrammar.Examples.setW",
+    "VE.EnglishGrammar.Examples.toks",
+    "VE.EnglishGrammar.Examples.w",
+    "VE.EnglishGrammar.Examples.wi"
+   ],
+   "G[R]": [
+    "VE.EnglishGrammar.Examples.rejects"
+   ]
+  },
+  "VE/EnglishGrammar/Lexer.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.Mode",
+    "VE.EnglishGrammar.Scan",
+    "VE.EnglishGrammar.Spanned",
+    "VE.EnglishGrammar.chunkChar",
+    "VE.EnglishGrammar.chunkToken",
+    "VE.EnglishGrammar.collapsedGo",
+    "VE.EnglishGrammar.collapsedLength",
+    "VE.EnglishGrammar.digitsValue",
+    "VE.EnglishGrammar.endChunk",
+    "VE.EnglishGrammar.isConclusionMarker",
+    "VE.EnglishGrammar.isSpace",
+    "VE.EnglishGrammar.lex",
+    "VE.EnglishGrammar.lexSpans",
+    "VE.EnglishGrammar.markInitials",
+    "VE.EnglishGrammar.markerAt",
+    "VE.EnglishGrammar.markers",
+    "VE.EnglishGrammar.normalStep",
+    "VE.EnglishGrammar.punctChars",
+    "VE.EnglishGrammar.scanGo",
+    "VE.EnglishGrammar.spaceCodes",
+    "VE.EnglishGrammar.startsWith"
+   ],
+   "G[R]": [
+    "VE.EnglishGrammar.maxSourceBytes",
+    "VE.EnglishGrammar.maxTextChars"
+   ],
+   "G[I]": [
+    "VE.EnglishGrammar.solid"
+   ]
+  },
+  "VE/EnglishGrammar/Lexicon.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.ConstDecl",
+    "VE.EnglishGrammar.Env",
+    "VE.EnglishGrammar.Env.arity",
+    "VE.EnglishGrammar.Env.declaredNegative",
+    "VE.EnglishGrammar.Env.declaredNoun",
+    "VE.EnglishGrammar.Env.declaredSpelling",
+    "VE.EnglishGrammar.Env.declaredWording",
+    "VE.EnglishGrammar.Env.predicate?",
+    "VE.EnglishGrammar.Failure",
+    "VE.EnglishGrammar.Lexicon",
+    "VE.EnglishGrammar.Lexicon.failures",
+    "VE.EnglishGrammar.Overlay",
+    "VE.EnglishGrammar.PredDecl",
+    "VE.EnglishGrammar.ProfileForms",
+    "VE.EnglishGrammar.SortDecl",
+    "VE.EnglishGrammar.coverage",
+    "VE.EnglishGrammar.fallbackWording",
+    "VE.EnglishGrammar.findSub",
+    "VE.EnglishGrammar.holes",
+    "VE.EnglishGrammar.idioms",
+    "VE.EnglishGrammar.idioms1",
+    "VE.EnglishGrammar.idioms2",
+    "VE.EnglishGrammar.irregularVerbs",
+    "VE.EnglishGrammar.jsonQuote",
+    "VE.EnglishGrammar.keysOf",
+    "VE.EnglishGrammar.mechanicalWording",
+    "VE.EnglishGrammar.negateVerb",
+    "VE.EnglishGrammar.negativeTemplate",
+    "VE.EnglishGrammar.noHole",
+    "VE.EnglishGrammar.pastVerbs",
+    "VE.EnglishGrammar.replaceFirst",
+    "VE.EnglishGrammar.shapeOk",
+    "VE.EnglishGrammar.splitWs",
+    "VE.EnglishGrammar.stripWs",
+    "VE.EnglishGrammar.verbBase",
+    "VE.EnglishGrammar.wordingKey",
+    "VE.EnglishGrammar.workBudget"
+   ],
+   "G[I]": [
+    "VE.EnglishGrammar.Lexicon.valid"
+   ]
+  },
+  "VE/EnglishGrammar/LexiconFixtures.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.LexiconFixtures.envF",
+    "VE.EnglishGrammar.LexiconFixtures.envF2",
+    "VE.EnglishGrammar.LexiconFixtures.envF3",
+    "VE.EnglishGrammar.LexiconFixtures.failureSet"
+   ]
+  },
+  "VE/EnglishGrammar/Syntax.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.DState",
+    "VE.EnglishGrammar.DState.init",
+    "VE.EnglishGrammar.EFormula",
+    "VE.EnglishGrammar.ETerm",
+    "VE.EnglishGrammar.Reject.code",
+    "VE.EnglishGrammar.Ty",
+    "VE.EnglishGrammar.blockedWordingIds"
+   ],
+   "G[R]": [
+    "VE.EnglishGrammar.Reject"
+   ]
+  },
+  "VE/EnglishGrammar/Token.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.Terminal",
+    "VE.EnglishGrammar.Terminal.accepts",
+    "VE.EnglishGrammar.Tok",
+    "VE.EnglishGrammar.Tok.plain",
+    "VE.EnglishGrammar.TokClass",
+    "VE.EnglishGrammar.TokClass.accepts",
+    "VE.EnglishGrammar.capitalise",
+    "VE.EnglishGrammar.fold",
+    "VE.EnglishGrammar.foldChar",
+    "VE.EnglishGrammar.instAcceptsTerminalTok",
+    "VE.EnglishGrammar.terminatorFree",
+    "VE.EnglishGrammar.terminators"
+   ]
+  },
   "VE/Finite.lean": {
    "K": [
     "VE.FiniteModel",
@@ -2254,6 +2466,138 @@
    "C": [
     "VE.Document.eval",
     "VE.Formula.eval"
+   ]
+  },
+  "VE/Grammar/Basic.lean": {
+   "G[V]": [
+    "VE.Grammar.Accepts",
+    "VE.Grammar.Grammar",
+    "VE.Grammar.Grammar.wf",
+    "VE.Grammar.Rule",
+    "VE.Grammar.Rule.wf",
+    "VE.Grammar.Sym"
+   ]
+  },
+  "VE/Grammar/Derives.lean": {
+   "S": [
+    "VE.Grammar.Derives"
+   ],
+   "G[V]": [
+    "VE.Grammar.Tree",
+    "VE.Grammar.Tree.decEq",
+    "VE.Grammar.Tree.decEqList",
+    "VE.Grammar.Tree.derives",
+    "VE.Grammar.Tree.yield",
+    "VE.Grammar.derivesAll",
+    "VE.Grammar.instDecidableEqTree",
+    "VE.Grammar.yieldAll"
+   ]
+  },
+  "VE/Grammar/Extension.lean": {
+   "S": [
+    "VE.Grammar.Embeds",
+    "VE.Grammar.RuleMap.Ok"
+   ],
+   "G[V]": [
+    "VE.Grammar.RuleMap",
+    "VE.Grammar.RuleMap.tree",
+    "VE.Grammar.RuleMap.trees",
+    "VE.Grammar.Sym.rename"
+   ]
+  },
+  "VE/Grammar/Meaning.lean": {
+   "G[V]": [
+    "VE.Grammar.Action",
+    "VE.Grammar.Args",
+    "VE.Grammar.Grammar.typed",
+    "VE.Grammar.Sig",
+    "VE.Grammar.Tree.sem",
+    "VE.Grammar.Val",
+    "VE.Grammar.semAll",
+    "VE.Grammar.symTy",
+    "VE.Grammar.toArgs"
+   ]
+  },
+  "VE/Grammar/Reading.lean": {
+   "S": [
+    "VE.Grammar.DocOneReading",
+    "VE.Grammar.OneReading"
+   ],
+   "G[V]": [
+    "VE.Grammar.DocOutcome",
+    "VE.Grammar.Meaning",
+    "VE.Grammar.Outcome",
+    "VE.Grammar.readDocument",
+    "VE.Grammar.readSentence",
+    "VE.Grammar.readingSet"
+   ]
+  },
+  "VE/Grammar/Table.lean": {
+   "G[V]": [
+    "VE.Grammar.Bucket",
+    "VE.Grammar.Bucket.addAll",
+    "VE.Grammar.Bucket.get",
+    "VE.Grammar.Bucket.merge",
+    "VE.Grammar.CRule",
+    "VE.Grammar.Grammar.prepare",
+    "VE.Grammar.NtRow",
+    "VE.Grammar.Prepared",
+    "VE.Grammar.Prepared.parse",
+    "VE.Grammar.Prepared.steps",
+    "VE.Grammar.Prepared.table",
+    "VE.Grammar.Prepared.verdict",
+    "VE.Grammar.SufPos",
+    "VE.Grammar.SufRow",
+    "VE.Grammar.Verdict",
+    "VE.Grammar.accepted",
+    "VE.Grammar.addTerms",
+    "VE.Grammar.avail",
+    "VE.Grammar.combine",
+    "VE.Grammar.dedup",
+    "VE.Grammar.fill",
+    "VE.Grammar.finalPass",
+    "VE.Grammar.firstAt",
+    "VE.Grammar.groupBy",
+    "VE.Grammar.groupList",
+    "VE.Grammar.insertCapped",
+    "VE.Grammar.ntRowGo",
+    "VE.Grammar.parse",
+    "VE.Grammar.rowAt",
+    "VE.Grammar.sufGet",
+    "VE.Grammar.sufGroups",
+    "VE.Grammar.sufPosGo",
+    "VE.Grammar.sufPositions",
+    "VE.Grammar.termIndex",
+    "VE.Grammar.termsOf",
+    "VE.Grammar.verdict"
+   ]
+  },
+  "VE/Grammar/TableInvariant.lean": {
+   "S": [
+    "VE.Grammar.BOk",
+    "VE.Grammar.Bucket.Sorted",
+    "VE.Grammar.EntryOk",
+    "VE.Grammar.KeysUp",
+    "VE.Grammar.NtFull",
+    "VE.Grammar.NtOk",
+    "VE.Grammar.OutInv",
+    "VE.Grammar.Span",
+    "VE.Grammar.SpanAll",
+    "VE.Grammar.SufRowOk",
+    "VE.Grammar.ValidPos",
+    "VE.Grammar.rootIn"
+   ],
+   "G[V]": [
+    "VE.Grammar.addCapped",
+    "VE.Grammar.allPositions",
+    "VE.Grammar.combineOne",
+    "VE.Grammar.cruleList",
+    "VE.Grammar.groupStep",
+    "VE.Grammar.ntKey",
+    "VE.Grammar.outAt",
+    "VE.Grammar.sufVal",
+    "VE.Grammar.termKey",
+    "VE.Grammar.toks"
    ]
   },
   "VE/GraphChecks.lean": {
@@ -3257,6 +3601,143 @@
     "VE.Order.OrderProfilesAccepted"
    ]
   },
+  "VE/Readings/Asserted.lean": {
+   "G[V]": [
+    "VE.Readings.buildAsserted"
+   ]
+  },
+  "VE/Readings/Assertions.lean": {
+   "G[V]": [
+    "VE.Readings.supAssertedAux",
+    "VE.Readings.supItemAsserted"
+   ]
+  },
+  "VE/Readings/BaseUp.lean": {
+   "S": [
+    "VE.Readings.IsBit",
+    "VE.Readings.OnBit",
+    "VE.Readings.upDom",
+    "VE.Readings.upRel"
+   ],
+   "G[V]": [
+    "VE.Readings.chosenIdx",
+    "VE.Readings.upB",
+    "VE.Readings.upConst"
+   ]
+  },
+  "VE/Readings/Choice.lean": {
+   "S": [
+    "VE.Readings.ChoiceExtension",
+    "VE.Readings.Compatible",
+    "VE.Readings.Encodes",
+    "VE.Readings.Fits"
+   ],
+   "G[V]": [
+    "VE.Readings.Choice",
+    "VE.Readings.Choice.index",
+    "VE.Readings.allFrom",
+    "VE.Readings.atomAt",
+    "VE.Readings.atoms",
+    "VE.Readings.bitDecls",
+    "VE.Readings.bitName",
+    "VE.Readings.bitsOf",
+    "VE.Readings.checkedChoices",
+    "VE.Readings.choiceAtom",
+    "VE.Readings.choiceCore",
+    "VE.Readings.choiceDoc",
+    "VE.Readings.choiceEnv",
+    "VE.Readings.choiceEnvFull",
+    "VE.Readings.choiceFresh",
+    "VE.Readings.choiceLabelled",
+    "VE.Readings.choicePremises",
+    "VE.Readings.choices",
+    "VE.Readings.choicesSoftChecked",
+    "VE.Readings.compatible",
+    "VE.Readings.complete",
+    "VE.Readings.conj",
+    "VE.Readings.copies",
+    "VE.Readings.copyCites",
+    "VE.Readings.copyContent",
+    "VE.Readings.copyOver",
+    "VE.Readings.couplingHolds",
+    "VE.Readings.couplingPremises",
+    "VE.Readings.couplingShape",
+    "VE.Readings.declaresRule",
+    "VE.Readings.disj",
+    "VE.Readings.entryKept",
+    "VE.Readings.fixedGenerated",
+    "VE.Readings.gateContent",
+    "VE.Readings.gatedRel",
+    "VE.Readings.here",
+    "VE.Readings.inForce",
+    "VE.Readings.itemUnit",
+    "VE.Readings.keyLabel",
+    "VE.Readings.label",
+    "VE.Readings.labelOf",
+    "VE.Readings.lit",
+    "VE.Readings.nameMap",
+    "VE.Readings.narrowingHolds",
+    "VE.Readings.narrowingPremises",
+    "VE.Readings.narrowingShape",
+    "VE.Readings.onePremises",
+    "VE.Readings.origin",
+    "VE.Readings.owners",
+    "VE.Readings.pairOwner",
+    "VE.Readings.pattern",
+    "VE.Readings.position",
+    "VE.Readings.pull",
+    "VE.Readings.qName",
+    "VE.Readings.qualify",
+    "VE.Readings.qualifyKey",
+    "VE.Readings.quietFormula",
+    "VE.Readings.quietOwn",
+    "VE.Readings.quietShared",
+    "VE.Readings.ruleNamed",
+    "VE.Readings.sameMembers",
+    "VE.Readings.search",
+    "VE.Readings.setSize",
+    "VE.Readings.sharedEnv",
+    "VE.Readings.slotLabelled",
+    "VE.Readings.slotP",
+    "VE.Readings.slotUnder",
+    "VE.Readings.sup",
+    "VE.Readings.supFrame",
+    "VE.Readings.supReady",
+    "VE.Readings.superposable",
+    "VE.Readings.takenBy",
+    "VE.Readings.uniformOn",
+    "VE.Readings.uniformPrecedence",
+    "VE.Readings.unitsDistinct"
+   ],
+   "G[R]": [
+    "VE.Readings.maxChoiceChecks",
+    "VE.Readings.maxChoices"
+   ]
+  },
+  "VE/Readings/ChoiceFacts.lean": {
+   "S": [
+    "VE.Readings.ChosenNorm",
+    "VE.Readings.FixedNorm",
+    "VE.Readings.Hyps"
+   ],
+   "G[V]": [
+    "VE.Readings.chosenAt",
+    "VE.Readings.fmap",
+    "VE.Readings.gateNorm",
+    "VE.Readings.pickC",
+    "VE.Readings.setOf"
+   ]
+  },
+  "VE/Readings/ChoiceTyped.lean": {
+   "G[V]": [
+    "VE.Readings.ctxY"
+   ]
+  },
+  "VE/Readings/ChoiceValid.lean": {
+   "G[V]": [
+    "VE.Readings.fname"
+   ]
+  },
   "VE/Readings/Doc.lean": {
    "S": [
     "VE.Readings.Attached",
@@ -3308,6 +3789,7 @@
    "G[V]": [
     "VE.Readings.free",
     "VE.Readings.interfaceOf",
+    "VE.Readings.namesFit",
     "VE.Readings.nodeUses",
     "VE.Readings.reservedSym",
     "VE.Readings.singlyAttached"
@@ -3334,21 +3816,54 @@
     "VE.Readings.Examples.K6",
     "VE.Readings.Examples.K9",
     "VE.Readings.Examples.K9b",
+    "VE.Readings.Examples.KB",
+    "VE.Readings.Examples.KH",
+    "VE.Readings.Examples.M10",
+    "VE.Readings.Examples.M10b",
+    "VE.Readings.Examples.M16",
+    "VE.Readings.Examples.M17d",
+    "VE.Readings.Examples.M18",
+    "VE.Readings.Examples.M20",
+    "VE.Readings.Examples.M5",
+    "VE.Readings.Examples.M6",
+    "VE.Readings.Examples.M7",
+    "VE.Readings.Examples.M8",
+    "VE.Readings.Examples.M9",
+    "VE.Readings.Examples.MB",
+    "VE.Readings.Examples.MH",
+    "VE.Readings.Examples.MU",
     "VE.Readings.Examples.S",
+    "VE.Readings.Examples.SB",
     "VE.Readings.Examples.arrestDefault",
     "VE.Readings.Examples.asksAll",
+    "VE.Readings.Examples.b0'",
+    "VE.Readings.Examples.b1",
+    "VE.Readings.Examples.b1'",
+    "VE.Readings.Examples.b2",
+    "VE.Readings.Examples.bH",
+    "VE.Readings.Examples.baseM",
     "VE.Readings.Examples.beKind",
+    "VE.Readings.Examples.binarySet",
+    "VE.Readings.Examples.bit",
     "VE.Readings.Examples.bothX",
+    "VE.Readings.Examples.c1",
     "VE.Readings.Examples.cand",
     "VE.Readings.Examples.docK",
     "VE.Readings.Examples.exc",
     "VE.Readings.Examples.exceptX",
+    "VE.Readings.Examples.ex₂",
     "VE.Readings.Examples.fanCited",
     "VE.Readings.Examples.fanDefault",
+    "VE.Readings.Examples.formulaSet",
+    "VE.Readings.Examples.frame9",
+    "VE.Readings.Examples.frameB",
+    "VE.Readings.Examples.frameH",
     "VE.Readings.Examples.frameK",
     "VE.Readings.Examples.frameR",
     "VE.Readings.Examples.frameWith",
+    "VE.Readings.Examples.helpX",
     "VE.Readings.Examples.holistic",
+    "VE.Readings.Examples.labelled",
     "VE.Readings.Examples.listedOnce",
     "VE.Readings.Examples.m0",
     "VE.Readings.Examples.m0b",
@@ -3356,17 +3871,32 @@
     "VE.Readings.Examples.m13",
     "VE.Readings.Examples.mR",
     "VE.Readings.Examples.modelK",
+    "VE.Readings.Examples.n1",
+    "VE.Readings.Examples.nD",
+    "VE.Readings.Examples.nS",
+    "VE.Readings.Examples.name45",
+    "VE.Readings.Examples.notAsks",
+    "VE.Readings.Examples.on2",
     "VE.Readings.Examples.orderOnly",
+    "VE.Readings.Examples.ow",
+    "VE.Readings.Examples.phiEx",
     "VE.Readings.Examples.q0",
+    "VE.Readings.Examples.quiet₂",
     "VE.Readings.Examples.regsK",
     "VE.Readings.Examples.rs1",
     "VE.Readings.Examples.rs15",
+    "VE.Readings.Examples.rs1f",
+    "VE.Readings.Examples.rs2f",
     "VE.Readings.Examples.rs2kind",
     "VE.Readings.Examples.rs4",
     "VE.Readings.Examples.rs9",
+    "VE.Readings.Examples.rsB",
+    "VE.Readings.Examples.rsF",
     "VE.Readings.Examples.sit",
     "VE.Readings.Examples.twiceListed",
+    "VE.Readings.Examples.unlabelled",
     "VE.Readings.Examples.users13",
+    "VE.Readings.Examples.waiveX",
     "VE.Readings.Examples.σ19",
     "VE.Readings.Examples.σ21c"
    ]
@@ -3379,6 +3909,14 @@
    ],
    "G[V]": [
     "VE.Readings.relaxDoc"
+   ]
+  },
+  "VE/Readings/Labels.lean": {
+   "S": [
+    "VE.Readings.NoSep"
+   ],
+   "G[V]": [
+    "VE.Readings.instDecidableNoSep"
    ]
   },
   "VE/Readings/Lines.lean": {
@@ -3402,13 +3940,61 @@
     "VE.Readings.tacticWalk_ok"
    ]
   },
+  "VE/Readings/Names.lean": {
+   "G[V]": [
+    "VE.Readings.keyChar",
+    "VE.Readings.substrEqLoopName",
+    "VE.Readings.tacticUnfold_substrEq_loop"
+   ]
+  },
+  "VE/Readings/Route.lean": {
+   "G[V]": [
+    "VE.Readings.Route",
+    "VE.Readings.Route.text",
+    "VE.Readings.candidateJson",
+    "VE.Readings.candidateNames",
+    "VE.Readings.checkBudgetText",
+    "VE.Readings.checkedJson",
+    "VE.Readings.choiceChainText",
+    "VE.Readings.choiceJson",
+    "VE.Readings.choiceText",
+    "VE.Readings.choicesJson",
+    "VE.Readings.contentJson",
+    "VE.Readings.cycleNames",
+    "VE.Readings.cycleSets",
+    "VE.Readings.elaborateFields",
+    "VE.Readings.enc",
+    "VE.Readings.enumeratedCheckText",
+    "VE.Readings.exceptionJson",
+    "VE.Readings.firstNonUniform",
+    "VE.Readings.nameMapJson",
+    "VE.Readings.notSuperposable",
+    "VE.Readings.notSuperposableText",
+    "VE.Readings.restrictionIds",
+    "VE.Readings.routeOf",
+    "VE.Readings.routeRefusal",
+    "VE.Readings.setNamesJson",
+    "VE.Readings.sizesJson",
+    "VE.Readings.slotJson",
+    "VE.Readings.softNodeJson",
+    "VE.Readings.staleNarrowings",
+    "VE.Readings.supCertificateCheck",
+    "VE.Readings.supModelCheck",
+    "VE.Readings.supUnits",
+    "VE.Readings.superposedCheckText",
+    "VE.Readings.unsatText",
+    "VE.Readings.untakenText",
+    "VE.Readings.vocabularyJson"
+   ]
+  },
   "VE/Readings/Run.lean": {
    "D[V]": [
     "VE.Readings.Run.candidateJson",
     "VE.Readings.Run.keyEntry",
     "VE.Readings.Run.oneJson",
     "VE.Readings.Run.optBool",
-    "VE.Readings.Run.pairJson"
+    "VE.Readings.Run.pairJson",
+    "VE.Readings.Run.runLowerWith"
    ],
    "G[V]": [
     "VE.Readings.Run.PairFacts",
@@ -3488,6 +4074,116 @@
     "VE.Readings.uniq"
    ]
   },
+  "VE/Readings/Shape.lean": {
+   "S": [
+    "VE.Readings.Grows"
+   ],
+   "G[V]": [
+    "VE.Readings.buildJunk",
+    "VE.Readings.buildNodes",
+    "VE.Readings.candJunk",
+    "VE.Readings.candNodes",
+    "VE.Readings.contrib",
+    "VE.Readings.isSet",
+    "VE.Readings.junk",
+    "VE.Readings.normsOf",
+    "VE.Readings.supItemJunk",
+    "VE.Readings.supItemNodes",
+    "VE.Readings.supNodesAux",
+    "VE.Readings.supStep"
+   ]
+  },
+  "VE/Readings/Simulate.lean": {
+   "S": [
+    "VE.Readings.Sim"
+   ]
+  },
+  "VE/Readings/Strings.lean": {
+   "S": [
+    "VE.Readings.AsciiL"
+   ],
+   "G[V]": [
+    "VE.Readings.instDecidableAsciiL"
+   ]
+  },
+  "VE/Readings/SupRun.lean": {
+   "G[V]": [
+    "VE.Readings.Run.NormsChoiceModel",
+    "VE.Readings.Run.NormsChoiceModel.check",
+    "VE.Readings.Run.NormsChoiceModel.value",
+    "VE.Readings.Run.RightsChoiceModel",
+    "VE.Readings.Run.RightsChoiceModel.check",
+    "VE.Readings.Run.RightsChoiceModel.value",
+    "VE.Readings.Run.SoftChoiceModel",
+    "VE.Readings.Run.SoftChoiceModel.check",
+    "VE.Readings.Run.SoftChoiceModel.value",
+    "VE.Readings.Run.certificateKinds",
+    "VE.Readings.Run.choiceAssertionJsons",
+    "VE.Readings.Run.choiceConflictCase",
+    "VE.Readings.Run.choiceFormulas",
+    "VE.Readings.Run.choiceJsons",
+    "VE.Readings.Run.choiceModel",
+    "VE.Readings.Run.conflictFreeAnswer",
+    "VE.Readings.Run.conflictKind",
+    "VE.Readings.Run.encodedChoice",
+    "VE.Readings.Run.evidenceKinds",
+    "VE.Readings.Run.firstFailing",
+    "VE.Readings.Run.modelAnswer",
+    "VE.Readings.Run.okWith",
+    "VE.Readings.Run.runCertificate",
+    "VE.Readings.Run.runChoice",
+    "VE.Readings.Run.runConflict",
+    "VE.Readings.Run.runDead",
+    "VE.Readings.Run.runElaborate",
+    "VE.Readings.Run.runModel",
+    "VE.Readings.Run.runS2",
+    "VE.Readings.Run.s2Kinds",
+    "VE.Readings.Run.slotLabels"
+   ],
+   "G[I]": [
+    "VE.Readings.Run.choiceHash"
+   ]
+  },
+  "VE/Readings/SupWire.lean": {
+   "G[V]": [
+    "VE.Readings.Wire.Admitted2",
+    "VE.Readings.Wire.CertificateReplay",
+    "VE.Readings.Wire.ModelReplay",
+    "VE.Readings.Wire.SupReplay",
+    "VE.Readings.Wire.admitS2",
+    "VE.Readings.Wire.axisLabels",
+    "VE.Readings.Wire.decodeAssumed",
+    "VE.Readings.Wire.decodeChoice",
+    "VE.Readings.Wire.decodeConflictCerts",
+    "VE.Readings.Wire.decodeCouplings",
+    "VE.Readings.Wire.decodeNarrowings",
+    "VE.Readings.Wire.decodeShared",
+    "VE.Readings.Wire.decodeSupModel",
+    "VE.Readings.Wire.replayCertificate",
+    "VE.Readings.Wire.replayModel",
+    "VE.Readings.Wire.replaySup",
+    "VE.Readings.Wire.sortedKeys",
+    "VE.Readings.Wire.stringList",
+    "VE.Readings.Wire.supReplayOf",
+    "VE.Readings.Wire.supVocabulary",
+    "VE.Readings.Wire.unitIdsOf"
+   ]
+  },
+  "VE/Readings/Superpose.lean": {
+   "S": [
+    "VE.Readings.bitOn"
+   ],
+   "G[V]": [
+    "VE.Readings.bitsVal",
+    "VE.Readings.deadCheck",
+    "VE.Readings.unsatCheck"
+   ]
+  },
+  "VE/Readings/UpSlot.lean": {
+   "S": [
+    "VE.Readings.ChosenAt"
+   ]
+  },
   "VE/Readings/Wire.lean": {
    "C": [
     "VE.Readings.Wire.replayPair"
@@ -3539,6 +4235,7 @@
     "VE.Readings.Wire.frameOf",
     "VE.Readings.Wire.inForce",
     "VE.Readings.Wire.keySorts",
+    "VE.Readings.Wire.placeholderFrame",
     "VE.Readings.Wire.readingIndex",
     "VE.Readings.Wire.readingsProfile",
     "VE.Readings.Wire.regSorts",

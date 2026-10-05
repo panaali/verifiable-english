@@ -5,6 +5,7 @@
     "if": {"type": "object", "required": ["status"], "properties": {"status": {"const": "error"}}},
     "then": {"$ref": "#/$defs/error"},
     "else": {"x-select": [
+      {"when": {"$ref": "#/$defs/kind/readings-superposed-evaluate"}, "then": {"$ref": "#/$defs/superposed"}},
       {"when": {"$ref": "#/$defs/kind/check"}, "then": {"$ref": "#/$defs/typing"}},
       {"when": {"$ref": "#/$defs/kind/evaluate-budgeted"}, "then": {"$ref": "#/$defs/evaluation"}},
       {"when": {"$ref": "#/$defs/kind/distinguishing-model"}, "then": {"$ref": "#/$defs/search"}},
@@ -16,6 +17,7 @@
   },
   "$defs": {
     "kind": {
+      "readings-superposed-evaluate": {"required": ["kind"], "properties": {"kind": {"const": "readings-superposed-evaluate"}}},
       "check": {"required": ["kind"], "properties": {"kind": {"const": "check"}}},
       "evaluate-budgeted": {"required": ["kind"], "properties": {"kind": {"const": "evaluate-budgeted"}}},
       "distinguishing-model": {"required": ["kind"], "properties": {"kind": {"const": "distinguishing-model"}}}
@@ -121,6 +123,20 @@
                         "premise_values": {"minItems": 1, "contains": {"const": false}}}},
         {"properties": {"status": {"const": "ResourceLimit"}, "valid": {"const": false}, "conclusion_value": {"const": null},
                         "premise_values": {"items": {"const": true}}}}]},
-    "premises_held": {"$comment": "Every premise evaluated, and true.", "items": {"const": true}, "x-length": "/premises"}
+    "premises_held": {"$comment": "Every premise evaluated, and true.", "items": {"const": true}, "x-length": "/premises"},
+    "superposed": {"$comment": "main.rs `readings_superposed_evaluate_case`: untrusted, the shown model's identity, and one value per formula of each of the four groups.",
+      "type": "object", "required": ["id", "status", "untrusted", "model_id", "values"], "additionalProperties": false,
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "status": {"const": "ok"},
+        "untrusted": {"const": true},
+        "model_id": {"$ref": "#/$defs/digest"},
+        "values": {
+          "type": "object", "required": ["slot", "assertions", "conflict_targets", "conclusions"], "additionalProperties": false,
+          "properties": {
+            "slot": {"type": "array", "items": {"type": "boolean"}, "x-length": "/slot"},
+            "assertions": {"type": "array", "items": {"type": "boolean"}, "x-length": "/assertions"},
+            "conflict_targets": {"type": "array", "items": {"type": "boolean"}, "x-length": "/conflict_targets"},
+            "conclusions": {"type": "array", "items": {"type": "boolean"}, "x-length": "/conclusions"}}}}}
   }
 }

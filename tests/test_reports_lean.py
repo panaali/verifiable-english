@@ -20,7 +20,7 @@ from pathlib import Path
 
 import pytest
 
-from subprocesses import HANG_TIMEOUT
+from tests.subprocesses import HANG_TIMEOUT
 from tools import rust_build
 from ve.ast import _Decoder
 from ve.entailment import prove_entailment

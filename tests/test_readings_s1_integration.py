@@ -29,9 +29,13 @@ def test_content_set_is_admitted_by_lean_in_a_document(tmp_path):
     path = source_document(tmp_path)
     loaded = load_document(path)
     assert loaded["readings_s1"]["content_bearing"] is True
+    assert loaded["readings_s2"]["route"] == "superposed"
+    assert loaded["readings_s2"]["choice_count"] == 2
     pair = loaded["readings_s1"]["sets"][0]["pairs"][0]["pair"]
     assert pair["separated"] and pair["witness"] == "default"
     report = check_document(path)
+    assert report["readings"]["route"] == "superposed"
+    assert report["readings"]["reading_premises"] == ["readings:rs1@1:1:quiet"]
     assert report["coverage"]["bytes_by_status"] == {"OPEN": len(b"Avoid deception.\n")}
 
 

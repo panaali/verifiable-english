@@ -9,6 +9,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
+from ..ast import numeral_value
 from ..norms import Norm, _to_data
 from ..errors import SyntaxError
 from .registry import SurfaceRecord, register
@@ -138,7 +139,7 @@ def parse_header_options(source: str) -> tuple[tuple[int, ...], tuple[str, ...]]
         if match:
             if refs:
                 raise SyntaxError("Duplicate precedence option")
-            refs = tuple(int(n) for n in re.findall(r"[1-9][0-9]*", match[1]))
+            refs = tuple(numeral_value(n) for n in re.findall(r"[1-9][0-9]*", match[1]))
             continue
         match = _PARTIES.fullmatch(piece)
         if match:
