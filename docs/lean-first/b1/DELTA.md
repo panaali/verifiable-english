@@ -115,10 +115,10 @@ signature: **the baseline does not grow.** The fuzzer's child processes used 1,5
 
 | Id | Class | Change | Signature |
 |---|---|---|---|
-| D1 | `availability` (by design) | `diagnose`: a case without a unit, or with a unit that names no contract, gets an error row (`InvalidInput: a diagnose case names its unit`, `UnsupportedProfile: no wire contract <unit>`) where `ve_diagnose` exited 2 for the whole batch. Diagnostic only; no verdict depends on it. | DRI: pending |
-| D2 | `verdict` by the tool, unavailable on both sides | the UDHR load's `CheckerUnavailable` names the readings route and its CPU deadline (F4) and arrives after 228.6 s of CPU instead of 120 s of wall | DRI: pending |
-| D3 | `wording` (code) | a route rejection raised through the relay is the class of the service's public code (`UnsupportedProfile`, `UnknownSymbol`, …) with Lean's text; it was a plain `VEError` with code `InvalidInput` for the rights, reports and norm-defaults routes. A soft-norms rejection keeps its soft-norms@0 code as before. No corpus record changed (the A/B corpora reach these routes only through `ve document check`, whose outputs are identical). | DRI: pending |
-| D4 | `availability` (operational) | `reports_route.run_case` without a build was `UnsupportedProfile: reports@0 needs the built ve_reports_route executable`; without the service it is `CheckerUnavailable` like every other route | DRI: pending |
+| D1 | `availability` (by design) | `diagnose`: a case without a unit, or with a unit that names no contract, gets an error row (`InvalidInput: a diagnose case names its unit`, `UnsupportedProfile: no wire contract <unit>`) where `ve_diagnose` exited 2 for the whole batch. Diagnostic only; no verdict depends on it. | DRI: signed 2026-10-04 |
+| D2 | `verdict` by the tool, unavailable on both sides | the UDHR load's `CheckerUnavailable` names the readings route and its CPU deadline (F4) and arrives after 228.6 s of CPU instead of 120 s of wall | DRI: signed 2026-10-04 |
+| D3 | `wording` (code) | a route rejection raised through the relay is the class of the service's public code (`UnsupportedProfile`, `UnknownSymbol`, …) with Lean's text; it was a plain `VEError` with code `InvalidInput` for the rights, reports and norm-defaults routes. A soft-norms rejection keeps its soft-norms@0 code as before. No corpus record changed (the A/B corpora reach these routes only through `ve document check`, whose outputs are identical). | DRI: signed 2026-10-04 |
+| D4 | `availability` (operational) | `reports_route.run_case` without a build was `UnsupportedProfile: reports@0 needs the built ve_reports_route executable`; without the service it is `CheckerUnavailable` like every other route | DRI: signed 2026-10-04 |
 
 ## Open items
 
