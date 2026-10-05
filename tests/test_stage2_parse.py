@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from ve.backends import dispatch, lean_runner, validation
+from ve.backends import dispatch, relay, validation
 from ve.environment import Environment
 from ve.errors import CheckerUnavailable, VEError
 from ve.parser import canonicalize, parse
@@ -73,7 +73,7 @@ def test_definitions_sugar_stays_with_python(monkeypatch, source):
     monkeypatch.setenv("VE_AUTHORITY", "python")
     expected = (outcome(lambda: parse(env, source)), outcome(lambda: canonicalize(env, source)))
     assert expected[0][0] == "accepted", source
-    real = lean_runner.run
+    real = relay.decide
     fake(monkeypatch, lambda case: pytest.fail("Lean was asked about a sugared source"))
     assert (outcome(lambda: parse(env, source)), outcome(lambda: canonicalize(env, source))) == expected
     with pytest.raises(VEError):
@@ -81,12 +81,12 @@ def test_definitions_sugar_stays_with_python(monkeypatch, source):
 
 
 def fake(monkeypatch, row):
-    real = lean_runner.run
+    real = relay.decide
 
     def run(mode, cases, **kw):
         return [row(case) for case in cases] if mode == "parse" else real(mode, cases, **kw)
 
-    monkeypatch.setattr(lean_runner, "run", run)
+    monkeypatch.setattr(relay, "decide", run)
     monkeypatch.setattr(validation, "_ACCEPTED", {})
     monkeypatch.setenv("VE_AUTHORITY", "lean")
 

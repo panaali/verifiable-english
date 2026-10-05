@@ -585,8 +585,8 @@ def test_the_position_row_is_the_service_schemas_case_error():
 
 
 def test_the_production_soft_reader_takes_no_code_from_an_unread_case(tmp_path):
-    """The production mirror (`ve.backends.lean.soft_error_problem`): a row named by position that names a
-    code is CheckerUnavailable, not a rejection with that code."""
+    """The production mirror (`ve.backends.lean.identity_problem`, through `read_rows`): a row named by
+    position that names a code is CheckerUnavailable, not a rejection with that code."""
     from ve.backends.lean import run_soft_case
     from ve.errors import CheckerUnavailable, VEError
     row = {"case_index": 0, "status": "error", "error": "InvalidInput: invalid vocabulary"}
@@ -650,7 +650,7 @@ def test_the_runner_reader_rejects_text_that_is_not_unicode(tmp_path):
     lone surrogate in any value or key, so none reaches a diagnostic."""
     from ve.backends.lean import run_norm_defaults_cases, run_readings_cases, run_soft_case
     from ve.backends.lean_service import _decode_json
-    from ve.errors import CheckerUnavailable, VEError
+    from ve.errors import CheckerUnavailable
     for text in ('"\\ud800"', '["a", ["\\udc00"]]', '{"\\ud800": 1}', '{"a": {"b": "x\\udfff"}}'):
         with pytest.raises(ValueError):
             _decode_json(text)
@@ -658,9 +658,10 @@ def test_the_runner_reader_rejects_text_that_is_not_unicode(tmp_path):
             _decode_json(text.encode())
     assert _decode_json('{"a": ["\\ud83d\\ude00"]}') == {"a": ["\U0001F600"]}  # a surrogate pair is text
     row = {"id": "x", "status": "error", "error": "bad \ud800", "code": "SOFT_INVALID_INPUT"}
-    with pytest.raises(VEError) as raised:
+    # Output that is not text is no answer (`read_rows`), never a rejection with the route's code.
+    with pytest.raises(CheckerUnavailable) as raised:
         run_soft_case(_soft_runner(tmp_path, row), {"id": "x"})
-    assert df.unholdable([raised.value.message, raised.value.code]) is None
+    assert df.unholdable([str(raised.value)]) is None
     for read in (run_norm_defaults_cases, run_readings_cases):
         with pytest.raises(CheckerUnavailable):
             read(_soft_runner(tmp_path, row), [{"id": "x"}])

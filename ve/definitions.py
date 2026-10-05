@@ -150,7 +150,8 @@ def _compile_lean(env: Environment, entries, version, python) -> tuple[Definitio
     Python's elaborator runs as the structural decoder and names a rejection
     both make (`backends.validation.decided`).
     """
-    from .backends.lean_runner import route_mode, run
+    from .backends.lean_runner import route_mode
+    from .backends.relay import decide
     from .backends.validation import decided, key, nary_core_definitions
     raw = _wire_entries(env, entries)
     if raw is None or type(version) is not str or not version:
@@ -160,7 +161,7 @@ def _compile_lean(env: Environment, entries, version, python) -> tuple[Definitio
     definitions = []
 
     def ask():
-        row = run(route_mode(env), [{"id": "definitions", "kind": "background", "environment": raw}])[0]
+        row = decide(route_mode(env), [{"id": "definitions", "kind": "background", "environment": raw}])[0]
         definitions[:] = [_lean_definition(env, premise) for premise, generator
                           in zip(row["premises"], row["generators"], strict=True)
                           if generator == "definitions"]
