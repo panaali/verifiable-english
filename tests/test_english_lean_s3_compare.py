@@ -3,6 +3,8 @@ from __future__ import annotations
 
 from collections import Counter
 import json
+from pathlib import Path
+import re
 
 import pytest
 
@@ -83,3 +85,24 @@ def test_committed_report_counts_are_derived_from_individual_records():
             "differences": sum(bool(row["record"]["classes"]) for row in own),
             "lean_statuses": dict(Counter(row["record"]["lean"]["status"] for row in own)),
         }
+
+
+def test_spec_report_numbers_follow_the_committed_case_records():
+    root = Path(__file__).resolve().parents[1]
+    text = (root / "docs/spec/english-lean-s3-report.md").read_text()
+    python = json.loads((root / "conformance/english-lean/s3-python-report.json").read_text())
+    lean = json.loads(C.REPORT.read_text())
+    first = re.search(r"Python agrees.*?on (\d+) of the (\d+) exact texts", text)
+    assert first is not None
+    assert tuple(map(int, first.groups())) == (python["agree"], python["fixtures"])
+    second = re.search(r"comparison has (\d+) cases, including (\d+) selected-wording variants\. "
+                       r"It records (\d+) agreements\s+and (\d+) differences", text)
+    assert second is not None
+    variants = sum(row["variant"] == "python-selection" for row in lean["rows"])
+    assert tuple(map(int, second.groups())) == (
+        lean["cases"], variants, lean["agreement"], lean["differences"])
+    for name, summary in lean["by_environment"].items():
+        line = re.search(rf"^\| `{re.escape(name)}` \| (\d+) \| (\d+) \| (\d+) \|", text, re.M)
+        assert line is not None, name
+        assert tuple(map(int, line.groups())) == (
+            summary["cases"], summary["agreement"], summary["differences"])
