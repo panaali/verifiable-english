@@ -216,6 +216,34 @@ elab "case_path_rw" : tactic => withMainContext do
     catch _ => continue
   throwError "case_path_rw: no field of the case is known"
 
+/-- Closes the goal from two hypotheses `P` and `¬ P` (or `b = true` and `b = false`) that are
+syntactically the same proposition; `contradiction` would unify across hypotheses, unfolding the
+runners. -/
+elab "contra" : tactic => withMainContext do
+  let hyps ← (← getLCtx).foldlM (init := #[]) fun acc d => do
+    if d.isImplementationDetail then return acc
+    return acc.push (d, (← instantiateMVars d.type).consumeMData)
+  for (d, t) in hyps do
+    if t.isAppOfArity ``Not 1 then
+      let p := t.appArg!.consumeMData
+      for (d', t') in hyps do
+        if t' == p then
+          let g ← getMainGoal
+          g.assign (← mkAppOptM ``absurd #[none, some (← g.getType), some d'.toExpr, some d.toExpr])
+          replaceMainGoal []
+          return
+    if let some (_, l, r) := t.eq? then
+      if r.isConstOf ``Bool.true then
+        for (d', t') in hyps do
+          if let some (_, l', r') := t'.eq? then
+            if r'.isConstOf ``Bool.false && l' == l then
+              let g ← getMainGoal
+              let ft ← mkEqTrans (← mkEqSymm d'.toExpr) d.toExpr
+              g.assign (← mkAppOptM ``absurd #[none, some (← g.getType), some ft, some (mkConst ``Bool.false_ne_true)])
+              replaceMainGoal []
+              return
+  throwError "contra: no hypothesis and its negation"
+
 /-- Fails unless the goal is `Fits c k v` with `k` a condition on the case (`Skel.onCase`). -/
 elab "on_case_goal" : tactic => withMainContext do
   let (k, _) ← fitsGoal
