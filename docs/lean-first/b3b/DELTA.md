@@ -221,7 +221,13 @@ the file was restored after each (`git status` clean).
 
 ## Rest of the gate (5.1)
 
-- **Suite (item 1):** the full suite at `3819af3e` (this file's later commits change documentation only), in a
+- **Suite (item 1), review round:** the full suite at `ce1c07f5` (the fixes; this file's later commit changes
+  documentation only), in this worktree with its builds, four chunks of `-n 8` with `VE_NATIVE_PREBUILT=1`:
+  **9,143 passed, 7 skipped, 0 failed** (1,761 + 4,430 + 1,747 + 1,205), `test_lean_transitive_axiom_allowlist`
+  and `tests/test_readings_lean_sharing.py` among the passes; `lake build` and `python lean/audit.py` pass (3,064
+  theorems, standard axioms only). Test changes: `tests/test_readings_lean_sharing.py` (6 IDs) and
+  `test_every_review_round_gave_identical_answers`, pinned in `tools/gate-collection.json`.
+- **Suite (item 1), before the review:** the full suite at `3819af3e` (this file's later commits change documentation only), in a
   clean worktree with its own builds, four chunks of `-n 8` with the gate's pytest options and environment
   (`VE_NATIVE_PREBUILT`, `VE_LEAN_PREBUILT`, `VE_RUST_PREBUILT`, `VE_RUST_BINARY`, no plugin autoload): **9,136
   passed, 6 skipped, 1 failed**. The failure, `test_rust_reproducible.py::test_a_copy_of_the_workspace_elsewhere_builds_the_same_binary`,
