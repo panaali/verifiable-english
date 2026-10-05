@@ -25,6 +25,15 @@ def test_fixture_pack_matches_spec_wordings():
         "joke": "J", "service": "S", "person": "P", "number": "N",
         "principal": "A", "resource": "R",
     }
+    assert [(sense["word"], sense["index"], sense["gloss"])
+            for sense in pack["senses"]] == [
+        ("funny", 1, "amusing"), ("funny", 2, "strange"),
+        ("odd", 1, "strange"), ("odd", 2, "uneven"),
+        ("tells", 1, "says aloud"), ("deployed", 1, "live"),
+        ("reviewed", 1, "checked"), ("reviewed", 2, "rated"),
+        ("access", 1, "read"),
+    ]
+    assert pack["senses"][-1]["negative"] == "{0} may not access {1}"
 
 
 def test_loader_preserves_untrusted_bytes_for_lean(tmp_path):
@@ -61,7 +70,7 @@ def test_review_requires_matching_identity_and_complete_record(tmp_path, monkeyp
     assert review_status("fixtures@1", "id-from-lean") == "unreviewed"
 
 
-@pytest.mark.parametrize("name", ["", ".", "..", "../other", "a/b", "a\\b"])
+@pytest.mark.parametrize("name", ["", ".", "..", "../other", "a/b", "a\\b", 7, True, None])
 def test_bundled_pack_rejects_path_escape(name):
     with pytest.raises(VEError, match="Invalid sense pack name"):
         bundled_pack(name)
