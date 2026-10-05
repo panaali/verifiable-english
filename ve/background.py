@@ -203,6 +203,13 @@ def _background_python(env) -> tuple[Premise, ...]:
                  for generator, (make, _) in _background_hooks(env) for formula in make(env))
 
 
+# Lean's Background answers by request (mode and case text). A service request is a pure function of
+# its text, so the same request needs no second call: the agent-policy harness asked for the same few
+# environments' Background 12,199 times (lean-first batch 2, F3).
+_LEAN_BACKGROUND: dict[tuple[str, str], dict] = {}
+_LEAN_BACKGROUND_LIMIT = 256
+
+
 @semantic_entry("definitions.elaborate")
 def background(env) -> tuple[Premise, ...]:
     """Environment premises from the selected authority, with the legacy type."""
@@ -218,8 +225,15 @@ def background(env) -> tuple[Premise, ...]:
             # The frozen v0 and v0.1 envelopes have no generated Background: their
             # Lean certificate runners bind the case premises alone.
             return ()
+        import json
         request = {**case, "environment": route_environment(env)}
-        row = decide(route_mode(env), [request])[0]
+        # The JSON value of the request: key order aside, the text the service reads.
+        key = (route_mode(env), json.dumps(request, ensure_ascii=False, sort_keys=True, separators=(",", ":")))
+        if key not in _LEAN_BACKGROUND:
+            if len(_LEAN_BACKGROUND) >= _LEAN_BACKGROUND_LIMIT:
+                _LEAN_BACKGROUND.clear()
+            _LEAN_BACKGROUND[key] = decide(key[0], [request])[0]
+        row = _LEAN_BACKGROUND[key]
         if len(row["premises"]) != len(row["generators"]):
             from .backends.lean_service import CheckerUnavailable
             raise CheckerUnavailable("CheckerUnavailable: malformed Lean Background result")

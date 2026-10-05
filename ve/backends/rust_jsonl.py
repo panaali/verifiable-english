@@ -91,9 +91,9 @@ class _Checker:
         with selectors.DefaultSelector() as selector:
             selector.register(self.process.stdin.fileno(), selectors.EVENT_WRITE)
             while view:
-                if not selector.select(max(deadline - time.monotonic(), 0)):
-                    if time.monotonic() >= deadline:
-                        raise subprocess.TimeoutExpired(self.argv, timeout)
+                if time.monotonic() >= deadline:
+                    raise subprocess.TimeoutExpired(self.argv, timeout)
+                if not selector.select(deadline - time.monotonic()):
                     continue
                 try:
                     view = view[os.write(self.process.stdin.fileno(), view):]
@@ -106,9 +106,9 @@ class _Checker:
             while (end := self.buffer.find(b"\n")) < 0:
                 if len(self.buffer) > MAX_LINE_BYTES:
                     raise OSError("oversized Rust JSONL response")
-                if not selector.select(max(deadline - time.monotonic(), 0)):
-                    if time.monotonic() >= deadline:
-                        raise subprocess.TimeoutExpired(self.argv, timeout)
+                if time.monotonic() >= deadline:
+                    raise subprocess.TimeoutExpired(self.argv, timeout)
+                if not selector.select(deadline - time.monotonic()):
                     continue
                 try:
                     chunk = os.read(self.process.stdout.fileno(), 1 << 20)

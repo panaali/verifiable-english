@@ -230,3 +230,24 @@ def test_a_rust_process_that_writes_two_records_is_no_answer(rust, tmp_path):
         rust_jsonl.run(_rust_case(), executable=binary, timeout=HANG_TIMEOUT,
                        expected_sha256=hashlib.sha256(binary.read_bytes()).hexdigest())
     assert not _checkers()
+
+
+# -- F3: the same Background request is asked once
+
+def test_lean_background_is_asked_once_per_request(monkeypatch):
+    from ve import background as background_module
+    from ve.backends import relay
+    from ve.environment import Environment
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    monkeypatch.delenv("VE_AUTHORITY_OVERRIDES", raising=False)
+    monkeypatch.setattr(background_module, "_LEAN_BACKGROUND", {})
+    described = json.loads(json.dumps(POLICY))
+    sort = next(iter(described["vocabulary"]["sorts"].values()))
+    sort["description"] = "another description"
+    env, same, other = Environment(POLICY), Environment(POLICY), Environment(described)
+    asked, decide = [], relay.decide
+    monkeypatch.setattr(relay, "decide", lambda mode, cases, **kw: (asked.append(mode), decide(mode, cases, **kw))[1])
+    first = background_module.background(env)
+    assert background_module.background(env) == first and background_module.background(same) == first
+    assert asked == ["norms"] and first
+    assert background_module.background(other) == first and asked == ["norms", "norms"]
