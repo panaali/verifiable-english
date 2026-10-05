@@ -1795,6 +1795,7 @@
   "tests/test_english_grammar_gen.py::test_a_new_english_grammar_lean_file_must_be_classified",
   "tests/test_english_grammar_gen.py::test_a_repeated_tag_is_refused",
   "tests/test_english_grammar_gen.py::test_act_texts_follow_the_export_encoding",
+  "tests/test_english_grammar_gen.py::test_actions_version_has_one_literal_and_it_is_generated",
   "tests/test_english_grammar_gen.py::test_copy_passes",
   "tests/test_english_grammar_gen.py::test_every_lean_file_of_the_two_directories_is_classified",
   "tests/test_english_grammar_gen.py::test_every_node_replaced_is_refused_with_the_source_error_only",

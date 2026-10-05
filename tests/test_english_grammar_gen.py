@@ -222,6 +222,18 @@ def test_every_lean_file_of_the_two_directories_is_classified():
     assert found == classified
 
 
+def test_actions_version_has_one_literal_and_it_is_generated():
+    """Review B1: `Actions.lean` held `actionsVersion := "1"` beside the generated "3". The only string literal
+    given to an `actionsVersion` is the generated module's; every other definition names it."""
+    import re
+    literal = re.compile(r'\bactionsVersion\s*:\s*String\s*:=\s*"')
+    found = sorted(str(path.relative_to(ROOT)) for path in (ROOT / "lean").rglob("*.lean")
+                   if ".lake" not in path.parts and literal.search(path.read_text()))
+    assert found == [G.VERSION_TARGET]
+    actions = (ROOT / "lean/VE/EnglishGrammar/Actions.lean").read_text()
+    assert "def actionsVersion : String := Fixed.actionsVersion" in actions
+
+
 def test_the_version_module_follows_the_lock(tree):
     lock = json.loads((tree / G.LOCK).read_bytes())
     (tree / G.LOCK).write_bytes(G.render_lock("7", lock["files"]))

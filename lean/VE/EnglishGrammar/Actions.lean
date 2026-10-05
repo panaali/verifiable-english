@@ -1,4 +1,5 @@
 import VE.EnglishGrammar.Rules
+import VE.EnglishGrammar.Fixed.Version
 import VE.Grammar.Meaning
 
 /-! The action library of the base profile (docs/spec/english-lean-s2.md 2.7, 2.8 and 5.2).
@@ -455,7 +456,8 @@ def lexActs (E : Env) (L : Lexicon) : Array (Action sig) :=
 
 def acts (E : Env) (L : Lexicon) : Array (Action sig) := fixedActs ++ lexActs E L
 
-/-- The version of the trusted definitions of the English instance (spec 2.9, `LOCK.json`). -/
-def actionsVersion : String := "1"
+/-- The version of the trusted definitions of the English instance (spec 2.9, 5.2): the one constant
+`Fixed.actionsVersion` that `tools/english_grammar_gen.py --write` renders from `LOCK.json`, never a copy. -/
+def actionsVersion : String := Fixed.actionsVersion
 
 end VE.EnglishGrammar
