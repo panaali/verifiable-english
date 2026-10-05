@@ -9,7 +9,6 @@ import json
 import os
 from pathlib import Path
 import re
-import shutil
 import subprocess
 import sys
 import threading
@@ -19,6 +18,7 @@ import pytest
 from hypothesis import HealthCheck, assume, given, settings, strategies as st
 
 from subprocesses import HANG_TIMEOUT
+from tests.lean_build import lean_build
 from ve.backends.lean_service import (MAX_CASES, MAX_LINE_BYTES, CheckerUnavailable, LeanService,
                                       LeanServicePool, MODES, case_digest, case_texts,
                                       executable_sha256)
@@ -41,14 +41,7 @@ OPEN_ROUTE_MODES = ("soft-norms", "rights", "speech-acts", "reports", "alternati
 
 @pytest.fixture(scope="session")
 def service_executable():
-    lake = shutil.which("lake")
-    if lake is None and not (BIN / "ve_service").exists():
-        pytest.skip("lake is not available")
-    if lake is not None and not os.environ.get("VE_LEAN_PREBUILT"):
-        build = subprocess.run([lake, "build", "ve_service", "ve_conformance", "ve_norms_route"],
-                               cwd=ROOT / "lean", capture_output=True, text=True, timeout=HANG_TIMEOUT)
-        assert build.returncode == 0, build.stdout + build.stderr
-    return BIN / "ve_service"
+    return lean_build("ve_service", "ve_conformance", "ve_english_run") / "ve_service"
 
 
 def raw_session(executable, lines: bytes, timeout=120):
