@@ -1951,12 +1951,15 @@
    "D[V]": [
     "VE.Discourse.Run.admittedJson",
     "VE.Discourse.Run.carrierText",
+    "VE.Discourse.Run.choicesJson",
     "VE.Discourse.Run.encodeAdmission",
+    "VE.Discourse.Run.jointFields",
     "VE.Discourse.Run.targetJson"
    ],
    "G[V]": [
     "VE.Discourse.Run.DiscourseAdmissionAnswer",
     "VE.Discourse.Run.fuelBudget",
+    "VE.Discourse.Run.jointJson",
     "VE.Discourse.Run.loadCase",
     "VE.Discourse.Run.main",
     "VE.Discourse.Run.runCase",
