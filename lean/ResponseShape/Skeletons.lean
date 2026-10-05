@@ -28,13 +28,15 @@ elab "define_row_skeletons" : command => do
     | .error e => throwError "mode {m.name}: {e}"
     | .ok (_, recursive@(_ :: _)) => throwError "mode {m.name}: recursive skeleton through {recursive}"
     | .ok (k, []) =>
+      let name := `ResponseShape.Skeletons ++ ctor
       liftCoreM <| addAndCompile <| .defnDecl {
-        name := `ResponseShape.Skeletons ++ ctor
+        name := name
         levelParams := []
         type := mkConst ``Skel
         value := toExpr k
         hints := .abbrev
         safety := .safe }
+      setReducibleAttribute name
       seen := ctor :: seen
   for c in ctors do
     unless seen.contains c do throwError "VE.Service.modes misses the mode {c}"

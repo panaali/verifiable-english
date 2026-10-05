@@ -34,7 +34,7 @@ macro "elems_split" : tactic =>
 
 /-- Literal conditions of a field list (`"".isEmpty`). -/
 macro "lits_simp" : tactic =>
-  `(tactic|simp only [isEmpty_empty, ↓reduceIte, Bool.false_eq_true, eq_self_iff_true, if_true, if_false, List.cons_append, List.nil_append, List.append_nil])
+  `(tactic|simp only [isEmpty_empty, setObjVal_mkObj, ↓reduceIte, Bool.false_eq_true, eq_self_iff_true, if_true, if_false, List.cons_append, List.nil_append, List.append_nil])
 
 /-- A hypothesis `(match x with ...) = some v` of a `filterMap` element: one case per branch. -/
 macro "elem_cases" : tactic =>
