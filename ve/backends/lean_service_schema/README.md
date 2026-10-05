@@ -30,6 +30,18 @@ to the service, which the tests check on its outputs (`ve_response_decode`'s
 `invariants`). Examples are counts regenerated from the environment, graph unfoldings,
 dependency orders, target lists and their sorts, and the relations between result fields.
 
+**Every answer is closed** (lf-1 review B). A mode's `ok` rows list each field its Lean
+encoder writes, required (or conditional, with the condition the encoder uses), typed to
+its leaves, with `additionalProperties: false`; nested objects are closed too, except maps
+keyed by request names (`additionalProperties` is then a schema). A statement-layer route
+(the batch 1 modes) answers a case on its own path with its own rows and delegates every
+other case unchanged: the `x-select` on the request is the route's dispatch test
+(`usesSoftPath`, `usesRightsPath`, ...) and the delegate's row is `$ref`'d. No caller reads a
+field the schema did not check, so a dropped, emptied or retyped field is
+`CheckerUnavailable`, never a `KeyError` in the caller. `tests/test_route_row_schemas.py`
+checks the route modes on genuine answers (`tests/data/route_rows/`) and on every drop,
+empty and retype of every field, against `ve_response_decode` (`ResponseDecode.routeRow`).
+
 `ve/backends/service_schema.py` compiles these files; `ve/backends/lean_service.py`
 has no other shape checks. `lean/ResponseDecode.lean` (`ve_response_decode`, check `decode`)
 decodes the same responses with the Lean decoders, and `tests/test_lean_service_schema.py`

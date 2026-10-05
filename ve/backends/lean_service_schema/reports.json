@@ -1,7 +1,172 @@
 {
   "$id": "reports.json",
-  "$comment": "Mode reports: Reports.Run.runCaseReported (ve_reports_route), a statement-layer route (docs/LEAN-FIRST-PLAN.md, batch 1).",
-  "row": {
-    "$ref": "common.json#/$defs/route_row"
+  "$comment": "Mode reports: Reports.Run.runCaseReported (lean/VE/Attribution/Run.lean, formerly ve_reports_route). A case on the reports path (usesReportsPath) is answered by the reports runner; every other case is delegated unchanged to the route mode's runner.",
+  "row": {"x-select": [
+    {"when": {"$ref": "#/$defs/reports_path"}, "then": {"anyOf": [
+      {"$ref": "common.json#/$defs/case_error"},
+      {"$ref": "common.json#/$defs/route_path_error"},
+      {"x-select": [
+        {"when": {"$ref": "#/$defs/kind/admission"}, "then": {"$ref": "#/$defs/admission"}},
+        {"when": {"$ref": "#/$defs/kind/reports-elaborate"}, "then": {"$ref": "#/$defs/elaborate"}},
+        {"when": {"$ref": "#/$defs/kind/reports-certificate"}, "then": {"$ref": "#/$defs/certificate"}},
+        {"when": {"$ref": "#/$defs/kind/reports-countermodel"}, "then": {"$ref": "#/$defs/countermodel"}},
+        {"when": {"$ref": "#/$defs/kind/reports-scoped"}, "then": {"$ref": "#/$defs/scoped"}},
+        {"when": {"$ref": "#/$defs/kind/reports-status"}, "then": {"$ref": "#/$defs/status"}}]}]}},
+    {"when": true, "then": {"$ref": "route.json#/row"}}]},
+  "$defs": {
+    "reports_path": {"$comment": "Reports.Run.usesReportsPath: the reports@0 profile or a reports-* kind.",
+      "type": "object", "anyOf": [
+        {"required": ["environment"], "properties": {"environment": {
+          "type": "object", "required": ["profiles"], "properties": {"profiles": {
+            "type": "array", "contains": {"const": "reports@0"}}}}}},
+        {"required": ["kind"], "properties": {"kind": {"type": "string", "pattern": "reports-.*"}}}]},
+    "kind": {
+      "admission": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "admission"}}},
+      "reports-elaborate": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "reports-elaborate"}}},
+      "reports-certificate": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "reports-certificate"}}},
+      "reports-countermodel": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "reports-countermodel"}}},
+      "reports-scoped": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "reports-scoped"}}},
+      "reports-status": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "reports-status"}}}},
+    "report_kind": {"$comment": "Route.Admission.renderKind of Attribution.Bridge.kindOf: a report's attributed kind (acts says, believes, wants, intends) or an assessment's hedged kind (could, likely), over an asserted, norm or definition body. Content depth is at most 16 (Wire.decodeContent).",
+      "x-fuel": {"counter": "report_kind", "limit": 32},
+      "anyOf": [
+        {"enum": ["asserted", "norm", "definition"]},
+        {"type": "array", "x-tagged": {
+          "attributed": [{"$ref": "common.json#/$defs/text"}, {"enum": ["says", "believes", "wants", "intends"]},
+                         {"$ref": "#/$defs/report_kind"}],
+          "hedged": [{"enum": ["could", "likely"]}, {"$ref": "#/$defs/report_kind"}]}}]},
+    "envelope": {"$comment": "Reports.Run.envelopeJson: the environment and document identities a certificate's envelope must name.",
+      "type": "object", "required": ["environment_id", "document_id"], "additionalProperties": false,
+      "properties": {"environment_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+                     "document_id": {"$ref": "common.json#/$defs/hex64_or_empty"}}},
+    "key": {"$comment": "Attribution.Wire.generated: a report key or an assessment key.",
+      "anyOf": [
+        {"type": "object", "required": ["act", "holder_sort", "context", "complement_id"], "additionalProperties": false,
+         "properties": {"act": {"enum": ["says", "believes", "wants", "intends"]}, "holder_sort": {"type": "string"},
+                        "context": {"type": "string"}, "complement_id": {"$ref": "common.json#/$defs/hex64_or_empty"}}},
+        {"type": "object", "required": ["judgment", "assessment", "content_id"], "additionalProperties": false,
+         "properties": {"judgment": {"enum": ["may", "probably"]}, "assessment": {"type": "string"},
+                        "content_id": {"$ref": "common.json#/$defs/hex64_or_empty"}}}]},
+    "status_word": {"enum": ["UNFORMALISED", "OPEN", "UNKNOWN", "LABELLED", "CHECKED"]},
+    "verdict": {"$comment": "Reports.Run.scopedVerdict: one scoped check's verdict; UNKNOWN for unreplayable payloads has no scope.",
+      "anyOf": [
+        {"type": "object", "required": ["id", "status", "detail"], "additionalProperties": false,
+         "properties": {"id": {"type": "string"}, "status": {"const": "UNKNOWN"}, "detail": {"const": "payloads"}}},
+        {"type": "object", "required": ["id", "environment_id", "background", "status"], "additionalProperties": false,
+         "properties": {"id": {"type": "string"}, "environment_id": {"type": "string"},
+                        "background": {"$ref": "common.json#/$defs/nat"},
+                        "status": {"enum": ["FOLLOWS", "PAYLOADS INCONSISTENT", "DOES NOT FOLLOW"]}}},
+        {"type": "object", "required": ["id", "environment_id", "background", "status", "detail"],
+         "additionalProperties": false,
+         "properties": {"id": {"type": "string"}, "environment_id": {"type": "string"},
+                        "background": {"$ref": "common.json#/$defs/nat"}, "status": {"const": "UNKNOWN"},
+                        "detail": {"enum": ["witness does not refute",
+                                            "witness replay over a quoted package's scope is not implemented",
+                                            "envelope", "certificate does not replay", "no evidence"]}}}]},
+    "admission": {"$comment": "Reports.Run.encodeAdmitted: W2's admission answer over the reports document, its envelope, and the kinds of the report, assessment and negated units.",
+      "type": "object", "required": ["id", "status", "admitted", "report", "report_id", "envelope", "kinds"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "status": {"const": "ok"},
+        "admitted": {"const": true},
+        "report": {"$ref": "common.json#/$defs/bound_report"},
+        "report_id": {"$ref": "common.json#/$defs/hex64"},
+        "envelope": {"$ref": "#/$defs/envelope"},
+        "kinds": {"type": "array", "items": {"$ref": "#/$defs/report_kind"}}}},
+    "elaborate": {"$comment": "Reports.Run.elaborated: E_reports' identity, the generated predicates with their keys, the premises, the open assessment terms with their records, the bridge formulas, the content identities, the envelope and the warnings.",
+      "type": "object", "required": ["id", "status", "environment_reports_id", "keys", "premises", "open_terms",
+        "bridge_formulas", "content_ids", "envelope", "warnings"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "status": {"const": "ok"},
+        "environment_reports_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+        "keys": {"type": "array", "items": {
+          "type": "object", "required": ["name", "arguments", "key"], "additionalProperties": false,
+          "properties": {"name": {"type": "string", "pattern": "reports__.+"},
+                         "arguments": {"$ref": "common.json#/$defs/strings"}, "key": {"$ref": "#/$defs/key"}}}},
+        "premises": {"type": "array", "items": {"$ref": "common.json#/$defs/labelled",
+          "properties": {"label": {"pattern": "(report|assessment):.+"}}}},
+        "open_terms": {"type": "array", "items": {
+          "type": "object", "required": ["name", "arguments"], "additionalProperties": false,
+          "properties": {
+            "name": {"type": "string"},
+            "arguments": {"$ref": "common.json#/$defs/strings"},
+            "record": {"type": "object", "required": ["id", "context", "decided_by", "necessary", "sufficient", "factors",
+                "precedents", "jurisdiction", "version"], "additionalProperties": false,
+              "properties": {
+                "id": {"type": "string"}, "context": {"type": "string"}, "decided_by": {"type": "string"},
+                "necessary": {"$ref": "common.json#/$defs/generated_formulas"},
+                "sufficient": {"$ref": "common.json#/$defs/generated_formulas"},
+                "factors": {"$ref": "common.json#/$defs/strings"},
+                "precedents": {"$ref": "common.json#/$defs/strings"},
+                "jurisdiction": {"type": "string"},
+                "version": {"$ref": "common.json#/$defs/nat"}}}}}},
+        "bridge_formulas": {"type": "array", "items": {
+          "type": "object", "required": ["id", "unit", "depth"], "additionalProperties": false,
+          "properties": {"id": {"type": "string"}, "unit": {"type": "string"}, "depth": {"$ref": "common.json#/$defs/nat"},
+                         "ast": {"$ref": "common.json#/$defs/generated_formula"}}}},
+        "content_ids": {"type": "array", "items": {
+          "type": "object", "required": ["unit", "content_id"], "additionalProperties": false,
+          "properties": {"unit": {"type": "string"}, "content_id": {"$ref": "common.json#/$defs/hex64_or_empty"}}}},
+        "envelope": {"$ref": "#/$defs/envelope"},
+        "warnings": {"type": "array", "items": {"type": "string", "pattern": "unreviewed act .+ in .+"}}}},
+    "certificate": {"$comment": "Reports.Run.runCertificate: the certificate's verdict with both bindings.",
+      "type": "object", "required": ["id", "status", "valid", "environment_reports_id", "envelope", "bindings"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "status": {"const": "ok"},
+        "valid": {"type": "boolean"},
+        "environment_reports_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+        "envelope": {"$ref": "#/$defs/envelope"},
+        "bindings": {"type": "object", "required": ["inner", "envelope"], "additionalProperties": false,
+          "properties": {"inner": {"type": "boolean"}, "envelope": {"type": "boolean"}}}}},
+    "countermodel": {"$comment": "Reports.Run.countermodelAnswer: whether the model refutes, and each generated predicate's table.",
+      "type": "object", "required": ["id", "status", "refutes", "source_model"], "additionalProperties": false,
+      "properties": {
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "status": {"const": "ok"},
+        "refutes": {"type": "boolean"},
+        "source_model": {"type": "array", "items": {
+          "type": "object", "required": ["name", "key", "holds_of"], "additionalProperties": false,
+          "properties": {"name": {"type": "string"}, "key": {"$ref": "#/$defs/key"},
+                         "holds_of": {"$ref": "common.json#/$defs/strings"}}}}}},
+    "envelope_binding": {"type": "object", "required": ["envelope"], "additionalProperties": false,
+      "properties": {"envelope": {"type": "boolean"}}},
+    "scoped": {"$comment": "Reports.Run.runCaseReported reports-scoped: one verdict per scoped check.",
+      "type": "object", "required": ["id", "status", "scoped", "envelope", "bindings"], "additionalProperties": false,
+      "properties": {
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "status": {"const": "ok"},
+        "scoped": {"type": "array", "items": {"$ref": "#/$defs/verdict"}},
+        "envelope": {"$ref": "#/$defs/envelope"},
+        "bindings": {"$ref": "#/$defs/envelope_binding"}}},
+    "status": {"$comment": "Reports.Run.runStatus: every unit's status with its nested results, the scoped verdicts and the document's status.",
+      "type": "object", "required": ["id", "status", "units", "scoped", "document_status", "envelope", "bindings"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "status": {"const": "ok"},
+        "units": {"type": "array", "items": {
+          "type": "object", "required": ["id", "status", "nested"], "additionalProperties": false,
+          "properties": {
+            "id": {"type": "string"},
+            "status": {"$ref": "#/$defs/status_word"},
+            "nested": {"type": "array", "items": {"anyOf": [
+              {"type": "object", "required": ["item", "path", "name", "status"], "additionalProperties": false,
+               "properties": {"item": {"const": "assessment"}, "path": {"type": "string", "pattern": "(1(\\.1)*)?"},
+                              "name": {"type": "string"}, "status": {"const": "OPEN"}}},
+              {"type": "object", "required": ["item", "path", "act", "status"], "additionalProperties": false,
+               "properties": {"item": {"const": "act"}, "path": {"type": "string", "pattern": "([12](\\.[12])*)?"},
+                              "act": {"type": "string"}, "status": {"const": "LABELLED"}}},
+              {"type": "object", "required": ["item", "path", "reason", "status"], "additionalProperties": false,
+               "properties": {"item": {"const": "unformalised"}, "path": {"type": "string", "pattern": "([12](\\.[12])*)?"},
+                              "reason": {"type": "string"}, "status": {"const": "UNFORMALISED"}}}]}}}}},
+        "scoped": {"type": "array", "items": {"$ref": "#/$defs/verdict"}},
+        "document_status": {"$ref": "#/$defs/status_word"},
+        "envelope": {"$ref": "#/$defs/envelope"},
+        "bindings": {"$ref": "#/$defs/envelope_binding"}}}
   }
 }
