@@ -228,6 +228,7 @@
       "lean/VE/Route/Checks.lean": "executable regressions (#eval checks); not on any runner path",
       "lean/ResponseDecode.lean": "test-only service response oracle; no executable production path or theorem imports it",
       "lean/VE/EnglishGrammar/ReadExamples.lean": "fixtures only: #guard checks of docs/spec/english-lean-s2.md section 8 build environment JSON for Env.decode; no runner path",
+      "lean/VE/Senses/Project.lean": "senses projection (docs/spec/senses.md 2.5): builds the projected environment JSON from the validated environment JSON; no decoder, no runner or service path yet (B6)",
       "lean/ResponseShape.lean": "the service's response shapes (lib ResponseShape, outside the trusted VE tree): renders the client's schema files and checks responses for ve_response_decode; no runner, executable production path or theorem imports it",
       "lean/ResponseShape/Schemas.lean": "collects the response shapes and renders the client's schema files; test tooling beside lean/ResponseShape.lean, not on any runner path",
       "lean/ResponseShape/Schemas/Norms.lean": "the norms mode's response shape; reads the case environment only to call Norms.Plain.layered beside its path selector (test tooling, not on any runner path)",
