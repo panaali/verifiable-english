@@ -1199,7 +1199,7 @@ class EnglishParser:
             match = re.compile(r'-?(?:0|[1-9][0-9]*)(?![0-9])').match(text, position)
             if match:
                 position = match.end()
-                return ast.Num(int(match.group()))
+                return ast.Num(ast.numeral_value(match.group()))
             if text.startswith('[', position):
                 position += 1
                 left = term()

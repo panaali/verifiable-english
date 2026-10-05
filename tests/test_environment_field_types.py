@@ -25,6 +25,7 @@ import subprocess
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
 from ve.backends.diagnostics import checker_error
 from ve.backends.relay import rejection
 from ve.environment import Environment
@@ -280,7 +281,7 @@ def lean_route_rows(route, environments):
             pytest.skip(f"{binary} has not been built")
         batch = [{"id": str(i), "environment": e, **case} for i, e in enumerate(environments)]
         done = subprocess.run([str(BIN / binary), "-"], input=json.dumps(batch), text=True,
-                              capture_output=True, timeout=1200)
+                              capture_output=True, timeout=HANG_TIMEOUT)
         assert done.returncode in (0, 1) and "PANIC" not in done.stderr, done.stderr[-2000:]
         rows = json.loads(done.stdout)
     assert [row["id"] for row in rows] == [str(i) for i in range(len(environments))]
@@ -512,7 +513,7 @@ def _block_matrix(binary, case, base, cases):
             python.append(_same_diagnostic(exc.to_dict()))
         batch.append({"id": name, "environment": data, **case["row"]})
     done = subprocess.run([str(BIN / binary), "-"], input=json.dumps(batch), text=True, capture_output=True,
-                          timeout=600)
+                          timeout=HANG_TIMEOUT)
     assert done.returncode in (0, 1), done.stderr[-2000:]
     rows = json.loads(done.stdout)
     assert [row["id"] for row in rows] == names
@@ -582,7 +583,7 @@ def test_every_lean_route_rejects_every_wrong_type_without_panicking(binary):
     batch = [{"id": f"{base}-{field}-{kind}", "environment": data, **LEAN_ROUTES[binary]}
              for base, field, kind, data in wrong_typed() if kind != "null"]
     done = subprocess.run([str(BIN / binary), "-"], input=json.dumps(batch).encode(), capture_output=True,
-                          timeout=600)
+                          timeout=HANG_TIMEOUT)
     assert done.returncode == 1 and b"PANIC" not in done.stderr, done.stderr[-2000:]
     rows = json.loads(done.stdout)
     assert [row["id"] for row in rows] == [case["id"] for case in batch]
@@ -598,14 +599,14 @@ def test_rust_rejects_every_wrong_type_without_crashing(rust_executable):
         case = {"id": f"{base}-{field}-{kind}", "kind": "check", "environment": data, "ast": ["top"]}
         (nulls if kind == "null" else cases).append(case)
     done = subprocess.run([str(rust_executable), "conformance", "-"], input=json.dumps(cases),
-                          capture_output=True, text=True, timeout=600)
+                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert done.returncode == 1, done.stderr
     rows = json.loads(done.stdout)
     assert [row["id"] for row in rows] == [case["id"] for case in cases]
     assert [row["id"] for row in rows if row["status"] != "error"] == []
     for case in nulls:
         done = subprocess.run([str(rust_executable), "conformance", "-"], input=json.dumps([case]),
-                              capture_output=True, text=True, timeout=60)
+                              capture_output=True, text=True, timeout=HANG_TIMEOUT)
         assert done.returncode == 2 and "null" in done.stderr.lower(), (case["id"], done.stderr)
 
 
@@ -620,7 +621,7 @@ def test_every_lean_route_reads_every_nested_value_without_panicking(binary):
              for base in sorted(NESTED_BASES) for path in _paths(NESTED_BASES[base]())
              for kind, value in NESTED_KINDS.items()]
     done = subprocess.run([str(BIN / binary), "-"], input=json.dumps(batch).encode(), capture_output=True,
-                          timeout=600)
+                          timeout=HANG_TIMEOUT)
     assert done.returncode in (0, 1) and b"PANIC" not in done.stderr, done.stderr[-2000:]
     rows = json.loads(done.stdout)
     assert [row["id"] for row in rows] == [case["id"] for case in batch]
@@ -636,7 +637,7 @@ def test_rust_reads_every_nested_value_of_every_kind_without_crashing(rust_execu
              for base in sorted(NESTED_BASES) for path in _paths(NESTED_BASES[base]())
              for kind, value in NESTED_KINDS.items()]
     done = subprocess.run([str(rust_executable), "conformance", "-"], input=json.dumps(cases),
-                          capture_output=True, text=True, timeout=600)
+                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert done.returncode in (0, 1) and "panicked" not in done.stderr, done.stderr[-2000:]
     rows = json.loads(done.stdout)
     assert [row["id"] for row in rows] == [case["id"] for case in cases]
@@ -655,6 +656,6 @@ def rust_executable():
         pytest.skip("cargo is required for the Rust decoder")
     built = subprocess.run([cargo, "build", "-j", "2", "--locked", "--release",
                             "--manifest-path", str(ROOT / "rust/Cargo.toml")],
-                           cwd=ROOT, env=rust_build.cargo_env(), capture_output=True, text=True, timeout=600)
+                           cwd=ROOT, env=rust_build.cargo_env(), capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert built.returncode == 0, built.stdout + built.stderr
     return RUST

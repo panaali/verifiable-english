@@ -17,6 +17,7 @@ import re
 from contextlib import contextmanager
 from pathlib import Path
 
+from .ast import decimal_value
 from .backends.lean import run_readings_cases
 from .errors import CheckerUnavailable, VEError
 from .readings_s1 import KEY_FIELDS, KEY_OPTIONAL, Decoded, Document, content_bearing, decode_key, wire
@@ -141,7 +142,7 @@ def parse_finding(text):
     m = _FINDING.fullmatch(text)
     if m is None or (m[5] is not None) != (m[1] == "SeparatedByDecisionOnly"):
         return None
-    return m[1], m[2], int(m[3]), int(m[4])
+    return m[1], m[2], decimal_value(m[3]), decimal_value(m[4])
 
 
 def _bind(row, document):

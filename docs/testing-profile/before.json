@@ -1,0 +1,1223 @@
+{
+ "tests": 8647,
+ "total_test_seconds": 14461.078551269795,
+ "suite_cpu": 19091.337863,
+ "self_cpu": 6736.509400000004,
+ "child_cpu": 12204.484316999999,
+ "slowest_tests": [
+  [
+   1279.152317617998,
+   "tests/test_english_evidence.py::test_english_mixed_merge_smoke"
+  ],
+  [
+   1008.0450034510031,
+   "tests/test_asimov_extended.py::test_rerun_equals_the_committed_results"
+  ],
+  [
+   948.1592784339955,
+   "tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_contract_and_soft_test_input"
+  ],
+  [
+   476.6068803290036,
+   "tests/test_readings_s1_differential.py::test_generated_sets_agree_with_lean"
+  ],
+  [
+   435.65434038800595,
+   "tests/test_english.py::test_identity_fixtures_are_unchanged_after_english_roundtrip"
+  ],
+  [
+   371.79211433200544,
+   "tests/test_lean_conformance.py::test_lean_transitive_axiom_allowlist"
+  ],
+  [
+   360.5701099350008,
+   "tests/test_rights_three_way.py::test_rights_differential_on_one_thousand_generated_documents"
+  ],
+  [
+   336.76239312100006,
+   "tests/test_bluedot_grant.py::test_document_coverage_and_premise_limit"
+  ],
+  [
+   244.1284278629937,
+   "tests/test_p1_amendment13.py::test_refresh_dev_is_read_only_and_missing_cache_fails_closed"
+  ],
+  [
+   243.44829743299852,
+   "tests/test_soft_review_regressions.py::test_generated_soft_conformance_is_part_of_suite"
+  ],
+  [
+   225.03056116300286,
+   "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget"
+  ],
+  [
+   168.26744736699766,
+   "tests/test_safety_framework.py::test_rerun_equals_committed_results"
+  ],
+  [
+   162.77348656100366,
+   "tests/test_norm_defaults_three_way.py::test_spec8_differentials"
+  ],
+  [
+   159.78732078999747,
+   "tests/test_order.py::test_lean_differential_corpus"
+  ],
+  [
+   152.27725172100327,
+   "tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results"
+  ],
+  [
+   140.67204500399748,
+   "tests/test_soft_review_regressions.py::test_rejection_fixtures_and_generated_soft_inputs_share_codes"
+  ],
+  [
+   139.81364647499868,
+   "tests/test_p1_amendment15.py::test_runner_preserves_finished_trajectories_initials_and_resumes_without_repurchase"
+  ],
+  [
+   131.49093329000243,
+   "tests/test_soft_review_regressions.py::test_accepted_sources_elaborate_and_rejected_sources_share_codes"
+  ],
+  [
+   123.84182860200235,
+   "tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_source_of_the_soft_conformance_module"
+  ],
+  [
+   107.49485848699987,
+   "tests/test_discourse_lean.py::test_mention_spans_start_and_end_on_tokens"
+  ],
+  [
+   103.67123404099766,
+   "tests/test_eligibility_wfp.py::test_staged_answers_match_the_key_and_the_recorded_results"
+  ],
+  [
+   102.96743516100105,
+   "tests/test_fluent.py::test_random_inverse_injectivity_and_pairwise_consistency_all_five_views[env1]"
+  ],
+  [
+   97.39166779300285,
+   "tests/test_asimov_laws.py::test_followability_agrees_across_python_rust_and_source_reading"
+  ],
+  [
+   95.74365680999836,
+   "tests/test_p1_amendment12.py::test_selected_dev_rebuys_changed_qwen_requests_and_blocks_scoring[replication_gemini_e5_2turn]"
+  ],
+  [
+   85.67056264700295,
+   "tests/test_risk_fixtures.py::test_k36_margin_limit_on_the_original_record_only"
+  ]
+ ],
+ "slowest_files": [
+  [
+   1360.8573569479922,
+   7,
+   "tests/test_english_evidence.py"
+  ],
+  [
+   1133.4046478269993,
+   3,
+   "tests/test_wire_gate_corpus.py"
+  ],
+  [
+   1016.6621304500004,
+   15,
+   "tests/test_asimov_extended.py"
+  ],
+  [
+   618.5233188450184,
+   202,
+   "tests/test_soft_review_regressions.py"
+  ],
+  [
+   611.5875427179926,
+   70,
+   "tests/test_discourse_lean.py"
+  ],
+  [
+   569.9799149940045,
+   32,
+   "tests/test_assist_invariants.py"
+  ],
+  [
+   479.25410618297246,
+   94,
+   "tests/test_english.py"
+  ],
+  [
+   478.695530042005,
+   2,
+   "tests/test_readings_s1_differential.py"
+  ],
+  [
+   431.8443364979903,
+   11,
+   "tests/test_risk_generated_policies.py"
+  ],
+  [
+   395.0206485110066,
+   87,
+   "tests/test_lean_conformance.py"
+  ],
+  [
+   385.57024575200194,
+   2,
+   "tests/test_rights_three_way.py"
+  ],
+  [
+   383.60274216300604,
+   8,
+   "tests/test_risk_margins.py"
+  ],
+  [
+   356.2246403020363,
+   134,
+   "tests/test_lean_service_schema.py"
+  ],
+  [
+   342.0328084889661,
+   97,
+   "tests/test_assist.py"
+  ],
+  [
+   337.27133408799637,
+   16,
+   "tests/test_bluedot_grant.py"
+  ],
+  [
+   250.2319208269946,
+   5,
+   "tests/test_p1_amendment13.py"
+  ],
+  [
+   247.42409227699318,
+   10,
+   "tests/test_w6a_limit_generator.py"
+  ],
+  [
+   217.9198541479891,
+   82,
+   "tests/test_eligibility_wfp.py"
+  ],
+  [
+   207.8583007849993,
+   26,
+   "tests/test_w6a_route_limits.py"
+  ],
+  [
+   195.90564294400247,
+   3,
+   "tests/test_agent_policy_rerun.py"
+  ],
+  [
+   193.3268428340416,
+   70,
+   "tests/test_fluent.py"
+  ],
+  [
+   190.5486843810104,
+   11,
+   "tests/test_safety_framework.py"
+  ],
+  [
+   183.20118803499645,
+   7,
+   "tests/test_p1_amendment12.py"
+  ],
+  [
+   169.8024585469975,
+   7,
+   "tests/test_norm_defaults_three_way.py"
+  ],
+  [
+   166.6480801209982,
+   33,
+   "tests/test_order.py"
+  ]
+ ],
+ "files": {
+  "tests/test_agent_policy.py": 28.295396916993923,
+  "tests/test_agent_policy_rerun.py": 195.90564294400247,
+  "tests/test_agent_policy_unspecified.py": 4.635742171994934,
+  "tests/test_alternatives_profile.py": 3.792708014985692,
+  "tests/test_alternatives_three_way.py": 15.34574659899954,
+  "tests/test_argument.py": 0.6102403179938847,
+  "tests/test_argument_adversarial.py": 0.43237371999566676,
+  "tests/test_argument_fixtures.py": 6.690813524008263,
+  "tests/test_asimov_extended.py": 1016.6621304500004,
+  "tests/test_asimov_laws.py": 123.00389739601087,
+  "tests/test_norm_defaults_differential.py": 13.050887899964437,
+  "tests/test_wire_gate_corpus.py": 1133.4046478269993,
+  "tests/test_assist.py": 342.0328084889661,
+  "tests/test_assist_deadline.py": 18.441465062993085,
+  "tests/test_assist_invariants.py": 569.9799149940045,
+  "tests/test_assist_recovery.py": 28.830417397992278,
+  "tests/test_assist_recovery_replay.py": 83.48743783698505,
+  "tests/test_assurance_manifest.py": 82.04866720998325,
+  "tests/test_soft_review_regressions.py": 618.5233188450184,
+  "tests/test_speech_acts_conformance.py": 120.80293508203977,
+  "tests/test_speech_acts_lean.py": 27.17918897400523,
+  "tests/test_stage2_dispatch.py": 0.44147591299406486,
+  "tests/test_stage2_evaluation.py": 6.7568546919719665,
+  "tests/test_stage2_faults.py": 27.776032282992674,
+  "tests/test_stage2_graph.py": 4.992333400019561,
+  "tests/test_stage2_norms.py": 1.8473551119823242,
+  "tests/test_stage2_readings.py": 4.845969359001174,
+  "tests/test_stage2_standalone.py": 1.467542783007957,
+  "tests/test_t1c.py": 18.25793566001812,
+  "tests/test_time_surface_w6a.py": 0.04515873299897066,
+  "tests/test_time_w6a.py": 0.03349251599502168,
+  "tests/test_units_lean_gate_w6a.py": 0.16544540799804963,
+  "tests/test_units_lean_w6a.py": 11.02389118998326,
+  "tests/test_units_rust_w6a.py": 3.9726735509975697,
+  "tests/test_units_w6a.py": 0.14133697200668394,
+  "tests/test_vacuity.py": 0.05631039299623808,
+  "tests/test_ve_iface.py": 0.4265865350025706,
+  "tests/test_views.py": 10.650591361991246,
+  "tests/test_w6a2_looprecheck1.py": 30.27899545602122,
+  "tests/test_w6a2_numeral_characters.py": 16.164745180991304,
+  "tests/test_w6a_citations.py": 4.3276959549803,
+  "tests/test_w6a_documents.py": 30.08774305499901,
+  "tests/test_w6a_limit_generator.py": 247.42409227699318,
+  "tests/test_w6a_limits.py": 6.418994812996971,
+  "tests/test_attacks.py": 1.043663957992976,
+  "tests/test_authoring.py": 0.02533071499419748,
+  "tests/test_background.py": 0.11767564799811225,
+  "tests/test_bench_timing.py": 0.0027796890026365872,
+  "tests/test_bluedot_grant.py": 337.27133408799637,
+  "tests/test_bundle.py": 7.7631962960113015,
+  "tests/test_calendar_regression_w6b.py": 0.0008811100015009288,
+  "tests/test_cedar_attributes.py": 0.0037030610037618317,
+  "tests/test_cedar_norms.py": 0.7302747479916434,
+  "tests/test_cli.py": 126.61213712802055,
+  "tests/test_closure.py": 15.194660528984969,
+  "tests/test_p1_amendment9.py": 22.559232579984382,
+  "tests/test_p1_history.py": 4.654515770005673,
+  "tests/test_p1_infrastructure.py": 0.9808762809880136,
+  "tests/test_p1_native_counter.py": 2.320553972989728,
+  "tests/test_p1_preflight.py": 39.81883997299883,
+  "tests/test_p1_reconcile.py": 47.392589354003576,
+  "tests/test_parser_renderer.py": 0.33460630999252317,
+  "tests/test_precommit_hook.py": 158.50120868601516,
+  "tests/test_propose.py": 91.63028317303178,
+  "tests/test_readings_s1_differential.py": 478.695530042005,
+  "tests/test_readings_s1_document.py": 6.506423277005524,
+  "tests/test_readings_s1_integration.py": 0.9664494560056482,
+  "tests/test_readings_s1_lean.py": 133.66664646397476,
+  "tests/test_reports_status.py": 52.88996800399036,
+  "tests/test_rights.py": 55.179606280009466,
+  "tests/test_rights_lean.py": 5.69696947200282,
+  "tests/test_rights_render_status.py": 0.06786251199810067,
+  "tests/test_rights_three_way.py": 385.57024575200194,
+  "tests/test_w6a_looprecheck1.py": 55.03780534403995,
+  "tests/test_w6a_review_regressions.py": 1.0173442859922943,
+  "tests/test_w6a_route_limits.py": 207.8583007849993,
+  "tests/test_wire_contract_three_way.py": 1.8123814679820498,
+  "tests/test_closure_certificates.py": 5.043734569011576,
+  "tests/test_closure_induction.py": 5.475573926996731,
+  "tests/test_closure_witnesses.py": 0.5565143780004291,
+  "tests/test_colab.py": 0.734613029006141,
+  "tests/test_compose_dispatch.py": 2.7208194230006484,
+  "tests/test_compose_integration.py": 2.5767552529978275,
+  "tests/test_conformance.py": 0.09652638299303362,
+  "tests/test_constitution_w6a_controls.py": 0.005974299001536565,
+  "tests/test_count_w6a.py": 6.112929526003427,
+  "tests/test_coverage_dashboard.py": 0.012020599999232218,
+  "tests/test_cpu_bounds.py": 5.97330108400638,
+  "tests/test_data_adapters.py": 0.03323693501079106,
+  "tests/test_data_flags.py": 0.03727103400888154,
+  "tests/test_data_surface.py": 31.7481356049866,
+  "tests/test_data_three_way.py": 2.993644760001189,
+  "tests/test_definitions.py": 0.5953928959970654,
+  "tests/test_definitions_differential.py": 40.38580882099632,
+  "tests/test_definitions_english.py": 4.828637280992552,
+  "tests/test_discourse.py": 6.952381501992932,
+  "tests/test_discourse_constitution.py": 6.330288253004255,
+  "tests/test_environment_field_types.py": 156.88051095108676,
+  "tests/test_equivalence.py": 0.37025211298896465,
+  "tests/test_equivalence_properties.py": 13.526297493990569,
+  "tests/test_lean_service_schema.py": 356.2246403020363,
+  "tests/test_legend.py": 0.3053438300048583,
+  "tests/test_lexicon.py": 6.530791430017416,
+  "tests/test_natural.py": 88.74084720396058,
+  "tests/test_news_w6a_fixtures.py": 1.2049329379988194,
+  "tests/test_norm_admission.py": 0.16103935700084548,
+  "tests/test_norm_defaults.py": 3.119488983978954,
+  "tests/test_norm_defaults_three_way.py": 169.8024585469975,
+  "tests/test_norm_english.py": 1.6612402709943126,
+  "tests/test_norms.py": 0.23025424999650568,
+  "tests/test_norms_three_way.py": 13.177693865996844,
+  "tests/test_order.py": 166.6480801209982,
+  "tests/test_order_gate.py": 0.7068021380036953,
+  "tests/test_order_grammar.py": 5.207671048992779,
+  "tests/test_order_round2.py": 3.409212906997709,
+  "tests/test_p0_three_way.py": 4.548589531983453,
+  "tests/test_profile_artifacts.py": 0.02862205600104062,
+  "tests/test_profiles.py": 0.020715637001558207,
+  "tests/test_properties.py": 108.06233280100787,
+  "tests/test_soft_norms_conformance.py": 12.120846019002784,
+  "tests/test_soft_norms_lean.py": 4.600906933006627,
+  "tests/test_softnorms_contract.py": 13.028631218003284,
+  "tests/test_discourse_lean.py": 611.5875427179926,
+  "tests/test_discourse_three_way.py": 4.912699975990108,
+  "tests/test_document.py": 14.186984436022612,
+  "tests/test_e1_core.py": 7.689790418022312,
+  "tests/test_readings_s1_python.py": 0.03710561398838763,
+  "tests/test_risk_diagnostics.py": 4.247401455992076,
+  "tests/test_risk_differential.py": 4.814187362007942,
+  "tests/test_risk_english.py": 3.8800108060313505,
+  "tests/test_risk_every_diagnostic.py": 3.9974976699413673,
+  "tests/test_softnorms_public_contract.py": 1.7703830749851477,
+  "tests/test_speech_acts.py": 0.8531028309989779,
+  "tests/test_stage0_inventory.py": 22.76656032200117,
+  "tests/test_stage0_probe_matrix.py": 13.114012489018933,
+  "tests/test_stage2_bundle.py": 3.329665686997032,
+  "tests/test_stage2_validation.py": 2.2398175439884653,
+  "tests/test_stats.py": 1.0494406759971753,
+  "tests/test_surface_registry.py": 0.04996573399694171,
+  "tests/test_w6a_certificate_steps.py": 30.43952953699045,
+  "tests/test_w6a_looprecheck2.py": 21.332088743001805,
+  "tests/test_w6b_gates.py": 0.11021422299745609,
+  "tests/test_wire_contract_corpus.py": 0.2106733699911274,
+  "tests/test_wire_contract_engine.py": 0.009631008008000208,
+  "tests/test_wire_contract_faults.py": 74.25901649397565,
+  "tests/test_wire_contract_generator.py": 0.0017295099969487637,
+  "tests/test_wire_contract_lean.py": 6.1612366270164785,
+  "tests/test_wire_contract_lint.py": 2.4451842910020787,
+  "tests/test_wire_contract_s4_lean.py": 0.7167817869958526,
+  "tests/test_wire_contract_soft_lean.py": 74.5493051989979,
+  "tests/test_e1_prompts.py": 116.24826877799569,
+  "tests/test_eligibility_wfp.py": 217.9198541479891,
+  "tests/test_english.py": 479.25410618297246,
+  "tests/test_english_evidence.py": 1360.8573569479922,
+  "tests/test_english_unambiguity.py": 1.672692525004095,
+  "tests/test_p1.py": 41.74225146999743,
+  "tests/test_p1_amendment11.py": 1.6352033059993119,
+  "tests/test_p1_amendment12.py": 183.20118803499645,
+  "tests/test_p1_amendment13.py": 250.2319208269946,
+  "tests/test_p1_amendment14.py": 19.160811590987578,
+  "tests/test_p1_amendment15.py": 140.04008212400004,
+  "tests/test_p1_amendment7.py": 13.950419647007948,
+  "tests/test_p1_amendment8.py": 10.316750180980307,
+  "tests/test_entailment.py": 0.8562779139829217,
+  "tests/test_entailment_adversarial.py": 1.7571357439883286,
+  "tests/test_entailment_properties.py": 9.823911075003707,
+  "tests/test_fret_w6a_rerating.py": 0.29690793200279586,
+  "tests/test_gate.py": 0.0011474300008558203,
+  "tests/test_gate_integrity.py": 9.231713262990525,
+  "tests/test_gatekeeper_adapter.py": 0.10887354699661955,
+  "tests/test_grammar.py": 98.45662359201015,
+  "tests/test_grammar_backends.py": 0.00399693900544662,
+  "tests/test_grammar_cli.py": 3.5764821469856543,
+  "tests/test_inventory_lint.py": 5.233197164998273,
+  "tests/test_lean_certificates.py": 21.321472226005426,
+  "tests/test_lean_conformance.py": 395.0206485110066,
+  "tests/test_lean_service.py": 56.13387496494397,
+  "tests/test_llm.py": 0.198590892017819,
+  "tests/test_nary.py": 0.5051335020034458,
+  "tests/test_nary_differential.py": 50.351842108997516,
+  "tests/test_nary_folio.py": 0.021328778006136417,
+  "tests/test_native_build_lock.py": 11.231358817,
+  "tests/test_risk_fixtures.py": 117.00775253599204,
+  "tests/test_risk_generated_policies.py": 431.8443364979903,
+  "tests/test_risk_integration.py": 39.57358265901348,
+  "tests/test_risk_lean_route.py": 19.21352312300951,
+  "tests/test_risk_margins.py": 383.60274216300604,
+  "tests/test_risk_profile.py": 2.1005731930017646,
+  "tests/test_evaluate_search.py": 1.011396263995266,
+  "tests/test_evidence_bounds.py": 13.539335754016065,
+  "tests/test_fluent.py": 193.3268428340416,
+  "tests/test_fol_names.py": 0.033660445998975774,
+  "tests/test_lean_import_reader.py": 14.28229285000998,
+  "tests/test_replay_conservativity.py": 3.426283446002344,
+  "tests/test_report_english.py": 2.9992246420006268,
+  "tests/test_reports.py": 13.566788764008379,
+  "tests/test_reports_agreement.py": 1.7974160839985416,
+  "tests/test_reports_lean.py": 80.36672474402076,
+  "tests/test_risk_rust.py": 0.07153906099119922,
+  "tests/test_risk_w6_extension.py": 3.1876001979981083,
+  "tests/test_runner.py": 2.88579462900816,
+  "tests/test_rust_conformance.py": 79.56162571399545,
+  "tests/test_rust_reproducible.py": 78.79969333398913,
+  "tests/test_safety_framework.py": 190.5486843810104,
+  "tests/test_search_options.py": 2.45576275395797,
+  "tests/test_stage2_parse.py": 14.088137932987593,
+  "tests/test_views_polish.py": 4.30006986099761,
+  "tests/test_wire_contract_precondition.py": 0.14891349999743397
+ },
+ "executables": [
+  {
+   "exe": "ve_risk_route",
+   "category": "lean route / runner",
+   "count": 2193,
+   "wall": 13882.542092584874,
+   "cpu": 8726.472029,
+   "median_wall": 0.1458339220007474,
+   "min_wall": 0.06409348200031673
+  },
+  {
+   "exe": "ve_service",
+   "category": "lean service (CPU)",
+   "count": 288,
+   "wall": 9074.162189254967,
+   "cpu": 41.793623,
+   "median_wall": 0.11393010499887168,
+   "min_wall": 0.07509339999887743
+  },
+  {
+   "exe": "python",
+   "category": "child python",
+   "count": 185,
+   "wall": 1319.0327396860048,
+   "cpu": 1026.8902659999999,
+   "median_wall": 0.7030575510034396,
+   "min_wall": 0.10835456600034377
+  },
+  {
+   "exe": "ve_discourse_route",
+   "category": "lean route / runner",
+   "count": 4534,
+   "wall": 572.3095462750352,
+   "cpu": 405.877735,
+   "median_wall": 0.11222818050009664,
+   "min_wall": 0.06871022099949187
+  },
+  {
+   "exe": "ve_rights_route",
+   "category": "lean route / runner",
+   "count": 904,
+   "wall": 286.54437837898513,
+   "cpu": 174.48508,
+   "median_wall": 0.13089031299932685,
+   "min_wall": 0.06833840199760743
+  },
+  {
+   "exe": "ve_soft_norms_route",
+   "category": "lean route / runner",
+   "count": 582,
+   "wall": 252.5247928279132,
+   "cpu": 174.516031,
+   "median_wall": 0.1395703064990812,
+   "min_wall": 0.06558371199935209
+  },
+  {
+   "exe": "ve_conformance",
+   "category": "lean route / runner",
+   "count": 699,
+   "wall": 214.3687240649706,
+   "cpu": 162.550663,
+   "median_wall": 0.15422279100312153,
+   "min_wall": 0.06322908199945232
+  },
+  {
+   "exe": "ve",
+   "category": "rust checker",
+   "count": 1795,
+   "wall": 200.46235377106495,
+   "cpu": 154.108315,
+   "median_wall": 0.005103778999909991,
+   "min_wall": 0.0002543599985074252
+  },
+  {
+   "exe": "pre-commit",
+   "category": "other",
+   "count": 72,
+   "wall": 136.10989762700046,
+   "cpu": 104.467922,
+   "median_wall": 2.23248905249784,
+   "min_wall": 0.007083978998707607
+  },
+  {
+   "exe": "ve_reports_route",
+   "category": "lean route / runner",
+   "count": 548,
+   "wall": 124.3883743820079,
+   "cpu": 82.30830499999999,
+   "median_wall": 0.13632951700128615,
+   "min_wall": 0.072096990999853
+  },
+  {
+   "exe": "ve_quantity",
+   "category": "lean route / runner",
+   "count": 336,
+   "wall": 117.31778296496122,
+   "cpu": 94.148076,
+   "median_wall": 0.1326490535011544,
+   "min_wall": 0.07533824100028141
+  },
+  {
+   "exe": "ve_readings_route",
+   "category": "lean route / runner",
+   "count": 659,
+   "wall": 105.54522120298861,
+   "cpu": 63.100888999999995,
+   "median_wall": 0.14421979200051283,
+   "min_wall": 0.07684891000099014
+  },
+  {
+   "exe": "ve_norm_defaults_route",
+   "category": "lean route / runner",
+   "count": 52,
+   "wall": 85.00168287499764,
+   "cpu": 57.009834,
+   "median_wall": 0.25298712299991166,
+   "min_wall": 0.08109236000018427
+  },
+  {
+   "exe": "cargo",
+   "category": "build (lake/cargo)",
+   "count": 18,
+   "wall": 80.48751313798493,
+   "cpu": 85.84279199999999,
+   "median_wall": 0.12044064450128644,
+   "min_wall": 0.012482358997658594
+  },
+  {
+   "exe": "ve_speech_acts_route",
+   "category": "lean route / runner",
+   "count": 446,
+   "wall": 71.11158378799155,
+   "cpu": 43.626242,
+   "median_wall": 0.12654514350106183,
+   "min_wall": 0.06676919200253906
+  },
+  {
+   "exe": "lean",
+   "category": "lean route / runner",
+   "count": 323,
+   "wall": 66.70578516500245,
+   "cpu": 33.667814,
+   "median_wall": 0.19330307500058552,
+   "min_wall": 0.09342971800288069
+  },
+  {
+   "exe": "lake",
+   "category": "build (lake/cargo)",
+   "count": 26,
+   "wall": 54.564118750007765,
+   "cpu": 33.904834,
+   "median_wall": 2.4802401019987883,
+   "min_wall": 0.12941366400264087
+  },
+  {
+   "exe": "ve_alternatives_route",
+   "category": "lean route / runner",
+   "count": 252,
+   "wall": 44.859971896006755,
+   "cpu": 33.898975,
+   "median_wall": 0.11797545949957566,
+   "min_wall": 0.06808751100106747
+  },
+  {
+   "exe": "ve_diagnose",
+   "category": "lean route / runner",
+   "count": 109,
+   "wall": 34.27062398198905,
+   "cpu": 26.873794,
+   "median_wall": 0.12524498399943695,
+   "min_wall": 0.06179376200088882
+  },
+  {
+   "exe": "fake-scripted",
+   "category": "other",
+   "count": 262,
+   "wall": 22.25358318301005,
+   "cpu": 16.634667999999998,
+   "median_wall": 0.0806429800013575,
+   "min_wall": 0.04735790400081896
+  },
+  {
+   "exe": "fake-hang",
+   "category": "other",
+   "count": 48,
+   "wall": 18.77587703799145,
+   "cpu": 2.104688,
+   "median_wall": 0.3770094319988857,
+   "min_wall": 0.3466357760007668
+  },
+  {
+   "exe": "git",
+   "category": "git",
+   "count": 1560,
+   "wall": 18.453913182001997,
+   "cpu": 11.37406,
+   "median_wall": 0.009688068999821553,
+   "min_wall": 0.00022119999994174577
+  },
+  {
+   "exe": "ve_response_decode",
+   "category": "lean route / runner",
+   "count": 12,
+   "wall": 12.256687767006952,
+   "cpu": 9.926783,
+   "median_wall": 0.28355626449956617,
+   "min_wall": 0.10122617700108094
+  },
+  {
+   "exe": "ve_norms_route",
+   "category": "lean route / runner",
+   "count": 37,
+   "wall": 9.85467703899485,
+   "cpu": 6.51181,
+   "median_wall": 0.17650303799746325,
+   "min_wall": 0.08491198899719166
+  },
+  {
+   "exe": "fake-crash",
+   "category": "other",
+   "count": 94,
+   "wall": 9.080909541018627,
+   "cpu": 4.856087,
+   "median_wall": 0.0931182929998613,
+   "min_wall": 0.04579198400097084
+  },
+  {
+   "exe": "fake_lean",
+   "category": "other",
+   "count": 39,
+   "wall": 6.991556927994679,
+   "cpu": 3.9924389999999996,
+   "median_wall": 0.08512796900322428,
+   "min_wall": 0.055338272999506444
+  },
+  {
+   "exe": "real_lean",
+   "category": "other",
+   "count": 16,
+   "wall": 3.7377871470016544,
+   "cpu": 2.8993789999999997,
+   "median_wall": 0.2326149060008902,
+   "min_wall": 0.1990414050014806
+  },
+  {
+   "exe": "control",
+   "category": "other",
+   "count": 6,
+   "wall": 2.536818268006755,
+   "cpu": 1.9672239999999999,
+   "median_wall": 0.4104181225011416,
+   "min_wall": 0.367777573002968
+  },
+  {
+   "exe": "forged_2",
+   "category": "other",
+   "count": 26,
+   "wall": 2.2180963270075154,
+   "cpu": 1.149497,
+   "median_wall": 0.08811645849891647,
+   "min_wall": 0.038093835002655396
+  },
+  {
+   "exe": "forged_0",
+   "category": "other",
+   "count": 26,
+   "wall": 2.133413974996074,
+   "cpu": 1.13309,
+   "median_wall": 0.08238134900057048,
+   "min_wall": 0.047502483997959644
+  },
+  {
+   "exe": "forged_1",
+   "category": "other",
+   "count": 26,
+   "wall": 2.0828897510073148,
+   "cpu": 1.102142,
+   "median_wall": 0.07464772549974441,
+   "min_wall": 0.046555264001653995
+  },
+  {
+   "exe": "hang",
+   "category": "other",
+   "count": 2,
+   "wall": 2.024380094000662,
+   "cpu": 0.12032599999999999,
+   "median_wall": 1.012190047000331,
+   "min_wall": 1.0120169820002047
+  },
+  {
+   "exe": "ve_english_run",
+   "category": "lean route / runner",
+   "count": 10,
+   "wall": 1.7316580299993802,
+   "cpu": 0.975965,
+   "median_wall": 0.17625714799942216,
+   "min_wall": 0.13123231400095392
+  },
+  {
+   "exe": "ve_risk_eval",
+   "category": "lean route / runner",
+   "count": 4,
+   "wall": 1.594784567001625,
+   "cpu": 0.883732,
+   "median_wall": 0.4011177990014403,
+   "min_wall": 0.3473488960007671
+  },
+  {
+   "exe": "bundle_lean",
+   "category": "other",
+   "count": 17,
+   "wall": 1.4031733510055346,
+   "cpu": 1.105181,
+   "median_wall": 0.0819197790006001,
+   "min_wall": 0.05356595299963374
+  },
+  {
+   "exe": "fake-silent",
+   "category": "other",
+   "count": 2,
+   "wall": 1.0153207319963258,
+   "cpu": 0.15768700000000002,
+   "median_wall": 0.5076603659981629,
+   "min_wall": 0.5055414759990526
+  },
+  {
+   "exe": "fake-wrong-case-id",
+   "category": "other",
+   "count": 8,
+   "wall": 0.83136400200965,
+   "cpu": 0.466655,
+   "median_wall": 0.10076379150086723,
+   "min_wall": 0.08450390900179627
+  },
+  {
+   "exe": "fake-flaky",
+   "category": "other",
+   "count": 2,
+   "wall": 0.8007455379993189,
+   "cpu": 0.14287499999999997,
+   "median_wall": 0.40037276899965946,
+   "min_wall": 0.16875532799895154
+  },
+  {
+   "exe": "uv",
+   "category": "child python",
+   "count": 4,
+   "wall": 0.6281767600012245,
+   "cpu": 0.452966,
+   "median_wall": 0.15099433100112947,
+   "min_wall": 0.03641500500089023
+  },
+  {
+   "exe": "forged_4",
+   "category": "other",
+   "count": 7,
+   "wall": 0.5770102269962081,
+   "cpu": 0.318728,
+   "median_wall": 0.08108260000153678,
+   "min_wall": 0.05871992299944395
+  },
+  {
+   "exe": "forged_3",
+   "category": "other",
+   "count": 7,
+   "wall": 0.5615205989997776,
+   "cpu": 0.31000099999999997,
+   "median_wall": 0.08521463899887749,
+   "min_wall": 0.047481153000262566
+  },
+  {
+   "exe": "rustc",
+   "category": "build (lake/cargo)",
+   "count": 10,
+   "wall": 0.5018028850026894,
+   "cpu": 0.34901499999999996,
+   "median_wall": 0.05318103849822364,
+   "min_wall": 0.0311270060010429
+  },
+  {
+   "exe": "fake-string-valid",
+   "category": "other",
+   "count": 4,
+   "wall": 0.37614733400187106,
+   "cpu": 0.244162,
+   "median_wall": 0.09365906350103614,
+   "min_wall": 0.08825595899907057
+  },
+  {
+   "exe": "fake-missing-valid",
+   "category": "other",
+   "count": 4,
+   "wall": 0.3732154930039542,
+   "cpu": 0.25606,
+   "median_wall": 0.0855343345010624,
+   "min_wall": 0.08024147000105586
+  },
+  {
+   "exe": "fake-background-boolean-premise",
+   "category": "other",
+   "count": 4,
+   "wall": 0.35462086599727627,
+   "cpu": 0.25425,
+   "median_wall": 0.0700379014997452,
+   "min_wall": 0.060784091998357326
+  },
+  {
+   "exe": "fake-wrong-mode",
+   "category": "other",
+   "count": 2,
+   "wall": 0.3280795379978372,
+   "cpu": 0.140714,
+   "median_wall": 0.1640397689989186,
+   "min_wall": 0.14797261099738535
+  },
+  {
+   "exe": "fake-nan-result",
+   "category": "other",
+   "count": 2,
+   "wall": 0.3050160410020908,
+   "cpu": 0.133004,
+   "median_wall": 0.1525080205010454,
+   "min_wall": 0.1514835710004263
+  },
+  {
+   "exe": "rejecting",
+   "category": "other",
+   "count": 4,
+   "wall": 0.2966657229990233,
+   "cpu": 0.236363,
+   "median_wall": 0.07519459049944999,
+   "min_wall": 0.059848393000720534
+  },
+  {
+   "exe": "fake-missing-error",
+   "category": "other",
+   "count": 2,
+   "wall": 0.2860796130007657,
+   "cpu": 0.13940599999999997,
+   "median_wall": 0.14303980650038284,
+   "min_wall": 0.09482044800097356
+  },
+  {
+   "exe": "fake-garbage",
+   "category": "other",
+   "count": 2,
+   "wall": 0.2836480730002222,
+   "cpu": 0.14365,
+   "median_wall": 0.1418240365001111,
+   "min_wall": 0.12406454400115763
+  },
+  {
+   "exe": "fake-english-bad-formula",
+   "category": "other",
+   "count": 2,
+   "wall": 0.2704053070010559,
+   "cpu": 0.12477999999999999,
+   "median_wall": 0.13520265350052796,
+   "min_wall": 0.13008500399882905
+  },
+  {
+   "exe": "fake-norms-bad-verdict",
+   "category": "other",
+   "count": 2,
+   "wall": 0.2659100969976862,
+   "cpu": 0.136592,
+   "median_wall": 0.1329550484988431,
+   "min_wall": 0.09273338899947703
+  },
+  {
+   "exe": "fake-route-extra-field",
+   "category": "other",
+   "count": 2,
+   "wall": 0.24930922799831023,
+   "cpu": 0.13053099999999998,
+   "median_wall": 0.12465461399915512,
+   "min_wall": 0.12213304399847402
+  },
+  {
+   "exe": "fake-route-string-values",
+   "category": "other",
+   "count": 2,
+   "wall": 0.24176010900191613,
+   "cpu": 0.118527,
+   "median_wall": 0.12088005450095807,
+   "min_wall": 0.11471335500027635
+  },
+  {
+   "exe": "fake-boolean-result",
+   "category": "other",
+   "count": 2,
+   "wall": 0.23586595899541862,
+   "cpu": 0.127027,
+   "median_wall": 0.11793297949770931,
+   "min_wall": 0.09114100799706648
+  },
+  {
+   "exe": "fake-wrong-id",
+   "category": "other",
+   "count": 2,
+   "wall": 0.23340753999946173,
+   "cpu": 0.122222,
+   "median_wall": 0.11670376999973087,
+   "min_wall": 0.11632544500025688
+  },
+  {
+   "exe": "fake-truncated",
+   "category": "other",
+   "count": 2,
+   "wall": 0.23237152899673674,
+   "cpu": 0.14127699999999999,
+   "median_wall": 0.11618576449836837,
+   "min_wall": 0.07219659999827854
+  },
+  {
+   "exe": "fake-english-nested-bool",
+   "category": "other",
+   "count": 2,
+   "wall": 0.22511594100069487,
+   "cpu": 0.120936,
+   "median_wall": 0.11255797050034744,
+   "min_wall": 0.11105057600070722
+  },
+  {
+   "exe": "fake-order-bad-surface",
+   "category": "other",
+   "count": 2,
+   "wall": 0.22048031200029072,
+   "cpu": 0.13305499999999998,
+   "median_wall": 0.11024015600014536,
+   "min_wall": 0.09533730800103513
+  },
+  {
+   "exe": "fake-null-modes",
+   "category": "other",
+   "count": 2,
+   "wall": 0.2147403220005799,
+   "cpu": 0.144534,
+   "median_wall": 0.10737016100028995,
+   "min_wall": 0.10636561600040295
+  },
+  {
+   "exe": "fake-admission-no-report",
+   "category": "other",
+   "count": 2,
+   "wall": 0.20728817399867694,
+   "cpu": 0.121673,
+   "median_wall": 0.10364408699933847,
+   "min_wall": 0.09103432800111477
+  },
+  {
+   "exe": "fake-english-negative-label",
+   "category": "other",
+   "count": 2,
+   "wall": 0.20715854500303976,
+   "cpu": 0.135399,
+   "median_wall": 0.10357927250151988,
+   "min_wall": 0.0841113900023629
+  },
+  {
+   "exe": "fake-short",
+   "category": "other",
+   "count": 2,
+   "wall": 0.20095042499815463,
+   "cpu": 0.142203,
+   "median_wall": 0.10047521249907732,
+   "min_wall": 0.08837345899883076
+  },
+  {
+   "exe": "fake-empty-result",
+   "category": "other",
+   "count": 2,
+   "wall": 0.1938398660022358,
+   "cpu": 0.12776,
+   "median_wall": 0.0969199330011179,
+   "min_wall": 0.08966123900245293
+  },
+  {
+   "exe": "fake-bad-protocol",
+   "category": "other",
+   "count": 2,
+   "wall": 0.1835212460027833,
+   "cpu": 0.137664,
+   "median_wall": 0.09176062300139165,
+   "min_wall": 0.07146703100079321
+  },
+  {
+   "exe": "forged_5",
+   "category": "other",
+   "count": 2,
+   "wall": 0.17840844599777483,
+   "cpu": 0.088614,
+   "median_wall": 0.08920422299888742,
+   "min_wall": 0.08804317799877026
+  },
+  {
+   "exe": "fake-english-deep-formula",
+   "category": "other",
+   "count": 2,
+   "wall": 0.17752526800177293,
+   "cpu": 0.123153,
+   "median_wall": 0.08876263400088646,
+   "min_wall": 0.07025256099950639
+  },
+  {
+   "exe": "fake-small-limits",
+   "category": "other",
+   "count": 2,
+   "wall": 0.17685412699938752,
+   "cpu": 0.12800699999999998,
+   "median_wall": 0.08842706349969376,
+   "min_wall": 0.07693791999918176
+  },
+  {
+   "exe": "python3",
+   "category": "child python",
+   "count": 1,
+   "wall": 0.17638936799994553,
+   "cpu": 0.138158,
+   "median_wall": 0.17638936799994553,
+   "min_wall": 0.17638936799994553
+  },
+  {
+   "exe": "forged_6",
+   "category": "other",
+   "count": 2,
+   "wall": 0.17559637800150085,
+   "cpu": 0.086561,
+   "median_wall": 0.08779818900075043,
+   "min_wall": 0.08122875000117347
+  },
+  {
+   "exe": "fake-startup-eof",
+   "category": "other",
+   "count": 2,
+   "wall": 0.17541376700319233,
+   "cpu": 0.13693499999999997,
+   "median_wall": 0.08770688350159617,
+   "min_wall": 0.08341044900225825
+  },
+  {
+   "exe": "fake-english-deep-parse",
+   "category": "other",
+   "count": 1,
+   "wall": 0.16077609000058146,
+   "cpu": 0.06608299999999999,
+   "median_wall": 0.16077609000058146,
+   "min_wall": 0.16077609000058146
+  },
+  {
+   "exe": "fake-duplicate-response",
+   "category": "other",
+   "count": 2,
+   "wall": 0.1583549499991932,
+   "cpu": 0.10162299999999999,
+   "median_wall": 0.0791774749995966,
+   "min_wall": 0.06821975200000452
+  },
+  {
+   "exe": "fake-english-order-atom",
+   "category": "other",
+   "count": 2,
+   "wall": 0.14398197199989227,
+   "cpu": 0.123789,
+   "median_wall": 0.07199098599994613,
+   "min_wall": 0.06941822099906858
+  },
+  {
+   "exe": "crash",
+   "category": "other",
+   "count": 1,
+   "wall": 0.11378562499885447,
+   "cpu": 0.075393,
+   "median_wall": 0.11378562499885447,
+   "min_wall": 0.11378562499885447
+  },
+  {
+   "exe": "fake-handshake",
+   "category": "other",
+   "count": 2,
+   "wall": 0.11290666599961696,
+   "cpu": 0.103169,
+   "median_wall": 0.05645333299980848,
+   "min_wall": 0.053651272999559296
+  },
+  {
+   "exe": "reordered",
+   "category": "other",
+   "count": 1,
+   "wall": 0.09845357800077181,
+   "cpu": 0.062240000000000004,
+   "median_wall": 0.09845357800077181,
+   "min_wall": 0.09845357800077181
+  },
+  {
+   "exe": "fake-normal",
+   "category": "other",
+   "count": 1,
+   "wall": 0.09670684800221352,
+   "cpu": 0.064133,
+   "median_wall": 0.09670684800221352,
+   "min_wall": 0.09670684800221352
+  },
+  {
+   "exe": "fake-english-checked-no-render",
+   "category": "other",
+   "count": 1,
+   "wall": 0.08671915900049498,
+   "cpu": 0.068381,
+   "median_wall": 0.08671915900049498,
+   "min_wall": 0.08671915900049498
+  },
+  {
+   "exe": "indexed",
+   "category": "other",
+   "count": 1,
+   "wall": 0.05950801200015121,
+   "cpu": 0.056296,
+   "median_wall": 0.05950801200015121,
+   "min_wall": 0.05950801200015121
+  },
+  {
+   "exe": "route.sh",
+   "category": "other",
+   "count": 8,
+   "wall": 0.05749667299824068,
+   "cpu": 0.040769,
+   "median_wall": 0.006528279000121984,
+   "min_wall": 0.005733418998715933
+  },
+  {
+   "exe": "elan",
+   "category": "other",
+   "count": 3,
+   "wall": 0.05401856400203542,
+   "cpu": 0.021849999999999998,
+   "median_wall": 0.01950970800317009,
+   "min_wall": 0.009962049000023399
+  },
+  {
+   "exe": "cat",
+   "category": "other",
+   "count": 3,
+   "wall": 0.015529546999459853,
+   "cpu": 0.007167,
+   "median_wall": 0.004341779000242241,
+   "min_wall": 0.00258474899965222
+  },
+  {
+   "exe": "probe",
+   "category": "other",
+   "count": 1,
+   "wall": 0.011506749000545824,
+   "cpu": 0.008376999999999999,
+   "median_wall": 0.011506749000545824,
+   "min_wall": 0.011506749000545824
+  },
+  {
+   "exe": "false",
+   "category": "other",
+   "count": 3,
+   "wall": 0.009577149001415819,
+   "cpu": 0.008452,
+   "median_wall": 0.0024477200022374745,
+   "min_wall": 0.0005046299993409775
+  }
+ ],
+ "categories": {
+  "python in the test process (remainder)": 8825.1086201769,
+  "lean route / runner": 3707.2466189377774,
+  "child python": 1319.837305814006,
+  "other": 221.18306117704924,
+  "rust checker": 200.46235377106495,
+  "build (lake/cargo)": 135.5534347729954,
+  "lean service (CPU)": 33.23324343800018,
+  "git": 18.453913182001997
+ }
+}

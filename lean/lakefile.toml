@@ -75,3 +75,7 @@ root = "RiskEvalMain"
 [[lean_exe]]
 name = "ve_diagnose"
 root = "DiagnoseMain"
+
+[[lean_exe]]
+name = "ve_english_lean_bench"
+root = "EnglishLeanBenchMain"

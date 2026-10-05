@@ -216,10 +216,36 @@ dependencies = [
 name = "ve-core"
 version = "0.1.0"
 dependencies = [
- "num-bigint",
+ "serde_json",
+ "ve-kernel",
+ "ve-profile",
+ "ve-surface",
+]
+
+[[package]]
+name = "ve-kernel"
+version = "0.1.0"
+dependencies = [
  "serde",
  "serde_json",
  "sha2",
+]
+
+[[package]]
+name = "ve-profile"
+version = "0.1.0"
+dependencies = [
+ "num-bigint",
+ "serde",
+ "serde_json",
+ "ve-kernel",
+]
+
+[[package]]
+name = "ve-surface"
+version = "0.1.0"
+dependencies = [
+ "ve-kernel",
 ]
 
 [[package]]

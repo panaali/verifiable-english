@@ -459,13 +459,14 @@ trust boundaries.
 **Python's admission is Lean's.** Python never adds or removes an admission on its own: loading or checking a
 `ve-document@2` document sends its bytes, with the sibling files its imports name, to the Lean route's `admission`
 kind, and the document's verdict, every unit's status, the references, the validity verdicts and the report id are
-that answer (`ve/discourse.py` `validate_discourse`). Python's own port of the validator (`python_discourse`, its
-English parser included) is used only for editor hints (`discourse_hints`, the reviewed presentations it can
-compute) and for the diagnostic text of a document Lean rejects too (8); a document Lean admits and Python's port
-rejects is admitted, with Python's diagnostic as a hint. A route that is missing, fails, times out or answers
-anything but one well-formed answer to the case is `CheckerUnavailable`, and so is a document Lean admits that
-Python cannot load or report; Lean's `NotImplemented` (fenced content, norm content, JSON `null`, a document
-without a claim graph) is `UnsupportedProfile`, and Lean's `ResourceLimit` stays Lean's. Neither is a
+that answer (`ve/discourse.py` `validate_discourse`), and so are the joint choices and the joint disjunction
+(the answer's `joint_choices` and `joint_formula`). Since lean-first batch 4 Python has no port of the validator:
+a document Lean rejects raises Lean's diagnostic before any Python check runs, and a unit's reviewed presentation
+is a display of Lean's answer (each resolved pronoun, demonstrative or ordinal pair replaced by its target's
+registered display). A route that is missing, fails, times out or answers anything but one well-formed answer to
+the case is `CheckerUnavailable`, and so is a document Lean admits that Python cannot load or report; Lean's
+`NotImplemented` (fenced content, norm content, JSON `null`, a document without a claim graph) is
+`UnsupportedProfile`, with Lean's text, and Lean's `ResourceLimit` stays Lean's. Neither is a
 verdict, and neither is ever a Python-only CHECKED. A text is a `ve-document@2` document when its JSON front matter's
 `format` says so, read before and apart from every other check, so a body or metadata Python's checks read
 differently still reaches Lean; what Python does before Lean's answer (that test, collecting the sibling files)

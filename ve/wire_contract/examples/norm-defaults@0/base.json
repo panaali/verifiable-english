@@ -1,0 +1,107 @@
+{
+  "environment": {
+    "language": "ve.core@0.2",
+    "profiles": [
+      "norm-defaults@0",
+      "norms@0",
+      "relational-fol@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+      "sorts": {
+        "assistant": {
+          "description": "assistant"
+        },
+        "user": {
+          "description": "user"
+        }
+      },
+      "predicates": {
+        "x_required": {
+          "arguments": [
+            "assistant"
+          ],
+          "description": "obligation",
+          "regulated": {
+            "role": "obligation",
+            "default": "deny",
+            "act": "{0} do x",
+            "permission": "x_permitted"
+          }
+        },
+        "x_permitted": {
+          "arguments": [
+            "assistant"
+          ],
+          "description": "permission",
+          "regulated": {
+            "role": "permission",
+            "default": "unspecified",
+            "act": "{0} do x"
+          }
+        },
+        "c": {
+          "arguments": [
+            "assistant"
+          ],
+          "description": "c"
+        }
+      },
+      "constants": {}
+    }
+  },
+  "norms": [
+    {
+      "norm": {
+        "name": "a0",
+        "predicate": "x_required",
+        "sign": true,
+        "guard": [
+          "unary",
+          "c",
+          [
+            "var",
+            0
+          ]
+        ],
+        "unless": [],
+        "over": []
+      }
+    },
+    {
+      "norm": {
+        "name": "b1",
+        "predicate": "x_permitted",
+        "sign": false,
+        "guard": [
+          "top"
+        ],
+        "unless": [
+          [
+            "unary",
+            "c",
+            [
+              "var",
+              0
+            ]
+          ]
+        ],
+        "over": []
+      }
+    },
+    {
+      "norm": {
+        "name": "c2",
+        "predicate": "x_required",
+        "sign": false,
+        "guard": [
+          "top"
+        ],
+        "unless": [],
+        "over": [
+          "a0"
+        ]
+      }
+    }
+  ]
+}
