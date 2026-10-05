@@ -110,18 +110,6 @@ def completionLabel : Completion → String
   | .allow => "allow"
   | .unspecified => "unspecified"
 
-/-- Some admissible filled base structure has a typed tuple where no author rule on `r`
-decides: `gaps: reachable` (unspecified) or `default reached` (deny, allow). -/
-def ReachedSome (U : UDoc) (r : Regulated) : Prop :=
-  ∃ B : VE.Structure.{0}, BaseAdmissibleU U B ∧ ∃ vs : List B.Carrier, VE.TupleTyped B r.sorts vs ∧
-    (reachedF U r.name).denote B (tupleVal vs)
-
-/-- At every typed tuple of every admissible filled base structure some author rule on
-`r` decides: `gaps: none`, and for deny or allow the completion is never used. -/
-def NeverReached (U : UDoc) (r : Regulated) : Prop :=
-  ∀ B : VE.Structure.{u}, BaseAdmissibleU U B → ∀ vs : List B.Carrier, VE.TupleTyped B r.sorts vs →
-    ¬ (reachedF U r.name).denote B (tupleVal vs)
-
 /-! ## The static cone (2.5) -/
 
 /-- The predicates named in the guards and carve-outs of the rules on `p`. -/
@@ -186,42 +174,235 @@ def reachedAt (U : UDoc) (M : VE.FiniteModel Entity) (p : String) (vs : List Ent
       touching.all (fun i => kleene M (coneAtomV U M C A) (tupleVal i.1.2) (fillBody U i.1.1) == some true) &&
         kleene M (coneAtomV U M C A) ρ φ == some true)).map (extendFill U M C)
 
-/-- The first typed tuple, in Python's order, whose proposed filling is admissible and
-reaches `r` there. -/
-def reachedWitness (U : UDoc) (M : VE.FiniteModel Entity) (r : Regulated) :
+/-- The route's extra base premises hold on the filled situation. -/
+def extraValid (U : UDoc) (X : List VE.Formula) (M : VE.FiniteModel Entity) (F : FiniteFill U Entity) : Bool :=
+  X.all (fun φ => φ.eval (M.withFill F) [])
+
+/-- The first typed tuple, in Python's order, whose proposed filling is admissible (`Fill_T`
+and the route's base premises `X`) and reaches `r` there. -/
+def reachedWitness (U : UDoc) (X : List VE.Formula) (M : VE.FiniteModel Entity) (r : Regulated) :
     Option (List Entity × FiniteFill U Entity) :=
   (allTuples M r.sorts).findSome? fun vs => match reachedAt U M r.name vs with
-    | some F => if fillValid U M F && (reachedF U r.name).eval (M.withFill F) (tupleVal vs) then some (vs, F)
-        else none
+    | some F => if fillValid U M F && extraValid U X M F && (reachedF U r.name).eval (M.withFill F) (tupleVal vs)
+        then some (vs, F) else none
     | none => none
 
+/-! ## Admissibility with the route's base premises -/
+
+/-- Base admissibility on `fill U` with the route's extra base premises `X`: soft's `Soft_T`
+(regenerated on `fill U`) and the rights limitation premises; `X = []` on the norms route. -/
+def BaseAdmissibleX (U : UDoc) (X : List VE.Formula) (B : VE.Structure.{u}) : Prop :=
+  BaseAdmissibleU U B ∧ Sat B X
+
+/-- Some admissible filled base structure has a typed tuple where no author rule on `r`
+decides: `gaps: reachable` (unspecified) or `default reached` (deny, allow). -/
+def ReachedSome (U : UDoc) (X : List VE.Formula) (r : Regulated) : Prop :=
+  ∃ B : VE.Structure.{0}, BaseAdmissibleX U X B ∧ ∃ vs : List B.Carrier, VE.TupleTyped B r.sorts vs ∧
+    (reachedF U r.name).denote B (tupleVal vs)
+
+/-- At every typed tuple of every admissible filled base structure some author rule on
+`r` decides: `gaps: none`, and for deny or allow the completion is never used. -/
+def NeverReached (U : UDoc) (X : List VE.Formula) (r : Regulated) : Prop :=
+  ∀ B : VE.Structure.{u}, BaseAdmissibleX U X B → ∀ vs : List B.Carrier, VE.TupleTyped B r.sorts vs →
+    ¬ (reachedF U r.name).denote B (tupleVal vs)
+
+/-- A checked finite filling of a situation is admissible with the route's premises. -/
+theorem admissibleX_of_fill (U : UDoc) (h : WellFormedU U = true) (X : List VE.Formula)
+    (M : VE.FiniteModel Entity) (valid : M.Valid (envAt U.D 0)) (hb : backgroundValid U.D M = true)
+    (F : FiniteFill U Entity) (hF : fillValid U M F = true) (hX : extraValid U X M F = true) :
+    BaseAdmissibleX U X (withFill U M.asStructure (finFill M F)) :=
+  ⟨admissible_of_fillValid U h M valid hb F hF, fun φ hφ =>
+    (eval_withFill U M F φ []).mp (List.all_eq_true.mp hX φ hφ)⟩
+
 /-- A checked filled situation reaches `r`. -/
-theorem reachedSome_of_fill (U : UDoc) (h : WellFormedU U = true) (M : VE.FiniteModel Entity)
-    (valid : M.Valid (envAt U.D 0)) (hb : backgroundValid U.D M = true) (r : Regulated) (vs : List Entity)
-    (F : FiniteFill U Entity) (typed : vs ∈ allTuples M r.sorts) (hF : fillValid U M F = true)
-    (hr : (reachedF U r.name).eval (M.withFill F) (tupleVal vs) = true) : ReachedSome U r :=
-  ⟨withFill U M.asStructure (finFill M F), admissible_of_fillValid U h M valid hb F hF, vs,
+theorem reachedSome_of_fill (U : UDoc) (h : WellFormedU U = true) (X : List VE.Formula)
+    (M : VE.FiniteModel Entity) (valid : M.Valid (envAt U.D 0)) (hb : backgroundValid U.D M = true)
+    (r : Regulated) (vs : List Entity) (F : FiniteFill U Entity) (typed : vs ∈ allTuples M r.sorts)
+    (hF : fillValid U M F = true) (hX : extraValid U X M F = true)
+    (hr : (reachedF U r.name).eval (M.withFill F) (tupleVal vs) = true) : ReachedSome U X r :=
+  ⟨withFill U M.asStructure (finFill M F), admissibleX_of_fill U h X M valid hb F hF hX, vs,
     (tupleTyped_relation M.asStructure _ _ vs).mpr ((mem_allTuples M r.sorts vs).mp typed),
     (eval_withFill U M F _ _).mp hr⟩
 
 /-- A replayed filled model (`ReachedData`) at which `reached_p` evaluates true reaches `p`. -/
 theorem ReachedData.reachedSome {s : SourceU} (d : ReachedData s) (hr : d.reached = true) :
-    ReachedSome s.U d.r :=
-  ⟨d.M.asStructure, ⟨baseAdmissible_of_valid (fill s.U) d.M d.valid d.background, fun φ hφ =>
-      (VE.eval_iff_denote d.M [] φ).mp (List.all_eq_true.mp d.filled φ hφ)⟩,
+    ReachedSome s.U [] d.r :=
+  ⟨d.M.asStructure, ⟨⟨baseAdmissible_of_valid (fill s.U) d.M d.valid d.background, fun φ hφ =>
+      (VE.eval_iff_denote d.M [] φ).mp (List.all_eq_true.mp d.filled φ hφ)⟩, fun _ h => by cases h⟩,
     d.tuple, d.typed, (VE.eval_iff_denote d.M _ _).mp hr⟩
 
-/-! ## The situation -/
+/-! ## The evidence a route supplies -/
 
 /-- A base situation of the author vocabulary (no unsaid tables), Background-valid. -/
-structure SituationU (s : SourceU) where
+structure SituationG (U : UDoc) where
   M : VE.FiniteModel Entity
-  valid : M.Valid (envAt s.U.D 0)
-  background : backgroundValid s.U.D M = true
+  valid : M.Valid (envAt U.D 0)
+  background : backgroundValid U.D M = true
 
-/-- Decode a base situation: an `unsaid__` table is a filling, never a situation table
-(Python `UnspecifiedDocument.situation`, checked in name order before decoding). -/
-def situationFrom (s : SourceU) (m : Json) : Except String (SituationU s) := do
+/-- What one route gives the report: its document `U`, its extra base premises `X`, how it
+decodes a base situation, how it replays a supplied witness for `r` (`none` when the
+`witnesses` object has no entry for `r` or the entry does not reach `r`), and how it replays
+the `reached:<p>` certificate (`some` exactly when it is accepted). -/
+structure ReportSource where
+  U : UDoc
+  X : List VE.Formula
+  wfU : WellFormedU U = true
+  situation : Json → Except String (SituationG U)
+  supplied : Json → (r : Regulated) → Except String (Option (PLift (ReachedSome U X r) × Json))
+  never : (r : Regulated) → Option (PLift (NeverReached.{0} U X r))
+
+/-! ## One line -/
+
+/-- The witness shown with a `reachable` line: the tuple's entity ids and every unsaid
+table of the filled situation, rows sorted (Python `_witness_json`). -/
+def witnessJson (U : UDoc) (M : VE.FiniteModel Entity) (vs : List Entity) : Json :=
+  Json.mkObj [("tuple", toJson (vs.map (·.2))),
+    ("filling", Json.mkObj (U.unspec.map fun p => (unsaidName p,
+      toJson (sortBy (fun a b => decide (a < b)) ((M.relations (unsaidName p)).map (·.map (·.2)))))))]
+
+/-- The lines of one regulated predicate, with the facts its evidence establishes. -/
+structure LineU (U : UDoc) (X : List VE.Formula) (cited : List (String × List String)) (translation : Bool) where
+  r : Regulated
+  reached : Reached
+  witness : Option Json
+  grounding : Grounding
+  sound_reached : reached = .reachable → ReachedSome U X r
+  sound_never : reached = .never → NeverReached.{0} U X r
+  ground_eq : grounding = groundingOf U r cited translation (reached == .reachable)
+
+def LineU.lines {U X cited translation} (l : LineU U X cited translation) : List String :=
+  let c := completionOf U l.r
+  [s!"completion: {completionLabel c}",
+   (if c = .unspecified then "gaps: " else "default reached: ") ++ l.reached.label] ++
+  l.grounding.line l.r.name ++
+  (match inheritsFrom U l.r.name with
+   | [] => []
+   | qs => ["inherits_from: [" ++ ", ".intercalate qs ++ "]"])
+
+def LineU.toJson {U X cited translation} (l : LineU U X cited translation) : Json :=
+  Json.mkObj ([("predicate", .str l.r.name), ("completion", .str (completionLabel (completionOf U l.r))),
+    ("reached", .str l.reached.label), ("lines", Lean.toJson l.lines),
+    ("inherits_from", Lean.toJson (inheritsFrom U l.r.name))] ++
+    (match l.witness with
+     | some w => [("witness", w)]
+     | none => []))
+
+/-- The situation's own witness search, checked. -/
+def situationWitness (src : ReportSource) (S : SituationG src.U) (r : Regulated) :
+    Option (PLift (ReachedSome src.U src.X r) × Json) :=
+  match reachedWitness src.U src.X S.M r with
+  | some (vs, F) =>
+    if hc : vs ∈ allTuples S.M r.sorts ∧ fillValid src.U S.M F = true ∧ extraValid src.U src.X S.M F = true ∧
+        (reachedF src.U r.name).eval (S.M.withFill F) (tupleVal vs) = true then
+      some (⟨reachedSome_of_fill src.U src.wfU src.X S.M S.valid S.background r vs F hc.1 hc.2.1 hc.2.2.1
+        hc.2.2.2⟩, witnessJson src.U (S.M.withFill F) vs)
+    else none
+  | none => none
+
+/-- The evidence for one line, in Python `report`'s order: the situation's own witness
+search, else a supplied witness; if neither reaches `r`, the `reached:<p>` certificate. -/
+def lineFor (src : ReportSource) (witnesses : Json) (sit : Option (SituationG src.U))
+    (cited : List (String × List String)) (translation : Bool) (r : Regulated) :
+    Except String (LineU src.U src.X cited translation) := do
+  let found ← match sit with
+    | some S => pure (situationWitness src S r)
+    | none => src.supplied witnesses r
+  match found with
+  | some (hs, w) =>
+    pure ⟨r, .reachable, some w, groundingOf src.U r cited translation true, (fun _ => hs.down),
+      (fun h => by cases h), rfl⟩
+  | none =>
+    match src.never r with
+    | some hn =>
+      pure ⟨r, .never, none, groundingOf src.U r cited translation false, (fun h => by cases h),
+        (fun _ => hn.down), rfl⟩
+    | none =>
+      pure ⟨r, .unknown, none, groundingOf src.U r cited translation false, (fun h => by cases h),
+        (fun h => by cases h), rfl⟩
+
+/-! ## The report -/
+
+structure ReportG (src : ReportSource) where
+  unitIds : List String
+  cited : List (Cited unitIds)
+  translation : Bool
+  lines : List (LineU src.U src.X (cited.map (·.1)) translation)
+
+/-- The residual line `gaps` (3.2): the unspecified predicates with a reachable gap,
+sorted, and the number of `UngroundedDefault` findings. -/
+def ReportG.gaps {src} (rep : ReportG src) : List String :=
+  sortBy (fun a b => decide (a < b)) ((rep.lines.filter (fun l =>
+    completionOf src.U l.r = .unspecified && l.reached == .reachable)).map (·.r.name))
+
+def ReportG.findings {src} (rep : ReportG src) : List String :=
+  rep.lines.flatMap (fun l => if l.grounding = .ungrounded then l.grounding.line l.r.name else [])
+
+def ReportG.toJson {src} (rep : ReportG src) : List (String × Json) :=
+  [("report", Json.arr (rep.lines.map (·.toJson)).toArray),
+   ("residual", Json.mkObj [("gaps", Lean.toJson rep.gaps),
+     ("ungrounded_defaults", Lean.toJson rep.findings.length)]),
+   ("findings", Lean.toJson rep.findings)]
+
+/-- The report fields of a case: the `completions` block against `unit_ids`, an optional
+base `model`, supplied `witnesses` (predicate → the route's witness) and `packages`
+(`reached:<p>` → package), `translation` and an optional `predicates` restriction; lines in
+the layer order of `fill U`. -/
+def reportWith (src : ReportSource) (j : Json) : Except String (ReportG src) := do
+  let translation ← match j.getObjValD "translation" with
+    | .bool b => pure b
+    | .null => pure false
+    | _ => throw "InvalidInput: translation must be a boolean"
+  let unitIds ← match j.getObjValD "unit_ids" with
+    | .null => pure []
+    | ids => match strings ids with
+      | .ok xs => pure xs
+      | .error _ => throw "InvalidInput: unit_ids must be a list of strings"
+  let block := match j.getObjValD "completions" with
+    | .null => Json.mkObj []
+    | b => b
+  let cited ← validateCompletions src.U block unitIds
+  let sit ← match j.getObjValD "model" with
+    | .null => pure none
+    | m => some <$> src.situation m
+  let only ← match j.getObjValD "predicates" with
+    | .null => pure none
+    | ps => match strings ps with
+      | .ok xs => pure (some xs)
+      | .error _ => throw "InvalidInput: predicates must be a list of strings"
+  for field in ["witnesses", "packages"] do
+    match j.getObjValD field with
+    | .null | .obj _ => pure ()
+    | _ => throw s!"InvalidInput: {field} must be an object"
+  let order := (layerNames (fill src.U).T).filterMap (fun n =>
+    if only.all (·.contains n) then src.U.D.T.regulated.find? (·.name == n) else none)
+  let lines ← order.mapM (lineFor src (j.getObjValD "witnesses") sit (cited.map (·.1)) translation)
+  pure ⟨unitIds, cited, translation, lines⟩
+
+/-- What a report establishes, on every route: a `reachable` line has an admissible filled
+witness, a `none` line is never reached under any admissible filling (for an unspecified
+`p`: no gap; for deny or allow: the completion is never used), `UngroundedDefault` is
+reported exactly for a reached, uncited deny or allow completion of a translation document,
+and every citation names known units. -/
+def ReportSound (src : ReportSource) (rep : ReportG src) : Prop :=
+  (∀ l ∈ rep.lines, (l.reached = .reachable → ReachedSome src.U src.X l.r) ∧
+    (l.reached = .never → NeverReached.{0} src.U src.X l.r) ∧
+    (l.grounding = .ungrounded ↔ completionOf src.U l.r ≠ .unspecified ∧
+      VE.Bridge.lookup (rep.cited.map (·.1)) l.r.name = none ∧ rep.translation = true ∧
+      l.reached = .reachable)) ∧
+  (∀ e ∈ rep.cited, e.1.2 ≠ [] ∧ ∀ u ∈ e.1.2, u ∈ rep.unitIds)
+
+theorem report_sound (src : ReportSource) (rep : ReportG src) : ReportSound src rep := by
+  refine ⟨fun l _ => ⟨l.sound_reached, l.sound_never, ?_⟩, fun e _ => ⟨e.2.1, fun u hu => ?_⟩⟩
+  · rw [l.ground_eq, grounding_ungrounded_iff]
+    cases l.reached <;> simp
+  · have := List.all_eq_true.mp e.2.2 u hu
+    simpa using this
+
+/-! ## The norms route -/
+
+/-- Decode a base situation of the norms route: an `unsaid__` table is a filling, never a
+situation table (Python `UnspecifiedDocument.situation`, checked in name order first). -/
+def situationFrom (s : SourceU) (m : Json) : Except String (SituationG s.U) := do
   if let .obj _ := m.getObjValD "relations" then
     for (n, _) in ← fields (m.getObjValD "relations") do
       if n.startsWith "unsaid__" then
@@ -236,59 +417,9 @@ def situationFrom (s : SourceU) (m : Json) : Except String (SituationU s) := do
     else throw (VE.Route.Wire.invalidModel "literals")
   else throw "model is not semantically admissible"
 
-/-! ## One line -/
-
-/-- The witness shown with a `reachable` line: the tuple's entity ids and every unsaid
-table of the filled situation, rows sorted (Python `_witness_json`). -/
-def witnessJson (U : UDoc) (M : VE.FiniteModel Entity) (vs : List Entity) : Json :=
-  Json.mkObj [("tuple", toJson (vs.map (·.2))),
-    ("filling", Json.mkObj (U.unspec.map fun p => (unsaidName p,
-      toJson (sortBy (fun a b => decide (a < b)) ((M.relations (unsaidName p)).map (·.map (·.2)))))))]
-
-/-- The lines of one regulated predicate, with the facts its evidence establishes. -/
-structure LineU (U : UDoc) (cited : List (String × List String)) (translation : Bool) where
-  r : Regulated
-  reached : Reached
-  witness : Option Json
-  grounding : Grounding
-  sound_reached : reached = .reachable → ReachedSome U r
-  sound_never : reached = .never → NeverReached.{0} U r
-  ground_eq : grounding = groundingOf U r cited translation (reached == .reachable)
-
-def LineU.lines {U cited translation} (l : LineU U cited translation) : List String :=
-  let c := completionOf U l.r
-  [s!"completion: {completionLabel c}",
-   (if c = .unspecified then "gaps: " else "default reached: ") ++ l.reached.label] ++
-  l.grounding.line l.r.name ++
-  (match inheritsFrom U l.r.name with
-   | [] => []
-   | qs => ["inherits_from: [" ++ ", ".intercalate qs ++ "]"])
-
-def LineU.toJson {U cited translation} (l : LineU U cited translation) : Json :=
-  Json.mkObj ([("predicate", .str l.r.name), ("completion", .str (completionLabel (completionOf U l.r))),
-    ("reached", .str l.reached.label), ("lines", Lean.toJson l.lines),
-    ("inherits_from", Lean.toJson (inheritsFrom U l.r.name))] ++
-    (match l.witness with
-     | some w => [("witness", w)]
-     | none => []))
-
-/-- The situation's own witness search, checked. -/
-def situationWitness (s : SourceU) (S : SituationU s) (r : Regulated) :
-    Option (PLift (ReachedSome s.U r) × Json) :=
-  match hwf : s.profiled with
-  | false => none
-  | true => match reachedWitness s.U S.M r with
-    | some (vs, F) =>
-      if hc : vs ∈ allTuples S.M r.sorts ∧ fillValid s.U S.M F = true ∧
-          (reachedF s.U r.name).eval (S.M.withFill F) (tupleVal vs) = true then
-        some (⟨reachedSome_of_fill s.U (s.wfU hwf) S.M S.valid S.background r vs F hc.1 hc.2.1 hc.2.2⟩,
-          witnessJson s.U (S.M.withFill F) vs)
-      else none
-    | none => none
-
-/-- A supplied filled witness for `r` (the `witnesses` entry named `r`), replayed. -/
+/-- A supplied filled model of `E‴_base` for `r` (the `witnesses` entry named `r`), replayed. -/
 def suppliedWitness (s : SourceU) (witnesses : Json) (r : Regulated) :
-    Except String (Option (PLift (ReachedSome s.U r) × Json)) :=
+    Except String (Option (PLift (ReachedSome s.U [] r) × Json)) :=
   match witnesses.getObjVal? r.name with
   | .ok w => do
     let d ← reachedFromU s (pure r.name) w
@@ -297,121 +428,42 @@ def suppliedWitness (s : SourceU) (witnesses : Json) (r : Regulated) :
     else pure none
   | .error _ => pure none
 
-/-- The `reached:<p>` certificate, replayed: `some` exactly when it is accepted. -/
+/-- The `reached:<p>` certificate over `Background_base(E‴) ++ Fill_T`, replayed. -/
 def neverReached (s : SourceU) (environment norms packages : Json) (r : Regulated) :
-    Option (PLift (NeverReached.{0} s.U r)) :=
+    Option (PLift (NeverReached.{0} s.U [] r)) :=
   match decodePackageU s.U environment norms packages (reachedTarget s.U r) with
   | some c =>
     if ok : VE.Tableau.checkCertificate (envAt (fill s.U) 0) (baseBackgroundU s.U)
         (targetConclusion (reachedTarget s.U r)) c = true then
-      some ⟨normDefaults_wire_gaps_sound.{0} s.U r c ok⟩
+      some ⟨fun B hB vs hvs => normDefaults_wire_gaps_sound.{0} s.U r c ok B hB.1 vs hvs⟩
     else none
   | none => none
 
-/-- The evidence for one line, in Python `report`'s order: the situation's own witness
-search, else a supplied filled witness; if neither reaches `r`, the `reached:<p>`
-certificate. -/
-def lineFor (s : SourceU) (environment norms packages witnesses : Json) (sit : Option (SituationU s))
-    (cited : List (String × List String)) (translation : Bool) (r : Regulated) :
-    Except String (LineU s.U cited translation) := do
-  let found ← match sit with
-    | some S => pure (situationWitness s S r)
-    | none => suppliedWitness s witnesses r
-  match found with
-  | some (hs, w) =>
-    pure ⟨r, .reachable, some w, groundingOf s.U r cited translation true, (fun _ => hs.down),
-      (fun h => by cases h), rfl⟩
-  | none =>
-    match neverReached s environment norms packages r with
-    | some hn =>
-      pure ⟨r, .never, none, groundingOf s.U r cited translation false, (fun h => by cases h),
-        (fun _ => hn.down), rfl⟩
-    | none =>
-      pure ⟨r, .unknown, none, groundingOf s.U r cited translation false, (fun h => by cases h),
-        (fun h => by cases h), rfl⟩
-
-/-! ## The report -/
+def normsSource (s : SourceU) (hs : s.profiled = true) (j : Json) : ReportSource :=
+  { U := s.U, X := [], wfU := s.wfU hs, situation := situationFrom s, supplied := suppliedWitness s,
+    never := neverReached s (j.getObjValD "environment") (j.getObjValD "norms") (j.getObjValD "packages") }
 
 structure ReportU (j : Json) where
   s : SourceU
   decoded : decodeSourceU (j.getObjValD "environment") (j.getObjValD "norms") = .ok s
-  unitIds : List String
-  cited : List (Cited unitIds)
-  translation : Bool
-  lines : List (LineU s.U (cited.map (·.1)) translation)
+  profiled : s.profiled = true
+  rep : ReportG (normsSource s profiled j)
 
-/-- The residual line `gaps` (3.2): the unspecified predicates with a reachable gap,
-sorted, and the number of `UngroundedDefault` findings. -/
-def ReportU.gaps {j} (rep : ReportU j) : List String :=
-  sortBy (fun a b => decide (a < b)) ((rep.lines.filter (fun l =>
-    completionOf rep.s.U l.r = .unspecified && l.reached == .reachable)).map (·.r.name))
-
-def ReportU.findings {j} (rep : ReportU j) : List String :=
-  rep.lines.flatMap (fun l => if l.grounding = .ungrounded then l.grounding.line l.r.name else [])
-
-def ReportU.toJson {j} (rep : ReportU j) : List (String × Json) :=
-  [("report", Json.arr (rep.lines.map (·.toJson)).toArray),
-   ("residual", Json.mkObj [("gaps", Lean.toJson rep.gaps),
-     ("ungrounded_defaults", Lean.toJson rep.findings.length)]),
-   ("findings", Lean.toJson rep.findings)]
-
-/-- The report case: the source under the profile, the `completions` block against
-`unit_ids`, an optional base `model`, supplied `witnesses` (predicate → filled `model` and
-`tuple`), `packages` (`reached:<p>` → package), `translation` and an optional
-`predicates` restriction; lines in the layer order of `fill U`. -/
+/-- The norms-route report case: the source under the profile, then `reportWith`. -/
 def reportFrom (j : Json) : Except String (ReportU j) :=
   match hs0 : decodeSourceU (j.getObjValD "environment") (j.getObjValD "norms") with
   | .error e => throw e
-  | .ok s => do
-  unless s.profiled do throw "UnsupportedProfile: norm-defaults@0 is required"
-  let translation ← match j.getObjValD "translation" with
-    | .bool b => pure b
-    | .null => pure false
-    | _ => throw "InvalidInput: translation must be a boolean"
-  let unitIds ← match j.getObjValD "unit_ids" with
-    | .null => pure []
-    | ids => match strings ids with
-      | .ok xs => pure xs
-      | .error _ => throw "InvalidInput: unit_ids must be a list of strings"
-  let block := match j.getObjValD "completions" with
-    | .null => Json.mkObj []
-    | b => b
-  let cited ← validateCompletions s.U block unitIds
-  let sit ← match j.getObjValD "model" with
-    | .null => pure none
-    | m => some <$> situationFrom s m
-  let only ← match j.getObjValD "predicates" with
-    | .null => pure none
-    | ps => match strings ps with
-      | .ok xs => pure (some xs)
-      | .error _ => throw "InvalidInput: predicates must be a list of strings"
-  for field in ["witnesses", "packages"] do
-    match j.getObjValD field with
-    | .null | .obj _ => pure ()
-    | _ => throw s!"InvalidInput: {field} must be an object"
-  let order := (layerNames (fill s.U).T).filterMap (fun n =>
-    if only.all (·.contains n) then s.U.D.T.regulated.find? (·.name == n) else none)
-  let lines ← order.mapM (lineFor s (j.getObjValD "environment") (j.getObjValD "norms")
-    (j.getObjValD "packages") (j.getObjValD "witnesses") sit (cited.map (·.1)) translation)
-  pure ⟨s, hs0, unitIds, cited, translation, lines⟩
+  | .ok s =>
+    if hs : s.profiled = true then do
+      let rep ← reportWith (normsSource s hs j) j
+      pure ⟨s, hs0, hs, rep⟩
+    else throw "UnsupportedProfile: norm-defaults@0 is required"
 
-/-- `normDefaults_wire_report_sound`: for the document decoded from that very input, a
-`reachable` line has an admissible filled witness, a `none` line is never reached under any
-admissible filling (for an unspecified `p`: no gap; for deny or allow: the completion is
-never used), `UngroundedDefault` is reported exactly for a reached, uncited deny or allow
-completion of a translation document, and every citation names known units. -/
+/-- `normDefaults_wire_report_sound`: the report of the document decoded from that very
+input satisfies `ReportSound` with no extra base premises. -/
 theorem normDefaults_wire_report_sound (j : Json) (rep : ReportU j) (_h : reportFrom j = .ok rep) :
     decodeSourceU (j.getObjValD "environment") (j.getObjValD "norms") = .ok rep.s ∧
-    (∀ l ∈ rep.lines, (l.reached = .reachable → ReachedSome rep.s.U l.r) ∧
-      (l.reached = .never → NeverReached.{0} rep.s.U l.r) ∧
-      (l.grounding = .ungrounded ↔ completionOf rep.s.U l.r ≠ .unspecified ∧
-        VE.Bridge.lookup (rep.cited.map (·.1)) l.r.name = none ∧ rep.translation = true ∧
-        l.reached = .reachable)) ∧
-    (∀ e ∈ rep.cited, e.1.2 ≠ [] ∧ ∀ u ∈ e.1.2, u ∈ rep.unitIds) := by
-  refine ⟨rep.decoded, fun l _ => ⟨l.sound_reached, l.sound_never, ?_⟩, fun e _ => ⟨e.2.1, fun u hu => ?_⟩⟩
-  · rw [l.ground_eq, grounding_ungrounded_iff]
-    cases l.reached <;> simp
-  · have := List.all_eq_true.mp e.2.2 u hu
-    simpa using this
+      ReportSound (normsSource rep.s rep.profiled j) rep.rep :=
+  ⟨rep.decoded, report_sound _ rep.rep⟩
 
 end VE.NormDefaults.Wire

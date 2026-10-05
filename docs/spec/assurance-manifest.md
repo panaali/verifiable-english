@@ -174,9 +174,10 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Risk/Run.lean` | 651 | 651 | 1–651 | `dbfad8022806…` |
 | `lean/VE/Rights/Wire.lean` | 698 | 698 | 1–698 | `fc25e57bed1a…` |
 | `lean/VE/Rights/Admission.lean` | 471 | 471 | 1–471 | `1b43543b7e66…` |
-| `lean/VE/NormDefaults/Wire.lean` | 377 | 377 | 1–377 | `b823854df575…` |
+| `lean/VE/NormDefaults/Wire.lean` | 383 | 383 | 1–383 | `c59e1151313d…` |
 | `lean/VE/NormDefaults/Replay.lean` | 377 | 377 | 1–377 | `0310b9e35bec…` |
-| `lean/VE/NormDefaults/Report.lean` | 417 | 417 | 1–417 | `95090f7096b7…` |
+| `lean/VE/NormDefaults/Report.lean` | 469 | 469 | 1–469 | `f54bf146c719…` |
+| `lean/VE/NormDefaults/Layered.lean` | 426 | 426 | 1–426 | `66690f53b646…` |
 | `lean/VE/NormDefaults/Admission.lean` | 350 | 350 | 1–350 | `b60054268019…` |
 | `lean/VE/Readings/Wire.lean` | 988 | 988 | 1–988 | `311cfeb72316…` |
 | `lean/VE/Readings/SupWire.lean` | 378 | 378 | 1–378 | `f1efaaba3d67…` |
