@@ -173,6 +173,7 @@ import VE.EnglishGrammar.FoldAgree
 import VE.EnglishGrammar.Rules
 import VE.EnglishGrammar.Read
 import VE.EnglishGrammar.Extends
+import VE.Senses.Read
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -4192,3 +4193,33 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.EnglishGrammar.rename_id
 #print axioms VE.EnglishGrammar.map_rename_id
 #print axioms VE.EnglishGrammar.grammar_extension
+#print axioms VE.Senses.wf_iff_no_failure
+#print axioms VE.Senses.readLine_ok
+#print axioms VE.Senses.readPreambleGo_lines
+#print axioms VE.Senses.preamble_unique
+#print axioms VE.Senses.project_eq
+#print axioms VE.Senses.project_valid
+#print axioms VE.Senses.mem_projectedSenses
+#print axioms VE.Senses.mem_projectedAliases
+#print axioms VE.Senses.project_extends
+#print axioms VE.Senses.mem_eraseDups_iff
+#print axioms VE.Senses.readOne_some
+#print axioms VE.Senses.readOne_ok_iff
+#print axioms VE.Senses.grammarFault_none
+#print axioms VE.Senses.tryChoice_some
+#print axioms VE.Senses.tryChoice_none
+#print axioms VE.Senses.candidatesOf_sound
+#print axioms VE.Senses.candidatesOf_complete
+#print axioms VE.Senses.openUnit_good
+#print axioms VE.Senses.readUnit_good
+#print axioms VE.Senses.stateFrom_init
+#print axioms VE.Senses.stateFrom_cons
+#print axioms VE.Senses.readBody_good
+#print axioms VE.Senses.readWithSenses_ok
+#print axioms VE.Senses.readBody_resolved
+#print axioms VE.Senses.filterMap_of_map_some
+#print axioms VE.Senses.senses_resolved_one_reading
+#print axioms VE.Senses.senses_unit_sound
+#print axioms VE.Senses.senses_candidate_sound
+#print axioms VE.Senses.candidates_complete
+#print axioms VE.Senses.mixed_exact
