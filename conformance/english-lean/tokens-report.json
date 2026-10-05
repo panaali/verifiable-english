@@ -1,0 +1,340 @@
+{
+ "ambiguity_probe": [
+  {
+   "python": "AmbiguousDerivation: two derivations",
+   "sentence": "Every deployed service is reviewed.",
+   "tokens": "many",
+   "witnesses": [
+    "sentence#0(formula#6(natural#113(natural_every#127(Every, natural_subject#132(deployed, service), natural_tail#129(relative#100(is, reviewed))))))",
+    "sentence#0(formula#11(universal#48(Every, declaration#55(noun#84(deployed, service)), relative#100(is, reviewed))))"
+   ]
+  },
+  {
+   "python": "AmbiguousDerivation: two derivations",
+   "sentence": "It is not the case that every deployed service is reviewed.",
+   "tokens": "many",
+   "witnesses": [
+    "sentence#0(formula#8(negation#19(It, is, not, the, case, that, formula#6(natural#113(natural_every#127(every, natural_subject#132(deployed, service), natural_tail#129(relative#100(is, reviewed))))))))",
+    "sentence#0(formula#8(negation#19(It, is, not, the, case, that, formula#11(universal#48(every, declaration#55(noun#84(deployed, service)), relative#100(is, reviewed))))))"
+   ]
+  },
+  {
+   "python": "AmbiguousDerivation: two derivations",
+   "sentence": "Every DEPLOYED service is reviewed.",
+   "tokens": "many",
+   "witnesses": [
+    "sentence#0(formula#6(natural#113(natural_every#127(Every, natural_subject#132(DEPLOYED, service), natural_tail#129(relative#100(is, reviewed))))))",
+    "sentence#0(formula#11(universal#48(Every, declaration#55(noun#84(DEPLOYED, service)), relative#100(is, reviewed))))"
+   ]
+  }
+ ],
+ "configurations": [
+  {
+   "configuration": "ordinary",
+   "cpu_seconds": 1.573,
+   "earley_cpu_ms_max": 27.9,
+   "earley_cpu_seconds": 0.709,
+   "longest_rhs": 28,
+   "max_steps": 32968,
+   "max_tokens": 63,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 515,
+   "rules": 131,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "closure",
+   "cpu_seconds": 2.22,
+   "earley_cpu_ms_max": 57.5,
+   "earley_cpu_seconds": 0.875,
+   "longest_rhs": 28,
+   "max_steps": 66138,
+   "max_tokens": 127,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 515,
+   "rules": 131,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "colliding_aliases",
+   "cpu_seconds": 2.72,
+   "dropped: uses IMPOSSIBLE": 5,
+   "earley_cpu_ms_max": 50.8,
+   "earley_cpu_seconds": 0.907,
+   "longest_rhs": 28,
+   "max_steps": 88071,
+   "max_tokens": 167,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 521,
+   "rules": 117,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "function_words",
+   "cpu_seconds": 2.245,
+   "dropped: uses IMPOSSIBLE": 5,
+   "earley_cpu_ms_max": 31.6,
+   "earley_cpu_seconds": 0.856,
+   "longest_rhs": 28,
+   "max_steps": 45989,
+   "max_tokens": 86,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 528,
+   "rules": 124,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "function_identifiers",
+   "cpu_seconds": 2.268,
+   "dropped: uses IMPOSSIBLE": 6,
+   "earley_cpu_ms_max": 35.6,
+   "earley_cpu_seconds": 0.793,
+   "longest_rhs": 28,
+   "max_steps": 77346,
+   "max_tokens": 153,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 500,
+   "rules": 114,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "precision_templates",
+   "cpu_seconds": 2.052,
+   "dropped: uses IMPOSSIBLE": 1,
+   "earley_cpu_ms_max": 55.2,
+   "earley_cpu_seconds": 0.834,
+   "longest_rhs": 28,
+   "max_steps": 81328,
+   "max_tokens": 156,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 514,
+   "rules": 126,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "birthright-citizenship-debate",
+   "cpu_seconds": 1.875,
+   "dropped: uses IMPOSSIBLE": 7,
+   "earley_cpu_ms_max": 52.4,
+   "earley_cpu_seconds": 0.833,
+   "longest_rhs": 28,
+   "max_steps": 69072,
+   "max_tokens": 136,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 501,
+   "rules": 114,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "claude-constitution-excerpt",
+   "cpu_seconds": 4.247,
+   "dropped: uses IMPOSSIBLE": 1,
+   "earley_cpu_ms_max": 107.0,
+   "earley_cpu_seconds": 1.48,
+   "longest_rhs": 28,
+   "max_steps": 189711,
+   "max_tokens": 266,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 706,
+   "rules": 185,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "news-article",
+   "cpu_seconds": 4.691,
+   "dropped: uses IMPOSSIBLE": 1,
+   "earley_cpu_ms_max": 96.1,
+   "earley_cpu_seconds": 2.101,
+   "longest_rhs": 28,
+   "max_steps": 77381,
+   "max_tokens": 92,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 829,
+   "rules": 204,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "us-constitution-14th-s1",
+   "cpu_seconds": 3.79,
+   "dropped: uses IMPOSSIBLE": 7,
+   "earley_cpu_ms_max": 33.4,
+   "earley_cpu_seconds": 0.856,
+   "longest_rhs": 28,
+   "max_steps": 92458,
+   "max_tokens": 137,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 667,
+   "rules": 139,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "birthright-citizenship-debate-reviewed",
+   "cpu_seconds": 2.752,
+   "dropped: uses IMPOSSIBLE": 7,
+   "earley_cpu_ms_max": 64.7,
+   "earley_cpu_seconds": 0.685,
+   "longest_rhs": 28,
+   "max_steps": 76306,
+   "max_tokens": 120,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 629,
+   "rules": 126,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "claude-constitution-excerpt-reviewed",
+   "cpu_seconds": 4.657,
+   "dropped: uses IMPOSSIBLE": 1,
+   "earley_cpu_ms_max": 108.3,
+   "earley_cpu_seconds": 1.309,
+   "longest_rhs": 28,
+   "max_steps": 208248,
+   "max_tokens": 218,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 946,
+   "rules": 235,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "news-article-reviewed",
+   "cpu_seconds": 3.43,
+   "dropped: uses IMPOSSIBLE": 1,
+   "earley_cpu_ms_max": 107.4,
+   "earley_cpu_seconds": 1.813,
+   "longest_rhs": 28,
+   "max_steps": 125562,
+   "max_tokens": 121,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 1020,
+   "rules": 251,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "us-constitution-14th-s1-reviewed",
+   "cpu_seconds": 6.385,
+   "dropped: uses IMPOSSIBLE": 7,
+   "earley_cpu_ms_max": 69.9,
+   "earley_cpu_seconds": 1.055,
+   "longest_rhs": 28,
+   "max_steps": 190186,
+   "max_tokens": 200,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 942,
+   "rules": 174,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "accepted-suggestions",
+   "cpu_seconds": 1.099,
+   "dropped: uses IMPOSSIBLE": 1,
+   "earley_cpu_ms_max": 22.0,
+   "earley_cpu_seconds": 0.473,
+   "longest_rhs": 28,
+   "max_steps": 54959,
+   "max_tokens": 112,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 484,
+   "rules": 122,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "adopted-unary",
+   "cpu_seconds": 2.77,
+   "dropped: uses IMPOSSIBLE": 7,
+   "earley_cpu_ms_max": 34.9,
+   "earley_cpu_seconds": 0.637,
+   "longest_rhs": 28,
+   "max_steps": 91202,
+   "max_tokens": 139,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 649,
+   "rules": 130,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "order",
+   "cpu_seconds": 1.204,
+   "dropped: uses IMPOSSIBLE": 1,
+   "earley_cpu_ms_max": 34.0,
+   "earley_cpu_seconds": 0.492,
+   "longest_rhs": 28,
+   "max_steps": 90170,
+   "max_tokens": 166,
+   "nonterminals": 44,
+   "rank_depth": 5,
+   "rhs_total": 535,
+   "rules": 139,
+   "verdicts": {
+    "one": 60
+   }
+  }
+ ],
+ "differences": [],
+ "earley_cpu_ms": {
+  "max": 108.32,
+  "note": "CPU time of the Lark Earley parse alone (process_time), one sentence each",
+  "p50": 12.31,
+  "p95": 43.44,
+  "p99": 67.02
+ },
+ "format": "ve.english-lean-tokens@1",
+ "per_configuration": 60,
+ "steps": {
+  "at_longest_sentence": {
+   "steps": 189711,
+   "tokens": 266
+  },
+  "max": 208248,
+  "p50": 17082,
+  "p95": 58173,
+  "p99": 118032
+ }
+}
