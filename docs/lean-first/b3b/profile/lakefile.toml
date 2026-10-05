@@ -1,0 +1,10 @@
+name = "lfProfile"
+defaultTargets = ["prof"]
+
+[[require]]
+name = "veReference"
+path = "../../../../lean"
+
+[[lean_exe]]
+name = "prof"
+root = "Prof"

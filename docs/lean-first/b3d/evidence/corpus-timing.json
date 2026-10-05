@@ -1,0 +1,45 @@
+{
+ "input": "readings-corpus.json",
+ "runs": [
+  {
+   "base": {
+    "wall": 51.72,
+    "python_cpu": 1.64,
+    "children_cpu": 51.06,
+    "ok": 621,
+    "rejected": 516,
+    "unavailable": 0
+   },
+   "head": {
+    "wall": 51.6,
+    "python_cpu": 1.63,
+    "children_cpu": 50.91,
+    "ok": 621,
+    "rejected": 516,
+    "unavailable": 0
+   },
+   "load_before": 18.8,
+   "load_after": 14.5
+  },
+  {
+   "base": {
+    "wall": 62.69,
+    "python_cpu": 1.9,
+    "children_cpu": 61.83,
+    "ok": 621,
+    "rejected": 516,
+    "unavailable": 0
+   },
+   "head": {
+    "wall": 62.56,
+    "python_cpu": 1.92,
+    "children_cpu": 61.69,
+    "ok": 621,
+    "rejected": 516,
+    "unavailable": 0
+   },
+   "load_before": 14.5,
+   "load_after": 13.3
+  }
+ ]
+}

@@ -21,6 +21,7 @@ import copy
 import json
 import os
 import random
+from collections import Counter
 from itertools import product
 
 import pytest
@@ -379,6 +380,7 @@ def generated_sets_lean_answers(count):
         rows.extend(run_lean(cases[start:start + 50]))
     kinds = {}
     texts = {}
+    other_admissible = Counter()
     for n, (case, row, (name, fault, complete, missing)) in enumerate(zip(cases, rows, expectations)):
         if n % 20 == 0:
             # The route relays Lean's row (a sample: one route process per case).
@@ -386,6 +388,7 @@ def generated_sets_lean_answers(count):
         if fault is None and complete:
             # Every situation the search finds is accepted by Lean.
             assert row["status"] == "ok", (n, name, row)
+            other_admissible += _other_admissible_agrees(case, row)
         if fault is None and missing:
             # A pair for which the search finds none is rejected.
             assert row["status"] == "error", (n, name, row)
@@ -411,6 +414,35 @@ def generated_sets_lean_answers(count):
     # Every generator was exercised, admitted and refused sets alike.
     assert {name for name, _ in kinds} == {g.__name__ for g, _ in GENERATORS}, kinds
     assert kinds.get(("twins", "ok")) and kinds.get(("renamed", "error")) and kinds.get(("faulty", "error")), kinds
+    # `other_admissible` was compared on pairs where it is some-but-not-every assignment (a reading reads both
+    # ways) and on pairs where no assignment is admissible.
+    assert other_admissible["some, not every"] and other_admissible["none"], other_admissible
+
+
+def _other_admissible_agrees(case, row):
+    """Lean's `other_admissible` of every pair of an admitted row against the search's own evaluation (rule 3,
+    untrusted; `Decoded.assignments` and `side_valid`): some assignment of the other reading's owned tables is
+    admissible over the situation's base, with the shared tables the search records (none). Returns how the
+    pairs split: admissible under every assignment, under some but not every, or under none."""
+    from ve.model import FiniteModel
+    decoded = Decoded(case["environment"], case["document"])
+    author = decoded.senv.author_environment()
+    situations = {sid: entry for rs in case["document"]["reading_sets"] for sid, entry in rs["situations"].items()}
+    seen = Counter()
+    for set_row in row["sets"]:
+        R = decoded.doc.set_by_id(set_row["set"])
+        index = {a.id: k for k, a in enumerate(R.candidates)}
+        for p in set_row["pairs"]:
+            facts = p["pair"]
+            entry = situations[facts["situation"]]
+            assert entry["fixed"] == [], entry
+            other = p["other"] if facts["witness"] == p["reading"] else p["reading"]
+            base = FiniteModel._decode(author, {**entry["base"], "complete": True}, _defer_model_id=True)
+            valid = [decoded.side_valid(R.id, index[other], base, G)
+                     for G in decoded.assignments(R.id, index[other], base)]
+            assert facts["other_admissible"] == any(valid), (case["id"], p)
+            seen["every" if all(valid) else "some, not every" if any(valid) else "none"] += 1
+    return seen
 
 
 def test_separation_conservative_shadow(lean):

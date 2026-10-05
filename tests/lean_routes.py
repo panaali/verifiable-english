@@ -97,3 +97,17 @@ def completed(route, cases: list, *, text: bool = True, timeout: float | None = 
     stdout = "" if rows is None else json.dumps(rows, ensure_ascii=False)
     return subprocess.CompletedProcess([str(route)], status, stdout if text else stdout.encode(),
                                        stderr if text else stderr.encode())
+
+
+def completed_within(route, cases: list, cpu_seconds: float):
+    """`completed` with the request's CPU deadline lowered to `cpu_seconds`, where the one-shot ran
+    under `run_cpu_bounded` (tests/subprocesses.py): a request that needs more CPU raises
+    `CheckerUnavailable` naming its mode, and is not retried (`lean_service.DEADLINES`)."""
+    from ve.backends import lean_service
+    name = mode(route)
+    saved = lean_service.DEADLINES[name]
+    lean_service.DEADLINES[name] = (cpu_seconds / max(len(cases), 1), 0.0)
+    try:
+        return completed(route, cases)
+    finally:
+        lean_service.DEADLINES[name] = saved

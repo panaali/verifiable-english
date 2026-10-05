@@ -179,5 +179,13 @@ signature: **the baseline does not grow.** The fuzzer's child processes used 1,5
   never empty (else `label` would be missing beside a soft premise).
 - **O3.** Docs outside this batch (`lean/*.md`, `docs/spec/*.md`, `conformance/DIFFFUZZ.md` on its branch)
   still name the one-shot executables. `infra/difffuzz` needs the head's adapter (one function) when it merges.
+  Batches 3b and 3d (merged from ve-integration 2ce1134e): their tests now run the `readings-route` mode
+  (`lean_routes.completed_within` lowers the request's CPU deadline, whose overrun is `CheckerUnavailable`,
+  where the one-shot ran under RLIMIT_CPU; the IR walks start at `VE.Readings.Run.runCaseReported`, the mode's runner by
+  `runMode_readingsRoute`, instead of the deleted `main`). One evidence script is not ported:
+  `docs/lean-first/b3b/udhr_timing.py time` and `alternate` start route executables, and this head builds no
+  `ve_readings_route` (a base build still can); `dump`, `docs/lean-first/b3d/timing.py` (through
+  `ve.readings_route`) and the profiles (`profile/Prof.lean`, which import `VE.Readings.Run`) do not need it.
+  Their recorded evidence stays valid for the commits it names.
 - **O4.** HUMAN: statement review of the 13 new theorems (`runMode_*` for the twelve modes,
   `diagnoseCase_registered`).

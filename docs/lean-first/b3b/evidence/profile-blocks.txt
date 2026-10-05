@@ -1,0 +1,20 @@
+decodeEnvironment: wall 0.001811 s, cpu 0.000000 s
+decodeDocument: wall 0.003078 s, cpu 0.000000 s
+items 51, fixed units 1, sets 50, content-bearing 39
+attached table: wall 0.000048 s, cpu 0.000000 s
+free: wall 0.000044 s, cpu 0.000000 s
+chainText free: wall 1.456851 s, cpu 1.460000 s
+one: wall 0.000001 s, cpu 0.000000 s
+one: 2 nodes, 0 rights; regulated 62
+correlate: wall 0.000000 s, cpu 0.000000 s
+genKeys: wall 0.000025 s, cpu 0.000000 s
+checkRights: wall 0.000026 s, cpu 0.000000 s
+checkSoft: wall 0.218616 s, cpu 0.220000 s
+targets: wall 0.175198 s, cpu 0.170000 s
+softSemanticCheck: wall 1.267010 s, cpu 1.270000 s
+rightsSemanticCheck: wall 0.007030 s, cpu 0.010000 s
+validateRights: wall 1.511694 s, cpu 1.510000 s
+chainText one: wall 1.592172 s, cpu 1.590000 s
+sideWF one: wall 1.509296 s, cpu 1.510000 s
+limitationScope: wall 0.000003 s, cpu 0.000000 s
+noDistinction: wall 0.000076 s, cpu 0.000000 s

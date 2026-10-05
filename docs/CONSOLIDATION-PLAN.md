@@ -641,7 +641,8 @@ prints no ledger while any classification or tie problem stands.
 claims, 3c's aliases, 4b's kit, 7's skeleton, 8a's canonical encoders), subtracted in `Net`.
 Measured on the table after consolidate-b1 fix 4 (K 978, S 7,550, trusted 25,641 of
 88,757 lines; step 5 remeasured after the 2026-10-05 merge of ve-integration, whose
-`VE.Discourse.Run` rewrite moved 3 of its tied lines; steps 6 and 7 remeasured after the second
+`VE.Discourse.Run` rewrite moved 3 of its tied lines, and again after the merge into lean-first/b3b, whose
+`Readings.Run.setFindings` and `Readings.Separate.actOnly` rewrites (each side built once) moved 4 more, and after the merge into lean-first/b3d, whose `Readings.Run` pair rewrite (each candidate's layers built once, `pairFactsIn`) adds 1; steps 6 and 7 remeasured after the second
 2026-10-05 merge, which brought english-lean, compose-s2 and difffuzz. Step 7's `*Main.lean`
 selector now also names `EnglishLeanBenchMain.lean`, english-lean's measurement executable (156 of
 the 159 added lines; no admission path reads it, and the seeded table counts it untied [V] by
@@ -660,8 +661,8 @@ Batch 1's new modules (`ResponseShape`, `VE/Service/*`) were classified by `--se
 | 2b | 94 | 0 | 0 | 0 | 94 | 2 | 2 | 23.5 |
 | 3 | 39 | 0 | 0 | 10 | 29 | 14 | 2 | 1.0 |
 | 4 | 718 | 0 | 0 | 420 | 298 | 14 | 2 | 10.6 |
-| 5 | 0 | 488 | 0 | 0 | 488 | 14 | 1 | 34.9 |
-| 6 | 35 | 0 | 1787 | 0 | 35 | 3 | 1 | 11.7 |
+| 5 | 0 | 485 | 0 | 0 | 485 | 14 | 1 | 34.6 |
+| 6 | 35 | 0 | 1758 | 0 | 35 | 3 | 1 | 11.7 |
 | 7 | 551 | 0 | 0 | 60 | 491 | 6 | 2 | 40.9 |
 | 8a | 106 | 225 | 0 | 60 | 271 | 10 | 1.5 | 18.1 |
 | 8b | 0 | 3460 | 0 | 0 | 3460 | 30 | 3 | 38.4 |
@@ -670,15 +671,15 @@ Batch 1's new modules (`ResponseShape`, `VE/Service/*`) were classified by `--se
 
 What the measurement changes:
 
-* **Re-ranking of steps 5 to 10 by measured score:** 7 (40.9), 5 (34.9), 8a (18.1), 6 (11.7),
+* **Re-ranking of steps 5 to 10 by measured score:** 7 (40.9), 5 (34.6), 8a (18.1), 6 (11.7),
   9 (2.4), 10. Step 8b's 3,460 is an upper bound (every untied line of the eight units' `Wire.lean`
   files, on the assumption that every decoder gets `exact`), not a forecast; it stays ranked by its
   pilot (Alternatives) as section 3 says. Against the estimates, 7 overtakes 5 (762 trusted
-  dispatch and `main` lines, not 340; 603 before the bench executable; 551 once batch 1 deleted the one-shot routes) and 5 is smaller than estimated (488 measured against 1,500 to
+  dispatch and `main` lines, not 340; 603 before the bench executable; 551 once batch 1 deleted the one-shot routes) and 5 is smaller than estimated (485 measured against 1,500 to
   2,000): most of the rows' targets are short runners, and `scopedVerdict` and `weighingWitness`
   are already C.
 * **Step 6** removes almost nothing trusted: the SHA-256 copy and the `maxNodes` sites are [I] and
-  [R], and the dead code is mostly P. Its value is 6e: 1,787 lines of `WireContract/*`,
+  [R], and the dead code is mostly P. Its value is 6e: 1,758 lines of `WireContract/*`,
   `SoftNorms/Phases`, `Service/TypingDiagnostic` and `Norms/Tree` diagnostics are counted [V]
   until marked [R]. That moves lines out of the reading load without a theorem, so it is shown
   apart from `Net`.
