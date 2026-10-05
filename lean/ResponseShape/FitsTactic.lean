@@ -21,7 +21,7 @@ namespace ResponseShape
 open Lean
 
 macro "keys_ok" : tactic =>
-  `(tactic|(simp only [List.map_cons, List.map_nil, List.map_append, List.cons_append, List.nil_append, List.append_nil]; decide))
+  `(tactic|(simp only [List.map_cons, List.map_nil, List.map_append, List.cons_append, List.nil_append, List.append_nil, List.filter_cons, List.filter_nil, String.reduceBNe, ↓reduceIte, Bool.false_eq_true]; decide))
 
 /-- The per-field goals of `Fits.mkObj`, one conjunct per field (each skeleton `Skel.field`,
 left to unification). -/
@@ -101,8 +101,18 @@ def fitsGoal : TacticM (Expr × Expr) := do
 elab "fits_pick" : tactic => withMainContext do
   let (k, v) ← fitsGoal
   unless k.isAppOfArity ``Skel.alt 1 do throwError "fits_pick: not an alternative"
-  unless v.isAppOfArity ``Lean.Json.mkObj 1 do throwError "fits_pick: not Json.mkObj"
-  let some keys := names? v.appArg! | throwError "fits_pick: field names are not literals"
+  -- `(Json.mkObj l).setObjVal! key x`: the names of `l` with `key` in place of any of that name.
+  let (set, keys) ← if v.isAppOfArity ``Lean.Json.setObjVal! 3 then do
+      let args := v.getAppArgs
+      let inner := args[0]!.consumeMData
+      unless inner.isAppOfArity ``Lean.Json.mkObj 1 do throwError "fits_pick: setObjVal! of another value"
+      let some key := strLit? args[1]! | throwError "fits_pick: the set field's name is not a literal"
+      let some ks := names? inner.appArg! | throwError "fits_pick: field names are not literals"
+      pure (true, key :: ks.filter (· != key))
+    else do
+      unless v.isAppOfArity ``Lean.Json.mkObj 1 do throwError "fits_pick: not Json.mkObj"
+      let some ks := names? v.appArg! | throwError "fits_pick: field names are not literals"
+      pure (false, ks)
   let some members := listElems bound k.appArg! | throwError "fits_pick: members are not a literal list"
   let mut members' := #[]
   for m in members do members' := members'.push (← whnf m)
@@ -110,7 +120,8 @@ elab "fits_pick" : tactic => withMainContext do
   | none => throwError "fits_pick: no member of the alternative has the fields {keys}"
   | some i =>
     let n := Syntax.mkNumLit (toString i)
-    evalTactic (← `(tactic| refine Fits.mkObjAlt $n rfl (by keys_ok) ?_))
+    if set then evalTactic (← `(tactic| refine Fits.setObjAlt $n rfl (by keys_ok) ?_ ?_))
+    else evalTactic (← `(tactic| refine Fits.mkObjAlt $n rfl (by keys_ok) ?_))
 
 /-- The position of `a` in the literal list `l` (structural equality). -/
 def position (l a : Expr) : MetaM (Option Nat) := do
@@ -154,7 +165,8 @@ macro_rules
   | `(tactic| fits) => `(tactic| first
       | exact Fits.any _
       | (apply Fits.mkObj (by keys_ok); fields_split <;> fits)
-      | (fits_pick; fields_split <;> fits)
+      | (fits_pick <;> (try simp only [List.map_cons, List.map_nil, List.filter_cons, List.filter_nil, String.reduceBNe, ↓reduceIte, Bool.false_eq_true]) <;> (try fields_split) <;> fits)
+      | (apply Fits.setObj (by keys_ok) <;> (try simp only [List.map_cons, List.map_nil, List.filter_cons, List.filter_nil, String.reduceBNe, ↓reduceIte, Bool.false_eq_true]) <;> (try fields_split) <;> fits)
       | (apply Fits.arrOf; elems_split <;> (try intros) <;> elem_cases <;> fits)
       | (apply Fits.strIn_lit; decide)
       | (apply Fits.strNotIn_lit; decide)
