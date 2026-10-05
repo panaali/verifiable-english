@@ -94,13 +94,13 @@ def token_sort(env, branch: Branch, token: str):
     if token.startswith("c:"):
         declaration = env.constants.get(token[2:])
         return None if declaration is None else declaration.sort
-    index = int(token[2:])
+    index = ast.decimal_value(token[2:])
     return branch.witnesses[index] if index < len(branch.witnesses) else None
 
 
 def _scoped(branch: Branch) -> bool:
     n = len(branch.witnesses)
-    return all(not t.startswith("w:") or int(t[2:]) < n
+    return all(not t.startswith("w:") or ast.decimal_value(t[2:]) < n
                for a in branch.formulas for t in a.bindings)
 
 
