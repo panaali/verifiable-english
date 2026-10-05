@@ -8,7 +8,22 @@
         "error": {"$ref": "common.json#/$defs/text"}}},
     {"type": "object", "required": ["id", "status", "outcome"], "additionalProperties": false,
       "properties": {"id": {"x-echo": "/id"}, "status": {"const": "ok"},
-        "outcome": {"enum": ["clean", "fault"]}, "diagnostic": {"type": "object"}},
+        "outcome": {"enum": ["clean", "fault"]}, "diagnostic": {"$ref": "#/$defs/record"}},
       "if": {"properties": {"outcome": {"const": "fault"}}},
-      "then": {"required": ["diagnostic"]}, "else": {"not": {"required": ["diagnostic"]}}}]}
+      "then": {"required": ["diagnostic"]}, "else": {"not": {"required": ["diagnostic"]}}}]},
+  "$defs": {
+    "record": {"$comment": "WireContract.Engine.record of the first finding: the case's contract and revision, the failed check, its phase, code and class, the JSON pointer it names, the rendered text and the template's arguments (strings).",
+      "type": "object", "required": ["contract", "revision", "check", "phase", "code", "class", "path", "text", "args"],
+      "additionalProperties": false,
+      "properties": {
+        "contract": {"type": "string", "x-equals": "/unit"},
+        "revision": {"$ref": "common.json#/$defs/nat"},
+        "check": {"$ref": "common.json#/$defs/text"},
+        "phase": {"$ref": "common.json#/$defs/text"},
+        "code": {"$ref": "common.json#/$defs/text"},
+        "class": {"$ref": "common.json#/$defs/code"},
+        "path": {"type": "string", "pattern": "(/.*)?"},
+        "text": {"type": "string"},
+        "args": {"$ref": "common.json#/$defs/string_map"}}}
+  }
 }

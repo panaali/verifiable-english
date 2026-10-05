@@ -15,7 +15,7 @@ import threading
 import time
 
 import pytest
-from hypothesis import HealthCheck, assume, given, settings, strategies as st
+from hypothesis import HealthCheck, given, settings, strategies as st
 
 from subprocesses import HANG_TIMEOUT
 from tests.lean_build import lean_build
@@ -34,8 +34,8 @@ BIN = ROOT / "lean/.lake/build/bin"
 CASES = json.loads((ROOT / "conformance/evaluation.json").read_text())
 
 
-# The statement-layer route modes (lean-first batch 1) whose rows are `common.json` route_row.
-OPEN_ROUTE_MODES = ("soft-norms", "rights", "speech-acts", "reports", "alternatives", "risk", "quantity",
+# The statement-layer route modes of lean-first batch 1 (their rows: `<mode>.json`).
+ROUTE_MODES = ("soft-norms", "rights", "speech-acts", "reports", "alternatives", "risk", "quantity",
                     "norm-defaults", "discourse", "readings-route")
 
 
@@ -651,10 +651,10 @@ def test_the_executable_digest_is_reused_across_processes_until_the_file_changes
     assert sorted(p.name for p in tmp_path.iterdir()) == ["service", "service.sha256-cache"]
 
 
-@pytest.mark.parametrize("mode", [*OPEN_ROUTE_MODES, "diagnose", "risk-eval"])
+@pytest.mark.parametrize("mode", [*ROUTE_MODES, "diagnose", "risk-eval"])
 def test_a_route_rejection_without_its_text_fails_closed(tmp_path, mode):
-    """A statement-layer route's answer is open beyond its binding, but a rejection row is not: without a
-    text `error` it is no rejection, and the batch is CheckerUnavailable (common.json route_error)."""
+    """A statement-layer route's rejection row without a text `error` is no rejection, and the batch is
+    CheckerUnavailable (common.json route_path_error and each mode's error rows)."""
     case = {"id": "c", "kind": "k", "unit": "soft-norms@0"}
     row = {"status": "error", "error": "InvalidInput: x", **({} if mode == "risk-eval" else {"id": "c"})}
 
@@ -966,7 +966,25 @@ _SCHEMA_SEEDS = {
     "risk-eval": ({"conditions": []}, {"status": "ok", "results": []}),
     "diagnose": ({"id": "c", "unit": "soft-norms@0", "kind": "soft-elaborate"},
                  {"id": "c", "status": "ok", "outcome": "clean"}),
-    **{mode: ({"id": "c", "kind": "k"}, {"id": "c", "status": "ok"}) for mode in OPEN_ROUTE_MODES},
+    # One closed answer per statement-layer route mode (<mode>.json), each on the mode's own path.
+    "soft-norms": ({"id": "c", "kind": "soft-certificate"},
+                   {"id": "c", "status": "ok", "valid": True, "background": 0, "layers": 0, "conditional_on": []}),
+    "rights": ({"id": "c", "kind": "rights-certificate"},
+               {"id": "c", "status": "ok", "valid": True, "background": 0, "layers": 0, "conditional_on": []}),
+    "speech-acts": ({"id": "c", "kind": "speech-answer", "question": "q"},
+                    {"id": "c", "status": "ok", "question": "q", "answer": "UNKNOWN (certificate not accepted)"}),
+    "reports": ({"id": "c", "kind": "reports-countermodel"},
+                {"id": "c", "status": "ok", "refutes": True, "source_model": []}),
+    "alternatives": ({"id": "c", "kind": "alt-certificate"},
+                     {"id": "c", "status": "ok", "valid": True, "background": 0, "layers": 0,
+                      "conditional_on": ["alternatives:own"]}),
+    "risk": ({"id": "c", "kind": "risk-certificate"}, {"id": "c", "status": "ok", "valid": True, "conditional_on": []}),
+    "quantity": ({"id": "c", "kind": "day"}, {"id": "c", "status": "ok", "day": 1}),
+    "norm-defaults": ({"id": "c", "kind": "norm-defaults-certificate"},
+                      {"id": "c", "status": "ok", "valid": True, "premises": 0}),
+    "discourse": ({"id": "c", "kind": "discourse-validity"}, {"id": "c", "status": "ok", "validity": {}}),
+    "readings-route": ({"id": "c", "kind": "readings-validate"},
+                       {"id": "c", "status": "ok", "content_bearing": False}),
 }
 
 
@@ -977,8 +995,6 @@ _SCHEMA_SEEDS = {
      "extra-row-field", "wrong-row-type", "wrong-error-shape", "wrong-digest", "wrong-index",
      "unbound-row")))
 def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation):
-    # A statement-layer route's answer is open beyond its binding (common.json route_ok).
-    assume(not (mutation == "extra-row-field" and mode in OPEN_ROUTE_MODES))
     case, row = _SCHEMA_SEEDS[mode]
     answer = {"id": "__nonce__", "status": "ok", "mode": mode, "results": [row.copy()],
               "counts": {"cases": 1, "bytes": "__bytes__", "errors": 0}}
@@ -995,7 +1011,7 @@ def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation
     elif mutation == "extra-row-field":
         answer["results"][0]["extra"] = 1
     elif mutation == "wrong-row-type":
-        field = ("id" if mode in OPEN_ROUTE_MODES else
+        field = ("id" if mode in ROUTE_MODES else
                  "outcome" if mode == "diagnose" else
                  "results" if mode == "risk-eval" else
                  "admissible" if mode == "english" else

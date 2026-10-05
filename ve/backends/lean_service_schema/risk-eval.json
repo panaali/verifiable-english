@@ -7,5 +7,19 @@
       "properties": {"status": {"const": "error"}, "error": {"$ref": "common.json#/$defs/text"}}},
     {"type": "object", "required": ["status", "results"], "additionalProperties": false,
       "properties": {"status": {"const": "ok"}, "results": {"type": "array", "x-length": "/conditions",
-        "items": {"type": "object"}}}}]}
+        "items": {"$ref": "#/$defs/result"}}}}]},
+  "$defs": {
+    "result": {"$comment": "Risk.Eval.evalCondition: the condition's diagnostic, or whether it is possible and certain over the quantities' box with a witness valuation (an integer per quantity) exactly when possible.",
+      "anyOf": [
+        {"type": "object", "required": ["error"], "additionalProperties": false,
+         "properties": {"error": {"$ref": "common.json#/$defs/text"}}},
+        {"type": "object", "required": ["possible", "certain", "witness"], "additionalProperties": false,
+         "properties": {
+           "possible": {"type": "boolean"},
+           "certain": {"type": "boolean"},
+           "witness": {"anyOf": [{"const": null}, {"type": "object", "additionalProperties": {"type": "integer"}}]}},
+         "if": {"properties": {"possible": {"const": true}}},
+         "then": {"properties": {"witness": {"type": "object"}}},
+         "else": {"properties": {"witness": {"const": null}}}}]}
+  }
 }

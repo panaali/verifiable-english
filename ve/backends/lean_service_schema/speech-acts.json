@@ -1,7 +1,116 @@
 {
   "$id": "speech-acts.json",
-  "$comment": "Mode speech-acts: SpeechActs.Run.runCaseReported (ve_speech_acts_route), a statement-layer route (docs/LEAN-FIRST-PLAN.md, batch 1).",
-  "row": {
-    "$ref": "common.json#/$defs/route_row"
+  "$comment": "Mode speech-acts: SpeechActs.Run.runCaseReported (formerly ve_speech_acts_route). A case on the speech path (SpeechActs.Run.usesSpeechPath) is answered by the speech runner; every other case is delegated unchanged to the norms mode's runner.",
+  "row": {"x-select": [
+    {"when": {"$ref": "#/$defs/speech_path"}, "then": {"anyOf": [
+      {"$ref": "common.json#/$defs/case_error"},
+      {"$ref": "common.json#/$defs/route_path_error"},
+      {"x-select": [
+        {"when": {"$ref": "#/$defs/kind/speech-elaborate"}, "then": {"$ref": "#/$defs/elaborate"}},
+        {"when": {"$ref": "#/$defs/kind/speech-answer"}, "then": {"$ref": "#/$defs/answer"}},
+        {"when": {"$ref": "#/$defs/kind/speech-consequence"}, "then": {"$ref": "#/$defs/consequence"}},
+        {"when": {"allOf": [{"$ref": "#/$defs/kind/speech-conflict"}, {"required": ["witness"]}]},
+         "then": {"$ref": "common.json#/$defs/witness_conflict"}},
+        {"when": {"$ref": "#/$defs/kind/speech-conflict"}, "then": {"$ref": "common.json#/$defs/packages_conflict"}}]}]}},
+    {"when": true, "then": {"$ref": "norms.json#/row"}}]},
+  "$defs": {
+    "speech_path": {"$comment": "SpeechActs.Run.usesSpeechPath: the speech-acts@0 profile, the environment's speech_acts block, a speech-* kind, or a unit of kind binding or with command or question content.",
+      "type": "object", "anyOf": [
+        {"required": ["environment"], "properties": {"environment": {
+          "type": "object", "required": ["profiles"], "properties": {"profiles": {
+            "type": "array", "contains": {"const": "speech-acts@0"}}}}}},
+        {"required": ["environment"], "properties": {"environment": {"type": "object", "required": ["speech_acts"]}}},
+        {"required": ["kind"], "properties": {"kind": {"type": "string", "pattern": "speech-.*"}}},
+        {"required": ["document"], "properties": {"document": {
+          "type": "object", "required": ["units"], "properties": {"units": {
+            "type": "array", "contains": {"type": "object", "anyOf": [
+              {"required": ["kind"], "properties": {"kind": {"const": "binding"}}},
+              {"required": ["content"], "properties": {"content": {"type": "object", "required": ["command"]}}},
+              {"required": ["content"], "properties": {"content": {"type": "object", "required": ["question"]}}}]}}}}}}]},
+    "kind": {
+      "speech-elaborate": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "speech-elaborate"}}},
+      "speech-answer": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "speech-answer"}}},
+      "speech-consequence": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "speech-consequence"}}},
+      "speech-conflict": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "speech-conflict"}}}},
+    "question": {"$comment": "SpeechActs.Run.questionJson with its meaning id: unit, mode, presupposition and meaning_id, then the mode's fields.",
+      "type": "object", "required": ["unit", "mode", "presupposition", "meaning_id"],
+      "properties": {
+        "unit": {"type": "string"},
+        "mode": {"enum": ["polar", "which_one", "which_all", "follows", "reading"]},
+        "presupposition": {"$ref": "common.json#/$defs/generated_formula"},
+        "meaning_id": {"$ref": "common.json#/$defs/hex64_or_empty"}},
+      "anyOf": [
+        {"required": ["tokens", "body"], "additionalProperties": false,
+         "properties": {"unit": true, "mode": {"const": "polar"}, "presupposition": true, "meaning_id": true,
+                        "tokens": {"const": ["yes", "no"]}, "body": {"$ref": "common.json#/$defs/generated_formula"}}},
+        {"required": ["tokens", "body"], "additionalProperties": false,
+         "properties": {"unit": true, "mode": {"const": "which_one"}, "presupposition": true, "meaning_id": true,
+                        "tokens": {"$ref": "common.json#/$defs/strings"},
+                        "body": {"$ref": "common.json#/$defs/generated_formula"}}},
+        {"required": ["domain", "body"], "additionalProperties": false,
+         "properties": {"unit": true, "mode": {"const": "which_all"}, "presupposition": true, "meaning_id": true,
+                        "domain": {"$ref": "common.json#/$defs/strings"},
+                        "body": {"$ref": "common.json#/$defs/generated_formula"}}},
+        {"required": ["query"], "additionalProperties": false,
+         "properties": {"unit": true, "mode": {"const": "follows"}, "presupposition": true, "meaning_id": true,
+                        "query": {"type": "string"}}},
+        {"required": ["set", "version"], "additionalProperties": false,
+         "properties": {"unit": true, "mode": {"const": "reading"}, "presupposition": true, "meaning_id": true,
+                        "set": {"type": "string"}, "version": {"$ref": "common.json#/$defs/nat"}}}]},
+    "elaborate": {"$comment": "SpeechActs.Run.elaborated: the environment id, the effective scope (Wire.encodeScope), its legend, the premises, the policy (Norms.Wire.regenerated of the command tree), the active commands, the dormant ones, the questions and the queries.",
+      "type": "object", "required": ["id", "status", "environment_id", "scope", "legend", "premises", "policy", "commands",
+        "dormant", "questions", "queries"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "status": {"const": "ok"},
+        "environment_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+        "scope": {"type": "object", "required": ["task"], "additionalProperties": false,
+          "properties": {
+            "task": {"type": "string"},
+            "addressee": {"type": "object", "required": ["sort", "constant"], "additionalProperties": false,
+              "properties": {"sort": {"type": "string"}, "constant": {"type": "string"}}},
+            "definites": {"$ref": "common.json#/$defs/string_map"}}},
+        "legend": {"$ref": "common.json#/$defs/nonempty_strings"},
+        "premises": {"$ref": "common.json#/$defs/generated_formulas"},
+        "policy": {"type": "object", "required": ["order", "background", "premises", "conflict_targets", "fragment"],
+          "additionalProperties": false,
+          "properties": {
+            "order": {"$ref": "common.json#/$defs/strings"},
+            "background": {"$ref": "common.json#/$defs/norms_background"},
+            "premises": {"$ref": "common.json#/$defs/layer_premises"},
+            "conflict_targets": {"$ref": "common.json#/$defs/conflict_targets"},
+            "fragment": {"type": "boolean"}}},
+        "commands": {"type": "array", "items": {
+          "type": "object", "required": ["unit", "force", "demand", "paraphrase", "meaning_id"], "additionalProperties": false,
+          "properties": {
+            "unit": {"type": "string"},
+            "force": {"enum": ["require", "forbid"]},
+            "demand": {"$ref": "common.json#/$defs/norm_node"},
+            "paraphrase": {"type": "string", "pattern": "In this task, you are (required|not permitted) to .*"},
+            "meaning_id": {"$ref": "common.json#/$defs/hex64_or_empty"}}}},
+        "dormant": {"$ref": "common.json#/$defs/strings"},
+        "questions": {"type": "array", "items": {"$ref": "#/$defs/question"}},
+        "queries": {"type": "array", "items": {
+          "type": "object", "required": ["id", "premises", "target"], "additionalProperties": false,
+          "properties": {
+            "id": {"type": "string"},
+            "premises": {"$ref": "common.json#/$defs/generated_formulas"},
+            "target": {"$ref": "common.json#/$defs/generated_formula"},
+            "warning": {"type": "string", "pattern": "TrivialQuery: .*"}}}}}},
+    "answer": {"$comment": "SpeechActs.Run speech-answer: the requested question and its answer line (AnswerReplay.line).",
+      "type": "object", "required": ["id", "status", "question", "answer"], "additionalProperties": false,
+      "properties": {
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "status": {"const": "ok"},
+        "question": {"type": "string", "x-equals": "/question"},
+        "answer": {"$ref": "common.json#/$defs/text"}}},
+    "consequence": {"$comment": "SpeechActs.Run speech-consequence: the requested query and its judgment.",
+      "type": "object", "required": ["id", "status", "query", "judgment"], "additionalProperties": false,
+      "properties": {
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "status": {"const": "ok"},
+        "query": {"type": "string", "x-equals": "/query"},
+        "judgment": {"type": "string", "pattern": "(follows|gap|unresolved) \\(.*"}}}
   }
 }

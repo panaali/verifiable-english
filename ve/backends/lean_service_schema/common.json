@@ -126,22 +126,97 @@
         "status": {"const": "error"},
         "error": {"$ref": "#/$defs/text"},
         "valid": {"const": false}}},
-    "route_error": {"$comment": "A case a statement-layer route rejected (the batch 1 modes): the request's id (null if absent) and the message; `code` is the soft-norms@0 contract code of a soft route rejection (SoftNorms.Run.reportedCode), `generator` and `valid: false` are the delegated route's (Route.Run.runCaseReported, Time.Wire.runCaseReported).",
+    "no_kind": {"$comment": "Selector over the request case: no kind field.", "type": "object", "not": {"required": ["kind"]}},
+
+    "id_ok": {"$comment": "Route.Wire.ok: an answer's id is the request's id, a string (Bridge.stringField).", "type": "string", "x-equals": "/id"},
+    "hex64_or_empty": {"$comment": "An identity the encoder writes as `.toOption.getD \"\"`.", "anyOf": [{"$ref": "#/$defs/hex64"}, {"const": ""}]},
+    "nonempty_strings": {"type": "array", "items": {"$ref": "#/$defs/text"}},
+    "string_map": {"$comment": "An object with string values.", "type": "object", "additionalProperties": {"type": "string"}},
+    "string_pair": {"type": "array", "prefixItems": [{"type": "string"}, {"type": "string"}], "minItems": 2, "maxItems": 2},
+    "report": {"$comment": "Norms.Run.reportJson: the root and its assumptions, each a Route.Run.claimJson.",
+      "type": "object", "required": ["root", "assumptions"], "additionalProperties": false,
+      "properties": {
+        "root": {"$ref": "#/$defs/claim"},
+        "assumptions": {"type": "array", "items": {"$ref": "#/$defs/claim"}}}},
+    "bound_report": {"$comment": "A report whose root is the request's graph root.",
+      "$ref": "#/$defs/report", "properties": {"root": {"properties": {"name": {"x-equals": "/document/graph/root"}}}}},
+    "labelled": {"$comment": "Route.Wire.labelled and its copies: a premise label and its generated formula.",
+      "type": "object", "required": ["label", "ast"], "additionalProperties": false,
+      "properties": {"label": {"$ref": "#/$defs/text"}, "ast": {"$ref": "#/$defs/generated_formula"}}},
+    "labelled_list": {"type": "array", "items": {"$ref": "#/$defs/labelled"}},
+    "norms_background": {"$comment": "Norms.Wire.regenerated: the Background of the definitions, literals and profile generators.",
+      "type": "array", "items": {
+        "type": "object", "required": ["generator", "ast"], "additionalProperties": false,
+        "properties": {
+          "generator": {"enum": ["definitions", "literals", "profile"]},
+          "ast": {"$ref": "#/$defs/generated_formula"}}}},
+    "layer_premises": {"$comment": "Norms.Wire.regenerated: one premise per layer.",
+      "type": "array", "items": {
+        "type": "object", "required": ["label", "ast"], "additionalProperties": false,
+        "properties": {
+          "label": {"type": "string", "pattern": "layer:norms:.+"},
+          "ast": {"$ref": "#/$defs/generated_formula"}}}},
+    "conflict_targets": {"$comment": "Norms.Wire.regenerated: one target per layer, then per declared pair, with its argument sorts.",
+      "type": "array", "items": {
+        "type": "object", "required": ["target", "sorts", "ast"], "additionalProperties": false,
+        "properties": {
+          "target": {"$ref": "#/$defs/text"},
+          "sorts": {"$ref": "#/$defs/strings"},
+          "ast": {"$ref": "#/$defs/generated_formula"}}}},
+    "norm_node": {"$comment": "Alternatives.Wire.encodeNode and SpeechActs.Run.encodeNode: a norm of the inlined tree.",
+      "type": "object", "required": ["name", "predicate", "sign", "guard", "unless", "over"], "additionalProperties": false,
+      "properties": {
+        "name": {"type": "string"},
+        "predicate": {"type": "string"},
+        "sign": {"type": "boolean"},
+        "guard": {"$ref": "#/$defs/generated_formula"},
+        "unless": {"$ref": "#/$defs/generated_formulas"},
+        "over": {"$ref": "#/$defs/strings"}}},
+    "witness_conflict": {"$comment": "A conflict witness replay (Norms.Replay.witnessFrom and its copies): the requested target.",
+      "type": "object", "required": ["id", "status", "verdict", "target", "targets"], "additionalProperties": false,
+      "properties": {
+        "id": {"$ref": "#/$defs/id_ok"},
+        "status": {"const": "ok"},
+        "verdict": {"enum": ["CONFLICT", "UNKNOWN"]},
+        "target": {"type": "string", "x-equals": "/witness/target"},
+        "targets": {"$ref": "#/$defs/strings"}}},
+    "packages_conflict": {"$comment": "A conflict-freedom replay over certificate packages: `detail` (the first failed target) exactly when the verdict is UNKNOWN.",
+      "type": "object", "required": ["id", "status", "verdict", "targets"], "additionalProperties": false,
+      "properties": {
+        "id": {"$ref": "#/$defs/id_ok"},
+        "status": {"const": "ok"},
+        "verdict": {"enum": ["CONFLICT-FREE", "UNKNOWN"]},
+        "targets": {"$ref": "#/$defs/strings"},
+        "detail": {"$ref": "#/$defs/text"}},
+      "if": {"properties": {"verdict": {"const": "UNKNOWN"}}},
+      "then": {"required": ["detail"]}, "else": {"not": {"required": ["detail"]}}},
+    "route_path_error": {"$comment": "The error row of a statement-layer route's own runner (`runCaseReported`): the request's id (null if absent) and the message. The public code (and generator) is the bound entry's (envelope.json).",
       "type": "object", "required": ["id", "status", "error"], "additionalProperties": false,
       "properties": {
         "id": {"x-echo": "/id"},
         "status": {"const": "error"},
-        "error": {"$ref": "#/$defs/text"},
-        "code": {"type": "string"},
-        "generator": {"type": "string"},
-        "valid": {"const": false}}},
-    "route_ok": {"$comment": "An answer of a statement-layer route, bound to its case by the id it echoes. Its other fields are the route's answer, which the service owns (docs/spec/lean-service.md, threat model); the caller reads them.",
-      "type": "object", "required": ["id", "status"],
+        "error": {"$ref": "#/$defs/text"}}},
+    "environment": {"$comment": "Norms.Wire.canonicalEnvironmentJson and its extensions (SoftNorms.Wire.primeJson, Rights.Wire.primeJsonR): the request environment after its envelope check (exactly language, profiles, spec_revision and vocabulary), with decision and generated predicates added. Its content is compared with Python's regeneration by the caller.",
+      "type": "object", "required": ["language", "profiles", "spec_revision", "vocabulary"], "additionalProperties": false,
       "properties": {
-        "id": {"x-echo": "/id"},
-        "status": {"const": "ok"}}},
-    "route_row": {"$comment": "One row of a statement-layer route mode: the one-shot route executable's row for the case.",
-      "anyOf": [{"$ref": "#/$defs/case_error"}, {"$ref": "#/$defs/route_error"}, {"$ref": "#/$defs/route_ok"}]},
-    "no_kind": {"$comment": "Selector over the request case: no kind field.", "type": "object", "not": {"required": ["kind"]}}
+        "language": {"type": "string", "x-equals": "/environment/language"},
+        "profiles": {"$ref": "#/$defs/strings"},
+        "spec_revision": {"type": "string", "x-equals": "/environment/spec_revision"},
+        "vocabulary": {"type": "object", "required": ["sorts", "predicates", "constants"], "additionalProperties": false,
+          "properties": {
+            "sorts": {"type": "object", "x-equals": "/environment/vocabulary/sorts"},
+            "constants": {"type": "object", "x-equals": "/environment/vocabulary/constants"},
+            "predicates": {"type": "object", "additionalProperties": {
+              "type": "object", "required": ["arguments"], "properties": {"arguments": {"$ref": "#/$defs/strings"}}}},
+            "soft": {"type": "object", "x-equals": "/environment/vocabulary/soft"},
+            "rights": {"type": "object", "x-equals": "/environment/vocabulary/rights"}},
+          "allOf": [
+            {"if": {"x-case": {"$ref": "#/$defs/request_block/soft"}}, "then": {"required": ["soft"]}},
+            {"if": {"x-case": {"$ref": "#/$defs/request_block/rights"}}, "then": {"required": ["rights"]}}]}}},
+    "request_block": {"$comment": "Selectors over the request case: its environment's vocabulary declares the block.",
+      "soft": {"type": "object", "required": ["environment"], "properties": {"environment": {
+        "type": "object", "required": ["vocabulary"], "properties": {"vocabulary": {"type": "object", "required": ["soft"]}}}}},
+      "rights": {"type": "object", "required": ["environment"], "properties": {"environment": {
+        "type": "object", "required": ["vocabulary"], "properties": {"vocabulary": {"type": "object", "required": ["rights"]}}}}}}
   }
 }

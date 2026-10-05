@@ -18,12 +18,12 @@
         {"when": {"$ref": "#/$defs/kind/norms-conflict"}, "then": {"$ref": "#/$defs/norms-conflict"}}]}]}},
     {"when": true, "then": {"$ref": "route.json#/row"}}]},
   "$defs": {
-    "norms_path": {"$comment": "Norms.Run.usesNormsPath (a regulated predicate, a norms field, a norms-* kind or a unit with norm content) or Plain.layered (a reports@0 or soft-norms@0 environment).",
+    "norms_path": {"$comment": "Norms.Run.usesNormsPath (a regulated predicate, a norms field, a norms-* kind or a unit with norm content) or Plain.layered (a profile of Plain.statementLayers: reports@0, soft-norms@0, rights@0 or speech-acts@0).",
       "type": "object", "anyOf": [
         {"required": ["norms"]},
         {"required": ["environment"], "properties": {"environment": {
           "type": "object", "required": ["profiles"], "properties": {"profiles": {
-            "type": "array", "contains": {"enum": ["reports@0", "soft-norms@0"]}}}}}},
+            "type": "array", "contains": {"enum": ["reports@0", "soft-norms@0", "rights@0", "speech-acts@0"]}}}}}},
         {"required": ["kind"], "properties": {"kind": {"type": "string", "pattern": "norms-.*"}}},
         {"required": ["environment"], "properties": {"environment": {
           "type": "object", "required": ["vocabulary"], "properties": {"vocabulary": {
