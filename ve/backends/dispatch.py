@@ -54,17 +54,28 @@ def composed(authority: str, run: Callable[[], T]) -> Callable[[], T]:
     return adapter
 
 
-def authority_for(op: str) -> str:
-    pin = _pin.get()
-    if pin is not None:
-        return pin
-    selected = os.environ.get("VE_AUTHORITY", "python")
+def _overrides() -> dict[str, str]:
+    """The per-operation selections of VE_AUTHORITY_OVERRIDES (the last entry for an operation wins)."""
+    selected = {}
     for entry in filter(None, os.environ.get("VE_AUTHORITY_OVERRIDES", "").split(",")):
         name, sep, authority = entry.partition("=")
         if not sep or not name or authority not in _AUTHORITIES:
             raise ValueError(f"invalid VE_AUTHORITY_OVERRIDES entry {entry!r}")
-        if name == op:
-            selected = authority
+        selected[name] = authority
+    return selected
+
+
+def overridden(op: str) -> bool:
+    """Whether VE_AUTHORITY_OVERRIDES selects an authority for `op` by name. An operation whose Lean side
+    is not built yet joins the dispatch only then, never through VE_AUTHORITY or a pin."""
+    return op in _overrides()
+
+
+def authority_for(op: str) -> str:
+    pin = _pin.get()
+    if pin is not None:
+        return pin
+    selected = _overrides().get(op, os.environ.get("VE_AUTHORITY", "python"))
     if selected not in _AUTHORITIES:
         raise ValueError(f"invalid VE_AUTHORITY {selected!r}")
     return selected

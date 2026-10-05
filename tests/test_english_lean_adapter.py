@@ -103,6 +103,29 @@ def test_the_default_authority_never_calls_lean(monkeypatch, tmp_path):
     assert not (tmp_path / "log.jsonl").exists()
 
 
+@pytest.mark.parametrize("setting", ["VE_AUTHORITY=lean", "VE_AUTHORITY=shadow", "pinned lean",
+                                     "VE_AUTHORITY_OVERRIDES=parse=lean"])
+def test_only_a_named_override_dispatches_the_english_reading(monkeypatch, tmp_path, setting):
+    """The reader is not built, so the global authority and a composing adapter's pin leave English on Python."""
+    from ve.backends import dispatch
+    monkeypatch.delenv("VE_AUTHORITY_OVERRIDES", raising=False)
+    monkeypatch.setenv("VE_SHADOW_LOG", str(tmp_path / "log.jsonl"))
+    expected = {source: outcome(source) for source in ACCEPTED + REJECTED}
+    fake = honest()
+    use(monkeypatch, fake)
+    if setting.startswith("VE_"):
+        monkeypatch.setenv(*setting.split("=", 1))
+        found = {source: outcome(source) for source in ACCEPTED + REJECTED}
+    else:
+        with dispatch.pinned("lean"):
+            found = {source: outcome(source) for source in ACCEPTED + REJECTED}
+    assert found == expected
+    assert fake.calls == [] and not (tmp_path / "log.jsonl").exists()
+    assert not dispatch.overridden("english.admission")
+    monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", "parse=lean,english.admission=python")
+    assert dispatch.overridden("english.admission") and dispatch.authority_for("english.admission") == "python"
+
+
 # ------------------------------------------------------------------ shadow
 
 def test_shadow_records_every_call_and_returns_pythons_result(monkeypatch, shadow):
