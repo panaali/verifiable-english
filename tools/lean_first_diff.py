@@ -44,6 +44,12 @@ that differs is a listed pair. ``order``, ``verdict`` and ``availability`` list 
 ``{"corpus", "authority", "case", "op", "base", "head"}`` with the two outcomes, accepted only when
 both outcomes are exactly the listed ones. Exit 0 when every difference is listed, 1 otherwise,
 2 on unusable input.
+
+``compare`` is evidence only when both runs recorded the gate's corpora: it refuses (exit 2) the
+same file given twice, a run without records and runs over different corpus files, and fails
+(exit 1, ``problems``) when a corpus of ``--corpus`` (default all; under each ``--authority``, the
+pilots under ``default``) has no record on a side, or when every record of a corpus is
+unavailable on both sides (two runs that checked nothing agree).
 """
 from __future__ import annotations
 
@@ -251,6 +257,10 @@ def record(args) -> int:
 
 # --- comparison ------------------------------------------------------------------------
 
+class Unusable(SystemExit):
+    """Input that cannot show a difference or its absence (exit 2)."""
+
+
 def load(path: str) -> dict[tuple, dict]:
     records = {}
     for line in Path(path).read_text().split("\n"):
@@ -321,14 +331,24 @@ def text_pairs(base, head, path=()):
     return [(base, head)] if base != head and path and path[-1] in ("message", "detail", "stderr") else []
 
 
-def compare(base_path: str, head_path: str, delta: dict | None) -> dict:
+def expected_groups(corpora=CORPORA, authorities=AUTHORITIES) -> set[tuple[str, str]]:
+    """The (corpus, authority) record groups a run of `record` over these corpora writes."""
+    return {(corpus, "default" if corpus == "pilots" else authority) for corpus in corpora for authority in authorities}
+
+
+def compare(base_path: str, head_path: str, delta: dict | None, expect: set | None = None) -> dict:
+    if Path(base_path).resolve() == Path(head_path).resolve():
+        raise Unusable(f"BASE and HEAD are the same file {base_path}")
     base, head = load(base_path), load(head_path)
+    for path, records in ((base_path, base), (head_path, head)):
+        if not records:
+            raise Unusable(f"{path} holds no record")
     sources = Counter()
     for key in base.keys() & head.keys():
         if base[key]["source_sha256"] != head[key]["source_sha256"]:
             sources[key[0]] += 1
     if sources:
-        raise SystemExit(f"the two runs read different corpus files: {dict(sources)}")
+        raise Unusable(f"the two runs read different corpus files: {dict(sources)}")
     delta = delta or {}
     wording = {(pair["base"], pair["head"]) for pair in delta.get("wording", [])}
     listed = {}
@@ -348,16 +368,27 @@ def compare(base_path: str, head_path: str, delta: dict | None) -> dict:
         if klass == "wording":
             accepted = all(pair in wording for pair in text_pairs(old, new))
         else:
-            accepted = (entry is not None and entry[0] == klass and entry[1].get("base") == old
-                        and entry[1].get("head") == new)
+            accepted = (entry is not None and entry[0] == klass and "base" in entry[1] and "head" in entry[1]
+                        and entry[1]["base"] == old and entry[1]["head"] == new)
         row = {"corpus": key[0], "authority": key[1], "case": key[2], "op": key[3], "class": klass,
                "base": old, "head": new, "listed": accepted}
         rows.append(row)
         if not accepted:
             unlisted.append(row)
     by_corpus = Counter((key[0], key[1]) for key in base.keys() | head.keys())
+    problems = []
+    for side, records in (("BASE", base), ("HEAD", head)):
+        present = {(key[0], key[1]) for key in records}
+        problems += [f"{side} has no record of {c}/{a}" for c, a in sorted((expect or set()) - present)]
+    unavailable = Counter()
+    for key in base.keys() & head.keys():
+        if _unavailable(base[key]["outcome"]) and _unavailable(head[key]["outcome"]):
+            unavailable[(key[0], key[1])] += 1
+    problems += [f"every record of {c}/{a} is unavailable on both sides" for (c, a), n in sorted(unavailable.items())
+                 if n == by_corpus[(c, a)]]
     return {"totals": dict(totals), "records": {f"{c}/{a}": n for (c, a), n in sorted(by_corpus.items())},
-            "differences": rows, "unlisted": len(unlisted)}
+            "unavailable_both": {f"{c}/{a}": n for (c, a), n in sorted(unavailable.items())},
+            "differences": rows, "unlisted": len(unlisted), "problems": problems}
 
 
 def main(argv=None) -> int:
@@ -375,21 +406,28 @@ def main(argv=None) -> int:
     p.add_argument("head")
     p.add_argument("--delta", type=Path)
     p.add_argument("--json", type=Path)
+    p.add_argument("--corpus", nargs="+", default=list(CORPORA), choices=CORPORA)
+    p.add_argument("--authority", nargs="+", default=list(AUTHORITIES), choices=AUTHORITIES)
     args = parser.parse_args(argv)
     if args.command == "record":
         return record(args)
     if args.command == "_child":
         return child(args)
     delta = json.loads(args.delta.read_text()) if args.delta else None
-    result = compare(args.base, args.head, delta)
+    try:
+        result = compare(args.base, args.head, delta, expected_groups(args.corpus, args.authority))
+    except Unusable as exc:
+        print(f"lean_first_diff: {exc}", file=sys.stderr)
+        return 2
     if args.json:
         args.json.write_text(json.dumps(result, indent=1, sort_keys=True, ensure_ascii=False) + "\n")
-    print(json.dumps({"records": result["records"], "totals": result["totals"], "unlisted": result["unlisted"]},
+    print(json.dumps({"records": result["records"], "totals": result["totals"], "unlisted": result["unlisted"],
+                      "unavailable_both": result["unavailable_both"], "problems": result["problems"]},
                      indent=1, sort_keys=True))
     for row in result["differences"][:20]:
         if not row["listed"]:
             print(f"UNLISTED {row['class']}: {row['corpus']}/{row['authority']} {row['op']} {row['case']}")
-    return 0 if result["unlisted"] == 0 else 1
+    return 0 if result["unlisted"] == 0 and not result["problems"] else 1
 
 
 if __name__ == "__main__":
