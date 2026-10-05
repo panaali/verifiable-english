@@ -6,7 +6,8 @@ chain) and faulty sources (each check of 4.1 broken once, malformed and misattri
 document Python's search records a situation per pair; Lean's `readings-validate` and Python's regenerated answer
 must be byte for byte the same, faulty sources are rejected by both with one text, every situation Python finds is
 accepted by Lean, and a set for which the search finds none is rejected by both. A sample is replayed by Rust,
-untrusted. The count is 1,000 (9.3); `VE_S1_DIFFERENTIAL_COUNT` lowers it for a quick run.
+untrusted. The count is 1,000 (9.3), in a nightly test; the default run checks the first 200;
+`VE_S1_DIFFERENTIAL_COUNT` lowers both for a quick run.
 
 `test_separation_conservative_shadow` is 9.3's shadow of `separation_conservative`: on pairs in which neither
 side owns a key, some probe separates exactly when the two observation lists differ.
@@ -28,6 +29,8 @@ from ve.readings_s1 import Admission, answer, record_situations, search
 
 SEED = 20261002
 COUNT = int(os.environ.get("VE_S1_DIFFERENTIAL_COUNT", "1000"))
+# The default run's prefix of those documents, which still breaks every check and exercises every generator.
+QUICK_COUNT = min(COUNT, 200)
 ASKS = ["binary", "asks", ["var", 1], ["var", 0]]
 ASKS_ALL = ["forall", "agent", ["forall", "user", ASKS]]
 NOT_ASKS_ALL = ["forall", "agent", ["forall", "user", ["not", ASKS]]]
@@ -320,9 +323,20 @@ def python_answer(raw, document, *, with_rust):
 
 
 def test_generated_sets_agree_with_lean(lean):
+    """The first QUICK_COUNT documents of the nightly run (the same seeds, in order)."""
+    generated_sets_agree_with_lean(QUICK_COUNT)
+
+
+@pytest.mark.nightly
+def test_all_generated_sets_agree_with_lean(lean):
+    """9.3's 1,000 documents (about 5 minutes): runs with `-m nightly` and in tools/gate.py."""
+    generated_sets_agree_with_lean(COUNT)
+
+
+def generated_sets_agree_with_lean(count):
     rng = random.Random(SEED)
     cases, expectations = [], []
-    for n in range(COUNT):
+    for n in range(count):
         name, raw, document, fault = generate(rng)
         # Its own generator, so that the documents are the ones generated without the nulls.
         raw = environment_nulled(random.Random(f"{SEED}-environment-{n}"), raw)

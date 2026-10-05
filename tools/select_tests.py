@@ -60,7 +60,7 @@ import time
 
 from change_units import Summary, delta
 from layer_policy import ROOT, lean_default_targets, lean_executables, python_exports
-from pytest_run import pytest_command, pytest_environment
+import nested_pytest
 import source_graph
 import test_map
 
@@ -69,8 +69,8 @@ EXTRA_UNITS = test_map.EXTRA_UNITS
 # Fast tests across parser, environment, wire and both native backends.
 SMOKE = ("tests/test_conformance.py", "tests/test_surface_registry.py", "tests/test_definitions.py")
 UV_PYTHON = ("uv", "run", "--frozen", "--group", "dev", "python")
-# Every pytest run the plan prints starts with this (tools/pytest_run.py).
-PYTEST = pytest_command(UV_PYTHON)
+# Every pytest run the plan prints starts with this (tools/nested_pytest.py).
+PYTEST = nested_pytest.command([], python=UV_PYTHON)
 CHECK_PYTHON = (*UV_PYTHON, "tools/check_python_layers.py")
 CHECK_LEAN = ("python3", "tools/check_lean_imports.py")
 CHECK_RUST = ("python3", "tools/check_rust_deps.py")
@@ -689,7 +689,7 @@ def finish(sel: Selection, changes: list[Change], paths: list[str], started: flo
     for unit in extra:
         commands.append(list(EXTRA_UNITS[unit]))
     if pytest_files:
-        commands.append([*PYTEST, "-q", *pytest_files])
+        commands.append(nested_pytest.command(["-q", *pytest_files], python=UV_PYTHON))
     return {"changed": paths, "selected": selected, "selected_count": len(selected),
             "full_count": len(sel.all_units), "full": full, "full_reasons": sel.full,
             "smoke": list(SMOKE), "reasons": {t: sorted(r) for t, r in sorted(sel.reasons.items())},
@@ -770,7 +770,7 @@ def native_commands(paths: list[str], selected: list[str], fallback: bool) -> tu
     if rust_debug_binary:
         commands.append([*CARGO, "build", "--locked", "--manifest-path",
                          "rust/Cargo.toml", "-p", "ve"])
-    commands.append([*PYTEST, "-q", *selected])
+    commands.append(nested_pytest.command(["-q", *selected], python=UV_PYTHON))
     return commands, lean, rust
 
 
@@ -1007,7 +1007,8 @@ def run_recorded(plan: dict, jobs: int) -> int:
 
 
 def run(plan: dict, *, record: bool = True, jobs: int = 8) -> int:
-    env = pytest_environment(os.environ)
+    # The selected tests run as the gate runs them, whatever pytest settings the shell has.
+    env = nested_pytest.environment(os.environ)
     env.setdefault("UV_CACHE_DIR", "/tmp/ve-layers-uv-cache")
     env["PATH"] = str(Path.home() / ".elan/bin") + os.pathsep + env.get("PATH", "")
     if plan["lean_build"]:

@@ -25,7 +25,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 
 import change_units  # noqa: E402
 from change_units import delta, summarize  # noqa: E402
-from pytest_run import pytest_command, pytest_environment  # noqa: E402
+import nested_pytest  # noqa: E402
 import select_tests  # noqa: E402
 import source_graph  # noqa: E402
 import test_map  # noqa: E402
@@ -558,8 +558,8 @@ def recorder_run(tmp_path, program: str, argv=("main.py",), files: dict[str, str
         "    runpy.run_module(sys.argv[0], run_name='__main__', alter_sys=True)\n"
         "else:\n"
         "    runpy.run_path(sys.argv[1], run_name='__main__')\n")
-    env = pytest_environment({"PATH": os.environ["PATH"], "VE_TESTMAP_OUT": str(out), "VE_TESTMAP_ROOT": str(root),
-                              "PYTHONDONTWRITEBYTECODE": "1"})
+    env = nested_pytest.environment({"PATH": os.environ["PATH"], "VE_TESTMAP_OUT": str(out), "VE_TESTMAP_ROOT": str(root),
+                                     "PYTHONDONTWRITEBYTECODE": "1"})
     subprocess.run([sys.executable, "start.py", *argv], cwd=root, env=env, check=True,
                    timeout=HANG_TIMEOUT)
     tracked = ({p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_file()},
@@ -621,8 +621,8 @@ def test_a_test_run_by_pytest_keeps_its_own_reads_and_listings(tmp_path):
             assert glob.glob(str(ROOT / "globbed" / "*.txt"))
             assert helper.value() == 1
     ''')
-    result = recorder_run(tmp_path, "", (*pytest_command([], "-q", "-p", "no:cacheprovider", "--rootdir", "."),
-                                         "--confcutdir", ".", "tests/test_uses.py"),
+    result = recorder_run(tmp_path, "", nested_pytest.command(["-q", "-p", "no:cacheprovider", "--rootdir", ".",
+                                                               "--confcutdir", ".", "tests/test_uses.py"], python=[]),
                           {"tests/test_uses.py": test, "helper.py": "def value():\n    return 1\n",
                            "more/x.txt": "", "globbed/y.txt": ""})
     assert "lib.py" in result["r"]  # read as data by the test
@@ -802,9 +802,9 @@ LISTING_FILES = {**LISTING_TREE, **{file: f"from pathlib import Path\n\ndef test
 
 
 def pytest_exit(root: Path, test_file: str) -> int:
-    return subprocess.run(pytest_command([sys.executable], "-q", "-p", "no:cacheprovider", "--rootdir", ".",
-                                         "--confcutdir", ".", test_file), cwd=root, capture_output=True,
-                          env=pytest_environment({"PATH": os.environ["PATH"], "PYTHONDONTWRITEBYTECODE": "1"}),
+    return subprocess.run(nested_pytest.command(["-q", "-p", "no:cacheprovider", "--rootdir", ".",
+                                                "--confcutdir", ".", test_file]), cwd=root, capture_output=True,
+                          env=nested_pytest.environment({"PATH": os.environ["PATH"], "PYTHONDONTWRITEBYTECODE": "1"}),
                           timeout=HANG_TIMEOUT).returncode
 
 
@@ -817,8 +817,8 @@ def test_an_added_or_deleted_file_selects_the_listers_of_every_directory_above_i
                       "exit": 0, "seconds": 1.0} for test in select_tests.units()}
     for unit, (test_file, directory, _) in LISTING_TESTS.items():
         (tmp_path / unit).mkdir(parents=True)
-        recorded = recorder_run(tmp_path / unit, "", (*pytest_command([], "-q", "-p", "no:cacheprovider", "--rootdir"),
-                                                      ".", "--confcutdir", ".", test_file), LISTING_FILES)
+        recorded = recorder_run(tmp_path / unit, "", nested_pytest.command(
+            ["-q", "-p", "no:cacheprovider", "--rootdir", ".", "--confcutdir", ".", test_file], python=[]), LISTING_FILES)
         assert recorded["d"] == {directory}, recorded["d"]
         results[unit]["d"] = recorded["d"]
     data = test_map.build_map(results, head)
