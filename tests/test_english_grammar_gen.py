@@ -175,7 +175,7 @@ def test_t5_a_proposed_row_in_the_table_is_named(tree):
     target = tree / TARGET
     text = target.read_text()
     last = next(l for l in text.splitlines() if 'tag := "count.zero"' in l)
-    target.write_text(text.replace(last, last + ",\n  " + G.lean_rule(row, 98)))
+    target.write_text(text.replace(last, last + ",\n  " + G.lean_rule(row)))
     assert f"{PROFILE}: proposed row widen.if-and-then is in the generated table {TARGET}" in run_check(tree)
 
 
@@ -204,15 +204,15 @@ def test_i5_a_trusted_change_with_the_version_unchanged_fails(tree, path):
     (tree / G.LOCK).write_bytes(G.render_lock(lock["actions_version"], lock["files"]))
     assert run_check(tree) == []
     errors = run_check(tree, base)
-    assert any(e.startswith(f"{path}: SHA-256 {old} at the base, {new} now, with actions_version '1' unchanged")
-               for e in errors), errors
-    assert G.write(tree, "2") == [G.VERSION_TARGET, G.LOCK]
+    unchanged = f"with actions_version {lock['actions_version']!r} unchanged"
+    assert any(e.startswith(f"{path}: SHA-256 {old} at the base, {new} now, {unchanged}") for e in errors), errors
+    assert G.write(tree, lock["actions_version"] + ".1") == [G.VERSION_TARGET, G.LOCK]
     assert run_check(tree, base) == []
 
 
 def test_a_new_english_grammar_lean_file_must_be_classified(tree):
-    (tree / "lean/VE/EnglishGrammar/Rules.lean").write_text("-- lexRules\n")
-    assert run_check(tree) == ["lean/VE/EnglishGrammar/Rules.lean: neither a trusted file of "
+    (tree / "lean/VE/EnglishGrammar/Unclassified.lean").write_text("-- lexRules\n")
+    assert run_check(tree) == ["lean/VE/EnglishGrammar/Unclassified.lean: neither a trusted file of "
                                f"{G.LOCK} nor listed as untrusted in tools/english_grammar_gen.py; classify it"]
 
 
@@ -325,6 +325,8 @@ def _one(**changes) -> bytes:
     ({"act": "coordSubjects", "kind": "implies"}, "is not one of"),
     ({"act": "top", "kind": "and"}, "unknown \\['kind'\\]"),
     ({"act": "internal"}, "unknown action"),
+    ({"act": "impliesAnd"}, "belongs to a proposed rule"),
+    ({"act": "orAdjectives"}, "belongs to a proposed rule"),
     ({"status": "accepted"}, "only"),
     ({"tag": "X"}, "tag"),
     ({"rhs": [{"cls": "label", "letter": "s"}]}, "label letter"),

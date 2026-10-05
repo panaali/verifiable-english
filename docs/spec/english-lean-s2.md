@@ -29,6 +29,11 @@
 > difference there is a finding, not a failed fixture. Every `file:line` was read on 2026-10-04 and must be
 > re-read at each step. Nothing here changes a verdict, an identity, a public code, a frozen file, an existing
 > theorem statement or a checker function.
+> **Integration amendment (2026-10-05, branch `english-lean-s2/integrate`; section 17).** The fixed table has 98
+> rows, not 88: Python's grammar has the eight ordinals `first` to `eighth` (`ve/english.py:45`, `:1924–1925`),
+> and D15 makes the table mirror it rule for rule, so `declaration` and `term` each have eight ordinal rows. The
+> figures of 8.1, 8.6 and section 12 were recomputed on the built reader; no verdict, formula, statement or code
+> changes.
 
 ## 0. Scope, one paragraph
 
@@ -184,7 +189,7 @@ grammar is true under these ranks (8.1, section 12).
 Notation. A plain word is a `kw` terminal; `c:word` is a `content` terminal; `⟨name⟩` is a nonterminal. A comma,
 semicolon or colon written attached to the symbol before it is the token `punct` with `gluedBefore` true and
 `gluedAfter` false, which is how Python spaces them; `(a)` `(b)` `(i)` `(ii)` are `punct` tokens free on both
-sides. The action column names the action of 2.7. The table has 88 rows; it is the source
+sides. The action column names the action of 2.7. The table has 98 rows (section 17); it is the source
 `ve/english_grammar/relational-fol@0.json` written out (2.9). The rules come from `english_lark_grammar`
 (`ve/english.py:1830–1873`) and `_natural_grammar` (`:1990–2000`), rule for rule, with the EBNF of Lark's `?`
 rule expanded and the document rule removed (the lexer splits sentences; W4).
@@ -226,12 +231,12 @@ rule expanded and the document rule removed (the lexer splits sentences; W4).
 | `existential.who` `existential.that` | `existential → there is ⟨article⟩ ⟨declaration⟩ who ⟨relative⟩` \| `… that ⟨relative⟩` | `existsRel` |
 | `article.a` `article.an` | `article → a` \| `an` | `unit` |
 | `declaration.noun` | `declaration → ⟨noun⟩` | `declThat` |
-| `declaration.first` `.second` `.third` | `declaration → c:first ⟨noun⟩` \| `c:second ⟨noun⟩` \| `c:third ⟨noun⟩` | `declOrdinal` |
+| `declaration.first` … `.eighth` (8 rows) | `declaration → c:first ⟨noun⟩` \| `c:second ⟨noun⟩` \| … \| `c:eighth ⟨noun⟩` | `declOrdinal` |
 | `declaration.named` | `declaration → ⟨noun⟩ c:named ⟨label⟩` | `declNamed` |
 | `term.constant` | `term → ⟨constant⟩` | `termConst` |
 | `term.it` | `term → it` | `termIt` |
 | `term.that` | `term → c:that ⟨noun⟩` | `termRef "that"` |
-| `term.the-first` `.the-second` `.the-third` | `term → c:the c:first ⟨noun⟩` … | `termRef "the first"` … |
+| `term.the-first` … `.the-eighth` (8 rows) | `term → c:the c:first ⟨noun⟩` … `c:the c:eighth ⟨noun⟩` | `termRef "the first"` … `termRef "the eighth"` |
 | `term.label` | `term → ⟨label⟩` | `termLabel` |
 | `atom.top` | `atom → this holds in all cases` | `top` |
 | `atom.bottom` | `atom → this is impossible` | `bottom` |
@@ -1015,11 +1020,12 @@ Gates: the statement review of this specification before S2.3's proofs; G2 as th
 ## 8. Acceptance fixtures
 
 Every fixture is an obligation on the implementation. **Verdicts, counts and steps in 8.1, 8.3, 8.4, 8.5 and 8.6
-were computed** (section 12) by the proved S1 parser on the fixture grammar `GF`: the 88 fixed rules of 2.5
+were computed** (section 12) by the proved S1 parser on the fixture grammar `GF`: the 98 fixed rules of 2.5
 (the four coordination rows over `term`) and the 29 lexical rules that 2.6 gives for `F` and `LF` (base 8.5:
 sorts `person`, `service`; `deployed`, `reviewed` with its negative, `owns` with its negative; `alice`,
-`legacy`), 117 rules in all, `|G|` = 479, 37 nonterminals, with the ranks of 2.4; `Grammar.wf` and
-`terminatorFree` true. The figures were recomputed for draft 2 and every row below holds under it; where draft 1
+`legacy`), 127 rules in all, `|G|` = 504, 37 nonterminals, with the ranks of 2.4; `Grammar.wf` and
+`terminatorFree` true (recomputed on the built reader for the 98-row table, section 17; drafts 1 to 5 had 88
+fixed rows, 117 rules and `|G|` = 479). The figures were recomputed for draft 2 and every row below holds under it; where draft 1
 had a different value the row says so. The expected formulas of 8.2 are hand-derived. A fixture whose expected
 value is marked *obligation* was not computed.
 
@@ -1031,7 +1037,7 @@ value is marked *obligation* was not computed.
 |---|---|---|---|
 | b1 | `Every service is reviewed.` | one | base e1 |
 | b2 | `Every service that is deployed is reviewed.` | one | `universal.guard-relative` |
-| b3 | `For every service that is deployed, there is a person who owns that service.` | one | 7,331 steps |
+| b3 | `For every service that is deployed, there is a person who owns that service.` | one | 7,736 steps |
 | b4 | `Alice owns legacy.` | one | |
 | b5 | `Legacy is not reviewed.` | one | the validated negative |
 | b6 | `Both legacy is deployed and legacy is reviewed.` | one | |
@@ -1049,7 +1055,7 @@ value is marked *obligation* was not computed.
 | b18 | `For every service that is deployed and is reviewed, and is deployed, that service is reviewed.` | one | `guard.three-left` |
 | b19 | `For every service that is deployed, and is reviewed and is deployed, that service is reviewed.` | one | `guard.three-right` |
 | b20 | `Every service that alice owns is reviewed.` | one | the object relative; spine `universal.guard-relative` |
-| b21 | `All of the following hold: first clause: legacy is deployed; end first clause; second clause: legacy is reviewed; end second clause.` | one | 13,162 steps |
+| b21 | `All of the following hold: first clause: legacy is deployed; end first clause; second clause: legacy is reviewed; end second clause.` | one | 13,837 steps |
 | b22 | `Both of the following hold: (a) legacy is deployed; (b) legacy is reviewed.` | one | |
 | b23 | `If the following holds: (a) legacy is deployed; then the following holds: (b) legacy is reviewed.` | one | |
 | b24 | `EVERY service is reviewed.` | zero | `kw` accepts one initial capital only |
@@ -1093,7 +1099,7 @@ is `deployed service` and letter `D`.
 
 | Id | Source (under `FD`) | Verdict | Witnesses (leftmost spines) |
 |---|---|---|---|
-| d1 | `Every deployed service is reviewed.` | many | `formula.universal › universal.relative` and `formula.natural › natural.every › natural-every.subject`; 2,514 steps |
+| d1 | `Every deployed service is reviewed.` | many | `formula.universal › universal.relative` and `formula.natural › natural.every › natural-every.subject`; 2,659 steps |
 | d2 | `It is not the case that every deployed service is reviewed.` | many | the same two under `negation` |
 | d3 | `Every DEPLOYED service is reviewed.` | many | content words match in any case |
 | d4 | `Every service is reviewed.` | one | |
@@ -1187,12 +1193,14 @@ when the widening is signed.
 
 | Fixture | Steps (cap 2) | Against the budget |
 |---|---|---|
-| b3 | 7,331 | 0.35% of 2,100,000 |
-| b21 | 13,162 | 0.63% |
-| d1 | 2,514 | 0.12% |
+| b3 | 7,736 | 0.37% of 2,100,000 |
+| b21 | 13,837 | 0.66% |
+| d1 | 2,659 | 0.13% |
 
 The three figures were re-measured for draft 2 under the coordination rows over `term` and the ranks of 2.4,
-and are unchanged from draft 1: none of the three sentences predicts a coordination past its first token.
+and were unchanged from draft 1 (7,331, 13,162 and 2,514): none of the three sentences predicts a coordination
+past its first token. They were measured again on the built reader with the 98-row table (section 17): the ten
+ordinal rows add predictions at every `declaration` and `term`.
 
 The two owed G1a budgets are obligations of the G2 report: BlueDot ≤ 1 s, generated modules ≤ 60 s of
 `lake build`.
@@ -1309,7 +1317,7 @@ section 8. All checks passed on 2026-10-04 under Lean 4.24.0 for draft 1.
   compares them by `lookup`; the real `Env.decode` puts them in `PredDecl` and `ConstDecl` (2.3);
 - `GF`, `GF3` (the extended `F` of e34), `GFD`, `GFv2`, `GFw` with the coordination rows over `term` and the
   ranks of 2.4: `Grammar.wf` and `terminatorFree` true, 117 rules, `|G|` = 479, 37 nonterminals, the longest
-  fixed right-hand side 28;
+  fixed right-hand side 28 (127 rules and `|G|` = 504 with the 98-row table, section 17);
 - every verdict of 8.1, 8.3, 8.4 and 8.5, b48 (now `one`) and the new rows b49 to b55 included, with the
   spines of b48 and b50 as 8.1 states them;
 - the steps of 8.6, unchanged.
@@ -1467,3 +1475,20 @@ section 12, which depend on no class; the stub of section 12, unchanged, was ela
 same counts, spines and steps. It is not committed (section 12); the sandbox of this session refused to delete
 it, so the untracked file remains in the worktree. The next step is a bounded re-verification of the edits of
 this section; PASS follows that re-verification, not this draft.
+
+## 17. Integration amendment: the eight ordinals (2026-10-05)
+
+Found when the Python generator (S2.0) and the Lean reader (S2.1 to S2.3) were merged on
+`english-lean-s2/integrate`. Spec 2.5 listed the ordinal rows of `declaration` and `term` as `first`, `second`,
+`third` (88 rows). Python's grammar has eight: `_ORDINALS` is `first` to `eighth` (`ve/english.py:45`), and
+`english_lark_grammar` gives one `declaration` and one `term` alternative per ordinal (`:1924–1925`); the hand
+parser accepts all eight (`:933`). D15 (the table mirrors Lark rule for rule) governs over the row count, so the
+source `ve/english_grammar/relational-fol@0.json` has 98 table rows and the generated table follows it; the
+test `tests/test_english_grammar_gen.py::test_the_table_is_pythons_grammar_rule_for_rule` compares it with
+Python's converted Lark grammar.
+
+What changes: 2.5's two ordinal rows and its count; the figures of 8.1 (127 rules, `|G|` = 504), 8.6 (7,736,
+13,837 and 2,659 steps, all below 0.7% of `workBudget`) and their mention in section 12, recomputed by
+`#guard` in `lean/VE/EnglishGrammar/ReadExamples.lean` on the built reader. What does not: every verdict and
+formula of section 8 (the fixtures name no ordinal past `second`), every statement of 5.6, the action library
+(`declOrdinal` and `termRef` carry the ordinal as data), the codes and the identities.
