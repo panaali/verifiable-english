@@ -183,6 +183,7 @@ macro_rules
     `(tactic| first
       | (skel_norm; fits using $ls,*)
       | exact Fits.any _
+      | (exfalso; assumption)
       | $known
       | (apply Fits.mkObj (by keys_ok); fields_split <;> fits using $ls,*)
       | (fits_pick <;> (try simp only [List.map_cons, List.map_nil, List.filter_cons, List.filter_nil, String.reduceBNe, ↓reduceIte, Bool.false_eq_true]) <;> (try fields_split) <;> fits using $ls,*)
