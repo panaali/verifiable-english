@@ -75,7 +75,7 @@ surface (`discourseSourceSurface`).
 - **Slots are discovered from the source** (3.4, 4.1(6)): before any unit is resolved, every unit with content or
   an active reading set (its readings are its meaning) must record every reference surface of its own bytes
   (`coverageOk`, `UnrecordedSlot: <unit>: [a, b)` in prose bytes, Python's text), and a unit whose text has a
-  derivation with a slot or a surface is validated. Discovery (`textSurfaces`, Python's `reference_surfaces`) reads
+  derivation with a slot or a surface is validated. Discovery (`textSurfaces`) reads
   each unit alone, as its segments: maximal runs of characters with a fold (ASCII letters and digits, and `İ`, `ı`,
   `ſ`, the Kelvin sign, which `re.I` equates with ASCII letters), folded. So a reference word joined to anything
   else (`It's`, `It’s`, `They're`, `It-is`, `It_`, `Itʼs`, `İt`, `ſuch`) is still a slot, and a unit boundary with
@@ -211,7 +211,7 @@ need renewed statement approval (the approved statement is false or unprovable a
     label naming an authored set, which `@1` admits (the gate would turn a W2-accepted label into
     `InvalidCompatibility`). The gate reads each compatible choice with the active authored sets fixed at their one
     signed reading (`gateChoices`, `authoredChoice`), and both theorems conclude `ExtendsTo ch (c ++ authoredChoice
-    res.doc)`; with no authored set this is the approved statement. Python's `check_joint_extensions` is the same.
+    res.doc)`; with no authored set this is the approved statement. Python checks no extension of its own.
 21. **Checks not implemented in `wellFormed`:** 4.1(9) (the definition/proof dependency DAG; the Lean W2 document has
     no citation graph); `exports` is checked as "a `definition` unit lies inside the anchor".
 
@@ -249,16 +249,17 @@ is the proved Lean statement.
   quantity profiles, and the `couplings`/`contexts`/`assessments`/`bridges`/`scoped` metadata stay `@1`-only (spec
   out of scope); on a `@2` document they are rejected, never silently accepted. Python passes both `joint_choices`
   and `couplings` to `check_readings`; a coupled document needs `rights@0`, so both are never set at once. On the
-  Rust `elaborated-document` family a case with `profile: reports@0` is a reports case and every other case is a
-  discourse case (`rust/ve/src/main.rs`).
+  Rust `elaborated-document` family only a case with `profile: reports@0` is accepted (a reports case); Rust
+  checks no discourse case (`rust/ve/src/main.rs`, lean-first batch 4).
 - **The Lean authority** (`manage-agents/discourse-authority-directive.md`, spec 3.4): Python's admission of a
   `ve-document@2` document is this route's `admission` answer on the same bytes (`ve/discourse.py`
   `lean_admission`, `validate_discourse`), with the sibling files its imports name: the verdict, every unit's
-  status, the references, the validity verdicts and the report id. Python's own check (`python_discourse`), which
-  elaborates pronouns, demonstratives and ordinal pairs only and evaluates no validity claim, self-truth label or
-  recorded choice, gives editor hints (`discourse_hints`, the reviewed presentations) and the diagnostic text of a
-  document this route rejects too. A route that is missing, fails or answers anything but one well-formed answer to
-  the case is `CheckerUnavailable`; `NotImplemented` is Python's `UnsupportedProfile`; neither is a verdict.
+  status, the references, the validity verdicts, the report id, the joint choices and the joint disjunction
+  (`joint_choices`, `joint_formula`, beside `joint` when the joint set completed). Since lean-first batch 4 Python
+  has no check of its own: a rejection is this route's diagnostic, raised before any Python check runs, and the
+  reviewed presentations display this route's resolved references. A route that is missing, fails or answers
+  anything but one well-formed answer to the case is `CheckerUnavailable`; `NotImplemented` is Python's
+  `UnsupportedProfile` with this route's text; neither is a verdict.
   Python recognises a `@2` text by its front matter's `format` alone (`is_discourse_text`), collects sibling files
   over any front matter (`import_files`, breadth first, embedded bytes as `embeddedBytes` reads them), and a Python
   failure of any kind on a document this route rejects is this route's diagnostic. `Loader.linesOf`/`byteStrip`
