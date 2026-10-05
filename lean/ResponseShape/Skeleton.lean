@@ -280,6 +280,9 @@ theorem bind {β : Type} {x : Except String β} {f : β → Except String α} (h
   | error e => cases hw
   | ok a => exact h a rfl w hw
 
+theorem pure_ok {β : Type} {v a : β} : (Pure.pure v : Except String β) = .ok a ↔ v = a :=
+  ⟨fun h => by cases h; rfl, fun h => by subst h; rfl⟩
+
 theorem throw_bind {β : Type} {e : String} {f : β → Except String α} : OkP P (MonadExcept.throw e >>= f) := by
   intro w hw
   cases hw

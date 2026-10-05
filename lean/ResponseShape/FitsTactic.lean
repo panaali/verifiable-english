@@ -43,7 +43,7 @@ macro "elem_cases" : tactic =>
 /-- Through a runner's `do` block: binds (keeping `x = .ok a`), conditions, matches and join
 points, down to each `pure` (left as a `Fits` goal) or `throw`. -/
 macro "okfits" : tactic =>
-  `(tactic|repeat' (first | (with_reducible apply OkP.pure) | (with_reducible apply OkP.ok) | (with_reducible show OkP _ (_ >>= _); simp only [bind_pure]) | exact OkP.throw_bind | (with_reducible apply OkP.bind; intro _ _) | (with_reducible apply OkP.ite <;> intro _) | exact OkP.throw | exact OkP.error | (show OkP _ _; split) | (show OkP _ _; simp only [])))
+  `(tactic|repeat' (first | (with_reducible apply OkP.pure) | (with_reducible apply OkP.ok) | (with_reducible show OkP _ (_ >>= _); simp only [bind_pure]) | with_reducible exact OkP.throw_bind | (with_reducible apply OkP.bind; intro _ h; try (rw [OkP.pure_ok] at h; subst h)) | (with_reducible apply OkP.ite <;> intro _) | with_reducible exact OkP.throw | with_reducible exact OkP.error | (show OkP _ _; split) | (show OkP _ _; simp only [])))
 
 end ResponseShape
 
