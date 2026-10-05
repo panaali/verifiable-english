@@ -1,222 +1,420 @@
 {
   "$id": "common.json",
-  "$comment": "Shared value domains of Lean service results. Every domain is the one the named Lean decoder accepts (lean/VE/...): the response validator in ve/backends/lean_service.py is compiled from these files and ve_response_decode (lean/ResponseDecode.lean) is the differential oracle. Only well-formedness and request binding are described here: relations the runners guarantee between values (counts regenerated from the environment, graph unfoldings, dependency orders, verdict details) are the service's responsibility and are tested on its outputs (docs/spec/lean-service.md, threat model). Dialect: README.md in this directory.",
+  "$comment": "Shared value domains of Lean service results. Every domain is the one the named Lean decoder accepts (lean/VE/...). Every file of this directory is rendered from lean/ResponseShape/Schemas (tools/response_schemas.py; never edit it by hand): the response validator in ve/backends/lean_service.py is compiled from these files, and ve_response_decode (lean/ResponseDecode.lean) decides responses with the same Lean shapes, the named decoders deciding beside them. Only well-formedness and request binding are described here: relations the runners guarantee between values (counts regenerated from the environment, graph unfoldings, dependency orders, verdict details) are the service's responsibility and are tested on its outputs (docs/spec/lean-service.md, threat model). Dialect: README.md in this directory.",
   "$defs": {
-    "text": {"type": "string", "minLength": 1},
-    "code": {"$comment": "Service.Protocol.rejectionCode: the public diagnostic code of a rejection, which the client relays with the message (docs/LEAN-FIRST-PLAN.md, batch 0); the handshake's codes.",
-      "enum": ["InvalidInput", "SyntaxError", "UnknownSymbol", "DuplicateDeclaration", "UnboundVariable", "TypeMismatch", "InvalidModel", "UnsupportedProfile", "ResourceLimit", "AdmissionError", "CheckerUnavailable"]},
-    "nat": {"type": "integer", "minimum": 0},
-    "booleans": {"type": "array", "items": {"type": "boolean"}},
-    "strings": {"type": "array", "items": {"type": "string"}},
-    "hex64": {"$comment": "SHA-256 digests (CertificateWire.digest, Service.Protocol.caseDigest).", "type": "string", "pattern": "[0-9a-f]{64}"},
-    "token": {"$comment": "Route.Admission.token: nonempty, at most 64 bytes, [A-Za-z0-9_.-].", "type": "string", "pattern": "[A-Za-z0-9_.-]{1,64}"},
-    "integer_text": {"$comment": "Order.Wire.decodeInt: canonical decimal, at most maxNumeralChars = 40 characters.", "type": "string", "maxLength": 40, "pattern": "0|-?[1-9][0-9]*"},
-    "values": {"$comment": "Evaluation values: one per requested formula (binding to the request's ast).", "type": "array", "items": {"type": "boolean"}, "x-length": "/ast"},
-
-    "fol_term": {"$comment": "Bridge.decodeTerm.", "x-tagged": {
-      "var": [{"$ref": "#/$defs/nat"}],
-      "const": [{"type": "string"}]}},
-    "fol_formula": {"$comment": "Bridge.decodeFormula 64: a formula the runner decoded from the request (a claim).", "x-fuel": {"counter": "fol_formula", "limit": 64}, "x-tagged": {
-      "top": [],
-      "bottom": [],
-      "unary": [{"type": "string"}, {"$ref": "#/$defs/fol_term"}],
-      "binary": [{"type": "string"}, {"$ref": "#/$defs/fol_term"}, {"$ref": "#/$defs/fol_term"}],
-      "eq": [{"$ref": "#/$defs/fol_term"}, {"$ref": "#/$defs/fol_term"}],
-      "not": [{"$ref": "#/$defs/fol_formula"}],
-      "and": [{"$ref": "#/$defs/fol_formula"}, {"$ref": "#/$defs/fol_formula"}],
-      "or": [{"$ref": "#/$defs/fol_formula"}, {"$ref": "#/$defs/fol_formula"}],
-      "implies": [{"$ref": "#/$defs/fol_formula"}, {"$ref": "#/$defs/fol_formula"}],
-      "forall": [{"type": "string"}, {"$ref": "#/$defs/fol_formula"}],
-      "exists": [{"type": "string"}, {"$ref": "#/$defs/fol_formula"}]}},
-    "generated_formula": {"$comment": "Route.Wire.encodeFormula of a formula the runner generated (Background, norms premises and conflict targets, English parses): Bridge.decodeFormula's grammar at any depth. The decoder's 64 bounds the inputs, not these: a definition premise wraps a body of depth 64 in two binders and a biconditional (68), an English parse nests one negation per 'it is not the case that', and a norms elaboration nests every rule, carve-out and lower layer.",
-      "x-tagged": {
-      "top": [],
-      "bottom": [],
-      "unary": [{"type": "string"}, {"$ref": "#/$defs/fol_term"}],
-      "binary": [{"type": "string"}, {"$ref": "#/$defs/fol_term"}, {"$ref": "#/$defs/fol_term"}],
-      "eq": [{"$ref": "#/$defs/fol_term"}, {"$ref": "#/$defs/fol_term"}],
-      "not": [{"$ref": "#/$defs/generated_formula"}],
-      "and": [{"$ref": "#/$defs/generated_formula"}, {"$ref": "#/$defs/generated_formula"}],
-      "or": [{"$ref": "#/$defs/generated_formula"}, {"$ref": "#/$defs/generated_formula"}],
-      "implies": [{"$ref": "#/$defs/generated_formula"}, {"$ref": "#/$defs/generated_formula"}],
-      "forall": [{"type": "string"}, {"$ref": "#/$defs/generated_formula"}],
-      "exists": [{"type": "string"}, {"$ref": "#/$defs/generated_formula"}]}},
-    "generated_formulas": {"type": "array", "items": {"$ref": "#/$defs/generated_formula"}},
-
-    "order_term": {"$comment": "Order.Wire.decodeTerm 64.", "x-fuel": {"counter": "order_term", "limit": 64}, "x-tagged": {
-      "var": [{"$ref": "#/$defs/nat"}],
-      "const": [{"type": "string"}],
-      "num": [{"$ref": "#/$defs/integer_text"}],
-      "add": [{"$ref": "#/$defs/order_term"}, {"$ref": "#/$defs/order_term"}],
-      "scale": [{"$ref": "#/$defs/integer_text"}, {"$ref": "#/$defs/order_term"}]}},
-    "order_formula": {"$comment": "Order.Wire.decodeFormula 64; each term has its own depth budget.", "x-fuel": {"counter": "order_formula", "limit": 64}, "x-tagged": {
-      "top": [],
-      "bottom": [],
-      "unary": [{"type": "string"}, {"$ref": "#/$defs/order_term"}],
-      "binary": [{"type": "string"}, {"$ref": "#/$defs/order_term"}, {"$ref": "#/$defs/order_term"}],
-      "eq": [{"$ref": "#/$defs/order_term"}, {"$ref": "#/$defs/order_term"}],
-      "lt": [{"$ref": "#/$defs/order_term"}, {"$ref": "#/$defs/order_term"}],
-      "le": [{"$ref": "#/$defs/order_term"}, {"$ref": "#/$defs/order_term"}],
-      "not": [{"$ref": "#/$defs/order_formula"}],
-      "and": [{"$ref": "#/$defs/order_formula"}, {"$ref": "#/$defs/order_formula"}],
-      "or": [{"$ref": "#/$defs/order_formula"}, {"$ref": "#/$defs/order_formula"}],
-      "implies": [{"$ref": "#/$defs/order_formula"}, {"$ref": "#/$defs/order_formula"}],
-      "forall": [{"type": "string"}, {"$ref": "#/$defs/order_formula"}],
-      "exists": [{"type": "string"}, {"$ref": "#/$defs/order_formula"}]}},
-
-    "atomic_kind": {"$comment": "Route.Admission.atomicKind.", "enum": ["asserted", "norm", "definition", "question", "instruction", "example", "exposition", "analogy", "explanation", "meta"]},
-    "act": {"$comment": "Route.Admission.acts.", "enum": ["says", "promised", "believes", "intends", "expects", "denies"]},
-    "modality": {"$comment": "Route.Admission.modalities.", "enum": ["could", "likely", "generally", "typically", "effectively"]},
-    "relation": {"$comment": "Route.Admission.relations.", "enum": ["because", "in order to", "prevents"]},
-    "kind": {"$comment": "Route.Admission.decodeKind 16.", "x-fuel": {"counter": "kind", "limit": 16}, "anyOf": [
-      {"type": "string", "$ref": "#/$defs/atomic_kind"},
-      {"type": "array", "x-tagged": {
-        "attributed": [{"$ref": "#/$defs/token"}, {"$ref": "#/$defs/act"}, {"$ref": "#/$defs/kind"}],
-        "hedged": [{"$ref": "#/$defs/modality"}, {"$ref": "#/$defs/kind"}],
-        "causal": [{"$ref": "#/$defs/relation"}, {"$ref": "#/$defs/kind"}, {"$ref": "#/$defs/kind"}],
-        "unformalised": [{"$ref": "#/$defs/token"}]}}]},
-
-    "generator": {"$comment": "Route.Background.generators.", "enum": ["flags", "definitions", "literals", "profile"]},
-    "label": {"$comment": "Canonical labels: Route.Admission.parseLabel (the parsed label renders to the input).",
-      "type": "string",
-      "pattern": "asserted|bridge:accepts\\([A-Za-z0-9_.-]{1,64},[A-Za-z0-9_.-]{1,64}\\)|background:(flags|definitions|literals|profile)|cite:[A-Za-z0-9_.-]{1,64}/[A-Za-z0-9_.-]{1,64}|open:[A-Za-z0-9_.-]{1,64}|readings:[A-Za-z0-9_.-]{1,64}@(0|[1-9][0-9]*):(0|[1-9][0-9]*|all)|narrowing:[A-Za-z0-9_.-]{1,64}"},
-
-    "claim": {"$comment": "Route.Run.claimJson: a decoded graph node of the request, re-encoded; the default label is omitted.",
-      "type": "object", "required": ["name", "ast"], "additionalProperties": false,
+    "act": {
+      "$comment": "Route.Admission.acts.",
+      "enum": ["says", "promised", "believes", "intends", "expects", "denies"]
+    },
+    "admission": {
+      "$comment": "Route.Run.runAdmit and Norms.Run.encodeAdmitted: the root is the request's root and kinds are the request's unit kinds (decodeKind_render). That the assumptions are the root's unfolding is the service's (tests/test_lean_service_schema.py, Lean invariants).",
+      "additionalProperties": false,
       "properties": {
-        "name": {"type": "string"},
-        "ast": {"$ref": "#/$defs/fol_formula"},
-        "label": {"type": "string", "not": {"const": "asserted"}}}},
-    "admission": {"$comment": "Route.Run.runAdmit and Norms.Run.encodeAdmitted: the root is the request's root and kinds are the request's unit kinds (decodeKind_render). That the assumptions are the root's unfolding is the service's (tests/test_lean_service_schema.py, Lean invariants).",
-      "type": "object", "required": ["id", "status", "admitted", "report", "report_id", "kinds"], "additionalProperties": false,
-      "properties": {
-        "id": {"type": "string", "x-equals": "/id"},
-        "status": {"const": "ok"},
         "admitted": {"const": true},
-        "report": {"type": "object", "required": ["root", "assumptions"], "additionalProperties": false,
+        "id": {"type": "string", "x-equals": "/id"},
+        "kinds": {"items": {"$ref": "#/$defs/kind"}, "type": "array", "x-equals": "/document/units/*/kind"},
+        "report": {
+          "additionalProperties": false,
           "properties": {
-            "root": {"$ref": "#/$defs/claim", "properties": {"name": {"x-equals": "/document/graph/root"}}},
-            "assumptions": {"type": "array", "items": {"$ref": "#/$defs/claim"}}}},
+            "assumptions": {"items": {"$ref": "#/$defs/claim"}, "type": "array"},
+            "root": {"$ref": "#/$defs/claim", "properties": {"name": {"x-equals": "/document/graph/root"}}}
+          },
+          "required": ["root", "assumptions"],
+          "type": "object"
+        },
         "report_id": {"$ref": "#/$defs/hex64"},
-        "kinds": {"type": "array", "items": {"$ref": "#/$defs/kind"}, "x-equals": "/document/units/*/kind"}}},
-
-    "case_error": {"$comment": "Service.Protocol.caseError: a case the batch decoder rejected on its own.",
-      "type": "object", "required": ["status", "case_index", "error"], "additionalProperties": false,
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "admitted", "report", "report_id", "kinds"],
+      "type": "object"
+    },
+    "atomic_kind": {
+      "$comment": "Route.Admission.atomicKind.",
+      "enum": [
+        "asserted",
+        "norm",
+        "definition",
+        "question",
+        "instruction",
+        "example",
+        "exposition",
+        "analogy",
+        "explanation",
+        "meta"
+      ]
+    },
+    "booleans": {"items": {"type": "boolean"}, "type": "array"},
+    "bound_report": {
+      "$comment": "A report whose root is the request's graph root.",
+      "$ref": "#/$defs/report",
+      "properties": {"root": {"properties": {"name": {"x-equals": "/document/graph/root"}}}}
+    },
+    "case_error": {
+      "$comment": "Service.Protocol.caseError: a case the batch decoder rejected on its own.",
+      "additionalProperties": false,
       "properties": {
-        "status": {"const": "error"},
-        "case_index": {"type": "integer", "x-index": true},
-        "error": {"$ref": "#/$defs/text"}}},
-    "case_error_valid": {"$comment": "Service.Protocol.caseError for check-certificate and order.",
-      "type": "object", "required": ["status", "case_index", "error", "valid"], "additionalProperties": false,
-      "properties": {
-        "status": {"const": "error"},
         "case_index": {"type": "integer", "x-index": true},
         "error": {"$ref": "#/$defs/text"},
-        "valid": {"const": false}}},
-    "error": {"$comment": "A case the runner rejected: the request's id (null if absent) and the message.",
-      "type": "object", "required": ["id", "status", "error"], "additionalProperties": false,
+        "status": {"const": "error"}
+      },
+      "required": ["status", "case_index", "error"],
+      "type": "object"
+    },
+    "case_error_valid": {
+      "$comment": "Service.Protocol.caseError for check-certificate and order.",
+      "additionalProperties": false,
       "properties": {
-        "id": {"x-echo": "/id"},
-        "status": {"const": "error"},
-        "error": {"$ref": "#/$defs/text"}}},
-    "error_valid": {"$comment": "The same with valid: false (CertificateWire and Order.Surface runCaseReported).",
-      "type": "object", "required": ["id", "status", "error", "valid"], "additionalProperties": false,
-      "properties": {
-        "id": {"x-echo": "/id"},
-        "status": {"const": "error"},
+        "case_index": {"type": "integer", "x-index": true},
         "error": {"$ref": "#/$defs/text"},
-        "valid": {"const": false}}},
-    "no_kind": {"$comment": "Selector over the request case: no kind field.", "type": "object", "not": {"required": ["kind"]}},
-
-    "id_ok": {"$comment": "Route.Wire.ok: an answer's id is the request's id, a string (Bridge.stringField).", "type": "string", "x-equals": "/id"},
-    "hex64_or_empty": {"$comment": "An identity the encoder writes as `.toOption.getD \"\"`.", "anyOf": [{"$ref": "#/$defs/hex64"}, {"const": ""}]},
-    "nonempty_strings": {"type": "array", "items": {"$ref": "#/$defs/text"}},
-    "string_map": {"$comment": "An object with string values.", "type": "object", "additionalProperties": {"type": "string"}},
-    "string_pair": {"type": "array", "prefixItems": [{"type": "string"}, {"type": "string"}], "minItems": 2, "maxItems": 2},
-    "report": {"$comment": "Norms.Run.reportJson: the root and its assumptions, each a Route.Run.claimJson.",
-      "type": "object", "required": ["root", "assumptions"], "additionalProperties": false,
+        "status": {"const": "error"},
+        "valid": {"const": false}
+      },
+      "required": ["status", "case_index", "error", "valid"],
+      "type": "object"
+    },
+    "claim": {
+      "$comment": "Route.Run.claimJson: a decoded graph node of the request, re-encoded; the default label is omitted.",
+      "additionalProperties": false,
       "properties": {
-        "root": {"$ref": "#/$defs/claim"},
-        "assumptions": {"type": "array", "items": {"$ref": "#/$defs/claim"}}}},
-    "bound_report": {"$comment": "A report whose root is the request's graph root.",
-      "$ref": "#/$defs/report", "properties": {"root": {"properties": {"name": {"x-equals": "/document/graph/root"}}}}},
-    "labelled": {"$comment": "Route.Wire.labelled and its copies: a premise label and its generated formula.",
-      "type": "object", "required": ["label", "ast"], "additionalProperties": false,
-      "properties": {"label": {"$ref": "#/$defs/text"}, "ast": {"$ref": "#/$defs/generated_formula"}}},
-    "labelled_list": {"type": "array", "items": {"$ref": "#/$defs/labelled"}},
-    "norms_background": {"$comment": "Norms.Wire.regenerated: the Background of the definitions, literals and profile generators.",
-      "type": "array", "items": {
-        "type": "object", "required": ["generator", "ast"], "additionalProperties": false,
+        "ast": {"$ref": "#/$defs/fol_formula"},
+        "label": {"not": {"const": "asserted"}, "type": "string"},
+        "name": {"type": "string"}
+      },
+      "required": ["name", "ast"],
+      "type": "object"
+    },
+    "code": {
+      "$comment": "Service.Protocol.rejectionCode: the public diagnostic code of a rejection, which the client relays with the message (docs/LEAN-FIRST-PLAN.md, batch 0); the handshake's codes.",
+      "enum": [
+        "InvalidInput",
+        "SyntaxError",
+        "UnknownSymbol",
+        "DuplicateDeclaration",
+        "UnboundVariable",
+        "TypeMismatch",
+        "InvalidModel",
+        "UnsupportedProfile",
+        "ResourceLimit",
+        "AdmissionError",
+        "CheckerUnavailable"
+      ]
+    },
+    "conflict_targets": {
+      "$comment": "Norms.Wire.regenerated: one target per layer, then per declared pair, with its argument sorts.",
+      "items": {
+        "additionalProperties": false,
         "properties": {
-          "generator": {"enum": ["definitions", "literals", "profile"]},
-          "ast": {"$ref": "#/$defs/generated_formula"}}}},
-    "layer_premises": {"$comment": "Norms.Wire.regenerated: one premise per layer.",
-      "type": "array", "items": {
-        "type": "object", "required": ["label", "ast"], "additionalProperties": false,
-        "properties": {
-          "label": {"type": "string", "pattern": "layer:norms:.*"},
-          "ast": {"$ref": "#/$defs/generated_formula"}}}},
-    "conflict_targets": {"$comment": "Norms.Wire.regenerated: one target per layer, then per declared pair, with its argument sorts.",
-      "type": "array", "items": {
-        "type": "object", "required": ["target", "sorts", "ast"], "additionalProperties": false,
-        "properties": {
-          "target": {"$ref": "#/$defs/text"},
+          "ast": {"$ref": "#/$defs/generated_formula"},
           "sorts": {"$ref": "#/$defs/strings"},
-          "ast": {"$ref": "#/$defs/generated_formula"}}}},
-    "norm_node": {"$comment": "Alternatives.Wire.encodeNode and SpeechActs.Run.encodeNode: a norm of the inlined tree.",
-      "type": "object", "required": ["name", "predicate", "sign", "guard", "unless", "over"], "additionalProperties": false,
-      "properties": {
-        "name": {"type": "string"},
-        "predicate": {"type": "string"},
-        "sign": {"type": "boolean"},
-        "guard": {"$ref": "#/$defs/generated_formula"},
-        "unless": {"$ref": "#/$defs/generated_formulas"},
-        "over": {"$ref": "#/$defs/strings"}}},
-    "witness_conflict": {"$comment": "A conflict witness replay (Norms.Replay.witnessFrom and its copies): the requested target.",
-      "type": "object", "required": ["id", "status", "verdict", "target", "targets"], "additionalProperties": false,
-      "properties": {
-        "id": {"$ref": "#/$defs/id_ok"},
-        "status": {"const": "ok"},
-        "verdict": {"enum": ["CONFLICT", "UNKNOWN"]},
-        "target": {"type": "string", "x-equals": "/witness/target"},
-        "targets": {"$ref": "#/$defs/strings"}}},
-    "packages_conflict": {"$comment": "A conflict-freedom replay over certificate packages: `detail` (the first failed target) exactly when the verdict is UNKNOWN.",
-      "type": "object", "required": ["id", "status", "verdict", "targets"], "additionalProperties": false,
-      "properties": {
-        "id": {"$ref": "#/$defs/id_ok"},
-        "status": {"const": "ok"},
-        "verdict": {"enum": ["CONFLICT-FREE", "UNKNOWN"]},
-        "targets": {"$ref": "#/$defs/strings"},
-        "detail": {"$ref": "#/$defs/text"}},
-      "if": {"properties": {"verdict": {"const": "UNKNOWN"}}},
-      "then": {"required": ["detail"]}, "else": {"not": {"required": ["detail"]}}},
-    "route_path_error": {"$comment": "The error row of a statement-layer route's own runner (`runCaseReported`): the request's id (null if absent) and the message. The public code (and generator) is the bound entry's (envelope.json).",
-      "type": "object", "required": ["id", "status", "error"], "additionalProperties": false,
-      "properties": {
-        "id": {"x-echo": "/id"},
-        "status": {"const": "error"},
-        "error": {"$ref": "#/$defs/text"}}},
-    "environment": {"$comment": "Norms.Wire.canonicalEnvironmentJson and its extensions (SoftNorms.Wire.primeJson, Rights.Wire.primeJsonR): the request environment after its envelope check (exactly language, profiles, spec_revision and vocabulary), with decision and generated predicates added. Its content is compared with Python's regeneration by the caller.",
-      "type": "object", "required": ["language", "profiles", "spec_revision", "vocabulary"], "additionalProperties": false,
+          "target": {"$ref": "#/$defs/text"}
+        },
+        "required": ["target", "sorts", "ast"],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "environment": {
+      "$comment": "Norms.Wire.canonicalEnvironmentJson and its extensions (SoftNorms.Wire.primeJson, Rights.Wire.primeJsonR): the request environment after its envelope check (exactly language, profiles, spec_revision and vocabulary), with decision and generated predicates added. Its content is compared with Python's regeneration by the caller.",
+      "additionalProperties": false,
       "properties": {
         "language": {"type": "string", "x-equals": "/environment/language"},
         "profiles": {"$ref": "#/$defs/strings"},
         "spec_revision": {"type": "string", "x-equals": "/environment/spec_revision"},
-        "vocabulary": {"type": "object", "required": ["sorts", "predicates", "constants"], "additionalProperties": false,
-          "properties": {
-            "sorts": {"type": "object", "x-equals": "/environment/vocabulary/sorts"},
-            "constants": {"type": "object", "x-equals": "/environment/vocabulary/constants"},
-            "predicates": {"type": "object", "additionalProperties": {
-              "type": "object", "required": ["arguments"], "properties": {"arguments": {"$ref": "#/$defs/strings"}}}},
-            "soft": {"type": "object", "x-equals": "/environment/vocabulary/soft"},
-            "rights": {"type": "object", "x-equals": "/environment/vocabulary/rights"}},
+        "vocabulary": {
+          "additionalProperties": false,
           "allOf": [
             {"if": {"x-case": {"$ref": "#/$defs/request_block/soft"}}, "then": {"required": ["soft"]}},
-            {"if": {"x-case": {"$ref": "#/$defs/request_block/rights"}}, "then": {"required": ["rights"]}}]}}},
-    "request_block": {"$comment": "Selectors over the request case: its environment's vocabulary declares the block.",
-      "soft": {"type": "object", "required": ["environment"], "properties": {"environment": {
-        "type": "object", "required": ["vocabulary"], "properties": {"vocabulary": {"type": "object", "required": ["soft"]}}}}},
-      "rights": {"type": "object", "required": ["environment"], "properties": {"environment": {
-        "type": "object", "required": ["vocabulary"], "properties": {"vocabulary": {"type": "object", "required": ["rights"]}}}}}}
+            {"if": {"x-case": {"$ref": "#/$defs/request_block/rights"}}, "then": {"required": ["rights"]}}
+          ],
+          "properties": {
+            "constants": {"type": "object", "x-equals": "/environment/vocabulary/constants"},
+            "predicates": {
+              "additionalProperties": {
+                "properties": {"arguments": {"$ref": "#/$defs/strings"}},
+                "required": ["arguments"],
+                "type": "object"
+              },
+              "type": "object"
+            },
+            "rights": {"type": "object", "x-equals": "/environment/vocabulary/rights"},
+            "soft": {"type": "object", "x-equals": "/environment/vocabulary/soft"},
+            "sorts": {"type": "object", "x-equals": "/environment/vocabulary/sorts"}
+          },
+          "required": ["sorts", "predicates", "constants"],
+          "type": "object"
+        }
+      },
+      "required": ["language", "profiles", "spec_revision", "vocabulary"],
+      "type": "object"
+    },
+    "error": {
+      "$comment": "A case the runner rejected: the request's id (null if absent) and the message.",
+      "additionalProperties": false,
+      "properties": {"error": {"$ref": "#/$defs/text"}, "id": {"x-echo": "/id"}, "status": {"const": "error"}},
+      "required": ["id", "status", "error"],
+      "type": "object"
+    },
+    "error_valid": {
+      "$comment": "The same with valid: false (CertificateWire and Order.Surface runCaseReported).",
+      "additionalProperties": false,
+      "properties": {
+        "error": {"$ref": "#/$defs/text"},
+        "id": {"x-echo": "/id"},
+        "status": {"const": "error"},
+        "valid": {"const": false}
+      },
+      "required": ["id", "status", "error", "valid"],
+      "type": "object"
+    },
+    "fol_formula": {
+      "$comment": "Bridge.decodeFormula 64: a formula the runner decoded from the request (a claim).",
+      "x-fuel": {"counter": "fol_formula", "limit": 64},
+      "x-tagged": {
+        "and": [{"$ref": "#/$defs/fol_formula"}, {"$ref": "#/$defs/fol_formula"}],
+        "binary": [{"type": "string"}, {"$ref": "#/$defs/fol_term"}, {"$ref": "#/$defs/fol_term"}],
+        "bottom": [],
+        "eq": [{"$ref": "#/$defs/fol_term"}, {"$ref": "#/$defs/fol_term"}],
+        "exists": [{"type": "string"}, {"$ref": "#/$defs/fol_formula"}],
+        "forall": [{"type": "string"}, {"$ref": "#/$defs/fol_formula"}],
+        "implies": [{"$ref": "#/$defs/fol_formula"}, {"$ref": "#/$defs/fol_formula"}],
+        "not": [{"$ref": "#/$defs/fol_formula"}],
+        "or": [{"$ref": "#/$defs/fol_formula"}, {"$ref": "#/$defs/fol_formula"}],
+        "top": [],
+        "unary": [{"type": "string"}, {"$ref": "#/$defs/fol_term"}]
+      }
+    },
+    "fol_term": {
+      "$comment": "Bridge.decodeTerm.",
+      "x-tagged": {"const": [{"type": "string"}], "var": [{"$ref": "#/$defs/nat"}]}
+    },
+    "generated_formula": {
+      "$comment": "Route.Wire.encodeFormula of a formula the runner generated (Background, norms premises and conflict targets, English parses): Bridge.decodeFormula's grammar at any depth. The decoder's 64 bounds the inputs, not these: a definition premise wraps a body of depth 64 in two binders and a biconditional (68), an English parse nests one negation per 'it is not the case that', and a norms elaboration nests every rule, carve-out and lower layer.",
+      "x-tagged": {
+        "and": [{"$ref": "#/$defs/generated_formula"}, {"$ref": "#/$defs/generated_formula"}],
+        "binary": [{"type": "string"}, {"$ref": "#/$defs/fol_term"}, {"$ref": "#/$defs/fol_term"}],
+        "bottom": [],
+        "eq": [{"$ref": "#/$defs/fol_term"}, {"$ref": "#/$defs/fol_term"}],
+        "exists": [{"type": "string"}, {"$ref": "#/$defs/generated_formula"}],
+        "forall": [{"type": "string"}, {"$ref": "#/$defs/generated_formula"}],
+        "implies": [{"$ref": "#/$defs/generated_formula"}, {"$ref": "#/$defs/generated_formula"}],
+        "not": [{"$ref": "#/$defs/generated_formula"}],
+        "or": [{"$ref": "#/$defs/generated_formula"}, {"$ref": "#/$defs/generated_formula"}],
+        "top": [],
+        "unary": [{"type": "string"}, {"$ref": "#/$defs/fol_term"}]
+      }
+    },
+    "generated_formulas": {"items": {"$ref": "#/$defs/generated_formula"}, "type": "array"},
+    "generator": {"$comment": "Route.Background.generators.", "enum": ["flags", "definitions", "literals", "profile"]},
+    "hex64": {
+      "$comment": "SHA-256 digests (CertificateWire.digest, Service.Protocol.caseDigest).",
+      "pattern": "[0-9a-f]{64}",
+      "type": "string"
+    },
+    "hex64_or_empty": {
+      "$comment": "An identity the encoder writes as `.toOption.getD \"\"`.",
+      "anyOf": [{"$ref": "#/$defs/hex64"}, {"const": ""}]
+    },
+    "id_ok": {
+      "$comment": "Route.Wire.ok: an answer's id is the request's id, a string (Bridge.stringField).",
+      "type": "string",
+      "x-equals": "/id"
+    },
+    "integer_text": {
+      "$comment": "Order.Wire.decodeInt: canonical decimal, at most maxNumeralChars = 40 characters.",
+      "maxLength": 40,
+      "pattern": "0|-?[1-9][0-9]*",
+      "type": "string"
+    },
+    "kind": {
+      "$comment": "Route.Admission.decodeKind 16.",
+      "anyOf": [
+        {"$ref": "#/$defs/atomic_kind", "type": "string"},
+        {
+          "type": "array",
+          "x-tagged": {
+            "attributed": [{"$ref": "#/$defs/token"}, {"$ref": "#/$defs/act"}, {"$ref": "#/$defs/kind"}],
+            "causal": [{"$ref": "#/$defs/relation"}, {"$ref": "#/$defs/kind"}, {"$ref": "#/$defs/kind"}],
+            "hedged": [{"$ref": "#/$defs/modality"}, {"$ref": "#/$defs/kind"}],
+            "unformalised": [{"$ref": "#/$defs/token"}]
+          }
+        }
+      ],
+      "x-fuel": {"counter": "kind", "limit": 16}
+    },
+    "label": {
+      "$comment": "Canonical labels: Route.Admission.parseLabel (the parsed label renders to the input).",
+      "pattern": "asserted|bridge:accepts\\([A-Za-z0-9_.\\-]{1,64},[A-Za-z0-9_.\\-]{1,64}\\)|background:(flags|definitions|literals|profile)|cite:[A-Za-z0-9_.\\-]{1,64}/[A-Za-z0-9_.\\-]{1,64}|open:[A-Za-z0-9_.\\-]{1,64}|readings:[A-Za-z0-9_.\\-]{1,64}@(0|[1-9][0-9]*):(0|[1-9][0-9]*|all)|narrowing:[A-Za-z0-9_.\\-]{1,64}",
+      "type": "string"
+    },
+    "labelled": {
+      "$comment": "Route.Wire.labelled and its copies: a premise label and its generated formula.",
+      "additionalProperties": false,
+      "properties": {"ast": {"$ref": "#/$defs/generated_formula"}, "label": {"$ref": "#/$defs/text"}},
+      "required": ["label", "ast"],
+      "type": "object"
+    },
+    "labelled_list": {"items": {"$ref": "#/$defs/labelled"}, "type": "array"},
+    "layer_premises": {
+      "$comment": "Norms.Wire.regenerated: one premise per layer.",
+      "items": {
+        "additionalProperties": false,
+        "properties": {"ast": {"$ref": "#/$defs/generated_formula"}, "label": {"pattern": "layer:norms:.*", "type": "string"}},
+        "required": ["label", "ast"],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "modality": {
+      "$comment": "Route.Admission.modalities.",
+      "enum": ["could", "likely", "generally", "typically", "effectively"]
+    },
+    "nat": {"minimum": 0, "type": "integer"},
+    "no_kind": {
+      "$comment": "Selector over the request case: no kind field.",
+      "not": {"required": ["kind"]},
+      "type": "object"
+    },
+    "nonempty_strings": {"items": {"$ref": "#/$defs/text"}, "type": "array"},
+    "norm_node": {
+      "$comment": "Alternatives.Wire.encodeNode and SpeechActs.Run.encodeNode: a norm of the inlined tree.",
+      "additionalProperties": false,
+      "properties": {
+        "guard": {"$ref": "#/$defs/generated_formula"},
+        "name": {"type": "string"},
+        "over": {"$ref": "#/$defs/strings"},
+        "predicate": {"type": "string"},
+        "sign": {"type": "boolean"},
+        "unless": {"$ref": "#/$defs/generated_formulas"}
+      },
+      "required": ["name", "predicate", "sign", "guard", "unless", "over"],
+      "type": "object"
+    },
+    "norms_background": {
+      "$comment": "Norms.Wire.regenerated: the Background of the definitions, literals and profile generators.",
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "ast": {"$ref": "#/$defs/generated_formula"},
+          "generator": {"enum": ["definitions", "literals", "profile"]}
+        },
+        "required": ["generator", "ast"],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "order_formula": {
+      "$comment": "Order.Wire.decodeFormula 64; each term has its own depth budget.",
+      "x-fuel": {"counter": "order_formula", "limit": 64},
+      "x-tagged": {
+        "and": [{"$ref": "#/$defs/order_formula"}, {"$ref": "#/$defs/order_formula"}],
+        "binary": [{"type": "string"}, {"$ref": "#/$defs/order_term"}, {"$ref": "#/$defs/order_term"}],
+        "bottom": [],
+        "eq": [{"$ref": "#/$defs/order_term"}, {"$ref": "#/$defs/order_term"}],
+        "exists": [{"type": "string"}, {"$ref": "#/$defs/order_formula"}],
+        "forall": [{"type": "string"}, {"$ref": "#/$defs/order_formula"}],
+        "implies": [{"$ref": "#/$defs/order_formula"}, {"$ref": "#/$defs/order_formula"}],
+        "le": [{"$ref": "#/$defs/order_term"}, {"$ref": "#/$defs/order_term"}],
+        "lt": [{"$ref": "#/$defs/order_term"}, {"$ref": "#/$defs/order_term"}],
+        "not": [{"$ref": "#/$defs/order_formula"}],
+        "or": [{"$ref": "#/$defs/order_formula"}, {"$ref": "#/$defs/order_formula"}],
+        "top": [],
+        "unary": [{"type": "string"}, {"$ref": "#/$defs/order_term"}]
+      }
+    },
+    "order_term": {
+      "$comment": "Order.Wire.decodeTerm 64.",
+      "x-fuel": {"counter": "order_term", "limit": 64},
+      "x-tagged": {
+        "add": [{"$ref": "#/$defs/order_term"}, {"$ref": "#/$defs/order_term"}],
+        "const": [{"type": "string"}],
+        "num": [{"$ref": "#/$defs/integer_text"}],
+        "scale": [{"$ref": "#/$defs/integer_text"}, {"$ref": "#/$defs/order_term"}],
+        "var": [{"$ref": "#/$defs/nat"}]
+      }
+    },
+    "packages_conflict": {
+      "$comment": "A conflict-freedom replay over certificate packages: `detail` (the first failed target) exactly when the verdict is UNKNOWN.",
+      "additionalProperties": false,
+      "else": {"not": {"required": ["detail"]}},
+      "if": {"properties": {"verdict": {"const": "UNKNOWN"}}},
+      "properties": {
+        "detail": {"$ref": "#/$defs/text"},
+        "id": {"$ref": "#/$defs/id_ok"},
+        "status": {"const": "ok"},
+        "targets": {"$ref": "#/$defs/strings"},
+        "verdict": {"enum": ["CONFLICT-FREE", "UNKNOWN"]}
+      },
+      "required": ["id", "status", "verdict", "targets"],
+      "then": {"required": ["detail"]},
+      "type": "object"
+    },
+    "relation": {"$comment": "Route.Admission.relations.", "enum": ["because", "in order to", "prevents"]},
+    "report": {
+      "$comment": "Norms.Run.reportJson: the root and its assumptions, each a Route.Run.claimJson.",
+      "additionalProperties": false,
+      "properties": {"assumptions": {"items": {"$ref": "#/$defs/claim"}, "type": "array"}, "root": {"$ref": "#/$defs/claim"}},
+      "required": ["root", "assumptions"],
+      "type": "object"
+    },
+    "request_block": {
+      "$comment": "Selectors over the request case: its environment's vocabulary declares the block.",
+      "rights": {
+        "properties": {
+          "environment": {
+            "properties": {"vocabulary": {"required": ["rights"], "type": "object"}},
+            "required": ["vocabulary"],
+            "type": "object"
+          }
+        },
+        "required": ["environment"],
+        "type": "object"
+      },
+      "soft": {
+        "properties": {
+          "environment": {
+            "properties": {"vocabulary": {"required": ["soft"], "type": "object"}},
+            "required": ["vocabulary"],
+            "type": "object"
+          }
+        },
+        "required": ["environment"],
+        "type": "object"
+      }
+    },
+    "route_path_error": {
+      "$comment": "The error row of a statement-layer route's own runner (`runCaseReported`): the request's id (null if absent) and the message. The public code (and generator) is the bound entry's (envelope.json).",
+      "additionalProperties": false,
+      "properties": {"error": {"$ref": "#/$defs/text"}, "id": {"x-echo": "/id"}, "status": {"const": "error"}},
+      "required": ["id", "status", "error"],
+      "type": "object"
+    },
+    "string_map": {"$comment": "An object with string values.", "additionalProperties": {"type": "string"}, "type": "object"},
+    "string_pair": {"maxItems": 2, "minItems": 2, "prefixItems": [{"type": "string"}, {"type": "string"}], "type": "array"},
+    "strings": {"items": {"type": "string"}, "type": "array"},
+    "text": {"minLength": 1, "type": "string"},
+    "token": {
+      "$comment": "Route.Admission.token: nonempty, at most 64 bytes, [A-Za-z0-9_.-].",
+      "pattern": "[A-Za-z0-9_.\\-]{1,64}",
+      "type": "string"
+    },
+    "values": {
+      "$comment": "Evaluation values: one per requested formula (binding to the request's ast).",
+      "items": {"type": "boolean"},
+      "type": "array",
+      "x-length": "/ast"
+    },
+    "witness_conflict": {
+      "$comment": "A conflict witness replay (Norms.Replay.witnessFrom and its copies): the requested target.",
+      "additionalProperties": false,
+      "properties": {
+        "id": {"$ref": "#/$defs/id_ok"},
+        "status": {"const": "ok"},
+        "target": {"type": "string", "x-equals": "/witness/target"},
+        "targets": {"$ref": "#/$defs/strings"},
+        "verdict": {"enum": ["CONFLICT", "UNKNOWN"]}
+      },
+      "required": ["id", "status", "verdict", "target", "targets"],
+      "type": "object"
+    }
   }
 }

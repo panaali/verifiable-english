@@ -1,70 +1,143 @@
 {
   "$id": "envelope.json",
   "$comment": "Service.Protocol lines. `handshake` is the first line; the context of `response` is the request: {id (the nonce), mode, cases (decoded), digests (SHA-256 of each case text as sent, null when the cases text does not split into cases), bytes (trimmed cases text)}. A bound request error is kept; any other mismatch is operational. Binding: the response echoes the nonce and mode, and result i is {index: i, digest: the digest of case i, result}, so omitted, reordered, duplicated and substituted results are rejected without semantic checks; a request error echoes the nonce, the mode and every case digest (docs/spec/lean-service.md, threat model). Every rejection, a request error or a result whose status is error, carries `code` (Service.Protocol.rejectionCode).",
-  "handshake": {"$comment": "Service.Protocol.handshake: this protocol, every mode and at least the client's limits.",
-    "type": "object", "required": ["service", "protocol", "modes", "codes", "limits"], "additionalProperties": false,
+  "handshake": {
+    "$comment": "Service.Protocol.handshake: this protocol, every mode and at least the client's limits.",
+    "additionalProperties": false,
     "properties": {
-      "service": {"const": "ve-lean@1"},
-      "protocol": {"const": 2},
+      "codes": {
+        "$comment": "Service.Protocol.rejectionCodes: exactly the code domain of the rows (common.json code), so a service with another code list is refused at its start.",
+        "const": [
+          "InvalidInput",
+          "SyntaxError",
+          "UnknownSymbol",
+          "DuplicateDeclaration",
+          "UnboundVariable",
+          "TypeMismatch",
+          "InvalidModel",
+          "UnsupportedProfile",
+          "ResourceLimit",
+          "AdmissionError",
+          "CheckerUnavailable"
+        ]
+      },
       "lean": {"type": "string"},
-      "modes": {"$ref": "common.json#/$defs/strings", "allOf": [
-        {"contains": {"const": "evaluate"}}, {"contains": {"const": "check-certificate"}},
-        {"contains": {"const": "order"}}, {"contains": {"const": "route"}},
-        {"contains": {"const": "norms"}}, {"contains": {"const": "english"}},
-        {"contains": {"const": "environment"}}, {"contains": {"const": "model"}},
-        {"contains": {"const": "check"}}, {"contains": {"const": "identity"}},
-        {"contains": {"const": "parse"}}, {"contains": {"const": "graph"}},
-        {"contains": {"const": "readings"}}, {"contains": {"const": "bundle"}}, {"contains": {"const": "family-norms"}},
-        {"contains": {"const": "soft-norms"}}, {"contains": {"const": "rights"}},
-        {"contains": {"const": "speech-acts"}}, {"contains": {"const": "reports"}},
-        {"contains": {"const": "alternatives"}}, {"contains": {"const": "risk"}},
-        {"contains": {"const": "risk-eval"}}, {"contains": {"const": "quantity"}},
-        {"contains": {"const": "norm-defaults"}}, {"contains": {"const": "discourse"}},
-        {"contains": {"const": "readings-route"}}, {"contains": {"const": "diagnose"}}]},
-      "codes": {"$comment": "Service.Protocol.rejectionCodes: exactly the code domain of the rows (common.json code), so a service with another code list is refused at its start.",
-        "const": ["InvalidInput", "SyntaxError", "UnknownSymbol", "DuplicateDeclaration", "UnboundVariable", "TypeMismatch", "InvalidModel", "UnsupportedProfile", "ResourceLimit", "AdmissionError", "CheckerUnavailable"]},
-      "limits": {"type": "object", "required": ["max_line_bytes", "max_cases", "json_depth"],
+      "limits": {
         "additionalProperties": false,
         "properties": {
-          "max_line_bytes": {"type": "integer", "minimum": 16777216},
-          "max_cases": {"type": "integer", "minimum": 4096},
-          "json_depth": {"type": "integer", "minimum": 256}}}}},
-  "response": {"anyOf": [
-    {"$ref": "#/$defs/ok"},
-    {"$ref": "#/$defs/error"}]},
+          "json_depth": {"minimum": 256, "type": "integer"},
+          "max_cases": {"minimum": 4096, "type": "integer"},
+          "max_line_bytes": {"minimum": 16777216, "type": "integer"}
+        },
+        "required": ["max_line_bytes", "max_cases", "json_depth"],
+        "type": "object"
+      },
+      "modes": {
+        "$ref": "common.json#/$defs/strings",
+        "allOf": [
+          {"contains": {"const": "evaluate"}},
+          {"contains": {"const": "check-certificate"}},
+          {"contains": {"const": "order"}},
+          {"contains": {"const": "route"}},
+          {"contains": {"const": "norms"}},
+          {"contains": {"const": "english"}},
+          {"contains": {"const": "environment"}},
+          {"contains": {"const": "model"}},
+          {"contains": {"const": "check"}},
+          {"contains": {"const": "identity"}},
+          {"contains": {"const": "parse"}},
+          {"contains": {"const": "graph"}},
+          {"contains": {"const": "readings"}},
+          {"contains": {"const": "bundle"}},
+          {"contains": {"const": "family-norms"}},
+          {"contains": {"const": "soft-norms"}},
+          {"contains": {"const": "rights"}},
+          {"contains": {"const": "speech-acts"}},
+          {"contains": {"const": "reports"}},
+          {"contains": {"const": "alternatives"}},
+          {"contains": {"const": "risk"}},
+          {"contains": {"const": "risk-eval"}},
+          {"contains": {"const": "quantity"}},
+          {"contains": {"const": "norm-defaults"}},
+          {"contains": {"const": "discourse"}},
+          {"contains": {"const": "readings-route"}},
+          {"contains": {"const": "diagnose"}}
+        ]
+      },
+      "protocol": {"const": 2},
+      "service": {"const": "ve-lean@1"}
+    },
+    "required": ["service", "protocol", "modes", "codes", "limits"],
+    "type": "object"
+  },
+  "response": {"anyOf": [{"$ref": "#/$defs/ok"}, {"$ref": "#/$defs/error"}]},
   "$defs": {
-    "ok": {"type": "object", "required": ["id", "status", "mode", "results", "counts"], "additionalProperties": false,
+    "bound": {
+      "$comment": "Service.Protocol.bound: the result's position, the digest of its case and the runner's result for that case; beside a rejection (an error row with a text error), its code and the generator an InvalidModel(generator) message names (Service.Protocol.coding), beside any other result neither.",
+      "additionalProperties": false,
+      "else": {"not": {"anyOf": [{"required": ["code"]}, {"required": ["generator"]}]}},
+      "if": {
+        "properties": {
+          "result": {
+            "properties": {"error": {"type": "string"}, "status": {"const": "error"}},
+            "required": ["status", "error"],
+            "type": "object"
+          }
+        }
+      },
       "properties": {
-        "id": {"type": "string", "x-equals": "/id"},
-        "status": {"const": "ok"},
-        "mode": {"type": "string", "x-equals": "/mode"},
-        "results": {"type": "array", "x-length": "/cases", "x-rows": {"$ref": "#/$defs/bound"}},
-        "counts": {"type": "object", "required": ["cases", "bytes", "errors"], "additionalProperties": false,
-          "properties": {
-            "cases": {"type": "integer", "x-count": "/cases"},
-            "bytes": {"type": "integer", "x-equals": "/bytes"},
-            "errors": {"$ref": "common.json#/$defs/nat"}}}},
-      "x-count-where": {"array": "/results", "where": {"type": "object", "properties": {"result": {"type": "object", "required": ["status"], "properties": {"status": {"const": "error"}}}}}, "equals": "/counts/errors"}},
-    "bound": {"$comment": "Service.Protocol.bound: the result's position, the digest of its case and the runner's result for that case; beside a rejection (an error row with a text error), its code and the generator an InvalidModel(generator) message names (Service.Protocol.coding), beside any other result neither.",
-      "type": "object", "required": ["index", "digest", "result"], "additionalProperties": false,
-      "properties": {
-        "index": {"x-index": true},
-        "digest": {"x-digest": true},
-        "result": {"x-row": true},
         "code": {"$ref": "common.json#/$defs/code"},
-        "generator": {"type": "string"}},
-      "if": {"properties": {"result": {"type": "object", "required": ["status", "error"],
-                                       "properties": {"status": {"const": "error"}, "error": {"type": "string"}}}}},
+        "digest": {"x-digest": true},
+        "generator": {"type": "string"},
+        "index": {"x-index": true},
+        "result": {"x-row": true}
+      },
+      "required": ["index", "digest", "result"],
       "then": {"required": ["code"]},
-      "else": {"not": {"anyOf": [{"required": ["code"]}, {"required": ["generator"]}]}}},
-    "error": {"$comment": "Service.Protocol.requestError: a request error is bound like a response, to the nonce, the mode and the digests of the cases as sent (null when the cases text does not split into cases). The unbound lineError answers no request.",
-      "type": "object", "required": ["id", "status", "mode", "digests", "error", "code"], "additionalProperties": false,
+      "type": "object"
+    },
+    "error": {
+      "$comment": "Service.Protocol.requestError: a request error is bound like a response, to the nonce, the mode and the digests of the cases as sent (null when the cases text does not split into cases). The unbound lineError answers no request.",
+      "additionalProperties": false,
       "properties": {
-        "id": {"type": "string", "x-equals": "/id"},
-        "status": {"const": "error"},
-        "mode": {"type": "string", "x-equals": "/mode"},
+        "code": {"$ref": "common.json#/$defs/code"},
         "digests": {"x-equals": "/digests"},
         "error": {"$ref": "common.json#/$defs/text"},
-        "code": {"$ref": "common.json#/$defs/code"}}}
+        "id": {"type": "string", "x-equals": "/id"},
+        "mode": {"type": "string", "x-equals": "/mode"},
+        "status": {"const": "error"}
+      },
+      "required": ["id", "status", "mode", "digests", "error", "code"],
+      "type": "object"
+    },
+    "ok": {
+      "additionalProperties": false,
+      "properties": {
+        "counts": {
+          "additionalProperties": false,
+          "properties": {
+            "bytes": {"type": "integer", "x-equals": "/bytes"},
+            "cases": {"type": "integer", "x-count": "/cases"},
+            "errors": {"$ref": "common.json#/$defs/nat"}
+          },
+          "required": ["cases", "bytes", "errors"],
+          "type": "object"
+        },
+        "id": {"type": "string", "x-equals": "/id"},
+        "mode": {"type": "string", "x-equals": "/mode"},
+        "results": {"type": "array", "x-length": "/cases", "x-rows": {"$ref": "#/$defs/bound"}},
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "mode", "results", "counts"],
+      "type": "object",
+      "x-count-where": {
+        "array": "/results",
+        "equals": "/counts/errors",
+        "where": {
+          "properties": {"result": {"properties": {"status": {"const": "error"}}, "required": ["status"], "type": "object"}},
+          "type": "object"
+        }
+      }
+    }
   }
 }

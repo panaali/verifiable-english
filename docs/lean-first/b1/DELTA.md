@@ -142,7 +142,15 @@ signature: **the baseline does not grow.** The fuzzer's child processes used 1,5
   mutants raise `CheckerUnavailable` through `relay.decide` and the public elaboration, twelve schema
   weakenings are each caught, and a lint fails any answer object left open (one allowance: E''s echoed
   predicate declarations). `norms.json`'s path now includes all four statement-layer profiles
-  (`Plain.layered`); it named two.
+  (`Plain.layered`); it named two. **One source (lf-1 recheck B):** the schemas and
+  `ve_response_decode`'s checks were two hand-written descriptions. Every response shape is now Lean data
+  beside the service (`lean/ResponseShape/Schemas/`, dialect `ResponseShape`): every file of
+  `ve/backends/lean_service_schema/` is its rendering (`tools/response_schemas.py`; a hand-written,
+  hand-edited, stale or missing file fails `tests/test_response_schemas.py`), `ve_response_decode` checks
+  responses with the same shapes, each Lean decoder and route dispatch test decides beside the shape it
+  names and must agree with it, and the enumerations with a Lean list (codes, modes, limits, acts,
+  modalities, relations, generators, statement layers) are that list. The rendering equals the former
+  files; ResponseDecode lost its 1,090 lines of per-mode checks.
 - **O3.** Docs outside this batch (`lean/*.md`, `docs/spec/*.md`, `conformance/DIFFFUZZ.md` on its branch)
   still name the one-shot executables. `infra/difffuzz` needs the head's adapter (one function) when it merges.
 - **O4.** HUMAN: statement review of the 13 new theorems (`runMode_*` for the twelve modes,

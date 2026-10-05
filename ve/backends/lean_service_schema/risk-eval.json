@@ -1,25 +1,50 @@
 {
   "$id": "risk-eval.json",
   "$comment": "Mode risk-eval: Risk.Eval.runCaseReported, the test-only differential harness of docs/spec/risk.md 8.3 (ve_risk_eval). Its rows carry no id; the binding is the case digest.",
-  "row": {"anyOf": [
-    {"$ref": "common.json#/$defs/case_error"},
-    {"type": "object", "required": ["status", "error"], "additionalProperties": false,
-      "properties": {"status": {"const": "error"}, "error": {"$ref": "common.json#/$defs/text"}}},
-    {"type": "object", "required": ["status", "results"], "additionalProperties": false,
-      "properties": {"status": {"const": "ok"}, "results": {"type": "array", "x-length": "/conditions",
-        "items": {"$ref": "#/$defs/result"}}}}]},
+  "row": {
+    "anyOf": [
+      {"$ref": "common.json#/$defs/case_error"},
+      {
+        "additionalProperties": false,
+        "properties": {"error": {"$ref": "common.json#/$defs/text"}, "status": {"const": "error"}},
+        "required": ["status", "error"],
+        "type": "object"
+      },
+      {
+        "additionalProperties": false,
+        "properties": {
+          "results": {"items": {"$ref": "#/$defs/result"}, "type": "array", "x-length": "/conditions"},
+          "status": {"const": "ok"}
+        },
+        "required": ["status", "results"],
+        "type": "object"
+      }
+    ]
+  },
   "$defs": {
-    "result": {"$comment": "Risk.Eval.evalCondition: the condition's diagnostic, or whether it is possible and certain over the quantities' box with a witness valuation (an integer per quantity) exactly when possible.",
+    "result": {
+      "$comment": "Risk.Eval.evalCondition: the condition's diagnostic, or whether it is possible and certain over the quantities' box with a witness valuation (an integer per quantity) exactly when possible.",
       "anyOf": [
-        {"type": "object", "required": ["error"], "additionalProperties": false,
-         "properties": {"error": {"$ref": "common.json#/$defs/text"}}},
-        {"type": "object", "required": ["possible", "certain", "witness"], "additionalProperties": false,
-         "properties": {
-           "possible": {"type": "boolean"},
-           "certain": {"type": "boolean"},
-           "witness": {"anyOf": [{"const": null}, {"type": "object", "additionalProperties": {"type": "integer"}}]}},
-         "if": {"properties": {"possible": {"const": true}}},
-         "then": {"properties": {"witness": {"type": "object"}}},
-         "else": {"properties": {"witness": {"const": null}}}}]}
+        {
+          "additionalProperties": false,
+          "properties": {"error": {"$ref": "common.json#/$defs/text"}},
+          "required": ["error"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "else": {"properties": {"witness": {"const": null}}},
+          "if": {"properties": {"possible": {"const": true}}},
+          "properties": {
+            "certain": {"type": "boolean"},
+            "possible": {"type": "boolean"},
+            "witness": {"anyOf": [{"const": null}, {"additionalProperties": {"type": "integer"}, "type": "object"}]}
+          },
+          "required": ["possible", "certain", "witness"],
+          "then": {"properties": {"witness": {"type": "object"}}},
+          "type": "object"
+        }
+      ]
+    }
   }
 }

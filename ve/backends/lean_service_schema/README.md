@@ -1,7 +1,30 @@
 # Lean service response schemas
 
-The single source of truth for the shapes of `ve_service` responses
-(`docs/spec/lean-service.md`, stage 1 of `docs/spec/SEMANTICS-MIGRATION-PLAN.md`).
+The shapes of `ve_service` responses (`docs/spec/lean-service.md`, stage 1 of
+`docs/spec/SEMANTICS-MIGRATION-PLAN.md`), **generated from Lean; never edit them by hand**.
+
+**One source** (lf-1 recheck B). The shapes are written once, as Lean data beside the service:
+`lean/ResponseShape/Schemas/<File>.lean` (one module per file here) in the dialect of
+`lean/ResponseShape.lean`. From that source
+
+* `python tools/response_schemas.py --write` renders every `*.json` here (through
+  `ve_response_decode`, check `schemas`), and `--check` fails on a file that differs from its
+  rendering, a missing one, or a file the Lean source does not render
+  (`tests/test_response_schemas.py`);
+* `ve_response_decode` decides responses by checking the same shapes (`ResponseShape.check`),
+  so the client and the Lean side read one description;
+* every value domain of a Lean decoder carries the decoder (`decidedBy`: `Bridge.decodeFormula`,
+  `Order.Wire.decodeFormula`, `Route.Admission.decodeKind`, `parseLabel`, `token`, `decodeInt`,
+  `atomicKind`, `EnglishRun.decodeTok`), and every route's path selector the runner's dispatch
+  test (`usesSoftPath`, `usesRightsPath`, ..., `usesNormsPath`): Lean decides each value with both
+  and fails (`broken`) when they disagree, so a schema cannot drift from the decoder or dispatch it
+  names;
+* enumerations with a Lean list are that list (`Service.rejectionCodes`, `Service.modes`, the
+  limits, `Route.Admission.acts`/`modalities`/`relations`, `Route.Background.generators`,
+  `Norms.Plain.statementLayers`).
+
+To change a shape, edit the Lean module, `lake build ve_response_decode`, then
+`python tools/response_schemas.py --write`.
 
 * `envelope.json`: the response line; its context is the request
   `{"id": nonce, "mode", "cases": [...], "digests": [...], "bytes": trimmed cases size}`,
@@ -39,13 +62,14 @@ other case unchanged: the `x-select` on the request is the route's dispatch test
 (`usesSoftPath`, `usesRightsPath`, ...) and the delegate's row is `$ref`'d. No caller reads a
 field the schema did not check, so a dropped, emptied or retyped field is
 `CheckerUnavailable`, never a `KeyError` in the caller. `tests/test_route_row_schemas.py`
-checks the route modes on genuine answers (`tests/data/route_rows/`) and on every drop,
-empty and retype of every field, against `ve_response_decode` (`ResponseDecode.routeRow`).
+checks the route modes on genuine answers (`tests/data/route-cases.jsonl`) and on every drop,
+empty and retype of every field, against `ve_response_decode`.
 
 `ve/backends/service_schema.py` compiles these files; `ve/backends/lean_service.py`
 has no other shape checks. `lean/ResponseDecode.lean` (`ve_response_decode`, check `decode`)
-decodes the same responses with the Lean decoders, and `tests/test_lean_service_schema.py`
-requires the two to agree on genuine service responses and on every mutation of them.
+checks the same responses with the Lean shapes and decoders, and `tests/test_lean_service_schema.py`
+requires the two to agree on genuine service responses and on every mutation of them (the
+Python and Lean readings of the dialect, and each decoder beside its grammar).
 
 ## Dialect
 
