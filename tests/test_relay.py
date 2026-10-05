@@ -160,9 +160,11 @@ TRANSPORTS = {
     "reports": lambda exe, case: lean_backend.run_reports_case(exe, case, timeout=HANG_TIMEOUT),
     "norm-defaults": lambda exe, case: lean_backend.run_norm_defaults_cases(exe, [case], timeout=HANG_TIMEOUT)[0],
     "readings": lambda exe, case: lean_backend.run_readings_cases(exe, [case], timeout=HANG_TIMEOUT)[0],
+    "english": lambda exe, case: lean_backend.run_english_cases(exe, "english.read", [case],
+                                                                timeout=HANG_TIMEOUT)[0],
 }
 CODED = {"soft"}
-RESTRICTED = {"run", "alternatives", "reports"}  # `read_rows(restricted=True)`: `ve.wire.loads_json`
+RESTRICTED = {"run", "alternatives", "reports", "english"}  # `read_rows(restricted=True)`: `ve.wire.loads_json`
 
 
 def test_every_runner_transport_is_listed():
@@ -189,7 +191,8 @@ def test_every_runner_transport_is_listed():
                 if isinstance(c, ast_module.Call))}
     names = {"run": "run", "soft": "run_soft_case", "alternatives": "run_alternatives_case",
              "discourse": "run_discourse_case", "reports": "run_reports_case",
-             "norm-defaults": "run_norm_defaults_cases", "readings": "run_readings_cases"}
+             "norm-defaults": "run_norm_defaults_cases", "readings": "run_readings_cases",
+             "english": "run_english_cases"}
     assert public == {names[key] for key in TRANSPORTS}
     restricted = {node.name for node in tree.body if isinstance(node, ast_module.FunctionDef)
                   and any(isinstance(k, ast_module.keyword) and k.arg == "restricted"
