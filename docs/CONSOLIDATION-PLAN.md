@@ -640,7 +640,8 @@ prints no ledger while any classification or tie problem stands.
 `Adds (est.)` is the only estimate left: the trusted lines a step introduces (2a's `Family` and
 claims, 3c's aliases, 4b's kit, 7's skeleton, 8a's canonical encoders), subtracted in `Net`.
 Measured on the table after consolidate-b1 fix 4 (K 978, S 7,550, trusted 25,641 of
-88,757 lines):
+88,757 lines; step 5 remeasured after the 2026-10-05 merge of ve-integration, whose
+`VE.Discourse.Run` rewrite moved 3 of its tied lines):
 
 | Step | Removed | Tied | Reclassified [V]→[R] | Adds (est.) | Net | Days | Risk | Score |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -649,7 +650,7 @@ Measured on the table after consolidate-b1 fix 4 (K 978, S 7,550, trusted 25,641
 | 2b | 94 | 0 | 0 | 0 | 94 | 2 | 2 | 23.5 |
 | 3 | 39 | 0 | 0 | 10 | 29 | 14 | 2 | 1.0 |
 | 4 | 718 | 0 | 0 | 420 | 298 | 14 | 2 | 10.6 |
-| 5 | 0 | 491 | 0 | 0 | 491 | 14 | 1 | 35.1 |
+| 5 | 0 | 488 | 0 | 0 | 488 | 14 | 1 | 34.9 |
 | 6 | 35 | 0 | 1284 | 0 | 35 | 3 | 1 | 11.7 |
 | 7 | 603 | 0 | 0 | 60 | 543 | 6 | 2 | 45.2 |
 | 8a | 106 | 225 | 0 | 60 | 271 | 10 | 1.5 | 18.1 |
@@ -659,11 +660,11 @@ Measured on the table after consolidate-b1 fix 4 (K 978, S 7,550, trusted 25,641
 
 What the measurement changes:
 
-* **Re-ranking of steps 5 to 10 by measured score:** 7 (45.2), 5 (35.1), 8a (18.1), 6 (11.7),
+* **Re-ranking of steps 5 to 10 by measured score:** 7 (45.2), 5 (34.9), 8a (18.1), 6 (11.7),
   9 (2.4), 10. Step 8b's 3,480 is an upper bound (every untied line of the eight units' `Wire.lean`
   files, on the assumption that every decoder gets `exact`), not a forecast; it stays ranked by its
   pilot (Alternatives) as section 3 says. Against the estimates, 7 overtakes 5 (603 trusted
-  dispatch and `main` lines, not 340) and 5 is smaller than estimated (491 measured against 1,500 to
+  dispatch and `main` lines, not 340) and 5 is smaller than estimated (488 measured against 1,500 to
   2,000): most of the rows' targets are short runners, and `scopedVerdict` and `weighingWitness`
   are already C.
 * **Step 6** removes almost nothing trusted: the SHA-256 copy and the `maxNodes` sites are [I] and
