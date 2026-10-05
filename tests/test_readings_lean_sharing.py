@@ -1,0 +1,179 @@
+"""The readings route builds each candidate's document once per request and evaluates a pair lazily (lean-first
+plan F5b; batch 3b review B1, B2).
+
+* The compiled route is the oracle for "built once": a script run by the pinned toolchain reads the compiler's own
+  IR of `ve_readings_route` and walks every function the executable can call from `main`. No path may reach
+  `one` (or `build`, which `one` may be inlined into) except through admission's candidate stage, which builds
+  each candidate's document once and keeps it in the request's table (`candidateStage`), and the table's reader
+  (`oneOf`); `free D` is the document without readings, built once in admission. The same walk from the specified
+  functions (`pairFactsSpec`, `candidateJsonSpec`, `admitReadingsSpec`) does reach `one`, so the walk can fail.
+* Admission stops at the first diagnostic (`firstSome` is `findSome?`): a document whose first set's candidate is
+  ill-formed is refused without validating the 119 candidates after it (4.0 s of CPU before, 0.26 s after).
+* The other reading's completions are scanned lazily: `RunExamples.lean` pins the evaluation counts at build time;
+  here the review's reproducer (12 cells, ten fixed default rules) runs under a CPU limit far below what
+  evaluating all 4,096 completions costs (7.8 s on the batch-3b head) and far above what the scan costs (0.07 s).
+"""
+from __future__ import annotations
+
+import json
+import shutil
+import subprocess
+from pathlib import Path
+
+import pytest
+
+from tests.subprocesses import HANG_TIMEOUT, run_cpu_bounded
+from tests.test_readings_s1_lean import (M0, Q0, entry, env_k, k1_document, lean, norm, reading,  # noqa: F401
+                                         reading_set, situation_id)
+from ve.readings_s1 import wire
+
+ROOT = Path(__file__).resolve().parents[1]
+
+WALK = r"""
+import Lean
+open Lean
+
+partial def callees : IR.FnBody → Array Name → Array Name
+  | .vdecl _ _ e b, acc =>
+    let acc := match e with
+      | .fap c _ | .pap c _ => acc.push c
+      | _ => acc
+    callees b acc
+  | .jdecl _ _ v b, acc => callees b (callees v acc)
+  | .case _ _ _ alts, acc => alts.foldl (fun acc a => callees a.body acc) acc
+  | b, acc => if b.isTerminal then acc else callees b.body acc
+
+/-- A stop and every compiled function named under it (`f._boxed`, `f._lam_0`, `g._at_.f.spec_0`). -/
+def under (stops : List Name) (n : Name) : Bool :=
+  stops.any (fun s => s.isPrefixOf n || (n.toString.splitOn s!"_at_.{s}.").length > 1)
+
+def main (args : List String) : IO UInt32 := do
+  let module :: rest := args | return 2
+  initSearchPath (← findSysroot)
+  let env ← importModules #[{ module := module.toName }] {}
+  let pick := fun (p : String) => rest.filterMap (fun a => (a.dropPrefix? p).map (·.toString.toName))
+  let stops := pick "stop="
+  let mut out : Array Json := #[]
+  for e in pick "entry=" do
+    let mut edges : Std.HashMap Name (Array Name) := {}
+    let mut todo := #[e]
+    let mut found := false
+    while h : todo.size > 0 do
+      let n := todo[todo.size - 1]
+      todo := todo.pop
+      if edges.contains n then continue
+      let cs := if under stops n then #[] else
+        match IR.findEnvDecl env n with
+        | some (.fdecl (body := b) ..) => callees b #[]
+        | _ => #[]
+      if n == e then found := (IR.findEnvDecl env n).isSome
+      edges := edges.insert n cs
+      todo := todo ++ cs
+    out := out.push (Json.mkObj [("entry", toJson e.toString), ("found", toJson found),
+      ("edges", Json.mkObj (edges.toList.map (fun (k, v) => (k.toString, toJson (v.map (·.toString))))))])
+  IO.println (Json.arr out).compress
+  return 0
+"""
+
+ONE = "VE.Readings.one"
+BUILD = "VE.Readings.build"
+TABLE = ("VE.Readings.Wire.candidateStage", "VE.Readings.Wire.oneOf")
+FREE = "VE.Readings.free"
+ENTRY = "VE.Readings.Run.main"
+SPECIFIED = ("VE.Readings.Run.pairFactsSpec", "VE.Readings.Run.candidateJsonSpec",
+             "VE.Readings.Wire.admitReadingsSpec")
+
+
+def named_under(name, function):
+    """`name` is `function` or a compiled piece of it: `f._boxed`, `f._lam_0`, `g._at_.f.spec_0`."""
+    return name == function or name.startswith(function + ".") or f"_at_.{function}." in name
+
+
+@pytest.fixture(scope="module")
+def walks(lean, tmp_path_factory):  # noqa: F811 (the route's build fixture)
+    lake = shutil.which("lake")
+    assert lake is not None, "lake is required for the complete test suite"
+    script = tmp_path_factory.mktemp("walk") / "walk.lean"
+    script.write_text(WALK)
+    arguments = [f"entry={name}" for name in (ENTRY, *SPECIFIED)] + [f"stop={name}" for name in (*TABLE, FREE)]
+    result = subprocess.run([lake, "env", "lean", "--run", str(script), "VE.Readings.Run", *arguments],
+                            cwd=ROOT / "lean", capture_output=True, text=True, timeout=HANG_TIMEOUT, check=False)
+    assert result.returncode == 0, result.stdout + result.stderr
+    walked = {walk["entry"]: walk for walk in json.loads(result.stdout)}
+    for name, walk in walked.items():
+        assert walk["found"], f"{name} has no compiled code"
+    return {name: walk["edges"] for name, walk in walked.items()}
+
+
+def callers(edges, function):
+    return {caller for caller, callees in edges.items() for callee in callees if named_under(callee, function)}
+
+
+def test_the_route_builds_a_candidates_document_only_in_the_request_table(walks):
+    edges = walks[ENTRY]
+    assert len(edges) > 1000  # the whole route, the chains' checks included
+    built = sorted(name for name in edges if named_under(name, ONE) or named_under(name, BUILD))
+    assert built == [], [(name, sorted(callers(edges, name))) for name in built]
+    # The table is built by admission alone, once per admitted document, and read through `oneOf`.
+    assert callers(edges, TABLE[0]) == {"VE.Readings.Wire.admitReadings"}
+    assert "VE.Readings.Wire.onesOf" not in edges  # the table as specified
+    assert "VE.Readings.Wire.oneOf" in edges
+    assert {caller for caller in callers(edges, TABLE[1]) if not named_under(caller, TABLE[1])} == \
+        {"VE.Readings.Wire.Admitted.side"}
+    assert callers(edges, FREE) == {"VE.Readings.Wire.frontText"}
+
+
+@pytest.mark.parametrize("specified", SPECIFIED)
+def test_the_walk_finds_one_where_the_specified_computation_builds_it(walks, specified):
+    assert ONE in walks[specified]
+
+
+def review_case(raw):
+    """The review's reproducer: twelve users (12 cells of the default reading's owned key), ten fixed default
+    rules on `avoid_required`, the strict reading as witness on `help_required`, which no rule regulates."""
+    users = ["u"] + [f"u{k}" for k in range(1, 12)]
+    base = {"domains": {"agent": ["a"], "user": users}, "constants": {}, "relations": {"asks": []}}
+    probe = {"outcome": {"predicate": "help_required", "tuple": ["a", "u"]}}
+    fixed = [(f"fixed{k}", norm(f"fixed{k}", "avoid_required", True, "default")) for k in range(10)]
+    document, sid = k1_document(raw, situation=entry(base, "strict", probe, False), fixed_units=fixed)
+    return {"id": "review-b1", "kind": "readings-separate", "environment": raw, "document": document,
+            "set": "rs1", "situation": sid, "other": "default"}, sid
+
+
+def test_the_other_side_is_scanned_lazily_on_the_review_reproducer(lean):  # noqa: F811
+    raw = env_k()
+    case, sid = review_case(raw)
+    completed, cpu = run_cpu_bounded([str(lean), "-"], json.dumps(wire([case])), cpu_seconds=3)
+    assert completed.returncode in (0, 1), (completed.returncode, completed.stderr, cpu)
+    [row] = json.loads(completed.stdout)
+    assert row == {"id": "review-b1", "status": "ok", "set": "rs1",
+                   "pair": {"situation": sid, "witness": "strict", "separated": False, "witness_admissible": True,
+                            "witness_value": False, "other_admissible": True}}
+
+
+def first_error_document(raw, sets=60, fixed=10):
+    """`sets` twin sets over `fixed` fixed default rules; only the first set's default candidate is ill-formed (a
+    rule on `avoid_required` over the strict rule `hard` on `help_required`)."""
+    units = [{"id": "hard", "kind": "norm", "content": norm("hard", "help_required", True)}]
+    units += [{"id": f"f{k}", "kind": "norm", "content": norm(f"f{k}", "avoid_required", True, "default")}
+              for k in range(fixed)]
+    reading_sets = []
+    for s in range(sets):
+        sigma = entry(M0, "default", Q0, False, decisions=[{"key": {"excepted": f"r{s}"}, "tuples": [["a", "u"]]}])
+        sid = situation_id(raw, sigma)
+        over = ("hard",) if s == 0 else ()
+        reading_sets.append(reading_set(f"rs{s}", f"u{s}", [
+            reading("strict", norm(f"r{s}", "avoid_required", True), {"default": sid}),
+            reading("default", norm(f"r{s}", "avoid_required", True, "default", over=over), {"strict": sid})],
+            {sid: sigma}))
+        units.append({"id": f"u{s}"})
+    return {"units": units, "reading_sets": reading_sets}
+
+
+def test_admission_stops_at_the_first_ill_formed_candidate(lean):  # noqa: F811
+    raw = env_k()
+    case = {"id": "first", "kind": "readings-validate", "environment": raw, "document": first_error_document(raw)}
+    completed, cpu = run_cpu_bounded([str(lean), "-"], json.dumps(wire([case])), cpu_seconds=2)
+    assert completed.returncode == 1, (completed.returncode, completed.stderr, cpu)
+    assert json.loads(completed.stdout) == [{"id": "first", "status": "error", "error":
+        "PrecedenceAcrossPredicates: rule r0 on avoid_required, rule hard on help_required under rs0@1:1"}]
