@@ -76,7 +76,10 @@ class _Failure(Exception):
     """An operational failure of one process; the supervisor restarts it."""
 
 
-def _decode_json(line: bytes) -> object:
+def _decode_json(line: bytes | str) -> object:
+    """The one reader of a Lean or Rust answer. Every way the bytes are no answer is a `ValueError`:
+    bytes that are not UTF-8 (json.loads alone would guess UTF-16 or UTF-32), a repeated member, a
+    non-JSON number, and nesting past the runtime limit (otherwise a `RecursionError`)."""
     def unique(pairs):
         result = {}
         for key, value in pairs:
@@ -88,8 +91,12 @@ def _decode_json(line: bytes) -> object:
     def invalid_constant(value):
         raise ValueError(f"invalid JSON number {value}")
 
-    return json.loads(line, object_pairs_hook=unique, parse_constant=invalid_constant,
-                      parse_int=_json_integer)
+    text = line.decode("utf-8") if isinstance(line, (bytes, bytearray)) else line
+    try:
+        return json.loads(text, object_pairs_hook=unique, parse_constant=invalid_constant,
+                          parse_int=_json_integer)
+    except RecursionError:
+        raise ValueError("JSON nesting exceeds the runtime limit") from None
 
 
 def _json_integer(digits: str) -> int | Decimal:

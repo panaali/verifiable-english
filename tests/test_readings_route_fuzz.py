@@ -310,8 +310,10 @@ def test_two_fault_mutants_are_unavailable(corpus):
 
 
 def _transport(monkeypatch, stdout, returncode=0):
+    """The route's process answers `stdout`, as bytes (the transport reads bytes; tests/test_route_transport.py
+    covers bytes that are not UTF-8)."""
     monkeypatch.setattr(lean_backend.subprocess, "run", lambda *a, **k: subprocess.CompletedProcess(
-        a[0], returncode, stdout=stdout, stderr=""))
+        a[0], returncode, stdout=stdout.encode(), stderr=b""))
 
 
 @pytest.mark.parametrize("stdout", [
