@@ -29,7 +29,9 @@ the two counterexample lists (5.1 B0, G-S0), as the review's joint position has 
 (`manage-agents/debates/senses-spec/`, Astra and Fable) converged on FIX, applied in [senses.md](senses.md)
 draft 2 (its section 0.1, edits R1 to R13). This plan's operative text is aligned with it where the review
 touched it: W2, W4 and W6 (2.2); the Q4 rule (2.3, 10); the switch rule for unresolved words (2.4, 2.6); the
-`limit` and `quotedSense` faults (2.5, 2.6); the one-candidate text (2.8); B5, G-S0 and G-S1. **Where this plan
+`limit` and `quotedSense` faults (2.5, 2.6); the one-candidate text (2.8); B5, G-S0 and G-S1. The
+verification of draft 2 (`manage-agents/senses-p3ver1.final.md`) added one alignment: a `collision` names one
+colliding pair (2.5; spec 2.5 step 6, j17). **Where this plan
 and the spec differ, the spec governs**: its statements (spec 5.3) replace those of 4.3 here, and its fixtures
 (spec 8) replace the hand-derived values of section 6. The W1, soft and P0 contracts are untouched.
 
@@ -276,7 +278,9 @@ wording or profile-fixed (V5, by D3). V1 holds by construction. So `Lexicon.vali
 dictionary over a validated base lexicon of a document with no own predicates (`project_valid`, 4.3, with
 `L.valid E {} = true` among its premises); with own predicates, `Lexicon.failures` is run and any failure is
 reported as `collision` naming the document's symbol and the sense (3.2): the author declared a wording a
-pack already gives, and the message says which. Before the build, `project` checks Python's counts on the
+pack already gives, and the message says which. As the spec has it (2.5 step 6, R10 after verification), the
+two names are one colliding pair of S2's V4 comparison (`clashes`), whose shared text is the wording the
+message quotes; they are never chosen independently. Before the build, `project` checks Python's counts on the
 projected environment (at most 32 sorts and 256 predicates, `ve/limits.py:6–7`), which no pack check can
 hold since they count the document's own symbols too: `fault (limit …)` (spec 2.5 step 5, R4).
 
@@ -1086,7 +1090,7 @@ without it (`GF`):
 
 | Gate | After | Passes when |
 |---|---|---|
-| G-S0 | B0 | the statement review converges on FIX or PASS with its list applied; the S1 stub elaborates the dictionary, assignment, preamble and projection statements; the interim S2 stub elaborates the five reading statements (a shape check, D19, with its interim names listed); a1 to a8 computed; every counterexample fixture of draft 2 is present with its expected value: d1's note, d17, d18, d19, a11, a12, j11, j12, n3, n7, s15, s16, s17, s18. **As amended (spec 7):** the review converged on FIX; G-S0 passes after one bounded re-review by both reviewers of the spec's diff from draft 1, the three changed statements re-elaborated against the merged S2 build, and the recomputed rows (d2, d26, j13's text, j15, j16, c16, c17, s22, s23, the whole R3 column under the narrowed simulation, every hand-derived row); no second full review. B1 to B4 start when G-S0 passes |
+| G-S0 | B0 | the statement review converges on FIX or PASS with its list applied; the S1 stub elaborates the dictionary, assignment, preamble and projection statements; the interim S2 stub elaborates the five reading statements (a shape check, D19, with its interim names listed); a1 to a8 computed; every counterexample fixture of draft 2 is present with its expected value: d1's note, d17, d18, d19, a11, a12, j11, j12, n3, n7, s15, s16, s17, s18. **As amended (spec 7):** the review converged on FIX; G-S0 passes after one bounded re-review by both reviewers of the spec's diff from draft 1, the three changed statements re-elaborated against the merged S2 build, and the recomputed rows (d2, d26, j6 and j13 under the spec's step-6 pair rule, j13's text, j15, j16, j17, c16, c17, s22, s23, the whole R3 column under the narrowed simulation, every hand-derived row); no second full review. B1 to B4 start when G-S0 passes |
 | G-S0b | before B5 is accepted | the five S2-dependent statements (`project_extends`, `senses_resolved_one_reading`, `senses_candidate_sound`, `candidates_complete`, `senseMap_ids`) re-elaborate against the **merged** S2.3 build, unchanged, or with every difference listed, re-reviewed by the statement reviewers and signed by the DRI; no S2-dependent proof counts before this gate |
 | G-S1 | B5 | every fixture of 6.1 to 6.6 holds, s15 to s18 and n7 included; `lean/audit.py` clean, standard axioms only; the theorems of 4.3 proved, or each deferral signed by the DRI and listed in the report; Q4 decided by its rule (10) on the spec's c fixtures in the column that ships, after the DRI's decision on R3 |
 | G-S2 | B7, B8, B9 | the joke reads, renders and re-reads (g1); the four packs pinned; the measurement of 7.2 in the report; no Python decision site in the relay or the display (lint); latency: `senses.read` on `J` and on each use-case document within S2's `english.read` budget plus 10 ms for the preamble and projection, warm, measured as S1 measured (`bench/english_lean_g1a.py`'s method) |
