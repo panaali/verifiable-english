@@ -5,6 +5,10 @@
 Each document is checked N times by each checkout's `ve` (`python -m ve document check`, the checkout's own
 sources and builds), alternating the two; the CPU time is the process tree's (`ve`, its Lean and Rust
 children), read from RUSAGE_CHILDREN.
+
+Exit 0 only when every document's output (exit status and standard output) is the same at both checkouts on
+every run and is not empty; 1 otherwise. Exit 2, before anything runs, when BASE_ROOT and HEAD_ROOT are the
+same directory, either is not a checkout of `ve`, a document is missing or --runs is below 1.
 """
 from __future__ import annotations
 
@@ -37,21 +41,44 @@ def main(argv=None):
     parser.add_argument("documents", nargs="+", type=Path)
     parser.add_argument("--runs", type=int, default=3)
     args = parser.parse_args(argv)
+    problem = unusable(args)
+    if problem:
+        print(f"latency: {problem}", file=sys.stderr)
+        return 2
     report = {}
     for document in args.documents:
         runs = {"base": [], "head": []}
-        outputs = {}
+        outputs = {"base": set(), "head": set()}
         for _ in range(args.runs):
             for side in ("base", "head"):
                 wall, cpu, code, stdout = check(getattr(args, side), document.resolve())
                 runs[side].append((wall, cpu))
-                outputs[side] = (code, stdout)
+                outputs[side].add((code, stdout))
         report[document.name] = {side: {"wall_median": round(statistics.median(w for w, _ in r), 3),
                                         "cpu_median": round(statistics.median(c for _, c in r), 3)}
                                  for side, r in runs.items()}
-        report[document.name]["same_output"] = outputs["base"] == outputs["head"]
+        report[document.name]["same_output"] = same_output(outputs)
     print(json.dumps(report, indent=2))
+    return 0 if all(row["same_output"] for row in report.values()) else 1
+
+
+def unusable(args) -> str | None:
+    """Why the inputs cannot show a latency comparison, or None."""
+    if args.runs < 1:
+        return "--runs must be at least 1"
+    if args.base.resolve() == args.head.resolve():
+        return f"BASE_ROOT and HEAD_ROOT are the same directory {args.base}"
+    for root in (args.base, args.head):
+        if not (root / "ve" / "__init__.py").is_file():
+            return f"{root} is not a checkout of ve"
+    missing = [str(d) for d in args.documents if not d.is_file()]
+    return f"no document {', '.join(missing)}" if missing else None
+
+
+def same_output(outputs) -> bool:
+    """Every run of both checkouts gave one and the same nonempty output."""
+    return len(outputs["base"]) == 1 and outputs["base"] == outputs["head"] and bool(next(iter(outputs["base"]))[1])
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

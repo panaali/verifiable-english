@@ -362,7 +362,18 @@ def main(argv=None):
                      f"{', '.join(f'{k}: {v}' for k, v in sorted(c['exit_codes'].items()))} |")
     (args.out / "PARITY.md").write_text("\n".join(lines) + "\n")
     print(f"TOTAL {same}/{total} identical")
-    return 0 if same == total else 1
+    return gate_status(report)
+
+
+def gate_status(report) -> int:
+    """0 when every case of every corpus is identical. A corpus that yielded no case (a glob that
+    matched nothing, a fixture that went missing) is no evidence: it fails the gate rather than
+    adding 0/0 to the total."""
+    empty = [f"{c['mode']}: {c['corpus']}" for c in report["corpora"] if c["cases"] == 0]
+    for name in empty:
+        print(f"EMPTY corpus {name}", file=sys.stderr)
+    total = report["total"]
+    return 0 if total["identical"] == total["cases"] and total["cases"] > 0 and not empty else 1
 
 
 if __name__ == "__main__":

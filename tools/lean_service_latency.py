@@ -69,6 +69,9 @@ def main(argv=None):
     parser.add_argument("--quick", action="store_true")
     args = parser.parse_args(argv)
     rows = workloads(args.bench_root, args.quick)
+    if not rows:
+        print(f"lean_service_latency: no workload in {args.bench_root}", file=sys.stderr)
+        return 2
     data = {"machine": machine(), "quick": args.quick, "build_check_ms": None, "cold_start": None,
             "warmup_first_100": None, "calls": [], "batches": []}
 
@@ -207,4 +210,4 @@ def report(data):
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

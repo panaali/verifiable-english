@@ -146,6 +146,9 @@ def compare(baseline: Path, new: Path) -> int:
     if not baseline.is_file():
         print(f"no baseline at {baseline}; run --save-baseline before the Rust edit", file=sys.stderr)
         return 2
+    if new.is_file() and baseline.resolve() == new.resolve():
+        print(f"--new is the baseline itself ({baseline}); compare a build of the edited sources", file=sys.stderr)
+        return 2
     old_digest, new_digest = rust_build.digest(baseline), rust_build.digest(new)
     if old_digest not in rust_build.pinned_digests():
         print(f"baseline {baseline} ({old_digest}) is not a pinned binary", file=sys.stderr)
