@@ -1,0 +1,41 @@
+{
+ "case": "udhr-case-10.json",
+ "runs": [
+  {
+   "head": {
+    "wall": 4.37,
+    "user": 4.34,
+    "sys": 0.03,
+    "exit": 0
+   },
+   "base": {
+    "wall": 53.58,
+    "user": 53.54,
+    "sys": 0.04,
+    "exit": 0
+   },
+   "identical": true,
+   "answer_bytes": 26435,
+   "load_before": 6.7,
+   "load_after": 6.2
+  },
+  {
+   "head": {
+    "wall": 3.32,
+    "user": 3.29,
+    "sys": 0.03,
+    "exit": 0
+   },
+   "base": {
+    "wall": 44.7,
+    "user": 44.66,
+    "sys": 0.04,
+    "exit": 0
+   },
+   "identical": true,
+   "answer_bytes": 26435,
+   "load_before": 6.2,
+   "load_after": 5.7
+  }
+ ]
+}

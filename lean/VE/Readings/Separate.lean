@@ -1,4 +1,5 @@
 import VE.Readings.Doc
+import VE.Readings.Layers
 import VE.NormDefaults.Dag
 
 /-! Separating situations (docs/spec/composition-s1.md 1.5 to 1.7, 4.5, 4.6, 4.9, 8.3).
@@ -280,6 +281,129 @@ def separates {α : Type u} [DecidableEq α] (D : Doc) (s : String) (i j : Nat) 
   (assignments D s j σ.base).all (fun G =>
     !(sideValid D s j σ.base (tablesFor D s j σ.fixed ++ G) &&
       sideValue D s j σ.base (tablesFor D s j σ.fixed ++ G) σ.probe == some σ.value))
+
+/-! ## A candidate's completions with its layers computed once (lean-first plan F5d)
+
+`observe` builds `soften (correlate X)`, the layer order and the expansion table again for every formula it
+evaluates, and `tablesTyped` the base environment for every tuple. `sideOf D s i` computes them once per candidate,
+and `sideValidOn` and `sideValueOn` read them; each is equal to the function it replaces (`sideValidOn_sideOf`,
+`sideValueOn_sideOf`). -/
+
+/-- Candidate `i`'s document, assertions and generated keys, `soften (correlate X)`, its layers and its base
+    environment. -/
+structure Side where
+  X : RightsDoc
+  A : List VE.Formula
+  keys : List (GenKey × String × List String)
+  S : VE.Norms.Doc
+  L : VE.Norms.Layers
+  E0 : VE.Environment
+
+/-- The side of a candidate whose document X (and assertions) the caller built once (the request's table, plan
+    F5b). -/
+def sideOfDoc (X : RightsDoc × List VE.Formula) : Side :=
+  let S := soften (correlate X.1)
+  let L := VE.Norms.layersOf S
+  ⟨X.1, X.2, genKeys X.1, S, L, VE.Norms.hide S.E L.names⟩
+
+def sideOf (D : Doc) (s : String) (i : Nat) : Side := sideOfDoc (one D s i)
+
+theorem tablesForOf_sideOf {α : Type u} (D : Doc) (s : String) (i : Nat) (T : List (GenKey × List (List α))) :
+    tablesForOf (sideOf D s i).X T = tablesFor D s i T := rfl
+
+theorem situationWFOf_sideOf {α : Type u} [DecidableEq α] (D : Doc) (s : String) (i j : Nat) (σ : Situation α) :
+    situationWFOf D s i j (sideOf D s i).X (sideOf D s j).X σ = situationWF D s i j σ := rfl
+
+def tablesModelOn {α : Type u} (P : Side) (M : VE.FiniteModel α) (T : List (GenKey × List (List α))) :
+    VE.FiniteModel α :=
+  { M with relations := fun p => match P.keys.find? (·.2.1 == p) with
+      | some g => tableOf T g.1
+      | none => M.relations p }
+
+def declaredTypedOn {α : Type u} [DecidableEq α] (P : Side) (M : VE.FiniteModel α) (p : String) (vs : List α) :
+    Bool :=
+  match P.E0.predicates p with
+  | some ss => typedTuple M ss vs
+  | none => false
+
+def tablesTypedOn {α : Type u} [DecidableEq α] (P : Side) (M : VE.FiniteModel α)
+    (T : List (GenKey × List (List α))) : Bool :=
+  T.all (fun t => P.keys.any (·.1 == t.1) &&
+    t.2.all (fun vs => P.keys.all (fun g =>
+      ((P.keys.find? (·.2.1 == g.2.1)).map (·.1)) != some t.1 || declaredTypedOn P M g.2.1 vs)))
+
+def backgroundValidOn {α : Type u} [DecidableEq α] (P : Side) (M : VE.FiniteModel α) : Bool :=
+  (VE.Norms.backgroundValid P.S M &&
+    (VE.SoftNorms.softPremisesIn (correlate P.X) P.S P.L).all (fun a => a.eval M [])) &&
+  (VE.Rights.limPremises P.X).all (fun a => a.eval M [])
+
+def observeOn {α : Type u} [DecidableEq α] (P : Side) (M : VE.FiniteModel α) : Probe α → Option Bool
+  | .outcome p vs =>
+    match (correlate P.X).T.regulated.find? (·.name == p) with
+    | some r => if (VE.Norms.conflictIn P.S P.L r).eval M (tupleVal vs) then none
+                else some ((VE.Norms.outcomeBaseIn P.S P.L p).eval M (tupleVal vs))
+    | none => none
+  | .selects k p vs => some ((selectable P.X k p).any (fun N =>
+      (VE.Norms.substIn P.L P.L.syms.length (VE.SoftNorms.selectsOn P.S (correlate P.X) N)).eval M (tupleVal vs)))
+  | .holds => some (P.A.all (fun a => (VE.Norms.substIn P.L P.L.syms.length a).eval M []))
+
+def sideValidOn {α : Type u} [DecidableEq α] (P : Side) (M : VE.FiniteModel α)
+    (T : List (GenKey × List (List α))) : Bool :=
+  tablesTypedOn P M T && backgroundValidOn P (tablesModelOn P M T)
+
+def sideValueOn {α : Type u} [DecidableEq α] (P : Side) (M : VE.FiniteModel α)
+    (T : List (GenKey × List (List α))) (q : Probe α) : Option Bool :=
+  observeOn P (tablesModelOn P M T) q
+
+def keyTuplesOn {α : Type u} [DecidableEq α] (P : Side) (M : VE.FiniteModel α) (k : GenKey) : List (List α) :=
+  uniq (P.keys.flatMap (fun g =>
+    if ((P.keys.find? (·.2.1 == g.2.1)).map (·.1)) == some k then
+      match P.E0.predicates g.2.1 with
+      | some ss => tuplesOf M ss
+      | none => []
+    else []))
+
+def ownedKeysOn (D : Doc) (s : String) (j : Nat) (P : Side) : List GenKey :=
+  (P.keys.map (·.1)).filter (owned D s j)
+
+def cellsOn {α : Type u} [DecidableEq α] (D : Doc) (s : String) (j : Nat) (P : Side) (M : VE.FiniteModel α) : Nat :=
+  ((ownedKeysOn D s j P).map (fun k => (keyTuplesOn P M k).length)).sum
+
+def assignmentsOn {α : Type u} [DecidableEq α] (D : Doc) (s : String) (j : Nat) (P : Side) (M : VE.FiniteModel α) :
+    List (List (GenKey × List (List α))) :=
+  (ownedKeysOn D s j P).foldr (fun k acc =>
+    (subsets (keyTuplesOn P M k)).flatMap (fun tbl => acc.map ((k, tbl) :: ·))) [[]]
+
+theorem ownedKeysOn_sideOf (D : Doc) (s : String) (j : Nat) : ownedKeysOn D s j (sideOf D s j) = ownedKeys D s j := rfl
+
+theorem cellsOn_sideOf {α : Type u} [DecidableEq α] (D : Doc) (s : String) (j : Nat) (M : VE.FiniteModel α) :
+    cellsOn D s j (sideOf D s j) M = cells D s j M := rfl
+
+theorem assignmentsOn_sideOf {α : Type u} [DecidableEq α] (D : Doc) (s : String) (j : Nat) (M : VE.FiniteModel α) :
+    assignmentsOn D s j (sideOf D s j) M = assignments D s j M := rfl
+
+theorem tablesModelOn_sideOf {α : Type u} (D : Doc) (s : String) (i : Nat) (M : VE.FiniteModel α)
+    (T : List (GenKey × List (List α))) : tablesModelOn (sideOf D s i) M T = tablesModel (one D s i).1 M T := rfl
+
+theorem sideValidOn_sideOf {α : Type u} [DecidableEq α] (D : Doc) (s : String) (i : Nat) (M : VE.FiniteModel α)
+    (T : List (GenKey × List (List α))) : sideValidOn (sideOf D s i) M T = sideValid D s i M T := by
+  simp only [sideValidOn, sideValid, sideValidOf, backgroundValidOn, backgroundValidR,
+    VE.SoftNorms.backgroundValid', sideOf, sideOfDoc, VE.SoftNorms.softPremisesIn_eq]
+  rfl
+
+theorem sideValueOn_sideOf {α : Type u} [DecidableEq α] (D : Doc) (s : String) (i : Nat) (M : VE.FiniteModel α)
+    (T : List (GenKey × List (List α))) (q : Probe α) :
+    sideValueOn (sideOf D s i) M T q = sideValue D s i M T q := by
+  simp only [sideValueOn, sideValue, sideValueOf, tablesModelOn_sideOf]
+  cases q with
+  | outcome p vs =>
+    simp only [observeOn, observe, sideOf, sideOfDoc, VE.Norms.conflictIn_eq, VE.Norms.outcomeBaseIn_eq]
+  | selects k p vs =>
+    simp only [observeOn, observe, sideOf, sideOfDoc, circ, VE.Norms.size, VE.Norms.substIn_eq,
+      VE.Norms.layersOf_syms, VE.SoftNorms.selectsOn_soften]
+  | holds =>
+    simp only [observeOn, observe, sideOf, sideOfDoc, circ, VE.Norms.size, VE.Norms.substIn_eq,
+      VE.Norms.layersOf_syms]
 
 /-! ## Conservativity (4.9) -/
 
