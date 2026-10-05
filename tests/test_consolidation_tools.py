@@ -1192,6 +1192,56 @@ def test_budget_check_needs_a_signed_allowance(tmp_path):
     assert rewritten["signed"] == [] and rewritten["history"][0]["change"] == "demo"
 
 
+def git(root: Path, *args: str) -> None:
+    env = {**os.environ, "GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@t", "GIT_COMMITTER_NAME": "t",
+           "GIT_COMMITTER_EMAIL": "t@t", "GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_NOSYSTEM": "1"}
+    subprocess.run(["git", "-C", str(root), *args], check=True, capture_output=True, env=env)
+
+
+def test_since_gates_a_change_on_its_own_growth(tmp_path):
+    """consolidate-b2 review B: with a stale baseline `--check` fails on growth merged earlier, and a
+    change's own growth hid behind it. `--since` measures the parent tree and allows only the
+    signed entries the change adds."""
+    tables = (tmp_path / "tools/trust-classes.json", tmp_path / "lean/statements.txt")
+    write_tree(tmp_path, {"D[R]": ["VE.Demo.decodeThing"], "S": ["VE.Demo.Meaning"], "C": [INSTANCE, "VE.Demo.helper"]})
+    stale, _ = trust_map.measure(tmp_path, *tables)
+    (tmp_path / "docs").mkdir()
+    baseline_path = tmp_path / "docs/trust-baseline.json"
+    trust_map.write_baseline(stale, baseline_path, {})
+    inherited = {"change": "older", "signed": "DRI", "allow": {"V": 4}}
+    baseline_path.write_text(json.dumps({**json.loads(baseline_path.read_text()), "signed": [inherited]}))
+    # Earlier work grew S (helper) without a signed entry: the parent already fails `--check`.
+    write_tree(tmp_path, {"D[R]": ["VE.Demo.decodeThing"], "S": ["VE.Demo.Meaning", "VE.Demo.helper"],
+                          "C": [INSTANCE]})
+    git(tmp_path, "init", "-q")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-qm", "parent")
+    parent, problems, parent_baseline = trust_map.measure_rev("HEAD", tmp_path)
+    assert problems == [] and parent_baseline == json.loads(baseline_path.read_text())
+    assert parent == trust_map.measure(tmp_path, *tables)[0]
+    assert trust_map.check(parent, parent_baseline)
+    assert trust_map.since(parent, parent, parent_baseline, parent_baseline) == []
+    # This change grows V; the inherited entry is the parent's, not this change's.
+    write_tree(tmp_path, {"D[V]": ["VE.Demo.decodeThing"], "S": ["VE.Demo.Meaning", "VE.Demo.helper"],
+                          "C": [INSTANCE]})
+    grown, _ = trust_map.measure(tmp_path, *tables)
+    baseline = json.loads(baseline_path.read_text())
+    failures = trust_map.since(grown, parent, baseline, parent_baseline)
+    assert len(failures) == 1 and failures[0].startswith("V grew") and "(signed allowance 0)" in failures[0]
+    own = {"change": "this change", "signed": "DRI", "allow": {"V": 4}}
+    baseline["signed"].append(own)
+    assert trust_map.since(grown, parent, baseline, parent_baseline) == []
+    assert trust_map.since(grown, parent, {**baseline, "signed": [own, {**own, "allow": {"V": 3}}][1:]},
+                           parent_baseline)
+    baseline_path.write_text(json.dumps(baseline))
+    assert trust_map.main(["--root", str(tmp_path), "--since", "HEAD"]) == 0
+    baseline_path.write_text(json.dumps({**baseline, "signed": [inherited]}))
+    assert trust_map.main(["--root", str(tmp_path), "--since", "HEAD"]) == 1
+    _, problems, _ = trust_map.measure_rev("no-such-commit", tmp_path)
+    assert problems and problems[0].startswith("git archive no-such-commit")
+    assert trust_map.main(["--root", str(tmp_path), "--since", "no-such-commit"]) == 1
+
+
 def test_committed_trust_table_covers_every_declaration():
     files, problems = trust_map.measure()
     assert problems == []
