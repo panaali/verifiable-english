@@ -120,9 +120,12 @@ Two failures found by earlier full-gate runs were fixed before this final gate:
    writer sorts that inventory. The inventory is now sorted, its hashes are unchanged,
    `VE/Route/frozen.py` passes, and both tests pass.
 2. `tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit`
-   found the new atom-budget fixture absent from the norm-defaults unit corpus. The unit's
-   input recorder added that one source to `norm-defaults@0-test-inputs.json`. The corpus
-   gate test then passed, including its nested recording run.
+   found the new atom-budget fixture absent from the norm-defaults unit corpus. The test now
+   uses differential source 26, which the unit already records, and checks the cone at the
+   12-atom limit and just beyond it. The corpus gate test passed, including its nested
+   recording run. An attempted one-row corpus addition was removed: it shifted the fuzzer's
+   deterministic mutation sample and exposed 17 existing decoder disagreements outside this
+   Lean-only batch. The differential baseline is unchanged.
 
 ## What batch 10b must list when the callers switch
 
