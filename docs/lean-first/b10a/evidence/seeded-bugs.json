@@ -1,0 +1,65 @@
+{
+ "M1 reached witness search: no cone enumeration": {
+  "returncode": 1,
+  "failed": [
+   "tests/test_norm_defaults_layered.py::test_soft_and_rights_fixtures_agree_with_python",
+   "tests/test_norm_defaults_report.py::test_report_on_generated_trees",
+   "tests/test_norm_defaults_report.py::test_report_with_a_situation_is_pythons_line_for_line"
+  ],
+  "summary": "3 failed, 45 passed in 33.85s"
+ },
+ "M2 findings count every grounding line": {
+  "returncode": 1,
+  "failed": [
+   "tests/test_norm_defaults_layered.py::test_layered_report_grounding",
+   "tests/test_norm_defaults_report.py::test_grounding_lines_follow_the_completions_block",
+   "tests/test_norm_defaults_report.py::test_report_on_generated_trees"
+  ],
+  "summary": "3 failed, 45 passed in 18.35s"
+ },
+ "M3 completions: a blank reason accepted": {
+  "returncode": 1,
+  "failed": [
+   "tests/test_norm_defaults_report.py::test_completions_faults_have_pythons_text[block13]",
+   "tests/test_norm_defaults_report.py::test_completions_faults_have_pythons_text[block14]",
+   "tests/test_norm_defaults_report.py::test_completions_faults_have_pythons_text[block15]"
+  ],
+  "summary": "3 failed, 45 passed in 18.59s"
+ },
+ "M4 inherits_from: guards of p only, not the cone": {
+  "returncode": 1,
+  "failed": [
+   "tests/test_norm_defaults_report.py::test_report_on_generated_trees",
+   "tests/test_norm_defaults_report.py::test_report_replays_pythons_search_evidence",
+   "tests/test_norm_defaults_report.py::test_report_with_a_situation_is_pythons_line_for_line"
+  ],
+  "summary": "3 failed, 45 passed in 27.61s"
+ },
+ "M5 soft: Coh_T on soften T, not on fill U": {
+  "returncode": 1,
+  "failed": [
+   "tests/test_norm_defaults_layered.py::test_coherence_is_regenerated_on_the_filled_tree",
+   "tests/test_norm_defaults_layered.py::test_soft_and_rights_fixtures_agree_with_python",
+   "tests/test_norm_defaults_layered.py::test_undecided_fillings_must_satisfy_the_route_premises"
+  ],
+  "summary": "3 failed, 45 passed in 26.31s"
+ },
+ "M6 rights: limitation premises dropped": {
+  "returncode": 1,
+  "failed": [
+   "tests/test_norm_defaults_layered.py::test_packages_are_bound_to_the_source_and_the_layered_background",
+   "tests/test_norm_defaults_layered.py::test_rights_limitation_premises_bind_fillings",
+   "tests/test_norm_defaults_layered.py::test_soft_and_rights_fixtures_agree_with_python"
+  ],
+  "summary": "3 failed, 45 passed in 23.75s"
+ },
+ "M7 status: UNDECIDED without the route premises X": {
+  "build": "failed",
+  "failed": [],
+  "log": [
+   "error: VE/NormDefaults/Layered.lean:358:79: Application type mismatch: The argument",
+   "error: VE/NormDefaults/Layered.lean:359:81: Application type mismatch: The argument"
+  ],
+  "note": "the extraValid conjuncts of replayStatusX's undecided check replaced by True: UndecidedAtX's proof no longer typechecks, so the replay cannot be built without the check"
+ }
+}
