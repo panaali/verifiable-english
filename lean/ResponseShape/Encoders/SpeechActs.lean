@@ -37,7 +37,7 @@ theorem runCase_fits (j : Json) : OkFits Γ Skeletons.speechActs (runCase j) := 
   okfits
   all_goals first
     | (fits_as "speech-acts.json#/$defs/elaborate"; with_reducible exact elaborate_fits _ _)
-    | exact OkP.of (Norms.runCase_fits j) fun _ => of_norms
+    | with_reducible exact OkP.of (Norms.runCase_fits j) fun _ => of_norms
     | skip
   all_goals (try simp only [VE.Route.Wire.ok])
   all_goals fits
