@@ -16,6 +16,7 @@ import subprocess
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
 from tests.test_units_lean_w6a import LEAN, ROOT, lean, quantity, rust
 from tests.test_w6a_review_regressions import raw_environment
 from ve import ast
@@ -133,7 +134,7 @@ def defined_env():
 
 def run(command, cases):
     completed = subprocess.run(command, input=json.dumps(cases), text=True, capture_output=True,
-                               timeout=600)
+                               timeout=HANG_TIMEOUT)
     assert completed.returncode in (0, 1), completed.stderr[:500]
     return json.loads(completed.stdout)
 

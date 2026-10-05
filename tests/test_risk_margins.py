@@ -23,6 +23,7 @@ from pathlib import Path
 import pytest
 
 from conformance.risk import Log, cell_env, condition, estimate, record, statement
+from subprocesses import HANG_TIMEOUT
 
 ROOT = Path(__file__).resolve().parents[1]
 BIN = ROOT / "lean/.lake/build/bin/ve_risk_route"
@@ -45,7 +46,7 @@ CELLS = ("server_outage", "job_failure", "task_delay")
 
 
 def route(cases):
-    out = subprocess.run([str(BIN), "-"], input=json.dumps(cases), text=True, capture_output=True, timeout=590)
+    out = subprocess.run([str(BIN), "-"], input=json.dumps(cases), text=True, capture_output=True, timeout=HANG_TIMEOUT)
     return json.loads(out.stdout)
 
 

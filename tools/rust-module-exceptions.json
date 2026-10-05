@@ -1,5 +1,1 @@
-{
-  "ve-core: environment -> route": "Environment checks definition order with the pure route::dependency_order (Python twin: ve.environment -> ve.definitions); move it to a kernel graph module (docs/ARCHITECTURE-LAYERS-PLAN2.md R1a).",
-  "ve-core: model -> eval": "FiniteModel decoding evaluates defined relations with eval::Evaluator (Python twin: ve.model -> ve.evaluate); move the evaluator core to a kernel semantics module (docs/ARCHITECTURE-LAYERS-PLAN2.md R1b).",
-  "ve-core: wire -> surface": "Wire decoding reads formula arities from surface::formula_record (Python twin: ve.wire -> ve.surface.registry); give the kernel its own arity table (docs/ARCHITECTURE-LAYERS-PLAN2.md R1c)."
-}
+{}

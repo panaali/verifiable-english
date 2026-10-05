@@ -225,6 +225,7 @@
       "lean/VE/WireContract/Engine.lean": "diagnostic only: no verdict depends on it. The wire contract engine reads the submitted case JSON to choose the first failing check of a rejection that the legacy validator already decided (docs/spec/wire-contract.md 2.8, 7.2); imported only by VE.WireContract.*, DiagnoseMain and VE.Audit (tools/check_lean_imports.py)",
       "lean/VE/WireContract/Hooks/Corpus.lean": "diagnostic only: no verdict depends on it. Hand-written hooks and view of the engine corpus contracts (docs/spec/wire-contract.md 8.1)",
       "lean/VE/WireContract/Hooks/SoftNorms.lean": "diagnostic only: no verdict depends on it. Hooks, classifiers and the soft_source adapter of the pilot contract soft-norms@0 (docs/spec/wire-contract.md section 6); they call SoftNorms.Phases, Wire.primeVocabulary, validateSoft and checkW1 read-only and only read their results",
+      "lean/VE/WireContract/Hooks/Norms.lean": "diagnostic only: no verdict depends on it. Hooks, classifiers and the norm_source adapter of the contract norms@0 (docs/spec/wire-contract-s5.md 2.3, 2.5); they call Norms.Wire.decodeNormsEnvironment, the route's environment decoder, Route.dependencyOrder and Norms.height read-only, never decodeSource, and hold the diagnostic syntax and typing walks of 2.5",
       "lean/VE/WireContract/Diagnose.lean": "diagnostic only: no verdict depends on it. The ve_diagnose runner: case dispatch through VE.JsonInput.parseCases, the contract registry and response rows (docs/spec/wire-contract.md 4.2)"
     }
   },
@@ -982,7 +983,15 @@
         {"executable": "ve_diagnose", "mode": "soft-norms@0",
          "kinds": ["soft-elaborate", "admission"],
          "response": {"outcome": "string"},
-         "dispatch": ["lean/VE/WireContract/Diagnose.lean", "lean/VE/WireContract/Hooks/SoftNorms.lean"]}
+         "dispatch": ["lean/VE/WireContract/Diagnose.lean", "lean/VE/WireContract/Hooks/SoftNorms.lean"]},
+        {"executable": "ve_diagnose", "mode": "norms@0",
+         "kinds": ["norms-elaborate", "norms-conflict", "norms-certificate", "admission"],
+         "response": {"outcome": "string"},
+         "dispatch": ["lean/VE/WireContract/Diagnose.lean", "lean/VE/WireContract/Hooks/Norms.lean"]},
+        {"executable": "ve_diagnose", "mode": "norm-defaults@0",
+         "kinds": ["norm-defaults-elaborate", "norm-defaults-conflict", "norm-defaults-certificate", "admission"],
+         "response": {"outcome": "string"},
+         "dispatch": ["lean/VE/WireContract/Diagnose.lean", "lean/VE/WireContract/Hooks/NormDefaults.lean", "lean/VE/WireContract/Hooks/Norms.lean"]}
       ], "planned_modes": [], "theorems": [], "planned_theorems": [], "decoders": []},
       "rust": null,
       "lean_call_sites": [],

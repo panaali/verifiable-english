@@ -5,6 +5,8 @@ reordered, an index pushed out of range); every mutant is `CheckerUnavailable` o
 the relay shows (`ve document check`, `render` and `readings`), and nothing else escapes."""
 import copy
 import json
+import subprocess
+import types
 
 import pytest
 
@@ -48,10 +50,21 @@ def _shown(path, conclusion, capsys):
     return check, render, json.loads(capsys.readouterr().out)
 
 
+def _route_writes(monkeypatch, stdout):
+    """The Lean discourse route process exits 0 having written `stdout`; every other process runs.
+    The transport (`run_discourse_case`, `read_rows`) reads it as it reads the route's output."""
+    route, real = str(discourse.route_executable()), subprocess.run
+
+    def run(args, *rest, **options):
+        if str(args[0]) == route:
+            return subprocess.CompletedProcess(args, 0, stdout, b"")
+        return real(args, *rest, **options)
+    monkeypatch.setattr(lean_backend, "subprocess",
+                        types.SimpleNamespace(run=run, TimeoutExpired=subprocess.TimeoutExpired))
+
+
 def _answered(monkeypatch, row):
-    def run(executable, case, timeout):
-        return 0, json.dumps([row]).encode(), b""
-    monkeypatch.setattr(lean_backend, "run_discourse_case", run)
+    _route_writes(monkeypatch, json.dumps([row]).encode())
 
 
 def _nodes(value, path=()):
@@ -269,6 +282,6 @@ def test_an_answer_deeper_than_the_c_stack_is_no_answer(tmp_path, monkeypatch):
     depth = 200_000
     deep = '["or", ["top"], ' * depth + '["top"]' + "]" * depth
     stdout = row.replace('"DEEP"', deep).encode()
-    monkeypatch.setattr(lean_backend, "run_discourse_case", lambda executable, case, timeout: (0, stdout, b""))
+    _route_writes(monkeypatch, stdout)
     with pytest.raises(CheckerUnavailable, match="no answer to the case"):
         discourse.lean_admission(path.read_bytes(), tmp_path)

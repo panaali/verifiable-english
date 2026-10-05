@@ -32429,5 +32429,14 @@
 "base": "ve.errors.VEError: UnrecordedSlot: u0123.s02.p1: [76303, 76305)",
 "head": "ve.errors.VEError: invalid JSON front matter"
 }
+],
+"unavailable": [
+{
+"corpus": "pilots",
+"authority": "default",
+"case": "pilot/udhr-20261003T0600Z:usecases/udhr-pilot/run-20261003T0600Z/translation.ve.md",
+"op": "document_check",
+"reason": "As in batch 0 (docs/lean-first/b0/DELTA.md, U1): the readings route needs far longer than its 120 s runner timeout on this document, on base and head alike, so the record is CheckerUnavailable on both sides and shows nothing about preservation."
+}
 ]
 }
