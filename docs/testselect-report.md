@@ -213,6 +213,47 @@ declarations); full pytest suite with 12 workers: 8743 passed, 6 skipped,
 seeded mutants. Evidence refresh and quiet-machine timing stay deferred, as
 above.
 
+## Review fixes (testselect-looprecheck3.final, round on `4d332aae`)
+
+Both B findings were one class: directory listings must fail open. The
+rules are now:
+
+1. An added or deleted file selects every test that listed any directory
+   above it, up to and including the root `.` (unchanged from the last
+   round; it now has a regression for a file in a new top-level directory).
+2. The static graph names the root. `.` and `./` literals mention `dir:.`,
+   so the `dir:.` lookup can match. Two exceptions keep this from selecting
+   every test. Every closure in this checkout holds a `.` literal, mostly
+   the full stop in `ve/english.py`. The first exception is a `.` used as
+   text: the receiver or an argument of a `str` method call (but not
+   `os.path.join(".", name)`), a compared or concatenated operand, or a piece
+   of an f-string (`change_units._text_operands`). The second is a `.` in a
+   product module (`ve/`, `ve_experiments/`). With both exceptions, 40 of 225
+   closures name the root. Without the product exception it is 118, and
+   with neither it is 225.
+3. The map keeps every listing the recorder saw under the root, including
+   directories that hold no tracked file or do not exist yet. Before, the
+   map kept only directories holding a tracked file. Map `VERSION` is now
+   4, so version-3 maps, which lack these edges, are no longer used. The
+   cache needs a fresh `python3 tools/test_map.py record`; until then,
+   selection uses the static graph.
+
+- Regression tests: `test_a_file_in_a_new_directory_selects_the_listers_of_the_root`
+  (rule 1), `test_without_a_map_an_added_file_selects_the_tests_that_name_the_root`
+  (rule 2: `Path('.')`, `'./'` and `os.path.join('.', ...)` name the root;
+  text uses and a product full stop do not), and
+  `test_a_listing_of_a_directory_that_does_not_exist_yet_is_kept` (rule 3).
+  The rule 1 and rule 3 tests record a real pytest test under the recorder,
+  show that the change makes it fail, and require the plan and the drift
+  check to select it.
+- Five seeded mutants were added to `SAFETY_CASES`, one for each new
+  behaviour.
+- Precision cost in static mode (`--static --paths`, compared with
+  `87e391da`): an added root document went from 0 to 40 tests, an edited
+  `docs/TESTING.md` from 1 to 40, and an added use-case file from 49 to 71.
+  A `ve/` edit stayed at 225. With a map, the static graph answers only for
+  unmapped and uncertain units.
+
 ## Known limits
 
 - An assignment whose value calls something (`X = registry.add(f)`) counts
@@ -230,3 +271,11 @@ above.
   directory. Nor is the tree before and after compared, so it also selects
   every lister of every directory above it, even when its own directory
   neither appeared nor vanished.
+- Existence checks (`exists()`, `is_dir()`, `stat`) are not audit events.
+  A test that skips a listing or a read because a path is missing records
+  nothing about that path. A read is kept for tracked files only, so opening
+  a file that is absent when recorded is not in the map either. The static
+  graph answers for such a test only if it names the path.
+- In static mode, a `.` in a product module does not name the root (see
+  rule 2 above); a product function that lists the working directory is
+  caught only by the map.
