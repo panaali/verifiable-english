@@ -48,7 +48,7 @@ PROFILES = {
 # The Lean files that hold a trusted definition of base 2.13 (base 2.12): the tokens and their matching, the
 # lexer, the derivation checker, well-formedness, the reading relations, lexicon validity, the surface syntax
 # and its rejection codes, and S2's catalogue and action data, `lexRules`, action library, AST encoding and
-# typed check, `meaning` and the readers (spec 5.1).
+# typed check, `meaning` and the readers (spec 5.1), and the service's decoder of the lexicon it reads (2.10).
 TRUSTED = (
     "lean/VE/Grammar/Basic.lean",
     "lean/VE/Grammar/Derives.lean",
@@ -63,6 +63,7 @@ TRUSTED = (
     "lean/VE/EnglishGrammar/Actions.lean",
     "lean/VE/EnglishGrammar/Encode.lean",
     "lean/VE/EnglishGrammar/Read.lean",
+    "lean/VE/EnglishGrammar/Run.lean",
 )
 # Lean files of the same directories that hold no trusted definition, with the reason.
 UNTRUSTED = {
