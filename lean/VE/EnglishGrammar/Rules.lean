@@ -59,22 +59,6 @@ structure LexRow where
   act : LexAct
   deriving DecidableEq, Repr
 
-/-- The tokens of a text written as one sentence, or none. -/
-def sentenceTokens (text : String) : Option (List Tok) :=
-  match lex (text ++ ".") with
-  | .ok sents =>
-    match sents.toList with
-    | [s] => some s.toList
-    | _ => none
-  | .error _ => none
-
-/-- The character that stands for a hole while a wording is lexed; a wording that contains it gives no
-rule. -/
-def holeChar : Char := Char.ofNat 0xE000
-
-/-- The word that stands for hole `k` while a wording is lexed. -/
-def holeMark (k : Nat) : String := String.singleton holeChar ++ toString k
-
 /-- A word of a wording, a noun or a relation name matches in any case; another token exactly. -/
 def contentTerminal : Tok → Terminal
   | .word text _ => .content text
@@ -90,20 +74,15 @@ def textSyms (text : String) (k : Tok → Terminal) : Option (List (Sym Terminal
   (sentenceTokens text).map fun toks => toks.map fun t => .t (k t)
 
 /-- A wording's hole order and symbols: a hole is `term`, a word `content`, another token `exact`.
-The holes are lexed as words, so the marks around them keep the spacing a term gives them. -/
+The holes are lexed as words (`wordingTokens`, the substitution V3 reads), so the marks around them keep
+the spacing a term gives them. -/
 def wordingSyms (w : String) : Option (List Nat × List (Sym Terminal)) :=
-  if w.any (· == holeChar) then none
-  else
-    match fillHoles w holeMark with
-    | (order, text) =>
-      match sentenceTokens text with
-      | none => none
-      | some toks =>
-        let syms := toks.map fun t =>
-          match t with
-          | .word x _ => if order.any (fun k => x == holeMark k) then Sym.n ntTerm else .t (.content x)
-          | t => .t (.exact t)
-        if (syms.filter (· == Sym.n ntTerm)).length == order.length then some (order, syms) else none
+  (wordingTokens w).map fun (order, toks) =>
+    (order, toks.map fun t =>
+      if isHoleWord order t then Sym.n ntTerm
+      else match t with
+        | .word x _ => .t (.content x)
+        | t => .t (.exact t))
 
 /-- Whether `pat` occurs in `s`. -/
 def occurs (pat s : String) : Bool := (findSub pat.toList s.toList 0).isSome

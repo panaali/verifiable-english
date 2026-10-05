@@ -12,8 +12,9 @@ holds when the five conditions of spec 2.9 hold:
 - V2 honesty: every selection is an honest wording of its own symbol (declared, profile, mechanical,
   fallback); negatives and aliases are the declared or profile-fixed ones.
 - V3 shape: a predicate wording has each hole `{0}` to `{k-1}` once, no other hole, and a word; and,
-  with its holes replaced by a space, it lexes as one sentence (S2 spec 2.6, Q6), so no wording puts
-  a terminator inside a rule.
+  with each hole lexed as a word of its own, it lexes as one sentence (S2 spec 2.6, Q6), so no wording
+  puts a terminator inside a rule. The substitution is `wordingTokens`, the one the lexical rules read,
+  so a wording that passes V3 gives its rules (`{0}s are {1}` fails both).
 - V4 distinctness, by `wordingKey`, against what every other symbol declares or selects.
 - V5 polarity: a selected negative is `negativeTemplate` of the selected wording, unless a profile block
   fixes it.
@@ -227,17 +228,46 @@ def fillHoles (w : String) (fill : Nat → String) : List Nat × String :=
 /-- The holes of a wording, in order, and its text with every hole replaced by a space. -/
 def holes (w : String) : List Nat × String := fillHoles w fun _ => " "
 
-/-- Whether a text, with a terminator appended, lexes as exactly one sentence. -/
-def oneSentence (text : String) : Bool :=
+/-- The tokens of a text written as one sentence, or none. -/
+def sentenceTokens (text : String) : Option (List Tok) :=
   match lex (text ++ ".") with
-  | .ok sents => sents.size == 1
-  | .error _ => false
+  | .ok sents =>
+    match sents.toList with
+    | [s] => some s.toList
+    | _ => none
+  | .error _ => none
+
+/-- The character that stands for a hole while a wording is lexed; a wording that contains it gives no
+rule. -/
+def holeChar : Char := Char.ofNat 0xE000
+
+/-- The word that stands for hole `k` while a wording is lexed. -/
+def holeMark (k : Nat) : String := String.singleton holeChar ++ toString k
+
+/-- Whether a token is the word of one of the holes `order`. -/
+def isHoleWord (order : List Nat) : Tok → Bool
+  | .word x _ => order.any fun k => x == holeMark k
+  | _ => false
+
+/-- A wording's hole order and its tokens, each hole lexed as the word `holeMark k`; none when the
+wording contains `holeChar`, does not lex as one sentence, or has a hole that is not a word of its own
+(`{0}s`). V3 (`shapeOk`) and the lexical rules (`wordingSyms`) read a wording through this one
+substitution. -/
+def wordingTokens (w : String) : Option (List Nat × List Tok) :=
+  if w.any (· == holeChar) then none
+  else
+    match fillHoles w holeMark with
+    | (order, text) =>
+      match sentenceTokens text with
+      | none => none
+      | some toks => if (toks.filter (isHoleWord order)).length == order.length then some (order, toks) else none
 
 /-- V3 for a predicate wording of arity `k`: each hole `{0}` to `{k-1}` once, no other, a word, and the
-text with its holes replaced by a space lexes as one sentence (S2 spec 2.6). -/
+wording lexes as one sentence with each hole a word of its own (`wordingTokens`; S2 spec 2.6). -/
 def shapeOk (w : String) (k : Nat) : Bool :=
   match holes w with
-  | (hs, rest) => decide (hs.mergeSort (· ≤ ·) = List.range k) && !(splitWs rest).isEmpty && oneSentence rest
+  | (hs, rest) =>
+    decide (hs.mergeSort (· ≤ ·) = List.range k) && !(splitWs rest).isEmpty && (wordingTokens w).isSome
 
 /-- V3 for a noun or a spelling: no hole. -/
 def noHole (w : String) : Bool := (holes w).1.isEmpty

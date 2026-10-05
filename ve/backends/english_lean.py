@@ -53,6 +53,7 @@ CLASSES = {
     "SourceTooLong": ("ResourceLimit",), "TextTooLong": ("ResourceLimit",),
     "BadCharacter": ("SyntaxError",), "OpenQuote": ("SyntaxError",), "BadNumeral": ("SyntaxError",),
     "EmptyDocument": ("SyntaxError",), "EmptySentence": ("SyntaxError",), "Unterminated": ("SyntaxError",),
+    "BadSpacing": ("SyntaxError",),
     "UnboundReference": ("SyntaxError",), "ShadowedName": ("SyntaxError",), "SortMismatch": ("SyntaxError",),
     "MarkerDepth": ("SyntaxError",), "NestingLimit": ("ResourceLimit",), "NumeralBound": ("ResourceLimit",),
     "PronounUnresolved": ("SyntaxError",), "BlockedWording": ("SyntaxError",), "IllTyped": ILL_TYPED,
