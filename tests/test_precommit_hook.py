@@ -8,6 +8,7 @@ Secret examples are assembled at run time so this file never contains one.
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 from pathlib import Path
 import shutil
@@ -409,6 +410,42 @@ def test_frozen_guard_rejects_unlisted_modules_bad_inventory_and_main(staging):
     staging.stage(INVENTORY, staging.head(INVENTORY))
     staging.stage("lean/Main.lean", staging.head("lean/Main.lean") + b"\n-- edit\n")
     rejects(staging, "lean/Main.lean: existing subcommands changed")
+
+
+ENGLISH_LOCK = "ve/english_grammar/LOCK.json"
+ENGLISH_TABLE = "lean/VE/EnglishGrammar/Fixed/RelationalFol.lean"
+ENGLISH_VERSION = "lean/VE/EnglishGrammar/Fixed/Version.lean"
+
+
+def test_english_grammar_checks_the_staged_generated_table(staging):
+    """Spec fixture t1 through the hook: an edited generated rule names the profile and the rule tag."""
+    text = staging.head(ENGLISH_TABLE).decode()
+    line = next(l for l in text.splitlines() if 'tag := "negation"' in l)
+    staging.stage(ENGLISH_TABLE, text.replace(line, line.replace('.kw "case"', '.kw "fact"')))
+    staging.rehash(ENGLISH_TABLE)
+    rejects(staging, "English grammar check failed",
+            f"relational-fol@0: {ENGLISH_TABLE} differs from its source at rule negation")
+
+
+def test_english_grammar_change_needs_a_new_actions_version(staging):
+    """Base fixture i5 through the hook: a trusted Lean file changed without the lock, then with the lock's
+    hash updated and actions_version unchanged, is rejected; a raised version with its module passes."""
+    path = "lean/VE/EnglishGrammar/Token.lean"
+    edited = staging.head(path) + b"\n-- Changed matching.\n"
+    staging.stage(path, edited)
+    staging.rehash(path)
+    lock = json.loads(staging.head(ENGLISH_LOCK))
+    old, new = lock["files"][path], hashlib.sha256(edited).hexdigest()
+    rejects(staging, f"{path}: SHA-256 {old} in {ENGLISH_LOCK}, {new} now")
+    lock["files"][path] = new
+    staging.stage(ENGLISH_LOCK, json.dumps(lock, indent=1) + "\n")
+    rejects(staging, f"{path}: SHA-256 {old} at the base, {new} now, with actions_version '1' unchanged")
+    lock["actions_version"] = "2"
+    staging.stage(ENGLISH_LOCK, json.dumps(lock, indent=1) + "\n")
+    rejects(staging, f"{ENGLISH_VERSION}: does not hold actions_version '2'")
+    staging.stage(ENGLISH_VERSION, staging.head(ENGLISH_VERSION).replace(b'"1"', b'"2"'))
+    staging.rehash(ENGLISH_VERSION)
+    passes(staging)
 
 
 def test_emergency_bypass_warns(staging):
