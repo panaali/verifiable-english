@@ -19,6 +19,7 @@ import json
 import os
 from pathlib import Path
 import random
+import time
 
 import pytest
 
@@ -331,23 +332,26 @@ def test_lean_authority_reports_resource_limit_on_every_generated_case(seed, mon
     Lean-authority evaluation asks Rust first. Under load (a 2 h 14 min suite)
     one such call outlasted the Rust client's 5-second default; every Rust call
     and Lean service request here must wait the suite's hang guard instead
-    (`VE_RUST_TIMEOUT`, `VE_LEAN_SERVICE_TIMEOUT`)."""
+    (`VE_RUST_TIMEOUT`, `VE_LEAN_SERVICE_TIMEOUT`: a request's wall-clock cap beside
+    its mode's CPU deadline, lean-first batch 1)."""
     monkeypatch.setenv("VE_AUTHORITY", "lean")
     monkeypatch.delenv("VE_AUTHORITY_OVERRIDES", raising=False)
     calls = []
     monkeypatch.setattr(dispatch, "observers", [*dispatch.observers, lambda op, a: calls.append((op, a))])
     waits, lean_waits = [], []
-    checker, roundtrip = rust_jsonl._run_checker, LeanService._roundtrip
+    checker, deadline = rust_jsonl._run_checker, LeanService._deadline
 
     def recorded(argv, *, input, timeout):
         waits.append(timeout)
         return checker(argv, input=input, timeout=timeout)
 
-    def lean_recorded(self, mode, cases_text, count, timeout, *rest):
-        lean_waits.append(timeout)
-        return roundtrip(self, mode, cases_text, count, timeout, *rest)
+    def lean_recorded(self, mode, size, cases, timeout):
+        start = time.monotonic()
+        result = deadline(self, mode, size, cases, timeout)
+        lean_waits.append(round(result.wall - start))
+        return result
     monkeypatch.setattr(rust_jsonl, "_run_checker", recorded)
-    monkeypatch.setattr(LeanService, "_roundtrip", lean_recorded)
+    monkeypatch.setattr(LeanService, "_deadline", lean_recorded)
     dispatched = set()
     for name, verdict, _, _, _ in generate(seed):
         calls.clear()
