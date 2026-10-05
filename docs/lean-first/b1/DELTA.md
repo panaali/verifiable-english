@@ -83,7 +83,13 @@ a host at load 20–40.
 
 **`tools/lean_first_diff.py`** (probe matrix under both authorities, the conformance fixtures under both, and
 every pilot document): 58,719 records per side, 58,718 identical, one listed difference
-([`delta.json`](delta.json), [`ab-compare.json`](ab-compare.json)); `compare --delta` exits 0.
+([`delta.json`](delta.json), [`ab-compare.json`](ab-compare.json)); `compare --delta` exits 0. Outcomes are
+compared as JSON values with their types (lf-1 recheck 3 B): `true` is not `1`, `false` is not `0` and `1` is
+not `1.0`, as Python's `==` had them (`{"values":[true]}` against `{"values":[1]}` passed as `same`). Every
+comparison of two outcomes, of an outcome and a delta entry, and of wording pairs uses the response
+validator's `service_schema.same_json`, as do `stage2_parity.py` and the service parity, latency and soak
+tools; a record key that is not a string is refused. The recorded runs give the same totals and difference
+under it ([`ab-compare.json`](ab-compare.json) regenerated).
 
 | Id | Record | Base | Head | Class |
 |---|---|---|---|---|
@@ -150,7 +156,26 @@ signature: **the baseline does not grow.** The fuzzer's child processes used 1,5
   responses with the same shapes, each Lean decoder and route dispatch test decides beside the shape it
   names and must agree with it, and the enumerations with a Lean list (codes, modes, limits, acts,
   modalities, relations, generators, statement layers) are that list. The rendering equals the former
-  files; ResponseDecode lost its 1,090 lines of per-mode checks.
+  files; ResponseDecode lost its 1,090 lines of per-mode checks. **Tied to the encoders by proof (lf-1
+  recheck 3 B):** `ResponseShape.Encoders.runMode_fits` proves, for every constructor of
+  `VE.Service.Mode`, that every row `VE.Service.runMode` returns for a case fits the skeleton of the mode's
+  row shape, extracted from the shapes when Lean builds (`ResponseShape.Skeleton`, `ResponseShape.Skeletons`):
+  every object the runner builds, at any depth, has exactly the fields its shape allows, every field it
+  requires and none it forbids, and the fields the shape ties to another field's value (`detail` beside
+  UNKNOWN) or to the case (`valid` beside a certificate case, `value` beside a model, `violations` beside
+  `taken`) exactly then. The service's lines (`bound`, `response`, `requestError`) are proved against
+  `envelope.json` the same way. A field an encoder adds or drops, or a shape that lists another field,
+  fails `lake build` (lib `ResponseShape` is a default target; its 205 theorems are audited in
+  `lean/ResponseShape/Audit.lean`); `tests/test_encoder_shapes.py` shows the proofs fail on such mutants of
+  encoders and shapes. Not covered by the proofs: field values (types, patterns, counts, echoes), which the
+  client's validator and `ve_response_decode` check from the same shapes; values the runner copies from the
+  request, marked in the shapes (`copied`: the canonical environment, a discourse mention's front-matter
+  target); and value conditions that never decide which fields are present (rights scope, risk statuses,
+  risk-eval results). The readings-route theorem assumes a case the service decodes (`CaseWF`: a well-formed
+  object map), which its lower runners' case rewrite needs to keep the kind. The proofs found no row that
+  violates its shape; they needed, for example, that a conflict replay that is not conflict-free names its
+  failing target (else `detail` would be missing beside UNKNOWN) and that soft and limitation labels are
+  never empty (else `label` would be missing beside a soft premise).
 - **O3.** Docs outside this batch (`lean/*.md`, `docs/spec/*.md`, `conformance/DIFFFUZZ.md` on its branch)
   still name the one-shot executables. `infra/difffuzz` needs the head's adapter (one function) when it merges.
 - **O4.** HUMAN: statement review of the 13 new theorems (`runMode_*` for the twelve modes,
