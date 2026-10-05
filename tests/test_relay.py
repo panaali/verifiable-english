@@ -363,7 +363,8 @@ def test_the_rust_checker_output_is_read_by_the_same_decoder(tmp_path):
     exe = tmp_path / "rust"
     out = tmp_path / "out.bin"
     out.write_bytes(b'{"id":"0","status":"error","error":"\\ud800"}\n')
-    exe.write_text(f"#!/bin/sh\ncat >/dev/null\ncat '{out}'\nexit 1\n")
+    # One case line in, as the persistent checker reads it (lean-first b2, F6).
+    exe.write_text(f"#!/bin/sh\nhead -n 1 >/dev/null\ncat '{out}'\nexit 1\n")
     exe.chmod(0o755)
     with pytest.raises(CheckerUnavailable, match="malformed"):
         rust_jsonl.run({"id": "0"}, executable=exe, timeout=HANG_TIMEOUT,
@@ -401,7 +402,8 @@ def test_the_rust_checker_output_must_name_its_case(tmp_path):
     import hashlib
     from ve.backends import rust_jsonl
     exe, out = tmp_path / "rust", tmp_path / "out.bin"
-    exe.write_text(f"#!/bin/sh\ncat >/dev/null\ncat '{out}'\nexit 1\n")
+    # One case line in, as the persistent checker reads it (lean-first b2, F6).
+    exe.write_text(f"#!/bin/sh\nhead -n 1 >/dev/null\ncat '{out}'\nexit 1\n")
     exe.chmod(0o755)
     run = lambda case: rust_jsonl.run(case, executable=exe, timeout=HANG_TIMEOUT,  # noqa: E731
                                       expected_sha256=hashlib.sha256(exe.read_bytes()).hexdigest())

@@ -33,6 +33,16 @@ norms result, is the service's responsibility and is not checked here.
 Supervision: an address-space limit on the process, a deadline per request, recycling
 after a number of requests or above an RSS threshold, and a small pool.
 
+Environment handles (docs/LEAN-FIRST-PLAN.md, F2, batch 2). A case whose `environment` is a JSON
+object is sent naming it by `environment_handle`, the SHA-256 of its compact text, and the request
+registers each environment the process does not hold yet (`environments`); the service answers it
+as the case with that environment (`VE.Service.Handles`). The client keeps the same table as the
+service (`_note` mirrors `Handles.insert`) and forgets it with the process. A request with handles
+that the service answers with a request error, a handle it no longer holds among them, is sent
+again with its environments in its cases, as before batch 2, and that answer is the answer: a
+handle never changes an answer, it only saves sending and decoding the environment again. Response
+checks read each case with its environment, as sent before.
+
 Deadlines (docs/LEAN-FIRST-PLAN.md, F4). A request's deadline is its operation's
 (`DEADLINES`): CPU seconds of the service process, a base per case plus a share per MiB of cases,
 measured where the platform reports a process's CPU time (`/proc`) and otherwise read as
@@ -82,6 +92,12 @@ MAX_REQUESTS = 10_000
 MAX_RESPONSE_BYTES = 1 << 30
 # Room for the request envelope around the cases text within one line.
 ENVELOPE_BYTES = 1024
+# The service's handle table (`VE.Service.maxHandles`, `maxHandleBytes`), the case member naming a
+# handle (`handleKey`), and the modes whose cases are never expanded (`expandCases`).
+MAX_HANDLES = 64
+MAX_HANDLE_BYTES = 64 << 20
+HANDLE_KEY = "environment_handle"
+UNHANDLED_MODES = frozenset({"english", "risk-eval"})
 
 
 # CPU seconds by mode: (base per case, per MiB of cases); each case is one operation. The core modes
@@ -259,16 +275,18 @@ def case_digest(text: str) -> str:
 
 
 def request_context(nonce: str, mode: str, cases_text: str, count: int,
-                    texts: list[str] | None = None) -> dict:
+                    texts: list[str] | None = None, cases: list | None = None) -> dict:
     """What a response to the request is checked against (`lean_service_schema/envelope.json`):
     `{"id", "mode", "cases", "digests", "bytes"}`. A request error is bound to the digests
     of the case texts as split, whether or not they decode (`null` if the text does not
     split); results also need the decoded cases, one per case (`null` otherwise, so that
-    only a request error can answer the request)."""
-    try:
-        cases = json.loads(cases_text, parse_int=_json_integer)
-    except (ValueError, RecursionError):
-        cases = None
+    only a request error can answer the request). `cases`, when given, are the decoded cases
+    with each handle replaced by its environment (`_Sent.expanded`)."""
+    if cases is None:
+        try:
+            cases = json.loads(cases_text, parse_int=_json_integer)
+        except (ValueError, RecursionError):
+            cases = None
     if texts is None:
         texts = case_texts(cases_text)
     digests = None if texts is None else [case_digest(text) for text in texts]
@@ -339,7 +357,8 @@ class LeanService:
                  address_space: int | None = ADDRESS_SPACE, max_requests: int = MAX_REQUESTS,
                  max_rss: int | None = MAX_RSS, expected_sha256: str | None = None,
                  allow_unlisted_build: bool = False,
-                 batch_cases: int = BATCH_CASES, batch_bytes: int = BATCH_BYTES, retries: int = 1):
+                 batch_cases: int = BATCH_CASES, batch_bytes: int = BATCH_BYTES, retries: int = 1,
+                 handles: bool = True):
         self.executable = Path(executable or os.environ.get("VE_LEAN_SERVICE") or DEFAULT_EXECUTABLE)
         # None: the configured default, read at each use (the shared pool outlives a setting).
         self.timeout, self.startup_timeout = timeout, startup_timeout
@@ -348,8 +367,13 @@ class LeanService:
         self.allow_unlisted_build = allow_unlisted_build
         self.batch_cases, self.batch_bytes = min(batch_cases, MAX_CASES), batch_bytes
         self.retries = retries
+        self.handles = handles
+        # The handles the current process holds, in registration order, with their sizes.
+        self._registered: dict[str, int] = {}
+        self._handle_bytes = 0
         self.handshake: dict | None = None
-        self.stats = {"starts": 0, "restarts": 0, "recycles": 0, "requests": 0, "retries": 0}
+        self.stats = {"starts": 0, "restarts": 0, "recycles": 0, "requests": 0, "retries": 0,
+                      "registered": 0, "handle_resends": 0}
         self._proc: subprocess.Popen | None = None
         self._stderr = None
         self._buffer = bytearray()
@@ -444,6 +468,7 @@ class LeanService:
             os.set_blocking(self._proc.stdin.fileno(), False)
             self._buffer.clear()
             self._served, self._recycle = 0, False
+            self._forget_handles()
             self.stats["starts"] += 1
             line = self._read_line(_Deadline(time.monotonic() + startup))
             handshake = _decode_json(line)
@@ -572,9 +597,28 @@ class LeanService:
                 self._buffer += chunk
 
     @staticmethod
-    def _request_line(nonce: str, mode: str, cases_text: str, budget: dict) -> bytes:
+    def _request_line(nonce: str, mode: str, cases_text: str, budget: dict,
+                      environments: dict[str, str] | None = None) -> bytes:
+        registered = ("" if not environments else ',"environments":{' + ",".join(
+            json.dumps(digest) + ":" + text for digest, text in environments.items()) + "}")
         return ('{"id":' + json.dumps(nonce) + ',"mode":' + json.dumps(mode) + ',"budget":'
-                + json.dumps(budget, separators=(",", ":")) + ',"cases":' + cases_text + "}\n").encode()
+                + json.dumps(budget, separators=(",", ":")) + registered + ',"cases":' + cases_text
+                + "}\n").encode()
+
+    # Handles
+
+    def _forget_handles(self) -> None:
+        self._registered.clear()
+        self._handle_bytes = 0
+
+    def _note(self, digest: str, size: int) -> None:
+        """Record that the process registered `digest` (`VE.Service.Handles.insert`)."""
+        if digest in self._registered:
+            return
+        if len(self._registered) + 1 > MAX_HANDLES or self._handle_bytes + size > MAX_HANDLE_BYTES:
+            self._forget_handles()
+        self._registered[digest] = size
+        self._handle_bytes += size
 
     def _deadline(self, mode: str, size: int, cases: int, timeout: float | None) -> _Deadline:
         """The request's deadline: `timeout` wall-clock seconds when given, else its mode's
@@ -591,7 +635,8 @@ class LeanService:
         return _Deadline(now + cap, cpu, start, mode)
 
     def _roundtrip(self, mode: str, cases_text: str, count: int, timeout: float | None,
-                   nonce: str, line: bytes, texts: list[str] | None) -> tuple[bytes, dict]:
+                   nonce: str, line: bytes, texts: list[str] | None,
+                   expanded: list | None = None) -> tuple[bytes, dict]:
         deadline = self._deadline(mode, len(cases_text.encode()), count, timeout)
         self._write_all(line, deadline)
         raw = self._read_line(deadline)
@@ -605,7 +650,7 @@ class LeanService:
                 raise _Failure(f"service could not read the request: {response.get('error')}")
             raise _Failure(f"response id does not match the request nonce: {raw[:200]!r}")
         try:
-            check_response(mode, response, request_context(nonce, mode, cases_text, count, texts))
+            check_response(mode, response, request_context(nonce, mode, cases_text, count, texts, expanded))
         except Invalid as exc:
             raise _Failure(f"malformed response ({exc}): {raw[:200]!r}") from None
         return raw, response
@@ -621,10 +666,15 @@ class LeanService:
                 self._recycle = True
 
     def exchange(self, mode: str, cases_text: str, count: int, *, timeout: float | None = None,
-                 budget: dict | None = None, texts: list[str] | None = None) -> tuple[bytes, dict]:
+                 budget: dict | None = None, texts: list[str] | None = None,
+                 environments: dict[str, str] | None = None, expanded: list | None = None
+                 ) -> tuple[bytes, dict]:
         """Send one request whose `cases` is `cases_text` (a JSON array of `count` cases).
         `texts`, when the caller has them, are the case texts `cases_text` joins without
-        whitespace (`case_texts(cases_text)`, which is then not recomputed).
+        whitespace (`case_texts(cases_text)`, which is then not recomputed). `environments` are
+        the texts of the handles the cases name, by digest: those the process does not hold are
+        registered with the request; `expanded` are then the cases with their environments, which
+        the response is checked against. A request error clears the client's handle table.
 
         Returns the raw response line and its decoding, whose results are still bound
         (`{"digest", "index", "result"}`). A request error from the service, bound to the
@@ -643,16 +693,32 @@ class LeanService:
             attempt = 0
             while True:
                 nonce = f"{self._nonce}-{next(self._counter)}"
-                line = self._request_line(nonce, mode, cases_text, budget)
-                if len(line) > MAX_LINE_BYTES + 1:
-                    raise ResourceLimit(f"ResourceLimit: request line exceeds {MAX_LINE_BYTES} bytes")
+                needed: dict[str, str] = {}
+                if not environments:
+                    line = self._request_line(nonce, mode, cases_text, budget)
+                    if len(line) > MAX_LINE_BYTES + 1:
+                        raise ResourceLimit(f"ResourceLimit: request line exceeds {MAX_LINE_BYTES} bytes")
                 try:
                     self._ensure()
-                    raw, response = self._roundtrip(mode, cases_text, count, timeout, nonce, line, texts)
+                    if environments:
+                        # Which environments to register depends on the process, known only now.
+                        needed = {digest: text for digest, text in environments.items()
+                                  if digest not in self._registered}
+                        line = self._request_line(nonce, mode, cases_text, budget, needed)
+                        if len(line) > MAX_LINE_BYTES + 1:
+                            raise ResourceLimit(f"ResourceLimit: request line exceeds {MAX_LINE_BYTES} bytes")
+                    raw, response = self._roundtrip(mode, cases_text, count, timeout, nonce, line, texts,
+                                                    expanded)
                 except _Failure as failure:
                     self._failed_attempt(failure, attempt)
                     attempt += 1
                     continue
+                if response.get("status") == "error":
+                    self._forget_handles()
+                else:
+                    for digest, text in needed.items():
+                        self._note(digest, len(text.encode()))
+                        self.stats["registered"] += 1
                 self._after_request()
                 return raw, response
 
@@ -665,42 +731,86 @@ class LeanService:
                 f"CheckerUnavailable: {failure}" + (f"; stderr: {detail}" if detail else "")) from None
         self.stats["retries"] += 1
 
-    def _chunks(self, texts: list[str], parts: int = 1):
+    def _chunks(self, sent: list, parts: int = 1):
         """Requests of at most `batch_cases` cases and `batch_bytes`, and at least `parts`
-        requests when there are that many cases (so a pool can answer them in parallel)."""
+        requests when there are that many cases (so a pool can answer them in parallel).
+        `sent` are case texts or `_Sent` cases, measured by the text sent."""
         # `size` is the byte length of "[" + ",".join(chunk) + "]".
-        limit = min(self.batch_cases, max(1, -(-len(texts) // max(parts, 1))))
-        chunk: list[str] = []
+        limit = min(self.batch_cases, max(1, -(-len(sent) // max(parts, 1))))
+        chunk: list = []
         size = 1
-        for text in texts:
-            n = len(text.encode())
+        for item in sent:
+            n = len((item.text if isinstance(item, _Sent) else item).encode())
             if n + 2 + ENVELOPE_BYTES > MAX_LINE_BYTES:
                 raise ResourceLimit(f"ResourceLimit: case exceeds {MAX_LINE_BYTES} bytes")
             if chunk and (len(chunk) >= limit or size + n + 1 > self.batch_bytes):
                 yield chunk
                 chunk, size = [], 1
-            chunk.append(text)
+            chunk.append(item)
             size += n + 1
         if chunk:
             yield chunk
 
-    def _run_chunk(self, mode: str, chunk: list[str], timeout: float | None) -> list:
+    def _request(self, mode: str, chunk: list[str], timeout: float | None, *,
+                 environments: dict[str, str] | None = None, expanded: list | None = None) -> dict:
         cases_text = "[" + ",".join(chunk) + "]"
         size = len(cases_text.encode())
         budget = {"cases": self.batch_cases,
                   "bytes": self.batch_bytes if size <= self.batch_bytes else MAX_LINE_BYTES - ENVELOPE_BYTES}
-        _, response = self.exchange(mode, cases_text, len(chunk), timeout=timeout, budget=budget, texts=chunk)
+        _, response = self.exchange(mode, cases_text, len(chunk), timeout=timeout, budget=budget, texts=chunk,
+                                    environments=environments, expanded=expanded)
+        return response
+
+    def _run_chunk(self, mode: str, chunk: list, timeout: float | None) -> list:
+        """The bound entries for one request's cases (texts or `_Sent` cases). Cases that name
+        handles are sent so first; if the service answers that request with a request error,
+        the cases are sent again with their environments, in requests of their own size."""
+        if chunk and isinstance(chunk[0], _Sent):
+            if any(item.digest for item in chunk):
+                response = self._handle_request(mode, chunk, timeout)
+                if response is not None:
+                    return response["results"]
+                with self._lock:
+                    self.stats["handle_resends"] += 1
+            entries: list = []
+            for inline in self._chunks([item.inline() for item in chunk]):
+                entries.extend(self._run_chunk(mode, inline, timeout))
+            return entries
+        response = self._request(mode, chunk, timeout)
         if response.get("status") == "error":
             from .relay import rejection  # relay.py builds on this client
             raise rejection(response["code"], response["error"])
         return response["results"]
+
+    def _handle_request(self, mode: str, chunk: list, timeout: float | None) -> dict | None:
+        """The service's answer to `chunk` sent with handles, or None when it is a request error
+        or would not fit one line with every environment registered."""
+        environments: dict[str, str] = {}
+        for item in chunk:
+            if item.digest:
+                environments.setdefault(item.digest, item.environment)
+        texts = [item.text for item in chunk]
+        line = sum(len(t.encode()) + 1 for t in texts) + sum(
+            len(d) + len(t.encode()) + 4 for d, t in environments.items()) + ENVELOPE_BYTES
+        if line > MAX_LINE_BYTES:
+            return None
+        decoded = {digest: json.loads(text, parse_int=_json_integer) for digest, text in environments.items()}
+        response = self._request(mode, texts, timeout, environments=environments,
+                                 expanded=[item.expanded(decoded) for item in chunk])
+        return None if response.get("status") == "error" else response
+
+    def _sent(self, mode: str, cases: list) -> list:
+        """`cases` as sent: with handles for their environments where this client uses them."""
+        if not self.handles or mode in UNHANDLED_MODES:
+            return _texts(cases)
+        return _encode(cases)
 
     def run_bound(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
         """The bound entries for `cases`, in order: each runner result with, beside a rejection,
         its `code` (and `generator`). Batches above the adapter caps (256 cases or 4 MiB) are
         split into several requests; each is one timeout unit."""
         entries: list = []
-        for chunk in self._chunks(_texts(cases)):
+        for chunk in self._chunks(self._sent(mode, cases)):
             entries.extend(self._run_chunk(mode, chunk, timeout))
         return entries
 
@@ -709,8 +819,55 @@ class LeanService:
         return [entry["result"] for entry in self.run_bound(mode, cases, timeout=timeout)]
 
 
+def _dumps(value) -> str:
+    return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+
+
+class _Sent:
+    """A case as sent with a handle: its text, naming its environment by `digest`, and the
+    environment's text. A case without a JSON-object environment has no digest and is sent as is."""
+    __slots__ = ("case", "text", "digest", "environment")
+
+    def __init__(self, case, text: str, digest: str | None = None, environment: str | None = None):
+        self.case, self.text, self.digest, self.environment = case, text, digest, environment
+
+    def inline(self) -> str:
+        """The case's text with its environment, as sent before batch 2."""
+        return self.text if self.digest is None else _dumps(self.case)
+
+    def expanded(self, environments: dict) -> object:
+        """The case as the service reads it: the decoded text, its handle replaced by the
+        decoded environment (`VE.Service.Handles.expand`)."""
+        case = json.loads(self.text, parse_int=_json_integer)
+        if self.digest is not None:
+            del case[HANDLE_KEY]
+            case["environment"] = environments[self.digest]
+        return case
+
+
+def _encode(cases: list) -> list[_Sent]:
+    """Each case as sent: a case object whose `environment` is an object, and which names no
+    handle itself, names its environment by the SHA-256 of the environment's compact text. An
+    environment object shared by several cases is encoded once."""
+    texts: dict[int, tuple[str, str]] = {}
+    sent = []
+    for case in cases:
+        environment = case.get("environment") if type(case) is dict and HANDLE_KEY not in case else None
+        if type(environment) is not dict:
+            sent.append(_Sent(case, _dumps(case)))
+            continue
+        if id(environment) not in texts:
+            text = _dumps(environment)
+            texts[id(environment)] = (text, case_digest(text))
+        text, digest = texts[id(environment)]
+        rest = {key: value for key, value in case.items() if key != "environment"}
+        rest[HANDLE_KEY] = digest
+        sent.append(_Sent(case, _dumps(rest), digest, text))
+    return sent
+
+
 def _texts(cases: list) -> list[str]:
-    return [json.dumps(case, ensure_ascii=False, separators=(",", ":")) for case in cases]
+    return [_dumps(case) for case in cases]
 
 
 class LeanServicePool:
@@ -745,7 +902,7 @@ class LeanServicePool:
         return [entry["result"] for entry in self.run_bound(mode, cases, timeout=timeout)]
 
     def run_bound(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
-        chunks = list(self._services[0]._chunks(_texts(cases), parts=len(self._services)))
+        chunks = list(self._services[0]._chunks(self._services[0]._sent(mode, cases), parts=len(self._services)))
         if len(chunks) <= 1:
             return self._on_idle(lambda service: service.run_bound(mode, cases, timeout=timeout))
         answers: list = [None] * len(chunks)

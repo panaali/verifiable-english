@@ -26,8 +26,9 @@ def _install():
 
     def run_chunk(self, mode, chunk, timeout):
         if mode in ROUTE_MODES:
-            for text in chunk:
-                _RECORDED.setdefault((mode, text), None)
+            for item in chunk:
+                # A case sent with an environment handle is recorded with its environment (lean-first b2).
+                _RECORDED.setdefault((mode, item if isinstance(item, str) else item.inline()), None)
         return original(self, mode, chunk, timeout)
 
     LeanService._run_chunk = run_chunk
