@@ -254,11 +254,14 @@ module VE.Readings.Examples
 module VE.Readings.Faithful
 module VE.Readings.Force
 module VE.Readings.Labels
+module VE.Readings.Layers
 module VE.Readings.Lines
 module VE.Readings.Live
 module VE.Readings.Names
 module VE.Readings.Route
 module VE.Readings.Run
+module VE.Readings.RunExamples
+module VE.Readings.Scan
 module VE.Readings.Separate
 module VE.Readings.Shape
 module VE.Readings.Simulate

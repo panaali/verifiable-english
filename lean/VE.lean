@@ -13,9 +13,11 @@ import VE.Compose.Content
 import VE.Compose.Adjoin
 import VE.Compose.Examples
 import VE.Readings.Doc
+import VE.Readings.Layers
 import VE.Readings.Separate
 import VE.Readings.Lines
 import VE.Readings.Wire
+import VE.Readings.Scan
 import VE.Readings.Run
 import VE.Readings.Choice
 import VE.Readings.Simulate
@@ -51,6 +53,7 @@ import VE.Readings.SupWireSound
 import VE.Readings.ChoiceWF
 import VE.Readings.Examples
 import VE.Readings.Force
+import VE.Readings.RunExamples
 import VE.Checks
 import VE.Closure.Checks
 import VE.Order.Checks

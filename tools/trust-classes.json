@@ -4400,6 +4400,31 @@
     "VE.Readings.instDecidableNoSep"
    ]
   },
+  "VE/Readings/Layers.lean": {
+   "G[V]": [
+    "VE.Norms.Layers",
+    "VE.Norms.conflictIn",
+    "VE.Norms.entryTable",
+    "VE.Norms.expAt",
+    "VE.Norms.expEntries",
+    "VE.Norms.expStep",
+    "VE.Norms.layersOf",
+    "VE.Norms.outcomeBaseIn",
+    "VE.Norms.pairConflictIn",
+    "VE.Norms.substIn",
+    "VE.Norms.targetsIn",
+    "VE.Rights.validateRightsOnce",
+    "VE.SoftNorms.checkSoftOnce",
+    "VE.SoftNorms.cohPremiseIn",
+    "VE.SoftNorms.selectsOn",
+    "VE.SoftNorms.softPremisesIn",
+    "VE.SoftNorms.softSemanticCheckOnce",
+    "VE.SoftNorms.validateSoftOnce"
+   ],
+   "G[R]": [
+    "VE.SoftNorms.defaultDecidesOn"
+   ]
+  },
   "VE/Readings/Lines.lean": {
    "S": [
     "VE.Readings.GenKey.tag",
@@ -4471,26 +4496,66 @@
   "VE/Readings/Run.lean": {
    "D[V]": [
     "VE.Readings.Run.candidateJson",
+    "VE.Readings.Run.findingsOf",
     "VE.Readings.Run.keyEntry",
     "VE.Readings.Run.oneJson",
     "VE.Readings.Run.optBool",
+    "VE.Readings.Run.pairFactsSpec",
     "VE.Readings.Run.pairJson",
-    "VE.Readings.Run.runLowerWith"
+    "VE.Readings.Run.pendingIn",
+    "VE.Readings.Run.runLowerWith",
+    "VE.Readings.Run.sideAt",
+    "VE.Readings.Run.sidesOf"
    ],
    "G[V]": [
     "VE.Readings.Run.PairFacts",
+    "VE.Readings.Run.candidateJsonSpec",
     "VE.Readings.Run.chainFindings",
     "VE.Readings.Run.decisionOnlyText",
-    "VE.Readings.Run.pairFacts",
+    "VE.Readings.Run.pairFactsIn",
     "VE.Readings.Run.runCase",
     "VE.Readings.Run.runCaseReported",
     "VE.Readings.Run.runLower",
     "VE.Readings.Run.setFindings",
+    "VE.Readings.Run.setFindingsSpec",
     "VE.Readings.Run.setPairs",
+    "VE.Readings.Run.setPairsSpec",
+    "VE.Readings.Run.sideIn",
     "VE.Readings.Run.validateResult"
    ],
    "G[I]": [
     "VE.Readings.Run.documentHash"
+   ]
+  },
+  "VE/Readings/RunExamples.lean": {
+   "G[V]": [
+    "VE.Readings.RunExamples.Counted",
+    "VE.Readings.RunExamples.K15",
+    "VE.Readings.RunExamples.counted",
+    "VE.Readings.RunExamples.m12",
+    "VE.Readings.RunExamples.m4",
+    "VE.Readings.RunExamples.specified",
+    "VE.Readings.RunExamples.tickValue",
+    "VE.Readings.RunExamples.users12",
+    "VE.Readings.RunExamples.users4",
+    "VE.Readings.RunExamples.σHelp",
+    "VE.Readings.RunExamples.σHelp12",
+    "VE.Readings.RunExamples.σK1",
+    "VE.Readings.RunExamples.σWrong",
+    "VE.Readings.RunExamples.σWrong12"
+   ],
+   "G[I]": [
+    "VE.Readings.RunExamples.tickValid",
+    "VE.Readings.RunExamples.σAvoid"
+   ]
+  },
+  "VE/Readings/Scan.lean": {
+   "G[V]": [
+    "VE.Readings.pairEval",
+    "VE.Readings.scanOthers"
+   ],
+   "G[I]": [
+    "VE.Readings.otherScanOn"
    ]
   },
   "VE/Readings/Separate.lean": {
@@ -4501,23 +4566,33 @@
     "VE.Readings.Observes",
     "VE.Readings.Probe",
     "VE.Readings.Separated",
+    "VE.Readings.Side",
     "VE.Readings.Situation",
     "VE.Readings.actOnly",
     "VE.Readings.assignments",
+    "VE.Readings.assignmentsOf",
     "VE.Readings.authorEnv",
+    "VE.Readings.cellsOf",
     "VE.Readings.contentActs",
     "VE.Readings.declaredTyped",
+    "VE.Readings.keyTuplesOn",
     "VE.Readings.kindWord",
     "VE.Readings.observeAll",
     "VE.Readings.owned",
     "VE.Readings.ownedKeys",
+    "VE.Readings.ownedKeysOf",
     "VE.Readings.probeKinds",
     "VE.Readings.probeTyped",
     "VE.Readings.probesOf",
+    "VE.Readings.sideOf",
+    "VE.Readings.sideValidOn",
     "VE.Readings.sideValue",
+    "VE.Readings.sideValueOn",
     "VE.Readings.strictOf",
     "VE.Readings.subsets",
+    "VE.Readings.tablesModelOn",
     "VE.Readings.tablesOf",
+    "VE.Readings.tablesTypedOn",
     "VE.Readings.tuplesOf",
     "VE.Readings.withTables"
    ],
@@ -4525,8 +4600,14 @@
     "VE.Readings.GenKey",
     "VE.Readings.GenKey.source",
     "VE.Readings.Tables",
+    "VE.Readings.actOnlyOf",
+    "VE.Readings.assignmentsOn",
+    "VE.Readings.backgroundValidOn",
     "VE.Readings.cells",
+    "VE.Readings.cellsOn",
     "VE.Readings.decisionOnly",
+    "VE.Readings.decisionOnlyOf",
+    "VE.Readings.declaredTypedOn",
     "VE.Readings.expand",
     "VE.Readings.forceTwins",
     "VE.Readings.genKeys",
@@ -4535,18 +4616,26 @@
     "VE.Readings.keyedNodes",
     "VE.Readings.maxCells",
     "VE.Readings.observe",
+    "VE.Readings.observeOn",
+    "VE.Readings.ownedKeysOn",
     "VE.Readings.relaxTo",
     "VE.Readings.ruleOf",
     "VE.Readings.selectable",
     "VE.Readings.separates",
+    "VE.Readings.sideOfDoc",
     "VE.Readings.sideValid",
+    "VE.Readings.sideValidOf",
+    "VE.Readings.sideValueOf",
     "VE.Readings.situationWF",
+    "VE.Readings.situationWFOf",
     "VE.Readings.strictTwin",
     "VE.Readings.tableOf",
     "VE.Readings.tablesFor",
+    "VE.Readings.tablesForOf",
     "VE.Readings.tablesModel",
     "VE.Readings.tablesTyped",
     "VE.Readings.twinDocs",
+    "VE.Readings.twinDocsOf",
     "VE.Readings.twinLineLists",
     "VE.Readings.twinLines",
     "VE.Readings.twinNodes",
@@ -4666,13 +4755,21 @@
   },
   "VE/Readings/Wire.lean": {
    "C": [
-    "VE.Readings.Wire.replayPair"
+    "VE.Readings.Wire.candidatesOf",
+    "VE.Readings.Wire.frameWF",
+    "VE.Readings.Wire.oneOf",
+    "VE.Readings.Wire.replayPair",
+    "VE.Readings.Wire.stageOf"
    ],
    "D[V]": [
+    "VE.Readings.Wire.Admitted.side",
     "VE.Readings.Wire.Decoded",
     "VE.Readings.Wire.ReadingJ",
     "VE.Readings.Wire.ReadingsEnvironment",
+    "VE.Readings.Wire.admitReadingsSpec",
     "VE.Readings.Wire.attachmentText",
+    "VE.Readings.Wire.candidateStage",
+    "VE.Readings.Wire.candidateText",
     "VE.Readings.Wire.chainText",
     "VE.Readings.Wire.decodeCandidate",
     "VE.Readings.Wire.decodeContent",
@@ -4690,6 +4787,7 @@
     "VE.Readings.Wire.interfaceText",
     "VE.Readings.Wire.keyJson",
     "VE.Readings.Wire.keyText",
+    "VE.Readings.Wire.pendingAt",
     "VE.Readings.Wire.reservedText"
    ],
    "G[V]": [
@@ -4702,9 +4800,11 @@
     "VE.Readings.Wire.SituationJ",
     "VE.Readings.Wire.abstention",
     "VE.Readings.Wire.active",
+    "VE.Readings.Wire.activeOf",
     "VE.Readings.Wire.admissionText",
     "VE.Readings.Wire.admitReadings",
     "VE.Readings.Wire.authorVocabulary",
+    "VE.Readings.Wire.chainTextSpec",
     "VE.Readings.Wire.contentBearing",
     "VE.Readings.Wire.contentKind",
     "VE.Readings.Wire.docOf",
@@ -4713,8 +4813,10 @@
     "VE.Readings.Wire.emptySoft",
     "VE.Readings.Wire.firstSome",
     "VE.Readings.Wire.frameOf",
+    "VE.Readings.Wire.frontText",
     "VE.Readings.Wire.inForce",
     "VE.Readings.Wire.keySorts",
+    "VE.Readings.Wire.onesOf",
     "VE.Readings.Wire.placeholderFrame",
     "VE.Readings.Wire.readingIndex",
     "VE.Readings.Wire.readingsProfile",

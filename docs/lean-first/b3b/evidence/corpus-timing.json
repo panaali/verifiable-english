@@ -1,0 +1,232 @@
+{
+ "corpus_sha256": "4f18eaa29f54535e1a7603cc646369b993309c0a22b56ba7f4e713e84bab55ab",
+ "readings_corpus": [
+  {
+   "run": "lake output 0",
+   "base": {
+    "wall": 136.63,
+    "python_cpu": 2.09,
+    "children_cpu": 96.06,
+    "ok": 621,
+    "rejected": 516,
+    "unavailable": 0
+   },
+   "head": {
+    "wall": 151.77,
+    "python_cpu": 2.09,
+    "children_cpu": 104.27,
+    "ok": 621,
+    "rejected": 516,
+    "unavailable": 0
+   }
+  },
+  {
+   "run": "lake output 1",
+   "base": {
+    "wall": 150.32,
+    "python_cpu": 1.96,
+    "children_cpu": 96.1,
+    "ok": 621,
+    "rejected": 516,
+    "unavailable": 0
+   },
+   "head": {
+    "wall": 169.42,
+    "python_cpu": 2.0,
+    "children_cpu": 104.42,
+    "ok": 621,
+    "rejected": 516,
+    "unavailable": 0
+   }
+  },
+  {
+   "run": "lake output 2",
+   "base": {
+    "wall": 237.34,
+    "python_cpu": 2.17,
+    "children_cpu": 102.59,
+    "ok": 621,
+    "rejected": 516,
+    "unavailable": 0
+   },
+   "head": {
+    "wall": 252.07,
+    "python_cpu": 2.17,
+    "children_cpu": 111.81,
+    "ok": 621,
+    "rejected": 516,
+    "unavailable": 0
+   }
+  },
+  {
+   "run": "fresh copy 1",
+   "base": {
+    "wall": 54.07,
+    "python_cpu": 1.61,
+    "children_cpu": 53.29,
+    "ok": 621,
+    "rejected": 516,
+    "unavailable": 0
+   },
+   "head": {
+    "wall": 53.84,
+    "python_cpu": 1.64,
+    "children_cpu": 53.03,
+    "ok": 621,
+    "rejected": 516,
+    "unavailable": 0
+   }
+  },
+  {
+   "run": "fresh copy 2",
+   "base": {
+    "wall": 56.1,
+    "python_cpu": 1.72,
+    "children_cpu": 55.23,
+    "ok": 621,
+    "rejected": 516,
+    "unavailable": 0
+   },
+   "head": {
+    "wall": 55.74,
+    "python_cpu": 1.7,
+    "children_cpu": 54.87,
+    "ok": 621,
+    "rejected": 516,
+    "unavailable": 0
+   }
+  }
+ ],
+ "pilots": {
+  "base": {
+   "pilot/cc-20261003T0600Z:usecases/claude-constitution-pilot/run-20261003T0600Z/readings/s1.ve.md": [
+    {
+     "wall": 6.14,
+     "python_cpu": 0.0,
+     "children_cpu": 4.99,
+     "exit": 0
+    },
+    {
+     "wall": 5.63,
+     "python_cpu": 0.0,
+     "children_cpu": 5.1,
+     "exit": 0
+    }
+   ],
+   "pilot/cc-20261004T0600Z:usecases/claude-constitution-pilot/run-20261004T0600Z/readings/s1.ve.md": [
+    {
+     "wall": 4.49,
+     "python_cpu": 0.0,
+     "children_cpu": 3.73,
+     "exit": 0
+    },
+    {
+     "wall": 5.2,
+     "python_cpu": 0.0,
+     "children_cpu": 3.7,
+     "exit": 0
+    }
+   ],
+   "pilot/cc-20261004T1800Z:usecases/claude-constitution-pilot/run-20261004T1800Z/readings/s1.ve.md": [
+    {
+     "wall": 6.17,
+     "python_cpu": 0.0,
+     "children_cpu": 4.19,
+     "exit": 0
+    },
+    {
+     "wall": 4.79,
+     "python_cpu": 0.0,
+     "children_cpu": 3.85,
+     "exit": 0
+    }
+   ]
+  },
+  "head": {
+   "pilot/cc-20261003T0600Z:usecases/claude-constitution-pilot/run-20261003T0600Z/readings/s1.ve.md": [
+    {
+     "wall": 6.37,
+     "python_cpu": 0.0,
+     "children_cpu": 4.75,
+     "exit": 0
+    },
+    {
+     "wall": 7.84,
+     "python_cpu": 0.0,
+     "children_cpu": 5.57,
+     "exit": 0
+    }
+   ],
+   "pilot/cc-20261004T0600Z:usecases/claude-constitution-pilot/run-20261004T0600Z/readings/s1.ve.md": [
+    {
+     "wall": 5.44,
+     "python_cpu": 0.0,
+     "children_cpu": 3.65,
+     "exit": 0
+    },
+    {
+     "wall": 4.95,
+     "python_cpu": 0.0,
+     "children_cpu": 3.6,
+     "exit": 0
+    }
+   ],
+   "pilot/cc-20261004T1800Z:usecases/claude-constitution-pilot/run-20261004T1800Z/readings/s1.ve.md": [
+    {
+     "wall": 4.42,
+     "python_cpu": 0.0,
+     "children_cpu": 3.53,
+     "exit": 0
+    },
+    {
+     "wall": 4.66,
+     "python_cpu": 0.0,
+     "children_cpu": 3.7,
+     "exit": 0
+    }
+   ]
+  }
+ },
+ "one_process": {
+  "source": "/usr/bin/time, the 1,137 cases the route sends, in one ve_readings_route process",
+  "base_cpu": [
+   4.36,
+   4.0
+  ],
+  "head_cpu": [
+   3.01,
+   2.97
+  ]
+ },
+ "per_process": {
+  "source": "getrusage, one ve_readings_route process per case, base and head alternating",
+  "base_cpu": 60.71,
+  "head_cpu": 59.8
+ },
+ "startup_100_empty": {
+  "source": "/usr/bin/time, 100 runs of ve_readings_route on an empty batch, user + sys CPU (s)",
+  "runs": [
+   {
+    "base_lake_output": 6.43,
+    "head_lake_output": 6.84,
+    "base_copy": 6.21,
+    "head_copy": 6.3
+   },
+   {
+    "base_lake_output": 4.34,
+    "head_lake_output": 4.95,
+    "head_copy": 4.39
+   },
+   {
+    "base_lake_output": 4.35,
+    "head_lake_output": 4.74,
+    "head_copy": 4.39
+   }
+  ],
+  "extents": {
+   "head_lake_output": 12,
+   "base_lake_output": 5,
+   "head_copy": 1
+  }
+ }
+}

@@ -15,11 +15,14 @@ audit allowlist is unchanged. The namespace is `VE.Readings` (`lean/VE/Route/Rea
 | File | Contents |
 |---|---|
 | `Doc.lean` | 8.2 verbatim: `Chain`, `chainOf`, `Candidate`, `ReadingSet`, `Item`, `Coupling`, `Narrowing`, `Doc`, `candidate`; the names a content uses (`uses`), `declaredBy`, `interfaceOf`, the relation `Attached` and its computation `attached` (a table per fixed unit, one level per step, stopping at a fixed point, fuel `D.items.length`); `place`, `build`, `free`, `one`; `chainWF`, `sideWF`, `reservedFree`, `distinctAcrossSets`, `interfaceClosed`, `singlyAttached`, `WellFormedDoc` |
-| `Separate.lean` | 8.3: `GenKey`, `genKeys`, `owned`, `ownedKeys`; `Tables`, `withTables`, `expand`, `Probe`, `selectable`, `Observes`, `authorEnv`, `Achieves`, `Separated`; the executable check (`Situation`, `tablesModel`, `tablesTyped`, `probeTyped`, `observe`, `sideValid`, `sideValue`, `cells`, `assignments`, `tablesFor`, `tablesOf`, `situationWF`, `separates`); `probesOf`, `observeAll`; `strictOf`, `strictTwin`, `forceTwins`, `relaxTo`, `twinDocs`, `decisionOnly`, `AchievesQuiet`, `actOnly` |
+| `Layers.lean` | Lean-first plan F5d, imported only by the readings route: the expansion table built once (`expEntries`, `expAt`), a document's layers (`Layers`, `layersOf`, `substIn`), the conflict formulas and targets from them (`conflictIn`, `outcomeBaseIn`, `pairConflictIn`, `targetsIn`), and the soft and rights validations with the layers computed once (`selectsOn`, `defaultDecidesOn`, `softPremisesIn`, `checkSoftOnce`, `softSemanticCheckOnce`, `validateSoftOnce`, `validateRightsOnce`); each is declared in the namespace of the function it replaces |
+| `Separate.lean` | 8.3: `GenKey`, `genKeys`, `owned`, `ownedKeys`; `Tables`, `withTables`, `expand`, `Probe`, `selectable`, `Observes`, `authorEnv`, `Achieves`, `Separated`; the executable check (`Situation`, `tablesModel`, `tablesTyped`, `probeTyped`, `observe`, `sideValid`, `sideValue`, `cells`, `assignments`, `tablesFor`, `tablesOf`, `situationWF`, `separates`), each on a candidate's document a caller built once (`ownedKeysOf`, `sideValidOf`, `sideValueOf`, `cellsOf`, `assignmentsOf`, `tablesForOf`, `situationWFOf`, `twinDocsOf`, `decisionOnlyOf`, `actOnlyOf`; the form on `D s i` applies it to `one D s i`); `probesOf`, `observeAll`; a candidate's side computed once from its document (`Side`, `sideOfDoc`, `sideOf`, `tablesModelOn`, `tablesTypedOn`, `keyTuplesOn`, `cellsOn`, `assignmentsOn`, `backgroundValidOn`, `observeOn`, `sideValidOn`, `sideValueOn`; F5d); `strictOf`, `strictTwin`, `forceTwins`, `relaxTo`, `twinDocs`, `decisionOnly`, `AchievesQuiet`, `actOnly` |
 | `Force.lean` | `decision_only_sound` and its three parts: `relaxDoc`, `Twin` and the force lemma for a whole document; `canon_relax`; the premises and probe values over one base; `TwinDocs`, `tablesRel`, `quiet_iff` |
 | `Lines.lean` | DRI ruling 1: `linesOnce`, the admission text `lineOrderText` (4.4), `checkRights` in named steps (equal by `rfl`) and the facts read from it, and `genKeys_nodup` |
-| `Wire.lean` | 8.4: the environment on the three chains, the document's units and active reading sets, contents, keys, tables, probes and situations; the checks of 4.1 with section 7's texts (`admissionText`); `SeparateReplay`, `replaySeparate`, `readings_wire_separate_sound` |
-| `Run.lean`, `../ReadingsMain.lean` | The `ve_readings_route` executable |
+| `Wire.lean` | 8.4: the environment on the three chains, the document's units and active reading sets, contents, keys, tables, probes and situations; the checks of 4.1 with section 7's texts (`admissionText`, stopping at the first); the request's table of every candidate's document (`onesOf`, read by `oneOf`, `Admitted.side`); admission as specified (`admitReadingsSpec`) and as run (`admitReadings`: `candidateStage` builds each candidate's document once, validates it and keeps it in the table, stopping at the first diagnostic); a side's chain checks as specified (`chainTextSpec`) and as run (`chainText`, the layers computed once); `SeparateReplay`, `replaySeparate`, `readings_wire_separate_sound` |
+| `Run.lean` | The `ve_service` mode `readings-route` (`runCaseReported`; the one-shot `ve_readings_route` and its root `../ReadingsMain.lean` were deleted in lean-first batch 1); a candidate's row, a pair's facts, a set's pairs and a set's findings as specified (`candidateJsonSpec`, `pairFactsSpec`, `setPairsSpec`, `setFindingsSpec`) and as run, every document read from the request's table, each candidate's side built from it once per set (`sideIn`, `sidesOf`, `sideAt`) and the other side scanned lazily (`pairFactsIn`, `setPairs`) |
+| `Scan.lean` | The other side of a pair scanned lazily (`scanOthers`, `otherScanOn`) and a pair's facts in a monad that can count the other side's evaluations (`pairEval`) |
+| `RunExamples.lean` | Build-time `#guard` counts of `pairEval`'s evaluations of the other side (batches 3b and 3d review B): one admissibility and one value on a 12-cell query, not 4,096; and which candidates' documents admission builds into the request's table (K15) |
 | `Examples.lean` | Build-time `#guard` regressions on fixtures K1 to K22 of 9.2, K2b's inadmissible base as two theorems, and the two counterexamples to `genKeys_nodup` without its hypothesis (`twiceListed`, `orderOnly`) |
 
 ## Theorems
@@ -102,6 +105,66 @@ audit allowlist is unchanged. The namespace is `VE.Readings` (`lean/VE/Route/Rea
   the conclusion of `separates_sound` for the decoded document, pair and situation.
 * `author_valid`: a base decoded over the author's base model vocabulary is valid over `authorEnv`.
 * `layerNames_sub`: every layer symbol is a regulated or a defined predicate.
+* `admitReadings_eq` (lean-first plan F5b): admission as run equals admission as specified. `admissionText` already
+  validates `free D` and every candidate's `one D s i` (`chainText`); once it finds nothing, `WellFormedDoc` is
+  `frameWF` (`wellFormedDoc_of_admissionText`, from `sideWF_of_chainText`), so admission evaluates `frameWF` instead
+  of validating each document a second time. Admission as run checks the candidates with content (`activeOf`) in
+  `candidateStage`, which builds each of their documents once and keeps it: its answer is the first candidate
+  diagnostic or the table `onesOf D` (`stageOf_eq`, `candidateStage_eq`, `candidateStage_ok`,
+  `admissionText_of_stage`). A pending candidate has no diagnostic (`candidateText`), so leaving it out leaves the
+  first one (`firstSome_filter`, `firstSome_activeOf`) and its document is never built (batch 3b looprecheck B).
+* `oneOf_eq`, `onesOf_holds`, `onesOf_active` (F5b): the table answers `one D s i` for every pair, holds every
+  candidate with content of every set and no pending one, so `oneOf` builds a document itself only for a pending
+  candidate, which only a `readings-separate` request naming it reaches, once, before refusing it.
+  `Admitted.side_eq`: an admitted document's table is that table. `tests/test_readings_lean_sharing.py` walks the compiled route from `main` and finds no other path
+  to `one`.
+
+### `Run.lean` and `Scan.lean`
+
+* `candidateJson_eq` (F5b): a candidate's row reads its document from the request's table, once, for its keys and its
+  findings. `setFindings_eq`: a set's findings read the table, for pairs of candidates with content only; a pair with
+  a pending candidate has neither finding (`pairFindings_pending`), so its sides are not read.
+* `pairEval_id` (`Scan.lean`; F5b, F5d, batches 3b and 3d review B): with each candidate's own side and the other
+  side's cells within `maxCells`, `pairEval` in `Id` is `separates` and the specified fields. Each document is read
+  from its side (`tablesForOf_sideOf`, `situationWFOf_sideOf`), so none is built there. The witness's completion is
+  evaluated once; the other side's completions go through `scanOthers`, each one's admissibility evaluated only when
+  the scan reaches it and its value only when needed (`scanOthers_eq`, `otherScanOn_id`, `and_not_and_any`;
+  `assignments_of_ownedKeys_nil` for `other_value`). `RunExamples.lean` counts those evaluations at build time: one
+  admissibility and one value on a 12-cell query (4,096 completions) that its first completion decides.
+* `pairFactsIn_eq` (F5d): with `side i = sideOf a.D s i` for every `i`, a pair's facts read from the sides equal
+  `pairFactsSpec`. `replayPair_doc`: a replay is of the admitted document and the requested set.
+* `sideIn_eq`, `sideAt_sidesOf` (F5b, F5d): a candidate's side built from the request's table (`sideIn`, the merge
+  of batches 3b and 3d) is `sideOf a.D s i`, and so is the per-set cache `sidesOf` (each side a `Thunk`, built when
+  first read) at every `i`. `setPairs_eq`: a set's pairs read from the cache equal `setPairsSpec`, where each pair
+  builds both sides' layers. Batch 3b's `pairFacts` (the documents from the table, each formula's layers rebuilt)
+  is replaced by `pairFactsIn`, which reads both.
+
+### `Layers.lean` (lean-first plan F5d)
+
+`expTable T i` answers a lookup by recomputing the layer order (a topological sort of the stratum DAG) at each of
+the `i` levels, and `envAt` and `size` recompute it too; a validation of a UDHR candidate computed it a few hundred
+times, and a pair's two conflict formulas once per level. Each function here computes it once per document and is
+equal to the function it replaces:
+
+* `expAt_expEntries`: the table of the first `i` layer symbols read from `expEntries T` (one entry per symbol,
+  newest first, each symbol's base formula a `Thunk` built when first read under the entries before it) is
+  `expTable T i`; from `entryTable_take` (by induction on `i`), `expStep_foldl_drop` and `expStep_foldl_length`.
+  `subst_expAt` and `substIn_eq`: `subst` read from the entries.
+* `layersOf_syms`, `layersOf_names`, `layersOf_entries` (`rfl`): the layers of a document are its layer symbols,
+  their names and `expEntries`.
+* `conflictIn_eq`, `outcomeBaseIn_eq`, `pairConflictIn_eq`, `targetsIn_eq`: the conflict formulas and the
+  conflict targets from a document's layers are `conflict`, `outcomeBase`, `pairConflict` and `targets`.
+* `selectsOn_soften` (`rfl`), `softPremisesIn_eq`: `selects′` and the soft premises with `soften D` and its layers
+  given.
+* `checkSoftOnce_eq`, `softSemanticCheckOnce_eq`, `validateSoftOnce_eq`, `validateRightsOnce_eq`: the soft and
+  rights validations with the layers computed once are `checkSoft`, `softSemanticCheck`, `validateSoft` and
+  `validateRights`.
+
+In `Separate.lean`: `ownedKeysOn_sideOf`, `cellsOn_sideOf`, `assignmentsOn_sideOf`, `tablesModelOn_sideOf` (`rfl`),
+`sideValidOn_sideOf` and `sideValueOn_sideOf`: a candidate's completions read from `sideOf D s i` are `ownedKeys`,
+`cells`, `assignments`, `tablesModel`, `sideValid` and `sideValue`. In `Wire.lean`: `chainText_eq`, a side's chain checks as run (each
+validation by its `Once` function, the complete environment for the assertions computed once) equal
+`chainTextSpec`; `sideWF_of_chainText` now reads `chainTextSpec` through it.
 
 ### `Force.lean`
 
