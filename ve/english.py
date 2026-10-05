@@ -1711,12 +1711,16 @@ def _parse_english_document_uncached(env, source, *, _with_structure=False, **op
         raise ResourceLimit(f'English source exceeds {MAX_SOURCE_BYTES} bytes')
     words = EnglishVocabulary(env, **options)
     from .backends import dispatch
-    from .backends.english_lean import shadow_record
-    reading = dispatch.execute(
-        'english.admission', {'environment_id': env.environment_id, 'source': source},
-        lambda: _python_reading(env, source, words, options),
-        lean=lambda: _lean_reading(env, source, words, options),
-        shadow=lambda python, lean: shadow_record(env, source, words, python, lean))
+    if not dispatch.overridden('english.admission'):
+        # The Lean reader is not built (english-lean S2.4): only a named override dispatches the reading.
+        reading = _python_reading(env, source, words, options)
+    else:
+        from .backends.english_lean import shadow_record
+        reading = dispatch.execute(
+            'english.admission', {'environment_id': env.environment_id, 'source': source},
+            lambda: _python_reading(env, source, words, options),
+            lean=lambda: _lean_reading(env, source, words, options),
+            shadow=lambda python, lean: shadow_record(env, source, words, python, lean))
     reading.check_conclusions()
     result = reading.document, source, reading.words, reading.conclusions
     if _with_structure:
