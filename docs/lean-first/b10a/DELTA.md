@@ -107,7 +107,22 @@ Base records `feb024e0436d…`, head records `8c96c407eb77…` (SHA-256 of the r
 
 ## Suite at the head
 
-To be filled from the clean-worktree run of the head.
+The clean-worktree gate is `python3 tools/gate.py --workers 16`; its result for this final
+commit is reported at handoff. The gate builds Lean and Rust, audits theorems, and runs
+the full non-live Python suite. Its result file is written outside the worktree so the
+source identity check sees a clean HEAD throughout the run.
+
+Two failures found by earlier full-gate runs were fixed before this final gate:
+
+1. `tests/test_wire_contract_lint.py::test_l13_write_after_a_revision_changes_only_generated_files`
+   and `tests/test_wire_contract_s4_lean.py::test_t3_the_switch_edit_changes_only_the_generated_revision`
+   found `Layered.lean` appended out of path order in `frozen-sources.sha256`. The wire-contract
+   writer sorts that inventory. The inventory is now sorted, its hashes are unchanged,
+   `VE/Route/frozen.py` passes, and both tests pass.
+2. `tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit`
+   found the new atom-budget fixture absent from the norm-defaults unit corpus. The unit's
+   input recorder added that one source to `norm-defaults@0-test-inputs.json`. The corpus
+   gate test then passed, including its nested recording run.
 
 ## What batch 10b must list when the callers switch
 
