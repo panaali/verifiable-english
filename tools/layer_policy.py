@@ -19,11 +19,13 @@ PYTHON = {
     2: ("background closure definitions entailment evaluate norms order profiles "
         "alternatives reports rights softnorms softnorms_contract norms_contract speech_acts units").split(),
     3: ("english english_phrases english_vocabulary fluent fol grammar natural "
-        "norm_english parser printer surface lexicon report_english speech_english readings_english").split(),
+        "norm_english parser printer surface lexicon report_english speech_english readings_english "
+        "readings_s2_english").split(),
     4: ("__main__ adapters admission argument attacks authoring backends bundle check "
         "document equivalence norm_admission norm_defaults norm_defaults_contract norm_defaults_english norm_defaults_route norm_strict "
         "openterms propose readings search stream_audit vacuity assist discourse quantity_admission "
-        "reports_route risk rights_route soft_route speech_document readings_route readings_s1").split(),
+        "reports_route risk rights_route soft_route speech_document readings_route readings_s1 "
+        "readings_sup readings_verdicts readings_s2_wording").split(),
     5: ["argument_fixtures"],
 }
 PYTHON_MODULES = {f"ve.{name}": layer for layer, names in PYTHON.items() for name in names}

@@ -14,7 +14,7 @@ from pathlib import Path
 
 from .assurance import semantic_entry
 from .admission import _check_kind, admit_document, token
-from .ast import Document, formula_from_data, formula_to_data
+from .ast import Document, decimal_value, formula_from_data, formula_to_data
 from .backends.lean_service import CheckerUnavailable
 from .environment import Environment, listed_profiles
 from .errors import ResourceLimit, VEError
@@ -596,6 +596,11 @@ def _load_document(raw: bytes, path: str | Path, lean):
             raise VEError("asserted unit needs content or a reading set")
     narrowings = meta.get("narrowings", [])
     validate_narrowings(narrowings, reading_sets, unit_ids)
+    readings_s2 = None
+    if s1_content:
+        from .readings_route import elaborate as elaborate_s2
+        readings_s2 = elaborate_s2(env.to_dict(), compiled, reading_sets,
+                                    couplings=couplings, narrowings=narrowings)
     weights = meta.get("weights", [])
     if type(weights) is not list or any(type(w) is not dict or set(w) != {"set", "by", "values"} for w in weights):
         raise VEError("invalid removable reading weights")
@@ -607,6 +612,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
            "norm_defaults": norm_defaults,
            "reports": reports, "rights_document": rights_document,
            "readings_s1": readings_s1,
+           "readings_s2": readings_s2,
            "reading_plan": plan_choices(active if couplings else
                                         [r for r in active if r["status"] == "open"],
                                         couplings=couplings)}
@@ -709,7 +715,9 @@ def _lower_soft_document(doc):
     """The soft document the lower route checks: under `readings@1` the head strips the profile and hands every
     other case to the lower route (composition-s1.md 4.1), so its environment is the one without it."""
     soft = doc["soft_document"]
-    if "readings@1" not in doc["environment"].profiles:
+    if "readings@1" not in doc["environment"].profiles or (soft is None and doc["rights_document"] is None):
+        # The norms chain has no soft document, with or without `readings@1` (DRI ruling 4: a norms document with
+        # `norm-defaults@0` and `readings@1` reaches this with a claim graph).
         return soft
     data = doc["environment"].to_dict()
     data["profiles"] = [p for p in data["profiles"] if p != "readings@1"]
@@ -1235,8 +1243,10 @@ def _report(doc):
         result["premises"] = {"status": "UNKNOWN",
                               "reason": "alternatives premise satisfiability requires the alternatives route"}
     elif _content_bearing(doc):
-        # composition-s1.md 4.8: S1 adds no verdict; a result that depends on a content-bearing set waits for S2.
-        result["premises"] = {"status": "UNKNOWN", "reason": "superposition pending"}
+        # composition-s2.md 1.1, 4.5 and 4.6: the premises across readings on the superposed or the enumerated
+        # route, each verdict from evidence Lean checked; the pending row keeps today's UNKNOWN.
+        from .readings_verdicts import context
+        result["premises"] = context(doc).premises()
     elif _unresolved_norm_reading(active):
         result["premises"] = {"status": "UNKNOWN", "reason": "non-assertion reading elaboration pending"}
     elif joint_pending or (joint is not None and joint["constraints"] and joint_formula is None):
@@ -1423,6 +1433,8 @@ def main(argv=None):
         sub.add_parser(name).add_argument("path")
     sub.choices["readings"].add_argument("--conclusion", help="formula AST JSON file to classify")
     sub.choices["readings"].add_argument("--narrowing", help="apply a recorded narrowing by id")
+    sub.choices["readings"].add_argument("--under", action="append", metavar="SET:INDEX",
+                                         help="a named reading of a content-bearing set (composition-s2.md 4.5)")
     args = parser.parse_args(argv)
     if args.command == "render":
         print(render_document(args.path), end="")
@@ -1433,8 +1445,32 @@ def main(argv=None):
         doc = load_document(args.path)
         if args.command == "coverage":
             data = coverage(doc)
+        elif args.under and not args.conclusion:
+            raise VEError("--under requires --conclusion")
         elif args.conclusion:
             conclusion = json.loads(Path(args.conclusion).read_text())
+            if _content_bearing(doc):
+                # composition-s2.md 4.5 and 4.6: ALL, SOME or NONE across the readings of a content-bearing
+                # document. Every narrowing in force is already a premise there (1.2); `--narrowing` is W2's.
+                if args.narrowing:
+                    raise VEError("--narrowing applies to W2's route; on the superposed and enumerated routes "
+                                  "every narrowing in force is a premise")
+                from .readings_verdicts import context
+                from .readings_s2_wording import query_english
+                assumed = None
+                if args.under:
+                    assumed = []
+                    for item in args.under:
+                        set_id, _, index = item.rpartition(":")
+                        if not set_id or not index.isdigit():
+                            raise VEError("--under takes SET:INDEX")
+                        assumed.append((set_id, decimal_value(index)))
+                data = context(doc).entailment(conclusion, assumed=assumed)
+                data["english"] = query_english(doc, conclusion, data)
+                print(json.dumps(data, ensure_ascii=False, indent=2))
+                return 0
+            if args.under:
+                raise VEError("--under names readings of a content-bearing set (composition-s2.md 4.5)")
             active = active_reading_sets(doc["meta"].get("reading_sets", []))
             sets = [{**r, "readings": [{**c, "original_index": i}
                                       for i, c in enumerate(r["readings"])]} for r in active]

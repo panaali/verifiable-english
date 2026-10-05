@@ -637,7 +637,8 @@ class SoftenedNormDocument(NormDocument):
         data['vocabulary']['predicates'] = {
             name: {k: v for k, v in decl.items() if k != 'instruction_of'}
             for name, decl in data['vocabulary']['predicates'].items() if 'regulated' not in decl}
-        data['profiles'] = [p for p in data['profiles'] if p not in ('norms@0', 'soft-norms@0')]
+        # `readings@1` is the head's layer, never the base vocabulary's (DRI ruling 4's class).
+        data['profiles'] = [p for p in data['profiles'] if p not in ('norms@0', 'soft-norms@0', 'readings@1')]
         return SoftBaseEnvironment(data, getattr(self, 'soft_premises', ()))
 
 
