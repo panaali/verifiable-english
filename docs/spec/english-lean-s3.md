@@ -1199,9 +1199,9 @@ The budgets of GE2 are obligations of its report.
 | ev8 | `english.read` on the environment JSON of `FA` (the `alternatives` block, `alternatives@0` and `norms@0` named), with `LA`: al1, al31, al32 | the outcomes of 8.3, typed; `environment_id` is Python's and equals `Alternatives.Replay.environmentId` |
 | ev9 | `english.read` on the JSON of `FR` (both blocks), with `LR`: ri1, ri4, ri7, ri9 | the outcomes of 8.4, typed: the generated predicates and the severity classes are declared in the typing view; `environment_id` is Python's |
 | ev10 | `english.read` on the JSON of `FM` (`access` and `review` with `regulated` declarations and act phrases), with `LM`: mo1, mo2; the same with an act phrase written with doubled spaces | the outcomes of 8.5, typed; the same forms and the same `environment_id` for both spellings of the act |
-| ev11 | `english.read` on the JSON of `FR` with the W6 unit extension as the risk route admits it: `unit_schema`, `units`, and unit annotations on a predicate and on a constant | admitted; the outcomes of ev9; `environment_id` over the submitted JSON, annotations included |
+| ev11 | `english.read` on the JSON of `FR` with the W6 unit extension as the risk route admits it: the profiles exactly `alternatives@0`, `norms@0`, `relational-fol@0`, `risk@0` (`Risk.Wire.unitProfiles`); `unit_schema`; `units` declaring one tag `usd`, `{"scale": "100", "display": {"kind": "money", "currency": "USD"}}`; an empty `argument_units` on `leads_to`; the constant `wait` with the `verbalisation` `wait`. `FR` has no integer slot and no integer constant, so no slot and no constant carries a unit: those annotations are refused (`Time/Wire.lean:234`, `Risk/Wire.lean:135`) and are cases of ev13 | admitted; the outcomes of ev9; `environment_id` over the submitted JSON, annotations included |
 | ev12 | malformed profile declarations: `alternatives@0` named without a block; a block without the profile; `risk@0` without `alternatives@0`; a block with an unknown field; a block that names an undeclared sort | refused before the reader runs, each. So a decoded `Env` has a block exactly when the profile is named |
-| ev13 | malformed unit declarations on `FR`'s JSON: `units` without `unit_schema`; `argument_units` with an undeclared tag; a `unit` on a constant that is not an integer | refused before the reader runs, each |
+| ev13 | malformed unit declarations on ev11's JSON: `units` without `unit_schema`; a nonempty `argument_units` on `leads_to`, whose slots are not integers, with the declared tag `usd` and with an undeclared tag; a `unit` on a constant that is not an integer (`usd` on `wait`) | refused before the reader runs, each |
 
 ### 8.13 The iff claims, both directions
 
@@ -1425,6 +1425,12 @@ precedes the shape check inside one term (`english.py:1157–1167`), so or38 has
 row the review cited `printer.py:271–272` for `TEMPLATE_LENGTH`; that line is the rule for more than two
 arguments, and the rule for one or two is `:225–226` with the limits of `:104–105`. The table of 2.9 gives
 both.
+
+The verification of these corrections (`manage-agents/english-lean-s3-p3ver1.final.md`) found one error,
+corrected here. Draft 2's ev11 put unit annotations on a predicate slot and on a constant of `FR`, which has
+no integer slot and no integer constant, so the frozen decoder refuses both and ev11 could not be admitted.
+ev11 now names a valid environment (the unit profile tuple, one declared tag, an empty `argument_units`, a
+constant `verbalisation`), and the refused annotations are cases of ev13.
 
 What may start, as the review converged: S3.0 and S3.5's harness at once; S3.1 to S3.3 on this draft; S3.4's
 proofs and E2.1 after the bounded re-check of section 10, items 14 to 21.
