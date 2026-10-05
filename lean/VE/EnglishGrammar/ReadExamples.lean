@@ -518,6 +518,42 @@ def F7 : Env := env (envJson false sortsF
 #guard (EFormula.pred "owner_of" [v 0, v 0, c "alice"]).encode.compress ==
   "[\"atom\",\"owner_of\",[[\"var\",0],[\"var\",0],[\"const\",\"alice\"]]]"
 
+-- every constructor of the strict AST, against Python's `_to_data` on the same nodes
+#guard (EFormula.and (.or .top .bottom) (.implies (.not (.eq (c "a") (v 1)))
+    (.all "s" (.ex "s" (.and (.lt (.add (.scale 3 (v 0)) (.num (-2))) (.num 5)) (.le (.num 0) (v 0))))))).encode.compress ==
+  "[\"and\",[\"or\",[\"top\"],[\"bottom\"]],[\"implies\",[\"not\",[\"eq\",[\"const\",\"a\"],[\"var\",1]]],[\"forall\",\"s\",[\"exists\",\"s\",[\"and\",[\"lt\",[\"add\",[\"scale\",\"3\",[\"var\",0]],[\"num\",\"-2\"]],[\"num\",\"5\"]],[\"le\",[\"num\",\"0\"],[\"var\",0]]]]]]]"
+#guard (EFormula.and (.reachNamed false "r" (c "a") (c "b"))
+    (.reachBody true "s" (.pred "p" [v 0, v 1, c "c"]) (c "a") (c "b"))).encode.compress ==
+  "[\"and\",[\"reach\",\"plus\",[\"named\",\"r\"],[\"const\",\"a\"],[\"const\",\"b\"]],[\"reach\",\"star\",[\"body\",\"s\",[\"atom\",\"p\",[[\"var\",0],[\"var\",1],[\"const\",\"c\"]]]],[\"const\",\"a\"],[\"const\",\"b\"]]]"
+#guard (EFormula.and (u "u" (c "a")) (b "b" (c "a") (v 0))).encode.compress ==
+  "[\"and\",[\"unary\",\"u\",[\"const\",\"a\"]],[\"binary\",\"b\",[\"const\",\"a\"],[\"var\",0]]]"
+
+/-! ## Malformed input, a zero budget, the rendered-text check in both directions -/
+
+-- `Env.decode` and the typed check fail closed on malformed JSON; nothing is read as an empty environment
+#guard (Env.decode (Json.mkObj []) (Json.mkObj [])).toOption.isNone
+#guard (Env.decode (Json.num 7) (Json.mkObj [])).toOption.isNone
+#guard (Env.decode ((envJson false sortsF predsF constsF).setObjVal! "vocabulary"
+  (Json.mkObj [("sorts", Json.mkObj []), ("predicates", Json.mkObj [("p", Json.mkObj [("arguments", Json.num 7)])]),
+    ("constants", Json.mkObj [])])) (Json.mkObj [])).toOption.isNone
+#guard (Env.decode (envJson false sortsF predsF constsF) (Json.mkObj [("constants", Json.arr #[])])).toOption.isNone
+#guard (Env.decode (envJson false sortsF predsF constsF) .null).toOption.isSome
+#guard !typedDocument { F with source := Json.num 7 } [u "deployed" (c "legacy")]
+#guard !typedDocument { F with source := .null } [u "deployed" (c "legacy")]
+#guard !typedDocument F [u "deployed" (c "alice")]
+#guard !typedDocument F [u "audited" (c "legacy")]
+#guard typedDocument F [u "deployed" (c "legacy")]
+-- a zero budget is `budget`, never `none`, `ok` or a reading set
+#guard summary (read F {} LF 0 "Legacy is deployed.") == .stopped 0 .budget
+#guard (match translate F {} LF 2 0 "Legacy is deployed." with
+  | .budget => true
+  | _ => false)
+-- `checkRendering` is true exactly when `read` returns these formulas and marks
+#guard checkRendering F {} LF workBudget [(u "deployed" (c "legacy"), false)] "Legacy is deployed."
+#guard !checkRendering F {} LF workBudget [(u "deployed" (c "legacy"), true)] "Legacy is deployed."
+#guard !checkRendering F {} LF workBudget [(u "reviewed" (c "legacy"), false)] "Legacy is deployed."
+#guard !checkRendering F {} LF workBudget [] "Every sevice is reviewed."
+
 /-! ## The document state -/
 
 #guard (DState.init.after (.and (u "deployed" (c "legacy")) (b "owns" (c "alice") (c "legacy")))) ==
