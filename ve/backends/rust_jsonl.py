@@ -17,6 +17,22 @@ BUILD_LOCK = ROOT / "lean/checkers.lock"
 MAX_LINE_BYTES = 16 * 1024 * 1024
 
 
+_SPAN_FIELDS = ("start", "end", "line", "column")
+
+
+def error_record(record: dict) -> bool:
+    """Whether `record` is `case_record`'s error shape (rust/ve/src/main.rs): `{"id", "status":
+    "error", "error"}` with `error` ve-core's `Error` (`code`, `message`, and a `Span` of four
+    naturals when it has one). Anything else rejects nothing: it is no answer of the checker."""
+    error = record.get("error")
+    if set(record) != {"id", "status", "error"} or type(error) is not dict:
+        return False
+    span = error.get("span", {field: 0 for field in _SPAN_FIELDS})
+    return (set(error) <= {"code", "message", "span"} and type(error.get("code")) is str
+            and type(error.get("message")) is str and type(span) is dict and set(span) == set(_SPAN_FIELDS)
+            and all(type(span[field]) is int and span[field] >= 0 for field in _SPAN_FIELDS))
+
+
 def _run_checker(argv, *, input, timeout):
     """`subprocess.run` through Popen, as the Lean service client starts its
     process: a test's fake of `subprocess.run` for some other process cannot
@@ -99,12 +115,14 @@ def run(case: dict, *, executable: str | os.PathLike | None = None,
             f"CheckerUnavailable: Rust protocol failure (exit {completed.returncode}; {detail})")
     try:
         record = _decode_json(lines[0])
-    except (UnicodeDecodeError, ValueError):
+    except ValueError:
         raise CheckerUnavailable("CheckerUnavailable: malformed Rust JSONL response") from None
-    if not isinstance(record, dict) or record.get("id") != case.get("id", ""):
+    if not isinstance(record, dict) or type(record.get("id")) is not str or record["id"] != case.get("id", ""):
         raise CheckerUnavailable("CheckerUnavailable: mismatched Rust response id")
     if (record.get("status") == "error") != (completed.returncode == 1):
         raise CheckerUnavailable("CheckerUnavailable: Rust exit status disagrees with response")
+    if record.get("status") == "error" and not error_record(record):
+        raise CheckerUnavailable("CheckerUnavailable: malformed Rust error record")
     if case.get("kind") == "evaluate-budgeted" and record.get("status") != "error":
         expected = {"id", "status", "value", "evaluations"}
         if case.get("trace") is True:
