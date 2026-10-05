@@ -116,7 +116,7 @@ exceeds the route's 120 s limit. On the head, the call completes and the check a
 answer to the same captured case (the paired runs above), so the report's readings content is the base's own
 answer, which the base could not deliver within the limit.
 
-**Signature:** DRI, availability A1 (1 record) — **pending**.
+**Signature:** DRI, availability A1 (1 record) — signed 2026-10-04: the UDHR document now loads (was CheckerUnavailable at the limit); answers byte-identical elsewhere.
 
 ## Gate item 4: latency
 
