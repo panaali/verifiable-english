@@ -415,6 +415,11 @@ def FixedAct.action (lhs : Ty) (τs : List Ty) : FixedAct → Action sig
     build [.term, .term, .count, .unit, .declaration, .unit, .declaration, .formula] .formula
       (fun xs => runReachBody listed xs.2.2.1 xs.1 xs.2.1 xs.2.2.2.2.1 xs.2.2.2.2.2.2.1 xs.2.2.2.2.2.2.2.1) τs
   | .count refl => constant .count refl τs
+  -- The actions of the staged rows (docs/spec/english-lean-s3.md 2.7) are stage S3.3's. Until they are
+  -- written, a rule that names one is `unfit`, which `Grammar.typed` refuses (`invalidGrammar`); no fixed
+  -- table of a profile list holds such a rule before S3.2.
+  | .intNegate | .intConst | .intTwice | .numeral _ | .intBracket | .op | .intCmp _ _ | .relOr | .verbSubject
+  | .verbSame => unfit
 
 /-- The action of a lexical row, from the types of its right-hand side (spec 2.7). -/
 def LexAct.action (τs : List Ty) : LexAct → Action sig

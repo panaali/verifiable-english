@@ -1,0 +1,10 @@
+[
+{"tag": "formula.alternatives", "lhs": "formula", "act": "nest", "rhs": [{"n": "alt_available_guard"}]},
+{"tag": "verb-phrase.one", "lhs": "alt_verb_phrase", "act": "through", "rhs": [{"n": "alt_verb_atom"}]},
+{"tag": "verb-phrase.either", "lhs": "alt_verb_phrase", "act": "relOr", "rhs": ["either", {"n": "alt_verb_atom"}, "or", {"n": "alt_verb_atom"}]},
+{"tag": "verb-phrase.either-both", "lhs": "alt_verb_phrase", "act": "relOr", "rhs": ["either", {"n": "alt_verb_atom"}, "or", {"n": "alt_verb_atom"}, {"p": ",", "before": true}, "or", "both"]},
+{"tag": "verb-phrase.both", "lhs": "alt_verb_phrase", "act": "relAnd", "rhs": ["both", {"n": "alt_verb_atom"}, "and", {"n": "alt_verb_atom"}]},
+{"tag": "verb-atom.relative", "lhs": "alt_verb_atom", "act": "through", "rhs": [{"n": "relative"}]},
+{"tag": "verb-atom.subject", "lhs": "alt_verb_atom", "act": "verbSubject", "rhs": [{"n": "alt_head"}, {"n": "relative"}]},
+{"tag": "verb-atom.same", "lhs": "alt_verb_atom", "act": "verbSame", "rhs": [{"n": "alt_head"}, {"c": "is"}, {"c": "the"}, {"c": "same"}, {"c": "as"}, {"n": "term"}]}
+]

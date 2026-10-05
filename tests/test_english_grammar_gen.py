@@ -218,7 +218,8 @@ def test_a_new_english_grammar_lean_file_must_be_classified(tree):
 
 def test_every_lean_file_of_the_two_directories_is_classified():
     found = set(G.file_listing(ROOT)())
-    classified = set(G.TRUSTED) | set(G.UNTRUSTED) | {TARGET}
+    classified = (set(G.TRUSTED) | set(G.UNTRUSTED) | {target for _, target, _ in G.PROFILES.values()}
+                  | set(G.generated_extras()))
     assert found == classified
 
 

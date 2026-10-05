@@ -68,7 +68,13 @@ def Conn.name : Conn → String
   | .or => "or"
   | .implies => "implies"
 
-/-- The fixed actions of spec 2.7, each with its data. -/
+/-- The comparison of an integer comparison row (docs/spec/english-lean-s3.md 2.5). -/
+inductive Cmp where
+  | eq | lt | le
+  deriving DecidableEq, Repr
+
+/-- The fixed actions of spec 2.7, each with its data, and those of the `order@0` and `alternatives@0`
+rows (docs/spec/english-lean-s3.md 2.5, 2.7). -/
 inductive FixedAct where
   | sentence (marked : Bool)
   | mark | unit | listMarker | through | nest | not | and2 | or2 | implies2
@@ -81,6 +87,9 @@ inductive FixedAct where
   | coordSubjects (k : Conn) | coordAdjectives (k : Conn)
   | naturalTop | someDecl | copulaAnd | noDecl | everySubject | everyOwner
   | reachNamed | reachBody (listed : Bool) | count (reflexive : Bool)
+  | intNegate | intConst | intTwice | numeral (negative : Bool) | intBracket | op
+  | intCmp (k : Cmp) (swapped : Bool)
+  | relOr | verbSubject | verbSame
   deriving DecidableEq, Repr
 
 /-- A row of the fixed-rule source (spec 2.9). -/
