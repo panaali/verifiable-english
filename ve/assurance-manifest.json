@@ -54,7 +54,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 19258,
+    "total_lines": 19272,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
@@ -178,13 +178,13 @@
       {"file": "lean/VE/NormDefaults/Wire.lean", "lines": 383, "sha256": "c59e1151313d522e071f624b428f302db515af5c9cb30e86a632a6e05c81a536",
        "ranges": [[1, 383]], "declarations": ["placeholderJson", "checkAuthorN", "decodeSourceU", "baseEnvironmentJsonU", "decodePackageU", "replayConflictU", "replayEntailmentU"],
        "reason": "norm-defaults@0 source, package and certificate decoder; the full file is pinned conservatively"},
-      {"file": "lean/VE/NormDefaults/Replay.lean", "lines": 377, "sha256": "0310b9e35bec8eff4d186dafb46f057f14ea4653f70a835d836e25e9dfaf56d7",
-       "ranges": [[1, 377]], "declarations": ["witnessFromU", "replayWitnessU", "decodeFilling", "replayStatus", "replayGaps", "reachedFromU", "replayReached"],
+      {"file": "lean/VE/NormDefaults/Replay.lean", "lines": 391, "sha256": "4242c79ff826cc94cee7f211f1a3f7d86e44537bb84702a3d7d570d4f70caad3",
+       "ranges": [[1, 391]], "declarations": ["witnessFromU", "replayWitnessU", "decodeFilling", "replayStatus", "replayGaps", "reachedFromU", "replayReached"],
        "reason": "norm-defaults@0 witness, status and gap decoder; the full file is pinned conservatively"},
       {"file": "lean/VE/NormDefaults/Report.lean", "lines": 469, "sha256": "f54bf146c71942e0e0ac98c72d377deb46eb2712814b81b47da172ed7b306fc3",
        "ranges": [[1, 469]], "declarations": ["groundingCites", "validateCompletions", "reportWith", "situationFrom", "suppliedWitness", "neverReached", "reportFrom"],
        "reason": "norm-defaults@0 report decoder: the completions block, the base situation, supplied filled witnesses and reached packages; the full file is pinned conservatively"},
-      {"file": "lean/VE/NormDefaults/Layered.lean", "lines": 426, "sha256": "66690f53b646c359d46ce91aad983661017d36c991f057187f0ef3aeea79bd62",
+      {"file": "lean/VE/NormDefaults/Layered.lean", "lines": 426, "sha256": "a9c026e9649014a496654c600527099d34ebb32bd3b59663b45374604168fb10",
        "ranges": [[1, 426]], "declarations": ["decodeSoftU", "decodeRightsU", "decodeLayered", "decodePackageX", "situationX", "tupleOf", "filledX", "witnessConflictX", "replayStatusX", "suppliedX", "neverX", "runLayered"],
        "reason": "norm-defaults@0 soft and rights branch decoder: the placeholder source through the soft or rights decoder, packages bound to the source and the layered base background, base situations with a separate filling, statuses and supplied witnesses; the full file is pinned conservatively"},
       {"file": "lean/VE/NormDefaults/Admission.lean", "lines": 350, "sha256": "b60054268019832d7de8374fb800954933526f31d93ad86a42958b72da4895a5",

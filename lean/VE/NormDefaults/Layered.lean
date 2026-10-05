@@ -280,7 +280,7 @@ structure FilledX (L : LayeredU) where
 
 def filledX (L : LayeredU) (w : Json) : Except String (FilledX L) := do
   let S ← situationX L (← w.getObjVal? "model")
-  let F ← decodeFilling L.U (w.getObjValD "filling")
+  let F ← decodeFilling L.U S.M (w.getObjValD "filling")
   if hf : fillValid L.U S.M F = true then
     if hx : extraValid L.U L.X S.M F = true then pure ⟨S, F, hf, hx⟩
     else
@@ -347,8 +347,8 @@ def replayStatusX (L : LayeredU) (j : Json) : Except String (StatusX L) := do
           (fun h => by cases h)⟩
       | none => pure unknown
     else if method == "undecided" then
-      let F₁ ← decodeFilling L.U (j.getObjValD "yes")
-      let F₂ ← decodeFilling L.U (j.getObjValD "no")
+      let F₁ ← decodeFilling L.U S.M (j.getObjValD "yes")
+      let F₂ ← decodeFilling L.U S.M (j.getObjValD "no")
       if hc : fillValid L.U S.M F₁ = true ∧ fillValid L.U S.M F₂ = true ∧
           extraValid L.U L.X S.M F₁ = true ∧ extraValid L.U L.X S.M F₂ = true ∧
           (outcomeBase (fill L.U) r.name).eval (S.M.withFill F₁) (tupleVal vs) = true ∧

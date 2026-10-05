@@ -178,13 +178,27 @@ def Status.label : Status → String
   | .undecided => "UNDECIDED"
   | .unknown => "UNKNOWN"
 
-/-- A finite filling from JSON: each unsaid predicate's rows of entity ids. -/
-def decodeFilling (U : UDoc) (j : Json) : Except String (FiniteFill U VE.Bridge.Entity) := do
+/-- A finite filling from JSON. Validate the entire table before converting ids to
+typed entities: `zip` alone would silently discard extra ids, and `withFill`
+filters ill-typed tuples rather than rejecting untrusted evidence. -/
+def decodeFilling (U : UDoc) (M : VE.FiniteModel VE.Bridge.Entity) (j : Json) :
+    Except String (FiniteFill U VE.Bridge.Entity) := do
+  let supplied ← VE.Bridge.fields j
+  let allowed := U.unspec.map unsaidName
+  for (name, _) in supplied do
+    unless allowed.contains name do throw s!"InvalidInput: unknown filling table {name}"
   let tables ← U.unspec.mapM fun p => do
     let rows ← match j.getObjVal? (unsaidName p) with
       | .ok r => (← r.getArr?).toList.mapM strings
       | .error _ => pure []
-    pure (unsaidName p, rows.map (fun row => (sortsOf U.D p).zip row))
+    unless rows.eraseDups.length == rows.length do throw "duplicate relation tuple"
+    let sorts := sortsOf U.D p
+    let tuples ← rows.mapM fun row => do
+      unless row.length == sorts.length do throw "wrong relation arity"
+      let tuple := sorts.zip row
+      unless VE.Bridge.tupleCheck M sorts tuple do throw "dangling or wrong-sort tuple"
+      pure tuple
+    pure (unsaidName p, tuples)
   pure fun n => (VE.Bridge.lookup tables n).getD []
 
 structure StatusData (j : Json) where
@@ -247,8 +261,8 @@ def replayStatus (j : Json) : Except String (StatusData j) :=
                   (fun hu => by cases hu)⟩
               | none => pure unknown
             else if method == "undecided" then
-              let F₁ ← decodeFilling s.U (j.getObjValD "yes")
-              let F₂ ← decodeFilling s.U (j.getObjValD "no")
+              let F₁ ← decodeFilling s.U M (j.getObjValD "yes")
+              let F₂ ← decodeFilling s.U M (j.getObjValD "no")
               if hc : fillValid s.U M F₁ = true ∧ fillValid s.U M F₂ = true ∧
                   (outcomeBase (fill s.U) r.name).eval (M.withFill F₁) (tupleVal tuple) = true ∧
                   (outcomeBase (fill s.U) r.name).eval (M.withFill F₂) (tupleVal tuple) = false then
