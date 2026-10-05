@@ -178,10 +178,11 @@ def test_genuine_profile_rejection_is_leans(monkeypatch):
         relay.decide("environment", [{"id": "e", "environment": raw}])
 
 
-# The one-shot runner transport (`ve/backends/lean.py` `run`, for `ve_conformance`; lean-first batch 1 made
-# every statement-layer route a service mode and deleted their one-shot transports): it reads its runner's
-# output with `read_rows`, so output that is no answer is `CheckerUnavailable`, never a rejection (lf-0 review
-# B1 and B2; reproducers from the difffuzz looprecheck3 review).
+# The one-shot runner transports (`ve/backends/lean.py` `run`, for `ve_conformance`, and `run_english_cases`,
+# for english-lean S2's `ve_english_route`; lean-first batch 1 made every statement-layer route a service mode
+# and deleted their one-shot transports): each reads its runner's output with `read_rows`, so output that is
+# no answer is `CheckerUnavailable`, never a rejection (lf-0 review B1 and B2; reproducers from the difffuzz
+# looprecheck3 review).
 
 CASE = {"id": "0", "kind": "bundle"}
 
@@ -199,9 +200,11 @@ def _runner(tmp_path, stdout: bytes, status: int):
 TRANSPORTS = {
     "run": lambda exe, case: lean_backend.run("bundle.check", exe, [case], runner="ve_conformance",
                                               mode="route", timeout=HANG_TIMEOUT)[0],
+    "english": lambda exe, case: lean_backend.run_english_cases(exe, "english.read", [case],
+                                                                timeout=HANG_TIMEOUT)[0],
 }
 CODED: set[str] = set()
-RESTRICTED = {"run"}  # `read_rows(restricted=True)`: `ve.wire.loads_json`
+RESTRICTED = {"run", "english"}  # `read_rows(restricted=True)`: `ve.wire.loads_json`
 
 
 def test_every_runner_transport_is_listed():
@@ -226,7 +229,7 @@ def test_every_runner_transport_is_listed():
         node.name for node in tree.body if isinstance(node, ast_module.FunctionDef)
         and any(getattr(c.func, "id", None) == "_route_rows" for c in ast_module.walk(node)
                 if isinstance(c, ast_module.Call))}
-    names = {"run": "run"}
+    names = {"run": "run", "english": "run_english_cases"}
     assert public == {names[key] for key in TRANSPORTS}
     restricted = {node.name for node in tree.body if isinstance(node, ast_module.FunctionDef)
                   and any(isinstance(k, ast_module.keyword) and k.arg == "restricted"

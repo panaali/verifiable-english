@@ -39,6 +39,18 @@
     {"id": "x16", "source": "Every \t\n service\r\n\t is  \n\n reviewed.",
      "sentences": [[{"w": "Every", "initial": true}, "service", "is", "reviewed"]]},
     {"id": "x17", "source": "ſervice café.",
-     "sentences": [[{"w": "ſervice", "initial": true}, "café"]]}
+     "sentences": [[{"w": "ſervice", "initial": true}, "café"]]},
+    {"id": "x18a", "source": " Legacy is deployed.", "reject": "badSpacing", "at": 1},
+    {"id": "x18b", "source": "\u00a0Legacy is deployed.", "reject": "badSpacing", "at": 2},
+    {"id": "x19a", "source": "Legacy is deployed .", "reject": "badSpacing", "at": 19},
+    {"id": "x19b", "source": "Legacy is deployed\t.", "reject": "badSpacing", "at": 19},
+    {"id": "x20a", "source": "Legacy is deployed.It is reviewed.", "reject": "badSpacing", "at": 19},
+    {"id": "x20b", "source": "Legacy is deployed.(a) x.", "reject": "badSpacing", "at": 19},
+    {"id": "x21a", "source": "Legacy has the recorded relation\"owner_of\" to alice.", "reject": "badSpacing", "at": 32},
+    {"id": "x21b", "source": "Legacy has the recorded relation \"owner_of\"to alice.", "reject": "badSpacing", "at": 43},
+    {"id": "x21c", "source": "\"a\"\"b\" is deployed.", "reject": "badSpacing", "at": 3},
+    {"id": "x22a", "source": "Legacy is deployed. .", "reject": "emptySentence", "at": 1},
+    {"id": "x22b", "source": "Legacy is deployed. \n",
+     "sentences": [[{"w": "Legacy", "initial": true}, "is", "deployed"]]}
   ]
 }
