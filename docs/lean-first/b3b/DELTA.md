@@ -259,6 +259,12 @@ the file was restored after each (`git status` clean).
 
 ## Rest of the gate (5.1)
 
+- **Suite (item 1), looprecheck round:** the full suite at `bbaf8f4c` (the fix, its tests and this file's tables;
+  this file's later commit changes documentation only), in this worktree with its builds, four chunks of `-n 8`
+  with `VE_NATIVE_PREBUILT=1` at load 17–37: **9,147 passed, 6 skipped, 0 failed** (1,636 + 4,156 + 1,803 + 1,552),
+  `test_lean_transitive_axiom_allowlist` and `tests/test_readings_lean_sharing.py` among the passes; `lake build`
+  and `python lean/audit.py` pass (3,068 theorems, standard axioms only). Test changes:
+  `test_no_pending_candidates_document_is_built` (3 IDs), pinned in `tools/gate-collection.json`.
 - **Suite (item 1), review round:** the full suite at `ce1c07f5` (the fixes; this file's later commit changes
   documentation only), in this worktree with its builds, four chunks of `-n 8` with `VE_NATIVE_PREBUILT=1`:
   **9,143 passed, 7 skipped, 0 failed** (1,761 + 4,430 + 1,747 + 1,205), `test_lean_transitive_axiom_allowlist`
