@@ -108,9 +108,9 @@ def main (args : List String) : IO Unit := do
     let w := match entry.getObjValD "witness" with | .str w => w | _ => ""
     let otherName := if w == x.id then y.id else x.id
     let f ← tm "pairFactsSpec" (fun _ => pairFactsSpec a R.id sid otherName)
-    let sides := sidesOf a.D R.id R.candidates.length
-    let g ← tm "pairFactsIn, sides built" (fun _ => pairFactsIn a (sideAt a.D R.id sides) R.id sid otherName)
-    let h ← tm "pairFactsIn, sides read again" (fun _ => pairFactsIn a (sideAt a.D R.id sides) R.id sid otherName)
+    let sides := sidesOf a R.id R.candidates.length
+    let g ← tm "pairFactsIn, sides built" (fun _ => pairFactsIn a (sideAt a R.id sides) R.id sid otherName)
+    let h ← tm "pairFactsIn, sides read again" (fun _ => pairFactsIn a (sideAt a R.id sides) R.id sid otherName)
     let facts := fun (r : Except String PairFacts) => match r with
       | .ok f => (f.separated, f.witnessValid, f.witnessValue, f.otherAdmissible, f.otherValue)
       | .error _ => (false, false, none, false, none)

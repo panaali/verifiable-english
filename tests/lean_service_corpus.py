@@ -24,6 +24,18 @@ ADVERSARIAL = [{"id": "deep", "x": json.loads("[" * 300 + "]" * 300)}, {}, {"id"
                {"id": "list-env", "environment": []}, [], "text"]
 
 
+# Request errors of every kind: (mode, cases text, count, budget).
+ERROR_REQUESTS = [
+    ("evaluate", '[{"id":"a","ast":[]},{"id":"b","ast":[]}]', 2, {"cases": 1}),
+    ("route", '[{"id":"a","kind":"evaluate"}]', 1, {"bytes": 3}),
+    ("evaluate", '[{},{}]', 2, {"steps": 1}),
+    ("order", '[{"id":1,}]', 1, None),
+    ("check-certificate", '[{"id":null}, {"id":"b"}]', 2, None),
+    ("english", '[{"cases":[],}]', 1, None),
+    ("norms", '{}', 0, {"cases": 1}),
+]
+
+
 def evaluate_cases():
     evaluation = load("conformance/evaluation.json")
     countermodels = load("conformance/countermodels.json")
