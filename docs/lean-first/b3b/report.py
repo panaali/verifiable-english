@@ -4,8 +4,8 @@
 
 Without `--write` it prints the tables; with it, it replaces the generated block of `DELTA.md`.
 `tests/test_lean_first_b3b_report.py` checks that the block equals this rendering, so every number in it comes
-from `evidence/` (`udhr_timing.py` outputs, `timing.py` outputs and the profiler's lines; the review round's from
-`udhr_timing.py alternate`).
+from `evidence/` (`udhr_timing.py` outputs, `timing.py` outputs and the profiler's lines; the review and
+looprecheck rounds' from `udhr_timing.py alternate`).
 """
 from __future__ import annotations
 
@@ -124,11 +124,39 @@ def review_rows():
     return rows
 
 
+LOOPRECHECK = (("looprecheck-pending-many-sets.json", "looprecheck B's reproducer: 60 sets, 119 pending candidates, one "
+                 "active, ten fixed default rules"),
+               ("looprecheck-pending-one-set.json", "one set: one active candidate, 59 pending, ten fixed default rules"),
+               ("looprecheck-b1-reproducer.json", "review B1's reproducer"),
+               ("looprecheck-first-error.json", "the first set's default candidate ill-formed"),
+               ("looprecheck-udhr-1-set.json", "UDHR first set"))
+
+
+def looprecheck_rows():
+    """`before` is the head before this round's fix (`1ec9204b`); the budget is the head against the base."""
+    rows = ["| Case | Rounds | Load | Base, min / median CPU (s) | Before the fix, min / median | Head, min / median "
+            "| Head against base, min / median | Head against before, min / median | Answers |",
+            "|---|---:|---|---:|---:|---:|---:|---:|---|"]
+    for name, label in LOOPRECHECK:
+        data = json.loads((EVIDENCE / name).read_text())
+        cpus = {side: [run["cpu"] for run in runs] for side, runs in data["runs"].items()}
+        least = {side: min(xs) for side, xs in cpus.items()}
+        middle = {side: statistics.median(xs) for side, xs in cpus.items()}
+        rows.append(f"| {label} | {data['rounds']} | {data['load_before']}–{data['load_after']} "
+                    + "".join(f"| {least[side]:,.2f} / {middle[side]:,.2f} " for side in ("base", "before", "head"))
+                    + "".join(f"| {change(least[side], least['head'])} / {change(middle[side], middle['head'])} "
+                              for side in ("base", "before"))
+                    + f"| {'identical' if data['identical'] else 'DIFFERENT'} |")
+    return rows
+
+
 def render():
     return "\n".join(["### UDHR readings call (paired runs)", "", *udhr_rows(), "", "### Where the head's CPU goes", "",
                       *profile_rows(), "", "### Other measured workloads", "", *corpus_rows(), "",
                       "### Review round (B1, B2): base, the head before the fixes, the head", "",
-                      *review_rows()]) + "\n"
+                      *review_rows(), "",
+                      "### Looprecheck round (B): base, the head before the fix, the head", "",
+                      *looprecheck_rows()]) + "\n"
 
 
 def main(argv=None) -> int:

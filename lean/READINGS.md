@@ -107,12 +107,15 @@ audit allowlist is unchanged. The namespace is `VE.Readings` (`lean/VE/Route/Rea
 * `admitReadings_eq` (lean-first plan F5b): admission as run equals admission as specified. `admissionText` already
   validates `free D` and every candidate's `one D s i` (`chainText`); once it finds nothing, `WellFormedDoc` is
   `frameWF` (`wellFormedDoc_of_admissionText`, from `sideWF_of_chainText`), so admission evaluates `frameWF` instead
-  of validating each document a second time. Admission as run checks the candidates in `candidateStage`, which builds
-  each document once and keeps it: its answer is the first candidate diagnostic or the table `onesOf D`
-  (`stageOf_eq`, `candidateStage_eq`, `candidateStage_ok`, `admissionText_of_stage`).
-* `oneOf_eq`, `onesOf_holds` (F5b): the table answers `one D s i` for every pair, and holds every candidate of every
-  set, so `oneOf` never builds a document itself for a candidate. `Admitted.side_eq`: an admitted document's table
-  is that table. `tests/test_readings_lean_sharing.py` walks the compiled route from `main` and finds no other path
+  of validating each document a second time. Admission as run checks the candidates with content (`activeOf`) in
+  `candidateStage`, which builds each of their documents once and keeps it: its answer is the first candidate
+  diagnostic or the table `onesOf D` (`stageOf_eq`, `candidateStage_eq`, `candidateStage_ok`,
+  `admissionText_of_stage`). A pending candidate has no diagnostic (`candidateText`), so leaving it out leaves the
+  first one (`firstSome_filter`, `firstSome_activeOf`) and its document is never built (batch 3b looprecheck B).
+* `oneOf_eq`, `onesOf_holds`, `onesOf_active` (F5b): the table answers `one D s i` for every pair, holds every
+  candidate with content of every set and no pending one, so `oneOf` builds a document itself only for a pending
+  candidate, which only a `readings-separate` request naming it reaches, once, before refusing it.
+  `Admitted.side_eq`: an admitted document's table is that table. `tests/test_readings_lean_sharing.py` walks the compiled route from `main` and finds no other path
   to `one`.
 
 ### `Scan.lean`, `Run.lean`
@@ -125,7 +128,8 @@ audit allowlist is unchanged. The namespace is `VE.Readings` (`lean/VE/Route/Rea
   admissible completion while the witness shows the value, stopping at the first that decides both answers
   (`scanOthers_eq`, `otherScan_id`, `and_not_and_any`).
 * `candidateJson_eq` (F5b): a candidate's row reads its document from the request's table, once, for its keys and its
-  findings. `setFindings_eq`: a set's findings read the table.
+  findings. `setFindings_eq`: a set's findings read the table, for pairs of candidates with content only; a pair with
+  a pending candidate has neither finding (`pairFindings_pending`), so its sides are not read.
 
 ### `Force.lean`
 
