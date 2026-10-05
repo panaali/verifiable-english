@@ -182,7 +182,14 @@ It also has an asserted unit over `warn_required`. It passes on the base and the
 
 ## Rest of the gate (5.1)
 
-- **Suite (item 1):** see below.
+- **Suite (item 1):** the full suite at `1675c0f4` (this file's later commits change documentation only), in a
+  clean worktree with its own builds (the Lean build copied and rechecked by `lake build`, the Rust build and the
+  offline Cargo registry copied), six chunks of `-n 8` with the gate's pytest options and environment
+  (`VE_NATIVE_PREBUILT`, `VE_LEAN_PREBUILT`, `VE_RUST_PREBUILT`, `VE_RUST_BINARY`, no plugin autoload,
+  `-m "not live"`), load 11–38: **9,141 passed, 6 skipped, 0 failed** (9,147 collected; the gate collection pins
+  9,148 IDs, the other one is `live`). The worktree was clean afterwards. Test changes:
+  `test_outcome_probe_through_two_layers` is new (seeded bugs M1, M2, M5), and
+  `tests/test_lean_first_b3d_report.py` is new (3 IDs); the 4 IDs are pinned in `tools/gate-collection.json`.
 - **Lean audit:** `python3 lean/audit.py` passes: 3,083 theorems, the 30 new ones with `propext`, `Quot.sound` and
   `Classical.choice` at most. `lean/axioms.txt`, `VE/Route/frozen-sources.sha256` (the new module, `Audit.lean`
   and the three changed readings modules) are updated; `python3 VE/Route/frozen.py` passes. The assurance manifest
