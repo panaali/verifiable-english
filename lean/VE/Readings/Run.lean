@@ -184,14 +184,77 @@ theorem pairFacts_eq (a : Admitted) (s : String) (sid other : String) :
         rfl
       · simp only [ho, if_false]
 
+/-! ### Each candidate's layers computed once per set (plan F5d) -/
+
+/-- `completions` from candidate j's side. -/
+def completionsOn {α : Type} [DecidableEq α] (D : Doc) (s : String) (j : Nat) (P : Side) (M : VE.FiniteModel α)
+    (T : List (GenKey × List (List α))) (q : Probe α) : List (Bool × Thunk (Option Bool)) :=
+  (assignmentsOn D s j P M).map (fun G => (sideValidOn P M (T ++ G), Thunk.mk (fun _ => sideValueOn P M (T ++ G) q)))
+
+theorem completionsOn_sideOf {α : Type} [DecidableEq α] (D : Doc) (s : String) (j : Nat) (M : VE.FiniteModel α)
+    (T : List (GenKey × List (List α))) (q : Probe α) :
+    completionsOn D s j (sideOf D s j) M T q = completions D s j M T q := by
+  simp only [completionsOn, completions, assignmentsOn_sideOf, sideValidOn_sideOf, sideValueOn_sideOf]
+
+/-- A replay is of the admitted document and the requested set. -/
+theorem replayPair_doc {a : Admitted} {s sid other : String} {r : SeparateReplay} {sj : SituationJ}
+    (h : replayPair a s sid other = .ok (r, sj)) : r.D = a.D ∧ r.set = s := by
+  unfold replayPair at h
+  simp only [bind, Except.bind] at h
+  repeat' (first | (split at h) | (cases h; exact ⟨rfl, rfl⟩))
+  all_goals (first | (cases h) | skip)
+
+/-- `pairFacts` with each side's completions read from `side`, candidate i's side `side i`. -/
+def pairFactsIn (a : Admitted) (side : Nat → Side) (s : String) (sid other : String) : Except String PairFacts := do
+  let (r, sj) ← replayPair a s sid other
+  let M := r.σ.base
+  let Pi := side r.witness
+  let Pj := side r.other
+  let Ti := tablesFor r.D s r.witness (r.σ.fixed ++ r.σ.decisions)
+  if cellsOn r.D s r.other Pj M > maxCells then throw "ResourceLimit: decision assignments"
+  let Tj := tablesFor r.D s r.other r.σ.fixed
+  let valid := sideValidOn Pi M Ti
+  let value := sideValueOn Pi M Ti r.σ.probe
+  let others := completionsOn r.D s r.other Pj M Tj r.σ.probe
+  pure ⟨r, sj.witness, separatesWith r.D s r.witness r.other r.σ valid value others, valid, value,
+    others.any (·.1),
+    if ownedKeys r.D s r.other = [] then (others.head?.map (·.2.get)).getD none else none⟩
+
+theorem pairFactsIn_eq (a : Admitted) (side : Nat → Side) (s : String) (sid other : String)
+    (h : ∀ i, side i = sideOf a.D s i) : pairFactsIn a side s sid other = pairFacts a s sid other := by
+  unfold pairFactsIn pairFacts
+  simp only [bind, Except.bind]
+  split
+  · rfl
+  · rename_i v hr
+    obtain ⟨r, sj⟩ := v
+    have hD := (replayPair_doc hr).1
+    simp only [h, ← hD, cellsOn_sideOf, sideValidOn_sideOf, sideValueOn_sideOf, completionsOn_sideOf]
+
+/-- Every candidate's side of set `s`, each built when first read. -/
+def sidesOf (D : Doc) (s : String) (n : Nat) : List (Thunk Side) :=
+  (List.range n).map (fun i => Thunk.mk (fun _ => sideOf D s i))
+
+def sideAt (D : Doc) (s : String) (sides : List (Thunk Side)) (i : Nat) : Side :=
+  match sides[i]? with
+  | some t => t.get
+  | none => sideOf D s i
+
+theorem sideAt_sidesOf (D : Doc) (s : String) (n i : Nat) : sideAt D s (sidesOf D s n) i = sideOf D s i := by
+  unfold sideAt sidesOf
+  by_cases hi : i < n
+  · simp [hi, Thunk.get]
+  · simp [hi]
+
 def pairJson (f : PairFacts) (sid : String) : Json :=
   Json.mkObj ([("situation", .str sid), ("witness", .str f.witnessName), ("separated", .bool f.separated),
     ("witness_admissible", .bool f.witnessValid), ("witness_value", optBool f.witnessValue),
     ("other_admissible", .bool f.otherAdmissible)] ++
     (if ownedKeys f.replay.D f.replay.set f.replay.other = [] then [("other_value", optBool f.otherValue)] else []))
 
-/-- 4.5 for every pair of a set, neither pending, in index order: each must be separated by its situation. -/
-def setPairs (a : Admitted) (R : ReadingSet) (RJ : SetJ) : Except String (List Json) := do
+/-- 4.5 for every pair of a set, neither pending, in index order: each must be separated by its situation. As
+    specified: each pair builds both sides' layers. -/
+def setPairsSpec (a : Admitted) (R : ReadingSet) (RJ : SetJ) : Except String (List Json) := do
   let mut out : List Json := []
   for (x, ix) in R.candidates.zip (List.range R.candidates.length) do
     for (y, iy) in R.candidates.zip (List.range R.candidates.length) do
@@ -211,6 +274,34 @@ def setPairs (a : Admitted) (R : ReadingSet) (RJ : SetJ) : Except String (List J
       unless f.separated do throw "distinguishing model does not separate readings"
       out := out ++ [Json.mkObj [("reading", .str x.id), ("other", .str y.id), ("pair", pairJson f sid)]]
   pure out
+
+/-- `setPairsSpec` with each candidate's side built once for the set (plan F5d, `setPairs_eq`). -/
+def setPairs (a : Admitted) (R : ReadingSet) (RJ : SetJ) : Except String (List Json) := do
+  let sides := sidesOf a.D R.id R.candidates.length
+  let mut out : List Json := []
+  for (x, ix) in R.candidates.zip (List.range R.candidates.length) do
+    for (y, iy) in R.candidates.zip (List.range R.candidates.length) do
+      if ix == iy || x.content.isNone || y.content.isNone then continue
+      let some rj := RJ.readings[ix]? | throw "invalid reading"
+      let some sid := rj.models.lookup y.id | throw "each other reading needs a distinguishing model id"
+      let some entry := RJ.situations.lookup sid | throw "distinguishing model id does not match model"
+      let w := match entry.getObjValD "witness" with
+        | .str w => w
+        | _ => ""
+      -- The situation is recorded for this pair: its witness is one of the two readings. A third reading as
+      -- witness would check another pair and leave this one uncompared.
+      unless w == x.id || w == y.id do throw s!"InvalidInput: invalid situation {sid}"
+      let otherName := if w == x.id then y.id else x.id
+      let f ← pairFactsIn a (sideAt a.D R.id sides) R.id sid otherName
+      unless f.witnessValid do throw "distinguishing model violates a generated premise"
+      unless f.separated do throw "distinguishing model does not separate readings"
+      out := out ++ [Json.mkObj [("reading", .str x.id), ("other", .str y.id), ("pair", pairJson f sid)]]
+  pure out
+
+theorem setPairs_eq (a : Admitted) (R : ReadingSet) (RJ : SetJ) : setPairs a R RJ = setPairsSpec a R RJ := by
+  have h : ∀ sid other, pairFactsIn a (sideAt a.D R.id (sidesOf a.D R.id R.candidates.length)) R.id sid other =
+      pairFacts a R.id sid other := fun sid other => pairFactsIn_eq a _ R.id sid other (sideAt_sidesOf a.D R.id _)
+  simp only [setPairs, setPairsSpec, h]
 
 /-- The finding of 1.7 for strict twin `i` and default twin `j`. Its theorem `decision_only_sound` is not proved
     yet (`lean/READINGS.md`), so the finding says on its face that it is not certified, and nothing reads it as a
@@ -266,7 +357,7 @@ def runCase (j : Json) : Except String Json := do
     let a ← admitReadings (← j.getObjVal? "environment") (← j.getObjVal? "document")
     let s ← stringField j "set"
     let sid ← stringField j "situation"
-    let f ← pairFacts a s sid (← stringField j "other")
+    let f ← pairFactsIn a (sideOf a.D s) s sid (← stringField j "other")
     return VE.Route.Wire.ok id [("set", .str s), ("pair", pairJson f sid)]
   throw s!"UnsupportedProfile: case kind {kind} is not available on the readings route"
 
