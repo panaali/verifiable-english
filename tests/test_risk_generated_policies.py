@@ -28,15 +28,15 @@ from __future__ import annotations
 
 import json
 import random
-import subprocess
 from copy import deepcopy
 from functools import lru_cache
 from pathlib import Path
 
 import pytest
 
+from tests import lean_routes
+
 from conformance.risk import agent_ops, rule
-from subprocesses import HANG_TIMEOUT
 from ve.ast import Not, _Decoder, formula_from_data
 from ve.entailment import prove_entailment
 from ve.environment import Environment
@@ -44,9 +44,9 @@ from ve.norms import _bind
 from ve.risk import run_case
 
 ROOT = Path(__file__).resolve().parents[1]
-BIN = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_risk_route"
+BIN = "ve_risk_route"  # its service mode, through tests/lean_routes.py
 
-pytestmark = pytest.mark.skipif(not BIN.exists(), reason="ve_risk_route is not built")
+pytestmark = pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="the Lean service is not built")
 
 POLICIES = 1000
 SHARDS = 10
@@ -55,8 +55,7 @@ MAX_STEPS = 400
 
 
 def run(cases):
-    out = subprocess.run([str(BIN), "-"], input=json.dumps(cases), text=True, capture_output=True,
-                         check=False, timeout=HANG_TIMEOUT)
+    out = lean_routes.completed(BIN, cases)
     assert out.returncode in (0, 1), out.stderr
     rows = json.loads(out.stdout)
     assert len(rows) == len(cases)

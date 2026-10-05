@@ -21,7 +21,6 @@ first `situations` trees, at every point of the situation:
 """
 from __future__ import annotations
 
-import os
 import random
 import sys
 from pathlib import Path
@@ -150,7 +149,7 @@ def point_cases(document, raw_situation):
     return rows
 
 
-def run(executable=route.LEAN_ROUTE, *, trees=1000, situations=1000, seed=0):
+def run(*, trees=1000, situations=1000, seed=0):
     cases, expected, kinds, documents, wide = [], [], [], [], 0
     for index in range(trees):
         draw = random.Random(f"domain:{seed + index}").random()
@@ -171,8 +170,7 @@ def run(executable=route.LEAN_ROUTE, *, trees=1000, situations=1000, seed=0):
     results = []
     for start in range(0, len(cases), CHUNK):
         # one process per chunk: the route reads at most 16 MiB of input
-        results.extend(route.run_cases(cases[start:start + CHUNK], executable,
-                                       timeout=int(os.environ.get("VE_CONFORMANCE_HANG_TIMEOUT", "600"))))
+        results.extend(route.run_cases(cases[start:start + CHUNK]))
     mismatches, counts = [], {}
     for case_, answer, kind, row in zip(cases, expected, kinds, results):
         counts[kind] = counts.get(kind, 0) + 1

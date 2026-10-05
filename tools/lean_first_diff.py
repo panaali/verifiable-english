@@ -73,6 +73,11 @@ that differs is a listed pair. ``order``, ``verdict`` and ``availability`` list 
 ``{"corpus", "authority", "case", "op", "base", "head"}`` with the two outcomes, accepted only when
 both outcomes are exactly the listed ones. Exit 0 when every difference is listed, 1 otherwise,
 2 on unusable input.
+
+``compare`` also refuses (exit 2) the same file given twice, and a delta that lists one record
+twice (a second entry would replace the first) or names a record by a key that is not four strings
+(`1` and `true` would name one record). A listed record names both outcomes, and a wording pair is
+matched with its JSON types.
 """
 from __future__ import annotations
 
@@ -471,10 +476,6 @@ def expected_cases(root: Path, corpora=CORPORA, authorities=AUTHORITIES) -> dict
             for authority in authorities_of(corpus, authorities)}
 
 
-def _same(a, b) -> bool:
-    from ve.backends.service_schema import same_json  # the recorded checkout's `ve` may lack it
-    return same_json(a, b)
-
 SCHEMA = ROOT / "tools/lean_first_schema"
 
 
@@ -555,11 +556,33 @@ def load(path: str) -> dict[tuple, dict]:
     return records
 
 
+def same(a, b) -> bool:
+    """JSON equality with the response validator's types (`service_schema.same_json`): `true` is not `1`,
+    `false` is not `0` and `1` is not `1.0`, as Python's `==` would have them. Every comparison of two
+    outcomes, or of an outcome and a delta entry, goes through it (lf-1 recheck 3, B)."""
+    from ve.backends.service_schema import same_json  # here, not at import: `_child` imports another checkout's `ve`
+    return same_json(a, b)
+
+
+def json_text(value) -> str:
+    """A leaf's identity in the wording pairs: its JSON text, so the pairs are type-strict too."""
+    return json.dumps(value, sort_keys=True, ensure_ascii=False)
+
+
+def record_key(row: dict, origin: str) -> tuple:
+    """`(corpus, authority, case, op)`, each a string: a number or a boolean there would pair records
+    that Python's `==` and hashing equate (`1` and `true`)."""
+    key = tuple(row.get(name) for name in ("corpus", "authority", "case", "op"))
+    if not all(type(part) is str for part in key):
+        raise Unusable(f"{origin}: a record's corpus, authority, case and op must be strings: {key!r}")
+    return key
+
+
 def leaf_differences(a, b, path=()):
     """mig3 2.5 case A: (path, kind) for each difference; kind is `shape`, `leaf`, or `text` for a
     report's description (`DESCRIPTIONS`), compared whole."""
     if path and path[-1] in DESCRIPTIONS:
-        return [] if _same(a, b) else [(path, "text")]
+        return [] if same(a, b) else [(path, "text")]
     if type(a) is not type(b):
         return [(path, "shape")]
     if isinstance(a, dict):
@@ -570,7 +593,7 @@ def leaf_differences(a, b, path=()):
         if len(a) != len(b):
             return [(path, "shape")]
         return [d for x, y in zip(a, b) for d in leaf_differences(x, y, path)]
-    return [] if _same(a, b) else [(path, "leaf")]
+    return [] if same(a, b) else [(path, "leaf")]
 
 
 def _unavailable(outcome) -> bool:
@@ -580,7 +603,7 @@ def _unavailable(outcome) -> bool:
 
 def change_class(base: dict | None, head: dict | None) -> str | None:
     """The plan's class of a difference between two outcomes, or None when equal (as JSON, with types)."""
-    if _same(base, head):
+    if same(base, head):
         return None
     if base is None or head is None:
         return "verdict"
@@ -615,13 +638,13 @@ def text_pairs(base, head, path=()):
     """The (base, head) texts of the `message` and `detail` leaves that differ; a description
     (`DESCRIPTIONS`) is one pair of its canonical JSON texts."""
     if path and path[-1] in DESCRIPTIONS:
-        return [] if _same(base, head) else [(json.dumps(base, sort_keys=True, ensure_ascii=False),
+        return [] if same(base, head) else [(json.dumps(base, sort_keys=True, ensure_ascii=False),
                                          json.dumps(head, sort_keys=True, ensure_ascii=False))]
     if isinstance(base, dict) and isinstance(head, dict):
         return [p for k in base.keys() & head.keys() for p in text_pairs(base[k], head[k], path + (k,))]
     if isinstance(base, list) and isinstance(head, list):
         return [p for x, y in zip(base, head) for p in text_pairs(x, y, path)]
-    return [(base, head)] if not _same(base, head) and path and path[-1] in TEXTS else []
+    return [(base, head)] if not same(base, head) and path and path[-1] in TEXTS else []
 
 
 def completeness(name: str, records: dict, expected: dict) -> None:
@@ -663,6 +686,8 @@ def completeness(name: str, records: dict, expected: dict) -> None:
 def compare(base_path: str, head_path: str, delta: dict | None, *, expected: dict) -> dict:
     """The classed differences of two recordings, given the `expected` cases (`expected_cases`)."""
     base, head = load(base_path), load(head_path)
+    if Path(base_path).resolve() == Path(head_path).resolve():
+        raise Unusable(f"BASE and HEAD are the same file {base_path}")
     completeness(base_path, base, expected)
     completeness(head_path, head, expected)
     sources = Counter()
@@ -672,11 +697,15 @@ def compare(base_path: str, head_path: str, delta: dict | None, *, expected: dic
     if sources:
         raise Unusable(f"the two runs read different corpus files: {dict(sources)}")
     delta = delta or {}
-    wording = {(pair["base"], pair["head"]) for pair in delta.get("wording", [])}
+    wording = {(json_text(pair["base"]), json_text(pair["head"])) for pair in delta.get("wording", [])}
     listed = {}
     for klass in ("order", "verdict", "availability", "unavailable"):
         for entry in delta.get(klass, []):
-            listed[(entry["corpus"], entry["authority"], entry["case"], entry["op"])] = (klass, entry)
+            key = record_key(entry, "the delta")
+            if key in listed:
+                # One entry per record: a second would silently replace the first (lf-1 recheck B's class).
+                raise Unusable(f"the delta lists the record {key} twice")
+            listed[key] = (klass, entry)
     rows, totals, unlisted = [], Counter(), []
     for key in sorted(base.keys() | head.keys()):
         old = base.get(key, {}).get("outcome")
@@ -690,20 +719,26 @@ def compare(base_path: str, head_path: str, delta: dict | None, *, expected: dic
         totals[klass] += 1
         entry = listed.get(key)
         if klass == "wording":
-            accepted = all(pair in wording for pair in text_pairs(old, new))
+            accepted = all((json_text(a), json_text(b)) in wording for a, b in text_pairs(old, new))
         elif klass == "unavailable":
             accepted = entry is not None and entry[0] == klass and type(entry[1].get("reason")) is str \
                 and entry[1]["reason"].strip() != ""
         else:
-            accepted = (entry is not None and entry[0] == klass and _same(entry[1].get("base"), old)
-                        and _same(entry[1].get("head"), new))
+            # Both outcomes named: an entry without `base` would accept a record missing from BASE.
+            accepted = (entry is not None and entry[0] == klass and "base" in entry[1] and "head" in entry[1]
+                        and same(entry[1]["base"], old) and same(entry[1]["head"], new))
         row = {"corpus": key[0], "authority": key[1], "case": key[2], "op": key[3], "class": klass,
                "base": old, "head": new, "listed": accepted}
         rows.append(row)
         if not accepted:
             unlisted.append(row)
     by_corpus = Counter((key[0], key[1]) for key in base.keys() | head.keys())
+    unavailable = Counter()
+    for key in base.keys() & head.keys():
+        if _unavailable(base[key]["outcome"]) and _unavailable(head[key]["outcome"]):
+            unavailable[(key[0], key[1])] += 1
     return {"totals": dict(totals), "records": {f"{c}/{a}": n for (c, a), n in sorted(by_corpus.items())},
+            "unavailable_both": {f"{c}/{a}": n for (c, a), n in sorted(unavailable.items())},
             "differences": rows, "unlisted": len(unlisted)}
 
 
@@ -738,11 +773,12 @@ def main(argv=None) -> int:
     try:
         result = compare(args.base, args.head, delta, expected=expected_cases(ROOT, args.corpus, args.authority))
     except Unusable as exc:
-        print(f"unusable evidence: {exc}", file=sys.stderr)
+        print(f"lean_first_diff: unusable evidence: {exc}", file=sys.stderr)
         return 2
     if args.json:
         args.json.write_text(json.dumps(result, indent=1, sort_keys=True, ensure_ascii=False) + "\n")
-    print(json.dumps({"records": result["records"], "totals": result["totals"], "unlisted": result["unlisted"]},
+    print(json.dumps({"records": result["records"], "totals": result["totals"], "unlisted": result["unlisted"],
+                      "unavailable_both": result["unavailable_both"]},
                      indent=1, sort_keys=True))
     for row in result["differences"][:20]:
         if not row["listed"]:
