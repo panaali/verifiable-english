@@ -82,17 +82,19 @@ theorem firstFailure_of_not_free (j : Json) (res : SoftConflictReplay) (h : repl
   rw [List.find?_isSome]
   exact ⟨(t, c), hm, by cases c <;> simp_all⟩
 
-theorem runSoftKind_fits (id kind : String) (j : Json) :
-    OkFits req Skeletons.softNorms (runSoftKind id kind j) := by
+theorem runSoftKind_fits (id kind : String) (j : Json) {w : Json} (hobj : j.getObjVal? "id" = .ok w)
+    (hp : usesSoftPath j = true) (hK : KindRead "evaluate" j kind) :
+    OkFits j Skeletons.softNorms (runSoftKind id kind j) := by
   unfold runSoftKind
   simp only []
-  okfits
-  all_goals (try simp only [VE.Route.Wire.ok])
-  all_goals fits
-  · fits_as "soft-norms.json#/$defs/elaborate"
-    exact elaborate_fits _ _ _
-  · fits_as "soft-norms.json#/$defs/pairs"
-    exact pairs_fits _ _ _ _ _ _ ‹_›
+  rcases hK with hK | ⟨hK, hd⟩
+  all_goals (try subst hd)
+  all_goals okfits
+  all_goals kind_norm
+  all_goals first
+    | fits_from elaborate_fits _ _ _
+    | fits_from pairs_fits _ _ _ _ _ _ ‹_›
+    | (try simp only [VE.Route.Wire.ok]); fits
   -- Not conflict-free with no failing target: impossible (`firstFailure_of_not_free`).
   all_goals
     exfalso
@@ -105,29 +107,30 @@ theorem admission_fits (id reportId : String) (res : Admission.Admitted) :
   fits
   all_goals exact Common.claimJson_fits _
 
-/-- The norms mode's rows are rows of this mode. -/
-theorem of_norms {v : Json} (h : Fits req Skeletons.norms v) : Fits req Skeletons.softNorms v := by
-  refine Fits.altSub ?_ h
-  alt_sub
+/-- The norms mode's rows, off the soft path, are rows of this mode. -/
+theorem of_norms {v : Json} (hp : usesSoftPath req = false) (h : Fits req Skeletons.norms v) :
+    Fits req Skeletons.softNorms v :=
+  Fits.onCaseE (by simpa [CaseCond.holds, CaseDecider.fn] using hp) h
 
-theorem runCase_fits (j : Json) :
-    OkFits req Skeletons.softNorms (runCase j) := by
+theorem runCase_fits (j : Json) (hp : usesSoftPath j = true) :
+    OkFits j Skeletons.softNorms (runCase j) := by
   unfold runCase
   okfits
-  · unfold runAdmission
-    okfits
-    fits_as "soft-norms.json#/$defs/admission"
-    exact admission_fits _ _ _
-  · exact OkP.of (Norms.runCase_fits j) fun _ => of_norms
-  · exact runSoftKind_fits _ _ _
+  all_goals first
+    | (exfalso; simp_all; done)
+    | read_kind
+  all_goals first
+    | (unfold runAdmission; okfits; fits_from admission_fits _ _ _)
+    | exact runSoftKind_fits _ _ _ ‹_› hp (KindRead.of_str ‹_›)
+    | exact runSoftKind_fits _ _ _ ‹_› hp (Or.inr ⟨‹_›, rfl⟩)
 
-theorem runCaseReported_fits (j : Json) :
+theorem runCaseReported_fits (j : Json) (hj : CaseWF j) :
     Fits j Skeletons.softNorms (runCaseReported j) := by
   unfold runCaseReported
   split
   · split
-    · exact runCase_fits j _ ‹_›
+    · exact runCase_fits j ‹_› _ ‹_›
     · fits
-  · exact of_norms (Norms.runCaseReported_fits j)
+  · exact of_norms (Bool.eq_false_iff.mpr ‹_›) (Norms.runCaseReported_fits j hj)
 
 end ResponseShape.Encoders.SoftNorms

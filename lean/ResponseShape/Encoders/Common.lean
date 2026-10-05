@@ -66,3 +66,17 @@ theorem reportJson_fits (r : VE.Graph.Report) :
   all_goals exact claimJson_fits _
 
 end ResponseShape.Encoders.Common
+
+namespace ResponseShape
+
+/-- In a runner that read its id (`stringField j "id"`) and its kind (`Route.Run.caseKind j`): the
+kind the case has (`KindRead`), split into a case with that `kind` string and one without a kind
+(read as `evaluate`), the runner's tests of the kind evaluated (`kind_norm`). -/
+macro "read_kind" : tactic =>
+  `(tactic|(obtain ⟨_, hobj⟩ := Encoders.Common.stringField_obj ‹VE.Bridge.stringField _ "id" = .ok _›
+            have hK := Encoders.Common.caseKind_read hobj ‹VE.Route.Run.caseKind _ = .ok _›
+            rcases hK with hK | ⟨hK, hd⟩
+            all_goals (try subst hd)
+            all_goals kind_norm))
+
+end ResponseShape
