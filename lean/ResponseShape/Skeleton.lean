@@ -353,6 +353,24 @@ theorem filterMapM {β : Type} {Q : α → Prop} {f : β → Except String (Opti
     (h : ∀ x, OkP (fun o => ∀ b, o = some b → Q b) (f x)) : OkP (fun ys => ∀ y ∈ ys, Q y) (xs.filterMapM f) :=
   filterMapM_loop h xs [] (fun _ h => by cases h)
 
+/-- A `for` loop over a list keeps an invariant of its state. -/
+theorem forIn {β : Type} {xs : List β} {init : α} {f : β → α → Except String (ForInStep α)}
+    (h0 : P init) (hf : ∀ x ∈ xs, ∀ s, P s → OkP (fun r : ForInStep α => P r.value) (f x s)) :
+    OkP P (ForIn.forIn xs init f) := by
+  induction xs generalizing init with
+  | nil => intro v hv; cases hv; exact h0
+  | cons x xs ih =>
+    intro v hv
+    simp only [List.forIn_cons] at hv
+    cases hfx : f x init with
+    | error e => rw [hfx] at hv; cases hv
+    | ok r =>
+      rw [hfx] at hv
+      have hr := hf x List.mem_cons_self init h0 r hfx
+      cases r with
+      | done s => exact (by cases hv; exact hr)
+      | yield s => exact ih hr (fun y hy => hf y (List.mem_cons_of_mem _ hy)) v hv
+
 theorem of {r : Except String α} {Q : α → Prop} (h : OkP Q r) (hq : ∀ v, Q v → P v) : OkP P r :=
   fun v hv => hq v (h v hv)
 
