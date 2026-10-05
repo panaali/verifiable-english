@@ -38,12 +38,12 @@ macro "lits_simp" : tactic =>
 
 /-- A hypothesis `(match x with ...) = some v` of a `filterMap` element: one case per branch. -/
 macro "elem_cases" : tactic =>
-  `(tactic|(try (rename_i h; split at h <;> (try simp only [Option.some.injEq, reduceCtorEq] at h) <;> (try subst_vars))))
+  `(tactic|(try (rename_i h; split at h <;> (try simp only [Option.some.injEq, reduceCtorEq, List.mem_map, List.not_mem_nil] at h) <;> (try obtain ⟨_, _, h⟩ := h) <;> (try subst_vars))))
 
 /-- Through a runner's `do` block: binds (keeping `x = .ok a`), conditions, matches and join
 points, down to each `pure` (left as a `Fits` goal) or `throw`. -/
 macro "okfits" : tactic =>
-  `(tactic|repeat' (first | (with_reducible apply OkP.pure) | (with_reducible apply OkP.ok) | (with_reducible show OkP _ (_ >>= _); simp only [bind_pure]) | (with_reducible apply OkP.bind; intro _ _) | (with_reducible apply OkP.ite <;> intro _) | exact OkP.throw | exact OkP.error | (show OkP _ _; split) | (show OkP _ _; simp only [])))
+  `(tactic|repeat' (first | (with_reducible apply OkP.pure) | (with_reducible apply OkP.ok) | (with_reducible show OkP _ (_ >>= _); simp only [bind_pure]) | exact OkP.throw_bind | (with_reducible apply OkP.bind; intro _ _) | (with_reducible apply OkP.ite <;> intro _) | exact OkP.throw | exact OkP.error | (show OkP _ _; split) | (show OkP _ _; simp only [])))
 
 end ResponseShape
 
