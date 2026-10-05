@@ -201,7 +201,7 @@ def test_a_rust_process_that_times_out_is_killed_and_not_reused(rust, monkeypatc
     [checker] = _checkers()
     monkeypatch.setattr(rust_jsonl, "_deadline", lambda timeout: time.monotonic() - 1)
     with pytest.raises(CheckerUnavailable, match="timed out"):
-        rust_jsonl.run(case, timeout=7.0)
+        rust_jsonl.run(case, timeout=HANG_TIMEOUT)
     assert checker.process.poll() is not None and not _checkers()
 
 
