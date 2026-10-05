@@ -2078,6 +2078,13 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Service.coding_error
 #print axioms VE.Service.rejectionCode_mem
 #print axioms VE.Service.respond_decoded
+#print axioms VE.Service.expand_plain
+#print axioms VE.Service.expand_hit
+#print axioms VE.Service.expand_miss
+#print axioms VE.Service.expandCases_unexpanded
+#print axioms VE.Service.register_none
+#print axioms VE.Service.registerOne_digest
+#print axioms VE.Service.registerOne_ok
 #print axioms VE.Risk.termSum_cons
 #print axioms VE.Risk.termSum_nil
 #print axioms VE.Risk.termSum_append
