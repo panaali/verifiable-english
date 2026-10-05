@@ -444,6 +444,22 @@ def validateRights (D : RightsDoc) : Except String Unit :=
       | some n => .error s!"ResourceLimit: identifier {n} exceeds 64 bytes"
       | none => if rightsSemanticCheck D then .ok () else .error "InvalidInput: rights document is not stratified"
 
+/-- `validateRights` with soft well-formedness checked by `validateSoftOnce` (lean-first plan F5d). -/
+def validateRightsOnce (D : RightsDoc) : Except String Unit :=
+  match checkRights D with
+  | .error e => .error e
+  | .ok () =>
+    match VE.SoftNorms.validateSoftOnce (correlate D) with
+    | .error e => .error e
+    | .ok () =>
+      match (VE.SoftNorms.decisionNames (correlate D)).find? (fun n => n.utf8ByteSize > 64) with
+      | some n => .error s!"ResourceLimit: identifier {n} exceeds 64 bytes"
+      | none => if rightsSemanticCheck D then .ok () else .error "InvalidInput: rights document is not stratified"
+
+theorem validateRightsOnce_eq (D : RightsDoc) : validateRightsOnce D = validateRights D := by
+  unfold validateRightsOnce validateRights
+  rw [VE.SoftNorms.validateSoftOnce_eq]
+
 def WellFormedRights (D : RightsDoc) : Bool :=
   match validateRights D with
   | .ok () => true

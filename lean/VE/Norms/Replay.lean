@@ -28,6 +28,14 @@ def targets (D : Doc) : List (String × List String × VE.Formula) :=
   (syms D.T).filterMap (fun | .reg r => some (r.name, r.sorts, conflict D r) | .defn _ => none) ++
     (pairs D.T).map (fun pr => (pr.req ++ "->" ++ pr.perm, pr.sorts, pairConflict D pr))
 
+/-- `targets` from the document's layers, computed once (plan F5d). -/
+def targetsIn (D : Doc) (L : Layers) : List (String × List String × VE.Formula) :=
+  L.syms.filterMap (fun | .reg r => some (r.name, r.sorts, conflictIn D L r) | .defn _ => none) ++
+    (pairs D.T).map (fun pr => (pr.req ++ "->" ++ pr.perm, pr.sorts, pairConflictIn D L pr))
+
+theorem targetsIn_eq (D : Doc) : targetsIn D (layersOf D) = targets D := by
+  simp only [targetsIn, targets, layersOf_syms, conflictIn_eq, pairConflictIn_eq]
+
 /-- `∀x̄. ¬conflict`, the certified conclusion of a target. -/
 def targetConclusion (t : String × List String × VE.Formula) : VE.Formula :=
   bindAll t.2.1 (.not t.2.2)
