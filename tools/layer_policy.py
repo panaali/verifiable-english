@@ -25,7 +25,7 @@ PYTHON = {
         "document equivalence norm_admission norm_defaults norm_defaults_contract norm_defaults_english norm_defaults_route norm_strict "
         "openterms propose readings search stream_audit vacuity assist discourse quantity_admission "
         "reports_route risk rights_route soft_route speech_document readings_route readings_s1 "
-        "readings_sup readings_verdicts").split(),
+        "readings_sup readings_verdicts readings_s2_wording").split(),
     5: ["argument_fixtures"],
 }
 PYTHON_MODULES = {f"ve.{name}": layer for layer, names in PYTHON.items() for name in names}

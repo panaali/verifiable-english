@@ -5,7 +5,7 @@
     "type": "object", "required": ["corpus", "authority", "case", "op", "source_sha256", "outcome"],
     "additionalProperties": false,
     "properties": {
-      "corpus": {"enum": ["probe", "conformance", "pilots"]},
+      "corpus": {"enum": ["probe", "conformance", "pilots", "readings", "discourse"]},
       "authority": {"$ref": "#/$defs/text"},
       "case": {"$ref": "#/$defs/text"},
       "op": {"$ref": "#/$defs/text"},
@@ -14,7 +14,9 @@
     "allOf": [
       {"if": {"properties": {"corpus": {"const": "conformance"}}}, "then": {"$ref": "#/$defs/conformance"}},
       {"if": {"properties": {"corpus": {"const": "probe"}}}, "then": {"$ref": "#/$defs/probe"}},
-      {"if": {"properties": {"corpus": {"const": "pilots"}}}, "then": {"$ref": "#/$defs/pilots"}}]
+      {"if": {"properties": {"corpus": {"const": "pilots"}}}, "then": {"$ref": "#/$defs/pilots"}},
+      {"if": {"properties": {"corpus": {"const": "readings"}}}, "then": {"$ref": "#/$defs/readings"}},
+      {"if": {"properties": {"corpus": {"const": "discourse"}}}, "then": {"$ref": "#/$defs/discourse"}}]
   },
   "$defs": {
     "text": {"type": "string", "minLength": 1},
@@ -144,17 +146,40 @@
       "type": "object", "required": ["package", "output"], "additionalProperties": false,
       "properties": {"package": {"type": "object"}, "output": {"type": "object"}}},
 
-    "pilots": {"$comment": "`pilot_check`: `ve document check` of one pilot document, its blob id the source.",
+    "pilots": {"$comment": "`pilot_check`: `ve document check` of one pilot document, its blob id the source; a report that is a JSON object is recorded parsed.",
       "properties": {
         "authority": {"const": "default"},
         "op": {"const": "document_check"},
         "source_sha256": {"type": "string", "pattern": "[0-9a-f]{40}|[0-9a-f]{64}"},
         "outcome": {"anyOf": [
           {"type": "object", "required": ["exit", "stdout", "stderr"], "additionalProperties": false,
-           "properties": {"exit": {"type": "integer"}, "stdout": {"type": "string"},
+           "properties": {"exit": {"type": "integer"}, "stdout": {"type": ["string", "object"]},
                           "stderr": {"type": "array", "maxItems": 1, "items": {"type": "string"}}},
            "if": {"properties": {"exit": {"const": 0}}}, "then": {"properties": {"stdout": {"minLength": 1}}}},
           {"type": "object", "required": ["timeout"], "additionalProperties": false,
-           "properties": {"timeout": {"$ref": "#/$defs/nat"}}}]}}}
+           "properties": {"timeout": {"$ref": "#/$defs/nat"}}}]}}},
+
+    "readings": {"$comment": "`readings_records`: `ve.readings_route.validate` on one case of the readings corpus file, its digest the source; Lean's relayed row, or the route's diagnostic.",
+      "properties": {
+        "authority": {"const": "default"},
+        "op": {"const": "readings_validate"},
+        "source_sha256": {"$ref": "#/$defs/digest"},
+        "outcome": {"anyOf": [
+          {"type": "object", "required": ["returned"], "additionalProperties": false,
+           "properties": {"returned": {"type": "object", "required": ["status", "content_bearing"],
+                                       "properties": {"status": {"const": "ok"}, "content_bearing": {"type": "boolean"}}}}},
+          {"type": "object", "required": ["raised"], "additionalProperties": false,
+           "properties": {"raised": {"$ref": "#/$defs/error"}}}]}}},
+
+    "discourse": {"$comment": "`_discourse_case`: `check_document` or `render_document` of one discourse corpus entry, the digest of the entry the source, `outcome` (mig3 2.4) of the call.",
+      "properties": {
+        "authority": {"const": "default"},
+        "op": {"enum": ["document_check", "document_render"]},
+        "source_sha256": {"$ref": "#/$defs/digest"},
+        "outcome": {"anyOf": [
+          {"type": "object", "required": ["returned"], "additionalProperties": false,
+           "properties": {"returned": {"type": ["object", "string"]}}},
+          {"type": "object", "required": ["raised"], "additionalProperties": false,
+           "properties": {"raised": {"$ref": "#/$defs/error"}}}]}}}
   }
 }

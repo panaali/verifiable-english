@@ -1,22 +1,29 @@
-"""Admission of content-bearing reading sets by the S1 Lean route, with Python's and Rust's agreement.
+"""Admission of content-bearing reading sets by the S1 Lean route, relayed (docs/LEAN-FIRST-PLAN.md rule 2).
 
 `validate` sends the document to `ve_readings_route` (`readings-validate`, docs/spec/composition-s1.md 8.4) and
-regenerates the answer in Python (`ve/readings_s1.py`); the two must be byte for byte the same (4.1 rule 3), and
-each recorded situation's evaluations are replayed by Rust, untrusted, whose values must agree (10). Lean's
-answer is the authority: its diagnostic rejects the document, and a disagreement of Python or Rust with it is
-`CheckerUnavailable`, never a rejection and never an admission.
+returns Lean's row, or raises Lean's diagnostic with its text verbatim. Lean is the one owner of the answer: no
+Python regeneration and no Rust replay is compared with it any more (lean-first batch 3). A route that cannot
+answer, or answers a row that is not bound to the request (its shape, its sets, candidates, readings and
+situations), is `CheckerUnavailable`, never a rejection and never an admission.
 
-`validate` retains S1's scope: couplings, narrowings and W2's structural checks are handled by Python there.
-`elaborate` runs after those checks and compares S2's decoded restrictions, choice search and generated slot with
-Python's independent regeneration. Verdict search is still separate from this admission path.
+What Lean checks is the readings head of 4.1 on the decoded units and active sets. Couplings, narrowings and
+W2's structural validation of the sets are not decoded by Lean (S1 limitation, DRI ruling 3): `ve/readings.py`
+checks them in Python, and the report says so. The English of the report (`Wording`) is built from Lean's row
+and Python's construction of the admitted document (`ve/readings_s1.py`).
+
+`elaborate` (S2) runs after those checks and compares S2's decoded restrictions, choice search and generated slot
+with Python's independent regeneration. Verdict search is still separate from this admission path.
 """
 from __future__ import annotations
 
+import re
+from contextlib import contextmanager
 from pathlib import Path
 
 from .backends.lean import configured_timeout as lean_timeout, run_readings_cases
 from .errors import CheckerUnavailable, VEError
-from .readings_s1 import Admission, answer, wire
+from .readings_s1 import KEY_FIELDS, KEY_OPTIONAL, Decoded, Document, content_bearing, decode_key, wire
+from .readings_s2_english import s1_gated as _s1_gated
 
 LEAN_ROUTE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_readings_route"
 
@@ -145,94 +152,195 @@ def _message(exc):
     return exc.message if hasattr(exc, "message") else str(exc)
 
 
-def rights_findings(side, label):
-    """The rights chain's findings of one candidate's document (4.4): `limitationScope` without certificates
-    and `noDistinction`, as the rights route reports them. Python has no implementation of either."""
-    from .rights_route import LEAN_ROUTE as RIGHTS_ROUTE
-    from .backends.lean import run_soft_case
-    units = [{"source_units": list(side.unit_ids)}]
-    for c in side.contents:
-        if isinstance(c, tuple):
-            units.append({"bar": c[1]})
-        elif c.kind != "assertion":
-            units.append(c.raw)
-    environment = wire(side.senv.frame_data)
-    scope = run_soft_case(RIGHTS_ROUTE, {"id": "scope", "kind": "rights-scope", "environment": environment,
-                                         "document": wire(units), "certificates": {}})
-    elaborated = run_soft_case(RIGHTS_ROUTE, {"id": "elaborate", "kind": "rights-elaborate",
-                                              "environment": environment, "document": wire(units)})
-    return list(scope["findings"]) + list(elaborated["findings"])
-
-
-def rust_check(admission, s, i, j, situation, Ti, Tj, facts):
-    """Replay one pair's evaluations in Rust, untrusted (10): the witness's completion under the shown
-    decision, and the other side with its own tables empty. Each value must be Python's, which the comparison
-    with Lean's answer then checks."""
-    from .backends.rust_jsonl import configured_timeout, run
-    model, _, _, probe, _ = situation
-    witness, other = admission.side(s, i), admission.side(s, j)
-    sides = [witness.evaluation_case(model, Ti, probe), other.evaluation_case(model, Tj, probe)]
+@contextmanager
+def _built():
+    """Python builds the English of a document Lean admitted (rule 2: Lean validates, Python constructs); a
+    construction that fails there is a bug, reported as `CheckerUnavailable`, never as a rejection."""
     try:
-        record = run({"id": "readings-evaluate", "kind": "readings-evaluate", "untrusted": True, "sides": sides},
-                     timeout=configured_timeout(60.0))
-    except VEError as exc:
-        # Rust is an untrusted shadow: its failure is never a rejection of the document.
-        raise CheckerUnavailable(f"ReadingsConformance: Rust did not evaluate the situation: {_message(exc)}") \
-            from None
-    if record.get("status") != "ok" or record.get("untrusted") is not True:
-        raise CheckerUnavailable(f"ReadingsConformance: Rust did not evaluate the situation: {record}")
-    for side, tables, values in ((witness, Ti, record["sides"][0]), (other, Tj, record["sides"][1])):
-        python_model = side.model(model, tables)
-        expected = {"premises": side.valid(python_model), "value": side.observe(python_model, probe)}
-        if probe == "holds":
-            value = all(values["assertions"])
-        elif probe[0] == "outcome":
-            value = values["outcomes"][1] if values["outcomes"][0] else None
-        else:
-            value = any(values["selections"])
-        if {"premises": all(values["premises"]), "value": value} != expected:
-            raise CheckerUnavailable(f"ReadingsConformance: Rust's untrusted evaluation differs from Python's "
-                                     f"on situation {facts['situation']}")
-
-
-def validate(environment, units, reading_sets, *, executable=LEAN_ROUTE, rust=True):
-    """Return Lean's checked reading data, or raise its first diagnostic.
-
-    Transport failure, a malformed response and any disagreement of Python's or Rust's regeneration with Lean's
-    answer remain operational failures (`CheckerUnavailable`); only a well-formed Lean error row, which Python
-    reproduces, can reject the document.
-    """
-    # One normalised input (`wire`: an explicit null is an absent field) for Lean and Python alike.
-    environment, document = wire(environment), wire(document_wire(units, reading_sets))
-    case = {"id": "readings-s1", "kind": "readings-validate", "environment": environment, "document": document}
-    rows = run_lean([case], executable=executable, timeout=lean_timeout(300.0))
-    row = rows[0]
-    if row["status"] == "ok" and (type(row.get("content_bearing")) is not bool or
-                                  row["content_bearing"] and type(row.get("sets")) is not list):
-        raise CheckerUnavailable("ve_readings_route returned an invalid answer")
-    try:
-        python = {"status": "ok", **answer(environment, document, chain_findings=rights_findings,
-                                           rust=rust_check if rust else None)}
+        yield
     except CheckerUnavailable:
         raise
-    except VEError as exc:
-        python = {"status": "error", "error": _message(exc)}
-    lean = {key: value for key, value in row.items() if key != "id"}
-    if python != lean:
-        raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on readings-validate: "
-                                 f"Lean {lean.get('error', 'ok')}, Python {python.get('error', 'ok')}")
+    except (VEError, KeyError, TypeError, ValueError, AttributeError, IndexError, StopIteration) as exc:
+        raise CheckerUnavailable("ReadingsConstruction: Python could not build the English of the document "
+                                 f"Lean admitted: {type(exc).__name__}") from exc
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# The answer's schema and its binding to the request (build checklist 4)
+#
+# The schema is that of Run.lean's encoders (`validateResult`, `candidateJson`, `keyEntry` with `keyJson`,
+# `pairJson`, `setFindings`), checked over the whole row before anything is compared or hashed. The binding then
+# checks what the request fixes: the content-bearing sets in source order, every candidate in order with its
+# pending state, every ordered pair of candidates neither pending in index order with the situation its
+# distinguishing model names and that situation's witness, and the producer's invariants (Lean only answers a
+# pair it found separated by an admissible witness showing the recorded value; `other_value` is present exactly
+# when the other side owns no key; decisions are the witness's own keys, fixed tables nobody's; findings in
+# `setFindings`' text and order). What is left is Lean's alone: which keys a candidate generates, its hash and
+# chain findings, the other side's completion and which pairs are findings.
+
+class _Invalid(Exception):
+    """A row that is not Lean's answer to this request."""
+
+
+def _need(condition):
+    if not condition:
+        raise _Invalid
+
+
+def _lit(expected):
+    return lambda v: type(v) is type(expected) and v == expected
+
+
+def _obj(required, optional=None):
+    optional = optional or {}
+    fields = {**required, **optional}
+    return lambda v: (type(v) is dict and set(required) <= set(v) <= set(fields)
+                      and all(fields[k](item) for k, item in v.items()))
+
+
+def _arr(item, *, nonempty=False):
+    return lambda v: type(v) is list and (bool(v) or not nonempty) and all(item(x) for x in v)
+
+
+def _either(*schemas):
+    return lambda v: any(schema(v) for schema in schemas)
+
+
+def _str(v):
+    return type(v) is str
+
+
+def _name(v):
+    return type(v) is str and v != ""
+
+
+def _nat(v):
+    return type(v) is int and v >= 0
+
+
+def _bool(v):
+    return type(v) is bool
+
+
+def _digest(v):
+    """A sha256 digest as Lean writes one (`CertificateWire.digest`, a situation id): 64 lowercase hex digits."""
+    return type(v) is str and len(v) == 64 and all(ch in "0123456789abcdef" for ch in v)
+
+
+_KEY = _either(*(_obj({f: _name for f in fields if f not in KEY_OPTIONAL},
+                      {f: _name for f in fields if f in KEY_OPTIONAL}) for fields in KEY_FIELDS.values()))
+_KEY_ENTRY = _obj({"key": _KEY, "name": _name})
+_CANDIDATE = _either(
+    _obj({"id": _str, "index": _nat, "pending": _lit(True)}),
+    _obj({"id": _str, "index": _nat, "pending": _lit(False), "document_hash": _digest,
+          "owned": _arr(_KEY_ENTRY), "shared": _arr(_KEY_ENTRY), "findings": _arr(_name)}))
+# Lean answers a pair only after `unless f.witnessValid` and `unless f.separated` (setPairs), so both are true and
+# the witness's value is the recorded one, never null.
+_PAIR_FACTS = _obj({"situation": _digest, "witness": _str, "separated": _lit(True),
+                    "witness_admissible": _lit(True), "witness_value": _bool, "other_admissible": _bool},
+                   {"other_value": lambda v: v is None or type(v) is bool})
+_SET = _obj({"set": _str, "version": _nat, "candidates": _arr(_CANDIDATE, nonempty=True),
+             "pairs": _arr(_obj({"reading": _str, "other": _str, "pair": _PAIR_FACTS})), "findings": _arr(_name)})
+ROW = _either(_obj({"id": _str, "status": _lit("ok"), "content_bearing": _lit(False)}),
+              _obj({"id": _str, "status": _lit("ok"), "content_bearing": _lit(True),
+                    "sets": _arr(_SET, nonempty=True)}))
+
+# `setFindings`: `<code>: <set>: <i>, <j>`, with ` (not certified)` on SeparatedByDecisionOnly; per unordered pair
+# (i < j) in order, the decision-only finding (either twin first) before the act-only one (i first).
+FINDING_RANK = {"SeparatedByDecisionOnly": 0, "SeparatedByActOnly": 1}
+_FINDING = re.compile(r"(SeparatedByDecisionOnly|SeparatedByActOnly): (.*): (0|[1-9][0-9]*), (0|[1-9][0-9]*)"
+                      r"( \(not certified\))?", re.DOTALL)
+
+
+def parse_finding(text):
+    """(code, set, i, j) of one of Lean's set findings, or None when it is not in `setFindings`' text."""
+    m = _FINDING.fullmatch(text)
+    if m is None or (m[5] is not None) != (m[1] == "SeparatedByDecisionOnly"):
+        return None
+    return m[1], m[2], int(m[3]), int(m[4])
+
+
+def _bind(row, document):
+    sets = [R for R in Document(None, document).sets if content_bearing(R)]
+    _need(row["content_bearing"] is bool(sets))
+    if sets:
+        _need([(e["set"], e["version"]) for e in row["sets"]] == [(R.id, R.version) for R in sets])
+        for entry, R in zip(row["sets"], sets):
+            _bind_set(entry, R)
+
+
+def _bind_set(entry, R):
+    candidates = entry["candidates"]
+    _need([(c["id"], c["index"], c["pending"]) for c in candidates]
+          == [(a.id, n, a.content is None) for n, a in enumerate(R.candidates)])
+    _need(len({a.id for a in R.candidates}) == len(R.candidates))
+    owned, keys = {}, {}
+    for c in candidates:
+        if c["pending"]:
+            continue
+        generated = [decode_key(e["key"]) for e in c["owned"] + c["shared"]]
+        _need(len(set(generated)) == len(generated))
+        suffix = f" under {R.id}@{R.version}:{c['index']}"
+        _need(all(len(f) > len(suffix) and f.endswith(suffix) for f in c["findings"]))
+        owned[c["index"]] = {decode_key(e["key"]) for e in c["owned"]}
+        keys[c["index"]] = set(generated)
+    index = {a.id: n for n, a in enumerate(R.candidates)}
+    readings = R.raw["readings"]
+    expected = []
+    for x, a in enumerate(R.candidates):
+        for y, b in enumerate(R.candidates):
+            if x != y and a.content is not None and b.content is not None:
+                sid = readings[x]["admission"]["distinguishing_models"][b.id]
+                expected.append((a.id, b.id, sid, R.situations[sid]["witness"]))
+    _need([(p["reading"], p["other"], p["pair"]["situation"], p["pair"]["witness"]) for p in entry["pairs"]]
+          == expected)
+    for p in entry["pairs"]:
+        facts, situation = p["pair"], R.situations[p["pair"]["situation"]]
+        _need(facts["witness"] in (p["reading"], p["other"]))
+        witness = index[facts["witness"]]
+        other = index[p["other"] if facts["witness"] == p["reading"] else p["reading"]]
+        _need(type(situation["value"]) is bool and facts["witness_value"] is situation["value"])
+        _need(("other_value" in facts) is (not owned[other]))
+        # With no key of its own the other side has one completion; separated, it does not show the value.
+        _need(not (facts["other_admissible"] and facts.get("other_value") is facts["witness_value"]))
+        decisions = [decode_key(t["key"]) for t in situation.get("decisions", [])]
+        fixed = [decode_key(t["key"]) for t in situation.get("fixed", [])]
+        _need(all(k in owned[witness] for k in decisions))
+        _need(all(k not in owned[witness] | owned[other] and k in keys[witness] | keys[other] for k in fixed))
+    order = []
+    for text in entry["findings"]:
+        parsed = parse_finding(text)
+        _need(parsed is not None and parsed[1] == R.id)
+        code, _, i, j = parsed
+        _need(i != j and i in owned and j in owned and (code == "SeparatedByDecisionOnly" or i < j))
+        order.append((min(i, j), max(i, j), FINDING_RANK[code]))
+    _need(order == sorted(set(order)))
+
+
+def _check(row, case):
+    """Raise `CheckerUnavailable` unless `row` is a well-formed `ok` answer bound to the request. Every failure of
+    the check itself (a type the schema missed, a missing request field) is contained here: the answer is then
+    not shown to be Lean's, which is operational, never a rejection."""
+    try:
+        _need(ROW(row) and row["id"] == case["id"])
+        _bind(row, case["document"])
+    except (_Invalid, TypeError, KeyError, ValueError, AttributeError, IndexError, RecursionError) as exc:
+        raise CheckerUnavailable("ve_readings_route returned an invalid answer") from exc
+
+
+def validate(environment, units, reading_sets, *, executable=LEAN_ROUTE):
+    """Return Lean's checked reading data, or raise its diagnostic.
+
+    Transport failure and a row that is malformed or not bound to the request are operational failures
+    (`CheckerUnavailable`); a well-formed Lean error row rejects the document with Lean's text."""
+    # One normalised input (`wire`: an explicit null is an absent field), as Lean reads it.
+    environment, document = wire(environment), wire(document_wire(units, reading_sets))
+    case = {"id": "readings-s1", "kind": "readings-validate", "environment": environment, "document": document}
+    row = run_lean([case], executable=executable, timeout=lean_timeout(300.0))[0]
     if row["status"] == "error":
         raise VEError(row["error"])
+    _check(row, case)
     return row
-
-
-def separate_many(environment, units, reading_sets, queries, *, executable=LEAN_ROUTE):
-    """`readings-separate` for each (set, situation id, other reading): Lean's answer per query, or its
-    diagnostic (the search's check, 8.5). The document carries the candidate situations."""
-    environment, document = wire(environment), wire(document_wire(units, reading_sets))
-    cases = [{"id": f"q{n}", "kind": "readings-separate", "environment": environment, "document": document,
-              "set": s, "situation": sid, "other": other} for n, (s, sid, other) in enumerate(queries)]
-    return run_lean(cases, executable=executable) if cases else []
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -241,9 +349,8 @@ def separate_many(environment, units, reading_sets, queries, *, executable=LEAN_
 CHECKED_BY = {
     "lean": "readings@1 admission (4.1 to 4.4), every recorded separation (4.5) and the findings (4.6): "
             "ve_readings_route readings-validate; S2 route and restrictions: readings-elaborate",
-    "python": "W2 structure of the reading sets and regeneration of S1 admission; "
-              "S2 choices, units, names, slot and sizes compared with Lean",
-    "rust": "untrusted evaluation of every recorded situation (10)",
+    "python": "W2 structure of the reading sets, couplings and narrowings (S1 limitation, DRI ruling 3: "
+              "Lean does not decode them); S2 choices, units, names, slot and sizes compared with Lean",
     "not_certified": "SeparatedByDecisionOnly: decision_only_sound is not proved (DRI ruling 2)"}
 
 
@@ -257,6 +364,11 @@ def report(doc):
     row = doc.get("readings_s1")
     if row is None or not row.get("content_bearing"):
         return None
+    with _built():
+        return _report(doc, row)
+
+
+def _report(doc, row):
     english = Wording(doc)
     sets = []
     separations = {"outcome": 0, "selects": 0, "holds": 0}
@@ -298,6 +410,7 @@ def report(doc):
         # `status`, `conflict` and `dead_readings` (6): each from checked evidence; `dead_readings` is null when
         # the compatible choices were too many to enumerate, never an unchecked empty list.
         result.update(route.report_fields())
+        from .readings_s2_wording import report_english
         result["english"] = report_english(doc, route)
     return result
 
@@ -308,11 +421,12 @@ class Wording:
     def __init__(self, doc):
         from .english import EnglishVocabulary
         self.doc = doc
-        self.environment = doc["environment"].to_dict()
-        self.document = document_wire(doc["units"], doc["meta"].get("reading_sets", []))
-        self.admission = Admission(self.environment, self.document)
-        self.words = EnglishVocabulary(self.admission.senv.frame)
-        self.numbers = {unit["id"]: n for n, unit in enumerate(doc["units"], 1)}
+        with _built():
+            self.environment = doc["environment"].to_dict()
+            self.document = document_wire(doc["units"], doc["meta"].get("reading_sets", []))
+            self.admission = Decoded(self.environment, self.document)
+            self.words = EnglishVocabulary(self.admission.senv.frame)
+            self.numbers = {unit["id"]: n for n, unit in enumerate(doc["units"], 1)}
 
     def set_raw(self, set_id):
         return self.admission.doc.set_by_id(set_id).raw
@@ -379,7 +493,7 @@ class Wording:
     def decision(self, set_id, witness, key_json_value, row, own):
         """`<decision>` of 2.1."""
         from .readings_s1 import decode_key
-        key = decode_key(key_json_value, "invalid key")
+        key = decode_key(key_json_value)
         tuple_text = self.subject(row)
         side = self.admission.side(set_id, witness)
         sd = side.soft
@@ -452,7 +566,7 @@ class Wording:
                 lines.append(E.force_twin_sentence(source_word, *paraphrases, who, tuple(row), role,
                                                    strict_value, default_value))
                 lines += self.e22_e23(set_id, strict, default)
-                if self.admission.decision_only(set_id, strict, default) is not None:
+                if (strict, default) in _finding_pairs(entry, "SeparatedByDecisionOnly"):
                     lines.append(E.decision_only_sentence(who))
                 return "E14", _s1_gated("E14", " ".join(lines))
             text = E.outcome_pair_sentence(self.situation_text(set_id, i, situation), names[i], names[j], role,
@@ -520,6 +634,10 @@ class Wording:
     def set_lines(self, unit_id):
         """The English shown under a content-bearing set (2.3): each pair's wording, then E16 for the
         `SeparatedByActOnly` finding."""
+        with _built():
+            return self._set_lines(unit_id)
+
+    def _set_lines(self, unit_id):
         from . import readings_english as E
         row = self.doc.get("readings_s1")
         lines = []
@@ -529,11 +647,9 @@ class Wording:
                 continue
             for pair in self.unordered_pairs(entry):
                 lines.append(self.pair(entry, pair)[1])
-            for finding in entry["findings"]:
-                if finding.startswith("SeparatedByActOnly:"):
-                    i, j = (int(x) for x in finding.split(":", 2)[2].split(","))
-                    acts = [self.act_phrase(entry["set"], k) for k in (i, j)]
-                    lines.append(_s1_gated("E16", E.act_only_sentence(*acts)))
+            for i, j in _finding_pairs(entry, "SeparatedByActOnly"):
+                acts = [self.act_phrase(entry["set"], k) for k in (i, j)]
+                lines.append(_s1_gated("E16", E.act_only_sentence(*acts)))
         return lines
 
     def act_phrase(self, set_id, k):
@@ -545,15 +661,10 @@ class Wording:
         return " ".join(word for word in phrase.split() if not (word.startswith("{") and word.endswith("}")))
 
 
-def _s1_gated(lead, text):
-    """S1's report sentences read against every registered wording, S2a's included (2.2 and composition.md 2): the
-    sentence has exactly one derivation, by its own lead (E19 to E21 share one lead), so no sentence of S1 can be
-    read as one of S2a's. Their own slots are S1's (composition-s1.md 2.1) and are read as any text here."""
-    from .readings_s2_english import Slots, derivations
-    found = derivations(text, Slots())
-    if len(found) != 1 or found[0][0] != lead:
-        raise VEError(f"InvalidInput: S1 wording {lead} has {len(found)} derivations: {text}")
-    return text
+def _finding_pairs(entry, code):
+    """The candidate indices of each of Lean's findings with this code, in Lean's order (`parse_finding`, the
+    reader `validate` checked them with)."""
+    return [(i, j) for found, _, i, j in map(parse_finding, entry["findings"]) if found == code]
 
 
 def _article(noun):
@@ -597,426 +708,6 @@ def _precedence_related(rules, name):
     return related
 
 
-__all__ = ["Admission", "CHECKED_BY", "Wording", "document_wire", "report", "rights_findings", "run_lean",
-           "rust_check", "separate_many", "validate"]
+__all__ = ["CHECKED_BY", "ROW", "Wording", "document_wire", "elaborate", "parse_finding", "report", "run_lean",
+           "validate"]
 
-
-
-# ---------------------------------------------------------------------------------------------------------------
-# The English of S2a (composition-s2.md 2.3), from checked verdicts only, every sentence through W7's gate
-
-
-def report_english(doc, route):
-    """The sentences of 2.3 for the report's verdicts across readings: the conflict status, the premise status, the
-    dead readings and the finding of 1.8."""
-    from .readings_verdicts import Enumerated, Superposed
-    if not isinstance(route, (Superposed, Enumerated)):
-        return []
-    return S2Wording(doc, route).report()
-
-
-def query_english(doc, conclusion, data):
-    """The sentences of 2.3 for one ALL, SOME or NONE query across readings."""
-    from .readings_verdicts import Enumerated, Superposed, context
-    route = context(doc)
-    if not isinstance(route, (Superposed, Enumerated)):
-        return []
-    return S2Wording(doc, route).query(conclusion, data)
-
-
-class S2Wording:
-    """2.1's slots on one document: sentence numbers, reading names, conclusions and pulled situations."""
-
-    def __init__(self, doc, route):
-        from . import readings_s2_english as E
-        self.E = E
-        self.doc, self.route = doc, route
-        self.s1 = Wording(doc)
-        self.numbers = {unit["id"]: n for n, unit in enumerate(doc["units"], 1)}
-        self.sets = route.sets
-        self.set_number = {R.id: self.numbers[R.unit] for R in self.sets}
-        self.names = {R.id: self.s1.reading_names(R.id) for R in self.sets}
-        self.slots = E.Slots(numbers={str(n) for n in self.numbers.values()},
-                             readings={name for names in self.names.values() for name in names})
-        senv = self.s1.admission.senv
-        self.frame = senv.frame
-        self.author = set(senv.author_environment().predicates)
-        self.decisions = self._decision_names()
-
-    # -- slots
-
-    def readings(self, choice):
-        """[(sentence number, reading name)] for a choice or assumed list, in source order."""
-        chosen = {s: i for s, i in choice}
-        return [(self.set_number[R.id], self.names[R.id][chosen[R.id]]) for R in self.sets if R.id in chosen]
-
-    def conclusion(self, ast):
-        """`<conclusion>`: the conclusion's canonical sentence on the existing English surface, in italics; it is
-        read back by that surface's all-derivations parser to the conclusion itself before it is shown."""
-        from .ast import Document as Formulas, formula_from_data
-        from .english import parse_english
-        from .printer import render
-        formula = formula_from_data(self.frame, ast)
-        text = render(Formulas((formula,)), self.frame, "ve_english").strip()
-        if parse_english(self.frame, text).formulas != (formula,):
-            raise VEError("InvalidInput: the conclusion's sentence does not read back to the conclusion")
-        slot = f"*{text}*"
-        self.slots.conclusions.add(slot)
-        return slot
-
-    def _decision_names(self):
-        """Every decision predicate a rule of the document or of a candidate generates, with what it decides:
-        (kind, rule name, party or ranks, owner (set, index) or None)."""
-        from .readings_sup import position, qualify
-        out = {}
-
-        def add(rule, owner, name):
-            root = name.replace("-", "_")
-            if rule.get("mode", "strict") == "default":
-                out[f"soft__excepted__{root}"] = ("excepted", rule, None, owner)
-            for party in rule.get("alterable", []):
-                out[f"soft__off__{root}__{party}"] = ("off", rule, party, owner)
-
-        source = self.route.source
-        for _, content in source.fixed_units():
-            for rule in content.rules():
-                add(rule, None, rule["name"])
-        for R in self.sets:
-            for i, a in enumerate(R.candidates):
-                for rule in (a.content.rules() if a.content is not None else []):
-                    add(rule, (R.id, i), rule["name"])
-                    add(rule, (R.id, i), qualify(position(self.sets, R.id, i), rule["name"]))
-        return out
-
-    def situation(self, data, choice):
-        """`<situation>` (2.1): the pulled situation of a model of the reading `choice` names: the elements by
-        sort, the author's base facts, and each decision as a supposition attributed to who decides; no choice
-        vocabulary and no generated name."""
-        words = self.s1.words
-        facts = []
-        for sort in sorted(data["domains"]):
-            if sort == "ve__reading":
-                continue
-            noun = words.sorts[sort]
-            for name in sorted(data["domains"][sort]):
-                facts.append(f"{name} is {_article(noun)} {noun}")
-        relations = data.get("relations", {})
-        for predicate in sorted(relations):
-            if predicate in self.author:
-                for row in sorted(relations[predicate]):
-                    facts.append(words.predicates[predicate].format(*row))
-        chosen = {(s, i) for s, i in choice}
-        own = self._choice_decisions(choice)
-        for predicate in sorted(relations):
-            for row in sorted(relations[predicate]):
-                phrase = (self._decision(predicate, row, chosen) if own is None else
-                          self._choice_decision(own, predicate, row, chosen))
-                if phrase is not None:
-                    facts.append("suppose " + phrase)
-                elif predicate not in self.author and predicate.startswith(_DECISION_PREFIXES):
-                    # Review A of compose-s2 looprecheck2: a decision the situation needs is never left out.
-                    raise VEError(f"InvalidInput: a situation's decision table {predicate} has no wording")
-        text = "; ".join(facts) if facts else "nothing exists"
-        self.slots.situations.add(text)
-        return text
-
-    def _choice_decisions(self, choice):
-        """On the enumerated route a model is one of the choice's own document, so its decision tables are the ones
-        that document generates (`gen_keys`: exceptions, switches, outweighing, limitations, their conditions and
-        the bar, on every chain): (the choice's side, generated name → key). None on the superposed route."""
-        from .readings_verdicts import Enumerated
-        if not isinstance(self.route, Enumerated):
-            return None
-        own = self.route._choice({s: i for s, i in choice})
-        if own.chain == "norms":
-            return own.side, {}
-        return own.side, {generated: key for key, generated, _ in own.side.gen_keys()}
-
-    def _rule_owner(self, name, chosen):
-        """(True, None) when the rule named `name` is a candidate's of the choice, (False, n) when sentence n's. Every
-        rule a content states is found (`Content.rules`: a norm, and every rule-bearing field of every line kind, a
-        power line's liberty and recognition included; compose-s2 fix4 A2)."""
-        def names(content):
-            return [] if content is None else [rule["name"] for rule in content.rules()]
-        for R in self.sets:
-            for i, a in enumerate(R.candidates):
-                if (R.id, i) in chosen and name in names(a.content):
-                    return True, None
-        for uid, content in self.route.source.fixed_units():
-            if name in names(content):
-                return False, self.numbers[uid]
-        raise VEError(f"InvalidInput: no sentence of the reading states rule {name}")
-
-    def _choice_decision(self, own, predicate, row, chosen):
-        """`<decision>` (2.1) for a decision table of a choice's own document, as S1 words it for a reading."""
-        side, keys = own
-        key = keys.get(predicate)
-        if key is None:
-            return None
-        subject = _series(list(row))
-        soft = side.soft.env.soft or {}
-        if key[0] in ("excepted", "off"):
-            mine, number = self._rule_owner(key[1], chosen)
-            sentence = "this sentence" if mine else f"sentence {number}"
-            if key[0] == "off":
-                return f"{key[3]} has turned {sentence} off for {subject}"
-            rule = next((r for r, name, bearer in side.keyed_rules() if name == key[1] and bearer == key[2]), None)
-            decided = ((rule.exception or {}).get("decided_by") if rule is not None else None) or \
-                soft.get("exception_decider")
-            target = "the exception" if mine else f"the exception to {sentence}"
-            return f"{self.s1.decider(decided)} decides {target} applies to {subject}"
-        if key[0] == "outweighs":
-            who = self.s1.decider(soft.get("outranking", {}).get("decided_by"))
-            return f"{who} decides that {key[2]} outweighs {key[3]} for {subject}"
-        rd = side.rights
-        if key[0] == "lim":
-            limit = next(item for item in rd.limitations if item["name"] == key[1])
-            who = limit["decided_by"]
-        elif key[0] == "cond":
-            limit = next(item for item in rd.limitations if item["name"] == key[1])
-            condition = next(item for item in limit["conditions"] if item["name"] == key[3])
-            who = condition.get("decided_by") or limit["decided_by"]
-        else:
-            who = rd.bar["decided_by"]
-        return f"{self.s1.decider(who)} decides that " + rd.wordings[predicate].format(*row)
-
-    def _decision(self, predicate, row, chosen):
-        subject = _series(list(row))
-        soft = getattr(self.frame, "soft", None) or {}
-        if predicate.startswith("soft__outweighs__"):
-            _, _, low, high, _ = predicate.split("__", 4)
-            outranking = soft.get("outranking", {})
-            return f"{self.s1.decider(outranking.get('decided_by'))} decides that {low} outweighs {high} for {subject}"
-        entry = self.decisions.get(predicate)
-        if entry is None:
-            return None
-        kind, rule, party, owner = entry
-        own = owner is not None
-        if own and owner not in chosen:
-            return None  # an unchosen reading's table is empty (quiescence); never shown
-        sentence = "this sentence" if own else f"sentence {self.s1.rule_unit(rule['name'])}"
-        if kind == "off":
-            return f"{party} has turned {sentence} off for {subject}"
-        decided = (rule.get("exception") or {}).get("decided_by") or soft.get("exception_decider")
-        target = "the exception" if own else f"the exception to {sentence}"
-        return f"{self.s1.decider(decided)} decides {target} applies to {subject}"
-
-    def classification(self, conflict):
-        """The lower route's classification line of a witness (R4 follows it), each rule of a candidate named as
-        the author named it with ` under <set>@<v>:<i>` (6)."""
-        sorts, values = conflict.get("sorts", []), conflict["tuple"]
-        setting = ", ".join(f"{sort} {value}" for sort, value in zip(sorts, values))
-        target = conflict["target"]
-        kind = f"pair conflict on {target}" if "->" in target else f"strict collision on {target}"
-        rules = conflict.get("selected")
-        if not rules:
-            return f"CONFLICT: {kind} at {setting}"
-        return (f"CONFLICT: {kind} at {setting}: " +
-                "; ".join(f"rule {self._rule_name(name)} {verb}" for name, verb in rules))
-
-    def _rule_name(self, name):
-        versions = {R.id: R.version for R in self.sets}
-        for entry in self.route.row.get("names", []):
-            for candidate in entry["candidates"]:
-                for original, qualified in candidate["names"]:
-                    if qualified == name:
-                        return f"{original} under {entry['set']}@{versions[entry['set']]}:{candidate['index']}"
-        return name
-
-    # -- E3's lines (2.3 item 1)
-
-    def provided(self, used):
-        """E3's lines for the slot labels an answer uses, each read by its kind (`slot_label`), never by its ending:
-        a coupling or narrowing id may itself be `one` or `quiet` (compose-s2 looprecheck1 A)."""
-        from .readings_sup import slot_label
-        E, lines = self.E, []
-        quiet = False
-        for label in used:
-            decoded = slot_label(label)
-            if decoded.kind == "one":
-                R = self._set(decoded.set, decoded.version, label)
-                lines.append(E.one_reading(self.set_number[R.id], len(R.candidates), self.slots))
-            elif decoded.kind in ("own", "shared"):
-                quiet = True
-            elif decoded.kind == "coupling":
-                from .readings_english import coupling_sentence
-                coupling = self._restriction(self.route.couplings, decoded, label)
-                sets = {R.id: {"unit": R.unit} for R in self.sets}
-                lines.append(E.gated("E5", coupling_sentence(coupling, sets, self.doc["units"]), self.slots))
-            elif decoded.kind == "narrowing":
-                narrowing = self._restriction(self.route.narrowings, decoded, label)
-                R = self._set(narrowing["set"], narrowing["version"], label)
-                cited = [self.numbers[u] for u in narrowing["reason_spans"]]
-                for i, a in enumerate(R.candidates):
-                    if a.id not in narrowing["keeps"]:
-                        lines.append(E.narrowed(self.set_number[R.id], self.names[R.id][i], cited, self.slots))
-            else:
-                raise VEError(f"InvalidInput: unknown slot label kind {decoded.kind}")
-        if quiet:
-            lines.append(E.quiet(self.slots))
-        return ([E.provided(self.slots)] + lines) if lines else []
-
-    def _set(self, set_id, version, label):
-        R = next((R for R in self.sets if (R.id, R.version) == (set_id, version)), None)
-        if R is None:
-            raise VEError(f"InvalidInput: slot label {label} names no open reading set")
-        return R
-
-    @staticmethod
-    def _restriction(items, decoded, label):
-        found = next((item for item in items if item["id"] == decoded.key), None)
-        if found is None:
-            raise VEError(f"InvalidInput: slot label {label} names no {decoded.kind}")
-        return found
-
-    def independent(self, mentions):
-        return [self.E.independent(self.set_number[R.id], self.slots) for R in self.sets if R.id not in mentions]
-
-    def _mentions(self, used):
-        """The open sets the used labels mention: a slot leaf by its bit predicates, and on the enumerated route a
-        coupling or narrowing label by the sets it restricts."""
-        from .readings_sup import bit_name, bits_of, in_force
-        asts = {entry["label"]: entry["ast"] for entry in self.route.row.get("slot", [])}
-        from .readings_sup import slot_label
-        restricted = set()
-        for label in used:
-            decoded = slot_label(label)
-            if decoded.kind == "coupling":
-                coupling = self._restriction(self.route.couplings, decoded, label)
-                restricted.update(ref["set"] for ref in coupling["sets"])
-            elif decoded.kind == "narrowing":
-                narrowing = self._restriction(self.route.narrowings, decoded, label)
-                restricted.update(R.id for R in self.sets if in_force(R, narrowing))
-        out = []
-        for position, R in enumerate(self.sets, 1):
-            bits = {bit_name(position, j) for j in range(bits_of(len(R.candidates)))}
-            if R.id in restricted or any(bits & _predicates(asts.get(label, [])) for label in used):
-                out.append(R.id)
-        return out
-
-    # -- the report (2.3 items 1, 3 and 6)
-
-    def report(self):
-        E, route, lines = self.E, self.route, []
-        k = len(self.sets)
-        finding = route.row.get("finding")
-        if finding is not None:
-            sets = finding["text"].split(": ", 1)[1].split(", ")
-            lines.append(E.not_superposed([self.set_number[s] for s in sets], self.slots))
-        conflict = route.conflict(())
-        if conflict["status"] == "CONFLICT-FREE":
-            lines.append(E.every_result(k, "conflict_free", self.slots))
-            used = self._dependencies(conflict)
-            lines += self.provided(used)
-            lines += self.independent(self._mentions(used))
-        elif conflict["status"] == "CONFLICT" and "model" in conflict:
-            lines.append(E.named_result(self.readings(conflict["choice"]), "conflict", self.slots,
-                                        situation=self.situation(conflict["model"], conflict["choice"])))
-            lines.append(self.classification(conflict))
-        elif conflict["status"] == "CONFLICT":
-            for witness in conflict.get("witnesses", []):
-                lines.append(E.named_result(self.readings(witness["choice"]), "conflict", self.slots,
-                                            situation=self.situation(witness["model"], witness["choice"])))
-                if witness.get("status_text"):
-                    lines.append(witness["status_text"])
-        premises = route.premises()
-        if premises["status"] == "model" and "model" in premises:
-            lines.append(E.named_result(self.readings(premises["choice"]), "premise_model", self.slots,
-                                        situation=self.situation(premises["model"], premises["choice"])))
-        elif premises["status"] == "INCONSISTENT" and premises.get("evidence") == "certificate":
-            # A certificate with A = [] (2.3 item 1): E3 and E13 from what it and its conflict certificates rely on.
-            lines.append(E.every_result(k, "inconsistent", self.slots))
-            used = self._dependencies(premises)
-            lines += self.provided(used)
-            lines += self.independent(self._mentions(used))
-        for dead in route.dead_readings() or []:
-            lines.append(E.dead_reading(self.set_number[dead["set"]], self.names[dead["set"]][dead["index"]],
-                                        self.slots))
-        return lines
-
-    # -- a query (2.3 items 1, 2, 4, 5 and 7)
-
-    def query(self, conclusion_ast, data):
-        E, lines = self.E, []
-        k = len(self.sets)
-        verdict = data["verdict"]
-        # Review A of compose-s2 looprecheck1: a result under named readings is worded under exactly those readings
-        # (2.3 item 2, on either route); E10, E26, E27 and E28 speak of every reading and never word one.
-        assumed = data.get("assumed") or []
-        slot = self.conclusion(conclusion_ast)
-        if verdict == "ALL":
-            if assumed:
-                lines.append(E.named_result(self.readings(assumed), "follows", self.slots, conclusion=slot))
-            else:
-                lines.append(E.every_result(k, "follows", self.slots, conclusion=slot))
-            # Review A1 of compose-s2 fix4: the conditions and the independence statement are both worded from the
-            # answer's one dependency set, its conflict certificates' included. Combined over the compatible choices
-            # (review A of compose-s2 looprecheck2) the set holds the couplings and narrowings that excluded the
-            # others (E3 with E5 and E7), and no independence is claimed.
-            used = self._dependencies(data)
-            lines += self.provided(used)
-            if data.get("evidence") == "certificate":
-                lines += self.independent(set(self._mentions(used)) | {s for s, _ in assumed})
-        elif verdict == "SOME":
-            lines.append(E.named_result(self.readings(data["proof"]["choice"]), "follows", self.slots,
-                                        conclusion=slot))
-            lines.append(self._countermodel(data["countermodel"]))
-        elif verdict == "NOT ALL":
-            lines.append(self._countermodel(data["countermodel"]))
-        elif verdict == "NONE":
-            if k >= 2 and not assumed:
-                lines.append(E.none_result(k, self.slots))
-            lines += [self._countermodel(c) for c in data["countermodels"]]
-            lines += self.provided(self._restrictions(data))
-        elif verdict == "UNKNOWN" and "countermodel" in data and data.get("budget") == {"max_choices": 64} \
-                and not assumed:
-            lines.append(E.over_budget(self.slots))
-            lines.append(self._countermodel(data["countermodel"]))
-        return lines
-
-    @staticmethod
-    def _dependencies(data):
-        """The slot labels a Lean-checked answer depends on (`reading_premises_used`, `Superposed._dependencies` on
-        the superposed route, the restrictions on the enumerated route); an answer without them is refused, never
-        worded as depending on no reading."""
-        if "reading_premises_used" not in data:
-            raise VEError("InvalidInput: a checked answer's wording needs the reading premises it depends on")
-        return data["reading_premises_used"]
-
-    @staticmethod
-    def _restrictions(data):
-        """The restrictions a combined verdict keeps; a combined verdict without the field is refused, never worded
-        as if no coupling or narrowing had selected its choices."""
-        if "restrictions" not in data:
-            raise VEError("InvalidInput: a verdict combined over the compatible choices needs its restrictions")
-        return data["restrictions"]
-
-    def _countermodel(self, counter):
-        model = counter.get("model")
-        if model is None:
-            raise VEError("InvalidInput: a countermodel's wording needs its checked model")
-        return self.E.named_result(self.readings(counter["choice"]), "countermodel", self.slots,
-                                   situation=self.situation(model, counter["choice"]))
-
-
-_DECISION_PREFIXES = ("soft__excepted__", "soft__off__", "soft__outweighs__", "rights__")
-
-
-def _series(values):
-    values = list(values)
-    if len(values) == 1:
-        return values[0]
-    if len(values) == 2:
-        return f"{values[0]} and {values[1]}"
-    return ", ".join(values[:-1]) + " and " + values[-1]
-
-
-def _predicates(ast):
-    out, stack = set(), [ast]
-    while stack:
-        node = stack.pop()
-        if type(node) is list and node:
-            if node[0] in ("unary", "binary") and type(node[1]) is str:
-                out.add(node[1])
-            stack.extend(item for item in node[1:] if type(item) is list)
-    return out

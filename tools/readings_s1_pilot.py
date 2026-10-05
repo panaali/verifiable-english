@@ -12,8 +12,8 @@ The UDHR: the run's translation with `readings@1`, the four norm-candidate sets 
 given the contents of their companion documents, and every right set's situations found by the search (their
 probe-free `models` are not read under S1, 13.9). The assertion set keeps today's validation.
 
-Each document is loaded and checked through the ordinary entry point, so Lean admits it, Python regenerates
-Lean's answer and Rust replays every situation. The report gives, per pilot: whether the single-attachment check
+Each document is loaded and checked through the ordinary entry point, so Lean admits it (the route relays its
+answer). The report gives, per pilot: whether the single-attachment check
 of 4.2 refuses the document; per named unit its status and bytes; the sets admitted, by probe form; the findings;
 the pairs without a situation and the rejection text; ResourceLimit hits; and the load time. Nothing here is a
 prediction: every number is the rerun's.
@@ -33,7 +33,7 @@ from ve.document import _environment, check_document, load_document  # noqa: E40
 from ve.errors import VEError  # noqa: E402
 from ve.readings import s1_content_meaning_id  # noqa: E402
 from ve.readings_route import document_wire  # noqa: E402
-from ve.readings_s1 import Admission, guard_base, record_situations, search  # noqa: E402
+from ve.readings_s1 import Decoded, guard_base, record_situations, search  # noqa: E402
 
 
 def read(path):
@@ -190,17 +190,17 @@ def find_situations(meta):
     units = [{"id": u["id"], "kind": u["kind"], "content": u.get("content")}
              for u in _flat(meta["units"])]
     document = document_wire(units, meta["reading_sets"])
-    admission = Admission(meta["environment"], document)
+    decoded = Decoded(meta["environment"], document)
     missing, limits = [], []
     sets = []
     for item in meta["reading_sets"]:
-        R = admission.doc.set_by_id(item["id"])
-        if R is None or not Admission.content_bearing(R):
+        R = decoded.doc.set_by_id(item["id"])
+        if R is None or not Decoded.content_bearing(R):
             sets.append(item)
             continue
-        hints = [guard_base(admission, item["id"], i) for i, a in enumerate(R.candidates) if a.content is not None]
+        hints = [guard_base(decoded, item["id"], i) for i, a in enumerate(R.candidates) if a.content is not None]
         try:
-            found = search(meta["environment"], document, item["id"], max_size=1, hints=hints, admission=admission)
+            found = search(meta["environment"], document, item["id"], max_size=1, hints=hints, decoded=decoded)
         except VEError as exc:
             limits.append((item["id"], str(exc)))
             sets.append(item)

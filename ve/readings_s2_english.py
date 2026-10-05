@@ -152,6 +152,16 @@ def gated(intended, text, slots):
     return text
 
 
+def s1_gated(lead, text):
+    """S1's report sentences read against every registered wording, S2a's included (2.2 and composition.md 2): the
+    sentence has exactly one derivation, by its own lead (E19 to E21 share one lead), so no sentence of S1 can be
+    read as one of S2a's. Their own slots are S1's (composition-s1.md 2.1) and are read as any text here."""
+    found = derivations(text, Slots())
+    if len(found) != 1 or found[0][0] != lead:
+        raise VEError(f"InvalidInput: S1 wording {lead} has {len(found)} derivations: {text}")
+    return text
+
+
 # ---------------------------------------------------------------------------------------------------------------
 # The sentences, each built from its template and gated before it is returned
 
@@ -260,4 +270,4 @@ def excludes(first, second, slots):
 __all__ = ["OVER_BUDGET", "PROVIDED", "QUIET", "S2A", "Slots", "TEMPLATES", "citation", "dead_reading",
            "derivations", "every_result", "excludes", "gated", "independent", "named_result", "narrowed",
            "none_result", "not_superposed", "one_reading", "over_budget", "provided", "quiet", "requires",
-           "result_sentence"]
+           "result_sentence", "s1_gated"]

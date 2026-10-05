@@ -181,16 +181,19 @@ def test_python_rejects_every_wrong_type_with_a_diagnostic(monkeypatch, base, fi
 def test_every_python_entry_taking_environment_json_raises_only_diagnostics(monkeypatch, tmp_path,
                                                                             base, field, data):
     """The routing that reads an environment's profiles or language before its
-    decoder runs (documents, bundles, admission, the soft, rights and readings
-    environments) never raises past the decoder's diagnostic."""
+    decoder runs (documents, bundles, admission, the soft and rights
+    environments) never raises past the decoder's diagnostic. The readings
+    environment (`S1Environment`) is no entry since lean-first batch 3: it only
+    builds what Lean's readings route admitted, and the route decides
+    (`test_readings_route_relay.py`); it still never crashes
+    (`test_every_nested_value_of_every_kind_raises_only_diagnostics`)."""
     from ve.admission import admit_document
     from ve.bundle import check_bundle
     from ve.document import load_document, stored_identities
-    from ve.readings_s1 import S1Environment
     from ve.rights import RightsEnvironment
     from ve.softnorms import SoftEnvironment
     monkeypatch.setenv("VE_AUTHORITY", "python")
-    for build in (SoftEnvironment, RightsEnvironment, S1Environment,
+    for build in (SoftEnvironment, RightsEnvironment,
                   lambda d: admit_document(d, {"units": []}),
                   lambda d: check_bundle({"version": "ve-bundle@0", "environment": d, "lemmas": []})):
         outcome(lambda: build(deepcopy(data)))
