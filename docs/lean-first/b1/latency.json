@@ -1,0 +1,26 @@
+[
+  {
+    "document": "s1.ve.md",
+    "base": {
+      "wall_median": 5.425,
+      "cpu_median": 5.438
+    },
+    "head": {
+      "wall_median": 5.085,
+      "cpu_median": 5.09
+    },
+    "same_output": true
+  },
+  {
+    "document": "all-default.ve.md",
+    "base": {
+      "wall_median": 0.97,
+      "cpu_median": 0.971
+    },
+    "head": {
+      "wall_median": 0.779,
+      "cpu_median": 0.779
+    },
+    "same_output": true
+  }
+]

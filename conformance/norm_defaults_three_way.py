@@ -200,7 +200,7 @@ def admission_document(document):
     return {"units": units, "graph": {"root": "all", "nodes": nodes}}
 
 
-def run(executable=route.LEAN_ROUTE):
+def run():
     rows = []
     for name, raw_env, units, situations in fixtures():
         env = Environment(raw_env)
@@ -231,7 +231,7 @@ def run(executable=route.LEAN_ROUTE):
         if admission is not None:
             add({"kind": "admission", "environment": raw_env, "document": admission},
                 python_admission, "admission")
-        results = route.run_cases(cases, executable)
+        results = route.run_cases(cases)
         mismatches = []
         for case, answer, kind, row in zip(cases, expected, kinds, results):
             if row.get("status") != "ok":

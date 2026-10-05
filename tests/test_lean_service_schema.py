@@ -24,7 +24,6 @@ from __future__ import annotations
 
 from copy import deepcopy
 import json
-import os
 from pathlib import Path
 import random
 import shutil
@@ -33,26 +32,20 @@ import subprocess
 import pytest
 
 from subprocesses import HANG_TIMEOUT
+from tests.lean_build import lean_build
 from tests.lean_service_corpus import ERROR_REQUESTS, corpus
 from tests.test_lean_service import fake
 from ve.backends.lean_service import CheckerUnavailable, LeanService, case_digest, case_texts, request_context
 from ve.backends.service_schema import DIRECTORY, MODES, Compiler, Context, Invalid, check_response
 
 ROOT = Path(__file__).resolve().parents[1]
-BIN = ROOT / "lean/.lake/build/bin"
 COMMON = json.loads((DIRECTORY / "common.json").read_text())["$defs"]
 
 
 @pytest.fixture(scope="module")
 def executables():
-    lake = shutil.which("lake")
-    if lake is None and not (BIN / "ve_response_decode").exists():
-        pytest.skip("lake is not available")
-    if lake is not None and not os.environ.get("VE_LEAN_PREBUILT"):
-        build = subprocess.run([lake, "build", "ve_service", "ve_response_decode"], cwd=ROOT / "lean",
-                               capture_output=True, text=True, timeout=HANG_TIMEOUT)
-        assert build.returncode == 0, build.stdout + build.stderr
-    return BIN / "ve_service", BIN / "ve_response_decode"
+    bin_ = lean_build("ve_service", "ve_response_decode")
+    return bin_ / "ve_service", bin_ / "ve_response_decode"
 
 
 def _text(value):

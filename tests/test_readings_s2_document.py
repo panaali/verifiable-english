@@ -101,10 +101,11 @@ def test_ruling4_lean_frame_reads_unspecified_as_deny(lean_route):
 
 @pytest.fixture
 def lean_route():
-    from ve.readings_route import LEAN_ROUTE
-    if not LEAN_ROUTE.exists():
-        pytest.skip("ve_readings_route is not built")
-    return LEAN_ROUTE
+    """The readings route's service (None: the default `ve_service`)."""
+    from tests import lean_routes
+    if not lean_routes.SERVICE.exists():
+        pytest.skip("the Lean service is not built")
+    return None
 
 
 # ---------------------------------------------------------------------------------------------------------------

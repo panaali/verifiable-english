@@ -135,3 +135,29 @@ manifest, gate-collection, consolidation, precommit, wire-contract and difffuzz 
 `tools/select_tests.py` selects for the two composition fixes): 4,957 + 728 passed, 1 skipped; the first run's two
 consolidation failures above pass after the fixes (340 passed in those two files). `tools/select_tests.py` selects
 233 of 251 files for the merge as a whole, because core Lean modules changed; that full suite is left to the merge train.
+
+## 8. Merge of ve-integration 24ea9e45 (2026-10-05)
+
+ve-integration brought lean-first batch 1 (lf-1): every one-shot route executable became a `ve_service` mode
+and was deleted with its transport in `ve/backends/lean.py`; the service's response shapes as Lean data
+(`lib ResponseShape`, a default target) with the encoder theorems; type-strict JSON comparison in the evidence
+tools; per-operation CPU deadlines. Conflicts and their resolution (both sides kept):
+
+| File | Resolution |
+|---|---|
+| `lean/lakefile.toml` | ve-integration's targets (no one-shot routes, `ResponseShape`) plus this branch's `ve_english_route`, which stays a default target and a one-shot executable as 2.10 of the spec requires |
+| `ve/backends/lean.py` | ve-integration's deletions of the route transports; this branch's `run_english_cases` kept, the one one-shot transport beside `run` |
+| `tests/test_relay.py` | the transport table is `run` and `english`; `english` stays restricted JSON (`read_rows(restricted=True)`) |
+| `tools/lean_output_diff.py` | ve-integration's route modes as service sessions; `ve_english_route` stays a harness executable with its `english.read` and `english.grammar` inputs |
+| `ve/assurance-manifest.json` | union: this branch's decoder pins (`EnglishGrammar/Encode.lean`, `Run.lean`) and `ReadExamples.lean`; ve-integration's `ResponseShape/*`, `Risk/Eval.lean`, `Service/Diagnose.lean`, and the deletion of `RiskEvalMain.lean`; `total_lines` 18,780 (18,310 + 470); `docs/spec/assurance-manifest.md` regenerated |
+| `lean/VE/Route/frozen-sources.sha256` | union of both inventories; `VE/Audit.lean` rehashed from the merged file (it holds both sides' `#print axioms` blocks) |
+| `lean/axioms.txt`, `lean/declarations.txt` | regenerated (`lean/audit.py --write`, `tools/lean_statements.py`); `axioms.txt` is exactly the union of both sides' entries |
+| `tools/gate-collection.json` | regenerated (`tools/gate_collection.py --write`); exactly ve-integration's IDs plus this branch's additions minus its removals |
+| `docs/CONSOLIDATION-PLAN.md` | remeasured (`tools/trust_map.py --ledger`): step 7 removes 584 (batch 1's 551 plus `ve_english_route`'s 33), net 524, score 43.7; step 6 1,758 and step 8b 3,460 as on ve-integration |
+
+Composition: `english.read` and `english.grammar` are not `ve_service` modes (the open row of section 5), so batch
+1's response-shape theorems, rendered schema files and route parity do not cover them; the adapter checks the
+response itself (`english_lean.response_problem`). Moving the two modes into the service is the same open row.
+
+`tools/trust_map.py --check` still fails its budget, as on both parents (ve-integration: S 7,848, [V] 25,653;
+this branch: S 7,827, [V] 22,473); after the merge S 7,869 and [V] 27,329. No signed allowance is written here.

@@ -127,7 +127,7 @@ def test_span_accounting_is_complete():
         assert build_document.main(["--check"]) == 0
 
 
-@pytest.mark.skipif(not OWN["severity_and_dates"].RISK_ROUTE.exists(), reason="ve_risk_route is not built")
+@pytest.mark.skipif(not OWN["severity_and_dates"].RISK_ROUTE.exists(), reason="the Lean service is not built")
 def test_rerun_equals_committed_results():
     assert run.main(["--check"]) == 0
 

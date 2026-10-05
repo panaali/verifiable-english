@@ -1,0 +1,48 @@
+{
+  "$id": "diagnose.json",
+  "$comment": "Mode diagnose: Service.Diagnose.diagnoseCase over a case with a member unit, the row ve_diagnose <unit> prints for the case (WireContract.Diagnose.diagnoseCase). Diagnostic only: it decides no verdict.",
+  "row": {
+    "anyOf": [
+      {"$ref": "common.json#/$defs/case_error"},
+      {
+        "additionalProperties": false,
+        "properties": {"error": {"$ref": "common.json#/$defs/text"}, "id": {"x-echo": "/id"}, "status": {"const": "error"}},
+        "required": ["id", "status", "error"],
+        "type": "object"
+      },
+      {
+        "additionalProperties": false,
+        "else": {"not": {"required": ["diagnostic"]}},
+        "if": {"properties": {"outcome": {"const": "fault"}}},
+        "properties": {
+          "diagnostic": {"$ref": "#/$defs/record"},
+          "id": {"x-echo": "/id"},
+          "outcome": {"enum": ["clean", "fault"]},
+          "status": {"const": "ok"}
+        },
+        "required": ["id", "status", "outcome"],
+        "then": {"required": ["diagnostic"]},
+        "type": "object"
+      }
+    ]
+  },
+  "$defs": {
+    "record": {
+      "$comment": "WireContract.Engine.record of the first finding: the case's contract and revision, the failed check, its phase, code and class, the JSON pointer it names, the rendered text and the template's arguments (strings).",
+      "additionalProperties": false,
+      "properties": {
+        "args": {"$ref": "common.json#/$defs/string_map"},
+        "check": {"$ref": "common.json#/$defs/text"},
+        "class": {"$ref": "common.json#/$defs/code"},
+        "code": {"$ref": "common.json#/$defs/text"},
+        "contract": {"type": "string", "x-equals": "/unit"},
+        "path": {"pattern": "(/.*)?", "type": "string"},
+        "phase": {"$ref": "common.json#/$defs/text"},
+        "revision": {"$ref": "common.json#/$defs/nat"},
+        "text": {"type": "string"}
+      },
+      "required": ["contract", "revision", "check", "phase", "code", "class", "path", "text", "args"],
+      "type": "object"
+    }
+  }
+}

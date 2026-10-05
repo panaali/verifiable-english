@@ -14,6 +14,8 @@ import subprocess
 from pathlib import Path
 
 import pytest
+
+from tests import lean_routes
 from tests.subprocesses import HANG_TIMEOUT
 
 from tools import rust_build
@@ -28,16 +30,16 @@ from ve.norms import (NormDocument, _bind, _instantiate, check_conflict,
 from tests.test_norms import environment, model, obligation, permission, rule
 
 ROOT = Path(__file__).resolve().parents[1]
-LEAN = ROOT / "lean/.lake/build/bin/ve_norms_route"
+LEAN = "ve_norms_route"  # its service mode, through tests/lean_routes.py
 RUST = Path(os.environ.get("VE_RUST_BINARY", str(ROOT / "rust/target/release/ve")))
 
 
 @pytest.fixture(scope="module")
 def lean_executable():
     if os.environ.get("VE_LEAN_PREBUILT"):
-        assert LEAN.is_file(), f"gate Lean build missing: {LEAN}"
+        assert lean_routes.SERVICE.exists(), f"gate Lean build missing: {LEAN}"
         return LEAN
-    if not LEAN.exists():
+    if not lean_routes.SERVICE.exists():
         lake = shutil.which("lake")
         if lake is None:
             pytest.skip("lake is required for the W1 wire gate")
@@ -64,6 +66,12 @@ def rust_executable():
 
 
 def run(executable, cases):
+    """The rows of Rust's `conformance` or of the Lean norms route (`LEAN`, the service mode `norms`)."""
+    if executable == LEAN:
+        status, rows, stderr = lean_routes.run(LEAN, cases)
+        assert status in (0, 1), stderr
+        assert len(rows) == len(cases)
+        return rows
     command = [str(executable)] + (["conformance"] if executable == RUST else []) + ["-"]
     result = subprocess.run(command, input=json.dumps(cases),
                             text=True, capture_output=True, timeout=HANG_TIMEOUT)

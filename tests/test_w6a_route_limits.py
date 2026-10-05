@@ -16,6 +16,8 @@ from pathlib import Path
 
 import pytest
 
+from tests import lean_routes
+
 from conformance.p0 import envelope
 from subprocesses import run_cpu_bounded
 from ve import Environment, FiniteModel, evaluate
@@ -25,9 +27,9 @@ from ve.search import check_countermodel
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_conformance"
-QUANTITY = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_quantity"
+QUANTITY = "ve_quantity"  # its service mode, through tests/lean_routes.py
 RUST = Path(os.environ.get("VE_RUST_BINARY", str(ROOT / "rust" / "target" / "release" / "ve")))
-pytestmark = pytest.mark.skipif(not (LEAN.exists() and RUST.exists()),
+pytestmark = pytest.mark.skipif(not (LEAN.exists() and lean_routes.SERVICE.exists() and RUST.exists()),
                                 reason="build ve_conformance (lake build) and the Rust release binary")
 # CPU seconds for one batch of limit-busting cases, per backend (tests/subprocesses.py:
 # CPU time, unlike elapsed time, does not grow with machine load).
@@ -36,8 +38,13 @@ CPU = 30
 
 def run(command, cases):
     # The kernel stops a batch that spends CPU seconds past the limit (a runaway guard: it
-    # then exits by a signal, which fails here). What each batch spends is a benchmark
-    # against a stored baseline (tools/bench/test_perf.py), not a test criterion.
+    # then exits by a signal, which fails here); the service stops a request past its mode's CPU
+    # deadline (`lean_service.DEADLINES`). What each batch spends is a benchmark against a stored
+    # baseline (tools/bench/test_perf.py), not a test criterion.
+    if command[0] == str(QUANTITY):
+        results = lean_routes.rows(QUANTITY, cases)
+        assert len(results) == len(cases)
+        return results
     completed, cpu = run_cpu_bounded(command, json.dumps(cases), CPU)
     assert completed.returncode in (0, 1), (command[0], completed.returncode, cpu, completed.stderr[:500])
     results = json.loads(completed.stdout)

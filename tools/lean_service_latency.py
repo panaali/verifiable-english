@@ -38,6 +38,7 @@ from tools.lean_service_common import (DEFAULT_BENCH, MODES, machine, one_shot, 
                                        summary, workloads)
 from ve.backends.lean_service import (DEFAULT_EXECUTABLE, LeanService, LeanServicePool,  # noqa: E402
                                       executable_sha256)
+from ve.backends.service_schema import same_json  # noqa: E402
 
 BATCHES = {"W3/definitions": 2048, "W3/bundle": 256, "W1/conflict-check": 256,
            "certificate/tableau-large": 8}
@@ -103,7 +104,7 @@ def main(argv=None):
         for name, impl, case, payload in rows:
             mode = MODES[impl][0]
             reference = one_shot_results(impl, payload)
-            assert service.run(mode, [case]) == reference, name
+            assert same_json(service.run(mode, [case]), reference), name
             persistent, oneshot, cpu, wait = [], [], [], []
             for i in range(max(args.samples, args.one_shot_samples)):
                 if i < args.one_shot_samples:
@@ -133,17 +134,17 @@ def main(argv=None):
                 cases = [case] * n
                 batch_payload = (json.dumps({**case, "cases": case["cases"] * n}).encode() if impl == "lean_english"
                                  else json.dumps(cases, separators=(",", ":")).encode())
-                assert pool.run(mode, cases, timeout=120) == reference * n, name  # starts both processes
+                assert same_json(pool.run(mode, cases, timeout=120), reference * n), name  # starts both processes
                 persistent, pooled, oneshot = [], [], []
                 for _ in range(args.batch_repeats):
                     started = time.perf_counter()
                     results = service.run(mode, cases, timeout=120)
                     persistent.append(time.perf_counter() - started)
-                    assert results == reference * n, name
+                    assert same_json(results, reference * n), name
                     started = time.perf_counter()
                     results = pool.run(mode, cases, timeout=120)
                     pooled.append(time.perf_counter() - started)
-                    assert results == reference * n, name
+                    assert same_json(results, reference * n), name
                     started = time.perf_counter()
                     one_shot(impl, batch_payload)
                     oneshot.append(time.perf_counter() - started)
@@ -160,6 +161,11 @@ def main(argv=None):
     (args.out / "latency.json").write_text(json.dumps(data, indent=2) + "\n")
     (args.out / "LATENCY.md").write_text(report(data))
     print(report(data))
+    if not rows:
+        # Cold starts alone are no latency evidence for the workloads the gates name.
+        print(f"lean_service_latency: no workload in {args.bench_root}", file=sys.stderr)
+        return 2
+    return 0
 
 
 def report(data):
@@ -207,4 +213,4 @@ def report(data):
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

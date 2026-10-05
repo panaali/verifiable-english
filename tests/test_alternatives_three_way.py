@@ -10,6 +10,8 @@ import subprocess
 
 import pytest
 
+from tests import lean_routes
+
 from conformance.alternatives import base_environment, cases, environment as fixture_environment, rules
 from subprocesses import HANG_TIMEOUT
 from tools import rust_build
@@ -27,13 +29,13 @@ from ve.wire import digest
 
 
 ROOT = Path(__file__).resolve().parents[1]
-LEAN = ROOT / "lean/.lake/build/bin/ve_alternatives_route"
+LEAN = ROOT / "lean/.lake/build/bin/ve_service"
 
 
 @pytest.fixture(scope="module")
 def rust_binary():
-    if not LEAN.is_file():
-        pytest.skip("build ve_alternatives_route with lake build")
+    if not lean_routes.SERVICE.exists():
+        pytest.skip("build ve_service with lake build")
     if os.environ.get("VE_RUST_PREBUILT"):
         binary = Path(os.environ["VE_RUST_BINARY"])
         assert binary.is_file(), f"gate Rust build missing: {binary}"
