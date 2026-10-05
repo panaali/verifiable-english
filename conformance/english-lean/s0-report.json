@@ -1,0 +1,1166 @@
+{
+ "configurations": [
+  {
+   "attribute_product": {
+    "factored_rules": 0,
+    "pairs": 0,
+    "properties": 0,
+    "relations": 0
+   },
+   "configuration": "ordinary",
+   "document_level_cycles": [
+    "__start_plus_0"
+   ],
+   "empty_rules": [],
+   "environment_id": "5dc3ed0a1fd9158bce6aa4760681a327838d5586210b1c9ff4a5145256199b97",
+   "left_corner_cycles": [],
+   "longest_rhs": 15,
+   "nonterminals": 38,
+   "open_regex_terminals": [
+    {
+     "name": "LABEL",
+     "pattern": "(?:P|S)[1-9][0-9]*"
+    }
+   ],
+   "phrases_by_token_count": {
+    "2": 20,
+    "3": 8,
+    "4": 4,
+    "5": 3,
+    "6": 3,
+    "8": 3
+   },
+   "rank_depth": 6,
+   "rhs_total": 337,
+   "rules": 132,
+   "seconds": 0.97,
+   "terminals": {
+    "layout-or-impossible": 1,
+    "literal": 78,
+    "open-regex": 1,
+    "phrase-regex": 12
+   },
+   "unlexable_phrases": [
+    {
+     "phrase": ".",
+     "reject": "emptySentence"
+    }
+   ]
+  },
+  {
+   "attribute_product": {
+    "factored_rules": 0,
+    "pairs": 0,
+    "properties": 0,
+    "relations": 0
+   },
+   "configuration": "closure",
+   "document_level_cycles": [
+    "__start_plus_0"
+   ],
+   "empty_rules": [],
+   "environment_id": "2c22626bf7cef0a86ddc4046202f811bdb8d6f63e1a4c3ae4e21a3ebaa2d59a0",
+   "left_corner_cycles": [],
+   "longest_rhs": 15,
+   "nonterminals": 38,
+   "open_regex_terminals": [
+    {
+     "name": "LABEL",
+     "pattern": "(?:P|S)[1-9][0-9]*"
+    }
+   ],
+   "phrases_by_token_count": {
+    "2": 20,
+    "3": 8,
+    "4": 4,
+    "5": 3,
+    "6": 3,
+    "8": 3
+   },
+   "rank_depth": 6,
+   "rhs_total": 337,
+   "rules": 132,
+   "seconds": 0.619,
+   "terminals": {
+    "layout-or-impossible": 1,
+    "literal": 78,
+    "open-regex": 1,
+    "phrase-regex": 12
+   },
+   "unlexable_phrases": [
+    {
+     "phrase": ".",
+     "reject": "emptySentence"
+    }
+   ]
+  },
+  {
+   "attribute_product": {
+    "factored_rules": 0,
+    "pairs": 0,
+    "properties": 0,
+    "relations": 0
+   },
+   "configuration": "colliding_aliases",
+   "document_level_cycles": [
+    "__start_plus_0"
+   ],
+   "empty_rules": [],
+   "environment_id": "35839fea488199bfc210ecebb67bc8ac28ddec42c0749acb5b27b7ce2f7d8bd9",
+   "left_corner_cycles": [],
+   "longest_rhs": 15,
+   "nonterminals": 38,
+   "open_regex_terminals": [
+    {
+     "name": "LABEL",
+     "pattern": "(?:E|N)[1-9][0-9]*"
+    }
+   ],
+   "phrases_by_token_count": {
+    "2": 17,
+    "3": 7,
+    "4": 5,
+    "5": 3,
+    "6": 3,
+    "8": 3
+   },
+   "rank_depth": 6,
+   "rhs_total": 339,
+   "rules": 123,
+   "seconds": 0.548,
+   "terminals": {
+    "layout-or-impossible": 2,
+    "literal": 80,
+    "open-regex": 1,
+    "phrase-regex": 6
+   },
+   "unlexable_phrases": [
+    {
+     "phrase": ".",
+     "reject": "emptySentence"
+    }
+   ]
+  },
+  {
+   "attribute_product": {
+    "factored_rules": 0,
+    "pairs": 0,
+    "properties": 0,
+    "relations": 0
+   },
+   "configuration": "function_words",
+   "document_level_cycles": [
+    "__start_plus_0"
+   ],
+   "empty_rules": [],
+   "environment_id": "60a3aa181cde157f02a28ac4a8600cfdafabb2dcabf1ead31fce2be22eb05f45",
+   "left_corner_cycles": [],
+   "longest_rhs": 15,
+   "nonterminals": 38,
+   "open_regex_terminals": [
+    {
+     "name": "LABEL",
+     "pattern": "(?:E|N)[1-9][0-9]*"
+    }
+   ],
+   "phrases_by_token_count": {
+    "2": 17,
+    "3": 7,
+    "4": 5,
+    "5": 3,
+    "6": 3,
+    "8": 3
+   },
+   "rank_depth": 6,
+   "rhs_total": 346,
+   "rules": 130,
+   "seconds": 0.584,
+   "terminals": {
+    "layout-or-impossible": 2,
+    "literal": 87,
+    "open-regex": 1,
+    "phrase-regex": 6
+   },
+   "unlexable_phrases": [
+    {
+     "phrase": ".",
+     "reject": "emptySentence"
+    }
+   ]
+  },
+  {
+   "attribute_product": {
+    "factored_rules": 0,
+    "pairs": 0,
+    "properties": 0,
+    "relations": 0
+   },
+   "configuration": "function_identifiers",
+   "document_level_cycles": [
+    "__start_plus_0"
+   ],
+   "empty_rules": [],
+   "environment_id": "595ff19388c63ebec4d3a324ccaf00d5a261ef4a710df6360bd989cf6c9f678c",
+   "left_corner_cycles": [],
+   "longest_rhs": 15,
+   "nonterminals": 38,
+   "open_regex_terminals": [
+    {
+     "name": "LABEL",
+     "pattern": "(?:E|N|T)[1-9][0-9]*"
+    }
+   ],
+   "phrases_by_token_count": {
+    "2": 15,
+    "3": 7,
+    "4": 5,
+    "5": 3,
+    "6": 3,
+    "8": 3
+   },
+   "rank_depth": 6,
+   "rhs_total": 327,
+   "rules": 120,
+   "seconds": 0.596,
+   "terminals": {
+    "layout-or-impossible": 2,
+    "literal": 81,
+    "open-regex": 1,
+    "phrase-regex": 4
+   },
+   "unlexable_phrases": [
+    {
+     "phrase": ".",
+     "reject": "emptySentence"
+    }
+   ]
+  },
+  {
+   "attribute_product": {
+    "factored_rules": 0,
+    "pairs": 0,
+    "properties": 0,
+    "relations": 0
+   },
+   "configuration": "precision_templates",
+   "document_level_cycles": [
+    "__start_plus_0"
+   ],
+   "empty_rules": [],
+   "environment_id": "3953bdcd7da45cb8a8ae6a723592fa10cf6b6e40f99228eb685a1002ac84b884",
+   "left_corner_cycles": [],
+   "longest_rhs": 15,
+   "nonterminals": 38,
+   "open_regex_terminals": [
+    {
+     "name": "LABEL",
+     "pattern": "(?:P|S)[1-9][0-9]*"
+    }
+   ],
+   "phrases_by_token_count": {
+    "2": 20,
+    "3": 7,
+    "4": 5,
+    "5": 3,
+    "6": 3,
+    "8": 3
+   },
+   "rank_depth": 6,
+   "rhs_total": 332,
+   "rules": 128,
+   "seconds": 0.589,
+   "terminals": {
+    "layout-or-impossible": 2,
+    "literal": 76,
+    "open-regex": 1,
+    "phrase-regex": 11
+   },
+   "unlexable_phrases": [
+    {
+     "phrase": ".",
+     "reject": "emptySentence"
+    }
+   ]
+  },
+  {
+   "attribute_product": {
+    "factored_rules": 0,
+    "pairs": 0,
+    "properties": 0,
+    "relations": 0
+   },
+   "configuration": "birthright-citizenship-debate",
+   "document_level_cycles": [
+    "__start_plus_0"
+   ],
+   "empty_rules": [],
+   "environment_id": "8937bcba42188c0dab8fe6d85252d527e99cc0c91a6f9ff9f62d42e6f029b3d5",
+   "left_corner_cycles": [],
+   "longest_rhs": 15,
+   "nonterminals": 38,
+   "open_regex_terminals": [
+    {
+     "name": "LABEL",
+     "pattern": "(?:P)[1-9][0-9]*"
+    }
+   ],
+   "phrases_by_token_count": {
+    "2": 16,
+    "3": 6,
+    "4": 4,
+    "5": 3,
+    "6": 3,
+    "8": 3
+   },
+   "rank_depth": 6,
+   "rhs_total": 329,
+   "rules": 123,
+   "seconds": 0.426,
+   "terminals": {
+    "layout-or-impossible": 2,
+    "literal": 79,
+    "open-regex": 1,
+    "phrase-regex": 3
+   },
+   "unlexable_phrases": [
+    {
+     "phrase": ".",
+     "reject": "emptySentence"
+    }
+   ]
+  },
+  {
+   "attribute_product": {
+    "factored_rules": 0,
+    "pairs": 0,
+    "properties": 0,
+    "relations": 0
+   },
+   "configuration": "claude-constitution-excerpt",
+   "document_level_cycles": [
+    "__start_plus_0"
+   ],
+   "empty_rules": [],
+   "environment_id": "98dbed69e9ed29c573756d4658b1fae39223466f3cb525f994648b7a5d4622cb",
+   "left_corner_cycles": [],
+   "longest_rhs": 15,
+   "nonterminals": 38,
+   "open_regex_terminals": [
+    {
+     "name": "LABEL",
+     "pattern": "(?:C|E|G|M|V|P|R|S)[1-9][0-9]*"
+    }
+   ],
+   "phrases_by_token_count": {
+    "2": 24,
+    "3": 7,
+    "4": 6,
+    "5": 3,
+    "6": 3,
+    "8": 3
+   },
+   "rank_depth": 6,
+   "rhs_total": 461,
+   "rules": 181,
+   "seconds": 0.832,
+   "terminals": {
+    "layout-or-impossible": 2,
+    "literal": 93,
+    "open-regex": 1,
+    "phrase-regex": 29
+   },
+   "unlexable_phrases": [
+    {
+     "phrase": ".",
+     "reject": "emptySentence"
+    }
+   ]
+  },
+  {
+   "attribute_product": {
+    "factored_rules": 0,
+    "pairs": 0,
+    "properties": 0,
+    "relations": 0
+   },
+   "configuration": "news-article",
+   "document_level_cycles": [
+    "__start_plus_0"
+   ],
+   "empty_rules": [],
+   "environment_id": "b3f7afa3f97f000698d6fd0e9cd7024a7d7aed4773d2ed0241dabf9f26616371",
+   "left_corner_cycles": [],
+   "longest_rhs": 15,
+   "nonterminals": 38,
+   "open_regex_terminals": [
+    {
+     "name": "LABEL",
+     "pattern": "(?:C|D|E|F|G|N|M|P|T|X|R)[1-9][0-9]*"
+    }
+   ],
+   "phrases_by_token_count": {
+    "2": 19,
+    "3": 6,
+    "4": 5,
+    "5": 3,
+    "6": 3,
+    "8": 3
+   },
+   "rank_depth": 6,
+   "rhs_total": 532,
+   "rules": 197,
+   "seconds": 1.213,
+   "terminals": {
+    "layout-or-impossible": 2,
+    "literal": 117,
+    "open-regex": 1,
+    "phrase-regex": 19
+   },
+   "unlexable_phrases": [
+    {
+     "phrase": ".",
+     "reject": "emptySentence"
+    }
+   ]
+  },
+  {
+   "attribute_product": {
+    "factored_rules": 0,
+    "pairs": 0,
+    "properties": 0,
+    "relations": 0
+   },
+   "configuration": "us-constitution-14th-s1",
+   "document_level_cycles": [
+    "__start_plus_0"
+   ],
+   "empty_rules": [],
+   "environment_id": "49d16fe885310c0b43a882958da6799a89e926e925b42cc1da49e27d3de8fe15",
+   "left_corner_cycles": [],
+   "longest_rhs": 15,
+   "nonterminals": 38,
+   "open_regex_terminals": [
+    {
+     "name": "LABEL",
+     "pattern": "(?:L|P|S)[1-9][0-9]*"
+    }
+   ],
+   "phrases_by_token_count": {
+    "2": 16,
+    "3": 5,
+    "4": 5,
+    "5": 4,
+    "6": 7,
+    "7": 2,
+    "8": 5,
+    "9": 1
+   },
+   "rank_depth": 6,
+   "rhs_total": 376,
+   "rules": 146,
+   "seconds": 0.939,
+   "terminals": {
+    "layout-or-impossible": 2,
+    "literal": 72,
+    "open-regex": 1,
+    "phrase-regex": 18
+   },
+   "unlexable_phrases": [
+    {
+     "phrase": ".",
+     "reject": "emptySentence"
+    }
+   ]
+  },
+  {
+   "attribute_product": {
+    "factored_rules": 0,
+    "pairs": 0,
+    "properties": 0,
+    "relations": 0
+   },
+   "configuration": "birthright-citizenship-debate-reviewed",
+   "document_level_cycles": [
+    "__start_plus_0"
+   ],
+   "empty_rules": [],
+   "environment_id": "8937bcba42188c0dab8fe6d85252d527e99cc0c91a6f9ff9f62d42e6f029b3d5",
+   "left_corner_cycles": [],
+   "longest_rhs": 15,
+   "nonterminals": 38,
+   "open_regex_terminals": [
+    {
+     "name": "LABEL",
+     "pattern": "(?:P)[1-9][0-9]*"
+    }
+   ],
+   "phrases_by_token_count": {
+    "11": 2,
+    "2": 16,
+    "3": 5,
+    "4": 5,
+    "5": 6,
+    "6": 5,
+    "7": 2,
+    "8": 3,
+    "9": 2
+   },
+   "rank_depth": 6,
+   "rhs_total": 335,
+   "rules": 135,
+   "seconds": 1.501,
+   "terminals": {
+    "layout-or-impossible": 2,
+    "literal": 73,
+    "open-regex": 1,
+    "phrase-regex": 14
+   },
+   "unlexable_phrases": [
+    {
+     "phrase": ".",
+     "reject": "emptySentence"
+    }
+   ]
+  },
+  {
+   "attribute_product": {
+    "factored_rules": 0,
+    "pairs": 0,
+    "properties": 0,
+    "relations": 0
+   },
+   "configuration": "claude-constitution-excerpt-reviewed",
+   "document_level_cycles": [
+    "__start_plus_0"
+   ],
+   "empty_rules": [],
+   "environment_id": "98dbed69e9ed29c573756d4658b1fae39223466f3cb525f994648b7a5d4622cb",
+   "left_corner_cycles": [],
+   "longest_rhs": 15,
+   "nonterminals": 38,
+   "open_regex_terminals": [
+    {
+     "name": "LABEL",
+     "pattern": "(?:C|L|G|M|V|P|R|S)[1-9][0-9]*"
+    }
+   ],
+   "phrases_by_token_count": {
+    "2": 27,
+    "3": 14,
+    "4": 8,
+    "5": 6,
+    "6": 8,
+    "7": 4,
+    "8": 4
+   },
+   "rank_depth": 6,
+   "rhs_total": 519,
+   "rules": 231,
+   "seconds": 1.268,
+   "terminals": {
+    "layout-or-impossible": 2,
+    "literal": 83,
+    "open-regex": 1,
+    "phrase-regex": 54
+   },
+   "unlexable_phrases": [
+    {
+     "phrase": ".",
+     "reject": "emptySentence"
+    }
+   ]
+  },
+  {
+   "attribute_product": {
+    "factored_rules": 0,
+    "pairs": 0,
+    "properties": 0,
+    "relations": 0
+   },
+   "configuration": "news-article-reviewed",
+   "document_level_cycles": [
+    "__start_plus_0"
+   ],
+   "empty_rules": [],
+   "environment_id": "b3f7afa3f97f000698d6fd0e9cd7024a7d7aed4773d2ed0241dabf9f26616371",
+   "left_corner_cycles": [],
+   "longest_rhs": 15,
+   "nonterminals": 38,
+   "open_regex_terminals": [
+    {
+     "name": "LABEL",
+     "pattern": "(?:C|D|E|F|G|N|M|P|R|T|B)[1-9][0-9]*"
+    }
+   ],
+   "phrases_by_token_count": {
+    "2": 21,
+    "3": 13,
+    "4": 8,
+    "5": 8,
+    "6": 7,
+    "7": 5,
+    "8": 3
+   },
+   "rank_depth": 6,
+   "rhs_total": 555,
+   "rules": 244,
+   "seconds": 1.415,
+   "terminals": {
+    "layout-or-impossible": 2,
+    "literal": 103,
+    "open-regex": 1,
+    "phrase-regex": 47
+   },
+   "unlexable_phrases": [
+    {
+     "phrase": ".",
+     "reject": "emptySentence"
+    }
+   ]
+  },
+  {
+   "attribute_product": {
+    "factored_rules": 0,
+    "pairs": 0,
+    "properties": 0,
+    "relations": 0
+   },
+   "configuration": "us-constitution-14th-s1-reviewed",
+   "document_level_cycles": [
+    "__start_plus_0"
+   ],
+   "empty_rules": [],
+   "environment_id": "49d16fe885310c0b43a882958da6799a89e926e925b42cc1da49e27d3de8fe15",
+   "left_corner_cycles": [],
+   "longest_rhs": 15,
+   "nonterminals": 38,
+   "open_regex_terminals": [
+    {
+     "name": "LABEL",
+     "pattern": "(?:L|P|S)[1-9][0-9]*"
+    }
+   ],
+   "phrases_by_token_count": {
+    "10": 3,
+    "2": 16,
+    "3": 8,
+    "4": 6,
+    "5": 5,
+    "6": 8,
+    "7": 4,
+    "8": 8,
+    "9": 1
+   },
+   "rank_depth": 6,
+   "rhs_total": 453,
+   "rules": 181,
+   "seconds": 0.483,
+   "terminals": {
+    "layout-or-impossible": 2,
+    "literal": 72,
+    "open-regex": 1,
+    "phrase-regex": 32
+   },
+   "unlexable_phrases": [
+    {
+     "phrase": ".",
+     "reject": "emptySentence"
+    }
+   ]
+  },
+  {
+   "attribute_product": {
+    "factored_rules": 0,
+    "pairs": 0,
+    "properties": 0,
+    "relations": 0
+   },
+   "configuration": "accepted-suggestions",
+   "document_level_cycles": [
+    "__start_plus_0"
+   ],
+   "empty_rules": [],
+   "environment_id": "2d84b403957a06235861cecb1e2d97373caa346fa9b72117eefe4c93672281b5",
+   "left_corner_cycles": [],
+   "longest_rhs": 15,
+   "nonterminals": 38,
+   "open_regex_terminals": [
+    {
+     "name": "LABEL",
+     "pattern": "(?:P|S)[1-9][0-9]*"
+    }
+   ],
+   "phrases_by_token_count": {
+    "2": 19,
+    "3": 6,
+    "4": 4,
+    "5": 3,
+    "6": 3,
+    "8": 3
+   },
+   "rank_depth": 6,
+   "rhs_total": 320,
+   "rules": 124,
+   "seconds": 0.296,
+   "terminals": {
+    "layout-or-impossible": 2,
+    "literal": 77,
+    "open-regex": 1,
+    "phrase-regex": 9
+   },
+   "unlexable_phrases": [
+    {
+     "phrase": ".",
+     "reject": "emptySentence"
+    }
+   ]
+  },
+  {
+   "attribute_product": {
+    "factored_rules": 0,
+    "pairs": 0,
+    "properties": 0,
+    "relations": 0
+   },
+   "configuration": "adopted-unary",
+   "document_level_cycles": [
+    "__start_plus_0"
+   ],
+   "empty_rules": [],
+   "environment_id": "a5df375e45b81944f76843584e74c030fa50f4f66e7ca396ee03334c43c0a88b",
+   "left_corner_cycles": [],
+   "longest_rhs": 15,
+   "nonterminals": 38,
+   "open_regex_terminals": [
+    {
+     "name": "LABEL",
+     "pattern": "(?:P)[1-9][0-9]*"
+    }
+   ],
+   "phrases_by_token_count": {
+    "11": 2,
+    "2": 16,
+    "3": 5,
+    "4": 6,
+    "5": 7,
+    "6": 5,
+    "7": 2,
+    "8": 3,
+    "9": 2
+   },
+   "rank_depth": 6,
+   "rhs_total": 341,
+   "rules": 139,
+   "seconds": 1.038,
+   "terminals": {
+    "layout-or-impossible": 2,
+    "literal": 73,
+    "open-regex": 1,
+    "phrase-regex": 16
+   },
+   "unlexable_phrases": [
+    {
+     "phrase": ".",
+     "reject": "emptySentence"
+    }
+   ]
+  },
+  {
+   "attribute_product": {
+    "factored_rules": 0,
+    "pairs": 0,
+    "properties": 0,
+    "relations": 0
+   },
+   "configuration": "order",
+   "document_level_cycles": [
+    "__start_plus_0"
+   ],
+   "empty_rules": [],
+   "environment_id": "7c95b110c8219bc172c23b4be91c3761ed2fbe24f8011416010c4a2e8504c84a",
+   "left_corner_cycles": [],
+   "longest_rhs": 15,
+   "nonterminals": 43,
+   "open_regex_terminals": [
+    {
+     "name": "LABEL",
+     "pattern": "(?:S)[1-9][0-9]*"
+    },
+    {
+     "name": "NUMERAL",
+     "pattern": "-?(?:0|[1-9][0-9]*)(?![0-9])"
+    },
+    {
+     "name": "INT_OP",
+     "pattern": "(?:\\+|\\-|\\*)"
+    }
+   ],
+   "phrases_by_token_count": {
+    "2": 19,
+    "3": 9,
+    "4": 4,
+    "5": 3,
+    "6": 3,
+    "8": 3
+   },
+   "rank_depth": 7,
+   "rhs_total": 357,
+   "rules": 137,
+   "seconds": 0.756,
+   "terminals": {
+    "layout-or-impossible": 2,
+    "literal": 83,
+    "open-regex": 3,
+    "phrase-regex": 11
+   },
+   "unlexable_phrases": [
+    {
+     "phrase": ".",
+     "reject": "emptySentence"
+    }
+   ]
+  }
+ ],
+ "corpus": {
+  "lexer_rejection_examples": {},
+  "lexer_rejections": {},
+  "sentences": 1020,
+  "spacing_mutant_examples": [
+   {
+    "configuration": "ordinary",
+    "kind": "space-before-punct",
+    "mutant": "For every service that is deployed , it is not the case that that service is the same as that service.\n",
+    "python": "rejected:SyntaxError",
+    "text": "For every service that is deployed, it is not the case that that service is the same as that service.\n"
+   },
+   {
+    "configuration": "ordinary",
+    "kind": "no-space-after-punct",
+    "mutant": "For every service that is deployed,it is not the case that that service is the same as that service.\n",
+    "python": "rejected:SyntaxError",
+    "text": "For every service that is deployed, it is not the case that that service is the same as that service.\n"
+   },
+   {
+    "configuration": "ordinary",
+    "kind": "space-before-punct",
+    "mutant": "For every service that is deployed and is deployed , it is not the case that that service is the same as that service.\n",
+    "python": "rejected:SyntaxError",
+    "text": "For every service that is deployed and is deployed, it is not the case that that service is the same as that service.\n"
+   },
+   {
+    "configuration": "ordinary",
+    "kind": "no-space-after-punct",
+    "mutant": "For every service that is deployed and is deployed,it is not the case that that service is the same as that service.\n",
+    "python": "rejected:SyntaxError",
+    "text": "For every service that is deployed and is deployed, it is not the case that that service is the same as that service.\n"
+   },
+   {
+    "configuration": "ordinary",
+    "kind": "space-before-punct",
+    "mutant": "Every service that is deployed and is deployed , and is deployed is deployed.\n",
+    "python": "rejected:SyntaxError",
+    "text": "Every service that is deployed and is deployed, and is deployed is deployed.\n"
+   },
+   {
+    "configuration": "ordinary",
+    "kind": "no-space-after-punct",
+    "mutant": "Every service that is deployed and is deployed,and is deployed is deployed.\n",
+    "python": "rejected:SyntaxError",
+    "text": "Every service that is deployed and is deployed, and is deployed is deployed.\n"
+   },
+   {
+    "configuration": "ordinary",
+    "kind": "space-before-punct",
+    "mutant": "For every service that is deployed and is deployed , and is deployed, it is not the case that that service is the same as that service.\n",
+    "python": "rejected:SyntaxError",
+    "text": "For every service that is deployed and is deployed, and is deployed, it is not the case that that service is the same as that service.\n"
+   },
+   {
+    "configuration": "ordinary",
+    "kind": "no-space-after-punct",
+    "mutant": "For every service that is deployed and is deployed,and is deployed, it is not the case that that service is the same as that service.\n",
+    "python": "rejected:SyntaxError",
+    "text": "For every service that is deployed and is deployed, and is deployed, it is not the case that that service is the same as that service.\n"
+   },
+   {
+    "configuration": "ordinary",
+    "kind": "space-before-punct",
+    "mutant": "Every service that is deployed , and is deployed and is deployed is deployed.\n",
+    "python": "rejected:SyntaxError",
+    "text": "Every service that is deployed, and is deployed and is deployed is deployed.\n"
+   },
+   {
+    "configuration": "ordinary",
+    "kind": "no-space-after-punct",
+    "mutant": "Every service that is deployed,and is deployed and is deployed is deployed.\n",
+    "python": "rejected:SyntaxError",
+    "text": "Every service that is deployed, and is deployed and is deployed is deployed.\n"
+   },
+   {
+    "configuration": "ordinary",
+    "kind": "space-before-punct",
+    "mutant": "For every service that is deployed , and is deployed and is deployed, it is not the case that that service is the same as that service.\n",
+    "python": "rejected:SyntaxError",
+    "text": "For every service that is deployed, and is deployed and is deployed, it is not the case that that service is the same as that service.\n"
+   },
+   {
+    "configuration": "ordinary",
+    "kind": "no-space-after-punct",
+    "mutant": "For every service that is deployed,and is deployed and is deployed, it is not the case that that service is the same as that service.\n",
+    "python": "rejected:SyntaxError",
+    "text": "For every service that is deployed, and is deployed and is deployed, it is not the case that that service is the same as that service.\n"
+   }
+  ],
+  "spacing_mutants": [
+   {
+    "count": 701,
+    "kind": "no-space-after-punct",
+    "python": "rejected:SyntaxError",
+    "same_tokens": true
+   },
+   {
+    "count": 631,
+    "kind": "space-before-punct",
+    "python": "rejected:SyntaxError",
+    "same_tokens": true
+   },
+   {
+    "count": 330,
+    "kind": "spaced-marker",
+    "python": "rejected:SyntaxError",
+    "same_tokens": false
+   }
+  ],
+  "texts": 1020,
+  "token_length_histogram": {
+   "10": 22,
+   "101": 2,
+   "102": 1,
+   "103": 1,
+   "104": 1,
+   "105": 1,
+   "106": 1,
+   "107": 2,
+   "108": 1,
+   "11": 31,
+   "112": 1,
+   "114": 1,
+   "118": 2,
+   "12": 14,
+   "120": 1,
+   "121": 2,
+   "122": 1,
+   "123": 1,
+   "124": 1,
+   "127": 1,
+   "13": 15,
+   "132": 1,
+   "135": 1,
+   "136": 1,
+   "137": 1,
+   "139": 1,
+   "14": 39,
+   "143": 1,
+   "147": 1,
+   "15": 25,
+   "153": 1,
+   "156": 1,
+   "16": 17,
+   "166": 2,
+   "167": 1,
+   "17": 14,
+   "18": 14,
+   "181": 1,
+   "188": 1,
+   "19": 19,
+   "198": 2,
+   "20": 9,
+   "200": 1,
+   "21": 19,
+   "218": 1,
+   "22": 21,
+   "23": 19,
+   "24": 14,
+   "25": 38,
+   "26": 13,
+   "266": 1,
+   "27": 3,
+   "28": 30,
+   "29": 22,
+   "3": 38,
+   "30": 21,
+   "31": 12,
+   "32": 30,
+   "33": 11,
+   "34": 9,
+   "35": 9,
+   "36": 5,
+   "37": 23,
+   "38": 8,
+   "39": 14,
+   "4": 5,
+   "40": 27,
+   "41": 5,
+   "42": 15,
+   "43": 19,
+   "44": 2,
+   "45": 5,
+   "46": 6,
+   "47": 16,
+   "48": 5,
+   "49": 5,
+   "5": 25,
+   "50": 20,
+   "51": 10,
+   "52": 9,
+   "53": 9,
+   "54": 4,
+   "55": 7,
+   "57": 3,
+   "58": 7,
+   "59": 11,
+   "6": 25,
+   "60": 13,
+   "61": 7,
+   "62": 5,
+   "63": 4,
+   "64": 3,
+   "65": 3,
+   "66": 8,
+   "67": 2,
+   "68": 13,
+   "69": 2,
+   "7": 21,
+   "71": 10,
+   "74": 3,
+   "75": 2,
+   "76": 1,
+   "77": 2,
+   "78": 4,
+   "79": 10,
+   "8": 21,
+   "82": 2,
+   "86": 1,
+   "88": 2,
+   "9": 14,
+   "90": 1,
+   "91": 1,
+   "92": 1,
+   "95": 2,
+   "96": 2,
+   "97": 1,
+   "98": 1
+  },
+  "token_length_percentiles": {
+   "p100": 266,
+   "p50": 28,
+   "p90": 67,
+   "p95": 86,
+   "p99": 156
+  }
+ },
+ "format": "ve.english-lean-s0@1",
+ "per_configuration": 60,
+ "synthetic": [
+  {
+   "attribute_product": {
+    "factored_rules": 0,
+    "pairs": 0,
+    "properties": 0,
+    "relations": 0
+   },
+   "declared_wordings_kept": 0,
+   "empty_rules": [],
+   "environment": "unary-256-mechanical",
+   "left_corner_cycles": [],
+   "longest_rhs": 15,
+   "nonterminals": 38,
+   "predicates": 256,
+   "rank_depth": 6,
+   "rhs_total": 2344,
+   "rules": 1644,
+   "rules_after_factoring": 1644,
+   "seconds": 1.79
+  },
+  {
+   "attribute_product": {
+    "factored_rules": 0,
+    "pairs": 0,
+    "properties": 0,
+    "relations": 0
+   },
+   "declared_wordings_kept": 256,
+   "empty_rules": [],
+   "environment": "unary-256-declared",
+   "left_corner_cycles": [],
+   "longest_rhs": 15,
+   "nonterminals": 38,
+   "predicates": 256,
+   "rank_depth": 6,
+   "rhs_total": 2344,
+   "rules": 1644,
+   "rules_after_factoring": 1644,
+   "seconds": 5.512
+  },
+  {
+   "attribute_product": {
+    "factored_rules": 0,
+    "pairs": 0,
+    "properties": 0,
+    "relations": 0
+   },
+   "declared_wordings_kept": 256,
+   "empty_rules": [],
+   "environment": "binary-256-declared",
+   "left_corner_cycles": [],
+   "longest_rhs": 15,
+   "nonterminals": 38,
+   "predicates": 256,
+   "rank_depth": 6,
+   "rhs_total": 2346,
+   "rules": 1134,
+   "rules_after_factoring": 1134,
+   "seconds": 1.309
+  },
+  {
+   "attribute_product": {
+    "factored_rules": 256,
+    "pairs": 16384,
+    "properties": 128,
+    "relations": 128
+   },
+   "declared_wordings_kept": 0,
+   "empty_rules": [],
+   "environment": "data-128x128",
+   "left_corner_cycles": [],
+   "longest_rhs": 15,
+   "nonterminals": 38,
+   "predicates": 256,
+   "rank_depth": 6,
+   "rhs_total": 102055,
+   "rules": 17771,
+   "rules_after_factoring": 1643,
+   "seconds": 160.146
+  },
+  {
+   "attribute_product": {
+    "factored_rules": 0,
+    "pairs": 0,
+    "properties": 0,
+    "relations": 0
+   },
+   "declared_wordings_kept": 256,
+   "empty_rules": [],
+   "environment": "order-256-int-slots",
+   "left_corner_cycles": [],
+   "longest_rhs": 15,
+   "nonterminals": 43,
+   "predicates": 256,
+   "rank_depth": 7,
+   "rhs_total": 1617,
+   "rules": 639,
+   "rules_after_factoring": 639,
+   "seconds": 0.606
+  }
+ ]
+}
