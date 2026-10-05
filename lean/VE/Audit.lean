@@ -3129,6 +3129,9 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.Wire.lookup_isSome_of_mem
 #print axioms VE.Readings.Wire.oneOf_eq
 #print axioms VE.Readings.Wire.onesOf_holds
+#print axioms VE.Readings.Wire.onesOf_active
+#print axioms VE.Readings.Wire.firstSome_filter
+#print axioms VE.Readings.Wire.firstSome_activeOf
 #print axioms VE.Readings.Wire.stageOf_eq
 #print axioms VE.Readings.Wire.candidateStage_eq
 #print axioms VE.Readings.Wire.candidateStage_ok
@@ -3140,6 +3143,7 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.otherScan_id
 #print axioms VE.Readings.and_not_and_any
 #print axioms VE.Readings.Run.pairFacts_eq
+#print axioms VE.Readings.Run.pairFindings_pending
 #print axioms VE.Readings.Run.setFindings_eq
 #print axioms VE.Readings.relaxTo_name
 #print axioms VE.Readings.relaxTo_pred

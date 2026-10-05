@@ -2960,6 +2960,9 @@
 'VE.Readings.Wire.lookup_isSome_of_mem' depends on axioms: [propext]
 'VE.Readings.Wire.oneOf_eq' depends on axioms: [propext, Quot.sound]
 'VE.Readings.Wire.onesOf_holds' depends on axioms: [propext, Quot.sound]
+'VE.Readings.Wire.onesOf_active' depends on axioms: [propext, Quot.sound]
+'VE.Readings.Wire.firstSome_filter' depends on axioms: [propext]
+'VE.Readings.Wire.firstSome_activeOf' depends on axioms: [propext, Quot.sound]
 'VE.Readings.Wire.stageOf_eq' depends on axioms: [propext, Quot.sound]
 'VE.Readings.Wire.candidateStage_eq' depends on axioms: [propext, Quot.sound]
 'VE.Readings.Wire.candidateStage_ok' depends on axioms: [propext, Quot.sound]
@@ -2971,6 +2974,7 @@
 'VE.Readings.otherScan_id' depends on axioms: [propext, Quot.sound]
 'VE.Readings.and_not_and_any' depends on axioms: [propext, Quot.sound]
 'VE.Readings.Run.pairFacts_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Readings.Run.pairFindings_pending' depends on axioms: [propext, Quot.sound]
 'VE.Readings.Run.setFindings_eq' depends on axioms: [propext, Quot.sound]
 'VE.Readings.relaxTo_name' does not depend on any axioms
 'VE.Readings.relaxTo_pred' does not depend on any axioms
