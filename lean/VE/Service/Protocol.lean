@@ -23,6 +23,7 @@ import VE.NormDefaults.Run
 import VE.Discourse.Run
 import VE.Readings.Run
 import VE.Service.Diagnose
+import Std.Data.HashMap
 
 /-! # `ve_service` protocol (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stage 1)
 
@@ -39,12 +40,19 @@ request error `{"digests", "error", "id", "mode", "status": "error"}`, bound lik
 response: its nonce, its mode and the digests of its cases (`null` when its cases text
 does not split into cases). Only a line whose envelope cannot be decoded gets the unbound
 line error `{"error", "id", "status": "error"}`, which answers no request. Non-English cases are decoded by `VE.JsonInput.parseCases`, the one-shot
-batch decoder; English and `risk-eval` use `Lean.Json.parse`, their one-shot runners' decoder. No state
-is kept between lines.
+batch decoder; English and `risk-eval` use `Lean.Json.parse`, their one-shot runners' decoder.
 
 Budgets are deterministic functions of the request: its size in bytes and its number
 of cases, each capped by the service limits; exceeding one is `ResourceLimit`. Work
 inside a runner is not budgeted here (the reference runners have no work budget).
+
+The one state the service keeps is its table of environment handles
+(docs/LEAN-FIRST-PLAN.md, F2, batch 2; `Handles` below): a request may register
+environments (`"environments": {digest: environment}`, each key the SHA-256 of its value's
+text), and a case may then name one by `environment_handle` in place of its `environment`.
+The case is answered as the same case with that environment (`Handles.expand`); a handle
+the table does not hold makes the request a bound `CheckerUnavailable` request error, which
+the client answers by sending the environment again.
 
 Trusted, as for the one-shot runners: the member splitter `objectMembers` and the
 restricted decoder `VE.JsonInput`, which have no refinement theorem. -/
@@ -206,6 +214,9 @@ structure Request where
   budgetText : Option String := none
   /-- The raw text of the `cases` array, decoded by the mode's runner decoder. -/
   cases : String
+  /-- The raw text of the `environments` member, if any: the environments the request
+  registers (`register`). -/
+  environmentsText : Option String := none
 
 /-- Split a JSON object's text into top-level `(key, value)` texts without decoding
 them. Quotes, escapes and bracket depth are tracked as in the batch splitter of
@@ -281,6 +292,7 @@ def decodeRequest (members : Array (String × String)) : Except String Request :
   let mut mode : Option Mode := none
   let mut budgetText : Option String := none
   let mut cases : Option String := none
+  let mut environmentsText : Option String := none
   for (rawKey, raw) in members do
     let key ← decodeString "key" rawKey
     if seen.contains key then throw s!"duplicate request field {key}"
@@ -293,9 +305,10 @@ def decodeRequest (members : Array (String × String)) : Except String Request :
       | none => throw s!"unknown mode {name}"
     else if key == "budget" then budgetText := some raw
     else if key == "cases" then cases := some raw.trim
+    else if key == "environments" then environmentsText := some raw
     else throw s!"unknown request field {key}"
   match id, mode, cases with
-  | some i, some m, some c => pure { id := i, mode := m, budgetText, cases := c }
+  | some i, some m, some c => pure { id := i, mode := m, budgetText, cases := c, environmentsText }
   | none, _, _ => throw "request field id is missing"
   | _, none, _ => throw "request field mode is missing"
   | _, _, none => throw "request field cases is missing"
@@ -491,13 +504,86 @@ def decodeCases (r : Request) : Except String (Array (Except String Json)) :=
   else if r.mode == .riskEval then parseLeanCases r.cases
   else VE.JsonInput.parseCases r.cases
 
+/-! ## Environment handles (docs/LEAN-FIRST-PLAN.md, F2, batch 2)
+
+A call with a real environment spent most of its CPU on the environment's bytes: splitting,
+digesting and decoding the request text again on every call (section 3.4). A request may
+therefore register environments once, and later cases name them by digest. The table is
+content-addressed: a key is accepted only as the SHA-256 of its value's text (`caseDigest`),
+so a handle names exactly one environment text. It holds at most `maxHandles` environments
+of at most `maxHandleBytes` in all; registering beyond either bound first empties it.
+
+A case that names a handle and no environment is answered as the case with the registered
+environment in place of the handle (`expand_hit`, `runRequest_ok`); every other case is
+answered as before (`expand_plain`). English and `risk-eval` cases are never expanded: their
+decoders are not the restricted one the table parses with. -/
+
+def maxHandles : Nat := 64
+def maxHandleBytes : Nat := 67108864
+/-- The case member naming a registered environment. -/
+def handleKey : String := "environment_handle"
+
+structure Handles where
+  table : Std.HashMap String Json := {}
+  bytes : Nat := 0
+
+/-- Register `env`, whose text has `size` bytes, under `digest`: unchanged when the digest is
+held; otherwise the table, emptied first if it would exceed a bound, with the entry added. -/
+def Handles.insert (h : Handles) (digest : String) (env : Json) (size : Nat) : Handles :=
+  if h.table.contains digest then h
+  else
+    let base : Handles :=
+      if h.table.size + 1 > maxHandles || h.bytes + size > maxHandleBytes then {} else h
+    { table := base.table.insert digest env, bytes := base.bytes + size }
+
+/-- The table after registering one member of `environments`: its key must be the SHA-256 of
+its value's text, and the value is parsed by the restricted decoder one level shallower than a
+case (an environment sits inside its case), so it is read exactly as it would be inside a case. -/
+def registerOne (h : Handles) (member : String × String) : Except String Handles := do
+  let digest ← decodeString "environment handle" member.1
+  unless caseDigest member.2 == digest do
+    throw s!"InvalidInput: environment handle {digest} is not the SHA-256 of its text"
+  let env ← VE.JsonInput.parse member.2.trim 254
+  pure (h.insert digest env member.2.trim.utf8ByteSize)
+
+/-- The table after the request's `environments` member, registered in order. -/
+def register (h : Handles) (r : Request) : Except String Handles := do
+  match r.environmentsText with
+  | none => pure h
+  | some text =>
+    let members ← match objectMembers text with
+      | .ok members => pure members
+      | .error _ => throw "InvalidInput: request field environments must be an object"
+    members.foldlM registerOne h
+
+/-- A case with its handle replaced by the registered environment. -/
+def Handles.expand (h : Handles) (j : Json) : Except String Json :=
+  match j with
+  | .obj kvs =>
+    match j.getObjVal? handleKey, j.getObjVal? "environment" with
+    | .ok (.str d), .error _ =>
+      match h.table[d]? with
+      | some env => pure (.obj ((kvs.erase handleKey).insert "environment" env))
+      | none => throw s!"CheckerUnavailable: environment handle {d} is not registered"
+    | _, _ => pure j
+  | _ => pure j
+
+/-- Every decoded case expanded (`Handles.expand`), except in the English and `risk-eval`
+modes. -/
+def expandCases (h : Handles) (m : Mode) (cases : Array (Except String Json)) :
+    Except String (Array (Except String Json)) :=
+  if m == .english || m == .riskEval then pure cases
+  else cases.mapM fun
+    | .ok j => .ok <$> h.expand j
+    | .error message => pure (.error message)
+
 /-- The request's budget: the service limits, lowered by its `budget` member. -/
 def Request.budget (r : Request) : Except String Budget :=
   match r.budgetText with
   | some raw => decodeBudget raw
   | none => pure {}
 
-def runRequest (r : Request) : Except String Json := do
+def runRequest (h : Handles) (r : Request) : Except String Json := do
   let budget ← r.budget
   let bytes := r.cases.utf8ByteSize
   if bytes > budget.bytes then
@@ -508,7 +594,7 @@ def runRequest (r : Request) : Except String Json := do
     throw s!"ResourceLimit: batch has {cases.size} cases; budget is {budget.cases}"
   let digests ← caseDigests r.cases
   unless digests.size == cases.size do throw "batch split mismatch"
-  pure (response r cases digests)
+  pure (response r (← expandCases h r.mode cases) digests)
 
 /-- The error for a line whose envelope cannot be decoded: it answers no request, so
 it carries the id when one can be read and no binding. -/
@@ -529,25 +615,32 @@ def requestError (r : Request) (message : String) : Json :=
   Json.mkObj [("id", .str r.id), ("status", .str "error"), ("mode", .str r.mode.name),
     ("digests", errorDigests r.cases), ("error", .str message), ("code", .str (rejectionCode message))]
 
-/-- The response to one request line. -/
-def respond (line : String) : Json :=
+/-- The response to one request line, and the handle table after it: a request registers its
+environments (`register`) before it runs, and a request whose registration fails changes no
+handle. -/
+def respond (h : Handles) (line : String) : Json × Handles :=
   match objectMembers line with
-  | .error message => lineError none message
+  | .error message => (lineError none message, h)
   | .ok members =>
     match decodeRequest members with
-    | .error message => lineError (requestId? members) message
+    | .error message => (lineError (requestId? members) message, h)
     | .ok r =>
-      match runRequest r with
-      | .ok answer => answer
-      | .error message => requestError r message
+      match register h r with
+      | .error message => (requestError r message, h)
+      | .ok h' =>
+        match runRequest h' r with
+        | .ok answer => (answer, h')
+        | .error message => (requestError r message, h')
 
 /-- One input line (with its newline, if any): blank lines are skipped, an over-long
 line gets one error record without being decoded. -/
-def handleLine (line : String) : Option Json :=
+def handleLine (h : Handles) (line : String) : Option Json × Handles :=
   if line.utf8ByteSize > maxLineBytes + 1 then
-    some (lineError none s!"ResourceLimit: request line exceeds {maxLineBytes} bytes")
-  else if line.trim.isEmpty then none
-  else some (respond line)
+    (some (lineError none s!"ResourceLimit: request line exceeds {maxLineBytes} bytes"), h)
+  else if line.trim.isEmpty then (none, h)
+  else
+    let (answer, h') := respond h line
+    (some answer, h')
 
 /-- The first line the service prints. The build hash is computed by the supervisor,
 which hashes the executable it starts. -/
@@ -611,25 +704,88 @@ theorem caseResult_ok (m : Mode) (i : Nat) (j : Json) : caseResult m i (.ok j) =
 /-- A request within its budget whose cases decode, one digest per case, is answered with
 `response`: `results`, the existing runner applied to every case in order, each bound
 to its case digest. -/
-theorem runRequest_ok (r : Request) (budget : Budget) (cases : Array (Except String Json))
+theorem runRequest_ok (h : Handles) (r : Request) (budget : Budget) (cases expanded : Array (Except String Json))
     (digests : Array String) (hq : r.budget = .ok budget)
     (hb : r.cases.utf8ByteSize ≤ budget.bytes) (ha : r.cases.trim.startsWith "[" = true)
     (hp : decodeCases r = .ok cases)
     (hc : cases.size ≤ budget.cases)
-    (ht : caseDigests r.cases = .ok digests) (hn : digests.size = cases.size) :
-    runRequest r = .ok (response r cases digests) := by
-  simp [runRequest, hq, Nat.not_lt.mpr hb, ha, hp, Nat.not_lt.mpr hc, ht, hn, bind, Except.bind, pure,
+    (ht : caseDigests r.cases = .ok digests) (hn : digests.size = cases.size)
+    (hx : expandCases h r.mode cases = .ok expanded) :
+    runRequest h r = .ok (response r expanded digests) := by
+  simp [runRequest, hq, Nat.not_lt.mpr hb, ha, hp, Nat.not_lt.mpr hc, ht, hn, hx, bind, Except.bind, pure,
     Except.pure]
+
+/-- A case that names no handle is answered as it was sent. -/
+theorem expand_plain (h : Handles) (j : Json) (hj : ∀ d, j.getObjVal? handleKey ≠ .ok (.str d)) :
+    h.expand j = .ok j := by
+  unfold Handles.expand
+  split
+  · next kvs =>
+    split
+    · next d _ hd _ => exact absurd hd (hj d)
+    · rfl
+  · rfl
+
+/-- A case that names a registered handle and no environment is answered as the case with
+that environment in place of the handle. -/
+theorem expand_hit (h : Handles) (kvs : Std.TreeMap.Raw String Json compare) (d : String) (env : Json)
+    (hd : (Json.obj kvs).getObjVal? handleKey = .ok (.str d))
+    (he : ∀ e, (Json.obj kvs).getObjVal? "environment" ≠ .ok e)
+    (ht : h.table[d]? = some env) :
+    h.expand (.obj kvs) = .ok (.obj ((kvs.erase handleKey).insert "environment" env)) := by
+  unfold Handles.expand
+  cases hv : (Json.obj kvs).getObjVal? "environment" with
+  | ok e => exact absurd hv (he e)
+  | error _ => simp [hd, ht, pure, Except.pure]
+
+/-- A case that names a handle the table does not hold makes the request unavailable. -/
+theorem expand_miss (h : Handles) (kvs : Std.TreeMap.Raw String Json compare) (d : String)
+    (hd : (Json.obj kvs).getObjVal? handleKey = .ok (.str d))
+    (he : ∀ e, (Json.obj kvs).getObjVal? "environment" ≠ .ok e)
+    (ht : h.table[d]? = none) :
+    h.expand (.obj kvs) = .error s!"CheckerUnavailable: environment handle {d} is not registered" := by
+  unfold Handles.expand
+  cases hv : (Json.obj kvs).getObjVal? "environment" with
+  | ok e => exact absurd hv (he e)
+  | error _ => simp [hd, ht, throw, throwThe, MonadExceptOf.throw]
+
+/-- English and `risk-eval` cases are never expanded. -/
+theorem expandCases_unexpanded (h : Handles) (m : Mode) (cases : Array (Except String Json))
+    (hm : m = .english ∨ m = .riskEval) : expandCases h m cases = .ok cases := by
+  rcases hm with rfl | rfl <;> rfl
+
+/-- A request without an `environments` member changes no handle. -/
+theorem register_none (h : Handles) (r : Request) (hr : r.environmentsText = none) :
+    register h r = .ok h := by
+  simp [register, hr, pure, Except.pure]
+
+/-- Registration is content-addressed: a key that is not the SHA-256 of its value's text is
+refused. -/
+theorem registerOne_digest (h : Handles) (key raw digest : String)
+    (hk : decodeString "environment handle" key = .ok digest) (hd : caseDigest raw ≠ digest) :
+    registerOne h (key, raw) =
+      .error s!"InvalidInput: environment handle {digest} is not the SHA-256 of its text" := by
+  simp [registerOne, hk, hd, bind, Except.bind]
+
+/-- A registered environment is the restricted decoding of its text, under its digest. -/
+theorem registerOne_ok (h : Handles) (key raw : String) (env : Json)
+    (hk : decodeString "environment handle" key = .ok (caseDigest raw))
+    (hp : VE.JsonInput.parse raw.trim 254 = .ok env) :
+    registerOne h (key, raw) = .ok (h.insert (caseDigest raw) env raw.trim.utf8ByteSize) := by
+  simp [registerOne, hk, hp, bind, Except.bind, pure, Except.pure]
 
 /-- Every error for a decoded request is bound to it: a line whose envelope decodes to `r`
 is answered with `r`'s response or with `requestError r`, which carries `r`'s nonce, mode
 and case digests. -/
-theorem respond_decoded (line : String) (members : Array (String × String)) (r : Request)
+theorem respond_decoded (h : Handles) (line : String) (members : Array (String × String)) (r : Request)
     (hm : objectMembers line = .ok members) (hr : decodeRequest members = .ok r) :
-    respond line = match runRequest r with
-      | .ok answer => answer
-      | .error message => requestError r message := by
-  simp [respond, hm, hr]
+    (respond h line).1 = match register h r with
+      | .error message => requestError r message
+      | .ok h' => match runRequest h' r with
+        | .ok answer => answer
+        | .error message => requestError r message := by
+  simp only [respond, hm, hr]
+  split <;> (try split) <;> rfl
 
 theorem results_eq (r : Request) (cases : Array (Except String Json)) (i : Nat) (h : i < cases.size) :
     (results r cases)[i]? = some (caseResult r.mode i cases[i]) := by
