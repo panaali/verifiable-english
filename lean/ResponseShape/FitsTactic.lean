@@ -91,7 +91,7 @@ def objAccepts (k : Expr) (keys : List String) : Bool := Id.run do
 
 /-- The skeleton and value of a goal `Fits Γ k v`, the skeleton in weak head normal form. -/
 def fitsGoal : TacticM (Expr × Expr) := do
-  let t ← instantiateMVars (← getMainTarget)
+  let t := (← instantiateMVars (← getMainTarget)).consumeMData.headBeta
   unless t.isAppOfArity ``Fits 3 do throwError "not a Fits goal"
   let args := t.getAppArgs
   pure (← whnf args[1]!, (← instantiateMVars args[2]!).consumeMData)
@@ -126,7 +126,7 @@ elab "fits_pick" : tactic => withMainContext do
 /-- `Fits Γ k v` with `k` replaced by its weak head normal form (a field's skeleton looked up,
 an abbreviation unfolded), so that lemmas apply to it by reducible unification. -/
 elab "skel_norm" : tactic => withMainContext do
-  let t ← instantiateMVars (← getMainTarget)
+  let t := (← instantiateMVars (← getMainTarget)).consumeMData.headBeta
   unless t.isAppOfArity ``Fits 3 do throwError "not a Fits goal"
   let args := t.getAppArgs
   let k ← whnf args[1]!
@@ -146,7 +146,7 @@ def position (l a : Expr) : MetaM (Option Nat) := do
 
 /-- `a ∈ l` for a member of a literal list. -/
 elab "alt_mem" : tactic => withMainContext do
-  let t ← instantiateMVars (← getMainTarget)
+  let t := (← instantiateMVars (← getMainTarget)).consumeMData
   unless t.isAppOfArity ``Membership.mem 5 do throwError "alt_mem: not a membership"
   let args := t.getAppArgs
   let (l, a) := (args[3]!, args[4]!)
@@ -186,7 +186,7 @@ macro_rules
       | $known
       | (apply Fits.mkObj (by keys_ok); fields_split <;> fits using $ls,*)
       | (fits_pick <;> (try simp only [List.map_cons, List.map_nil, List.filter_cons, List.filter_nil, String.reduceBNe, ↓reduceIte, Bool.false_eq_true]) <;> (try fields_split) <;> fits using $ls,*)
-      | (apply Fits.setObj (by keys_ok) <;> (try simp only [List.map_cons, List.map_nil, List.filter_cons, List.filter_nil, String.reduceBNe, ↓reduceIte, Bool.false_eq_true]) <;> (try fields_split) <;> fits using $ls,*)
+      | (with_reducible apply Fits.setObj (by keys_ok) <;> (try simp only [List.map_cons, List.map_nil, List.filter_cons, List.filter_nil, String.reduceBNe, ↓reduceIte, Bool.false_eq_true]) <;> (try fields_split) <;> fits using $ls,*)
       | (apply Fits.arrOf; elems_split <;> (try intros) <;> elem_cases <;> fits using $ls,*)
       | (apply Fits.mkObjExtra; elems_split <;> (try intros) <;> elem_cases <;> fits using $ls,*)
       | (apply Fits.strIn_lit; decide)
