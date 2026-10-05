@@ -1698,7 +1698,7 @@ def _lean_reading(env, source, words, options):
     reading = english_lean.read(env, source, words, options)
     if reading.status != 'one':
         raise reading.rejection()
-    return _Reading(env, reading.document(env), words, reading.response['conclusions'], lean=reading)
+    return _Reading(env, reading.document(), words, reading.response['conclusions'], lean=reading)
 
 
 def _parse_english_document_uncached(env, source, *, _with_structure=False, **options):

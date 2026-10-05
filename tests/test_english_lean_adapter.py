@@ -1,10 +1,10 @@
 """The Lean side of `english.admission` (docs/spec/english-lean-s2.md 2.10, 2.11, 4.2, 4.5; S2 plan S2.5).
 
-The English reader of S2.4 is not built, so the Lean answers here come from a fake transport: the honest
-one answers what Python reads (as `english.read` would on agreement), and the others are that answer with
-one field changed. The tests show that nothing changes under the default authority, that every call is
-recorded under shadow with the fields of 4.5 and the class map of 4.2, that a malformed answer or a
-producer fault is `CheckerUnavailable`, and that the lexicon export now lives under `ve/`.
+The Lean answers here come from a fake transport: the honest one answers what Python reads (as
+`english.read` does on agreement), and the others are that answer with one field changed; the real reader is
+exercised in `tests/test_english_lean_route.py`. The tests show that nothing changes under the default
+authority, that every call is recorded under shadow with the fields of 4.5 and the class map of 4.2, that a
+malformed answer or a producer fault is `CheckerUnavailable`, and that the lexicon export lives under `ve/`.
 """
 from __future__ import annotations
 
@@ -52,14 +52,14 @@ def honest(env=ENV, **options):
             reading = EN._python_reading(env, source, words, options)
         except AmbiguousDerivation as exc:
             return {**response, "status": "many", "code": "Ambiguous", "text": str(exc), "sentence": 0,
-                    "witnesses": [["a"], ["b"]]}
+                    "witnesses": [[["a", 0, 1]], [["b", 0, 1]]]}
         except UnsupportedProfile as exc:
             return {**response, "status": "rejected", "code": "IllTyped", "text": str(exc)}
         except SyntaxError as exc:
             return {**response, "status": "none", "code": "NoDerivation", "text": str(exc), "sentence": 0}
         found = reading.comparison()
-        return {**response, "status": "one", "ast": found["formulas"], "canonical": found["canonical"],
-                "conclusions": found["conclusions"], "derivation": [["sentence.plain"]] * len(found["formulas"])}
+        return {**response, "status": "one", "ast": found["formulas"], "conclusions": found["conclusions"],
+                "derivation": [[["sentence.plain", 0, 2], ["formula.atom", 0, 2]]] * len(found["formulas"])}
 
     transport.calls = calls
     return transport
@@ -155,7 +155,7 @@ def test_shadow_without_the_reader_records_unavailability_and_changes_nothing(mo
     monkeypatch.setenv("VE_ENGLISH_ROUTE", str(tmp_path / "missing"))
     EN._parse_english_document(ENV, ACCEPTED[0])
     [record] = shadow()
-    assert record["lean"]["status"] == "unavailable" and "S2.4" in record["lean"]["message"]
+    assert record["lean"]["status"] == "unavailable" and "not built" in record["lean"]["message"]
     assert record["classes"] == ["diagnostic-code", "schema", "verdict"]
 
 
@@ -294,18 +294,40 @@ def mutants(response):
     yield "conclusion out of range", {**response, "conclusions": [5]}
     yield "conclusions repeated", {**response, "conclusions": [1, 1]}
     yield "derivation short", {**response, "derivation": response["derivation"][:1]}
+    tree = response["derivation"][0]
+    for label, bad in (("a node as a string", ["sentence.plain", *tree[1:]]),
+                       ("an empty tag", [["", 0, 2], *tree[1:]]),
+                       ("an empty span", [["sentence.plain", 1, 1], *tree[1:]]),
+                       ("a root not at 0", [["sentence.plain", 1, 2], ["formula.atom", 1, 2]]),
+                       ("a child outside its parent", [tree[0], ["formula.atom", 1, 3]]),
+                       ("a span as a Boolean", [["sentence.plain", False, 2], *tree[1:]]),
+                       ("a node with four fields", [["sentence.plain", 0, 2, 0], *tree[1:]]),
+                       ("an empty tree", [])):
+        yield f"derivation: {label}", {**response, "derivation": [bad, *response["derivation"][1:]]}
+    yield "a canonical text from Lean", {**response, "canonical": "Legacy is deployed."}
     yield "an unknown field", {**response, "steps": 3}
     yield "a nested null", {**response, "ast": [response["ast"][0], ["const", None]]}
     yield "a formula that does not decode", {**response, "ast": [response["ast"][0], ["unary", "nowhere"]]}
     yield "too deep", {**response, "ast": [json.loads("[" * 5000 + "]" * 5000)]}
     yield "rejected with an unknown code", {"identities": response["identities"], "status": "rejected",
                                             "code": "Internal", "text": "x"}
-    yield "many with one witness", {"identities": response["identities"], "status": "many", "code": "A",
-                                    "text": "x", "sentence": 0, "witnesses": [["a"]]}
-    yield "sentence as a Boolean", {"identities": response["identities"], "status": "none", "code": "A",
+    yield "many with one witness", {"identities": response["identities"], "status": "many", "code": "Ambiguous",
+                                    "text": "x", "sentence": 0, "witnesses": [[["a", 0, 1]]]}
+    yield "many with a malformed witness", {"identities": response["identities"], "status": "many",
+                                            "code": "Ambiguous", "text": "x", "sentence": 0,
+                                            "witnesses": [[["a", 0, 1]], [["b", 0, 0]]]}
+    yield "sentence as a Boolean", {"identities": response["identities"], "status": "none", "code": "NoDerivation",
                                     "text": "x", "sentence": False}
-    yield "an unknown fault", {"identities": response["identities"], "status": "invalidGrammar", "code": "A",
-                               "text": "x", "fault": "other"}
+    yield "an unknown fault", {"identities": response["identities"], "status": "invalidGrammar",
+                               "code": "InvalidGrammar", "text": "x", "fault": "other"}
+    for status, code in (("none", "Ambiguous"), ("many", "NoDerivation"), ("budget", "SortMismatch"),
+                         ("invalidGrammar", "IllTyped")):
+        extra = {"many": {"sentence": 0, "witnesses": [[["a", 0, 1]], [["b", 0, 1]]]},
+                 "invalidGrammar": {"fault": "lexicon"}}.get(status, {"sentence": 0})
+        yield f"{status} with the code {code}", {"identities": response["identities"], "status": status,
+                                                 "code": code, "text": "x", **extra}
+    yield "rejected with a status code", {"identities": response["identities"], "status": "rejected",
+                                          "code": "NoDerivation", "text": "x"}
 
 
 def test_the_genuine_answer_is_well_formed():
