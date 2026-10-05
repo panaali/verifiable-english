@@ -637,8 +637,7 @@ and untied [V]) under the reviewed side table, crediting each declaration to the
 names it. Lines the step names that are already untrusted (C, P, T, [R], [I], tied) earn nothing.
 It validates the side table exactly as `--check` does (one shared pass and trust rule) and
 prints no ledger while any classification or tie problem stands.
-`Adds (est.)` is the only estimate left: the trusted lines a step introduces (2a's `Family` and
-claims, 3c's aliases, 4b's kit, 7's skeleton, 8a's canonical encoders), subtracted in `Net`.
+`Adds (est.)` is the only estimate left: the trusted lines a step introduces (3c's aliases, 4b's kit, 7's skeleton, 8a's canonical encoders), subtracted in `Net`.
 Measured on the table after consolidate-b1 fix 4 (K 978, S 7,550, trusted 25,641 of
 88,757 lines; step 5 remeasured after the 2026-10-05 merge of ve-integration, whose
 `VE.Discourse.Run` rewrite moved 3 of its tied lines, and again after the merge into lean-first/b3b, whose
@@ -653,7 +652,7 @@ the DRI. Step 6 counts 503 more [V] diagnostic lines than at fix 4, from the two
 | Step | Removed | Tied | Reclassified [V]→[R] | Adds (est.) | Net | Days | Risk | Score |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | 1 | 0 | 23 | 0 | 0 | 23 | 5 | 1.5 | 3.1 |
-| 2a | 0 | 114 | 0 | 30 | 84 | 4 | 1 | 21.0 |
+| 2a | 0 | 0 | 0 | 0 | 0 | 4 | 1 | 0.0 |
 | 2b | 94 | 0 | 0 | 0 | 94 | 2 | 2 | 23.5 |
 | 3 | 39 | 0 | 0 | 10 | 29 | 14 | 2 | 1.0 |
 | 4 | 718 | 0 | 0 | 420 | 298 | 14 | 2 | 10.6 |
@@ -686,9 +685,17 @@ What the measurement changes:
 * **Step 1:** 1a and 1b are done; the nine `Flagged` definitions are C, and `BaseConflictFree` is
   tied by `conflictFree_of_base` in the side table. The remaining 23 lines are 1c's
   `FamilyNorms.conflictCase`.
-* Steps 1 to 4 keep the DRI's order (section 4 above). The measured total before 8b is 2,536
-  trusted lines removed or tied (net 1,956 after 580 estimated additions) out of 25,641, against the
-  estimate of about 4,300.
+* **Step 2a:** done (`VE.Route.WireSound`, `VE.Route.RunSound`, `VE.Norms.RunSound`). The side
+  table ties `runFol`, `runClosure` and `runOrder` (114 G[V] lines) to their certificate,
+  countermodel and evaluate theorems, so the row now measures 0. Measured, not estimated, the step
+  added 107 trusted lines: S 91 (`Family`, `CertificateClaim`, `CountermodelAnswer`,
+  `CountermodelClaim`, `EvaluateClaim`, `RouteIntended`, `Runner.Bound` and the three family
+  instances, docstrings included) and D[V] 16 (`routeModel`, `orderModel`, the model decoders the
+  claims name). Net −7, against the estimated −84: the claims cover all three kinds of all three
+  runners, not the certificate kind alone, and the family instances are read.
+* Steps 1 to 4 keep the DRI's order (section 4 above). After step 2a the measured total before 8b
+  is 2,575 trusted lines removed or tied (net 2,025 after 550 estimated additions) out of 25,641,
+  against the estimate of about 4,300.
 
 The budget check (step 0) now also fails a predicate (a declaration whose type ends in `Prop`,
 listed in `lean/predicates.txt`) classed C, [R] or [I] without a tie: such a class took

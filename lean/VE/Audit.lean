@@ -41,6 +41,9 @@ import VE.Norms.Cedar
 import VE.Norms.Replay
 import VE.Norms.Flagged
 import VE.Norms.FlaggedSpec
+import VE.Norms.RunSound
+import VE.Route.WireSound
+import VE.Route.RunSound
 import VE.Service.Graph
 import VE.Service.Readings
 import VE.Service.FamilyNorms
@@ -965,6 +968,60 @@ import VE.EnglishGrammar.FoldAgree
 #print axioms VE.Norms.FlaggedSpec.norms_wire_conflict_free
 #print axioms VE.Norms.FlaggedSpec.norms_wire_conflict_refuted
 #print axioms VE.Norms.FlaggedSpec.norms_wire_conflict_exclusive
+#print axioms VE.Route.WireSound.countermodelAnswer_refutes
+#print axioms VE.Route.WireSound.certificate_countermodel_exclusive
+#print axioms VE.Route.WireSound.Runner.background_routeSound
+#print axioms VE.Route.WireSound.Runner.acceptance
+#print axioms VE.Route.WireSound.getObjValD_of_ok
+#print axioms VE.Route.WireSound.valid_field
+#print axioms VE.Route.WireSound.refutes_field
+#print axioms VE.Route.WireSound.values_field
+#print axioms VE.Route.WireSound.mem_zip_map
+#print axioms VE.Route.WireSound.decodeFormulas_data
+#print axioms VE.Route.WireSound.decodeClosed_data
+#print axioms VE.Route.WireSound.fullBackground_formulas
+#print axioms VE.Route.WireSound.routeIntended_background
+#print axioms VE.Route.WireSound.routeModel_ok
+#print axioms VE.Route.WireSound.folRunner_run
+#print axioms VE.Route.WireSound.runFol_accepted
+#print axioms VE.Route.WireSound.folRunner_sound
+#print axioms VE.Route.WireSound.runFol_certificate_acceptance
+#print axioms VE.Route.WireSound.runFol_countermodel
+#print axioms VE.Route.WireSound.runFol_evaluate
+#print axioms VE.Route.WireSound.closureRunner_run
+#print axioms VE.Route.WireSound.runClosure_accepted
+#print axioms VE.Route.WireSound.closureRunner_sound
+#print axioms VE.Route.WireSound.runClosure_certificate_acceptance
+#print axioms VE.Route.WireSound.runClosure_countermodel
+#print axioms VE.Route.WireSound.runClosure_evaluate
+#print axioms VE.Route.WireSound.orderRunner_run
+#print axioms VE.Route.WireSound.runOrder_accepted
+#print axioms VE.Route.WireSound.orderRunner_sound
+#print axioms VE.Route.WireSound.runOrder_certificate_acceptance
+#print axioms VE.Route.WireSound.decodeOrderModel_validFast
+#print axioms VE.Route.WireSound.decodeOrderModel_intended
+#print axioms VE.Route.WireSound.orderModel_ok
+#print axioms VE.Route.WireSound.forIn_yield_ok
+#print axioms VE.Route.WireSound.orderVocabulary_no_definitions
+#print axioms VE.Route.WireSound.runOrder_countermodel
+#print axioms VE.Route.WireSound.runOrder_evaluate
+#print axioms VE.Route.RunSound.runCase_dispatch
+#print axioms VE.Route.RunSound.runnerKind_ne
+#print axioms VE.Route.RunSound.dispatch_fol
+#print axioms VE.Route.RunSound.dispatch_closure
+#print axioms VE.Route.RunSound.dispatch_order
+#print axioms VE.Route.RunSound.route_fol_certificate
+#print axioms VE.Route.RunSound.route_fol_countermodel
+#print axioms VE.Route.RunSound.route_fol_evaluate
+#print axioms VE.Route.RunSound.route_closure_certificate
+#print axioms VE.Route.RunSound.route_closure_countermodel
+#print axioms VE.Route.RunSound.route_closure_evaluate
+#print axioms VE.Route.RunSound.route_order_certificate
+#print axioms VE.Route.RunSound.route_order_countermodel
+#print axioms VE.Route.RunSound.route_order_evaluate
+#print axioms VE.Norms.RunSound.valid_field
+#print axioms VE.Norms.RunSound.runCase_certificate
+#print axioms VE.Norms.RunSound.norms_wire_certificate_acceptance
 #print axioms VE.Service.Graph.graph_sound
 #print axioms VE.Service.Graph.graph_entails
 #print axioms VE.Service.Graph.graph_unfolds
