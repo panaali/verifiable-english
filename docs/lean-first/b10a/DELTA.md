@@ -46,7 +46,7 @@ trusted lines of decoders and glue); `lean/statements.txt`, `declarations.txt`, 
 ## Gate (section 5.1)
 
 1. **Suite.** The full suite at the head, in chunks with the prebuilt binaries, in a clean worktree: see "Suite at
-   the head" below. No existing test changed.
+   the head" below. A preservation-gate regression now checks per-input verdict changes.
 2. **Corpus A/B.** `tools/lean_first_diff.py` over every corpus, base and head: identical (table below). Besides the
    route, five executables changed bytes because they import the edited norm-defaults modules (`ve_service`,
    `ve_readings_route`, `ve_discourse_route`, `ve_diagnose`, `ve_response_decode`); the probe, conformance,
@@ -99,7 +99,7 @@ Base records `feb024e0436d…`, head records `8c96c407eb77…` (SHA-256 of the r
 | 20261003 | 25,794 | 53 / 53 | 0 / 0 | none |
 | 20261004 | 25,794 | 0 / 0 | 0 / 0 | none |
 
-Base `2ce1134e532c`, head `c1b96acf0bc9`; baseline SHA-256 `16d8a23683a5…` on both sides. Compared corpus, mutant counts, answers, finding counts, new signature sets, and baseline replay per seed. The baseline was not updated.
+Base `2ce1134e532c`, head `6a335d65821e`; baseline SHA-256 `16d8a23683a5…` on both sides. Compared every sampled input and full Python/Lean/Rust answer by SHA-256 digest, plus corpus, mutant counts, finding counts, new signature sets, and baseline replay per seed. The baseline was not updated.
 
 ### Gate item 4: latency (paired, base and head alternating)
 
