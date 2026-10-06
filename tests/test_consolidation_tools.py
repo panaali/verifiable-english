@@ -1373,6 +1373,12 @@ def test_output_diff_harness_inputs_cover_the_other_executables():
     decoded = [lean_output_diff.run(lean_output_diff.BIN / i.exe, i) for i in work if i.exe == "ve_response_decode"]
     # The genuine responses are accepted, so the decoder runs past its input checks.
     assert all(code == 0 and b'"accept"' in out for code, out, _ in decoded)
+    senses = next(i for i in work if i.exe == "ve_senses_route")
+    code, out, _ = lean_output_diff.run(lean_output_diff.BIN / senses.exe, senses)
+    rows = json.loads(out)
+    assert code == 1  # The second case deliberately has a malformed pack.
+    assert rows[0]["status"] == "ok" and rows[0]["result"]["reading"]["status"] == "one"
+    assert rows[1]["status"] == "error"
 
 
 def test_output_diff_fails_when_a_rebuilt_executable_has_no_inputs(tmp_path, monkeypatch, capsys):

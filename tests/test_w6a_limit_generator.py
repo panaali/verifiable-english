@@ -147,7 +147,8 @@ def py_route_countermodel(env, premises, conclusion, data):
 # --- Generated cases ------------------------------------------------------------
 
 def generate(seed):
-    """(name, python verdict thunk, Lean runner, Lean case, Rust case)."""
+    """(name, python verdict thunk, Lean runner, Lean case, Rust case or None). Quantity cases
+    have no Rust case: Lean-first batch 9 deleted Rust's quantity route."""
     rng = random.Random(seed)
     cases = []
 
@@ -155,8 +156,7 @@ def generate(seed):
         raw = w6_env()
         cases.append((name, lambda: py_quantity_value(raw, formula, data), "quantity",
                       {"id": name, "environment": raw, "quantity": q(formula), "model": data},
-                      {"id": name, "kind": "quantity", "environment": raw, "quantity": q(formula),
-                       "model": data}))
+                      None))
 
     def quantity_countermodel_case(name, premises, conclusion, data):
         raw = w6_env()
@@ -164,7 +164,7 @@ def generate(seed):
                 "model": data}
         cases.append((name, lambda: py_quantity_countermodel(raw, premises, conclusion, data), "quantity",
                       {"id": name, "kind": "countermodel", **body},
-                      {"id": name, "kind": "quantity", "mode": "countermodel", **body}))
+                      None))
 
     def route_evaluate(name, env, ast, data):
         cases.append((name, lambda: py_route_evaluate(env, ast, data), "route",
@@ -309,7 +309,7 @@ def test_every_backend_reports_resource_limit_in_bounded_time(seed, monkeypatch)
     route = run([str(ROUTE), "route", "-"], [c[3] for c in cases if c[2] == "route"])
     for got in quantity + route:
         assert got["status"] == "error" and got["error"].startswith("ResourceLimit"), got
-    rust = run([str(RUST), "conformance"], [c[4] for c in cases])
+    rust = run([str(RUST), "conformance"], [c[4] for c in cases if c[4] is not None])
     for got in rust:
         limited = (got.get("status") == "error" and got["error"]["code"] == "ResourceLimit") or \
             got.get("status") == "ResourceLimit"
@@ -365,7 +365,7 @@ def test_lean_authority_reports_resource_limit_on_every_generated_case(seed, mon
 
 # --- The Python meter keeps the regression power of the old wall-clock bound ---
 
-@pytest.mark.parametrize("prefix", ["q-binders-cm-", "r-binders-", "reproducer-2-"])
+@pytest.mark.parametrize("prefix", ["r-binders-", "reproducer-2-"])
 def test_python_meter_stops_an_evaluator_that_skips_its_budget(prefix, monkeypatch):
     """An evaluator whose budget check is skipped would answer after 2^k units
     (2^30 for the defined table); the meter stops it one charge past the budget,

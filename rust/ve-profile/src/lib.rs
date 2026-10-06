@@ -1,11 +1,9 @@
 #![forbid(unsafe_code)]
-//! VE profiles over the kernel: evaluation, routes, countermodel search, order, units and
-//! risk.
+//! VE profiles over the kernel: evaluation, routes, countermodel search and order.
 mod eval;
 mod order;
 mod route;
 mod search;
-mod units;
 
 #[cfg(feature = "bench-internals")]
 #[doc(hidden)]
@@ -18,4 +16,3 @@ pub use search::{
     find_countermodel_min, find_countermodel_with_nonvacuity, find_distinguishing_model,
     find_distinguishing_model_with_nonvacuity,
 };
-pub use units::quantity_case;

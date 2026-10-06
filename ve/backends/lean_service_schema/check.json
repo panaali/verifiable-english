@@ -8,6 +8,21 @@
       {
         "additionalProperties": false,
         "properties": {
+          "Q": {"$ref": "quantity.json#/$defs/q_formula"},
+          "core": {"type": "array"},
+          "environment_id": {"$ref": "common.json#/$defs/hex64"},
+          "id": {"type": "string", "x-equals": "/id"},
+          "meaning_id": {"$ref": "common.json#/$defs/hex64"},
+          "status": {"const": "ok"},
+          "target_environment_id": {"$ref": "common.json#/$defs/hex64"},
+          "well_typed": {"const": true}
+        },
+        "required": ["id", "status", "well_typed", "meaning_id", "Q", "core", "environment_id", "target_environment_id"],
+        "type": "object"
+      },
+      {
+        "additionalProperties": false,
+        "properties": {
           "id": {"type": "string", "x-equals": "/id"},
           "meaning_id": {"$ref": "common.json#/$defs/hex64"},
           "status": {"const": "ok"},

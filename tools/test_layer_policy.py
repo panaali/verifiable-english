@@ -682,7 +682,7 @@ class LayerSelectionTests(unittest.TestCase):
         groups = check_rust_deps.MODULE_GROUPS
         self.assertEqual({crate: set(modules) for crate, modules in groups.items()}, {
             "ve-kernel": {"lib", "ast", "environment", "graph", "internal", "model", "semantics", "wire"},
-            "ve-profile": {"lib", "eval", "order", "route", "search", "units"},
+            "ve-profile": {"lib", "eval", "order", "route", "search"},
             "ve-surface": {"lib", "surface"},
             "ve-core": {"lib"},
         })

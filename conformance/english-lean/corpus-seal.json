@@ -271,7 +271,7 @@
    }
   }
  ],
- "seal_id": "071cf5ecd39f44a0773f1843bacb7976435f6fbc980d85e2ff42e352e5e208ff",
+ "seal_id": "e31062710c0ccf43e4b6495e9b1e8ca33a573d2ac128e6905068c8ab1087e049",
  "sources": [
   {
    "kind": "corpus source",
@@ -296,12 +296,12 @@
   {
    "kind": "corpus source",
    "path": "conformance/english-lean/lexer.json",
-   "sha256": "1a13d8c26595ed33aee51677218c592f736932b805ffca7220132a6929b7bb78"
+   "sha256": "6759d13a2d947767c08025e4fe36447c26bb70fc8c28f4daab222d5757310d62"
   },
   {
    "kind": "corpus source",
    "path": "conformance/english-lean/lexicon.json",
-   "sha256": "038f5a1176e2bc40acf59c1c803da9199e8008e5db69a56863d1329029eb20b0"
+   "sha256": "8ca104426f570fd787f3aca62c03b7fbe49ecce04f44c5e180c6f346e1b31ea8"
   },
   {
    "kind": "corpus source",
@@ -321,7 +321,7 @@
   {
    "kind": "entry-point caller",
    "path": "conformance/english_mixed.py",
-   "sha256": "9b398054449b6235d9e07fc4cf0f69ec5b4c216a7d78feaccafa6a675ce92a3a"
+   "sha256": "624070631fbe33d74e792ba67632b4f59a3922284341f293e3b81c714d1a5869"
   },
   {
    "kind": "entry-point caller",
@@ -351,7 +351,7 @@
   {
    "kind": "entry-point caller",
    "path": "tests/lean_service_corpus.py",
-   "sha256": "024aae462f1d7f679a31d2dfea1e2061f5dbb3649c7aed9e8d6568e781e036e8"
+   "sha256": "58ea9d8a51d987b480a3c73aae3d8078223cf099a5e9dc3ef8b9d7679c57e55e"
   },
   {
    "kind": "entry-point caller",
@@ -366,17 +366,17 @@
   {
    "kind": "entry-point caller",
    "path": "tests/test_alternatives_profile.py",
-   "sha256": "bdf3892f8860853c073b4455b8a3133b9ebc06cf079911db9b5db40225f9dd8f"
+   "sha256": "9dfc8224e97e6bf99767297d3a5d896cac90f31aec661646f00114d5e6d8e3a8"
   },
   {
    "kind": "entry-point caller",
    "path": "tests/test_asimov_extended.py",
-   "sha256": "2cd4f3e952635d7c8b465c5ca6c3c3bfc7d0e92771c1d7eb783676aef60d51f8"
+   "sha256": "084b3d1a16e7ff19e7a09a7189d87244c86db5415c58a2151286a14621c90078"
   },
   {
    "kind": "entry-point caller",
    "path": "tests/test_asimov_laws.py",
-   "sha256": "8d09ee5ee3cbe506a9f2d6c142f7ac95cbdce913210882638a90fd50e2fe8ff4"
+   "sha256": "50c473228b410d3bf1795730a95444130c02faf7c465dfc52f76fe39d54e7b31"
   },
   {
    "kind": "entry-point caller",
@@ -411,12 +411,12 @@
   {
    "kind": "entry-point caller",
    "path": "tests/test_discourse_lean.py",
-   "sha256": "a7f952bb3b0b6ff600d2fe0430083aa2297da4aae89d9e4938b687646cfddbb3"
+   "sha256": "f122a5d510da0f98b5dc195637103c2266306e0f7d813c77ed45c99f342d0b84"
   },
   {
    "kind": "entry-point caller",
    "path": "tests/test_discourse_three_way.py",
-   "sha256": "e7856e47de5ed99b40416665559d984ab8ff74da35888a39b9657aa8bc251d3c"
+   "sha256": "7d7e14a597a3dd93b46bcfb89b21bd61fc04c4f8704ec7eab610173ec49327ff"
   },
   {
    "kind": "entry-point caller",
@@ -426,7 +426,7 @@
   {
    "kind": "entry-point caller",
    "path": "tests/test_english_evidence.py",
-   "sha256": "153ba6597b63dd472bde03605ef17e6ffeb1184c14a6760e935f165e91335ce7"
+   "sha256": "21548743c68f79f76854be59f9d145dd5e463eb117dda17bcd0c633957b25384"
   },
   {
    "kind": "entry-point caller",
@@ -451,12 +451,17 @@
   {
    "kind": "entry-point caller",
    "path": "tests/test_norm_defaults.py",
-   "sha256": "7c6b5d22412e4366cbb31fdf9d9148d91a4978c63db9c723460a0ee5e385be11"
+   "sha256": "f898d99798a542e300187ac4c9f1c15cd3ae2dff4b6a535f8329178d5e32205b"
   },
   {
    "kind": "entry-point caller",
    "path": "tests/test_norm_english.py",
    "sha256": "587e8130affd46b128ebac2fe471e05f141571cb7edeaf181b9f18ad313f6ab3"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_numeral_conversion.py",
+   "sha256": "a2697fe6c5e9575fcdde5880854cafd14258f36b809809f19c8e6f82ada56750"
   },
   {
    "kind": "entry-point caller",
@@ -471,22 +476,22 @@
   {
    "kind": "entry-point caller",
    "path": "tests/test_risk_english.py",
-   "sha256": "c7e606be13838828babf0a90fddf2f41799583867ceca227d26a592a388ad666"
+   "sha256": "0868da7177ce27ffbe633257d60f639e6e47db693da1a120dd9d6b2130d6d713"
   },
   {
    "kind": "entry-point caller",
    "path": "tests/test_risk_profile.py",
-   "sha256": "2c5b8df2e6ead622e92c9e6d7c5d85d274a601e7a07b3efeff6d5ee08d2a0fdb"
+   "sha256": "cb211fc6e70cb49e5e742265bfbb314e5aa1870589734df4f40d2470d18e04c9"
   },
   {
    "kind": "entry-point caller",
    "path": "tests/test_soft_review_regressions.py",
-   "sha256": "58e77913af4e3110d6a9c32b97df05c5090d55c5af876f2e9c800d83efc520a3"
+   "sha256": "e29f81887b6bf260c6fa39eb69047ce1bde330bda287da7f2d08b06d96c04835"
   },
   {
    "kind": "entry-point caller",
    "path": "usecases/agent-policy/check.py",
-   "sha256": "8de84231334dd7d64a14808b9f1346cc235ed8dd487db95218e5fa7c8ef4b49d"
+   "sha256": "57fe066468ec8de4f53df62d65dcb55966bddf8bc192a15bad3ad917b06a99f3"
   },
   {
    "kind": "corpus source",

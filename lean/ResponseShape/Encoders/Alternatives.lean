@@ -9,52 +9,69 @@ open VE.Alternatives VE.Alternatives.Run
 
 variable {req : Json}
 
-theorem of_norms {v : Json} (h : Fits req Skeletons.norms v) : Fits req Skeletons.alternatives v := by
-  refine Fits.altSub ?_ h
-  alt_sub
+/-- The norms mode's rows, off the alternatives path, are rows of this mode. -/
+theorem of_norms {v : Json} (hp : usesAltPath req = false) (h : Fits req Skeletons.norms v) :
+    Fits req Skeletons.alternatives v :=
+  Fits.onCaseE (by simpa [CaseCond.holds, CaseDecider.fn] using hp) h
+
+/-- Every Background premise label of the alternatives document is one of the four. -/
+theorem premiseLabels_mem (A : AltDoc) : ∀ s ∈ altPremiseLabels A,
+    s ∈ ["alternatives:own", "alternatives:one_taken", "alternatives:one_inaction", "alternatives:proximate"] := by
+  intro s hs
+  simp only [altPremiseLabels, List.mem_cons, List.mem_append, List.mem_map] at hs
+  rcases hs with rfl | ((⟨_, _, rfl⟩ | ⟨_, _, rfl⟩) | ⟨_, _, rfl⟩) <;> decide
+
+theorem premiseLabels_fits (A : AltDoc) :
+    Fits req (.arr [] (.strIn ["alternatives:own", "alternatives:one_taken", "alternatives:one_inaction",
+      "alternatives:proximate"])) (toJson (altPremiseLabels A)) :=
+  Fits.toJsonStrs (premiseLabels_mem A)
+
+theorem labelled_fits {A : AltDoc} {p : String × VE.Formula} (h : p ∈ (altPremiseLabels A).zip (altPremises A)) :
+    Fits req (.strIn ["alternatives:own", "alternatives:one_taken", "alternatives:one_inaction",
+      "alternatives:proximate"]) (.str p.1) :=
+  Fits.strIn (premiseLabels_mem A _ (List.of_mem_zip h).1)
 
 theorem elaborate_fits (id : String) (src : Wire.AltSource)
     (hcoverage : (CaseCond.path ["coverage_units"]).holds req = false) :
-    Fits req Skeletons.alternatives (ok id (Wire.regenerated src)) := by
+    Fits req (skel% "alternatives.json#/$defs/elaborate") (ok id (Wire.regenerated src)) := by
   unfold ok VE.Route.Wire.ok Wire.regenerated Wire.encodeNode Wire.labelled Wire.profileExists
     VE.Norms.Wire.regenerated profileWords profileDef
   simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte, Bool.false_eq_true]
-  fits
-  all_goals exact hcoverage
+  fits using labelled_fits
 
 theorem elaborate_coverage_fits (id : String) (src : Wire.AltSource)
     (environment units narrowings : Json)
     (hcoverage : (CaseCond.path ["coverage_units"]).holds req = true) :
-    Fits req Skeletons.alternatives
+    Fits req (skel% "alternatives.json#/$defs/elaborate")
       (ok id (Wire.regenerated src ++
         [("coverage", Wire.coverage src.A environment units narrowings)])) := by
   unfold ok VE.Route.Wire.ok Wire.regenerated Wire.encodeNode Wire.labelled Wire.profileExists
     VE.Norms.Wire.regenerated profileWords profileDef Wire.coverage
   simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte, Bool.false_eq_true]
-  fits
-  all_goals first | exact hcoverage | fits
+  fits using labelled_fits
   case h_2 x completion item heq hx =>
     simp only [List.mem_flatMap, List.mem_filterMap] at hx
     rcases hx with ⟨action, _, harm, _, h⟩
     split at h <;> simp only [Option.some.injEq, reduceCtorEq] at h
     subst_vars
     fits
+    -- The complete table's own cell, read from the declared outcomes decider.
+    all_goals
+      split at heq <;> simp only [Option.some.injEq, reduceCtorEq] at heq
+      subst_vars
+      fits
 
-theorem sourceOf_environment {j : Json} {src : Wire.AltSource}
-    (h : Replay.sourceOf j = .ok src) : ∃ environment, j.getObjVal? "environment" = .ok environment := by
-  unfold Replay.sourceOf at h
-  obtain ⟨environment, henv, _⟩ := VE.Order.ProfileGate.bind_ok h
-  exact ⟨environment, henv⟩
-
-theorem elaborate_case_fits (id : String) (j : Json) :
+theorem elaborate_case_fits (id : String) (j : Json) {w : Json} (hobj : j.getObjVal? "id" = .ok w)
+    (hp : usesAltPath j = true) (hK : j.getObjValD "kind" = .str "alt-elaborate") :
     OkFits j Skeletons.alternatives (runElaborate id j) := by
   unfold runElaborate
   okfits
   split
-  · exact elaborate_coverage_fits (req := j) _ _ _ _ _ (CaseCond.path_ok ‹j.getObjVal? "coverage_units" = .ok _›)
-  · obtain ⟨_, henv⟩ := sourceOf_environment ‹Replay.sourceOf j = .ok _›
-    simpa only [List.append_nil] using (elaborate_fits (req := j) id _
-      (CaseCond.path_error henv ‹j.getObjVal? "coverage_units" = .error _›))
+  · fits_from elaborate_coverage_fits (req := j) id _ _ _ _
+      (CaseCond.path_ok ‹j.getObjVal? "coverage_units" = .ok _›)
+  · simp only [List.append_nil]
+    fits_from elaborate_fits (req := j) id _
+      (CaseCond.path_error hobj ‹j.getObjVal? "coverage_units" = .error _›)
 
 theorem fields_obj {j : Json} {fs : VE.Bridge.Fields} (h : VE.Bridge.fields j = .ok fs) : ∃ m, j = .obj m := by
   cases j <;> first | exact ⟨_, rfl⟩ | (simp [VE.Bridge.fields, Json.getObj?] at h; cases h)
@@ -111,7 +128,8 @@ theorem chooser_fits (A : AltDoc) (M : VE.FiniteModel VE.Bridge.Entity) (r : VE.
     | exact hA ▸ ‹A.alt.taken.isSome = true›
     | exact hA ▸ Bool.eq_false_iff.mpr ‹¬ A.alt.taken.isSome = true›
 
-theorem validate_fits (id : String) (j : Json) : OkFits j Skeletons.alternatives (runValidate id j) := by
+theorem validate_fits (id : String) (j : Json) (hp : usesAltPath j = true)
+    (hK : j.getObjValD "kind" = .str "alt-validate") : OkFits j Skeletons.alternatives (runValidate id j) := by
   unfold runValidate
   okfits
   all_goals (try simp only [ok, VE.Route.Wire.ok])
@@ -131,7 +149,9 @@ theorem firstFailure_of_not_free (j : Json) (res : Replay.AltConflictReplay)
   rw [List.find?_isSome]
   exact ⟨(t, c), by simpa [Replay.conflictCerts] using hm, by cases c <;> simp_all⟩
 
-theorem conflict_fits (id : String) (j : Json) : OkFits req Skeletons.alternatives (runConflict id j) := by
+theorem conflict_fits (id : String) (j : Json) {w : Json} (hobj : j.getObjVal? "id" = .ok w)
+    (hp : usesAltPath j = true) (hK : j.getObjValD "kind" = .str "alt-conflict") :
+    OkFits j Skeletons.alternatives (runConflict id j) := by
   unfold runConflict runConflictWitness
   okfits
   all_goals (try simp only [ok, VE.Route.Wire.ok])
@@ -141,35 +161,45 @@ theorem conflict_fits (id : String) (j : Json) : OkFits req Skeletons.alternativ
     have := firstFailure_of_not_free j _ ‹Replay.replayAltConflict j = .ok _› (by simp_all)
     simp_all
 
-theorem followable_fits (id : String) (j : Json) : OkFits req Skeletons.alternatives (runFollowable id j) := by
+theorem followable_fits (id : String) (j : Json) {w : Json} (hobj : j.getObjVal? "id" = .ok w)
+    (hp : usesAltPath j = true) (hK : j.getObjValD "kind" = .str "alt-followable") :
+    OkFits j Skeletons.alternatives (runFollowable id j) := by
   unfold runFollowable
   okfits
   all_goals (try simp only [ok, VE.Route.Wire.ok])
   all_goals fits
 
-theorem admission_fits (id reportId : String) (res : Admission.Admitted) :
-    Fits req Skeletons.alternatives (encodeAdmitted id reportId res) := by
+/-- Every admission's kinds are its units' rendered kinds. -/
+theorem admitDocument_kinds (environment document : Json) :
+    OkP (fun res : Admission.Admitted => Common.KindsRendered res.kinds) (Admission.admitDocument environment document) := by
+  unfold Admission.admitDocument
+  okfits
+  all_goals exact Common.kindsRendered_map _ _
+
+theorem admission_fits (id reportId : String) (res : Admission.Admitted) (hk : Common.KindsRendered res.kinds) :
+    Fits req (skel% "alternatives.json#/$defs/admission") (encodeAdmitted id reportId res) := by
   unfold encodeAdmitted ok VE.Route.Wire.ok
-  fits
+  fits using Common.kind_fits hk
   all_goals exact Common.claimJson_fits _
 
-theorem runCase_fits (j : Json) : OkFits j Skeletons.alternatives (runCase j) := by
+theorem runCase_fits (j : Json) (hp : usesAltPath j = true) : OkFits j Skeletons.alternatives (runCase j) := by
   unfold runCase
   okfits
+  all_goals read_kind
   all_goals first
-    | (unfold runAdmission; okfits; exact admission_fits _ _ _)
-    | exact elaborate_case_fits _ _
-    | with_reducible exact validate_fits _ _
-    | with_reducible exact conflict_fits _ _
-    | with_reducible exact followable_fits _ _
-    | (simp only [ok, VE.Route.Wire.ok]; fits)
+    | (unfold runAdmission; okfits; fits_from admission_fits _ _ _ (admitDocument_kinds _ _ _ ‹Admission.admitDocument _ _ = .ok _›))
+    | exact elaborate_case_fits _ _ ‹_› hp ‹_›
+    | exact validate_fits _ _ hp ‹_›
+    | exact conflict_fits _ _ ‹_› hp ‹_›
+    | exact followable_fits _ _ ‹_› hp ‹_›
+    | (simp only [ok, VE.Route.Wire.ok]; fits using premiseLabels_fits)
 
-theorem runCaseReported_fits (j : Json) : Fits j Skeletons.alternatives (runCaseReported j) := by
+theorem runCaseReported_fits (j : Json) (hj : CaseWF j) : Fits j Skeletons.alternatives (runCaseReported j) := by
   unfold runCaseReported
   split
   · split
-    · exact runCase_fits j _ ‹_›
+    · exact runCase_fits j ‹_› _ ‹_›
     · fits
-  · exact of_norms (Norms.runCaseReported_fits j)
+  · exact of_norms (Bool.eq_false_iff.mpr ‹_›) (Norms.runCaseReported_fits j hj)
 
 end ResponseShape.Encoders.Alternatives

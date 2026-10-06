@@ -1,6 +1,6 @@
 {
   "$id": "norms.json",
-  "$comment": "Mode norms: Norms.Run.runCaseReported. A case on the norms path (Norms.Run.usesNormsPath) is answered by the norms runner; every other case is delegated unchanged to route.",
+  "$comment": "Mode norms: Norms.Run.runCaseReported. A case on the norms path (Norms.Run.usesNormsPath) is answered by the norms runner (a case without a kind is an evaluation, Route.Run.caseKind's default, answered through Norms.Plain.run); every other case is delegated unchanged to route.",
   "row": {
     "x-select": [
       {
@@ -10,6 +10,7 @@
             {"$ref": "common.json#/$defs/error"},
             {
               "x-select": [
+                {"then": {"$ref": "route.json#/$defs/evaluate"}, "when": {"$ref": "common.json#/$defs/no_kind"}},
                 {"then": {"$ref": "common.json#/$defs/admission"}, "when": {"$ref": "#/$defs/kind/admission"}},
                 {"then": {"$ref": "route.json#/$defs/background"}, "when": {"$ref": "#/$defs/kind/background"}},
                 {

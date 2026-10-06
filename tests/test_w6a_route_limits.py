@@ -304,7 +304,7 @@ def test_model_limits_precede_entity_checks_three_ways(profiles):
         rust_limit(other)
 
 
-def test_quantity_model_limits_precede_entity_checks_three_ways():
+def test_quantity_model_limits_precede_entity_checks_relay_and_lean():
     from tests.test_units_lean_w6a import lean as lean_quantity, quantity
     from tests.test_w6a_review_regressions import raw_environment
     from ve.units import quantity_countermodel
@@ -317,8 +317,6 @@ def test_quantity_model_limits_precede_entity_checks_three_ways():
         case = {"environment": raw, "premises": [], "conclusion": quantity(["bottom"]), "model": data}
         [got] = lean_quantity([{"id": "q", "kind": "countermodel", **case}])
         lean_limit(got)
-        [other] = rust([{"id": "q", "kind": "quantity", "mode": "countermodel", **case}])
-        rust_limit(other)
 
 
 def full_table():
@@ -347,7 +345,7 @@ def test_largest_tables_reach_the_budget_quickly_three_ways():
         rust_limit(other)
 
 
-def test_largest_tables_on_the_quantity_route_three_ways():
+def test_largest_tables_on_the_quantity_route_relay_and_lean():
     from tests.test_units_lean_w6a import quantity
     from tests.test_w6a_review_regressions import raw_environment
     from ve.units import quantity_countermodel
@@ -363,8 +361,6 @@ def test_largest_tables_on_the_quantity_route_three_ways():
     case = {"environment": raw, "premises": [], "conclusion": conclusion, "model": data}
     [got] = run([str(QUANTITY), "-"], [{"id": "q", "kind": "countermodel", **case}])
     lean_limit(got, "MAX_EVALUATIONS")
-    [other] = rust([{"id": "q", "kind": "quantity", "mode": "countermodel", **case}])
-    rust_limit(other)
 
 
 # --- Background of a model --------------------------------------------------------

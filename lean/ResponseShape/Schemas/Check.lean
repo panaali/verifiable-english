@@ -10,6 +10,18 @@ def «row» : Shape :=
     ref "common.json#/$defs/error",
     n [
       obj,
+      .required ["id", "status", "well_typed", "meaning_id", "Q", "core", "environment_id", "target_environment_id"],
+      closed [
+        ("id", n [str, .equals "/id"]),
+        ("status", constS "ok"),
+        ("well_typed", .const (.bool true)),
+        ("meaning_id", ref "common.json#/$defs/hex64"),
+        ("Q", ref "quantity.json#/$defs/q_formula"),
+        ("core", arr),
+        ("environment_id", ref "common.json#/$defs/hex64"),
+        ("target_environment_id", ref "common.json#/$defs/hex64")]],
+    n [
+      obj,
       .required ["id", "status", "well_typed", "meaning_id"],
       closed [
         ("id", n [str, .equals "/id"]),

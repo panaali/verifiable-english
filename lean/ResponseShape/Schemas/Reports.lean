@@ -1,12 +1,13 @@
 import VE.Service.Protocol
 import ResponseShape
+import ResponseShape.CaseDeciders
 
 /-! The source of `ve/backends/lean_service_schema/reports.json` (`file`; `tools/response_schemas.py` writes it). -/
 namespace ResponseShape.Schemas.Reports
 open Lean ResponseShape
 
 def reports_path : Shape :=
-  decidedBy "Reports.Run.usesReportsPath" VE.Reports.Run.usesReportsPath <|
+  decidedCase .reportsPath <|
   c "Reports.Run.usesReportsPath: the reports@0 profile or a reports-* kind." [
     obj,
     .anyOf [

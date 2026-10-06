@@ -838,6 +838,6 @@ def runCaseReported (j : Json) (more : Extension := noExtension) : Json :=
   | .ok result => result
   | .error message => Json.mkObj ([("id", j.getObjValD "id"), ("status", .str "error"),
       ("error", .str message)] ++
-      (if j.getObjValD "kind" == .str "certificate" then [("valid", .bool false)] else []))
+      (if (j.getObjValD "kind").getStr?.toOption == some "certificate" then [("valid", .bool false)] else []))
 
 end VE.Time.Wire

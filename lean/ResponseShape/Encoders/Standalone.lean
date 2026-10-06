@@ -9,11 +9,20 @@ open VE.Service.Standalone
 
 variable {req : Json}
 
+/-- The family an environment row names (`Gate.Family.name`, `Legacy.family`) is one of the schema's. -/
+theorem family_fits (f : VE.Route.Gate.Family) :
+    Fits req (.strIn ["fol", "closure", "closure+n-ary", "order"]) (.str f.name) := by
+  cases f <;> fits
+
+theorem legacy_family_fits (l : Legacy) :
+    Fits req (.strIn ["fol", "closure", "closure+n-ary", "order"]) (.str l.family) := by
+  cases l <;> simp only [Legacy.family] <;> fits
+
 theorem environment_fits (j : Json) : OkFits req Skeletons.environment (environmentCase j) := by
   unfold environmentCase
   okfits
-  all_goals (try simp only [VE.Route.Wire.ok])
-  all_goals fits
+  all_goals (try simp only [VE.Route.Wire.ok, Legacy.family])
+  all_goals fits using family_fits, legacy_family_fits
 
 theorem model_fits (j : Json) : OkFits req Skeletons.model (modelCase j) := by
   unfold modelCase legacyModelCase
@@ -31,6 +40,8 @@ theorem identity_fits (j : Json) : OkFits req Skeletons.identity (identityCase j
   unfold identityCase
   okfits
   all_goals (try simp only [VE.Route.Wire.ok])
+  -- The kind the row echoes is the one the runner tested.
+  all_goals (try kind_subst)
   all_goals fits
 
 theorem parse_fits (j : Json) : OkFits req Skeletons.parse (parseCase j) := by

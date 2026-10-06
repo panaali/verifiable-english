@@ -1,0 +1,78 @@
+"""The differential fuzzer at the base and the head of lean-first batch 9 (gate item 2: its baseline must
+not grow).
+
+    python docs/lean-first/b9/difffuzz_ab.py --base /tmp/ve-b9-base --out docs/lean-first/b9/evidence/difffuzz-ab.json
+
+Runs `tools/difffuzz.py --ci` and `--deep 1 --seed D` for the 14 date seeds of `SEEDS` in each checkout (its
+own `ve`, baseline, Lean and Rust builds, `VE_NATIVE_PREBUILT=1`), `--jobs` runs at a time. Unlike batch 2's
+script (`docs/lean-first/b2/difffuzz_ab.py`), the answers are not expected to be equal: this batch removes
+Rust from the quantity surface and Python relays Lean there, so quantity findings disappear or change engine
+set. For every run it records the findings by surface and profile, the new signatures of each side and the
+**head-only** new signatures with their answers. The run fails when the head has a head-only signature, a
+baseline entry it does not reproduce, or an unreviewed entry.
+"""
+from __future__ import annotations
+
+import argparse
+from concurrent.futures import ThreadPoolExecutor
+import json
+import os
+from pathlib import Path
+import subprocess
+import tempfile
+
+HEAD = Path(__file__).resolve().parents[3]
+SEEDS = [f"202609{day}" for day in range(23, 31)] + [f"202610{day:02d}" for day in range(1, 7)]
+
+
+def _run(root: Path, args: list[str], report: Path) -> dict:
+    env = {**os.environ, "VE_NATIVE_PREBUILT": "1", "PATH": f"{Path.home()}/.elan/bin:{os.environ['PATH']}"}
+    proc = subprocess.run([str(root / ".venv/bin/python"), "tools/difffuzz.py", *args, "--minimise-limit", "0",
+                           "--report", str(report)], cwd=root, env=env, capture_output=True, text=True)
+    if not report.exists():
+        raise SystemExit(f"{root} {args}: no report (exit {proc.returncode})\n{proc.stdout[-2000:]}{proc.stderr[-2000:]}")
+    return json.loads(report.read_text())
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--base", required=True, type=Path)
+    parser.add_argument("--out", required=True, type=Path)
+    parser.add_argument("--jobs", type=int, default=6)
+    args = parser.parse_args()
+    runs = [["--ci"]] + [["--deep", "1", "--seed", seed] for seed in SEEDS]
+    scratch = Path(tempfile.mkdtemp(prefix="difffuzz-ab-b9-"))
+    jobs = [(side, root, run) for run in runs for side, root in (("base", args.base.resolve()), ("head", HEAD))]
+    with ThreadPoolExecutor(args.jobs) as pool:
+        reports = list(pool.map(lambda job: _run(job[1], job[2], scratch / f"{job[0]}-{'-'.join(job[2])}.json"),
+                                jobs))
+    rows, ok = [], True
+    for index, run in enumerate(runs):
+        base, head = reports[2 * index], reports[2 * index + 1]
+        base_new = {entry["signature"] for entry in base["new"]}
+        head_only = [{"signature": entry["signature"], "surface": entry["surface"], "profile": entry["profile"],
+                      "seed": entry["seed"], "classes": entry["classes"], "answers": entry["answers"],
+                      "input": entry["input"]}
+                     for entry in head["new"] if entry["signature"] not in base_new]
+        row = {"run": " ".join(run),
+               "findings": [base["findings"], head["findings"]],
+               "new": [len(base["new"]), len(head["new"])],
+               "base_only_new": sorted(base_new - {entry["signature"] for entry in head["new"]}),
+               "head_only_new": head_only,
+               "baseline": [{k: (len(v) if isinstance(v, list) else v) for k, v in side["baseline"].items()}
+                            for side in (base, head)],
+               "head_not_reproduced": head["baseline"]["not_reproduced"],
+               "cpu_seconds": [base["cpu_seconds"], head["cpu_seconds"]]}
+        row["ok"] = not head_only and not head["baseline"]["not_reproduced"] and not head["baseline"]["unreviewed"]
+        ok &= row["ok"]
+        rows.append(row)
+    args.out.write_text(json.dumps({"base": str(args.base), "head": str(HEAD), "runs": rows, "ok": ok},
+                                   indent=1, ensure_ascii=False) + "\n")
+    print(json.dumps({"ok": ok, "runs": [(r["run"], r["ok"], r["new"], len(r["head_only_new"]),
+                                          r["baseline"][0]["entries"], r["baseline"][1]["entries"]) for r in rows]},
+                     indent=1))
+    raise SystemExit(0 if ok else 1)
+
+
+if __name__ == "__main__":
+    main()
