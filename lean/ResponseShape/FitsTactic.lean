@@ -683,7 +683,12 @@ syntax "scalar_alt" : tactic
 
 macro_rules
   | `(tactic| scalar_alt) => `(tactic| first
-    | (apply Fits.altHead; first | exact Fits.lit _ | (apply Fits.strIn_lit; decide))
+    | (apply Fits.altHead; first
+        | exact Fits.lit _
+        | (apply Fits.strIn_lit; decide)
+        | exact Fits.notString_arr
+        | exact Fits.notString_mkObj
+        | exact Fits.notString_setObj)
     | (apply Fits.altTail; scalar_alt))
 
 /-- `fits using l, ...`: as `fits`, trying at every node first each lemma `l` (a `Fits` fact about

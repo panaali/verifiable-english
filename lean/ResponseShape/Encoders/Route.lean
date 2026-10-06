@@ -116,8 +116,10 @@ theorem runAdmit_fits (profiles : List String) (environment : Json) (rv : Wire.R
     OkFits req routeOk (runAdmit profiles environment rv id j) := by
   unfold runAdmit
   okfits
+  all_goals
+    have hk := Common.admitDocument_kinds _ _ _ _ _ ‹Admission.admitDocument _ _ _ _ = .ok _›
   all_goals (try simp only [Wire.ok])
-  all_goals fits
+  all_goals fits using Common.kind_fits hk
   all_goals exact Common.claimJson_fits _
 
 /-- `dispatch` on a case whose kind is the kind of `req` (`req` is the case itself, or a case the

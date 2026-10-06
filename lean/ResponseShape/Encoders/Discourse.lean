@@ -138,15 +138,44 @@ theorem admitDiscourse_status (ps : List String) (env : Json) (rv : VE.Route.Wir
     | (apply OkP.map; intro a p hp; simp [lift1] at hp)
     | exact admit2_status _ _ _ _ _
 
+theorem admitCore_kinds (ps : List String) (env : Json) (rv : VE.Route.Wire.RouteVocabulary) (D : DDoc)
+    (front : Loader.Front) (envId : String) :
+    OkP (fun C : CoreResult => Common.KindsRendered C.base.kinds) (admitCore ps env rv D front envId) := by
+  unfold admitCore
+  okfits
+  all_goals exact Common.admitDocument_kinds _ _ _ _ _ ‹VE.Route.Admission.admitDocument _ _ _ _ = .ok _›
+
+theorem admit2_kinds (ps : List String) (env : Json) (rv : VE.Route.Wire.RouteVocabulary) (j : Json)
+    (check : ByteArray → ImportOutcome) :
+    OkP (fun res : Admitted => Common.KindsRendered res.base.kinds) (admit2 ps env rv j check) := by
+  unfold admit2
+  okfits
+  all_goals exact admitCore_kinds _ _ _ _ _ _ _ ‹admitCore _ _ _ _ _ _ = .ok _›
+
+theorem admit1_kinds (ps : List String) (env : Json) (rv : VE.Route.Wire.RouteVocabulary) (j : Json) :
+    OkP (fun res : VE.Route.Admission.Admitted => Common.KindsRendered res.kinds) (admit1 ps env rv j) := by
+  unfold admit1
+  okfits
+  all_goals exact Common.admitDocument_kinds _ _ _ _
+
+/-- Every admission's kinds are its units' rendered kinds (W2's, for a `@1` document). -/
+theorem admitDiscourse_kinds (ps : List String) (env : Json) (rv : VE.Route.Wire.RouteVocabulary) (j : Json)
+    (n : Nat) : OkP (fun res : Admitted => Common.KindsRendered res.base.kinds) (admitDiscourse ps env rv j n) := by
+  cases n <;> unfold admitDiscourse admitAt <;> simp only [] <;> okfits
+  all_goals first
+    | exact admit2_kinds _ _ _ _ _
+    | exact OkP.mapOf (admit1_kinds _ _ _ _) (fun _ h => h)
+    | exact OkP.mapOf (Common.admitDocument_kinds _ _ _ _) (fun _ h => h)
+
 theorem encodeAdmission_fits (id : String) (res : Admitted)
     (hr : Fits req (.arr [] (skel% "discourse.json#/$defs/reference")) res.references)
-    (hs : StatusesOk res.doc) :
+    (hs : StatusesOk res.doc) (hk : Common.KindsRendered res.base.kinds) :
     OkFits req (skel% "discourse.json#/$defs/admission") (encodeAdmission id res) := by
   unfold encodeAdmission jointFields
   okfits
   simp only [VE.Route.Wire.ok, admittedJson, reportJson, claimJson]
   split <;> simp only [List.cons_append, List.nil_append, List.append_nil, choicesJson, jointJson]
-  all_goals fits using statusOf_fits res hs, readingVerdict_fits res
+  all_goals fits using statusOf_fits res hs, readingVerdict_fits res, Common.kind_fits hk
   all_goals first
     | exact Common.claimJson_fits _
     | exact hr
@@ -191,7 +220,7 @@ theorem runCase_fits (j : Json) (hp : usesDiscoursePath j = true) : OkFits j Ske
   all_goals first
     | (intro v hv
        fits_from encodeAdmission_fits _ _ (admitDiscourse_references _ _ _ _ _ _ ‹_›)
-         (admitDiscourse_status _ _ _ _ _ _ ‹_›) v hv)
+         (admitDiscourse_status _ _ _ _ _ _ ‹_›) (admitDiscourse_kinds _ _ _ _ _ _ ‹_›) v hv)
     | (intro v hv; fits_from resolve_fits _ _ _ _ _ v hv)
     | (intro v hv; fits_from joint_fits _ _ _ _ _ v hv)
     | (simp only [VE.Route.Wire.ok]; fits)

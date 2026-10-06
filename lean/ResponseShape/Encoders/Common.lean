@@ -20,6 +20,38 @@ theorem rejectionCode_fits (m : String) :
     · exact Fits.strIn (List.contains_iff_mem.mp ‹_›)
     · fits
 
+/-! ### Kinds
+
+An atomic kind renders as its word, any other as a tagged array (`Route.Admission.renderKind`), and
+every admission's `kinds` are its units' rendered kinds (`KindsRendered`). -/
+
+abbrev kindSkel : Skel :=
+  .alt [.strIn ["asserted", "norm", "definition", "question", "instruction", "example", "exposition", "analogy",
+    "explanation", "meta"], .kindNot "string"]
+
+theorem renderKind_fits (k : VE.Route.Admission.Kind) : Fits req kindSkel (VE.Route.Admission.renderKind k) := by
+  cases k <;> simp only [VE.Route.Admission.renderKind] <;> fits
+
+/-- The kinds of an admission: each a unit's rendered kind. -/
+def KindsRendered (ks : List Json) : Prop := ∀ k ∈ ks, ∃ kd, k = VE.Route.Admission.renderKind kd
+
+theorem kind_fits {ks : List Json} (h : KindsRendered ks) {k : Json} (hk : k ∈ ks) : Fits req kindSkel k := by
+  obtain ⟨kd, rfl⟩ := h k hk
+  exact renderKind_fits kd
+
+theorem kindsRendered_map {α : Type} (us : List α) (f : α → VE.Route.Admission.Kind) :
+    KindsRendered (us.map fun x => VE.Route.Admission.renderKind (f x)) := by
+  intro k hk
+  obtain ⟨u, _, rfl⟩ := List.mem_map.mp hk
+  exact ⟨_, rfl⟩
+
+theorem admitDocument_kinds (ps : List String) (env : Json) (rv : VE.Route.Wire.RouteVocabulary) (j : Json) :
+    OkP (fun res : VE.Route.Admission.Admitted => KindsRendered res.kinds)
+      (VE.Route.Admission.admitDocument ps env rv j) := by
+  unfold VE.Route.Admission.admitDocument
+  okfits
+  exact kindsRendered_map _ _
+
 /-- `Route.Run.caseKind` (default `evaluate`) of a case that is an object. -/
 theorem caseKind_read {j w : Json} {k' kind : String} (hobj : j.getObjVal? k' = .ok w)
     (h : VE.Route.Run.caseKind j = .ok kind) : KindRead "evaluate" j kind := by

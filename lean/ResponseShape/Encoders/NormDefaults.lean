@@ -27,6 +27,13 @@ theorem firstFailure_of_not_free (j : Json) (res : Wire.ConflictReplayU) (h : Wi
   rw [List.find?_isSome]
   exact ⟨(t, c), hm, by cases c <;> simp_all⟩
 
+/-- Every admission's kinds are its units' rendered kinds. -/
+theorem admitDocument_kinds (environment document : Json) :
+    OkP (fun res : Admission.Admitted => Common.KindsRendered res.kinds) (Admission.admitDocument environment document) := by
+  unfold Admission.admitDocument
+  okfits
+  all_goals exact Common.kindsRendered_map _ _
+
 theorem runCase_fits (j : Json) (hp : usesNormDefaultsPath j = true) :
     OkFits j Skeletons.normDefaults (runCase j) := by
   unfold runCase runOtherCase runAdmission
@@ -37,6 +44,7 @@ theorem runCase_fits (j : Json) (hp : usesNormDefaultsPath j = true) :
   all_goals (try simp only [VE.Route.Wire.ok, encodeAdmitted, Wire.regeneratedU, VE.Norms.Wire.regenerated])
   all_goals fits
   all_goals try exact Common.claimJson_fits _
+  all_goals try exact Common.kind_fits (admitDocument_kinds _ _ _ ‹Admission.admitDocument _ _ = .ok _›) ‹_›
   -- Not conflict-free with no failing target: impossible (`firstFailure_of_not_free`).
   all_goals
     exfalso

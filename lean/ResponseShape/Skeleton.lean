@@ -217,7 +217,7 @@ inductive Lit where
   | null
   | bool (b : Bool)
   | num (mantissa : Int) (exponent : Nat)
-  deriving Inhabited, Repr, BEq, Lean.ToExpr
+  deriving Inhabited, Repr, BEq, DecidableEq, Lean.ToExpr
 
 namespace Lit
 
@@ -454,6 +454,16 @@ theorem altTail {s : Skel} {ss : List Skel} {v : Json} (h : Fits c (.alt ss) v) 
   cases h with
   | alt hm h => exact Fits.alt (List.mem_cons_of_mem _ hm) h
 
+/-- An array, or an object built from fields, is not a string. -/
+theorem notString_arr {a : Array Json} : Fits c (.kindNot "string") (.arr a) := Fits.kindNot (by simp [kind])
+
+theorem notString_mkObj {l : List (String × Json)} : Fits c (.kindNot "string") (Json.mkObj l) :=
+  Fits.kindNot (by simp [Json.mkObj, kind])
+
+theorem notString_setObj {l : List (String × Json)} {k : String} {v : Json} :
+    Fits c (.kindNot "string") ((Json.mkObj l).setObjVal! k v) :=
+  Fits.kindNot (by simp [Json.mkObj, Json.setObjVal!, kind])
+
 theorem strIn_lit {vs : List String} {s : String} (h : vs.contains s = true) : Fits c (.strIn vs) (.str s) :=
   Fits.strIn (by simpa using h)
 
@@ -602,6 +612,14 @@ theorem mapM {β : Type} {Q : α → Prop} {f : β → Except String α} {xs : L
         rcases List.mem_cons.mp hw with rfl | hw
         · exact h x List.mem_cons_self w hfx
         · exact ih (fun z hz => h z (List.mem_cons_of_mem _ hz)) zs hrest w hw
+
+/-- The image of a result that satisfies `Q`. -/
+theorem mapOf {β : Type} {Q : β → Prop} {x : Except String β} {f : β → α} (hx : OkP Q x)
+    (h : ∀ a, Q a → P (f a)) : OkP P (x.map f) := by
+  intro w hw
+  cases hc : x with
+  | error e => rw [hc] at hw; cases hw
+  | ok a => rw [hc] at hw; cases hw; exact h a (hx a hc)
 
 theorem map {β : Type} {x : Except String β} {f : β → α} (h : ∀ a, P (f a)) : OkP P (x.map f) := by
   intro w hw
@@ -1012,7 +1030,8 @@ def ofEnum : Nat → List Json → Skel
     mkAlt ((if strs.isEmpty then [] else [.strIn strs]) ++ others)
 
 /-- `any` for an array or object of which the skeleton says nothing more (its elements or fields
-`any`, no field required or forbidden): the fields are what skeletons describe. -/
+`any`, no field required or forbidden): the fields are what skeletons describe. Beside a literal
+domain in an alternative, such a member is `kindNot "string"` instead. -/
 def simp : Nat → Skel → Skel
   | 0, k => k
   | fuel + 1, k =>
@@ -1029,7 +1048,14 @@ def simp : Nat → Skel → Skel
       | [] => .any
       | [s] => s
       | ss => .all ss
-    | .alt ss => mkAlt (ss.map (simp fuel))
+    | .alt ss =>
+      let simplified := ss.map (simp fuel)
+      -- Beside a literal domain, a member that says nothing more than its kind (an array or an
+      -- object) keeps that it holds no string, so the alternative's strings stay the declared ones.
+      let literal := simplified.any fun | .strIn _ | .lit _ => true | _ => false
+      let typed : Skel → Bool := fun | .obj .. | .arr .. => true | _ => false
+      mkAlt (if literal then (ss.zip simplified).map (fun (o, k) => if k.isAny && typed o then .kindNot "string" else k)
+        else simplified)
     | .onCase c t e =>
       let t := simp fuel t
       let e := simp fuel e

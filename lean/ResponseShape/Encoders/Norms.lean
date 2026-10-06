@@ -28,10 +28,17 @@ theorem of_plain_route {v : Json} {kind : String} (hp : (usesNormsPath req || Pl
   · fits_invert h
     all_goals fits_from h
 
-theorem admission_fits (id reportId : String) (res : Admission.Admitted) :
+/-- Every admission's kinds are its units' rendered kinds. -/
+theorem admitDocument_kinds (environment document : Json) :
+    OkP (fun res : Admission.Admitted => Common.KindsRendered res.kinds) (Admission.admitDocument environment document) := by
+  unfold Admission.admitDocument
+  okfits
+  all_goals exact Common.kindsRendered_map _ _
+
+theorem admission_fits (id reportId : String) (res : Admission.Admitted) (hk : Common.KindsRendered res.kinds) :
     Fits req (skel% "common.json#/$defs/admission") (encodeAdmitted id reportId res) := by
   unfold encodeAdmitted VE.Route.Wire.ok
-  fits
+  fits using Common.kind_fits hk
   all_goals exact Common.claimJson_fits _
 
 theorem certificate_fits (profiles : List String) (environment stripped : Json) (T : Tree)
@@ -92,7 +99,7 @@ theorem runCase_fits (j : Json) (hj : CaseWF j)
   all_goals (try simp only [VE.Route.Wire.ok, Flagged.regenerated, Wire.regenerated, List.map_cons, List.map_nil,
     String.reduceBEq])
   all_goals first
-    | (unfold runAdmission; okfits; fits_from admission_fits _ _ _)
+    | (unfold runAdmission; okfits; fits_from admission_fits _ _ _ (admitDocument_kinds _ _ _ ‹Admission.admitDocument _ _ = .ok _›))
     | fits
 
 theorem runCaseReported_fits (j : Json) (hj : CaseWF j) : Fits j Skeletons.norms (runCaseReported j) := by
