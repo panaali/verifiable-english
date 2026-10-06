@@ -25947,7 +25947,7 @@ theorem VE.Route.WireSound.forIn_yield_ok
       ∀ (l : List α) (u : PUnit),
         ForIn.forIn l PUnit.unit f = Except.ok u →
           ∀ (x : α), x ∈ l → f x PUnit.unit = Except.ok (ForInStep.yield PUnit.unit)
-  -- uses 
+  -- uses
   -- expr 2683945154
 theorem VE.Route.WireSound.fullBackground_formulas
   ∀ (rv : VE.Route.Wire.RouteVocabulary),
@@ -25995,7 +25995,7 @@ theorem VE.Route.WireSound.fullLayer_restrict
   -- expr 1048279558
 theorem VE.Route.WireSound.getObjValD_of_ok
   ∀ {j v : Lean.Json} {k : String}, j.getObjVal? k = Except.ok v → j.getObjValD k = v
-  -- uses 
+  -- uses
   -- expr 2586305039
 theorem VE.Route.WireSound.hide_predicates_some
   ∀ {E : VE.Environment} {ns : List String} {p : String} {ss : List String},
@@ -26004,7 +26004,7 @@ theorem VE.Route.WireSound.hide_predicates_some
   -- expr 364531215
 theorem VE.Route.WireSound.mem_zip_map
   ∀ {α β : Type} (f : α → β) (l : List α) (p : α × β), p ∈ l.zip (List.map f l) → p.snd = f p.fst
-  -- uses 
+  -- uses
   -- expr 1190237451
 theorem VE.Route.WireSound.orderFamily_sound
   VE.Route.WireSound.orderFamily.Sound
