@@ -9904,7 +9904,7 @@
   "tests/test_speech_acts_conformance.py::test_beta_prohibition_regenerates_permission_negation",
   "tests/test_speech_acts_conformance.py::test_cli_and_fences_read_the_effective_scope",
   "tests/test_speech_acts_conformance.py::test_combine_keeps_pending_commands_dormant",
-  "tests/test_speech_acts_conformance.py::test_document_admission_stays_closed_until_source_wrapper_is_proved",
+  "tests/test_speech_acts_conformance.py::test_document_admission_reads_the_source_payload",
   "tests/test_speech_acts_conformance.py::test_duplicate_reading_version_precedes_later_item_error",
   "tests/test_speech_acts_conformance.py::test_eta_polar_answer_in_same_model[reviewed0-no]",
   "tests/test_speech_acts_conformance.py::test_eta_polar_answer_in_same_model[reviewed1-yes]",
