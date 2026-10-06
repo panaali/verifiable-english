@@ -12,7 +12,7 @@ import json
 from ve import profiles
 from ve.errors import ResourceLimit, UnsupportedProfile, VEError
 from ve.limits import MAX_IDENTIFIER_BYTES, MAX_PREDICATES
-from ve import softnorms as soft
+from conformance import softnorms_legacy as soft
 from conformance.wire_contract_engine import Registry, load, overlay, run
 
 
@@ -48,7 +48,7 @@ def public_rejection(environment, norms, error: VEError, *, contract=None, regis
 # registry adds six statement layers; S3-pre and S4-pre record the resulting comparisons.
 INHERITED_PROFILES = ("data@0", "definitions@0", "documents@1", "time@0")
 ROUTE_PROFILES = frozenset({"closure@0", "data@0", "definitions@0", "documents@1", "nary@0", "norms@0",
-                            "order@0", profiles.BASE, "time@0", soft.SOFT_PROFILE})
+                            "order@0", profiles.BASE, "time@0", "soft-norms@0"})
 DECISION_PREFIXES = ("soft__excepted__", "soft__off__", "soft__outweighs__")
 
 

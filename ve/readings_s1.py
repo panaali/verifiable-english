@@ -195,13 +195,17 @@ def node_value(raw, fan_pred=None):
     """A norm object as `ruleFields` decodes it (a `SoftNode`); raises when it does not decode. A fan-out line's
     absent predicate is its first mapped predicate (`decodeLineNorm`). The exception decider decides only whether
     the object decodes, never its value, so a stand-in is passed."""
-    from .softnorms import _rule_fields
+    from .softnorms import _hydrate_rule
     if type(raw) is dict and fan_pred is not None and "predicate" not in raw:
         raw = {**raw, "predicate": fan_pred}
-    f = _rule_fields({"norm": wire(raw)}, "unstated")
+    f = _hydrate_rule({"norm": wire(raw)})
     exception = None
     if f.mode == "default":
-        exception = (f.exception.get("decided_by"), f.conditions["sufficient"], f.conditions["necessary"],
+        from .ast import _Decoder
+        decoder = _Decoder()
+        exception = (f.exception.get("decided_by"),
+                     tuple(decoder.decode(x) for x in f.exception["sufficient"]),
+                     tuple(decoder.decode(x) for x in f.exception["necessary"]),
                      tuple(f.exception["factors"]))
     return (f.core, f.mode, f.rank, f.alterable, exception, f.hard)
 
