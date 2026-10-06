@@ -498,6 +498,25 @@ def readCaseReported (j : Json) : Json := runCaseReported "english.read" j
 def grammarCaseReported (j : Json) : Json := runCaseReported "english.grammar" j
 def checkCaseReported (j : Json) : Json := runCaseReported "english.check" j
 
+/-- The one-shot S2 transport remains in use until the Python E2 relay switches to the service.
+Its reader accepts the S2 result fields exactly. Keep the E2 additions on the service mode. -/
+def legacyRow (mode : String) (request row : Json) : Json :=
+  if mode != "english.read" then row else
+  match VE.Bridge.fields (row.getObjValD "result") with
+  | .error _ => row
+  | .ok fields =>
+    let fields := fields.filter fun (name, _) =>
+      !["class", "span", "spans", "advice", "obligations"].contains name
+    let fields := if fields.lookup "status" == some (.str "invalidGrammar") then
+      match decodeCase request with
+      | .error _ => fields
+      | .ok c => match (c.L.failures c.E {}).head? with
+        | none => fields
+        | some (code, kind, name) => (fields.filter (·.1 != "failure")) ++
+          [("failure", Json.arr #[.str code, .str kind, .str name])]
+    else fields
+    row.setObjVal! "result" (Json.mkObj fields)
+
 def main (args : List String) : IO UInt32 := do
   let usage := "usage: ve_english_route english.read|english.grammar [cases.json|-]"
   let (mode, paths) := match args with
@@ -518,7 +537,7 @@ def main (args : List String) : IO UInt32 := do
     return 2
   | .ok cases =>
     let results := cases.mapIdx fun index c => match c with
-      | .ok j => runCaseReported mode j
+      | .ok j => legacyRow mode j (runCaseReported mode j)
       | .error message => Json.mkObj [("status", .str "error"), ("case_index", toJson index), ("error", .str message)]
     (← IO.getStdout).putStrLn (Json.arr results).compress
     return if results.any (fun r => r.getObjValD "status" == .str "error") then 1 else 0

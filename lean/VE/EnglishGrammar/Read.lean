@@ -437,6 +437,79 @@ theorem policy_iff_no_failure : ∀ (E : Env) (O : Overlay) (L : Lexicon),
   intro E O L
   simp [Lexicon.policyOk, List.isEmpty_iff]
 
+theorem policy_selection : ∀ (E : Env) (O : Overlay) (L : Lexicon), L.policyOk E O = true →
+  (∀ p w, (p, w) ∈ L.wordings → (E.predicate? p).isSome →
+    (policyPredicate E O p).map (·.1) = some w ∨ fallbackWording p (E.arity p) = some w) ∧
+  (∀ p n, (p, n) ∈ L.negatives → (E.predicate? p).isSome →
+    ∃ w, policyPredicate E O p = some (w, some n) ∧ L.wordings.lookup p = some w) ∧
+  (∀ s n, (s, n) ∈ L.nouns → ∀ m, (policyNouns E O).lookup s = some m → n = m ∨ n = fallbackNoun s) ∧
+  (∀ c sp, (c, sp) ∈ L.spellings → ∀ m, (policySpellings E O).lookup c = some m → sp = m ∨ sp = jsonQuote c) := by
+  intro E O L hp
+  simp only [Lexicon.policyOk, List.isEmpty_iff, Lexicon.policyFailures,
+    List.append_eq_nil_iff, List.filterMap_eq_nil_iff] at hp
+  rcases hp with ⟨⟨⟨hword, hneg⟩, hnoun⟩, hspell⟩
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · intro p w hmem hpred
+    have hc : (E.predicates.map (·.name)).contains p = true := by
+      rw [List.contains_iff_mem, List.mem_map]
+      obtain ⟨d, hd, hname⟩ := List.find?_isSome.mp hpred
+      exact ⟨d, hd, by simpa using hname⟩
+    have hf := hword (p,w) hmem
+    simp only [Prod.fst, Prod.snd, hc, Bool.not_true, Bool.false_eq_true, if_false] at hf
+    cases hpol : policyPredicate E O p with
+    | none =>
+      have hs : (policyPredicate E O p).isSome = true := by
+        unfold policyPredicate
+        cases hp : E.predicate? p with
+        | none => simp [hp] at hpred
+        | some d => simp only [hp]; split <;> cases hform : List.lookup p E.forms.wordings <;> simp [hform]
+      rw [hpol] at hs
+      cases hs
+    | some pair =>
+      rcases pair with ⟨pw, pn⟩
+      simp only [hpol, beq_iff_eq, Bool.or_eq_true, Option.some.injEq, Option.some.injEq, if_true, if_false] at hf
+      have hsel : w = pw ∨ some w = fallbackWording p (E.arity p) := by
+        by_cases hgood : w = pw ∨ some w = fallbackWording p (E.arity p)
+        · exact hgood
+        · simp [hgood] at hf
+      rcases hsel with hleft | hright
+      · left; simp [hpol, hleft]
+      · right; exact hright.symm
+  · intro p n hmem hpred
+    have hc : (E.predicates.map (·.name)).contains p = true := by
+      rw [List.contains_iff_mem, List.mem_map]
+      obtain ⟨d, hd, hname⟩ := List.find?_isSome.mp hpred
+      exact ⟨d, hd, by simpa using hname⟩
+    have hf := hneg (p,n) hmem
+    simp only [Prod.fst, Prod.snd, hc, Bool.not_true, Bool.false_eq_true, if_false] at hf
+    cases hpol : policyPredicate E O p with
+    | none =>
+      have hs : (policyPredicate E O p).isSome = true := by
+        unfold policyPredicate
+        cases hp : E.predicate? p with
+        | none => simp [hp] at hpred
+        | some d => simp only [hp]; split <;> cases hform : List.lookup p E.forms.wordings <;> simp [hform]
+      rw [hpol] at hs
+      cases hs
+    | some pair =>
+      rcases pair with ⟨pw, pn⟩
+      simp only [hpol] at hf
+      have hsel : pn = some n ∧ L.wordings.lookup p = some pw := by
+        by_cases hgood : pn = some n ∧ L.wordings.lookup p = some pw
+        · exact hgood
+        · simp [hgood] at hf
+      exact ⟨pw, by simp [hpol, hsel.1, hsel.2]⟩
+  · intro s n hmem m hm
+    have hf := hnoun (s,n) hmem
+    rw [hm] at hf
+    simp at hf
+    exact (Classical.em (n = m)).elim (fun h => Or.inl h) (fun h => Or.inr (hf h))
+  · intro c sp hmem m hm
+    have hf := hspell (c,sp) hmem
+    rw [hm] at hf
+    simp at hf
+    exact (Classical.em (sp = m)).elim (fun h => Or.inl h) (fun h => Or.inr (hf h))
+
 theorem admitRequest_ok : ∀ (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (s : String)
     (rs : List (EFormula × Bool)) (obs : List (Nat × List Nat)),
   admitRequest E O L b s = .ok rs obs →
