@@ -54,7 +54,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 18985,
+    "total_lines": 19000,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
@@ -193,8 +193,8 @@
       {"file": "lean/VE/EnglishGrammar/Encode.lean", "lines": 297, "sha256": "92446de419ef1e59c22dc2c9a773df524d7f2b8a411f24ad0ce39f564bdff419",
        "ranges": [[1, 297]], "declarations": ["typedCheck", "typedDocument", "optString", "optFields", "Env.decode"],
        "reason": "english-lean S2 (docs/spec/english-lean-s2.md 2.3, 2.10): Env.decode reads the environment and an English vocabulary overlay into the reader's Env; typedDocument decides check_document's verdict through the standalone typing service's decoders; S3 extends the same trusted decoder with profile symbols, forms and typing views (docs/spec/english-lean-s3.md 2.3); the full file is pinned conservatively"},
-      {"file": "lean/VE/EnglishGrammar/Run.lean", "lines": 378, "sha256": "5a801f6f174f06114649561be80538763224d3a2e0f45feabbf565fa7dfe6bf2",
-       "ranges": [[1, 378]], "declarations": ["pairs", "triples", "decodeLexicon", "environmentId", "grammarId", "decodeCase", "readCase", "grammarCase"],
+      {"file": "lean/VE/EnglishGrammar/Run.lean", "lines": 393, "sha256": "1e5db6b062d6366ffcf70600e1f676a693b1974c539669d72eda810cb3d31373",
+       "ranges": [[1, 393]], "declarations": ["pairs", "triples", "decodeLexicon", "blockRouteView", "validateDeclarations", "environmentId", "grammarId", "decodeCase", "readCase", "grammarCase"],
        "reason": "english-lean S2.4 (docs/spec/english-lean-s2.md 2.10, 4.3, 4.4): ve_english_route decodes the case (environment through Env.decode, overlay, the ve.english-lexicon@1 lexicon, which must name the environment), computes the six identities and writes the english.read and english.grammar answers; shadow only while english.admission keeps authority python; S3 validates alternatives and risk profile environments at the reader boundary (docs/spec/english-lean-s3.md 2.3); the full file is pinned conservatively"}
     ],
     "other_json": {
