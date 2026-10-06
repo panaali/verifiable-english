@@ -449,6 +449,20 @@ def test_soft_relay_cached_answers_are_independent(lean):
     assert "bogus@0" not in second["environment_prime"]["profiles"]
 
 
+def test_soft_rules_batch_preserves_each_lean_rule_result(lean):
+    environment_json = env()
+    good = should("good", "x_required", True)
+    bad = should("bad", "missing", True)
+    [batch, individual] = run(lean, [
+        {"id": "batch", "kind": "soft-rules", "environment": environment_json,
+         "norms": [good, bad]},
+        {"id": "individual", "kind": "soft-rule", "environment": environment_json,
+         "norm": bad}])
+    assert batch["status"] == "ok"
+    assert batch["results"] == [{"status": "ok"},
+                                {"status": "error", "error": individual["error"]}]
+
+
 def test_admission_with_soft_units_and_regenerated_leaves(lean):
     environment_json = env()
     delta = [should("a", "x_required", True), should("b", "x_permitted", False)]

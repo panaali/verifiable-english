@@ -143,7 +143,7 @@ def _quantity_content(env, unit, content, fences):
     return canonical, quantity_meaning_id(env, canonical)
 
 
-def _content(env, unit, fences, *, formula_env=None, rights=False):
+def _content(env, unit, fences, *, formula_env=None, rights=False, rule_result=None):
     formula_env = env if formula_env is None else formula_env
     content = unit.get("content")
     if content is None:
@@ -153,7 +153,7 @@ def _content(env, unit, fences, *, formula_env=None, rights=False):
         # 3.2: a norm unit outside rights may carry `narrows:<line>` citations,
         # which the rights document validates; the meaning binds them too.
         canonical, _ = _content(env, {**unit, "content": {"norm": content["norm"]}}, fences,
-                                formula_env=formula_env)
+                                formula_env=formula_env, rule_result=rule_result)
         from .readings import rights_meaning_id
         canonical = {**canonical, "cites": content["cites"]}
         return canonical, rights_meaning_id(env, canonical)
@@ -167,8 +167,10 @@ def _content(env, unit, fences, *, formula_env=None, rights=False):
         return content, None  # The reports decoder binds its identity after all declarations.
     if "norm" in content:
         if "soft-norms@0" in env.profiles:
-            from .softnorms import decode_rule, soft_digest
-            canonical = decode_rule(env, content).to_dict()
+            from .softnorms import batch_rule, decode_rule, soft_digest
+            rule = (batch_rule(env, content, rule_result) if rule_result is not None
+                    else decode_rule(env, content))
+            canonical = rule.to_dict()
             mid = soft_digest(f"ve-meaning-{env.identity_version}\n",
                               {"environment_id": env.environment_id, "ast": canonical})
             return canonical, mid
@@ -406,6 +408,22 @@ def _load_document(raw: bytes, path: str | Path, lean):
         soft_document = SoftNormDocument(env, _soft_contents(units, attached))
         formula_env = soft_document.extended_env
         open_names = set(open_names) | soft_document.extended_env.decision_names
+    rule_results = {}
+    if soft_enabled:
+        from .softnorms import check_rule_batch
+        authored = []
+        try:
+            for raw, _ in _parts(units):
+                content = raw.get("content")
+                if type(content) is dict and "norm" in content:
+                    authored.append((raw, {"norm": content["norm"]}))
+        except VEError:
+            # The ordinary unit loop below reports this structural fault in
+            # source order, after any earlier per-rule Lean outcome.
+            pass
+        if authored:
+            outcomes = check_rule_batch(formula_env, (content for _, content in authored))
+            rule_results = {id(raw): outcome for (raw, _), outcome in zip(authored, outcomes, strict=True)}
     compiled = []
     unit_ids = set()
     cursor = 0
@@ -443,7 +461,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
         content_env = (env if rights_enabled and kind in ("right", "right_lines", "limitation", "bar")
                        else formula_env)
         content, mid = (_content(content_env, unit, fences, formula_env=formula_env,
-                                 rights=rights_enabled)
+                                 rights=rights_enabled, rule_result=rule_results.get(id(unit)))
                         if unit.get("content") is not None else (None, None))
         is_norm = type(content) is dict and "norm" in content
         if is_norm:

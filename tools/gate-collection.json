@@ -9177,6 +9177,7 @@
   "tests/test_soft_norms_lean.py::test_readings_identity_environment_is_bound",
   "tests/test_soft_norms_lean.py::test_soft_elaborate_unresolved_pair_and_hard_status",
   "tests/test_soft_norms_lean.py::test_soft_relay_cached_answers_are_independent",
+  "tests/test_soft_norms_lean.py::test_soft_rules_batch_preserves_each_lean_rule_result",
   "tests/test_soft_norms_lean.py::test_theta_dual_guard_cycle_on_t_prime",
   "tests/test_soft_norms_lean.py::test_theta_sigma_pi_rho_diagnostics[environment_json0-norms0-TieAgainstOrder: a, b]",
   "tests/test_soft_norms_lean.py::test_theta_sigma_pi_rho_diagnostics[environment_json1-norms1-DependencyCycle: a, b, c]",

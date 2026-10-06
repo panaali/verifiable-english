@@ -14,7 +14,7 @@ from .environment import valid_identifier
 from .errors import DuplicateDeclaration, ResourceLimit, UnknownSymbol, UnsupportedProfile, VEError
 from .norms import Norm, _bind, _instantiate
 from .search import _used_predicates
-from .softnorms import SoftEnvironment, SoftNormDocument, decode_rule
+from .softnorms import SoftEnvironment, SoftNormDocument, batch_rule, check_rule_batch, decode_rule
 
 _RULE = re.compile(r"[a-z][a-z0-9-]*\Z", re.ASCII)
 # Every line kind with its rule-bearing fields, in the order the line states its rules: a power line states a
@@ -351,7 +351,7 @@ class RightsDocument:
                 "description": f"condition {condition} of limitation {name} on {act}"}
         return SoftEnvironment(source, generated=True)
 
-    def _instances(self, entries, names):
+    def _instance_candidates(self, entries, names):
         fan = 0
         for right_name, line in entries:
             right = self.rights[right_name]
@@ -397,7 +397,24 @@ class RightsDocument:
                         if norm["name"] in names:
                             raise DuplicateDeclaration(f"rule {norm['name']}")
                         names.add(norm["name"])
-                    rule = decode_rule(self.line_env, {"norm": norm})
+                    yield (right_name, right, kind, line, instance_kind, raw, bearer,
+                           predicate, norm, fan_map)
+
+    def _instances(self, entries, names):
+        # Assemble the authored order without running post-rule rights checks. A
+        # later structural fault is saved until all earlier Lean rule outcomes
+        # and rights checks have been replayed in their original order.
+        candidates = []
+        pending = None
+        try:
+            for candidate in self._instance_candidates(entries, names):
+                candidates.append(candidate)
+        except VEError as error:
+            pending = error
+        outcomes = check_rule_batch(self.line_env, ({"norm": c[8]} for c in candidates)) if candidates else []
+        for (right_name, right, kind, line, instance_kind, raw, bearer, predicate,
+             norm, fan_map), outcome in zip(candidates, outcomes, strict=True):
+                    rule = batch_rule(self.line_env, {"norm": norm}, outcome)
                     slot = _slot(self.env, right, rule, line.get("holder_slot"),
                                  subject=instance_kind in ("liberty", "powerLiberty"))
                     _line_shape(self.env, right, instance_kind, rule, slot)
@@ -421,6 +438,8 @@ class RightsDocument:
                     yield {"right": right_name, "source_kind": kind, "kind": instance_kind,
                            "rule": rule, "holder_slot": slot, "cites": line.get("cites", {}),
                            "bearer": bearer, "source_line": line}
+        if pending is not None:
+            raise pending
 
     def _validate_citations(self, entries):
         """4.1 step 3: every citation names a source unit, so a citation to a
@@ -557,13 +576,23 @@ class RightsDocument:
                 raise ResourceLimit(f"carve-outs of rule {core.name}")
             unless = core.unless + ((_or(_atom(name, arity) for name in covering),) if covering else ())
             rules.append(replace(rule, core=replace(core, guard=guard, unless=unless)))
-        for unit in self.outside:
-            raw = unit["norm"]
-            _name(raw.get("name"))
-            if any(type(parent) is str and parent.startswith("rights-")
-                   for parent in raw.get("over", ())):
-                raise VEError("InvalidInput: authored precedence cites a generated rule")
-            rules.append(decode_rule(env, {"norm": raw}))
+        outside = []
+        pending = None
+        try:
+            for unit in self.outside:
+                raw = unit["norm"]
+                _name(raw.get("name"))
+                if any(type(parent) is str and parent.startswith("rights-")
+                       for parent in raw.get("over", ())):
+                    raise VEError("InvalidInput: authored precedence cites a generated rule")
+                outside.append({"norm": raw})
+        except VEError as error:
+            pending = error
+        outcomes = check_rule_batch(env, outside) if outside else []
+        for content, outcome in zip(outside, outcomes, strict=True):
+            rules.append(batch_rule(env, content, outcome))
+        if pending is not None:
+            raise pending
         if self.bar is not None and self.bar["reading"] == "rule":
             for index, predicate in enumerate(permissions, 1):
                 parents = tuple(instance["rule"].core.name for instance in self.instances

@@ -12,6 +12,7 @@
               "x-select": [
                 {"then": {"$ref": "#/$defs/admission"}, "when": {"$ref": "#/$defs/kind/admission"}},
                 {"then": {"$ref": "#/$defs/rule"}, "when": {"$ref": "#/$defs/kind/soft-rule"}},
+                {"then": {"$ref": "#/$defs/rules"}, "when": {"$ref": "#/$defs/kind/soft-rules"}},
                 {"then": {"$ref": "#/$defs/elaborate"}, "when": {"$ref": "#/$defs/kind/soft-elaborate"}},
                 {"then": {"$ref": "#/$defs/pairs"}, "when": {"$ref": "#/$defs/kind/soft-pairs"}},
                 {"then": {"$ref": "#/$defs/certificate"}, "when": {"$ref": "#/$defs/kind/soft-certificate"}},
@@ -245,7 +246,8 @@
       "soft-conflict": {"properties": {"kind": {"const": "soft-conflict"}}, "required": ["kind"], "type": "object"},
       "soft-elaborate": {"properties": {"kind": {"const": "soft-elaborate"}}, "required": ["kind"], "type": "object"},
       "soft-pairs": {"properties": {"kind": {"const": "soft-pairs"}}, "required": ["kind"], "type": "object"},
-      "soft-rule": {"properties": {"kind": {"const": "soft-rule"}}, "required": ["kind"], "type": "object"}
+      "soft-rule": {"properties": {"kind": {"const": "soft-rule"}}, "required": ["kind"], "type": "object"},
+      "soft-rules": {"properties": {"kind": {"const": "soft-rules"}}, "required": ["kind"], "type": "object"}
     },
     "packages": {
       "$comment": "SoftNorms.Run.runSoftKind soft-conflict over certificate packages: detail exactly beside UNKNOWN (firstFailure).",
@@ -301,6 +303,35 @@
       "additionalProperties": false,
       "properties": {"accepted": {"const": true}, "id": {"$ref": "common.json#/$defs/id_ok"}, "status": {"const": "ok"}},
       "required": ["id", "status", "accepted"],
+      "type": "object"
+    },
+    "rules": {
+      "$comment": "SoftNorms.Run.runSoftKind: each standalone rule is checked under one decoded source.",
+      "additionalProperties": false,
+      "properties": {
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "results": {
+          "items": {
+            "anyOf": [
+              {
+                "additionalProperties": false,
+                "properties": {"status": {"const": "ok"}},
+                "required": ["status"],
+                "type": "object"
+              },
+              {
+                "additionalProperties": false,
+                "properties": {"error": {"$ref": "common.json#/$defs/text"}, "status": {"const": "error"}},
+                "required": ["status", "error"],
+                "type": "object"
+              }
+            ]
+          },
+          "type": "array"
+        },
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "results"],
       "type": "object"
     },
     "soft_field": {

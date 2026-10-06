@@ -114,7 +114,7 @@ def distinctionJson (D : RightsDoc) : Json :=
         ("right", .str N.right), ("protected", .str q), ("cited", .bool c)])).toArray)])).toArray
 
 def regenerated (D : RightsDoc) (environment : Json) : List (String × Json) :=
-  let soft := VE.SoftNorms.Wire.regenerated (correlate D) environment
+  let soft := VE.SoftNorms.Wire.regeneratedCore (correlate D) environment
   [("environment_prime", (primeJsonR D environment).toOption.getD .null),
    ("generated", Json.arr (generatedKeys D).toArray),
    ("lines", Json.arr ((linesOf D).map (lineJson D)).toArray),

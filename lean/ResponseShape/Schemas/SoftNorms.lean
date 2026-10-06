@@ -71,6 +71,7 @@ def kind : Def :=
   .group none [
     ("admission", kindIs "admission"),
     ("soft-rule", kindIs "soft-rule"),
+    ("soft-rules", kindIs "soft-rules"),
     ("soft-elaborate", kindIs "soft-elaborate"),
     ("soft-pairs", kindIs "soft-pairs"),
     ("soft-certificate", kindIs "soft-certificate"),
@@ -133,6 +134,16 @@ def rule : Shape :=
     obj, .required ["id", "status", "accepted"],
     closed [("id", ref "common.json#/$defs/id_ok"),
       ("status", constS "ok"), ("accepted", .const (.bool true))]]
+
+def rules : Shape :=
+  c "SoftNorms.Run.runSoftKind: each standalone rule is checked under one decoded source." [
+    obj, .required ["id", "status", "results"],
+    closed [("id", ref "common.json#/$defs/id_ok"),
+      ("status", constS "ok"),
+      ("results", n [arr, .items (.anyOf [
+        n [obj, .required ["status"], closed [("status", constS "ok")]],
+        n [obj, .required ["status", "error"], closed [
+          ("status", constS "error"), ("error", ref "common.json#/$defs/text")]]])])]]
 
 def admission : Shape :=
   c "SoftNorms.Run.encodeAdmitted: W2's admission answer and the open coherence premises the report assumes." [
@@ -313,6 +324,7 @@ def «row» : Shape :=
       .select [
         (ref "#/$defs/kind/admission", ref "#/$defs/admission"),
         (ref "#/$defs/kind/soft-rule", ref "#/$defs/rule"),
+        (ref "#/$defs/kind/soft-rules", ref "#/$defs/rules"),
         (ref "#/$defs/kind/soft-elaborate", ref "#/$defs/elaborate"),
         (ref "#/$defs/kind/soft-pairs", ref "#/$defs/pairs"),
         (ref "#/$defs/kind/soft-certificate", ref "#/$defs/certificate"),
@@ -332,6 +344,7 @@ def file : File where
     ("coherence_labels", .schema coherence_labels),
     ("witness_model", .schema witness_model),
     ("rule", .schema rule),
+    ("rules", .schema rules),
     ("admission", .schema admission),
     ("background", .schema background),
     ("soft_residual", .schema (n [obj,

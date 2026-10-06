@@ -304,6 +304,15 @@ def runSoftKind (id kind : String) (j : Json) : Except String Json := do
     let src ← decodeSoftSource environment (toJson ([] : List Json))
     let _ ← decodeSoftNorm src.se (← j.getObjVal? "norm")
     return VE.Route.Wire.ok id [("accepted", .bool true)]
+  if kind == "soft-rules" then
+    let environment ← j.getObjVal? "environment"
+    let src ← decodeSoftSource environment (toJson ([] : List Json))
+    let norms ← (← j.getObjVal? "norms").getArr?
+    let results := norms.toList.map (fun norm =>
+      match decodeSoftNorm src.se norm with
+      | .ok _ => Json.mkObj [("status", .str "ok")]
+      | .error error => Json.mkObj [("status", .str "error"), ("error", .str error)])
+    return VE.Route.Wire.ok id [("results", Json.arr results.toArray)]
   if kind == "soft-elaborate" then
     let environment ← j.getObjVal? "environment"
     let norms := j.getObjValD "norms"
