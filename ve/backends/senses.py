@@ -34,6 +34,10 @@ def _word(value) -> bool:
     return type(value) is str and bool(value)
 
 
+def _string(value) -> bool:
+    return type(value) is str
+
+
 def _words(value) -> bool:
     return type(value) is list and bool(value) and all(_word(word) for word in value) \
         and len(set(value)) == len(value)
@@ -52,7 +56,9 @@ FAULT_DETAILS = {
     "PreambleBudget": {"line": _nat},
     "RepeatedDefault": {"line": _nat, "word": _word},
     "PreambleLate": {"sentence": _nat},
-    "Collision": {"kind": _word, "name": _word, "sense": _word},
+    # Project.pairFault and preCheck may leave a collision component empty; Run.faultFields
+    # serializes each component as a string without a nonempty invariant.
+    "Collision": {"kind": _string, "name": _string, "sense": _string},
     "VocabularyLimit": {"what": lambda value: value in ("sorts", "predicates")},
     "TooManyCandidates": {"sentence": _nat, "words": _words},
     "CandidatesDiverge": {"sentence": _nat, "words": _words, "why": _why},

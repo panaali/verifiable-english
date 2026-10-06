@@ -242,6 +242,35 @@ def test_gloss_words_are_not_occurrences():
         assert [c["choice"] for c in unit["candidates"]] == [[["reviewed", 1]], [["reviewed", 2]]], gloss
 
 
+@pytest.mark.parametrize("mark", [" (meaning odd thing reviewed)", ", in the sense of odd thing reviewed"])
+def test_prefix_gloss_does_not_project_its_remaining_words(mark):
+    """A shorter valid comma gloss cannot expose the tail of a longer gloss as a body word.
+    At 253 document predicates, incorrectly projecting `reviewed` would exceed the 256 cap.
+    """
+    names = ("q" + chr(97 + i // 26) + chr(97 + i % 26) for i in range(253))
+    place = world(predicates={name: {"arguments": ["joke"], "description": "A predicate.",
+                                     "verbalisation": "{0} is " + name} for name in names})
+    pack = pack_with(replace=lambda s: {**s, "gloss": "odd thing" if s["index"] == 1 else
+                      "odd thing reviewed"} if s["word"] == "funny" else s)
+    reading = read_in(place, "The riddle is funny" + mark + ".", pack)["reading"]
+    assert reading["status"] == "one", reading
+    assert reading["sense_map"][0]["symbol"] == "sense__funny_2"
+
+
+def test_name_collision_with_empty_sense_is_a_valid_refusal():
+    """Lean preCheck reports a name clash with an empty `sense`; Python relays it."""
+    place = world(predicates={"sense__funny_1": {"arguments": ["joke"],
+                                                    "description": "A predicate.",
+                                                    "verbalisation": "{0} is amusing"}})
+    result = read_in(place, "The riddle is funny.")
+    assert result["reading"] == {"status": "rejected", "code": "Collision",
+                                 "details": {"kind": "name", "name": "sense__funny_1", "sense": ""}}
+    for field in ("kind", "name", "sense"):
+        bad = deepcopy(result)
+        bad["reading"]["details"][field] = None
+        assert route._response_problem(bad, result["dictionary_id"], result["request_id"])
+
+
 @pytest.fixture(scope="module")
 def lean_guards():
     """VE.Senses.Examples compiled once: its `#guard`s are the Lean side of the fixture comparison."""
