@@ -1,0 +1,17 @@
+{
+  "format": "lean-first-delta@1",
+  "batch": "2",
+  "wording": [],
+  "order": [],
+  "verdict": [],
+  "availability": [],
+  "unavailable": [
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261004T1800Z:usecases/claude-constitution-pilot/run-20261004T1800Z/readings/s1.ve.md",
+      "op": "document_check",
+      "reason": "U1: the recorder's 600 s cap per document stopped both sides at load 30-60. Run alone with a 1500 s cap at the same time, base and head printed byte-identical reports (base 632.7 s wall, 471.2 s user; head 616.6 s wall, 480.7 s user; load 55-61)."
+    }
+  ]
+}
