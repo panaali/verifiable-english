@@ -40,7 +40,6 @@ ignore_imports =
     ve.environment -> ve.backends.validation
     ve.environment -> ve.definitions
     ve.environment -> ve.profiles
-    ve.environment -> ve.risk
     ve.environment -> ve.speech_acts
     ve.environment -> ve.units
     ve.evaluate -> ve.backends.dispatch
