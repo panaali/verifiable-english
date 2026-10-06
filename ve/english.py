@@ -229,7 +229,11 @@ class UnreviewedVocabularyWarning(UserWarning):
 
 class EnglishVocabulary:
     """Versioned precision pass; leaves the five historical views byte-stable."""
-    def __init__(self, env, vocabulary=None, accept_suggested_vocabulary=False):
+    def __init__(self, env, vocabulary=None, accept_suggested_vocabulary=False, *,
+                 _defer_overlay_refusals=False):
+        # E2's Lean admission path needs a lexicon even when its overlay check will
+        # refuse the submitted overlay. Other callers retain the producer's raises.
+        self._defer_overlay_refusals = _defer_overlay_refusals
         env, self.overlay_digest, self.overlay = display_environment(env, vocabulary, accept_suggested_vocabulary)
         self.provenance = overlay_provenance(vocabulary)
         self.review_status = self.provenance["review_status"]
@@ -370,7 +374,7 @@ class EnglishVocabulary:
             if duplicates:
                 accepted = False
                 issues.add(VocabularyLint(path, 'DUPLICATE_TEMPLATE'))
-                if name in self.overlay['predicates']:
+                if name in self.overlay['predicates'] and not self._defer_overlay_refusals:
                     raise VEError(f'Duplicate English wording {template!r} for {name!r}; '
                                   f'existing symbol(s): {", ".join(sorted(duplicates))}')
             if accepted:
@@ -439,7 +443,7 @@ class EnglishVocabulary:
                     forms = (self.predicates.get(name), self.negatives.get(name))
                     if not any(form and wording_key(form) in risk_keys for form in forms):
                         continue
-                    if name in self.overlay['predicates']:
+                    if name in self.overlay['predicates'] and not self._defer_overlay_refusals:
                         raise VEError(f'English wording for {name!r} reuses a risk@0 wording')
                     issues.add(VocabularyLint(f'/vocabulary/predicates/{name}/verbalisation', 'DUPLICATE_TEMPLATE'))
                     self.predicates[name] = ('{0} is classified as ' + quote(name) if len(decl.arguments) == 1
@@ -514,7 +518,8 @@ class EnglishVocabulary:
                 selected = self.sorts[name] if category == 'sorts' else self.predicates[name]
                 if (selected != (expected['singular'] if category == 'sorts' else expected)
                         or any(i.path.startswith(f'/vocabulary/{category}/{name}/') for i in self.issues)):
-                    raise VEError(f'English vocabulary entry fails the template linter: {category}/{name}')
+                    if not self._defer_overlay_refusals:
+                        raise VEError(f'English vocabulary entry fails the template linter: {category}/{name}')
         # A regulated atom in a norm guard has one deontic spelling. The norm
         # consequence parser handles must not / need not separately; ordinary
         # formula parsing and the independent Earley grammar share these atoms.
