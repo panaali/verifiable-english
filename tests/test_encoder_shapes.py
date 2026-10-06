@@ -116,6 +116,40 @@ def test_a_field_tied_to_a_value_is_checked(lake, tmp_path):
     assert not _passes(lake, tmp_path, _packages("CONFLICT-FREE", True))
 
 
+def _scoped_verdict(status: str) -> str:
+    return f'''
+example (req : Json) (id env : String) (background : Nat) :
+    Fits req (skel% "reports.json#/$defs/verdict")
+      (Json.mkObj [("id", .str id), ("environment_id", .str env),
+        ("background", toJson background), ("status", .str "{status}")]) := by
+  fits
+'''
+
+
+def test_reports_verdict_status_enum_is_proved(lake, tmp_path):
+    """Every scoped verdict status must belong to its schema branch's enum."""
+    for status in ("FOLLOWS", "PAYLOADS INCONSISTENT", "DOES NOT FOLLOW"):
+        assert _passes(lake, tmp_path, _scoped_verdict(status))
+    for status in ("BOGUS", "UNKNOWN", "ok"):
+        assert not _passes(lake, tmp_path, _scoped_verdict(status))
+
+
+def test_referenced_status_domain_matches_renderer(lake, tmp_path):
+    """A referenced status enum is extracted from the same schema as the row proof."""
+    for status in ("UNFORMALISED", "OPEN", "UNKNOWN", "LABELLED", "CHECKED"):
+        body = f'''
+example (req : Json) :
+    Fits req (skelStrings% "reports.json#/$defs/status_word") (.str "{status}") := by
+  fits
+'''
+        assert _passes(lake, tmp_path, body)
+    assert not _passes(lake, tmp_path, '''
+example (req : Json) :
+    Fits req (skelStrings% "reports.json#/$defs/status_word") (.str "BOGUS") := by
+  fits
+''')
+
+
 def _shape(required: str, allowed: str) -> str:
     return f"""
 def certificateShape : List File :=

@@ -26,6 +26,16 @@ elab_rules : term
     | .ok (_, recursive@(_ :: _)) => throwError "{target.getString}: recursive skeleton through {recursive}"
     | .ok (k, []) => pure (toExpr k)
 
+/-- Extract the same schema's string domain for a proof about a status renderer. -/
+syntax (name := skelStringsTerm) "skelStrings% " str : term
+
+elab_rules : term
+  | `(skelStrings% $target:str) => do
+    match skeletonWithStrings Schemas.files target.getString true with
+    | .error e => throwError "{target.getString}: {e}"
+    | .ok (_, recursive@(_ :: _)) => throwError "{target.getString}: recursive skeleton through {recursive}"
+    | .ok (k, []) => pure (toExpr k)
+
 abbrev evaluate : Skel := skel% "evaluate.json#/row"
 abbrev checkCertificate : Skel := skel% "check-certificate.json#/row"
 abbrev order : Skel := skel% "order.json#/row"
