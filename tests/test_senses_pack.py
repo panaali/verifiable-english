@@ -23,7 +23,7 @@ def test_fixture_pack_matches_spec_wordings():
     }
     assert {sort["name"]: sort["letter"] for sort in pack["sorts"]} == {
         "joke": "J", "service": "S", "person": "P", "number": "N",
-        "principal": "A", "resource": "R",
+        "principal": "R", "resource": "Q",
     }
     assert [(sense["word"], sense["index"], sense["gloss"])
             for sense in pack["senses"]] == [

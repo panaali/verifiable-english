@@ -61,6 +61,7 @@ module ResponseShape.Schemas
 module ResponseShape.Skeleton
 module ResponseShape.Skeletons
 module ResponseShape
+module SensesMain
 module Serve
 module VE.Alternatives.Admission
 module VE.Alternatives.Background
@@ -348,6 +349,7 @@ module VE.Senses.Fixtures
 module VE.Senses.Preamble
 module VE.Senses.Project
 module VE.Senses.Read
+module VE.Senses.Run
 module VE.Service.Diagnose
 module VE.Service.EnglishRun
 module VE.Service.Family

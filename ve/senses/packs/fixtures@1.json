@@ -6,8 +6,8 @@
     {"name": "service", "noun": "service", "plural": "services", "description": "A service.", "letter": "S"},
     {"name": "person", "noun": "person", "plural": "persons", "description": "A person.", "letter": "P"},
     {"name": "number", "noun": "number", "plural": "numbers", "description": "A number.", "letter": "N"},
-    {"name": "principal", "noun": "principal", "plural": "principals", "description": "A principal.", "letter": "A"},
-    {"name": "resource", "noun": "resource", "plural": "resources", "description": "A resource.", "letter": "R"}
+    {"name": "principal", "noun": "principal", "plural": "principals", "description": "A principal.", "letter": "R"},
+    {"name": "resource", "noun": "resource", "plural": "resources", "description": "A resource.", "letter": "Q"}
   ],
   "senses": [
     {"word": "funny", "index": 1, "gloss": "amusing", "description": "causes laughter", "kinds": ["joke"], "wording": "{0} is funny"},
