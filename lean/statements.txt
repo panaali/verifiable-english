@@ -6052,6 +6052,10 @@ theorem VE.EnglishGrammar.Run.alternativesView_eq
   VE.EnglishGrammar.alternativesView = VE.Service.Standalone.alternativesReduced
   -- uses VE.EnglishGrammar.alternativesView@VE.EnglishGrammar.Encode VE.Service.Standalone.alternativesReduced@VE.Service.Standalone
   -- expr 2280930877
+theorem VE.EnglishGrammar.Run.codeClasses_total
+  ∀ (r : VE.EnglishGrammar.Reject), (List.lookup r.code VE.EnglishGrammar.Run.codeClasses).isSome = Bool.true
+  -- uses VE.EnglishGrammar.Reject.code@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Reject@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Run.codeClasses@VE.EnglishGrammar.Run
+  -- expr 1871180427
 theorem VE.EnglishGrammar.Run.riskView_eq
   VE.EnglishGrammar.riskView = VE.Service.Standalone.riskReduced
   -- uses VE.EnglishGrammar.riskView@VE.EnglishGrammar.Encode VE.Service.Standalone.riskReduced@VE.Service.Standalone
@@ -6068,6 +6072,32 @@ theorem VE.EnglishGrammar.adjectiveRows_sub
         r ∈ VE.EnglishGrammar.adjectiveRows L p s a → r ∈ VE.EnglishGrammar.adjectiveRows L2 p s a
   -- uses VE.EnglishGrammar.LexRow@VE.EnglishGrammar.Rules VE.EnglishGrammar.Lexicon.nouns@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.adjectiveRows@VE.EnglishGrammar.Rules
   -- expr 682741589
+theorem VE.EnglishGrammar.admitRequest_exact
+  ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String)
+    (rs : List (VE.EnglishGrammar.EFormula × Bool)),
+    (∃ obs, VE.EnglishGrammar.admitRequest E O L b s = VE.EnglishGrammar.AdmitOutcome.ok rs obs) ↔
+      VE.EnglishGrammar.Lexicon.policyOk E O L = Bool.true ∧
+        VE.EnglishGrammar.read E O L b s = VE.EnglishGrammar.ReadOutcome.ok rs ∧
+          ∀ (o : Nat × List Nat), o ∈ VE.EnglishGrammar.obligations rs → o.snd ≠ []
+  -- uses VE.EnglishGrammar.AdmitOutcome.ok@VE.EnglishGrammar.Read VE.EnglishGrammar.AdmitOutcome@VE.EnglishGrammar.Read VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon.policyOk@VE.EnglishGrammar.Policy VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.ReadOutcome.ok@VE.EnglishGrammar.Read VE.EnglishGrammar.ReadOutcome@VE.EnglishGrammar.Read VE.EnglishGrammar.admitRequest@VE.EnglishGrammar.Read VE.EnglishGrammar.obligations@VE.EnglishGrammar.Read VE.EnglishGrammar.read@VE.EnglishGrammar.Read
+  -- expr 3471723718
+theorem VE.EnglishGrammar.admitRequest_ok
+  ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String)
+    (rs : List (VE.EnglishGrammar.EFormula × Bool)) (obs : List (Nat × List Nat)),
+    VE.EnglishGrammar.admitRequest E O L b s = VE.EnglishGrammar.AdmitOutcome.ok rs obs →
+      VE.EnglishGrammar.Lexicon.policyOk E O L = Bool.true ∧
+        VE.EnglishGrammar.EnglishOneReading E O L s rs ∧
+          obs = VE.EnglishGrammar.obligations rs ∧ ∀ (o : Nat × List Nat), o ∈ obs → o.snd ≠ []
+  -- uses VE.EnglishGrammar.AdmitOutcome.ok@VE.EnglishGrammar.Read VE.EnglishGrammar.AdmitOutcome@VE.EnglishGrammar.Read VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.EnglishOneReading@VE.EnglishGrammar.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon.policyOk@VE.EnglishGrammar.Policy VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.admitRequest@VE.EnglishGrammar.Read VE.EnglishGrammar.obligations@VE.EnglishGrammar.Read
+  -- expr 577609332
+theorem VE.EnglishGrammar.admitRequest_policy
+  ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String),
+    VE.EnglishGrammar.Lexicon.policyOk E O L = Bool.false →
+      VE.EnglishGrammar.admitRequest E O L b s =
+        VE.EnglishGrammar.AdmitOutcome.refused
+          (VE.EnglishGrammar.ReadOutcome.invalidGrammar VE.EnglishGrammar.GrammarFault.lexicon)
+  -- uses VE.EnglishGrammar.AdmitOutcome.refused@VE.EnglishGrammar.Read VE.EnglishGrammar.AdmitOutcome@VE.EnglishGrammar.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.GrammarFault.lexicon@VE.EnglishGrammar.Read VE.EnglishGrammar.Lexicon.policyOk@VE.EnglishGrammar.Policy VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.ReadOutcome.invalidGrammar@VE.EnglishGrammar.Read VE.EnglishGrammar.admitRequest@VE.EnglishGrammar.Read
+  -- expr 3943037975
 theorem VE.EnglishGrammar.admit_exact
   ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String)
     (rs : List (VE.EnglishGrammar.EFormula × Bool)),
@@ -6136,6 +6166,19 @@ theorem VE.EnglishGrammar.attributeRows_sub
                       VE.EnglishGrammar.attributeRows E2 q
   -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.LexRow.rename@VE.EnglishGrammar.Extends VE.EnglishGrammar.LexRow@VE.EnglishGrammar.Rules VE.EnglishGrammar.PredDecl.args@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.PredDecl.functional@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.PredDecl.name@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.PredDecl.total@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.PredDecl@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.attributeRows@VE.EnglishGrammar.Rules VE.EnglishGrammar.envSub@VE.EnglishGrammar.Extends VE.EnglishGrammar.propRename@VE.EnglishGrammar.Extends
   -- expr 660141553
+theorem VE.EnglishGrammar.checkRequest_some
+  ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon) (b : Nat)
+    (rs : List (VE.EnglishGrammar.EFormula × Bool)) (candidates : List String) (i : Nat),
+    VE.EnglishGrammar.checkRequest E O L b rs candidates = Option.some i →
+      VE.EnglishGrammar.Lexicon.policyOk E O L = Bool.true ∧
+        ∃ s,
+          candidates[i]? = Option.some s ∧
+            VE.EnglishGrammar.read E O L b s = VE.EnglishGrammar.ReadOutcome.ok rs ∧
+              ∀ (j : Nat) (t : String),
+                j < i →
+                  candidates[j]? = Option.some t → VE.EnglishGrammar.read E O L b t ≠ VE.EnglishGrammar.ReadOutcome.ok rs
+  -- uses VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon.policyOk@VE.EnglishGrammar.Policy VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.ReadOutcome.ok@VE.EnglishGrammar.Read VE.EnglishGrammar.ReadOutcome@VE.EnglishGrammar.Read VE.EnglishGrammar.checkRequest@VE.EnglishGrammar.Read VE.EnglishGrammar.read@VE.EnglishGrammar.Read
+  -- expr 2102880722
 theorem VE.EnglishGrammar.checked_rendering
   ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon) (b : Nat)
     (rs : List (VE.EnglishGrammar.EFormula × Bool)) (s : String),
@@ -6246,6 +6289,12 @@ theorem VE.EnglishGrammar.foldChar_agrees
   ∀ (c : Char), VE.EnglishGrammar.foldChar c = (VE.Discourse.foldChar c).getD c
   -- uses VE.Discourse.foldChar@VE.Discourse.Access VE.EnglishGrammar.foldChar@VE.EnglishGrammar.Token
   -- expr 3727333165
+theorem VE.EnglishGrammar.grammarFault_none
+  ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon),
+    VE.EnglishGrammar.grammarFault E O L = Option.none →
+      VE.EnglishGrammar.Lexicon.policyOk E O L = Bool.true ∧ VE.EnglishGrammar.Lexicon.valid E O L = Bool.true
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.GrammarFault@VE.EnglishGrammar.Read VE.EnglishGrammar.Lexicon.policyOk@VE.EnglishGrammar.Policy VE.EnglishGrammar.Lexicon.valid@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.grammarFault@VE.EnglishGrammar.Read
+  -- expr 832178558
 theorem VE.EnglishGrammar.grammar_extension
   ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon)
     (E2 : VE.EnglishGrammar.Env) (O2 : VE.EnglishGrammar.Overlay) (L2 : VE.EnglishGrammar.Lexicon),
@@ -6399,6 +6448,43 @@ theorem VE.EnglishGrammar.obligations_exact
         js = List.filter (fun j => Option.map (fun x => x.snd) rs[j]? == Option.some Bool.false) (List.range i)
   -- uses VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.obligations@VE.EnglishGrammar.Read
   -- expr 1848904215
+theorem VE.EnglishGrammar.overlayCheck_constants
+  ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (cs : List (String × String)),
+    VE.EnglishGrammar.overlayCheck E { sorts := O.sorts, predicates := O.predicates, constants := cs } =
+      VE.EnglishGrammar.overlayCheck E O
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Failure@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay.mk@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay.predicates@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay.sorts@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.overlayCheck@VE.EnglishGrammar.Policy
+  -- expr 615795187
+theorem VE.EnglishGrammar.policy_iff_no_failure
+  ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon),
+    VE.EnglishGrammar.Lexicon.policyOk E O L = Bool.true ↔ VE.EnglishGrammar.Lexicon.policyFailures E O L = []
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Failure@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon.policyFailures@VE.EnglishGrammar.Policy VE.EnglishGrammar.Lexicon.policyOk@VE.EnglishGrammar.Policy VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon
+  -- expr 3293029225
+theorem VE.EnglishGrammar.policy_selection
+  ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon),
+    VE.EnglishGrammar.Lexicon.policyOk E O L = Bool.true →
+      (∀ (p w : String),
+          (p, w) ∈ L.wordings →
+            (E.predicate? p).isSome = Bool.true →
+              Option.map (fun x => x.fst) (VE.EnglishGrammar.policyPredicate E O p) = Option.some w ∨
+                VE.EnglishGrammar.fallbackWording p (E.arity p) = Option.some w) ∧
+        (∀ (p n : String),
+            (p, n) ∈ L.negatives →
+              (E.predicate? p).isSome = Bool.true →
+                ∃ w,
+                  VE.EnglishGrammar.policyPredicate E O p = Option.some (w, Option.some n) ∧
+                    List.lookup p L.wordings = Option.some w) ∧
+          (∀ (s n : String),
+              (s, n) ∈ L.nouns →
+                ∀ (m : String),
+                  List.lookup s (VE.EnglishGrammar.policyNouns E O) = Option.some m →
+                    n = m ∨ n = VE.EnglishGrammar.fallbackNoun s) ∧
+            ∀ (c sp : String),
+              (c, sp) ∈ L.spellings →
+                ∀ (m : String),
+                  List.lookup c (VE.EnglishGrammar.policySpellings E O) = Option.some m →
+                    sp = m ∨ sp = VE.EnglishGrammar.jsonQuote c
+  -- uses VE.EnglishGrammar.Env.arity@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Env.predicate?@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon.negatives@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon.nouns@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon.policyOk@VE.EnglishGrammar.Policy VE.EnglishGrammar.Lexicon.spellings@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon.wordings@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.PredDecl@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.fallbackNoun@VE.EnglishGrammar.Policy VE.EnglishGrammar.fallbackWording@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.jsonQuote@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.policyNouns@VE.EnglishGrammar.Policy VE.EnglishGrammar.policyPredicate@VE.EnglishGrammar.Policy VE.EnglishGrammar.policySpellings@VE.EnglishGrammar.Policy
+  -- expr 2042165929
 theorem VE.EnglishGrammar.propRename_inj
   ∀ {E E2 : VE.EnglishGrammar.Env},
     VE.EnglishGrammar.envSub E E2 →
@@ -6530,6 +6616,12 @@ theorem VE.EnglishGrammar.rhsTys_rename
             VE.EnglishGrammar.rhsTys (VE.EnglishGrammar.ty E L) xs
   -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.InDom@VE.EnglishGrammar.Extends VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.Ty@VE.EnglishGrammar.Syntax VE.EnglishGrammar.envSub@VE.EnglishGrammar.Extends VE.EnglishGrammar.propRename@VE.EnglishGrammar.Extends VE.EnglishGrammar.rhsTys@VE.EnglishGrammar.Actions VE.EnglishGrammar.ty@VE.EnglishGrammar.Rules VE.Grammar.Sym.n@VE.Grammar.Basic VE.Grammar.Sym.rename@VE.Grammar.Extension VE.Grammar.Sym@VE.Grammar.Basic
   -- expr 2014022138
+theorem VE.EnglishGrammar.sensesRequest_policy
+  ∀ (D : VE.Senses.Dictionary) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String),
+    VE.EnglishGrammar.Lexicon.policyOk E { } L = Bool.true →
+      VE.EnglishGrammar.sensesRequest D E L b s = VE.Senses.readWithSenses D E L b s
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon.policyOk@VE.EnglishGrammar.Policy VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay.mk@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.sensesRequest@VE.EnglishGrammar.SensesRequest VE.Senses.Dictionary@VE.Senses.Dictionary VE.Senses.SensesOutcome@VE.Senses.Read VE.Senses.readWithSenses@VE.Senses.Read
+  -- expr 2738870176
 theorem VE.EnglishGrammar.slot_small
   ∀ (args : List String) (k : Nat),
     (if (args.getD k "" == VE.EnglishGrammar.intSort) = Bool.true then VE.EnglishGrammar.ntIntTerm
@@ -6599,6 +6691,14 @@ theorem VE.EnglishGrammar.textSyms_noNt
     VE.EnglishGrammar.textSyms t k = Option.some syms → ∀ (A : Nat), ¬VE.Grammar.Sym.n A ∈ syms
   -- uses VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.EnglishGrammar.textSyms@VE.EnglishGrammar.Rules VE.Grammar.Sym.n@VE.Grammar.Basic VE.Grammar.Sym@VE.Grammar.Basic
   -- expr 3453920228
+theorem VE.EnglishGrammar.translateRequest_policy
+  ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon) (cap b : Nat)
+    (s : String),
+    VE.EnglishGrammar.Lexicon.policyOk E O L = Bool.false →
+      VE.EnglishGrammar.translateRequest E O L cap b s =
+        VE.EnglishGrammar.TranslateOutcome.invalidGrammar VE.EnglishGrammar.GrammarFault.lexicon
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.GrammarFault.lexicon@VE.EnglishGrammar.Read VE.EnglishGrammar.Lexicon.policyOk@VE.EnglishGrammar.Policy VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.TranslateOutcome.invalidGrammar@VE.EnglishGrammar.Read VE.EnglishGrammar.TranslateOutcome@VE.EnglishGrammar.Read VE.EnglishGrammar.translateRequest@VE.EnglishGrammar.Read
+  -- expr 899822788
 theorem VE.EnglishGrammar.translate_checks
   ∀ {E : VE.EnglishGrammar.Env} {O : VE.EnglishGrammar.Overlay} {L : VE.EnglishGrammar.Lexicon} {cap b : Nat} {s : String}
     {o : VE.EnglishGrammar.TranslateOutcome},
@@ -27624,6 +27724,18 @@ theorem VE.Service.runMode_english
       | Except.error message => Lean.Json.mkObj [("status", Lean.Json.str "error"), ("error", Lean.Json.str message)]
   -- uses VE.English.ServiceRun.run@VE.Service.EnglishRun VE.Service.Mode.english@VE.Service.Protocol VE.Service.englishReported.match_1@VE.Service.Protocol VE.Service.englishReported.match_3@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
   -- expr 1255633073
+theorem VE.Service.runMode_englishCheck
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.englishCheck j = VE.EnglishGrammar.Run.checkCaseReported j
+  -- uses VE.EnglishGrammar.Run.checkCaseReported@VE.EnglishGrammar.Run VE.Service.Mode.englishCheck@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- expr 3423368793
+theorem VE.Service.runMode_englishGrammar
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.englishGrammar j = VE.EnglishGrammar.Run.grammarCaseReported j
+  -- uses VE.EnglishGrammar.Run.grammarCaseReported@VE.EnglishGrammar.Run VE.Service.Mode.englishGrammar@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- expr 2149289540
+theorem VE.Service.runMode_englishRead
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.englishRead j = VE.EnglishGrammar.Run.readCaseReported j
+  -- uses VE.EnglishGrammar.Run.readCaseReported@VE.EnglishGrammar.Run VE.Service.Mode.englishRead@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- expr 3070480935
 theorem VE.Service.runMode_environment
   ∀ (j : Lean.Json),
     VE.Service.runMode VE.Service.Mode.environment j =

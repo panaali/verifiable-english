@@ -119,7 +119,8 @@ def test_python_entries_resolve_to_guarded_callables():
     for entry, op_id in _manifest_entries():
         fn = _resolve(entry)
         assert getattr(fn, "__ve_operation__", None) == op_id, entry
-        assert fn.__ve_engine__ == "python"
+        expected_engine = "lean" if next(op for op in OPS if op["id"] == op_id)["authority"] == "migrated" else "python"
+        assert fn.__ve_engine__ == expected_engine
     for op_id, rows in assurance.ENTRIES.items():
         assert {(name, op_id) for name, _ in rows} <= _manifest_entries()
 
@@ -278,10 +279,9 @@ def test_broad_exception_handlers_are_reviewed():
     assert all(reason for reason in reviewed.values())
 
 
-def test_nothing_is_migrated_yet():
-    """P0-3 adds the hooks only; switching authority is stage 4's decision."""
-    assert {op["authority"] for op in OPS} <= {"python", "lean-only"}
-    assert assurance.enforced_operations() == frozenset()
+def test_english_admission_is_lean_authoritative():
+    assert {op["authority"] for op in OPS} <= {"python", "migrated", "lean-only"}
+    assert assurance.enforced_operations() == frozenset({"english.admission"})
 
 
 # --- completeness: omissions that no decorator comparison can see ----------------
@@ -366,7 +366,8 @@ def test_lean_only_operations_have_no_python_verdict_path():
 
 # --- executable bindings: Lean and Rust ---------------------------------------
 
-AUDITED = set(re.findall(r"^'([^']+)' depends on axioms", (ROOT / "lean/axioms.txt").read_text(), re.M))
+AUDITED = set(re.findall(r"^'([^']+)' (?:depends on axioms|does not depend on any axioms)",
+                         (ROOT / "lean/axioms.txt").read_text(), re.M))
 
 
 def test_lean_theorems_are_audited_and_planned_ones_absent():
@@ -624,13 +625,16 @@ def test_guard_blocks_every_python_entry_once_migrated():
     for op in OPS:
         for entry in op["python"]:
             fn = _resolve(entry)
+            if fn.__ve_engine__ == "lean":
+                assurance.require_authority(op["id"], "lean")
+                continue
             with assurance.simulate_migration(op["id"]):
                 assert op["id"] in assurance.enforced_operations()
                 with pytest.raises(AuthorityViolation) as caught:
                     fn()
             assert caught.value.to_dict()["code"] == "CheckerUnavailable"
             assert caught.value.operation == op["id"]
-    assert assurance.enforced_operations() == frozenset()
+    assert assurance.enforced_operations() == frozenset({"english.admission"})
 
 
 def test_guard_allows_the_lean_engine():

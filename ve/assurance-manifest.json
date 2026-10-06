@@ -51,10 +51,11 @@
     "ve/search.py:_models_with_terminal_error": "buffers a terminal model-stream error for every scoped reader, which re-raises the original error before reporting a verdict",
     "ve/softnorms_contract.py:public_rejection": "diagnosis runs only after the legacy soft validator rejects; a diagnosis failure returns the same error, leaving its verdict, code and original text intact",
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome",
-    "ve/backends/dispatch.py:_shadow": "shadow authority only (execute and shadowed): the Python result is returned (a Python exception is re-raised unchanged); a candidate backend exception, CheckerUnavailable included, is only recorded as a shadow difference and never becomes the returned verdict"
+    "ve/backends/dispatch.py:_shadow": "shadow authority only (execute and shadowed): the Python result is returned (a Python exception is re-raised unchanged); a candidate backend exception, CheckerUnavailable included, is only recorded as a shadow difference and never becomes the returned verdict",
+    "ve/english.py:_parse_english_document_uncached": "Comparator only: Python parser exceptions are recorded after Lean has decided; they never change the returned Lean result or error."
   },
   "lean_decoders": {
-    "total_lines": 21696,
+    "total_lines": 21977,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -272,12 +273,12 @@
       },
       {
         "file": "lean/VE/EnglishGrammar/Encode.lean",
-        "lines": 297,
-        "sha256": "92446de419ef1e59c22dc2c9a773df524d7f2b8a411f24ad0ce39f564bdff419",
+        "lines": 426,
+        "sha256": "dae5d5055d048704a27fbbf583c0d3c4121d5c0b5bddca553f6ab2dd5980cac4",
         "ranges": [
           [
             1,
-            297
+            426
           ]
         ],
         "declarations": [
@@ -291,12 +292,12 @@
       },
       {
         "file": "lean/VE/EnglishGrammar/Run.lean",
-        "lines": 393,
-        "sha256": "1e5db6b062d6366ffcf70600e1f676a693b1974c539669d72eda810cb3d31373",
+        "lines": 545,
+        "sha256": "fb313a4264f586da11f0917d625fbeacd340275d4b3b869f2132fac91e2a398d",
         "ranges": [
           [
             1,
-            393
+            545
           ]
         ],
         "declarations": [
@@ -827,7 +828,7 @@
       {
         "file": "lean/VE/Senses/Run.lean",
         "lines": 144,
-        "sha256": "7015a002b04ead4c27462cda1a59f2d36c17165b713bc2d945fce72285952303",
+        "sha256": "4402b02195b78ce17068663426cc51bb6017e83515c89e67be92e4f40a10d137",
         "ranges": [
           [
             1,
@@ -3170,21 +3171,19 @@
     },
     {
       "id": "english.admission",
-      "summary": "English surface admission: unique derivation and desugaring to a strict document",
+      "summary": "English surface admission: Lean decides one reading per sentence and its obligations",
       "class": "surface",
-      "authority": "python",
-      "target": "python",
+      "authority": "migrated",
+      "target": "lean",
       "assurance": {
         "current": "experimental",
         "at_switch": "experimental",
-        "reason": "the English surface stays Python by decision; records carry python:surface"
+        "reason": "Lean english.read decides admission; Python produces a checked lexicon and relays obligations to the entailment prover"
       },
       "python": [
         "ve.english:parse_english_with_metadata",
         "ve.english:parse_english",
-        "ve.english:parse_english_argument",
-        "ve.norm_english:parse_english",
-        "ve.surface.unambiguity:require_unique_derivation"
+        "ve.english:parse_english_argument"
       ],
       "outcomes": {
         "verdict": [
@@ -3204,20 +3203,62 @@
         ]
       },
       "lean": {
-        "bindings": [],
-        "planned_modes": [
-          "english.read"
+        "bindings": [
+          {
+            "executable": "ve_service",
+            "mode": "english.read",
+            "kinds": [],
+            "response": {
+              "result": "object"
+            },
+            "dispatch": [
+              "lean/VE/Service/Protocol.lean",
+              "lean/VE/EnglishGrammar/Run.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "english.grammar",
+            "kinds": [],
+            "response": {
+              "result": "object"
+            },
+            "dispatch": [
+              "lean/VE/Service/Protocol.lean",
+              "lean/VE/EnglishGrammar/Run.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "english.check",
+            "kinds": [],
+            "response": {
+              "result": "object"
+            },
+            "dispatch": [
+              "lean/VE/Service/Protocol.lean",
+              "lean/VE/EnglishGrammar/Run.lean"
+            ]
+          }
         ],
-        "harness": "lake env lean --run VE/English/Run.lean (conformance/english_lean.py); no theorem depends on it. Shadow adapter ve/backends/english_lean.py (english-lean-s2.md 2.10): under VE_AUTHORITY_OVERRIDES=english.admission=shadow every call is recorded against ve_english_route english.read, and any other selection is refused (dispatch.SHADOW_ONLY, DRI ruling 6) (lean/EnglishMain.lean, VE.EnglishGrammar.Run; tests/test_english_lean_route.py), whose reader read is proved one reading per sentence (VE.EnglishGrammar.read_ok, english_reading_unique); english.read stays planned here until the authority moves (LEAN-FIRST E2)",
+        "planned_modes": [],
+        "harness": "The persistent service runs the E2 English reader and candidate checker; the Python relay validates request identities and the full read response before returning a verdict.",
         "theorems": [
-          "VE.English.checked_unique_derivation",
-          "VE.English.checked_one_reading",
-          "VE.English.checked_parse_render",
-          "VE.English.checked_render_injective",
-          "VE.English.admissible_sound",
-          "VE.English.core_parse_sound"
+          "VE.EnglishGrammar.policy_iff_no_failure",
+          "VE.EnglishGrammar.policy_selection",
+          "VE.EnglishGrammar.admitRequest_ok",
+          "VE.EnglishGrammar.admitRequest_exact",
+          "VE.EnglishGrammar.admitRequest_policy",
+          "VE.EnglishGrammar.translateRequest_policy",
+          "VE.EnglishGrammar.grammarFault_none",
+          "VE.EnglishGrammar.overlayCheck_constants",
+          "VE.EnglishGrammar.checkRequest_some",
+          "VE.EnglishGrammar.sensesRequest_policy",
+          "VE.EnglishGrammar.Run.codeClasses_total"
         ],
-        "planned_theorems": [],
+        "planned_theorems": [
+          "VE.EnglishGrammar.decode_encode"
+        ],
         "decoders": []
       },
       "rust": null,
@@ -3228,13 +3269,14 @@
         "tests/test_english_evidence.py::test_full_english_report_gate"
       ],
       "trusted": [
+        "lean:kernel",
+        "lean:compiler",
+        "lean:runner-glue",
         "python:implementation",
-        "python:surface",
-        "python:backend-adapter"
+        "python:display"
       ],
       "notes": [
-        "Recorded conflation, not changed: the Earley wall-clock budget (surface/unambiguity.py EARLEY_SECONDS) reports ResourceLimit, while the migration plan reserves ResourceLimit for deterministic budgets. Changing a public code needs the plan's section-2.3 product decision.",
-        "Recorded conflation, not changed: a marked English conclusion whose bounded proof search returns NotFound or ResourceLimit is rejected as SyntaxError (english.py _check_conclusions), so search UNKNOWN surfaces as a rejection; the search result is not replayed there."
+        "The norm and norm-default English statement readers still use their own Python grammar until E3."
       ]
     },
     {

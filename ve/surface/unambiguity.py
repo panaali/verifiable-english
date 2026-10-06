@@ -8,7 +8,6 @@ import time
 
 from lark.exceptions import LarkError
 
-from ..assurance import semantic_entry
 from ..errors import AmbiguousDerivation, ResourceLimit, SyntaxError
 from ..limits import MAX_NODES, MAX_SOURCE_BYTES
 
@@ -23,7 +22,6 @@ def _parser(grammar):
                 propagate_positions=True)
 
 
-@semantic_entry("english.admission")
 def require_unique_derivation(env, source, *, grammar=None, **options):
     from ..english import english_lark_grammar, EnglishVocabulary, _normalise_english_source
     if len(source.encode('utf-8')) > MAX_SOURCE_BYTES:
@@ -52,6 +50,8 @@ def require_unique_derivation(env, source, *, grammar=None, **options):
         sys.settrace(trace)
     try:
         tree = _parser(grammar).parse(text)
+        if not use_signal and _monotonic() - started > EARLEY_SECONDS:
+            raise ResourceLimit("English Earley time budget exhausted")
     except ResourceLimit:
         raise
     # A host SIGALRM handler may raise an ordinary Exception. Let it escape.

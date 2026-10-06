@@ -182,6 +182,7 @@ import VE.EnglishGrammar.Read
 import VE.EnglishGrammar.Extends
 import VE.EnglishGrammar.Run
 import VE.Senses.Read
+import VE.EnglishGrammar.SensesRequest
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -4419,3 +4420,17 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Senses.senses_candidate_sound
 #print axioms VE.Senses.candidates_complete
 #print axioms VE.Senses.mixed_exact
+#print axioms VE.EnglishGrammar.policy_iff_no_failure
+#print axioms VE.EnglishGrammar.policy_selection
+#print axioms VE.EnglishGrammar.admitRequest_ok
+#print axioms VE.EnglishGrammar.admitRequest_exact
+#print axioms VE.EnglishGrammar.admitRequest_policy
+#print axioms VE.EnglishGrammar.translateRequest_policy
+#print axioms VE.EnglishGrammar.grammarFault_none
+#print axioms VE.EnglishGrammar.overlayCheck_constants
+#print axioms VE.EnglishGrammar.checkRequest_some
+#print axioms VE.EnglishGrammar.sensesRequest_policy
+#print axioms VE.EnglishGrammar.Run.codeClasses_total
+#print axioms VE.Service.runMode_englishRead
+#print axioms VE.Service.runMode_englishGrammar
+#print axioms VE.Service.runMode_englishCheck

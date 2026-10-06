@@ -71,10 +71,8 @@ def overridden(op: str) -> bool:
     return op in _overrides()
 
 
-# Operations whose other backend may only shadow Python: no selection (VE_AUTHORITY, a named override, a pin)
-# makes it the authority. english.admission keeps the English reader outside admission until its authority
-# moves (english-lean S2, DRI ruling 6; ve/assurance-manifest.json lists english.read as planned only).
-SHADOW_ONLY = frozenset({"english.admission"})
+# Operations with a temporary Python-authority shadow policy.
+SHADOW_ONLY = frozenset()
 
 
 def shadowed(op: str, payload: dict, python: Callable[[], T], candidate: Callable[[], T],

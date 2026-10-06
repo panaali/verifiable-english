@@ -1,30 +1,10 @@
-"""The Lean side of `english.admission`: the English reader's request, its answer, and the shadow record.
+"""E2's Lean-authoritative English reader and its untrusted response boundary.
 
-docs/spec/english-lean-s2.md 2.10, 2.11, 4.1, 4.2, 4.5 (S2 plan S2.5). The dispatched unit is the
-grammatical reading up to the typed check (D16): `ve.english` runs Python's (the hand parser, the Lark audit
-and `check_document`) and this module's `read` under `dispatch.shadowed("english.admission", …)`; the
-entailment check of marked conclusions runs after the dispatch, in Python, for either backend.
-`english.admission` keeps `authority: python` and is shadow-only (DRI ruling 6): under the default nothing here
-runs, a selection of another authority is refused, and under
-`VE_AUTHORITY_OVERRIDES=english.admission=shadow` Python's result is returned and `shadow_record` writes one
-record for every call, with the six identities, both outcomes, the classes of `dispatch._classes` over the
-comparison forms, and `conclusion_rejected` when Python's conclusion check refused the document.
-
-The request carries the environment, the overlay (absent without one), the lexicon Python's
-`EnglishVocabulary` selects (`ve.english_grammar.export`), the source, the reading mode `authoring` and the
-cap 2. Every answer is checked before anything reads it: its fields by status (base 4.3; no `null`
-anywhere, no Boolean for a number), its code against its status, its identities against the ones computed
-here from the same request (base 2.12, fixture i4: a different `lexicon_id` fails closed), its counts against
-its formulas, and every tree of `derivation` and `witnesses` in the form of spec 4.3: the rule tags along a
-pre-order walk, each with its token span `[start, end)`, the root's span starting at 0 and every child inside
-its parent. A malformed answer, a missing executable and `invalidGrammar` (a producer fault, base 4.1) are
-`CheckerUnavailable`, never a verdict.
-
-Transport: `ve_english_route english.read` (`lean/EnglishMain.lean`, `VE.EnglishGrammar.Run`) as a one-shot
-runner, one case per call, its row `{"id", "status": "ok", "result": <the response of base 4.3>}` read by
-`ve.backends.lean.read_rows`; `TRANSPORT` replaces it (the tests' fake reader). Lean's `one` answer carries
-no canonical text: the canonical strict text of its formulas is Python's printer's (`print_document`), the
-one owner of the printer, so the comparison of 2.11 compares the formulas and the text follows them.
+Requests carry the submitted environment, optional overlay, Python's proposed lexicon,
+source, mode and cap. The persistent `ve_service` answers `english.read`; this module
+checks the answer's schema, formulas, spans, obligations and request identities before
+`ve.english` uses it. `TRANSPORT` is a test override. The optional Python comparator
+records a shadow outcome but never decides admission (docs/spec/english-lean-e2.md).
 """
 from __future__ import annotations
 
@@ -36,12 +16,11 @@ from typing import Callable
 from .. import ast
 from ..english_grammar import actions_version, export, grammar_id, lexicon_id
 from ..errors import (AmbiguousDerivation, CheckerUnavailable, ResourceLimit, SyntaxError, TypeMismatch,
-                      UnknownSymbol, UnsupportedProfile, VEError)
+                      UnknownSymbol, UnsupportedProfile, VEError, Span)
 from . import dispatch
-from .lean import ROUTE_TIMEOUT, configured_timeout, run_english_cases
+from . import relay
 
 ROOT = Path(__file__).resolve().parents[2]
-EXECUTABLE = ROOT / "lean/.lake/build/bin/ve_english_route"
 MODE = "english.read"
 CAP = 2
 IDENTITIES = ("source_sha256", "environment_id", "overlay_digest", "lexicon_id", "grammar_id", "actions_version")
@@ -62,6 +41,8 @@ CLASSES = {
     "PronounUnresolved": ("SyntaxError",), "BlockedWording": ("SyntaxError",), "IllTyped": ILL_TYPED,
     "CoordinationRepeated": ("SyntaxError",), "CoordinationForm": ("SyntaxError",),
     "NaturalScoped": ("SyntaxError",), "RelativeForm": ("SyntaxError", *ILL_TYPED),
+    "ConclusionWithoutPremise": ("SyntaxError",), "ConclusionNotDerived": ("SyntaxError",),
+    "NotOneSentence": ("SyntaxError",), "Internal": ("CheckerUnavailable",),
 }
 # The Python class of each status other than `rejected` (base 4.1), and the code Lean gives it.
 STATUS_CLASSES = {"one": ("accepted",), "none": ("SyntaxError",), "many": ("AmbiguousDerivation",),
@@ -197,15 +178,85 @@ def response_problem(response, expected: dict, env) -> str | None:
     return None
 
 
+def e2_response_problem(response: dict, expected: dict, env, source: str) -> str | None:
+    """Validate the full E2 answer before any formula or diagnostic is used."""
+    if type(response) is not dict or _has_null(response):
+        return "the response is not an object or contains null"
+    status = response.get("status")
+    if status not in STATUSES:
+        return "unknown status"
+    additions = {"one": {"obligations", "spans"}, "none": {"class", "span"},
+                 "many": {"class", "span"}, "budget": {"class", "span"},
+                 "rejected": {"class", "span"}, "invalidGrammar": {"class"}}[status]
+    if status == "none" and "advice" in response:
+        additions.add("advice")
+    base = {k: v for k, v in response.items() if k not in additions}
+    if status == "invalidGrammar" and base.get("code") == "InvalidOverlay":
+        base = {k: v for k, v in base.items() if k != "failure"}
+        base.update(code="InvalidGrammar", fault="lexicon")
+    problem = response_problem(base, expected, env)
+    if problem:
+        return problem
+    if not additions <= response.keys():
+        return f"missing E2 fields {sorted(additions - response.keys())}"
+    def span_ok(value):
+        return (type(value) is list and len(value) == 2 and all(_nat(x) for x in value)
+                and value[0] <= value[1] <= len(source))
+    if "span" in response and not span_ok(response["span"]):
+        return "invalid source span"
+    if status == "one":
+        n = len(response["ast"])
+        spans = response["spans"]
+        if type(spans) is not list or len(spans) != n or not all(span_ok(s) for s in spans):
+            return "spans do not match the sentences"
+        if any(spans[i][1] > spans[i + 1][0] for i in range(n - 1)):
+            return "sentence spans overlap"
+        obligations = response["obligations"]
+        if type(obligations) is not list or len(obligations) != len(response["conclusions"]):
+            return "obligations do not match conclusions"
+        for marked, item in zip(response["conclusions"], obligations):
+            if type(item) is not dict or item.keys() != {"conclusion", "premises", "unproved"}:
+                return "malformed obligation"
+            premises = item["premises"]
+            if (type(item["conclusion"]) is not int or item["conclusion"] != marked
+                    or type(premises) is not list or not premises
+                    or not all(_nat(j) and j < marked for j in premises)
+                    or premises != sorted(set(premises))
+                    or type(item["unproved"]) is not str or item["unproved"].count("{status}") != 1):
+                return "invalid obligation premises or text"
+    else:
+        if type(response.get("class")) is not str or not response["class"]:
+            return "missing diagnostic class"
+        if status == "invalidGrammar":
+            expected_class = "VEError" if response.get("code") == "InvalidOverlay" else "CheckerUnavailable"
+        elif status == "rejected":
+            expected_class = ("TypeMismatch" if response.get("code") == "IllTyped" else
+                              CLASSES.get(response.get("code"), (None,))[0])
+        else:
+            expected_class = {"none": "SyntaxError", "many": "AmbiguousDerivation",
+                              "budget": "ResourceLimit"}[status]
+        if response["class"] != expected_class:
+            return "diagnostic class does not match the code"
+        if status == "invalidGrammar" and response["code"] == "InvalidOverlay":
+            failure = response.get("failure")
+            if (type(failure) is not list or len(failure) != 3
+                    or not all(type(x) is str and x for x in failure)
+                    or failure[0] not in {"O1", "O2", "O3"}
+                    or failure[1] not in {"sort", "predicate"} or "fault" in response):
+                return "invalid overlay failure"
+        if "advice" in response:
+            advice = response["advice"]
+            if status != "none" or type(advice) is not dict or advice.keys() != {"id", "text"} or not all(
+                    type(x) is str and x for x in advice.values()):
+                return "malformed advice"
+    return None
+
+
 def _transport(case: dict) -> dict:
     if TRANSPORT is not None:
         return TRANSPORT(case)
-    executable = Path(os.environ.get("VE_ENGLISH_ROUTE", EXECUTABLE))
-    if not executable.is_file():
-        raise CheckerUnavailable(f"CheckerUnavailable: the Lean English reader {executable} is not built "
-                                 "(lake build ve_english_route)")
-    [row] = run_english_cases(executable, MODE, [case], timeout=configured_timeout(ROUTE_TIMEOUT))
-    if row["status"] != "ok" or row.keys() != {"id", "status", "result"}:
+    row = relay.decide_once(MODE, case)
+    if row.get("status") != "ok" or row.keys() != {"id", "status", "result"}:
         raise CheckerUnavailable(f"CheckerUnavailable: the Lean English reader did not read the case: "
                                  f"{row.get('error', row)!r}")
     return row["result"]
@@ -214,12 +265,17 @@ def _transport(case: dict) -> dict:
 class LeanReading:
     """A checked `english.read` answer."""
 
-    def __init__(self, response: dict, env):
-        self.response, self.env = response, env
+    def __init__(self, response: dict, env, source: str = ""):
+        self.response, self.env, self.source = response, env, source
         self.status = response["status"]
 
     def classes(self) -> tuple[str, ...]:
         """The Python classes this outcome maps onto (base 4.1, spec 4.2)."""
+        if "class" in self.response:
+            code = self.response.get("code")
+            if code in ("RelativeForm", "IllTyped"):
+                return CLASSES[code]
+            return (self.response["class"],)
         if self.status == "rejected":
             return CLASSES[self.response["code"]]
         return STATUS_CLASSES[self.status]
@@ -236,12 +292,17 @@ class LeanReading:
     def rejection(self) -> Exception:
         """Lean's outcome other than `one` as the exception of its (first) Python class, with Lean's text;
         the answer rides along as `lean_reading` for the shadow record."""
-        if self.status == "invalidGrammar":
+        if self.status == "invalidGrammar" and self.response["code"] == "InvalidGrammar":
             failure = self.response.get("failure")
             error = CheckerUnavailable(f"CheckerUnavailable: invalidGrammar {self.response['fault']}"
                                        + (f": {' '.join(failure)}" if failure else ""))
         else:
-            error = ERRORS[self.classes()[0]](self.response["text"])
+            cls = self.response.get("class", self.classes()[0])
+            span = self.response.get("span")
+            where = None if span is None else Span(span[0], span[1],
+                                                   self.source.count("\n", 0, span[0]) + 1,
+                                                   span[0] - self.source.rfind("\n", 0, span[0]))
+            error = ERRORS.get(cls, VEError)(self.response["text"], span=where)
         error.lean_reading = self
         return error
 
@@ -274,12 +335,44 @@ def read(env, source: str, words, options: dict) -> LeanReading:
     expected = identities(env, source, words, case["lexicon"])
     response = _transport(case)
     try:
-        problem = response_problem(response, expected, env)
+        problem = (response_problem(response, expected, env) if TRANSPORT is not None else
+                   e2_response_problem(response, expected, env, source))
     except RecursionError:
         problem = "the response is nested too deeply"
     if problem:
         raise CheckerUnavailable(f"CheckerUnavailable: the Lean English reader's answer is malformed: {problem}")
-    return LeanReading(response, env)
+    return LeanReading(response, env, source)
+
+
+def check(env, words, options: dict, formulas: list, marks: list[bool], candidates: list[str]) -> int | None:
+    """Ask Lean which candidate has the submitted formulas and marks."""
+    case = {"id": "english.check", "environment": env.to_dict(), "lexicon": export(words),
+            "formulas": formulas, "marks": marks, "candidates": candidates}
+    if options.get("vocabulary") is not None:
+        case["overlay"] = options["vocabulary"]
+    row = relay.decide_once("english.check", case)
+    if type(row) is not dict or row.get("id") != case["id"] or row.get("status") != "ok" or row.keys() != {
+            "id", "status", "result"} or type(row["result"]) is not dict:
+        raise CheckerUnavailable("CheckerUnavailable: malformed English check row")
+    result = row["result"]
+    expected = identities(env, "", words, case["lexicon"])
+    del expected["source_sha256"]
+    if result.get("identities") != expected:
+        raise CheckerUnavailable("CheckerUnavailable: English check identities differ from the request")
+    if "status" in result:
+        if result.get("status") != "invalidGrammar" or result.get("class") not in ("CheckerUnavailable", "VEError"):
+            raise CheckerUnavailable("CheckerUnavailable: malformed English check refusal")
+        if type(result.get("text")) is not str or not result["text"]:
+            raise CheckerUnavailable("CheckerUnavailable: English check refusal has no text")
+        if result["class"] == "CheckerUnavailable":
+            raise CheckerUnavailable(result["text"])
+        raise VEError(result["text"])
+    if result.keys() == {"identities"}:
+        return None
+    index = result.get("index")
+    if result.keys() != {"identities", "index"} or not _nat(index) or index >= len(candidates):
+        raise CheckerUnavailable("CheckerUnavailable: malformed English check index")
+    return index
 
 
 def _verdict(python_class: str) -> str:
