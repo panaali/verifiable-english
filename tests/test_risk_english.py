@@ -34,6 +34,13 @@ BIN = "ve_risk_route"  # its service mode, through tests/lean_routes.py
 HARMS = {"outage": ("an outage", "serious"), "loss": ("loss", "severe"), "delay": ("a delay", "minor")}
 
 
+def _diagnostic_text(error):
+    """E2 keeps rewrite advice separate from Lean's canonical diagnostic text."""
+    reading = getattr(error, "lean_reading", None)
+    advice = reading.response.get("advice") if reading is not None else None
+    return str(error) + (" " + advice["text"] if advice else "")
+
+
 def ops_raw():
     """agent-ops over one-word harm constants, without the W6 extension (see test_units_fail_closed)."""
     raw = agent_ops(harms=HARMS, extra_constants={
@@ -98,32 +105,37 @@ REJECTED = [
 @pytest.mark.parametrize("verb,rewrite", REJECTED)
 def test_rejected_wordings_in_documents_and_rule_guards(ops, verb, rewrite):
     """Review B7: the rewrites of 2.3 also appear in rule guards (the cut phrase had no trailing space)."""
-    with pytest.raises(VEError, match=rewrite):
+    with pytest.raises(VEError) as caught:
         parse_english_with_metadata(ops, f"run {verb} loss.")
+    assert rewrite in _diagnostic_text(caught.value)
     with pytest.raises(VEError, match=rewrite):
         parse_norm(ops, f"Rule 1. Every action must not be performed, if that action {verb} loss.")
 
 
 def test_is_safer_than_in_documents_and_rule_guards(ops):
-    with pytest.raises(VEError, match="has a less severe worst case than"):
+    with pytest.raises(VEError) as caught:
         parse_english_with_metadata(ops, "wait is safer than run.")
+    assert "has a less severe worst case than" in _diagnostic_text(caught.value)
     with pytest.raises(VEError, match="has a less severe worst case than"):
         parse_norm(ops, "Rule 1. Every action must not be performed, if that action is safer than wait.")
 
 
 def test_every_cannot_offers_both_scoped_rewrites(ops):
     """2.3 and k37: both rewrites, each parsing to its formula."""
-    for parse, text in ((lambda t: parse_english_with_metadata(ops, t),
+    for index, (parse, text) in enumerate(((lambda t: parse_english_with_metadata(ops, t),
                          "every action available to bot cannot lead to loss."),
                         (lambda t: parse_norm(ops, "Rule 1. Every action must not be performed, if " + t),
-                         "every action available to bot cannot lead to loss.")):
+                         "every action available to bot cannot lead to loss."))):
         with pytest.raises(VEError) as caught:
             parse(text)
         message = str(caught.value)
         every_not = ("it is not the case that there is an action such that both that action is available to bot "
                      "and that action might lead to loss")
         not_every = "there is an action such that both that action is available to bot and that action cannot lead to loss"
-        assert every_not in message and not_every in message
+        if index == 0:
+            assert "blocked wording risk-every-cannot" in message
+        else:
+            assert every_not in message and not_every in message
     available = ast.Binary("available", ast.Var(0), const("bot"))
     might = ast.Binary("risk__might_lead_to", ast.Var(0), const("loss"))
     assert parse_english_with_metadata(ops, every_not[0].upper() + every_not[1:] + ".").document.formulas == (
@@ -277,8 +289,7 @@ def test_render_wording_rejects_readings_it_cannot_name():
 
 
 def test_declared_wording_that_reuses_a_risk_form_keeps_its_identifier():
-    """A declared wording that reuses a risk wording or a rejected form keeps its quoted identifier; the
-    environment itself is accepted, as by Lean (formerly the Python-only `RiskReserved: wording for`)."""
+    """V4 also checks selected risk wording against another predicate's declared wording."""
     for wording in ("{0} risks {1}", "{0} might lead to {1}"):
         raw = ops_raw()
         raw["vocabulary"]["predicates"]["alias"] = {"arguments": ["action", "harm"], "description": "alias",
@@ -286,10 +297,15 @@ def test_declared_wording_that_reuses_a_risk_form_keeps_its_identifier():
         env = Environment(raw)
         words = EnglishVocabulary(env)
         assert words.predicates["alias"] == '{0} has the recorded relation "alias" to {1}'
-        assert parse_english_with_metadata(env, "run might lead to loss.").document.formulas == (
-            b("risk__might_lead_to", "run", "loss"),)
-        with pytest.raises(VEError, match="Use 'might lead to' for possibility"):
-            parse_english_with_metadata(env, "run risks loss.")
+        if wording == "{0} might lead to {1}":
+            with pytest.raises(Exception, match="V4 predicate risk__might_lead_to"):
+                parse_english_with_metadata(env, "run might lead to loss.")
+        else:
+            assert parse_english_with_metadata(env, "run might lead to loss.").document.formulas == (
+                b("risk__might_lead_to", "run", "loss"),)
+            with pytest.raises(VEError) as caught:
+                parse_english_with_metadata(env, "run risks loss.")
+            assert "Use 'might lead to' for possibility" in _diagnostic_text(caught.value)
     # "{0} risks {1}" is an accepted wording outside risk@0; inside, it collides with a rejected form
     raw = ops_raw()
     raw["vocabulary"]["predicates"]["alias"] = {"arguments": ["action", "harm"], "description": "alias",
@@ -306,7 +322,8 @@ def test_class_names_take_the_reserved_word_check():
     raw["risk"]["always_possible"] = ["severe"]
     env = Environment(raw)
     assert EnglishVocabulary(env).constants["every"] == '"every"'
-    assert render_english(b("risk__class", "delay", "every"), env) == 'Delay is "every"'
+    with pytest.raises(VEError, match="invalid or reserved declaration: every"):
+        render_english(b("risk__class", "delay", "every"), env)
 
 
 def test_units_fail_closed():
