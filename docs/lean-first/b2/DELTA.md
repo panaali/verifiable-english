@@ -23,9 +23,12 @@ row 2; F2, F3 and F6 of section 4) and the rule-3 measurement (DRI answer 2/10).
   handshake's bounds). A request with handles that the service answers with a request error, a missed handle
   among them, is sent again with its environments in its cases, exactly as before this batch, and that answer is
   the answer. Responses are checked against the cases with their environments, as before.
-- **Python (F3).** `relay.decide_once` asks the same request of a service pool once (`background` uses it: the
-  agent-policy harness asked 12,199 Background requests of a few environments). Batching the remaining
-  single-case streams is open item O1.
+- **Python (F3).** `relay.decide_once` asks Background once per environment and pool. The public
+  `check_document` and `evaluate(Document)` paths send ordered formulas as one typing and one route/norms
+  case; the agent-policy harness now uses that document path for each `satisfies` conjunction. Its captured
+  Rust evaluation calls fell from 22,533 to 11,829 with the same answer-key results. A call on one formula
+  remains one case. Typing, route and norms adapters reuse an immutable environment encoding keyed by its
+  identity; the Rust JSONL sender inserts that text without encoding it again.
 - **Rust and Python (F6).** `ve jsonl` flushes each record; `rust_jsonl` keeps one persistent process per caller
   instead of one per call, and hashes the binary through `executable_sha256` instead of on every call.
 - **Measurement (rule 3).** [`rule3.py`](rule3.py), record [`rule3.json`](rule3.json); below.
@@ -110,42 +113,46 @@ decoding (O2). No measured workload uses more Lean CPU than the base.
 
 ## Rule-3 measurement (for 15a and question 10)
 
-[`rule3.py`](rule3.py), record [`rule3.json`](rule3.json) (load 19.5, one warm service, handles, 256 candidates
-per request). Rust's own search of each query ran in the same process at the same time (the persistent checker).
+[`rule3.py`](rule3.py), record [`rule3.json`](rule3.json) (load 24.71, one warm service, handles, 256 candidates
+per request). [`rule3_enumerate.rs`](../../../rust/ve/examples/rule3_enumerate.rs) streams the actual Rust
+search iterator's models without evaluating them. Rust's own search of each query ran at measurement time.
 
-**Rust enumerates, Lean evaluates.** Candidates in the generator's order (`ve.search._models`, the order
-`search.rs` follows) go to Lean's evaluation route in batches; the first candidate Lean values as a countermodel
-is the witness.
+**Rust enumerates, Lean evaluates.** Candidates from the same Rust iterator as `search.rs` go to Lean's
+evaluation route in batches; the first candidate Lean values as a countermodel is the witness.
 
-| Corpus | Queries | Candidates | Order, first witness, counts, exhaustion as Rust | Lean CPU (decoding / semantic) | Transport and client | Rust wall |
+| Corpus | Queries | Examined / evaluated candidates | Order, first witness, counts, exhaustion as Rust | Lean CPU (decoding / semantic) | Transport and client | Rust wall |
 |---|---:|---:|---|---:|---:|---:|
-| `conformance/search.json` searches | 28 | 69 | 26 of 28; the 2 others are the evaluation-budget fixtures (`search_budget_1`, `_3`): Rust stops at its budget, Lean has no budget to stop at | 0.022 s (0.014 / 0.007) | 0.034 s | 0.026 s |
-| bluedot `document.ve.md` query (19 premises) | 1 | 10,000 (Rust: the same 10,000, `ResourceLimit` at `max_models`) | equal | 53.5 s (43.0 / 10.5), 5.3 ms per candidate | 7.3 s, 68 MB sent | 6.05 s |
+| `conformance/search.json` searches | 28 | 69 / 88 | 26 of 28; the 2 others are evaluation-budget fixtures (`search_budget_1`, `_3`) | 0.023 s (0.015 / 0.009) | 0.034 s | 0.028 s |
+| bluedot `document.ve.md` query (19 premises) | 1 | 10,000 / 10,000 (`ResourceLimit` at `max_models`) | equal | 36.888 s (24.425 / 12.463), 3.689 ms per evaluated candidate | 4.453 s, 68 MB sent | 4.285 s |
 
 - **Preservation.** Order, first witness, model counts and exhaustion are preserved wherever Lean can say:
-  every search fixture and the bluedot query. **Charging is not**: Lean's evaluator has no work budget, so
-  `ResourceLimit` at an evaluation budget and Rust's evaluation counts (23,781 on bluedot) have no Lean
-  counterpart before 15a's metered evaluator; neither has non-vacuity.
-- **Deadline.** The bluedot query costs 53.5 s of Lean CPU and 60.7 s of wall without enumeration (82 s with
-  Python standing in for the enumerator) against Rust's 6.05 s and its 5 s default deadline: about 10 times
-  Rust, at this transport. 80% of the Lean CPU is decoding: every candidate carries its whole model and is decoded
-  with the environment again (the handle saves sending the environment, not decoding it). The semantic work alone
-  (10.5 s) is 1.7 times Rust's whole search.
-- **What this says for 15a.** A compliant evaluator that meets the deadline needs candidate batches that share
-  one decoded environment and send models as deltas or as an enumeration Lean expands itself; the JSON route as
-  it is does not. The plan's next step, an in-process compiled Lean interface, was **not investigated** in this
-  batch (no `@[export]` exists; a new build artifact linked into the Rust crate). The DRI has the numbers for
-  question 10.
+  every search fixture and the bluedot query. Lean's evaluator has no work budget, so the two evaluation-budget
+  fixtures differ in counts; Rust's 23,781 evaluations on bluedot have no Lean charging counterpart before 15a.
+  Non-vacuity also remains outside this evaluator.
+- **Deadline.** The bluedot query costs about 42 s of wall including Rust enumeration, against Rust search's
+  4.285 s and its 5 s default deadline. About two thirds of Lean CPU is decoding: every candidate carries its
+  whole model and is decoded with the environment again. `search_1_2` examines one candidate before its witness
+  but evaluates three in its batch; CPU per candidate uses three, as do all work-unit totals.
+- **In-process interface investigation.** A Lean 4.24 `@[export]` compiled to C and a 3 KB object in under 2 s.
+  With `LEAN_EXPORTING`, a 16 KB shared library linked against `libleanshared` and an exported
+  `UInt64 → UInt64` call returned correctly through FFI (about 0.75 µs/call from Python `ctypes`, a call-overhead
+  floor, not an evaluator benchmark). An export importing `VE.Service.Protocol` compiled to a 2 KB object but
+  needs the protocol's 440 KB object and its transitive Lean runtime/modules; the existing `ve_service`
+  executable is 181 MB. A production Rust link needs runtime initialisation, Lean object ownership rules, a
+  pinned shared artifact and assurance-manifest changes. This establishes feasibility of an in-process call,
+  not that semantic evaluation meets 5 s. The JSON-route failure and interface cost are design input for 15a.
 
-**The provers replay through Lean per step** (certificate cohorts of `conformance/certificates.py`, 40 queries
-from each of the three cohorts): 99 certificates, 303 prover steps in all (at most 7 per certificate). Python's
-prover took 0.106 s (search and self-replay), its replay alone 0.044 s; Lean replayed the 99 whole certificates
-in 0.064 s of CPU (0.126 s wall), median 0.56 ms each, against a per-request floor of 0.29 ms (median, the same
-environment, a trivial request). From these parts a per-step design costs 0.33 s (one request per step, each node
-replayed once: an incremental replay that does not exist) or 0.37 s (each step's request replays its prefix):
-about 3 times the prover's own time. The cohorts are small formulas; the agent-policy harness's certificate
-replays cost 16.6 ms of Lean CPU each in the plan's run (section 3.4), so a cohort of real prover workloads is
-the measurement 15a still needs.
+**Certificate replay per step.** On the certificate cohorts (40 queries from each of three cohorts), 99
+certificates contain 303 trace nodes. One full replay each cost 0.090 s Lean CPU and 0.163 s wall in total;
+asking Lean to replay each full certificate once for every node actually cost 0.219 s CPU and 0.425 s wall.
+On 12 agent-policy certificates sampled from 2,488, 826 nodes cost 0.091 s CPU / 0.110 s wall for one full
+replay each and 6.193 s CPU / 9.222 s wall for one full replay per node. These are measured supported stateless
+requests. A prefix or incremental replay API is absent, so no estimate for one is counted as a measurement.
+
+**Agent-policy evaluation workload.** The refreshed harness capture has 11,829 Rust evaluation cases after
+document batching; Lean evaluated them in 54 requests, 26.506 s CPU, 35.393 s wall and 69.1 MB sent, with zero
+value disagreements. The earlier capture before document batching had 22,533 cases. The replacement workload
+now measures the actual calls rather than the 87 model witnesses in the replay evidence.
 
 ## Seeded bugs (build checklist 13)
 
@@ -177,18 +184,11 @@ time but no corpus test: no runner reads that member, so on every corpus it is a
 
 ## Open items
 
-- **O1 (F3, partial).** The prover already types a document in one request (`check_document`); Background is
-  now asked once per request. `evaluate()`'s typing and Lean evaluation calls remain one request per
-  (formula, model), because its callers ask one at a time; batching them needs a batched public evaluation,
-  which is the candidate-batch design 15a decides from the rule-3 record. Measured headroom: 0.81 ms against
-  0.94 ms of Lean CPU and 0.85 ms against 1.40 ms of wall per typing case.
 - **O2.** With a handle, 0.8 of the 0.94 ms of Lean CPU of a typing call on the agent-policy environment is
   still decoding the environment into the mode's own structures, once per case. A cache of decoded environments
   needs each mode's decoder to take it; it is also what the rule-3 search design needs.
-- **O3.** The in-process compiled Lean interface the plan names after a failed batched transport was not
-  investigated (rule-3 measurement above).
-- **O4.** The certificate cohorts are small; a cohort of real prover workloads (agent-policy) for the per-step
-  replay design is still to be measured.
+- **O3.** The in-process call is feasible; its budgeted evaluator, Lean object ownership and Rust linkage
+  remain a 15a design decision after the measured JSON transport misses the deadline.
 - Not run: the plan's 1,000-document rights and soft-norm differentials (no statement-layer route changed beyond
   its transport; their cases ran through the handle path in the suite and the route corpus), and the UDHR
   pilot load (unchanged at batch 1's `CheckerUnavailable`; the A/B records it identical at base and head).
