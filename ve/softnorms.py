@@ -514,6 +514,8 @@ def check_soft_source(environment, norms=None, *, generated=False, layers=frozen
     if "rights@0" in layers:
         source["profiles"] = [p for p in source["profiles"] if p != "rights@0"]
         source["vocabulary"].pop("rights", None)
+    if "readings@1" in layers:
+        source["profiles"] = [p for p in source["profiles"] if p != "readings@1"]
     if generated:
         source["vocabulary"]["predicates"] = {
             name: entry for name, entry in source["vocabulary"]["predicates"].items()
@@ -525,8 +527,9 @@ def check_soft_source(environment, norms=None, *, generated=False, layers=frozen
 def load_soft_document(environment, norms):
     """Build the Python containers after Lean accepts the complete soft source."""
     from .backends.soft_relay import run as _run, wire as _wire
+    environment, norms = _wire(environment), _wire(norms)
     _run({"id": "soft-elaborate", "kind": "soft-elaborate",
-          "environment": _wire(environment), "norms": _wire(norms)})
+          "environment": environment, "norms": norms})
     try:
         return SoftNormDocument(SoftEnvironment(environment), norms)
     except Exception as error:
@@ -545,7 +548,10 @@ class SoftEnvironment(Environment):
     LAYERS = frozenset()
 
     def __init__(self, data, *, generated=False):
-        if "norm-defaults@0" in data.get("profiles", ()):
+        from .backends.soft_relay import wire
+        data = wire(data)
+        profiles = data.get("profiles") if type(data) is dict else None
+        if type(profiles) is list and any(p in profiles for p in ("norm-defaults@0", "readings@1")):
             # Fill still constructs placeholder completions in Python (batch 10).
             # The stand-alone soft route rejects this profile before fill runs.
             _envelope(data, None)
@@ -733,9 +739,11 @@ def _or_nonempty(items):
 class SoftNormDocument:
     """Validated soft tree, its W1 elaboration, and regenerated base premises."""
     def __init__(self, env: SoftEnvironment, units):
-        from .backends.soft_relay import run as _run, wire as _wire
-        row = _run({"id": "soft-elaborate", "kind": "soft-elaborate",
-                    "environment": _wire(env.to_dict()), "norms": _wire(units)})
+        from .backends.soft_relay import wire
+        units = wire(units)
+        profiles = env.to_dict().get("profiles", ())
+        row = check_soft_source(env.to_dict(), units,
+                                layers=frozenset(p for p in profiles if p in ("readings@1", "rights@0")))
         try:
             self._init_soft(env, units, row)
         except Exception as exc:

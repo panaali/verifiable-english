@@ -378,7 +378,8 @@ def _load_document(raw: bytes, path: str | Path, lean):
         from .softnorms import check_soft_source
         if type(meta.get("units")) is list:
             # The environment and the norm units are one soft source (8).
-            check_soft_source(environment_data, _soft_contents(meta["units"], attached))
+            check_soft_source(environment_data, _soft_contents(meta["units"], attached),
+                              layers=frozenset({"readings@1"} if "readings@1" in profiles else ()))
     env = _environment(environment_data)
     if "reports@0" not in env.profiles and set(meta) & {"contexts", "assessments", "bridges", "scoped"}:
         raise VEError("unknown document metadata")
