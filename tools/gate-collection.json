@@ -90,6 +90,7 @@
   "tests/test_alternatives_profile.py::test_coverage_names_declared_alternatives_and_counterfactual_support",
   "tests/test_alternatives_profile.py::test_coverage_quoted_outcomes_are_not_asserted_cells[kind0]",
   "tests/test_alternatives_profile.py::test_coverage_quoted_outcomes_are_not_asserted_cells[kind1]",
+  "tests/test_alternatives_profile.py::test_coverage_response_shape_rejects_dropped_and_boolean_counts",
   "tests/test_alternatives_profile.py::test_derived_words_round_trip_without_declared_predicate_tables",
   "tests/test_alternatives_profile.py::test_document_check_dispatches_w2_admission_to_lean",
   "tests/test_alternatives_profile.py::test_english_own_outcome_guard_names_the_semantic_change",

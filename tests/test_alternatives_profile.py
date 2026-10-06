@@ -258,6 +258,23 @@ def test_coverage_names_declared_alternatives_and_counterfactual_support():
     assert report["residual"]["counterfactual_leaves"] == 1
 
 
+def test_coverage_response_shape_rejects_dropped_and_boolean_counts():
+    from ve.backends.service_schema import Context, Invalid, _compiler
+    check = _compiler.ref("alternatives.json", "#/$defs/coverage")[0]
+    row = run_case({"id": "coverage", "kind": "alt-elaborate", "environment": source(),
+                    "norms": [], "coverage_units": []})
+    coverage_answer = row["coverage"]
+    check(coverage_answer, Context(None), {})
+    changed = deepcopy(coverage_answer)
+    changed["residual"]["alternatives_declared"] = True
+    with pytest.raises(Invalid):
+        check(changed, Context(None), {})
+    missing = deepcopy(coverage_answer)
+    del missing["alternatives"]["counterfactual_leaves"]
+    with pytest.raises(Invalid):
+        check(missing, Context(None), {})
+
+
 @pytest.mark.parametrize("kind", [
     ["attributed", "witness", "says", "asserted"],
     ["hedged", "likely", "asserted"],

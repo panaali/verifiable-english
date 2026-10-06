@@ -179,7 +179,17 @@
             "dilemmas": {"maxItems": 0, "type": "array"},
             "narrowings": {"type": "array"},
             "proximate_judgments": {"type": "array"},
-            "table_complete": {"anyOf": [{"type": "null"}, {"type": "object"}]},
+            "table_complete": {
+              "anyOf": [
+                {"type": "null"},
+                {
+                  "additionalProperties": false,
+                  "properties": {"decider": {"type": "string"}, "premise": {"type": "string"}},
+                  "required": ["decider", "premise"],
+                  "type": "object"
+                }
+              ]
+            },
             "unmapped_obligations": {"$ref": "common.json#/$defs/strings"}
           },
           "required": [
