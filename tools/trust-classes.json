@@ -3217,6 +3217,7 @@
    "G[V]": [
     "VE.EnglishGrammar.Run.Case",
     "VE.EnglishGrammar.Run.authoring",
+    "VE.EnglishGrammar.Run.blockRouteView",
     "VE.EnglishGrammar.Run.boolText",
     "VE.EnglishGrammar.Run.budgetFields",
     "VE.EnglishGrammar.Run.coded",
