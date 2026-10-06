@@ -524,43 +524,16 @@ def _load_document(raw: bytes, path: str | Path, lean):
                                   for c in reading_set["readings"]) else "OPEN")
     if rights_document is not None:
         rights = rights_document
-        from .search import _used_predicates
-
-        # Correlation keeps the incident order and appends outside rules after
-        # them. Inspect the resulting guards and carve-outs, not source lines.
-        correlated = {id(instance): rule for instance, rule in
-                      zip(rights.instances, rights.soft_document.rules)}
-
-        def open_rule(rule):
-            return (rule.mode == "default" or bool(rule.alterable) or
-                    bool(_used_predicates(rule.core.guard) & open_names) or
-                    any(_used_predicates(f) & open_names for f in rule.core.unless))
-
+        from .rights_route import run_rights_case
+        statuses = run_rights_case(env, rights.units, "rights-unit-status",
+                                  open_predicates=sorted(open_names))["open"]
+        source_ids = [u["id"] for u, _ in _parts(units)
+                      if type(u.get("content")) is dict and u.get("id") not in attached and
+                      u.get("kind") in ("right", "right_lines", "limitation", "bar", "norm")]
+        source_status = dict(zip(source_ids, statuses[1:], strict=True))
         for unit in compiled:
-            if unit["status"] != "CHECKED" or unit["kind"] not in (
-                    "right", "right_lines", "limitation", "bar", "norm"):
-                continue
-            content = unit["content"]
-            if type(content) is not dict:
-                continue
-            # The content's block, not the unit kind, is what was correlated.
-            kind = _rights_block(content) or "norm"
-            if kind in ("limitation", "bar"):
+            if unit["status"] == "CHECKED" and source_status.get(unit["id"], False):
                 unit["status"] = "OPEN"
-            elif kind == "norm":
-                from .softnorms import decode_rule
-                if open_rule(decode_rule(rights.environment, {"norm": content["norm"]})):
-                    unit["status"] = "OPEN"
-            else:
-                body = content[kind]
-                name = body["name"] if kind == "right" else body["right"]
-                active_lines = [i for i in rights.instances if i["right"] == name and
-                                any(i["source_line"] is line for line in body["lines"])]
-                if any(open_rule(correlated[id(i)]) or
-                       any(rights._in_scope(limit, i) for limit in rights.limitations) or
-                       (rights.bar is not None and i["kind"] in ("liberty", "powerLiberty"))
-                       for i in active_lines):
-                    unit["status"] = "OPEN"
     if meta["format"] == "ve-document@1":
         for unit in compiled:
             if unit.pop("explicit_status") not in (None, unit["status"]):

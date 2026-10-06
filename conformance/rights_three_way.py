@@ -1,12 +1,8 @@
-"""Rights fixtures (docs/spec/rights.md 10): Python correlation, Lean rights, and Lean soft replay.
+"""Rights fixtures and the independently checked soft embedding (rights.md 10).
 
-Each fixture source is correlated by Python and regenerated independently by the Lean rights
-route and, on the correlated soft document, by the Lean soft route; `check_rights_regenerated`
-compares every output (generated keys, E″′ byte for byte, line instances and nodes, Lim_D,
-bar nodes, layer order, premises, background, targets, warnings). Fixture θ is checked as its
-own statement: every shape-fitting rule of the soft conformance trees, wrapped as a one-line
-right with `H_R = ⊤`, correlates to exactly the flattened soft document on both routes, and
-with a holder guard the nodes differ exactly by the conjunct."""
+Lean owns rights correlation. Fixture θ checks that every fitting soft rule wrapped as
+a right with `H_R = ⊤` has the same layer result as the soft route. A holder guard
+must add exactly one conjunct to the Lean line node."""
 from __future__ import annotations
 
 import json
@@ -16,7 +12,7 @@ from pathlib import Path
 from tests.test_norms import obligation, permission
 from tests.test_rights import claim, right, rights_env
 from ve.rights import correlate
-from ve.rights_route import check_rights_regenerated, run_rights_case
+from ve.rights_route import run_rights_case
 from ve.backends.relay import decide
 from ve.softnorms import SoftEnvironment, SoftNormDocument
 
@@ -237,7 +233,6 @@ def theta_rows(seeds=range(60)):
         assert [r.to_dict() for r in rights.soft_document.rules] == [r.to_dict() for r in flat.rules], seed
         assert rights.soft_document.extended_env.to_dict() == flat.extended_env.to_dict(), seed
         lean = run_rights_case(rights.env, units, "rights-elaborate")
-        check_rights_regenerated(rights, lean)
         soft = decide("soft-norms", [{"id": "f", "kind": "soft-elaborate", "environment": raw,
                                       "norms": fitting + outside}])[0]
         for field in ("order", "premises", "derived", "colliding_pairs", "conflict_targets",
@@ -264,7 +259,6 @@ def run():
         # supplied to the rights executable.
         rights = correlate(deepcopy(raw), deepcopy(units))
         lean = run_rights_case(rights.env, units, "rights-elaborate")
-        check_rights_regenerated(rights, lean)
         summary.append({"fixture": name, "lines": len(lean["lines"]),
                         "limitations": len(lean["limitations"]),
                         "conflict_targets": len(lean["conflict_targets"]),
