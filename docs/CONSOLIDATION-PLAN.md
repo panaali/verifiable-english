@@ -662,19 +662,19 @@ one-shot executable by english-lean-s2.md 2.10 and, at that point, the only one-
 and the senses integration adds `ve_senses_route` as another one-shot route with 26 trusted lines (remeasured at
  the merge of ve-integration into senses/integrate, 2026-10-06). The English Lean E2 classification adds one step 7 trusted line in `EnglishGrammar.Run`; the current measurements follow:
 
-The merged step 2a ledger now identifies 114 tied runner lines; the table below records
-that source classification alongside the previously measured steps.
+The merged step 2a ledger now identifies no remaining runner lines in that row; the table below records
+the current source classification alongside the previously measured steps.
 
 | Step | Removed | Tied | Reclassified [V]→[R] | Adds (est.) | Net | Days | Risk | Score |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | 1 | 0 | 23 | 0 | 0 | 23 | 5 | 1.5 | 3.1 |
-| 2a | 0 | 114 | 0 | 0 | 114 | 4 | 1 | 28.5 |
+| 2a | 0 | 0 | 0 | 0 | 0 | 4 | 1 | 0.0 |
 | 2b | 94 | 0 | 0 | 0 | 94 | 2 | 2 | 23.5 |
 | 3 | 39 | 0 | 0 | 10 | 29 | 14 | 2 | 1.0 |
 | 4 | 718 | 0 | 0 | 420 | 298 | 14 | 2 | 10.6 |
 | 5 | 0 | 485 | 0 | 0 | 485 | 14 | 1 | 34.6 |
 | 6 | 35 | 0 | 1758 | 0 | 35 | 3 | 1 | 11.7 |
-| 7 | 613 | 0 | 0 | 60 | 553 | 6 | 2 | 46.1 |
+| 7 | 614 | 0 | 0 | 60 | 554 | 6 | 2 | 46.2 |
 | 8a | 106 | 225 | 0 | 60 | 271 | 10 | 1.5 | 18.1 |
 | 8b | 0 | 3456 | 0 | 0 | 3456 | 30 | 3 | 38.4 |
 | 9 | 88 | 0 | 0 | 0 | 88 | 18 | 2 | 2.4 |
@@ -682,7 +682,7 @@ that source classification alongside the previously measured steps.
 
 What the measurement changes:
 
-* **Re-ranking of steps 5 to 10 by measured score:** 7 (46.1), 5 (34.6), 8a (18.1), 6 (11.7),
+* **Re-ranking of steps 5 to 10 by measured score:** 7 (46.2), 5 (34.6), 8a (18.1), 6 (11.7),
   9 (2.4), 10. Step 8b's 3,460 is an upper bound (every untied line of the eight units' `Wire.lean`
   files, on the assumption that every decoder gets `exact`), not a forecast; it stays ranked by its
   pilot (Alternatives) as section 3 says. Against the estimates, 7 overtakes 5 (762 trusted

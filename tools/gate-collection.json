@@ -7390,7 +7390,7 @@
   "tests/test_propose.py::test_cli_adopt_to_keeps_all_gates",
   "tests/test_propose.py::test_cli_adopts_proposal_without_base_overlay",
   "tests/test_propose.py::test_cli_lead_workflow",
-  "tests/test_propose.py::test_closed_diagnostic_names_phrase_span_and_nearest_wording",
+  "tests/test_propose.py::test_closed_diagnostic_has_the_lean_sentence_span",
   "tests/test_propose.py::test_content_case_roundtrip_and_no_second_predicate[UK CITIZEN]",
   "tests/test_propose.py::test_content_case_roundtrip_and_no_second_predicate[Uk Citizen]",
   "tests/test_propose.py::test_content_case_roundtrip_and_no_second_predicate[uK   CiTiZeN]",
