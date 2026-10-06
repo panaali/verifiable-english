@@ -1,10 +1,19 @@
-"""Seeded bugs for lean-first batch 9: each must make its test fail; every file is restored."""
+"""Seeded bugs for lean-first batch 9: each must make its test fail; every file is restored.
+
+    python3 -I docs/lean-first/b9/mutants.py > docs/lean-first/b9/evidence/mutants.txt
+
+A Lean mutant's build is allowed in `lean/checkers.lock` while its test runs, so the test fails on the
+answer, not on the build pin; the clean build is restored and checked against the lock after each.
+"""
 import hashlib
 import os
 from pathlib import Path
 import subprocess
+import sys
 
-ROOT = Path("/home/seyran/code/ve-lf-9")
+ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT))
+from tools import nested_pytest  # noqa: E402
 LOCK = ROOT / "lean/checkers.lock"
 SERVICE = ROOT / "lean/.lake/build/bin/ve_service"
 ENV = {**os.environ, "VE_NATIVE_PREBUILT": "1", "PATH": f"{Path.home()}/.elan/bin:{os.environ['PATH']}"}
@@ -41,10 +50,6 @@ MUTANTS = [
 ]
 
 
-def run(command, **kw):
-    return subprocess.run(command, cwd=ROOT, env=ENV, capture_output=True, text=True, timeout=3000, **kw)
-
-
 def main():
     lock = LOCK.read_text()
     for name, kind, relative, old, new, tests in MUTANTS:
@@ -63,7 +68,10 @@ def main():
                 done = subprocess.run(["cargo", "test", "-q", "-p", "ve", "quantity"], cwd=ROOT / "rust",
                                       env=ENV, capture_output=True, text=True, timeout=3000)
             else:
-                done = run([str(ROOT / ".venv/bin/python"), "-m", "pytest", "-q", "-p", "no:cacheprovider", *tests])
+                done = subprocess.run(nested_pytest.command(["-q", "-p", "no:cacheprovider", *tests],
+                                                            python=[str(ROOT / ".venv/bin/python")]),
+                                      cwd=ROOT, env=nested_pytest.environment(ENV), capture_output=True,
+                                      text=True, timeout=3000)
             output = done.stdout + done.stderr
             failed = done.returncode != 0 and ("FAILED" in output or "test result: FAILED" in output
                                                or "panicked" in output)
