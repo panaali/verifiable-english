@@ -27601,6 +27601,12 @@ theorem VE.SpeechActs.Source.Admission.answerLeaf_entailed
           VE.Norms.Sat S (VE.SpeechActs.premises src.dec.D) → VE.Formula.denote S [] w.claim.formula
   -- uses VE.Formula.denote@VE.Semantics VE.Graph.Claim.formula@VE.ClaimGraph VE.Norms.Sat@VE.Norms.Prefix VE.Route.Admission.WireNode.claim@VE.Route.Admission VE.Route.Admission.WireNode@VE.Route.Admission VE.SpeechActs.En@VE.SpeechActs.Tree VE.SpeechActs.Source.Admission.AnswerLeaf@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.premises@VE.SpeechActs.Tree VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 820844272
+theorem VE.SpeechActs.Source.Admission.answerPremiseClaims_formulas
+  ∀ (src : VE.SpeechActs.Source.SpeechSource) (answer : String),
+    List.map (fun x => x.formula) (VE.SpeechActs.Source.Admission.answerPremiseClaims src answer) =
+      VE.SpeechActs.premises src.dec.D
+  -- uses VE.Formula@VE.Syntax VE.Graph.Claim.formula@VE.ClaimGraph VE.Graph.Claim@VE.ClaimGraph VE.SpeechActs.Source.Admission.answerPremiseClaims@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.premises@VE.SpeechActs.Tree
+  -- expr 246412102
 theorem VE.SpeechActs.Source.Admission.bindings_withheld
   ∀ (adm : VE.SpeechActs.Source.Admission.SpeechAdmitted),
     (∀ (u : VE.SpeechActs.Source.SourceUnit),

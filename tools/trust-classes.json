@@ -6511,13 +6511,16 @@
     "VE.SpeechActs.Source.Admission.RecordsSound",
     "VE.SpeechActs.Source.Admission.ReportAdmitted",
     "VE.SpeechActs.Source.Admission.answerLabel",
+    "VE.SpeechActs.Source.Admission.answerPremiseClaims",
     "VE.SpeechActs.Source.Admission.certifiedAnswer",
     "VE.SpeechActs.Source.Admission.encodeAdmitted",
+    "VE.SpeechActs.Source.Admission.formulaAst",
     "VE.SpeechActs.Source.Admission.formulaContent",
     "VE.SpeechActs.Source.Admission.isBinding",
     "VE.SpeechActs.Source.Admission.latestSets",
     "VE.SpeechActs.Source.Admission.p0Json",
-    "VE.SpeechActs.Source.Admission.presuppositionLabel"
+    "VE.SpeechActs.Source.Admission.presuppositionLabel",
+    "VE.SpeechActs.Source.Admission.reportedReport"
    ],
    "C": [
     "VE.SpeechActs.Source.Admission.SpeechAdmitted",
