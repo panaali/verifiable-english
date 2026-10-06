@@ -4384,6 +4384,7 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.EnglishGrammar.wordingSymsBy_nts
 #print axioms VE.EnglishGrammar.wordingSyms_nts
 #print axioms VE.EnglishGrammar.policy_iff_no_failure
+#print axioms VE.EnglishGrammar.policy_selection
 #print axioms VE.EnglishGrammar.admitRequest_ok
 #print axioms VE.EnglishGrammar.admitRequest_exact
 #print axioms VE.EnglishGrammar.admitRequest_policy

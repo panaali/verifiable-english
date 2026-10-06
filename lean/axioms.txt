@@ -4159,6 +4159,7 @@
 'VE.EnglishGrammar.wordingSymsBy_nts' depends on axioms: [propext, Quot.sound]
 'VE.EnglishGrammar.wordingSyms_nts' depends on axioms: [propext, Quot.sound]
 'VE.EnglishGrammar.policy_iff_no_failure' depends on axioms: [propext]
+'VE.EnglishGrammar.policy_selection' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.EnglishGrammar.admitRequest_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.EnglishGrammar.admitRequest_exact' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.EnglishGrammar.admitRequest_policy' depends on axioms: [propext, Classical.choice, Quot.sound]
