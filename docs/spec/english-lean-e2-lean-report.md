@@ -1,6 +1,6 @@
 # English Lean E2 Lean work report
 
-Branch `english-lean-e2/lean`; local commits `f3147ce3`, `dfb426d1`, `56b96a2a`, `246ddf04`. Nothing was pushed. Frozen Norms, SoftNorms and Route Lean source was not edited; `VE/Route/frozen-sources.sha256` changed only to record the changed English and audit files.
+Branch `english-lean-e2/lean`; local commits `f3147ce3`, `dfb426d1`, `56b96a2a`, `246ddf04`, `237e5c9f`, `61383f34`, `3084dadd` and this report commit. Nothing was pushed. Frozen Norms, SoftNorms and Route Lean source was not edited; `VE/Route/frozen-sources.sha256` changed only to record the changed English and audit files.
 
 ## Implemented
 
@@ -16,6 +16,9 @@ Branch `english-lean-e2/lean`; local commits `f3147ce3`, `dfb426d1`, `56b96a2a`,
 - `python3 tools/check_english_s3_statements.py`: passed, 10 exact S3 statements.
 - `python3 tools/check_english_e2_statements.py`: 10 of 12 exact E2 statements found; see open work below.
 - `tests/test_english_lean_route.py`: 60 passed.
+- The clean-HEAD gate on `237e5c9f` selected 11,159 Python tests: 10,990 passed, 162 failed and 7 skipped; Rust tests passed. The failures exposed stale service mode lists, generated assurance pins, the S3 fixture report and the declaration table. Those integration artifacts are repaired in `61383f34` and `3084dadd`. The gate is being repeated on this report commit; its outcome must be reported at handoff.
+- Focused integration checks after repair: 597 passed, three failed before the last corrections; the three failures were generated assurance tables, new mode deadlines and malformed-response seeds. All ten targeted regression checks then passed. S3 fixture comparison: 200 cases, 198 agreements, two spec-disposed differences, zero unexplained.
+- The declaration table now covers all new E2 declarations conservatively. The trust budget check already had two issues at starting commit `73257d6a`; its baseline has not been changed or given a fabricated DRI signature.
 - `python3 tools/english_grammar_gen.py --check`, `python3 lean/VE/Route/frozen.py`, and `git diff --check`: passed.
 - `python3 lean/audit.py` read-only check and `python3 tools/gate.py --workers 4` are required before handoff; record their final outcome with the gate result.
 
@@ -46,12 +49,12 @@ The approved `sensesRequest_policy` and `decode_encode` statements are not yet p
 | 11. No regex over real languages | Done | New Lean policy uses explicit character/token scanners; Lean compiled the source. |
 | 12. State machine and ledger | Not applicable | No state-machine or ledger code changed. |
 | 13. Seeded mutants | Done | Three distinct scanner mutations failed the three `#guard`s and were removed. |
-| 14. Hermetic execution | Open | The final clean-HEAD gate is pending. |
+| 14. Hermetic execution | Open | A clean-HEAD gate ran and exposed integration failures; the final clean-HEAD repeat is pending. |
 | 15. Identity mutations | Open | Lexicon/display identity is bound; mutation coverage for every schema field is incomplete. |
-| 16. Registered lists | Done | English grammar lock, frozen source inventory, audit manifest and statement inventories were regenerated and checked. |
+| 16. Registered lists | Done | English grammar lock, frozen source inventory, audit manifest, statement inventories and service modes were regenerated or checked. |
 | 17. Approved statement diff | Open | The E2 diff tool finds 10 exact statements and two missing proofs. |
 | 18. Spec-stage fixtures and iff boundaries | Open | Existing S3 fixtures and new scanner guards pass; E2 fixture matrix is incomplete. |
 | 19. Use-case formalisation | Not applicable | No use-case rule or answer key was changed. |
-| 20. Regenerated report numbers | Open | Full gate JSON is pending; this report states what was and was not run. |
+| 20. Regenerated report numbers | Open | First gate counts came from `/tmp/e2-gate-result.json`; no test yet regenerates every report number. Final gate JSON is pending. |
 | 21. AGENT/HUMAN/EXTERNAL labels | Open | E2 plan acceptance labels have not been fully annotated. |
 | 22. Commit, full gate, disk, report | Open | Source commits and this nonempty report exist; full gate on a clean HEAD is pending. Disk had 59 GB free. |
