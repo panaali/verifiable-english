@@ -8,44 +8,17 @@ from __future__ import annotations
 
 from copy import deepcopy
 
-from .admission import token
 from .environment import Environment
-from .errors import CheckerUnavailable, DuplicateDeclaration, ResourceLimit, UnsupportedProfile, VEError
+from .errors import CheckerUnavailable
+from .reports_preflight import prepare
 from .reports_route import run_case
-
-
-def _records(rows, label):
-    """Preserve the public record diagnostics before the Lean document route."""
-    if type(rows) is not list:
-        raise VEError(f"InvalidInput: {label} must be a list")
-    if len(rows) > 256:
-        raise ResourceLimit(f"ResourceLimit: {label}")
-    result = {}
-    for row in rows:
-        if type(row) is not dict or not token(row.get("id")):
-            raise VEError(f"InvalidInput: {label} record")
-        if row["id"] in result:
-            raise DuplicateDeclaration(f"DuplicateDeclaration: {label[:-1]} {row['id']}")
-        result[row["id"]] = deepcopy(row)
-    return result
-
 
 class ReportsDocument:
     def __init__(self, environment: Environment, contexts, assessments, units, *,
                  bridges=(), scoped=(), choices=(), open_terms=()):
-        if "reports@0" not in environment.profiles or environment.reports is None:
-            raise UnsupportedProfile("reports@0 needs a reports block")
         self.environment = environment
-        self.contexts = _records(contexts, "contexts")
-        self.assessments = _records(assessments, "assessments")
-        bridges, scoped = list(bridges), list(scoped)
-        for label, rows in (("bridge", bridges), ("scoped", scoped)):
-            ids = [row.get("id") if type(row) is dict else None for row in rows]
-            duplicate = next((i for n, i in enumerate(ids) if i in ids[:n]), None)
-            if duplicate is not None:
-                raise DuplicateDeclaration(f"DuplicateDeclaration: {label} {duplicate}")
-        if len(bridges) > 1000 or len(scoped) > 256:
-            raise ResourceLimit("ResourceLimit: bridges or scoped")
+        self.contexts, self.assessments, bridges, scoped = prepare(
+            environment, contexts, assessments, bridges, scoped)
         self.units = deepcopy(units)
         self._document = {"units": self.units, "contexts": deepcopy(contexts), "assessments": deepcopy(assessments),
                           "bridges": deepcopy(bridges), "scoped": deepcopy(scoped),
