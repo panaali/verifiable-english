@@ -18,6 +18,13 @@ def _report():
     return module
 
 
+def _tool(name):
+    spec = importlib.util.spec_from_file_location(name, B10A / f"{name}.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def _evidence(name):
     return json.loads((B10A / "evidence" / name).read_text())
 
@@ -51,6 +58,55 @@ def test_fourteen_date_seeds_preserve_the_differential_result():
                for row in evidence["seeds"])
     assert all(sum(sum(counts.values()) for counts in row["mutants"].values()) > 25000
                for row in evidence["seeds"])
+    assert all(row["base_trace"] == row["head_trace"] and
+               {name: trace["count"] for name, trace in row["base_trace"].items()} ==
+               {name: sum(counts.values()) for name, counts in row["mutants"].items()}
+               for row in evidence["seeds"])
+
+
+def test_fuzzer_gate_detects_changed_verdicts_with_equal_summaries(tmp_path, monkeypatch):
+    """Recheck B: the real report generator can retain identical totals and finding signatures when
+    Lean's per-input verdict changes. The preservation gate must detect either kind of change."""
+    from tools import difffuzz as df
+
+    gate, tracer = _tool("fuzzer_gate"), _tool("trace_fuzzer")
+    baseline = tmp_path / "baseline.json"
+    baseline.write_text(json.dumps({"format": df.FORMAT, "entries": []}))
+    monkeypatch.setattr(df, "sample", lambda surface, seeds, *args: [(seed, []) for seed in seeds])
+    monkeypatch.setattr(df, "MINIMISE_LIMIT", 0)
+
+    class VerdictProbe(df.Surface):
+        name = "requests"
+
+        def __init__(self, values, all_engines):
+            self.values, self.all_engines = values, all_engines
+
+        def seeds(self):
+            return [df.Seed("requests", "core/evaluate", "same-input", {"id": "same-input"})]
+
+        def answers(self, items):
+            return [{engine: df.ok({"values": self.values if self.all_engines or engine == "lean"
+                                    else [True, True]}) for engine in df.ENGINES} for _ in items]
+
+        def text_fixed(self, *args):
+            return False
+
+    def report(values, all_engines):
+        surface = VerdictProbe(values, all_engines)
+        result, trace = tracer.trace_run(df, lambda: df._fuzz(
+            {"requests": surface}, ["requests"], 1, 20260921, baseline, False, lambda _: None))
+        result["trace"], result["exit"] = trace, int(not result["passed"])
+        assert trace["requests"]["count"] == sum(result["mutants"]["requests"].values())
+        return result
+
+    for all_engines in (False, True):
+        base, head = report([True, False], all_engines), report([False, True], all_engines)
+        assert all(base[key] == head[key] for key in gate.COMPARE)
+        assert {entry["signature"] for entry in base["new"]} == \
+               {entry["signature"] for entry in head["new"]}
+        assert base["trace"]["requests"]["inputs_sha256"] == head["trace"]["requests"]["inputs_sha256"]
+        assert base["trace"]["requests"]["answers_sha256"] != head["trace"]["requests"]["answers_sha256"]
+        assert gate.compare(base, head) == ["trace"]
 
 
 def test_every_timed_run_exited_cleanly_on_both_sides():

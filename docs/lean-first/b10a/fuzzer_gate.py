@@ -1,8 +1,9 @@
 """Run the fourteen dated differential samples on the base and this batch.
 
 Both checkouts must have their Lean and Rust binaries built. The script waits for
-every fuzzer process, compares the full per-surface summaries and signature sets,
-and writes compact evidence without changing the fuzzer baseline.
+every fuzzer process, compares every sampled input and engine answer through
+stable digests as well as the summaries, and writes compact evidence without
+changing the fuzzer baseline.
 """
 from __future__ import annotations
 
@@ -17,6 +18,7 @@ import tempfile
 
 SEEDS = tuple(range(20260921, 20260931)) + tuple(range(20261001, 20261005))
 COMPARE = ("corpus", "mutants", "answers", "findings")
+TRACE = Path(__file__).with_name("trace_fuzzer.py")
 
 
 def revision(root: Path) -> str:
@@ -29,18 +31,26 @@ def baseline_hash(root: Path) -> str:
 
 def run(root: Path, seed: int, scratch: Path) -> dict:
     report = scratch / f"{root.name}-{seed}.json"
-    command = [sys.executable, "tools/difffuzz.py", "--deep", "1", "--seed", str(seed),
+    trace = scratch / f"{root.name}-{seed}.trace.json"
+    command = [sys.executable, str(TRACE), str(root), str(trace), "--deep", "1", "--seed", str(seed),
                "--minimise-limit", "0", "--report", str(report)]
     result = subprocess.run(command, cwd=root, text=True, capture_output=True)
-    if not report.exists():
-        raise RuntimeError(f"{root.name} seed {seed}: no report (exit {result.returncode}): {result.stderr[-2000:]}")
+    if not report.exists() or not trace.exists():
+        raise RuntimeError(f"{root.name} seed {seed}: missing report or trace (exit {result.returncode}): "
+                           f"{result.stderr[-2000:]}")
     data = json.loads(report.read_text())
+    data["trace"] = json.loads(trace.read_text())
+    for name, mutants in data["mutants"].items():
+        if data["trace"].get(name, {}).get("count") != sum(mutants.values()):
+            raise RuntimeError(f"{root.name} seed {seed}: incomplete {name} trace")
     data["exit"] = result.returncode
     return data
 
 
 def compare(base: dict, head: dict) -> list[str]:
     differences = [key for key in COMPARE if base[key] != head[key]]
+    if base["trace"] != head["trace"]:
+        differences.append("trace")
     for key in ("entries", "seen_in_sample", "unreviewed", "not_reproduced"):
         if base["baseline"][key] != head["baseline"][key]:
             differences.append("baseline." + key)
@@ -77,7 +87,8 @@ def main() -> int:
                      "base_new": len(a["new"]), "head_new": len(b["new"]),
                      "base_not_reproduced": len(a["baseline"]["not_reproduced"]),
                      "head_not_reproduced": len(b["baseline"]["not_reproduced"]),
-                     "mutants": a["mutants"], "differences": compare(a, b)})
+                     "mutants": a["mutants"], "base_trace": a["trace"],
+                     "head_trace": b["trace"], "differences": compare(a, b)})
     evidence = {"base_commit": revision(base), "head_commit": revision(head),
                 "baseline_sha256": baseline_hash(base), "seeds": rows}
     args.output.write_text(json.dumps(evidence, indent=2) + "\n")
