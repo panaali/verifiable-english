@@ -657,8 +657,9 @@ trusted lines are gone already, and 20 of 8b's (`VE.Time.Wire.main`); the servic
 Batch 1's new modules (`ResponseShape`, `VE/Service/*`) were classified by `--seed` and no step names them.
 Step 7 remeasured again after the merge of that ve-integration into english-lean-s2/integrate (2026-10-05):
 S2.4's `ve_english_route` (`EnglishGrammar.Run`'s `runCaseReported` and `main`, and `EnglishMain.lean`), a
-one-shot executable by english-lean-s2.md 2.10 and the only one-shot route left beside `ve_conformance`, adds
-its 33 trusted lines to batch 1's 551:
+one-shot executable by english-lean-s2.md 2.10, adds its 33 trusted lines to batch 1's 551.
+The senses integration adds `ve_senses_route` as another one-shot route and adds 26 trusted lines to step 7,
+making its measured removal count 610:
 
 | Step | Removed | Tied | Reclassified [V]→[R] | Adds (est.) | Net | Days | Risk | Score |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -669,7 +670,7 @@ its 33 trusted lines to batch 1's 551:
 | 4 | 718 | 0 | 0 | 420 | 298 | 14 | 2 | 10.6 |
 | 5 | 0 | 485 | 0 | 0 | 485 | 14 | 1 | 34.6 |
 | 6 | 35 | 0 | 1758 | 0 | 35 | 3 | 1 | 11.7 |
-| 7 | 584 | 0 | 0 | 60 | 524 | 6 | 2 | 43.7 |
+| 7 | 610 | 0 | 0 | 60 | 550 | 6 | 2 | 45.8 |
 | 8a | 106 | 225 | 0 | 60 | 271 | 10 | 1.5 | 18.1 |
 | 8b | 0 | 3460 | 0 | 0 | 3460 | 30 | 3 | 38.4 |
 | 9 | 88 | 0 | 0 | 0 | 88 | 18 | 2 | 2.4 |
@@ -677,11 +678,11 @@ its 33 trusted lines to batch 1's 551:
 
 What the measurement changes:
 
-* **Re-ranking of steps 5 to 10 by measured score:** 7 (43.7), 5 (34.6), 8a (18.1), 6 (11.7),
+* **Re-ranking of steps 5 to 10 by measured score:** 7 (45.8), 5 (34.6), 8a (18.1), 6 (11.7),
   9 (2.4), 10. Step 8b's 3,460 is an upper bound (every untied line of the eight units' `Wire.lean`
   files, on the assumption that every decoder gets `exact`), not a forecast; it stays ranked by its
   pilot (Alternatives) as section 3 says. Against the estimates, 7 overtakes 5 (762 trusted
-  dispatch and `main` lines, not 340; 603 before the bench executable; 551 once batch 1 deleted the one-shot routes; 584 with english-lean S2's `ve_english_route`) and 5 is smaller than estimated (485 measured against 1,500 to
+  dispatch and `main` lines, not 340; 603 before the bench executable; 551 once batch 1 deleted the one-shot routes; 584 with english-lean S2's `ve_english_route`; 610 with `ve_senses_route`) and 5 is smaller than estimated (485 measured against 1,500 to
   2,000): most of the rows' targets are short runners, and `scopedVerdict` and `weighingWitness`
   are already C.
 * **Step 6** removes almost nothing trusted: the SHA-256 copy and the `maxNodes` sites are [I] and
