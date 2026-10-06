@@ -11,7 +11,7 @@ import pytest
 from conformance.soft_norms import generated
 from tests.test_soft_norms_lean import env, norm, ranks, should
 from ve.errors import UnsupportedProfile, VEError
-from ve import softnorms as soft
+from conformance import softnorms_legacy as soft
 from ve.softnorms import load_soft_document
 from conformance.softnorms_contract import INHERITED_PROFILES, REGISTRY, ROUTE_PROFILES, soft_source
 from ve.wire import loads_json
