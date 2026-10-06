@@ -54,249 +54,1245 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 19000,
-    "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
-    "files": [
-      {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
-       "ranges": [[1, 136]], "declarations": ["value", "parse", "caseTexts", "parseCases"]},
-      {"file": "lean/VE/Bridge.lean", "lines": 282, "sha256": "967a6ee399612d1b8b88c0f8d36c29a2d88ec7136c0c5f7bd9b42f312d01d318",
-       "ranges": [[14, 248]],
-       "declarations": ["fields", "decodeEnvironment", "decodeModelData", "decodeModel", "decodeFormula", "decodeDocument", "decodeCountermodel"]},
-      {"file": "lean/VE/CertificateWire.lean", "lines": 236, "sha256": "3d002c705023b1b79eaffee591ec648c1f7f8a8e5426a9cb1098c1e42c5efdf6",
-       "ranges": [[11, 163], [177, 187]],
-       "declarations": ["sha256", "canonical", "digest", "decodeTrace", "decodeCertificate", "decodeClosureTrace", "decodeClosureCertificate", "meaningId", "decodeQuery"]},
-      {"file": "lean/VE/Closure/Bridge.lean", "lines": 99, "sha256": "9711c23a178688eadab849f89912cc5f3f9dea032018d76c5ae870130cd54a1b",
-       "ranges": [[9, 66]],
-       "declarations": ["decodeEnvironment", "decodeKind", "decodeFormula", "decodeFormulas"]},
-      {"file": "lean/VE/Core/Bridge.lean", "lines": 159, "sha256": "6cd616c3c6634d99306573aee3d40a2f3851c17d4c65e9b8103b3c8895eb625b",
-       "ranges": [[10, 126]],
-       "declarations": ["decodeEnvironment", "decodeKind", "decodeFormula", "decodeFormulas"]},
-      {"file": "lean/VE/Core/Wire.lean", "lines": 166, "sha256": "280802e8f79ad3bdbe39484aaa0915a70938fb8f21d141f719a8946a9ed956ce",
-       "ranges": [[1, 166]],
-       "declarations": ["decodeModel", "decodeTrace", "decodeCertificate"]},
-      {"file": "lean/VE/Route/Wire.lean", "lines": 666, "sha256": "7a9f5a63f666e2ce0f14d35deeaa25b6af0558f0da958c16392b4159852d2e1a",
-       "ranges": [[1, 666]],
-       "declarations": ["decodeVocabulary", "decodeOrderVocabulary", "environmentId", "meaningId", "encodeFormula", "decodeModel", "decodeDataModel", "decodeFormulas", "decodeClosed", "bindingOk", "decodeOrderModel", "decodeNodes"]},
-      {"file": "lean/VE/Order/Wire.lean", "lines": 292, "sha256": "03f085f67a4450364a606663ea88fc126d7abf7e0d5d4a84348ccaf96208da47",
-       "ranges": [[24, 233], [247, 253]],
-       "declarations": ["decodeEnvironment", "decodeFormula", "decodeModel", "decodeTrace", "decodeCertificate", "environmentId", "meaningId"]},
-      {"file": "lean/VE/Norms/Wire.lean", "lines": 314, "sha256": "9e2638cc83529162bd8fff6c6927fa1a82e407149483e9978b14b735ff8b1d31",
-       "ranges": [[25, 313]],
-       "declarations": ["decodeRegulated", "decodeNormsEnvironment", "decodeNorm", "decodeSource", "regenerated"]},
-      {"file": "lean/VE/SpeechActs/Wire.lean", "lines": 993, "sha256": "fbe08d985f7fc507397eb1e74d7c9cc6ee8504dfc2e43f7cd77d78bf53f3e618",
-       "ranges": [[1, 993]], "declarations": ["parseScope", "decodeSpeechEnvironment", "decodeUnit", "decodeDocument"],
-       "reason": "speech scope, content, identity and document decoder; the full file is pinned conservatively"},
-      {"file": "lean/VE/Route/Gate.lean", "lines": 213, "sha256": "afccc527197416046f7e07fa9b2ae08d31bc717291724fe71e92a2d7de58a686",
-       "ranges": [[126, 163]], "declarations": ["profilesOf", "decodeEnvelope"]},
-      {"file": "lean/VE/Route/Admission.lean", "lines": 697, "sha256": "230006c26a0730425a818788e034ac564178dc1c9e309cf5d3a45d0a287e8c74",
-       "ranges": [[1, 697]],
-       "declarations": ["decodeKind", "parseLabelRaw", "parseLabel", "decodeUnit", "decodeLeaf", "decodeLemma", "decodeReadingSet", "decodeNode", "checkBindings", "decodeDoc"]},
-      {"file": "lean/VE/Norms/Replay.lean", "lines": 393, "sha256": "dfc40bd4fb007d06107833999c5c8413e623a6e096e4d7b93c4023e999f50eea",
-       "ranges": [[92, 140], [272, 291]],
-       "declarations": ["baseEnvironmentJson", "documentHash", "decodePackage", "witnessFrom"]},
-      {"file": "lean/VE/Norms/Flagged.lean", "lines": 389, "sha256": "2921520480a4afc21083c3d2fd9d991cc289bcbe3587b1f8190e9d20d370d58c",
-       "ranges": [[1, 389]], "declarations": ["regenerated", "replayEntailment", "decodePackage", "replayConflict", "witnessFrom", "replayWitness"],
-       "reason": "norms-elaborate, norms-certificate and norms-conflict with data@0 flags and Python's base Background; the full file is pinned conservatively"},
-      {"file": "lean/VE/Service/Graph.lean", "lines": 255, "sha256": "cd0523e5ad4d580bc7de3076996974e060eb106eda981fd84aa4dc0f0b6fc212",
-       "ranges": [[1, 255]], "declarations": ["decodeNode", "decodeEdge", "routeCtx", "legacyCtx", "compose", "graphCase"],
-       "reason": "graph-mode package decoder: claims, deductions, recomputed identities and certificate bindings (no refinement theorem; trusted, plan 2.1); the full file is pinned conservatively"},
-      {"file": "lean/VE/Service/Readings.lean", "lines": 215, "sha256": "357a25dda81bfbce40b2361f8f437a74231e199228e53130f099f543e35816ed",
-       "ranges": [[1, 215]], "declarations": ["decodeModel", "readingsCase"],
-       "reason": "readings-mode decoder: environment, fixed premises, reading sets, conclusion, verdict and evidence; the full file is pinned conservatively"},
-      {"file": "lean/VE/Service/Family.lean", "lines": 817, "sha256": "e1e00be4379626252de90286a857d800f98086bf48b734093ab6d0e8d0f546c0",
-       "ranges": [[1, 817]], "declarations": ["closureEnv", "coreEnv", "orderEnv", "decodeNode", "decodeEdge", "compose", "graphCase", "readings", "readingsCase"],
-       "reason": "graph- and readings-mode decoders on the closure, core and order families: family contexts (formula, certificate, Background, binding, model), claims, deductions, recomputed identities, reading sets and evidence; the full file is pinned conservatively"},
-      {"file": "lean/VE/Service/FamilyBundle.lean", "lines": 500, "sha256": "75698a329690b03fb5843bfa3deb4fa91ab92ab94f6055830ba6be48b6ab908a",
-       "ranges": [[1, 500]], "declarations": ["decodeLeaf", "decodeLemma", "decodeReadingSet", "run", "folCtx", "bundleCase"],
-       "reason": "bundle-mode decoder over the family contexts: lemmas, leaves, citations, reading sets and certificate bindings; the full file is pinned conservatively"},
-      {"file": "lean/VE/Service/FamilyNorms.lean", "lines": 244, "sha256": "f2e5ffd9ed57abbd61dd3cf67775195363271814e55f954c4323405209d4cc3c",
-       "ranges": [[1, 244]], "declarations": ["folView", "viewModel", "decodeFamily", "certificateCase", "targetPackage", "conflictCase", "runCase"],
-       "reason": "family-norms decoder: the FOL view of the environment and the witness model, the family certificates and their bindings to the submitted and base environments; the full file is pinned conservatively"},
-      {"file": "lean/VE/Definitions/Bundle.lean", "lines": 471, "sha256": "fc86d51a7f848ba1ad4ca613f73494ef09c1e908c81ef1e0429b73c7351accbb",
-       "ranges": [[1, 471]], "declarations": ["decodeLeaf", "decodeLemma"]},
-      {"file": "lean/VE/Norms/Admission.lean", "lines": 465, "sha256": "a57c5bf09a155631bfdfddcdf682eb45b16444ad9c18f530012ab60638c198df",
-       "ranges": [[22, 45]], "declarations": ["splitUnit", "splitDocument"],
-       "reason": "rewrites the norms document (drops norm content from the FOL copy) before decoding; admitDocument_spec takes splitDocument's result as given. The JSON reads in admitDocument itself are specified by SourceDecoded (admitDocument_spec); envelopeGate only rejects, through the pinned Gate.decodeEnvelope"},
-      {"file": "lean/VE/Alternatives/Wire.lean", "lines": 296, "sha256": "26827ec1010c948832f3bd73100c392ab467197aa08740694e6a8ee64582e026",
-       "ranges": [[1, 296]], "declarations": ["profileGate", "normsView", "decodeBlock", "decodeAltSource"],
-       "reason": "strict alternatives block, profile, source and regenerated premise decoder; the full file is pinned conservatively"},
-      {"file": "lean/VE/Alternatives/Replay.lean", "lines": 328, "sha256": "1b69bb125b3dffc0c53e6e97099a5fe72f1759d3c492757a37c8e61eb06b0f78",
-       "ranges": [[1, 328]], "declarations": ["documentHash", "decodePackage", "sourceOf", "decodeRows", "decodeScenario"],
-       "reason": "package bindings and scenario replay from JSON; the full file is pinned conservatively"},
-      {"file": "lean/VE/Alternatives/Admission.lean", "lines": 133, "sha256": "64cacbdf9eb6906fcf61897a6fdc0f1c3876737345c58132626ac2b3fb15d0a2",
-       "ranges": [[1, 133]], "declarations": ["admitDocument"],
-       "reason": "decodes the alternatives document graph and checks its bindings; the full file is pinned conservatively"},
-      {"file": "lean/VE/Route/Decode.lean", "lines": 282, "sha256": "7cd23701ca9597d409c929dc679826da8ee2e5c5f2d5330a17a219255f69a8d7",
-       "ranges": [[1, 282]], "declarations": ["modelLimits", "localIds"],
-       "reason": "W6 route model decoder and optimized validation; the full file is pinned conservatively"},
-      {"file": "lean/VE/Time/Document.lean", "lines": 613, "sha256": "4407e998d0073b5c1c7755d42d5ae6773e2d720c3c33cbfd7c436301e0bf407f",
-       "ranges": [[1, 613]], "declarations": ["decodeDocument", "checkGraph"],
-       "reason": "W6 quantity document and citation decoder; the full file is pinned conservatively"},
-      {"file": "lean/VE/Time/Wire.lean", "lines": 843, "sha256": "7f9c8b54dc820197ad0e59033763a063ed75ff728542fcf094dc93bc5059f925",
-       "ranges": [[1, 843]], "declarations": ["decodeEnvironment", "decodeQuantity", "runCase"],
-       "reason": "W6 unit declarations, quantity syntax and runner; the full file is pinned conservatively"},
-      {"file": "lean/VE/Attribution/Admission.lean", "lines": 327, "sha256": "357665dbfa39d9fb65f85e2829f593beb9f4451bd266fe1dd8924eda9d5af525",
-       "ranges": [[1, 327]], "declarations": ["admissionReports"],
-       "reason": "reports document admission and bindings; the full file is pinned conservatively"},
-      {"file": "lean/VE/Attribution/Content.lean", "lines": 726, "sha256": "42d7518d9a79a9c180ed9b463cad04d23c6ddc15cfdc8815e97dd9fe5791b26c",
-       "ranges": [[1, 726]], "declarations": ["canonicalObject", "documentObject", "documentId"],
-       "reason": "report content and document identity JSON; the full file is pinned conservatively"},
-      {"file": "lean/VE/Attribution/Wire.lean", "lines": 510, "sha256": "f8b2a8b0b38145d78d7ac90da84eb4c96aaef01fabaca781c14767739d715579",
-       "ranges": [[1, 510]], "declarations": ["decodeEnvironment", "decodeContent", "decodeUnit", "decodeDocument"],
-       "reason": "reports environment and document decoder; the full file is pinned conservatively"},
-      {"file": "lean/VE/SoftNorms/Phases.lean", "lines": 362, "sha256": "a19fb700f52c52564a1516fe74a1e6a0b06fa779ef4bd33470b1756b88c711d6",
-       "ranges": [[1, 362]], "declarations": ["envelope", "declarations", "ruleFields", "checkSource"],
-       "reason": "soft environment and rule phase decoder; the full file is pinned conservatively"},
-      {"file": "lean/VE/SoftNorms/Admission.lean", "lines": 332, "sha256": "65c5511e845dca854ad374851393cb945aad630981434c77e0bd1a0db2ae1a8c",
-       "ranges": [[1, 332]], "declarations": ["decodeSoftDoc", "admitDocument"],
-       "reason": "soft document admission decoder; the full file is pinned conservatively"},
-      {"file": "lean/VE/SoftNorms/Wire.lean", "lines": 462, "sha256": "641a13b4cd6917aad8444951d4ea4e89da0afd5ba10706a2bb0c62aa8caf0ce4",
-       "ranges": [[1, 462]], "declarations": ["decodeSoftNorm", "decodeSoftSource", "replaySoftConflict", "replaySoftWitness", "replaySoftEntailment"],
-       "reason": "soft wire and certificate decoder; the full file is pinned conservatively"},
-      {"file": "lean/VE/Risk/Wire.lean", "lines": 487, "sha256": "3c35ffb89361cf5bd6e6721289a0db0232ce20d4c523a7f31fff6bca67fcb90d",
-       "ranges": [[1, 487]],
-       "declarations": ["profileGate", "riskNormsView", "extended", "decodeUnits", "checkVocabularyUnits", "checkExtension", "decodeRiskBlock", "decodeRiskSource", "decodeEntry", "decodeSupplied", "decodeLog"],
-       "reason": "risk profile gate, strict risk block, W6 units, source, entry and log decoder; the full file is pinned conservatively"},
-      {"file": "lean/VE/Risk/Record.lean", "lines": 1266, "sha256": "9b9aa82f9a8dd88d66bccae8d8294683f4d25f8f209a52459e47468411313d7e",
-       "ranges": [[1, 1266]], "declarations": ["decodeRecord", "elabTerm", "elabCond", "decodeItem", "admitDecision"],
-       "reason": "decision record and cited-entry content decoder, condition elaboration and record admission; the full file is pinned conservatively"},
-      {"file": "lean/VE/Risk/Audit.lean", "lines": 190, "sha256": "62c518fee5d35cc985cf1293d4a5f365a5ea26baacf77b59a15211ee40e112e9",
-       "ranges": [[1, 190]], "declarations": ["snapshotOf", "liveEstimates", "allEstimatesRecord", "auditQ12", "auditQ3"],
-       "reason": "audit snapshot admission and the recorded-estimate replay read log entry contents; the full file is pinned conservatively"},
-      {"file": "lean/VE/Risk/Admission.lean", "lines": 128, "sha256": "f3927135556b65898bcfe94e147b29349a5eed1ccaf0ad600e212013336a2aca",
-       "ranges": [[1, 128]], "declarations": ["admitDocument"],
-       "reason": "decodes the risk document graph and checks its bindings; the full file is pinned conservatively"},
-      {"file": "lean/VE/Risk/Run.lean", "lines": 632, "sha256": "6d98b5de4c612db0dabb9349822e5d0cd0128128e4ec680ac4c13819a57606c8",
-       "ranges": [[1, 632]], "declarations": ["decodeRef", "queried", "riskBaseEnvironmentJson", "decodePackage", "decodeWitnessModel", "runCase"],
-       "reason": "risk package bindings, audit references, witness models and ve_risk_route dispatch; the full file is pinned conservatively"},
-      {"file": "lean/VE/Rights/Wire.lean", "lines": 698, "sha256": "fc25e57bed1adf2d72edcf7c0cd20409b427829d7eb5838028422151ca02e82f",
-       "ranges": [[1, 698]], "declarations": ["decodeRightsEnvironment", "decodeRightsSource", "replayRightsConflict", "replayRightsEntailment"],
-       "reason": "rights source, package and certificate decoder; the full file is pinned conservatively"},
-      {"file": "lean/VE/Rights/Admission.lean", "lines": 471, "sha256": "1b43543b7e666ae3874d748c88ce0a88665f996f5584888b71c94db76e527756",
-       "ranges": [[1, 471]], "declarations": ["splitUnit", "checkSourceCites", "validateCouplings", "decodeRightsDoc", "admitDocument"],
-       "reason": "rights W2 admission and coupling decoder; the full file is pinned conservatively"},
-      {"file": "lean/VE/NormDefaults/Wire.lean", "lines": 377, "sha256": "b823854df5755108e85cac7ce7dd6dab1a039730a991db2dafaddeb1bf53efc4",
-       "ranges": [[1, 377]], "declarations": ["placeholderJson", "checkAuthor", "decodeSourceU", "baseEnvironmentJsonU", "decodePackageU", "replayConflictU", "replayEntailmentU"],
-       "reason": "norm-defaults@0 source, package and certificate decoder; the full file is pinned conservatively"},
-      {"file": "lean/VE/NormDefaults/Replay.lean", "lines": 371, "sha256": "46be075c87933872ce38a1f79fb9d80ab1bb9a871aed5175847de574f0be12f1",
-       "ranges": [[1, 371]], "declarations": ["witnessFromU", "replayWitnessU", "decodeFilling", "replayStatus", "replayGaps", "replayReached"],
-       "reason": "norm-defaults@0 witness, status and gap decoder; the full file is pinned conservatively"},
-      {"file": "lean/VE/NormDefaults/Admission.lean", "lines": 350, "sha256": "b60054268019832d7de8374fb800954933526f31d93ad86a42958b72da4895a5",
-       "ranges": [[1, 350]], "declarations": ["fillJson", "decodeFilledDoc", "admitNodes", "admitDocument"],
-       "reason": "norm-defaults@0 W2 admission decoder over E‴; the full file is pinned conservatively"},
-      {"file": "lean/VE/Readings/Wire.lean", "lines": 988, "sha256": "311cfeb723160a8a2298b5133a4c43194a5ee7f861e403083eac39d015721d2a",
-       "ranges": [[1, 988]], "declarations": ["placeholderFrame", "decodeEnvironment", "decodeContent", "decodeReading", "decodeSet", "decodeDocument", "decodeKey", "decodeTables", "decodeProbe", "decodeSituation", "admitReadingsSpec", "admitReadings", "replayPair", "replaySeparate"],
-       "reason": "readings@1 S1 decoder: environment on the three chains, W2 units and active reading sets, situations, keys and probes, and (DRI ruling 2 of 2026-10-03) the chain text that reports `ResourceLimit: decision predicate <n>` first, and (DRI ruling 4) the frame of a norm-defaults@0 environment read with each `unspecified` completion as the placeholder `deny`; the full file is pinned conservatively"},
-      {"file": "lean/VE/Readings/SupWire.lean", "lines": 378, "sha256": "f1efaaba3d67d4cdba675a9e40abe12e461124f324c3254ca6ab531bf8885937",
-       "ranges": [[1, 378]], "declarations": ["decodeCouplings", "decodeNarrowings", "admitS2", "supReplayOf", "replaySup", "decodeChoice", "decodeSupModel", "decodeAssumed", "decodeShared", "decodeConflictCerts", "replayCertificate", "replayModel"],
-       "reason": "readings@1 S2a decoder: couplings and narrowings with W2's checks and texts, the superposed admission, choices, models over sup D's base vocabulary, and the certificate and model replays of readings_wire_all_sound and readings_wire_model_sound, and the superposed admission's refusals before any verdict (ReadingsUnsatisfiable, and the soft check of every compatible choice's document of DRI ruling 5: readings_wire_satisfiable, readings_wire_choice_wellFormed); the full file is pinned conservatively"},
-      {"file": "lean/VE/EnglishGrammar/Encode.lean", "lines": 297, "sha256": "92446de419ef1e59c22dc2c9a773df524d7f2b8a411f24ad0ce39f564bdff419",
-       "ranges": [[1, 297]], "declarations": ["typedCheck", "typedDocument", "optString", "optFields", "Env.decode"],
-       "reason": "english-lean S2 (docs/spec/english-lean-s2.md 2.3, 2.10): Env.decode reads the environment and an English vocabulary overlay into the reader's Env; typedDocument decides check_document's verdict through the standalone typing service's decoders; S3 extends the same trusted decoder with profile symbols, forms and typing views (docs/spec/english-lean-s3.md 2.3); the full file is pinned conservatively"},
-      {"file": "lean/VE/EnglishGrammar/Run.lean", "lines": 393, "sha256": "1e5db6b062d6366ffcf70600e1f676a693b1974c539669d72eda810cb3d31373",
-       "ranges": [[1, 393]], "declarations": ["pairs", "triples", "decodeLexicon", "blockRouteView", "validateDeclarations", "environmentId", "grammarId", "decodeCase", "readCase", "grammarCase"],
-       "reason": "english-lean S2.4 (docs/spec/english-lean-s2.md 2.10, 4.3, 4.4): ve_english_route decodes the case (environment through Env.decode, overlay, the ve.english-lexicon@1 lexicon, which must name the environment), computes the six identities and writes the english.read and english.grammar answers; shadow only while english.admission keeps authority python; S3 validates alternatives and risk profile environments at the reader boundary (docs/spec/english-lean-s3.md 2.3); the full file is pinned conservatively"}
-    ],
-    "other_json": {
-      "lean/EnglishLeanBenchMain.lean": "measurement only: the ve_english_lean_bench executable of the english-lean G1a measurement and the lexer differential reads grammars, sentences and sources from a JSON file and prints JSON rows; no admission path, service mode or record reads it",
-      "lean/VE/Discourse/Run.lean": "lean:runner-glue: ve_discourse_route case dispatch and response rows",
-      "lean/VE/Discourse/Wire.lean": "lean:discourse-wire: the ve.discourse@1 manifest decoder and discourse report rows; decoded values are validated, never trusted (discourse_wire_binding, discourse_report_sound)",
-      "lean/VE/Discourse/Admission.lean": "lean:discourse-wire: the profile adapter strips ve.discourse@1 from the environment JSON before every frozen call (setObjVal!, profile_adapter_base)",
-      "lean/VE/Discourse/Loader.lean": "lean:discourse-wire: the ve-document@2 loader reads the front matter and embedded or imported documents' metadata fields",
-      "lean/VE/Discourse/Theorems.lean": "lean:discourse-wire: statements about the discourse wire decoder (getObjValD_ok) and the profile adapter; no runtime JSON handling",
-      "lean/VE/Audit.lean": "audit manifest only: #print axioms of theorem names containing a JSON accessor name (VE.Discourse.getObjValD_ok); no JSON handling",
-      "lean/VE/Norms/FlaggedSpec.lean": "statements about the norms conflict replay and Norms.Run.runCase answers (getObjValD of the case and the verdict field) and decoder rejection lemmas; no runtime JSON handling",
-      "lean/VE/Route/WireSound.lean": "statements about the route runners' answers (getObjValD of the case and the valid, refutes and values fields), the family decoders as the runners call them, and decoder rejection lemmas; no runtime JSON handling",
-      "lean/VE/Route/RunSound.lean": "statements about Route.Run.runCase answers (getObjValD of the case's environment and answer fields); no runtime JSON handling",
-      "lean/VE/Norms/RunSound.lean": "statements about Norms.Run.runCase norms-certificate answers (getObjValD of the case and the valid field); no runtime JSON handling",
-      "lean/Main.lean": "lean:runner-glue: argument dispatch and result arrays of ve_conformance",
-      "lean/VE/Route/Run.lean": "lean:runner-glue: route case dispatch and error rows (route_gate pins the envelope check)",
-      "lean/VE/SoftNorms/Run.lean": "lean:runner-glue: ve_soft_norms_route case dispatch and response rows",
-      "lean/VE/Rights/Run.lean": "lean:runner-glue: ve_rights_route case dispatch and response rows",
-      "lean/VE/Readings/Run.lean": "lean:runner-glue: ve_readings_route case dispatch and response rows; readings-validate and readings-separate rows regenerated from the pinned Wire decoder; the S2a kinds dispatched to SupRun",
-      "lean/VE/Readings/SupRun.lean": "lean:runner-glue: ve_readings_route S2a case kinds; case fields are read through the pinned SupWire and Wire decoders, and the response rows are built from Lean checks (supCertificateCheck, supModelCheck, slotConflictFreeCheck, deadCheck, unsatCheck); readings-choice runs the lower route on the regenerated choice document with its regenerated assertions, accepts a chain certificate only when the lower conflict kind finds the case's conflict packages CONFLICT-FREE on the same document, and choice-model reads its model through the chain decoders (decodeModel, decodeModelR, decodeModelData)",
-      "lean/VE/Readings/Route.lean": "lean:runner-glue: the readings@1 route of 1.1 and the regenerated S2a elaboration rows (elaborateFields); builds JSON, reads none",
-      "lean/VE/Norms/Run.lean": "lean:runner-glue: ve_norms_route case dispatch and error rows",
-      "lean/VE/NormDefaults/Run.lean": "lean:runner-glue: ve_norm_defaults_route case dispatch and response rows",
-      "lean/VE/SpeechActs/Run.lean": "lean:runner-glue: ve_speech_acts_route case dispatch, regenerated model tables and response rows; separate opt-in profile slice",
-      "lean/VE/Alternatives/Run.lean": "lean:runner-glue: ve_alternatives_route case dispatch and response rows",
-      "lean/VE/Attribution/Run.lean": "lean:runner-glue: ve_reports_route case dispatch and response rows",
-      "lean/VE/Order/ProfileGate.lean": "lean:runner-glue: the default-mode evaluation dispatch (runEvaluationCaseReported_eq)",
-      "lean/VE/Order/Surface.lean": "lean:order-surface-parser: order text parser and its case wrapper",
-      "lean/VE/English/Run.lean": "harness only (conformance/english_lean.py); no executable and no theorem depends on it",
-      "lean/VE/Order/Gate.lean": "builds fixed envelopes for the profile-gate theorems; decodes nothing",
-      "lean/VE/Order/WireGate.lean": "JSON access only inside theorem statements (order route gate)",
-      "lean/VE/EvaluationCounts.lean": "JSON access only inside theorem statements (evaluation answers count the submitted formulas)",
-      "lean/VE/Order/TableauChecks.lean": "executable regressions (#eval checks); not on any runner path",
-      "lean/VE/Route/Checks.lean": "executable regressions (#eval checks); not on any runner path",
-      "lean/ResponseDecode.lean": "test-only service response oracle; no executable production path or theorem imports it",
-      "lean/VE/EnglishGrammar/ReadExamples.lean": "fixtures only: #guard checks of docs/spec/english-lean-s2.md section 8 build environment JSON for Env.decode; no runner path",
-      "lean/VE/EnglishGrammar/ProfileExamples.lean": "fixtures only: S3 profile environment and reader #guard checks; no runner path",
-      "lean/ResponseShape.lean": "the service's response shapes (lib ResponseShape, outside the trusted VE tree): renders the client's schema files and checks responses for ve_response_decode; no runner, executable production path or theorem imports it",
-      "lean/ResponseShape/Schemas.lean": "collects the response shapes and renders the client's schema files; test tooling beside lean/ResponseShape.lean, not on any runner path",
-      "lean/ResponseShape/Schemas/Norms.lean": "the norms mode's response shape; reads the case environment only to call Norms.Plain.layered beside its path selector (test tooling, not on any runner path)",
-      "lean/ResponseShape/Skeleton.lean": "the skeletons of the response shapes and Fits, the field-level conformance the encoder theorems prove; JSON only in lemma statements about Json.mkObj and setObjVal! (theorems, not on any runner path)",
-      "lean/ResponseShape/FitsTactic.lean": "tactics that build the encoder theorems' proofs, reading Json.mkObj and setObjVal! terms of goals (proof automation, checked by the kernel; not on any runner path)",
-      "lean/ResponseShape/Audit.lean": "the dependency audit of the response-shape theorems (#print axioms only); JSON only in theorem names",
-      "lean/ResponseShape/Encoders/SoftNorms.lean": "theorems that the soft-norms mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
-      "lean/ResponseShape/Encoders/Reports.lean": "theorems that the reports mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
-      "lean/ResponseShape/Encoders/ReadingsRoute.lean": "theorems that the readings-route mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
-      "lean/ResponseShape/Encoders/English.lean": "theorems that the english and diagnose modes' rows fit their shapes; JSON access only in statements and proofs (not on any runner path)",
-      "lean/ResponseShape/Encoders/Envelope.lean": "theorems that the service's response lines fit envelope.json; JSON access only in statements and proofs (not on any runner path)",
-      "lean/ResponseShape/Encoders/Alternatives.lean": "theorems that the alternatives mode's rows fit its shape, with the decoded block's taken tied to the case (getObjVal? in statements and proofs only; not on any runner path)",
-      "lean/ResponseShape/Encoders/Quantity.lean": "theorems that the quantity mode's rows fit its shape, with value and evaluations tied to the case's model (getObjVal? in statements and proofs only; not on any runner path)",
-      "lean/VE/Risk/Eval.lean": "test-only differential harness (risk.md 8.3; service mode risk-eval): decodes its case envelope, then calls the pinned risk decoders; no production path or theorem uses it",
-      "lean/VE/Service/EnglishRun.lean": "stage-1 service copy of the English runner; additive dispatch, not yet on an assurance operation path",
-      "lean/VE/Service/Protocol.lean": "the service request decoder and dispatcher: each mode is its runner's per-case function, pinned by runMode_* (the statement-layer route modes since lean-first batch 1)",
-      "lean/VE/Service/Diagnose.lean": "diagnostic only: no verdict depends on it. The service mode diagnose: reads a case's unit and inner case and returns the ve_diagnose row for them",
-      "lean/VE/Route/Steps.lean": "reads only a certificate case's optional max_steps field (the replay step cap, at most 1,000,000)",
-      "lean/VE/Core/Layers.lean": "stage-2 core-family glue: decodes definitions and data flags with the pinned FOL route decoders over the FOL projection, adds the computed defined tables to the model and delegates background, evaluate and countermodel cases to the unchanged core route",
-      "lean/VE/Norms/Plain.lean":"stage-2 norms-route glue: validates the regulated extension on any family, removes it and delegates background, evaluate and countermodel cases to the unchanged route, adding profile premises (embedded on the closure, core and order families) and the profile model check",
-      "lean/VE/Service/TypingDiagnostic.lean": "stage-2 diagnostic glue: names a typing rejection the proved decoder already made with Python's code and message; never accepts",
-      "lean/VE/Service/Standalone.lean": "stage-2 service modes environment, model, check, identity and parse: wrap the pinned family decoders and surface parsers and recompute identities; reached from the Python adapters in ve/backends (validation, typing, parse), which the manifest's one-shot bindings do not yet describe",
-      "lean/VE/WireContract/Engine.lean": "diagnostic only: no verdict depends on it. The wire contract engine reads the submitted case JSON to choose the first failing check of a rejection that the legacy validator already decided (docs/spec/wire-contract.md 2.8, 7.2); imported only by VE.WireContract.*, DiagnoseMain and VE.Audit (tools/check_lean_imports.py)",
-      "lean/VE/WireContract/Hooks/Corpus.lean": "diagnostic only: no verdict depends on it. Hand-written hooks and view of the engine corpus contracts (docs/spec/wire-contract.md 8.1)",
-      "lean/VE/WireContract/Hooks/SoftNorms.lean": "diagnostic only: no verdict depends on it. Hooks, classifiers and the soft_source adapter of the pilot contract soft-norms@0 (docs/spec/wire-contract.md section 6); they call SoftNorms.Phases, Wire.primeVocabulary, validateSoft and checkW1 read-only and only read their results",
-      "lean/VE/WireContract/Hooks/Norms.lean": "diagnostic only: no verdict depends on it. Hooks, classifiers and the norm_source adapter of the contract norms@0 (docs/spec/wire-contract-s5.md 2.3, 2.5); they call Norms.Wire.decodeNormsEnvironment, the route's environment decoder, Route.dependencyOrder and Norms.height read-only, never decodeSource, and hold the diagnostic syntax and typing walks of 2.5",
-      "lean/VE/WireContract/Diagnose.lean": "diagnostic only: no verdict depends on it. The ve_diagnose runner: case dispatch through VE.JsonInput.parseCases, the contract registry and response rows (docs/spec/wire-contract.md 4.2)"
+  "total_lines": 21446,
+  "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
+  "files": [
+    {
+      "file": "lean/VE/Alternatives/Admission.lean",
+      "lines": 133,
+      "sha256": "64cacbdf9eb6906fcf61897a6fdc0f1c3876737345c58132626ac2b3fb15d0a2",
+      "ranges": [
+        [
+          1,
+          133
+        ]
+      ],
+      "declarations": [
+        "admitDocument"
+      ],
+      "reason": "decodes the alternatives document graph and checks its bindings; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Alternatives/Replay.lean",
+      "lines": 328,
+      "sha256": "1b69bb125b3dffc0c53e6e97099a5fe72f1759d3c492757a37c8e61eb06b0f78",
+      "ranges": [
+        [
+          1,
+          328
+        ]
+      ],
+      "declarations": [
+        "documentHash",
+        "decodePackage",
+        "sourceOf",
+        "decodeRows",
+        "decodeScenario"
+      ],
+      "reason": "package bindings and scenario replay from JSON; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Alternatives/Wire.lean",
+      "lines": 296,
+      "sha256": "26827ec1010c948832f3bd73100c392ab467197aa08740694e6a8ee64582e026",
+      "ranges": [
+        [
+          1,
+          296
+        ]
+      ],
+      "declarations": [
+        "profileGate",
+        "normsView",
+        "decodeBlock",
+        "decodeAltSource"
+      ],
+      "reason": "strict alternatives block, profile, source and regenerated premise decoder; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Attribution/Admission.lean",
+      "lines": 327,
+      "sha256": "357665dbfa39d9fb65f85e2829f593beb9f4451bd266fe1dd8924eda9d5af525",
+      "ranges": [
+        [
+          1,
+          327
+        ]
+      ],
+      "declarations": [
+        "admissionReports"
+      ],
+      "reason": "reports document admission and bindings; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Attribution/Content.lean",
+      "lines": 726,
+      "sha256": "42d7518d9a79a9c180ed9b463cad04d23c6ddc15cfdc8815e97dd9fe5791b26c",
+      "ranges": [
+        [
+          1,
+          726
+        ]
+      ],
+      "declarations": [
+        "canonicalObject",
+        "documentObject",
+        "documentId"
+      ],
+      "reason": "report content and document identity JSON; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Attribution/Wire.lean",
+      "lines": 510,
+      "sha256": "f8b2a8b0b38145d78d7ac90da84eb4c96aaef01fabaca781c14767739d715579",
+      "ranges": [
+        [
+          1,
+          510
+        ]
+      ],
+      "declarations": [
+        "decodeEnvironment",
+        "decodeContent",
+        "decodeUnit",
+        "decodeDocument"
+      ],
+      "reason": "reports environment and document decoder; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Bridge.lean",
+      "lines": 282,
+      "sha256": "967a6ee399612d1b8b88c0f8d36c29a2d88ec7136c0c5f7bd9b42f312d01d318",
+      "ranges": [
+        [
+          14,
+          248
+        ]
+      ],
+      "declarations": [
+        "fields",
+        "decodeEnvironment",
+        "decodeModelData",
+        "decodeModel",
+        "decodeFormula",
+        "decodeDocument",
+        "decodeCountermodel"
+      ]
+    },
+    {
+      "file": "lean/VE/CertificateWire.lean",
+      "lines": 236,
+      "sha256": "3d002c705023b1b79eaffee591ec648c1f7f8a8e5426a9cb1098c1e42c5efdf6",
+      "ranges": [
+        [
+          11,
+          163
+        ],
+        [
+          177,
+          187
+        ]
+      ],
+      "declarations": [
+        "sha256",
+        "canonical",
+        "digest",
+        "decodeTrace",
+        "decodeCertificate",
+        "decodeClosureTrace",
+        "decodeClosureCertificate",
+        "meaningId",
+        "decodeQuery"
+      ]
+    },
+    {
+      "file": "lean/VE/Closure/Bridge.lean",
+      "lines": 99,
+      "sha256": "9711c23a178688eadab849f89912cc5f3f9dea032018d76c5ae870130cd54a1b",
+      "ranges": [
+        [
+          9,
+          66
+        ]
+      ],
+      "declarations": [
+        "decodeEnvironment",
+        "decodeKind",
+        "decodeFormula",
+        "decodeFormulas"
+      ]
+    },
+    {
+      "file": "lean/VE/Core/Bridge.lean",
+      "lines": 159,
+      "sha256": "6cd616c3c6634d99306573aee3d40a2f3851c17d4c65e9b8103b3c8895eb625b",
+      "ranges": [
+        [
+          10,
+          126
+        ]
+      ],
+      "declarations": [
+        "decodeEnvironment",
+        "decodeKind",
+        "decodeFormula",
+        "decodeFormulas"
+      ]
+    },
+    {
+      "file": "lean/VE/Core/Wire.lean",
+      "lines": 166,
+      "sha256": "280802e8f79ad3bdbe39484aaa0915a70938fb8f21d141f719a8946a9ed956ce",
+      "ranges": [
+        [
+          1,
+          166
+        ]
+      ],
+      "declarations": [
+        "decodeModel",
+        "decodeTrace",
+        "decodeCertificate"
+      ]
+    },
+    {
+      "file": "lean/VE/Definitions/Bundle.lean",
+      "lines": 471,
+      "sha256": "fc86d51a7f848ba1ad4ca613f73494ef09c1e908c81ef1e0429b73c7351accbb",
+      "ranges": [
+        [
+          1,
+          471
+        ]
+      ],
+      "declarations": [
+        "decodeLeaf",
+        "decodeLemma"
+      ]
+    },
+    {
+      "file": "lean/VE/EnglishGrammar/Encode.lean",
+      "lines": 297,
+      "sha256": "92446de419ef1e59c22dc2c9a773df524d7f2b8a411f24ad0ce39f564bdff419",
+      "ranges": [
+        [
+          1,
+          297
+        ]
+      ],
+      "declarations": [
+        "typedCheck",
+        "typedDocument",
+        "optString",
+        "optFields",
+        "Env.decode"
+      ],
+      "reason": "english-lean S2 (docs/spec/english-lean-s2.md 2.3, 2.10): Env.decode reads the environment and an English vocabulary overlay into the reader's Env; typedDocument decides check_document's verdict through the standalone typing service's decoders; S3 extends the same trusted decoder with profile symbols, forms and typing views (docs/spec/english-lean-s3.md 2.3); the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/EnglishGrammar/Run.lean",
+      "lines": 393,
+      "sha256": "1e5db6b062d6366ffcf70600e1f676a693b1974c539669d72eda810cb3d31373",
+      "ranges": [
+        [
+          1,
+          393
+        ]
+      ],
+      "declarations": [
+        "pairs",
+        "triples",
+        "decodeLexicon",
+        "blockRouteView",
+        "validateDeclarations",
+        "environmentId",
+        "grammarId",
+        "decodeCase",
+        "readCase",
+        "grammarCase"
+      ],
+      "reason": "english-lean S2.4 (docs/spec/english-lean-s2.md 2.10, 4.3, 4.4): ve_english_route decodes the case (environment through Env.decode, overlay, the ve.english-lexicon@1 lexicon, which must name the environment), computes the six identities and writes the english.read and english.grammar answers; shadow only while english.admission keeps authority python; S3 validates alternatives and risk profile environments at the reader boundary (docs/spec/english-lean-s3.md 2.3); the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Json.lean",
+      "lines": 136,
+      "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
+      "ranges": [
+        [
+          1,
+          136
+        ]
+      ],
+      "declarations": [
+        "value",
+        "parse",
+        "caseTexts",
+        "parseCases"
+      ]
+    },
+    {
+      "file": "lean/VE/NormDefaults/Admission.lean",
+      "lines": 350,
+      "sha256": "b60054268019832d7de8374fb800954933526f31d93ad86a42958b72da4895a5",
+      "ranges": [
+        [
+          1,
+          350
+        ]
+      ],
+      "declarations": [
+        "fillJson",
+        "decodeFilledDoc",
+        "admitNodes",
+        "admitDocument"
+      ],
+      "reason": "norm-defaults@0 W2 admission decoder over E\u2034; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/NormDefaults/Layered.lean",
+      "lines": 426,
+      "sha256": "dc7777651caf94d8401a11394e79bd0fc75882f0f8371dc8378558a1a084f67a",
+      "ranges": [
+        [
+          1,
+          426
+        ]
+      ],
+      "declarations": [
+        "decodeSoftU",
+        "decodeRightsU",
+        "decodeLayered",
+        "decodePackageX",
+        "situationX",
+        "tupleOf",
+        "filledX",
+        "witnessConflictX",
+        "replayStatusX",
+        "suppliedX",
+        "neverX",
+        "runLayered"
+      ],
+      "reason": "norm-defaults@0 soft and rights branch decoder: the placeholder source through the soft or rights decoder, packages bound to the source and the layered base background, base situations with a separate filling, statuses and supplied witnesses; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/NormDefaults/Replay.lean",
+      "lines": 391,
+      "sha256": "4242c79ff826cc94cee7f211f1a3f7d86e44537bb84702a3d7d570d4f70caad3",
+      "ranges": [
+        [
+          1,
+          391
+        ]
+      ],
+      "declarations": [
+        "witnessFromU",
+        "replayWitnessU",
+        "decodeFilling",
+        "replayStatus",
+        "replayGaps",
+        "reachedFromU",
+        "replayReached"
+      ],
+      "reason": "norm-defaults@0 witness, status and gap decoder; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/NormDefaults/Report.lean",
+      "lines": 475,
+      "sha256": "f00d2b66e18234792263f6bac27b7bc4629df397f15fffecaafb978828d02b10",
+      "ranges": [
+        [
+          1,
+          475
+        ]
+      ],
+      "declarations": [
+        "groundingCites",
+        "validateCompletions",
+        "reportWith",
+        "situationFrom",
+        "suppliedWitness",
+        "neverReached",
+        "reportFrom"
+      ],
+      "reason": "norm-defaults@0 report decoder: the completions block, the base situation, supplied filled witnesses and reached packages; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/NormDefaults/Wire.lean",
+      "lines": 383,
+      "sha256": "c59e1151313d522e071f624b428f302db515af5c9cb30e86a632a6e05c81a536",
+      "ranges": [
+        [
+          1,
+          383
+        ]
+      ],
+      "declarations": [
+        "placeholderJson",
+        "checkAuthorN",
+        "decodeSourceU",
+        "baseEnvironmentJsonU",
+        "decodePackageU",
+        "replayConflictU",
+        "replayEntailmentU"
+      ],
+      "reason": "norm-defaults@0 source, package and certificate decoder; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Norms/Admission.lean",
+      "lines": 465,
+      "sha256": "a57c5bf09a155631bfdfddcdf682eb45b16444ad9c18f530012ab60638c198df",
+      "ranges": [
+        [
+          22,
+          45
+        ]
+      ],
+      "declarations": [
+        "splitUnit",
+        "splitDocument"
+      ],
+      "reason": "rewrites the norms document (drops norm content from the FOL copy) before decoding; admitDocument_spec takes splitDocument's result as given. The JSON reads in admitDocument itself are specified by SourceDecoded (admitDocument_spec); envelopeGate only rejects, through the pinned Gate.decodeEnvelope"
+    },
+    {
+      "file": "lean/VE/Norms/Flagged.lean",
+      "lines": 389,
+      "sha256": "2921520480a4afc21083c3d2fd9d991cc289bcbe3587b1f8190e9d20d370d58c",
+      "ranges": [
+        [
+          1,
+          389
+        ]
+      ],
+      "declarations": [
+        "regenerated",
+        "replayEntailment",
+        "decodePackage",
+        "replayConflict",
+        "witnessFrom",
+        "replayWitness"
+      ],
+      "reason": "norms-elaborate, norms-certificate and norms-conflict with data@0 flags and Python's base Background; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Norms/Replay.lean",
+      "lines": 393,
+      "sha256": "dfc40bd4fb007d06107833999c5c8413e623a6e096e4d7b93c4023e999f50eea",
+      "ranges": [
+        [
+          92,
+          140
+        ],
+        [
+          272,
+          291
+        ]
+      ],
+      "declarations": [
+        "baseEnvironmentJson",
+        "documentHash",
+        "decodePackage",
+        "witnessFrom"
+      ]
+    },
+    {
+      "file": "lean/VE/Norms/Wire.lean",
+      "lines": 314,
+      "sha256": "9e2638cc83529162bd8fff6c6927fa1a82e407149483e9978b14b735ff8b1d31",
+      "ranges": [
+        [
+          25,
+          313
+        ]
+      ],
+      "declarations": [
+        "decodeRegulated",
+        "decodeNormsEnvironment",
+        "decodeNorm",
+        "decodeSource",
+        "regenerated"
+      ]
+    },
+    {
+      "file": "lean/VE/Order/Wire.lean",
+      "lines": 292,
+      "sha256": "03f085f67a4450364a606663ea88fc126d7abf7e0d5d4a84348ccaf96208da47",
+      "ranges": [
+        [
+          24,
+          233
+        ],
+        [
+          247,
+          253
+        ]
+      ],
+      "declarations": [
+        "decodeEnvironment",
+        "decodeFormula",
+        "decodeModel",
+        "decodeTrace",
+        "decodeCertificate",
+        "environmentId",
+        "meaningId"
+      ]
+    },
+    {
+      "file": "lean/VE/Readings/SupWire.lean",
+      "lines": 378,
+      "sha256": "f1efaaba3d67d4cdba675a9e40abe12e461124f324c3254ca6ab531bf8885937",
+      "ranges": [
+        [
+          1,
+          378
+        ]
+      ],
+      "declarations": [
+        "decodeCouplings",
+        "decodeNarrowings",
+        "admitS2",
+        "supReplayOf",
+        "replaySup",
+        "decodeChoice",
+        "decodeSupModel",
+        "decodeAssumed",
+        "decodeShared",
+        "decodeConflictCerts",
+        "replayCertificate",
+        "replayModel"
+      ],
+      "reason": "readings@1 S2a decoder: couplings and narrowings with W2's checks and texts, the superposed admission, choices, models over sup D's base vocabulary, and the certificate and model replays of readings_wire_all_sound and readings_wire_model_sound, and the superposed admission's refusals before any verdict (ReadingsUnsatisfiable, and the soft check of every compatible choice's document of DRI ruling 5: readings_wire_satisfiable, readings_wire_choice_wellFormed); the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Readings/Wire.lean",
+      "lines": 988,
+      "sha256": "311cfeb723160a8a2298b5133a4c43194a5ee7f861e403083eac39d015721d2a",
+      "ranges": [
+        [
+          1,
+          988
+        ]
+      ],
+      "declarations": [
+        "placeholderFrame",
+        "decodeEnvironment",
+        "decodeContent",
+        "decodeReading",
+        "decodeSet",
+        "decodeDocument",
+        "decodeKey",
+        "decodeTables",
+        "decodeProbe",
+        "decodeSituation",
+        "admitReadingsSpec",
+        "admitReadings",
+        "replayPair",
+        "replaySeparate"
+      ],
+      "reason": "readings@1 S1 decoder: environment on the three chains, W2 units and active reading sets, situations, keys and probes, and (DRI ruling 2 of 2026-10-03) the chain text that reports `ResourceLimit: decision predicate <n>` first, and (DRI ruling 4) the frame of a norm-defaults@0 environment read with each `unspecified` completion as the placeholder `deny`; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Rights/Admission.lean",
+      "lines": 471,
+      "sha256": "1b43543b7e666ae3874d748c88ce0a88665f996f5584888b71c94db76e527756",
+      "ranges": [
+        [
+          1,
+          471
+        ]
+      ],
+      "declarations": [
+        "splitUnit",
+        "checkSourceCites",
+        "validateCouplings",
+        "decodeRightsDoc",
+        "admitDocument"
+      ],
+      "reason": "rights W2 admission and coupling decoder; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Rights/Wire.lean",
+      "lines": 698,
+      "sha256": "fc25e57bed1adf2d72edcf7c0cd20409b427829d7eb5838028422151ca02e82f",
+      "ranges": [
+        [
+          1,
+          698
+        ]
+      ],
+      "declarations": [
+        "decodeRightsEnvironment",
+        "decodeRightsSource",
+        "replayRightsConflict",
+        "replayRightsEntailment"
+      ],
+      "reason": "rights source, package and certificate decoder; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Risk/Admission.lean",
+      "lines": 128,
+      "sha256": "f3927135556b65898bcfe94e147b29349a5eed1ccaf0ad600e212013336a2aca",
+      "ranges": [
+        [
+          1,
+          128
+        ]
+      ],
+      "declarations": [
+        "admitDocument"
+      ],
+      "reason": "decodes the risk document graph and checks its bindings; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Risk/Audit.lean",
+      "lines": 190,
+      "sha256": "62c518fee5d35cc985cf1293d4a5f365a5ea26baacf77b59a15211ee40e112e9",
+      "ranges": [
+        [
+          1,
+          190
+        ]
+      ],
+      "declarations": [
+        "snapshotOf",
+        "liveEstimates",
+        "allEstimatesRecord",
+        "auditQ12",
+        "auditQ3"
+      ],
+      "reason": "audit snapshot admission and the recorded-estimate replay read log entry contents; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Risk/Record.lean",
+      "lines": 1266,
+      "sha256": "9b9aa82f9a8dd88d66bccae8d8294683f4d25f8f209a52459e47468411313d7e",
+      "ranges": [
+        [
+          1,
+          1266
+        ]
+      ],
+      "declarations": [
+        "decodeRecord",
+        "elabTerm",
+        "elabCond",
+        "decodeItem",
+        "admitDecision"
+      ],
+      "reason": "decision record and cited-entry content decoder, condition elaboration and record admission; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Risk/Run.lean",
+      "lines": 632,
+      "sha256": "6d98b5de4c612db0dabb9349822e5d0cd0128128e4ec680ac4c13819a57606c8",
+      "ranges": [
+        [
+          1,
+          632
+        ]
+      ],
+      "declarations": [
+        "decodeRef",
+        "queried",
+        "riskBaseEnvironmentJson",
+        "decodePackage",
+        "decodeWitnessModel",
+        "runCase"
+      ],
+      "reason": "risk package bindings, audit references, witness models and ve_risk_route dispatch; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Risk/Wire.lean",
+      "lines": 487,
+      "sha256": "3c35ffb89361cf5bd6e6721289a0db0232ce20d4c523a7f31fff6bca67fcb90d",
+      "ranges": [
+        [
+          1,
+          487
+        ]
+      ],
+      "declarations": [
+        "profileGate",
+        "riskNormsView",
+        "extended",
+        "decodeUnits",
+        "checkVocabularyUnits",
+        "checkExtension",
+        "decodeRiskBlock",
+        "decodeRiskSource",
+        "decodeEntry",
+        "decodeSupplied",
+        "decodeLog"
+      ],
+      "reason": "risk profile gate, strict risk block, W6 units, source, entry and log decoder; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Route/Admission.lean",
+      "lines": 697,
+      "sha256": "230006c26a0730425a818788e034ac564178dc1c9e309cf5d3a45d0a287e8c74",
+      "ranges": [
+        [
+          1,
+          697
+        ]
+      ],
+      "declarations": [
+        "decodeKind",
+        "parseLabelRaw",
+        "parseLabel",
+        "decodeUnit",
+        "decodeLeaf",
+        "decodeLemma",
+        "decodeReadingSet",
+        "decodeNode",
+        "checkBindings",
+        "decodeDoc"
+      ]
+    },
+    {
+      "file": "lean/VE/Route/Decode.lean",
+      "lines": 282,
+      "sha256": "7cd23701ca9597d409c929dc679826da8ee2e5c5f2d5330a17a219255f69a8d7",
+      "ranges": [
+        [
+          1,
+          282
+        ]
+      ],
+      "declarations": [
+        "modelLimits",
+        "localIds"
+      ],
+      "reason": "W6 route model decoder and optimized validation; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Route/Gate.lean",
+      "lines": 213,
+      "sha256": "afccc527197416046f7e07fa9b2ae08d31bc717291724fe71e92a2d7de58a686",
+      "ranges": [
+        [
+          126,
+          163
+        ]
+      ],
+      "declarations": [
+        "profilesOf",
+        "decodeEnvelope"
+      ]
+    },
+    {
+      "file": "lean/VE/Route/Wire.lean",
+      "lines": 666,
+      "sha256": "7a9f5a63f666e2ce0f14d35deeaa25b6af0558f0da958c16392b4159852d2e1a",
+      "ranges": [
+        [
+          1,
+          666
+        ]
+      ],
+      "declarations": [
+        "decodeVocabulary",
+        "decodeOrderVocabulary",
+        "environmentId",
+        "meaningId",
+        "encodeFormula",
+        "decodeModel",
+        "decodeDataModel",
+        "decodeFormulas",
+        "decodeClosed",
+        "bindingOk",
+        "decodeOrderModel",
+        "decodeNodes"
+      ]
+    },
+    {
+      "file": "lean/VE/Service/Family.lean",
+      "lines": 817,
+      "sha256": "e1e00be4379626252de90286a857d800f98086bf48b734093ab6d0e8d0f546c0",
+      "ranges": [
+        [
+          1,
+          817
+        ]
+      ],
+      "declarations": [
+        "closureEnv",
+        "coreEnv",
+        "orderEnv",
+        "decodeNode",
+        "decodeEdge",
+        "compose",
+        "graphCase",
+        "readings",
+        "readingsCase"
+      ],
+      "reason": "graph- and readings-mode decoders on the closure, core and order families: family contexts (formula, certificate, Background, binding, model), claims, deductions, recomputed identities, reading sets and evidence; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Service/FamilyBundle.lean",
+      "lines": 500,
+      "sha256": "75698a329690b03fb5843bfa3deb4fa91ab92ab94f6055830ba6be48b6ab908a",
+      "ranges": [
+        [
+          1,
+          500
+        ]
+      ],
+      "declarations": [
+        "decodeLeaf",
+        "decodeLemma",
+        "decodeReadingSet",
+        "run",
+        "folCtx",
+        "bundleCase"
+      ],
+      "reason": "bundle-mode decoder over the family contexts: lemmas, leaves, citations, reading sets and certificate bindings; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Service/FamilyNorms.lean",
+      "lines": 244,
+      "sha256": "f2e5ffd9ed57abbd61dd3cf67775195363271814e55f954c4323405209d4cc3c",
+      "ranges": [
+        [
+          1,
+          244
+        ]
+      ],
+      "declarations": [
+        "folView",
+        "viewModel",
+        "decodeFamily",
+        "certificateCase",
+        "targetPackage",
+        "conflictCase",
+        "runCase"
+      ],
+      "reason": "family-norms decoder: the FOL view of the environment and the witness model, the family certificates and their bindings to the submitted and base environments; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Service/Graph.lean",
+      "lines": 255,
+      "sha256": "cd0523e5ad4d580bc7de3076996974e060eb106eda981fd84aa4dc0f0b6fc212",
+      "ranges": [
+        [
+          1,
+          255
+        ]
+      ],
+      "declarations": [
+        "decodeNode",
+        "decodeEdge",
+        "routeCtx",
+        "legacyCtx",
+        "compose",
+        "graphCase"
+      ],
+      "reason": "graph-mode package decoder: claims, deductions, recomputed identities and certificate bindings (no refinement theorem; trusted, plan 2.1); the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Service/Readings.lean",
+      "lines": 215,
+      "sha256": "357a25dda81bfbce40b2361f8f437a74231e199228e53130f099f543e35816ed",
+      "ranges": [
+        [
+          1,
+          215
+        ]
+      ],
+      "declarations": [
+        "decodeModel",
+        "readingsCase"
+      ],
+      "reason": "readings-mode decoder: environment, fixed premises, reading sets, conclusion, verdict and evidence; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/SoftNorms/Admission.lean",
+      "lines": 332,
+      "sha256": "65c5511e845dca854ad374851393cb945aad630981434c77e0bd1a0db2ae1a8c",
+      "ranges": [
+        [
+          1,
+          332
+        ]
+      ],
+      "declarations": [
+        "decodeSoftDoc",
+        "admitDocument"
+      ],
+      "reason": "soft document admission decoder; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/SoftNorms/Phases.lean",
+      "lines": 362,
+      "sha256": "a19fb700f52c52564a1516fe74a1e6a0b06fa779ef4bd33470b1756b88c711d6",
+      "ranges": [
+        [
+          1,
+          362
+        ]
+      ],
+      "declarations": [
+        "envelope",
+        "declarations",
+        "ruleFields",
+        "checkSource"
+      ],
+      "reason": "soft environment and rule phase decoder; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/SoftNorms/Wire.lean",
+      "lines": 462,
+      "sha256": "641a13b4cd6917aad8444951d4ea4e89da0afd5ba10706a2bb0c62aa8caf0ce4",
+      "ranges": [
+        [
+          1,
+          462
+        ]
+      ],
+      "declarations": [
+        "decodeSoftNorm",
+        "decodeSoftSource",
+        "replaySoftConflict",
+        "replaySoftWitness",
+        "replaySoftEntailment"
+      ],
+      "reason": "soft wire and certificate decoder; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/SpeechActs/Source/Admission/Run.lean",
+      "lines": 630,
+      "sha256": "666d467b95bb495c05c226e1311588498d22bc7368986030e6766209a8817438",
+      "ranges": [
+        [
+          1,
+          630
+        ]
+      ],
+      "declarations": [
+        "p0Json",
+        "admitSpeech",
+        "runAdmission",
+        "isSourceAdmission",
+        "runCase"
+      ],
+      "reason": "speech-act admission (8.5, 8.6): the P0 projection of the decoded source, the speech leaves, the graph and the report identity; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/SpeechActs/Source/Run.lean",
+      "lines": 889,
+      "sha256": "965cd295dcb41ff7a5cc72b25de57f425be4bd32a155cf3755980be3256df51c",
+      "ranges": [
+        [
+          1,
+          889
+        ]
+      ],
+      "declarations": [
+        "readUnit",
+        "readUnits",
+        "speechReadings",
+        "readingSets",
+        "answerRecord",
+        "gapRecord",
+        "answerRecords",
+        "externalRecord",
+        "complianceRecords",
+        "decodeSpeechSource"
+      ],
+      "reason": "speech-act decoded-source wrapper (8.5): ve-document@2 units, reading sets, records and identity; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/SpeechActs/Wire.lean",
+      "lines": 993,
+      "sha256": "fbe08d985f7fc507397eb1e74d7c9cc6ee8504dfc2e43f7cd77d78bf53f3e618",
+      "ranges": [
+        [
+          1,
+          993
+        ]
+      ],
+      "declarations": [
+        "parseScope",
+        "decodeSpeechEnvironment",
+        "decodeUnit",
+        "decodeDocument"
+      ],
+      "reason": "speech scope, content, identity and document decoder; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Time/Document.lean",
+      "lines": 613,
+      "sha256": "4407e998d0073b5c1c7755d42d5ae6773e2d720c3c33cbfd7c436301e0bf407f",
+      "ranges": [
+        [
+          1,
+          613
+        ]
+      ],
+      "declarations": [
+        "decodeDocument",
+        "checkGraph"
+      ],
+      "reason": "W6 quantity document and citation decoder; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Time/Wire.lean",
+      "lines": 843,
+      "sha256": "7f9c8b54dc820197ad0e59033763a063ed75ff728542fcf094dc93bc5059f925",
+      "ranges": [
+        [
+          1,
+          843
+        ]
+      ],
+      "declarations": [
+        "decodeEnvironment",
+        "decodeQuantity",
+        "runCase"
+      ],
+      "reason": "W6 unit declarations, quantity syntax and runner; the full file is pinned conservatively"
     }
-  },
+  ],
+  "other_json": {
+    "lean/EnglishLeanBenchMain.lean": "measurement only: the ve_english_lean_bench executable of the english-lean G1a measurement and the lexer differential reads grammars, sentences and sources from a JSON file and prints JSON rows; no admission path, service mode or record reads it",
+    "lean/VE/Discourse/Run.lean": "lean:runner-glue: ve_discourse_route case dispatch and response rows",
+    "lean/VE/Discourse/Wire.lean": "lean:discourse-wire: the ve.discourse@1 manifest decoder and discourse report rows; decoded values are validated, never trusted (discourse_wire_binding, discourse_report_sound)",
+    "lean/VE/Discourse/Admission.lean": "lean:discourse-wire: the profile adapter strips ve.discourse@1 from the environment JSON before every frozen call (setObjVal!, profile_adapter_base)",
+    "lean/VE/Discourse/Loader.lean": "lean:discourse-wire: the ve-document@2 loader reads the front matter and embedded or imported documents' metadata fields",
+    "lean/VE/Discourse/Theorems.lean": "lean:discourse-wire: statements about the discourse wire decoder (getObjValD_ok) and the profile adapter; no runtime JSON handling",
+    "lean/VE/Audit.lean": "audit manifest only: #print axioms of theorem names containing a JSON accessor name (VE.Discourse.getObjValD_ok); no JSON handling",
+    "lean/VE/Norms/FlaggedSpec.lean": "statements about the norms conflict replay and Norms.Run.runCase answers (getObjValD of the case and the verdict field) and decoder rejection lemmas; no runtime JSON handling",
+    "lean/VE/Route/WireSound.lean": "statements about the route runners' answers (getObjValD of the case and the valid, refutes and values fields), the family decoders as the runners call them, and decoder rejection lemmas; no runtime JSON handling",
+    "lean/VE/Route/RunSound.lean": "statements about Route.Run.runCase answers (getObjValD of the case's environment and answer fields); no runtime JSON handling",
+    "lean/VE/Norms/RunSound.lean": "statements about Norms.Run.runCase norms-certificate answers (getObjValD of the case and the valid field); no runtime JSON handling",
+    "lean/Main.lean": "lean:runner-glue: argument dispatch and result arrays of ve_conformance",
+    "lean/VE/Route/Run.lean": "lean:runner-glue: route case dispatch and error rows (route_gate pins the envelope check)",
+    "lean/VE/SoftNorms/Run.lean": "lean:runner-glue: ve_soft_norms_route case dispatch and response rows",
+    "lean/VE/Rights/Run.lean": "lean:runner-glue: ve_rights_route case dispatch and response rows",
+    "lean/VE/Readings/Run.lean": "lean:runner-glue: ve_readings_route case dispatch and response rows; readings-validate and readings-separate rows regenerated from the pinned Wire decoder; the S2a kinds dispatched to SupRun",
+    "lean/VE/Readings/SupRun.lean": "lean:runner-glue: ve_readings_route S2a case kinds; case fields are read through the pinned SupWire and Wire decoders, and the response rows are built from Lean checks (supCertificateCheck, supModelCheck, slotConflictFreeCheck, deadCheck, unsatCheck); readings-choice runs the lower route on the regenerated choice document with its regenerated assertions, accepts a chain certificate only when the lower conflict kind finds the case's conflict packages CONFLICT-FREE on the same document, and choice-model reads its model through the chain decoders (decodeModel, decodeModelR, decodeModelData)",
+    "lean/VE/Readings/Route.lean": "lean:runner-glue: the readings@1 route of 1.1 and the regenerated S2a elaboration rows (elaborateFields); builds JSON, reads none",
+    "lean/VE/Norms/Run.lean": "lean:runner-glue: ve_norms_route case dispatch and error rows",
+    "lean/VE/NormDefaults/Run.lean": "lean:runner-glue: ve_norm_defaults_route case dispatch and response rows",
+    "lean/VE/SpeechActs/Run.lean": "lean:runner-glue: ve_speech_acts_route case dispatch, regenerated model tables and response rows; separate opt-in profile slice",
+    "lean/VE/Alternatives/Run.lean": "lean:runner-glue: ve_alternatives_route case dispatch and response rows",
+    "lean/VE/Attribution/Run.lean": "lean:runner-glue: ve_reports_route case dispatch and response rows",
+    "lean/VE/Order/ProfileGate.lean": "lean:runner-glue: the default-mode evaluation dispatch (runEvaluationCaseReported_eq)",
+    "lean/VE/Order/Surface.lean": "lean:order-surface-parser: order text parser and its case wrapper",
+    "lean/VE/English/Run.lean": "harness only (conformance/english_lean.py); no executable and no theorem depends on it",
+    "lean/VE/Order/Gate.lean": "builds fixed envelopes for the profile-gate theorems; decodes nothing",
+    "lean/VE/Order/WireGate.lean": "JSON access only inside theorem statements (order route gate)",
+    "lean/VE/EvaluationCounts.lean": "JSON access only inside theorem statements (evaluation answers count the submitted formulas)",
+    "lean/VE/Order/TableauChecks.lean": "executable regressions (#eval checks); not on any runner path",
+    "lean/VE/Route/Checks.lean": "executable regressions (#eval checks); not on any runner path",
+    "lean/ResponseDecode.lean": "test-only service response oracle; no executable production path or theorem imports it",
+    "lean/VE/EnglishGrammar/ReadExamples.lean": "fixtures only: #guard checks of docs/spec/english-lean-s2.md section 8 build environment JSON for Env.decode; no runner path",
+    "lean/ResponseShape.lean": "the service's response shapes (lib ResponseShape, outside the trusted VE tree): renders the client's schema files and checks responses for ve_response_decode; no runner, executable production path or theorem imports it",
+    "lean/ResponseShape/Schemas.lean": "collects the response shapes and renders the client's schema files; test tooling beside lean/ResponseShape.lean, not on any runner path",
+    "lean/ResponseShape/Schemas/Norms.lean": "the norms mode's response shape; reads the case environment only to call Norms.Plain.layered beside its path selector (test tooling, not on any runner path)",
+    "lean/ResponseShape/Skeleton.lean": "the skeletons of the response shapes and Fits, the field-level conformance the encoder theorems prove; JSON only in lemma statements about Json.mkObj and setObjVal! (theorems, not on any runner path)",
+    "lean/ResponseShape/FitsTactic.lean": "tactics that build the encoder theorems' proofs, reading Json.mkObj and setObjVal! terms of goals (proof automation, checked by the kernel; not on any runner path)",
+    "lean/ResponseShape/Audit.lean": "the dependency audit of the response-shape theorems (#print axioms only); JSON only in theorem names",
+    "lean/ResponseShape/Encoders/SoftNorms.lean": "theorems that the soft-norms mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
+    "lean/ResponseShape/Encoders/Reports.lean": "theorems that the reports mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
+    "lean/ResponseShape/Encoders/ReadingsRoute.lean": "theorems that the readings-route mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
+    "lean/ResponseShape/Encoders/English.lean": "theorems that the english and diagnose modes' rows fit their shapes; JSON access only in statements and proofs (not on any runner path)",
+    "lean/ResponseShape/Encoders/Envelope.lean": "theorems that the service's response lines fit envelope.json; JSON access only in statements and proofs (not on any runner path)",
+    "lean/ResponseShape/Encoders/Alternatives.lean": "theorems that the alternatives mode's rows fit its shape, with the decoded block's taken tied to the case (getObjVal? in statements and proofs only; not on any runner path)",
+    "lean/ResponseShape/Encoders/Quantity.lean": "theorems that the quantity mode's rows fit its shape, with value and evaluations tied to the case's model (getObjVal? in statements and proofs only; not on any runner path)",
+    "lean/VE/Risk/Eval.lean": "test-only differential harness (risk.md 8.3; service mode risk-eval): decodes its case envelope, then calls the pinned risk decoders; no production path or theorem uses it",
+    "lean/VE/Service/EnglishRun.lean": "stage-1 service copy of the English runner; additive dispatch, not yet on an assurance operation path",
+    "lean/VE/Service/Protocol.lean": "the service request decoder and dispatcher: each mode is its runner's per-case function, pinned by runMode_* (the statement-layer route modes since lean-first batch 1)",
+    "lean/VE/Service/Diagnose.lean": "diagnostic only: no verdict depends on it. The service mode diagnose: reads a case's unit and inner case and returns the ve_diagnose row for them",
+    "lean/VE/Route/Steps.lean": "reads only a certificate case's optional max_steps field (the replay step cap, at most 1,000,000)",
+    "lean/VE/Core/Layers.lean": "stage-2 core-family glue: decodes definitions and data flags with the pinned FOL route decoders over the FOL projection, adds the computed defined tables to the model and delegates background, evaluate and countermodel cases to the unchanged core route",
+    "lean/VE/Norms/Plain.lean": "stage-2 norms-route glue: validates the regulated extension on any family, removes it and delegates background, evaluate and countermodel cases to the unchanged route, adding profile premises (embedded on the closure, core and order families) and the profile model check",
+    "lean/VE/Service/TypingDiagnostic.lean": "stage-2 diagnostic glue: names a typing rejection the proved decoder already made with Python's code and message; never accepts",
+    "lean/VE/Service/Standalone.lean": "stage-2 service modes environment, model, check, identity and parse: wrap the pinned family decoders and surface parsers and recompute identities; reached from the Python adapters in ve/backends (validation, typing, parse), which the manifest's one-shot bindings do not yet describe",
+    "lean/VE/WireContract/Engine.lean": "diagnostic only: no verdict depends on it. The wire contract engine reads the submitted case JSON to choose the first failing check of a rejection that the legacy validator already decided (docs/spec/wire-contract.md 2.8, 7.2); imported only by VE.WireContract.*, DiagnoseMain and VE.Audit (tools/check_lean_imports.py)",
+    "lean/VE/WireContract/Hooks/Corpus.lean": "diagnostic only: no verdict depends on it. Hand-written hooks and view of the engine corpus contracts (docs/spec/wire-contract.md 8.1)",
+    "lean/VE/WireContract/Hooks/SoftNorms.lean": "diagnostic only: no verdict depends on it. Hooks, classifiers and the soft_source adapter of the pilot contract soft-norms@0 (docs/spec/wire-contract.md section 6); they call SoftNorms.Phases, Wire.primeVocabulary, validateSoft and checkW1 read-only and only read their results",
+    "lean/VE/WireContract/Hooks/Norms.lean": "diagnostic only: no verdict depends on it. Hooks, classifiers and the norm_source adapter of the contract norms@0 (docs/spec/wire-contract-s5.md 2.3, 2.5); they call Norms.Wire.decodeNormsEnvironment, the route's environment decoder, Route.dependencyOrder and Norms.height read-only, never decodeSource, and hold the diagnostic syntax and typing walks of 2.5",
+    "lean/VE/WireContract/Diagnose.lean": "diagnostic only: no verdict depends on it. The ve_diagnose runner: case dispatch through VE.JsonInput.parseCases, the contract registry and response rows (docs/spec/wire-contract.md 4.2)",
+    "lean/VE/EnglishGrammar/ProfileExamples.lean": "fixtures only: S3 profile environment and reader #guard checks; no runner path"
+  }
+},
   "plan_operations": {
     "note": "Every operation named in SEMANTICS-MIGRATION-PLAN.md section 2.3 (Operations) and every new Lean mode of section 2.1, mapped to the manifest operations that carry it; the test parses the plan.",
     "operations": {
-      "parse/accept": ["parse"], "canonicalize": ["parse"], "typing": ["typing"],
-      "environment validation": ["environment"], "model validation": ["model"],
-      "evaluate": ["evaluate"], "evaluate with trace": ["evaluate"], "countermodel check": ["countermodel.check"],
-      "countermodel search (each option)": ["countermodel.search"], "distinguishing model": ["countermodel.search"],
-      "certificate replay (v0, extended, closure, order, core)": ["certificate.check"],
-      "Background": ["definitions.elaborate"], "definitions elaboration": ["definitions.elaborate"],
-      "dependency order": ["definitions.elaborate"], "admission": ["admission"], "label": ["label"],
-      "bundle": ["bundle.check"],
-      "norms elaborate/conflict/certificate/admission": ["norms.elaborate", "norms.conflict", "norms.certificate", "admission"],
-      "readings": ["readings"], "argument check (graph)": ["graph.compose"], "compare": ["compare"],
-      "premise status": ["premise-status"]
+      "parse/accept": [
+        "parse"
+      ],
+      "canonicalize": [
+        "parse"
+      ],
+      "typing": [
+        "typing"
+      ],
+      "environment validation": [
+        "environment"
+      ],
+      "model validation": [
+        "model"
+      ],
+      "evaluate": [
+        "evaluate"
+      ],
+      "evaluate with trace": [
+        "evaluate"
+      ],
+      "countermodel check": [
+        "countermodel.check"
+      ],
+      "countermodel search (each option)": [
+        "countermodel.search"
+      ],
+      "distinguishing model": [
+        "countermodel.search"
+      ],
+      "certificate replay (v0, extended, closure, order, core)": [
+        "certificate.check"
+      ],
+      "Background": [
+        "definitions.elaborate"
+      ],
+      "definitions elaboration": [
+        "definitions.elaborate"
+      ],
+      "dependency order": [
+        "definitions.elaborate"
+      ],
+      "admission": [
+        "admission"
+      ],
+      "label": [
+        "label"
+      ],
+      "bundle": [
+        "bundle.check"
+      ],
+      "norms elaborate/conflict/certificate/admission": [
+        "norms.elaborate",
+        "norms.conflict",
+        "norms.certificate",
+        "admission"
+      ],
+      "readings": [
+        "readings"
+      ],
+      "argument check (graph)": [
+        "graph.compose"
+      ],
+      "compare": [
+        "compare"
+      ],
+      "premise status": [
+        "premise-status"
+      ]
     }
   },
   "non_verdict_api": [
-    {"names": ["And", "Binary", "Body", "Bottom", "Const", "Document", "Edge", "Eq", "Exists", "Forall", "Formula",
-               "Implies", "Named", "Not", "Or", "Reach", "Term", "Top", "Unary", "Var"],
-     "reason": "AST node types; constructing a node asserts nothing (typing is the typing entries)"},
-    {"names": ["ArgumentGraph", "ArgumentResult", "Budgets", "ComparisonResult", "Deduction", "DirectionResult",
-               "EntailmentCertificateCheck", "EntailmentResult", "Evidence", "InductionInvariant", "ReferenceValidation"],
-     "reason": "input and result containers; their verdicts come from the entries that fill them"},
-    {"names": ["DIFFERENT", "EQUIVALENT", "UNKNOWN", "VEError"], "reason": "constants and the error base class"},
-    {"names": ["doc_from_json", "document_from_data", "document_to_data", "document_from_named_fol",
-               "document_to_named_fol", "render_fol"],
-     "reason": "wire and FOL conversion; every document is typed by the typing entry check_document"},
-    {"names": ["is_weaker", "is_stronger"], "reason": "relabel the verdict of the compare entry"},
-    {"names": ["in_two_variable_fragment"], "reason": "syntactic classification, no semantic verdict"},
-    {"names": ["prove_entailment"],
-     "reason": "untrusted proof generation; it reports Found only after the certificate.check entry replays the certificate"},
-    {"names": ["lint_english_vocabulary", "lint_vocabulary", "suggest_vocabulary"],
-     "reason": "vocabulary authoring aids; they propose or warn and never admit"},
-    {"names": ["measure_view_lengths", "natural_document", "natural_formula", "print_document", "print_formula",
-               "render", "render_vocabulary", "outstanding_obligations", "predicate_use_panel"],
-     "reason": "display of already checked values (python:display)"}
+    {
+      "names": [
+        "And",
+        "Binary",
+        "Body",
+        "Bottom",
+        "Const",
+        "Document",
+        "Edge",
+        "Eq",
+        "Exists",
+        "Forall",
+        "Formula",
+        "Implies",
+        "Named",
+        "Not",
+        "Or",
+        "Reach",
+        "Term",
+        "Top",
+        "Unary",
+        "Var"
+      ],
+      "reason": "AST node types; constructing a node asserts nothing (typing is the typing entries)"
+    },
+    {
+      "names": [
+        "ArgumentGraph",
+        "ArgumentResult",
+        "Budgets",
+        "ComparisonResult",
+        "Deduction",
+        "DirectionResult",
+        "EntailmentCertificateCheck",
+        "EntailmentResult",
+        "Evidence",
+        "InductionInvariant",
+        "ReferenceValidation"
+      ],
+      "reason": "input and result containers; their verdicts come from the entries that fill them"
+    },
+    {
+      "names": [
+        "DIFFERENT",
+        "EQUIVALENT",
+        "UNKNOWN",
+        "VEError"
+      ],
+      "reason": "constants and the error base class"
+    },
+    {
+      "names": [
+        "doc_from_json",
+        "document_from_data",
+        "document_to_data",
+        "document_from_named_fol",
+        "document_to_named_fol",
+        "render_fol"
+      ],
+      "reason": "wire and FOL conversion; every document is typed by the typing entry check_document"
+    },
+    {
+      "names": [
+        "is_weaker",
+        "is_stronger"
+      ],
+      "reason": "relabel the verdict of the compare entry"
+    },
+    {
+      "names": [
+        "in_two_variable_fragment"
+      ],
+      "reason": "syntactic classification, no semantic verdict"
+    },
+    {
+      "names": [
+        "prove_entailment"
+      ],
+      "reason": "untrusted proof generation; it reports Found only after the certificate.check entry replays the certificate"
+    },
+    {
+      "names": [
+        "lint_english_vocabulary",
+        "lint_vocabulary",
+        "suggest_vocabulary"
+      ],
+      "reason": "vocabulary authoring aids; they propose or warn and never admit"
+    },
+    {
+      "names": [
+        "measure_view_lengths",
+        "natural_document",
+        "natural_formula",
+        "print_document",
+        "print_formula",
+        "render",
+        "render_vocabulary",
+        "outstanding_obligations",
+        "predicate_use_panel"
+      ],
+      "reason": "display of already checked values (python:display)"
+    }
   ],
   "operations": [
     {
@@ -305,33 +1301,116 @@
       "class": "leaf",
       "authority": "python",
       "target": "lean",
-      "assurance": {"current": "experimental", "at_switch": "experimental",
-                    "reason": "grammar P1-P3 are unproved outside the propositional fragment"},
-      "python": ["ve.parser:parse_with_metadata", "ve.parser:parse", "ve.parser:canonicalize", "ve.parser:is_canonical"],
-      "outcomes": {"verdict": ["accepted document", "canonical text"], "unknown": [],
-                   "rejection": ["SyntaxError", "UnknownSymbol", "UnboundVariable", "ShadowedVariable", "TypeMismatch"],
-                   "budget": ["ResourceLimit"], "operational": ["CheckerUnavailable"]},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "grammar P1-P3 are unproved outside the propositional fragment"
+      },
+      "python": [
+        "ve.parser:parse_with_metadata",
+        "ve.parser:parse",
+        "ve.parser:canonicalize",
+        "ve.parser:is_canonical"
+      ],
+      "outcomes": {
+        "verdict": [
+          "accepted document",
+          "canonical text"
+        ],
+        "unknown": [],
+        "rejection": [
+          "SyntaxError",
+          "UnknownSymbol",
+          "UnboundVariable",
+          "ShadowedVariable",
+          "TypeMismatch"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
       "lean": {
         "bindings": [
-          {"executable": "ve_conformance", "mode": "", "kinds": [], "response": {"canonical": "string", "values": "array<bool>"}, "counts": {"values": "case.ast"}, "dispatch": ["lean/VE/Bridge.lean"],
-           "note": "an evaluation case with `source`: Lean parses it and decides source/AST equality"},
-          {"executable": "ve_conformance", "mode": "order", "kinds": ["surface"], "response": {"ast": "array<json>"}, "uncounted": {"ast": "one formula per sentence of the submitted source text"}, "dispatch": ["lean/VE/Order/Surface.lean"]}
+          {
+            "executable": "ve_conformance",
+            "mode": "",
+            "kinds": [],
+            "response": {
+              "canonical": "string",
+              "values": "array<bool>"
+            },
+            "counts": {
+              "values": "case.ast"
+            },
+            "dispatch": [
+              "lean/VE/Bridge.lean"
+            ],
+            "note": "an evaluation case with `source`: Lean parses it and decides source/AST equality"
+          },
+          {
+            "executable": "ve_conformance",
+            "mode": "order",
+            "kinds": [
+              "surface"
+            ],
+            "response": {
+              "ast": "array<json>"
+            },
+            "uncounted": {
+              "ast": "one formula per sentence of the submitted source text"
+            },
+            "dispatch": [
+              "lean/VE/Order/Surface.lean"
+            ]
+          }
         ],
-        "planned_modes": ["parse", "normalize"],
-        "theorems": ["VE.Surface.parse_print", "VE.Surface.parse_wellFormed", "VE.Surface.normalize_idempotent",
-                     "VE.Surface.print_injective", "VE.Surface.accepted_normalize_eq_iff",
-                     "VE.Surface.parse_print_propositional", "VE.Closure.Surface.parse_print_named",
-                     "VE.Core.Surface.parse_print_named",
-                     "VE.EvaluationCounts.legacy_decodeDocument_length", "VE.EvaluationCounts.closure_decodeFormulas_length"],
+        "planned_modes": [
+          "parse",
+          "normalize"
+        ],
+        "theorems": [
+          "VE.Surface.parse_print",
+          "VE.Surface.parse_wellFormed",
+          "VE.Surface.normalize_idempotent",
+          "VE.Surface.print_injective",
+          "VE.Surface.accepted_normalize_eq_iff",
+          "VE.Surface.parse_print_propositional",
+          "VE.Closure.Surface.parse_print_named",
+          "VE.Core.Surface.parse_print_named",
+          "VE.EvaluationCounts.legacy_decodeDocument_length",
+          "VE.EvaluationCounts.closure_decodeFormulas_length"
+        ],
         "planned_theorems": [],
-        "decoders": ["lean/VE/Json.lean", "lean/VE/Bridge.lean"]
+        "decoders": [
+          "lean/VE/Json.lean",
+          "lean/VE/Bridge.lean"
+        ]
       },
-      "rust": {"commands": ["parse", "format"], "role": "parse diagnostics with codes and spans; canonical formatting"},
+      "rust": {
+        "commands": [
+          "parse",
+          "format"
+        ],
+        "role": "parse diagnostics with codes and spans; canonical formatting"
+      },
       "lean_call_sites": [],
-      "tests": ["tests/test_parser_renderer.py::test_strict_syntax_rejects_variants",
-                "tests/test_lean_conformance.py::test_lean_source_resolution_and_canonical_binder_order",
-                "tests/test_rust_conformance.py::test_rust_shared_parser"],
-      "trusted": ["python:implementation", "python:wire", "lean:kernel", "lean:compiler", "lean:decoders", "lean:runner-glue", "lean:order-surface-parser"],
+      "tests": [
+        "tests/test_parser_renderer.py::test_strict_syntax_rejects_variants",
+        "tests/test_lean_conformance.py::test_lean_source_resolution_and_canonical_binder_order",
+        "tests/test_rust_conformance.py::test_rust_shared_parser"
+      ],
+      "trusted": [
+        "python:implementation",
+        "python:wire",
+        "lean:kernel",
+        "lean:compiler",
+        "lean:decoders",
+        "lean:runner-glue",
+        "lean:order-surface-parser"
+      ],
       "notes": []
     },
     {
@@ -340,27 +1419,75 @@
       "class": "leaf",
       "authority": "python",
       "target": "lean",
-      "assurance": {"current": "experimental", "at_switch": "reference-theorems-checked", "reason": "check_iff_wellFormed per family"},
-      "python": ["ve.ast:check_formula", "ve.ast:check_document", "ve.ast:formula_from_data", "ve.ast:formula_to_data"],
-      "outcomes": {"verdict": ["well-typed"], "unknown": [],
-                   "rejection": ["TypeMismatch", "UnknownSymbol", "UnboundVariable", "UnsupportedProfile", "InvalidInput"],
-                   "budget": ["ResourceLimit"], "operational": ["CheckerUnavailable"]},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "reference-theorems-checked",
+        "reason": "check_iff_wellFormed per family"
+      },
+      "python": [
+        "ve.ast:check_formula",
+        "ve.ast:check_document",
+        "ve.ast:formula_from_data",
+        "ve.ast:formula_to_data"
+      ],
+      "outcomes": {
+        "verdict": [
+          "well-typed"
+        ],
+        "unknown": [],
+        "rejection": [
+          "TypeMismatch",
+          "UnknownSymbol",
+          "UnboundVariable",
+          "UnsupportedProfile",
+          "InvalidInput"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
       "lean": {
         "bindings": [],
-        "planned_modes": ["check"],
-        "theorems": ["VE.check_iff_wellFormed", "VE.Closure.check_iff_wellFormed", "VE.Order.check_iff_wellFormed",
-                     "VE.Core.check_iff_wellFormed"],
+        "planned_modes": [
+          "check"
+        ],
+        "theorems": [
+          "VE.check_iff_wellFormed",
+          "VE.Closure.check_iff_wellFormed",
+          "VE.Order.check_iff_wellFormed",
+          "VE.Core.check_iff_wellFormed"
+        ],
         "planned_theorems": [],
-        "decoders": ["lean/VE/Bridge.lean", "lean/VE/Route/Wire.lean"]
+        "decoders": [
+          "lean/VE/Bridge.lean",
+          "lean/VE/Route/Wire.lean"
+        ]
       },
-      "rust": {"commands": ["conformance"], "role": "typed Document::check inside every Rust case"},
+      "rust": {
+        "commands": [
+          "conformance"
+        ],
+        "role": "typed Document::check inside every Rust case"
+      },
       "lean_call_sites": [],
-      "tests": ["tests/test_lean_conformance.py::test_countermodel_rejects_ill_typed_formulas_before_evaluation",
-                "tests/test_order.py::test_typing_separates_objects_and_integers",
-                "tests/test_p0_three_way.py::test_hostile_wire_diagnostics_match_three_ways"],
-      "trusted": ["python:implementation", "lean:kernel", "lean:compiler", "lean:decoders"],
-      "notes": ["Lean types every formula it decodes in every mode; a standalone typing request is the planned `check` mode.",
-                "formula_from_data and formula_to_data type-check while decoding or encoding, so they are typing entries like check_document (which document_from_data and document_to_data call)."]
+      "tests": [
+        "tests/test_lean_conformance.py::test_countermodel_rejects_ill_typed_formulas_before_evaluation",
+        "tests/test_order.py::test_typing_separates_objects_and_integers",
+        "tests/test_p0_three_way.py::test_hostile_wire_diagnostics_match_three_ways"
+      ],
+      "trusted": [
+        "python:implementation",
+        "lean:kernel",
+        "lean:compiler",
+        "lean:decoders"
+      ],
+      "notes": [
+        "Lean types every formula it decodes in every mode; a standalone typing request is the planned `check` mode.",
+        "formula_from_data and formula_to_data type-check while decoding or encoding, so they are typing entries like check_document (which document_from_data and document_to_data call)."
+      ]
     },
     {
       "id": "environment",
@@ -368,28 +1495,77 @@
       "class": "leaf",
       "authority": "python",
       "target": "lean",
-      "assurance": {"current": "experimental", "at_switch": "experimental",
-                    "reason": "decodeEnvelope_sound and route_gate pin the profile gate only; the vocabulary decoders have no refinement theorem (lean:decoders)"},
-      "python": ["ve.environment:Environment.__init__"],
-      "outcomes": {"verdict": ["validated environment", "environment_id"], "unknown": [],
-                   "rejection": ["UnsupportedProfile", "DuplicateDeclaration", "UnknownSymbol", "InvalidInput"],
-                   "budget": ["ResourceLimit"], "operational": ["CheckerUnavailable"]},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "decodeEnvelope_sound and route_gate pin the profile gate only; the vocabulary decoders have no refinement theorem (lean:decoders)"
+      },
+      "python": [
+        "ve.environment:Environment.__init__"
+      ],
+      "outcomes": {
+        "verdict": [
+          "validated environment",
+          "environment_id"
+        ],
+        "unknown": [],
+        "rejection": [
+          "UnsupportedProfile",
+          "DuplicateDeclaration",
+          "UnknownSymbol",
+          "InvalidInput"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
       "lean": {
         "bindings": [],
-        "planned_modes": ["environment"],
-        "theorems": ["VE.Route.Gate.decodeEnvelope_sound", "VE.Route.Gate.classify_sound", "VE.Route.Gate.classify_complete",
-                     "VE.Route.Run.route_gate", "VE.Route.Run.route_gate_rejects", "VE.Order.profile_gate"],
+        "planned_modes": [
+          "environment"
+        ],
+        "theorems": [
+          "VE.Route.Gate.decodeEnvelope_sound",
+          "VE.Route.Gate.classify_sound",
+          "VE.Route.Gate.classify_complete",
+          "VE.Route.Run.route_gate",
+          "VE.Route.Run.route_gate_rejects",
+          "VE.Order.profile_gate"
+        ],
         "planned_theorems": [],
-        "decoders": ["lean/VE/Json.lean", "lean/VE/Bridge.lean", "lean/VE/Closure/Bridge.lean", "lean/VE/Core/Bridge.lean",
-                     "lean/VE/Route/Gate.lean", "lean/VE/Route/Wire.lean", "lean/VE/Order/Wire.lean", "lean/VE/Norms/Wire.lean"]
+        "decoders": [
+          "lean/VE/Json.lean",
+          "lean/VE/Bridge.lean",
+          "lean/VE/Closure/Bridge.lean",
+          "lean/VE/Core/Bridge.lean",
+          "lean/VE/Route/Gate.lean",
+          "lean/VE/Route/Wire.lean",
+          "lean/VE/Order/Wire.lean",
+          "lean/VE/Norms/Wire.lean"
+        ]
       },
-      "rust": {"commands": ["conformance"], "role": "environment decoding and environment_id in every Rust case"},
+      "rust": {
+        "commands": [
+          "conformance"
+        ],
+        "role": "environment decoding and environment_id in every Rust case"
+      },
       "lean_call_sites": [],
-      "tests": ["tests/test_conformance.py::test_environment_rejects_unknown_fields_and_lone_surrogates",
-                "tests/test_conformance.py::test_environment_identity_ignores_json_format_and_key_order",
-                "tests/test_p0_three_way.py::test_hostile_wire_diagnostics_match_three_ways"],
-      "trusted": ["python:implementation", "python:wire"],
-      "notes": ["Lean decodes and gates the environment of every case in every mode; a standalone request is the planned `environment` mode (migration plan 2.1). Every other operation depends on it."]
+      "tests": [
+        "tests/test_conformance.py::test_environment_rejects_unknown_fields_and_lone_surrogates",
+        "tests/test_conformance.py::test_environment_identity_ignores_json_format_and_key_order",
+        "tests/test_p0_three_way.py::test_hostile_wire_diagnostics_match_three_ways"
+      ],
+      "trusted": [
+        "python:implementation",
+        "python:wire"
+      ],
+      "notes": [
+        "Lean decodes and gates the environment of every case in every mode; a standalone request is the planned `environment` mode (migration plan 2.1). Every other operation depends on it."
+      ]
     },
     {
       "id": "model",
@@ -397,27 +1573,70 @@
       "class": "leaf",
       "authority": "python",
       "target": "lean",
-      "assurance": {"current": "experimental", "at_switch": "experimental",
-                    "reason": "decodeModel_valid proves decoded models admissible; the wire correspondence is lean:decoders"},
-      "python": ["ve.model:FiniteModel.from_dict"],
-      "outcomes": {"verdict": ["validated model", "model_id"], "unknown": [],
-                   "rejection": ["InvalidModel", "InvalidInput"],
-                   "budget": ["ResourceLimit"], "operational": ["CheckerUnavailable"]},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "decodeModel_valid proves decoded models admissible; the wire correspondence is lean:decoders"
+      },
+      "python": [
+        "ve.model:FiniteModel.from_dict"
+      ],
+      "outcomes": {
+        "verdict": [
+          "validated model",
+          "model_id"
+        ],
+        "unknown": [],
+        "rejection": [
+          "InvalidModel",
+          "InvalidInput"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
       "lean": {
         "bindings": [],
-        "planned_modes": ["model"],
-        "theorems": ["VE.Bridge.decodeModel_valid", "VE.Route.Wire.decodeModel_valid",
-                     "VE.Route.Wire.decodeModel_background", "VE.Route.Wire.decodeModel_intended"],
+        "planned_modes": [
+          "model"
+        ],
+        "theorems": [
+          "VE.Bridge.decodeModel_valid",
+          "VE.Route.Wire.decodeModel_valid",
+          "VE.Route.Wire.decodeModel_background",
+          "VE.Route.Wire.decodeModel_intended"
+        ],
         "planned_theorems": [],
-        "decoders": ["lean/VE/Json.lean", "lean/VE/Bridge.lean", "lean/VE/Route/Wire.lean", "lean/VE/Order/Wire.lean", "lean/VE/Core/Wire.lean"]
+        "decoders": [
+          "lean/VE/Json.lean",
+          "lean/VE/Bridge.lean",
+          "lean/VE/Route/Wire.lean",
+          "lean/VE/Order/Wire.lean",
+          "lean/VE/Core/Wire.lean"
+        ]
       },
-      "rust": {"commands": ["conformance"], "role": "model decoding and model_id in every Rust case"},
+      "rust": {
+        "commands": [
+          "conformance"
+        ],
+        "role": "model decoding and model_id in every Rust case"
+      },
       "lean_call_sites": [],
-      "tests": ["tests/test_evaluate_search.py::test_model_rejects_nonliteral_complete_duplicates_dangling_and_missing",
-                "tests/test_lean_conformance.py::test_countermodel_rejects_inadmissible_model",
-                "tests/test_rust_conformance.py::test_rust_shared_identities"],
-      "trusted": ["python:implementation", "python:wire"],
-      "notes": ["Lean validates every model it decodes in evaluate and countermodel cases; a standalone request, with model_id, is the planned `model` mode (migration plan 2.1, 2.2)."]
+      "tests": [
+        "tests/test_evaluate_search.py::test_model_rejects_nonliteral_complete_duplicates_dangling_and_missing",
+        "tests/test_lean_conformance.py::test_countermodel_rejects_inadmissible_model",
+        "tests/test_rust_conformance.py::test_rust_shared_identities"
+      ],
+      "trusted": [
+        "python:implementation",
+        "python:wire"
+      ],
+      "notes": [
+        "Lean validates every model it decodes in evaluate and countermodel cases; a standalone request, with model_id, is the planned `model` mode (migration plan 2.1, 2.2)."
+      ]
     },
     {
       "id": "evaluate",
@@ -425,36 +1644,136 @@
       "class": "leaf",
       "authority": "python",
       "target": "lean",
-      "assurance": {"current": "experimental", "at_switch": "reference-theorems-checked", "reason": "P6 eval_iff_denote per family"},
-      "python": ["ve.evaluate:evaluate"],
-      "outcomes": {"verdict": ["Satisfied", "Violated"], "unknown": [],
-                   "rejection": ["InvalidModel", "TypeMismatch", "InvalidInput"],
-                   "budget": ["ResourceLimit"], "operational": ["CheckerUnavailable"]},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "reference-theorems-checked",
+        "reason": "P6 eval_iff_denote per family"
+      },
+      "python": [
+        "ve.evaluate:evaluate"
+      ],
+      "outcomes": {
+        "verdict": [
+          "Satisfied",
+          "Violated"
+        ],
+        "unknown": [],
+        "rejection": [
+          "InvalidModel",
+          "TypeMismatch",
+          "InvalidInput"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
       "lean": {
         "bindings": [
-          {"executable": "ve_conformance", "mode": "", "kinds": [], "response": {"value": "bool", "values": "array<bool>"}, "counts": {"values": "case.ast"}, "dispatch": ["lean/VE/Order/ProfileGate.lean", "lean/VE/Bridge.lean"]},
-          {"executable": "ve_conformance", "mode": "route", "kinds": ["evaluate"], "response": {"values": "array<bool>"}, "counts": {"values": "case.ast"}, "dispatch": ["lean/VE/Route/Run.lean", "lean/VE/Route/Wire.lean", "lean/VE/Core/Wire.lean"]},
-          {"executable": "ve_conformance", "mode": "order", "kinds": ["evaluate"], "response": {"values": "array<bool>"}, "counts": {"values": "case.ast"}, "dispatch": ["lean/VE/Order/Wire.lean"]}
+          {
+            "executable": "ve_conformance",
+            "mode": "",
+            "kinds": [],
+            "response": {
+              "value": "bool",
+              "values": "array<bool>"
+            },
+            "counts": {
+              "values": "case.ast"
+            },
+            "dispatch": [
+              "lean/VE/Order/ProfileGate.lean",
+              "lean/VE/Bridge.lean"
+            ]
+          },
+          {
+            "executable": "ve_conformance",
+            "mode": "route",
+            "kinds": [
+              "evaluate"
+            ],
+            "response": {
+              "values": "array<bool>"
+            },
+            "counts": {
+              "values": "case.ast"
+            },
+            "dispatch": [
+              "lean/VE/Route/Run.lean",
+              "lean/VE/Route/Wire.lean",
+              "lean/VE/Core/Wire.lean"
+            ]
+          },
+          {
+            "executable": "ve_conformance",
+            "mode": "order",
+            "kinds": [
+              "evaluate"
+            ],
+            "response": {
+              "values": "array<bool>"
+            },
+            "counts": {
+              "values": "case.ast"
+            },
+            "dispatch": [
+              "lean/VE/Order/Wire.lean"
+            ]
+          }
         ],
         "planned_modes": [],
-        "theorems": ["VE.eval_iff_denote", "VE.eval_false_iff_not_denote", "VE.document_eval_iff_denote",
-                     "VE.Closure.eval_iff_denote", "VE.Order.eval_iff_denote", "VE.Core.eval_iff_denote",
-                     "VE.Bridge.decodeModel_valid", "VE.Route.Wire.decodeModel_valid",
-                     "VE.EvaluationCounts.legacy_decodeDocument_length", "VE.EvaluationCounts.closure_decodeFormulas_length",
-                     "VE.EvaluationCounts.core_decodeFormulas_length", "VE.EvaluationCounts.order_decodeFormulas_length",
-                     "VE.EvaluationCounts.route_decodeFormulas_length",
-                     "VE.Route.WireSound.runFol_evaluate", "VE.Route.WireSound.runClosure_evaluate",
-                     "VE.Route.WireSound.runOrder_evaluate", "VE.Route.RunSound.route_fol_evaluate",
-                     "VE.Route.RunSound.route_closure_evaluate", "VE.Route.RunSound.route_order_evaluate"],
+        "theorems": [
+          "VE.eval_iff_denote",
+          "VE.eval_false_iff_not_denote",
+          "VE.document_eval_iff_denote",
+          "VE.Closure.eval_iff_denote",
+          "VE.Order.eval_iff_denote",
+          "VE.Core.eval_iff_denote",
+          "VE.Bridge.decodeModel_valid",
+          "VE.Route.Wire.decodeModel_valid",
+          "VE.EvaluationCounts.legacy_decodeDocument_length",
+          "VE.EvaluationCounts.closure_decodeFormulas_length",
+          "VE.EvaluationCounts.core_decodeFormulas_length",
+          "VE.EvaluationCounts.order_decodeFormulas_length",
+          "VE.EvaluationCounts.route_decodeFormulas_length",
+          "VE.Route.WireSound.runFol_evaluate",
+          "VE.Route.WireSound.runClosure_evaluate",
+          "VE.Route.WireSound.runOrder_evaluate",
+          "VE.Route.RunSound.route_fol_evaluate",
+          "VE.Route.RunSound.route_closure_evaluate",
+          "VE.Route.RunSound.route_order_evaluate"
+        ],
         "planned_theorems": [],
-        "decoders": ["lean/VE/Json.lean", "lean/VE/Bridge.lean", "lean/VE/Route/Wire.lean", "lean/VE/Order/Wire.lean", "lean/VE/Core/Wire.lean"]
+        "decoders": [
+          "lean/VE/Json.lean",
+          "lean/VE/Bridge.lean",
+          "lean/VE/Route/Wire.lean",
+          "lean/VE/Order/Wire.lean",
+          "lean/VE/Core/Wire.lean"
+        ]
       },
-      "rust": {"commands": ["evaluate", "conformance"], "role": "hot evaluation and, after stage 2e, budgeted traces"},
+      "rust": {
+        "commands": [
+          "evaluate",
+          "conformance"
+        ],
+        "role": "hot evaluation and, after stage 2e, budgeted traces"
+      },
       "lean_call_sites": [],
-      "tests": ["tests/test_lean_conformance.py::test_lean_agrees_on_every_shared_case",
-                "tests/test_rust_conformance.py::test_rust_shared_evaluation",
-                "tests/test_evaluate_search.py::test_evaluation_resource_limit_is_not_false"],
-      "trusted": ["python:implementation", "lean:kernel", "lean:compiler", "lean:decoders", "lean:runner-glue"],
+      "tests": [
+        "tests/test_lean_conformance.py::test_lean_agrees_on_every_shared_case",
+        "tests/test_rust_conformance.py::test_rust_shared_evaluation",
+        "tests/test_evaluate_search.py::test_evaluation_resource_limit_is_not_false"
+      ],
+      "trusted": [
+        "python:implementation",
+        "lean:kernel",
+        "lean:compiler",
+        "lean:decoders",
+        "lean:runner-glue"
+      ],
       "notes": []
     },
     {
@@ -463,37 +1782,131 @@
       "class": "leaf",
       "authority": "python",
       "target": "lean",
-      "assurance": {"current": "experimental", "at_switch": "reference-theorems-checked",
-                    "reason": "P11 countermodelCheck_iff and countermodel_sound; decoded models proved admissible"},
-      "python": ["ve.search:check_countermodel"],
-      "outcomes": {"verdict": ["Valid", "NotCountermodel"], "unknown": [],
-                   "rejection": ["InvalidModel", "TypeMismatch", "InvalidInput"],
-                   "budget": ["ResourceLimit"], "operational": ["CheckerUnavailable"]},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "reference-theorems-checked",
+        "reason": "P11 countermodelCheck_iff and countermodel_sound; decoded models proved admissible"
+      },
+      "python": [
+        "ve.search:check_countermodel"
+      ],
+      "outcomes": {
+        "verdict": [
+          "Valid",
+          "NotCountermodel"
+        ],
+        "unknown": [],
+        "rejection": [
+          "InvalidModel",
+          "TypeMismatch",
+          "InvalidInput"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
       "lean": {
         "bindings": [
-          {"executable": "ve_conformance", "mode": "", "kinds": ["countermodel"], "response": {"refutes": "bool"}, "dispatch": ["lean/VE/Bridge.lean", "lean/VE/Closure/Bridge.lean"]},
-          {"executable": "ve_conformance", "mode": "route", "kinds": ["countermodel"], "response": {"refutes": "bool"}, "dispatch": ["lean/VE/Route/Wire.lean", "lean/VE/Core/Wire.lean"]},
-          {"executable": "ve_conformance", "mode": "order", "kinds": ["countermodel"], "response": {"refutes": "bool"}, "dispatch": ["lean/VE/Order/Wire.lean"]}
+          {
+            "executable": "ve_conformance",
+            "mode": "",
+            "kinds": [
+              "countermodel"
+            ],
+            "response": {
+              "refutes": "bool"
+            },
+            "dispatch": [
+              "lean/VE/Bridge.lean",
+              "lean/VE/Closure/Bridge.lean"
+            ]
+          },
+          {
+            "executable": "ve_conformance",
+            "mode": "route",
+            "kinds": [
+              "countermodel"
+            ],
+            "response": {
+              "refutes": "bool"
+            },
+            "dispatch": [
+              "lean/VE/Route/Wire.lean",
+              "lean/VE/Core/Wire.lean"
+            ]
+          },
+          {
+            "executable": "ve_conformance",
+            "mode": "order",
+            "kinds": [
+              "countermodel"
+            ],
+            "response": {
+              "refutes": "bool"
+            },
+            "dispatch": [
+              "lean/VE/Order/Wire.lean"
+            ]
+          }
         ],
-        "planned_modes": ["model"],
-        "theorems": ["VE.countermodelCheck_iff", "VE.countermodel_sound", "VE.Closure.countermodelCheck_iff",
-                     "VE.Closure.countermodel_sound", "VE.Order.countermodelCheck_iff", "VE.Order.countermodel_sound",
-                     "VE.Order.checkCountermodel_sound", "VE.Core.countermodelCheck_iff", "VE.Core.countermodel_sound",
-                     "VE.Bridge.decodeModel_valid", "VE.Bridge.decoded_countermodel_sound",
-                     "VE.Bridge.CountermodelQuery.refutes_sound", "VE.Route.Wire.decodeModel_valid",
-                     "VE.Route.WireSound.runFol_countermodel", "VE.Route.WireSound.runClosure_countermodel",
-                     "VE.Route.WireSound.runOrder_countermodel", "VE.Route.RunSound.route_fol_countermodel",
-                     "VE.Route.RunSound.route_closure_countermodel", "VE.Route.RunSound.route_order_countermodel"],
+        "planned_modes": [
+          "model"
+        ],
+        "theorems": [
+          "VE.countermodelCheck_iff",
+          "VE.countermodel_sound",
+          "VE.Closure.countermodelCheck_iff",
+          "VE.Closure.countermodel_sound",
+          "VE.Order.countermodelCheck_iff",
+          "VE.Order.countermodel_sound",
+          "VE.Order.checkCountermodel_sound",
+          "VE.Core.countermodelCheck_iff",
+          "VE.Core.countermodel_sound",
+          "VE.Bridge.decodeModel_valid",
+          "VE.Bridge.decoded_countermodel_sound",
+          "VE.Bridge.CountermodelQuery.refutes_sound",
+          "VE.Route.Wire.decodeModel_valid",
+          "VE.Route.WireSound.runFol_countermodel",
+          "VE.Route.WireSound.runClosure_countermodel",
+          "VE.Route.WireSound.runOrder_countermodel",
+          "VE.Route.RunSound.route_fol_countermodel",
+          "VE.Route.RunSound.route_closure_countermodel",
+          "VE.Route.RunSound.route_order_countermodel"
+        ],
         "planned_theorems": [],
-        "decoders": ["lean/VE/Json.lean", "lean/VE/Bridge.lean", "lean/VE/Closure/Bridge.lean", "lean/VE/Route/Wire.lean", "lean/VE/Order/Wire.lean", "lean/VE/Core/Wire.lean"]
+        "decoders": [
+          "lean/VE/Json.lean",
+          "lean/VE/Bridge.lean",
+          "lean/VE/Closure/Bridge.lean",
+          "lean/VE/Route/Wire.lean",
+          "lean/VE/Order/Wire.lean",
+          "lean/VE/Core/Wire.lean"
+        ]
       },
-      "rust": {"commands": ["check-countermodel", "conformance"], "role": "fast validation; Lean validates every Rust witness before it is reported"},
+      "rust": {
+        "commands": [
+          "check-countermodel",
+          "conformance"
+        ],
+        "role": "fast validation; Lean validates every Rust witness before it is reported"
+      },
       "lean_call_sites": [],
-      "tests": ["tests/test_lean_conformance.py::test_lean_countermodels_agree_on_every_shared_case",
-                "tests/test_lean_conformance.py::test_countermodel_rejects_inadmissible_model",
-                "tests/test_rust_conformance.py::test_rust_shared_countermodels",
-                "tests/test_p0_three_way.py::test_order_countermodel_three_way_agreement"],
-      "trusted": ["python:implementation", "lean:kernel", "lean:compiler", "lean:decoders", "lean:runner-glue"],
+      "tests": [
+        "tests/test_lean_conformance.py::test_lean_countermodels_agree_on_every_shared_case",
+        "tests/test_lean_conformance.py::test_countermodel_rejects_inadmissible_model",
+        "tests/test_rust_conformance.py::test_rust_shared_countermodels",
+        "tests/test_p0_three_way.py::test_order_countermodel_three_way_agreement"
+      ],
+      "trusted": [
+        "python:implementation",
+        "lean:kernel",
+        "lean:compiler",
+        "lean:decoders",
+        "lean:runner-glue"
+      ],
       "notes": []
     },
     {
@@ -502,23 +1915,56 @@
       "class": "search",
       "authority": "python",
       "target": "rust",
-      "assurance": {"current": "experimental", "at_switch": "experimental",
-                    "reason": "search is untrusted generation; a Found witness is reported only after countermodel.check, and NotFound is never a semantic verdict"},
-      "python": ["ve.search:find_countermodel", "ve.search:find_distinguishing_model"],
-      "outcomes": {"verdict": ["Found (validated witness)"], "unknown": ["NotFound"],
-                   "rejection": ["InvalidInput", "TypeMismatch"], "budget": ["ResourceLimit"],
-                   "operational": ["CheckerUnavailable"]},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "search is untrusted generation; a Found witness is reported only after countermodel.check, and NotFound is never a semantic verdict"
+      },
+      "python": [
+        "ve.search:find_countermodel",
+        "ve.search:find_distinguishing_model"
+      ],
+      "outcomes": {
+        "verdict": [
+          "Found (validated witness)"
+        ],
+        "unknown": [
+          "NotFound"
+        ],
+        "rejection": [
+          "InvalidInput",
+          "TypeMismatch"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
       "lean": null,
-      "rust": {"commands": ["countermodel", "conformance"], "role": "search, extended with every Python search option in stage 2e"},
+      "rust": {
+        "commands": [
+          "countermodel",
+          "conformance"
+        ],
+        "role": "search, extended with every Python search option in stage 2e"
+      },
       "lean_call_sites": [],
-      "tests": ["tests/test_evaluate_search.py::test_search_finds_empty_domain_countermodel_and_checks_it",
-                "tests/test_search_options.py::test_public_countermodel_check_always_revalidates_forged_model_identity",
-                "tests/test_rust_conformance.py::test_rust_shared_search",
-                "tests/test_lean_conformance.py::test_oracle_witnesses_replay_in_lean",
-                "tests/test_assurance_manifest.py::test_search_reports_found_only_through_the_countermodel_check"],
-      "trusted": ["python:implementation"],
-      "notes": ["Search has no theorem; its soundness is countermodel.check's. Every candidate passes the `ve.search:check_countermodel` verdict entry before `Found` is reported (a distinguishing model is checked as a countermodel to the direction it refutes), so a migrated countermodel.check makes search CheckerUnavailable rather than bypassed.",
-                "The non-vacuity filter (`nonvacuous_for`, `semantic_nonvacuity`) is a search-side constraint with no checker counterpart; it is trusted as python:implementation."]
+      "tests": [
+        "tests/test_evaluate_search.py::test_search_finds_empty_domain_countermodel_and_checks_it",
+        "tests/test_search_options.py::test_public_countermodel_check_always_revalidates_forged_model_identity",
+        "tests/test_rust_conformance.py::test_rust_shared_search",
+        "tests/test_lean_conformance.py::test_oracle_witnesses_replay_in_lean",
+        "tests/test_assurance_manifest.py::test_search_reports_found_only_through_the_countermodel_check"
+      ],
+      "trusted": [
+        "python:implementation"
+      ],
+      "notes": [
+        "Search has no theorem; its soundness is countermodel.check's. Every candidate passes the `ve.search:check_countermodel` verdict entry before `Found` is reported (a distinguishing model is checked as a countermodel to the direction it refutes), so a migrated countermodel.check makes search CheckerUnavailable rather than bypassed.",
+        "The non-vacuity filter (`nonvacuous_for`, `semantic_nonvacuity`) is a search-side constraint with no checker counterpart; it is trusted as python:implementation."
+      ]
     },
     {
       "id": "certificate.check",
@@ -526,40 +1972,127 @@
       "class": "leaf",
       "authority": "python",
       "target": "lean",
-      "assurance": {"current": "experimental", "at_switch": "reference-theorems-checked", "reason": "checkCertificate_sound per checker version"},
-      "python": ["ve.entailment:check_entailment_certificate"],
-      "outcomes": {"verdict": ["Valid", "InvalidCertificate"], "unknown": [],
-                   "rejection": ["InvalidInput", "TypeMismatch"], "budget": ["ResourceLimit"],
-                   "operational": ["CheckerUnavailable"]},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "reference-theorems-checked",
+        "reason": "checkCertificate_sound per checker version"
+      },
+      "python": [
+        "ve.entailment:check_entailment_certificate"
+      ],
+      "outcomes": {
+        "verdict": [
+          "Valid",
+          "InvalidCertificate"
+        ],
+        "unknown": [],
+        "rejection": [
+          "InvalidInput",
+          "TypeMismatch"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
       "lean": {
         "bindings": [
-          {"executable": "ve_conformance", "mode": "check-certificate", "kinds": [], "response": {"valid": "bool"}, "dispatch": ["lean/VE/CertificateWire.lean"]},
-          {"executable": "ve_conformance", "mode": "route", "kinds": ["certificate"], "response": {"valid": "bool", "background": "nat"}, "uncounted": {"background": "the background the environment generates; the caller compares it with Python's"}, "dispatch": ["lean/VE/Route/Wire.lean", "lean/VE/Core/Wire.lean"]},
-          {"executable": "ve_conformance", "mode": "order", "kinds": ["certificate"], "response": {"valid": "bool"}, "dispatch": ["lean/VE/Order/Wire.lean"]}
+          {
+            "executable": "ve_conformance",
+            "mode": "check-certificate",
+            "kinds": [],
+            "response": {
+              "valid": "bool"
+            },
+            "dispatch": [
+              "lean/VE/CertificateWire.lean"
+            ]
+          },
+          {
+            "executable": "ve_conformance",
+            "mode": "route",
+            "kinds": [
+              "certificate"
+            ],
+            "response": {
+              "valid": "bool",
+              "background": "nat"
+            },
+            "uncounted": {
+              "background": "the background the environment generates; the caller compares it with Python's"
+            },
+            "dispatch": [
+              "lean/VE/Route/Wire.lean",
+              "lean/VE/Core/Wire.lean"
+            ]
+          },
+          {
+            "executable": "ve_conformance",
+            "mode": "order",
+            "kinds": [
+              "certificate"
+            ],
+            "response": {
+              "valid": "bool"
+            },
+            "dispatch": [
+              "lean/VE/Order/Wire.lean"
+            ]
+          }
         ],
         "planned_modes": [],
-        "theorems": ["VE.Tableau.checkCertificate_sound", "VE.Closure.Tableau.checkCertificate_sound",
-                     "VE.Closure.Tableau.checkCertificate_sound_v0", "VE.Core.Tableau.checkCertificate_sound",
-                     "VE.Core.Tableau.checkCertificate_sound_v0", "VE.Order.Tableau.checkCertificate_sound",
-                     "VE.CertificateWire.Query.accepts_sound", "VE.CertificateWire.ClosureQuery.accepts_sound",
-                     "VE.Order.Wire.Query.accepts_sound", "VE.Core.Wire.run_certificate_acceptance",
-                     "VE.Route.route_acceptance", "VE.Route.core_route_acceptance",
-                     "VE.Route.WireSound.Runner.acceptance", "VE.Route.WireSound.runFol_certificate_acceptance",
-                     "VE.Route.WireSound.runClosure_certificate_acceptance",
-                     "VE.Route.WireSound.runOrder_certificate_acceptance",
-                     "VE.Route.RunSound.route_fol_certificate", "VE.Route.RunSound.route_closure_certificate",
-                     "VE.Route.RunSound.route_order_certificate"],
+        "theorems": [
+          "VE.Tableau.checkCertificate_sound",
+          "VE.Closure.Tableau.checkCertificate_sound",
+          "VE.Closure.Tableau.checkCertificate_sound_v0",
+          "VE.Core.Tableau.checkCertificate_sound",
+          "VE.Core.Tableau.checkCertificate_sound_v0",
+          "VE.Order.Tableau.checkCertificate_sound",
+          "VE.CertificateWire.Query.accepts_sound",
+          "VE.CertificateWire.ClosureQuery.accepts_sound",
+          "VE.Order.Wire.Query.accepts_sound",
+          "VE.Core.Wire.run_certificate_acceptance",
+          "VE.Route.route_acceptance",
+          "VE.Route.core_route_acceptance",
+          "VE.Route.WireSound.Runner.acceptance",
+          "VE.Route.WireSound.runFol_certificate_acceptance",
+          "VE.Route.WireSound.runClosure_certificate_acceptance",
+          "VE.Route.WireSound.runOrder_certificate_acceptance",
+          "VE.Route.RunSound.route_fol_certificate",
+          "VE.Route.RunSound.route_closure_certificate",
+          "VE.Route.RunSound.route_order_certificate"
+        ],
         "planned_theorems": [],
-        "decoders": ["lean/VE/Json.lean", "lean/VE/CertificateWire.lean", "lean/VE/Route/Wire.lean", "lean/VE/Order/Wire.lean", "lean/VE/Core/Wire.lean", "lean/VE/Route/Gate.lean"]
+        "decoders": [
+          "lean/VE/Json.lean",
+          "lean/VE/CertificateWire.lean",
+          "lean/VE/Route/Wire.lean",
+          "lean/VE/Order/Wire.lean",
+          "lean/VE/Core/Wire.lean",
+          "lean/VE/Route/Gate.lean"
+        ]
       },
       "rust": null,
       "lean_call_sites": [],
-      "tests": ["tests/test_lean_certificates.py::test_python_certificates_and_forged_mutations",
-                "tests/test_lean_certificates.py::test_compound_closure_versions_and_parameter_bindings",
-                "tests/test_entailment.py::test_malformed_and_fabricated_certificates_never_certify_or_crash",
-                "tests/test_p0_three_way.py::test_lean_matches_expected"],
-      "trusted": ["python:implementation", "python:wire", "lean:kernel", "lean:compiler", "lean:decoders", "lean:runner-glue"],
-      "notes": ["Proof search (prove_entailment) is untrusted generation and is not a verdict entry."]
+      "tests": [
+        "tests/test_lean_certificates.py::test_python_certificates_and_forged_mutations",
+        "tests/test_lean_certificates.py::test_compound_closure_versions_and_parameter_bindings",
+        "tests/test_entailment.py::test_malformed_and_fabricated_certificates_never_certify_or_crash",
+        "tests/test_p0_three_way.py::test_lean_matches_expected"
+      ],
+      "trusted": [
+        "python:implementation",
+        "python:wire",
+        "lean:kernel",
+        "lean:compiler",
+        "lean:decoders",
+        "lean:runner-glue"
+      ],
+      "notes": [
+        "Proof search (prove_entailment) is untrusted generation and is not a verdict entry."
+      ]
     },
     {
       "id": "definitions.elaborate",
@@ -567,33 +2100,119 @@
       "class": "leaf",
       "authority": "python",
       "target": "lean",
-      "assurance": {"current": "experimental", "at_switch": "experimental",
-                    "reason": "theorems exist but are not yet mapped in theorem-coverage.md (migration plan stage 4)"},
-      "python": ["ve.definitions:compile_definitions", "ve.definitions:expand", "ve.background:background",
-                 "ve.background:validate_background", "ve.background:dependency_order"],
-      "outcomes": {"verdict": ["Background premises", "defined tables", "dependency order"], "unknown": [],
-                   "rejection": ["InvalidModel", "DependencyCycle", "DuplicateDeclaration", "UnsupportedProfile", "InvalidInput"],
-                   "budget": ["ResourceLimit"], "operational": ["CheckerUnavailable"]},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "theorems exist but are not yet mapped in theorem-coverage.md (migration plan stage 4)"
+      },
+      "python": [
+        "ve.definitions:compile_definitions",
+        "ve.definitions:expand",
+        "ve.background:background",
+        "ve.background:validate_background",
+        "ve.background:dependency_order"
+      ],
+      "outcomes": {
+        "verdict": [
+          "Background premises",
+          "defined tables",
+          "dependency order"
+        ],
+        "unknown": [],
+        "rejection": [
+          "InvalidModel",
+          "DependencyCycle",
+          "DuplicateDeclaration",
+          "UnsupportedProfile",
+          "InvalidInput"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
       "lean": {
         "bindings": [
-          {"executable": "ve_conformance", "mode": "route", "kinds": ["background"], "response": {"background": "array<json>", "generators": "array<string>", "premises": "array<json>"}, "counts": {"background": "row.premises", "generators": "row.premises"}, "uncounted": {"premises": "the background the environment generates"}, "dispatch": ["lean/VE/Route/Run.lean"]},
-          {"executable": "ve_conformance", "mode": "route", "kinds": ["dependency-order"], "response": {"order": "array<string>"}, "counts": {"order": "case.nodes"}, "dispatch": ["lean/VE/Route/Run.lean"]}
+          {
+            "executable": "ve_conformance",
+            "mode": "route",
+            "kinds": [
+              "background"
+            ],
+            "response": {
+              "background": "array<json>",
+              "generators": "array<string>",
+              "premises": "array<json>"
+            },
+            "counts": {
+              "background": "row.premises",
+              "generators": "row.premises"
+            },
+            "uncounted": {
+              "premises": "the background the environment generates"
+            },
+            "dispatch": [
+              "lean/VE/Route/Run.lean"
+            ]
+          },
+          {
+            "executable": "ve_conformance",
+            "mode": "route",
+            "kinds": [
+              "dependency-order"
+            ],
+            "response": {
+              "order": "array<string>"
+            },
+            "counts": {
+              "order": "case.nodes"
+            },
+            "dispatch": [
+              "lean/VE/Route/Run.lean"
+            ]
+          }
         ],
         "planned_modes": [],
-        "theorems": ["VE.Definitions.stepOk_sound", "VE.Definitions.chainOk_sound", "VE.Definitions.faithful",
-                     "VE.Definitions.conservative", "VE.Definitions.conservative_entails",
-                     "VE.Definitions.routeLayer_background_sound", "VE.Route.Background.fol_background_sound",
-                     "VE.Route.Background.fol_background_complete", "VE.Data.Background.generate_sat_iff"],
+        "theorems": [
+          "VE.Definitions.stepOk_sound",
+          "VE.Definitions.chainOk_sound",
+          "VE.Definitions.faithful",
+          "VE.Definitions.conservative",
+          "VE.Definitions.conservative_entails",
+          "VE.Definitions.routeLayer_background_sound",
+          "VE.Route.Background.fol_background_sound",
+          "VE.Route.Background.fol_background_complete",
+          "VE.Data.Background.generate_sat_iff"
+        ],
         "planned_theorems": [],
-        "decoders": ["lean/VE/Json.lean", "lean/VE/Route/Wire.lean", "lean/VE/Route/Gate.lean"]
+        "decoders": [
+          "lean/VE/Json.lean",
+          "lean/VE/Route/Wire.lean",
+          "lean/VE/Route/Gate.lean"
+        ]
       },
-      "rust": {"commands": ["conformance"], "role": "defined tables and the dependency-order route kind"},
+      "rust": {
+        "commands": [
+          "conformance"
+        ],
+        "role": "defined tables and the dependency-order route kind"
+      },
       "lean_call_sites": [],
-      "tests": ["tests/test_definitions_differential.py::test_python_and_lean_elaborate_identically",
-                "tests/test_definitions_differential.py::test_rust_computes_the_same_tables",
-                "tests/test_background.py::test_literal_background_is_derived_and_identity_bound",
-                "tests/test_background.py::test_one_dependency_dag"],
-      "trusted": ["python:implementation", "lean:kernel", "lean:compiler", "lean:decoders", "lean:runner-glue"],
+      "tests": [
+        "tests/test_definitions_differential.py::test_python_and_lean_elaborate_identically",
+        "tests/test_definitions_differential.py::test_rust_computes_the_same_tables",
+        "tests/test_background.py::test_literal_background_is_derived_and_identity_bound",
+        "tests/test_background.py::test_one_dependency_dag"
+      ],
+      "trusted": [
+        "python:implementation",
+        "lean:kernel",
+        "lean:compiler",
+        "lean:decoders",
+        "lean:runner-glue"
+      ],
       "notes": []
     },
     {
@@ -602,27 +2221,85 @@
       "class": "leaf",
       "authority": "python",
       "target": "lean",
-      "assurance": {"current": "experimental", "at_switch": "experimental",
-                    "reason": "elaborate_iff exists; not yet mapped in theorem-coverage.md; the Lean norms route takes FOL-family documents with definitions and data flags, and the family-norms mode (Service.FamilyNorms) first-order documents on the closure, core and order families, regenerated over the environment's FOL view"},
-      "python": ["ve.norms:NormDocument.elaborate", "ve.norms:NormDocument.premises"],
-      "outcomes": {"verdict": ["regenerated layer premises"], "unknown": [],
-                   "rejection": ["DuplicateDeclaration", "UnsupportedProfile", "InvalidInput"],
-                   "budget": ["ResourceLimit"], "operational": ["CheckerUnavailable"]},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "elaborate_iff exists; not yet mapped in theorem-coverage.md; the Lean norms route takes FOL-family documents with definitions and data flags, and the family-norms mode (Service.FamilyNorms) first-order documents on the closure, core and order families, regenerated over the environment's FOL view"
+      },
+      "python": [
+        "ve.norms:NormDocument.elaborate",
+        "ve.norms:NormDocument.premises"
+      ],
+      "outcomes": {
+        "verdict": [
+          "regenerated layer premises"
+        ],
+        "unknown": [],
+        "rejection": [
+          "DuplicateDeclaration",
+          "UnsupportedProfile",
+          "InvalidInput"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
       "lean": {
         "bindings": [
-          {"executable": "ve_service", "mode": "norms", "kinds": ["norms-elaborate"], "response": {"premises": "array<object>", "conflict_targets": "array<object>"}, "uncounted": {"premises": "one per norm symbol the environment registers", "conflict_targets": "the conflict targets the environment registers"}, "dispatch": ["lean/VE/Norms/Run.lean"]}
+          {
+            "executable": "ve_service",
+            "mode": "norms",
+            "kinds": [
+              "norms-elaborate"
+            ],
+            "response": {
+              "premises": "array<object>",
+              "conflict_targets": "array<object>"
+            },
+            "uncounted": {
+              "premises": "one per norm symbol the environment registers",
+              "conflict_targets": "the conflict targets the environment registers"
+            },
+            "dispatch": [
+              "lean/VE/Norms/Run.lean"
+            ]
+          }
         ],
         "planned_modes": [],
-        "theorems": ["VE.Norms.elaborate_iff", "VE.Norms.elaborate_iff_at", "VE.Norms.norms_route_intended"],
+        "theorems": [
+          "VE.Norms.elaborate_iff",
+          "VE.Norms.elaborate_iff_at",
+          "VE.Norms.norms_route_intended"
+        ],
         "planned_theorems": [],
-        "decoders": ["lean/VE/Json.lean", "lean/VE/Norms/Wire.lean", "lean/VE/Norms/Flagged.lean",
-                     "lean/VE/Service/FamilyNorms.lean"]
+        "decoders": [
+          "lean/VE/Json.lean",
+          "lean/VE/Norms/Wire.lean",
+          "lean/VE/Norms/Flagged.lean",
+          "lean/VE/Service/FamilyNorms.lean"
+        ]
       },
-      "rust": {"commands": ["conformance"], "role": "evaluates the regenerated formulas"},
+      "rust": {
+        "commands": [
+          "conformance"
+        ],
+        "role": "evaluates the regenerated formulas"
+      },
       "lean_call_sites": [],
-      "tests": ["tests/test_norms_three_way.py::test_1100_regenerated_documents_match_lean",
-                "tests/test_norms.py::test_pair_rule_and_default_counterexamples"],
-      "trusted": ["python:implementation", "lean:kernel", "lean:compiler", "lean:decoders", "lean:runner-glue"],
+      "tests": [
+        "tests/test_norms_three_way.py::test_1100_regenerated_documents_match_lean",
+        "tests/test_norms.py::test_pair_rule_and_default_counterexamples"
+      ],
+      "trusted": [
+        "python:implementation",
+        "lean:kernel",
+        "lean:compiler",
+        "lean:decoders",
+        "lean:runner-glue"
+      ],
       "notes": []
     },
     {
@@ -631,32 +2308,97 @@
       "class": "leaf",
       "authority": "python",
       "target": "lean",
-      "assurance": {"current": "experimental", "at_switch": "experimental",
-                    "reason": "conflict theorems exist; not yet mapped in theorem-coverage.md"},
-      "python": ["ve.norms:check_witness", "ve.norms:check_conflict"],
-      "outcomes": {"verdict": ["CONFLICT", "CONFLICT-FREE"], "unknown": ["UNKNOWN"],
-                   "rejection": ["InvalidModel", "UnknownSymbol", "InvalidInput"],
-                   "budget": ["ResourceLimit"], "operational": ["CheckerUnavailable"]},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "conflict theorems exist; not yet mapped in theorem-coverage.md"
+      },
+      "python": [
+        "ve.norms:check_witness",
+        "ve.norms:check_conflict"
+      ],
+      "outcomes": {
+        "verdict": [
+          "CONFLICT",
+          "CONFLICT-FREE"
+        ],
+        "unknown": [
+          "UNKNOWN"
+        ],
+        "rejection": [
+          "InvalidModel",
+          "UnknownSymbol",
+          "InvalidInput"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
       "lean": {
         "bindings": [
-          {"executable": "ve_service", "mode": "norms", "kinds": ["norms-conflict"], "response": {"verdict": "string", "targets": "array<string>"}, "uncounted": {"targets": "the conflict targets the environment registers"}, "dispatch": ["lean/VE/Norms/Run.lean"]}
+          {
+            "executable": "ve_service",
+            "mode": "norms",
+            "kinds": [
+              "norms-conflict"
+            ],
+            "response": {
+              "verdict": "string",
+              "targets": "array<string>"
+            },
+            "uncounted": {
+              "targets": "the conflict targets the environment registers"
+            },
+            "dispatch": [
+              "lean/VE/Norms/Run.lean"
+            ]
+          }
         ],
         "planned_modes": [],
-        "theorems": ["VE.Service.FamilyNorms.closure_conflict_target_sound", "VE.Service.FamilyNorms.core_conflict_target_sound",
-                     "VE.Service.FamilyNorms.order_conflict_target_sound", "VE.Norms.conflictFreeCheck_sound", "VE.Norms.conflict_witness_sound", "VE.Norms.conflict_smallModel",
-                     "VE.Norms.FlaggedSpec.conflictFree_of_base", "VE.Norms.FlaggedSpec.norms_flagged_conflict_free",
-                     "VE.Norms.FlaggedSpec.norms_wire_conflict_free",
-                     "VE.Norms.Flagged.norms_flagged_conflict_sound", "VE.Norms.Flagged.norms_flagged_witness_sound"],
+        "theorems": [
+          "VE.Service.FamilyNorms.closure_conflict_target_sound",
+          "VE.Service.FamilyNorms.core_conflict_target_sound",
+          "VE.Service.FamilyNorms.order_conflict_target_sound",
+          "VE.Norms.conflictFreeCheck_sound",
+          "VE.Norms.conflict_witness_sound",
+          "VE.Norms.conflict_smallModel",
+          "VE.Norms.FlaggedSpec.conflictFree_of_base",
+          "VE.Norms.FlaggedSpec.norms_flagged_conflict_free",
+          "VE.Norms.FlaggedSpec.norms_wire_conflict_free",
+          "VE.Norms.Flagged.norms_flagged_conflict_sound",
+          "VE.Norms.Flagged.norms_flagged_witness_sound"
+        ],
         "planned_theorems": [],
-        "decoders": ["lean/VE/Json.lean", "lean/VE/Norms/Wire.lean", "lean/VE/Norms/Replay.lean", "lean/VE/Norms/Flagged.lean",
-                     "lean/VE/Service/FamilyNorms.lean"]
+        "decoders": [
+          "lean/VE/Json.lean",
+          "lean/VE/Norms/Wire.lean",
+          "lean/VE/Norms/Replay.lean",
+          "lean/VE/Norms/Flagged.lean",
+          "lean/VE/Service/FamilyNorms.lean"
+        ]
       },
-      "rust": {"commands": ["conformance"], "role": "evaluates Python-generated conflict targets"},
+      "rust": {
+        "commands": [
+          "conformance"
+        ],
+        "role": "evaluates Python-generated conflict targets"
+      },
       "lean_call_sites": [],
-      "tests": ["tests/test_norms_three_way.py::test_conflict_witness_and_certificates_match_lean",
-                "tests/test_norms.py::test_same_sign_overlap_is_not_conflict",
-                "tests/test_norms_three_way.py::test_rust_evaluates_python_generated_conflicts"],
-      "trusted": ["python:implementation", "lean:kernel", "lean:compiler", "lean:decoders", "lean:runner-glue"],
+      "tests": [
+        "tests/test_norms_three_way.py::test_conflict_witness_and_certificates_match_lean",
+        "tests/test_norms.py::test_same_sign_overlap_is_not_conflict",
+        "tests/test_norms_three_way.py::test_rust_evaluates_python_generated_conflicts"
+      ],
+      "trusted": [
+        "python:implementation",
+        "lean:kernel",
+        "lean:compiler",
+        "lean:decoders",
+        "lean:runner-glue"
+      ],
       "notes": []
     },
     {
@@ -665,28 +2407,83 @@
       "class": "leaf",
       "authority": "python",
       "target": "lean",
-      "assurance": {"current": "experimental", "at_switch": "experimental",
-                    "reason": "norms_flagged_acceptance exists; not yet mapped in theorem-coverage.md"},
-      "python": ["ve.norms:check_norm_entailment_certificate"],
-      "outcomes": {"verdict": ["Valid", "InvalidCertificate"], "unknown": [],
-                   "rejection": ["InvalidInput"], "budget": ["ResourceLimit"], "operational": ["CheckerUnavailable"]},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "norms_flagged_acceptance exists; not yet mapped in theorem-coverage.md"
+      },
+      "python": [
+        "ve.norms:check_norm_entailment_certificate"
+      ],
+      "outcomes": {
+        "verdict": [
+          "Valid",
+          "InvalidCertificate"
+        ],
+        "unknown": [],
+        "rejection": [
+          "InvalidInput"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
       "lean": {
         "bindings": [
-          {"executable": "ve_service", "mode": "norms", "kinds": ["norms-certificate"], "response": {"valid": "bool", "layers": "nat"}, "uncounted": {"layers": "the elaboration layers of the environment's norms"}, "dispatch": ["lean/VE/Norms/Run.lean"]}
+          {
+            "executable": "ve_service",
+            "mode": "norms",
+            "kinds": [
+              "norms-certificate"
+            ],
+            "response": {
+              "valid": "bool",
+              "layers": "nat"
+            },
+            "uncounted": {
+              "layers": "the elaboration layers of the environment's norms"
+            },
+            "dispatch": [
+              "lean/VE/Norms/Run.lean"
+            ]
+          }
         ],
         "planned_modes": [],
-        "theorems": ["VE.Service.FamilyNorms.closure_norms_certificate_sound", "VE.Service.FamilyNorms.core_norms_certificate_sound",
-                     "VE.Service.FamilyNorms.order_norms_certificate_sound", "VE.Norms.norms_route_acceptance",
-                     "VE.Norms.norms_route_entails_iff", "VE.Norms.norms_route_countermodel",
-                     "VE.Norms.Flagged.norms_flagged_acceptance", "VE.Norms.RunSound.norms_wire_certificate_acceptance"],
+        "theorems": [
+          "VE.Service.FamilyNorms.closure_norms_certificate_sound",
+          "VE.Service.FamilyNorms.core_norms_certificate_sound",
+          "VE.Service.FamilyNorms.order_norms_certificate_sound",
+          "VE.Norms.norms_route_acceptance",
+          "VE.Norms.norms_route_entails_iff",
+          "VE.Norms.norms_route_countermodel",
+          "VE.Norms.Flagged.norms_flagged_acceptance",
+          "VE.Norms.RunSound.norms_wire_certificate_acceptance"
+        ],
         "planned_theorems": [],
-        "decoders": ["lean/VE/Json.lean", "lean/VE/Norms/Wire.lean", "lean/VE/Norms/Replay.lean", "lean/VE/Norms/Flagged.lean", "lean/VE/CertificateWire.lean",
-                     "lean/VE/Service/FamilyNorms.lean"]
+        "decoders": [
+          "lean/VE/Json.lean",
+          "lean/VE/Norms/Wire.lean",
+          "lean/VE/Norms/Replay.lean",
+          "lean/VE/Norms/Flagged.lean",
+          "lean/VE/CertificateWire.lean",
+          "lean/VE/Service/FamilyNorms.lean"
+        ]
       },
       "rust": null,
       "lean_call_sites": [],
-      "tests": ["tests/test_norms_three_way.py::test_norm_certificate_producer_and_canonical_identity_match_lean"],
-      "trusted": ["python:implementation", "lean:kernel", "lean:compiler", "lean:decoders", "lean:runner-glue"],
+      "tests": [
+        "tests/test_norms_three_way.py::test_norm_certificate_producer_and_canonical_identity_match_lean"
+      ],
+      "trusted": [
+        "python:implementation",
+        "lean:kernel",
+        "lean:compiler",
+        "lean:decoders",
+        "lean:runner-glue"
+      ],
       "notes": []
     },
     {
@@ -695,16 +2492,42 @@
       "class": "leaf",
       "authority": "lean-only",
       "target": "lean",
-      "assurance": {"current": "experimental", "at_switch": "experimental",
-                    "reason": "not implemented; new constructs land as Lean checkers only (migration plan section 6)"},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "not implemented; new constructs land as Lean checkers only (migration plan section 6)"
+      },
       "python": [],
-      "outcomes": {"verdict": [], "unknown": [], "rejection": [], "budget": [], "operational": ["CheckerUnavailable"]},
-      "lean": {"bindings": [], "planned_modes": ["soft"], "theorems": [], "planned_theorems": [], "decoders": []},
+      "outcomes": {
+        "verdict": [],
+        "unknown": [],
+        "rejection": [],
+        "budget": [],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
+      "lean": {
+        "bindings": [],
+        "planned_modes": [
+          "soft"
+        ],
+        "theorems": [],
+        "planned_theorems": [],
+        "decoders": []
+      },
       "rust": null,
       "lean_call_sites": [],
-      "tests": ["tests/test_assurance_manifest.py::test_lean_only_operations_have_no_python_verdict_path"],
-      "trusted": ["lean:kernel", "lean:compiler"],
-      "notes": ["No implementation exists in any engine. A Python verdict entry for it fails the manifest test."]
+      "tests": [
+        "tests/test_assurance_manifest.py::test_lean_only_operations_have_no_python_verdict_path"
+      ],
+      "trusted": [
+        "lean:kernel",
+        "lean:compiler"
+      ],
+      "notes": [
+        "No implementation exists in any engine. A Python verdict entry for it fails the manifest test."
+      ]
     },
     {
       "id": "admission",
@@ -712,37 +2535,159 @@
       "class": "leaf",
       "authority": "python",
       "target": "lean",
-      "assurance": {"current": "experimental", "at_switch": "experimental",
-                    "reason": "admission theorems exist; not yet mapped in theorem-coverage.md"},
-      "python": ["ve.admission:admit_document", "ve.norm_admission:admit_norm_document", "ve.norm_defaults_route:admit_norm_defaults_document"],
-      "outcomes": {"verdict": ["admitted report"], "unknown": [],
-                   "rejection": ["AdmissionError", "UnsupportedProfile", "InvalidInput"],
-                   "budget": ["ResourceLimit"], "operational": ["CheckerUnavailable"]},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "admission theorems exist; not yet mapped in theorem-coverage.md"
+      },
+      "python": [
+        "ve.admission:admit_document",
+        "ve.norm_admission:admit_norm_document",
+        "ve.norm_defaults_route:admit_norm_defaults_document"
+      ],
+      "outcomes": {
+        "verdict": [
+          "admitted report"
+        ],
+        "unknown": [],
+        "rejection": [
+          "AdmissionError",
+          "UnsupportedProfile",
+          "InvalidInput"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
       "lean": {
         "bindings": [
-          {"executable": "ve_conformance", "mode": "route", "kinds": ["admission"], "response": {"admitted": "bool", "report": "object", "report_id": "string", "kinds": "array<json>"}, "uncounted": {"kinds": "the content kinds the admitted document uses"}, "dispatch": ["lean/VE/Route/Run.lean"]},
-          {"executable": "ve_service", "mode": "norms", "kinds": ["admission"], "response": {"admitted": "bool", "report": "object", "report_id": "string", "kinds": "array<json>"}, "uncounted": {"kinds": "the content kinds the admitted document uses"}, "dispatch": ["lean/VE/Norms/Run.lean"]},
-          {"executable": "ve_service", "mode": "norm-defaults", "kinds": ["admission"], "response": {"admitted": "bool", "report": "object", "report_id": "string", "kinds": "array<json>"}, "uncounted": {"kinds": "the content kinds the admitted document uses"}, "dispatch": ["lean/VE/NormDefaults/Run.lean"]},
-          {"executable": "ve_service", "mode": "quantity", "kinds": ["document"], "response": {"admitted": "bool", "report": "object", "report_id": "string", "kinds": "array<json>"}, "uncounted": {"kinds": "the content kinds the admitted quantity document uses"}, "dispatch": ["lean/VE/Time/Document.lean"]}
+          {
+            "executable": "ve_conformance",
+            "mode": "route",
+            "kinds": [
+              "admission"
+            ],
+            "response": {
+              "admitted": "bool",
+              "report": "object",
+              "report_id": "string",
+              "kinds": "array<json>"
+            },
+            "uncounted": {
+              "kinds": "the content kinds the admitted document uses"
+            },
+            "dispatch": [
+              "lean/VE/Route/Run.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norms",
+            "kinds": [
+              "admission"
+            ],
+            "response": {
+              "admitted": "bool",
+              "report": "object",
+              "report_id": "string",
+              "kinds": "array<json>"
+            },
+            "uncounted": {
+              "kinds": "the content kinds the admitted document uses"
+            },
+            "dispatch": [
+              "lean/VE/Norms/Run.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "admission"
+            ],
+            "response": {
+              "admitted": "bool",
+              "report": "object",
+              "report_id": "string",
+              "kinds": "array<json>"
+            },
+            "uncounted": {
+              "kinds": "the content kinds the admitted document uses"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "quantity",
+            "kinds": [
+              "document"
+            ],
+            "response": {
+              "admitted": "bool",
+              "report": "object",
+              "report_id": "string",
+              "kinds": "array<json>"
+            },
+            "uncounted": {
+              "kinds": "the content kinds the admitted quantity document uses"
+            },
+            "dispatch": [
+              "lean/VE/Time/Document.lean"
+            ]
+          }
         ],
         "planned_modes": [],
-        "theorems": ["VE.Route.Admission.admit_report_sound", "VE.Route.Admission.admit_string_sound",
-                     "VE.Route.Admission.admit_labels_decoded", "VE.Norms.Admission.admitDocument_spec",
-                     "VE.Norms.Admission.norms_wire_admission_sound", "VE.Norms.Admission.norms_wire_report_consequence",
-                     "VE.Norms.Run.runAdmission_sound", "VE.Norms.Run.norms_wire_acceptance",
-                     "VE.NormDefaults.Admission.admitDocument_spec", "VE.NormDefaults.Admission.wire_report_consequence",
-                     "VE.NormDefaults.Run.runAdmission_sound", "VE.NormDefaults.Run.normDefaults_wire_admission"],
+        "theorems": [
+          "VE.Route.Admission.admit_report_sound",
+          "VE.Route.Admission.admit_string_sound",
+          "VE.Route.Admission.admit_labels_decoded",
+          "VE.Norms.Admission.admitDocument_spec",
+          "VE.Norms.Admission.norms_wire_admission_sound",
+          "VE.Norms.Admission.norms_wire_report_consequence",
+          "VE.Norms.Run.runAdmission_sound",
+          "VE.Norms.Run.norms_wire_acceptance",
+          "VE.NormDefaults.Admission.admitDocument_spec",
+          "VE.NormDefaults.Admission.wire_report_consequence",
+          "VE.NormDefaults.Run.runAdmission_sound",
+          "VE.NormDefaults.Run.normDefaults_wire_admission"
+        ],
         "planned_theorems": [],
-        "decoders": ["lean/VE/Json.lean", "lean/VE/Route/Admission.lean", "lean/VE/Route/Wire.lean", "lean/VE/Norms/Wire.lean", "lean/VE/Route/Gate.lean", "lean/VE/Norms/Admission.lean", "lean/VE/NormDefaults/Wire.lean", "lean/VE/NormDefaults/Admission.lean"]
+        "decoders": [
+          "lean/VE/Json.lean",
+          "lean/VE/Route/Admission.lean",
+          "lean/VE/Route/Wire.lean",
+          "lean/VE/Norms/Wire.lean",
+          "lean/VE/Route/Gate.lean",
+          "lean/VE/Norms/Admission.lean",
+          "lean/VE/NormDefaults/Wire.lean",
+          "lean/VE/NormDefaults/Admission.lean"
+        ]
       },
       "rust": null,
-      "lean_call_sites": ["ve.admission:_lean_quantity_admission"],
-      "tests": ["tests/test_p0_three_way.py::test_report_identity_binds_environment_and_document",
-                "tests/test_p0_three_way.py::test_data_background_deduction_admission_matches_lean",
-                "tests/test_norms_three_way.py::test_norm_document_admission_and_provenance_match_lean",
-                "tests/test_norm_admission.py::test_active_norm_unit_admits_only_its_regenerated_layer",
-                "tests/test_norm_defaults_three_way.py::test_admission_tampering_is_rejected_by_both"],
-      "trusted": ["python:implementation", "python:wire", "lean:kernel", "lean:compiler", "lean:decoders", "lean:runner-glue", "python:record-identity"],
+      "lean_call_sites": [
+        "ve.admission:_lean_quantity_admission"
+      ],
+      "tests": [
+        "tests/test_p0_three_way.py::test_report_identity_binds_environment_and_document",
+        "tests/test_p0_three_way.py::test_data_background_deduction_admission_matches_lean",
+        "tests/test_norms_three_way.py::test_norm_document_admission_and_provenance_match_lean",
+        "tests/test_norm_admission.py::test_active_norm_unit_admits_only_its_regenerated_layer",
+        "tests/test_norm_defaults_three_way.py::test_admission_tampering_is_rejected_by_both"
+      ],
+      "trusted": [
+        "python:implementation",
+        "python:wire",
+        "lean:kernel",
+        "lean:compiler",
+        "lean:decoders",
+        "lean:runner-glue",
+        "python:record-identity"
+      ],
       "notes": []
     },
     {
@@ -751,24 +2696,71 @@
       "class": "leaf",
       "authority": "python",
       "target": "lean",
-      "assurance": {"current": "experimental", "at_switch": "experimental", "reason": "parseLabel_render only; the label grammar has no independent specification theorem"},
-      "python": ["ve.admission:parse_label", "ve.admission:validate_label"],
-      "outcomes": {"verdict": ["canonical label"], "unknown": [], "rejection": ["AdmissionError", "InvalidInput"],
-                   "budget": [], "operational": ["CheckerUnavailable"]},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "parseLabel_render only; the label grammar has no independent specification theorem"
+      },
+      "python": [
+        "ve.admission:parse_label",
+        "ve.admission:validate_label"
+      ],
+      "outcomes": {
+        "verdict": [
+          "canonical label"
+        ],
+        "unknown": [],
+        "rejection": [
+          "AdmissionError",
+          "InvalidInput"
+        ],
+        "budget": [],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
       "lean": {
         "bindings": [
-          {"executable": "ve_conformance", "mode": "route", "kinds": ["label"], "response": {"label": "string"}, "dispatch": ["lean/VE/Route/Run.lean"]}
+          {
+            "executable": "ve_conformance",
+            "mode": "route",
+            "kinds": [
+              "label"
+            ],
+            "response": {
+              "label": "string"
+            },
+            "dispatch": [
+              "lean/VE/Route/Run.lean"
+            ]
+          }
         ],
         "planned_modes": [],
-        "theorems": ["VE.Route.Admission.parseLabel_render"],
+        "theorems": [
+          "VE.Route.Admission.parseLabel_render"
+        ],
         "planned_theorems": [],
-        "decoders": ["lean/VE/Route/Admission.lean"]
+        "decoders": [
+          "lean/VE/Route/Admission.lean"
+        ]
       },
-      "rust": {"commands": ["conformance"], "role": "the label route kind"},
+      "rust": {
+        "commands": [
+          "conformance"
+        ],
+        "role": "the label route kind"
+      },
       "lean_call_sites": [],
-      "tests": ["tests/test_p0_three_way.py::test_python_claim_labels_follow_the_route_grammar",
-                "tests/test_p0_three_way.py::test_lean_matches_expected"],
-      "trusted": ["python:implementation", "lean:kernel", "lean:compiler", "lean:decoders"],
+      "tests": [
+        "tests/test_p0_three_way.py::test_python_claim_labels_follow_the_route_grammar",
+        "tests/test_p0_three_way.py::test_lean_matches_expected"
+      ],
+      "trusted": [
+        "python:implementation",
+        "lean:kernel",
+        "lean:compiler",
+        "lean:decoders"
+      ],
       "notes": []
     },
     {
@@ -777,25 +2769,63 @@
       "class": "leaf",
       "authority": "python",
       "target": "lean",
-      "assurance": {"current": "experimental", "at_switch": "experimental",
-                    "reason": "SHA-256 and canonical JSON have vector tests, no proof; trusted as today (migration plan 2.2)"},
-      "python": ["ve.identity:source_id", "ve.identity:meaning_id", "ve.argument:Claim.claim_id", "ve.argument:deduction_identity"],
-      "outcomes": {"verdict": ["identity digest"], "unknown": [],
-                   "rejection": ["SyntaxError", "InvalidInput"], "budget": [], "operational": ["CheckerUnavailable"]},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "SHA-256 and canonical JSON have vector tests, no proof; trusted as today (migration plan 2.2)"
+      },
+      "python": [
+        "ve.identity:source_id",
+        "ve.identity:meaning_id",
+        "ve.argument:Claim.claim_id",
+        "ve.argument:deduction_identity"
+      ],
+      "outcomes": {
+        "verdict": [
+          "identity digest"
+        ],
+        "unknown": [],
+        "rejection": [
+          "SyntaxError",
+          "InvalidInput"
+        ],
+        "budget": [],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
       "lean": {
         "bindings": [],
-        "planned_modes": ["identity"],
+        "planned_modes": [
+          "identity"
+        ],
         "theorems": [],
         "planned_theorems": [],
-        "decoders": ["lean/VE/CertificateWire.lean", "lean/VE/Route/Wire.lean", "lean/VE/Order/Wire.lean"]
+        "decoders": [
+          "lean/VE/CertificateWire.lean",
+          "lean/VE/Route/Wire.lean",
+          "lean/VE/Order/Wire.lean"
+        ]
       },
-      "rust": {"commands": ["conformance"], "role": "environment_id, meaning_id and model_id in every Rust case"},
+      "rust": {
+        "commands": [
+          "conformance"
+        ],
+        "role": "environment_id, meaning_id and model_id in every Rust case"
+      },
       "lean_call_sites": [],
-      "tests": ["tests/test_conformance.py::test_identity_preimages_have_exact_domain_and_shape",
-                "tests/test_rust_conformance.py::test_rust_shared_identities",
-                "tests/test_p0_three_way.py::test_report_identity_binds_environment_and_document"],
-      "trusted": ["python:implementation", "python:wire"],
-      "notes": ["Lean recomputes environment_id and meaning_id on every binding it accepts (Route.Wire.bindingOk, admission checkBindings) but not source_id, claim_id or edge_id; those are the planned `identity` and `graph` modes. graph_id and record ids stay Python (python:record-identity)."]
+      "tests": [
+        "tests/test_conformance.py::test_identity_preimages_have_exact_domain_and_shape",
+        "tests/test_rust_conformance.py::test_rust_shared_identities",
+        "tests/test_p0_three_way.py::test_report_identity_binds_environment_and_document"
+      ],
+      "trusted": [
+        "python:implementation",
+        "python:wire"
+      ],
+      "notes": [
+        "Lean recomputes environment_id and meaning_id on every binding it accepts (Route.Wire.bindingOk, admission checkBindings) but not source_id, claim_id or edge_id; those are the planned `identity` and `graph` modes. graph_id and record ids stay Python (python:record-identity)."
+      ]
     },
     {
       "id": "readings",
@@ -803,32 +2833,77 @@
       "class": "combination",
       "authority": "python",
       "target": "lean",
-      "assurance": {"current": "experimental", "at_switch": "reference-theorems-checked",
-                    "reason": "the checker and its three soundness theorems are in lean/VE/Service/Readings.lean (service mode readings), and per family in lean/VE/Service/Family.lean; the assertion-reading wire decoding is trusted"},
-      "python": ["ve.readings:check_readings"],
-      "outcomes": {"verdict": ["ALL", "SOME", "NONE"], "unknown": ["UNKNOWN"],
-                   "rejection": ["InvalidInput", "TypeMismatch"], "budget": ["ResourceLimit"],
-                   "operational": ["CheckerUnavailable"]},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "reference-theorems-checked",
+        "reason": "the checker and its three soundness theorems are in lean/VE/Service/Readings.lean (service mode readings), and per family in lean/VE/Service/Family.lean; the assertion-reading wire decoding is trusted"
+      },
+      "python": [
+        "ve.readings:check_readings"
+      ],
+      "outcomes": {
+        "verdict": [
+          "ALL",
+          "SOME",
+          "NONE"
+        ],
+        "unknown": [
+          "UNKNOWN"
+        ],
+        "rejection": [
+          "InvalidInput",
+          "TypeMismatch"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
       "lean": {
         "bindings": [],
-        "planned_modes": ["readings"],
-        "theorems": ["VE.Route.readings_all_iff", "VE.Service.Readings.readings_all_sound",
-                     "VE.Service.Readings.readings_none_sound", "VE.Service.Readings.readings_some_sound",
-                     "VE.Service.Family.closure_readings_all_sound", "VE.Service.Family.closure_readings_none_sound",
-                     "VE.Service.Family.closure_readings_some_sound", "VE.Service.Family.core_readings_all_sound",
-                     "VE.Service.Family.core_readings_none_sound", "VE.Service.Family.core_readings_some_sound",
-                     "VE.Service.Family.order_readings_all_sound", "VE.Service.Family.order_readings_none_sound",
-                     "VE.Service.Family.order_readings_some_sound", "VE.Service.Family.fol_readings_all_sound",
-                     "VE.Service.Family.fol_readings_none_sound", "VE.Service.Family.fol_readings_some_sound"],
+        "planned_modes": [
+          "readings"
+        ],
+        "theorems": [
+          "VE.Route.readings_all_iff",
+          "VE.Service.Readings.readings_all_sound",
+          "VE.Service.Readings.readings_none_sound",
+          "VE.Service.Readings.readings_some_sound",
+          "VE.Service.Family.closure_readings_all_sound",
+          "VE.Service.Family.closure_readings_none_sound",
+          "VE.Service.Family.closure_readings_some_sound",
+          "VE.Service.Family.core_readings_all_sound",
+          "VE.Service.Family.core_readings_none_sound",
+          "VE.Service.Family.core_readings_some_sound",
+          "VE.Service.Family.order_readings_all_sound",
+          "VE.Service.Family.order_readings_none_sound",
+          "VE.Service.Family.order_readings_some_sound",
+          "VE.Service.Family.fol_readings_all_sound",
+          "VE.Service.Family.fol_readings_none_sound",
+          "VE.Service.Family.fol_readings_some_sound"
+        ],
         "planned_theorems": [],
-        "decoders": ["lean/VE/Service/Readings.lean", "lean/VE/Service/Family.lean"]
+        "decoders": [
+          "lean/VE/Service/Readings.lean",
+          "lean/VE/Service/Family.lean"
+        ]
       },
       "rust": null,
       "lean_call_sites": [],
-      "tests": ["tests/test_document.py::test_assertion_readings_all_some_none_have_checked_evidence",
-                "tests/test_document.py::test_some_reports_the_winning_choice_vacuity"],
-      "trusted": ["python:implementation", "python:readings-rule", "python:wire"],
-      "notes": ["Constituent certificates and models are checked by certificate.check and countermodel.check; with either migrated, an unavailable constituent propagates as CheckerUnavailable, never UNKNOWN."]
+      "tests": [
+        "tests/test_document.py::test_assertion_readings_all_some_none_have_checked_evidence",
+        "tests/test_document.py::test_some_reports_the_winning_choice_vacuity"
+      ],
+      "trusted": [
+        "python:implementation",
+        "python:readings-rule",
+        "python:wire"
+      ],
+      "notes": [
+        "Constituent certificates and models are checked by certificate.check and countermodel.check; with either migrated, an unavailable constituent propagates as CheckerUnavailable, never UNKNOWN."
+      ]
     },
     {
       "id": "graph.compose",
@@ -836,40 +2911,118 @@
       "class": "combination",
       "authority": "python",
       "target": "lean",
-      "assurance": {"current": "experimental", "at_switch": "reference-theorems-checked",
-                    "reason": "Graph.check_sound, check_entails, check_unfolds, tableau_certificateSound; the service graph mode's answer theorems (Service.Graph.graph_sound, graph_entails, graph_unfolds, and Service.Family.closure_/core_/order_graph_* for the other families) cover Background as explicit leaves; the package decoder is trusted (plan 2.1)"},
-      "python": ["ve.argument:check_argument"],
-      "outcomes": {"verdict": ["Checked"], "unknown": ["Incomplete"],
-                   "rejection": ["InvalidInput"], "budget": ["ResourceLimit"],
-                   "operational": ["CheckerUnavailable"]},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "reference-theorems-checked",
+        "reason": "Graph.check_sound, check_entails, check_unfolds, tableau_certificateSound; the service graph mode's answer theorems (Service.Graph.graph_sound, graph_entails, graph_unfolds, and Service.Family.closure_/core_/order_graph_* for the other families) cover Background as explicit leaves; the package decoder is trusted (plan 2.1)"
+      },
+      "python": [
+        "ve.argument:check_argument"
+      ],
+      "outcomes": {
+        "verdict": [
+          "Checked"
+        ],
+        "unknown": [
+          "Incomplete"
+        ],
+        "rejection": [
+          "InvalidInput"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
       "lean": {
         "bindings": [
-          {"executable": "ve_conformance", "mode": "route", "kinds": ["certificate"], "response": {"valid": "bool", "background": "nat"}, "uncounted": {"background": "the background the environment generates; the caller compares it with Python's"}, "dispatch": ["lean/VE/Route/Wire.lean", "lean/VE/Core/Wire.lean"]},
-          {"executable": "ve_conformance", "mode": "check-certificate", "kinds": [], "response": {"valid": "bool"}, "dispatch": ["lean/VE/CertificateWire.lean"]}
+          {
+            "executable": "ve_conformance",
+            "mode": "route",
+            "kinds": [
+              "certificate"
+            ],
+            "response": {
+              "valid": "bool",
+              "background": "nat"
+            },
+            "uncounted": {
+              "background": "the background the environment generates; the caller compares it with Python's"
+            },
+            "dispatch": [
+              "lean/VE/Route/Wire.lean",
+              "lean/VE/Core/Wire.lean"
+            ]
+          },
+          {
+            "executable": "ve_conformance",
+            "mode": "check-certificate",
+            "kinds": [],
+            "response": {
+              "valid": "bool"
+            },
+            "dispatch": [
+              "lean/VE/CertificateWire.lean"
+            ]
+          }
         ],
-        "planned_modes": ["graph"],
-        "theorems": ["VE.Graph.check_sound", "VE.Graph.check_entails", "VE.Graph.check_unfolds",
-                     "VE.Graph.tableau_certificateSound", "VE.composition_sound",
-                     "VE.Service.Graph.graph_sound", "VE.Service.Graph.graph_entails",
-                     "VE.Service.Graph.graph_unfolds", "VE.Service.Family.closure_graph_sound",
-                     "VE.Service.Family.closure_graph_entails", "VE.Service.Family.closure_graph_unfolds",
-                     "VE.Service.Family.core_graph_sound", "VE.Service.Family.core_graph_entails",
-                     "VE.Service.Family.core_graph_unfolds", "VE.Service.Family.order_graph_sound",
-                     "VE.Service.Family.order_graph_entails", "VE.Service.Family.order_graph_unfolds"],
+        "planned_modes": [
+          "graph"
+        ],
+        "theorems": [
+          "VE.Graph.check_sound",
+          "VE.Graph.check_entails",
+          "VE.Graph.check_unfolds",
+          "VE.Graph.tableau_certificateSound",
+          "VE.composition_sound",
+          "VE.Service.Graph.graph_sound",
+          "VE.Service.Graph.graph_entails",
+          "VE.Service.Graph.graph_unfolds",
+          "VE.Service.Family.closure_graph_sound",
+          "VE.Service.Family.closure_graph_entails",
+          "VE.Service.Family.closure_graph_unfolds",
+          "VE.Service.Family.core_graph_sound",
+          "VE.Service.Family.core_graph_entails",
+          "VE.Service.Family.core_graph_unfolds",
+          "VE.Service.Family.order_graph_sound",
+          "VE.Service.Family.order_graph_entails",
+          "VE.Service.Family.order_graph_unfolds"
+        ],
         "planned_theorems": [],
-        "decoders": ["lean/VE/Json.lean", "lean/VE/CertificateWire.lean", "lean/VE/Route/Wire.lean",
-                     "lean/VE/Service/Graph.lean", "lean/VE/Service/Family.lean"]
+        "decoders": [
+          "lean/VE/Json.lean",
+          "lean/VE/CertificateWire.lean",
+          "lean/VE/Route/Wire.lean",
+          "lean/VE/Service/Graph.lean",
+          "lean/VE/Service/Family.lean"
+        ]
       },
       "rust": null,
-      "lean_call_sites": ["ve.argument:_lean_deductions"],
-      "tests": ["tests/test_argument.py::test_composition_of_shared_dag_preserves_leaves_once",
-                "tests/test_p0_three_way.py::test_argument_lean_replay_uses_route",
-                "tests/test_closure_certificates.py::test_argument_profile_and_actual_lean_status"],
-      "trusted": ["python:implementation", "python:composition-rule", "python:argument-diagnostics",
-                  "python:record-identity", "python:backend-adapter", "python:wire", "lean:kernel", "lean:compiler",
-                  "lean:decoders"],
-      "notes": ["Today Lean replays the root cone's edge certificates as an optional cross-check (`lean_outcome`); composition itself is Python's until the `graph` mode.",
-                "ContradictoryPremises and CheckerConflict are diagnostics, not verdicts."]
+      "lean_call_sites": [
+        "ve.argument:_lean_deductions"
+      ],
+      "tests": [
+        "tests/test_argument.py::test_composition_of_shared_dag_preserves_leaves_once",
+        "tests/test_p0_three_way.py::test_argument_lean_replay_uses_route",
+        "tests/test_closure_certificates.py::test_argument_profile_and_actual_lean_status"
+      ],
+      "trusted": [
+        "python:implementation",
+        "python:composition-rule",
+        "python:argument-diagnostics",
+        "python:record-identity",
+        "python:backend-adapter",
+        "python:wire",
+        "lean:kernel",
+        "lean:compiler",
+        "lean:decoders"
+      ],
+      "notes": [
+        "Today Lean replays the root cone's edge certificates as an optional cross-check (`lean_outcome`); composition itself is Python's until the `graph` mode.",
+        "ContradictoryPremises and CheckerConflict are diagnostics, not verdicts."
+      ]
     },
     {
       "id": "bundle.check",
@@ -877,31 +3030,91 @@
       "class": "leaf",
       "authority": "python",
       "target": "lean",
-      "assurance": {"current": "experimental", "at_switch": "experimental",
-                    "reason": "bundle_sound exists (route bundles), and FamilyBundle.bundle_sound per family for the service bundle mode (closure, core and order families, norms environments); not yet mapped in theorem-coverage.md"},
-      "python": ["ve.bundle:check_bundle"],
-      "outcomes": {"verdict": ["Checked"], "unknown": [],
-                   "rejection": ["InvalidInput"], "budget": ["ResourceLimit"], "operational": ["CheckerUnavailable"]},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "bundle_sound exists (route bundles), and FamilyBundle.bundle_sound per family for the service bundle mode (closure, core and order families, norms environments); not yet mapped in theorem-coverage.md"
+      },
+      "python": [
+        "ve.bundle:check_bundle"
+      ],
+      "outcomes": {
+        "verdict": [
+          "Checked"
+        ],
+        "unknown": [],
+        "rejection": [
+          "InvalidInput"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
       "lean": {
         "bindings": [
-          {"executable": "ve_conformance", "mode": "route", "kinds": ["bundle"], "response": {"lemmas": "array<string>", "checked": "nat"}, "counts": {"lemmas": "case.lemmas", "checked": "case.lemmas"}, "dispatch": ["lean/VE/Route/Run.lean"]}
+          {
+            "executable": "ve_conformance",
+            "mode": "route",
+            "kinds": [
+              "bundle"
+            ],
+            "response": {
+              "lemmas": "array<string>",
+              "checked": "nat"
+            },
+            "counts": {
+              "lemmas": "case.lemmas",
+              "checked": "case.lemmas"
+            },
+            "dispatch": [
+              "lean/VE/Route/Run.lean"
+            ]
+          }
         ],
         "planned_modes": [],
-        "theorems": ["VE.Definitions.Bundle.bundle_sound", "VE.Definitions.Bundle.checkAll_sound", "VE.Definitions.Bundle.checkAll_length",
-                     "VE.Definitions.Bundle.backgroundLeaves_hold", "VE.Service.FamilyBundle.bundle_sound",
-                     "VE.Service.FamilyBundle.fol_bundle_sound", "VE.Service.FamilyBundle.closure_bundle_sound",
-                     "VE.Service.FamilyBundle.core_bundle_sound", "VE.Service.FamilyBundle.order_bundle_sound"],
+        "theorems": [
+          "VE.Definitions.Bundle.bundle_sound",
+          "VE.Definitions.Bundle.checkAll_sound",
+          "VE.Definitions.Bundle.checkAll_length",
+          "VE.Definitions.Bundle.backgroundLeaves_hold",
+          "VE.Service.FamilyBundle.bundle_sound",
+          "VE.Service.FamilyBundle.fol_bundle_sound",
+          "VE.Service.FamilyBundle.closure_bundle_sound",
+          "VE.Service.FamilyBundle.core_bundle_sound",
+          "VE.Service.FamilyBundle.order_bundle_sound"
+        ],
         "planned_theorems": [],
-        "decoders": ["lean/VE/Json.lean", "lean/VE/Definitions/Bundle.lean", "lean/VE/Route/Admission.lean", "lean/VE/Route/Wire.lean",
-                     "lean/VE/Service/FamilyBundle.lean", "lean/VE/Service/Family.lean"]
+        "decoders": [
+          "lean/VE/Json.lean",
+          "lean/VE/Definitions/Bundle.lean",
+          "lean/VE/Route/Admission.lean",
+          "lean/VE/Route/Wire.lean",
+          "lean/VE/Service/FamilyBundle.lean",
+          "lean/VE/Service/Family.lean"
+        ]
       },
       "rust": null,
-      "lean_call_sites": ["ve.bundle:lean_bundle_verdict"],
-      "tests": ["tests/test_bundle.py::test_lean_replays_bundles_in_one_run",
-                "tests/test_bundle.py::test_lean_rejects_the_same_forged_citations",
-                "tests/test_bundle.py::test_reject_forged_citation"],
-      "trusted": ["python:implementation", "python:record-identity", "python:backend-adapter", "python:wire",
-                  "lean:kernel", "lean:compiler", "lean:decoders", "lean:runner-glue"],
+      "lean_call_sites": [
+        "ve.bundle:lean_bundle_verdict"
+      ],
+      "tests": [
+        "tests/test_bundle.py::test_lean_replays_bundles_in_one_run",
+        "tests/test_bundle.py::test_lean_rejects_the_same_forged_citations",
+        "tests/test_bundle.py::test_reject_forged_citation"
+      ],
+      "trusted": [
+        "python:implementation",
+        "python:record-identity",
+        "python:backend-adapter",
+        "python:wire",
+        "lean:kernel",
+        "lean:compiler",
+        "lean:decoders",
+        "lean:runner-glue"
+      ],
       "notes": []
     },
     {
@@ -910,31 +3123,68 @@
       "class": "surface",
       "authority": "python",
       "target": "python",
-      "assurance": {"current": "experimental", "at_switch": "experimental",
-                    "reason": "the English surface stays Python by decision; records carry python:surface"},
-      "python": ["ve.english:parse_english_with_metadata", "ve.english:parse_english", "ve.english:parse_english_argument",
-                 "ve.norm_english:parse_english", "ve.surface.unambiguity:require_unique_derivation"],
-      "outcomes": {"verdict": ["admitted document"], "unknown": [],
-                   "rejection": ["SyntaxError", "UnknownSymbol", "TypeMismatch"], "budget": ["ResourceLimit"],
-                   "operational": ["CheckerUnavailable"]},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "the English surface stays Python by decision; records carry python:surface"
+      },
+      "python": [
+        "ve.english:parse_english_with_metadata",
+        "ve.english:parse_english",
+        "ve.english:parse_english_argument",
+        "ve.norm_english:parse_english",
+        "ve.surface.unambiguity:require_unique_derivation"
+      ],
+      "outcomes": {
+        "verdict": [
+          "admitted document"
+        ],
+        "unknown": [],
+        "rejection": [
+          "SyntaxError",
+          "UnknownSymbol",
+          "TypeMismatch"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
       "lean": {
         "bindings": [],
-        "planned_modes": ["english.read"],
+        "planned_modes": [
+          "english.read"
+        ],
         "harness": "lake env lean --run VE/English/Run.lean (conformance/english_lean.py); no theorem depends on it. Shadow adapter ve/backends/english_lean.py (english-lean-s2.md 2.10): under VE_AUTHORITY_OVERRIDES=english.admission=shadow every call is recorded against ve_english_route english.read, and any other selection is refused (dispatch.SHADOW_ONLY, DRI ruling 6) (lean/EnglishMain.lean, VE.EnglishGrammar.Run; tests/test_english_lean_route.py), whose reader read is proved one reading per sentence (VE.EnglishGrammar.read_ok, english_reading_unique); english.read stays planned here until the authority moves (LEAN-FIRST E2)",
-        "theorems": ["VE.English.checked_unique_derivation", "VE.English.checked_one_reading",
-                     "VE.English.checked_parse_render", "VE.English.checked_render_injective",
-                     "VE.English.admissible_sound", "VE.English.core_parse_sound"],
+        "theorems": [
+          "VE.English.checked_unique_derivation",
+          "VE.English.checked_one_reading",
+          "VE.English.checked_parse_render",
+          "VE.English.checked_render_injective",
+          "VE.English.admissible_sound",
+          "VE.English.core_parse_sound"
+        ],
         "planned_theorems": [],
         "decoders": []
       },
       "rust": null,
       "lean_call_sites": [],
-      "tests": ["tests/test_english_unambiguity.py::test_two_derivations_reject_before_ast_admission",
-                "tests/test_english_unambiguity.py::test_earley_time_budget_rejects_in_worker_thread",
-                "tests/test_english_evidence.py::test_full_english_report_gate"],
-      "trusted": ["python:implementation", "python:surface", "python:backend-adapter"],
-      "notes": ["Recorded conflation, not changed: the Earley wall-clock budget (surface/unambiguity.py EARLEY_SECONDS) reports ResourceLimit, while the migration plan reserves ResourceLimit for deterministic budgets. Changing a public code needs the plan's section-2.3 product decision.",
-                "Recorded conflation, not changed: a marked English conclusion whose bounded proof search returns NotFound or ResourceLimit is rejected as SyntaxError (english.py _check_conclusions), so search UNKNOWN surfaces as a rejection; the search result is not replayed there."]
+      "tests": [
+        "tests/test_english_unambiguity.py::test_two_derivations_reject_before_ast_admission",
+        "tests/test_english_unambiguity.py::test_earley_time_budget_rejects_in_worker_thread",
+        "tests/test_english_evidence.py::test_full_english_report_gate"
+      ],
+      "trusted": [
+        "python:implementation",
+        "python:surface",
+        "python:backend-adapter"
+      ],
+      "notes": [
+        "Recorded conflation, not changed: the Earley wall-clock budget (surface/unambiguity.py EARLEY_SECONDS) reports ResourceLimit, while the migration plan reserves ResourceLimit for deterministic budgets. Changing a public code needs the plan's section-2.3 product decision.",
+        "Recorded conflation, not changed: a marked English conclusion whose bounded proof search returns NotFound or ResourceLimit is rejected as SyntaxError (english.py _check_conclusions), so search UNKNOWN surfaces as a rejection; the search result is not replayed there."
+      ]
     },
     {
       "id": "premise-status",
@@ -942,17 +3192,42 @@
       "class": "combination",
       "authority": "python",
       "target": "lean",
-      "assurance": {"current": "experimental", "at_switch": "experimental",
-                    "reason": "class L relabelling of one certificate or one model; covered once those constituents are"},
-      "python": ["ve.vacuity:premise_status"],
-      "outcomes": {"verdict": ["INCONSISTENT", "model"], "unknown": ["UNKNOWN"],
-                   "rejection": ["InvalidInput"], "budget": [], "operational": ["CheckerUnavailable"]},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "class L relabelling of one certificate or one model; covered once those constituents are"
+      },
+      "python": [
+        "ve.vacuity:premise_status"
+      ],
+      "outcomes": {
+        "verdict": [
+          "INCONSISTENT",
+          "model"
+        ],
+        "unknown": [
+          "UNKNOWN"
+        ],
+        "rejection": [
+          "InvalidInput"
+        ],
+        "budget": [],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
       "lean": null,
       "rust": null,
       "lean_call_sites": [],
-      "tests": ["tests/test_vacuity.py::test_three_valued_premise_report"],
-      "trusted": ["python:implementation"],
-      "notes": ["Bounded search exhaustion is UNKNOWN; an unavailable constituent checker propagates as CheckerUnavailable."]
+      "tests": [
+        "tests/test_vacuity.py::test_three_valued_premise_report"
+      ],
+      "trusted": [
+        "python:implementation"
+      ],
+      "notes": [
+        "Bounded search exhaustion is UNKNOWN; an unavailable constituent checker propagates as CheckerUnavailable."
+      ]
     },
     {
       "id": "compare",
@@ -960,17 +3235,42 @@
       "class": "combination",
       "authority": "python",
       "target": "python",
-      "assurance": {"current": "experimental", "at_switch": "experimental",
-                    "reason": "class C, trusted and narrowed: a two-clause rule with no theorem to attach (plan 1.2)"},
-      "python": ["ve.equivalence:compare"],
-      "outcomes": {"verdict": ["EQUIVALENT", "DIFFERENT"], "unknown": ["UNKNOWN"],
-                   "rejection": ["InvalidInput", "TypeMismatch"], "budget": [], "operational": ["CheckerUnavailable"]},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "class C, trusted and narrowed: a two-clause rule with no theorem to attach (plan 1.2)"
+      },
+      "python": [
+        "ve.equivalence:compare"
+      ],
+      "outcomes": {
+        "verdict": [
+          "EQUIVALENT",
+          "DIFFERENT"
+        ],
+        "unknown": [
+          "UNKNOWN"
+        ],
+        "rejection": [
+          "InvalidInput",
+          "TypeMismatch"
+        ],
+        "budget": [],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
       "lean": null,
       "rust": null,
       "lean_call_sites": [],
-      "tests": ["tests/test_equivalence.py::test_bounded_exhaustion_is_never_equivalence",
-                "tests/test_equivalence.py::test_proof_and_model_outputs_are_independently_replayed"],
-      "trusted": ["python:implementation", "python:equivalence.compare"],
+      "tests": [
+        "tests/test_equivalence.py::test_bounded_exhaustion_is_never_equivalence",
+        "tests/test_equivalence.py::test_proof_and_model_outputs_are_independently_replayed"
+      ],
+      "trusted": [
+        "python:implementation",
+        "python:equivalence.compare"
+      ],
       "notes": []
     },
     {
@@ -979,18 +3279,45 @@
       "class": "combination",
       "authority": "python",
       "target": "python",
-      "assurance": {"current": "experimental", "at_switch": "experimental",
-                    "reason": "class C, trusted and narrowed like compare: a Python rule over checked constituents"},
-      "python": ["ve.equivalence:validate_reference"],
-      "outcomes": {"verdict": ["VALID", "INVALID"], "unknown": ["UNKNOWN"],
-                   "rejection": ["InvalidInput", "TypeMismatch"], "budget": [], "operational": ["CheckerUnavailable"]},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "class C, trusted and narrowed like compare: a Python rule over checked constituents"
+      },
+      "python": [
+        "ve.equivalence:validate_reference"
+      ],
+      "outcomes": {
+        "verdict": [
+          "VALID",
+          "INVALID"
+        ],
+        "unknown": [
+          "UNKNOWN"
+        ],
+        "rejection": [
+          "InvalidInput",
+          "TypeMismatch"
+        ],
+        "budget": [],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
       "lean": null,
       "rust": null,
       "lean_call_sites": [],
-      "tests": ["tests/test_equivalence.py::test_reference_validation_requires_non_vacuous_satisfaction_and_nonvalidity",
-                "tests/test_assurance_manifest.py::test_combinations_propagate_unavailability_instead_of_unknown"],
-      "trusted": ["python:implementation", "python:reference-rule"],
-      "notes": ["Every model is checked by countermodel.check and every certificate by certificate.check; an unavailable constituent propagates as CheckerUnavailable, never UNKNOWN."]
+      "tests": [
+        "tests/test_equivalence.py::test_reference_validation_requires_non_vacuous_satisfaction_and_nonvalidity",
+        "tests/test_assurance_manifest.py::test_combinations_propagate_unavailability_instead_of_unknown"
+      ],
+      "trusted": [
+        "python:implementation",
+        "python:reference-rule"
+      ],
+      "notes": [
+        "Every model is checked by countermodel.check and every certificate by certificate.check; an unavailable constituent propagates as CheckerUnavailable, never UNKNOWN."
+      ]
     },
     {
       "id": "document.check",
@@ -998,17 +3325,43 @@
       "class": "combination",
       "authority": "python",
       "target": "lean",
-      "assurance": {"current": "experimental", "at_switch": "experimental",
-                    "reason": "orchestration over admission, premise-status and readings; inherits their assurance"},
-      "python": ["ve.document:check_document"],
-      "outcomes": {"verdict": ["admitted document report"], "unknown": ["premises UNKNOWN"],
-                   "rejection": ["AdmissionError", "InvalidInput"], "budget": ["ResourceLimit"],
-                   "operational": ["CheckerUnavailable"]},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "orchestration over admission, premise-status and readings; inherits their assurance"
+      },
+      "python": [
+        "ve.document:check_document"
+      ],
+      "outcomes": {
+        "verdict": [
+          "admitted document report"
+        ],
+        "unknown": [
+          "premises UNKNOWN"
+        ],
+        "rejection": [
+          "AdmissionError",
+          "InvalidInput"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
       "lean": null,
       "rust": null,
       "lean_call_sites": [],
-      "tests": ["tests/test_document.py::test_byte_partition_and_vacuity"],
-      "trusted": ["python:implementation", "python:surface", "python:record-identity"],
+      "tests": [
+        "tests/test_document.py::test_byte_partition_and_vacuity"
+      ],
+      "trusted": [
+        "python:implementation",
+        "python:surface",
+        "python:record-identity"
+      ],
       "notes": []
     },
     {
@@ -1017,24 +3370,66 @@
       "class": "leaf",
       "authority": "lean-only",
       "target": "lean",
-      "assurance": {"current": "experimental", "at_switch": "experimental",
-                    "reason": "diagnostic only; no verdict or identity depends on it"},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "diagnostic only; no verdict or identity depends on it"
+      },
       "python": [],
-      "outcomes": {"verdict": [], "unknown": [], "rejection": [], "budget": [],
-                   "operational": ["CheckerUnavailable"]},
-      "lean": {"bindings": [
-        {"executable": "ve_service", "mode": "diagnose",
-         "kinds": ["soft-elaborate", "admission", "norms-elaborate", "norms-conflict", "norms-certificate",
-                   "norm-defaults-elaborate", "norm-defaults-conflict", "norm-defaults-certificate"],
-         "response": {"outcome": "string"},
-         "dispatch": ["lean/VE/Service/Diagnose.lean", "lean/VE/WireContract/Diagnose.lean", "lean/VE/WireContract/Hooks/SoftNorms.lean",
-                      "lean/VE/WireContract/Hooks/Norms.lean", "lean/VE/WireContract/Hooks/NormDefaults.lean"]}
-      ], "planned_modes": [], "theorems": [], "planned_theorems": [], "decoders": []},
+      "outcomes": {
+        "verdict": [],
+        "unknown": [],
+        "rejection": [],
+        "budget": [],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
+      "lean": {
+        "bindings": [
+          {
+            "executable": "ve_service",
+            "mode": "diagnose",
+            "kinds": [
+              "soft-elaborate",
+              "admission",
+              "norms-elaborate",
+              "norms-conflict",
+              "norms-certificate",
+              "norm-defaults-elaborate",
+              "norm-defaults-conflict",
+              "norm-defaults-certificate"
+            ],
+            "response": {
+              "outcome": "string"
+            },
+            "dispatch": [
+              "lean/VE/Service/Diagnose.lean",
+              "lean/VE/WireContract/Diagnose.lean",
+              "lean/VE/WireContract/Hooks/SoftNorms.lean",
+              "lean/VE/WireContract/Hooks/Norms.lean",
+              "lean/VE/WireContract/Hooks/NormDefaults.lean"
+            ]
+          }
+        ],
+        "planned_modes": [],
+        "theorems": [],
+        "planned_theorems": [],
+        "decoders": []
+      },
       "rust": null,
       "lean_call_sites": [],
-      "tests": ["tests/test_wire_contract_soft_lean.py::test_fixtures_p1_to_p17"],
-      "trusted": ["lean:kernel", "lean:compiler", "lean:runner-glue"],
-      "notes": ["The binding has no verdict authority. A missing executable is a deferred diagnostic, never an admission failure."]
+      "tests": [
+        "tests/test_wire_contract_soft_lean.py::test_fixtures_p1_to_p17"
+      ],
+      "trusted": [
+        "lean:kernel",
+        "lean:compiler",
+        "lean:runner-glue"
+      ],
+      "notes": [
+        "The binding has no verdict authority. A missing executable is a deferred diagnostic, never an admission failure."
+      ]
     },
     {
       "id": "check",
@@ -1042,18 +3437,46 @@
       "class": "combination",
       "authority": "python",
       "target": "lean",
-      "assurance": {"current": "experimental", "at_switch": "experimental",
-                    "reason": "class L relabelling of parse, evaluate and premise-status; parse acceptance stays experimental"},
-      "python": ["ve.check:check"],
-      "outcomes": {"verdict": ["Satisfied", "Violated"], "unknown": ["premises UNKNOWN"],
-                   "rejection": ["SyntaxError", "TypeMismatch", "InvalidModel", "InvalidInput"],
-                   "budget": ["ResourceLimit"], "operational": ["CheckerUnavailable"]},
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "class L relabelling of parse, evaluate and premise-status; parse acceptance stays experimental"
+      },
+      "python": [
+        "ve.check:check"
+      ],
+      "outcomes": {
+        "verdict": [
+          "Satisfied",
+          "Violated"
+        ],
+        "unknown": [
+          "premises UNKNOWN"
+        ],
+        "rejection": [
+          "SyntaxError",
+          "TypeMismatch",
+          "InvalidModel",
+          "InvalidInput"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
       "lean": null,
       "rust": null,
       "lean_call_sites": [],
-      "tests": ["tests/test_cli.py::test_cli_negative_and_resource_outcomes_are_distinct",
-                "tests/test_cli.py::test_cli_evaluation_and_source_binding"],
-      "trusted": ["python:implementation", "python:display"],
+      "tests": [
+        "tests/test_cli.py::test_cli_negative_and_resource_outcomes_are_distinct",
+        "tests/test_cli.py::test_cli_evaluation_and_source_binding"
+      ],
+      "trusted": [
+        "python:implementation",
+        "python:display"
+      ],
       "notes": []
     }
   ]

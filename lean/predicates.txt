@@ -62,6 +62,7 @@ module ResponseShape.Skeleton
 module ResponseShape.Skeletons
 module ResponseShape
 module Serve
+module SpeechActsMain
 module VE.Alternatives.Admission
 module VE.Alternatives.Background
 module VE.Alternatives.Decl
@@ -211,8 +212,10 @@ module VE.NormDefaults.Evidence
 module VE.NormDefaults.Examples
 module VE.NormDefaults.Fill
 module VE.NormDefaults.FillCheck
+module VE.NormDefaults.Layered
 module VE.NormDefaults.Premises
 module VE.NormDefaults.Replay
+module VE.NormDefaults.Report
 module VE.NormDefaults.Routes
 module VE.NormDefaults.Run
 module VE.NormDefaults.Semantics
@@ -371,6 +374,8 @@ module VE.SpeechActs.Answer
 module VE.SpeechActs.Consequence
 module VE.SpeechActs.Demand
 module VE.SpeechActs.Run
+module VE.SpeechActs.Source.Admission.Run
+module VE.SpeechActs.Source.Run
 module VE.SpeechActs.Tree
 module VE.SpeechActs.Wire
 module VE.Surface
@@ -598,6 +603,12 @@ VE.NormDefaults.SettledAs@VE.NormDefaults.Status
 VE.NormDefaults.UValid@VE.NormDefaults.Fill
 VE.NormDefaults.UndecidedAt@VE.NormDefaults.Status
 VE.NormDefaults.UniversalQF@VE.NormDefaults.Evidence
+VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report
+VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered
+VE.NormDefaults.Wire.NeverReached@VE.NormDefaults.Report
+VE.NormDefaults.Wire.ReachedSome@VE.NormDefaults.Report
+VE.NormDefaults.Wire.ReportSound@VE.NormDefaults.Report
+VE.NormDefaults.Wire.UndecidedAtX@VE.NormDefaults.Layered
 VE.NormDefaults.canonicalFill@VE.NormDefaults.Premises
 VE.NormDefaults.fillOf@VE.NormDefaults.Status
 VE.NormDefaults.finFill@VE.NormDefaults.Evidence
@@ -891,6 +902,14 @@ VE.SoftNorms.YieldsSoftD@VE.SoftNorms.Semantics
 VE.SoftNorms.holdsSoft@VE.SoftNorms.Semantics
 VE.SoftNorms.sameStrictCore@VE.SoftNorms.Semantics
 VE.SpeechActs.AnswersAt@VE.SpeechActs.Answer
+VE.SpeechActs.Source.Admission.AnswerLeaf@VE.SpeechActs.Source.Admission.Run
+VE.SpeechActs.Source.Admission.BindingsMatchSourceAndRegeneration@VE.SpeechActs.Source.Admission.Run
+VE.SpeechActs.Source.Admission.Discharged@VE.SpeechActs.Source.Admission.Run
+VE.SpeechActs.Source.Admission.NodeAdmitted@VE.SpeechActs.Source.Admission.Run
+VE.SpeechActs.Source.Admission.PresuppositionLeaf@VE.SpeechActs.Source.Admission.Run
+VE.SpeechActs.Source.Admission.RecordsSound@VE.SpeechActs.Source.Admission.Run
+VE.SpeechActs.Source.Admission.ReportAdmitted@VE.SpeechActs.Source.Admission.Run
+VE.SpeechActs.Source.DoneFact@VE.SpeechActs.Source.Run
 VE.SpeechActs.ValidSpeech@VE.SpeechActs.Tree
 VE.Structure.Admissible@VE.Semantics
 VE.Structure.domain@VE.Semantics

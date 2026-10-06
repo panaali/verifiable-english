@@ -21,6 +21,13 @@
           "CheckerUnavailable"
         ]
       },
+      "handles": {
+        "$comment": "Service.Protocol.Handles: the case member naming a handle and the table's bounds, exactly: the client keeps the same table (Handles.insert).",
+        "additionalProperties": false,
+        "properties": {"max": {"const": 64}, "max_bytes": {"const": 67108864}, "member": {"const": "environment_handle"}},
+        "required": ["member", "max", "max_bytes"],
+        "type": "object"
+      },
       "lean": {"type": "string"},
       "limits": {
         "additionalProperties": false,
@@ -67,7 +74,7 @@
       "protocol": {"const": 2},
       "service": {"const": "ve-lean@1"}
     },
-    "required": ["service", "protocol", "modes", "codes", "limits"],
+    "required": ["service", "protocol", "modes", "codes", "limits", "handles"],
     "type": "object"
   },
   "response": {"anyOf": [{"$ref": "#/$defs/ok"}, {"$ref": "#/$defs/error"}]},

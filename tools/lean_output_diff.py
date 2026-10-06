@@ -14,7 +14,7 @@ the same invocations:
 The invocations are:
 
 * every case-reading mode (`ve_conformance` with no mode, `check-certificate`, `order` and
-  `route`; the `ve_service` modes that replaced `ve_quantity`, every `ve_*_route` and `ve_risk_eval`
+  `route`; the batch 11a `ve_speech_acts_route` for W2 source cases; the `ve_service` modes that replaced the earlier one-shot routes and `ve_risk_eval`
   in lean-first batch 1, and its mode `diagnose` for every registered unit, each as a `ve_service`
   session) over every `conformance/*.json` corpus that is a list of cases and every
   `lean/VE/*/examples/*.json` case file. A mode is given every corpus, matching or not: a corpus of
@@ -73,7 +73,7 @@ TIMEOUT = 300
 # units are read from `VE/WireContract/Diagnose.lean`.
 CASE_MODES: tuple[tuple[str, tuple[str, ...]], ...] = (
     ("ve_conformance", ()), ("ve_conformance", ("check-certificate",)), ("ve_conformance", ("order",)),
-    ("ve_conformance", ("route",)),
+    ("ve_conformance", ("route",)), ("ve_speech_acts_route", ()),
 )
 # The `ve_service` modes that replaced the one-shot route executables (lean-first batch 1), given the
 # same corpora as `ve_service` sessions (`route_session`).

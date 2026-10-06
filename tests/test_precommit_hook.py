@@ -229,9 +229,12 @@ def test_python_imports_resolve_against_the_staged_tree(staging):
 
 def test_staged_policy_code_is_the_policy(staging):
     policy = staging.head("tools/layer_policy.py")
-    assert b'"ast environment errors' in policy
-    staging.stage("tools/layer_policy.py", policy.replace(b'"ast environment errors',
-                                                          b'"ast planted_module environment errors'))
+    start = policy.index(b'1: "', policy.index(b'PYTHON = {')) + len(b'1: "')
+    end = policy.index(b'"', start)
+    names = policy[start:end].split()
+    assert b"environment_wire" in names
+    staged = policy[:start] + b" ".join([*names, b"planted_module"]) + policy[end:]
+    staging.stage("tools/layer_policy.py", staged)
     staging.stage("ve/planted_module.py", "import ve.errors\n")
     passes(staging)  # mapped by the staged policy, which the working tree lacks
     staging.stage("ve/planted_module.py", "from ve import parser\n")

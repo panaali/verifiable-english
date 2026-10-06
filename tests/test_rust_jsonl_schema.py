@@ -104,6 +104,34 @@ def _feed(monkeypatch, case, record, status):
     return rust_jsonl.run(case)
 
 
+@pytest.mark.parametrize("bad_record", [b"not-json", b'{"id":"other","status":"Satisfied","value":true,"evaluations":1}'])
+def test_invalid_record_discards_process_before_next_case(monkeypatch, bad_record):
+    """A poisoned process cannot answer a later bottom case with a stale Satisfied record."""
+    rust_jsonl._close_all()
+    case = {"id": "bottom", "kind": "evaluate-budgeted", "environment": ENV.to_dict(),
+            "ast": [["bottom"]], "model": MODEL.to_dict(), "max_evaluations": 10, "trace": False}
+    original = rust_jsonl._Checker.exchange
+    first = []
+
+    def poisoned(self, data, timeout):
+        if not first:
+            first.append(self)
+            return bad_record
+        if self is first[0]:
+            return b'{"id":"bottom","status":"Satisfied","value":true,"evaluations":1}'
+        return original(self, data, timeout)
+
+    monkeypatch.setattr(rust_jsonl._Checker, "exchange", poisoned)
+    try:
+        with pytest.raises(CheckerUnavailable):
+            rust_jsonl.run(case)
+        assert first[0].process.poll() is not None
+        answer = rust_jsonl.run(case)
+        assert answer["status"] == "Violated" and answer["value"] is False
+    finally:
+        rust_jsonl._close_all()
+
+
 def test_every_record_shape_is_exercised(genuine):
     """The genuine records cover every branch of the schema's selection and both outcomes."""
     shapes = {"error" if record["status"] == "error" else case.get("kind", "countermodel" if "model" in case
