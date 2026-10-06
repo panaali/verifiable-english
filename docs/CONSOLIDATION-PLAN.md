@@ -670,15 +670,15 @@ the current measurements follow:
 | 4 | 718 | 0 | 0 | 420 | 298 | 14 | 2 | 10.6 |
 | 5 | 0 | 485 | 0 | 0 | 485 | 14 | 1 | 34.6 |
 | 6 | 35 | 0 | 1758 | 0 | 35 | 3 | 1 | 11.7 |
-| 7 | 587 | 0 | 0 | 60 | 527 | 6 | 2 | 43.9 |
+| 7 | 585 | 0 | 0 | 60 | 525 | 6 | 2 | 43.8 |
 | 8a | 106 | 225 | 0 | 60 | 271 | 10 | 1.5 | 18.1 |
-| 8b | 0 | 3460 | 0 | 0 | 3460 | 30 | 3 | 38.4 |
+| 8b | 0 | 3555 | 0 | 0 | 3555 | 30 | 3 | 39.5 |
 | 9 | 88 | 0 | 0 | 0 | 88 | 18 | 2 | 2.4 |
 | 10 | 0 | 0 | 0 | 0 | 0 | 4 | 1 | 0.0 |
 
 What the measurement changes:
 
-* **Re-ranking of steps 5 to 10 by measured score:** 7 (43.9), 5 (34.6), 8a (18.1), 6 (11.7),
+* **Re-ranking of steps 5 to 10 by measured score:** 7 (43.8), 5 (34.6), 8a (18.1), 6 (11.7),
   9 (2.4), 10. Step 8b's 3,460 is an upper bound (every untied line of the eight units' `Wire.lean`
   files, on the assumption that every decoder gets `exact`), not a forecast; it stays ranked by its
   pilot (Alternatives) as section 3 says. Against the estimates, 7 overtakes 5 (762 trusted
