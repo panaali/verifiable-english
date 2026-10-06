@@ -216,10 +216,24 @@ def test_every_field_of_a_def_or_class_is_part_of_its_digest():
 def compound_statements() -> set[type]:
     """Statement kinds that hold other statements, read from the `ast` schema."""
     def holds(annotation) -> bool:
-        return any(name in str(annotation) for name in ("ast.stmt", "excepthandler", "match_case"))
+        return any(name in str(annotation) for name in ("ast.stmt", "stmt", "excepthandler", "match_case"))
     return {cls for cls in ast.stmt.__subclasses__()
             if cls not in (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)
-            and any(holds(t) for t in cls._field_types.values())}
+            and any(holds(t) for t in ast_field_types(cls).values())}
+
+
+def ast_field_types(cls: type) -> dict[str, object]:
+    """Compiler-provided AST field schema on both Python 3.12 and 3.13+.
+
+    Python 3.12 exposes field types in each constructor's generated docstring;
+    Python 3.13+ also provides ``_field_types``. Keep the schema as the oracle.
+    """
+    if hasattr(cls, "_field_types"):
+        return cls._field_types
+    signature = (cls.__doc__ or "").partition("(")[2].rpartition(")")[0]
+    return {name: kind for field in signature.split(",")
+            if len(parts := field.strip().split()) == 2
+            for kind, name in [parts] if name in cls._fields}
 
 
 # A def in every block of every compound statement; {body} marks each def.
@@ -259,7 +273,9 @@ def test_every_identifier_field_of_the_ast_is_classified():
     # A name-holding field the binder does not know would let a rebinding go unseen.
     found = {(cls.__name__, name) for cls in vars(ast).values()
              if isinstance(cls, type) and issubclass(cls, ast.AST)
-             for name, annotation in getattr(cls, "_field_types", {}).items() if "str" in str(annotation)}
+             for name, annotation in ast_field_types(cls).items()
+             if ("str" in str(annotation) if hasattr(cls, "_field_types")
+                 else str(annotation).rstrip("?*") in ("identifier", "string"))}
     assert found == set(change_units.IDENTIFIER_FIELDS)
     for old, new, name in (
             ("try:\n    pass\nexcept E as e:\n    pass\n", "try:\n    pass\nexcept F as e:\n    pass\n", "e"),
