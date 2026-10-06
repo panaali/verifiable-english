@@ -9174,6 +9174,7 @@
   "tests/test_soft_norms_lean.py::test_lambda_blocked_dominator",
   "tests/test_soft_norms_lean.py::test_mu_switchable_strict_exception_changes_hard_parent",
   "tests/test_soft_norms_lean.py::test_nu_outweighs_indexed_by_act_and_sorts",
+  "tests/test_soft_norms_lean.py::test_soft_elaborate_unresolved_pair_and_hard_status",
   "tests/test_soft_norms_lean.py::test_theta_dual_guard_cycle_on_t_prime",
   "tests/test_soft_norms_lean.py::test_theta_sigma_pi_rho_diagnostics[environment_json0-norms0-TieAgainstOrder: a, b]",
   "tests/test_soft_norms_lean.py::test_theta_sigma_pi_rho_diagnostics[environment_json1-norms1-DependencyCycle: a, b, c]",
