@@ -672,6 +672,26 @@ def test_admission_presupposition_leaves_stay_assumptions(lean):
     assert result["report"]["assumptions"] == [{"name": "h", "ast": ["top"], "label": "speech:presupposition:p"}]
 
 
+@pytest.mark.parametrize("status,label", [("open", "readings:rs@1:all"),
+                                         ("authored", "readings:rs@1:0")])
+def test_admission_projects_structured_assertion_readings(lean, status, label):
+    """An asserted speech reading has `{"ast": ...}` content; P0 reads the enclosed formula.
+    Both an open disjunction and a signed choice retain their reading provenance.
+    """
+    env = base_env()
+    source = "Atlas is reviewed.\n"
+    ast = U("reviewed", "atlas")
+    metadata = {"format": "ve-document@2", "environment": env,
+                "units": placed([source], [unit("a", 0, "asserted", {"ast": ast})]),
+                "reading_sets": [reading_set("a", 1, status, "asserted", {"ast": ast})]}
+    node = {"name": "r", "ast": ast, "label": label}
+    assert py_outcome(metadata, source)["ok"]
+    assert run_source(metadata, source)["status"] == "ok"
+    result = admit(metadata, source, {"root": "r", "nodes": [node]})
+    assert result["status"] == "ok", result
+    assert result["report"]["assumptions"] == [node]
+
+
 @pytest.mark.parametrize("node, error", [
     # an answer leaf whose formula is not H and F of a certificate-supported record
     ({"name": "n", "ast": ["and", ["top"], ["not", REVIEWED]], "label": "speech:answer:p:no"},
