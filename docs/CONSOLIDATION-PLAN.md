@@ -661,10 +661,13 @@ one-shot executable by english-lean-s2.md 2.10 and, at that point, the only one-
 `ve_conformance`, added 33 trusted lines to batch 1's 551. Batch 11a then added the W2 speech-source executable;
 the current measurements follow:
 
+The merged step 2a ledger now identifies 114 tied runner lines; the table below records
+that source classification alongside the previously measured steps.
+
 | Step | Removed | Tied | Reclassified [V]→[R] | Adds (est.) | Net | Days | Risk | Score |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | 1 | 0 | 23 | 0 | 0 | 23 | 5 | 1.5 | 3.1 |
-| 2a | 0 | 0 | 0 | 0 | 0 | 4 | 1 | 0.0 |
+| 2a | 0 | 114 | 0 | 0 | 114 | 4 | 1 | 28.5 |
 | 2b | 94 | 0 | 0 | 0 | 94 | 2 | 2 | 23.5 |
 | 3 | 39 | 0 | 0 | 10 | 29 | 14 | 2 | 1.0 |
 | 4 | 718 | 0 | 0 | 420 | 298 | 14 | 2 | 10.6 |
@@ -672,7 +675,7 @@ the current measurements follow:
 | 6 | 35 | 0 | 1758 | 0 | 35 | 3 | 1 | 11.7 |
 | 7 | 587 | 0 | 0 | 60 | 527 | 6 | 2 | 43.9 |
 | 8a | 106 | 225 | 0 | 60 | 271 | 10 | 1.5 | 18.1 |
-| 8b | 0 | 3460 | 0 | 0 | 3460 | 30 | 3 | 38.4 |
+| 8b | 0 | 3456 | 0 | 0 | 3456 | 30 | 3 | 38.4 |
 | 9 | 88 | 0 | 0 | 0 | 88 | 18 | 2 | 2.4 |
 | 10 | 0 | 0 | 0 | 0 | 0 | 4 | 1 | 0.0 |
 

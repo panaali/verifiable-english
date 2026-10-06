@@ -170,7 +170,7 @@ def statementLayers : List String := ["reports@0", "soft-norms@0", "rights@0", "
 
 def layered (environment : Json) : Bool :=
   match environment.getObjValD "profiles" with
-  | .arr ps => ps.any (fun p => statementLayers.any (p == .str ·))
+  | .arr ps => ps.any (fun p => statementLayers.any (p.getStr?.toOption == some ·))
   | _ => false
 
 def reduced (environment : Json) : Except String Json := do

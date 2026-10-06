@@ -32,9 +32,10 @@ theorem bundle_fits (j : Json) : OkFits req Skeletons.bundle (FamilyBundle.bundl
   all_goals (try simp only [VE.Route.Wire.ok])
   all_goals fits
 
-theorem familyNorms_fits (j : Json) : OkFits req Skeletons.familyNorms (FamilyNorms.runCase j) := by
+theorem familyNorms_fits (j : Json) : OkFits j Skeletons.familyNorms (FamilyNorms.runCase j) := by
   unfold FamilyNorms.runCase
   okfits
+  all_goals read_kind
   all_goals (try simp only [VE.Route.Wire.ok, VE.Norms.Flagged.regenerated, VE.Norms.Wire.regenerated,
     List.map_cons, List.map_nil, String.reduceBEq, FamilyNorms.conflictCase])
   all_goals fits
