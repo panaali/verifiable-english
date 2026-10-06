@@ -61,6 +61,10 @@ quantity route), the W6 tests compare Lean with Python's relay, `test_units_rust
 (`tools/gate-collection.json`) lists 81 removed and 78 added IDs: renames (`…three_ways` →
 `…relay_and_lean`), the removed Rust-only tests, and the new relay tests.
 
+After review B's fix: `lake build` and `lean/audit.py` pass. The full suite (5 chunks, `-n 16`,
+`VE_LEAN_PREBUILT=1`, then the four slow tests alone) has 11,212 passed, 6 skipped and 0 failed. The
+gate collection gains the 144 new test IDs and removes none.
+
 Not run: the hermetic `tools/gate.py` in a fresh worktree (its Lean rebuild and suite exceed one
 60-minute call); the suite above ran on the committed head in this worktree.
 
