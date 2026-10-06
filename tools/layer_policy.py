@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 NAMES = {1: "kernel", 2: "profiles", 3: "surface", 4: "tools", 5: "apps-and-measurements"}
 
 PYTHON = {
-    1: "ast environment errors identity limits model wire wire_contract assurance".split(),
+    1: "ast environment environment_wire errors identity limits model wire wire_contract assurance".split(),
     2: ("background closure definitions entailment evaluate norms order profiles "
         "alternatives reports rights softnorms softnorms_contract norms_contract speech_acts units").split(),
     3: ("english english_grammar english_phrases english_vocabulary fluent fol grammar natural "
@@ -113,6 +113,8 @@ def lean_entry(module: str) -> bool:
 def lean_layer(module: str) -> int | None:
     if module in {"VE", "VE.Audit", "Iceberg", "VE.Checks", "VE.Route.Checks"}:
         return 5  # aggregation and audit targets
+    if module == "VE.EnglishGrammar.ProfileExamples":
+        return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run
     if lean_entry(module) or module.endswith(".Run") or module.startswith("VE.Service."):
         return 4
     if module == "ResponseShape" or module.startswith("ResponseShape."):

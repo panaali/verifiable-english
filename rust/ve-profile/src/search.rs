@@ -196,6 +196,27 @@ struct Models<'a> {
     ready: bool,
     done: bool,
 }
+
+/// Candidate order used by search, exposed for the rule-3 transport measurement.
+/// This iterator does not evaluate or certify a candidate.
+pub struct CandidateIterator<'a> {
+    models: Models<'a>,
+}
+
+impl<'a> CandidateIterator<'a> {
+    pub fn new(env: &'a Environment, problem: &'a CountermodelProblem,
+               maximum: usize, minimum: usize, guard: Option<&'a Formula>) -> Result<Self> {
+        problem.document.belongs_to(env)?;
+        if maximum > 1000 || minimum > maximum {
+            return error("ResourceLimit", "search bounds exceed v0 envelope");
+        }
+        Ok(Self { models: Models::new(env, &problem.document, maximum, minimum, guard) })
+    }
+
+    pub fn next_model(&mut self) -> Result<Option<FiniteModel>> {
+        self.models.next()
+    }
+}
 impl<'a> Models<'a> {
     fn new(env: &'a Environment, document: &Document, maximum: usize,
            minimum: usize, guard: Option<&Formula>) -> Self {

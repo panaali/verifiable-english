@@ -207,8 +207,8 @@ def _background_python(env) -> tuple[Premise, ...]:
 def background(env) -> tuple[Premise, ...]:
     """Environment premises from the selected authority, with the legacy type."""
     from .backends.dispatch import execute
-    from .backends.lean_runner import route_environment, route_mode
-    from .backends.relay import decide
+    from .backends.lean_runner import cached_route_environment, route_mode
+    from .backends.relay import decide_once
     from .ast import formula_from_data
 
     case = {"id": "background", "kind": "background", "environment": env.to_dict()}
@@ -218,8 +218,8 @@ def background(env) -> tuple[Premise, ...]:
             # The frozen v0 and v0.1 envelopes have no generated Background: their
             # Lean certificate runners bind the case premises alone.
             return ()
-        request = {**case, "environment": route_environment(env)}
-        row = decide(route_mode(env), [request])[0]
+        # The same Background request is asked once (lean-first batch 2, F3).
+        row = decide_once(route_mode(env), {**case, "environment": cached_route_environment(env)})
         if len(row["premises"]) != len(row["generators"]):
             from .backends.lean_service import CheckerUnavailable
             raise CheckerUnavailable("CheckerUnavailable: malformed Lean Background result")

@@ -183,11 +183,11 @@ def check_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, model
     from .ast import _to_data
     from .backends.dispatch import execute
     from .backends.lean_service import CheckerUnavailable
-    from .backends.lean_runner import lean_mode, route_environment
+    from .backends.lean_runner import lean_mode, cached_route_environment
     from .backends.relay import decide
-    from .backends.rust_jsonl import run as rust_run, rust_environment, soft_case
+    from .backends.rust_jsonl import run as rust_run, cached_rust_environment, soft_case
 
-    case = {"id": "countermodel", "environment": rust_environment(env), **soft_case(env),
+    case = {"id": "countermodel", "environment": cached_rust_environment(env), **soft_case(env),
             "premises": [_to_data(f) for f in premises], "conclusion": _to_data(conclusion),
             "model": model.to_dict(), "max_evaluations": max_evaluations}
 
@@ -221,7 +221,7 @@ def check_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, model
         result = rust()
         if result.status == "ResourceLimit":
             return result
-        request = {**case, "kind": "countermodel", "environment": route_environment(env)}
+        request = {**case, "kind": "countermodel", "environment": cached_route_environment(env)}
         row = decide(lean_mode(env), [request])[0]
         if row["refutes"] != result.valid:
             raise CheckerUnavailable("CheckerUnavailable: Lean and Rust countermodel checks disagree")
@@ -656,7 +656,7 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
     from .ast import _to_data
     from .backends.dispatch import authority_for, execute
     from .backends.lean_service import CheckerUnavailable
-    from .backends.rust_jsonl import run as rust_run, rust_environment, soft_case
+    from .backends.rust_jsonl import run as rust_run, cached_rust_environment, soft_case
     from .profiles import require_checker
 
     if authority_for("countermodel_search") == "python":
@@ -676,7 +676,7 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
     check_formula(env, conclusion)
     if nonvacuous_for is not None:
         check_formula(env, nonvacuous_for)
-    case = {"id": "countermodel-search", "environment": rust_environment(env), **soft_case(env),
+    case = {"id": "countermodel-search", "environment": cached_rust_environment(env), **soft_case(env),
             "premises": [_to_data(f) for f in premises], "conclusion": _to_data(conclusion),
             "max_domain_size": max_domain_size, "min_domain_size": min_domain_size,
             "nonempty_domains": nonempty_domains, "max_models": max_models,
@@ -828,7 +828,7 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
     from .ast import _to_data
     from .backends.dispatch import authority_for, execute
     from .backends.lean_service import CheckerUnavailable
-    from .backends.rust_jsonl import run as rust_run, rust_environment, soft_case
+    from .backends.rust_jsonl import run as rust_run, cached_rust_environment, soft_case
     from .profiles import require_checker
 
     def python():
@@ -849,7 +849,7 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
     if nonvacuous_for is not None:
         check_formula(env, nonvacuous_for)
     case = {"id": "distinguishing-model", "kind": "distinguishing-model", **soft_case(env),
-            "environment": rust_environment(env), "a": _to_data(a), "b": _to_data(b),
+            "environment": cached_rust_environment(env), "a": _to_data(a), "b": _to_data(b),
             "max_domain_size": max_domain_size, "min_domain_size": min_domain_size,
             "nonempty_domains": nonempty_domains, "max_models": max_models,
             "max_evaluations": max_evaluations,
