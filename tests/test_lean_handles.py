@@ -141,6 +141,12 @@ def test_the_client_mirrors_the_services_eviction(executable):
                              _answers(inline.run_bound("environment", [case])))
         assert service.stats["handle_resends"] == 0
         assert len(service._registered) == 5 and service.stats["registered"] == MAX_HANDLES + 5
+        # Every environment the client believes the process holds is answered by its handle alone.
+        held = set(service._registered)
+        for environment in environments:
+            if case_digest(json.dumps(environment, ensure_ascii=False, separators=(",", ":"))) in held:
+                service.run_bound("environment", [{"id": "e", "environment": environment}])
+        assert service.stats["handle_resends"] == 0 and service.stats["registered"] == MAX_HANDLES + 5
 
 
 def test_a_case_that_names_its_own_handle_is_sent_as_it_is(executable):
