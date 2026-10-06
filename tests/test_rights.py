@@ -1069,3 +1069,56 @@ def test_line_on_a_base_predicate_is_unknown_not_a_crash():
     line["norm"]["predicate"] = "base_act"
     with pytest.raises(VEError, match="UnknownSymbol: regulated predicate base_act"):
         correlate(raw, [right([line])])
+
+
+# lean-first batch 7 review B2 and B3: what the document entry points report on the rights profile's own corpus.
+
+def test_document_loader_relays_lean_rights_rejections_verbatim(tmp_path):
+    """Every generated source Lean rejects is rejected by `load_document` with Lean's error class and text, as the
+    relay raises them (the wording and code changes listed in docs/lean-first/b7/DELTA.md, B2): an unknown cited
+    unit is `UnknownSymbol: unit u9`, not `InvalidInput`, and a second bar `DuplicateDeclaration: bar`."""
+    from conformance.rights_differential import document, loaded
+    from ve.backends.relay import decide
+    from ve.rights_route import _wire
+
+    seen = set()
+    for seed in range(120):
+        raw, units = document(seed)
+        case = {"id": "s", "kind": "rights-elaborate", "environment": _wire(raw), "document": _wire(units)}
+        try:
+            decide("rights", [case])
+            continue
+        except VEError as exc:
+            lean = exc
+        directory = tmp_path / str(seed)
+        directory.mkdir()
+        with pytest.raises(VEError) as raised:
+            loaded(raw, units, directory)
+        assert (type(raised.value), str(raised.value)) == (type(lean), str(lean)), seed
+        seen.add(type(lean).__name__)
+    assert {"UnknownSymbol", "DuplicateDeclaration"} <= seen
+
+
+def test_head_profile_over_a_rights_document_without_reading_sets_reports_the_lower_chain(tmp_path):
+    """`readings@1` over a rights source with no reading set: the rights report is the lower chain's, the same as
+    without the head profile (the availability change listed in docs/lean-first/b7/DELTA.md, B3; the base raised
+    `UnsupportedProfile: Unsupported profile readings@1` from the rights report)."""
+    from conformance.rights_differential import document, document_text
+
+    checked = 0
+    for seed in range(12):
+        raw, units = document(seed)
+        plain, headed = tmp_path / f"{seed}.ve.md", tmp_path / f"{seed}-headed.ve.md"
+        plain.write_text(document_text(raw, units))
+        headed.write_text(document_text({**raw, "profiles": sorted([*raw["profiles"], "readings@1"])}, units))
+        try:
+            lower = check_document(plain)
+        except VEError:
+            continue
+        report = check_document(headed)
+        # The environment identity names the head profile; everything the rights chain reports is the lower one's.
+        assert report["rights"]["environment_id"] != lower["rights"]["environment_id"]
+        assert {k: v for k, v in report["rights"].items() if k != "environment_id"} == \
+            {k: v for k, v in lower["rights"].items() if k != "environment_id"}, seed
+        checked += 1
+    assert checked >= 6
