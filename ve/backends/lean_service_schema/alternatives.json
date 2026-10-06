@@ -169,6 +169,53 @@
     "coverage": {
       "$comment": "Alternatives.Wire.coverage: accepted unit cells and their Lean-owned residual fold.",
       "additionalProperties": false,
+      "allOf": [
+        {
+          "x-count-where": {
+            "array": "/alternatives/alternatives_declared",
+            "equals": "/residual/alternatives_declared",
+            "where": true
+          }
+        },
+        {
+          "x-count-where": {
+            "array": "/alternatives/counterfactual_leaves",
+            "equals": "/residual/counterfactual_leaves",
+            "where": true
+          }
+        },
+        {
+          "x-count-where": {"array": "/alternatives/assumed_harm_free", "equals": "/residual/assumed_harm_free", "where": true}
+        },
+        {
+          "x-count-where": {
+            "array": "/alternatives/proximate_judgments",
+            "equals": "/residual/proximate_judgments",
+            "where": true
+          }
+        },
+        {
+          "x-count-where": {
+            "array": "/alternatives/unmapped_obligations",
+            "equals": "/residual/unmapped_obligations",
+            "where": true
+          }
+        },
+        {"x-count-where": {"array": "/alternatives/dilemmas", "equals": "/residual/dilemmas", "where": true}},
+        {
+          "x-count-where": {"array": "/alternatives/narrowings", "equals": "/residual/narrowings", "where": true}
+        },
+        {
+          "x-references": {"array": "/alternatives/alternatives_declared", "field": "unit", "in": "/coverage_units/*/id"}
+        },
+        {
+          "x-references": {"array": "/alternatives/counterfactual_leaves", "field": "unit", "in": "/coverage_units/*/id"}
+        },
+        {
+          "x-references": {"array": "/alternatives/proximate_judgments", "field": "unit", "in": "/coverage_units/*/id"}
+        },
+        {"x-count-presence": {"equals": "/residual/table_complete", "value": "/alternatives/table_complete"}}
+      ],
       "properties": {
         "alternatives": {
           "additionalProperties": false,

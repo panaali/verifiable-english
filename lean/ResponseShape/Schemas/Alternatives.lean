@@ -113,6 +113,18 @@ def coverage : Shape :=
   c "Alternatives.Wire.coverage: accepted unit cells and their Lean-owned residual fold." [
     obj,
     .required ["alternatives", "residual"],
+    .allOf [
+      .countWhere "/alternatives/alternatives_declared" (.bool true) "/residual/alternatives_declared",
+      .countWhere "/alternatives/counterfactual_leaves" (.bool true) "/residual/counterfactual_leaves",
+      .countWhere "/alternatives/assumed_harm_free" (.bool true) "/residual/assumed_harm_free",
+      .countWhere "/alternatives/proximate_judgments" (.bool true) "/residual/proximate_judgments",
+      .countWhere "/alternatives/unmapped_obligations" (.bool true) "/residual/unmapped_obligations",
+      .countWhere "/alternatives/dilemmas" (.bool true) "/residual/dilemmas",
+      .countWhere "/alternatives/narrowings" (.bool true) "/residual/narrowings",
+      .references "/alternatives/alternatives_declared" "unit" "/coverage_units/*/id",
+      .references "/alternatives/counterfactual_leaves" "unit" "/coverage_units/*/id",
+      .references "/alternatives/proximate_judgments" "unit" "/coverage_units/*/id",
+      .presenceCount "/alternatives/table_complete" "/residual/table_complete"],
     closed [
       ("alternatives", n [obj,
         .required ["alternatives_declared", "counterfactual_leaves", "assumed_harm_free",
