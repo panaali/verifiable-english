@@ -46,6 +46,11 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.English.reported_fits
 #print axioms ResponseShape.Encoders.English.runCase_fits
 #print axioms ResponseShape.Encoders.English.run_fits
+#print axioms ResponseShape.Encoders.EnglishLean.read_fits
+#print axioms ResponseShape.Encoders.EnglishLean.grammar_fits
+#print axioms ResponseShape.Encoders.EnglishLean.check_fits
+#print axioms ResponseShape.Encoders.EnglishLean.ok_fits
+#print axioms ResponseShape.Encoders.EnglishLean.readCase_fits
 #print axioms ResponseShape.Encoders.Envelope.bound_fits
 #print axioms ResponseShape.Encoders.Envelope.getObjValD_str
 #print axioms ResponseShape.Encoders.Envelope.lacks

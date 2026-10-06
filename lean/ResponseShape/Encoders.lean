@@ -1,5 +1,6 @@
 import ResponseShape.Encoders.Conformance
 import ResponseShape.Encoders.English
+import ResponseShape.Encoders.EnglishLean
 import ResponseShape.Encoders.Standalone
 import ResponseShape.Encoders.Family
 import ResponseShape.Encoders.Rights
@@ -40,6 +41,9 @@ theorem runMode_fits (m : VE.Service.Mode) (j : Json) (hj : CaseWF j) : Fits j (
   · exact Route.runCaseReported_fits j
   · exact Norms.runCaseReported_fits j
   · exact English.english_fits j
+  · exact EnglishLean.read_fits j
+  · exact EnglishLean.grammar_fits j
+  · exact EnglishLean.check_fits j
   · exact Standalone.environment_reported j
   · exact Standalone.model_reported j
   · exact Standalone.check_reported j
