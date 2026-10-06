@@ -5,7 +5,8 @@ budgeted evaluator short-circuits quantifiers, so its work (and whether it
 exhausts `MAX_EVALUATIONS`) depends on entity order. Lean now sorts after
 the frozen decoders, in the quantity runner (`admission` and `countermodel`)
 and in the relational route (the defined-table budget). Each check runs in
-more than one domain order, three ways.
+more than one domain order: the quantity checks in Lean and through Python's relay
+(Lean-first batch 9 deleted Rust's quantity route), the relational one three ways.
 """
 from __future__ import annotations
 
@@ -19,7 +20,7 @@ import pytest
 from tests import lean_routes
 
 from subprocesses import HANG_TIMEOUT
-from tests.test_units_lean_w6a import LEAN, ROOT, lean, quantity, rust
+from tests.test_units_lean_w6a import LEAN, ROOT, lean, quantity
 from tests.test_w6a_review_regressions import raw_environment
 from ve import ast
 from ve.environment import Environment
@@ -59,19 +60,16 @@ def python_value(formula, data):
     return (None, None) if result.value is None else (result.value, result.evaluations)
 
 
-def test_reviewer_reproducer_is_unknown_in_every_order_three_ways():
+def test_reviewer_reproducer_is_unknown_in_every_order_relay_and_lean():
     formula = ["exists", "item", wide(19)]
     for domain in (["b", "a"], ["a", "b"]):
         data = model(domain)
         assert python_value(formula, data) == (None, None)
         [got] = lean([{"id": "r", "environment": raw(), "quantity": quantity(formula), "model": data}])
         assert got["status"] == "error" and "MAX_EVALUATIONS" in got["error"], (domain, got)
-        [other] = rust([{"id": "r", "kind": "quantity", "environment": raw(),
-                         "quantity": quantity(formula), "model": data}])
-        assert other["status"] == "error" and other["error"]["code"] == "ResourceLimit", other
 
 
-def test_countermodel_route_is_unknown_in_every_order_three_ways():
+def test_countermodel_route_is_unknown_in_every_order_relay_and_lean():
     env = Environment(raw())
     conclusion = quantity(["not", ["exists", "item", wide(19)]])
     for domain in (["b", "a"], ["a", "b"]):
@@ -81,8 +79,6 @@ def test_countermodel_route_is_unknown_in_every_order_three_ways():
         case = {"environment": raw(), "premises": [], "conclusion": conclusion, "model": data}
         [got] = lean([{"id": "m", "kind": "countermodel", **case}])
         assert got["status"] == "error" and "MAX_EVALUATIONS" in got["error"], (domain, got)
-        [other] = rust([{"id": "m", "kind": "quantity", "mode": "countermodel", **case}])
-        assert other["status"] == "error" and other["error"]["code"] == "ResourceLimit", other
 
 
 def test_evaluation_counts_agree_on_every_permutation():
@@ -99,8 +95,6 @@ def test_evaluation_counts_agree_on_every_permutation():
             expected.append(python_value(formula, data))
     for got, (value, work) in zip(lean(cases), expected, strict=True):
         assert got["status"] == "ok" and (got["value"], got["evaluations"]) == (value, work), got
-    for other, (value, _) in zip(rust([{**c, "kind": "quantity"} for c in cases]), expected, strict=True):
-        assert other["status"] == "ok" and other["value"] is value, other
 
 
 def test_premise_order_short_circuit_still_matches_across_domain_orders():
@@ -114,8 +108,6 @@ def test_premise_order_short_circuit_still_matches_across_domain_orders():
         case = {"environment": raw(), "premises": [premise], "conclusion": conclusion, "model": data}
         [got] = lean([{"id": "m", "kind": "countermodel", **case}])
         assert got["status"] == "ok" and got["refutes"] is False, got
-        [other] = rust([{"id": "m", "kind": "quantity", "mode": "countermodel", **case}])
-        assert other["status"] == "ok" and other["refutes"] is False, other
 
 
 # --- The same class on the relational route: the defined-table budget --------

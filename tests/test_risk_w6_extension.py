@@ -6,7 +6,7 @@ Review risk-looprecheck1 B1: the route's unit decoder skipped W6's sort/tag coll
 Python applies to a risk environment. Each is checked here, with the route gates that surround them (the
 checker family, the W6 profile tuple, and the definitions, data flags and `$string` literals the route
 refuses). Each mutation below gets one answer from both, text included. Python's W6 texts are Lean's frozen
-ones, and so are Rust's where Rust names the same diagnostic.
+ones.
 """
 from __future__ import annotations
 
@@ -24,7 +24,6 @@ from ve.errors import VEError
 
 ROOT = Path(__file__).resolve().parents[1]
 BIN = "ve_risk_route"  # its service mode, through tests/lean_routes.py
-RUST = ROOT / "rust/target/release/ve"
 
 pytestmark = pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="the Lean service is not built")
 
@@ -293,7 +292,7 @@ def test_base_environment_binding_drops_the_annotations():
     assert res["verdict"] != "CONFLICT-FREE", res
 
 
-@pytest.mark.skipif(not (lean_routes.SERVICE.exists() and RUST.exists()), reason="the Lean service or the Rust binary is not built")
+@pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="the Lean service is not built")
 @pytest.mark.parametrize("units,constants,text", [
     ({"Gb": {"scale": "1", "display": {"kind": "percent"}}}, {}, 'Invalid unit tag "Gb"'),
     ({"gx": {"scale": "1", "display": {"kind": "decimal", "label": "GB1"}}}, {},
@@ -308,14 +307,12 @@ def test_base_environment_binding_drops_the_annotations():
           "a": {"sort": "$int", "description": "a", "unit": "bp", "verbalisation": "the rate"}},
      "VerbalisationCollision(a, b)"),
 ], ids=["tag", "touches", "tab", "extends", "tag-order", "constant-order"])
-def test_w6_texts_are_one_text_three_ways(units, constants, text):
-    """Python's W6 texts are the frozen Lean ones (quoted and ordered as Lean reads JSON), and Rust's."""
-    from tests.test_units_lean_w6a import lean, quantity, rust
+def test_w6_texts_are_one_text_relay_and_lean(units, constants, text):
+    """Python's W6 texts are the frozen Lean ones (quoted and ordered as Lean reads JSON)."""
+    from tests.test_units_lean_w6a import lean, quantity
     from tests.test_w6a_review_regressions import raw_environment
     raw = raw_environment(constants=constants)
     raw["units"].update(units)
     assert _python(raw) == text
     [got] = lean([{"id": "e", "environment": raw, "quantity": quantity(["top"])}])
     assert got["error"] == text, got
-    [other] = rust([{"id": "e", "kind": "quantity", "environment": raw, "quantity": quantity(["top"])}])
-    assert other["error"]["message"] == text, other
