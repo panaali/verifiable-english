@@ -14,7 +14,7 @@ from .ast import (And, Binary, Const, Eq, Exists, Forall, Implies, Not, Or, Top,
                   _Checker, _Decoder, _to_data)
 from .background import background, dependency_order
 from .environment import Environment, valid_identifier
-from .errors import DuplicateDeclaration, ResourceLimit, UnknownSymbol, UnsupportedProfile, VEError
+from .errors import CheckerUnavailable, DuplicateDeclaration, ResourceLimit, UnknownSymbol, UnsupportedProfile, VEError
 from .limits import MAX_DEPTH, MAX_IDENTIFIER_BYTES, MAX_NODES, MAX_PREDICATES
 from .norms import _NAME, Norm, NormDocument, _all, _any, _atom, _bind
 from . import profiles as profile_registry
@@ -508,29 +508,30 @@ def _rank_semantics(ctx):
 
 def check_soft_source(environment, norms=None, *, generated=False, layers=frozenset(),
                       submitted_soft_route=False):
-    """Phases 1 to 5 and the rank checks of phase 6 over one soft source.
-
-    Raises the first failing check of the table with its code. A caller that
-    holds the raw environment and norms together runs this before building
-    `SoftEnvironment`, so an environment fault never masks an earlier-phase
-    fault in a rule. `layers` are the statement layers of `LAYER_ROUTES` whose
-    own route is checking the source (`RightsEnvironment` passes `rights@0`).
-    `submitted_soft_route` matches Lean's inherited W1 profile list at the
-    stand-alone soft route without changing norm-defaults fill construction."""
-    _envelope(environment, norms)
-    ctx = _declarations(environment, generated, submitted_soft_route=submitted_soft_route)
-    _profiles(environment, ctx.env, layers)
-    rules = [_rule_fields(unit, ctx.exception_decider) for unit in (norms or ())]
-    _environment_references(ctx)
-    _document_references(ctx.env, ctx.parties, ctx.ranks, rules)
-    above = _rank_semantics(ctx)
-    return ctx, rules, above
+    """Lean's ordered soft source checks, including a generated layer's lower frame."""
+    from .backends.soft_relay import run as _run, wire as _wire
+    source = deepcopy(environment)
+    if "rights@0" in layers:
+        source["profiles"] = [p for p in source["profiles"] if p != "rights@0"]
+        source["vocabulary"].pop("rights", None)
+    if generated:
+        source["vocabulary"]["predicates"] = {
+            name: entry for name, entry in source["vocabulary"]["predicates"].items()
+            if not name.startswith("soft__")}
+    return _run({"id": "soft-elaborate", "kind": "soft-elaborate",
+                 "environment": _wire(source), "norms": _wire(list(norms or ()))})
 
 
 def load_soft_document(environment, norms):
-    """A soft source from raw JSON, validated in table order over the whole source."""
-    check_soft_source(environment, norms, submitted_soft_route=True)
-    return SoftNormDocument(SoftEnvironment(environment), norms)
+    """Build the Python containers after Lean accepts the complete soft source."""
+    from .backends.soft_relay import run as _run, wire as _wire
+    _run({"id": "soft-elaborate", "kind": "soft-elaborate",
+          "environment": _wire(environment), "norms": _wire(norms)})
+    try:
+        return SoftNormDocument(SoftEnvironment(environment), norms)
+    except Exception as error:
+        raise CheckerUnavailable(
+            f"CheckerUnavailable: Python could not construct Lean-accepted soft source: {error}") from error
 
 
 class SoftEnvironment(Environment):
@@ -544,14 +545,24 @@ class SoftEnvironment(Environment):
     LAYERS = frozenset()
 
     def __init__(self, data, *, generated=False):
+        if "norm-defaults@0" in data.get("profiles", ()):
+            # Fill still constructs placeholder completions in Python (batch 10).
+            # The stand-alone soft route rejects this profile before fill runs.
+            _envelope(data, None)
+            ctx = _declarations(data, generated)
+            _profiles(data, ctx.env, self.LAYERS)
+            _environment_references(ctx)
+            row = {"ranks_above": {name: sorted(above)
+                    for name, above in _rank_semantics(ctx).items()}}
+        else:
+            row = check_soft_source(data, generated=generated, layers=self.LAYERS)
         try:
-            self._init_soft(data, generated=generated)
-        except VEError as exc:
-            _code_soft_error(exc)
-            raise
+            self._init_soft(data, row)
+        except Exception as error:
+            raise CheckerUnavailable(
+                f"CheckerUnavailable: Python could not construct Lean-accepted soft environment: {error}") from error
 
-    def _init_soft(self, data, *, generated=False):
-        ctx, _, above = check_soft_source(data, generated=generated, layers=self.LAYERS)
+    def _init_soft(self, data, row):
         raw = deepcopy(data)
         vocab = raw['vocabulary']
         has_block = 'soft' in vocab
@@ -561,8 +572,11 @@ class SoftEnvironment(Environment):
             entry.pop('instruction_of', None)
         object.__setattr__(self, 'soft', soft)
         object.__setattr__(self, 'soft_present', has_block)
-        object.__setattr__(self, 'instruction_of', dict(sorted(ctx.instructions.items())))
-        object.__setattr__(self, 'ranks_above', above)
+        object.__setattr__(self, 'instruction_of', {
+            name: entry['instruction_of'] for name, entry in sorted(data['vocabulary']['predicates'].items())
+            if 'instruction_of' in entry})
+        object.__setattr__(self, 'ranks_above', {
+            name: set(above) for name, above in row['ranks_above'].items()})
         object.__setattr__(self, 'soft_premises', ())
         # Every declaration passed 2.3 under the same profiles; this cannot fail.
         super().__init__(raw)
@@ -719,90 +733,48 @@ def _or_nonempty(items):
 class SoftNormDocument:
     """Validated soft tree, its W1 elaboration, and regenerated base premises."""
     def __init__(self, env: SoftEnvironment, units):
+        from .backends.soft_relay import run as _run, wire as _wire
+        row = _run({"id": "soft-elaborate", "kind": "soft-elaborate",
+                    "environment": _wire(env.to_dict()), "norms": _wire(units)})
         try:
-            self._init_soft(env, units)
-        except VEError as exc:
-            _code_soft_error(exc)
-            raise
+            self._init_soft(env, units, row)
+        except Exception as exc:
+            raise CheckerUnavailable(
+                f"CheckerUnavailable: Python could not construct Lean-accepted soft document: {exc}") from exc
+        self.document_hash = row["document_hash"]
 
-    def _init_soft(self, env: SoftEnvironment, units):
+    def _init_soft(self, env: SoftEnvironment, units, row):
         if not isinstance(env, SoftEnvironment):
             raise UnsupportedProfile('soft-norms@0 is required')
         self.env = env
-        # Phases 1, 4 and 5 over the whole document; the environment passed
-        # phases 1 to 3, 5 and 6.1 to 6.3 when it was built.
-        _norm_array(units)
         fields = [_rule_fields(unit, env.soft.get('exception_decider')) for unit in units]
-        _document_references(env, env.soft.get('parties', []), env.soft.get('ranks', []), fields)
-        self.rules = tuple(_soft_rule(x) for x in fields)
-        self.collisions = tuple(sorted(((min(left, right, key=lambda r: r.core.name),
-                                         max(left, right, key=lambda r: r.core.name))
-                                        for i, left in enumerate(self.rules)
-                                        for right in self.rules[i + 1:]
-                                        if left.mode == right.mode == 'default'
-                                        and self._incompatible(left, right)),
-                                       key=lambda pair: (pair[0].core.name, pair[1].core.name)))
-        # 6.4: E′ is within the vocabulary limits before anything is elaborated.
-        self.decisions = self._decisions()
-        for prefix in ('soft__excepted__', 'soft__off__', 'soft__outweighs__'):
-            for name in self.decisions:
-                if name.startswith(prefix) and len(name.encode('utf-8')) > MAX_IDENTIFIER_BYTES:
-                    raise ResourceLimit(f'ResourceLimit: decision predicate {name}')
-        if len(env.predicates) + len(self.decisions) > MAX_PREDICATES:
-            raise ResourceLimit('ResourceLimit: extended vocabulary')
-        self.core = NormDocument(env, [r.core for r in self.rules])
-        by_name = {r.core.name: r for r in self.rules}
+        self.rules = tuple(_soft_rule(field) for field in fields)
+        by_name = {rule.core.name: rule for rule in self.rules}
+        self.core = NormDocument(env, [rule.core for rule in self.rules])
+        self.decisions = {item['name']: item['arguments'] for item in row['decisions']}
+        self.collisions = tuple((by_name[item['pair'][0]], by_name[item['pair'][1]])
+                                for item in row['colliding_pairs'])
+        self.document_hash = row['document_hash']
+        self.warnings = tuple(row['warnings'])
+        self.extended_env = SoftEnvironment(row['environment_prime'], generated=True)
+        object.__setattr__(self.extended_env, 'decision_names', frozenset(self.decisions))
+        derived = {item['rule']: item['ast'] for item in row['derived']}
+        softened = []
         for rule in self.rules:
-            if rule.mode == 'default':
-                for parent in rule.core.over:
-                    if by_name[parent].mode == 'strict':
-                        raise VEError(f'SoftOverHard: rule {rule.core.name} over {parent}')
-        self.document_hash = soft_digest(f've-soft-norms-{env.identity_version}\n',
-                                         {'environment_id': env.environment_id,
-                                          'document': [r.to_dict() for r in self.rules]})
-        warnings = []
-        for rule in self.rules:
-            for parent_name in rule.core.over:
-                parent = by_name[parent_name]
-                if (rule.mode == parent.mode == 'default' and
-                        self._incompatible(rule, parent) and
-                        parent.rank is not None and rule.rank is not None and
-                        parent.rank in env.ranks_above[rule.rank]):
-                    warnings.append(f'RankAgainstPrecedence: rule {rule.core.name} over {parent_name}')
-        ranks = tuple(env.soft.get('ranks', []))
-        ties = {frozenset(pair) for pair in env.soft.get('ties', [])}
-        for a in ranks:
-            for b in ranks:
-                if (a < b and a not in env.ranks_above[b] and
-                        b not in env.ranks_above[a] and frozenset((a, b)) not in ties):
-                    warnings.append(f'undeclared tie: {a}, {b}')
-        self.warnings = tuple(warnings)
-        self.extended_env = self._extended_environment()
-        self.elaborated = self._soften()
-        # 6.11 and 6.12: every generated premise, serialised on its own as the
-        # soft route does, is within MAX_DEPTH and MAX_NODES, so an accepted
-        # document's whole elaboration serialises. A coherence premise is sized
-        # from the expansion table and built only if it fits.
-        self.exception_premises = self._exception_premises()
-        for label, formula in self.exception_premises:
-            if not _within_limits(self.extended_env, formula):
-                raise ResourceLimit(f'ResourceLimit: generated soft premise {label}')
-        self.expansion_sizes = self._expansion_sizes()
-        self.coherence_premises = self._coherence_premises()
-        for label, formula in self.elaborated.premises():
-            if not _within_limits(self.extended_env, formula):
-                raise ResourceLimit(f'ResourceLimit: generated norm layer {label}')
-        self._check_conflict_targets()
+            core = rule.core
+            ast = derived[core.name]
+            unless = core.unless if ast is None else (*core.unless, _Decoder().decode(ast))
+            softened.append(Norm(core.name, core.predicate, core.sign, core.guard, unless, core.over))
+        self.elaborated = SoftenedNormDocument(self.extended_env, softened)
+        self.exception_premises = tuple(
+            (item['label'], _Decoder().decode(item['ast'])) for item in row['background']
+            if item['generator'] == 'soft' and item['label'].startswith('soft:exception:'))
+        self.coherence_premises = tuple(
+            (item['label'], _Decoder().decode(item['ast'])) for item in row['colliding_pairs'])
         object.__setattr__(self.extended_env, 'soft_premises',
                            (*self.exception_premises, *self.coherence_premises))
         self.elaborated.soft_premises = self.extended_env.soft_premises
-        # 6.14 and 6.15: what the entailment route types with one checker, and
-        # so one MAX_NODES budget: all of background′, and the layers followed by
-        # the smallest conclusion ⊤ (`prove_norm_entailment(elaborated, (), ⊤)`).
-        if not _within_limits(self.extended_env, *(p.formula for p in background(self.extended_env))):
-            raise ResourceLimit('ResourceLimit: generated background')
-        if not _within_limits(self.extended_env, *(f for _, f in self.elaborated.premises()), Top()):
-            raise ResourceLimit('ResourceLimit: generated norm layers')
+        self.expansion_sizes = self._expansion_sizes()
 
     def _act(self, rule):
         decl = self.env.predicates[rule.core.predicate]
@@ -838,175 +810,6 @@ class SoftNormDocument:
         key = permission[0] if permission else keys[0]
         return f'soft__outweighs__{low}__{high}__{key}'
 
-    def _decisions(self):
-        """The decision predicates of E′ and their argument sorts."""
-        generated = {}
-        for rule in self.rules:
-            args = list(self.env.predicates[rule.core.predicate].arguments)
-            if rule.mode == 'default':
-                generated[_decision_name(rule)] = args
-            for party in rule.alterable:
-                generated[_decision_name(rule, party)] = args
-        if self.env.soft['outranking']['mode'] == 'holistic':
-            for left, right in self.collisions:
-                pair = self._rank_pair(left, right)
-                if pair is not None:
-                    name = self._outweighs_name(*pair, self._act(left),
-                                                self.env.predicates[left.core.predicate].arguments)
-                    generated[name] = list(self.env.predicates[left.core.predicate].arguments)
-        return generated
-
-    def _extended_environment(self):
-        data = self.env.to_dict()
-        predicates = data['vocabulary']['predicates']
-        generated = self.decisions
-        for name, args in generated.items():
-            if name in predicates:
-                raise VEError(f'InvalidInput: generated predicate collision {name}')
-            predicates[name] = {'arguments': args, 'description': 'soft-norms decision'}
-        result = SoftEnvironment(data, generated=True)
-        object.__setattr__(result, 'decision_names', frozenset(generated))
-        return result
-
-    def _switch(self, rule):
-        arity = len(self.env.predicates[rule.core.predicate].arguments)
-        return _or_nonempty(_atom(_decision_name(rule, party), arity) for party in rule.alterable)
-
-    def _strict_document(self):
-        rules = []
-        for rule in self.rules:
-            if rule.mode == 'strict':
-                core = rule.core
-                switch = self._switch(rule)
-                rules.append(Norm(core.name, core.predicate, core.sign, core.guard,
-                                  (*core.unless, switch) if not isinstance(switch, Bottom) else core.unless,
-                                  tuple(p for p in core.over if self.core.by_name[p].name in
-                                        {r.core.name for r in self.rules if r.mode == 'strict'})))
-        return NormDocument(self.extended_env, rules)
-
-    def _soften(self):
-        # Mirror Soften.lean's constructor order. Certificate identities bind
-        # these syntax trees, so Boolean equivalence alone is insufficient.
-        arity = {p: len(d.arguments) for p, d in self.env.predicates.items()
-                 if d.regulated is not None}
-        # W1 `children`: sorted by name, whatever the order of rules and `over` entries.
-        children = {r.core.name: sorted((x for x in self.rules if r.core.name in x.core.over),
-                                        key=lambda x: x.core.name)
-                    for r in self.rules}
-
-        def strict_live(rule):
-            return And(And(rule.core.guard, Not(_any(rule.core.unless))),
-                       Not(self._switch(rule)))
-
-        yields = {}
-
-        def strict_yields(rule, fuel):
-            # Shared per rule and fuel, so a precedence DAG with many paths is
-            # built as a graph; the limit checks walk its unfolding and stop.
-            key = (rule.core.name, fuel)
-            if key not in yields:
-                own = strict_live(rule) if rule.mode == 'strict' else Bottom()
-                yields[key] = Or(own, _any(strict_yields(child, fuel - 1)
-                                           for child in children[rule.core.name])
-                                 if fuel else Bottom())
-            return yields[key]
-
-        def strict_selects(rule):
-            if rule.mode != 'strict':
-                return Bottom()
-            return And(strict_live(rule),
-                       Not(_any(strict_yields(child, len(self.rules))
-                                for child in children[rule.core.name])))
-
-        def strict_decides(predicate, sign):
-            return _any(strict_selects(rule) for rule in self.rules
-                        if rule.core.predicate == predicate and rule.core.sign == sign)
-
-        def blocked(rule):
-            p = rule.core.predicate
-            reg = self.env.predicates[p].regulated
-            dual_neg = Bottom()
-            dual_pos = Bottom()
-            if rule.core.sign and reg.role == 'obligation' and reg.permission:
-                dual_neg = strict_decides(reg.permission, False)
-            if not rule.core.sign and reg.role == 'permission':
-                required = next((q for q, d in self.env.predicates.items()
-                                 if d.regulated is not None and d.regulated.permission == p), None)
-                if required is not None:
-                    dual_pos = strict_decides(required, True)
-            return Or(Or(Or(strict_decides(p, True), strict_decides(p, False)),
-                         dual_neg), dual_pos)
-
-        def eligible(rule):
-            if rule.mode != 'default':
-                return Bottom()
-            live = And(strict_live(rule),
-                       Not(_atom(_decision_name(rule), arity[rule.core.predicate])))
-            return And(live, Not(blocked(rule)))
-
-        holistic = self.env.soft['outranking']['mode'] == 'holistic'
-        effective = {}
-
-        def eff(rule, fuel):
-            key = (rule.core.name, fuel)
-            if key not in effective:
-                effective[key] = (eligible(rule) if fuel == 0 else
-                                  And(eligible(rule), Not(dominated(rule, fuel - 1))))
-            return effective[key]
-
-        def dominated(rule, fuel):
-            opponents = [other for other in self.rules
-                         if other.mode == 'default' and other is not rule
-                         and self._incompatible(rule, other)
-                         and self._rank_pair(rule, other) is not None]
-            terms = []
-            for other in opponents:
-                low, high = self._rank_pair(rule, other)
-                outweighs = (_atom(self._outweighs_name(low, high, self._act(rule),
-                                                       self.env.predicates[rule.core.predicate].arguments),
-                                    arity[rule.core.predicate]) if holistic else Bottom())
-                higher = (And(eff(other, fuel), Not(outweighs) if holistic else Top())
-                          if other.rank == high else Bottom())
-                lower = (And(eligible(other), outweighs)
-                         if holistic and other.rank == low else Bottom())
-                terms.append(Or(higher, lower))
-            return _any(terms)
-
-        result = []
-        for rule in self.rules:
-            core = rule.core
-            if rule.mode == 'strict':
-                derived = self._switch(rule)
-            else:
-                derived = Or(Or(Or(_atom(_decision_name(rule), arity[core.predicate]),
-                                    self._switch(rule)), blocked(rule)),
-                             dominated(rule, len(self.env.soft.get('ranks', []))))
-            unless = (*core.unless, derived) if not isinstance(derived, Bottom) else core.unless
-            if len(unless) > 8 or not _within_limits(self.extended_env, derived, context=(
-                    tuple(reversed(self.env.predicates[core.predicate].arguments)))):
-                raise ResourceLimit(f'ResourceLimit: derived carve-out of rule {core.name}')
-            result.append(Norm(core.name, core.predicate, core.sign, core.guard, unless, core.over))
-        try:
-            return SoftenedNormDocument(self.extended_env, result)
-        except ResourceLimit as exc:
-            raise ResourceLimit('ResourceLimit: derived carve-out') from exc
-
-    def _exception_premises(self):
-        premises = []
-        for rule in self.rules:
-            if rule.exception is None:
-                continue
-            sorts = self.env.predicates[rule.core.predicate].arguments
-            atom = _atom(_decision_name(rule), len(sorts))
-            for kind in ('sufficient', 'necessary'):
-                for index, wire in enumerate(rule.exception[kind]):
-                    condition = _Decoder().decode(wire)
-                    formula = (Implies(condition, atom) if kind == 'sufficient'
-                               else Implies(atom, condition))
-                    premises.append((f'soft:exception:{rule.core.name}:{kind}:{index}',
-                                     _bind(formula, sorts)))
-        return tuple(premises)
-
     def _expansion_sizes(self):
         """The size of each regulated predicate's expanded outcome, in layer order.
 
@@ -1023,44 +826,3 @@ class SoftNormDocument:
         sizes = self.expansion_sizes if sizes is None else sizes
         return _size(formula, lambda atom: sizes[atom.predicate]
                      if atom.predicate != current and atom.predicate in sizes else None)
-
-    def _check_conflict_targets(self):
-        """6.13: the certified conclusion `∀x̄. ¬conflict` of each conflict target, in
-        `conflict_targets` order, is within MAX_DEPTH and MAX_NODES on its own. A
-        target expands every lower predicate's outcome, so it is sized from the
-        expansion table and never built here."""
-        doc = self.elaborated
-        targets = []
-        for predicate in doc.order:
-            positive, negative, _ = doc.selection(predicate)
-            targets.append((predicate, doc.env.predicates[predicate].arguments,
-                            And(*(_Sized(self._expanded_size(f, predicate)) for f in (positive, negative)))))
-        for required, decl in sorted(doc.env.predicates.items()):
-            reg = decl.regulated
-            if reg is not None and reg.permission is not None:
-                targets.append((f'{required}->{reg.permission}', decl.arguments,
-                                And(_Sized(self.expansion_sizes[required]),
-                                    Not(_Sized(self.expansion_sizes[reg.permission])))))
-        for name, sorts, conflict in targets:
-            if not _fits(_size(_bind(Not(conflict), sorts))):
-                raise ResourceLimit(f'ResourceLimit: generated conflict target {name}')
-
-    def _coherence_premises(self):
-        """6.11 for the coherence premises, in order: each is sized first and
-        expanded only if it is within MAX_DEPTH and MAX_NODES."""
-        selections = {p: self.elaborated.selection(p)[2] for p in self.elaborated.order}
-        premises = []
-        for left, right in self.collisions:
-            a, b = sorted((left.core.name, right.core.name))
-            label = f'soft:coherence:{a},{b}'
-            sides = [(selections[r.core.predicate][r.core.name], r.core.predicate) for r in (left, right)]
-            sorts = self.env.predicates[left.core.predicate].arguments
-            shape = _bind(Not(And(*(_Sized(self._expanded_size(f, p)) for f, p in sides))), sorts)
-            if not _fits(_size(shape)):
-                raise ResourceLimit(f'ResourceLimit: generated soft premise {label}')
-            la, rb = (self.elaborated._expand(f, p) for f, p in sides)
-            premise = _bind(Not(And(la, rb)), sorts)
-            if not _within_limits(self.extended_env, premise):
-                raise ResourceLimit(f'ResourceLimit: generated soft premise {label}')
-            premises.append((label, premise))
-        return tuple(premises)

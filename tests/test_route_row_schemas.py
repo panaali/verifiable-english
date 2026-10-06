@@ -39,7 +39,7 @@ ROUTE_MODES = ("soft-norms", "rights", "speech-acts", "reports", "alternatives",
                "quantity", "norm-defaults", "discourse", "readings-route", "diagnose")
 # Top-level answer fields that are maps keyed by request names (an empty map is an answer).
 MAPS = {"worst_cases", "bound", "meaning_ids", "presuppositions", "validity", "statuses", "reading_verdicts",
-        "units", "mentions"}
+        "units", "mentions", "default_exceptions_by_decider"}
 # Top-level fields whose domain is a union across JSON types (field: the types beside the genuine one).
 UNIONS = {"joint": {"string", "integer"}, "admitted": {"boolean", "string"}, "finding": {"object", "null"},
           "first_failing": {"string", "null"}}

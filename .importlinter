@@ -11,7 +11,7 @@ layers =
     ve.argument_fixtures:ve_experiments
     ve.__main__:ve.adapters:ve.admission:ve.argument:ve.attacks:ve.authoring:ve.backends:ve.bundle:ve.check:ve.document:ve.equivalence:ve.norm_admission:ve.norm_defaults:ve.norm_defaults_contract:ve.norm_defaults_english:ve.norm_defaults_route:ve.norm_strict:ve.openterms:ve.propose:ve.readings:ve.search:ve.stream_audit:ve.vacuity:ve.assist:ve.discourse:ve.quantity_admission:ve.reports_route:ve.risk:ve.rights_route:ve.soft_route:ve.speech_document:ve.readings_route:ve.readings_s1:ve.readings_sup:ve.readings_verdicts:ve.readings_s2_wording
     ve.english:ve.english_grammar:ve.english_phrases:ve.english_vocabulary:ve.fluent:ve.fol:ve.grammar:ve.natural:ve.norm_english:ve.parser:ve.printer:ve.surface:ve.lexicon:ve.report_english:ve.speech_english:ve.readings_english:ve.readings_s2_english
-    ve.background:ve.closure:ve.definitions:ve.entailment:ve.evaluate:ve.norms:ve.order:ve.profiles:ve.alternatives:ve.reports:ve.rights:ve.softnorms:ve.softnorms_contract:ve.norms_contract:ve.speech_acts:ve.units
+    ve.background:ve.closure:ve.definitions:ve.entailment:ve.evaluate:ve.norms:ve.order:ve.profiles:ve.alternatives:ve.reports:ve.rights:ve.softnorms:ve.norms_contract:ve.speech_acts:ve.units
     ve.ast:ve.environment:ve.environment_wire:ve.errors:ve.identity:ve.limits:ve.model:ve.wire:ve.wire_contract:ve.assurance
 ignore_imports =
     ve.alternatives -> ve.backends.relay
@@ -61,6 +61,7 @@ ignore_imports =
     ve.parser -> ve.backends.validation
     ve.reports -> ve.admission
     ve.rights -> ve.search
+    ve.softnorms -> ve.backends.soft_relay
     ve.softnorms -> ve.search
     ve.speech_acts -> ve.admission
     ve.speech_acts -> ve.norm_admission

@@ -13,7 +13,7 @@ from ve import profiles
 from ve.errors import ResourceLimit, UnsupportedProfile, VEError
 from ve.limits import MAX_IDENTIFIER_BYTES, MAX_PREDICATES
 from ve import softnorms as soft
-from ve.wire_contract.engine import Registry, load, overlay, run
+from conformance.wire_contract_engine import Registry, load, overlay, run
 
 
 @lru_cache(maxsize=1)
@@ -225,10 +225,29 @@ def _prepared(root):
     return document
 
 
+def _oracle_decisions(document):
+    """The frozen Python oracle's decision names, used only by wire-contract tests."""
+    generated = {}
+    for rule in document.rules:
+        args = list(document.env.predicates[rule.core.predicate].arguments)
+        if rule.mode == "default":
+            generated[soft._decision_name(rule)] = args
+        for party in rule.alterable:
+            generated[soft._decision_name(rule, party)] = args
+    if document.env.soft["outranking"]["mode"] == "holistic":
+        for left, right in document.collisions:
+            pair = document._rank_pair(left, right)
+            if pair is not None:
+                name = document._outweighs_name(*pair, document._act(left),
+                                                 document.env.predicates[left.core.predicate].arguments)
+                generated[name] = list(document.env.predicates[left.core.predicate].arguments)
+    return generated
+
+
 def decision_names_fit(root, items):
     """6.4a: the first decision name over the limit, prefix by prefix and in rule order within a prefix, as
     `SoftNormDocument` and Lean's `Wire.primeVocabulary` (`decisionNames`) report it."""
-    decisions = _prepared(root)._decisions()
+    decisions = _oracle_decisions(_prepared(root))
     for prefix in DECISION_PREFIXES:
         for name in decisions:
             if name.startswith(prefix) and len(name.encode("utf-8")) > MAX_IDENTIFIER_BYTES:
@@ -238,7 +257,7 @@ def decision_names_fit(root, items):
 
 def extended_vocabulary_fits(root, items):
     document = _prepared(root)
-    return len(document.env.predicates) + len(document._decisions()) > MAX_PREDICATES
+    return len(document.env.predicates) + len(_oracle_decisions(document)) > MAX_PREDICATES
 
 
 def rule_typing(root, items):

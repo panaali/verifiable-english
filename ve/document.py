@@ -874,22 +874,11 @@ def coverage(doc, scoped=None, rights_report=None):
                          "narrowings": len(alternatives["narrowings"])})
     soft = doc.get("soft_document")
     if soft is not None:
-        decisions = soft.extended_env.decision_names
-        open_pairs = [
-            f"soft:coherence:{left.core.name},{right.core.name}"
-            for left, right in soft.collisions
-            if (left.rank is None or right.rank is None or
-                (left.rank not in soft.env.ranks_above[right.rank] and
-                 right.rank not in soft.env.ranks_above[left.rank]))]
-        residual["default_exceptions"] = sum(r.mode == "default" for r in soft.rules)
-        residual["instruction_switches"] = sum(len(r.alterable) for r in soft.rules)
-        residual["holistic_overrides"] = sum(name.startswith("soft__outweighs__") for name in decisions)
-        residual["weighing_points"] = len(open_pairs)
-        by_decider = {}
-        for rule in soft.rules:
-            if rule.mode == "default":
-                who = (rule.exception or {}).get("decided_by") or soft.env.soft.get("exception_decider") or "unstated"
-                by_decider[who] = by_decider.get(who, 0) + 1
+        from .soft_route import elaborate_soft_document
+        soft_row = elaborate_soft_document(_lower_soft_document(doc) if "environment" in doc else soft)
+        residual.update(soft_row["soft_residual"])
+        by_decider = soft_row["default_exceptions_by_decider"]
+        open_pairs = soft_row["conditional_on"]
     rights = doc.get("rights_document")
     if rights is not None:
         residual["limitation_terms"] = len(rights.limitation_names) + len(rights.condition_names)
@@ -930,8 +919,7 @@ def coverage(doc, scoped=None, rights_report=None):
         gaps = gaps_residual(defaults_lines)
         residual["gaps"] = len(gaps["gaps"])
         residual["ungrounded_defaults"] = gaps["ungrounded_defaults"]
-    soft_open = ("default_exceptions", "instruction_switches", "holistic_overrides", "weighing_points",
-                 "limitation_terms", "bar_terms")
+    rights_open = ("limitation_terms", "bar_terms")
     return {"source_bytes": len(source), "accounted_bytes": sum(kinds.values()),
             "coverage_percent": 100, "bytes_by_kind": kinds, "bytes_by_status": statuses,
             "unformalised_reasons": reasons,
@@ -943,10 +931,13 @@ def coverage(doc, scoped=None, rights_report=None):
                 "findings": [line.grounding for line in defaults_lines
                              if line.grounding.startswith("UngroundedDefault")]}}
                if defaults_lines is not None else {}),
-            **({"soft_status": "OPEN" if any(residual.get(key) for key in soft_open) else "CHECKED",
+            **({"soft_status": "OPEN" if soft_row["soft_status"] == "OPEN" or
+                any(residual.get(key) for key in rights_open) else "CHECKED",
                 "default_exceptions_by_decider": by_decider,
-                "soft_residual_labels": [*sorted(soft.extended_env.decision_names), *open_pairs],
-                "soft_background_labels": [label for label, _ in soft.exception_premises]}
+                "soft_residual_labels": [*sorted(item["name"] for item in soft_row["decisions"]), *open_pairs],
+                "soft_background_labels": [item["label"] for item in soft_row["background"]
+                                           if item["generator"] == "soft" and
+                                           item["label"].startswith("soft:exception:")]}
                if soft is not None else {}),
             **({"rights_residual_labels": [
                 *[f"limitation {name} on {act}: {generated}; decider " +
