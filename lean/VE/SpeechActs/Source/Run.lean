@@ -806,7 +806,8 @@ def report (src : SpeechSource) : List (String × Json) :=
   let latest := src.sets.filter fun s => (latestOf src.sets s.unit).any (·.version == s.version)
   [("document_id", .str (src.documentId.toOption.getD "")),
    ("source_id", .str (Loader.sourceId dec.se.profiles src.source))] ++ Run.elaborated dec ++
-  [("units", Json.arr (src.cov.rows.map fun r => Json.mkObj ([("id", .str r.id), ("bytes", toJson r.bytes),
+  [("rules", Json.arr (((policy dec.D).T.nodes).map Run.encodeNode).toArray),
+   ("units", Json.arr (src.cov.rows.map fun r => Json.mkObj ([("id", .str r.id), ("bytes", toJson r.bytes),
       ("status", .str r.status), ("class", .str r.cls)] ++
       match (src.units.find? (·.id == r.id)).bind (·.parent) with
       | some p => [("parent", .str p)]
