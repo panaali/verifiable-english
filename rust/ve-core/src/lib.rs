@@ -17,7 +17,7 @@ pub use ve_profile::{
     TracedEvaluation, check_label, check_reading_binding, evaluate, evaluate_formula,
     evaluate_risk_condition, evaluate_traced, find_countermodel, find_countermodel_min,
     find_countermodel_with_nonvacuity, find_distinguishing_model,
-    find_distinguishing_model_with_nonvacuity, label_is_canonical, order_case, quantity_case,
+    find_distinguishing_model_with_nonvacuity, label_is_canonical, order_case,
     regenerate_risk_cells,
 };
 pub use ve_surface::{ParseResult, SourceNode, parse, parse_with_metadata, print_document};

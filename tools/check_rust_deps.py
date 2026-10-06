@@ -54,7 +54,7 @@ MODULE_LEDGER = ROOT / "tools/rust-module-exceptions.json"
 MODULE_GROUPS = {
     "ve-kernel": dict.fromkeys(("lib", "ast", "environment", "graph", "internal", "model", "semantics",
                                 "wire"), 1),
-    "ve-profile": dict.fromkeys(("lib", "eval", "order", "risk", "route", "search", "units"), 2),
+    "ve-profile": dict.fromkeys(("lib", "eval", "order", "risk", "route", "search"), 2),
     "ve-surface": dict.fromkeys(("lib", "surface"), 3),
     "ve-core": {"lib": 3},
 }

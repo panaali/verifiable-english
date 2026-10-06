@@ -238,7 +238,6 @@ dependencies = [
  "num-bigint",
  "serde",
  "serde_json",
- "sha2",
  "ve-kernel",
 ]
 

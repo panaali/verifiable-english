@@ -5,8 +5,9 @@ A citation is bound by a checked lemma: its `ve-quantity-certificate@1`
 establishes the conclusion from exactly its transitive leaves, bound to their
 annotated meaning ids. A `cite` leaf states that conclusion, and the report
 carries the lemma's leaves with their labels. Lean `VE.Time.Document` is the
-authority (`cites_discharged`); Python mirrors it and Rust regenerates every
-lemma statement. Each binding class is rejected the same way by Python and Lean.
+authority (`cites_discharged`); Python relays it (Lean-first batch 9 deleted
+Python's copy and Rust's quantity route). Each binding class is rejected the same
+way by the relay and by Lean.
 """
 import copy
 from pathlib import Path
@@ -15,8 +16,8 @@ import pytest
 
 from tests import lean_routes
 
-from tests.test_units_lean_w6a import LEAN, lean, rust
-from tests.test_w6a_documents import DELETE, HIGH, LOW, MONEY_LOW, ORDER, doc_env, mutate, q, three_ways
+from tests.test_units_lean_w6a import LEAN, lean
+from tests.test_w6a_documents import DELETE, HIGH, LOW, MONEY_LOW, ORDER, doc_env, mutate, q, relay_and_lean
 from ve.admission import AdmissionError
 from ve.environment import Environment
 from ve.errors import VEError
@@ -51,26 +52,24 @@ def cited_document(env):
                  "certificate": prove_quantity(env, [LOW, HIGH, ORDER], LE)}]}}
 
 
-def test_a_checked_lemma_is_cited_three_ways():
+def test_a_checked_lemma_is_cited_relay_and_lean():
     raw = doc_env()
     env = Environment(raw)
     document = cited_document(env)
-    python, got, other = three_ways(raw, document)
+    python, got = relay_and_lean(raw, document)
     assert got["status"] == "ok" and got["assurance"] == "lean-admitted", got
     assert got["report"] == python["report"] and got["report_id"] == python["report_id"]
     labels = [(a["name"], a.get("label", "asserted")) for a in got["report"]["assumptions"]]
     assert labels == [("low", "asserted"), ("high", BRIDGE), ("order", "cite:fed/order")]
     # The cited statement is bound by its annotated meaning id.
     assert got["report"]["assumptions"][2]["meaning_id"] == quantity_meaning_id(env, ORDER)
-    assert other["status"] == "ok" and other["assurance"] == "lean-admitted", other
-    assert other == got
 
 
 def test_the_review_reproducer_now_admits():
     # The recheck's reproducer: a quantity document with a cite label and a
     # lemma rejected as unsupported. With a checked lemma it is admitted.
     raw = doc_env()
-    python, got, _ = three_ways(raw, cited_document(Environment(raw)))
+    python, got = relay_and_lean(raw, cited_document(Environment(raw)))
     assert python["admitted"] is True and got["admitted"] is True
 
 
@@ -137,21 +136,9 @@ CASES = len(citation_rejections(Environment(doc_env())))
 def test_every_citation_binding_class_rejects_in_python_and_lean(index):
     raw = doc_env()
     name, document, message = citation_rejections(Environment(raw))[index]
-    python, got, _ = three_ways(raw, document)
+    python, got = relay_and_lean(raw, document)
     assert isinstance(python, VEError) and message in str(python), (name, python)
     assert got["status"] == "error" and message in got["error"], (name, got)
-
-
-def test_rust_rejects_lemma_statement_classes():
-    raw = doc_env()
-    cases = {name: (document, message) for name, document, message in citation_rejections(Environment(raw))}
-    for name, message in (("lemma forged Q", "Q differs"),
-                          ("lemma leaf unit mismatch", "UnitMismatch(bp,usd_cent)"),
-                          ("certificate missing", "fields")):
-        document, _ = cases[name]
-        [other] = rust([{"id": name, "kind": "quantity", "mode": "document", "environment": raw,
-                         "document": document}])
-        assert other["status"] == "error" and message in other["error"]["message"], (name, other)
 
 
 def test_relabelling_the_whole_citation_to_money_fails():
@@ -165,7 +152,7 @@ def test_relabelling_the_whole_citation_to_money_fails():
     relabelled["lemmas"][0]["conclusion"] = MONEY_ORDER
     relabelled["lemmas"][0]["leaves"] = [{"quantity": MONEY_LOW, "label": "asserted"},
                                          {"quantity": money_high, "label": BRIDGE}]
-    python, got, _ = three_ways(raw, relabelled)
+    python, got = relay_and_lean(raw, relabelled)
     assert isinstance(python, AdmissionError) and "not established by its certificate" in str(python)
     assert "not established by its certificate" in got["error"]
 

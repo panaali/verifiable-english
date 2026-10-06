@@ -2,7 +2,8 @@
 
 Every static limit of a problem is checked on the decoded input before a model
 is decoded, a certificate is read or anything is evaluated, in one shared stage
-per wire mode and in the same order in Python, Lean and Rust. Each reproducer
+per wire mode, in Lean's order (Python relays it; Lean-first batch 9 deleted Rust's
+quantity route). Each reproducer
 from the W6a loop review is pinned here, with the rest of its class.
 """
 from __future__ import annotations
@@ -11,7 +12,7 @@ import pytest
 
 from tests import lean_routes
 
-from tests.test_units_lean_w6a import LEAN, lean, quantity, rust
+from tests.test_units_lean_w6a import LEAN, lean, quantity
 from tests.test_w6a_looprecheck2 import model, raw
 from ve.environment import Environment
 from ve.errors import ResourceLimit
@@ -34,15 +35,11 @@ def lean_error(got, text="ResourceLimit"):
         and text in got["error"], got
 
 
-def rust_error(got):
-    assert got["status"] == "error" and got["error"]["code"] == "ResourceLimit", got
-
-
 # --- Aggregate nodes across premises and conclusion (loop review P2) ---------
 
-def test_countermodel_aggregate_reproducer_three_ways():
+def test_countermodel_aggregate_reproducer_relay_and_lean():
     """[F₁₂, F₁₂] ⊢ ⊥ has 16,383 core nodes, each statement under 10,000.
-    Lean used to answer `refutes=true`; all three now stop before the model."""
+    Lean used to answer `refutes=true`; it now stops before the model."""
     premises, conclusion = [quantity(doubling(12))] * 2, quantity(["bottom"])
     env = Environment(raw())
     for p in premises:
@@ -53,11 +50,9 @@ def test_countermodel_aggregate_reproducer_three_ways():
         quantity_countermodel(env, premises, conclusion, case["model"])
     [got] = lean([{"id": "m", "kind": "countermodel", **case}])
     lean_error(got, AGGREGATE_LIMIT)
-    [other] = rust([{"id": "m", "kind": "quantity", "mode": "countermodel", **case}])
-    rust_error(other)
 
 
-def test_aggregate_is_checked_before_the_model_three_ways():
+def test_aggregate_is_checked_before_the_model_relay_and_lean():
     """An invalid model is never read when the problem is already too large."""
     premises, conclusion = [quantity(doubling(12))] * 2, quantity(["bottom"])
     bad = {"complete": True, "domains": {"item": ["a", "a"]}, "constants": {}, "relations": {"p": []}}
@@ -66,12 +61,10 @@ def test_aggregate_is_checked_before_the_model_three_ways():
     case = {"environment": raw(), "premises": premises, "conclusion": conclusion, "model": bad}
     [got] = lean([{"id": "m", "kind": "countermodel", **case}])
     lean_error(got, AGGREGATE_LIMIT)
-    [other] = rust([{"id": "m", "kind": "quantity", "mode": "countermodel", **case}])
-    rust_error(other)
 
 
 @pytest.mark.parametrize("split", [(12, 11, 11), (13, 0, 0), (11, 11, 11)])
-def test_aggregate_boundary_three_ways(split):
+def test_aggregate_boundary_relay_and_lean(split):
     """10,000 is allowed and 10,001 is not, however the nodes are split."""
     a, b, c = (doubling(n) for n in split)
     total = sum(2 ** (n + 1) - 1 for n in split)
@@ -79,17 +72,14 @@ def test_aggregate_boundary_three_ways(split):
     case = {"environment": raw(), "premises": premises, "conclusion": conclusion,
             "model": model(["a", "b"])}
     [got] = lean([{"id": "m", "kind": "countermodel", **case}])
-    [other] = rust([{"id": "m", "kind": "quantity", "mode": "countermodel", **case}])
     env = Environment(raw())
     if total > 10000:
         with pytest.raises(ResourceLimit):
             quantity_countermodel(env, premises, conclusion, case["model"])
         lean_error(got)
-        rust_error(other)
     else:
         assert quantity_countermodel(env, premises, conclusion, case["model"]) is False
         assert got["status"] == "ok" and got["refutes"] is False, got
-        assert other["status"] == "ok" and other["refutes"] is False, other
 
 
 def rebind(small, admissions, premises):
@@ -166,7 +156,7 @@ def test_document_lemma_over_the_aggregate_is_not_established():
 
 # --- Per-statement node count before elaboration ------------------------------
 
-def test_statement_node_count_precedes_type_errors_three_ways():
+def test_statement_node_count_precedes_type_errors_relay_and_lean():
     """An ill-typed node ahead of 10,001 nodes: every backend reports the node
     limit, which is checked before elaboration, not where elaboration stops."""
     ill = ["eq", ["var", 0], ["var", 0]]  # unbound: an elaboration error
@@ -175,18 +165,12 @@ def test_statement_node_count_precedes_type_errors_three_ways():
         elaborate_quantity(Environment(raw()), quantity(formula))
     [got] = lean([{"id": "q", "environment": raw(), "quantity": quantity(formula)}])
     lean_error(got, "node or depth limit")
-    [other] = rust([{"id": "q", "kind": "quantity", "environment": raw(),
-                     "quantity": quantity(formula)}])
-    rust_error(other)
 
 
-def test_statement_node_count_includes_the_operator_position_three_ways():
+def test_statement_node_count_includes_the_operator_position_relay_and_lean():
     """Arrays in the operator position count too (Rust used to skip them)."""
     formula = [doubling(13)]
     with pytest.raises(ResourceLimit, match="node or depth limit"):
         elaborate_quantity(Environment(raw()), quantity(formula))
     [got] = lean([{"id": "q", "environment": raw(), "quantity": quantity(formula)}])
     lean_error(got, "node or depth limit")
-    [other] = rust([{"id": "q", "kind": "quantity", "environment": raw(),
-                     "quantity": quantity(formula)}])
-    rust_error(other)
