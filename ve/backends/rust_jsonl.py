@@ -217,7 +217,7 @@ def _run_checker(argv, *, input, timeout):
             checker.close()
             raise subprocess.TimeoutExpired(argv, timeout)
         line = _answer(checker, input, remaining)
-    except BaseException:
+    except subprocess.TimeoutExpired:
         checker.close()
         raise
     completed = subprocess.CompletedProcess(list(argv), 0, line + b"\n", b"")

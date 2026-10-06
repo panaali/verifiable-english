@@ -274,7 +274,7 @@ def test_rust_retry_keeps_the_original_deadline(monkeypatch):
         def exchange(self, data, timeout):
             waits.append(timeout)
             if self.index == 0:
-                clock[0] = 0.8
+                clock[0] = 0.8 * HANG_TIMEOUT
                 raise OSError("reused process ended")
             return b'{"id":"x","status":"ok","well_typed":true}'
 
@@ -285,10 +285,10 @@ def test_rust_retry_keeps_the_original_deadline(monkeypatch):
     monkeypatch.setattr(rust_jsonl, "_Checker", FakeChecker)
     argv = ["fake", "jsonl", "-"]
     rust_jsonl._idle[tuple(argv)] = [FakeChecker(argv)]
-    completed = rust_jsonl._run_checker(argv, input=b"{}\n", timeout=1.0)
+    completed = rust_jsonl._run_checker(argv, input=b"{}\n", timeout=HANG_TIMEOUT)
     rust_jsonl._release(completed, valid=False)
-    assert waits[0] == 1.0
-    assert 0.19 < waits[1] < 0.21
+    assert waits[0] == HANG_TIMEOUT
+    assert 0.19 * HANG_TIMEOUT < waits[1] < 0.21 * HANG_TIMEOUT
     assert completed._checker.closed
 
 
