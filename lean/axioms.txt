@@ -3943,6 +3943,7 @@
 'VE.Grammar.verdict_one' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Grammar.verdict_many' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.EnglishGrammar.foldChar_agrees' depends on axioms: [propext]
+'VE.Norms.Wire.appendPredicates_assembly' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.CaseCond.all_false_head' depends on axioms: [propext]
 'ResponseShape.CaseCond.all_false_tail' depends on axioms: [propext]
 'ResponseShape.CaseCond.all_true' depends on axioms: [propext]
