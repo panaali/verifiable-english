@@ -41,7 +41,7 @@ theorem elaborate_fits (id : String) (D : SoftDoc) (env : Json) :
   unfold VE.Route.Wire.ok regenerated bgEntry
   fits
   all_goals first
-    | exact Fits.softEnvironment D env (decision_entries_fit D)
+    | exact Fits.softEnvironment D env (decision_entries_fit D) rfl
     | (exfalso; rename_i x hx h; have := softLabelled_nonempty D x hx; simp_all)
 
 /-- A pair's status and detail: a detail exactly beside a weighing point or UNKNOWN. -/
