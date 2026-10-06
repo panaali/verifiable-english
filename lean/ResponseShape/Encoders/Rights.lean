@@ -80,6 +80,7 @@ theorem elaborate_fits (id : String) (D : RightsDoc) (env : Json) :
   fits
   all_goals try first
     | exact Fits.rightsEnvironment D env (generated_entries_fit D)
+        (fun p _ => Common.decisionEntry_fits p.2) rfl
     | exact (labelled_contra (limLabels_nonempty D) ‹_› ‹_›).elim
     | exact (labelled_contra (SoftNorms.softLabelled_nonempty _) ‹_› ‹_›).elim
 

@@ -205,7 +205,8 @@ example (req : Json) (D : VE.SoftNorms.SoftDoc) (env : Json) :
     | (apply Fits.softEnvironment D env
        intro p hp
        unfold VE.SoftNorms.Wire.decisionEntry
-       fits)
+       fits
+       rfl)
     | skip
 '''
 
@@ -214,3 +215,23 @@ def test_environment_field_is_bound_to_the_prime_encoder(lake, tmp_path):
     prime = '((VE.SoftNorms.Wire.primeJson D env).toOption.getD .null)'
     assert _passes(lake, tmp_path, _prime_environment(prime))
     assert not _passes(lake, tmp_path, _prime_environment('(Json.mkObj [])'))
+
+
+def _assembled_decisions(entry: str) -> str:
+    return f'''
+def mutantWithDecisions (D : VE.SoftNorms.SoftDoc) (environment : Json) : Except String Json := do
+  VE.Norms.Wire.appendPredicates environment
+    ((VE.SoftNorms.decisions D).map fun (n, ss) => (n, {entry}))
+
+example (D : VE.SoftNorms.SoftDoc) (env : Json) :
+    mutantWithDecisions D env =
+      VE.Norms.Wire.appendPredicates env
+        ((VE.SoftNorms.decisions D).map fun (n, ss) =>
+          (n, VE.SoftNorms.Wire.decisionEntry ss)) := by
+  rfl
+'''
+
+
+def test_assembled_environment_uses_the_proved_entries(lake, tmp_path):
+    assert _passes(lake, tmp_path, _assembled_decisions('VE.SoftNorms.Wire.decisionEntry ss'))
+    assert not _passes(lake, tmp_path, _assembled_decisions('Json.mkObj []'))

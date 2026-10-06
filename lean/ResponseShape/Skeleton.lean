@@ -279,9 +279,21 @@ inductive Fits (c : Json) : Skel → Json → Prop where
   | softEnvironment {entry : Skel} (D : VE.SoftNorms.SoftDoc) (env : Json) :
       (∀ p ∈ VE.SoftNorms.decisions D,
         Fits c entry (VE.SoftNorms.Wire.decisionEntry p.2)) →
+      VE.SoftNorms.Wire.primeJson D env = (do
+        let canonical ← VE.Norms.Wire.canonicalEnvironmentJson env
+        VE.Norms.Wire.appendPredicates canonical
+          ((VE.SoftNorms.decisions D).map fun (n, ss) => (n, VE.SoftNorms.Wire.decisionEntry ss))) →
       Fits c (.encodedEnvironment entry) ((VE.SoftNorms.Wire.primeJson D env).toOption.getD .null)
   | rightsEnvironment {entry : Skel} (D : VE.Rights.RightsDoc) (env : Json) :
       (∀ p ∈ VE.Rights.Wire.genEntries D, Fits c entry p.2) →
+      (∀ p ∈ VE.SoftNorms.decisions (VE.Rights.correlate D),
+        Fits c entry (VE.SoftNorms.Wire.decisionEntry p.2)) →
+      VE.Rights.Wire.primeJsonR D env = (do
+        let canonical ← VE.Norms.Wire.canonicalEnvironmentJson env
+        let rights ← VE.Norms.Wire.appendPredicates canonical (VE.Rights.Wire.genEntries D)
+        VE.Norms.Wire.appendPredicates rights
+          ((VE.SoftNorms.decisions (VE.Rights.correlate D)).map fun (n, ss) =>
+            (n, VE.SoftNorms.Wire.decisionEntry ss))) →
       Fits c (.encodedEnvironment entry) ((VE.Rights.Wire.primeJsonR D env).toOption.getD .null)
 
 namespace Fits
@@ -750,18 +762,19 @@ theorem congr {p : CaseCond → Bool} {c c' : Json} (hp : ∀ cond, p cond = tru
     | succ n =>
       simp only [Skel.condsOk, Bool.and_eq_true] at hn
       exact Fits.onCaseE ((hp _ hn.1.1).symm.trans hc) (ih n hn.2)
-  | softEnvironment D env he ih =>
+  | softEnvironment D env he hassembly ih =>
     intro n hn
     cases n with
     | zero => cases hn
     | succ n =>
-      exact Fits.softEnvironment D env (fun p hm => ih p hm n hn)
-  | rightsEnvironment D env he ih =>
+      exact Fits.softEnvironment D env (fun p hm => ih p hm n hn) hassembly
+  | rightsEnvironment D env he hd hassembly ih ie =>
     intro n hn
     cases n with
     | zero => cases hn
     | succ n =>
       exact Fits.rightsEnvironment D env (fun p hm => ih p hm n hn)
+        (fun p hm => ie p hm n hn) hassembly
 
 end Fits
 
