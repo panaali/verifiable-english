@@ -127,8 +127,10 @@ fn case(v: &Value) -> Result<Value> {
         let (possible, certain) = evaluate_risk_condition(field(v, "condition")?, &ranges, &scales)?;
         return Ok(json!({"id":id,"status":"ok","possible":possible,"certain":certain}));
     }
+    // Rust checks no quantity: the Lean quantity route owns W6 typing, certificates,
+    // countermodels and documents (docs/LEAN-FIRST-PLAN.md, batch 9), so the case is refused.
     if v.get("kind") == Some(&json!("quantity")) {
-        return quantity_case(v);
+        return Err(Error::new("UnsupportedProfile", "quantities are checked by the Lean quantity route"));
     }
     // A reports case names its profile. Rust checks no discourse elaboration: the Lean discourse
     // route owns the profile (docs/LEAN-FIRST-PLAN.md, batch 4), so any other family is refused.
@@ -353,6 +355,20 @@ mod readings_s2_tests {
         let mut unmarked = input;
         unmarked["untrusted"] = json!(false);
         assert!(case(&unmarked).is_err());
+    }
+}
+
+#[cfg(test)]
+mod quantity_tests {
+    use super::*;
+
+    #[test]
+    fn quantity_cases_are_the_lean_routes() {
+        for mode in ["admission", "countermodel", "certificate", "document"] {
+            let input = json!({"id":"q", "kind":"quantity", "mode":mode, "environment":{},
+                               "quantity":{"format":"ve-quantity@1","formula":["top"]}});
+            assert_eq!(case(&input).unwrap_err().code, "UnsupportedProfile");
+        }
     }
 }
 
