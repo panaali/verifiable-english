@@ -8,7 +8,16 @@ Base `9aaf918d`; head is this batch's final commit. Scope: risk and alternatives
 
 ## Gate evidence
 
-The A/B recorder covered the Stage-0 probes, conformance corpus, discourse and readings corpora, and every historical pilot document: [corpus-ab.json](corpus-ab.json) records 66,247 paired results. 66,246 were identical. The one remaining record is the historical constitution-pilot readings document, unavailable on both base and head at the recorder's 600-second limit; [delta.json](delta.json) gives its reason. There are no wording, order, verdict, or one-sided availability differences. No verdict or availability difference is accepted without the DRI's signature.
+The A/B recorder covered the Stage-0 probes, conformance corpus, discourse and readings corpora, and every historical pilot document: [corpus-ab.json](corpus-ab.json) records 66,247 paired results. 66,246 were identical. The one remaining record is the historical constitution-pilot readings document, unavailable on both base and head at the recorder's 600-second limit; [delta.json](delta.json) gives its reason. The recorded corpus has no wording, order, verdict, or one-sided availability differences. Two direct entry points outside that corpus changed; their before/after outcomes and pending DRI dispositions are listed in `delta.json` below. No verdict or availability change is accepted without the DRI's signature.
+
+## Direct entry points outside the recorded corpus
+
+| Entry point and regression | Base | Head | Gate class and disposition |
+|---|---|---|---|
+| `Environment` with alternatives and norm-defaults (`test_permission_default_stays_allow_until_norm_defaults_combines_with_alternatives`) | `UnsupportedProfile: alternatives@0 with norm-defaults@0 is not implemented` | `UnsupportedProfile: Unsupported profile norm-defaults@0` | Wording. Listed as a text pair in `delta.json`; DRI review pending, unsigned. |
+| Direct risk route on DF-12 NBSP act phrase (`test_df12_risk_route_rejects_an_nbsp_act_phrase`) | Accepted | `InvalidInput: W6 environment does not round-trip to its canonical declaration` | Verdict (acceptance changed; also a route availability change). Listed under `outside_corpus` in `delta.json`; DRI review pending, unsigned. |
+
+The `outside_corpus` entries are supplementary evidence: the A/B comparator checks record keys from its corpora and does not treat these direct-entry tests as signed corpus records. The DRI must review these two entries before batch 5's preservation gate can be called signed.
 
 The CI differential-fuzz sample produced no new signatures in the [head report](difffuzz-head-ci.json). Its reviewed baseline shrank from 384 entries in the [base report](difffuzz-base-ci.json) to 358 (26 findings fixed by removing the duplicate paths). The [14 date-seed A/B result](difffuzz-14-seeds.json) has zero head-only signatures; the base had 682 unbaselined signatures summed over seeds and the head had 606. Both checkouts ran their own locked builds; [difffuzz_ab.py](difffuzz_ab.py) reproduces the run. Summed Python and child CPU across the 14 runs was 4,858.3 s base and 4,837.2 s head; this is total fuzzer CPU, not isolated Lean CPU.
 
@@ -37,5 +46,5 @@ The batch changes no English parser, state machine, ledger, theorem statement, u
 |---|---|---|
 | Lean block validation, coverage, admission routing, and duplicate deletion | **AGENT** | Builder; checked by the source ledger, focused tests, mutants and full gate. |
 | Corpus preservation and differential fuzz baseline | **AGENT** | Builder; identical paired results except the listed paired unavailability, baseline shrunk. |
-| Verdict or one-sided availability changes | **HUMAN** | DRI; none occurred, so no signature is requested or inferred. |
+| Direct-entry wording and verdict changes | **HUMAN** | DRI; the two `outside_corpus` entries are pending review, with no signature inferred. |
 | Historical constitution-pilot readings timeout | **EXTERNAL** | Pilot throughput owner (the plan's readings optimisation track); recorded in `delta.json` as unavailable on both sides, deferred from this batch. |
