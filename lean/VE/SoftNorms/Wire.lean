@@ -221,7 +221,14 @@ def regenerated (D : SoftDoc) (environment : Json) : List (String × Json) :=
        | .defn _ => none)).toArray),
    ("colliding_pairs", Json.arr ((collidingPairs D).map (fun (M, N) => Json.mkObj
      [("pair", toJson [M.name, N.name]), ("act", .str (act D M)), ("comparable", .bool (Comparable D M N)),
-      ("label", .str (cohLabel M N)), ("ast", enc (cohPremise D M N))])).toArray),
+      ("label", .str (cohLabel M N)), ("ast", enc (cohPremise D M N)),
+      ("outweighs", if D.soft.outranking == .holistic && Comparable D M N then
+        let (a, low, high) := pairTriple D M N
+        .str (outweighsName a low high) else .null)])).toArray),
+   ("rule_acts", Json.mkObj (D.T.nodes.map (fun N => (N.name, .str (act D N))))),
+   ("incompatible_pairs", Json.arr (D.T.nodes.flatMap (fun M =>
+      D.T.nodes.filterMap (fun N => if decide (M.name < N.name) && Incompatible D M N then
+        some (toJson [M.name, N.name]) else none))).toArray),
    ("conflict_targets", Json.arr ((targets (soften D)).map (fun t => Json.mkObj
      [("target", .str t.1), ("sorts", toJson t.2.1), ("ast", enc t.2.2)])).toArray),
    ("conditional_on", toJson (openCoherence D)),

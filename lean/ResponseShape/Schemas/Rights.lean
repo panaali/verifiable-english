@@ -120,7 +120,7 @@ def elaborate : Shape :=
     "Rights.Run.regenerated: E'' (primeJsonR), the generated predicates, the lines, the limitation premises, the bar nodes, the rights Background, the narrowings, the distinction rows and findings, then every SoftNorms.Wire.regenerated field over the correlated document but its environment_prime."
     [
       obj,
-      .required ["id", "status", "environment_prime", "generated", "lines", "limitations", "bars", "rights_background", "narrowings", "distinction", "findings", "decisions", "ranks_above", "derived", "order", "background", "premises", "colliding_pairs", "conflict_targets", "conditional_on", "soft_residual", "soft_status", "default_exceptions_by_decider", "fragment", "warnings"],
+      .required ["id", "status", "environment_prime", "generated", "lines", "limitations", "bars", "rights_background", "narrowings", "distinction", "findings", "decisions", "ranks_above", "derived", "order", "background", "premises", "colliding_pairs", "rule_acts", "incompatible_pairs", "conflict_targets", "conditional_on", "soft_residual", "soft_status", "default_exceptions_by_decider", "fragment", "warnings"],
       closed [
         ("id", ref "common.json#/$defs/id_ok"),
         ("status", constS "ok"),
@@ -206,6 +206,10 @@ def elaborate : Shape :=
         ("background", ref "soft-norms.json#/$defs/background"),
         ("premises", ref "common.json#/$defs/layer_premises"),
         ("colliding_pairs", ref "soft-norms.json#/$defs/elaborated/colliding_pairs"),
+        ("rule_acts", copied "SoftNorms.Tree.act for each accepted rule." <|
+          n [obj, .object [] (some str)]),
+        ("incompatible_pairs", copied "SoftNorms.Tree.Incompatible over accepted rule pairs." <|
+          n [arr, .items (ref "common.json#/$defs/string_pair")]),
         ("conflict_targets", ref "common.json#/$defs/conflict_targets"),
         ("conditional_on", ref "soft-norms.json#/$defs/coherence_labels"),
         ("soft_residual", ref "soft-norms.json#/$defs/soft_residual"),

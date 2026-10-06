@@ -617,14 +617,16 @@ class Wording:
         if twin is None or any(twin_name in r.core.over for r in rules):
             return []
         related = _precedence_related(rules, twin_name)
-        act = _act(sd, twin)
+        act = sd.rule_acts[twin_name]
         out = []
-        if any(r.mode == "strict" and r.core.name != twin_name and _act(sd, r) == act
-               and sd._incompatible(r, twin) and r.core.name not in related for r in rules):
+        if any(r.mode == "strict" and r.core.name != twin_name and sd.rule_acts[r.core.name] == act
+               and frozenset((r.core.name, twin_name)) in sd.incompatible_pairs
+               and r.core.name not in related for r in rules):
             out.append(E.E22)
         if sd.env.soft["outranking"]["mode"] == "strict" and any(
-                r.mode == "default" and r.core.name != twin_name and _act(sd, r) == act
-                and (r.core.predicate == twin.core.predicate or sd._incompatible(r, twin))
+                r.mode == "default" and r.core.name != twin_name and sd.rule_acts[r.core.name] == act
+                and (r.core.predicate == twin.core.predicate or
+                     frozenset((r.core.name, twin_name)) in sd.incompatible_pairs)
                 and r.core.name not in related for r in rules):
             out.append(E.E23)
         return out
@@ -684,11 +686,6 @@ def _modal(env, rule):
         "may" if rule.core.sign else "must not")
 
 
-def _act(sd, rule):
-    from .readings_s1 import _act_key
-    return _act_key(sd.env, rule.core.predicate)
-
-
 def _precedence_related(rules, name):
     """The rules related to `name` by precedence, in either direction, through any chain."""
     over = {r.core.name: set(r.core.over) for r in rules}
@@ -708,4 +705,3 @@ def _precedence_related(rules, name):
 
 __all__ = ["CHECKED_BY", "ROW", "Wording", "document_wire", "elaborate", "parse_finding", "report", "run_lean",
            "validate"]
-
