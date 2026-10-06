@@ -39,6 +39,30 @@ def _document(name):
     raise KeyError(name)
 
 
+def test_undecided_filling_decoder_rejects_untrusted_rows(lean_executable):
+    """The shared decoder also guards the ordinary norms route: evidence with
+    an extra tuple component, an undeclared table or an unknown entity cannot
+    be an UNDECIDED witness."""
+    env, units, situations = next((env, units, situations) for name, env, units, situations in fixtures()
+                                  if name == "u1")
+    doc = _document("u1")
+    situation = doc.situation(situations[0])
+    point = next(s for s in doc.statuses(situation) if s.status == "UNDECIDED")
+    base = route.source_case(doc, "norm-defaults-status", model=situation.to_dict(),
+                             predicate=point.predicate, tuple=list(point.values), method="undecided",
+                             yes={k: [list(row) for row in v] for k, v in point.fillings[0].items()},
+                             no={k: [list(row) for row in v] for k, v in point.fillings[1].items()})
+    table = "unsaid__" + point.predicate
+    row = list(point.values)
+    cases = [base]
+    for filling in ({table: [row + ["extra"]]}, {"unknown": []}, {table: [["nobody"]]}, 7):
+        cases.append({**base, "yes": filling})
+        cases.append({**base, "no": filling})
+    rows = route.run_cases(cases)
+    assert rows[0]["point_status"] == "UNDECIDED"
+    assert all(row["status"] == "error" for row in rows[1:])
+
+
 def test_three_way_fixtures(lean_executable):
     result = run()
     rows = {row["fixture"]: row for row in result["fixtures"]}
