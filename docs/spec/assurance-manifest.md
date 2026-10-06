@@ -172,6 +172,8 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Route/Decode.lean` | 282 | 282 | 1–282 | `7cd23701ca95…` |
 | `lean/VE/Route/Gate.lean` | 213 | 38 | 126–163 | `afccc5271974…` |
 | `lean/VE/Route/Wire.lean` | 666 | 666 | 1–666 | `7a9f5a63f666…` |
+| `lean/VE/Senses/Decode.lean` | 93 | 93 | 1–93 | `5f0f5265fe8d…` |
+| `lean/VE/Senses/Run.lean` | 144 | 144 | 1–144 | `7015a002b04e…` |
 | `lean/VE/Service/Family.lean` | 817 | 817 | 1–817 | `e1e00be43796…` |
 | `lean/VE/Service/FamilyBundle.lean` | 500 | 500 | 1–500 | `75698a329690…` |
 | `lean/VE/Service/FamilyNorms.lean` | 244 | 244 | 1–244 | `f2e5ffd9ed57…` |
@@ -185,7 +187,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/SpeechActs/Wire.lean` | 993 | 993 | 1–993 | `fbe08d985f7f…` |
 | `lean/VE/Time/Document.lean` | 613 | 613 | 1–613 | `4407e998d007…` |
 | `lean/VE/Time/Wire.lean` | 843 | 843 | 1–843 | `43eff830ca8c…` |
-| **total** | | **21,459** | | |
+| **total** | | **21,696** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
@@ -238,7 +240,9 @@ dispatch (`lean:runner-glue`), and `lean/VE/English/Run.lean`, a harness no theo
     `check_entailment_certificate` before `Found`.)
 - **Completeness.** The plan's operations and new Lean modes map to operations (`plan_operations`), and every public
   name of `ve` is an entry or classified in `non_verdict_api`.
-- **Invariants.** No operation is migrated yet, and lean-only operations have no Python verdict path.
+- **Invariants.** No operation is migrated yet, and lean-only operations have no Python verdict path: their only
+  Python code is a declared relay of Lean's answer through `ve.backends.lean.run` (`senses.read`), never a semantic
+  entry.
 - **This document.** The table in section 7 is generated from the manifest.
 
 ## 6. Recorded conflations, not changed here
@@ -278,6 +282,7 @@ the manifest `notes`, not changed:
 | `graph.compose` | combination | python → lean | experimental / reference-theorems-checked | `ve.argument:check_argument` | `ve_conformance route certificate`<br>`ve_conformance check-certificate` | `VE.Graph.check_sound`<br>`VE.Graph.check_entails`<br>`VE.Graph.check_unfolds`<br>`VE.Graph.tableau_certificateSound`<br>`VE.composition_sound`<br>`VE.Service.Graph.graph_sound`<br>`VE.Service.Graph.graph_entails`<br>`VE.Service.Graph.graph_unfolds`<br>`VE.Service.Family.closure_graph_sound`<br>`VE.Service.Family.closure_graph_entails`<br>`VE.Service.Family.closure_graph_unfolds`<br>`VE.Service.Family.core_graph_sound`<br>`VE.Service.Family.core_graph_entails`<br>`VE.Service.Family.core_graph_unfolds`<br>`VE.Service.Family.order_graph_sound`<br>`VE.Service.Family.order_graph_entails`<br>`VE.Service.Family.order_graph_unfolds` | none | `python:implementation`<br>`python:composition-rule`<br>`python:argument-diagnostics`<br>`python:record-identity`<br>`python:backend-adapter`<br>`python:wire`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders` |
 | `bundle.check` | leaf | python → lean | experimental / experimental | `ve.bundle:check_bundle` | `ve_conformance route bundle` | `VE.Definitions.Bundle.bundle_sound`<br>`VE.Definitions.Bundle.checkAll_sound`<br>`VE.Definitions.Bundle.checkAll_length`<br>`VE.Definitions.Bundle.backgroundLeaves_hold`<br>`VE.Service.FamilyBundle.bundle_sound`<br>`VE.Service.FamilyBundle.fol_bundle_sound`<br>`VE.Service.FamilyBundle.closure_bundle_sound`<br>`VE.Service.FamilyBundle.core_bundle_sound`<br>`VE.Service.FamilyBundle.order_bundle_sound` | none | `python:implementation`<br>`python:record-identity`<br>`python:backend-adapter`<br>`python:wire`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
 | `english.admission` | surface | python → python | experimental / experimental | `ve.english:parse_english_with_metadata`<br>`ve.english:parse_english`<br>`ve.english:parse_english_argument`<br>`ve.norm_english:parse_english`<br>`ve.surface.unambiguity:require_unique_derivation` | none | `VE.English.checked_unique_derivation`<br>`VE.English.checked_one_reading`<br>`VE.English.checked_parse_render`<br>`VE.English.checked_render_injective`<br>`VE.English.admissible_sound`<br>`VE.English.core_parse_sound` | none | `python:implementation`<br>`python:surface`<br>`python:backend-adapter` |
+| `senses.read` | surface | lean-only → lean | experimental / experimental | none | `ve_senses_route (default)` | `VE.Senses.senses_resolved_one_reading`<br>`VE.Senses.senses_unit_sound`<br>`VE.Senses.senses_candidate_sound`<br>`VE.Senses.candidates_complete`<br>`VE.Senses.mixed_exact` | none | `lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue`<br>`python:wire`<br>`python:backend-adapter` |
 | `premise-status` | combination | python → lean | experimental / experimental | `ve.vacuity:premise_status` | none | none | none | `python:implementation` |
 | `compare` | combination | python → python | experimental / experimental | `ve.equivalence:compare` | none | none | none | `python:implementation`<br>`python:equivalence.compare` |
 | `reference.validate` | combination | python → python | experimental / experimental | `ve.equivalence:validate_reference` | none | none | none | `python:implementation`<br>`python:reference-rule` |
