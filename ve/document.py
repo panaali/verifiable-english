@@ -736,7 +736,8 @@ def coverage_defaults(doc):
         from .norm_defaults import report
         doc["_norm_defaults_report"] = report(
             doc["norm_defaults"], prove=True, search_domain_size=2, translation=True,
-            completions=doc["meta"].get("completions", {}))
+            completions=doc["meta"].get("completions", {}),
+            unit_ids={u["id"] for u in doc["units"]})
     return doc["_norm_defaults_report"]
 
 
@@ -897,9 +898,8 @@ def coverage(doc, scoped=None, rights_report=None):
     defaults_lines = None
     if doc.get("norm_defaults") is not None:
         # norm-defaults 3.2: a gap is no open term and changes no unit status.
-        from .norm_defaults import gaps_residual
         defaults_lines = coverage_defaults(doc)
-        gaps = gaps_residual(defaults_lines)
+        gaps = defaults_lines["residual"]
         residual["gaps"] = len(gaps["gaps"])
         residual["ungrounded_defaults"] = gaps["ungrounded_defaults"]
     soft_open = ("default_exceptions", "instruction_switches", "holistic_overrides", "weighing_points",
@@ -911,9 +911,8 @@ def coverage(doc, scoped=None, rights_report=None):
             **({"residual_lines": lines} if lines else {}),
             **({"alternatives": alternatives} if alternatives is not None else {}),
             **({"norm_defaults": {
-                "gaps": gaps_residual(defaults_lines)["gaps"],
-                "findings": [line.grounding for line in defaults_lines
-                             if line.grounding.startswith("UngroundedDefault")]}}
+                "gaps": gaps["gaps"],
+                "findings": defaults_lines["findings"]}}
                if defaults_lines is not None else {}),
             **({"soft_status": "OPEN" if any(residual.get(key) for key in soft_open) else "CHECKED",
                 "default_exceptions_by_decider": by_decider,
@@ -1124,7 +1123,7 @@ def _report(doc):
             "fill_hash": defaults.fill_hash,
             "unsaid_predicates": [f"unsaid__{p}" for p in defaults.unspec],
             "background_labels": [label for label, _ in defaults.fill_premises],
-            "report": {line.predicate: list(line.lines()) for line in lines}}
+            "report": {line["predicate"]: line["lines"] for line in lines["report"]}}
     if "graph" in doc["meta"] and joint_pending:
         result["admission"] = {"status": "UNKNOWN",
                                "reason": "discourse citation and report extension pending"}

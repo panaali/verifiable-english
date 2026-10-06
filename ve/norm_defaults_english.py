@@ -145,16 +145,19 @@ def _rule_numbers(document):
     return {rule.name: i for i, rule in enumerate(document.author.rules, 1)}
 
 
+def _point_bindings(sorts, values):
+    return tuple(zip(reversed(sorts), reversed(tuple(values))))
+
+
 def _selected_author_rules(document, situation, filling, predicate, values):
     from .evaluate import _Evaluator
-    from .norm_defaults import _bindings as bindings
     sorts = document.env.predicates[predicate].arguments
     selected = document.filled.selection(predicate)[2]
     model = document.with_filling(situation, filling, checked=False)
     evaluator = _Evaluator(document._raw_base(), model, 1_000_000, trace=False)
     return tuple(rule for rule in document.author.rules if rule.predicate == predicate and
                  evaluator.formula(document.filled._expand(selected[rule.name], predicate),
-                                   bindings(sorts, values))[0])
+                                   _point_bindings(sorts, values))[0])
 
 
 def status_sentence(document, situation, status):

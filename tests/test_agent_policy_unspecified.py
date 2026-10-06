@@ -17,7 +17,7 @@ sys.path.insert(0, str(HERE))
 import check  # noqa: E402
 import environments  # noqa: E402
 from ve.environment import Environment  # noqa: E402
-from ve import norm_defaults as nd  # noqa: E402
+from conformance import frozen_norm_defaults as nd  # noqa: E402
 
 KEY = json.loads((HERE / "answer-key.json").read_text())
 RESULTS = json.loads((HERE / "results.json").read_text())

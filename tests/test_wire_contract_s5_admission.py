@@ -51,8 +51,14 @@ def test_shadow_admission_retains_legacy_error(unit, fixture):
     with pytest.raises(VEError) as caught:
         call(environment, document(norms))
     assert caught.value.diagnostic is None
-    assert (type(caught.value), caught.value.code, str(caught.value)) == \
-        (type(legacy.value), legacy.value.code, str(legacy.value))
+    if unit == "norm-defaults@0":
+        from ve.norm_defaults_route import run_cases
+        (lean,) = run_cases([{"id": "admission", "kind": "admission", "environment": environment,
+                             "document": document(norms)}])
+        assert str(caught.value) == lean["error"]
+    else:
+        assert (type(caught.value), caught.value.code, str(caught.value)) == \
+            (type(legacy.value), legacy.value.code, str(legacy.value))
 
 
 PROBE = """

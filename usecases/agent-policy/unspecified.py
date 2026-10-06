@@ -28,7 +28,7 @@ sys.path.insert(0, str(REPO))
 
 import check  # noqa: E402
 from conformance.norm_defaults_three_way import conflict_case, gap_cases, status_cases  # noqa: E402
-from ve import norm_defaults as nd  # noqa: E402
+from conformance import frozen_norm_defaults as nd  # noqa: E402
 from ve import norm_defaults_route as route  # noqa: E402
 from ve.environment import Environment  # noqa: E402
 

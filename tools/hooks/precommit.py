@@ -491,6 +491,7 @@ def check_wire_contract(index: Index) -> list[str]:
     names = [path for path in index.listing()
              if path.startswith(("ve/", "conformance/wire-contract/contracts/",
                                  "lean/VE/WireContract/")) or WIRE_UNIT_PATHS.match(path) or path in {
+                 "conformance/frozen_norm_defaults.py",
                  "lean/audit.py", "tools/wire_contract.py", "tools/wire_contract_lean.py",
                  "lean/VE/Route/frozen-sources.sha256",
                  "conformance/wire-contract/engine-golden.json"}]
@@ -500,7 +501,8 @@ def check_wire_contract(index: Index) -> list[str]:
         target = index.snapshot / path
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(blob)
-    env = {**os.environ, "PYTHONPATH": str(index.snapshot), "PYTHONDONTWRITEBYTECODE": "1"}
+    env = {**os.environ, "PYTHONPATH": str(index.snapshot), "PYTHONDONTWRITEBYTECODE": "1",
+           "GIT_DIR": git("rev-parse", "--absolute-git-dir").decode().strip()}
     done = subprocess.run([sys.executable, "tools/wire_contract.py", "--check"],
                           cwd=index.snapshot, env=env, capture_output=True, text=True,
                           timeout=configured_wait(WIRE_CHECK_TIMEOUT), check=False)

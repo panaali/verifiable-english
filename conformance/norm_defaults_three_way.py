@@ -33,8 +33,9 @@ from ve.ast import And, formula_from_data, formula_to_data  # noqa: E402
 from ve.background import background  # noqa: E402
 from ve.entailment import prove_entailment  # noqa: E402
 from ve.environment import Environment  # noqa: E402
-from ve import norm_defaults as nd  # noqa: E402
+from conformance import frozen_norm_defaults as nd  # noqa: E402
 from ve import norm_defaults_route as route  # noqa: E402
+from conformance import frozen_norm_defaults_route as frozen_route  # noqa: E402
 from ve.norms import NormDocument  # noqa: E402
 from conformance.norm_defaults import (ROW_GUARDS, _environment, _norm, _regulated, between,  # noqa: E402
                                        rows_close, rows_situations, sources, switch_counterexample)
@@ -255,7 +256,7 @@ def run():
 
 
 def _regenerated(document, row):
-    route.check_regenerated(document, row)
+    frozen_route.check_regenerated(document, row)
     return None
 
 
