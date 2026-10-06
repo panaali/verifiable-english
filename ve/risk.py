@@ -3,10 +3,7 @@ from __future__ import annotations
 
 import os
 
-from .errors import CheckerUnavailable, VEError
-
-_KINDS = frozenset({"risk-elaborate", "risk-decision", "risk-conflict",
-                    "risk-followable", "risk-audit", "risk-certificate", "admission"})
+from .errors import CheckerUnavailable
 
 
 def run_case(case: dict, *, timeout: float | None = None) -> dict:
@@ -16,9 +13,6 @@ def run_case(case: dict, *, timeout: float | None = None) -> dict:
     Python decodes nothing of the environment, record or log first, so every
     diagnostic, including its order, is the route's (risk.md 6, 7.3).
     """
-    if (type(case) is not dict or type(case.get("kind")) is not str
-            or case["kind"] not in _KINDS or type(case.get("environment")) is not dict):
-        raise VEError("InvalidInput: risk route case")
     if os.environ.get("VE_AUTHORITY") == "python":
         raise CheckerUnavailable("risk@0 requires the Lean checker")
     from .backends.relay import rows

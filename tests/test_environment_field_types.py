@@ -298,6 +298,12 @@ def lean_diagnostic(data):
     return row
 
 
+@pytest.mark.parametrize("value", [7, True, []])
+def test_non_object_environment_raises_ve_error(value):
+    with pytest.raises(VEError):
+        Environment(value)
+
+
 @lean_service
 @pytest.mark.parametrize("base, field, data", CASES)
 def test_type_diagnostics_are_leans(monkeypatch, base, field, data):
