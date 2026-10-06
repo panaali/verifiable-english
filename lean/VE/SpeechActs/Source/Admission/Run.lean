@@ -35,11 +35,18 @@ def isBinding (u : SourceUnit) : Bool := u.kind == .str "binding"
 
 /-- A unit's formula content as W2 sends it to P0 (`{"ast": a}` or the bare AST); command, question, binding and
 norm content is speech content, never a P0 formula. -/
+/-- The same formula projection for a fixed unit and for an asserted reading.
+The speech schema wraps formula ASTs in `{"ast": ...}`; P0 expects the AST itself. -/
+def formulaAst (content : Json) : Json :=
+  match fields content with
+  | .ok [("ast", a)] => a
+  | _ => content
+
 def formulaContent (u : SourceUnit) : Option Json :=
   match u.content with
   | some (.arr xs) => some (.arr xs)
   | some c => match fields c with
-    | .ok [("ast", a)] => some a
+    | .ok [("ast", _)] => some (formulaAst c)
     | _ => none
   | none => none
 
@@ -58,7 +65,7 @@ def p0Json (src : SpeechSource) (graph : Json) : Json :=
       | none => [])
   let sets := (latest.filter fun s => s.readings.all fun r => r.getObjValD "kind" == .str "asserted").map fun s =>
     Json.mkObj [("id", .str s.id), ("version", toJson s.version),
-      ("readings", Json.arr (s.readings.map (·.getObjValD "content")).toArray)]
+      ("readings", Json.arr (s.readings.map (fun r => formulaAst (r.getObjValD "content"))).toArray)]
   let narrowings := match Loader.optionalList src.metadata "narrowings" with
     | .arr ns => ns.toList.map fun (n : Json) => n.getObjValD "id"
     | _ => []
