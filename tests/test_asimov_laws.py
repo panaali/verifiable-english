@@ -402,7 +402,7 @@ def test_permission_default_stays_allow_until_norm_defaults_combines_with_altern
     data = load()[0]
     assert "alternatives@0" in data["profiles"]
     switched = _unspecified_permission(data)
-    with pytest.raises(UnsupportedProfile, match="alternatives@0 with norm-defaults@0 is not implemented"):
+    with pytest.raises(UnsupportedProfile, match="Unsupported profile norm-defaults@0"):
         Environment(switched)
     (row,) = lean_routes.rows("alternatives", [{"id": "switched", "kind": "alt-elaborate", "environment": switched,
                                                 "norms": norms()}])

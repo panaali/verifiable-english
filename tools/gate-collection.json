@@ -5745,7 +5745,7 @@
   "tests/test_lean_first_oracle.py::test_the_oracle_runs_the_pre_deletion_python",
   "tests/test_lean_first_rule3_measurement.py::test_rule3_report_numbers_come_from_record",
   "tests/test_lean_first_rule3_measurement.py::test_search_1_2_counts_all_three_evaluated_candidates",
-  "tests/test_lean_first_triage.py::test_df12_risk_route_accepts_an_nbsp_act_phrase",
+  "tests/test_lean_first_triage.py::test_df12_risk_route_rejects_an_nbsp_act_phrase",
   "tests/test_lean_first_triage.py::test_df1_is_closed_at_the_base",
   "tests/test_lean_first_triage.py::test_df8_dependency_order_accepts_a_misspelt_vocabulary_field",
   "tests/test_lean_first_triage.py::test_every_group_is_classed_with_its_fixture",
