@@ -19,7 +19,7 @@ def wire(value):
 def run(case):
     """Return a Lean soft row, retaining its diagnostic on a rejection."""
     try:
-        if case.get("kind") in ("soft-elaborate", "soft-rule"):
+        if case.get("kind") in ("soft-elaborate", "soft-rule", "soft-rules"):
             # Both are pure source checks. Repeated rights correlation sends the
             # same large source and rules many times; keep Lean's bound answer,
             # and give each caller an independent display row.

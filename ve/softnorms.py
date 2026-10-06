@@ -138,9 +138,8 @@ class SoftRule:
         return {'norm': raw}
 
 
-def decode_rule(env: SoftEnvironment, content):
-    """Ask Lean to check a quoted rule, then construct its display container."""
-    from .backends.soft_relay import run as _run, wire as _wire
+def _rule_source(env: SoftEnvironment):
+    """The lower soft source used for individual quoted rules."""
     source = env.to_dict()
     source["profiles"] = [p for p in source["profiles"]
                           if p not in ("norm-defaults@0", "readings@1", "rights@0")]
@@ -148,8 +147,39 @@ def decode_rule(env: SoftEnvironment, content):
     source["vocabulary"]["predicates"] = {
         name: declaration for name, declaration in source["vocabulary"]["predicates"].items()
         if not name.startswith("soft__")}
+    return source
+
+
+def decode_rule(env: SoftEnvironment, content):
+    """Ask Lean to check a quoted rule, then construct its display container."""
+    from .backends.soft_relay import run as _run, wire as _wire
+    source = _rule_source(env)
     _run({"id": "soft-rule", "kind": "soft-rule", "environment": _wire(source),
           "norm": _wire(content)})
+    try:
+        return _hydrate_rule(content)
+    except Exception as error:
+        raise CheckerUnavailable(
+            f"CheckerUnavailable: Python could not construct Lean-accepted soft rule: {error}") from error
+
+
+def check_rule_batch(env: SoftEnvironment, contents):
+    """Check many rules under one Lean-decoded source, retaining per-rule outcomes."""
+    from .backends.soft_relay import run as _run, wire as _wire
+    contents = list(contents)
+    row = _run({"id": "soft-rules", "kind": "soft-rules", "environment": _wire(_rule_source(env)),
+                "norms": _wire(contents)})
+    results = row["results"]
+    if len(results) != len(contents):
+        raise CheckerUnavailable("CheckerUnavailable: Lean soft rule count differs from the request")
+    return results
+
+
+def batch_rule(env: SoftEnvironment, content, result):
+    """Hydrate a checked batch item when its position is reached by the caller."""
+    if result["status"] == "error":
+        decode_rule(env, content)  # Lean supplies the same public diagnostic and code.
+        raise CheckerUnavailable("CheckerUnavailable: Lean soft rule checks disagree")
     try:
         return _hydrate_rule(content)
     except Exception as error:

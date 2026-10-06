@@ -45,7 +45,7 @@ theorem firstFailure_of_not_free (j : Json) (res : RightsConflictReplay) (h : re
 
 theorem elaborate_fits (id : String) (D : RightsDoc) (env : Json) :
     Fits req (skel% "rights.json#/$defs/elaborate") (VE.Route.Wire.ok id (regenerated D env)) := by
-  unfold VE.Route.Wire.ok regenerated VE.SoftNorms.Wire.regenerated VE.SoftNorms.Wire.bgEntry generatedKeys
+  unfold VE.Route.Wire.ok regenerated VE.SoftNorms.Wire.regeneratedCore VE.SoftNorms.Wire.bgEntry generatedKeys
     lineJson nodeJson narrowingsJson distinctionJson
   simp only [List.filter_cons, List.filter_nil, String.reduceBNe, Bool.false_eq_true, ↓reduceIte]
   fits

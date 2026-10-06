@@ -117,7 +117,7 @@
       "type": "array"
     },
     "elaborate": {
-      "$comment": "Rights.Run.regenerated: E'' (primeJsonR), the generated predicates, the lines, the limitation premises, the bar nodes, the rights Background, the narrowings, the distinction rows and findings, then every SoftNorms.Wire.regenerated field over the correlated document but its environment_prime.",
+      "$comment": "Rights.Run.regenerated: E'' (primeJsonR), the generated predicates, the lines, the limitation premises, the bar nodes, the rights Background, the narrowings, the distinction rows and findings, then every SoftNorms.Wire.regeneratedCore field over the correlated document but its environment_prime.",
       "additionalProperties": false,
       "properties": {
         "background": {"$ref": "soft-norms.json#/$defs/background"},
@@ -126,7 +126,6 @@
         "conditional_on": {"$ref": "soft-norms.json#/$defs/coherence_labels"},
         "conflict_targets": {"$ref": "common.json#/$defs/conflict_targets"},
         "decisions": {"$ref": "soft-norms.json#/$defs/elaborated/decisions"},
-        "default_exceptions_by_decider": {"additionalProperties": {"$ref": "common.json#/$defs/nat"}, "type": "object"},
         "derived": {"$ref": "soft-norms.json#/$defs/elaborated/derived"},
         "distinction": {
           "items": {
@@ -198,7 +197,6 @@
           "type": "array"
         },
         "id": {"$ref": "common.json#/$defs/id_ok"},
-        "incompatible_pairs": {"items": {"$ref": "common.json#/$defs/string_pair"}, "type": "array"},
         "limitations": {
           "items": {"$ref": "common.json#/$defs/labelled", "properties": {"label": {"pattern": "rights:limitation:.*"}}},
           "type": "array"
@@ -228,7 +226,6 @@
         "narrowings": {"$ref": "#/$defs/narrowings"},
         "order": {"$ref": "common.json#/$defs/strings"},
         "premises": {"$ref": "common.json#/$defs/layer_premises"},
-        "ranks_above": {"additionalProperties": {"$ref": "common.json#/$defs/strings"}, "type": "object"},
         "rights_background": {
           "items": {
             "additionalProperties": false,
@@ -242,9 +239,6 @@
           },
           "type": "array"
         },
-        "rule_acts": {"additionalProperties": {"type": "string"}, "type": "object"},
-        "soft_residual": {"$ref": "soft-norms.json#/$defs/soft_residual"},
-        "soft_status": {"enum": ["CHECKED", "OPEN"]},
         "status": {"const": "ok"},
         "warnings": {"$ref": "common.json#/$defs/nonempty_strings"}
       },
@@ -261,19 +255,13 @@
         "distinction",
         "findings",
         "decisions",
-        "ranks_above",
         "derived",
         "order",
         "background",
         "premises",
         "colliding_pairs",
-        "rule_acts",
-        "incompatible_pairs",
         "conflict_targets",
         "conditional_on",
-        "soft_residual",
-        "soft_status",
-        "default_exceptions_by_decider",
         "fragment",
         "warnings"
       ],

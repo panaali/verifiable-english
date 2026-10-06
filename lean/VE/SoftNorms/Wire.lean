@@ -199,13 +199,11 @@ def deciderCounts (D : SoftDoc) : Json :=
 def bgEntry (g l : String) (a : VE.Formula) : Json :=
   Json.mkObj ([("generator", .str g), ("ast", enc a)] ++ (if l.isEmpty then [] else [("label", .str l)]))
 
-def regenerated (D : SoftDoc) (environment : Json) : List (String × Json) :=
+def regeneratedCore (D : SoftDoc) (environment : Json) : List (String × Json) :=
   let T' := (soften D).T
   [("environment_prime", (primeJson D environment).toOption.getD .null),
    ("decisions", Json.arr ((decisions D).map (fun (n, ss) =>
       Json.mkObj [("name", .str n), ("arguments", toJson ss)])).toArray),
-   ("ranks_above", Json.mkObj (D.soft.ranks.map (fun lower =>
-      (lower, toJson (D.soft.ranks.filter (fun higher => outranksPlus D.soft higher lower)))))),
    ("derived", Json.arr (D.T.nodes.map (fun N => Json.mkObj [("rule", .str N.name),
       ("ast", match derivedList D N with
         | [φ] => enc φ
@@ -225,18 +223,25 @@ def regenerated (D : SoftDoc) (environment : Json) : List (String × Json) :=
       ("outweighs", if D.soft.outranking == .holistic && Comparable D M N then
         let (a, low, high) := pairTriple D M N
         .str (outweighsName a low high) else .null)])).toArray),
-   ("rule_acts", Json.mkObj (D.T.nodes.map (fun N => (N.name, .str (act D N))))),
-   ("incompatible_pairs", Json.arr (D.T.nodes.flatMap (fun M =>
-      D.T.nodes.filterMap (fun N => if decide (M.name < N.name) && Incompatible D M N then
-        some (toJson [M.name, N.name]) else none))).toArray),
    ("conflict_targets", Json.arr ((targets (soften D)).map (fun t => Json.mkObj
      [("target", .str t.1), ("sorts", toJson t.2.1), ("ast", enc t.2.2)])).toArray),
    ("conditional_on", toJson (openCoherence D)),
-   ("soft_residual", residual D),
-   ("soft_status", .str (residualStatus D)),
-   ("default_exceptions_by_decider", deciderCounts D),
    ("fragment", .bool (InFragment D)),
    ("warnings", toJson (warnings D))]
+
+/-- The soft route's additional decisions. Rights elaboration uses the common
+core without computing these relations for every reading candidate. -/
+def regenerated (D : SoftDoc) (environment : Json) : List (String × Json) :=
+  regeneratedCore D environment ++
+    [("ranks_above", Json.mkObj (D.soft.ranks.map (fun lower =>
+       (lower, toJson (D.soft.ranks.filter (fun higher => outranksPlus D.soft higher lower)))))),
+     ("rule_acts", Json.mkObj (D.T.nodes.map (fun N => (N.name, .str (act D N))))),
+     ("incompatible_pairs", Json.arr (D.T.nodes.flatMap (fun M =>
+       D.T.nodes.filterMap (fun N => if decide (M.name < N.name) && Incompatible D M N then
+         some (toJson [M.name, N.name]) else none))).toArray),
+     ("soft_residual", residual D),
+     ("soft_status", .str (residualStatus D)),
+     ("default_exceptions_by_decider", deciderCounts D)]
 
 /-! ## Conflict packages (CONFLICT-FREE) -/
 

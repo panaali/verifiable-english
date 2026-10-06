@@ -32,7 +32,7 @@ theorem elaborate_fits (id : String) (D : SoftDoc) (env : Json) (documentHash : 
         cycles.toList.map (fun value => ("override_cycles", toJson value)))) := by
   cases overlaps <;> cases cycles <;>
     simp only [Option.toList, List.map_cons, List.map_nil, List.append_nil] <;>
-    unfold VE.Route.Wire.ok regenerated bgEntry <;> fits
+    unfold VE.Route.Wire.ok regenerated regeneratedCore bgEntry <;> fits
   all_goals (try { exfalso; rename_i x hx h; have := softLabelled_nonempty D x hx; simp_all })
 
 /-- A pair's status and detail: a detail exactly beside a weighing point or UNKNOWN. -/
@@ -96,6 +96,8 @@ theorem runSoftKind_fits (id kind : String) (j : Json) :
   okfits
   all_goals (try simp only [VE.Route.Wire.ok])
   · fits_as "soft-norms.json#/$defs/rule"
+    fits
+  · fits_as "soft-norms.json#/$defs/rules"
     fits
   · fits_as "soft-norms.json#/$defs/elaborate"
     exact elaborate_fits _ _ _ _ _ _

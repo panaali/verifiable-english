@@ -32,7 +32,7 @@ def s1_content_kind(content):
     return None
 
 
-def s1_content_meaning_id(env, set_id, reading):
+def s1_content_meaning_id(env, set_id, reading, *, rule_result=None):
     """Give a content-bearing candidate the identity of the same fixed unit.
 
     This checks the content's profile and kind. Whole-document elaboration and
@@ -54,7 +54,7 @@ def s1_content_meaning_id(env, set_id, reading):
             f"UnsupportedProfile: reading {set_id}:{name} of kind {content_kind} requires {needs}")
     from .document import _content
     canonical, mid = _content(env, {"kind": content_kind, "content": content}, {},
-                              rights="rights@0" in env.profiles)
+                              rights="rights@0" in env.profiles, rule_result=rule_result)
     if mid is None:
         from .norms import NormDocument, norm_meaning_id
         mid = norm_meaning_id(env, NormDocument._decode(canonical))
@@ -126,6 +126,17 @@ def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None
                           lean_replay=False):
     if type(values) is not list:
         raise VEError("reading_sets must be a list")
+    rule_results = {}
+    if "soft-norms@0" in env.profiles and "readings@1" in env.profiles:
+        from .softnorms import check_rule_batch
+        candidates = [(reading, {"norm": reading["content"]["norm"]})
+                      for item in values if type(item) is dict and type(item.get("readings")) is list
+                      for reading in item["readings"] if type(reading) is dict
+                      and type(reading.get("content")) is dict and "norm" in reading["content"]]
+        if candidates:
+            outcomes = check_rule_batch(env, (content for _, content in candidates))
+            rule_results = {id(reading): outcome for (reading, _), outcome
+                            in zip(candidates, outcomes, strict=True)}
     seen = set()
     owners = {}
     units = {}
@@ -180,7 +191,8 @@ def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None
                 raise VEError("duplicate or invalid reading id")
             ids.add(reading["id"])
             if "readings@1" in env.profiles and s1_content_kind(reading["content"]) == "bar":
-                s1_content_meaning_id(env, item["id"], reading)
+                s1_content_meaning_id(env, item["id"], reading,
+                                      rule_result=rule_results.get(id(reading)))
             if not (s1_bearing and s1_content_kind(reading["content"]) in S1_CONTENT_KINDS
                     or rights_enabled and reading["kind"] in
                     ("right", "right_lines", "limitation", "bar")):
@@ -190,7 +202,8 @@ def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None
             if reading["content"] is not None:
                 content = reading["content"]
                 if s1_bearing and s1_content_kind(content) in S1_CONTENT_KINDS:
-                    content_id = s1_content_meaning_id(env, item["id"], reading)
+                    content_id = s1_content_meaning_id(env, item["id"], reading,
+                                                       rule_result=rule_results.get(id(reading)))
                 elif rights_enabled and type(content) is dict and set(content) == {"right"}:
                     from .rights import RightsDocument
                     RightsDocument(env, [{"source_units": sorted(unit_ids)}, content])
