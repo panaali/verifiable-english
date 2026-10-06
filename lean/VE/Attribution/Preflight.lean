@@ -517,10 +517,15 @@ success the decoder reads the document as given (without its `null`s). -/
 def check (typing : Typing) (environment document : Json) (nulls : List (List Step)) :
     Except String _root_.Unit := do
   let doc := restore document nulls
-  let profiles := (arr (environment.getObjValD "profiles")).filterMap (·.getStr?.toOption)
-  unless profiles.contains "reports@0" && hasKey (environment.getObjValD "vocabulary") "reports" do
-    throw "UnsupportedProfile: reports@0 needs a reports block"
-  let re ← Wire.decodeEnvironment environment
+  -- The environment's own faults first (Python's `Environment` came first); a well-formed
+  -- envelope without the profile has the reports document's text.
+  let re ← match Wire.decodeEnvironment environment with
+    | .ok re => pure re
+    | .error e =>
+      let profiles := (arr (environment.getObjValD "profiles")).filterMap (·.getStr?.toOption)
+      if !profiles.contains "reports@0" && (VE.Route.Gate.decodeEnvelope environment).toBool then
+        throw "UnsupportedProfile: reports@0 needs a reports block"
+      else throw e
   let contexts ← records (field doc "contexts") "contexts" "context"
   let assessments ← records (field doc "assessments") "assessments" "assessment"
   let bridges := pyList (field doc "bridges")
