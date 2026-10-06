@@ -1,0 +1,43 @@
+M1 Lean check mode answers the erased core: exit=1 failed=True
+    E             Use -v to get more diff
+    
+    tests/test_units_lean_w6a.py:74: AssertionError
+    =========================== short test summary info ============================
+    FAILED tests/test_units_lean_w6a.py::test_news_admission_agrees_with_the_relay
+    1 failed in 0.66s
+M2 either W6 field selects Lean's decoder: exit=1 failed=True
+    E            +        where VEError('property not found: ast') = <ExceptionInfo VEError('property not found: ast') tblen=4>.value
+    
+    tests/test_units_relay_w6a.py:208: AssertionError
+    =========================== short test summary info ============================
+    FAILED tests/test_units_relay_w6a.py::test_either_w6_field_takes_lean_s_decoder
+    1 failed in 0.46s
+M3 a W6 environment is admitted by Lean before Python constructs it: exit=1 failed=True
+    E           Failed: DID NOT RAISE VEError
+    
+    tests/test_units_relay_w6a.py:112: Failed
+    =========================== short test summary info ============================
+    FAILED tests/test_units_relay_w6a.py::test_every_display_collision_class_rejects
+    1 failed in 0.17s
+M4 an exhausted certificate replay is ResourceLimit, never false: exit=1 failed=True
+    E           Failed: DID NOT RAISE ResourceLimit
+    
+    tests/test_w6a_certificate_steps.py:109: Failed
+    =========================== short test summary info ============================
+    FAILED tests/test_w6a_certificate_steps.py::test_quantity_certificates_share_the_step_budget[12-False]
+    1 failed, 1 passed in 9.62s
+M5 Rust refuses a quantity case: exit=101 failed=True
+    failures:
+        quantity_tests::quantity_cases_are_the_lean_routes
+    
+    test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+    
+    error: test failed, to rerun pass `-p ve --bin ve`
+M6 every transport sends only JSON on the wire subset: exit=1 failed=True
+    
+    tests/test_relay_wire_check.py:122: Failed
+    =========================== short test summary info ============================
+    FAILED tests/test_relay_wire_check.py::test_document_check_of_a_file_with_a_lone_surrogate_is_the_wires_veerror
+    FAILED tests/test_relay_wire_check.py::test_a_tuple_formula_is_not_admitted_as_a_list
+    2 failed in 1.33s
+all mutants removed; ve_service rebuilt clean (16897e2b270d, pinned)

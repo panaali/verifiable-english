@@ -205,7 +205,8 @@ def conflict_case(kind, env, source, doc, situation, bindings):
     report = nd.check_conflict(doc, model=situation)
     if report.status == "CONFLICT":
         return report.status, case(kind, env, source, "norm-defaults-conflict", witness={
-            "target": report.target, "model": situation, "filling": report.filling, "tuple": list(report.tuple)})
+            "target": report.target, "model": situation, "filling": filling_json(report.filling),
+            "tuple": list(report.tuple)})
     report = nd.check_conflict(doc, prove=True)
     packages = {target: {**package, **bindings} for target, package in report.certificates.items()}
     return report.status, case(kind, env, source, "norm-defaults-conflict", packages=packages)

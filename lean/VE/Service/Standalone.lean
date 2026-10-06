@@ -7,6 +7,7 @@ import VE.Order.Surface
 import VE.Route.Run
 import VE.Service.TypingDiagnostic
 import VE.Risk.Wire
+import VE.Time.Wire
 
 /-! Standalone service validation and identity endpoints. These wrap the same
 decoders used by the route; successful model answers require a checked model. -/
@@ -441,6 +442,15 @@ def legacyCheckCase (id : String) (environment ast : Json) (formula : Bool) (ite
 def checkCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let environment ← j.getObjVal? "environment"
+  -- W6: either extension field selects the quantity decoder, which owns typing, erasure and
+  -- the three identities (Lean-first batch 9).
+  if (environment.getObjVal? "unit_schema").isOk || (environment.getObjVal? "units").isOk then
+    let w ← VE.Time.Wire.decodeEnvironment environment
+    let a ← VE.Time.Wire.decodeQuantity w (← j.getObjVal? "quantity")
+    return VE.Route.Wire.ok id [("well_typed", .bool true),
+      ("meaning_id", .str a.meaningId), ("Q", a.Q), ("core", a.core),
+      ("environment_id", .str w.environmentId),
+      ("target_environment_id", .str w.targetId)]
   let ast ← j.getObjVal? "ast"
   if environment.getObjValD "language" != Json.str "ve.core@0.2" then
     let items ← ast.getArr?

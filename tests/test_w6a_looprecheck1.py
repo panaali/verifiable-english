@@ -2,7 +2,8 @@
 
 P1 names that the sentence normalizer rewrites; P2 Lean evaluation without the
 Python/Rust budget; P2 renderings that do not reparse; P2 the conditional
-calendar inverse. Each class is checked in Python, Lean and Rust.
+calendar inverse. Each class is checked in Lean and through Python's relay of it
+(Lean-first batch 9 deleted Rust's quantity route).
 """
 from itertools import product
 from pathlib import Path
@@ -12,7 +13,7 @@ import pytest
 
 from tests import lean_routes
 
-from tests.test_units_lean_w6a import LEAN, lean, quantity, rust
+from tests.test_units_lean_w6a import LEAN, lean, quantity
 from tests.test_w6a_review_regressions import label, named, raw_environment
 from ve import ast
 from ve.environment import Environment
@@ -28,23 +29,19 @@ ROOT = Path(__file__).resolve().parents[1]
 pytestmark = pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="build the Lean service first")
 
 
-def rejected_three_ways(raw, message):
+def rejected_relay_and_lean(raw, message):
     with pytest.raises(VEError, match=re.escape(message)):
         Environment(raw)
     probe = quantity(["top"])
     [got] = lean([{"id": "e", "environment": raw, "quantity": probe}])
     assert got["status"] == "error" and message in got["error"], got
-    [other] = rust([{"id": "e", "kind": "quantity", "environment": raw, "quantity": probe}])
-    assert other["status"] == "error" and message in other["error"]["message"], other
 
 
-def admitted_three_ways(raw):
+def admitted_relay_and_lean(raw):
     env = Environment(raw)
     probe = quantity(["top"])
     [got] = lean([{"id": "a", "environment": raw, "quantity": probe}])
     assert got["status"] == "ok" and got["environment_id"] == env.environment_id, got
-    [other] = rust([{"id": "a", "kind": "quantity", "environment": raw, "quantity": probe}])
-    assert other["status"] == "ok" and other["environment_id"] == env.environment_id, other
     return env
 
 
@@ -57,11 +54,11 @@ UNNORMALIZED = ["the  rate", " the rate", "the rate ", "the\trate", "the\nrate",
 
 
 @pytest.mark.parametrize("words", UNNORMALIZED)
-def test_names_the_normalizer_rewrites_reject_three_ways(words):
+def test_names_the_normalizer_rewrites_reject_relay_and_lean(words):
     raw = raw_environment(constants={"a": named("bp", words), "b": named("bp", "the rate")})
-    rejected_three_ways(raw, "must be whitespace-normalized")
+    rejected_relay_and_lean(raw, "must be whitespace-normalized")
     # Alone, too: the name could never be read back.
-    rejected_three_ways(raw_environment(constants={"a": named("bp", words)}),
+    rejected_relay_and_lean(raw_environment(constants={"a": named("bp", words)}),
                         "must be whitespace-normalized")
 
 
@@ -75,9 +72,6 @@ def test_every_python_space_is_rejected_inside_a_name():
     for got in lean([{"id": str(i), "environment": raw, "quantity": probe}
                      for i, raw in enumerate(raws)]):
         assert got["status"] == "error" and "must be whitespace-normalized" in got["error"], got
-    for got in rust([{"id": str(i), "kind": "quantity", "environment": raw, "quantity": probe}
-                     for i, raw in enumerate(raws)]):
-        assert got["status"] == "error" and "must be whitespace-normalized" in got["error"]["message"], got
 
 
 @pytest.mark.parametrize("first,second", [
@@ -85,13 +79,13 @@ def test_every_python_space_is_rejected_inside_a_name():
     ("The rate", "the rate"),       # equal once the second starts a sentence
     ("the rate", "The rate"),
 ])
-def test_names_sharing_a_sentence_spelling_reject_three_ways(first, second):
+def test_names_sharing_a_sentence_spelling_reject_relay_and_lean(first, second):
     raw = raw_environment(constants={"a": named("bp", first), "b": named("bp", second)})
-    rejected_three_ways(raw, "VerbalisationCollision(")
+    rejected_relay_and_lean(raw, "VerbalisationCollision(")
 
 
-def test_distinct_names_still_admit_three_ways():
-    admitted_three_ways(raw_environment(constants={
+def test_distinct_names_still_admit_relay_and_lean():
+    admitted_relay_and_lean(raw_environment(constants={
         "a": named("bp", "the rate"), "b": named("bp", "the Rate"), "c": named("bp", "éclair rate"),
         "d": named("bp", "Éclair rate"), "e": named("bp", "the old rate")}))
 
@@ -99,7 +93,7 @@ def test_distinct_names_still_admit_three_ways():
 def test_sentence_initial_capitalization_is_ascii_only():
     # Python would upper-case "é"; Lean and Rust do not. The spelling rule is ASCII
     # in all three, and the parser uses the same rule.
-    env = admitted_three_ways(raw_environment(constants={
+    env = admitted_relay_and_lean(raw_environment(constants={
         "a": named("bp", "éclair rate"), "b": named("bp", "Éclair rate")}))
     for name in ("a", "b"):
         q = quantity(["eq", ["const", "bp", name], ["num", "bp", "0"]])
@@ -193,7 +187,7 @@ def extreme_coordinates():
 def test_every_scale_renders_every_admitted_coordinate_reparsably(places):
     raw = raw_environment({"q": label("units") | {"scale": "1" + "0" * places}})
     env = Environment(raw)
-    lean_cases, rust_cases, expected = [], [], []
+    lean_cases, expected = [], []
     for coordinate in extreme_coordinates():
         assert len(str(coordinate)) <= 40
         display = render_coordinate("q", coordinate, env)
@@ -201,16 +195,11 @@ def test_every_scale_renders_every_admitted_coordinate_reparsably(places):
         assert decimal_exact(amount, "q", env) == coordinate, display
         lean_cases.append({"id": amount, "kind": "lower", "decimal": amount, "places": places})
         lean_cases.append({"id": "r", "kind": "render", "coordinate": str(coordinate), "places": places})
-        rust_cases.append({"id": amount, "kind": "quantity", "environment": raw,
-                           "quantity": quantity(["eq", ["decimal", "q", amount],
-                                                 ["num", "q", str(coordinate)]])})
         expected.append((amount, coordinate))
     results = lean(lean_cases)
     for (amount, coordinate), lowered, rendered in zip(expected, results[::2], results[1::2]):
         assert lowered["status"] == "ok" and lowered["coordinate"] == str(coordinate), lowered
         assert rendered["amount"] == amount
-    for got in rust(rust_cases):
-        assert got["status"] == "ok", got
 
 
 def test_review_reproducers_round_trip_through_english():
@@ -225,7 +214,7 @@ def test_review_reproducers_round_trip_through_english():
         assert parse_quantity_sentence(env, sentence) == canonical
 
 
-def test_literals_over_forty_digits_still_reject_three_ways():
+def test_literals_over_forty_digits_still_reject_relay_and_lean():
     raw = raw_environment()
     env = Environment(raw)
     for text in ("1" * 41, "-" + "1" * 41, "1." + "0" * 40, "0." + "0" * 39 + "1"):
@@ -234,8 +223,6 @@ def test_literals_over_forty_digits_still_reject_three_ways():
             elaborate_quantity(env, quantity(formula))
         [got] = lean([{"id": "l", "environment": raw, "quantity": quantity(formula)}])
         assert "40 digits" in got["error"]
-        [other] = rust([{"id": "l", "kind": "quantity", "environment": raw, "quantity": quantity(formula)}])
-        assert "40 digits" in other["error"]["message"]
 
 
 # --- P2: Lean evaluates under the Python/Rust budget ---------------------------
@@ -270,7 +257,7 @@ def pinned_formula(env, name):
             "7 of 7": lambda: n_of_m(env, "item", 7, 7, s, p)}[name]()
 
 
-def test_pinned_counting_fixtures_evaluate_identically_three_ways():
+def test_pinned_counting_fixtures_evaluate_identically_relay_and_lean():
     raw = counting_raw()
     env = Environment(raw)
     target = erased_environment(env)
@@ -285,20 +272,16 @@ def test_pinned_counting_fixtures_evaluate_identically_three_ways():
         cases.append({"id": name, "environment": raw, "quantity": quantity(data),
                       "model": counting_model(n)})
         expected.append((value, work))
-    for case, got, other, (value, work) in zip(cases, lean(cases),
-                                                rust([{**c, "kind": "quantity"} for c in cases]),
-                                                expected):
+    for case, got, (value, work) in zip(cases, lean(cases), expected, strict=True):
         if value is None:
             # UNKNOWN naming the budget: never false, never a successful evaluation.
             assert got["status"] == "error" and "ResourceLimit" in got["error"], got
             assert "MAX_EVALUATIONS" in got["error"]
-            assert other["status"] == "error" and other["error"]["code"] == "ResourceLimit", other
         else:
             assert got["status"] == "ok" and got["value"] is value and got["evaluations"] == work, got
-            assert other["status"] == "ok" and other["value"] is value, other
 
 
-def test_countermodels_share_the_budget_three_ways():
+def test_countermodels_share_the_budget_relay_and_lean():
     raw = counting_raw()
     env = Environment(raw)
     seven = ast._to_data(pinned_formula(env, "exactly 7"))
@@ -311,16 +294,13 @@ def test_countermodels_share_the_budget_three_ways():
             ([quantity(["bottom"])], quantity(seven), counting_model(7), False)):
         case = {"environment": raw, "premises": premises, "conclusion": conclusion, "model": model}
         [got] = lean([{"id": "m", "kind": "countermodel", **case}])
-        [other] = rust([{"id": "m", "kind": "quantity", "mode": "countermodel", **case}])
         if refutes is None:
             with pytest.raises(ResourceLimit, match="MAX_EVALUATIONS"):
                 quantity_countermodel(env, premises, conclusion, model)
             assert got["status"] == "error" and "ResourceLimit" in got["error"], got
-            assert other["status"] == "error" and other["error"]["code"] == "ResourceLimit", other
         else:
             assert quantity_countermodel(env, premises, conclusion, model) is refutes
             assert got["status"] == "ok" and got["refutes"] is refutes, got
-            assert other["status"] == "ok" and other["refutes"] is refutes, other
 
 
 def test_lean_budget_theorems_are_audited():
