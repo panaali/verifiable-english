@@ -1,5 +1,5 @@
-"""The three independent rights/soft regeneration paths agree on the fixtures and on 1,000
-generated documents (docs/spec/rights.md 10)."""
+"""The relayed rights source, its soft embedding, and document loading agree on
+fixtures and 1,000 generated documents (docs/spec/rights.md 10)."""
 
 import pytest
 
@@ -7,7 +7,7 @@ from conformance.rights_differential import run as differential
 from conformance.rights_three_way import run
 
 
-def test_rights_three_way_fixtures():
+def test_rights_embedding_fixtures():
     result = run()
     names = [row["fixture"] for row in result["fixtures"]]
     assert result["passed"] == 18

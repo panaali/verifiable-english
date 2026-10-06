@@ -205,7 +205,7 @@ def fixtures():
 def theta_rows(seeds=range(60)):
     """θ: every shape-fitting rule of the soft conformance trees wrapped as a one-line right
     (`H_R = ⊤`, no limitation, no bar) correlates to the flattened soft document on the
-    Python route, the Lean rights route and the Lean soft route; with `H_R = u(h)` the Lean
+    Lean rights route and the Lean soft route; with `H_R = u(h)` the Lean
     line nodes differ exactly by the conjunct. Rows with no fitting rule are skipped."""
     from conformance.soft_norms import generated
     compared = skipped = 0
@@ -249,26 +249,25 @@ def theta_rows(seeds=range(60)):
                                                               ["unary", "u", ["var", 0]]]}, seed
         compared += 1
     return {"fixture": "theta", "wrapped_documents": compared, "skipped_documents": skipped,
-            "three_way": "PASS"}
+            "embedding": "PASS"}
 
 
 def run():
     summary = []
     for name, (raw, units) in fixtures().items():
-        # Each route receives the source independently. No Python elaboration is
-        # supplied to the rights executable.
+        # The container and the explicit route both receive Lean's elaboration.
         rights = correlate(deepcopy(raw), deepcopy(units))
         lean = run_rights_case(rights.env, units, "rights-elaborate")
         summary.append({"fixture": name, "lines": len(lean["lines"]),
                         "limitations": len(lean["limitations"]),
                         "conflict_targets": len(lean["conflict_targets"]),
-                        "three_way": "PASS"})
+                        "embedding": "PASS"})
     summary.append(theta_rows())
-    return {"format": "rights-three-way@0", "fixtures": summary, "passed": len(summary)}
+    return {"format": "rights-embedding@0", "fixtures": summary, "passed": len(summary)}
 
 
 if __name__ == "__main__":
     result = run()
     Path(__file__).with_name("rights-three-way-report.json").write_text(
         json.dumps(result, indent=2, sort_keys=True) + "\n")
-    print(f"PASS: {result['passed']} rights fixtures across Python, rights Lean, and soft Lean")
+    print(f"PASS: {result['passed']} rights relay and soft embedding fixtures")
