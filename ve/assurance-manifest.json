@@ -94,7 +94,7 @@
       {
         "file": "lean/VE/Alternatives/Wire.lean",
         "lines": 390,
-        "sha256": "ea48845f5b0c0abf46c1c391c00efd0fda09ff95549b0de302488ccb63125fa5",
+        "sha256": "b6758bfb1e3a49772a4be95cd9d050f3c922f6aa56f35b879f6474f6ef44cbf9",
         "ranges": [
           [
             1,
@@ -1098,6 +1098,7 @@
       "lean/ResponseShape/Encoders/English.lean": "theorems that the english and diagnose modes' rows fit their shapes; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/Envelope.lean": "theorems that the service's response lines fit envelope.json; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/Alternatives.lean": "theorems that the alternatives mode's rows fit its shape, with the decoded block's taken tied to the case (getObjVal? in statements and proofs only; not on any runner path)",
+      "lean/ResponseShape/Encoders/Risk.lean": "theorems that the risk mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/Quantity.lean": "theorems that the quantity mode's rows fit its shape, with value and evaluations tied to the case's model (getObjVal? in statements and proofs only; not on any runner path)",
       "lean/VE/Risk/Eval.lean": "test-only differential harness (risk.md 8.3; service mode risk-eval): decodes its case envelope, then calls the pinned risk decoders; no production path or theorem uses it",
       "lean/VE/Service/EnglishRun.lean": "stage-1 service copy of the English runner; additive dispatch, not yet on an assurance operation path",
