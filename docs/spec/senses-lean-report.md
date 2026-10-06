@@ -118,7 +118,7 @@ was clean afterwards).
 | 4 | not applicable | no Lean or Rust response is consumed |
 | 5 | done | the pack decoder with every field removed, replaced by null, 7, `true`, `[]`, `{}`, a string; an unknown field; a fraction, a Boolean and a string index; 10,000-deep nesting; empty and scalar texts (Examples 8.2) |
 | 6 | done | budget 0 on the preamble and the body (`preambleBudget 0`, `stopped 0 budget`); budget, ambiguity and rejection stop, never drop a choice; no candidate is `stopped noDerivation`, one candidate stays open |
-| 7 | done, with a limit | the budget is S2's per sentence; one sentence costs at most `1 + candidateCap` parses, each bounded; there is no whole-operation deadline in Lean (the service adds it, B6) |
+| 7 | done, with a limit | the budget is S2's per sentence; one sentence costs at most `1 + candidateCap` parses, each bounded, and the cap is checked by `choiceCount`, linear in the words (fix round: the first build compared the length of the built choices, exponential in the words, Astra A1; the thirty-word row of `Examples.lean` guards it); there is no whole-operation deadline in Lean (the service adds it, B6) |
 | 8 | done | `SenseFault.code` and `statusCode` are exhaustive matches; every constructor of `SensesOutcome` and of `SenseFault` is produced by a fixture (`limit` through `project`, j16); nesting depth does not apply (flat kinds) |
 | 9 | done for this item | `Assignment.lines` read back (a10, a11); S2's `checkRendering` under the projection (s8); the English of the texts is B6 |
 | 10 | not applicable | one entry point, `readWithSenses`; the service paths are B6 |
@@ -143,4 +143,5 @@ was clean afterwards).
 - The full pytest suite, in three file chunks with prebuilt binaries: 5,361 + 2,942 + 2,605 passed, 7 skipped
   (optional corpora and tokenizers); one failure in the first chunk, `test_committed_trust_table_covers_every_declaration`,
   fixed by commit "senses: trust classes" (that file then passed, 283 tests). The four long tests that the chunks
-  deselect passed alone (28 cases). The gate result on HEAD is recorded below once it has run.
+  deselect passed alone (28 cases). The gate result on HEAD is not recorded here: the integration branch's report
+  ([senses-integration-report.md](senses-integration-report.md)) carries the later runs.
