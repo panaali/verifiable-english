@@ -439,6 +439,7 @@
   "ResponseShape/Schemas/Reports.lean": {
    "G[V]": [
     "ResponseShape.Schemas.Reports.admission",
+    "ResponseShape.Schemas.Reports.boundVerdicts",
     "ResponseShape.Schemas.Reports.certificate",
     "ResponseShape.Schemas.Reports.content",
     "ResponseShape.Schemas.Reports.countermodel",
