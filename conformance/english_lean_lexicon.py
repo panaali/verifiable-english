@@ -99,7 +99,9 @@ def profile_tables(env) -> dict:
             nouns[rblock['severity']['sort']] = 'severity'
             wordings.update({'risk__might_lead_to': '{0} might lead to {1}', 'risk__class': '{0} is {1}',
                              'risk__or_worse': '{0} is {1} or worse',
-                             'risk__less_worst': '{0} has a less severe worst case than {1}'})
+                             'risk__less_worst': '{0} has a less severe worst case than {1}',
+                             # DRI ruling 2 (docs/spec/english-lean-s3.md D9): the fixed wording of S3
+                             'risk__more_severe': '{0} is more severe than {1}'})
             negatives[block['leads_to']] = '{0} might not lead to {1}'
             negatives['risk__might_lead_to'] = '{0} cannot lead to {1}'
     for name, template in (getattr(env, 'rights_wordings', None) or {}).items():
@@ -147,6 +149,13 @@ def _shape_ok(wording: str, arity: int) -> bool:
             and wording_tokens(wording) is not None)
 
 
+def _subject_first(wording: str) -> bool:
+    """S3's subject first (docs/spec/english-lean-s3.md 2.9, D8): the wording begins with `{0}` and a space
+    and its holes, in order of occurrence, are `0, 1, …` (`subjectFirst` of `Lexicon.lean`)."""
+    order = [decimal_value(h) for h in HOLE.findall(wording)]
+    return wording.startswith('{0} ') and order == list(range(len(order)))
+
+
 def negative_template_of(wording: str | None, arity: int) -> str | None:
     """`negativeTemplate` of spec 2.9 on a selected wording, total as Lean's is. Where Python's
     `negative_template` is defined it is its value; where it fails, Lean's value is none: no selected
@@ -160,6 +169,12 @@ def negative_template_of(wording: str | None, arity: int) -> str | None:
 
 
 # ------------------------------------------------------------------ the lexical view and validity
+
+def _modal(env, decl) -> bool:
+    """S3's `PredDecl.modal` (spec 2.3): `norms@0` regulates the predicate as a permission or an obligation."""
+    reg = getattr(decl, 'regulated', None) if decl is not None else None
+    return 'norms@0' in env.profiles and reg is not None and reg.role in ('permission', 'obligation')
+
 
 def lexical_view(words: EnglishVocabulary) -> dict:
     """The `Env` of spec 5.8 that `Lexicon.valid` reads: every sort, predicate and constant, the symbols
@@ -184,7 +199,8 @@ def lexical_view(words: EnglishVocabulary) -> dict:
         'sorts': [{'name': s, 'noun': noun(s)} for s in sorted(sorts)],
         'predicates': [{'name': p, 'arity': len(declared(p).arguments) if declared(p) else 2,
                         'wording': declared(p).verbalisation if declared(p) else None,
-                        'negative': declared(p).negative_verbalisation if declared(p) else None}
+                        'negative': declared(p).negative_verbalisation if declared(p) else None,
+                        'modal': _modal(env, declared(p))}
                        for p in sorted(predicates)],
         'constants': [{'name': c, 'display': words.declared_constants.get(c)} for c in sorted(constants)],
         'forms': profile_tables(env),
@@ -249,16 +265,19 @@ def failures(view: dict, lexicon: dict) -> list[tuple[str, str, str]]:
     for p, w in L['wordings']:
         if p in preds:
             k = arity(p)
-            if w not in {pred[p]['wording'], F['wordings'].get(p), mechanical(p, k), fallback(p, k)} - {None}:
+            # S3 (spec 2.9, D17): a modal predicate has one honest wording, its modal form
+            honest = ({F['wordings'].get(p)} if pred[p].get('modal') else
+                      {pred[p]['wording'], F['wordings'].get(p), mechanical(p, k), fallback(p, k)})
+            if w not in honest - {None}:
                 out.append(('V2', 'predicate', p))
-            if not _shape_ok(w, k):
+            if not (_shape_ok(w, k) and _subject_first(w)):
                 out.append(('V3', 'predicate', p))
     for p, w in L['negatives']:
         if p in preds:
             k, fixed = arity(p), F['negatives'].get(p)
             if w not in {pred[p]['negative'], fixed} - {None}:
                 out.append(('V2', 'negative', p))
-            if not _shape_ok(w, k):
+            if not (_shape_ok(w, k) and _subject_first(w)):
                 out.append(('V3', 'negative', p))
             if fixed != w and negative_template_of(_lookup(L['wordings'], p), k) != w:
                 out.append(('V5', 'negative', p))
@@ -266,7 +285,7 @@ def failures(view: dict, lexicon: dict) -> list[tuple[str, str, str]]:
         selected = [(w, neg) for q, w, neg in L['aliases'] if q == p]
         if sorted(selected) != sorted(map(tuple, F['aliases'].get(p, []))):
             out.append(('V2', 'alias', p))
-        if not all(_shape_ok(w, arity(p)) for w, _ in selected):
+        if not all(_shape_ok(w, arity(p)) and _subject_first(w) for w, _ in selected):
             out.append(('V3', 'alias', p))
     for s, n in L['nouns']:
         if s in sorts:
@@ -442,7 +461,8 @@ def lean_env(view: dict) -> str:
     F = view['forms']
     sorts = ', '.join(f'{{ name := {lean_string(s["name"])}, noun := {_option(s["noun"])} }}' for s in view['sorts'])
     preds = ',\n      '.join(f'{{ name := {lean_string(p["name"])}, arity := {p["arity"]}, '
-                             f'wording := {_option(p["wording"])}, negative := {_option(p["negative"])} }}'
+                             f'wording := {_option(p["wording"])}, negative := {_option(p["negative"])}'
+                             + (', modal := true' if p.get('modal') else '') + ' }'
                              for p in view['predicates'])
     consts = ', '.join(f'{{ name := {lean_string(c["name"])}, display := {_option(c["display"])} }}'
                        for c in view['constants'])
