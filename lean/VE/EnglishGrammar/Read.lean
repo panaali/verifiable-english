@@ -1,4 +1,5 @@
 import VE.EnglishGrammar.Encode
+import VE.EnglishGrammar.Policy
 import VE.Grammar.Reading
 
 /-! The English readers and their statements (docs/spec/english-lean-s2.md 5.3, 5.5 and 5.6).
@@ -407,5 +408,92 @@ theorem first_checked : ∀ (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (rs 
   apply hbefore j hj
   rw [hjt]
   exact (checked_rendering_exact E O L b rs t).mpr hr
+
+/-! E2 request guards. The request's own lexicon is checked before the grammar reader. -/
+
+def admitRequest (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (s : String) : AdmitOutcome :=
+  if L.policyOk E O then admit E O L b s else .refused (.invalidGrammar .lexicon)
+
+def checkRequest (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (rs : List (EFormula × Bool))
+    (candidates : List String) : Option Nat :=
+  if L.policyOk E O then firstChecked E O L b rs candidates else none
+
+def translateRequest (E : Env) (O : Overlay) (L : Lexicon) (cap b : Nat) (s : String) : TranslateOutcome :=
+  if L.policyOk E O then translate E O L cap b s else .invalidGrammar .lexicon
+
+def grammarFault (E : Env) (O : Overlay) (L : Lexicon) : Option GrammarFault :=
+  if !L.policyOk E O then some .lexicon
+  else if !L.valid E O then some .lexicon
+  else if !((grammar E L).wf && terminatorFree (grammar E L)) then some .notWellFormed
+  else if !((grammar E L).typed sig (ty E L) (acts E L) && decide (ty E L (grammar E L).start = .sentence)) then
+    some .notTyped
+  else none
+
+def lexiconFailure (E : Env) (O : Overlay) (L : Lexicon) : Option Failure :=
+  (L.policyFailures E O ++ L.failures E O).head?
+
+theorem policy_iff_no_failure : ∀ (E : Env) (O : Overlay) (L : Lexicon),
+  L.policyOk E O = true ↔ L.policyFailures E O = [] := by
+  intro E O L
+  simp [Lexicon.policyOk, List.isEmpty_iff]
+
+theorem admitRequest_ok : ∀ (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (s : String)
+    (rs : List (EFormula × Bool)) (obs : List (Nat × List Nat)),
+  admitRequest E O L b s = .ok rs obs →
+  L.policyOk E O = true ∧ EnglishOneReading E O L s rs ∧ obs = obligations rs ∧ ∀ o ∈ obs, o.2 ≠ [] := by
+  intro E O L b s rs obs h
+  unfold admitRequest at h
+  by_cases hp : L.policyOk E O = true
+  · simp [hp] at h
+    exact ⟨hp, admit_ok E O L b s rs obs h |>.1, (admit_ok E O L b s rs obs h).2.1,
+      (admit_ok E O L b s rs obs h).2.2⟩
+  · simp [hp] at h
+
+theorem admitRequest_exact : ∀ (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (s : String)
+    (rs : List (EFormula × Bool)),
+  (∃ obs, admitRequest E O L b s = .ok rs obs) ↔
+    (L.policyOk E O = true ∧ read E O L b s = .ok rs ∧ ∀ o ∈ obligations rs, o.2 ≠ []) := by
+  intro E O L b s rs
+  unfold admitRequest
+  by_cases hp : L.policyOk E O = true
+  · simp [hp, admit_exact]
+  · simp [hp]
+
+theorem admitRequest_policy : ∀ (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (s : String),
+  L.policyOk E O = false → admitRequest E O L b s = .refused (.invalidGrammar .lexicon) := by
+  intro E O L b s h
+  simp [admitRequest, h]
+
+theorem translateRequest_policy : ∀ (E : Env) (O : Overlay) (L : Lexicon) (cap b : Nat) (s : String),
+  L.policyOk E O = false → translateRequest E O L cap b s = .invalidGrammar .lexicon := by
+  intro E O L cap b s h
+  simp [translateRequest, h]
+
+theorem grammarFault_none : ∀ (E : Env) (O : Overlay) (L : Lexicon),
+  grammarFault E O L = none → L.policyOk E O = true ∧ L.valid E O = true := by
+  intro E O L h
+  unfold grammarFault at h
+  by_cases hp : L.policyOk E O = true
+  · by_cases hv : L.valid E O = true
+    · exact ⟨hp, hv⟩
+    · simp [hp, hv] at h
+  · simp [hp] at h
+
+theorem overlayCheck_constants : ∀ (E : Env) (O : Overlay) (cs : List (String × String)),
+  overlayCheck E { O with constants := cs } = overlayCheck E O := by
+  intro E O cs
+  rfl
+
+theorem checkRequest_some : ∀ (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (rs : List (EFormula × Bool))
+    (candidates : List String) (i : Nat),
+  checkRequest E O L b rs candidates = some i →
+  L.policyOk E O = true ∧ ∃ s, candidates[i]? = some s ∧ read E O L b s = .ok rs ∧
+    ∀ j t, j < i → candidates[j]? = some t → read E O L b t ≠ .ok rs := by
+  intro E O L b rs candidates i h
+  unfold checkRequest at h
+  by_cases hp : L.policyOk E O = true
+  · simp [hp] at h
+    exact ⟨hp, first_checked E O L b rs candidates i h⟩
+  · simp [hp] at h
 
 end VE.EnglishGrammar
