@@ -4155,3 +4155,4 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Grammar.verdict_one
 #print axioms VE.Grammar.verdict_many
 #print axioms VE.EnglishGrammar.foldChar_agrees
+#print axioms VE.Norms.Wire.appendPredicates_assembly
