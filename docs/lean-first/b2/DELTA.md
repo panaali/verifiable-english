@@ -172,8 +172,8 @@ time but no corpus test: no runner reads that member, so on every corpus it is a
 
 | Id | Class | Change | Signature |
 |---|---|---|---|
-| D1 | `availability` (protocol) | A raw service request may carry `environments`, and a case may name `environment_handle` without `environment`: such a case is answered as the case with that environment, or the request is a bound `CheckerUnavailable` (a missed handle) or `InvalidInput` (a key that is not its environment's SHA-256) request error. Before, `environments` was an unknown request field (an unbound line error) and such a case was refused for its missing environment. No public `ve` input reaches either form: only the client writes them. The handshake gains `handles`; the client refuses a service without it. | DRI |
-| D2 | none (operational) | The Rust checker is a persistent process: a call no longer checks a process exit status per record, a reused process that has ended is replaced once for the same call, and a process with output pending is never reused. Every corpus record is unchanged. | DRI |
+| D1 | `availability` (protocol) | A raw service request may carry `environments`, and a case may name `environment_handle` without `environment`: such a case is answered as the case with that environment, or the request is a bound `CheckerUnavailable` (a missed handle) or `InvalidInput` (a key that is not its environment's SHA-256) request error. Before, `environments` was an unknown request field (an unbound line error) and such a case was refused for its missing environment. No public `ve` input reaches either form: only the client writes them. The handshake gains `handles`; the client refuses a service without it. | DRI: signed 2026-10-06 |
+| D2 | none (operational) | The Rust checker is a persistent process: a call no longer checks a process exit status per record, a reused process that has ended is replaced once for the same call, and a process with output pending is never reused. Every corpus record is unchanged. | DRI: signed 2026-10-06 |
 
 ## Open items
 
