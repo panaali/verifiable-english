@@ -152,6 +152,7 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.Reports.scopedVerdict_fits
 #print axioms ResponseShape.Encoders.Reports.scoped_fits
 #print axioms ResponseShape.Encoders.Reports.status_fits
+#print axioms ResponseShape.Encoders.Reports.status_render_fits
 #print axioms ResponseShape.Encoders.Rights.admission_fits
 #print axioms ResponseShape.Encoders.Rights.generated_entries_fit
 #print axioms ResponseShape.Encoders.Rights.regenerated_environment

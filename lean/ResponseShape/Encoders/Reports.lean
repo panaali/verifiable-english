@@ -46,7 +46,7 @@ theorem scopedVerdict_fits (c : Wire.Checked) (j : Json) (s : ScopedCheck) :
   all_goals fits
 
 theorem status_render_fits (s : Status) :
-    Fits req (skelStrings% "reports.json#/$defs/status_word") (.str s.render) := by
+    Fits req (.strIn ["UNFORMALISED", "OPEN", "UNKNOWN", "LABELLED", "CHECKED"]) (.str s.render) := by
   cases s <;> (apply Fits.strIn_lit; decide)
 
 theorem status_fits (c : Wire.Checked) (id : String) (j : Json) :

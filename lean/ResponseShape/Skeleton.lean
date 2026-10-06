@@ -1082,18 +1082,12 @@ where
       | none => pure .any
     | _ => pure .any
 
-/-- The skeleton of the shape at `target`, and the recursive targets it names. `keepStrings`
-retains a referenced string domain when proving an encoder field against that reference. -/
-def skeletonWithStrings (files : List File) (target : String) (keepStrings : Bool) :
-    Except String (Skel × List String) := do
+/-- The skeleton of the shape at `target`, and the recursive targets it names. -/
+def skeleton (files : List File) (target : String) : Except String (Skel × List String) := do
   match lookup files target with
   | none => throw s!"unresolved $ref {target}"
   | some s =>
-    let (k, st) ← (skeletonOf files depth keepStrings s).run { stack := [target] }
+    let (k, st) ← (skeletonOf files depth false s).run { stack := [target] }
     pure (Skel.simp depth k, st.recursive)
-
-/-- The row skeleton, with conditional strings kept only where extraction requires them. -/
-def skeleton (files : List File) (target : String) : Except String (Skel × List String) :=
-  skeletonWithStrings files target false
 
 end ResponseShape
