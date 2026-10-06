@@ -11,3 +11,14 @@ FAILED tests/test_reports_status.py::test_nested_unformalised_kind_reaches_statu
 
 residual: exit=1; test=tests/test_reports.py::test_report_premises_are_in_the_residual
 FAILED tests/test_reports.py::test_report_premises_are_in_the_residual - KeyE...
+
+status text: exit=1; test=tests/test_reports_status.py::test_nested_unformalised_kind_reaches_status_and_residual
+FAILED tests/test_reports_status.py::test_nested_unformalised_kind_reaches_status_and_residual[0]
+FAILED tests/test_reports_status.py::test_nested_unformalised_kind_reaches_status_and_residual[1]
+FAILED tests/test_reports_status.py::test_nested_unformalised_kind_reaches_status_and_residual[2]
+FAILED tests/test_reports_status.py::test_nested_unformalised_kind_reaches_status_and_residual[3]
+FAILED tests/test_reports_status.py::test_nested_unformalised_kind_reaches_status_and_residual[4]
+FAILED tests/test_reports_status.py::test_nested_unformalised_kind_reaches_status_and_residual[5]
+
+bridge diagnostics: exit=1; test=tests/test_reports.py::test_w2_nested_bridge_needs_a_record
+FAILED tests/test_reports.py::test_w2_nested_bridge_needs_a_record - Assertio...
