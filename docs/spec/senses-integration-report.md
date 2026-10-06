@@ -48,6 +48,11 @@ The A and B findings of `manage-agents/senses-review-astra.final.md` (with the D
 - `VE_NATIVE_PREBUILT=1 PATH=$HOME/.elan/bin:$PATH .venv/bin/python -m pytest -q tests/test_senses_route.py` passed after the fixture extension.
 - `tools/lean_statements.py` found no added, removed or changed approved statements.
 - The full clean-HEAD gate runs after this report is committed; its generated JSON is the source for final counts.
+- Fix round, on `73f77922` with a clean tree: `lake build` passed; `python lean/audit.py` PASS (413 source files,
+  4,301 theorems, standard axioms only); the full pytest suite in three file chunks with prebuilt binaries
+  (`VE_NATIVE_PREBUILT=1 VE_LEAN_PREBUILT=1 pytest -n 24`) passed 5,395 + 2,945 + 2,683 tests, 6 skipped, none
+  failed. `tools/gate.py` was not run in this round, so no gate JSON exists for these commits.
+  `tools/trust_map.py --check` fails on unsigned trusted-base growth (above, HUMAN).
 
 ## Seeded bugs
 
@@ -88,4 +93,4 @@ The line numbers refer to `manage-agents/prompts/build-checklist.txt`.
 | 19 | Not applicable to route | No new use-case rule is formalized. B8 use-case measurement remains open. |
 | 20 | Partly done | The final handoff takes test counts from the gate JSON and cites fixture test IDs. Full B6/B7 and measurements are listed as not run. |
 | 21 | Done | Every acceptance row above has AGENT, HUMAN or EXTERNAL ownership and deferred owners. |
-| 22 | Pending final gate | This non-empty report is committed before the full gate on clean HEAD; final status and disk space are recorded in the handoff. |
+| 22 | Done except the gate JSON | Everything is committed; lake build, the audit and the full suite passed on the fix round's HEAD (Verification); 74 GB free; `tools/gate.py` was not run. |
