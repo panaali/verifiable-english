@@ -17,8 +17,7 @@ environment fields; the producer skeleton does not reprove those copied fields.
 
 The skeleton used to keep a field's allowed values only for a field named `status`, so
 `document_status`, `point_status`, the conflict `verdict`s, `gaps` and the discourse `statuses`
-were proved with any value. Extraction now keeps every `enum` and `const` wherever the schema
-declares it (`Skel.ofEnum`: strings as `strIn`, other scalars as `Skel.lit`), and an array or
+were proved with any value. Extraction now keeps every `enum` and `const` that the schema declares on a field (NOT YET inside tagged grammars: the word slots of `common.json`'s `kind` grammar and `reports.json`'s `report_kind` are still treated as any value; listed as an exclusion, DRI 2026-10-06, follow-up) (`Skel.ofEnum`: strings as `strIn`, other scalars as `Skel.lit`), and an array or
 object alternative beside a literal domain keeps that it holds no string, so an `anyOf` of a word
 list and a tagged array (`kinds`) or of `null` and an object (`witness`) keeps its words.
 
