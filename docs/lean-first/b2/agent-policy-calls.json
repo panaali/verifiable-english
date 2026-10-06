@@ -1,0 +1,238 @@
+{
+ "workload": "usecases/agent-policy/check.py base, VE_AUTHORITY=lean, 6 workers; base and head run at the same time",
+ "recorder": "design/lean-first docs/lean-first/hook/sitecustomize.py (its _roundtrip patched to pass batch 2's extra argument)",
+ "base": {
+  "by_kind": {
+   "rust": {
+    "calls": 22533,
+    "wall_s": 113.367,
+    "lean_cpu_s": 0.0,
+    "bytes": 201720416
+   },
+   "service:check": {
+    "calls": 23150,
+    "wall_s": 172.437,
+    "lean_cpu_s": 133.946,
+    "bytes": 216016607
+   },
+   "service:environment": {
+    "calls": 308,
+    "wall_s": 1.574,
+    "lean_cpu_s": 1.237,
+    "bytes": 1994514
+   },
+   "service:model": {
+    "calls": 1261,
+    "wall_s": 8.05,
+    "lean_cpu_s": 6.475,
+    "bytes": 9391310
+   },
+   "service:norms": {
+    "calls": 9702,
+    "wall_s": 69.856,
+    "lean_cpu_s": 45.616,
+    "bytes": 92453970
+   },
+   "service:route": {
+    "calls": 27274,
+    "wall_s": 159.249,
+    "lean_cpu_s": 105.905,
+    "bytes": 222240385
+   },
+   "spawn": {
+    "calls": 8,
+    "wall_s": 0.392,
+    "lean_cpu_s": 0.0,
+    "bytes": 0
+   }
+  },
+  "by_caller": {
+   "service:check ast.py:lean": {
+    "calls": 23150,
+    "wall_s": 172.437,
+    "lean_cpu_s": 133.946
+   },
+   "rust evaluate.py:rust": {
+    "calls": 22533,
+    "wall_s": 113.367,
+    "lean_cpu_s": 0.0
+   },
+   "service:route evaluate.py:lean": {
+    "calls": 13819,
+    "wall_s": 73.869,
+    "lean_cpu_s": 53.286
+   },
+   "service:route background.py:lean": {
+    "calls": 12199,
+    "wall_s": 61.67,
+    "lean_cpu_s": 31.814
+   },
+   "service:norms evaluate.py:lean": {
+    "calls": 8714,
+    "wall_s": 54.447,
+    "lean_cpu_s": 36.696
+   },
+   "service:model model.py:<lambda>": {
+    "calls": 1261,
+    "wall_s": 8.05,
+    "lean_cpu_s": 6.475
+   },
+   "service:route entailment.py:<lambda>": {
+    "calls": 1256,
+    "wall_s": 23.711,
+    "lean_cpu_s": 20.805
+   },
+   "service:norms background.py:lean": {
+    "calls": 656,
+    "wall_s": 3.796,
+    "lean_cpu_s": 2.089
+   },
+   "service:environment environment.py:<lambda>": {
+    "calls": 308,
+    "wall_s": 1.574,
+    "lean_cpu_s": 1.237
+   },
+   "service:norms norms.py:_lean_regenerated": {
+    "calls": 168,
+    "wall_s": 6.579,
+    "lean_cpu_s": 2.235
+   },
+   "service:norms norms.py:<lambda>": {
+    "calls": 163,
+    "wall_s": 5.025,
+    "lean_cpu_s": 4.588
+   },
+   "spawn environment.py:<lambda>": {
+    "calls": 7,
+    "wall_s": 0.328,
+    "lean_cpu_s": 0.0
+   }
+  },
+  "lean_cpu_s": 293.179,
+  "lean_bytes": 542096786,
+  "rust_wall_s": 113.367,
+  "harness_seconds": 270.4,
+  "time_v": {
+   "user_s": 500.64,
+   "system_s": 81.45,
+   "elapsed": "4:31.02"
+  }
+ },
+ "head": {
+  "by_kind": {
+   "rust": {
+    "calls": 22533,
+    "wall_s": 30.137,
+    "lean_cpu_s": 0.0,
+    "bytes": 201720416
+   },
+   "service:check": {
+    "calls": 23150,
+    "wall_s": 109.233,
+    "lean_cpu_s": 88.699,
+    "bytes": 76005367
+   },
+   "service:environment": {
+    "calls": 308,
+    "wall_s": 1.345,
+    "lean_cpu_s": 1.045,
+    "bytes": 2043178
+   },
+   "service:model": {
+    "calls": 1261,
+    "wall_s": 5.539,
+    "lean_cpu_s": 4.494,
+    "bytes": 2281532
+   },
+   "service:norms": {
+    "calls": 9702,
+    "wall_s": 39.791,
+    "lean_cpu_s": 25.338,
+    "bytes": 32401016
+   },
+   "service:route": {
+    "calls": 27274,
+    "wall_s": 98.468,
+    "lean_cpu_s": 59.241,
+    "bytes": 78491543
+   },
+   "spawn": {
+    "calls": 8,
+    "wall_s": 0.412,
+    "lean_cpu_s": 0.0,
+    "bytes": 0
+   }
+  },
+  "by_caller": {
+   "service:check ast.py:lean": {
+    "calls": 23150,
+    "wall_s": 109.233,
+    "lean_cpu_s": 88.699
+   },
+   "rust evaluate.py:rust": {
+    "calls": 22533,
+    "wall_s": 30.137,
+    "lean_cpu_s": 0.0
+   },
+   "service:route evaluate.py:lean": {
+    "calls": 13819,
+    "wall_s": 41.749,
+    "lean_cpu_s": 30.09
+   },
+   "service:route background.py:lean": {
+    "calls": 12199,
+    "wall_s": 36.307,
+    "lean_cpu_s": 10.421
+   },
+   "service:norms evaluate.py:lean": {
+    "calls": 8714,
+    "wall_s": 26.882,
+    "lean_cpu_s": 18.229
+   },
+   "service:model model.py:<lambda>": {
+    "calls": 1261,
+    "wall_s": 5.539,
+    "lean_cpu_s": 4.494
+   },
+   "service:route entailment.py:<lambda>": {
+    "calls": 1256,
+    "wall_s": 20.412,
+    "lean_cpu_s": 18.73
+   },
+   "service:norms background.py:lean": {
+    "calls": 656,
+    "wall_s": 2.199,
+    "lean_cpu_s": 0.695
+   },
+   "service:environment environment.py:<lambda>": {
+    "calls": 308,
+    "wall_s": 1.345,
+    "lean_cpu_s": 1.045
+   },
+   "service:norms norms.py:_lean_regenerated": {
+    "calls": 168,
+    "wall_s": 5.84,
+    "lean_cpu_s": 2.068
+   },
+   "service:norms norms.py:<lambda>": {
+    "calls": 163,
+    "wall_s": 4.86,
+    "lean_cpu_s": 4.337
+   },
+   "spawn environment.py:<lambda>": {
+    "calls": 7,
+    "wall_s": 0.352,
+    "lean_cpu_s": 0.0
+   }
+  },
+  "lean_cpu_s": 178.817,
+  "lean_bytes": 191222636,
+  "rust_wall_s": 30.137,
+  "harness_seconds": 188.9,
+  "time_v": {
+   "user_s": 429.04,
+   "system_s": 17.45,
+   "elapsed": "3:09.52"
+  }
+ }
+}

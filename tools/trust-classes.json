@@ -6856,6 +6856,7 @@
   },
   "VE/Service/Protocol.lean": {
    "D[V]": [
+    "VE.Service.Handles.expand",
     "VE.Service.Mode.name",
     "VE.Service.Mode.ofName?",
     "VE.Service.bindResults",
@@ -6864,8 +6865,11 @@
     "VE.Service.decodeCases",
     "VE.Service.decodeRequest",
     "VE.Service.decodeString",
+    "VE.Service.expandCases",
     "VE.Service.objectMembers",
     "VE.Service.parseEnglishCases",
+    "VE.Service.register",
+    "VE.Service.registerOne",
     "VE.Service.respond",
     "VE.Service.results"
    ],
@@ -6886,6 +6890,8 @@
    ],
    "G[V]": [
     "VE.Service.Budget",
+    "VE.Service.Handles",
+    "VE.Service.Handles.insert",
     "VE.Service.Mode",
     "VE.Service.Request",
     "VE.Service.Request.budget",
@@ -6894,6 +6900,7 @@
     "VE.Service.codeMembers",
     "VE.Service.coding",
     "VE.Service.englishReported",
+    "VE.Service.handleKey",
     "VE.Service.handleLine",
     "VE.Service.handshake",
     "VE.Service.modes",
@@ -6909,6 +6916,8 @@
     "VE.Service.caseError",
     "VE.Service.lineError",
     "VE.Service.maxCases",
+    "VE.Service.maxHandleBytes",
+    "VE.Service.maxHandles",
     "VE.Service.maxLineBytes",
     "VE.Service.rejectionCode",
     "VE.Service.rejectionCodes",

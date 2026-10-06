@@ -61,7 +61,7 @@ def error : Shape :=
 def handshake : Shape :=
   c "Service.Protocol.handshake: this protocol, every mode and at least the client's limits." [
     obj,
-    .required ["service", "protocol", "modes", "codes", "limits"],
+    .required ["service", "protocol", "modes", "codes", "limits", "handles"],
     closed [
       ("service", constS "ve-lean@1"),
       ("protocol", .const (toJson (2 : Int))),
@@ -78,7 +78,15 @@ def handshake : Shape :=
         closed [
           ("max_line_bytes", n [.type ["integer"], .minimum VE.Service.maxLineBytes]),
           ("max_cases", n [.type ["integer"], .minimum VE.Service.maxCases]),
-          ("json_depth", n [.type ["integer"], .minimum 256])]])]]
+          ("json_depth", n [.type ["integer"], .minimum 256])]]),
+      ("handles", c
+        "Service.Protocol.Handles: the case member naming a handle and the table's bounds, exactly: the client keeps the same table (Handles.insert)."
+        [obj,
+          .required ["member", "max", "max_bytes"],
+          closed [
+            ("member", constS VE.Service.handleKey),
+            ("max", .const (toJson VE.Service.maxHandles)),
+            ("max_bytes", .const (toJson VE.Service.maxHandleBytes))]])]]
 
 def response : Shape :=
   .anyOf [ref "#/$defs/ok", ref "#/$defs/error"]

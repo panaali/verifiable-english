@@ -14,6 +14,26 @@ fn env(unused: bool, constants: bool) -> Environment {
     Environment::from_value(&v).unwrap()
 }
 #[test]
+fn measurement_iterator_uses_the_search_order() {
+    let e = env(false, false);
+    for conclusion in [Formula::Top, Formula::Bottom] {
+        let p = CountermodelProblem::new(&e, vec![], conclusion).unwrap();
+        let searched = find_countermodel(&e, &p, Default::default()).unwrap();
+        let mut candidates = CandidateIterator::new(&e, &p, 2, 0, None).unwrap();
+        let mut checked = 0;
+        let mut witness = None;
+        while let Some(model) = candidates.next_model().unwrap() {
+            checked += 1;
+            if p.check_countermodel(&model, 1_000_000).unwrap().valid {
+                witness = Some(model.to_value());
+                break;
+            }
+        }
+        assert_eq!(checked, searched.models_checked);
+        assert_eq!(witness, searched.model.map(|model| model.to_value()));
+    }
+}
+#[test]
 fn flagged_relation_absent_from_query_is_enumerated() {
     let e = Environment::from_value(&json!({
         "language":"ve.core@0.2", "profiles":["data@0","relational-fol@0"],

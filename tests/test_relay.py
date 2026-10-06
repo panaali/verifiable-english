@@ -366,7 +366,8 @@ def test_the_rust_checker_output_is_read_by_the_same_decoder(tmp_path):
     exe = tmp_path / "rust"
     out = tmp_path / "out.bin"
     out.write_bytes(b'{"id":"0","status":"error","error":"\\ud800"}\n')
-    exe.write_text(f"#!/bin/sh\ncat >/dev/null\ncat '{out}'\nexit 1\n")
+    # One case line in, as the persistent checker reads it (lean-first b2, F6).
+    exe.write_text(f"#!/bin/sh\nhead -n 1 >/dev/null\ncat '{out}'\nexit 1\n")
     exe.chmod(0o755)
     with pytest.raises(CheckerUnavailable, match="malformed"):
         rust_jsonl.run({"id": "0"}, executable=exe, timeout=HANG_TIMEOUT,
@@ -403,20 +404,26 @@ def test_the_rust_checker_output_must_name_its_case(tmp_path):
     no answer, also to a case without an id; Rust echoes `""` for that case."""
     import hashlib
     from ve.backends import rust_jsonl
-    exe, out = tmp_path / "rust", tmp_path / "out.bin"
-    exe.write_text(f"#!/bin/sh\ncat >/dev/null\ncat '{out}'\nexit 1\n")
-    exe.chmod(0o755)
-    run = lambda case: rust_jsonl.run(case, executable=exe, timeout=HANG_TIMEOUT,  # noqa: E731
-                                      expected_sha256=hashlib.sha256(exe.read_bytes()).hexdigest())
     error = {"code": "UnknownSymbol", "message": "UnknownSymbol: x"}
+
+    def run(case, record):
+        # One checker per record: the checker is a persistent process reading one case line (lean-first
+        # b2, F6), and one whose answer file the next record rewrote could still be printing it.
+        directory = tmp_path / str(len(list(tmp_path.iterdir())))
+        directory.mkdir()
+        exe, out = directory / "rust", directory / "out.bin"
+        out.write_text(json.dumps(record) + "\n")
+        exe.write_text(f"#!/bin/sh\nhead -n 1 >/dev/null\ncat '{out}'\nexit 1\n")
+        exe.chmod(0o755)
+        return rust_jsonl.run(case, executable=exe, timeout=HANG_TIMEOUT,
+                              expected_sha256=hashlib.sha256(exe.read_bytes()).hexdigest())
+
     for record, case in (({}, {"kind": "evaluate"}), ({"id": False}, {"id": 0}), ({"id": 0}, {"id": False}),
                          ({"id": None}, {"kind": "evaluate"}), ({"id": "0"}, {"id": 0})):
-        out.write_text(json.dumps({**record, "status": "error", "error": error}) + "\n")
         with pytest.raises(CheckerUnavailable, match=r"malformed Rust response \((id: |missing field id)"):
-            run(case)
-    out.write_text(json.dumps({"id": "", "status": "error", "error": error}) + "\n")
+            run(case, {**record, "status": "error", "error": error})
     with pytest.raises(UnknownSymbol):
-        run({"kind": "evaluate"})
+        run({"kind": "evaluate"}, {"id": "", "status": "error", "error": error})
 
 
 # The relay itself, over a scripted service (the persistent path): the same answers are
