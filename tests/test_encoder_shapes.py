@@ -181,6 +181,7 @@ def test_quantity_select_keeps_the_request_kind(lake, tmp_path):
     """A lower answer must have coordinate; render's amount cannot satisfy the lower selector."""
     assert _passes(lake, tmp_path, _quantity_lower("coordinate"))
     assert not _passes(lake, tmp_path, _quantity_lower("amount"))
+    assert not _passes(lake, tmp_path, _quantity_lower("error"))
 
 
 def _generated_predicate(fields: str) -> str:

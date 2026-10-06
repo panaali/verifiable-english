@@ -972,7 +972,13 @@ def skeletonOf (files : List File) : Nat → Bool → Shape → StateT Extract (
     | .const _ => pure .any
     | .required ks => pure (.obj [] (some .any) ks [])
     | .object ps extra => do
-      let fields ← ps.mapM fun (k, v) => do pure (k, ← go cond v)
+      let fields ← ps.mapM fun (k, v) => do
+        -- Keep the branch discriminator even outside an if/then/else. Other constants
+        -- are outside the field skeleton's scope; dynamic status enums remain data.
+        let statusConst := k == "status" && match v with
+          | .const (.str _) => true
+          | _ => false
+        pure (k, ← go (cond || statusConst) v)
       let extra ← match extra with
         | none => pure (some .any)
         | some (.bool false) => pure none
