@@ -15,11 +15,56 @@ V4's comparison only to name the pair. `project` appends and never chooses: `L`'
 namespace VE.Senses
 open Lean VE.Grammar VE.EnglishGrammar
 
+/-- The number of tokens of the mark that opens a gloss at the start of the tokens: 2 for `(` and
+`meaning`, 5 for a comma and `in the sense of`. -/
+def glossMark : List Tok → Option Nat
+  | .punct "(" _ _ :: .word m _ :: _ => if fold m == "meaning" then some 2 else none
+  | .punct "," _ _ :: .word a _ :: .word b _ :: .word c _ :: .word d _ :: _ =>
+    if fold a == "in" && fold b == "the" && fold c == "sense" && fold d == "of" then some 5 else none
+  | _ => none
+
+/-- Whether the tokens begin with word tokens folding to the parts, in order. -/
+def startsWithParts : List Tok → List String → Bool
+  | _, [] => true
+  | .word x _ :: ts, p :: ps => fold x == p && startsWithParts ts ps
+  | _, _ => false
+
+/-- The tokens after a word token at the start of the tokens that are its gloss's mark and gloss (2.6, R7):
+the fewest, over the senses of `D` with the token as a headword token, whose gloss follows the mark, `)`
+after it for `(`; 0 when no mark follows or no gloss of the head matches. -/
+def glossAfter (D : Dictionary) : List Tok → Nat
+  | .word h _ :: rest =>
+    match glossMark rest with
+    | none => 0
+    | some m =>
+      let lens := (D.senses.filter fun s => s.headwordTokens.contains (fold h)).filterMap fun s =>
+        let ps := partsOf s.gloss
+        let after := rest.drop m
+        if startsWithParts after ps && (m != 2 || match after.drop ps.length with
+            | .punct ")" _ _ :: _ => true
+            | _ => false) then some (m + ps.length) else none
+      match lens with
+      | [] => 0
+      | n :: ns => ns.foldl min n
+  | _ => 0
+
+/-- The tokens of a sentence from index `i`, with their indices, skipping the mark and gloss after a
+glossed head. -/
+def unglossedFrom (D : Dictionary) (i : Nat) : List Tok → List (Nat × Tok)
+  | [] => []
+  | t :: ts => (i, t) :: unglossedFrom D (i + 1 + glossAfter D (t :: ts)) (ts.drop (glossAfter D (t :: ts)))
+termination_by ts => ts.length
+decreasing_by simp only [List.length_drop, List.length_cons]; omega
+
+/-- The tokens of a sentence that are read as written, with their indices: every token but the mark and
+the gloss after a glossed head (2.6, R7). A word inside a gloss is not an occurrence of that word. -/
+def unglossed (D : Dictionary) (w : List Tok) : List (Nat × Tok) := unglossedFrom D 0 w
+
 /-- The words of `D`, in `D`'s order, one of whose senses has a headword token equal to the folded text
-of some word token of `sents`. -/
+of some word token of `sents` outside a gloss. -/
 def usedWords (D : Dictionary) (sents : List (List Tok)) : List String :=
-  let toks := sents.flatMap fun w => w.filterMap fun
-    | .word x _ => some (fold x)
+  let toks := sents.flatMap fun w => (unglossed D w).filterMap fun
+    | (_, .word x _) => some (fold x)
     | _ => none
   D.words.filter fun w => (D.sensesOf w).any fun s => s.headwordTokens.any toks.contains
 

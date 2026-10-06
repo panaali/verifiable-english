@@ -4282,6 +4282,10 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Senses.mem_projectedAliases
 #print axioms VE.Senses.project_extends
 #print axioms VE.Senses.mem_eraseDups_iff
+#print axioms VE.Senses.sum_replicate_nat
+#print axioms VE.Senses.length_choicesOf
+#print axioms VE.Senses.choiceCount_eq
+#print axioms VE.Senses.choiceCount_gt_iff
 #print axioms VE.Senses.readOne_some
 #print axioms VE.Senses.readOne_ok_iff
 #print axioms VE.Senses.grammarFault_none

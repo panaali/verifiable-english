@@ -555,4 +555,46 @@ def glossed : String := "In this document, funny means amusing.\nThe riddle is f
 #guard rs F EJ LJ "In this document, funny means amusing.\u0007\nThe riddle is funny (meaning strange)." ==
   .lexical (.badCharacter 38)
 
+/-! ## Review findings (senses fix round): regression rows -/
+
+/-- The words and candidate counts of the units of an accepted text. -/
+def unitsOf : Out → List (List String × Nat)
+  | .ok us _ _ _ => us.map fun u => (u.unresolved, u.candidates.length)
+  | _ => []
+
+-- Fable B3: a word inside a gloss is not an occurrence of that word (2.6, R7). `funny` 2 glossed `odd thing`:
+-- `odd` is neither used nor unresolved, so the unit opens over `reviewed` alone with two candidates.
+def Fg : Dictionary := Fwith (swap sFunny2 { sFunny2 with gloss := "odd thing" })
+def gThing : String := "Both legacy is reviewed and the riddle is funny (meaning odd thing)."
+#guard Fg.failures [] == []
+#guard usedWords Fg (sentsOf gThing) == ["funny", "reviewed"]
+#guard unitsOf (rs Fg EJs LJs gThing) == [(["reviewed"], 2)]
+-- the comma form, and an inflected headword token (`tell`, of `tells`) inside a gloss
+#guard (sentsOf "Both legacy is reviewed and the riddle is funny, in the sense of odd thing.").map
+  (unresolvedIn Fg ⟨[]⟩) == [["reviewed"]]
+-- `tells` has two senses here, so it has no default and only the gloss could make it unresolved
+def Ft : Dictionary := Fwith fun l => swap sFunny2 { sFunny2 with gloss := "tell apart" } l ++ [sTells2]
+#guard Ft.failures [] == []
+#guard (sentsOf "Both legacy is reviewed and the riddle is funny (meaning tell apart).").map
+  (unresolvedIn Ft ⟨[]⟩) == [["reviewed"]]
+#guard usedWords Ft (sentsOf "Both legacy is reviewed and the riddle is funny (meaning tell apart).") ==
+  ["funny", "reviewed"]
+-- the same words outside a gloss still count, and a gloss that does not close is no gloss
+#guard usedWords Fg (sentsOf "Both the riddle is odd and the riddle is funny (meaning odd thing).") ==
+  ["funny", "odd"]
+#guard usedWords Fg (sentsOf "The riddle is funny (meaning odd thing and more).") == ["funny", "odd"]
+
+-- Astra A1: the cap is checked on the capped product of the sense counts, never on the built choices; 30
+-- words of two senses each (2^30 choices) stop at once with `tooManyCandidates`.
+def manyWords : List String := (List.range 30).map fun i =>
+  "zq" ++ String.singleton (Char.ofNat (97 + i / 26)) ++ String.singleton (Char.ofNat (97 + i % 26))
+def twoSenses (w : String) : List Sense := [(1, "plain kind"), (2, "usual kind")].map fun (i, g) =>
+  ⟨w, i, g, "a sense of " ++ w, ["joke"], "{0} is " ++ w, none⟩
+def F30 : Dictionary := Fwith fun l => l ++ manyWords.flatMap twoSenses
+def many30 : String := "The riddle is " ++ ", ".intercalate manyWords ++ "."
+#guard F30.failures [] == []
+#guard choiceCount F30 candidateCap manyWords == candidateCap + 1
+#guard choiceCount F candidateCap ["funny", "odd"] == 4
+#guard rs F30 EJ LJ many30 == .fault (.tooManyCandidates 0 manyWords)
+
 end VE.Senses.Examples

@@ -25992,6 +25992,16 @@ theorem VE.Senses.candidates_complete
             ∃ c, c ∈ u.candidates ∧ c.choice = choice ∧ c.formula = F ∧ c.mark = m)
   -- uses VE.EnglishGrammar.DState@VE.EnglishGrammar.Syntax VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Reject@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.EnglishGrammar.acts@VE.EnglishGrammar.Actions VE.EnglishGrammar.grammar@VE.EnglishGrammar.Rules VE.EnglishGrammar.instAcceptsTerminalTok@VE.EnglishGrammar.Token VE.EnglishGrammar.instDecidableEqTerminal@VE.EnglishGrammar.Token VE.EnglishGrammar.instDecidableEqTok@VE.EnglishGrammar.Token VE.EnglishGrammar.lex@VE.EnglishGrammar.Lexer VE.EnglishGrammar.meaning@VE.EnglishGrammar.Read VE.EnglishGrammar.typedDocument@VE.EnglishGrammar.Encode VE.Grammar.Outcome.ok@VE.Grammar.Reading VE.Grammar.Outcome@VE.Grammar.Reading VE.Grammar.readSentence@VE.Grammar.Reading VE.Senses.Assignment.extend@VE.Senses.Assignment VE.Senses.Assignment@VE.Senses.Assignment VE.Senses.Candidate.choice@VE.Senses.Read VE.Senses.Candidate.formula@VE.Senses.Read VE.Senses.Candidate.mark@VE.Senses.Read VE.Senses.Candidate@VE.Senses.Read VE.Senses.Dictionary@VE.Senses.Dictionary VE.Senses.Projection.env@VE.Senses.Project VE.Senses.Projection.lexicon@VE.Senses.Project VE.Senses.Projection@VE.Senses.Project VE.Senses.SenseFault@VE.Senses.Preamble VE.Senses.SenseOccurrence@VE.Senses.Read VE.Senses.SenseUnit.candidates@VE.Senses.Read VE.Senses.SenseUnit.unresolved@VE.Senses.Read VE.Senses.SenseUnit@VE.Senses.Read VE.Senses.SensesOutcome.ok@VE.Senses.Read VE.Senses.SensesOutcome@VE.Senses.Read VE.Senses.choicesOf@VE.Senses.Read VE.Senses.project@VE.Senses.Project VE.Senses.readPreamble@VE.Senses.Preamble VE.Senses.readWithSenses@VE.Senses.Read VE.Senses.stateBefore@VE.Senses.Read VE.Senses.usedWords@VE.Senses.Project
   -- expr 1324268618
+theorem VE.Senses.choiceCount_eq
+  ∀ (D : VE.Senses.Dictionary) (cap : Nat) (ws : List String),
+    VE.Senses.choiceCount D cap ws = Min.min (cap + 1) (VE.Senses.choicesOf D ws).length
+  -- uses VE.Senses.Dictionary@VE.Senses.Dictionary VE.Senses.choiceCount@VE.Senses.Read VE.Senses.choicesOf@VE.Senses.Read
+  -- expr 2310853599
+theorem VE.Senses.choiceCount_gt_iff
+  ∀ (D : VE.Senses.Dictionary) (cap : Nat) (ws : List String),
+    VE.Senses.choiceCount D cap ws > cap ↔ (VE.Senses.choicesOf D ws).length > cap
+  -- uses VE.Senses.Dictionary@VE.Senses.Dictionary VE.Senses.choiceCount@VE.Senses.Read VE.Senses.choicesOf@VE.Senses.Read
+  -- expr 3543755589
 theorem VE.Senses.filterMap_of_map_some
   ∀ {α β : Type} {f : α → Option β} {l : List α} {rs : List β},
     List.map f l = List.map Option.some rs → List.filterMap f l = rs
@@ -26004,6 +26014,11 @@ theorem VE.Senses.grammarFault_none
         (VE.EnglishGrammar.grammar P.env P.lexicon).wf = Bool.true
   -- uses VE.EnglishGrammar.GrammarFault@VE.EnglishGrammar.Read VE.EnglishGrammar.Lexicon.valid@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay.mk@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.grammar@VE.EnglishGrammar.Rules VE.Grammar.Grammar.wf@VE.Grammar.Basic VE.Senses.Projection.env@VE.Senses.Project VE.Senses.Projection.lexicon@VE.Senses.Project VE.Senses.Projection@VE.Senses.Project VE.Senses.grammarFault@VE.Senses.Read
   -- expr 3274330051
+theorem VE.Senses.length_choicesOf
+  ∀ (D : VE.Senses.Dictionary) (ws : List String),
+    (VE.Senses.choicesOf D ws).length = List.foldr (fun x1 x2 => x1 * x2) 1 (List.map (fun w => (D.sensesOf w).length) ws)
+  -- uses VE.Senses.Dictionary.sensesOf@VE.Senses.Dictionary VE.Senses.Dictionary@VE.Senses.Dictionary VE.Senses.Sense@VE.Senses.Dictionary VE.Senses.choicesOf@VE.Senses.Read
+  -- expr 3072082077
 theorem VE.Senses.mem_eraseDups_iff
   ∀ {α : Type} [inst : BEq α] [LawfulBEq α] {l : List α} {a : α}, a ∈ l.eraseDups ↔ a ∈ l
   -- uses 
@@ -26260,6 +26275,10 @@ theorem VE.Senses.stateFrom_init
     VE.Senses.stateFrom VE.EnglishGrammar.DState.init units j = VE.Senses.stateBefore units j
   -- uses VE.EnglishGrammar.DState.init@VE.EnglishGrammar.Syntax VE.EnglishGrammar.DState@VE.EnglishGrammar.Syntax VE.Senses.SenseUnit@VE.Senses.Read VE.Senses.stateBefore@VE.Senses.Read VE.Senses.stateFrom@VE.Senses.Read
   -- expr 1382099737
+theorem VE.Senses.sum_replicate_nat
+  ∀ (a n : Nat), (List.replicate a n).sum = a * n
+  -- uses 
+  -- expr 3628465440
 theorem VE.Senses.tryChoice_none
   ∀ {D : VE.Senses.Dictionary} {A : VE.Senses.Assignment} {E : VE.EnglishGrammar.Env} {L : VE.EnglishGrammar.Lexicon}
     {used : List String} {b sentence : Nat} {st : VE.EnglishGrammar.DState} {w : Array VE.EnglishGrammar.Tok} {j : Nat}

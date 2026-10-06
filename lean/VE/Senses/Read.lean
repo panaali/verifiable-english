@@ -55,7 +55,8 @@ inductive SensesOutcome where
   | fault (f : SenseFault)
   | lexical (r : Reject)
   | invalidGrammar (why : GrammarFault)
-  | stopped (index : Nat) (o : Outcome Tok Reject EFormula)
+  /-- `tags` are the rule tags of the grammar that stopped, for the trees of an ambiguity; empty otherwise. -/
+  | stopped (index : Nat) (o : Outcome Tok Reject EFormula) (tags : Array String)
   | illTyped
 
 /-- The public code of a fault (4.1). -/
@@ -83,11 +84,11 @@ def SensesOutcome.statusCode : SensesOutcome → Except String (String × Option
   | .fault f => pure ("rejected", some f.code)
   | .lexical r => pure ("rejected", some r.code)
   | .invalidGrammar _ => pure ("invalidGrammar", some "InvalidGrammar")
-  | .stopped _ .budget => pure ("budget", some "Budget")
-  | .stopped _ .noDerivation => pure ("none", some "NoDerivation")
-  | .stopped _ (.ambiguous _ _) => pure ("many", some "Ambiguous")
-  | .stopped _ (.rejected r) => pure ("rejected", some r.code)
-  | .stopped _ (.ok _ _) => throw "a stopped reading cannot be ok"
+  | .stopped _ .budget _ => pure ("budget", some "Budget")
+  | .stopped _ .noDerivation _ => pure ("none", some "NoDerivation")
+  | .stopped _ (.ambiguous _ _) _ => pure ("many", some "Ambiguous")
+  | .stopped _ (.rejected r) _ => pure ("rejected", some r.code)
+  | .stopped _ (.ok _ _) _ => throw "a stopped reading cannot be ok"
   | .illTyped => pure ("rejected", some "IllTyped")
 
 /-- The most choices an open unit may have. -/
@@ -98,22 +99,20 @@ def choicesOf (D : Dictionary) : List String → List (List (String × Nat))
   | [] => [[]]
   | w :: ws => (D.sensesOf w).flatMap fun s => (choicesOf D ws).map fun c => (w, s.index) :: c
 
-/-- Whether the tokens begin a gloss: `(` and `meaning`, or a comma and `in the sense of`. -/
-def glossFollows : List Tok → Bool
-  | .punct "(" _ _ :: .word m _ :: _ => fold m == "meaning"
-  | .punct "," _ _ :: .word a _ :: .word b _ :: .word c _ :: .word d _ :: _ =>
-    fold a == "in" && fold b == "the" && fold c == "sense" && fold d == "of"
-  | _ => false
+/-- The number of choices of one sense for each of the words, counted up to `cap + 1`: the product of the
+words' sense counts, capped at each word, so that it never builds the choices (`choiceCount_eq`). -/
+def choiceCount (D : Dictionary) (cap : Nat) : List String → Nat
+  | [] => 1
+  | w :: ws => min (cap + 1) ((D.sensesOf w).length * choiceCount D cap ws)
 
 /-- Whether the token at `j` is followed by `(` and `meaning`, or by a comma and `in the sense of`. -/
-def switchedAt (w : List Tok) (j : Nat) : Bool := glossFollows (w.drop (j + 1))
+def switchedAt (w : List Tok) (j : Nat) : Bool := (glossMark (w.drop (j + 1))).isSome
 
-/-- Whether some token of `w` folds to a headword token of `x` and is not switched. -/
+/-- Whether some token of `w` outside a gloss folds to a headword token of `x` and is not switched. -/
 def unswitchedIn (D : Dictionary) (x : String) (w : List Tok) : Bool :=
   let heads := (D.sensesOf x).flatMap (·.headwordTokens)
-  (List.range w.length).any fun j =>
-    match w[j]? with
-    | some (.word t _) => heads.contains (fold t) && !switchedAt w j
+  (unglossed D w).any fun
+    | (j, .word t _) => heads.contains (fold t) && !switchedAt w j
     | _ => false
 
 /-- The used words of one sentence that have no default under `A` and an unswitched occurrence. -/
@@ -281,12 +280,17 @@ outcome for a sentence. -/
 inductive Stop where
   | fault (f : SenseFault)
   | invalidGrammar (why : GrammarFault)
-  | stopped (index : Nat) (o : Outcome Tok Reject EFormula)
+  | stopped (index : Nat) (o : Outcome Tok Reject EFormula) (tags : Array String)
 
 def Stop.outcome : Stop → SensesOutcome
   | .fault f => .fault f
   | .invalidGrammar g => .invalidGrammar g
-  | .stopped i o => .stopped i o
+  | .stopped i o tags => .stopped i o tags
+
+/-- The rule tags of `P`'s grammar when `o` is an ambiguity, whose trees name its rules; empty otherwise. -/
+def tagsOf (P : Projection) : Outcome Tok Reject EFormula → Array String
+  | .ambiguous _ _ => (grammar P.env P.lexicon).rules.map (·.tag)
+  | _ => #[]
 
 /-- One choice for an unresolved sentence: its candidate, its successor state and its occurrences; none
 when the choice is dropped (no derivation, or a formula that does not type); or the outcome that stops. -/
@@ -300,7 +304,7 @@ def tryChoice (D : Dictionary) (A : Assignment) (E : Env) (L : Lexicon) (used : 
     | some g => .error (.invalidGrammar g)
     | none =>
       match readOne P2 st b w with
-      | .error o => .error (.stopped sentence o)
+      | .error o => .error (.stopped sentence o (tagsOf P2 o))
       | .ok none => .ok none
       | .ok (some (t, F, m, st2)) =>
         if typedDocument P2.env [F] then
@@ -327,12 +331,12 @@ def candidatesOf (D : Dictionary) (A : Assignment) (E : Env) (L : Lexicon) (used
 def openUnit (D : Dictionary) (A : Assignment) (E : Env) (L : Lexicon) (used : List String) (b sentence : Nat)
     (st : DState) (w : Array Tok) : Except Stop (SenseUnit × List SenseOccurrence) :=
   let words := unresolvedIn D A w.toList
-  if words.isEmpty then .error (.stopped sentence .noDerivation)
-  else if (choicesOf D words).length > candidateCap then .error (.fault (.tooManyCandidates sentence words))
+  if words.isEmpty then .error (.stopped sentence .noDerivation #[])
+  else if choiceCount D candidateCap words > candidateCap then .error (.fault (.tooManyCandidates sentence words))
   else
     match candidatesOf D A E L used b sentence st w (choicesOf D words) 0 with
     | .error o => .error o
-    | .ok [] => .error (.stopped sentence .noDerivation)
+    | .ok [] => .error (.stopped sentence .noDerivation #[])
     | .ok ((c, st2, occ) :: rest) =>
       match rest.find? (fun x => x.2.1 != st2) with
       | some (_, st3, _) => .error (.fault (.candidatesDiverge sentence words (divergence st2 st3)))
@@ -342,7 +346,7 @@ def openUnit (D : Dictionary) (A : Assignment) (E : Env) (L : Lexicon) (used : L
 def readUnit (D : Dictionary) (A : Assignment) (E : Env) (L : Lexicon) (used : List String) (P : Projection)
     (b sentence : Nat) (st : DState) (w : Array Tok) : Except Stop (SenseUnit × List SenseOccurrence) :=
   match readOne P st b w with
-  | .error o => .error (.stopped sentence o)
+  | .error o => .error (.stopped sentence o (tagsOf P o))
   | .ok (some (t, F, m, st2)) =>
     match quotedSenseOf P t with
     | some word => .error (.fault (.quotedSense sentence word))
@@ -417,6 +421,39 @@ theorem mem_eraseDups_iff {α : Type} [BEq α] [LawfulBEq α] : ∀ {l : List α
         · exact absurd h e
         · exact Or.inr ⟨h, e⟩
 termination_by l => l.length
+
+theorem sum_replicate_nat : ∀ a n : Nat, (List.replicate a n).sum = a * n
+  | 0, _ => by simp
+  | a + 1, n => by rw [List.replicate_succ, List.sum_cons, sum_replicate_nat a n, Nat.succ_mul]; omega
+
+theorem length_choicesOf (D : Dictionary) : ∀ ws : List String,
+    (choicesOf D ws).length = (ws.map fun w => (D.sensesOf w).length).foldr (· * ·) 1
+  | [] => rfl
+  | w :: ws => by
+    simp only [choicesOf, List.length_flatMap, List.length_map, length_choicesOf D ws, List.map_cons,
+      List.foldr_cons, List.map_const', sum_replicate_nat]
+
+/-- The capped count is the number of choices up to `cap + 1`, so `openUnit`'s comparison with
+`candidateCap` is the comparison of 2.6 on the number of choices. -/
+theorem choiceCount_eq (D : Dictionary) (cap : Nat) : ∀ ws : List String,
+    choiceCount D cap ws = min (cap + 1) (choicesOf D ws).length
+  | [] => by simp [choiceCount, choicesOf]
+  | w :: ws => by
+    rw [choiceCount, choiceCount_eq D cap ws, length_choicesOf, length_choicesOf]
+    simp only [List.map_cons, List.foldr_cons]
+    generalize (D.sensesOf w).length = a
+    generalize (ws.map fun w => (D.sensesOf w).length).foldr (· * ·) 1 = n
+    rcases Nat.eq_zero_or_pos a with rfl | ha
+    · simp
+    · by_cases hn : n ≤ cap + 1
+      · rw [Nat.min_eq_right hn]
+      · rw [Nat.min_eq_left (show cap + 1 ≤ n by omega), Nat.min_eq_left (Nat.le_mul_of_pos_left _ ha),
+          Nat.min_eq_left (Nat.le_trans (show cap + 1 ≤ n by omega) (Nat.le_mul_of_pos_left n ha))]
+
+theorem choiceCount_gt_iff (D : Dictionary) (cap : Nat) (ws : List String) :
+    choiceCount D cap ws > cap ↔ (choicesOf D ws).length > cap := by
+  rw [choiceCount_eq]
+  omega
 
 theorem readOne_some {P : Projection} {st : DState} {b : Nat} {w : Array Tok} {t : Tree Tok} {F : EFormula}
     {m : Bool} {st2 : DState} (h : readOne P st b w = .ok (some (t, F, m, st2))) :
