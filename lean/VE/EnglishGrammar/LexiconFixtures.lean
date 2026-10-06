@@ -704,7 +704,7 @@ def envF3 : Env :=
     negatives := [("owns", "{0} does not own {1}"), ("reviewed", "{0} is not reviewed")],
     aliases := [],
     spellings := [("alice", "alice"), ("legacy", "legacy")] } ==
-  ["V2 predicate deployed"]
+  ["V2 predicate deployed", "V3 predicate deployed"]
 -- mutant wordings[0] glue
 #guard failureSet envF
   { nouns := [("person", "person"), ("service", "service")],
@@ -794,7 +794,7 @@ def envF3 : Env :=
     negatives := [("owns", "{0} does not own {1}"), ("reviewed", "{0} is not reviewed")],
     aliases := [],
     spellings := [("alice", "alice"), ("legacy", "legacy")] } ==
-  ["V2 predicate owns", "V5 negative owns"]
+  ["V2 predicate owns", "V3 predicate owns", "V5 negative owns"]
 -- mutant wordings[1] glue
 #guard failureSet envF
   { nouns := [("person", "person"), ("service", "service")],
@@ -884,7 +884,7 @@ def envF3 : Env :=
     negatives := [("owns", "{0} does not own {1}"), ("reviewed", "{0} is not reviewed")],
     aliases := [],
     spellings := [("alice", "alice"), ("legacy", "legacy")] } ==
-  ["V2 predicate reviewed", "V5 negative reviewed"]
+  ["V2 predicate reviewed", "V3 predicate reviewed", "V5 negative reviewed"]
 -- mutant wordings[2] glue
 #guard failureSet envF
   { nouns := [("person", "person"), ("service", "service")],
@@ -983,7 +983,7 @@ def envF3 : Env :=
     negatives := [("owns", "{0}\u00A0 DOES NOT OWN {1}"), ("reviewed", "{0} is not reviewed")],
     aliases := [],
     spellings := [("alice", "alice"), ("legacy", "legacy")] } ==
-  ["V2 negative owns", "V5 negative owns"]
+  ["V2 negative owns", "V3 negative owns", "V5 negative owns"]
 -- mutant negatives[0] glue
 #guard failureSet envF
   { nouns := [("person", "person"), ("service", "service")],
@@ -1073,7 +1073,7 @@ def envF3 : Env :=
     negatives := [("owns", "{0} does not own {1}"), ("reviewed", "{0}\u00A0 IS NOT REVIEWED")],
     aliases := [],
     spellings := [("alice", "alice"), ("legacy", "legacy")] } ==
-  ["V2 negative reviewed", "V5 negative reviewed"]
+  ["V2 negative reviewed", "V3 negative reviewed", "V5 negative reviewed"]
 -- mutant negatives[1] glue
 #guard failureSet envF
   { nouns := [("person", "person"), ("service", "service")],
@@ -1370,7 +1370,7 @@ def envF3 : Env :=
     negatives := [("owns", "{0} does not own {1}")],
     aliases := [],
     spellings := [("alice", "alice"), ("legacy", "legacy")] } ==
-  ["V2 predicate owns", "V5 negative owns"]
+  ["V2 predicate owns", "V3 predicate owns", "V5 negative owns"]
 -- mutant negatives[0] empty + wordings[1] dup-other
 #guard failureSet envF
   { nouns := [("person", "person"), ("service", "service")],
@@ -1442,7 +1442,7 @@ def envF3 : Env :=
     negatives := [("owns", "{0} does not own {1}"), ("reviewed", "{0} is not reviewed")],
     aliases := [],
     spellings := [("alice", "alice"), ("legacy", "legacy")] } ==
-  ["V1 letter person", "V2 predicate reviewed", "V5 negative reviewed"]
+  ["V1 letter person", "V2 predicate reviewed", "V3 predicate reviewed", "V5 negative reviewed"]
 -- mutant letters[1] drop + spellings[1] hole
 #guard failureSet envF
   { nouns := [("person", "person"), ("service", "service")],
@@ -1496,7 +1496,7 @@ def envF3 : Env :=
     negatives := [("owns", "{0} does not own {1}"), ("reviewed", "{0}\u00A0 IS NOT REVIEWED")],
     aliases := [],
     spellings := [("alice", ""), ("legacy", "legacy")] } ==
-  ["V2 constant alice", "V2 negative reviewed", "V5 negative reviewed"]
+  ["V2 constant alice", "V2 negative reviewed", "V3 negative reviewed", "V5 negative reviewed"]
 -- mutant spellings[1] dup + wordings[2] dup-other
 #guard failureSet envF
   { nouns := [("person", "person"), ("service", "service")],
@@ -1523,7 +1523,7 @@ def envF3 : Env :=
     negatives := [("owns", "{0} does not own {1}"), ("reviewed", "{0} is not reviewed")],
     aliases := [],
     spellings := [("alice", "alice"), ("legacy", "legacy")] } ==
-  ["V2 predicate owns", "V5 negative owns"]
+  ["V2 predicate owns", "V3 predicate owns", "V5 negative owns"]
 -- mutant nouns[1] hole + wordings[2] lead-space
 #guard failureSet envF
   { nouns := [("person", "person"), ("service", "service {9}")],
@@ -1622,7 +1622,7 @@ def envF3 : Env :=
     negatives := [("owns", "{0} does not own {1}"), ("reviewed", "{0} is not reviewed")],
     aliases := [],
     spellings := [("alice", "alice"), ("legacy", "legacy"), ("zzz", "zzz")] } ==
-  ["V1 constant zzz", "V2 predicate reviewed", "V5 negative reviewed"]
+  ["V1 constant zzz", "V2 predicate reviewed", "V3 predicate reviewed", "V5 negative reviewed"]
 -- mutant letters[0] steal + nouns[1] lead-space
 #guard failureSet envF
   { nouns := [("person", "person"), ("service", " service")],
@@ -1649,7 +1649,7 @@ def envF3 : Env :=
     negatives := [("owns", "{0} does not own {1}"), ("reviewed", "{0} is not reviewed"), ("reviewed", "{0} is not reviewed")],
     aliases := [],
     spellings := [("alice", "alice"), ("legacy", "legacy")] } ==
-  ["V1 negative reviewed", "V2 predicate owns", "V5 negative owns"]
+  ["V1 negative reviewed", "V2 predicate owns", "V3 predicate owns", "V5 negative owns"]
 -- mutant negatives[0] respace + wordings[2] glue
 #guard failureSet envF
   { nouns := [("person", "person"), ("service", "service")],
@@ -1658,7 +1658,7 @@ def envF3 : Env :=
     negatives := [("owns", "{0}\u00A0 DOES NOT OWN {1}"), ("reviewed", "{0} is not reviewed")],
     aliases := [],
     spellings := [("alice", "alice"), ("legacy", "legacy")] } ==
-  ["V2 negative owns", "V2 predicate reviewed", "V3 predicate reviewed", "V5 negative owns", "V5 negative reviewed"]
+  ["V2 negative owns", "V2 predicate reviewed", "V3 negative owns", "V3 predicate reviewed", "V5 negative owns", "V5 negative reviewed"]
 -- mutant negatives[1] steal + wordings[1] hole
 #guard failureSet envF
   { nouns := [("person", "person"), ("service", "service")],

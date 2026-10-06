@@ -128,14 +128,7 @@
           ],
           "properties": {
             "constants": {"type": "object", "x-equals": "/environment/vocabulary/constants"},
-            "predicates": {
-              "additionalProperties": {
-                "properties": {"arguments": {"$ref": "#/$defs/strings"}},
-                "required": ["arguments"],
-                "type": "object"
-              },
-              "type": "object"
-            },
+            "predicates": {"additionalProperties": {"$ref": "#/$defs/environment_predicate"}, "type": "object"},
             "rights": {"type": "object", "x-equals": "/environment/vocabulary/rights"},
             "soft": {"type": "object", "x-equals": "/environment/vocabulary/soft"},
             "sorts": {"type": "object", "x-equals": "/environment/vocabulary/sorts"}
@@ -147,6 +140,7 @@
       "required": ["language", "profiles", "spec_revision", "vocabulary"],
       "type": "object"
     },
+    "environment_predicate": {"properties": {"arguments": {"$ref": "#/$defs/strings"}}, "required": ["arguments"], "type": "object"},
     "error": {
       "$comment": "A case the runner rejected: the request's id (null if absent) and the message.",
       "additionalProperties": false,
