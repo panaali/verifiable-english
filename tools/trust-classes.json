@@ -706,6 +706,11 @@
     "main"
    ]
   },
+  "SpeechActsMain.lean": {
+   "G[V]": [
+    "main"
+   ]
+  },
   "VE/Alternatives/Admission.lean": {
    "S": [
     "VE.Alternatives.Admission.generated",
@@ -2358,6 +2363,7 @@
     "VE.Discourse.Loader.cutsCharacter",
     "VE.Discourse.Loader.explicitOk",
     "VE.Discourse.Loader.fencesOf",
+    "VE.Discourse.Loader.field",
     "VE.Discourse.Loader.filesOf",
     "VE.Discourse.Loader.formats",
     "VE.Discourse.Loader.isPayload",
@@ -2381,7 +2387,9 @@
     "VE.Discourse.Loader.splitText",
     "VE.Discourse.Loader.statuses",
     "VE.Discourse.Loader.supports",
-    "VE.Discourse.Loader.tupleLe"
+    "VE.Discourse.Loader.tupleLe",
+    "VE.Discourse.Loader.w2SetStatus",
+    "VE.Discourse.Loader.w2Status"
    ],
    "D[R]": [
     "VE.Discourse.Loader.maxDocumentBytes"
@@ -7440,6 +7448,134 @@
     "VE.SpeechActs.Run.replayAnswer",
     "VE.SpeechActs.Run.runCase",
     "VE.SpeechActs.Run.runCaseReported"
+   ]
+  },
+  "VE/SpeechActs/Source/Admission/Run.lean": {
+   "S": [
+    "VE.SpeechActs.Source.Admission.AnswerLeaf",
+    "VE.SpeechActs.Source.Admission.BindingsMatchSourceAndRegeneration",
+    "VE.SpeechActs.Source.Admission.Discharged",
+    "VE.SpeechActs.Source.Admission.NodeAdmitted",
+    "VE.SpeechActs.Source.Admission.PresuppositionLeaf",
+    "VE.SpeechActs.Source.Admission.RecordsSound",
+    "VE.SpeechActs.Source.Admission.ReportAdmitted",
+    "VE.SpeechActs.Source.Admission.answerLabel",
+    "VE.SpeechActs.Source.Admission.answerPremiseClaims",
+    "VE.SpeechActs.Source.Admission.certifiedAnswer",
+    "VE.SpeechActs.Source.Admission.encodeAdmitted",
+    "VE.SpeechActs.Source.Admission.formulaAst",
+    "VE.SpeechActs.Source.Admission.formulaContent",
+    "VE.SpeechActs.Source.Admission.isBinding",
+    "VE.SpeechActs.Source.Admission.latestSets",
+    "VE.SpeechActs.Source.Admission.p0Json",
+    "VE.SpeechActs.Source.Admission.presuppositionLabel",
+    "VE.SpeechActs.Source.Admission.reportedReport"
+   ],
+   "C": [
+    "VE.SpeechActs.Source.Admission.SpeechAdmitted",
+    "VE.SpeechActs.Source.Admission.admitNodes",
+    "VE.SpeechActs.Source.Admission.admitSpeech",
+    "VE.SpeechActs.Source.Admission.instDecidableAnswerLeaf",
+    "VE.SpeechActs.Source.Admission.instDecidableDischarged",
+    "VE.SpeechActs.Source.Admission.instDecidableNodeAdmitted",
+    "VE.SpeechActs.Source.Admission.instDecidablePresuppositionLeaf",
+    "VE.SpeechActs.Source.Admission.otherAssumptions"
+   ],
+   "D[I]": [
+    "VE.SpeechActs.Source.Admission.reportId"
+   ],
+   "G[R]": [
+    "VE.SpeechActs.Source.Admission.nodeDiagnostic",
+    "VE.SpeechActs.Source.admissionPayloadError"
+   ],
+   "G[V]": [
+    "VE.SpeechActs.Source.Admission.SpeechAdmitted.kinds",
+    "VE.SpeechActs.Source.Admission.runAdmission",
+    "VE.SpeechActs.Source.isSourceAdmission",
+    "VE.SpeechActs.Source.main",
+    "VE.SpeechActs.Source.runCase",
+    "VE.SpeechActs.Source.runCaseReported",
+    "VE.SpeechActs.Source.usesSourcePath"
+   ]
+  },
+  "VE/SpeechActs/Source/Run.lean": {
+   "D[V]": [
+    "VE.SpeechActs.Source.SetInfo",
+    "VE.SpeechActs.Source.SourceUnit",
+    "VE.SpeechActs.Source.allowedMetadata",
+    "VE.SpeechActs.Source.answerJson",
+    "VE.SpeechActs.Source.coreUnit",
+    "VE.SpeechActs.Source.countsJson",
+    "VE.SpeechActs.Source.decodeSpeechSource",
+    "VE.SpeechActs.Source.isObj",
+    "VE.SpeechActs.Source.keysOf",
+    "VE.SpeechActs.Source.latestOf",
+    "VE.SpeechActs.Source.nominationKeys",
+    "VE.SpeechActs.Source.ordinary",
+    "VE.SpeechActs.Source.partitionError",
+    "VE.SpeechActs.Source.premiseText",
+    "VE.SpeechActs.Source.queryJson",
+    "VE.SpeechActs.Source.readUnit",
+    "VE.SpeechActs.Source.readUnits",
+    "VE.SpeechActs.Source.readingSets",
+    "VE.SpeechActs.Source.readingsOf",
+    "VE.SpeechActs.Source.recordKeys",
+    "VE.SpeechActs.Source.recordOptional",
+    "VE.SpeechActs.Source.setKeys",
+    "VE.SpeechActs.Source.setOptional",
+    "VE.SpeechActs.Source.speechReadings",
+    "VE.SpeechActs.Source.statusEvidence",
+    "VE.SpeechActs.Source.unitOptional",
+    "VE.SpeechActs.Source.unitRequired"
+   ],
+   "D[I]": [
+    "VE.SpeechActs.Source.SpeechSource.documentId",
+    "VE.SpeechActs.Source.SpeechSource.identityPayload",
+    "VE.SpeechActs.Source.completedModelId"
+   ],
+   "S": [
+    "VE.SpeechActs.Source.Coverage",
+    "VE.SpeechActs.Source.DoneFact",
+    "VE.SpeechActs.Source.Row",
+    "VE.SpeechActs.Source.actVerb",
+    "VE.SpeechActs.Source.coverage",
+    "VE.SpeechActs.Source.doneFact",
+    "VE.SpeechActs.Source.expectedOpenTerm",
+    "VE.SpeechActs.Source.meaningWord",
+    "VE.SpeechActs.Source.reconciles",
+    "VE.SpeechActs.Source.sumBytes",
+    "VE.SpeechActs.Source.totals",
+    "VE.SpeechActs.Source.unitClass",
+    "VE.SpeechActs.Source.unitStatus"
+   ],
+   "G[V]": [
+    "VE.SpeechActs.Source.AnswerRecord",
+    "VE.SpeechActs.Source.Answers",
+    "VE.SpeechActs.Source.Answers.answers",
+    "VE.SpeechActs.Source.Answers.judgments",
+    "VE.SpeechActs.Source.Compliance",
+    "VE.SpeechActs.Source.Compliance.command",
+    "VE.SpeechActs.Source.Compliance.isExternal",
+    "VE.SpeechActs.Source.ExternalRecord",
+    "VE.SpeechActs.Source.GapRecord",
+    "VE.SpeechActs.Source.Judgment",
+    "VE.SpeechActs.Source.Judgment.unit",
+    "VE.SpeechActs.Source.Nomination",
+    "VE.SpeechActs.Source.QueryRecord",
+    "VE.SpeechActs.Source.Record",
+    "VE.SpeechActs.Source.SpeechSource",
+    "VE.SpeechActs.Source.answerRecord",
+    "VE.SpeechActs.Source.answerRecords",
+    "VE.SpeechActs.Source.checkOpenTerms",
+    "VE.SpeechActs.Source.complianceJson",
+    "VE.SpeechActs.Source.complianceRecords",
+    "VE.SpeechActs.Source.externalRecord",
+    "VE.SpeechActs.Source.gapRecord",
+    "VE.SpeechActs.Source.nominationLines",
+    "VE.SpeechActs.Source.queryRecord",
+    "VE.SpeechActs.Source.recordJson",
+    "VE.SpeechActs.Source.report",
+    "VE.SpeechActs.Source.statusText"
    ]
   },
   "VE/SpeechActs/Tree.lean": {
