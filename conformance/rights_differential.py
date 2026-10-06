@@ -204,7 +204,7 @@ def document(seed):
     return raw, units
 
 
-def loaded(raw, units, directory):
+def document_text(raw, units):
     """The rights source as a ve-document, one source unit per content; `u2` is a plain
     exposition unit when the source has a single content, so every citation resolves."""
     contents = [unit for unit in units if "source_units" not in unit]
@@ -219,9 +219,14 @@ def loaded(raw, units, directory):
                  "meaning": "specified", "support": "none",
                  **({"content": deepcopy(contents[index])} if index < len(contents) else {})}
                 for index in range(len(spans))]
+    return "---\n" + json.dumps({"format": "ve-document@1", "environment": deepcopy(raw),
+                                 "units": document}) + "\n---\n" + source
+
+
+def loaded(raw, units, directory):
+    """`load_document` of the source written as `document_text`."""
     path = Path(directory) / "rights.ve.md"
-    path.write_text("---\n" + json.dumps({"format": "ve-document@1", "environment": deepcopy(raw),
-                                          "units": document}) + "\n---\n" + source)
+    path.write_text(document_text(raw, units))
     return load_document(path)
 
 
