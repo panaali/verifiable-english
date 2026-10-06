@@ -338,6 +338,7 @@ module VE.Route.Steps
 module VE.Route.Wire
 module VE.Semantics
 module VE.Senses.Assignment
+module VE.Senses.Decode
 module VE.Senses.Dictionary
 module VE.Senses.Examples
 module VE.Senses.Fixtures
