@@ -373,9 +373,13 @@ def test_outward_rust_dependency_is_rejected(staging):
 @pytest.mark.parametrize("line, token", [
     ("theorem planted : 1 = 1 := by sorry", "sorry"),
     ("theorem planted : 1 = 1 := by admit", "admit"),
+    ("def planted : Nat := by · admit", "admit"),
+    ("def planted : Nat := by case zero => admit", "admit"),
+    ("def planted : Nat := by exact 0 <;> admit", "admit"),
+    ("def planted : Nat := decreasing_by admit", "admit"),
     ("axiom planted : False", "axiom"),
     ("-- a comment still may not say sorry", "sorry"),  # lean/audit.py scans comments too
-], ids=["sorry", "admit", "axiom", "comment"])
+], ids=["sorry", "admit", "bullet admit", "case admit", "chain admit", "decreasing admit", "axiom", "comment"])
 def test_lean_forbidden_tokens_are_rejected(staging, line, token):
     path = "lean/VE/Core/Planted.lean"
     staging.stage(path, f"namespace VE\n\n{line}\n\nend VE\n")
