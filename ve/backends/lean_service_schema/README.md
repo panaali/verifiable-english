@@ -91,11 +91,13 @@ element of an array (every element must resolve).
 | `x-equals: p` | equals the context value at `p`, which must exist |
 | `x-length: p` | an array as long as the context array at `p` |
 | `x-count: p` | the integer length of the context array at `p` |
+| `x-references: {array: a, field: f, in: p}` | every object in the response array at `a` has a string field `f` equal to one member of the context array at `p` |
 | `x-index: true` | the position of the result in the response |
 | `x-digest: true` | the digest of the result's case (`digests[i]` of the request) |
 | `x-zip: {of: p, items: s}` | an array with element `i` valid under `s` with context element `i` of the context array at `p` |
 | `x-case: s` | the context is valid under `s` |
 | `x-select: [{when, then}, ...]` | the first `when` valid for the context selects `then`; none fails |
 | `x-count-where: {array, where, equals}` | the number of elements of `array` valid under `where` equals `equals` |
+| `x-count-presence: {value, equals}` | the integer at `equals` is 0 for a null `value`, and 1 otherwise; both paths must exist |
 | `x-rows: s` | one element per case; element `i` is valid under `s` for result `i` (its case `cases[i]`, position `i` and digest `digests[i]`) |
 | `x-row: true` | valid under the mode's `row` with the context of the enclosing result's case |

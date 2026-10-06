@@ -161,6 +161,42 @@ def test_genuine_responses_are_accepted_by_schema_and_lean(genuine, executables)
     assert set(verdicts) == {"accept"}
 
 
+def test_coverage_unit_binding_and_counts_agree_with_lean(executables, tmp_path):
+    """The generated schema and Lean decoder both reject the review's invented ID and
+    one-cell/zero-count mutants, including the other coverage sections."""
+    from tests.test_alternatives_profile import source
+
+    case = {"id": "coverage", "kind": "alt-elaborate", "environment": source(),
+            "norms": [], "coverage_units": [{
+                "id": "choice", "kind": "asserted", "support": "testimony",
+                "content": ["binary", "available", ["const", "pull"], ["const", "r"]]}]}
+    cases_text = _text([case])
+    with LeanService(executables[0]) as service:
+        _, response = service.exchange("alternatives", cases_text, 1)
+    request = request_context(response["id"], "alternatives", cases_text, 1)
+    good = result(response, 0)["coverage"]
+    assert good["alternatives"]["alternatives_declared"][0]["unit"] == "choice"
+    mutants = []
+    for change in ("unit", "count", "type"):
+        bad = deepcopy(response)
+        coverage = result(bad, 0)["coverage"]
+        if change == "unit":
+            coverage["alternatives"]["alternatives_declared"][0]["unit"] = "invented"
+        elif change == "count":
+            coverage["residual"]["alternatives_declared"] = 0
+        else:
+            coverage["alternatives"]["alternatives_declared"][0]["unit"] = []
+        mutants.append(bad)
+    assert assert_agreement(executables[1], [("alternatives", request, [response, *mutants])]) == [
+        "accept", *[schema_verdict("alternatives", request, bad) for bad in mutants]]
+    assert all(schema_verdict("alternatives", request, bad).startswith("reject") for bad in mutants)
+    for index, bad in enumerate(mutants):
+        location = tmp_path / str(index)
+        location.mkdir()
+        _scripted_rejected(location, "alternatives", case,
+                           deepcopy(result(response, 0)), deepcopy(result(bad, 0)))
+
+
 def test_genuine_responses_satisfy_the_lean_invariants(genuine, executables):
     """What the client leaves to the service holds on everything the service emits."""
     verdicts = lean_verdicts(executables[1], [(m, q, [r]) for m, q, r in genuine], "invariants")
