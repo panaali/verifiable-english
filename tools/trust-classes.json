@@ -4107,7 +4107,8 @@
    ],
    "G[V]": [
     "VE.Norms.Replay.ConflictReplay.conflictFree",
-    "VE.Norms.targets"
+    "VE.Norms.targets",
+    "VE.Norms.targetsOnce"
    ]
   },
   "VE/Norms/Run.lean": {
@@ -4797,31 +4798,6 @@
     "VE.Readings.instDecidableNoSep"
    ]
   },
-  "VE/Readings/Layers.lean": {
-   "G[V]": [
-    "VE.Norms.Layers",
-    "VE.Norms.conflictIn",
-    "VE.Norms.entryTable",
-    "VE.Norms.expAt",
-    "VE.Norms.expEntries",
-    "VE.Norms.expStep",
-    "VE.Norms.layersOf",
-    "VE.Norms.outcomeBaseIn",
-    "VE.Norms.pairConflictIn",
-    "VE.Norms.substIn",
-    "VE.Norms.targetsIn",
-    "VE.Rights.validateRightsOnce",
-    "VE.SoftNorms.checkSoftOnce",
-    "VE.SoftNorms.cohPremiseIn",
-    "VE.SoftNorms.selectsOn",
-    "VE.SoftNorms.softPremisesIn",
-    "VE.SoftNorms.softSemanticCheckOnce",
-    "VE.SoftNorms.validateSoftOnce"
-   ],
-   "G[R]": [
-    "VE.SoftNorms.defaultDecidesOn"
-   ]
-  },
   "VE/Readings/Lines.lean": {
    "S": [
     "VE.Readings.GenKey.tag",
@@ -5321,6 +5297,9 @@
     "VE.Rights.checkBlock",
     "VE.Rights.checkRights",
     "VE.Rights.checkSourceLine"
+   ],
+   "G[V]": [
+    "VE.Rights.validateRightsOnce"
    ]
   },
   "VE/Rights/Distinction.lean": {
@@ -8434,6 +8413,45 @@
   "VE/WireContract/Tables/SoftNorms.lean": {
    "G[V]": [
     "VE.WireContract.Tables.SoftNorms.table"
+   ]
+  },
+  "VE/Norms/LayersOnce.lean": {
+   "G[V]": [
+    "VE.Norms.InFragmentIn",
+    "VE.Norms.InFragmentOnce",
+    "VE.Norms.Layers",
+    "VE.Norms.conflictIn",
+    "VE.Norms.entryTable",
+    "VE.Norms.expAt",
+    "VE.Norms.expEntries",
+    "VE.Norms.expStep",
+    "VE.Norms.layersOf",
+    "VE.Norms.outcomeBaseIn",
+    "VE.Norms.pairConflictIn",
+    "VE.Norms.substIn",
+    "VE.Norms.targetsIn"
+   ]
+  },
+  "VE/Norms/Once.lean": {
+   "G[V]": [
+    "VE.Norms.WellFormedOnce",
+    "VE.Norms.semanticCheckOnce",
+    "VE.Norms.validateOnce"
+   ]
+  },
+  "VE/SoftNorms/Once.lean": {
+   "G[V]": [
+    "VE.SoftNorms.InFragmentOnce",
+    "VE.SoftNorms.WellFormedSoftOnce",
+    "VE.SoftNorms.checkSoftOnce",
+    "VE.SoftNorms.cohPremiseIn",
+    "VE.SoftNorms.selectsOn",
+    "VE.SoftNorms.softPremisesIn",
+    "VE.SoftNorms.softSemanticCheckOnce",
+    "VE.SoftNorms.validateSoftOnce"
+   ],
+   "G[R]": [
+    "VE.SoftNorms.defaultDecidesOn"
    ]
   }
  }
