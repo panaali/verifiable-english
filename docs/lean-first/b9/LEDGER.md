@@ -7,7 +7,7 @@ Gate item 3 of `docs/LEAN-FIRST-PLAN.md` 5.1. Base `9aaf918d`, head `lean-first/
 
 | Language | Deleted | Added | What |
 |---|---:|---:|---|
-| Python `ve/` | 599 | 87 | `quantity_admission.py` (318); `units.py` elaborator and certificate/countermodel bodies (253 − 35); W6 validator calls in `environment.py` (18 − 42, the relay gate added); W6 branches in `admission.py` (10 − 10) |
+| Python `ve/` | 605 | 167 | `quantity_admission.py` (318); `units.py` elaborator and certificate/countermodel bodies (253 − 35); W6 validator calls in `environment.py` (18 − 42, the relay gate added); W6 branches in `admission.py` (10 − 10); the transport check of review B (`environment_wire.py`, `relay.py`, `rust_jsonl.py`: 6 − 80) |
 | Rust | 1,021 | 19 | `ve-profile/src/units.rs` (922), `ve-core/tests/units.rs` (93), re-exports and dispatch; the refusal and its test added |
 | Lean | 0 | 22 | the `check` mode's W6 branch (`VE/Service/Standalone.lean`, 10) and its row shape (`ResponseShape/Schemas/Check.lean`, 12); `check.json` is generated from it |
 

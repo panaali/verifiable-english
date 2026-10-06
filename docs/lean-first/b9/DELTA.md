@@ -25,6 +25,22 @@ Base `9aaf918d` (main after batch 2), head `lean-first/b9`. Row 9 of `docs/LEAN-
   quantity surface (`tools/difffuzz.py` `ROUTES["quantity"].no_rust`).
 - **Limits stay Lean's.** The replay step limit is not sent by the client:
   `check_quantity_certificate` lost its `max_steps` argument (only one test passed it).
+- **Transport check (review B).** The W6 relays sent the caller's data to Lean with no wire check: a lone
+  surrogate escaped as `UnicodeEncodeError`, a set or bytes as `TypeError`, and `json` sent a tuple
+  formula as a list, so it was admitted. Every checker transport now runs one check,
+  `ve.environment_wire.wire_checked`, before encoding: `relay.decide`, `relay.rows` (every Lean service
+  call, not only W6's) and `rust_jsonl.run`. The check rejects with `ve.wire`'s texts exactly the values
+  `json` cannot send as themselves: a lone surrogate, a set, bytes, a tuple, another type, a non-string
+  key, a non-finite float, a cycle, or nesting past 10,000 levels, where the encoder's C stack overflows.
+  The walk is iterative. JSON values that are off the restricted subset (null, a float, a negative or
+  over-range integer, depth past 256) are still sent. Lean decides them in its own words (R9). The
+  review's suggested `canonical_json` would have pre-empted Lean on those, including signed row W9.3. No
+  case of the quantity corpus (12,863) or the discourse corpus (3,175) is rejected by the check, and it
+  returns its input unchanged, so the corpus A/B cannot change. One internal caller sent a tuple: the
+  norm-defaults conformance harness's conflict witness filling, now `filling_json` (the same bytes).
+  Tests: `tests/test_relay_wire_check.py` (every W6 entry point × unsendable and wrong-shaped values,
+  every formula node replaced, the CLI's `check_document` reproduction, both transports, the 256 and
+  10,000 depth boundaries); seeded bug M6.
 
 ## Gate 5.1
 
@@ -145,6 +161,10 @@ each (`evidence/mutants.txt`).
 | M3 | a W6 environment is admitted by Lean before Python constructs it | the relay gate never fires | `test_units_relay_w6a.py::test_every_display_collision_class_rejects` |
 | M4 | an exhausted certificate replay is `ResourceLimit`, never `false` | the relay maps `ResourceLimit` to `False` | `test_w6a_certificate_steps.py::test_quantity_certificates_share_the_step_budget[12-False]` |
 | M5 | Rust refuses a quantity case | `ve conformance` answers `ok` | `quantity_tests::quantity_cases_are_the_lean_routes` (cargo) |
+| M6 | every transport sends only values `json` writes as themselves | `wire_checked` returns its input unchecked | `test_relay_wire_check.py::test_document_check_of_a_file_with_a_lone_surrogate_is_the_wires_veerror`, `::test_a_tuple_formula_is_not_admitted_as_a_list` |
+
+M6 was added for review B and run alone (`mutants.py M6`); its block is appended to `evidence/mutants.txt`.
+`test_every_seeded_bug_was_caught` takes the seed list from `mutants.py`.
 
 ## Acceptance items
 
