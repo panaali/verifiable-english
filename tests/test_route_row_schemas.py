@@ -296,7 +296,13 @@ def test_the_reviewed_soft_mutants_raise_checker_unavailable(tmp_path, monkeypat
     document = _soft_document()
     rows = []
     real = relay.decide
-    monkeypatch.setattr("ve.backends.soft_relay.decide", lambda mode, cases: rows.extend(real(mode, cases)) or rows[-1:])
+    from ve.backends import soft_relay
+    real_once = soft_relay.decide_once
+    def observed_once(mode, case):
+        row = real_once(mode, case)
+        rows.append(row)
+        return row
+    monkeypatch.setattr(soft_relay, "decide_once", observed_once)
     genuine = elaborate_soft_document(document)
     assert genuine["environment_prime"] and rows == [genuine]
     altered = {"drop environment_prime": {k: v for k, v in genuine.items() if k != "environment_prime"},
@@ -304,7 +310,7 @@ def test_the_reviewed_soft_mutants_raise_checker_unavailable(tmp_path, monkeypat
                "no payload": {"id": genuine["id"], "status": "ok"}}[alteration]
     pool = _scripted_pool(tmp_path, "soft-norms", altered)
     monkeypatch.setattr(relay, "_pool", pool)
-    monkeypatch.setattr("ve.backends.soft_relay.decide", real)
+    monkeypatch.setattr(soft_relay, "decide_once", real_once)
     try:
         case = {"id": "soft-elaborate", "kind": "soft-elaborate", "environment": document.env.to_dict(),
                 "norms": [rule.to_dict() for rule in document.rules]}
