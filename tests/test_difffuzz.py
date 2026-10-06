@@ -23,7 +23,8 @@ from tools import difffuzz as df
 from tools import difffuzz_corpus as corpus
 
 ROOT = Path(__file__).resolve().parents[1]
-LEAN_BINARIES = ("ve_conformance", "ve_diagnose", "ve_service", *(r.lean for r in df.ROUTES.values()))
+# The one-shot routes and `ve_diagnose` are service modes since lean-first batch 1 (`df.SERVICE_MODES`).
+LEAN_BINARIES = ("ve_conformance", "ve_service")
 
 
 @pytest.fixture(scope="module")
@@ -333,30 +334,6 @@ def test_every_own_code_route_has_a_python_counterpart_that_agrees_on_its_seeds(
         assert answers["python"]["own"] == answers["lean"]["own"], (seed.id, answers)
 
 
-def _soft_runner(tmp_path, row):
-    """A soft route runner that prints `row` for its case."""
-    script = tmp_path / "soft_route"
-    script.write_text(f"#!{sys.executable}\nimport sys\nsys.stdout.write({json.dumps([row])!r})\nsys.exit(1)\n")
-    script.chmod(0o755)
-    return script
-
-
-def test_the_soft_route_reader_checks_the_code_it_keeps(tmp_path):
-    """The production reader of the same field (`ve.backends.lean.run_soft_case`): the route's code is the
-    rejection's code; a code or a message that is not text is no rejection but CheckerUnavailable. (Which
-    codes are the contract's is checked by the fuzzer: the contract table stays off verdict paths.)"""
-    from ve.backends.lean import run_soft_case
-    from ve.errors import CheckerUnavailable, VEError
-    base = {"id": "x", "status": "error", "error": "InvalidInput: invalid vocabulary"}
-    with pytest.raises(VEError) as raised:
-        run_soft_case(_soft_runner(tmp_path, {**base, "code": "SOFT_INVALID_INPUT"}), {"id": "x"})
-    assert raised.value.code == "SOFT_INVALID_INPUT"
-    for bad in ({**base, "code": 7}, {**base, "code": ""}, {**base, "code": None}, {**base, "code": ["x"]},
-                {**base, "error": 7}):
-        with pytest.raises(CheckerUnavailable):
-            run_soft_case(_soft_runner(tmp_path, bad), {"id": "x"})
-
-
 # ---------------------------------------------------------------- B2: missing answers are findings
 
 def test_python_accepting_an_off_wire_input_is_a_finding(built, monkeypatch):
@@ -435,6 +412,8 @@ def _fake_runner(monkeypatch, answer):
         returncode, stdout = result
         return subprocess.CompletedProcess(command, returncode, stdout, ""), 0.0
     monkeypatch.setattr(df, "run_cpu_bounded", run)
+    # A route's batch is the fake's too, read as a runner's output (not the service's).
+    monkeypatch.setattr(df, "SERVICE_MODES", {})
 
 
 def _invalid_label():
@@ -584,19 +563,6 @@ def test_the_position_row_is_the_service_schemas_case_error():
     assert set(common["case_error_valid"]["properties"]) == {*df.POSITION_ROW, "valid"}
 
 
-def test_the_production_soft_reader_takes_no_code_from_an_unread_case(tmp_path):
-    """The production mirror (`ve.backends.lean.identity_problem`, through `read_rows`): a row named by
-    position that names a code is CheckerUnavailable, not a rejection with that code."""
-    from ve.backends.lean import run_soft_case
-    from ve.errors import CheckerUnavailable, VEError
-    row = {"case_index": 0, "status": "error", "error": "InvalidInput: invalid vocabulary"}
-    with pytest.raises(VEError) as raised:
-        run_soft_case(_soft_runner(tmp_path, row), {"id": "x"})
-    assert raised.value.code != "SOFT_INVALID_INPUT"
-    with pytest.raises(CheckerUnavailable):
-        run_soft_case(_soft_runner(tmp_path, {**row, "code": "SOFT_INVALID_INPUT"}), {"id": "x"})
-
-
 SURROGATE_OUTPUTS = {
     "rust error.code": lambda c: {"id": c["id"], "status": "error", "error": {"code": "\ud800", "message": "m"}},
     "rust error.message": lambda c: {"id": c["id"], "status": "error", "error": {"code": "C", "message": "\udc00"}},
@@ -644,27 +610,17 @@ def test_every_answer_the_fuzzer_keeps_is_json_text():
     assert found == ["no-answer", "python-crash"] and df.signature("toy", seed, found, projected)
 
 
-def test_the_runner_reader_rejects_text_that_is_not_unicode(tmp_path):
+def test_the_runner_reader_rejects_text_that_is_not_unicode():
     """The production mirror: the one reader of runner output (`lean_service._decode_json`, used by the
-    service, the Rust JSONL checker and the one-shot routes that are not read as restricted JSON) rejects a
-    lone surrogate in any value or key, so none reaches a diagnostic."""
-    from ve.backends.lean import run_norm_defaults_cases, run_readings_cases, run_soft_case
+    service, which runs every route since lean-first batch 1, and the Rust JSONL checker) rejects a lone
+    surrogate in any value or key, so none reaches a diagnostic."""
     from ve.backends.lean_service import _decode_json
-    from ve.errors import CheckerUnavailable
     for text in ('"\\ud800"', '["a", ["\\udc00"]]', '{"\\ud800": 1}', '{"a": {"b": "x\\udfff"}}'):
         with pytest.raises(ValueError):
             _decode_json(text)
         with pytest.raises(ValueError):
             _decode_json(text.encode())
     assert _decode_json('{"a": ["\\ud83d\\ude00"]}') == {"a": ["\U0001F600"]}  # a surrogate pair is text
-    row = {"id": "x", "status": "error", "error": "bad \ud800", "code": "SOFT_INVALID_INPUT"}
-    # Output that is not text is no answer (`read_rows`), never a rejection with the route's code.
-    with pytest.raises(CheckerUnavailable) as raised:
-        run_soft_case(_soft_runner(tmp_path, row), {"id": "x"})
-    assert df.unholdable([str(raised.value)]) is None
-    for read in (run_norm_defaults_cases, run_readings_cases):
-        with pytest.raises(CheckerUnavailable):
-            read(_soft_runner(tmp_path, row), [{"id": "x"}])
 
 
 # ---------------------------------------------------------------- B3: coverage
@@ -723,7 +679,7 @@ def test_every_route_is_a_built_lean_executable_with_a_named_rust_path():
     from tools.layer_policy import lean_executables
     executables = lean_executables()
     for name, route in df.ROUTES.items():
-        assert route.lean in executables, name
+        assert route.lean in executables or route.lean in df.SERVICE_MODES, name
         assert (route.rust is None) == bool(route.no_rust), name
         assert route.case is None or "kind" in route.case, name
     routes = {df.lean_route(data) for data in (
@@ -1055,8 +1011,9 @@ def test_every_wire_unit_is_fuzzed_or_included(built):
     seeded = {seed.profile for seed in df.Wire().seeds()}
     assert seeded | included == units
     for unit in units:
-        done, _ = df.run_cpu_bounded([str(df.BIN / "ve_diagnose"), unit, "-"], "[]", df.BATCH_CPU, env=df.CHILD_ENV)
-        assert done.returncode == 0, (unit, done.stderr)
+        # The service's `diagnose` mode registers the unit: its row is no `no wire contract` error.
+        [row] = df.service_rows(["ve_diagnose", unit], [{"id": "u"}])
+        assert type(row) is dict and row.get("error") != f"UnsupportedProfile: no wire contract {unit}", (unit, row)
 
 
 def test_every_follow_up_is_documented_and_used():

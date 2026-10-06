@@ -1,0 +1,38 @@
+{
+ "differences": [
+  {
+   "authority": "default",
+   "base": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": "{\n  \"status\": \"CheckerUnavailable\",\n  \"error\": {\n    \"code\": \"CheckerUnavailable\",\n    \"message\": \"ve_readings_route is unavailable\"\n  }\n}\n"
+   },
+   "case": "pilot/udhr-20261003T0600Z:usecases/udhr-pilot/run-20261003T0600Z/translation.ve.md",
+   "class": "verdict",
+   "corpus": "pilots",
+   "head": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": "{\n  \"status\": \"CheckerUnavailable\",\n  \"error\": {\n    \"code\": \"CheckerUnavailable\",\n    \"message\": \"CheckerUnavailable: the Lean service mode readings-route used more than its deadline of 228.599 s of CPU\",\n    \"operation\": \"readings-route\",\n    \"backend\": \"lean\"\n  }\n}\n"
+   },
+   "listed": true,
+   "op": "document_check"
+  }
+ ],
+ "problems": [],
+ "records": {
+  "conformance/lean": 19806,
+  "conformance/python": 19806,
+  "pilots/default": 237,
+  "probe/lean": 9435,
+  "probe/python": 9435
+ },
+ "totals": {
+  "same": 58718,
+  "verdict": 1
+ },
+ "unavailable_both": {
+  "pilots/default": 1
+ },
+ "unlisted": 0
+}

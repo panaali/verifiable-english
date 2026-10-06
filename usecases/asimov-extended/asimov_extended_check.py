@@ -1,7 +1,7 @@
 """Runs VE on every case of the asimov-extended use case and compares with the answer key.
 
 `python usecases/asimov-extended/asimov_extended_check.py` writes `results.json` and prints the
-comparison with `answer-key.json`. VE's Lean route (`ve_risk_route`) decides
+comparison with `answer-key.json`. VE's Lean risk route (service mode `risk`) decides
 every record; the comparison reads the answer key only after every result is
 computed. What runs (PLAN.md sections 7, 8 and 10):
 
@@ -16,11 +16,11 @@ computed. What runs (PLAN.md sections 7, 8 and 10):
 """
 from __future__ import annotations
 
+import atexit
 import json
 import multiprocessing
 import os
 import random
-import subprocess
 import sys
 import time
 from collections import Counter
@@ -35,27 +35,28 @@ import asimov_extended_cases as cases  # noqa: E402
 import asimov_extended_reading as reading  # noqa: E402
 from asimov_extended_cases import HARMS, REPO  # noqa: E402
 from ve.ast import Not, _Decoder  # noqa: E402
+from ve.backends.lean_service import DEFAULT_EXECUTABLE, LeanServicePool  # noqa: E402
 from ve.entailment import prove_entailment  # noqa: E402
 from ve.environment import Environment  # noqa: E402
 from ve.norms import _bind  # noqa: E402
 
-BINARY = REPO / "lean" / ".lake" / "build" / "bin" / "ve_risk_route"
+SERVICE = DEFAULT_EXECUTABLE
 WORKERS = int(os.environ.get("ASIMOV_EXTENDED_WORKERS", min(12, os.cpu_count() or 1)))
+# One Lean service per worker; each starts at its first request.
+POOL = LeanServicePool(size=WORKERS)
+atexit.register(POOL.close)
 CHUNK = 4
 PROVER_STEPS = 20000
 SAMPLE, SEED = 300, 2026
 
 
 def route(batch):
-    out = subprocess.run([str(BINARY), "-"], input=json.dumps(batch), text=True, capture_output=True,
-                         check=False, timeout=3600)
-    if out.returncode != 0 and not out.stdout:
-        raise RuntimeError(out.stderr)
-    return json.loads(out.stdout)
+    """The risk route's rows for `batch` (service mode `risk`), rejections included."""
+    return POOL.run("risk", batch)
 
 
 def run(batch):
-    """Every case through the Lean route, in chunks on parallel processes, results in order."""
+    """Every case through the Lean route, in chunks on the parallel services, results in order."""
     chunks = [batch[i:i + CHUNK] for i in range(0, len(batch), CHUNK)]
     with ThreadPoolExecutor(WORKERS) as pool:
         return [result for chunk in pool.map(route, chunks) for result in chunk]

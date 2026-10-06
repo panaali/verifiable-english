@@ -1,0 +1,371 @@
+{
+  "$id": "norm-defaults.json",
+  "$comment": "Mode norm-defaults: NormDefaults.Run.runCaseReported (formerly ve_norm_defaults_route). A case on the norm-defaults path (usesNormDefaultsPath) is answered by the norm-defaults runner; every other case is delegated unchanged to the norms mode's runner.",
+  "row": {
+    "x-select": [
+      {
+        "then": {
+          "anyOf": [
+            {"$ref": "common.json#/$defs/case_error"},
+            {"$ref": "common.json#/$defs/route_path_error"},
+            {
+              "x-select": [
+                {"then": {"$ref": "common.json#/$defs/admission"}, "when": {"$ref": "#/$defs/kind/admission"}},
+                {
+                  "then": {"anyOf": [{"$ref": "#/$defs/elaborate"}, {"$ref": "#/$defs/layered_elaborate"}]},
+                  "when": {"$ref": "#/$defs/kind/norm-defaults-elaborate"}
+                },
+                {
+                  "then": {"$ref": "common.json#/$defs/witness_conflict"},
+                  "when": {"allOf": [{"$ref": "#/$defs/kind/norm-defaults-conflict"}, {"required": ["witness"]}]}
+                },
+                {
+                  "then": {"$ref": "common.json#/$defs/packages_conflict"},
+                  "when": {"$ref": "#/$defs/kind/norm-defaults-conflict"}
+                },
+                {"then": {"$ref": "#/$defs/status"}, "when": {"$ref": "#/$defs/kind/norm-defaults-status"}},
+                {
+                  "then": {"$ref": "#/$defs/gaps_model"},
+                  "when": {"allOf": [{"$ref": "#/$defs/kind/norm-defaults-gaps"}, {"required": ["model"]}]}
+                },
+                {"then": {"$ref": "#/$defs/gaps"}, "when": {"$ref": "#/$defs/kind/norm-defaults-gaps"}},
+                {
+                  "then": {"$ref": "#/$defs/certificate"},
+                  "when": {"$ref": "#/$defs/kind/norm-defaults-certificate"}
+                },
+                {"then": {"$ref": "#/$defs/report_row"}, "when": {"$ref": "#/$defs/kind/norm-defaults-report"}}
+              ]
+            }
+          ]
+        },
+        "when": {"$ref": "#/$defs/norm_defaults_path"}
+      },
+      {"then": {"$ref": "norms.json#/row"}, "when": true}
+    ]
+  },
+  "$defs": {
+    "base_environment": {
+      "$comment": "NormDefaults.Wire.withUnsaid of SoftNorms.Wire.basePrimeJson or Rights.Wire.basePrimeJsonR: Norms.Replay.baseEnvironmentJson of the request environment, with the decision predicates and the unsaid predicates added.",
+      "additionalProperties": false,
+      "properties": {
+        "language": {"type": "string", "x-equals": "/environment/language"},
+        "profiles": {"$ref": "common.json#/$defs/strings"},
+        "spec_revision": {"type": "string", "x-equals": "/environment/spec_revision"},
+        "vocabulary": {
+          "additionalProperties": false,
+          "properties": {
+            "constants": {"type": "object", "x-equals": "/environment/vocabulary/constants"},
+            "predicates": {
+              "additionalProperties": {
+                "properties": {"arguments": {"$ref": "common.json#/$defs/strings"}},
+                "required": ["arguments"],
+                "type": "object"
+              },
+              "type": "object"
+            },
+            "sorts": {"type": "object", "x-equals": "/environment/vocabulary/sorts"}
+          },
+          "required": ["sorts", "predicates", "constants"],
+          "type": "object"
+        }
+      },
+      "required": ["language", "profiles", "spec_revision", "vocabulary"],
+      "type": "object"
+    },
+    "certificate": {
+      "$comment": "norm-defaults-certificate: the replay's verdict and its premise count.",
+      "additionalProperties": false,
+      "properties": {
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "premises": {"$ref": "common.json#/$defs/nat"},
+        "status": {"const": "ok"},
+        "valid": {"type": "boolean"}
+      },
+      "required": ["id", "status", "valid", "premises"],
+      "type": "object"
+    },
+    "elaborate": {
+      "$comment": "NormDefaults.Wire.regeneratedU: Norms.Wire.regenerated of fill U, then Fill_T, the unspecified predicates, their unsaid predicates, the default-reached targets and the fragment flag of fill U.",
+      "additionalProperties": false,
+      "properties": {
+        "background": {"$ref": "common.json#/$defs/norms_background"},
+        "conflict_targets": {"$ref": "common.json#/$defs/conflict_targets"},
+        "fill": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {"ast": {"$ref": "common.json#/$defs/generated_formula"}, "generator": {"const": "fill"}},
+            "required": ["generator", "ast"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "fragment": {"type": "boolean"},
+        "fragment_fill": {"type": "boolean"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "order": {"$ref": "common.json#/$defs/strings"},
+        "premises": {"$ref": "common.json#/$defs/layer_premises"},
+        "reached": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "ast": {"$ref": "common.json#/$defs/generated_formula"},
+              "predicate": {"type": "string"},
+              "sorts": {"$ref": "common.json#/$defs/strings"}
+            },
+            "required": ["predicate", "sorts", "ast"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "status": {"const": "ok"},
+        "unsaid": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "name": {"pattern": "unsaid__.*", "type": "string"},
+              "sorts": {"$ref": "common.json#/$defs/strings"}
+            },
+            "required": ["name", "sorts"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "unspecified": {"$ref": "common.json#/$defs/strings"}
+      },
+      "required": [
+        "id",
+        "status",
+        "order",
+        "background",
+        "premises",
+        "conflict_targets",
+        "fragment",
+        "fill",
+        "unspecified",
+        "unsaid",
+        "reached",
+        "fragment_fill"
+      ],
+      "type": "object"
+    },
+    "gaps": {
+      "$comment": "norm-defaults-gaps without a model: whether a certificate shows no gap.",
+      "additionalProperties": false,
+      "properties": {
+        "gaps": {"enum": ["none", "unknown"]},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "predicate": {"type": "string", "x-equals": "/predicate"},
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "gaps", "predicate"],
+      "type": "object"
+    },
+    "gaps_model": {
+      "$comment": "norm-defaults-gaps with a model: whether the default is reached in it.",
+      "additionalProperties": false,
+      "properties": {
+        "gaps": {"enum": ["reachable", "unknown"]},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "predicate": {"type": "string", "x-equals": "/predicate"},
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "gaps", "predicate"],
+      "type": "object"
+    },
+    "kind": {
+      "admission": {"properties": {"kind": {"const": "admission"}}, "required": ["kind"], "type": "object"},
+      "norm-defaults-certificate": {"properties": {"kind": {"const": "norm-defaults-certificate"}}, "required": ["kind"], "type": "object"},
+      "norm-defaults-conflict": {"properties": {"kind": {"const": "norm-defaults-conflict"}}, "required": ["kind"], "type": "object"},
+      "norm-defaults-elaborate": {"properties": {"kind": {"const": "norm-defaults-elaborate"}}, "required": ["kind"], "type": "object"},
+      "norm-defaults-gaps": {"properties": {"kind": {"const": "norm-defaults-gaps"}}, "required": ["kind"], "type": "object"},
+      "norm-defaults-report": {"properties": {"kind": {"const": "norm-defaults-report"}}, "required": ["kind"], "type": "object"},
+      "norm-defaults-status": {"properties": {"kind": {"const": "norm-defaults-status"}}, "required": ["kind"], "type": "object"}
+    },
+    "layered_elaborate": {
+      "$comment": "NormDefaults.Wire.layeredElaborate (the soft and rights branches): regeneratedU of fill U, then the soft and rights layer premises of the route's base, its environment id and document hash, and its base environment.",
+      "additionalProperties": false,
+      "properties": {
+        "background": {"$ref": "common.json#/$defs/norms_background"},
+        "base_environment": {"$ref": "#/$defs/base_environment"},
+        "conflict_targets": {"$ref": "common.json#/$defs/conflict_targets"},
+        "document_hash": {"type": "string"},
+        "environment_id": {"type": "string"},
+        "fill": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {"ast": {"$ref": "common.json#/$defs/generated_formula"}, "generator": {"const": "fill"}},
+            "required": ["generator", "ast"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "fragment": {"type": "boolean"},
+        "fragment_fill": {"type": "boolean"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "order": {"$ref": "common.json#/$defs/strings"},
+        "premises": {"$ref": "common.json#/$defs/layer_premises"},
+        "reached": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "ast": {"$ref": "common.json#/$defs/generated_formula"},
+              "predicate": {"type": "string"},
+              "sorts": {"$ref": "common.json#/$defs/strings"}
+            },
+            "required": ["predicate", "sorts", "ast"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "rights": {"$ref": "common.json#/$defs/labelled_list"},
+        "soft": {"$ref": "common.json#/$defs/labelled_list"},
+        "status": {"const": "ok"},
+        "unsaid": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "name": {"pattern": "unsaid__.*", "type": "string"},
+              "sorts": {"$ref": "common.json#/$defs/strings"}
+            },
+            "required": ["name", "sorts"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "unspecified": {"$ref": "common.json#/$defs/strings"}
+      },
+      "required": [
+        "id",
+        "status",
+        "order",
+        "background",
+        "premises",
+        "conflict_targets",
+        "fragment",
+        "fill",
+        "unspecified",
+        "unsaid",
+        "reached",
+        "fragment_fill",
+        "soft",
+        "rights",
+        "environment_id",
+        "document_hash",
+        "base_environment"
+      ],
+      "type": "object"
+    },
+    "norm_defaults_path": {
+      "$comment": "NormDefaults.Run.usesNormDefaultsPath: the norm-defaults@0 profile in a profile list of strings (Wire.hasProfile), a regulated predicate whose default is unspecified (Wire.unspecifiedNames), or a norm-defaults-* kind.",
+      "anyOf": [
+        {
+          "properties": {
+            "environment": {
+              "properties": {
+                "profiles": {"contains": {"const": "norm-defaults@0"}, "items": {"type": "string"}, "type": "array"}
+              },
+              "required": ["profiles"],
+              "type": "object"
+            }
+          },
+          "required": ["environment"]
+        },
+        {
+          "properties": {
+            "environment": {
+              "properties": {
+                "vocabulary": {
+                  "properties": {
+                    "predicates": {
+                      "not": {
+                        "additionalProperties": {
+                          "not": {
+                            "properties": {
+                              "regulated": {
+                                "properties": {"default": {"const": "unspecified"}},
+                                "required": ["default"],
+                                "type": "object"
+                              }
+                            },
+                            "required": ["regulated"],
+                            "type": "object"
+                          }
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "required": ["predicates"],
+                  "type": "object"
+                }
+              },
+              "required": ["vocabulary"],
+              "type": "object"
+            }
+          },
+          "required": ["environment"]
+        },
+        {"properties": {"kind": {"pattern": "norm-defaults-.*", "type": "string"}}, "required": ["kind"]}
+      ],
+      "type": "object"
+    },
+    "report_line": {
+      "$comment": "NormDefaults.Wire.LineU.toJson: one regulated predicate's lines (spec 3.2); `witness` (NormDefaults.Wire.WitnessRow.toJson: the tuple's entity ids and every unsaid table of the checked filled situation) exactly on a reachable line.",
+      "additionalProperties": false,
+      "properties": {
+        "completion": {"enum": ["deny", "allow", "unspecified"]},
+        "inherits_from": {"$ref": "common.json#/$defs/strings"},
+        "lines": {"$ref": "common.json#/$defs/strings"},
+        "predicate": {"type": "string"},
+        "reached": {"enum": ["none", "reachable", "unknown"]},
+        "witness": {
+          "additionalProperties": false,
+          "properties": {
+            "filling": {
+              "additionalProperties": {"items": {"$ref": "common.json#/$defs/strings"}, "type": "array"},
+              "type": "object"
+            },
+            "tuple": {"$ref": "common.json#/$defs/strings"}
+          },
+          "required": ["tuple", "filling"],
+          "type": "object"
+        }
+      },
+      "required": ["predicate", "completion", "reached", "lines", "inherits_from"],
+      "type": "object"
+    },
+    "report_row": {
+      "$comment": "NormDefaults.Wire.ReportG.toJson (norm-defaults-report): the lines of every regulated predicate, the residual and the findings.",
+      "additionalProperties": false,
+      "properties": {
+        "findings": {"$ref": "common.json#/$defs/strings"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "report": {"items": {"$ref": "#/$defs/report_line"}, "type": "array"},
+        "residual": {
+          "additionalProperties": false,
+          "properties": {
+            "gaps": {"$ref": "common.json#/$defs/strings"},
+            "ungrounded_defaults": {"$ref": "common.json#/$defs/nat"}
+          },
+          "required": ["gaps", "ungrounded_defaults"],
+          "type": "object"
+        },
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "report", "residual", "findings"],
+      "type": "object"
+    },
+    "status": {
+      "$comment": "NormDefaults.Run.runOtherCase norm-defaults-status: the requested predicate's point status.",
+      "additionalProperties": false,
+      "properties": {
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "point_status": {"enum": ["SETTLED yes", "SETTLED no", "UNDECIDED", "UNKNOWN"]},
+        "predicate": {"type": "string", "x-equals": "/predicate"},
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "point_status", "predicate"],
+      "type": "object"
+    }
+  }
+}

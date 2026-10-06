@@ -198,3 +198,28 @@ frozen inventory, manifest, trust classes and gate collection regenerated), 17 (
 only), 20 (the tables above are rendered by `report.py` and checked by `tests/test_lean_first_b10a_report.py`), 21
 (tags above), 22 (committed; the suite ran on the head in a clean worktree). Not applicable: 7 to 12, 18, 19 (no
 public operation, deadline, fold, English, entry point, regex, ledger or use case changed).
+
+## Merge of ve-integration (95a97a07)
+
+ve-integration retired the one-shot `ve_norm_defaults_route` executable (the route is the `ve_service` mode
+`norm-defaults`, `ve.norm_defaults_route.run_cases(cases)`) and proves every service row against its closed
+response shape (`lean/ResponseShape`). This batch's kinds now compose with both:
+
+* The harnesses and tests call `run_cases(cases)` without an executable; `conformance/norm_defaults_layered.run()`
+  and `conformance/norm_defaults_report.generated()` lost their executable parameter.
+* `norm-defaults.json` answers `norm-defaults-report` (`report_row`, `report_line`) and the soft and rights
+  branches' `norm-defaults-elaborate` (`layered_elaborate`, `base_environment`); conflict and status rows of the
+  branches already had the norms branch's shapes. `ResponseShape.Encoders.NormDefaults.runLayered_fits` and
+  `line_fits` prove the new rows against them (`firstFailureX_of_not_free`: an `UNKNOWN` verdict has a `detail`).
+* To close the `witness` object the encoder theorems needed its fields, so a line's witness is now the record
+  `WitnessRow` (`tuple`, `filling`) that `witnessRow` builds where `witnessJson` built the JSON; the row bytes are
+  unchanged (`Report.lean`, `Layered.lean`; frozen hashes, decoder pins and trust classes updated).
+* The base environment's predicate declarations are an open object, allowed in `tests/test_route_row_schemas.py`
+  for the same reason as E′'s (they echo the request's, and the caller compares the base environment whole).
+* `tests/data/route-cases.jsonl` gained 8 genuine cases (report with and without a witness on the norms, soft and
+  rights branches; the branches' elaborate), so every answer kind of the schema is reached.
+* `lean/checkers.lock` pins the merged `ve_service` build.
+
+Gap: `timing.py` measured the one-shot `ve_norm_defaults_route` of base and head; on the merged tree that executable
+no longer exists, so its route rows (`evidence/timing-route.json`, `timing.json`) are the pre-merge measurement and
+the script cannot be re-run here without porting it to the service mode.

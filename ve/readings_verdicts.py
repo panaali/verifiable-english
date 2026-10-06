@@ -87,9 +87,9 @@ class _Route:
         self.numbers = {unit["id"]: n for n, unit in enumerate(doc["units"], 1)}
 
     def lean(self, kind, **fields):
-        from .readings_route import lean_timeout, run_lean
+        from .readings_route import run_lean
         [row] = run_lean([{"id": kind, "kind": kind, "environment": self.environment, "document": self.document,
-                           **fields}], timeout=lean_timeout(300.0))
+                           **fields}])
         if row.get("status") != "ok":
             raise CheckerUnavailable(f"ReadingsConformance: Lean refused the {kind} case Python built: "
                                      f"{row.get('error')}")

@@ -1346,6 +1346,7 @@ def test_signed_choice_source_null_is_one_diagnostic(lean):
     # whatever the choice kind.
     # Lean's decoder raises it for `null` too, but the route's frozen JSON boundary rejects every `null` first.
     from test_speech_acts_lean import LEAN
+    from tests import lean_routes
     env = F0()
     for value in (None, 7, [], {}, True):
         for kind, content in [("asserted", {"ast": U("reviewed", "atlas")}), ("question", polar(U("reviewed", "atlas"))),
@@ -1353,8 +1354,7 @@ def test_signed_choice_source_null_is_one_diagnostic(lean):
             document, case = _choice_case(env, value, kind, content)
             assert _outcome(lambda: core(env, document)) == "InvalidInput: speech wording"
             if value is None:
-                completed = subprocess.run([str(LEAN), "-"], input=json.dumps([case]), capture_output=True,
-                                           text=True, timeout=HANG_TIMEOUT)
+                completed = lean_routes.completed(LEAN, [case])
                 assert completed.returncode != 0 and "expected restricted JSON value" in completed.stderr
             else:
                 assert _lean_outcome(run1(case)) == "InvalidInput: speech wording"

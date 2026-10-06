@@ -222,11 +222,11 @@ def layered_search_evidence(doc, bindings, **options):
     return lines, (witnesses, {k: {**v, **bindings} for k, v in packages.items()})
 
 
-def run(executable=route.LEAN_ROUTE):
+def run():
     rows = []
     for name, kind, env, source, situations in fixtures():
         doc = document(kind, env, source)
-        elaborated = route.run_cases([case(kind, env, source, "norm-defaults-elaborate")], executable)[0]
+        elaborated = route.run_cases([case(kind, env, source, "norm-defaults-elaborate")])[0]
         if elaborated.get("status") != "ok":
             rows.append({"fixture": name, "mismatches": [("elaborate", elaborated.get("error"))]})
             continue
@@ -248,7 +248,7 @@ def run(executable=route.LEAN_ROUTE):
         cases.append(case(kind, env, source, "norm-defaults-report", witnesses=witnesses, packages=packages,
                           translation=True))
         expected.append(lines), kinds.append("report")
-        for c, answer, k, row in zip(cases, expected, kinds, route.run_cases(cases, executable)):
+        for c, answer, k, row in zip(cases, expected, kinds, route.run_cases(cases)):
             if row.get("status") != "ok":
                 mismatches.append((k, row.get("error")))
             elif k == "status" and row["point_status"] != answer:

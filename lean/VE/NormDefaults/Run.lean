@@ -2,8 +2,7 @@ import VE.NormDefaults.Layered
 import VE.NormDefaults.Admission
 import VE.Norms.Run
 
-/-! The `ve_norm_defaults_route` executable (docs/spec/norm-defaults.md 3, 6 and 8),
-invoked as `lean/.lake/build/bin/ve_norm_defaults_route <cases.json|->` (root `NormDefaultsMain.lean`). The frozen
+/-! The `ve_service` mode `norm-defaults` (docs/spec/norm-defaults.md 3, 6 and 8), formerly the one-shot `ve_norm_defaults_route`. The frozen
 norms route is unchanged; this executable adds the `norm-defaults@0` branch and
 delegates every other case to it.
 
@@ -211,24 +210,5 @@ def runCaseReported (j : Json) : Json :=
     | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"),
         ("error", .str message)]
   else VE.Norms.Run.runCaseReported j
-
-def main (paths : List String) : IO UInt32 := do
-  let input ← match paths with
-    | [] | ["-"] => (← IO.getStdin).readToEnd
-    | [path] => IO.FS.readFile path
-    | _ =>
-      (← IO.getStderr).putStrLn "usage: ve_norm_defaults_route [cases.json|-]"
-      return 2
-  match VE.JsonInput.parseCases input with
-  | .error message =>
-    (← IO.getStderr).putStrLn message
-    return 2
-  | .ok cases =>
-    let results := cases.mapIdx fun index c => match c with
-      | .ok j => VE.NormDefaults.Run.runCaseReported j
-      | .error message => Json.mkObj [("status", .str "error"),
-          ("case_index", toJson index), ("error", .str message)]
-    (← IO.getStdout).putStrLn (Json.arr results).compress
-    return if results.any (fun r => r.getObjValD "status" == .str "error") then 1 else 0
 
 end VE.NormDefaults.Run

@@ -1,15 +1,10 @@
 """Replay rights reporting through the Lean rights route on source units."""
 from __future__ import annotations
 
-from pathlib import Path
-
 from .ast import _Checker, _to_data, formula_to_data
-from .backends.lean import run_soft_case
+from .backends.relay import decide
 from .errors import VEError
 from .soft_route import check_regenerated, elaborate_soft_document
-
-LEAN_ROUTE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_rights_route"
-
 
 def _wire(value):
     # The restricted Lean JSON input represents optional null fields by omission.
@@ -23,7 +18,7 @@ def _wire(value):
 def run_rights_case(environment, units, kind, **extra):
     case = {"id": kind, "kind": kind, "environment": _wire(environment.to_dict()),
             "document": _wire(units), **extra}
-    return run_soft_case(LEAN_ROUTE, case)
+    return decide("rights", [case])[0]
 
 
 def expected_environment_prime(rights):
@@ -130,5 +125,5 @@ def admit_rights_document(environment, document, rights):
     report_rights(environment, source, rights)
     case = {"id": "admission", "kind": "admission", "environment": environment.to_dict(),
             "document": document}
-    row = run_soft_case(LEAN_ROUTE, _wire(case))
+    row = decide("rights", [_wire(case)])[0]
     return {key: value for key, value in row.items() if key not in ("id", "status")}

@@ -1,0 +1,173 @@
+{
+  "base": "776a64d7",
+  "head": "958547b6",
+  "total": {
+    "cases": 155479,
+    "same": 155477,
+    "different": 0,
+    "by_design": 2,
+    "batches": 2470,
+    "one_shot_cpu": 7528.15,
+    "service_cpu": 7359.98,
+    "one_shot_wall": 10163.67,
+    "service_wall": 14088.05
+  },
+  "modes": {
+    "alternatives": {
+      "cases": 7250,
+      "same": 7250,
+      "different": 0,
+      "by_design": 0,
+      "examples": [],
+      "one_shot_cpu": 24.05,
+      "service_cpu": 15.79,
+      "one_shot_wall": 38.64,
+      "service_wall": 25.17,
+      "batches": 114
+    },
+    "diagnose": {
+      "cases": 3766,
+      "same": 3764,
+      "different": 0,
+      "by_design": 2,
+      "examples": [],
+      "one_shot_cpu": 27.71,
+      "service_cpu": 29.07,
+      "one_shot_wall": 50.3,
+      "service_wall": 94.8,
+      "batches": 69
+    },
+    "discourse": {
+      "cases": 6399,
+      "same": 6399,
+      "different": 0,
+      "by_design": 0,
+      "examples": [],
+      "one_shot_cpu": 25.37,
+      "service_cpu": 18.88,
+      "one_shot_wall": 130.07,
+      "service_wall": 89.0,
+      "batches": 100
+    },
+    "norm-defaults": {
+      "cases": 28008,
+      "same": 28008,
+      "different": 0,
+      "by_design": 0,
+      "examples": [],
+      "one_shot_cpu": 85.62,
+      "service_cpu": 56.61,
+      "one_shot_wall": 122.75,
+      "service_wall": 92.34,
+      "batches": 438
+    },
+    "norms": {
+      "cases": 5474,
+      "same": 5474,
+      "different": 0,
+      "by_design": 0,
+      "examples": [],
+      "one_shot_cpu": 9.52,
+      "service_cpu": 3.19,
+      "one_shot_wall": 18.3,
+      "service_wall": 10.38,
+      "batches": 86
+    },
+    "quantity": {
+      "cases": 31870,
+      "same": 31870,
+      "different": 0,
+      "by_design": 0,
+      "examples": [],
+      "one_shot_cpu": 105.12,
+      "service_cpu": 70.08,
+      "one_shot_wall": 146.3,
+      "service_wall": 144.4,
+      "batches": 512
+    },
+    "readings-route": {
+      "cases": 6649,
+      "same": 6649,
+      "different": 0,
+      "by_design": 0,
+      "examples": [],
+      "one_shot_cpu": 17.95,
+      "service_cpu": 9.04,
+      "one_shot_wall": 121.6,
+      "service_wall": 50.27,
+      "batches": 104
+    },
+    "reports": {
+      "cases": 8265,
+      "same": 8265,
+      "different": 0,
+      "by_design": 0,
+      "examples": [],
+      "one_shot_cpu": 45.68,
+      "service_cpu": 36.04,
+      "one_shot_wall": 73.58,
+      "service_wall": 56.87,
+      "batches": 130
+    },
+    "rights": {
+      "cases": 7355,
+      "same": 7355,
+      "different": 0,
+      "by_design": 0,
+      "examples": [],
+      "one_shot_cpu": 128.04,
+      "service_cpu": 117.75,
+      "one_shot_wall": 175.56,
+      "service_wall": 154.94,
+      "batches": 115
+    },
+    "risk": {
+      "cases": 23120,
+      "same": 23120,
+      "different": 0,
+      "by_design": 0,
+      "examples": [],
+      "one_shot_cpu": 6912.02,
+      "service_cpu": 6874.13,
+      "one_shot_wall": 8933.32,
+      "service_wall": 12973.78,
+      "batches": 362
+    },
+    "risk-eval": {
+      "cases": 203,
+      "same": 203,
+      "different": 0,
+      "by_design": 0,
+      "examples": [],
+      "one_shot_cpu": 0.83,
+      "service_cpu": 0.82,
+      "one_shot_wall": 1.04,
+      "service_wall": 1.61,
+      "batches": 4
+    },
+    "soft-norms": {
+      "cases": 16328,
+      "same": 16328,
+      "different": 0,
+      "by_design": 0,
+      "examples": [],
+      "one_shot_cpu": 122.31,
+      "service_cpu": 115.67,
+      "one_shot_wall": 319.42,
+      "service_wall": 362.98,
+      "batches": 267
+    },
+    "speech-acts": {
+      "cases": 10792,
+      "same": 10792,
+      "different": 0,
+      "by_design": 0,
+      "examples": [],
+      "one_shot_cpu": 23.93,
+      "service_cpu": 12.91,
+      "one_shot_wall": 32.79,
+      "service_wall": 31.51,
+      "batches": 169
+    }
+  }
+}

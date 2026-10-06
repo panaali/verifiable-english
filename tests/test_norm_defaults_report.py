@@ -32,8 +32,8 @@ def _document(name):
     raise KeyError(name)
 
 
-def _run(cases, executable):
-    return route.run_cases(cases, executable)
+def _run(cases):
+    return route.run_cases(cases)
 
 
 def test_report_with_a_situation_is_pythons_line_for_line(lean_executable):
@@ -46,7 +46,7 @@ def test_report_with_a_situation_is_pythons_line_for_line(lean_executable):
             for translation in (False, True):
                 cases.append(report_case(doc, model=raw, translation=translation))
                 expected.append((name, nd.report(doc, model=raw, translation=translation)))
-    rows = _run(cases, lean_executable)
+    rows = _run(cases)
     problems = [(name, compare(lines, row)) for (name, lines), row in zip(expected, rows)]
     assert [p for p in problems if p[1]] == []
     reached = {line.reached for _, lines in expected for line in lines}
@@ -65,7 +65,7 @@ def test_report_replays_pythons_search_evidence(lean_executable):
         lines, evidence = search_evidence(doc, translation=True)
         cases.append(report_case(doc, evidence=evidence, translation=True))
         expected.append((name, lines))
-    rows = _run(cases, lean_executable)
+    rows = _run(cases)
     assert [(name, p) for (name, lines), row in zip(expected, rows) if (p := compare(lines, row))] == []
     reached = {line.reached for _, lines in expected for line in lines}
     assert reached == {"reachable", "none"}
@@ -76,7 +76,7 @@ def test_report_replays_pythons_search_evidence(lean_executable):
 
 def test_without_evidence_every_line_is_unknown(lean_executable):
     doc, _ = _document("u1-allow")
-    (row,) = _run([report_case(doc, translation=True)], lean_executable)
+    (row,) = _run([report_case(doc, translation=True)])
     assert [r["reached"] for r in row["report"]] == ["unknown"]
     # no witness, so no finding: "One without a witness is not flagged" (spec 5)
     assert row["findings"] == [] and row["residual"] == {"gaps": [], "ungrounded_defaults": 0}
@@ -100,7 +100,7 @@ def test_grounding_lines_follow_the_completions_block(lean_executable):
             completions = nd.validate_completions(doc, block, {"u1", "u2"}) if block else None
             wanted.append(python_rows(nd.report(doc, model=situation, translation=translation,
                                                 completions=completions)))
-    rows = _run(cases, lean_executable)
+    rows = _run(cases)
     assert [r["report"] for r in rows] == wanted
     lines = [r["report"][0]["lines"] for r in rows]
     assert lines[0][-1] == f"UngroundedDefault: {CSAM}" and lines[2][-1] == "grounded: u1"
@@ -140,14 +140,14 @@ def test_completions_faults_have_pythons_text(lean_executable, block):
     expected = _completions_fault(doc, block)
     assert expected is not None
     (row,) = _run([report_case(doc, model=situations[0], translation=True, completions=block,
-                               unit_ids=["u1"])], lean_executable)
+                               unit_ids=["u1"])])
     assert (row["status"], row["error"]) == ("error", expected)
 
 
 def test_completions_of_an_unspecified_predicate_cite_nothing(lean_executable):
     doc, situations = _document("u1")
     expected = _completions_fault(doc, {CSAM: GOOD})
-    (row,) = _run([report_case(doc, completions={CSAM: GOOD}, unit_ids=["u1"])], lean_executable)
+    (row,) = _run([report_case(doc, completions={CSAM: GOOD}, unit_ids=["u1"])])
     assert row["error"] == expected == f"InvalidInput: completion of {CSAM} is unspecified and cites nothing"
 
 
@@ -156,7 +156,7 @@ def test_completions_are_read_in_key_order(lean_executable):
     maps). Python reads the block in insertion order; batch 10b lists this as an order change."""
     doc, _ = _document("u5a")
     block = {"x_required": GOOD, "x_permitted": {"cites": [], "reason": "x"}}
-    (row,) = _run([report_case(doc, completions=block, unit_ids=["u1"])], lean_executable)
+    (row,) = _run([report_case(doc, completions=block, unit_ids=["u1"])])
     assert row["error"] == "InvalidInput: invalid completion grounding for x_permitted"
     assert _completions_fault(doc, block) == "InvalidInput: completion of x_required is unspecified and cites nothing"
 
@@ -172,7 +172,7 @@ def test_completions_are_read_in_key_order(lean_executable):
 ])
 def test_case_fields_are_typed(lean_executable, field, value, message):
     doc, _ = _document("u1")
-    (row,) = _run([report_case(doc, **{field: value})], lean_executable)
+    (row,) = _run([report_case(doc, **{field: value})])
     assert (row["status"], row["error"]) == ("error", message)
 
 
@@ -182,7 +182,7 @@ def test_a_situation_table_named_unsaid_is_a_filling(lean_executable):
     model["relations"]["unsaid__" + CSAM] = [["sol0"]]
     with pytest.raises(VEError, match="is a filling"):
         doc.situation(model)
-    (row,) = _run([report_case(doc, model=model)], lean_executable)
+    (row,) = _run([report_case(doc, model=model)])
     assert row["error"] == (f"InvalidModel(norm-defaults): unsaid__{CSAM} is a filling; "
                             "supply it as a filling, not a table")
 
@@ -200,7 +200,7 @@ def test_tampered_evidence_never_becomes_a_line(lean_executable):
     decided = {**good, "tuple": [claude]}
     rows = _run([report_case(doc, evidence=({CSAM: good}, {})),
                  report_case(doc, evidence=({CSAM: decided}, {})),
-                 report_case(doc, evidence=({}, {}))], lean_executable)
+                 report_case(doc, evidence=({}, {}))])
     assert [r["report"][0]["reached"] for r in rows] == ["reachable", "unknown", "unknown"]
 
     # u5c: both members unspecified; the filling (required yes, permitted no) fails Fill_T
@@ -211,7 +211,7 @@ def test_tampered_evidence_never_becomes_a_line(lean_executable):
     bad = deepcopy(witness)
     bad["model"]["relations"]["unsaid__x_required"] = [[e] for e in bad["model"]["domains"]["act"]]
     bad["model"]["relations"]["unsaid__x_permitted"] = []
-    (row,) = _run([report_case(pair, evidence=({predicate: bad}, {}))], lean_executable)
+    (row,) = _run([report_case(pair, evidence=({predicate: bad}, {}))])
     assert (row["status"], row["error"]) == ("error", "InvalidModel(unsaid): the model violates a background premise")
 
     # a certificate proved for one document does not replay on another
@@ -219,7 +219,7 @@ def test_tampered_evidence_never_becomes_a_line(lean_executable):
     _, (_, packages) = search_evidence(never)
     other, _ = _document("u15-unspecified")
     rows = _run([report_case(never, evidence=({}, packages)),
-                 report_case(other, evidence=({}, packages))], lean_executable)
+                 report_case(other, evidence=({}, packages))])
     assert [r["report"][0]["reached"] for r in rows] == ["none", "unknown"]
 
 
@@ -228,7 +228,7 @@ def test_the_atom_budget_bounds_lean_like_python(lean_executable):
     closed cone meets the limit; at seven it exceeds it, so neither side searches it."""
     doc, situations = _document("b2-wide")
     lines = nd.report(doc, model=situations[0])
-    (row,) = _run([report_case(doc, model=situations[0])], lean_executable)
+    (row,) = _run([report_case(doc, model=situations[0])])
     assert compare(lines, row) == []
     env, rules, situation = differential_case(26)
     tight = nd.UnspecifiedDocument(env, rules)
@@ -240,7 +240,7 @@ def test_the_atom_budget_bounds_lean_like_python(lean_executable):
         assert len(cone) == 2 * size
         cases.append(report_case(tight, model=model))
         expected.append(nd.report(tight, model=model))
-    rows = _run(cases, lean_executable)
+    rows = _run(cases)
     assert [compare(lines, row) for lines, row in zip(expected, rows)] == [[], []]
     assert [[entry["reached"] for entry in row["report"] if entry["predicate"] == "x_permitted"]
             for row in rows] == [["reachable"], ["unknown"]]
@@ -249,7 +249,7 @@ def test_the_atom_budget_bounds_lean_like_python(lean_executable):
 def test_predicates_restrict_the_report(lean_executable):
     doc, situations = _document("a1-switch-deny")
     lines = nd.report(doc, model=situations[0], predicates=("p_permitted",))
-    (row,) = _run([report_case(doc, model=situations[0], predicates=["p_permitted"])], lean_executable)
+    (row,) = _run([report_case(doc, model=situations[0], predicates=["p_permitted"])])
     assert compare(lines, row) == [] and len(row["report"]) == 1
 
 
@@ -258,7 +258,7 @@ def test_report_on_generated_trees(lean_executable):
     evidence), as authored and translation documents, some with a `completions` block:
     every report is Python's, line for line."""
     from conformance.norm_defaults_report import generated
-    result = generated(lean_executable)
+    result = generated()
     assert result["mismatches"] == []
     assert result["cases"] == 1200
     counts = result["counts"]
@@ -285,7 +285,7 @@ def test_malformed_fields_are_refused_or_inert(lean_executable):
                   report_case(doc, completions={CSAM: value}, unit_ids=["u1"])]
     models = [{**situations[0], part: value} for part in ("complete", "domains", "constants", "relations")
               for value in MALFORMED] + [value for value in MALFORMED]
-    rows = _run(cases + [report_case(doc, model=m) for m in models], lean_executable)
+    rows = _run(cases + [report_case(doc, model=m) for m in models])
     assert len(rows) == len(cases) + len(models)
     evidence, situated = rows[:len(cases)], rows[len(cases):]
     errors = [r for r in evidence if r["status"] == "error"]

@@ -1,8 +1,7 @@
 import VE.Alternatives.Admission
 import VE.Norms.Run
 
-/-! The `ve_alternatives_route` executable (docs/spec/alternatives.md 7.3), invoked as
-`lean/.lake/build/bin/ve_alternatives_route <cases.json|->`. Each case is
+/-! The `ve_service` mode `alternatives` (docs/spec/alternatives.md 7.3), formerly the one-shot `ve_alternatives_route`. Each case is
 `{"id", "kind", "environment", "norms", "units"?, ...}` with the `alternatives` block in the
 environment and `alternatives@0`, `norms@0` among its profiles.
 
@@ -295,23 +294,5 @@ def runCaseReported (j : Json) : Json :=
     | .ok result => result
     | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)]
   else VE.Norms.Run.runCaseReported j
-
-def main (paths : List String) : IO UInt32 := do
-  let input ← match paths with
-    | [] | ["-"] => (← IO.getStdin).readToEnd
-    | [path] => IO.FS.readFile path
-    | _ =>
-      (← IO.getStderr).putStrLn "usage: ve_alternatives_route [cases.json|-]"
-      return 2
-  match VE.JsonInput.parseCases input with
-  | .error message =>
-    (← IO.getStderr).putStrLn message
-    return 2
-  | .ok cases =>
-    let results := cases.mapIdx fun index c => match c with
-      | .ok j => runCaseReported j
-      | .error message => Json.mkObj [("status", .str "error"), ("case_index", toJson index), ("error", .str message)]
-    (← IO.getStdout).putStrLn (Json.arr results).compress
-    return if results.any (fun r => r.getObjValD "status" == .str "error") then 1 else 0
 
 end VE.Alternatives.Run

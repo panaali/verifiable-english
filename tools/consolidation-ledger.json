@@ -5,7 +5,7 @@
    "tied": [
     {"module": "VE/Norms/Flagged.lean", "names": "\\.(regTable|regSubst|conflictPy|outcomePy|pairConflictPy|pyTargets|baseEnv|baseBackground|BaseConflictFree)$"},
     {"module": "VE/Service/FamilyNorms.lean", "names": "\\.conflictCase$"}]},
-  {"step": "2a", "title": "Runner theorems", "days": 4, "risk": 1, "adds_est": 30,
+  {"step": "2a", "title": "Runner theorems (2a done)", "days": 4, "risk": 1, "adds_est": 0,
    "tied": [{"module": "VE/Route/Wire.lean", "names": "\\.(runFol|runClosure|runOrder)$"}]},
   {"step": "2b", "title": "Merge the runners", "days": 2, "risk": 2, "adds_est": 0,
    "removed": [{"module": "VE/Core/Wire.lean"}]},

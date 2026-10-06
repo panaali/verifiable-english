@@ -13,6 +13,8 @@ from pathlib import Path
 
 import pytest
 
+from tests import lean_routes
+
 from tests.test_units_lean_w6a import LEAN, lean, rust
 from tests.test_w6a_documents import DELETE, HIGH, LOW, MONEY_LOW, ORDER, doc_env, mutate, q, three_ways
 from ve.admission import AdmissionError
@@ -21,7 +23,7 @@ from ve.errors import VEError
 from ve.units import prove_quantity, quantity_meaning_id
 
 ROOT = Path(__file__).resolve().parents[1]
-pytestmark = pytest.mark.skipif(not LEAN.exists(), reason="build the Lean ve_quantity runner first")
+pytestmark = pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="build the Lean service first")
 
 BRIDGE = "bridge:accepts(fed,u_high)"
 LE = q(["le", ["const", "bp", "low"], ["const", "bp", "high"]])

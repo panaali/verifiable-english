@@ -1,0 +1,497 @@
+{
+  "$id": "readings-route.json",
+  "$comment": "Mode readings-route: Readings.Run.runCaseReported (formerly ve_readings_route). readings-validate, readings-separate and the S2a kinds (Readings.Run.runS2) are the readings runner's; every other case goes, with readings@1 stripped from its profiles, to the runner Compose.dispatch names (rights, soft-norms or norm-defaults, else norms; Readings.Run.runLower). The client does not evaluate Compose.dispatch, so such a row is any of those four modes' rows for the case.",
+  "row": {
+    "x-select": [
+      {
+        "then": {
+          "anyOf": [
+            {"$ref": "common.json#/$defs/case_error"},
+            {"$ref": "common.json#/$defs/route_path_error"},
+            {"$ref": "#/$defs/validate"}
+          ]
+        },
+        "when": {"$ref": "#/$defs/kind/readings-validate"}
+      },
+      {
+        "then": {
+          "anyOf": [
+            {"$ref": "common.json#/$defs/case_error"},
+            {"$ref": "common.json#/$defs/route_path_error"},
+            {"$ref": "#/$defs/separate"}
+          ]
+        },
+        "when": {"$ref": "#/$defs/kind/readings-separate"}
+      },
+      {
+        "then": {
+          "anyOf": [
+            {"$ref": "common.json#/$defs/case_error"},
+            {"$ref": "common.json#/$defs/route_path_error"},
+            {"$ref": "#/$defs/elaborate"}
+          ]
+        },
+        "when": {"$ref": "#/$defs/kind/readings-elaborate"}
+      },
+      {
+        "then": {
+          "anyOf": [
+            {"$ref": "common.json#/$defs/case_error"},
+            {"$ref": "common.json#/$defs/route_path_error"},
+            {"$ref": "#/$defs/conflict"}
+          ]
+        },
+        "when": {"$ref": "#/$defs/kind/readings-conflict"}
+      },
+      {
+        "then": {
+          "anyOf": [
+            {"$ref": "common.json#/$defs/case_error"},
+            {"$ref": "common.json#/$defs/route_path_error"},
+            {"$ref": "#/$defs/certificate"}
+          ]
+        },
+        "when": {"$ref": "#/$defs/kind/readings-certificate"}
+      },
+      {
+        "then": {
+          "anyOf": [
+            {"$ref": "common.json#/$defs/case_error"},
+            {"$ref": "common.json#/$defs/route_path_error"},
+            {"$ref": "#/$defs/model"}
+          ]
+        },
+        "when": {"$ref": "#/$defs/kind/readings-model"}
+      },
+      {
+        "then": {
+          "anyOf": [
+            {"$ref": "common.json#/$defs/case_error"},
+            {"$ref": "common.json#/$defs/route_path_error"},
+            {"$ref": "#/$defs/dead"}
+          ]
+        },
+        "when": {"$ref": "#/$defs/kind/readings-dead"}
+      },
+      {
+        "then": {
+          "anyOf": [
+            {"$ref": "common.json#/$defs/case_error"},
+            {"$ref": "common.json#/$defs/route_path_error"},
+            {"$ref": "#/$defs/choice_answer"}
+          ]
+        },
+        "when": {"$ref": "#/$defs/kind/readings-choice"}
+      },
+      {
+        "then": {
+          "anyOf": [
+            {"$ref": "rights.json#/row"},
+            {"$ref": "soft-norms.json#/row"},
+            {"$ref": "norm-defaults.json#/row"},
+            {"$ref": "norms.json#/row"}
+          ]
+        },
+        "when": true
+      }
+    ]
+  },
+  "$defs": {
+    "candidate": {
+      "$comment": "Readings.Run.candidateJson: a pending candidate, or its document hash, owned and shared keys and findings.",
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {"id": {"type": "string"}, "index": {"$ref": "common.json#/$defs/nat"}, "pending": {"const": true}},
+          "required": ["id", "index", "pending"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "document_hash": {"$ref": "common.json#/$defs/hex64"},
+            "findings": {"$ref": "common.json#/$defs/nonempty_strings"},
+            "id": {"type": "string"},
+            "index": {"$ref": "common.json#/$defs/nat"},
+            "owned": {"$ref": "#/$defs/keys"},
+            "pending": {"const": false},
+            "shared": {"$ref": "#/$defs/keys"}
+          },
+          "required": ["id", "index", "pending", "document_hash", "owned", "shared", "findings"],
+          "type": "object"
+        }
+      ]
+    },
+    "certificate": {
+      "$comment": "Readings.Run.runCertificate: accepted exactly when the conflict status is certified and the certificate checks.",
+      "additionalProperties": false,
+      "properties": {
+        "accepted": {"type": "boolean"},
+        "assumed": {"$ref": "#/$defs/choice"},
+        "conflict_free": {"type": "boolean"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "reading_premises": {"$ref": "common.json#/$defs/strings"},
+        "status": {"const": "ok"},
+        "valid": {"type": "boolean"}
+      },
+      "required": ["id", "status", "accepted", "conflict_free", "valid", "assumed", "reading_premises"],
+      "type": "object"
+    },
+    "choice": {
+      "$comment": "Readings.choiceJson: per open set the choice takes a reading of, the set and the reading's index.",
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [{"type": "string"}, {"$ref": "common.json#/$defs/nat"}],
+        "type": "array"
+      },
+      "type": "array"
+    },
+    "choice_answer": {
+      "$comment": "Readings.Run.runChoice: the choice, the document hash of its document, the number of its regenerated assertions and the lower route's answer to the inner case; for a certificate kind also the conflict status and acceptance. The inner answer is the lower route's row for the inner case, whose kind is not the request's, so no row shape of a lower mode selects it here: the caller reads it as that route's answer.",
+      "additionalProperties": false,
+      "properties": {
+        "accepted": {"type": "boolean"},
+        "assertions": {"$ref": "common.json#/$defs/nat"},
+        "choice": {"$ref": "#/$defs/choice"},
+        "conflict_free": {"type": "boolean"},
+        "document_hash": {"$ref": "common.json#/$defs/hex64"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "inner": {"$comment": "the lower route's row for the inner case"},
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "choice", "document_hash", "assertions", "inner"],
+      "type": "object"
+    },
+    "conflict": {
+      "$comment": "Readings.Run.runConflict: a witness's verdict on its target with the choice its model encodes, or the conflict status the certificates show under the assumed choice.",
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "assumed": {"$ref": "#/$defs/choice"},
+            "choice": {"$ref": "#/$defs/choice"},
+            "id": {"$ref": "common.json#/$defs/id_ok"},
+            "status": {"const": "ok"},
+            "target": {"type": "string", "x-equals": "/witness/target"},
+            "verdict": {"enum": ["CONFLICT", "UNKNOWN"]}
+          },
+          "required": ["id", "status", "verdict", "target", "assumed", "choice"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "assumed": {"$ref": "#/$defs/choice"},
+            "id": {"$ref": "common.json#/$defs/id_ok"},
+            "reading_premises": {"$ref": "common.json#/$defs/strings"},
+            "status": {"const": "ok"},
+            "targets": {"$ref": "common.json#/$defs/strings"},
+            "verdict": {"enum": ["CONFLICT-FREE", "UNKNOWN"]}
+          },
+          "required": ["id", "status", "verdict", "assumed", "targets", "reading_premises"],
+          "type": "object"
+        }
+      ]
+    },
+    "dead": {
+      "$comment": "Readings.Run.runDead: whether the certificate shows the reading dead (or the readings unsatisfiable), and the finding.",
+      "additionalProperties": false,
+      "properties": {
+        "accepted": {"type": "boolean"},
+        "finding": {
+          "anyOf": [{"type": "null"}, {"pattern": "(ReadingsUnsatisfiable: |DeadReading: ).*", "type": "string"}]
+        },
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "accepted", "finding"],
+      "type": "object"
+    },
+    "elaborate": {
+      "$comment": "Readings.Run.runElaborate (Route.elaborateFields): the route of 1.1; past its first three rows the finding of 1.8, the stale narrowings, the compatible choices (or over the limit) and the number checked; on the superposed route also the choice vocabulary, the units of sup D, the labelled slot, the name map and the sizes. The units and the name map are compared whole with Python's regeneration (ve/readings_route.py elaborate).",
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {"$ref": "common.json#/$defs/id_ok"},
+            "route": {"enum": ["w2", "pending", "abstention"]},
+            "status": {"const": "ok"}
+          },
+          "required": ["id", "status", "route"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "choice_count": {"anyOf": [{"$ref": "common.json#/$defs/nat"}, {"pattern": "over 64", "type": "string"}]},
+            "choices": {"anyOf": [{"items": {"$ref": "#/$defs/choice"}, "type": "array"}, {"const": "over"}]},
+            "choices_checked": {"anyOf": [{"$ref": "common.json#/$defs/nat"}, {"pattern": "over .*", "type": "string"}]},
+            "finding": {
+              "anyOf": [
+                {"type": "null"},
+                {
+                  "additionalProperties": false,
+                  "properties": {"cause": {"type": "string"}, "text": {"$ref": "common.json#/$defs/text"}},
+                  "required": ["text", "cause"],
+                  "type": "object"
+                }
+              ]
+            },
+            "id": {"$ref": "common.json#/$defs/id_ok"},
+            "narrowings_stale": {"$ref": "common.json#/$defs/strings"},
+            "route": {"enum": ["enumerated"]},
+            "status": {"const": "ok"}
+          },
+          "required": ["id", "status", "route", "finding", "narrowings_stale", "choice_count", "choices", "choices_checked"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "choice_count": {"anyOf": [{"$ref": "common.json#/$defs/nat"}, {"pattern": "over 64", "type": "string"}]},
+            "choices": {"anyOf": [{"items": {"$ref": "#/$defs/choice"}, "type": "array"}, {"const": "over"}]},
+            "choices_checked": {"anyOf": [{"$ref": "common.json#/$defs/nat"}, {"pattern": "over .*", "type": "string"}]},
+            "finding": {
+              "anyOf": [
+                {"type": "null"},
+                {
+                  "additionalProperties": false,
+                  "properties": {"cause": {"type": "string"}, "text": {"$ref": "common.json#/$defs/text"}},
+                  "required": ["text", "cause"],
+                  "type": "object"
+                }
+              ]
+            },
+            "id": {"$ref": "common.json#/$defs/id_ok"},
+            "names": {"type": "array"},
+            "narrowings_stale": {"$ref": "common.json#/$defs/strings"},
+            "route": {"enum": ["superposed"]},
+            "sizes": {
+              "additionalProperties": false,
+              "properties": {
+                "limits": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "nodes": {"$ref": "common.json#/$defs/nat"},
+                    "predicates": {"$ref": "common.json#/$defs/nat"},
+                    "sorts": {"$ref": "common.json#/$defs/nat"}
+                  },
+                  "required": ["sorts", "predicates", "nodes"],
+                  "type": "object"
+                },
+                "nodes": {"$ref": "common.json#/$defs/nat"},
+                "predicates": {"$ref": "common.json#/$defs/nat"},
+                "sorts": {"$ref": "common.json#/$defs/nat"}
+              },
+              "required": ["sorts", "predicates", "nodes", "limits"],
+              "type": "object"
+            },
+            "slot": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {"ast": {"$ref": "common.json#/$defs/generated_formula"}, "label": {"type": "string"}},
+                "required": ["label", "ast"],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "status": {"const": "ok"},
+            "units": {"type": "array"},
+            "vocabulary": {
+              "additionalProperties": false,
+              "properties": {
+                "constants": {"additionalProperties": {"type": "string"}, "type": "object"},
+                "predicates": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {"arguments": {"$ref": "common.json#/$defs/strings"}, "name": {"type": "string"}},
+                    "required": ["name", "arguments"],
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "sorts": {"$ref": "common.json#/$defs/strings"}
+              },
+              "required": ["sorts", "constants", "predicates"],
+              "type": "object"
+            }
+          },
+          "required": [
+            "id",
+            "status",
+            "route",
+            "finding",
+            "narrowings_stale",
+            "choice_count",
+            "choices",
+            "choices_checked",
+            "vocabulary",
+            "units",
+            "slot",
+            "names",
+            "sizes"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "key": {
+      "$comment": "Readings.Wire key JSON: one generated key.",
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {"bearer": {"type": "string"}, "excepted": {"type": "string"}},
+          "required": ["excepted"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {"bearer": {"type": "string"}, "off": {"type": "string"}, "party": {"type": "string"}},
+          "required": ["off", "party"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {"higher": {"type": "string"}, "lower": {"type": "string"}, "outweighs": {"type": "string"}},
+          "required": ["outweighs", "lower", "higher"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {"act": {"type": "string"}, "lim": {"type": "string"}},
+          "required": ["lim", "act"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {"act": {"type": "string"}, "cond": {"type": "string"}, "condition": {"type": "string"}},
+          "required": ["cond", "act", "condition"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {"aimed": {"type": "string"}},
+          "required": ["aimed"],
+          "type": "object"
+        }
+      ]
+    },
+    "keys": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {"key": {"$ref": "#/$defs/key"}, "name": {"type": "string"}},
+        "required": ["key", "name"],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "kind": {
+      "readings-certificate": {"properties": {"kind": {"const": "readings-certificate"}}, "required": ["kind"], "type": "object"},
+      "readings-choice": {"properties": {"kind": {"const": "readings-choice"}}, "required": ["kind"], "type": "object"},
+      "readings-conflict": {"properties": {"kind": {"const": "readings-conflict"}}, "required": ["kind"], "type": "object"},
+      "readings-dead": {"properties": {"kind": {"const": "readings-dead"}}, "required": ["kind"], "type": "object"},
+      "readings-elaborate": {"properties": {"kind": {"const": "readings-elaborate"}}, "required": ["kind"], "type": "object"},
+      "readings-model": {"properties": {"kind": {"const": "readings-model"}}, "required": ["kind"], "type": "object"},
+      "readings-separate": {"properties": {"kind": {"const": "readings-separate"}}, "required": ["kind"], "type": "object"},
+      "readings-validate": {"properties": {"kind": {"const": "readings-validate"}}, "required": ["kind"], "type": "object"}
+    },
+    "model": {
+      "$comment": "Readings.Run.runModel: the model's check, the conclusion's value, the first failing premise and the choice it encodes.",
+      "additionalProperties": false,
+      "properties": {
+        "assumed": {"$ref": "#/$defs/choice"},
+        "choice": {"$ref": "#/$defs/choice"},
+        "conclusion_value": {"type": "boolean"},
+        "first_failing": {"type": ["string", "null"]},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "status": {"const": "ok"},
+        "valid": {"type": "boolean"}
+      },
+      "required": ["id", "status", "valid", "conclusion_value", "first_failing", "assumed", "choice"],
+      "type": "object"
+    },
+    "pair": {
+      "$comment": "Readings.Run.pairJson: a separating situation's facts; other_value exactly when the other reading owns no generated key.",
+      "additionalProperties": false,
+      "properties": {
+        "other_admissible": {"type": "boolean"},
+        "other_value": {"type": ["boolean", "null"]},
+        "separated": {"type": "boolean"},
+        "situation": {"type": "string"},
+        "witness": {"type": "string"},
+        "witness_admissible": {"type": "boolean"},
+        "witness_value": {"type": ["boolean", "null"]}
+      },
+      "required": ["situation", "witness", "separated", "witness_admissible", "witness_value", "other_admissible"],
+      "type": "object"
+    },
+    "separate": {
+      "$comment": "Readings.Run.runCase readings-separate: the requested set and situation's pair facts.",
+      "additionalProperties": false,
+      "properties": {
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "pair": {"$ref": "#/$defs/pair", "properties": {"situation": {"x-equals": "/situation"}}},
+        "set": {"type": "string", "x-equals": "/set"},
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "set", "pair"],
+      "type": "object"
+    },
+    "validate": {
+      "$comment": "Readings.Run.validateResult: no content-bearing set, or one entry per content-bearing open set.",
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "content_bearing": {"const": false},
+            "id": {"$ref": "common.json#/$defs/id_ok"},
+            "status": {"const": "ok"}
+          },
+          "required": ["id", "status", "content_bearing"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "content_bearing": {"const": true},
+            "id": {"$ref": "common.json#/$defs/id_ok"},
+            "sets": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "candidates": {"items": {"$ref": "#/$defs/candidate"}, "type": "array"},
+                  "findings": {
+                    "items": {"pattern": "(SeparatedByDecisionOnly: |SeparatedByActOnly: ).*", "type": "string"},
+                    "type": "array"
+                  },
+                  "pairs": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "other": {"type": "string"},
+                        "pair": {"$ref": "#/$defs/pair"},
+                        "reading": {"type": "string"}
+                      },
+                      "required": ["reading", "other", "pair"],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "set": {"type": "string"},
+                  "version": {"$ref": "common.json#/$defs/nat"}
+                },
+                "required": ["set", "version", "candidates", "pairs", "findings"],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "status": {"const": "ok"}
+          },
+          "required": ["id", "status", "content_bearing", "sets"],
+          "type": "object"
+        }
+      ]
+    }
+  }
+}

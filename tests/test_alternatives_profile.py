@@ -102,8 +102,11 @@ def test_route_fails_closed_without_lean(monkeypatch, tmp_path):
     with pytest.raises(CheckerUnavailable, match="Lean checker"):
         run_case(case)
     monkeypatch.delenv("VE_AUTHORITY")
-    with pytest.raises(CheckerUnavailable, match="unavailable"):
-        run_case(case, binary=tmp_path / "absent")
+    from ve.backends import relay
+    from ve.backends.lean_service import LeanServicePool
+    monkeypatch.setattr(relay, "_pool", LeanServicePool(size=1, executable=tmp_path / "absent"))
+    with pytest.raises(CheckerUnavailable, match="missing Lean service executable"):
+        run_case(case)
 
 
 def test_profile_records_are_scoped():

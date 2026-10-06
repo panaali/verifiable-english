@@ -28,7 +28,9 @@ def test_record_names_every_theorem_once():
 def fake_lean(monkeypatch, tmp_path):
     """The audit with the committed record as Lean's output and a temporary record file."""
     output = audit.RECORD.read_text()
-    monkeypatch.setattr(subprocess, 'run', lambda *a, **k: SimpleNamespace(stdout=output, returncode=0))
+    # The whole record is the first manifest's output; the others print nothing.
+    monkeypatch.setattr(subprocess, 'run', lambda command, **k: SimpleNamespace(
+        stdout=output if command[-1] == audit.MANIFESTS[0] else '', returncode=0))
     record = tmp_path / 'axioms.txt'
     monkeypatch.setattr(audit, 'RECORD', record)
     return output, record

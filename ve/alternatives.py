@@ -6,19 +6,15 @@ the original case so Lean can regenerate every premise and binding itself.
 from __future__ import annotations
 
 import os
-from pathlib import Path
 
-from .backends.lean import configured_timeout, run_alternatives_case
+from .backends.relay import rows
 from .errors import CheckerUnavailable, UnsupportedProfile, VEError
 
 _KINDS = frozenset({"alt-elaborate", "alt-validate", "alt-conflict", "alt-followable",
                     "alt-certificate", "admission"})
-_BINARY = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_alternatives_route"
-_ROUTE_TIMEOUT = 180
-
-
-def run_case(case: dict, *, binary: Path | None = None, timeout: float | None = None) -> dict:
-    """Dispatch one raw case; never substitute a Python semantic implementation."""
+def run_case(case: dict, *, timeout: float | None = None) -> dict:
+    """Dispatch one raw case to the Lean alternatives route (service mode `alternatives`); its row,
+    a rejection included. Never substitute a Python semantic implementation."""
     if type(case) is not dict or case.get("kind") not in _KINDS or type(case.get("environment")) is not dict:
         raise VEError("InvalidInput: alternatives route case")
     from .environment import Environment
@@ -27,8 +23,4 @@ def run_case(case: dict, *, binary: Path | None = None, timeout: float | None = 
         raise UnsupportedProfile("alternatives@0 is required")
     if os.environ.get("VE_AUTHORITY") == "python":
         raise CheckerUnavailable("alternatives@0 requires the Lean checker")
-    executable = _BINARY if binary is None else Path(binary)
-    if not executable.is_file():
-        raise CheckerUnavailable("ve_alternatives_route is unavailable")
-    return run_alternatives_case(executable, case,
-                                 timeout=configured_timeout(_ROUTE_TIMEOUT) if timeout is None else timeout)
+    return rows("alternatives", [case], timeout=timeout)[0]

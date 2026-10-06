@@ -239,6 +239,19 @@ structure SituationG (U : UDoc) where
   valid : M.Valid (envAt U.D 0)
   background : backgroundValid U.D M = true
 
+/-- The witness shown with a `reachable` line: the tuple's entity ids and every unsaid
+table of the filled situation, rows sorted (Python `_witness_json`). -/
+structure WitnessRow where
+  tuple : Json
+  filling : List (String × Json)
+
+def WitnessRow.toJson (w : WitnessRow) : Json :=
+  Json.mkObj [("tuple", w.tuple), ("filling", Json.mkObj w.filling)]
+
+def witnessRow (U : UDoc) (M : VE.FiniteModel Entity) (vs : List Entity) : WitnessRow :=
+  ⟨toJson (vs.map (·.2)), U.unspec.map fun p => (unsaidName p,
+    toJson (sortBy (fun a b => decide (a < b)) ((M.relations (unsaidName p)).map (·.map (·.2)))))⟩
+
 /-- What one route gives the report: its document `U`, its extra base premises `X`, how it
 decodes a base situation, how it replays a supplied witness for `r` (`none` when the
 `witnesses` object has no entry for `r` or the entry does not reach `r`), and how it replays
@@ -248,23 +261,16 @@ structure ReportSource where
   X : List VE.Formula
   wfU : WellFormedU U = true
   situation : Json → Except String (SituationG U)
-  supplied : Json → (r : Regulated) → Except String (Option (PLift (ReachedSome U X r) × Json))
+  supplied : Json → (r : Regulated) → Except String (Option (PLift (ReachedSome U X r) × WitnessRow))
   never : (r : Regulated) → Option (PLift (NeverReached.{0} U X r))
 
 /-! ## One line -/
-
-/-- The witness shown with a `reachable` line: the tuple's entity ids and every unsaid
-table of the filled situation, rows sorted (Python `_witness_json`). -/
-def witnessJson (U : UDoc) (M : VE.FiniteModel Entity) (vs : List Entity) : Json :=
-  Json.mkObj [("tuple", toJson (vs.map (·.2))),
-    ("filling", Json.mkObj (U.unspec.map fun p => (unsaidName p,
-      toJson (sortBy (fun a b => decide (a < b)) ((M.relations (unsaidName p)).map (·.map (·.2)))))))]
 
 /-- The lines of one regulated predicate, with the facts its evidence establishes. -/
 structure LineU (U : UDoc) (X : List VE.Formula) (cited : List (String × List String)) (translation : Bool) where
   r : Regulated
   reached : Reached
-  witness : Option Json
+  witness : Option WitnessRow
   grounding : Grounding
   sound_reached : reached = .reachable → ReachedSome U X r
   sound_never : reached = .never → NeverReached.{0} U X r
@@ -284,18 +290,18 @@ def LineU.toJson {U X cited translation} (l : LineU U X cited translation) : Jso
     ("reached", .str l.reached.label), ("lines", Lean.toJson l.lines),
     ("inherits_from", Lean.toJson (inheritsFrom U l.r.name))] ++
     (match l.witness with
-     | some w => [("witness", w)]
+     | some w => [("witness", w.toJson)]
      | none => []))
 
 /-- The situation's own witness search, checked. -/
 def situationWitness (src : ReportSource) (S : SituationG src.U) (r : Regulated) :
-    Option (PLift (ReachedSome src.U src.X r) × Json) :=
+    Option (PLift (ReachedSome src.U src.X r) × WitnessRow) :=
   match reachedWitness src.U src.X S.M r with
   | some (vs, F) =>
     if hc : vs ∈ allTuples S.M r.sorts ∧ fillValid src.U S.M F = true ∧ extraValid src.U src.X S.M F = true ∧
         (reachedF src.U r.name).eval (S.M.withFill F) (tupleVal vs) = true then
       some (⟨reachedSome_of_fill src.U src.wfU src.X S.M S.valid S.background r vs F hc.1 hc.2.1 hc.2.2.1
-        hc.2.2.2⟩, witnessJson src.U (S.M.withFill F) vs)
+        hc.2.2.2⟩, witnessRow src.U (S.M.withFill F) vs)
     else none
   | none => none
 
@@ -419,12 +425,12 @@ def situationFrom (s : SourceU) (m : Json) : Except String (SituationG s.U) := d
 
 /-- A supplied filled model of `E‴_base` for `r` (the `witnesses` entry named `r`), replayed. -/
 def suppliedWitness (s : SourceU) (witnesses : Json) (r : Regulated) :
-    Except String (Option (PLift (ReachedSome s.U [] r) × Json)) :=
+    Except String (Option (PLift (ReachedSome s.U [] r) × WitnessRow)) :=
   match witnesses.getObjVal? r.name with
   | .ok w => do
     let d ← reachedFromU s (pure r.name) w
     if hd : d.r = r ∧ d.reached = true then
-      pure (some (⟨hd.1 ▸ d.reachedSome hd.2⟩, witnessJson s.U d.M d.tuple))
+      pure (some (⟨hd.1 ▸ d.reachedSome hd.2⟩, witnessRow s.U d.M d.tuple))
     else pure none
   | .error _ => pure none
 

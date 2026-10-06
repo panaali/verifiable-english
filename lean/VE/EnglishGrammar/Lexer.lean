@@ -21,6 +21,15 @@ The `glued` flags (DRI ruling on O1, 2026-10-04). A punctuation token records wh
 is not whitespace comes right before it (`gluedBefore`) and right after it (`gluedAfter`) in the
 source, the terminator included. So `deployed, it` and `deployed , it` lex differently, as do
 `non-compliant` and `non - compliant`, and the rules decide which spacing they accept.
+
+The spacing table (DRI ruling 1, finding F1 of `docs/spec/english-lean-s2-integrate.md`). Every other
+spacing is the lexer's, as Python's patterns fix it, so whitespace is never ignored where Python
+reads it: `spacing` says, for the item read last and the item that starts, whether whitespace must,
+must not or may come between them. No whitespace before the first item or before a terminator,
+whitespace after a terminator unless the text ends, whitespace between two tokens of the word kinds
+(`relation"owner_of"to` is refused, not read as three words); around punctuation the `glued` flags
+carry the spacing to the rules. A breach is `badSpacing` at the byte offset of the item that starts.
+`conformance/english_lean_lexer.py` holds the same table.
 -/
 
 namespace VE.EnglishGrammar
@@ -87,6 +96,27 @@ def chunkToken (cs : List Char) (start : Nat) : Except Reject Tok :=
 /-- A token with its byte span. -/
 abbrev Spanned := Tok × Nat × Nat
 
+/-- An item of the spacing table: the start of the source, a token of a word kind (a word, a quoted
+identifier, a label, a numeral), a punctuation token, a terminator. -/
+inductive Item where
+  | start | word | punct | stop
+  deriving DecidableEq, Repr
+
+/-- The spacing table: whether whitespace must (`some true`), must not (`some false`) or may (`none`)
+come between the item read last and the item that starts. The first row that matches decides. -/
+def spacing : Item → Item → Option Bool
+  | .start, _ => some false
+  | _, .stop => some false
+  | .stop, _ => some true
+  | .word, .word => some true
+  | _, _ => none
+
+/-- Whether an item may start after `last`, `spaced` telling whether whitespace comes between them. -/
+def spacingOk (last next : Item) (spaced : Bool) : Bool :=
+  match spacing last next with
+  | some b => b == spaced
+  | none => true
+
 /-- What the scanner is in the middle of. -/
 inductive Mode where
   | normal
@@ -94,11 +124,12 @@ inductive Mode where
   | chunk (start : Nat) (acc : List Char)
   | skip (k : Nat)
 
-/-- The scanner's state: the finished sentences, the current one, the mode. -/
+/-- The scanner's state: the finished sentences, the current one, the mode, the item read last. -/
 structure Scan where
   sents : Array (Array Spanned)
   cur : Array Spanned
   mode : Mode
+  last : Item
 
 /-- Whether `cs` starts with the characters of `m`. -/
 def startsWith (cs : List Char) (m : String) : Bool := m.toList.isPrefixOf cs
@@ -112,24 +143,31 @@ def solid : Option Char → Bool
   | some c => !isSpace c
   | none => false
 
+/-- Starts an item of kind `k` at the byte offset `pos`, after the character `prev`: the spacing table
+decides whether the whitespace before it, if any, may be there. -/
+def begin (st : Scan) (prev : Option Char) (k : Item) (pos : Nat) : Except Reject Scan :=
+  if spacingOk st.last k (prev.any isSpace) then .ok { st with last := k } else .error (.badSpacing pos)
+
 /-- Reads the character `c` at the byte offset `pos` in normal mode; `prev` is the character before
 it and `cs` the characters after it. -/
 def normalStep (st : Scan) (prev : Option Char) (c : Char) (cs : List Char) (pos : Nat) :
     Except Reject Scan :=
   if isSpace c then .ok st
-  else if c == '"' then .ok { st with mode := .quote pos false [] }
-  else if chunkChar c then .ok { st with mode := .chunk pos [c] }
+  else if c == '"' then (begin st prev .word pos).map fun st => { st with mode := .quote pos false [] }
+  else if chunkChar c then (begin st prev .word pos).map fun st => { st with mode := .chunk pos [c] }
   else if c == '.' then
     if st.cur.isEmpty then .error (.emptySentence st.sents.size)
-    else .ok { st with sents := st.sents.push st.cur, cur := #[] }
+    else (begin st prev .stop pos).map fun st => { st with sents := st.sents.push st.cur, cur := #[] }
   else match markerAt c cs with
     | some m =>
       let after := (cs.drop (m.length - 1)).head?
-      .ok { st with cur := st.cur.push (.punct m (solid prev) (solid after), pos, pos + m.length),
-                    mode := .skip (m.length - 1) }
+      (begin st prev .punct pos).map fun st =>
+        { st with cur := st.cur.push (.punct m (solid prev) (solid after), pos, pos + m.length),
+                  mode := .skip (m.length - 1) }
     | none =>
       if punctChars.contains c then
-        .ok { st with cur := st.cur.push (.punct (String.singleton c) (solid prev) (solid cs.head?), pos, pos + 1) }
+        (begin st prev .punct pos).map fun st =>
+          { st with cur := st.cur.push (.punct (String.singleton c) (solid prev) (solid cs.head?), pos, pos + 1) }
       else .error (.badCharacter pos)
 
 /-- Ends a chunk at the byte offset `pos`. -/
@@ -189,7 +227,7 @@ def lexSpans (s : String) : Except Reject (Array (Array Spanned)) :=
   if s.utf8ByteSize > maxSourceBytes then .error .sourceTooLong
   else if collapsedLength s > maxTextChars then .error .textTooLong
   else
-    match scanGo ⟨#[], #[], .normal⟩ none s.toList 0 with
+    match scanGo ⟨#[], #[], .normal, .start⟩ none s.toList 0 with
     | .error r => .error r
     | .ok st =>
       let fin : Except Reject Scan :=

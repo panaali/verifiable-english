@@ -16,9 +16,7 @@ fan-out sort)."""
 from __future__ import annotations
 
 import json
-import os
 import random
-import subprocess
 import sys
 import tempfile
 from copy import deepcopy
@@ -28,8 +26,8 @@ from tests.test_norms import environment, obligation, permission
 from ve.document import load_document
 from ve.errors import VEError
 from ve.rights import correlate
-from ve.rights_route import LEAN_ROUTE, _wire, check_rights_regenerated
-from ve.soft_route import LEAN_ROUTE as SOFT_ROUTE
+from ve.backends.relay import rows as lean_rows
+from ve.rights_route import _wire, check_rights_regenerated
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORT = ROOT / "conformance/rights-differential-report.json"
@@ -230,11 +228,9 @@ def loaded(raw, units, directory):
     return load_document(path)
 
 
-def _rows(executable, cases):
-    run = subprocess.run([str(executable), "-"], input=json.dumps(cases), text=True,
-                         capture_output=True, check=False,
-                         timeout=int(os.environ.get("VE_CONFORMANCE_HANG_TIMEOUT", "600")))
-    rows = json.loads(run.stdout)
+def _rows(mode, cases):
+    """The rows of the Lean route `mode` (`rights` or `soft-norms`), rejections included."""
+    rows = lean_rows(mode, cases)
     if len(rows) != len(cases):
         raise AssertionError("Lean returned the wrong row count")
     return rows
@@ -257,13 +253,13 @@ def run(count=1000, batch=50):
                 rights, error = None, str(exc)
             sources.append((seeds, raw, units, rights, error))
             seeds += 1
-        rows = _rows(LEAN_ROUTE, [{"id": str(seed), "kind": "rights-elaborate", "environment": _wire(raw),
+        rows = _rows("rights", [{"id": str(seed), "kind": "rights-elaborate", "environment": _wire(raw),
                                    "document": _wire(units)} for seed, raw, units, _, _ in sources])
         soft_cases = [(i, {"id": str(seed), "kind": "soft-elaborate",
                            "environment": rights.soft_document.env.to_dict(),
                            "norms": [r.to_dict() for r in rights.soft_document.rules]})
                       for i, (seed, _, _, rights, _) in enumerate(sources) if rights is not None]
-        soft_rows = dict(zip((i for i, _ in soft_cases), _rows(SOFT_ROUTE, [case for _, case in soft_cases])))
+        soft_rows = dict(zip((i for i, _ in soft_cases), _rows("soft-norms", [case for _, case in soft_cases])))
         for i, ((seed, raw, units, rights, error), row) in enumerate(zip(sources, rows)):
             if rights is None:
                 if row.get("status") != "error":
