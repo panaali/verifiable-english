@@ -61,23 +61,15 @@ operation were captured at the base (`capture_quantity.py`, the method of batch 
 `check_quantity_certificate`, 35 `quantity_countermodel`), each recorded under the `python` and `lean`
 authorities (`--corpus quantity`).
 
-| Corpus | Records per side | Same | Wording | Order | Verdict | Availability |
-|---|---:|---:|---:|---:|---:|---:|
-| quantity (`python`, `lean`) | 25,726 | 25,592 | 88 | 40 | 6 | 0 |
-| probe (`python`, `lean`) | 18,870 | 18,870 | 0 | 0 | 0 | 0 |
-| conformance (`python`, `lean`) | 39,612 | 39,612 | 0 | 0 | 0 | 0 |
-| pilots (`ve document check`) | 278 | 278 | 0 | 0 | 0 | 0 |
-| readings | 1,137 | 1,137 | 0 | 0 | 0 | 0 |
-| discourse | 6,350 | 6,350 | 0 | 0 | 0 | 0 |
-| **All** | 91,973 | 91,839 | 88 | 40 | 6 | 0 |
+The counts are in the generated block at the end of this file (`report.py`).
 
 Every difference comes from one rule, **R9: a W6 answer is Lean's, relayed verbatim**. The differences
 are the same under both authorities, except the four W9.4 admission records (69 `python`, 65 `lean`):
 the base's `lean` authority already sent W6 admission to Lean's quantity route.
 
 **Use-case harness (eligibility, W6).** `usecases/eligibility/run.py --no-write` at base and head prints
-byte-identical results (80 profiles, 32/32 mutants killed). No other harness or pilot calls a W6
-operation; the pilots corpus covers the use-case documents.
+byte-identical results (80 profiles, 32/32 mutants killed; `evidence/eligibility.json`). No other harness
+or pilot calls a W6 operation; the pilots corpus covers the use-case documents.
 
 #### W9 wording (88 records, 10 pairs, signed as one block)
 
@@ -121,21 +113,9 @@ deleted symbol; `tools/check_rust_deps.py` and the layer checks pass with two ne
 
 Measured back to back on the same host (load 30–50, so CPU is the comparison).
 
-- **Eligibility harness** (budget ≤ 1.25× base wall): base 425 s wall, 224 s user CPU; head 395 s wall,
-  182 s user CPU (0.93× wall).
-- **Every W6 operation of the quantity corpus, one process** (`timing.py`, `evidence/timing-*.json`): total
-  CPU 211.8 s at the base (all Python) and 230.7 s at the head (151.4 s Python, 79.4 s Lean service),
-  +9%; wall 333 s → 296 s.
-
-| Operation | Calls | p50 wall base → head (ms) | p95 wall base → head (ms) | Total base → head (s) |
-|---|---:|---:|---:|---:|
-| `elaborate_quantity` | 11,375 | 3.5 → 6.6 | 18.6 → 17.4 | 72.7 → 106.8 |
-| W6 `Environment` | 584 | 1.5 → 3.3 | 6.9 → 7.3 | 1.4 → 2.2 |
-| `quantity_meaning_id` | 62 | 7.8 → 12.5 | 19.0 → 25.0 | 0.5 → 1.6 |
-| `quantity_countermodel` | 35 | 6.3 → 13.9 | 4,076 → 371 | 24.1 → 3.3 |
-| `check_quantity_certificate` | 41 | 19.4 → 15.0 | 1,109 → 221 | 6.9 → 2.0 |
-| `admit_document` | 42 | 15.7 → 8.8 | 53.8 → 19.1 | 1.2 → 0.5 |
-| `prove_quantity` | 724 | 152 → 127 | 1,199 → 1,045 | 226 → 180 |
+Measured: the eligibility harness (budget ≤ 1.25× base wall, `evidence/eligibility.json`) and every W6
+operation of the quantity corpus in one process (`timing.py`, `evidence/timing-*.json`); the numbers are
+in the generated block at the end of this file.
 
 Each corpus call constructs its `Environment` first, so a typing call here is two service calls (the
 environment, then the statement); a caller that keeps its `Environment` pays one. The interactive row
@@ -146,11 +126,11 @@ service calls is about 3 ms per call at load 45.
 ### Differential fuzzer
 
 `difffuzz_ab.py` ran `--ci` and the 14 date seeds 2026-09-23 to 2026-10-06 (`--deep 1`) in both
-checkouts (`evidence/difffuzz-ab.json`): **no head-only finding signature** in any run, no unreproduced
-or unreviewed baseline entry, and 682 → 647 new findings in total. The baseline shrinks from 384 to 357
-entries: 27 `environment`/`quantity` disagreements are gone, because Python's W6 environment is Lean's.
-One entry (`{"units": {}}`, DF-9, Python's `UnsupportedProfile` against Lean's `InvalidInput`) is
-re-recorded with Rust `n/a` (signature `cc847b4f…` → `41c14060…`); the count does not grow.
+checkouts (`evidence/difffuzz-ab.json`; summary in the generated block): no head-only finding signature in
+any run, no unreproduced or unreviewed baseline entry. The baseline loses 27 `environment`/`quantity`
+disagreements, because Python's W6 environment is Lean's. One entry (`{"units": {}}`, DF-9, Python's
+`UnsupportedProfile` against Lean's `InvalidInput`) is re-recorded with Rust `n/a` (signature `cc847b4f…`
+→ `41c14060…`); the count does not grow.
 
 ## Seeded bugs
 
@@ -175,3 +155,33 @@ each (`evidence/mutants.txt`).
 | Verdict rows V9.1 and V9.2 | HUMAN (DRI) | signature requested, one each |
 | Hermetic `tools/gate.py` in a fresh worktree | AGENT (reviewer's run) | not run here, see 5.1 item 1 |
 | Quiet-host latency for the interactive row | AGENT | deferred: the host was never quiet |
+
+## Generated numbers
+
+<!-- BEGIN GENERATED: python docs/lean-first/b9/report.py --write -->
+| Corpus | Records per side | Same | Wording | Order | Verdict | Availability |
+|---|---:|---:|---:|---:|---:|---:|
+| quantity (`lean`, `python`) | 25,726 | 25,592 | 88 | 40 | 6 | 0 |
+| probe (`lean`, `python`) | 18,870 | 18,870 | 0 | 0 | 0 | 0 |
+| conformance (`lean`, `python`) | 39,612 | 39,612 | 0 | 0 | 0 | 0 |
+| pilots | 278 | 278 | 0 | 0 | 0 | 0 |
+| readings | 1,137 | 1,137 | 0 | 0 | 0 | 0 |
+| discourse | 6,350 | 6,350 | 0 | 0 | 0 | 0 |
+| **All** | 91,973 | 91,839 | 88 | 40 | 6 | 0 |
+
+Eligibility harness: base 424.9 s wall, 224.4 s user CPU; head 394.8 s wall, 181.6 s user CPU (0.93× wall); results byte-identical.
+
+Quantity corpus in one process: CPU 211.8 s at the base (211.8 s Python, 0.0 s Lean) and 230.7 s at the head (151.4 s Python, 79.4 s Lean), +9%; wall 333.2 s → 296.1 s.
+
+| Operation | Calls | p50 wall base → head (ms) | p95 wall base → head (ms) | Total base → head (s) |
+|---|---:|---:|---:|---:|
+| `elaborate_quantity` | 11,375 | 3.5 → 6.6 | 18.6 → 17.4 | 72.7 → 106.8 |
+| W6 `Environment` | 584 | 1.5 → 3.3 | 6.9 → 7.3 | 1.4 → 2.1 |
+| `quantity_meaning_id` | 62 | 7.8 → 12.5 | 19.0 → 25.0 | 0.5 → 1.6 |
+| `quantity_countermodel` | 35 | 6.3 → 13.9 | 4,075.8 → 370.6 | 24.1 → 3.3 |
+| `check_quantity_certificate` | 41 | 19.4 → 15.0 | 1,109.3 → 220.7 | 6.9 → 2.0 |
+| `admit_document` | 42 | 15.7 → 8.8 | 53.8 → 19.1 | 1.2 → 0.5 |
+| `prove_quantity` | 724 | 152.5 → 126.9 | 1,199.3 → 1,044.6 | 226.4 → 179.8 |
+
+Differential fuzzer: 15 runs (`--ci` and 14 date seeds), 0 head-only signatures, 682 → 647 new findings, baseline 384 → 357 entries, 0 head entries not reproduced.
+<!-- END GENERATED -->
