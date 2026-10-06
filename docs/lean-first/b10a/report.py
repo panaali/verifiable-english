@@ -92,8 +92,9 @@ def fuzzer_rows():
                     f"{', '.join(row['differences']) or 'none'} |")
     rows += ["", f"Base `{data['base_commit'][:12]}`, head `{data['head_commit'][:12]}`; "
              f"baseline SHA-256 `{data['baseline_sha256'][:12]}…` on both sides. "
-             "Compared corpus, mutant counts, answers, finding counts, new signature sets, "
-             "and baseline replay per seed. The baseline was not updated."]
+             "Compared every sampled input and full Python/Lean/Rust answer by SHA-256 digest, "
+             "plus corpus, mutant counts, finding counts, new signature sets, and baseline replay "
+             "per seed. The baseline was not updated."]
     return rows
 
 
