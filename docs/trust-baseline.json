@@ -8784,26 +8784,6 @@
    "trusted": 5,
    "lines": 507
   },
-  "VE/Readings/Layers.lean": {
-   "K": 0,
-   "S": 0,
-   "D": 0,
-   "G": 159,
-   "C": 0,
-   "P": 91,
-   "T": 0,
-   "o": 39,
-   "D[V]": 0,
-   "D[R]": 0,
-   "D[I]": 0,
-   "G[V]": 156,
-   "G[R]": 3,
-   "G[I]": 0,
-   "tied": 0,
-   "unclassified": 0,
-   "trusted": 156,
-   "lines": 289
-  },
   "VE/Readings/Lines.lean": {
    "K": 0,
    "S": 62,
