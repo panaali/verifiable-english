@@ -118,6 +118,16 @@ def error : Shape :=
 def coherence_labels : Shape :=
   n [arr, .items (n [str, .pattern (Re.prefixes ["soft:coherence:"])])]
 
+def witness_model : Shape :=
+  c "A Lean-checked finite model echoed with a witnessed soft finding." [
+    obj, .required ["complete", "domains", "constants", "relations"],
+    closed [
+      ("complete", .type ["boolean"]),
+      ("domains", n [obj, .object [] (some (ref "common.json#/$defs/strings"))]),
+      ("constants", n [obj, .object [] (some str)]),
+      ("relations", n [obj, .object [] (some (n [arr,
+        .items (ref "common.json#/$defs/strings")]))])]]
+
 def rule : Shape :=
   c "SoftNorms.Run.runSoftKind: Lean accepted the standalone soft rule." [
     obj, .required ["id", "status", "accepted"],
@@ -214,13 +224,13 @@ def elaborate : Shape :=
           n [arr, .items (n [obj, .required ["pair", "tuple", "model", "line"], closed [
             ("pair", ref "common.json#/$defs/string_pair"),
             ("tuple", ref "common.json#/$defs/strings"),
-            ("model", obj),
+            ("model", ref "#/$defs/witness_model"),
             ("line", n [str, .pattern (Re.prefixes ["Overlap("])])]])]),
         ("override_cycles", copied "A Lean-checked witness echoes its model and tuple, and names the preference cycle." <|
           n [arr, .items (n [obj, .required ["cycle", "tuple", "model", "line"], closed [
             ("cycle", ref "common.json#/$defs/strings"),
             ("tuple", ref "common.json#/$defs/strings"),
-            ("model", obj),
+            ("model", ref "#/$defs/witness_model"),
             ("line", n [str, .pattern (Re.prefixes ["override_cycles:"])])]])])]]
 
 def pairs : Shape :=
@@ -320,6 +330,7 @@ def file : File where
     ("kind", kind),
     ("error", .schema error),
     ("coherence_labels", .schema coherence_labels),
+    ("witness_model", .schema witness_model),
     ("rule", .schema rule),
     ("admission", .schema admission),
     ("background", .schema background),

@@ -29,7 +29,7 @@ from .ast import And, Binary, Bottom, Exists, Forall, Implies, Not, Or, Unary, _
 from .environment import Environment
 from .errors import InvalidModel, ResourceLimit, UnsupportedProfile, VEError
 from .limits import MAX_EVALUATIONS, MAX_PREDICATES
-from .norms import Norm, NormDocument, _atom, _bind, _any
+from .norms import Norm, NormDocument, _atom, _bind, _any, _norm_defaults_placeholder as _placeholder
 from .search import _used_predicates
 from .wire import digest
 
@@ -618,16 +618,6 @@ class UnspecifiedDocument:
             for row in product(*(situation.domains[s] for s in sorts)):
                 result.append(self.status(situation, p, row, **options))
         return tuple(result)
-
-
-def _placeholder(data):
-    """The environment without norm-defaults@0, each unspecified completion the placeholder deny."""
-    data = copy.deepcopy(data)
-    data["profiles"] = [p for p in data["profiles"] if p != PROFILE]
-    for decl in data["vocabulary"]["predicates"].values():
-        if decl.get("regulated", {}).get("default") == "unspecified":
-            decl["regulated"]["default"] = "deny"
-    return data
 
 
 class FilledSoftBaseEnvironment(Environment):

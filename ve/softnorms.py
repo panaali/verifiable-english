@@ -30,13 +30,22 @@ def check_soft_source(environment, norms=None, *, generated=False, layers=frozen
     if "readings@1" in layers:
         source["profiles"] = [p for p in source["profiles"] if p != "readings@1"]
     if "norm-defaults@0" in layers:
-        source["profiles"] = [p for p in source["profiles"] if p != "norm-defaults@0"]
+        vocabulary = source.get("vocabulary") if type(source) is dict else None
+        predicates = vocabulary.get("predicates") if type(vocabulary) is dict else None
+        if type(predicates) is dict and all(type(entry) is dict and
+                                           type(entry.get("regulated", {})) is dict
+                                           for entry in predicates.values()):
+            from .norms import _norm_defaults_placeholder
+            source = _norm_defaults_placeholder(source)
     if generated:
         source["vocabulary"]["predicates"] = {
             name: entry for name, entry in source["vocabulary"]["predicates"].items()
             if not name.startswith("soft__")}
-    return _run({"id": "soft-elaborate", "kind": "soft-elaborate",
-                 "environment": _wire(source), "norms": _wire(list(norms or ()))})
+    payload = {"id": "soft-elaborate", "kind": "soft-elaborate",
+               "environment": _wire(source), "norms": _wire(list(norms or ()))}
+    if not generated and "readings@1" in layers and not layers.intersection({"rights@0", "norm-defaults@0"}):
+        payload["identity_environment"] = _wire(environment)
+    return _run(payload)
 
 
 def load_soft_document(environment, norms):

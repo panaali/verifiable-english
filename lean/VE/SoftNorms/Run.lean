@@ -285,6 +285,19 @@ def warningRows (src : SoftSource) (j : Json) : Except String (Option (List Json
   pure (overlaps, cycles)
 
 /-- The non-admission soft case kinds. -/
+def documentIdentityEnvironment (source request : Json) : Except String (Json × List String) := do
+  match (request.getObjVal? "identity_environment").toOption with
+  | none => pure (source, ← VE.Bridge.strings (← source.getObjVal? "profiles"))
+  | some original =>
+    let profiles ← VE.Bridge.strings (← original.getObjVal? "profiles")
+    unless profiles.contains "readings@1" do
+      throw "InvalidInput: identity environment has no readings@1 profile"
+    let lowered := original.setObjVal! "profiles"
+      (toJson (profiles.filter (· != "readings@1")))
+    unless lowered == source do
+      throw "InvalidInput: identity environment differs from the soft source"
+    pure (original, profiles)
+
 def runSoftKind (id kind : String) (j : Json) : Except String Json := do
   if kind == "soft-rule" then
     let environment ← j.getObjVal? "environment"
@@ -295,9 +308,10 @@ def runSoftKind (id kind : String) (j : Json) : Except String Json := do
     let environment ← j.getObjVal? "environment"
     let norms := j.getObjValD "norms"
     let src ← decodeSoftSource environment norms
-    let documentHash ← softDocumentHash src.se.profiles environment norms
+    let (identityEnvironment, identityProfiles) ← documentIdentityEnvironment environment j
+    let documentHash ← softDocumentHash identityProfiles identityEnvironment norms
     let extra ← warningRows src j
-    return VE.Route.Wire.ok id (regenerated src.D environment ++
+    return VE.Route.Wire.ok id (regenerated src.D identityEnvironment ++
       [("document_hash", .str documentHash)] ++
       extra.1.toList.map (fun value => ("overlaps", toJson value)) ++
       extra.2.toList.map (fun value => ("override_cycles", toJson value)))

@@ -39,7 +39,7 @@ ROUTE_MODES = ("soft-norms", "rights", "speech-acts", "reports", "alternatives",
                "quantity", "norm-defaults", "discourse", "readings-route", "diagnose")
 # Top-level answer fields that are maps keyed by request names (an empty map is an answer).
 MAPS = {"worst_cases", "bound", "meaning_ids", "presuppositions", "validity", "statuses", "reading_verdicts",
-        "units", "mentions", "default_exceptions_by_decider"}
+        "units", "mentions", "default_exceptions_by_decider", "rule_acts"}
 # Top-level fields whose domain is a union across JSON types (field: the types beside the genuine one).
 UNIONS = {"joint": {"string", "integer"}, "admitted": {"boolean", "string"}, "finding": {"object", "null"},
           "first_failing": {"string", "null"}}
@@ -408,6 +408,10 @@ def test_an_open_answer_is_found(tmp_path):
 
 def test_the_delta_states_the_corpus_it_ran():
     import re
-    delta = (ROOT / "docs/lean-first/b1/DELTA.md").read_text()
-    stated = re.search(r"`tests/data/route-cases\.jsonl`, (\d[\d,]*) cases", delta)
-    assert stated and int(stated.group(1).replace(",", "")) == len(CASES.read_text().splitlines())
+    baseline = (ROOT / "docs/lean-first/b1/DELTA.md").read_text()
+    old = re.search(r"`tests/data/route-cases\.jsonl`, (\d[\d,]*) cases", baseline)
+    current = (ROOT / "docs/lean-first/b6/DELTA.md").read_text()
+    stated = re.search(r"`tests/data/route-cases\.jsonl`, (\d[\d,]*) cases", current)
+    count = len(CASES.read_text().splitlines())
+    assert old and int(old.group(1).replace(",", "")) <= count
+    assert stated and int(stated.group(1).replace(",", "")) == count
