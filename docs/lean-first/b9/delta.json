@@ -1,0 +1,868 @@
+{
+ "availability": [],
+ "order": [
+  {
+   "corpus": "quantity",
+   "authority": "lean",
+   "case": "04a7091e4b368db4",
+   "op": "elaborate",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "lean",
+   "case": "0aa431b6bd3bb5a2",
+   "op": "countermodel",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "lean",
+   "case": "0fed7d8f41974db2",
+   "op": "countermodel",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "lean",
+   "case": "1282d41a0c91942d",
+   "op": "countermodel",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "lean",
+   "case": "1b20466a7c2a2305",
+   "op": "countermodel",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '111111111111111111111111111111111111111١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "lean",
+   "case": "1c7f8e8e92aa6225",
+   "op": "elaborate",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "lean",
+   "case": "3dfb622a8d6acf48",
+   "op": "elaborate",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "lean",
+   "case": "4728037f7bed6ce3",
+   "op": "elaborate",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "lean",
+   "case": "7607858c743a06c3",
+   "op": "elaborate",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "lean",
+   "case": "8f723e3772e21902",
+   "op": "countermodel",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "lean",
+   "case": "9de0c0b5a27145f8",
+   "op": "countermodel",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "lean",
+   "case": "9fa855d5a29adfe6",
+   "op": "countermodel",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "lean",
+   "case": "a72a0dc3aafeb499",
+   "op": "countermodel",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "lean",
+   "case": "b068ccebc3fe7c85",
+   "op": "elaborate",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '111111111111111111111111111111111111111١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "lean",
+   "case": "c178ad8b998e13a6",
+   "op": "elaborate",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '111111111111111111111111111111111111111١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "lean",
+   "case": "dc9c376638bdc903",
+   "op": "elaborate",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "lean",
+   "case": "dcca02c9ebea3937",
+   "op": "countermodel",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '111111111111111111111111111111111111111١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "lean",
+   "case": "e728a679cfabb8f1",
+   "op": "elaborate",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "lean",
+   "case": "e927a883af7dcdc1",
+   "op": "elaborate",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "lean",
+   "case": "e9dd241333c582f5",
+   "op": "countermodel",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "python",
+   "case": "04a7091e4b368db4",
+   "op": "elaborate",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "python",
+   "case": "0aa431b6bd3bb5a2",
+   "op": "countermodel",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "python",
+   "case": "0fed7d8f41974db2",
+   "op": "countermodel",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "python",
+   "case": "1282d41a0c91942d",
+   "op": "countermodel",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "python",
+   "case": "1b20466a7c2a2305",
+   "op": "countermodel",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '111111111111111111111111111111111111111١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "python",
+   "case": "1c7f8e8e92aa6225",
+   "op": "elaborate",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "python",
+   "case": "3dfb622a8d6acf48",
+   "op": "elaborate",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "python",
+   "case": "4728037f7bed6ce3",
+   "op": "elaborate",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "python",
+   "case": "7607858c743a06c3",
+   "op": "elaborate",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "python",
+   "case": "8f723e3772e21902",
+   "op": "countermodel",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "python",
+   "case": "9de0c0b5a27145f8",
+   "op": "countermodel",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "python",
+   "case": "9fa855d5a29adfe6",
+   "op": "countermodel",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "python",
+   "case": "a72a0dc3aafeb499",
+   "op": "countermodel",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "python",
+   "case": "b068ccebc3fe7c85",
+   "op": "elaborate",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '111111111111111111111111111111111111111١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "python",
+   "case": "c178ad8b998e13a6",
+   "op": "elaborate",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '111111111111111111111111111111111111111١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "python",
+   "case": "dc9c376638bdc903",
+   "op": "elaborate",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "python",
+   "case": "dcca02c9ebea3937",
+   "op": "countermodel",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '111111111111111111111111111111111111111١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "python",
+   "case": "e728a679cfabb8f1",
+   "op": "elaborate",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "python",
+   "case": "e927a883af7dcdc1",
+   "op": "elaborate",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "python",
+   "case": "e9dd241333c582f5",
+   "op": "countermodel",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   }
+  }
+ ],
+ "verdict": [
+  {
+   "corpus": "quantity",
+   "authority": "lean",
+   "case": "107504ec59655ec2",
+   "op": "certificate",
+   "base": {
+    "returned": false
+   },
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: certificate replay exceeds 10,000 steps"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "lean",
+   "case": "54644fe6f94c1724",
+   "op": "countermodel",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "domain exceeds entity limit",
+     "path": "/domains/s"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: domain size"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "lean",
+   "case": "a36824490b381033",
+   "op": "certificate",
+   "base": {
+    "returned": false
+   },
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: certificate replay exceeds 10,000 steps"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "python",
+   "case": "107504ec59655ec2",
+   "op": "certificate",
+   "base": {
+    "returned": false
+   },
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: certificate replay exceeds 10,000 steps"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "python",
+   "case": "54644fe6f94c1724",
+   "op": "countermodel",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "domain exceeds entity limit",
+     "path": "/domains/s"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: domain size"
+    }
+   }
+  },
+  {
+   "corpus": "quantity",
+   "authority": "python",
+   "case": "a36824490b381033",
+   "op": "certificate",
+   "base": {
+    "returned": false
+   },
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: certificate replay exceeds 10,000 steps"
+    }
+   }
+  }
+ ],
+ "wording": [
+  {
+   "base": "Decimal literal exceeds 40 digits",
+   "head": "ResourceLimit: Decimal literal exceeds 40 digits"
+  },
+  {
+   "base": "Incorrect fields (missing=['certificate'], unknown=[])",
+   "head": "fields do not match: expected [name, conclusion, leaves, certificate], got [conclusion, leaves, name]"
+  },
+  {
+   "base": "Integer literal exceeds 40 characters",
+   "head": "ResourceLimit: numeral length"
+  },
+  {
+   "base": "Invalid quantity certificate",
+   "head": "Invalid quantity certificate: fields do not match: expected [format, environment_id, premise_meaning_ids, conclusion_meaning_id, core], got [checker_version, conclusion_meaning_id, environment_id, premise_meaning_ids, trace]"
+  },
+  {
+   "base": "Quantity AST exceeds node or depth limit",
+   "head": "ResourceLimit: JSON depth exceeds 256"
+  },
+  {
+   "base": "Quantity AST exceeds node or depth limit",
+   "head": "ResourceLimit: Quantity AST exceeds node or depth limit"
+  },
+  {
+   "base": "Verbalisations must be nonempty strings",
+   "head": "String expected"
+  },
+  {
+   "base": "Verbalisations must be nonempty strings",
+   "head": "Verbalisation must be nonempty"
+  },
+  {
+   "base": "formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted",
+   "head": "ResourceLimit: formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+  },
+  {
+   "base": "premises and conclusion exceed aggregate 10000-node limit",
+   "head": "ResourceLimit: premises and conclusion exceed aggregate 10000-node limit"
+  }
+ ],
+ "unavailable": []
+}
