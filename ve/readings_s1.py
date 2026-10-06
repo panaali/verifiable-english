@@ -268,10 +268,9 @@ def lean_defaults(unit):
 
 def _right_header(body):
     """A right's name, holder and guard as `decodeRight` decodes them: an absent guard is `top`."""
-    from .ast import Top
-    from .softnorms import _fol
+    from .ast import Top, _Decoder
     guard = wire(body).get("guard")
-    return (body.get("name"), body.get("holder"), Top() if guard is None else _fol(guard))
+    return (body.get("name"), body.get("holder"), Top() if guard is None else _Decoder().decode(guard))
 
 
 def decode_content(j):
@@ -562,12 +561,11 @@ class Side:
         if env.soft["outranking"]["mode"] == "holistic":
             seen = []
             for left, right in sd.collisions:
-                pair = sd._rank_pair(left, right)
-                if pair is None:
+                generated = sd.override_for_pair.get(frozenset((left.core.name, right.core.name)))
+                if generated is None:
                     continue
-                generated = sd._outweighs_name(*pair, sd._act(left), env.predicates[left.core.predicate].arguments)
-                act = generated[len(f"soft__outweighs__{pair[0]}__{pair[1]}__"):]
-                key = ("outweighs", act, pair[0], pair[1])
+                _, _, low, high, act = generated.split("__", 4)
+                key = ("outweighs", act, low, high)
                 if key not in seen:
                     seen.append(key)
                     keys.append((key, generated, list(env.predicates[left.core.predicate].arguments)))

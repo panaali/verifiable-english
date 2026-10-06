@@ -92,6 +92,7 @@
         "environment_prime": {"$ref": "common.json#/$defs/environment"},
         "fragment": {"type": "boolean"},
         "id": {"$ref": "common.json#/$defs/id_ok"},
+        "incompatible_pairs": {"items": {"$ref": "common.json#/$defs/string_pair"}, "type": "array"},
         "order": {"$ref": "common.json#/$defs/strings"},
         "overlaps": {
           "items": {
@@ -123,6 +124,7 @@
         },
         "premises": {"$ref": "common.json#/$defs/layer_premises"},
         "ranks_above": {"additionalProperties": {"$ref": "common.json#/$defs/strings"}, "type": "object"},
+        "rule_acts": {"additionalProperties": {"type": "string"}, "type": "object"},
         "soft_residual": {"$ref": "#/$defs/soft_residual"},
         "soft_status": {"enum": ["CHECKED", "OPEN"]},
         "status": {"const": "ok"},
@@ -140,6 +142,8 @@
         "background",
         "premises",
         "colliding_pairs",
+        "rule_acts",
+        "incompatible_pairs",
         "conflict_targets",
         "conditional_on",
         "soft_residual",
@@ -160,9 +164,10 @@
             "ast": {"$ref": "common.json#/$defs/generated_formula"},
             "comparable": {"type": "boolean"},
             "label": {"pattern": "soft:coherence:.*", "type": "string"},
+            "outweighs": {"anyOf": [{"const": null}, {"pattern": "soft__outweighs__.*", "type": "string"}]},
             "pair": {"$ref": "common.json#/$defs/string_pair"}
           },
-          "required": ["pair", "act", "comparable", "label", "ast"],
+          "required": ["pair", "act", "comparable", "label", "ast", "outweighs"],
           "type": "object"
         },
         "type": "array"

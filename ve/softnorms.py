@@ -202,6 +202,11 @@ class SoftNormDocument:
         self.decisions = {item['name']: item['arguments'] for item in row['decisions']}
         self.collisions = tuple((by_name[item['pair'][0]], by_name[item['pair'][1]])
                                 for item in row['colliding_pairs'])
+        self.rule_acts = row['rule_acts']
+        self.incompatible_pairs = frozenset(frozenset(pair) for pair in row['incompatible_pairs'])
+        self.override_for_pair = {
+            frozenset(item['pair']): item['outweighs'] for item in row['colliding_pairs']
+            if item['outweighs'] is not None}
         self.document_hash = row['document_hash']
         self.warnings = tuple(row['warnings'])
         self.extended_env = SoftEnvironment(row['environment_prime'], generated=True)
@@ -222,37 +227,3 @@ class SoftNormDocument:
         object.__setattr__(self.extended_env, 'soft_premises',
                            (*self.exception_premises, *self.coherence_premises))
         self.elaborated.soft_premises = self.extended_env.soft_premises
-
-    def _act(self, rule):
-        decl = self.env.predicates[rule.core.predicate]
-        return decl.regulated.act or rule.core.predicate
-
-    def _incompatible(self, left, right):
-        l, r = left.core, right.core
-        if (self._act(left) != self._act(right) or
-                self.env.predicates[l.predicate].arguments != self.env.predicates[r.predicate].arguments):
-            return False
-        if l.predicate == r.predicate:
-            return l.sign != r.sign
-        ld, rd = self.env.predicates[l.predicate].regulated, self.env.predicates[r.predicate].regulated
-        return ((ld.role == 'obligation' and ld.permission == r.predicate and l.sign and not r.sign)
-                or (rd.role == 'obligation' and rd.permission == l.predicate and r.sign and not l.sign))
-
-    def _rank_pair(self, left, right):
-        if left.rank is None or right.rank is None:
-            return None
-        if left.rank in self.env.ranks_above[right.rank]:
-            return (right.rank, left.rank)
-        if right.rank in self.env.ranks_above[left.rank]:
-            return (left.rank, right.rank)
-        return None
-
-    def _outweighs_name(self, low, high, act, sorts):
-        # Act key is the permission predicate, or the only regulated predicate.
-        keys = [name for name, decl in self.env.predicates.items()
-                if decl.regulated is not None and (decl.regulated.act or name) == act
-                and decl.arguments == sorts]
-        permission = [name for name in keys
-                      if self.env.predicates[name].regulated.role == 'permission']
-        key = permission[0] if permission else keys[0]
-        return f'soft__outweighs__{low}__{high}__{key}'

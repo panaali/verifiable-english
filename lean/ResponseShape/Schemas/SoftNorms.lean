@@ -171,20 +171,22 @@ def elaborated : Def :=
       arr,
       .items (n [
           obj,
-          .required ["pair", "act", "comparable", "label", "ast"],
+          .required ["pair", "act", "comparable", "label", "ast", "outweighs"],
           closed [
             ("pair", ref "common.json#/$defs/string_pair"),
             ("act", str),
             ("comparable", .type ["boolean"]),
             ("label", n [str, .pattern (Re.prefixes ["soft:coherence:"])]),
-            ("ast", ref "common.json#/$defs/generated_formula")]])])]
+            ("ast", ref "common.json#/$defs/generated_formula"),
+            ("outweighs", copied "SoftNorms.Tree.pairTriple and outweighsName; null unless holistic and comparable." <|
+              .anyOf [.const .null, n [str, .pattern (Re.prefixes ["soft__outweighs__"])]])]])])]
 
 def elaborate : Shape :=
   c
     "SoftNorms.Wire.regenerated: E' (primeJson), the decision predicates, each rule's derived carve-out (null for a strict rule without alterable), the layers, Background', the colliding pairs with their coherence premises, the conflict targets, the open coherence labels, the fragment flag and the warnings."
     [
       obj,
-      .required ["id", "status", "environment_prime", "document_hash", "decisions", "ranks_above", "derived", "order", "background", "premises", "colliding_pairs", "conflict_targets", "conditional_on", "soft_residual", "soft_status", "default_exceptions_by_decider", "fragment", "warnings"],
+      .required ["id", "status", "environment_prime", "document_hash", "decisions", "ranks_above", "derived", "order", "background", "premises", "colliding_pairs", "rule_acts", "incompatible_pairs", "conflict_targets", "conditional_on", "soft_residual", "soft_status", "default_exceptions_by_decider", "fragment", "warnings"],
       closed [
         ("id", ref "common.json#/$defs/id_ok"),
         ("status", constS "ok"),
@@ -197,6 +199,10 @@ def elaborate : Shape :=
         ("background", ref "#/$defs/background"),
         ("premises", ref "common.json#/$defs/layer_premises"),
         ("colliding_pairs", ref "#/$defs/elaborated/colliding_pairs"),
+        ("rule_acts", copied "SoftNorms.Tree.act for each accepted rule." <|
+          n [obj, .object [] (some str)]),
+        ("incompatible_pairs", copied "SoftNorms.Tree.Incompatible over accepted rule pairs." <|
+          n [arr, .items (ref "common.json#/$defs/string_pair")]),
         ("conflict_targets", ref "common.json#/$defs/conflict_targets"),
         ("conditional_on", ref "#/$defs/coherence_labels"),
         ("soft_residual", ref "#/$defs/soft_residual"),

@@ -198,6 +198,7 @@
           "type": "array"
         },
         "id": {"$ref": "common.json#/$defs/id_ok"},
+        "incompatible_pairs": {"items": {"$ref": "common.json#/$defs/string_pair"}, "type": "array"},
         "limitations": {
           "items": {"$ref": "common.json#/$defs/labelled", "properties": {"label": {"pattern": "rights:limitation:.*"}}},
           "type": "array"
@@ -241,6 +242,7 @@
           },
           "type": "array"
         },
+        "rule_acts": {"additionalProperties": {"type": "string"}, "type": "object"},
         "soft_residual": {"$ref": "soft-norms.json#/$defs/soft_residual"},
         "soft_status": {"enum": ["CHECKED", "OPEN"]},
         "status": {"const": "ok"},
@@ -265,6 +267,8 @@
         "background",
         "premises",
         "colliding_pairs",
+        "rule_acts",
+        "incompatible_pairs",
         "conflict_targets",
         "conditional_on",
         "soft_residual",
