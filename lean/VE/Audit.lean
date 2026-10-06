@@ -176,6 +176,7 @@ import VE.EnglishGrammar.FoldAgree
 import VE.EnglishGrammar.Rules
 import VE.EnglishGrammar.Read
 import VE.EnglishGrammar.Extends
+import VE.EnglishGrammar.Run
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -4267,7 +4268,70 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.EnglishGrammar.lexRules_get
 #print axioms VE.EnglishGrammar.lexActs_get
 #print axioms VE.EnglishGrammar.fixedActs_size
-#print axioms VE.EnglishGrammar.fixedRules_base
-#print axioms VE.EnglishGrammar.rename_id
-#print axioms VE.EnglishGrammar.map_rename_id
+#print axioms VE.EnglishGrammar.fixedTable_small
+#print axioms VE.EnglishGrammar.propRename_inj
+#print axioms VE.EnglishGrammar.lexRows_dom
 #print axioms VE.EnglishGrammar.grammar_extension
+#print axioms VE.EnglishGrammar.unstaged_fixed
+#print axioms VE.EnglishGrammar.ty_catalogue
+#print axioms VE.EnglishGrammar.ty_property
+#print axioms VE.EnglishGrammar.valid_subject_first
+#print axioms VE.EnglishGrammar.obligations_exact
+#print axioms VE.EnglishGrammar.admit_ok
+#print axioms VE.EnglishGrammar.admit_exact
+#print axioms VE.EnglishGrammar.admit_no_premise
+#print axioms VE.EnglishGrammar.first_checked
+
+-- English S3: every added named lemma and statement.
+#print axioms VE.EnglishGrammar.LexRow.Small.dom
+#print axioms VE.EnglishGrammar.LexRow.Small.rename_eq
+#print axioms VE.EnglishGrammar.LexRow.rename_inj
+#print axioms VE.EnglishGrammar.Run.alternativesView_eq
+#print axioms VE.EnglishGrammar.Run.riskView_eq
+#print axioms VE.EnglishGrammar.adjectiveRows_small
+#print axioms VE.EnglishGrammar.admit_of_read
+#print axioms VE.EnglishGrammar.admit_ok_read
+#print axioms VE.EnglishGrammar.append_all
+#print axioms VE.EnglishGrammar.append_map
+#print axioms VE.EnglishGrammar.attributeRows_sub
+#print axioms VE.EnglishGrammar.clauseRowsOrder_small
+#print axioms VE.EnglishGrammar.clauseRows_small
+#print axioms VE.EnglishGrammar.constantRows_eq
+#print axioms VE.EnglishGrammar.constantRows_small
+#print axioms VE.EnglishGrammar.fixedRules_size
+#print axioms VE.EnglishGrammar.fixed_rows_small
+#print axioms VE.EnglishGrammar.flatMap_all
+#print axioms VE.EnglishGrammar.guardRows_eq
+#print axioms VE.EnglishGrammar.guardRows_small
+#print axioms VE.EnglishGrammar.indexIn_lt
+#print axioms VE.EnglishGrammar.intConstantRows_small
+#print axioms VE.EnglishGrammar.lexRowsAll_dom
+#print axioms VE.EnglishGrammar.map_rename_inj
+#print axioms VE.EnglishGrammar.map_rename_small
+#print axioms VE.EnglishGrammar.mem_eraseDups
+#print axioms VE.EnglishGrammar.mem_eraseDupsBy_loop
+#print axioms VE.EnglishGrammar.noNt_of
+#print axioms VE.EnglishGrammar.propertyNt_ge
+#print axioms VE.EnglishGrammar.propertyRows_sub
+#print axioms VE.EnglishGrammar.rename_prop
+#print axioms VE.EnglishGrammar.rename_small
+#print axioms VE.EnglishGrammar.rhsTys_rename
+#print axioms VE.EnglishGrammar.slot_small
+#print axioms VE.EnglishGrammar.smallRow_of
+#print axioms VE.EnglishGrammar.small_of
+#print axioms VE.EnglishGrammar.spellingRows_small
+#print axioms VE.EnglishGrammar.symsSmall_append
+#print axioms VE.EnglishGrammar.symsSmall_cons_n
+#print axioms VE.EnglishGrammar.symsSmall_cons_t
+#print axioms VE.EnglishGrammar.symsSmall_iff
+#print axioms VE.EnglishGrammar.symsSmall_nil
+#print axioms VE.EnglishGrammar.symsSmall_textSyms
+#print axioms VE.EnglishGrammar.terminatorFree_rename
+#print axioms VE.EnglishGrammar.textSyms_noNt
+#print axioms VE.EnglishGrammar.ty_propertyNt
+#print axioms VE.EnglishGrammar.ty_rename
+#print axioms VE.EnglishGrammar.valueSorts_sub
+#print axioms VE.EnglishGrammar.wordingRows_small
+#print axioms VE.EnglishGrammar.wordingRows_sub
+#print axioms VE.EnglishGrammar.wordingSymsBy_nts
+#print axioms VE.EnglishGrammar.wordingSyms_nts
