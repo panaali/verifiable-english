@@ -136,7 +136,9 @@ theorem alternativesView_eq : alternativesView = VE.Service.Standalone.alternati
 def declaresBlock (environment : Json) : Bool :=
   let ps := (VE.Route.Gate.profilesOf environment).toOption.getD []
   ps.contains "alternatives@0" || ps.contains "risk@0" || ps.contains "norm-defaults@0" ||
-    ps.contains "soft-norms@0" || (environment.getObjVal? "units").isOk ||
+    ps.contains "soft-norms@0" || ps.contains "reports@0" || ps.contains "readings@1" ||
+    ps.contains "speech-acts@0" || (environment.getObjVal? "speech_acts").isOk ||
+    (environment.getObjVal? "units").isOk ||
     (environment.getObjVal? "unit_schema").isOk ||
     (environment.getObjVal? "alternatives").isOk || (environment.getObjVal? "risk").isOk
 
@@ -146,14 +148,19 @@ only those declarations from the source-route view, so the routes can check the 
 W6 annotations without deciding whether an unrelated profile may be combined with them. -/
 def blockRouteView (environment : Json) : Json := Id.run do
   let vocabulary := environment.getObjValD "vocabulary"
+  let profiles := (VE.Route.Gate.profilesOf environment).toOption.getD []
+  let profiles := profiles.filter (fun p => p != "readings@1" && p != "reports@0" &&
+    p != "speech-acts@0" && p != "rights@0")
   let predicates := VE.Risk.Wire.mapEntries (fun entry =>
     VE.Risk.Wire.dropField "defined" (VE.Risk.Wire.dropField "total"
       (VE.Risk.Wire.dropField "functional" entry))) (vocabulary.getObjValD "predicates")
   let constants := match VE.Bridge.fields (vocabulary.getObjValD "constants") with
     | .ok cs => Json.mkObj (cs.filter fun (_, entry) => entry.getObjValD "sort" != .str "$string")
     | .error _ => vocabulary.getObjValD "constants"
-  return environment.setObjVal! "vocabulary"
-    ((vocabulary.setObjVal! "predicates" predicates).setObjVal! "constants" constants)
+  let vocabulary := (vocabulary.setObjVal! "predicates" predicates).setObjVal! "constants" constants
+  let vocabulary := VE.Risk.Wire.dropField "reports" (VE.Risk.Wire.dropField "rights" vocabulary)
+  let environment := VE.Risk.Wire.dropField "speech_acts" environment
+  return (environment.setObjVal! "profiles" (toJson profiles)).setObjVal! "vocabulary" vocabulary
 
 /-- Part 1 of the boundary (S3 spec 2.3): check the profile blocks and W6 declarations by the route
 decoders, using an empty document. The typing check below reads the complete submitted declarations. -/

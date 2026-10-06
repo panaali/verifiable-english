@@ -166,7 +166,25 @@ def typingView (environment : Json) : Except String Json := do
   let env ← if ps.contains "soft-norms@0" then softNormsView env else pure env
   let env ← if ps.contains "norm-defaults@0" then normDefaultsView env else pure env
   let env ← if (environment.getObjVal? "units").isOk && !ps.contains "risk@0" then unitsView env else pure env
-  if ps.contains "norms@0" then regulatedView env else pure env
+  let env ← if ps.contains "norms@0" then regulatedView env else pure env
+  let env ← if ps.contains "reports@0" then do
+    let vocabulary ← env.getObjVal? "vocabulary"
+    let constants ← (← VE.Bridge.fields (← vocabulary.getObjVal? "constants")).mapM fun (c, entry) => do
+      pure (c, Json.mkObj ((← VE.Bridge.fields entry).filter (·.1 != "verbalisation")))
+    let fields := (← VE.Bridge.fields vocabulary).filter (·.1 != "reports")
+    let reduced := env.setObjVal! "profiles"
+      (toJson (((VE.Route.Gate.profilesOf env).toOption.getD []).erase "reports@0"))
+    pure (reduced.setObjVal! "vocabulary"
+      ((Json.mkObj fields).setObjVal! "constants" (Json.mkObj constants)))
+    else pure env
+  let env := if ps.contains "readings@1" then
+    env.setObjVal! "profiles" (toJson (((VE.Route.Gate.profilesOf env).toOption.getD []).erase "readings@1"))
+    else env
+  if ps.contains "speech-acts@0" then
+    let fields := (← VE.Bridge.fields env).filter (·.1 != "speech_acts")
+    pure ((Json.mkObj fields).setObjVal! "profiles"
+      (toJson (((VE.Route.Gate.profilesOf env).toOption.getD []).erase "speech-acts@0")))
+  else pure env
 
 /-- The typed check of a document of encoded formulas against an environment JSON, by the standalone
 typing service's decoders, family by family, over the environment's typing view (S3 spec 2.3). -/
