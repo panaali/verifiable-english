@@ -325,6 +325,25 @@ class Environment:
         """Decode and validate an environment under the selected authority."""
         from .backends.dispatch import authority_for, execute
 
+        if (not _generated_reports and type(data) is dict and
+                ("unit_schema" in data or "units" in data) and
+                type(data.get("profiles")) is list and
+                "time@0" in data["profiles"] and "risk@0" not in data["profiles"]):
+            # W6's decoder owns the extended environment. A top statement asks
+            # the same decoder used by every quantity check to admit it first.
+            from .backends.relay import decide
+            from .errors import CheckerUnavailable
+            [row] = decide("check", [{"id": "environment", "environment": data,
+                                      "quantity": {"format": "ve-quantity@1", "formula": ["top"]}}])
+            try:
+                self._decode(data, _generated_reports=False)
+            except Exception as exc:
+                raise CheckerUnavailable(
+                    "CheckerUnavailable: Python could not construct a Lean-accepted W6 environment") from exc
+            if self.environment_id != row["environment_id"]:
+                raise CheckerUnavailable("CheckerUnavailable: W6 environment identity mismatch")
+            return
+
         def python():
             self._decode(data, _generated_reports=_generated_reports)
             return self
@@ -432,12 +451,13 @@ class Environment:
                 raise UnsupportedProfile("Unsupported language, semantic profile, or specification revision")
         vocab = data["vocabulary"]
         if extended:
-            from .units import validate_units
-            if type(data["unit_schema"]) is not str and "risk@0" not in data["profiles"]:
-                # VE.Time.Wire.decodeEnvironment; the risk route compares the
-                # value (VE.Risk.Wire), which validate_units does.
-                raise VEError("String expected")
-            checked_units = validate_units(data["unit_schema"], data["units"])
+            if kind == "risk":
+                from .units import validate_units
+                checked_units = validate_units(data["unit_schema"], data["units"])
+            else:
+                # The W6 check mode admitted these declarations before this
+                # constructor ran; copy them without another decision.
+                checked_units = data["units"]
             units = {tag: MappingProxyType({"scale": record["scale"],
                                           "display": MappingProxyType(dict(record["display"]))})
                      for tag, record in checked_units.items()}
@@ -449,6 +469,7 @@ class Environment:
             raise UnsupportedProfile("reports@0 needs a reports block")
         if type(vocab) is not dict:
             raise VEError("object expected")
+        unit_route = kind
         require_fields(vocab, {"sorts", "predicates", "constants"} |
                        ({"reports"} if route and "reports@0" in data["profiles"] else set()),
                        path="/vocabulary")
@@ -515,9 +536,12 @@ class Environment:
             # An explicit map, even an empty one, is part of the submitted identity.
             argument_units = None
             if "argument_units" in entry:
-                from .units import validate_slot_units
-                argument_units = MappingProxyType(
-                    validate_slot_units(entry["argument_units"], args, units))
+                if unit_route == "risk":
+                    from .units import validate_slot_units
+                    argument_units = MappingProxyType(
+                        validate_slot_units(entry["argument_units"], args, units))
+                else:
+                    argument_units = MappingProxyType(dict(entry["argument_units"]))
             if flagged and len(args) != 2:
                 raise VEError("Functional and total flags require a binary predicate")
             if flagged and INT_SORT in args:
@@ -594,12 +618,13 @@ class Environment:
                                           and not (route and sort == STRING_SORT)):
                 raise UnknownSymbol(f"Undeclared constant sort: {sort!r}")
             if has_unit:
-                from .units import validate_tag
-                if sort != INT_SORT:
-                    raise VEError(f"Unit on non-integer constant {name}")
-                if type(entry["unit"]) is not str:
-                    raise VEError("String expected")
-                validate_tag(entry["unit"], units)
+                if unit_route == "risk":
+                    from .units import validate_tag
+                    if sort != INT_SORT:
+                        raise VEError(f"Unit on non-integer constant {name}")
+                    if type(entry["unit"]) is not str:
+                        raise VEError("String expected")
+                    validate_tag(entry["unit"], units)
             constants[name] = ConstantDecl(sort, _description(entry["description"])
                                            if "description" in entry else None,
                                            entry.get("unit") if has_unit else None,
@@ -694,9 +719,8 @@ class Environment:
             object.__setattr__(self, field, value)
         object.__setattr__(self, "risk", risk)
         object.__setattr__(self, "reports", reports)
-        if extended and risk is None:  # a risk environment was checked after its vocabulary
-            from .units import validate_extension
-            validate_extension(self.profiles, units, sorts, constants)
+        # W6's profile and vocabulary extension were checked by Lean before
+        # construction. The risk profile takes its own route's legacy decoder.
         if extended:
             # Rust and Lean digest the submitted environment; Python digests
             # to_dict(). Any spelling that does not survive the round trip would

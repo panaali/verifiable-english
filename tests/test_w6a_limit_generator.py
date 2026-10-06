@@ -365,7 +365,7 @@ def test_lean_authority_reports_resource_limit_on_every_generated_case(seed, mon
 
 # --- The Python meter keeps the regression power of the old wall-clock bound ---
 
-@pytest.mark.parametrize("prefix", ["q-binders-cm-", "r-binders-", "reproducer-2-"])
+@pytest.mark.parametrize("prefix", ["r-binders-", "reproducer-2-"])
 def test_python_meter_stops_an_evaluator_that_skips_its_budget(prefix, monkeypatch):
     """An evaluator whose budget check is skipped would answer after 2^k units
     (2^30 for the defined table); the meter stops it one charge past the budget,

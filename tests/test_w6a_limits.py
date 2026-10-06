@@ -141,7 +141,7 @@ def test_certificate_aggregate_is_checked_before_replay():
 def test_document_lemma_over_the_aggregate_is_not_established():
     """Documents check lemmas through the same stage: an oversized lemma is
     'not established' in Lean and Python alike."""
-    from ve.quantity_admission import admit_quantity_document
+    from ve.admission import admit_document
     from ve.errors import VEError
     premises, conclusion, certificate = oversized_certificate()
     data = raw()
@@ -159,7 +159,7 @@ def test_document_lemma_over_the_aggregate_is_not_established():
                                                   "label": "cite:b/l"}]}}
     message = "AdmissionError: lemma b/l is not established by its certificate"
     with pytest.raises(VEError, match=message):
-        admit_quantity_document(Environment(data), document)
+        admit_document(Environment(data), document)
     [got] = lean([{"id": "d", "kind": "document", "environment": data, "document": document}])
     assert got["status"] == "error" and got["error"] == message, got
 
