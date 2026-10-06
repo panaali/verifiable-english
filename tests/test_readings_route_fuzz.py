@@ -13,15 +13,15 @@ from __future__ import annotations
 
 import copy
 import json
-import subprocess
 
 import pytest
 
-import ve.backends.lean as lean_backend
 import ve.readings_route as route
+from tests import lean_routes
 from tests.test_readings_s1_document import default, s1_document, strict
-from tests.test_readings_s1_lean import (EXCEPTED, LEAN, M0, Q0, entry, env_k, env_rights, k1_document, norm,
+from tests.test_readings_s1_lean import (EXCEPTED, M0, Q0, entry, env_k, env_rights, k1_document, norm,
                                          norm_object, reading, reading_set, situation_id)
+from ve.backends.lean_service import _decode_json
 from ve.document import check_document
 from ve.errors import CheckerUnavailable
 
@@ -103,18 +103,18 @@ def _holds(reading_set):
 def corpus(tmp_path_factory):
     """(case, row) for every genuine ok `readings-validate` answer Lean gives on the corpus, recorded at the route's
     transport (S2's cases on the same transport, `readings-elaborate` and the verdict routes, are not S1's answer)."""
-    if not LEAN.exists():
-        pytest.skip("ve_readings_route is not built")
+    if not lean_routes.SERVICE.exists():
+        pytest.skip("the Lean service is not built")
     recorded = []
-    real = route.run_readings_cases
+    real = route.rows
 
-    def recording(executable, cases, timeout=None):
-        rows = real(executable, cases, timeout=timeout)
+    def recording(mode, cases, **options):
+        rows = real(mode, cases, **options)
         recorded.extend((case, copy.deepcopy(row)) for case, row in zip(cases, rows)
                         if row["status"] == "ok" and case["kind"] == "readings-validate")
         return rows
     with pytest.MonkeyPatch.context() as patch:
-        patch.setattr(route, "run_readings_cases", recording)
+        patch.setattr(route, "rows", recording)
         for raw, document in _k_requests():
             route.validate(raw, units_of(document), document["reading_sets"])
         tmp = tmp_path_factory.mktemp("readings-corpus")
@@ -288,7 +288,7 @@ def test_a_failure_of_the_check_itself_is_contained(monkeypatch, corpus, error):
     def failing(row, document):
         raise error("injected")
     monkeypatch.setattr(route, "_bind", failing)
-    with pytest.raises(CheckerUnavailable, match="ve_readings_route returned an invalid answer"):
+    with pytest.raises(CheckerUnavailable, match="the Lean readings route returned an invalid answer"):
         route._check(row, case)
 
 
@@ -311,50 +311,41 @@ def test_two_fault_mutants_are_unavailable(corpus):
                 route._check(mutant, case)
 
 
-def _transport(monkeypatch, stdout, returncode=0):
-    """The route's process answers `stdout`, as bytes (the transport reads bytes; tests/test_route_transport.py
-    covers bytes that are not UTF-8)."""
-    monkeypatch.setattr(lean_backend.subprocess, "run", lambda *a, **k: subprocess.CompletedProcess(
-        a[0], returncode, stdout=stdout.encode(), stderr=b""))
-
-
 @pytest.mark.parametrize("stdout", [
     '[{"id": "c", "status": "ok", "status": "ok"}]',
     '[{"id": "c", "status": "ok", "content_bearing": NaN}]',
     "[" * 100_000 + "]" * 100_000,
     '[{"id": "c", "status": "ok"}',
 ])
-def test_the_transport_reads_strict_json(monkeypatch, stdout):
+def test_the_transport_reads_strict_json(stdout):
     """A repeated member (the last would win in `json.loads`), a non-JSON number, nesting past the runtime limit
-    and truncated output are no answer: `CheckerUnavailable`, never a `RecursionError` or a silently chosen
-    value."""
-    _transport(monkeypatch, stdout)
-    with pytest.raises(CheckerUnavailable):
-        lean_backend.run_readings_cases("ve_readings_route", [{"id": "c"}])
+    and truncated output are no answer to the service's client (`_decode_json`: `ValueError`, which `LeanService`
+    makes `CheckerUnavailable`), never a `RecursionError` or a silently chosen value."""
+    with pytest.raises(ValueError):
+        _decode_json(stdout.encode())
 
 
-def test_the_transport_still_reads_every_genuine_answer(monkeypatch, corpus):
+def test_the_transport_still_reads_every_genuine_answer(corpus):
     """Lean's rows carry `null` (an unknown `witness_value` or `other_value`), which `ve.wire.loads_json` refuses:
     the strict reader must still read every genuine answer."""
     assert any("null" in json.dumps(row) for _, row in corpus)
-    for case, row in corpus:
-        _transport(monkeypatch, json.dumps([row]))
-        assert lean_backend.run_readings_cases("ve_readings_route", [case]) == [row]
+    for _, row in corpus:
+        assert _decode_json(json.dumps([row]).encode()) == [row]
 
 
 def test_a_pair_lean_never_answers_is_not_rendered(tmp_path, monkeypatch, corpus):
     """lf-3 review B1: `separated: false` on a genuine K1 row used to reach the English, which then said "They
     differ here". The document path now reports the route unavailable instead."""
     path = s1_document(tmp_path, [strict(), default()])
-    real = route.run_readings_cases
+    real = route.rows
 
-    def unseparated(executable, cases, timeout=None):
-        rows = real(executable, cases, timeout=timeout)
+    def unseparated(mode, cases, **options):
+        rows = real(mode, cases, **options)
         for row in rows:
             for s in row.get("sets", []):
                 for p in s["pairs"]:
                     p["pair"]["separated"] = False
         return rows
-    monkeypatch.setattr(route, "run_readings_cases", unseparated)
-    with pytest.raises(CheckerUnavailable, match="ve_readings_route returned an invalid answer"):
+    monkeypatch.setattr(route, "rows", unseparated)
+    with pytest.raises(CheckerUnavailable, match="the Lean readings route returned an invalid answer"):
         check_document(path)

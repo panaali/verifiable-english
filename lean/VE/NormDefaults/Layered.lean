@@ -368,14 +368,14 @@ def replayStatusX (L : LayeredU) (j : Json) : Except String (StatusX L) := do
 
 /-- A supplied witness for `r`: a situation, its `filling` and the `tuple`. -/
 def suppliedX (L : LayeredU) (witnesses : Json) (r : Regulated) :
-    Except String (Option (PLift (ReachedSome L.U L.X r) × Json)) :=
+    Except String (Option (PLift (ReachedSome L.U L.X r) × WitnessRow)) :=
   match witnesses.getObjVal? r.name with
   | .ok w => do
     let fw ← filledX L w
     let ⟨vs, hvs⟩ ← tupleOf fw.S.M r.sorts (← w.getObjVal? "tuple")
     if hr : (reachedF L.U r.name).eval (fw.S.M.withFill fw.F) (tupleVal vs) = true then
       pure (some (⟨reachedSome_of_fill L.U L.wfU L.X fw.S.M fw.S.valid fw.S.background r vs fw.F hvs
-        fw.fill_ok fw.extra_ok hr⟩, witnessJson L.U (fw.S.M.withFill fw.F) vs))
+        fw.fill_ok fw.extra_ok hr⟩, witnessRow L.U (fw.S.M.withFill fw.F) vs))
     else pure none
   | .error _ => pure none
 

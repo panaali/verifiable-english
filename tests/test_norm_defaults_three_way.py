@@ -7,11 +7,11 @@ Python/Lean legs through `ve_norm_defaults_route`.
 from __future__ import annotations
 
 import os
-import shutil
-import subprocess
 from copy import deepcopy
 
 import pytest
+
+from tests import lean_routes
 
 from conformance import norm_defaults_differential as differential
 from conformance.norm_defaults_three_way import (admission_document, certificate_case, conflict_case,
@@ -23,22 +23,13 @@ from ve.environment import Environment
 from ve.errors import VEError
 from ve.norms import NormDocument
 
-LEAN = route.LEAN_ROUTE
-
-
 @pytest.fixture(scope="module")
 def lean_executable():
-    if os.environ.get("VE_LEAN_PREBUILT"):
-        assert LEAN.is_file(), f"gate Lean build missing: {LEAN}"
-        return LEAN
-    if not LEAN.exists():
-        lake = shutil.which("lake")
-        if lake is None:
-            pytest.skip("lake is required for the norm-defaults route")
-        built = subprocess.run([lake, "build", "ve_norm_defaults_route"], cwd=LEAN.parents[3],
-                               capture_output=True, text=True, timeout=1800)
-        assert built.returncode == 0, built.stdout + built.stderr
-    return LEAN
+    """The Lean norm-defaults route is the service mode `norm-defaults`; this fixture needs the service."""
+    if not lean_routes.SERVICE.exists():
+        if os.environ.get("VE_LEAN_PREBUILT"):
+            raise AssertionError(f"gate Lean build missing: {lean_routes.SERVICE}")
+        pytest.skip("the Lean service has not been built")
 
 
 def _document(name):
@@ -67,13 +58,13 @@ def test_undecided_filling_decoder_rejects_untrusted_rows(lean_executable):
     for filling in ({table: [row + ["extra"]]}, {"unknown": []}, {table: [["nobody"]]}, 7):
         cases.append({**base, "yes": filling})
         cases.append({**base, "no": filling})
-    rows = route.run_cases(cases, lean_executable)
+    rows = route.run_cases(cases)
     assert rows[0]["point_status"] == "UNDECIDED"
     assert all(row["status"] == "error" for row in rows[1:])
 
 
 def test_three_way_fixtures(lean_executable):
-    result = run(lean_executable)
+    result = run()
     rows = {row["fixture"]: row for row in result["fixtures"]}
     assert [r for r in result["fixtures"] if r["mismatches"]] == []
     assert result["passed"] == len(rows) == 18
@@ -120,7 +111,7 @@ def test_python_enumeration_is_replayed_by_lean_enumeration(lean_executable):
     assert (status.status, status.value, status.evidence) == ("SETTLED", True, "enumeration")
     base = route.source_case(doc, "norm-defaults-status", model=situation.to_dict(),
                              predicate="x_permitted", tuple=["a"])
-    rows = route.run_cases([{**base, "method": "enumerate"}, {**base, "method": "table3"}], lean_executable)
+    rows = route.run_cases([{**base, "method": "enumerate"}, {**base, "method": "table3"}])
     assert [r["point_status"] for r in rows] == ["SETTLED yes", "UNKNOWN"]
 
 
@@ -139,7 +130,7 @@ def test_audit_certificate_replays_on_the_switched_source(lean_executable):
     switched = nd.UnspecifiedDocument(Environment(nd._profiled(env, ("x_permitted",)).to_dict()), rules)
     case = route.source_case(switched, "norm-defaults-gaps", predicate="x_permitted",
                              packages={"reached:x_permitted": entry["certificate"]})
-    assert route.run_cases([case], lean_executable)[0]["gaps"] == "none"
+    assert route.run_cases([case])[0]["gaps"] == "none"
 
     env, units, situations = next((e, u, s) for n, e, u, s in fixtures() if n == "a1-switch-deny")
     rules = [NormDocument._decode(u) for u in units]
@@ -158,13 +149,13 @@ def test_audit_certificate_replays_on_the_switched_source(lean_executable):
                                tuple=entry["switched_witness"]["tuple"]),
              route.source_case(switched, "norm-defaults-gaps", predicate="p_permitted",
                                packages={"reached:p_permitted": line.certificate})]
-    assert [r["gaps"] for r in route.run_cases(cases, lean_executable)] == ["none", "reachable", "unknown"]
+    assert [r["gaps"] for r in route.run_cases(cases)] == ["none", "reachable", "unknown"]
 
 
 def test_spec8_differentials(lean_executable):
     """Spec 8: 1,000 generated trees regenerate byte for byte in Lean; on 1,000 generated
     situations every `table3` entry and every status is Lean's (conformance/norm_defaults_differential.py)."""
-    result = differential.run(lean_executable)
+    result = differential.run()
     assert result["mismatches"] == []
     assert result["counts"]["elaborate"] == 1000 and result["counts"]["status"] > 9000
     assert result["counts"]["conflict:latent"] > 0 and result["wide"] > 0 and result["unspecified"] > 500
@@ -185,14 +176,14 @@ def test_mutations_are_rejected_by_both(lean_executable):
     stale = nd.check_conflict(nd.UnspecifiedDocument(Environment(flipped["environment"]), []),
                               certificates=report.certificates)
     assert stale.status == "UNKNOWN"
-    rows = route.run_cases([case, flipped], lean_executable)
+    rows = route.run_cases([case, flipped])
     assert [r["verdict"] for r in rows] == ["CONFLICT-FREE", "UNKNOWN"]
 
     certified = certificate_case(doc)
     dropped = deepcopy(certified)
     dropped["certificate"]["premise_meaning_ids"] = [
         pid for i, pid in enumerate(dropped["certificate"]["premise_meaning_ids"]) if i != 1]
-    rows = route.run_cases([certified, dropped], lean_executable)
+    rows = route.run_cases([certified, dropped])
     assert rows[0]["valid"] is True
     assert rows[1].get("valid") is not True
 
@@ -223,7 +214,7 @@ def test_admission_tampering_is_rejected_by_both(lean_executable):
     python = admit_document(raw, good)
     rows = route.run_cases([{"id": "good", "kind": "admission", "environment": raw, "document": good}] +
                            [{"id": k, "kind": "admission", "environment": raw, "document": d}
-                            for k, d in mutants.items()], lean_executable)
+                            for k, d in mutants.items()])
     assert {k: v for k, v in rows[0].items() if k not in ("id", "status")} == python
     for (label, document), row in zip(mutants.items(), rows[1:]):
         with pytest.raises(VEError) as error:
@@ -244,6 +235,5 @@ def test_profiled_admission_without_unspecified_is_w1_admission(lean_executable)
     # E‴ is E without the profile, so the certificates already bind the W1 environment.
     w1 = admit_document(plain, document)
     assert profiled["report"] == w1["report"] and profiled["kinds"] == w1["kinds"]
-    row = route.run_cases([{"id": "p", "kind": "admission", "environment": raw, "document": document}],
-                          lean_executable)[0]
+    row = route.run_cases([{"id": "p", "kind": "admission", "environment": raw, "document": document}])[0]
     assert {k: v for k, v in row.items() if k not in ("id", "status")} == profiled

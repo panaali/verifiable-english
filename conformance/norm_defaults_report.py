@@ -87,7 +87,7 @@ def compare(lines, row, *, witnesses=True):
     return problems
 
 
-def generated(executable=route.LEAN_ROUTE, *, trees=1000, searched=200, seed=0):
+def generated(*, trees=1000, searched=200, seed=0):
     """The report on the spec 8 differential's generated trees (`norm_defaults_differential.case`):
     with each tree's situation for all `trees` (a translation document half of the time, with
     a `completions` block citing one deny or allow predicate a quarter of the time), and
@@ -117,7 +117,7 @@ def generated(executable=route.LEAN_ROUTE, *, trees=1000, searched=200, seed=0):
             kinds.append("searched")
     rows = []
     for start in range(0, len(cases), 500):
-        rows.extend(route.run_cases(cases[start:start + 500], executable))
+        rows.extend(route.run_cases(cases[start:start + 500]))
     mismatches, counts = [], {}
     for index, (lines, row, kind) in enumerate(zip(expected, rows, kinds)):
         for line in lines:

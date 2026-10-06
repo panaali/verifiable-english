@@ -25,13 +25,13 @@ def _fixture(name):
                 if n == name)
 
 
-def _run(cases, executable):
-    return route.run_cases(cases, executable)
+def _run(cases):
+    return route.run_cases(cases)
 
 
-def _elaborate(name, executable):
+def _elaborate(name):
     kind, env, source, _ = _fixture(name)
-    (row,) = _run([layered.case(kind, env, source, "norm-defaults-elaborate")], executable)
+    (row,) = _run([layered.case(kind, env, source, "norm-defaults-elaborate")])
     assert row["status"] == "ok", row
     return row
 
@@ -40,7 +40,7 @@ def test_soft_and_rights_fixtures_agree_with_python(lean_executable):
     """Spec 9 u2, u3, u8 and u9 and a coherence case: the regeneration, `Soft_T`, the
     rights premises and the bound base environment byte for byte; every status, conflict
     verdict and report line as Python's."""
-    result = layered.run(lean_executable)
+    result = layered.run()
     rows = {r["fixture"]: r for r in result["fixtures"]}
     assert [(r["fixture"], r["mismatches"]) for r in result["fixtures"] if r["mismatches"]] == []
     assert result["passed"] == len(rows) == 12
@@ -67,7 +67,7 @@ def test_soft_and_rights_fixtures_agree_with_python(lean_executable):
 def test_coherence_is_regenerated_on_the_filled_tree(lean_executable):
     """3.3: `Coh_T`'s selections read unsaid atoms where guards mention unspecified
     predicates; soft's own `Coh_T` (on `soften T`) reads the placeholder deny instead."""
-    row = _elaborate("coherent", lean_executable)
+    row = _elaborate("coherent")
     (coherence,) = [p for p in row["soft"] if p["label"].startswith("soft:coherence:")]
     assert "unsaid__y_permitted" in json.dumps(coherence["ast"])
     kind, env, source, _ = _fixture("coherent")
@@ -89,16 +89,14 @@ def test_undecided_fillings_must_satisfy_the_route_premises(lean_executable):
     cases = [layered.case("soft", env, rules, "norm-defaults-status", method="undecided", yes=yes, no=no, **point),
              layered.case("soft", env, rules, "norm-defaults-status", method="enumerate", **point),
              layered.case("soft", env, rules, "norm-defaults-status", method="table3", **point)]
-    assert [r["point_status"] for r in _run(cases, lean_executable)] == ["UNKNOWN"] * 3
+    assert [r["point_status"] for r in _run(cases)] == ["UNKNOWN"] * 3
     # the same filling as evidence of a gap is refused as inadmissible, naming soft
     witness = {"model": situation, "filling": yes, "tuple": ["a"]}
-    (row,) = _run([layered.case("soft", env, rules, "norm-defaults-report", witnesses={"y_permitted": witness})],
-                  lean_executable)
+    (row,) = _run([layered.case("soft", env, rules, "norm-defaults-report", witnesses={"y_permitted": witness})])
     assert row["error"] == "InvalidModel(soft): the model violates a background premise"
     # with the admissible filling the gap is reachable
     witness["filling"] = no
-    (row,) = _run([layered.case("soft", env, rules, "norm-defaults-report", witnesses={"y_permitted": witness})],
-                  lean_executable)
+    (row,) = _run([layered.case("soft", env, rules, "norm-defaults-report", witnesses={"y_permitted": witness})])
     assert [r["reached"] for r in row["report"] if r["predicate"] == "y_permitted"] == ["reachable"]
 
 
@@ -112,8 +110,7 @@ def test_rights_limitation_premises_bind_fillings(lean_executable):
     situation = doc.situation(bad)
     assert not doc.fill_valid(situation, doc.canonical_filling(situation))
     witness = {"model": bad, "filling": {}, "tuple": ["s", "p"]}
-    (row,) = _run([layered.case(kind, env, source, "norm-defaults-report", witnesses={"arrest_permitted": witness})],
-                  lean_executable)
+    (row,) = _run([layered.case(kind, env, source, "norm-defaults-report", witnesses={"arrest_permitted": witness})])
     assert row["error"] == "InvalidModel(rights): the model violates a background premise"
 
 
@@ -123,7 +120,7 @@ def test_packages_are_bound_to_the_source_and_the_layered_background(lean_execut
     rights premise is a missing or invalid certificate, never CONFLICT-FREE."""
     kind, env, source, situations = _fixture("u9-unspecified")
     doc = layered.document(kind, env, source)
-    row = _elaborate("u9-unspecified", lean_executable)
+    row = _elaborate("u9-unspecified")
     bindings = {"environment_id": row["environment_id"], "document_hash": row["document_hash"]}
     verdict, good = layered.conflict_case(kind, env, source, doc, situations[0], bindings)
     assert verdict == "CONFLICT-FREE"
@@ -137,7 +134,7 @@ def test_packages_are_bound_to_the_source_and_the_layered_background(lean_execut
              mutant(lambda p: p.update(document_hash="0" * 64)),
              mutant(lambda p: p.update(environment_id=doc.env.environment_id[:-1] + "0")),
              mutant(lambda p: p["certificate"]["premise_meaning_ids"].pop())]
-    rows = _run(cases, lean_executable)
+    rows = _run(cases)
     assert [r["verdict"] for r in rows] == ["CONFLICT-FREE", "UNKNOWN", "UNKNOWN", "UNKNOWN"]
     assert all(r["detail"].startswith("missing certificate for ") for r in rows[1:])
 
@@ -151,7 +148,7 @@ def test_a_conflict_witness_is_checked(lean_executable):
     assert verdict == "CONFLICT"
     moved = deepcopy(case)
     moved["witness"]["model"] = situations[1]
-    assert [r["verdict"] for r in _run([case, moved], lean_executable)] == ["CONFLICT", "UNKNOWN"]
+    assert [r["verdict"] for r in _run([case, moved])] == ["CONFLICT", "UNKNOWN"]
 
 
 def test_reserved_names_and_kinds(lean_executable):
@@ -162,7 +159,7 @@ def test_reserved_names_and_kinds(lean_executable):
         layered.document(kind, env, reserved)
     rows = _run([layered.case(kind, env, reserved, "norm-defaults-elaborate"),
                  layered.case(kind, env, source, "norm-defaults-gaps", predicate="x_permitted"),
-                 layered.case(kind, env, source, "norm-defaults-certificate")], lean_executable)
+                 layered.case(kind, env, source, "norm-defaults-certificate")])
     assert rows[0]["error"] == str(caught.value) == "InvalidInput: reserved name unsaid--s"
     assert rows[1]["error"] == ("UnsupportedProfile: case kind norm-defaults-gaps is not available on the "
                                 "soft-norms@0 norm-defaults branch")
@@ -170,7 +167,7 @@ def test_reserved_names_and_kinds(lean_executable):
     # without the profile the soft route's unspecified completion is refused, as on the norms route
     plain = deepcopy(env)
     plain["profiles"].remove("norm-defaults@0")
-    (row,) = _run([layered.case(kind, plain, source, "norm-defaults-elaborate")], lean_executable)
+    (row,) = _run([layered.case(kind, plain, source, "norm-defaults-elaborate")])
     assert row["error"] == "UnsupportedProfile: unspecified completion requires norm-defaults@0"
 
 
@@ -184,7 +181,7 @@ def test_situations_are_typed_and_unsaid_tables_are_fillings(lean_executable):
                           **{**point, "tuple": ["nobody"]}),
              layered.case(kind, env, source, "norm-defaults-status", model=situations[0],
                           **{**point, "method": "guess"})]
-    rows = _run(cases, lean_executable)
+    rows = _run(cases)
     assert rows[0]["error"] == ("InvalidModel(norm-defaults): unsaid__x_permitted is a filling; "
                                 "supply it as a filling, not a table")
     assert rows[1]["error"] == "InvalidInput: tuple has the wrong length or sort"
@@ -220,7 +217,7 @@ def test_nested_fillings_are_checked_before_evidence_replay(lean_executable, fix
         witness = {"model": status["model"], "filling": value, "tuple": entities}
         cases.append(layered.case(kind, env, source, "norm-defaults-report",
                                   witnesses={predicate: witness}))
-    rows = _run([status, *cases], lean_executable)
+    rows = _run([status, *cases])
     assert rows[0]["point_status"] == "UNDECIDED"
     assert all(row["status"] == "error" for row in rows[1:]), rows
     assert all(row.get("point_status") != "UNDECIDED" and
@@ -236,7 +233,7 @@ def test_layered_report_grounding(lean_executable):
     cases = [layered.case(kind, env, source, "norm-defaults-report", model=situations[1], translation=True),
              layered.case(kind, env, source, "norm-defaults-report", model=situations[1], translation=True,
                           completions=block, unit_ids=["a29"])]
-    rows = _run(cases, lean_executable)
+    rows = _run(cases)
     assert rows[0]["findings"] == ["UngroundedDefault: arrest_permitted"]
     assert rows[1]["findings"] == [] and rows[1]["report"][0]["lines"][-1] == "grounded: a29"
     doc = layered.document(kind, env, source)

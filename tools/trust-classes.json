@@ -1,21 +1,6 @@
 {
  "comment": "Trust classes of Lean declarations (docs/TRUST-MAP.md section 2), read by tools/trust_map.py. Seeded by `tools/trust_map.py --seed` from the trust map's section 11 module rows, lean/predicates.txt and name rules; a reseed keeps every entry except predicates outside K and S and kernel data types (see seed_module). A tie is written {\"name\": ..., \"tied\": [theorem, ...]}.",
  "modules": {
-  "AlternativesMain.lean": {
-   "G[V]": [
-    "main"
-   ]
-  },
-  "DiagnoseMain.lean": {
-   "G[V]": [
-    "main"
-   ]
-  },
-  "DiscourseMain.lean": {
-   "G[V]": [
-    "main"
-   ]
-  },
   "EnglishLeanBenchMain.lean": {
    "G[V]": [
     "EnglishLeanBench.arr",
@@ -39,6 +24,11 @@
    ],
    "G[R]": [
     "EnglishLeanBench.rejectJson"
+   ]
+  },
+  "EnglishMain.lean": {
+   "G[V]": [
+    "main"
    ]
   },
   "Iceberg.lean": {
@@ -65,31 +55,6 @@
     "main"
    ]
   },
-  "NormDefaultsMain.lean": {
-   "G[V]": [
-    "main"
-   ]
-  },
-  "NormsMain.lean": {
-   "G[V]": [
-    "main"
-   ]
-  },
-  "QuantityMain.lean": {
-   "G[V]": [
-    "main"
-   ]
-  },
-  "ReadingsMain.lean": {
-   "G[V]": [
-    "main"
-   ]
-  },
-  "ReportsMain.lean": {
-   "G[V]": [
-    "main"
-   ]
-  },
   "ResponseDecode.lean": {
    "T": [
     "ResponseDecode.Check",
@@ -108,51 +73,23 @@
     "ResponseDecode.Invariants.sourceTargets",
     "ResponseDecode.Invariants.targetNames",
     "ResponseDecode.Invariants.targetSorts",
-    "ResponseDecode.admission",
     "ResponseDecode.array",
-    "ResponseDecode.background",
-    "ResponseDecode.bool",
-    "ResponseDecode.bound",
-    "ResponseDecode.bundle",
-    "ResponseDecode.caseErrorRow",
-    "ResponseDecode.checkCertificate",
-    "ResponseDecode.claim",
-    "ResponseDecode.coding",
     "ResponseDecode.contentCheck",
     "ResponseDecode.countWhere",
     "ResponseDecode.definitionsCount",
-    "ResponseDecode.dependencyOrder",
-    "ResponseDecode.english",
-    "ResponseDecode.englishItem",
-    "ResponseDecode.errorRow",
-    "ResponseDecode.evaluate",
     "ResponseDecode.field",
-    "ResponseDecode.firstOk",
     "ResponseDecode.flagsCount",
-    "ResponseDecode.folFormula",
-    "ResponseDecode.generatedFormula",
     "ResponseDecode.graphShape",
     "ResponseDecode.has",
-    "ResponseDecode.hex64",
     "ResponseDecode.invariants",
     "ResponseDecode.isField",
     "ResponseDecode.isTrue",
-    "ResponseDecode.kind",
-    "ResponseDecode.label",
     "ResponseDecode.length",
     "ResponseDecode.line",
     "ResponseDecode.literalsCount",
     "ResponseDecode.members",
-    "ResponseDecode.nat",
     "ResponseDecode.need",
     "ResponseDecode.noContent",
-    "ResponseDecode.norms",
-    "ResponseDecode.normsElaborate",
-    "ResponseDecode.normsOk",
-    "ResponseDecode.objects",
-    "ResponseDecode.okRow",
-    "ResponseDecode.order",
-    "ResponseDecode.orderFormula",
     "ResponseDecode.pairsCount",
     "ResponseDecode.path",
     "ResponseDecode.predicates",
@@ -160,51 +97,611 @@
     "ResponseDecode.regulatedCount",
     "ResponseDecode.requestNode",
     "ResponseDecode.response",
-    "ResponseDecode.route",
-    "ResponseDecode.routeError",
-    "ResponseDecode.routeOk",
-    "ResponseDecode.row",
     "ResponseDecode.runs",
-    "ResponseDecode.shape",
-    "ResponseDecode.standalone",
-    "ResponseDecode.string",
-    "ResponseDecode.text",
-    "ResponseDecode.token",
     "ResponseDecode.unfold",
     "ResponseDecode.unfolds",
-    "ResponseDecode.values",
     "ResponseDecode.verdict",
     "main"
    ]
   },
-  "RightsMain.lean": {
-   "G[V]": [
-    "main"
+  "ResponseShape/Encoders/ReadingsRoute.lean": {
+   "S": [
+    "ResponseShape.Encoders.ReadingsRoute.PairEntry",
+    "ResponseShape.Encoders.ReadingsRoute.SetEntry"
    ]
   },
-  "RiskEvalMain.lean": {
-   "T": [
-    "evalCase",
-    "evalCondition",
-    "main"
+  "ResponseShape/Encoders/SoftNorms.lean": {
+   "S": [
+    "ResponseShape.Encoders.SoftNorms.Classified"
    ]
   },
-  "RiskMain.lean": {
+  "ResponseShape/FitsTactic.lean": {
    "G[V]": [
-    "main"
+    "ResponseShape.FitsTactic.bound",
+    "ResponseShape.FitsTactic.caseBranch",
+    "ResponseShape.FitsTactic.fitsGoal",
+    "ResponseShape.FitsTactic.listElems",
+    "ResponseShape.FitsTactic.names?",
+    "ResponseShape.FitsTactic.objAccepts",
+    "ResponseShape.FitsTactic.position",
+    "ResponseShape.FitsTactic.strList?",
+    "ResponseShape.FitsTactic.strLit?",
+    "ResponseShape.FitsTactic.tacticAlt_mem",
+    "ResponseShape.FitsTactic.tacticBool_hyp",
+    "ResponseShape.FitsTactic.tacticFits_as_",
+    "ResponseShape.FitsTactic.tacticFits_pick",
+    "ResponseShape.FitsTactic.tacticSkel_norm",
+    "ResponseShape.FitsTactic.valueKeys",
+    "ResponseShape._aux_ResponseShape_FitsTactic___macroRules_ResponseShape_tacticFitsUsing__1",
+    "ResponseShape.tacticAlt_sub",
+    "ResponseShape.tacticCase_cond",
+    "ResponseShape.tacticElem_cases",
+    "ResponseShape.tacticElems_split",
+    "ResponseShape.tacticFields_split",
+    "ResponseShape.tacticFitsUsing_",
+    "ResponseShape.tacticKeys_ok",
+    "ResponseShape.tacticLits_simp",
+    "ResponseShape.tacticOkfits"
+   ]
+  },
+  "ResponseShape/Schemas/Alternatives.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.Alternatives.admission",
+    "ResponseShape.Schemas.Alternatives.alt_labels",
+    "ResponseShape.Schemas.Alternatives.alt_path",
+    "ResponseShape.Schemas.Alternatives.certificate",
+    "ResponseShape.Schemas.Alternatives.chooser",
+    "ResponseShape.Schemas.Alternatives.conflict_witness",
+    "ResponseShape.Schemas.Alternatives.elaborate",
+    "ResponseShape.Schemas.Alternatives.file",
+    "ResponseShape.Schemas.Alternatives.followable",
+    "ResponseShape.Schemas.Alternatives.followable_witness",
+    "ResponseShape.Schemas.Alternatives.kind",
+    "ResponseShape.Schemas.Alternatives.regenerated",
+    "ResponseShape.Schemas.Alternatives.row",
+    "ResponseShape.Schemas.Alternatives.validate"
+   ]
+  },
+  "ResponseShape/Schemas/Bundle.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.Bundle.file",
+    "ResponseShape.Schemas.Bundle.row"
+   ]
+  },
+  "ResponseShape/Schemas/Check.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.Check.file",
+    "ResponseShape.Schemas.Check.row"
+   ]
+  },
+  "ResponseShape/Schemas/CheckCertificate.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.CheckCertificate.certificate",
+    "ResponseShape.Schemas.CheckCertificate.file",
+    "ResponseShape.Schemas.CheckCertificate.row"
+   ]
+  },
+  "ResponseShape/Schemas/Common.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.Common.act",
+    "ResponseShape.Schemas.Common.admission",
+    "ResponseShape.Schemas.Common.alts",
+    "ResponseShape.Schemas.Common.atomic_kind",
+    "ResponseShape.Schemas.Common.booleans",
+    "ResponseShape.Schemas.Common.bound_report",
+    "ResponseShape.Schemas.Common.claim",
+    "ResponseShape.Schemas.Common.code",
+    "ResponseShape.Schemas.Common.conflict_targets",
+    "ResponseShape.Schemas.Common.environment",
+    "ResponseShape.Schemas.Common.file",
+    "ResponseShape.Schemas.Common.fol_formula",
+    "ResponseShape.Schemas.Common.fol_term",
+    "ResponseShape.Schemas.Common.generated_formula",
+    "ResponseShape.Schemas.Common.generated_formulas",
+    "ResponseShape.Schemas.Common.generator",
+    "ResponseShape.Schemas.Common.hex64",
+    "ResponseShape.Schemas.Common.hex64_or_empty",
+    "ResponseShape.Schemas.Common.id_ok",
+    "ResponseShape.Schemas.Common.integer_text",
+    "ResponseShape.Schemas.Common.kind",
+    "ResponseShape.Schemas.Common.label",
+    "ResponseShape.Schemas.Common.labelled",
+    "ResponseShape.Schemas.Common.labelled_list",
+    "ResponseShape.Schemas.Common.layer_premises",
+    "ResponseShape.Schemas.Common.modality",
+    "ResponseShape.Schemas.Common.nat",
+    "ResponseShape.Schemas.Common.natRe",
+    "ResponseShape.Schemas.Common.no_kind",
+    "ResponseShape.Schemas.Common.nonempty_strings",
+    "ResponseShape.Schemas.Common.norm_node",
+    "ResponseShape.Schemas.Common.norms_background",
+    "ResponseShape.Schemas.Common.onString",
+    "ResponseShape.Schemas.Common.order_formula",
+    "ResponseShape.Schemas.Common.order_term",
+    "ResponseShape.Schemas.Common.packages_conflict",
+    "ResponseShape.Schemas.Common.relation",
+    "ResponseShape.Schemas.Common.report",
+    "ResponseShape.Schemas.Common.request_block",
+    "ResponseShape.Schemas.Common.seqs",
+    "ResponseShape.Schemas.Common.string_map",
+    "ResponseShape.Schemas.Common.string_pair",
+    "ResponseShape.Schemas.Common.strings",
+    "ResponseShape.Schemas.Common.text",
+    "ResponseShape.Schemas.Common.token",
+    "ResponseShape.Schemas.Common.tokenRe",
+    "ResponseShape.Schemas.Common.values",
+    "ResponseShape.Schemas.Common.witness_conflict"
+   ],
+   "G[R]": [
+    "ResponseShape.Schemas.Common.case_error",
+    "ResponseShape.Schemas.Common.error",
+    "ResponseShape.Schemas.Common.route_path_error"
+   ],
+   "G[I]": [
+    "ResponseShape.Schemas.Common.case_error_valid",
+    "ResponseShape.Schemas.Common.error_valid"
+   ]
+  },
+  "ResponseShape/Schemas/Diagnose.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.Diagnose.file",
+    "ResponseShape.Schemas.Diagnose.record",
+    "ResponseShape.Schemas.Diagnose.row"
+   ]
+  },
+  "ResponseShape/Schemas/Discourse.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.Discourse.admission",
+    "ResponseShape.Schemas.Discourse.admissionFields",
+    "ResponseShape.Schemas.Discourse.admissionRequired",
+    "ResponseShape.Schemas.Discourse.choices",
+    "ResponseShape.Schemas.Discourse.discourse_path",
+    "ResponseShape.Schemas.Discourse.file",
+    "ResponseShape.Schemas.Discourse.joint",
+    "ResponseShape.Schemas.Discourse.joint_count",
+    "ResponseShape.Schemas.Discourse.kind",
+    "ResponseShape.Schemas.Discourse.reference",
+    "ResponseShape.Schemas.Discourse.resolve",
+    "ResponseShape.Schemas.Discourse.resolved_target",
+    "ResponseShape.Schemas.Discourse.row",
+    "ResponseShape.Schemas.Discourse.target_kind",
+    "ResponseShape.Schemas.Discourse.validity",
+    "ResponseShape.Schemas.Discourse.validity_map"
+   ]
+  },
+  "ResponseShape/Schemas/English.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.English.file",
+    "ResponseShape.Schemas.English.item",
+    "ResponseShape.Schemas.English.row",
+    "ResponseShape.Schemas.English.run",
+    "ResponseShape.Schemas.English.token"
+   ],
+   "G[R]": [
+    "ResponseShape.Schemas.English.error"
+   ]
+  },
+  "ResponseShape/Schemas/Envelope.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.Envelope.bound",
+    "ResponseShape.Schemas.Envelope.file",
+    "ResponseShape.Schemas.Envelope.handshake",
+    "ResponseShape.Schemas.Envelope.ok",
+    "ResponseShape.Schemas.Envelope.response"
+   ],
+   "G[R]": [
+    "ResponseShape.Schemas.Envelope.error"
+   ]
+  },
+  "ResponseShape/Schemas/Environment.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.Environment.file",
+    "ResponseShape.Schemas.Environment.row"
+   ]
+  },
+  "ResponseShape/Schemas/Evaluate.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.Evaluate.countermodel",
+    "ResponseShape.Schemas.Evaluate.document",
+    "ResponseShape.Schemas.Evaluate.file",
+    "ResponseShape.Schemas.Evaluate.row"
+   ]
+  },
+  "ResponseShape/Schemas/FamilyNorms.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.FamilyNorms.file",
+    "ResponseShape.Schemas.FamilyNorms.row"
+   ]
+  },
+  "ResponseShape/Schemas/Graph.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.Graph.file",
+    "ResponseShape.Schemas.Graph.row"
+   ]
+  },
+  "ResponseShape/Schemas/Identity.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.Identity.file",
+    "ResponseShape.Schemas.Identity.row"
+   ]
+  },
+  "ResponseShape/Schemas/Model.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.Model.file",
+    "ResponseShape.Schemas.Model.row"
+   ]
+  },
+  "ResponseShape/Schemas/NormDefaults.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.NormDefaults.base_environment",
+    "ResponseShape.Schemas.NormDefaults.certificate",
+    "ResponseShape.Schemas.NormDefaults.elaborate",
+    "ResponseShape.Schemas.NormDefaults.elaborateFields",
+    "ResponseShape.Schemas.NormDefaults.elaborateRequired",
+    "ResponseShape.Schemas.NormDefaults.file",
+    "ResponseShape.Schemas.NormDefaults.gaps",
+    "ResponseShape.Schemas.NormDefaults.gaps_model",
+    "ResponseShape.Schemas.NormDefaults.kind",
+    "ResponseShape.Schemas.NormDefaults.layered_elaborate",
+    "ResponseShape.Schemas.NormDefaults.report_line",
+    "ResponseShape.Schemas.NormDefaults.report_row",
+    "ResponseShape.Schemas.NormDefaults.row",
+    "ResponseShape.Schemas.NormDefaults.status"
+   ],
+   "G[R]": [
+    "ResponseShape.Schemas.NormDefaults.norm_defaults_path"
+   ]
+  },
+  "ResponseShape/Schemas/Norms.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.Norms.file",
+    "ResponseShape.Schemas.Norms.kind",
+    "ResponseShape.Schemas.Norms.norms_path",
+    "ResponseShape.Schemas.Norms.row",
+    "ResponseShape.Schemas.Norms.«norms-certificate»",
+    "ResponseShape.Schemas.Norms.«norms-conflict»",
+    "ResponseShape.Schemas.Norms.«norms-elaborate»",
+    "ResponseShape.Schemas.Norms.«norms-witness»"
+   ]
+  },
+  "ResponseShape/Schemas/Order.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.Order.certificate",
+    "ResponseShape.Schemas.Order.countermodel",
+    "ResponseShape.Schemas.Order.evaluate",
+    "ResponseShape.Schemas.Order.file",
+    "ResponseShape.Schemas.Order.kind",
+    "ResponseShape.Schemas.Order.row",
+    "ResponseShape.Schemas.Order.surface"
+   ]
+  },
+  "ResponseShape/Schemas/Parse.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.Parse.file",
+    "ResponseShape.Schemas.Parse.row"
+   ]
+  },
+  "ResponseShape/Schemas/Quantity.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.Quantity.admission",
+    "ResponseShape.Schemas.Quantity.certificate",
+    "ResponseShape.Schemas.Quantity.civil",
+    "ResponseShape.Schemas.Quantity.claim",
+    "ResponseShape.Schemas.Quantity.core_formula",
+    "ResponseShape.Schemas.Quantity.core_term",
+    "ResponseShape.Schemas.Quantity.count",
+    "ResponseShape.Schemas.Quantity.countermodel",
+    "ResponseShape.Schemas.Quantity.day",
+    "ResponseShape.Schemas.Quantity.document",
+    "ResponseShape.Schemas.Quantity.file",
+    "ResponseShape.Schemas.Quantity.identities",
+    "ResponseShape.Schemas.Quantity.kind",
+    "ResponseShape.Schemas.Quantity.lower",
+    "ResponseShape.Schemas.Quantity.q_formula",
+    "ResponseShape.Schemas.Quantity.q_term",
+    "ResponseShape.Schemas.Quantity.render",
+    "ResponseShape.Schemas.Quantity.row"
+   ],
+   "G[R]": [
+    "ResponseShape.Schemas.Quantity.error"
+   ]
+  },
+  "ResponseShape/Schemas/Readings.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.Readings.file",
+    "ResponseShape.Schemas.Readings.row"
+   ]
+  },
+  "ResponseShape/Schemas/ReadingsRoute.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.ReadingsRoute.candidate",
+    "ResponseShape.Schemas.ReadingsRoute.certificate",
+    "ResponseShape.Schemas.ReadingsRoute.choice",
+    "ResponseShape.Schemas.ReadingsRoute.choice_answer",
+    "ResponseShape.Schemas.ReadingsRoute.conflict",
+    "ResponseShape.Schemas.ReadingsRoute.dead",
+    "ResponseShape.Schemas.ReadingsRoute.elaborate",
+    "ResponseShape.Schemas.ReadingsRoute.elaborateChoices",
+    "ResponseShape.Schemas.ReadingsRoute.elaborateRoute",
+    "ResponseShape.Schemas.ReadingsRoute.elaborateSuperposed",
+    "ResponseShape.Schemas.ReadingsRoute.file",
+    "ResponseShape.Schemas.ReadingsRoute.key",
+    "ResponseShape.Schemas.ReadingsRoute.keys",
+    "ResponseShape.Schemas.ReadingsRoute.kind",
+    "ResponseShape.Schemas.ReadingsRoute.model",
+    "ResponseShape.Schemas.ReadingsRoute.over",
+    "ResponseShape.Schemas.ReadingsRoute.pair",
+    "ResponseShape.Schemas.ReadingsRoute.row",
+    "ResponseShape.Schemas.ReadingsRoute.separate",
+    "ResponseShape.Schemas.ReadingsRoute.validate"
+   ]
+  },
+  "ResponseShape/Schemas/Reports.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.Reports.admission",
+    "ResponseShape.Schemas.Reports.certificate",
+    "ResponseShape.Schemas.Reports.countermodel",
+    "ResponseShape.Schemas.Reports.elaborate",
+    "ResponseShape.Schemas.Reports.envelope",
+    "ResponseShape.Schemas.Reports.file",
+    "ResponseShape.Schemas.Reports.key",
+    "ResponseShape.Schemas.Reports.kind",
+    "ResponseShape.Schemas.Reports.report_kind",
+    "ResponseShape.Schemas.Reports.reports_path",
+    "ResponseShape.Schemas.Reports.row",
+    "ResponseShape.Schemas.Reports.scoped",
+    "ResponseShape.Schemas.Reports.status",
+    "ResponseShape.Schemas.Reports.status_word",
+    "ResponseShape.Schemas.Reports.verdict"
+   ],
+   "G[I]": [
+    "ResponseShape.Schemas.Reports.envelope_binding"
+   ]
+  },
+  "ResponseShape/Schemas/Rights.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.Rights.admission",
+    "ResponseShape.Schemas.Rights.bar",
+    "ResponseShape.Schemas.Rights.certificate",
+    "ResponseShape.Schemas.Rights.conditional_labels",
+    "ResponseShape.Schemas.Rights.elaborate",
+    "ResponseShape.Schemas.Rights.entries",
+    "ResponseShape.Schemas.Rights.file",
+    "ResponseShape.Schemas.Rights.findings",
+    "ResponseShape.Schemas.Rights.instance",
+    "ResponseShape.Schemas.Rights.kind",
+    "ResponseShape.Schemas.Rights.narrowings",
+    "ResponseShape.Schemas.Rights.node",
+    "ResponseShape.Schemas.Rights.packages",
+    "ResponseShape.Schemas.Rights.projections",
+    "ResponseShape.Schemas.Rights.rights_path",
+    "ResponseShape.Schemas.Rights.rights_unit",
+    "ResponseShape.Schemas.Rights.row",
+    "ResponseShape.Schemas.Rights.scope"
+   ]
+  },
+  "ResponseShape/Schemas/Risk.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.Risk.admission",
+    "ResponseShape.Schemas.Risk.audit",
+    "ResponseShape.Schemas.Risk.cell",
+    "ResponseShape.Schemas.Risk.certificate",
+    "ResponseShape.Schemas.Risk.conflict",
+    "ResponseShape.Schemas.Risk.decision",
+    "ResponseShape.Schemas.Risk.elaborate",
+    "ResponseShape.Schemas.Risk.endpoint",
+    "ResponseShape.Schemas.Risk.file",
+    "ResponseShape.Schemas.Risk.followable",
+    "ResponseShape.Schemas.Risk.followable_witness",
+    "ResponseShape.Schemas.Risk.kind",
+    "ResponseShape.Schemas.Risk.risk_labels",
+    "ResponseShape.Schemas.Risk.risk_path",
+    "ResponseShape.Schemas.Risk.row"
+   ]
+  },
+  "ResponseShape/Schemas/RiskEval.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.RiskEval.file",
+    "ResponseShape.Schemas.RiskEval.result",
+    "ResponseShape.Schemas.RiskEval.row"
+   ]
+  },
+  "ResponseShape/Schemas/Route.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.Route.background",
+    "ResponseShape.Schemas.Route.bundle",
+    "ResponseShape.Schemas.Route.certificate",
+    "ResponseShape.Schemas.Route.countermodel",
+    "ResponseShape.Schemas.Route.evaluate",
+    "ResponseShape.Schemas.Route.file",
+    "ResponseShape.Schemas.Route.kind",
+    "ResponseShape.Schemas.Route.label",
+    "ResponseShape.Schemas.Route.row",
+    "ResponseShape.Schemas.Route.«dependency-order»"
+   ],
+   "G[R]": [
+    "ResponseShape.Schemas.Route.error"
+   ]
+  },
+  "ResponseShape/Schemas/SoftNorms.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.SoftNorms.admission",
+    "ResponseShape.Schemas.SoftNorms.background",
+    "ResponseShape.Schemas.SoftNorms.certificate",
+    "ResponseShape.Schemas.SoftNorms.coherence_labels",
+    "ResponseShape.Schemas.SoftNorms.elaborate",
+    "ResponseShape.Schemas.SoftNorms.elaborated",
+    "ResponseShape.Schemas.SoftNorms.file",
+    "ResponseShape.Schemas.SoftNorms.kind",
+    "ResponseShape.Schemas.SoftNorms.packages",
+    "ResponseShape.Schemas.SoftNorms.pairs",
+    "ResponseShape.Schemas.SoftNorms.row",
+    "ResponseShape.Schemas.SoftNorms.soft_field",
+    "ResponseShape.Schemas.SoftNorms.soft_path",
+    "ResponseShape.Schemas.SoftNorms.witness"
+   ],
+   "G[R]": [
+    "ResponseShape.Schemas.SoftNorms.error"
+   ]
+  },
+  "ResponseShape/Schemas/SpeechActs.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.SpeechActs.answer",
+    "ResponseShape.Schemas.SpeechActs.consequence",
+    "ResponseShape.Schemas.SpeechActs.elaborate",
+    "ResponseShape.Schemas.SpeechActs.file",
+    "ResponseShape.Schemas.SpeechActs.kind",
+    "ResponseShape.Schemas.SpeechActs.question",
+    "ResponseShape.Schemas.SpeechActs.row",
+    "ResponseShape.Schemas.SpeechActs.speech_path"
+   ]
+  },
+  "ResponseShape/Schemas.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.files",
+    "ResponseShape.Schemas.rendered",
+    "ResponseShape.Schemas.row"
+   ]
+  },
+  "ResponseShape/Skeleton.lean": {
+   "S": [
+    "ResponseShape.CaseWF",
+    "ResponseShape.Fits",
+    "ResponseShape.OkFits",
+    "ResponseShape.OkP"
+   ],
+   "G[V]": [
+    "ResponseShape.CaseCond",
+    "ResponseShape.CaseCond.holds",
+    "ResponseShape.CaseCond.isKind",
+    "ResponseShape.CaseCond.objectHas",
+    "ResponseShape.Extract",
+    "ResponseShape.Skel",
+    "ResponseShape.Skel.anyObject",
+    "ResponseShape.Skel.condsOk",
+    "ResponseShape.Skel.conj",
+    "ResponseShape.Skel.conjAll",
+    "ResponseShape.Skel.distinct",
+    "ResponseShape.Skel.field",
+    "ResponseShape.Skel.isAny",
+    "ResponseShape.Skel.item",
+    "ResponseShape.Skel.keysOk",
+    "ResponseShape.Skel.members",
+    "ResponseShape.Skel.mergeStr",
+    "ResponseShape.Skel.mkAlt",
+    "ResponseShape.Skel.simp",
+    "ResponseShape.caseCondOf",
+    "ResponseShape.objectFree",
+    "ResponseShape.skeleton",
+    "ResponseShape.skeletonOf"
+   ]
+  },
+  "ResponseShape/Skeletons.lean": {
+   "G[V]": [
+    "ResponseShape.Skeletons._aux_ResponseShape_Skeletons___elabRules_ResponseShape_Skeletons_skelTerm_1",
+    "ResponseShape.Skeletons.alternatives",
+    "ResponseShape.Skeletons.bundle",
+    "ResponseShape.Skeletons.check",
+    "ResponseShape.Skeletons.checkCertificate",
+    "ResponseShape.Skeletons.discourse",
+    "ResponseShape.Skeletons.english",
+    "ResponseShape.Skeletons.environment",
+    "ResponseShape.Skeletons.evaluate",
+    "ResponseShape.Skeletons.familyNorms",
+    "ResponseShape.Skeletons.graph",
+    "ResponseShape.Skeletons.model",
+    "ResponseShape.Skeletons.norms",
+    "ResponseShape.Skeletons.order",
+    "ResponseShape.Skeletons.parse",
+    "ResponseShape.Skeletons.quantity",
+    "ResponseShape.Skeletons.readings",
+    "ResponseShape.Skeletons.readingsRoute",
+    "ResponseShape.Skeletons.reports",
+    "ResponseShape.Skeletons.rights",
+    "ResponseShape.Skeletons.risk",
+    "ResponseShape.Skeletons.riskEval",
+    "ResponseShape.Skeletons.route",
+    "ResponseShape.Skeletons.row",
+    "ResponseShape.Skeletons.skelTerm",
+    "ResponseShape.Skeletons.softNorms",
+    "ResponseShape.Skeletons.speechActs"
+   ],
+   "G[R]": [
+    "ResponseShape.Skeletons.diagnose",
+    "ResponseShape.Skeletons.normDefaults"
+   ],
+   "G[I]": [
+    "ResponseShape.Skeletons.identity"
+   ]
+  },
+  "ResponseShape.lean": {
+   "G[V]": [
+    "ResponseShape.Counters",
+    "ResponseShape.Ctx",
+    "ResponseShape.Def",
+    "ResponseShape.File",
+    "ResponseShape.File.qualified",
+    "ResponseShape.File.render",
+    "ResponseShape.Re",
+    "ResponseShape.Re.classChar",
+    "ResponseShape.Re.deriv",
+    "ResponseShape.Re.escape",
+    "ResponseShape.Re.matches",
+    "ResponseShape.Re.mkAlt",
+    "ResponseShape.Re.mkSeq",
+    "ResponseShape.Re.nullable",
+    "ResponseShape.Re.oneOf",
+    "ResponseShape.Re.optional",
+    "ResponseShape.Re.prefixes",
+    "ResponseShape.Re.render",
+    "ResponseShape.Re.special",
+    "ResponseShape.Result",
+    "ResponseShape.Shape",
+    "ResponseShape.arr",
+    "ResponseShape.brokenOn",
+    "ResponseShape.bump",
+    "ResponseShape.c",
+    "ResponseShape.check",
+    "ResponseShape.closed",
+    "ResponseShape.constS",
+    "ResponseShape.copied",
+    "ResponseShape.decide",
+    "ResponseShape.decidedBy",
+    "ResponseShape.depth",
+    "ResponseShape.disagreeing",
+    "ResponseShape.enumS",
+    "ResponseShape.fail",
+    "ResponseShape.isItems",
+    "ResponseShape.kind",
+    "ResponseShape.kindIs",
+    "ResponseShape.lookup",
+    "ResponseShape.members",
+    "ResponseShape.n",
+    "ResponseShape.numEq",
+    "ResponseShape.numLe",
+    "ResponseShape.obj",
+    "ResponseShape.passed",
+    "ResponseShape.pointerString",
+    "ResponseShape.props",
+    "ResponseShape.qualify",
+    "ResponseShape.ref",
+    "ResponseShape.render",
+    "ResponseShape.resolve",
+    "ResponseShape.resolveAt",
+    "ResponseShape.same",
+    "ResponseShape.sameJson",
+    "ResponseShape.short",
+    "ResponseShape.str",
+    "ResponseShape.strs",
+    "ResponseShape.tok",
+    "ResponseShape.tokens",
+    "ResponseShape.within"
+   ],
+   "G[R]": [
+    "ResponseShape.Fault"
    ]
   },
   "Serve.lean": {
-   "G[V]": [
-    "main"
-   ]
-  },
-  "SoftNormsMain.lean": {
-   "G[V]": [
-    "main"
-   ]
-  },
-  "SpeechActsMain.lean": {
    "G[V]": [
     "main"
    ]
@@ -423,7 +920,6 @@
     "VE.Alternatives.Run.encodeAdmitted",
     "VE.Alternatives.Run.ids",
     "VE.Alternatives.Run.joined",
-    "VE.Alternatives.Run.main",
     "VE.Alternatives.Run.notComputed",
     "VE.Alternatives.Run.ok",
     "VE.Alternatives.Run.runAdmission",
@@ -733,7 +1229,6 @@
     "VE.Reports.Run.ReportsAdmissionAnswer",
     "VE.Reports.Run.certificateFor",
     "VE.Reports.Run.countermodelAnswer",
-    "VE.Reports.Run.main",
     "VE.Reports.Run.reportDomain",
     "VE.Reports.Run.reportPayload",
     "VE.Reports.Run.runAdmission",
@@ -1991,7 +2486,6 @@
     "VE.Discourse.Run.fuelBudget",
     "VE.Discourse.Run.jointJson",
     "VE.Discourse.Run.loadCase",
-    "VE.Discourse.Run.main",
     "VE.Discourse.Run.runCase",
     "VE.Discourse.Run.runCaseReported",
     "VE.Discourse.Run.runJoint",
@@ -2275,6 +2769,89 @@
     "VE.English.coreSurface"
    ]
   },
+  "VE/EnglishGrammar/Actions.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.Conn.make",
+    "VE.EnglishGrammar.ConstVal",
+    "VE.EnglishGrammar.Ctx",
+    "VE.EnglishGrammar.Ctx.bind",
+    "VE.EnglishGrammar.Ctx.deeper",
+    "VE.EnglishGrammar.Ctx.inner",
+    "VE.EnglishGrammar.Ctx.innerSort",
+    "VE.EnglishGrammar.Ctx.it",
+    "VE.EnglishGrammar.Ctx.listed",
+    "VE.EnglishGrammar.Ctx.lookup",
+    "VE.EnglishGrammar.Ctx.push",
+    "VE.EnglishGrammar.Ctx.start",
+    "VE.EnglishGrammar.DState.after",
+    "VE.EnglishGrammar.EFormula.consts",
+    "VE.EnglishGrammar.EFormula.hasBinder",
+    "VE.EnglishGrammar.ETerm.consts",
+    "VE.EnglishGrammar.FixedAct.action",
+    "VE.EnglishGrammar.LexAct.action",
+    "VE.EnglishGrammar.Scope",
+    "VE.EnglishGrammar.Sem",
+    "VE.EnglishGrammar.TermVal",
+    "VE.EnglishGrammar.TermVal.name?",
+    "VE.EnglishGrammar.actionsVersion",
+    "VE.EnglishGrammar.acts",
+    "VE.EnglishGrammar.build",
+    "VE.EnglishGrammar.constant",
+    "VE.EnglishGrammar.fixedActs",
+    "VE.EnglishGrammar.lexActs",
+    "VE.EnglishGrammar.markersAt",
+    "VE.EnglishGrammar.negatedTail",
+    "VE.EnglishGrammar.ofTerms",
+    "VE.EnglishGrammar.ofToken",
+    "VE.EnglishGrammar.permute",
+    "VE.EnglishGrammar.polarity",
+    "VE.EnglishGrammar.rhsTys",
+    "VE.EnglishGrammar.runCoordAdjectives",
+    "VE.EnglishGrammar.runCoordSubjects",
+    "VE.EnglishGrammar.runReachBody",
+    "VE.EnglishGrammar.runTerms",
+    "VE.EnglishGrammar.sig",
+    "VE.EnglishGrammar.strip",
+    "VE.EnglishGrammar.stripArgs",
+    "VE.EnglishGrammar.termsOf",
+    "VE.EnglishGrammar.tokText",
+    "VE.EnglishGrammar.unfit"
+   ]
+  },
+  "VE/EnglishGrammar/Catalogue.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.Conn",
+    "VE.EnglishGrammar.Conn.name",
+    "VE.EnglishGrammar.FixedAct",
+    "VE.EnglishGrammar.FixedRow",
+    "VE.EnglishGrammar.ntAdjective",
+    "VE.EnglishGrammar.ntAtom",
+    "VE.EnglishGrammar.ntConstant",
+    "VE.EnglishGrammar.ntCopulaAdjective",
+    "VE.EnglishGrammar.ntCopulaRelative",
+    "VE.EnglishGrammar.ntLabel",
+    "VE.EnglishGrammar.ntNaturalSubject",
+    "VE.EnglishGrammar.ntNoun",
+    "VE.EnglishGrammar.ntObjectRelative",
+    "VE.EnglishGrammar.ntOwnerClause",
+    "VE.EnglishGrammar.ntRelation",
+    "VE.EnglishGrammar.ntRelative",
+    "VE.EnglishGrammar.ntTerm",
+    "VE.EnglishGrammar.ntTy"
+   ]
+  },
+  "VE/EnglishGrammar/Encode.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.EFormula.encode",
+    "VE.EnglishGrammar.ETerm.encode",
+    "VE.EnglishGrammar.Env.decode",
+    "VE.EnglishGrammar.optFields",
+    "VE.EnglishGrammar.optString",
+    "VE.EnglishGrammar.reachKind",
+    "VE.EnglishGrammar.typedCheck",
+    "VE.EnglishGrammar.typedDocument"
+   ]
+  },
   "VE/EnglishGrammar/EngineExamples.lean": {
    "G[V]": [
     "VE.EnglishGrammar.EngineExamples.G1",
@@ -2343,11 +2920,40 @@
     "VE.EnglishGrammar.Examples.rejects"
    ]
   },
+  "VE/EnglishGrammar/Extends.lean": {
+   "S": [
+    "VE.EnglishGrammar.Extends",
+    "VE.EnglishGrammar.envSub",
+    "VE.EnglishGrammar.lexiconSub"
+   ],
+   "G[V]": [
+    "VE.EnglishGrammar.extensionMap",
+    "VE.EnglishGrammar.indexIn"
+   ]
+  },
+  "VE/EnglishGrammar/Fixed/RelationalFol.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.ntNames",
+    "VE.EnglishGrammar.ranks",
+    "VE.EnglishGrammar.relationalFolActs",
+    "VE.EnglishGrammar.relationalFolRows"
+   ],
+   "G[I]": [
+    "VE.EnglishGrammar.relationalFolSha256"
+   ]
+  },
+  "VE/EnglishGrammar/Fixed/Version.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.Fixed.actionsVersion"
+   ]
+  },
   "VE/EnglishGrammar/Lexer.lean": {
    "G[V]": [
+    "VE.EnglishGrammar.Item",
     "VE.EnglishGrammar.Mode",
     "VE.EnglishGrammar.Scan",
     "VE.EnglishGrammar.Spanned",
+    "VE.EnglishGrammar.begin",
     "VE.EnglishGrammar.chunkChar",
     "VE.EnglishGrammar.chunkToken",
     "VE.EnglishGrammar.collapsedGo",
@@ -2365,6 +2971,8 @@
     "VE.EnglishGrammar.punctChars",
     "VE.EnglishGrammar.scanGo",
     "VE.EnglishGrammar.spaceCodes",
+    "VE.EnglishGrammar.spacing",
+    "VE.EnglishGrammar.spacingOk",
     "VE.EnglishGrammar.startsWith"
    ],
    "G[R]": [
@@ -2394,12 +3002,16 @@
     "VE.EnglishGrammar.SortDecl",
     "VE.EnglishGrammar.coverage",
     "VE.EnglishGrammar.fallbackWording",
+    "VE.EnglishGrammar.fillHoles",
     "VE.EnglishGrammar.findSub",
+    "VE.EnglishGrammar.holeChar",
+    "VE.EnglishGrammar.holeMark",
     "VE.EnglishGrammar.holes",
     "VE.EnglishGrammar.idioms",
     "VE.EnglishGrammar.idioms1",
     "VE.EnglishGrammar.idioms2",
     "VE.EnglishGrammar.irregularVerbs",
+    "VE.EnglishGrammar.isHoleWord",
     "VE.EnglishGrammar.jsonQuote",
     "VE.EnglishGrammar.keysOf",
     "VE.EnglishGrammar.mechanicalWording",
@@ -2408,11 +3020,14 @@
     "VE.EnglishGrammar.noHole",
     "VE.EnglishGrammar.pastVerbs",
     "VE.EnglishGrammar.replaceFirst",
+    "VE.EnglishGrammar.reprJson",
+    "VE.EnglishGrammar.sentenceTokens",
     "VE.EnglishGrammar.shapeOk",
     "VE.EnglishGrammar.splitWs",
     "VE.EnglishGrammar.stripWs",
     "VE.EnglishGrammar.verbBase",
     "VE.EnglishGrammar.wordingKey",
+    "VE.EnglishGrammar.wordingTokens",
     "VE.EnglishGrammar.workBudget"
    ],
    "G[I]": [
@@ -2425,6 +3040,155 @@
     "VE.EnglishGrammar.LexiconFixtures.envF2",
     "VE.EnglishGrammar.LexiconFixtures.envF3",
     "VE.EnglishGrammar.LexiconFixtures.failureSet"
+   ]
+  },
+  "VE/EnglishGrammar/Read.lean": {
+   "S": [
+    "VE.EnglishGrammar.EnglishOneReading"
+   ],
+   "G[V]": [
+    "VE.EnglishGrammar.ReadOutcome",
+    "VE.EnglishGrammar.TranslateOutcome",
+    "VE.EnglishGrammar.checkRendering",
+    "VE.EnglishGrammar.meaning",
+    "VE.EnglishGrammar.read",
+    "VE.EnglishGrammar.translate"
+   ],
+   "G[R]": [
+    "VE.EnglishGrammar.GrammarFault"
+   ]
+  },
+  "VE/EnglishGrammar/ReadExamples.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.ReadExamples.F",
+    "VE.EnglishGrammar.ReadExamples.F2",
+    "VE.EnglishGrammar.ReadExamples.F3",
+    "VE.EnglishGrammar.ReadExamples.F4",
+    "VE.EnglishGrammar.ReadExamples.F51",
+    "VE.EnglishGrammar.ReadExamples.F52",
+    "VE.EnglishGrammar.ReadExamples.F53",
+    "VE.EnglishGrammar.ReadExamples.F6",
+    "VE.EnglishGrammar.ReadExamples.F7",
+    "VE.EnglishGrammar.ReadExamples.FC",
+    "VE.EnglishGrammar.ReadExamples.FD",
+    "VE.EnglishGrammar.ReadExamples.Fapi",
+    "VE.EnglishGrammar.ReadExamples.GFw",
+    "VE.EnglishGrammar.ReadExamples.GW4bad",
+    "VE.EnglishGrammar.ReadExamples.GW4ok",
+    "VE.EnglishGrammar.ReadExamples.L4",
+    "VE.EnglishGrammar.ReadExamples.L51",
+    "VE.EnglishGrammar.ReadExamples.L52",
+    "VE.EnglishGrammar.ReadExamples.L53",
+    "VE.EnglishGrammar.ReadExamples.L6",
+    "VE.EnglishGrammar.ReadExamples.LF",
+    "VE.EnglishGrammar.ReadExamples.LF2fb",
+    "VE.EnglishGrammar.ReadExamples.LF3",
+    "VE.EnglishGrammar.ReadExamples.LFD",
+    "VE.EnglishGrammar.ReadExamples.LFv2",
+    "VE.EnglishGrammar.ReadExamples.LFv3",
+    "VE.EnglishGrammar.ReadExamples.Lapi",
+    "VE.EnglishGrammar.ReadExamples.O",
+    "VE.EnglishGrammar.ReadExamples.PredSpec",
+    "VE.EnglishGrammar.ReadExamples.R",
+    "VE.EnglishGrammar.ReadExamples.V",
+    "VE.EnglishGrammar.ReadExamples.b",
+    "VE.EnglishGrammar.ReadExamples.c",
+    "VE.EnglishGrammar.ReadExamples.constsF",
+    "VE.EnglishGrammar.ReadExamples.emptyEnv",
+    "VE.EnglishGrammar.ReadExamples.env",
+    "VE.EnglishGrammar.ReadExamples.envJson",
+    "VE.EnglishGrammar.ReadExamples.envSubB",
+    "VE.EnglishGrammar.ReadExamples.extendsB",
+    "VE.EnglishGrammar.ReadExamples.lexWith",
+    "VE.EnglishGrammar.ReadExamples.lexiconSubB",
+    "VE.EnglishGrammar.ReadExamples.many",
+    "VE.EnglishGrammar.ReadExamples.negations",
+    "VE.EnglishGrammar.ReadExamples.ok1",
+    "VE.EnglishGrammar.ReadExamples.one",
+    "VE.EnglishGrammar.ReadExamples.predsF",
+    "VE.EnglishGrammar.ReadExamples.rd",
+    "VE.EnglishGrammar.ReadExamples.rej",
+    "VE.EnglishGrammar.ReadExamples.sortsF",
+    "VE.EnglishGrammar.ReadExamples.steps",
+    "VE.EnglishGrammar.ReadExamples.summary",
+    "VE.EnglishGrammar.ReadExamples.tr",
+    "VE.EnglishGrammar.ReadExamples.u",
+    "VE.EnglishGrammar.ReadExamples.v",
+    "VE.EnglishGrammar.ReadExamples.verdicts",
+    "VE.EnglishGrammar.ReadExamples.widenings",
+    "VE.EnglishGrammar.ReadExamples.withPred",
+    "VE.EnglishGrammar.ReadExamples.wverdict",
+    "VE.EnglishGrammar.ReadExamples.zero"
+   ]
+  },
+  "VE/EnglishGrammar/Rules.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.LexAct",
+    "VE.EnglishGrammar.LexRow",
+    "VE.EnglishGrammar.LexRow.terminatorFree",
+    "VE.EnglishGrammar.adjectiveOf",
+    "VE.EnglishGrammar.adjectiveRows",
+    "VE.EnglishGrammar.baseProfile",
+    "VE.EnglishGrammar.clauseRows",
+    "VE.EnglishGrammar.contentTerminal",
+    "VE.EnglishGrammar.declsOf",
+    "VE.EnglishGrammar.fixedRules",
+    "VE.EnglishGrammar.fixedTable",
+    "VE.EnglishGrammar.grammar",
+    "VE.EnglishGrammar.keywordTerminal",
+    "VE.EnglishGrammar.lexRows",
+    "VE.EnglishGrammar.lexRowsAll",
+    "VE.EnglishGrammar.lexRules",
+    "VE.EnglishGrammar.lowerWord",
+    "VE.EnglishGrammar.nameForm",
+    "VE.EnglishGrammar.occurs",
+    "VE.EnglishGrammar.spellingRows",
+    "VE.EnglishGrammar.textSyms",
+    "VE.EnglishGrammar.ty",
+    "VE.EnglishGrammar.wordingSyms"
+   ]
+  },
+  "VE/EnglishGrammar/Run.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.Run.Case",
+    "VE.EnglishGrammar.Run.authoring",
+    "VE.EnglishGrammar.Run.boolText",
+    "VE.EnglishGrammar.Run.budgetFields",
+    "VE.EnglishGrammar.Run.coded",
+    "VE.EnglishGrammar.Run.decodeCase",
+    "VE.EnglishGrammar.Run.decodeLexicon",
+    "VE.EnglishGrammar.Run.derivations",
+    "VE.EnglishGrammar.Run.failureJson",
+    "VE.EnglishGrammar.Run.grammarCase",
+    "VE.EnglishGrammar.Run.illTypedText",
+    "VE.EnglishGrammar.Run.kidsRows",
+    "VE.EnglishGrammar.Run.lexActText",
+    "VE.EnglishGrammar.Run.lexiconFormat",
+    "VE.EnglishGrammar.Run.main",
+    "VE.EnglishGrammar.Run.notOneSentenceText",
+    "VE.EnglishGrammar.Run.pairs",
+    "VE.EnglishGrammar.Run.q",
+    "VE.EnglishGrammar.Run.readCase",
+    "VE.EnglishGrammar.Run.readingJson",
+    "VE.EnglishGrammar.Run.runCaseReported",
+    "VE.EnglishGrammar.Run.status",
+    "VE.EnglishGrammar.Run.symJson",
+    "VE.EnglishGrammar.Run.tables",
+    "VE.EnglishGrammar.Run.tokJson",
+    "VE.EnglishGrammar.Run.translation",
+    "VE.EnglishGrammar.Run.treeJson",
+    "VE.EnglishGrammar.Run.treeRows",
+    "VE.EnglishGrammar.Run.triples"
+   ],
+   "G[R]": [
+    "VE.EnglishGrammar.Run.faultName",
+    "VE.EnglishGrammar.Run.invalidFields",
+    "VE.EnglishGrammar.Run.invalidGrammarText",
+    "VE.EnglishGrammar.Run.rejectText"
+   ],
+   "G[I]": [
+    "VE.EnglishGrammar.Run.environmentId",
+    "VE.EnglishGrammar.Run.grammarId"
    ]
   },
   "VE/EnglishGrammar/Syntax.lean": {
@@ -2873,6 +3637,7 @@
     "VE.NormDefaults.Wire.ReportSource",
     "VE.NormDefaults.Wire.ReportU",
     "VE.NormDefaults.Wire.SituationG",
+    "VE.NormDefaults.Wire.WitnessRow",
     "VE.NormDefaults.Wire.atomKey",
     "VE.NormDefaults.Wire.canonicalFinite",
     "VE.NormDefaults.Wire.extendFill",
@@ -2891,13 +3656,14 @@
     "VE.NormDefaults.Wire.Grounding.line",
     "VE.NormDefaults.Wire.LineU.lines",
     "VE.NormDefaults.Wire.LineU.toJson",
-    "VE.NormDefaults.Wire.ReportG.toJson",
     "VE.NormDefaults.Wire.Reached.label",
+    "VE.NormDefaults.Wire.ReportG.toJson",
+    "VE.NormDefaults.Wire.WitnessRow.toJson",
     "VE.NormDefaults.Wire.completionLabel",
     "VE.NormDefaults.Wire.groundingCites",
     "VE.NormDefaults.Wire.situationFrom",
     "VE.NormDefaults.Wire.validateCompletions",
-    "VE.NormDefaults.Wire.witnessJson"
+    "VE.NormDefaults.Wire.witnessRow"
    ],
    "G[V]": [
     "VE.NormDefaults.Wire.ReportG.findings",
@@ -2936,7 +3702,6 @@
     "VE.NormDefaults.Run.usesNormDefaultsPath"
    ],
    "G[V]": [
-    "VE.NormDefaults.Run.main",
     "VE.NormDefaults.Run.runAdmission",
     "VE.NormDefaults.Run.runCase",
     "VE.NormDefaults.Run.runCaseReported",
@@ -3345,7 +4110,6 @@
     "VE.Norms.Run.usesNormsPath"
    ],
    "G[V]": [
-    "VE.Norms.Run.main",
     "VE.Norms.Run.reportDomain",
     "VE.Norms.Run.reportJson",
     "VE.Norms.Run.reportPayload",
@@ -4137,7 +4901,6 @@
     "VE.Readings.Run.candidateJsonSpec",
     "VE.Readings.Run.chainFindings",
     "VE.Readings.Run.decisionOnlyText",
-    "VE.Readings.Run.main",
     "VE.Readings.Run.pairFactsIn",
     "VE.Readings.Run.runCase",
     "VE.Readings.Run.runCaseReported",
@@ -4664,7 +5427,6 @@
     "VE.Rights.Run.RightsAdmissionAnswer",
     "VE.Rights.Run.barResult",
     "VE.Rights.Run.generatedKeys",
-    "VE.Rights.Run.main",
     "VE.Rights.Run.projectionsResult",
     "VE.Rights.Run.rightsLabelled",
     "VE.Rights.Run.runAdmission",
@@ -5046,6 +5808,13 @@
     "VE.Risk.witnessE"
    ]
   },
+  "VE/Risk/Eval.lean": {
+   "G[V]": [
+    "VE.Risk.Eval.evalCase",
+    "VE.Risk.Eval.evalCondition",
+    "VE.Risk.Eval.runCaseReported"
+   ]
+  },
   "VE/Risk/Piecewise.lean": {
    "P": [
     "VE.Risk.BoxAgree",
@@ -5284,7 +6053,6 @@
     "VE.Risk.Run.endpointJson",
     "VE.Risk.Run.firingRules",
     "VE.Risk.Run.isSetting",
-    "VE.Risk.Run.main",
     "VE.Risk.Run.noClearActionText",
     "VE.Risk.Run.notComputed",
     "VE.Risk.Run.ok",
@@ -5718,6 +6486,11 @@
     "VE.Route.Run.runCaseReported"
    ]
   },
+  "VE/Route/RunSound.lean": {
+   "P": [
+    "VE.Route.RunSound.RunnerKind"
+   ]
+  },
   "VE/Route/Steps.lean": {
    "G[V]": [
     "VE.Route.Steps.caseCap",
@@ -5786,12 +6559,73 @@
     "VE.Route.Wire.RouteVocabulary.modelVocabulary",
     "VE.Route.Wire.definitionBackgroundBudget",
     "VE.Route.Wire.runBackground",
-    "VE.Route.Wire.runClosure",
-    "VE.Route.Wire.runFol",
-    "VE.Route.Wire.runOrder"
+    {
+     "name": "VE.Route.Wire.runClosure",
+     "tied": [
+      "VE.Route.WireSound.runClosure_certificate_acceptance",
+      "VE.Route.WireSound.runClosure_countermodel",
+      "VE.Route.WireSound.runClosure_evaluate"
+     ]
+    },
+    {
+     "name": "VE.Route.Wire.runFol",
+     "tied": [
+      "VE.Route.WireSound.runFol_certificate_acceptance",
+      "VE.Route.WireSound.runFol_countermodel",
+      "VE.Route.WireSound.runFol_evaluate"
+     ]
+    },
+    {
+     "name": "VE.Route.Wire.runOrder",
+     "tied": [
+      "VE.Route.WireSound.runOrder_certificate_acceptance",
+      "VE.Route.WireSound.runOrder_countermodel",
+      "VE.Route.WireSound.runOrder_evaluate"
+     ]
+    }
    ],
    "G[R]": [
     "VE.Route.Wire.nodeLimit"
+   ]
+  },
+  "VE/Route/WireSound.lean": {
+   "S": [
+    "VE.Route.WireSound.BaseAdmissible",
+    "VE.Route.WireSound.BaseClaim",
+    "VE.Route.WireSound.CertificateClaim",
+    "VE.Route.WireSound.CountermodelAnswer",
+    "VE.Route.WireSound.CountermodelClaim",
+    "VE.Route.WireSound.EvaluateClaim",
+    "VE.Route.WireSound.Family",
+    "VE.Route.WireSound.FlagsBase",
+    "VE.Route.WireSound.FlagsHold",
+    "VE.Route.WireSound.RouteIntended",
+    "VE.Route.WireSound.Runner.Bound",
+    "VE.Route.WireSound.closureFamily",
+    "VE.Route.WireSound.folFamily",
+    "VE.Route.WireSound.orderFamily"
+   ],
+   "C": [
+    "VE.Route.Layer.toClosure",
+    "VE.Route.Layer.within",
+    "VE.Route.WireSound.Runner",
+    "VE.Route.WireSound.closureLayer",
+    "VE.Route.WireSound.definitionsLayer",
+    "VE.Route.WireSound.fullLayer"
+   ],
+   "P": [
+    "VE.Route.WireSound.Family.Sound",
+    "VE.Route.WireSound.Runner.Accepted",
+    "VE.Route.WireSound.Runner.Sound"
+   ],
+   "D[V]": [
+    "VE.Route.WireSound.orderModel",
+    "VE.Route.WireSound.routeModel"
+   ],
+   "G[I]": [
+    "VE.Route.WireSound.closureRunner",
+    "VE.Route.WireSound.folRunner",
+    "VE.Route.WireSound.orderRunner"
    ]
   },
   "VE/Semantics.lean": {
@@ -5805,6 +6639,11 @@
     "VE.TupleTyped",
     "VE.Valuation",
     "VE.Valuation.Typed"
+   ]
+  },
+  "VE/Service/Diagnose.lean": {
+   "G[R]": [
+    "VE.Service.Diagnose.diagnoseCase"
    ]
   },
   "VE/Service/EnglishRun.lean": {
@@ -6050,6 +6889,7 @@
     "VE.Service.handleLine",
     "VE.Service.handshake",
     "VE.Service.modes",
+    "VE.Service.parseLeanCases",
     "VE.Service.requestId?",
     "VE.Service.response",
     "VE.Service.runMode",
@@ -6271,7 +7111,6 @@
     "VE.SoftNorms.Run.openAfterClassification"
    ],
    "G[V]": [
-    "VE.SoftNorms.Run.main",
     "VE.SoftNorms.Run.pairsResult",
     "VE.SoftNorms.Run.reportedCode",
     "VE.SoftNorms.Run.runAdmission",
@@ -6596,7 +7435,6 @@
     "VE.SpeechActs.Run.ConsequenceCase.follows",
     "VE.SpeechActs.Run.PremiseStatus",
     "VE.SpeechActs.Run.firstFailure",
-    "VE.SpeechActs.Run.main",
     "VE.SpeechActs.Run.meaningOf",
     "VE.SpeechActs.Run.modelAnswer",
     "VE.SpeechActs.Run.replayAnswer",
@@ -7074,7 +7912,6 @@
     "VE.Time.Document.instDecidableQuotedUnit",
     "VE.Time.Document.instDecidableReadingContent",
     "VE.Time.Document.isCite",
-    "VE.Time.Document.main",
     "VE.Time.Document.runDocument",
     "VE.Time.Document.tokenList"
    ],
@@ -7201,7 +8038,6 @@
     "VE.Time.Wire.admissions",
     "VE.Time.Wire.budgetExhausted",
     "VE.Time.Wire.integer",
-    "VE.Time.Wire.main",
     "VE.Time.Wire.noExtension",
     "VE.Time.Wire.numbers2",
     "VE.Time.Wire.reservedDay",
@@ -7223,12 +8059,10 @@
    "G[V]": [
     "VE.WireContract.Diagnose.Registered",
     "VE.WireContract.Diagnose.caseRoot",
-    "VE.WireContract.Diagnose.main",
     "VE.WireContract.Diagnose.units"
    ],
    "G[R]": [
-    "VE.WireContract.Diagnose.diagnoseCase",
-    "VE.WireContract.Diagnose.usage"
+    "VE.WireContract.Diagnose.diagnoseCase"
    ]
   },
   "VE/WireContract/Engine.lean": {

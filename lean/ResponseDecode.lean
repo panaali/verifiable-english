@@ -2,27 +2,31 @@ import VE.Norms.Run
 import VE.Order.Wire
 import VE.Service.EnglishRun
 import VE.Service.Protocol
+import ResponseShape.Schemas
 
 /-! `ve_response_decode`: the Lean side of the tests of service responses. Test tooling
 only: nothing imports it and no theorem depends on it.
 
-* `decode` is the differential oracle of the client's response schemas
-  (`ve/backends/lean_service_schema/`): binding to the request (nonce, mode, each
-  result's position and case digest, the identity fields the runners echo from the
-  case) and well-formedness, decoded with the Lean decoders the runners' outputs come
-  from (`Bridge.decodeFormula`, `Order.Wire.decodeFormula`, `Route.Admission.decodeKind`,
-  `parseLabel`, `EnglishRun`'s token form) and the runners' dispatch
-  (`Route.Run.caseKind`, `Norms.Run.usesNormsPath`).
+* `decode` decides a response by the one description of the service's responses,
+  `ResponseShape.Schemas` (from which the client's `ve/backends/lean_service_schema/` is
+  generated): binding to the request (nonce, mode, each result's position and case
+  digest, the identity fields the runners echo from the case) and well-formedness, with
+  the Lean decoders the runners' outputs come from (`Bridge.decodeFormula`,
+  `Order.Wire.decodeFormula`, `Route.Admission.decodeKind`, `parseLabel`, `EnglishRun`'s
+  token form) and the runners' dispatch tests (`usesSoftPath`, `Norms.Run.usesNormsPath`,
+  ...) deciding beside their schemas, which must agree (`ResponseShape`, `lean` nodes).
 * `invariants` is `decode` and the content the runners guarantee, which the client does
   not check (docs/spec/lean-service.md, threat model): counts regenerated from the
   environment, graph unfoldings, dependency orders, distinct layers and conflict targets
   with their declared argument sorts, verdict details, English check consistency. The
   tests require every genuine service response to satisfy it.
+* `schemas` renders the schema files (`tools/response_schemas.py` writes and checks them).
 
 Each input line is `{"check"?: "decode" | "invariants", "mode", "request": {"id", "cases",
 "digests", "bytes"}, "responses": [...]}`, where `digests` is `null` when the request's cases
 text does not split into cases; the output line is an array with `"accept"`
-or `"reject: <reason>"` per response. -/
+or `"reject: <reason>"` per response. The line `{"check": "schemas"}` is answered with
+`{file name: schema document}`. -/
 namespace ResponseDecode
 open Lean
 
@@ -30,12 +34,6 @@ abbrev Check := Except String Unit
 
 def need (b : Bool) (message : String) : Check :=
   if b then pure () else throw message
-
-/-- The object has exactly the required fields, plus any of the optional ones. -/
-def shape (j : Json) (required optional : List String) : Check := do
-  let keys := (← VE.Bridge.fields j).map Prod.fst
-  need (required.all keys.contains) s!"fields {keys}: missing one of {required}"
-  need (keys.all (fun k => required.contains k || optional.contains k)) s!"unexpected field in {keys}"
 
 def field (j : Json) (k : String) : Except String Json := j.getObjVal? k
 
@@ -46,32 +44,9 @@ def isField (j : Json) (k : String) (v : Json) : Bool :=
 
 def has (j : Json) (k : String) : Bool := (j.getObjVal? k).toBool
 
-def bool (j : Json) : Check := do let _ ← j.getBool?
-
-def nat (j : Json) : Check := do let _ ← j.getNat?
-
-def string (j : Json) : Check := do let _ ← j.getStr?
-
-def text (j : Json) : Check := do
-  need (!(← j.getStr?).isEmpty) "empty message"
-
 def array (j : Json) (f : Json → Check) : Check := do
   for x in ← j.getArr? do f x
 
-def hex64 (j : Json) : Check := do
-  let s ← j.getStr?
-  need (s.length == 64 && s.all (fun c => c.isDigit || ('a' ≤ c && c ≤ 'f'))) "not a SHA-256 digest"
-
-def folFormula (j : Json) : Check := do let _ ← VE.Bridge.decodeFormula 64 j
-
-/-- A formula the runner generated: `Bridge.decodeFormula`'s grammar at any depth. Each
-level of a formula adds at least two characters to its rendering, so that length is
-enough fuel. -/
-def generatedFormula (j : Json) : Check := do let _ ← VE.Bridge.decodeFormula j.compress.length j
-
-def orderFormula (j : Json) : Check := do let _ ← VE.Order.Wire.decodeFormula 64 j
-
-def kind (j : Json) : Check := do let _ ← VE.Route.Admission.decodeKind 16 j
 
 /-- The request's case at a path of object fields. -/
 def path (j : Json) : List String → Except String Json
@@ -130,56 +105,11 @@ def runs (case : Json) (counts : List (String × (Json → Except String Nat))) 
     out := out ++ List.replicate (← count case) (Json.str g)
   pure out
 
-/-- The values of `values`: one per requested formula. -/
-def values (row case : Json) : Check := do
-  let vs ← (← field row "values").getArr?
-  for v in vs do bool v
-  need (vs.size == (← length (← field case "ast"))) "one value per formula"
-
-/-- A successful result: the request's (string) id, status ok, then exactly `fields`. -/
-def okRow (row case : Json) (required : List String) (optional : List String := []) : Check := do
-  shape row (["id", "status"] ++ required) optional
-  need (isField row "status" (.str "ok")) "status"
-  let id ← (← field row "id").getStr?
-  need (isField case "id" (.str id)) "id is not the request's"
-
-def errorRow (row case : Json) (extra : List String) : Check := do
-  shape row (["id", "status", "error"] ++ extra) []
-  need (isField row "status" (.str "error")) "status"
-  need ((← field row "id") == case.getObjValD "id") "id is not the request's"
-  text (← field row "error")
-  if extra.contains "valid" then need (isField row "valid" (.bool false)) "valid"
-
-/-- `Service.Protocol.caseError`. -/
-def caseErrorRow (row : Json) (index : Nat) (valid : Bool) : Check := do
-  shape row (["status", "case_index", "error"] ++ if valid then ["valid"] else []) []
-  need (isField row "status" (.str "error")) "status"
-  need ((← (← field row "case_index").getNat?) == index) "case index"
-  text (← field row "error")
-  if valid then need (isField row "valid" (.bool false)) "valid"
-
-def firstOk (checks : List (Unit → Check)) : Check :=
-  match checks with
-  | [] => throw "no alternative"
-  | c :: cs => match c () with
-    | .ok () => pure ()
-    | .error m => match firstOk cs with
-      | .ok () => pure ()
-      | .error m' => throw s!"{m}; {m'}"
-
-/-! ## Results by mode -/
+/-! ## Graph reports -/
 
 /-- A claim's identity: its name, AST and label (absent keys stay absent). -/
 def project (x : Json) : List (Option Json) :=
   ["name", "ast", "label"].map (fun k => (x.getObjVal? k).toOption)
-
-/-- `Route.Run.claimJson`: a claim's shape. -/
-def claim (j : Json) : Check := do
-  shape j ["name", "ast"] ["label"]
-  string (← field j "name")
-  folFormula (← field j "ast")
-  if let .ok l := j.getObjVal? "label" then
-    need ((← l.getStr?) != "asserted") "explicit default label"
 
 /-- The claim is a node the request declared (`admit_labels_decoded`). -/
 def requestNode (j case : Json) : Check := do
@@ -225,216 +155,6 @@ def unfolds (assumptions case : Json) : Check := do
   let xs ← assumptions.getArr?
   need (xs.size == leaves.length && (xs.toList.zip leaves).all (fun (x, l) => project x == project l))
     "assumptions are not the root's unfolding"
-
-def admission (row case : Json) : Check := do
-  okRow row case ["admitted", "report", "report_id", "kinds"]
-  need (isField row "admitted" (.bool true)) "admitted"
-  let report ← field row "report"
-  shape report ["root", "assumptions"] []
-  let root ← field report "root"
-  claim root
-  need ((← field root "name") == (← path case ["document", "graph", "root"])) "root"
-  array (← field report "assumptions") claim
-  hex64 (← field row "report_id")
-  let kinds ← field row "kinds"
-  array kinds kind
-  let units ← (← path case ["document", "units"]).getArr?
-  let requested ← units.mapM (field · "kind")
-  need (kinds == .arr requested) "kinds are not the request's unit kinds"
-
-def dependencyOrder (row case : Json) : Check := do
-  okRow row case ["order"]
-  let _ ← VE.Bridge.strings (← field row "order")
-
-def bundle (row case : Json) : Check := do
-  okRow row case ["checked", "lemmas"]
-  let requested ← (← field case "lemmas").getArr?
-  need ((← (← field row "checked").getNat?) == requested.size) "one check per requested lemma"
-  let lemmas ← field row "lemmas"
-  array lemmas hex64
-  need (lemmas == .arr (← requested.mapM (field · "meaning_id"))) "lemmas are not the request's"
-
-def background (row case : Json) : Check := do
-  okRow row case ["background", "premises", "generators"]
-  array (← field row "background") generatedFormula
-  array (← field row "premises") generatedFormula
-  array (← field row "generators")
-    (fun g => do need (VE.Route.Background.generators.contains (← g.getStr?)) "generator")
-
-def label (row case : Json) : Check := do
-  okRow row case ["label"]
-  let l ← (← field row "label").getStr?
-  need (VE.Route.Admission.parseLabel l).isSome "not a canonical label"
-  need (isField case "label" (.str l)) "not the request's label"
-
-def routeError (row case : Json) : Check := do
-  let valid := case.getObjValD "kind" == .str "certificate"
-  shape row (["id", "status", "error"] ++ if valid then ["valid"] else []) ["generator"]
-  need (isField row "status" (.str "error")) "status"
-  need ((← field row "id") == case.getObjValD "id") "id is not the request's"
-  text (← field row "error")
-  if valid then need (isField row "valid" (.bool false)) "valid"
-  if let .ok g := row.getObjVal? "generator" then string g
-
-def routeOk (row case : Json) : Check := do
-  need (case.getObj?).toBool "case is not an object"
-  match ← VE.Route.Run.caseKind case with
-  | "evaluate" => do okRow row case ["values"]; values row case
-  | "countermodel" => do okRow row case ["refutes"]; bool (← field row "refutes")
-  | "certificate" => do
-    okRow row case ["valid", "background"]
-    bool (← field row "valid")
-    nat (← field row "background")
-  | "dependency-order" => dependencyOrder row case
-  | "bundle" => bundle row case
-  | "background" => background row case
-  | "label" => label row case
-  | "admission" => admission row case
-  | k => throw s!"no result for kind {k}"
-
-def route (row case : Json) (index : Nat) : Check :=
-  firstOk [fun _ => caseErrorRow row index false, fun _ => routeError row case, fun _ => routeOk row case]
-
-def objects (j : Json) (required : List String) (f : Json → Check) : Check :=
-  array j (fun x => do shape x required []; f x)
-
-def normsElaborate (row case : Json) : Check := do
-  okRow row case ["order", "background", "premises", "conflict_targets", "fragment"]
-  let order ← VE.Bridge.strings (← field row "order")
-  let background ← field row "background"
-  objects background ["generator", "ast"] fun x => do
-    need (["definitions", "literals", "profile"].contains (← (← field x "generator").getStr?)) "generator"
-    generatedFormula (← field x "ast")
-  let premises ← field row "premises"
-  objects premises ["label", "ast"] fun x => do
-    need ((← (← field x "label").getStr?).startsWith "layer:norms:") "layer label"
-    generatedFormula (← field x "ast")
-  let targets ← field row "conflict_targets"
-  objects targets ["target", "sorts", "ast"] fun x => do
-    string (← field x "target")
-    let _ ← VE.Bridge.strings (← field x "sorts")
-    generatedFormula (← field x "ast")
-  bool (← field row "fragment")
-  let _ := order
-
-def normsOk (row case : Json) : Check := do
-  match ← VE.Route.Run.caseKind case with
-  | "admission" => admission row case
-  | "norms-elaborate" => normsElaborate row case
-  | "norms-certificate" => do
-    okRow row case ["valid", "background", "layers"]
-    bool (← field row "valid")
-    nat (← field row "background")
-    nat (← field row "layers")
-  | "norms-conflict" =>
-    if has case "witness" then do
-      okRow row case ["verdict", "target", "targets"]
-      need (["CONFLICT", "UNKNOWN"].contains (← (← field row "verdict").getStr?)) "verdict"
-      let target ← (← field row "target").getStr?
-      let _ ← VE.Bridge.strings (← field row "targets")
-      need ((← path case ["witness", "target"]) == .str target) "not the requested target"
-    else do
-      okRow row case ["verdict", "targets"] ["detail"]
-      need (["CONFLICT-FREE", "UNKNOWN"].contains (← (← field row "verdict").getStr?)) "verdict"
-      let _ ← VE.Bridge.strings (← field row "targets")
-      if let .ok d := row.getObjVal? "detail" then string d
-  | k => throw s!"no norms result for kind {k}"
-
-def norms (row case : Json) (index : Nat) : Check :=
-  if VE.Norms.Run.usesNormsPath case then
-    firstOk [fun _ => caseErrorRow row index false, fun _ => errorRow row case [],
-      fun _ => normsOk row case]
-  else route row case index
-
-def evaluate (row case : Json) (index : Nat) : Check :=
-  firstOk [fun _ => caseErrorRow row index false, fun _ => errorRow row case [], fun _ => do
-    need (case.getObj?).toBool "case is not an object"
-    match case.getObjVal? "kind" with
-    | .error _ => do
-      okRow row case ["values", "value", "canonical"]
-      values row case
-      bool (← field row "value")
-      string (← field row "canonical")
-    | .ok k => do
-      need (k == .str "countermodel") "unknown kind"
-      okRow row case ["refutes"]
-      bool (← field row "refutes")]
-
-def checkCertificate (row case : Json) (index : Nat) : Check :=
-  firstOk [fun _ => caseErrorRow row index true, fun _ => errorRow row case ["valid"], fun _ => do
-    okRow row case ["valid"]
-    bool (← field row "valid")]
-
-def order (row case : Json) (index : Nat) : Check :=
-  firstOk [fun _ => caseErrorRow row index true, fun _ => errorRow row case ["valid"], fun _ => do
-    match ← (← field case "kind").getStr? with
-    | "surface" => do
-      okRow row case ["ast"]
-      for f in ← (← field row "ast").getArr? do orderFormula f
-    | "evaluate" => do okRow row case ["values"]; values row case
-    | "countermodel" => do okRow row case ["refutes"]; bool (← field row "refutes")
-    | "certificate" => do okRow row case ["valid"]; bool (← field row "valid")
-    | k => throw s!"no order result for kind {k}"]
-
-def token (j : Json) : Check := do
-  let _ ← VE.English.ServiceRun.decodeTok j
-  need (j == VE.English.ServiceRun.encodeTok (← VE.English.ServiceRun.decodeTok j)) "token"
-
-def englishItem (j : Json) : Check := do
-  shape j ["parsed", "checked", "rendered", "roundtrip"] []
-  let parsed ← field j "parsed"
-  unless parsed.isNull do array parsed generatedFormula
-  bool (← field j "checked")
-  let rendered ← field j "rendered"
-  unless rendered.isNull do array rendered token
-  bool (← field j "roundtrip")
-
-def english (row case : Json) (index : Nat) : Check :=
-  firstOk [fun _ => caseErrorRow row index false,
-    fun _ => do
-      shape row ["status", "error"] []
-      need (isField row "status" (.str "error")) "status"
-      text (← field row "error"),
-    fun _ => do
-      shape row ["admissible", "covers", "results"] []
-      bool (← field row "admissible"); bool (← field row "covers")
-      let results ← (← field row "results").getArr?
-      let cases ← (← field case "cases").getArr?
-      need (results.size == cases.size) "one result per case"
-      for item in results do englishItem item]
-
-def standalone (mode : String) (r case : Json) (index : Nat) : Check :=
-  firstOk [fun _ => caseErrorRow r index false,
-    fun _ => errorRow r case [],
-    fun _ => do
-      if mode == "environment" then
-        okRow r case ["environment_id", "profiles", "family"]
-        hex64 (← field r "environment_id")
-        let _ ← VE.Bridge.strings (← field r "profiles")
-        need ((← field r "profiles") == (← path case ["environment", "profiles"])) "profiles"
-        let f ← (← field r "family").getStr?
-        need (["fol", "closure", "closure+n-ary", "order"].contains f) "family"
-      else if mode == "model" then
-        okRow r case ["valid", "model_id"]
-        need (isField r "valid" (.bool true)) "valid"
-        hex64 (← field r "model_id")
-      else
-        okRow r case ["kind", "identity_id"]
-        need ((← field r "kind") == (← field case "kind")) "kind"
-        let k ← (← field r "kind").getStr?
-        need (["source", "meaning", "model", "claim", "edge"].contains k) "kind"
-        hex64 (← field r "identity_id")]
-
-def row (mode : String) (r case : Json) (index : Nat) : Check :=
-  match mode with
-  | "evaluate" => evaluate r case index
-  | "check-certificate" => checkCertificate r case index
-  | "order" => order r case index
-  | "route" => route r case index
-  | "norms" => norms r case index
-  | "english" => english r case index
-  | "environment" | "model" | "identity" => standalone mode r case index
-  | m => throw s!"unknown mode {m}"
 
 /-! ## Invariants: content the runners guarantee
 
@@ -606,61 +326,30 @@ def row (mode : String) (r case : Json) (_index : Nat) : Check := do
     if let .ok results := r.getObjVal? "results" then
       let cases ← (← field case "cases").getArr?
       for (item, c) in (← results.getArr?).zip cases do englishItem item c
+  | "soft-norms" =>
+    -- A soft rejection's contract code is the failed check's (`SoftNorms.Run.reportedCode`).
+    if VE.SoftNorms.Run.usesSoftPath case && !ok then
+      if let .ok (.str m) := r.getObjVal? "error" then
+        need (r.getObjValD "code" == .str (VE.SoftNorms.Run.reportedCode case m)) "code is not the message's check"
   | _ => pure ()
 
 end Invariants
 
-/-- `Service.Protocol.coding`: beside a rejection (an error row with a text `error`), a public
-diagnostic code and possibly a generator name; beside any other result, neither. -/
-def coding (b result : Json) : Check := do
-  if isField result "status" (.str "error") && (result.getObjValD "error").getStr?.toBool then
-    need (VE.Service.rejectionCodes.contains (← (← field b "code").getStr?)) "code is not a public code"
-    if let .ok g := b.getObjVal? "generator" then string g
-  else need (!has b "code" && !has b "generator") "code beside a result that is not a rejection"
 
-/-- `Service.Protocol.bound`: result `i` carries position `i` and the digest of case `i`, and
-the coding of a rejection. -/
-def bound (b : Json) (index : Nat) (digest : Json) : Except String Json := do
-  shape b ["index", "digest", "result"] ["code", "generator"]
-  coding b (← field b "result")
-  need ((← (← field b "index").getNat?) == index) "index is not the result's position"
-  hex64 (← field b "digest")
-  need ((← field b "digest") == digest) "digest is not the case's"
-  field b "result"
-
-/-- `Service.Protocol`: a request error bound to the request's mode and case digests
-(`requestError`), or one bound result per case with exact counts; `content` is applied to
-each bound entry and its result, with its case and position. -/
+/-- The response's verdict under `envelope.json#/response` with the mode's row, then the
+content check of each bound result with its case and position (a request error has none). -/
 def response (mode : String) (request r : Json) (content : Json → Json → Json → Nat → Check) : Check := do
-  let nonce ← field request "id"
-  if isField r "status" (.str "error") then
-    shape r ["id", "status", "mode", "digests", "error", "code"] []
-    need ((← field r "id") == nonce && (← (field r "id")).getStr?.toBool) "id is not the nonce"
-    need (isField r "mode" (.str mode)) "mode"
-    need ((← field r "digests") == (← field request "digests")) "digests are not the request's"
-    text (← field r "error")
-    need (VE.Service.rejectionCodes.contains (← (← field r "code").getStr?)) "code is not a public code"
-  else
-    shape r ["id", "status", "mode", "results", "counts"] []
-    need (isField r "status" (.str "ok")) "status"
-    need ((← field r "id") == nonce && (← (field r "id")).getStr?.toBool) "id is not the nonce"
-    need (isField r "mode" (.str mode)) "mode"
+  let some rowShape := ResponseShape.Schemas.row mode | throw s!"unknown mode {mode}"
+  ResponseShape.decide ResponseShape.Schemas.files (.ref "envelope.json#/response")
+    { value := request, row := rowShape } r
+  if isField r "status" (.str "ok") then
     let cases ← (← field request "cases").getArr?
-    let digests ← (← field request "digests").getArr?
     let results ← (← field r "results").getArr?
-    need (results.size == cases.size && digests.size == cases.size) "one result per case"
-    let mut rows := #[]
     for i in [:results.size] do
-      match bound results[i]! i digests[i]! >>= fun x => do
-          row mode x cases[i]! i; content results[i]! x cases[i]! i; pure x with
-      | .ok x => rows := rows.push x
+      let b := results[i]!
+      match content b (← field b "result") cases[i]! i with
+      | .ok () => pure ()
       | .error m => throw s!"result {i}: {m}"
-    let counts ← field r "counts"
-    shape counts ["cases", "bytes", "errors"] []
-    need ((← (← field counts "cases").getNat?) == cases.size) "counts.cases"
-    need ((← field counts "bytes") == (← field request "bytes")) "counts.bytes"
-    let errors := (rows.filter (fun x => isField x "status" (.str "error"))).size
-    need ((← (← field counts "errors").getNat?) == errors) "counts.errors"
 
 def verdict (check : Json → Json → Json → Nat → Check) (mode : String) (request r : Json) : Json :=
   match response mode request r check with
@@ -681,6 +370,7 @@ def contentCheck (mode : String) : Json → Except String (Json → Json → Jso
 
 def line (text : String) : Except String Json := do
   let j ← Json.parse text
+  if j.getObjValD "check" == .str "schemas" then return ← ResponseShape.Schemas.rendered
   let mode ← (← field j "mode").getStr?
   let request ← field j "request"
   let responses ← (← field j "responses").getArr?
@@ -688,6 +378,7 @@ def line (text : String) : Except String Json := do
   pure (.arr (responses.map (verdict content mode request)))
 
 end ResponseDecode
+
 
 def main : IO UInt32 := do
   let stdin ← IO.getStdin
