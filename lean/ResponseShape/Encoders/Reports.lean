@@ -24,6 +24,11 @@ theorem elaborate_fits (id : String) (dec : Wire.Decoded) (environment : Json) :
   simp only []
   fits using generated_key
 
+theorem content_fits (id meaningId : String) :
+    Fits req Skeletons.reports (VE.Route.Wire.ok id [("meaning_id", .str meaningId)]) := by
+  simp only [VE.Route.Wire.ok]
+  fits
+
 theorem certificate_fits (c : Wire.Checked) (environment : Json) (id : String) (j : Json) :
     OkFits req Skeletons.reports (runCertificate c environment id j) := by
   unfold runCertificate
@@ -44,13 +49,39 @@ theorem scopedVerdict_fits (c : Wire.Checked) (j : Json) (s : ScopedCheck) :
   okfits
   all_goals fits
 
+theorem scopedUnreplayed_fits (c : Wire.Checked) (j : Json) (s : ScopedCheck) :
+    Fits req (skel% "reports.json#/$defs/verdict") (scopedUnreplayed c j s) := by
+  unfold scopedUnreplayed
+  split <;> fits
+
+theorem nested_fits (D : ReportDoc) (u : Wire.DecodedUnit) (x : Json × Status)
+    (h : x ∈ nestedResults D u) :
+    Fits req (skel% "reports.json#/$defs/nested") x.fst := by
+  simp only [nestedResults, List.mem_append] at h
+  rcases h with (h | h) | h
+  · cases u with
+    | reports x start stop kind =>
+        simp only [List.mem_map] at h
+        rcases h with ⟨p, _, rfl⟩
+        fits
+    | w2 x => simp at h
+  · simp only [List.mem_map] at h
+    rcases h with ⟨p, _, rfl⟩
+    fits
+  · simp only [List.mem_map] at h
+    rcases h with ⟨p, _, rfl⟩
+    fits
+
 theorem status_fits (c : Wire.Checked) (id : String) (j : Json) :
     OkFits req Skeletons.reports (runStatus c id j) := by
   unfold runStatus
   okfits
   simp only [VE.Route.Wire.ok, envelopeJson, nestedResults]
-  fits
-  exact OkP.mapM (fun x _ => scopedVerdict_fits c j x) _ ‹_› _ ‹_›
+  all_goals fits_as "reports.json#/$defs/status"
+  all_goals fits using scopedUnreplayed_fits
+  all_goals fits using nested_fits
+  all_goals fits
+  all_goals try (exact OkP.mapM (fun x _ => scopedVerdict_fits c j x) _ (by assumption) _ (by assumption))
 
 theorem admission_fits (id reportId : String) (res : ReportsAdmitted) :
     Fits req Skeletons.reports (encodeAdmitted id reportId res) := by
@@ -75,6 +106,7 @@ theorem runCase_fits (j : Json) : OkFits req Skeletons.reports (runCase j) := by
     okfits
     exact admission_fits _ _ _
   · exact elaborate_fits _ _ _
+  · exact content_fits _ _
   · exact certificate_fits _ _ _ _
   · exact countermodel_fits _ _ _
   · fits_as "reports.json#/$defs/scoped"

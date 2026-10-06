@@ -133,9 +133,7 @@ def elaborate : Shape :=
         ("id", ref "common.json#/$defs/id_ok"),
         ("status", constS "ok"),
         ("environment_reports_id", ref "common.json#/$defs/hex64_or_empty"),
-        ("environment_reports", n [obj, .required ["language", "profiles", "spec_revision", "vocabulary"],
-          closed [("language", str), ("profiles", ref "common.json#/$defs/strings"),
-            ("spec_revision", str), ("vocabulary", obj)]]),
+        ("environment_reports", obj),
         ("keys", n [
           arr,
           .items (n [
@@ -240,6 +238,22 @@ def «scoped» : Shape :=
       ("envelope", ref "#/$defs/envelope"),
       ("bindings", ref "#/$defs/envelope_binding")]]
 
+def nested : Shape := .anyOf [
+  n [obj, .required ["item", "path", "name", "status"],
+    closed [("item", constS "assessment"),
+      ("path", n [str, .pattern (Re.optional (.seq (.lit "1") (.star (.lit ".1"))))]),
+      ("name", str), ("status", constS "OPEN")]],
+  n [obj, .required ["item", "path", "act", "status"],
+    closed [("item", constS "act"),
+      ("path", n [str, .pattern (Re.optional (.seq (.cls [('1', '1'), ('2', '2')])
+        (.star (.seq (.lit ".") (.cls [('1', '1'), ('2', '2')])))))]),
+      ("act", str), ("status", constS "LABELLED")]],
+  n [obj, .required ["item", "path", "reason", "status"],
+    closed [("item", constS "unformalised"),
+      ("path", n [str, .pattern (Re.optional (.seq (.cls [('1', '1'), ('2', '2')])
+        (.star (.seq (.lit ".") (.cls [('1', '1'), ('2', '2')])))))]),
+      ("reason", str), ("status", constS "UNFORMALISED")]]]
+
 def status : Shape :=
   c
     "Reports.Run.runStatus: every unit's status with its nested results, the scoped verdicts and the document's status."
@@ -257,40 +271,10 @@ def status : Shape :=
               closed [
                 ("id", str),
                 ("status", ref "#/$defs/status_word"),
-                ("nested", n [
-                  arr,
-                  .items (.anyOf [
-                      n [
-                        obj,
-                        .required ["item", "path", "name", "status"],
-                        closed [
-                          ("item", constS "assessment"),
-                          ("path", n [str, .pattern (Re.optional (.seq (.lit "1") (.star (.lit ".1"))))]),
-                          ("name", str),
-                          ("status", constS "OPEN")]],
-                      n [
-                        obj,
-                        .required ["item", "path", "act", "status"],
-                        closed [
-                          ("item", constS "act"),
-                          ("path", n [
-                            str,
-                            .pattern (Re.optional (.seq (.cls [('1', '1'), ('2', '2')]) (.star (.seq (.lit ".") (.cls [('1', '1'), ('2', '2')])))))]),
-                          ("act", str),
-                          ("status", constS "LABELLED")]],
-                      n [
-                        obj,
-                        .required ["item", "path", "reason", "status"],
-                        closed [
-                          ("item", constS "unformalised"),
-                          ("path", n [
-                            str,
-                            .pattern (Re.optional (.seq (.cls [('1', '1'), ('2', '2')]) (.star (.seq (.lit ".") (.cls [('1', '1'), ('2', '2')])))))]),
-                          ("reason", str),
-                          ("status", constS "UNFORMALISED")]]])])]])]),
+                ("nested", n [arr, .items (ref "#/$defs/nested")])]])]),
         ("scoped", n [arr, .items (ref "#/$defs/verdict")]),
         ("document_status", ref "#/$defs/status_word"),
-        ("status_text", ref "#/$defs/status_word"),
+        ("status_text", n [arr, .items str]),
         ("residual_lines", n [obj,
           .required ["open_terms", "reports", "assessments", "literal_quotations", "scoped_checks", "unreviewed_acts", "unformalised_kinds"],
           closed [("open_terms", ref "common.json#/$defs/strings"),
@@ -329,6 +313,7 @@ def file : File where
     ("envelope", .schema envelope),
     ("key", .schema key),
     ("status_word", .schema status_word),
+    ("nested", .schema nested),
     ("counts", .schema counts),
     ("verdict", .schema verdict),
     ("admission", .schema admission),

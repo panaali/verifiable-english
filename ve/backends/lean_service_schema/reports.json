@@ -127,17 +127,7 @@
           "type": "array"
         },
         "envelope": {"$ref": "#/$defs/envelope"},
-        "environment_reports": {
-          "additionalProperties": false,
-          "properties": {
-            "language": {"type": "string"},
-            "profiles": {"$ref": "common.json#/$defs/strings"},
-            "spec_revision": {"type": "string"},
-            "vocabulary": {"type": "object"}
-          },
-          "required": ["language", "profiles", "spec_revision", "vocabulary"],
-          "type": "object"
-        },
+        "environment_reports": {"type": "object"},
         "environment_reports_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
         "id": {"$ref": "common.json#/$defs/id_ok"},
         "keys": {
@@ -277,6 +267,43 @@
       "reports-scoped": {"properties": {"kind": {"const": "reports-scoped"}}, "required": ["kind"], "type": "object"},
       "reports-status": {"properties": {"kind": {"const": "reports-status"}}, "required": ["kind"], "type": "object"}
     },
+    "nested": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "item": {"const": "assessment"},
+            "name": {"type": "string"},
+            "path": {"pattern": "(1(\\.1)*)?", "type": "string"},
+            "status": {"const": "OPEN"}
+          },
+          "required": ["item", "path", "name", "status"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "act": {"type": "string"},
+            "item": {"const": "act"},
+            "path": {"pattern": "([12](\\.[12])*)?", "type": "string"},
+            "status": {"const": "LABELLED"}
+          },
+          "required": ["item", "path", "act", "status"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "item": {"const": "unformalised"},
+            "path": {"pattern": "([12](\\.[12])*)?", "type": "string"},
+            "reason": {"type": "string"},
+            "status": {"const": "UNFORMALISED"}
+          },
+          "required": ["item", "path", "reason", "status"],
+          "type": "object"
+        }
+      ]
+    },
     "report_kind": {
       "$comment": "Route.Admission.renderKind of Attribution.Bridge.kindOf: a report's attributed kind (acts says, believes, wants, intends) or an assessment's hedged kind (could, likely), over an asserted, norm or definition body. Content depth is at most 16 (Wire.decodeContent).",
       "anyOf": [
@@ -365,52 +392,13 @@
         },
         "scoped": {"items": {"$ref": "#/$defs/verdict"}, "type": "array"},
         "status": {"const": "ok"},
-        "status_text": {"$ref": "#/$defs/status_word"},
+        "status_text": {"items": {"type": "string"}, "type": "array"},
         "units": {
           "items": {
             "additionalProperties": false,
             "properties": {
               "id": {"type": "string"},
-              "nested": {
-                "items": {
-                  "anyOf": [
-                    {
-                      "additionalProperties": false,
-                      "properties": {
-                        "item": {"const": "assessment"},
-                        "name": {"type": "string"},
-                        "path": {"pattern": "(1(\\.1)*)?", "type": "string"},
-                        "status": {"const": "OPEN"}
-                      },
-                      "required": ["item", "path", "name", "status"],
-                      "type": "object"
-                    },
-                    {
-                      "additionalProperties": false,
-                      "properties": {
-                        "act": {"type": "string"},
-                        "item": {"const": "act"},
-                        "path": {"pattern": "([12](\\.[12])*)?", "type": "string"},
-                        "status": {"const": "LABELLED"}
-                      },
-                      "required": ["item", "path", "act", "status"],
-                      "type": "object"
-                    },
-                    {
-                      "additionalProperties": false,
-                      "properties": {
-                        "item": {"const": "unformalised"},
-                        "path": {"pattern": "([12](\\.[12])*)?", "type": "string"},
-                        "reason": {"type": "string"},
-                        "status": {"const": "UNFORMALISED"}
-                      },
-                      "required": ["item", "path", "reason", "status"],
-                      "type": "object"
-                    }
-                  ]
-                },
-                "type": "array"
-              },
+              "nested": {"items": {"$ref": "#/$defs/nested"}, "type": "array"},
               "status": {"$ref": "#/$defs/status_word"}
             },
             "required": ["id", "status", "nested"],
