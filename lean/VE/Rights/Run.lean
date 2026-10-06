@@ -43,7 +43,7 @@ case kind, or a rights unit in the document. -/
 def usesRightsPath (j : Json) : Bool :=
   let env := j.getObjValD "environment"
   let profile := match env.getObjValD "profiles" with
-    | .arr ps => ps.toList.contains (.str rightsProfile)
+    | .arr ps => ps.toList.any (·.getStr?.toOption == some rightsProfile)
     | _ => false
   let block := ((env.getObjValD "vocabulary").getObjVal? "rights").toBool
   let kind := match j.getObjValD "kind" with

@@ -104,44 +104,234 @@
     "main"
    ]
   },
+  "ResponseShape.lean": {
+   "G[V]": [
+    "ResponseShape.Counters",
+    "ResponseShape.Ctx",
+    "ResponseShape.Def",
+    "ResponseShape.File",
+    "ResponseShape.File.qualified",
+    "ResponseShape.File.render",
+    "ResponseShape.Re",
+    "ResponseShape.Re.classChar",
+    "ResponseShape.Re.deriv",
+    "ResponseShape.Re.escape",
+    "ResponseShape.Re.matches",
+    "ResponseShape.Re.mkAlt",
+    "ResponseShape.Re.mkSeq",
+    "ResponseShape.Re.nullable",
+    "ResponseShape.Re.oneOf",
+    "ResponseShape.Re.optional",
+    "ResponseShape.Re.prefixes",
+    "ResponseShape.Re.render",
+    "ResponseShape.Re.special",
+    "ResponseShape.Result",
+    "ResponseShape.Shape",
+    "ResponseShape.arr",
+    "ResponseShape.brokenOn",
+    "ResponseShape.bump",
+    "ResponseShape.c",
+    "ResponseShape.check",
+    "ResponseShape.closed",
+    "ResponseShape.constS",
+    "ResponseShape.copied",
+    "ResponseShape.decide",
+    "ResponseShape.decidedBy",
+    "ResponseShape.depth",
+    "ResponseShape.disagreeing",
+    "ResponseShape.encodedEnvironment",
+    "ResponseShape.enumS",
+    "ResponseShape.fail",
+    "ResponseShape.isItems",
+    "ResponseShape.kind",
+    "ResponseShape.kindIs",
+    "ResponseShape.lookup",
+    "ResponseShape.members",
+    "ResponseShape.n",
+    "ResponseShape.numEq",
+    "ResponseShape.numLe",
+    "ResponseShape.obj",
+    "ResponseShape.passed",
+    "ResponseShape.pointerString",
+    "ResponseShape.props",
+    "ResponseShape.qualify",
+    "ResponseShape.ref",
+    "ResponseShape.render",
+    "ResponseShape.resolve",
+    "ResponseShape.resolveAt",
+    "ResponseShape.same",
+    "ResponseShape.sameJson",
+    "ResponseShape.short",
+    "ResponseShape.str",
+    "ResponseShape.strs",
+    "ResponseShape.tok",
+    "ResponseShape.tokens",
+    "ResponseShape.within"
+   ],
+   "G[R]": [
+    "ResponseShape.Fault"
+   ]
+  },
+  "ResponseShape/CaseDeciders.lean": {
+   "G[V]": [
+    "ResponseShape.CaseDecider",
+    "ResponseShape.CaseDecider.all",
+    "ResponseShape.CaseDecider.fn",
+    "ResponseShape.CaseDecider.name",
+    "ResponseShape.CaseDecider.ofName?",
+    "ResponseShape.decidedCase"
+   ]
+  },
+  "ResponseShape/Encoders/Common.lean": {
+   "G[V]": [
+    "ResponseShape.findOkHyp",
+    "ResponseShape.tacticRead_kind"
+   ],
+   "P": [
+    "ResponseShape.Encoders.Common.KindsRendered",
+    "ResponseShape.Encoders.Common.kindSkel"
+   ]
+  },
+  "ResponseShape/Encoders/Discourse.lean": {
+   "P": [
+    "ResponseShape.Encoders.Discourse.StatusesOk",
+    "ResponseShape.Encoders.Discourse.statusWords"
+   ]
+  },
+  "ResponseShape/Encoders/English.lean": {
+   "P": [
+    "ResponseShape.Encoders.English.ClassesIn",
+    "ResponseShape.Encoders.English.entriesClasses",
+    "ResponseShape.Encoders.English.entryClasses",
+    "ResponseShape.Encoders.English.tableClasses"
+   ]
+  },
+  "ResponseShape/Encoders/Quantity.lean": {
+   "G[V]": [
+    "ResponseShape.Encoders.Quantity.tacticQuantity_rows"
+   ]
+  },
   "ResponseShape/Encoders/ReadingsRoute.lean": {
    "S": [
     "ResponseShape.Encoders.ReadingsRoute.PairEntry",
     "ResponseShape.Encoders.ReadingsRoute.SetEntry"
+   ],
+   "G[V]": [
+    "ResponseShape.Encoders.ReadingsRoute.atomInv",
+    "ResponseShape.Encoders.ReadingsRoute.lowerInv"
+   ]
+  },
+  "ResponseShape/Encoders/Route.lean": {
+   "G[V]": [
+    "ResponseShape.Encoders.Route.routeOk",
+    "ResponseShape.Encoders.Route.tacticKind_route"
+   ],
+   "P": [
+    "ResponseShape.Encoders.Route.tacticGenerators_ok"
    ]
   },
   "ResponseShape/Encoders/SoftNorms.lean": {
    "S": [
     "ResponseShape.Encoders.SoftNorms.Classified"
+   ],
+   "P": [
+    "ResponseShape.Encoders.SoftNorms.CodeOk",
+    "ResponseShape.Encoders.SoftNorms.errorCodes",
+    "ResponseShape.Encoders.SoftNorms.tacticCodes_ok"
+   ]
+  },
+  "ResponseShape/EnumSites.lean": {
+   "T": [
+    "ResponseShape.EnumSites.Domain",
+    "ResponseShape.EnumSites.Probe",
+    "ResponseShape.EnumSites.Site",
+    "ResponseShape.EnumSites._aux_ResponseShape_EnumSites___elabRules_ResponseShape_EnumSites_fieldSkelTerm_1",
+    "ResponseShape.EnumSites.compose",
+    "ResponseShape.EnumSites.domainOf",
+    "ResponseShape.EnumSites.entries",
+    "ResponseShape.EnumSites.escape",
+    "ResponseShape.EnumSites.fieldSkelTerm",
+    "ResponseShape.EnumSites.fieldSkeleton",
+    "ResponseShape.EnumSites.instToJsonProbe",
+    "ResponseShape.EnumSites.instToJsonSite",
+    "ResponseShape.EnumSites.probes",
+    "ResponseShape.EnumSites.probesOf",
+    "ResponseShape.EnumSites.reach",
+    "ResponseShape.EnumSites.refsOf",
+    "ResponseShape.EnumSites.sites",
+    "ResponseShape.EnumSites.sitesOf",
+    "ResponseShape.EnumSites.stringFree"
+   ],
+   "P": [
+    "ResponseShape.Skel.admits"
    ]
   },
   "ResponseShape/FitsTactic.lean": {
    "G[V]": [
     "ResponseShape.FitsTactic.bound",
     "ResponseShape.FitsTactic.caseBranch",
+    "ResponseShape.FitsTactic.ctorClash",
+    "ResponseShape.FitsTactic.enumLike",
+    "ResponseShape.FitsTactic.fitsFrom",
     "ResponseShape.FitsTactic.fitsGoal",
+    "ResponseShape.FitsTactic.isStrLit",
+    "ResponseShape.FitsTactic.jsonLit?",
     "ResponseShape.FitsTactic.listElems",
+    "ResponseShape.FitsTactic.litClash",
     "ResponseShape.FitsTactic.names?",
     "ResponseShape.FitsTactic.objAccepts",
+    "ResponseShape.FitsTactic.pairs?",
     "ResponseShape.FitsTactic.position",
+    "ResponseShape.FitsTactic.reaches",
+    "ResponseShape.FitsTactic.strBeqTrue?",
+    "ResponseShape.FitsTactic.strCasesCore",
     "ResponseShape.FitsTactic.strList?",
     "ResponseShape.FitsTactic.strLit?",
     "ResponseShape.FitsTactic.tacticAlt_mem",
+    "ResponseShape.FitsTactic.tacticBool_cases",
     "ResponseShape.FitsTactic.tacticBool_hyp",
+    "ResponseShape.FitsTactic.tacticCase_kind_rw",
+    "ResponseShape.FitsTactic.tacticCase_path_rw",
+    "ResponseShape.FitsTactic.tacticContra",
     "ResponseShape.FitsTactic.tacticFits_as_",
+    "ResponseShape.FitsTactic.tacticFits_from_",
     "ResponseShape.FitsTactic.tacticFits_pick",
+    "ResponseShape.FitsTactic.tacticKind_subst",
+    "ResponseShape.FitsTactic.tacticOn_case_goal",
     "ResponseShape.FitsTactic.tacticSkel_norm",
+    "ResponseShape.FitsTactic.tacticStr_cases",
     "ResponseShape.FitsTactic.valueKeys",
+    "ResponseShape._aux_ResponseShape_FitsTactic___macroRules_ResponseShape_tacticCase_cond_1",
     "ResponseShape._aux_ResponseShape_FitsTactic___macroRules_ResponseShape_tacticFitsUsing__1",
+    "ResponseShape._aux_ResponseShape_FitsTactic___macroRules_ResponseShape_tacticFits_invert__1",
+    "ResponseShape._aux_ResponseShape_FitsTactic___macroRules_ResponseShape_tacticScalar_alt_1",
     "ResponseShape.tacticAlt_sub",
+    "ResponseShape.tacticCase_absurd_",
+    "ResponseShape.tacticCase_all_goal",
     "ResponseShape.tacticCase_cond",
+    "ResponseShape.tacticCase_cond_atom",
     "ResponseShape.tacticElem_cases",
     "ResponseShape.tacticElems_split",
+    "ResponseShape.tacticErrfits",
+    "ResponseShape.tacticErrp_let",
+    "ResponseShape.tacticErrp_whnf",
     "ResponseShape.tacticFields_split",
     "ResponseShape.tacticFitsUsing_",
+    "ResponseShape.tacticFits_invert_",
     "ResponseShape.tacticKeys_ok",
+    "ResponseShape.tacticKind_norm",
     "ResponseShape.tacticLits_simp",
-    "ResponseShape.tacticOkfits"
+    "ResponseShape.tacticName_disc",
+    "ResponseShape.tacticOkfits",
+    "ResponseShape.tacticRevert_lit_tests",
+    "ResponseShape.tacticScalar_alt"
+   ]
+  },
+  "ResponseShape/Schemas.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.files",
+    "ResponseShape.Schemas.rendered",
+    "ResponseShape.Schemas.row"
    ]
   },
   "ResponseShape/Schemas/Alternatives.lean": {
@@ -193,6 +383,7 @@
     "ResponseShape.Schemas.Common.code",
     "ResponseShape.Schemas.Common.conflict_targets",
     "ResponseShape.Schemas.Common.environment",
+    "ResponseShape.Schemas.Common.environment_predicate",
     "ResponseShape.Schemas.Common.file",
     "ResponseShape.Schemas.Common.fol_formula",
     "ResponseShape.Schemas.Common.fol_term",
@@ -358,10 +549,10 @@
     "ResponseShape.Schemas.Norms.kind",
     "ResponseShape.Schemas.Norms.norms_path",
     "ResponseShape.Schemas.Norms.row",
-    "ResponseShape.Schemas.Norms.\u00abnorms-certificate\u00bb",
-    "ResponseShape.Schemas.Norms.\u00abnorms-conflict\u00bb",
-    "ResponseShape.Schemas.Norms.\u00abnorms-elaborate\u00bb",
-    "ResponseShape.Schemas.Norms.\u00abnorms-witness\u00bb"
+    "ResponseShape.Schemas.Norms.«norms-certificate»",
+    "ResponseShape.Schemas.Norms.«norms-conflict»",
+    "ResponseShape.Schemas.Norms.«norms-elaborate»",
+    "ResponseShape.Schemas.Norms.«norms-witness»"
    ]
   },
   "ResponseShape/Schemas/Order.lean": {
@@ -516,8 +707,9 @@
     "ResponseShape.Schemas.Route.file",
     "ResponseShape.Schemas.Route.kind",
     "ResponseShape.Schemas.Route.label",
+    "ResponseShape.Schemas.Route.ok",
     "ResponseShape.Schemas.Route.row",
-    "ResponseShape.Schemas.Route.\u00abdependency-order\u00bb"
+    "ResponseShape.Schemas.Route.«dependency-order»"
    ],
    "G[R]": [
     "ResponseShape.Schemas.Route.error"
@@ -556,17 +748,11 @@
     "ResponseShape.Schemas.SpeechActs.speech_path"
    ]
   },
-  "ResponseShape/Schemas.lean": {
-   "G[V]": [
-    "ResponseShape.Schemas.files",
-    "ResponseShape.Schemas.rendered",
-    "ResponseShape.Schemas.row"
-   ]
-  },
   "ResponseShape/Skeleton.lean": {
    "S": [
     "ResponseShape.CaseWF",
     "ResponseShape.Fits",
+    "ResponseShape.KindRead",
     "ResponseShape.OkFits",
     "ResponseShape.OkP"
    ],
@@ -576,12 +762,16 @@
     "ResponseShape.CaseCond.isKind",
     "ResponseShape.CaseCond.objectHas",
     "ResponseShape.Extract",
+    "ResponseShape.Lit",
+    "ResponseShape.Lit.json",
+    "ResponseShape.Lit.of?",
     "ResponseShape.Skel",
     "ResponseShape.Skel.anyObject",
     "ResponseShape.Skel.condsOk",
     "ResponseShape.Skel.conj",
     "ResponseShape.Skel.conjAll",
     "ResponseShape.Skel.distinct",
+    "ResponseShape.Skel.environmentEntry",
     "ResponseShape.Skel.field",
     "ResponseShape.Skel.isAny",
     "ResponseShape.Skel.item",
@@ -589,11 +779,15 @@
     "ResponseShape.Skel.members",
     "ResponseShape.Skel.mergeStr",
     "ResponseShape.Skel.mkAlt",
+    "ResponseShape.Skel.ofEnum",
     "ResponseShape.Skel.simp",
     "ResponseShape.caseCondOf",
     "ResponseShape.objectFree",
     "ResponseShape.skeleton",
     "ResponseShape.skeletonOf"
+   ],
+   "P": [
+    "ResponseShape.ErrP"
    ]
   },
   "ResponseShape/Skeletons.lean": {
@@ -632,73 +826,6 @@
    ],
    "G[I]": [
     "ResponseShape.Skeletons.identity"
-   ]
-  },
-  "ResponseShape.lean": {
-   "G[V]": [
-    "ResponseShape.Counters",
-    "ResponseShape.Ctx",
-    "ResponseShape.Def",
-    "ResponseShape.File",
-    "ResponseShape.File.qualified",
-    "ResponseShape.File.render",
-    "ResponseShape.Re",
-    "ResponseShape.Re.classChar",
-    "ResponseShape.Re.deriv",
-    "ResponseShape.Re.escape",
-    "ResponseShape.Re.matches",
-    "ResponseShape.Re.mkAlt",
-    "ResponseShape.Re.mkSeq",
-    "ResponseShape.Re.nullable",
-    "ResponseShape.Re.oneOf",
-    "ResponseShape.Re.optional",
-    "ResponseShape.Re.prefixes",
-    "ResponseShape.Re.render",
-    "ResponseShape.Re.special",
-    "ResponseShape.Result",
-    "ResponseShape.Shape",
-    "ResponseShape.arr",
-    "ResponseShape.brokenOn",
-    "ResponseShape.bump",
-    "ResponseShape.c",
-    "ResponseShape.check",
-    "ResponseShape.closed",
-    "ResponseShape.constS",
-    "ResponseShape.copied",
-    "ResponseShape.decide",
-    "ResponseShape.decidedBy",
-    "ResponseShape.depth",
-    "ResponseShape.disagreeing",
-    "ResponseShape.enumS",
-    "ResponseShape.fail",
-    "ResponseShape.isItems",
-    "ResponseShape.kind",
-    "ResponseShape.kindIs",
-    "ResponseShape.lookup",
-    "ResponseShape.members",
-    "ResponseShape.n",
-    "ResponseShape.numEq",
-    "ResponseShape.numLe",
-    "ResponseShape.obj",
-    "ResponseShape.passed",
-    "ResponseShape.pointerString",
-    "ResponseShape.props",
-    "ResponseShape.qualify",
-    "ResponseShape.ref",
-    "ResponseShape.render",
-    "ResponseShape.resolve",
-    "ResponseShape.resolveAt",
-    "ResponseShape.same",
-    "ResponseShape.sameJson",
-    "ResponseShape.short",
-    "ResponseShape.str",
-    "ResponseShape.strs",
-    "ResponseShape.tok",
-    "ResponseShape.tokens",
-    "ResponseShape.within"
-   ],
-   "G[R]": [
-    "ResponseShape.Fault"
    ]
   },
   "Serve.lean": {
@@ -2350,7 +2477,7 @@
    "D[V]": [
     "VE.Discourse.Loader.Front",
     "VE.Discourse.Loader.Split",
-    "VE.Discourse.Loader.Unit\u2080",
+    "VE.Discourse.Loader.Unit₀",
     "VE.Discourse.Loader.activeOf",
     "VE.Discourse.Loader.allowedMetadata",
     "VE.Discourse.Loader.bodyOf",
@@ -2982,6 +3109,24 @@
     "VE.EnglishGrammar.symsSmall"
    ]
   },
+  "VE/EnglishGrammar/Fixed/Alternatives.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.alternativesActs",
+    "VE.EnglishGrammar.alternativesRows"
+   ],
+   "G[I]": [
+    "VE.EnglishGrammar.alternativesSha256"
+   ]
+  },
+  "VE/EnglishGrammar/Fixed/Order.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.orderActs",
+    "VE.EnglishGrammar.orderRows"
+   ],
+   "G[I]": [
+    "VE.EnglishGrammar.orderSha256"
+   ]
+  },
   "VE/EnglishGrammar/Fixed/RelationalFol.lean": {
    "G[V]": [
     "VE.EnglishGrammar.ntNames",
@@ -2991,6 +3136,18 @@
    ],
    "G[I]": [
     "VE.EnglishGrammar.relationalFolSha256"
+   ]
+  },
+  "VE/EnglishGrammar/Fixed/Staged.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.ntNamesStaged",
+    "VE.EnglishGrammar.ranksStaged",
+    "VE.EnglishGrammar.stagedNames"
+   ]
+  },
+  "VE/EnglishGrammar/Fixed/Tables.lean": {
+   "G[I]": [
+    "VE.EnglishGrammar.tableSources"
    ]
   },
   "VE/EnglishGrammar/Fixed/Version.lean": {
@@ -3096,6 +3253,101 @@
     "VE.EnglishGrammar.LexiconFixtures.envF2",
     "VE.EnglishGrammar.LexiconFixtures.envF3",
     "VE.EnglishGrammar.LexiconFixtures.failureSet"
+   ]
+  },
+  "VE/EnglishGrammar/ProfileExamples.lean": {
+   "T": [
+    "VE.EnglishGrammar.ProfileExamples.Av",
+    "VE.EnglishGrammar.ProfileExamples.D",
+    "VE.EnglishGrammar.ProfileExamples.FA",
+    "VE.EnglishGrammar.ProfileExamples.FD",
+    "VE.EnglishGrammar.ProfileExamples.FD3",
+    "VE.EnglishGrammar.ProfileExamples.FDam",
+    "VE.EnglishGrammar.ProfileExamples.FM",
+    "VE.EnglishGrammar.ProfileExamples.FMd",
+    "VE.EnglishGrammar.ProfileExamples.FO",
+    "VE.EnglishGrammar.ProfileExamples.FO2",
+    "VE.EnglishGrammar.ProfileExamples.FOx",
+    "VE.EnglishGrammar.ProfileExamples.FPG",
+    "VE.EnglishGrammar.ProfileExamples.FPacts",
+    "VE.EnglishGrammar.ProfileExamples.FR",
+    "VE.EnglishGrammar.ProfileExamples.FRam",
+    "VE.EnglishGrammar.ProfileExamples.Fcb",
+    "VE.EnglishGrammar.ProfileExamples.Fsz",
+    "VE.EnglishGrammar.ProfileExamples.Gcb",
+    "VE.EnglishGrammar.ProfileExamples.LA",
+    "VE.EnglishGrammar.ProfileExamples.LA2",
+    "VE.EnglishGrammar.ProfileExamples.LD",
+    "VE.EnglishGrammar.ProfileExamples.LD3",
+    "VE.EnglishGrammar.ProfileExamples.LDam",
+    "VE.EnglishGrammar.ProfileExamples.LM",
+    "VE.EnglishGrammar.ProfileExamples.LO",
+    "VE.EnglishGrammar.ProfileExamples.LO2",
+    "VE.EnglishGrammar.ProfileExamples.LOx",
+    "VE.EnglishGrammar.ProfileExamples.LR",
+    "VE.EnglishGrammar.ProfileExamples.LR4",
+    "VE.EnglishGrammar.ProfileExamples.LRam",
+    "VE.EnglishGrammar.ProfileExamples.Lcb",
+    "VE.EnglishGrammar.ProfileExamples.Ld",
+    "VE.EnglishGrammar.ProfileExamples.M",
+    "VE.EnglishGrammar.ProfileExamples.Pred",
+    "VE.EnglishGrammar.ProfileExamples.S",
+    "VE.EnglishGrammar.ProfileExamples.act",
+    "VE.EnglishGrammar.ProfileExamples.ad",
+    "VE.EnglishGrammar.ProfileExamples.admitted",
+    "VE.EnglishGrammar.ProfileExamples.altBlock",
+    "VE.EnglishGrammar.ProfileExamples.altConsts",
+    "VE.EnglishGrammar.ProfileExamples.altPreds",
+    "VE.EnglishGrammar.ProfileExamples.basePreds",
+    "VE.EnglishGrammar.ProfileExamples.costs",
+    "VE.EnglishGrammar.ProfileExamples.dl",
+    "VE.EnglishGrammar.ProfileExamples.drop",
+    "VE.EnglishGrammar.ProfileExamples.entries",
+    "VE.EnglishGrammar.ProfileExamples.envOf",
+    "VE.EnglishGrammar.ProfileExamples.flags",
+    "VE.EnglishGrammar.ProfileExamples.forms23",
+    "VE.EnglishGrammar.ProfileExamples.formulaIn",
+    "VE.EnglishGrammar.ProfileExamples.grammarIdOf",
+    "VE.EnglishGrammar.ProfileExamples.idOf",
+    "VE.EnglishGrammar.ProfileExamples.inj",
+    "VE.EnglishGrammar.ProfileExamples.jFA",
+    "VE.EnglishGrammar.ProfileExamples.jFD",
+    "VE.EnglishGrammar.ProfileExamples.jFD3",
+    "VE.EnglishGrammar.ProfileExamples.jFDnt",
+    "VE.EnglishGrammar.ProfileExamples.jFM",
+    "VE.EnglishGrammar.ProfileExamples.jFMd",
+    "VE.EnglishGrammar.ProfileExamples.jFMn",
+    "VE.EnglishGrammar.ProfileExamples.jFMsp",
+    "VE.EnglishGrammar.ProfileExamples.jFO",
+    "VE.EnglishGrammar.ProfileExamples.jFO2",
+    "VE.EnglishGrammar.ProfileExamples.jFOx",
+    "VE.EnglishGrammar.ProfileExamples.jFR",
+    "VE.EnglishGrammar.ProfileExamples.jFRu",
+    "VE.EnglishGrammar.ProfileExamples.marks",
+    "VE.EnglishGrammar.ProfileExamples.n",
+    "VE.EnglishGrammar.ProfileExamples.nineValue",
+    "VE.EnglishGrammar.ProfileExamples.nines",
+    "VE.EnglishGrammar.ProfileExamples.outcomeIn",
+    "VE.EnglishGrammar.ProfileExamples.pairs6",
+    "VE.EnglishGrammar.ProfileExamples.pythonShape",
+    "VE.EnglishGrammar.ProfileExamples.r",
+    "VE.EnglishGrammar.ProfileExamples.regulated",
+    "VE.EnglishGrammar.ProfileExamples.ri16",
+    "VE.EnglishGrammar.ProfileExamples.riskBlock",
+    "VE.EnglishGrammar.ProfileExamples.routeEnv",
+    "VE.EnglishGrammar.ProfileExamples.rv",
+    "VE.EnglishGrammar.ProfileExamples.scaleN",
+    "VE.EnglishGrammar.ProfileExamples.selecting",
+    "VE.EnglishGrammar.ProfileExamples.signs",
+    "VE.EnglishGrammar.ProfileExamples.size",
+    "VE.EnglishGrammar.ProfileExamples.stepsIn",
+    "VE.EnglishGrammar.ProfileExamples.sz4",
+    "VE.EnglishGrammar.ProfileExamples.verdictsIn",
+    "VE.EnglishGrammar.ProfileExamples.w",
+    "VE.EnglishGrammar.ProfileExamples.withUnits",
+    "VE.EnglishGrammar.ProfileExamples.withoutForm",
+    "VE.EnglishGrammar.ProfileExamples.withoutRow",
+    "VE.EnglishGrammar.ProfileExamples.worded"
    ]
   },
   "VE/EnglishGrammar/Read.lean": {
@@ -3630,18 +3882,18 @@
     "VE.NormDefaults.Wire.FilledX",
     "VE.NormDefaults.Wire.StatusX",
     "VE.NormDefaults.Wire.acceptedX",
-    "VE.NormDefaults.Wire.firstFailureX",
-    "VE.NormDefaults.Wire.layeredSource",
-    "VE.NormDefaults.Wire.neverX",
-    "VE.NormDefaults.Wire.replayStatusX",
-    "VE.NormDefaults.Wire.suppliedX",
-    "VE.NormDefaults.Wire.witnessConflictX",
     {
      "name": "VE.NormDefaults.Wire.conflictFreeX",
      "tied": [
       "VE.NormDefaults.Wire.layered_conflict_sound"
      ]
-    }
+    },
+    "VE.NormDefaults.Wire.firstFailureX",
+    "VE.NormDefaults.Wire.layeredSource",
+    "VE.NormDefaults.Wire.neverX",
+    "VE.NormDefaults.Wire.replayStatusX",
+    "VE.NormDefaults.Wire.suppliedX",
+    "VE.NormDefaults.Wire.witnessConflictX"
    ],
    "D[V]": [
     "VE.NormDefaults.Wire.LayeredU",
@@ -3751,16 +4003,16 @@
     "VE.NormDefaults.Wire.ReportG.findings",
     "VE.NormDefaults.Wire.ReportG.gaps",
     "VE.NormDefaults.Wire.extraValid",
-    "VE.NormDefaults.Wire.guardCone",
-    "VE.NormDefaults.Wire.guardPredicates",
-    "VE.NormDefaults.Wire.inheritsFrom",
-    "VE.NormDefaults.Wire.normsSource",
     {
      "name": "VE.NormDefaults.Wire.groundingOf",
      "tied": [
       "VE.NormDefaults.Wire.grounding_ungrounded_iff"
      ]
-    }
+    },
+    "VE.NormDefaults.Wire.guardCone",
+    "VE.NormDefaults.Wire.guardPredicates",
+    "VE.NormDefaults.Wire.inheritsFrom",
+    "VE.NormDefaults.Wire.normsSource"
    ]
   },
   "VE/NormDefaults/Routes.lean": {
@@ -4310,6 +4562,7 @@
     "VE.Norms.Wire.maxNodes"
    ],
    "D[I]": [
+    "VE.Norms.Wire.appendPredicates",
     "VE.Norms.Wire.canonicalAct",
     "VE.Norms.Wire.canonicalEnvironmentJson"
    ]
@@ -4803,7 +5056,7 @@
     "VE.Readings.Examples.docK",
     "VE.Readings.Examples.exc",
     "VE.Readings.Examples.exceptX",
-    "VE.Readings.Examples.ex\u2082",
+    "VE.Readings.Examples.ex₂",
     "VE.Readings.Examples.fanCited",
     "VE.Readings.Examples.fanDefault",
     "VE.Readings.Examples.formulaSet",
@@ -4833,7 +5086,7 @@
     "VE.Readings.Examples.ow",
     "VE.Readings.Examples.phiEx",
     "VE.Readings.Examples.q0",
-    "VE.Readings.Examples.quiet\u2082",
+    "VE.Readings.Examples.quiet₂",
     "VE.Readings.Examples.regsK",
     "VE.Readings.Examples.rs1",
     "VE.Readings.Examples.rs15",
@@ -4849,8 +5102,8 @@
     "VE.Readings.Examples.unlabelled",
     "VE.Readings.Examples.users13",
     "VE.Readings.Examples.waiveX",
-    "VE.Readings.Examples.\u03c319",
-    "VE.Readings.Examples.\u03c321c"
+    "VE.Readings.Examples.σ19",
+    "VE.Readings.Examples.σ21c"
    ]
   },
   "VE/Readings/Force.lean": {
@@ -5009,15 +5262,15 @@
     "VE.Readings.RunExamples.tickValue",
     "VE.Readings.RunExamples.users12",
     "VE.Readings.RunExamples.users4",
-    "VE.Readings.RunExamples.\u03c3Help",
-    "VE.Readings.RunExamples.\u03c3Help12",
-    "VE.Readings.RunExamples.\u03c3K1",
-    "VE.Readings.RunExamples.\u03c3Wrong",
-    "VE.Readings.RunExamples.\u03c3Wrong12"
+    "VE.Readings.RunExamples.σHelp",
+    "VE.Readings.RunExamples.σHelp12",
+    "VE.Readings.RunExamples.σK1",
+    "VE.Readings.RunExamples.σWrong",
+    "VE.Readings.RunExamples.σWrong12"
    ],
    "G[I]": [
     "VE.Readings.RunExamples.tickValid",
-    "VE.Readings.RunExamples.\u03c3Avoid"
+    "VE.Readings.RunExamples.σAvoid"
    ]
   },
   "VE/Readings/Scan.lean": {
@@ -6641,30 +6894,9 @@
     "VE.Route.Wire.RouteVocabulary.modelVocabulary",
     "VE.Route.Wire.definitionBackgroundBudget",
     "VE.Route.Wire.runBackground",
-    {
-     "name": "VE.Route.Wire.runClosure",
-     "tied": [
-      "VE.Route.WireSound.runClosure_certificate_acceptance",
-      "VE.Route.WireSound.runClosure_countermodel",
-      "VE.Route.WireSound.runClosure_evaluate"
-     ]
-    },
-    {
-     "name": "VE.Route.Wire.runFol",
-     "tied": [
-      "VE.Route.WireSound.runFol_certificate_acceptance",
-      "VE.Route.WireSound.runFol_countermodel",
-      "VE.Route.WireSound.runFol_evaluate"
-     ]
-    },
-    {
-     "name": "VE.Route.Wire.runOrder",
-     "tied": [
-      "VE.Route.WireSound.runOrder_certificate_acceptance",
-      "VE.Route.WireSound.runOrder_countermodel",
-      "VE.Route.WireSound.runOrder_evaluate"
-     ]
-    }
+    "VE.Route.Wire.runClosure",
+    "VE.Route.Wire.runFol",
+    "VE.Route.Wire.runOrder"
    ],
    "G[R]": [
     "VE.Route.Wire.nodeLimit"
@@ -8501,131 +8733,6 @@
   "VE/WireContract/Tables/SoftNorms.lean": {
    "G[V]": [
     "VE.WireContract.Tables.SoftNorms.table"
-   ]
-  },
-  "VE/EnglishGrammar/Fixed/Alternatives.lean": {
-   "G[V]": [
-    "VE.EnglishGrammar.alternativesActs",
-    "VE.EnglishGrammar.alternativesRows"
-   ],
-   "G[I]": [
-    "VE.EnglishGrammar.alternativesSha256"
-   ]
-  },
-  "VE/EnglishGrammar/Fixed/Order.lean": {
-   "G[V]": [
-    "VE.EnglishGrammar.orderActs",
-    "VE.EnglishGrammar.orderRows"
-   ],
-   "G[I]": [
-    "VE.EnglishGrammar.orderSha256"
-   ]
-  },
-  "VE/EnglishGrammar/ProfileExamples.lean": {
-   "T": [
-    "VE.EnglishGrammar.ProfileExamples.Av",
-    "VE.EnglishGrammar.ProfileExamples.D",
-    "VE.EnglishGrammar.ProfileExamples.FA",
-    "VE.EnglishGrammar.ProfileExamples.FD",
-    "VE.EnglishGrammar.ProfileExamples.FD3",
-    "VE.EnglishGrammar.ProfileExamples.FDam",
-    "VE.EnglishGrammar.ProfileExamples.FM",
-    "VE.EnglishGrammar.ProfileExamples.FMd",
-    "VE.EnglishGrammar.ProfileExamples.FO",
-    "VE.EnglishGrammar.ProfileExamples.FO2",
-    "VE.EnglishGrammar.ProfileExamples.FOx",
-    "VE.EnglishGrammar.ProfileExamples.FPG",
-    "VE.EnglishGrammar.ProfileExamples.FPacts",
-    "VE.EnglishGrammar.ProfileExamples.FR",
-    "VE.EnglishGrammar.ProfileExamples.FRam",
-    "VE.EnglishGrammar.ProfileExamples.Fcb",
-    "VE.EnglishGrammar.ProfileExamples.Fsz",
-    "VE.EnglishGrammar.ProfileExamples.Gcb",
-    "VE.EnglishGrammar.ProfileExamples.LA",
-    "VE.EnglishGrammar.ProfileExamples.LA2",
-    "VE.EnglishGrammar.ProfileExamples.LD",
-    "VE.EnglishGrammar.ProfileExamples.LD3",
-    "VE.EnglishGrammar.ProfileExamples.LDam",
-    "VE.EnglishGrammar.ProfileExamples.LM",
-    "VE.EnglishGrammar.ProfileExamples.LO",
-    "VE.EnglishGrammar.ProfileExamples.LO2",
-    "VE.EnglishGrammar.ProfileExamples.LOx",
-    "VE.EnglishGrammar.ProfileExamples.LR",
-    "VE.EnglishGrammar.ProfileExamples.LR4",
-    "VE.EnglishGrammar.ProfileExamples.LRam",
-    "VE.EnglishGrammar.ProfileExamples.Lcb",
-    "VE.EnglishGrammar.ProfileExamples.Ld",
-    "VE.EnglishGrammar.ProfileExamples.M",
-    "VE.EnglishGrammar.ProfileExamples.Pred",
-    "VE.EnglishGrammar.ProfileExamples.S",
-    "VE.EnglishGrammar.ProfileExamples.act",
-    "VE.EnglishGrammar.ProfileExamples.ad",
-    "VE.EnglishGrammar.ProfileExamples.admitted",
-    "VE.EnglishGrammar.ProfileExamples.altBlock",
-    "VE.EnglishGrammar.ProfileExamples.altConsts",
-    "VE.EnglishGrammar.ProfileExamples.altPreds",
-    "VE.EnglishGrammar.ProfileExamples.basePreds",
-    "VE.EnglishGrammar.ProfileExamples.costs",
-    "VE.EnglishGrammar.ProfileExamples.dl",
-    "VE.EnglishGrammar.ProfileExamples.drop",
-    "VE.EnglishGrammar.ProfileExamples.entries",
-    "VE.EnglishGrammar.ProfileExamples.envOf",
-    "VE.EnglishGrammar.ProfileExamples.flags",
-    "VE.EnglishGrammar.ProfileExamples.forms23",
-    "VE.EnglishGrammar.ProfileExamples.formulaIn",
-    "VE.EnglishGrammar.ProfileExamples.grammarIdOf",
-    "VE.EnglishGrammar.ProfileExamples.idOf",
-    "VE.EnglishGrammar.ProfileExamples.inj",
-    "VE.EnglishGrammar.ProfileExamples.jFA",
-    "VE.EnglishGrammar.ProfileExamples.jFD",
-    "VE.EnglishGrammar.ProfileExamples.jFD3",
-    "VE.EnglishGrammar.ProfileExamples.jFDnt",
-    "VE.EnglishGrammar.ProfileExamples.jFM",
-    "VE.EnglishGrammar.ProfileExamples.jFMd",
-    "VE.EnglishGrammar.ProfileExamples.jFMn",
-    "VE.EnglishGrammar.ProfileExamples.jFMsp",
-    "VE.EnglishGrammar.ProfileExamples.jFO",
-    "VE.EnglishGrammar.ProfileExamples.jFO2",
-    "VE.EnglishGrammar.ProfileExamples.jFOx",
-    "VE.EnglishGrammar.ProfileExamples.jFR",
-    "VE.EnglishGrammar.ProfileExamples.jFRu",
-    "VE.EnglishGrammar.ProfileExamples.marks",
-    "VE.EnglishGrammar.ProfileExamples.n",
-    "VE.EnglishGrammar.ProfileExamples.nineValue",
-    "VE.EnglishGrammar.ProfileExamples.nines",
-    "VE.EnglishGrammar.ProfileExamples.outcomeIn",
-    "VE.EnglishGrammar.ProfileExamples.pairs6",
-    "VE.EnglishGrammar.ProfileExamples.pythonShape",
-    "VE.EnglishGrammar.ProfileExamples.r",
-    "VE.EnglishGrammar.ProfileExamples.regulated",
-    "VE.EnglishGrammar.ProfileExamples.ri16",
-    "VE.EnglishGrammar.ProfileExamples.riskBlock",
-    "VE.EnglishGrammar.ProfileExamples.routeEnv",
-    "VE.EnglishGrammar.ProfileExamples.rv",
-    "VE.EnglishGrammar.ProfileExamples.scaleN",
-    "VE.EnglishGrammar.ProfileExamples.selecting",
-    "VE.EnglishGrammar.ProfileExamples.signs",
-    "VE.EnglishGrammar.ProfileExamples.size",
-    "VE.EnglishGrammar.ProfileExamples.stepsIn",
-    "VE.EnglishGrammar.ProfileExamples.sz4",
-    "VE.EnglishGrammar.ProfileExamples.verdictsIn",
-    "VE.EnglishGrammar.ProfileExamples.w",
-    "VE.EnglishGrammar.ProfileExamples.withUnits",
-    "VE.EnglishGrammar.ProfileExamples.withoutForm",
-    "VE.EnglishGrammar.ProfileExamples.withoutRow",
-    "VE.EnglishGrammar.ProfileExamples.worded"
-   ]
-  },
-  "VE/EnglishGrammar/Fixed/Staged.lean": {
-   "G[V]": [
-    "VE.EnglishGrammar.ntNamesStaged",
-    "VE.EnglishGrammar.ranksStaged",
-    "VE.EnglishGrammar.stagedNames"
-   ]
-  },
-  "VE/EnglishGrammar/Fixed/Tables.lean": {
-   "G[I]": [
-    "VE.EnglishGrammar.tableSources"
    ]
   }
  }

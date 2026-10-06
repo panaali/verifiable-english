@@ -121,10 +121,8 @@ def decisionEntry (sorts : List String) : Json :=
   Json.mkObj [("arguments", toJson sorts), ("description", .str "soft-norms decision")]
 
 def withDecisions (D : SoftDoc) (environment : Json) : Except String Json := do
-  let vocab ← environment.getObjVal? "vocabulary"
-  let preds ← fields (← vocab.getObjVal? "predicates")
-  pure (environment.setObjVal! "vocabulary" (vocab.setObjVal! "predicates"
-    (Json.mkObj (preds ++ (decisions D).map (fun (n, ss) => (n, decisionEntry ss))))))
+  Norms.Wire.appendPredicates environment
+    ((decisions D).map (fun (n, ss) => (n, decisionEntry ss)))
 
 /-- The regenerated `E′_base`: no regulated predicate, no soft construct, the decision
 predicates as base predicates; profiles without `norms@0` and `soft-norms@0`. -/

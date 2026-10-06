@@ -33,7 +33,7 @@ open VE.SoftNorms.Wire
 def usesSoftPath (j : Json) : Bool :=
   let env := j.getObjValD "environment"
   let profile := match env.getObjValD "profiles" with
-    | .arr ps => ps.toList.contains (.str softProfile)
+    | .arr ps => ps.toList.any (·.getStr?.toOption == some softProfile)
     | _ => false
   let vocab := env.getObjValD "vocabulary"
   let block := (vocab.getObjVal? "soft").toBool

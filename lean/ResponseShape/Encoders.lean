@@ -38,7 +38,7 @@ theorem runMode_fits (m : VE.Service.Mode) (j : Json) (hj : CaseWF j) : Fits j (
   · exact Conformance.checkCertificate_fits j
   · exact Conformance.order_fits j
   · exact Route.runCaseReported_fits j
-  · exact Norms.runCaseReported_fits j
+  · exact Norms.runCaseReported_fits j hj
   · exact English.english_fits j
   · exact Standalone.environment_reported j
   · exact Standalone.model_reported j
@@ -49,15 +49,15 @@ theorem runMode_fits (m : VE.Service.Mode) (j : Json) (hj : CaseWF j) : Fits j (
   · exact Family.readings_reported j
   · exact Family.bundle_reported j
   · exact Family.familyNorms_reported j
-  · exact SoftNorms.runCaseReported_fits j
-  · exact Rights.runCaseReported_fits j
-  · exact SpeechActs.runCaseReported_fits j
+  · exact SoftNorms.runCaseReported_fits j hj
+  · exact Rights.runCaseReported_fits j hj
+  · exact SpeechActs.runCaseReported_fits j hj
   · exact Reports.runCaseReported_fits j
-  · exact Alternatives.runCaseReported_fits j
-  · exact Risk.runCaseReported_fits j
+  · exact Alternatives.runCaseReported_fits j hj
+  · exact Risk.runCaseReported_fits j hj
   · exact RiskEval.runCaseReported_fits j
   · exact Quantity.runCaseReported_fits j
-  · exact NormDefaults.runCaseReported_fits j
+  · exact NormDefaults.runCaseReported_fits j hj
   · exact Discourse.runCaseReported_fits j
   · exact ReadingsRoute.runCaseReported_fits j hj
   · exact English.diagnose_fits j
