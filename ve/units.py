@@ -23,7 +23,7 @@ _DECIMAL = re.compile(r"-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?\Z", re.ASCII)
 _ISO = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}\Z", re.ASCII)
 _SLOT = re.compile(r"0|[1-9][0-9]*\Z", re.ASCII)
 # Exactly the characters for which Python's str.isspace() holds, listed so that
-# Rust and Lean check the same display-string rule.
+# Lean's W6 decoder checks the same display-string rule.
 SPACES = frozenset(map(chr, (9, 10, 11, 12, 13, 28, 29, 30, 31, 32, 0x85, 0xA0, 0x1680,
                              *range(0x2000, 0x200B), 0x2028, 0x2029, 0x202F, 0x205F, 0x3000)))
 # Characters a decimal amount can begin or end with. A display affix must not
@@ -38,11 +38,10 @@ W6_PROFILES = (("order@0", "relational-fol@0", "time@0"),
 RISK_UNIT_PROFILES = (("alternatives@0", "norms@0", "relational-fol@0", "risk@0"),)
 W6_PROFILE_TEXT = ("ve-units@1 requires exactly order@0, relational-fol@0 and time@0, "
                    "optionally with documents@1")
-NUMBERS2 = "$int quantification requires the missing numbers2 route"
 
 
 def quote(s):
-    """Lean's `String.quote`, which the Lean and Rust W6 decoders use in their texts."""
+    """Lean's `String.quote`, which the Lean W6 decoder uses in its texts."""
     escapes = {"\n": "\\n", "\t": "\\t", "\\": "\\\\", '"': '\\"'}
     return '"' + "".join(escapes.get(c) or (f"\\x{ord(c):02x}" if ord(c) <= 31 or c == "\x7f" else c)
                          for c in s) + '"'
@@ -157,7 +156,7 @@ def check_verbalisations(constants):
     """Constant names are spelled so that the sentence normalizer keeps them and
     no two share a spelling, even when one starts a sentence. Then a rendered
     name is read back as exactly its own constant. Names are checked in sorted
-    order, as the Lean and Rust decoders read a JSON object."""
+    order, as the Lean decoder reads a JSON object."""
     spellings = {}
     for name, decl in sorted(constants.items()):
         if decl.verbalisation is None:
@@ -394,7 +393,8 @@ def check_quantity_limits(cores):
     """The static limits of a quantity problem, after each statement's own limits
     and before any model is decoded, certificate read or evaluation run: the
     regenerated cores (premises, then the conclusion) have at most 10,000 formula
-    and term nodes together (Lean `quantityLimits`, Rust `quantity_limits`)."""
+    and term nodes together (Lean `quantityLimits`). The certificate generator stops
+    here (rule 3: an untrusted generator's budget); Lean decides every replay."""
     from .search import _node_count
     if sum(_node_count(core) for core in cores) > MAX_NODES:
         raise ResourceLimit(AGGREGATE_LIMIT)
@@ -421,9 +421,6 @@ def check_quantity_certificate(env, premises, conclusion, certificate, *, max_st
                                 "conclusion": conclusion, "certificate": certificate,
                                 "max_steps": max_steps}])
     return row["valid"]
-
-
-BUDGET_EXHAUSTED = "formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
 
 
 def quantity_countermodel(env, premises, conclusion, model_data):

@@ -33,6 +33,7 @@
     "python:argument-diagnostics": "CheckerConflict, ContradictoryPremises, Incomplete, ResourceLimit and InvalidInput statuses; display that asserts no consequence"
   },
   "reviewed_broad_handlers": {
+    "ve/environment.py:Environment.__init__": "W6 environments: Lean's check mode accepts first (its rejection is raised before the handler); a Python failure constructing an environment Lean accepted becomes CheckerUnavailable, never a verdict (LEAN-FIRST-PLAN.md rule 2)",
     "ve/document.py:load_document": "CheckerUnavailable is re-raised first; a @2 document Lean rejected raises Lean's diagnostic before Python loads it, and a Python failure on one Lean admitted becomes CheckerUnavailable (unavailable_report), never a Python verdict",
     "ve/document.py:_check_document": "CheckerUnavailable is re-raised first; a Python failure reporting a @2 document Lean admitted becomes CheckerUnavailable (unavailable_report), never a verdict",
     "ve/__main__.py:_main": "display only: an English rendering of an already computed record is omitted (`display_omitted`); the verdict fields are untouched",
@@ -54,7 +55,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 21226,
+    "total_lines": 21229,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1034,12 +1035,12 @@
       },
       {
         "file": "lean/VE/Time/Wire.lean",
-        "lines": 843,
-        "sha256": "7f9c8b54dc820197ad0e59033763a063ed75ff728542fcf094dc93bc5059f925",
+        "lines": 846,
+        "sha256": "3c0c2a8bf035a72a47ee8db0ce6ea8fa8185c32c35f206bdb88b20f71cffcb2a",
         "ranges": [
           [
             1,
-            843
+            846
           ]
         ],
         "declarations": [
@@ -2666,9 +2667,7 @@
         ]
       },
       "rust": null,
-      "lean_call_sites": [
-        "ve.admission:_lean_quantity_admission"
-      ],
+      "lean_call_sites": [],
       "tests": [
         "tests/test_p0_three_way.py::test_report_identity_binds_environment_and_document",
         "tests/test_p0_three_way.py::test_data_background_deduction_admission_matches_lean",

@@ -28321,7 +28321,7 @@
    "follow_up": "DF-3"
   },
   {
-   "id": "environment-cc847b4fff38012a",
+   "id": "environment-41c1406059215bdb",
    "surface": "environment",
    "profile": "quantity",
    "seed": "usecases/news-article/w6a-quantity-fixtures.json/environment",
@@ -28350,7 +28350,7 @@
     "python": {
      "outcome": "error",
      "code": "UnsupportedProfile",
-     "text": "unit_schema and units require the ve.core@0.2 quantity route together"
+     "text": "UnsupportedProfile: unit_schema and units require the ve.core@0.2 quantity route together"
     },
     "lean": {
      "outcome": "error",
@@ -28358,12 +28358,10 @@
      "text": "fields do not match: expected [language, profiles, spec_revision, vocabulary, unit_schema, units], got [units]"
     },
     "rust": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "unknown or missing quantity fields"
+     "outcome": "n/a"
     }
    },
-   "signature": "cc847b4fff38012a",
+   "signature": "41c1406059215bdb",
    "follow_up": "DF-9"
   },
   {
