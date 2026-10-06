@@ -42,7 +42,7 @@ import focused  # noqa: E402
 import mutants as mutant_edits  # noqa: E402
 from environments import TOOLS  # noqa: E402
 from ve.ast import (And, Binary, Bottom, Const, Exists, Not, Or, Unary, Var,  # noqa: E402
-                    formula_to_data)
+                    Document, formula_to_data)
 from ve.english import parse_english as parse_sentences  # noqa: E402
 from ve.entailment import _binding, _validate_inputs, check_entailment_certificate, prove_entailment  # noqa: E402
 from ve.environment import Environment  # noqa: E402
@@ -205,7 +205,14 @@ def value(env, formula, model):
 
 
 def satisfies(env, premises, model):
-    return all(value(env, f, model) for f in premises)
+    # A conjunction is one document evaluation. The checker types and evaluates
+    # its formulas together, in order, with one Lean route request.
+    if not premises:
+        return True
+    result = evaluate(env, Document(tuple(premises)), model, trace=False)
+    if result.value is None:
+        raise VEError(f"evaluation failed: {result.status}")
+    return bool(result.value)
 
 
 def one_atom_variants(env, model, predicates=None):

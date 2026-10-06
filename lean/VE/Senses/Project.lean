@@ -305,17 +305,17 @@ theorem project_extends : ∀ (D : Dictionary) (A : Assignment) (E : Env) (L : L
   project D A E L used = .ok P → project D A E L used2 = .ok P2 →
   P.lexicon.valid P.env {} = true → P2.lexicon.valid P2.env {} = true →
   Extends P.env {} P.lexicon P2.env {} P2.lexicon := by
-  intro D A E L used used2 P P2 hprof hu h h2 hv hv2
+  intro D A E L used used2 P P2 _ hu h h2 hv hv2
   obtain ⟨_, rfl, _⟩ := project_eq h
   obtain ⟨_, rfl, _⟩ := project_eq h2
-  refine ⟨⟨hprof, rfl, ?_, ?_, ?_⟩, ⟨?_, ?_, ?_, ?_, ?_, ?_⟩, hv, hv2⟩
+  refine ⟨⟨rfl, rfl, ?_, ?_, ?_⟩, ⟨?_, ?_, ?_, ?_, ?_, ?_⟩, hv, hv2⟩
   · intro s hs
     exact ⟨s, hs, rfl⟩
   · intro p hp
     simp only [projectionOf, projectedEnv, List.mem_append, List.mem_map] at hp ⊢
     rcases hp with hp | ⟨s, hs, rfl⟩
-    · exact ⟨p, Or.inl hp, rfl, rfl, rfl⟩
-    · exact ⟨senseDecl D A s, Or.inr ⟨s, mem_projectedSenses hu hs, rfl⟩, rfl, rfl, rfl⟩
+    · exact ⟨p, Or.inl hp, rfl, rfl, rfl, rfl, rfl⟩
+    · exact ⟨senseDecl D A s, Or.inr ⟨s, mem_projectedSenses hu hs, rfl⟩, rfl, rfl, rfl, rfl, rfl⟩
   · intro c hc
     exact ⟨c, hc, rfl, rfl⟩
   · intro x hx

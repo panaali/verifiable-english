@@ -229,9 +229,12 @@ def test_python_imports_resolve_against_the_staged_tree(staging):
 
 def test_staged_policy_code_is_the_policy(staging):
     policy = staging.head("tools/layer_policy.py")
-    assert b'"ast environment errors' in policy
-    staging.stage("tools/layer_policy.py", policy.replace(b'"ast environment errors',
-                                                          b'"ast planted_module environment errors'))
+    start = policy.index(b'1: "', policy.index(b'PYTHON = {')) + len(b'1: "')
+    end = policy.index(b'"', start)
+    names = policy[start:end].split()
+    assert b"environment_wire" in names
+    staged = policy[:start] + b" ".join([*names, b"planted_module"]) + policy[end:]
+    staging.stage("tools/layer_policy.py", staged)
     staging.stage("ve/planted_module.py", "import ve.errors\n")
     passes(staging)  # mapped by the staged policy, which the working tree lacks
     staging.stage("ve/planted_module.py", "from ve import parser\n")
@@ -373,9 +376,13 @@ def test_outward_rust_dependency_is_rejected(staging):
 @pytest.mark.parametrize("line, token", [
     ("theorem planted : 1 = 1 := by sorry", "sorry"),
     ("theorem planted : 1 = 1 := by admit", "admit"),
+    ("def planted : Nat := by · admit", "admit"),
+    ("def planted : Nat := by case zero => admit", "admit"),
+    ("def planted : Nat := by exact 0 <;> admit", "admit"),
+    ("def planted : Nat := decreasing_by admit", "admit"),
     ("axiom planted : False", "axiom"),
     ("-- a comment still may not say sorry", "sorry"),  # lean/audit.py scans comments too
-], ids=["sorry", "admit", "axiom", "comment"])
+], ids=["sorry", "admit", "bullet admit", "case admit", "chain admit", "decreasing admit", "axiom", "comment"])
 def test_lean_forbidden_tokens_are_rejected(staging, line, token):
     path = "lean/VE/Core/Planted.lean"
     staging.stage(path, f"namespace VE\n\n{line}\n\nend VE\n")

@@ -1,15 +1,30 @@
-"""Bounded one-request client for Rust's JSON-lines evaluator and searcher."""
+"""Bounded client for Rust's JSON-lines evaluator and searcher.
+
+Each call sends one case line and reads one record line. Since lean-first batch 2 (F6 in
+docs/LEAN-FIRST-PLAN.md section 4) the line goes to a persistent `ve jsonl -` process, which
+answers and flushes each record, instead of a new process per case (13 ms of wall and 4 ms of
+CPU per call in the agent-policy harness, plus a SHA-256 of the binary per call). Records are
+independent, so a process is reused across calls; one that times out, ends its output or
+writes anything but one record is killed and never reused, and the call is
+`CheckerUnavailable`, as a failed one-shot process was. A process is reused only while its
+executable keeps the file identity it was started from.
+"""
 from __future__ import annotations
 
-import hashlib
+import atexit
 import json
 import os
 from pathlib import Path
+import selectors
 import subprocess
+import tempfile
+import threading
+import time
 
 from ..errors import ResourceLimit
 from .diagnostics import require_ok
-from .lean_service import CheckerUnavailable, _decode_json, configured_seconds
+from ..environment_wire import EncodedEnvironment, encoded_environment
+from .lean_service import CheckerUnavailable, _decode_json, configured_seconds, executable_sha256
 from .service_schema import Compiler, Context, Invalid
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -28,19 +43,200 @@ def configured_timeout(default: float = DEFAULT_TIMEOUT) -> float:
     return configured_seconds("VE_RUST_TIMEOUT", default)
 
 
-def _run_checker(argv, *, input, timeout):
-    """`subprocess.run` through Popen, as the Lean service client starts its
-    process: a test's fake of `subprocess.run` for some other process cannot
-    intercept the checker."""
-    with subprocess.Popen(argv, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                          stderr=subprocess.PIPE) as process:
+def _identity(path: str):
+    """The file identity of an executable: a process is reused only while it is unchanged."""
+    st = os.stat(path)
+    return (st.st_dev, st.st_ino, st.st_size, st.st_mtime_ns, st.st_ctime_ns)
+
+
+def _deadline(timeout: float) -> float:
+    """The monotonic time a call given `timeout` seconds must be answered by (a test seam: a
+    deadline test injects an expired one)."""
+    return time.monotonic() + timeout
+
+
+class _Checker:
+    """One persistent `ve jsonl -` process: a case line in, its record line out."""
+
+    def __init__(self, argv):
+        self.argv = list(argv)
+        self.identity = _identity(self.argv[0])
+        self.stderr = tempfile.TemporaryFile()
+        self.process = subprocess.Popen(self.argv, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                        stderr=self.stderr, bufsize=0, close_fds=True)
+        os.set_blocking(self.process.stdin.fileno(), False)
+        os.set_blocking(self.process.stdout.fileno(), False)
+        self.buffer = bytearray()
+
+    def usable(self) -> bool:
+        """Whether the process may answer another case: it runs, its executable is unchanged, and it
+        has written nothing since its last record (output that answers no case is never read as the
+        next case's answer)."""
         try:
-            stdout, stderr = process.communicate(input, timeout=timeout)
+            if self.process.poll() is not None or _identity(self.argv[0]) != self.identity:
+                return False
+            os.read(self.process.stdout.fileno(), 1)
+        except BlockingIOError:
+            return True
+        except OSError:
+            return False
+        return False
+
+    def _failure(self, what: str) -> OSError:
+        try:
+            code = self.process.wait(timeout=1)
         except subprocess.TimeoutExpired:
-            process.kill()
-            process.communicate()
+            code = None
+        self.stderr.seek(0)
+        detail = self.stderr.read()[-200:].decode("utf-8", "replace").strip()
+        return OSError(f"{what} (exit {code}{'; ' + detail if detail else ''})")
+
+    def exchange(self, data: bytes, timeout: float) -> bytes:
+        """The record line answering the case line `data`. `TimeoutExpired` once `timeout`
+        seconds have passed; `OSError` if the process stops reading or ends its output, or its
+        record exceeds the line limit."""
+        deadline = _deadline(timeout)
+        view = memoryview(data)
+        with selectors.DefaultSelector() as selector:
+            selector.register(self.process.stdin.fileno(), selectors.EVENT_WRITE)
+            while view:
+                if time.monotonic() >= deadline:
+                    raise subprocess.TimeoutExpired(self.argv, timeout)
+                if not selector.select(deadline - time.monotonic()):
+                    continue
+                try:
+                    view = view[os.write(self.process.stdin.fileno(), view):]
+                except BlockingIOError:
+                    continue
+                except OSError:
+                    raise self._failure("the Rust checker stopped reading") from None
+        with selectors.DefaultSelector() as selector:
+            selector.register(self.process.stdout.fileno(), selectors.EVENT_READ)
+            while (end := self.buffer.find(b"\n")) < 0:
+                if len(self.buffer) > MAX_LINE_BYTES:
+                    raise OSError("oversized Rust JSONL response")
+                if time.monotonic() >= deadline:
+                    raise subprocess.TimeoutExpired(self.argv, timeout)
+                if not selector.select(deadline - time.monotonic()):
+                    continue
+                try:
+                    chunk = os.read(self.process.stdout.fileno(), 1 << 20)
+                except BlockingIOError:
+                    continue
+                if not chunk:
+                    raise self._failure("the Rust checker ended its output")
+                self.buffer += chunk
+        line = bytes(self.buffer[:end])
+        del self.buffer[:end + 1]
+        if self.buffer:
+            raise OSError("the Rust checker wrote more than one record")
+        return line
+
+    def close(self) -> None:
+        for stream in (self.process.stdin, self.process.stdout):
+            try:
+                stream.close()
+            except OSError:
+                pass
+        if self.process.poll() is None:
+            self.process.kill()
+        try:
+            self.process.wait(timeout=10)
+        except subprocess.TimeoutExpired:
+            pass
+        self.stderr.close()
+
+
+# Idle processes by argv. A call takes one (or starts one) and gives it back only after a
+# complete answer, so concurrent callers never share a process.
+_idle: dict[tuple, list[_Checker]] = {}
+_idle_lock = threading.Lock()
+
+
+def _close_all() -> None:
+    with _idle_lock:
+        checkers = [checker for idle in _idle.values() for checker in idle]
+        _idle.clear()
+    for checker in checkers:
+        checker.close()
+
+
+def _forget_in_child() -> None:
+    """A forked child does not inherit its parent's processes (their pipes are the parent's)."""
+    global _idle_lock
+    _idle.clear()
+    _idle_lock = threading.Lock()
+
+
+atexit.register(_close_all)
+os.register_at_fork(after_in_child=_forget_in_child)
+
+
+def _answer(checker: _Checker, data: bytes, timeout: float) -> bytes:
+    """`checker`'s record for `data`; a process that gives none is closed, whatever stopped it."""
+    answered = False
+    try:
+        line = checker.exchange(data, timeout)
+        answered = True
+        return line
+    finally:
+        if not answered:
+            checker.close()
+
+
+def _run_checker(argv, *, input, timeout):
+    """The record a persistent `argv` process writes for the case line `input`, as a completed
+    process with that line as its output. `TimeoutExpired` or `OSError` when it gives no record;
+    that process is then killed."""
+    deadline = _deadline(timeout)
+    key = tuple(argv)
+    checker = None
+    with _idle_lock:
+        idle = _idle.get(key, [])
+        while idle and checker is None:
+            candidate = idle.pop()
+            if candidate.usable():
+                checker = candidate
+            else:
+                candidate.close()
+    reused = checker is not None
+    if checker is None:
+        checker = _Checker(argv)
+    try:
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise subprocess.TimeoutExpired(argv, timeout)
+        line = _answer(checker, input, remaining)
+    except OSError:
+        if not reused:
             raise
-    return subprocess.CompletedProcess(argv, process.returncode, stdout, stderr)
+        # A reused process may have ended since its last answer: the case goes once to a new one.
+        checker = _Checker(argv)
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            checker.close()
+            raise subprocess.TimeoutExpired(argv, timeout)
+        line = _answer(checker, input, remaining)
+    except subprocess.TimeoutExpired:
+        checker.close()
+        raise
+    completed = subprocess.CompletedProcess(list(argv), 0, line + b"\n", b"")
+    # The caller owns this process until the response is decoded and bound to its case.
+    completed._checker = checker
+    completed._key = key
+    return completed
+
+
+def _release(completed, *, valid: bool) -> None:
+    """Only a fully validated record can put its producer back in the idle pool."""
+    checker = getattr(completed, "_checker", None)
+    if checker is None:  # A synthetic CompletedProcess supplied by a test.
+        return
+    if valid:
+        with _idle_lock:
+            _idle.setdefault(completed._key, []).append(checker)
+    else:
+        checker.close()
 
 
 def soft_case(env) -> dict:
@@ -74,12 +270,16 @@ def rust_environment(env) -> dict:
     return data
 
 
+def cached_rust_environment(env) -> dict:
+    return encoded_environment(env, "rust", lambda: rust_environment(env))
+
+
 def run(case: dict, *, executable: str | os.PathLike | None = None,
         timeout: float | None = None, expected_sha256: str | None = None) -> dict:
     """Run one case and return its checked record, or a classified error.
 
-    The subprocess is waited on before returning, so no worker outlives the
-    call. A selected Rust backend never falls back to Python. Without a
+    The case goes to a persistent checker process (`_run_checker`); a process that gives no
+    record is killed. A selected Rust backend never falls back to Python. Without a
     `timeout`, the call waits `configured_timeout()` seconds.
     """
     if timeout is None:
@@ -93,33 +293,43 @@ def run(case: dict, *, executable: str | os.PathLike | None = None,
                    json.loads(BUILD_LOCK.read_text())["rust_jsonl"])
     except (OSError, ValueError, KeyError, TypeError) as exc:
         raise CheckerUnavailable(f"CheckerUnavailable: invalid Rust build lock: {exc}") from None
-    digest = hashlib.sha256(binary.read_bytes()).hexdigest()
+    digest = executable_sha256(binary)
     if digest not in allowed:
         raise CheckerUnavailable(f"CheckerUnavailable: Rust executable hash mismatch: {binary} "
                                  "(build it with python3 tools/rust_build.py)")
-    data = json.dumps(case, ensure_ascii=False, separators=(",", ":")).encode() + b"\n"
+    environment = case.get("environment") if type(case) is dict else None
+    if isinstance(environment, EncodedEnvironment):
+        rest = {key: value for key, value in case.items() if key != "environment"}
+        prefix = json.dumps(rest, ensure_ascii=False, separators=(",", ":"))
+        encoded = prefix[:-1] + ',"environment":' + environment.text + "}"
+    else:
+        encoded = json.dumps(case, ensure_ascii=False, separators=(",", ":"))
+    data = encoded.encode() + b"\n"
     if len(data) > MAX_LINE_BYTES:
         raise ResourceLimit(f"Rust case exceeds {MAX_LINE_BYTES} bytes")
     try:
         completed = _run_checker([str(binary), "jsonl", "-"], input=data, timeout=timeout)
     except (OSError, subprocess.TimeoutExpired) as exc:
         raise CheckerUnavailable(f"CheckerUnavailable: Rust checker failed: {exc}") from None
-    if len(completed.stdout) > MAX_LINE_BYTES:
-        raise CheckerUnavailable("CheckerUnavailable: oversized Rust JSONL response")
-    lines = completed.stdout.splitlines()
-    if completed.returncode not in (0, 1) or len(lines) != 1:
-        detail = completed.stderr[:200].decode("utf-8", "replace")
-        raise CheckerUnavailable(
-            f"CheckerUnavailable: Rust protocol failure (exit {completed.returncode}; {detail})")
+    valid = False
     try:
-        record = _decode_json(lines[0])
-    except (ValueError, RecursionError):
-        raise CheckerUnavailable("CheckerUnavailable: malformed Rust JSONL response") from None
-    problem = record_problem(case, record)
-    if problem:
-        raise CheckerUnavailable(f"CheckerUnavailable: malformed Rust response ({problem})")
-    if (record["status"] == "error") != (completed.returncode == 1):
-        raise CheckerUnavailable("CheckerUnavailable: Rust exit status disagrees with response")
+        if len(completed.stdout) > MAX_LINE_BYTES:
+            raise CheckerUnavailable("CheckerUnavailable: oversized Rust JSONL response")
+        lines = completed.stdout.splitlines()
+        if completed.returncode not in (0, 1) or len(lines) != 1:
+            detail = completed.stderr[:200].decode("utf-8", "replace")
+            raise CheckerUnavailable(
+                f"CheckerUnavailable: Rust protocol failure (exit {completed.returncode}; {detail})")
+        try:
+            record = _decode_json(lines[0])
+        except (ValueError, RecursionError):
+            raise CheckerUnavailable("CheckerUnavailable: malformed Rust JSONL response") from None
+        problem = record_problem(case, record)
+        if problem:
+            raise CheckerUnavailable(f"CheckerUnavailable: malformed Rust response ({problem})")
+        valid = True
+    finally:
+        _release(completed, valid=valid)
     return require_ok(record)
 
 

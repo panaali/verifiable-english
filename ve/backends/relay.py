@@ -17,9 +17,11 @@ them before batch 1). Every statement-layer route is a service mode, so this mod
 from __future__ import annotations
 
 import atexit
+import json
 import os
 from pathlib import Path
 import threading
+import weakref
 
 from ..errors import (CheckerUnavailable, DuplicateDeclaration, InvalidModel, ResourceLimit, SyntaxError,
                       TypeMismatch, UnboundVariable, UnknownSymbol, UnsupportedProfile, VEError)
@@ -30,6 +32,10 @@ from .lean_service import DEFAULT_EXECUTABLE, LeanServicePool
 _pool: LeanServicePool | None = None
 _pools: dict[Path, LeanServicePool] = {}
 _lock = threading.Lock()
+# `decide_once`'s answers, per pool: a pool runs one pinned build, so its answer to a request is
+# the answer to every copy of that request; another pool (another build) starts empty.
+_answers: weakref.WeakKeyDictionary = weakref.WeakKeyDictionary()
+ANSWERS_LIMIT = 256
 
 
 def _admission_error():
@@ -113,3 +119,23 @@ def decide(mode: str, cases: list[dict], *, timeout: float | None = None,
         if entry["result"].get("status") == "error":
             raise _raised(entry)
     return [entry["result"] for entry in entries]
+
+
+def decide_once(mode: str, case: dict) -> dict:
+    """`decide(mode, [case])[0]`, asked of the default service once per request (docs/LEAN-FIRST-PLAN.md,
+    F3, batch 2). A service request is a pure function of its text, so a request that is the same JSON
+    value as one the same pool answered gets that answer without a call: the agent-policy harness asked
+    for the same few environments' Background 12,199 times. A rejection is raised each time and kept
+    nowhere. At most `ANSWERS_LIMIT` answers are kept per pool."""
+    pool = _pool_for(None)
+    key = (mode, json.dumps(case, ensure_ascii=False, sort_keys=True, separators=(",", ":")))
+    with _lock:
+        row = _answers.setdefault(pool, {}).get(key)
+    if row is None:
+        row = decide(mode, [case])[0]
+        with _lock:
+            answers = _answers.setdefault(pool, {})
+            if len(answers) >= ANSWERS_LIMIT:
+                answers.clear()
+            answers[key] = row
+    return row

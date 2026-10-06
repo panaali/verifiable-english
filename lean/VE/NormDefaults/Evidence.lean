@@ -806,15 +806,29 @@ def closeCone {β : Type u} [DecidableEq β] : Nat → List (List β) → List �
     if hit.isEmpty then acc
     else closeCone k (pending.filter (fun is => !is.any (· ∈ acc))) (acc ++ hit.flatten).eraseDups
 
+/-- The ground `Fill_T` instances (a pair with an unspecified member and a typed tuple)
+whose Kleene value with nothing filled is unknown, each with its unsaid atoms (Python's
+`UnspecifiedDocument.instances`, kept where the value is unknown). -/
+def openInstances {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) :
+    List ((Pair × List α) × List (String × List α)) :=
+  (openPairs U).flatMap (fun pr => (allTuples M pr.sorts).filterMap (fun ws =>
+    let y := coneEval U M (tupleVal ws) (fillBody U pr)
+    if y.1.isNone then some ((pr, ws), y.2) else none))
+
+/-- The closed cone of a formula at a valuation (2.5): the unsaid atoms its Kleene
+value depends on, closed under the open `Fill_T` instances that meet them; empty where
+the value is definite (Python's `UnspecifiedDocument.cone`). -/
+def coneOf {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (ρ : List α) (φ : VE.Formula) :
+    List (String × List α) :=
+  let x := coneEval U M ρ φ
+  if x.1.isSome then [] else
+  let inst := (openInstances U M).map (·.2)
+  closeCone (inst.length + 1) inst x.2.eraseDups
+
 /-- The closed cone of `n` at `vs` (2.5): empty where the Kleene value is definite. -/
 def coneAtoms {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (n : String) (vs : List α) :
     List (String × List α) :=
-  let x := coneEval U M (tupleVal vs) (outcomeBase (fill U) n)
-  if x.1.isSome then [] else
-  let inst := (openPairs U).flatMap (fun pr => (allTuples M pr.sorts).filterMap (fun ws =>
-    let y := coneEval U M (tupleVal ws) (fillBody U pr)
-    if y.1.isNone then some y.2 else none))
-  closeCone (inst.length + 1) inst x.2.eraseDups
+  coneOf U M (tupleVal vs) (outcomeBase (fill U) n)
 
 /-- An assignment of the atoms `C` (true exactly on `A`); other unsaid atoms unknown. -/
 def coneAtomV {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (C A : List (String × List α))
