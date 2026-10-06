@@ -21,6 +21,7 @@ from . import dispatch
 from . import relay
 
 ROOT = Path(__file__).resolve().parents[2]
+EXECUTABLE = ROOT / "lean/.lake/build/bin/ve_english_route"  # S2/S3 conformance oracle
 MODE = "english.read"
 CAP = 2
 IDENTITIES = ("source_sha256", "environment_id", "overlay_digest", "lexicon_id", "grammar_id", "actions_version")
