@@ -11,7 +11,6 @@ import hashlib
 import json
 import re
 
-from .assurance import semantic_entry
 from . import ast
 from .english import EnglishParser, EnglishTraversal, EnglishVocabulary, _max_scope, english_lark_grammar
 from .surface.unambiguity import require_unique_derivation
@@ -283,7 +282,6 @@ def _parse_consequence(text, env, words):
     return matches[0]
 
 
-@semantic_entry("english.admission")
 def parse_english(env, source, manifest=None, *, existing_names=(), _w1=False):
     if not _w1 and _soft_surface.SOFT_PROFILE in env.profiles:
         return _parse_soft_english(env, source, manifest, existing_names=existing_names)

@@ -660,7 +660,7 @@ S2.4's `ve_english_route` (`EnglishGrammar.Run`'s `runCaseReported` and `main`, 
 one-shot executable by english-lean-s2.md 2.10 and, at that point, the only one-shot route left beside
 `ve_conformance`, added 33 trusted lines to batch 1's 551. Batch 11a then added the W2 speech-source executable,
 and the senses integration adds `ve_senses_route` as another one-shot route with 26 trusted lines (remeasured at
-the merge of ve-integration into senses/integrate, 2026-10-06); the current measurements follow:
+ the merge of ve-integration into senses/integrate, 2026-10-06). The English Lean E2 classification adds one step 7 trusted line in `EnglishGrammar.Run`; the current measurements follow:
 
 The merged step 2a ledger now identifies 114 tied runner lines; the table below records
 that source classification alongside the previously measured steps.

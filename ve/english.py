@@ -11,6 +11,7 @@ from contextlib import contextmanager
 from contextvars import ContextVar
 from dataclasses import dataclass
 import json
+import os
 import re
 import warnings
 
@@ -818,7 +819,7 @@ def render_english(value, env, *, conclusions=(), **options):
         ast.check_document(env, value)
     else:
         ast.check_formula(env, value)
-    words = EnglishVocabulary(env, **options)
+    words = EnglishVocabulary(env, _defer_overlay_refusals=True, **options)
     if words.review_status == 'unreviewed':
         warnings.warn('English overlay ' + words.overlay_digest + ': unreviewed',
                       UnreviewedVocabularyWarning, stacklevel=2)
@@ -829,27 +830,27 @@ def render_english(value, env, *, conclusions=(), **options):
             or any(type(i) is not int or not 0 <= i < len(formulas) for i in conclusions)):
         raise ValueError('Conclusion indices must identify distinct document statements')
     marked = set(conclusions)
+    from .backends.english_lean import check as check_rendering
     sentences = []
     for index, formula in enumerate(formulas):
+        candidates = []
         for settings in ({}, {'avoid_negative_universal': True},
                          {'avoid_negative_universal': True, 'word_markers': True}):
             sentence = EnglishTraversal(env, words, **settings).render(formula)
-            try:
-                if _parse_english_document(env, sentence + '.', **options)[0] == ast.Document((formula,)):
-                    if index in marked:
-                        proper_name = any(
-                            name in words.declared_constants and display[0].isupper()
-                            and sentence.startswith(display)
-                            and (len(sentence) == len(display) or
-                                 not re.match(r'[A-Za-z0-9_]', sentence[len(display)]))
-                            for name, display in words.constants.items() if display)
-                        sentence = 'Therefore ' + (sentence if proper_name else sentence[0].lower() + sentence[1:])
-                    sentences.append(sentence)
-                    break
-            except VEError:
-                continue
-        else:
+            if index in marked:
+                proper_name = any(
+                    name in words.declared_constants and display[0].isupper()
+                    and sentence.startswith(display)
+                    and (len(sentence) == len(display) or
+                         not re.match(r'[A-Za-z0-9_]', sentence[len(display)]))
+                    for name, display in words.constants.items() if display)
+                sentence = 'Therefore ' + (sentence if proper_name else sentence[0].lower() + sentence[1:])
+            candidates.append(sentence)
+        chosen = check_rendering(env, words, options, [ast._to_data(formula)],
+                                 [index in marked], [sentence + '.' for sentence in candidates])
+        if chosen is None:
             raise ValueError('No writable English form passed the one-reading check')
+        sentences.append(candidates[chosen])
     text = (''.join(sentence + '.\n' for sentence in sentences)
             if type(value) is ast.Document else sentences[0])
     if len(text.encode('utf-8')) + (0 if type(value) is ast.Document else 2) > MAX_SOURCE_BYTES:
@@ -857,8 +858,8 @@ def render_english(value, env, *, conclusions=(), **options):
     if type(value) is ast.Document:
         if len(text) > MAX_NODES:
             raise ResourceLimit(f'Rendered ve_english text exceeds the derivation budget MAX_NODES ({MAX_NODES})')
-        parsed, _, _, parsed_conclusions = _parse_english_document(env, text, **options)
-        if parsed != value or parsed_conclusions != tuple(sorted(marked)):
+        if check_rendering(env, words, options, [ast._to_data(f) for f in formulas],
+                           [i in marked for i in range(len(formulas))], [text]) is None:
             raise ValueError('Rendered ve_english document has a different reading')
     return text
 
@@ -1641,15 +1642,16 @@ class EnglishParser:
 
 
 class _Reading:
-    """The grammatical reading of a document, the unit `english.admission` dispatches: the hand parser, the
-    Lark audit and `check_document` (docs/spec/english-lean-s2.md 2.10, D16). Conclusion marks are part of
-    it; whether a marked sentence follows is `check_conclusions`, after the dispatch, for either backend.
-    `spans` are the sentences' source spans (Python's reading only); `lean` is Lean's checked answer when
-    the reading is Lean's."""
+    """One document reading and its marked-conclusion obligations.
+
+    Public admission uses Lean's formulas, marks, spans and obligations. The retained
+    Python parser creates this type only for the optional comparator.
+    """
 
     def __init__(self, env, document, words, conclusions, spans=None, *, lean=None):
         self.env, self.document, self.words = env, document, words
         self.conclusions, self.spans, self.lean = tuple(conclusions), spans, lean
+        self.obligations = tuple(lean.response.get('obligations', ())) if lean is not None else ()
         self._refused = None
 
     def comparison(self):
@@ -1663,7 +1665,16 @@ class _Reading:
         """Python's conclusion check (`_check_conclusions`), run once: None, or the error it raised."""
         if self._refused is None:
             try:
-                _check_conclusions(self.env, self.document, self.conclusions)
+                if self.lean is None:
+                    _check_conclusions(self.env, self.document, self.conclusions)
+                else:
+                    from .entailment import prove_entailment
+                    for obligation in self.obligations:
+                        premises = tuple(self.document.formulas[j] for j in obligation['premises'])
+                        result = prove_entailment(self.env, premises,
+                                                  self.document.formulas[obligation['conclusion']])
+                        if result.status != 'Found':
+                            raise SyntaxError(obligation['unproved'].replace('{status}', result.status))
                 self._refused = False
             except VEError as exc:
                 self._refused = exc
@@ -1705,28 +1716,45 @@ def _lean_reading(env, source, words, options):
     reading = english_lean.read(env, source, words, options)
     if reading.status != 'one':
         raise reading.rejection()
-    return _Reading(env, reading.document(), words, reading.response['conclusions'], lean=reading)
+    return _Reading(env, reading.document(), words, reading.response['conclusions'],
+                    tuple(tuple(span) for span in reading.response.get('spans', ())), lean=reading)
 
 
-def _parse_english_document_uncached(env, source, *, _with_structure=False, **options):
+def _parse_english_document_uncached(env, source, *, _with_structure=False, _with_reading=False,
+                                     _check=True, **options):
     if isinstance(source, bytes):
         try: source = source.decode('utf-8')
         except UnicodeDecodeError as exc:
             raise SyntaxError('English input must be UTF-8.', span=Span(exc.start, exc.end, 1, exc.start + 1)) from exc
     if not isinstance(source, str): raise TypeError('source must be str or bytes')
-    if len(source.encode('utf-8')) > MAX_SOURCE_BYTES:
-        raise ResourceLimit(f'English source exceeds {MAX_SOURCE_BYTES} bytes')
-    words = EnglishVocabulary(env, **options)
+    words = EnglishVocabulary(env, _defer_overlay_refusals=True, **options)
     from .backends import dispatch
     from .backends.english_lean import shadow_record
-    # The Lean reader only shadows admission (DRI ruling 6): Python's reading is the one returned.
-    reading = dispatch.shadowed(
-        'english.admission', {'environment_id': env.environment_id, 'source': source},
-        lambda: _python_reading(env, source, words, options),
-        lambda: _lean_reading(env, source, words, options),
-        lambda python, lean: shadow_record(env, source, words, python, lean))
-    reading.check_conclusions()
+    selected = dispatch._overrides().get('english.admission')
+    if selected is not None and selected != 'lean':
+        raise CheckerUnavailable(f'CheckerUnavailable: english.admission is Lean-authoritative; '
+                                 f'{selected!r} cannot decide it')
+    for observer in dispatch.observers:
+        observer('english.admission', 'lean')
+    try:
+        reading = _lean_reading(env, source, words, options)
+    except (VEError, CheckerUnavailable) as lean_error:
+        if os.environ.get('VE_ENGLISH_COMPARATOR') == '1':
+            try: python = _python_reading(env, source, words, options)
+            except Exception as exc: python = exc
+            try: dispatch._append(shadow_record(env, source, words, python, lean_error))
+            except Exception: pass
+        raise
+    if os.environ.get('VE_ENGLISH_COMPARATOR') == '1':
+        try: python = _python_reading(env, source, words, options)
+        except Exception as exc: python = exc
+        try: dispatch._append(shadow_record(env, source, words, python, reading))
+        except Exception: pass
+    if _check:
+        reading.check_conclusions()
     result = reading.document, source, reading.words, reading.conclusions
+    if _with_reading:
+        return (*result, reading)
     if _with_structure:
         breaks = tuple(index for index in range(1, len(reading.spans))
                        if re.search(r'\n\s*\n', source[reading.spans[index - 1][1]:reading.spans[index][0]]))
@@ -1734,11 +1762,12 @@ def _parse_english_document_uncached(env, source, *, _with_structure=False, **op
     return result
 
 
-def _parse_english_document(env, source, *, _with_structure=False, **options):
+def _parse_english_document(env, source, *, _with_structure=False, _with_reading=False, _check=True, **options):
     """Reuse exact sentence audits within an explicitly scoped editor operation."""
     cache = _sentence_parse_cache.get()
-    if cache is None or options or _with_structure or type(source) is not str:
-        return _parse_english_document_uncached(env, source, _with_structure=_with_structure, **options)
+    if cache is None or options or _with_structure or _with_reading or not _check or type(source) is not str:
+        return _parse_english_document_uncached(env, source, _with_structure=_with_structure,
+                                                _with_reading=_with_reading, _check=_check, **options)
     key = (env.environment_id, source)
     if key not in cache:
         cache[key] = _parse_english_document_uncached(env, source)
@@ -1775,15 +1804,18 @@ def _check_conclusions(env, document, conclusions):
                               + result.status)
 
 
-@semantic_entry("english.admission")
+@semantic_entry("english.admission", engine="lean")
 def parse_english_with_metadata(env, source, **options):
     document, source, words, conclusions = _parse_english_document(env, source, **options)
     try:
         english = render_english(document, env, **options)
         if conclusions:
             english = source
-        if english != source and _parse_english_document(env, english, **options)[0] != document:
-            english = source
+        if english != source:
+            from .backends.english_lean import check as check_rendering
+            if check_rendering(env, words, options, [ast._to_data(f) for f in document.formulas],
+                               [i in conclusions for i in range(len(document.formulas))], [english]) is None:
+                english = source
     except (VEError, ValueError):
         # The input passed the complete audit. Never display an unchecked rewrite.
         english = source
@@ -1792,12 +1824,12 @@ def parse_english_with_metadata(env, source, **options):
                               **words.provenance, conclusions=conclusions)
 
 
-@semantic_entry("english.admission")
+@semantic_entry("english.admission", engine="lean")
 def parse_english(env, source, **options):
     return _parse_english_document(env, source, **options)[0]
 
 
-@semantic_entry("english.admission")
+@semantic_entry("english.admission", engine="lean")
 def parse_english_argument(env, source, **options):
     """Build checked claim-graph edges for marked conclusions.
 
@@ -1808,21 +1840,28 @@ def parse_english_argument(env, source, **options):
     from .argument import ArgumentGraph, Claim, Deduction, check_argument, deduction_identity
     from .entailment import prove_entailment
     from .printer import print_formula
-    document, _, _, conclusions = _parse_english_document(env, source, **options)
+    parsed = _parse_english_document(env, source, _with_reading=True, _check=False, **options)
+    document, _, _, conclusions = parsed[:4]
+    obligations = parsed[4].obligations if len(parsed) > 4 else ()
+    premises_by_conclusion = {item['conclusion']: item['premises'] for item in obligations}
+    text_by_conclusion = {item['conclusion']: item['unproved'] for item in obligations}
     marked = set(conclusions)
     claims = tuple(Claim.create(env, f's{i + 1}', print_formula(env, formula) + '.\n',
                                 candidate_ast=formula)
                    for i, formula in enumerate(document.formulas))
-    edges = tuple(Deduction(f'd{i + 1}', tuple(f's{j + 1}' for j in range(i) if j not in marked),
+    edges = tuple(Deduction(f'd{i + 1}', tuple(f's{j + 1}' for j in premises_by_conclusion.get(
+                                i, [j for j in range(i) if j not in marked])),
                             f's{i + 1}') for i in conclusions)
     graph = ArgumentGraph(env, claims, edges, claims[-1].name)
     checked_edges = []
     for i, edge in zip(conclusions, edges):
-        premises = tuple(document.formulas[j] for j in range(i) if j not in marked)
+        premises = tuple(document.formulas[j] for j in premises_by_conclusion.get(
+            i, [j for j in range(i) if j not in marked]))
         proof = prove_entailment(env, premises, document.formulas[i])
         if proof.status != 'Found':
-            raise SyntaxError('The marked conclusion has no checked derivation from earlier premises: '
-                              + proof.status)
+            raise SyntaxError(text_by_conclusion.get(
+                i, 'The marked conclusion has no checked derivation from earlier premises: {status}').replace(
+                    '{status}', proof.status))
         checked_edges.append(Deduction(edge.name, edge.premises, edge.conclusion,
                                        ({'edge_id': deduction_identity(graph, edge),
                                          'direction': 'follows', 'proof': proof.certificate},)))

@@ -670,4 +670,9 @@ def drop (j : Json) (k : String) : Json := VE.Risk.Wire.dropField k j
 #guard (idOf (withUnits jFR (Json.mkObj [("1", .str "eur")]) none)).isNone
 #guard (idOf (withUnits jFR (Json.mkObj []) (some "usd"))).isNone
 
+/-! E2 scanner fixtures: Unicode case folding, hyphenated tokens and word boundaries. -/
+#guard pyLower "Kİ" == "ki\u0307"
+#guard tokens "Audit-Case" == ["Audit-Case"]
+#guard wordOccurs "foo" " foo bar"
+
 end VE.EnglishGrammar.ProfileExamples

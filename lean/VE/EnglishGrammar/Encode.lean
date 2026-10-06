@@ -120,6 +120,42 @@ def regulatedView (environment : Json) : Except String Json := do
     pure (environment.setObjVal! "vocabulary" (vocabulary.setObjVal! "predicates" (Json.mkObj stripped)))
   else pure environment
 
+/-- The norm-defaults profile affects defaults, not formula typing. The modal form reads the
+same placeholder as the source decoder, while the submitted environment remains the identity. -/
+def normDefaultsView (environment : Json) : Except String Json := do
+  let vocabulary ← environment.getObjVal? "vocabulary"
+  let predicates ← VE.Bridge.fields (← vocabulary.getObjVal? "predicates")
+  let predicates := predicates.map fun (p, entry) =>
+    let entry := match entry.getObjVal? "regulated" with
+      | .ok r => if r.getObjValD "default" == .str "unspecified" then
+          entry.setObjVal! "regulated" (r.setObjVal! "default" (.str "deny")) else entry
+      | .error _ => entry
+    (p, entry)
+  let profiles := (← VE.Route.Gate.profilesOf environment).erase "norm-defaults@0"
+  pure ((environment.setObjVal! "profiles" (toJson profiles)).setObjVal! "vocabulary"
+    (vocabulary.setObjVal! "predicates" (Json.mkObj predicates)))
+
+/-- Soft declarations carry ranks and instruction links, not argument sorts. -/
+def softNormsView (environment : Json) : Except String Json := do
+  let vocabulary ← environment.getObjVal? "vocabulary"
+  let predicates ← VE.Bridge.fields (← vocabulary.getObjVal? "predicates")
+  let predicates := predicates.map fun (p, entry) =>
+    (p, VE.Risk.Wire.dropField "instruction_of" entry)
+  let vocabulary := (VE.Risk.Wire.dropField "soft" vocabulary).setObjVal! "predicates" (Json.mkObj predicates)
+  let profiles := (← VE.Route.Gate.profilesOf environment).erase "soft-norms@0"
+  pure ((environment.setObjVal! "profiles" (toJson profiles)).setObjVal! "vocabulary" vocabulary)
+
+/-- W6 annotations are checked on the submitted environment and absent from the formula typing view. -/
+def unitsView (environment : Json) : Except String Json := do
+  let vocabulary ← environment.getObjVal? "vocabulary"
+  let predicates := VE.Risk.Wire.mapEntries (VE.Risk.Wire.dropField "argument_units")
+    (vocabulary.getObjValD "predicates")
+  let constants := VE.Risk.Wire.mapEntries (fun e => VE.Risk.Wire.dropField "unit"
+    (VE.Risk.Wire.dropField "verbalisation" e)) (vocabulary.getObjValD "constants")
+  let vocabulary := (vocabulary.setObjVal! "predicates" predicates).setObjVal! "constants" constants
+  let environment := VE.Risk.Wire.dropField "units" (VE.Risk.Wire.dropField "unit_schema" environment)
+  pure (environment.setObjVal! "vocabulary" vocabulary)
+
 /-- The typing view of an environment (S3 spec 2.3, part 2): `riskView` under `risk@0`, then
 `alternativesView` under `alternatives@0`, then `regulatedView` under `norms@0`. An environment without these
 profiles is its own view. -/
@@ -127,6 +163,9 @@ def typingView (environment : Json) : Except String Json := do
   let ps := (VE.Route.Gate.profilesOf environment).toOption.getD []
   let env ← if ps.contains "risk@0" then riskView environment else pure environment
   let env ← if ps.contains "alternatives@0" then alternativesView env else pure env
+  let env ← if ps.contains "soft-norms@0" then softNormsView env else pure env
+  let env ← if ps.contains "norm-defaults@0" then normDefaultsView env else pure env
+  let env ← if (environment.getObjVal? "units").isOk && !ps.contains "risk@0" then unitsView env else pure env
   if ps.contains "norms@0" then regulatedView env else pure env
 
 /-- The typed check of a document of encoded formulas against an environment JSON, by the standalone
@@ -202,7 +241,8 @@ def decodeAltBlock (environment : Json) (profiles : List String) : Except String
     let harm ← VE.Bridge.stringField b "harm"
     let available ← VE.Bridge.stringField b "available"
     let leadsTo ← VE.Bridge.stringField b "leads_to"
-    pure (some { action, chooser, harm, available, leadsTo })
+    let optional := ["inaction", "taken", "proximate"].filterMap (optString b)
+    pure (some { action, chooser, harm, available, leadsTo, optional })
   | .error _, false => pure none
   | _, true => throw "InvalidInput: alternatives@0 is named without its block"
   | _, false => throw "UnsupportedProfile: an alternatives block requires alternatives@0"
@@ -219,6 +259,13 @@ def modalForm (name : String) (args : List String) (entry : Json) : Except Strin
     | .obligation, some act => pure (some (replaceFirst act "{0} " "{0} must "))
     | _, _ => pure none
 
+/-- The modal reader's placeholder for an unspecified norm default. -/
+def placeholderEntry (entry : Json) : Json :=
+  match entry.getObjVal? "regulated" with
+  | .ok r => if r.getObjValD "default" == .str "unspecified" then
+      entry.setObjVal! "regulated" (r.setObjVal! "default" (.str "deny")) else entry
+  | .error _ => entry
+
 /-- What the profile blocks generate (S3 spec 2.3; `ve/environment.py:658–680`, `english.py:393–468`): the
 sorts, predicates and constants, and the forms they fix. `roles` are the block's role predicates with their
 decoded wordings. -/
@@ -228,7 +275,8 @@ def blockSymbols (environment : Json) (block : Option AltBlock) (risk : Bool)
   match block with
   | none => pure ([], [], [], {})
   | some B =>
-    let gen := fun (name : String) (args : List String) => ({ name, arity := args.length, args } : PredDecl)
+    let gen := fun (name : String) (args : List String) =>
+      ({ name, arity := args.length, args, generated := true } : PredDecl)
     let altPreds := [gen "avoidable" [B.harm, B.chooser], gen "unavoidable" [B.harm, B.chooser],
       gen "allows" [B.action, B.harm], gen "prevents" [B.action, B.harm]]
     let altForms : ProfileForms := {
@@ -245,7 +293,8 @@ def blockSymbols (environment : Json) (block : Option AltBlock) (risk : Bool)
       let riskPreds := [gen "risk__might_lead_to" [B.action, B.harm], gen "risk__class" [B.harm, sort],
         gen "risk__more_severe" [sort, sort], gen "risk__or_worse" [B.harm, sort],
         gen "risk__less_worst" [B.action, B.action]]
-      pure ([{ name := sort }], altPreds ++ riskPreds, classes.map fun c => ({ name := c, sort } : ConstDecl),
+      pure ([{ name := sort, generated := true }], altPreds ++ riskPreds,
+        classes.map fun c => ({ name := c, sort, generated := true } : ConstDecl),
         { altForms with
           wordings := altForms.wordings ++ [("risk__might_lead_to", "{0} might lead to {1}"),
             ("risk__class", "{0} is {1}"), ("risk__or_worse", "{0} is {1} or worse"),
@@ -265,19 +314,28 @@ def Env.decode (environment overlay : Json) : Except String Env := do
   let oPreds ← optFields overlay "predicates"
   let oConsts ← optFields overlay "constants"
   let sorts ← (← VE.Bridge.fields (← vocabulary.getObjVal? "sorts")).mapM fun (name, entry) => do
+    let selected := match VE.Bridge.lookup oSorts name with
+      | some o => o
+      | none => entry
     let noun := match VE.Bridge.lookup oSorts name with
       | some o => (o.getObjValD "verbalisation").getObjValD "singular" |>.getStr?.toOption
       | none => (entry.getObjValD "verbalisation").getObjValD "singular" |>.getStr?.toOption
-    pure ({ name, noun } : SortDecl)
+    let plural := optString (selected.getObjValD "verbalisation") "plural"
+    pure ({ name, noun, plural } : SortDecl)
   let decoded ← (← VE.Bridge.fields (← vocabulary.getObjVal? "predicates")).mapM fun (name, entry) => do
     let args ← VE.Bridge.strings (← entry.getObjVal? "arguments")
     let (wording, negative) := match VE.Bridge.lookup oPreds name with
       | some o => (optString o "verbalisation", optString o "negative_verbalisation")
       | none => (optString entry "verbalisation", optString entry "negative_verbalisation")
-    let modal ← if profiles.contains "norms@0" then modalForm name args entry else pure none
+    let modal ← if profiles.contains "norms@0" then
+      modalForm name args (if profiles.contains "norm-defaults@0" then placeholderEntry entry else entry)
+      else pure none
     pure (({ name, arity := args.length, wording, negative, args, functional := ← optBool entry "functional",
              total := ← optBool entry "total", modal := modal.isSome,
-             description := (optString entry "description").getD "" } : PredDecl), modal)
+             description := (optString entry "description").getD "",
+             suggested := (VE.Bridge.lookup oPreds name).isSome &&
+               ((VE.Bridge.lookup oPreds name).map (fun o => (o.getObjValD "suggested") == .bool true)).getD false
+             } : PredDecl), modal)
   let predicates := decoded.map (·.1)
   let modalForms := decoded.filterMap fun (d, m) => m.map (d.name, ·)
   let alternatives ← decodeAltBlock environment profiles
@@ -287,11 +345,82 @@ def Env.decode (environment overlay : Json) : Except String Env := do
           ((predicates.find? (·.name == p)).bind (·.wording)).map (p, ·)
     | none => []
   let (gSorts, gPreds, gConsts, forms) ← blockSymbols environment alternatives (profiles.contains "risk@0") roles
+  let gConsts := gConsts.map fun c =>
+    { c with display := (VE.Bridge.lookup oConsts c.name).bind (optString · "verbalisation") }
   let constants ← (← VE.Bridge.fields (← vocabulary.getObjVal? "constants")).mapM fun (name, entry) => do
     let sort ← VE.Bridge.stringField entry "sort"
     let display := (VE.Bridge.lookup oConsts name).bind (optString · "verbalisation")
     pure ({ name, display, sort } : ConstDecl)
   pure { sorts := sorts ++ gSorts, predicates := predicates ++ gPreds, constants := constants ++ gConsts, profiles,
-         forms := { forms with wordings := forms.wordings ++ modalForms }, source := environment, alternatives }
+         forms := { forms with wordings := modalForms ++ forms.wordings }, source := environment, alternatives }
+
+/-- Python's display environment for identity binding: overlay sort and predicate fields replace the
+submitted declaration fields; `suggested` is transport metadata, and an old negative is removed. -/
+def displayJson (environment overlay : Json) : Json := Id.run do
+  let vocabulary := environment.getObjValD "vocabulary"
+  let merge (category : String) (dropNegative : Bool) (vocabulary : Json) : Json := Id.run do
+    let entries := (VE.Bridge.fields (vocabulary.getObjValD category)).toOption.getD []
+    let replacements := (VE.Bridge.fields (overlay.getObjValD category)).toOption.getD []
+    let entries := entries.map fun (name, entry) =>
+      match VE.Bridge.lookup replacements name with
+      | none => (name, entry)
+      | some replacement =>
+        let base := (VE.Bridge.fields entry).toOption.getD []
+        let base := base.filter fun (key, _) => !(dropNegative && key == "negative_verbalisation")
+        let changed := ((VE.Bridge.fields replacement).toOption.getD []).filter (·.1 != "suggested")
+        (name, Json.mkObj (base.filter (fun (key, _) => !(changed.any (·.1 == key))) ++ changed))
+    return vocabulary.setObjVal! category (Json.mkObj entries)
+  let vocabulary := merge "sorts" false vocabulary
+  let vocabulary := merge "predicates" true vocabulary
+  return environment.setObjVal! "vocabulary" vocabulary
+
+def Overlay.decode (overlay : Json) : Except String Overlay := do
+  let sorts ← (← optFields overlay "sorts").mapM fun (s, e) => do
+    pure (s, ← VE.Bridge.stringField (← e.getObjVal? "verbalisation") "singular")
+  let predicates ← (← optFields overlay "predicates").mapM fun (p, e) => do
+    pure (p, ← VE.Bridge.stringField e "verbalisation", optString e "negative_verbalisation")
+  let constants ← (← optFields overlay "constants").mapM fun (c, e) => do
+    pure (c, ← VE.Bridge.stringField e "verbalisation")
+  pure { sorts, predicates, constants }
+
+def overlayText : Failure → String
+  | ("O1", _, n) => s!"The vocabulary overlay gives {n} a wording that another symbol already has. No text was read."
+  | ("O2", _, n) => s!"The vocabulary overlay gives {n} a wording that risk@0 reserves. No text was read."
+  | (_, _, n) => s!"The vocabulary overlay entry for {n} cannot be used as written. No text was read."
+
+def ETerm.decode : Json → Option ETerm
+  | .arr #[.str "var", i] => (i.getNat?.toOption).map ETerm.var
+  | .arr #[.str "const", .str x] => some (.const x)
+  | .arr #[.str "num", .str v] => v.toInt?.map ETerm.num
+  | .arr #[.str "add", a, b] => do pure (.add (← ETerm.decode a) (← ETerm.decode b))
+  | .arr #[.str "scale", .str k, t] => do pure (.scale (← k.toInt?) (← ETerm.decode t))
+  | _ => none
+
+def reachRefl : Json → Option Bool
+  | .str "star" => some true
+  | .str "plus" => some false
+  | _ => none
+
+def EFormula.decode : Json → Option EFormula
+  | .arr #[.str "top"] => some .top
+  | .arr #[.str "bottom"] => some .bottom
+  | .arr #[.str "unary", .str p, t] => do pure (.pred p [← ETerm.decode t])
+  | .arr #[.str "binary", .str p, t, u] => do pure (.pred p [← ETerm.decode t, ← ETerm.decode u])
+  | .arr #[.str "atom", .str p, .arr ts] => do pure (.pred p (← ts.toList.mapM ETerm.decode))
+  | .arr #[.str "eq", t, u] => do pure (.eq (← ETerm.decode t) (← ETerm.decode u))
+  | .arr #[.str "lt", t, u] => do pure (.lt (← ETerm.decode t) (← ETerm.decode u))
+  | .arr #[.str "le", t, u] => do pure (.le (← ETerm.decode t) (← ETerm.decode u))
+  | .arr #[.str "not", a] => do pure (.not (← EFormula.decode a))
+  | .arr #[.str "and", a, b] => do pure (.and (← EFormula.decode a) (← EFormula.decode b))
+  | .arr #[.str "or", a, b] => do pure (.or (← EFormula.decode a) (← EFormula.decode b))
+  | .arr #[.str "implies", a, b] => do pure (.implies (← EFormula.decode a) (← EFormula.decode b))
+  | .arr #[.str "forall", .str s, a] => do pure (.all s (← EFormula.decode a))
+  | .arr #[.str "exists", .str s, a] => do pure (.ex s (← EFormula.decode a))
+  | .arr #[.str "reach", k, .arr #[.str "named", .str r], t, u] => do
+      pure (.reachNamed (← reachRefl k) r (← ETerm.decode t) (← ETerm.decode u))
+  | .arr #[.str "reach", k, .arr #[.str "body", .str s, a], t, u] => do
+      pure (.reachBody (← reachRefl k) s (← EFormula.decode a) (← ETerm.decode t) (← ETerm.decode u))
+  | _ => none
+
 
 end VE.EnglishGrammar

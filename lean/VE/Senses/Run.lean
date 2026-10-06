@@ -1,4 +1,4 @@
-import VE.Senses.Read
+import VE.EnglishGrammar.SensesRequest
 import VE.Senses.Decode
 import VE.EnglishGrammar.Run
 
@@ -112,7 +112,7 @@ def readCase (j : Json) : Except String Json := do
   let count := match lex source with
     | .ok sents => sents.size
     | .error _ => 0
-  let result ← outcomeJson c count (readWithSenses D c.E c.L budget source)
+  let result ← outcomeJson c count (sensesRequest D c.E c.L budget source)
   pure (VE.Route.Wire.ok id [("result", Json.mkObj
     [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)), ("reading", result)])])
 

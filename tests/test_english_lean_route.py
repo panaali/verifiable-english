@@ -259,13 +259,12 @@ def outcome(env, text, options):
         return (type(exc).__name__, str(exc))
 
 
-def test_admission_under_shadow_records_agreement_with_the_real_reader(monkeypatch, tmp_path):
+def test_admission_comparator_records_agreement_with_the_real_reader(monkeypatch, tmp_path):
     env, options = ENVIRONMENTS["F"]()
-    monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", "english.admission=python")
     expected = {text: outcome(env, text, options) for text in ADMISSION}
     log = tmp_path / "ve-shadow.jsonl"
     monkeypatch.setenv("VE_SHADOW_LOG", str(log))
-    monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", "english.admission=shadow")
+    monkeypatch.setenv("VE_ENGLISH_COMPARATOR", "1")
     assert {text: outcome(env, text, options) for text in ADMISSION} == expected
     records = [json.loads(line) for line in log.read_text().splitlines()]
     assert len(records) >= len(ADMISSION)
@@ -274,15 +273,18 @@ def test_admission_under_shadow_records_agreement_with_the_real_reader(monkeypat
     assert any(r.get("conclusion_rejected") for r in records)
 
 
-@pytest.mark.parametrize("authority", ["lean", "rust-experimental"])
-def test_admission_refuses_to_make_the_reader_the_authority(monkeypatch, authority):
-    """DRI ruling 6 (review A2): `english.admission=lean` replaced Python's admission, and `Legacy is deployed .`
-    went from SyntaxError to accepted. Every selection other than python or shadow is now refused."""
+@pytest.mark.parametrize("authority", ["python", "shadow", "rust-experimental"])
+def test_admission_refuses_non_lean_authority(monkeypatch, authority):
     env, options = ENVIRONMENTS["F"]()
     monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", f"english.admission={authority}")
-    for text in ADMISSION + ["Legacy is deployed ."]:
-        with pytest.raises(CheckerUnavailable, match="only the python or shadow authority"):
-            EN.parse_english_with_metadata(env, text, **options)
+    with pytest.raises(CheckerUnavailable, match="Lean-authoritative"):
+        EN.parse_english_with_metadata(env, "Legacy is deployed.", **options)
+
+
+def test_admission_does_not_call_the_python_parser(monkeypatch):
+    env, options = ENVIRONMENTS["F"]()
+    monkeypatch.setattr(EN, "_python_reading", lambda *_args, **_kwargs: pytest.fail("Python parser called"))
+    assert EN.parse_english(env, "Legacy is deployed.", **options).formulas
 
 
 # ------------------------------------------------------------------ identities (base 8.8)

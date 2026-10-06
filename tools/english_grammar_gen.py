@@ -71,6 +71,8 @@ TRUSTED = (
     "lean/VE/EnglishGrammar/Token.lean",
     "lean/VE/EnglishGrammar/Lexer.lean",
     "lean/VE/EnglishGrammar/Lexicon.lean",
+    "lean/VE/EnglishGrammar/Policy.lean",
+    "lean/VE/EnglishGrammar/Advice.lean",
     "lean/VE/EnglishGrammar/Syntax.lean",
     "lean/VE/EnglishGrammar/Catalogue.lean",
     "lean/VE/EnglishGrammar/Rules.lean",
@@ -78,6 +80,7 @@ TRUSTED = (
     "lean/VE/EnglishGrammar/Encode.lean",
     "lean/VE/EnglishGrammar/Read.lean",
     "lean/VE/EnglishGrammar/Run.lean",
+    "lean/VE/EnglishGrammar/SensesRequest.lean",
     "lean/VE/EnglishGrammar/Fixed/Order.lean",
     "lean/VE/EnglishGrammar/Fixed/Alternatives.lean",
 )
