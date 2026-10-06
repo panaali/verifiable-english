@@ -20,10 +20,8 @@ payload of 3.5, as `Discourse.Loader.payload` builds it from a document text) an
 * the answer, nomination and compliance records of 3.3, each replayed by the checkers `Run` already uses.
 
 What is not done here (named, never a silent acceptance): English fences need the speech parser, which is Python's
-English layer (`NotImplemented: fenced English content`); the claim graph is not admitted (P0 `admit_document` over
-the projection, 8.5's `SpeechAdmitted`), as Python's wrapper never checks it either; a compliance record naming an
-asserted `done` unit (external evidence) is rejected as Python rejects it (`QueryMismatch: <u>`), since no checker
-derives the `done` predicate of an act. -/
+English layer (`NotImplemented: fenced English content`). The claim graph is admitted by the `admission` kind over
+this wrapper (`Source/Admission.lean`, 8.5's `SpeechAdmitted`). -/
 namespace VE.SpeechActs.Source
 open Lean
 open VE.Bridge (stringField strings fields)
@@ -821,41 +819,6 @@ def report (src : SpeechSource) : List (String × Json) :=
    ("nominations", Json.arr (nominationLines src).toArray),
    ("compliance", Json.arr (src.compliance.map complianceJson).toArray),
    ("status_text", toJson (statusText src))]
-
-/-! ## The entry point -/
-
-def runCase (j : Json) : Except String Json := do
-  if (VE.Route.Run.caseKind j).toOption == some "speech-source" then
-    let id ← stringField j "id"
-    let src ← decodeSpeechSource (← j.getObjVal? "document") (j.getObjValD "premise_status")
-    return VE.Route.Wire.ok id (report src.1)
-  Run.runCase j
-
-def runCaseReported (j : Json) : Json :=
-  if (VE.Route.Run.caseKind j).toOption == some "speech-source" then
-    match runCase j with
-    | .ok result => result
-    | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)]
-  else Run.runCaseReported j
-
-def main (paths : List String) : IO UInt32 := do
-  let input ← match paths with
-    | [] | ["-"] => (← IO.getStdin).readToEnd
-    | [path] => IO.FS.readFile path
-    | _ =>
-      (← IO.getStderr).putStrLn "usage: ve_speech_acts_route [cases.json|-]"
-      return 2
-  match VE.JsonInput.parseCases input with
-  | .error message =>
-    (← IO.getStderr).putStrLn message
-    return 2
-  | .ok cases =>
-    let results := cases.mapIdx fun index c => match c with
-      | .ok j => runCaseReported j
-      | .error message => Json.mkObj [("status", .str "error"),
-          ("case_index", toJson index), ("error", .str message)]
-    (← IO.getStdout).putStrLn (Json.arr results).compress
-    return if results.any (fun r => r.getObjValD "status" == .str "error") then 1 else 0
 
 /-! ## Theorems -/
 

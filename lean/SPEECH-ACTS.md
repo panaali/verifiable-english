@@ -20,7 +20,8 @@ changed; `VE.lean` and `VE/Audit.lean` gained imports and audit entries only, an
 | `Consequence.lean` | the section 8.4 theorems; `entails_lower` (a structure lifted along `ULift`) |
 | `Wire.lean` | the profile allowlist, the strict scope block, the canonical environment, `decodeSpeechEnvironment`, `scope_in_identity`, the unit and document decoder (`Decoded`) |
 | `Run.lean` | the case kinds of the core and the soundness of their replays |
-| `Source/Run.lean`, `../SpeechActsMain.lean` | the decoded-source wrapper of 8.5 (`speech-source`): `decodeSpeechSource` over a `ve-document@2` payload, the coverage projection of 6, the answer, nomination and compliance records of 3.3; the executable's entry point |
+| `Source/Run.lean` | the decoded-source wrapper of 8.5 (`speech-source`): `decodeSpeechSource` over a `ve-document@2` payload, the coverage projection of 6, the answer, judgment (`follows`, `gap`), nomination and compliance (certificate, external `done` unit) records of 3.3 and 5.4, in document order |
+| `Source/Admission/Run.lean`, `../SpeechActsMain.lean` | 8.5's admission over the wrapper (`admission` on a payload): W2's P0 projection with binding units withheld (`p0Json`), the two route-local leaves, `SpeechAdmitted`, the report identity; the executable's entry point and `speech_wire_acceptance` |
 
 `eqGuard`, `demand`, `policy` and `premises` live in `Tree.lean` rather than `Demand.lean` (spec 8's file list)
 because `WellFormedSpeech` checks W1's `WellFormed (policy D)`.
@@ -79,6 +80,14 @@ Names have prefix `VE.SpeechActs.`.
 | `Source.coverage_partition` | Every unit's class is the one its W2 status maps to (CHECKED ↦ C, OPEN ↦ R/O/U, LABELLED ↦ L, UNFORMALISED ↦ U), and the class and status tables both total the source byte count. |
 | `Source.answers_sound` | A certificate answer record of a decoded source makes its stated answer an answer in every admissible model of the regenerated premises (conditionally on `H` for a conditional record); a model record's answers are exactly `AnswersAt` in that model. |
 | `Source.query_records_sound` | Every `follows` judgment record and every proof task's compliance certificate is entailment of the query's target by its pinned `Π_q`. |
+| `Source.gap_records_sound` | Every `gap` judgment record refutes that entailment: its model satisfies `Π_q` and falsifies the target (`gap_sound`). |
+| `Source.external_records_sound` | Every external compliance record names an asserted unit of the document (so a member of `premises D`) whose content is exactly the command's `done` fact; nothing is generated. |
+| `Source.Admission.bindings_withheld` | A binding unit never reaches the P0 document, and is classed by the coverage projection (and kept in the identity payload, `source_retained`); every other unit reaches P0. |
+| `Source.Admission.active_commands` | A command is in the decoded core exactly when an active instruction unit carries it (8.5's statement over the wrapper's `src.dec`). |
+| `Source.Admission.report_sound`, `reportAdmitted`, `certificates_bound` | The admitted report is sound for its graph (the unchanged W2 checker); every node is admitted by P0 provenance, a regenerated layer or profile leaf of `policy(D)`, or a speech leaf; every leaf is such a node; citations are closed, choices compatible; every certificate names the canonical environment and its source ASTs. |
+| `Source.Admission.report_consequence` | In every admissible structure satisfying the flag premises, `premises D` and the remaining assumptions (presupposition leaves among them), the report's root holds: layer, profile and Background leaves are regenerated premises and answer leaves are entailed by their records' accepted certificates. |
+| `Source.Admission.records_sound`, `runAdmission_sound` | Every record of the source is established by its evidence; an admission answer is the encoding of a checked admission whose report id is P0's digest over the recomputed environment id, the 3.5 document id and the report. |
+| `Source.speech_wire_acceptance` | 8.5's acceptance from the public entry point: an `admission` answer for a payload is exactly the encoding of a `SpeechAdmitted` whose source is the payload's decoding, with a well-formed core, recomputed bindings, an admitted report that is a semantic consequence as above, and sound records. |
 
 The remaining theorems are helper lemmas (formula typing and closedness, `eqsFrom` denotation, sublists and
 pairs, JSON object lookup after insertion, the `ULift` lift) audited with the same allowlist.
@@ -141,6 +150,7 @@ candidates cannot reach the route, and an authored choice needs its content.
 | `speech-conflict` | `packages` (target → `{"environment_id", "document_hash", "target", "certificate"}`) | `CONFLICT-FREE`, or `UNKNOWN` with the first target lacking an accepted certificate; the outer binding is the canonical environment id, the document hash `ve-speech-acts-<identity version>` over `{"environment_id", "document"}` and the target; the inner certificate binds the regenerated base environment (scope block, regulated predicates, `speech-acts@0` and `norms@0` removed), `Background_base` and `∀x̄. ¬conflict` |
 | `speech-conflict` | `witness` (W1's shape) | `CONFLICT` or `UNKNOWN` on the regenerated policy |
 | `speech-source` | `document`: the payload `{"metadata", "source", "fences"}` of a `ve-document@2` text (`Discourse.Loader.payload`); optional `premise_status`: `{"answers": {"<i>": {"model"} or {"inconsistent"}}, "compliance": {...}}`, evidence an untrusted search found for record `i`'s checked list | every `speech-elaborate` field, `document_id`, `source_id`, `units` (bytes, W2 status, class, `MIXED` parent), `coverage` (`bytes_by_class`, `bytes_by_status`, `residual`), `answers` (status, evidence, answer, the 5.3 line), `nominations` (the 5.3 line and, for one nomination, its narrowing), `compliance` (the 5.4 line), `status_text` (5.5) |
+| `admission` | `document`: the payload of `speech-source` with a front-matter `graph`; optional `premise_status` as `speech-source` | `admitted`, `report`, `report_id` (P0's digest over `{"environment_id", "document": <document id>, "report"}`), `document_id`, `kinds` (of the P0 units), `classes` (6, every unit), `status_text` (5.5) |
 
 `speech-source` follows Python's `SpeechSource` (`ve/speech_document.py`) check by check, in its order, and reads the
 same W2 decoders the discourse route reads (`Discourse.Loader`: `partsOf`, `meaningStatus`, `openTermNames`,
@@ -148,13 +158,35 @@ same W2 decoders the discourse route reads (`Discourse.Loader`: `partsOf`, `mean
 owner. Speech candidates of a reading set keep W2's schema (`speechReadings`); the core then checks each as its unit
 would be were it chosen. A record's certificate is bound and replayed exactly as `speech-answer` and
 `speech-consequence` do; a record whose evidence does not establish it is `AnswerMismatch: <u>` (answers) or
-`QueryMismatch: <q>` (judgments and compliance), as in Python. A nomination (`{"question", "by", "support":
+`QueryMismatch: <q>` (certificates of judgments and compliance), as in Python. A `gap` judgment (`"judgment": "gap"`,
+`"support": "model"`, `{"model"}` evidence) is a validated model of `Π_q` with the target false, the line
+`speech-consequence` gives for that model (`gap (model <id>)`, `AnswerMismatch: <u>` when the target holds); any other
+judgment shape is `InvalidInput: judgment`. Records keep the document's order. External compliance (`{"command": u,
+"evidence": {"unit": d}}`) names an asserted unit `d` whose content is exactly the act's `done` fact: the base
+predicate `done_<verb>` of the act phrase `{0} <verb> ...`, declared with the act's sorts and not regulated, at the
+addressee and the command's arguments (`doneFact`); its line repeats `d`'s support kind (`external: unit d
+(observation)`), and anything else is `InvalidInput: compliance record`. Python's `SpeechSource` rejects both
+shapes (`InvalidInput: judgment`, `QueryMismatch: <u>`); the Lean answers are the specified ones (3.3, 5.3, 5.4) and
+Python's rejections are its own gap until batch 11b. A nomination (`{"question", "by", "support":
 "testimony", "nominate": i}`) names candidate `i` of the reading question's set version (`NominationOutsideSet: <u>`
 otherwise); one distinct nomination is `<i> by <agent> (testimony)` with its W2 narrowing, none or several
 `CLARIFICATION-OPEN (none | multiple)`. Premise statuses are UNKNOWN unless the case supplies evidence, which Lean
 checks; the policy line of 5.5 says `UNKNOWN (no conflict evidence; see speech-conflict)`.
 `tests/test_speech_source_lean.py` compares every field with Python on seven template documents and every
 single-fault mutant of them.
+
+`admission` decodes the payload exactly as `speech-source` does (every record replayed), then admits the claim
+graph as W2 admits a document, over W2's projection of the source (`p0Json`): every unit but `binding` units (P0's
+frozen kind decoder has none), each with its formula content unless its latest reading set decides it, the latest
+all-assertion reading sets, the declared open-term names, the narrowing ids and the lemmas. A node is admitted by P0's
+provenance, as W1's regenerated layer or profile leaf of `policy(D)`, or as one of the two route-local leaves:
+`speech:presupposition:<u>` (exactly `presupposition D q`, kept as an assumption) and `speech:answer:<u>:<a>` (exactly
+`H ∧ F` of a certificate-supported answer record, discharged by its certificate). There is no compliance leaf and no
+generated `done` fact; such a leaf has no provenance and is rejected. A payload without a graph is
+`NotImplemented: a document without a claim graph`, as on the discourse route; a P0-form case (`environment`,
+`document.units`) with a speech-act construct names the payload it needs. Python's wrapper never admits the claim
+graph, so the admission has no Python counterpart to compare with; `tests/test_speech_source_lean.py` pins its
+answers and rejections, and fuzzes every single-fault mutant of the graph.
 
 Cases without a speech-act construct (profile, block, `speech-*` kind, `binding` unit, command or question
 content) delegate unchanged to `Norms.Run.runCase`. A query whose target is one of its pinned premises carries
@@ -166,21 +198,20 @@ source file through Python's experimental inspection path; Rust has no speech-ac
 
 ## Not done
 
-* **Section 8.5's admission.** The wrapper is `Source.SpeechSource` (`speech-source`), which keeps the payload and
-  the validated W2 structure as JSON with typed projections rather than 8.5's `OpenTerm`, `SpeechReading` and
-  `Narrowing` structures, and states `source_retained` over that payload (a weaker form of 8.5's, which also
-  re-decodes the reading sets and narrowings). `SpeechAdmitted` (P0 `admit_document` over the projection with the
-  claim graph and the two route-local leaves), `bindings_withheld`, `active_commands` over `SpeechSource`
-  (`Wire.decoded_active_commands` holds for `src.dec`) and `speech_wire_acceptance` are not implemented, and the
-  `admission` kind on a speech-act input is still rejected with `UnsupportedProfile: case kind admission is not
-  available on the speech-acts route`. Python's wrapper does not check the claim graph either.
+* **The 8.5 structures.** `SpeechSource` keeps the payload and the validated W2 structure as JSON with typed
+  projections rather than 8.5's `OpenTerm`, `SpeechReading`, `SpeechReadingSet` and `Narrowing` structures, and
+  states `source_retained` over that payload (a weaker form of 8.5's, which also re-decodes the reading sets and
+  narrowings). `tests/test_speech_source_lean.py::test_every_spec_8_5_name_has_a_lean_owner` names the declaration
+  that stands in for each. `SpeechAdmitted`, `bindings_withheld`, `active_commands` and `speech_wire_acceptance` are
+  implemented in `Source/Admission/Run.lean`, over this wrapper. Their statement review is the speech-acts DRI's
+  (deferred, `docs/lean-first/b11a/DELTA.md`).
 * **Fences.** An English fence needs the speech parser, Python's English layer (plan track E3): `speech-source`
-  answers `NotImplemented: fenced English content` unless a signed choice replaces the fence. Python's
+  and `admission` answer `NotImplemented: fenced English content` unless a signed choice replaces the fence. Python's
   `_check_wordings` (each instruction and question wording parsed and compared with its content) is likewise
   English-layer and has no Lean counterpart; the differential test names the cases.
-* **Records.** External compliance evidence (an asserted `done` unit, 5.4) is rejected as Python rejects it
-  (`QueryMismatch: <u>`): no checker derives an act's `done` predicate. Binding units have no meaning id in the
-  report. `CLARIFICATION-OPEN (outside set)` never arises: a nomination outside the set is an error (3.3).
+* **Records.** Binding units have no meaning id in the report. `CLARIFICATION-OPEN (outside set)` never arises: a
+  nomination outside the set is an error (3.3). The narrowing reported for a nomination carries `support:
+  testimony` as 3.3 writes it, which W2's narrowing schema does not have; reading it back as a W2 narrowing is open.
 * **Route-wide conformance and English fidelity.** Python's experimental `SpeechDocument`, `SpeechSource` and
   restricted English parser are present. The section 9 shared fixtures above cover a subset of semantic results;
   Rust still has no speech-act parser or admission route. W8 replay/approval, all-derivations English checks and

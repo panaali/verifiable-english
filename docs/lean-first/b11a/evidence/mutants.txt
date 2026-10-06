@@ -91,3 +91,10 @@ FAILED tests/test_speech_source_lean.py::test_nominations_name_a_candidate_of_th
 1 failed in 0.42s
 
 restored build 0
+
+== Review fix mutants (lf-11a review B1-B3), one at a time, restored and rebuilt clean after each ==
+M4 p0Json keeps binding units: FAILED tests/test_speech_source_lean.py::test_binding_units_are_withheld_from_p0_and_classed (assert 'error' == 'ok')
+M5 AnswerLeaf without the formula comparison: build failed in VE.SpeechActs.Source.Admission.Run (the proofs of answerLeaf_entailed and report_consequence reject it)
+M5b PresuppositionLeaf without the formula comparison: FAILED tests/test_speech_source_lean.py::test_admission_rejects_leaves_without_provenance[node3-AdmissionError: node n is not admitted under label speech:presupposition:p] (KeyError: 'error')
+M6 Loader.field maps every failure to Python's text: FAILED tests/test_discourse.py::test_w2_front_matter_diagnostics_are_pinned ("('narrowings', 0, 'by', {})": 'invalid narrowing id or author', ...)
+M7 gapRecord accepts a model satisfying the target: FAILED tests/test_speech_source_lean.py::test_gap_judgment_records_replay_their_model (KeyError: 'error')

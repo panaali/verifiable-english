@@ -56,6 +56,7 @@ import VE.SpeechActs.Consequence
 import VE.SpeechActs.Wire
 import VE.SpeechActs.Run
 import VE.SpeechActs.Source.Run
+import VE.SpeechActs.Source.Admission.Run
 import VE.SoftNorms.Run
 import VE.Rights.Run
 import VE.Attribution.Content
@@ -1314,6 +1315,24 @@ import VE.EnglishGrammar.FoldAgree
 #print axioms VE.SpeechActs.Source.coverage_partition
 #print axioms VE.SpeechActs.Source.answers_sound
 #print axioms VE.SpeechActs.Source.query_records_sound
+#print axioms VE.SpeechActs.Source.gap_records_sound
+#print axioms VE.SpeechActs.Source.external_records_sound
+#print axioms VE.SpeechActs.Source.Admission.normsSource_D
+#print axioms VE.SpeechActs.Source.Admission.admitNodes_ok
+#print axioms VE.SpeechActs.Source.Admission.eq_of_map_nodup
+#print axioms VE.SpeechActs.Source.Admission.admissible_En
+#print axioms VE.SpeechActs.Source.Admission.bindings_withheld
+#print axioms VE.SpeechActs.Source.Admission.active_commands
+#print axioms VE.SpeechActs.Source.Admission.report_sound
+#print axioms VE.SpeechActs.Source.Admission.certificates_bound
+#print axioms VE.SpeechActs.Source.Admission.leaves_admitted
+#print axioms VE.SpeechActs.Source.Admission.reportAdmitted
+#print axioms VE.SpeechActs.Source.Admission.certifiedAnswer_entailed
+#print axioms VE.SpeechActs.Source.Admission.answerLeaf_entailed
+#print axioms VE.SpeechActs.Source.Admission.report_consequence
+#print axioms VE.SpeechActs.Source.Admission.records_sound
+#print axioms VE.SpeechActs.Source.Admission.runAdmission_sound
+#print axioms VE.SpeechActs.Source.speech_wire_acceptance
 #print axioms VE.SoftNorms.Admission.admitDocument_spec
 #print axioms VE.SoftNorms.Admission.admitNodes_ok
 #print axioms VE.SoftNorms.Admission.layerLeaf_formula

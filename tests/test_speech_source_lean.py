@@ -602,12 +602,161 @@ def test_document_id_excludes_removable_weights_only(lean):
     assert run_source(moved, source)["document_id"] != first["document_id"]
 
 
-def test_admission_kind_stays_closed(lean):
+REVIEWED, CAT = U("reviewed", "atlas"), U("cat", "tom")
+ANSWER_LEAF = {"name": "ans", "ast": ["and", ["top"], REVIEWED], "label": "speech:answer:p:yes"}
+
+
+def admission_case(metadata, source, graph, **extra):
+    return {"id": "a", "kind": "admission",
+            "document": {"metadata": {**metadata, "graph": graph}, "source": source, "fences": {}}, **extra}
+
+
+def admit(metadata, source, graph, **extra):
+    [result] = run([admission_case(metadata, source, graph, **extra)])
+    return result
+
+
+def certified_graph(env):
+    """The certified document's claim graph: the answer leaf of `p` and the asserted unit `b` entail the root."""
+    metadata, source = certified(env)
+    py = core(env, {"units": metadata["units"], "queries": metadata["queries"]})
+    from ve.background import background as generated_background
+    answer = formula_from_data(py.env, ANSWER_LEAF["ast"])
+    cat = formula_from_data(py.env, CAT)
+    root = And(answer, cat)
+    # The prover checks Background first; in a graph those premises are explicit `background:<generator>` leaves.
+    found = prove_entailment(py.env, [answer, cat], root)
+    assert found.certificate is not None
+    background = [{"name": f"bg{i}", "ast": _to_data(p.formula), "label": f"background:{p.generator}"}
+                  for i, p in enumerate(generated_background(py.env))]
+    assert background and {n["label"] for n in background} == {"background:profile"}
+    graph = {"root": "root", "nodes": [
+        *background, ANSWER_LEAF, {"name": "b", "ast": CAT, "unit": "b"},
+        {"name": "root", "ast": _to_data(root), "premises": [*(n["name"] for n in background), "ans", "b"],
+         "certificate": found.certificate}]}
+    return metadata, source, graph
+
+
+def test_admission_admits_the_claim_graph_over_the_projection(lean):
+    """Review 11a B1: the `admission` kind admits a speech-act payload's claim graph (8.5, 8.6): P0 provenance over
+    W2's projection plus the two route-local leaves, and P0's report identity over the 3.5 document id."""
+    env = base_env()
+    metadata, source, graph = certified_graph(env)
+    result = admit(metadata, source, graph)
+    assert result["status"] == "ok", result
+    assert result["admitted"] is True
+    assert [leaf.get("label", "asserted") for leaf in result["report"]["assumptions"]] == \
+        ["background:profile"] * 3 + ["speech:answer:p:yes", "asserted"]
+    assert result["report"]["root"]["name"] == "root"
+    assert result["document_id"] == run_source({**metadata, "graph": graph}, source)["document_id"]
+    assert result["kinds"] == ["asserted", "asserted", "question", "question", "instruction", "asserted"]
+    assert result["classes"] == [{"id": u["id"], "class": "C"} for u in metadata["units"]]
+    assert result["status_text"] == run_source(metadata, source)["status_text"]
+    # Identity (checklist 15): removable weights move nothing; the source, the report and the document do.
+    weighted = {**metadata, "weights": [{"set": "rs", "by": "alice", "values": [1]}]}
+    assert admit(weighted, source, graph)["report_id"] == result["report_id"]
+    assert admit(metadata, source.replace("Beacon", "Becon"), graph)["status"] == "error"  # spans
+    smaller = {"root": "ans", "nodes": [ANSWER_LEAF]}
+    assert admit(metadata, source, smaller)["report_id"] != result["report_id"]
+    renamed = copy.deepcopy(metadata)
+    renamed["units"][1]["support"] = "observation"
+    assert admit(renamed, source, graph)["report_id"] != result["report_id"]
+
+
+def test_admission_presupposition_leaves_stay_assumptions(lean):
+    env = base_env()
+    metadata, source = certified(env)
+    graph = {"root": "h", "nodes": [{"name": "h", "ast": ["top"], "label": "speech:presupposition:p"}]}
+    result = admit(metadata, source, graph)
+    assert result["status"] == "ok", result
+    assert result["report"]["assumptions"] == [{"name": "h", "ast": ["top"], "label": "speech:presupposition:p"}]
+
+
+@pytest.mark.parametrize("node, error", [
+    # an answer leaf whose formula is not H and F of a certificate-supported record
+    ({"name": "n", "ast": ["and", ["top"], ["not", REVIEWED]], "label": "speech:answer:p:no"},
+     "AdmissionError: node n is not admitted under label speech:answer:p:no"),
+    ({"name": "n", "ast": REVIEWED, "label": "speech:answer:p:yes"},
+     "AdmissionError: node n is not admitted under label speech:answer:p:yes"),
+    # the follows question's judgment is no answer leaf, and a presupposition leaf must be the regenerated formula
+    ({"name": "n", "ast": CAT, "label": "speech:answer:f:yes"},
+     "AdmissionError: node n is not admitted under label speech:answer:f:yes"),
+    ({"name": "n", "ast": REVIEWED, "label": "speech:presupposition:p"},
+     "AdmissionError: node n is not admitted under label speech:presupposition:p"),
+    # no compliance leaf and no checker-generated done fact (4.6, 8.5)
+    ({"name": "n", "ast": ["binary", "done_submit", ["const", "alice"], ["const", "q1"]],
+      "label": "speech:compliance:t"}, "AdmissionError: node n is not admitted under label speech:compliance:t"),
+    ({"name": "n", "ast": ["binary", "done_submit", ["const", "alice"], ["const", "q1"]]},
+     "AdmissionError: node n is not admitted under label asserted"),
+    ({"name": "n", "ast": ["binary", "done_submit", ["const", "alice"], ["const", "q1"]], "unit": "t"},
+     "AdmissionError: node n is not admitted under label asserted"),
+    # an asserted leaf is the unit's own formula
+    ({"name": "n", "ast": CAT, "unit": "a"}, "AdmissionError: node n is not admitted under label asserted"),
+])
+def test_admission_rejects_leaves_without_provenance(lean, node, error):
+    env = base_env()
+    metadata, source = certified(env)
+    assert admit(metadata, source, {"root": "n", "nodes": [node]})["error"] == error
+
+
+def test_binding_units_are_withheld_from_p0_and_classed(lean):
+    """8.5 `bindings_withheld`: a binding unit never reaches P0 (its kind decoder has no `binding`), is classed by the
+    coverage projection and stays in the identity payload."""
+    name, metadata, source = templates()[2]
+    graph = {"root": "h", "nodes": [{"name": "h", "ast": ["top"], "label": "speech:presupposition:u2"}]}
+    result = admit(metadata, source, graph)
+    assert result["status"] == "ok", result
+    assert result["kinds"] == ["instruction", "question"]
+    assert [c["id"] for c in result["classes"]] == ["u0", "u1", "u2"]
+    pointed = {"root": "h", "nodes": [{"name": "h", "ast": ["top"], "unit": "u0"}]}
+    assert admit(metadata, source, pointed)["error"] == "AdmissionError: node h is not admitted under label asserted"
+    rebound = copy.deepcopy(metadata)
+    rebound["units"][0]["support"] = "testimony"
+    assert admit(rebound, source, graph)["report_id"] != result["report_id"]
+
+
+def test_admission_layer_leaves_are_the_regenerated_policy(lean):
+    env = base_env()
+    metadata, source = certified(env)
+    layers = {p["label"]: p["ast"] for p in run_source(metadata, source)["policy"]["premises"]}
+    label = "layer:norms:submit_required"
+    assert admit(metadata, source, {"root": "l", "nodes": [{"name": "l", "ast": layers[label], "label": label}]}) \
+        ["status"] == "ok"
+    wrong = layers["layer:norms:click_required"]
+    assert admit(metadata, source, {"root": "l", "nodes": [{"name": "l", "ast": wrong, "label": label}]})["error"] \
+        == f"AdmissionError: node l is not admitted under label {label}"
+
+
+def test_admission_entry_points(lean):
+    """The P0-form admission case on the speech route names the payload it needs; a payload without a graph is
+    W2's abstention, never an admission; a malformed source is the speech-source rejection."""
     name, metadata, source = templates()[0]
     case = {"id": "a", "kind": "admission", "environment": metadata["environment"],
             "document": {"units": metadata["units"]}}
     [result] = run([case])
-    assert result["error"] == "UnsupportedProfile: case kind admission is not available on the speech-acts route"
+    assert result["error"] == ('InvalidInput: speech-act admission reads the ve-document@2 payload '
+                               '{"metadata", "source", "fences"}')
+    [result] = run([{"id": "a", "kind": "admission",
+                     "document": {"metadata": metadata, "source": source, "fences": {}}}])
+    assert result["error"] == "NotImplemented: a document without a claim graph"
+    bad = {**metadata, "units": []}
+    assert admit(bad, source, {"root": "n", "nodes": []})["error"] == run_source(bad, source)["error"]
+
+
+def test_admission_graph_type_confusion_is_a_bounded_rejection(lean):
+    """Every single-fault mutant of the claim graph (checklist 5) is an answer row: admitted, or rejected with a
+    diagnostic; nothing crashes or goes unanswered."""
+    env = base_env()
+    metadata, source, graph = certified_graph(env)
+    mutants = [_replace_wire({"graph": graph}, path, replacement)["graph"]
+               for path, replacement in _wire_mutations({"graph": graph}) if path != ("graph",)]
+    results = run([{**admission_case(metadata, source, g), "id": str(i)} for i, g in enumerate(mutants)])
+    assert len(results) == len(mutants) > 100
+    for g, result in zip(mutants, results):
+        assert result["status"] in ("ok", "error") and "case_index" not in result, (g, result)
+        if result["status"] == "error":
+            assert type(result["error"]) is str and result["error"], (g, result)
+    assert sum(r["status"] == "ok" for r in results) < len(results) // 2
 
 
 def test_every_record_line_is_regenerated_not_copied(lean):
@@ -637,3 +786,32 @@ def test_deep_input_is_a_bounded_rejection(lean, depth):
     assert completed.returncode == 1
     assert json.loads(completed.stdout) == [{"case_index": 0, "error": "ResourceLimit: JSON depth exceeds 256",
                                              "status": "error"}]
+
+
+# Spec 8.5 names whose Lean owner has another name or shape, each with the declaration that stands in for it (and
+# lean/SPEECH-ACTS.md says how it differs). Every other 8.5 name must be declared under VE.SpeechActs as written.
+SPEC_8_5_STAND_INS = {
+    "SpeechUnit": "VE.SpeechActs.Source.SourceUnit",
+    "OpenTerm": "VE.SpeechActs.Source.SpeechSource.openTerms",  # validated W2 JSON (`Loader.openTermNames`)
+    "SpeechReading": "VE.SpeechActs.Source.SetInfo.readings",  # validated W2 JSON, checked as candidates by the core
+    "SpeechReadingSet": "VE.SpeechActs.Source.SetInfo",
+    "Narrowing": "VE.SpeechActs.Source.Nomination",  # recorded nominations; W2 narrowings by `Loader.narrowingIds`
+    "SpeechSource.toDoc": "VE.SpeechActs.Wire.Decoded.D",  # the projection is `src.dec.D`
+}
+
+
+def test_every_spec_8_5_name_has_a_lean_owner():
+    """Review 11a B1's class: a required 8.5 item (wrapper, admission, theorem) is never silently left out."""
+    import re
+    spec = (ROOT / "docs/spec/speech-acts.md").read_text()
+    section = spec[spec.index("### 8.5 Theorems: wire and report"):spec.index("### 8.6 ")]
+    names = re.findall(r"^(?:theorem|structure|def) ([A-Za-z_.]+)", section, re.M)
+    assert {"SpeechAdmitted", "bindings_withheld", "speech_wire_acceptance", "active_commands"} <= set(names)
+    declared = (ROOT / "lean/declarations.txt").read_text()
+    missing = []
+    for name in names:
+        owner = SPEC_8_5_STAND_INS.get(name)
+        pattern = re.escape(owner) + "@" if owner else r" VE\.SpeechActs\.[\w.]*\b" + re.escape(name) + "@"
+        if not re.search(pattern, declared):
+            missing.append(name)
+    assert missing == []
