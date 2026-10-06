@@ -1,6 +1,7 @@
 """Seeded bugs for lean-first batch 9: each must make its test fail; every file is restored.
 
     python3 -I docs/lean-first/b9/mutants.py > docs/lean-first/b9/evidence/mutants.txt
+    python3 -I docs/lean-first/b9/mutants.py M6     # only the named seeds
 
 A Lean mutant's build is allowed in `lean/checkers.lock` while its test runs, so the test fails on the
 answer, not on the build pin; the clean build is restored and checked against the lock after each.
@@ -47,12 +48,21 @@ MUTANTS = [
      'return Err(Error::new("UnsupportedProfile", "quantities are checked by the Lean quantity route"));',
      'return Ok(json!({"id": v.get("id").cloned().unwrap_or(json!("")), "status": "ok"}));',
      None),
+    ("M6 every transport sends only JSON on the wire subset", "python", "ve/environment_wire.py",
+     '''    if type(cases) is not list:
+        raise VEError("Expected a JSON array of cases")''',
+     '''    return cases''',
+     ["tests/test_relay_wire_check.py::test_document_check_of_a_file_with_a_lone_surrogate_is_the_wires_veerror",
+      "tests/test_relay_wire_check.py::test_a_tuple_formula_is_not_admitted_as_a_list"]),
 ]
 
 
-def main():
+def main(argv=()):
     lock = LOCK.read_text()
+    selected = set(argv)
     for name, kind, relative, old, new, tests in MUTANTS:
+        if selected and name.split(" ", 1)[0] not in selected:
+            continue
         path = ROOT / relative
         original = path.read_text()
         assert original.count(old) == 1, (name, original.count(old))
@@ -95,4 +105,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])

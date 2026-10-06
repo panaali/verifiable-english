@@ -33,4 +33,11 @@ M5 Rust refuses a quantity case: exit=101 failed=True
     test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
     
     error: test failed, to rerun pass `-p ve --bin ve`
+M6 every transport sends only JSON on the wire subset: exit=1 failed=True
+    
+    tests/test_relay_wire_check.py:122: Failed
+    =========================== short test summary info ============================
+    FAILED tests/test_relay_wire_check.py::test_document_check_of_a_file_with_a_lone_surrogate_is_the_wires_veerror
+    FAILED tests/test_relay_wire_check.py::test_a_tuple_formula_is_not_admitted_as_a_list
+    2 failed in 1.33s
 all mutants removed; ve_service rebuilt clean (16897e2b270d, pinned)

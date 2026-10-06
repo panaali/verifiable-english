@@ -11,11 +11,15 @@ ROOT = Path(__file__).resolve().parents[1]
 B9 = ROOT / "docs/lean-first/b9"
 
 
-def _report():
-    spec = importlib.util.spec_from_file_location("lean_first_b9_report", B9 / "report.py")
+def _module(name):
+    spec = importlib.util.spec_from_file_location(f"lean_first_b9_{name}", B9 / f"{name}.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+def _report():
+    return _module("report")
 
 
 def _evidence(name):
@@ -71,6 +75,8 @@ def test_the_eligibility_harness_answers_alike_within_its_budget():
 def test_every_seeded_bug_was_caught():
     lines = (B9 / "evidence" / "mutants.txt").read_text().splitlines()
     verdicts = [line for line in lines if line.startswith("M")]
-    assert [line.split(" ", 1)[0] for line in verdicts] == ["M1", "M2", "M3", "M4", "M5"]
+    # Every seed the runner plants has its verdict, in the runner's order (build checklist 16).
+    seeded = [name.split(" ", 1)[0] for name, *_ in _module("mutants").MUTANTS]
+    assert [line.split(" ", 1)[0] for line in verdicts] == seeded
     assert all("failed=True" in line for line in verdicts), verdicts
     assert lines[-1].startswith("all mutants removed; ve_service rebuilt clean")
