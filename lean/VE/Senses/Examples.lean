@@ -584,6 +584,16 @@ def Ft : Dictionary := Fwith fun l => swap sFunny2 { sFunny2 with gloss := "tell
   ["funny", "odd"]
 #guard usedWords Fg (sentsOf "The riddle is funny (meaning odd thing and more).") == ["funny", "odd"]
 
+-- Two valid glosses of one head may share a prefix. In the comma form, consume the complete longer
+-- gloss, so neither `odd` nor `reviewed` is projected as a separate body occurrence.
+def Fprefix : Dictionary := Fwith fun l =>
+  swap sFunny2 { sFunny2 with gloss := "odd thing reviewed" }
+    (swap sFunny1 { sFunny1 with gloss := "odd thing" } l)
+#guard Fprefix.failures [] == []
+#guard usedWords Fprefix (sentsOf "The riddle is funny, in the sense of odd thing reviewed.") == ["funny"]
+#guard usedWords Fprefix (sentsOf "The riddle is funny (meaning odd thing reviewed).") == ["funny"]
+#guard usedWords Fprefix (sentsOf "The riddle is funny, in the sense of odd thing.") == ["funny"]
+
 -- Astra A1: the cap is checked on the capped product of the sense counts, never on the built choices; 30
 -- words of two senses each (2^30 choices) stop at once with `tooManyCandidates`.
 def manyWords : List String := (List.range 30).map fun i =>

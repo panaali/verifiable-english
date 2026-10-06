@@ -30,8 +30,9 @@ def startsWithParts : List Tok → List String → Bool
   | _, _ => false
 
 /-- The tokens after a word token at the start of the tokens that are its gloss's mark and gloss (2.6, R7):
-the fewest, over the senses of `D` with the token as a headword token, whose gloss follows the mark, `)`
-after it for `(`; 0 when no mark follows or no gloss of the head matches. -/
+the longest matching gloss of a sense of `D` with the token as a headword token, with `)` after it for
+`(`; 0 when no mark follows or no gloss of the head matches. A shorter comma gloss may prefix a longer
+one, so stopping at the shorter one would expose the rest of the longer gloss as body words. -/
 def glossAfter (D : Dictionary) : List Tok → Nat
   | .word h _ :: rest =>
     match glossMark rest with
@@ -45,7 +46,7 @@ def glossAfter (D : Dictionary) : List Tok → Nat
             | _ => false) then some (m + ps.length) else none
       match lens with
       | [] => 0
-      | n :: ns => ns.foldl min n
+      | n :: ns => ns.foldl max n
   | _ => 0
 
 /-- The tokens of a sentence from index `i`, with their indices, skipping the mark and gloss after a

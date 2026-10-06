@@ -382,15 +382,17 @@ parenthetical forms (j8, computed on the Lean side).
 
    **Words inside a gloss (fix round, Fable B3).** The mark after a switched head and the gloss after the
    mark are not occurrences of any word: `unglossed D w` keeps every token of `w` but those, and both
-   `usedWords` and `unswitchedIn` read only its tokens. The gloss is the fewest tokens, over the senses of `D`
+   `usedWords` and `unswitchedIn` read only its tokens. The gloss is the most tokens, over the senses of `D`
    with the head as a headword token, that fold to the parts of one of their glosses, followed by `)` in the
-   parenthetical form; when no gloss matches, nothing is skipped. So `funny` 2 glossed `odd thing` adds no
-   choice for `odd` in `… is funny (meaning odd thing).`, nor does `tell apart` one for `tells`; without the
-   rule both gave candidates that differ in nothing, and could cause a spurious `tooManyCandidates`,
-   collision or limit. Skipping the shortest matching gloss errs safely in the same way: a skipped token
+   parenthetical form; when no gloss matches, nothing is skipped. This matters when two comma glosses share
+   a prefix: stopping at the shorter one would count the rest of the longer gloss as body words. So `funny` 2
+   glossed `odd thing` adds no choice for `odd` in `… is funny (meaning odd thing).`, nor does `tell apart` one
+   for `tells`; without the rule both gave candidates that differ in nothing, and could cause a spurious `tooManyCandidates`,
+   collision or limit. Skipping the longest matching gloss errs safely in the same way: a skipped token
    could only lose a rule, and S2 has no row that reads a token after a gloss mark other than the gloss forms
    themselves. Applied on the DRI's instruction to fix every A and B finding of the integration review
-   (2026-10-06); regression rows in `VE.Senses.Examples` and `test_gloss_words_are_not_occurrences`.
+   (2026-10-06); regression rows in `VE.Senses.Examples`, `test_gloss_words_are_not_occurrences`, and
+   `test_prefix_gloss_does_not_project_its_remaining_words`.
 
    **Quoted names (R13).** S2 gives every binary predicate whose two arguments have one sort a `relation.`
    row on its quoted name (`Rules.lean:182–190`), used by the named-reachability sentence. That row has no
@@ -1509,4 +1511,3 @@ what the fixes need:
 | Astra A1: the cap built every choice | `choiceCount`, proved equal to the capped length (`choiceCount_eq`, `choiceCount_gt_iff`); thirty two-sense words stop at once | 2.6 step 8, 5.2; `Examples.lean` A1 rows, `test_every_refusal_carries_its_arguments[a1-30-words]` |
 | Fable B3: words inside a gloss counted as occurrences | `unglossed`, read by `usedWords` and `unswitchedIn` | 2.5, 2.6 (R7), 5.2; `Examples.lean` B3 rows, `test_gloss_words_are_not_occurrences` |
 | Astra B1, Fable B2: the response dropped the unit state and the refusals' arguments | `stopped` carries the stopping grammar's rule tags; the route writes the fields of 4.1 *as built* | 4.1, 5.2; `test_every_refusal_carries_its_arguments`, `test_s2_outcomes_match_the_english_route` |
-
