@@ -1,4 +1,4 @@
-Status: DRAFT (plan and pre-registration text; not frozen, not timestamped, no model call made)
+Status: Draft 2 (converged by DRI ruling); plan and pre-registration text; not frozen, not timestamped, no model call made
 
 # Policy audit: do VE's checks find defects in real agent policies that frontier models miss?
 
@@ -7,6 +7,15 @@ This file is experiment 1 of `~/code/manage-agents/reviews/oversight-opportuniti
 ("spec-defect audit of real agent policies"), written as a pre-registration and as a build plan in batches of
 2 to 6 hours. It becomes binding only when batch B5 freezes it: line 1 changes to `Status: FROZEN`, a copy goes to
 `experiments/policy-audit/PREREG.md` (the path `ve_experiments/runner.py` checks), and the hash is timestamped.
+
+**Draft 2 (2026-10-06).** This text holds the edits both plan reviewers (Fable 5.1, GPT-6 Astra) agreed in
+`~/code/manage-agents/debates/design-policy-audit/` (Astra's findings 1 to 6 and Fable's 1 to 9, merged where they
+overlap) and the DRI ruling on the two points they left open: the measured VE arm uses Lean-owned admission of
+the English it uses (sections 9, 12, 13), and the gap bar's subset is the CHECKED-anchor subset (sections 8, 9).
+Main changes: silence means "two admissible completions differ", not "no rule decides"; obligation-permission
+conflicts are explained; universal verdicts need a checked situation that meets the stated facts; every report
+is adjudicated and matching is semantic; one judge call per variant; a cluster check after seeding; a protocol
+freeze (B5) and a later materials seal; baseline guides carry the raised-case recipe.
 
 **What was and was not done for this draft.**
 
@@ -34,15 +43,16 @@ This file is experiment 1 of `~/code/manage-agents/reviews/oversight-opportuniti
 - **Arms.** A frontier model alone; the same model with VE; the same model writing Z3; the same model writing
   Datalog. Equal rounds, equal token and compute caps.
 - **Metric.** Share of seeded defects found, at an equal rate of false reports. Every report in every arm must
-  carry a concrete situation that a blind judge can check against the policy text.
+  carry a concrete situation, and every report is checked by two blind judges against the policy text. A seeded
+  defect counts as found only if the judges confirm the report and its situation.
 - **Bars fixed here.** The VE claim on gaps passes only if the model alone is under 90%, VE adds at least 15
   points over the model alone, and VE beats both Z3 and Datalog by at least 15 points. It is **falsified** if a
   model alone reaches 90%, or if Z3 or Datalog comes within 5 points of VE on gaps. It is **void** if VE can
-  formalise less than 60% of the rule paragraphs.
+  formalise less than 60% of the rule paragraphs, or if fewer than 8 policies carry at least 3 gap items.
 - **Build.** Four Lean-first batches give Lean the audit questions that live in a Python harness today (which two
-  rules clash, which rule never decides, which condition can never hold, which raised case is unsaid). Six
-  harness batches build materials, runners and the scorer. Then a gate run, the scored run, blind adjudication
-  and the report. No GPU.
+  rules clash, which rule never decides, which condition can never hold, which raised case is left open). Six
+  harness batches build materials, runners and the scorer. The measured run waits for Lean-owned admission of
+  the English the VE arm uses. Then a gate run, the scored run, blind adjudication and the report. No GPU.
 
 ## 1. Claims and hypotheses
 
@@ -167,9 +177,15 @@ their own track (section 5.3).
    (c) the base text does not; (d) the two paraphrases preserve meaning; (e) the edit reads as a plausible
    drafting slip. For clean variants: (d), and that the structural edit changes no answer. A variant that either
    validator rejects is discarded and replaced from the reserve in the recorded order.
-6. **Sealing.** The key file is written outside every worktree. Its SHA-256 goes into the freeze manifest
-   (batch B5). The key is read only by the frozen scorer, after the outputs of the arms it scores are hashed. It
-   is committed after the last arm output is hashed.
+6. **Sealing.** The key file is written outside every worktree. The protocol freeze (batch B5) comes before
+   seeding, so it cannot hold the key. After seeding, a **materials seal** records the SHA-256 of the key, the
+   variants, the allocation and the base texts in a second manifest. That manifest is timestamped before any
+   scored arm call. Only the frozen scorer reads the key: once in gate mode (section 9, step 3) and once after
+   adjudication (step 6), each time after the outputs of the arms it scores are hashed. The key is committed
+   after the last arm output is hashed.
+7. **Cluster check.** After validation and before the materials seal, count the policies that hold at least 3
+   gap items. The gap tests of section 7 run over those policies only. If fewer than 8 policies qualify, the gap
+   claim is void (V2, section 8). This is declared in R1 before any arm call.
 
 **Why validation uses no formal tool.** A key checked by VE would favour the VE arm; one checked by Z3 would
 favour the Z3 arm. The cost is stated in section 14: the key holds defects a model can confirm when told where
@@ -216,9 +232,12 @@ Equal treatment of the three formal arms:
 
 - **Guides.** Each formal arm gets a writing guide of at most 5,000 tokens. Each guide names the three defect
   classes and says how to ask for each in that formalism. The Z3 and Datalog guides say outright that
-  "permitted" and "forbidden" should be separate relations and that a case where neither holds is a gap. The
-  baselines are therefore told VE's main idea. The two baseline guides are drafted by a builder model and
-  reviewed by both plan reviewers with one instruction: make this arm as strong as you can.
+  "permitted" and "forbidden" should be separate relations and that a case where neither holds is a gap. They
+  also carry the same per-rule raised-case recipe that VE applies: for each rule, the cases its condition names
+  when one of its parts is reversed, and each of its "unless" cases, then the question whether anything in the
+  text answers there. The baselines are therefore told VE's main idea and VE's recipe, so H3 does not test a
+  withheld recipe. The two baseline guides are drafted by a builder model and reviewed by both plan reviewers
+  with one instruction: make this arm as strong as you can.
 - **Caps.** The same number of rounds, the same input and output token caps per item, the same tool budget
   (20 minutes of wall time on 4 cores per item for VE's findings, for Z3 and for Soufflé). A tool that runs out
   returns "unknown", which is never a finding.
@@ -238,14 +257,28 @@ Arm J gets one call at the highest effort with an output cap equal to the formal
 | Finding | Evidence | Shown as |
 |---|---|---|
 | two rules clash | a checked situation, and the rules that decide in it | "Paragraphs 3 and 14 give opposite answers when …" plus the facts of the situation |
-| a raised case is unsaid | a checked situation where no rule decides, at a case the rules themselves name | "The text does not say whether … when …" plus the facts |
-| a rule never decides | a checked proof, and one checked situation where its condition holds and another rule decides | "Paragraph 12 never decides any case. Here its condition holds and paragraph 24 decides." |
-| a condition can never hold | a checked proof | "The condition of paragraph 9 can never hold, given paragraphs 2 and 5." |
-| no conflict anywhere, or no gap for a question | a checked proof | stated as such |
-| unknown | the budget that ran out | "not decided within the budget" |
+| something required is not permitted | a checked situation, the rules or defaults that make the obligation hold, and those that make the permission fail | "Paragraph 7 requires … when …, and paragraph 11 does not permit it there" plus the facts |
+| a raised case is left open | a checked situation at a case the rules themselves name, where two admissible completions of the text give opposite answers | "The text does not say whether … when …" plus the facts |
+| a rule never decides | a checked proof, a checked situation that meets the stated facts, and one checked situation where its condition holds and another rule decides | "Paragraph 12 never decides any case. Here its condition holds and paragraph 24 decides." |
+| a condition can never hold | a checked proof, and a checked situation that meets the stated facts | "The condition of paragraph 9 can never hold, given paragraphs 2 and 5." |
+| no conflict anywhere, or no gap for a question | a checked proof, and a checked situation that meets the stated facts | stated as such |
+| the stated facts cannot all hold | a checked proof | "The facts stated in paragraphs 2 and 5 cannot all hold." |
+| unknown | the budget that ran out, or no checked situation that meets the stated facts | "not decided within the budget" |
+
+A case where a stated default answers ("by default, refuse"), or where an obligation settles the permission
+that goes with it, is not left open. Such a case is shown as "the text's default answers here", for display
+only; it is never a finding.
+
+A universal verdict (never decides, can never hold, no conflict, no gap) is true of any set of stated facts
+that cannot all hold. So each such verdict is given only with a checked situation that meets the background,
+the completion premises and the stated facts. Without one the answer is "unknown", unless a checked proof
+shows that the stated facts cannot all hold, which is then the finding.
 
 A rule carries the paragraph numbers it translates, in a side file the model writes with the document. The
 mapping from a finding to paragraphs is a lookup. A wrong mapping is the arm's error.
+
+**Unaccepted units.** After the two repair rounds, Lean checks the accepted units only. The rule paragraphs
+that no accepted unit translates are listed beside the findings, both in what the model sees and in the record.
 
 **Ambiguous source sentences.** The translator writes the reading it judges most likely and marks the unit as
 narrowed, with the other reading in a note. A finding that depends on a narrowed unit is shown as
@@ -266,6 +299,8 @@ only where a paragraph says so and cites it; otherwise the completion is "the te
   differ, with a situation. Renderings: VE English exactly as a reader sees it (rules and legend sentences, no
   JSON, no symbols); SMT-LIB; Datalog. Readers: Sonnet 5.5 (proxy for a human reader), Opus 5.5, GPT-6 Sol.
   Each reader sees each section in all three renderings, in separate conversations, in rotated order.
+- **Reader prompt.** The source section, the rendering and the task, nothing else: no writing guide and no
+  worked example, so the reading stays zero-training. The prompt is frozen in B5.
 - **Score.** As section 6, with "the rendering differs from the source here" as the only class.
 
 ## 6. Outputs, matching and metrics
@@ -278,17 +313,24 @@ two opposite answers and from which paragraphs; which rule never takes effect an
 and 1; and for formal arms the id of the tool result it rests on, if any. A reply that cannot be parsed is kept
 and scored as no report.
 
-### 6.2 Matching a report to the key (mechanical)
+### 6.2 Matching a report to the key (semantic)
 
-A seeded item is **found at cut-off t** if some report with confidence at least t has the key's class and names
-at least one anchor paragraph. Secondary matchings, reported beside it: *strict* (the two judges also agree that
-the report's situation is the key's kind of situation) and *lenient* (anchor paragraph only, class ignored).
+A seeded item is **found at cut-off t** if some report with confidence at least t has the key's class, names at
+least one anchor paragraph, is judged real by both judges (6.4), and both judges agree that its situation is the
+key's kind of situation. The class-and-anchor test alone is **candidate retrieval**: it selects the reports the
+judges compare with the key. Reported beside the primary figure: *mechanical* recall (class and anchor only) and
+*lenient* recall (anchor paragraph only, class ignored).
+
+**Paragraph-spray control.** A scripted arm (B4) that gives 8 reports per item, each with a random class and
+three random paragraphs and no situation, is scored mechanically on the sealed key. Its recall is reported as the
+chance level of mechanical matching.
 
 ### 6.3 False reports and the matched level
 
-- A report that does not match the key goes to adjudication (6.4) and is **real**, **not real** or
-  **unresolved**. "Not real" and "unresolved" count as false in the primary analysis. A sensitivity analysis
-  drops "unresolved".
+- **Every report**, matched or not, goes to adjudication (6.4) and is **real**, **not real** or
+  **unresolved**. "Not real" and "unresolved" count as false in the primary analysis. A report that matches the
+  key mechanically but is not judged real is a false report, never a hit. A sensitivity analysis drops
+  "unresolved". The cut-offs and H7 are computed over all reports.
 - For an arm and a cut-off t, the false-report rate is the number of false reports with confidence at least t,
   divided by the number of items the arm ran, seeded and clean together (160 for a full arm).
 - **Matched level:** for each arm, the lowest cut-off whose false-report rate is at most **0.20 per item**. The
@@ -299,10 +341,16 @@ the report's situation is the key's kind of situation) and *lenient* (anchor par
 ### 6.4 Adjudication: the situation makes each report checkable
 
 - Reports are rewritten into one neutral template (class, paragraphs, question, situation, claim). Arm, model,
-  tool ids and confidence are removed. Identical reports on the same policy are judged once.
-- Two judges, Fable 5.1 and GPT-6 Astra, each in a fresh context, get the variant and the report and answer
-  three narrow questions: Is the situation possible under the text? Which paragraphs apply in it? Does the claim
-  follow? A report with no usable situation is "not real".
+  tool ids and confidence are removed. Identical reports on the same variant are judged once.
+- **One judge call per variant and judge.** Two judges, Fable 5.1 and GPT-6 Astra, each in a fresh context, get
+  the variant and every distinct report of every arm on it, in shuffled order. For each report they answer three
+  narrow questions: Is the situation possible under the text? Which paragraphs apply in it? Does the claim
+  follow? They answer against the whole variant, defaults and paragraphs outside the report's anchors included.
+  A report with no usable situation is "not real". A gap that exists only because a formal translation left a
+  paragraph out is "not real".
+- After the three answers for every report are recorded, a second turn of the same conversation shows the key
+  entry and asks, for each report that matches it mechanically, whether the report's situation is the key's
+  kind of situation (6.2). This turn runs at step 6 of section 9, after the scorer opens the key.
 - Agreement of the two gives the label. Disagreement is "unresolved". Cohen's kappa is reported per arm.
 - A judge may meet reports from an arm of its own model. The template hides that; section 14 lists what remains.
 
@@ -310,12 +358,15 @@ the report's situation is the key's kind of situation) and *lenient* (anchor par
 
 | Metric | Definition |
 |---|---|
-| **Primary:** recall at the matched level | per arm and model, on G (60), C (30), L (30) and all 120 |
+| **Primary:** recall at the matched level | per arm and model, semantic matching (6.2), on G (60; the gap tests use the qualifying policies of 4.2 step 7), C (30), L (30) and all 120 |
+| Mechanical and lenient recall | the same, with candidate retrieval only (6.2); the paragraph-spray chance level beside them |
+| Seeded case in VE's findings | descriptive, uncapped: share of seeded gap items whose seeded case is in VE's full finding list for the item, before the 8-report cap |
 | Clean accuracy | share of the 40 clean items with no false report at the matched level |
 | Certified clean (VE only) | share of clean items for which VE returns "no conflict" and "no gap" proofs for every question; expected to be small on real policies, reported as found |
 | False share of checked reports | among VE-checked (and solver-backed) reports that do not match the key, the share judged not real: the size of the translation-error problem |
 | Judge agreement | kappa per arm; first-pass agreement on checked against unchecked reports |
-| Coverage | share of rule paragraphs with at least one formal VE unit (9.1); the same count for Z3 and Datalog, from the paragraph side files |
+| Coverage | share of rule paragraphs with at least one formal VE unit, CHECKED or OPEN, and with at least one CHECKED unit (section 9, step 2); the same count for Z3 and Datalog, from the paragraph side files |
+| Recall by subset | J+VE and J recall on gaps in the CHECKED-anchor subset (section 9, step 2) and, descriptively, in the CHECKED-or-OPEN subset |
 | Unknown rate | share of tool questions that ended "unknown", per formal arm |
 | Cost | input and output tokens, tool CPU seconds, rounds used, per arm and item |
 | Translation track | recall and clean accuracy per rendering and reader |
@@ -325,8 +376,12 @@ the report's situation is the key's kind of situation) and *lenient* (anchor par
 - **Unit and clusters.** The unit is the item. Items of one policy share a base text, so the ten policies are
   the clusters.
 - **Registered test.** For a contrast between two arms on a class, compute the recall difference inside each
-  policy, then the exact sign-flip test on the mean of the ten differences (1,024 assignments, two-sided). Holm's
-  correction covers the three primary contrasts of M1 on gaps: J+VE against J, against J+Z3, against J+DL.
+  policy, then the exact sign-flip test on the mean of the differences (2^k assignments for k policies,
+  two-sided). Holm's correction covers the three primary contrasts of M1 on gaps: J+VE against J, against J+Z3,
+  against J+DL.
+- **Policies in the gap tests.** Only the policies with at least 3 gap items (section 4.2, step 7). The
+  smallest two-sided p of the sign-flip test is 2 / 2^k: 0.008 for 8 policies, but 0.031 for 6, which is above
+  Holm's strictest level of 0.0167. Hence fewer than 8 qualifying policies make the gap claim void (V2).
 - **Intervals.** A 95% interval for each difference from a bootstrap over policies (10,000 resamples), and a
   Wilson interval for each single recall. Ten clusters make the bootstrap interval too narrow; it is descriptive.
 - **Failures.** A failed call or an unparseable reply stays in the data as "no report". The failure rate is
@@ -334,8 +389,8 @@ the report's situation is the key's kind of situation) and *lenient* (anchor par
 - **M2** is a replication on five policies: the same tables, no bar of its own except "same sign" in section 8.
 
 **Why 150 and 50, and why 60 gaps.** The VE-specific prediction concerns gaps, so gaps get the most items. The
-figures below are planning values, computed by hand with a normal approximation; batch B4 replaces them with a
-simulation under the same assumptions.
+figures below are planning values, computed by hand with a normal approximation for ten policies; batch B4
+replaces them with a simulation under the same assumptions, including fewer qualifying policies.
 
 | Quantity | Value |
 |---|---|
@@ -362,15 +417,18 @@ All bars use M1 at the matched level with the primary matching, unless stated.
 | F1 | **Falsified: no headroom** | any model-alone arm (M1, M2, or a strongest-model check on its half) reaches 90% recall on the policy-defect items it ran, or on its gap items. The scope that reached 90% gets no VE claim |
 | F2 | **Falsified: not VE-specific** | on gaps, J+Z3 or J+DL is within 5 points of J+VE, or above it |
 | F3 | **Falsified: VE does not help** | on gaps, J+VE is not above J (difference zero or negative) |
-| V1 | **Void** | VE formalises less than 60% of the rule paragraphs of the ten base texts, pooled (9.1). The run stops after the gate and reports the coverage |
+| V1 | **Void** | VE formalises less than 60% of the rule paragraphs of the ten base texts, pooled (section 9, step 2). The run stops after the gate and reports the coverage |
+| V2 | **Void: too few clusters** | fewer than 8 policies hold at least 3 gap items after validation (section 4.2, step 7). Declared in R1 before any arm call; the gap claim is not tested |
 | P1 | Pass, headroom | F1 does not hold |
 | P2 | Pass, VE over the model alone | on gaps, J+VE minus J is at least 15 points and the registered test gives p below 0.05 after Holm |
 | P3 | Pass, VE-specific | on gaps, J+VE minus J+Z3 and J+VE minus J+DL are each at least 15 points, each with p below 0.05 after Holm |
-| P4 | Pass, absolute | J+VE recall on gaps is at least 80% on all 60 items, and at least 90% on the gap items in the expressible region (9.1) |
+| P4 | Pass, absolute | J+VE recall on gaps is at least 80% on all gap items, and at least 90% on the gap items in the CHECKED-anchor subset (section 9, step 2) |
 | P5 | Replication | every M2 difference that P2 and P3 use has the same sign |
 
+All recall figures in this table use the semantic matching of 6.2.
+
 **Verdict rule.** "VE finds gaps that the alternatives miss" is claimed only if P1 to P5 all hold. If F1, F2,
-F3 or V1 holds, the report's first sentence says so. Anything else is **inconclusive**, and is reported with
+F3, V1 or V2 holds, the report's first sentence says so. Anything else is **inconclusive**, and is reported with
 that word.
 
 Secondary bars, reported and never used to rescue a primary failure:
@@ -387,8 +445,8 @@ Secondary bars, reported and never used to rescue a primary failure:
 
 #### Primary contrast
 
-Recall on the 60 gap items at 0.20 false reports per item: J+VE minus J, J+VE minus J+Z3, J+VE minus J+DL, for
-Opus 5.5.
+Recall (semantic matching, 6.2) on the gap items of the qualifying policies (section 4.2, step 7) at 0.20 false
+reports per item: J+VE minus J, J+VE minus J+Z3, J+VE minus J+DL, for Opus 5.5.
 
 #### Refutation condition
 
@@ -405,30 +463,50 @@ the matched level.
 
 #### Capability gate
 
-The gate of section 9: coverage at least 60% (else void), and the model alone below 90% (else falsified, and
-the formal arms are not run).
+The gates of section 9: Lean-owned admission of the English the VE arm uses (else no measured run), at least 8
+qualifying policies (else void), coverage at least 60% (else void), and the model alone below 90% (else
+falsified, and the formal arms are not run).
 
 #### Sample size
 
 200 items in 10 policies: 120 policy-defect items (60 G, 30 C, 30 L), 40 clean policy items, 30 translation
-items, 10 clean translation items. Reasoning in section 7.
+items, 10 clean translation items. The gap tests use the policies with at least 3 gap items. Reasoning in
+section 7.
 
 ## 9. Gates and order of the run
 
-1. **Freeze** (batch B5): prompts, guides, harness, scorer, tool versions, this file. Then seeding, validation
-   and sealing (section 4). No prompt or harness change after the first seed is written; a change after that
-   point is a dated amendment and a rerun of everything it touches.
+0. **Checks before the freeze.**
+   - *Ownership (gate O).* Lean admits the English subset the VE arm actually uses and decides what it means,
+     through english-lean E2/E3 or an equivalent scoped delivery, and Lean checks the findings. Executable guards
+     (section 13) show that no scored finding and no admission can reach a legacy Python semantic path. Without
+     gate O there is no measured run: development and a VE arm on the Python reader may run only as a pilot
+     labelled as such, and the pilot is not the measured VE arm.
+   - *Readability.* The A4 situations render with no symbol, bracket or variable letter; the reader prompts of
+     5.3 hold source, rendering and task only.
+   - *Coverage procedure.* Step 2 below runs end to end on the development policy.
+1. **Protocol freeze** (batch B5): prompts, guides, harness, scorer, tool versions, the Lean service and
+   reader, this file. Then seeding, validation, the cluster check and the materials seal (section 4). No prompt
+   or harness change after the first seed is written; a change after that point is a dated amendment and a
+   rerun of everything it touches.
 2. **Coverage gate.** M1 translates each of the ten base texts into VE (ten translations).
    - Two annotators (the seeders) mark each base paragraph as rule, definition or other; on disagreement it
      counts as a rule.
    - **Coverage** is the share of rule paragraphs that at least one formal VE unit translates (status CHECKED,
      or OPEN because of an open term). CHECKED alone is reported beside it.
    - Pooled coverage below 60%: outcome V1, stop.
-   - A seeded item is **in the expressible region** if all its anchor paragraphs correspond to covered base
-     paragraphs. This is fixed before any arm runs, so P4's second part does not depend on arm outcomes.
-3. **Headroom gate.** Run every model-alone arm on all its items; hash the outputs; the scorer prints, per arm,
-   only recall with no cut-off on all items and on gaps. If every figure is below 90%, continue. Otherwise
-   adjudicate those arms' reports and compute recall at the matched level; if F1 holds, stop and report.
+   - A seeded item is **in the CHECKED-anchor subset** if every one of its anchor paragraphs corresponds to a
+     base paragraph that at least one CHECKED unit translates (OPEN units do not count). The subset is fixed
+     before any arm runs, so P4's second part does not depend on arm outcomes. Recall on the
+     CHECKED-or-OPEN subset is reported beside it, descriptively.
+   - **CHECKED establishes neither a complete translation nor a faithful one.** A CHECKED unit is accepted and
+     checked; it may still leave out a condition, or say something the source does not. The subset is therefore
+     not called expressible. Every report is still adjudicated against the whole variant (6.4), so an
+     incomplete translation earns no credit by itself.
+3. **Headroom gate.** Run every model-alone arm on all its items; hash the outputs. The scorer then runs in
+   **gate mode**, which this step authorises: it reads the key once, for the model-alone arms only, and prints
+   per arm only recall with no cut-off on all items and on gaps (mechanical matching, since adjudication has
+   not run). If every figure is below 90%, continue. Otherwise adjudicate those arms' reports and compute recall
+   at the matched level; if F1 holds, stop and report.
 4. **Formal arms**, tier A or B (section 11), items in a fixed random order, arms interleaved.
 5. **Translation track.**
 6. **Adjudication**, then the scorer opens the key and writes the tables.
@@ -441,7 +519,7 @@ items, 10 clean translation items. Reasoning in section 7.
 | An arm model knows the original policy and spots the change | proper names replaced (section 2, rule 5); three edits in every variant, seeded or clean (4.2); a recitation probe before the run: each arm model is asked to continue each original from a 200-word prefix, and the overlap is reported per policy |
 | Published encodings help the Z3 and Datalog arms | τ² airline is not scored. MANTRA is published with SMT validation; if its encodings are public, that helps the Z3 arm, which is against VE's claim and is accepted. B0 records what is public |
 | A model audits its own seeds | no arm model seeds. The strongest-model checks run only on the other seeder's policies |
-| The key leaks into prompts or code | the key lives outside every worktree; arms have no tools or files; builders work on development policies only; freeze before seeding; the scorer opens the key after output hashes are written |
+| The key leaks into prompts or code | the key lives outside every worktree; arms have no tools or files; builders work on development policies only; protocol freeze before seeding, materials seal before any scored arm call; the scorer opens the key only in gate mode and after adjudication, each time after output hashes are written |
 | Tuning on scored outcomes | cut-off rule, matching rule, tiers and bars are fixed here; the gates print only what section 9 allows |
 | The key favours a formalism | validation uses no formal tool (4.2) |
 | Judges recognise an arm | neutral template; arm and model removed (6.4) |
@@ -461,12 +539,13 @@ rule below, before any scored call. Calls run on the Claude and Codex subscripti
 | Formal arms, M2, tier A: 80 items × 3 | 240 item-arms | 12.2 M | 7.9 M |
 | Coverage gate: 10 base translations | 10 | 0.5 M | 0.3 M |
 | Seeding and validation, with the 50% reserve | about 800 | 7 M | 0.8 M |
-| Adjudication, about 500 distinct reports × 2 judges | about 1,000 | 9 M | 1.5 M |
+| Adjudication: one call per variant and judge, each holding every distinct report of every arm on it (up to about 70, thousands in all) | 160 × 2 = 320 | about 6 M | about 2 M |
 | Translation track: references, seeds, 360 readings | about 600 | 2.5 M | 2 M |
 | Development on airline and agent-policy | — | 3 M | 1.5 M |
-| **Total, tier A** | | **about 63 M** | **about 35 M** |
+| **Total, tier A** | | **about 60 M** | **about 36 M** |
 
-Split: Claude (Opus, Fable, Sonnet) about 39 M in and 22 M out; Codex (Sol, Astra) about 24 M in and 13 M out.
+Split: Claude (Opus, Fable, Sonnet) about 38 M in and 22 M out; Codex (Sol, Astra) about 22 M in and 13 M out.
+Half of the adjudication falls on Astra, beside half of the seeding, the validation and a strongest-model check.
 For scale, T1c used about 45 M input tokens on a subscription, with little output. How these token counts map
 onto the weekly allowances is not known; B2's development runs measure it as a share of each pool.
 
@@ -475,9 +554,11 @@ pass a ceiling, and reports what is missing.
 
 **Tier rule** (applied once, from B2's measurements):
 
-- **Tier A** if the measured cost per item and arm, times the planned counts, fits the ceilings.
+- **Tier A** if the measured cost per item and arm, times the planned counts, plus the measured adjudication
+  cost per variant times 160, fits the ceilings, and Astra's share (seeding, validation, judging, its
+  strongest-model check) fits Astra's plan allowance over the run's weeks.
 - **Tier B** otherwise: M2 runs the model-alone arm on all items and the three formal arms only on the gap and
-  clean items of policies 1 to 5 (50 items). M1 is unchanged.
+  clean items of policies 1 to 5 (50 items). M1 is unchanged. The same two conditions apply.
 - If tier B does not fit either, nothing scored is run and this file is amended.
 
 **Standing limits.** No Claude account above 90% of a five-hour or weekly pool (`usage-guard.sh`,
@@ -496,18 +577,22 @@ less is expected if agent-policy's cost (115 s for 26 rules on 6 workers) is a g
 |---|---|---|
 | Rules with exceptions and "unless", permissions, prohibitions, obligations (`norms@0`) | present; Lean decides conflicts (`lean/NORMS.md`) | used as is |
 | "The text does not say" as a third answer (`norm-defaults@0`) | present; Lean replays "no gap" proofs and reachable-gap situations (`normDefaults_wire_gaps_sound`, `normDefaults_wire_reached_sound`); Python still decides at runtime until lean-first batch 10b | used through the Lean service only |
-| Which two rules clash; a rule that never decides; a condition that can never hold | **Python only**, inside `usecases/agent-policy/check.py` (`policy_findings`) and the safety-framework harness | **A1, A2: moved to Lean** |
-| A gap at a case the rules themselves raise | not present (gaps are per question, not per rule) | **A1, A2** |
+| Which two rules clash; which obligation lacks its permission; a rule that never decides; a condition that can never hold | **Python only**, inside `usecases/agent-policy/check.py` (`policy_findings`) and the safety-framework harness; Lean decides that a conflict exists, not which rules or defaults make it | **A1, A2: moved to Lean** |
+| A gap at a case the rules themselves raise | not present (gaps are per question, not per rule); `reachedF` counts a case a stated default answers as reached | **A1, A2**: "left open" means two admissible completions differ |
 | Checks relative to the document's own stated facts ("no booking is both basic and business") | Lean checks over the base background only; the safety-framework harness added the facts in Python | **A1, A2**: a premise list in every finding |
 | The facts of a situation that matter, for display | not present | **A1** (`Formula.why`), **A4** |
-| Reading rule blocks in English with one reading | `ve/norm_english.py` decides acceptance (Python). Lean reads formula-level English (S2 merged, S3 and E2 in flight); rule blocks are track E3 | used as `main` has it at the freeze; see below |
+| Reading rule blocks in English with one reading | `ve/norm_english.py` decides acceptance (Python). Lean reads formula-level English (S2 merged, S3 and E2 in flight); rule blocks are track E3 | **Lean-owned admission of the English subset the experiment uses**, through E2/E3 or an equivalent scoped delivery: a prerequisite of the measured run (gate O, section 9); see below |
 | Stated facts with attribute flags (`data@0`) on the norm-defaults route | **unverified**; the agent-policy case replays in Lean on a flag-free copy | A0 probes it; the writing guide states uniqueness as ordinary sentences if flags are refused |
 | Size limits: 256 rules, 64 regulated predicates, 8 "unless" parts per rule, precedence depth 16 | fixed limits | a policy over a limit is split by the translator; findings across the parts are lost and count as misses |
 
-**The reader's owner at the freeze.** The preferred freeze is after E3 has moved rule-block English to Lean.
-If the freeze comes earlier, the run uses the Python reader, adds no reader logic, and the report says
-"one reading enforced by the Python reader" wherever it would have said "Lean-checked". The findings themselves
-are Lean-decided in both cases.
+**The reader's owner (DRI ruling, 2026-10-06).** In `ve/norm_english.py` Python decides the consequence, the
+conditions, the exceptions, the precedence and the one reading, then builds the document. Lean checking that
+document does not check that Python gave the English its right meaning, and an import restriction cannot show
+it either. So a Python reader deciding meaning is not acceptable for the measured VE arm. The measured run uses
+Lean-owned admission for the English subset it actually uses: E2/E3 if they cover it, else an equivalent scoped
+delivery. A0 sizes the minimum Lean reader work for that subset. Full E3 does not block development or batches
+A0, B0 and B1; Lean-owned admission of the subset blocks the measured run (gate O). A VE arm on the Python
+reader may run only as a pilot, labelled as such, and is not the measured VE arm.
 
 **Not needed, but each would raise coverage (next month or later):**
 
@@ -529,10 +614,23 @@ differential fuzzer's baseline not growing. Review rounds come on top. Lean chan
 the frozen-source list, the assurance manifest and `tools/trust_map.py --since` (the batch states its own trust
 budget growth).
 
-**Ownership rule for this experiment.** Lean owns every question about what a VE policy means and every
-finding. Python reads files, calls models and tools, relays Lean's answers and shows them. Scoring an
-experiment (matching reports to a key, statistics) is not VE logic and stays in `ve_experiments`. No Python in
-this plan builds a VE formula.
+**Ownership rule for this experiment.** Lean owns every question about what a VE policy means, every finding,
+and, for the measured run, the admission of the English the VE arm uses (section 12). Python reads files, calls
+models and tools, relays Lean's answers and shows them. Scoring an experiment (matching reports to a key,
+statistics) is not VE logic and stays in `ve_experiments`. No Python in this plan builds a VE formula.
+
+**Python semantic paths that remain on `main`**, each with the lean-first batch that moves it:
+
+| Path | Moved by |
+|---|---|
+| acceptance and meaning of rule-block English, `ve/norm_english.py` | E3, or for this experiment's subset the scoped delivery of gate O |
+| the runtime norm-defaults decision | lean-first 10b |
+| per-action verdicts in `usecases/agent-policy/check.py` | lean-first 13b |
+| the per-tool gap loop in the same file | lean-first 14 |
+
+These stay for their unmigrated callers. The experiment cannot reach them: a lint fixture pins the modules that
+`ve_experiments` may import for scored runs, and an executable guard fails a scored run that reaches a legacy
+semantic path (gate O). This plan makes no repository-wide deletion claim.
 
 ### A0. Probes (2 h, no code kept)
 
@@ -542,7 +640,13 @@ Recorded in the deviations section before A1:
 - whether the `norm-defaults` service mode accepts an environment with `data@0` flags;
 - the cost of a "never decides" proof on the agent-policy document through the service (the plan's largest
   performance risk: VE's prover alone exhausted its steps there, and the certificate replay has depth limit 125);
-- whether E3 for rule blocks has a date.
+- whether E3 for rule blocks has a date, and the minimum Lean reader work that gives Lean-owned admission of the
+  English subset this experiment uses (gate O), with its estimate;
+- the semantic counterexamples behind fd9 and fd10 run against the current semantics: a case a stated default
+  answers is reached but not open, and an obligation can settle a permission where no permission rule decides.
+
+Effort is re-estimated after A0. Elaboration alone does not show that the proofs are feasible or that the
+search cost is acceptable.
 
 ### A1. Lean: the audit questions and their meaning (4–6 h)
 
@@ -556,10 +660,14 @@ New file `lean/VE/NormDefaults/Findings.lean` (namespace `VE.NormDefaults`), and
 | `clashF U N₁ N₂` | both rules decide here |
 | `Allowed U Γ B` | `B` is an admissible filled situation that satisfies the stated facts `Γ` |
 | `NeverDecides U Γ N`, `NeverApplies U Γ N` | in no allowed situation, at no typed point |
-| `ConflictFreeUnder U Γ`, `GapFreeUnder U Γ r` | the existing notions, over allowed situations |
-| `nearMisses φ`, `raisedCases N`, `raisedGapF U N k` | the cases a rule's own condition names by reversing one part, plus each "unless" case; "that case is unsaid" |
+| `pairSettledF U p`, `unsettledF U p` | "a declared obligation-permission pair forces `p`'s answer here"; "`p` is a gap here and no pair forces it", so two admissible fillings differ |
+| `ConflictFreeUnder U Γ`, `GapFreeUnder U Γ r` | the existing conflict notion over allowed situations; no allowed point unsettled on `r` |
+| `nearMisses φ`, `raisedCases N`, `raisedGapF U N k` | the cases a rule's own condition names by reversing one part, plus each "unless" case; "that case occurs and is unsettled" |
 | `decidersAt U M p vs` | the author rules that decide at a checked point, by evaluation |
-| `Formula.why M ρ φ` | a small set of ground atoms that settles the value of `φ` in `M` |
+| `Formula.why M ρ φ` | a small set of facts (equalities between objects, and ground atoms) that settles the value of `φ` in `M` |
+
+A case reached by a stated default but not unsettled is a display kind, "the default answers here", never a
+finding.
 
 Statements to prove (exact text in the appendix):
 
@@ -567,16 +675,26 @@ Statements to prove (exact text in the appendix):
 2. `decidesF_iff_selects`: `decidesF` holds on the base restriction exactly when the direct semantics `SelectsD`
    holds, through `subst_sound` and `selects_denote`.
 3. `conflict_iff_clash`: a conflict on `r` at a point holds exactly when two author rules of opposite sign on `r`
-   both decide there. So every conflict has a named pair, and the pair list is complete.
-4. `never_decides_sound`, `never_applies_sound`: an accepted certificate over
+   both decide there. So every conflict on one predicate has a named pair of rules.
+4. `pairConflict_explained`: an obligation-permission conflict (`pairConflict`, the second half of
+   `ConflictFree`) at a point has, on the obligation side, a positive author rule that decides there or the
+   obligation's default or filling, and on the permission side a negative author rule that decides there or the
+   permission's default or filling. With 3, every conflict that `ConflictFree` excludes has a named explanation.
+5. `never_decides_sound`, `never_applies_sound`: an accepted certificate over
    `Background_base(E‴) ++ Fill_T ++ Γ` gives `NeverDecides` or `NeverApplies`.
-5. `decides_witness_sound`, `applies_witness_sound`: a valid finite model that passes the background, the fill
+6. `decides_witness_sound`, `applies_witness_sound`: a valid finite model that passes the background, the fill
    premises and `Γ`, with the formula true at a typed tuple, refutes them.
-6. `conflictFreeUnder_sound`, `conflictUnder_witness_sound`: the two halves of the conflict check, with `Γ`.
-7. `gapFreeUnder_sound`; `raisedGap_reached`: a raised gap is a reachable gap of the same question.
-8. `decidersAt_iff`: membership is "an author rule on `p` that decides there".
-9. `eval_congr_why`: a model with the same domains and constants that agrees on the `why` atoms gives the
-   formula the same value.
+7. `allowed_witness_sound`: such a model, with no formula required, shows that an allowed situation exists.
+   `facts_inconsistent_sound`: an accepted certificate for the negation of the conjunction of `Γ` shows that none
+   does. A universal verdict (5, 8, 9) is reported only together with 7's witness; otherwise it is `unknown`, or
+   the finding "the stated facts cannot all hold".
+8. `conflictFreeUnder_sound`, `conflictUnder_witness_sound`: the two halves of the conflict check, with `Γ`.
+9. `unsettled_iff_two_fillings`: `unsettledF` holds at a point of an admissible filling exactly when two
+   admissible fillings that differ only in the table of that predicate give it opposite answers there.
+   `gapFreeUnder_sound`; `raisedGap_unsettled`: a raised gap is an unsettled point of the same question.
+10. `decidersAt_iff`: membership is "an author rule on `p` that decides there".
+11. `eval_congr_why`: a model with the same domains and constants that agrees on the `why` atoms gives the
+    formula the same value. Equalities are part of `why` for display (A4); they hold in every such model.
 
 Fixtures (`#guard` in `Findings/Examples.lean`, hand-written expectations):
 
@@ -584,18 +702,21 @@ Fixtures (`#guard` in `Findings/Examples.lean`, hand-written expectations):
 |---|---|---|
 | fd1 | agent-policy, `environment.unspecified.lean.json` with `policy.ve`, the record model of action a10 | `decidersAt` gives rules 3 and 14; `clashF 3 14` true |
 | fd2 | the same, record model of a06 | rule 12 applies; `decidersAt` gives rule 24 only |
-| fd3 | the same, rule 19 and a27's model | the raised case "condition and exception both hold" is unsaid |
-| fd4 | the same, rule 11 and a36's model | the near miss "get_secret and not confirmed" is unsaid |
+| fd3 | the same, rule 19 and a27's model | the raised case "condition and exception both hold" is unsettled |
+| fd4 | the same, rule 11 and a36's model | the near miss "get_secret and not confirmed" is unsettled |
 | fd5 | two rules "may if internal", "must not if external", no facts; then with the fact "nothing is both internal and external" | a clash situation without the fact; a model that breaks the fact is refused with it |
 | fd6 | a rule "may if gold and basic", fact "no gold member is basic" | an applies situation without the fact; none can pass with it |
 | fd7 | `nearMisses` of "there is a file such that both A and B" | the two expected formulas, in order |
 | fd8 | `Formula.why` on "there is a file that the action reads and that is in the workspace" at a01's model | the two atoms about that file |
+| fd9 | "by default, refuse; permit if confirmed", a model with an unconfirmed action | the default is reached, the case is not unsettled, and its raised case is no gap ("the default answers here") |
+| fd10 | a declared pair, an obligation rule that holds at the point, no permission rule deciding | the permission is a gap but pair-settled, so not unsettled |
 
 Certificate-side expectations (rule 12 never decides; no dead condition; pair (3, 14) the only clash) are A2's
 fixtures, because they need generated certificates.
 
-Deleted or not duplicated: nothing is deleted in A1. Nothing is copied: `decidesF`, `appliesF` and `raisedGapF`
-reuse `selects`, `applies`, `subst`, `before` and `reachedF`; no new elaboration of rules is written.
+Deleted or not duplicated: nothing is deleted in A1. Nothing is copied: `decidesF`, `appliesF`, `unsettledF` and
+`raisedGapF` reuse `selects`, `applies`, `subst`, `before`, `gapF`, `outcomeBase` and `pairs`; no new
+elaboration of rules is written.
 
 ### A2. Lean: service kinds and the public statements (3–5 h)
 
@@ -605,19 +726,21 @@ Additions to the `norm-defaults` service mode (`lean/VE/NormDefaults/Run.lean`, 
 | Case kind | Extra input | Answer |
 |---|---|---|
 | `norm-defaults-elaborate` | none | gains `finding_targets`: for each author rule the keys `decides:<rule>`, `applies:<rule>`, `raised:<rule>:<k>` with sorts and formula, so that the untrusted provers and searchers get every target from Lean |
-| `norm-defaults-rule` | `rule`, `question` (`decides` or `applies`), `premises`, and either `packages` or `model` with `tuple` | `finding`: `never` with an accepted certificate, `some` with a checked situation, else `unknown` |
-| `norm-defaults-deciders` | `predicate`, `model`, `tuple`, `premises` | `deciders`: the rules that decide there, each with its sign; `clash`: whether two signs occur |
-| `norm-defaults-gaps` | gains optional `rule` with `case`, and `premises` | `raised`: `reachable` or `unknown`; the existing answers unchanged when the new fields are absent |
-| `norm-defaults-conflict` | gains optional `premises` | the existing verdicts, relative to the stated facts |
-| `norm-defaults-why` | `target`, `model`, `tuple` | `atoms`: the list of `Formula.why`, each with its truth value in the model |
+| `norm-defaults-rule` | `rule`, `question` (`decides` or `applies`), `premises`, `allowed_model`, and either `packages` or `model` with `tuple` | `finding`: `never` with an accepted certificate and a checked `allowed_model`, `some` with a checked situation, `facts-inconsistent` with an accepted certificate, else `unknown` |
+| `norm-defaults-deciders` | `predicate` or `pair`, `model`, `tuple`, `premises` | for a predicate, `deciders`: the rules that decide there, each with its sign, and `clash`: whether two signs occur; for a pair, the deciders of each member, whether each member's default or filling answers, and `pair_conflict` |
+| `norm-defaults-gaps` | gains optional `rule` with `case`, `premises` and `allowed_model` | `raised`: `unsettled` with a checked situation, `default-answers` (display only, never a finding) or `unknown`; a "no gap" verdict needs a checked `allowed_model`; the existing answers unchanged when the new fields are absent |
+| `norm-defaults-conflict` | gains optional `premises` and `allowed_model` | the existing verdicts, relative to the stated facts; "conflict-free" needs a checked `allowed_model` |
+| `norm-defaults-why` | `target`, `model`, `tuple` | the objects of each sort, then `equalities`, then `atoms`: the list of `Formula.why`, each with its truth value in the model |
 
 `premises` are formulas over the base vocabulary of `fill U`. A premise that uses a regulated or defined word is
 refused (`InvalidInput`), and a model that breaks a premise is refused (`InvalidModel: premises`), never turned
-into a verdict.
+into a verdict. `allowed_model` is a finite model that must pass the background, `Fill_T` and the premises
+(`allowed_witness_sound`); without one that passes, a universal verdict is `unknown`.
 
 Public statements, one per verdict a caller can receive, each from raw JSON in the pattern of
 `normDefaults_wire_reached_sound`: `normDefaults_wire_never_sound` (appendix), `normDefaults_wire_some_sound`,
-`normDefaults_wire_deciders_sound`, `normDefaults_wire_raised_sound`, `normDefaults_wire_under_sound`.
+`normDefaults_wire_inconsistent_sound`, `normDefaults_wire_deciders_sound`, `normDefaults_wire_pair_sound`,
+`normDefaults_wire_raised_sound`, `normDefaults_wire_under_sound`.
 
 Fixtures: `conformance/norm_defaults_findings.py` with `tests/test_norm_defaults_findings.py`.
 
@@ -626,6 +749,9 @@ Fixtures: `conformance/norm_defaults_findings.py` with `tests/test_norm_defaults
   mutant m1 has no clash and is conflict-free; mutant m5 makes (12, 24) clash at a06.
 - The safety-framework answers N1 (a rule that can never apply through two levels, given a closure sentence) and
   N3 (no dead commitment) as stated-fact fixtures.
+- Vacuity: a `never` question with stated facts that cannot all hold answers `facts-inconsistent`, and without
+  a passing `allowed_model` answers `unknown`, never `never`.
+- fd9 and fd10 through the service: `default-answers` and no `unsettled` answer.
 - Conservativity: every existing `norm-defaults-*` and `norms-*` case of the conformance corpus gives a
   byte-identical answer (corpus A/B of the lean-first gate).
 
@@ -642,9 +768,11 @@ decoders.
 - `usecases/agent-policy/focused.py` moves to `ve/focused.py` unchanged (it has two callers now). It only
   chooses among VE's own tableau rules, and Lean replays what it produces.
 
-**Deleted in this batch:** in `usecases/agent-policy/check.py`, the policy-level loops that build formulas in
-Python from `NormDocument.selection` (lines 554 to 581: opposite-sign pairs, never-deciding rules, dead
-conditions) and the helper `applies_open`. They become calls to `ve.policy_findings`. `results.json` must be
+**Deleted in this batch:** in `usecases/agent-policy/check.py`, lines 554 to 581 only: the policy-level loops
+that build formulas in Python from `NormDocument.selection` (opposite-sign pairs, never-deciding rules, dead
+conditions). They become calls to `ve.policy_findings`. The helper `applies_open` stays (it is still used at
+line 359), and so does `doc.selection` (it feeds the per-tool gap loop at line 584, which is not touched here).
+Both remain until their callers migrate. `results.json` must be
 unchanged in its `pairs`, `never_deciding` and `dead_guards` entries, apart from evidence ids;
 `tests/test_agent_policy_rerun.py` is the gate. The per-action verdicts and the per-tool gap loop are not
 touched here; they belong to lean-first batches 13b and 14. If A0 finds that the route refuses `data@0` flags,
@@ -652,17 +780,23 @@ these calls use the flag-free copy the case already ships (`environment.unspecif
 replay does today. The key's answers to these three questions rest on precedence edges and on rule 24's
 condition, not on the flags; the test confirms that or the batch records the difference.
 
-Not duplicated: no selection formula, no "applies" formula, no pair logic and no verdict fold exists in Python
-after this batch. `tools/relay_lint.py` covers the new module.
+Not duplicated: after this batch no Python builds the policy-level findings (opposite-sign pairs, never-deciding
+rules, dead conditions). Python semantic code remains for its unmigrated callers (the table under the ownership
+rule); the experiment cannot reach it, and no repository-wide deletion is claimed. `tools/relay_lint.py` covers
+the new module.
 
 ### A4. Situations in English (2–4 h)
 
-- Python renders the atoms that `norm-defaults-why` returns as fact sentences, with the environment's wordings
-  ("The action reads the file." / "The file is not in the workspace."), and an unsaid atom as the existing
-  sentence "Here the text does not say whether …; this situation answers yes".
+- Python renders what `norm-defaults-why` returns as fact sentences, with the environment's wordings, in a
+  fixed order: first the objects of each sort ("There are two files."), then the equalities ("The file it reads
+  is the file it writes."), then the atoms ("The action reads the file." / "The file is not in the workspace.").
+  An unsaid atom becomes the existing sentence "Here the text does not say whether …; this situation answers
+  yes". `eval_congr_why` holds only with the domains and constants fixed, so the reader is shown what they are.
+  An explanation whose objects or equalities cannot be shown is marked "explanation incomplete".
 - Every rendered sentence is read back by the English reader and must give the same atom, or the situation is
   shown as "not displayable" and the finding keeps its evidence id. Rendering is display; reading back is Lean's
-  where the Lean reader covers the sentence, else the Python reader, stated in the output.
+  where the Lean reader covers the sentence, else the Python reader, stated in the output. In the measured run
+  the sentence kinds shown are part of the English subset that gate O puts under Lean.
 - Fixtures: the situations of fd1 to fd6 as expected English text, with no symbol, bracket or variable letter.
 
 Not duplicated: no new renderer; `ve/english.py`'s rendering entry and the existing legend sentences are used.
@@ -690,10 +824,13 @@ Not duplicated: file handling only. Texts that may not be redistributed stay unt
 
 - The four arm protocols of 5.2 and the reader protocol of 5.3 in `ve_experiments/policy_audit/`, on
   `ve_experiments/llm.py` and `runner.py`. Report parser (strict JSON at the end of the reply).
-- The three writing guides, each at most 5,000 tokens; the two baseline guides go to both plan reviewers for the
-  "make it as strong as you can" review.
-- Development runs on τ² airline and the agent-policy paraphrase; measured tokens per item and arm; the tier is
-  chosen by the rule of section 11 and written into the freeze manifest.
+- The three writing guides, each at most 5,000 tokens, each with the raised-case recipe (5.2); the two baseline
+  guides go to both plan reviewers for the "make it as strong as you can" review.
+- The reader prompts of 5.3: source, rendering and task only.
+- Development runs on τ² airline and the agent-policy paraphrase; measured tokens per item and arm, per
+  adjudication call (one variant, all its reports), and as a share of Astra's plan allowance; the tier is chosen
+  by the rule of section 11 and written into the freeze manifest. Development VE runs use whatever reader `main`
+  has; they are not the measured arm.
 - Fixtures: a full offline pass with scripted model replies for each arm.
 
 Not duplicated: `llm.py` stays the only place that calls a model; the runner's pre-registration gate is used
@@ -705,41 +842,52 @@ as is.
   step (key outside the worktrees, hash recorded).
 - Translation track: reference renderings in three formalisms for the development sections, the agreement
   check on generated situations, the seed and its check.
-- Dry run on τ² airline end to end (its key is not sealed and is committed as a worked example).
+- Dry run on τ² airline end to end (its key is not sealed and is committed as a worked example). The dry run
+  also counts VE's raised-gap findings on the unseeded development text: how many true gaps the 8-report cap
+  competes with on a policy that leaves most near misses open.
+- The cluster check (4.2, step 7) and the materials seal (4.2, step 6) as code.
 - Fixtures: allocation with shortfalls gives the totals of section 3; a variant always has three edits; a
   rejected variant is replaced in the recorded order.
 
 ### B4. Scorer and statistics (3–5 h, no model call)
 
-- Matching (6.2), false-report rates and the matched level (6.3), adjudication input and output (6.4), every
-  table of 6.5, the gate lines of section 9, the verdict rule of section 8 as code.
+- Semantic matching with candidate retrieval (6.2), false-report rates over all reports and the matched level
+  (6.3), adjudication input and output, one call per variant and judge with shuffled reports (6.4), every table
+  of 6.5, the gate mode and gate lines of section 9, the cluster rule, the verdict rule of section 8 as code.
+- The paragraph-spray control arm (6.2).
 - Statistics: the exact sign-flip test, Holm, the policy bootstrap, Wilson intervals, on `ve_experiments/stats.py`
   (extended, not copied).
-- **Known-answer runs with scripted arms**: one that reads the key (recall 100%, no false report); one that
+- **Known-answer runs with scripted arms and scripted judges**: one that reads the key (recall 100%, no false report); one that
   reports nothing; one random; one that always reports the first paragraph. The scorer must give the values
   these imply, and the verdict rule must give "falsified: no headroom" for the first as a model-alone arm.
 - **Power by simulation** under the assumptions of section 7; the table there is replaced by the simulated one.
 
-### B5. Freeze (2 h)
+### B5. Protocol freeze (2 h)
 
-Line 1 becomes `Status: FROZEN`; the copy at `experiments/policy-audit/PREREG.md`; the manifest of hashes
-(this file, guides, prompts, harness, scorer, tool binaries, the Lean service binary, base texts, model ids,
-tier); OpenTimestamps receipt, as for T1c. Both plan reviewers have converged on the frozen text. Only then does
-seeding of scored policies start.
+Only after the checks of section 9, step 0 (gate O, readability, coverage procedure) pass. Line 1 becomes
+`Status: FROZEN`; the copy at `experiments/policy-audit/PREREG.md`; the protocol manifest of hashes (this file,
+guides, prompts, harness, scorer, tool binaries, the Lean service binary and the Lean reader of gate O, model
+ids, tier); OpenTimestamps receipt, as for T1c. The key, variants, allocation and base texts are not in it; they
+go into the materials seal after seeding (4.2, step 6). Both plan reviewers have accepted the revised text. Only
+then does seeding of scored policies start.
 
 ### R1 to R4. Runs
 
 | Step | Content | Stops when |
 |---|---|---|
-| R1 | seeding, validation, sealing; coverage gate; recitation probe; headroom gate | V1 or F1 |
+| R1 | seeding, validation, cluster check, materials seal; coverage gate; recitation probe; headroom gate | V2, V1 or F1 |
 | R2 | formal arms (tier A or B); translation track | a ceiling of section 11 |
 | R3 | adjudication; the scorer opens the key | — |
 | R4 | report in `experiments/policy-audit/RESULTS.md`: every table of 6.5, the verdict, every deviation, the natural-defect list | — |
 
 ### Order and effort
 
-A0 → A1 → A2 → A3 and A4 in parallel. B0 and B1 can start at once; B2 after A3 and B1; B3 after B0; B4 any time;
-B5 after all. About 11 batches and 30 to 50 build hours before R1, reviews not counted.
+A0, B0 and B1 start at once. A1 (the revised stub) after A0; then A2; then A3 and A4 in parallel. B2 after A3
+and B1; B3 after B0. B4's code may start at once; its validation against the semantic matching of 6.2 follows
+this revision. Then the checks of section 9, step 0 (ownership, readability, coverage procedure), including the
+Lean reader work A0 sizes for gate O; B5 after all of them and after both reviewers accept the revised text; then
+R1 (seeding, cluster check, materials seal, gates) and the runs. About 11 batches and 30 to 50 build hours
+before R1, reviews and gate O's reader work not counted; re-estimated after A0.
 
 ## 14. Honest limits
 
@@ -764,22 +912,33 @@ B5 after all. About 11 batches and 30 to 50 build hours before R1, reviews not c
    against the source. H7 measures how often that matters.
 10. **Coverage.** Earlier translations of real texts formalised little (the safety framework: 8.5% of bytes
     CHECKED, most commitments OPEN on open terms). Agent policies are more procedural, but V1 may well fire.
+    The CHECKED-anchor subset of P4 is not an expressible region: CHECKED establishes neither a complete nor a
+    faithful translation.
 11. **Expressiveness.** Time, counting and amounts become tool-supplied facts. A defect that lives in such a
     condition (two deadlines that cannot both be met) is invisible to VE and counts as a miss.
 12. **Size limits.** A long manual may exceed 256 rules. Findings across its parts are lost.
 13. **Proof search.** "Never decides" needs a certificate. If the provers run out, the answer is "unknown" and
     the item is a miss for the checked sub-arm.
 14. **The matched level is set on the scored data.** Every arm gets the same advantage from that.
-15. **One reading.** Unless E3 lands first, the one-reading check of rule blocks is the Python reader's.
+15. **One reading.** The measured run needs Lean-owned admission of the English subset it uses (gate O). Until
+    that exists, only a labelled pilot on the Python reader can run, and the measured run waits. Python
+    semantic paths remain on `main` for other callers (section 13); the experiment is guarded from them, but they
+    are not deleted.
 16. **Budget.** Tier B weakens the replication to gaps on five policies.
-17. **This draft's own gaps:** licences re-check pending; Lean statements not elaborated; power figures by hand.
+17. **Clusters.** If seeding leaves fewer than 8 policies with 3 gap items, the gap claim is void (V2), whatever
+    the arms would have shown.
+18. **This draft's own gaps:** licences re-check pending; Lean statements not elaborated; power figures by hand;
+    the size of gate O's reader work unknown until A0.
 
 ## 15. Questions for the DRI
 
 1. Arm models: Opus 5.5 and GPT-6 Sol as planned, with Fable and Astra as seeders, judges and cross-checks? The
    alternative (Fable and Astra as arms) would test the strongest models everywhere but leaves no strong seeder
    outside the arms, and Astra's allowance is small.
-2. Freeze before or after E3 moves rule-block English to Lean (section 12)?
+2. ~~Freeze before or after E3 moves rule-block English to Lean (section 12)?~~ **Resolved by the DRI ruling
+   (2026-10-06):** the measured VE arm uses Lean-owned admission for the English subset it uses (E2/E3 or an
+   equivalent scoped delivery); full E3 does not block development or A0, B0 and B1; gate O blocks the measured
+   run (sections 9 and 12).
 3. The Claude Code page has no open licence. Use it by reference as planned, or drop it for the reserve?
 4. May Astra's steps use the lead's held Codex reset if the plan allowance runs short?
 5. Should the lead or another person check a sample of adjudicated reports (limit 4)?
@@ -787,7 +946,7 @@ B5 after all. About 11 batches and 30 to 50 build hours before R1, reviews not c
 ## Deviations
 
 Empty at plan time. A0's probe results and every later change go here, each with date, section, old text, new
-text and reason.
+text and reason. (Draft 2 is a pre-freeze revision, described under the title, not a deviation.)
 
 ## Appendix: Lean stub (not elaborated; batch A0 elaborates it first)
 
@@ -800,18 +959,26 @@ import VE.NormDefaults.Replay
 namespace VE
 universe u
 
-/-- A small set of ground atoms that settles the value of a formula in a finite model:
-enough to show a reader, and any model that agrees on it gives the same value. -/
+/-- One fact shown to a reader: a ground atom, or whether two objects are the same. -/
+inductive WhyFact (α : Type u) where
+  | atom (p : String) (args : List α)
+  | eq (v w : α)
+
+/-- A small set of facts that settles the value of a formula in a finite model: enough to
+show a reader, and any model with the same domains and constants that agrees on its atoms
+gives the same value. Equalities are kept for the reader; they hold in every such model. -/
 def Formula.why {α : Type u} [DecidableEq α] (M : FiniteModel α) (ρ : List α) :
-    Formula → List (String × List α)
+    Formula → List (WhyFact α)
   | .top => []
   | .bottom => []
-  | .eq _ _ => []
+  | .eq t s => match t.denote M.asStructure ρ, s.denote M.asStructure ρ with
+      | some v, some w => [.eq v w]
+      | _, _ => []
   | .unary p t => match t.denote M.asStructure ρ with
-      | some v => [(p, [v])]
+      | some v => [.atom p [v]]
       | none => []
   | .binary p t s => match t.denote M.asStructure ρ, s.denote M.asStructure ρ with
-      | some v, some w => [(p, [v, w])]
+      | some v, some w => [.atom p [v, w]]
       | _, _ => []
   | .not a => a.why M ρ
   | .and a b =>
@@ -829,7 +996,7 @@ def Formula.why {α : Type u} [DecidableEq α] (M : FiniteModel α) (ρ : List �
 
 theorem eval_congr_why {α : Type u} [DecidableEq α] (M N : FiniteModel α) (ρ : List α) (φ : Formula)
     (hd : N.domains = M.domains) (hc : N.constants = M.constants)
-    (hr : ∀ a ∈ φ.why M ρ, (a.2 ∈ N.relations a.1 ↔ a.2 ∈ M.relations a.1)) :
+    (hr : ∀ p xs, WhyFact.atom p xs ∈ φ.why M ρ → (xs ∈ N.relations p ↔ xs ∈ M.relations p)) :
     φ.eval N ρ = φ.eval M ρ := by
   stub
 
@@ -868,9 +1035,22 @@ def NeverApplies (U : UDoc) (Γ : List VE.Formula) (N : Node) : Prop :=
 def ConflictFreeUnder (U : UDoc) (Γ : List VE.Formula) : Prop :=
   ∀ B : VE.Structure.{u}, Allowed U Γ B → ConflictFree (fill U) B
 
+/-- "A declared pair forces `p`'s answer here": `p` is the permission member of a pair whose
+obligation holds, or the obligation member of a pair whose permission fails. -/
+def pairSettledF (U : UDoc) (p : String) : VE.Formula :=
+  ((pairs U.D.T).filterMap fun pr =>
+      if pr.perm = p then some (outcomeBase (fill U) pr.req)
+      else if pr.req = p then some (.not (outcomeBase (fill U) pr.perm))
+      else none).foldr .or .bottom
+
+/-- "No author rule decides `p` here, no stated default answers, and no pair forces it":
+the text leaves the answer open. -/
+def unsettledF (U : UDoc) (p : String) : VE.Formula :=
+  .and (gapF U p) (.not (pairSettledF U p))
+
 def GapFreeUnder (U : UDoc) (Γ : List VE.Formula) (r : Regulated) : Prop :=
   ∀ B : VE.Structure.{u}, Allowed U Γ B → ∀ vs, VE.TupleTyped B r.sorts vs →
-    ¬ (reachedF U r.name).denote B (tupleVal vs)
+    ¬ (unsettledF U r.name).denote B (tupleVal vs)
 
 /-- The cases a condition names by reversing exactly one of its parts. -/
 def nearMisses : VE.Formula → List VE.Formula
@@ -883,9 +1063,10 @@ def nearMisses : VE.Formula → List VE.Formula
 def raisedCases (N : Node) : List VE.Formula :=
   nearMisses N.guard ++ N.carveOuts.map (fun c => .and N.guard c)
 
-/-- "The `k`-th case that rule `N` raises occurs here, and no rule answers its question." -/
+/-- "The `k`-th case that rule `N` raises occurs here, and the text leaves its question open."
+A case a stated default answers is not open (`gapF` is `.bottom` off `U.unspec`). -/
 def raisedGapF (U : UDoc) (N : Node) (k : Nat) : VE.Formula :=
-  .and (baseOf U N ((raisedCases N).getD k .bottom)) (reachedF U N.pred)
+  .and (baseOf U N ((raisedCases N).getD k .bottom)) (unsettledF U N.pred)
 
 /-- The author rules on `p` that decide at a checked point. -/
 def decidersAt {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (p : String) (vs : List α) :
@@ -909,6 +1090,18 @@ theorem conflict_iff_clash (U : UDoc) (h : WellFormedU U = true) (r : Regulated)
     (conflict (fill U) r).denote B (tupleVal vs) ↔
       ∃ N₁ ∈ rulesOn U.D.T r.name, ∃ N₂ ∈ rulesOn U.D.T r.name,
         N₁.sign = true ∧ N₂.sign = false ∧ (clashF U N₁ N₂).denote B (tupleVal vs) := by
+  stub
+
+/-- An obligation-permission conflict has a named explanation on each side: a deciding
+author rule of the right sign, or the member's own default or filling. -/
+theorem pairConflict_explained (U : UDoc) (h : WellFormedU U = true) (pr : Pair) (hpr : pr ∈ pairs U.D.T)
+    (B : VE.Structure.{u}) (hB : BaseAdmissibleU U B) (vs : List B.Carrier)
+    (typed : VE.TupleTyped B pr.sorts vs)
+    (hc : (pairConflict (fill U) pr).denote B (tupleVal vs)) :
+    ((∃ N ∈ rulesOn U.D.T pr.req, N.sign = true ∧ (decidesF U N).denote B (tupleVal vs)) ∨
+        (reachedF U pr.req).denote B (tupleVal vs)) ∧
+      ((∃ N ∈ rulesOn U.D.T pr.perm, N.sign = false ∧ (decidesF U N).denote B (tupleVal vs)) ∨
+        (reachedF U pr.perm).denote B (tupleVal vs)) := by
   stub
 
 theorem never_decides_sound (U : UDoc) (Γ : List VE.Formula) (N : Node) (c : VE.Tableau.Certificate)
@@ -943,6 +1136,23 @@ theorem applies_witness_sound {α : Type u} [DecidableEq α] (U : UDoc) (Γ : Li
     ¬ NeverApplies.{u} U Γ N := by
   stub
 
+/-- A checked model of the background, `Fill_T` and the stated facts: the universal
+verdicts above are then not empty. -/
+theorem allowed_witness_sound {α : Type u} [DecidableEq α] (U : UDoc) (Γ : List VE.Formula)
+    (M : VE.FiniteModel α) (valid : M.Valid (envAt (fill U) 0))
+    (hb : backgroundValid (fill U) M = true)
+    (hf : (fillPremises U).all (fun φ => φ.eval M []) = true)
+    (hg : Γ.all (fun φ => φ.eval M []) = true) :
+    ∃ B : VE.Structure.{u}, Allowed U Γ B := by
+  stub
+
+/-- "The stated facts cannot all hold." -/
+theorem facts_inconsistent_sound (U : UDoc) (Γ : List VE.Formula) (c : VE.Tableau.Certificate)
+    (ok : VE.Tableau.checkCertificate (envAt (fill U) 0) (Wire.baseBackgroundU U)
+      (.not (Γ.foldr .and .top)) c = true) :
+    ∀ B : VE.Structure.{u}, ¬ Allowed U Γ B := by
+  stub
+
 theorem conflictFreeUnder_sound (U : UDoc) (Γ : List VE.Formula)
     (certs : List (Option VE.Tableau.Certificate))
     (hl : (targets (fill U)).length = certs.length)
@@ -964,14 +1174,26 @@ theorem conflictUnder_witness_sound {α : Type u} [DecidableEq α] (U : UDoc) (�
     ¬ ConflictFreeUnder.{u} U Γ := by
   stub
 
+/-- At a point of an admissible filling, "unsettled" is "two admissible fillings that differ
+only in `r`'s own table give opposite answers there". -/
+theorem unsettled_iff_two_fillings (U : UDoc) (h : WellFormedU U = true) (r : Regulated)
+    (hr : r ∈ U.D.T.regulated) (B : VE.Structure.{u}) (hB : BaseAdmissible U.D B) (F : FillTables U B)
+    (hF : BaseAdmissibleU U (withFill U B F)) (vs : List B.Carrier) (typed : VE.TupleTyped B r.sorts vs) :
+    (unsettledF U r.name).denote (withFill U B F) (tupleVal vs) ↔
+      ∃ F₁ F₂ : FillTables U B, (∀ n, n ≠ unsaidName r.name → F₁ n = F n ∧ F₂ n = F n) ∧
+        BaseAdmissibleU U (withFill U B F₁) ∧ BaseAdmissibleU U (withFill U B F₂) ∧
+        (outcomeBase (fill U) r.name).denote (withFill U B F₁) (tupleVal vs) ∧
+        ¬ (outcomeBase (fill U) r.name).denote (withFill U B F₂) (tupleVal vs) := by
+  stub
+
 theorem gapFreeUnder_sound (U : UDoc) (Γ : List VE.Formula) (r : Regulated) (c : VE.Tableau.Certificate)
     (ok : VE.Tableau.checkCertificate (envAt (fill U) 0) (Wire.baseBackgroundU U ++ Γ)
-      (targetConclusion (Wire.reachedTarget U r)) c = true) :
+      (bindAll r.sorts (.not (unsettledF U r.name))) c = true) :
     GapFreeUnder.{u} U Γ r := by
   stub
 
-theorem raisedGap_reached (U : UDoc) (N : Node) (k : Nat) (B : VE.Structure.{u}) (ρ : VE.Valuation B) :
-    (raisedGapF U N k).denote B ρ → (reachedF U N.pred).denote B ρ := by
+theorem raisedGap_unsettled (U : UDoc) (N : Node) (k : Nat) (B : VE.Structure.{u}) (ρ : VE.Valuation B) :
+    (raisedGapF U N k).denote B ρ → (unsettledF U N.pred).denote B ρ := by
   stub
 
 theorem decidersAt_iff {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (p : String)
@@ -987,7 +1209,9 @@ open Lean
 open VE.Norms
 
 /-- A replayed "never" question: the decoded source, the stated facts, the rule, which
-question (`true` for decides, `false` for applies) and the bound certificate, if any. -/
+question (`true` for decides, `false` for applies), the bound certificate, if any, and
+whether the decoder checked an `allowed_model` against the background, `Fill_T` and the
+stated facts (the checks of `allowed_witness_sound`). -/
 structure FindingReplay where
   s : SourceU
   Γ : List VE.Formula
@@ -995,11 +1219,14 @@ structure FindingReplay where
   mem : N ∈ s.U.D.T.nodes
   question : Bool
   cert : Option VE.Tableau.Certificate
+  allowed : Bool
 
 def FindingReplay.target (g : FindingReplay) : VE.Formula :=
   if g.question then decidesF g.s.U g.N else appliesF g.s.U g.N
 
-def FindingReplay.never (g : FindingReplay) : Bool := match g.cert with
+/-- "Never" needs both the certificate and a checked allowed situation; otherwise the
+answer is `unknown`. -/
+def FindingReplay.never (g : FindingReplay) : Bool := g.allowed && match g.cert with
   | some c => VE.Tableau.checkCertificate (envAt (fill g.s.U) 0) (baseBackgroundU g.s.U ++ g.Γ)
       (bindAll (sortsOf g.s.U.D g.N.pred) (.not g.target)) c
   | none => false
@@ -1011,6 +1238,7 @@ def replayFinding (j : Json) : Except String FindingReplay := by
 theorem normDefaults_wire_never_sound (j : Json) (g : FindingReplay) (h : replayFinding j = .ok g)
     (hn : g.never = true) :
     decodeSourceU (j.getObjValD "environment") (j.getObjValD "norms") = .ok g.s ∧
+      (∃ B : VE.Structure.{0}, Allowed g.s.U g.Γ B) ∧
       (if g.question then NeverDecides.{0} g.s.U g.Γ g.N else NeverApplies.{0} g.s.U g.Γ g.N) := by
   stub
 
