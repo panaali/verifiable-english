@@ -782,12 +782,12 @@
       },
       {
         "file": "lean/VE/Route/Wire.lean",
-        "lines": 666,
-        "sha256": "7a9f5a63f666e2ce0f14d35deeaa25b6af0558f0da958c16392b4159852d2e1a",
+        "lines": 668,
+        "sha256": "c17038603022404f61f416f093840551ef0999a0b5f7612f27bd2d7b7ffd9562",
         "ranges": [
           [
             1,
-            666
+            668
           ]
         ],
         "declarations": [
