@@ -464,9 +464,12 @@ def test_countermodels_agree_three_ways():
         [other] = rust([{"id": "m", "kind": "quantity", "mode": "countermodel", "environment": raw,
                          "premises": premises, "conclusion": conclusion, "model": model}])
         assert other["refutes"] is refutes
-    [unsupported] = rust([{"id": "c", "kind": "quantity", "mode": "certificate", "environment": raw,
-                           "premises": premises, "conclusion": conclusion, "model": model}])
-    assert unsupported["status"] == "error" and "Lean checks" in unsupported["error"]["message"]
+    missing = {"id": "c", "kind": "certificate", "environment": raw,
+               "premises": premises, "conclusion": conclusion, "model": model}
+    [rejected] = lean([missing])
+    [relayed] = rust([{**missing, "kind": "quantity", "mode": "certificate"}])
+    assert relayed["status"] == "error"
+    assert relayed["error"]["message"] == rejected["error"]
 
 
 def test_generic_route_still_rejects_extended_environments():

@@ -83,8 +83,8 @@ def test_document_admission_agrees_three_ways():
     assert labels == [("low", "asserted"), ("high", "bridge:accepts(fed,u_high)")]
     # The report binds the annotated statements, not their erasures.
     assert got["report"]["root"]["meaning_id"] == quantity_meaning_id(env, ORDER)
-    assert other["status"] == "ok" and other["assurance"] == "regeneration-only"
-    assert other["node_meaning_ids"] == [quantity_meaning_id(env, x) for x in (LOW, HIGH, ORDER)]
+    assert other["status"] == "ok" and other["assurance"] == "lean-admitted"
+    assert other == got
 
 
 def mutate(document, path, value):

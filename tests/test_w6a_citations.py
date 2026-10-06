@@ -62,10 +62,8 @@ def test_a_checked_lemma_is_cited_three_ways():
     assert labels == [("low", "asserted"), ("high", BRIDGE), ("order", "cite:fed/order")]
     # The cited statement is bound by its annotated meaning id.
     assert got["report"]["assumptions"][2]["meaning_id"] == quantity_meaning_id(env, ORDER)
-    assert other["status"] == "ok" and other["assurance"] == "regeneration-only", other
-    assert other["lemma_meaning_ids"] == [{"conclusion": quantity_meaning_id(env, ORDER),
-                                           "leaves": [quantity_meaning_id(env, LOW),
-                                                      quantity_meaning_id(env, HIGH)]}]
+    assert other["status"] == "ok" and other["assurance"] == "lean-admitted", other
+    assert other == got
 
 
 def test_the_review_reproducer_now_admits():

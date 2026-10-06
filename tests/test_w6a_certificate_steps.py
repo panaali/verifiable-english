@@ -12,6 +12,7 @@ from __future__ import annotations
 import json
 
 import pytest
+from ve.errors import ResourceLimit
 
 from tests import lean_routes
 
@@ -98,7 +99,11 @@ def test_quantity_certificates_share_the_step_budget(n, fits):
     env = Environment(raw)
     assert check_quantity_certificate(env, premises, quantity(["bottom"]), certificate,
                                       max_steps=100_000)
-    python = check_quantity_certificate(env, premises, quantity(["bottom"]), certificate)
+    if fits:
+        python = check_quantity_certificate(env, premises, quantity(["bottom"]), certificate)
+    else:
+        with pytest.raises(ResourceLimit, match="certificate replay exceeds"):
+            check_quantity_certificate(env, premises, quantity(["bottom"]), certificate)
     [got] = lean_quantity([{"id": "c", "kind": "certificate", "environment": raw,
                             "premises": premises, "conclusion": quantity(["bottom"]),
                             "certificate": certificate}])
@@ -106,13 +111,12 @@ def test_quantity_certificates_share_the_step_budget(n, fits):
         assert python is True
         assert got["status"] == "ok" and got["valid"] is True, got
     else:
-        assert python is False
         assert got["status"] == "error" and got["error"] == STEP_LIMIT and got["valid"] is False, got
 
 
 def test_document_lemma_over_the_step_budget_is_not_established():
     from ve.errors import VEError
-    from ve.quantity_admission import admit_quantity_document
+    from ve.admission import admit_document
     raw = w6_env(12)
     raw["profiles"] = sorted({*raw["profiles"], "documents@1"})
     premises, certificate = w6_certificate(12, raw)
@@ -124,7 +128,7 @@ def test_document_lemma_over_the_step_budget_is_not_established():
                                                   "label": "cite:b/l"}]}}
     message = "AdmissionError: lemma b/l is not established by its certificate"
     with pytest.raises(VEError, match=message):
-        admit_quantity_document(Environment(raw), document)
+        admit_document(Environment(raw), document)
     [got] = lean_quantity([{"id": "d", "kind": "document", "environment": raw, "document": document}])
     assert got["status"] == "error" and got["error"] == message, got
 

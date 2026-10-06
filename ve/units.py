@@ -315,218 +315,21 @@ def render_coordinate(tag, coordinate, env):
     return label + " " + amount if display.get("placement") == "prefix" else amount + " " + label
 
 
-# Statement types keep unit tags and user sorts in separate namespaces, so a
-# sort spelled like a tag is never a quantity type.
-def _unit(tag):
-    return ("unit", tag)
-
-
-def _sort(name):
-    return ("sort", name)
-
-
-def _same(a, b):
-    if a != b:
-        if a[0] == b[0] == "unit":
-            raise TypeMismatch(f"UnitMismatch({a[1]},{b[1]})")
-        raise TypeMismatch(f"TypeMismatch({a[0]} {a[1]},{b[0]} {b[1]})")
-    return a
-
-
-def _need(node, tag, arity):
-    if type(node) is not list or len(node) != arity or node[0] != tag:
-        raise VEError(f"Invalid {tag} node")
-
-
-_TEMPORAL = ("date_on", "date_before", "date_after", "date_no_later", "within_days",
-             "shift_days", "elapsed_days")
-_W6B = ("sunday", "excluded_sundays", "forall_date", "exists_date", "trace_all", "trace_some")
-
-
-class _Elaborator:
-    """Formula and term depth are budgeted separately (each at most 64), as in
-    the frozen checker; every array node counts toward 10,000."""
-
-    def __init__(self, env):
-        if env.unit_schema != SCHEMA:
-            raise UnsupportedProfile("quantities require ve-units@1")
-        self.env = env
-        self.nodes = 0
-
-    def tick(self, depth):
-        self.nodes += 1
-        if self.nodes > 10000 or depth > 64:
-            raise ResourceLimit("Quantity AST exceeds node or depth limit")
-
-    def tag(self, tag):
-        return validate_tag(tag, self.env.units)
-
-    def term(self, node, context=(), depth=1):
-        """Return (type, annotated term, erased term); context lists user sorts."""
-        self.tick(depth)
-        if type(node) is not list or not node or type(node[0]) is not str:
-            raise VEError("Invalid quantity term")
-        op, arity = node[0], len(node)
-        if op == "var" and arity == 2:
-            index = node[1]
-            if type(index) is not int or not 0 <= index < len(context):
-                raise VEError(f"Unbound variable {index!r}")
-            return _sort(context[index]), node, node
-        if op == "var" and arity == 3:
-            raise UnsupportedProfile(NUMBERS2)
-        if op == "const" and arity in (2, 3):
-            name = node[-1]
-            decl = self.env.constants.get(name) if type(name) is str else None
-            if decl is None:
-                raise VEError(f"Unknown constant {name!r}")
-            if decl.sort != INT_SORT:
-                if arity == 3:
-                    raise TypeMismatch(f"Unit on object constant {name}")
-                return _sort(decl.sort), node, node
-            tag = self.tag(node[1]) if arity == 3 else DIMENSIONLESS
-            _same(_unit(tag), _unit(decl.unit or DIMENSIONLESS))
-            return _unit(tag), ["const", tag, name], ["const", name]
-        if op in ("num", "decimal") and arity == 3 or op == "num" and arity == 2:
-            tag = self.tag(node[1]) if arity == 3 else DIMENSIONLESS
-            text = node[-1]
-            coordinate = decimal_from_wire(text) if op == "num" else decimal_exact(text, tag, self.env)
-            return _unit(tag), ["num", tag, str(coordinate)], ["num", str(coordinate)]
-        if op == "date" and arity == 2:
-            # The literal names the reserved tag; it must be declared like any other.
-            tag = self.tag("day")
-            coordinate = day_number(node[1])
-            return _unit(tag), ["num", tag, str(coordinate)], ["num", str(coordinate)]
-        if op in ("add", "scale") and arity in (3, 4):
-            tag = self.tag(node[1]) if arity == 4 else DIMENSIONLESS
-            if op == "scale":
-                coefficient = decimal_from_wire(node[-2])
-                found, q, core = self.term(node[-1], context, depth + 1)
-                _same(_unit(tag), found)
-                if tag == "day":
-                    raise TypeMismatch("Calendar dates cannot be scaled")
-                return _unit(tag), ["scale", tag, str(coefficient), q], ["scale", str(coefficient), core]
-            left, lq, lc = self.term(node[-2], context, depth + 1)
-            right, rq, rc = self.term(node[-1], context, depth + 1)
-            _same(_unit(tag), _same(left, right))
-            if tag == "day":
-                raise TypeMismatch("Calendar dates cannot be added")
-            return _unit(tag), ["add", tag, lq, rq], ["add", lc, rc]
-        raise VEError(f"Invalid quantity term {op}")
-
-    def formula(self, node, context=(), depth=1):
-        self.tick(depth)
-        if type(node) is not list or not node or type(node[0]) is not str:
-            raise VEError("Invalid quantity formula")
-        op = node[0]
-        if op in ("top", "bottom") and len(node) == 1:
-            return node, node
-        if op in ("eq", "lt", "le") and len(node) == 3:
-            lt, lq, lc = self.term(node[1], context)
-            rt, rq, rc = self.term(node[2], context)
-            _same(lt, rt)
-            if op != "eq" and lt[0] != "unit":
-                raise TypeMismatch("Order needs quantity terms")
-            return [op, lq, rq], [op, lc, rc]
-        if op in ("unary", "binary"):
-            if len(node) != (3 if op == "unary" else 4) or type(node[1]) is not str:
-                raise VEError(f"Invalid {op} arity")
-            decl = self.env.predicates.get(node[1])
-            args = node[2:]
-            if decl is None or len(args) != len(decl.arguments):
-                raise VEError(f"Unknown predicate or arity {node[1]}")
-            units = decl.argument_units or {}
-            terms = [self.term(t, context) for t in args]
-            for i, (found, _, _) in enumerate(terms):
-                sort = decl.arguments[i]
-                _same(found, _unit(units.get(str(i), DIMENSIONLESS)) if sort == INT_SORT else _sort(sort))
-            return [op, node[1], *(t[1] for t in terms)], [op, node[1], *(t[2] for t in terms)]
-        if op == "atom":
-            raise UnsupportedProfile("n-ary atoms are not admitted on the order@0 quantity route")
-        if op == "not" and len(node) == 2:
-            q, c = self.formula(node[1], context, depth + 1)
-            return [op, q], [op, c]
-        if op in ("and", "or", "implies") and len(node) == 3:
-            lq, lc = self.formula(node[1], context, depth + 1)
-            rq, rc = self.formula(node[2], context, depth + 1)
-            return [op, lq, rq], [op, lc, rc]
-        if op in ("forall", "exists"):
-            if len(node) in (3, 4) and node[1] == INT_SORT:
-                raise UnsupportedProfile(NUMBERS2)
-            if len(node) != 3 or type(node[1]) is not str or node[1] not in self.env.sorts:
-                raise VEError("Invalid quantity binder")
-            q, c = self.formula(node[2], (node[1], *context), depth + 1)
-            return [op, node[1], q], [op, node[1], c]
-        if op in _TEMPORAL:
-            return self.temporal(node, context)
-        if op in _W6B:
-            raise UnsupportedProfile(NUMBERS2)
-        raise VEError(f"Unknown quantity formula {op}")
-
-    def temporal(self, node, context):
-        op = node[0]
-        _need(node, op, 4 if op in ("within_days", "shift_days", "elapsed_days") else 3)
-        a, aq, ac = self.term(node[1], context)
-        b, bq, bc = self.term(node[2], context)
-        day = _unit(self.tag("day"))
-        _same(a, day); _same(b, day)
-        guard = lambda x: ["and", ["le", ["num", "0"], x], ["le", x, ["num", str(_DATE_MAX)]]]
-        both = ["and", guard(ac), guard(bc)]
-        if op == "date_on": body = ["eq", ac, bc]
-        elif op == "date_before": body = ["lt", ac, bc]
-        elif op == "date_after": body = ["lt", bc, ac]
-        elif op == "date_no_later": body = ["le", ac, bc]
-        elif op == "elapsed_days":
-            v, vq, vc = self.term(node[3], context)
-            _same(v, _unit(self.tag("elapsed_day")))
-            body = ["eq", vc, ["add", bc, ["scale", "-1", ac]]]
-            return [op, aq, bq, vq], ["and", both, body]
-        else:
-            n = decimal_from_wire(node[3])
-            if n < 0:
-                raise VEError("Day offset must be nonnegative")
-            upper = ["add", bc, ["num", str(n)]]
-            body = (["and", ["le", bc, ac], ["le", ac, upper]] if op == "within_days"
-                    else ["eq", ac, upper])
-            return [op, aq, bq, str(n)], ["and", both, body]
-        return [op, aq, bq], ["and", both, body]
-
-
-def _source_nodes(formula):
-    """Every array node of the submitted formula counts toward 10,000, checked
-    before elaboration so a statement's first diagnostic does not depend on where
-    its type errors sit (Lean `jsonNodes`, Rust `budget`)."""
-    count, stack = 0, [formula]
-    while stack:
-        node = stack.pop()
-        if type(node) is list:
-            count += 1
-            if count > 10000:
-                raise ResourceLimit("Quantity AST exceeds node or depth limit")
-            stack.extend(node)
+def _checked_quantity(env, payload):
+    """Lean's W6 typing and erasure answer for one annotated statement."""
+    from .backends.relay import decide
+    [row] = decide("check", [{"id": "quantity", "environment": env.to_dict(),
+                              "quantity": payload}])
+    if row["environment_id"] != env.environment_id:
+        from .errors import CheckerUnavailable
+        raise CheckerUnavailable("CheckerUnavailable: W6 environment identity mismatch")
+    return row
 
 
 def elaborate_quantity(env, payload):
-    """Return canonical annotated payload and regenerated frozen-core formula data."""
-    _fields(payload, ("format", "formula"), ("traces", "Q"))
-    if payload["format"] != "ve-quantity@1":
-        raise VEError("Unsupported quantity format")
-    traces = payload.get("traces", [])
-    if type(traces) is not list:
-        raise VEError("traces must be an array")
-    if traces:
-        # Trace declarations exist only for trace_all/trace_some, which need
-        # integer binders; Rust and Lean gate them identically.
-        raise UnsupportedProfile("trace declarations require the missing numbers2 route")
-    _source_nodes(payload["formula"])
-    q, core = _Elaborator(env).formula(payload["formula"])
-    if "Q" in payload and canonical_json(payload["Q"]) != canonical_json(q):
-        raise VEError("Quantity Q differs from regenerated formula")
-    # The target vocabulary has the same symbols and checker profile, with only
-    # W6 declaration fields removed. The frozen checker validates regenerated
-    # data in that independently identified environment.
-    from .ast import formula_from_data
-    formula_from_data(erased_environment(env), core)
-    return {"format": "ve-quantity@1", "formula": q, "traces": []}, core
+    """Return Lean's canonical annotated statement and erased core."""
+    row = _checked_quantity(env, payload)
+    return {"format": "ve-quantity@1", "formula": row["Q"], "traces": []}, row["core"]
 
 
 def erased_data(data):
@@ -565,9 +368,7 @@ def core_formula(env, payload):
 
 
 def quantity_meaning_id(env, payload):
-    canonical, _ = elaborate_quantity(env, payload)
-    return digest(f"ve-meaning-{env.identity_version}\n",
-                  {"environment_id": env.environment_id, "ast": canonical})
+    return _checked_quantity(env, payload)["meaning_id"]
 
 
 # --- Quantity evidence: a core order certificate wrapped by the annotated binding
@@ -576,14 +377,12 @@ CERTIFICATE_FORMAT = "ve-quantity-certificate@1"
 
 
 def _core_problem(env, premises, conclusion):
-    """Regenerate each annotated statement; return target env, ids and core ASTs."""
+    """Read each admitted core and identity from Lean for the certificate generator."""
     from .ast import formula_from_data
     target = erased_environment(env)
-    admitted = [elaborate_quantity(env, p) for p in (*premises, conclusion)]
-    ids = [digest(f"ve-meaning-{env.identity_version}\n",
-                  {"environment_id": env.environment_id, "ast": canonical})
-           for canonical, _ in admitted]
-    cores = [formula_from_data(target, core) for _, core in admitted]
+    rows = [_checked_quantity(env, p) for p in (*premises, conclusion)]
+    ids = [row["meaning_id"] for row in rows]
+    cores = [formula_from_data(target, row["core"]) for row in rows]
     check_quantity_limits(cores)
     return target, ids, cores
 
@@ -615,35 +414,22 @@ def prove_quantity(env, premises, conclusion, *, max_steps=10_000):
 
 
 def check_quantity_certificate(env, premises, conclusion, certificate, *, max_steps=10_000):
-    """Early Python check mirroring Lean `checkW6Certificate`: the outer binding to
-    the annotated statements, then the core certificate for their regeneration."""
-    from .entailment import check_entailment_certificate
-    target, ids, cores = _core_problem(env, premises, conclusion)
-    if (type(certificate) is not dict or set(certificate) != {
-            "format", "environment_id", "premise_meaning_ids", "conclusion_meaning_id", "core"}
-            or certificate["format"] != CERTIFICATE_FORMAT):
-        raise VEError("Invalid quantity certificate")
-    if (certificate["environment_id"] != env.environment_id
-            or certificate["premise_meaning_ids"] != ids[:-1]
-            or certificate["conclusion_meaning_id"] != ids[-1]):
-        raise VEError("W6 certificate is stale or bound to different annotated statements")
-    return check_entailment_certificate(target, cores[:-1], cores[-1], certificate["core"],
-                                        max_steps=max_steps).valid
+    """Replay the bound quantity certificate through Lean."""
+    from .backends.relay import decide
+    [row] = decide("quantity", [{"id": "certificate", "kind": "certificate",
+                                "environment": env.to_dict(), "premises": premises,
+                                "conclusion": conclusion, "certificate": certificate,
+                                "max_steps": max_steps}])
+    return row["valid"]
 
 
 BUDGET_EXHAUSTED = "formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
 
 
 def quantity_countermodel(env, premises, conclusion, model_data):
-    """Whether finite tables for the target vocabulary refute the regenerated claim.
-
-    An exhausted evaluation budget is UNKNOWN and raises, as in Lean and Rust;
-    it is never reported as "does not refute"."""
-    from .model import FiniteModel
-    from .search import check_countermodel
-    target, _, cores = _core_problem(env, premises, conclusion)
-    checked = check_countermodel(target, cores[:-1], cores[-1],
-                                 FiniteModel.from_dict(target, model_data))
-    if checked.status == "ResourceLimit":
-        raise ResourceLimit(BUDGET_EXHAUSTED)
-    return checked.valid
+    """Return Lean's checked countermodel verdict."""
+    from .backends.relay import decide
+    [row] = decide("quantity", [{"id": "countermodel", "kind": "countermodel",
+                                "environment": env.to_dict(), "premises": premises,
+                                "conclusion": conclusion, "model": model_data}])
+    return row["refutes"]

@@ -6,7 +6,7 @@ from tests.test_w6a_route_limits import fol, lean as lean_route, model, rust as 
 from tests.test_w6a_review_regressions import raw_environment
 from ve import Environment
 from ve.ast import document_from_data
-from ve.errors import ResourceLimit, SyntaxError
+from ve.errors import ResourceLimit, SyntaxError, VEError
 from ve.units import elaborate_quantity, quantity_countermodel
 
 
@@ -40,6 +40,8 @@ def test_numeral_limit_counts_characters_on_all_routes(text, coefficient, route)
         [lean_result] = lean_route([lean_case])
         [rust_result] = rust_route([case])
     else:
+        if malformed and not limited:
+            expected = VEError  # W6 uses Lean's canonical InvalidInput code.
         raw = raw_environment({})
         tagged = ["scale", text, ["num", "0"]] if coefficient else ["num", text]
         payload = quantity(["eq", tagged, ["num", "0"]])
@@ -66,7 +68,7 @@ def test_numeral_limit_counts_characters_on_all_routes(text, coefficient, route)
         [rust_result] = rust_quantity([rust_case])
 
     if expected:
-        code = "ResourceLimit" if limited else "SyntaxError"
+        code = "ResourceLimit" if limited else "InvalidInput" if route.startswith("quantity") else "SyntaxError"
         assert lean_result["status"] == "error", lean_result
         assert ("ResourceLimit" in lean_result["error"]) == limited, lean_result
         assert rust_result["status"] == "error" and rust_result["error"]["code"] == code, rust_result
