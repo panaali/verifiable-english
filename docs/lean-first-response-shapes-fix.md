@@ -62,6 +62,13 @@ Each seed was applied to the worktree, checked in the foreground, and removed:
    The build accepted the weakened skeleton; the prime-environment regression
    test failed.
 
+4. `Skeleton.lean`: extract every `enum` as `any`. The `ResponseShape` build
+   failed: lemmas stated against schema domains (`rejectionCode_fits`) no
+   longer type-check.
+5. `Skeleton.lean`: extract a non-string `const` as `any`. The build accepted
+   the weaker skeleton; `tests/test_enum_domains.py::test_every_field_keeps_its_domain`
+   failed on the opposite-Boolean and `BOGUS` probes.
+
 The two reported encoder mutations were also checked directly: removing
 `arguments` from `decisionEntry`, and replacing `environment_prime` with
 `{}`. Both made their Lean encoder-shape builds fail.
