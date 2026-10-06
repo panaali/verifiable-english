@@ -72,6 +72,7 @@ TRUSTED = (
     "lean/VE/EnglishGrammar/Lexer.lean",
     "lean/VE/EnglishGrammar/Lexicon.lean",
     "lean/VE/EnglishGrammar/Policy.lean",
+    "lean/VE/EnglishGrammar/Advice.lean",
     "lean/VE/EnglishGrammar/Syntax.lean",
     "lean/VE/EnglishGrammar/Catalogue.lean",
     "lean/VE/EnglishGrammar/Rules.lean",

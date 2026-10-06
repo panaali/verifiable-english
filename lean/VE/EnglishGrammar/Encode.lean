@@ -120,6 +120,42 @@ def regulatedView (environment : Json) : Except String Json := do
     pure (environment.setObjVal! "vocabulary" (vocabulary.setObjVal! "predicates" (Json.mkObj stripped)))
   else pure environment
 
+/-- The norm-defaults profile affects defaults, not formula typing. The modal form reads the
+same placeholder as the source decoder, while the submitted environment remains the identity. -/
+def normDefaultsView (environment : Json) : Except String Json := do
+  let vocabulary ← environment.getObjVal? "vocabulary"
+  let predicates ← VE.Bridge.fields (← vocabulary.getObjVal? "predicates")
+  let predicates := predicates.map fun (p, entry) =>
+    let entry := match entry.getObjVal? "regulated" with
+      | .ok r => if r.getObjValD "default" == .str "unspecified" then
+          entry.setObjVal! "regulated" (r.setObjVal! "default" (.str "deny")) else entry
+      | .error _ => entry
+    (p, entry)
+  let profiles := (← VE.Route.Gate.profilesOf environment).erase "norm-defaults@0"
+  pure ((environment.setObjVal! "profiles" (toJson profiles)).setObjVal! "vocabulary"
+    (vocabulary.setObjVal! "predicates" (Json.mkObj predicates)))
+
+/-- Soft declarations carry ranks and instruction links, not argument sorts. -/
+def softNormsView (environment : Json) : Except String Json := do
+  let vocabulary ← environment.getObjVal? "vocabulary"
+  let predicates ← VE.Bridge.fields (← vocabulary.getObjVal? "predicates")
+  let predicates := predicates.map fun (p, entry) =>
+    (p, VE.Risk.Wire.dropField "instruction_of" entry)
+  let vocabulary := (VE.Risk.Wire.dropField "soft" vocabulary).setObjVal! "predicates" (Json.mkObj predicates)
+  let profiles := (← VE.Route.Gate.profilesOf environment).erase "soft-norms@0"
+  pure ((environment.setObjVal! "profiles" (toJson profiles)).setObjVal! "vocabulary" vocabulary)
+
+/-- W6 annotations are checked on the submitted environment and absent from the formula typing view. -/
+def unitsView (environment : Json) : Except String Json := do
+  let vocabulary ← environment.getObjVal? "vocabulary"
+  let predicates := VE.Risk.Wire.mapEntries (VE.Risk.Wire.dropField "argument_units")
+    (vocabulary.getObjValD "predicates")
+  let constants := VE.Risk.Wire.mapEntries (fun e => VE.Risk.Wire.dropField "unit"
+    (VE.Risk.Wire.dropField "verbalisation" e)) (vocabulary.getObjValD "constants")
+  let vocabulary := (vocabulary.setObjVal! "predicates" predicates).setObjVal! "constants" constants
+  let environment := VE.Risk.Wire.dropField "units" (VE.Risk.Wire.dropField "unit_schema" environment)
+  pure (environment.setObjVal! "vocabulary" vocabulary)
+
 /-- The typing view of an environment (S3 spec 2.3, part 2): `riskView` under `risk@0`, then
 `alternativesView` under `alternatives@0`, then `regulatedView` under `norms@0`. An environment without these
 profiles is its own view. -/
@@ -127,6 +163,9 @@ def typingView (environment : Json) : Except String Json := do
   let ps := (VE.Route.Gate.profilesOf environment).toOption.getD []
   let env ← if ps.contains "risk@0" then riskView environment else pure environment
   let env ← if ps.contains "alternatives@0" then alternativesView env else pure env
+  let env ← if ps.contains "soft-norms@0" then softNormsView env else pure env
+  let env ← if ps.contains "norm-defaults@0" then normDefaultsView env else pure env
+  let env ← if (environment.getObjVal? "units").isOk && !ps.contains "risk@0" then unitsView env else pure env
   if ps.contains "norms@0" then regulatedView env else pure env
 
 /-- The typed check of a document of encoded formulas against an environment JSON, by the standalone
