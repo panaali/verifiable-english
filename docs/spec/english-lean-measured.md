@@ -1,9 +1,10 @@
 # English in Lean: S0 measurements (partial)
 
 **Status:** S0 deliverable of [english-lean-PLAN.md](english-lean-PLAN.md) section 5, **partial**, 2026-10-03,
-branch `english-lean/py`. Every figure below was measured by a committed tool on this branch; the raw data is
-`conformance/english-lean/s0-report.json`. Nothing here changes a verdict, an identity, a public code or a
-frozen file. Items that S0 still owes are listed in section 10.
+branch `english-lean/py`. The S0 figures below come from `conformance/english-lean/s0-report.json`; the lexicon
+corpus result was refreshed after S3 D9. S0 did not change admission. S3 D9 later changed the risk English
+surface and its lexicon identity; see [the S3 report](english-lean-s3-report.md). Items S0 still owes are in
+section 10.
 
 Tools (no model calls; none is on an admission path):
 
@@ -170,15 +171,10 @@ the fixtures v1 to v12 (`conformance/english-lean/lexicon.json`), and Python sel
 Over 39 environments (the 17 round-trip configurations and 22 use-case environments, with their overlays;
 `conformance/english-lean/lexicon-report.json`):
 
-- **38 are valid.** No V2 to V5 failure: Python's producer never selects a dishonest wording, a misshapen
-  one, a cross-symbol duplicate or a wrong-polarity negative on the corpus.
-- **One fails V1: `usecases/asimov-extended` (risk@0).** risk@0 generates five predicates
-  (`ve/environment.py`), and Python's vocabulary gives a wording to four. `risk__more_severe` has none, so
-  under the literal V1 ("exactly one entry for each … predicate … including the symbols a profile block
-  generates") every text of that environment would be refused as `invalidGrammar lexicon`. **For the DRI:**
-  either V1 exempts profile-generated symbols that have no English form (a tier B wording change of 2.9),
-  or S3 adds a fixed wording for `risk__more_severe` (a change of the English surface, through the delta
-  process). Until then the shadow comparison must list this environment.
+- **All 39 are valid after S3 D9.** Python's producer supplies the fixed wording for `risk__more_severe` in
+  `usecases/asimov-extended`; its selected lexicon now passes V1. No environment fails V2 or V3, including
+  modal and subject-first checks, or V4 and V5. The committed report is recomputed in
+  `tests/test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon`.
 - **`wordingKey`:** spec 2.9's port (fold of 5.8, whitespace and hyphen runs) equals Python's
   `wording_key` on every selected wording of the corpus. They differ outside ASCII: Python uses
   `str.casefold` (`Groß` gives `gross`), the Lean fold leaves `ß`. No corpus wording has such a letter; O5's
