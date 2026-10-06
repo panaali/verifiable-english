@@ -76,6 +76,7 @@ import threading
 import time
 
 from ..errors import CheckerUnavailable, ResourceLimit, VEError
+from ..environment_wire import EncodedEnvironment
 from .service_schema import MODES, Invalid, check_handshake, check_response
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -857,11 +858,11 @@ def _encode(cases: list) -> list[_Sent]:
     sent = []
     for case in cases:
         environment = case.get("environment") if type(case) is dict and HANDLE_KEY not in case else None
-        if type(environment) is not dict:
+        if not isinstance(environment, dict):
             sent.append(_Sent(case, _dumps(case)))
             continue
         if id(environment) not in texts:
-            text = _dumps(environment)
+            text = environment.text if isinstance(environment, EncodedEnvironment) else _dumps(environment)
             texts[id(environment)] = (text, case_digest(text))
         text, digest = texts[id(environment)]
         rest = {key: value for key, value in case.items() if key != "environment"}

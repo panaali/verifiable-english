@@ -172,6 +172,22 @@ def _rust_case():
             "ast": [["top"]]}
 
 
+def test_adapter_environment_is_encoded_once_and_immutable():
+    from ve.backends.lean_runner import cached_route_environment, route_environment
+    from ve.environment import Environment
+    env = Environment(POLICY)
+    lean = cached_route_environment(env)
+    rust = rust_jsonl.cached_rust_environment(env)
+    assert cached_route_environment(env) is lean
+    assert rust_jsonl.cached_rust_environment(env) is rust
+    assert json.loads(lean.text) == route_environment(env)
+    assert json.loads(rust.text) == rust_jsonl.rust_environment(env)
+    with pytest.raises(TypeError):
+        lean["vocabulary"]["sorts"].clear()
+    with pytest.raises(TypeError):
+        rust["profiles"].append("bogus@0")
+
+
 def _checkers():
     return [checker for idle in rust_jsonl._idle.values() for checker in idle]
 
@@ -236,6 +252,44 @@ def test_a_rust_process_that_writes_two_records_is_no_answer(rust, tmp_path):
         rust_jsonl.run(_rust_case(), executable=binary, timeout=HANG_TIMEOUT,
                        expected_sha256=hashlib.sha256(binary.read_bytes()).hexdigest())
     assert not _checkers()
+
+
+def test_rust_retry_keeps_the_original_deadline(monkeypatch):
+    from types import SimpleNamespace
+    rust_jsonl._close_all()
+    clock = [0.0]
+    waits = []
+
+    class FakeChecker:
+        instances = 0
+
+        def __init__(self, argv):
+            self.index = FakeChecker.instances
+            FakeChecker.instances += 1
+            self.closed = False
+
+        def usable(self):
+            return True
+
+        def exchange(self, data, timeout):
+            waits.append(timeout)
+            if self.index == 0:
+                clock[0] = 0.8
+                raise OSError("reused process ended")
+            return b'{"id":"x","status":"ok","well_typed":true}'
+
+        def close(self):
+            self.closed = True
+
+    monkeypatch.setattr(rust_jsonl, "time", SimpleNamespace(monotonic=lambda: clock[0]))
+    monkeypatch.setattr(rust_jsonl, "_Checker", FakeChecker)
+    argv = ["fake", "jsonl", "-"]
+    rust_jsonl._idle[tuple(argv)] = [FakeChecker(argv)]
+    completed = rust_jsonl._run_checker(argv, input=b"{}\n", timeout=1.0)
+    rust_jsonl._release(completed, valid=False)
+    assert waits[0] == 1.0
+    assert 0.19 < waits[1] < 0.21
+    assert completed._checker.closed
 
 
 # -- F3: the same Background request is asked once

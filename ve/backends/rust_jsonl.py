@@ -23,6 +23,7 @@ import time
 
 from ..errors import ResourceLimit
 from .diagnostics import require_ok
+from ..environment_wire import EncodedEnvironment, encoded_environment
 from .lean_service import CheckerUnavailable, _decode_json, configured_seconds, executable_sha256
 from .service_schema import Compiler, Context, Invalid
 
@@ -269,6 +270,10 @@ def rust_environment(env) -> dict:
     return data
 
 
+def cached_rust_environment(env) -> dict:
+    return encoded_environment(env, "rust", lambda: rust_environment(env))
+
+
 def run(case: dict, *, executable: str | os.PathLike | None = None,
         timeout: float | None = None, expected_sha256: str | None = None) -> dict:
     """Run one case and return its checked record, or a classified error.
@@ -292,7 +297,14 @@ def run(case: dict, *, executable: str | os.PathLike | None = None,
     if digest not in allowed:
         raise CheckerUnavailable(f"CheckerUnavailable: Rust executable hash mismatch: {binary} "
                                  "(build it with python3 tools/rust_build.py)")
-    data = json.dumps(case, ensure_ascii=False, separators=(",", ":")).encode() + b"\n"
+    environment = case.get("environment") if type(case) is dict else None
+    if isinstance(environment, EncodedEnvironment):
+        rest = {key: value for key, value in case.items() if key != "environment"}
+        prefix = json.dumps(rest, ensure_ascii=False, separators=(",", ":"))
+        encoded = prefix[:-1] + ',"environment":' + environment.text + "}"
+    else:
+        encoded = json.dumps(case, ensure_ascii=False, separators=(",", ":"))
+    data = encoded.encode() + b"\n"
     if len(data) > MAX_LINE_BYTES:
         raise ResourceLimit(f"Rust case exceeds {MAX_LINE_BYTES} bytes")
     try:
