@@ -7,11 +7,12 @@ import Lean.ToExpr
 
 A `Skel` is what a `Shape` says about the fields of the objects in a value: for each object
 its allowed fields (each with the skeleton of its value), the fields it requires and the
-fields it forbids, through arrays, alternatives and references; where a field's presence
-depends on another field's string value (an `if`/`then`/`else`), that value; status domains;
-and where it depends on the request case (an `if` over `x-case`), that condition (`CaseCond`). Everything
-else a shape checks (patterns, numbers, echoes, counts, grammars without objects) is `any`
-here, and a value the runner copies from the request (`Shape.copied`) is `any`.
+fields it forbids, through arrays, alternatives and references; the values every `enum` and
+`const` allows, wherever it is (a field's domain, or the value another field's presence depends on
+in an `if`/`then`/`else`); and where a field depends on the request case (an `if` over `x-case`),
+that condition (`CaseCond`). Everything else a shape checks (patterns, numbers, echoes, counts,
+grammars without objects) is `any` here, and a value the runner copies from the request
+(`Shape.copied`) is `any`.
 An encoded environment instead retains an encoder obligation: its value is the prime
 environment of its source, and every generated predicate entry fits the entry shape
 extracted from the environment schema. The decoded source fields remain the request decoder's.
@@ -211,6 +212,28 @@ theorem getObjVal_setObjVal {j : Json} (hj : ∀ m, j = .obj m → m.WF) {m : St
     simpa [hne] using h
   rw [this]
 
+/-- A JSON scalar other than a string, as a `const` or an `enum` member gives it. -/
+inductive Lit where
+  | null
+  | bool (b : Bool)
+  | num (mantissa : Int) (exponent : Nat)
+  deriving Inhabited, Repr, BEq, Lean.ToExpr
+
+namespace Lit
+
+def json : Lit → Json
+  | .null => .null
+  | .bool b => .bool b
+  | .num m e => .num ⟨m, e⟩
+
+def of? : Json → Option Lit
+  | .null => some .null
+  | .bool b => some (.bool b)
+  | .num x => some (.num x.mantissa x.exponent)
+  | _ => none
+
+end Lit
+
 inductive Skel where
   /-- Any value. -/
   | any
@@ -218,6 +241,8 @@ inductive Skel where
   | nothing
   /-- A string among these. -/
   | strIn (vs : List String)
+  /-- Exactly this scalar. -/
+  | lit (l : Lit)
   /-- Any value but a string among these. -/
   | strNotIn (vs : List String)
   /-- A value whose JSON type (`ResponseShape.kind`) is not this one. -/
@@ -263,6 +288,7 @@ end Skel
 inductive Fits (c : Json) : Skel → Json → Prop where
   | any (v : Json) : Fits c .any v
   | strIn {vs : List String} {s : String} : s ∈ vs → Fits c (.strIn vs) (.str s)
+  | lit (l : Lit) : Fits c (.lit l) l.json
   | strNotIn {vs : List String} {v : Json} : (∀ s, v = .str s → s ∉ vs) → Fits c (.strNotIn vs) v
   | kindNot {k : String} {v : Json} : kind v ≠ k → Fits c (.kindNot k) v
   | obj {fields : List (String × Skel)} {extra : Option Skel} {required absent : List String}
@@ -437,6 +463,13 @@ theorem strNotIn_lit {vs : List String} {s : String} (h : vs.contains s = false)
     cases ht
     simpa using h
 
+/-- A list of strings (`toJson`), each among `vs`. -/
+theorem toJsonStrs {vs ss : List String} (h : ∀ s ∈ ss, s ∈ vs) : Fits c (.arr [] (.strIn vs)) (toJson ss) := by
+  refine Fits.arr fun i hi => ?_
+  simp only [Skel.item, List.getD_nil]
+  simp only [toJson, Array.getElem_map, List.getElem_toArray]
+  exact Fits.strIn (h _ (List.getElem_mem _))
+
 /-- An array whose every element fits `items`. -/
 theorem arrOf {items : Skel} {a : Array Json} (h : ∀ x ∈ a, Fits c items x) : Fits c (.arr [] items) (.arr a) :=
   Fits.arr fun i hi => by
@@ -474,6 +507,26 @@ theorem ofAlt {s : Skel} {ss : List Skel} {v : Json} (hs : s ∈ ss) (h : Fits c
 theorem alt_inv {ss : List Skel} {v : Json} (h : Fits c (.alt ss) v) : ∃ s ∈ ss, Fits c s v := by
   cases h with
   | alt hm h => exact ⟨_, hm, h⟩
+
+/-- A field of an object that fits an object skeleton fits that field's skeleton. -/
+theorem getObjVal {fs : List (String × Skel)} {ex : Option Skel} {rq ab : List String} {v w : Json}
+    {k : String} (h : Fits c (.obj fs ex rq ab) v) (hk : v.getObjVal? k = .ok w) : Fits c (Skel.field fs ex k) w := by
+  cases h with
+  | obj hv _ _ =>
+    simp only [Json.getObjVal?] at hk
+    split at hk
+    · cases hk; exact hv _ _ ‹_›
+    · cases hk
+
+/-- Every element of an array that fits an array skeleton fits its `items`. -/
+theorem getArr {items : Skel} {v : Json} {xs : Array Json} (h : Fits c (.arr [] items) v)
+    (hx : v.getArr? = .ok xs) : ∀ x ∈ xs, Fits c items x := by
+  cases h with
+  | arr hv =>
+    cases hx
+    intro x hm
+    obtain ⟨i, hi, rfl⟩ := Array.mem_iff_getElem.mp hm
+    simpa [Skel.item] using hv i hi
 
 theorem onCase_inv {cond : CaseCond} {t e : Skel} {v : Json} (h : Fits c (.onCase cond t e) v) :
     (cond.holds c = true ∧ Fits c t v) ∨ (cond.holds c = false ∧ Fits c e v) := by
@@ -618,10 +671,99 @@ theorem forIn {β : Type} {xs : List β} {init : α} {f : β → α → Except S
       | done s => exact (by cases hv; exact hr)
       | yield s => exact ih hr (fun y hy => hf y (List.mem_cons_of_mem _ hy)) v hv
 
+/-- A `foldlM` keeps an invariant of its accumulator. -/
+theorem foldlM {σ β : Type} {I : σ → Prop} {f : σ → β → Except String σ} (hf : ∀ s x, I s → OkP I (f s x)) :
+    ∀ (xs : List β) (init : σ), I init → OkP I (xs.foldlM f init)
+  | [], _, h0 => OkP.pure h0
+  | x :: xs, init, h0 => by
+    rw [List.foldlM_cons]
+    exact OkP.bind fun s hs => foldlM hf xs s (hf init x h0 s hs)
+
 theorem of {r : Except String α} {Q : α → Prop} (h : OkP Q r) (hq : ∀ v, Q v → P v) : OkP P r :=
   fun v hv => hq v (h v hv)
 
 end OkP
+
+/-- `∀ e, r = .error e → P e`: every error a computation throws satisfies `P` (a diagnostic code
+among a schema's, whatever check fails). -/
+def ErrP {ε α : Type} (P : ε → Prop) (r : Except ε α) : Prop := ∀ e, r = .error e → P e
+
+namespace ErrP
+
+variable {ε α : Type} {P : ε → Prop}
+
+theorem pure {v : α} : ErrP P (Pure.pure v : Except ε α) := by
+  intro e he
+  cases he
+
+theorem ok {v : α} : ErrP P (Except.ok v : Except ε α) := pure
+
+theorem error {e : ε} (h : P e) : ErrP P (Except.error e : Except ε α) := by
+  intro e' he
+  cases he
+  exact h
+
+theorem bind {β : Type} {x : Except ε β} {f : β → Except ε α} (hx : ErrP P x) (hf : ∀ a, ErrP P (f a)) :
+    ErrP P (x >>= f) := by
+  intro e he
+  cases x with
+  | error e' =>
+    have : e' = e := by cases he; rfl
+    subst this
+    exact hx _ rfl
+  | ok a => exact hf a e he
+
+theorem ite {c : Prop} [Decidable c] {a b : Except ε α} (ha : ErrP P a) (hb : ErrP P b) :
+    ErrP P (if c then a else b) := by
+  split
+  · exact ha
+  · exact hb
+
+theorem map {β : Type} {x : Except ε β} {f : β → α} (hx : ErrP P x) : ErrP P (f <$> x) := by
+  intro e he
+  cases x with
+  | error e' =>
+    have : e' = e := by cases he; rfl
+    subst this
+    exact hx _ rfl
+  | ok a => cases he
+
+theorem mapM {β : Type} {f : β → Except ε α} {xs : List β} (h : ∀ x, ErrP P (f x)) : ErrP P (xs.mapM f) := by
+  induction xs with
+  | nil => exact pure
+  | cons x xs ih =>
+    rw [List.mapM_cons]
+    exact bind (h x) fun _ => bind ih fun _ => pure
+
+/-- A `for` loop over a list throws only what its body throws. -/
+theorem forIn {β σ : Type} {xs : List β} {init : σ} {f : β → σ → Except ε (ForInStep σ)}
+    (h : ∀ x s, ErrP P (f x s)) : ErrP P (ForIn.forIn xs init f) := by
+  induction xs generalizing init with
+  | nil => exact pure
+  | cons x xs ih =>
+    simp only [List.forIn_cons]
+    refine bind (h x init) fun r => ?_
+    cases r with
+    | done s => exact pure
+    | yield s => exact ih
+
+/-- A join point `v` of a `do` block (`let k := v; b k`, here `b v`): its body's errors satisfy `P`
+for every argument, and so do the errors of the block that calls it. The body is proved once, not
+once per call (`errp_let`). -/
+theorem jp1 {β γ : Type} {v : β → Except ε γ} {b : (β → Except ε γ) → Except ε α}
+    (hv : ∀ y, ErrP P (v y)) (hb : ∀ k : β → Except ε γ, (∀ y, ErrP P (k y)) → ErrP P (b k)) :
+    ErrP P (b v) := hb v hv
+
+theorem jp2 {β δ γ : Type} {v : β → δ → Except ε γ} {b : (β → δ → Except ε γ) → Except ε α}
+    (hv : ∀ y z, ErrP P (v y z)) (hb : ∀ k : β → δ → Except ε γ, (∀ y z, ErrP P (k y z)) → ErrP P (b k)) :
+    ErrP P (b v) := hb v hv
+
+theorem jp3 {β δ η γ : Type} {v : β → δ → η → Except ε γ} {b : (β → δ → η → Except ε γ) → Except ε α}
+    (hv : ∀ y z w, ErrP P (v y z w))
+    (hb : ∀ k : β → δ → η → Except ε γ, (∀ y z w, ErrP P (k y z w)) → ErrP P (b k)) :
+    ErrP P (b v) := hb v hv
+
+end ErrP
 
 theorem isEmpty_empty : ("" : String).isEmpty = true := rfl
 
@@ -708,6 +850,7 @@ theorem congr {p : CaseCond → Bool} {c c' : Json} (hp : ∀ cond, p cond = tru
   induction h with
   | any v => intro _ _; exact Fits.any v
   | strIn hs => intro _ _; exact Fits.strIn hs
+  | lit l => intro _ _; exact Fits.lit l
   | strNotIn hs => intro _ _; exact Fits.strNotIn hs
   | kindNot hk => intro _ _; exact Fits.kindNot hk
   | obj hv hreq hab ih =>
@@ -800,6 +943,8 @@ def conj : Nat → Skel → Skel → Skel
   | fuel + 1, a, .alt bs => .alt (bs.map (conj fuel a ·))
   | fuel + 1, .onCase c t e, b => .onCase c (conj fuel t b) (conj fuel e b)
   | fuel + 1, a, .onCase c t e => .onCase c (conj fuel a t) (conj fuel a e)
+  | _, .lit a, .lit b => if a == b then .lit a else .all [.lit a, .lit b]
+  | _, .lit a, b | _, b, .lit a => .all [.lit a, b]
   | _, .strIn a, .strIn b => .strIn (a.filter b.contains)
   | _, .strIn a, .strNotIn b => .strIn (a.filter (!b.contains ·))
   | _, .strNotIn a, .strIn b => .strIn (b.filter (!a.contains ·))
@@ -849,6 +994,22 @@ def mkAlt (ss : List Skel) : Skel :=
     | _ => .alt flat
 
 def anyObject : Skel := .obj [] (some .any) [] []
+
+/-- The values an `enum` allows (a `const` is the enum of its value): its strings (`strIn`), its
+other scalars (`lit`), an array whose elements are among an array member's, an object with
+exactly an object member's fields, each among that member's value. -/
+def ofEnum : Nat → List Json → Skel
+  | 0, _ => .any
+  | fuel + 1, vs =>
+    let strs := vs.filterMap fun | .str s => some s | _ => none
+    let others := vs.filterMap fun
+      | .str _ => none
+      | .arr xs => some (.arr [] (ofEnum fuel xs.toList))
+      | j@(.obj _) =>
+        let kvs := (ResponseShape.members j).toList
+        some (.obj (kvs.map fun (k, v) => (k, ofEnum fuel [v])) none (kvs.map (·.1)) [])
+      | j => (Lit.of? j).map .lit
+    mkAlt ((if strs.isEmpty then [] else [.strIn strs]) ++ others)
 
 /-- `any` for an array or object of which the skeleton says nothing more (its elements or fields
 `any`, no field required or forbidden): the fields are what skeletons describe. -/
@@ -952,11 +1113,12 @@ where
         if k == k' then (innerPath fuel inner).map (k :: ·) else none
       | _ => none
 
-/-- The skeleton of a shape in `files`. `cond` marks a condition of an `if`, whose string
-values are kept (a field present exactly when another field has one of some values). -/
-def skeletonOf (files : List File) : Nat → Bool → Shape → StateT Extract (Except String) Skel
-  | 0, _, _ => throw "shape nesting exceeds the skeleton's bound"
-  | fuel + 1, cond, s => do
+/-- The skeleton of a shape in `files`. Every `enum` and `const` keeps its values (`Skel.ofEnum`),
+wherever it is: a field's allowed values, or the condition of an `if` (a field present exactly when
+another field has one of some values). -/
+def skeletonOf (files : List File) : Nat → Shape → StateT Extract (Except String) Skel
+  | 0, _ => throw "shape nesting exceeds the skeleton's bound"
+  | fuel + 1, s => do
     let go := skeletonOf files fuel
     let conj := Skel.conj fuel
     match s with
@@ -965,27 +1127,20 @@ def skeletonOf (files : List File) : Nat → Bool → Shape → StateT Extract (
     | .type ["object"] => pure Skel.anyObject
     | .type ["array"] => pure (.arr [] .any)
     | .type _ => pure .any
-    | .const (.str v) => pure (if cond then .strIn [v] else .any)
-    | .enum vs => pure (match cond, vs.mapM (fun | .str v => some v | _ => none) with
-      | true, some ss => .strIn ss
-      | _, _ => .any)
-    | .const _ => pure .any
+    | .const v => pure (Skel.ofEnum depth [v])
+    | .enum vs => pure (Skel.ofEnum depth vs)
     | .required ks => pure (.obj [] (some .any) ks [])
     | .object ps extra => do
-      let fields ← ps.mapM fun (k, v) => do
-        -- Keep status domains even outside an if/then/else, including domains
-        -- reached through references: each encoder proves its branch's status.
-        let statusDomain := k == "status"
-        pure (k, ← go (cond || statusDomain) v)
+      let fields ← ps.mapM fun (k, v) => do pure (k, ← go v)
       let extra ← match extra with
         | none => pure (some .any)
         | some (.bool false) => pure none
-        | some e => pure (some (← go cond e))
+        | some e => pure (some (← go e))
       pure (.obj fields extra [] [])
-    | .prefixItems ss => do pure (.arr (← ss.mapM (go cond)) .any)
-    | .items x => do pure (.arr [] (← go cond x))
-    | .anyOf ss => do pure (Skel.mkAlt (← ss.mapM (go cond)))
-    | .allOf ss => do pure (Skel.conjAll fuel (← ss.mapM (go cond)))
+    | .prefixItems ss => do pure (.arr (← ss.mapM go) .any)
+    | .items x => do pure (.arr [] (← go x))
+    | .anyOf ss => do pure (Skel.mkAlt (← ss.mapM go))
+    | .allOf ss => do pure (Skel.conjAll fuel (← ss.mapM go))
     | .not (.required [k]) => pure (.obj [] (some .any) [] [k])
     | .not (.anyOf ss) =>
       match ss.mapM (fun | .required [k] => some k | _ => none) with
@@ -995,12 +1150,12 @@ def skeletonOf (files : List File) : Nat → Bool → Shape → StateT Extract (
     | .ite (.onCase x) t e => do
       let some c := caseCondOf files depth x
         | throw "a condition on the request case that skeletons do not describe"
-      pure (.onCase c (← go cond t) (← go cond e))
+      pure (.onCase c (← go t) (← go e))
     | .ite c t e => do
-      let yes ← go true c
+      let yes ← go c
       let no ← negation c
-      let t ← go cond t
-      let e ← go cond e
+      let t ← go t
+      let e ← go e
       if t.isAny && e.isAny then pure .any else pure (Skel.mkAlt [conj yes t, conj no e])
     | .ref target => do
       let st ← get
@@ -1012,7 +1167,7 @@ def skeletonOf (files : List File) : Nat → Bool → Shape → StateT Extract (
         | none => throw s!"unresolved $ref {target}"
         | some x => do
           modify fun st => { st with stack := target :: st.stack }
-          let r ← go cond x
+          let r ← go x
           modify fun st => { st with stack := st.stack.drop 1 }
           pure r
     | .tagged table => do
@@ -1023,8 +1178,8 @@ def skeletonOf (files : List File) : Nat → Bool → Shape → StateT Extract (
     | .fuel _ _ | .echo _ | .equals _ | .length _ | .count _ | .index | .digest | .pattern _
     | .minLength _ | .maxLength _ | .minimum _ | .minItems _ | .maxItems _ | .contains _ | .countWhere _ _ _
     | .onCase _ | .row => pure .any
-    | .zip _ x => do pure (.arr [] (← go cond x))
-    | .rows x => do pure (.arr [] (← go cond x))
+    | .zip _ x => do pure (.arr [] (← go x))
+    | .rows x => do pure (.arr [] (← go x))
     | .select cs => do
       -- The first entry whose condition the case meets gives the shape; no entry, no value.
       let mut out := Skel.nothing
@@ -1032,21 +1187,21 @@ def skeletonOf (files : List File) : Nat → Bool → Shape → StateT Extract (
         let some c := caseCondOf files depth w
           | throw "a selector on the request case that skeletons do not describe"
         -- An entry every case meets (`true`) ends the selection.
-        let k ← go cond t
+        let k ← go t
         out := if c == .all [] then k else .onCase c k out
       pure out
-    | .lean _ x _ => go cond x
+    | .lean _ x _ => go x
     | .copied _ _ => pure .any
     | .encodedEnvironment raw => do
-      let k ← go cond raw
+      let k ← go raw
       let some entry := Skel.environmentEntry depth k
         | throw "the encoded environment has no common generated-predicate entry shape"
       pure (.encodedEnvironment entry)
     | .node _ keywords => do
       let skip := keywords.any fun | .prefixItems _ => true | _ => false
       let parts ← keywords.mapM fun k => match k, skip with
-        | .items x, true => do pure (.arr [] (← go cond x))  -- beside prefixItems: the elements after them
-        | k, _ => go cond k
+        | .items x, true => do pure (.arr [] (← go x))  -- beside prefixItems: the elements after them
+        | k, _ => go k
       let pre := keywords.findSome? fun | .prefixItems ss => some ss | _ => none
       match pre with
       | some ss =>
@@ -1056,7 +1211,7 @@ def skeletonOf (files : List File) : Nat → Bool → Shape → StateT Extract (
         let rest := (parts.zip keywords).filterMap fun
           | (_, .items _) | (_, .prefixItems _) => none
           | (p, _) => some p
-        pure (conj (.arr (← ss.mapM (go cond)) (items.getD .any)) (Skel.conjAll fuel rest))
+        pure (conj (.arr (← ss.mapM go) (items.getD .any)) (Skel.conjAll fuel rest))
       | none => pure (Skel.conjAll fuel parts)
 where
   /-- A skeleton of every value failing the condition `c`, or `any` where none is expressible. -/
@@ -1087,7 +1242,7 @@ def skeleton (files : List File) (target : String) : Except String (Skel × List
   match lookup files target with
   | none => throw s!"unresolved $ref {target}"
   | some s =>
-    let (k, st) ← (skeletonOf files depth false s).run { stack := [target] }
+    let (k, st) ← (skeletonOf files depth s).run { stack := [target] }
     pure (Skel.simp depth k, st.recursive)
 
 end ResponseShape

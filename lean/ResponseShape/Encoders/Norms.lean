@@ -64,7 +64,11 @@ theorem plain_fits (j : Json) (hj : CaseWF j)
     | (have hr := Route.runCase_fits_of (req := j) _ (fun _ h => Common.caseKind_read hobj
           (by rwa [Route.caseKind_setObjVal hj hobj] at h)) _ ‹VE.Route.Run.runCase _ = .ok _›
        exact of_plain_route hp hK hpk hr)
-    | (rcases hK with hK | ⟨hK, rfl⟩ <;> kind_norm <;> (try simp only [VE.Route.Wire.ok]) <;> fits)
+    | (have hr := Route.runCase_fits_of (req := j) _ (fun _ h => Common.caseKind_read hobj
+          (by rwa [Route.caseKind_setObjVal hj hobj] at h)) _ ‹VE.Route.Run.runCase _ = .ok _›
+       rcases hK with hK | ⟨hK, rfl⟩ <;> kind_norm <;> (try simp only [VE.Route.Wire.ok]) <;> fits
+       -- The route's own generators, re-emitted beside the profile premises.
+       all_goals exact Route.background_generators_fit hr hK ‹_› ‹_› _ ‹_›)
 
 theorem runCase_fits (j : Json) (hj : CaseWF j)
     (hp : (usesNormsPath j || Plain.layered (j.getObjValD "environment")) = true) :

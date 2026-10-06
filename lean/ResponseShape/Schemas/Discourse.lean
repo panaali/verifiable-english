@@ -42,7 +42,7 @@ def reference : Shape :=
       closed [
         ("mention", str),
         ("unit", str),
-        ("form", enumS [
+        ("form", copied "the mention's form, copied from the request's document (Discourse.Admission.referencesJson); the client checks it against the forms Wire.decodeForm reads" <| enumS [
           "pronoun",
           "demonstrative",
           "definite",

@@ -48,6 +48,68 @@ macro "okfits" : tactic =>
 end ResponseShape
 
 namespace ResponseShape
+open Lean Meta Elab Tactic
+
+/-- At `ErrP P (let k := v; e)`: for a join point `v` (a function of one to three arguments into
+`Except`), `ErrP.jp1`/`jp2`/`jp3`, its body proved once for every argument; for any other value, `e`
+with `v` in place of `k`. A join point is never copied into the branches that call it. -/
+elab "errp_let" : tactic => withMainContext do
+  let g ← getMainGoal
+  let t ← instantiateMVars (← g.getType)
+  unless t.isAppOfArity ``ErrP 4 do throwError "errp_let: not an ErrP goal"
+  let r := t.appArg!.consumeMData.headBeta
+  let .letE n ty v body _ := r | throwError "errp_let: not a let"
+  let tys ← forallTelescopeReducing ty fun xs res => do
+    let res ← whnfR res
+    unless res.isAppOfArity ``Except 2 && xs.size ≥ 1 && xs.size ≤ 3 do return none
+    let bs ← xs.mapM fun x => do return (← inferType x)
+    -- A dependent join point (a later argument's type naming an earlier one) is unfolded instead.
+    if bs.any (fun b => b.hasAnyFVar fun f => xs.any (·.fvarId! == f)) then return none
+    return some (bs, res.appArg!)
+  let args := t.getAppArgs
+  if let some (bs, γ) := tys then
+    let lemma := match bs.size with | 1 => ``ErrP.jp1 | 2 => ``ErrP.jp2 | _ => ``ErrP.jp3
+    let pf ← mkAppOptM lemma ((#[args[0]!, args[1]!, args[2]!] ++ bs ++ #[γ, v, .lam n ty body .default]).map some)
+    replaceMainGoal (← g.apply pf)
+  else
+    replaceMainGoal [← g.change (mkApp4 (mkConst ``ErrP) args[0]! args[1]! args[2]! (body.instantiate1 v))]
+
+/-- `ErrP P t` with `t` in weak head normal form (a `match` on a known value reduced, `fail` run). -/
+elab "errp_whnf" : tactic => withMainContext do
+  let g ← getMainGoal
+  let t ← instantiateMVars (← g.getType)
+  unless t.isAppOfArity ``ErrP 4 do throwError "errp_whnf: not an ErrP goal"
+  let args := t.getAppArgs
+  replaceMainGoal [← g.change (mkApp4 (mkConst ``ErrP) args[0]! args[1]! args[2]! (← whnf args[3]!))]
+
+/-- Names `disc` the local that the goal's first `match` inspects, to case on it (a pattern such as
+`#[a, b]`, which `split` cannot take apart, reduces once the value is known). -/
+elab "name_disc" : tactic => withMainContext do
+  let t ← instantiateMVars (← getMainTarget)
+  let env ← getEnv
+  let some m := t.find? (fun e => isMatcherAppCore env e) | throwError "name_disc: no match"
+  let some app ← matchMatcherApp? m | throwError "name_disc: no match"
+  let some d := app.discrs.find? (·.isFVar) | throwError "name_disc: no local discriminant"
+  replaceMainGoal [← (← getMainGoal).rename d.fvarId! `disc]
+
+/-- Through a computation's `do` block (join points, binds, conditions, matches, loops, `mapM`, `<$>`)
+down to each call that may throw, left as an `ErrP` goal for the caller's lemmas (`Phases.fail` with
+its code). -/
+macro "errfits" : tactic =>
+  `(tactic|repeat' (first
+    | (errp_let <;> intros)
+    | (with_reducible apply ErrP.pure)
+    | (with_reducible apply ErrP.ok)
+    | (with_reducible apply ErrP.bind <;> try intro _)
+    | (with_reducible apply ErrP.ite)
+    | (with_reducible apply ErrP.map)
+    | (with_reducible apply ErrP.mapM; intro _)
+    | (with_reducible apply ErrP.forIn; intro _ _)
+    | (with_reducible apply ‹∀ _, ErrP _ _›)
+    | (with_reducible apply ‹∀ _ _, ErrP _ _›)
+    | (with_reducible apply ‹∀ _ _ _, ErrP _ _›)
+    | (show ErrP _ _; dsimp -zeta only)
+    | (show ErrP _ _; split)))
 
 theorem not_not_true {b : Bool} (h : ¬ (!b) = true) : b = true := by
   cases b <;> simp_all
@@ -79,22 +141,65 @@ def bound : Nat := 1000000
 
 def strList? (e : Expr) : Option (List String) := (listElems bound e) >>= (·.mapM strLit?)
 
-/-- The names of a list of pairs whose first components are literals. -/
-def names? (e : Expr) : Option (List String) :=
+/-- A list of pairs whose first components are literals: each name with its second component. -/
+def pairs? (e : Expr) : Option (List (String × Expr)) :=
   (listElems bound e) >>= (·.mapM fun p =>
     let p := p.consumeMData
-    if p.isAppOfArity ``Prod.mk 4 then strLit? p.appFn!.appArg! else none)
+    if p.isAppOfArity ``Prod.mk 4 then (strLit? p.appFn!.appArg!).map (·, p.appArg!) else none)
 
-/-- `Skel.keysOk`, on the literals of an object skeleton. -/
-def objAccepts (k : Expr) (keys : List String) : Bool := Id.run do
+/-- The names of a list of pairs whose first components are literals. -/
+def names? (e : Expr) : Option (List String) := (pairs? e).map (·.map (·.1))
+
+/-- A literal JSON scalar: a string, a Boolean (`some b`) or null (`none`). -/
+def jsonLit? (v : Expr) : Option (String ⊕ Option Bool) :=
+  let v := v.consumeMData
+  let bool? (b : Expr) : Option Bool :=
+    if b.isConstOf ``Bool.true then some true else if b.isConstOf ``Bool.false then some false else none
+  if v.isAppOfArity ``Lean.Json.str 1 then (strLit? v.appArg!).map .inl
+  else if v.isAppOfArity ``Lean.Json.bool 1 then (bool? v.appArg!.consumeMData).map (.inr ∘ some)
+  else if v.isConstOf ``Lean.Json.null then some (.inr none)
+  else none
+
+/-- Whether the value `v` is a literal outside the literal domain of the skeleton `s` (`strIn`, or a
+Boolean or null `lit`): an alternative whose field is `s` cannot take it. -/
+def litClash (s v : Expr) : Bool := Id.run do
+  let some lit := jsonLit? v | return false
+  let s := s.consumeMData
+  if s.isAppOfArity ``Skel.strIn 1 then
+    let some vs := strList? s.appArg! | return false
+    return match lit with
+      | .inl x => !vs.contains x
+      | .inr _ => true
+  if s.isAppOfArity ``Skel.lit 1 then
+    let l := s.appArg!.consumeMData
+    let want : Option (Option Bool) :=
+      if l.isConstOf ``Lit.null then some none
+      else if l.isAppOfArity ``Lit.bool 1 then
+        let b := l.appArg!.consumeMData
+        if b.isConstOf ``Bool.true then some (some true) else if b.isConstOf ``Bool.false then some (some false)
+        else none
+      else none
+    return match lit, want with
+      | .inl _, _ => true
+      | .inr x, some w => x != w
+      | .inr _, none => l.isAppOfArity ``Lit.num 2
+  return false
+
+/-- `Skel.keysOk`, on the literals of an object skeleton, and no literal value of `vals` outside
+its field's literal domain. -/
+def objAccepts (k : Expr) (keys : List String) (vals : List (String × Expr) := []) : Bool := Id.run do
   unless k.isAppOfArity ``Skel.obj 4 do return false
   let args := k.getAppArgs
-  let some fs := names? args[0]! | return false
+  let some fps := pairs? args[0]! | return false
+  let fs := fps.map (·.1)
   let extra := args[1]!.isAppOfArity ``Option.some 1
   let some req := strList? args[2]! | return false
   let some ab := strList? args[3]! | return false
   keys.eraseDups.length == keys.length && keys.all (fun x => fs.contains x || extra) &&
-    req.all keys.contains && ab.all (fun x => !keys.contains x)
+    req.all keys.contains && ab.all (fun x => !keys.contains x) &&
+    vals.all fun (key, v) => match fps.lookup key with
+      | some s => !litClash s v
+      | none => true
 
 /-- The skeleton and value of a goal `Fits c k v`, the skeleton in weak head normal form. -/
 def fitsGoal : TacticM (Expr × Expr) := do
@@ -106,52 +211,54 @@ def fitsGoal : TacticM (Expr × Expr) := do
 /-- The field names of an object value: `Json.mkObj l` with literal names, or
 `(Json.mkObj l).setObjVal! key x` (with `key` in place of any field of that name); whether it is
 the latter. -/
-def valueKeys (v : Expr) : MetaM (Bool × List String) := do
+def valueKeys (v : Expr) : MetaM (Bool × List String × List (String × Expr)) := do
   if v.isAppOfArity ``Lean.Json.setObjVal! 3 then
     let args := v.getAppArgs
     let inner := args[0]!.consumeMData
     unless inner.isAppOfArity ``Lean.Json.mkObj 1 do throwError "fits_pick: setObjVal! of another value"
     let some key := strLit? args[1]! | throwError "fits_pick: the set field's name is not a literal"
-    let some ks := names? inner.appArg! | throwError "fits_pick: field names are not literals"
-    pure (true, key :: ks.filter (· != key))
+    let some ps := pairs? inner.appArg! | throwError "fits_pick: field names are not literals"
+    let ps := (key, args[2]!) :: ps.filter (·.1 != key)
+    pure (true, ps.map (·.1), ps)
   else
     unless v.isAppOfArity ``Lean.Json.mkObj 1 do throwError "fits_pick: not Json.mkObj"
-    let some ks := names? v.appArg! | throwError "fits_pick: field names are not literals"
-    pure (false, ks)
+    let some ps := pairs? v.appArg! | throwError "fits_pick: field names are not literals"
+    pure (false, ps.map (·.1), ps)
 
 /-- Whether some object skeleton reachable from `k` through conditions on the case and
-alternatives has the fields `keys`. -/
-def reaches (keys : List String) : Nat → Expr → MetaM Bool
+alternatives has the fields `keys` and takes the literal values `vals`. -/
+def reaches (keys : List String) (vals : List (String × Expr)) : Nat → Expr → MetaM Bool
   | 0, _ => pure false
   | fuel + 1, k => do
     let k ← whnf k
-    if objAccepts k keys then return true
+    if objAccepts k keys vals then return true
     if k.isAppOfArity ``Skel.onCase 3 then
       let args := k.getAppArgs
-      return (← reaches keys fuel args[1]!) || (← reaches keys fuel args[2]!)
+      return (← reaches keys vals fuel args[1]!) || (← reaches keys vals fuel args[2]!)
     if k.isAppOfArity ``Skel.alt 1 then
       let some members := listElems bound k.appArg! | return false
       for m in members do
-        if ← reaches keys fuel m then return true
+        if ← reaches keys vals fuel m then return true
     return false
 
-/-- Which branch of `.onCase cond t e` has the fields `keys`: `t` (true), `e` (false) or neither. -/
-def caseBranch (k : Expr) (keys : List String) : MetaM (Option Bool) := do
+/-- Which branch of `.onCase cond t e` has the fields `keys` (with the literal values `vals`): `t`
+(true), `e` (false) or neither. -/
+def caseBranch (k : Expr) (keys : List String) (vals : List (String × Expr)) : MetaM (Option Bool) := do
   unless k.isAppOfArity ``Skel.onCase 3 do return none
   let args := k.getAppArgs
-  if ← reaches keys bound args[1]! then return some true
-  if ← reaches keys bound args[2]! then return some false
+  if ← reaches keys vals bound args[1]! then return some true
+  if ← reaches keys vals bound args[2]! then return some false
   return none
 
 /-- At `Fits c k v` for an object `v` with literal field names: when `k` is an alternative, the
-first member whose fields `v`'s names pass (an object skeleton, or a branch of a condition on the
+first member whose fields `v`'s names and literal values pass (an object skeleton, or a branch of a condition on the
 request case); when `k` is such a condition, the branch they pass, leaving the condition on the
 case `c` as a goal. -/
 elab "fits_pick" : tactic => withMainContext do
   let (k, v) ← fitsGoal
-  let (set, keys) ← valueKeys v
+  let (set, keys, vals) ← valueKeys v
   if k.isAppOfArity ``Skel.onCase 3 then
-    match ← caseBranch k keys with
+    match ← caseBranch k keys vals with
     | some true => evalTactic (← `(tactic| refine Fits.onCaseT ?_ ?_))
     | some false => evalTactic (← `(tactic| refine Fits.onCaseE ?_ ?_))
     | none => throwError "fits_pick: no branch of the condition has the fields {keys}"
@@ -161,14 +268,105 @@ elab "fits_pick" : tactic => withMainContext do
   for (m, i) in members.zipIdx do
     let m ← whnf m
     let n := Syntax.mkNumLit (toString i)
-    if objAccepts m keys then
+    if objAccepts m keys vals then
       if set then evalTactic (← `(tactic| refine Fits.setObjAlt $n rfl (by keys_ok) ?_ ?_))
       else evalTactic (← `(tactic| refine Fits.mkObjAlt $n rfl (by keys_ok) ?_))
       return
-    if (← caseBranch m keys).isSome then
+    if (← caseBranch m keys vals).isSome then
       evalTactic (← `(tactic| refine Fits.ofAlt (List.mem_of_getElem? (i := $n) rfl) ?_))
       return
   throwError "fits_pick: no member of the alternative has the fields {keys}"
+
+/-- Whether `t` is an enumeration: an inductive type without parameters or indices, not recursive,
+whose constructors' fields are enumerations (`Bool`, `Act`, `Status` with its `settled (b : Bool)`). -/
+def enumLike : Nat → Expr → MetaM Bool
+  | 0, _ => pure false
+  | fuel + 1, t => do
+    let .const n _ := (← whnf t).getAppFn | return false
+    let some (.inductInfo info) := (← getEnv).find? n | return false
+    unless info.numParams == 0 && info.numIndices == 0 && !info.isRec do return false
+    for c in info.ctors do
+      let ok ← forallTelescopeReducing (← getConstInfo c).type fun xs _ =>
+        xs.allM fun x => do enumLike fuel (← inferType x)
+      unless ok do return false
+    return true
+
+/-- Closes a goal whose hypotheses equate one term to two different constructors (`hgen : a = C`
+from `str_cases`, and the runner's test `a = C'`). -/
+def ctorClash (a : Expr) : TacticM Bool := withMainContext do
+  let some hgen := (← getLCtx).findFromUserName? `hgen | return false
+  for d in ← getLCtx do
+    if d.isImplementationDetail || d.fvarId == hgen.fvarId then continue
+    let some (_, l, _) := (← instantiateMVars d.type).consumeMData.eq? | continue
+    unless ← withReducible (isDefEq l a) do continue
+    let s ← saveState
+    try
+      let p ← mkEqTrans (← mkEqSymm hgen.toExpr) d.toExpr
+      let (fv, g) ← (← getMainGoal).note `hclash p
+      if (← g.cases fv).isEmpty then
+        setGoals []
+        return true
+      s.restore
+    catch _ => s.restore
+  return false
+
+/-- The string domain goal decided, or each constructor of the first enumeration-typed local of the
+value taken in turn, a case the runner's tests exclude closed (`fuel` bounds the nesting: a constructor's fields are cased in their turn). -/
+def strCasesCore (a : Expr) : Nat → TacticM Unit
+  | 0 => throwError "str_cases: too deep"
+  | fuel + 1 => withMainContext do
+    let s ← saveState
+    try
+      evalTactic (← `(tactic| (apply Fits.strIn_lit; decide)))
+      return
+    catch _ => s.restore
+    if ← ctorClash a then return
+    let (_, v) ← fitsGoal
+    let mut found : Option FVarId := none
+    for x in (collectFVars {} v).fvarIds do
+      if ← enumLike 3 (← x.getType) then
+        found := some x
+        break
+    let some x := found | throwError "str_cases: no enumeration to case on"
+    let subgoals ← (← getMainGoal).cases x
+    for sg in subgoals do
+      setGoals [sg.mvarId]
+      strCasesCore a fuel
+    setGoals []
+
+/-- `Fits c (.strIn vs) (.str (f a))` or `Fits c (.strIn vs) (f a)` for `a` of an inductive type
+without indices (a renderer of an enumeration, `Act.name`, `encodeForce`, `Status.label`): one goal
+per constructor of `a` (and of its constructors' enumeration fields), each string decided. Fails
+unless every constructor's string is among `vs`. -/
+elab "str_cases" : tactic => withMainContext do
+  let (k, v) ← fitsGoal
+  unless k.isAppOfArity ``Skel.strIn 1 do throwError "str_cases: not a string domain"
+  let e := if v.isAppOfArity ``Lean.Json.str 1 then v.appArg!.consumeMData else v
+  unless e.isApp do throwError "str_cases: not an application"
+  let a := e.appArg!
+  unless ← enumLike 3 (← inferType a) do throwError "str_cases: not an enumeration"
+  -- `hgen : a = x` keeps what the runner tested of `a` (`ctorClash`).
+  let (_, g) ← (← getMainGoal).generalize #[{ expr := a, hName? := some `hgen }]
+  setGoals [g]
+  strCasesCore a 4
+
+/-- At `Fits c (.alt ss) v` for an object `v` with a field `.bool e` (`e` not a literal), alternatives
+that differ only by that field's literal (`true` beside an empty list, `false` beside a nonempty
+one): the cases of `e`, each then picked by its value. -/
+elab "bool_cases" : tactic => withMainContext do
+  let (k, v) ← fitsGoal
+  unless k.isAppOfArity ``Skel.alt 1 do throwError "bool_cases: not an alternative"
+  let (_, _, vals) ← valueKeys v
+  for (_, e) in vals do
+    let e := e.consumeMData
+    unless e.isAppOfArity ``Lean.Json.bool 1 do continue
+    let b := e.appArg!.consumeMData
+    if b.isConstOf ``Bool.true || b.isConstOf ``Bool.false then continue
+    let (fvs, g) ← (← getMainGoal).generalize #[{ expr := b }]
+    let gs ← g.cases fvs[0]!
+    replaceMainGoal (gs.map (·.mvarId)).toList
+    return
+  throwError "bool_cases: no Boolean field"
 
 /-- `Fits c k v` with `k` replaced by its weak head normal form (a field's skeleton looked up,
 an abbreviation unfolded), so that lemmas apply to it by reducible unification. -/
@@ -479,6 +677,15 @@ macro_rules
 macro "alt_sub" : tactic =>
   `(tactic|(intro s hs; simp only [List.mem_cons, List.not_mem_nil, or_false] at hs; (repeat' (rcases hs with h | hs)); all_goals (subst_vars; alt_mem)))
 
+/-- `Fits c (.alt ss) v` for a scalar `v` (an `enum` of strings and other scalars): the first
+member that is `v` itself or a string list holding it. -/
+syntax "scalar_alt" : tactic
+
+macro_rules
+  | `(tactic| scalar_alt) => `(tactic| first
+    | (apply Fits.altHead; first | exact Fits.lit _ | (apply Fits.strIn_lit; decide))
+    | (apply Fits.altTail; scalar_alt))
+
 /-- `fits using l, ...`: as `fits`, trying at every node first each lemma `l` (a `Fits` fact about
 an encoder, such as `claimJson_fits`), whose hypotheses are closed by assumption. -/
 syntax "fits" (" using " term,+)? : tactic
@@ -497,12 +704,17 @@ macro_rules
       | (exfalso; assumption)
       | $known
       | (apply Fits.mkObj (by keys_ok); fields_split <;> fits using $ls,*)
+      | focus (bool_cases <;> fits using $ls,*; done)
       | (fits_pick <;> (try simp only [List.map_cons, List.map_nil, List.filter_cons, List.filter_nil, String.reduceBNe, ↓reduceIte, Bool.false_eq_true]) <;> (try fields_split) <;> fits using $ls,*)
       | (with_reducible apply Fits.setObj (by keys_ok) <;> (try simp only [List.map_cons, List.map_nil, List.filter_cons, List.filter_nil, String.reduceBNe, ↓reduceIte, Bool.false_eq_true]) <;> (try fields_split) <;> fits using $ls,*)
       | (apply Fits.arrOf; elems_split <;> (try intros) <;> elem_cases <;> fits using $ls,*)
       | (apply Fits.mkObjExtra; elems_split <;> (try intros) <;> elem_cases <;> fits using $ls,*)
+      | exact Fits.lit _
       | (apply Fits.strIn_lit; decide)
+      | str_cases
+      | scalar_alt
       | (apply Fits.strNotIn_lit; decide)
+      | (apply Fits.toJsonStrs; decide)
       | (lits_simp; fits using $ls,*)
       | (split <;> fits using $ls,*)
       | skip)

@@ -14,11 +14,17 @@ theorem of_norms {v : Json} (hp : usesSpeechPath req = false) (h : Fits req Skel
     Fits req Skeletons.speechActs v :=
   Fits.onCaseE (by simpa [CaseCond.holds, CaseDecider.fn] using hp) h
 
+/-- A question's fields are its mode's (`questionJson` per `Mode`). -/
+theorem question_fits (D : SpeechDoc) (q : Question) (m : String) :
+    Fits req (skel% "speech-acts.json#/$defs/question") ((questionJson D q).setObjVal! "meaning_id" (.str m)) := by
+  obtain ⟨u, mode, body, sort, domain, query, rs⟩ := q
+  cases mode <;> simp only [questionJson, Wire.modeName, List.cons_append, List.nil_append] <;> fits
+
 theorem elaborate_fits (id : String) (dec : Wire.Decoded) :
     Fits req (skel% "speech-acts.json#/$defs/elaborate") (VE.Route.Wire.ok id (elaborated dec)) := by
-  unfold VE.Route.Wire.ok elaborated Wire.encodeScope encodeNode questionJson VE.Norms.Wire.regenerated
+  unfold VE.Route.Wire.ok elaborated Wire.encodeScope encodeNode VE.Norms.Wire.regenerated
   simp only []
-  fits
+  fits using question_fits
 
 theorem firstFailure_of_not_free (j : Json) (res : ConflictCase) (h : replayConflict j = .ok res)
     (hf : res.conflictFree = false) : (firstFailure res).isSome = true := by
