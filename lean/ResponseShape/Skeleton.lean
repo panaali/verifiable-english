@@ -735,7 +735,7 @@ def objectFree (files : List File) : Nat → List String → Shape → Bool
     | .type ts => !ts.contains "object"
     | .required _ | .object _ _ => false
     | .prefixItems ss | .anyOf ss | .allOf ss => ss.all go
-    | .items x | .contains x | .not x | .zip _ x | .rows x | .lean _ x _ | .copied _ x => go x
+    | .items x | .contains x | .not x | .zip _ x | .zipOrEmpty _ x | .rows x | .lean _ x _ | .copied _ x => go x
     | .ite _ t e => go t && go e
     | .tagged table => table.all fun (_, slots) => slots.all go
     | .select cs => cs.all fun (_, t) => go t
@@ -844,6 +844,7 @@ def skeletonOf (files : List File) : Nat → Bool → Shape → StateT Extract (
     | .minLength _ | .maxLength _ | .minimum _ | .minItems _ | .maxItems _ | .contains _ | .countWhere _ _ _
     | .onCase _ | .row => pure .any
     | .zip _ x => do pure (.arr [] (← go cond x))
+    | .zipOrEmpty _ x => do pure (.arr [] (← go cond x))
     | .rows x => do pure (.arr [] (← go cond x))
     | .select cs => do pure (Skel.mkAlt (← cs.mapM fun (_, t) => go cond t))
     | .lean _ x _ => go cond x

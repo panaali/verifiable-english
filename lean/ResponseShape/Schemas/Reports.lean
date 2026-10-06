@@ -258,6 +258,11 @@ def «scoped» : Shape :=
       ("envelope", ref "#/$defs/envelope"),
       ("bindings", ref "#/$defs/envelope_binding")]]
 
+def boundVerdicts : Shape := n [
+  arr,
+  .zipOrEmpty "/document/scoped" (n [ref "#/$defs/verdict",
+    props [("id", n [str, .equals "/id"])]])]
+
 def nested : Shape := .anyOf [
   n [obj, .required ["item", "path", "name", "status"],
     closed [("item", constS "assessment"),
@@ -285,14 +290,10 @@ def status : Shape :=
         ("status", constS "ok"),
         ("units", n [
           arr,
-          .items (n [
-              obj,
-              .required ["id", "status", "nested"],
-              closed [
-                ("id", str),
-                ("status", ref "#/$defs/status_word"),
-                ("nested", n [arr, .items (ref "#/$defs/nested")])]])]),
-        ("scoped", n [arr, .items (ref "#/$defs/verdict")]),
+          .zip "/document/units" (n [obj, .required ["id", "status", "nested"], closed [
+            ("id", n [str, .equals "/id"]), ("status", ref "#/$defs/status_word"),
+            ("nested", n [arr, .items (ref "#/$defs/nested")])]])]),
+        ("scoped", boundVerdicts),
         ("document_status", ref "#/$defs/status_word"),
         ("status_text", n [arr, .items str]),
         ("residual_lines", n [obj,
@@ -301,7 +302,7 @@ def status : Shape :=
             ("reports", ref "#/$defs/counts"), ("assessments", ref "#/$defs/counts"),
             ("literal_quotations", n [arr, .items (n [obj, .required ["unit", "path"],
               closed [("unit", str), ("path", str)]])]),
-            ("scoped_checks", n [arr, .items (ref "#/$defs/verdict")]),
+            ("scoped_checks", boundVerdicts),
             ("unreviewed_acts", ref "#/$defs/counts"),
             ("unformalised_kinds", ref "#/$defs/counts")]]),
         ("envelope", ref "#/$defs/envelope"),

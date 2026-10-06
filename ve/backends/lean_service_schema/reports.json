@@ -412,7 +412,13 @@
             },
             "open_terms": {"$ref": "common.json#/$defs/strings"},
             "reports": {"$ref": "#/$defs/counts"},
-            "scoped_checks": {"items": {"$ref": "#/$defs/verdict"}, "type": "array"},
+            "scoped_checks": {
+              "type": "array",
+              "x-zip-or-empty": {
+                "items": {"$ref": "#/$defs/verdict", "properties": {"id": {"type": "string", "x-equals": "/id"}}},
+                "of": "/document/scoped"
+              }
+            },
             "unformalised_kinds": {"$ref": "#/$defs/counts"},
             "unreviewed_acts": {"$ref": "#/$defs/counts"}
           },
@@ -427,21 +433,30 @@
           ],
           "type": "object"
         },
-        "scoped": {"items": {"$ref": "#/$defs/verdict"}, "type": "array"},
+        "scoped": {
+          "type": "array",
+          "x-zip-or-empty": {
+            "items": {"$ref": "#/$defs/verdict", "properties": {"id": {"type": "string", "x-equals": "/id"}}},
+            "of": "/document/scoped"
+          }
+        },
         "status": {"const": "ok"},
         "status_text": {"items": {"type": "string"}, "type": "array"},
         "units": {
-          "items": {
-            "additionalProperties": false,
-            "properties": {
-              "id": {"type": "string"},
-              "nested": {"items": {"$ref": "#/$defs/nested"}, "type": "array"},
-              "status": {"$ref": "#/$defs/status_word"}
+          "type": "array",
+          "x-zip": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "id": {"type": "string", "x-equals": "/id"},
+                "nested": {"items": {"$ref": "#/$defs/nested"}, "type": "array"},
+                "status": {"$ref": "#/$defs/status_word"}
+              },
+              "required": ["id", "status", "nested"],
+              "type": "object"
             },
-            "required": ["id", "status", "nested"],
-            "type": "object"
-          },
-          "type": "array"
+            "of": "/document/units"
+          }
         }
       },
       "required": [

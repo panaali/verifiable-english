@@ -379,7 +379,7 @@ def open_objects(directory=DIRECTORY):
                 walk(value, file, f"{where}/{key}", False)
             elif key in ("then", "else"):
                 walk(value, file, f"{where}/{key}", True)
-            elif key == "x-zip":
+            elif key in ("x-zip", "x-zip-or-empty"):
                 walk(value["items"], file, f"{where}/x-zip/items", False)
 
     while stack:
