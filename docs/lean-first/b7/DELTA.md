@@ -47,6 +47,8 @@ The first hermetic full gate ran on clean `8bcd4e86` and reached all six stages.
 
 The second hermetic full gate passed on clean `cc57f668`: 11,074 Python tests passed, 7 allowed skips, 50 Rust tests passed, zero failures (`evidence/full-gate.json`). It again built 743 Lean targets and audited 4,311 named theorems. After committing this gate record, the full gate is run once more on the resulting clean HEAD; that run's commit and result are reported in the handoff.
 
+**Review-fix gate (lf-7 review B1–B3):** on the working tree of `2043b344`, `lake build` built 747 targets, and `python3 lean/audit.py` passed with 410 files and 4,327 named theorems, standard axioms only. Pytest was run in this worktree, not a hermetic gate: five file chunks with `-n 16`, the four long tests deselected there and then run alone with `-n 4`. In all, 11,075 passed, 6 skipped and none failed. Rust and the hermetic `tools/gate.py` run were not repeated; the review fix changes no Rust.
+
 ## Changes for signature
 
 `delta.json` lists every record below, written by `rights_delta.py` from the comparison, which refuses any other kind of difference. Run with `--delta delta.json`, the rights corpus has zero unlisted differences.
