@@ -35,7 +35,7 @@ from ve.evaluate import evaluate
 from ve.model import FiniteModel
 from ve.norms import _bind
 from ve.rights import correlate
-from ve.rights_route import check_rights_regenerated, run_rights_case
+from ve.rights_route import run_rights_case
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -51,7 +51,6 @@ def test_gamma_document_admission_and_end_to_end(tmp_path):
     """The L2–L7 source loads, admits and checks on today's rights route."""
     raw, units, rights = gamma()
     lean = run_rights_case(rights.env, units, "rights-elaborate")
-    check_rights_regenerated(rights, lean)
     premise = next(row for row in lean["premises"]
                    if row["label"] == "layer:norms:arrest_permitted")
     path = rights_document_file(tmp_path, units, env=raw)
@@ -76,7 +75,6 @@ def test_gamma_slot_models_python_rust_and_lean_agree():
     """L3–L5 and L7 on this document: Python, Rust and Lean evaluate the same formulas on the same models."""
     _, units, rights = gamma()
     lean = run_rights_case(rights.env, units, "rights-elaborate")
-    check_rights_regenerated(rights, lean)
     base_data = rights.soft_document.extended_env.to_dict()
     base_data["profiles"] = ["relational-fol@0"]
     for predicate in base_data["vocabulary"]["predicates"].values():

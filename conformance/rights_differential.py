@@ -1,11 +1,8 @@
-"""Deterministic Python/Lean `correlate` differential on 1,000 generated rights documents
-(docs/spec/rights.md 10): each accepted source is correlated by Python and regenerated,
-independently, by the Lean rights route and the Lean soft route, and every output of
-`check_rights_regenerated` must agree (generated keys, E″′ byte for byte, line instances
-and nodes, Lim_D, bar nodes, order, layer premises, background, targets, warnings). A
-generated source Python rejects must be rejected by Lean too, and conversely. Every accepted
-source is also wrapped as a ve-document and loaded by `load_document`, which must accept it and
-correlate it to the same rules: the loader admits exactly the unit contents the profile does.
+"""Deterministic rights relay corpus on 1,000 generated documents (rights.md 10).
+
+The Lean route owns correlation. Each accepted source is also wrapped as a ve-document;
+the Python container and document loader must construct the same Lean-owned rules.
+Rejected sources must raise Lean's diagnostic verbatim through the relay.
 
 The generator covers every incident shape (strict and default claims of both signs,
 fan-out claims, liberties, immunities, powers), holder guards, right_lines units later in
@@ -27,7 +24,7 @@ from ve.document import load_document
 from ve.errors import VEError
 from ve.rights import correlate
 from ve.backends.relay import rows as lean_rows
-from ve.rights_route import _wire, check_rights_regenerated
+from ve.rights_route import _wire
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORT = ROOT / "conformance/rights-differential-report.json"
@@ -255,11 +252,6 @@ def run(count=1000, batch=50):
             seeds += 1
         rows = _rows("rights", [{"id": str(seed), "kind": "rights-elaborate", "environment": _wire(raw),
                                    "document": _wire(units)} for seed, raw, units, _, _ in sources])
-        soft_cases = [(i, {"id": str(seed), "kind": "soft-elaborate",
-                           "environment": rights.soft_document.env.to_dict(),
-                           "norms": [r.to_dict() for r in rights.soft_document.rules]})
-                      for i, (seed, _, _, rights, _) in enumerate(sources) if rights is not None]
-        soft_rows = dict(zip((i for i, _ in soft_cases), _rows("soft-norms", [case for _, case in soft_cases])))
         for i, ((seed, raw, units, rights, error), row) in enumerate(zip(sources, rows)):
             if rights is None:
                 if row.get("status") != "error":
@@ -269,12 +261,8 @@ def run(count=1000, batch=50):
                 continue
             if row.get("status") != "ok":
                 raise AssertionError(f"seed {seed}: Python accepted, Lean rejected: {row.get('error')}")
-            if soft_rows[i].get("status") != "ok":
-                raise AssertionError(f"seed {seed}: soft route rejected the correlation: {soft_rows[i]}")
-            try:
-                check_rights_regenerated(rights, row, soft_rows[i])
-            except VEError as exc:
-                raise AssertionError(f"seed {seed}: {exc}") from exc
+            if len(row["lines"]) != len(rights.instances):
+                raise AssertionError(f"seed {seed}: relay lost a line")
             try:
                 doc = loaded(raw, units, directory.name)
             except VEError as exc:

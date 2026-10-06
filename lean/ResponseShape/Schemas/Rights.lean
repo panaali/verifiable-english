@@ -46,6 +46,7 @@ def kind : Def :=
   .group none [
     ("admission", kindIs "admission"),
     ("rights-elaborate", kindIs "rights-elaborate"),
+    ("rights-unit-status", kindIs "rights-unit-status"),
     ("rights-projections", kindIs "rights-projections"),
     ("rights-scope", kindIs "rights-scope"),
     ("rights-certificate", kindIs "rights-certificate"),
@@ -120,11 +121,12 @@ def elaborate : Shape :=
     "Rights.Run.regenerated: E'' (primeJsonR), the generated predicates, the lines, the limitation premises, the bar nodes, the rights Background, the narrowings, the distinction rows and findings, then every SoftNorms.Wire.regenerated field over the correlated document but its environment_prime."
     [
       obj,
-      .required ["id", "status", "environment_prime", "generated", "lines", "limitations", "bars", "rights_background", "narrowings", "distinction", "findings", "decisions", "derived", "order", "background", "premises", "colliding_pairs", "conflict_targets", "conditional_on", "fragment", "warnings"],
+      .required ["id", "status", "environment_prime", "generated", "wordings", "lines", "limitations", "bars", "rights_background", "narrowings", "distinction", "findings", "decisions", "derived", "order", "background", "premises", "colliding_pairs", "conflict_targets", "conditional_on", "fragment", "warnings"],
       closed [
         ("id", ref "common.json#/$defs/id_ok"),
         ("status", constS "ok"),
         ("environment_prime", ref "common.json#/$defs/environment"),
+        ("wordings", ref "common.json#/$defs/string_map"),
         ("generated", n [
           arr,
           .items (.anyOf [
@@ -209,6 +211,15 @@ def elaborate : Shape :=
         ("conditional_on", ref "soft-norms.json#/$defs/coherence_labels"),
         ("fragment", .type ["boolean"]),
         ("warnings", ref "common.json#/$defs/nonempty_strings")]]
+
+def unit_status : Shape :=
+  c "Rights.Run.unitStatuses: one openness decision per source unit." [
+    obj,
+    .required ["id", "status", "open"],
+    closed [
+      ("id", ref "common.json#/$defs/id_ok"),
+      ("status", constS "ok"),
+      ("open", n [arr, .items (.type ["boolean"]), .length "/document"])]]
 
 def projections : Shape :=
   c "Rights.Run.projectionsResult: the selected line instances by holder and by bearer (entryJson)." [
@@ -312,6 +323,7 @@ def «row» : Shape :=
       .select [
         (ref "#/$defs/kind/admission", ref "#/$defs/admission"),
         (ref "#/$defs/kind/rights-elaborate", ref "#/$defs/elaborate"),
+        (ref "#/$defs/kind/rights-unit-status", ref "#/$defs/unit_status"),
         (ref "#/$defs/kind/rights-projections", ref "#/$defs/projections"),
         (ref "#/$defs/kind/rights-scope", ref "#/$defs/scope"),
         (ref "#/$defs/kind/rights-certificate", ref "#/$defs/certificate"),
@@ -335,6 +347,7 @@ def file : File where
     ("narrowings", .schema narrowings),
     ("findings", .schema findings),
     ("elaborate", .schema elaborate),
+    ("unit_status", .schema unit_status),
     ("projections", .schema projections),
     ("entries", .schema entries),
     ("scope", .schema scope),

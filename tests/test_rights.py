@@ -730,7 +730,7 @@ def test_python_applies_the_lean_carve_out_and_count_limits():
     assert run_rights_case(env, [right([six])], "rights-elaborate")["lines"]
 
 
-def test_generated_declarations_are_the_same_bytes_in_python_and_lean(monkeypatch):
+def test_generated_declarations_are_used_from_lean():
     from ve import rights_route
     raw = rights_env()
     liberty = {"kind": "liberty", "holder_slot": None, "cites": {},
@@ -747,22 +747,11 @@ def test_generated_declarations_are_the_same_bytes_in_python_and_lean(monkeypatc
     assert predicates["rights__cond__1"]["verbalisation"] == "determined by law where {0} protect {1}"
     assert predicates["rights__bar__1"]["verbalisation"] == "{0} act aimed at the destruction of a right"
     assert row["environment_prime"] == rights_route.expected_environment_prime(rights)
-    rights_route.report_rights(rights.env, units, rights)
-    original = rights_route.run_rights_case
-
-    def drifted(environment, source, kind, **extra):
-        result = original(environment, source, kind, **extra)
-        if kind == "rights-elaborate":
-            generated = result["environment_prime"]["vocabulary"]["predicates"]["rights__lim__1"]
-            generated["description"] = "rights-generated open predicate"
-        return result
-
-    monkeypatch.setattr(rights_route, "run_rights_case", drifted)
-    with pytest.raises(VEError, match="regeneration mismatch: environment"):
-        rights_route.report_rights(rights.env, units, rights)
+    assert rights.environment.to_dict()["vocabulary"]["predicates"]["rights__lim__1"] == predicates["rights__lim__1"]
+    assert rights.wordings == row["wordings"]
 
 
-def test_reporting_rejects_swapped_lean_lines_even_when_names_match(monkeypatch):
+def test_rights_row_preserves_source_line_order():
     from ve import rights_route
     raw = rights_env()
     first = right([claim("first")])
@@ -771,18 +760,11 @@ def test_reporting_rejects_swapped_lean_lines_even_when_names_match(monkeypatch)
     later = {"right_lines": {"right": "life", "lines": [second_line]}}
     units = [first, later]
     rights = correlate(raw, units)
-    original = rights_route.run_rights_case
-
-    def swapped(environment, source, kind, **extra):
-        row = original(environment, source, kind, **extra)
-        if kind == "rights-elaborate":
-            row["lines"][0]["node"], row["lines"][1]["node"] = (
-                row["lines"][1]["node"], row["lines"][0]["node"])
-        return row
-
-    monkeypatch.setattr(rights_route, "run_rights_case", swapped)
-    with pytest.raises(VEError, match="regeneration mismatch: lines"):
-        rights_route.report_rights(rights.env, units, rights)
+    row = rights_route.run_rights_case(rights.env, units, "rights-elaborate")
+    assert [line["rule"] for line in row["lines"]] == ["first", "second"]
+    assert [item["rule"].core.name for item in rights.instances] == ["first", "second"]
+    assert rights.instances[0]["source_line"] is first["right"]["lines"][0]
+    assert rights.instances[1]["source_line"] is second_line
 
 
 def test_document_graph_admits_exact_regenerated_rights_layer(tmp_path):
