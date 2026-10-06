@@ -54,7 +54,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 20299,
+    "total_lines": 21226,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -347,13 +347,39 @@
         "reason": "norm-defaults@0 W2 admission decoder over E‴; the full file is pinned conservatively"
       },
       {
-        "file": "lean/VE/NormDefaults/Replay.lean",
-        "lines": 371,
-        "sha256": "46be075c87933872ce38a1f79fb9d80ab1bb9a871aed5175847de574f0be12f1",
+        "file": "lean/VE/NormDefaults/Layered.lean",
+        "lines": 426,
+        "sha256": "dc7777651caf94d8401a11394e79bd0fc75882f0f8371dc8378558a1a084f67a",
         "ranges": [
           [
             1,
-            371
+            426
+          ]
+        ],
+        "declarations": [
+          "decodeSoftU",
+          "decodeRightsU",
+          "decodeLayered",
+          "decodePackageX",
+          "situationX",
+          "tupleOf",
+          "filledX",
+          "witnessConflictX",
+          "replayStatusX",
+          "suppliedX",
+          "neverX",
+          "runLayered"
+        ],
+        "reason": "norm-defaults@0 soft and rights branch decoder: the placeholder source through the soft or rights decoder, packages bound to the source and the layered base background, base situations with a separate filling, statuses and supplied witnesses; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/NormDefaults/Replay.lean",
+        "lines": 391,
+        "sha256": "4242c79ff826cc94cee7f211f1a3f7d86e44537bb84702a3d7d570d4f70caad3",
+        "ranges": [
+          [
+            1,
+            391
           ]
         ],
         "declarations": [
@@ -362,23 +388,45 @@
           "decodeFilling",
           "replayStatus",
           "replayGaps",
+          "reachedFromU",
           "replayReached"
         ],
         "reason": "norm-defaults@0 witness, status and gap decoder; the full file is pinned conservatively"
       },
       {
-        "file": "lean/VE/NormDefaults/Wire.lean",
-        "lines": 377,
-        "sha256": "b823854df5755108e85cac7ce7dd6dab1a039730a991db2dafaddeb1bf53efc4",
+        "file": "lean/VE/NormDefaults/Report.lean",
+        "lines": 475,
+        "sha256": "f00d2b66e18234792263f6bac27b7bc4629df397f15fffecaafb978828d02b10",
         "ranges": [
           [
             1,
-            377
+            475
+          ]
+        ],
+        "declarations": [
+          "groundingCites",
+          "validateCompletions",
+          "reportWith",
+          "situationFrom",
+          "suppliedWitness",
+          "neverReached",
+          "reportFrom"
+        ],
+        "reason": "norm-defaults@0 report decoder: the completions block, the base situation, supplied filled witnesses and reached packages; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/NormDefaults/Wire.lean",
+        "lines": 383,
+        "sha256": "c59e1151313d522e071f624b428f302db515af5c9cb30e86a632a6e05c81a536",
+        "ranges": [
+          [
+            1,
+            383
           ]
         ],
         "declarations": [
           "placeholderJson",
-          "checkAuthor",
+          "checkAuthorN",
           "decodeSourceU",
           "baseEnvironmentJsonU",
           "decodePackageU",

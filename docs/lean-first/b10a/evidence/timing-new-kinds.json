@@ -1,0 +1,44 @@
+{
+ "report": {
+  "cases": 1235,
+  "runs": [
+   {
+    "cpu": 4.61,
+    "wall": 4.75,
+    "load": 25.4
+   },
+   {
+    "cpu": 3.76,
+    "wall": 3.76,
+    "load": 25.5
+   },
+   {
+    "cpu": 3.6,
+    "wall": 3.6,
+    "load": 25.3
+   }
+  ],
+  "cpu_ms_per_case_min": 2.91
+ },
+ "layered other kinds": {
+  "cases": 66,
+  "runs": [
+   {
+    "cpu": 0.15,
+    "wall": 0.15,
+    "load": 25.3
+   },
+   {
+    "cpu": 0.15,
+    "wall": 0.15,
+    "load": 25.3
+   },
+   {
+    "cpu": 0.16,
+    "wall": 0.16,
+    "load": 25.3
+   }
+  ],
+  "cpu_ms_per_case_min": 2.27
+ }
+}

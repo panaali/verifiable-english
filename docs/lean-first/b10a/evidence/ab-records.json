@@ -1,0 +1,30 @@
+{
+ "base": {
+  "sha256": "feb024e0436d27170aa9773c473b3c77b93c1ccfb68e55bbd7a4baf3acc92880",
+  "records": 66242,
+  "by_corpus": {
+   "conformance/lean": 19806,
+   "conformance/python": 19806,
+   "discourse/default": 6350,
+   "pilots/default": 273,
+   "probe/lean": 9435,
+   "probe/python": 9435,
+   "readings/default": 1137
+  }
+ },
+ "head": {
+  "sha256": "8c96c407eb77f8c538560734e3d9528caed85a092649547f99676d5262fcad8d",
+  "records": 66242,
+  "by_corpus": {
+   "conformance/lean": 19806,
+   "conformance/python": 19806,
+   "discourse/default": 6350,
+   "pilots/default": 273,
+   "probe/lean": 9435,
+   "probe/python": 9435,
+   "readings/default": 1137
+  }
+ },
+ "base_commit": "2ce1134e",
+ "note": "records written by tools/lean_first_diff.py record (base: worktree at 2ce1134e with its Lean build and a rebuilt Rust binary; head: this branch); compare: ab-compare.json"
+}
