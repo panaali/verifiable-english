@@ -16,7 +16,7 @@ from ve.ast import Body, Le, Lt, Num, Reach, Scale
 from ve.natural import (_NOTATION, natural_coverage, render_natural_sentence,
                         parse_presentation, render_presentation, migrate_presentation,
                         PresentationNeedsRepair)
-from ve.errors import ResourceLimit
+from ve.errors import CheckerUnavailable, ResourceLimit
 from ve.limits import MAX_NODES, MAX_SOURCE_BYTES
 from ve.printer import natural_document
 from test_views import ENV, vocabulary
@@ -105,7 +105,7 @@ def test_web_app_first_example_is_one_checked_prose_argument():
     assert repeated_prose.sentences[3]['dependencies'] == (0, 1)
     with pytest.raises(Exception, match='no checked derivation'):
         parse_english(env, 'The API is reviewed. Therefore the API is safe.', **options)
-    with pytest.raises(Exception, match='earlier premise'):
+    with pytest.raises(Exception, match='no earlier sentence is a premise'):
         parse_english(env, 'Therefore the API is safe. The API is reviewed.', **options)
 
 
@@ -155,7 +155,7 @@ def test_existential_antecedent_blocks_unconfirmed_it_even_with_one_constant():
     env = Environment(vocabulary())
     options = _names(env, api='the API')
     source = 'The API is reviewed. Some service is deployed. It is reviewed.'
-    with pytest.raises(Exception, match='referent of it is incomplete'):
+    with pytest.raises(Exception, match='it is not settled what'):
         parse_english(env, source, **options)
     document = Document((Unary('reviewed', Const('api')),
                          Exists('item', Unary('active', Var(0))),
@@ -350,7 +350,7 @@ def test_plural_and_possessive_references_require_explicit_repair():
     options = _names(env, api='the API', alice='Alice')
     for sentence in ('They are reviewed.', 'Her manager is ready.',
                      'Their service is deployed.'):
-        with pytest.raises(Exception, match='explicit-name or scoped-referent'):
+        with pytest.raises(Exception, match='no reading with the current vocabulary'):
             parse_english(env, 'Alice is ready. ' + sentence, **options)
 
 
@@ -404,6 +404,12 @@ def test_declared_constant_cannot_shadow_generated_article_or_case(alias):
     assert words.constants['beta'] == '"beta"'
     api = Document((Unary('reviewed', Const('api')),))
     beta = Document((Unary('reviewed', Const('beta')),))
+    if alias in ('api', 'API'):
+        # V4 compares a selected spelling with every other declared spelling,
+        # including an alias whose selected fallback has been quoted.
+        with pytest.raises(CheckerUnavailable, match='V4 constant api'):
+            parse_english(env, 'The api is reviewed.', **options)
+        return
     assert parse_english(env, 'The api is reviewed.', **options) == api
     assert parse_english(env, 'the api is reviewed.', **options) == api
     assert parse_english(env, '"beta" is reviewed.', **options) == beta
@@ -549,7 +555,7 @@ def test_case_varied_and_nested_adjective_ambiguity_rejects():
     for sentence in ('Every deployed service is reviewed.',
                      'It is not the case that every deployed service is reviewed.',
                      'Every DEPLOYED service is reviewed.'):
-        with pytest.raises(Exception, match='two derivations'):
+        with pytest.raises(Exception, match='more than one way'):
             parse_english(env, sentence)
 
 
