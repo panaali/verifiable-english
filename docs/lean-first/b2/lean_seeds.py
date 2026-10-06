@@ -3,8 +3,10 @@ theorem itself refuses the seed at build time), listed in the lock for the run, 
 
     PATH=~/.elan/bin:$PATH uv run --frozen python docs/lean-first/b2/lean_seeds.py
 """
-import json, subprocess, hashlib
+import json, os, subprocess, hashlib, sys
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+from tools import nested_pytest  # noqa: E402
 SEEDS = [
   ("S7 Lean registration is content-addressed: the digest check removed",
    "  unless caseDigest member.2 == digest do\n    throw s!\"InvalidInput: environment handle {digest} is not the SHA-256 of its text\"\n",
@@ -33,8 +35,8 @@ for name, old, new, tests, (proof, stub) in SEEDS:
         digest = hashlib.sha256(Path("lean/.lake/build/bin/ve_service").read_bytes()).hexdigest()
         data = json.loads(original_lock); data["ve_service"].append(digest)
         lock.write_text(json.dumps(data, indent=2) + "\n")
-        proc = subprocess.run(["uv", "run", "--frozen", "pytest", "-q", "-p", "no:randomly", *tests],
-                              capture_output=True, text=True, timeout=1500)
+        proc = subprocess.run(nested_pytest.command(["-q", "-x", *tests], workers=1),
+                              env=nested_pytest.environment(os.environ), capture_output=True, text=True, timeout=1500)
         tail = [l for l in proc.stdout.splitlines() if l.strip()][-1]
         print(name, "->", "CAUGHT" if proc.returncode != 0 else "MISSED", "|", tail, flush=True)
         for line in proc.stdout.splitlines():
