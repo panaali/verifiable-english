@@ -31,7 +31,7 @@ sys.path.insert(0, str(ROOT))
 # The modules whose diagnostics are Lean's (batch 0: the relay itself; batch 3: the readings route;
 # batch 4: discourse).
 RELAYED = ("ve/backends/relay.py", "ve/readings_route.py", "ve/discourse.py",
-           "ve/rights_route.py")
+           "ve/rights_route.py", "ve/backends/speech_source.py", "ve/speech_document.py")
 FILE_IO = "# relay-lint: file I/O"
 
 
