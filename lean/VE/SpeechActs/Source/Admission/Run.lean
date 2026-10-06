@@ -18,7 +18,9 @@ The `admission` case kind of `ve_speech_acts_route` reads the same `ve-document@
   is no compliance leaf and no checker-generated `done` fact: a leaf claiming one has no provenance (4.6);
 * every certificate is bound to the canonical environment and its nodes' ASTs, the graph is checked by the
   unchanged W2 checker, citations are closed and reading choices compatible;
-* the report id is P0's digest over `{"environment_id", "document": <the 3.5 document id>, "report"}`.
+* the wire report expands each certificate-supported answer leaf with the bound `premises D` inputs; the exact graph
+  report remains in `SpeechAdmitted` for the soundness and consequence theorems. The report id hashes the expanded
+  report with the canonical environment id and 3.5 document id.
 
 Each check's success is carried as a field of `SpeechAdmitted`, so the theorems below read it off the result. -/
 namespace VE.SpeechActs.Source.Admission
@@ -33,8 +35,6 @@ universe u
 
 def isBinding (u : SourceUnit) : Bool := u.kind == .str "binding"
 
-/-- A unit's formula content as W2 sends it to P0 (`{"ast": a}` or the bare AST); command, question, binding and
-norm content is speech content, never a P0 formula. -/
 /-- The same formula projection for a fixed unit and for an asserted reading.
 The speech schema wraps formula ASTs in `{"ast": ...}`; P0 expects the AST itself. -/
 def formulaAst (content : Json) : Json :=
@@ -42,6 +42,8 @@ def formulaAst (content : Json) : Json :=
   | .ok [("ast", a)] => a
   | _ => content
 
+/-- A unit's formula content as W2 sends it to P0 (`{"ast": a}` or the bare AST); command, question, binding and
+norm content is speech content, never a P0 formula. -/
 def formulaContent (u : SourceUnit) : Option Json :=
   match u.content with
   | some (.arr xs) => some (.arr xs)
@@ -171,6 +173,57 @@ structure SpeechAdmitted where
 def SpeechAdmitted.kinds (adm : SpeechAdmitted) : List Json :=
   adm.p0.units.map fun x => VE.Route.Admission.renderKind x.kind
 
+/-- The ordered premise inputs bound into an answer certificate, with their source provenance.
+Background and layer claims use generated names; asserted claims keep their unit ids. -/
+def answerPremiseClaims (src : SpeechSource) (answer : String) : List VE.Graph.Claim :=
+  let p := policy src.dec.D
+  let bg := ((VE.Norms.definitionPremises p.T).map (fun a => ("background:definitions", a)) ++
+    (VE.Norms.backgroundBase p).map (fun a => ("background:literals", a)) ++
+    (VE.Norms.pairPremises p.T).map (fun a => ("background:profile", a)))
+  let layers := (VE.Norms.syms p.T).filterMap fun
+    | .reg r => some ("layer:norms:" ++ r.name, VE.Norms.elabPremise p.T r)
+    | .defn _ => none
+  let generated := (bg ++ layers).zipIdx.map fun ((label, formula), i) =>
+    ({ name := answer ++ ":premise:" ++ toString i, formula, label } : VE.Graph.Claim)
+  let asserted := src.dec.D.asserted.map fun (name, formula) =>
+    ({ name, formula, label := "asserted" } : VE.Graph.Claim)
+  generated ++ asserted
+
+/-- The provenance expansion lists exactly the formulas to which the accepted answer certificate is bound. -/
+theorem answerPremiseClaims_formulas (src : SpeechSource) (answer : String) :
+    (answerPremiseClaims src answer).map (·.formula) = premises src.dec.D := by
+  have indexed (xs : List (String × VE.Formula)) (i : Nat) :
+      ((xs.zipIdx i).map fun ((label, formula), n) =>
+        ({ name := answer ++ ":premise:" ++ toString n, formula, label } : VE.Graph.Claim)).map
+          (·.formula) = xs.map Prod.snd := by
+    induction xs generalizing i with
+    | nil => simp
+    | cons x xs ih => simp [List.zipIdx, ih]
+  have layers (xs : List VE.Norms.Sym) :
+      (xs.filterMap (fun
+        | .reg r => some ("layer:norms:" ++ r.name, VE.Norms.elabPremise (policy src.dec.D).T r)
+        | .defn _ => none)).map Prod.snd =
+      xs.filterMap (fun
+        | .reg r => some (VE.Norms.elabPremise (policy src.dec.D).T r)
+        | .defn _ => none) := by
+    induction xs with
+    | nil => simp
+    | cons x xs ih => cases x <;> simp [ih]
+  simp [answerPremiseClaims, indexed, premises, VE.Norms.background, VE.Norms.elaborate,
+    VE.Norms.definitionPremises, VE.Norms.backgroundBase, layers, assertedFormulas, Function.comp_def]
+  rfl
+
+/-- A graph answer leaf abbreviates a checked certificate over `premises D`. Expand each such
+leaf in the wire report with the certificate's bound premise inputs, retaining the exact
+graph report separately for `SoundReport` and consequence proofs. -/
+def reportedReport (adm : SpeechAdmitted) : VE.Graph.Report :=
+  { adm.report with assumptions := adm.report.assumptions.flatMap fun leaf =>
+      if adm.src.answers.answers.any (fun r => match certifiedAnswer r with
+          | some (label, formula) => leaf.label == label && decide (leaf.formula = formula)
+          | none => false) then
+        leaf :: answerPremiseClaims adm.src leaf.label
+      else [leaf] }
+
 def admitSpeech (payload evidence : Json) :
     Except String { adm : SpeechAdmitted // adm.payload = payload ∧ adm.evidence = evidence } := do
   match hs : decodeSpeechSource payload evidence with
@@ -216,16 +269,16 @@ def admitSpeech (payload evidence : Json) :
 
 /-! ## The report identity and the answer -/
 
-/-- P0's report identity over the complete validated source (3.5): the canonical environment id, the document id
-recomputed from the retained identity payload, and the checked report. -/
+/-- Report identity over the complete validated source (3.5): the canonical environment id, the document id
+recomputed from the retained identity payload, and the checked graph report with answer support expanded. -/
 def reportId (adm : SpeechAdmitted) : Except String String := do
   let envId ← VE.Route.Wire.environmentId adm.src.dec.se.profiles adm.src.dec.se.canonical
   let docId ← adm.src.documentId
   VE.CertificateWire.digest (VE.Norms.Run.reportDomain adm.src.dec.se.profiles)
-    (VE.Norms.Run.reportPayload envId (.str docId) adm.report)
+    (VE.Norms.Run.reportPayload envId (.str docId) (reportedReport adm))
 
 def encodeAdmitted (id reportId : String) (adm : SpeechAdmitted) : Json :=
-  VE.Route.Wire.ok id [("admitted", .bool true), ("report", VE.Norms.Run.reportJson adm.report),
+  VE.Route.Wire.ok id [("admitted", .bool true), ("report", VE.Norms.Run.reportJson (reportedReport adm)),
     ("report_id", .str reportId), ("document_id", .str (adm.src.documentId.toOption.getD "")),
     ("kinds", Json.arr adm.kinds.toArray),
     ("classes", Json.arr (adm.src.cov.rows.map fun r => Json.mkObj [("id", .str r.id), ("class", .str r.cls)]).toArray),
@@ -455,14 +508,14 @@ theorem records_sound (src : SpeechSource) : RecordsSound.{u} src := by
 
 /-- Every binding is the recomputed one: certificates name the canonical environment and their source ASTs, and
 the report id is P0's digest of the canonical environment id, the 3.5 document id recomputed from the retained
-payload, and the checked report. Equality of digests, not injectivity of SHA-256. -/
+payload, and the reported graph result with answer support expanded. Equality of digests, not injectivity of SHA-256. -/
 def BindingsMatchSourceAndRegeneration (adm : SpeechAdmitted) (rid : String) : Prop :=
   (∀ x ∈ adm.decoded, VE.Norms.Admission.CertificateBound adm.src.dec.se.profiles adm.src.dec.se.canonical
     adm.decoded x) ∧
   ∃ envId docId, VE.Route.Wire.environmentId adm.src.dec.se.profiles adm.src.dec.se.canonical = .ok envId ∧
     adm.src.documentId = .ok docId ∧
     VE.CertificateWire.digest (VE.Norms.Run.reportDomain adm.src.dec.se.profiles)
-      (VE.Norms.Run.reportPayload envId (.str docId) adm.report) = .ok rid
+      (VE.Norms.Run.reportPayload envId (.str docId) (reportedReport adm)) = .ok rid
 
 theorem runAdmission_sound (id : String) (payload evidence a : Json)
     (h : runAdmission id payload evidence = .ok a) :

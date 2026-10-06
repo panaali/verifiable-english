@@ -1351,6 +1351,10 @@ P0 document `adm.p0` (binding units withheld), whose report id is the digest of 
 "document": adm.src.documentId, "report"}`, with exactly two route-local leaves: `speech:presupposition:<u>` (equal
 to `presupposition D q`) and `speech:answer:<u>:<a>` (equal to `H ∧ F` of a certificate-supported answer over
 `premises D`, with that certificate's leaves retained), each admitted only when equal to the regenerated formula.
+The wire report unfolds a certificate-supported answer leaf into the answer claim followed by the ordered
+`premises D` inputs bound into its accepted certificate. Generated Background and layer inputs carry their
+generator labels; fixed asserted inputs carry their source unit ids. The graph check and its soundness theorem
+retain the exact submitted graph report, while the report identity binds this provenance-expanded wire report.
 There is **no** `speech:compliance:<u>` leaf and no leaf over a `done` atom that the checker generates: an accepted
 proof-task certificate is evidence on the compliance line only (4.6), and a graph leaf claiming `done_submit(you, q)`
 from it is rejected. `AnswerEvidence adm line` says: `supported` carries an accepted certificate for `H ∧ F` over
