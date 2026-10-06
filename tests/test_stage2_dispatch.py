@@ -134,7 +134,7 @@ def test_rust_checker_slower_than_the_setting_is_stopped_at_it(monkeypatch, tmp_
     checker never answers, and its deadline is injected as expired: the test waits
     for no deadline."""
     from ve.backends import rust_jsonl
-    from subprocesses import expired_waits
+    import time
     script = tmp_path / "ve"
     script.write_text("#!/bin/sh\nexec sleep 600\n")
     script.chmod(0o755)
@@ -142,10 +142,18 @@ def test_rust_checker_slower_than_the_setting_is_stopped_at_it(monkeypatch, tmp_
     monkeypatch.setenv("VE_RUST_JSONL", str(script))
     monkeypatch.setenv("VE_RUST_SHA256", sha256(script.read_bytes()).hexdigest())
     monkeypatch.setenv("VE_RUST_TIMEOUT", "1234.5")
-    waits = expired_waits(monkeypatch, rust_jsonl)
+    # The checker is a persistent process (lean-first b2, F6): its deadline is injected as
+    # expired through the transport's clock, not through `communicate`.
+    waits = []
+
+    def expired(timeout):
+        waits.append(timeout)
+        return time.monotonic()
+    monkeypatch.setattr(rust_jsonl, "_deadline", expired)
     with pytest.raises(CheckerUnavailable, match="timed out after 1234.5 seconds"):
         rust_run({"id": "x", "kind": "check"})
     assert waits == [1234.5]
+    assert not any(c.argv[0] == str(script) for idle in rust_jsonl._idle.values() for c in idle)
 
 
 def test_the_suite_waits_its_hang_guard_for_every_checker():

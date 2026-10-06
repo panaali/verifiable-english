@@ -8,6 +8,7 @@ Secret examples are assembled at run time so this file never contains one.
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 from pathlib import Path
 import shutil
@@ -19,6 +20,9 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 HOOK = ROOT / "tools/hooks/pre-commit"
 INVENTORY = "lean/VE/Route/frozen-sources.sha256"
+ENGLISH_LOCK = "ve/english_grammar/LOCK.json"
+ENGLISH_TABLE = "lean/VE/EnglishGrammar/Fixed/RelationalFol.lean"
+ENGLISH_VERSION = "lean/VE/EnglishGrammar/Fixed/Version.lean"
 
 
 class Staging:
@@ -225,9 +229,12 @@ def test_python_imports_resolve_against_the_staged_tree(staging):
 
 def test_staged_policy_code_is_the_policy(staging):
     policy = staging.head("tools/layer_policy.py")
-    assert b'"ast environment errors' in policy
-    staging.stage("tools/layer_policy.py", policy.replace(b'"ast environment errors',
-                                                          b'"ast planted_module environment errors'))
+    start = policy.index(b'1: "', policy.index(b'PYTHON = {')) + len(b'1: "')
+    end = policy.index(b'"', start)
+    names = policy[start:end].split()
+    assert b"environment_wire" in names
+    staged = policy[:start] + b" ".join([*names, b"planted_module"]) + policy[end:]
+    staging.stage("tools/layer_policy.py", staged)
     staging.stage("ve/planted_module.py", "import ve.errors\n")
     passes(staging)  # mapped by the staged policy, which the working tree lacks
     staging.stage("ve/planted_module.py", "from ve import parser\n")
@@ -369,9 +376,13 @@ def test_outward_rust_dependency_is_rejected(staging):
 @pytest.mark.parametrize("line, token", [
     ("theorem planted : 1 = 1 := by sorry", "sorry"),
     ("theorem planted : 1 = 1 := by admit", "admit"),
+    ("def planted : Nat := by · admit", "admit"),
+    ("def planted : Nat := by case zero => admit", "admit"),
+    ("def planted : Nat := by exact 0 <;> admit", "admit"),
+    ("def planted : Nat := decreasing_by admit", "admit"),
     ("axiom planted : False", "axiom"),
     ("-- a comment still may not say sorry", "sorry"),  # lean/audit.py scans comments too
-], ids=["sorry", "admit", "axiom", "comment"])
+], ids=["sorry", "admit", "bullet admit", "case admit", "chain admit", "decreasing admit", "axiom", "comment"])
 def test_lean_forbidden_tokens_are_rejected(staging, line, token):
     path = "lean/VE/Core/Planted.lean"
     staging.stage(path, f"namespace VE\n\n{line}\n\nend VE\n")
@@ -411,6 +422,39 @@ def test_frozen_guard_rejects_unlisted_modules_bad_inventory_and_main(staging):
     rejects(staging, "lean/Main.lean: existing subcommands changed")
 
 
+def test_english_grammar_checks_the_staged_generated_table(staging):
+    """Spec fixture t1 through the hook: an edited generated rule names the profile and the rule tag."""
+    text = staging.head(ENGLISH_TABLE).decode()
+    line = next(l for l in text.splitlines() if 'tag := "negation"' in l)
+    staging.stage(ENGLISH_TABLE, text.replace(line, line.replace('.kw "case"', '.kw "fact"')))
+    staging.rehash(ENGLISH_TABLE)
+    rejects(staging, "English grammar check failed",
+            f"relational-fol@0: {ENGLISH_TABLE} differs from its source at rule negation")
+
+
+def test_english_grammar_change_needs_a_new_actions_version(staging):
+    """Base fixture i5 through the hook: a trusted Lean file changed without the lock, then with the lock's
+    hash updated and actions_version unchanged, is rejected; a raised version with its module passes."""
+    path = "lean/VE/EnglishGrammar/Token.lean"
+    edited = staging.head(path) + b"\n-- Changed matching.\n"
+    staging.stage(path, edited)
+    staging.rehash(path)
+    lock = json.loads(staging.head(ENGLISH_LOCK))
+    old, new = lock["files"][path], hashlib.sha256(edited).hexdigest()
+    rejects(staging, f"{path}: SHA-256 {old} in {ENGLISH_LOCK}, {new} now")
+    lock["files"][path] = new
+    staging.stage(ENGLISH_LOCK, json.dumps(lock, indent=1) + "\n")
+    version = lock["actions_version"]
+    rejects(staging, f"{path}: SHA-256 {old} at the base, {new} now, with actions_version {version!r} unchanged")
+    lock["actions_version"] = version + ".1"
+    staging.stage(ENGLISH_LOCK, json.dumps(lock, indent=1) + "\n")
+    rejects(staging, f"{ENGLISH_VERSION}: does not hold actions_version {version + '.1'!r}")
+    staging.stage(ENGLISH_VERSION, staging.head(ENGLISH_VERSION).replace(json.dumps(version).encode(),
+                                                                         json.dumps(version + ".1").encode()))
+    staging.rehash(ENGLISH_VERSION)
+    passes(staging)
+
+
 def test_emergency_bypass_warns(staging):
     staging.stage("docs/probe.md", SECRETS["GitHub token"]() + "\n")
     result = staging.run(VE_SKIP_HOOKS="1")
@@ -435,8 +479,19 @@ def stage_large_change(staging):
     line = b"The applicant qualifies when every listed condition holds on the reference date.\n"
     for number in range(1500):
         files[f"experiments/timing-probe/case_{number:04}.md"] = line * 120
+    # The English grammar lock hashes trusted Lean files: an edit of them raises actions_version (spec
+    # english-lean-s2.md 2.9), and the generated tables are never edited by hand.
+    for path in [p for p in lean if p.startswith("lean/VE/EnglishGrammar/Fixed/")]:
+        del files[path]
+    lock = json.loads(staging.head(ENGLISH_LOCK))
+    lock["files"] = {path: hashlib.sha256(files.get(path) or staging.head(path)).hexdigest()
+                     for path in lock["files"]}
+    version = json.dumps(lock["actions_version"]).encode()
+    lock["actions_version"] = "timing-probe"
+    files[ENGLISH_LOCK] = (json.dumps(lock, indent=1) + "\n").encode()
+    files[ENGLISH_VERSION] = staging.head(ENGLISH_VERSION).replace(version, b'"timing-probe"')
     staging.stage_many(files)
-    staging.rehash(*lean)
+    staging.rehash(*[p for p in lean if p in files], ENGLISH_VERSION)
     return files
 
 

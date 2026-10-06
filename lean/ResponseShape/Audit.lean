@@ -87,6 +87,8 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.Discourse.runCaseReported_fits
 #print axioms ResponseShape.Encoders.Discourse.runCase_fits
 #print axioms ResponseShape.Encoders.Discourse.statusOf_fits
+#print axioms ResponseShape.Encoders.Discourse.w2SetStatus_mem
+#print axioms ResponseShape.Encoders.Discourse.w2Status_mem
 #print axioms ResponseShape.Encoders.Discourse.targetJson_fits
 #print axioms ResponseShape.Encoders.English.diagnose_fits
 #print axioms ResponseShape.Encoders.English.english_fits
@@ -117,10 +119,13 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.Family.readings_fits
 #print axioms ResponseShape.Encoders.Family.readings_reported
 #print axioms ResponseShape.Encoders.NormDefaults.admitDocument_kinds
+#print axioms ResponseShape.Encoders.NormDefaults.firstFailureX_of_not_free
 #print axioms ResponseShape.Encoders.NormDefaults.firstFailure_of_not_free
+#print axioms ResponseShape.Encoders.NormDefaults.line_fits
 #print axioms ResponseShape.Encoders.NormDefaults.of_norms
 #print axioms ResponseShape.Encoders.NormDefaults.runCaseReported_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runCase_fits
+#print axioms ResponseShape.Encoders.NormDefaults.runLayered_fits
 #print axioms ResponseShape.Encoders.Norms.admission_fits
 #print axioms ResponseShape.Encoders.Norms.admitDocument_kinds
 #print axioms ResponseShape.Encoders.Norms.certificate_fits

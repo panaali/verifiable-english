@@ -40,7 +40,8 @@ FROZEN_SCRIPT = "lean/VE/Route/frozen.py"
 MAIN = "lean/Main.lean"
 LEAN_TOOLCHAIN = "lean/lean-toolchain"
 POLICY = {"layer_policy": "tools/layer_policy.py", "check_lean_imports": "tools/check_lean_imports.py",
-          "check_rust_deps": "tools/check_rust_deps.py", "audit": "lean/audit.py"}
+          "check_rust_deps": "tools/check_rust_deps.py", "audit": "lean/audit.py",
+          "english_grammar_gen": "tools/english_grammar_gen.py"}
 LAKEFILE = "lean/lakefile.toml"  # its executable roots are tool-layer entry modules
 RUST_MANIFEST = re.compile(r"rust/(?:.+/)?Cargo\.toml")
 BLOB_MODES = {"100644", "100755", "120000"}
@@ -390,6 +391,11 @@ def check_lean_tokens(index: Index) -> list[str]:
         for match in pattern.finditer(scanned):
             line = scanned.count("\n", 0, match.start()) + 1
             errors.append(f"{path}:{line}: forbidden Lean token '{match[0]}'")
+        if path.startswith("lean/"):
+            code = audit.code_only(text)
+            if match := audit.admit_tactic(code):
+                line = code.count("\n", 0, match.start()) + 1
+                errors.append(f"{path}:{line}: forbidden Lean token 'admit'")
     return errors
 
 
@@ -503,9 +509,25 @@ def check_wire_contract(index: Index) -> list[str]:
     return []
 
 
+def check_english_grammar(index: Index) -> list[str]:
+    """The fixed-rule generator's `--check` on staged blobs (docs/spec/english-lean-s2.md 2.9, 4.5): the
+    generated tables against their sources, the lock file's hashes, and against HEAD's lock, a changed hash
+    with `actions_version` unchanged (base spec 2.12)."""
+    watched = ("ve/english_grammar/", "tools/english_grammar_gen.py", "lean/VE/Grammar/",
+               "lean/VE/EnglishGrammar/")
+    if not any(path.startswith(watched) for path in index.changed):
+        return []
+    generator = index.policy().english_grammar_gen
+    try:
+        base = git("cat-file", "blob", f"{index.base}:{generator.LOCK}")
+    except RuntimeError:  # no lock at HEAD yet: the first commit that adds it
+        base = None
+    return generator.check(lambda path: index.read([path])[path], lambda: list(index.listing()), base)
+
+
 CHECKS = [("secrets", check_secrets), ("layer imports", check_layers),
           ("Lean forbidden tokens", check_lean_tokens), ("frozen files", check_frozen),
-          ("wire contract", check_wire_contract)]
+          ("wire contract", check_wire_contract), ("English grammar", check_english_grammar)]
 
 
 def main(argv: list[str]) -> int:

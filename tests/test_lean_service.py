@@ -21,7 +21,8 @@ from hypothesis import HealthCheck, given, settings, strategies as st
 
 from subprocesses import HANG_TIMEOUT
 from tests.lean_build import lean_build
-from ve.backends.lean_service import (MAX_CASES, MAX_LINE_BYTES, CheckerUnavailable, LeanService,
+from ve.backends.lean_service import (HANDLE_KEY, MAX_CASES, MAX_HANDLE_BYTES, MAX_HANDLES, MAX_LINE_BYTES,
+                                      CheckerUnavailable, LeanService,
                                       LeanServicePool, MODES, case_digest, case_texts,
                                       executable_sha256)
 from ve.backends.service_schema import DIRECTORY as SCHEMAS
@@ -94,6 +95,9 @@ def test_response_schemas_follow_lean_sources():
     assert limits == {"max_line_bytes": MAX_LINE_BYTES, "max_cases": MAX_CASES, "json_depth": 256}
     assert re.search(r"def maxLineBytes : Nat := (\d+)", protocol)[1] == str(MAX_LINE_BYTES)
     assert re.search(r"def maxCases : Nat := (\d+)", protocol)[1] == str(MAX_CASES)
+    assert re.search(r"def maxHandles : Nat := (\d+)", protocol)[1] == str(MAX_HANDLES)
+    assert re.search(r"def maxHandleBytes : Nat := (\d+)", protocol)[1] == str(MAX_HANDLE_BYTES)
+    assert re.search(r'def handleKey : String := "(\w+)"', protocol)[1] == HANDLE_KEY
     runner = (ROOT / "lean/VE/Service/EnglishRun.lean").read_text()
     terms = runner.split("def encodeTerm :", 1)[1].split("def encodeFormula :", 1)[0]
     formulas = runner.split("def encodeFormula :", 1)[1].split("/-- Decide", 1)[0]
@@ -141,6 +145,9 @@ def test_handshake(service_executable):
         assert tuple(service.handshake["modes"]) == MODES
         assert service.handshake["limits"] == {"max_line_bytes": 16777216, "max_cases": 4096,
                                                "json_depth": 256}
+        # The handle table the client mirrors (lean-first b2): the service states it, the schema pins it.
+        assert service.handshake["handles"] == {"member": HANDLE_KEY, "max": MAX_HANDLES,
+                                                "max_bytes": MAX_HANDLE_BYTES}
         assert len(service.build) == 64
 
 
@@ -378,9 +385,14 @@ def test_chunks_fit_their_byte_budget(service_executable):
     chunks = list(service._chunks(texts))
     assert [t for chunk in chunks for t in chunk] == texts
     assert all(len(("[" + ",".join(chunk) + "]").encode()) <= 3000 for chunk in chunks if len(chunk) > 1)
+    # Cases go with environment handles (lean-first b2): their requests are the chunks of the texts sent.
+    sent = list(service._chunks(service._sent("evaluate", CASES[:40])))
+    assert all(len(("[" + ",".join(item.text for item in chunk) + "]").encode()) <= 3000
+               for chunk in sent if len(chunk) > 1)
     with service:
         assert [r["id"] for r in service.run("evaluate", CASES[:40])] == [c["id"] for c in CASES[:40]]
-        assert service.stats["requests"] == len(chunks) and service.stats["restarts"] == 0
+        assert service.stats["requests"] == len(sent) and service.stats["restarts"] == 0
+        assert service.stats["handle_resends"] == 0
 
 
 def test_build_mismatch_is_refused(service_executable):
@@ -438,7 +450,8 @@ def placeholders(value, line):
 hello = {"service": "ve-lean@1", "protocol": 2,
          "modes": __MODES__,
          "codes": __CODES__,
-         "limits": {"max_line_bytes": 16777216, "max_cases": 4096, "json_depth": 256}}
+         "limits": {"max_line_bytes": 16777216, "max_cases": 4096, "json_depth": 256},
+         "handles": {"member": "environment_handle", "max": 64, "max_bytes": 67108864}}
 if behaviour == "handshake":
     hello["service"] = "other"
 if behaviour == "null-modes":
