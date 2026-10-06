@@ -2,7 +2,7 @@
 
 Base: `9aaf918d`. Branch: `lean-first/b7`. This batch changes the rights source's owner to Lean. `RightsDocument` now builds display and search containers from a checked `rights-elaborate` row. The document loader takes each rights source unit's openness from that row, and the generated English sentences come from Lean. `rights_route` relays the five-question report without regenerating and comparing Python's answer. Repeated identical rights requests use the existing bounded service cache.
 
-The committed code diff deletes 585 Python lines in the three rights decision modules (`rights.py`, `rights_route.py`, `document.py`) while adding 128 relay/container lines there. Across all changed Python files, 659 lines are deleted and 164 added. Lean adds 81 lines and deletes 6 across the rights runner, response schema and response-shape proof; the rights runner itself adds 74 lines.
+The committed code diff deletes 585 Python lines in the three rights decision modules (`rights.py`, `rights_route.py`, `document.py`) while adding 128 relay/container lines there. Across all changed Python files, 663 lines are deleted and 164 added. Lean adds 81 lines and deletes 6 across the rights runner, response schema and response-shape proof; the rights runner itself adds 74 lines.
 
 ## Deletion ledger
 
@@ -37,7 +37,9 @@ The affected rights and composition tests passed (70 passed, 1 nightly deselecte
 
 **Latency:** on a 1,687-byte rights document with a limitation, five alternating fresh-process checks had identical JSON answers. Median wall was 0.5786 s on the base and 0.5735 s on the head (`evidence/rights-benchmark.json`). This is a loaded-host observation, not a quiet-host CPU measurement. The two large pilot retries took 520.67 s and 498.74 s at load roughly 22–42; both remained inside their 600-second recorder limit and were answer-identical. The separate 120-second quiet-host pilot budget cannot be measured on this saturated host.
 
-The first hermetic full gate ran on clean `8bcd4e86` and reached all six stages. Lean build and audit passed (743 targets; 408 files and 4,311 named theorems with standard axioms only); Rust built and 50 tests passed. Pytest recorded 11,071 passed, 7 allowed skips and 3 failures (`evidence/full-gate-first.json`). All three failures were batch bookkeeping: two deleted call sites remained in `tools/inventory_lint.py`, the new Python container exception boundary lacked its assurance-manifest entry, and eight new Lean declarations lacked trust classes. Those records were fixed, the stale `rights-three-way-report.json` was regenerated as an embedding report, and the three exact failing tests passed. The final clean-HEAD gate result is recorded in `evidence/full-gate.json` after the evidence commit.
+The first hermetic full gate ran on clean `8bcd4e86` and reached all six stages. Lean build and audit passed (743 targets; 408 files and 4,311 named theorems with standard axioms only); Rust built and 50 tests passed. Pytest recorded 11,071 passed, 7 allowed skips and 3 failures (`evidence/full-gate-first.json`). All three failures were batch bookkeeping: two deleted call sites remained in `tools/inventory_lint.py`, the new Python container exception boundary lacked its assurance-manifest entry, and eight new Lean declarations lacked trust classes. Those records were fixed, the stale `rights-three-way-report.json` was regenerated as an embedding report, and the three exact failing tests passed.
+
+The second hermetic full gate passed on clean `cc57f668`: 11,074 Python tests passed, 7 allowed skips, 50 Rust tests passed, zero failures (`evidence/full-gate.json`). It again built 743 Lean targets and audited 4,311 named theorems. After committing this gate record, the full gate is run once more on the resulting clean HEAD; that run's commit and result are reported in the handoff.
 
 ## Seeded bugs: tests can fail
 
