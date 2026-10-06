@@ -8142,6 +8142,7 @@
     "VE.SpeechActs.Source.nominationKeys",
     "VE.SpeechActs.Source.ordinary",
     "VE.SpeechActs.Source.partitionError",
+    "VE.SpeechActs.Source.premiseFields",
     "VE.SpeechActs.Source.premiseText",
     "VE.SpeechActs.Source.queryJson",
     "VE.SpeechActs.Source.readUnit",
@@ -8160,7 +8161,8 @@
    "D[I]": [
     "VE.SpeechActs.Source.SpeechSource.documentId",
     "VE.SpeechActs.Source.SpeechSource.identityPayload",
-    "VE.SpeechActs.Source.completedModelId"
+    "VE.SpeechActs.Source.completedModelId",
+    "VE.SpeechActs.Source.statusModelId"
    ],
    "S": [
     "VE.SpeechActs.Source.Coverage",
@@ -8205,6 +8207,9 @@
     "VE.SpeechActs.Source.recordJson",
     "VE.SpeechActs.Source.report",
     "VE.SpeechActs.Source.statusText"
+   ],
+   "G[R]": [
+    "VE.SpeechActs.Source.trivialWarnings"
    ]
   },
   "VE/SpeechActs/Tree.lean": {

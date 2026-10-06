@@ -29,13 +29,24 @@ def premise_status(env, premises, *, max_proof_steps=10_000, max_domain_size=2,
                    rust=composed("rust-experimental", run))
 
 
+def search_premise_status_witness(env, premises):
+    """Untrusted search proposal for an already expanded Lean premise list.
+
+    The speech source route replays the returned model or certificate before
+    publishing a status. This does not decide whether the evidence is valid.
+    """
+    return _premise_status(env, premises, max_proof_steps=10_000, max_domain_size=2,
+                           max_models=10_000, max_evaluations=100_000,
+                           include_witness=True, expanded=True)
+
+
 def _premise_status(env, premises, *, max_proof_steps, max_domain_size, max_models, max_evaluations,
-                    include_witness=False):
+                    include_witness=False, expanded=False):
     def contradiction(budget):
-        proof = prove_entailment(env, premises, Bottom(), max_steps=budget)
+        proof = prove_entailment(env, premises, Bottom(), max_steps=budget, _background=not expanded)
         if proof.status == "Found":
             replay = check_entailment_certificate(env, premises, Bottom(), proof.certificate,
-                                                  max_steps=budget)
+                                                  max_steps=budget, _background=not expanded)
             if replay.valid:
                 return {"status": "INCONSISTENT", "certificate": proof.certificate}
         return None

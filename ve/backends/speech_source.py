@@ -6,12 +6,10 @@ binding; it does not recalculate a speech decision.
 """
 from __future__ import annotations
 
-import subprocess
 from pathlib import Path
 
 from ..errors import CheckerUnavailable
-from ..wire import canonical_json
-from .lean import NoAnswer, configured_timeout, read_rows, row_problem
+from .lean import row_problem, run_route_cases
 from .relay import rejection
 from .service_schema import Invalid, check_row
 
@@ -39,12 +37,7 @@ def decide_source(metadata: dict, source: str, fences: dict | None = None, *,
     case = {"id": "speech-source", "kind": "speech-source", "document": payload}
     if premise_status is not None:
         case["premise_status"] = premise_status
-    try:
-        proc = subprocess.run([str(executable), "-"], input=canonical_json([case]),
-                              capture_output=True, timeout=configured_timeout(120.0))
-        [row] = read_rows(proc.returncode, proc.stdout, [case], coded=True, restricted=True)
-    except (OSError, subprocess.TimeoutExpired, NoAnswer) as exc:
-        raise CheckerUnavailable(f"CheckerUnavailable: speech-source route returned no bound answer ({exc})") from exc
+    [row] = run_route_cases(executable, "-", [case], coded=True, route_name="speech-source route")
     if row["status"] == "error":
         if type(row.get("code")) is not str:
             raise CheckerUnavailable("CheckerUnavailable: speech-source route omitted its diagnostic code")

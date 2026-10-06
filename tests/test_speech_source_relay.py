@@ -41,7 +41,28 @@ def test_source_transport_fails_closed_on_tampered_report(monkeypatch, mutation)
         result["document_id"] = False
     else:
         result["coverage"]["bytes_by_class"]["C"] = False
-    monkeypatch.setattr("ve.backends.speech_source.subprocess.run", lambda *a, **k:
+    monkeypatch.setattr("ve.backends.lean.subprocess.run", lambda *a, **k:
                         subprocess.CompletedProcess([], 0, json.dumps([result]).encode(), b""))
     with pytest.raises(CheckerUnavailable):
         decide_source(metadata, source)
+
+
+def test_every_producer_field_is_required_and_typed(monkeypatch):
+    metadata, source = sample()
+    result = decide_source(metadata, source)
+    original = subprocess.run
+    try:
+        for field in result.keys() - {"id", "status"}:
+            for kind in ("drop", "retype"):
+                tampered = copy.deepcopy(result)
+                if kind == "drop":
+                    del tampered[field]
+                else:
+                    value = tampered[field]
+                    tampered[field] = [] if type(value) is dict else {} if type(value) is list else False
+                monkeypatch.setattr("ve.backends.lean.subprocess.run", lambda *a, row=tampered, **k:
+                                    subprocess.CompletedProcess([], 0, json.dumps([row]).encode(), b""))
+                with pytest.raises(CheckerUnavailable):
+                    decide_source(metadata, source)
+    finally:
+        monkeypatch.setattr("ve.backends.lean.subprocess.run", original)
