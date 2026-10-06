@@ -20,7 +20,7 @@ PYTHON = {
         "alternatives reports rights softnorms softnorms_contract norms_contract speech_acts units").split(),
     3: ("english english_grammar english_phrases english_vocabulary fluent fol grammar natural "
         "norm_english parser printer surface lexicon report_english speech_english readings_english "
-        "readings_s2_english").split(),
+        "readings_s2_english senses").split(),
     4: ("__main__ adapters admission argument attacks authoring backends bundle check "
         "document equivalence norm_admission norm_defaults norm_defaults_contract norm_defaults_english norm_defaults_route norm_strict "
         "openterms propose readings search stream_audit vacuity assist discourse quantity_admission "
@@ -123,7 +123,7 @@ def lean_layer(module: str) -> int | None:
         return 4  # states theorems on Norms.Run.runCase (docs/CONSOLIDATION-PLAN.md step 1a)
     if module in {"VE.Route.RunSound", "VE.Norms.RunSound"}:
         return 4  # states theorems on Route.Run.runCase and Norms.Run.runCase (step 2a)
-    if module.startswith(("VE.English.", "VE.Grammar.", "VE.EnglishGrammar.")) or module in {
+    if module.startswith(("VE.English.", "VE.Grammar.", "VE.EnglishGrammar.", "VE.Senses.")) or module in {
         "VE.Surface", "VE.SurfaceProofs", "VE.ParserContracts", "VE.LexicalProofs",
         "VE.Order.Surface", "VE.Core.Surface", "VE.Closure.Surface",
     }:

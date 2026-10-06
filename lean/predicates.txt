@@ -63,6 +63,7 @@ module ResponseShape.Schemas
 module ResponseShape.Skeleton
 module ResponseShape.Skeletons
 module ResponseShape
+module SensesMain
 module Serve
 module SpeechActsMain
 module VE.Alternatives.Admission
@@ -350,6 +351,15 @@ module VE.Route.Steps
 module VE.Route.Wire
 module VE.Route.WireSound
 module VE.Semantics
+module VE.Senses.Assignment
+module VE.Senses.Decode
+module VE.Senses.Dictionary
+module VE.Senses.Examples
+module VE.Senses.Fixtures
+module VE.Senses.Preamble
+module VE.Senses.Project
+module VE.Senses.Read
+module VE.Senses.Run
 module VE.Service.Diagnose
 module VE.Service.EnglishRun
 module VE.Service.Family
@@ -852,6 +862,12 @@ VE.Route.closureValid@VE.Route.Checker
 VE.Route.coreValid@VE.Core.Route
 VE.Route.folValid@VE.Route.Checker
 VE.Route.orderValid@VE.Route.Checker
+VE.Senses.CandidateGood@VE.Senses.Read
+VE.Senses.UnitGood@VE.Senses.Read
+VE.Senses.glossed_negative@VE.Senses.Dictionary
+VE.Senses.lines_read@VE.Senses.Preamble
+VE.Senses.project_total@VE.Senses.Project
+VE.Senses.senseMap_ids@VE.Senses.Read
 VE.Service.FamilyBundle.ReadingBound@VE.Service.FamilyBundle
 VE.Service.FamilyBundle.ReadingCompatible@VE.Service.FamilyBundle
 VE.Service.FamilyBundle.Sound@VE.Service.FamilyBundle
