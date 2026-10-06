@@ -525,8 +525,8 @@ def _load_document(raw: bytes, path: str | Path, lean):
     if rights_document is not None:
         rights = rights_document
         from .rights_route import run_rights_case
-        statuses = run_rights_case(env, rights.units, "rights-unit-status",
-                                  open_predicates=sorted(open_names))["open"]
+        statuses = run_rights_case(env, rights.units, "rights-elaborate",
+                                  open_predicates=sorted(open_names))["unit_open"]
         source_ids = [u["id"] for u, _ in _parts(units)
                       if type(u.get("content")) is dict and u.get("id") not in attached and
                       u.get("kind") in ("right", "right_lines", "limitation", "bar", "norm")]

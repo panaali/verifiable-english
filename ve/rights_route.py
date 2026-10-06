@@ -1,7 +1,7 @@
 """Relay rights decisions and reports from the Lean rights route."""
 from __future__ import annotations
 
-from .backends.relay import decide
+from .backends.relay import decide, decide_once
 
 def _wire(value):
     # The restricted Lean JSON input represents optional null fields by omission.
@@ -13,9 +13,13 @@ def _wire(value):
 
 
 def run_rights_case(environment, units, kind, **extra):
-    case = {"id": kind, "kind": kind, "environment": _wire(environment.to_dict()),
+    raw = environment.to_dict()
+    # readings@1 is a head profile. Its lower rights chain is checked with
+    # that profile removed, as the readings route does for each choice.
+    raw["profiles"] = [p for p in raw["profiles"] if p != "readings@1"]
+    case = {"id": kind, "kind": kind, "environment": _wire(raw),
             "document": _wire(units), **extra}
-    return decide("rights", [case])[0]
+    return decide_once("rights", case)
 
 
 def expected_environment_prime(rights):
