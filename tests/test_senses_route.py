@@ -66,6 +66,34 @@ def test_spec_reading_fixtures(joke, fixture, source, status, code):
         assert [c["choice"] for c in reading["units"][0]["candidates"]] == [[['odd', 1]]]
 
 
+@pytest.mark.parametrize("fixture, source, status, formula, unresolved", [
+    ("s8", "In this document, funny means amusing. The riddle is funny (meaning amusing).",
+     "one", ["unary", "sense__funny_1", ["const", "riddle"]], []),
+    ("s9", "In this document, funny means amusing. In this document, odd means strange. "
+     "Every funny joke is odd.", "one",
+     ["forall", "joke", ["implies", ["unary", "sense__funny_1", ["var", 0]],
+                          ["unary", "sense__odd_1", ["var", 0]]]], []),
+    ("s22", "Both the riddle is odd and the riddle is funny (meaning strange).",
+     "open", None, ["odd"]),
+    ("n1", "In this document, funny means amusing. The riddle is not funny.",
+     "one", ["not", ["unary", "sense__funny_1", ["const", "riddle"]]], []),
+    ("n2", "The riddle is not funny (meaning strange).",
+     "one", ["not", ["unary", "sense__funny_2", ["const", "riddle"]]], []),
+    ("n3", "Alice does not tell the riddle.",
+     "one", ["not", ["binary", "sense__tells_1", ["const", "alice"],
+                          ["const", "riddle"]]], []),
+])
+def test_three_way_spec_fixture_admission(fixture, source, status, formula, unresolved):
+    """Spec outcomes also have independent compiled Lean guards in VE.Senses.Examples."""
+    result = subprocess.run(["lake", "build", "VE.Senses.Examples"], cwd=ROOT / "lean",
+                            capture_output=True, text=True, timeout=HANG_TIMEOUT)
+    assert result.returncode == 0, result.stdout + result.stderr
+    reading = route.read(joke_env(), source, [PACK])["reading"]
+    assert reading["status"] == status, fixture
+    assert reading["units"][0].get("formula") == formula, fixture
+    assert reading["units"][0]["unresolved"] == unresolved, fixture
+
+
 def test_spec_pack_python_file_and_lean_fixture_agree(tmp_path):
     """The spec's JSON, the shipped file, and Lean's fixture pack describe one dictionary."""
     text = (ROOT / "docs/spec/senses.md").read_text()
@@ -133,7 +161,7 @@ def test_two_cli_admission_paths_agree(joke, tmp_path):
     pack = tmp_path / "pack.json"
     pack.write_bytes(PACK)
     source = tmp_path / "source.txt"
-    source.write_text("Alice tells riddle.")
+    source.write_text("Alice tells the riddle.")
     commands = [
         ["senses", "check", "--env", str(env), "--pack", str(pack), str(source)],
         ["check", "--surface", "english", "--env", str(env), "--senses", str(pack), str(source)],
@@ -145,6 +173,9 @@ def test_two_cli_admission_paths_agree(joke, tmp_path):
         assert run.returncode == 0, run.stdout + run.stderr
         answers.append(json.loads(run.stdout))
     assert answers[0] == answers[1]
+    assert answers[0]["reading"]["status"] == "one"
+    assert answers[0]["reading"]["units"][0]["formula"] == [
+        "binary", "sense__tells_1", ["const", "alice"], ["const", "riddle"]]
 
 
 def test_zero_budget_never_admits(joke):
