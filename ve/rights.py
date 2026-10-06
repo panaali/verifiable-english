@@ -138,12 +138,13 @@ class RightsDocument:
     rendering and proof-search callers; they do not decide rights acceptance.
     """
 
-    def __init__(self, env: RightsEnvironment, units):
+    def __init__(self, env: RightsEnvironment, units, *, open_predicates=()):
         from .rights_route import run_rights_case
         from .errors import CheckerUnavailable
         from .ast import formula_from_data, _Decoder
 
-        row = run_rights_case(env, units, "rights-elaborate")
+        row = run_rights_case(env, units, "rights-elaborate",
+                              open_predicates=sorted(open_predicates))
         try:
             self.elaborated = row
             self.env = env
