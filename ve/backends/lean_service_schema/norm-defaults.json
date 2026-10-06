@@ -90,6 +90,8 @@
       "properties": {
         "background": {"$ref": "common.json#/$defs/norms_background"},
         "conflict_targets": {"$ref": "common.json#/$defs/conflict_targets"},
+        "document_hash": {"type": "string"},
+        "environment_id": {"type": "string"},
         "fill": {
           "items": {
             "additionalProperties": false,
@@ -99,6 +101,9 @@
           },
           "type": "array"
         },
+        "fill_hash": {"type": "string"},
+        "fill_labels": {"$ref": "common.json#/$defs/strings"},
+        "filled_environment_id": {"type": "string"},
         "fragment": {"type": "boolean"},
         "fragment_fill": {"type": "boolean"},
         "id": {"$ref": "common.json#/$defs/id_ok"},
@@ -144,7 +149,12 @@
         "unspecified",
         "unsaid",
         "reached",
-        "fragment_fill"
+        "fragment_fill",
+        "filled_environment_id",
+        "fill_hash",
+        "fill_labels",
+        "environment_id",
+        "document_hash"
       ],
       "type": "object"
     },

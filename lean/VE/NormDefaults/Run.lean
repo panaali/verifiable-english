@@ -135,8 +135,23 @@ def runOtherCase (id kind : String) (j : Json) : Except String Json := do
   if Wire.hasProfile env && (Wire.layeredRoute env).isSome && kind.startsWith "norm-defaults-" then
     return ← Wire.runLayered id kind j
   if kind == "norm-defaults-elaborate" then
-    let s ← Wire.decodeSourceU (← j.getObjVal? "environment") (j.getObjValD "norms")
-    return VE.Route.Wire.ok id (Wire.regeneratedU s.U)
+    let environment ← j.getObjVal? "environment"
+    let s ← Wire.decodeSourceU environment (j.getObjValD "norms")
+    let filled ← Admission.fillJson environment s.U
+    let filledId ← VE.Route.Wire.environmentId (Wire.profilesOf filled) filled
+    let sourceId ← VE.Route.Wire.environmentId (Wire.profilesOf environment)
+      (← Wire.canonicalEnvironmentJsonU environment)
+    let documentHash ← VE.Norms.Replay.documentHash (Wire.profilesOf environment)
+      environment (j.getObjValD "norms")
+    let labelled := Json.arr ((Admission.fillLabelled s.U).map (fun (label, formula) =>
+      Json.arr #[.str label, Wire.enc formula])).toArray
+    let fillHash ← VE.CertificateWire.digest
+      s!"ve-norm-defaults-fill-{VE.Route.Wire.identityVersion (Wire.profilesOf environment)}\n"
+      (Json.mkObj [("environment_id", .str sourceId), ("premises", labelled)])
+    return VE.Route.Wire.ok id (Wire.regeneratedU s.U ++
+      [("filled_environment_id", .str filledId), ("fill_hash", .str fillHash),
+       ("fill_labels", toJson (Admission.fillLabels s.U)),
+       ("environment_id", .str sourceId), ("document_hash", .str documentHash)])
   if kind == "norm-defaults-conflict" && (j.getObjVal? "witness").toBool then
     let ⟨s, w⟩ ← Wire.replayWitnessU j
     return VE.Route.Wire.ok id [("verdict", .str (if w.conflict then "CONFLICT" else "UNKNOWN")),
