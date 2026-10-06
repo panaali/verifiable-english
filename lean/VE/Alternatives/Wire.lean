@@ -375,11 +375,11 @@ def coverage (A : AltDoc) (environment units narrowings : Json) : Json := Id.run
             ("decider", item.getObjValD "decider"), ("premise", item.getObjValD "premise")])
   let unmapped := unmappedObligations A |>.map (fun r => Json.str r.name)
   let ns := narrowings.getArr?.toOption.map (·.toList) |>.getD []
-  let detail := Json.mkObj [("alternatives_declared", toJson declared),
-    ("counterfactual_leaves", toJson cells), ("assumed_harm_free", toJson assumed),
-    ("table_complete", completion.getD .null), ("proximate_judgments", toJson proximate),
-    ("unmapped_obligations", toJson unmapped), ("dilemmas", toJson ([] : List Json)),
-    ("narrowings", toJson ns)]
+  let detail := Json.mkObj [("alternatives_declared", Json.arr declared.toArray),
+    ("counterfactual_leaves", Json.arr cells.toArray), ("assumed_harm_free", Json.arr assumed.toArray),
+    ("table_complete", completion.getD .null), ("proximate_judgments", Json.arr proximate.toArray),
+    ("unmapped_obligations", Json.arr unmapped.toArray),
+    ("dilemmas", Json.arr #[]), ("narrowings", Json.arr ns.toArray)]
   let counts := Json.mkObj [("alternatives_declared", toJson declared.length),
     ("counterfactual_leaves", toJson cells.length), ("assumed_harm_free", toJson assumed.length),
     ("table_complete", toJson (if completion.isSome then (1 : Nat) else 0)),

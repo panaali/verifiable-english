@@ -107,7 +107,33 @@ def elaborate : Shape :=
         ("premises", ref "common.json#/$defs/layer_premises"),
         ("conflict_targets", ref "common.json#/$defs/conflict_targets"),
         ("fragment", .type ["boolean"]),
-        ("coverage", ref "#/$defs/coverage")]]
+        ("coverage", ref "#/$defs/coverage")],
+      .ite (.onCase (.required ["coverage_units"]))
+        (.required ["coverage"])
+        (.bool true)]
+
+def declaredCell : Shape :=
+  c "Alternatives.Wire.coverage: an asserted available(action, chooser) leaf." [
+    obj, .required ["action", "chooser", "unit", "support"],
+    closed [("action", str), ("chooser", str), ("unit", str), ("support", str)]]
+
+def counterfactualCell : Shape :=
+  c "Alternatives.Wire.coverage: an asserted leads_to(action, harm) leaf." [
+    obj, .required ["action", "harm", "leads_to", "decider", "unit", "support"],
+    closed [("action", str), ("harm", str), ("leads_to", .type ["boolean"]),
+      ("decider", str), ("unit", str), ("support", str)]]
+
+def assumedCell : Shape :=
+  c "Alternatives.Wire.coverage: an outcome assumed by the complete table." [
+    obj, .required ["action", "harm", "decider", "premise"],
+    closed [("action", str), ("harm", str), ("decider", str),
+      ("premise", constS "alternatives:table_complete")]]
+
+def proximateCell : Shape :=
+  c "Alternatives.Wire.coverage: an asserted proximate(action, harm) leaf." [
+    obj, .required ["action", "harm", "decider", "unit", "support"],
+    closed [("action", str), ("harm", str), ("decider", str),
+      ("unit", str), ("support", str)]]
 
 def coverage : Shape :=
   c "Alternatives.Wire.coverage: accepted unit cells and their Lean-owned residual fold." [
@@ -130,16 +156,18 @@ def coverage : Shape :=
         .required ["alternatives_declared", "counterfactual_leaves", "assumed_harm_free",
           "table_complete", "proximate_judgments", "unmapped_obligations", "dilemmas", "narrowings"],
         closed [
-          ("alternatives_declared", arr),
-          ("counterfactual_leaves", arr),
-          ("assumed_harm_free", arr),
+          ("alternatives_declared", n [arr, .items declaredCell]),
+          ("counterfactual_leaves", n [arr, .items counterfactualCell]),
+          ("assumed_harm_free", n [arr, .items assumedCell]),
           ("table_complete", .anyOf [.type ["null"], n [obj,
             .required ["decider", "premise"],
-            closed [("decider", str), ("premise", str)]]]),
-          ("proximate_judgments", arr),
+            closed [("decider", str), ("premise", constS "alternatives:table_complete")]]]),
+          ("proximate_judgments", n [arr, .items proximateCell]),
           ("unmapped_obligations", ref "common.json#/$defs/strings"),
           ("dilemmas", n [arr, .maxItems 0]),
-          ("narrowings", arr)]]),
+          ("narrowings", n [arr,
+            .ite (.onCase (.required ["narrowings"]))
+              (.equals "/narrowings") (.maxItems 0)])]]),
       ("residual", n [obj,
         .required ["alternatives_declared", "counterfactual_leaves", "assumed_harm_free",
           "table_complete", "proximate_judgments", "unmapped_obligations", "dilemmas", "narrowings"],

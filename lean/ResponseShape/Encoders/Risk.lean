@@ -43,15 +43,18 @@ theorem certificate_fits (id : String) (j : Json) : OkFits req Skeletons.risk (r
   all_goals (try simp only [ok, VE.Route.Wire.ok])
   all_goals fits
 
-theorem elaborate_fits (id : String) (src : Wire.RiskSource) :
+theorem elaborate_fits (id : String) (src : Wire.RiskSource)
+    (hcoverage : (CaseCond.path ["coverage_units"]).holds req = false) :
     Fits req Skeletons.risk (ok id (Wire.regenerated src)) := by
   unfold ok VE.Route.Wire.ok Wire.regenerated VE.Alternatives.Wire.encodeNode Wire.labelled
     VE.Norms.Wire.regenerated orWorseName lessWorstName
   simp only []
   fits
+  all_goals exact hcoverage
 
 theorem elaborate_coverage_fits (id : String) (src : Wire.RiskSource)
-    (environment units narrowings : Json) :
+    (environment units narrowings : Json)
+    (hcoverage : (CaseCond.path ["coverage_units"]).holds req = true) :
     Fits req Skeletons.risk
       (ok id (Wire.regenerated src ++
         [("coverage", VE.Alternatives.Wire.coverage (toAlt src.R)
@@ -60,14 +63,30 @@ theorem elaborate_coverage_fits (id : String) (src : Wire.RiskSource)
     VE.Norms.Wire.regenerated orWorseName lessWorstName VE.Alternatives.Wire.coverage
   simp only []
   fits
+  all_goals first | exact hcoverage | fits
+  case h_2 x completion item heq hx =>
+    simp only [List.mem_flatMap, List.mem_filterMap] at hx
+    rcases hx with ⟨action, _, harm, _, h⟩
+    split at h <;> simp only [Option.some.injEq, reduceCtorEq] at h
+    subst_vars
+    fits
 
-theorem elaborate_case_fits (id : String) (j : Json) :
-    OkFits req Skeletons.risk (runElaborate id j) := by
+theorem elaborate_case_fits (id : String) (j : Json)
+    (hid : ∃ v, j.getObjVal? "id" = .ok v) :
+    OkFits j Skeletons.risk (runElaborate id j) := by
   unfold runElaborate
   okfits
   split
-  · exact elaborate_coverage_fits (req := req) _ _ _ _ _
-  · simpa only [List.append_nil] using (elaborate_fits (req := req) id _)
+  · exact elaborate_coverage_fits (req := j) _ _ _ _ _ (CaseCond.path_ok ‹j.getObjVal? "coverage_units" = .ok _›)
+  · obtain ⟨_, hid⟩ := hid
+    simpa only [List.append_nil] using (elaborate_fits (req := j) id _
+      (CaseCond.path_error hid ‹j.getObjVal? "coverage_units" = .error _›))
+
+private theorem stringField_present {j : Json} {id : String}
+    (h : VE.Bridge.stringField j "id" = .ok id) : ∃ v, j.getObjVal? "id" = .ok v := by
+  unfold VE.Bridge.stringField at h
+  obtain ⟨v, hv, _⟩ := VE.Order.ProfileGate.bind_ok h
+  exact ⟨v, hv⟩
 
 theorem admission_fits (id reportId : String) (res : Admission.Admitted) :
     Fits req Skeletons.risk (encodeAdmitted id reportId res) := by
@@ -75,12 +94,12 @@ theorem admission_fits (id reportId : String) (res : Admission.Admitted) :
   fits
   all_goals exact Common.claimJson_fits _
 
-theorem runCase_fits (j : Json) : OkFits req Skeletons.risk (runCase j) := by
+theorem runCase_fits (j : Json) : OkFits j Skeletons.risk (runCase j) := by
   unfold runCase
   okfits
   all_goals first
     | (unfold runAdmission; okfits; exact admission_fits _ _ _)
-    | exact elaborate_case_fits _ _
+    | exact elaborate_case_fits _ _ (stringField_present ‹VE.Bridge.stringField j "id" = .ok _›)
     | with_reducible exact decision_fits _ _
     | with_reducible exact conflict_fits _ _
     | with_reducible exact followable_fits _ _

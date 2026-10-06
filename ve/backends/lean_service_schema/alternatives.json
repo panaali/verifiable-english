@@ -220,18 +220,82 @@
         "alternatives": {
           "additionalProperties": false,
           "properties": {
-            "alternatives_declared": {"type": "array"},
-            "assumed_harm_free": {"type": "array"},
-            "counterfactual_leaves": {"type": "array"},
+            "alternatives_declared": {
+              "items": {
+                "$comment": "Alternatives.Wire.coverage: an asserted available(action, chooser) leaf.",
+                "additionalProperties": false,
+                "properties": {
+                  "action": {"type": "string"},
+                  "chooser": {"type": "string"},
+                  "support": {"type": "string"},
+                  "unit": {"type": "string"}
+                },
+                "required": ["action", "chooser", "unit", "support"],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "assumed_harm_free": {
+              "items": {
+                "$comment": "Alternatives.Wire.coverage: an outcome assumed by the complete table.",
+                "additionalProperties": false,
+                "properties": {
+                  "action": {"type": "string"},
+                  "decider": {"type": "string"},
+                  "harm": {"type": "string"},
+                  "premise": {"const": "alternatives:table_complete"}
+                },
+                "required": ["action", "harm", "decider", "premise"],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "counterfactual_leaves": {
+              "items": {
+                "$comment": "Alternatives.Wire.coverage: an asserted leads_to(action, harm) leaf.",
+                "additionalProperties": false,
+                "properties": {
+                  "action": {"type": "string"},
+                  "decider": {"type": "string"},
+                  "harm": {"type": "string"},
+                  "leads_to": {"type": "boolean"},
+                  "support": {"type": "string"},
+                  "unit": {"type": "string"}
+                },
+                "required": ["action", "harm", "leads_to", "decider", "unit", "support"],
+                "type": "object"
+              },
+              "type": "array"
+            },
             "dilemmas": {"maxItems": 0, "type": "array"},
-            "narrowings": {"type": "array"},
-            "proximate_judgments": {"type": "array"},
+            "narrowings": {
+              "else": {"maxItems": 0},
+              "if": {"x-case": {"required": ["narrowings"]}},
+              "then": {"x-equals": "/narrowings"},
+              "type": "array"
+            },
+            "proximate_judgments": {
+              "items": {
+                "$comment": "Alternatives.Wire.coverage: an asserted proximate(action, harm) leaf.",
+                "additionalProperties": false,
+                "properties": {
+                  "action": {"type": "string"},
+                  "decider": {"type": "string"},
+                  "harm": {"type": "string"},
+                  "support": {"type": "string"},
+                  "unit": {"type": "string"}
+                },
+                "required": ["action", "harm", "decider", "unit", "support"],
+                "type": "object"
+              },
+              "type": "array"
+            },
             "table_complete": {
               "anyOf": [
                 {"type": "null"},
                 {
                   "additionalProperties": false,
-                  "properties": {"decider": {"type": "string"}, "premise": {"type": "string"}},
+                  "properties": {"decider": {"type": "string"}, "premise": {"const": "alternatives:table_complete"}},
                   "required": ["decider", "premise"],
                   "type": "object"
                 }
@@ -282,6 +346,7 @@
     "elaborate": {
       "$comment": "Alternatives.Wire.regenerated: the legend, the inlined tree, the alternatives premises, the base premises, the followability formulas, the profile words' existential probes, the unmapped obligations, then Norms.Wire.regenerated of the inlined tree.",
       "additionalProperties": false,
+      "if": {"x-case": {"required": ["coverage_units"]}},
       "properties": {
         "alternatives": {"$ref": "#/$defs/regenerated/alternatives"},
         "background": {"$ref": "common.json#/$defs/norms_background"},
@@ -325,6 +390,7 @@
         "conflict_targets",
         "fragment"
       ],
+      "then": {"required": ["coverage"]},
       "type": "object"
     },
     "followable": {
