@@ -4096,6 +4096,7 @@
 'ResponseShape.Encoders.Reports.scopedVerdict_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Reports.scoped_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Reports.status_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Reports.status_render_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Rights.admission_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Rights.generated_entries_fit' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Rights.regenerated_environment' depends on axioms: [propext, Classical.choice, Quot.sound]

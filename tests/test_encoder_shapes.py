@@ -134,22 +134,6 @@ def test_reports_verdict_status_enum_is_proved(lake, tmp_path):
         assert not _passes(lake, tmp_path, _scoped_verdict(status))
 
 
-def test_referenced_status_domain_matches_renderer(lake, tmp_path):
-    """A referenced status enum is extracted from the same schema as the row proof."""
-    for status in ("UNFORMALISED", "OPEN", "UNKNOWN", "LABELLED", "CHECKED"):
-        body = f'''
-example (req : Json) :
-    Fits req (skelStrings% "reports.json#/$defs/status_word") (.str "{status}") := by
-  fits
-'''
-        assert _passes(lake, tmp_path, body)
-    assert not _passes(lake, tmp_path, '''
-example (req : Json) :
-    Fits req (skelStrings% "reports.json#/$defs/status_word") (.str "BOGUS") := by
-  fits
-''')
-
-
 def _shape(required: str, allowed: str) -> str:
     return f"""
 def certificateShape : List File :=

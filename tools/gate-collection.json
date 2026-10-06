@@ -1922,7 +1922,6 @@
   "tests/test_encoder_shapes.py::test_environment_field_is_bound_to_the_prime_encoder",
   "tests/test_encoder_shapes.py::test_generated_environment_predicate_has_arguments",
   "tests/test_encoder_shapes.py::test_quantity_select_keeps_the_request_kind",
-  "tests/test_encoder_shapes.py::test_referenced_status_domain_matches_renderer",
   "tests/test_encoder_shapes.py::test_reports_verdict_status_enum_is_proved",
   "tests/test_encoder_shapes.py::test_the_genuine_encoder_is_proved",
   "tests/test_english.py::test_absent_or_invalid_pinned_review_fails_closed[None]",
