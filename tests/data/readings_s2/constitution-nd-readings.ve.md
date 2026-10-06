@@ -237,7 +237,7 @@
      "regulated": {
       "role": "permission",
       "default": "unspecified",
-      "act": "{0} actively deceive {1} about a system prompt's existence-or-content"
+      "act": "{0} actively deceive {1} about a system prompt"
      }
     },
     "denial_of_being_claude_permitted": {
@@ -1363,7 +1363,7 @@
    "version": 1,
    "status": "open",
    "models": {
-    "947ba7e14f8b8000d75a645783234481494c0cffd27e98be402e0560a2e11fc7": {
+    "ede04e151d0efa22ca4069d97b475ad50416c5e363c75fbee81632124c35572e": {
      "complete": true,
      "domains": {
       "entity": [
@@ -1460,7 +1460,7 @@
       "who": "translator",
       "why": "“should ask”: strict duty in cases of genuine ambiguity, or defeasible duty. “Genuine ambiguity” is an open term. The stored model is a placeholder (an empty situation): a candidate norm carries no content, so this document cannot check that it separates the readings. The separating situation is computed in finish.py (readings/separating-situations.json).",
       "distinguishing_models": {
-       "default": "947ba7e14f8b8000d75a645783234481494c0cffd27e98be402e0560a2e11fc7"
+       "default": "ede04e151d0efa22ca4069d97b475ad50416c5e363c75fbee81632124c35572e"
       }
      }
     },
@@ -1473,7 +1473,7 @@
       "who": "translator",
       "why": "“should ask”: strict duty in cases of genuine ambiguity, or defeasible duty. “Genuine ambiguity” is an open term. The stored model is a placeholder (an empty situation): a candidate norm carries no content, so this document cannot check that it separates the readings. The separating situation is computed in finish.py (readings/separating-situations.json).",
       "distinguishing_models": {
-       "strict": "947ba7e14f8b8000d75a645783234481494c0cffd27e98be402e0560a2e11fc7"
+       "strict": "ede04e151d0efa22ca4069d97b475ad50416c5e363c75fbee81632124c35572e"
       }
      }
     }
