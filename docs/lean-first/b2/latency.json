@@ -1,0 +1,44 @@
+{
+ "base": {
+  "root": "/home/seyran/code/ve-lf-2-base",
+  "load": "8.18",
+  "rows": {
+   "check top": {
+    "lean_cpu_p50_ms": 1.785,
+    "wall_p50_ms": 2.42,
+    "batched_300_lean_cpu_per_case_ms": 1.692,
+    "batched_300_wall_per_case_ms": 1.854
+   },
+   "environment": {
+    "lean_cpu_p50_ms": 1.642,
+    "wall_p50_ms": 2.097,
+    "batched_300_lean_cpu_per_case_ms": 1.592,
+    "batched_300_wall_per_case_ms": 1.721
+   },
+   "rust typing call": {
+    "wall_p50_ms": 5.622
+   }
+  }
+ },
+ "head": {
+  "root": "/home/seyran/code/ve-lf-2",
+  "load": "8.18",
+  "rows": {
+   "check top": {
+    "lean_cpu_p50_ms": 0.937,
+    "wall_p50_ms": 1.395,
+    "batched_300_lean_cpu_per_case_ms": 0.811,
+    "batched_300_wall_per_case_ms": 0.849
+   },
+   "environment": {
+    "lean_cpu_p50_ms": 0.821,
+    "wall_p50_ms": 1.276,
+    "batched_300_lean_cpu_per_case_ms": 0.711,
+    "batched_300_wall_per_case_ms": 0.756
+   },
+   "rust typing call": {
+    "wall_p50_ms": 0.853
+   }
+  }
+ }
+}

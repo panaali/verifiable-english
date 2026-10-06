@@ -69,13 +69,26 @@ theorem statusOf_fits (res : Admitted) (hs : StatusesOk res.doc) (u : String) :
   · decide
   split <;> exact loadedStatus_mem hs _
 
+theorem w2Status_mem (b : Bool) (s : String) : Loader.w2Status b s ∈ statusWords := by
+  unfold Loader.w2Status
+  split
+  · decide
+  · split
+    · decide
+    · split <;> decide
+
+theorem w2SetStatus_mem (a b : Bool) : Loader.w2SetStatus a b ∈ statusWords := by
+  unfold Loader.w2SetStatus
+  split <;> decide
+
 theorem compileUnit_status (rv : VE.Route.Wire.RouteVocabulary) (ps : List String) (envId source : String)
     (openNames : List String) (cursor : Nat) (u : Json) :
     OkP (fun x : Loader.Unit₀ => x.status ∈ statusWords) (Loader.compileUnit rv ps envId source openNames cursor u) := by
   unfold Loader.compileUnit
   okfits
   all_goals dsimp only
-  all_goals (repeat' split) <;> decide
+  all_goals (repeat' split)
+  all_goals first | exact w2Status_mem _ _ | exact w2SetStatus_mem _ _ | decide
 
 theorem compileUnits_status (rv : VE.Route.Wire.RouteVocabulary) (ps : List String) (envId source : String)
     (openNames parents : List String) :
@@ -115,7 +128,7 @@ theorem loadFront_status (rv : VE.Route.Wire.RouteVocabulary) (ps : List String)
     obtain ⟨x, hx, rfl⟩ := hp
     dsimp only
     split
-    · split <;> decide
+    · exact w2SetStatus_mem _ _
     · exact compileUnits_status _ _ _ _ _ _ _ _ _ ‹Loader.compileUnits _ _ _ _ _ _ _ _ = .ok _› x hx
 
 theorem prepare_status (ps : List String) (env : Json) (rv : VE.Route.Wire.RouteVocabulary) (j : Json) :

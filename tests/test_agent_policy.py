@@ -22,12 +22,30 @@ import environments  # noqa: E402
 import mutants  # noqa: E402
 import reference_policy  # noqa: E402
 from ve.norm_english import render_english  # noqa: E402
+from ve.ast import Document, Top, Bottom  # noqa: E402
 
 KEY = json.loads((HERE / "answer-key.json").read_text())
 RESULTS = json.loads((HERE / "results.json").read_text())
 # Disagreements between VE and the answer key, each a finding recorded in
 # README.md and PLAN section 12. The key itself is never edited to match VE.
 RECORDED_DISAGREEMENTS = {}
+
+
+def test_satisfies_sends_one_ordered_document(monkeypatch):
+    asked = []
+
+    def evaluate(env, document, model, **options):
+        asked.append((document, options))
+        return type("Result", (), {"value": False})()
+
+    monkeypatch.setattr(check, "evaluate", evaluate)
+    assert check.satisfies(object(), (), object())
+    assert not asked
+    assert check.satisfies(object(), (Top(), Bottom()), object()) is False
+    assert len(asked) == 1
+    assert isinstance(asked[0][0], Document)
+    assert asked[0][0].formulas == (Top(), Bottom())
+    assert asked[0][1] == {"trace": False}
 
 
 def test_environment_files_are_generated_and_differ_only_in_defaults():

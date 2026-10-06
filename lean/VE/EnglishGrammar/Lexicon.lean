@@ -1,3 +1,4 @@
+import Lean.Data.Json
 import VE.EnglishGrammar.Lexer
 
 /-! The selected lexicon and its validity (docs/spec/english-lean.md 2.9 and 5.8; tier B).
@@ -10,7 +11,11 @@ holds when the five conditions of spec 2.9 hold:
   generated symbol without an English wording makes the lexicon invalid until it gets one.
 - V2 honesty: every selection is an honest wording of its own symbol (declared, profile, mechanical,
   fallback); negatives and aliases are the declared or profile-fixed ones.
-- V3 shape: a predicate wording has each hole `{0}` to `{k-1}` once, no other hole, and a word.
+- V3 shape: a predicate wording has each hole `{0}` to `{k-1}` once, no other hole, and a word, and (S3)
+  begins with `{0}` and a space with its holes in order (`subjectFirst`); and,
+  with each hole lexed as a word of its own, it lexes as one sentence (S2 spec 2.6, Q6), so no wording
+  puts a terminator inside a rule. The substitution is `wordingTokens`, the one the lexical rules read,
+  so a wording that passes V3 gives its rules (`{0}s are {1}` fails both).
 - V4 distinctness, by `wordingKey`, against what every other symbol declares or selects.
 - V5 polarity: a selected negative is `negativeTemplate` of the selected wording, unless a profile block
   fixes it.
@@ -20,10 +25,19 @@ The lint codes that the DRI's ruling 4 (2026-10-04) moves into Lean validity are
 (V5), and the hole part of `TEMPLATE_SHAPE` (V3). The order rule of `TEMPLATE_SHAPE` and the advisory
 lints stay Python checks; the final list is fixed at the statement review.
 
-`Env` and `Overlay` here are the lexical views that `valid` reads (a draft of S2): the declared wordings,
-nouns and display forms, the arities, and the forms the profile blocks fix (`ProfileForms`, spec 2.9
-notes and O7). The profile forms are computed from the profile blocks in S3; the base environments of
-S2 have none.
+`Env` and `Overlay` here are the lexical views that `valid` reads: the declared wordings, nouns and
+display forms, the arities, and the forms the profile blocks fix (`ProfileForms`, spec 2.9 notes and
+O7). The profile forms are computed from the profile blocks in S3; the base environments of S2 have
+none. S2 adds the signatures that the lexical rules and the actions read (S2 spec 2.3): a predicate's
+argument sorts `args` and a constant's `sort`, and the environment JSON `source`, which only the typed
+check of `VE.EnglishGrammar.Encode` reads.
+
+S3 (docs/spec/english-lean-s3.md 2.3 and 2.9) adds, all with defaults: a predicate's `functional` and `total`
+flags, which the attribute rows read; `modal`, set for a predicate that `norms@0` regulates as a permission or
+an obligation, and `description`, which only `valid` reads; the environment's `alternatives` block. The risk
+flag is no field: `Env.risk` reads the profile list (D19). V3 gains subject first (D8): a selected wording,
+negative or alias begins with `{0}` and a space and has its holes in increasing order. V2 counts the modal form,
+which the profile fixes, as the only honest wording of a modal predicate (D17).
 -/
 
 namespace VE.EnglishGrammar
@@ -200,8 +214,8 @@ def negativeTemplate (wording : String) (arity : Nat) : Option String :=
       | none => rest
     | none => none
 
-/-- The holes of a wording, in order, and its text with every hole replaced by a space. -/
-def holes (w : String) : List Nat × String :=
+/-- The holes of a wording, in order, and its text with every hole `{k}` replaced by `fill k`. -/
+def fillHoles (w : String) (fill : Nat → String) : List Nat × String :=
   let rec go : Nat → List Char → List Nat → List Char → List Nat × List Char
     | 0, _, hs, out => (hs.reverse, out.reverse)
     | _ + 1, [], hs, out => (hs.reverse, out.reverse)
@@ -211,16 +225,63 @@ def holes (w : String) : List Nat × String :=
         match cs.drop ds.length with
         | '}' :: rest =>
           if ds.isEmpty then go n cs hs (c :: out)
-          else go n rest (ds.foldl (fun k d => 10 * k + (d.toNat - '0'.toNat)) 0 :: hs) (' ' :: out)
+          else
+            let k := ds.foldl (fun k d => 10 * k + (d.toNat - '0'.toNat)) 0
+            go n rest (k :: hs) ((fill k).toList.reverse ++ out)
         | _ => go n cs hs (c :: out)
       else go n cs hs (c :: out)
   match go (w.length + 1) w.toList [] [] with
   | (hs, out) => (hs, String.mk out)
 
-/-- V3 for a predicate wording of arity `k`: each hole `{0}` to `{k-1}` once, no other, and a word. -/
+/-- The holes of a wording, in order, and its text with every hole replaced by a space. -/
+def holes (w : String) : List Nat × String := fillHoles w fun _ => " "
+
+/-- The tokens of a text written as one sentence, or none. -/
+def sentenceTokens (text : String) : Option (List Tok) :=
+  match lex (text ++ ".") with
+  | .ok sents =>
+    match sents.toList with
+    | [s] => some s.toList
+    | _ => none
+  | .error _ => none
+
+/-- The character that stands for a hole while a wording is lexed; a wording that contains it gives no
+rule. -/
+def holeChar : Char := Char.ofNat 0xE000
+
+/-- The word that stands for hole `k` while a wording is lexed. -/
+def holeMark (k : Nat) : String := String.singleton holeChar ++ toString k
+
+/-- Whether a token is the word of one of the holes `order`. -/
+def isHoleWord (order : List Nat) : Tok → Bool
+  | .word x _ => order.any fun k => x == holeMark k
+  | _ => false
+
+/-- A wording's hole order and its tokens, each hole lexed as the word `holeMark k`; none when the
+wording contains `holeChar`, does not lex as one sentence, or has a hole that is not a word of its own
+(`{0}s`). V3 (`shapeOk`) and the lexical rules (`wordingSyms`) read a wording through this one
+substitution. -/
+def wordingTokens (w : String) : Option (List Nat × List Tok) :=
+  if w.any (· == holeChar) then none
+  else
+    match fillHoles w holeMark with
+    | (order, text) =>
+      match sentenceTokens text with
+      | none => none
+      | some toks => if (toks.filter (isHoleWord order)).length == order.length then some (order, toks) else none
+
+/-- V3 for a predicate wording of arity `k`: each hole `{0}` to `{k-1}` once, no other, a word, and the
+wording lexes as one sentence with each hole a word of its own (`wordingTokens`; S2 spec 2.6). -/
 def shapeOk (w : String) (k : Nat) : Bool :=
   match holes w with
-  | (hs, rest) => decide (hs.mergeSort (· ≤ ·) = List.range k) && !(splitWs rest).isEmpty
+  | (hs, rest) =>
+    decide (hs.mergeSort (· ≤ ·) = List.range k) && !(splitWs rest).isEmpty && (wordingTokens w).isSome
+
+/-- The holes of a wording are `0, 1, …` in order of occurrence (S3 spec 5.2). -/
+def holeOrder (w : String) : Bool := (holes w).1 == List.range (holes w).1.length
+
+/-- Subject first (S3 spec 2.9, D8): the wording begins with `{0}` and a space and its holes are in order. -/
+def subjectFirst (w : String) : Bool := w.startsWith "{0} " && holeOrder w
 
 /-- V3 for a noun or a spelling: no hole. -/
 def noHole (w : String) : Bool := (holes w).1.isEmpty
@@ -235,11 +296,22 @@ structure PredDecl where
   arity : Nat
   wording : Option String := none
   negative : Option String := none
+  /-- The argument sorts in order; `arity = args.length` for a decoded environment (S2 spec 2.3). -/
+  args : List String := []
+  /-- The declaration's `functional` and `total` flags (S3 spec 2.3), read by the attribute rows. -/
+  functional : Bool := false
+  total : Bool := false
+  /-- Whether `norms@0` regulates the predicate as a permission or an obligation (S3 spec 2.3, D17). -/
+  modal : Bool := false
+  /-- The declaration's description; read by `valid` only (S3 spec 2.3). -/
+  description : String := ""
   deriving Repr
 
 structure ConstDecl where
   name : String
   display : Option String := none
+  /-- The constant's sort (S2 spec 2.3). -/
+  sort : String := ""
   deriving Repr
 
 /-- The forms that profile blocks fix (spec 2.9 notes, O7): wordings, negatives, aliases, nouns. -/
@@ -250,6 +322,19 @@ structure ProfileForms where
   nouns : List (String × String) := []
   deriving Repr
 
+/-- The `alternatives@0` block that the guard rows read (S3 spec 5.2): the action, chooser and harm sorts and
+the `available` and `leads_to` predicates. -/
+structure AltBlock where
+  action : String
+  chooser : String
+  harm : String
+  available : String
+  leadsTo : String
+  deriving DecidableEq, Repr
+
+/-- The environment JSON is shown compressed. -/
+instance reprJson : Repr Lean.Json := ⟨fun j _ => .text j.compress⟩
+
 /-- The lexical view of an environment that `Lexicon.valid` reads: every sort, predicate and constant,
 the symbols that profile blocks generate included, with their declared wordings. -/
 structure Env where
@@ -258,6 +343,11 @@ structure Env where
   constants : List ConstDecl
   profiles : List String := []
   forms : ProfileForms := {}
+  /-- The validated environment JSON; read by `typedDocument` only (S2 spec 2.3). -/
+  source : Lean.Json := .null
+  /-- The `alternatives@0` block; present exactly when the profile is named, for a decoded `Env` (S3 spec
+  2.3). -/
+  alternatives : Option AltBlock := none
   deriving Repr
 
 /-- The replaced wordings of an English vocabulary overlay. A predicate entry replaces both the
@@ -302,6 +392,12 @@ def declaredSpelling (E : Env) (O : Overlay) (c : String) : Option String :=
   | none => (E.constants.find? (·.name == c)).bind (·.display)
 
 def arity (E : Env) (p : String) : Nat := ((E.predicate? p).map (·.arity)).getD 0
+
+/-- The risk flag (S3 spec 5.2, D19): whether the profile list names `risk@0`. Not a field. -/
+def risk (E : Env) : Bool := E.profiles.contains "risk@0"
+
+/-- Whether `p` is a modal predicate (S3 spec 2.3). -/
+def modal (E : Env) (p : String) : Bool := ((E.predicate? p).map (·.modal)).getD false
 
 end Env
 
@@ -350,15 +446,17 @@ def Lexicon.failures (E : Env) (O : Overlay) (L : Lexicon) : List Failure :=
   let v23w := L.wordings.flatMap fun (p, w) =>
     if !preds.contains p then [] else
     let k := E.arity p
-    let honest := [E.declaredWording O p, F.wordings.lookup p, mechanicalWording p k, fallbackWording p k]
+    -- a modal predicate has one honest wording, its modal form (S3 spec 2.9, D17)
+    let honest := if E.modal p then [F.wordings.lookup p]
+      else [E.declaredWording O p, F.wordings.lookup p, mechanicalWording p k, fallbackWording p k]
     (if honest.contains (some w) then [] else [("V2", "predicate", p)]) ++
-    (if shapeOk w k then [] else [("V3", "predicate", p)])
+    (if shapeOk w k && subjectFirst w then [] else [("V3", "predicate", p)])
   let v235n := L.negatives.flatMap fun (p, w) =>
     if !preds.contains p then [] else
     let k := E.arity p
     let fixed := F.negatives.lookup p
     (if [E.declaredNegative O p, fixed].contains (some w) then [] else [("V2", "negative", p)]) ++
-    (if shapeOk w k then [] else [("V3", "negative", p)]) ++
+    (if shapeOk w k && subjectFirst w then [] else [("V3", "negative", p)]) ++
     (if fixed == some w || negativeTemplate ((L.wordings.lookup p).getD "") k == some w then []
      else [("V5", "negative", p)])
   let aliasPreds := ((L.aliases.map (·.1)) ++ (F.aliases.map (·.1))).eraseDups
@@ -367,7 +465,7 @@ def Lexicon.failures (E : Env) (O : Overlay) (L : Lexicon) : List Failure :=
     let sel := (L.aliases.filter (·.1 == p)).map (·.2)
     let fix := (F.aliases.filter (·.1 == p)).map (·.2)
     (if sortPairs sel == sortPairs fix then [] else [("V2", "alias", p)]) ++
-    (if sel.all (fun a => shapeOk a.1 (E.arity p)) then [] else [("V3", "alias", p)])
+    (if sel.all (fun a => shapeOk a.1 (E.arity p) && subjectFirst a.1) then [] else [("V3", "alias", p)])
   let v23s := L.nouns.flatMap fun (s, n) =>
     if !sorts.contains s then [] else
     let honest := [E.declaredNoun O s, F.nouns.lookup s, some s, some ("entity of sort " ++ jsonQuote s)]
@@ -400,7 +498,7 @@ def Lexicon.failures (E : Env) (O : Overlay) (L : Lexicon) : List Failure :=
     else none
   v1 ++ v23w ++ v235n ++ v23a ++ v23s ++ v23c ++ v4
 
-/-- `Lexicon.valid` of spec 2.9: V1 to V5. -/
+/-- `Lexicon.valid` of spec 2.9: V1 to V5, with S3's subject first in V3 and the modal form in V2. -/
 def Lexicon.valid (E : Env) (O : Overlay) (L : Lexicon) : Bool := (L.failures E O).isEmpty
 
 /-- The work budget of one sentence, in steps of spec 2.6 (DRI ruling 5, 2026-10-04): ten times the

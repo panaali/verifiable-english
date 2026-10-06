@@ -6,7 +6,8 @@
 and `lexicon_id` identifies it under the domain `ve-english-lexicon-v1` (spec 2.12). `check(words, lexicon)`
 is a reference of `Lexicon.valid` (V1 to V5), written from spec 2.9: it returns the failing conditions,
 each with its symbol. The run over every corpus environment reports where Python's own selection would be
-refused by Lean (`invalidGrammar lexicon`). Test and measurement code; no admission path calls it.
+refused by Lean (`invalidGrammar lexicon`). Test and measurement code; no admission path calls it. The
+export and its identity are `ve.english_grammar`'s (english-lean-s2.md 6), which the adapter uses.
 
 The reference reads the honest wordings from the display environment that `EnglishVocabulary` holds (the
 environment with the overlay applied), and the profile-fixed forms from the tables below, which copy
@@ -24,39 +25,18 @@ import warnings
 
 from ve import Environment
 from ve.english import EnglishVocabulary, UnreviewedVocabularyWarning, quote
+from ve.english_grammar import LEXICON_FORMAT as FORMAT, export, lexicon_id  # noqa: F401  (moved under ve/)
 from ve.english_phrases import wording_key
 from ve.english_vocabulary import IDIOMS, negative_template
 from ve.errors import VEError
 from ve.printer import _negative_template
-from ve.wire import digest, loads_json
+from ve.wire import loads_json
 
 from conformance.english_lean_engine import fold
-from conformance.english_lean_lexer import decimal_value
+from conformance.english_lean_lexer import LexError, decimal_value, lex
 
 ROOT = Path(__file__).resolve().parents[1]
-DOMAIN = 've-english-lexicon-v1\n'
-FORMAT = 've.english-lexicon@1'
 HOLE = re.compile(r'\{([0-9]+)\}')
-
-
-# ------------------------------------------------------------------ export and identity
-
-def export(words: EnglishVocabulary) -> dict:
-    """The lexicon Python selects, in the field order of spec 5.8; every list sorted by symbol."""
-    return {
-        'format': FORMAT,
-        'environment_id': words.env.environment_id,
-        'nouns': sorted([s, n] for s, n in words.sorts.items()),
-        'letters': sorted([s, l] for s, l in words.letters.items()),
-        'wordings': sorted([p, w] for p, w in words.predicates.items()),
-        'negatives': sorted([p, w] for p, w in words.negatives.items()),
-        'aliases': sorted([p, w, bool(neg)] for p, w, neg in words.input_aliases),
-        'spellings': sorted([c, s] for c, s in words.constants.items()),
-    }
-
-
-def lexicon_id(lexicon: dict) -> str:
-    return digest(DOMAIN, lexicon)
 
 
 # ------------------------------------------------------------------ wordingKey (spec 2.9)
@@ -119,7 +99,9 @@ def profile_tables(env) -> dict:
             nouns[rblock['severity']['sort']] = 'severity'
             wordings.update({'risk__might_lead_to': '{0} might lead to {1}', 'risk__class': '{0} is {1}',
                              'risk__or_worse': '{0} is {1} or worse',
-                             'risk__less_worst': '{0} has a less severe worst case than {1}'})
+                             'risk__less_worst': '{0} has a less severe worst case than {1}',
+                             # DRI ruling 2 (docs/spec/english-lean-s3.md D9): the fixed wording of S3
+                             'risk__more_severe': '{0} is more severe than {1}'})
             negatives[block['leads_to']] = '{0} might not lead to {1}'
             negatives['risk__might_lead_to'] = '{0} cannot lead to {1}'
     for name, template in (getattr(env, 'rights_wordings', None) or {}).items():
@@ -133,10 +115,45 @@ def profile_tables(env) -> dict:
     return {'wordings': wordings, 'negatives': negatives, 'aliases': aliases, 'nouns': nouns}
 
 
+HOLE_CHAR = '\ue000'
+
+
+def hole_mark(k: int) -> str:
+    """`holeMark`: the word that stands for hole `k` while a wording is lexed."""
+    return HOLE_CHAR + str(k)
+
+
+def wording_tokens(wording: str) -> tuple[list[int], list[tuple]] | None:
+    """`wordingTokens`: the hole order and the tokens, each hole lexed as the word `hole_mark(k)`; None when
+    the wording contains `HOLE_CHAR`, does not lex as one sentence, or has a hole that is not a word of its
+    own. V3 and the lexical rules read a wording through this one substitution."""
+    if HOLE_CHAR in wording:
+        return None
+    order = [decimal_value(h) for h in HOLE.findall(wording)]
+    try:
+        sentences = lex(HOLE.sub(lambda m: hole_mark(decimal_value(m[1])), wording) + '.')
+    except LexError:
+        return None
+    if len(sentences) != 1:
+        return None
+    marks = {hole_mark(k) for k in order}
+    if sum(1 for t in sentences[0] if t[0] == 'word' and t[1] in marks) != len(order):
+        return None
+    return order, sentences[0]
+
+
 def _shape_ok(wording: str, arity: int) -> bool:
     holes = HOLE.findall(wording)
     words = [w for w in HOLE.sub(' ', wording).split() if w]
-    return sorted(decimal_value(h) for h in holes) == list(range(arity)) and bool(words)
+    return (sorted(decimal_value(h) for h in holes) == list(range(arity)) and bool(words)
+            and wording_tokens(wording) is not None)
+
+
+def _subject_first(wording: str) -> bool:
+    """S3's subject first (docs/spec/english-lean-s3.md 2.9, D8): the wording begins with `{0}` and a space
+    and its holes, in order of occurrence, are `0, 1, …` (`subjectFirst` of `Lexicon.lean`)."""
+    order = [decimal_value(h) for h in HOLE.findall(wording)]
+    return wording.startswith('{0} ') and order == list(range(len(order)))
 
 
 def negative_template_of(wording: str | None, arity: int) -> str | None:
@@ -152,6 +169,12 @@ def negative_template_of(wording: str | None, arity: int) -> str | None:
 
 
 # ------------------------------------------------------------------ the lexical view and validity
+
+def _modal(env, decl) -> bool:
+    """S3's `PredDecl.modal` (spec 2.3): `norms@0` regulates the predicate as a permission or an obligation."""
+    reg = getattr(decl, 'regulated', None) if decl is not None else None
+    return 'norms@0' in env.profiles and reg is not None and reg.role in ('permission', 'obligation')
+
 
 def lexical_view(words: EnglishVocabulary) -> dict:
     """The `Env` of spec 5.8 that `Lexicon.valid` reads: every sort, predicate and constant, the symbols
@@ -176,7 +199,8 @@ def lexical_view(words: EnglishVocabulary) -> dict:
         'sorts': [{'name': s, 'noun': noun(s)} for s in sorted(sorts)],
         'predicates': [{'name': p, 'arity': len(declared(p).arguments) if declared(p) else 2,
                         'wording': declared(p).verbalisation if declared(p) else None,
-                        'negative': declared(p).negative_verbalisation if declared(p) else None}
+                        'negative': declared(p).negative_verbalisation if declared(p) else None,
+                        'modal': _modal(env, declared(p))}
                        for p in sorted(predicates)],
         'constants': [{'name': c, 'display': words.declared_constants.get(c)} for c in sorted(constants)],
         'forms': profile_tables(env),
@@ -241,16 +265,19 @@ def failures(view: dict, lexicon: dict) -> list[tuple[str, str, str]]:
     for p, w in L['wordings']:
         if p in preds:
             k = arity(p)
-            if w not in {pred[p]['wording'], F['wordings'].get(p), mechanical(p, k), fallback(p, k)} - {None}:
+            # S3 (spec 2.9, D17): a modal predicate has one honest wording, its modal form
+            honest = ({F['wordings'].get(p)} if pred[p].get('modal') else
+                      {pred[p]['wording'], F['wordings'].get(p), mechanical(p, k), fallback(p, k)})
+            if w not in honest - {None}:
                 out.append(('V2', 'predicate', p))
-            if not _shape_ok(w, k):
+            if not (_shape_ok(w, k) and _subject_first(w)):
                 out.append(('V3', 'predicate', p))
     for p, w in L['negatives']:
         if p in preds:
             k, fixed = arity(p), F['negatives'].get(p)
             if w not in {pred[p]['negative'], fixed} - {None}:
                 out.append(('V2', 'negative', p))
-            if not _shape_ok(w, k):
+            if not (_shape_ok(w, k) and _subject_first(w)):
                 out.append(('V3', 'negative', p))
             if fixed != w and negative_template_of(_lookup(L['wordings'], p), k) != w:
                 out.append(('V5', 'negative', p))
@@ -258,7 +285,7 @@ def failures(view: dict, lexicon: dict) -> list[tuple[str, str, str]]:
         selected = [(w, neg) for q, w, neg in L['aliases'] if q == p]
         if sorted(selected) != sorted(map(tuple, F['aliases'].get(p, []))):
             out.append(('V2', 'alias', p))
-        if not all(_shape_ok(w, arity(p)) for w, _ in selected):
+        if not all(_shape_ok(w, arity(p)) and _subject_first(w) for w, _ in selected):
             out.append(('V3', 'alias', p))
     for s, n in L['nouns']:
         if s in sorts:
@@ -358,7 +385,8 @@ def fixture_lexicon(corpus: dict, case: dict, env: Environment) -> dict:
 def mutants(view: dict, lexicon: dict) -> list[tuple[str, dict]]:
     """One- and two-fault mutants of a valid lexicon: each entry repeated (with its own and with another
     honest value), dropped, emptied, cut to one word, given an extra hole, given the next entry's text,
-    and respaced with a no-break space and upper case; an entry for an unknown symbol in each field; aliases with and without the
+    respaced with a no-break space and upper case, with its first hole glued to the next word, and with a
+    leading space; an entry for an unknown symbol in each field; aliases with and without the
     right shape. Two-fault mutants pair single faults of different fields (a fixed sample)."""
     import random
     arity = {p['name']: p['arity'] for p in view['predicates']}
@@ -379,7 +407,10 @@ def mutants(view: dict, lexicon: dict) -> list[tuple[str, dict]]:
                              ('hole', lambda es: es[:i] + [[key, value + ' {9}']] + es[i + 1:]),
                              ('steal', lambda es: es[:i] + [[key, es[(i + 1) % len(es)][1]]] + es[i + 1:]),
                              ('respace', lambda es: es[:i] + [[key, value.replace(' ', '  ', 1).upper()]]
-                                                    + es[i + 1:])):
+                                                    + es[i + 1:]),
+                             # V3 and the rules read one substitution: a hole glued to a word is no hole
+                             ('glue', lambda es: es[:i] + [[key, value.replace('} ', '}', 1)]] + es[i + 1:]),
+                             ('lead-space', lambda es: es[:i] + [[key, ' ' + value]] + es[i + 1:])):
                 singles.append((f'{field}[{i}] {op}', field, edit(lexicon[field])))
         singles.append((f'{field} unknown', field, lexicon[field] + [['zzz', 'zzz']]))
     first = view['predicates'][0]['name']
@@ -430,7 +461,8 @@ def lean_env(view: dict) -> str:
     F = view['forms']
     sorts = ', '.join(f'{{ name := {lean_string(s["name"])}, noun := {_option(s["noun"])} }}' for s in view['sorts'])
     preds = ',\n      '.join(f'{{ name := {lean_string(p["name"])}, arity := {p["arity"]}, '
-                             f'wording := {_option(p["wording"])}, negative := {_option(p["negative"])} }}'
+                             f'wording := {_option(p["wording"])}, negative := {_option(p["negative"])}'
+                             + (', modal := true' if p.get('modal') else '') + ' }'
                              for p in view['predicates'])
     consts = ', '.join(f'{{ name := {lean_string(c["name"])}, display := {_option(c["display"])} }}'
                        for c in view['constants'])

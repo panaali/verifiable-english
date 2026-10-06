@@ -1,0 +1,100 @@
+M1 document identity build 0
+M1 document identity test exit 1
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______________________ test_templates_agree_with_python _______________________
+
+lean = PosixPath('/home/seyran/code/ve-lf-11a/lean/.lake/build/bin/ve_speech_acts_route')
+
+    def test_templates_agree_with_python(lean):
+        for name, metadata, source in templates():
+            py, le = comparable(py_outcome(metadata, source), lean_outcome(run_source(metadata, source)))
+            assert py["ok"], (name, py)
+>           assert py == le, name
+E           AssertionError: polar
+E           assert {'ok': True, ...664e9f9', ...} == {'ok': True, ...664e9f9', ...}
+E
+E             Omitting 7 identical items, use -vv to show
+E             Differing items:
+E             {'document_id': 'fdffd6824846e7fbf8c0c9a91e341265b3075299feac7973bcdc147fd8841385'} != {'document_id': 'e8bfcd18d0768016b91abeb2270b7555d1d2e10457a66cc7f9157b483002c558'}
+E             Use -v to get more diff
+
+tests/test_speech_source_lean.py:202: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_speech_source_lean.py::test_templates_agree_with_python - A...
+1 failed in 0.19s
+
+M2 coverage class build 0
+M2 coverage class test exit 1
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______________ test_template_reports_cover_every_class_and_record ______________
+
+lean = PosixPath('/home/seyran/code/ve-lf-11a/lean/.lake/build/bin/ve_speech_acts_route')
+
+    def test_template_reports_cover_every_class_and_record(lean):
+        by_name = {name: run_source(metadata, source) for name, metadata, source in templates()}
+        classes = set()
+        for result in by_name.values():
+            assert result["status"] == "ok", result
+            classes |= set(result["coverage"]["bytes_by_class"])
+            total = sum(u["bytes"] for u in result["units"])
+            assert sum(result["coverage"]["bytes_by_class"].values()) == total
+            assert sum(result["coverage"]["bytes_by_status"].values()) == total
+>       assert classes == {"C", "L", "O", "R", "U"}
+E       AssertionError: assert {'CHECKED', '...UNFORMALISED'} == {'C', 'L', 'O', 'R', 'U'}
+E
+E         Extra items in the left set:
+E         'CHECKED'
+E         'UNFORMALISED'
+E         'LABELLED'
+E         'OPEN'
+E         Extra items in the right set:...
+E
+E         ...Full output truncated (6 lines hidden), use '-vv' to show
+
+tests/test_speech_source_lean.py:214: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_speech_source_lean.py::test_template_reports_cover_every_class_and_record
+1 failed in 0.51s
+
+M3 nomination uniqueness build 0
+M3 nomination uniqueness test exit 1
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______________ test_nominations_name_a_candidate_of_the_bound_set ______________
+
+lean = PosixPath('/home/seyran/code/ve-lf-11a/lean/.lake/build/bin/ve_speech_acts_route')
+
+    def test_nominations_name_a_candidate_of_the_bound_set(lean):
+        metadata, source = nominated([])
+        [line] = run_source(metadata, source)["nominations"]
+        assert line == {"question": "r", "line": "CLARIFICATION-OPEN (none)"}
+        record = {"question": "r", "by": "alice", "support": "testimony", "nominate": 1}
+        metadata, source = nominated([record])
+        [line] = run_source(metadata, source)["nominations"]
+        assert line == {"question": "r", "line": "1 by alice (testimony)",
+                        "narrowing": {"set": "rs", "version": 1, "keeps": ["r2"], "by": "alice",
+                                      "reason_spans": ["r"], "support": "testimony"}}
+        metadata, source = nominated([record, {**record, "nominate": 0}])
+        assert run_source(metadata, source)["nominations"][0]["line"] == "CLARIFICATION-OPEN (multiple)"
+        metadata, source = nominated([record, record])
+>       assert run_source(metadata, source)["nominations"][0]["line"] == "1 by alice (testimony)"
+E       AssertionError: assert 'CLARIFICATIO...EN (multiple)' == '1 by alice (testimony)'
+E
+E         - 1 by alice (testimony)
+E         + CLARIFICATION-OPEN (multiple)
+
+tests/test_speech_source_lean.py:419: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_speech_source_lean.py::test_nominations_name_a_candidate_of_the_bound_set
+1 failed in 0.42s
+
+restored build 0
+
+== Review fix mutants (lf-11a review B1-B3), one at a time, restored and rebuilt clean after each ==
+M4 p0Json keeps binding units: FAILED tests/test_speech_source_lean.py::test_binding_units_are_withheld_from_p0_and_classed (assert 'error' == 'ok')
+M5 AnswerLeaf without the formula comparison: build failed in VE.SpeechActs.Source.Admission.Run (the proofs of answerLeaf_entailed and report_consequence reject it)
+M5b PresuppositionLeaf without the formula comparison: FAILED tests/test_speech_source_lean.py::test_admission_rejects_leaves_without_provenance[node3-AdmissionError: node n is not admitted under label speech:presupposition:p] (KeyError: 'error')
+M6 Loader.field maps every failure to Python's text: FAILED tests/test_discourse.py::test_w2_front_matter_diagnostics_are_pinned ("('narrowings', 0, 'by', {})": 'invalid narrowing id or author', ...)
+M7 gapRecord accepts a model satisfying the target: FAILED tests/test_speech_source_lean.py::test_gap_judgment_records_replay_their_model (KeyError: 'error')

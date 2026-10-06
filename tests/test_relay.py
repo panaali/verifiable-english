@@ -178,10 +178,11 @@ def test_genuine_profile_rejection_is_leans(monkeypatch):
         relay.decide("environment", [{"id": "e", "environment": raw}])
 
 
-# The one-shot runner transport (`ve/backends/lean.py` `run`, for `ve_conformance`; lean-first batch 1 made
-# every statement-layer route a service mode and deleted their one-shot transports): it reads its runner's
-# output with `read_rows`, so output that is no answer is `CheckerUnavailable`, never a rejection (lf-0 review
-# B1 and B2; reproducers from the difffuzz looprecheck3 review).
+# The one-shot runner transports (`ve/backends/lean.py` `run`, for `ve_conformance`, and `run_english_cases`,
+# for english-lean S2's `ve_english_route`; lean-first batch 1 made every statement-layer route a service mode
+# and deleted their one-shot transports): each reads its runner's output with `read_rows`, so output that is
+# no answer is `CheckerUnavailable`, never a rejection (lf-0 review B1 and B2; reproducers from the difffuzz
+# looprecheck3 review).
 
 CASE = {"id": "0", "kind": "bundle"}
 
@@ -199,9 +200,11 @@ def _runner(tmp_path, stdout: bytes, status: int):
 TRANSPORTS = {
     "run": lambda exe, case: lean_backend.run("bundle.check", exe, [case], runner="ve_conformance",
                                               mode="route", timeout=HANG_TIMEOUT)[0],
+    "english": lambda exe, case: lean_backend.run_english_cases(exe, "english.read", [case],
+                                                                timeout=HANG_TIMEOUT)[0],
 }
 CODED: set[str] = set()
-RESTRICTED = {"run"}  # `read_rows(restricted=True)`: `ve.wire.loads_json`
+RESTRICTED = {"run", "english"}  # `read_rows(restricted=True)`: `ve.wire.loads_json`
 
 
 def test_every_runner_transport_is_listed():
@@ -226,7 +229,7 @@ def test_every_runner_transport_is_listed():
         node.name for node in tree.body if isinstance(node, ast_module.FunctionDef)
         and any(getattr(c.func, "id", None) == "_route_rows" for c in ast_module.walk(node)
                 if isinstance(c, ast_module.Call))}
-    names = {"run": "run"}
+    names = {"run": "run", "english": "run_english_cases"}
     assert public == {names[key] for key in TRANSPORTS}
     restricted = {node.name for node in tree.body if isinstance(node, ast_module.FunctionDef)
                   and any(isinstance(k, ast_module.keyword) and k.arg == "restricted"
@@ -363,7 +366,8 @@ def test_the_rust_checker_output_is_read_by_the_same_decoder(tmp_path):
     exe = tmp_path / "rust"
     out = tmp_path / "out.bin"
     out.write_bytes(b'{"id":"0","status":"error","error":"\\ud800"}\n')
-    exe.write_text(f"#!/bin/sh\ncat >/dev/null\ncat '{out}'\nexit 1\n")
+    # One case line in, as the persistent checker reads it (lean-first b2, F6).
+    exe.write_text(f"#!/bin/sh\nhead -n 1 >/dev/null\ncat '{out}'\nexit 1\n")
     exe.chmod(0o755)
     with pytest.raises(CheckerUnavailable, match="malformed"):
         rust_jsonl.run({"id": "0"}, executable=exe, timeout=HANG_TIMEOUT,
@@ -400,20 +404,26 @@ def test_the_rust_checker_output_must_name_its_case(tmp_path):
     no answer, also to a case without an id; Rust echoes `""` for that case."""
     import hashlib
     from ve.backends import rust_jsonl
-    exe, out = tmp_path / "rust", tmp_path / "out.bin"
-    exe.write_text(f"#!/bin/sh\ncat >/dev/null\ncat '{out}'\nexit 1\n")
-    exe.chmod(0o755)
-    run = lambda case: rust_jsonl.run(case, executable=exe, timeout=HANG_TIMEOUT,  # noqa: E731
-                                      expected_sha256=hashlib.sha256(exe.read_bytes()).hexdigest())
     error = {"code": "UnknownSymbol", "message": "UnknownSymbol: x"}
+
+    def run(case, record):
+        # One checker per record: the checker is a persistent process reading one case line (lean-first
+        # b2, F6), and one whose answer file the next record rewrote could still be printing it.
+        directory = tmp_path / str(len(list(tmp_path.iterdir())))
+        directory.mkdir()
+        exe, out = directory / "rust", directory / "out.bin"
+        out.write_text(json.dumps(record) + "\n")
+        exe.write_text(f"#!/bin/sh\nhead -n 1 >/dev/null\ncat '{out}'\nexit 1\n")
+        exe.chmod(0o755)
+        return rust_jsonl.run(case, executable=exe, timeout=HANG_TIMEOUT,
+                              expected_sha256=hashlib.sha256(exe.read_bytes()).hexdigest())
+
     for record, case in (({}, {"kind": "evaluate"}), ({"id": False}, {"id": 0}), ({"id": 0}, {"id": False}),
                          ({"id": None}, {"kind": "evaluate"}), ({"id": "0"}, {"id": 0})):
-        out.write_text(json.dumps({**record, "status": "error", "error": error}) + "\n")
         with pytest.raises(CheckerUnavailable, match=r"malformed Rust response \((id: |missing field id)"):
-            run(case)
-    out.write_text(json.dumps({"id": "", "status": "error", "error": error}) + "\n")
+            run(case, {**record, "status": "error", "error": error})
     with pytest.raises(UnknownSymbol):
-        run({"kind": "evaluate"})
+        run({"kind": "evaluate"}, {"id": "", "status": "error", "error": error})
 
 
 # The relay itself, over a scripted service (the persistent path): the same answers are

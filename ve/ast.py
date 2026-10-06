@@ -389,11 +389,12 @@ def check_formula(env: Environment, formula: Formula) -> Formula:
         return formula
     from .backends.relay import decide
     from .backends.rust_jsonl import run as rust_run
+    from .environment_wire import encoded_environment
     ast = _to_data(formula)
     payload = {"environment_id": env.environment_id, "ast": ast}
 
     def case():
-        return {"id": "typing", "environment": env.to_dict(), "ast": ast}
+        return {"id": "typing", "environment": encoded_environment(env, "lean-base", env.to_dict), "ast": ast}
 
     def python():
         _Checker(env).formula(formula)
@@ -427,7 +428,8 @@ def check_document(env: Environment, document: Document) -> Document:
         return document
     from .backends.relay import decide
     from .backends.rust_jsonl import run as rust_run
-    case = {"id": "typing", "environment": env.to_dict(),
+    from .environment_wire import encoded_environment
+    case = {"id": "typing", "environment": encoded_environment(env, "lean-base", env.to_dict),
             "ast": [_to_data(formula) for formula in document.formulas]}
 
     def python():

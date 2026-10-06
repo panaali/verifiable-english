@@ -41,6 +41,9 @@ import VE.Norms.Cedar
 import VE.Norms.Replay
 import VE.Norms.Flagged
 import VE.Norms.FlaggedSpec
+import VE.Norms.RunSound
+import VE.Route.WireSound
+import VE.Route.RunSound
 import VE.Service.Graph
 import VE.Service.Readings
 import VE.Service.FamilyNorms
@@ -55,6 +58,8 @@ import VE.SpeechActs.Answer
 import VE.SpeechActs.Consequence
 import VE.SpeechActs.Wire
 import VE.SpeechActs.Run
+import VE.SpeechActs.Source.Run
+import VE.SpeechActs.Source.Admission.Run
 import VE.SoftNorms.Run
 import VE.Rights.Run
 import VE.Attribution.Content
@@ -120,6 +125,8 @@ import VE.NormDefaults.Routes
 import VE.NormDefaults.Wire
 import VE.NormDefaults.Examples
 import VE.NormDefaults.Replay
+import VE.NormDefaults.Report
+import VE.NormDefaults.Layered
 import VE.NormDefaults.Admission
 import VE.NormDefaults.Run
 import VE.Readings.Doc
@@ -170,6 +177,10 @@ import VE.Grammar.Reading
 import VE.Grammar.TableInvariant
 import VE.Grammar.TableProofs
 import VE.EnglishGrammar.FoldAgree
+import VE.EnglishGrammar.Rules
+import VE.EnglishGrammar.Read
+import VE.EnglishGrammar.Extends
+import VE.EnglishGrammar.Run
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -965,6 +976,82 @@ import VE.EnglishGrammar.FoldAgree
 #print axioms VE.Norms.FlaggedSpec.norms_wire_conflict_free
 #print axioms VE.Norms.FlaggedSpec.norms_wire_conflict_refuted
 #print axioms VE.Norms.FlaggedSpec.norms_wire_conflict_exclusive
+#print axioms VE.Route.WireSound.Family.Sound.expands_intended
+#print axioms VE.Route.WireSound.countermodelAnswer_refutes
+#print axioms VE.Route.WireSound.certificate_countermodel_exclusive
+#print axioms VE.Route.WireSound.Runner.acceptance
+#print axioms VE.Route.WireSound.getObjValD_of_ok
+#print axioms VE.Route.WireSound.valid_field
+#print axioms VE.Route.WireSound.refutes_field
+#print axioms VE.Route.WireSound.values_field
+#print axioms VE.Route.WireSound.mem_zip_map
+#print axioms VE.Route.WireSound.decodeFormulas_data
+#print axioms VE.Route.WireSound.decodeClosed_data
+#print axioms VE.Route.WireSound.fullBackground_formulas
+#print axioms VE.Route.WireSound.routeIntended_background
+#print axioms VE.Route.WireSound.wellFormed_sorts
+#print axioms VE.Route.WireSound.chain_sorts
+#print axioms VE.Route.WireSound.chain_environment
+#print axioms VE.Route.WireSound.flagsHold_forget
+#print axioms VE.Route.WireSound.definitionsLayer_restrict
+#print axioms VE.Route.WireSound.fullLayer_E_out
+#print axioms VE.Route.WireSound.fullLayer_premises
+#print axioms VE.Route.WireSound.fullLayer_admissible_in
+#print axioms VE.Route.WireSound.fullLayer_admissible_out
+#print axioms VE.Route.WireSound.fullLayer_restrict
+#print axioms VE.Route.WireSound.fullLayer_intended
+#print axioms VE.Route.WireSound.fullLayer_background_sound
+#print axioms VE.Route.WireSound.routeModel_ok
+#print axioms VE.Route.WireSound.folRunner_run
+#print axioms VE.Route.WireSound.runFol_accepted
+#print axioms VE.Route.WireSound.folFamily_sound
+#print axioms VE.Route.WireSound.folRunner_sound
+#print axioms VE.Route.WireSound.runFol_certificate_acceptance
+#print axioms VE.Route.WireSound.runFol_countermodel
+#print axioms VE.Route.WireSound.runFol_evaluate
+#print axioms VE.Route.WireSound.hide_predicates_some
+#print axioms VE.Route.WireSound.closure_wellFormed_hide
+#print axioms VE.Route.WireSound.term_denote_forget
+#print axioms VE.Route.WireSound.closure_denote_forget
+#print axioms VE.Route.WireSound.embed_wellFormed
+#print axioms VE.Route.WireSound.embed_sat
+#print axioms VE.Route.WireSound.closureRunner_run
+#print axioms VE.Route.WireSound.runClosure_accepted
+#print axioms VE.Route.WireSound.closureFamily_sound
+#print axioms VE.Route.WireSound.closureRunner_sound
+#print axioms VE.Route.WireSound.runClosure_certificate_acceptance
+#print axioms VE.Route.WireSound.runClosure_countermodel
+#print axioms VE.Route.WireSound.runClosure_evaluate
+#print axioms VE.Route.WireSound.orderRunner_run
+#print axioms VE.Route.WireSound.runOrder_accepted
+#print axioms VE.Route.WireSound.orderFamily_sound
+#print axioms VE.Route.WireSound.orderRunner_sound
+#print axioms VE.Route.WireSound.runOrder_certificate_acceptance
+#print axioms VE.Route.WireSound.decodeOrderModel_validFast
+#print axioms VE.Route.WireSound.decodeOrderModel_intended
+#print axioms VE.Route.WireSound.orderModel_ok
+#print axioms VE.Route.WireSound.forIn_yield_ok
+#print axioms VE.Route.WireSound.orderVocabulary_no_definitions
+#print axioms VE.Route.WireSound.runOrder_countermodel
+#print axioms VE.Route.WireSound.runOrder_evaluate
+#print axioms VE.Route.RunSound.runCase_dispatch
+#print axioms VE.Route.RunSound.runnerKind_ne
+#print axioms VE.Route.RunSound.dispatch_fol
+#print axioms VE.Route.RunSound.dispatch_closure
+#print axioms VE.Route.RunSound.dispatch_order
+#print axioms VE.Route.RunSound.decodeRouteVocabulary_flagsBase
+#print axioms VE.Route.RunSound.route_fol_certificate
+#print axioms VE.Route.RunSound.route_fol_countermodel
+#print axioms VE.Route.RunSound.route_fol_evaluate
+#print axioms VE.Route.RunSound.route_closure_certificate
+#print axioms VE.Route.RunSound.route_closure_countermodel
+#print axioms VE.Route.RunSound.route_closure_evaluate
+#print axioms VE.Route.RunSound.route_order_certificate
+#print axioms VE.Route.RunSound.route_order_countermodel
+#print axioms VE.Route.RunSound.route_order_evaluate
+#print axioms VE.Norms.RunSound.valid_field
+#print axioms VE.Norms.RunSound.runCase_certificate
+#print axioms VE.Norms.RunSound.norms_wire_certificate_acceptance
 #print axioms VE.Service.Graph.graph_sound
 #print axioms VE.Service.Graph.graph_entails
 #print axioms VE.Service.Graph.graph_unfolds
@@ -1309,6 +1396,29 @@ import VE.EnglishGrammar.FoldAgree
 #print axioms VE.SpeechActs.Wire.decoded_active_commands
 #print axioms VE.SpeechActs.Wire.decoded_premises
 #print axioms VE.SpeechActs.Run.speech_wire_conflict_free_sound
+#print axioms VE.SpeechActs.Source.source_retained
+#print axioms VE.SpeechActs.Source.coverage_partition
+#print axioms VE.SpeechActs.Source.answers_sound
+#print axioms VE.SpeechActs.Source.query_records_sound
+#print axioms VE.SpeechActs.Source.gap_records_sound
+#print axioms VE.SpeechActs.Source.external_records_sound
+#print axioms VE.SpeechActs.Source.Admission.normsSource_D
+#print axioms VE.SpeechActs.Source.Admission.admitNodes_ok
+#print axioms VE.SpeechActs.Source.Admission.answerPremiseClaims_formulas
+#print axioms VE.SpeechActs.Source.Admission.eq_of_map_nodup
+#print axioms VE.SpeechActs.Source.Admission.admissible_En
+#print axioms VE.SpeechActs.Source.Admission.bindings_withheld
+#print axioms VE.SpeechActs.Source.Admission.active_commands
+#print axioms VE.SpeechActs.Source.Admission.report_sound
+#print axioms VE.SpeechActs.Source.Admission.certificates_bound
+#print axioms VE.SpeechActs.Source.Admission.leaves_admitted
+#print axioms VE.SpeechActs.Source.Admission.reportAdmitted
+#print axioms VE.SpeechActs.Source.Admission.certifiedAnswer_entailed
+#print axioms VE.SpeechActs.Source.Admission.answerLeaf_entailed
+#print axioms VE.SpeechActs.Source.Admission.report_consequence
+#print axioms VE.SpeechActs.Source.Admission.records_sound
+#print axioms VE.SpeechActs.Source.Admission.runAdmission_sound
+#print axioms VE.SpeechActs.Source.speech_wire_acceptance
 #print axioms VE.SoftNorms.Admission.admitDocument_spec
 #print axioms VE.SoftNorms.Admission.admitNodes_ok
 #print axioms VE.SoftNorms.Admission.layerLeaf_formula
@@ -2078,6 +2188,13 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Service.coding_error
 #print axioms VE.Service.rejectionCode_mem
 #print axioms VE.Service.respond_decoded
+#print axioms VE.Service.expand_plain
+#print axioms VE.Service.expand_hit
+#print axioms VE.Service.expand_miss
+#print axioms VE.Service.expandCases_unexpanded
+#print axioms VE.Service.register_none
+#print axioms VE.Service.registerOne_digest
+#print axioms VE.Service.registerOne_ok
 #print axioms VE.Risk.termSum_cons
 #print axioms VE.Risk.termSum_nil
 #print axioms VE.Risk.termSum_append
@@ -3081,6 +3198,17 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.NormDefaults.Wire.normDefaults_wire_status_sound
 #print axioms VE.NormDefaults.Wire.normDefaults_wire_witness_sound
 #print axioms VE.NormDefaults.Wire.targetU_refutes
+#print axioms VE.NormDefaults.Wire.grounding_ungrounded_iff
+#print axioms VE.NormDefaults.Wire.reachedSome_of_fill
+#print axioms VE.NormDefaults.Wire.ReachedData.reachedSome
+#print axioms VE.NormDefaults.Wire.admissibleX_of_fill
+#print axioms VE.NormDefaults.Wire.report_sound
+#print axioms VE.NormDefaults.Wire.normDefaults_wire_report_sound
+#print axioms VE.NormDefaults.Wire.layered_cert_sound
+#print axioms VE.NormDefaults.Wire.target_not_conflictFree
+#print axioms VE.NormDefaults.Wire.layered_conflict_sound
+#print axioms VE.NormDefaults.Wire.FilledX.admissible
+#print axioms VE.NormDefaults.Wire.layered_report_sound
 #print axioms VE.NormDefaults.canonO
 #print axioms VE.NormDefaults.gap_of_kleene
 #print axioms VE.NormDefaults.notreq_of_notperm
@@ -4156,3 +4284,103 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Grammar.verdict_many
 #print axioms VE.EnglishGrammar.foldChar_agrees
 #print axioms VE.Norms.Wire.appendPredicates_assembly
+#print axioms VE.EnglishGrammar.grammar_rules
+#print axioms VE.EnglishGrammar.start_sentence
+#print axioms VE.EnglishGrammar.valid_iff_no_failure
+#print axioms VE.EnglishGrammar.lexRules_terminatorFree
+#print axioms VE.EnglishGrammar.read_checks
+#print axioms VE.EnglishGrammar.read_eq
+#print axioms VE.EnglishGrammar.read_ok
+#print axioms VE.EnglishGrammar.read_complete_english
+#print axioms VE.EnglishGrammar.read_stopped
+#print axioms VE.EnglishGrammar.english_reading_unique
+#print axioms VE.EnglishGrammar.meaning_total
+#print axioms VE.EnglishGrammar.checked_rendering_exact
+#print axioms VE.EnglishGrammar.checked_rendering
+#print axioms VE.EnglishGrammar.translate_eq
+#print axioms VE.EnglishGrammar.translate_checks
+#print axioms VE.EnglishGrammar.translate_exact
+#print axioms VE.EnglishGrammar.translate_one_sentence
+#print axioms VE.EnglishGrammar.flatMap_sub
+#print axioms VE.EnglishGrammar.flatMap_mono
+#print axioms VE.EnglishGrammar.adjectiveRows_sub
+#print axioms VE.EnglishGrammar.decl_sub
+#print axioms VE.EnglishGrammar.lexRowsAll_sub
+#print axioms VE.EnglishGrammar.lexRows_sub
+#print axioms VE.EnglishGrammar.indexIn_get
+#print axioms VE.EnglishGrammar.nodup_index_inj
+#print axioms VE.EnglishGrammar.nodup_filter
+#print axioms VE.EnglishGrammar.lexRows_nodup
+#print axioms VE.EnglishGrammar.lexRules_get
+#print axioms VE.EnglishGrammar.lexActs_get
+#print axioms VE.EnglishGrammar.fixedActs_size
+#print axioms VE.EnglishGrammar.fixedTable_small
+#print axioms VE.EnglishGrammar.propRename_inj
+#print axioms VE.EnglishGrammar.lexRows_dom
+#print axioms VE.EnglishGrammar.grammar_extension
+#print axioms VE.EnglishGrammar.fixedRules_base
+#print axioms VE.EnglishGrammar.rename_id
+#print axioms VE.EnglishGrammar.map_rename_id
+#print axioms VE.EnglishGrammar.unstaged_fixed
+#print axioms VE.EnglishGrammar.ty_catalogue
+#print axioms VE.EnglishGrammar.ty_property
+#print axioms VE.EnglishGrammar.valid_subject_first
+#print axioms VE.EnglishGrammar.obligations_exact
+#print axioms VE.EnglishGrammar.admit_ok
+#print axioms VE.EnglishGrammar.admit_exact
+#print axioms VE.EnglishGrammar.admit_no_premise
+#print axioms VE.EnglishGrammar.first_checked
+
+-- English S3: every added named lemma and statement.
+#print axioms VE.EnglishGrammar.LexRow.Small.dom
+#print axioms VE.EnglishGrammar.LexRow.Small.rename_eq
+#print axioms VE.EnglishGrammar.LexRow.rename_inj
+#print axioms VE.EnglishGrammar.Run.alternativesView_eq
+#print axioms VE.EnglishGrammar.Run.riskView_eq
+#print axioms VE.EnglishGrammar.adjectiveRows_small
+#print axioms VE.EnglishGrammar.admit_of_read
+#print axioms VE.EnglishGrammar.admit_ok_read
+#print axioms VE.EnglishGrammar.append_all
+#print axioms VE.EnglishGrammar.append_map
+#print axioms VE.EnglishGrammar.attributeRows_sub
+#print axioms VE.EnglishGrammar.clauseRowsOrder_small
+#print axioms VE.EnglishGrammar.clauseRows_small
+#print axioms VE.EnglishGrammar.constantRows_eq
+#print axioms VE.EnglishGrammar.constantRows_small
+#print axioms VE.EnglishGrammar.fixedRules_size
+#print axioms VE.EnglishGrammar.fixed_rows_small
+#print axioms VE.EnglishGrammar.flatMap_all
+#print axioms VE.EnglishGrammar.guardRows_eq
+#print axioms VE.EnglishGrammar.guardRows_small
+#print axioms VE.EnglishGrammar.indexIn_lt
+#print axioms VE.EnglishGrammar.intConstantRows_small
+#print axioms VE.EnglishGrammar.lexRowsAll_dom
+#print axioms VE.EnglishGrammar.map_rename_inj
+#print axioms VE.EnglishGrammar.map_rename_small
+#print axioms VE.EnglishGrammar.mem_eraseDups
+#print axioms VE.EnglishGrammar.mem_eraseDupsBy_loop
+#print axioms VE.EnglishGrammar.noNt_of
+#print axioms VE.EnglishGrammar.propertyNt_ge
+#print axioms VE.EnglishGrammar.propertyRows_sub
+#print axioms VE.EnglishGrammar.rename_prop
+#print axioms VE.EnglishGrammar.rename_small
+#print axioms VE.EnglishGrammar.rhsTys_rename
+#print axioms VE.EnglishGrammar.slot_small
+#print axioms VE.EnglishGrammar.smallRow_of
+#print axioms VE.EnglishGrammar.small_of
+#print axioms VE.EnglishGrammar.spellingRows_small
+#print axioms VE.EnglishGrammar.symsSmall_append
+#print axioms VE.EnglishGrammar.symsSmall_cons_n
+#print axioms VE.EnglishGrammar.symsSmall_cons_t
+#print axioms VE.EnglishGrammar.symsSmall_iff
+#print axioms VE.EnglishGrammar.symsSmall_nil
+#print axioms VE.EnglishGrammar.symsSmall_textSyms
+#print axioms VE.EnglishGrammar.terminatorFree_rename
+#print axioms VE.EnglishGrammar.textSyms_noNt
+#print axioms VE.EnglishGrammar.ty_propertyNt
+#print axioms VE.EnglishGrammar.ty_rename
+#print axioms VE.EnglishGrammar.valueSorts_sub
+#print axioms VE.EnglishGrammar.wordingRows_small
+#print axioms VE.EnglishGrammar.wordingRows_sub
+#print axioms VE.EnglishGrammar.wordingSymsBy_nts
+#print axioms VE.EnglishGrammar.wordingSyms_nts

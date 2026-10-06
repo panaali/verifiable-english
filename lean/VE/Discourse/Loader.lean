@@ -1,5 +1,6 @@
 import VE.Discourse.Manifest
 import VE.Route.Run
+import VE.Norms.Tree
 
 /-! # Loading a `ve-document` text (docs/spec/discourse.md 3.1 to 3.3, document.md)
 
@@ -151,20 +152,40 @@ def supports : List String :=
 
 def statuses : List String := ["CHECKED", "OPEN", "LABELLED", "UNFORMALISED"]
 
+/-- A field read under one of the two check modes of the shared W2 front-matter readers. With `python` (the
+speech-source wrapper, compared with Python's `SpeechSource`), any failure is Python's `validate_*` text `text`;
+otherwise it is the reader's own failure, which the discourse route relays to Python verbatim (batch 4). The
+discourse texts are frozen: a change to them is a Python-visible `wording` change that needs a signed DELTA
+(lean-first 11a review B2; `tests/test_discourse.py::test_w2_front_matter_diagnostics_are_pinned`). -/
+def field {α : Type} (python : Bool) (text : String) (x : Except String α) : Except String α :=
+  if python then x.mapError (fun _ => text) else x
+
 /-- `_meaning`: the meaning status of a unit. -/
-def meaningStatus (openNames : List String) (j : Json) : Except String String := do
+def meaningStatus (openNames : List String) (j : Json) (python : Bool := false) : Except String String := do
   match j with
   | .str "specified" => pure "specified"
   | .obj _ =>
     match ← fields j with
     | [("contextual", .str d)] => if d.isEmpty then throw "invalid meaning status" else pure "contextual"
     | [("open", .arr xs)] => do
-      let names ← xs.toList.mapM Json.getStr?
+      let names ← field python "invalid meaning status" (xs.toList.mapM Json.getStr?)
       unless !names.isEmpty && names.all openNames.contains do throw "invalid meaning status"
       pure "open"
     | [("unformalised", .str r)] => if token r then pure "unformalised" else throw "invalid meaning status"
     | _ => throw "invalid meaning status"
   | _ => throw "invalid meaning status"
+
+/-- W2's status of a unit without an active reading set (`load_document`): content and meaning. The speech-act
+source wrapper reads the same function. -/
+def w2Status (hasContent : Bool) (meaning : String) : String :=
+  if hasContent && meaning == "specified" then "CHECKED"
+  else if meaning == "open" then "OPEN"
+  else if meaning == "unformalised" then "UNFORMALISED" else "LABELLED"
+
+/-- W2's status of a unit whose active reading set decides: CHECKED only for an authored set of asserted
+readings, which W2 checks itself; every other set is stored under OPEN. -/
+def w2SetStatus (authored allAsserted : Bool) : String :=
+  if authored && allAsserted then "CHECKED" else "OPEN"
 
 /-- One compiled unit of the front matter. -/
 structure Unit₀ where
@@ -229,10 +250,7 @@ def compileUnit (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (e
       unless statuses.contains s do throw "invalid unit status"
       pure (some s)
     | .error _ => pure none
-  let status := if content.isSome && meaning == "specified" then "CHECKED"
-    else if meaning == "open" then "OPEN"
-    else if meaning == "unformalised" then "UNFORMALISED" else "LABELLED"
-  pure ⟨id, (a, b), kind, content, status, explicit⟩
+  pure ⟨id, (a, b), kind, content, w2Status content.isSome meaning, explicit⟩
 
 /-- `_parts`: a unit, or the parts of an explicitly partitioned `MIXED` unit (document.md). The
 parent is provenance only: its bytes are counted once, by its parts, which partition its span
@@ -291,8 +309,12 @@ def compileUnits (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (
     if xs.any fun x => (rest.map Unit₀.id).contains x.id then throw "duplicate or invalid unit id"
     pure (xs ++ rest)
 
-/-- `validate_open_terms`: the declared open-term names. -/
-def openTermNames (rv : VE.Route.Wire.RouteVocabulary) (j : Json) : Except String (List String) := do
+/-- `validate_open_terms`: the declared open-term names. With `python`, every malformed field has Python's text and
+every necessary and sufficient condition is a closed formula over the environment (document.md), typed as Python's
+`formula_from_data` types it, with its first diagnostic; the discourse route (`python = false`) reads only their
+structure, as it did before batch 11a. -/
+def openTermNames (rv : VE.Route.Wire.RouteVocabulary) (j : Json) (python : Bool := false) (data : Bool := false) :
+    Except String (List String) := do
   let items ← match j with
     | .arr xs => pure xs.toList
     | _ => throw "open_terms must be a list"
@@ -303,23 +325,29 @@ def openTermNames (rv : VE.Route.Wire.RouteVocabulary) (j : Json) : Except Strin
     let schema := ["name", "arguments", "decided_by", "necessary", "sufficient", "factors", "precedents",
       "jurisdiction", "version"]
     unless keys.length == schema.length && schema.all keys.contains do throw "invalid open-term schema"
-    let name ← stringField item "name"
+    let name ← field python "duplicate or invalid open term" (stringField item "name")
     unless token name && !seen.contains name do throw "duplicate or invalid open term"
-    let args ← strings (← item.getObjVal? "arguments")
+    let args ← field python "invalid open-term arguments" (do strings (← item.getObjVal? "arguments"))
     unless args.all token && args.eraseDups.length == args.length do throw "invalid open-term arguments"
-    unless token (← stringField item "decided_by") && token (← stringField item "jurisdiction") do
-      throw "open term needs a decision role and jurisdiction"
-    let v ← (← item.getObjVal? "version").getNat?
+    let roles := "open term needs a decision role and jurisdiction"
+    let decider ← field python roles (stringField item "decided_by")
+    let jurisdiction ← field python roles (stringField item "jurisdiction")
+    unless token decider && token jurisdiction do throw roles
+    let v ← field python "invalid open-term version" (do (← item.getObjVal? "version").getNat?)
     unless 1 ≤ v do throw "invalid open-term version"
-    for field in ["necessary", "sufficient"] do
-      let fs ← match ← item.getObjVal? field with
+    for key in ["necessary", "sufficient"] do
+      let fs ← match ← item.getObjVal? key with
         | .arr xs => pure xs.toList
-        | _ => throw s!"{field} must be a list"
-      for f in fs do let _ ← VE.Bridge.decodeFormula 64 f; pure ()
-    let factors ← strings (← item.getObjVal? "factors")
-    let precedents ← strings (← item.getObjVal? "precedents")
-    unless factors.all (!·.isEmpty) && precedents.all (!·.isEmpty) do
-      throw "invalid open-term factors or precedents"
+        | _ => throw s!"{key} must be a list"
+      for f in fs do
+        let φ ← VE.Bridge.decodeFormula 64 f
+        if python then
+          VE.Norms.typeDiagnostic rv.environment [] φ
+          let _ ← VE.Route.Wire.decodeClosed rv.environment f data
+    let lists := "invalid open-term factors or precedents"
+    let factors ← field python lists (do strings (← item.getObjVal? "factors"))
+    let precedents ← field python lists (do strings (← item.getObjVal? "precedents"))
+    unless factors.all (!·.isEmpty) && precedents.all (!·.isEmpty) do throw lists
     pure (seen ++ [name])) []
 
 /-! ## Distinguishing models (their identity is Python's `model_id`) -/
@@ -346,18 +374,21 @@ def modelId (profiles : List String) (envId : String) (m : Json) : Except String
   VE.CertificateWire.digest ("ve-model-" ++ VE.Route.Wire.identityVersion profiles ++ "\n")
     (Json.mkObj [("environment_id", .str envId), ("model", ← normalizedModel m)])
 
-/-- One reading of a reading set: its id, kind, content and admission record. -/
+/-- One reading of a reading set: its id, kind, content and admission record. With `python`, its id is checked here
+against the readings before it (`seen`, Python's loop); otherwise `compileSets` has checked every id first. -/
 def compileReading (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (envId : String)
-    (ids : List String) (r : Json) : Except String (String × Bool × VE.Formula × List (String × String)) := do
+    (ids seen : List String) (r : Json) (python : Bool := false) :
+    Except String (String × Bool × VE.Formula × List (String × String)) := do
   let keys ← match r with
     | .obj kvs => pure (kvs.toList.map Prod.fst)
     | _ => throw "invalid reading"
   let schema := ["id", "kind", "meaning_id", "content", "admission"]
   unless keys.length == schema.length && schema.all keys.contains do throw "invalid reading"
-  let id ← stringField r "id"
+  let id ← field python "duplicate or invalid reading id" (stringField r "id")
+  if python then unless token id && !seen.contains id do throw "duplicate or invalid reading id"
   let kind ← r.getObjVal? "kind"
   let _ ← VE.Route.Admission.decodeKind 16 kind
-  let mid ← stringField r "meaning_id"
+  let mid ← field python "invalid reading meaning id" (stringField r "meaning_id")
   unless token mid do throw "invalid reading meaning id"
   let f ← VE.Route.Wire.decodeClosed rv.environment (← r.getObjVal? "content") (profiles.contains "data@0")
   unless (← VE.Route.Wire.meaningId profiles envId (VE.Route.Wire.encodeFormula f)) == mid do
@@ -368,8 +399,9 @@ def compileReading (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String)
     | _ => throw "invalid reading admission"
   unless akeys.length == 3 && ["who", "why", "distinguishing_models"].all akeys.contains do
     throw "invalid reading admission"
-  unless token (← stringField admission "who") && !(← stringField admission "why").isEmpty do
-    throw "invalid reading admission"
+  let who ← field python "invalid reading admission" (stringField admission "who")
+  let why ← field python "invalid reading admission" (stringField admission "why")
+  unless token who && !why.isEmpty do throw "invalid reading admission"
   let models ← match ← admission.getObjVal? "distinguishing_models" with
     | .obj kvs => pure kvs.toList
     | _ => throw "invalid reading admission"
@@ -383,9 +415,9 @@ def compileReading (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String)
   pure (id, kind == .str "asserted", f, pairs)
 
 /-- `validate_reading_sets` and `active_reading_sets`: the active sets (the latest version per
-unit) with their status and readings. -/
+unit) with their status and readings; `python` as for `field`. -/
 def compileSets (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (envId : String)
-    (unitIds : List String) (j : Json) : Except String (List (FrontSet × List Bool)) := do
+    (unitIds : List String) (j : Json) (python : Bool := false) : Except String (List (FrontSet × List Bool)) := do
   let items ← match j with
     | .arr xs => pure xs.toList
     | _ => throw "reading_sets must be a list"
@@ -396,12 +428,13 @@ def compileSets (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (e
     let required := ["id", "unit", "version", "status", "readings"]
     unless required.all keys.contains && keys.all (required ++ ["signature", "rejected_history", "models"]).contains do
       throw "invalid reading set"
-    let id ← stringField item "id"
-    let version ← (← item.getObjVal? "version").getNat?
+    let versionText := "invalid or duplicate reading set version"
+    let id ← field python versionText (stringField item "id")
+    let version ← field python versionText (do (← item.getObjVal? "version").getNat?)
     unless token id && 1 ≤ version && !(acc.any fun (s, _) => s.id == id && s.version == version) do
-      throw "invalid or duplicate reading set version"
-    let unit ← stringField item "unit"
-    let status ← stringField item "status"
+      throw versionText
+    let unit ← field python "invalid reading set unit or status" (stringField item "unit")
+    let status ← field python "invalid reading set unit or status" (stringField item "status")
     unless unitIds.contains unit && (status == "authored" || status == "open") do
       throw "invalid reading set unit or status"
     unless acc.all (fun (s, _) => (s.id == id) == (s.unit == unit)) do
@@ -415,9 +448,14 @@ def compileSets (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (e
       throw "authored reading needs one signed choice"
     if status == "open" && (item.getObjVal? "signature").toBool then
       throw "open reading set cannot have an author signature"
-    let ids ← readings.mapM fun r => stringField r "id"
-    unless ids.all token && ids.eraseDups.length == ids.length do throw "duplicate or invalid reading id"
-    let compiled ← readings.mapM (compileReading rv profiles envId ids)
+    let compiled ← if python then
+        -- Each reading in order, its id checked against the ones before it (Python's loop).
+        let ids := readings.map fun r => ((r.getObjValD "id").getStr?).toOption.getD ""
+        readings.zipIdx.mapM fun (r, i) => compileReading rv profiles envId ids (ids.take i) r true
+      else do
+        let ids ← readings.mapM fun r => stringField r "id"
+        unless ids.all token && ids.eraseDups.length == ids.length do throw "duplicate or invalid reading id"
+        readings.mapM (compileReading rv profiles envId ids [])
     let models ← match item.getObjVal? "models" with
       | .ok (.obj kvs) => pure kvs.toList
       | .ok _ => throw "distinguishing models must be supplied by id"
@@ -446,8 +484,10 @@ def compileSets (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (e
 def activeOf (all : List (FrontSet × List Bool)) : List (FrontSet × List Bool) :=
   all.filter fun (s, _) => !all.any fun (o, _) => o.unit == s.unit && o.version > s.version
 
-/-- `validate_narrowings`: the narrowing ids. -/
-def narrowingIds (all : List FrontSet) (unitIds : List String) (j : Json) : Except String (List String) := do
+/-- `validate_narrowings`: the narrowing ids, over the reading-set versions `(id, version, reading ids)`. With
+`python`, each reference is a name (or a version number) before it is resolved, with Python's texts. -/
+def narrowingIds (all : List (String × Nat × List String)) (unitIds : List String) (j : Json)
+    (python : Bool := false) : Except String (List String) := do
   let items ← match j with
     | .arr xs => pure xs.toList
     | _ => throw "narrowings must be a list"
@@ -457,16 +497,19 @@ def narrowingIds (all : List FrontSet) (unitIds : List String) (j : Json) : Exce
       | _ => throw "invalid narrowing"
     let schema := ["id", "set", "version", "keeps", "by", "reason_spans"]
     unless keys.length == schema.length && schema.all keys.contains do throw "invalid narrowing"
-    let id ← stringField item "id"
-    unless token id && !ids.contains id && token (← stringField item "by") do throw "invalid narrowing id or author"
-    let set ← stringField item "set"
-    let version ← (← item.getObjVal? "version").getNat?
-    let rs ← match all.find? (fun r => r.id == set && r.version == version) with
-      | some rs => pure rs
+    let author := "invalid narrowing id or author"
+    let id ← field python author (stringField item "id")
+    let by_ ← field python author (stringField item "by")
+    unless token id && !ids.contains id && token by_ do throw author
+    let set ← field python "invalid narrowing" (stringField item "set")
+    let version ← field python "invalid narrowing" (do (← item.getObjVal? "version").getNat?)
+    if python then unless token set && 1 ≤ version do throw "invalid narrowing"
+    let readings ← match all.find? (fun r => r.1 == set && r.2.1 == version) with
+      | some r => pure r.2.2
       | none => throw "narrowing cites unknown reading set version"
-    let keeps ← strings (← item.getObjVal? "keeps")
-    unless !keeps.isEmpty && keeps.all (rs.readings.map Prod.fst).contains do throw "narrowing must keep named readings"
-    let spans ← strings (← item.getObjVal? "reason_spans")
+    let keeps ← field python "narrowing must keep named readings" (do strings (← item.getObjVal? "keeps"))
+    unless !keeps.isEmpty && keeps.all readings.contains do throw "narrowing must keep named readings"
+    let spans ← field python "narrowing needs cited source units" (do strings (← item.getObjVal? "reason_spans"))
     unless !spans.isEmpty && spans.all unitIds.contains do throw "narrowing needs cited source units"
     pure (ids ++ [id])) []
 
@@ -503,7 +546,7 @@ def loadFront (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (env
   let all ← compileSets rv profiles envId (units.map Unit₀.id) (optionalList front "reading_sets")
   let active := activeOf all
   let status := units.map fun x => (x.id, match active.find? (·.1.unit == x.id) with
-    | some (rs, kinds) => if rs.status == "authored" && kinds.all id then "CHECKED" else "OPEN"
+    | some (rs, kinds) => w2SetStatus (rs.status == "authored") (kinds.all id)
     | none => x.status)
   match front.getObjVal? "lemmas" with
   | .ok (.arr _) | .error _ => pure ()
@@ -511,7 +554,8 @@ def loadFront (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (env
   for x in units do
     if x.kind == .str "asserted" && x.content.isNone && !(all.any (·.1.unit == x.id)) then
       throw "asserted unit needs content or a reading set"
-  let narrowings ← narrowingIds (all.map Prod.fst) (units.map Unit₀.id) (optionalList front "narrowings")
+  let narrowings ← narrowingIds (all.map fun (s, _) => (s.id, s.version, s.readings.map Prod.fst))
+    (units.map Unit₀.id) (optionalList front "narrowings")
   match optionalList front "weights" with
   | .arr ws => for w in ws.toList do
       match w with

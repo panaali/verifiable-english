@@ -45,6 +45,7 @@ default report, `--check`, `--write` and `--ledger` all read the tree through on
 
     python3 tools/trust_map.py            # per-file counts against docs/trust-baseline.json
     python3 tools/trust_map.py --check    # exit 1 if K, S or untied [V] grew without a signed entry
+    python3 tools/trust_map.py --since main   # the same, against the tree of `main` measured now
     python3 tools/trust_map.py --write    # rewrite the baseline from the current tree
     python3 tools/trust_map.py --ledger   # measured lines per plan step (E9, tools/consolidation-ledger.json)
 
@@ -52,6 +53,13 @@ Growth of K, S or untied [V] (unclassified included) over the baseline fails `--
 baseline's `signed` list allows it: each entry is `{"change", "signed", "allow": {"K": n, "S": n,
 "V": n}}`, a note signed by the DRI. `--write` moves the signed entries into `history`; growth
 beyond them (a reclassification, not new code) needs `--reason`, which `history` keeps.
+
+The baseline is only rewritten on request, so growth that other changes merged without a signed
+entry makes `--check` fail for every later change too, and hides a change's own growth behind it.
+`--since REV` gates one change on its own: it measures the tree of commit `REV` (its `lean/` and its
+side table, read from git into a scratch directory, with this tool's rules) and checks the current
+tree against that measurement, allowing only the signed entries the current baseline adds to
+`REV`'s; an entry `REV` already had is inherited, not this change's.
 
 `--seed TRUST-MAP.md` updates the side table: current entries and ties stay, except that a
 predicate (`lean/predicates.txt`, a declaration whose type ends in `Prop`) outside K, S, P and T takes
@@ -78,10 +86,14 @@ from collections import Counter, defaultdict
 from collections.abc import Iterable
 from dataclasses import dataclass, replace
 import fnmatch
+import io
 import json
 from pathlib import Path
 import re
+import subprocess
 import sys
+import tarfile
+import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean"
@@ -588,6 +600,41 @@ def check(files: dict[str, dict[str, int]], baseline: dict) -> list[str]:
     return failures
 
 
+def since(files: dict[str, dict[str, int]], parent: dict[str, dict[str, int]], baseline: dict | None,
+          parent_baseline: dict | None) -> list[str]:
+    """`check` against a parent commit's measured tree: the parent's counts are the baseline and the
+    allowances are the signed entries `baseline` adds to `parent_baseline`'s."""
+    inherited = [json.dumps(e, sort_keys=True) for e in (parent_baseline or {}).get("signed", [])]
+    added = []
+    for entry in (baseline or {}).get("signed", []):
+        key = json.dumps(entry, sort_keys=True)
+        if key in inherited:
+            inherited.remove(key)
+        else:
+            added.append(entry)
+    return check(files, {"totals": totals(parent), "files": parent, "signed": added})
+
+
+def measure_rev(rev: str, root: Path = ROOT) -> tuple[dict[str, dict[str, int]], list[str], dict | None]:
+    """Measure the tree of commit `rev` with this tool's rules: its `lean/` and side table are read
+    from git into a scratch directory (no worktree, index or stash is touched). Also returns that
+    commit's baseline, or None when it has none. A git failure is a problem, never an empty tree."""
+    table = TABLE.relative_to(ROOT).as_posix()
+    archive = subprocess.run(["git", "-C", str(root), "archive", "--format=tar", rev, "--", "lean", table],
+                             capture_output=True)
+    if archive.returncode:
+        return {}, [f"git archive {rev}: {archive.stderr.decode(errors='replace').strip()}"], None
+    shown = subprocess.run(["git", "-C", str(root), "show", f"{rev}:{BASELINE.relative_to(ROOT).as_posix()}"],
+                           capture_output=True)
+    parent_baseline = json.loads(shown.stdout) if shown.returncode == 0 else None
+    with tempfile.TemporaryDirectory() as scratch:
+        tree = Path(scratch)
+        with tarfile.open(fileobj=io.BytesIO(archive.stdout)) as tar:
+            tar.extractall(tree, filter="data")
+        files, problems = measure(tree, tree / table, tree / STATEMENTS.relative_to(ROOT))
+    return files, [f"{rev}: {p}" for p in problems], parent_baseline
+
+
 def write_baseline(files: dict[str, dict[str, int]], path: Path = BASELINE, section11: dict | None = None,
                    reason: str | None = None) -> None:
     """Rewrite the baseline. Growth beyond the signed allowances (`check`) is absorbed only with
@@ -925,6 +972,9 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--fresh", action="store_true", help="with --seed, ignore the current table")
     parser.add_argument("--reason", help="with --write, why the budget grew beyond the signed allowances "
                                          "(a reclassification); kept in the baseline's history")
+    parser.add_argument("--since", metavar="REV",
+                        help="fail if K, S or untied [V] grew over the tree of commit REV, measured now, "
+                             "beyond the signed entries this tree's baseline adds to REV's")
     parser.add_argument("--root", type=Path, default=ROOT)
     parser.add_argument("--ledger", action="store_true",
                         help="print the measured E9 ledger of tools/consolidation-ledger.json")
@@ -958,6 +1008,19 @@ def main(argv: list[str]) -> int:
             return 1
         print(f"wrote {baseline_path.relative_to(root)}")
         return 0
+    if args.since:
+        parent, parent_problems, parent_baseline = measure_rev(args.since, root)
+        for problem in parent_problems:
+            print(problem, file=sys.stderr)
+        if parent_problems:
+            print(f"FAIL: the tree of {args.since} does not measure cleanly", file=sys.stderr)
+            return 1
+        failures = since(files, parent, baseline, parent_baseline)
+        for failure in failures:
+            print(f"BUDGET since {args.since}: {failure}", file=sys.stderr)
+        if failures:
+            return 1
+        print(f"PASS: K, S and untied [V] within {args.since} and the allowances signed since")
     if args.check:
         if baseline is None:
             print(f"no baseline at {baseline_path}; run --write first", file=sys.stderr)

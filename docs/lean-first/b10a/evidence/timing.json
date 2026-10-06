@@ -1,0 +1,78 @@
+{
+ "cases": 22640,
+ "runs": [
+  {
+   "run": 1,
+   "side": "base",
+   "what": "record readings",
+   "load": 28.7,
+   "wall": 223.51,
+   "cpu": 192.82,
+   "exit": 0
+  },
+  {
+   "run": 1,
+   "side": "head",
+   "what": "record readings",
+   "load": 31.8,
+   "wall": 188.43,
+   "cpu": 187.52,
+   "exit": 0
+  },
+  {
+   "run": 2,
+   "side": "head",
+   "what": "record readings",
+   "load": 20.6,
+   "wall": 222.98,
+   "cpu": 223.85,
+   "exit": 0
+  },
+  {
+   "run": 2,
+   "side": "base",
+   "what": "record readings",
+   "load": 10.1,
+   "wall": 219.38,
+   "cpu": 220.3,
+   "exit": 0
+  },
+  {
+   "run": 1,
+   "side": "base",
+   "what": "record probe",
+   "load": 10.0,
+   "wall": 107.05,
+   "cpu": 105.17,
+   "exit": 0
+  },
+  {
+   "run": 1,
+   "side": "head",
+   "what": "record probe",
+   "load": 13.9,
+   "wall": 89.06,
+   "cpu": 90.11,
+   "exit": 0
+  },
+  {
+   "run": 2,
+   "side": "head",
+   "what": "record probe",
+   "load": 12.9,
+   "wall": 85.76,
+   "cpu": 87.19,
+   "exit": 0
+  },
+  {
+   "run": 2,
+   "side": "base",
+   "what": "record probe",
+   "load": 11.1,
+   "wall": 94.0,
+   "cpu": 94.2,
+   "exit": 0
+  }
+ ],
+ "note": "the corpus rows of timing.py; its first route rows (6, one 22,640-case file each) exited 2 because the route reads at most 16 MiB of input, and were replaced by timing-route.json (23 chunks of 1,000 cases)"
+}
