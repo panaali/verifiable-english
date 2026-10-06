@@ -5385,6 +5385,7 @@
   "tests/test_lean_first_b10a_report.py::test_every_seeded_bug_was_caught",
   "tests/test_lean_first_b10a_report.py::test_every_timed_run_exited_cleanly_on_both_sides",
   "tests/test_lean_first_b10a_report.py::test_fourteen_date_seeds_preserve_the_differential_result",
+  "tests/test_lean_first_b10a_report.py::test_fuzzer_gate_detects_changed_verdicts_with_equal_summaries",
   "tests/test_lean_first_b10a_report.py::test_the_ab_found_no_difference_over_every_corpus",
   "tests/test_lean_first_b3b_report.py::test_delta_tables_are_generated_from_the_evidence",
   "tests/test_lean_first_b3b_report.py::test_every_paired_udhr_run_gave_identical_answers",
