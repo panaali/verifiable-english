@@ -107,7 +107,7 @@ def test_spec_reading_fixtures(joke, fixture, source, status, code):
     assert (reading["status"], reading.get("code")) == (status, code), fixture
     if fixture == "s1":
         # `stopped 1 noDerivation`: the sentence index counts the preamble line (spec 4.1, reviews B1/B2)
-        assert reading == {"status": "none", "code": "NoDerivation", "sentence": 1,
+        assert reading == {"status": "none", "code": "NoDerivation", "class": "SyntaxError", "sentence": 1,
                            "text": "Sentence 2 has no reading with the current vocabulary."}
     if fixture == "s4":
         assert reading["details"] == {"line": 0, "word": "funny", "gloss": "purple"}
@@ -179,6 +179,10 @@ REFUSALS = [
 def test_every_refusal_carries_its_arguments(fixture, place, pack, source, budget, expected):
     """Reviews (Astra B1, Fable B2): a refusal names its sentence and its fault's arguments."""
     result = read_in(WORLDS[place](), source, pack, budget=route.WORK_BUDGET if budget is None else budget)
+    classes = {"NoDerivation": "SyntaxError", "Budget": "ResourceLimit",
+               "IllTyped": "TypeMismatch", "EmptyDocument": "SyntaxError"}
+    if expected["code"] in classes:
+        expected = {**expected, "class": classes[expected["code"]]}
     assert result["reading"] == expected, fixture
 
 
@@ -225,7 +229,7 @@ def test_s2_outcomes_match_the_english_route(source):
     [row] = run_english_cases(ENGLISH, "english.read", [case], timeout=HANG_TIMEOUT)
     english = {k: v for k, v in row["result"].items() if k != "identities"}
     assert english["status"] != "one", english
-    assert reading == english
+    assert {k: v for k, v in reading.items() if k not in {"class", "span", "advice"}} == english
 
 
 def test_gloss_words_are_not_occurrences():

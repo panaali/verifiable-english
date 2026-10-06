@@ -10,7 +10,7 @@ import time
 
 from .. import ast
 from ..backends import lean as lean_backend
-from ..backends.english_lean import response_problem as s2_response_problem
+from ..backends.english_lean import CLASSES as ENGLISH_CLASSES, response_problem as s2_response_problem
 from ..backends.lean import ROUTE_TIMEOUT, configured_timeout
 from ..environment import Environment
 from ..errors import CheckerUnavailable, VEError
@@ -75,7 +75,7 @@ def _text(raw: bytes) -> str:
         raise VEError("A sense pack is not UTF-8") from exc
 
 
-def _refusal_problem(reading: dict) -> str | None:
+def _refusal_problem(reading: dict, source: str) -> str | None:
     """A refused reading: a sense fault with its arguments, or one of S2's outcomes as S2's authoring answer
     writes it (`english_lean.response_problem`, the one validator of those fields)."""
     code = reading.get("code")
@@ -100,11 +100,33 @@ def _refusal_problem(reading: dict) -> str | None:
         return None
     if reading.get("status") in ("one", "open"):
         return "a refused reading has an admitting status"
-    problem = s2_response_problem({**reading, "identities": {}}, {}, None)
-    return problem and "a refused reading is not S2's: " + problem
+    if "class" not in reading:
+        return "a refused reading has no diagnostic class"
+    extras = {key: reading[key] for key in ("class", "span", "advice") if key in reading}
+    base = {key: value for key, value in reading.items() if key not in extras}
+    problem = s2_response_problem({**base, "identities": {}}, {}, None)
+    if problem:
+        return "a refused reading is not S2's: " + problem
+    if "class" in extras:
+        expected = ({"none": "SyntaxError", "many": "AmbiguousDerivation",
+                     "budget": "ResourceLimit", "invalidGrammar": "CheckerUnavailable"}.get(reading["status"])
+                    or ("TypeMismatch" if code == "IllTyped" else ENGLISH_CLASSES.get(code, (None,))[0]))
+        if extras["class"] != expected:
+            return "a refused reading's class does not match its code"
+    if "span" in extras:
+        span = extras["span"]
+        if not (type(span) is list and len(span) == 2 and all(_nat(i) for i in span)
+                and span[0] <= span[1] <= len(source)):
+            return "a refused reading's span is malformed"
+    if "advice" in extras:
+        advice = extras["advice"]
+        if reading["status"] != "none" or type(advice) is not dict or advice.keys() != {"id", "text"} \
+                or not all(_word(value) for value in advice.values()):
+            return "a refused reading's advice is malformed"
+    return None
 
 
-def _response_problem(response: object, expected_id: str, request_id: str) -> str | None:
+def _response_problem(response: object, expected_id: str, request_id: str, source: str = "") -> str | None:
     if type(response) is not dict or response.keys() != {"request_id", "dictionary_id", "reading"}:
         return "the result does not have request and dictionary identities and a reading"
     if type(response["request_id"]) is not str or response["request_id"] != request_id:
@@ -200,7 +222,7 @@ def _response_problem(response: object, expected_id: str, request_id: str) -> st
         if not all(type(word) is str for word in reading["unused"]):
             return "unused words are malformed"
     else:
-        return _refusal_problem(reading)
+        return _refusal_problem(reading, source)
     return None
 
 
@@ -249,7 +271,7 @@ def read(env, source: str, packs: list[bytes], *, own: list[dict] | None = None,
     [row] = lean_backend.run("senses.read", executable, [case], runner="ve_senses_route", timeout=remaining)
     if row["status"] != "ok" or row.keys() != {"id", "status", "result"}:
         raise VEError(row.get("error", "Invalid senses request"))
-    problem = _response_problem(row["result"], expected_id, request_id)
+    problem = _response_problem(row["result"], expected_id, request_id, source)
     if problem:
         raise CheckerUnavailable("CheckerUnavailable: malformed senses response: " + problem)
     if time.monotonic() > deadline:
