@@ -78,6 +78,8 @@ def test_comparison_refuses_an_empty_corpus():
 def test_committed_report_counts_are_derived_from_individual_records():
     report = json.loads(C.REPORT.read_text())
     rows = report["rows"]
+    assert {row["record"]["identities"]["actions_version"] for row in rows} == {
+        adapter.actions_version()}
     assert report["cases"] == len(rows) == len(C.cases())
     assert report["agreement"] == sum(not row["record"]["classes"] for row in rows)
     assert report["differences"] == sum(bool(row["record"]["classes"]) for row in rows)

@@ -2,7 +2,8 @@
 
 Status: **the spec fixture slice passes with its two approved dispositions; G3 and GE2 remain open**.
 This report joins `english-lean-s3/py` and `english-lean-s3/lean` on
-`english-lean-s3/integrate`. No authority change or model call was made. The case records are
+`english-lean-s3/integrate`. Python remains the admission authority; D9 changes the accepted risk wording
+and selected lexicon identity. No model call was made. The case records are
 `conformance/english-lean/s3-python-report.json` and
 `conformance/english-lean/s3-fixture-comparison.json`.
 
@@ -20,6 +21,21 @@ assurance, declaration and gate collection inventories were regenerated; the cor
 reports zero drift.
 
 ## Measured fixture differences
+
+### Risk surface delta (DRI ruling 2)
+
+| Before S3 D9 | After S3 D9 |
+|---|---|
+| `Catastrophic is more severe than minor.` was rejected by Python | Python accepts it as `risk__more_severe(catastrophic, minor)`; Lean reads the same formula (`ri7`) |
+| The `asimov-extended` lexicon failed V1 for missing `risk__more_severe` | The selected lexicon includes the wording and passes V1; its `lexicon_id` changes from `baef1a705ac0ebe43a084d91cf1bedf6ade5da1610acaf96fe412980ac23e753` to `833cf8d5d499d31d9567cd6030037e568a90e38458fbe958985053f2b376b225` |
+
+The refreshed lexicon report derives validity over all 39 corpus environments, and
+`test_every_corpus_environment_has_a_valid_selected_lexicon` verifies the complete report. This surface
+change was signed in S3 D9; S0/S1's unchanged-behavior merge scope does not govern S3.
+
+The later profile-boundary repair changed `Run.lean`, so the English grammar lock requires
+`actions_version` 8 (formerly 7). The regenerated 200-case comparison records version 8 for
+every case; the version identifies the changed reader even where its verdict is unchanged.
 
 Python agrees with the spec's mapped class, formulas, and marks on 147 of the 163 exact texts. All 16 exact-text
 differences agree when written with Python's selected wording. Python selects the quoted fallback for `safe`
