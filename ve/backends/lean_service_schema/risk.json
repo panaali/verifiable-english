@@ -289,6 +289,7 @@
     "elaborate": {
       "$comment": "Risk.Wire.regenerated: the policy identities, E_risk's generated vocabulary, the legend, the risk premises, the unranked severity pairs, then the alternatives fields of the inlined tree and Norms.Wire.regenerated.",
       "additionalProperties": false,
+      "if": {"x-case": {"required": ["coverage_units"]}},
       "properties": {
         "alternatives": {"$ref": "alternatives.json#/$defs/regenerated/alternatives"},
         "background": {"$ref": "common.json#/$defs/norms_background"},
@@ -365,6 +366,7 @@
         "conflict_targets",
         "fragment"
       ],
+      "then": {"required": ["coverage"]},
       "type": "object"
     },
     "endpoint": {

@@ -13,15 +13,18 @@ theorem of_norms {v : Json} (h : Fits req Skeletons.norms v) : Fits req Skeleton
   refine Fits.altSub ?_ h
   alt_sub
 
-theorem elaborate_fits (id : String) (src : Wire.AltSource) :
+theorem elaborate_fits (id : String) (src : Wire.AltSource)
+    (hcoverage : (CaseCond.path ["coverage_units"]).holds req = false) :
     Fits req Skeletons.alternatives (ok id (Wire.regenerated src)) := by
   unfold ok VE.Route.Wire.ok Wire.regenerated Wire.encodeNode Wire.labelled Wire.profileExists
     VE.Norms.Wire.regenerated profileWords profileDef
   simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte, Bool.false_eq_true]
   fits
+  all_goals exact hcoverage
 
 theorem elaborate_coverage_fits (id : String) (src : Wire.AltSource)
-    (environment units narrowings : Json) :
+    (environment units narrowings : Json)
+    (hcoverage : (CaseCond.path ["coverage_units"]).holds req = true) :
     Fits req Skeletons.alternatives
       (ok id (Wire.regenerated src ++
         [("coverage", Wire.coverage src.A environment units narrowings)])) := by
@@ -29,14 +32,29 @@ theorem elaborate_coverage_fits (id : String) (src : Wire.AltSource)
     VE.Norms.Wire.regenerated profileWords profileDef Wire.coverage
   simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte, Bool.false_eq_true]
   fits
+  all_goals first | exact hcoverage | fits
+  case h_2 x completion item heq hx =>
+    simp only [List.mem_flatMap, List.mem_filterMap] at hx
+    rcases hx with ⟨action, _, harm, _, h⟩
+    split at h <;> simp only [Option.some.injEq, reduceCtorEq] at h
+    subst_vars
+    fits
+
+private theorem sourceOf_environment {j : Json} {src : Wire.AltSource}
+    (h : Replay.sourceOf j = .ok src) : ∃ environment, j.getObjVal? "environment" = .ok environment := by
+  unfold Replay.sourceOf at h
+  obtain ⟨environment, henv, _⟩ := VE.Order.ProfileGate.bind_ok h
+  exact ⟨environment, henv⟩
 
 theorem elaborate_case_fits (id : String) (j : Json) :
     OkFits j Skeletons.alternatives (runElaborate id j) := by
   unfold runElaborate
   okfits
   split
-  · exact elaborate_coverage_fits (req := j) _ _ _ _ _
-  · simpa only [List.append_nil] using (elaborate_fits (req := j) id _)
+  · exact elaborate_coverage_fits (req := j) _ _ _ _ _ (CaseCond.path_ok ‹j.getObjVal? "coverage_units" = .ok _›)
+  · obtain ⟨_, henv⟩ := sourceOf_environment ‹Replay.sourceOf j = .ok _›
+    simpa only [List.append_nil] using (elaborate_fits (req := j) id _
+      (CaseCond.path_error henv ‹j.getObjVal? "coverage_units" = .error _›))
 
 theorem fields_obj {j : Json} {fs : VE.Bridge.Fields} (h : VE.Bridge.fields j = .ok fs) : ∃ m, j = .obj m := by
   cases j <;> first | exact ⟨_, rfl⟩ | (simp [VE.Bridge.fields, Json.getObj?] at h; cases h)

@@ -197,6 +197,89 @@ def test_coverage_unit_binding_and_counts_agree_with_lean(executables, tmp_path)
                            deepcopy(result(response, 0)), deepcopy(result(bad, 0)))
 
 
+def test_coverage_is_required_for_both_elaborate_modes(executables):
+    """A covered request cannot turn into a valid response with no coverage section."""
+    from tests.test_alternatives_profile import source
+    from tests.test_risk_profile import risk_source
+
+    for mode, kind, environment, document in (
+        ("alternatives", "alt-elaborate", source(), None),
+        ("risk", "risk-elaborate", risk_source(), {"norms": [], "units": []}),
+    ):
+        case = {"id": "coverage", "kind": kind, "environment": environment,
+                "coverage_units": []}
+        if document is None:
+            case["norms"] = []
+        else:
+            case["document"] = document
+        cases_text = _text([case])
+        with LeanService(executables[0]) as service:
+            _, response = service.exchange(mode, cases_text, 1)
+        request = request_context(response["id"], mode, cases_text, 1)
+        assert "coverage" in result(response, 0)
+        assert schema_verdict(mode, request, response) == "accept"
+        missing = deepcopy(response)
+        del result(missing, 0)["coverage"]
+        assert schema_verdict(mode, request, missing).startswith("reject")
+        assert assert_agreement(executables[1], [(mode, request, [response, missing])]) == [
+            "accept", schema_verdict(mode, request, missing)]
+
+
+def test_every_coverage_cell_field_has_a_checked_shape(executables):
+    """A genuine declared cell reduced to {unit} is invalid; so is every dropped,
+    retyped, or unexpected member of each kind of emitted coverage cell."""
+    from tests.test_alternatives_profile import source
+
+    environment = source()
+    environment["alternatives"]["outcomes"] = {"complete_by": "case annotator"}
+    environment["vocabulary"]["constants"] = {
+        "pull": {"sort": "action", "description": "pull"},
+        "wait": {"sort": "action", "description": "wait"},
+        "r": {"sort": "robot", "description": "r"},
+        "h": {"sort": "harm", "description": "h"},
+    }
+    units = [
+        {"id": name, "kind": "asserted", "support": "testimony",
+         "content": ["binary", predicate, ["const", "pull"], ["const", second]]}
+        for name, predicate, second in (
+            ("choice", "available", "r"),
+            ("outcome", "leads_to", "h"),
+            ("cause", "causes", "h"),
+        )]
+    case = {"id": "coverage", "kind": "alt-elaborate", "environment": environment,
+            "norms": [], "coverage_units": units}
+    cases_text = _text([case])
+    with LeanService(executables[0]) as service:
+        _, response = service.exchange("alternatives", cases_text, 1)
+    request = request_context(response["id"], "alternatives", cases_text, 1)
+    sections = ("alternatives_declared", "counterfactual_leaves", "assumed_harm_free",
+                "proximate_judgments")
+    detail = result(response, 0)["coverage"]["alternatives"]
+    assert all(detail[section] for section in sections)
+    assert schema_verdict("alternatives", request, response) == "accept"
+    mutants = []
+    for section in sections:
+        cell = detail[section][0]
+        for field in cell:
+            for change in ("drop", "retype"):
+                bad = deepcopy(response)
+                target = result(bad, 0)["coverage"]["alternatives"][section][0]
+                if change == "drop":
+                    del target[field]
+                else:
+                    target[field] = []
+                mutants.append(bad)
+        bad = deepcopy(response)
+        result(bad, 0)["coverage"]["alternatives"][section][0]["unexpected"] = True
+        mutants.append(bad)
+    declared = deepcopy(response)
+    result(declared, 0)["coverage"]["alternatives"]["alternatives_declared"] = [{"unit": "choice"}]
+    mutants.append(declared)
+    assert all(schema_verdict("alternatives", request, bad).startswith("reject") for bad in mutants)
+    assert all(verdict.startswith("reject") for verdict in
+               assert_agreement(executables[1], [("alternatives", request, mutants)]))
+
+
 def test_genuine_responses_satisfy_the_lean_invariants(genuine, executables):
     """What the client leaves to the service holds on everything the service emits."""
     verdicts = lean_verdicts(executables[1], [(m, q, [r]) for m, q, r in genuine], "invariants")
