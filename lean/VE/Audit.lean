@@ -4383,3 +4383,15 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.EnglishGrammar.wordingRows_sub
 #print axioms VE.EnglishGrammar.wordingSymsBy_nts
 #print axioms VE.EnglishGrammar.wordingSyms_nts
+#print axioms VE.EnglishGrammar.policy_iff_no_failure
+#print axioms VE.EnglishGrammar.admitRequest_ok
+#print axioms VE.EnglishGrammar.admitRequest_exact
+#print axioms VE.EnglishGrammar.admitRequest_policy
+#print axioms VE.EnglishGrammar.translateRequest_policy
+#print axioms VE.EnglishGrammar.grammarFault_none
+#print axioms VE.EnglishGrammar.overlayCheck_constants
+#print axioms VE.EnglishGrammar.checkRequest_some
+#print axioms VE.EnglishGrammar.Run.codeClasses_total
+#print axioms VE.Service.runMode_englishRead
+#print axioms VE.Service.runMode_englishGrammar
+#print axioms VE.Service.runMode_englishCheck

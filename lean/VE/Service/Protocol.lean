@@ -5,6 +5,7 @@ import VE.Order.Surface
 import VE.Route.Run
 import VE.Norms.Run
 import VE.Service.EnglishRun
+import VE.EnglishGrammar.Run
 import VE.Service.Standalone
 import VE.Service.Graph
 import VE.Service.Readings
@@ -65,7 +66,8 @@ def maxLineBytes : Nat := 16777216
 def maxCases : Nat := 4096
 
 inductive Mode where
-  | evaluate | checkCertificate | order | route | norms | english | environment | model | check | identity
+  | evaluate | checkCertificate | order | route | norms | english | englishRead | englishGrammar | englishCheck
+  | environment | model | check | identity
   | parse | graph | readings | bundle | familyNorms
   | softNorms | rights | speechActs | reports | alternatives | risk | riskEval | quantity | normDefaults
   | discourse | readingsRoute | diagnose
@@ -78,6 +80,9 @@ def Mode.name : Mode → String
   | .route => "route"
   | .norms => "norms"
   | .english => "english"
+  | .englishRead => "english.read"
+  | .englishGrammar => "english.grammar"
+  | .englishCheck => "english.check"
   | .environment => "environment"
   | .model => "model"
   | .check => "check"
@@ -101,6 +106,7 @@ def Mode.name : Mode → String
   | .diagnose => "diagnose"
 
 def modes : List Mode := [.evaluate, .checkCertificate, .order, .route, .norms, .english,
+  .englishRead, .englishGrammar, .englishCheck,
   .environment, .model, .check, .identity, .parse, .graph, .readings, .bundle, .familyNorms,
   .softNorms, .rights, .speechActs, .reports, .alternatives, .risk, .riskEval, .quantity, .normDefaults,
   .discourse, .readingsRoute, .diagnose]
@@ -128,6 +134,9 @@ def runMode : Mode → Json → Json
   | .route, j => VE.Route.Run.runCaseReported j
   | .norms, j => VE.Norms.Run.runCaseReported j
   | .english, j => englishReported j
+  | .englishRead, j => VE.EnglishGrammar.Run.readCaseReported j
+  | .englishGrammar, j => VE.EnglishGrammar.Run.grammarCaseReported j
+  | .englishCheck, j => VE.EnglishGrammar.Run.checkCaseReported j
   | .environment, j => Standalone.reported Standalone.environmentCase j
   | .model, j => Standalone.reported Standalone.modelCase j
   | .check, j => Standalone.reported Standalone.checkCase j
@@ -666,6 +675,12 @@ theorem runMode_english (j : Json) :
         (match j with | .str text => text | _ => j.compress) with
       | .ok result => result
       | .error message => Json.mkObj [("status", .str "error"), ("error", .str message)] := rfl
+theorem runMode_englishRead (j : Json) :
+    runMode .englishRead j = VE.EnglishGrammar.Run.readCaseReported j := rfl
+theorem runMode_englishGrammar (j : Json) :
+    runMode .englishGrammar j = VE.EnglishGrammar.Run.grammarCaseReported j := rfl
+theorem runMode_englishCheck (j : Json) :
+    runMode .englishCheck j = VE.EnglishGrammar.Run.checkCaseReported j := rfl
 theorem runMode_environment (j : Json) :
     runMode .environment j = Standalone.reported Standalone.environmentCase j := rfl
 theorem runMode_model (j : Json) :

@@ -7,6 +7,7 @@ import ResponseShape.Schemas.CheckCertificate
 import ResponseShape.Schemas.Diagnose
 import ResponseShape.Schemas.Discourse
 import ResponseShape.Schemas.English
+import ResponseShape.Schemas.EnglishLean
 import ResponseShape.Schemas.Environment
 import ResponseShape.Schemas.Evaluate
 import ResponseShape.Schemas.FamilyNorms
@@ -44,6 +45,9 @@ def files : List File := [
   Diagnose.file,
   Discourse.file,
   English.file,
+  EnglishLean.readFile,
+  EnglishLean.grammarFile,
+  EnglishLean.checkFile,
   Environment.file,
   Evaluate.file,
   FamilyNorms.file,
