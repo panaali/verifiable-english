@@ -146,15 +146,9 @@
   },
   {
    "environment": "usecases/asimov-extended/environment.json",
-   "failures": [
-    [
-     "V1",
-     "predicate",
-     "risk__more_severe"
-    ]
-   ],
-   "lexicon_id": "baef1a705ac0ebe43a084d91cf1bedf6ade5da1610acaf96fe412980ac23e753",
-   "symbols": 54
+   "failures": [],
+   "lexicon_id": "833cf8d5d499d31d9567cd6030037e568a90e38458fbe958985053f2b376b225",
+   "symbols": 55
   },
   {
    "environment": "usecases/asimov-laws/environment.json",
@@ -241,11 +235,9 @@
    "symbols": 16
   }
  ],
- "failures_by_condition": {
-  "V1": 1
- },
+ "failures_by_condition": {},
  "format": "ve.english-lean-lexicon-report@1",
- "invalid": 1,
- "valid": 38,
+ "invalid": 0,
+ "valid": 39,
  "wording_key_differences": []
 }

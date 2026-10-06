@@ -1,12 +1,13 @@
 import VE.Service.Protocol
 import ResponseShape
+import ResponseShape.CaseDeciders
 
 /-! The source of `ve/backends/lean_service_schema/risk.json` (`file`; `tools/response_schemas.py` writes it). -/
 namespace ResponseShape.Schemas.Risk
 open Lean ResponseShape
 
 def risk_path : Shape :=
-  decidedBy "Risk.Run.usesRiskPath" VE.Risk.Run.usesRiskPath <|
+  decidedCase .riskPath <|
   c "Risk.Run.usesRiskPath: the risk@0 profile, the environment's risk block or a risk-* kind." [
     obj,
     .anyOf [

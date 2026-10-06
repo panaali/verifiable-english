@@ -1,12 +1,13 @@
 import VE.Service.Protocol
 import ResponseShape
+import ResponseShape.CaseDeciders
 
 /-! The source of `ve/backends/lean_service_schema/norm-defaults.json` (`file`; `tools/response_schemas.py` writes it). -/
 namespace ResponseShape.Schemas.NormDefaults
 open Lean ResponseShape
 
 def norm_defaults_path : Shape :=
-  decidedBy "NormDefaults.Run.usesNormDefaultsPath" VE.NormDefaults.Run.usesNormDefaultsPath <|
+  decidedCase .normDefaultsPath <|
   c
     "NormDefaults.Run.usesNormDefaultsPath: the norm-defaults@0 profile in a profile list of strings (Wire.hasProfile), a regulated predicate whose default is unspecified (Wire.unspecifiedNames), or a norm-defaults-* kind."
     [
