@@ -58,11 +58,10 @@ class S2Wording:
         """`<conclusion>`: the conclusion's canonical sentence on the existing English surface, in italics; it is
         read back by that surface's all-derivations parser to the conclusion itself before it is shown."""
         from .ast import Document as Formulas, formula_from_data
-        from .english import parse_english
-        from .printer import render
+        from .english import parse_statement_english, render_english
         formula = formula_from_data(self.frame, ast)
-        text = render(Formulas((formula,)), self.frame, "ve_english").strip()
-        if parse_english(self.frame, text).formulas != (formula,):
+        text = render_english(Formulas((formula,)), self.frame, _statement_layer=True).strip()
+        if parse_statement_english(self.frame, text).formulas != (formula,):
             raise VEError("InvalidInput: the conclusion's sentence does not read back to the conclusion")
         slot = f"*{text}*"
         self.slots.conclusions.add(slot)

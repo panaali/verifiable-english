@@ -25,7 +25,8 @@ import re
 from .. import ast
 from ..ast import Document
 from ..definitions import Definition, _atom, compile_definitions, premise
-from ..english import EnglishTraversal, EnglishVocabulary, _max_scope, parse_english, render_english
+from ..english import (EnglishTraversal, EnglishVocabulary, _max_scope,
+                       parse_statement_english, render_english)
 from ..environment import Environment
 from ..errors import VEError
 from ..printer import print_document
@@ -89,8 +90,8 @@ def parse_definition(env: Environment, sentence: str) -> Definition:
     if not left.startswith("for every ") or cut < 0:
         raise VEError("A definition sentence introduces its arguments with 'for every'")
     prefix, head_text = left[:cut + 2], left[cut + 2:]
-    head_doc = parse_english(env, prefix + head_text + ".")
-    body_doc = parse_english(env, prefix + body_text + ".")
+    head_doc = parse_statement_english(env, prefix + head_text + ".")
+    body_doc = parse_statement_english(env, prefix + body_text + ".")
     if len(head_doc.formulas) != 1 or len(body_doc.formulas) != 1:
         raise VEError("A definition sentence has exactly one head and one body statement")
     head, body = head_doc.formulas[0], body_doc.formulas[0]
@@ -163,7 +164,7 @@ def render_citation(env: Environment, cited, conclusion) -> str:
     English statement; lemmas are cited by their stable names."""
     cited = list(cited)
     _check_lemma_names(cited)
-    statement = render_english(Document((conclusion,)), env)
+    statement = render_english(Document((conclusion,)), env, _statement_layer=True)
     if not cited:
         return statement
     names = cited[0] if len(cited) == 1 else ", ".join(cited[:-1]) + " and " + cited[-1]
@@ -187,7 +188,7 @@ def parse_citation(env: Environment, sentence: str, lemma_names) -> tuple[tuple[
         if unknown:
             raise VEError(f"Citation names an unknown lemma: {unknown[0]}")
         text = text[match.end():]
-    document = parse_english(env, text)
+    document = parse_statement_english(env, text)
     if len(document.formulas) != 1:
         raise VEError("A citation sentence has one conclusion")
     return cited, document.formulas[0]
@@ -239,6 +240,6 @@ def wordings(env: Environment) -> tuple[dict, ...]:
             raise VEError(f"English definition wording has another reading: {definition.name}")
         document = Document((premise(definition),))
         result.append({"predicate": definition.name, "english": english,
-                       "biconditional": render_english(document, env),
+                       "biconditional": render_english(document, env, _statement_layer=True),
                        "strict": print_document(env, document)})
     return tuple(result)

@@ -814,7 +814,7 @@ class EnglishTraversal:
         return text[0].upper() + text[1:]
 
 
-def render_english(value, env, *, conclusions=(), **options):
+def render_english(value, env, *, conclusions=(), _statement_layer=False, **options):
     if type(value) is ast.Document:
         ast.check_document(env, value)
     else:
@@ -830,7 +830,22 @@ def render_english(value, env, *, conclusions=(), **options):
             or any(type(i) is not int or not 0 <= i < len(formulas) for i in conclusions)):
         raise ValueError('Conclusion indices must identify distinct document statements')
     marked = set(conclusions)
-    from .backends.english_lean import check as check_rendering
+    if _statement_layer:
+        # E3 owns statement-layer wording. Its generated decision names can be
+        # outside the E2 formula lexicon, but the all-derivations check still
+        # has to read each displayed sentence back to the exact formula.
+        def check_rendering(env, words, options, formulas, marks, candidates):
+            for candidate_index, candidate in enumerate(candidates):
+                try:
+                    reading = _python_reading(env, candidate, words, options)
+                except VEError:
+                    continue
+                if ([ast._to_data(f) for f in reading.document.formulas] == formulas
+                        and [i in reading.conclusions for i in range(len(formulas))] == marks):
+                    return candidate_index
+            return None
+    else:
+        from .backends.english_lean import check as check_rendering
     sentences = []
     for index, formula in enumerate(formulas):
         candidates = []
@@ -1709,6 +1724,14 @@ def _python_reading(env, source, words, options):
         raise
     spans = tuple((boundaries[start], boundaries[end]) for start, end in parser.sentence_spans)
     return _Reading(env, document, parser.words, parser.conclusions, spans)
+
+
+def parse_statement_english(env, source, **options):
+    """Read E3 statement wording, whose generated atoms are not E2 vocabulary."""
+    words = EnglishVocabulary(env, _defer_overlay_refusals=True, **options)
+    reading = _python_reading(env, source, words, options)
+    reading.check_conclusions()
+    return reading.document
 
 
 def _lean_reading(env, source, words, options):
