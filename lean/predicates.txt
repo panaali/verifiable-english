@@ -206,8 +206,10 @@ module VE.NormDefaults.Evidence
 module VE.NormDefaults.Examples
 module VE.NormDefaults.Fill
 module VE.NormDefaults.FillCheck
+module VE.NormDefaults.Layered
 module VE.NormDefaults.Premises
 module VE.NormDefaults.Replay
+module VE.NormDefaults.Report
 module VE.NormDefaults.Routes
 module VE.NormDefaults.Run
 module VE.NormDefaults.Semantics
@@ -590,6 +592,12 @@ VE.NormDefaults.SettledAs@VE.NormDefaults.Status
 VE.NormDefaults.UValid@VE.NormDefaults.Fill
 VE.NormDefaults.UndecidedAt@VE.NormDefaults.Status
 VE.NormDefaults.UniversalQF@VE.NormDefaults.Evidence
+VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report
+VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered
+VE.NormDefaults.Wire.NeverReached@VE.NormDefaults.Report
+VE.NormDefaults.Wire.ReachedSome@VE.NormDefaults.Report
+VE.NormDefaults.Wire.ReportSound@VE.NormDefaults.Report
+VE.NormDefaults.Wire.UndecidedAtX@VE.NormDefaults.Layered
 VE.NormDefaults.canonicalFill@VE.NormDefaults.Premises
 VE.NormDefaults.fillOf@VE.NormDefaults.Status
 VE.NormDefaults.finFill@VE.NormDefaults.Evidence

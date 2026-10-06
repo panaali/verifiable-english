@@ -333,12 +333,18 @@
   },
   "ResponseShape/Schemas/NormDefaults.lean": {
    "G[V]": [
+    "ResponseShape.Schemas.NormDefaults.base_environment",
     "ResponseShape.Schemas.NormDefaults.certificate",
     "ResponseShape.Schemas.NormDefaults.elaborate",
+    "ResponseShape.Schemas.NormDefaults.elaborateFields",
+    "ResponseShape.Schemas.NormDefaults.elaborateRequired",
     "ResponseShape.Schemas.NormDefaults.file",
     "ResponseShape.Schemas.NormDefaults.gaps",
     "ResponseShape.Schemas.NormDefaults.gaps_model",
     "ResponseShape.Schemas.NormDefaults.kind",
+    "ResponseShape.Schemas.NormDefaults.layered_elaborate",
+    "ResponseShape.Schemas.NormDefaults.report_line",
+    "ResponseShape.Schemas.NormDefaults.report_row",
     "ResponseShape.Schemas.NormDefaults.row",
     "ResponseShape.Schemas.NormDefaults.status"
    ],
@@ -3467,6 +3473,7 @@
     "VE.NormDefaults.coneEval",
     "VE.NormDefaults.coneJoin",
     "VE.NormDefaults.coneList",
+    "VE.NormDefaults.coneOf",
     "VE.NormDefaults.coneValues",
     "VE.NormDefaults.enumerateSettled",
     "VE.NormDefaults.fillBody",
@@ -3477,6 +3484,7 @@
     "VE.NormDefaults.kleene",
     "VE.NormDefaults.kneg",
     "VE.NormDefaults.kor",
+    "VE.NormDefaults.openInstances",
     "VE.NormDefaults.pairRule",
     "VE.NormDefaults.stepEntry",
     "VE.NormDefaults.subsets",
@@ -3530,6 +3538,51 @@
     "VE.NormDefaults.belowCount"
    ]
   },
+  "VE/NormDefaults/Layered.lean": {
+   "S": [
+    "VE.NormDefaults.Wire.ConflictFreeX",
+    "VE.NormDefaults.Wire.UndecidedAtX",
+    "VE.NormDefaults.Wire.cohPremiseU"
+   ],
+   "C": [
+    "VE.NormDefaults.Wire.FilledX",
+    "VE.NormDefaults.Wire.StatusX",
+    "VE.NormDefaults.Wire.acceptedX",
+    "VE.NormDefaults.Wire.firstFailureX",
+    "VE.NormDefaults.Wire.layeredSource",
+    "VE.NormDefaults.Wire.neverX",
+    "VE.NormDefaults.Wire.replayStatusX",
+    "VE.NormDefaults.Wire.suppliedX",
+    "VE.NormDefaults.Wire.witnessConflictX",
+    {
+     "name": "VE.NormDefaults.Wire.conflictFreeX",
+     "tied": [
+      "VE.NormDefaults.Wire.layered_conflict_sound"
+     ]
+    }
+   ],
+   "D[V]": [
+    "VE.NormDefaults.Wire.LayeredU",
+    "VE.NormDefaults.Wire.decodeLayered",
+    "VE.NormDefaults.Wire.decodePackageX",
+    "VE.NormDefaults.Wire.decodeRightsU",
+    "VE.NormDefaults.Wire.decodeSoftU",
+    "VE.NormDefaults.Wire.filledX",
+    "VE.NormDefaults.Wire.layeredElaborate",
+    "VE.NormDefaults.Wire.layeredRoute",
+    "VE.NormDefaults.Wire.situationX",
+    "VE.NormDefaults.Wire.sourceField",
+    "VE.NormDefaults.Wire.tupleOf",
+    "VE.NormDefaults.Wire.unspecOf",
+    "VE.NormDefaults.Wire.withUnsaid"
+   ],
+   "G[V]": [
+    "VE.NormDefaults.Wire.LayeredU.X",
+    "VE.NormDefaults.Wire.LayeredU.background",
+    "VE.NormDefaults.Wire.runLayered",
+    "VE.NormDefaults.Wire.softLabelledU"
+   ]
+  },
   "VE/NormDefaults/Premises.lean": {
    "S": [
     "VE.NormDefaults.BaseAdmissibleU",
@@ -3553,6 +3606,7 @@
     "VE.NormDefaults.Wire.Status",
     "VE.NormDefaults.Wire.StatusData",
     "VE.NormDefaults.Wire.WitnessDataU",
+    "VE.NormDefaults.Wire.reachedFromU",
     "VE.NormDefaults.Wire.replayGaps",
     "VE.NormDefaults.Wire.replayReached",
     "VE.NormDefaults.Wire.replayStatus",
@@ -3566,6 +3620,65 @@
     "VE.NormDefaults.Wire.decodeFilling",
     "VE.NormDefaults.Wire.reachedTarget",
     "VE.NormDefaults.Wire.unsaidEntries"
+   ]
+  },
+  "VE/NormDefaults/Report.lean": {
+   "S": [
+    "VE.NormDefaults.Wire.BaseAdmissibleX",
+    "VE.NormDefaults.Wire.NeverReached",
+    "VE.NormDefaults.Wire.ReachedSome",
+    "VE.NormDefaults.Wire.ReportSound"
+   ],
+   "C": [
+    "VE.NormDefaults.Wire.Grounding",
+    "VE.NormDefaults.Wire.LineU",
+    "VE.NormDefaults.Wire.Reached",
+    "VE.NormDefaults.Wire.ReportG",
+    "VE.NormDefaults.Wire.ReportSource",
+    "VE.NormDefaults.Wire.ReportU",
+    "VE.NormDefaults.Wire.SituationG",
+    "VE.NormDefaults.Wire.WitnessRow",
+    "VE.NormDefaults.Wire.atomKey",
+    "VE.NormDefaults.Wire.canonicalFinite",
+    "VE.NormDefaults.Wire.extendFill",
+    "VE.NormDefaults.Wire.lineFor",
+    "VE.NormDefaults.Wire.neverReached",
+    "VE.NormDefaults.Wire.reachedAt",
+    "VE.NormDefaults.Wire.reachedWitness",
+    "VE.NormDefaults.Wire.reportFrom",
+    "VE.NormDefaults.Wire.reportWith",
+    "VE.NormDefaults.Wire.situationWitness",
+    "VE.NormDefaults.Wire.sortAtoms",
+    "VE.NormDefaults.Wire.suppliedWitness"
+   ],
+   "D[V]": [
+    "VE.NormDefaults.Wire.Cited",
+    "VE.NormDefaults.Wire.Grounding.line",
+    "VE.NormDefaults.Wire.LineU.lines",
+    "VE.NormDefaults.Wire.LineU.toJson",
+    "VE.NormDefaults.Wire.Reached.label",
+    "VE.NormDefaults.Wire.ReportG.toJson",
+    "VE.NormDefaults.Wire.WitnessRow.toJson",
+    "VE.NormDefaults.Wire.completionLabel",
+    "VE.NormDefaults.Wire.groundingCites",
+    "VE.NormDefaults.Wire.situationFrom",
+    "VE.NormDefaults.Wire.validateCompletions",
+    "VE.NormDefaults.Wire.witnessRow"
+   ],
+   "G[V]": [
+    "VE.NormDefaults.Wire.ReportG.findings",
+    "VE.NormDefaults.Wire.ReportG.gaps",
+    "VE.NormDefaults.Wire.extraValid",
+    "VE.NormDefaults.Wire.guardCone",
+    "VE.NormDefaults.Wire.guardPredicates",
+    "VE.NormDefaults.Wire.inheritsFrom",
+    "VE.NormDefaults.Wire.normsSource",
+    {
+     "name": "VE.NormDefaults.Wire.groundingOf",
+     "tied": [
+      "VE.NormDefaults.Wire.grounding_ungrounded_iff"
+     ]
+    }
    ]
   },
   "VE/NormDefaults/Routes.lean": {
@@ -3646,6 +3759,7 @@
     "VE.NormDefaults.Wire.ConflictReplayU",
     "VE.NormDefaults.Wire.EntailmentReplayU",
     "VE.NormDefaults.Wire.checkAuthor",
+    "VE.NormDefaults.Wire.checkAuthorN",
     "VE.NormDefaults.Wire.conflictFreeCheckU",
     "VE.NormDefaults.Wire.replayConflictU",
     "VE.NormDefaults.Wire.replayEntailmentU"

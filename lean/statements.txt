@@ -7542,6 +7542,30 @@ theorem VE.NormDefaults.UValid.regulated_eq
       ∀ {r r' : VE.Norms.Regulated}, r ∈ U.D.T.regulated → r' ∈ U.D.T.regulated → r.name = r'.name → r = r'
   -- uses VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.UValid@VE.NormDefaults.Fill VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree
   -- expr 3148485760
+theorem VE.NormDefaults.Wire.FilledX.admissible
+  ∀ {L : VE.NormDefaults.Wire.LayeredU} (w : VE.NormDefaults.Wire.FilledX L),
+    VE.NormDefaults.Wire.BaseAdmissibleX L.U L.X
+      (VE.NormDefaults.withFill L.U w.S.M.asStructure (VE.NormDefaults.finFill w.S.M w.F))
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report VE.NormDefaults.Wire.FilledX.F@VE.NormDefaults.Layered VE.NormDefaults.Wire.FilledX.S@VE.NormDefaults.Layered VE.NormDefaults.Wire.FilledX@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.SituationG.M@VE.NormDefaults.Report VE.NormDefaults.finFill@VE.NormDefaults.Evidence VE.NormDefaults.withFill@VE.NormDefaults.Premises
+  -- expr 2124005329
+theorem VE.NormDefaults.Wire.ReachedData.reachedSome
+  ∀ {s : VE.NormDefaults.Wire.SourceU} (d : VE.NormDefaults.Wire.ReachedData s),
+    d.reached = Bool.true → VE.NormDefaults.Wire.ReachedSome s.U [] d.r
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Wire.ReachedData.r@VE.NormDefaults.Replay VE.NormDefaults.Wire.ReachedData.reached@VE.NormDefaults.Replay VE.NormDefaults.Wire.ReachedData@VE.NormDefaults.Replay VE.NormDefaults.Wire.ReachedSome@VE.NormDefaults.Report VE.NormDefaults.Wire.SourceU.U@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire
+  -- expr 1497724329
+theorem VE.NormDefaults.Wire.admissibleX_of_fill
+  ∀ (U : VE.NormDefaults.UDoc),
+    VE.NormDefaults.WellFormedU U = Bool.true →
+      ∀ (X : List VE.Formula) (M : VE.FiniteModel VE.Bridge.Entity),
+        M.Valid (VE.Norms.envAt U.D 0) →
+          VE.Norms.backgroundValid U.D M = Bool.true →
+            ∀ (F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity),
+              VE.NormDefaults.fillValid U M F = Bool.true →
+                VE.NormDefaults.Wire.extraValid U X M F = Bool.true →
+                  VE.NormDefaults.Wire.BaseAdmissibleX U X
+                    (VE.NormDefaults.withFill U M.asStructure (VE.NormDefaults.finFill M F))
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report VE.NormDefaults.Wire.extraValid@VE.NormDefaults.Report VE.NormDefaults.fillValid@VE.NormDefaults.Evidence VE.NormDefaults.finFill@VE.NormDefaults.Evidence VE.NormDefaults.withFill@VE.NormDefaults.Premises VE.Norms.backgroundValid@VE.Norms.Conflict VE.Norms.envAt@VE.Norms.Tree
+  -- expr 2061444020
 theorem VE.NormDefaults.Wire.baseModelU_valid
   ∀ (s : VE.NormDefaults.Wire.SourceU),
     s.profiled = Bool.true →
@@ -7580,6 +7604,34 @@ theorem VE.NormDefaults.Wire.fillPremises_wellFormed
         a ∈ VE.NormDefaults.fillPremises U → VE.Formula.WellFormed (VE.Norms.envAt (VE.NormDefaults.fill U) 0) [] a
   -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.fillPremises@VE.NormDefaults.Premises VE.Norms.envAt@VE.Norms.Tree
   -- expr 2558402127
+theorem VE.NormDefaults.Wire.grounding_ungrounded_iff
+  ∀ (U : VE.NormDefaults.UDoc) (r : VE.Norms.Regulated) (cited : List (String × List String))
+    (translation reachable : Bool),
+    VE.NormDefaults.Wire.groundingOf U r cited translation reachable = VE.NormDefaults.Wire.Grounding.ungrounded ↔
+      VE.NormDefaults.completionOf U r ≠ VE.NormDefaults.Completion.unspecified ∧
+        VE.Bridge.lookup cited r.name = Option.none ∧ translation = Bool.true ∧ reachable = Bool.true
+  -- uses VE.Bridge.lookup@VE.Bridge VE.NormDefaults.Completion.unspecified@VE.NormDefaults.Tree VE.NormDefaults.Completion@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.Grounding.ungrounded@VE.NormDefaults.Report VE.NormDefaults.Wire.Grounding@VE.NormDefaults.Report VE.NormDefaults.Wire.groundingOf@VE.NormDefaults.Report VE.NormDefaults.completionOf@VE.NormDefaults.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree
+  -- expr 951398524
+theorem VE.NormDefaults.Wire.layered_cert_sound
+  ∀ (L : VE.NormDefaults.Wire.LayeredU) (ss : List String) (φ : VE.Formula) (c : VE.Tableau.Certificate),
+    VE.Tableau.checkCertificate (VE.Norms.envAt (VE.NormDefaults.fill L.U) 0) L.background (VE.Norms.bindAll ss φ.not) c =
+        Bool.true →
+      ∀ (B : VE.Structure),
+        VE.NormDefaults.Wire.BaseAdmissibleX L.U L.X B →
+          ∀ (vs : List B.Carrier), VE.TupleTyped B ss vs → ¬VE.Formula.denote B (VE.Norms.tupleVal vs) φ
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula.not@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.background@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.bindAll@VE.Norms.Basic VE.Norms.envAt@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Tableau.Certificate@VE.Tableau VE.Tableau.checkCertificate@VE.TableauChecker VE.TupleTyped@VE.Semantics
+  -- expr 2666149117
+theorem VE.NormDefaults.Wire.layered_conflict_sound
+  ∀ (L : VE.NormDefaults.Wire.LayeredU) (packages : Lean.Json),
+    VE.NormDefaults.Wire.conflictFreeX L packages = Bool.true → VE.NormDefaults.Wire.ConflictFreeX L.U L.X
+  -- uses VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.conflictFreeX@VE.NormDefaults.Layered
+  -- expr 3464972856
+theorem VE.NormDefaults.Wire.layered_report_sound
+  ∀ (L : VE.NormDefaults.Wire.LayeredU) (packages : Lean.Json)
+    (rep : VE.NormDefaults.Wire.ReportG (VE.NormDefaults.Wire.layeredSource L packages)),
+    VE.NormDefaults.Wire.ReportSound (VE.NormDefaults.Wire.layeredSource L packages) rep
+  -- uses VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.ReportG@VE.NormDefaults.Report VE.NormDefaults.Wire.ReportSound@VE.NormDefaults.Report VE.NormDefaults.Wire.layeredSource@VE.NormDefaults.Layered
+  -- expr 4184792209
 theorem VE.NormDefaults.Wire.lookup_append
   ∀ {α : Type} (l₁ l₂ : List (String × α)) (k : String),
     VE.Bridge.lookup (l₁ ++ l₂) k =
@@ -7637,6 +7689,13 @@ theorem VE.NormDefaults.Wire.normDefaults_wire_reached_sound
             VE.Formula.denote d.M.asStructure (VE.Norms.tupleVal d.tuple) (VE.NormDefaults.reachedF s.U d.r.name)
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Formula.denote@VE.Semantics VE.NormDefaults.BaseAdmissibleU@VE.NormDefaults.Premises VE.NormDefaults.Wire.ReachedData.M@VE.NormDefaults.Replay VE.NormDefaults.Wire.ReachedData.r@VE.NormDefaults.Replay VE.NormDefaults.Wire.ReachedData.reached@VE.NormDefaults.Replay VE.NormDefaults.Wire.ReachedData.tuple@VE.NormDefaults.Replay VE.NormDefaults.Wire.ReachedData@VE.NormDefaults.Replay VE.NormDefaults.Wire.SourceU.U@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.replayReached@VE.NormDefaults.Replay VE.NormDefaults.reachedF@VE.NormDefaults.Premises VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 1486374995
+theorem VE.NormDefaults.Wire.normDefaults_wire_report_sound
+  ∀ (j : Lean.Json) (rep : VE.NormDefaults.Wire.ReportU j),
+    VE.NormDefaults.Wire.reportFrom j = Except.ok rep →
+      VE.NormDefaults.Wire.decodeSourceU (j.getObjValD "environment") (j.getObjValD "norms") = Except.ok rep.s ∧
+        VE.NormDefaults.Wire.ReportSound (VE.NormDefaults.Wire.normsSource rep.s ⋯ j) rep.rep
+  -- uses VE.NormDefaults.Wire.ReportSound@VE.NormDefaults.Report VE.NormDefaults.Wire.ReportU.profiled@VE.NormDefaults.Report VE.NormDefaults.Wire.ReportU.rep@VE.NormDefaults.Report VE.NormDefaults.Wire.ReportU.s@VE.NormDefaults.Report VE.NormDefaults.Wire.ReportU@VE.NormDefaults.Report VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.decodeSourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.normsSource@VE.NormDefaults.Report VE.NormDefaults.Wire.reportFrom@VE.NormDefaults.Report
+  -- expr 3696183850
 theorem VE.NormDefaults.Wire.normDefaults_wire_status_sound
   ∀ (j : Lean.Json) (d : VE.NormDefaults.Wire.StatusData j),
     VE.NormDefaults.Wire.replayStatus j = Except.ok d →
@@ -7656,6 +7715,26 @@ theorem VE.NormDefaults.Wire.normDefaults_wire_witness_sound
           ¬VE.NormDefaults.ConflictFreeU s.U
   -- uses VE.NormDefaults.ConflictFreeU@VE.NormDefaults.Premises VE.NormDefaults.Wire.SourceU.U@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.WitnessDataU.conflict@VE.NormDefaults.Replay VE.NormDefaults.Wire.WitnessDataU@VE.NormDefaults.Replay VE.NormDefaults.Wire.decodeSourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.replayWitnessU@VE.NormDefaults.Replay
   -- expr 1370411668
+theorem VE.NormDefaults.Wire.reachedSome_of_fill
+  ∀ (U : VE.NormDefaults.UDoc),
+    VE.NormDefaults.WellFormedU U = Bool.true →
+      ∀ (X : List VE.Formula) (M : VE.FiniteModel VE.Bridge.Entity),
+        M.Valid (VE.Norms.envAt U.D 0) →
+          VE.Norms.backgroundValid U.D M = Bool.true →
+            ∀ (r : VE.Norms.Regulated) (vs : List VE.Bridge.Entity) (F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity),
+              vs ∈ VE.NormDefaults.allTuples M r.sorts →
+                VE.NormDefaults.fillValid U M F = Bool.true →
+                  VE.NormDefaults.Wire.extraValid U X M F = Bool.true →
+                    VE.Formula.eval (M.withFill F) (VE.Norms.tupleVal vs) (VE.NormDefaults.reachedF U r.name) =
+                        Bool.true →
+                      VE.NormDefaults.Wire.ReachedSome U X r
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.withFill@VE.NormDefaults.Evidence VE.FiniteModel@VE.Finite VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.ReachedSome@VE.NormDefaults.Report VE.NormDefaults.Wire.extraValid@VE.NormDefaults.Report VE.NormDefaults.allTuples@VE.NormDefaults.Evidence VE.NormDefaults.fillValid@VE.NormDefaults.Evidence VE.NormDefaults.reachedF@VE.NormDefaults.Premises VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.backgroundValid@VE.Norms.Conflict VE.Norms.envAt@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic
+  -- expr 2020370126
+theorem VE.NormDefaults.Wire.report_sound
+  ∀ (src : VE.NormDefaults.Wire.ReportSource) (rep : VE.NormDefaults.Wire.ReportG src),
+    VE.NormDefaults.Wire.ReportSound src rep
+  -- uses VE.NormDefaults.Wire.ReportG@VE.NormDefaults.Report VE.NormDefaults.Wire.ReportSound@VE.NormDefaults.Report VE.NormDefaults.Wire.ReportSource@VE.NormDefaults.Report
+  -- expr 2486045729
 theorem VE.NormDefaults.Wire.targetU_refutes
   ∀ (U : VE.NormDefaults.UDoc),
     VE.Norms.WellFormed (VE.NormDefaults.fill U) = Bool.true →
@@ -7668,6 +7747,16 @@ theorem VE.NormDefaults.Wire.targetU_refutes
                   VE.Formula.denote B (VE.Norms.tupleVal vs) t.snd.snd → ¬VE.NormDefaults.ConflictFreeU U
   -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.BaseAdmissibleU@VE.NormDefaults.Premises VE.NormDefaults.ConflictFreeU@VE.NormDefaults.Premises VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.WellFormed@VE.Norms.Tree VE.Norms.targets@VE.Norms.Replay VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 1546325729
+theorem VE.NormDefaults.Wire.target_not_conflictFree
+  ∀ (U : VE.NormDefaults.UDoc),
+    VE.Norms.WellFormed (VE.NormDefaults.fill U) = Bool.true →
+      ∀ (t : String × List String × VE.Formula),
+        t ∈ VE.Norms.targets (VE.NormDefaults.fill U) →
+          ∀ (B : VE.Structure) (vs : List B.Carrier),
+            VE.TupleTyped B t.snd.fst vs →
+              VE.Formula.denote B (VE.Norms.tupleVal vs) t.snd.snd → ¬VE.Norms.ConflictFree (VE.NormDefaults.fill U) B
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.WellFormed@VE.Norms.Tree VE.Norms.targets@VE.Norms.Replay VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
+  -- expr 2327373120
 theorem VE.NormDefaults.aboveCount_over
   ∀ {T : VE.Norms.Tree},
     VE.Route.DagAcyclic (VE.Norms.precedenceNodes T) →

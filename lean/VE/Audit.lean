@@ -123,6 +123,8 @@ import VE.NormDefaults.Routes
 import VE.NormDefaults.Wire
 import VE.NormDefaults.Examples
 import VE.NormDefaults.Replay
+import VE.NormDefaults.Report
+import VE.NormDefaults.Layered
 import VE.NormDefaults.Admission
 import VE.NormDefaults.Run
 import VE.Readings.Doc
@@ -3163,6 +3165,17 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.NormDefaults.Wire.normDefaults_wire_status_sound
 #print axioms VE.NormDefaults.Wire.normDefaults_wire_witness_sound
 #print axioms VE.NormDefaults.Wire.targetU_refutes
+#print axioms VE.NormDefaults.Wire.grounding_ungrounded_iff
+#print axioms VE.NormDefaults.Wire.reachedSome_of_fill
+#print axioms VE.NormDefaults.Wire.ReachedData.reachedSome
+#print axioms VE.NormDefaults.Wire.admissibleX_of_fill
+#print axioms VE.NormDefaults.Wire.report_sound
+#print axioms VE.NormDefaults.Wire.normDefaults_wire_report_sound
+#print axioms VE.NormDefaults.Wire.layered_cert_sound
+#print axioms VE.NormDefaults.Wire.target_not_conflictFree
+#print axioms VE.NormDefaults.Wire.layered_conflict_sound
+#print axioms VE.NormDefaults.Wire.FilledX.admissible
+#print axioms VE.NormDefaults.Wire.layered_report_sound
 #print axioms VE.NormDefaults.canonO
 #print axioms VE.NormDefaults.gap_of_kleene
 #print axioms VE.NormDefaults.notreq_of_notperm
