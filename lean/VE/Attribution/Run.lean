@@ -1,6 +1,8 @@
 import VE.Attribution.Admission
+import VE.Attribution.Preflight
 import VE.Attribution.Status
 import VE.Route.Run
+import VE.Service.TypingDiagnostic
 
 /-! The `ve_service` mode `reports` (spec 9.4), formerly the one-shot `ve_reports_route`. Each case is
 `{"id", "kind", "environment", "document", ...}`. Every formula, key, name,
@@ -594,7 +596,10 @@ def runCase (j : Json) : Except String Json := do
     return ← runAdmission id environment document
   if kind.startsWith "reports-" then
     let environment ← j.getObjVal? "environment"
-    let c ← Wire.decodeDocument environment (← j.getObjVal? "document")
+    let document ← j.getObjVal? "document"
+    -- The public fault order and texts first (`Preflight.check`); then the decoder.
+    Preflight.check VE.Service.TypingDiagnostic.diagnose environment document (← Preflight.nullPaths j)
+    let c ← Wire.decodeDocument environment document
     if kind == "reports-elaborate" then
       return VE.Route.Wire.ok id (elaborated c.dec environment)
     if kind == "reports-content" then
