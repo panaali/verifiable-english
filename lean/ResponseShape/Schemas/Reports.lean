@@ -77,6 +77,9 @@ def status_word : Shape :=
 
 def counts : Shape := n [obj, .object [] (some (ref "common.json#/$defs/nat"))]
 
+def object_map : Shape := n [obj, .object [] (some (n [obj,
+  .object [] (some (.type ["null", "boolean", "integer", "number", "string", "array", "object"]))]))]
+
 def verdict : Shape :=
   c "Reports.Run.scopedVerdict: one scoped check's verdict; UNKNOWN for unreplayable payloads has no scope." [
     .anyOf [
@@ -133,7 +136,24 @@ def elaborate : Shape :=
         ("id", ref "common.json#/$defs/id_ok"),
         ("status", constS "ok"),
         ("environment_reports_id", ref "common.json#/$defs/hex64_or_empty"),
-        ("environment_reports", obj),
+        ("environment_reports", copied
+          "Attribution.Wire.environmentReportsJson copies the decoded request environment and extends its vocabulary predicates; the Python caller compares the whole regenerated identity."
+          <| n [
+            obj,
+            .required ["language", "profiles", "spec_revision", "vocabulary"],
+            .object [
+              ("language", str),
+              ("profiles", ref "common.json#/$defs/strings"),
+              ("spec_revision", str),
+              ("vocabulary", n [
+                obj,
+                .required ["sorts", "predicates", "constants"],
+                .object [
+                  ("sorts", object_map),
+                  ("predicates", object_map),
+                  ("constants", object_map)]
+                  (some (.type ["null", "boolean", "integer", "number", "string", "array", "object"]))])]
+              (some (.type ["null", "boolean", "integer", "number", "string", "array", "object"]))]),
         ("keys", n [
           arr,
           .items (n [
