@@ -46,7 +46,7 @@
   "ve.parser -> ve.backends.relay": "Stage 2 authority adapter (SEMANTICS-MIGRATION-PLAN.md 2a): the class-A function dispatches its verdict through ve.backends; place the dispatch and checker clients below the kernel when stage 5 deletes the Python bodies.",
   "ve.parser -> ve.backends.validation": "Stage 2 authority adapter (SEMANTICS-MIGRATION-PLAN.md 2a): the class-A function dispatches its verdict through ve.backends; place the dispatch and checker clients below the kernel when stage 5 deletes the Python bodies.",
   "ve.reports -> ve.admission": "Reports reuse admission label parsing; move shared label syntax to the kernel.",
-  "ve.rights -> ve.search": "Rights reads used predicates from search helpers; move the helper to the kernel.",
+  "ve.rights -> ve.rights_route": "Lean-first batch 7: RightsDocument asks the rights route for the accepted elaboration before constructing Python views; move the constructor beside the route when remaining profile constructors relay.",
   "ve.softnorms -> ve.search": "Soft norms read used predicates from search helpers; move the helper to the kernel.",
   "ve.speech_acts -> ve.admission": "Speech acts reuse admission checks; split the shared checks into a profile module.",
   "ve.speech_acts -> ve.norm_admission": "Speech acts reuse quoted-norm admission; split the shared checks into a profile module.",

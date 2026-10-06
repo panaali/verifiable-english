@@ -1,20 +1,11 @@
-"""Identity-bound rights declarations and holder-side elaboration.
-
-The output is a soft document. Rights add no deontic primitive: a claim and
-the corresponding bearer duty are the same selected rule.
-"""
+"""Rights environment and Python views of Lean's rights elaboration."""
 from __future__ import annotations
 
 from copy import deepcopy
-from dataclasses import replace
 import re
 
-from .ast import And, Atom, Binary, Bottom, Implies, Or, Top, Unary, Var, _Checker, _Decoder, _to_data
-from .environment import valid_identifier
-from .errors import DuplicateDeclaration, ResourceLimit, UnknownSymbol, UnsupportedProfile, VEError
-from .norms import Norm, _bind, _instantiate
-from .search import _used_predicates
-from .softnorms import SoftEnvironment, SoftNormDocument, decode_rule
+from .errors import DuplicateDeclaration, UnknownSymbol, UnsupportedProfile, VEError
+from .softnorms import SoftEnvironment, SoftNormDocument
 
 _RULE = re.compile(r"[a-z][a-z0-9-]*\Z", re.ASCII)
 # Every line kind with its rule-bearing fields, in the order the line states its rules: a power line states a
@@ -140,460 +131,111 @@ class RightsEnvironment(SoftEnvironment):
         return result
 
 
-def conjugated(act):
-    """The act phrase with its verb in the third person singular, for the
-    generated wordings' "where that state arrests that person" (2.1)."""
-    if not act.startswith("{0} "):
-        return act
-    verb, _, rest = act[4:].partition(" ")
-    irregular = {"be": "is", "have": "has", "do": "does", "go": "goes"}
-    if verb in irregular:
-        verb = irregular[verb]
-    elif verb.endswith(("s", "x", "z", "ch", "sh", "o")):
-        verb += "es"
-    elif verb.endswith("y") and len(verb) > 1 and verb[-2] not in "aeiou":
-        verb = verb[:-1] + "ies"
-    else:
-        verb += "s"
-    return "{0} " + verb + (" " + rest if rest else "")
-
-
-def _atom(name, arity):
-    terms = tuple(Var(arity - index - 1) for index in range(arity))
-    return (Unary(name, terms[0]) if arity == 1 else
-            Binary(name, *terms) if arity == 2 else Atom(name, terms))
-
-
-def _or(items):
-    result = Bottom()
-    for item in items:
-        result = Or(result, item)
-    return result
-
-
-def _slot(env, right, rule, specified, *, subject=False):
-    arguments = env.predicates[rule.core.predicate].arguments
-    if subject:
-        if arguments[0] != right["holder"]:
-            raise VEError(f"IncidentShape: {rule.core.name} on right {right['name']}")
-        return 0
-    choices = [index for index, sort in enumerate(arguments) if index and sort == right["holder"]]
-    if specified is None and len(choices) > 1:
-        raise VEError(f"HolderSlotAmbiguous: {rule.core.name}")
-    slot = specified if specified is not None else choices[0] if len(choices) == 1 else None
-    if slot not in choices:
-        raise VEError(f"IncidentShape: {rule.core.name} on right {right['name']}")
-    return slot
-
-
-def _line_shape(env, right, kind, rule, slot):
-    core = rule.core
-    decl = env.predicates.get(core.predicate)
-    reg = decl.regulated if decl else None
-    subject = decl.arguments[0] if decl else None
-    valid = (
-        kind in ("claim", "powerRecognition") and subject in env.bearers and
-        ((reg.role == "obligation" and core.sign) or (reg.role == "permission" and not core.sign))
-        if reg is not None else False)
-    valid = valid or (kind in ("liberty", "powerLiberty") and subject == right["holder"]
-                      and reg is not None and reg.role == "permission" and core.sign)
-    valid = valid or (kind == "immunity" and subject in env.bearers and reg is not None
-                      and reg.role == "permission" and not core.sign and
-                      core.predicate in env.rights.get("alters", {}) and
-                      env.rights["alters"][core.predicate]["holder_slot"] == slot)
-    if not valid:
-        raise VEError(f"IncidentShape: {core.name} on right {right['name']}")
-
-
 class RightsDocument:
-    """Validate source units and regenerate E'', T'', and limitation premises."""
+    """Python containers constructed from the Lean rights elaboration.
 
-    def __init__(self, env: RightsEnvironment, units):
-        if not isinstance(env, RightsEnvironment):
-            raise UnsupportedProfile("rights@0 is required")
-        self.env = env
-        if type(units) is not list or len(units) > 1024:
-            raise ResourceLimit("units")
-        rights = {}
-        entries = []
-        limitations = []
-        bars = []
-        outside = []
-        names = set()
-        source_units = None
-        for unit in units:
-            if type(unit) is dict and set(unit) == {"norm", "cites"}:
-                # 3.2: a norm unit outside rights may carry `narrows:<line>` citations.
-                outside.append(unit)
-                continue
-            if type(unit) is not dict or len(unit) != 1:
-                raise VEError("InvalidInput: rights unit")
-            kind, body = next(iter(unit.items()))
-            if kind == "source_units":
-                # The ids of the source units a citation may name (the Lean wire's element).
-                if source_units is not None:
-                    raise VEError("InvalidInput: duplicate source_units")
-                if type(body) is not list or any(type(item) is not str for item in body):
-                    raise VEError("InvalidInput: source_units must list unit ids")
-                source_units = tuple(body)
-            elif kind == "right":
-                if (type(body) is not dict or
-                        set(body) != {"name", "holder", "guard", "lines"}):
-                    raise VEError("InvalidInput: right")
-                name = _name(body["name"])
-                if name in names:
-                    raise DuplicateDeclaration(f"right {name}")
-                names.add(name)
-                if body["holder"] not in env.holders:
-                    raise VEError(f"UnknownSymbol: sort {body['holder']}")
-                guard = _Decoder().decode(body["guard"])
-                _Checker(env).formula(guard, (body["holder"],))
-                if any(env.predicates[p].regulated is not None or
-                       env.predicates[p].defined is not None or p.startswith("soft__")
-                       for p in _used_predicates(guard)):
-                    raise VEError(f"InvalidInput: right guard {name} must use base predicates")
-                if type(body["lines"]) is not list:
-                    raise VEError("InvalidInput: right lines")
-                rights[name] = {**body, "guard_formula": guard, "count": 0}
-                for line in body["lines"]:
-                    entries.append((name, line))
-                    rights[name]["count"] += 1
-            elif kind == "right_lines":
-                if type(body) is not dict or set(body) != {"right", "lines"}:
-                    raise VEError("InvalidInput: right_lines")
-                if body["right"] not in rights:
-                    raise VEError(f"UnknownRight: {body['right']}")
-                if type(body["lines"]) is not list:
-                    raise VEError("InvalidInput: right lines")
-                for line in body["lines"]:
-                    entries.append((body["right"], line))
-                    rights[body["right"]]["count"] += 1
-            elif kind == "limitation":
-                if type(body) is not dict or "name" not in body:
-                    raise VEError("InvalidInput: limitation")
-                name = _name(body["name"])
-                if name in names:
-                    raise DuplicateDeclaration(f"limitation {name}")
-                names.add(name)
-                limitations.append(body)
-            elif kind == "bar":
-                if bars:
-                    raise DuplicateDeclaration("bar")
-                if type(body) is not dict or set(body) != {"name", "reading", "decided_by"}:
-                    raise VEError("InvalidInput: bar")
-                name = _name(body["name"])
-                if name in names:
-                    raise DuplicateDeclaration("bar")
-                names.add(name)
-                if body["reading"] not in ("rule", "query"):
-                    raise VEError("InvalidInput: bar reading")
-                if type(body["decided_by"]) is not str or not body["decided_by"]:
-                    raise VEError("InvalidInput: bar decider")
-                bars.append(body)
-            elif kind == "norm":
-                outside.append(unit)
-            else:
-                raise VEError(f"InvalidInput: rights unit {kind}")
-        # 11: the same limits as the Lean rights route.
-        if len(rights) > 128:
-            raise ResourceLimit("rights")
-        if len(limitations) > 16:
-            raise ResourceLimit("limitations")
-        for name, right in rights.items():
-            if not right["count"]:
-                raise VEError(f"RightWithoutIncident: {name}")
-        self.rights = rights
-        self.limitations = tuple(limitations)
-        self.bar = bars[0] if bars else None
-        self.outside = tuple(outside)
-        self.source_units = source_units or ()
-        self._validate_limitations(names)
-        self._validate_citations(entries)
-        self.line_env = self._line_environment(entries)
-        self.instances = tuple(self._instances(entries, names))
-        self._correlate()
+    Lean checks the complete source first. The objects below serve existing
+    rendering and proof-search callers; they do not decide rights acceptance.
+    """
 
-    def _line_environment(self, entries):
-        """Declare source-key predicates before typing authored line guards."""
-        source = self.env.to_dict()
-        source["profiles"].remove("rights@0")
-        source["vocabulary"].pop("rights")
-        predicates = source["vocabulary"]["predicates"]
-        pairs = set()
-        for right_name, line in entries:
-            if type(line) is not dict:
-                continue
-            kind = line.get("kind")
-            for field in (LINE_RULE_FIELDS.get(kind, ("norm",)) if type(kind) is str else ("norm",)):
-                raw = line.get(field)
-                if type(raw) is not dict:
+    def __init__(self, env: RightsEnvironment, units, *, open_predicates=()):
+        from .rights_route import run_rights_case
+        from .errors import CheckerUnavailable
+        from .ast import formula_from_data, _Decoder
+
+        row = run_rights_case(env, units, "rights-elaborate",
+                              open_predicates=sorted(open_predicates))
+        try:
+            self.elaborated = row
+            self.env = env
+            self.units = units
+            self.rights = {}
+            self.limitations = tuple(u["limitation"] for u in units if "limitation" in u)
+            bars = [u["bar"] for u in units if "bar" in u]
+            self.bar = bars[0] if bars else None
+            self.outside = tuple(u for u in units if "norm" in u)
+            self.source_units = tuple(next((u["source_units"] for u in units if "source_units" in u), ()))
+            self.limitation_names = {(g["limitation"], g["act"]): g["name"]
+                                     for g in row["generated"] if g["kind"] == "lim"}
+            self.condition_names = {(g["limitation"], g["act"], g["condition"]): g["name"]
+                                    for g in row["generated"] if g["kind"] == "cond"}
+            self.bar_names = {g["predicate"]: g["name"] for g in row["generated"]
+                              if g["kind"] == "aimed"}
+
+            # Source references preserve the authored line's identity for the
+            # renderer. Lean's lines are in precisely this source order.
+            refs = []
+            for unit in units:
+                kind = "right" if "right" in unit else "right_lines" if "right_lines" in unit else None
+                if kind is None:
                     continue
-                subjects = (line.get("fan_out") or {}).values() if line.get("fan_out") else (raw.get("predicate"),)
-                for predicate in subjects:
-                    if predicate not in self.env.predicates:
-                        continue
-                    act = self._act(predicate)
-                    for limit in self.limitations:
-                        if ((limit["scope"] == "all" or right_name in limit["scope"]) and
-                                (limit["kinds"] == "all" or line.get("kind") in limit["kinds"])):
-                            pairs.add((limit["name"], act))
-        for index, (name, act) in enumerate(sorted(pairs), 1):
-            args = list(self.env.predicates[act].arguments)
-            predicates[f"rights__lim__{index}"] = {
-                "arguments": args, "description": f"limitation {name} of {act}"}
-        triples = sorted((name, act, condition["name"])
-                         for name, act in pairs
-                         for limit in self.limitations if limit["name"] == name
-                         for condition in limit["conditions"])
-        for index, (name, act, condition) in enumerate(triples, 1):
-            predicates[f"rights__cond__{index}"] = {
-                "arguments": list(self.env.predicates[act].arguments),
-                "description": f"condition {condition} of limitation {name} on {act}"}
-        return SoftEnvironment(source, generated=True)
+                body = unit[kind]
+                right = body["name"] if kind == "right" else body["right"]
+                if kind == "right":
+                    self.rights[right] = {**body, "guard_formula": _Decoder().decode(body["guard"])}
+                for line in body["lines"]:
+                    fields = LINE_RULE_FIELDS[line["kind"]]
+                    for field in fields:
+                        raw = line[field]
+                        fan = line.get("fan_out") or {}
+                        for bearer in (sorted(fan) if fan else (None,)):
+                            refs.append((right, line, raw, bearer))
+            if len(refs) != len(row["lines"]):
+                raise ValueError("rights line count")
+            if set(row["wordings"]) != {g["name"] for g in row["generated"]}:
+                raise ValueError("rights wording keys")
+            for line_row, (right, line, raw, bearer) in zip(row["lines"], refs):
+                if (line_row["right"] != right or line_row["kind"] != line["kind"] or
+                    line_row.get("bearer") != bearer or
+                    line_row["rule"] != line_row["node"]["name"] or
+                    line_row["predicate"] != line_row["node"]["predicate"] or
+                    (bearer is None and line_row["rule"] != raw["name"])):
+                    raise ValueError("rights line binding")
 
-    def _instances(self, entries, names):
-        fan = 0
-        for right_name, line in entries:
-            right = self.rights[right_name]
-            if type(line) is not dict or line.get("kind") not in _KINDS:
-                raise VEError("InvalidInput: incident line")
-            kind = line["kind"]
-            fields = LINE_RULE_FIELDS[kind]
-            allowed = {"kind", "cites", "holder_slot", *fields} | (set() if kind == "power" else {"fan_out"})
-            if set(line) - allowed or (kind == "power" and not set(fields) <= set(line)):
-                raise VEError("InvalidInput: incident line fields")
-            norms = (tuple((f"power{field.capitalize()}", line.get(field)) for field in fields) if kind == "power"
-                     else ((kind, line.get("norm")),))
-            fan_map = line.get("fan_out")
-            if fan_map is not None and (kind not in ("claim", "immunity") or
-                                        type(fan_map) is not dict):
-                raise VEError("InvalidInput: invalid fan-out")
-            for instance_kind, raw in norms:
-                if type(raw) is not dict:
-                    raise VEError("InvalidInput: incident norm")
-                if fan_map is not None and raw.get("predicate") is not None:
-                    raise VEError(f"InvalidInput: line {raw.get('name')} has predicate and fan_out")
-                if any(type(parent) is str and parent.startswith("rights-")
-                       for parent in raw.get("over", ())):
-                    raise VEError("InvalidInput: authored precedence cites a generated rule")
-                if fan_map is not None:
-                    # A fan-out line keeps its author name as its source key (1.6): it is
-                    # an author rule name, reserved prefix and uniqueness included.
-                    _name(raw.get("name"))
-                    if raw["name"] in names:
-                        raise DuplicateDeclaration(f"rule {raw['name']}")
-                    names.add(raw["name"])
-                sources = ([(bearer, fan_map.get(bearer)) for bearer in sorted(self.env.bearers)]
-                           if fan_map is not None else [(None, raw.get("predicate"))])
-                for bearer, predicate in sources:
-                    if bearer is not None and predicate is None:
-                        raise VEError(f"FanOutUndeclared: {raw.get('name')}, {bearer}")
-                    norm = {**raw, "predicate": predicate}
-                    if bearer is not None:
-                        fan += 1
-                        norm["name"] = f"rights-fan-{fan}"
-                    else:
-                        _name(norm.get("name"))
-                        if norm["name"] in names:
-                            raise DuplicateDeclaration(f"rule {norm['name']}")
-                        names.add(norm["name"])
-                    rule = decode_rule(self.line_env, {"norm": norm})
-                    slot = _slot(self.env, right, rule, line.get("holder_slot"),
-                                 subject=instance_kind in ("liberty", "powerLiberty"))
-                    _line_shape(self.env, right, instance_kind, rule, slot)
-                    if instance_kind == "powerLiberty":
-                        alter = self.env.rights.get("alters", {}).get(predicate)
-                        if alter is None or alter["holder_slot"] != 0 or alter.get("recognition") is None:
-                            raise VEError(f"IncidentShape: {rule.core.name} on right {right_name}")
-                    if instance_kind == "powerRecognition":
-                        liberty = line["liberty"]["predicate"]
-                        alter = self.env.rights.get("alters", {}).get(liberty)
-                        if alter is None or predicate != alter.get("recognition"):
-                            raise VEError(f"IncidentShape: {rule.core.name} on right {right_name}")
-                    if bearer is not None:
-                        example = next((self.env.predicates[p] for p in fan_map.values() if p in self.env.predicates), None)
-                        actual = self.env.predicates[predicate]
-                        if (example is None or actual.arguments[0] != bearer or
-                                actual.arguments[1:] != example.arguments[1:] or
-                                actual.regulated.act != example.regulated.act or
-                                actual.regulated.role != example.regulated.role):
-                            raise VEError(f"FanOutUndeclared: {raw.get('name')}, {bearer}")
-                    yield {"right": right_name, "source_kind": kind, "kind": instance_kind,
-                           "rule": rule, "holder_slot": slot, "cites": line.get("cites", {}),
-                           "bearer": bearer, "source_line": line}
+            raw_env = env.to_dict()
+            raw_env["profiles"].remove("rights@0")
+            raw_env["vocabulary"].pop("rights")
+            generated = row["environment_prime"]["vocabulary"]["predicates"]
+            raw_env["vocabulary"]["predicates"].update(
+                {name: declaration for name, declaration in generated.items()
+                 if name.startswith("rights__")})
+            self.environment = SoftEnvironment(raw_env, generated=True)
+            self.line_env = self.environment
 
-    def _validate_citations(self, entries):
-        """4.1 step 3: every citation names a source unit, so a citation to a
-        non-existent unit never licenses a mechanism (4.5)."""
-        tables = [line.get("cites", {}) for _, line in entries if type(line) is dict]
-        tables += [unit["cites"] for unit in self.outside if "cites" in unit]
-        for cites in tables:
-            if type(cites) is not dict:
-                raise VEError("InvalidInput: line citations")
-            for key, targets in cites.items():
-                if type(targets) is not list or not targets or any(type(t) is not str for t in targets):
-                    raise VEError(f"InvalidInput: cites {key} must list unit ids")
-                for target in targets:
-                    if target not in self.source_units:
-                        raise VEError(f"UnknownSymbol: unit {target}")
+            def rule_from_node(node, raw):
+                # Soft metadata stays in the source. Lean provides every
+                # correlated W1 core field and the hard/mode decisions.
+                norm = {key: raw[key] for key in ("rank", "alterable", "exception") if key in raw}
+                norm.update({"name": node["name"], "predicate": node["predicate"],
+                             "sign": node["sign"], "guard": node["guard"],
+                             "unless": node["unless"], "over": node["over"],
+                             "mode": node["mode"], "hard": node["hard"]})
+                return {"norm": norm}
 
-    def _validate_limitations(self, names):
-        for limit in self.limitations:
-            if (set(limit) != {"name", "scope", "kinds", "decided_by", "conditions", "factors"}
-                    or type(limit["conditions"]) is not list or type(limit["factors"]) is not list):
-                raise VEError("InvalidInput: limitation")
-            if len(limit["conditions"]) > 8:
-                raise ResourceLimit("conditions")
-            scope = limit["scope"]
-            kinds = limit["kinds"]
-            if scope != "all":
-                if type(scope) is not list or not scope:
-                    raise VEError("InvalidInput: limitation scope")
-                for right in scope:
-                    if right not in self.rights:
-                        raise VEError(f"UnknownRight: {right}")
-            if kinds != "all" and (type(kinds) is not list or not kinds or
-                                    not set(kinds) <= _KINDS):
-                raise VEError("InvalidInput: limitation kinds")
-            if not limit["decided_by"] or type(limit["decided_by"]) is not str:
-                raise VEError(f"MissingExceptionDecider: limitation {limit['name']}")
-            if any(type(factor) is not str or not factor for factor in limit["factors"]):
-                raise VEError("InvalidInput: limitation factors")
-            condition_names = set()
-            for condition in limit["conditions"]:
-                if (type(condition) is not dict or
-                        not {"name", "role", "verbalisation", "decided_by"} <= set(condition) or
-                        set(condition) - {"name", "role", "verbalisation", "decided_by", "purposes"} or
-                        not valid_identifier(condition["name"]) or
-                        condition["role"] not in ("necessary", "sufficient") or
-                        type(condition["verbalisation"]) is not str or not condition["verbalisation"]):
-                    raise VEError("InvalidInput: limitation condition")
-                if condition["name"] in condition_names:
-                    raise DuplicateDeclaration(f"condition {condition['name']}")
-                condition_names.add(condition["name"])
-                if condition["decided_by"] is None and not limit["decided_by"]:
-                    raise VEError(f"MissingExceptionDecider: condition {condition['name']}")
-                if (condition["decided_by"] is not None and
-                        (type(condition["decided_by"]) is not str or not condition["decided_by"])):
-                    raise VEError(f"MissingExceptionDecider: condition {condition['name']}")
-
-    def _act(self, predicate):
-        declaration = self.env.predicates[predicate]
-        reg = declaration.regulated
-        # A base predicate is its own act here; the line's decoder refuses it (`UnknownSymbol`), as Lean's does.
-        return reg.permission if reg is not None and reg.role == "obligation" and reg.permission else predicate
-
-    def _in_scope(self, limit, instance):
-        return ((limit["scope"] == "all" or instance["right"] in limit["scope"])
-                and (limit["kinds"] == "all" or instance["source_kind"] in limit["kinds"]))
-
-    def _correlate(self):
-        source = self.env.to_dict()
-        source["profiles"].remove("rights@0")
-        source["vocabulary"].pop("rights")
-        predicates = source["vocabulary"]["predicates"]
-        pairs = sorted({(limit["name"], self._act(instance["rule"].core.predicate))
-                        for limit in self.limitations for instance in self.instances
-                        if self._in_scope(limit, instance)})
-        lim_names = {pair: f"rights__lim__{index}" for index, pair in enumerate(pairs, 1)}
-        triples = sorted((limit["name"], act, condition["name"])
-                         for limit in self.limitations for name, act in pairs if name == limit["name"]
-                         for condition in limit["conditions"])
-        cond_names = {triple: f"rights__cond__{index}" for index, triple in enumerate(triples, 1)}
-        permissions = sorted({instance["rule"].core.predicate for instance in self.instances
-                              if instance["kind"] in ("liberty", "powerLiberty")})
-        bar_names = ({p: f"rights__bar__{i}" for i, p in enumerate(permissions, 1)}
-                     if self.bar is not None else {})
-        # 2.1: one fixed wording per generated predicate, by the limitation's display
-        # number (document order) and the act phrase; the Lean route emits the same bytes.
-        display = {item["name"]: number for number, item in enumerate(self.limitations, 1)}
-        for (name, act), generated in lim_names.items():
-            limit = next(item for item in self.limitations if item["name"] == name)
-            args = list(self.env.predicates[act].arguments)
-            predicates[generated] = {"arguments": args, "description": f"limitation {name} of {act}",
-                                     "verbalisation": f"limitation {display[name]} holds where " +
-                                     self.env.predicates[act].regulated.act}
-            for condition in limit["conditions"]:
-                generated_condition = cond_names[(name, act, condition["name"])]
-                predicates[generated_condition] = {
-                    "arguments": args, "description": f"condition {condition['name']} of limitation {name} on {act}",
-                    "verbalisation": condition["verbalisation"] + " where " +
-                    self.env.predicates[act].regulated.act}
-        for predicate, generated in bar_names.items():
-            decl = self.env.predicates[predicate]
-            predicates[generated] = {"arguments": list(decl.arguments),
-                                     "description": "act aimed at destruction of a right",
-                                     "verbalisation": decl.regulated.act + " aimed at the destruction of a right"}
-        env = SoftEnvironment(source, generated=True)
-        # 2.1: the one English wording of each generated predicate, with the act
-        # phrase conjugated for the "where" clause the declared template stands for.
-        wordings = {}
-        for (name, act), generated in lim_names.items():
-            wordings[generated] = (f"limitation {display[name]} holds where " +
-                                   conjugated(self.env.predicates[act].regulated.act))
-        for (name, act, condition_name), generated in cond_names.items():
-            limit = next(item for item in self.limitations if item["name"] == name)
-            condition = next(item for item in limit["conditions"] if item["name"] == condition_name)
-            wordings[generated] = (condition["verbalisation"] + " where " +
-                                   conjugated(self.env.predicates[act].regulated.act))
-        for predicate, generated in bar_names.items():
-            wordings[generated] = (conjugated(self.env.predicates[predicate].regulated.act) +
-                                   " aimed at the destruction of a right")
-        object.__setattr__(env, "rights_wordings", wordings)
-        rules = []
-        for instance in self.instances:
-            rule = instance["rule"]
-            core = rule.core
-            arity = len(env.predicates[core.predicate].arguments)
-            holder_guard = self.rights[instance["right"]]["guard_formula"]
-            guard = core.guard
-            if not isinstance(holder_guard, Top):
-                term = Var(arity - instance["holder_slot"] - 1)
-                guard = And(guard, _instantiate(holder_guard, (term,)))
-            covering = [lim_names[(limit["name"], self._act(core.predicate))]
-                        for limit in self.limitations if self._in_scope(limit, instance)]
-            # 4.1 step 5: six author carve-outs on every right line, covered or not.
-            if len(core.unless) > 6:
-                raise ResourceLimit(f"carve-outs of rule {core.name}")
-            unless = core.unless + ((_or(_atom(name, arity) for name in covering),) if covering else ())
-            rules.append(replace(rule, core=replace(core, guard=guard, unless=unless)))
-        for unit in self.outside:
-            raw = unit["norm"]
-            _name(raw.get("name"))
-            if any(type(parent) is str and parent.startswith("rights-")
-                   for parent in raw.get("over", ())):
-                raise VEError("InvalidInput: authored precedence cites a generated rule")
-            rules.append(decode_rule(env, {"norm": raw}))
-        if self.bar is not None and self.bar["reading"] == "rule":
-            for index, predicate in enumerate(permissions, 1):
-                parents = tuple(instance["rule"].core.name for instance in self.instances
-                                if instance["rule"].core.predicate == predicate
-                                and instance["rule"].core.sign)
-                bar_rule = Norm(f"rights-bar-{index}", predicate, False,
-                                _atom(bar_names[predicate], len(env.predicates[predicate].arguments)),
-                                (), parents)
-                rules.append(decode_rule(env, {"norm": {**bar_rule.to_dict()["norm"], "hard": True}}))
-        self.environment = env
-        self.soft_document = SoftNormDocument(env, [rule.to_dict() for rule in rules])
-        self.limitation_names = lim_names
-        self.condition_names = cond_names
-        self.bar_names = bar_names
-        premises = []
-        for name, act, condition_name in triples:
-            limit = next(item for item in self.limitations if item["name"] == name)
-            condition = next(item for item in limit["conditions"] if item["name"] == condition_name)
-            arity = len(env.predicates[act].arguments)
-            lim = _atom(lim_names[(name, act)], arity)
-            cond = _atom(cond_names[(name, act, condition_name)], arity)
-            implication = Implies(lim, cond) if condition["role"] == "necessary" else Implies(cond, lim)
-            label = f"rights:limitation:{name}:{act}:{condition['role']}:{condition_name}"
-            premises.append((label, _bind(implication, env.predicates[act].arguments)))
-        self.limitation_premises = tuple(premises)
-        object.__setattr__(self.soft_document.extended_env, "rights_premises",
-                           self.limitation_premises)
-        object.__setattr__(self.soft_document.extended_env, "rights_wordings", wordings)
-        self.wordings = wordings
-
+            self.instances = tuple({"right": r["right"], "source_kind": r["kind"],
+                                    "kind": r["instance"], "rule": None,
+                                    "holder_slot": r["holder_slot"],
+                                    "cites": line.get("cites", {}),
+                                    "bearer": r.get("bearer"), "source_line": line}
+                                   for r, (_, line, _, _) in zip(row["lines"], refs))
+            rules = [rule_from_node(r["node"], ref[2])
+                     for r, ref in zip(row["lines"], refs)]
+            rules.extend({"norm": u["norm"]} for u in self.outside)
+            rules.extend(rule_from_node(n, {}) for n in row["bars"])
+            self.soft_document = SoftNormDocument(self.environment, rules)
+            for instance, rule in zip(self.instances, self.soft_document.rules):
+                instance["rule"] = rule
+            self.limitation_premises = tuple((item["label"],
+                formula_from_data(self.soft_document.extended_env, item["ast"], _generated=True))
+                for item in row["limitations"])
+            object.__setattr__(self.soft_document.extended_env, "rights_premises",
+                               self.limitation_premises)
+            self.wordings = row["wordings"]
+            object.__setattr__(self.environment, "rights_wordings", self.wordings)
+            object.__setattr__(self.soft_document.extended_env, "rights_wordings", self.wordings)
+        except Exception as exc:
+            raise CheckerUnavailable("CheckerUnavailable: Lean accepted a rights source that "
+                                     "the Python container could not build") from exc
 
 def correlate(environment, units):
     """Return the validated holder-side document and its soft elaboration."""
