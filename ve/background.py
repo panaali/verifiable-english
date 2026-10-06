@@ -207,7 +207,7 @@ def _background_python(env) -> tuple[Premise, ...]:
 def background(env) -> tuple[Premise, ...]:
     """Environment premises from the selected authority, with the legacy type."""
     from .backends.dispatch import execute
-    from .backends.lean_runner import route_environment, route_mode
+    from .backends.lean_runner import cached_route_environment, route_mode
     from .backends.relay import decide_once
     from .ast import formula_from_data
 
@@ -219,7 +219,7 @@ def background(env) -> tuple[Premise, ...]:
             # Lean certificate runners bind the case premises alone.
             return ()
         # The same Background request is asked once (lean-first batch 2, F3).
-        row = decide_once(route_mode(env), {**case, "environment": route_environment(env)})
+        row = decide_once(route_mode(env), {**case, "environment": cached_route_environment(env)})
         if len(row["premises"]) != len(row["generators"]):
             from .backends.lean_service import CheckerUnavailable
             raise CheckerUnavailable("CheckerUnavailable: malformed Lean Background result")

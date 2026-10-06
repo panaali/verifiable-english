@@ -168,7 +168,9 @@ def _lean_mode(document) -> str:
 
 def _lean_case(document, kind, **fields):
     """A norms-route case over the document's own environment and norm objects."""
-    return {"id": kind, "kind": kind, "environment": document.env.to_dict(),
+    from .environment_wire import encoded_environment
+    return {"id": kind, "kind": kind,
+            "environment": encoded_environment(document.env, "lean-norms", document.env.to_dict),
             "norms": [rule.to_dict() for rule in document.rules], **fields}
 
 
