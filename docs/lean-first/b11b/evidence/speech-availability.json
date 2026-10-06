@@ -1,0 +1,91 @@
+[
+  {
+    "case": "gap",
+    "class": "availability",
+    "base": {
+      "status": "error",
+      "code": "InvalidInput",
+      "message": "InvalidInput: judgment"
+    },
+    "head": {
+      "status": "ok",
+      "document_id": "acf30d661c9e983d9a5ba34bbfef78f074c15c9ed53215c8e682c43df628e93f",
+      "answers": [
+        {
+          "line": "gap (model b7c78d5f114a88365ee27f5fe35b2f49ca52b08aa1f61af9bb3a9feae50d5412)",
+          "query": "q1",
+          "question": "f",
+          "status": "gap"
+        },
+        {
+          "answer": "yes",
+          "evidence": "model",
+          "model_id": "b7c78d5f114a88365ee27f5fe35b2f49ca52b08aa1f61af9bb3a9feae50d5412",
+          "question": "p",
+          "scope": "this model only",
+          "status": "evaluated"
+        }
+      ],
+      "compliance": [],
+      "nominations": []
+    },
+    "dri_signature": null
+  },
+  {
+    "case": "external_compliance",
+    "class": "availability",
+    "base": {
+      "status": "error",
+      "code": "InvalidInput",
+      "message": "QueryMismatch: u1"
+    },
+    "head": {
+      "status": "ok",
+      "document_id": "0b06dadb8d08af9beea37b31d617b29725499e16d5d5e85620564fe33c2ed7d6",
+      "answers": [],
+      "compliance": [
+        {
+          "command": "u1",
+          "line": "external: unit d (observation)",
+          "unit": "d"
+        }
+      ],
+      "nominations": []
+    },
+    "dri_signature": null
+  },
+  {
+    "case": "nomination",
+    "class": "availability",
+    "base": {
+      "status": "error",
+      "code": "InvalidInput",
+      "message": "InvalidInput: answer record"
+    },
+    "head": {
+      "status": "ok",
+      "document_id": "5ab8ca08d17d073fadb2573a318baff325241cf0492895a068be4f7d512b384e",
+      "answers": [],
+      "compliance": [],
+      "nominations": [
+        {
+          "line": "1 by alice (testimony)",
+          "narrowing": {
+            "by": "alice",
+            "keeps": [
+              "r2"
+            ],
+            "reason_spans": [
+              "r"
+            ],
+            "set": "rs",
+            "support": "testimony",
+            "version": 1
+          },
+          "question": "r"
+        }
+      ]
+    },
+    "dri_signature": null
+  }
+]
