@@ -1,4 +1,4 @@
-import VE.Norms.SmallModel
+import VE.Norms.LayersOnce
 import VE.Route.Gate
 import VE.Route.Wire
 
