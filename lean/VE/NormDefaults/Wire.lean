@@ -69,19 +69,25 @@ structure SourceU where
   wfU : profiled = true → WellFormedU U = true
   plain : profiled = false → U.unspec = []
 
-/-- Reserved names and the author-side limits of section 8, in the table's order. -/
-def checkAuthor (environment : Json) (U : UDoc) : Except String Unit := do
+/-- Reserved names and the author-side limits of section 8, in the table's order;
+`generated` counts the predicates the route adds to the author vocabulary (soft's
+decision predicates, rights' generated ones; none on the norms route). -/
+def checkAuthorN (environment : Json) (generated : Nat) (U : UDoc) : Except String Unit := do
   for n in declaredNames environment do
     if n.startsWith "unsaid__" then throw s!"InvalidInput: reserved name {n}"
   for N in U.D.T.nodes do
     if N.name.startsWith "unsaid--" then throw s!"InvalidInput: reserved name {N.name}"
-  if (declaredNames environment).length + U.unspec.length > 256 then throw "ResourceLimit: vocabulary size"
+  if (declaredNames environment).length + generated + U.unspec.length > 256 then
+    throw "ResourceLimit: vocabulary size"
   if U.D.T.nodes.length + U.unspec.length > 256 then throw "ResourceLimit: rules"
   if U.unspec.any (fun p => p.utf8ByteSize > 56) then throw "ResourceLimit: unspecified name length"
   if (U.D.T.nodes.map ruleNodes).sum + fillGuardNodes U > 10000 then
     throw "ResourceLimit: AST exceeds 10,000 nodes"
   if U.D.T.nodes.any (fun N => decide (N.pred ∈ U.unspec) && decide (height U.D.T (fuel U.D.T) N > 15)) then
     throw "ResourceLimit: precedence depth"
+
+/-- The norms route's author check: no generated predicates. -/
+def checkAuthor (environment : Json) (U : UDoc) : Except String Unit := checkAuthorN environment 0 U
 
 def decodeSourceU (environment norms : Json) : Except String SourceU :=
   if hasProfile environment then do
