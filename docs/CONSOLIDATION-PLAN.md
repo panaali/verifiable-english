@@ -266,10 +266,13 @@ theorem covers all three parts, and none names a runner. `Core.Wire.run_certific
 
 **2a. Theorems on the runners as they are.** New file `lean/VE/Route/WireSound.lean`.
 
-1. `fullLayer rv : Layer fol Unit`: the definitions layer composed over the identity layer whose
+1. `fullLayer rv hd : Layer fol Unit`: the definitions layer composed over the identity layer whose
    admissibility is "structurally admissible, flags hold, literals distinct", with
-   `BackgroundSound (fullLayer rv) ((fullBackground rv).map Prod.fst)`. `RouteVocabulary` already
-   carries `chain` and `nodup` (`Route/Wire.lean:33,36`), so no decoder fact is needed.
+   `BackgroundSound (fullLayer rv hd) ((fullBackground rv).map Prod.fst)`. `RouteVocabulary` already
+   carries `chain` and `nodup` (`Route/Wire.lean:33,36`). One decoder fact is needed, `hd :
+   FlagsBase rv`: no flag names a defined predicate, so forgetting the defined tables keeps the
+   flags and every base structure has its expansion (`Norms.FlaggedSpec.
+   decodeVocabulary_flag_not_defined`, discharged at `Route.Run.runCase`).
 2. One record and three claim predicates, which are what the reviewer reads instead of the
    runners. The fol family's `Intended` is `Definitions.Intended ∧` the flags' `Intended`, as
    `decodeDataModel_combined` states, not `Sat S fullBackground`:
@@ -637,8 +640,7 @@ and untied [V]) under the reviewed side table, crediting each declaration to the
 names it. Lines the step names that are already untrusted (C, P, T, [R], [I], tied) earn nothing.
 It validates the side table exactly as `--check` does (one shared pass and trust rule) and
 prints no ledger while any classification or tie problem stands.
-`Adds (est.)` is the only estimate left: the trusted lines a step introduces (2a's `Family` and
-claims, 3c's aliases, 4b's kit, 7's skeleton, 8a's canonical encoders), subtracted in `Net`.
+`Adds (est.)` is the only estimate left: the trusted lines a step introduces (3c's aliases, 4b's kit, 7's skeleton, 8a's canonical encoders), subtracted in `Net`.
 Measured on the table after consolidate-b1 fix 4 (K 978, S 7,550, trusted 25,641 of
 88,757 lines; step 5 remeasured after the 2026-10-05 merge of ve-integration, whose
 `VE.Discourse.Run` rewrite moved 3 of its tied lines, and again after the merge into lean-first/b3b, whose
@@ -652,18 +654,23 @@ the DRI. Step 6 counts 503 more [V] diagnostic lines than at fix 4, from the two
 of ve-integration into lean-first batch 1 (2026-10-05), which deleted the thirteen one-shot route executables (their
 `*Main.lean` roots, `EnglishLeanBenchMain.lean` kept) and the route modules' `main` batch loops: 211 of step 7's
 trusted lines are gone already, and 20 of 8b's (`VE.Time.Wire.main`); the service's own batch loop is the one left.
-Batch 1's new modules (`ResponseShape`, `VE/Service/*`) were classified by `--seed` and no step names them:
+Batch 1's new modules (`ResponseShape`, `VE/Service/*`) were classified by `--seed` and no step names them.
+Step 7 remeasured again after the merge of that ve-integration into english-lean-s2/integrate (2026-10-05):
+S2.4's `ve_english_route` (`EnglishGrammar.Run`'s `runCaseReported` and `main`, and `EnglishMain.lean`), a
+one-shot executable by english-lean-s2.md 2.10 and, at that point, the only one-shot route left beside
+`ve_conformance`, added 33 trusted lines to batch 1's 551. Batch 11a then added the W2 speech-source executable;
+the current measurements follow:
 
 | Step | Removed | Tied | Reclassified [V]→[R] | Adds (est.) | Net | Days | Risk | Score |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | 1 | 0 | 23 | 0 | 0 | 23 | 5 | 1.5 | 3.1 |
-| 2a | 0 | 114 | 0 | 30 | 84 | 4 | 1 | 21.0 |
+| 2a | 0 | 0 | 0 | 0 | 0 | 4 | 1 | 0.0 |
 | 2b | 94 | 0 | 0 | 0 | 94 | 2 | 2 | 23.5 |
 | 3 | 39 | 0 | 0 | 10 | 29 | 14 | 2 | 1.0 |
 | 4 | 718 | 0 | 0 | 420 | 298 | 14 | 2 | 10.6 |
 | 5 | 0 | 485 | 0 | 0 | 485 | 14 | 1 | 34.6 |
 | 6 | 35 | 0 | 1758 | 0 | 35 | 3 | 1 | 11.7 |
-| 7 | 551 | 0 | 0 | 60 | 491 | 6 | 2 | 40.9 |
+| 7 | 587 | 0 | 0 | 60 | 527 | 6 | 2 | 43.9 |
 | 8a | 106 | 225 | 0 | 60 | 271 | 10 | 1.5 | 18.1 |
 | 8b | 0 | 3460 | 0 | 0 | 3460 | 30 | 3 | 38.4 |
 | 9 | 88 | 0 | 0 | 0 | 88 | 18 | 2 | 2.4 |
@@ -671,11 +678,11 @@ Batch 1's new modules (`ResponseShape`, `VE/Service/*`) were classified by `--se
 
 What the measurement changes:
 
-* **Re-ranking of steps 5 to 10 by measured score:** 7 (40.9), 5 (34.6), 8a (18.1), 6 (11.7),
+* **Re-ranking of steps 5 to 10 by measured score:** 7 (43.9), 5 (34.6), 8a (18.1), 6 (11.7),
   9 (2.4), 10. Step 8b's 3,460 is an upper bound (every untied line of the eight units' `Wire.lean`
   files, on the assumption that every decoder gets `exact`), not a forecast; it stays ranked by its
   pilot (Alternatives) as section 3 says. Against the estimates, 7 overtakes 5 (762 trusted
-  dispatch and `main` lines, not 340; 603 before the bench executable; 551 once batch 1 deleted the one-shot routes) and 5 is smaller than estimated (485 measured against 1,500 to
+  dispatch and `main` lines, not 340; 603 before the bench executable; 551 once batch 1 deleted the one-shot routes; 584 with english-lean S2's `ve_english_route`; 587 after batch 11a added the W2 `ve_speech_acts_route`) and 5 is smaller than estimated (485 measured against 1,500 to
   2,000): most of the rows' targets are short runners, and `scopedVerdict` and `weighingWitness`
   are already C.
 * **Step 6** removes almost nothing trusted: the SHA-256 copy and the `maxNodes` sites are [I] and
@@ -690,9 +697,26 @@ What the measurement changes:
 * **Step 1:** 1a and 1b are done; the nine `Flagged` definitions are C, and `BaseConflictFree` is
   tied by `conflictFree_of_base` in the side table. The remaining 23 lines are 1c's
   `FamilyNorms.conflictCase`.
-* Steps 1 to 4 keep the DRI's order (section 4 above). The measured total before 8b is 2,536
-  trusted lines removed or tied (net 1,956 after 580 estimated additions) out of 25,641, against the
-  estimate of about 4,300.
+* **Step 2a:** done (`VE.Route.WireSound`, `VE.Route.RunSound`, `VE.Norms.RunSound`). The side
+  table ties `runFol`, `runClosure` and `runOrder` (114 G[V] lines) to their certificate,
+  countermodel and evaluate theorems, so the row now measures 0. `Runner.acceptance` goes through
+  each family's layer: `fullLayer` (item 1) for FOL, the same layer over closure formulas for
+  closure, the identity layer of `OrderStringAdmissible` for order; with `BackgroundSound` of the
+  layer it gives `CertificateClaim` (`route_intended`) and `BaseClaim` (`route_base`, unique
+  expansion, which step 5b reuses). Measured with `tools/trust_map.py --since` against the parent
+  tree, not estimated, the step adds 128 S lines (`Family`, `CertificateClaim`, `BaseClaim`,
+  `CountermodelAnswer`, `CountermodelClaim`, `EvaluateClaim`, `RouteIntended`, `FlagsBase`,
+  `FlagsHold`, `BaseAdmissible`, `Runner.Bound` and the three family instances, docstrings
+  included), covered by a signed allowance in `docs/trust-baseline.json`, and no K or untied [V]
+  line: the model decoders the claims name (`routeModel`, `orderModel`, D[V] 16) are offset by
+  the 114 tied lines. The layer constructions (`fullLayer`, `Layer.within`, `Layer.toClosure`)
+  are C: their meaning is stated by `fullLayer_admissible_in`, `fullLayer_admissible_out`,
+  `fullLayer_intended` and `fullLayer_premises`. Net +30 trusted lines, against the estimated
+  −84: the claims cover all three kinds of all three runners and the expansion, not the
+  certificate kind alone, and the family instances are read.
+* Steps 1 to 4 keep the DRI's order (section 4 above). After step 2a the measured total before 8b
+  is 2,575 trusted lines removed or tied (net 2,025 after 550 estimated additions) out of 25,641,
+  against the estimate of about 4,300.
 
 The budget check (step 0) now also fails a predicate (a declaration whose type ends in `Prop`,
 listed in `lean/predicates.txt`) classed C, [R] or [I] without a tie: such a class took

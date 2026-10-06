@@ -178,13 +178,27 @@ def Status.label : Status → String
   | .undecided => "UNDECIDED"
   | .unknown => "UNKNOWN"
 
-/-- A finite filling from JSON: each unsaid predicate's rows of entity ids. -/
-def decodeFilling (U : UDoc) (j : Json) : Except String (FiniteFill U VE.Bridge.Entity) := do
+/-- A finite filling from JSON. Validate the entire table before converting ids to
+typed entities: `zip` alone would silently discard extra ids, and `withFill`
+filters ill-typed tuples rather than rejecting untrusted evidence. -/
+def decodeFilling (U : UDoc) (M : VE.FiniteModel VE.Bridge.Entity) (j : Json) :
+    Except String (FiniteFill U VE.Bridge.Entity) := do
+  let supplied ← VE.Bridge.fields j
+  let allowed := U.unspec.map unsaidName
+  for (name, _) in supplied do
+    unless allowed.contains name do throw s!"InvalidInput: unknown filling table {name}"
   let tables ← U.unspec.mapM fun p => do
     let rows ← match j.getObjVal? (unsaidName p) with
       | .ok r => (← r.getArr?).toList.mapM strings
       | .error _ => pure []
-    pure (unsaidName p, rows.map (fun row => (sortsOf U.D p).zip row))
+    unless rows.eraseDups.length == rows.length do throw "duplicate relation tuple"
+    let sorts := sortsOf U.D p
+    let tuples ← rows.mapM fun row => do
+      unless row.length == sorts.length do throw "wrong relation arity"
+      let tuple := sorts.zip row
+      unless VE.Bridge.tupleCheck M sorts tuple do throw "dangling or wrong-sort tuple"
+      pure tuple
+    pure (unsaidName p, tuples)
   pure fun n => (VE.Bridge.lookup tables n).getD []
 
 structure StatusData (j : Json) where
@@ -247,8 +261,8 @@ def replayStatus (j : Json) : Except String (StatusData j) :=
                   (fun hu => by cases hu)⟩
               | none => pure unknown
             else if method == "undecided" then
-              let F₁ ← decodeFilling s.U (j.getObjValD "yes")
-              let F₂ ← decodeFilling s.U (j.getObjValD "no")
+              let F₁ ← decodeFilling s.U M (j.getObjValD "yes")
+              let F₂ ← decodeFilling s.U M (j.getObjValD "no")
               if hc : fillValid s.U M F₁ = true ∧ fillValid s.U M F₂ = true ∧
                   (outcomeBase (fill s.U) r.name).eval (M.withFill F₁) (tupleVal tuple) = true ∧
                   (outcomeBase (fill s.U) r.name).eval (M.withFill F₂) (tupleVal tuple) = false then
@@ -328,17 +342,16 @@ structure ReachedData (s : SourceU) where
 def ReachedData.reached {s : SourceU} (d : ReachedData s) : Bool :=
   (reachedF s.U d.r.name).eval d.M (tupleVal d.tuple)
 
-/-- Decode a filled model of `E‴_base` (checked against `Background_base` and `Fill_T`),
-the predicate and the typed tuple. -/
-def replayReached (j : Json) : Except String ((s : SourceU) × ReachedData s) := do
-  let environment ← j.getObjVal? "environment"
-  let s ← decodeSourceU environment (j.getObjValD "norms")
+/-- Decode a filled model of `E‴_base` (the `model` field of `w`, checked against
+`Background_base` and `Fill_T`), the predicate (`name`, read after the model) and the
+typed tuple (the `tuple` field of `w`). -/
+def reachedFromU (s : SourceU) (name : Except String String) (w : Json) : Except String (ReachedData s) := do
   if hs : s.profiled = true then
     let v := baseModelVocabularyU s
-    let data ← VE.Bridge.decodeModelData v (← j.getObjVal? "model")
+    let data ← VE.Bridge.decodeModelData v (← w.getObjVal? "model")
     let M := data.toModel
-    let name ← VE.Bridge.stringField j "predicate"
-    let ids ← VE.Bridge.strings (← j.getObjVal? "tuple")
+    let name ← name
+    let ids ← VE.Bridge.strings (← w.getObjVal? "tuple")
     if hv : data.valid v = true then
       if hb : backgroundValid (fill s.U) M = true then
         if hf : (fillPremises s.U).all (fun φ => φ.eval M []) = true then
@@ -347,14 +360,21 @@ def replayReached (j : Json) : Except String ((s : SourceU) × ReachedData s) :=
           | some r =>
             let tuple := r.sorts.zip ids
             if ht : ids.length == r.sorts.length && VE.Bridge.tupleCheck M r.sorts tuple then
-              pure ⟨s, ⟨M, baseModelU_valid s hs M (VE.Bridge.modelData_valid data v hv), hb, hf, r,
+              pure ⟨M, baseModelU_valid s hs M (VE.Bridge.modelData_valid data v hv), hb, hf, r,
                 List.mem_of_find?_eq_some hfind, tuple,
-                (VE.Bridge.tupleCheck_iff M _ _).mp (by simp only [Bool.and_eq_true] at ht; exact ht.2)⟩⟩
+                (VE.Bridge.tupleCheck_iff M _ _).mp (by simp only [Bool.and_eq_true] at ht; exact ht.2)⟩
             else throw "InvalidInput: tuple has the wrong length or sort"
         else throw (VE.Route.Wire.invalidModel "unsaid")
       else throw (VE.Route.Wire.invalidModel "literals")
     else throw "model is not semantically admissible"
   else throw "UnsupportedProfile: filled models require norm-defaults@0"
+
+/-- Decode a filled model of `E‴_base` (checked against `Background_base` and `Fill_T`),
+the predicate and the typed tuple. -/
+def replayReached (j : Json) : Except String ((s : SourceU) × ReachedData s) := do
+  let environment ← j.getObjVal? "environment"
+  let s ← decodeSourceU environment (j.getObjValD "norms")
+  pure ⟨s, ← reachedFromU s (VE.Bridge.stringField j "predicate") j⟩
 
 /-- `normDefaults_wire_reached_sound`: a replayed filled model at which `reached_p`
 evaluates true is an admissible filling at which no author rule decides `p` at the

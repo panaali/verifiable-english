@@ -25,7 +25,15 @@
   "S": 7550,
   "V": 17113
  },
- "signed": [],
+ "signed": [
+  {
+   "change": "consolidation step 2a (VE.Route.WireSound, VE.Route.RunSound, VE.Norms.RunSound): S +128 over the parent tree 2ce1134e measured by tools/trust_map.py --since (S 7806 -> 7934); K and untied [V] do not grow (runFol, runClosure, runOrder tied, -114). The S lines are the reviewed meaning of the runner theorems: Family, CertificateClaim, BaseClaim, CountermodelAnswer, CountermodelClaim, EvaluateClaim, RouteIntended, FlagsBase, FlagsHold, BaseAdmissible, Runner.Bound and the three family instances. Growth merged before 2ce1134e is not part of this allowance.",
+   "signed": "DRI (orchestrator), consolidate-b2 review finding B (trust budget), 2026-10-05",
+   "allow": {
+    "S": 128
+   }
+  }
+ ],
  "history": [
   {
    "change": "Review B3 (consolidate-b1): predicates (lean/predicates.txt) out of C, [R] and [I] into K or S unless tied; kernel data types K; kernel modules reviewed (Paths dedup/pivot/reachEval C, ClosedAt P; reach, embed, erase K in Closure and Core; Time QTerm/QEnv.erase K; Bridge helpers D[V]); Rights.PrefixAdmissibleR S. Reclassification only: no Lean change.",

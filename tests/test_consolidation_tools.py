@@ -1192,6 +1192,118 @@ def test_budget_check_needs_a_signed_allowance(tmp_path):
     assert rewritten["signed"] == [] and rewritten["history"][0]["change"] == "demo"
 
 
+def git(root: Path, *args: str) -> None:
+    env = {**os.environ, "GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@t", "GIT_COMMITTER_NAME": "t",
+           "GIT_COMMITTER_EMAIL": "t@t", "GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_NOSYSTEM": "1"}
+    subprocess.run(["git", "-C", str(root), *args], check=True, capture_output=True, env=env)
+
+
+def test_since_gates_a_change_on_its_own_growth(tmp_path):
+    """consolidate-b2 review B: with a stale baseline `--check` fails on growth merged earlier, and a
+    change's own growth hid behind it. `--since` measures the parent tree and allows only the
+    signed entries the change adds."""
+    tables = (tmp_path / "tools/trust-classes.json", tmp_path / "lean/statements.txt")
+    write_tree(tmp_path, {"D[R]": ["VE.Demo.decodeThing"], "S": ["VE.Demo.Meaning"], "C": [INSTANCE, "VE.Demo.helper"]})
+    stale, _ = trust_map.measure(tmp_path, *tables)
+    (tmp_path / "docs").mkdir()
+    baseline_path = tmp_path / "docs/trust-baseline.json"
+    trust_map.write_baseline(stale, baseline_path, {})
+    inherited = {"change": "older", "signed": "DRI", "allow": {"V": 4}}
+    baseline_path.write_text(json.dumps({**json.loads(baseline_path.read_text()), "signed": [inherited]}))
+    # Earlier work grew S (helper) without a signed entry: the parent already fails `--check`.
+    write_tree(tmp_path, {"D[R]": ["VE.Demo.decodeThing"], "S": ["VE.Demo.Meaning", "VE.Demo.helper"],
+                          "C": [INSTANCE]})
+    git(tmp_path, "init", "-q")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-qm", "parent")
+    parent, problems, parent_baseline = trust_map.measure_rev("HEAD", tmp_path)
+    assert problems == [] and parent_baseline == json.loads(baseline_path.read_text())
+    assert parent == trust_map.measure(tmp_path, *tables)[0]
+    assert trust_map.check(parent, parent_baseline)
+    assert trust_map.since(parent, parent, parent_baseline, parent_baseline) == []
+    # This change grows V; the inherited entry is the parent's, not this change's.
+    write_tree(tmp_path, {"D[V]": ["VE.Demo.decodeThing"], "S": ["VE.Demo.Meaning", "VE.Demo.helper"],
+                          "C": [INSTANCE]})
+    grown, _ = trust_map.measure(tmp_path, *tables)
+    baseline = json.loads(baseline_path.read_text())
+    failures = trust_map.since(grown, parent, baseline, parent_baseline)
+    assert len(failures) == 1 and failures[0].startswith("V grew") and "(signed allowance 0)" in failures[0]
+    own = {"change": "this change", "signed": "DRI", "allow": {"V": 4}}
+    baseline["signed"].append(own)
+    assert trust_map.since(grown, parent, baseline, parent_baseline) == []
+    assert trust_map.since(grown, parent, {**baseline, "signed": [own, {**own, "allow": {"V": 3}}][1:]},
+                           parent_baseline)
+    baseline_path.write_text(json.dumps(baseline))
+    assert trust_map.main(["--root", str(tmp_path), "--since", "HEAD"]) == 0
+    baseline_path.write_text(json.dumps({**baseline, "signed": [inherited]}))
+    assert trust_map.main(["--root", str(tmp_path), "--since", "HEAD"]) == 1
+    _, problems, _ = trust_map.measure_rev("no-such-commit", tmp_path)
+    assert problems and problems[0].startswith("git archive no-such-commit")
+    assert trust_map.main(["--root", str(tmp_path), "--since", "no-such-commit"]) == 1
+
+
+def done_substeps(ledger: dict) -> list[str]:
+    """The substeps a ledger title marks done: `2a done`, `1a, 1b done; 1c`."""
+    done = []
+    for step in ledger["steps"]:
+        for clause in re.findall(r"\(([^)]*)\)", step["title"]):
+            for part in clause.split(";"):
+                if part.strip().endswith(" done"):
+                    done += re.findall(r"\d+[a-z]", part)
+    return done
+
+
+def plan_declarations(plan: str, substep: str) -> list[str]:
+    """The declarations a plan substep defines: a backticked signature `name args : type` and the
+    `def`, `structure`, `theorem` (...) headers of its code blocks."""
+    section = re.search(rf"^\*\*{substep}\..*?(?=^\*\*\d+[a-z]\.|^### |\Z)", plan, re.S | re.M)
+    assert section, f"no plan section for {substep}"
+    text = section.group(0)
+    signatures = re.findall(r"`([A-Za-z_][\w.']*)(?: [^`:]*)? : [^`]+`", text)
+    headers = re.findall(r"^\s*(?:def|structure|theorem|abbrev|inductive)\s+([A-Za-z_][\w.']*)", text, re.M)
+    return signatures + headers
+
+
+def unresolved(names: list[str], declared: set[str]) -> list[str]:
+    return [n for n in names if not any(d == n or d.endswith("." + n) for d in declared)]
+
+
+def test_plan_declarations_of_a_done_step_exist():
+    """consolidate-b2 review B: step 2a was marked done while the plan's `fullLayer` was missing.
+    Every declaration a done substep's plan text defines must be a compiled declaration."""
+    plan = (ROOT / "docs/CONSOLIDATION-PLAN.md").read_text()
+    ledger = json.loads((ROOT / "tools/consolidation-ledger.json").read_text())
+    done = done_substeps(ledger)
+    assert "2a" in done
+    declared = {m[1] for m in re.finditer(r" (\S+)@\S+$", lean_statements.DECLARATIONS.read_text(), re.M)}
+    missing = {s: unresolved(plan_declarations(plan, s), declared) for s in done}
+    assert plan_declarations(plan, "2a")[:1] == ["fullLayer"]
+    assert {s: m for s, m in missing.items() if m} == {}
+
+
+def test_plan_declaration_check_can_fail():
+    plan = "### Step 9\n\n**9a. Demo.**\n1. `missingLayer rv : Layer fol Unit`.\n```lean\ndef Shown : Prop\n```\n"
+    assert plan_declarations(plan, "9a") == ["missingLayer", "Shown"]
+    assert unresolved(plan_declarations(plan, "9a"), {"VE.Demo.Shown"}) == ["missingLayer"]
+    ledger = {"steps": [{"title": "Kit (9a done; 9b)"}, {"title": "Other (9c, 9d done)"}, {"title": "Open"}]}
+    assert done_substeps(ledger) == ["9a", "9c", "9d"]
+
+
+def test_route_runners_go_through_the_composed_layer():
+    """consolidate-b2 review B: the runner theorems read the definitions layer composed over the
+    flags and literals (`fullLayer`, with its BackgroundSound), not an identity layer of `Intended`."""
+    entries = lean_statements.parse(lean_statements.OUTPUT.read_text())
+    sound = entries["VE.Route.WireSound.fullLayer_background_sound"]
+    assert "VE.Route.BackgroundSound (VE.Route.WireSound.fullLayer rv hd)" in sound
+    assert "(List.map Prod.fst (VE.Route.Wire.fullBackground rv))" in sound
+    for family in ("runFol", "runClosure"):
+        assert f"VE.Route.WireSound.BaseClaim VE.Route.WireSound.{family.removeprefix('run').lower()}Family" \
+            in entries[f"VE.Route.WireSound.{family}_certificate_acceptance"]
+    for family in ("fol", "closure"):
+        assert "VE.Route.WireSound.BaseClaim" in entries[f"VE.Route.RunSound.route_{family}_certificate"]
+    assert "VE.Route.WireSound.Runner.background_routeSound" not in entries
+
+
 def test_committed_trust_table_covers_every_declaration():
     files, problems = trust_map.measure()
     assert problems == []
