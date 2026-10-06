@@ -1,51 +1,54 @@
 # Batch 6 delta and fix report (2026-10-06)
 
-**Status: incomplete; do not merge.** This branch moves several soft-norm decisions to Lean, but it does not pass the section 5.1 gate or implement every item of row 6. All changes below are local commits on `lean-first/b6`; nothing was pushed.
+**Status: gate in progress; do not merge yet.** Local branch `lean-first/b6` is based on `9aaf918d`. Nothing was pushed. The producer schema regression corpus is `tests/data/route-cases.jsonl`, 292 cases after adding standalone and batched soft-rule answers.
 
 ## Ownership and deletion ledger
 
-| Decision site | Owner after this branch | Remaining work |
-| --- | --- | --- |
-| Soft source acceptance, fault order, code, text and diagnostic record | `VE.SoftNorms.Phases.checkSource` and the Lean diagnose mode; `ve.backends.soft_relay.run` relays them | Python phase helpers remain for norm-defaults and readings wrappers, and for test-only contract hooks. Delete or replace those helpers after the wrappers have Lean route coverage. |
-| `E′`, decisions, carve-outs, background, coherence pairs, layers and conflict targets | `VE.SoftNorms.Wire.regenerated`; `SoftNormDocument` hydrates Python containers from its row | Python still constructs W1 `NormDocument` containers and computes expansion sizes. Review every retained helper for semantic decisions. |
-| Soft document hash, rank closure, residual counts, decider grouping and status | Lean `softDocumentHash`, `regenerated`, `residual`, `deciderCounts`, `residualStatus` | The W2 coverage wrapper still combines soft and rights status in Python. |
-| Rust soft premises | `SoftNormDocument` takes Lean's `background` and `colliding_pairs` formulas; `rust_jsonl.soft_case` serializes these bound formulas | Rust's generic candidate evaluator remains under the plan's later batches. |
-| Runtime regeneration comparison | Deleted from `ve.soft_route`; the old comparison lives in `conformance.soft_oracle` | Test-only oracle retained under the DRI's answer 7. |
-| Soft wire contract and generic interpreter | Moved out of `ve/` to `conformance/softnorms_contract.py` and `conformance/wire_contract_engine.py`; runtime retains only a registry type used by other profiles | Test-only code remains until the DRI's batch-18 decision on the JSON contract. |
+| Decision or output | Lean owner and Python relay |
+| --- | --- |
+| Soft source acceptance, fault order, code, text, limits and rule references | `VE.SoftNorms.Phases.checkSource` and `decodeSoftNorm`; `soft_relay.run` calls the service and preserves the Lean diagnostic. Python phase checks are removed from the runtime. |
+| Soft expansion, decisions, ranks, exceptions, coherence pairs, preference predicates, rule acts and incompatibility | `VE.SoftNorms.Wire.regenerated` and `VE.SoftNorms.Run.runSoftKind`; `SoftNormDocument` hydrates display and search containers from the response. Python semantic reconstruction methods are removed. |
+| Residual counts, decider grouping, status and document hash | Lean `residual`, `deciderCounts`, `residualStatus` and `softDocumentHash`; the readings wrapper sends the original identity environment, which Lean checks against its lowered source before hashing and regenerating the displayed environment. |
+| Witnessed Overlap and override cycle lines, DualGuardCycle hint | Lean `warningRows`, `overlapLine`, `overrideCycleLine` and `dualGuardCycle` replay the supplied typed situation before reporting the line or hint. Python no longer decides these outcomes. |
+| Rust soft premises | `SoftNormDocument` passes Lean's bound background and pair formulas to Rust's search adapter. Rust remains an untrusted witness generator under the plan. |
+| Soft wire contract and generic interpreter | The former `ve/softnorms_contract.py` and `ve/wire_contract/engine.py` are under `conformance/` as test-only oracles, per DRI answer 7. The Python regeneration comparison is deleted. |
 
-Against `9aaf918d`, the diff has **457 deleted and 163 added runtime Python lines** (net −294); the two moved contract modules no longer live in `ve/` but retain their test-only bodies. Lean `.lean` files have **69 added and 8 deleted lines** (net +61), including schemas and their encoder proof; 44 added lines are in the three `VE/SoftNorms` modules. These counts use `git diff --numstat` and include additions needed to bind the Lean response.
+Against `9aaf918d`, `ve/**/*.py` has **1,131 deleted and 244 added lines** (net −887 runtime Python lines). The 837 lines removed from the two contract modules remain in test-only `conformance/`; excluding those moves, 294 old runtime lines were deleted and 244 relay/container lines added. Lean `.lean` files have **247 added and 18 deleted lines** (net +229), including the response schema and encoder proof. These numbers come from `git diff --numstat 9aaf918d..HEAD` and will be refreshed at the final head.
 
-**Unimplemented row-6 output:** `soft-elaborate` does not yet emit witnessed `Overlap` or `override_cycles` lines, or the English-layer `DualGuardCycle` hint. It would be incorrect to emit an empty or merely structural witness list as if it were checked. The branch therefore does not satisfy the row-6 Lean work.
+The relay caches only successful pure `soft-elaborate`, `soft-rule` and `soft-rules` answers through the existing bounded `decide_once` pool. Each caller receives a deep copy. The batch route validates several rules under one decoded source. An isolated large UDHR document still took 426.19 s wall / 425.72 s CPU against 58.90 s wall / 58.60 s CPU at the base; parsed JSON output was identical. This violates the latency allowance. The 822.53-second instrumented run logged 763 soft-elaborate, 253 soft-rules and 961 soft-rule calls, including cache hits; wall time spent inside those wrappers was 325.13, 225.39 and 176.82 seconds respectively under heavier load. The remaining distinct generated sources require repeated Lean checks.
 
 ## Gate evidence
 
 | Check | Result |
 | --- | --- |
-| Lean build | `lake build` passed, 743 jobs. The schema encoder proof was repaired in `30520e41`. |
-| Lean audit / Rust build / Cargo tests | All passed in `/tmp/ve-b6-gate.json`; 50 Rust tests passed. |
-| Full gate | **Failed** on clean HEAD `30520e41`: 10,884 passed, 191 failed, 7 skipped of 11,082 selected tests. A rerun on clean HEAD `084a0323` reached the 16-worker Python suite after the Lean build and audit and Rust build and tests passed, but hit a 25-minute command cap before pytest returned (exit 124). It has no valid final counts (`/tmp/ve-b6-gate-final.json` was only initialized). The full gate therefore remains unpassed at the latest HEAD. |
-| Focused tests after fixes | Malformed environments: 2,672 passed; readings S1/S2 documents: 101 passed; selected route, schema, import and manifest tests passed. A later combined readings/wire-corpus run was interrupted after one wire-corpus failure; its traceback was not captured. |
-| Differential fuzzer | Full CI sample with `--minimise-limit 0` passed: zero new, zero unreviewed, zero missing baseline signatures (`/tmp/ve-b6-difffuzz-ci.json`). The first full attempt was interrupted during minimization while its Lean/Rust binaries were absent. |
-| A/B conformance | 39,612 records identical across Python and Lean authorities, zero unlisted differences (`/tmp/ve-b6-ab-compare.json`). |
-| A/B Stage-0 probe | 18,870 records identical across Python and Lean authorities, zero unlisted differences (`/tmp/ve-b6-probe-compare.json`). |
-| Soft-specific corpus, 14 date seeds, use-case answer keys, historical pilots | **Not run** as a base/head A/B comparison. The test suite's focused soft conformance fixtures passed earlier, but this is not the full section 5.1 comparison. |
-| Latency | No comparable base/head Lean CPU or quiet-host wall sample was taken. This batch does not claim a speed improvement. The added Lean calls in Python containers need a latency measurement before acceptance. |
-| Disk | 60 GiB free at the last `df -h .` check. |
+| Lean build and response schemas | Full `lake build` passed (743 jobs); final `ve_service` rebuild passed (542 jobs). `tools/response_schemas.py --check`, frozen-source audit and relay lint passed. |
+| Focused tests | 459 of 460 selected tests passed; the sole manifest review-list omission was fixed and its test and the new batch-rule test then passed. Earlier 112 norm-default tests passed after moving the shared placeholder producer. |
+| A/B probe and conformance | 58,482 recorded results identical across base and head, zero differences (`/tmp/ve-b6-core-compare.json`). |
+| A/B readings and discourse | 7,487 recorded results identical, zero differences (`/tmp/ve-b6-rd-compare.json`). |
+| Soft-specific corpus | 1,000 accepted trees and 4,843 rejected inputs on both base and head; all 1,000 environment, layer, background and decision comparisons matched. The near-limit cohorts were 90 accepted and 137 rejected on each side. A final-head rerun is pending. |
+| Differential fuzzer CI sample | Zero new, zero unreviewed, zero missing baseline signatures (`/tmp/ve-b6-difffuzz-ci-final.json`). Fourteen date seeds at the final head are pending. |
+| Historical pilots | The base recorded 278 documents. Final-head recording is in progress. The first 52 head records had one 600-second wall timeout on a constitution S1 document under host load above 32 cores; the earlier head run of that document returned an identical result. All other first 52 records matched. |
+| Full offline gate on clean head | Pending. The previous completed run, before the fixes in `c60cb4ca`, had 11,011 passed and 65 failed; its failures drove the focused repairs above. |
+| Latency | The isolated UDHR translation completed with identical output in 38.99 s wall / 37.63 s CPU at the base and 150.37 s wall / 150.12 s CPU at the earlier head. The larger UDHR document completed with identical parsed JSON in 58.90 s wall / 58.60 s CPU at the base and 426.19 s wall / 425.72 s CPU at the current code head. Both exceed the plan's 120 s pilot wall budget and 20% CPU-growth allowance. |
+| Disk | 68 GiB free at the last check. |
 
-### Three planted bugs, each removed
+The producer schema has closed witness-model fields (`complete`, `domains`, `constants`, `relations`); the route-row mutation test rejects dropped, emptied and retyped required fields. `lean/declarations.txt` was regenerated. The trust class table now covers every declaration, and the consolidation-plan ledger figures were updated mechanically. `trust_map.py --since 9aaf918d` still reports **145 additional trusted Lean lines** against zero signed allowance. The inherited whole-tree S/V budget drift exists on the base as well. Neither budget was silently signed or rebased.
 
-1. Replaced `residual.update(soft_row["soft_residual"])` with an empty update. `test_document_coverage_and_render_show_open_exception` failed (1 failed in 5.18 s).
-2. Replaced `SoftNormDocument.document_hash` with 64 zeroes. `test_python_lean_spec_fixture[alpha-high]` failed (1 failed in 1.44 s).
-3. Changed the Lean diagnostic attachment condition from `fault` to `clean`. `test_public_call_reports_the_first_fault_and_keeps_the_legacy_error` failed (1 failed in 2.44 s).
+## Seeded bug checks
 
-The files were restored after each mutant; the three focused tests then passed together.
+Each mutant was planted temporarily in changed code, made the named test fail, and was removed before continuing:
 
-## Outstanding acceptance and ownership
+1. Changed the Lean Overlap witness conjunction to a disjunction; `test_witnessed_overlap_and_override_cycle_lines` accepted a false overlap and failed.
+2. Negated the Lean preference-edge condition for `override_cycles`; the same test lost a valid cycle and failed.
+3. Negated the Lean dependency condition for `DualGuardCycle`; `test_theta_dual_guard_cycle_on_t_prime` failed because the hint disappeared.
+4. Ignored `identity_environment` in the Lean soft document hash; `test_readings_identity_environment_is_bound` failed, then passed with the restored service binary and lock.
 
-- **AGENT:** Implement witnessed `Overlap`, `override_cycles`, and `DualGuardCycle` Lean output and corresponding producer-derived schemas and tests. Remove the remaining Python soft phase/semantic decision sites once readings and norm-defaults wrappers use their own Lean owner.
-- **AGENT:** Resolve the remaining full-gate failures and rerun `python3 tools/gate.py` on a clean, committed HEAD with sufficient time for pytest to return. The previous completed gate failures included stale route/contract test hooks (since fixed), wrapper rejection and malformed input crashes (focused tests now pass), and trust-map/statement metadata. The generated declaration dump is current, but `trust_map.py --check` still reports inherited K/S/V budget drift and 27 unclassified declarations; these are not silently signed or rebased here. `test_select_tests.py` also assumes Python AST `_field_types`, absent from the gate's Python 3.12.3.
-- **AGENT:** Complete section 5.1 A/B coverage over the soft corpus, 14 date seeds, use-case answer keys and every historical pilot; list and classify every difference. Measure Lean CPU and quiet-host wall latency against the batch base.
-- **HUMAN (DRI):** Review and sign any wording/order delta block and each verdict/availability delta, and decide whether the remaining cross-batch compatibility code may persist. No signature is claimed here.
-- **EXTERNAL:** No external service or model call was used. Operational soak and any external pilot environment remain deferred to their assigned plan gates.
+The earlier incomplete report also recorded three removed mutants for residual count, document hash and diagnostic attachment. The new cache-isolation test passes; its mutant check is pending.
 
-Checklist coverage: the changed response fields have Lean-generated schemas and mutation tests (items 1, 4, 13); the full fuzzer ran with 1- and 2-fault samples and zero baseline growth (2); malformed-environment tests passed (5); binaries were pinned and built through the offline gate (14); identities and new fields are covered by focused tests (15); the Lean statements dump was regenerated, with trust budget not approved (17); this report uses gate JSON counts and records omissions (20); the table above tags AGENT/HUMAN/EXTERNAL (21). Item 22 is **not satisfied** because the completed full gate failed, and the final-HEAD rerun timed out. Unchanged concerns in checklist items 3, 6–12, 16, 18 and 19 were not established by this batch's evidence.
+## Acceptance ownership
+
+- **AGENT:** Complete the final-head pilot A/B, 14 date-seed comparison, final soft-corpus run and full offline gate on a clean committed head. Record every output or availability difference and final gate counts from its JSON.
+- **HUMAN (DRI):** Review the 145-line trusted-code growth and any remaining latency or availability deltas. The plan requires a signature for the pilot CPU growth and each availability difference. No signature is claimed here.
+- **EXTERNAL:** No model call or external service was used. The plan's later operational soak remains outside batch 6.
+
+Checklist coverage: the generated response shape and mutation corpus cover items 1 and 4; the differential fuzzer covers item 2; the focused malformed-source and near-limit corpus covers item 5; Lean owns the three-valued soft status (6); the seeded mutants cover item 13; pinned binary and source hashes cover item 14; the bound readings identity test covers item 15; the route-case corpus and gate collection pin cover item 16; the statement dump and trust-map check cover item 17; the gate JSON and this report cover item 20; and the acceptance owners above cover item 21. Items 3, 7–12, 18 and 19 are unchanged concerns of other batches. Item 22 is pending the final clean-head gate and report commit.
