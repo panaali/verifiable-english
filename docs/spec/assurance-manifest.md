@@ -140,6 +140,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Attribution/Admission.lean` | 343 | 343 | 1–343 | `de9ae29eed4d…` |
 | `lean/VE/Attribution/Content.lean` | 726 | 726 | 1–726 | `42d7518d9a79…` |
 | `lean/VE/Attribution/Wire.lean` | 514 | 514 | 1–514 | `4eadc30b6ea7…` |
+| `lean/VE/Attribution/Preflight.lean` | 545 | 545 | 1–545 | `cd3fd4bce0ca…` |
 | `lean/VE/Bridge.lean` | 282 | 235 | 14–248 | `967a6ee39961…` |
 | `lean/VE/CertificateWire.lean` | 236 | 164 | 11–163, 177–187 | `3d002c705023…` |
 | `lean/VE/Closure/Bridge.lean` | 99 | 58 | 9–66 | `9711c23a1786…` |
