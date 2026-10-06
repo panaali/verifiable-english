@@ -643,12 +643,15 @@ def handleLine (h : Handles) (line : String) : Option Json × Handles :=
     (some answer, h')
 
 /-- The first line the service prints. The build hash is computed by the supervisor,
-which hashes the executable it starts. -/
+which hashes the executable it starts. `handles` states the handle table's member and bounds,
+which the client mirrors (`Handles.insert`). -/
 def handshake : Json :=
   Json.mkObj [("service", .str "ve-lean@1"), ("protocol", toJson (2 : Nat)),
     ("lean", .str Lean.versionString), ("modes", toJson (modes.map Mode.name)),
     ("codes", toJson rejectionCodes), ("limits", Json.mkObj [("max_line_bytes", toJson maxLineBytes),
-      ("max_cases", toJson maxCases), ("json_depth", toJson (256 : Nat))])]
+      ("max_cases", toJson maxCases), ("json_depth", toJson (256 : Nat))]),
+    ("handles", Json.mkObj [("member", .str handleKey), ("max", toJson maxHandles),
+      ("max_bytes", toJson maxHandleBytes)])]
 
 /-! ## Dispatch pins (statement review: each mode is exactly its existing runner) -/
 
