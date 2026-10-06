@@ -12,7 +12,6 @@
               "x-select": [
                 {"then": {"$ref": "#/$defs/admission"}, "when": {"$ref": "#/$defs/kind/admission"}},
                 {"then": {"$ref": "#/$defs/elaborate"}, "when": {"$ref": "#/$defs/kind/rights-elaborate"}},
-                {"then": {"$ref": "#/$defs/unit_status"}, "when": {"$ref": "#/$defs/kind/rights-unit-status"}},
                 {"then": {"$ref": "#/$defs/projections"}, "when": {"$ref": "#/$defs/kind/rights-projections"}},
                 {"then": {"$ref": "#/$defs/scope"}, "when": {"$ref": "#/$defs/kind/rights-scope"}},
                 {"then": {"$ref": "#/$defs/certificate"}, "when": {"$ref": "#/$defs/kind/rights-certificate"}},
@@ -241,6 +240,7 @@
           "type": "array"
         },
         "status": {"const": "ok"},
+        "unit_open": {"items": {"type": "boolean"}, "type": "array", "x-length": "/document"},
         "warnings": {"$ref": "common.json#/$defs/nonempty_strings"},
         "wordings": {"$ref": "common.json#/$defs/string_map"}
       },
@@ -250,6 +250,7 @@
         "environment_prime",
         "generated",
         "wordings",
+        "unit_open",
         "lines",
         "limitations",
         "bars",
@@ -293,8 +294,7 @@
       "rights-conflict": {"properties": {"kind": {"const": "rights-conflict"}}, "required": ["kind"], "type": "object"},
       "rights-elaborate": {"properties": {"kind": {"const": "rights-elaborate"}}, "required": ["kind"], "type": "object"},
       "rights-projections": {"properties": {"kind": {"const": "rights-projections"}}, "required": ["kind"], "type": "object"},
-      "rights-scope": {"properties": {"kind": {"const": "rights-scope"}}, "required": ["kind"], "type": "object"},
-      "rights-unit-status": {"properties": {"kind": {"const": "rights-unit-status"}}, "required": ["kind"], "type": "object"}
+      "rights-scope": {"properties": {"kind": {"const": "rights-scope"}}, "required": ["kind"], "type": "object"}
     },
     "narrowings": {
       "$comment": "Rights.Run.narrowingsJson: per line, whether a limitation scopes it and each narrowing mechanism with its licence (null when none).",
@@ -443,17 +443,6 @@
       },
       "required": ["id", "status", "findings", "licensed", "narrowings"],
       "then": {"properties": {"licensed": {"const": true}}},
-      "type": "object"
-    },
-    "unit_status": {
-      "$comment": "Rights.Run.unitStatuses: one openness decision per source unit.",
-      "additionalProperties": false,
-      "properties": {
-        "id": {"$ref": "common.json#/$defs/id_ok"},
-        "open": {"items": {"type": "boolean"}, "type": "array", "x-length": "/document"},
-        "status": {"const": "ok"}
-      },
-      "required": ["id", "status", "open"],
       "type": "object"
     }
   }

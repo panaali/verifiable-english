@@ -348,14 +348,13 @@ def runRightsKind (id kind : String) (j : Json) : Except String Json := do
     return ← runAdmission id (← j.getObjVal? "environment") (← j.getObjVal? "document")
   if kind == "rights-elaborate" then
     let environment ← j.getObjVal? "environment"
-    let src ← decodeRightsSource environment (j.getObjValD "document")
-    return VE.Route.Wire.ok id (regenerated src.D environment)
-  if kind == "rights-unit-status" then
-    let environment ← j.getObjVal? "environment"
     let document ← j.getObjVal? "document"
     let src ← decodeRightsSource environment document
-    let openNames ← VE.Bridge.strings (j.getObjValD "open_predicates")
-    return VE.Route.Wire.ok id [("open", unitStatuses src.D openNames document)]
+    let openNames ← match j.getObjVal? "open_predicates" with
+      | .ok value => VE.Bridge.strings value
+      | .error _ => pure []
+    return VE.Route.Wire.ok id (regenerated src.D environment ++
+      [("unit_open", unitStatuses src.D openNames document)])
   if kind == "rights-projections" then
     let src ← decodeRightsSource (← j.getObjVal? "environment") (j.getObjValD "document")
     return VE.Route.Wire.ok id (← projectionsResult src j)
