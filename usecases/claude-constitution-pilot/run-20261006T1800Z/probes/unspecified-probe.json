@@ -1,0 +1,392 @@
+{
+  "document": "readings/all-strict.ve.md",
+  "points": [
+    {
+      "label": "u0165.s01: the case holds",
+      "predicate": "weapons_uplift_permitted",
+      "true_atoms": [
+        "mass_casualty_weapon_uplift"
+      ],
+      "status": "SETTLED no",
+      "evidence": "table3"
+    },
+    {
+      "label": "u0165.s01: the case does not hold",
+      "predicate": "weapons_uplift_permitted",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "evidence": "witness"
+    },
+    {
+      "label": "u0165.s02: the case holds",
+      "predicate": "infrastructure_uplift_permitted",
+      "true_atoms": [
+        "critical_infrastructure_uplift"
+      ],
+      "status": "SETTLED no",
+      "evidence": "table3"
+    },
+    {
+      "label": "u0165.s02: the case does not hold",
+      "predicate": "infrastructure_uplift_permitted",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "evidence": "witness"
+    },
+    {
+      "label": "u0165.s03: the case holds",
+      "predicate": "cyberweapon_creation_permitted",
+      "true_atoms": [
+        "damaging_cyberweapon_or_malicious_code"
+      ],
+      "status": "SETTLED no",
+      "evidence": "table3"
+    },
+    {
+      "label": "u0165.s03: the case does not hold",
+      "predicate": "cyberweapon_creation_permitted",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "evidence": "witness"
+    },
+    {
+      "label": "u0165.s04: the case holds",
+      "predicate": "oversight_undermining_permitted",
+      "true_atoms": [
+        "clear_and_substantial_undermining_of_oversight"
+      ],
+      "status": "SETTLED no",
+      "evidence": "table3"
+    },
+    {
+      "label": "u0165.s04: the case does not hold",
+      "predicate": "oversight_undermining_permitted",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "evidence": "witness"
+    },
+    {
+      "label": "u0165.s05: the case holds",
+      "predicate": "humanity_attack_participation_permitted",
+      "true_atoms": [
+        "attempt_to_kill_or_disempower_most_of_humanity"
+      ],
+      "status": "SETTLED no",
+      "evidence": "table3"
+    },
+    {
+      "label": "u0165.s05: the case does not hold",
+      "predicate": "humanity_attack_participation_permitted",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "evidence": "witness"
+    },
+    {
+      "label": "u0165.s06: the case holds",
+      "predicate": "illegitimate_control_involvement_permitted",
+      "true_atoms": [
+        "illegitimate_absolute_control"
+      ],
+      "status": "SETTLED no",
+      "evidence": "table3"
+    },
+    {
+      "label": "u0165.s06: the case does not hold",
+      "predicate": "illegitimate_control_involvement_permitted",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "evidence": "witness"
+    },
+    {
+      "label": "u0165.s07: the case holds",
+      "predicate": "csam_generation_permitted_for_claude",
+      "true_atoms": [
+        "child_sexual_abuse_material"
+      ],
+      "status": "SETTLED no",
+      "evidence": "table3"
+    },
+    {
+      "label": "u0165.s07: the case does not hold",
+      "predicate": "csam_generation_permitted_for_claude",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "evidence": "witness"
+    },
+    {
+      "label": "u0156.s03: any situation",
+      "predicate": "system_prompt_deception_permitted",
+      "true_atoms": [],
+      "status": "SETTLED no",
+      "evidence": "table3"
+    },
+    {
+      "label": "u0125.s04.p2: any situation",
+      "predicate": "denial_of_being_claude_permitted",
+      "true_atoms": [],
+      "status": "SETTLED no",
+      "evidence": "table3"
+    },
+    {
+      "label": "u0123.s01: a dishonest-looking instruction within the honesty principles",
+      "predicate": "operator_input_permitted",
+      "true_atoms": [
+        "instruction_dishonest_looking_within_honesty"
+      ],
+      "status": "SETTLED yes",
+      "evidence": "table3"
+    },
+    {
+      "label": "u0062.s01: input is a persona",
+      "predicate": "operator_input_permitted",
+      "true_atoms": [
+        "input_is_persona"
+      ],
+      "status": "SETTLED yes",
+      "evidence": "table3"
+    },
+    {
+      "label": "u0062.s01: input is none of the three",
+      "predicate": "operator_input_permitted",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "evidence": "witness"
+    },
+    {
+      "label": "u0062.s01: input is specific instructions",
+      "predicate": "operator_input_permitted",
+      "true_atoms": [
+        "input_is_specific_instructions"
+      ],
+      "status": "SETTLED yes",
+      "evidence": "table3"
+    },
+    {
+      "label": "u0062.s01 and u0123.s03: a persona that also is an instruction to claim to be human",
+      "predicate": "operator_input_permitted",
+      "true_atoms": [
+        "input_is_persona",
+        "instruction_claim_human_when_asked"
+      ],
+      "status": "SETTLED no",
+      "evidence": "table3"
+    },
+    {
+      "label": "u0062.s01 and u0123.s03: specific instructions that also endanger health or safety",
+      "predicate": "operator_input_permitted",
+      "true_atoms": [
+        "input_is_specific_instructions",
+        "instruction_endanger_health_or_safety"
+      ],
+      "status": "SETTLED no",
+      "evidence": "table3"
+    },
+    {
+      "label": "u0123.s01 and u0123.s03: a dishonest-looking instruction that also acts against the guidelines",
+      "predicate": "operator_input_permitted",
+      "true_atoms": [
+        "instruction_act_against_guidelines",
+        "instruction_dishonest_looking_within_honesty"
+      ],
+      "status": "SETTLED no",
+      "evidence": "table3"
+    },
+    {
+      "label": "u0123.s02: persona role-play instruction",
+      "predicate": "operator_input_permitted",
+      "true_atoms": [
+        "instruction_role_play_custom_persona"
+      ],
+      "status": "SETTLED yes",
+      "evidence": "table3"
+    },
+    {
+      "label": "u0123.s03: instruction to claim to be human",
+      "predicate": "operator_input_permitted",
+      "true_atoms": [
+        "instruction_claim_human_when_asked"
+      ],
+      "status": "SETTLED no",
+      "evidence": "table3"
+    },
+    {
+      "label": "u0123.s02 and u0123.s03: a role-play instruction that also claims to be human",
+      "predicate": "operator_input_permitted",
+      "true_atoms": [
+        "instruction_claim_human_when_asked",
+        "instruction_role_play_custom_persona"
+      ],
+      "status": "SETTLED no",
+      "evidence": "table3"
+    },
+    {
+      "label": "u0036.s05: genuine ambiguity",
+      "predicate": "clarification_required",
+      "true_atoms": [
+        "genuine_ambiguity"
+      ],
+      "status": "SETTLED yes",
+      "evidence": "table3"
+    },
+    {
+      "label": "u0036.s05: no genuine ambiguity",
+      "predicate": "clarification_required",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "evidence": "witness"
+    },
+    {
+      "label": "u0073.s05: the case holds",
+      "predicate": "system_prompt_compliance_required",
+      "true_atoms": [
+        "operator_prompt_addresses_case"
+      ],
+      "status": "SETTLED yes",
+      "evidence": "table3"
+    },
+    {
+      "label": "u0073.s05: the case does not hold",
+      "predicate": "system_prompt_compliance_required",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "evidence": "witness"
+    },
+    {
+      "label": "u0073.s05: the case holds but complying is unsafe",
+      "predicate": "system_prompt_compliance_required",
+      "true_atoms": [
+        "compliance_unsafe",
+        "operator_prompt_addresses_case"
+      ],
+      "status": "UNDECIDED",
+      "evidence": "witness"
+    },
+    {
+      "label": "u0073.s05: the case holds and the “generally” exception applies",
+      "predicate": "system_prompt_compliance_required",
+      "true_atoms": [
+        "general_exception_to_complying",
+        "operator_prompt_addresses_case"
+      ],
+      "status": "UNDECIDED",
+      "evidence": "witness"
+    },
+    {
+      "label": "u0168.s01: the case holds",
+      "predicate": "firmness_required",
+      "true_atoms": [
+        "seemingly_compelling_argument_to_cross_line"
+      ],
+      "status": "SETTLED yes",
+      "evidence": "table3"
+    },
+    {
+      "label": "u0168.s01: the case does not hold",
+      "predicate": "firmness_required",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "evidence": "witness"
+    }
+  ],
+  "conflict": {
+    "a role-play instruction that also claims to be human": {
+      "status": "UNKNOWN",
+      "target": null,
+      "kind": "",
+      "tuple": []
+    },
+    "a persona that also is an instruction to claim to be human": {
+      "status": "UNKNOWN",
+      "target": null,
+      "kind": "",
+      "tuple": []
+    },
+    "no atom true": {
+      "status": "UNKNOWN",
+      "target": null,
+      "kind": "",
+      "tuple": []
+    },
+    "whole document, proof attempt": {
+      "status": "CONFLICT-FREE",
+      "detail": ""
+    }
+  },
+  "gaps": {
+    "clarification_required": {
+      "completion": "unspecified",
+      "reached": "reachable",
+      "inherits_from": []
+    },
+    "csam_generation_permitted_for_claude": {
+      "completion": "unspecified",
+      "reached": "reachable",
+      "inherits_from": []
+    },
+    "cyberweapon_creation_permitted": {
+      "completion": "unspecified",
+      "reached": "reachable",
+      "inherits_from": []
+    },
+    "denial_of_being_claude_permitted": {
+      "completion": "unspecified",
+      "reached": "none",
+      "inherits_from": []
+    },
+    "exploit_instruction_compliance_required": {
+      "completion": "unspecified",
+      "reached": "reachable",
+      "inherits_from": []
+    },
+    "firmness_required": {
+      "completion": "unspecified",
+      "reached": "reachable",
+      "inherits_from": []
+    },
+    "humanity_attack_participation_permitted": {
+      "completion": "unspecified",
+      "reached": "reachable",
+      "inherits_from": []
+    },
+    "illegitimate_control_involvement_permitted": {
+      "completion": "unspecified",
+      "reached": "reachable",
+      "inherits_from": []
+    },
+    "infrastructure_uplift_permitted": {
+      "completion": "unspecified",
+      "reached": "reachable",
+      "inherits_from": []
+    },
+    "judgment_use_required": {
+      "completion": "unspecified",
+      "reached": "none",
+      "inherits_from": []
+    },
+    "operator_input_permitted": {
+      "completion": "unspecified",
+      "reached": "unknown",
+      "inherits_from": []
+    },
+    "oversight_undermining_permitted": {
+      "completion": "unspecified",
+      "reached": "reachable",
+      "inherits_from": []
+    },
+    "system_prompt_compliance_required": {
+      "completion": "unspecified",
+      "reached": "reachable",
+      "inherits_from": []
+    },
+    "system_prompt_deception_permitted": {
+      "completion": "unspecified",
+      "reached": "none",
+      "inherits_from": []
+    },
+    "weapons_uplift_permitted": {
+      "completion": "unspecified",
+      "reached": "reachable",
+      "inherits_from": []
+    }
+  }
+}

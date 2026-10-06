@@ -1,0 +1,8 @@
+{
+  "verdict": "UNKNOWN",
+  "route": "superposed",
+  "budget": {
+    "max_choices": 64
+  },
+  "english": []
+}
