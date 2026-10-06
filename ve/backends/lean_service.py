@@ -92,11 +92,15 @@ MAX_REQUESTS = 10_000
 MAX_RESPONSE_BYTES = 1 << 30
 # Room for the request envelope around the cases text within one line.
 ENVELOPE_BYTES = 1024
-# The service's handle table (`VE.Service.maxHandles`, `maxHandleBytes`), the case member naming a
-# handle (`handleKey`), and the modes whose cases are never expanded (`expandCases`).
-MAX_HANDLES = 64
-MAX_HANDLE_BYTES = 64 << 20
-HANDLE_KEY = "environment_handle"
+# The handle table's case member and bounds are the service's: its handshake states them
+# (`handles`: `VE.Service.handleKey`, `maxHandles`, `maxHandleBytes`), the response schema pins them
+# (`envelope.json`, rendered from the Lean shapes) and the client reads them from there.
+_HANDLES = json.loads((Path(__file__).resolve().parent / "lean_service_schema/envelope.json").read_text())[
+    "handshake"]["properties"]["handles"]["properties"]
+HANDLE_KEY = _HANDLES["member"]["const"]
+MAX_HANDLES = _HANDLES["max"]["const"]
+MAX_HANDLE_BYTES = _HANDLES["max_bytes"]["const"]
+# The modes whose cases the service never expands (`expandCases`).
 UNHANDLED_MODES = frozenset({"english", "risk-eval"})
 
 
