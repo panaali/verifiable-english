@@ -1118,6 +1118,7 @@
 'VE.SpeechActs.Source.external_records_sound' depends on axioms: [propext, Quot.sound]
 'VE.SpeechActs.Source.Admission.normsSource_D' depends on axioms: [propext, Quot.sound]
 'VE.SpeechActs.Source.Admission.admitNodes_ok' depends on axioms: [propext, Quot.sound]
+'VE.SpeechActs.Source.Admission.answerPremiseClaims_formulas' depends on axioms: [propext, Quot.sound]
 'VE.SpeechActs.Source.Admission.eq_of_map_nodup' depends on axioms: [propext, Quot.sound]
 'VE.SpeechActs.Source.Admission.admissible_En' depends on axioms: [propext, Quot.sound]
 'VE.SpeechActs.Source.Admission.bindings_withheld' depends on axioms: [propext, Classical.choice, Quot.sound]
