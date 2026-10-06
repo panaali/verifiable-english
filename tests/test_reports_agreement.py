@@ -13,12 +13,102 @@ import pytest
 from ve.environment import Environment
 from ve.errors import VEError
 from ve.reports import ReportsDocument
+from ve.backends.service_schema import Compiler, Context, Invalid
 
 from test_reports_lean import (A1, CONTEXTS, E0, LANGUAGE, REVISION, U, assess, ast, doc, lean, neg,  # noqa: F401
-                               report, run)
+                               report, run, run1)
 
 KEYS = ("environment_reports_id", "keys", "premises", "open_terms", "bridge_formulas",
         "content_ids", "envelope", "warnings")
+
+
+@pytest.mark.parametrize("field,value,message", [
+    ("contexts", 7, "InvalidInput: contexts must be a list"),
+    ("assessments", None, "InvalidInput: assessments must be a list"),
+    ("contexts", [7], "InvalidInput: contexts record"),
+    ("assessments", [True], "InvalidInput: assessments record"),
+    ("contexts", [CONTEXTS[0], CONTEXTS[0]], "DuplicateDeclaration: context c1"),
+    ("assessments", [A1, A1], "DuplicateDeclaration: assessment a1"),
+    ("contexts", CONTEXTS * 86, "ResourceLimit: contexts"),
+])
+def test_legacy_record_diagnostic_precedes_choices(field, value, message, monkeypatch):
+    """Record type, limit and duplicate faults retain their public order and wording."""
+    import ve.reports as reports
+    monkeypatch.setattr(reports, "run_case", lambda *a, **k: pytest.fail("invalid records reached Lean"))
+    kwargs = {"contexts": CONTEXTS, "assessments": [A1], field: value}
+    with pytest.raises(VEError) as exc:
+        ReportsDocument(Environment(E0()), kwargs["contexts"], kwargs["assessments"], [], choices=["x"])
+    assert str(exc.value) == message
+
+
+@pytest.mark.parametrize("field,value,message", [
+    ("bridges", [{"id": "b"}, {"id": "b"}], "DuplicateDeclaration: bridge b"),
+    ("scoped", [{"id": "s"}, {"id": "s"}], "DuplicateDeclaration: scoped s"),
+    ("bridges", [{"id": str(i)} for i in range(1001)], "ResourceLimit: bridges or scoped"),
+    ("scoped", [{"id": str(i)} for i in range(257)], "ResourceLimit: bridges or scoped"),
+])
+def test_legacy_metadata_fault_precedes_choices(field, value, message, monkeypatch):
+    import ve.reports as reports
+    monkeypatch.setattr(reports, "run_case", lambda *a, **k: pytest.fail("invalid metadata reached Lean"))
+    with pytest.raises(VEError) as exc:
+        ReportsDocument(Environment(E0()), CONTEXTS, [A1], [], choices=["x"], **{field: value})
+    assert str(exc.value) == message
+
+
+def test_profile_fault_precedes_malformed_records():
+    from ve.errors import UnsupportedProfile
+    with pytest.raises(UnsupportedProfile, match="reports@0 needs a reports block"):
+        ReportsDocument(Environment(E0(profiles=["relational-fol@0"], block=False)), 7, [], [], choices=["x"])
+
+
+def test_status_rows_are_bound_to_requested_unit_and_scoped_ids(lean, monkeypatch):
+    """A genuine response with a dropped, replaced or invented ID is unavailable."""
+    from ve.errors import CheckerUnavailable
+    import ve.reports as reports
+
+    check = {"id": "s1", "payloads": [{"unit": "u1", "path": "1"}],
+             "conclusion": ast(U("safe", "service"))}
+    d = package_doc(scoped=[check])
+    case = {"id": "document", "kind": "reports-status", "environment": E0(), "document": d}
+    genuine = run1(case)
+    assert genuine["status"] == "ok", genuine
+    validator = Compiler().ref("reports.json", "#/row")[0]
+    validator(genuine, Context(case), {})
+    mutations = []
+    for field in ("units", "scoped", "residual_lines"):
+        key = "scoped_checks" if field == "residual_lines" else field
+        rows = genuine[field][key] if field == "residual_lines" else genuine[field]
+        for changed in ([], [{**rows[0], "id": "other"}], rows + [rows[0]]):
+            bad = copy.deepcopy(genuine)
+            if field == "residual_lines":
+                bad[field][key] = changed
+            else:
+                bad[field] = changed
+            mutations.append(bad)
+    for bad in mutations:
+        with pytest.raises(Invalid):
+            validator(bad, Context(case), {})
+
+    without_scoped = copy.deepcopy(case)
+    del without_scoped["document"]["scoped"]
+    empty = run1(without_scoped)
+    assert empty["status"] == "ok", empty
+    validator(empty, Context(without_scoped), {})
+    injected = copy.deepcopy(empty)
+    injected["scoped"] = [genuine["scoped"][0]]
+    with pytest.raises(Invalid):
+        validator(injected, Context(without_scoped), {})
+
+    view = ReportsDocument(Environment(E0()), d["contexts"], d["assessments"], d["units"], scoped=d["scoped"])
+    original = copy.deepcopy(view.statuses())
+    for field in ("units", "scoped"):
+        for altered in ([], [{**genuine[field][0], "id": "other"}]):
+            bad = copy.deepcopy(genuine)
+            bad[field] = altered
+            monkeypatch.setattr(reports, "run_case", lambda *a, answer=bad, **k: answer)
+            with pytest.raises(CheckerUnavailable):
+                view.replay()
+            assert view.statuses() == original
 
 
 def python(d, env):
