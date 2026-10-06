@@ -45,8 +45,9 @@ theorem scopedVerdict_fits (c : Wire.Checked) (j : Json) (s : ScopedCheck) :
   okfits
   all_goals fits
 
+/-- Every status word renders into the schema's `status_word` domain (read from the schema). -/
 theorem status_render_fits (s : Status) :
-    Fits req (.strIn ["UNFORMALISED", "OPEN", "UNKNOWN", "LABELLED", "CHECKED"]) (.str s.render) := by
+    Fits req (skel% "reports.json#/$defs/status_word") (.str s.render) := by
   cases s <;> (apply Fits.strIn_lit; decide)
 
 theorem status_fits (c : Wire.Checked) (id : String) (j : Json) :
@@ -57,10 +58,16 @@ theorem status_fits (c : Wire.Checked) (id : String) (j : Json) :
   fits using status_render_fits
   exact OkP.mapM (fun x _ => scopedVerdict_fits c j x) _ ‹_› _ ‹_›
 
+/-- A report's kind renders as one of `report_kind`'s words or a tagged array (`kindOf`). -/
+theorem kindOf_fits (c : VE.Reports.Content) :
+    Fits req (.alt [.strIn ["asserted", "norm", "definition"], .kindNot "string"])
+      (VE.Route.Admission.renderKind (VE.Reports.kindOf c)) := by
+  induction c <;> simp only [VE.Reports.kindOf, VE.Route.Admission.renderKind] <;> first | assumption | fits
+
 theorem admission_fits (id reportId : String) (res : ReportsAdmitted) :
     Fits req (skel% "reports.json#/$defs/admission") (encodeAdmitted id reportId res) := by
   unfold encodeAdmitted VE.Route.Wire.ok reportJson
-  fits
+  fits using kindOf_fits
   all_goals exact Common.claimJson_fits _
 
 theorem scoped_fits (c : Wire.Checked) (j : Json) (id : String) (verdicts : List Json)

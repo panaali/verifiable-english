@@ -113,6 +113,10 @@
    "G[V]": [
     "ResponseShape.findOkHyp",
     "ResponseShape.tacticRead_kind"
+   ],
+   "P": [
+    "ResponseShape.Encoders.Common.KindsRendered",
+    "ResponseShape.Encoders.Common.kindSkel"
    ]
   },
   "ResponseShape/Encoders/Quantity.lean": {
@@ -134,29 +138,44 @@
    "G[V]": [
     "ResponseShape.Encoders.Route.routeOk",
     "ResponseShape.Encoders.Route.tacticKind_route"
+   ],
+   "P": [
+    "ResponseShape.Encoders.Route.tacticGenerators_ok"
    ]
   },
   "ResponseShape/Encoders/SoftNorms.lean": {
    "S": [
     "ResponseShape.Encoders.SoftNorms.Classified"
+   ],
+   "P": [
+    "ResponseShape.Encoders.SoftNorms.CodeOk",
+    "ResponseShape.Encoders.SoftNorms.errorCodes",
+    "ResponseShape.Encoders.SoftNorms.tacticCodes_ok"
    ]
   },
   "ResponseShape/FitsTactic.lean": {
    "G[V]": [
     "ResponseShape.FitsTactic.bound",
     "ResponseShape.FitsTactic.caseBranch",
+    "ResponseShape.FitsTactic.ctorClash",
+    "ResponseShape.FitsTactic.enumLike",
     "ResponseShape.FitsTactic.fitsFrom",
     "ResponseShape.FitsTactic.fitsGoal",
     "ResponseShape.FitsTactic.isStrLit",
+    "ResponseShape.FitsTactic.jsonLit?",
     "ResponseShape.FitsTactic.listElems",
+    "ResponseShape.FitsTactic.litClash",
     "ResponseShape.FitsTactic.names?",
     "ResponseShape.FitsTactic.objAccepts",
+    "ResponseShape.FitsTactic.pairs?",
     "ResponseShape.FitsTactic.position",
     "ResponseShape.FitsTactic.reaches",
     "ResponseShape.FitsTactic.strBeqTrue?",
+    "ResponseShape.FitsTactic.strCasesCore",
     "ResponseShape.FitsTactic.strList?",
     "ResponseShape.FitsTactic.strLit?",
     "ResponseShape.FitsTactic.tacticAlt_mem",
+    "ResponseShape.FitsTactic.tacticBool_cases",
     "ResponseShape.FitsTactic.tacticBool_hyp",
     "ResponseShape.FitsTactic.tacticCase_kind_rw",
     "ResponseShape.FitsTactic.tacticCase_path_rw",
@@ -167,10 +186,12 @@
     "ResponseShape.FitsTactic.tacticKind_subst",
     "ResponseShape.FitsTactic.tacticOn_case_goal",
     "ResponseShape.FitsTactic.tacticSkel_norm",
+    "ResponseShape.FitsTactic.tacticStr_cases",
     "ResponseShape.FitsTactic.valueKeys",
     "ResponseShape._aux_ResponseShape_FitsTactic___macroRules_ResponseShape_tacticCase_cond_1",
     "ResponseShape._aux_ResponseShape_FitsTactic___macroRules_ResponseShape_tacticFitsUsing__1",
     "ResponseShape._aux_ResponseShape_FitsTactic___macroRules_ResponseShape_tacticFits_invert__1",
+    "ResponseShape._aux_ResponseShape_FitsTactic___macroRules_ResponseShape_tacticScalar_alt_1",
     "ResponseShape.tacticAlt_sub",
     "ResponseShape.tacticCase_absurd_",
     "ResponseShape.tacticCase_all_goal",
@@ -178,14 +199,19 @@
     "ResponseShape.tacticCase_cond_atom",
     "ResponseShape.tacticElem_cases",
     "ResponseShape.tacticElems_split",
+    "ResponseShape.tacticErrfits",
+    "ResponseShape.tacticErrp_let",
+    "ResponseShape.tacticErrp_whnf",
     "ResponseShape.tacticFields_split",
     "ResponseShape.tacticFitsUsing_",
     "ResponseShape.tacticFits_invert_",
     "ResponseShape.tacticKeys_ok",
     "ResponseShape.tacticKind_norm",
     "ResponseShape.tacticLits_simp",
+    "ResponseShape.tacticName_disc",
     "ResponseShape.tacticOkfits",
-    "ResponseShape.tacticRevert_lit_tests"
+    "ResponseShape.tacticRevert_lit_tests",
+    "ResponseShape.tacticScalar_alt"
    ]
   },
   "ResponseShape/Schemas/Alternatives.lean": {
@@ -617,6 +643,9 @@
     "ResponseShape.CaseCond.isKind",
     "ResponseShape.CaseCond.objectHas",
     "ResponseShape.Extract",
+    "ResponseShape.Lit",
+    "ResponseShape.Lit.json",
+    "ResponseShape.Lit.of?",
     "ResponseShape.Skel",
     "ResponseShape.Skel.anyObject",
     "ResponseShape.Skel.condsOk",
@@ -631,11 +660,15 @@
     "ResponseShape.Skel.members",
     "ResponseShape.Skel.mergeStr",
     "ResponseShape.Skel.mkAlt",
+    "ResponseShape.Skel.ofEnum",
     "ResponseShape.Skel.simp",
     "ResponseShape.caseCondOf",
     "ResponseShape.objectFree",
     "ResponseShape.skeleton",
     "ResponseShape.skeletonOf"
+   ],
+   "P": [
+    "ResponseShape.ErrP"
    ]
   },
   "ResponseShape/Skeletons.lean": {
@@ -7881,6 +7914,46 @@
   "VE/WireContract/Tables/SoftNorms.lean": {
    "G[V]": [
     "VE.WireContract.Tables.SoftNorms.table"
+   ]
+  },
+  "ResponseShape/EnumSites.lean": {
+   "T": [
+    "ResponseShape.EnumSites.Domain",
+    "ResponseShape.EnumSites.Probe",
+    "ResponseShape.EnumSites.Site",
+    "ResponseShape.EnumSites._aux_ResponseShape_EnumSites___elabRules_ResponseShape_EnumSites_fieldSkelTerm_1",
+    "ResponseShape.EnumSites.compose",
+    "ResponseShape.EnumSites.domainOf",
+    "ResponseShape.EnumSites.entries",
+    "ResponseShape.EnumSites.escape",
+    "ResponseShape.EnumSites.fieldSkelTerm",
+    "ResponseShape.EnumSites.fieldSkeleton",
+    "ResponseShape.EnumSites.instToJsonProbe",
+    "ResponseShape.EnumSites.instToJsonSite",
+    "ResponseShape.EnumSites.probes",
+    "ResponseShape.EnumSites.probesOf",
+    "ResponseShape.EnumSites.reach",
+    "ResponseShape.EnumSites.refsOf",
+    "ResponseShape.EnumSites.sites",
+    "ResponseShape.EnumSites.sitesOf",
+    "ResponseShape.EnumSites.stringFree"
+   ],
+   "P": [
+    "ResponseShape.Skel.admits"
+   ]
+  },
+  "ResponseShape/Encoders/Discourse.lean": {
+   "P": [
+    "ResponseShape.Encoders.Discourse.StatusesOk",
+    "ResponseShape.Encoders.Discourse.statusWords"
+   ]
+  },
+  "ResponseShape/Encoders/English.lean": {
+   "P": [
+    "ResponseShape.Encoders.English.ClassesIn",
+    "ResponseShape.Encoders.English.entriesClasses",
+    "ResponseShape.Encoders.English.entryClasses",
+    "ResponseShape.Encoders.English.tableClasses"
    ]
   }
  }

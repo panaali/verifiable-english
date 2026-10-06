@@ -74,10 +74,17 @@ theorem elaborate_fits (id : String) (src : Wire.RiskSource) :
   simp only []
   fits using labelled_fits, Alternatives.labelled_fits
 
-theorem admission_fits (id reportId : String) (res : Admission.Admitted) :
+/-- Every admission's kinds are its units' rendered kinds. -/
+theorem admitDocument_kinds (environment document : Json) :
+    OkP (fun res : Admission.Admitted => Common.KindsRendered res.kinds) (Admission.admitDocument environment document) := by
+  unfold Admission.admitDocument
+  okfits
+  all_goals exact Common.kindsRendered_map _ _
+
+theorem admission_fits (id reportId : String) (res : Admission.Admitted) (hk : Common.KindsRendered res.kinds) :
     Fits req (skel% "risk.json#/$defs/admission") (encodeAdmitted id reportId res) := by
   unfold encodeAdmitted ok VE.Route.Wire.ok
-  fits
+  fits using Common.kind_fits hk
   all_goals exact Common.claimJson_fits _
 
 theorem runCase_fits (j : Json) (hp : usesRiskPath j = true) : OkFits j Skeletons.risk (runCase j) := by
@@ -85,7 +92,7 @@ theorem runCase_fits (j : Json) (hp : usesRiskPath j = true) : OkFits j Skeleton
   okfits
   all_goals read_kind
   all_goals first
-    | (unfold runAdmission; okfits; fits_from admission_fits _ _ _)
+    | (unfold runAdmission; okfits; fits_from admission_fits _ _ _ (admitDocument_kinds _ _ _ ‹Admission.admitDocument _ _ = .ok _›))
     | fits_from elaborate_fits _ _
     | exact decision_fits _ _ ‹_› hp ‹_›
     | exact conflict_fits _ _ ‹_› hp ‹_›

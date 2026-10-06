@@ -116,10 +116,17 @@ theorem runSoftKind_fits (id kind : String) (j : Json) {w : Json} (hobj : j.getO
     have := firstFailure_of_not_free j _ ‹replaySoftConflict j = .ok _› (by simp_all)
     simp_all
 
-theorem admission_fits (id reportId : String) (res : Admission.Admitted) :
+/-- Every admission's kinds are its units' rendered kinds. -/
+theorem admitDocument_kinds (environment document : Json) :
+    OkP (fun res : Admission.Admitted => Common.KindsRendered res.kinds) (Admission.admitDocument environment document) := by
+  unfold Admission.admitDocument
+  okfits
+  all_goals exact Common.kindsRendered_map _ _
+
+theorem admission_fits (id reportId : String) (res : Admission.Admitted) (hk : Common.KindsRendered res.kinds) :
     Fits req (skel% "soft-norms.json#/$defs/admission") (encodeAdmitted id reportId res) := by
   unfold encodeAdmitted VE.Route.Wire.ok
-  fits
+  fits using Common.kind_fits hk
   all_goals exact Common.claimJson_fits _
 
 /-- The norms mode's rows, off the soft path, are rows of this mode. -/
@@ -135,7 +142,7 @@ theorem runCase_fits (j : Json) (hp : usesSoftPath j = true) :
     | (exfalso; simp_all; done)
     | read_kind
   all_goals first
-    | (unfold runAdmission; okfits; fits_from admission_fits _ _ _)
+    | (unfold runAdmission; okfits; fits_from admission_fits _ _ _ (admitDocument_kinds _ _ _ ‹Admission.admitDocument _ _ = .ok _›))
     | exact runSoftKind_fits _ _ _ ‹_› hp (KindRead.of_str ‹_›)
     | exact runSoftKind_fits _ _ _ ‹_› hp (Or.inr ⟨‹_›, rfl⟩)
 

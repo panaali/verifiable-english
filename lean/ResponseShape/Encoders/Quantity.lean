@@ -21,7 +21,7 @@ theorem runDocument_fits (w : W6Env) (id : String) (j : Json) (hK : req.getObjVa
   unfold Document.runDocument
   okfits
   all_goals (try simp only [ok, Document.claimJson])
-  all_goals fits
+  all_goals fits using Common.renderKind_fits
 
 /-- The kind `Time.Wire.runCase` reads: the case's `kind` string, else `admission`. -/
 theorem kind_read {j w : Json} {k' kind : String} (hobj : j.getObjVal? k' = .ok w)
