@@ -11,6 +11,7 @@
             {
               "x-select": [
                 {"then": {"$ref": "#/$defs/admission"}, "when": {"$ref": "#/$defs/kind/admission"}},
+                {"then": {"$ref": "#/$defs/rule"}, "when": {"$ref": "#/$defs/kind/soft-rule"}},
                 {"then": {"$ref": "#/$defs/elaborate"}, "when": {"$ref": "#/$defs/kind/soft-elaborate"}},
                 {"then": {"$ref": "#/$defs/pairs"}, "when": {"$ref": "#/$defs/kind/soft-pairs"}},
                 {"then": {"$ref": "#/$defs/certificate"}, "when": {"$ref": "#/$defs/kind/soft-certificate"}},
@@ -92,6 +93,34 @@
         "fragment": {"type": "boolean"},
         "id": {"$ref": "common.json#/$defs/id_ok"},
         "order": {"$ref": "common.json#/$defs/strings"},
+        "overlaps": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "line": {"pattern": "Overlap\\(.*", "type": "string"},
+              "model": {"type": "object"},
+              "pair": {"$ref": "common.json#/$defs/string_pair"},
+              "tuple": {"$ref": "common.json#/$defs/strings"}
+            },
+            "required": ["pair", "tuple", "model", "line"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "override_cycles": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "cycle": {"$ref": "common.json#/$defs/strings"},
+              "line": {"pattern": "override_cycles:.*", "type": "string"},
+              "model": {"type": "object"},
+              "tuple": {"$ref": "common.json#/$defs/strings"}
+            },
+            "required": ["cycle", "tuple", "model", "line"],
+            "type": "object"
+          },
+          "type": "array"
+        },
         "premises": {"$ref": "common.json#/$defs/layer_premises"},
         "ranks_above": {"additionalProperties": {"$ref": "common.json#/$defs/strings"}, "type": "object"},
         "soft_residual": {"$ref": "#/$defs/soft_residual"},
@@ -197,6 +226,7 @@
             "SOFT_UNSUPPORTED_PROFILE"
           ]
         },
+        "dual_guard_cycle": {"const": true},
         "error": {"$ref": "common.json#/$defs/text"},
         "id": {"x-echo": "/id"},
         "status": {"const": "error"}
@@ -209,7 +239,8 @@
       "soft-certificate": {"properties": {"kind": {"const": "soft-certificate"}}, "required": ["kind"], "type": "object"},
       "soft-conflict": {"properties": {"kind": {"const": "soft-conflict"}}, "required": ["kind"], "type": "object"},
       "soft-elaborate": {"properties": {"kind": {"const": "soft-elaborate"}}, "required": ["kind"], "type": "object"},
-      "soft-pairs": {"properties": {"kind": {"const": "soft-pairs"}}, "required": ["kind"], "type": "object"}
+      "soft-pairs": {"properties": {"kind": {"const": "soft-pairs"}}, "required": ["kind"], "type": "object"},
+      "soft-rule": {"properties": {"kind": {"const": "soft-rule"}}, "required": ["kind"], "type": "object"}
     },
     "packages": {
       "$comment": "SoftNorms.Run.runSoftKind soft-conflict over certificate packages: detail exactly beside UNKNOWN (firstFailure).",
@@ -258,6 +289,13 @@
         "weighing_points": {"$ref": "#/$defs/coherence_labels"}
       },
       "required": ["id", "status", "pairs", "discharged", "weighing_points"],
+      "type": "object"
+    },
+    "rule": {
+      "$comment": "SoftNorms.Run.runSoftKind: Lean accepted the standalone soft rule.",
+      "additionalProperties": false,
+      "properties": {"accepted": {"const": true}, "id": {"$ref": "common.json#/$defs/id_ok"}, "status": {"const": "ok"}},
+      "required": ["id", "status", "accepted"],
       "type": "object"
     },
     "soft_field": {

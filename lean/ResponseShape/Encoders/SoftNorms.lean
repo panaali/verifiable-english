@@ -24,11 +24,15 @@ theorem softLabelled_nonempty (D : SoftDoc) : ∀ x ∈ softLabelled D, x.1.isEm
   · simp +decide [cohLabel, isEmpty_append, toString]
 
 set_option maxHeartbeats 1000000 in
-theorem elaborate_fits (id : String) (D : SoftDoc) (env : Json) (documentHash : String) :
+theorem elaborate_fits (id : String) (D : SoftDoc) (env : Json) (documentHash : String)
+    (overlaps cycles : Option (List Json)) :
     Fits req (skel% "soft-norms.json#/$defs/elaborate")
-      (VE.Route.Wire.ok id (regenerated D env ++ [("document_hash", .str documentHash)])) := by
-  unfold VE.Route.Wire.ok regenerated bgEntry
-  fits
+      (VE.Route.Wire.ok id (regenerated D env ++ [("document_hash", .str documentHash)] ++
+        overlaps.toList.map (fun value => ("overlaps", toJson value)) ++
+        cycles.toList.map (fun value => ("override_cycles", toJson value)))) := by
+  cases overlaps <;> cases cycles <;>
+    simp only [Option.toList, List.map_cons, List.map_nil, List.append_nil] <;>
+    unfold VE.Route.Wire.ok regenerated bgEntry <;> fits
   all_goals (try { exfalso; rename_i x hx h; have := softLabelled_nonempty D x hx; simp_all })
 
 /-- A pair's status and detail: a detail exactly beside a weighing point or UNKNOWN. -/
@@ -91,11 +95,13 @@ theorem runSoftKind_fits (id kind : String) (j : Json) :
   simp only []
   okfits
   all_goals (try simp only [VE.Route.Wire.ok])
-  all_goals fits
+  · fits_as "soft-norms.json#/$defs/rule"
+    fits
   · fits_as "soft-norms.json#/$defs/elaborate"
-    exact elaborate_fits _ _ _ _
+    exact elaborate_fits _ _ _ _ _ _
   · fits_as "soft-norms.json#/$defs/pairs"
     exact pairs_fits _ _ _ _ _ _ ‹_›
+  all_goals fits
   -- Not conflict-free with no failing target: impossible (`firstFailure_of_not_free`).
   all_goals
     exfalso

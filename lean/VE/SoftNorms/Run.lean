@@ -209,15 +209,98 @@ theorem runAdmission_sound (id : String) (environment document answer : Json)
 def witnessKind (t : String × List String × VE.Formula) : String :=
   if (t.1.splitOn "->").length > 1 then s!"pair conflict on {t.1}" else s!"strict collision on {t.1}"
 
+/-- A situation supplied by a searcher is checked against the regenerated base vocabulary.
+Warnings are emitted only for a model with a typed tuple and the exception premises. -/
+def warningSituation (src : SoftSource) (sorts : List String) (w : Json) :
+    Except String (VE.FiniteModel VE.Bridge.Entity × List VE.Bridge.Entity × List String) := do
+  let ⟨model, _⟩ ← decodeModel src w
+  unless classificationBackgroundValid src.D model do
+    throw (VE.Route.Wire.invalidModel "soft background")
+  let ids ← VE.Bridge.strings (← w.getObjVal? "tuple")
+  let tuple := sorts.zip ids
+  unless ids.length == sorts.length && VE.Bridge.tupleCheck model sorts tuple do
+    throw "InvalidInput: witness tuple has the wrong length or sort"
+  pure (model, tuple, ids)
+
+def warningRule (D : SoftDoc) (name : String) : Except String SoftNode :=
+  match D.T.nodes.find? (·.name == name) with
+  | some N => pure N
+  | none => throw s!"InvalidInput: unknown soft rule {name}"
+
+def overlapLine (src : SoftSource) (w : Json) : Except String Json := do
+  let names ← VE.Bridge.strings (← w.getObjVal? "pair")
+  unless names.length == 2 && names[0]! < names[1]! do
+    throw "InvalidInput: overlap pair must name two distinct sorted rules"
+  let M ← warningRule src.D names[0]!
+  let N ← warningRule src.D names[1]!
+  unless M.mode == .default && N.mode == .default && M.pred == N.pred && M.sign == N.sign do
+    throw "InvalidInput: overlap pair must have the same predicate, sign and default mode"
+  let (model, tuple, ids) ← warningSituation src (actSorts src.D M) w
+  unless (circ src.D (selects' src.D M)).eval model (tupleVal tuple) &&
+      (circ src.D (selects' src.D N)).eval model (tupleVal tuple) do
+    throw "InvalidInput: overlap witness does not select both rules"
+  pure (Json.mkObj [("pair", toJson names), ("tuple", toJson ids),
+    ("model", w.getObjValD "model"), ("line", .str s!"Overlap({M.name}, {N.name})")])
+
+/-- `M` is preferred to `N` at this tuple, using the same act-indexed finding
+that the direct soft semantics uses for dominance. -/
+def preferredAt (D : SoftDoc) (model : VE.FiniteModel VE.Bridge.Entity)
+    (tuple : List VE.Bridge.Entity) (M N : SoftNode) : Bool :=
+  let finding := (outweighsF D (act D M) (rk (if higher D M N then N else M))
+    (rk (if higher D M N then M else N))).eval model (tupleVal tuple)
+  (higher D M N && !finding) || (higher D N M && finding)
+
+def overrideCycleLine (src : SoftSource) (w : Json) : Except String Json := do
+  let names ← VE.Bridge.strings (← w.getObjVal? "cycle")
+  unless names.length >= 3 && names.eraseDups.length == names.length do
+    throw "InvalidInput: override cycle needs at least three distinct rules"
+  let rules ← names.mapM (warningRule src.D)
+  let some first := rules.head? | throw "InvalidInput: empty override cycle"
+  let some last := rules.getLast? | throw "InvalidInput: empty override cycle"
+  unless src.D.soft.outranking == .holistic && rules.all (fun N =>
+      N.mode == .default && act src.D N == act src.D first &&
+      actSorts src.D N == actSorts src.D first) do
+    throw "InvalidInput: override cycle needs holistic defaults on one act"
+  let (model, tuple, ids) ← warningSituation src (actSorts src.D first) w
+  unless rules.all (fun N => (eligibleF src.D N).eval model (tupleVal tuple)) do
+    throw "InvalidInput: override cycle witness has an ineligible rule"
+  let edges := (rules.zip (rules.drop 1)) ++ [(last, first)]
+  unless edges.all (fun (M, N) => Incompatible src.D M N && preferredAt src.D model tuple M N) do
+    throw "InvalidInput: override cycle witness has a missing preference edge"
+  pure (Json.mkObj [("cycle", toJson names), ("tuple", toJson ids),
+    ("model", w.getObjValD "model"),
+    ("line", .str ("override_cycles: " ++ String.intercalate " > " (names ++ [names.head!])))])
+
+def warningRows (src : SoftSource) (j : Json) : Except String (Option (List Json) × Option (List Json)) := do
+  let overlaps ← match (j.getObjVal? "overlap_witnesses").toOption with
+    | none => pure none
+    | some raw => do
+      let ws ← raw.getArr?
+      pure (some (← ws.toList.mapM (overlapLine src)))
+  let cycles ← match (j.getObjVal? "override_cycle_witnesses").toOption with
+    | none => pure none
+    | some raw => do
+      let ws ← raw.getArr?
+      pure (some (← ws.toList.mapM (overrideCycleLine src)))
+  pure (overlaps, cycles)
+
 /-- The non-admission soft case kinds. -/
 def runSoftKind (id kind : String) (j : Json) : Except String Json := do
+  if kind == "soft-rule" then
+    let environment ← j.getObjVal? "environment"
+    let src ← decodeSoftSource environment (toJson ([] : List Json))
+    let _ ← decodeSoftNorm src.se (← j.getObjVal? "norm")
+    return VE.Route.Wire.ok id [("accepted", .bool true)]
   if kind == "soft-elaborate" then
     let environment ← j.getObjVal? "environment"
     let norms := j.getObjValD "norms"
     let src ← decodeSoftSource environment norms
     let documentHash ← softDocumentHash src.se.profiles environment norms
+    let extra ← warningRows src j
     return VE.Route.Wire.ok id (regenerated src.D environment ++
-      [("document_hash", .str documentHash)])
+      [("document_hash", .str documentHash)] ++
+      extra.1.toList.map (fun value => ("overlaps", toJson value)) ++
+      extra.2.toList.map (fun value => ("override_cycles", toJson value)))
   if kind == "soft-pairs" then
     let environment ← j.getObjVal? "environment"
     let norms := j.getObjValD "norms"
@@ -353,12 +436,27 @@ def reportedCode (j : Json) (message : String) : String :=
   | .error f => if f.message == message then f.code else softDiagnosticCode message
   | .ok _ => softDiagnosticCode message
 
+/-- A cycle introduced by the soft derived guard, after the source tree itself
+passes W1's dependency check. This is the English rewrite hint's condition. -/
+def dualGuardCycle (j : Json) (message : String) : Bool :=
+  if !message.startsWith "DependencyCycle:" then false else
+    match Phases.checkSource (j.getObjValD "environment") (j.getObjValD "norms") with
+    | .error _ => false
+    | .ok c =>
+      let D : SoftDoc := ⟨c.ne.rv.environment, c.ne.rv.literals, c.soft,
+        ⟨c.ne.regulated, [], c.nodes⟩⟩
+      (validateW1 D.base).isOk &&
+        match validateW1 (soften D) with
+        | .error e => e == message
+        | .ok _ => false
+
 def runCaseReported (j : Json) : Json :=
   if usesSoftPath j then
     match runCase j with
     | .ok result => result
-    | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"),
-        ("error", .str message), ("code", .str (reportedCode j message))]
+    | .error message => Json.mkObj ([("id", j.getObjValD "id"), ("status", .str "error"),
+        ("error", .str message), ("code", .str (reportedCode j message))] ++
+        if dualGuardCycle j message then [("dual_guard_cycle", .bool true)] else [])
   else Norms.Run.runCaseReported j
 
 end VE.SoftNorms.Run
