@@ -1,7 +1,9 @@
 """Python-side seeded bugs of lean-first batch 2: plant one at a time, run the tests that must catch it, revert
 (git checkout). `uv run --frozen python docs/lean-first/b2/seeds.py`"""
-import subprocess, sys
+import os, subprocess, sys
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+from tools import nested_pytest  # noqa: E402
 SEEDS = [
   ("S1 handle answers equal re-sending: every case is sent with the first environment's handle",
    "ve/backends/lean_service.py",
@@ -52,8 +54,8 @@ for name, path, old, new, old2, new2, tests in SEEDS:
         s = s.replace(old2, new2, 1)
     p.write_text(s)
     try:
-        proc = subprocess.run(["uv", "run", "--frozen", "pytest", "-q", "-x", "-p", "no:randomly", "-n", "4", *tests],
-                              capture_output=True, text=True, timeout=1500)
+        proc = subprocess.run(nested_pytest.command(["-q", "-x", *tests], workers=4),
+                              env=nested_pytest.environment(os.environ), capture_output=True, text=True, timeout=1500)
         tail = [l for l in proc.stdout.splitlines() if l.strip()][-1]
         results.append((name, proc.returncode, tail))
         print(name, "->", "CAUGHT" if proc.returncode != 0 else "MISSED", "|", tail, flush=True)
