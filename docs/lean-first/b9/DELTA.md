@@ -151,8 +151,8 @@ each (`evidence/mutants.txt`).
 | Item | Owner | State |
 |---|---|---|
 | Lean `check` mode for W6, relays, deletions, tests, A/B, fuzzer, latency, seeded bugs | AGENT | done, evidence above |
-| Wording block W9 and order rows O9.1–O9.2 | HUMAN (DRI) | signature requested |
-| Verdict rows V9.1 and V9.2 | HUMAN (DRI) | signature requested, one each |
+| Wording block W9 and order rows O9.1–O9.2 | HUMAN (DRI) | signed 2026-10-06 (Lean texts and order canonical) |
+| Verdict rows V9.1 and V9.2 | HUMAN (DRI) | signed 2026-10-06: V9.1 an exhausted replay is UNKNOWN (ResourceLimit), never "false"; V9.2 same code and outcome, Lean wording |
 | Hermetic `tools/gate.py` in a fresh worktree | AGENT (reviewer's run) | not run here, see 5.1 item 1 |
 | Quiet-host latency for the interactive row | AGENT | deferred: the host was never quiet |
 
