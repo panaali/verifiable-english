@@ -383,7 +383,42 @@ def test_theta_dual_guard_cycle_on_t_prime(lean):
     # self-edge is on the defaulted predicate, and the strict rule's predicate depends on it
     assert rows[0]["error"] == "DependencyCycle: x_permitted, x_required"
     assert rows[1]["error"] == "DependencyCycle: x_permitted, x_required"
+    assert rows[0]["dual_guard_cycle"] is True and rows[1]["dual_guard_cycle"] is True
     assert rows[2]["status"] == "ok" and rows[3]["status"] == "ok"
+
+
+def test_witnessed_overlap_and_override_cycle_lines(lean):
+    same = [should("a", "x_required", True), should("b", "x_required", True)]
+    witness = {"pair": ["a", "b"], "model": model({"soft__excepted__a": [],
+                                                        "soft__excepted__b": []}), "tuple": ["a"]}
+    base = {"id": "overlap", "kind": "soft-elaborate", "environment": env(), "norms": same}
+    [row] = run(lean, [{**base, "overlap_witnesses": [witness]}])
+    assert row["overlaps"][0]["line"] == "Overlap(a, b)"
+    assert row["overlaps"][0]["tuple"] == ["a"]
+    [refused] = run(lean, [{**base, "overlap_witnesses": [{**witness, "model": model({
+        "soft__excepted__a": [["a"]], "soft__excepted__b": []})}]}])
+    assert refused["status"] == "error" and "does not select both" in refused["error"]
+
+    rules = [should("ra", "x_required", True, rank="a"),
+             should("rb", "x_required", False, rank="b"),
+             should("rc", "x_required", True, rank="c"),
+             should("rd", "x_required", False, rank="d")]
+    environment_json = env(ranks(["a", "b", "c", "d"], "holistic"))
+    prepared = elaborate(lean, environment_json, rules)
+    positive = {"soft__outweighs__b__a__x_permitted",
+                "soft__outweighs__c__b__x_permitted",
+                "soft__outweighs__d__c__x_permitted"}
+    relations = {item["name"]: ([['a']] if item["name"] in positive else [])
+                 for item in prepared["decisions"]}
+    cycle = {"cycle": ["rb", "ra", "rd", "rc"], "tuple": ["a"], "model": model(relations)}
+    case = {"id": "cycle", "kind": "soft-elaborate", "environment": environment_json,
+            "norms": rules, "override_cycle_witnesses": [cycle]}
+    [row] = run(lean, [case])
+    assert row["override_cycles"][0]["cycle"] == ["rb", "ra", "rd", "rc"]
+    assert row["override_cycles"][0]["line"] == "override_cycles: rb > ra > rd > rc > rb"
+    bad = {**cycle, "model": model({**relations, "soft__outweighs__d__c__x_permitted": []})}
+    [refused] = run(lean, [{**case, "override_cycle_witnesses": [bad]}])
+    assert refused["status"] == "error" and "missing preference edge" in refused["error"]
 
 
 def test_admission_with_soft_units_and_regenerated_leaves(lean):

@@ -70,6 +70,7 @@ def soft_field : Shape :=
 def kind : Def :=
   .group none [
     ("admission", kindIs "admission"),
+    ("soft-rule", kindIs "soft-rule"),
     ("soft-elaborate", kindIs "soft-elaborate"),
     ("soft-pairs", kindIs "soft-pairs"),
     ("soft-certificate", kindIs "soft-certificate"),
@@ -111,10 +112,17 @@ def error : Shape :=
           "SOFT_TIE_AGAINST_ORDER",
           "SOFT_UNKNOWN_PARTY",
           "SOFT_UNKNOWN_RANK",
-          "SOFT_UNSUPPORTED_PROFILE"])]]
+          "SOFT_UNSUPPORTED_PROFILE"]),
+        ("dual_guard_cycle", .const (.bool true))]]
 
 def coherence_labels : Shape :=
   n [arr, .items (n [str, .pattern (Re.prefixes ["soft:coherence:"])])]
+
+def rule : Shape :=
+  c "SoftNorms.Run.runSoftKind: Lean accepted the standalone soft rule." [
+    obj, .required ["id", "status", "accepted"],
+    closed [("id", ref "common.json#/$defs/id_ok"),
+      ("status", constS "ok"), ("accepted", .const (.bool true))]]
 
 def admission : Shape :=
   c "SoftNorms.Run.encodeAdmitted: W2's admission answer and the open coherence premises the report assumes." [
@@ -195,7 +203,19 @@ def elaborate : Shape :=
         ("soft_status", enumS ["CHECKED", "OPEN"]),
         ("default_exceptions_by_decider", n [obj, .object [] (some (ref "common.json#/$defs/nat"))]),
         ("fragment", .type ["boolean"]),
-        ("warnings", ref "common.json#/$defs/nonempty_strings")]]
+        ("warnings", ref "common.json#/$defs/nonempty_strings"),
+        ("overlaps", copied "A Lean-checked witness echoes its model and tuple, and names the selected pair." <|
+          n [arr, .items (n [obj, .required ["pair", "tuple", "model", "line"], closed [
+            ("pair", ref "common.json#/$defs/string_pair"),
+            ("tuple", ref "common.json#/$defs/strings"),
+            ("model", obj),
+            ("line", n [str, .pattern (Re.prefixes ["Overlap("])])]])]),
+        ("override_cycles", copied "A Lean-checked witness echoes its model and tuple, and names the preference cycle." <|
+          n [arr, .items (n [obj, .required ["cycle", "tuple", "model", "line"], closed [
+            ("cycle", ref "common.json#/$defs/strings"),
+            ("tuple", ref "common.json#/$defs/strings"),
+            ("model", obj),
+            ("line", n [str, .pattern (Re.prefixes ["override_cycles:"])])]])])]]
 
 def pairs : Shape :=
   c
@@ -276,6 +296,7 @@ def «row» : Shape :=
       ref "#/$defs/error",
       .select [
         (ref "#/$defs/kind/admission", ref "#/$defs/admission"),
+        (ref "#/$defs/kind/soft-rule", ref "#/$defs/rule"),
         (ref "#/$defs/kind/soft-elaborate", ref "#/$defs/elaborate"),
         (ref "#/$defs/kind/soft-pairs", ref "#/$defs/pairs"),
         (ref "#/$defs/kind/soft-certificate", ref "#/$defs/certificate"),
@@ -293,6 +314,7 @@ def file : File where
     ("kind", kind),
     ("error", .schema error),
     ("coherence_labels", .schema coherence_labels),
+    ("rule", .schema rule),
     ("admission", .schema admission),
     ("background", .schema background),
     ("soft_residual", .schema (n [obj,
