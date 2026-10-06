@@ -659,6 +659,7 @@ Step 7 remeasured again after the merge of that ve-integration into english-lean
 S2.4's `ve_english_route` (`EnglishGrammar.Run`'s `runCaseReported` and `main`, and `EnglishMain.lean`), a
 one-shot executable by english-lean-s2.md 2.10 and, at that point, the only one-shot route left beside
 `ve_conformance`, added 33 trusted lines to batch 1's 551. Batch 11a then added the W2 speech-source executable;
+the English Lean E2 classification adds one step 7 trusted line in `EnglishGrammar.Run`;
 the current measurements follow:
 
 | Step | Removed | Tied | Reclassified [V]→[R] | Adds (est.) | Net | Days | Risk | Score |
@@ -670,7 +671,7 @@ the current measurements follow:
 | 4 | 718 | 0 | 0 | 420 | 298 | 14 | 2 | 10.6 |
 | 5 | 0 | 485 | 0 | 0 | 485 | 14 | 1 | 34.6 |
 | 6 | 35 | 0 | 1758 | 0 | 35 | 3 | 1 | 11.7 |
-| 7 | 587 | 0 | 0 | 60 | 527 | 6 | 2 | 43.9 |
+| 7 | 588 | 0 | 0 | 60 | 528 | 6 | 2 | 44.0 |
 | 8a | 106 | 225 | 0 | 60 | 271 | 10 | 1.5 | 18.1 |
 | 8b | 0 | 3460 | 0 | 0 | 3460 | 30 | 3 | 38.4 |
 | 9 | 88 | 0 | 0 | 0 | 88 | 18 | 2 | 2.4 |

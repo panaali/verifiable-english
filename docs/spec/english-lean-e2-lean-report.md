@@ -1,6 +1,6 @@
 # English Lean E2 Lean work report
 
-Branch `english-lean-e2/lean`; local commits `f3147ce3`, `dfb426d1`, `56b96a2a`, `246ddf04`, `237e5c9f`, `61383f34`, `3084dadd` and this report commit. Nothing was pushed. Frozen Norms, SoftNorms and Route Lean source was not edited; `VE/Route/frozen-sources.sha256` changed only to record the changed English and audit files.
+Branch `english-lean-e2/lean`; local commits `f3147ce3`, `dfb426d1`, `56b96a2a`, `246ddf04`, `237e5c9f`, `61383f34`, `3084dadd`, `ea40c957` and this report commit. Nothing was pushed. Frozen Norms, SoftNorms and Route Lean source was not edited; `VE/Route/frozen-sources.sha256` changed only to record the changed English and audit files.
 
 ## Implemented
 
@@ -19,6 +19,7 @@ Branch `english-lean-e2/lean`; local commits `f3147ce3`, `dfb426d1`, `56b96a2a`,
 - The clean-HEAD gate on `237e5c9f` selected 11,159 Python tests: 10,990 passed, 162 failed and 7 skipped; Rust tests passed. The failures exposed stale service mode lists, generated assurance pins, the S3 fixture report and the declaration table. Those integration artifacts are repaired in `61383f34` and `3084dadd`. The gate is being repeated on this report commit; its outcome must be reported at handoff.
 - Focused integration checks after repair: 597 passed, three failed before the last corrections; the three failures were generated assurance tables, new mode deadlines and malformed-response seeds. All ten targeted regression checks then passed. S3 fixture comparison: 200 cases, 198 agreements, two spec-disposed differences, zero unexplained.
 - The declaration table now covers all new E2 declarations conservatively. The trust budget check already had two issues at starting commit `73257d6a`; its baseline has not been changed or given a fabricated DRI signature.
+- The second clean-HEAD gate on `ea40c957` passed 11,151 Python tests, skipped seven, and found one stale measured ledger row in `docs/CONSOLIDATION-PLAN.md`; Lean audit, Rust build and native tests passed. The row was regenerated from `tools/trust_map.py --ledger`. A third clean-HEAD gate is required after this correction.
 - `python3 tools/english_grammar_gen.py --check`, `python3 lean/VE/Route/frozen.py`, and `git diff --check`: passed.
 - `python3 lean/audit.py` read-only check and `python3 tools/gate.py --workers 4` are required before handoff; record their final outcome with the gate result.
 
