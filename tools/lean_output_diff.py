@@ -203,13 +203,11 @@ def harness_invocations(baseline: Path) -> list[Invocation]:
     grammars = [{**english_route.grammar_request(name), "id": name} for name in english_route.ENVIRONMENTS]
     found.append(Invocation("ve_english_route", "english.grammar of every environment", ("english.grammar", "-"),
                             json.dumps(grammars, ensure_ascii=False).encode()))
-    from test_senses_route import PACK, joke_env
-    from ve.english import EnglishVocabulary
-    from ve.english_grammar import export
-    env = joke_env()
-    senses_case = {"id": "senses-s7", "environment": env.to_dict(),
-                   "lexicon": export(EnglishVocabulary(env)), "packs": [PACK.decode("utf-8")],
-                   "own": [], "source": "Alice tells the riddle.", "budget": 2_100_000}
+    from test_senses_route import PACK, world
+    from ve.backends.senses import request
+    env, overlay = world()
+    senses_case = {**request(env, "Alice tells the riddle.", [PACK.decode("utf-8")], overlay=overlay),
+                   "id": "senses-s7"}
     malformed = {**senses_case, "id": "senses-invalid-pack", "packs": ["null"]}
     found.append(Invocation("ve_senses_route", "senses s7 and malformed pack", ("-",),
                             json.dumps([senses_case, malformed], ensure_ascii=False).encode()))

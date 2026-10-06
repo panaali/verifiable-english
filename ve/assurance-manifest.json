@@ -54,7 +54,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 18964,
+    "total_lines": 19017,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
@@ -199,9 +199,9 @@
       {"file": "lean/VE/Senses/Decode.lean", "lines": 93, "sha256": "5f0f5265fe8d81f015e7b7cf2e038b5f0d2065c3f806c485d3365b800dbe678e",
        "ranges": [[1, 93]], "declarations": ["checkFields", "natOf", "decodeSense", "decodePackSort", "decodePack", "decodePackText", "dictionaryId"],
        "reason": "senses pack decoder over the restricted JSON boundary and dictionary_id over re-encoded packs; W1 to W7 are Dictionary.failures; called by the senses runner; the full file is pinned conservatively"},
-      {"file": "lean/VE/Senses/Run.lean", "lines": 91, "sha256": "a65842cd3f54e5fdd7fa57458f415d205e003a073ac2406c77ee44a2d2bcd12f",
-       "ranges": [[1, 91]], "declarations": ["decodeDictionary", "readCase", "runCaseReported"],
-       "reason": "senses admission runner: exact request fields, restricted pack decoder, and response rows; the full file is pinned conservatively"}
+      {"file": "lean/VE/Senses/Run.lean", "lines": 144, "sha256": "7015a002b04ead4c27462cda1a59f2d36c17165b713bc2d945fce72285952303",
+       "ranges": [[1, 144]], "declarations": ["decodeDictionary", "faultFields", "s2Fields", "outcomeJson", "readCase", "runCaseReported"],
+       "reason": "senses admission runner: exact request fields, restricted pack decoder, and response rows (units with their sentence and state, sense faults with their arguments, S2 outcomes with S2's fields); the full file is pinned conservatively"}
     ],
     "other_json": {
       "lean/EnglishLeanBenchMain.lean": "measurement only: the ve_english_lean_bench executable of the english-lean G1a measurement and the lexer differential reads grammars, sentences and sources from a JSON file and prints JSON rows; no admission path, service mode or record reads it",
@@ -942,6 +942,42 @@
       "trusted": ["python:implementation", "python:surface", "python:backend-adapter"],
       "notes": ["Recorded conflation, not changed: the Earley wall-clock budget (surface/unambiguity.py EARLEY_SECONDS) reports ResourceLimit, while the migration plan reserves ResourceLimit for deterministic budgets. Changing a public code needs the plan's section-2.3 product decision.",
                 "Recorded conflation, not changed: a marked English conclusion whose bounded proof search returns NotFound or ResourceLimit is rejected as SyntaxError (english.py _check_conclusions), so search UNKNOWN surfaces as a rejection; the search result is not replayed there."]
+    },
+    {
+      "id": "senses.read",
+      "summary": "English with senses (docs/spec/senses.md): the dictionary, the preamble, the projection and the reading, with open units listed",
+      "class": "surface",
+      "authority": "lean-only",
+      "target": "lean",
+      "assurance": {"current": "experimental", "at_switch": "experimental",
+                    "reason": "Lean decides every reading (VE.Senses.readWithSenses, nine statements of spec 5.3 proved); the pack decoder and the response encoder are trusted; no intent check and no proof of the text's claims"},
+      "python": [],
+      "outcomes": {"verdict": ["one", "open"], "unknown": [],
+                   "rejection": ["InvalidDictionary", "UnknownWord", "UnknownGloss", "MalformedPreamble", "RepeatedDefault",
+                                 "PreambleLate", "Collision", "VocabularyLimit", "TooManyCandidates", "CandidatesDiverge",
+                                 "QuotedSense", "NoDerivation", "Ambiguous", "IllTyped"],
+                   "budget": ["ResourceLimit"], "operational": ["CheckerUnavailable"]},
+      "lean": {
+        "bindings": [
+          {"executable": "ve_senses_route", "mode": "", "kinds": [], "response": {"result": "object"},
+           "dispatch": ["lean/SensesMain.lean", "lean/VE/Senses/Run.lean"]}
+        ],
+        "planned_modes": [],
+        "theorems": ["VE.Senses.senses_resolved_one_reading", "VE.Senses.senses_unit_sound",
+                     "VE.Senses.senses_candidate_sound", "VE.Senses.candidates_complete", "VE.Senses.mixed_exact"],
+        "planned_theorems": [],
+        "decoders": ["lean/VE/Senses/Decode.lean", "lean/VE/Senses/Run.lean"]
+      },
+      "rust": null,
+      "lean_call_sites": ["ve.backends.senses:read"],
+      "tests": ["tests/test_senses_route.py::test_spec_reading_fixtures",
+                "tests/test_senses_route.py::test_every_refusal_carries_its_arguments",
+                "tests/test_senses_route.py::test_genuine_response_field_mutations_are_rejected"],
+      "trusted": ["lean:kernel", "lean:compiler", "lean:decoders", "lean:runner-glue", "python:wire",
+                  "python:backend-adapter"],
+      "notes": ["The relay in ve.backends.senses:read only transports packs and validates the answer's shape and identities; no Python function decides a reading.",
+                "Rust has no senses implementation: the conformance of this operation is spec fixtures against Lean, not three-way.",
+                "The budget class is the reading's status `budget`, with the code PreambleBudget (a preamble line) or Budget (a body sentence)."]
     },
     {
       "id": "premise-status",
