@@ -36,6 +36,7 @@
     "ve/environment.py:Environment.__init__": "W6 environments: Lean's check mode accepts first (its rejection is raised before the handler); a Python failure constructing an environment Lean accepted becomes CheckerUnavailable, never a verdict (LEAN-FIRST-PLAN.md rule 2)",
     "ve/document.py:load_document": "CheckerUnavailable is re-raised first; a @2 document Lean rejected raises Lean's diagnostic before Python loads it, and a Python failure on one Lean admitted becomes CheckerUnavailable (unavailable_report), never a Python verdict",
     "ve/document.py:_check_document": "CheckerUnavailable is re-raised first; a Python failure reporting a @2 document Lean admitted becomes CheckerUnavailable (unavailable_report), never a verdict",
+    "ve/rights.py:RightsDocument.__init__": "Lean accepts the rights source before Python constructs display and search containers; any container construction failure is CheckerUnavailable, never a Python rights verdict",
     "ve/__main__.py:_main": "display only: an English rendering of an already computed record is omitted (`display_omitted`); the verdict fields are untouched",
     "ve/assist/api.py:call_tool": "CheckerUnavailable is caught first and keeps its code; other RuntimeErrors are logged as a rejected BackendError call, never a verdict",
     "ve/assist/cli.py:main": "CheckerUnavailable, raised or returned in an action or tool result (exit_code), exits 5 and the action is not saved; other failures print an error and exit 2",
@@ -55,7 +56,7 @@
     "ve/backends/dispatch.py:_shadow": "shadow authority only (execute and shadowed): the Python result is returned (a Python exception is re-raised unchanged); a candidate backend exception, CheckerUnavailable included, is only recorded as a shadow difference and never becomes the returned verdict"
   },
   "lean_decoders": {
-    "total_lines": 21801,
+    "total_lines": 21802,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -477,16 +478,16 @@
       },
       {
         "file": "lean/VE/Norms/Replay.lean",
-        "lines": 393,
-        "sha256": "dfc40bd4fb007d06107833999c5c8413e623a6e096e4d7b93c4023e999f50eea",
+        "lines": 404,
+        "sha256": "741968e0457a1e196589f05d7c26580a2dddbbec765a29b252eec476b02cd14b",
         "ranges": [
           [
-            92,
-            140
+            103,
+            151
           ],
           [
-            272,
-            291
+            283,
+            302
           ]
         ],
         "declarations": [
@@ -499,7 +500,7 @@
       {
         "file": "lean/VE/Norms/Wire.lean",
         "lines": 331,
-        "sha256": "56661ba08a3f5a03fb8db81667c8c7ebe2a973ac3847e27e4ddc91e0ee23c500",
+        "sha256": "608bb613cc6a3490a5f523c48c0dac2f02e2672ffe81e73343b38b5fad2c8371",
         "ranges": [
           [
             25,
@@ -983,12 +984,12 @@
       },
       {
         "file": "lean/VE/SoftNorms/Wire.lean",
-        "lines": 460,
-        "sha256": "4cc42cc7a7cac41af724fdd74ab91219ef0f5bac07318d41dae2507c0b1ff8a9",
+        "lines": 461,
+        "sha256": "0669c3cb696602de5b74730259a7c4ec34181af76bd0c7e88f0a3f4ef4b01bac",
         "ranges": [
           [
             1,
-            460
+            461
           ]
         ],
         "declarations": [

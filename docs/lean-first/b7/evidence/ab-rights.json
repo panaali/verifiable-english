@@ -1,0 +1,40 @@
+{
+ "base": "9aaf918d",
+ "commands": [
+  "tools/lean_first_diff.py record --root <base worktree> --out base.jsonl --corpus rights --workers 4",
+  "tools/lean_first_diff.py record --root <head> --out head.jsonl --corpus rights --workers 4",
+  "tools/lean_first_diff.py compare base.jsonl head.jsonl --corpus rights --delta docs/lean-first/b7/delta.json",
+  "tools/lean_first_diff.py record/compare as above with --corpus readings (no --delta)"
+ ],
+ "head": "0a96df17 (ve/ and lean/ as recorded)",
+ "readings_rerun": {
+  "records": {
+   "readings/default": 1137
+  },
+  "totals": {
+   "same": 1137
+  },
+  "unlisted": 0
+ },
+ "rights": {
+  "listed_by_kind": {
+   "A1": 190,
+   "O1": 148,
+   "W1": 224
+  },
+  "order_records": 148,
+  "records": {
+   "rights/default": 2500
+  },
+  "totals": {
+   "order": 148,
+   "same": 1938,
+   "verdict": 190,
+   "wording": 224
+  },
+  "unavailable_both": {},
+  "unlisted": 0,
+  "verdict_records": 190,
+  "wording_pairs": 6
+ }
+}

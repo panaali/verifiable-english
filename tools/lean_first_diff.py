@@ -33,6 +33,13 @@ Corpora (``--corpus``, default all):
   `docs/lean-first/b4/capture_discourse.py`), each written with the sibling files its imports name
   to its own scratch directory, through `check_document` and `render_document` (under the default
   authority, `--workers` processes).
+* ``rights``: the rights profile's own generated corpus (`conformance/rights_differential.py`, seeds 0 to
+  `RIGHTS_COUNT` - 1, accepted and rejected sources alike), each written as a ve-document (`document_text`),
+  and every `RIGHTS_HEADED`-th again under the head profile ``readings@1`` with no reading set (the lower
+  rights chain under its head, lean-first batch 7 review B3), through `check_document` and `render_document`.
+  The documents are generated once, by this checkout, into a file both sides read. Every differential
+  generator of ``conformance/`` is a corpus here or is named in `GENERATORS_NOT_RECORDED` with the reason
+  (batch 7 review B2: the batch's own profile corpus was left out).
 * ``quantity``: every W6 call of `docs/lean-first/quantity-corpus.json.gz` (the calls the W6 tests make
   to a quantity public operation, captured at batch 9's base by `docs/lean-first/b9/capture_quantity.py`),
   each through its one operation (`QUANTITY_OPS`: `Environment`, `elaborate_quantity`,
@@ -58,13 +65,14 @@ line must be one the recorder writes (`record_problem`, the schema `tools/lean_f
 each corpus's fields, authorities and sources, each operation's outcome, a rejection's complete
 diagnostic), and the records of one corpus file must name one digest; an empty, partial or retyped
 outcome is no acceptance. Then, for every corpus and authority
-it checks (``--corpus``, ``--authority``, default all; the pilots, the readings corpus and the
-discourse corpus have the one authority ``default``), each side must hold a record of every case of
+it checks (``--corpus``, ``--authority``, default all; the pilots and the readings, discourse
+and rights corpora have the one authority ``default``), each side must hold a record of every case of
 the corpus as this checkout defines it (`expected_cases`: the conformance files' case ids, the probe
 matrix's frozen baseline, the pilot documents, the readings corpus's cases, the discourse and quantity
-corpora's ids), through every operation the case requires (a conformance case: `CONFORMANCE_OPS`, given
-the outcomes recorded for it; a probe case: its operation; a pilot: ``document_check``; a readings case:
-``readings_validate``; a discourse document: `DISCOURSE_OPS`; a quantity call: its one operation),
+corpora's ids, the rights corpus's cases), through every operation the case requires (a conformance
+case: `CONFORMANCE_OPS`, given the outcomes recorded for it; a probe case: its operation; a pilot:
+``document_check``; a readings case: ``readings_validate``; a discourse document or a rights document:
+`DOCUMENT_OPS`; a quantity call: its one operation),
 and nothing else, some of its records must be available, and it must hold both an
 acceptance and a rejection (every corpus holds both kinds of input). A record unavailable on
 both sides is no evidence either (class ``unavailable``, whatever its texts): it is accepted only
@@ -101,9 +109,9 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-CORPORA = ("probe", "conformance", "pilots", "readings", "discourse", "quantity")
+CORPORA = ("probe", "conformance", "pilots", "readings", "discourse", "rights", "quantity")
 DISCOURSE = Path("docs/lean-first/discourse-corpus.json.gz")
-DISCOURSE_OPS = ("document_check", "document_render")
+DOCUMENT_OPS = ("document_check", "document_render")
 QUANTITY = Path("docs/lean-first/quantity-corpus.json.gz")
 QUANTITY_OPS = ("environment", "elaborate", "meaning_id", "countermodel", "certificate", "prove", "admission")
 AUTHORITIES = ("python", "lean")
@@ -120,6 +128,14 @@ IDENTITY_KEYS = frozenset({"environment_id", "source_id", "meaning_id", "model_i
 COUNT_KEYS = frozenset({"evaluations", "steps", "models_checked"})
 PILOT_TIMEOUT = 600
 READINGS_COUNT = 1000  # the readings differential's documents (composition-s1.md 9.3)
+RIGHTS_COUNT = 1000  # the rights differential's generator seeds (rights.md 10)
+RIGHTS_HEADED = 4  # every fourth rights source is recorded again under readings@1
+# The differential generators of `conformance/` that are a corpus here, and those that are not, with the reason.
+GENERATED_CORPORA = {"rights": "conformance/rights_differential.py"}
+GENERATORS_NOT_RECORDED = {
+    "conformance/norm_defaults_differential.py":
+        "norm-defaults@0 keeps its Python fill; the lean-first batch that moves it adds this corpus",
+}
 PROBE_BASELINE = "conformance/baseline-2026-09/python.json"
 PROBE_SECTIONS = ("graph_probes", "budget_boundaries", "feature_probes")
 
@@ -341,6 +357,50 @@ def readings_records(path: Path):
                "outcome": outcome(lambda: validate(case["environment"], units, document["reading_sets"]))}
 
 
+def rights_corpus(out: Path) -> None:
+    """Write the rights corpus: generated by this checkout's rights differential, read by both recorded sides."""
+    from conformance import rights_differential as generator
+    rows = []
+    for seed in range(RIGHTS_COUNT):
+        raw, units = generator.document(seed)
+        rows.append({"case": f"s{seed}", "text": generator.document_text(raw, units)})
+        if seed % RIGHTS_HEADED == 0:
+            headed = {**raw, "profiles": sorted([*raw["profiles"], "readings@1"])}
+            rows.append({"case": f"s{seed}/readings@1", "text": generator.document_text(headed, units)})
+    assert [row["case"] for row in rows] == rights_cases(), "the corpus names its cases as `rights_cases`"
+    out.write_text(json.dumps(rows, ensure_ascii=False))
+
+
+def rights_cases() -> list[str]:
+    """The case names of the rights corpus `rights_corpus` writes, without generating it."""
+    return [name for seed in range(RIGHTS_COUNT)
+            for name in ([f"s{seed}", f"s{seed}/readings@1"] if seed % RIGHTS_HEADED == 0 else [f"s{seed}"])]
+
+
+def _rights_case(item):
+    """`check_document` and `render_document` of one rights corpus document (in a pool worker)."""
+    scratch, source, entry = item
+    from ve.document import check_document, render_document
+    directory = Path(scratch) / entry["case"].replace("/", "_")
+    directory.mkdir(parents=True, exist_ok=True)
+    path = directory / "document.ve.md"
+    path.write_text(entry["text"])
+    return [{"case": entry["case"], "op": op, "source_sha256": source, "authority": "default",
+             "outcome": outcome(lambda: call(path))}
+            for op, call in zip(DOCUMENT_OPS, (check_document, render_document))]
+
+
+def rights_records(path: Path, scratch: Path, workers: int):
+    """The rights corpus file `path` recorded with the child's `ve`."""
+    import multiprocessing
+    source = digest(path)
+    os.environ.pop("VE_AUTHORITY", None)
+    entries = [(str(scratch), source, entry) for entry in json.loads(path.read_text())]
+    with multiprocessing.get_context("fork").Pool(workers) as pool:
+        for rows in pool.imap(_rights_case, entries, chunksize=8):
+            yield from rows
+
+
 def _discourse_case(item):
     """`check_document` and `render_document` of one corpus document (in a pool worker)."""
     scratch, entry = item
@@ -357,7 +417,7 @@ def _discourse_case(item):
     source = hashlib.sha256(json.dumps(entry, sort_keys=True).encode()).hexdigest()
     return [{"case": entry["id"], "op": op, "source_sha256": source, "authority": "default",
              "outcome": outcome(lambda: call(path))}
-            for op, call in zip(DISCOURSE_OPS, (check_document, render_document))]
+            for op, call in zip(DOCUMENT_OPS, (check_document, render_document))]
 
 
 def discourse_corpus(root: Path) -> list[dict]:
@@ -461,6 +521,11 @@ def child(args) -> int:
                 for record in pilot_records(root, Path(args.out).with_suffix(".pilots"), args.workers):
                     write({"corpus": corpus, **record})
                 continue
+            if corpus == "rights":
+                for record in rights_records(Path(args.out).with_suffix(".rights.json"),
+                                             Path(args.out).with_suffix(".rights"), args.workers):
+                    write({"corpus": corpus, **record})
+                continue
             if corpus == "discourse":
                 for record in discourse_records(Path(args.out).with_suffix(".discourse"), args.workers):
                     write({"corpus": corpus, **record})
@@ -480,10 +545,12 @@ def child(args) -> int:
 
 def record(args) -> int:
     root = Path(args.root).resolve()
-    if "readings" in args.corpus:
-        corpus = Path(args.out).resolve().with_suffix(".readings.json")
+    for name in ("readings", "rights"):
+        if name not in args.corpus:
+            continue
+        corpus = Path(args.out).resolve().with_suffix(f".{name}.json")
         if not corpus.exists():
-            done = subprocess.run([sys.executable, str(Path(__file__).resolve()), "_readings_corpus",
+            done = subprocess.run([sys.executable, str(Path(__file__).resolve()), f"_{name}_corpus",
                                    "--out", str(corpus)], cwd=ROOT, env={**os.environ, "PYTHONPATH": str(ROOT)})
             if done.returncode != 0:
                 return 2
@@ -501,7 +568,7 @@ class Unusable(Exception):
 
 
 def authorities_of(corpus: str, authorities=AUTHORITIES) -> tuple[str, ...]:
-    return ("default",) if corpus in ("pilots", "readings", "discourse") else tuple(authorities)
+    return ("default",) if corpus in ("pilots", "readings", "discourse", "rights") else tuple(authorities)
 
 
 def only(op: str):
@@ -513,7 +580,7 @@ def expected_cases(root: Path, corpora=CORPORA, authorities=AUTHORITIES) -> dict
     """Every case each (corpus, authority) of a complete recording holds, from this checkout's
     corpora, not from a recording: the conformance files' case ids, the cells and named probes of
     the probe matrix's frozen baseline, the pilot documents, the readings corpus's cases and the
-    discourse and quantity corpora's entries. Each case maps to its operations:
+    discourse and quantity corpora's entries and the rights corpus's cases. Each case maps to its operations:
     a function of the outcomes a recording holds for the case (`{op: outcome}`) giving the set of
     operations it must hold, since a conformance case's later operations run only on what its
     earlier ones returned (`conformance_ops`)."""
@@ -530,7 +597,9 @@ def expected_cases(root: Path, corpora=CORPORA, authorities=AUTHORITIES) -> dict
         elif corpus == "readings":
             cases[corpus] = {name: only("readings_validate") for name in readings_cases()}
         elif corpus == "discourse":
-            cases[corpus] = {entry["id"]: (lambda held: set(DISCOURSE_OPS)) for entry in discourse_corpus(root)}
+            cases[corpus] = {entry["id"]: (lambda held: set(DOCUMENT_OPS)) for entry in discourse_corpus(root)}
+        elif corpus == "rights":
+            cases[corpus] = {name: (lambda held: set(DOCUMENT_OPS)) for name in rights_cases()}
         elif corpus == "quantity":
             cases[corpus] = {entry["id"]: only(entry["op"]) for entry in quantity_corpus(root)}
         else:
@@ -577,9 +646,10 @@ def record_problem(row) -> str | None:
 
 def _source_group(key: tuple) -> tuple:
     """The records that read one corpus file: a conformance file, the probe matrix, a pilot document,
-    the readings corpus, a discourse corpus entry."""
+    the readings corpus, a discourse corpus entry, the rights corpus."""
     corpus, _, case, _ = key
-    return {"conformance": (corpus, case.split("/")[0]), "probe": (corpus,), "readings": (corpus,)}.get(
+    return {"conformance": (corpus, case.split("/")[0]), "probe": (corpus,), "readings": (corpus,),
+            "rights": (corpus,)}.get(
         corpus, (corpus, case))
 
 
@@ -815,8 +885,9 @@ def main(argv=None) -> int:
         p.add_argument("--corpus", nargs="+", default=list(CORPORA), choices=CORPORA)
         p.add_argument("--authority", nargs="+", default=list(AUTHORITIES), choices=AUTHORITIES)
         p.add_argument("--workers", type=int, default=4)
-    p = sub.add_parser("_readings_corpus")
-    p.add_argument("--out", required=True)
+    for name in ("_readings_corpus", "_rights_corpus"):
+        p = sub.add_parser(name)
+        p.add_argument("--out", required=True)
     p = sub.add_parser("compare")
     p.add_argument("base")
     p.add_argument("head")
@@ -831,6 +902,9 @@ def main(argv=None) -> int:
         return child(args)
     if args.command == "_readings_corpus":
         readings_corpus(Path(args.out))
+        return 0
+    if args.command == "_rights_corpus":
+        rights_corpus(Path(args.out))
         return 0
     delta = json.loads(args.delta.read_text()) if args.delta else None
     try:

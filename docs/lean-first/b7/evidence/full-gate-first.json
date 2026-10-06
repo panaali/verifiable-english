@@ -1,0 +1,171 @@
+{
+  "commit_sha": "8bcd4e867c3251167214ec4a2114a371c46fde35",
+  "counts": {
+    "collected": 11082,
+    "deselected": 1,
+    "failed": 3,
+    "passed": 11071,
+    "rust_ignored": 0,
+    "rust_passed": 50,
+    "selected": 11081,
+    "skipped": 7
+  },
+  "dirty": false,
+  "environment": {
+    "base": {
+      "CARGO_HOME": "/tmp/ve-gate-nb3m5lne/cargo-home",
+      "GIT_CONFIG_NOSYSTEM": "1",
+      "HOME": "/tmp/ve-gate-nb3m5lne/home",
+      "LAKE_CACHE_DIR": "/tmp/ve-gate-nb3m5lne/lake-cache",
+      "LANG": "C.UTF-8",
+      "LC_ALL": "C.UTF-8",
+      "PATH": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin:/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin:/tmp/ve-gate-nb3m5lne/bin:/usr/bin:/bin",
+      "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+      "PYTHONNOUSERSITE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/ve-gate-nb3m5lne/pycache",
+      "TMPDIR": "/tmp/ve-gate-nb3m5lne/tmp",
+      "UV_CACHE_DIR": "/tmp/ve-gate-nb3m5lne/uv-cache",
+      "UV_NO_CONFIG": "1",
+      "XDG_CACHE_HOME": "/tmp/ve-gate-nb3m5lne/home/.cache",
+      "XDG_CONFIG_HOME": "/tmp/ve-gate-nb3m5lne/home/.config",
+      "XDG_DATA_HOME": "/tmp/ve-gate-nb3m5lne/home/.local/share"
+    },
+    "cargo": {
+      "CARGO_ENCODED_RUSTFLAGS": "--remap-path-prefix=/home/seyran/code/ve-lf-7=/ve\u001f--remap-path-prefix=/tmp/ve-gate-nb3m5lne/cargo-home=/cargo-home\u001f--remap-path-prefix=/home/seyran/code/ve-lf-7/rust/target=/ve-target",
+      "CARGO_HOME": "/tmp/ve-gate-nb3m5lne/cargo-home",
+      "CARGO_NET_OFFLINE": "true",
+      "GIT_CONFIG_NOSYSTEM": "1",
+      "HOME": "/tmp/ve-gate-nb3m5lne/home",
+      "LAKE_CACHE_DIR": "/tmp/ve-gate-nb3m5lne/lake-cache",
+      "LANG": "C.UTF-8",
+      "LC_ALL": "C.UTF-8",
+      "PATH": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin:/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin:/tmp/ve-gate-nb3m5lne/bin:/usr/bin:/bin",
+      "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+      "PYTHONNOUSERSITE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/ve-gate-nb3m5lne/pycache",
+      "TMPDIR": "/tmp/ve-gate-nb3m5lne/tmp",
+      "UV_CACHE_DIR": "/tmp/ve-gate-nb3m5lne/uv-cache",
+      "UV_NO_CONFIG": "1",
+      "XDG_CACHE_HOME": "/tmp/ve-gate-nb3m5lne/home/.cache",
+      "XDG_CONFIG_HOME": "/tmp/ve-gate-nb3m5lne/home/.config",
+      "XDG_DATA_HOME": "/tmp/ve-gate-nb3m5lne/home/.local/share"
+    },
+    "pytest": {
+      "CARGO_HOME": "/tmp/ve-gate-nb3m5lne/cargo-home",
+      "GIT_CONFIG_NOSYSTEM": "1",
+      "HOME": "/tmp/ve-gate-nb3m5lne/home",
+      "LAKE_CACHE_DIR": "/tmp/ve-gate-nb3m5lne/lake-cache",
+      "LANG": "C.UTF-8",
+      "LC_ALL": "C.UTF-8",
+      "PATH": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin:/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin:/tmp/ve-gate-nb3m5lne/bin:/usr/bin:/bin",
+      "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+      "PYTHONNOUSERSITE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/ve-gate-nb3m5lne/pycache",
+      "TMPDIR": "/tmp/ve-gate-nb3m5lne/tmp",
+      "UV_CACHE_DIR": "/tmp/ve-gate-nb3m5lne/uv-cache",
+      "UV_NO_CONFIG": "1",
+      "VE_GATE_PYTEST_PROGRESS": "/tmp/ve-gate-nb3m5lne/current-test.txt",
+      "VE_GATE_PYTEST_RESULT": "/tmp/ve-gate-nb3m5lne/pytest-collection.json",
+      "VE_LEAN_PREBUILT": "1",
+      "VE_NATIVE_PREBUILT": "1",
+      "VE_RUST_BINARY": "/home/seyran/code/ve-lf-7/rust/target/release/ve",
+      "VE_RUST_PREBUILT": "1",
+      "XDG_CACHE_HOME": "/tmp/ve-gate-nb3m5lne/home/.cache",
+      "XDG_CONFIG_HOME": "/tmp/ve-gate-nb3m5lne/home/.config",
+      "XDG_DATA_HOME": "/tmp/ve-gate-nb3m5lne/home/.local/share"
+    }
+  },
+  "failures": [
+    {
+      "reason": "Python suite: exit 1",
+      "stage": "pytest command"
+    },
+    {
+      "nodeid": "tests/test_assurance_manifest.py::test_broad_exception_handlers_are_reviewed",
+      "reason": "def test_broad_exception_handlers_are_reviewed():\n        \"\"\"A handler broad enough to catch CheckerUnavailable could turn it into a result.\"\"\"\n        broad = (\"Exception\", \"BaseException\", \"RuntimeError\")\n        found = set()\n        def own(node):\n            # The node's own body, not nested functions (reported under their own name).\n            pending = list(ast.iter_child_nodes(node))\n            while pending:\n                child = pending.pop()\n                if not isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Lambda)):\n                    yield child\n                    pending.extend(ast.iter_child_nodes(child))\n    \n        for _, rel, tree in _modules():\n            for qualname, node in [(\"<module>\", tree), *_qualified(tree)]:\n                for handler in own(node):\n                    if not isinstance(handler, ast.ExceptHandler):\n                        continue\n                    caught = (handler.type.elts if isinstance(handler.type, ast.Tuple) else [handler.type])\n                    if handler.type is None or any(getattr(t, \"id\", None) in broad for t in caught):\n                        found.add(f\"{rel.as_posix()}:{qualname}\")\n        reviewed = MANIFEST[\"reviewed_broad_handlers\"]\n>       assert found == set(reviewed), \"\\n\".join(sorted(found ^ set(reviewed)))\nE       AssertionError: ve/rights.py:RightsDocument.__init__\nE       assert {'ve/__main__...command', ...} == {'ve/__main__...command', ...}\nE         \nE         Extra items in the left set:\nE         've/rights.py:RightsDocument.__init__'\nE         Use -v to get more diff\n\ntests/test_assurance_manifest.py:277: AssertionError",
+      "stage": "pytest"
+    },
+    {
+      "nodeid": "tests/test_consolidation_tools.py::test_committed_trust_table_covers_every_declaration",
+      "reason": "def test_committed_trust_table_covers_every_declaration():\n        files, problems = trust_map.measure()\n        assert problems == []\n        totals = trust_map.totals(files)\n>       assert totals[\"unclassified\"] == 0\nE       assert 64 == 0\n\ntests/test_consolidation_tools.py:1311: AssertionError",
+      "stage": "pytest"
+    },
+    {
+      "nodeid": "tests/test_inventory_lint.py::test_every_recorded_exception_is_still_used",
+      "reason": "def test_every_recorded_exception_is_still_used():\n        _, excepted = lint.violations()\n        used = {(row[\"consumer\"].split(\":\")[0], row[\"consumer\"].split(\":\")[1],\n                 row[\"provider\"].split(\":\")[0], row[\"provider\"].split(\":\")[1]) for row in excepted}\n>       assert used == set(lint.EXCEPTIONS)\nE       AssertionError: assert {('ve.closure...hecker'), ...} == {('ve.closure...hecker'), ...}\nE         \nE         Extra items in the right set:\nE         ('ve.rights', 'RightsDocument.__init__', 've.ast', '_Checker')\nE         ('ve.rights_route', 'check_rights_regenerated', 've.ast', '_Checker')\nE         Use -v to get more diff\n\ntests/test_inventory_lint.py:18: AssertionError",
+      "stage": "pytest"
+    }
+  ],
+  "schema_version": 1,
+  "skips": [
+    {
+      "allowed": true,
+      "nodeid": "tests/test_assist.py::test_p5_real_dev_file_loads_when_present",
+      "reason": "('/home/seyran/code/ve-lf-7/tests/test_assist.py', 90, 'Skipped: P5 materials not available')"
+    },
+    {
+      "allowed": true,
+      "nodeid": "tests/test_grammar_backends.py::test_llguidance_compiles_lark_and_gbnf_exports",
+      "reason": "('/home/seyran/code/ve-lf-7/tests/test_grammar_backends.py', 22, \"Skipped: could not import 'llguidance': No module named 'llguidance'\")"
+    },
+    {
+      "allowed": true,
+      "nodeid": "tests/test_grammar_backends.py::test_xgrammar_compiles_and_matches_ebnf_exports",
+      "reason": "('/home/seyran/code/ve-lf-7/tests/test_grammar_backends.py', 51, \"Skipped: could not import 'xgrammar': No module named 'xgrammar'\")"
+    },
+    {
+      "allowed": true,
+      "nodeid": "tests/test_nary_folio.py::test_full_nary_folio_accounting_when_corpus_is_available",
+      "reason": "('/home/seyran/code/ve-lf-7/tests/test_nary_folio.py', 18, 'Skipped: optional pinned FOLIO v2 corpus is not downloaded')"
+    },
+    {
+      "allowed": true,
+      "nodeid": "tests/test_p0_three_way.py::test_rust_matches_expected[admission]",
+      "reason": "('/home/seyran/code/ve-lf-7/tests/test_p0_three_way.py', 92, 'Skipped: admission is outside Rust scope')"
+    },
+    {
+      "allowed": true,
+      "nodeid": "tests/test_p1_native_counter.py::test_retained_deepinfra_smoke_native_count[weak-21]",
+      "reason": "('/home/seyran/code/ve-lf-7/tests/test_p1_native_counter.py', 60, 'Skipped: pinned tokenizer not cached; test never downloads')"
+    },
+    {
+      "allowed": true,
+      "nodeid": "tests/test_safety_framework.py::test_build_check_writes_nothing_beside_the_source",
+      "reason": "('/home/seyran/code/ve-lf-7/tests/test_safety_framework.py', 180, 'Skipped: the pinned source is not stored on this machine')"
+    },
+    {
+      "allowed": true,
+      "deselected": true,
+      "nodeid": "tests/test_llm.py::test_live_smoke",
+      "reason": "excluded live model call"
+    }
+  ],
+  "stages": [
+    "toolchains",
+    "lean_build",
+    "lean_audit",
+    "rust_build",
+    "cargo_test",
+    "pytest"
+  ],
+  "status": "failed",
+  "toolchains": {
+    "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+    "lake": "Lake version 5.0.0-src+797c613 (Lean version 4.24.0)",
+    "lean": "Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)",
+    "lean_pin": "4.24.0",
+    "paths": {
+      "cargo": "/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin/cargo",
+      "lake": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lake",
+      "lean": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean",
+      "rustc": "/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin/rustc",
+      "uv": "/tmp/ve-gate-nb3m5lne/bin/uv"
+    },
+    "python": "Python 3.14.7",
+    "rust_pin": "1.98.1",
+    "rust_toolchain": "1.98.1-x86_64-unknown-linux-gnu",
+    "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+    "uv": "uv 0.12.19 (x86_64-unknown-linux-gnu)",
+    "uv_lock_sha256": "312825c8c53903f3dcacc5aa9fea5514183a99aa155f4df9ee056d163011b75b"
+  }
+}
