@@ -883,6 +883,8 @@ module ResponseShape ad7bb48749b5dec2adeff5b9e9094dcd75236224dfd114073074b8941fa
 620:0-620:113 def ResponseShape.tok@ResponseShape
 627:0-627:84 def ResponseShape.disagreeing@ResponseShape
 628:0-631:14 def ResponseShape.brokenOn@ResponseShape
+module SensesMain 05cc0d2c0d864744efa3e0602376447057c5b4710b6188d794e5bae5eeef8d11
+3:0-3:68 def main@SensesMain
 module Serve 00cd744c318adec2f3c44dfd629bc4ec6e369fd69c2aea6b4ec46cb500020261
 3:0-21:10 def main@Serve
 module VE.Alternatives.Admission 64cacbdf9eb6906fcf61897a6fdc0f1c3876737345c58132626ac2b3fb15d0a2
@@ -11328,6 +11330,16 @@ module VE.Senses.Read c69cac8b27416a6b312e8ede1f300e7f79cd9ac696096e5f574da0f6af
 933:0-963:61 theorem VE.Senses.candidates_complete@VE.Senses.Read
 965:0-994:63 theorem VE.Senses.mixed_exact@VE.Senses.Read
 996:0-1005:37 def VE.Senses.senseMap_ids@VE.Senses.Read
+module VE.Senses.Run a65842cd3f54e5fdd7fa57458f415d205e003a073ac2406c77ee44a2d2bcd12f
+13:0-13:74 def VE.Senses.Run.pairJson@VE.Senses.Run
+15:0-17:57 def VE.Senses.Run.candidateJson@VE.Senses.Run
+19:0-24:17 def VE.Senses.Run.unitJson@VE.Senses.Run
+26:0-32:17 def VE.Senses.Run.occurrenceJson@VE.Senses.Run
+34:0-45:38 def VE.Senses.Run.outcomeJson@VE.Senses.Run
+47:0-51:47 def VE.Senses.Run.decodeDictionary@VE.Senses.Run
+53:0-64:102 def VE.Senses.Run.readCase@VE.Senses.Run
+66:0-70:84 def VE.Senses.Run.runCaseReported@VE.Senses.Run
+72:0-89:88 def VE.Senses.Run.main@VE.Senses.Run
 module VE.Service.Diagnose 0913297b59dc00e6821619a9df029ade52518172aed644518bdc48e13174622b
 13:0-25:61 def VE.Service.Diagnose.diagnoseCase@VE.Service.Diagnose
 27:0-32:29 theorem VE.Service.Diagnose.diagnoseCase_registered@VE.Service.Diagnose

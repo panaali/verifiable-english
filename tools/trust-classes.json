@@ -695,6 +695,11 @@
     "ResponseShape.Fault"
    ]
   },
+  "SensesMain.lean": {
+   "G[V]": [
+    "main"
+   ]
+  },
   "Serve.lean": {
    "G[V]": [
     "main"
@@ -6814,6 +6819,21 @@
     "VE.Senses.tryChoice",
     "VE.Senses.unresolvedIn",
     "VE.Senses.unswitchedIn"
+   ]
+  },
+  "VE/Senses/Run.lean": {
+   "D[V]": [
+    "VE.Senses.Run.decodeDictionary"
+   ],
+   "G[V]": [
+    "VE.Senses.Run.candidateJson",
+    "VE.Senses.Run.main",
+    "VE.Senses.Run.occurrenceJson",
+    "VE.Senses.Run.outcomeJson",
+    "VE.Senses.Run.pairJson",
+    "VE.Senses.Run.readCase",
+    "VE.Senses.Run.runCaseReported",
+    "VE.Senses.Run.unitJson"
    ]
   },
   "VE/Service/Diagnose.lean": {

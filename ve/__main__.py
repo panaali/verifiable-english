@@ -51,6 +51,23 @@ def _main(argv=None):
     if argv[:1] == ["assist"]:
         from .assist.cli import main as assist_main
         return assist_main(argv[1:])
+    if argv[:2] == ["senses", "check"]:
+        senses_parser = argparse.ArgumentParser(prog="python -m ve senses check")
+        senses_parser.add_argument("--env", required=True, help="environment JSON file")
+        senses_parser.add_argument("--pack", action="append", required=True, help="sense pack JSON file")
+        senses_parser.add_argument("source", help="English text file")
+        options = senses_parser.parse_args(argv[2:])
+        try:
+            from .senses import load_pack
+            from .backends.senses import read
+            env = Environment(loads_json(_read(options.env)))
+            result = read(env, _read(options.source, MAX_SOURCE_BYTES).decode("utf-8"),
+                          [load_pack(path) for path in options.pack])
+            _emit(result)
+            return 0 if result["reading"]["status"] == "one" else 3
+        except (VEError, UnicodeError, OSError) as exc:
+            _emit({"status": "InvalidInput", "error": str(exc)})
+            return 2
     if argv[:2] == ["adapter", "run"]:
         from .adapters.cli import main as adapter_main
         return adapter_main(argv[2:])
@@ -204,6 +221,8 @@ def _main(argv=None):
         if command in ("evaluate", "check"):
             sub.add_argument("--model", required=command == "evaluate", help="complete finite-model JSON")
             sub.add_argument("--candidate-ast", help="document AST JSON to check against source")
+        if command == "check":
+            sub.add_argument("--senses", action="append", help="sense pack JSON file; repeat for more packs")
         if command in ("evaluate", "check", "countermodel"):
             sub.add_argument("--max-evaluations", type=int, default=1_000_000)
         if command in ("evaluate", "check"):
@@ -264,6 +283,16 @@ def _main(argv=None):
 
         defer_display_options = surface == "strict" and args.command in ("check", "evaluate", "parse", "countermodel")
         english_options, provenance = ({}, {}) if defer_display_options else load_english_options()
+        if args.command == "check" and args.senses:
+            if surface != "english" or args.model or args.candidate_ast:
+                raise VEError("--senses requires --surface english without a model or candidate AST")
+            from .senses import load_pack
+            from .backends.senses import read
+            result = read(env, _read(args.source, MAX_SOURCE_BYTES).decode("utf-8"),
+                          [load_pack(path) for path in args.senses],
+                          overlay=english_options.get("vocabulary"))
+            _emit(result)
+            return 0 if result["reading"]["status"] == "one" else 3
         if (surface == "english" or getattr(args, "view", None) == "ve_english") and provenance.get("overlay_digest"):
             print(json.dumps(provenance), file=sys.stderr)
         paraphrases = {}
