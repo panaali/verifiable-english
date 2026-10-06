@@ -83,6 +83,18 @@ def test_lean_fixtures_are_generated_from_the_python_reference():
         'regenerate: uv run python -m conformance.english_lean_lexicon --lean-fixtures'
 
 
+def test_every_corpus_environment_has_a_valid_selected_lexicon():
+    report = X.corpus_report()
+    assert len(report['environments']) == 39
+    assert report['valid'] == len(report['environments'])
+    assert report['invalid'] == 0
+    assert report['failures_by_condition'] == {}
+    assert report['wording_key_differences'] == []
+    assert all('error' not in row and row['failures'] == [] for row in report['environments'])
+    committed = json.loads((ROOT / 'conformance/english-lean/lexicon-report.json').read_text())
+    assert committed == report
+
+
 def test_mutants_reach_every_condition_and_never_crash():
     env = _environment('F')
     view = X.lexical_view(EnglishVocabulary(env))

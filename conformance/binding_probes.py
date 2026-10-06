@@ -163,6 +163,17 @@ def _surface():
             "source": print_document(env, document_from_data(env, case["ast"]))}
 
 
+def _senses():
+    from ve.backends.senses import request
+    from ve.senses import bundled_pack
+    env = {"language": "ve.core@0", "profile": "relational-fol@0", "spec_revision": "ve-v0-draft-2026-09-20",
+           "vocabulary": {"sorts": {"person": {"description": "A sort."}, "joke": {"description": "A sort."}},
+                          "predicates": {},
+                          "constants": {"alice": {"sort": "person", "description": "A constant."},
+                                        "riddle": {"sort": "joke", "description": "A constant."}}}}
+    return request(_python(env), "Alice tells the riddle.", [bundled_pack("fixtures@1").decode("utf-8")])
+
+
 C, S = "ve_conformance", "ve_service"
 BUILDERS = {
     ("wire.diagnose", S, "diagnose", "soft-elaborate"):
@@ -203,6 +214,7 @@ BUILDERS = {
     ("graph.compose", C, "route", "certificate"): lambda: _certificate_case(_route(), "edge", "certificate"),
     ("graph.compose", C, "check-certificate", None): lambda: _certificate_case(_legacy(), "edge"),
     ("bundle.check", C, "route", "bundle"): _bundle,
+    ("senses.read", "ve_senses_route", "", None): _senses,
 }
 
 

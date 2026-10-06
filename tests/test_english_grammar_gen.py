@@ -218,7 +218,8 @@ def test_a_new_english_grammar_lean_file_must_be_classified(tree):
 
 def test_every_lean_file_of_the_two_directories_is_classified():
     found = set(G.file_listing(ROOT)())
-    classified = set(G.TRUSTED) | set(G.UNTRUSTED) | {TARGET}
+    classified = (set(G.TRUSTED) | set(G.UNTRUSTED) | {target for _, target, _ in G.PROFILES.values()}
+                  | set(G.generated_extras()))
     assert found == classified
 
 
@@ -236,8 +237,10 @@ def test_actions_version_has_one_literal_and_it_is_generated():
 
 def test_the_version_module_follows_the_lock(tree):
     lock = json.loads((tree / G.LOCK).read_bytes())
-    (tree / G.LOCK).write_bytes(G.render_lock("7", lock["files"]))
-    assert run_check(tree) == [f"{G.VERSION_TARGET}: does not hold actions_version '7' of {G.LOCK}; run --write"]
+    changed_version = lock["actions_version"] + ".1"
+    (tree / G.LOCK).write_bytes(G.render_lock(changed_version, lock["files"]))
+    assert run_check(tree) == [f"{G.VERSION_TARGET}: does not hold actions_version {changed_version!r} "
+                               f"of {G.LOCK}; run --write"]
 
 
 def test_write_reproduces_the_committed_files(tree):

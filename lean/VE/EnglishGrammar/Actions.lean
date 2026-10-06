@@ -16,6 +16,13 @@ children's values. `lexActs E L` has one action per lexical row, `LexAct.action`
 the row's data alone. An action's argument types are the types of its rule's right-hand side; when they
 do not have the shape the action reads, the action is `unfit`, which `Grammar.typed` refuses, so `read`
 reports `invalidGrammar notTyped` instead of computing anything.
+
+S3 (docs/spec/english-lean-s3.md 2.7, 2.8): an integer term is evaluated at a depth kept in `Ctx.nesting`, 1
+for each integer slot of a clause or a comparison; a clause reads its object terms first, then its integer
+terms, and a `nestingLimit` among the integer terms comes before any other of their rejections (Python's
+`int_syntax` checks shape and depth before `int_term` evaluates). An attribute reads both terms with the
+clause's own `leftmost`. A guard runs the six steps of `alternatives_guard` in Python's order; its risk flag is
+data of its row, set from the profile list.
 -/
 
 namespace VE.EnglishGrammar
@@ -190,6 +197,19 @@ def tokText : Tok → String
 def ofToken (out : Ty) (f : String → Sem out) (τs : List Ty) : Action sig :=
   if τs = [.tok] then ⟨[.tok], out, fun xs => f (tokText xs.1)⟩ else unfit
 
+/-- A clause slot (S3 spec 2.7): an object term or an integer term. -/
+inductive Slot where
+  | obj (t : Sem .term)
+  | int (t : Sem .intTerm)
+
+/-- The slot values among the arguments, in order. -/
+def slotsOf : (τs : List Ty) → Args sig τs → List Slot
+  | [], _ => []
+  | τ :: τs, xs =>
+    if h : τ = .term then .obj (cast (by rw [h]; rfl) xs.1) :: slotsOf τs xs.2
+    else if h2 : τ = .intTerm then .int (cast (by rw [h2]; rfl) xs.1) :: slotsOf τs xs.2
+    else slotsOf τs xs.2
+
 /-- The term values among the arguments, in order. -/
 def termsOf : (τs : List Ty) → Args sig τs → List (Sem .term)
   | [], _ => []
@@ -200,6 +220,49 @@ first symbol is a term (and may then keep `leftmost`). -/
 def ofTerms (out : Ty) (f : Bool → List (Sem .term) → Sem out) (τs : List Ty) : Action sig :=
   if τs.all (fun τ => τ == .tok || τ == .term) then ⟨τs, out, fun xs => f (τs.head? == some .term) (termsOf τs xs)⟩
   else unfit
+
+/-- The action of a rule of terminals, terms and integer terms, which reads the slots with `f`; `f` learns
+whether the first symbol is a term (S3 spec 2.6, 2.7). -/
+def ofSlots (out : Ty) (f : Bool → List Slot → Sem out) (τs : List Ty) : Action sig :=
+  if τs.all (fun τ => τ == .tok || τ == .term || τ == .intTerm) then
+    ⟨τs, out, fun xs => f (τs.head? == some .term) (slotsOf τs xs)⟩
+  else unfit
+
+/-- The context of an integer slot: depth 1, whatever the formula's nesting (S3 spec 2.7, `int_syntax`). -/
+def Ctx.intStart (c : Ctx) : Ctx := { c with nesting := 1, leftmost := false }
+
+/-- An integer term one or more levels deeper. -/
+def Ctx.down (c : Ctx) (k : Nat) : Ctx := { c with nesting := c.nesting + k, leftmost := false }
+
+/-- The object terms of a clause, in order, the first keeping `leftmost` when it begins the rule; an integer
+slot is `none`. The first rejection is the result. -/
+def runObjects : List Slot → Ctx → Bool → Except Reject (List (Option ETerm))
+  | [], _, _ => .ok []
+  | .obj t :: ss, c, first => do
+    let v ← t (if first then c else c.inner)
+    let vs ← runObjects ss c false
+    pure (some v.term :: vs)
+  | .int _ :: ss, c, _ => do
+    let vs ← runObjects ss c false
+    pure (none :: vs)
+
+/-- Integer results: `nestingLimit` when any has it, else the first other rejection, else the terms. -/
+def collectInts (rs : List (Except Reject TermVal)) : Except Reject (List ETerm) :=
+  if rs.any (fun | .error .nestingLimit => true | _ => false) then .error .nestingLimit
+  else rs.mapM fun r => (·.term) <$> r
+
+/-- The slots' terms in rule order. -/
+def mergeSlots : List (Option ETerm) → List ETerm → List ETerm
+  | [], _ => []
+  | some t :: os, is => t :: mergeSlots os is
+  | none :: os, i :: is => i :: mergeSlots os is
+  | none :: os, [] => mergeSlots os []
+
+/-- Runs the slots of a clause (S3 spec 2.7): the object terms first, then the integer terms at depth 1. -/
+def runSlots (ss : List Slot) (c : Ctx) (first : Bool) : Except Reject (List ETerm) := do
+  let os ← runObjects ss c first
+  let is ← collectInts (ss.filterMap fun | .int t => some (t c.intStart) | .obj _ => none)
+  pure (mergeSlots os is)
 
 /-- Runs the terms of a clause: the first keeps `leftmost` when it begins the rule, the others do not. -/
 def runTerms : List (Sem .term) → Ctx → Bool → Except Reject (List ETerm)
@@ -284,6 +347,93 @@ def runReachBody (listed refl : Bool) (t u : Sem .term) (src dst : Sem .declarat
     let inner := (c.push s).push d
     let B ← body (if listed then inner.listed else inner.deeper)
     pure (.reachBody refl s.1 B a.term b.term)
+
+/-! ## Integer terms, guards and attributes (S3 spec 2.7) -/
+
+/-- The depth check of an integer term: deeper than 64 is `nestingLimit` (`english.py:1160`). -/
+def depthOk (c : Ctx) (v : Except Reject TermVal) : Except Reject TermVal :=
+  if c.nesting > 64 then .error .nestingLimit else v
+
+/-- Two integer operands: `nestingLimit` when either has it, else the first other rejection. -/
+def bothInts (a b : Except Reject TermVal) : Except Reject (ETerm × ETerm) := do
+  match ← collectInts [a, b] with
+  | [x, y] => pure (x, y)
+  | _ => .error .nestingLimit
+
+/-- A numeral term (`ve/ast.py:204–209`): the depth check, then `numeralBound` when its digits and its sign are
+more than 40 characters. The terminal `cls numeral` accepts only a numeral token. -/
+def numeralTerm (negative : Bool) (t : Tok) (c : Ctx) : Except Reject TermVal :=
+  depthOk c <| match t with
+    | .numeral v =>
+      if (toString v.natAbs).length + (if negative then 1 else 0) > 40 then .error .numeralBound
+      else .ok ⟨.num (if negative then -v else v), none⟩
+    | _ => .error .numeralBound
+
+/-- `[a op b]` (`english.py:1166–1175`, `:1205–1216`): the left term one level deeper, the right one level
+deeper or two after `-`; then the sum, the difference or the scaling by a numeral. -/
+def runBracket (a : Sem .intTerm) (op : String) (b : Sem .intTerm) (c : Ctx) : Except Reject TermVal :=
+  depthOk c do
+    let (x, y) ← bothInts (a (c.down 1)) (b (c.down (if op == "-" then 2 else 1)))
+    if op == "+" then pure ⟨.add x y, none⟩
+    else if op == "-" then pure ⟨.add x (.scale (-1) y), none⟩
+    else match x with
+      | .num k => pure ⟨.scale k y, none⟩
+      | _ => .error .coefficientNotNumeral
+
+def IntCmp.make : IntCmp → ETerm → ETerm → EFormula
+  | .eq => .eq
+  | .lt => .lt
+  | .le => .le
+
+/-- The action of a numeral row: `numeral → cls numeral`, or `numeral → minus cls numeral` when negative. -/
+def numeralAct (negative : Bool) (τs : List Ty) : Action sig :=
+  if negative then
+    if τs = [.unit, .tok] then ⟨[.unit, .tok], .intTerm, fun xs => numeralTerm true xs.2.1⟩ else unfit
+  else if τs = [.tok] then ⟨[.tok], .intTerm, fun xs => numeralTerm false xs.1⟩ else unfit
+
+/-- A term under one more binder. -/
+def ETerm.lift : ETerm → ETerm
+  | .var i => .var (i + 1)
+  | t => t
+
+/-- `not risk__might_lead_to(_, _)`: the part a blocked `every … cannot` guard has (`english.py:1349–1360`). -/
+def cannotAtom : EFormula → Bool
+  | .not (.pred "risk__might_lead_to" [_, _]) => true
+  | _ => false
+
+/-- The verb's formula, or a conjunction or disjunction with such a part. -/
+def cannotPart : EFormula → Bool
+  | .and a b | .or a b => cannotAtom a || cannotAtom b
+  | b => cannotAtom b
+
+/-- The guard (S3 spec 2.7, `english.py:1296–1367`), in Python's order: the reference action, the owner, the
+excluded action, the verb under the guard's binding, the `every … cannot` block, the formula. -/
+def runGuard (mode : GuardMode) (a n available : String) (risk : Bool) (owner : Sem .term)
+    (excluded : Option (Sem .term)) (verb : Sem .relative) (c : Ctx) : Except Reject EFormula := do
+  let k0 ← if mode == .every then pure 0 else
+    match c.scope.findIdx? (·.1 == a) with
+    | some k => pure k
+    | none => .error .unboundReference
+  let o ← owner c.inner
+  let k ← match excluded with
+    | none => pure k0
+    | some e => do
+      let x ← e c.inner
+      match x.term with
+      | .var i => if (c.scope[i]?.map (·.1)) == some a then pure i else .error .sortMismatch
+      | _ => .error .sortMismatch
+  let B ← verb (c.push (a, if mode == .every then "that " ++ n else "that other " ++ n))
+  if mode == .every && risk && cannotPart B then .error (.blockedWording "risk-every-cannot")
+  else
+    let A := EFormula.pred available [.var 0, o.term.lift]
+    let D := EFormula.not (.eq (.var 0) (.var (k + 1)))
+    pure (match mode with
+      | .every => .all a (.implies A B)
+      | .other => .all a (.implies (.and A D) B)
+      | .another => .ex a (.and (.and A D) B))
+
+/-- The reference text of the innermost binding is the head's (S3 spec 2.7, `verbSubject` and `verbSame`). -/
+def headIsInnermost (c : Ctx) (head : String) : Bool := c.scope.head?.map (·.2) == some head
 
 /-- The action of a fixed row, from the type of its left-hand side and the types of its right-hand
 side (spec 2.7). -/
@@ -415,23 +565,43 @@ def FixedAct.action (lhs : Ty) (τs : List Ty) : FixedAct → Action sig
     build [.term, .term, .count, .unit, .declaration, .unit, .declaration, .formula] .formula
       (fun xs => runReachBody listed xs.2.2.1 xs.1 xs.2.1 xs.2.2.2.2.1 xs.2.2.2.2.2.2.1 xs.2.2.2.2.2.2.2.1) τs
   | .count refl => constant .count refl τs
+  | .intNegate => build [.unit, .intTerm] .intTerm (fun xs c =>
+      (fun t => (⟨.scale (-1) t.term, none⟩ : TermVal)) <$> xs.2.1 (c.down 1)) τs
+  | .intConst => build [.constant] .intTerm (fun xs c => depthOk c (.ok ⟨.const xs.1.name, none⟩)) τs
+  | .intTwice => build [.constant] .intTerm (fun xs c => depthOk c (.ok ⟨.scale 2 (.const xs.1.name), none⟩)) τs
+  | .intBracket => build [.unit, .intTerm, .listMarker, .intTerm, .unit] .intTerm
+      (fun xs => runBracket xs.2.1 xs.2.2.1 xs.2.2.2.1) τs
+  | .numeral negative => numeralAct negative τs
+  | .op => ofToken .listMarker id τs
+  | .intCmp k swapped => build [.intTerm, .intTerm] .formula (fun xs c => do
+      let (x, y) ← bothInts (xs.1 c.intStart) (xs.2.1 c.intStart)
+      pure (if swapped then k.make y x else k.make x y)) τs
+  | .relOr => build [.relative, .relative] .relative (fun xs c => do
+      let a ← xs.1 c.inner
+      let b ← xs.2.1 c.inner
+      pure (.or a b)) τs
+  | .verbSubject => build [.listMarker, .relative] .relative (fun xs c =>
+      if headIsInnermost c xs.1 then xs.2.1 c.inner else .error .unboundReference) τs
+  | .verbSame => build [.listMarker, .term] .relative (fun xs c =>
+      if headIsInnermost c xs.1 then (fun t => EFormula.eq (.var 0) t.term) <$> xs.2.1 c.inner
+      else .error .unboundReference) τs
 
 /-- The action of a lexical row, from the types of its right-hand side (spec 2.7). -/
 def LexAct.action (τs : List Ty) : LexAct → Action sig
-  | .pred p order negated => ofTerms .formula (fun first ts c => do
-      let ws ← runTerms ts c first
+  | .pred p order negated => ofSlots .formula (fun first ts c => do
+      let ws ← runSlots ts c first
       pure (polarity negated (.pred p (permute order ws)))) τs
-  | .relSubject p order negated => ofTerms .relative (fun first ts c =>
+  | .relSubject p order negated => ofSlots .relative (fun first ts c =>
       if ts.length == order.length then do
         -- the wording begins with a word: the rule keeps every term, and the subject is prepended
-        let ws ← runTerms ts c first
+        let ws ← runSlots ts c first
         pure (polarity negated (.pred p (.var 0 :: permute order ws)))
       else if order.head? == some 0 then do
-        let ws ← runTerms ts c first
+        let ws ← runSlots ts c first
         pure (polarity negated (.pred p (permute order (.var 0 :: ws))))
       else .error .relativeForm) τs
-  | .relObject p negated => ofTerms .relative (fun first ts c => do
-      let ws ← runTerms ts c first
+  | .relObject p negated => ofSlots .relative (fun first ts c => do
+      let ws ← runSlots ts c first
       pure (polarity negated (.pred p (ws ++ [.var 0])))) τs
   | .noun s n => constant .noun (s, n) τs
   | .label s => ofToken .label (fun text => (s, text)) τs
@@ -442,19 +612,34 @@ def LexAct.action (τs : List Ty) : LexAct → Action sig
   | .owner s1 s2 => constant .relative (fun c =>
       if c.innerSort == some s2 then .ok (.ex s1 (.pred "owns" [.var 0, .var 1])) else .error .sortMismatch) τs
   | .relation r => constant .relation r τs
+  | .attribute r => build [.term, .term] .formula (fun xs c => do
+      -- both terms with the clause's own `leftmost` (`english.py:971`, `:995–997`)
+      let t ← xs.1 c
+      let u ← xs.2.1 c
+      pure (.pred r [t.term, u.term])) τs
+  | .attributeProperty r s => build [.term, .adjective] .formula (fun xs c => do
+      let t ← xs.1 c
+      pure (.ex s (.and (.pred r [t.term.lift, .var 0]) (.pred xs.2.1.1 [.var 0])))) τs
+  | .guard mode false a n available risk => build [.term, .relative] .formula
+      (fun xs => runGuard mode a n available risk xs.1 none xs.2.1) τs
+  | .guard mode true a n available risk => build [.term, .term, .relative] .formula
+      (fun xs => runGuard mode a n available risk xs.1 (some xs.2.1) xs.2.2.1) τs
+  | .altHead ref => constant .listMarker ref τs
+  | .termOther n => constant .term (fun c => c.lookup ("that other " ++ n)) τs
 
-/-- The types of a right-hand side. -/
-def rhsTys (rhs : List (Sym Terminal)) : List Ty := rhs.map (symTy sig ntTy)
+/-- The types of a right-hand side under a type table. -/
+def rhsTys (τ : Nat → Ty) (rhs : List (Sym Terminal)) : List Ty := rhs.map (symTy sig τ)
 
-/-- The fixed actions: the action of fixed row `i` at index `i`. Closed: no environment, no lexicon. -/
-def fixedActs : Array (Action sig) :=
-  relationalFolRows.map fun r => r.act.action (ntTy r.lhs) (rhsTys r.rhs)
+/-- The fixed actions of a profile list: the action of fixed row `i` at index `i`. Closed: they read the
+profile list only, neither an environment nor a lexicon. -/
+def fixedActs (profiles : List String) : Array (Action sig) :=
+  (fixedTable profiles).map fun r => r.act.action (ntTy r.lhs) (rhsTys ntTy r.rhs)
 
-/-- One action per lexical rule, in the order of `lexRules E L`. -/
+/-- One action per lexical rule, in the order of `lexRules E L`, typed by `ty E L`. -/
 def lexActs (E : Env) (L : Lexicon) : Array (Action sig) :=
-  (lexRows E L).toArray.map fun r => r.act.action (rhsTys r.rhs)
+  (lexRows E L).toArray.map fun r => r.act.action (rhsTys (ty E L) r.rhs)
 
-def acts (E : Env) (L : Lexicon) : Array (Action sig) := fixedActs ++ lexActs E L
+def acts (E : Env) (L : Lexicon) : Array (Action sig) := fixedActs E.profiles ++ lexActs E L
 
 /-- The version of the trusted definitions of the English instance (spec 2.9, 5.2): the one constant
 `Fixed.actionsVersion` that `tools/english_grammar_gen.py --write` renders from `LOCK.json`, never a copy. -/
