@@ -1,12 +1,13 @@
 import VE.Service.Protocol
 import ResponseShape
+import ResponseShape.CaseDeciders
 
 /-! The source of `ve/backends/lean_service_schema/alternatives.json` (`file`; `tools/response_schemas.py` writes it). -/
 namespace ResponseShape.Schemas.Alternatives
 open Lean ResponseShape
 
 def alt_path : Shape :=
-  decidedBy "Alternatives.Run.usesAltPath" VE.Alternatives.Run.usesAltPath <|
+  decidedCase .altPath <|
   c
     "Alternatives.Run.usesAltPath: the alternatives@0 profile, the environment's alternatives block or an alt-* kind."
     [

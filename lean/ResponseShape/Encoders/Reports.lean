@@ -9,9 +9,10 @@ open VE.Reports VE.Reports.Run
 
 variable {req : Json}
 
-theorem of_route {v : Json} (h : Fits req Skeletons.route v) : Fits req Skeletons.reports v := by
-  refine Fits.altSub ?_ h
-  alt_sub
+/-- The route mode's rows, off the reports path, are rows of this mode. -/
+theorem of_route {v : Json} (hp : usesReportsPath req = false) (h : Fits req Skeletons.route v) :
+    Fits req Skeletons.reports v :=
+  Fits.onCaseE (by simpa [CaseCond.holds, CaseDecider.fn] using hp) h
 
 theorem generated_key (D : ReportDoc) (x : String × List String × Json) (h : x ∈ Wire.generated D) :
     Fits req (skel% "reports.json#/$defs/key") x.2.2 := by
@@ -19,20 +20,20 @@ theorem generated_key (D : ReportDoc) (x : String × List String × Json) (h : x
   rcases h with ⟨k, _, rfl⟩ | ⟨k, _, rfl⟩ <;> fits
 
 theorem elaborate_fits (id : String) (dec : Wire.Decoded) (environment : Json) :
-    Fits req Skeletons.reports (VE.Route.Wire.ok id (elaborated dec environment)) := by
+    Fits req (skel% "reports.json#/$defs/elaborate") (VE.Route.Wire.ok id (elaborated dec environment)) := by
   unfold VE.Route.Wire.ok elaborated envelopeJson recordJson
   simp only []
   fits using generated_key
 
 theorem certificate_fits (c : Wire.Checked) (environment : Json) (id : String) (j : Json) :
-    OkFits req Skeletons.reports (runCertificate c environment id j) := by
+    OkFits req (skel% "reports.json#/$defs/certificate") (runCertificate c environment id j) := by
   unfold runCertificate
   okfits
   simp only [VE.Route.Wire.ok, envelopeJson]
   fits
 
 theorem countermodel_fits (c : Wire.Checked) (id : String) (j : Json) :
-    OkFits req Skeletons.reports (runCountermodel c id j) := by
+    OkFits req (skel% "reports.json#/$defs/countermodel") (runCountermodel c id j) := by
   unfold runCountermodel
   okfits
   simp only [countermodelAnswer, VE.Route.Wire.ok]
@@ -44,18 +45,29 @@ theorem scopedVerdict_fits (c : Wire.Checked) (j : Json) (s : ScopedCheck) :
   okfits
   all_goals fits
 
+/-- Every status word renders into the schema's `status_word` domain (read from the schema). -/
+theorem status_render_fits (s : Status) :
+    Fits req (skel% "reports.json#/$defs/status_word") (.str s.render) := by
+  cases s <;> (apply Fits.strIn_lit; decide)
+
 theorem status_fits (c : Wire.Checked) (id : String) (j : Json) :
-    OkFits req Skeletons.reports (runStatus c id j) := by
+    OkFits req (skel% "reports.json#/$defs/status") (runStatus c id j) := by
   unfold runStatus
   okfits
   simp only [VE.Route.Wire.ok, envelopeJson, nestedResults]
-  fits
+  fits using status_render_fits
   exact OkP.mapM (fun x _ => scopedVerdict_fits c j x) _ ‹_› _ ‹_›
 
+/-- A report's kind renders as one of `report_kind`'s words or a tagged array (`kindOf`). -/
+theorem kindOf_fits (c : VE.Reports.Content) :
+    Fits req (.alt [.strIn ["asserted", "norm", "definition"], .kindNot "string"])
+      (VE.Route.Admission.renderKind (VE.Reports.kindOf c)) := by
+  induction c <;> simp only [VE.Reports.kindOf, VE.Route.Admission.renderKind] <;> first | assumption | fits
+
 theorem admission_fits (id reportId : String) (res : ReportsAdmitted) :
-    Fits req Skeletons.reports (encodeAdmitted id reportId res) := by
+    Fits req (skel% "reports.json#/$defs/admission") (encodeAdmitted id reportId res) := by
   unfold encodeAdmitted VE.Route.Wire.ok reportJson
-  fits
+  fits using kindOf_fits
   all_goals exact Common.claimJson_fits _
 
 theorem scoped_fits (c : Wire.Checked) (j : Json) (id : String) (verdicts : List Json)
@@ -67,27 +79,28 @@ theorem scoped_fits (c : Wire.Checked) (j : Json) (id : String) (verdicts : List
   fits
   exact OkP.mapM (fun x _ => scopedVerdict_fits _ j x) _ h _ ‹_›
 
-theorem runCase_fits (j : Json) : OkFits req Skeletons.reports (runCase j) := by
+theorem runCase_fits (j : Json) (hp : usesReportsPath j = true) : OkFits j Skeletons.reports (runCase j) := by
   unfold runCase
   simp only []
   okfits
-  · unfold runAdmission
-    okfits
-    exact admission_fits _ _ _
-  · exact elaborate_fits _ _ _
-  · exact certificate_fits _ _ _ _
-  · exact countermodel_fits _ _ _
-  · fits_as "reports.json#/$defs/scoped"
-    exact scoped_fits _ _ _ _ ‹_›
-  · exact status_fits _ _ _
-  all_goals exact OkP.of (Route.runCase_fits _) fun _ => of_route
+  all_goals first
+    | contra
+    | read_kind
+  all_goals (try contra)
+  all_goals first
+    | (unfold runAdmission; okfits; fits_from admission_fits _ _ _)
+    | fits_from elaborate_fits _ _ _
+    | (intro v hv; fits_from certificate_fits _ _ _ _ _ hv)
+    | (intro v hv; fits_from countermodel_fits _ _ _ _ hv)
+    | fits_from scoped_fits _ _ _ _ ‹_›
+    | (intro v hv; fits_from status_fits _ _ _ _ hv)
 
 theorem runCaseReported_fits (j : Json) : Fits j Skeletons.reports (runCaseReported j) := by
   unfold runCaseReported
   split
   · split
-    · exact runCase_fits j _ ‹_›
+    · exact runCase_fits j ‹_› _ ‹_›
     · fits
-  · exact of_route (Route.runCaseReported_fits j)
+  · exact of_route (Bool.eq_false_iff.mpr ‹_›) (Route.runCaseReported_fits j)
 
 end ResponseShape.Encoders.Reports
