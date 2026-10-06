@@ -109,15 +109,30 @@ def declaresBlock (environment : Json) : Bool :=
   ps.contains "alternatives@0" || ps.contains "risk@0" ||
     (environment.getObjVal? "alternatives").isOk || (environment.getObjVal? "risk").isOk
 
-/-- Part 1 of the boundary (S3 spec 2.3): the profile list, the blocks and the W6 unit declarations validated
-as submitted, by the source decoder of the risk route when `risk@0` is named or a `risk` block is present, and
-by the alternatives route's otherwise, each with an empty document. -/
+/-- The source routes also enforce document-scope restrictions on flags, definitions and literals. Those
+declarations are checked on the submitted environment by `validated (typingView environment)` below. Remove
+only those declarations from the source-route view, so the routes can check the alternatives/risk blocks and
+W6 annotations without deciding whether an unrelated profile may be combined with them. -/
+def blockRouteView (environment : Json) : Json := Id.run do
+  let vocabulary := environment.getObjValD "vocabulary"
+  let predicates := VE.Risk.Wire.mapEntries (fun entry =>
+    VE.Risk.Wire.dropField "defined" (VE.Risk.Wire.dropField "total"
+      (VE.Risk.Wire.dropField "functional" entry))) (vocabulary.getObjValD "predicates")
+  let constants := match VE.Bridge.fields (vocabulary.getObjValD "constants") with
+    | .ok cs => Json.mkObj (cs.filter fun (_, entry) => entry.getObjValD "sort" != .str "$string")
+    | .error _ => vocabulary.getObjValD "constants"
+  return environment.setObjVal! "vocabulary"
+    ((vocabulary.setObjVal! "predicates" predicates).setObjVal! "constants" constants)
+
+/-- Part 1 of the boundary (S3 spec 2.3): check the profile blocks and W6 declarations by the route
+decoders, using an empty document. The typing check below reads the complete submitted declarations. -/
 def validateDeclarations (environment : Json) : Except String Unit := do
   let ps := (VE.Route.Gate.profilesOf environment).toOption.getD []
+  let routeView := blockRouteView environment
   if ps.contains "risk@0" || (environment.getObjVal? "risk").isOk then
-    let _ ← VE.Risk.Wire.decodeRiskSource environment (Json.mkObj [("norms", Json.arr #[])])
+    let _ ← VE.Risk.Wire.decodeRiskSource routeView (Json.mkObj [("norms", Json.arr #[])])
   else
-    let _ ← VE.Alternatives.Wire.decodeAltSource environment (Json.arr #[]) (Json.arr #[])
+    let _ ← VE.Alternatives.Wire.decodeAltSource routeView (Json.arr #[]) (Json.arr #[])
 
 /-- The environment identity, as the typing service computes it; for an environment with a profile block, after
 the three parts of the boundary (S3 spec 2.3). -/

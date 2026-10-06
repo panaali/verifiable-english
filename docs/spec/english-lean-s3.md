@@ -13,9 +13,10 @@
 > 8 with the proved parser, the S2 reader and the S2 `Lexicon.valid` (section 12). A fixture marked
 > *obligation* was not computed. **Python's outcome on each fixture was read from `ve/english.py`, not run**; S3.5
 > runs it, and a difference there is a finding, not a failed fixture. Every `file:line` was read on 2026-10-05
-> in this worktree and must be re-read at each step. Under S3 nothing changes a verdict, an identity, a public
-> code or an existing theorem statement; E2 changes who decides, and lists every visible change in its
-> `DELTA.md`.
+> in this worktree and must be re-read at each step. S3 retains Python admission authority and existing theorem
+> statements. D9, signed by DRI ruling 2, changes the public English surface: the risk severity sentence gains
+> a reading, and the selected lexicon identity changes in risk environments. The S3 integration report records
+> that delta. E2 changes who decides and lists its further visible changes in `DELTA.md`.
 >
 > **Draft 2** applies the corrections of the statement review (`manage-agents/debates/english-lean-s3-spec/`,
 > Astra and Fable, converged on FIX after round 3). Section 13 lists each correction and where it landed. Draft 2
