@@ -37,7 +37,7 @@ The affected rights and composition tests passed (70 passed, 1 nightly deselecte
 
 **Latency:** on a 1,687-byte rights document with a limitation, five alternating fresh-process checks had identical JSON answers. Median wall was 0.5786 s on the base and 0.5735 s on the head (`evidence/rights-benchmark.json`). This is a loaded-host observation, not a quiet-host CPU measurement. The two large pilot retries took 520.67 s and 498.74 s at load roughly 22–42; both remained inside their 600-second recorder limit and were answer-identical. The separate 120-second quiet-host pilot budget cannot be measured on this saturated host.
 
-The hermetic full gate runs after this report is committed. Its result JSON and counts are added in a separate evidence commit, then that final HEAD is gated again from a clean worktree.
+The first hermetic full gate ran on clean `8bcd4e86` and reached all six stages. Lean build and audit passed (743 targets; 408 files and 4,311 named theorems with standard axioms only); Rust built and 50 tests passed. Pytest recorded 11,071 passed, 7 allowed skips and 3 failures (`evidence/full-gate-first.json`). All three failures were batch bookkeeping: two deleted call sites remained in `tools/inventory_lint.py`, the new Python container exception boundary lacked its assurance-manifest entry, and eight new Lean declarations lacked trust classes. Those records were fixed, the stale `rights-three-way-report.json` was regenerated as an embedding report, and the three exact failing tests passed. The final clean-HEAD gate result is recorded in `evidence/full-gate.json` after the evidence commit.
 
 ## Seeded bugs: tests can fail
 

@@ -35,6 +35,7 @@
   "reviewed_broad_handlers": {
     "ve/document.py:load_document": "CheckerUnavailable is re-raised first; a @2 document Lean rejected raises Lean's diagnostic before Python loads it, and a Python failure on one Lean admitted becomes CheckerUnavailable (unavailable_report), never a Python verdict",
     "ve/document.py:_check_document": "CheckerUnavailable is re-raised first; a Python failure reporting a @2 document Lean admitted becomes CheckerUnavailable (unavailable_report), never a verdict",
+    "ve/rights.py:RightsDocument.__init__": "Lean accepts the rights source before Python constructs display and search containers; any container construction failure is CheckerUnavailable, never a Python rights verdict",
     "ve/__main__.py:_main": "display only: an English rendering of an already computed record is omitted (`display_omitted`); the verdict fields are untouched",
     "ve/assist/api.py:call_tool": "CheckerUnavailable is caught first and keeps its code; other RuntimeErrors are logged as a rejected BackendError call, never a verdict",
     "ve/assist/cli.py:main": "CheckerUnavailable, raised or returned in an action or tool result (exit_code), exits 5 and the action is not saved; other failures print an error and exit 2",

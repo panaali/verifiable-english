@@ -5419,22 +5419,28 @@
    ],
    "D[V]": [
     "VE.Rights.Run.baseWithout",
+    "VE.Rights.Run.conjugatedAct",
     "VE.Rights.Run.distinctionJson",
     "VE.Rights.Run.encodeAdmitted",
     "VE.Rights.Run.entailmentUses",
     "VE.Rights.Run.entryJson",
+    "VE.Rights.Run.generatedWordings",
     "VE.Rights.Run.ikindText",
     "VE.Rights.Run.kindText",
     "VE.Rights.Run.licence",
     "VE.Rights.Run.lineJson",
+    "VE.Rights.Run.lineSourceName",
     "VE.Rights.Run.narrowingsJson",
     "VE.Rights.Run.nodeJson",
-    "VE.Rights.Run.regenerated"
+    "VE.Rights.Run.regenerated",
+    "VE.Rights.Run.sourceRuleNames",
+    "VE.Rights.Run.unitRuleNames"
    ],
    "G[V]": [
     "VE.Rights.Run.RightsAdmissionAnswer",
     "VE.Rights.Run.barResult",
     "VE.Rights.Run.generatedKeys",
+    "VE.Rights.Run.nodeOpen",
     "VE.Rights.Run.projectionsResult",
     "VE.Rights.Run.rightsLabelled",
     "VE.Rights.Run.runAdmission",
@@ -5442,6 +5448,8 @@
     "VE.Rights.Run.runCaseReported",
     "VE.Rights.Run.runRightsKind",
     "VE.Rights.Run.tuples",
+    "VE.Rights.Run.unitOpen",
+    "VE.Rights.Run.unitStatuses",
     "VE.Rights.Run.usesRightsPath",
     "VE.Rights.Run.witnessKind"
    ]

@@ -2,130 +2,130 @@
   "fixtures": [
     {
       "conflict_targets": 4,
+      "embedding": "PASS",
       "fixture": "alpha",
       "limitations": 0,
-      "lines": 1,
-      "three_way": "PASS"
+      "lines": 1
     },
     {
       "conflict_targets": 5,
+      "embedding": "PASS",
       "fixture": "beta",
       "limitations": 0,
-      "lines": 2,
-      "three_way": "PASS"
+      "lines": 2
     },
     {
       "conflict_targets": 5,
+      "embedding": "PASS",
       "fixture": "gamma",
       "limitations": 2,
-      "lines": 1,
-      "three_way": "PASS"
+      "lines": 1
     },
     {
       "conflict_targets": 4,
+      "embedding": "PASS",
       "fixture": "delta",
       "limitations": 0,
-      "lines": 1,
-      "three_way": "PASS"
+      "lines": 1
     },
     {
       "conflict_targets": 7,
+      "embedding": "PASS",
       "fixture": "epsilon",
       "limitations": 0,
-      "lines": 4,
-      "three_way": "PASS"
+      "lines": 4
     },
     {
       "conflict_targets": 4,
+      "embedding": "PASS",
       "fixture": "eta",
       "limitations": 0,
-      "lines": 1,
-      "three_way": "PASS"
+      "lines": 1
     },
     {
       "conflict_targets": 4,
+      "embedding": "PASS",
       "fixture": "theta-row",
       "limitations": 0,
-      "lines": 1,
-      "three_way": "PASS"
+      "lines": 1
     },
     {
       "conflict_targets": 4,
+      "embedding": "PASS",
       "fixture": "kappa",
       "limitations": 1,
-      "lines": 1,
-      "three_way": "PASS"
+      "lines": 1
     },
     {
       "conflict_targets": 7,
+      "embedding": "PASS",
       "fixture": "mu",
       "limitations": 0,
-      "lines": 2,
-      "three_way": "PASS"
+      "lines": 2
     },
     {
       "conflict_targets": 4,
+      "embedding": "PASS",
       "fixture": "nu",
       "limitations": 0,
-      "lines": 1,
-      "three_way": "PASS"
+      "lines": 1
     },
     {
       "conflict_targets": 4,
+      "embedding": "PASS",
       "fixture": "omicron",
       "limitations": 0,
-      "lines": 1,
-      "three_way": "PASS"
+      "lines": 1
     },
     {
       "conflict_targets": 4,
+      "embedding": "PASS",
       "fixture": "pi",
       "limitations": 0,
-      "lines": 1,
-      "three_way": "PASS"
+      "lines": 1
     },
     {
       "conflict_targets": 5,
+      "embedding": "PASS",
       "fixture": "rho",
       "limitations": 1,
-      "lines": 1,
-      "three_way": "PASS"
+      "lines": 1
     },
     {
       "conflict_targets": 4,
+      "embedding": "PASS",
       "fixture": "sigma",
       "limitations": 0,
-      "lines": 1,
-      "three_way": "PASS"
+      "lines": 1
     },
     {
       "conflict_targets": 5,
+      "embedding": "PASS",
       "fixture": "tau",
       "limitations": 3,
-      "lines": 1,
-      "three_way": "PASS"
+      "lines": 1
     },
     {
       "conflict_targets": 7,
+      "embedding": "PASS",
       "fixture": "psi",
       "limitations": 0,
-      "lines": 2,
-      "three_way": "PASS"
+      "lines": 2
     },
     {
       "conflict_targets": 5,
+      "embedding": "PASS",
       "fixture": "charged",
       "limitations": 0,
-      "lines": 1,
-      "three_way": "PASS"
+      "lines": 1
     },
     {
+      "embedding": "PASS",
       "fixture": "theta",
       "skipped_documents": 24,
-      "three_way": "PASS",
       "wrapped_documents": 36
     }
   ],
-  "format": "rights-three-way@0",
+  "format": "rights-embedding@0",
   "passed": 18
 }
