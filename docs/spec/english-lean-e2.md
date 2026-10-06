@@ -1,11 +1,12 @@
 # English in Lean, E2: Lean decides English admission (statement specification)
 
-> Status: statement specification, draft 2 (2026-10-06), branch `design/english-lean-e2`. This is the item-1
-> statement spec of [english-lean-E2-PLAN.md](english-lean-E2-PLAN.md) draft 3 (the **plan**). It writes out stages
-> E2.0 to E2.5 on top of `english-lean-s3.md` draft 2 (the **S3 spec**) as built on `english-lean-s3/integrate` at
-> `531f2789` (the **S3 build**). The S3 build, the S3 spec, `english-lean-S3-PLAN.md` and `english-lean-s3-report.md`
-> (the **S3 report**) are on that branch and reach `main` when S3 merges; `S3 2.9` refers to the S3 spec, `S2 2.6`
-> to `english-lean-s2.md`, `base 2.12` to `english-lean.md`. Their definitions and statements are not repeated.
+> Status: statement specification, draft 2 with py1 run (2026-10-06), branch `design/english-lean-e2`. This is
+> the item-1 statement spec of [english-lean-E2-PLAN.md](english-lean-E2-PLAN.md) draft 3 (the **plan**). It writes
+> out stages E2.0 to E2.5 on top of `english-lean-s3.md` draft 2 (the **S3 spec**) as built on
+> `english-lean-s3/integrate` at `531f2789` (the **S3 build**). The S3 build, the S3 spec, `english-lean-S3-PLAN.md`
+> and `english-lean-s3-report.md` (the **S3 report**) are on that branch and reach `main` when S3 merges; `S3 2.9`
+> refers to the S3 spec, `S2 2.6` to `english-lean-s2.md`, `base 2.12` to `english-lean.md`. Their definitions and
+> statements are not repeated.
 >
 > **Draft 2 applies the statement review.** The review of draft 1 (`manage-agents/debates/english-lean-e2-spec/`)
 > converged on FIX after round 3. Its joint position is Fable's six items of round 2, with the precisions of round 3
@@ -44,12 +45,39 @@
 > correction is shown against the draft-1 value it replaces. Draft 2's text reproduces Python's recorded
 > `lexicon_id` on all 22 rows.
 >
-> **Python was not run.** A Python outcome named here was read from `ve/english.py`, `ve/printer.py` and
-> `ve/english_vocabulary.py`, or recovered from an identity Python recorded. Every `file:line` was read on
-> 2026-10-06 in the S3 build's worktree and must be re-read at each step. For draft 2 the planner session could not
-> run Python either, so the Python expectations of the new fixtures were read from the source, except lx32a and
-> lx31c, which the review ran. The script `lean/SpecStubs_english-lean-e2.py` (scratch, beside the stub) prints each.
-> Running it, and reconciling any difference, is obligation **py1**, due before the bounded round.
+> **Python.** For the fixtures of draft 1, a Python outcome named here was read from `ve/english.py`,
+> `ve/printer.py` and `ve/english_vocabulary.py`, or recovered from an identity Python recorded (pt1). Every
+> `file:line` was read on 2026-10-06 in the S3 build's worktree and must be re-read at each step.
+>
+> **py1 is discharged.** The review required that each new fixture's Python expectation be computed by running
+> Python, before the bounded round. The script `lean/SpecStubs_english-lean-e2.py` (scratch, beside the stub) was run
+> on 2026-10-06 against the S3 build's worktree (section 12). Every Python outcome of a new fixture in 8.3, 8.11 and
+> 8.12 is now Python's printed output. Python agreed with draft 2 on every new fixture but four, and these rows are
+> corrected:
+>
+> - **lx31e and lx31f.** The suggested path refuses the wording, as draft 2 said. But the entry is an overlay's, so
+>   the producer does not stop at the fallback: its final comparison raises at `:517`. The overlay check refuses
+>   both with O3 (computed), as it refuses lx31b (8.3).
+> - **ov8 and ov9.** Draft 2's two overlays rewrote the fixed wording of the role `available`. Python refuses them
+>   before the producer's main loop: `display_environment` builds the display environment, and its validation
+>   raises `AlternativesVerbalisation: available must read "{0} is available to {1}"` (`english_vocabulary.py:131`,
+>   `environment.py:243`). That check stays in Python and runs before any Lean call (2.8, 2.9). ov8 and ov9 now keep
+>   the role's fixed wording, so they reach `:374` and `:399` as intended. Draft 2's two overlays are now ov11a and
+>   ov11b (8.11).
+>
+> The second correction has consequences, and they are the only other edits. No definition or statement of
+> section 5 changes:
+>
+> - The ledger row of `display_environment` (2.9) and the relay (2.8) name its validation of the display
+>   environment.
+> - A paragraph after the overlay check (2.3) states that the check reads an overlay `display_environment` admitted.
+> - 8.10's overlay claim takes that as its premise, with ov11 as the premise's fixture.
+> - The overlay parity harness (2.10) compares no site for a mutant that `display_environment` refuses.
+> - rl8 covers ov11a.
+> - Section 9 states the limit.
+>
+> md4's Python column is now computed as well. Python's `Environment` refuses that environment, so py1 ran the
+> producer on an environment object whose role is regulated after validation (8.12).
 
 ## 0. Scope, one paragraph
 
@@ -90,7 +118,7 @@ how the figures were computed (12).
 | D15 | After the flip, Python's hand parser, the Lark audit and Python's premise check run only as the comparator: switched on by `VE_ENGLISH_COMPARATOR=1`, logged, never returned, never raising. The next stage deletes them | 2.8 |
 | D16 | Python's producer of the lexicon stays (untrusted; V6 checks it). The ledger lists its selection logic as kept, with its callers. On the admission path it does not raise at its three overlay refusals, which the overlay check owns (D17); every other caller keeps them | 2.8, 2.9, Q1 |
 | D17 | The overlay check: Lean owns the producer's three refusals of an overlay, in Python's order. O1 is a duplicate wording (`english.py:373–375`), O2 a reused risk wording (`:442–443`) and O3 an entry that the final comparison refuses (`:511–517`). A refusal is `invalidGrammar` with the code `InvalidOverlay`, of class `VEError`, and the failure `("O1"` to `"O3", kind, name)`. A constant entry is never refused | 2.3, 5.2, 8.11 |
-| D18 | `Env.decode` lists the modal forms before the role wordings, so a predicate that is both gets its modal form, as Python gives it (`english.py:521–527` runs last). This was Q7 of draft 1 | 2.2, md4 |
+| D18 | `Env.decode` lists the modal forms before the role wordings, so a predicate that is both gets its modal form, as Python gives it (`english.py:521–527` runs last; run by py1). This was Q7 of draft 1 | 2.2, md4 |
 
 ## 2. Definitions
 
@@ -183,8 +211,8 @@ With parts 3 and 4 the port's `lexicon_id` equals Python's on all four rows (md5
 
 **Modal forms first** (D18). `Env.decode` appends the modal forms after the role wordings in `forms.wordings`, so
 `forms.wordings.lookup` gives a predicate that is both a role and modal its role wording, while Python gives it the
-modal form (`english.py:521–527` runs last). E2.0 lists the modal forms first. md4 computes both orders on a direct
-`Env.decode`. The boundary refuses such an environment today (`AlternativesRegulated: available available`), so the
+modal form (`english.py:521–527` runs last; py1 ran the producer on it, md4). E2.0 lists the modal forms first. md4
+computes both orders on a direct `Env.decode`. The boundary refuses such an environment today (`AlternativesRegulated: available available`), so the
 change alters no admitted environment; it makes `Env.decode` agree with Python on its own.
 
 `Route.Gate.decodeEnvelope` and the frozen decoders are not edited. If the lean-first batch 12b lands first, its
@@ -305,11 +333,12 @@ arguments is accepted when it carries no code. A wording of one or two arguments
    under `re.I` (`english_phrases.py:24`), and so does the constants test (`english.py:351`). Under `re.I` the class
    `[A-Za-z]` also matches four letters beyond ASCII, `İ` (U+0130), `ı` (U+0131), `ſ` (U+017F) and the Kelvin sign
    (U+212A). The literal `i` also matches `İ` and `ı`, and `s` matches `ſ` (the `re` documentation of `IGNORECASE`;
-   `re/_casefix.py`; obligation py1 runs Python on it). The port follows: `reILetter` is the letter class, `reIFold`
-   folds a character to the ASCII letter it is matched as, `wordOccursI` compares under that folding with these
-   letters counted as word characters, and the negated-head words are taken from `pyLower` of the phrase, Python's
-   `phrase.lower()`. lx31c computes the difference from draft 1 on `{0} is Keen` with the Kelvin sign: Python accepts
-   it (the review ran it), and draft 2 does; draft 1 did not.
+   `re/_casefix.py`). py1 ran Python over every code point and printed exactly these letters; `a` and `n` match
+   only themselves. The port follows: `reILetter` is the letter class, `reIFold` folds a character to the ASCII
+   letter it is matched as, `wordOccursI` compares under that folding with these letters counted as word characters,
+   and the negated-head words are taken from `pyLower` of the phrase, Python's `phrase.lower()`. lx31c computes the
+   difference from draft 1 on `{0} is Keen` with the Kelvin sign: Python accepts it (py1), and draft 2 does; draft 1
+   did not.
 3. **Structure words.** An accepted wording that is not an idiom is refused when one of its `[a-z]+` words is in
    `extraReserved` (`ENGLISH_STRUCTURE_WORD`, `:362–364`). Under `order@0`, a wording is refused when one of its
    lower-cased words is a comparison word (`:365–367`).
@@ -360,8 +389,8 @@ arguments is accepted when it carries no code. A wording of one or two arguments
 The freedom V6 leaves is the conservative one: a producer may write any symbol in its quoted form, and may omit a
 negative. It cannot select a wording, noun or spelling that Python refuses. V6 alone still widens one thing: Python
 refuses an overlay whose entry it would not select as written, while V6 accepts the same lexicon with that entry on
-its fallback. The overlay check below closes that. With both, nothing becomes a warning, and nothing Python refuses
-today is admitted (S3 D14, R4).
+its fallback. The overlay check below closes that. With both, and with `display_environment` still run first in
+Python (2.8), nothing becomes a warning, and nothing Python refuses today is admitted (S3 D14, R4).
 
 **The overlay check** (`overlayCheck`, D17). For an overlay, Python's producer raises `VEError` at three sites, and
 the selected lexicon cannot show their decisions: the first runs before the role wordings are restored, and the
@@ -400,6 +429,12 @@ from the source:
 
 A constant entry is never refused: a bad display form keeps its quoted name (`english.py:471–510`).
 `overlayCheck_constants` states this (5.5), and ov6 computes it.
+
+The check reads an overlay that `display_environment` has already admitted. That function stays in Python (2.9) and
+refuses some overlays before the producer's main loop: an unknown symbol, a malformed entry, a suggested entry
+without consent, and an overlay whose display environment Python's `Environment` refuses. An example of the last is
+an overlay that rewrites the fixed wording of an `alternatives@0` role (ov11a, ov11b, run by py1). Lean does not
+repeat these checks.
 
 The refusal is the failure `("O1", "predicate", p)`, `("O2", "predicate", p)`, `("O3", "sort", s)` or
 `("O3", "predicate", p)`. Within one site the entries come in Lean's order (2.2). When two entries fail at one site,
@@ -516,8 +551,8 @@ service mode against S2's route fixtures first.
 - **The producer on the admission path.** The relay builds `EnglishVocabulary` with its three overlay refusals
   (`english.py:373–375`, `:442–443`, `:511–517`) switched off, so that the producer selects the fallback where it
   would raise and the request reaches Lean, whose overlay check refuses it (D16, D17). Every other caller of the
-  producer keeps the three refusals. `display_environment`'s own checks of the overlay and its consent gate run
-  first, unchanged (2.9, kept).
+  producer keeps the three refusals. `display_environment`'s own checks of the overlay, its consent gate and its
+  validation of the display environment run first, unchanged (2.9, kept).
 - **Admission** (`parse_english`, `parse_english_with_metadata`, `parse_english_argument`). The relay sends the
   environment, the overlay, the producer's lexicon and the source to `english.read`. For any status but `one`, it
   raises `ERRORS[response["class"]](response["text"])`, with the span of 4.4. For `one`, it calls
@@ -541,7 +576,8 @@ service mode against S2's route fixtures first.
   Without the switch, no admission entry point calls Python's parser (ev6).
 - **What Python keeps.** File I/O and UTF-8 decoding; spans for display, from Lean's offsets; the producer of the
   lexicon (D16); the renderer as a producer of candidates; the nearest-wording suggestion as editor help over Lean's
-  tokens; `display_environment`'s checks of the overlay, with the `accept_suggested_vocabulary` consent gate; and,
+  tokens; `display_environment`'s checks of the overlay, with the `accept_suggested_vocabulary` consent gate and the
+  validation of the display environment; and,
   until E3, the statement layers that construct `EnglishParser` themselves.
 
 ### 2.9 The deletion ledger
@@ -564,7 +600,7 @@ check named), *comparator* (off the admission path, deleted in the next stage), 
 | `english.py:373–375` the duplicate wording of an overlay entry | owned by Lean: O1 of `overlayCheck`; off on the admission path, kept for the other callers |
 | `english.py:442–443` an overlay entry's reused risk wording | owned by Lean: O2; off on the admission path, kept for the other callers |
 | `english.py:511–517` the final comparison of the overlay's sort and predicate entries | owned by Lean: O3; off on the admission path, kept for the other callers |
-| `english_vocabulary.py:90–132` `display_environment`: the overlay's format, identity, symbols and fields, and the `accept_suggested_vocabulary` consent gate (`:113–114`) | kept: it decides whether a suggested entry may be used at all, before any Lean call (rl8) |
+| `english_vocabulary.py:90–132` `display_environment`: the overlay's format, identity, symbols and fields, the `accept_suggested_vocabulary` consent gate (`:113–114`), and the validation of the display environment by `Environment(data)` (`:131`), which refuses, for instance, a rewritten `alternatives@0` role wording | kept: it decides whether a suggested entry may be used at all, and whether the display environment is an environment, before any Lean call (rl8, ov11) |
 | `backends/english_lean.py` `CLASSES`, `STATUS_CLASSES`, `_verdict` | owned by Lean: the class table (4.2); the comparator keeps its class tolerance for `RelativeForm` |
 | `backends/english_lean.py` `_transport` over `ve_english_route` | owned by Lean: the `ve_service` mode |
 | `english.py:1868–2022` `english_lark_grammar` | comparator; if an editor reads it, regenerated from the `english.grammar` export (LEAN-FIRST 5.2) |
@@ -595,7 +631,8 @@ These are the harness items of E2.5, which GE2 reads.
   O3). A mutant replaces or adds one overlay entry: a predicate entry with a wording of 8.1, with such a wording and
   a negative that is not its negation, with a risk template under `risk@0`, or with another predicate's wording; a
   sort entry with a noun of lx27; or a constant entry from lx28. The expectations come from running Python, never
-  from the port.
+  from the port. A mutant that `display_environment` refuses (ov11) is refused before any Lean call on the admission
+  path too: the harness records it and compares no site for it.
 - **The three-way differential** on the 57,765 core texts, with fourteen fresh date seeds of the generated streams.
 - **Coverage.** Every lexical family and every fixed rule of every profile occurs in at least one compared text;
   the report lists the rules that the corpora do not reach and the texts written for them.
@@ -1728,10 +1765,9 @@ Each row replaces one selection of Python's choice.
 | lx31a | F + `fast` (service) with an overlay entry `{0} is a fast service`, suggested | none | none (accepted by the suggested path) |
 | lx31b | the same, not suggested | none | `("V6", "predicate", "fast")` |
 
-**Draft 2's corrections** (computed; Python's choice read from the source, lx32a also run by the review, all to be
-confirmed by py1). Each row gives Python's choice, then the choice of draft 1's port and of draft 2's text. The last
-column is V6 on the lexicon that selects the declared wording or noun, by draft 1 and by draft 2; V1 to V5 accept that
-lexicon in every row. K is the Kelvin sign, U+212A.
+**Draft 2's corrections** (computed; Python's choice run by py1). Each row gives Python's choice, then the choice of
+draft 1's port and of draft 2's text. The last column is V6 on the lexicon that selects the declared wording or
+noun, by draft 1 and by draft 2; V1 to V5 accept that lexicon in every row. K is the Kelvin sign, U+212A.
 
 | Id | Case | Python's choice | Draft 1 | Draft 2 | V6 of the declared selection: draft 1; draft 2 |
 |---|---|---|---|---|---|
@@ -1740,12 +1776,20 @@ lexicon in every row. K is the Kelvin sign, U+212A.
 | lx32c | `FR` with the severity sort named `level`, + sort `grade` with the noun `level` | `level` | `entity of sort "grade"` | `level` | `("V6", "sort", "grade")`; none |
 | lx31c | F + `keen` (service), suggested overlay entry `{0} is Keen` with K | declared | fallback | declared | `("V6", "predicate", "keen")`; none |
 | lx31d | the same with `{0} IS keen` | declared | declared | declared | none; none |
-| lx31e | F + `known` (`{0} is known`) + `obscure`, suggested `{0} is unKnown` with K | fallback: `unknown` is a negated head once lower-cased | fallback | fallback | `("V6", "predicate", "obscure")` both |
-| lx31f | F + constant `kelp` + `green`, suggested `{0} is Kelp green` with K | fallback: `kelp` occurs under `re.I` | fallback | fallback | `("V6", "predicate", "green")` both |
+| lx31e | F + `known` (`{0} is known`) + `obscure`, suggested `{0} is unKnown` with K | fallback (`unknown` is a negated head once lower-cased), then the raise at `:517` | fallback | fallback; O3 | `("V6", "predicate", "obscure")` both |
+| lx31f | F + constant `kelp` + `green`, suggested `{0} is Kelp green` with K | fallback (`kelp` occurs under `re.I`), then the raise at `:517` | fallback | fallback; O3 | `("V6", "predicate", "green")` both |
 
 Draft 1's V6 in lx31c follows from its choice, the fallback. lx31e and lx31f pin the two other parts of `re.I` on the
 suggested path, `pyLower` and `wordOccursI`: Python refuses both wordings, and draft 2 does too. In lx32c the severity
 sort itself gets `severity` in both drafts.
+
+py1 printed Python's outcome for each row. Each lx31 case carries its wording as an overlay entry, so a wording that
+the suggested path refuses does not stop at the fallback. The producer's final comparison then raises:
+`English vocabulary entry fails the template linter: predicates/obscure`, and `…/green` for lx31f. Draft 2's
+overlay check refuses both with `("O3", "predicate", "obscure")` and `("O3", "predicate", "green")` (computed). A
+request with either overlay is therefore `InvalidOverlay` before V6 is reached (2.5). The same holds of lx31b in the
+first table: Python raises at `:517`, and the check gives `("O3", "predicate", "fast")`. lx31a, lx31c and lx31d are
+admitted by both, with the overlay's wording selected. The V6 columns above stay what V6 says of each lexicon.
 
 ### 8.4 Why V6 is outside `Lexicon.valid` (computed)
 
@@ -1840,7 +1884,7 @@ ad3 is the same kind of case within the table: under `risk`, `could lead to` is 
 | rl5 | `parse_english_with_metadata` when the rendering does not read back | `english_text` is the source |
 | rl6 | a request that fails V6 | `CheckerUnavailable` with `invalidGrammar lexicon: V6 …` |
 | rl7 | the natural view of a two-paragraph document | the same paragraph breaks as before the flip |
-| rl8 | the producer raises for a suggested overlay entry without `accept_suggested_vocabulary` | the same `VEError` before any Lean call |
+| rl8 | the producer raises for a suggested overlay entry without `accept_suggested_vocabulary`, or for ov11a's overlay, whose display environment `Environment` refuses | the same `VEError` before any Lean call |
 | rl9 | `parse_english` with each overlay of ov1b, ov2b, ov3b, ov4b, ov5b | the producer does not raise; Lean answers `InvalidOverlay`; the relay raises `VEError` with Lean's text |
 | rl10 | each other caller of `EnglishVocabulary` with the same overlays | the producer's own `VEError`, as today |
 | rl11 | `render_english` when `english.check` answers `invalidGrammar` (a lexicon that fails V6, as in ev4d) | the response's class, `CheckerUnavailable`, with Lean's text; not the rendering `ValueError` |
@@ -1871,8 +1915,9 @@ ad3 is the same kind of case within the table: under `risk`, `could lead to` is 
 | | collides | lx28d |
 | a suggested entry is accepted by the suggested path exactly when it is suggested and passes `unary_phrase` and the three checks | suggested | lx31a, lx31c, lx31d |
 | | not suggested; a check fails | lx31b; lx31e, lx31f |
-| the overlay check refuses an overlay exactly when Python's producer raises for it, at the same site | refused (O1; O2; O3) | ov1b, ov7, ov8; ov2b, ov10; ov3b, ov4b, ov5b |
-| | admitted | ov4c, ov6, ov9, ovc (the corpus overlays) |
+| for an overlay that `display_environment` admits, the overlay check refuses it exactly when Python's producer raises for it, at the same site | refused (O1; O2; O3) | ov1b, ov7, ov8; ov2b, ov10; ov3b, ov4b, ov5b, lx31b, lx31e, lx31f |
+| | admitted | ov4c, ov6, ov9, lx31a, lx31c, lx31d, ovc (the corpus overlays) |
+| | the premise matters: `display_environment` refuses first | ov11a, ov11b (Python raises before the main loop; the check alone gives O1 and none) |
 | a request is answered with the first refusal in the order boundary, overlay check, V6, V1 to V5 | each pair | ev14a and ev15a (boundary); ev17 (overlay before V6); lx24 (V6 before V2 and V5) |
 | `admitRequest` is `ok` exactly when V6 passes, `read` is `ok` and every obligation has a premise | all three | cn10, cn12 |
 | | V6 fails | cn11 |
@@ -1890,11 +1935,11 @@ ad3 is the same kind of case within the table: under `risk`, `could lead to` is 
 | the comparator runs exactly when its switch is set | set | ev7 (*obligation*) |
 | | not set | ev6 (*obligation*) |
 
-### 8.11 The overlay check (computed; Python read from the source, py1)
+### 8.11 The overlay check (computed; Python run, py1)
 
 Each `a` row is a declaration, with no overlay: Python's choice by the port, and no refusal. Each `b` row puts the
 same wording in an overlay entry, the environment declaring a plain wording for the symbol. The Lean column is
-`overlayCheck` on the decoded overlay. The Python column is what the producer does, read from `english.py`.
+`overlayCheck` on the decoded overlay. The Python column is what `EnglishVocabulary` did when py1 ran it.
 
 | Id | Case | Lean | Python |
 |---|---|---|---|
@@ -1911,23 +1956,33 @@ same wording in an overlay entry, the environment declaring a plain wording for 
 | ov5b | F + sort `item`, overlay sort entry `item` → `every item` | `("O3", "sort", "item")` | raises at `:517` |
 | ov6 | F + constants `api`, `api2`, overlay constant entries `api` → `the api`, `api2` → `api` | none; both spellings quoted | no raise; both quoted (lx28d) |
 | ov7 | overlay with ov3b's and ov1b's entries | `("O1", "predicate", "inspected")`: O1 runs first | raises at `:374` |
-| ov8 | `FA`, overlay `available` → `{0} leads to {1}` (a role, the key of `leads_to`'s wording) | `("O1", "predicate", "available")` | raises at `:374`, before `:399` would restore the role |
-| ov9 | `FA`, overlay `available` → `{0} can use {1}` (a role the linter refuses) | none; Python's choice `{0} can use {1}` | no raise; the role's wording is restored |
+| ov8 | `FA`, overlay `available` → its fixed wording `{0} is available to {1}`, with the negative `{0} leads to {1}` (a role; the negative has the key of `leads_to`'s wording) | `("O1", "predicate", "available")` | raises at `:374` (existing symbol `leads_to`), before `:399` would restore the role |
+| ov9 | `FA`, overlay `available` → its fixed wording `{0} is available to {1}` (a role the linter refuses: `acceptsDeclared` is false) | none; Python's choice `{0} is available to {1}` | no raise; the role's wording is restored, without a negative |
 | ov10 | `FR` + sort `item`, overlay `hazard` → `{0} risks {1}` and sort `item` → `every item` | `("O2", "predicate", "hazard")`: O2 before O3 | raises at `:443` |
+| ov11a | `FA`, overlay `available` → `{0} leads to {1}` (draft 2's ov8) | `("O1", "predicate", "available")`, not reached | raises in `display_environment`, before the main loop: `AlternativesVerbalisation: available must read "{0} is available to {1}"` (`english_vocabulary.py:131`, `environment.py:243`) |
+| ov11b | `FA`, overlay `available` → `{0} can use {1}` (draft 2's ov9) | none, not reached; the port's choice would be `{0} can use {1}` | the same raise |
 | ovc | the four corpus overlays (birthright, constitution, news, 14th amendment) | none, each | no raise: their `lexicon_id`s are recorded |
 
-The texts of the three sites, computed for `inspected`, `hazard` and `item`, are 4.2's.
+The texts of the three sites, computed for `inspected`, `hazard` and `item`, are 4.2's. Python's messages, as py1
+printed them, are `Duplicate English wording '{0} is reviewed' for 'inspected'; existing symbol(s): reviewed` (O1),
+`English wording for 'hazard' reuses a risk@0 wording` (O2) and
+`English vocabulary entry fails the template linter: predicates/stable` (O3). The texts differ, so they are
+`wording` rows of `DELTA.md`.
+
+ov11a and ov11b are refused by `display_environment`'s validation of the display environment. That validation stays
+in Python and runs before any Lean call (2.8, 2.9), so the overlay check never sees these overlays on the admission
+path. Their Lean column is the check applied on its own (computed). On its own it would admit ov11b (section 9).
 
 ### 8.12 E2.0: the boundary's part 4 and the modal forms (computed)
 
 | Id | Case | Expected |
 |---|---|---|
 | md1a | the S3 build's `Env.decode` on `usecases/agent-policy/environment.unspecified.json` | `InvalidInput: invalid regulated role or default for permitted` |
-| md1b | draft 2's `Env.decode` (5.3) on the same | the modal forms `{0} may be performed` (`permitted`) and `{0} must be reported to the user` (`report_required`); Python's, read from `english.py:521–527` |
+| md1b | draft 2's `Env.decode` (5.3) on the same | the modal forms `{0} may be performed` (`permitted`) and `{0} must be reported to the user` (`report_required`); Python's (py1: the producer gives these two, with no raise) |
 | md1c | part 1, `NormDefaults.Wire.decodeSourceU` with an empty document, on the same | admitted over `blockRouteView`; without it, `UnsupportedProfile: norms route with data flags is not implemented` |
-| md2 | the same with the `default` of `permitted` set to `sometimes` | part 1 and `Env.decode` both refuse: `InvalidInput: invalid regulated role or default for permitted` |
-| md3 | the same without `norm-defaults@0` | part 1 refuses: `UnsupportedProfile: unspecified completion requires norm-defaults@0` |
-| md4 | `FA` with `available` regulated as a permission, act `{0} choose {1}`, under `Env.decode` directly | the S3 build gives `available` the role wording `{0} is available to {1}`; draft 2 gives the modal form `{0} may choose {1}`, Python's (D18). The boundary refuses the environment: `AlternativesRegulated: available available` |
+| md2 | the same with the `default` of `permitted` set to `sometimes` | part 1 and `Env.decode` both refuse: `InvalidInput: invalid regulated role or default for permitted`. Python's `Environment` refuses with the same message (py1) |
+| md3 | the same without `norm-defaults@0` | part 1 refuses: `UnsupportedProfile: unspecified completion requires norm-defaults@0`. Python's `Environment` refuses with the same message (py1) |
+| md4 | `FA` with `available` regulated as a permission, act `{0} choose {1}`, under `Env.decode` directly | the S3 build gives `available` the role wording `{0} is available to {1}`; draft 2 gives the modal form `{0} may choose {1}`, Python's (D18). The boundary refuses the environment: `AlternativesRegulated: available available`, and so does Python's `Environment` (py1). py1 therefore regulated the role on a validated environment object and ran the producer: `{0} may choose {1}`, with no negative |
 | md5 | the four rows of ev14a, decoded by draft 2's `Env.decode`, the identity `Standalone.environmentIdOf` over the submitted environment | the port's `lexicon_id` equals Python's recorded one, 4 of 4 |
 
 ### 8.13 Guards, codes and texts (computed)
@@ -1961,7 +2016,13 @@ The limits of S2 section 9 and S3 section 9 stand. In addition:
   this path.
 - **The order within one overlay site** follows Lean's key order, not the overlay's source order (2.3). When two
   entries fail at one site, the entry named can differ from Python's.
-- **Python was not run for draft 2** (py1).
+- **py1 ran Python on the new fixtures only.** Draft 1's fixtures meet Python through the port and the 22 recorded
+  identities (pt1). The two parity harnesses run Python at scale.
+- **The overlay check relies on `display_environment`.** That function stays in Python (2.9) and refuses some
+  overlays before any Lean call, among them one whose display environment Python's `Environment` refuses (ov11).
+  Lean does not repeat those checks. A request that reached `english.read` without the relay could carry such an
+  overlay, and the overlay check would not refuse it (ov11b). On the admission path the relay always runs
+  `display_environment` first.
 - **V6 does not cover letters**, and `rights@0` wordings are outside the reader.
 - **The producer still proposes**, and the next stage removes it.
 - **Advice is wider than Python's hints and proves nothing.** Two hints are still lost (S3 4.3).
@@ -2005,10 +2066,12 @@ Draft 2 adds the items of the bounded round:
     generated symbols stay where 2.3 keeps them.
 15. `overlayCheck` is the producer's three refusals in Python's order: O1 as `:368–375`, O2 as `:432–443`, O3 as
     `:511–517` with the derivation of 2.3; constants are never refused.
-16. `unaryPhrase`, `wordOccursI` and the negated-head words follow `re.I` with Python's letters (py1 runs them).
+16. `unaryPhrase`, `wordOccursI` and the negated-head words follow `re.I` with Python's letters (py1 ran them).
 17. `placeholderEntry` and the modal forms first (D7 part 4, D18) change no frozen decoder and no identity.
 18. `translateRequest`, `grammarFault` and `lexiconFailure`, with the order of 2.5, give each response of 4.4.
 19. Each new fixture's expectation was computed: by Python (py1) for selections and raises, by the stub for Lean.
+    py1's four corrections (lx31e and lx31f; ov8 and ov9, with ov11) are right, and the ledger row of
+    `display_environment` covers its validation of the display environment.
 
 ## 11. Open points
 
@@ -2074,7 +2137,7 @@ build lives in that worktree, and E2 builds on it. The toolchain was Lean 4.24.0
 - *The comparison.* Draft 1's port over `PEnv` was kept as it was, so each correction is computed against the draft-1
   value it replaces (8.3). On the seven cases of draft 1, draft 2's text still equals draft 1's port. On `LA`/`FA`,
   `LR`/`FR` and `LM`/`FM` it gives draft 1's V6 results.
-- *The new fixtures.* It computed lx31c to lx31f and lx32 (8.3), ov1 to ov10 and ovc (8.11), md1 to md5 (8.12),
+- *The new fixtures.* It computed lx31c to lx31f and lx32 (8.3), ov1 to ov11 and ovc (8.11), md1 to md5 (8.12),
   and gg1 to cl1, lx33 and ad19 (8.13), with draft 2's text, `Overlay.decode` and a copy of the S3 build's
   `Env.decode` carrying draft 2's three changes. It recomputed pt1 with draft 2's text on all 22 rows, from the
   display JSON, with the identity of `Run.environmentId` or, for the four rows the S3 boundary refuses,
@@ -2082,15 +2145,32 @@ build lives in that worktree, and E2 builds on it. The toolchain was Lean 4.24.0
 
 All checks passed on 2026-10-06, and the last full elaboration exited cleanly with no error.
 
-**Python.** The planner session could not run Python (2026-10-06, both drafts). `lean/SpecStubs_english-lean-e2.py`,
-untracked beside the stub, prints Python's selection or raise for each new fixture and the letters `re.I` admits.
-Its run is obligation py1, before the bounded round.
+**py1.** Python was run with `python3 -I lean/SpecStubs_english-lean-e2.py`. The script is untracked beside the
+stub, and it imports `ve` from the S3 build's worktree. That worktree's head has since moved to `18a3e055`, which
+merges `ve-integration` into `531f2789`. `git diff 531f2789 18a3e055` is empty for `ve/english.py`, `ve/printer.py`,
+`ve/english_vocabulary.py`, `ve/english_phrases.py` and `ve/environment.py`, so Python's outcome is the S3 build's.
+The script prints two things:
+
+- for each new fixture, what `EnglishVocabulary` selects or raises, or what `Environment` raises;
+- the code points that `re.I` matches for `[A-Za-z]`, `i`, `s`, `a` and `n`.
+
+Every printed value is the one 8.3, 8.11 and 8.12 now state. Four rows of draft 2 differed, and they were corrected
+(the header lists them). The run added these cases:
+
+- lx31a and lx31b, whose Python outcome draft 2 had not stated;
+- ov8 and ov9 in their new form;
+- md4's producer run. `Environment` refuses that declaration, so the script builds `FA`, replaces the declared
+  `available` with a copy regulated as a permission, and runs `EnglishVocabulary` on that object.
+
+The stub gained a matching section, which computes `overlayCheck` and the choice for lx31a to lx31f and for the new
+ov8 and ov9. It was elaborated once more over the worktree at `18a3e055`. Its other printed values were unchanged,
+and it exited with no error. None of the Lean files changed by the merge holds a line this spec cites.
 
 **What the stub does not show:**
 
 - that the build's fields decode as the accessors read them;
-- anything about Python beyond the 22 recorded identities, the four corpus overlays' admission, and what the review
-  ran (lx32a, lx31c);
+- anything about Python beyond the 22 recorded identities, the four corpus overlays' admission, and py1's run of the
+  new fixtures;
 - the 17 round-trip configurations;
 - the boundary extension's parts 1 and 2 (ev14b), except part 1 for `norm-defaults@0` (md1c to md3);
 - the modes' order in `Run.lean`, and the relay;

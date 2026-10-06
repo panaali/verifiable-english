@@ -1,7 +1,9 @@
 # English in Lean, stage E2: Lean decides English admission (plan)
 
-**Status:** plan, draft 3, 2026-10-06, branch `design/english-lean-e2`. Draft 1 was the pointer plan at
-`929e72c1`, draft 2 the plan at `d1adcfc0`. Draft 3 applies the statement review of the spec (section 2). Item 1 is
+**Status:** plan, draft 3 with py1 run, 2026-10-06, branch `design/english-lean-e2`. Draft 1 was the pointer plan
+at `929e72c1`, draft 2 the plan at `d1adcfc0`. Draft 3 applies the statement review of the spec (section 2), first
+at `e63c4430`. This revision runs Python on the new fixtures, the spec's obligation py1, and applies its four
+corrections (finding 13). Item 1 is
 track E2 of `docs/LEAN-FIRST-PLAN.md` (branch `design/lean-first`, sections 5.2 and 6.3) together with the E2 items
 that english-lean S3 left open: stages E2.0 to E2.4 of `english-lean-S3-PLAN.md` draft 3
 (the **S3 plan**) and the G3 evidence that the S3 integration report lists as open. This plan builds on the S3
@@ -9,14 +11,14 @@ integration, branch `english-lean-s3/integrate` at `531f2789` (the **S3 build**)
 reader, `admit`, `obligations` and `firstChecked` with their proofs, and `english.admission` there is still
 `authority: python`. The S3 build is not yet on `main`: the S3 plan, `english-lean-s3.md` (the **S3 spec**) and
 `english-lean-s3-report.md` (the **S3 report**) are cited from that branch and reach `main` when S3 merges. The
-item-1 statement spec is [english-lean-e2.md](english-lean-e2.md), draft 2 (the **spec**).
+item-1 statement spec is [english-lean-e2.md](english-lean-e2.md), draft 2 with py1 run (the **spec**).
 
 **Nothing was built for this draft.** The spec's statements were elaborated in a scratch stub against the S3
 build, and every value marked *computed* in its section 8 was computed by that stub. The stub ports Python's
 vocabulary policy and checks it against Python's recorded lexicon identities on the corpus environments (spec
-section 12): draft 2's text reproduces all 22. Python itself was not run, in either draft. Every Python outcome
-named here was read from the source, recovered from an identity Python recorded, or run by the review. A script
-beside the stub prints Python's outcome for each new fixture; running it is the spec's obligation py1.
+section 12): draft 2's text reproduces all 22. Python was run on every new fixture of the statement review by the
+script beside the stub (spec py1, section 12). Every other Python outcome named here was read from the source,
+recovered from an identity Python recorded, or run by the review.
 
 **Review provenance.** The debate directory `manage-agents/debates/design-english-lean-e2/` holds a copy of the
 review of the base plan (`english-lean-PLAN.md`): rounds of 2026-10-03, converged after round 3 on Fable's eight
@@ -104,17 +106,19 @@ run only as a logged comparator, and the next stage deletes them. Eight things a
    with the entry on its fallback. Lean's overlay check states the three sites in Python's order, as O1 to O3, and
    answers `InvalidOverlay`, of class `VEError`; a constant entry is never refused (spec D17, 2.3, 8.11). On the
    admission path the producer is built with the three refusals off; every other caller keeps them. The consent
-   gate and the rest of `display_environment` stay in Python.
+   gate and the rest of `display_environment` stay in Python. That includes its validation of the display
+   environment, which refuses an overlay that rewrites an `alternatives@0` role's wording before the producer's
+   main loop runs (spec ov11, run by py1).
 
 ## 1. Item 1: stage E2
 
 | # | Content | Owner | Done when |
 |---|---|---|---|
 | E2.0 | **Service and boundary.** `english.read`, `english.grammar` and `english.check` become modes of `ve_service`, each pinned by an `rfl` theorem, with the response shapes of spec 4.4, `InvalidOverlay` and the translation mode's `NotOneSentence` included. Each mode answers in the order of spec 2.5: boundary, overlay check (wired in at E2.2, once E2.1 has built it), V6, V1 to V5; `english.grammar` and `english.check` run the grammar guard (`grammarFault`) and answer `invalidGrammar` for a refused vocabulary. `ResponseShape`'s `runMode_fits` is extended to the three modes. The prepared grammar is cached by `environment_id`, `overlay_digest` and `lexicon_id` (spec 2.7). The lexicon is bound to the display environment's identity (ev15). The boundary admits `norm-defaults@0`, `soft-norms@0` and the W6 units outside `risk@0` (ev14), with the fourth part, `placeholderEntry`, for the modal forms under `norm-defaults@0` (spec D7). `Env.decode` lists the modal forms first (spec D18). `ve_english_route` is deleted with its transport | Lean implementer | spec ev2 to ev4d, ev14, ev15, md1 to md5, gg1, gg2, cn19; the latency rows of GE2 measured on the service |
-| E2.1 | **V6 and the overlay check.** `Policy.lean`: Python's selection as data and functions (spec 2.3, 5.2), with the declared-only enumeration and `re.I` on the suggested path; `Lexicon.policyFailures` and `Lexicon.policyOk`; the overlay check `overlayCheck`, O1 to O3. The new fields `SortDecl.plural`, `PredDecl.suggested`, `AltBlock.optional` and the `generated` flags, all with defaults. The **port parity harness**: on every corpus environment of the lexicon report and on the mutation set of spec 2.10, generated names included, Lean's choice equals Python's `EnglishVocabulary` symbol by symbol. The **overlay parity harness**: on every corpus overlay and every overlay mutant, Python's raise or no raise, and its site, equal `overlayCheck`'s. A difference is a port defect or a signed row of `DELTA.md` | Lean and Python implementers | spec lx15 to lx33, ov1 to ov10, ovc and pt1; parity on every corpus environment and overlay, mutants included; the bounded statement review of the port's tables (spec 10, items 1 to 6 and 14 to 16) has passed |
+| E2.1 | **V6 and the overlay check.** `Policy.lean`: Python's selection as data and functions (spec 2.3, 5.2), with the declared-only enumeration and `re.I` on the suggested path; `Lexicon.policyFailures` and `Lexicon.policyOk`; the overlay check `overlayCheck`, O1 to O3. The new fields `SortDecl.plural`, `PredDecl.suggested`, `AltBlock.optional` and the `generated` flags, all with defaults. The **port parity harness**: on every corpus environment of the lexicon report and on the mutation set of spec 2.10, generated names included, Lean's choice equals Python's `EnglishVocabulary` symbol by symbol. The **overlay parity harness**: on every corpus overlay and every overlay mutant, Python's raise or no raise, and its site, equal `overlayCheck`'s. A difference is a port defect or a signed row of `DELTA.md` | Lean and Python implementers | spec lx15 to lx33, ov1 to ov11, ovc and pt1; parity on every corpus environment and overlay, mutants included; the bounded statement review of the port's tables (spec 10, items 1 to 6 and 14 to 16) has passed |
 | E2.2 | **Admission.** `admitRequest`, `translateRequest`, `grammarFault`, `lexiconFailure`, `checkRequest` and `sensesRequest`, and `Overlay.decode` (spec 5.3). The modes run `overlayCheck` in the order of spec 2.5. The class table, the texts of 4.2 (the `unproved` text with its status slot) and the advice table of 4.3, all exported by `english.grammar`. `EFormula.decode`, for `english.check`. The statements of spec 5.5 | Lean implementer | spec cn10 to cn19, ad1 to ad19, tg1, tg2, lx24′, ev17; the statements of 5.5 proved; `lean/audit.py` clean |
 | E2.3 | **The flip and the relay.** In the assurance manifest `english.admission` gets `authority: lean` and `target: lean` and leaves `dispatch.SHADOW_ONLY`. `parse_english`, `parse_english_with_metadata` and `parse_english_argument` relay `english.read`, with the producer built with its three overlay refusals off. The marked conclusions go to the entailment operation one obligation at a time, a refusal raising Lean's `unproved` text with the prover's status. The renderer's candidates go through `english.check`, whose `invalidGrammar` is raised with its class. Records carry claim C2 with the six identities, and C5 when obligations were proved. The comparator runs as spec 2.8 states | Python implementer | gate GE2; spec rl1 to rl11 |
-| E2.4 | **Deletions.** The deletion ledger of spec 2.9: every Python decision site of formula-level admission is mapped to the Lean check that now owns it, removed from the admission path and kept as comparator, or kept for E3 with its caller named. The producer's three overlay refusals are owned by Lean and off on the admission path; `display_environment` and its consent gate are kept. The test-only references `conformance/english_lean_{engine,lexer,lexicon}.py` are deleted once nothing compares against them | Python implementer | `tools/relay_lint.py` passes on the admission path of `ve/english.py`; the ledger is signed |
+| E2.4 | **Deletions.** The deletion ledger of spec 2.9: every Python decision site of formula-level admission is mapped to the Lean check that now owns it, removed from the admission path and kept as comparator, or kept for E3 with its caller named. The producer's three overlay refusals are owned by Lean and off on the admission path; `display_environment` is kept, with its consent gate and its validation of the display environment. The test-only references `conformance/english_lean_{engine,lexer,lexicon}.py` are deleted once nothing compares against them | Python implementer | `tools/relay_lint.py` passes on the admission path of `ve/english.py`; the ledger is signed |
 | E2.5 | **Evidence.** The G3 harness that S3.5 owed and that the S3 report lists as open: the comparison at the dispatched boundary on the sealed corpus of every profile, the reverse corpus, the lexicon mutation replay with V6 lexicons, the three-way differential on the 57,765 core texts, the use-case documents and the pilots, the readability items. Then GE2's corpus A/B (spec 2.10) | Python implementer | the report `docs/spec/english-lean-e2-report.md` and `docs/lean-first/e2/DELTA.md`, every difference dispositioned |
 
 **Gate GE2** (LEAN-FIRST 5.1, the pointer plan and the converged edits). All of the following hold at the batch head.
@@ -197,7 +201,8 @@ run only as a logged comparator, and the next stage deletes them. Eight things a
 0. No stage builds on draft 1 of the spec. Before any stage starts, both reviewers check draft 2 of the spec in one
    bounded round: the new definitions (the overlay check, `placeholderEntry`, the two guards, `lexiconFailure`), the
    order of spec 2.5, and that each new fixture's expectation was computed, by Python for selections and raises
-   (spec py1, run first) and by the stub for Lean. Nothing else reopens. The stage gates of the review then hold,
+   (spec py1, now run, with four rows corrected: finding 13) and by the stub for Lean. Nothing else reopens. The
+   stage gates of the review then hold,
    each satisfied by draft 2: E2.0 needs the boundary and the guards and responses (review items 3 and 4); E2.1 the
    enumeration, the overlay check and `unaryPhrase` (items 1, 2 and 5); E2.2 the overlay check, the guards and
    responses, and the claims and texts (items 2, 4 and 6).
@@ -237,15 +242,18 @@ Astra's three qualifications hold:
 | # | Item | Where applied | Gates |
 |---|---|---|---|
 | 1 | **Enumeration.** The port enumerates the declared symbols where Python does; the generated ones stay in V6's domain, the initial spellings, the fixpoint and the severity noun. Fixture `{0} is fully avoidable`; the class and severity-sort rows; the generated names in the mutation set | spec D1, D5, 2.3, 5.2, 2.10; lx32a to lx32c (draft 1 wrong, draft 2 Python's, computed) | E2.1 |
-| 2 | **The overlay check.** Python's three refusals as a Lean check in Python's order, with its own code, `InvalidOverlay`, of class `VEError`; the admission path's producer stops raising, other callers keep the raise; ledger rows; paired fixtures; constants never refused; parity by raise against no raise | spec D16, D17, 2.3, 2.8, 2.9, 2.10, 4.2, 4.4, 5.2, 5.5 (`overlayCheck_constants`); ov1 to ov10, ovc; rl9, rl10 | E2.1, E2.2 |
+| 2 | **The overlay check.** Python's three refusals as a Lean check in Python's order, with its own code, `InvalidOverlay`, of class `VEError`; the admission path's producer stops raising, other callers keep the raise; ledger rows; paired fixtures; constants never refused; parity by raise against no raise | spec D16, D17, 2.3, 2.8, 2.9, 2.10, 4.2, 4.4, 5.2, 5.5 (`overlayCheck_constants`); ov1 to ov11, ovc; rl8 to rl10 | E2.1, E2.2 |
 | 3 | **The boundary.** D7 part four: modal extraction under `norm-defaults@0` through an adapter, frozen decoders unedited, with a direct `Env.decode` fixture and a malformed-declaration fixture. Modal forms before role wordings in E2.0 | spec D7, D18, 2.2, 5.3; md1 to md5 | E2.0 |
 | 4 | **Guards and responses.** The translation and grammar guards defined; the order boundary, overlay check, V6, then V1 to V5, with lx24; `english.check` answers `invalidGrammar`, and `{}` only after the guard; `NotOneSentence → SyntaxError` | spec D8, D9, 2.5, 2.7, 4.2, 4.4, 5.3, 5.5 (`translateRequest_policy`, `grammarFault_none`); gg1, gg2, tg1, tg2, cn19, ev4d, ev17, lx24′, rl11 | E2.0, E2.2 |
 | 5 | **`unaryPhrase`.** It follows `re.I`, with Python's letters; section 9 corrected; a Kelvin-sign fixture | spec 2.3, 5.2, 9; lx31c to lx31f | E2.1 |
 | 6 | **Claims and texts.** Three rows of 8.10 scoped; the `unproved` text carries the prover's status | spec 8.10 (with lx33a, lx33b, ev15d, ad19), D11, 2.8, 4.2; cn15, rl2 | E2.2 |
 
-The Python expectations of the new fixtures were read from the source, since Python could not be run in the planner
-session; lx32a and lx31c were run by the review. Running the script beside the stub (spec py1) comes first in the
-bounded round.
+At `e63c4430` the Python expectations of the new fixtures were read from the source, since Python could not be run
+in the planner session; lx32a and lx31c were run by the review. All three verifications of that commit failed for
+this reason alone. The review required the expectations to be computed by running Python before the bounded round,
+and they were not (`manage-agents/old-p3/english-lean-e2/`). This revision runs the script beside the stub (spec
+py1), and every Python column of a new fixture is now its output. Python agreed on every row but four, and those
+were corrected (finding 13).
 
 ## 3. DRI rulings and amendments in force
 
@@ -296,7 +304,7 @@ Each finding below was computed by the stub (spec section 12).
 5. **V6 inside `Lexicon.valid` would break the senses projection** (decision 2; spec lx30).
 6. **A role predicate that is also modal.** `Env.decode` lists the role wordings before the modal forms, so
    `forms.wordings.lookup` gives a role predicate its role wording, while Python gives it the modal form
-   (`english.py:521–527` runs last). The S3 build is affected. No corpus environment regulates a role predicate,
+   (`english.py:521–527` runs last; py1 ran the producer on it: `{0} may choose {1}`). The S3 build is affected. No corpus environment regulates a role predicate,
    and the boundary refuses such an environment (`AlternativesRegulated`, computed, spec md4). The port follows
    Python. E2.0 lists the modal forms first (spec D18).
 
@@ -304,8 +312,8 @@ Draft 3 adds the findings of the statement review, each computed by the stub unl
 
 7. **Generated symbols were enumerated.** Draft 1's port treated the symbols that profile blocks generate as owners
    and collisions, which Python never does. In three cases it refused what Python selects, among them
-   `{0} is fully avoidable` under `alternatives@0` (spec lx32; Python's choice run by the review for that one, read
-   from the source for the other two). Draft 2's text reproduces all 22 recorded identities.
+   `{0} is fully avoidable` under `alternatives@0` (spec lx32; Python's choice run by the review for that one, and
+   by py1 for all three). Draft 2's text reproduces all 22 recorded identities.
 8. **Python refuses overlays that V6 would accept.** The producer's three overlay refusals are not visible in the
    lexicon it selects; the overlay check reproduces them (spec 8.11). On the four corpus overlays it refuses none, as
    Python did.
@@ -315,8 +323,23 @@ Draft 3 adds the findings of the statement review, each computed by the stub unl
 10. **The responses were incomplete.** `NotOneSentence` had no class, and `english.check` answered `{}` for a refused
     vocabulary as well as for no reading candidate (spec cn19, ev4d).
 11. **`re.I` reaches the suggested path.** Python accepts a suggested `{0} is Keen` written with the Kelvin sign;
-    draft 1 did not (spec lx31c; Python run by the review).
+    draft 1 did not (spec lx31c; Python run by the review and by py1).
 12. **The `unproved` text dropped the prover's status**, which Python shows. The text now has a slot for it.
+
+py1 adds one finding, from running Python. Its Lean side was computed by the stub.
+
+13. **py1 corrected four rows of draft 2.** Python agreed with every other new fixture, and nothing else changed.
+    - *lx31e and lx31f.* Draft 2 stated Python's choice as the fallback. Each wording is an overlay entry, so the
+      producer goes on to raise at its final comparison (`:517`). The overlay check refuses both with O3 (computed),
+      as it refuses lx31b.
+    - *ov8 and ov9.* Draft 2's overlays rewrote the fixed wording of the role `available`. Python refuses them
+      before the producer's main loop: `display_environment` validates the display environment and raises
+      `AlternativesVerbalisation`. That validation is part of the kept `display_environment`, so the overlay check
+      never sees these overlays on the admission path. ov8 and ov9 now keep the role's fixed wording and reach the
+      sites they were written for. With a negative that is `leads_to`'s wording, ov8 raises at `:374` and gets O1.
+      ov9 is not refused, and the role's wording is restored. The old overlays are spec ov11a and ov11b. The
+      ledger row of `display_environment` and spec 2.8 now name its validation of the display environment, and rl8
+      covers it.
 
 ## 6. Honest open questions
 
@@ -350,7 +373,9 @@ Draft 3 adds the findings of the statement review, each computed by the stub unl
    operation proves them. A Lean-side entailment call is for the lean-first batch that owns entailment.
 9. **Performance at pilot size is still unmeasured** (S3 plan, question 8); GE2 item 9 measures it. If a budget is
    missed, the flip waits.
-10. **Python was not run for the new fixtures.** The planner session's permissions refused running Python, so the
-    Python column of each new fixture was read from the source, except the two cases the review ran. The script
-    `lean/SpecStubs_english-lean-e2.py`, untracked beside the stub, prints each one. Recommendation: run it as the
-    first step of the bounded round (spec py1); a difference corrects the spec before any stage starts.
+10. **The overlay check relies on `display_environment`, which stays in Python** (finding 13, spec 9). Lean does not
+    repeat its checks, so a request that reached `english.read` without the relay could carry an overlay that
+    Python refuses there. ov11b is such an overlay: it rewrites a role's wording, and the overlay check alone does
+    not refuse it. On the admission path the relay runs `display_environment` first, so nothing Python refuses is
+    admitted. Recommendation: keep it so in E2, as the ledger has it. The stage that makes Lean the producer
+    (question 3) can take these checks with it.
