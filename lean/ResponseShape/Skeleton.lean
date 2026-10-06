@@ -8,8 +8,8 @@ import Lean.ToExpr
 A `Skel` is what a `Shape` says about the fields of the objects in a value: for each object
 its allowed fields (each with the skeleton of its value), the fields it requires and the
 fields it forbids, through arrays, alternatives and references; where a field's presence
-depends on another field's string value (an `if`/`then`/`else`), that value; and where it
-depends on the request case (an `if` over `x-case`), that condition (`CaseCond`). Everything
+depends on another field's string value (an `if`/`then`/`else`), that value; status domains;
+and where it depends on the request case (an `if` over `x-case`), that condition (`CaseCond`). Everything
 else a shape checks (patterns, numbers, echoes, counts, grammars without objects) is `any`
 here, and a value the runner copies from the request (`Shape.copied`) is `any`.
 An encoded environment instead retains an encoder obligation: its value is the prime
@@ -973,12 +973,10 @@ def skeletonOf (files : List File) : Nat → Bool → Shape → StateT Extract (
     | .required ks => pure (.obj [] (some .any) ks [])
     | .object ps extra => do
       let fields ← ps.mapM fun (k, v) => do
-        -- Keep the branch discriminator even outside an if/then/else. Other constants
-        -- are outside the field skeleton's scope; dynamic status enums remain data.
-        let statusConst := k == "status" && match v with
-          | .const (.str _) => true
-          | _ => false
-        pure (k, ← go (cond || statusConst) v)
+        -- Keep status domains even outside an if/then/else, including domains
+        -- reached through references: each encoder proves its branch's status.
+        let statusDomain := k == "status"
+        pure (k, ← go (cond || statusDomain) v)
       let extra ← match extra with
         | none => pure (some .any)
         | some (.bool false) => pure none
@@ -1084,12 +1082,18 @@ where
       | none => pure .any
     | _ => pure .any
 
-/-- The skeleton of the shape at `target`, and the recursive targets it names. -/
-def skeleton (files : List File) (target : String) : Except String (Skel × List String) := do
+/-- The skeleton of the shape at `target`, and the recursive targets it names. `keepStrings`
+retains a referenced string domain when proving an encoder field against that reference. -/
+def skeletonWithStrings (files : List File) (target : String) (keepStrings : Bool) :
+    Except String (Skel × List String) := do
   match lookup files target with
   | none => throw s!"unresolved $ref {target}"
   | some s =>
-    let (k, st) ← (skeletonOf files depth false s).run { stack := [target] }
+    let (k, st) ← (skeletonOf files depth keepStrings s).run { stack := [target] }
     pure (Skel.simp depth k, st.recursive)
+
+/-- The row skeleton, with conditional strings kept only where extraction requires them. -/
+def skeleton (files : List File) (target : String) : Except String (Skel × List String) :=
+  skeletonWithStrings files target false
 
 end ResponseShape

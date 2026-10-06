@@ -45,12 +45,16 @@ theorem scopedVerdict_fits (c : Wire.Checked) (j : Json) (s : ScopedCheck) :
   okfits
   all_goals fits
 
+theorem status_render_fits (s : Status) :
+    Fits req (skelStrings% "reports.json#/$defs/status_word") (.str s.render) := by
+  cases s <;> (apply Fits.strIn_lit; decide)
+
 theorem status_fits (c : Wire.Checked) (id : String) (j : Json) :
     OkFits req (skel% "reports.json#/$defs/status") (runStatus c id j) := by
   unfold runStatus
   okfits
   simp only [VE.Route.Wire.ok, envelopeJson, nestedResults]
-  fits
+  fits using status_render_fits
   exact OkP.mapM (fun x _ => scopedVerdict_fits c j x) _ ‹_› _ ‹_›
 
 theorem admission_fits (id reportId : String) (res : ReportsAdmitted) :
