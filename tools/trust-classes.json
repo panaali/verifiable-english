@@ -2860,9 +2860,7 @@
     "VE.EnglishGrammar.ntRelation",
     "VE.EnglishGrammar.ntRelative",
     "VE.EnglishGrammar.ntTerm",
-    "VE.EnglishGrammar.ntTy",
-    "VE.EnglishGrammar.ranksStaged",
-    "VE.EnglishGrammar.stagedNames"
+    "VE.EnglishGrammar.ntTy"
    ]
   },
   "VE/EnglishGrammar/Encode.lean": {
@@ -8249,12 +8247,18 @@
    "G[V]": [
     "VE.EnglishGrammar.alternativesActs",
     "VE.EnglishGrammar.alternativesRows"
+   ],
+   "G[I]": [
+    "VE.EnglishGrammar.alternativesSha256"
    ]
   },
   "VE/EnglishGrammar/Fixed/Order.lean": {
    "G[V]": [
     "VE.EnglishGrammar.orderActs",
     "VE.EnglishGrammar.orderRows"
+   ],
+   "G[I]": [
+    "VE.EnglishGrammar.orderSha256"
    ]
   },
   "VE/EnglishGrammar/ProfileExamples.lean": {
@@ -8350,6 +8354,18 @@
     "VE.EnglishGrammar.ProfileExamples.withoutForm",
     "VE.EnglishGrammar.ProfileExamples.withoutRow",
     "VE.EnglishGrammar.ProfileExamples.worded"
+   ]
+  },
+  "VE/EnglishGrammar/Fixed/Staged.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.ntNamesStaged",
+    "VE.EnglishGrammar.ranksStaged",
+    "VE.EnglishGrammar.stagedNames"
+   ]
+  },
+  "VE/EnglishGrammar/Fixed/Tables.lean": {
+   "G[I]": [
+    "VE.EnglishGrammar.tableSources"
    ]
   }
  }

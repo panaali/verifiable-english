@@ -175,6 +175,8 @@ module VE.EnglishGrammar.Extends
 module VE.EnglishGrammar.Fixed.Alternatives
 module VE.EnglishGrammar.Fixed.Order
 module VE.EnglishGrammar.Fixed.RelationalFol
+module VE.EnglishGrammar.Fixed.Staged
+module VE.EnglishGrammar.Fixed.Tables
 module VE.EnglishGrammar.Fixed.Version
 module VE.EnglishGrammar.FoldAgree
 module VE.EnglishGrammar.Lexer

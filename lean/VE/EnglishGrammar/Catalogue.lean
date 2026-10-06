@@ -12,7 +12,7 @@ table from `ve/english_grammar/relational-fol@0.json` (`Fixed/RelationalFol.lean
 
 S3 (docs/spec/english-lean-s3.md 2.4) appends fourteen fixed nonterminals, 37 to 50: the integer terms of
 `order@0` and the guard phrases of `alternatives@0`; per environment, one property nonterminal per value sort
-follows from 51 (`ty` in `Rules.lean`). `stagedNames` names the fourteen and `ranksStaged` is the one rank
+follows from 51 (`ty` in `Rules.lean`). `Fixed/Staged.lean` generates the fourteen names and the rank
 certificate of every profile list that names a staged profile (spec D3).
 -/
 
@@ -78,16 +78,6 @@ def ntTy : Nat → Ty
   | 48 | 49 => .relative
   | 50 => .listMarker
   | _ => .tok
-
-/-- The names of the staged nonterminals 37 to 50 (spec 2.4). -/
-def stagedNames : Array String := #[
-  "int_term", "int_atom", "int_neg", "int_constant", "int_plain_constant", "numeral", "int_op", "minus",
-  "lbracket", "rbracket", "alt_available_guard", "alt_verb_phrase", "alt_verb_atom", "alt_head"]
-
-/-- The rank certificate of a profile list that names a staged profile (spec 2.4, D3): S2's 37 entries
-raised where an integer term can begin a clause, then the fourteen staged nonterminals. -/
-def ranksStaged : Array Nat := #[6, 0, 5, 4, 0, 0, 0, 0, 0, 2, 6, 6, 5, 0, 0, 0, 1, 1, 0, 0, 0, 4, 4, 0, 1, 0, 5,
-  0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 3, 2, 1, 0, 0, 1, 0, 0, 0, 0, 0, 6, 5, 0]
 
 /-- The connective of a listing or a coordination. -/
 inductive Conn where
