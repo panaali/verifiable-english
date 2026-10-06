@@ -5,14 +5,17 @@ Branch `english-lean-e2/integrate`. The Python and Lean branches were merged loc
 ## Implementation
 
 - `english.admission` calls the persistent Lean service for its reading. The three public admission functions share `_parse_english_document`; marked conclusions use Lean's obligation list and Python's existing entailment checker.
-- The Python hand parser and Lark audit run only when `VE_ENGLISH_COMPARATOR=1`. Comparator results are logged and cannot decide the public verdict.
+- For public formula admission, the Python hand parser and Lark audit run only when `VE_ENGLISH_COMPARATOR=1`. Comparator results are logged and cannot decide the public verdict. E3 statement wording still uses its checked Python all-derivations reader.
 - `english.check` checks rendered candidates and canonical display. The Python boundary validates E2 response fields, formulas, spans, obligations, classes and all six request identities before use.
 - The Lean request policy now guards `senses.read`; its approved theorem is proved. The lexicon action lock includes that trusted module.
+- Lean reduces reports, readings and speech-act declarations to their formula typing view; the E3 statement layer checks its generated decision wording before display. The pilot readings document uses a V3-valid act wording with re-bound model IDs.
 - The S2/S3 specification fixtures are compared by Python, the Lean reader and the W7 route in `tests/test_english_lean_route.py::test_three_way_conformance_on_the_spec_fixtures`.
 
 ## Evidence and open points
 
 The exact E2 statement diff finds 11 of 12 declarations. `decode_encode` remains unproved. The Lean tree contains no `sorry` or extra axiom for it. E2 acceptance remains open until the proof and the applicable checklist work below are complete.
+
+The clean gate on `38eb65ff` passed: **11,275 Python tests passed, 7 allowed skips, 0 failures; 50 Rust tests passed**. Its complete result is [e2-gate-result.json](../../conformance/english-lean/e2-gate-result.json), and `tests/test_english_e2_report.py::test_report_counts_follow_gate_json` checks the numbers above against that file. The S3 comparison records **200 cases, 198 agreements, 2 disposed differences, 0 unexplained differences**; the same test derives these figures from the case records.
 
 Three temporary mutations were introduced into `ve/backends/english_lean.py`, each made `tests/test_english_e2_relay.py` fail, and each was removed:
 
@@ -39,15 +42,15 @@ The statuses here refer to the integrated E2 work. An open status means the line
 | 11. Language parsing | Done | New Lean policy uses explicit scanners, and E2 transport uses JSON libraries rather than regex parsing of a programming language. |
 | 12. State machine and ledger | Not applicable | No state-machine or event-ledger code changed. |
 | 13. Seeded mutants | Done | The three seeded boundary bugs above each failed a committed test and were removed. |
-| 14. Hermetic tests | Open | The clean-HEAD full gate is still pending. |
+| 14. Hermetic tests | Done | The clean-HEAD full gate on `38eb65ff` passed with a clean source identity; the Rust cache was seeded into the gate's isolated Cargo home. |
 | 15. Identity binding | Open | All six E2 request identities have mutation tests; the requested per-field schema identity matrix is incomplete. |
 | 16. Registered lists | Done | Grammar lock, frozen inventory, theorem inventories, service modes and test collection are generated or checked. |
 | 17. Statement diff | Open | The exact checker finds 11/12; `decode_encode` is unproved. |
 | 18. Spec-stage fixtures | Open | S2/S3 three-way fixtures and E2 Lean guards exist; the complete E2 iff-boundary matrix is absent. |
 | 19. Use-case formalisation | Not applicable | This merge changes no use-case rule or answer key. |
-| 20. Regenerated report numbers | Open | Final gate JSON and a report-number regeneration test are pending. |
+| 20. Regenerated report numbers | Done | The gate JSON and S3 case records are committed; `tests/test_english_e2_report.py::test_report_counts_follow_gate_json` checks the printed counts. |
 | 21. Acceptance ownership | Open | The E2 acceptance cases and DRI rulings still need complete AGENT/HUMAN/EXTERNAL ownership tags with test IDs. |
-| 22. Handoff | Open | Final commits, clean-HEAD gate, disk check and final fix-report figures are pending. |
+| 22. Handoff | Open | This report commit still needs its own clean-HEAD gate and final disk check. |
 
 ## Acceptance ownership
 
