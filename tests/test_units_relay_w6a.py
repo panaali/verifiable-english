@@ -195,3 +195,15 @@ def test_formula_and_term_depth_are_budgeted_separately():
         deep = ["not", deep]
     with pytest.raises(VEError, match="depth"):
         _quantity(raw, deep)
+
+
+def test_either_w6_field_takes_lean_s_decoder():
+    """`units` without `unit_schema` (or the reverse) is decided by Lean's W6 decoder, which
+    names the missing field; Python raises Lean's text (Lean-first batch 9)."""
+    for missing in ("unit_schema", "units"):
+        raw = raw_environment()
+        raw.pop(missing)
+        with pytest.raises(VEError) as caught:
+            Environment(raw)
+        assert str(caught.value).startswith("fields do not match: expected [language, profiles, "
+                                            "spec_revision, vocabulary, unit_schema, units]"), caught.value

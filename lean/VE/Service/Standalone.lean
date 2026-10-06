@@ -410,7 +410,9 @@ def legacyCheckCase (id : String) (environment ast : Json) (formula : Bool) (ite
 def checkCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let environment ← j.getObjVal? "environment"
-  if (environment.getObjVal? "unit_schema").isOk then
+  -- W6: either extension field selects the quantity decoder, which owns typing, erasure and
+  -- the three identities (Lean-first batch 9).
+  if (environment.getObjVal? "unit_schema").isOk || (environment.getObjVal? "units").isOk then
     let w ← VE.Time.Wire.decodeEnvironment environment
     let a ← VE.Time.Wire.decodeQuantity w (← j.getObjVal? "quantity")
     return VE.Route.Wire.ok id [("well_typed", .bool true),

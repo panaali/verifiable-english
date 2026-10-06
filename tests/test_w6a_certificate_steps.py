@@ -23,7 +23,7 @@ from tests.test_w6a_route_limits import LEAN, lean
 from ve import Environment
 from ve.ast import formula_from_data
 from ve.entailment import check_entailment_certificate, prove_entailment
-from ve.units import check_quantity_certificate, prove_quantity
+from ve.units import check_quantity_certificate, core_formula, prove_quantity
 
 pytestmark = pytest.mark.skipif(not (LEAN.exists() and lean_routes.SERVICE.exists()),
                                 reason="build the Lean runners first")
@@ -97,8 +97,12 @@ def test_quantity_certificates_share_the_step_budget(n, fits):
     raw = w6_env(n)
     premises, certificate = w6_certificate(n, raw)
     env = Environment(raw)
-    assert check_quantity_certificate(env, premises, quantity(["bottom"]), certificate,
-                                      max_steps=100_000)
+    # Valid apart from its length: the core replay accepts it under a larger step budget.
+    cores = [core_formula(env, p) for p in (*premises, quantity(["bottom"]))]
+    target = cores[0][0]
+    cores = [core for _, core in cores]
+    assert check_entailment_certificate(target, cores[:-1], cores[-1], certificate["core"],
+                                        max_steps=100_000).valid
     if fits:
         python = check_quantity_certificate(env, premises, quantity(["bottom"]), certificate)
     else:
