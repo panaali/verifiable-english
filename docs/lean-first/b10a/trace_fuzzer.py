@@ -16,7 +16,8 @@ import sys
 def trace_run(df, run):
     """Return (fuzzer result, per-surface digests) for one complete fuzzer run."""
     sampled = {}
-    original_sample, original_evaluate = df.sample, df.evaluate
+    replayed = {"count": 0, "inputs": hashlib.sha256(), "answers": hashlib.sha256()}
+    original_sample, original_evaluate, original_replay = df.sample, df.evaluate, df.replay
 
     def sample(surface, *arguments):
         rows = original_sample(surface, *arguments)
@@ -41,7 +42,19 @@ def trace_run(df, run):
                 state["count"] += 1
         return results
 
-    df.sample, df.evaluate = sample, evaluate
+    def replay(entries, surfaces):
+        results = original_replay(entries, surfaces)
+        if len(results) != len(entries):
+            raise RuntimeError("baseline replay trace length mismatch")
+        for entry, (returned_entry, status, now) in zip(entries, results):
+            if returned_entry != entry:
+                raise RuntimeError("baseline replay trace order mismatch")
+            replayed["inputs"].update(df.canonical(entry).encode("utf-8") + b"\n")
+            replayed["answers"].update(df.canonical([status, now]).encode("utf-8") + b"\n")
+            replayed["count"] += 1
+        return results
+
+    df.sample, df.evaluate, df.replay = sample, evaluate, replay
     try:
         result = run()
         trace = {}
@@ -53,9 +66,12 @@ def trace_run(df, run):
                            "answers_sha256": state["answers"].hexdigest()}
         if not trace:
             raise RuntimeError("no samples traced")
+        trace["baseline_replay"] = {"count": replayed["count"],
+                                    "inputs_sha256": replayed["inputs"].hexdigest(),
+                                    "answers_sha256": replayed["answers"].hexdigest()}
         return result, trace
     finally:
-        df.sample, df.evaluate = original_sample, original_evaluate
+        df.sample, df.evaluate, df.replay = original_sample, original_evaluate, original_replay
 
 
 def main() -> int:
