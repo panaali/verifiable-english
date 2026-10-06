@@ -173,12 +173,17 @@ module VE.EnglishGrammar.Encode
 module VE.EnglishGrammar.EngineExamples
 module VE.EnglishGrammar.Examples
 module VE.EnglishGrammar.Extends
+module VE.EnglishGrammar.Fixed.Alternatives
+module VE.EnglishGrammar.Fixed.Order
 module VE.EnglishGrammar.Fixed.RelationalFol
+module VE.EnglishGrammar.Fixed.Staged
+module VE.EnglishGrammar.Fixed.Tables
 module VE.EnglishGrammar.Fixed.Version
 module VE.EnglishGrammar.FoldAgree
 module VE.EnglishGrammar.Lexer
 module VE.EnglishGrammar.Lexicon
 module VE.EnglishGrammar.LexiconFixtures
+module VE.EnglishGrammar.ProfileExamples
 module VE.EnglishGrammar.Read
 module VE.EnglishGrammar.ReadExamples
 module VE.EnglishGrammar.Rules
@@ -534,6 +539,9 @@ VE.English.Tree.Syntactic@VE.English.Grammar
 VE.English.UniqueDerivation@VE.English.Statements
 VE.EnglishGrammar.EnglishOneReading@VE.EnglishGrammar.Read
 VE.EnglishGrammar.Extends@VE.EnglishGrammar.Extends
+VE.EnglishGrammar.InDom@VE.EnglishGrammar.Extends
+VE.EnglishGrammar.LexRow.NtsIn@VE.EnglishGrammar.Extends
+VE.EnglishGrammar.LexRow.Small@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.envSub@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.lexiconSub@VE.EnglishGrammar.Extends
 VE.Entails@VE.Semantics

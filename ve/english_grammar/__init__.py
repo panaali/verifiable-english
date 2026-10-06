@@ -1,10 +1,11 @@
 """The data of English in Lean that Python produces or names (docs/spec/english-lean-s2.md 2.9, 2.10).
 
-The directory holds each profile's fixed-rule source (`relational-fol@0.json`) and the lock file
-(`LOCK.json`), which `tools/english_grammar_gen.py` checks and renders into Lean. This module gives the
-adapter (`ve/backends/english_lean.py`) what it compares Lean's identities with: the lexicon Python selects
-(`export`, base 5.8) and its `lexicon_id`, the `grammar_id` of an environment's profiles and the
-`actions_version` of the lock file (base 2.12). Python gets no copy of the grammar (S2 plan, A1).
+The directory holds each profile's fixed-rule source (`relational-fol@0.json`, `order@0.json`,
+`alternatives@0.json`) and the lock file (`LOCK.json`), which `tools/english_grammar_gen.py` checks and
+renders into Lean. This module gives the adapter (`ve/backends/english_lean.py`) what it compares Lean's
+identities with: the lexicon Python selects (`export`, base 5.8) and its `lexicon_id`, the `grammar_id` of an
+environment's profiles and the `actions_version` of the lock file (base 2.12). Python gets no copy of the
+grammar (S2 plan, A1).
 """
 from __future__ import annotations
 
@@ -18,8 +19,11 @@ HERE = Path(__file__).resolve().parent
 LEXICON_DOMAIN = 've-english-lexicon-v1\n'
 LEXICON_FORMAT = 've.english-lexicon@1'
 GRAMMAR_DOMAIN = 've-english-grammar-v1\n'
-# The profiles that have a fixed-rule table, with its source (spec 2.5: `closure@0` has none).
-TABLES = {'relational-fol@0': 'relational-fol@0.json'}
+# The profiles that have a fixed-rule table, with its source (spec 2.5: `closure@0` has none; S3 2.14: the
+# staged tables of `order@0` and `alternatives@0`). `tools/english_grammar_gen.py` generates Lean's list of
+# the same tables; tests/test_english_grammar_gen.py checks that the two name the same sources.
+TABLES = {'relational-fol@0': 'relational-fol@0.json', 'order@0': 'order@0.json',
+          'alternatives@0': 'alternatives@0.json'}
 
 
 def export(words) -> dict:
