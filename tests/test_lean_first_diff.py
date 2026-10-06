@@ -519,6 +519,51 @@ def test_readings_records_are_checked_against_their_schema(tmp_path):
     assert list(expected) == [("readings", "default")] and set(expected["readings", "default"]) == set(names)
 
 
+# lf-7 review B2 and B3: the batch's own profile corpus, and the head profile over it, were not in the A/B.
+
+def test_every_differential_generator_is_a_corpus_or_names_its_reason():
+    generators = {str(p.relative_to(ROOT)) for p in (ROOT / "conformance").glob("*_differential.py")}
+    assert generators == set(diff.GENERATED_CORPORA.values()) | set(diff.GENERATORS_NOT_RECORDED)
+    assert not set(diff.GENERATED_CORPORA.values()) & set(diff.GENERATORS_NOT_RECORDED)
+    assert set(diff.GENERATED_CORPORA) <= set(diff.CORPORA)
+    assert all(type(reason) is str and reason for reason in diff.GENERATORS_NOT_RECORDED.values())
+
+
+def test_the_rights_corpus_is_the_generator_and_its_head_profile_variant(tmp_path):
+    out = tmp_path / "rights.json"
+    diff.rights_corpus(out)
+    rows = json.loads(out.read_text())
+    assert [row["case"] for row in rows] == diff.rights_cases()
+    headed = [row for row in rows if row["case"].endswith("/readings@1")]
+    assert len(rows) - len(headed) == diff.RIGHTS_COUNT and len(headed) == -(-diff.RIGHTS_COUNT // diff.RIGHTS_HEADED)
+    from conformance.rights_differential import document, document_text
+    for row in (rows[0], headed[0], rows[-1]):
+        seed = int(row["case"].split("/")[0][1:])
+        raw, units = document(seed)
+        if row in headed:
+            raw = {**raw, "profiles": sorted([*raw["profiles"], "readings@1"])}
+            assert "readings@1" in json.loads(row["text"].split("\n")[1])["environment"]["profiles"]
+        assert row["text"] == document_text(raw, units)
+    expected = diff.expected_cases(ROOT, ("rights",))
+    assert list(expected) == [("rights", "default")] and list(expected["rights", "default"]) == diff.rights_cases()
+    assert all(ops({}) == set(diff.DOCUMENT_OPS) for ops in expected["rights", "default"].values())
+    assert diff.authorities_of("rights") == ("default",)
+
+
+def test_rights_records_are_checked_against_their_schema(tmp_path):
+    from ve.errors import UnknownSymbol
+
+    def record(outcome, **fields):
+        return {"corpus": "rights", "authority": "default", "case": "s0", "op": "document_check",
+                "source_sha256": SOURCE, "outcome": outcome, **fields}
+    accepted = record(diff.outcome(lambda: {"format": "ve-document@1"}))
+    rejected = record(diff.outcome(lambda: (_ for _ in ()).throw(UnknownSymbol("UnknownSymbol: unit u9"))))
+    assert diff.record_problem(accepted) is None and diff.record_problem(rejected) is None
+    for bad in (record({}), record({"raised": {"message": "x"}}), record(accepted["outcome"], authority="lean"),
+                record(accepted["outcome"], op="readings_validate"), record(accepted["outcome"], source_sha256="x")):
+        assert diff.record_problem(bad) is not None, bad
+
+
 # lf-1 review B and rechecks B and 3 B (the class of route_parity.py's empty pass), on the lf-0 evidence rules.
 
 def test_compare_refuses_the_same_file(tmp_path):

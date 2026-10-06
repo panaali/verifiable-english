@@ -61,7 +61,7 @@ ignore_imports =
     ve.parser -> ve.backends.relay
     ve.parser -> ve.backends.validation
     ve.reports -> ve.admission
-    ve.rights -> ve.search
+    ve.rights -> ve.rights_route
     ve.softnorms -> ve.search
     ve.speech_acts -> ve.admission
     ve.speech_acts -> ve.norm_admission

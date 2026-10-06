@@ -5,7 +5,7 @@
     "type": "object", "required": ["corpus", "authority", "case", "op", "source_sha256", "outcome"],
     "additionalProperties": false,
     "properties": {
-      "corpus": {"enum": ["probe", "conformance", "pilots", "readings", "discourse", "quantity"]},
+      "corpus": {"enum": ["probe", "conformance", "pilots", "readings", "discourse", "rights", "quantity"]},
       "authority": {"$ref": "#/$defs/text"},
       "case": {"$ref": "#/$defs/text"},
       "op": {"$ref": "#/$defs/text"},
@@ -17,6 +17,7 @@
       {"if": {"properties": {"corpus": {"const": "pilots"}}}, "then": {"$ref": "#/$defs/pilots"}},
       {"if": {"properties": {"corpus": {"const": "readings"}}}, "then": {"$ref": "#/$defs/readings"}},
       {"if": {"properties": {"corpus": {"const": "discourse"}}}, "then": {"$ref": "#/$defs/discourse"}},
+      {"if": {"properties": {"corpus": {"const": "rights"}}}, "then": {"$ref": "#/$defs/discourse"}},
       {"if": {"properties": {"corpus": {"const": "quantity"}}}, "then": {"$ref": "#/$defs/quantity"}}]
   },
   "$defs": {
@@ -172,7 +173,7 @@
           {"type": "object", "required": ["raised"], "additionalProperties": false,
            "properties": {"raised": {"$ref": "#/$defs/error"}}}]}}},
 
-    "discourse": {"$comment": "`_discourse_case`: `check_document` or `render_document` of one discourse corpus entry, the digest of the entry the source, `outcome` (mig3 2.4) of the call.",
+    "discourse": {"$comment": "`_discourse_case`: `check_document` or `render_document` of one discourse corpus entry, the digest of the entry the source, `outcome` (mig3 2.4) of the call. `_rights_case` writes the same records for one rights corpus document, the digest of the rights corpus file the source.",
       "properties": {
         "authority": {"const": "default"},
         "op": {"enum": ["document_check", "document_render"]},

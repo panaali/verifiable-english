@@ -229,7 +229,7 @@ def background(env) -> tuple[Premise, ...]:
         # document, and rights premises to a correlated rights document, not to
         # the environment JSON. Lean regenerates them in the soft and rights
         # routes, and soft_route.check_regenerated and
-        # rights_route.check_rights_regenerated compare them there.
+        # The rights route supplies them as part of its Lean elaboration.
         return (base + tuple(Premise(formula, "soft") for formula in _soft_premises(env))
                 + tuple(Premise(formula, "rights") for formula in _rights_premises(env)))
 

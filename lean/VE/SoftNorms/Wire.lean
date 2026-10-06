@@ -1,4 +1,5 @@
 import VE.SoftNorms.Phases
+import VE.SoftNorms.Once
 
 /-! The soft-norms decoder and replays (docs/spec/soft-norms.md 3, 9.3 and 9.4).
 
