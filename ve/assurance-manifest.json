@@ -56,7 +56,7 @@
     "ve/backends/dispatch.py:_shadow": "shadow authority only (execute and shadowed): the Python result is returned (a Python exception is re-raised unchanged); a candidate backend exception, CheckerUnavailable included, is only recorded as a shadow difference and never becomes the returned verdict"
   },
   "lean_decoders": {
-    "total_lines": 21697,
+    "total_lines": 21743,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1001,12 +1001,12 @@
       },
       {
         "file": "lean/VE/SpeechActs/Source/Admission/Run.lean",
-        "lines": 630,
-        "sha256": "666d467b95bb495c05c226e1311588498d22bc7368986030e6766209a8817438",
+        "lines": 632,
+        "sha256": "776cebdcc648a0fa59fce70025b84c2f84b843e247f8a1633fdfa24dd2c61070",
         "ranges": [
           [
             1,
-            630
+            632
           ]
         ],
         "declarations": [
@@ -1020,12 +1020,12 @@
       },
       {
         "file": "lean/VE/SpeechActs/Source/Run.lean",
-        "lines": 889,
-        "sha256": "965cd295dcb41ff7a5cc72b25de57f425be4bd32a155cf3755980be3256df51c",
+        "lines": 933,
+        "sha256": "6d39ec0b8b5b21c0a4b10ff2acdbe15cf352dfd7ce39863219c13d940d163b1a",
         "ranges": [
           [
             1,
-            889
+            933
           ]
         ],
         "declarations": [

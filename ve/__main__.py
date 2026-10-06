@@ -153,7 +153,10 @@ def _main(argv=None):
                    "warnings": report["warnings"],
                    "reading_plan": source.reading_plan,
                    "answers": source.answer_lines, "compliance": source.compliance_lines,
-                   "coverage": source.coverage()})
+                   "coverage": source.coverage(),
+                   **({"nominations": report["nominations"]} if any(
+                       type(row) is dict and "nominate" in row
+                       for row in source.metadata.get("answers", [])) else {})})
             return 0
         except CheckerUnavailable:
             raise

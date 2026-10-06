@@ -18,7 +18,7 @@ from .readings import active_reading_sets, plan_choices
 from .speech_acts import wording_text
 from .speech_english import _sentence, parse_speech
 from .speech_english import legend
-from .vacuity import _premise_status
+from .vacuity import search_premise_status_witness
 
 
 class SpeechSource:
@@ -53,10 +53,11 @@ class SpeechSource:
         self.fences = fences
         self.document_id = self.report["document_id"]
         self.source_id = self.report["source_id"]
-        self.answer_lines = [{key: value for key, value in row.items() if key != "line"}
-                             for row in self.report["answers"]]
-        self.compliance_lines = [{key: value for key, value in row.items() if key != "line"}
-                                 for row in self.report["compliance"]]
+        answer_indices = [i for i, row in enumerate(meta.get("answers", [])) if "nominate" not in row]
+        self.answer_lines = [_display_record(row, evidence.get("answers", {}).get(str(i), {}))
+                             for i, row in zip(answer_indices, self.report["answers"], strict=True)]
+        self.compliance_lines = [_display_record(row, evidence.get("compliance", {}).get(str(i), {}))
+                                 for i, row in enumerate(self.report["compliance"])]
         try:
             self.legend = legend(env)
             sets = meta.get("reading_sets", [])
@@ -66,6 +67,20 @@ class SpeechSource:
 
     def coverage(self):
         return self.report["coverage"]
+
+
+def _display_record(row, status_evidence):
+    """Project Lean's checked status with the Python generator's search detail."""
+    result = {key: value for key, value in row.items()
+              if key != "line" or row.get("status") == "gap" or "unit" in row}
+    if "premises" in result:
+        premise = result["premises"]
+        if premise["status"] == "INCONSISTENT":
+            result["premises"] = {**premise, "certificate": status_evidence["inconsistent"]}
+        elif premise["status"] == "UNKNOWN":
+            result["premises"] = {**premise, "budget": {"max_proof_steps": 10_000,
+                "max_domain_size": 2, "max_models": 10_000, "max_evaluations": 100_000}}
+    return result
 
 
 def _premise_evidence(meta, report, env):
@@ -83,9 +98,7 @@ def _premise_evidence(meta, report, env):
         key = json.dumps(raw, sort_keys=True)
         if key not in cache:
             premises = [formula_from_data(env, ast) for ast in raw]
-            result = _premise_status(env, premises, max_proof_steps=10_000,
-                                     max_domain_size=2, max_models=10_000,
-                                     max_evaluations=100_000, include_witness=True)
+            result = search_premise_status_witness(env, premises)
             if result["status"] == "model":
                 wire = result["model"]
                 wire["relations"] = {name: rows for name, rows in wire["relations"].items()
@@ -112,7 +125,10 @@ def _premise_evidence(meta, report, env):
     for index, record in enumerate(compliance):
         if type(record) is not dict or record.get("command") not in by_command:
             continue
-        raw = by_query[by_command[record["command"]]["query"]]["premises"]
+        checked = by_command[record["command"]]
+        if "query" not in checked:
+            continue  # External evidence has no consequence certificate.
+        raw = by_query[checked["query"]]["premises"]
         if (proposal := propose(raw)) is not None:
             evidence["compliance"][str(index)] = proposal
     return evidence if evidence["answers"] or evidence["compliance"] else {}
