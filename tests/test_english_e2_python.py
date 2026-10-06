@@ -71,3 +71,20 @@ def test_deferred_overlay_refusals_still_require_suggested_consent():
     }})
     with pytest.raises(VEError, match="accept-suggested-vocabulary"):
         EnglishVocabulary(env, vocabulary=overlay, _defer_overlay_refusals=True)
+
+
+def test_argument_failure_text_preserves_prover_status(monkeypatch):
+    from types import SimpleNamespace
+    from ve import Const, Document, Unary
+    from ve import english, entailment
+    from ve.errors import SyntaxError as VESyntaxError
+
+    env = Environment(fixtures.F())
+    document = Document((Unary("deployed", Const("legacy")),
+                         Unary("reviewed", Const("legacy"))))
+    monkeypatch.setattr(english, "_parse_english_document",
+                        lambda *_args, **_kwargs: (document, "source", None, (1,)))
+    monkeypatch.setattr(entailment, "prove_entailment",
+                        lambda *_args, **_kwargs: SimpleNamespace(status="Unknown"))
+    with pytest.raises(VESyntaxError, match="earlier premises: Unknown"):
+        english.parse_english_argument(env, "source")
