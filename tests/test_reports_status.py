@@ -1,13 +1,13 @@
-"""Directive 2 property: statuses and details computed for nested content reach
-unit and document status and the residual, in Python and Lean alike.
+"""Directive 2 property: Lean statuses and details for nested content reach
+unit and document status and the residual through the Python relay.
 
 For generated report documents (nesting depth 1 to 3; open assessments, stale,
 missing and fresh carried scoped certificates, acts outside the slice and
 unformalised nodes anywhere in a kind, on units with and without content),
 `check_document`'s document status is at most every unit's status,
 every nested result and every scoped check's replayed status; every nested
-result that is not CHECKED appears in the residual lines; the Lean
-`reports-status` case gives the same statuses; and each status is the one the
+result that is not CHECKED appears in the residual lines; the direct Lean
+`reports-status` case matches the public relay; and each status is the one the
 generator predicts. The loop's reproducers are the first cases.
 """
 from __future__ import annotations
@@ -192,7 +192,9 @@ def check_properties(path, variants, unit_statuses, acts, reasons=()):
     route_doc = {k: meta[k] for k in ("units", "contexts", "assessments", "scoped", "graph") if k in meta}
     lean = run_case("reports-status", meta["environment"], route_doc)
     assert lean["units"] == statuses["units"] and lean["document_status"] == document
-    assert lean["status_text"] == document
+    assert lean["status_text"][-1] == f"DOCUMENT: {document}"
+    assert any(line.startswith("REPORT u1:") for line in lean["status_text"])
+    assert all(f"SCOPED {v['id']}:" in "\n".join(lean["status_text"]) for v in lean["scoped"])
     assert lean["residual_lines"] == lines
     assert [(v["status"], v.get("detail")) for v in lean["scoped"]] == \
         [(v["status"], v.get("detail")) for v in statuses["scoped"]]
