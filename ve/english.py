@@ -1821,7 +1821,8 @@ def parse_english_argument(env, source, **options):
         premises = tuple(document.formulas[j] for j in range(i) if j not in marked)
         proof = prove_entailment(env, premises, document.formulas[i])
         if proof.status != 'Found':
-            raise SyntaxError('The marked conclusion has no checked derivation from earlier premises.')
+            raise SyntaxError('The marked conclusion has no checked derivation from earlier premises: '
+                              + proof.status)
         checked_edges.append(Deduction(edge.name, edge.premises, edge.conclusion,
                                        ({'edge_id': deduction_identity(graph, edge),
                                          'direction': 'follows', 'proof': proof.certificate},)))
