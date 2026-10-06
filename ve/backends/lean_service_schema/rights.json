@@ -126,6 +126,7 @@
         "conditional_on": {"$ref": "soft-norms.json#/$defs/coherence_labels"},
         "conflict_targets": {"$ref": "common.json#/$defs/conflict_targets"},
         "decisions": {"$ref": "soft-norms.json#/$defs/elaborated/decisions"},
+        "default_exceptions_by_decider": {"additionalProperties": {"$ref": "common.json#/$defs/nat"}, "type": "object"},
         "derived": {"$ref": "soft-norms.json#/$defs/elaborated/derived"},
         "distinction": {
           "items": {
@@ -226,6 +227,7 @@
         "narrowings": {"$ref": "#/$defs/narrowings"},
         "order": {"$ref": "common.json#/$defs/strings"},
         "premises": {"$ref": "common.json#/$defs/layer_premises"},
+        "ranks_above": {"additionalProperties": {"$ref": "common.json#/$defs/strings"}, "type": "object"},
         "rights_background": {
           "items": {
             "additionalProperties": false,
@@ -239,6 +241,8 @@
           },
           "type": "array"
         },
+        "soft_residual": {"$ref": "soft-norms.json#/$defs/soft_residual"},
+        "soft_status": {"enum": ["CHECKED", "OPEN"]},
         "status": {"const": "ok"},
         "warnings": {"$ref": "common.json#/$defs/nonempty_strings"}
       },
@@ -255,6 +259,7 @@
         "distinction",
         "findings",
         "decisions",
+        "ranks_above",
         "derived",
         "order",
         "background",
@@ -262,6 +267,9 @@
         "colliding_pairs",
         "conflict_targets",
         "conditional_on",
+        "soft_residual",
+        "soft_status",
+        "default_exceptions_by_decider",
         "fragment",
         "warnings"
       ],

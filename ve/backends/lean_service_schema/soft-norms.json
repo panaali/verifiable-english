@@ -85,12 +85,17 @@
         "conditional_on": {"$ref": "#/$defs/coherence_labels"},
         "conflict_targets": {"$ref": "common.json#/$defs/conflict_targets"},
         "decisions": {"$ref": "#/$defs/elaborated/decisions"},
+        "default_exceptions_by_decider": {"additionalProperties": {"$ref": "common.json#/$defs/nat"}, "type": "object"},
         "derived": {"$ref": "#/$defs/elaborated/derived"},
+        "document_hash": {"$ref": "common.json#/$defs/hex64"},
         "environment_prime": {"$ref": "common.json#/$defs/environment"},
         "fragment": {"type": "boolean"},
         "id": {"$ref": "common.json#/$defs/id_ok"},
         "order": {"$ref": "common.json#/$defs/strings"},
         "premises": {"$ref": "common.json#/$defs/layer_premises"},
+        "ranks_above": {"additionalProperties": {"$ref": "common.json#/$defs/strings"}, "type": "object"},
+        "soft_residual": {"$ref": "#/$defs/soft_residual"},
+        "soft_status": {"enum": ["CHECKED", "OPEN"]},
         "status": {"const": "ok"},
         "warnings": {"$ref": "common.json#/$defs/nonempty_strings"}
       },
@@ -98,7 +103,9 @@
         "id",
         "status",
         "environment_prime",
+        "document_hash",
         "decisions",
+        "ranks_above",
         "derived",
         "order",
         "background",
@@ -106,6 +113,9 @@
         "colliding_pairs",
         "conflict_targets",
         "conditional_on",
+        "soft_residual",
+        "soft_status",
+        "default_exceptions_by_decider",
         "fragment",
         "warnings"
       ],
@@ -335,6 +345,17 @@
           "required": ["document"]
         }
       ],
+      "type": "object"
+    },
+    "soft_residual": {
+      "additionalProperties": false,
+      "properties": {
+        "default_exceptions": {"$ref": "common.json#/$defs/nat"},
+        "holistic_overrides": {"$ref": "common.json#/$defs/nat"},
+        "instruction_switches": {"$ref": "common.json#/$defs/nat"},
+        "weighing_points": {"$ref": "common.json#/$defs/nat"}
+      },
+      "required": ["default_exceptions", "instruction_switches", "holistic_overrides", "weighing_points"],
       "type": "object"
     },
     "witness": {

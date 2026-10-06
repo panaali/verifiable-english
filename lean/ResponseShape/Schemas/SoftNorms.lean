@@ -176,12 +176,14 @@ def elaborate : Shape :=
     "SoftNorms.Wire.regenerated: E' (primeJson), the decision predicates, each rule's derived carve-out (null for a strict rule without alterable), the layers, Background', the colliding pairs with their coherence premises, the conflict targets, the open coherence labels, the fragment flag and the warnings."
     [
       obj,
-      .required ["id", "status", "environment_prime", "decisions", "derived", "order", "background", "premises", "colliding_pairs", "conflict_targets", "conditional_on", "fragment", "warnings"],
+      .required ["id", "status", "environment_prime", "document_hash", "decisions", "ranks_above", "derived", "order", "background", "premises", "colliding_pairs", "conflict_targets", "conditional_on", "soft_residual", "soft_status", "default_exceptions_by_decider", "fragment", "warnings"],
       closed [
         ("id", ref "common.json#/$defs/id_ok"),
         ("status", constS "ok"),
         ("environment_prime", ref "common.json#/$defs/environment"),
+        ("document_hash", ref "common.json#/$defs/hex64"),
         ("decisions", ref "#/$defs/elaborated/decisions"),
+        ("ranks_above", n [obj, .object [] (some (ref "common.json#/$defs/strings"))]),
         ("derived", ref "#/$defs/elaborated/derived"),
         ("order", ref "common.json#/$defs/strings"),
         ("background", ref "#/$defs/background"),
@@ -189,6 +191,9 @@ def elaborate : Shape :=
         ("colliding_pairs", ref "#/$defs/elaborated/colliding_pairs"),
         ("conflict_targets", ref "common.json#/$defs/conflict_targets"),
         ("conditional_on", ref "#/$defs/coherence_labels"),
+        ("soft_residual", ref "#/$defs/soft_residual"),
+        ("soft_status", enumS ["CHECKED", "OPEN"]),
+        ("default_exceptions_by_decider", n [obj, .object [] (some (ref "common.json#/$defs/nat"))]),
         ("fragment", .type ["boolean"]),
         ("warnings", ref "common.json#/$defs/nonempty_strings")]]
 
@@ -290,6 +295,13 @@ def file : File where
     ("coherence_labels", .schema coherence_labels),
     ("admission", .schema admission),
     ("background", .schema background),
+    ("soft_residual", .schema (n [obj,
+      .required ["default_exceptions", "instruction_switches", "holistic_overrides", "weighing_points"],
+      closed [
+        ("default_exceptions", ref "common.json#/$defs/nat"),
+        ("instruction_switches", ref "common.json#/$defs/nat"),
+        ("holistic_overrides", ref "common.json#/$defs/nat"),
+        ("weighing_points", ref "common.json#/$defs/nat")]])),
     ("elaborated", elaborated),
     ("elaborate", .schema elaborate),
     ("pairs", .schema pairs),
