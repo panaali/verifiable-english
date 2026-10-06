@@ -427,4 +427,132 @@ def allJoke (A B : EFormula) : EFormula := .all "joke" (.implies A B)
 #guard mixedOf (projectionOf F A1 EJ LJ ["funny", "tells"])
     [res (u "sense__funny_1" "riddle") DState.init, res (.not (u "sense__funny_1" "riddle")) DState.init] == []
 
+/-! ## 8.2 Packs and identities (p), the Lean half: the decoder and `dictionaryId` -/
+
+/-- The pack file of spec 2.2 with the sorts `principal` (`R`) and `resource` (`Q`) of section 8. -/
+def packText : String :=
+  "{\"format\": \"ve.sense-pack@1\", \"name\": \"fixtures@1\",\n" ++
+  " \"sorts\": [{\"name\": \"joke\", \"noun\": \"joke\", \"plural\": \"jokes\", \"description\": \"A joke.\", \"letter\": \"J\"},\n" ++
+  "  {\"name\": \"service\", \"noun\": \"service\", \"plural\": \"services\", \"description\": \"A service.\", \"letter\": \"S\"},\n" ++
+  "  {\"name\": \"person\", \"noun\": \"person\", \"plural\": \"persons\", \"description\": \"A person.\", \"letter\": \"P\"},\n" ++
+  "  {\"name\": \"number\", \"noun\": \"number\", \"plural\": \"numbers\", \"description\": \"A number.\", \"letter\": \"N\"},\n" ++
+  "  {\"name\": \"principal\", \"noun\": \"principal\", \"plural\": \"principals\", \"description\": \"A principal.\", \"letter\": \"R\"},\n" ++
+  "  {\"name\": \"resource\", \"noun\": \"resource\", \"plural\": \"resources\", \"description\": \"A resource.\", \"letter\": \"Q\"}],\n" ++
+  " \"senses\": [\n" ++
+  "  {\"word\": \"funny\", \"index\": 1, \"gloss\": \"amusing\", \"description\": \"causes laughter\", \"kinds\": [\"joke\"], \"wording\": \"{0} is funny\"},\n" ++
+  "  {\"word\": \"funny\", \"index\": 2, \"gloss\": \"strange\", \"description\": \"odd, hard to explain\", \"kinds\": [\"joke\"], \"wording\": \"{0} is funny\"},\n" ++
+  "  {\"word\": \"odd\", \"index\": 1, \"gloss\": \"strange\", \"description\": \"odd, hard to explain\", \"kinds\": [\"joke\"], \"wording\": \"{0} is odd\"},\n" ++
+  "  {\"word\": \"odd\", \"index\": 2, \"gloss\": \"uneven\", \"description\": \"not divisible by two\", \"kinds\": [\"number\"], \"wording\": \"{0} is odd\"},\n" ++
+  "  {\"word\": \"tells\", \"index\": 1, \"gloss\": \"says aloud\", \"description\": \"says the joke to someone\", \"kinds\": [\"person\", \"joke\"], \"wording\": \"{0} tells {1}\"},\n" ++
+  "  {\"word\": \"deployed\", \"index\": 1, \"gloss\": \"live\", \"description\": \"running in production\", \"kinds\": [\"service\"], \"wording\": \"{0} is deployed\"},\n" ++
+  "  {\"word\": \"reviewed\", \"index\": 1, \"gloss\": \"checked\", \"description\": \"examined by a reviewer\", \"kinds\": [\"service\"], \"wording\": \"{0} is reviewed\"},\n" ++
+  "  {\"word\": \"reviewed\", \"index\": 2, \"gloss\": \"rated\", \"description\": \"given a public rating\", \"kinds\": [\"service\"], \"wording\": \"{0} is reviewed\"},\n" ++
+  "  {\"word\": \"access\", \"index\": 1, \"gloss\": \"read\", \"description\": \"may read the resource\", \"kinds\": [\"principal\", \"resource\"], \"wording\": \"{0} may access {1}\", \"negative\": \"{0} may not access {1}\"}\n" ++
+  " ]}"
+def samePack (p q : Pack) : Bool := p.name == q.name && p.sorts == q.sorts && p.senses == q.senses
+def decodesTo (text : String) (q : Pack) : Bool :=
+  match decodePackText text with
+  | .ok p => samePack p q
+  | .error _ => false
+def decodes (text : String) : Bool := (decodePackText text).toOption.isSome
+#guard decodesTo packText packF
+-- the round trip, and the identity: whitespace and key order do not count
+#guard decodesTo packF.toJson.compress packF && decodesTo packF.toJson.pretty packF
+#guard match decodePackText packText with
+  | .ok p => dictionaryId ⟨[p], []⟩ == dictionaryId F
+  | .error _ => false
+#guard (dictionaryId F).length == 64 && dictionaryId F != dictionaryId ⟨[], []⟩
+/-- An object with one field replaced, or removed when the value is none. -/
+def withField (j : Json) (k : String) (v : Option Json) : Json :=
+  let fs := ((VE.Bridge.fields j).toOption.getD []).filter (·.1 != k)
+  Json.mkObj (match v with
+    | some x => fs ++ [(k, x)]
+    | none => fs)
+/-- An array with element `i` changed by `f`. -/
+def atIndex (j : Json) (i : Nat) (f : Json → Json) : Json :=
+  match j with
+  | .arr xs => .arr (xs.mapIdx fun n x => if n == i then f x else x)
+  | _ => j
+def junk : List Json := [.null, (7 : Nat), .bool true, .arr #[], Json.mkObj [], .str "x"]
+-- each top-level field: removed, or replaced by each kind of value; an unknown field
+#guard ["format", "name", "sorts", "senses"].all fun k =>
+  !decodes (withField packF.toJson k none).compress &&
+  junk.all fun v => decodes (withField packF.toJson k (some v)).compress ==
+    ((k == "name" && v == .str "x") || ((k == "sorts" || k == "senses") && v == .arr #[]))
+#guard !decodes (withField packF.toJson "extra" (some (.str "x"))).compress
+-- each field of a sort
+#guard ["name", "noun", "plural", "description", "letter"].all fun k =>
+  let edit (v : Option Json) := withField packF.toJson "sorts"
+    (some (atIndex (packF.toJson.getObjValD "sorts") 0 fun t => withField t k v))
+  !decodes (edit none).compress && junk.all fun v => decodes (edit (some v)).compress == (v == .str "x")
+-- each field of a sense, and the optional negative
+#guard ["word", "index", "gloss", "description", "kinds", "wording", "negative"].all fun k =>
+  let edit (v : Option Json) := withField packF.toJson "senses"
+    (some (atIndex (packF.toJson.getObjValD "senses") 0 fun t => withField t k v))
+  decodes (edit none).compress == (k == "negative") && junk.all fun v =>
+    decodes (edit (some v)).compress ==
+      ((v == .str "x" && k != "index" && k != "kinds") || (k == "index" && v == (7 : Nat)) || (k == "kinds" && v == .arr #[]))
+#guard !decodes (packF.toJson.compress.replace "\"index\":1" "\"index\":true")
+#guard !decodes (packF.toJson.compress.replace "\"index\":1" "\"index\":1.5")
+#guard !decodes (packF.toJson.compress.replace "\"index\":1" "\"index\":\"1\"")
+#guard !decodes (packF.toJson.compress.replace "\"format\":\"ve.sense-pack@1\"" "\"format\":\"ve.sense-pack@2\"")
+#guard !decodes (String.mk (List.replicate 10000 '[') ++ String.mk (List.replicate 10000 ']'))
+#guard !decodes "" && !decodes "7" && !decodes "true" && !decodes "[]" && !decodes "{}" && !decodes "null"
+-- every field of the canonical form is bound by the identity: one changed value changes the id
+#guard
+  let id0 := dictionaryId F
+  let p := packF
+  [{ p with name := "other@1" }, { p with sorts := p.sorts.map fun t => { t with plural := t.plural ++ "x" } },
+   { p with sorts := p.sorts.map fun t => { t with description := "B" } }, { p with sorts := p.sorts.reverse },
+   { p with senses := swap sFunny1 { sFunny1 with gloss := "droll" } p.senses },
+   { p with senses := swap sFunny1 { sFunny1 with description := "x" } p.senses },
+   { p with senses := swap sFunny1 { sFunny1 with index := 3 } p.senses },
+   { p with senses := swap sFunny1 { sFunny1 with kinds := ["number"] } p.senses },
+   { p with senses := swap sFunny1 { sFunny1 with wording := "{0} is funnier" } p.senses },
+   { p with senses := swap sAccess1 { sAccess1 with negative := none } p.senses }].all
+    fun q => dictionaryId ⟨[q], []⟩ != id0
+#guard dictionaryId ⟨[packF], [sDry]⟩ != dictionaryId F
+
+/-! ## 4.1 Status and code -/
+
+def statusOf (D : Dictionary) (E : Env) (L : Lexicon) (s : String) (b : Nat := workBudget) :
+    Option (String × Option String) :=
+  (readWithSenses D E L b s).statusCode.toOption
+#guard statusOf F EJ LJ "Alice tells the riddle." == some ("one", none)
+#guard statusOf F EJ LJ "The riddle is odd." == some ("open", some "Unresolved")
+#guard statusOf F EJ LJ "In this document, funny means purple. Alice tells the riddle." ==
+  some ("rejected", some "UnknownGloss")
+#guard statusOf F EJ LJ (doc [lineFunny, "Alice tells the riddle."]) 1 == some ("budget", some "PreambleBudget")
+#guard statusOf F EJ LJ "Alice tells the riddle." 1 == some ("budget", some "Budget")
+#guard statusOf F EJ LJ "Alice tells bob." == some ("none", some "NoDerivation")
+#guard statusOf F EJ6 LJ6 J == some ("rejected", some "Collision")
+#guard statusOf F EJ LJ lineFunny == some ("rejected", some "EmptyDocument")
+#guard statusOf F EJs LJs (doc [lineFunny, "Legacy is funny."]) == some ("rejected", some "IllTyped")
+#guard statusOf F EJ { LJ with nouns := [] } "Alice tells the riddle." == some ("invalidGrammar", some "InvalidGrammar")
+#guard statusOf (Fwith (swap sOdd1 { sOdd1 with gloss := "odd" })) EJ LJ "Alice tells the riddle." ==
+  some ("rejected", some "InvalidDictionary")
+
+/-! ## Budget zero and the spellings of a text (build checklist 3 and 6) -/
+
+-- at budget 0 nothing is read: the preamble line or the first sentence stops on the budget
+#guard rs F EJ LJ J 0 == .fault (.preambleBudget 0)
+#guard rs F EJ LJ "Alice tells the riddle." 0 == .stopped 0 .budget
+#guard rs F EJ LJ "The riddle is odd." 0 == .stopped 0 .budget
+-- a no-break space, a double space, a tab and a carriage return read as the plain text; curly quotes,
+-- the Kelvin sign, a dotted capital I and a control character never read as another sense
+def glossed : String := "In this document, funny means amusing.\nThe riddle is funny (meaning strange)."
+#guard ["In this document, funny means amusing.\nThe riddle is funny (meaning strange).",
+    "In this document,  funny means amusing.\nThe riddle is  funny (meaning strange).",
+    "In this document,\tfunny means amusing.\tThe riddle is funny (meaning strange).",
+    "In this document, funny means amusing.\r\nThe riddle is funny (meaning strange)."].all
+  fun s => rs F EJ LJ s == rs F EJ LJ glossed
+#guard rs F EJ LJ glossed ==
+  .ok [res (u "sense__funny_2" "riddle") (st ["riddle"])] [occ 1 3 8 "sense__funny_2" false] [] []
+#guard rs F EJ LJ "In this document, funny means amusing.\nThe riddle is funny (meaning “strange”)." == .stopped 1 .none
+#guard rs F EJ LJ (glossed ++ "\nThe riddle is Kind.") == .stopped 2 .none
+#guard rs F EJ LJ "İn this document, funny means amusing.\nThe riddle is funny (meaning strange)." ==
+  .fault (.malformedPreamble 0)
+#guard rs F EJ LJ "In this document, funny means amusing.\u0007\nThe riddle is funny (meaning strange)." ==
+  .lexical (.badCharacter 38)
+
 end VE.Senses.Examples

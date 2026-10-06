@@ -58,6 +58,38 @@ inductive SensesOutcome where
   | stopped (index : Nat) (o : Outcome Tok Reject EFormula)
   | illTyped
 
+/-- The public code of a fault (4.1). -/
+def SenseFault.code : SenseFault → String
+  | .invalidDictionary _ => "InvalidDictionary"
+  | .unknownWord _ _ => "UnknownWord"
+  | .unknownGloss _ _ _ => "UnknownGloss"
+  | .malformedPreamble _ => "MalformedPreamble"
+  | .preambleBudget _ => "PreambleBudget"
+  | .repeatedDefault _ _ => "RepeatedDefault"
+  | .preambleLate _ => "PreambleLate"
+  | .collision _ _ _ => "Collision"
+  | .limit _ => "VocabularyLimit"
+  | .tooManyCandidates _ _ => "TooManyCandidates"
+  | .candidatesDiverge _ _ _ => "CandidatesDiverge"
+  | .quotedSense _ _ => "QuotedSense"
+
+/-- The status and code of an outcome (4.1): `one` with no code when every unit is resolved, `open` with
+`Unresolved` when a unit is open, `budget` for `preambleBudget`, `rejected` for the other faults, and S2's
+status and code for S2's outcomes. A stopped outcome is never `ok`. -/
+def SensesOutcome.statusCode : SensesOutcome → Except String (String × Option String)
+  | .ok units _ _ _ _ =>
+    pure (if units.all (·.candidates.isEmpty) then ("one", none) else ("open", some "Unresolved"))
+  | .fault (.preambleBudget _) => pure ("budget", some "PreambleBudget")
+  | .fault f => pure ("rejected", some f.code)
+  | .lexical r => pure ("rejected", some r.code)
+  | .invalidGrammar _ => pure ("invalidGrammar", some "InvalidGrammar")
+  | .stopped _ .budget => pure ("budget", some "Budget")
+  | .stopped _ .noDerivation => pure ("none", some "NoDerivation")
+  | .stopped _ (.ambiguous _ _) => pure ("many", some "Ambiguous")
+  | .stopped _ (.rejected r) => pure ("rejected", some r.code)
+  | .stopped _ (.ok _ _) => throw "a stopped reading cannot be ok"
+  | .illTyped => pure ("rejected", some "IllTyped")
+
 /-- The most choices an open unit may have. -/
 def candidateCap : Nat := 8
 

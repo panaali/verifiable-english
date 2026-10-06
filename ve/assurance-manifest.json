@@ -54,7 +54,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 18780,
+    "total_lines": 18873,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
@@ -195,7 +195,10 @@
        "reason": "english-lean S2 (docs/spec/english-lean-s2.md 2.3, 2.10): Env.decode reads the environment and an English vocabulary overlay into the reader's Env; typedDocument decides check_document's verdict through the standalone typing service's decoders; the full file is pinned conservatively"},
       {"file": "lean/VE/EnglishGrammar/Run.lean", "lines": 331, "sha256": "1e0d02fad48418a1daaa74c0614ee0f2b9fa4161680cf2b682a4665780435ccb",
        "ranges": [[1, 331]], "declarations": ["pairs", "triples", "decodeLexicon", "environmentId", "grammarId", "decodeCase", "readCase", "grammarCase"],
-       "reason": "english-lean S2.4 (docs/spec/english-lean-s2.md 2.10, 4.3, 4.4): ve_english_route decodes the case (environment through Env.decode, overlay, the ve.english-lexicon@1 lexicon, which must name the environment), computes the six identities and writes the english.read and english.grammar answers; shadow only while english.admission keeps authority python; the full file is pinned conservatively"}
+       "reason": "english-lean S2.4 (docs/spec/english-lean-s2.md 2.10, 4.3, 4.4): ve_english_route decodes the case (environment through Env.decode, overlay, the ve.english-lexicon@1 lexicon, which must name the environment), computes the six identities and writes the english.read and english.grammar answers; shadow only while english.admission keeps authority python; the full file is pinned conservatively"},
+      {"file": "lean/VE/Senses/Decode.lean", "lines": 93, "sha256": "5f0f5265fe8d81f015e7b7cf2e038b5f0d2065c3f806c485d3365b800dbe678e",
+       "ranges": [[1, 93]], "declarations": ["checkFields", "natOf", "decodeSense", "decodePackSort", "decodePack", "decodePackText", "dictionaryId"],
+       "reason": "senses B2, the Lean half (docs/spec/senses.md 2.2, plan 2.7): the ve.sense-pack@1 decoder over the restricted JSON boundary (no null, no unknown or missing field, no Boolean for a number) and dictionary_id over the re-encoded packs; the shape only, W1 to W7 are Dictionary.failures; no runner or service path yet (B6); the full file is pinned conservatively"}
     ],
     "other_json": {
       "lean/EnglishLeanBenchMain.lean": "measurement only: the ve_english_lean_bench executable of the english-lean G1a measurement and the lexer differential reads grammars, sentences and sources from a JSON file and prints JSON rows; no admission path, service mode or record reads it",

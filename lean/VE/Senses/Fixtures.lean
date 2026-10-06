@@ -1,4 +1,5 @@
 import VE.Senses.Read
+import VE.Senses.Decode
 import VE.EnglishGrammar.ReadExamples
 
 /-! The fixture dictionaries, environments and lexicons of docs/spec/senses.md section 8, and the
