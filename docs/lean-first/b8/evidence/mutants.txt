@@ -1,0 +1,13 @@
+identity: exit=1; test=tests/test_reports.py::test_nested_and_negated_scope_and_context_binding
+FAILED tests/test_reports.py::test_nested_and_negated_scope_and_context_binding
+
+status: exit=1; test=tests/test_reports_status.py::test_nested_unformalised_kind_reaches_status_and_residual
+FAILED tests/test_reports_status.py::test_nested_unformalised_kind_reaches_status_and_residual[0]
+FAILED tests/test_reports_status.py::test_nested_unformalised_kind_reaches_status_and_residual[1]
+FAILED tests/test_reports_status.py::test_nested_unformalised_kind_reaches_status_and_residual[2]
+FAILED tests/test_reports_status.py::test_nested_unformalised_kind_reaches_status_and_residual[3]
+FAILED tests/test_reports_status.py::test_nested_unformalised_kind_reaches_status_and_residual[4]
+FAILED tests/test_reports_status.py::test_nested_unformalised_kind_reaches_status_and_residual[5]
+
+residual: exit=1; test=tests/test_reports.py::test_report_premises_are_in_the_residual
+FAILED tests/test_reports.py::test_report_premises_are_in_the_residual - KeyE...

@@ -12,6 +12,7 @@
               "x-select": [
                 {"then": {"$ref": "#/$defs/admission"}, "when": {"$ref": "#/$defs/kind/admission"}},
                 {"then": {"$ref": "#/$defs/elaborate"}, "when": {"$ref": "#/$defs/kind/reports-elaborate"}},
+                {"then": {"$ref": "#/$defs/content"}, "when": {"$ref": "#/$defs/kind/reports-content"}},
                 {"then": {"$ref": "#/$defs/certificate"}, "when": {"$ref": "#/$defs/kind/reports-certificate"}},
                 {
                   "then": {"$ref": "#/$defs/countermodel"},
@@ -63,6 +64,16 @@
       "required": ["id", "status", "valid", "environment_reports_id", "envelope", "bindings"],
       "type": "object"
     },
+    "content": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "meaning_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "meaning_id"],
+      "type": "object"
+    },
     "countermodel": {
       "$comment": "Reports.Run.countermodelAnswer: whether the model refutes, and each generated predicate's table.",
       "additionalProperties": false,
@@ -87,6 +98,7 @@
       "required": ["id", "status", "refutes", "source_model"],
       "type": "object"
     },
+    "counts": {"additionalProperties": {"$ref": "common.json#/$defs/nat"}, "type": "object"},
     "elaborate": {
       "$comment": "Reports.Run.elaborated: E_reports' identity, the generated predicates with their keys, the premises, the open assessment terms with their records, the bridge formulas, the content identities, the envelope and the warnings.",
       "additionalProperties": false,
@@ -115,6 +127,17 @@
           "type": "array"
         },
         "envelope": {"$ref": "#/$defs/envelope"},
+        "environment_reports": {
+          "additionalProperties": false,
+          "properties": {
+            "language": {"type": "string"},
+            "profiles": {"$ref": "common.json#/$defs/strings"},
+            "spec_revision": {"type": "string"},
+            "vocabulary": {"type": "object"}
+          },
+          "required": ["language", "profiles", "spec_revision", "vocabulary"],
+          "type": "object"
+        },
         "environment_reports_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
         "id": {"$ref": "common.json#/$defs/id_ok"},
         "keys": {
@@ -126,6 +149,15 @@
               "name": {"pattern": "reports__.*", "type": "string"}
             },
             "required": ["name", "arguments", "key"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "meaning_ids": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {"meaning_id": {"$ref": "common.json#/$defs/hex64_or_empty"}, "unit": {"type": "string"}},
+            "required": ["unit", "meaning_id"],
             "type": "object"
           },
           "type": "array"
@@ -182,11 +214,13 @@
         "id",
         "status",
         "environment_reports_id",
+        "environment_reports",
         "keys",
         "premises",
         "open_terms",
         "bridge_formulas",
         "content_ids",
+        "meaning_ids",
         "envelope",
         "warnings"
       ],
@@ -237,6 +271,7 @@
     "kind": {
       "admission": {"properties": {"kind": {"const": "admission"}}, "required": ["kind"], "type": "object"},
       "reports-certificate": {"properties": {"kind": {"const": "reports-certificate"}}, "required": ["kind"], "type": "object"},
+      "reports-content": {"properties": {"kind": {"const": "reports-content"}}, "required": ["kind"], "type": "object"},
       "reports-countermodel": {"properties": {"kind": {"const": "reports-countermodel"}}, "required": ["kind"], "type": "object"},
       "reports-elaborate": {"properties": {"kind": {"const": "reports-elaborate"}}, "required": ["kind"], "type": "object"},
       "reports-scoped": {"properties": {"kind": {"const": "reports-scoped"}}, "required": ["kind"], "type": "object"},
@@ -298,8 +333,39 @@
         "document_status": {"$ref": "#/$defs/status_word"},
         "envelope": {"$ref": "#/$defs/envelope"},
         "id": {"$ref": "common.json#/$defs/id_ok"},
+        "residual_lines": {
+          "additionalProperties": false,
+          "properties": {
+            "assessments": {"$ref": "#/$defs/counts"},
+            "literal_quotations": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {"path": {"type": "string"}, "unit": {"type": "string"}},
+                "required": ["unit", "path"],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "open_terms": {"$ref": "common.json#/$defs/strings"},
+            "reports": {"$ref": "#/$defs/counts"},
+            "scoped_checks": {"items": {"$ref": "#/$defs/verdict"}, "type": "array"},
+            "unformalised_kinds": {"$ref": "#/$defs/counts"},
+            "unreviewed_acts": {"$ref": "#/$defs/counts"}
+          },
+          "required": [
+            "open_terms",
+            "reports",
+            "assessments",
+            "literal_quotations",
+            "scoped_checks",
+            "unreviewed_acts",
+            "unformalised_kinds"
+          ],
+          "type": "object"
+        },
         "scoped": {"items": {"$ref": "#/$defs/verdict"}, "type": "array"},
         "status": {"const": "ok"},
+        "status_text": {"$ref": "#/$defs/status_word"},
         "units": {
           "items": {
             "additionalProperties": false,
@@ -353,7 +419,17 @@
           "type": "array"
         }
       },
-      "required": ["id", "status", "units", "scoped", "document_status", "envelope", "bindings"],
+      "required": [
+        "id",
+        "status",
+        "units",
+        "scoped",
+        "document_status",
+        "status_text",
+        "residual_lines",
+        "envelope",
+        "bindings"
+      ],
       "type": "object"
     },
     "status_word": {"enum": ["UNFORMALISED", "OPEN", "UNKNOWN", "LABELLED", "CHECKED"]},
@@ -387,6 +463,7 @@
                 "witness replay over a quoted package's scope is not implemented",
                 "envelope",
                 "certificate does not replay",
+                "not replayed",
                 "no evidence"
               ]
             },

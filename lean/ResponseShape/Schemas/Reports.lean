@@ -23,6 +23,7 @@ def kind : Def :=
   .group none [
     ("admission", kindIs "admission"),
     ("reports-elaborate", kindIs "reports-elaborate"),
+    ("reports-content", kindIs "reports-content"),
     ("reports-certificate", kindIs "reports-certificate"),
     ("reports-countermodel", kindIs "reports-countermodel"),
     ("reports-scoped", kindIs "reports-scoped"),
@@ -74,6 +75,8 @@ def key : Shape :=
 def status_word : Shape :=
   enumS ["UNFORMALISED", "OPEN", "UNKNOWN", "LABELLED", "CHECKED"]
 
+def counts : Shape := n [obj, .object [] (some (ref "common.json#/$defs/nat"))]
+
 def verdict : Shape :=
   c "Reports.Run.scopedVerdict: one scoped check's verdict; UNKNOWN for unreplayable payloads has no scope." [
     .anyOf [
@@ -102,6 +105,7 @@ def verdict : Shape :=
             "witness replay over a quoted package's scope is not implemented",
             "envelope",
             "certificate does not replay",
+            "not replayed",
             "no evidence"])]]]]
 
 def admission : Shape :=
@@ -124,11 +128,14 @@ def elaborate : Shape :=
     "Reports.Run.elaborated: E_reports' identity, the generated predicates with their keys, the premises, the open assessment terms with their records, the bridge formulas, the content identities, the envelope and the warnings."
     [
       obj,
-      .required ["id", "status", "environment_reports_id", "keys", "premises", "open_terms", "bridge_formulas", "content_ids", "envelope", "warnings"],
+      .required ["id", "status", "environment_reports_id", "environment_reports", "keys", "premises", "open_terms", "bridge_formulas", "content_ids", "meaning_ids", "envelope", "warnings"],
       closed [
         ("id", ref "common.json#/$defs/id_ok"),
         ("status", constS "ok"),
         ("environment_reports_id", ref "common.json#/$defs/hex64_or_empty"),
+        ("environment_reports", n [obj, .required ["language", "profiles", "spec_revision", "vocabulary"],
+          closed [("language", str), ("profiles", ref "common.json#/$defs/strings"),
+            ("spec_revision", str), ("vocabulary", obj)]]),
         ("keys", n [
           arr,
           .items (n [
@@ -180,8 +187,14 @@ def elaborate : Shape :=
               obj,
               .required ["unit", "content_id"],
               closed [("unit", str), ("content_id", ref "common.json#/$defs/hex64_or_empty")]])]),
+        ("meaning_ids", n [arr, .items (n [obj, .required ["unit", "meaning_id"],
+          closed [("unit", str), ("meaning_id", ref "common.json#/$defs/hex64_or_empty")]])]),
         ("envelope", ref "#/$defs/envelope"),
         ("warnings", n [arr, .items (n [str, .pattern (Re.prefixes ["unreviewed act "])])])]]
+
+def content : Shape := n [obj, .required ["id", "status", "meaning_id"],
+  closed [("id", ref "common.json#/$defs/id_ok"), ("status", constS "ok"),
+    ("meaning_id", ref "common.json#/$defs/hex64_or_empty")]]
 
 def certificate : Shape :=
   c "Reports.Run.runCertificate: the certificate's verdict with both bindings." [
@@ -232,7 +245,7 @@ def status : Shape :=
     "Reports.Run.runStatus: every unit's status with its nested results, the scoped verdicts and the document's status."
     [
       obj,
-      .required ["id", "status", "units", "scoped", "document_status", "envelope", "bindings"],
+      .required ["id", "status", "units", "scoped", "document_status", "status_text", "residual_lines", "envelope", "bindings"],
       closed [
         ("id", ref "common.json#/$defs/id_ok"),
         ("status", constS "ok"),
@@ -277,6 +290,16 @@ def status : Shape :=
                           ("status", constS "UNFORMALISED")]]])])]])]),
         ("scoped", n [arr, .items (ref "#/$defs/verdict")]),
         ("document_status", ref "#/$defs/status_word"),
+        ("status_text", ref "#/$defs/status_word"),
+        ("residual_lines", n [obj,
+          .required ["open_terms", "reports", "assessments", "literal_quotations", "scoped_checks", "unreviewed_acts", "unformalised_kinds"],
+          closed [("open_terms", ref "common.json#/$defs/strings"),
+            ("reports", ref "#/$defs/counts"), ("assessments", ref "#/$defs/counts"),
+            ("literal_quotations", n [arr, .items (n [obj, .required ["unit", "path"],
+              closed [("unit", str), ("path", str)]])]),
+            ("scoped_checks", n [arr, .items (ref "#/$defs/verdict")]),
+            ("unreviewed_acts", ref "#/$defs/counts"),
+            ("unformalised_kinds", ref "#/$defs/counts")]]),
         ("envelope", ref "#/$defs/envelope"),
         ("bindings", ref "#/$defs/envelope_binding")]]
 
@@ -288,6 +311,7 @@ def «row» : Shape :=
       .select [
         (ref "#/$defs/kind/admission", ref "#/$defs/admission"),
         (ref "#/$defs/kind/reports-elaborate", ref "#/$defs/elaborate"),
+        (ref "#/$defs/kind/reports-content", ref "#/$defs/content"),
         (ref "#/$defs/kind/reports-certificate", ref "#/$defs/certificate"),
         (ref "#/$defs/kind/reports-countermodel", ref "#/$defs/countermodel"),
         (ref "#/$defs/kind/reports-scoped", ref "#/$defs/scoped"),
@@ -305,9 +329,11 @@ def file : File where
     ("envelope", .schema envelope),
     ("key", .schema key),
     ("status_word", .schema status_word),
+    ("counts", .schema counts),
     ("verdict", .schema verdict),
     ("admission", .schema admission),
     ("elaborate", .schema elaborate),
+    ("content", .schema content),
     ("certificate", .schema certificate),
     ("countermodel", .schema countermodel),
     ("envelope_binding", .schema envelope_binding),

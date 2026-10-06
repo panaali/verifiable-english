@@ -1,10 +1,7 @@
-"""Checked reports route and independent Python/Lean elaboration comparison."""
+"""Checked reports route."""
 from __future__ import annotations
 
 from .backends.relay import decide
-from .errors import VEError
-FIELDS = ("environment_reports_id", "keys", "premises", "open_terms",
-          "bridge_formulas", "content_ids", "envelope", "warnings")
 
 
 def _without_null(value):
@@ -17,17 +14,8 @@ def _without_null(value):
     return value
 
 
-def run_case(kind, environment, document):
+def run_case(kind, environment, document, **extra):
     """Lean's reports route row (service mode `reports`); a rejection raises Lean's diagnostic."""
     case = _without_null({"id": "document", "kind": kind,
-                          "environment": environment, "document": document})
+                          "environment": environment, "document": document, **extra})
     return decide("reports", [case])[0]
-
-
-def checked_elaboration(reports, environment, document):
-    result = run_case("reports-elaborate", environment, document)
-    python = reports.elaborated()
-    for field in FIELDS:
-        if python[field] != result.get(field):
-            raise VEError(f"ReportsConformance: Python and Lean differ at {field}")
-    return result

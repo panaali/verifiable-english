@@ -785,10 +785,12 @@ def coverage(doc, scoped=None, rights_report=None):
             reason = u["meaning"]["unformalised"]
             reasons[reason] = reasons.get(reason, 0) + 1
         if doc.get("reports") is not None:
-            # 6: a nested unformalised kind is a part of the unit left unformalised
-            # (the root one needs an unformalised meaning, counted above).
-            from .reports import unformalised_kinds
-            for node in unformalised_kinds(u["kind"]):
+            # Lean supplies every nested status and its reason.
+            nested = next(row["nested"] for row in doc["reports"].statuses()["units"]
+                          if row["id"] == u["id"])
+            for node in nested:
+                if node["item"] != "unformalised":
+                    continue
                 if node["path"]:
                     reasons[node["reason"]] = reasons.get(node["reason"], 0) + 1
     meta = doc["meta"]
@@ -807,7 +809,7 @@ def coverage(doc, scoped=None, rights_report=None):
         # does, and every report or assessment premise is an identified assumption
         # whatever its support, so each line counts into the total.
         residual["bridges_nested"] = sum(label.startswith("bridge:accepts_at(") for label in labels)
-        lines = doc["reports"].residual_lines(scoped)
+        lines = doc["reports"].residual_lines()
         residual.update({line: sum(detail.values()) if type(detail) is dict else len(detail)
                          for line, detail in lines.items()})
     alternatives = None
@@ -1069,7 +1071,7 @@ def _report(doc):
     joint_pending = joint is not None and joint["status"] == "UNKNOWN"
     soft = doc["soft_document"]
     if doc["reports"] is not None:
-        from .reports_route import checked_elaboration, run_case
+        from .reports_route import run_case
         meta = doc["meta"]
         route_doc = {"units": [_wire_unit(u) for u in doc["units"]],
                      "contexts": meta.get("contexts", []), "assessments": meta.get("assessments", []),
@@ -1078,13 +1080,9 @@ def _report(doc):
                      **({"graph": meta["graph"]} if "graph" in meta else {})}
         environment = meta["environment"]
         reports = doc["reports"]
-        checked = checked_elaboration(reports, environment, route_doc)
-        # 6: the scoped checks' replayed verdicts, and every unit's and the
-        # document's status as the meet of all nested results, in Python and Lean.
-        replayed = run_case("reports-status", environment, route_doc)
-        statuses = reports.statuses(reports.scoped_verdicts(replayed["scoped"]))
-        if any(replayed.get(key) != statuses[key] for key in ("units", "document_status")):
-            raise VEError("ReportsConformance: Python and Lean differ at statuses")
+        reports.replay()
+        checked = reports.route_answer()
+        statuses = reports.statuses()
         result = {"format": doc["meta"]["format"], "status": "UNVERIFIED",
                   "source_id": doc["source_id"], "document_id": doc["document_id"],
                   "coverage": coverage(doc, statuses["scoped"]), "reports": checked,
