@@ -536,9 +536,11 @@
     "ResponseShape.Schemas.SoftNorms.packages",
     "ResponseShape.Schemas.SoftNorms.pairs",
     "ResponseShape.Schemas.SoftNorms.row",
+    "ResponseShape.Schemas.SoftNorms.rule",
     "ResponseShape.Schemas.SoftNorms.soft_field",
     "ResponseShape.Schemas.SoftNorms.soft_path",
-    "ResponseShape.Schemas.SoftNorms.witness"
+    "ResponseShape.Schemas.SoftNorms.witness",
+    "ResponseShape.Schemas.SoftNorms.witness_model"
    ],
    "G[R]": [
     "ResponseShape.Schemas.SoftNorms.error"
@@ -3556,18 +3558,18 @@
     "VE.NormDefaults.Wire.FilledX",
     "VE.NormDefaults.Wire.StatusX",
     "VE.NormDefaults.Wire.acceptedX",
-    "VE.NormDefaults.Wire.firstFailureX",
-    "VE.NormDefaults.Wire.layeredSource",
-    "VE.NormDefaults.Wire.neverX",
-    "VE.NormDefaults.Wire.replayStatusX",
-    "VE.NormDefaults.Wire.suppliedX",
-    "VE.NormDefaults.Wire.witnessConflictX",
     {
      "name": "VE.NormDefaults.Wire.conflictFreeX",
      "tied": [
       "VE.NormDefaults.Wire.layered_conflict_sound"
      ]
-    }
+    },
+    "VE.NormDefaults.Wire.firstFailureX",
+    "VE.NormDefaults.Wire.layeredSource",
+    "VE.NormDefaults.Wire.neverX",
+    "VE.NormDefaults.Wire.replayStatusX",
+    "VE.NormDefaults.Wire.suppliedX",
+    "VE.NormDefaults.Wire.witnessConflictX"
    ],
    "D[V]": [
     "VE.NormDefaults.Wire.LayeredU",
@@ -3677,16 +3679,16 @@
     "VE.NormDefaults.Wire.ReportG.findings",
     "VE.NormDefaults.Wire.ReportG.gaps",
     "VE.NormDefaults.Wire.extraValid",
-    "VE.NormDefaults.Wire.guardCone",
-    "VE.NormDefaults.Wire.guardPredicates",
-    "VE.NormDefaults.Wire.inheritsFrom",
-    "VE.NormDefaults.Wire.normsSource",
     {
      "name": "VE.NormDefaults.Wire.groundingOf",
      "tied": [
       "VE.NormDefaults.Wire.grounding_ungrounded_iff"
      ]
-    }
+    },
+    "VE.NormDefaults.Wire.guardCone",
+    "VE.NormDefaults.Wire.guardPredicates",
+    "VE.NormDefaults.Wire.inheritsFrom",
+    "VE.NormDefaults.Wire.normsSource"
    ]
   },
   "VE/NormDefaults/Routes.lean": {
@@ -7120,14 +7122,20 @@
     "VE.SoftNorms.Run.classificationPackage",
     "VE.SoftNorms.Run.conflictValidWithout",
     "VE.SoftNorms.Run.entailmentValidWithout",
+    "VE.SoftNorms.Run.overlapLine",
+    "VE.SoftNorms.Run.warningRule",
+    "VE.SoftNorms.Run.warningSituation",
     "VE.SoftNorms.Run.weighingWitness"
    ],
    "D[V]": [
     "VE.SoftNorms.Run.classify",
+    "VE.SoftNorms.Run.dualGuardCycle",
     "VE.SoftNorms.Run.encodeAdmitted",
-    "VE.SoftNorms.Run.openAfterClassification"
+    "VE.SoftNorms.Run.openAfterClassification",
+    "VE.SoftNorms.Run.preferredAt"
    ],
    "G[V]": [
+    "VE.SoftNorms.Run.overrideCycleLine",
     "VE.SoftNorms.Run.pairsResult",
     "VE.SoftNorms.Run.reportedCode",
     "VE.SoftNorms.Run.runAdmission",
@@ -7138,7 +7146,11 @@
     "VE.SoftNorms.Run.witnessKind"
    ],
    "G[R]": [
-    "VE.SoftNorms.Run.softDiagnosticCode"
+    "VE.SoftNorms.Run.softDiagnosticCode",
+    "VE.SoftNorms.Run.warningRows"
+   ],
+   "G[I]": [
+    "VE.SoftNorms.Run.documentIdentityEnvironment"
    ]
   },
   "VE/SoftNorms/Semantics.lean": {
@@ -7337,8 +7349,10 @@
     "VE.SoftNorms.Wire.SoftEnvironment",
     "VE.SoftNorms.Wire.SoftWitnessData",
     "VE.SoftNorms.Wire.cohLabel",
+    "VE.SoftNorms.Wire.exceptionDecider",
     "VE.SoftNorms.Wire.replaySoftConflict",
     "VE.SoftNorms.Wire.replaySoftEntailment",
+    "VE.SoftNorms.Wire.residual",
     "VE.SoftNorms.Wire.softWitnessFrom"
    ],
    "D[V]": [
@@ -7346,6 +7360,7 @@
     "VE.SoftNorms.Wire.SoftSource",
     "VE.SoftNorms.Wire.basePrimeJson",
     "VE.SoftNorms.Wire.bgEntry",
+    "VE.SoftNorms.Wire.deciderCounts",
     "VE.SoftNorms.Wire.decisionEntry",
     "VE.SoftNorms.Wire.decodeModel",
     "VE.SoftNorms.Wire.decodeSoftNorm",
@@ -7356,6 +7371,7 @@
     "VE.SoftNorms.Wire.openCoherence",
     "VE.SoftNorms.Wire.primeJson",
     "VE.SoftNorms.Wire.replaySoftWitness",
+    "VE.SoftNorms.Wire.residualStatus",
     "VE.SoftNorms.Wire.softProfile",
     "VE.SoftNorms.Wire.stripSoft",
     "VE.SoftNorms.Wire.withDecisions"
@@ -7493,10 +7509,6 @@
    "D[I]": [
     "VE.SpeechActs.Source.Admission.reportId"
    ],
-   "G[R]": [
-    "VE.SpeechActs.Source.Admission.nodeDiagnostic",
-    "VE.SpeechActs.Source.admissionPayloadError"
-   ],
    "G[V]": [
     "VE.SpeechActs.Source.Admission.SpeechAdmitted.kinds",
     "VE.SpeechActs.Source.Admission.runAdmission",
@@ -7505,9 +7517,28 @@
     "VE.SpeechActs.Source.runCase",
     "VE.SpeechActs.Source.runCaseReported",
     "VE.SpeechActs.Source.usesSourcePath"
+   ],
+   "G[R]": [
+    "VE.SpeechActs.Source.Admission.nodeDiagnostic",
+    "VE.SpeechActs.Source.admissionPayloadError"
    ]
   },
   "VE/SpeechActs/Source/Run.lean": {
+   "S": [
+    "VE.SpeechActs.Source.Coverage",
+    "VE.SpeechActs.Source.DoneFact",
+    "VE.SpeechActs.Source.Row",
+    "VE.SpeechActs.Source.actVerb",
+    "VE.SpeechActs.Source.coverage",
+    "VE.SpeechActs.Source.doneFact",
+    "VE.SpeechActs.Source.expectedOpenTerm",
+    "VE.SpeechActs.Source.meaningWord",
+    "VE.SpeechActs.Source.reconciles",
+    "VE.SpeechActs.Source.sumBytes",
+    "VE.SpeechActs.Source.totals",
+    "VE.SpeechActs.Source.unitClass",
+    "VE.SpeechActs.Source.unitStatus"
+   ],
    "D[V]": [
     "VE.SpeechActs.Source.SetInfo",
     "VE.SpeechActs.Source.SourceUnit",
@@ -7541,21 +7572,6 @@
     "VE.SpeechActs.Source.SpeechSource.documentId",
     "VE.SpeechActs.Source.SpeechSource.identityPayload",
     "VE.SpeechActs.Source.completedModelId"
-   ],
-   "S": [
-    "VE.SpeechActs.Source.Coverage",
-    "VE.SpeechActs.Source.DoneFact",
-    "VE.SpeechActs.Source.Row",
-    "VE.SpeechActs.Source.actVerb",
-    "VE.SpeechActs.Source.coverage",
-    "VE.SpeechActs.Source.doneFact",
-    "VE.SpeechActs.Source.expectedOpenTerm",
-    "VE.SpeechActs.Source.meaningWord",
-    "VE.SpeechActs.Source.reconciles",
-    "VE.SpeechActs.Source.sumBytes",
-    "VE.SpeechActs.Source.totals",
-    "VE.SpeechActs.Source.unitClass",
-    "VE.SpeechActs.Source.unitStatus"
    ],
    "G[V]": [
     "VE.SpeechActs.Source.AnswerRecord",

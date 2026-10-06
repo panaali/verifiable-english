@@ -99,7 +99,7 @@
             "additionalProperties": false,
             "properties": {
               "line": {"pattern": "Overlap\\(.*", "type": "string"},
-              "model": {"type": "object"},
+              "model": {"$ref": "#/$defs/witness_model"},
               "pair": {"$ref": "common.json#/$defs/string_pair"},
               "tuple": {"$ref": "common.json#/$defs/strings"}
             },
@@ -114,7 +114,7 @@
             "properties": {
               "cycle": {"$ref": "common.json#/$defs/strings"},
               "line": {"pattern": "override_cycles:.*", "type": "string"},
-              "model": {"type": "object"},
+              "model": {"$ref": "#/$defs/witness_model"},
               "tuple": {"$ref": "common.json#/$defs/strings"}
             },
             "required": ["cycle", "tuple", "model", "line"],
@@ -417,6 +417,21 @@
       },
       "required": ["id", "status", "verdict", "target", "targets", "status_text"],
       "then": {"required": ["witness_kind"]},
+      "type": "object"
+    },
+    "witness_model": {
+      "$comment": "A Lean-checked finite model echoed with a witnessed soft finding.",
+      "additionalProperties": false,
+      "properties": {
+        "complete": {"type": "boolean"},
+        "constants": {"additionalProperties": {"type": "string"}, "type": "object"},
+        "domains": {"additionalProperties": {"$ref": "common.json#/$defs/strings"}, "type": "object"},
+        "relations": {
+          "additionalProperties": {"items": {"$ref": "common.json#/$defs/strings"}, "type": "array"},
+          "type": "object"
+        }
+      },
+      "required": ["complete", "domains", "constants", "relations"],
       "type": "object"
     }
   }

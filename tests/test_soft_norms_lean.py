@@ -9,6 +9,7 @@ inputs. The Python soft profile (item 2) is not needed: environments are raw JSO
 """
 from __future__ import annotations
 
+from copy import deepcopy
 import json
 from pathlib import Path
 
@@ -419,6 +420,33 @@ def test_witnessed_overlap_and_override_cycle_lines(lean):
     bad = {**cycle, "model": model({**relations, "soft__outweighs__d__c__x_permitted": []})}
     [refused] = run(lean, [{**case, "override_cycle_witnesses": [bad]}])
     assert refused["status"] == "error" and "missing preference edge" in refused["error"]
+
+
+def test_readings_identity_environment_is_bound(lean):
+    lower = env()
+    original = deepcopy(lower)
+    original["profiles"] = sorted([*original["profiles"], "readings@1"])
+    case = {"id": "identity", "kind": "soft-elaborate", "environment": lower,
+            "norms": [should("default", "x_required", True)]}
+    [plain, bound] = run(lean, [case, {**case, "id": "bound", "identity_environment": original}])
+    assert plain["status"] == bound["status"] == "ok"
+    assert plain["document_hash"] != bound["document_hash"]
+    assert "readings@1" not in plain["environment_prime"]["profiles"]
+    assert "readings@1" in bound["environment_prime"]["profiles"]
+    tampered = deepcopy(original)
+    tampered["vocabulary"]["sorts"]["assistant"]["description"] = "altered"
+    [refused] = run(lean, [{**case, "identity_environment": tampered}])
+    assert refused["status"] == "error" and "identity environment differs" in refused["error"]
+
+
+def test_soft_relay_cached_answers_are_independent(lean):
+    from ve.backends.soft_relay import run as relay
+
+    case = {"id": "cache-isolation", "kind": "soft-elaborate", "environment": env(), "norms": []}
+    first = relay(case)
+    first["environment_prime"]["profiles"].append("bogus@0")
+    second = relay(case)
+    assert "bogus@0" not in second["environment_prime"]["profiles"]
 
 
 def test_admission_with_soft_units_and_regenerated_leaves(lean):

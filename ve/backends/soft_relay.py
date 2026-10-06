@@ -1,8 +1,10 @@
 """Lean's soft route at the Python boundary."""
 from __future__ import annotations
 
+from copy import deepcopy
+
 from ..errors import VEError
-from .relay import decide
+from .relay import decide, decide_once
 
 
 def wire(value):
@@ -17,6 +19,11 @@ def wire(value):
 def run(case):
     """Return a Lean soft row, retaining its diagnostic on a rejection."""
     try:
+        if case.get("kind") in ("soft-elaborate", "soft-rule"):
+            # Both are pure source checks. Repeated rights correlation sends the
+            # same large source and rules many times; keep Lean's bound answer,
+            # and give each caller an independent display row.
+            return deepcopy(decide_once("soft-norms", case))
         return decide("soft-norms", [case])[0]
     except VEError as error:
         if case.get("kind") in ("soft-elaborate", "admission"):
