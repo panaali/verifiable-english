@@ -31,14 +31,13 @@ KEYS = ("environment_reports_id", "keys", "premises", "open_terms", "bridge_form
     ("assessments", [A1, A1], "DuplicateDeclaration: assessment a1"),
     ("contexts", CONTEXTS * 86, "ResourceLimit: contexts"),
 ])
-def test_legacy_record_diagnostic_precedes_choices(field, value, message, monkeypatch):
-    """Record type, limit and duplicate faults retain their public order and wording."""
-    import ve.reports as reports
-    monkeypatch.setattr(reports, "run_case", lambda *a, **k: pytest.fail("invalid records reached Lean"))
+def test_legacy_record_diagnostic_precedes_choices(field, value, message):
+    """Record type, limit and duplicate faults retain their public order and wording; Lean
+    names them (`Preflight.check`), Python no longer does."""
     kwargs = {"contexts": CONTEXTS, "assessments": [A1], field: value}
     with pytest.raises(VEError) as exc:
         ReportsDocument(Environment(E0()), kwargs["contexts"], kwargs["assessments"], [], choices=["x"])
-    assert str(exc.value) == message
+    assert str(exc.value) == message and exc.value.backend_rejection
 
 
 @pytest.mark.parametrize("field,value,message", [
@@ -47,12 +46,10 @@ def test_legacy_record_diagnostic_precedes_choices(field, value, message, monkey
     ("bridges", [{"id": str(i)} for i in range(1001)], "ResourceLimit: bridges or scoped"),
     ("scoped", [{"id": str(i)} for i in range(257)], "ResourceLimit: bridges or scoped"),
 ])
-def test_legacy_metadata_fault_precedes_choices(field, value, message, monkeypatch):
-    import ve.reports as reports
-    monkeypatch.setattr(reports, "run_case", lambda *a, **k: pytest.fail("invalid metadata reached Lean"))
+def test_legacy_metadata_fault_precedes_choices(field, value, message):
     with pytest.raises(VEError) as exc:
         ReportsDocument(Environment(E0()), CONTEXTS, [A1], [], choices=["x"], **{field: value})
-    assert str(exc.value) == message
+    assert str(exc.value) == message and exc.value.backend_rejection
 
 
 def test_profile_fault_precedes_malformed_records():

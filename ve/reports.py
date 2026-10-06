@@ -10,21 +10,22 @@ from copy import deepcopy
 
 from .environment import Environment
 from .errors import CheckerUnavailable
-from .reports_preflight import prepare
 from .reports_route import run_case
 
 class ReportsDocument:
     def __init__(self, environment: Environment, contexts, assessments, units, *,
                  bridges=(), scoped=(), choices=(), open_terms=()):
         self.environment = environment
-        self.contexts, self.assessments, bridges, scoped = prepare(
-            environment, contexts, assessments, bridges, scoped)
         self.units = deepcopy(units)
+        # Lean decides every value as given (its order and texts are the public ones).
         self._document = {"units": self.units, "contexts": deepcopy(contexts), "assessments": deepcopy(assessments),
                           "bridges": deepcopy(bridges), "scoped": deepcopy(scoped),
                           "open_terms": deepcopy(open_terms), "choices": deepcopy(choices)}
         self._environment = environment.to_dict()
         answer = run_case("reports-elaborate", self._environment, self._document)
+        # Accepted: the records are lists of objects with distinct ids.
+        self.contexts = {row["id"]: deepcopy(row) for row in contexts}
+        self.assessments = {row["id"]: deepcopy(row) for row in assessments}
         self.choices = deepcopy(choices)
         self._answer = answer
         self.envelope = answer["envelope"]
