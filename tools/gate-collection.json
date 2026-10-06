@@ -1393,6 +1393,7 @@
   "tests/test_difffuzz.py::test_every_runner_rows_for_unread_cases_carry_the_position_row_alone[ve_soft_norms_route]",
   "tests/test_difffuzz.py::test_every_runner_rows_for_unread_cases_carry_the_position_row_alone[ve_speech_acts_route]",
   "tests/test_difffuzz.py::test_every_wire_unit_is_fuzzed_or_included",
+  "tests/test_difffuzz.py::test_gate_result_metadata_is_not_an_environment_seed",
   "tests/test_difffuzz.py::test_genuine_rows_pass_their_checks_and_mutated_rows_are_not_answers",
   "tests/test_difffuzz.py::test_limits_come_from_the_wire_contract_tables",
   "tests/test_difffuzz.py::test_mutations",
