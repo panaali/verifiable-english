@@ -14,12 +14,29 @@ theorem of_norms {v : Json} (hp : usesAltPath req = false) (h : Fits req Skeleto
     Fits req Skeletons.alternatives v :=
   Fits.onCaseE (by simpa [CaseCond.holds, CaseDecider.fn] using hp) h
 
+/-- Every Background premise label of the alternatives document is one of the four. -/
+theorem premiseLabels_mem (A : AltDoc) : ∀ s ∈ altPremiseLabels A,
+    s ∈ ["alternatives:own", "alternatives:one_taken", "alternatives:one_inaction", "alternatives:proximate"] := by
+  intro s hs
+  simp only [altPremiseLabels, List.mem_cons, List.mem_append, List.mem_map] at hs
+  rcases hs with rfl | ((⟨_, _, rfl⟩ | ⟨_, _, rfl⟩) | ⟨_, _, rfl⟩) <;> decide
+
+theorem premiseLabels_fits (A : AltDoc) :
+    Fits req (.arr [] (.strIn ["alternatives:own", "alternatives:one_taken", "alternatives:one_inaction",
+      "alternatives:proximate"])) (toJson (altPremiseLabels A)) :=
+  Fits.toJsonStrs (premiseLabels_mem A)
+
+theorem labelled_fits {A : AltDoc} {p : String × VE.Formula} (h : p ∈ (altPremiseLabels A).zip (altPremises A)) :
+    Fits req (.strIn ["alternatives:own", "alternatives:one_taken", "alternatives:one_inaction",
+      "alternatives:proximate"]) (.str p.1) :=
+  Fits.strIn (premiseLabels_mem A _ (List.of_mem_zip h).1)
+
 theorem elaborate_fits (id : String) (src : Wire.AltSource) :
     Fits req (skel% "alternatives.json#/$defs/elaborate") (ok id (Wire.regenerated src)) := by
   unfold ok VE.Route.Wire.ok Wire.regenerated Wire.encodeNode Wire.labelled Wire.profileExists
     VE.Norms.Wire.regenerated profileWords profileDef
   simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte, Bool.false_eq_true]
-  fits
+  fits using labelled_fits
 
 theorem fields_obj {j : Json} {fs : VE.Bridge.Fields} (h : VE.Bridge.fields j = .ok fs) : ∃ m, j = .obj m := by
   cases j <;> first | exact ⟨_, rfl⟩ | (simp [VE.Bridge.fields, Json.getObj?] at h; cases h)
@@ -133,7 +150,7 @@ theorem runCase_fits (j : Json) (hp : usesAltPath j = true) : OkFits j Skeletons
     | exact validate_fits _ _ hp ‹_›
     | exact conflict_fits _ _ ‹_› hp ‹_›
     | exact followable_fits _ _ ‹_› hp ‹_›
-    | (simp only [ok, VE.Route.Wire.ok]; fits)
+    | (simp only [ok, VE.Route.Wire.ok]; fits using premiseLabels_fits)
 
 theorem runCaseReported_fits (j : Json) (hj : CaseWF j) : Fits j Skeletons.alternatives (runCaseReported j) := by
   unfold runCaseReported

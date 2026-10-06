@@ -54,12 +54,25 @@ theorem certificate_fits (id : String) (j : Json) {w : Json} (hobj : j.getObjVal
   all_goals (try simp only [ok, VE.Route.Wire.ok])
   all_goals fits
 
+/-- Every Background premise label of the risk document is one of `risk.json#/$defs/risk_labels`. -/
+theorem premiseLabels_mem (R : RiskDoc) : ∀ s ∈ riskPremiseLabels R,
+    s ∈ ["risk:certain_possible", "risk:severity_closure", "risk:classes_distinct", "risk:order",
+      "risk:class_functional", "risk:class"] := by
+  intro s hs
+  simp only [riskPremiseLabels, List.mem_cons, List.mem_append, List.mem_map] at hs
+  rcases hs with rfl | rfl | ((⟨_, _, rfl⟩ | ⟨_, _, rfl⟩) | rfl | ⟨_, _, rfl⟩) <;> decide
+
+theorem labelled_fits {R : RiskDoc} {p : String × VE.Formula} (h : p ∈ (riskPremiseLabels R).zip (riskPremises R)) :
+    Fits req (.strIn ["risk:certain_possible", "risk:severity_closure", "risk:classes_distinct", "risk:order",
+      "risk:class_functional", "risk:class"]) (.str p.1) :=
+  Fits.strIn (premiseLabels_mem R _ (List.of_mem_zip h).1)
+
 theorem elaborate_fits (id : String) (src : Wire.RiskSource) :
     Fits req (skel% "risk.json#/$defs/elaborate") (ok id (Wire.regenerated src)) := by
   unfold ok VE.Route.Wire.ok Wire.regenerated VE.Alternatives.Wire.encodeNode Wire.labelled
     VE.Norms.Wire.regenerated orWorseName lessWorstName
   simp only []
-  fits
+  fits using labelled_fits, Alternatives.labelled_fits
 
 theorem admission_fits (id reportId : String) (res : Admission.Admitted) :
     Fits req (skel% "risk.json#/$defs/admission") (encodeAdmitted id reportId res) := by

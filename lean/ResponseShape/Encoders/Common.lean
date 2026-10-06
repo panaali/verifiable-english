@@ -9,6 +9,17 @@ open Lean ResponseShape ResponseShape.Skeletons
 
 variable {req : Json}
 
+/-- `Service.rejectionCode` gives one of the public codes (`common.json#/$defs/code`). -/
+theorem rejectionCode_fits (m : String) :
+    Fits req (skel% "common.json#/$defs/code") (.str (VE.Service.rejectionCode m)) := by
+  unfold VE.Service.rejectionCode
+  split
+  · fits
+  · dsimp only
+    split
+    · exact Fits.strIn (List.contains_iff_mem.mp ‹_›)
+    · fits
+
 /-- `Route.Run.caseKind` (default `evaluate`) of a case that is an object. -/
 theorem caseKind_read {j w : Json} {k' kind : String} (hobj : j.getObjVal? k' = .ok w)
     (h : VE.Route.Run.caseKind j = .ok kind) : KindRead "evaluate" j kind := by

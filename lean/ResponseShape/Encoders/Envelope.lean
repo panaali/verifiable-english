@@ -75,7 +75,7 @@ theorem bound_fits (index : Nat) (digest : String) (result : Json) :
         rcases hk with rfl | rfl
         · exact Option.isSome_iff_exists.mpr ⟨_, hso⟩
         · exact Option.isSome_iff_exists.mpr ⟨_, heo⟩
-    split <;> fits using hr
+    split <;> fits using hr, Common.rejectionCode_fits
   · -- Not a rejection: the result is not an object, lacks status or error, or has another status
     -- or an error that is not a string (one `else` branch each).
     rename_i hne
@@ -120,6 +120,6 @@ theorem response_fits (r : Request) (cases : Array (Except String Json)) (digest
 theorem requestError_fits (r : Request) (message : String) :
     Fits req (skel% "envelope.json#/$defs/error") (requestError r message) := by
   unfold requestError
-  fits
+  fits using Common.rejectionCode_fits
 
 end ResponseShape.Encoders.Envelope

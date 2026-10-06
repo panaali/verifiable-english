@@ -15,12 +15,43 @@ abbrev routeOk : Skel := skel% "route.json#/$defs/ok"
 `route.json#/row` on the case's kind, so an answer of one kind given for a case of another, or a
 field renamed in one kind's answer, fails. -/
 
-/-- A Background answer: the case is a `background` case. -/
+/-- A Background answer: the case is a `background` case, and each premise's generator is one of
+`Background.generators`. -/
 theorem runBackground_fits (id : String) (bg : List (VE.Formula × String))
-    (hK : req.getObjValD "kind" = .str "background") :
+    (hK : req.getObjValD "kind" = .str "background") (hg : ∀ p ∈ bg, p.2 ∈ Background.generators) :
     Fits req routeOk (Wire.runBackground id bg) := by
   unfold Wire.runBackground Wire.ok
   fits
+  exact Fits.strIn (hg _ ‹_›)
+
+/-- The premises of one generator, each tagged with its name. -/
+theorem tagged_generators {fs : List VE.Formula} {g : String} (hg : g ∈ Background.generators) :
+    ∀ p ∈ fs.map (·, g), p.2 ∈ Background.generators := by
+  intro p hp
+  obtain ⟨_, _, rfl⟩ := List.mem_map.mp hp
+  exact hg
+
+/-- Every Background the runners regenerate tags each premise with one of `Background.generators`. -/
+theorem fullBackground_generators (rv : Wire.RouteVocabulary) :
+    ∀ p ∈ Wire.fullBackground rv, p.2 ∈ Background.generators := by
+  intro p hp
+  simp only [Wire.fullBackground, Background.background, List.mem_append] at hp
+  rcases hp with (hp | hp) | hp
+  all_goals exact tagged_generators (by decide) p hp
+
+macro "generators_ok" : tactic =>
+  `(tactic|first
+    | exact fullBackground_generators _
+    | exact tagged_generators (by decide)
+    | (unfold Background.background; exact tagged_generators (by decide)))
+
+/-- The generators of a Background answer of the route: each is one of `Background.generators`
+(a runner that re-emits them, `Norms.Plain.run`). -/
+theorem background_generators_fit {result g : Json} {xs : Array Json} (hfit : Fits req routeOk result)
+    (hK : req.getObjValD "kind" = .str "background") (hg : result.getObjVal? "generators" = .ok g)
+    (hx : g.getArr? = .ok xs) : ∀ x ∈ xs, Fits req (.strIn Background.generators) x := by
+  fits_invert hfit
+  all_goals exact Fits.getArr (Fits.getObjVal hfit hg) hx
 
 theorem runDependencyOrder_fits (id : String) (j : Json) (hK : req.getObjValD "kind" = .str "dependency-order") :
     OkFits req routeOk (Wire.runDependencyOrder id j) := by
@@ -56,7 +87,7 @@ theorem coreWire_fits (profiles : List String) (environment : Json) (id kind : S
     OkFits req routeOk (VE.Core.Wire.run profiles environment id kind j) := by
   unfold VE.Core.Wire.run
   rcases hK with hK | ⟨hK, rfl⟩ <;> okfits <;> kind_subst <;> (try simp only [Wire.ok]) <;>
-    first | with_reducible exact runBackground_fits _ _ ‹_› | fits
+    first | with_reducible exact runBackground_fits _ _ ‹_› (by generators_ok) | fits
 
 theorem coreLayers_fits (profiles : List String) (environment : Json) (id kind : String) (j : Json)
     (hK : KindRead "evaluate" req kind) :
@@ -69,7 +100,7 @@ theorem coreLayers_fits (profiles : List String) (environment : Json) (id kind :
   all_goals rcases hK with hK | ⟨hK, rfl⟩
   all_goals kind_subst
   all_goals first
-    | with_reducible exact runBackground_fits _ _ ‹_›
+    | with_reducible exact runBackground_fits _ _ ‹_› (by generators_ok)
     | (unfold VE.Core.Layers.coreCertificate; okfits; all_goals (try simp only [Wire.ok]); all_goals fits)
 
 theorem runBundle_fits (profiles : List String) (environment : Json) (rv : Wire.RouteVocabulary) (id : String)
@@ -110,7 +141,7 @@ theorem dispatch_fits (id : String) (environment : Json) (e : Gate.Envelope) (j 
   all_goals (try simp only [Wire.ok])
   all_goals first
     | with_reducible exact runDependencyOrder_fits _ _ hK
-    | with_reducible exact runBackground_fits _ _ hK
+    | with_reducible exact runBackground_fits _ _ hK (by generators_ok)
     | with_reducible exact runBundle_fits _ _ _ _ _ hK
     | with_reducible exact runAdmit_fits _ _ _ _ _ hK
     | fits
