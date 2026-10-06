@@ -151,6 +151,15 @@ def checkVerbalisations (alt : AltEnv) (vocabulary : Json) : Except String Unit 
       if wordingOf p == some wording && roleName role != some p then
         throw s!"AlternativesVerbalisation: {role} must be declared for \"{wording}\""
 
+/-- The four derived profile sentences cannot be claimed by an author predicate. -/
+def checkReservedWording (vocabulary : Json) : Except String Unit := do
+  let predicates ← fields (← vocabulary.getObjVal? "predicates")
+  let reserved := ["{0} is avoidable by {1}", "{0} is unavoidable by {1}",
+    "{0} allows {1} to happen", "{0} prevents {1}"]
+  for (name, entry) in predicates do
+    if reserved.contains ((entry.getObjValD "verbalisation").getStr?.toOption.getD "") then
+      throw s!"AlternativesReserved: wording for {name}"
+
 /-- `avoids` only on obligations over `(chooser, harm)` (3.1). -/
 def checkAvoids (A : AltDoc) (avoidsOn : List String) : Except String Unit := do
   for o in avoidsOn do
@@ -201,6 +210,7 @@ def decodeAltSource (environment norms premises : Json) : Except String AltSourc
   unless ne.rv.flags.isEmpty do
     throw "UnsupportedProfile: alternatives route with data flags is not implemented"
   let b ← decodeBlock block
+  checkReservedWording (← environment.getObjVal? "vocabulary")
   let units ← match norms with
     | .arr xs => pure xs.toList
     | _ => throw "InvalidInput: norms must be an array"
@@ -292,5 +302,89 @@ def regenerated (src : AltSource) : List (String × Json) :=
    ("unmapped_obligations", Json.arr ((unmappedObligations A).map (fun r =>
      Json.mkObj [("obligation", .str r.name), ("act", .str (r.act.getD ""))])).toArray)] ++
   VE.Norms.Wire.regenerated (inlineTree A)
+
+/-! The document wrapper's alternatives coverage is a view of accepted
+assertions. Keep its cell selection and counts beside the block semantics. -/
+
+private def coverageBinary (j : Json) : Option (String × String × String) := do
+  let xs ← j.getArr?.toOption
+  if xs.size != 4 || xs[0]! != Json.str "binary" then none else
+  let predicate ← xs[1]!.getStr?.toOption
+  let atomConst (term : Json) : Option String := do
+    let ts ← term.getArr?.toOption
+    if ts.size != 2 || ts[0]! != Json.str "const" then none else
+    ts[1]!.getStr?.toOption
+  let a ← atomConst xs[2]!
+  let b ← atomConst xs[3]!
+  pure (predicate, a, b)
+
+private def coverageAtom (j : Json) : Option (String × String × String × Bool) := do
+  let xs ← j.getArr?.toOption
+  if xs.size == 2 && xs[0]! == Json.str "not" then
+    let (p, a, b) ← coverageBinary xs[1]!
+    pure (p, a, b, false)
+  else
+    let (p, a, b) ← coverageBinary j
+    pure (p, a, b, true)
+
+private def coverageField (j : Json) (name : String) : String :=
+  (j.getObjValD name).getStr?.toOption.getD ""
+
+private def coverageConstNames (environment : Json) (sort : String) : List String := Id.run do
+  let constants := ((environment.getObjValD "vocabulary").getObjValD "constants")
+  return ((fields constants).toOption.getD []).filterMap fun (name, entry) =>
+    if coverageField entry "sort" == sort then some name else none
+
+/-- The accepted unit ASTs and metadata are relayed unchanged; the cell fold is
+Lean's. The result also carries counts so Python never recounts it. -/
+def coverage (A : AltDoc) (environment units narrowings : Json) : Json := Id.run do
+  let block := environment.getObjValD "alternatives"
+  let us := units.getArr?.toOption.map (·.toList) |>.getD []
+  let leaves := us.filterMap fun u => do
+    if coverageField u "kind" != "asserted" then none else
+    let (p, a, b, positive) ← coverageAtom (u.getObjValD "content")
+    some (u, p, a, b, positive)
+  let declared := leaves.filterMap fun (u, p, a, b, positive) =>
+    if p == coverageField block "available" && positive then
+      some (Json.mkObj [("action", .str a), ("chooser", .str b),
+        ("unit", u.getObjValD "id"), ("support", u.getObjValD "support")]) else none
+  let cells := leaves.filterMap fun (u, p, a, b, positive) =>
+    if p == coverageField block "leads_to" then
+      some (Json.mkObj [("action", .str a), ("harm", .str b), ("leads_to", .bool positive),
+        ("decider", .str ((block.getObjVal? "decided_by").toOption.bind (·.getStr?.toOption) |>.getD "unstated")),
+        ("unit", u.getObjValD "id"), ("support", u.getObjValD "support")]) else none
+  let proximate := leaves.filterMap fun (u, p, a, b, positive) =>
+    if (block.getObjVal? "proximate").isOk && p == coverageField block "proximate" && positive then
+      some (Json.mkObj [("action", .str a), ("harm", .str b),
+        ("decider", .str ((block.getObjVal? "decided_by").toOption.bind (·.getStr?.toOption) |>.getD "unstated")),
+        ("unit", u.getObjValD "id"), ("support", u.getObjValD "support")]) else none
+  let completion := match block.getObjValD "outcomes" with
+    | .obj _ => some (Json.mkObj [("decider", (block.getObjValD "outcomes").getObjValD "complete_by"),
+        ("premise", .str "alternatives:table_complete")])
+    | _ => none
+  let actions := VE.Route.sortStrings ((coverageConstNames environment (coverageField block "action") ++
+    declared.map (coverageField · "action")).eraseDups)
+  let harms := VE.Route.sortStrings ((coverageConstNames environment (coverageField block "harm") ++
+    cells.map (coverageField · "harm")).eraseDups)
+  let stated := cells.map fun c => (coverageField c "action", coverageField c "harm")
+  let assumed := match completion with
+    | none => []
+    | some item => actions.flatMap fun action => harms.filterMap fun harm =>
+        if stated.contains (action, harm) then none else
+          some (Json.mkObj [("action", .str action), ("harm", .str harm),
+            ("decider", item.getObjValD "decider"), ("premise", item.getObjValD "premise")])
+  let unmapped := unmappedObligations A |>.map (fun r => Json.str r.name)
+  let ns := narrowings.getArr?.toOption.map (·.toList) |>.getD []
+  let detail := Json.mkObj [("alternatives_declared", toJson declared),
+    ("counterfactual_leaves", toJson cells), ("assumed_harm_free", toJson assumed),
+    ("table_complete", completion.getD .null), ("proximate_judgments", toJson proximate),
+    ("unmapped_obligations", toJson unmapped), ("dilemmas", toJson ([] : List Json)),
+    ("narrowings", toJson ns)]
+  let counts := Json.mkObj [("alternatives_declared", toJson declared.length),
+    ("counterfactual_leaves", toJson cells.length), ("assumed_harm_free", toJson assumed.length),
+    ("table_complete", toJson (if completion.isSome then (1 : Nat) else 0)),
+    ("proximate_judgments", toJson proximate.length), ("unmapped_obligations", toJson unmapped.length),
+    ("dilemmas", toJson (0 : Nat)), ("narrowings", toJson ns.length)]
+  return Json.mkObj [("alternatives", detail), ("residual", counts)]
 
 end VE.Alternatives.Wire

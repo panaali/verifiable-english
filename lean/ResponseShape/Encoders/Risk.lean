@@ -50,6 +50,25 @@ theorem elaborate_fits (id : String) (src : Wire.RiskSource) :
   simp only []
   fits
 
+theorem elaborate_coverage_fits (id : String) (src : Wire.RiskSource)
+    (environment units narrowings : Json) :
+    Fits req Skeletons.risk
+      (ok id (Wire.regenerated src ++
+        [("coverage", VE.Alternatives.Wire.coverage (toAlt src.R)
+          environment units narrowings)])) := by
+  unfold ok VE.Route.Wire.ok Wire.regenerated VE.Alternatives.Wire.encodeNode Wire.labelled
+    VE.Norms.Wire.regenerated orWorseName lessWorstName VE.Alternatives.Wire.coverage
+  simp only []
+  fits
+
+theorem elaborate_case_fits (id : String) (j : Json) :
+    OkFits req Skeletons.risk (runElaborate id j) := by
+  unfold runElaborate
+  okfits
+  split
+  · exact elaborate_coverage_fits (req := req) _ _ _ _ _
+  · simpa only [List.append_nil] using (elaborate_fits (req := req) id _)
+
 theorem admission_fits (id reportId : String) (res : Admission.Admitted) :
     Fits req Skeletons.risk (encodeAdmitted id reportId res) := by
   unfold encodeAdmitted ok VE.Route.Wire.ok
@@ -61,7 +80,7 @@ theorem runCase_fits (j : Json) : OkFits req Skeletons.risk (runCase j) := by
   okfits
   all_goals first
     | (unfold runAdmission; okfits; exact admission_fits _ _ _)
-    | with_reducible exact elaborate_fits _ _
+    | exact elaborate_case_fits _ _
     | with_reducible exact decision_fits _ _
     | with_reducible exact conflict_fits _ _
     | with_reducible exact followable_fits _ _

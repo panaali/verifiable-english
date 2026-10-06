@@ -101,7 +101,8 @@ def elaborate : Shape :=
         ("background", ref "common.json#/$defs/norms_background"),
         ("premises", ref "common.json#/$defs/layer_premises"),
         ("conflict_targets", ref "common.json#/$defs/conflict_targets"),
-        ("fragment", .type ["boolean"])]]
+        ("fragment", .type ["boolean"]),
+        ("coverage", ref "alternatives.json#/$defs/coverage")]]
 
 def cell : Shape :=
   n [obj, .required ["alternative", "harm"], closed [("alternative", str), ("harm", str)]]
