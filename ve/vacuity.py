@@ -29,7 +29,8 @@ def premise_status(env, premises, *, max_proof_steps=10_000, max_domain_size=2,
                    rust=composed("rust-experimental", run))
 
 
-def _premise_status(env, premises, *, max_proof_steps, max_domain_size, max_models, max_evaluations):
+def _premise_status(env, premises, *, max_proof_steps, max_domain_size, max_models, max_evaluations,
+                    include_witness=False):
     def contradiction(budget):
         proof = prove_entailment(env, premises, Bottom(), max_steps=budget)
         if proof.status == "Found":
@@ -48,7 +49,10 @@ def _premise_status(env, premises, *, max_proof_steps, max_domain_size, max_mode
         witness = check_countermodel(env, premises, Bottom(), found.model,
                                      max_evaluations=max_evaluations)
         if witness.valid:
-            return {"status": "model", "model_id": found.model.model_id}
+            result = {"status": "model", "model_id": found.model.model_id}
+            if include_witness:
+                result["model"] = found.model.to_dict()
+            return result
     if max_proof_steps > 128:
         full = contradiction(max_proof_steps)
         if full is not None:

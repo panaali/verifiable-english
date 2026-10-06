@@ -441,6 +441,10 @@ def completedModelId (dec : Wire.Decoded) (j : Json) : String :=
     (Loader.modelId dec.se.profiles envId wire).toOption.getD ""
   | _, _ => ""
 
+def statusModelId (dec : Wire.Decoded) (status : Json) : String :=
+  let id := completedModelId dec ((status.getObjValD "premise_status").getObjValD "model")
+  if id.isEmpty then "m" else id
+
 /-- One answer record of a polar or which question (Python's `_answer_records`, in its order): the answer's shape
 for the mode, the support and evidence kinds, the stated token, then the evidence replayed for exactly that token;
 evidence that does not establish it is `AnswerMismatch`. -/
@@ -474,12 +478,12 @@ def answerRecord (dec : Wire.Decoded) (q : Question) (hq : q ∈ dec.D.questions
       if record.getObjValD "conditional" == .bool true then do
         let checked := premises D ++ [presupposition D q]
         let some c := (Run.boundCertificate dec checked φ cj).toOption | throw mismatch
-        let s ← Run.decodePremiseStatus dec checked "m" status
+        let s ← Run.decodePremiseStatus dec checked (statusModelId dec status) status
         pure (Run.AnswerReplay.conditional a φ hφ c s)
       else do
         let some c := (Run.boundCertificate dec (premises D) (.and (presupposition D q) φ) cj).toOption |
           throw mismatch
-        let s ← Run.decodePremiseStatus dec (premises D) "m" status
+        let s ← Run.decodePremiseStatus dec (premises D) (statusModelId dec status) status
         pure (Run.AnswerReplay.certificate a φ hφ c s)
     else do
       let mj := ev.getObjValD "model"
@@ -498,7 +502,7 @@ def queryRecord (dec : Wire.Decoded) (unit qid : String) (cj status : Json) : Ex
     | .ok r => pure r
     | .error _ => throw mismatch
   let some c := (Run.boundCertificate dec (queryPremises dec.D qr) qr.target cj).toOption | throw mismatch
-  let s ← Run.decodePremiseStatus dec (queryPremises dec.D qr) "m" status
+  let s ← Run.decodePremiseStatus dec (queryPremises dec.D qr) (statusModelId dec status) status
   if h : VE.Tableau.checkCertificate (En dec.D) (queryPremises dec.D qr) qr.target c = true then
     pure ⟨unit, qr, hq, c, h, s⟩
   else throw mismatch
@@ -689,10 +693,24 @@ def decodeSpeechSource (payload evidence : Json) : Except String { src : SpeechS
     s.readings.map fun r => ((r.getObjValD "id").getStr?).toOption.getD "")) ids (Loader.optionalList fm "narrowings")
     (python := true)
   let chosen := fun (u : SourceUnit) => (latestOf sets u.id).any (·.authored)
-  -- An English fence needs the speech parser (Python's English layer); a fence a signed choice replaces does not.
-  for u in units do
-    if let some c := u.content then
-      if (c.getObjVal? "fence").isOk && !chosen u then throw (Loader.notImplemented "fenced English content")
+  -- Until E3, Python's English parser supplies structured contents for unchosen
+  -- fences. The source payload and its identity remain the authored ones; the
+  -- speech core checks every supplied content after this projection.
+  let needed := units.filter fun u => u.content.any (fun c => (c.getObjVal? "fence").isOk) && !chosen u
+  let translations ← if needed.isEmpty then pure [] else match payload.getObjVal? "resolved_fences" with
+    | .ok (.obj pairs) => pure pairs.toList
+    | _ => throw (Loader.notImplemented "fenced English content")
+  unless translations.length == needed.length &&
+      needed.all (fun u => (translations.map Prod.fst).contains u.id) do
+    throw "InvalidInput: resolved speech fences"
+  let units ← units.mapM fun u => do
+    if !needed.any (·.id == u.id) then return u
+    let some resolved := (translations.find? (·.1 == u.id)).map Prod.snd
+      | throw "InvalidInput: resolved speech fences"
+    let tags ← fields resolved
+    unless tags.length == 1 && ["ast", "command", "question"].contains tags.head!.1 do
+      throw "InvalidInput: resolved speech fences"
+    return { u with content := some resolved, raw := u.raw.setObjVal! "content" resolved }
   let document := Json.mkObj ([("units", Json.arr (units.map fun u => coreUnit u (chosen u)).toArray)] ++
     (match fm.getObjVal? "queries" with
      | .ok q => [("queries", q)]
@@ -718,18 +736,36 @@ def decodeSpeechSource (payload evidence : Json) : Except String { src : SpeechS
 
 def premiseText {D : SpeechDoc} {checked : List VE.Formula} (s : Run.PremiseStatus D checked) : String := s.text
 
+def premiseFields {D : SpeechDoc} {checked : List VE.Formula}
+    (s : Run.PremiseStatus D checked) : List (String × Json) :=
+  match s with
+  | .model id _ => [("premises", Json.mkObj [("status", .str "model"), ("model_id", .str id)]),
+      ("vacuous", .str "no")]
+  | .inconsistent .. => [("premises", Json.mkObj [("status", .str "INCONSISTENT")]),
+      ("vacuous", .str "yes")]
+  | .unknown => [("premises", Json.mkObj [("status", .str "UNKNOWN")]),
+      ("vacuous", .str "unknown")]
+
 def answerJson {dec : Wire.Decoded} (r : AnswerRecord dec) : Json :=
   let (status, evidence) : String × String := match r.replay with
     | .certificate .. => ("supported", "certificate")
     | .conditional .. => ("supported given presupposition", "certificate")
     | .presuppositionFailed .. => ("PRESUPPOSITION-FAILED", "certificate")
     | .model _ m => (if (presupposition dec.D r.q).eval m.M [] then "evaluated" else "PRESUPPOSITION-FAILED", "model")
-  Json.mkObj [("question", .str r.q.unit), ("status", .str status), ("evidence", .str evidence),
-    ("answer", Wire.encodeAnswer r.stated), ("line", .str r.replay.line)]
+  let details : List (String × Json) := match r.replay with
+    | .certificate _ _ _ _ s => [("assumptions", toJson ([] : List String))] ++ premiseFields s
+    | .conditional _ _ _ _ s => [("assumptions", toJson [s!"speech:presupposition:{r.q.unit}"])] ++ premiseFields s
+    | .presuppositionFailed _ s => premiseFields s
+    | .model id _ => [("model_id", .str id), ("scope", .str "this model only")]
+  Json.mkObj ([("question", .str r.q.unit), ("status", .str status), ("evidence", .str evidence)] ++
+    (if status == "PRESUPPOSITION-FAILED" then [] else [("answer", Wire.encodeAnswer r.stated)]) ++
+    [("line", .str r.replay.line)] ++ details)
 
 def queryJson {dec : Wire.Decoded} (key : String) (r : QueryRecord dec) : Json :=
-  Json.mkObj [(key, .str r.unit), ("query", .str r.qr.id),
-    ("line", .str s!"{if key == "command" then "certificate: query " ++ r.qr.id ++ " (" else "follows (certificate; "}premises: {r.status.text})")]
+  Json.mkObj ([(key, .str r.unit), ("query", .str r.qr.id),
+    ("status", .str (if key == "command" then "certificate" else "follows"))] ++
+    (if key == "command" then [] else [("evidence", .str "certificate")]) ++ premiseFields r.status ++
+    [("line", .str s!"{if key == "command" then "certificate: query " ++ r.qr.id ++ " (" else "follows (certificate; "}premises: {r.status.text})")])
 
 /-- One answer or judgment line (5.3), in record order. -/
 def recordJson {dec : Wire.Decoded} : Record dec → Json
@@ -801,12 +837,19 @@ def statusText (src : SpeechSource) : List String :=
 
 def countsJson (xs : List (String × Nat)) : Json := Json.mkObj (xs.map fun (k, n) => (k, toJson n))
 
+/-- The source unit at which a trivial query is first consumed, in document order. -/
+def trivialWarnings (src : SpeechSource) : List String :=
+  (src.dec.D.queries.filter (trivialQuery src.dec.D)).map fun qr =>
+    let unit := (src.dec.units.find? fun u => Wire.queryOf src.dec.D.E u == some qr.id).map (·.id)
+    s!"TrivialQuery: {unit.getD qr.id}"
+
 def report (src : SpeechSource) : List (String × Json) :=
   let dec := src.dec
   let latest := src.sets.filter fun s => (latestOf src.sets s.unit).any (·.version == s.version)
   [("document_id", .str (src.documentId.toOption.getD "")),
    ("source_id", .str (Loader.sourceId dec.se.profiles src.source))] ++ Run.elaborated dec ++
   [("rules", Json.arr (((policy dec.D).T.nodes).map Run.encodeNode).toArray),
+   ("warnings", toJson (trivialWarnings src)),
    ("units", Json.arr (src.cov.rows.map fun r => Json.mkObj ([("id", .str r.id), ("bytes", toJson r.bytes),
       ("status", .str r.status), ("class", .str r.cls)] ++
       match (src.units.find? (·.id == r.id)).bind (·.parent) with
