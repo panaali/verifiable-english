@@ -213,8 +213,11 @@ def witnessKind (t : String × List String × VE.Formula) : String :=
 def runSoftKind (id kind : String) (j : Json) : Except String Json := do
   if kind == "soft-elaborate" then
     let environment ← j.getObjVal? "environment"
-    let src ← decodeSoftSource environment (j.getObjValD "norms")
-    return VE.Route.Wire.ok id (regenerated src.D environment)
+    let norms := j.getObjValD "norms"
+    let src ← decodeSoftSource environment norms
+    let documentHash ← softDocumentHash src.se.profiles environment norms
+    return VE.Route.Wire.ok id (regenerated src.D environment ++
+      [("document_hash", .str documentHash)])
   if kind == "soft-pairs" then
     let environment ← j.getObjVal? "environment"
     let norms := j.getObjValD "norms"
