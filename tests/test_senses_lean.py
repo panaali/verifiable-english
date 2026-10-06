@@ -156,4 +156,5 @@ def test_limits_are_python_limits(lean_values):
     _verbalisation('a' * max_form)
     with pytest.raises(ResourceLimit):
         _verbalisation('a' * (max_form + 1))
-    assert cap == 8  # spec 2.6, candidateCap
+    from ve.backends.senses import CANDIDATE_CAP
+    assert cap == CANDIDATE_CAP == 8  # spec 2.6, candidateCap; the response check's bound
