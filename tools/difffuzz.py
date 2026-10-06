@@ -277,7 +277,7 @@ def limit_patterns():
     conformance unit (its limits from `conformance/wire-contract/contracts/limits.json`). A pattern is
     a tuple of JSON pointer tokens, `*` for any key or index; `unit` is None for the production table,
     which applies wherever its pattern matches."""
-    from ve.wire_contract.engine import load
+    from conformance.wire_contract_engine import load
     from tests.test_wire_contract_corpus import CONTRACTS, LIMITS
     production = json.loads((ROOT / "ve/wire_contract/limits.json").read_text())
     tables = [(None, load("soft-norms@0"), production)] + [
@@ -1180,7 +1180,7 @@ _CONTRACT_CODES = {}
 def contract_codes(contract):
     """{code: {class, summary}} of a production wire contract (`ve/wire_contract/<contract>.json`)."""
     if contract not in _CONTRACT_CODES:
-        from ve.wire_contract.engine import load
+        from conformance.wire_contract_engine import load
         _CONTRACT_CODES[contract] = load(contract)["codes"]
     return _CONTRACT_CODES[contract]
 
@@ -1421,9 +1421,9 @@ class Wire(Surface):
         return self._engines[unit]
 
     def _load_engine(self, unit):
-        from ve.wire_contract.engine import load
+        from conformance.wire_contract_engine import load
         if unit == "soft-norms@0":
-            from ve.softnorms_contract import REGISTRY
+            from conformance.softnorms_contract import REGISTRY
             return load("soft-norms@0"), {"registry": REGISTRY}
         if unit in corpus.WIRE_UNITS:
             from conformance.wire_contract_faults import unit_module
@@ -1433,7 +1433,7 @@ class Wire(Surface):
                                  "names": NAMES}
 
     def python(self, seed, root):
-        from ve.wire_contract.engine import CLEAN, Deferred, run
+        from conformance.wire_contract_engine import CLEAN, Deferred, run
         contract, options = self._engine(seed.profile)
 
         def diagnose():
@@ -1485,7 +1485,7 @@ class Wire(Surface):
     def _inherited(self, unit):
         if unit in self._inherited_cache:
             return self._inherited_cache[unit]
-        from ve.wire_contract.engine import load
+        from conformance.wire_contract_engine import load
         try:
             contract, options = self._engine(unit)
         except KeyError:

@@ -124,6 +124,28 @@ def test_alpha_holistic_override_one_winner(lean):
     assert values(row, "x_required", []) == [True]
     assert [(p["pair"], p["comparable"]) for p in row["colliding_pairs"]] == [(["h", "l"], True)]
     assert row["conditional_on"] == []
+    assert row["soft_residual"] == {
+        "default_exceptions": 2, "instruction_switches": 0,
+        "holistic_overrides": 1, "weighing_points": 0,
+    }
+    assert row["default_exceptions_by_decider"] == {"assistant": 2}
+    assert row["soft_status"] == "OPEN"
+    assert row["ranks_above"] == {"a": [], "b": ["a"]}
+
+
+def test_soft_elaborate_unresolved_pair_and_hard_status(lean):
+    open_row = elaborate(lean, env(), [should("a", "x_required", True),
+                                        should("b", "x_required", False)])
+    assert open_row["conditional_on"] == ["soft:coherence:a,b"]
+    assert open_row["soft_residual"]["weighing_points"] == 1
+    assert open_row["soft_status"] == "OPEN"
+
+    hard_row = elaborate(lean, env(), [norm("h", "x_required", True)])
+    assert hard_row["soft_residual"] == {
+        "default_exceptions": 0, "instruction_switches": 0,
+        "holistic_overrides": 0, "weighing_points": 0,
+    }
+    assert hard_row["soft_status"] == "CHECKED"
 
 
 def test_epsilon_alternating_cycle_d_alone_effective(lean):

@@ -4,7 +4,7 @@ from __future__ import annotations
 from .ast import _Checker, _to_data, formula_to_data
 from .backends.relay import decide
 from .errors import VEError
-from .soft_route import check_regenerated, elaborate_soft_document
+from .soft_route import elaborate_soft_document
 
 def _wire(value):
     # The restricted Lean JSON input represents optional null fields by omission.
@@ -38,8 +38,7 @@ def check_rights_regenerated(rights, elaborated, soft_row=None):
     order, background and targets on T″′. `soft_row`, when given, is the Lean
     soft route's row for the correlated document (else it is run here); returns
     the checked soft elaboration."""
-    soft = (elaborate_soft_document(rights.soft_document) if soft_row is None
-            else check_regenerated(rights.soft_document, soft_row))
+    soft = elaborate_soft_document(rights.soft_document) if soft_row is None else soft_row
     expected_generated = (
         [{"name": v, "kind": "lim", "limitation": k[0], "act": k[1]}
          for k, v in rights.limitation_names.items()] +

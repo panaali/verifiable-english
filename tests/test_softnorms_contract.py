@@ -13,9 +13,9 @@ from tests.test_soft_norms_lean import env, norm, ranks, should
 from ve.errors import UnsupportedProfile, VEError
 from ve import softnorms as soft
 from ve.softnorms import load_soft_document
-from ve.softnorms_contract import INHERITED_PROFILES, REGISTRY, ROUTE_PROFILES, soft_source
+from conformance.softnorms_contract import INHERITED_PROFILES, REGISTRY, ROUTE_PROFILES, soft_source
 from ve.wire import loads_json
-from ve.wire_contract.engine import CLEAN, Fault, load, run
+from conformance.wire_contract_engine import CLEAN, Fault, load, run
 from tools.wire_contract import process
 
 
@@ -90,7 +90,7 @@ def test_shadow_fault_agrees_with_legacy_rejection(make):
     assert outcome.record["check"] == expected
     assert outcome.record["code"] == error.value.code
     assert CONTRACT["status"] == "public"
-    assert error.value.diagnostic is None
+    assert error.value.diagnostic == outcome.record
 
 
 def test_valid_examples_are_clean_and_accepted():
@@ -254,7 +254,7 @@ def test_admission_adapter_selects_active_norm_units():
 # wire-contract-s5.md 2.8: the contract modules, which may import the engine and each other; no other module
 # of `ve/` imports one of them, or `ve.wire_contract`, except the one call site of each public unit.
 CONTRACT_MODULES = {"softnorms_contract.py", "norms_contract.py", "norm_defaults_contract.py"}
-DIAGNOSTIC_MODULES = ("ve.softnorms_contract", "ve.norms_contract", "ve.norm_defaults_contract", "ve.wire_contract")
+DIAGNOSTIC_MODULES = ("conformance.softnorms_contract", "ve.norms_contract", "ve.norm_defaults_contract", "ve.wire_contract")
 # The call site of each unit after the pilot (2.8). It is added by the unit's switch commit (7.2): while the
 # unit's contract is in shadow, its route imports no diagnostic module.
 UNIT_CALL_SITES = {"norms@0": ("norm_admission.py", "norms_contract", "_admit_norm_document_python"),
@@ -267,7 +267,7 @@ def _diagnostic_import_boundary(overrides=None):
     root = DIRECTORY.parent
     overrides = overrides or {}
     routes = {}
-    allowed = {"soft_route.py": ("softnorms_contract", "admit_soft_document")}
+    allowed = {}
     allowed.update({path: (module, function) for unit, (path, module, function) in UNIT_CALL_SITES.items()
                     if load(unit)["status"] == "public"})
     for path in root.rglob("*.py"):
@@ -323,15 +323,10 @@ def test_diagnostic_modules_stay_off_verdict_import_paths():
     route = root / "soft_route.py"
     with pytest.raises(AssertionError):
         _diagnostic_import_boundary({document: document.read_text() +
-                                     "\nfrom .softnorms_contract import soft_source\n"})
+                                     "\nfrom conformance.softnorms_contract import soft_source\n"})
     with pytest.raises(AssertionError):
-        _diagnostic_import_boundary({route: route.read_text().replace(
-            "raise public_rejection(environment, active, error)",
-            "public_rejection(environment, active, error)\n                raise error")})
-    with pytest.raises(AssertionError):
-        _diagnostic_import_boundary({route: route.read_text().replace(
-            "raise public_rejection(environment, active, error)",
-            "diagnosed = public_rejection(environment, active, error)\n                raise diagnosed")})
+        _diagnostic_import_boundary({route: route.read_text() +
+                                     "\nfrom conformance.softnorms_contract import public_rejection\n"})
     defaults = root / "norm_defaults_route.py"
     with pytest.raises(AssertionError):
         _diagnostic_import_boundary({defaults: defaults.read_text() +
