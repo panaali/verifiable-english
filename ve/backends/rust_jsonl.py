@@ -187,6 +187,7 @@ def _run_checker(argv, *, input, timeout):
     """The record a persistent `argv` process writes for the case line `input`, as a completed
     process with that line as its output. `TimeoutExpired` or `OSError` when it gives no record;
     that process is then killed."""
+    deadline = _deadline(timeout)
     key = tuple(argv)
     checker = None
     with _idle_lock:
@@ -201,16 +202,40 @@ def _run_checker(argv, *, input, timeout):
     if checker is None:
         checker = _Checker(argv)
     try:
-        line = _answer(checker, input, timeout)
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise subprocess.TimeoutExpired(argv, timeout)
+        line = _answer(checker, input, remaining)
     except OSError:
         if not reused:
             raise
         # A reused process may have ended since its last answer: the case goes once to a new one.
         checker = _Checker(argv)
-        line = _answer(checker, input, timeout)
-    with _idle_lock:
-        _idle.setdefault(key, []).append(checker)
-    return subprocess.CompletedProcess(list(argv), 0, line + b"\n", b"")
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            checker.close()
+            raise subprocess.TimeoutExpired(argv, timeout)
+        line = _answer(checker, input, remaining)
+    except BaseException:
+        checker.close()
+        raise
+    completed = subprocess.CompletedProcess(list(argv), 0, line + b"\n", b"")
+    # The caller owns this process until the response is decoded and bound to its case.
+    completed._checker = checker
+    completed._key = key
+    return completed
+
+
+def _release(completed, *, valid: bool) -> None:
+    """Only a fully validated record can put its producer back in the idle pool."""
+    checker = getattr(completed, "_checker", None)
+    if checker is None:  # A synthetic CompletedProcess supplied by a test.
+        return
+    if valid:
+        with _idle_lock:
+            _idle.setdefault(completed._key, []).append(checker)
+    else:
+        checker.close()
 
 
 def soft_case(env) -> dict:
@@ -274,20 +299,25 @@ def run(case: dict, *, executable: str | os.PathLike | None = None,
         completed = _run_checker([str(binary), "jsonl", "-"], input=data, timeout=timeout)
     except (OSError, subprocess.TimeoutExpired) as exc:
         raise CheckerUnavailable(f"CheckerUnavailable: Rust checker failed: {exc}") from None
-    if len(completed.stdout) > MAX_LINE_BYTES:
-        raise CheckerUnavailable("CheckerUnavailable: oversized Rust JSONL response")
-    lines = completed.stdout.splitlines()
-    if completed.returncode not in (0, 1) or len(lines) != 1:
-        detail = completed.stderr[:200].decode("utf-8", "replace")
-        raise CheckerUnavailable(
-            f"CheckerUnavailable: Rust protocol failure (exit {completed.returncode}; {detail})")
+    valid = False
     try:
-        record = _decode_json(lines[0])
-    except (ValueError, RecursionError):
-        raise CheckerUnavailable("CheckerUnavailable: malformed Rust JSONL response") from None
-    problem = record_problem(case, record)
-    if problem:
-        raise CheckerUnavailable(f"CheckerUnavailable: malformed Rust response ({problem})")
+        if len(completed.stdout) > MAX_LINE_BYTES:
+            raise CheckerUnavailable("CheckerUnavailable: oversized Rust JSONL response")
+        lines = completed.stdout.splitlines()
+        if completed.returncode not in (0, 1) or len(lines) != 1:
+            detail = completed.stderr[:200].decode("utf-8", "replace")
+            raise CheckerUnavailable(
+                f"CheckerUnavailable: Rust protocol failure (exit {completed.returncode}; {detail})")
+        try:
+            record = _decode_json(lines[0])
+        except (ValueError, RecursionError):
+            raise CheckerUnavailable("CheckerUnavailable: malformed Rust JSONL response") from None
+        problem = record_problem(case, record)
+        if problem:
+            raise CheckerUnavailable(f"CheckerUnavailable: malformed Rust response ({problem})")
+        valid = True
+    finally:
+        _release(completed, valid=valid)
     return require_ok(record)
 
 
