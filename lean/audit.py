@@ -14,7 +14,11 @@ import sys
 ROOT = Path(__file__).resolve().parent
 RECORD = ROOT / "axioms.txt"
 ALLOWED = {"propext", "Classical.choice", "Quot.sound"}
-FORBIDDEN = re.compile(r"\b(sorry|sorryAx|admit|axiom|unsafe|native_decide|implemented_by|partial|opaque|extern)\b")
+FORBIDDEN = re.compile(r"\b(sorry|sorryAx|axiom|unsafe|native_decide|implemented_by|partial|opaque|extern)\b")
+# S3 names its admission function `admit`. Reject the Lean tactic in code while allowing that
+# identifier in definitions, applications and comments. The axiom dependency check below also
+# catches a tactic hole in any audited theorem.
+ADMIT_TACTIC = re.compile(r"\bby[ \t]+admit\b|(?m:^[ \t]*admit[ \t]*(?:$|;))")
 
 
 def code_only(text):
@@ -68,6 +72,10 @@ def scan_sources(root):
             line = text.count("\n", 0, forbidden.start()) + 1
             raise AssertionError(f"{source.relative_to(root)}:{line}: forbidden {forbidden[0]}")
         code = code_only(text)
+        tactic = ADMIT_TACTIC.search(code)
+        if tactic:
+            line = code.count("\n", 0, tactic.start()) + 1
+            raise AssertionError(f"{source.relative_to(root)}:{line}: forbidden admit tactic")
         scopes = []
         for line in code.splitlines():
             namespace = re.match(r"\s*namespace\s+(\S+)", line)

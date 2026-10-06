@@ -19,6 +19,14 @@ import VE.Json
 A case that cannot be read is an `error` row; every outcome of the reader, `invalidGrammar` included, is an
 `ok` row whose `result` carries it. The canonical strict text of a reading is the adapter's: Python's
 printer renders the formulas (one owner of the printer), so `one` carries no `canonical` field.
+
+S3 (docs/spec/english-lean-s3.md 2.3, D18): an environment that names `alternatives@0` or `risk@0`, or carries
+their blocks, is admitted at the boundary in three parts: its declarations are validated as submitted by the
+routes' own source decoders (`Alternatives.Wire.decodeAltSource`, `Risk.Wire.decodeRiskSource`, with an empty
+document); the family decoders validate its typing view (`typingView`); its identity is
+`Standalone.environmentIdOf` over the submitted environment. `Route.Gate.decodeEnvelope` is not edited.
+`riskView_eq` and `alternativesView_eq` prove that the typing view of `Encode.lean` is built by the service's
+own reductions.
 -/
 
 namespace VE.EnglishGrammar.Run
@@ -88,10 +96,38 @@ def decodeLexicon (environmentId : String) (j : Json) : Except String Lexicon :=
   pure { nouns := ← pairs j "nouns", letters := ← pairs j "letters", wordings := ← pairs j "wordings",
          negatives := ← pairs j "negatives", aliases := ← triples j "aliases", spellings := ← pairs j "spellings" }
 
-/-- The environment identity, as the typing service computes it. -/
+/-- The typing view of `Encode.lean` is the service's: `riskView` is `Standalone.riskReduced` and
+`alternativesView` is `Standalone.alternativesReduced` (S3 spec 2.3, part 2). -/
+theorem riskView_eq : riskView = VE.Service.Standalone.riskReduced := rfl
+
+theorem alternativesView_eq : alternativesView = VE.Service.Standalone.alternativesReduced := rfl
+
+/-- Whether an environment names a profile with a block, or carries a block (S3 spec 2.3). -/
+def declaresBlock (environment : Json) : Bool :=
+  let ps := (VE.Route.Gate.profilesOf environment).toOption.getD []
+  ps.contains "alternatives@0" || ps.contains "risk@0" ||
+    (environment.getObjVal? "alternatives").isOk || (environment.getObjVal? "risk").isOk
+
+/-- Part 1 of the boundary (S3 spec 2.3): the profile list, the blocks and the W6 unit declarations validated
+as submitted, by the source decoder of the risk route when `risk@0` is named or a `risk` block is present, and
+by the alternatives route's otherwise, each with an empty document. -/
+def validateDeclarations (environment : Json) : Except String Unit := do
+  let ps := (VE.Route.Gate.profilesOf environment).toOption.getD []
+  if ps.contains "risk@0" || (environment.getObjVal? "risk").isOk then
+    let _ ← VE.Risk.Wire.decodeRiskSource environment (Json.mkObj [("norms", Json.arr #[])])
+  else
+    let _ ← VE.Alternatives.Wire.decodeAltSource environment (Json.arr #[]) (Json.arr #[])
+
+/-- The environment identity, as the typing service computes it; for an environment with a profile block, after
+the three parts of the boundary (S3 spec 2.3). -/
 def environmentId (environment : Json) : Except String String := do
-  let row ← VE.Service.Standalone.environmentCase (Json.mkObj [("id", .str "e"), ("environment", environment)])
-  VE.Bridge.stringField row "environment_id"
+  if declaresBlock environment then
+    validateDeclarations environment
+    let _ ← VE.Service.Standalone.validated (← typingView environment)
+    VE.Service.Standalone.environmentIdOf (← VE.Route.Gate.profilesOf environment) environment
+  else
+    let row ← VE.Service.Standalone.environmentCase (Json.mkObj [("id", .str "e"), ("environment", environment)])
+    VE.Bridge.stringField row "environment_id"
 
 /-- The tables of the profiles that have one, with the SHA-256 of each JSON source (spec 2.5, 2.10). -/
 def tables : List (String × String) := [(baseProfile, relationalFolSha256)]
@@ -252,8 +288,8 @@ def tokJson : Tok → Json
 
 /-- A symbol in the encoding of spec 2.9 and 4.4; an `exact` word, label or numeral, which no rule of the
 base profile has, as its token. -/
-def symJson : Sym Terminal → Json
-  | .n i => Json.mkObj [("n", .str (ntNames[i]?.getD ""))]
+def symJson (names : Array String) : Sym Terminal → Json
+  | .n i => Json.mkObj [("n", .str (names[i]?.getD ""))]
   | .t (.kw s) => .str s
   | .t (.kwMid s) => Json.mkObj [("kwMid", .str s)]
   | .t (.content s) => Json.mkObj [("c", .str s)]
@@ -278,6 +314,11 @@ def lexActText : LexAct → String
   | .copulaRel p => s!"copulaRel {q p}"
   | .owner s1 s2 => s!"owner {q s1} {q s2}"
   | .relation r => s!"relation {q r}"
+  | .attribute r => s!"attribute {q r}"
+  | .attributeProperty r s => s!"attributeProperty {q r} {q s}"
+  | .guard m x a n av risk => s!"guard {m.name} {boolText x} {q a} {q n} {q av} {boolText risk}"
+  | .altHead ref => s!"altHead {q ref}"
+  | .termOther n => s!"termOther {q n}"
 
 def grammarCase (j : Json) : Except String Json := do
   VE.Bridge.exactFields j ((["id", "environment", "lexicon"] ++
@@ -286,14 +327,18 @@ def grammarCase (j : Json) : Except String Json := do
   let c ← decodeCase j
   let G := grammar c.E c.L
   let fixed := (fixedTable c.E.profiles).size
+  let texts := fixedActTexts c.E.profiles
   let lexical := (lexRows c.E c.L).toArray
+  -- the catalogue of the profile list, then `property_i` for the `i`-th value sort (S3 spec 2.4)
+  let names := ntNamesFor c.E.profiles ++
+    ((List.range (valueSorts c.E).length).map fun i => s!"property_{i}").toArray
   let rules := (List.range G.rules.size).filterMap fun i => G.rules[i]?.map fun r =>
-    Json.mkObj [("index", toJson i), ("tag", .str r.tag), ("lhs", .str (ntNames[r.lhs]?.getD "")),
-      ("act", .str (if i < fixed then relationalFolActs[i]?.getD "" else
+    Json.mkObj [("index", toJson i), ("tag", .str r.tag), ("lhs", .str (names[r.lhs]?.getD "")),
+      ("act", .str (if i < fixed then texts[i]?.getD "" else
         ((lexical[i - fixed]?).map (lexActText ·.act)).getD "")),
-      ("rhs", Json.arr (r.rhs.map symJson).toArray)]
+      ("rhs", Json.arr (r.rhs.map (symJson names)).toArray)]
   pure (VE.Route.Wire.ok id [("result", Json.mkObj [("identities", Json.mkObj c.identities),
-    ("nonterminals", toJson ntNames), ("ranks", toJson ranks), ("rules", Json.arr rules.toArray)])])
+    ("nonterminals", toJson names), ("ranks", toJson G.rank), ("rules", Json.arr rules.toArray)])])
 
 /-! ## The executable -/
 

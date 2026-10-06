@@ -64,6 +64,8 @@ TRUSTED = (
     "lean/VE/EnglishGrammar/Encode.lean",
     "lean/VE/EnglishGrammar/Read.lean",
     "lean/VE/EnglishGrammar/Run.lean",
+    "lean/VE/EnglishGrammar/Fixed/Order.lean",
+    "lean/VE/EnglishGrammar/Fixed/Alternatives.lean",
 )
 # Lean files of the same directories that hold no trusted definition, with the reason.
 UNTRUSTED = {
@@ -76,6 +78,7 @@ UNTRUSTED = {
     "lean/VE/EnglishGrammar/FoldAgree.lean": "a theorem: foldChar agrees with the discourse fold",
     "lean/VE/EnglishGrammar/LexiconFixtures.lean": "generated fixtures",
     "lean/VE/EnglishGrammar/ReadExamples.lean": "fixtures",
+    "lean/VE/EnglishGrammar/ProfileExamples.lean": "profile fixtures",
     "lean/VE/EnglishGrammar/Extends.lean": "`Extends` and the theorem `grammar_extension`: proved",
     VERSION_TARGET: "generated from this lock file; it holds the version itself",
 }
