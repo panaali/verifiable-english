@@ -8250,6 +8250,7 @@
   "tests/test_reports.py::test_author_assertions_travel_in_the_wire_form",
   "tests/test_reports.py::test_bound_review_wording_rejects_changed_context_and_text",
   "tests/test_reports.py::test_literal_and_paraphrase_have_distinct_keys",
+  "tests/test_reports.py::test_meaning_id_relay_uses_lean_content_identity",
   "tests/test_reports.py::test_nested_and_negated_scope_and_context_binding",
   "tests/test_reports.py::test_nested_unreviewed_acts_enter_the_residual",
   "tests/test_reports.py::test_open_content_is_open_coverage",

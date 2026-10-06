@@ -127,7 +127,44 @@
           "type": "array"
         },
         "envelope": {"$ref": "#/$defs/envelope"},
-        "environment_reports": {"type": "object"},
+        "environment_reports": {
+          "additionalProperties": {"type": ["null", "boolean", "integer", "number", "string", "array", "object"]},
+          "properties": {
+            "language": {"type": "string"},
+            "profiles": {"$ref": "common.json#/$defs/strings"},
+            "spec_revision": {"type": "string"},
+            "vocabulary": {
+              "additionalProperties": {"type": ["null", "boolean", "integer", "number", "string", "array", "object"]},
+              "properties": {
+                "constants": {
+                  "additionalProperties": {
+                    "additionalProperties": {"type": ["null", "boolean", "integer", "number", "string", "array", "object"]},
+                    "type": "object"
+                  },
+                  "type": "object"
+                },
+                "predicates": {
+                  "additionalProperties": {
+                    "additionalProperties": {"type": ["null", "boolean", "integer", "number", "string", "array", "object"]},
+                    "type": "object"
+                  },
+                  "type": "object"
+                },
+                "sorts": {
+                  "additionalProperties": {
+                    "additionalProperties": {"type": ["null", "boolean", "integer", "number", "string", "array", "object"]},
+                    "type": "object"
+                  },
+                  "type": "object"
+                }
+              },
+              "required": ["sorts", "predicates", "constants"],
+              "type": "object"
+            }
+          },
+          "required": ["language", "profiles", "spec_revision", "vocabulary"],
+          "type": "object"
+        },
         "environment_reports_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
         "id": {"$ref": "common.json#/$defs/id_ok"},
         "keys": {

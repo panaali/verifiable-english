@@ -35,6 +35,7 @@
   "reviewed_broad_handlers": {
     "ve/document.py:load_document": "CheckerUnavailable is re-raised first; a @2 document Lean rejected raises Lean's diagnostic before Python loads it, and a Python failure on one Lean admitted becomes CheckerUnavailable (unavailable_report), never a Python verdict",
     "ve/document.py:_check_document": "CheckerUnavailable is re-raised first; a Python failure reporting a @2 document Lean admitted becomes CheckerUnavailable (unavailable_report), never a verdict",
+    "ve/reports.py:ReportsDocument.__init__": "a Lean accepted reports environment that Python cannot construct becomes CheckerUnavailable; no report status or verdict is returned",
     "ve/__main__.py:_main": "display only: an English rendering of an already computed record is omitted (`display_omitted`); the verdict fields are untouched",
     "ve/assist/api.py:call_tool": "CheckerUnavailable is caught first and keeps its code; other RuntimeErrors are logged as a rejected BackendError call, never a verdict",
     "ve/assist/cli.py:main": "CheckerUnavailable, raised or returned in an action or tool result (exit_code), exits 5 and the action is not saved; other failures print an error and exit 2",
@@ -54,7 +55,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 21226,
+    "total_lines": 21246,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -111,12 +112,12 @@
       },
       {
         "file": "lean/VE/Attribution/Admission.lean",
-        "lines": 327,
-        "sha256": "357665dbfa39d9fb65f85e2829f593beb9f4451bd266fe1dd8924eda9d5af525",
+        "lines": 343,
+        "sha256": "de9ae29eed4d8964900ef593c5a46a32094f08adfacbe013c5ed40dfd458b4d9",
         "ranges": [
           [
             1,
-            327
+            343
           ]
         ],
         "declarations": [
@@ -143,12 +144,12 @@
       },
       {
         "file": "lean/VE/Attribution/Wire.lean",
-        "lines": 510,
-        "sha256": "f8b2a8b0b38145d78d7ac90da84eb4c96aaef01fabaca781c14767739d715579",
+        "lines": 514,
+        "sha256": "4eadc30b6ea7aa48059794724edc301213b9fca4ef7e8c3bd2100fc4271f0ee5",
         "ranges": [
           [
             1,
-            510
+            514
           ]
         ],
         "declarations": [

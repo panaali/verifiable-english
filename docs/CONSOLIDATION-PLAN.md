@@ -667,22 +667,22 @@ the current measurements follow:
 | 2a | 0 | 0 | 0 | 0 | 0 | 4 | 1 | 0.0 |
 | 2b | 94 | 0 | 0 | 0 | 94 | 2 | 2 | 23.5 |
 | 3 | 39 | 0 | 0 | 10 | 29 | 14 | 2 | 1.0 |
-| 4 | 718 | 0 | 0 | 420 | 298 | 14 | 2 | 10.6 |
+| 4 | 720 | 0 | 0 | 420 | 300 | 14 | 2 | 10.7 |
 | 5 | 0 | 485 | 0 | 0 | 485 | 14 | 1 | 34.6 |
 | 6 | 35 | 0 | 1758 | 0 | 35 | 3 | 1 | 11.7 |
-| 7 | 587 | 0 | 0 | 60 | 527 | 6 | 2 | 43.9 |
+| 7 | 598 | 0 | 0 | 60 | 538 | 6 | 2 | 44.8 |
 | 8a | 106 | 225 | 0 | 60 | 271 | 10 | 1.5 | 18.1 |
-| 8b | 0 | 3460 | 0 | 0 | 3460 | 30 | 3 | 38.4 |
+| 8b | 0 | 3464 | 0 | 0 | 3464 | 30 | 3 | 38.5 |
 | 9 | 88 | 0 | 0 | 0 | 88 | 18 | 2 | 2.4 |
 | 10 | 0 | 0 | 0 | 0 | 0 | 4 | 1 | 0.0 |
 
 What the measurement changes:
 
-* **Re-ranking of steps 5 to 10 by measured score:** 7 (43.9), 5 (34.6), 8a (18.1), 6 (11.7),
-  9 (2.4), 10. Step 8b's 3,460 is an upper bound (every untied line of the eight units' `Wire.lean`
+* **Re-ranking of steps 5 to 10 by measured score:** 7 (44.8), 5 (34.6), 8a (18.1), 6 (11.7),
+  9 (2.4), 10. Step 8b's 3,464 is an upper bound (every untied line of the eight units' `Wire.lean`
   files, on the assumption that every decoder gets `exact`), not a forecast; it stays ranked by its
   pilot (Alternatives) as section 3 says. Against the estimates, 7 overtakes 5 (762 trusted
-  dispatch and `main` lines, not 340; 603 before the bench executable; 551 once batch 1 deleted the one-shot routes; 584 with english-lean S2's `ve_english_route`; 587 after batch 11a added the W2 `ve_speech_acts_route`) and 5 is smaller than estimated (485 measured against 1,500 to
+  dispatch and `main` lines, not 340; 603 before the bench executable; 551 once batch 1 deleted the one-shot routes; 584 with english-lean S2's `ve_english_route`; 587 after batch 11a added the W2 `ve_speech_acts_route`; 598 after the reports batch) and 5 is smaller than estimated (485 measured against 1,500 to
   2,000): most of the rows' targets are short runners, and `scopedVerdict` and `weighingWitness`
   are already C.
 * **Step 6** removes almost nothing trusted: the SHA-256 copy and the `maxNodes` sites are [I] and
@@ -690,8 +690,8 @@ What the measurement changes:
   `SoftNorms/Phases`, `Service/TypingDiagnostic` and `Norms/Tree` diagnostics are counted [V]
   until marked [R]. That moves lines out of the reading load without a theorem, so it is shown
   apart from `Net`.
-* **Step 4** removes 718 trusted lines of admission skeleton for an estimated 420-line kit (net
-  298, not 650); **step 3** removes 39 trusted lines (its gain is the 1,550 untrusted lines and one
+* **Step 4** removes 720 trusted lines of admission skeleton for an estimated 420-line kit (net
+  300, not 650); **step 3** removes 39 trusted lines (its gain is the 1,550 untrusted lines and one
   `denote`, as section 4 already says); **step 9** has 88 measured lines before 9b's lowering, which
   cannot be measured until it exists.
 * **Step 1:** 1a and 1b are done; the nine `Flagged` definitions are C, and `BaseConflictFree` is
