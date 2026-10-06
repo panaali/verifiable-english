@@ -249,7 +249,7 @@ def test_only_the_backend_starts_processes():
             if any(name in ("subprocess", "multiprocessing") or name.startswith("subprocess.") for name in names):
                 starters.add(rel.as_posix())
     assert starters == {"ve/backends/lean.py", "ve/backends/lean_service.py",
-                        "ve/backends/rust_jsonl.py"}
+                        "ve/backends/rust_jsonl.py", "ve/backends/senses.py"}
 
 
 def test_broad_exception_handlers_are_reviewed():

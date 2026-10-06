@@ -27,7 +27,7 @@ The invocations are:
   `ve_english_lean_bench --lex` (its default mode prints CPU times, which no byte comparison
   holds; it is measurement only), and for `ve_english_route` the spec fixtures of
   `tests/test_english_lean_route.py` as `english.read` cases and each of its environments as an
-  `english.grammar` case;
+  `english.grammar` case; for `ve_senses_route`, a successful s7 request and a malformed pack;
 * with `--contract-inputs`, the `soft-norms@0` inputs that `tests/contract_input_recorder.py`
   wrote (`VE_CONTRACT_INPUTS`), as `soft-elaborate` cases for the service modes `soft-norms` and
   `diagnose` (unit `soft-norms@0`);
@@ -81,7 +81,7 @@ ROUTE_MODES = ("quantity", "norms", "discourse", "speech-acts", "soft-norms", "r
                "risk", "norm-defaults", "readings-route")
 # Executables that read no case list; `harness_invocations` gives their inputs.
 HARNESS_EXECUTABLES = frozenset({"ve_service", "ve_english_run", "ve_response_decode", "ve_english_lean_bench",
-                                 "ve_english_route"})
+                                 "ve_english_route", "ve_senses_route"})
 
 
 class Invocation(NamedTuple):
@@ -172,7 +172,8 @@ def service_session() -> tuple[bytes, list[tuple[str, dict]]]:
 
 def harness_invocations(baseline: Path) -> list[Invocation]:
     """Inputs of the executables that read no case list (`ve_service`, its `risk-eval` mode included,
-    `ve_english_run`, `ve_response_decode`, `ve_english_lean_bench`, `ve_english_route`), from the generators and
+    `ve_english_run`, `ve_response_decode`, `ve_english_lean_bench`, `ve_english_route`,
+    `ve_senses_route`), from the generators and
     fixtures their tests use. The responses that `ve_response_decode` checks are the baseline
     service's answers to the session."""
     for folder in (ROOT, ROOT / "tests"):  # the test modules import their helpers as pytest does
@@ -202,6 +203,16 @@ def harness_invocations(baseline: Path) -> list[Invocation]:
     grammars = [{**english_route.grammar_request(name), "id": name} for name in english_route.ENVIRONMENTS]
     found.append(Invocation("ve_english_route", "english.grammar of every environment", ("english.grammar", "-"),
                             json.dumps(grammars, ensure_ascii=False).encode()))
+    from test_senses_route import PACK, joke_env
+    from ve.english import EnglishVocabulary
+    from ve.english_grammar import export
+    env = joke_env()
+    senses_case = {"id": "senses-s7", "environment": env.to_dict(),
+                   "lexicon": export(EnglishVocabulary(env)), "packs": [PACK.decode("utf-8")],
+                   "own": [], "source": "Alice tells the riddle.", "budget": 2_100_000}
+    malformed = {**senses_case, "id": "senses-invalid-pack", "packs": ["null"]}
+    found.append(Invocation("ve_senses_route", "senses s7 and malformed pack", ("-",),
+                            json.dumps([senses_case, malformed], ensure_ascii=False).encode()))
     code, out, err = run(baseline / "ve_service", found[0])
     responses = [json.loads(line) for line in out.decode().splitlines()[1:]]
     if code != 0 or len(responses) != len(requests):
