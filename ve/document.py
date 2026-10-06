@@ -557,7 +557,13 @@ def _load_document(raw: bytes, path: str | Path, lean):
     if defaults_enabled:
         # norm-defaults 2.3: the layers are those of `fill U`, over E‴ with Fill_T.
         from .norm_defaults import UnspecifiedDocument, validate_completions
-        norm_defaults = UnspecifiedDocument(env, selected_norms)
+        defaults_env = env
+        if "readings@1" in env.profiles and not s1_content:
+            # A non-content-bearing reading set uses the lower W2 route.
+            lowered = env.to_dict()
+            lowered["profiles"] = [p for p in lowered["profiles"] if p != "readings@1"]
+            defaults_env = _environment(lowered)
+        norm_defaults = UnspecifiedDocument(defaults_env, selected_norms)
         validate_completions(norm_defaults, meta.get("completions", {}), unit_ids)
         norms = None
     if "lemmas" in meta and type(meta["lemmas"]) is not list:
@@ -1178,7 +1184,7 @@ def _report(doc):
         elif defaults is not None:
             # W1's admission on `fill U`, from the source environment (Lean
             # `VE.NormDefaults.Admission`); the report is over E‴ (`env`).
-            result["admission"] = admit_document(doc["environment"], admission)
+            result["admission"] = admit_document(lower_env, admission)
         else:
             result["admission"] = admit_document(env, admission)
         latest = {}
