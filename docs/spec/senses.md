@@ -288,8 +288,9 @@ the assignment's own order, joined by line breaks; reading it back gives the ass
 ### 2.5 The projection onto S2's lexicon
 
 **Used words.** `usedWords D sents` are the words of `D`, in `D`'s order, one of whose senses has a headword
-token equal to the folded text of some word token of `sents` (D18). A verb written only negatively is found
-through `tell` (j11); a gloss is no headword (`The riddle is strange.` uses no word of `F`).
+token equal to the folded text of some word token of `sents` outside a gloss (D18; `unglossed`, 2.6, fix
+round). A verb written only negatively is found through `tell` (j11); a gloss is no headword (`The riddle is
+strange.` uses no word of `F`), and a word inside a gloss is no occurrence of that word.
 
 **`project D A E L used`**, for the document's environment `E` and its own lexicon `L` (the request's, from
 S2's one producer; `readWithSenses` checks `L.valid E {}` first). With `senses` the senses of the used words
@@ -354,7 +355,9 @@ parenthetical forms (j8, computed on the Lean side).
    - `noDerivation`: let `words` be the used words of this sentence that have no default under `A` and an
      **unswitched** occurrence in it (`unresolvedIn`, below). No such word: `stopped (k + i) noDerivation`,
      S2's outcome. More than `candidateCap`
-     (8) choices of one sense per word: `fault (tooManyCandidates (k + i) words)`. Otherwise every choice of
+     (8) choices of one sense per word: `fault (tooManyCandidates (k + i) words)`; the choices are counted by
+     `choiceCount`, the product of the words' sense counts capped at `candidateCap + 1` word by word, never by
+     building them (`choiceCount_gt_iff`; fix round, A1: thirty two-sense words stop at once). Otherwise every choice of
      `choicesOf D words` (the words in `D`'s order, the senses in theirs) is tried in order: `project D
      (A.extend choice) E L used` (a failure is that `fault`), S2's checks on it (a failure is
      `invalidGrammar`), then `readSentence` under it from the same `st`. **Typed admission:** the choice is a
@@ -372,10 +375,22 @@ parenthetical forms (j8, computed on the Lean side).
    and a word folding to `meaning`, or a comma and four words folding to `in`, `the`, `sense`, `of`.
    `unresolvedIn D A w` keeps a used word of `w` with no default under `A` only when one of its occurrences in
    `w` is not switched. A glossed occurrence names its sense whatever the assignment, so a choice for it would
-   only add candidates that differ in nothing (s22). `usedWords` is unchanged: a switched occurrence still
-   puts its word's senses into the projection. The rule errs safely: a word it excludes by mistake gets no
+   only add candidates that differ in nothing (s22). A switched occurrence still puts its word's senses into
+   the projection. The rule errs safely: a word it excludes by mistake gets no
    bare rule, so the sentence can lose a reading and never gains a guessed one; the one such loss known is the
    glossed negative of a past-tense idiom (L11).
+
+   **Words inside a gloss (fix round, Fable B3).** The mark after a switched head and the gloss after the
+   mark are not occurrences of any word: `unglossed D w` keeps every token of `w` but those, and both
+   `usedWords` and `unswitchedIn` read only its tokens. The gloss is the fewest tokens, over the senses of `D`
+   with the head as a headword token, that fold to the parts of one of their glosses, followed by `)` in the
+   parenthetical form; when no gloss matches, nothing is skipped. So `funny` 2 glossed `odd thing` adds no
+   choice for `odd` in `… is funny (meaning odd thing).`, nor does `tell apart` one for `tells`; without the
+   rule both gave candidates that differ in nothing, and could cause a spurious `tooManyCandidates`,
+   collision or limit. Skipping the shortest matching gloss errs safely in the same way: a skipped token
+   could only lose a rule, and S2 has no row that reads a token after a gloss mark other than the gloss forms
+   themselves. Applied on the DRI's instruction to fix every A and B finding of the integration review
+   (2026-10-06); regression rows in `VE.Senses.Examples` and `test_gloss_words_are_not_occurrences`.
 
    **Quoted names (R13).** S2 gives every binary predicate whose two arguments have one sort a `relation.`
    row on its quoted name (`Rules.lean:182–190`), used by the named-reachability sentence. That row has no
@@ -552,6 +567,16 @@ No existing code or text changes (D10). The response per unit adds the state aft
 `binderSeen`), as S2's response does per reading (S2 4.3), and per candidate its choice, formula, mark and
 resolving lines; the rest of the response is plan B6.
 
+**As built (fix round, reviews Astra B1 and Fable B2).** `ve_senses_route` writes each unit with its
+`sentence` (its index in the whole text), `referents` and `binder_seen`; a fault other than
+`invalidDictionary` with `details`, its arguments under the names of `SenseFault`'s fields (`line`,
+`sentence`, `word`, `gloss`, `words`, `kind`, `name`, `sense`, `what`, and `why`: `{"referent": x}` or
+`"binder"`); `invalidDictionary` with `failure`, its condition, word and detail; and S2's outcomes with exactly
+the fields of S2's authoring answer (S2 4.3): `text`, `sentence`, the two `witnesses` of an ambiguity under
+the grammar that stopped, and an invalid grammar's `fault` and `failure`. `tests/test_senses_route.py`
+compares the S2 fields with `ve_english_route`'s and checks every fault code. The 3.2 texts of the sense
+faults are still plan B6.
+
 ### 4.2 The texts of `Dictionary.failures`
 
 Each is the `detail` of a failure, written to complete `… is not usable: {detail}.`
@@ -687,6 +712,8 @@ inductive SenseFault where
 
 def readPreamble (D : Dictionary) (b : Nat) (sents : List (List Tok)) : Except SenseFault (Assignment × Nat)
 
+/-- The tokens of a sentence with their indices, but the mark and the gloss after a glossed head (2.6). -/
+def unglossed (D : Dictionary) (w : List Tok) : List (Nat × Tok)                  -- fix round
 def usedWords (D : Dictionary) (sents : List (List Tok)) : List String
 
 structure Projection where
@@ -735,15 +762,20 @@ inductive SensesOutcome where
   | lexical (r : Reject)
   | invalidGrammar (why : GrammarFault)
   | stopped (index : Nat) (o : Outcome Tok Reject EFormula)
+      (tags : Array String)           -- fix round: the rule tags of the grammar that stopped, for witnesses
   | illTyped
 
 def candidateCap : Nat := 8
+/-- The number of choices counted up to `cap + 1`; `choiceCount_eq` relates it to `choicesOf`. -/
+def choiceCount (D : Dictionary) (cap : Nat) : List String → Nat                  -- fix round
+  | [] => 1
+  | w :: ws => min (cap + 1) ((D.sensesOf w).length * choiceCount D cap ws)
 def choicesOf (D : Dictionary) : List String → List (List (String × Nat))
   | [] => [[]]
   | w :: ws => (D.sensesOf w).flatMap fun s => (choicesOf D ws).map fun c => (w, s.index) :: c
 /-- Whether the token at `j` is followed by `(` and `meaning`, or by a comma and `in the sense of`. -/
 def switchedAt (w : List Tok) (j : Nat) : Bool                                    -- draft 2
-/-- Whether some token of `w` folds to a headword token of `x` and is not switched. -/
+/-- Whether some token of `w` outside a gloss folds to a headword token of `x` and is not switched. -/
 def unswitchedIn (D : Dictionary) (x : String) (w : List Tok) : Bool              -- draft 2
 /-- The used words of one sentence that have no default under `A` and an unswitched occurrence. -/
 def unresolvedIn (D : Dictionary) (A : Assignment) (w : List Tok) : List String :=  -- draft 2
@@ -1465,3 +1497,16 @@ own row, so the map is total. j15's value changes accordingly (`sense__near_2` i
 **The plan (`senses-PLAN.md`)** is aligned in its operative text: its status note, W2, W4 and W6 (2.2), the
 Q4 rule (2.3, Q4), the switch rule (2.4, 2.6), the `limit` and `quotedSense` faults (2.5, 2.6), the
 colliding pair of a `collision` (2.5), the one-candidate text (2.8), B5, G-S0 and G-S1. Where the two still differ, this specification governs.
+
+### 13.4 The integration review's fix round (2026-10-06)
+
+The integration reviews (`manage-agents/senses-review-astra.final.md`, `manage-agents/reviews/senses-review-fable.md`)
+gave FIX. No statement of 5.3 changed (`test_statement_equals_the_approved_text`); the signature of 5.2 gained
+what the fixes need:
+
+| Finding | Change | Where |
+|---|---|---|
+| Astra A1: the cap built every choice | `choiceCount`, proved equal to the capped length (`choiceCount_eq`, `choiceCount_gt_iff`); thirty two-sense words stop at once | 2.6 step 8, 5.2; `Examples.lean` A1 rows, `test_every_refusal_carries_its_arguments[a1-30-words]` |
+| Fable B3: words inside a gloss counted as occurrences | `unglossed`, read by `usedWords` and `unswitchedIn` | 2.5, 2.6 (R7), 5.2; `Examples.lean` B3 rows, `test_gloss_words_are_not_occurrences` |
+| Astra B1, Fable B2: the response dropped the unit state and the refusals' arguments | `stopped` carries the stopping grammar's rule tags; the route writes the fields of 4.1 *as built* | 4.1, 5.2; `test_every_refusal_carries_its_arguments`, `test_s2_outcomes_match_the_english_route` |
+
