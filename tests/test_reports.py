@@ -203,6 +203,11 @@ def test_w2_nested_bridge_needs_a_record(tmp_path):
     assert residual["bridges_nested"] == 1 and residual["bridge_leaves"] == 0
     assert result["coverage"]["residual"]["reports"] == 1  # the says premise itself
     assert result["coverage"]["residual_total"] == 2
+    wrong_holder = json.loads(json.dumps(metadata))
+    wrong_holder["graph"]["nodes"][0]["label"] = "bridge:accepts_at(article,u1,1)"
+    path.write_text("---\n" + json.dumps(wrong_holder) + "\n---\n" + source)
+    with pytest.raises(VEError, match="BridgeHolder: u1, 1"):
+        check_document(path)
     root = dict(metadata, units=[dict(metadata["units"][0], content=inner,
                                       kind=["attributed", "alice", "believes", "asserted"])],
                 bridges=[], graph={"root": "B", "nodes": [{"name": "B", "label": "bridge:accepts(alice,u1)",
@@ -213,7 +218,7 @@ def test_w2_nested_bridge_needs_a_record(tmp_path):
     assert result["coverage"]["residual"]["bridge_leaves"] == 1 and result["coverage"]["residual"]["bridges_nested"] == 0
     del metadata["bridges"]
     path.write_text("---\n" + json.dumps(metadata) + "\n---\n" + source)
-    with pytest.raises(VEError):
+    with pytest.raises(VEError, match="MissingBridgeRecord: u1, 1"):
         check_document(path)
 
 

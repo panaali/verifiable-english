@@ -1,9 +1,8 @@
-"""Python and Lean agree on what a reports@0 document is, not only on what it elaborates to.
+"""The Python reports relay preserves Lean's answers and diagnostics.
 
-Each case is a reproducer from the attribution reviews (Astra, Fable), kept as a
-class: the Python production layer (`ve/reports.py`) and the Lean route
-(`ve_reports_route`) accept exactly the same documents, reject the rest with the
-same section-8 diagnostic kind, and bind the same envelope when they accept.
+Each case is a reproducer from the attribution reviews. The direct Lean service
+row and the public Python container must expose the same accepted fields or
+diagnostic kind, including the bound envelope.
 """
 from __future__ import annotations
 
