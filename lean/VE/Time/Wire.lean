@@ -624,7 +624,7 @@ the inner binding to their regenerated core problem, the replay's 10,000 steps
 (`VE.Route.Steps`), then the frozen order replay. Documents check lemmas and graph edges here, so an oversized problem is
 never established there either. -/
 def checkW6Certificate {w : W6Env} (ps : List (Admission w)) (c : Admission w)
-    (cert : W6Certificate) (maxSteps : Nat := VE.Route.Steps.maxSteps) : Except String Bool :=
+    (cert : W6Certificate) : Except String Bool :=
   if (quantityLimits ps c).isOk = false then .error aggregateLimit
   else if !(cert.environmentId == w.environmentId && cert.premiseIds == ps.map (·.meaningId) &&
       cert.conclusionId == c.meaningId) then
@@ -633,7 +633,7 @@ def checkW6Certificate {w : W6Env} (ps : List (Admission w)) (c : Admission w)
       cert.core.premise_meaning_ids == ps.map (·.coreId) &&
       cert.core.conclusion_meaning_id == c.coreId) then
     .error "core certificate is stale or bound to a different regenerated problem"
-  else if VE.Route.Steps.order cert.core.trace > maxSteps then
+  else if VE.Route.Steps.order cert.core.trace > VE.Route.Steps.maxSteps then
     .error VE.Route.Steps.stepLimit
   else .ok (VE.Order.Tableau.checkCertificate w.vocab.core.environment (ps.map (·.formula.erase))
     c.formula.erase cert.core)
@@ -825,10 +825,7 @@ def runCase (j : Json) (more : Extension := noExtension) : Except String Json :=
     let c ← decodeQuantity w (← j.getObjVal? "conclusion")
     quantityLimits ps c
     let cert ← decodeW6Certificate (← j.getObjVal? "certificate")
-    let maxSteps ← match j.getObjVal? "max_steps" with
-      | .ok limit => limit.getNat?
-      | .error _ => pure VE.Route.Steps.maxSteps
-    let valid ← checkW6Certificate ps c cert maxSteps
+    let valid ← checkW6Certificate ps c cert
     pure (ok id ([("valid", .bool valid), ("premise_meaning_ids", toJson (ps.map (·.meaningId))),
       ("conclusion_meaning_id", .str c.meaningId),
       ("core_premise_meaning_ids", toJson (ps.map (·.coreId))),

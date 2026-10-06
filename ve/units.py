@@ -413,13 +413,12 @@ def prove_quantity(env, premises, conclusion, *, max_steps=10_000):
             "core": result.certificate}
 
 
-def check_quantity_certificate(env, premises, conclusion, certificate, *, max_steps=10_000):
-    """Replay the bound quantity certificate through Lean."""
+def check_quantity_certificate(env, premises, conclusion, certificate):
+    """Lean's replay of the bound quantity certificate, within Lean's step limit."""
     from .backends.relay import decide
     [row] = decide("quantity", [{"id": "certificate", "kind": "certificate",
                                 "environment": env.to_dict(), "premises": premises,
-                                "conclusion": conclusion, "certificate": certificate,
-                                "max_steps": max_steps}])
+                                "conclusion": conclusion, "certificate": certificate}])
     return row["valid"]
 
 
