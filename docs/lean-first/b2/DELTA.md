@@ -199,8 +199,7 @@ Full gate on `0e87eb79` in a clean worktree (`git worktree add`, the Lean and Ru
 build` was a no-op, the Rust binary is the pinned one): four chunks of `tests/` plus `tools/test_layer_policy.py`
 (`VE_NATIVE_PREBUILT=1`, `-n 12`, load 13-30): **10,579 passed, 6 skipped, 0 failed** (chunk 1 ran at
 `cd6b056e`, whose only difference is the two seed scripts' pytest command, which chunk 2's
-`test_nested_pytest` checks at `0e87eb79`). The four tests the suite memory lists as over 10 minutes alone were
-not deselected and passed. Outside pytest, on the same tree: `lean/audit.py`, `lean/VE/Route/frozen.py`,
+`test_nested_pytest` checks at `0e87eb79`); no test was deselected. Outside pytest, on the same tree: `lean/audit.py`, `lean/VE/Route/frozen.py`,
 `tools/lean_statements.py --check`, `tools/response_schemas.py --check`, `tools/gate_collection.py --check`,
 `tools/check_lean_imports.py`, `tools/check_python_layers.py`, `tools/check_rust_deps.py`,
 `tools/relay_lint.py` and `tools/wire_contract.py --check` exit 0; `tools/trust_map.py` reports 0 unclassified.
