@@ -40,6 +40,11 @@ Corpora (``--corpus``, default all):
   The documents are generated once, by this checkout, into a file both sides read. Every differential
   generator of ``conformance/`` is a corpus here or is named in `GENERATORS_NOT_RECORDED` with the reason
   (batch 7 review B2: the batch's own profile corpus was left out).
+* ``quantity``: every W6 call of `docs/lean-first/quantity-corpus.json.gz` (the calls the W6 tests make
+  to a quantity public operation, captured at batch 9's base by `docs/lean-first/b9/capture_quantity.py`),
+  each through its one operation (`QUANTITY_OPS`: `Environment`, `elaborate_quantity`,
+  `quantity_meaning_id`, `quantity_countermodel`, `check_quantity_certificate`, `prove_quantity`,
+  `admit_document`), under each authority (`--workers` processes).
 
 A record is ``{"corpus", "authority", "case", "op", "source_sha256", "outcome"}``; the outcome is
 ``{"returned": <public record>}`` or ``{"raised": <error record>}``, as mig3's recorder writes
@@ -63,10 +68,11 @@ outcome is no acceptance. Then, for every corpus and authority
 it checks (``--corpus``, ``--authority``, default all; the pilots and the readings, discourse
 and rights corpora have the one authority ``default``), each side must hold a record of every case of
 the corpus as this checkout defines it (`expected_cases`: the conformance files' case ids, the probe
-matrix's frozen baseline, the pilot documents, the readings corpus's cases, the discourse corpus's
-ids, the rights corpus's cases), through every operation the case requires (a conformance case: `CONFORMANCE_OPS`, given the
-outcomes recorded for it; a probe case: its operation; a pilot: ``document_check``; a readings case:
-``readings_validate``; a discourse document or a rights document: `DOCUMENT_OPS`),
+matrix's frozen baseline, the pilot documents, the readings corpus's cases, the discourse and quantity
+corpora's ids, the rights corpus's cases), through every operation the case requires (a conformance
+case: `CONFORMANCE_OPS`, given the outcomes recorded for it; a probe case: its operation; a pilot:
+``document_check``; a readings case: ``readings_validate``; a discourse document or a rights document:
+`DOCUMENT_OPS`; a quantity call: its one operation),
 and nothing else, some of its records must be available, and it must hold both an
 acceptance and a rejection (every corpus holds both kinds of input). A record unavailable on
 both sides is no evidence either (class ``unavailable``, whatever its texts): it is accepted only
@@ -103,9 +109,11 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-CORPORA = ("probe", "conformance", "pilots", "readings", "discourse", "rights")
+CORPORA = ("probe", "conformance", "pilots", "readings", "discourse", "rights", "quantity")
 DISCOURSE = Path("docs/lean-first/discourse-corpus.json.gz")
 DOCUMENT_OPS = ("document_check", "document_render")
+QUANTITY = Path("docs/lean-first/quantity-corpus.json.gz")
+QUANTITY_OPS = ("environment", "elaborate", "meaning_id", "countermodel", "certificate", "prove", "admission")
 AUTHORITIES = ("python", "lean")
 CONFORMANCE = ("evaluation", "parser", "identity", "validation", "closure", "countermodels")
 DROPPED = frozenset({"checker_build", "record_id"})
@@ -427,6 +435,56 @@ def discourse_records(scratch: Path, workers: int):
             yield from rows
 
 
+def _quantity_call(entry: dict):
+    """The one public W6 operation a quantity corpus entry names, on the recorded checkout's `ve`."""
+    from ve.admission import admit_document
+    from ve.environment import Environment
+    from ve.units import (check_quantity_certificate, elaborate_quantity, prove_quantity,
+                          quantity_countermodel, quantity_meaning_id)
+    op = entry["op"]
+    if op == "environment":
+        env = Environment(entry["environment"])
+        return {"environment_id": env.environment_id, "data": env.to_dict()}
+    env = Environment(entry["environment"])
+    if op == "elaborate":
+        return elaborate_quantity(env, entry["quantity"])
+    if op == "meaning_id":
+        return quantity_meaning_id(env, entry["quantity"])
+    if op == "countermodel":
+        return quantity_countermodel(env, entry["premises"], entry["conclusion"], entry["model"])
+    if op == "certificate":
+        return check_quantity_certificate(env, entry["premises"], entry["conclusion"], entry["certificate"])
+    if op == "prove":
+        return prove_quantity(env, entry["premises"], entry["conclusion"])
+    assert op == "admission", op
+    return admit_document(env, entry["document"])
+
+
+def _quantity_case(item):
+    """One quantity corpus entry under one authority (in a pool worker)."""
+    authority, entry = item
+    os.environ["VE_AUTHORITY"] = authority
+    source = hashlib.sha256(json.dumps(entry, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+    return {"case": entry["id"], "op": entry["op"], "source_sha256": source, "authority": authority,
+            "outcome": outcome(lambda: _quantity_call(entry))}
+
+
+def quantity_corpus(root: Path) -> list[dict]:
+    """The entries of the quantity corpus file of the checkout `root`."""
+    return json.loads(gzip.decompress((root / QUANTITY).read_bytes()))
+
+
+def quantity_records(authorities, workers: int):
+    """The quantity corpus, read from this tool's checkout, recorded with the child's `ve` under each
+    authority."""
+    import multiprocessing
+    corpus = quantity_corpus(ROOT)
+    with multiprocessing.get_context("fork").Pool(workers) as pool:
+        items = [(authority, entry) for authority in authorities for entry in corpus]
+        yield from pool.imap(_quantity_case, items, chunksize=16)
+    os.environ.pop("VE_AUTHORITY", None)
+
+
 def pilot_check(root: Path, path: Path, env: dict) -> dict:
     """The outcome of `ve document check` of `path` in the checkout `root`."""
     try:
@@ -470,6 +528,10 @@ def child(args) -> int:
                 continue
             if corpus == "discourse":
                 for record in discourse_records(Path(args.out).with_suffix(".discourse"), args.workers):
+                    write({"corpus": corpus, **record})
+                continue
+            if corpus == "quantity":
+                for record in quantity_records(args.authority, args.workers):
                     write({"corpus": corpus, **record})
                 continue
             for authority in args.authority:
@@ -518,7 +580,7 @@ def expected_cases(root: Path, corpora=CORPORA, authorities=AUTHORITIES) -> dict
     """Every case each (corpus, authority) of a complete recording holds, from this checkout's
     corpora, not from a recording: the conformance files' case ids, the cells and named probes of
     the probe matrix's frozen baseline, the pilot documents, the readings corpus's cases and the
-    discourse corpus's entries. Each case maps to its operations:
+    discourse and quantity corpora's entries and the rights corpus's cases. Each case maps to its operations:
     a function of the outcomes a recording holds for the case (`{op: outcome}`) giving the set of
     operations it must hold, since a conformance case's later operations run only on what its
     earlier ones returned (`conformance_ops`)."""
@@ -538,6 +600,8 @@ def expected_cases(root: Path, corpora=CORPORA, authorities=AUTHORITIES) -> dict
             cases[corpus] = {entry["id"]: (lambda held: set(DOCUMENT_OPS)) for entry in discourse_corpus(root)}
         elif corpus == "rights":
             cases[corpus] = {name: (lambda held: set(DOCUMENT_OPS)) for name in rights_cases()}
+        elif corpus == "quantity":
+            cases[corpus] = {entry["id"]: only(entry["op"]) for entry in quantity_corpus(root)}
         else:
             cases[corpus] = {name: only("document_check") for name, _, _ in pilot_documents(root)}
     return {(corpus, authority): cases[corpus] for corpus in corpora

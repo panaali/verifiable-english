@@ -5,7 +5,7 @@
     "type": "object", "required": ["corpus", "authority", "case", "op", "source_sha256", "outcome"],
     "additionalProperties": false,
     "properties": {
-      "corpus": {"enum": ["probe", "conformance", "pilots", "readings", "discourse", "rights"]},
+      "corpus": {"enum": ["probe", "conformance", "pilots", "readings", "discourse", "rights", "quantity"]},
       "authority": {"$ref": "#/$defs/text"},
       "case": {"$ref": "#/$defs/text"},
       "op": {"$ref": "#/$defs/text"},
@@ -17,7 +17,8 @@
       {"if": {"properties": {"corpus": {"const": "pilots"}}}, "then": {"$ref": "#/$defs/pilots"}},
       {"if": {"properties": {"corpus": {"const": "readings"}}}, "then": {"$ref": "#/$defs/readings"}},
       {"if": {"properties": {"corpus": {"const": "discourse"}}}, "then": {"$ref": "#/$defs/discourse"}},
-      {"if": {"properties": {"corpus": {"const": "rights"}}}, "then": {"$ref": "#/$defs/discourse"}}]
+      {"if": {"properties": {"corpus": {"const": "rights"}}}, "then": {"$ref": "#/$defs/discourse"}},
+      {"if": {"properties": {"corpus": {"const": "quantity"}}}, "then": {"$ref": "#/$defs/quantity"}}]
   },
   "$defs": {
     "text": {"type": "string", "minLength": 1},
@@ -180,6 +181,17 @@
         "outcome": {"anyOf": [
           {"type": "object", "required": ["returned"], "additionalProperties": false,
            "properties": {"returned": {"type": ["object", "string"]}}},
+          {"type": "object", "required": ["raised"], "additionalProperties": false,
+           "properties": {"raised": {"$ref": "#/$defs/error"}}}]}}},
+
+    "quantity": {"$comment": "`_quantity_case`: one public W6 operation (`QUANTITY_OPS`) of one quantity corpus entry under one authority, the digest of the entry the source, `outcome` (mig3 2.4) of the call: an environment's identity and data, a canonical statement and core, a meaning id, a verdict, a certificate or none, an admission report.",
+      "properties": {
+        "authority": {"$ref": "#/$defs/authority"},
+        "op": {"enum": ["environment", "elaborate", "meaning_id", "countermodel", "certificate", "prove", "admission"]},
+        "source_sha256": {"$ref": "#/$defs/digest"},
+        "outcome": {"anyOf": [
+          {"type": "object", "required": ["returned"], "additionalProperties": false,
+           "properties": {"returned": {"type": ["object", "array", "string", "boolean", "null"]}}},
           {"type": "object", "required": ["raised"], "additionalProperties": false,
            "properties": {"raised": {"$ref": "#/$defs/error"}}}]}}}
   }
