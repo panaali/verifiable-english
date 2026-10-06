@@ -97,7 +97,7 @@ time:
 
 | Workload | Base wall / CPU | Head wall / CPU | Results |
 |---|---:|---:|---|
-| agent-policy `check.py base`, `VE_AUTHORITY=lean`, head `36fe1245`'s code (load 17-20) | 389.1 s / 815 s | 263.4 s / 587 s | identical (42/42, same policy summary) |
+| agent-policy `check.py base`, `VE_AUTHORITY=lean`, head `d894e67d` (load 17-20) | 389.1 s / 815 s | 263.4 s / 587 s | identical (42/42, same policy summary) |
 | the same, head `0ac28c7e` before `decide_once` moved to the relay (load 11-15) | 270.4 s / 582 s | 188.9 s / 446 s | identical |
 | eligibility `run.py --no-write`, default authority (load 17-20) | 344.7 s / 197 s | 323.7 s / 156 s | identical (32/32 mutants) |
 
