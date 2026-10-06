@@ -3893,6 +3893,7 @@
     "VE.Norms.Wire.maxNodes"
    ],
    "D[I]": [
+    "VE.Norms.Wire.appendPredicates",
     "VE.Norms.Wire.canonicalAct",
     "VE.Norms.Wire.canonicalEnvironmentJson"
    ]

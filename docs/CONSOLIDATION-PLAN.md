@@ -665,14 +665,14 @@ Batch 1's new modules (`ResponseShape`, `VE/Service/*`) were classified by `--se
 | 6 | 35 | 0 | 1758 | 0 | 35 | 3 | 1 | 11.7 |
 | 7 | 551 | 0 | 0 | 60 | 491 | 6 | 2 | 40.9 |
 | 8a | 106 | 225 | 0 | 60 | 271 | 10 | 1.5 | 18.1 |
-| 8b | 0 | 3460 | 0 | 0 | 3460 | 30 | 3 | 38.4 |
+| 8b | 0 | 3456 | 0 | 0 | 3456 | 30 | 3 | 38.4 |
 | 9 | 88 | 0 | 0 | 0 | 88 | 18 | 2 | 2.4 |
 | 10 | 0 | 0 | 0 | 0 | 0 | 4 | 1 | 0.0 |
 
 What the measurement changes:
 
 * **Re-ranking of steps 5 to 10 by measured score:** 7 (40.9), 5 (34.6), 8a (18.1), 6 (11.7),
-  9 (2.4), 10. Step 8b's 3,460 is an upper bound (every untied line of the eight units' `Wire.lean`
+  9 (2.4), 10. Step 8b's 3,456 is an upper bound (every untied line of the eight units' `Wire.lean`
   files, on the assumption that every decoder gets `exact`), not a forecast; it stays ranked by its
   pilot (Alternatives) as section 3 says. Against the estimates, 7 overtakes 5 (762 trusted
   dispatch and `main` lines, not 340; 603 before the bench executable; 551 once batch 1 deleted the one-shot routes) and 5 is smaller than estimated (485 measured against 1,500 to
