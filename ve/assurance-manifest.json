@@ -54,7 +54,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 21226,
+    "total_lines": 21331,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -93,19 +93,21 @@
       },
       {
         "file": "lean/VE/Alternatives/Wire.lean",
-        "lines": 296,
-        "sha256": "26827ec1010c948832f3bd73100c392ab467197aa08740694e6a8ee64582e026",
+        "lines": 390,
+        "sha256": "ea48845f5b0c0abf46c1c391c00efd0fda09ff95549b0de302488ccb63125fa5",
         "ranges": [
           [
             1,
-            296
+            390
           ]
         ],
         "declarations": [
           "profileGate",
           "normsView",
           "decodeBlock",
-          "decodeAltSource"
+          "decodeAltSource",
+          "checkReservedWording",
+          "coverage"
         ],
         "reason": "strict alternatives block, profile, source and regenerated premise decoder; the full file is pinned conservatively"
       },
@@ -680,12 +682,12 @@
       },
       {
         "file": "lean/VE/Risk/Run.lean",
-        "lines": 632,
-        "sha256": "6d98b5de4c612db0dabb9349822e5d0cd0128128e4ec680ac4c13819a57606c8",
+        "lines": 639,
+        "sha256": "a08b876d4363393c61c62108fb9bc5a7b432801a447c3081af80e0d87d8e0f64",
         "ranges": [
           [
             1,
-            632
+            639
           ]
         ],
         "declarations": [
@@ -700,12 +702,12 @@
       },
       {
         "file": "lean/VE/Risk/Wire.lean",
-        "lines": 487,
-        "sha256": "3c35ffb89361cf5bd6e6721289a0db0232ce20d4c523a7f31fff6bca67fcb90d",
+        "lines": 491,
+        "sha256": "884475cd3930183fbb529f4129c6fae9dc0a8eac8b41534b658aa355758aba62",
         "ranges": [
           [
             1,
-            487
+            491
           ]
         ],
         "declarations": [

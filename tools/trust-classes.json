@@ -152,6 +152,7 @@
     "ResponseShape.Schemas.Alternatives.certificate",
     "ResponseShape.Schemas.Alternatives.chooser",
     "ResponseShape.Schemas.Alternatives.conflict_witness",
+    "ResponseShape.Schemas.Alternatives.coverage",
     "ResponseShape.Schemas.Alternatives.elaborate",
     "ResponseShape.Schemas.Alternatives.file",
     "ResponseShape.Schemas.Alternatives.followable",
@@ -932,6 +933,7 @@
     "VE.Alternatives.Run.runCaseReported",
     "VE.Alternatives.Run.runConflict",
     "VE.Alternatives.Run.runConflictWitness",
+    "VE.Alternatives.Run.runElaborate",
     "VE.Alternatives.Run.runFollowable",
     "VE.Alternatives.Run.runValidate",
     "VE.Alternatives.Run.unmappedText",
@@ -998,6 +1000,11 @@
     "VE.Alternatives.Wire.Block",
     "VE.Alternatives.Wire.actWords",
     "VE.Alternatives.Wire.checkAvoids",
+    "VE.Alternatives.Wire.checkReservedWording",
+    "VE.Alternatives.Wire.coverageAtom",
+    "VE.Alternatives.Wire.coverageBinary",
+    "VE.Alternatives.Wire.coverageConstNames",
+    "VE.Alternatives.Wire.coverageField",
     "VE.Alternatives.Wire.decodeAltSource",
     "VE.Alternatives.Wire.decodeBlock",
     "VE.Alternatives.Wire.decodeOutcomes",
@@ -1015,6 +1022,7 @@
    "G[V]": [
     "VE.Alternatives.Wire.blockString",
     "VE.Alternatives.Wire.checkVerbalisations",
+    "VE.Alternatives.Wire.coverage",
     "VE.Alternatives.Wire.mandatoryFields",
     "VE.Alternatives.Wire.normsView",
     "VE.Alternatives.Wire.optString",
@@ -3556,18 +3564,18 @@
     "VE.NormDefaults.Wire.FilledX",
     "VE.NormDefaults.Wire.StatusX",
     "VE.NormDefaults.Wire.acceptedX",
-    "VE.NormDefaults.Wire.firstFailureX",
-    "VE.NormDefaults.Wire.layeredSource",
-    "VE.NormDefaults.Wire.neverX",
-    "VE.NormDefaults.Wire.replayStatusX",
-    "VE.NormDefaults.Wire.suppliedX",
-    "VE.NormDefaults.Wire.witnessConflictX",
     {
      "name": "VE.NormDefaults.Wire.conflictFreeX",
      "tied": [
       "VE.NormDefaults.Wire.layered_conflict_sound"
      ]
-    }
+    },
+    "VE.NormDefaults.Wire.firstFailureX",
+    "VE.NormDefaults.Wire.layeredSource",
+    "VE.NormDefaults.Wire.neverX",
+    "VE.NormDefaults.Wire.replayStatusX",
+    "VE.NormDefaults.Wire.suppliedX",
+    "VE.NormDefaults.Wire.witnessConflictX"
    ],
    "D[V]": [
     "VE.NormDefaults.Wire.LayeredU",
@@ -3677,16 +3685,16 @@
     "VE.NormDefaults.Wire.ReportG.findings",
     "VE.NormDefaults.Wire.ReportG.gaps",
     "VE.NormDefaults.Wire.extraValid",
-    "VE.NormDefaults.Wire.guardCone",
-    "VE.NormDefaults.Wire.guardPredicates",
-    "VE.NormDefaults.Wire.inheritsFrom",
-    "VE.NormDefaults.Wire.normsSource",
     {
      "name": "VE.NormDefaults.Wire.groundingOf",
      "tied": [
       "VE.NormDefaults.Wire.grounding_ungrounded_iff"
      ]
-    }
+    },
+    "VE.NormDefaults.Wire.guardCone",
+    "VE.NormDefaults.Wire.guardPredicates",
+    "VE.NormDefaults.Wire.inheritsFrom",
+    "VE.NormDefaults.Wire.normsSource"
    ]
   },
   "VE/NormDefaults/Routes.lean": {
@@ -6081,6 +6089,7 @@
     "VE.Risk.Run.runCertificate",
     "VE.Risk.Run.runConflict",
     "VE.Risk.Run.runDecision",
+    "VE.Risk.Run.runElaborate",
     "VE.Risk.Run.runFollowable",
     "VE.Risk.Run.statusText",
     "VE.Risk.Run.withCase",
@@ -7493,10 +7502,6 @@
    "D[I]": [
     "VE.SpeechActs.Source.Admission.reportId"
    ],
-   "G[R]": [
-    "VE.SpeechActs.Source.Admission.nodeDiagnostic",
-    "VE.SpeechActs.Source.admissionPayloadError"
-   ],
    "G[V]": [
     "VE.SpeechActs.Source.Admission.SpeechAdmitted.kinds",
     "VE.SpeechActs.Source.Admission.runAdmission",
@@ -7505,9 +7510,28 @@
     "VE.SpeechActs.Source.runCase",
     "VE.SpeechActs.Source.runCaseReported",
     "VE.SpeechActs.Source.usesSourcePath"
+   ],
+   "G[R]": [
+    "VE.SpeechActs.Source.Admission.nodeDiagnostic",
+    "VE.SpeechActs.Source.admissionPayloadError"
    ]
   },
   "VE/SpeechActs/Source/Run.lean": {
+   "S": [
+    "VE.SpeechActs.Source.Coverage",
+    "VE.SpeechActs.Source.DoneFact",
+    "VE.SpeechActs.Source.Row",
+    "VE.SpeechActs.Source.actVerb",
+    "VE.SpeechActs.Source.coverage",
+    "VE.SpeechActs.Source.doneFact",
+    "VE.SpeechActs.Source.expectedOpenTerm",
+    "VE.SpeechActs.Source.meaningWord",
+    "VE.SpeechActs.Source.reconciles",
+    "VE.SpeechActs.Source.sumBytes",
+    "VE.SpeechActs.Source.totals",
+    "VE.SpeechActs.Source.unitClass",
+    "VE.SpeechActs.Source.unitStatus"
+   ],
    "D[V]": [
     "VE.SpeechActs.Source.SetInfo",
     "VE.SpeechActs.Source.SourceUnit",
@@ -7541,21 +7565,6 @@
     "VE.SpeechActs.Source.SpeechSource.documentId",
     "VE.SpeechActs.Source.SpeechSource.identityPayload",
     "VE.SpeechActs.Source.completedModelId"
-   ],
-   "S": [
-    "VE.SpeechActs.Source.Coverage",
-    "VE.SpeechActs.Source.DoneFact",
-    "VE.SpeechActs.Source.Row",
-    "VE.SpeechActs.Source.actVerb",
-    "VE.SpeechActs.Source.coverage",
-    "VE.SpeechActs.Source.doneFact",
-    "VE.SpeechActs.Source.expectedOpenTerm",
-    "VE.SpeechActs.Source.meaningWord",
-    "VE.SpeechActs.Source.reconciles",
-    "VE.SpeechActs.Source.sumBytes",
-    "VE.SpeechActs.Source.totals",
-    "VE.SpeechActs.Source.unitClass",
-    "VE.SpeechActs.Source.unitStatus"
    ],
    "G[V]": [
     "VE.SpeechActs.Source.AnswerRecord",
