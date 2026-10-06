@@ -28608,6 +28608,201 @@ theorem VE.SpeechActs.Run.valid_transfer
     E'.constants = E.constants → (∀ (p : String), E'.predicates p = E.predicates p) → M.Valid E → M.Valid E'
   -- uses VE.Bridge.Entity@VE.Bridge VE.Environment.constants@VE.Syntax VE.Environment.predicates@VE.Syntax VE.Environment@VE.Syntax VE.FiniteModel.Valid@VE.Finite VE.FiniteModel@VE.Finite
   -- expr 2243035471
+theorem VE.SpeechActs.Source.Admission.active_commands
+  ∀ (src : VE.SpeechActs.Source.SpeechSource) (c : VE.SpeechActs.Command),
+    c ∈ src.dec.D.commands ↔ ∃ u, u ∈ src.dec.units ∧ VE.SpeechActs.Wire.activeCommand u = Option.some c
+  -- uses VE.SpeechActs.Command@VE.SpeechActs.Tree VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.SpeechDoc.commands@VE.SpeechActs.Tree VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.Wire.Decoded.units@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechUnitInfo@VE.SpeechActs.Wire VE.SpeechActs.Wire.activeCommand@VE.SpeechActs.Wire
+  -- expr 1777066854
+theorem VE.SpeechActs.Source.Admission.admissible_En
+  ∀ (D : VE.SpeechActs.SpeechDoc) (S : VE.Structure), S.Admissible (VE.SpeechActs.En D) ↔ S.Admissible D.E
+  -- uses VE.SpeechActs.En@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.E@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc@VE.SpeechActs.Tree VE.Structure.Admissible@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1926515587
+theorem VE.SpeechActs.Source.Admission.admitNodes_ok
+  ∀ (src : VE.SpeechActs.Source.SpeechSource) (D : VE.Route.Admission.Doc) (ws : List VE.Route.Admission.WireNode),
+    VE.SpeechActs.Source.Admission.admitNodes src D ws = Except.ok () →
+      ∀ (w : VE.Route.Admission.WireNode), w ∈ ws → VE.SpeechActs.Source.Admission.NodeAdmitted src D w
+  -- uses VE.Route.Admission.Doc@VE.Route.Admission VE.Route.Admission.WireNode@VE.Route.Admission VE.SpeechActs.Source.Admission.NodeAdmitted@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.admitNodes@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run
+  -- expr 2944514524
+theorem VE.SpeechActs.Source.Admission.answerLeaf_entailed
+  ∀ (src : VE.SpeechActs.Source.SpeechSource) (w : VE.Route.Admission.WireNode),
+    VE.SpeechActs.Source.Admission.AnswerLeaf src w →
+      ∀ (S : VE.Structure),
+        S.Admissible (VE.SpeechActs.En src.dec.D) →
+          VE.Norms.Sat S (VE.SpeechActs.premises src.dec.D) → VE.Formula.denote S [] w.claim.formula
+  -- uses VE.Formula.denote@VE.Semantics VE.Graph.Claim.formula@VE.ClaimGraph VE.Norms.Sat@VE.Norms.Prefix VE.Route.Admission.WireNode.claim@VE.Route.Admission VE.Route.Admission.WireNode@VE.Route.Admission VE.SpeechActs.En@VE.SpeechActs.Tree VE.SpeechActs.Source.Admission.AnswerLeaf@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.premises@VE.SpeechActs.Tree VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 820844272
+theorem VE.SpeechActs.Source.Admission.answerPremiseClaims_formulas
+  ∀ (src : VE.SpeechActs.Source.SpeechSource) (answer : String),
+    List.map (fun x => x.formula) (VE.SpeechActs.Source.Admission.answerPremiseClaims src answer) =
+      VE.SpeechActs.premises src.dec.D
+  -- uses VE.Formula@VE.Syntax VE.Graph.Claim.formula@VE.ClaimGraph VE.Graph.Claim@VE.ClaimGraph VE.SpeechActs.Source.Admission.answerPremiseClaims@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.premises@VE.SpeechActs.Tree
+  -- expr 246412102
+theorem VE.SpeechActs.Source.Admission.bindings_withheld
+  ∀ (adm : VE.SpeechActs.Source.Admission.SpeechAdmitted),
+    (∀ (u : VE.SpeechActs.Source.SourceUnit),
+        u ∈ adm.src.units →
+          VE.SpeechActs.Source.Admission.isBinding u = Bool.true →
+            (∀ (p : VE.Route.Admission.DocUnit), p ∈ adm.p0.units → p.id ≠ u.id) ∧
+              u.id ∈ List.map (fun x => x.id) adm.src.cov.rows) ∧
+      ∀ (u : VE.SpeechActs.Source.SourceUnit),
+        u ∈ adm.src.units → VE.SpeechActs.Source.Admission.isBinding u = Bool.false → ∃ p, p ∈ adm.p0.units ∧ p.id = u.id
+  -- uses VE.Route.Admission.Doc.units@VE.Route.Admission VE.Route.Admission.DocUnit.id@VE.Route.Admission VE.Route.Admission.DocUnit@VE.Route.Admission VE.SpeechActs.Source.Admission.SpeechAdmitted.p0@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.src@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.isBinding@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Coverage.rows@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Row.id@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Row@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SourceUnit.id@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SourceUnit@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.cov@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.source@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.units@VE.SpeechActs.Source.Run
+  -- expr 2707086881
+theorem VE.SpeechActs.Source.Admission.certificates_bound
+  ∀ (adm : VE.SpeechActs.Source.Admission.SpeechAdmitted) (x : VE.Route.Admission.WireNode × Lean.Json),
+    x ∈ adm.decoded → VE.Norms.Admission.CertificateBound adm.src.dec.se.profiles adm.src.dec.se.canonical adm.decoded x
+  -- uses VE.Norms.Admission.CertificateBound@VE.Norms.Admission VE.Route.Admission.WireNode@VE.Route.Admission VE.SpeechActs.Source.Admission.SpeechAdmitted.decoded@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.src@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Wire.Decoded.se@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment.canonical@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment.profiles@VE.SpeechActs.Wire
+  -- expr 1844311760
+theorem VE.SpeechActs.Source.Admission.certifiedAnswer_entailed
+  ∀ {dec : VE.SpeechActs.Wire.Decoded} (r : VE.SpeechActs.Source.AnswerRecord dec) (l : String) (ψ : VE.Formula),
+    VE.SpeechActs.Source.Admission.certifiedAnswer r = Option.some (l, ψ) →
+      VE.Entails (VE.SpeechActs.En dec.D) (VE.SpeechActs.premises dec.D) ψ
+  -- uses VE.Entails@VE.Semantics VE.Formula@VE.Syntax VE.SpeechActs.En@VE.SpeechActs.Tree VE.SpeechActs.Source.Admission.certifiedAnswer@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.AnswerRecord@VE.SpeechActs.Source.Run VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.Wire.Decoded@VE.SpeechActs.Wire VE.SpeechActs.premises@VE.SpeechActs.Tree
+  -- expr 2096225654
+theorem VE.SpeechActs.Source.Admission.eq_of_map_nodup
+  ∀ {α β : Type} {f : α → β} {l : List α}, (List.map f l).Nodup → ∀ {x y : α}, x ∈ l → y ∈ l → f x = f y → x = y
+  -- uses 
+  -- expr 2912099309
+theorem VE.SpeechActs.Source.Admission.leaves_admitted
+  ∀ (adm : VE.SpeechActs.Source.Admission.SpeechAdmitted) (leaf : VE.Graph.Claim),
+    leaf ∈ adm.report.assumptions →
+      ∃ w,
+        w ∈ adm.wires ∧
+          w.claim = leaf ∧ w.deduction = Option.none ∧ VE.SpeechActs.Source.Admission.NodeAdmitted adm.src adm.p0 w
+  -- uses VE.Graph.Claim@VE.ClaimGraph VE.Graph.Edge@VE.ClaimGraph VE.Graph.Report.assumptions@VE.ClaimGraph VE.Route.Admission.WireNode.claim@VE.Route.Admission VE.Route.Admission.WireNode.deduction@VE.Route.Admission VE.Route.Admission.WireNode@VE.Route.Admission VE.SpeechActs.Source.Admission.NodeAdmitted@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.p0@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.report@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.src@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.wires@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted@VE.SpeechActs.Source.Admission.Run VE.Tableau.Certificate@VE.Tableau
+  -- expr 494143796
+theorem VE.SpeechActs.Source.Admission.normsSource_D
+  ∀ (dec : VE.SpeechActs.Wire.Decoded), (VE.SpeechActs.Run.normsSource dec).D = VE.SpeechActs.policy dec.D
+  -- uses VE.Norms.Doc@VE.Norms.Tree VE.Norms.Wire.Source.D@VE.Norms.Wire VE.SpeechActs.Run.normsSource@VE.SpeechActs.Run VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.Wire.Decoded@VE.SpeechActs.Wire VE.SpeechActs.policy@VE.SpeechActs.Tree
+  -- expr 2402959437
+theorem VE.SpeechActs.Source.Admission.records_sound
+  ∀ (src : VE.SpeechActs.Source.SpeechSource), VE.SpeechActs.Source.Admission.RecordsSound src
+  -- uses VE.SpeechActs.Source.Admission.RecordsSound@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run
+  -- expr 534605814
+theorem VE.SpeechActs.Source.Admission.reportAdmitted
+  ∀ (adm : VE.SpeechActs.Source.Admission.SpeechAdmitted), VE.SpeechActs.Source.Admission.ReportAdmitted adm
+  -- uses VE.SpeechActs.Source.Admission.ReportAdmitted@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted@VE.SpeechActs.Source.Admission.Run
+  -- expr 3947409296
+theorem VE.SpeechActs.Source.Admission.report_consequence
+  ∀ (adm : VE.SpeechActs.Source.Admission.SpeechAdmitted) (S : VE.Structure),
+    S.Admissible (VE.SpeechActs.En adm.src.dec.D) →
+      VE.Norms.Sat S (VE.Data.Background.generate adm.p0.flags) →
+        VE.Norms.Sat S (VE.SpeechActs.premises adm.src.dec.D) →
+          VE.Norms.Sat S (List.map (fun x => x.formula) (VE.SpeechActs.Source.Admission.otherAssumptions adm)) →
+            VE.Formula.denote S [] adm.report.root.formula
+  -- uses VE.Data.Background.generate@VE.Data.Background VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Graph.Claim.formula@VE.ClaimGraph VE.Graph.Claim@VE.ClaimGraph VE.Graph.Report.root@VE.ClaimGraph VE.Norms.Sat@VE.Norms.Prefix VE.Route.Admission.Doc.flags@VE.Route.Admission VE.SpeechActs.En@VE.SpeechActs.Tree VE.SpeechActs.Source.Admission.SpeechAdmitted.p0@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.report@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.src@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.otherAssumptions@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.premises@VE.SpeechActs.Tree VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1338745407
+theorem VE.SpeechActs.Source.Admission.report_sound
+  ∀ (adm : VE.SpeechActs.Source.Admission.SpeechAdmitted),
+    VE.Graph.SoundReport adm.src.dec.se.ne.rv.environment adm.graph adm.report
+  -- uses VE.Graph.SoundReport@VE.ClaimGraph VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.SpeechActs.Source.Admission.SpeechAdmitted.graph@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.report@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.src@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Wire.Decoded.se@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.Tableau.Certificate@VE.Tableau
+  -- expr 810298227
+theorem VE.SpeechActs.Source.Admission.runAdmission_sound
+  ∀ (id : String) (payload evidence a : Lean.Json),
+    VE.SpeechActs.Source.Admission.runAdmission id payload evidence = Except.ok a →
+      ∃ adm rid,
+        Option.map (fun x => x.val) (VE.SpeechActs.Source.Admission.admitSpeech payload evidence).toOption =
+            Option.some adm ∧
+          adm.payload = payload ∧
+            adm.evidence = evidence ∧
+              a = VE.SpeechActs.Source.Admission.encodeAdmitted id rid adm ∧
+                VE.SpeechActs.Source.Admission.BindingsMatchSourceAndRegeneration adm rid
+  -- uses VE.SpeechActs.Source.Admission.BindingsMatchSourceAndRegeneration@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.evidence@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.payload@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.admitSpeech@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.encodeAdmitted@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.runAdmission@VE.SpeechActs.Source.Admission.Run
+  -- expr 1821009212
+theorem VE.SpeechActs.Source.answers_sound
+  ∀ (src : VE.SpeechActs.Source.SpeechSource) (r : VE.SpeechActs.Source.AnswerRecord src.dec),
+    r ∈ src.answers.answers →
+      (∀ (a : VE.SpeechActs.Answer) (φ : VE.Formula) (hφ : VE.SpeechActs.correct src.dec.D r.q a = Option.some φ)
+          (c : VE.Tableau.Certificate) (s : VE.SpeechActs.Run.PremiseStatus src.dec.D (VE.SpeechActs.premises src.dec.D)),
+          r.replay = VE.SpeechActs.Run.AnswerReplay.certificate a φ hφ c s →
+            ∀ (S : VE.Structure),
+              S.Admissible (VE.SpeechActs.En src.dec.D) →
+                VE.Norms.Sat S (VE.SpeechActs.premises src.dec.D) → VE.SpeechActs.AnswersAt src.dec.D r.q S a) ∧
+        (∀ (a : VE.SpeechActs.Answer) (φ : VE.Formula) (hφ : VE.SpeechActs.correct src.dec.D r.q a = Option.some φ)
+            (c : VE.Tableau.Certificate)
+            (s :
+              VE.SpeechActs.Run.PremiseStatus src.dec.D
+                (VE.SpeechActs.premises src.dec.D ++ [VE.SpeechActs.presupposition src.dec.D r.q])),
+            r.replay = VE.SpeechActs.Run.AnswerReplay.conditional a φ hφ c s →
+              ∀ (S : VE.Structure),
+                S.Admissible (VE.SpeechActs.En src.dec.D) →
+                  VE.Norms.Sat S (VE.SpeechActs.premises src.dec.D) →
+                    VE.Formula.denote S [] (VE.SpeechActs.presupposition src.dec.D r.q) →
+                      VE.SpeechActs.AnswersAt src.dec.D r.q S a) ∧
+          ∀ (id : String) (m : VE.SpeechActs.Run.CheckedModel src.dec.D (VE.SpeechActs.premises src.dec.D)),
+            r.replay = VE.SpeechActs.Run.AnswerReplay.model id m →
+              ∀ (a : VE.SpeechActs.Answer),
+                VE.SpeechActs.answerEval src.dec.D r.q m.M a = Bool.true ↔
+                  VE.SpeechActs.AnswersAt src.dec.D r.q m.M.asStructure a
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.SpeechActs.Answer@VE.SpeechActs.Tree VE.SpeechActs.AnswersAt@VE.SpeechActs.Answer VE.SpeechActs.En@VE.SpeechActs.Tree VE.SpeechActs.Run.AnswerReplay.certificate@VE.SpeechActs.Run VE.SpeechActs.Run.AnswerReplay.conditional@VE.SpeechActs.Run VE.SpeechActs.Run.AnswerReplay.model@VE.SpeechActs.Run VE.SpeechActs.Run.AnswerReplay@VE.SpeechActs.Run VE.SpeechActs.Run.CheckedModel.M@VE.SpeechActs.Run VE.SpeechActs.Run.CheckedModel@VE.SpeechActs.Run VE.SpeechActs.Run.PremiseStatus@VE.SpeechActs.Run VE.SpeechActs.Source.AnswerRecord.q@VE.SpeechActs.Source.Run VE.SpeechActs.Source.AnswerRecord.replay@VE.SpeechActs.Source.Run VE.SpeechActs.Source.AnswerRecord@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Answers.answers@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.answers@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.answerEval@VE.SpeechActs.Answer VE.SpeechActs.correct@VE.SpeechActs.Answer VE.SpeechActs.premises@VE.SpeechActs.Tree VE.SpeechActs.presupposition@VE.SpeechActs.Answer VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Tableau.Certificate@VE.Tableau
+  -- expr 1970443857
+theorem VE.SpeechActs.Source.coverage_partition
+  ∀ (src : VE.SpeechActs.Source.SpeechSource),
+    (src.cov.rows.all fun r => VE.SpeechActs.Source.reconciles r.status r.cls) = Bool.true ∧
+      VE.SpeechActs.Source.sumBytes (VE.SpeechActs.Source.totals VE.SpeechActs.Source.Row.cls src.cov.rows) =
+          src.source.utf8ByteSize ∧
+        VE.SpeechActs.Source.sumBytes (VE.SpeechActs.Source.totals VE.SpeechActs.Source.Row.status src.cov.rows) =
+          src.source.utf8ByteSize
+  -- uses VE.SpeechActs.Source.Coverage.rows@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Row.cls@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Row.status@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Row@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.cov@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.source@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.Source.reconciles@VE.SpeechActs.Source.Run VE.SpeechActs.Source.sumBytes@VE.SpeechActs.Source.Run VE.SpeechActs.Source.totals@VE.SpeechActs.Source.Run
+  -- expr 3659585699
+theorem VE.SpeechActs.Source.external_records_sound
+  ∀ (src : VE.SpeechActs.Source.SpeechSource) (r : VE.SpeechActs.Source.ExternalRecord src.dec),
+    VE.SpeechActs.Source.Compliance.external r ∈ src.compliance →
+      r.c ∈ src.dec.D.commands ∧
+        r.entry ∈ src.dec.D.asserted ∧
+          VE.SpeechActs.Source.DoneFact src.dec.D r.c r.entry.snd ∧ r.entry.snd ∈ VE.SpeechActs.premises src.dec.D
+  -- uses VE.Formula@VE.Syntax VE.SpeechActs.Command@VE.SpeechActs.Tree VE.SpeechActs.Source.Compliance.external@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Compliance@VE.SpeechActs.Source.Run VE.SpeechActs.Source.DoneFact@VE.SpeechActs.Source.Run VE.SpeechActs.Source.ExternalRecord.c@VE.SpeechActs.Source.Run VE.SpeechActs.Source.ExternalRecord.entry@VE.SpeechActs.Source.Run VE.SpeechActs.Source.ExternalRecord@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.compliance@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.SpeechDoc.asserted@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.commands@VE.SpeechActs.Tree VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.premises@VE.SpeechActs.Tree
+  -- expr 4150511360
+theorem VE.SpeechActs.Source.gap_records_sound
+  ∀ (src : VE.SpeechActs.Source.SpeechSource) (r : VE.SpeechActs.Source.GapRecord src.dec),
+    VE.SpeechActs.Source.Judgment.gap r ∈ src.answers.judgments →
+      ¬VE.Entails (VE.SpeechActs.En src.dec.D) (VE.SpeechActs.queryPremises src.dec.D r.qr) r.qr.target
+  -- uses VE.Entails@VE.Semantics VE.SpeechActs.En@VE.SpeechActs.Tree VE.SpeechActs.Query.target@VE.SpeechActs.Tree VE.SpeechActs.Source.Answers.judgments@VE.SpeechActs.Source.Run VE.SpeechActs.Source.GapRecord.qr@VE.SpeechActs.Source.Run VE.SpeechActs.Source.GapRecord@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Judgment.gap@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Judgment@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.answers@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.queryPremises@VE.SpeechActs.Tree
+  -- expr 4225604054
+theorem VE.SpeechActs.Source.query_records_sound
+  ∀ (src : VE.SpeechActs.Source.SpeechSource) (r : VE.SpeechActs.Source.QueryRecord src.dec),
+    VE.SpeechActs.Source.Judgment.follows r ∈ src.answers.judgments ∨
+        VE.SpeechActs.Source.Compliance.certificate r ∈ src.compliance →
+      VE.Entails (VE.SpeechActs.En src.dec.D) (VE.SpeechActs.queryPremises src.dec.D r.qr) r.qr.target
+  -- uses VE.Entails@VE.Semantics VE.SpeechActs.En@VE.SpeechActs.Tree VE.SpeechActs.Query.target@VE.SpeechActs.Tree VE.SpeechActs.Source.Answers.judgments@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Compliance.certificate@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Compliance@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Judgment.follows@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Judgment@VE.SpeechActs.Source.Run VE.SpeechActs.Source.QueryRecord.qr@VE.SpeechActs.Source.Run VE.SpeechActs.Source.QueryRecord@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.answers@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.compliance@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.queryPremises@VE.SpeechActs.Tree
+  -- expr 177831084
+theorem VE.SpeechActs.Source.source_retained
+  ∀ (p e : Lean.Json) (src : { src // src.payload = p }),
+    VE.SpeechActs.Source.decodeSpeechSource p e = Except.ok src →
+      src.val.metadata = p.getObjValD "metadata" ∧
+        src.val.source = VE.Discourse.Loader.sourceOf p ∧
+          src.val.documentId =
+            VE.CertificateWire.digest "ve-document@2\n"
+              (Lean.Json.mkObj
+                [("metadata", VE.Discourse.Loader.identityMetadata (p.getObjValD "metadata")),
+                  ("source", Lean.Json.str (VE.Discourse.Loader.sourceOf p)), ("fences", p.getObjValD "fences")])
+  -- uses VE.CertificateWire.digest@VE.CertificateWire VE.Discourse.Loader.identityMetadata@VE.Discourse.Loader VE.Discourse.Loader.sourceOf@VE.Discourse.Loader VE.SpeechActs.Source.SpeechSource.documentId@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.metadata@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.payload@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.source@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.Source.decodeSpeechSource@VE.SpeechActs.Source.Run
+  -- expr 1041629818
+theorem VE.SpeechActs.Source.speech_wire_acceptance
+  ∀ (j a : Lean.Json),
+    VE.SpeechActs.Source.runCase j = Except.ok a →
+      VE.Route.Run.caseKind j = Except.ok "admission" →
+        VE.Discourse.Loader.isPayload (j.getObjValD "document") = Bool.true →
+          ∃ adm id rid,
+            VE.Bridge.stringField j "id" = Except.ok id ∧
+              adm.payload = j.getObjValD "document" ∧
+                adm.evidence = j.getObjValD "premise_status" ∧
+                  VE.SpeechActs.Source.decodeSpeechSource adm.payload adm.evidence = Except.ok ⟨adm.src, ⋯⟩ ∧
+                    VE.SpeechActs.WellFormedSpeech adm.src.dec.D = Bool.true ∧
+                      a = VE.SpeechActs.Source.Admission.encodeAdmitted id rid adm ∧
+                        VE.SpeechActs.Source.Admission.BindingsMatchSourceAndRegeneration adm rid ∧
+                          VE.SpeechActs.Source.Admission.ReportAdmitted adm ∧
+                            (∀ (S : VE.Structure),
+                                S.Admissible (VE.SpeechActs.En adm.src.dec.D) →
+                                  VE.Norms.Sat S (VE.Data.Background.generate adm.p0.flags) →
+                                    VE.Norms.Sat S (VE.SpeechActs.premises adm.src.dec.D) →
+                                      VE.Norms.Sat S
+                                          (List.map (fun x => x.formula)
+                                            (VE.SpeechActs.Source.Admission.otherAssumptions adm)) →
+                                        VE.Formula.denote S [] adm.report.root.formula) ∧
+                              VE.SpeechActs.Source.Admission.RecordsSound adm.src
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Data.Background.generate@VE.Data.Background VE.Discourse.Loader.isPayload@VE.Discourse.Loader VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Graph.Claim.formula@VE.ClaimGraph VE.Graph.Claim@VE.ClaimGraph VE.Graph.Report.root@VE.ClaimGraph VE.Norms.Sat@VE.Norms.Prefix VE.Route.Admission.Doc.flags@VE.Route.Admission VE.Route.Run.caseKind@VE.Route.Run VE.SpeechActs.En@VE.SpeechActs.Tree VE.SpeechActs.Source.Admission.BindingsMatchSourceAndRegeneration@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.RecordsSound@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.ReportAdmitted@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.evidence@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.p0@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.payload@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.report@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.src@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.srcPayload@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.encodeAdmitted@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.otherAssumptions@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.payload@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.Source.decodeSpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.Source.runCase@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.WellFormedSpeech@VE.SpeechActs.Tree VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.premises@VE.SpeechActs.Tree VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2451241489
 theorem VE.SpeechActs.Wire.canonical_scope
   ∀ (environment b : Lean.Json) (sc : VE.SpeechActs.Scope),
     environment.getObjVal? "speech_acts" >>= VE.SpeechActs.Wire.parseScope = Except.ok sc →

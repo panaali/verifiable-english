@@ -1351,6 +1351,10 @@ P0 document `adm.p0` (binding units withheld), whose report id is the digest of 
 "document": adm.src.documentId, "report"}`, with exactly two route-local leaves: `speech:presupposition:<u>` (equal
 to `presupposition D q`) and `speech:answer:<u>:<a>` (equal to `H ∧ F` of a certificate-supported answer over
 `premises D`, with that certificate's leaves retained), each admitted only when equal to the regenerated formula.
+The wire report unfolds a certificate-supported answer leaf into the answer claim followed by the ordered
+`premises D` inputs bound into its accepted certificate. Generated Background and layer inputs carry their
+generator labels; fixed asserted inputs carry their source unit ids. The graph check and its soundness theorem
+retain the exact submitted graph report, while the report identity binds this provenance-expanded wire report.
 There is **no** `speech:compliance:<u>` leaf and no leaf over a `done` atom that the checker generates: an accepted
 proof-task certificate is evidence on the compliance line only (4.6), and a graph leaf claiming `done_submit(you, q)`
 from it is rejected. `AnswerEvidence adm line` says: `supported` carries an accepted certificate for `H ∧ F` over
@@ -1365,10 +1369,12 @@ that status. `JudgmentEvidence` is `follows_sound`'s or `gap_sound`'s hypothesis
 the second case no premise, leaf or `done` fact accompanies it. Hash equality is equality of recomputed canonical
 digests, not a claim that SHA-256 is injective.
 
-### 8.6 The executable `ve_speech_acts_route`
+### 8.6 The speech-act routes
 
-`lean/.lake/build/bin/ve_speech_acts_route <cases.json>`, root `SpeechActsMain.lean`, a new Lake target; `Run.main` is
-the executable root and no frozen file changes (norms.md 11.4). On raw input it runs the frozen envelope and profile
+The established `speech-acts` cases run through `ve_service`. The W2 `speech-source` and payload `admission`
+cases run through `lean/.lake/build/bin/ve_speech_acts_route <cases.json>`, root `SpeechActsMain.lean`;
+`Source.main` is the executable root. This transport split is the batch 11a merge boundary; Python has no caller
+for the new cases yet. On raw input the executable runs the frozen envelope and profile
 gate, requires `speech-acts@0` and `norms@0`, decodes the environment through the W1 norms decoder plus a strict scope
 decoder (unknown fields rejected; the original complete environment hashed), decodes units, queries, answers and
 compliance, runs `WellFormedSpeech`, regenerates `policy(D)`, `premises(D)`, every `H(q)`, `F(q, a)` and `Π_q`, validates

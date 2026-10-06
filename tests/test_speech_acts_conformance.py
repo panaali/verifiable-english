@@ -990,12 +990,15 @@ def test_presupposition_failure_and_compliance_lines_carry_premise_status(lean, 
     assert (line["status"], line["premises"]["status"], line["vacuous"]) == ("certificate", "INCONSISTENT", "yes")
 
 
-def test_document_admission_stays_closed_until_source_wrapper_is_proved(lean):
+def test_document_admission_reads_the_source_payload(lean):
+    # 8.5: speech-act admission runs over the decoded-source wrapper (`admission` on a ve-document@2 payload,
+    # tests/test_speech_source_lean.py); a P0-form document with a speech-act construct names that payload.
     case = {"id": "closed", "kind": "admission", "environment": F0(),
             "document": {"units": [unit("u1", 0, "instruction",
                                         command("require", "click_required", ["check"]))]}}
-    assert run1(case)["error"] == (
-        "UnsupportedProfile: case kind admission is not available on the speech-acts route")
+    from test_speech_source_lean import run as source_run
+    assert source_run([case])[0]["error"] == (
+        'InvalidInput: speech-act admission reads the ve-document@2 payload {"metadata", "source", "fences"}')
 
 
 def test_reported_structural_regressions(lean, tmp_path):
