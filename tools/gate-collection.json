@@ -2040,6 +2040,7 @@
   "tests/test_english_e2_relay.py::test_e2_response_binds_each_obligation_to_an_earlier_premise",
   "tests/test_english_e2_relay.py::test_e2_response_has_bound_formulas_spans_and_obligations",
   "tests/test_english_e2_relay.py::test_e2_response_rejects_bool_indices_and_substituted_identity",
+  "tests/test_english_e2_report.py::test_report_counts_follow_gate_json",
   "tests/test_english_evidence.py::test_a_classifier_that_drops_negation_fails_the_smoke",
   "tests/test_english_evidence.py::test_a_differential_that_skips_its_comparisons_is_incomplete",
   "tests/test_english_evidence.py::test_an_unchecked_mixed_run_completes_no_round_trip",
