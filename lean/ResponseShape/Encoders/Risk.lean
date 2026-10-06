@@ -82,7 +82,7 @@ theorem elaborate_case_fits (id : String) (j : Json)
     simpa only [List.append_nil] using (elaborate_fits (req := j) id _
       (CaseCond.path_error hid ‹j.getObjVal? "coverage_units" = .error _›))
 
-private theorem stringField_present {j : Json} {id : String}
+theorem stringField_present {j : Json} {id : String}
     (h : VE.Bridge.stringField j "id" = .ok id) : ∃ v, j.getObjVal? "id" = .ok v := by
   unfold VE.Bridge.stringField at h
   obtain ⟨v, hv, _⟩ := VE.Order.ProfileGate.bind_ok h
