@@ -16,6 +16,8 @@ from pathlib import Path
 
 import pytest
 
+from tests import lean_routes
+
 from subprocesses import HANG_TIMEOUT
 from ve.ast import _Decoder
 from ve.entailment import prove_entailment
@@ -23,13 +25,13 @@ from ve.environment import Environment
 from ve.wire import digest
 
 ROOT = Path(__file__).resolve().parents[1]
-LEAN = ROOT / "lean/.lake/build/bin/ve_speech_acts_route"
+LEAN = "ve_speech_acts_route"  # its service mode, through tests/lean_routes.py
 LANGUAGE, REVISION = "ve.core@0.2", "ve-v0.2-expand2-2026-09-25"
 
 
 @pytest.fixture(scope="module")
 def lean():
-    if not LEAN.exists():
+    if not lean_routes.SERVICE.exists():
         lake = shutil.which("lake")
         if lake is None:
             pytest.skip("lake is required for the speech-acts Lean route")
@@ -39,8 +41,7 @@ def lean():
 
 
 def run(cases):
-    result = subprocess.run([str(LEAN), "-"], input=json.dumps(cases), capture_output=True, text=True,
-                            timeout=HANG_TIMEOUT)
+    result = lean_routes.completed(LEAN, cases)
     return json.loads(result.stdout)
 
 

@@ -60,7 +60,7 @@ STAGE1_STEPS = 2000
 POLICY_STEPS = 5000
 FOCUSED_NODES = 20000
 LEAN_ROUTE = REPO / "lean/.lake/build/bin/ve_conformance"
-LEAN_NORMS = REPO / "lean/.lake/build/bin/ve_norms_route"
+LEAN_SERVICE = REPO / "lean/.lake/build/bin/ve_service"
 RUST = REPO / "rust/target/release/ve"
 
 
@@ -752,8 +752,8 @@ def replay_rust(exported, batch=200):
 
 def lean_norms_route(doc, inventory, records):
     """The document conflict results on the flag-free environment (PLAN section 8)."""
-    if not LEAN_NORMS.exists():
-        return {"status": "skipped: lake build has not produced ve_norms_route"}
+    if not LEAN_SERVICE.exists():
+        return {"status": "skipped: lake build has not produced ve_service"}
     env = Environment(read_json("environment.lean.json"))
     lean_doc = NormDocument(env, doc.rules)
     base = lean_doc.base_environment()
@@ -784,9 +784,8 @@ def lean_norms_route(doc, inventory, records):
         certified[name] = sorted(packages)
         cases.append({"id": f"packages:{name}", "kind": "norms-conflict", "environment": env.to_dict(),
                       "norms": [r.to_dict() for r in document.rules], "packages": packages})
-    done = subprocess.run([str(LEAN_NORMS), "-"], input=json.dumps(cases), text=True,
-                          capture_output=True, timeout=1800)
-    rows = json.loads(done.stdout)
+    from ve.backends.relay import rows as lean_rows
+    rows = lean_rows("norms", cases)
     return {"rows": [{k: row.get(k) for k in ("id", "verdict", "target", "detail", "error")} for row in rows],
             "certified_targets": certified, "python": notes}
 

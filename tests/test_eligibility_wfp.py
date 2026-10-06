@@ -14,9 +14,11 @@ import sys
 
 import pytest
 
+from tests import lean_routes
+
 ROOT = Path(__file__).resolve().parents[1]
 HERE = ROOT / "usecases" / "eligibility"
-LEAN = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_quantity"
+LEAN = "ve_quantity"  # its service mode, through tests/lean_routes.py
 RUST = ROOT / "rust" / "target" / "release" / "ve"
 sys.path.insert(0, str(HERE))
 
@@ -449,7 +451,7 @@ def _python_lean_rust(cases_and_expected):
     assert lean_values == rust_values == [p for _, p, _ in rows]
 
 
-@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="build Lean ve_quantity and Rust ve first")
+@pytest.mark.skipif(not (lean_routes.SERVICE.exists() and RUST.exists()), reason="build the Lean service and Rust ve first")
 def test_whole_week_household_rules_evaluate_alike_in_python_lean_and_rust():
     """R7a, R7b and R7, and the mutants M26 to M29 that drop or tighten "throughout", in
     the reference fixture models of B24 to B29 and of an undated couple (B01). The rules
@@ -469,7 +471,7 @@ def test_whole_week_household_rules_evaluate_alike_in_python_lean_and_rust():
     _python_lean_rust(items)
 
 
-@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="build Lean ve_quantity and Rust ve first")
+@pytest.mark.skipif(not (lean_routes.SERVICE.exists() and RUST.exists()), reason="build the Lean service and Rust ve first")
 def test_common_day_rules_evaluate_alike_in_python_lean_and_rust():
     """R14a and R14.3, and the mutants M31 (no common day) and M32 (strict bounds), in
     the reference fixture models of B30 to B34, A08 and B01. The rules are true in every
@@ -489,7 +491,7 @@ def test_common_day_rules_evaluate_alike_in_python_lean_and_rust():
     _python_lean_rust(items)
 
 
-@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="build Lean ve_quantity and Rust ve first")
+@pytest.mark.skipif(not (lean_routes.SERVICE.exists() and RUST.exists()), reason="build the Lean service and Rust ve first")
 def test_common_day_is_interval_intersection_for_every_dated_household():
     """The class of the R7 recheck: R14a states the common day of two periods by two
     pairwise bounds, which equals interval intersection only because each period
@@ -520,7 +522,7 @@ def test_common_day_is_interval_intersection_for_every_dated_household():
     _python_lean_rust(items)
 
 
-@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="build Lean ve_quantity and Rust ve first")
+@pytest.mark.skipif(not (lean_routes.SERVICE.exists() and RUST.exists()), reason="build the Lean service and Rust ve first")
 def test_care_end_rule_evaluates_alike_in_python_lean_and_rust():
     """R5b and its mutants M24 (end date ignored) and M25 (end bound strict), evaluated
     in each recheck profile's reference fixture model. Python, Lean and Rust must give
@@ -552,7 +554,7 @@ def test_care_end_rule_evaluates_alike_in_python_lean_and_rust():
     assert lean_values == rust_values == [p for _, _, p, _ in rows]
 
 
-@pytest.mark.skipif(not LEAN.exists(), reason="build the Lean ve_quantity runner first")
+@pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="build the Lean service first")
 def test_lean_admits_every_answer_and_replays_every_step(staged_runs):
     raw = T.environment()
     cases = []

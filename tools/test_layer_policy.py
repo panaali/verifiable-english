@@ -395,7 +395,7 @@ class LayerSelectionTests(unittest.TestCase):
         self.assertIn("tests/test_norms_three_way.py",
                       select(["lean/VE/Norms/Run.lean"])["selected"])
         real_exists = Path.exists
-        with patch.object(Path, "exists", lambda path: False if path.name == "ve_norms_route"
+        with patch.object(Path, "exists", lambda path: False if path.name == "ve_service"
                           else real_exists(path)):
             self.assertTrue(select(["ve/search.py"])["lean_build"])
 
@@ -496,13 +496,13 @@ class LayerSelectionTests(unittest.TestCase):
         python = [".".join(path.relative_to(layer_policy.ROOT).with_suffix("").parts)
                   .removesuffix(".__init__")
                   for path in (layer_policy.ROOT / "ve").rglob("*.py")]
-        self.assertIn("AlternativesMain", lean)
+        self.assertIn("Serve", lean)
         self.assertEqual([m for m in lean if layer_policy.lean_layer(m) is None], [])
         self.assertEqual([m for m in python if m != "ve" and layer_policy.python_layer(m) is None], [])
 
     def test_lean_entry_modules_are_tool_layer(self):
         roots = layer_policy.lean_executables().values()
-        self.assertTrue({"Main", "AlternativesMain", "ReportsMain", "Serve"} <= set(roots))
+        self.assertTrue({"Main", "ResponseDecode", "Serve"} <= set(roots))
         for module in (*roots, "RiskMain"):
             with self.subTest(module=module):
                 self.assertEqual(layer_policy.lean_layer(module), 4)
@@ -556,22 +556,30 @@ class LayerSelectionTests(unittest.TestCase):
                 with self.subTest(name=name):
                     self.assertIn(f"lean-exe:{name}", graph.closure("tests/test_route.py")[1])
         real_exists = Path.exists
-        for binary in ("ve_quantity", "ve_discourse_route", "ve_reports_route"):
+        for binary in ("ve_conformance", "ve_service"):
             with self.subTest(binary=binary), patch.object(
                 Path, "exists", lambda path: False if path.name == binary else real_exists(path)
             ):
                 self.assertTrue(select(["ve/search.py"])["lean_build"])
 
     def test_non_default_lean_executables_are_built_by_name(self):
-        self.assertIn("ve_risk_eval", layer_policy.lean_executables())
-        # Simulate a route outside defaultTargets; the current lakefile builds it
-        # by default, but the selector must still support explicitly named builds.
-        defaults = layer_policy.lean_default_targets() - {"ve_risk_eval"}
+        # Since lean-first batch 1 no executable is outside defaultTargets (the one-shot routes,
+        # `ve_risk_eval` among them, are service modes); simulate one, which a test names.
+        executables = {**layer_policy.lean_executables(), "ve_risk_eval": "RiskEvalMain"}
+        defaults = layer_policy.lean_default_targets()
         real_exists = Path.exists
-        with (patch.object(select_tests, "lean_default_targets", return_value=defaults),
+
+        def clear_caches():
+            for value in vars(select_tests).values():
+                if hasattr(value, "cache_clear"):
+                    value.cache_clear()
+        clear_caches()
+        with (patch.object(select_tests, "lean_executables", return_value=executables),
+              patch.object(select_tests, "lean_default_targets", return_value=defaults),
               patch.object(Path, "exists",
                            lambda path: False if path.name == "ve_risk_eval" else real_exists(path))):
             plan = select(["ve/search.py"])
+        clear_caches()
         self.assertIn("tests/test_risk_differential.py", plan["selected"])
         self.assertIn(["lake", "build"], plan["commands"])
         self.assertIn(["lake", "build", "ve_risk_eval"], plan["commands"])

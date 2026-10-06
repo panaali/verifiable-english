@@ -55,6 +55,7 @@ Exit status: 0 when nothing is new and every baseline entry reproduces, 1 otherw
 from __future__ import annotations
 
 import argparse
+import atexit
 from contextlib import contextmanager
 from copy import deepcopy
 from dataclasses import dataclass, field
@@ -529,14 +530,62 @@ def _exchange(command, cases):
     return completed, None
 
 
+# The one-shot route executables are modes of the Lean service since lean-first batch 1 (`tests/lean_routes.py`
+# `MODES`): a command naming one runs on its mode (`service_rows`); `ve_diagnose <unit>` names its unit in each case.
+SERVICE_MODES = {"ve_norms_route": "norms", "ve_soft_norms_route": "soft-norms", "ve_rights_route": "rights",
+                 "ve_speech_acts_route": "speech-acts", "ve_reports_route": "reports",
+                 "ve_alternatives_route": "alternatives", "ve_risk_route": "risk", "ve_risk_eval": "risk-eval",
+                 "ve_quantity": "quantity", "ve_norm_defaults_route": "norm-defaults",
+                 "ve_discourse_route": "discourse", "ve_readings_route": "readings-route", "ve_diagnose": "diagnose"}
+_SERVICE = []  # the run's one service for the route modes
+
+
+def _close_service():
+    while _SERVICE:
+        _SERVICE.pop().close()
+
+
+atexit.register(_close_service)
+
+
+def service_rows(command, cases):
+    """One row per case from the service mode of the one-shot route `command` names, each checked by the
+    service client against the mode's schema (its binding included), or `NoAnswer`: a batch the service
+    does not answer is split until the case is alone, as `run_rows` splits a runner's. A case alone that
+    the service refuses as a request (the one-shot's package refusal) is `Refused`. The mode's CPU deadline
+    stops a runaway case (`lean_service.DEADLINES`)."""
+    from ve.backends.lean_service import LeanService
+    from ve.errors import CheckerUnavailable, VEError
+    if not cases:
+        return []
+    mode = SERVICE_MODES[Path(str(command[0])).name]
+    sent = [{**case, "unit": str(command[1])} for case in cases] if mode == "diagnose" else cases
+    try:
+        if not _SERVICE:
+            _SERVICE.append(LeanService())
+        return _SERVICE[0].run(mode, sent)
+    except CheckerUnavailable as exc:
+        _close_service()
+        if len(cases) == 1:
+            return [NoAnswer(f"{type(exc).__name__}: {exc}"[:300])]
+    except VEError as exc:
+        if len(cases) == 1:
+            return [Refused(str(exc)[-300:])]
+    middle = len(cases) // 2
+    return service_rows(command, cases[:middle]) + service_rows(command, cases[middle:])
+
+
 def run_rows(command, cases):
     """One row per case from a batch runner, or `NoAnswer`: a batch that does not answer is split until
     the case that does not answer is alone. A batch answers when it prints one object per case, in
     order, each naming its case (`bind_rows`), and its exit status is 1 exactly when some row is an error
     (the one-shot runner contract, `ve/backends/lean.py`). A case alone that the runner refuses as a
-    package (exit 2) is `Refused`."""
+    package (exit 2) is `Refused`. A command naming a one-shot route runs on its service mode
+    (`service_rows`)."""
     if not cases:
         return []
+    if Path(str(command[0])).name in SERVICE_MODES:
+        return service_rows(command, cases)
     completed, reason = _exchange(command, cases)
     if reason is None:
         rows, reason = _read_batch(completed, cases)

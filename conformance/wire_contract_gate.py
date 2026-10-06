@@ -39,6 +39,7 @@ from conformance.wire_contract import choose_combinations
 from conformance.wire_contract_faults import (PILOT, UNREACHED, catalogue, expected_first, expected_record,
                                               footprint, legacy_codes, overlaps, position, unit_module,
                                               unreached)
+from tests import lean_routes
 from tests.test_soft_norms_lean import env
 from tools import nested_pytest
 from ve.backends.diagnostics import checker_error
@@ -48,7 +49,6 @@ from ve.softnorms_contract import REGISTRY, public_rejection
 from ve.wire_contract.engine import Deferred, Fault, load, overlay, run
 
 ROOT = Path(__file__).resolve().parents[1]
-BIN = ROOT / "lean/.lake/build/bin"
 REPORT = ROOT / "conformance/wire-contract/soft-norms@0-gate.json"
 SWITCH = ROOT / "conformance/wire-contract/soft-norms@0-switch.json"
 SPEC = ROOT / "docs/spec/wire-contract.md"
@@ -529,36 +529,14 @@ def record_problems(record, expected, legacy):
     return []
 
 
-def _lean_batches(cases, count=100, limit=8 << 20):
-    """Consecutive slices of `cases`, each of at most `count` cases and `limit` bytes of JSON unless a
-    single case is larger (the executables refuse a package over 16 MiB; a near-limit source is up to
-    0.5 MiB)."""
-    batch, size = [], 0
-    for case in cases:
-        encoded = len(json.dumps(case))
-        if batch and (len(batch) == count or size + encoded > limit):
-            yield batch
-            batch, size = [], 0
-        batch.append(case)
-        size += encoded
-    if batch:
-        yield batch
-
-
 def _lean_rows(binary, unit, cases):
+    """The rows of the service mode that replaced the one-shot `binary` (`ve_diagnose` with `unit`, or
+    `ve_soft_norms_route`) for each `(environment, norms)` source, as cases of the unit's kind."""
     kind = unit_of(unit).case_kind if unit else CASE_KINDS[binary]
-    rows = []
-    for batch in _lean_batches([{"id": str(i), "kind": kind, "environment": raw, "norms": norms}
-                                for i, (raw, norms) in enumerate(cases)]):
-        result = subprocess.run([str(BIN / binary), *([unit] if unit else []), "-"],
-                                input=json.dumps(batch), text=True, capture_output=True,
-                                timeout=int(os.environ.get("VE_CONFORMANCE_HANG_TIMEOUT", "600")))
-        if result.returncode not in (0, 1):
-            raise RuntimeError(f"{binary}: {result.stderr}")
-        parsed = json.loads(result.stdout)
-        if len(parsed) != len(batch):
-            raise RuntimeError(f"{binary}: wrong row count")
-        rows.extend(parsed)
+    wire = [{"id": str(i), "kind": kind, "environment": raw, "norms": norms} for i, (raw, norms) in enumerate(cases)]
+    rows = lean_routes.diagnose(unit, wire) if binary == "ve_diagnose" else lean_routes.rows(binary, wire)
+    if len(rows) != len(wire):
+        raise RuntimeError(f"{binary}: wrong row count")
     return rows
 
 

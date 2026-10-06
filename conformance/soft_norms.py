@@ -5,9 +5,7 @@ import json
 from copy import deepcopy
 from itertools import combinations
 from pathlib import Path
-import os
 import random
-import subprocess
 import sys
 
 from ve.ast import formula_to_data
@@ -19,11 +17,11 @@ from ve.evaluate import evaluate
 from ve.model import FiniteModel
 from ve.softnorms import SoftEnvironment, SoftNormDocument, load_soft_document
 from ve.soft_route import check_regenerated
+from tests import lean_routes
 from tests.test_soft_norms_lean import env, norm, should, ranks
 from conformance.wire_contract import choose_combinations, first_fault
 
 ROOT = Path(__file__).resolve().parents[1]
-LEAN = ROOT / "lean/.lake/build/bin/ve_soft_norms_route"
 RUST_FIXTURES = ROOT / "conformance/soft_norms_rust.json"
 # The accepted seeded trees `main` compares.
 TREES = 1000
@@ -705,12 +703,7 @@ def compare_near_limit(sources):
             expected.append((name, None, exc.code))
     wire = [{"id": name, "kind": "soft-elaborate", "environment": raw, "norms": rules}
             for name, raw, rules in sources]
-    rows = []
-    for batch in _batches(wire):
-        run = subprocess.run([str(LEAN), "-"], input=batch, text=True,
-                             capture_output=True, check=False,
-                             timeout=int(os.environ.get("VE_CONFORMANCE_HANG_TIMEOUT", "600")))
-        rows += json.loads(run.stdout)
+    rows = lean_routes.rows("soft-norms", wire)
     if len(rows) != len(sources):
         raise AssertionError("Lean returned the wrong near-limit row count")
     accepted = 0
@@ -1058,20 +1051,6 @@ def expected_rejections():
             *soft_limits_reproducers(), *soft_over_reproducers(), *multi_fault_cases()]
 
 
-def _batches(cases, limit=8 << 20):
-    """JSON arrays of consecutive cases, each within the executable's input limit."""
-    batch, size = [], 2
-    for case in cases:
-        encoded = json.dumps(case)
-        if batch and size + len(encoded) + 1 > limit:
-            yield "[" + ",".join(batch) + "]"
-            batch, size = [], 2
-        batch.append(encoded)
-        size += len(encoded) + 1
-    if batch:
-        yield "[" + ",".join(batch) + "]"
-
-
 def rejected_cases():
     """The sources `compare_rejected` submits, in its order: the fixed rejections, the named sources of
     `expected_rejections()`, then the generated block, rule, combined block and exception faults."""
@@ -1125,12 +1104,7 @@ def compare_rejected(part=0, parts=1):
             raise AssertionError("Python unexpectedly accepted a rejected soft source")
     wire = [{"id": str(i), "kind": "soft-elaborate", "environment": cases[i][0], "norms": cases[i][1]}
             for i in indices]
-    rows = []
-    for batch in _batches(wire):
-        run = subprocess.run([str(LEAN), "-"], input=batch, text=True,
-                             capture_output=True, check=False,
-                             timeout=int(os.environ.get("VE_CONFORMANCE_HANG_TIMEOUT", "300")))
-        rows += json.loads(run.stdout)
+    rows = lean_routes.rows("soft-norms", wire)
     if len(rows) != len(indices):
         raise AssertionError("Lean returned the wrong rejected row count")
     fixtures = len(rejected_sources())
@@ -1151,10 +1125,7 @@ def rust_fixture_rows():
     for name, raw, rules, present in rust_sources():
         soft = SoftNormDocument(SoftEnvironment(raw), rules)
         case = {"id": name, "kind": "soft-elaborate", "environment": raw, "norms": rules}
-        run = subprocess.run([str(LEAN), "-"], input=json.dumps([case]), text=True,
-                             capture_output=True, check=False,
-                             timeout=int(os.environ.get("VE_CONFORMANCE_HANG_TIMEOUT", "120")))
-        row = json.loads(run.stdout)[0]
+        row = lean_routes.rows("soft-norms", [case])[0]
         if row.get("status") != "ok":
             raise AssertionError((name, row))
         py_layers = [(label, formula_to_data(soft.extended_env, formula, _generated=True))
@@ -1227,10 +1198,7 @@ def compare_generated():
         cases = [{"id": str(compared + i), "kind": "soft-elaborate",
                   "environment": raw, "norms": rules}
                  for i, (raw, rules, _) in enumerate(batch)]
-        run = subprocess.run([str(LEAN), "-"], input=json.dumps(cases), text=True,
-                             capture_output=True, check=False,
-                             timeout=int(os.environ.get("VE_CONFORMANCE_HANG_TIMEOUT", "120")))
-        rows = json.loads(run.stdout)
+        rows = lean_routes.rows("soft-norms", cases)
         if len(rows) != len(batch):
             raise AssertionError("Lean returned the wrong row count")
         for i, ((_, _, soft), row) in enumerate(zip(batch, rows)):

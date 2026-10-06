@@ -4,6 +4,16 @@ Base: `2ce1134e` (before this batch). Branch: `lean-first/b11a`. This is the Lea
 
 ## Acceptance and ownership
 
+### Merge with the service consolidation
+
+The `speech-acts` service mode continues to answer its established W1 cases through
+`VE.SpeechActs.Run.runCaseReported`. The new W2 `speech-source` and payload `admission`
+cases use the `ve_speech_acts_route` Lake target and `VE.SpeechActs.Source.runCaseReported`.
+Both routes are built by `lake build` and their tests exercise the appropriate entry
+point. The W2 cases are not yet a `ve_service` mode; batch 11b must choose their
+transport when it switches the Python caller. This is a transport integration gap,
+not a change to either route's verdicts or to the audit manifest (which is the union).
+
 | Item | Owner | Evidence or state |
 |---|---|---|
 | 8.5 source wrapper, document/source/environment IDs | AGENT | `Source/Run.lean`; `test_templates_agree_with_python`, `test_document_id_excludes_removable_weights_only` |

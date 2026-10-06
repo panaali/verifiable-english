@@ -5,15 +5,14 @@ reordered, an index pushed out of range); every mutant is `CheckerUnavailable` o
 the relay shows (`ve document check`, `render` and `readings`), and nothing else escapes."""
 import copy
 import json
-import subprocess
-import types
 
 import pytest
 
 from tests.test_discourse import _correlated, _sample, _write
 from tests.test_discourse_lean import DOC_CONSTANTS, env, text, unary, validity_doc
 from ve import discourse
-from ve.backends import lean as lean_backend
+from ve.backends import relay
+from ve.backends.lean_service import _decode_json
 from ve.document import check_document, main, render_document
 from ve.errors import CheckerUnavailable
 
@@ -50,21 +49,16 @@ def _shown(path, conclusion, capsys):
     return check, render, json.loads(capsys.readouterr().out)
 
 
-def _route_writes(monkeypatch, stdout):
-    """The Lean discourse route process exits 0 having written `stdout`; every other process runs.
-    The transport (`run_discourse_case`, `read_rows`) reads it as it reads the route's output."""
-    route, real = str(discourse.route_executable()), subprocess.run
-
-    def run(args, *rest, **options):
-        if str(args[0]) == route:
-            return subprocess.CompletedProcess(args, 0, stdout, b"")
-        return real(args, *rest, **options)
-    monkeypatch.setattr(lean_backend, "subprocess",
-                        types.SimpleNamespace(run=run, TimeoutExpired=subprocess.TimeoutExpired))
-
-
 def _answered(monkeypatch, row):
-    _route_writes(monkeypatch, json.dumps([row]).encode())
+    """The Lean discourse route (service mode `discourse`) answers `row`; every other mode runs. The relay
+    reads it as it reads the service's rows (`relay.rows`)."""
+    real = relay.rows
+
+    def rows(mode, cases, **options):
+        if mode == "discourse":
+            return [copy.deepcopy(row)]
+        return real(mode, cases, **options)
+    monkeypatch.setattr(relay, "rows", rows)
 
 
 def _nodes(value, path=()):
@@ -274,14 +268,14 @@ def test_a_joint_set_deeper_than_pythons_call_depth_is_admitted(tmp_path):
     assert check_document(path)["joint_choices"] == {"status": "complete", "count": 1, "constraints": 0}
 
 
-def test_an_answer_deeper_than_the_c_stack_is_no_answer(tmp_path, monkeypatch):
-    """Nesting no JSON reader on the C stack reads (a joint disjunction 200,000 deep) is
-    `CheckerUnavailable`, never an escaping `RecursionError`."""
+def test_an_answer_deeper_than_the_c_stack_is_no_answer(tmp_path):
+    """Nesting no JSON reader on the C stack reads (a joint disjunction 200,000 deep) is no answer, never
+    an escaping `RecursionError`: the service's client decodes every response line with `_decode_json`,
+    which refuses it (`ValueError`), and `LeanService` makes a line it cannot decode `CheckerUnavailable`
+    (tests/test_lean_service.py, the malformed responses)."""
     path, _ = _document(tmp_path, "some")
     row = json.dumps([{**discourse.lean_admission(path.read_bytes(), tmp_path), "joint_formula": "DEEP"}])
     depth = 200_000
     deep = '["or", ["top"], ' * depth + '["top"]' + "]" * depth
-    stdout = row.replace('"DEEP"', deep).encode()
-    _route_writes(monkeypatch, stdout)
-    with pytest.raises(CheckerUnavailable, match="no answer to the case"):
-        discourse.lean_admission(path.read_bytes(), tmp_path)
+    with pytest.raises(ValueError):
+        _decode_json(row.replace('"DEEP"', deep).encode())

@@ -54,6 +54,25 @@ def rejects (s : String) (r : Reject) : Bool :=
 #guard rejects (String.join (List.replicate 5000 "a ") ++ "a.") .textTooLong
 -- x17
 #guard toks "ſervice café." == #[#[wi "ſervice", w "café"]]
+-- x18 to x22: the spacing table (DRI ruling 1, finding F1). Offsets are UTF-8 bytes (x18b: a no-break
+-- space is two). A spacing breach is found where its item starts, so `..` stays `emptySentence` (x11).
+#guard rejects " Legacy is deployed." (.badSpacing 1)
+#guard rejects "\u00a0Legacy is deployed." (.badSpacing 2)
+#guard rejects "Legacy is deployed ." (.badSpacing 19)
+#guard rejects "Legacy is deployed\t." (.badSpacing 19)
+#guard rejects "Legacy is deployed.It is reviewed." (.badSpacing 19)
+#guard rejects "Legacy is deployed.(a) x." (.badSpacing 19)
+#guard rejects "Legacy has the recorded relation\"owner_of\" to alice." (.badSpacing 32)
+#guard rejects "Legacy has the recorded relation \"owner_of\"to alice." (.badSpacing 43)
+#guard rejects "\"a\"\"b\" is deployed." (.badSpacing 3)
+#guard rejects "Legacy is deployed. ." (.emptySentence 1)
+#guard toks "Legacy is deployed. \n" == #[#[wi "Legacy", w "is", w "deployed"]]
+#guard toks "x ,y." == #[#[wi "x", .punct "," false true, w "y"]]
+-- V3 reads a wording through the substitution of the lexical rules (`wordingTokens`, review C2): a hole
+-- glued to a word is no hole of its own, so `{0}s are {1}` fails V3 instead of passing and giving no rule.
+#guard shapeOk "{0} owns {1}" 2 && shapeOk "{0}, then {1}" 2
+#guard !shapeOk "{0}s are {1}" 2 && (wordingTokens "{0}s are {1}").isNone
+#guard !shapeOk "{0}\"x\" {1}" 2 && !shapeOk " {0} is deployed" 1 && !shapeOk "{0} is deployed ." 1
 -- Labels and numerals: `S01` and `x1` are words; `0` is a numeral.
 #guard toks "S01 x1 0 12." == #[#[wi "S01", w "x1", .numeral 0, .numeral 12]]
 -- A numeral or a label index has no bound but the text limit, beyond the 4,300 digits of Python's `int`

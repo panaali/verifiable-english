@@ -324,12 +324,13 @@ def test_the_fix3_reproducer_empty_outcomes_are_unusable(tmp_path, conformance_r
     Without the schema the empty outcomes suppressed every later operation and counted as acceptances."""
     records, expected = conformance_recording
     whole = _recording(tmp_path, "whole.jsonl", records)
-    assert diff.compare(whole, whole, None, expected=expected)["unlisted"] == 0
+    again = _recording(tmp_path, "again.jsonl", records)
+    assert diff.compare(whole, again, None, expected=expected)["unlisted"] == 0
     emptied = [{**r, "outcome": {} if "returned" in r["outcome"] else r["outcome"]}
                for r in records if r["op"] == "environment"]
     path = _recording(tmp_path, "emptied.jsonl", emptied)
     with pytest.raises(diff.Unusable, match=r"line \d+ is no record the recorder writes"):
-        diff.compare(path, path, None, expected=expected)
+        diff.compare(path, _recording(tmp_path, "emptied-again.jsonl", emptied), None, expected=expected)
     with pytest.raises(diff.Unusable, match="no record the recorder writes"):
         diff.compare(whole, path, None, expected=expected)
 
@@ -516,3 +517,73 @@ def test_readings_records_are_checked_against_their_schema(tmp_path):
     assert names[:2] == ["differential/c0", "differential/c1"] and len(names) == len(set(names)) > diff.READINGS_COUNT
     expected = diff.expected_cases(ROOT, ("readings",))
     assert list(expected) == [("readings", "default")] and set(expected["readings", "default"]) == set(names)
+
+
+# lf-1 review B and rechecks B and 3 B (the class of route_parity.py's empty pass), on the lf-0 evidence rules.
+
+def test_compare_refuses_the_same_file(tmp_path):
+    run = _write(tmp_path / "run.jsonl", {**CONTROLS, "a": OK})
+    with pytest.raises(diff.Unusable, match="same file"):
+        diff.compare(run, run, None, expected=_expected({GROUP: {*CONTROLS, "a"}}))
+    assert diff.main(["compare", run, run, "--corpus", "conformance", "--authority", "python"]) == 2
+
+
+def test_a_delta_entry_without_its_outcomes_lists_nothing(tmp_path):
+    """A listed record must name both outcomes: an entry without `head` used to accept a record missing
+    from HEAD (None == None)."""
+    entry = {"corpus": "conformance", "authority": "python", "case": "evaluation/a", "op": "model", "base": MODEL_OK}
+    delta = {"verdict": [_entry("a", base=OK, head=REJECTED), entry]}
+    result = _compare(tmp_path, {"a": OK, "a#model": MODEL_OK}, {"a": REJECTED}, delta,
+                      expected={GROUP: {"a": _after_op}})
+    assert result["unlisted"] == 1
+    delta["verdict"][1] = {**entry, "head": None}
+    assert _compare(tmp_path, {"a": OK, "a#model": MODEL_OK}, {"a": REJECTED}, delta,
+                    expected={GROUP: {"a": _after_op}})["unlisted"] == 0
+
+
+def test_a_delta_listing_a_record_twice_is_unusable(tmp_path):
+    """The latency tool's overwrite class (lf-1 recheck B): a record listed in two entries kept only the last."""
+    changed = {"returned": {"environment_id": ENV_ID, "record": {"values": [False]}}}
+    entry = _entry("a", base=OK, head=changed)
+    for delta in ({"verdict": [entry, entry]}, {"order": [{**entry, "head": REJECTED}], "verdict": [entry]}):
+        with pytest.raises(diff.Unusable, match="twice"):
+            _compare(tmp_path, {"a": OK}, {"a": changed}, delta)
+
+
+@pytest.mark.parametrize("old, new", [(True, 1), (False, 0), (1, 1.0), (0, False), (1.0, 1), (0, -0.0)])
+def test_a_retyped_value_is_a_verdict_change(old, new):
+    """lf-1 recheck 3 B: the comparison is type-strict JSON equality (`service_schema.same_json`)."""
+    assert diff.change_class({"returned": {"values": [old]}}, {"returned": {"values": [new]}}) == "verdict"
+    assert not diff.same(old, new)
+
+
+def test_a_wording_pair_matches_only_its_own_types(tmp_path):
+    """A signed pair names its texts exactly, as JSON: the text `1` is not the number 1."""
+    base = {"raised": {"code": "UnknownSymbol", "message": "1"}}
+    head = {"raised": {"code": "UnknownSymbol", "message": "2"}}
+    assert _compare(tmp_path, {"a": base}, {"a": head}, {"wording": [{"base": "1", "head": "2"}]})["unlisted"] == 0
+    for pair in ({"base": 1, "head": "2"}, {"base": True, "head": "2"}, {"base": "1", "head": 2.0}):
+        assert _compare(tmp_path, {"a": base}, {"a": head}, {"wording": [pair]})["unlisted"] == 1
+
+
+@pytest.mark.parametrize("case", [1, True, None, 1.0, ["a"]])
+def test_a_record_key_that_is_not_a_string_is_unusable(tmp_path, case):
+    """Keys `1` and `true` would pair two different records (Python hashes them alike): a record is refused
+    by the recorder's schema, a delta entry by its key."""
+    path = tmp_path / "r.jsonl"
+    path.write_text(json.dumps({"corpus": "conformance", "authority": "python", "case": case, "op": "environment",
+                                "source_sha256": SOURCE, "outcome": OK}) + "\n")
+    with pytest.raises(diff.Unusable):
+        diff.load(str(path))
+    entry = {**_entry("a", base=OK, head=OK), "case": case}
+    with pytest.raises(diff.Unusable, match="must be strings"):
+        _compare(tmp_path, {"a": OK}, {"a": OK}, {"verdict": [entry]})
+
+
+def test_stage2_parity_classifies_a_retyped_output_as_a_change():
+    """The same class in `tools/stage2_parity.py`: its projection was compared with `==`."""
+    from tools import stage2_parity
+    row = {"cell": "A", "status": "ok", "output": {"values": [True]}}
+    assert stage2_parity._classify(row, dict(row)) .startswith("same")
+    for new in (1, 1.0):
+        assert stage2_parity._classify(row, {**row, "output": {"values": [new]}}) == "different"

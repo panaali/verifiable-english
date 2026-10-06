@@ -9,7 +9,6 @@ import json
 import os
 from pathlib import Path
 import re
-import shutil
 import subprocess
 import sys
 import threading
@@ -21,6 +20,7 @@ import pytest
 from hypothesis import HealthCheck, given, settings, strategies as st
 
 from subprocesses import HANG_TIMEOUT
+from tests.lean_build import lean_build
 from ve.backends.lean_service import (MAX_CASES, MAX_LINE_BYTES, CheckerUnavailable, LeanService,
                                       LeanServicePool, MODES, case_digest, case_texts,
                                       executable_sha256)
@@ -36,16 +36,14 @@ BIN = ROOT / "lean/.lake/build/bin"
 CASES = json.loads((ROOT / "conformance/evaluation.json").read_text())
 
 
+# The statement-layer route modes of lean-first batch 1 (their rows: `<mode>.json`).
+ROUTE_MODES = ("soft-norms", "rights", "speech-acts", "reports", "alternatives", "risk", "quantity",
+                    "norm-defaults", "discourse", "readings-route")
+
+
 @pytest.fixture(scope="session")
 def service_executable():
-    lake = shutil.which("lake")
-    if lake is None and not (BIN / "ve_service").exists():
-        pytest.skip("lake is not available")
-    if lake is not None and not os.environ.get("VE_LEAN_PREBUILT"):
-        build = subprocess.run([lake, "build", "ve_service", "ve_conformance", "ve_norms_route"],
-                               cwd=ROOT / "lean", capture_output=True, text=True, timeout=HANG_TIMEOUT)
-        assert build.returncode == 0, build.stdout + build.stderr
-    return BIN / "ve_service"
+    return lean_build("ve_service", "ve_conformance", "ve_english_run") / "ve_service"
 
 
 def raw_session(executable, lines: bytes, timeout=HANG_TIMEOUT):
@@ -438,8 +436,7 @@ def placeholders(value, line):
 
 
 hello = {"service": "ve-lean@1", "protocol": 2,
-         "modes": ["evaluate", "check-certificate", "order", "route", "norms", "english",
-                   "environment", "model", "check", "identity", "parse", "graph", "readings", "bundle", "family-norms"],
+         "modes": __MODES__,
          "codes": __CODES__,
          "limits": {"max_line_bytes": 16777216, "max_cases": 4096, "json_depth": 256}}
 if behaviour == "handshake":
@@ -467,6 +464,9 @@ for line in sys.stdin:
     open(marker, "a").close()
     if behaviour == "hang" or (behaviour == "flaky" and first_process):
         time.sleep(60)
+    if behaviour == "spin":
+        while True:
+            pass
     if behaviour == "crash":
         sys.exit(3)
     if behaviour == "garbage":
@@ -615,7 +615,7 @@ def expire_service_waits(monkeypatch):
             phase.kind, phase.expires, phase.start, phase.write = saved
 
     def wait_of(deadline):
-        return None if phase.start is None else round(deadline - phase.start, 6)
+        return None if phase.start is None else round(deadline.wall - phase.start, 6)
 
     def recorded_roundtrip(self, *arguments):
         return within("request", len(state.waits) in state.requests, lambda: roundtrip(self, *arguments))
@@ -634,7 +634,7 @@ def expire_service_waits(monkeypatch):
         else:
             state.waits.append(wait if phase.write == wait else {"write": phase.write, "read": wait})
         if phase.expires:  # the whole wait (and a second, so no rounding leaves a remainder)
-            phase.skew += max(0.0, deadline - clock()) + 1  # elapses on the injected clock
+            phase.skew += max(0.0, deadline.wall - clock()) + 1  # elapses on the injected clock
         return read_line(self, deadline)
     monkeypatch.setattr(lean_service, "time", SimpleNamespace(monotonic=clock))
     monkeypatch.setattr(LeanService, "_roundtrip", recorded_roundtrip)
@@ -644,15 +644,16 @@ def expire_service_waits(monkeypatch):
     return state
 
 
+LATER = "_Deadline(deadline.wall + 1, deadline.cpu, deadline.start, deadline.mode)"
 DEADLINE_MUTANTS = {
-    "request wait ignores the timeout": ("_roundtrip", "deadline = time.monotonic() + timeout",
-                                         "deadline = time.monotonic() + 999999"),
+    "request wait ignores the setting": ("_deadline", "_Deadline(now + cap, cpu, start, mode)",
+                                         "_Deadline(now + 999999, cpu, start, mode)"),
     "request read past its deadline": ("_roundtrip", "raw = self._read_line(deadline)",
-                                       "raw = self._read_line(deadline + 1)"),
+                                       f"raw = self._read_line({LATER})"),
     "request write past its deadline": ("_roundtrip", "self._write_all(line, deadline)",
-                                        "self._write_all(line, deadline + 1)"),
-    "start wait ignores the setting": ("_spawn", "self._read_line(time.monotonic() + startup)",
-                                       "self._read_line(time.monotonic() + 999999)"),
+                                        f"self._write_all(line, {LATER})"),
+    "start wait ignores the setting": ("_spawn", "self._read_line(_Deadline(time.monotonic() + startup))",
+                                       "self._read_line(_Deadline(time.monotonic() + 999999))"),
 }
 
 
@@ -683,7 +684,7 @@ def test_the_injected_clock_records_a_miscomputed_deadline(tmp_path, monkeypatch
 
 def fake(tmp_path, behaviour):
     script = tmp_path / "fake.py"
-    script.write_text(FAKE.replace("__CODES__", json.dumps(CODES)))
+    script.write_text(FAKE.replace("__CODES__", json.dumps(CODES)).replace("__MODES__", json.dumps(list(MODES))))
     wrapper = tmp_path / f"fake-{behaviour}"
     wrapper.write_text(f"#!/bin/sh\nexec {sys.executable} {script} {behaviour} {tmp_path / 'marker'}\n")
     wrapper.chmod(0o755)
@@ -706,6 +707,98 @@ def test_operational_faults_fail_closed(tmp_path, expired, behaviour):
         assert expired.waits == [HANG_TIMEOUT] * 2
     finally:
         service.close()
+
+
+@pytest.mark.skipif(not Path("/proc/self/stat").exists(), reason="process CPU time is read from /proc")
+def test_a_request_past_its_cpu_deadline_names_its_mode_and_is_not_retried(tmp_path, monkeypatch):
+    """F4: a request that needs more CPU than its operation's deadline is `CheckerUnavailable` naming the
+    mode, at once: the same request needs the same work, so it is not retried."""
+    from ve.backends import lean_service
+    monkeypatch.setitem(lean_service.DEADLINES, "evaluate", (0.3, 0.0))
+    with LeanService(fake(tmp_path, "spin"), allow_unlisted_build=True) as service:
+        with pytest.raises(CheckerUnavailable, match="mode evaluate used more than its deadline of 0.3 s of CPU") \
+                as caught:
+            service.run("evaluate", [{}])
+        assert caught.value.operation == "evaluate" and not isinstance(caught.value, ResourceLimit)
+        assert service.stats["starts"] == 1 and service.stats["retries"] == 0 and service.pid is None
+
+
+def test_a_request_that_gets_no_cpu_meets_the_wall_cap(tmp_path, monkeypatch, expired):
+    """A process that stops being scheduled (here, sleeping) uses no CPU; the wall-clock cap still
+    ends the request, which is retried once. The cap is `WALL_FACTOR` times the CPU deadline
+    (`test_users_keep_the_mode_deadlines`); in the suite it is the setting, HANG_TIMEOUT, and each
+    attempt's wait is injected as expired."""
+    from ve.backends import lean_service
+    monkeypatch.setitem(lean_service.DEADLINES, "evaluate", (0.05, 0.0))
+    expired.requests = ALL
+    with LeanService(fake(tmp_path, "hang"), allow_unlisted_build=True) as service:
+        with pytest.raises(CheckerUnavailable, match=r"timeout waiting for the response \(mode evaluate\)"):
+            service.run("evaluate", [{}])
+        assert service.stats["starts"] == 2 and service.stats["retries"] == 1
+    assert expired.waits == [HANG_TIMEOUT] * 2
+
+
+def test_every_mode_has_a_deadline_that_grows_with_its_input():
+    from ve.backends.lean_service import DEADLINES, deadline
+    assert set(DEADLINES) == set(MODES)
+    for mode, (base, per_mib) in DEADLINES.items():
+        assert base > 0 and per_mib > 0, mode
+        assert deadline(mode, 0) == base and deadline(mode, 1 << 20) == base + per_mib, mode
+        assert deadline(mode, 1 << 20, 3) == 3 * base + per_mib, mode
+    # The readings route keeps the UDHR call (about 2,300 s of CPU per MiB) unavailable until F5.
+    assert deadline("readings-route", 500_000) < 2300 * 500_000 / (1 << 20)
+
+
+def test_the_executable_digest_is_reused_across_processes_until_the_file_changes(tmp_path, monkeypatch):
+    """The client's SHA-256 of the service binary is cached beside it by the file's identity, so a new
+    process does not read the binary again; a write to the binary or a sidecar for another identity is
+    a miss, and the digest is the file's."""
+    import hashlib
+    from ve.backends import lean_service
+    binary = tmp_path / "service"
+    binary.write_bytes(b"first build")
+    monkeypatch.setattr(lean_service, "_hashes", {})
+    assert lean_service.executable_sha256(binary) == hashlib.sha256(b"first build").hexdigest()
+    sidecar = tmp_path / "service.sha256-cache"
+    assert json.loads(sidecar.read_text())["sha256"] == hashlib.sha256(b"first build").hexdigest()
+    monkeypatch.setattr(lean_service, "_hashes", {})  # a new process
+    real_open = Path.open
+    monkeypatch.setattr(Path, "open", lambda path, *a, **k: (_ for _ in ()).throw(AssertionError("read"))
+                        if path == binary else real_open(path, *a, **k))
+    assert lean_service.executable_sha256(binary) == hashlib.sha256(b"first build").hexdigest()
+    monkeypatch.setattr(Path, "open", real_open)
+    binary.write_bytes(b"second build")
+    monkeypatch.setattr(lean_service, "_hashes", {})
+    assert lean_service.executable_sha256(binary) == hashlib.sha256(b"second build").hexdigest()
+    forged = json.loads(sidecar.read_text())
+    sidecar.write_text(json.dumps({"key": [*forged["key"][:-1], 0], "sha256": "0" * 64}))
+    monkeypatch.setattr(lean_service, "_hashes", {})
+    assert lean_service.executable_sha256(binary) == hashlib.sha256(b"second build").hexdigest()
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["service", "service.sha256-cache"]
+
+
+@pytest.mark.parametrize("mode", [*ROUTE_MODES, "diagnose", "risk-eval"])
+def test_a_route_rejection_without_its_text_fails_closed(tmp_path, mode):
+    """A statement-layer route's rejection row without a text `error` is no rejection, and the batch is
+    CheckerUnavailable (common.json route_path_error and each mode's error rows)."""
+    case = {"id": "c", "kind": "k", "unit": "soft-norms@0"}
+    row = {"status": "error", "error": "InvalidInput: x", **({} if mode == "risk-eval" else {"id": "c"})}
+
+    def answer(result, coded):
+        # Beside a rejection the service sets its code; beside anything else, none (`Protocol.coding`), so a
+        # broken row is refused by the row schema, not by the envelope's coding rule.
+        return {"__bound__": True, "id": "__nonce__", "status": "ok", "mode": mode,
+                "results": [{"index": 0, "digest": {"$digest": 0}, "result": result,
+                             **({"code": "InvalidInput"} if coded else {})}],
+                "counts": {"cases": 1, "bytes": "__bytes__", "errors": 1}}
+    marker = tmp_path / "marker"
+    marker.write_text(json.dumps(answer(row, True)))
+    with LeanService(fake(tmp_path, "scripted"), allow_unlisted_build=True) as service:
+        assert service.run(mode, [case]) == [row]
+        for broken in ({k: v for k, v in row.items() if k != "error"}, {**row, "error": 7}):
+            marker.write_text(json.dumps(answer(broken, False)))
+            with pytest.raises(CheckerUnavailable, match="malformed response"):
+                service.run(mode, [case])
 
 
 def test_one_retry_recovers_a_hung_batch(tmp_path, expired):
@@ -1000,6 +1093,28 @@ _SCHEMA_SEEDS = {
                {"id": "c", "status": "ok", "checked": 1, "lemmas": ["a" * 64]}),
     "family-norms": ({"id": "c", "kind": "norms-certificate"},
                      {"id": "c", "status": "ok", "valid": True, "background": 0, "layers": 1}),
+    "risk-eval": ({"conditions": []}, {"status": "ok", "results": []}),
+    "diagnose": ({"id": "c", "unit": "soft-norms@0", "kind": "soft-elaborate"},
+                 {"id": "c", "status": "ok", "outcome": "clean"}),
+    # One closed answer per statement-layer route mode (<mode>.json), each on the mode's own path.
+    "soft-norms": ({"id": "c", "kind": "soft-certificate"},
+                   {"id": "c", "status": "ok", "valid": True, "background": 0, "layers": 0, "conditional_on": []}),
+    "rights": ({"id": "c", "kind": "rights-certificate"},
+               {"id": "c", "status": "ok", "valid": True, "background": 0, "layers": 0, "conditional_on": []}),
+    "speech-acts": ({"id": "c", "kind": "speech-answer", "question": "q"},
+                    {"id": "c", "status": "ok", "question": "q", "answer": "UNKNOWN (certificate not accepted)"}),
+    "reports": ({"id": "c", "kind": "reports-countermodel"},
+                {"id": "c", "status": "ok", "refutes": True, "source_model": []}),
+    "alternatives": ({"id": "c", "kind": "alt-certificate"},
+                     {"id": "c", "status": "ok", "valid": True, "background": 0, "layers": 0,
+                      "conditional_on": ["alternatives:own"]}),
+    "risk": ({"id": "c", "kind": "risk-certificate"}, {"id": "c", "status": "ok", "valid": True, "conditional_on": []}),
+    "quantity": ({"id": "c", "kind": "day"}, {"id": "c", "status": "ok", "day": 1}),
+    "norm-defaults": ({"id": "c", "kind": "norm-defaults-certificate"},
+                      {"id": "c", "status": "ok", "valid": True, "premises": 0}),
+    "discourse": ({"id": "c", "kind": "discourse-validity"}, {"id": "c", "status": "ok", "validity": {}}),
+    "readings-route": ({"id": "c", "kind": "readings-validate"},
+                       {"id": "c", "status": "ok", "content_bearing": False}),
 }
 
 
@@ -1026,7 +1141,10 @@ def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation
     elif mutation == "extra-row-field":
         answer["results"][0]["extra"] = 1
     elif mutation == "wrong-row-type":
-        field = ("admissible" if mode == "english" else
+        field = ("id" if mode in ROUTE_MODES else
+                 "outcome" if mode == "diagnose" else
+                 "results" if mode == "risk-eval" else
+                 "admissible" if mode == "english" else
                  "valid" if mode in ("check-certificate", "order", "norms", "model") else
                  "environment_id" if mode == "environment" else
                  "identity_id" if mode == "identity" else
@@ -1069,17 +1187,19 @@ def test_bad_or_missing_handshake_is_unavailable(tmp_path, expired, behaviour):
     service.close()
 
 
-def test_users_keep_the_wall_clock_defaults(tmp_path, monkeypatch, expired):
-    """Load reproducer (W6a generator, Lean authority, a 2 h 14 min suite): the
-    5-second default is the users'; without a setting a request still waits 5 s (a
-    start 30 s). Each default is checked at the deadline that reaches the wait, on an
-    injected clock that only moves when a test expires a wait, so load cannot expire
-    one: the services start under the suite's settings, so no real child runs against
-    a default (tests/conftest.py refuses one)."""
+def test_users_keep_the_mode_deadlines(tmp_path, monkeypatch, expired):
+    """Load reproducer (W6a generator, Lean authority, a 2 h 14 min suite): the users'
+    defaults are kept; without a setting a request waits its mode's wall-clock cap,
+    `WALL_FACTOR` times its CPU deadline (lean-first batch 1, F4; a start 30 s), and a
+    request given a timeout waits that. Each default is checked at the deadline that
+    reaches the wait, on an injected clock that only moves when a test expires a wait,
+    so load cannot expire one: the services start under the suite's settings, so no
+    real child runs against a default (tests/conftest.py refuses one)."""
     from ve.backends import lean_service
-    assert (lean_service.INTERACTIVE_TIMEOUT, lean_service.STARTUP_TIMEOUT) == (5.0, 30.0)
+    assert (lean_service.WALL_FACTOR, lean_service.STARTUP_TIMEOUT) == (10.0, 30.0)
     expired.frozen = True
     case = {"id": "a", "ast": [["top"]]}
+    size = len(json.dumps([case], separators=(",", ":")).encode())
     with LeanService(fake(tmp_path, "ok"), allow_unlisted_build=True) as service, \
             LeanService(fake(tmp_path, "ok"), timeout=3, allow_unlisted_build=True) as fixed:
         for variable in ("VE_LEAN_SERVICE_TIMEOUT", "VE_LEAN_SERVICE_STARTUP_TIMEOUT"):
@@ -1087,7 +1207,8 @@ def test_users_keep_the_wall_clock_defaults(tmp_path, monkeypatch, expired):
         service.run("evaluate", [case])
         service.run("evaluate", [case], timeout=7)
         fixed.run("evaluate", [case])
-    assert expired.waits == [5.0, 7, 3]
+    cap = lean_service.WALL_FACTOR * lean_service.deadline("evaluate", size)
+    assert expired.waits == [round(cap, 6), 7, 3]
     assert expired.starts == [HANG_TIMEOUT] * 2
     assert lean_service.configured_seconds("VE_LEAN_SERVICE_STARTUP_TIMEOUT", 30.0) == 30.0
 
@@ -1105,7 +1226,7 @@ def test_users_keep_the_wall_clock_defaults(tmp_path, monkeypatch, expired):
     starts = []
 
     def handshake(self, deadline):
-        starts.append(deadline)
+        starts.append(deadline.wall)
         raise lean_service._Failure("instrumented start")
     monkeypatch.setattr(lean_service, "subprocess", SimpleNamespace(
         Popen=Unstarted, PIPE=subprocess.PIPE, TimeoutExpired=subprocess.TimeoutExpired))

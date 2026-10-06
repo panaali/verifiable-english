@@ -17,8 +17,7 @@ from tests.test_norms import obligation, permission
 from tests.test_rights import claim, right, rights_env
 from ve.rights import correlate
 from ve.rights_route import check_rights_regenerated, run_rights_case
-from ve.soft_route import LEAN_ROUTE as SOFT_ROUTE
-from ve.backends.lean import run_soft_case
+from ve.backends.relay import decide
 from ve.softnorms import SoftEnvironment, SoftNormDocument
 
 EXCEPTION = {"decided_by": "unstated", "sufficient": [], "necessary": [], "factors": []}
@@ -239,8 +238,8 @@ def theta_rows(seeds=range(60)):
         assert rights.soft_document.extended_env.to_dict() == flat.extended_env.to_dict(), seed
         lean = run_rights_case(rights.env, units, "rights-elaborate")
         check_rights_regenerated(rights, lean)
-        soft = run_soft_case(SOFT_ROUTE, {"id": "f", "kind": "soft-elaborate", "environment": raw,
-                                          "norms": fitting + outside})
+        soft = decide("soft-norms", [{"id": "f", "kind": "soft-elaborate", "environment": raw,
+                                      "norms": fitting + outside}])[0]
         for field in ("order", "premises", "derived", "colliding_pairs", "conflict_targets",
                       "warnings", "decisions", "background"):
             assert lean[field] == soft[field], (seed, field)

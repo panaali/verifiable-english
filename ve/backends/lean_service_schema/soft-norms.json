@@ -1,0 +1,359 @@
+{
+  "$id": "soft-norms.json",
+  "$comment": "Mode soft-norms: SoftNorms.Run.runCaseReported (formerly ve_soft_norms_route). A case on the soft path (SoftNorms.Run.usesSoftPath) is answered by the soft runner (runCase: admission, else runSoftKind); every other case is delegated unchanged to the norms mode's runner.",
+  "row": {
+    "x-select": [
+      {
+        "then": {
+          "anyOf": [
+            {"$ref": "common.json#/$defs/case_error"},
+            {"$ref": "#/$defs/error"},
+            {
+              "x-select": [
+                {"then": {"$ref": "#/$defs/admission"}, "when": {"$ref": "#/$defs/kind/admission"}},
+                {"then": {"$ref": "#/$defs/elaborate"}, "when": {"$ref": "#/$defs/kind/soft-elaborate"}},
+                {"then": {"$ref": "#/$defs/pairs"}, "when": {"$ref": "#/$defs/kind/soft-pairs"}},
+                {"then": {"$ref": "#/$defs/certificate"}, "when": {"$ref": "#/$defs/kind/soft-certificate"}},
+                {
+                  "then": {"$ref": "#/$defs/witness"},
+                  "when": {"allOf": [{"$ref": "#/$defs/kind/soft-conflict"}, {"required": ["witness"]}]}
+                },
+                {"then": {"$ref": "#/$defs/packages"}, "when": {"$ref": "#/$defs/kind/soft-conflict"}}
+              ]
+            }
+          ]
+        },
+        "when": {"$ref": "#/$defs/soft_path"}
+      },
+      {"then": {"$ref": "norms.json#/row"}, "when": true}
+    ]
+  },
+  "$defs": {
+    "admission": {
+      "$comment": "SoftNorms.Run.encodeAdmitted: W2's admission answer and the open coherence premises the report assumes.",
+      "additionalProperties": false,
+      "properties": {
+        "admitted": {"const": true},
+        "conditional_on": {"$ref": "#/$defs/coherence_labels"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "kinds": {"items": {"$ref": "common.json#/$defs/kind"}, "type": "array", "x-equals": "/document/units/*/kind"},
+        "report": {"$ref": "common.json#/$defs/bound_report"},
+        "report_id": {"$ref": "common.json#/$defs/hex64"},
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "admitted", "report", "report_id", "kinds", "conditional_on"],
+      "type": "object"
+    },
+    "background": {
+      "$comment": "SoftNorms.Wire.regenerated: Background' in generator order; a soft premise carries its label (bgEntry), no other does.",
+      "items": {
+        "additionalProperties": false,
+        "else": {"not": {"required": ["label"]}},
+        "if": {"properties": {"generator": {"const": "soft"}}},
+        "properties": {
+          "ast": {"$ref": "common.json#/$defs/generated_formula"},
+          "generator": {"enum": ["definitions", "literals", "profile", "soft"]},
+          "label": {"pattern": "(soft:exception:|soft:coherence:).*", "type": "string"}
+        },
+        "required": ["generator", "ast"],
+        "then": {"required": ["label"]},
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "certificate": {
+      "$comment": "SoftNorms.Run.runSoftKind soft-certificate: the replay's verdict, Background' and layer counts, and the coherence premises a valid certificate is conditional on.",
+      "additionalProperties": false,
+      "properties": {
+        "background": {"$ref": "common.json#/$defs/nat"},
+        "conditional_on": {"$ref": "#/$defs/coherence_labels"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "layers": {"$ref": "common.json#/$defs/nat"},
+        "status": {"const": "ok"},
+        "valid": {"type": "boolean"}
+      },
+      "required": ["id", "status", "valid", "background", "layers", "conditional_on"],
+      "type": "object"
+    },
+    "coherence_labels": {"items": {"pattern": "soft:coherence:.*", "type": "string"}, "type": "array"},
+    "elaborate": {
+      "$comment": "SoftNorms.Wire.regenerated: E' (primeJson), the decision predicates, each rule's derived carve-out (null for a strict rule without alterable), the layers, Background', the colliding pairs with their coherence premises, the conflict targets, the open coherence labels, the fragment flag and the warnings.",
+      "additionalProperties": false,
+      "properties": {
+        "background": {"$ref": "#/$defs/background"},
+        "colliding_pairs": {"$ref": "#/$defs/elaborated/colliding_pairs"},
+        "conditional_on": {"$ref": "#/$defs/coherence_labels"},
+        "conflict_targets": {"$ref": "common.json#/$defs/conflict_targets"},
+        "decisions": {"$ref": "#/$defs/elaborated/decisions"},
+        "derived": {"$ref": "#/$defs/elaborated/derived"},
+        "environment_prime": {"$ref": "common.json#/$defs/environment"},
+        "fragment": {"type": "boolean"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "order": {"$ref": "common.json#/$defs/strings"},
+        "premises": {"$ref": "common.json#/$defs/layer_premises"},
+        "status": {"const": "ok"},
+        "warnings": {"$ref": "common.json#/$defs/nonempty_strings"}
+      },
+      "required": [
+        "id",
+        "status",
+        "environment_prime",
+        "decisions",
+        "derived",
+        "order",
+        "background",
+        "premises",
+        "colliding_pairs",
+        "conflict_targets",
+        "conditional_on",
+        "fragment",
+        "warnings"
+      ],
+      "type": "object"
+    },
+    "elaborated": {
+      "$comment": "SoftNorms.Wire.regenerated without environment_prime: the fields rights-elaborate repeats.",
+      "colliding_pairs": {
+        "items": {
+          "additionalProperties": false,
+          "properties": {
+            "act": {"type": "string"},
+            "ast": {"$ref": "common.json#/$defs/generated_formula"},
+            "comparable": {"type": "boolean"},
+            "label": {"pattern": "soft:coherence:.*", "type": "string"},
+            "pair": {"$ref": "common.json#/$defs/string_pair"}
+          },
+          "required": ["pair", "act", "comparable", "label", "ast"],
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "decisions": {
+        "items": {
+          "additionalProperties": false,
+          "properties": {
+            "arguments": {"$ref": "common.json#/$defs/strings"},
+            "name": {"pattern": "soft__.*", "type": "string"}
+          },
+          "required": ["name", "arguments"],
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "derived": {
+        "items": {
+          "additionalProperties": false,
+          "properties": {
+            "ast": {"anyOf": [{"const": null}, {"$ref": "common.json#/$defs/generated_formula"}]},
+            "rule": {"type": "string"}
+          },
+          "required": ["rule", "ast"],
+          "type": "object"
+        },
+        "type": "array"
+      }
+    },
+    "error": {
+      "$comment": "SoftNorms.Run.runCaseReported: a soft rejection carries its soft-norms@0 contract code (reportedCode), which the relay keeps as the error's code.",
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "SOFT_DEPENDENCY_CYCLE",
+            "SOFT_DUPLICATE_DECLARATION",
+            "SOFT_EXCEPTION_ARRAY",
+            "SOFT_HARD_CONSTRAINT",
+            "SOFT_INVALID_ALTERABLE",
+            "SOFT_INVALID_ARRAY",
+            "SOFT_INVALID_BLOCK",
+            "SOFT_INVALID_DECIDER",
+            "SOFT_INVALID_EXCEPTION_CONDITION",
+            "SOFT_INVALID_FACTORS",
+            "SOFT_INVALID_INPUT",
+            "SOFT_INVALID_NAME",
+            "SOFT_INVALID_OUTRANKING",
+            "SOFT_INVALID_OUTRANKS_PAIR",
+            "SOFT_INVALID_RULE_FIELDS",
+            "SOFT_INVALID_TIES_PAIR",
+            "SOFT_MISSING_DECIDER",
+            "SOFT_MISSING_EXCEPTION",
+            "SOFT_OVER_HARD",
+            "SOFT_RESOURCE_LIMIT",
+            "SOFT_STRICT_EXCEPTION",
+            "SOFT_STRICT_OUTRANKING_DECIDER",
+            "SOFT_TIE_AGAINST_ORDER",
+            "SOFT_UNKNOWN_PARTY",
+            "SOFT_UNKNOWN_RANK",
+            "SOFT_UNSUPPORTED_PROFILE"
+          ]
+        },
+        "error": {"$ref": "common.json#/$defs/text"},
+        "id": {"x-echo": "/id"},
+        "status": {"const": "error"}
+      },
+      "required": ["id", "status", "error", "code"],
+      "type": "object"
+    },
+    "kind": {
+      "admission": {"properties": {"kind": {"const": "admission"}}, "required": ["kind"], "type": "object"},
+      "soft-certificate": {"properties": {"kind": {"const": "soft-certificate"}}, "required": ["kind"], "type": "object"},
+      "soft-conflict": {"properties": {"kind": {"const": "soft-conflict"}}, "required": ["kind"], "type": "object"},
+      "soft-elaborate": {"properties": {"kind": {"const": "soft-elaborate"}}, "required": ["kind"], "type": "object"},
+      "soft-pairs": {"properties": {"kind": {"const": "soft-pairs"}}, "required": ["kind"], "type": "object"}
+    },
+    "packages": {
+      "$comment": "SoftNorms.Run.runSoftKind soft-conflict over certificate packages: detail exactly beside UNKNOWN (firstFailure).",
+      "additionalProperties": false,
+      "else": {"not": {"required": ["detail"]}},
+      "if": {"properties": {"verdict": {"const": "UNKNOWN"}}},
+      "properties": {
+        "budget": {"$ref": "common.json#/$defs/nat"},
+        "coherent_exhibit": {"type": "boolean"},
+        "conditional_on": {"$ref": "#/$defs/coherence_labels"},
+        "detail": {"$ref": "common.json#/$defs/text"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "status": {"const": "ok"},
+        "status_text": {"$ref": "common.json#/$defs/text"},
+        "targets": {"$ref": "common.json#/$defs/strings"},
+        "verdict": {"enum": ["CONFLICT-FREE", "UNKNOWN"]}
+      },
+      "required": ["id", "status", "verdict", "status_text", "coherent_exhibit", "budget", "targets", "conditional_on"],
+      "then": {"required": ["detail"]},
+      "type": "object"
+    },
+    "pairs": {
+      "$comment": "SoftNorms.Run.pairsResult: each colliding pair's status (detail beside a weighing point or UNKNOWN only), the discharged labels and the open ones.",
+      "additionalProperties": false,
+      "properties": {
+        "discharged": {"$ref": "#/$defs/coherence_labels"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "pairs": {
+          "items": {
+            "additionalProperties": false,
+            "else": {"required": ["detail"]},
+            "if": {"properties": {"status": {"enum": ["RANK-RESOLVED", "DISJOINT"]}}},
+            "properties": {
+              "detail": {"$ref": "common.json#/$defs/text"},
+              "label": {"pattern": "soft:coherence:.*", "type": "string"},
+              "pair": {"$ref": "common.json#/$defs/string_pair"},
+              "status": {"enum": ["RANK-RESOLVED", "DISJOINT", "WEIGHING POINT", "UNKNOWN"]}
+            },
+            "required": ["pair", "label", "status"],
+            "then": {"not": {"required": ["detail"]}},
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "status": {"const": "ok"},
+        "weighing_points": {"$ref": "#/$defs/coherence_labels"}
+      },
+      "required": ["id", "status", "pairs", "discharged", "weighing_points"],
+      "type": "object"
+    },
+    "soft_field": {
+      "properties": {
+        "norm": {
+          "anyOf": [
+            {"required": ["mode"]},
+            {"required": ["rank"]},
+            {"required": ["alterable"]},
+            {"required": ["exception"]},
+            {"required": ["hard"]}
+          ],
+          "type": "object"
+        }
+      },
+      "required": ["norm"],
+      "type": "object"
+    },
+    "soft_path": {
+      "$comment": "SoftNorms.Run.usesSoftPath: the soft-norms@0 profile, the vocabulary's soft block, an instruction_of predicate, a soft-* kind, or a soft field (Phases.softKeys) on a norm of `norms` or of a document unit.",
+      "anyOf": [
+        {
+          "properties": {
+            "environment": {
+              "properties": {"profiles": {"contains": {"const": "soft-norms@0"}, "type": "array"}},
+              "required": ["profiles"],
+              "type": "object"
+            }
+          },
+          "required": ["environment"]
+        },
+        {
+          "properties": {
+            "environment": {
+              "properties": {"vocabulary": {"required": ["soft"], "type": "object"}},
+              "required": ["vocabulary"],
+              "type": "object"
+            }
+          },
+          "required": ["environment"]
+        },
+        {
+          "properties": {
+            "environment": {
+              "properties": {
+                "vocabulary": {
+                  "properties": {
+                    "predicates": {
+                      "not": {"additionalProperties": {"not": {"required": ["instruction_of"], "type": "object"}}},
+                      "type": "object"
+                    }
+                  },
+                  "required": ["predicates"],
+                  "type": "object"
+                }
+              },
+              "required": ["vocabulary"],
+              "type": "object"
+            }
+          },
+          "required": ["environment"]
+        },
+        {"properties": {"kind": {"pattern": "soft-.*", "type": "string"}}, "required": ["kind"]},
+        {
+          "properties": {"norms": {"contains": {"$ref": "#/$defs/soft_field"}, "type": "array"}},
+          "required": ["norms"]
+        },
+        {
+          "properties": {
+            "document": {
+              "properties": {
+                "units": {
+                  "contains": {
+                    "properties": {"content": {"$ref": "#/$defs/soft_field"}},
+                    "required": ["content"],
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": ["units"],
+              "type": "object"
+            }
+          },
+          "required": ["document"]
+        }
+      ],
+      "type": "object"
+    },
+    "witness": {
+      "$comment": "SoftNorms.Run.runSoftKind soft-conflict with a witness: the requested target, and its kind beside a CONFLICT.",
+      "additionalProperties": false,
+      "else": {"not": {"required": ["witness_kind"]}},
+      "if": {"properties": {"verdict": {"const": "CONFLICT"}}},
+      "properties": {
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "status": {"const": "ok"},
+        "status_text": {"$ref": "common.json#/$defs/text"},
+        "target": {"type": "string", "x-equals": "/witness/target"},
+        "targets": {"$ref": "common.json#/$defs/strings"},
+        "verdict": {"enum": ["CONFLICT", "UNKNOWN"]},
+        "witness_kind": {"pattern": "(pair conflict on |strict collision on ).*", "type": "string"}
+      },
+      "required": ["id", "status", "verdict", "target", "targets", "status_text"],
+      "then": {"required": ["witness_kind"]},
+      "type": "object"
+    }
+  }
+}

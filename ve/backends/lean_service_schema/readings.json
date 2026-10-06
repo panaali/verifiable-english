@@ -1,13 +1,20 @@
 {
   "$id": "readings.json",
   "$comment": "Reading-set verdict (Service.Readings.readingsCase): the submitted ALL, NONE or SOME verdict, confirmed only when Lean's rebuilt premises and the evidence check (readings_all_sound, readings_none_sound, readings_some_sound).",
-  "row": {"anyOf": [
-    {"$ref": "common.json#/$defs/case_error"},
-    {"$ref": "common.json#/$defs/error"},
-    {"type": "object", "required": ["id", "status", "verdict"],
-      "additionalProperties": false,
-      "properties": {
-        "id": {"type": "string", "x-equals": "/id"},
-        "status": {"const": "ok"},
-        "verdict": {"enum": ["ALL", "NONE", "SOME"], "x-equals": "/verdict"}}}]}
+  "row": {
+    "anyOf": [
+      {"$ref": "common.json#/$defs/case_error"},
+      {"$ref": "common.json#/$defs/error"},
+      {
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "x-equals": "/id"},
+          "status": {"const": "ok"},
+          "verdict": {"enum": ["ALL", "NONE", "SOME"], "x-equals": "/verdict"}
+        },
+        "required": ["id", "status", "verdict"],
+        "type": "object"
+      }
+    ]
+  }
 }

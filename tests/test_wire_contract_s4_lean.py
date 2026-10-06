@@ -5,7 +5,7 @@ The switch of `soft-norms@0` from `shadow` to `public` is revision 4 and changes
 and the engine reads a table's phases only. These tests hold before and after the switch commit: each one
 derives the revision from the contract file rather than naming it.
 
-- L1: `ve_diagnose soft-norms@0` on the source of fixture S1 prints the record of 4.1's first object.
+- L1: the service mode `diagnose` (unit `soft-norms@0`) on the source of fixture S1 prints the record of 4.1's first object.
 - T2: `status` raised to `public` without a new revision is `WC10`.
 - T3: the switch edit, written by `tools/wire_contract.py --write`, changes the generated module's header
   comment and the numeral of its `revision`, and nothing else; `status` alone changes no byte of its body.
@@ -14,13 +14,11 @@ derives the revision from the contract file rather than naming it.
 from __future__ import annotations
 
 import json
-import shutil
-import subprocess
 from pathlib import Path
 
 import pytest
 
-from subprocesses import HANG_TIMEOUT
+from tests import lean_routes
 import tools.wire_contract as wire_tool
 from conformance.soft_norms import multi_fault_base, multi_faults
 from tests.test_wire_contract_lint import shipped_copy  # noqa: F401  (a fixture)
@@ -41,14 +39,9 @@ def revision():
 
 @pytest.fixture(scope="module")
 def diagnose():
-    if not (BIN / "ve_diagnose").exists():
-        lake = shutil.which("lake")
-        if lake is None:
-            pytest.skip("lake is required for ve_diagnose")
-        result = subprocess.run([lake, "build", "ve_diagnose"], cwd=ROOT / "lean", capture_output=True,
-                                text=True, timeout=HANG_TIMEOUT)
-        assert result.returncode == 0, result.stdout + result.stderr
-    return BIN / "ve_diagnose"
+    if not (BIN / "ve_service").exists():
+        pytest.skip("the Lean service has not been built")
+    return lean_routes.diagnose
 
 
 def s1_source():
@@ -63,13 +56,10 @@ def s1_source():
 def test_l1_diagnose_prints_the_record_of_s1(diagnose):
     raw, rules = s1_source()
     case = {"id": "s1", "kind": "soft-elaborate", "environment": raw, "norms": rules}
-    result = subprocess.run([str(diagnose), "soft-norms@0", "-"], input=json.dumps([case]), text=True,
-                            capture_output=True, timeout=HANG_TIMEOUT)
-    assert result.returncode in (0, 1), result.stderr
     record = {"contract": "soft-norms@0", "revision": revision(), "check": "2.7a", "phase": "declarations",
               "code": "SOFT_INVALID_NAME", "class": "InvalidInput", "path": "/environment/vocabulary/soft/parties/1",
               "text": "InvalidInput: invalid soft name Q!", "args": {"value": "Q!"}}
-    assert json.loads(result.stdout) == [{"id": "s1", "status": "ok", "outcome": "fault", "diagnostic": record}]
+    assert diagnose("soft-norms@0", [case]) == [{"id": "s1", "status": "ok", "outcome": "fault", "diagnostic": record}]
 
 
 def edit(copy, **members):

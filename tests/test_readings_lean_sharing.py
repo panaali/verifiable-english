@@ -2,7 +2,8 @@
 plan F5b; batch 3b review B1, B2).
 
 * The compiled route is the oracle for "built once": a script run by the pinned toolchain reads the compiler's own
-  IR of `ve_readings_route` and walks every function the executable can call from `main`. No path may reach
+  IR and walks every function the service's `readings-route` mode can call (`runCaseReported`, by
+  `runMode_readingsRoute`; the one-shot `ve_readings_route` and its `main` are gone since batch 1). No path may reach
   `one` (or `build`, which `one` may be inlined into) except through admission's candidate stage, which builds
   each candidate's document once and keeps it in the request's table (`candidateStage`), and the table's reader
   (`oneOf`); `free D` is the document without readings, built once in admission. The same walk from the specified
@@ -17,8 +18,8 @@ plan F5b; batch 3b review B1, B2).
 * No pending candidate's document is built (batch 3b looprecheck B): admission builds the candidates with content
   only, and a set's findings skip a pair with a pending candidate before reading either side.
 * The other reading's completions are scanned lazily: `RunExamples.lean` pins the evaluation counts at build time;
-  here the review's reproducer (12 cells, ten fixed default rules) runs under a CPU limit far below what
-  evaluating all 4,096 completions costs (7.8 s on the batch-3b head) and far above what the scan costs (0.07 s).
+  here the review's reproducer (12 cells, ten fixed default rules) runs under a CPU deadline on the service
+  (`lean_routes.completed_within`) far below what evaluating all 4,096 completions costs (7.8 s on the batch-3b head) and far above what the scan costs (0.07 s).
 """
 from __future__ import annotations
 
@@ -29,7 +30,8 @@ from pathlib import Path
 
 import pytest
 
-from tests.subprocesses import HANG_TIMEOUT, run_cpu_bounded
+from tests import lean_routes
+from tests.subprocesses import HANG_TIMEOUT
 from tests.test_readings_s1_lean import (M0, Q0, entry, env_k, k1_document, lean, norm, reading,  # noqa: F401
                                          reading_set, situation_id)
 from ve.readings_s1 import wire
@@ -88,7 +90,7 @@ TABLE = ("VE.Readings.Wire.candidateStage", "VE.Readings.Wire.oneOf")
 FREE = "VE.Readings.free"
 CHOICE = "VE.Readings.choiceDoc"
 SHARED = "VE.Readings.sharedEnv"
-ENTRY = "VE.Readings.Run.main"
+ENTRY = "VE.Readings.Run.runCaseReported"  # the service mode readings-route (`runMode_readingsRoute`)
 SPECIFIED = ("VE.Readings.Run.pairFactsSpec", "VE.Readings.Run.candidateJsonSpec",
              "VE.Readings.Wire.admitReadingsSpec")
 
@@ -154,8 +156,8 @@ def review_case(raw):
 def test_the_other_side_is_scanned_lazily_on_the_review_reproducer(lean):  # noqa: F811
     raw = env_k()
     case, sid = review_case(raw)
-    completed, cpu = run_cpu_bounded([str(lean), "-"], json.dumps(wire([case])), cpu_seconds=3)
-    assert completed.returncode in (0, 1), (completed.returncode, completed.stderr, cpu)
+    completed = lean_routes.completed_within(lean, wire([case]), cpu_seconds=3)
+    assert completed.returncode in (0, 1), (completed.returncode, completed.stderr)
     [row] = json.loads(completed.stdout)
     assert row == {"id": "review-b1", "status": "ok", "set": "rs1",
                    "pair": {"situation": sid, "witness": "strict", "separated": False, "witness_admissible": True,
@@ -184,8 +186,8 @@ def first_error_document(raw, sets=60, fixed=10):
 def test_admission_stops_at_the_first_ill_formed_candidate(lean):  # noqa: F811
     raw = env_k()
     case = {"id": "first", "kind": "readings-validate", "environment": raw, "document": first_error_document(raw)}
-    completed, cpu = run_cpu_bounded([str(lean), "-"], json.dumps(wire([case])), cpu_seconds=2)
-    assert completed.returncode == 1, (completed.returncode, completed.stderr, cpu)
+    completed = lean_routes.completed_within(lean, wire([case]), cpu_seconds=2)
+    assert completed.returncode == 1, (completed.returncode, completed.stderr)
     assert json.loads(completed.stdout) == [{"id": "first", "status": "error", "error":
         "PrecedenceAcrossPredicates: rule r0 on avoid_required, rule hard on help_required under rs0@1:1"}]
 
@@ -226,7 +228,7 @@ def test_no_pending_candidates_document_is_built(lean, sets, per_set):  # noqa: 
     raw = env_k()
     case = {"id": "pending", "kind": "readings-validate", "environment": raw,
             "document": pending_document(sets, per_set)}
-    completed, cpu = run_cpu_bounded([str(lean), "-"], json.dumps(wire([case])), cpu_seconds=1)
-    assert completed.returncode == 0, (completed.returncode, completed.stderr, cpu)
+    completed = lean_routes.completed_within(lean, wire([case]), cpu_seconds=1)
+    assert completed.returncode == 0, (completed.returncode, completed.stderr)
     [row] = json.loads(completed.stdout)
     assert_one_active_row(row, per_set)

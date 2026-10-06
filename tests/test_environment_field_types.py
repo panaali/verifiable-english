@@ -27,6 +27,7 @@ import pytest
 
 from subprocesses import HANG_TIMEOUT
 from ve.backends.diagnostics import checker_error
+from tests import lean_routes
 from ve.backends.relay import rejection
 from ve.environment import Environment
 from ve.errors import VEError
@@ -277,13 +278,9 @@ def lean_route_rows(route, environments):
             pool.close()
     else:
         binary, case = ROUTE_CASES[route]
-        if not (BIN / binary).exists():
-            pytest.skip(f"{binary} has not been built")
         batch = [{"id": str(i), "environment": e, **case} for i, e in enumerate(environments)]
-        done = subprocess.run([str(BIN / binary), "-"], input=json.dumps(batch), text=True,
-                              capture_output=True, timeout=HANG_TIMEOUT)
-        assert done.returncode in (0, 1) and "PANIC" not in done.stderr, done.stderr[-2000:]
-        rows = json.loads(done.stdout)
+        status, rows, stderr = _answer(binary, batch)
+        assert status in (0, 1) and "PANIC" not in stderr, stderr[-2000:]
     assert [row["id"] for row in rows] == [str(i) for i in range(len(environments))]
     # The service's rows carry Lean's code; the one-shot routes' leave it in the text's prefix.
     return [pair((rejection(row["code"], row["error"]) if "code" in row else checker_error(row["error"])).to_dict())
@@ -497,8 +494,6 @@ def _rights_cases():
 
 def _block_matrix(binary, case, base, cases):
     """Python's diagnostic and the Lean route's for each case of a nested block."""
-    if not (BIN / binary).exists():
-        pytest.skip(f"{binary} has not been built")
     names, python, batch = [], [], []
     for name, path, value in cases:
         data = base()
@@ -512,10 +507,8 @@ def _block_matrix(binary, case, base, cases):
         except VEError as exc:
             python.append(_same_diagnostic(exc.to_dict()))
         batch.append({"id": name, "environment": data, **case["row"]})
-    done = subprocess.run([str(BIN / binary), "-"], input=json.dumps(batch), text=True, capture_output=True,
-                          timeout=HANG_TIMEOUT)
-    assert done.returncode in (0, 1), done.stderr[-2000:]
-    rows = json.loads(done.stdout)
+    status, rows, stderr = _answer(binary, batch)
+    assert status in (0, 1), stderr[-2000:]
     assert [row["id"] for row in rows] == names
     lean = [_same_diagnostic(checker_error(row["error"]).to_dict()) if row["status"] == "error" else ("ok", "")
             for row in rows]
@@ -573,19 +566,25 @@ LEAN_ROUTES = {
 }
 
 
+def _answer(binary, batch):
+    """(exit status, rows, stderr) of a Lean route on `batch`: the one-shot `ve_conformance`, or the
+    service mode of a statement-layer route (`tests/lean_routes.py`)."""
+    if binary != "ve_conformance":
+        return lean_routes.run(binary, batch)
+    done = subprocess.run([str(BIN / binary), "-"], input=json.dumps(batch).encode(), capture_output=True,
+                          timeout=HANG_TIMEOUT)
+    return done.returncode, json.loads(done.stdout), done.stderr.decode(errors="replace")
+
+
 @pytest.mark.parametrize("binary", sorted(LEAN_ROUTES))
 def test_every_lean_route_rejects_every_wrong_type_without_panicking(binary):
     """Each Lean route decodes the environment of a case with `Except`: every
     wrong-typed environment is a rejection row, never a panic (null is not on
     the restricted wire)."""
-    if not (BIN / binary).exists():
-        pytest.skip(f"{binary} has not been built")
     batch = [{"id": f"{base}-{field}-{kind}", "environment": data, **LEAN_ROUTES[binary]}
              for base, field, kind, data in wrong_typed() if kind != "null"]
-    done = subprocess.run([str(BIN / binary), "-"], input=json.dumps(batch).encode(), capture_output=True,
-                          timeout=HANG_TIMEOUT)
-    assert done.returncode == 1 and b"PANIC" not in done.stderr, done.stderr[-2000:]
-    rows = json.loads(done.stdout)
+    status, rows, stderr = _answer(binary, batch)
+    assert status == 1 and "PANIC" not in stderr, stderr[-2000:]
     assert [row["id"] for row in rows] == [case["id"] for case in batch]
     assert [row["id"] for row in rows if row["status"] != "error"] == []
 
@@ -614,16 +613,12 @@ def test_rust_rejects_every_wrong_type_without_crashing(rust_executable):
 def test_every_lean_route_reads_every_nested_value_without_panicking(binary):
     """The nested matrix above on each Lean route: one row per case, each a
     result or a rejection, and no panic."""
-    if not (BIN / binary).exists():
-        pytest.skip(f"{binary} has not been built")
     batch = [{"id": f"{base}-{'/'.join(map(str, path))}-{kind}",
               "environment": _replaced(NESTED_BASES[base](), path, value), **LEAN_ROUTES[binary]}
              for base in sorted(NESTED_BASES) for path in _paths(NESTED_BASES[base]())
              for kind, value in NESTED_KINDS.items()]
-    done = subprocess.run([str(BIN / binary), "-"], input=json.dumps(batch).encode(), capture_output=True,
-                          timeout=HANG_TIMEOUT)
-    assert done.returncode in (0, 1) and b"PANIC" not in done.stderr, done.stderr[-2000:]
-    rows = json.loads(done.stdout)
+    status, rows, stderr = _answer(binary, batch)
+    assert status in (0, 1) and "PANIC" not in stderr, stderr[-2000:]
     assert [row["id"] for row in rows] == [case["id"] for case in batch]
     assert {row["status"] for row in rows} <= {"ok", "error"}
 

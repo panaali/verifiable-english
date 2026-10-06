@@ -1,6 +1,6 @@
 name = "veReference"
 version = "0.1.0"
-defaultTargets = ["VE", "ve_conformance", "Iceberg", "ve_norms_route", "ve_discourse_route", "ve_speech_acts_route", "ve_soft_norms_route", "ve_rights_route", "ve_quantity", "ve_reports_route", "ve_alternatives_route", "ve_risk_route", "ve_risk_eval", "ve_norm_defaults_route", "ve_service", "ve_english_run", "ve_response_decode", "ve_readings_route", "ve_diagnose"]
+defaultTargets = ["VE", "ve_conformance", "Iceberg", "ve_service", "ve_english_run", "ve_response_decode", "ResponseShape", "ve_english_route", "ve_speech_acts_route"]
 
 [[lean_lib]]
 name = "VE"
@@ -9,48 +9,15 @@ name = "VE"
 name = "ve_conformance"
 root = "Main"
 
-[[lean_exe]]
-name = "ve_norms_route"
-root = "NormsMain"
-
-[[lean_exe]]
-name = "ve_discourse_route"
-root = "DiscourseMain"
-
-[[lean_exe]]
-name = "ve_speech_acts_route"
-root = "SpeechActsMain"
-
-[[lean_exe]]
-name = "ve_soft_norms_route"
-root = "SoftNormsMain"
-
-[[lean_exe]]
-name = "ve_quantity"
-root = "QuantityMain"
-
-[[lean_exe]]
-name = "ve_reports_route"
-root = "ReportsMain"
-
-[[lean_exe]]
-name = "ve_alternatives_route"
-root = "AlternativesMain"
-
-[[lean_exe]]
-name = "ve_risk_route"
-root = "RiskMain"
-
-[[lean_exe]]
-name = "ve_rights_route"
-root = "RightsMain"
-
-[[lean_exe]]
-name = "ve_readings_route"
-root = "ReadingsMain"
-
 [[lean_lib]]
 name = "Iceberg"
+
+# The service's response shapes (the client's schema source and test tooling, outside the trusted VE tree)
+# and the theorems that every runner's rows fit them (ResponseShape.Encoders); a default target, so a
+# plain `lake build` checks them.
+[[lean_lib]]
+name = "ResponseShape"
+globs = ["ResponseShape.*"]
 
 [[lean_exe]]
 name = "ve_service"
@@ -65,17 +32,13 @@ name = "ve_response_decode"
 root = "ResponseDecode"
 
 [[lean_exe]]
-name = "ve_norm_defaults_route"
-root = "NormDefaultsMain"
-
-[[lean_exe]]
-name = "ve_risk_eval"
-root = "RiskEvalMain"
-
-[[lean_exe]]
-name = "ve_diagnose"
-root = "DiagnoseMain"
-
-[[lean_exe]]
 name = "ve_english_lean_bench"
 root = "EnglishLeanBenchMain"
+
+[[lean_exe]]
+name = "ve_english_route"
+root = "EnglishMain"
+
+[[lean_exe]]
+name = "ve_speech_acts_route"
+root = "SpeechActsMain"

@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import pytest
 
+from tests import lean_routes
+
 from tests.test_units_lean_w6a import LEAN, lean, quantity, rust
 from tests.test_w6a_looprecheck2 import model, raw
 from ve.environment import Environment
@@ -16,7 +18,7 @@ from ve.errors import ResourceLimit
 from ve.units import (AGGREGATE_LIMIT, check_quantity_certificate, elaborate_quantity,
                       prove_quantity, quantity_countermodel)
 
-pytestmark = pytest.mark.skipif(not LEAN.exists(), reason="build the Lean ve_quantity runner first")
+pytestmark = pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="build the Lean service first")
 
 
 def doubling(n):

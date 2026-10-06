@@ -11,11 +11,14 @@ from __future__ import annotations
 
 import copy
 import json
+import shutil
+import subprocess
 
 import pytest
 
 from test_speech_acts_conformance import _MISSING, _replace_wire, _wire_mutations, core, reading_set
-from test_speech_acts_lean import F0, ROOT, U, command, lean, model, polar, run, unit  # noqa: F401  (lean: fixture)
+from test_speech_acts_lean import F0, ROOT, U, command, model, polar, unit
+from subprocesses import HANG_TIMEOUT
 from ve.ast import And, Not, Top, _to_data, formula_from_data
 from ve.entailment import prove_entailment
 from ve.environment import Environment
@@ -25,6 +28,27 @@ from ve.speech_acts import SpeechDocument
 from ve.speech_document import SpeechSource
 
 NON_ASCII = "InvalidInput: non-ASCII speech wording"
+
+
+@pytest.fixture(scope="module")
+def lean():
+    route = ROOT / "lean/.lake/build/bin/ve_speech_acts_route"
+    if not route.exists():
+        lake = shutil.which("lake")
+        if lake is None:
+            pytest.skip("lake is required for the speech-source Lean route")
+        built = subprocess.run([lake, "build", "ve_speech_acts_route"], cwd=ROOT / "lean",
+                               capture_output=True, text=True, timeout=HANG_TIMEOUT)
+        assert built.returncode == 0, built.stdout + built.stderr
+    return route
+
+
+def run(cases):
+    route = ROOT / "lean/.lake/build/bin/ve_speech_acts_route"
+    result = subprocess.run([route, "-"], input=json.dumps(cases), capture_output=True,
+                            text=True, timeout=HANG_TIMEOUT)
+    assert result.returncode in (0, 1), result.stderr
+    return json.loads(result.stdout)
 
 
 def spans(lines):
