@@ -43,8 +43,9 @@ theorem firstFailure_of_not_free (j : Json) (res : RightsConflictReplay) (h : re
   rw [List.find?_isSome]
   exact ⟨(t, c), hm, by cases c <;> simp_all⟩
 
-theorem elaborate_fits (id : String) (D : RightsDoc) (env : Json) :
-    Fits req (skel% "rights.json#/$defs/elaborate") (VE.Route.Wire.ok id (regenerated D env)) := by
+theorem elaborate_fits (id : String) (D : RightsDoc) (env doc : Json) (openNames : List String) :
+    Fits req (skel% "rights.json#/$defs/elaborate")
+      (VE.Route.Wire.ok id (regenerated D env ++ [("unit_open", unitStatuses D openNames doc)])) := by
   unfold VE.Route.Wire.ok regenerated VE.SoftNorms.Wire.regenerated VE.SoftNorms.Wire.bgEntry generatedKeys
     lineJson nodeJson narrowingsJson distinctionJson
   simp only [List.filter_cons, List.filter_nil, String.reduceBNe, Bool.false_eq_true, ↓reduceIte]
@@ -79,7 +80,7 @@ theorem runRightsKind_fits (id kind : String) (j : Json) :
   okfits
   all_goals first
     | (unfold runAdmission; okfits; fits_as "rights.json#/$defs/admission"; exact admission_fits _ _ _)
-    | (fits_as "rights.json#/$defs/elaborate"; with_reducible exact elaborate_fits _ _ _)
+    | (fits_as "rights.json#/$defs/elaborate"; with_reducible exact elaborate_fits _ _ _ _ _)
     | (fits_as "rights.json#/$defs/projections"
        have h := projections_fits (req := req) id _ j _ ‹projectionsResult _ j = .ok _›
        simp only [VE.Route.Wire.ok, List.cons_append, List.nil_append] at h
