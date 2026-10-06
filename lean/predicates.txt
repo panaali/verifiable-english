@@ -7,6 +7,7 @@ module Iceberg
 module Main
 module ResponseDecode
 module ResponseShape.Audit
+module ResponseShape.CaseDeciders
 module ResponseShape.Encoders.Alternatives
 module ResponseShape.Encoders.Common
 module ResponseShape.Encoders.Conformance
@@ -27,6 +28,7 @@ module ResponseShape.Encoders.SoftNorms
 module ResponseShape.Encoders.SpeechActs
 module ResponseShape.Encoders.Standalone
 module ResponseShape.Encoders
+module ResponseShape.EnumSites
 module ResponseShape.FitsTactic
 module ResponseShape.Schemas.Alternatives
 module ResponseShape.Schemas.Bundle
@@ -426,11 +428,17 @@ module VE.WireContract.Tables.SoftNorms
 module VE
 Iceberg.Within@Iceberg
 ResponseShape.CaseWF@ResponseShape.Skeleton
+ResponseShape.Encoders.Common.KindsRendered@ResponseShape.Encoders.Common
+ResponseShape.Encoders.Discourse.StatusesOk@ResponseShape.Encoders.Discourse
+ResponseShape.Encoders.English.ClassesIn@ResponseShape.Encoders.English
 ResponseShape.Encoders.ReadingsRoute.PairEntry@ResponseShape.Encoders.ReadingsRoute
 ResponseShape.Encoders.ReadingsRoute.SetEntry@ResponseShape.Encoders.ReadingsRoute
 ResponseShape.Encoders.SoftNorms.Classified@ResponseShape.Encoders.SoftNorms
+ResponseShape.Encoders.SoftNorms.CodeOk@ResponseShape.Encoders.SoftNorms
+ResponseShape.ErrP@ResponseShape.Skeleton
 ResponseShape.Fits.below@ResponseShape.Skeleton
 ResponseShape.Fits@ResponseShape.Skeleton
+ResponseShape.KindRead@ResponseShape.Skeleton
 ResponseShape.OkFits@ResponseShape.Skeleton
 ResponseShape.OkP@ResponseShape.Skeleton
 VE.Alternatives.AltConflictFree@VE.Alternatives.Background

@@ -54,6 +54,41 @@ The A and B findings of `manage-agents/senses-review-astra.final.md` (with the D
   failed. `tools/gate.py` was not run in this round, so no gate JSON exists for these commits.
   `tools/trust_map.py --check` fails on unsigned trusted-base growth (above, HUMAN).
 
+## Merge of ve-integration (2026-10-06)
+
+Two merges: `a35028cd` (english-lean S3, batch 11a) and then `bb014a81` (lean-first/shapes), which landed while
+the first was being resolved. Every conflict kept both sides:
+
+- `lean/lakefile.toml`: both one-shot executables, `ve_speech_acts_route` and `ve_senses_route`, and both default
+  targets. `lean/VE.lean`, `lean/VE/Audit.lean`: both imports and both `#print axioms` blocks (S3 moved the
+  `grammar_extension` line; it is printed once). `lean/axioms.txt` is exactly the three-way union of both sides'
+  entries; `declarations.txt`, `statements.txt` and `predicates.txt` were regenerated, and no approved senses
+  statement changed.
+- `lean/VE/Route/frozen-sources.sha256`, `tools/trust-classes.json`: merged by name, with both sides' entries;
+  `VE/Audit.lean` and `VE/Senses/Project.lean` rehashed.
+- `ve/assurance-manifest.json`: ve-integration's file plus the senses decoder files, `other_json` entries and the
+  `senses.read` operation (decoder total 21,696); the doc's generated tables were regenerated.
+- `docs/CONSOLIDATION-PLAN.md`: step 7 remeasured with both routes: 613 lines (587 + 26), score 46.1.
+- `docs/ARCHITECTURE-LAYERS.md`: layer 3 now lists `senses`, as `tools/layer_policy.py` already did
+  (`test_documented_python_layers_match_policy` failed on this branch before the merge).
+
+Composition: S3 generalized `EnglishGrammar.envSub`. It no longer requires the base profile, and it adds equal
+`alternatives` blocks and equal predicate `functional` and `total` flags. `VE.Senses.project_extends` keeps its
+approved statement, so the base-profile premise is now unused, and its proof gives the new conjuncts by `rfl`.
+The projection copies `alternatives` and gives every sense predicate the default flags. Gap, not closed here: the
+premise could be dropped to cover the S3 profiles, but that is a statement change that needs review. Senses
+packs over S3 profile environments are not exercised by any fixture.
+
+Verification on the merged tree: `lake build` (776 jobs) and `lake build ve_english_lean_bench` passed;
+`lean/audit.py` PASS (425 files, 4,549 theorems, standard axioms only); the frozen inventory check passed;
+`tools/check_python_layers.py`, `check_lean_imports.py`, `check_rust_deps.py` and `tools/test_layer_policy.py`
+passed. A targeted pytest run passed 1,024 tests, none failed (senses route, pack and Lean; assurance manifest;
+consolidation tools; audit record; gate collection and integrity; Lean build; precommit; wire-contract lint;
+English S2, S3 and route; speech source and acts; encoder shapes, response schemas, enum domains; hang
+guards). The full suite was not run here; the merge train runs it. `tools/trust_map.py --check` reports
+0 unclassified, but fails against the baseline that ve-integration re-recorded: senses grows S by 917 and
+untied [V] by 200, with no signed entry (HUMAN, DRI).
+
 ## Seeded bugs
 
 Each change was made in `ve/backends/senses.py`, its focused test was run, and
