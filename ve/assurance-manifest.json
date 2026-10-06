@@ -54,7 +54,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 19133,
+    "total_lines": 19810,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
@@ -86,9 +86,12 @@
       {"file": "lean/VE/SpeechActs/Wire.lean", "lines": 993, "sha256": "fbe08d985f7fc507397eb1e74d7c9cc6ee8504dfc2e43f7cd77d78bf53f3e618",
        "ranges": [[1, 993]], "declarations": ["parseScope", "decodeSpeechEnvironment", "decodeUnit", "decodeDocument"],
        "reason": "speech scope, content, identity and document decoder; the full file is pinned conservatively"},
-      {"file": "lean/VE/SpeechActs/Source/Run.lean", "lines": 782, "sha256": "1cff9995efeffc71c66653069e7aed0ba12e05171e891dbfdc61a4de7a9a7ff3",
-       "ranges": [[1, 782]], "declarations": ["readUnit", "readUnits", "speechReadings", "readingSets", "answerRecord", "answerRecords", "complianceRecords", "decodeSpeechSource"],
+      {"file": "lean/VE/SpeechActs/Source/Run.lean", "lines": 889, "sha256": "965cd295dcb41ff7a5cc72b25de57f425be4bd32a155cf3755980be3256df51c",
+       "ranges": [[1, 889]], "declarations": ["readUnit", "readUnits", "speechReadings", "readingSets", "answerRecord", "gapRecord", "answerRecords", "externalRecord", "complianceRecords", "decodeSpeechSource"],
        "reason": "speech-act decoded-source wrapper (8.5): ve-document@2 units, reading sets, records and identity; the full file is pinned conservatively"},
+      {"file": "lean/VE/SpeechActs/Source/Admission/Run.lean", "lines": 570, "sha256": "ac5d9521cfca0fbd80ffde6e58158504c673ad37234b9cf0ca82a7fb42649168",
+       "ranges": [[1, 570]], "declarations": ["p0Json", "admitSpeech", "runAdmission", "isSourceAdmission", "runCase"],
+       "reason": "speech-act admission (8.5, 8.6): the P0 projection of the decoded source, the speech leaves, the graph and the report identity; the full file is pinned conservatively"},
       {"file": "lean/VE/Route/Gate.lean", "lines": 213, "sha256": "afccc527197416046f7e07fa9b2ae08d31bc717291724fe71e92a2d7de58a686",
        "ranges": [[126, 163]], "declarations": ["profilesOf", "decodeEnvelope"]},
       {"file": "lean/VE/Route/Admission.lean", "lines": 697, "sha256": "230006c26a0730425a818788e034ac564178dc1c9e309cf5d3a45d0a287e8c74",
