@@ -6027,10 +6027,316 @@ theorem VE.English.tree_unique
           VE.English.Tree.Syntactic L t₂ → VE.English.Tree.yield L d t₁ = VE.English.Tree.yield L d t₂ → t₁ = t₂
   -- uses VE.English.Admitted@VE.English.Lexicon VE.English.Lexicon@VE.English.Lexicon VE.English.Tok@VE.English.Lexicon VE.English.Tree.Syntactic@VE.English.Grammar VE.English.Tree.yield@VE.English.Grammar VE.English.Tree@VE.English.Grammar
   -- expr 4079222823
+theorem VE.EnglishGrammar.adjectiveRows_sub
+  ∀ {L L2 : VE.EnglishGrammar.Lexicon},
+    (∀ (x : String × String), x ∈ L.nouns → x ∈ L2.nouns) →
+      ∀ (p s a : String) (r : VE.EnglishGrammar.LexRow),
+        r ∈ VE.EnglishGrammar.adjectiveRows L p s a → r ∈ VE.EnglishGrammar.adjectiveRows L2 p s a
+  -- uses VE.EnglishGrammar.LexRow@VE.EnglishGrammar.Rules VE.EnglishGrammar.Lexicon.nouns@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.adjectiveRows@VE.EnglishGrammar.Rules
+  -- expr 682741589
+theorem VE.EnglishGrammar.checked_rendering
+  ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon) (b : Nat)
+    (rs : List (VE.EnglishGrammar.EFormula × Bool)) (s : String),
+    VE.EnglishGrammar.checkRendering E O L b rs s = Bool.true → VE.EnglishGrammar.EnglishOneReading E O L s rs
+  -- uses VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.EnglishOneReading@VE.EnglishGrammar.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.checkRendering@VE.EnglishGrammar.Read
+  -- expr 120303120
+theorem VE.EnglishGrammar.checked_rendering_exact
+  ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon) (b : Nat)
+    (rs : List (VE.EnglishGrammar.EFormula × Bool)) (s : String),
+    VE.EnglishGrammar.checkRendering E O L b rs s = Bool.true ↔
+      VE.EnglishGrammar.read E O L b s = VE.EnglishGrammar.ReadOutcome.ok rs
+  -- uses VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.ReadOutcome.ok@VE.EnglishGrammar.Read VE.EnglishGrammar.ReadOutcome@VE.EnglishGrammar.Read VE.EnglishGrammar.checkRendering@VE.EnglishGrammar.Read VE.EnglishGrammar.read@VE.EnglishGrammar.Read
+  -- expr 2776625116
+theorem VE.EnglishGrammar.decl_sub
+  ∀ {E E2 : VE.EnglishGrammar.Env},
+    (∀ (p : VE.EnglishGrammar.PredDecl),
+        p ∈ E.predicates → ∃ q, q ∈ E2.predicates ∧ q.name = p.name ∧ q.arity = p.arity ∧ q.args = p.args) →
+      ∀ {p : String} {d : VE.EnglishGrammar.PredDecl},
+        d ∈ VE.EnglishGrammar.declsOf E p → ∃ q, q ∈ VE.EnglishGrammar.declsOf E2 p ∧ q.args = d.args
+  -- uses VE.EnglishGrammar.Env.predicates@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.PredDecl.args@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.PredDecl.arity@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.PredDecl.name@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.PredDecl@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.declsOf@VE.EnglishGrammar.Rules
+  -- expr 2706609387
+theorem VE.EnglishGrammar.english_reading_unique
+  ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon) (s : String)
+    (rs rs2 : List (VE.EnglishGrammar.EFormula × Bool)),
+    VE.EnglishGrammar.EnglishOneReading E O L s rs → VE.EnglishGrammar.EnglishOneReading E O L s rs2 → rs2 = rs
+  -- uses VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.EnglishOneReading@VE.EnglishGrammar.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon
+  -- expr 2491866006
+theorem VE.EnglishGrammar.fixedActs_size
+  VE.EnglishGrammar.fixedActs.size = VE.EnglishGrammar.relationalFolRows.size
+  -- uses VE.EnglishGrammar.FixedRow@VE.EnglishGrammar.Catalogue VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.EnglishGrammar.fixedActs@VE.EnglishGrammar.Actions VE.EnglishGrammar.relationalFolRows@VE.EnglishGrammar.Fixed.RelationalFol VE.EnglishGrammar.sig@VE.EnglishGrammar.Actions VE.Grammar.Action@VE.Grammar.Meaning
+  -- expr 2354476971
+theorem VE.EnglishGrammar.fixedRules_base
+  ∀ {profiles : List String},
+    profiles = ["relational-fol@0"] →
+      VE.EnglishGrammar.fixedRules profiles =
+        Array.mapIdx (fun i r => { lhs := r.lhs, rhs := r.rhs, act := i, tag := r.tag })
+          VE.EnglishGrammar.relationalFolRows
+  -- uses VE.EnglishGrammar.FixedRow.lhs@VE.EnglishGrammar.Catalogue VE.EnglishGrammar.FixedRow.rhs@VE.EnglishGrammar.Catalogue VE.EnglishGrammar.FixedRow.tag@VE.EnglishGrammar.Catalogue VE.EnglishGrammar.FixedRow@VE.EnglishGrammar.Catalogue VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.fixedRules@VE.EnglishGrammar.Rules VE.EnglishGrammar.relationalFolRows@VE.EnglishGrammar.Fixed.RelationalFol VE.Grammar.Rule.mk@VE.Grammar.Basic VE.Grammar.Rule@VE.Grammar.Basic
+  -- expr 4107959233
+theorem VE.EnglishGrammar.flatMap_mono
+  ∀ {α γ : Type} {l1 l2 : List α} {f : α → List γ},
+    (∀ (x : α), x ∈ l1 → x ∈ l2) → ∀ (r : γ), r ∈ List.flatMap f l1 → r ∈ List.flatMap f l2
+  -- uses 
+  -- expr 3575443730
+theorem VE.EnglishGrammar.flatMap_sub
+  ∀ {α β γ : Type} {l1 : List α} {l2 : List β} {f : α → List γ} {g : β → List γ},
+    (∀ (x : α), x ∈ l1 → ∃ y, y ∈ l2 ∧ ∀ (r : γ), r ∈ f x → r ∈ g y) →
+      ∀ (r : γ), r ∈ List.flatMap f l1 → r ∈ List.flatMap g l2
+  -- uses 
+  -- expr 3928369410
 theorem VE.EnglishGrammar.foldChar_agrees
   ∀ (c : Char), VE.EnglishGrammar.foldChar c = (VE.Discourse.foldChar c).getD c
   -- uses VE.Discourse.foldChar@VE.Discourse.Access VE.EnglishGrammar.foldChar@VE.EnglishGrammar.Token
   -- expr 3727333165
+theorem VE.EnglishGrammar.grammar_extension
+  ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon)
+    (E2 : VE.EnglishGrammar.Env) (O2 : VE.EnglishGrammar.Overlay) (L2 : VE.EnglishGrammar.Lexicon),
+    VE.EnglishGrammar.Extends E O L E2 O2 L2 →
+      ∃ e,
+        e.Ok (VE.EnglishGrammar.grammar E L) (VE.EnglishGrammar.grammar E2 L2) (VE.EnglishGrammar.acts E L)
+          (VE.EnglishGrammar.acts E2 L2)
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Extends@VE.EnglishGrammar.Extends VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.EnglishGrammar.acts@VE.EnglishGrammar.Actions VE.EnglishGrammar.grammar@VE.EnglishGrammar.Rules VE.EnglishGrammar.sig@VE.EnglishGrammar.Actions VE.Grammar.RuleMap.Ok@VE.Grammar.Extension VE.Grammar.RuleMap@VE.Grammar.Extension
+  -- expr 467771385
+theorem VE.EnglishGrammar.grammar_rules
+  ∀ (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon),
+    (VE.EnglishGrammar.grammar E L).rules = VE.EnglishGrammar.fixedRules E.profiles ++ VE.EnglishGrammar.lexRules E L
+  -- uses VE.EnglishGrammar.Env.profiles@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.fixedRules@VE.EnglishGrammar.Rules VE.EnglishGrammar.grammar@VE.EnglishGrammar.Rules VE.EnglishGrammar.lexRules@VE.EnglishGrammar.Rules VE.Grammar.Grammar.rules@VE.Grammar.Basic VE.Grammar.Rule@VE.Grammar.Basic
+  -- expr 2055545253
+theorem VE.EnglishGrammar.indexIn_get
+  ∀ {α : Type} [inst : DecidableEq α] {a : α} {l : List α}, a ∈ l → l[VE.EnglishGrammar.indexIn a l]? = Option.some a
+  -- uses VE.EnglishGrammar.indexIn@VE.EnglishGrammar.Extends
+  -- expr 390210024
+theorem VE.EnglishGrammar.lexActs_get
+  ∀ (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) (i : Nat),
+    (VE.EnglishGrammar.lexActs E L)[i]? =
+      Option.map (fun r => VE.EnglishGrammar.LexAct.action (VE.EnglishGrammar.rhsTys r.rhs) r.act)
+        (VE.EnglishGrammar.lexRows E L)[i]?
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.LexAct.action@VE.EnglishGrammar.Actions VE.EnglishGrammar.LexRow.act@VE.EnglishGrammar.Rules VE.EnglishGrammar.LexRow.rhs@VE.EnglishGrammar.Rules VE.EnglishGrammar.LexRow@VE.EnglishGrammar.Rules VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.EnglishGrammar.lexActs@VE.EnglishGrammar.Actions VE.EnglishGrammar.lexRows@VE.EnglishGrammar.Rules VE.EnglishGrammar.rhsTys@VE.EnglishGrammar.Actions VE.EnglishGrammar.sig@VE.EnglishGrammar.Actions VE.Grammar.Action@VE.Grammar.Meaning
+  -- expr 2110621048
+theorem VE.EnglishGrammar.lexRowsAll_sub
+  ∀ {E E2 : VE.EnglishGrammar.Env} {L L2 : VE.EnglishGrammar.Lexicon},
+    VE.EnglishGrammar.envSub E E2 →
+      VE.EnglishGrammar.lexiconSub L L2 →
+        ∀ (r : VE.EnglishGrammar.LexRow), r ∈ VE.EnglishGrammar.lexRowsAll E L → r ∈ VE.EnglishGrammar.lexRowsAll E2 L2
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.LexRow@VE.EnglishGrammar.Rules VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.envSub@VE.EnglishGrammar.Extends VE.EnglishGrammar.lexRowsAll@VE.EnglishGrammar.Rules VE.EnglishGrammar.lexiconSub@VE.EnglishGrammar.Extends
+  -- expr 634066694
+theorem VE.EnglishGrammar.lexRows_nodup
+  ∀ (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon), (VE.EnglishGrammar.lexRows E L).Nodup
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.LexRow@VE.EnglishGrammar.Rules VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.lexRows@VE.EnglishGrammar.Rules
+  -- expr 866372287
+theorem VE.EnglishGrammar.lexRows_sub
+  ∀ {E E2 : VE.EnglishGrammar.Env} {L L2 : VE.EnglishGrammar.Lexicon},
+    VE.EnglishGrammar.envSub E E2 →
+      VE.EnglishGrammar.lexiconSub L L2 →
+        ∀ (r : VE.EnglishGrammar.LexRow), r ∈ VE.EnglishGrammar.lexRows E L → r ∈ VE.EnglishGrammar.lexRows E2 L2
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.LexRow@VE.EnglishGrammar.Rules VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.envSub@VE.EnglishGrammar.Extends VE.EnglishGrammar.lexRows@VE.EnglishGrammar.Rules VE.EnglishGrammar.lexiconSub@VE.EnglishGrammar.Extends
+  -- expr 2267043537
+theorem VE.EnglishGrammar.lexRules_get
+  ∀ (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) (i : Nat),
+    (VE.EnglishGrammar.lexRules E L)[i]? =
+      Option.map
+        (fun r => { lhs := r.lhs, rhs := r.rhs, act := VE.EnglishGrammar.relationalFolRows.size + i, tag := r.tag })
+        (VE.EnglishGrammar.lexRows E L)[i]?
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.FixedRow@VE.EnglishGrammar.Catalogue VE.EnglishGrammar.LexRow.lhs@VE.EnglishGrammar.Rules VE.EnglishGrammar.LexRow.rhs@VE.EnglishGrammar.Rules VE.EnglishGrammar.LexRow.tag@VE.EnglishGrammar.Rules VE.EnglishGrammar.LexRow@VE.EnglishGrammar.Rules VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.lexRows@VE.EnglishGrammar.Rules VE.EnglishGrammar.lexRules@VE.EnglishGrammar.Rules VE.EnglishGrammar.relationalFolRows@VE.EnglishGrammar.Fixed.RelationalFol VE.Grammar.Rule.mk@VE.Grammar.Basic VE.Grammar.Rule@VE.Grammar.Basic
+  -- expr 1747287682
+theorem VE.EnglishGrammar.lexRules_terminatorFree
+  ∀ (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon),
+    VE.EnglishGrammar.terminatorFree { rules := VE.EnglishGrammar.lexRules E L, start := 0, rank := #[] } = Bool.true
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.lexRules@VE.EnglishGrammar.Rules VE.EnglishGrammar.terminatorFree@VE.EnglishGrammar.Token VE.Grammar.Grammar.mk@VE.Grammar.Basic
+  -- expr 1686808867
+theorem VE.EnglishGrammar.map_rename_id
+  ∀ (xs : List (VE.Grammar.Sym VE.EnglishGrammar.Terminal)), List.map (VE.Grammar.Sym.rename fun A => A) xs = xs
+  -- uses VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.Grammar.Sym.rename@VE.Grammar.Extension VE.Grammar.Sym@VE.Grammar.Basic
+  -- expr 4098852575
+theorem VE.EnglishGrammar.meaning_total
+  ∀ (G : VE.Grammar.Grammar VE.EnglishGrammar.Terminal) (acts : Array (VE.Grammar.Action VE.EnglishGrammar.sig))
+    (ty : Nat → VE.EnglishGrammar.Ty) (st : VE.EnglishGrammar.DState) (w : List VE.EnglishGrammar.Tok)
+    (t : VE.Grammar.Tree VE.EnglishGrammar.Tok),
+    G.typed VE.EnglishGrammar.sig ty acts = Bool.true →
+      ty G.start = VE.EnglishGrammar.Ty.sentence →
+        VE.Grammar.Derives G (VE.Grammar.Sym.n G.start) w t →
+          ∃ f,
+            VE.Grammar.Tree.sem G VE.EnglishGrammar.sig acts t = Option.some ⟨VE.EnglishGrammar.Ty.sentence, f⟩ ∧
+              VE.EnglishGrammar.meaning G acts st t = f st
+  -- uses VE.EnglishGrammar.DState@VE.EnglishGrammar.Syntax VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Reject@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.EnglishGrammar.Ty.sentence@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Ty@VE.EnglishGrammar.Syntax VE.EnglishGrammar.instAcceptsTerminalTok@VE.EnglishGrammar.Token VE.EnglishGrammar.meaning@VE.EnglishGrammar.Read VE.EnglishGrammar.sig@VE.EnglishGrammar.Actions VE.Grammar.Action@VE.Grammar.Meaning VE.Grammar.Derives@VE.Grammar.Derives VE.Grammar.Grammar.start@VE.Grammar.Basic VE.Grammar.Grammar.typed@VE.Grammar.Meaning VE.Grammar.Grammar@VE.Grammar.Basic VE.Grammar.Sig.Sem@VE.Grammar.Meaning VE.Grammar.Sig.Ty@VE.Grammar.Meaning VE.Grammar.Sym.n@VE.Grammar.Basic VE.Grammar.Tree.sem@VE.Grammar.Meaning VE.Grammar.Tree@VE.Grammar.Derives VE.Grammar.Val@VE.Grammar.Meaning
+  -- expr 427436084
+theorem VE.EnglishGrammar.nodup_filter
+  ∀ {α : Type} {p : α → Bool} {l : List α}, l.Nodup → (List.filter p l).Nodup
+  -- uses 
+  -- expr 1554832526
+theorem VE.EnglishGrammar.nodup_index_inj
+  ∀ {α : Type} {l : List α} {i j : Nat}, l.Nodup → l[i]? = l[j]? → i < l.length → i = j
+  -- uses 
+  -- expr 2400405287
+theorem VE.EnglishGrammar.read_checks
+  ∀ {E : VE.EnglishGrammar.Env} {O : VE.EnglishGrammar.Overlay} {L : VE.EnglishGrammar.Lexicon} {b : Nat} {s : String}
+    {o : VE.EnglishGrammar.ReadOutcome},
+    VE.EnglishGrammar.read E O L b s = o →
+      (∀ (g : VE.EnglishGrammar.GrammarFault), o ≠ VE.EnglishGrammar.ReadOutcome.invalidGrammar g) →
+        VE.EnglishGrammar.Lexicon.valid E O L = Bool.true ∧
+          (VE.EnglishGrammar.grammar E L).wf = Bool.true ∧
+            VE.EnglishGrammar.terminatorFree (VE.EnglishGrammar.grammar E L) = Bool.true ∧
+              (VE.EnglishGrammar.grammar E L).typed VE.EnglishGrammar.sig (VE.EnglishGrammar.ty E L)
+                    (VE.EnglishGrammar.acts E L) =
+                  Bool.true ∧
+                VE.EnglishGrammar.ty E L (VE.EnglishGrammar.grammar E L).start = VE.EnglishGrammar.Ty.sentence
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.GrammarFault@VE.EnglishGrammar.Read VE.EnglishGrammar.Lexicon.valid@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.ReadOutcome.invalidGrammar@VE.EnglishGrammar.Read VE.EnglishGrammar.ReadOutcome@VE.EnglishGrammar.Read VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.EnglishGrammar.Ty.sentence@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Ty@VE.EnglishGrammar.Syntax VE.EnglishGrammar.acts@VE.EnglishGrammar.Actions VE.EnglishGrammar.grammar@VE.EnglishGrammar.Rules VE.EnglishGrammar.read@VE.EnglishGrammar.Read VE.EnglishGrammar.sig@VE.EnglishGrammar.Actions VE.EnglishGrammar.terminatorFree@VE.EnglishGrammar.Token VE.EnglishGrammar.ty@VE.EnglishGrammar.Rules VE.Grammar.Grammar.start@VE.Grammar.Basic VE.Grammar.Grammar.typed@VE.Grammar.Meaning VE.Grammar.Grammar.wf@VE.Grammar.Basic
+  -- expr 2234782947
+theorem VE.EnglishGrammar.read_complete_english
+  ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String)
+    (rs : List (VE.EnglishGrammar.EFormula × Bool)),
+    VE.EnglishGrammar.EnglishOneReading E O L s rs →
+      (VE.EnglishGrammar.grammar E L).wf = Bool.true →
+        VE.EnglishGrammar.terminatorFree (VE.EnglishGrammar.grammar E L) = Bool.true →
+          (VE.EnglishGrammar.grammar E L).typed VE.EnglishGrammar.sig (VE.EnglishGrammar.ty E L)
+                (VE.EnglishGrammar.acts E L) =
+              Bool.true →
+            VE.EnglishGrammar.ty E L (VE.EnglishGrammar.grammar E L).start = VE.EnglishGrammar.Ty.sentence →
+              VE.EnglishGrammar.read E O L b s = VE.EnglishGrammar.ReadOutcome.ok rs ∨
+                ∃ i, VE.EnglishGrammar.read E O L b s = VE.EnglishGrammar.ReadOutcome.stopped i VE.Grammar.Outcome.budget
+  -- uses VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.EnglishOneReading@VE.EnglishGrammar.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.ReadOutcome.ok@VE.EnglishGrammar.Read VE.EnglishGrammar.ReadOutcome.stopped@VE.EnglishGrammar.Read VE.EnglishGrammar.ReadOutcome@VE.EnglishGrammar.Read VE.EnglishGrammar.Reject@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.EnglishGrammar.Ty.sentence@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Ty@VE.EnglishGrammar.Syntax VE.EnglishGrammar.acts@VE.EnglishGrammar.Actions VE.EnglishGrammar.grammar@VE.EnglishGrammar.Rules VE.EnglishGrammar.read@VE.EnglishGrammar.Read VE.EnglishGrammar.sig@VE.EnglishGrammar.Actions VE.EnglishGrammar.terminatorFree@VE.EnglishGrammar.Token VE.EnglishGrammar.ty@VE.EnglishGrammar.Rules VE.Grammar.Grammar.start@VE.Grammar.Basic VE.Grammar.Grammar.typed@VE.Grammar.Meaning VE.Grammar.Grammar.wf@VE.Grammar.Basic VE.Grammar.Outcome.budget@VE.Grammar.Reading
+  -- expr 2358389165
+theorem VE.EnglishGrammar.read_eq
+  ∀ {E : VE.EnglishGrammar.Env} {O : VE.EnglishGrammar.Overlay} {L : VE.EnglishGrammar.Lexicon} {b : Nat} {s : String},
+    VE.EnglishGrammar.Lexicon.valid E O L = Bool.true →
+      (VE.EnglishGrammar.grammar E L).wf = Bool.true →
+        VE.EnglishGrammar.terminatorFree (VE.EnglishGrammar.grammar E L) = Bool.true →
+          (VE.EnglishGrammar.grammar E L).typed VE.EnglishGrammar.sig (VE.EnglishGrammar.ty E L)
+                (VE.EnglishGrammar.acts E L) =
+              Bool.true →
+            VE.EnglishGrammar.ty E L (VE.EnglishGrammar.grammar E L).start = VE.EnglishGrammar.Ty.sentence →
+              VE.EnglishGrammar.read E O L b s =
+                match VE.EnglishGrammar.lex s with
+                | Except.error r => VE.EnglishGrammar.ReadOutcome.lexical r
+                | Except.ok sents =>
+                  match
+                    VE.Grammar.readDocument (VE.EnglishGrammar.grammar E L)
+                      (VE.EnglishGrammar.meaning (VE.EnglishGrammar.grammar E L) (VE.EnglishGrammar.acts E L))
+                      VE.EnglishGrammar.DState.init b sents.toList with
+                  | (VE.Grammar.DocOutcome.ok rs, snd) =>
+                    if VE.EnglishGrammar.typedDocument E (List.map (fun x => x.fst) rs) = Bool.true then
+                      VE.EnglishGrammar.ReadOutcome.ok rs
+                    else VE.EnglishGrammar.ReadOutcome.illTyped
+                  | (VE.Grammar.DocOutcome.stopped i o, snd) => VE.EnglishGrammar.ReadOutcome.stopped i o
+  -- uses VE.EnglishGrammar.DState.init@VE.EnglishGrammar.Syntax VE.EnglishGrammar.DState@VE.EnglishGrammar.Syntax VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon.valid@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.ReadOutcome.illTyped@VE.EnglishGrammar.Read VE.EnglishGrammar.ReadOutcome.lexical@VE.EnglishGrammar.Read VE.EnglishGrammar.ReadOutcome.ok@VE.EnglishGrammar.Read VE.EnglishGrammar.ReadOutcome.stopped@VE.EnglishGrammar.Read VE.EnglishGrammar.ReadOutcome@VE.EnglishGrammar.Read VE.EnglishGrammar.Reject@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.EnglishGrammar.Ty.sentence@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Ty@VE.EnglishGrammar.Syntax VE.EnglishGrammar.acts@VE.EnglishGrammar.Actions VE.EnglishGrammar.grammar@VE.EnglishGrammar.Rules VE.EnglishGrammar.instAcceptsTerminalTok@VE.EnglishGrammar.Token VE.EnglishGrammar.instDecidableEqTerminal@VE.EnglishGrammar.Token VE.EnglishGrammar.instDecidableEqTok@VE.EnglishGrammar.Token VE.EnglishGrammar.lex@VE.EnglishGrammar.Lexer VE.EnglishGrammar.meaning@VE.EnglishGrammar.Read VE.EnglishGrammar.read.match_1@VE.EnglishGrammar.Read VE.EnglishGrammar.read.match_3@VE.EnglishGrammar.Read VE.EnglishGrammar.read@VE.EnglishGrammar.Read VE.EnglishGrammar.sig@VE.EnglishGrammar.Actions VE.EnglishGrammar.terminatorFree@VE.EnglishGrammar.Token VE.EnglishGrammar.ty@VE.EnglishGrammar.Rules VE.EnglishGrammar.typedDocument@VE.EnglishGrammar.Encode VE.Grammar.DocOutcome@VE.Grammar.Reading VE.Grammar.Grammar.start@VE.Grammar.Basic VE.Grammar.Grammar.typed@VE.Grammar.Meaning VE.Grammar.Grammar.wf@VE.Grammar.Basic VE.Grammar.Outcome@VE.Grammar.Reading VE.Grammar.readDocument@VE.Grammar.Reading
+  -- expr 524044603
+theorem VE.EnglishGrammar.read_ok
+  ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String)
+    (rs : List (VE.EnglishGrammar.EFormula × Bool)),
+    VE.EnglishGrammar.read E O L b s = VE.EnglishGrammar.ReadOutcome.ok rs →
+      VE.EnglishGrammar.EnglishOneReading E O L s rs
+  -- uses VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.EnglishOneReading@VE.EnglishGrammar.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.ReadOutcome.ok@VE.EnglishGrammar.Read VE.EnglishGrammar.ReadOutcome@VE.EnglishGrammar.Read VE.EnglishGrammar.read@VE.EnglishGrammar.Read
+  -- expr 2528787892
+theorem VE.EnglishGrammar.read_stopped
+  ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String)
+    (i : Nat) (o : VE.Grammar.Outcome VE.EnglishGrammar.Tok VE.EnglishGrammar.Reject VE.EnglishGrammar.EFormula),
+    VE.EnglishGrammar.read E O L b s = VE.EnglishGrammar.ReadOutcome.stopped i o →
+      VE.EnglishGrammar.Lexicon.valid E O L = Bool.true ∧
+        (VE.EnglishGrammar.grammar E L).wf = Bool.true ∧
+          VE.EnglishGrammar.terminatorFree (VE.EnglishGrammar.grammar E L) = Bool.true ∧
+            (VE.EnglishGrammar.grammar E L).typed VE.EnglishGrammar.sig (VE.EnglishGrammar.ty E L)
+                  (VE.EnglishGrammar.acts E L) =
+                Bool.true ∧
+              VE.EnglishGrammar.ty E L (VE.EnglishGrammar.grammar E L).start = VE.EnglishGrammar.Ty.sentence ∧
+                ∃ sents rs st1 w,
+                  VE.EnglishGrammar.lex s = Except.ok sents ∧
+                    VE.Grammar.DocOneReading (VE.EnglishGrammar.grammar E L)
+                        (VE.EnglishGrammar.meaning (VE.EnglishGrammar.grammar E L) (VE.EnglishGrammar.acts E L))
+                        VE.EnglishGrammar.DState.init (List.map (fun x => x.toList) (List.take i sents.toList)) rs st1 ∧
+                      sents.toList[i]? = Option.some w ∧
+                        (VE.Grammar.readSentence (VE.EnglishGrammar.grammar E L)
+                                (VE.EnglishGrammar.meaning (VE.EnglishGrammar.grammar E L) (VE.EnglishGrammar.acts E L))
+                                st1 b w).fst =
+                            o ∧
+                          ∀ (A : VE.EnglishGrammar.EFormula) (c : Bool), o ≠ VE.Grammar.Outcome.ok A c
+  -- uses VE.EnglishGrammar.DState.init@VE.EnglishGrammar.Syntax VE.EnglishGrammar.DState@VE.EnglishGrammar.Syntax VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon.valid@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.ReadOutcome.stopped@VE.EnglishGrammar.Read VE.EnglishGrammar.ReadOutcome@VE.EnglishGrammar.Read VE.EnglishGrammar.Reject@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.EnglishGrammar.Ty.sentence@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Ty@VE.EnglishGrammar.Syntax VE.EnglishGrammar.acts@VE.EnglishGrammar.Actions VE.EnglishGrammar.grammar@VE.EnglishGrammar.Rules VE.EnglishGrammar.instAcceptsTerminalTok@VE.EnglishGrammar.Token VE.EnglishGrammar.instDecidableEqTerminal@VE.EnglishGrammar.Token VE.EnglishGrammar.instDecidableEqTok@VE.EnglishGrammar.Token VE.EnglishGrammar.lex@VE.EnglishGrammar.Lexer VE.EnglishGrammar.meaning@VE.EnglishGrammar.Read VE.EnglishGrammar.read@VE.EnglishGrammar.Read VE.EnglishGrammar.sig@VE.EnglishGrammar.Actions VE.EnglishGrammar.terminatorFree@VE.EnglishGrammar.Token VE.EnglishGrammar.ty@VE.EnglishGrammar.Rules VE.Grammar.DocOneReading@VE.Grammar.Reading VE.Grammar.Grammar.start@VE.Grammar.Basic VE.Grammar.Grammar.typed@VE.Grammar.Meaning VE.Grammar.Grammar.wf@VE.Grammar.Basic VE.Grammar.Outcome.ok@VE.Grammar.Reading VE.Grammar.Outcome@VE.Grammar.Reading VE.Grammar.readSentence@VE.Grammar.Reading
+  -- expr 692919095
+theorem VE.EnglishGrammar.rename_id
+  ∀ (X : VE.Grammar.Sym VE.EnglishGrammar.Terminal), VE.Grammar.Sym.rename (fun A => A) X = X
+  -- uses VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.Grammar.Sym.rename@VE.Grammar.Extension VE.Grammar.Sym@VE.Grammar.Basic
+  -- expr 2786575268
+theorem VE.EnglishGrammar.start_sentence
+  ∀ (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon),
+    VE.EnglishGrammar.ty E L (VE.EnglishGrammar.grammar E L).start = VE.EnglishGrammar.Ty.sentence
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.Ty.sentence@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Ty@VE.EnglishGrammar.Syntax VE.EnglishGrammar.grammar@VE.EnglishGrammar.Rules VE.EnglishGrammar.ty@VE.EnglishGrammar.Rules VE.Grammar.Grammar.start@VE.Grammar.Basic
+  -- expr 1369052378
+theorem VE.EnglishGrammar.translate_checks
+  ∀ {E : VE.EnglishGrammar.Env} {O : VE.EnglishGrammar.Overlay} {L : VE.EnglishGrammar.Lexicon} {cap b : Nat} {s : String}
+    {o : VE.EnglishGrammar.TranslateOutcome},
+    VE.EnglishGrammar.translate E O L cap b s = o →
+      (∀ (g : VE.EnglishGrammar.GrammarFault), o ≠ VE.EnglishGrammar.TranslateOutcome.invalidGrammar g) →
+        VE.EnglishGrammar.Lexicon.valid E O L = Bool.true ∧
+          (VE.EnglishGrammar.grammar E L).wf = Bool.true ∧
+            VE.EnglishGrammar.terminatorFree (VE.EnglishGrammar.grammar E L) = Bool.true ∧
+              (VE.EnglishGrammar.grammar E L).typed VE.EnglishGrammar.sig (VE.EnglishGrammar.ty E L)
+                    (VE.EnglishGrammar.acts E L) =
+                  Bool.true ∧
+                VE.EnglishGrammar.ty E L (VE.EnglishGrammar.grammar E L).start = VE.EnglishGrammar.Ty.sentence
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.GrammarFault@VE.EnglishGrammar.Read VE.EnglishGrammar.Lexicon.valid@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.EnglishGrammar.TranslateOutcome.invalidGrammar@VE.EnglishGrammar.Read VE.EnglishGrammar.TranslateOutcome@VE.EnglishGrammar.Read VE.EnglishGrammar.Ty.sentence@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Ty@VE.EnglishGrammar.Syntax VE.EnglishGrammar.acts@VE.EnglishGrammar.Actions VE.EnglishGrammar.grammar@VE.EnglishGrammar.Rules VE.EnglishGrammar.sig@VE.EnglishGrammar.Actions VE.EnglishGrammar.terminatorFree@VE.EnglishGrammar.Token VE.EnglishGrammar.translate@VE.EnglishGrammar.Read VE.EnglishGrammar.ty@VE.EnglishGrammar.Rules VE.Grammar.Grammar.start@VE.Grammar.Basic VE.Grammar.Grammar.typed@VE.Grammar.Meaning VE.Grammar.Grammar.wf@VE.Grammar.Basic
+  -- expr 95835216
+theorem VE.EnglishGrammar.translate_eq
+  ∀ {E : VE.EnglishGrammar.Env} {O : VE.EnglishGrammar.Overlay} {L : VE.EnglishGrammar.Lexicon} {cap b : Nat}
+    {s : String},
+    VE.EnglishGrammar.Lexicon.valid E O L = Bool.true →
+      (VE.EnglishGrammar.grammar E L).wf = Bool.true →
+        VE.EnglishGrammar.terminatorFree (VE.EnglishGrammar.grammar E L) = Bool.true →
+          (VE.EnglishGrammar.grammar E L).typed VE.EnglishGrammar.sig (VE.EnglishGrammar.ty E L)
+                (VE.EnglishGrammar.acts E L) =
+              Bool.true →
+            VE.EnglishGrammar.ty E L (VE.EnglishGrammar.grammar E L).start = VE.EnglishGrammar.Ty.sentence →
+              VE.EnglishGrammar.translate E O L cap b s =
+                match VE.EnglishGrammar.lex s with
+                | Except.error r => VE.EnglishGrammar.TranslateOutcome.lexical r
+                | Except.ok sents =>
+                  match sents.toList with
+                  | [w] =>
+                    match VE.Grammar.parse (VE.EnglishGrammar.grammar E L) cap b w with
+                    | Option.none => VE.EnglishGrammar.TranslateOutcome.budget
+                    | Option.some ts =>
+                      VE.EnglishGrammar.TranslateOutcome.readings
+                        (VE.Grammar.readingSet
+                          (VE.EnglishGrammar.meaning (VE.EnglishGrammar.grammar E L) (VE.EnglishGrammar.acts E L))
+                          VE.EnglishGrammar.DState.init ts)
+                        (Decidable.decide (ts.length < cap))
+                  | x => VE.EnglishGrammar.TranslateOutcome.notOneSentence
+  -- uses VE.EnglishGrammar.DState.init@VE.EnglishGrammar.Syntax VE.EnglishGrammar.DState@VE.EnglishGrammar.Syntax VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon.valid@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Reject@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.EnglishGrammar.TranslateOutcome.budget@VE.EnglishGrammar.Read VE.EnglishGrammar.TranslateOutcome.lexical@VE.EnglishGrammar.Read VE.EnglishGrammar.TranslateOutcome.notOneSentence@VE.EnglishGrammar.Read VE.EnglishGrammar.TranslateOutcome.readings@VE.EnglishGrammar.Read VE.EnglishGrammar.TranslateOutcome@VE.EnglishGrammar.Read VE.EnglishGrammar.Ty.sentence@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Ty@VE.EnglishGrammar.Syntax VE.EnglishGrammar.acts@VE.EnglishGrammar.Actions VE.EnglishGrammar.grammar@VE.EnglishGrammar.Rules VE.EnglishGrammar.instAcceptsTerminalTok@VE.EnglishGrammar.Token VE.EnglishGrammar.instDecidableEqTerminal@VE.EnglishGrammar.Token VE.EnglishGrammar.instDecidableEqTok@VE.EnglishGrammar.Token VE.EnglishGrammar.lex@VE.EnglishGrammar.Lexer VE.EnglishGrammar.meaning@VE.EnglishGrammar.Read VE.EnglishGrammar.read.match_3@VE.EnglishGrammar.Read VE.EnglishGrammar.sig@VE.EnglishGrammar.Actions VE.EnglishGrammar.terminatorFree@VE.EnglishGrammar.Token VE.EnglishGrammar.translate.match_1@VE.EnglishGrammar.Read VE.EnglishGrammar.translate.match_3@VE.EnglishGrammar.Read VE.EnglishGrammar.translate@VE.EnglishGrammar.Read VE.EnglishGrammar.ty@VE.EnglishGrammar.Rules VE.Grammar.Grammar.start@VE.Grammar.Basic VE.Grammar.Grammar.typed@VE.Grammar.Meaning VE.Grammar.Grammar.wf@VE.Grammar.Basic VE.Grammar.Tree@VE.Grammar.Derives VE.Grammar.parse@VE.Grammar.Table VE.Grammar.readingSet@VE.Grammar.Reading
+  -- expr 2991313505
+theorem VE.EnglishGrammar.translate_exact
+  ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon) (cap b : Nat) (s : String)
+    (rs : List (VE.EnglishGrammar.EFormula × Bool × VE.EnglishGrammar.DState))
+    (x : VE.EnglishGrammar.EFormula × Bool × VE.EnglishGrammar.DState),
+    VE.EnglishGrammar.translate E O L cap b s = VE.EnglishGrammar.TranslateOutcome.readings rs Bool.true →
+      ∃ w,
+        VE.EnglishGrammar.lex s = Except.ok #[w] ∧
+          (x ∈ rs ↔
+            ∃ t,
+              VE.Grammar.Derives (VE.EnglishGrammar.grammar E L) (VE.Grammar.Sym.n (VE.EnglishGrammar.grammar E L).start)
+                  w.toList t ∧
+                VE.EnglishGrammar.meaning (VE.EnglishGrammar.grammar E L) (VE.EnglishGrammar.acts E L)
+                    VE.EnglishGrammar.DState.init t =
+                  Except.ok x)
+  -- uses VE.EnglishGrammar.DState.init@VE.EnglishGrammar.Syntax VE.EnglishGrammar.DState@VE.EnglishGrammar.Syntax VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Reject@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.EnglishGrammar.TranslateOutcome.readings@VE.EnglishGrammar.Read VE.EnglishGrammar.TranslateOutcome@VE.EnglishGrammar.Read VE.EnglishGrammar.acts@VE.EnglishGrammar.Actions VE.EnglishGrammar.grammar@VE.EnglishGrammar.Rules VE.EnglishGrammar.instAcceptsTerminalTok@VE.EnglishGrammar.Token VE.EnglishGrammar.lex@VE.EnglishGrammar.Lexer VE.EnglishGrammar.meaning@VE.EnglishGrammar.Read VE.EnglishGrammar.translate@VE.EnglishGrammar.Read VE.Grammar.Derives@VE.Grammar.Derives VE.Grammar.Grammar.start@VE.Grammar.Basic VE.Grammar.Sym.n@VE.Grammar.Basic VE.Grammar.Tree@VE.Grammar.Derives
+  -- expr 3192561975
+theorem VE.EnglishGrammar.translate_one_sentence
+  ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon) (cap b : Nat) (s : String)
+    (sents : Array (Array VE.EnglishGrammar.Tok)),
+    VE.EnglishGrammar.lex s = Except.ok sents →
+      sents.size ≠ 1 →
+        VE.EnglishGrammar.Lexicon.valid E O L = Bool.true →
+          (VE.EnglishGrammar.grammar E L).wf = Bool.true →
+            VE.EnglishGrammar.terminatorFree (VE.EnglishGrammar.grammar E L) = Bool.true →
+              (VE.EnglishGrammar.grammar E L).typed VE.EnglishGrammar.sig (VE.EnglishGrammar.ty E L)
+                    (VE.EnglishGrammar.acts E L) =
+                  Bool.true →
+                VE.EnglishGrammar.ty E L (VE.EnglishGrammar.grammar E L).start = VE.EnglishGrammar.Ty.sentence →
+                  VE.EnglishGrammar.translate E O L cap b s = VE.EnglishGrammar.TranslateOutcome.notOneSentence
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon.valid@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Reject@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.EnglishGrammar.TranslateOutcome.notOneSentence@VE.EnglishGrammar.Read VE.EnglishGrammar.TranslateOutcome@VE.EnglishGrammar.Read VE.EnglishGrammar.Ty.sentence@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Ty@VE.EnglishGrammar.Syntax VE.EnglishGrammar.acts@VE.EnglishGrammar.Actions VE.EnglishGrammar.grammar@VE.EnglishGrammar.Rules VE.EnglishGrammar.lex@VE.EnglishGrammar.Lexer VE.EnglishGrammar.sig@VE.EnglishGrammar.Actions VE.EnglishGrammar.terminatorFree@VE.EnglishGrammar.Token VE.EnglishGrammar.translate@VE.EnglishGrammar.Read VE.EnglishGrammar.ty@VE.EnglishGrammar.Rules VE.Grammar.Grammar.start@VE.Grammar.Basic VE.Grammar.Grammar.typed@VE.Grammar.Meaning VE.Grammar.Grammar.wf@VE.Grammar.Basic
+  -- expr 2098733196
+theorem VE.EnglishGrammar.valid_iff_no_failure
+  ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon),
+    VE.EnglishGrammar.Lexicon.valid E O L = Bool.true ↔ VE.EnglishGrammar.Lexicon.failures E O L = []
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Failure@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon.failures@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon.valid@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon
+  -- expr 279229191
 theorem VE.EvaluationCounts.closure_decodeFormulas_length
   ∀ {E : VE.Environment} {fs : List VE.Closure.Formula} (j : Lean.Json),
     VE.Closure.Bridge.decodeFormulas E j = Except.ok fs → ∃ arr, j.getArr? = Except.ok arr ∧ fs.length = arr.size
@@ -7236,6 +7542,30 @@ theorem VE.NormDefaults.UValid.regulated_eq
       ∀ {r r' : VE.Norms.Regulated}, r ∈ U.D.T.regulated → r' ∈ U.D.T.regulated → r.name = r'.name → r = r'
   -- uses VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.UValid@VE.NormDefaults.Fill VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree
   -- expr 3148485760
+theorem VE.NormDefaults.Wire.FilledX.admissible
+  ∀ {L : VE.NormDefaults.Wire.LayeredU} (w : VE.NormDefaults.Wire.FilledX L),
+    VE.NormDefaults.Wire.BaseAdmissibleX L.U L.X
+      (VE.NormDefaults.withFill L.U w.S.M.asStructure (VE.NormDefaults.finFill w.S.M w.F))
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report VE.NormDefaults.Wire.FilledX.F@VE.NormDefaults.Layered VE.NormDefaults.Wire.FilledX.S@VE.NormDefaults.Layered VE.NormDefaults.Wire.FilledX@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.SituationG.M@VE.NormDefaults.Report VE.NormDefaults.finFill@VE.NormDefaults.Evidence VE.NormDefaults.withFill@VE.NormDefaults.Premises
+  -- expr 2124005329
+theorem VE.NormDefaults.Wire.ReachedData.reachedSome
+  ∀ {s : VE.NormDefaults.Wire.SourceU} (d : VE.NormDefaults.Wire.ReachedData s),
+    d.reached = Bool.true → VE.NormDefaults.Wire.ReachedSome s.U [] d.r
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Wire.ReachedData.r@VE.NormDefaults.Replay VE.NormDefaults.Wire.ReachedData.reached@VE.NormDefaults.Replay VE.NormDefaults.Wire.ReachedData@VE.NormDefaults.Replay VE.NormDefaults.Wire.ReachedSome@VE.NormDefaults.Report VE.NormDefaults.Wire.SourceU.U@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire
+  -- expr 1497724329
+theorem VE.NormDefaults.Wire.admissibleX_of_fill
+  ∀ (U : VE.NormDefaults.UDoc),
+    VE.NormDefaults.WellFormedU U = Bool.true →
+      ∀ (X : List VE.Formula) (M : VE.FiniteModel VE.Bridge.Entity),
+        M.Valid (VE.Norms.envAt U.D 0) →
+          VE.Norms.backgroundValid U.D M = Bool.true →
+            ∀ (F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity),
+              VE.NormDefaults.fillValid U M F = Bool.true →
+                VE.NormDefaults.Wire.extraValid U X M F = Bool.true →
+                  VE.NormDefaults.Wire.BaseAdmissibleX U X
+                    (VE.NormDefaults.withFill U M.asStructure (VE.NormDefaults.finFill M F))
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report VE.NormDefaults.Wire.extraValid@VE.NormDefaults.Report VE.NormDefaults.fillValid@VE.NormDefaults.Evidence VE.NormDefaults.finFill@VE.NormDefaults.Evidence VE.NormDefaults.withFill@VE.NormDefaults.Premises VE.Norms.backgroundValid@VE.Norms.Conflict VE.Norms.envAt@VE.Norms.Tree
+  -- expr 2061444020
 theorem VE.NormDefaults.Wire.baseModelU_valid
   ∀ (s : VE.NormDefaults.Wire.SourceU),
     s.profiled = Bool.true →
@@ -7274,6 +7604,34 @@ theorem VE.NormDefaults.Wire.fillPremises_wellFormed
         a ∈ VE.NormDefaults.fillPremises U → VE.Formula.WellFormed (VE.Norms.envAt (VE.NormDefaults.fill U) 0) [] a
   -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.fillPremises@VE.NormDefaults.Premises VE.Norms.envAt@VE.Norms.Tree
   -- expr 2558402127
+theorem VE.NormDefaults.Wire.grounding_ungrounded_iff
+  ∀ (U : VE.NormDefaults.UDoc) (r : VE.Norms.Regulated) (cited : List (String × List String))
+    (translation reachable : Bool),
+    VE.NormDefaults.Wire.groundingOf U r cited translation reachable = VE.NormDefaults.Wire.Grounding.ungrounded ↔
+      VE.NormDefaults.completionOf U r ≠ VE.NormDefaults.Completion.unspecified ∧
+        VE.Bridge.lookup cited r.name = Option.none ∧ translation = Bool.true ∧ reachable = Bool.true
+  -- uses VE.Bridge.lookup@VE.Bridge VE.NormDefaults.Completion.unspecified@VE.NormDefaults.Tree VE.NormDefaults.Completion@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.Grounding.ungrounded@VE.NormDefaults.Report VE.NormDefaults.Wire.Grounding@VE.NormDefaults.Report VE.NormDefaults.Wire.groundingOf@VE.NormDefaults.Report VE.NormDefaults.completionOf@VE.NormDefaults.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree
+  -- expr 951398524
+theorem VE.NormDefaults.Wire.layered_cert_sound
+  ∀ (L : VE.NormDefaults.Wire.LayeredU) (ss : List String) (φ : VE.Formula) (c : VE.Tableau.Certificate),
+    VE.Tableau.checkCertificate (VE.Norms.envAt (VE.NormDefaults.fill L.U) 0) L.background (VE.Norms.bindAll ss φ.not) c =
+        Bool.true →
+      ∀ (B : VE.Structure),
+        VE.NormDefaults.Wire.BaseAdmissibleX L.U L.X B →
+          ∀ (vs : List B.Carrier), VE.TupleTyped B ss vs → ¬VE.Formula.denote B (VE.Norms.tupleVal vs) φ
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula.not@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.background@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.bindAll@VE.Norms.Basic VE.Norms.envAt@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Tableau.Certificate@VE.Tableau VE.Tableau.checkCertificate@VE.TableauChecker VE.TupleTyped@VE.Semantics
+  -- expr 2666149117
+theorem VE.NormDefaults.Wire.layered_conflict_sound
+  ∀ (L : VE.NormDefaults.Wire.LayeredU) (packages : Lean.Json),
+    VE.NormDefaults.Wire.conflictFreeX L packages = Bool.true → VE.NormDefaults.Wire.ConflictFreeX L.U L.X
+  -- uses VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.conflictFreeX@VE.NormDefaults.Layered
+  -- expr 3464972856
+theorem VE.NormDefaults.Wire.layered_report_sound
+  ∀ (L : VE.NormDefaults.Wire.LayeredU) (packages : Lean.Json)
+    (rep : VE.NormDefaults.Wire.ReportG (VE.NormDefaults.Wire.layeredSource L packages)),
+    VE.NormDefaults.Wire.ReportSound (VE.NormDefaults.Wire.layeredSource L packages) rep
+  -- uses VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.ReportG@VE.NormDefaults.Report VE.NormDefaults.Wire.ReportSound@VE.NormDefaults.Report VE.NormDefaults.Wire.layeredSource@VE.NormDefaults.Layered
+  -- expr 4184792209
 theorem VE.NormDefaults.Wire.lookup_append
   ∀ {α : Type} (l₁ l₂ : List (String × α)) (k : String),
     VE.Bridge.lookup (l₁ ++ l₂) k =
@@ -7331,6 +7689,13 @@ theorem VE.NormDefaults.Wire.normDefaults_wire_reached_sound
             VE.Formula.denote d.M.asStructure (VE.Norms.tupleVal d.tuple) (VE.NormDefaults.reachedF s.U d.r.name)
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Formula.denote@VE.Semantics VE.NormDefaults.BaseAdmissibleU@VE.NormDefaults.Premises VE.NormDefaults.Wire.ReachedData.M@VE.NormDefaults.Replay VE.NormDefaults.Wire.ReachedData.r@VE.NormDefaults.Replay VE.NormDefaults.Wire.ReachedData.reached@VE.NormDefaults.Replay VE.NormDefaults.Wire.ReachedData.tuple@VE.NormDefaults.Replay VE.NormDefaults.Wire.ReachedData@VE.NormDefaults.Replay VE.NormDefaults.Wire.SourceU.U@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.replayReached@VE.NormDefaults.Replay VE.NormDefaults.reachedF@VE.NormDefaults.Premises VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 1486374995
+theorem VE.NormDefaults.Wire.normDefaults_wire_report_sound
+  ∀ (j : Lean.Json) (rep : VE.NormDefaults.Wire.ReportU j),
+    VE.NormDefaults.Wire.reportFrom j = Except.ok rep →
+      VE.NormDefaults.Wire.decodeSourceU (j.getObjValD "environment") (j.getObjValD "norms") = Except.ok rep.s ∧
+        VE.NormDefaults.Wire.ReportSound (VE.NormDefaults.Wire.normsSource rep.s ⋯ j) rep.rep
+  -- uses VE.NormDefaults.Wire.ReportSound@VE.NormDefaults.Report VE.NormDefaults.Wire.ReportU.profiled@VE.NormDefaults.Report VE.NormDefaults.Wire.ReportU.rep@VE.NormDefaults.Report VE.NormDefaults.Wire.ReportU.s@VE.NormDefaults.Report VE.NormDefaults.Wire.ReportU@VE.NormDefaults.Report VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.decodeSourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.normsSource@VE.NormDefaults.Report VE.NormDefaults.Wire.reportFrom@VE.NormDefaults.Report
+  -- expr 3696183850
 theorem VE.NormDefaults.Wire.normDefaults_wire_status_sound
   ∀ (j : Lean.Json) (d : VE.NormDefaults.Wire.StatusData j),
     VE.NormDefaults.Wire.replayStatus j = Except.ok d →
@@ -7350,6 +7715,26 @@ theorem VE.NormDefaults.Wire.normDefaults_wire_witness_sound
           ¬VE.NormDefaults.ConflictFreeU s.U
   -- uses VE.NormDefaults.ConflictFreeU@VE.NormDefaults.Premises VE.NormDefaults.Wire.SourceU.U@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.WitnessDataU.conflict@VE.NormDefaults.Replay VE.NormDefaults.Wire.WitnessDataU@VE.NormDefaults.Replay VE.NormDefaults.Wire.decodeSourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.replayWitnessU@VE.NormDefaults.Replay
   -- expr 1370411668
+theorem VE.NormDefaults.Wire.reachedSome_of_fill
+  ∀ (U : VE.NormDefaults.UDoc),
+    VE.NormDefaults.WellFormedU U = Bool.true →
+      ∀ (X : List VE.Formula) (M : VE.FiniteModel VE.Bridge.Entity),
+        M.Valid (VE.Norms.envAt U.D 0) →
+          VE.Norms.backgroundValid U.D M = Bool.true →
+            ∀ (r : VE.Norms.Regulated) (vs : List VE.Bridge.Entity) (F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity),
+              vs ∈ VE.NormDefaults.allTuples M r.sorts →
+                VE.NormDefaults.fillValid U M F = Bool.true →
+                  VE.NormDefaults.Wire.extraValid U X M F = Bool.true →
+                    VE.Formula.eval (M.withFill F) (VE.Norms.tupleVal vs) (VE.NormDefaults.reachedF U r.name) =
+                        Bool.true →
+                      VE.NormDefaults.Wire.ReachedSome U X r
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.withFill@VE.NormDefaults.Evidence VE.FiniteModel@VE.Finite VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.ReachedSome@VE.NormDefaults.Report VE.NormDefaults.Wire.extraValid@VE.NormDefaults.Report VE.NormDefaults.allTuples@VE.NormDefaults.Evidence VE.NormDefaults.fillValid@VE.NormDefaults.Evidence VE.NormDefaults.reachedF@VE.NormDefaults.Premises VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.backgroundValid@VE.Norms.Conflict VE.Norms.envAt@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic
+  -- expr 2020370126
+theorem VE.NormDefaults.Wire.report_sound
+  ∀ (src : VE.NormDefaults.Wire.ReportSource) (rep : VE.NormDefaults.Wire.ReportG src),
+    VE.NormDefaults.Wire.ReportSound src rep
+  -- uses VE.NormDefaults.Wire.ReportG@VE.NormDefaults.Report VE.NormDefaults.Wire.ReportSound@VE.NormDefaults.Report VE.NormDefaults.Wire.ReportSource@VE.NormDefaults.Report
+  -- expr 2486045729
 theorem VE.NormDefaults.Wire.targetU_refutes
   ∀ (U : VE.NormDefaults.UDoc),
     VE.Norms.WellFormed (VE.NormDefaults.fill U) = Bool.true →
@@ -7362,6 +7747,16 @@ theorem VE.NormDefaults.Wire.targetU_refutes
                   VE.Formula.denote B (VE.Norms.tupleVal vs) t.snd.snd → ¬VE.NormDefaults.ConflictFreeU U
   -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.BaseAdmissibleU@VE.NormDefaults.Premises VE.NormDefaults.ConflictFreeU@VE.NormDefaults.Premises VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.WellFormed@VE.Norms.Tree VE.Norms.targets@VE.Norms.Replay VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 1546325729
+theorem VE.NormDefaults.Wire.target_not_conflictFree
+  ∀ (U : VE.NormDefaults.UDoc),
+    VE.Norms.WellFormed (VE.NormDefaults.fill U) = Bool.true →
+      ∀ (t : String × List String × VE.Formula),
+        t ∈ VE.Norms.targets (VE.NormDefaults.fill U) →
+          ∀ (B : VE.Structure) (vs : List B.Carrier),
+            VE.TupleTyped B t.snd.fst vs →
+              VE.Formula.denote B (VE.Norms.tupleVal vs) t.snd.snd → ¬VE.Norms.ConflictFree (VE.NormDefaults.fill U) B
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.WellFormed@VE.Norms.Tree VE.Norms.targets@VE.Norms.Replay VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
+  -- expr 2327373120
 theorem VE.NormDefaults.aboveCount_over
   ∀ {T : VE.Norms.Tree},
     VE.Route.DagAcyclic (VE.Norms.precedenceNodes T) →
@@ -10150,6 +10545,46 @@ theorem VE.Norms.Run.runAdmission_sound
       VE.Norms.Run.AdmissionAnswer id environment document answer
   -- uses VE.Norms.Run.AdmissionAnswer@VE.Norms.Run VE.Norms.Run.runAdmission@VE.Norms.Run
   -- expr 3081730087
+theorem VE.Norms.RunSound.norms_wire_certificate_acceptance
+  ∀ (j answer : Lean.Json),
+    VE.Norms.Run.runCase j = Except.ok answer →
+      VE.Route.Run.caseKind j = Except.ok "norms-certificate" →
+        answer.getObjValD "valid" = Lean.Json.bool Bool.true →
+          ∃ r,
+            VE.Norms.Flagged.replayEntailment j = Except.ok r ∧
+              VE.Norms.Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") Bool.true = Except.ok r.src ∧
+                (∀ (S : VE.Structure),
+                    S.Admissible (VE.Norms.envAt r.src.D (VE.Norms.size r.src.D)) →
+                      VE.Norms.Sat S (VE.Norms.Flagged.flagPremises r.src) →
+                        VE.Norms.holdsCatala r.src.D.T S →
+                          VE.Norms.definitionsHold r.src.D S →
+                            VE.Norms.profileHold r.src.D S →
+                              VE.Norms.Sat S (VE.Norms.backgroundBase r.src.D) →
+                                VE.Norms.Sat S r.premises → VE.Formula.denote S [] r.conclusion) ∧
+                  (VE.Norms.Flagged.flagPremises r.src = [] →
+                    (∀ (B : VE.Structure), VE.Norms.BaseAdmissible r.src.D B → VE.Norms.ConflictFree r.src.D B) →
+                      (∀ (a : VE.Formula), a ∈ r.premises → VE.Formula.WellFormed (VE.Norms.envAt r.src.D 0) [] a) →
+                        VE.Formula.WellFormed (VE.Norms.envAt r.src.D 0) [] r.conclusion →
+                          ∀ (B : VE.Structure),
+                            VE.Norms.BaseAdmissible r.src.D B →
+                              VE.Norms.Sat B r.premises → VE.Formula.denote B [] r.conclusion)
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Flagged.replayEntailment@VE.Norms.Flagged VE.Norms.Replay.EntailmentReplay.conclusion@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.premises@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.src@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay@VE.Norms.Replay VE.Norms.Run.runCase@VE.Norms.Run VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Norms.backgroundBase@VE.Norms.Prefix VE.Norms.definitionsHold@VE.Norms.Layer VE.Norms.envAt@VE.Norms.Tree VE.Norms.holdsCatala@VE.Norms.Elaborate VE.Norms.profileHold@VE.Norms.Layer VE.Norms.size@VE.Norms.Tree VE.Route.Run.caseKind@VE.Route.Run VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3327095928
+theorem VE.Norms.RunSound.runCase_certificate
+  ∀ (j answer : Lean.Json),
+    VE.Norms.Run.runCase j = Except.ok answer →
+      VE.Route.Run.caseKind j = Except.ok "norms-certificate" →
+        ∃ r,
+          VE.Norms.Flagged.replayEntailment j = Except.ok r ∧
+            answer.getObjValD "valid" = Lean.Json.bool (VE.Norms.Flagged.valid r)
+  -- uses VE.Norms.Flagged.replayEntailment@VE.Norms.Flagged VE.Norms.Flagged.valid@VE.Norms.Flagged VE.Norms.Replay.EntailmentReplay@VE.Norms.Replay VE.Norms.Run.runCase@VE.Norms.Run VE.Route.Run.caseKind@VE.Route.Run
+  -- expr 670460400
+theorem VE.Norms.RunSound.valid_field
+  ∀ (id : String) (b : Bool) (n m : Lean.Json),
+    (VE.Route.Wire.ok id [("valid", Lean.Json.bool b), ("background", n), ("layers", m)]).getObjValD "valid" =
+      Lean.Json.bool b
+  -- uses VE.Route.Wire.ok@VE.Route.Wire
+  -- expr 540553084
 theorem VE.Norms.agreesBelow_of_meanings
   ∀ {D : VE.Norms.Doc} {k : Nat} {S : VE.Structure}, VE.Norms.MeaningsBelow D k S → VE.Norms.AgreesBelow D k S
   -- uses VE.Norms.AgreesBelow@VE.Norms.Subst VE.Norms.Doc@VE.Norms.Tree VE.Norms.MeaningsBelow@VE.Norms.Prefix VE.Structure@VE.Semantics
@@ -24834,6 +25269,189 @@ theorem VE.Route.Run.route_rejects_before_checking
         VE.Route.Gate.decodeEnvelope env = Except.error message → VE.Route.Run.runCase j = Except.error message
   -- uses VE.Bridge.stringField@VE.Bridge VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.decodeEnvelope@VE.Route.Gate VE.Route.Run.runCase@VE.Route.Run
   -- expr 167621404
+theorem VE.Route.RunSound.decodeRouteVocabulary_flagsBase
+  ∀ (e : VE.Route.Gate.Envelope) (rv : VE.Route.Wire.RouteVocabulary),
+    VE.Route.Run.decodeRouteVocabulary e = Except.ok rv → VE.Route.WireSound.FlagsBase rv
+  -- uses VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Run.decodeRouteVocabulary@VE.Route.Run VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.FlagsBase@VE.Route.WireSound
+  -- expr 3335060808
+theorem VE.Route.RunSound.dispatch_closure
+  ∀ (id : String) (environment : Lean.Json) (e : VE.Route.Gate.Envelope) (j out : Lean.Json) (k : String),
+    VE.Route.Run.caseKind j = Except.ok k →
+      VE.Route.RunSound.RunnerKind k →
+        e.family = VE.Route.Gate.Family.closure →
+          VE.Route.Run.dispatch id environment e j = Except.ok out →
+            ∃ rv,
+              VE.Route.Run.decodeRouteVocabulary e = Except.ok rv ∧
+                VE.Route.Wire.runClosure e.profiles environment rv id k j = Except.ok out
+  -- uses VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope.profiles@VE.Route.Gate VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.Family.closure@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Run.caseKind@VE.Route.Run VE.Route.Run.decodeRouteVocabulary@VE.Route.Run VE.Route.Run.dispatch@VE.Route.Run VE.Route.RunSound.RunnerKind@VE.Route.RunSound VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.runClosure@VE.Route.Wire
+  -- expr 2618790435
+theorem VE.Route.RunSound.dispatch_fol
+  ∀ (id : String) (environment : Lean.Json) (e : VE.Route.Gate.Envelope) (j out : Lean.Json) (k : String),
+    VE.Route.Run.caseKind j = Except.ok k →
+      VE.Route.RunSound.RunnerKind k →
+        e.family = VE.Route.Gate.Family.fol →
+          VE.Route.Run.dispatch id environment e j = Except.ok out →
+            ∃ rv,
+              VE.Route.Run.decodeRouteVocabulary e = Except.ok rv ∧
+                VE.Route.Wire.runFol e.profiles environment rv id k j = Except.ok out
+  -- uses VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope.profiles@VE.Route.Gate VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.Family.fol@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Run.caseKind@VE.Route.Run VE.Route.Run.decodeRouteVocabulary@VE.Route.Run VE.Route.Run.dispatch@VE.Route.Run VE.Route.RunSound.RunnerKind@VE.Route.RunSound VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.runFol@VE.Route.Wire
+  -- expr 1658574300
+theorem VE.Route.RunSound.dispatch_order
+  ∀ (id : String) (environment : Lean.Json) (e : VE.Route.Gate.Envelope) (j out : Lean.Json) (k : String),
+    VE.Route.Run.caseKind j = Except.ok k →
+      VE.Route.RunSound.RunnerKind k →
+        e.family = VE.Route.Gate.Family.order →
+          VE.Route.Run.dispatch id environment e j = Except.ok out →
+            ∃ rv,
+              VE.Route.Wire.decodeOrderVocabulary e.vocabulary = Except.ok rv ∧
+                VE.Route.Wire.runOrder e.profiles environment rv id k j = Except.ok out
+  -- uses VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope.profiles@VE.Route.Gate VE.Route.Gate.Envelope.vocabulary@VE.Route.Gate VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.Family.order@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Run.caseKind@VE.Route.Run VE.Route.Run.dispatch@VE.Route.Run VE.Route.RunSound.RunnerKind@VE.Route.RunSound VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.decodeOrderVocabulary@VE.Route.Wire VE.Route.Wire.runOrder@VE.Route.Wire
+  -- expr 3310273661
+theorem VE.Route.RunSound.route_closure_certificate
+  ∀ (j out : Lean.Json),
+    VE.Route.Run.runCase j = Except.ok out →
+      VE.Route.Run.caseKind j = Except.ok "certificate" →
+        ∀ (e : VE.Route.Gate.Envelope),
+          VE.Route.Gate.decodeEnvelope (j.getObjValD "environment") = Except.ok e →
+            e.family = VE.Route.Gate.Family.closure →
+              out.getObjValD "valid" = Lean.Json.bool Bool.true →
+                ∃ rv,
+                  VE.Route.Run.decodeRouteVocabulary e = Except.ok rv ∧
+                    ∃ hb,
+                      (∃ cert,
+                          VE.CertificateWire.decodeClosureCertificate (j.getObjValD "certificate") = Except.ok cert ∧
+                            VE.Route.WireSound.closureRunner.Bound e.profiles (j.getObjValD "environment") rv j cert) ∧
+                        VE.Route.WireSound.CertificateClaim VE.Route.WireSound.closureFamily rv j ∧
+                          VE.Route.WireSound.BaseClaim VE.Route.WireSound.closureFamily rv hb j
+  -- uses VE.CertificateWire.decodeClosureCertificate@VE.CertificateWire VE.Closure.Tableau.Certificate@VE.TableauExtended VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope.profiles@VE.Route.Gate VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.Family.closure@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Gate.decodeEnvelope@VE.Route.Gate VE.Route.Run.caseKind@VE.Route.Run VE.Route.Run.decodeRouteVocabulary@VE.Route.Run VE.Route.Run.runCase@VE.Route.Run VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.BaseClaim@VE.Route.WireSound VE.Route.WireSound.CertificateClaim@VE.Route.WireSound VE.Route.WireSound.FlagsBase@VE.Route.WireSound VE.Route.WireSound.Runner.Bound@VE.Route.WireSound VE.Route.WireSound.closureFamily@VE.Route.WireSound VE.Route.WireSound.closureRunner@VE.Route.WireSound
+  -- expr 2438111179
+theorem VE.Route.RunSound.route_closure_countermodel
+  ∀ (j out : Lean.Json),
+    VE.Route.Run.runCase j = Except.ok out →
+      VE.Route.Run.caseKind j = Except.ok "countermodel" →
+        ∀ (e : VE.Route.Gate.Envelope),
+          VE.Route.Gate.decodeEnvelope (j.getObjValD "environment") = Except.ok e →
+            e.family = VE.Route.Gate.Family.closure →
+              ∃ rv,
+                VE.Route.Run.decodeRouteVocabulary e = Except.ok rv ∧
+                  VE.Route.WireSound.CountermodelAnswer VE.Route.WireSound.closureFamily VE.Route.WireSound.routeModel rv
+                    j out
+  -- uses VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.Family.closure@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Gate.decodeEnvelope@VE.Route.Gate VE.Route.Run.caseKind@VE.Route.Run VE.Route.Run.decodeRouteVocabulary@VE.Route.Run VE.Route.Run.runCase@VE.Route.Run VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.CountermodelAnswer@VE.Route.WireSound VE.Route.WireSound.closureFamily@VE.Route.WireSound VE.Route.WireSound.routeModel@VE.Route.WireSound
+  -- expr 4105909426
+theorem VE.Route.RunSound.route_closure_evaluate
+  ∀ (j out : Lean.Json),
+    VE.Route.Run.runCase j = Except.ok out →
+      VE.Route.Run.caseKind j = Except.ok "evaluate" →
+        ∀ (e : VE.Route.Gate.Envelope),
+          VE.Route.Gate.decodeEnvelope (j.getObjValD "environment") = Except.ok e →
+            e.family = VE.Route.Gate.Family.closure →
+              ∃ rv,
+                VE.Route.Run.decodeRouteVocabulary e = Except.ok rv ∧
+                  VE.Route.WireSound.EvaluateClaim VE.Route.WireSound.closureFamily VE.Route.WireSound.routeModel rv j out
+  -- uses VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.Family.closure@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Gate.decodeEnvelope@VE.Route.Gate VE.Route.Run.caseKind@VE.Route.Run VE.Route.Run.decodeRouteVocabulary@VE.Route.Run VE.Route.Run.runCase@VE.Route.Run VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.EvaluateClaim@VE.Route.WireSound VE.Route.WireSound.closureFamily@VE.Route.WireSound VE.Route.WireSound.routeModel@VE.Route.WireSound
+  -- expr 7420587
+theorem VE.Route.RunSound.route_fol_certificate
+  ∀ (j out : Lean.Json),
+    VE.Route.Run.runCase j = Except.ok out →
+      VE.Route.Run.caseKind j = Except.ok "certificate" →
+        ∀ (e : VE.Route.Gate.Envelope),
+          VE.Route.Gate.decodeEnvelope (j.getObjValD "environment") = Except.ok e →
+            e.family = VE.Route.Gate.Family.fol →
+              out.getObjValD "valid" = Lean.Json.bool Bool.true →
+                ∃ rv,
+                  VE.Route.Run.decodeRouteVocabulary e = Except.ok rv ∧
+                    ∃ hb,
+                      (∃ cert,
+                          VE.CertificateWire.decodeCertificate (j.getObjValD "certificate") = Except.ok cert ∧
+                            VE.Route.WireSound.folRunner.Bound e.profiles (j.getObjValD "environment") rv j cert) ∧
+                        VE.Route.WireSound.CertificateClaim VE.Route.WireSound.folFamily rv j ∧
+                          VE.Route.WireSound.BaseClaim VE.Route.WireSound.folFamily rv hb j
+  -- uses VE.CertificateWire.decodeCertificate@VE.CertificateWire VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope.profiles@VE.Route.Gate VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.Family.fol@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Gate.decodeEnvelope@VE.Route.Gate VE.Route.Run.caseKind@VE.Route.Run VE.Route.Run.decodeRouteVocabulary@VE.Route.Run VE.Route.Run.runCase@VE.Route.Run VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.BaseClaim@VE.Route.WireSound VE.Route.WireSound.CertificateClaim@VE.Route.WireSound VE.Route.WireSound.FlagsBase@VE.Route.WireSound VE.Route.WireSound.Runner.Bound@VE.Route.WireSound VE.Route.WireSound.folFamily@VE.Route.WireSound VE.Route.WireSound.folRunner@VE.Route.WireSound VE.Tableau.Certificate@VE.Tableau
+  -- expr 1910566409
+theorem VE.Route.RunSound.route_fol_countermodel
+  ∀ (j out : Lean.Json),
+    VE.Route.Run.runCase j = Except.ok out →
+      VE.Route.Run.caseKind j = Except.ok "countermodel" →
+        ∀ (e : VE.Route.Gate.Envelope),
+          VE.Route.Gate.decodeEnvelope (j.getObjValD "environment") = Except.ok e →
+            e.family = VE.Route.Gate.Family.fol →
+              ∃ rv,
+                VE.Route.Run.decodeRouteVocabulary e = Except.ok rv ∧
+                  VE.Route.WireSound.CountermodelAnswer VE.Route.WireSound.folFamily VE.Route.WireSound.routeModel rv j
+                    out
+  -- uses VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.Family.fol@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Gate.decodeEnvelope@VE.Route.Gate VE.Route.Run.caseKind@VE.Route.Run VE.Route.Run.decodeRouteVocabulary@VE.Route.Run VE.Route.Run.runCase@VE.Route.Run VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.CountermodelAnswer@VE.Route.WireSound VE.Route.WireSound.folFamily@VE.Route.WireSound VE.Route.WireSound.routeModel@VE.Route.WireSound
+  -- expr 3493062199
+theorem VE.Route.RunSound.route_fol_evaluate
+  ∀ (j out : Lean.Json),
+    VE.Route.Run.runCase j = Except.ok out →
+      VE.Route.Run.caseKind j = Except.ok "evaluate" →
+        ∀ (e : VE.Route.Gate.Envelope),
+          VE.Route.Gate.decodeEnvelope (j.getObjValD "environment") = Except.ok e →
+            e.family = VE.Route.Gate.Family.fol →
+              ∃ rv,
+                VE.Route.Run.decodeRouteVocabulary e = Except.ok rv ∧
+                  VE.Route.WireSound.EvaluateClaim VE.Route.WireSound.folFamily VE.Route.WireSound.routeModel rv j out
+  -- uses VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.Family.fol@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Gate.decodeEnvelope@VE.Route.Gate VE.Route.Run.caseKind@VE.Route.Run VE.Route.Run.decodeRouteVocabulary@VE.Route.Run VE.Route.Run.runCase@VE.Route.Run VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.EvaluateClaim@VE.Route.WireSound VE.Route.WireSound.folFamily@VE.Route.WireSound VE.Route.WireSound.routeModel@VE.Route.WireSound
+  -- expr 2574941502
+theorem VE.Route.RunSound.route_order_certificate
+  ∀ (j out : Lean.Json),
+    VE.Route.Run.runCase j = Except.ok out →
+      VE.Route.Run.caseKind j = Except.ok "certificate" →
+        ∀ (e : VE.Route.Gate.Envelope),
+          VE.Route.Gate.decodeEnvelope (j.getObjValD "environment") = Except.ok e →
+            e.family = VE.Route.Gate.Family.order →
+              out.getObjValD "valid" = Lean.Json.bool Bool.true →
+                ∃ rv,
+                  VE.Route.Wire.decodeOrderVocabulary e.vocabulary = Except.ok rv ∧
+                    (∃ cert,
+                        VE.Order.Wire.decodeCertificate (j.getObjValD "certificate") = Except.ok cert ∧
+                          VE.Route.WireSound.orderRunner.Bound e.profiles (j.getObjValD "environment") rv j cert) ∧
+                      VE.Route.WireSound.CertificateClaim VE.Route.WireSound.orderFamily rv j ∧
+                        VE.Route.WireSound.BaseClaim VE.Route.WireSound.orderFamily rv trivial j
+  -- uses VE.Order.Tableau.Certificate@VE.Order.Tableau VE.Order.Wire.decodeCertificate@VE.Order.Wire VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope.profiles@VE.Route.Gate VE.Route.Gate.Envelope.vocabulary@VE.Route.Gate VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.Family.order@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Gate.decodeEnvelope@VE.Route.Gate VE.Route.Run.caseKind@VE.Route.Run VE.Route.Run.runCase@VE.Route.Run VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.decodeOrderVocabulary@VE.Route.Wire VE.Route.WireSound.BaseClaim@VE.Route.WireSound VE.Route.WireSound.CertificateClaim@VE.Route.WireSound VE.Route.WireSound.Runner.Bound@VE.Route.WireSound VE.Route.WireSound.orderFamily@VE.Route.WireSound VE.Route.WireSound.orderRunner@VE.Route.WireSound
+  -- expr 2338235649
+theorem VE.Route.RunSound.route_order_countermodel
+  ∀ (j out : Lean.Json),
+    VE.Route.Run.runCase j = Except.ok out →
+      VE.Route.Run.caseKind j = Except.ok "countermodel" →
+        ∀ (e : VE.Route.Gate.Envelope),
+          VE.Route.Gate.decodeEnvelope (j.getObjValD "environment") = Except.ok e →
+            e.family = VE.Route.Gate.Family.order →
+              ∃ rv,
+                VE.Route.Wire.decodeOrderVocabulary e.vocabulary = Except.ok rv ∧
+                  VE.Route.WireSound.CountermodelAnswer VE.Route.WireSound.orderFamily VE.Route.WireSound.orderModel rv j
+                    out
+  -- uses VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope.vocabulary@VE.Route.Gate VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.Family.order@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Gate.decodeEnvelope@VE.Route.Gate VE.Route.Run.caseKind@VE.Route.Run VE.Route.Run.runCase@VE.Route.Run VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.decodeOrderVocabulary@VE.Route.Wire VE.Route.WireSound.CountermodelAnswer@VE.Route.WireSound VE.Route.WireSound.orderFamily@VE.Route.WireSound VE.Route.WireSound.orderModel@VE.Route.WireSound
+  -- expr 1084559992
+theorem VE.Route.RunSound.route_order_evaluate
+  ∀ (j out : Lean.Json),
+    VE.Route.Run.runCase j = Except.ok out →
+      VE.Route.Run.caseKind j = Except.ok "evaluate" →
+        ∀ (e : VE.Route.Gate.Envelope),
+          VE.Route.Gate.decodeEnvelope (j.getObjValD "environment") = Except.ok e →
+            e.family = VE.Route.Gate.Family.order →
+              ∃ rv,
+                VE.Route.Wire.decodeOrderVocabulary e.vocabulary = Except.ok rv ∧
+                  VE.Route.WireSound.EvaluateClaim VE.Route.WireSound.orderFamily VE.Route.WireSound.orderModel rv j out
+  -- uses VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope.vocabulary@VE.Route.Gate VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.Family.order@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Gate.decodeEnvelope@VE.Route.Gate VE.Route.Run.caseKind@VE.Route.Run VE.Route.Run.runCase@VE.Route.Run VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.decodeOrderVocabulary@VE.Route.Wire VE.Route.WireSound.EvaluateClaim@VE.Route.WireSound VE.Route.WireSound.orderFamily@VE.Route.WireSound VE.Route.WireSound.orderModel@VE.Route.WireSound
+  -- expr 1729054581
+theorem VE.Route.RunSound.runCase_dispatch
+  ∀ (j out : Lean.Json),
+    VE.Route.Run.runCase j = Except.ok out →
+      ∃ id e,
+        VE.Bridge.stringField j "id" = Except.ok id ∧
+          VE.Route.Gate.decodeEnvelope (j.getObjValD "environment") = Except.ok e ∧
+            VE.Route.Run.dispatch id (j.getObjValD "environment") e j = Except.ok out
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.decodeEnvelope@VE.Route.Gate VE.Route.Run.dispatch@VE.Route.Run VE.Route.Run.runCase@VE.Route.Run
+  -- expr 4068013763
+theorem VE.Route.RunSound.runnerKind_ne
+  ∀ {k : String},
+    VE.Route.RunSound.RunnerKind k →
+      (k == "dependency-order") = Bool.false ∧
+        (k == "label") = Bool.false ∧
+          (k == "admission") = Bool.false ∧ (k == "background") = Bool.false ∧ (k == "bundle") = Bool.false
+  -- uses VE.Route.RunSound.RunnerKind@VE.Route.RunSound
+  -- expr 1173996312
 theorem VE.Route.Semantics.sat_append
   ∀ (L : VE.Route.Semantics) (S : L.Model) (as bs : List L.Formula), L.Sat S (as ++ bs) ↔ L.Sat S as ∧ L.Sat S bs
   -- uses VE.Route.Semantics.Formula@VE.Route.Layer VE.Route.Semantics.Model@VE.Route.Layer VE.Route.Semantics.Sat@VE.Route.Layer VE.Route.Semantics@VE.Route.Layer
@@ -24895,6 +25513,362 @@ theorem VE.Route.Wire.definitionsCheck_ok
         VE.Route.Wire.definitionsCheck mem M as = Except.ok () → (as.all fun a => VE.Formula.eval M [] a) = Bool.true
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.Route.Wire.definitionsCheck@VE.Route.Wire
   -- expr 1431424931
+theorem VE.Route.WireSound.Family.Sound.expands_intended
+  ∀ {F : VE.Route.WireSound.Family},
+    F.Sound →
+      ∀ (rv : F.Vocab) (hd : F.Decoded rv) (S₀ : F.L.Model),
+        (F.layer rv hd).Admissible_in S₀ → VE.Route.Unique fun S => (F.layer rv hd).restrict S = S₀ ∧ F.Intended rv S
+  -- uses VE.Route.Layer.Admissible_in@VE.Route.Layer VE.Route.Layer.restrict@VE.Route.Layer VE.Route.Semantics.Model@VE.Route.Layer VE.Route.Unique@VE.Route.Layer VE.Route.WireSound.Family.Decoded@VE.Route.WireSound VE.Route.WireSound.Family.Intended@VE.Route.WireSound VE.Route.WireSound.Family.L@VE.Route.WireSound VE.Route.WireSound.Family.Sound@VE.Route.WireSound VE.Route.WireSound.Family.Vocab@VE.Route.WireSound VE.Route.WireSound.Family.layer@VE.Route.WireSound VE.Route.WireSound.Family@VE.Route.WireSound
+  -- expr 2576035853
+theorem VE.Route.WireSound.Runner.acceptance
+  ∀ {F : VE.Route.WireSound.Family} (R : VE.Route.WireSound.Runner F),
+    R.Sound →
+      ∀ (profiles : List String) (environment : Lean.Json) (rv : F.Vocab) (hd : F.Decoded rv) (id : String)
+        (j out : Lean.Json),
+        R.run profiles environment rv id "certificate" j = Except.ok out →
+          out.getObjValD "valid" = Lean.Json.bool Bool.true →
+            (∃ cert,
+                R.decodeCertificate rv (j.getObjValD "certificate") = Except.ok cert ∧
+                  R.Bound profiles environment rv j cert) ∧
+              VE.Route.WireSound.CertificateClaim F rv j ∧ VE.Route.WireSound.BaseClaim F rv hd j
+  -- uses VE.Route.Checker.Cert@VE.Route.Checker VE.Route.WireSound.BaseClaim@VE.Route.WireSound VE.Route.WireSound.CertificateClaim@VE.Route.WireSound VE.Route.WireSound.Family.Decoded@VE.Route.WireSound VE.Route.WireSound.Family.L@VE.Route.WireSound VE.Route.WireSound.Family.Vocab@VE.Route.WireSound VE.Route.WireSound.Family.env@VE.Route.WireSound VE.Route.WireSound.Family@VE.Route.WireSound VE.Route.WireSound.Runner.Bound@VE.Route.WireSound VE.Route.WireSound.Runner.Sound@VE.Route.WireSound VE.Route.WireSound.Runner.checker@VE.Route.WireSound VE.Route.WireSound.Runner.decodeCertificate@VE.Route.WireSound VE.Route.WireSound.Runner.run@VE.Route.WireSound VE.Route.WireSound.Runner@VE.Route.WireSound
+  -- expr 1602709921
+theorem VE.Route.WireSound.certificate_countermodel_exclusive
+  ∀ (F : VE.Route.WireSound.Family) (decodeModel : F.Vocab → Lean.Json → Except String F.L.Model) (rv : F.Vocab)
+    (j₁ j₂ : Lean.Json),
+    F.decodePremises rv j₁ = F.decodePremises rv j₂ →
+      F.decodeConclusion rv j₁ = F.decodeConclusion rv j₂ →
+        VE.Route.WireSound.CertificateClaim F rv j₁ → ¬VE.Route.WireSound.CountermodelClaim F decodeModel rv j₂
+  -- uses VE.Route.Semantics.Formula@VE.Route.Layer VE.Route.Semantics.Model@VE.Route.Layer VE.Route.WireSound.CertificateClaim@VE.Route.WireSound VE.Route.WireSound.CountermodelClaim@VE.Route.WireSound VE.Route.WireSound.Family.L@VE.Route.WireSound VE.Route.WireSound.Family.Vocab@VE.Route.WireSound VE.Route.WireSound.Family.decodeConclusion@VE.Route.WireSound VE.Route.WireSound.Family.decodePremises@VE.Route.WireSound VE.Route.WireSound.Family@VE.Route.WireSound
+  -- expr 2239043241
+theorem VE.Route.WireSound.chain_environment
+  ∀ (rv : VE.Route.Wire.RouteVocabulary), VE.Definitions.Chain rv.environment rv.definitions
+  -- uses VE.Definitions.Chain@VE.Definitions.Layer VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire
+  -- expr 3982306247
+theorem VE.Route.WireSound.chain_sorts
+  ∀ (E : VE.Environment) (xs : List String) (ds : List VE.Definitions.Def),
+    VE.Definitions.Chain E ds →
+      VE.Definitions.Chain { sorts := E.sorts ++ xs, predicates := E.predicates, constants := E.constants } ds
+  -- uses VE.Definitions.Chain@VE.Definitions.Layer VE.Definitions.Def@VE.Definitions.Layer VE.Environment.constants@VE.Syntax VE.Environment.mk@VE.Syntax VE.Environment.predicates@VE.Syntax VE.Environment.sorts@VE.Syntax VE.Environment@VE.Syntax
+  -- expr 2121627954
+theorem VE.Route.WireSound.closureFamily_sound
+  VE.Route.WireSound.closureFamily.Sound
+  -- uses VE.Route.WireSound.Family.Sound@VE.Route.WireSound VE.Route.WireSound.closureFamily@VE.Route.WireSound
+  -- expr 768663563
+theorem VE.Route.WireSound.closureRunner_run
+  VE.Route.WireSound.closureRunner.run = VE.Route.Wire.runClosure
+  -- uses VE.Route.Wire.runClosure@VE.Route.Wire VE.Route.WireSound.Family.Vocab@VE.Route.WireSound VE.Route.WireSound.Runner.run@VE.Route.WireSound VE.Route.WireSound.closureFamily@VE.Route.WireSound VE.Route.WireSound.closureRunner@VE.Route.WireSound
+  -- expr 2330337687
+theorem VE.Route.WireSound.closureRunner_sound
+  VE.Route.WireSound.closureRunner.Sound
+  -- uses VE.Route.WireSound.Runner.Sound@VE.Route.WireSound VE.Route.WireSound.closureFamily@VE.Route.WireSound VE.Route.WireSound.closureRunner@VE.Route.WireSound
+  -- expr 1279640154
+theorem VE.Route.WireSound.closure_denote_forget
+  ∀ (E : VE.Environment) (ns : List String) (S : VE.Structure) (a : VE.Closure.Formula) (Γ : List String)
+    (ρ : VE.Valuation S),
+    VE.Closure.Formula.WellFormed (VE.Definitions.hide E ns) Γ a →
+      (VE.Closure.Formula.denote (VE.Definitions.forget ns S) ρ a ↔ VE.Closure.Formula.denote S ρ a)
+  -- uses VE.Closure.Formula.WellFormed@VE.Closure.Syntax VE.Closure.Formula.denote@VE.Closure.Syntax VE.Closure.Formula@VE.Closure.Syntax VE.Definitions.forget@VE.Definitions.Layer VE.Definitions.hide@VE.Definitions.Layer VE.Environment@VE.Syntax VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 1609178500
+theorem VE.Route.WireSound.closure_wellFormed_hide
+  ∀ (E : VE.Environment) (ns : List String) (a : VE.Closure.Formula) (Γ : List String),
+    VE.Closure.Formula.WellFormed (VE.Definitions.hide E ns) Γ a → VE.Closure.Formula.WellFormed E Γ a
+  -- uses VE.Closure.Formula.WellFormed@VE.Closure.Syntax VE.Closure.Formula@VE.Closure.Syntax VE.Definitions.hide@VE.Definitions.Layer VE.Environment@VE.Syntax
+  -- expr 1355352461
+theorem VE.Route.WireSound.countermodelAnswer_refutes
+  ∀ (F : VE.Route.WireSound.Family) (decodeModel : F.Vocab → Lean.Json → Except String F.L.Model) (rv : F.Vocab)
+    (j answer : Lean.Json),
+    VE.Route.WireSound.CountermodelAnswer F decodeModel rv j answer →
+      answer.getObjValD "refutes" = Lean.Json.bool Bool.true → VE.Route.WireSound.CountermodelClaim F decodeModel rv j
+  -- uses VE.Route.Semantics.Model@VE.Route.Layer VE.Route.WireSound.CountermodelAnswer@VE.Route.WireSound VE.Route.WireSound.CountermodelClaim@VE.Route.WireSound VE.Route.WireSound.Family.L@VE.Route.WireSound VE.Route.WireSound.Family.Vocab@VE.Route.WireSound VE.Route.WireSound.Family@VE.Route.WireSound
+  -- expr 4059294946
+theorem VE.Route.WireSound.decodeClosed_data
+  ∀ (E : VE.Environment) (j : Lean.Json) (data : Bool) (a : VE.Formula),
+    VE.Route.Wire.decodeClosed E j data = Except.ok a → VE.Route.Wire.decodeClosed E j = Except.ok a
+  -- uses VE.Environment@VE.Syntax VE.Formula@VE.Syntax VE.Route.Wire.decodeClosed@VE.Route.Wire
+  -- expr 342686743
+theorem VE.Route.WireSound.decodeFormulas_data
+  ∀ (E : VE.Environment) (j : Lean.Json) (data : Bool) (fs : List VE.Formula),
+    VE.Route.Wire.decodeFormulas E j data = Except.ok fs → VE.Route.Wire.decodeFormulas E j = Except.ok fs
+  -- uses VE.Environment@VE.Syntax VE.Formula@VE.Syntax VE.Route.Wire.decodeFormulas@VE.Route.Wire
+  -- expr 464798113
+theorem VE.Route.WireSound.decodeOrderModel_intended
+  ∀ (rv : VE.Route.Wire.RouteOrderVocabulary) (j : Lean.Json) (d : VE.Order.ModelData VE.Order.Wire.Entity),
+    VE.Route.Wire.decodeOrderModel rv j = Except.ok d → VE.Route.WireSound.orderFamily.Intended rv d.toModel.asStructure
+  -- uses VE.Order.FiniteModel.asStructure@VE.Order.Finite VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Wire.Entity@VE.Order.Wire VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.decodeOrderModel@VE.Route.Wire VE.Route.WireSound.Family.Intended@VE.Route.WireSound VE.Route.WireSound.orderFamily@VE.Route.WireSound
+  -- expr 4117912950
+theorem VE.Route.WireSound.decodeOrderModel_validFast
+  ∀ (v : VE.Order.Vocabulary) (j : Lean.Json) (d : VE.Order.ModelData VE.Order.Wire.Entity),
+    VE.Route.Decode.decodeOrderModel v j = Except.ok d → VE.Route.Decode.validOrderFast v d = Bool.true
+  -- uses VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Vocabulary@VE.Order.ModelCheck VE.Order.Wire.Entity@VE.Order.Wire VE.Route.Decode.decodeOrderModel@VE.Route.Decode VE.Route.Decode.validOrderFast@VE.Route.Decode
+  -- expr 1168237585
+theorem VE.Route.WireSound.definitionsLayer_restrict
+  ∀ (rv : VE.Route.Wire.RouteVocabulary) (S : VE.Structure),
+    (VE.Route.WireSound.definitionsLayer rv).restrict S = VE.Definitions.forget (VE.Definitions.names rv.definitions) S
+  -- uses VE.Definitions.forget@VE.Definitions.Layer VE.Definitions.names@VE.Definitions.Layer VE.Route.Layer.restrict@VE.Route.Layer VE.Route.Semantics.Model@VE.Route.Layer VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.definitionsLayer@VE.Route.WireSound VE.Route.fol@VE.Route.Checker VE.Structure@VE.Semantics
+  -- expr 993243778
+theorem VE.Route.WireSound.embed_sat
+  ∀ (S : VE.Structure) (as : List VE.Formula),
+    VE.Route.closure.Sat S (List.map VE.Closure.embed as) ↔ VE.Route.fol.Sat S as
+  -- uses VE.Closure.embed@VE.Closure.Syntax VE.Formula@VE.Syntax VE.Route.Semantics.Formula@VE.Route.Layer VE.Route.Semantics.Sat@VE.Route.Layer VE.Route.closure@VE.Route.Checker VE.Route.fol@VE.Route.Checker VE.Structure@VE.Semantics
+  -- expr 1033528939
+theorem VE.Route.WireSound.embed_wellFormed
+  ∀ (E : VE.Environment) (a : VE.Formula) (Γ : List String),
+    VE.Formula.WellFormed E Γ a → VE.Closure.Formula.WellFormed E Γ (VE.Closure.embed a)
+  -- uses VE.Closure.Formula.WellFormed@VE.Closure.Syntax VE.Closure.embed@VE.Closure.Syntax VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax
+  -- expr 3742949803
+theorem VE.Route.WireSound.flagsHold_forget
+  ∀ (rv : VE.Route.Wire.RouteVocabulary),
+    VE.Route.WireSound.FlagsBase rv →
+      ∀ (S : VE.Structure),
+        VE.Route.WireSound.FlagsHold rv (VE.Definitions.forget (VE.Definitions.names rv.definitions) S) ↔
+          VE.Route.WireSound.FlagsHold rv S
+  -- uses VE.Definitions.forget@VE.Definitions.Layer VE.Definitions.names@VE.Definitions.Layer VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.FlagsBase@VE.Route.WireSound VE.Route.WireSound.FlagsHold@VE.Route.WireSound VE.Structure@VE.Semantics
+  -- expr 1336837740
+theorem VE.Route.WireSound.folFamily_sound
+  VE.Route.WireSound.folFamily.Sound
+  -- uses VE.Route.WireSound.Family.Sound@VE.Route.WireSound VE.Route.WireSound.folFamily@VE.Route.WireSound
+  -- expr 1539636234
+theorem VE.Route.WireSound.folRunner_run
+  VE.Route.WireSound.folRunner.run = VE.Route.Wire.runFol
+  -- uses VE.Route.Wire.runFol@VE.Route.Wire VE.Route.WireSound.Family.Vocab@VE.Route.WireSound VE.Route.WireSound.Runner.run@VE.Route.WireSound VE.Route.WireSound.folFamily@VE.Route.WireSound VE.Route.WireSound.folRunner@VE.Route.WireSound
+  -- expr 2030690894
+theorem VE.Route.WireSound.folRunner_sound
+  VE.Route.WireSound.folRunner.Sound
+  -- uses VE.Route.WireSound.Runner.Sound@VE.Route.WireSound VE.Route.WireSound.folFamily@VE.Route.WireSound VE.Route.WireSound.folRunner@VE.Route.WireSound
+  -- expr 3221943970
+theorem VE.Route.WireSound.forIn_yield_ok
+  ∀ {α : Type} (f : α → PUnit → Except String (ForInStep PUnit)),
+    (∀ (x : α) (r : PUnit) (s : ForInStep PUnit), f x r = Except.ok s → s = ForInStep.yield PUnit.unit) →
+      ∀ (l : List α) (u : PUnit),
+        ForIn.forIn l PUnit.unit f = Except.ok u →
+          ∀ (x : α), x ∈ l → f x PUnit.unit = Except.ok (ForInStep.yield PUnit.unit)
+  -- uses 
+  -- expr 2683945154
+theorem VE.Route.WireSound.fullBackground_formulas
+  ∀ (rv : VE.Route.Wire.RouteVocabulary),
+    List.map Prod.fst (VE.Route.Wire.fullBackground rv) =
+      VE.Data.Background.generate rv.flags ++ VE.Definitions.expand rv.definitions ++
+        VE.Route.Background.literals rv.literals
+  -- uses VE.Data.Background.generate@VE.Data.Background VE.Definitions.expand@VE.Definitions.Layer VE.Formula@VE.Syntax VE.Route.Background.literals@VE.Route.Background VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary.flags@VE.Route.Wire VE.Route.Wire.RouteVocabulary.literals@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.fullBackground@VE.Route.Wire
+  -- expr 132050718
+theorem VE.Route.WireSound.fullLayer_E_out
+  ∀ (rv : VE.Route.Wire.RouteVocabulary) (hd : VE.Route.WireSound.FlagsBase rv),
+    (VE.Route.WireSound.fullLayer rv hd).E_out = rv.environment
+  -- uses VE.Route.Layer.E_out@VE.Route.Layer VE.Route.Semantics.Env@VE.Route.Layer VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.FlagsBase@VE.Route.WireSound VE.Route.WireSound.fullLayer@VE.Route.WireSound VE.Route.fol@VE.Route.Checker
+  -- expr 4240082216
+theorem VE.Route.WireSound.fullLayer_admissible_in
+  ∀ (rv : VE.Route.Wire.RouteVocabulary) (hd : VE.Route.WireSound.FlagsBase rv) (S : VE.Structure),
+    (VE.Route.WireSound.fullLayer rv hd).Admissible_in S ↔ VE.Route.WireSound.BaseAdmissible rv S
+  -- uses VE.Route.Layer.Admissible_in@VE.Route.Layer VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.BaseAdmissible@VE.Route.WireSound VE.Route.WireSound.FlagsBase@VE.Route.WireSound VE.Route.WireSound.fullLayer@VE.Route.WireSound VE.Route.fol@VE.Route.Checker VE.Structure@VE.Semantics
+  -- expr 3478975827
+theorem VE.Route.WireSound.fullLayer_admissible_out
+  ∀ (rv : VE.Route.Wire.RouteVocabulary) (hd : VE.Route.WireSound.FlagsBase rv) (S : VE.Structure),
+    (VE.Route.WireSound.fullLayer rv hd).Admissible_out S ↔
+      VE.Route.Background.StringAdmissible rv.environment rv.literals S ∧ VE.Route.WireSound.FlagsHold rv S
+  -- uses VE.Route.Background.StringAdmissible@VE.Route.Background VE.Route.Layer.Admissible_out@VE.Route.Layer VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary.literals@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.FlagsBase@VE.Route.WireSound VE.Route.WireSound.FlagsHold@VE.Route.WireSound VE.Route.WireSound.fullLayer@VE.Route.WireSound VE.Route.fol@VE.Route.Checker VE.Structure@VE.Semantics
+  -- expr 3878249649
+theorem VE.Route.WireSound.fullLayer_background_sound
+  ∀ (rv : VE.Route.Wire.RouteVocabulary) (hd : VE.Route.WireSound.FlagsBase rv),
+    VE.Route.BackgroundSound (VE.Route.WireSound.fullLayer rv hd) (List.map Prod.fst (VE.Route.Wire.fullBackground rv))
+  -- uses VE.Route.BackgroundSound@VE.Route.Route VE.Route.Semantics.Formula@VE.Route.Layer VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.fullBackground@VE.Route.Wire VE.Route.WireSound.FlagsBase@VE.Route.WireSound VE.Route.WireSound.fullLayer@VE.Route.WireSound VE.Route.fol@VE.Route.Checker
+  -- expr 1571512028
+theorem VE.Route.WireSound.fullLayer_intended
+  ∀ (rv : VE.Route.Wire.RouteVocabulary) (hd : VE.Route.WireSound.FlagsBase rv) (S : VE.Structure),
+    VE.Route.WireSound.RouteIntended rv S ↔
+      (VE.Route.WireSound.fullLayer rv hd).Admissible_out S ∧ (VE.Route.WireSound.fullLayer rv hd).Intended () S
+  -- uses VE.Route.Layer.Admissible_out@VE.Route.Layer VE.Route.Layer.Intended@VE.Route.Layer VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.FlagsBase@VE.Route.WireSound VE.Route.WireSound.RouteIntended@VE.Route.WireSound VE.Route.WireSound.fullLayer@VE.Route.WireSound VE.Route.fol@VE.Route.Checker VE.Structure@VE.Semantics
+  -- expr 3834723145
+theorem VE.Route.WireSound.fullLayer_premises
+  ∀ (rv : VE.Route.Wire.RouteVocabulary) (hd : VE.Route.WireSound.FlagsBase rv),
+    (VE.Route.WireSound.fullLayer rv hd).premises () = VE.Definitions.expand rv.definitions
+  -- uses VE.Definitions.expand@VE.Definitions.Layer VE.Route.Layer.premises@VE.Route.Layer VE.Route.Semantics.Formula@VE.Route.Layer VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.FlagsBase@VE.Route.WireSound VE.Route.WireSound.fullLayer@VE.Route.WireSound VE.Route.fol@VE.Route.Checker
+  -- expr 1019101274
+theorem VE.Route.WireSound.fullLayer_restrict
+  ∀ (rv : VE.Route.Wire.RouteVocabulary) (hd : VE.Route.WireSound.FlagsBase rv) (S : VE.Structure),
+    (VE.Route.WireSound.fullLayer rv hd).restrict S = VE.Definitions.forget (VE.Definitions.names rv.definitions) S
+  -- uses VE.Definitions.forget@VE.Definitions.Layer VE.Definitions.names@VE.Definitions.Layer VE.Route.Layer.restrict@VE.Route.Layer VE.Route.Semantics.Model@VE.Route.Layer VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.FlagsBase@VE.Route.WireSound VE.Route.WireSound.fullLayer@VE.Route.WireSound VE.Route.fol@VE.Route.Checker VE.Structure@VE.Semantics
+  -- expr 1048279558
+theorem VE.Route.WireSound.getObjValD_of_ok
+  ∀ {j v : Lean.Json} {k : String}, j.getObjVal? k = Except.ok v → j.getObjValD k = v
+  -- uses 
+  -- expr 2586305039
+theorem VE.Route.WireSound.hide_predicates_some
+  ∀ {E : VE.Environment} {ns : List String} {p : String} {ss : List String},
+    (VE.Definitions.hide E ns).predicates p = Option.some ss → ¬p ∈ ns ∧ E.predicates p = Option.some ss
+  -- uses VE.Definitions.hide@VE.Definitions.Layer VE.Environment.predicates@VE.Syntax VE.Environment@VE.Syntax
+  -- expr 364531215
+theorem VE.Route.WireSound.mem_zip_map
+  ∀ {α β : Type} (f : α → β) (l : List α) (p : α × β), p ∈ l.zip (List.map f l) → p.snd = f p.fst
+  -- uses 
+  -- expr 1190237451
+theorem VE.Route.WireSound.orderFamily_sound
+  VE.Route.WireSound.orderFamily.Sound
+  -- uses VE.Route.WireSound.Family.Sound@VE.Route.WireSound VE.Route.WireSound.orderFamily@VE.Route.WireSound
+  -- expr 496218438
+theorem VE.Route.WireSound.orderModel_ok
+  ∀ (rv : VE.Route.Wire.RouteOrderVocabulary) (j m : Lean.Json) (d : VE.Order.ModelData VE.Order.Wire.Entity),
+    j.getObjVal? "model" = Except.ok m →
+      VE.Route.Wire.decodeOrderModel rv m = Except.ok d →
+        VE.Route.WireSound.orderModel rv j = Except.ok d.toModel.asStructure
+  -- uses VE.Order.FiniteModel.asStructure@VE.Order.Finite VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Structure@VE.Order.Semantics VE.Order.Wire.Entity@VE.Order.Wire VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.decodeOrderModel@VE.Route.Wire VE.Route.WireSound.orderModel@VE.Route.WireSound
+  -- expr 2788587040
+theorem VE.Route.WireSound.orderRunner_run
+  VE.Route.WireSound.orderRunner.run = VE.Route.Wire.runOrder
+  -- uses VE.Route.Wire.runOrder@VE.Route.Wire VE.Route.WireSound.Family.Vocab@VE.Route.WireSound VE.Route.WireSound.Runner.run@VE.Route.WireSound VE.Route.WireSound.orderFamily@VE.Route.WireSound VE.Route.WireSound.orderRunner@VE.Route.WireSound
+  -- expr 4087763139
+theorem VE.Route.WireSound.orderRunner_sound
+  VE.Route.WireSound.orderRunner.Sound
+  -- uses VE.Route.WireSound.Runner.Sound@VE.Route.WireSound VE.Route.WireSound.orderFamily@VE.Route.WireSound VE.Route.WireSound.orderRunner@VE.Route.WireSound
+  -- expr 3456146370
+theorem VE.Route.WireSound.orderVocabulary_no_definitions
+  ∀ (v : Lean.Json) (rv : VE.Route.Wire.RouteOrderVocabulary),
+    VE.Route.Wire.decodeOrderVocabulary v = Except.ok rv →
+      ∀ (ps : List (String × Lean.Json)),
+        VE.Bridge.fields (v.getObjValD "predicates") = Except.ok ps →
+          ∀ (p : String × Lean.Json), p ∈ ps → (p.snd.getObjVal? "defined").isOk = Bool.false
+  -- uses VE.Bridge.Fields@VE.Bridge VE.Bridge.fields@VE.Bridge VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.decodeOrderVocabulary@VE.Route.Wire
+  -- expr 3356087206
+theorem VE.Route.WireSound.refutes_field
+  ∀ (id : String) (b : Bool),
+    (VE.Route.Wire.ok id [("refutes", Lean.Json.bool b)]).getObjValD "refutes" = Lean.Json.bool b
+  -- uses VE.Route.Wire.ok@VE.Route.Wire
+  -- expr 282003940
+theorem VE.Route.WireSound.routeIntended_background
+  ∀ (rv : VE.Route.Wire.RouteVocabulary) (S : VE.Structure),
+    VE.Route.WireSound.RouteIntended rv S →
+      ∀ (a : VE.Formula), a ∈ List.map Prod.fst (VE.Route.Wire.fullBackground rv) → VE.Formula.denote S [] a
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.fullBackground@VE.Route.Wire VE.Route.WireSound.RouteIntended@VE.Route.WireSound VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 4164888829
+theorem VE.Route.WireSound.routeModel_ok
+  ∀ (rv : VE.Route.Wire.RouteVocabulary) (j m : Lean.Json) (M : VE.FiniteModel VE.Bridge.Entity),
+    j.getObjVal? "model" = Except.ok m →
+      VE.Route.Wire.decodeDataModel rv m = Except.ok M → VE.Route.WireSound.routeModel rv j = Except.ok M.asStructure
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.decodeDataModel@VE.Route.Wire VE.Route.WireSound.routeModel@VE.Route.WireSound VE.Structure@VE.Semantics
+  -- expr 756454322
+theorem VE.Route.WireSound.runClosure_accepted
+  ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary) (id : String)
+    (j out : Lean.Json),
+    VE.Route.Wire.runClosure profiles environment rv id "certificate" j = Except.ok out →
+      out.getObjValD "valid" = Lean.Json.bool Bool.true →
+        VE.Route.WireSound.closureRunner.Accepted profiles environment rv j
+  -- uses VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.runClosure@VE.Route.Wire VE.Route.WireSound.Runner.Accepted@VE.Route.WireSound VE.Route.WireSound.closureFamily@VE.Route.WireSound VE.Route.WireSound.closureRunner@VE.Route.WireSound
+  -- expr 4203474208
+theorem VE.Route.WireSound.runClosure_certificate_acceptance
+  ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary)
+    (hd : VE.Route.WireSound.FlagsBase rv) (id : String) (j out : Lean.Json),
+    VE.Route.Wire.runClosure profiles environment rv id "certificate" j = Except.ok out →
+      out.getObjValD "valid" = Lean.Json.bool Bool.true →
+        (∃ cert,
+            VE.CertificateWire.decodeClosureCertificate (j.getObjValD "certificate") = Except.ok cert ∧
+              VE.Route.WireSound.closureRunner.Bound profiles environment rv j cert) ∧
+          VE.Route.WireSound.CertificateClaim VE.Route.WireSound.closureFamily rv j ∧
+            VE.Route.WireSound.BaseClaim VE.Route.WireSound.closureFamily rv hd j
+  -- uses VE.CertificateWire.decodeClosureCertificate@VE.CertificateWire VE.Closure.Tableau.Certificate@VE.TableauExtended VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.runClosure@VE.Route.Wire VE.Route.WireSound.BaseClaim@VE.Route.WireSound VE.Route.WireSound.CertificateClaim@VE.Route.WireSound VE.Route.WireSound.FlagsBase@VE.Route.WireSound VE.Route.WireSound.Runner.Bound@VE.Route.WireSound VE.Route.WireSound.closureFamily@VE.Route.WireSound VE.Route.WireSound.closureRunner@VE.Route.WireSound
+  -- expr 754930426
+theorem VE.Route.WireSound.runClosure_countermodel
+  ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary) (id : String)
+    (j out : Lean.Json),
+    VE.Route.Wire.runClosure profiles environment rv id "countermodel" j = Except.ok out →
+      VE.Route.WireSound.CountermodelAnswer VE.Route.WireSound.closureFamily VE.Route.WireSound.routeModel rv j out
+  -- uses VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.runClosure@VE.Route.Wire VE.Route.WireSound.CountermodelAnswer@VE.Route.WireSound VE.Route.WireSound.closureFamily@VE.Route.WireSound VE.Route.WireSound.routeModel@VE.Route.WireSound
+  -- expr 1035956557
+theorem VE.Route.WireSound.runClosure_evaluate
+  ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary) (id : String)
+    (j out : Lean.Json),
+    VE.Route.Wire.runClosure profiles environment rv id "evaluate" j = Except.ok out →
+      VE.Route.WireSound.EvaluateClaim VE.Route.WireSound.closureFamily VE.Route.WireSound.routeModel rv j out
+  -- uses VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.runClosure@VE.Route.Wire VE.Route.WireSound.EvaluateClaim@VE.Route.WireSound VE.Route.WireSound.closureFamily@VE.Route.WireSound VE.Route.WireSound.routeModel@VE.Route.WireSound
+  -- expr 2869260472
+theorem VE.Route.WireSound.runFol_accepted
+  ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary) (id : String)
+    (j out : Lean.Json),
+    VE.Route.Wire.runFol profiles environment rv id "certificate" j = Except.ok out →
+      out.getObjValD "valid" = Lean.Json.bool Bool.true → VE.Route.WireSound.folRunner.Accepted profiles environment rv j
+  -- uses VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.runFol@VE.Route.Wire VE.Route.WireSound.Runner.Accepted@VE.Route.WireSound VE.Route.WireSound.folFamily@VE.Route.WireSound VE.Route.WireSound.folRunner@VE.Route.WireSound
+  -- expr 961581477
+theorem VE.Route.WireSound.runFol_certificate_acceptance
+  ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary)
+    (hd : VE.Route.WireSound.FlagsBase rv) (id : String) (j out : Lean.Json),
+    VE.Route.Wire.runFol profiles environment rv id "certificate" j = Except.ok out →
+      out.getObjValD "valid" = Lean.Json.bool Bool.true →
+        (∃ cert,
+            VE.CertificateWire.decodeCertificate (j.getObjValD "certificate") = Except.ok cert ∧
+              VE.Route.WireSound.folRunner.Bound profiles environment rv j cert) ∧
+          VE.Route.WireSound.CertificateClaim VE.Route.WireSound.folFamily rv j ∧
+            VE.Route.WireSound.BaseClaim VE.Route.WireSound.folFamily rv hd j
+  -- uses VE.CertificateWire.decodeCertificate@VE.CertificateWire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.runFol@VE.Route.Wire VE.Route.WireSound.BaseClaim@VE.Route.WireSound VE.Route.WireSound.CertificateClaim@VE.Route.WireSound VE.Route.WireSound.FlagsBase@VE.Route.WireSound VE.Route.WireSound.Runner.Bound@VE.Route.WireSound VE.Route.WireSound.folFamily@VE.Route.WireSound VE.Route.WireSound.folRunner@VE.Route.WireSound VE.Tableau.Certificate@VE.Tableau
+  -- expr 3929513869
+theorem VE.Route.WireSound.runFol_countermodel
+  ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary) (id : String)
+    (j out : Lean.Json),
+    VE.Route.Wire.runFol profiles environment rv id "countermodel" j = Except.ok out →
+      VE.Route.WireSound.CountermodelAnswer VE.Route.WireSound.folFamily VE.Route.WireSound.routeModel rv j out
+  -- uses VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.runFol@VE.Route.Wire VE.Route.WireSound.CountermodelAnswer@VE.Route.WireSound VE.Route.WireSound.folFamily@VE.Route.WireSound VE.Route.WireSound.routeModel@VE.Route.WireSound
+  -- expr 2823912357
+theorem VE.Route.WireSound.runFol_evaluate
+  ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary) (id : String)
+    (j out : Lean.Json),
+    VE.Route.Wire.runFol profiles environment rv id "evaluate" j = Except.ok out →
+      VE.Route.WireSound.EvaluateClaim VE.Route.WireSound.folFamily VE.Route.WireSound.routeModel rv j out
+  -- uses VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.runFol@VE.Route.Wire VE.Route.WireSound.EvaluateClaim@VE.Route.WireSound VE.Route.WireSound.folFamily@VE.Route.WireSound VE.Route.WireSound.routeModel@VE.Route.WireSound
+  -- expr 2539253995
+theorem VE.Route.WireSound.runOrder_accepted
+  ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteOrderVocabulary) (id : String)
+    (j out : Lean.Json),
+    VE.Route.Wire.runOrder profiles environment rv id "certificate" j = Except.ok out →
+      out.getObjValD "valid" = Lean.Json.bool Bool.true →
+        VE.Route.WireSound.orderRunner.Accepted profiles environment rv j
+  -- uses VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.runOrder@VE.Route.Wire VE.Route.WireSound.Runner.Accepted@VE.Route.WireSound VE.Route.WireSound.orderFamily@VE.Route.WireSound VE.Route.WireSound.orderRunner@VE.Route.WireSound
+  -- expr 778182594
+theorem VE.Route.WireSound.runOrder_certificate_acceptance
+  ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteOrderVocabulary) (id : String)
+    (j out : Lean.Json),
+    VE.Route.Wire.runOrder profiles environment rv id "certificate" j = Except.ok out →
+      out.getObjValD "valid" = Lean.Json.bool Bool.true →
+        (∃ cert,
+            VE.Order.Wire.decodeCertificate (j.getObjValD "certificate") = Except.ok cert ∧
+              VE.Route.WireSound.orderRunner.Bound profiles environment rv j cert) ∧
+          VE.Route.WireSound.CertificateClaim VE.Route.WireSound.orderFamily rv j ∧
+            VE.Route.WireSound.BaseClaim VE.Route.WireSound.orderFamily rv trivial j
+  -- uses VE.Order.Tableau.Certificate@VE.Order.Tableau VE.Order.Wire.decodeCertificate@VE.Order.Wire VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.runOrder@VE.Route.Wire VE.Route.WireSound.BaseClaim@VE.Route.WireSound VE.Route.WireSound.CertificateClaim@VE.Route.WireSound VE.Route.WireSound.Runner.Bound@VE.Route.WireSound VE.Route.WireSound.orderFamily@VE.Route.WireSound VE.Route.WireSound.orderRunner@VE.Route.WireSound
+  -- expr 3607858085
+theorem VE.Route.WireSound.runOrder_countermodel
+  ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteOrderVocabulary) (id : String)
+    (j out : Lean.Json),
+    VE.Route.Wire.runOrder profiles environment rv id "countermodel" j = Except.ok out →
+      VE.Route.WireSound.CountermodelAnswer VE.Route.WireSound.orderFamily VE.Route.WireSound.orderModel rv j out
+  -- uses VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.runOrder@VE.Route.Wire VE.Route.WireSound.CountermodelAnswer@VE.Route.WireSound VE.Route.WireSound.orderFamily@VE.Route.WireSound VE.Route.WireSound.orderModel@VE.Route.WireSound
+  -- expr 2529267789
+theorem VE.Route.WireSound.runOrder_evaluate
+  ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteOrderVocabulary) (id : String)
+    (j out : Lean.Json),
+    VE.Route.Wire.runOrder profiles environment rv id "evaluate" j = Except.ok out →
+      VE.Route.WireSound.EvaluateClaim VE.Route.WireSound.orderFamily VE.Route.WireSound.orderModel rv j out
+  -- uses VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.runOrder@VE.Route.Wire VE.Route.WireSound.EvaluateClaim@VE.Route.WireSound VE.Route.WireSound.orderFamily@VE.Route.WireSound VE.Route.WireSound.orderModel@VE.Route.WireSound
+  -- expr 578414335
+theorem VE.Route.WireSound.term_denote_forget
+  ∀ (ns : List String) (S : VE.Structure) (ρ : VE.Valuation S) (t : VE.Term),
+    VE.Term.denote (VE.Definitions.forget ns S) ρ t = VE.Term.denote S ρ t
+  -- uses VE.Definitions.forget@VE.Definitions.Layer VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Term.denote@VE.Semantics VE.Term@VE.Syntax VE.Valuation@VE.Semantics
+  -- expr 2129548524
+theorem VE.Route.WireSound.valid_field
+  ∀ (id : String) (b : Bool) (n : Lean.Json),
+    (VE.Route.Wire.ok id [("valid", Lean.Json.bool b), ("background", n)]).getObjValD "valid" = Lean.Json.bool b
+  -- uses VE.Route.Wire.ok@VE.Route.Wire
+  -- expr 3006534112
+theorem VE.Route.WireSound.values_field
+  ∀ (id : String) (v : Lean.Json), (VE.Route.Wire.ok id [("values", v)]).getObjValD "values" = v
+  -- uses VE.Route.Wire.ok@VE.Route.Wire
+  -- expr 2300293659
+theorem VE.Route.WireSound.wellFormed_sorts
+  ∀ {E E' : VE.Environment},
+    (∀ (s : String), s ∈ E.sorts → s ∈ E'.sorts) →
+      E'.predicates = E.predicates →
+        E'.constants = E.constants →
+          ∀ (a : VE.Formula) (Γ : List String), VE.Formula.WellFormed E Γ a → VE.Formula.WellFormed E' Γ a
+  -- uses VE.Environment.constants@VE.Syntax VE.Environment.predicates@VE.Syntax VE.Environment.sorts@VE.Syntax VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax
+  -- expr 3819914996
 theorem VE.Route.closureValid_certificateSound
   ∀ (E : VE.Environment), VE.Route.CertificateSound VE.Route.closure id E (VE.Route.closureValid E)
   -- uses VE.Closure.Tableau.Certificate@VE.TableauExtended VE.Environment@VE.Syntax VE.Route.CertificateSound@VE.Route.Checker VE.Route.Semantics.Formula@VE.Route.Layer VE.Route.closure@VE.Route.Checker VE.Route.closureValid@VE.Route.Checker
@@ -27691,6 +28665,201 @@ theorem VE.SpeechActs.Run.valid_transfer
     E'.constants = E.constants → (∀ (p : String), E'.predicates p = E.predicates p) → M.Valid E → M.Valid E'
   -- uses VE.Bridge.Entity@VE.Bridge VE.Environment.constants@VE.Syntax VE.Environment.predicates@VE.Syntax VE.Environment@VE.Syntax VE.FiniteModel.Valid@VE.Finite VE.FiniteModel@VE.Finite
   -- expr 2243035471
+theorem VE.SpeechActs.Source.Admission.active_commands
+  ∀ (src : VE.SpeechActs.Source.SpeechSource) (c : VE.SpeechActs.Command),
+    c ∈ src.dec.D.commands ↔ ∃ u, u ∈ src.dec.units ∧ VE.SpeechActs.Wire.activeCommand u = Option.some c
+  -- uses VE.SpeechActs.Command@VE.SpeechActs.Tree VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.SpeechDoc.commands@VE.SpeechActs.Tree VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.Wire.Decoded.units@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechUnitInfo@VE.SpeechActs.Wire VE.SpeechActs.Wire.activeCommand@VE.SpeechActs.Wire
+  -- expr 1777066854
+theorem VE.SpeechActs.Source.Admission.admissible_En
+  ∀ (D : VE.SpeechActs.SpeechDoc) (S : VE.Structure), S.Admissible (VE.SpeechActs.En D) ↔ S.Admissible D.E
+  -- uses VE.SpeechActs.En@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.E@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc@VE.SpeechActs.Tree VE.Structure.Admissible@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1926515587
+theorem VE.SpeechActs.Source.Admission.admitNodes_ok
+  ∀ (src : VE.SpeechActs.Source.SpeechSource) (D : VE.Route.Admission.Doc) (ws : List VE.Route.Admission.WireNode),
+    VE.SpeechActs.Source.Admission.admitNodes src D ws = Except.ok () →
+      ∀ (w : VE.Route.Admission.WireNode), w ∈ ws → VE.SpeechActs.Source.Admission.NodeAdmitted src D w
+  -- uses VE.Route.Admission.Doc@VE.Route.Admission VE.Route.Admission.WireNode@VE.Route.Admission VE.SpeechActs.Source.Admission.NodeAdmitted@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.admitNodes@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run
+  -- expr 2944514524
+theorem VE.SpeechActs.Source.Admission.answerLeaf_entailed
+  ∀ (src : VE.SpeechActs.Source.SpeechSource) (w : VE.Route.Admission.WireNode),
+    VE.SpeechActs.Source.Admission.AnswerLeaf src w →
+      ∀ (S : VE.Structure),
+        S.Admissible (VE.SpeechActs.En src.dec.D) →
+          VE.Norms.Sat S (VE.SpeechActs.premises src.dec.D) → VE.Formula.denote S [] w.claim.formula
+  -- uses VE.Formula.denote@VE.Semantics VE.Graph.Claim.formula@VE.ClaimGraph VE.Norms.Sat@VE.Norms.Prefix VE.Route.Admission.WireNode.claim@VE.Route.Admission VE.Route.Admission.WireNode@VE.Route.Admission VE.SpeechActs.En@VE.SpeechActs.Tree VE.SpeechActs.Source.Admission.AnswerLeaf@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.premises@VE.SpeechActs.Tree VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 820844272
+theorem VE.SpeechActs.Source.Admission.answerPremiseClaims_formulas
+  ∀ (src : VE.SpeechActs.Source.SpeechSource) (answer : String),
+    List.map (fun x => x.formula) (VE.SpeechActs.Source.Admission.answerPremiseClaims src answer) =
+      VE.SpeechActs.premises src.dec.D
+  -- uses VE.Formula@VE.Syntax VE.Graph.Claim.formula@VE.ClaimGraph VE.Graph.Claim@VE.ClaimGraph VE.SpeechActs.Source.Admission.answerPremiseClaims@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.premises@VE.SpeechActs.Tree
+  -- expr 246412102
+theorem VE.SpeechActs.Source.Admission.bindings_withheld
+  ∀ (adm : VE.SpeechActs.Source.Admission.SpeechAdmitted),
+    (∀ (u : VE.SpeechActs.Source.SourceUnit),
+        u ∈ adm.src.units →
+          VE.SpeechActs.Source.Admission.isBinding u = Bool.true →
+            (∀ (p : VE.Route.Admission.DocUnit), p ∈ adm.p0.units → p.id ≠ u.id) ∧
+              u.id ∈ List.map (fun x => x.id) adm.src.cov.rows) ∧
+      ∀ (u : VE.SpeechActs.Source.SourceUnit),
+        u ∈ adm.src.units → VE.SpeechActs.Source.Admission.isBinding u = Bool.false → ∃ p, p ∈ adm.p0.units ∧ p.id = u.id
+  -- uses VE.Route.Admission.Doc.units@VE.Route.Admission VE.Route.Admission.DocUnit.id@VE.Route.Admission VE.Route.Admission.DocUnit@VE.Route.Admission VE.SpeechActs.Source.Admission.SpeechAdmitted.p0@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.src@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.isBinding@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Coverage.rows@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Row.id@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Row@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SourceUnit.id@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SourceUnit@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.cov@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.source@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.units@VE.SpeechActs.Source.Run
+  -- expr 2707086881
+theorem VE.SpeechActs.Source.Admission.certificates_bound
+  ∀ (adm : VE.SpeechActs.Source.Admission.SpeechAdmitted) (x : VE.Route.Admission.WireNode × Lean.Json),
+    x ∈ adm.decoded → VE.Norms.Admission.CertificateBound adm.src.dec.se.profiles adm.src.dec.se.canonical adm.decoded x
+  -- uses VE.Norms.Admission.CertificateBound@VE.Norms.Admission VE.Route.Admission.WireNode@VE.Route.Admission VE.SpeechActs.Source.Admission.SpeechAdmitted.decoded@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.src@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Wire.Decoded.se@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment.canonical@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment.profiles@VE.SpeechActs.Wire
+  -- expr 1844311760
+theorem VE.SpeechActs.Source.Admission.certifiedAnswer_entailed
+  ∀ {dec : VE.SpeechActs.Wire.Decoded} (r : VE.SpeechActs.Source.AnswerRecord dec) (l : String) (ψ : VE.Formula),
+    VE.SpeechActs.Source.Admission.certifiedAnswer r = Option.some (l, ψ) →
+      VE.Entails (VE.SpeechActs.En dec.D) (VE.SpeechActs.premises dec.D) ψ
+  -- uses VE.Entails@VE.Semantics VE.Formula@VE.Syntax VE.SpeechActs.En@VE.SpeechActs.Tree VE.SpeechActs.Source.Admission.certifiedAnswer@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.AnswerRecord@VE.SpeechActs.Source.Run VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.Wire.Decoded@VE.SpeechActs.Wire VE.SpeechActs.premises@VE.SpeechActs.Tree
+  -- expr 2096225654
+theorem VE.SpeechActs.Source.Admission.eq_of_map_nodup
+  ∀ {α β : Type} {f : α → β} {l : List α}, (List.map f l).Nodup → ∀ {x y : α}, x ∈ l → y ∈ l → f x = f y → x = y
+  -- uses 
+  -- expr 2912099309
+theorem VE.SpeechActs.Source.Admission.leaves_admitted
+  ∀ (adm : VE.SpeechActs.Source.Admission.SpeechAdmitted) (leaf : VE.Graph.Claim),
+    leaf ∈ adm.report.assumptions →
+      ∃ w,
+        w ∈ adm.wires ∧
+          w.claim = leaf ∧ w.deduction = Option.none ∧ VE.SpeechActs.Source.Admission.NodeAdmitted adm.src adm.p0 w
+  -- uses VE.Graph.Claim@VE.ClaimGraph VE.Graph.Edge@VE.ClaimGraph VE.Graph.Report.assumptions@VE.ClaimGraph VE.Route.Admission.WireNode.claim@VE.Route.Admission VE.Route.Admission.WireNode.deduction@VE.Route.Admission VE.Route.Admission.WireNode@VE.Route.Admission VE.SpeechActs.Source.Admission.NodeAdmitted@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.p0@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.report@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.src@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.wires@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted@VE.SpeechActs.Source.Admission.Run VE.Tableau.Certificate@VE.Tableau
+  -- expr 494143796
+theorem VE.SpeechActs.Source.Admission.normsSource_D
+  ∀ (dec : VE.SpeechActs.Wire.Decoded), (VE.SpeechActs.Run.normsSource dec).D = VE.SpeechActs.policy dec.D
+  -- uses VE.Norms.Doc@VE.Norms.Tree VE.Norms.Wire.Source.D@VE.Norms.Wire VE.SpeechActs.Run.normsSource@VE.SpeechActs.Run VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.Wire.Decoded@VE.SpeechActs.Wire VE.SpeechActs.policy@VE.SpeechActs.Tree
+  -- expr 2402959437
+theorem VE.SpeechActs.Source.Admission.records_sound
+  ∀ (src : VE.SpeechActs.Source.SpeechSource), VE.SpeechActs.Source.Admission.RecordsSound src
+  -- uses VE.SpeechActs.Source.Admission.RecordsSound@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run
+  -- expr 534605814
+theorem VE.SpeechActs.Source.Admission.reportAdmitted
+  ∀ (adm : VE.SpeechActs.Source.Admission.SpeechAdmitted), VE.SpeechActs.Source.Admission.ReportAdmitted adm
+  -- uses VE.SpeechActs.Source.Admission.ReportAdmitted@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted@VE.SpeechActs.Source.Admission.Run
+  -- expr 3947409296
+theorem VE.SpeechActs.Source.Admission.report_consequence
+  ∀ (adm : VE.SpeechActs.Source.Admission.SpeechAdmitted) (S : VE.Structure),
+    S.Admissible (VE.SpeechActs.En adm.src.dec.D) →
+      VE.Norms.Sat S (VE.Data.Background.generate adm.p0.flags) →
+        VE.Norms.Sat S (VE.SpeechActs.premises adm.src.dec.D) →
+          VE.Norms.Sat S (List.map (fun x => x.formula) (VE.SpeechActs.Source.Admission.otherAssumptions adm)) →
+            VE.Formula.denote S [] adm.report.root.formula
+  -- uses VE.Data.Background.generate@VE.Data.Background VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Graph.Claim.formula@VE.ClaimGraph VE.Graph.Claim@VE.ClaimGraph VE.Graph.Report.root@VE.ClaimGraph VE.Norms.Sat@VE.Norms.Prefix VE.Route.Admission.Doc.flags@VE.Route.Admission VE.SpeechActs.En@VE.SpeechActs.Tree VE.SpeechActs.Source.Admission.SpeechAdmitted.p0@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.report@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.src@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.otherAssumptions@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.premises@VE.SpeechActs.Tree VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1338745407
+theorem VE.SpeechActs.Source.Admission.report_sound
+  ∀ (adm : VE.SpeechActs.Source.Admission.SpeechAdmitted),
+    VE.Graph.SoundReport adm.src.dec.se.ne.rv.environment adm.graph adm.report
+  -- uses VE.Graph.SoundReport@VE.ClaimGraph VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.SpeechActs.Source.Admission.SpeechAdmitted.graph@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.report@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.src@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Wire.Decoded.se@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.Tableau.Certificate@VE.Tableau
+  -- expr 810298227
+theorem VE.SpeechActs.Source.Admission.runAdmission_sound
+  ∀ (id : String) (payload evidence a : Lean.Json),
+    VE.SpeechActs.Source.Admission.runAdmission id payload evidence = Except.ok a →
+      ∃ adm rid,
+        Option.map (fun x => x.val) (VE.SpeechActs.Source.Admission.admitSpeech payload evidence).toOption =
+            Option.some adm ∧
+          adm.payload = payload ∧
+            adm.evidence = evidence ∧
+              a = VE.SpeechActs.Source.Admission.encodeAdmitted id rid adm ∧
+                VE.SpeechActs.Source.Admission.BindingsMatchSourceAndRegeneration adm rid
+  -- uses VE.SpeechActs.Source.Admission.BindingsMatchSourceAndRegeneration@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.evidence@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.payload@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.admitSpeech@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.encodeAdmitted@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.runAdmission@VE.SpeechActs.Source.Admission.Run
+  -- expr 1821009212
+theorem VE.SpeechActs.Source.answers_sound
+  ∀ (src : VE.SpeechActs.Source.SpeechSource) (r : VE.SpeechActs.Source.AnswerRecord src.dec),
+    r ∈ src.answers.answers →
+      (∀ (a : VE.SpeechActs.Answer) (φ : VE.Formula) (hφ : VE.SpeechActs.correct src.dec.D r.q a = Option.some φ)
+          (c : VE.Tableau.Certificate) (s : VE.SpeechActs.Run.PremiseStatus src.dec.D (VE.SpeechActs.premises src.dec.D)),
+          r.replay = VE.SpeechActs.Run.AnswerReplay.certificate a φ hφ c s →
+            ∀ (S : VE.Structure),
+              S.Admissible (VE.SpeechActs.En src.dec.D) →
+                VE.Norms.Sat S (VE.SpeechActs.premises src.dec.D) → VE.SpeechActs.AnswersAt src.dec.D r.q S a) ∧
+        (∀ (a : VE.SpeechActs.Answer) (φ : VE.Formula) (hφ : VE.SpeechActs.correct src.dec.D r.q a = Option.some φ)
+            (c : VE.Tableau.Certificate)
+            (s :
+              VE.SpeechActs.Run.PremiseStatus src.dec.D
+                (VE.SpeechActs.premises src.dec.D ++ [VE.SpeechActs.presupposition src.dec.D r.q])),
+            r.replay = VE.SpeechActs.Run.AnswerReplay.conditional a φ hφ c s →
+              ∀ (S : VE.Structure),
+                S.Admissible (VE.SpeechActs.En src.dec.D) →
+                  VE.Norms.Sat S (VE.SpeechActs.premises src.dec.D) →
+                    VE.Formula.denote S [] (VE.SpeechActs.presupposition src.dec.D r.q) →
+                      VE.SpeechActs.AnswersAt src.dec.D r.q S a) ∧
+          ∀ (id : String) (m : VE.SpeechActs.Run.CheckedModel src.dec.D (VE.SpeechActs.premises src.dec.D)),
+            r.replay = VE.SpeechActs.Run.AnswerReplay.model id m →
+              ∀ (a : VE.SpeechActs.Answer),
+                VE.SpeechActs.answerEval src.dec.D r.q m.M a = Bool.true ↔
+                  VE.SpeechActs.AnswersAt src.dec.D r.q m.M.asStructure a
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.SpeechActs.Answer@VE.SpeechActs.Tree VE.SpeechActs.AnswersAt@VE.SpeechActs.Answer VE.SpeechActs.En@VE.SpeechActs.Tree VE.SpeechActs.Run.AnswerReplay.certificate@VE.SpeechActs.Run VE.SpeechActs.Run.AnswerReplay.conditional@VE.SpeechActs.Run VE.SpeechActs.Run.AnswerReplay.model@VE.SpeechActs.Run VE.SpeechActs.Run.AnswerReplay@VE.SpeechActs.Run VE.SpeechActs.Run.CheckedModel.M@VE.SpeechActs.Run VE.SpeechActs.Run.CheckedModel@VE.SpeechActs.Run VE.SpeechActs.Run.PremiseStatus@VE.SpeechActs.Run VE.SpeechActs.Source.AnswerRecord.q@VE.SpeechActs.Source.Run VE.SpeechActs.Source.AnswerRecord.replay@VE.SpeechActs.Source.Run VE.SpeechActs.Source.AnswerRecord@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Answers.answers@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.answers@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.answerEval@VE.SpeechActs.Answer VE.SpeechActs.correct@VE.SpeechActs.Answer VE.SpeechActs.premises@VE.SpeechActs.Tree VE.SpeechActs.presupposition@VE.SpeechActs.Answer VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Tableau.Certificate@VE.Tableau
+  -- expr 1970443857
+theorem VE.SpeechActs.Source.coverage_partition
+  ∀ (src : VE.SpeechActs.Source.SpeechSource),
+    (src.cov.rows.all fun r => VE.SpeechActs.Source.reconciles r.status r.cls) = Bool.true ∧
+      VE.SpeechActs.Source.sumBytes (VE.SpeechActs.Source.totals VE.SpeechActs.Source.Row.cls src.cov.rows) =
+          src.source.utf8ByteSize ∧
+        VE.SpeechActs.Source.sumBytes (VE.SpeechActs.Source.totals VE.SpeechActs.Source.Row.status src.cov.rows) =
+          src.source.utf8ByteSize
+  -- uses VE.SpeechActs.Source.Coverage.rows@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Row.cls@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Row.status@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Row@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.cov@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.source@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.Source.reconciles@VE.SpeechActs.Source.Run VE.SpeechActs.Source.sumBytes@VE.SpeechActs.Source.Run VE.SpeechActs.Source.totals@VE.SpeechActs.Source.Run
+  -- expr 3659585699
+theorem VE.SpeechActs.Source.external_records_sound
+  ∀ (src : VE.SpeechActs.Source.SpeechSource) (r : VE.SpeechActs.Source.ExternalRecord src.dec),
+    VE.SpeechActs.Source.Compliance.external r ∈ src.compliance →
+      r.c ∈ src.dec.D.commands ∧
+        r.entry ∈ src.dec.D.asserted ∧
+          VE.SpeechActs.Source.DoneFact src.dec.D r.c r.entry.snd ∧ r.entry.snd ∈ VE.SpeechActs.premises src.dec.D
+  -- uses VE.Formula@VE.Syntax VE.SpeechActs.Command@VE.SpeechActs.Tree VE.SpeechActs.Source.Compliance.external@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Compliance@VE.SpeechActs.Source.Run VE.SpeechActs.Source.DoneFact@VE.SpeechActs.Source.Run VE.SpeechActs.Source.ExternalRecord.c@VE.SpeechActs.Source.Run VE.SpeechActs.Source.ExternalRecord.entry@VE.SpeechActs.Source.Run VE.SpeechActs.Source.ExternalRecord@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.compliance@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.SpeechDoc.asserted@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.commands@VE.SpeechActs.Tree VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.premises@VE.SpeechActs.Tree
+  -- expr 4150511360
+theorem VE.SpeechActs.Source.gap_records_sound
+  ∀ (src : VE.SpeechActs.Source.SpeechSource) (r : VE.SpeechActs.Source.GapRecord src.dec),
+    VE.SpeechActs.Source.Judgment.gap r ∈ src.answers.judgments →
+      ¬VE.Entails (VE.SpeechActs.En src.dec.D) (VE.SpeechActs.queryPremises src.dec.D r.qr) r.qr.target
+  -- uses VE.Entails@VE.Semantics VE.SpeechActs.En@VE.SpeechActs.Tree VE.SpeechActs.Query.target@VE.SpeechActs.Tree VE.SpeechActs.Source.Answers.judgments@VE.SpeechActs.Source.Run VE.SpeechActs.Source.GapRecord.qr@VE.SpeechActs.Source.Run VE.SpeechActs.Source.GapRecord@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Judgment.gap@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Judgment@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.answers@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.queryPremises@VE.SpeechActs.Tree
+  -- expr 4225604054
+theorem VE.SpeechActs.Source.query_records_sound
+  ∀ (src : VE.SpeechActs.Source.SpeechSource) (r : VE.SpeechActs.Source.QueryRecord src.dec),
+    VE.SpeechActs.Source.Judgment.follows r ∈ src.answers.judgments ∨
+        VE.SpeechActs.Source.Compliance.certificate r ∈ src.compliance →
+      VE.Entails (VE.SpeechActs.En src.dec.D) (VE.SpeechActs.queryPremises src.dec.D r.qr) r.qr.target
+  -- uses VE.Entails@VE.Semantics VE.SpeechActs.En@VE.SpeechActs.Tree VE.SpeechActs.Query.target@VE.SpeechActs.Tree VE.SpeechActs.Source.Answers.judgments@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Compliance.certificate@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Compliance@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Judgment.follows@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Judgment@VE.SpeechActs.Source.Run VE.SpeechActs.Source.QueryRecord.qr@VE.SpeechActs.Source.Run VE.SpeechActs.Source.QueryRecord@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.answers@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.compliance@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.queryPremises@VE.SpeechActs.Tree
+  -- expr 177831084
+theorem VE.SpeechActs.Source.source_retained
+  ∀ (p e : Lean.Json) (src : { src // src.payload = p }),
+    VE.SpeechActs.Source.decodeSpeechSource p e = Except.ok src →
+      src.val.metadata = p.getObjValD "metadata" ∧
+        src.val.source = VE.Discourse.Loader.sourceOf p ∧
+          src.val.documentId =
+            VE.CertificateWire.digest "ve-document@2\n"
+              (Lean.Json.mkObj
+                [("metadata", VE.Discourse.Loader.identityMetadata (p.getObjValD "metadata")),
+                  ("source", Lean.Json.str (VE.Discourse.Loader.sourceOf p)), ("fences", p.getObjValD "fences")])
+  -- uses VE.CertificateWire.digest@VE.CertificateWire VE.Discourse.Loader.identityMetadata@VE.Discourse.Loader VE.Discourse.Loader.sourceOf@VE.Discourse.Loader VE.SpeechActs.Source.SpeechSource.documentId@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.metadata@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.payload@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.source@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.Source.decodeSpeechSource@VE.SpeechActs.Source.Run
+  -- expr 1041629818
+theorem VE.SpeechActs.Source.speech_wire_acceptance
+  ∀ (j a : Lean.Json),
+    VE.SpeechActs.Source.runCase j = Except.ok a →
+      VE.Route.Run.caseKind j = Except.ok "admission" →
+        VE.Discourse.Loader.isPayload (j.getObjValD "document") = Bool.true →
+          ∃ adm id rid,
+            VE.Bridge.stringField j "id" = Except.ok id ∧
+              adm.payload = j.getObjValD "document" ∧
+                adm.evidence = j.getObjValD "premise_status" ∧
+                  VE.SpeechActs.Source.decodeSpeechSource adm.payload adm.evidence = Except.ok ⟨adm.src, ⋯⟩ ∧
+                    VE.SpeechActs.WellFormedSpeech adm.src.dec.D = Bool.true ∧
+                      a = VE.SpeechActs.Source.Admission.encodeAdmitted id rid adm ∧
+                        VE.SpeechActs.Source.Admission.BindingsMatchSourceAndRegeneration adm rid ∧
+                          VE.SpeechActs.Source.Admission.ReportAdmitted adm ∧
+                            (∀ (S : VE.Structure),
+                                S.Admissible (VE.SpeechActs.En adm.src.dec.D) →
+                                  VE.Norms.Sat S (VE.Data.Background.generate adm.p0.flags) →
+                                    VE.Norms.Sat S (VE.SpeechActs.premises adm.src.dec.D) →
+                                      VE.Norms.Sat S
+                                          (List.map (fun x => x.formula)
+                                            (VE.SpeechActs.Source.Admission.otherAssumptions adm)) →
+                                        VE.Formula.denote S [] adm.report.root.formula) ∧
+                              VE.SpeechActs.Source.Admission.RecordsSound adm.src
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Data.Background.generate@VE.Data.Background VE.Discourse.Loader.isPayload@VE.Discourse.Loader VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Graph.Claim.formula@VE.ClaimGraph VE.Graph.Claim@VE.ClaimGraph VE.Graph.Report.root@VE.ClaimGraph VE.Norms.Sat@VE.Norms.Prefix VE.Route.Admission.Doc.flags@VE.Route.Admission VE.Route.Run.caseKind@VE.Route.Run VE.SpeechActs.En@VE.SpeechActs.Tree VE.SpeechActs.Source.Admission.BindingsMatchSourceAndRegeneration@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.RecordsSound@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.ReportAdmitted@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.evidence@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.p0@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.payload@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.report@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.src@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted.srcPayload@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.SpeechAdmitted@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.encodeAdmitted@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.Admission.otherAssumptions@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.payload@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.Source.decodeSpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.Source.runCase@VE.SpeechActs.Source.Admission.Run VE.SpeechActs.WellFormedSpeech@VE.SpeechActs.Tree VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.premises@VE.SpeechActs.Tree VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2451241489
 theorem VE.SpeechActs.Wire.canonical_scope
   ∀ (environment b : Lean.Json) (sc : VE.SpeechActs.Scope),
     environment.getObjVal? "speech_acts" >>= VE.SpeechActs.Wire.parseScope = Except.ok sc →

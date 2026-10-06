@@ -663,3 +663,90 @@ def test_python_follows_a_lean_verdict_it_would_not_reach(tmp_path, monkeypatch)
     with pytest.raises(VEError, match="^StaleTarget: m1$") as caught:
         check_document(original)
     assert caught.value.code == "StaleTarget"
+
+
+@pytest.mark.parametrize("condition, text", [
+    (["unary", "nonexistent", ["const", "api"]], "UnknownSymbol: Unknown predicate 'nonexistent'"),
+    (["unary", "reviewed", ["const", "nobody"]], "UnknownSymbol: Unknown constant 'nobody'"),
+    (["unary", "reviewed", ["var", 0]], "UnboundVariable: Variable index 0 is outside its scope")])
+def test_ill_typed_open_term_condition_keeps_its_base_answer(tmp_path, condition, text):
+    # Discrepancy fixture (lean-first 11a review B2): an open term's conditions are closed formulas over the
+    # environment (document.md), but the discourse route reads only their structure and admits the document,
+    # which Python's `validate_open_terms` then rejects: CheckerUnavailable, as at base. Making it Lean's
+    # rejection is an `availability` change that needs a DRI signature (plan 5.1 item 2); it is proposed in
+    # docs/lean-first/b11a/DELTA.md, not applied. Only the speech-source wrapper types the conditions.
+    source, front = _sample(tmp_path)
+    term = {**OPEN_TERM, "necessary": [condition]}
+    path = _write(tmp_path, {**front, "graph": OPEN_GRAPH, "open_terms": [term]}, source)
+    with pytest.raises(CheckerUnavailable) as raised:
+        load_document(path)
+    assert str(raised.value) == f"CheckerUnavailable: Lean admits the document but Python cannot report it ({text})"
+
+
+# The shared W2 front-matter readers (`Discourse.Loader`) are relayed to Python verbatim (batch 4), so a change made
+# for another route (the speech-source wrapper reads the same functions in their `python` mode) must not move one
+# discourse answer without a signed DELTA (lean-first 11a review B2). Every single-fault mutant of the open terms,
+# reading sets, narrowings and unit meanings of one document is answered by the route and compared with the answers
+# the base checkout's route gave, captured once by `capture_w2_pins` and pinned in `W2_PINS`.
+W2_PINS = __import__("pathlib").Path(__file__).parent / "data" / "w2-front-matter-pins.json"
+W2_FIELDS = ("open_terms", "reading_sets", "narrowings", "units")
+
+
+def _w2_front(tmp_path):
+    requires = [{"kind": "requires", "a": ["rs5", 1, "a"], "b": ["rs6", 1, "a"]}]
+    source, front = _correlated(tmp_path, requires)
+    front["open_terms"] = [{**OPEN_TERM, "arguments": ["api"], "necessary": [["unary", "reviewed", ["const", "api"]]],
+                            "factors": ["review record"], "precedents": ["p1"]}]
+    front["units"][0]["meaning"] = {"open": ["t"]}
+    front["narrowings"] = [{"id": "n1", "set": "rs5", "version": 1, "keeps": ["a"], "by": "author",
+                            "reason_spans": ["u1"]}]
+    return source, front
+
+
+def w2_front_matter_cases(tmp_path):
+    """(path, document text) for the template and each of its single-fault mutants in `W2_FIELDS`."""
+    from tests.test_speech_acts_conformance import _MISSING, _replace_wire, _wire_mutations
+    source, front = _w2_front(tmp_path)
+    out = [("template", front)]
+    for path, replacement in _wire_mutations(front):
+        if path[0] in W2_FIELDS and not (path[0] == "units" and "content" in path):
+            name = repr((*path, "MISSING" if replacement is _MISSING else replacement))
+            out.append((name, _replace_wire(front, path, replacement)))
+    return [(name, (b"---\n" + json.dumps(f).encode() + b"\n---\n" + source).decode()) for name, f in out]
+
+
+def _w2_answers(executable, cases):
+    import hashlib
+    import subprocess
+
+    from subprocesses import HANG_TIMEOUT
+    batch = [{"id": str(i), "kind": "admission", "document": text, "files": {}} for i, (_, text) in enumerate(cases)]
+    if executable is None:
+        from tests import lean_routes
+        rows = lean_routes.rows("ve_discourse_route", batch)
+    else:
+        done = subprocess.run([str(executable), "-"], input=json.dumps(batch).encode(), capture_output=True,
+                              timeout=HANG_TIMEOUT * 4, check=False)
+        rows = json.loads(done.stdout)
+        assert len(rows) == len(cases), done.stderr[-300:]
+    assert len(rows) == len(cases)
+    return {name: (row["error"] if row.get("status") == "error" else
+                   "ok " + hashlib.sha256(json.dumps(row, sort_keys=True).encode()).hexdigest())
+            for (name, _), row in zip(cases, rows)}
+
+
+def capture_w2_pins(executable, tmp_path):
+    """Write `W2_PINS` from `executable`, the base checkout's `ve_discourse_route` (run once per frozen change):
+    `python -c "from pathlib import Path; import tempfile; from tests.test_discourse import capture_w2_pins;
+    capture_w2_pins(Path('BASE/lean/.lake/build/bin/ve_discourse_route'), Path(tempfile.mkdtemp()))"`."""
+    W2_PINS.write_text(json.dumps(_w2_answers(executable, w2_front_matter_cases(tmp_path)), indent=0,
+                                  sort_keys=True) + "\n")
+
+
+def test_w2_front_matter_diagnostics_are_pinned(tmp_path):
+    pinned = json.loads(W2_PINS.read_text())
+    cases = w2_front_matter_cases(tmp_path)
+    assert pinned["template"].startswith("ok "), pinned["template"]
+    assert len(cases) == len(pinned) > 500
+    answers = _w2_answers(None, cases)
+    assert {k: v for k, v in answers.items() if pinned[k] != v} == {}

@@ -2,6 +2,7 @@
 -- type ends in Prop, as name@Module, over the modules listed. tools/trust_map.py keeps them
 -- out of the executable classes C, D, G.
 module EnglishLeanBenchMain
+module EnglishMain
 module Iceberg
 module Main
 module ResponseDecode
@@ -61,6 +62,7 @@ module ResponseShape.Skeleton
 module ResponseShape.Skeletons
 module ResponseShape
 module Serve
+module SpeechActsMain
 module VE.Alternatives.Admission
 module VE.Alternatives.Background
 module VE.Alternatives.Decl
@@ -165,12 +167,22 @@ module VE.English.Render
 module VE.English.RenderProofs
 module VE.English.Run
 module VE.English.Statements
+module VE.EnglishGrammar.Actions
+module VE.EnglishGrammar.Catalogue
+module VE.EnglishGrammar.Encode
 module VE.EnglishGrammar.EngineExamples
 module VE.EnglishGrammar.Examples
+module VE.EnglishGrammar.Extends
+module VE.EnglishGrammar.Fixed.RelationalFol
+module VE.EnglishGrammar.Fixed.Version
 module VE.EnglishGrammar.FoldAgree
 module VE.EnglishGrammar.Lexer
 module VE.EnglishGrammar.Lexicon
 module VE.EnglishGrammar.LexiconFixtures
+module VE.EnglishGrammar.Read
+module VE.EnglishGrammar.ReadExamples
+module VE.EnglishGrammar.Rules
+module VE.EnglishGrammar.Run
 module VE.EnglishGrammar.Syntax
 module VE.EnglishGrammar.Token
 module VE.EnvironmentProofs
@@ -195,8 +207,10 @@ module VE.NormDefaults.Evidence
 module VE.NormDefaults.Examples
 module VE.NormDefaults.Fill
 module VE.NormDefaults.FillCheck
+module VE.NormDefaults.Layered
 module VE.NormDefaults.Premises
 module VE.NormDefaults.Replay
+module VE.NormDefaults.Report
 module VE.NormDefaults.Routes
 module VE.NormDefaults.Run
 module VE.NormDefaults.Semantics
@@ -217,6 +231,7 @@ module VE.Norms.Plain
 module VE.Norms.Prefix
 module VE.Norms.Replay
 module VE.Norms.Run
+module VE.Norms.RunSound
 module VE.Norms.SmallModel
 module VE.Norms.Subst
 module VE.Norms.Tree
@@ -323,8 +338,10 @@ module VE.Route.Layer
 module VE.Route.Readings
 module VE.Route.Route
 module VE.Route.Run
+module VE.Route.RunSound
 module VE.Route.Steps
 module VE.Route.Wire
+module VE.Route.WireSound
 module VE.Semantics
 module VE.Service.Diagnose
 module VE.Service.EnglishRun
@@ -352,6 +369,8 @@ module VE.SpeechActs.Answer
 module VE.SpeechActs.Consequence
 module VE.SpeechActs.Demand
 module VE.SpeechActs.Run
+module VE.SpeechActs.Source.Admission.Run
+module VE.SpeechActs.Source.Run
 module VE.SpeechActs.Tree
 module VE.SpeechActs.Wire
 module VE.Surface
@@ -513,6 +532,10 @@ VE.English.Surface.admitted@VE.English.Statements
 VE.English.Surface.derives@VE.English.Statements
 VE.English.Tree.Syntactic@VE.English.Grammar
 VE.English.UniqueDerivation@VE.English.Statements
+VE.EnglishGrammar.EnglishOneReading@VE.EnglishGrammar.Read
+VE.EnglishGrammar.Extends@VE.EnglishGrammar.Extends
+VE.EnglishGrammar.envSub@VE.EnglishGrammar.Extends
+VE.EnglishGrammar.lexiconSub@VE.EnglishGrammar.Extends
 VE.Entails@VE.Semantics
 VE.FiniteModel.Valid@VE.Finite
 VE.FiniteModel.inDomain@VE.Alternatives.Followable
@@ -572,6 +595,12 @@ VE.NormDefaults.SettledAs@VE.NormDefaults.Status
 VE.NormDefaults.UValid@VE.NormDefaults.Fill
 VE.NormDefaults.UndecidedAt@VE.NormDefaults.Status
 VE.NormDefaults.UniversalQF@VE.NormDefaults.Evidence
+VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report
+VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered
+VE.NormDefaults.Wire.NeverReached@VE.NormDefaults.Report
+VE.NormDefaults.Wire.ReachedSome@VE.NormDefaults.Report
+VE.NormDefaults.Wire.ReportSound@VE.NormDefaults.Report
+VE.NormDefaults.Wire.UndecidedAtX@VE.NormDefaults.Layered
 VE.NormDefaults.canonicalFill@VE.NormDefaults.Premises
 VE.NormDefaults.fillOf@VE.NormDefaults.Status
 VE.NormDefaults.finFill@VE.NormDefaults.Evidence
@@ -781,12 +810,28 @@ VE.Route.Layer.Compatible@VE.Route.Layer
 VE.Route.Layer.Intended@VE.Route.Layer
 VE.Route.ReadingChoices.below@VE.Route.Readings
 VE.Route.ReadingChoices@VE.Route.Readings
+VE.Route.RunSound.RunnerKind@VE.Route.RunSound
 VE.Route.Semantics.Admissible@VE.Route.Layer
 VE.Route.Semantics.Entails@VE.Route.Layer
 VE.Route.Semantics.Holds@VE.Route.Layer
 VE.Route.Semantics.Sat@VE.Route.Layer
 VE.Route.Semantics.WellFormed@VE.Route.Layer
 VE.Route.Unique@VE.Route.Layer
+VE.Route.WireSound.BaseAdmissible@VE.Route.WireSound
+VE.Route.WireSound.BaseClaim@VE.Route.WireSound
+VE.Route.WireSound.CertificateClaim@VE.Route.WireSound
+VE.Route.WireSound.CountermodelAnswer@VE.Route.WireSound
+VE.Route.WireSound.CountermodelClaim@VE.Route.WireSound
+VE.Route.WireSound.EvaluateClaim@VE.Route.WireSound
+VE.Route.WireSound.Family.Decoded@VE.Route.WireSound
+VE.Route.WireSound.Family.Intended@VE.Route.WireSound
+VE.Route.WireSound.Family.Sound@VE.Route.WireSound
+VE.Route.WireSound.FlagsBase@VE.Route.WireSound
+VE.Route.WireSound.FlagsHold@VE.Route.WireSound
+VE.Route.WireSound.RouteIntended@VE.Route.WireSound
+VE.Route.WireSound.Runner.Accepted@VE.Route.WireSound
+VE.Route.WireSound.Runner.Bound@VE.Route.WireSound
+VE.Route.WireSound.Runner.Sound@VE.Route.WireSound
 VE.Route.closureValid@VE.Route.Checker
 VE.Route.coreValid@VE.Core.Route
 VE.Route.folValid@VE.Route.Checker
@@ -849,6 +894,14 @@ VE.SoftNorms.YieldsSoftD@VE.SoftNorms.Semantics
 VE.SoftNorms.holdsSoft@VE.SoftNorms.Semantics
 VE.SoftNorms.sameStrictCore@VE.SoftNorms.Semantics
 VE.SpeechActs.AnswersAt@VE.SpeechActs.Answer
+VE.SpeechActs.Source.Admission.AnswerLeaf@VE.SpeechActs.Source.Admission.Run
+VE.SpeechActs.Source.Admission.BindingsMatchSourceAndRegeneration@VE.SpeechActs.Source.Admission.Run
+VE.SpeechActs.Source.Admission.Discharged@VE.SpeechActs.Source.Admission.Run
+VE.SpeechActs.Source.Admission.NodeAdmitted@VE.SpeechActs.Source.Admission.Run
+VE.SpeechActs.Source.Admission.PresuppositionLeaf@VE.SpeechActs.Source.Admission.Run
+VE.SpeechActs.Source.Admission.RecordsSound@VE.SpeechActs.Source.Admission.Run
+VE.SpeechActs.Source.Admission.ReportAdmitted@VE.SpeechActs.Source.Admission.Run
+VE.SpeechActs.Source.DoneFact@VE.SpeechActs.Source.Run
 VE.SpeechActs.ValidSpeech@VE.SpeechActs.Tree
 VE.Structure.Admissible@VE.Semantics
 VE.Structure.domain@VE.Semantics

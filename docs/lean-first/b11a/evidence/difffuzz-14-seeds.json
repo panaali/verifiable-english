@@ -1,0 +1,161 @@
+{
+  "base": "2ce1134e",
+  "head": "3877e6e2",
+  "seed_count": 14,
+  "seeds": [
+    {
+      "seed": 20260921,
+      "equal_counts_and_answers": true,
+      "base_new": 47,
+      "head_new": 47,
+      "added_signatures": 0,
+      "removed_signatures": 0,
+      "same_baseline": true,
+      "base_passed": false,
+      "head_passed": false
+    },
+    {
+      "seed": 20260922,
+      "equal_counts_and_answers": true,
+      "base_new": 55,
+      "head_new": 55,
+      "added_signatures": 0,
+      "removed_signatures": 0,
+      "same_baseline": true,
+      "base_passed": false,
+      "head_passed": false
+    },
+    {
+      "seed": 20260923,
+      "equal_counts_and_answers": true,
+      "base_new": 47,
+      "head_new": 47,
+      "added_signatures": 0,
+      "removed_signatures": 0,
+      "same_baseline": true,
+      "base_passed": false,
+      "head_passed": false
+    },
+    {
+      "seed": 20260924,
+      "equal_counts_and_answers": true,
+      "base_new": 78,
+      "head_new": 78,
+      "added_signatures": 0,
+      "removed_signatures": 0,
+      "same_baseline": true,
+      "base_passed": false,
+      "head_passed": false
+    },
+    {
+      "seed": 20260925,
+      "equal_counts_and_answers": true,
+      "base_new": 50,
+      "head_new": 50,
+      "added_signatures": 0,
+      "removed_signatures": 0,
+      "same_baseline": true,
+      "base_passed": false,
+      "head_passed": false
+    },
+    {
+      "seed": 20260926,
+      "equal_counts_and_answers": true,
+      "base_new": 41,
+      "head_new": 41,
+      "added_signatures": 0,
+      "removed_signatures": 0,
+      "same_baseline": true,
+      "base_passed": false,
+      "head_passed": false
+    },
+    {
+      "seed": 20260927,
+      "equal_counts_and_answers": true,
+      "base_new": 47,
+      "head_new": 47,
+      "added_signatures": 0,
+      "removed_signatures": 0,
+      "same_baseline": true,
+      "base_passed": false,
+      "head_passed": false
+    },
+    {
+      "seed": 20260928,
+      "equal_counts_and_answers": true,
+      "base_new": 52,
+      "head_new": 52,
+      "added_signatures": 0,
+      "removed_signatures": 0,
+      "same_baseline": true,
+      "base_passed": false,
+      "head_passed": false
+    },
+    {
+      "seed": 20260929,
+      "equal_counts_and_answers": true,
+      "base_new": 55,
+      "head_new": 55,
+      "added_signatures": 0,
+      "removed_signatures": 0,
+      "same_baseline": true,
+      "base_passed": false,
+      "head_passed": false
+    },
+    {
+      "seed": 20260930,
+      "equal_counts_and_answers": true,
+      "base_new": 56,
+      "head_new": 56,
+      "added_signatures": 0,
+      "removed_signatures": 0,
+      "same_baseline": true,
+      "base_passed": false,
+      "head_passed": false
+    },
+    {
+      "seed": 20261001,
+      "equal_counts_and_answers": true,
+      "base_new": 52,
+      "head_new": 52,
+      "added_signatures": 0,
+      "removed_signatures": 0,
+      "same_baseline": true,
+      "base_passed": false,
+      "head_passed": false
+    },
+    {
+      "seed": 20261002,
+      "equal_counts_and_answers": true,
+      "base_new": 44,
+      "head_new": 44,
+      "added_signatures": 0,
+      "removed_signatures": 0,
+      "same_baseline": true,
+      "base_passed": false,
+      "head_passed": false
+    },
+    {
+      "seed": 20261003,
+      "equal_counts_and_answers": true,
+      "base_new": 53,
+      "head_new": 53,
+      "added_signatures": 0,
+      "removed_signatures": 0,
+      "same_baseline": true,
+      "base_passed": false,
+      "head_passed": false
+    },
+    {
+      "seed": 20261004,
+      "equal_counts_and_answers": true,
+      "base_new": 0,
+      "head_new": 0,
+      "added_signatures": 0,
+      "removed_signatures": 0,
+      "same_baseline": true,
+      "base_passed": true,
+      "head_passed": true
+    }
+  ]
+}

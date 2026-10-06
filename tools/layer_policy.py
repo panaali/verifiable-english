@@ -18,7 +18,7 @@ PYTHON = {
     1: "ast environment environment_wire errors identity limits model wire wire_contract assurance".split(),
     2: ("background closure definitions entailment evaluate norms order profiles "
         "alternatives reports rights softnorms softnorms_contract norms_contract speech_acts units").split(),
-    3: ("english english_phrases english_vocabulary fluent fol grammar natural "
+    3: ("english english_grammar english_phrases english_vocabulary fluent fol grammar natural "
         "norm_english parser printer surface lexicon report_english speech_english readings_english "
         "readings_s2_english").split(),
     4: ("__main__ adapters admission argument attacks authoring backends bundle check "
@@ -119,6 +119,8 @@ def lean_layer(module: str) -> int | None:
         return 4  # the service's response shapes: ve_response_decode and the client's schema source
     if module in {"VE.Norms.FlaggedSpec"}:
         return 4  # states theorems on Norms.Run.runCase (docs/CONSOLIDATION-PLAN.md step 1a)
+    if module in {"VE.Route.RunSound", "VE.Norms.RunSound"}:
+        return 4  # states theorems on Route.Run.runCase and Norms.Run.runCase (step 2a)
     if module.startswith(("VE.English.", "VE.Grammar.", "VE.EnglishGrammar.")) or module in {
         "VE.Surface", "VE.SurfaceProofs", "VE.ParserContracts", "VE.LexicalProofs",
         "VE.Order.Surface", "VE.Core.Surface", "VE.Closure.Surface",

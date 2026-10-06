@@ -7,6 +7,8 @@ import VE.EnglishGrammar.Examples
 import VE.EnglishGrammar.FoldAgree
 import VE.EnglishGrammar.EngineExamples
 import VE.EnglishGrammar.LexiconFixtures
+import VE.EnglishGrammar.Fixed.Version
+import VE.EnglishGrammar.ReadExamples
 import VE.Compose.Slot
 import VE.Compose.Dispatch
 import VE.Compose.Content
@@ -75,6 +77,8 @@ import VE.Discourse.Run
 import VE.Discourse.Theorems
 import VE.Discourse.English
 import VE.SpeechActs.Run
+import VE.SpeechActs.Source.Run
+import VE.SpeechActs.Source.Admission.Run
 import VE.Time.Wire
 import VE.Time.Document
 import VE.Risk.Cond

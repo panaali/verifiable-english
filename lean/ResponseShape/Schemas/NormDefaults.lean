@@ -49,47 +49,117 @@ def kind : Def :=
     ("norm-defaults-conflict", kindIs "norm-defaults-conflict"),
     ("norm-defaults-status", kindIs "norm-defaults-status"),
     ("norm-defaults-gaps", kindIs "norm-defaults-gaps"),
-    ("norm-defaults-certificate", kindIs "norm-defaults-certificate")]
+    ("norm-defaults-certificate", kindIs "norm-defaults-certificate"),
+    ("norm-defaults-report", kindIs "norm-defaults-report")]
+
+/-- The fields of `elaborate`, shared with `layered_elaborate`. -/
+def elaborateFields : List (String × Shape) := [
+  ("id", ref "common.json#/$defs/id_ok"),
+  ("status", constS "ok"),
+  ("order", ref "common.json#/$defs/strings"),
+  ("background", ref "common.json#/$defs/norms_background"),
+  ("premises", ref "common.json#/$defs/layer_premises"),
+  ("conflict_targets", ref "common.json#/$defs/conflict_targets"),
+  ("fragment", .type ["boolean"]),
+  ("fill", n [
+    arr,
+    .items (n [
+        obj,
+        .required ["generator", "ast"],
+        closed [("generator", constS "fill"), ("ast", ref "common.json#/$defs/generated_formula")]])]),
+  ("unspecified", ref "common.json#/$defs/strings"),
+  ("unsaid", n [
+    arr,
+    .items (n [
+        obj,
+        .required ["name", "sorts"],
+        closed [
+          ("name", n [str, .pattern (Re.prefixes ["unsaid__"])]),
+          ("sorts", ref "common.json#/$defs/strings")]])]),
+  ("reached", n [
+    arr,
+    .items (n [
+        obj,
+        .required ["predicate", "sorts", "ast"],
+        closed [
+          ("predicate", str),
+          ("sorts", ref "common.json#/$defs/strings"),
+          ("ast", ref "common.json#/$defs/generated_formula")]])]),
+  ("fragment_fill", .type ["boolean"])]
+
+def elaborateRequired : List String :=
+  ["id", "status", "order", "background", "premises", "conflict_targets", "fragment", "fill", "unspecified", "unsaid", "reached", "fragment_fill"]
 
 def elaborate : Shape :=
   c
     "NormDefaults.Wire.regeneratedU: Norms.Wire.regenerated of fill U, then Fill_T, the unspecified predicates, their unsaid predicates, the default-reached targets and the fragment flag of fill U."
+    [obj, .required elaborateRequired, closed elaborateFields]
+
+def base_environment : Shape :=
+  copied "the route's base environment regenerated from the request's environment (its soft or rights block removed), compared whole with Python's by the caller" <| c
+    "NormDefaults.Wire.withUnsaid of SoftNorms.Wire.basePrimeJson or Rights.Wire.basePrimeJsonR: Norms.Replay.baseEnvironmentJson of the request environment, with the decision predicates and the unsaid predicates added."
     [
       obj,
-      .required ["id", "status", "order", "background", "premises", "conflict_targets", "fragment", "fill", "unspecified", "unsaid", "reached", "fragment_fill"],
+      .required ["language", "profiles", "spec_revision", "vocabulary"],
       closed [
-        ("id", ref "common.json#/$defs/id_ok"),
-        ("status", constS "ok"),
-        ("order", ref "common.json#/$defs/strings"),
-        ("background", ref "common.json#/$defs/norms_background"),
-        ("premises", ref "common.json#/$defs/layer_premises"),
-        ("conflict_targets", ref "common.json#/$defs/conflict_targets"),
-        ("fragment", .type ["boolean"]),
-        ("fill", n [
-          arr,
-          .items (n [
+        ("language", n [str, .equals "/environment/language"]),
+        ("profiles", ref "common.json#/$defs/strings"),
+        ("spec_revision", n [str, .equals "/environment/spec_revision"]),
+        ("vocabulary", n [
+          obj,
+          .required ["sorts", "predicates", "constants"],
+          closed [
+            ("sorts", n [obj, .equals "/environment/vocabulary/sorts"]),
+            ("constants", n [obj, .equals "/environment/vocabulary/constants"]),
+            ("predicates", n [
               obj,
-              .required ["generator", "ast"],
-              closed [("generator", constS "fill"), ("ast", ref "common.json#/$defs/generated_formula")]])]),
-        ("unspecified", ref "common.json#/$defs/strings"),
-        ("unsaid", n [
-          arr,
-          .items (n [
-              obj,
-              .required ["name", "sorts"],
-              closed [
-                ("name", n [str, .pattern (Re.prefixes ["unsaid__"])]),
-                ("sorts", ref "common.json#/$defs/strings")]])]),
-        ("reached", n [
-          arr,
-          .items (n [
-              obj,
-              .required ["predicate", "sorts", "ast"],
-              closed [
-                ("predicate", str),
-                ("sorts", ref "common.json#/$defs/strings"),
-                ("ast", ref "common.json#/$defs/generated_formula")]])]),
-        ("fragment_fill", .type ["boolean"])]]
+              .object [] (some (n [obj, .required ["arguments"], props [("arguments", ref "common.json#/$defs/strings")]]))])]])]]
+
+def layered_elaborate : Shape :=
+  c
+    "NormDefaults.Wire.layeredElaborate (the soft and rights branches): regeneratedU of fill U, then the soft and rights layer premises of the route's base, its environment id and document hash, and its base environment."
+    [
+      obj,
+      .required (elaborateRequired ++ ["soft", "rights", "environment_id", "document_hash", "base_environment"]),
+      closed (elaborateFields ++ [
+        ("soft", ref "common.json#/$defs/labelled_list"),
+        ("rights", ref "common.json#/$defs/labelled_list"),
+        ("environment_id", str),
+        ("document_hash", str),
+        ("base_environment", ref "#/$defs/base_environment")])]
+
+def report_line : Shape :=
+  c
+    "NormDefaults.Wire.LineU.toJson: one regulated predicate's lines (spec 3.2); `witness` (NormDefaults.Wire.WitnessRow.toJson: the tuple's entity ids and every unsaid table of the checked filled situation) exactly on a reachable line."
+    [
+      obj,
+      .required ["predicate", "completion", "reached", "lines", "inherits_from"],
+      closed [
+        ("predicate", str),
+        ("completion", enumS ["deny", "allow", "unspecified"]),
+        ("reached", enumS ["none", "reachable", "unknown"]),
+        ("lines", ref "common.json#/$defs/strings"),
+        ("inherits_from", ref "common.json#/$defs/strings"),
+        ("witness", n [
+          obj,
+          .required ["tuple", "filling"],
+          closed [
+            ("tuple", ref "common.json#/$defs/strings"),
+            ("filling", n [obj, .object [] (some (n [arr, .items (ref "common.json#/$defs/strings")]))])]])]]
+
+def report_row : Shape :=
+  c "NormDefaults.Wire.ReportG.toJson (norm-defaults-report): the lines of every regulated predicate, the residual and the findings." [
+    obj,
+    .required ["id", "status", "report", "residual", "findings"],
+    closed [
+      ("id", ref "common.json#/$defs/id_ok"),
+      ("status", constS "ok"),
+      ("report", n [arr, .items (ref "#/$defs/report_line")]),
+      ("residual", n [
+        obj,
+        .required ["gaps", "ungrounded_defaults"],
+        closed [("gaps", ref "common.json#/$defs/strings"), ("ungrounded_defaults", ref "common.json#/$defs/nat")]]),
+      ("findings", ref "common.json#/$defs/strings")]]
 
 def status : Shape :=
   c "NormDefaults.Run.runOtherCase norm-defaults-status: the requested predicate's point status." [
@@ -138,13 +208,14 @@ def «row» : Shape :=
       ref "common.json#/$defs/route_path_error",
       .select [
         (ref "#/$defs/kind/admission", ref "common.json#/$defs/admission"),
-        (ref "#/$defs/kind/norm-defaults-elaborate", ref "#/$defs/elaborate"),
+        (ref "#/$defs/kind/norm-defaults-elaborate", .anyOf [ref "#/$defs/elaborate", ref "#/$defs/layered_elaborate"]),
         (.allOf [ref "#/$defs/kind/norm-defaults-conflict", .required ["witness"]], ref "common.json#/$defs/witness_conflict"),
         (ref "#/$defs/kind/norm-defaults-conflict", ref "common.json#/$defs/packages_conflict"),
         (ref "#/$defs/kind/norm-defaults-status", ref "#/$defs/status"),
         (.allOf [ref "#/$defs/kind/norm-defaults-gaps", .required ["model"]], ref "#/$defs/gaps_model"),
         (ref "#/$defs/kind/norm-defaults-gaps", ref "#/$defs/gaps"),
-        (ref "#/$defs/kind/norm-defaults-certificate", ref "#/$defs/certificate")]]),
+        (ref "#/$defs/kind/norm-defaults-certificate", ref "#/$defs/certificate"),
+        (ref "#/$defs/kind/norm-defaults-report", ref "#/$defs/report_row")]]),
     ((.bool true), ref "norms.json#/row")]
 
 def file : File where
@@ -155,9 +226,13 @@ def file : File where
     ("norm_defaults_path", .schema norm_defaults_path),
     ("kind", kind),
     ("elaborate", .schema elaborate),
+    ("base_environment", .schema base_environment),
+    ("layered_elaborate", .schema layered_elaborate),
     ("status", .schema status),
     ("gaps_model", .schema gaps_model),
     ("gaps", .schema gaps),
-    ("certificate", .schema certificate)]
+    ("certificate", .schema certificate),
+    ("report_line", .schema report_line),
+    ("report_row", .schema report_row)]
 
 end ResponseShape.Schemas.NormDefaults
