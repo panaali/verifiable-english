@@ -200,6 +200,14 @@ theorem ty_rename (hE : envSub E E2) {L L2 : Lexicon} {A : Nat} (hA : InDom E A)
     rw [if_pos hA, if_pos hA]
   · rw [rename_prop hs, ty_propertyNt hs, ty_propertyNt (valueSorts_sub hE s hs)]
 
+theorem rename_id : ∀ (X : Sym Terminal), Sym.rename (fun A => A) X = X
+  | .t _ => rfl
+  | .n _ => rfl
+
+theorem map_rename_id : ∀ (xs : List (Sym Terminal)), xs.map (Sym.rename fun A => A) = xs
+  | [] => rfl
+  | x :: xs => by rw [List.map_cons, rename_id, map_rename_id xs]
+
 theorem map_rename_small : ∀ (xs : List (Sym Terminal)), (∀ A, Sym.n A ∈ xs → A < ntProperty) →
     xs.map (Sym.rename (propRename E E2)) = xs
   | [], _ => rfl
@@ -863,6 +871,12 @@ theorem fixedActs_size (profiles : List String) : (fixedActs profiles).size = (f
 theorem fixedRules_size (profiles : List String) : (fixedRules profiles).size = (fixedTable profiles).size := by
   unfold fixedRules
   simp
+
+theorem fixedRules_base {profiles : List String} (h : profiles = ["relational-fol@0"]) :
+    fixedRules profiles = relationalFolRows.mapIdx fun i r =>
+      { lhs := r.lhs, rhs := r.rhs, act := i, tag := r.tag } := by
+  subst h
+  rfl
 
 /-- A fixed row names only the catalogue's nonterminals. -/
 def fixedSmall (r : FixedRow) : Bool := decide (r.lhs < ntProperty) && symsSmall r.rhs

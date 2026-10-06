@@ -16,7 +16,7 @@ pub use order::order_case;
 pub use risk::{Range as RiskRange, evaluate_risk_condition, regenerate_risk_cells};
 pub use route::{check_label, check_reading_binding, label_is_canonical};
 pub use search::{
-    CountermodelCheck, CountermodelProblem, SearchBounds, SearchResult, find_countermodel,
+    CandidateIterator, CountermodelCheck, CountermodelProblem, SearchBounds, SearchResult, find_countermodel,
     find_countermodel_min, find_countermodel_with_nonvacuity, find_distinguishing_model,
     find_distinguishing_model_with_nonvacuity,
 };

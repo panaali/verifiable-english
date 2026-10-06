@@ -46,6 +46,8 @@ DEADLINE_NAME = re.compile(r"(TIMEOUT|_SECONDS)$")
 INJECTED = {
     # Product: reaping a service process that was asked to stop, then killed.
     "ve/backends/lean_service.py::_stop": "reaps a process already signalled (2 s) or killed (10 s)",
+    "ve/backends/rust_jsonl.py::_failure": "reaps a checker process that ended its output or stopped reading",
+    "ve/backends/rust_jsonl.py::close": "reaps a checker process already killed",
     # Event polls bounded by HANG_TIMEOUT: a marker file, a lock, a killed process group.
     "tests/conftest.py::_stop_build_group": "polls /proc for a process group already sent SIGKILL",
     "tests/test_native_build_lock.py::_wait_for": "polls for a marker file, bounded by HANG_TIMEOUT",

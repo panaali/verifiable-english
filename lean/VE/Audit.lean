@@ -58,6 +58,8 @@ import VE.SpeechActs.Answer
 import VE.SpeechActs.Consequence
 import VE.SpeechActs.Wire
 import VE.SpeechActs.Run
+import VE.SpeechActs.Source.Run
+import VE.SpeechActs.Source.Admission.Run
 import VE.SoftNorms.Run
 import VE.Rights.Run
 import VE.Attribution.Content
@@ -123,6 +125,8 @@ import VE.NormDefaults.Routes
 import VE.NormDefaults.Wire
 import VE.NormDefaults.Examples
 import VE.NormDefaults.Replay
+import VE.NormDefaults.Report
+import VE.NormDefaults.Layered
 import VE.NormDefaults.Admission
 import VE.NormDefaults.Run
 import VE.Readings.Doc
@@ -1392,6 +1396,29 @@ import VE.EnglishGrammar.Run
 #print axioms VE.SpeechActs.Wire.decoded_active_commands
 #print axioms VE.SpeechActs.Wire.decoded_premises
 #print axioms VE.SpeechActs.Run.speech_wire_conflict_free_sound
+#print axioms VE.SpeechActs.Source.source_retained
+#print axioms VE.SpeechActs.Source.coverage_partition
+#print axioms VE.SpeechActs.Source.answers_sound
+#print axioms VE.SpeechActs.Source.query_records_sound
+#print axioms VE.SpeechActs.Source.gap_records_sound
+#print axioms VE.SpeechActs.Source.external_records_sound
+#print axioms VE.SpeechActs.Source.Admission.normsSource_D
+#print axioms VE.SpeechActs.Source.Admission.admitNodes_ok
+#print axioms VE.SpeechActs.Source.Admission.answerPremiseClaims_formulas
+#print axioms VE.SpeechActs.Source.Admission.eq_of_map_nodup
+#print axioms VE.SpeechActs.Source.Admission.admissible_En
+#print axioms VE.SpeechActs.Source.Admission.bindings_withheld
+#print axioms VE.SpeechActs.Source.Admission.active_commands
+#print axioms VE.SpeechActs.Source.Admission.report_sound
+#print axioms VE.SpeechActs.Source.Admission.certificates_bound
+#print axioms VE.SpeechActs.Source.Admission.leaves_admitted
+#print axioms VE.SpeechActs.Source.Admission.reportAdmitted
+#print axioms VE.SpeechActs.Source.Admission.certifiedAnswer_entailed
+#print axioms VE.SpeechActs.Source.Admission.answerLeaf_entailed
+#print axioms VE.SpeechActs.Source.Admission.report_consequence
+#print axioms VE.SpeechActs.Source.Admission.records_sound
+#print axioms VE.SpeechActs.Source.Admission.runAdmission_sound
+#print axioms VE.SpeechActs.Source.speech_wire_acceptance
 #print axioms VE.SoftNorms.Admission.admitDocument_spec
 #print axioms VE.SoftNorms.Admission.admitNodes_ok
 #print axioms VE.SoftNorms.Admission.layerLeaf_formula
@@ -2161,6 +2188,13 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Service.coding_error
 #print axioms VE.Service.rejectionCode_mem
 #print axioms VE.Service.respond_decoded
+#print axioms VE.Service.expand_plain
+#print axioms VE.Service.expand_hit
+#print axioms VE.Service.expand_miss
+#print axioms VE.Service.expandCases_unexpanded
+#print axioms VE.Service.register_none
+#print axioms VE.Service.registerOne_digest
+#print axioms VE.Service.registerOne_ok
 #print axioms VE.Risk.termSum_cons
 #print axioms VE.Risk.termSum_nil
 #print axioms VE.Risk.termSum_append
@@ -3164,6 +3198,17 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.NormDefaults.Wire.normDefaults_wire_status_sound
 #print axioms VE.NormDefaults.Wire.normDefaults_wire_witness_sound
 #print axioms VE.NormDefaults.Wire.targetU_refutes
+#print axioms VE.NormDefaults.Wire.grounding_ungrounded_iff
+#print axioms VE.NormDefaults.Wire.reachedSome_of_fill
+#print axioms VE.NormDefaults.Wire.ReachedData.reachedSome
+#print axioms VE.NormDefaults.Wire.admissibleX_of_fill
+#print axioms VE.NormDefaults.Wire.report_sound
+#print axioms VE.NormDefaults.Wire.normDefaults_wire_report_sound
+#print axioms VE.NormDefaults.Wire.layered_cert_sound
+#print axioms VE.NormDefaults.Wire.target_not_conflictFree
+#print axioms VE.NormDefaults.Wire.layered_conflict_sound
+#print axioms VE.NormDefaults.Wire.FilledX.admissible
+#print axioms VE.NormDefaults.Wire.layered_report_sound
 #print axioms VE.NormDefaults.canonO
 #print axioms VE.NormDefaults.gap_of_kleene
 #print axioms VE.NormDefaults.notreq_of_notperm
@@ -4272,6 +4317,9 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.EnglishGrammar.propRename_inj
 #print axioms VE.EnglishGrammar.lexRows_dom
 #print axioms VE.EnglishGrammar.grammar_extension
+#print axioms VE.EnglishGrammar.fixedRules_base
+#print axioms VE.EnglishGrammar.rename_id
+#print axioms VE.EnglishGrammar.map_rename_id
 #print axioms VE.EnglishGrammar.unstaged_fixed
 #print axioms VE.EnglishGrammar.ty_catalogue
 #print axioms VE.EnglishGrammar.ty_property
