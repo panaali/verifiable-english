@@ -43,7 +43,7 @@ case kind, or a rights unit in the document. -/
 def usesRightsPath (j : Json) : Bool :=
   let env := j.getObjValD "environment"
   let profile := match env.getObjValD "profiles" with
-    | .arr ps => ps.toList.contains (.str rightsProfile)
+    | .arr ps => ps.toList.any (·.getStr?.toOption == some rightsProfile)
     | _ => false
   let block := ((env.getObjValD "vocabulary").getObjVal? "rights").toBool
   let kind := match j.getObjValD "kind" with
@@ -74,6 +74,31 @@ def generatedKeys (D : RightsDoc) : List Json :=
       ("kind", .str "cond"), ("limitation", .str k.1), ("act", .str k.2.1), ("condition", .str k.2.2)]) ++
   (if D.bars = [] then [] else (barPreds D).map (fun m => Json.mkObj [("name", .str (aimedName (barIndex D m))),
       ("kind", .str "aimed"), ("predicate", .str m)]))
+
+/-- The fixed English wording of a generated rights predicate. -/
+def conjugatedAct (phrase : String) : String :=
+  match phrase.splitOn " " with
+  | head :: verb :: rest =>
+    if head != "{0}" then phrase else
+    let stem := verb.dropRight 1
+    let ending := if verb == "be" then "is"
+      else if verb == "have" then "has"
+      else if verb == "do" then "does"
+      else if verb == "go" then "goes"
+      else if ["s", "x", "z", "ch", "sh", "o"].any verb.endsWith then verb ++ "es"
+      else if verb.endsWith "y" && !(stem.toList.getLast?.map (fun c => ("aeiou".toList.contains c))).getD true
+        then stem ++ "ies"
+      else verb ++ "s"
+    String.intercalate " " (["{0}", ending] ++ rest)
+  | _ => phrase
+
+def generatedWordings (D : RightsDoc) : Json := Json.mkObj <|
+  (limKeys D).map (fun k => (limName ((limKeys D).idxOf k + 1),
+    .str s!"limitation {limDisplay D k.1} holds where {conjugatedAct (actPhrase D k.2)}")) ++
+  (condKeys D).map (fun k => (condName ((condKeys D).idxOf k + 1),
+    .str s!"{condVerbalisation D k.1 k.2.2} where {conjugatedAct (actPhrase D k.2.1)}")) ++
+  (if D.bars == [] then [] else (barPreds D).map (fun m =>
+    (aimedName (barIndex D m), .str s!"{conjugatedAct (actPhrase D m)} aimed at the destruction of a right")))
 
 def nodeJson (X : SoftNode) : Json :=
   Json.mkObj [("name", .str X.name), ("predicate", .str X.pred), ("sign", .bool X.sign),
@@ -117,6 +142,7 @@ def regenerated (D : RightsDoc) (environment : Json) : List (String × Json) :=
   let soft := VE.SoftNorms.Wire.regenerated (correlate D) environment
   [("environment_prime", (primeJsonR D environment).toOption.getD .null),
    ("generated", Json.arr (generatedKeys D).toArray),
+   ("wordings", generatedWordings D),
    ("lines", Json.arr ((linesOf D).map (lineJson D)).toArray),
    ("limitations", Json.arr ((limPremisesLabelled D).map (fun (l, a) =>
       Json.mkObj [("label", .str l), ("ast", enc a)])).toArray),
@@ -127,6 +153,47 @@ def regenerated (D : RightsDoc) (environment : Json) : List (String × Json) :=
    ("distinction", distinctionJson D),
    ("findings", Json.arr ((noDistinction D).map (fun f => Json.str f.text)).toArray)] ++
   soft.filter (fun kv => kv.1 != "environment_prime")
+
+/-! ## Status of rights source units -/
+
+def nodeOpen (openNames : List String) (N : SoftNode) : Bool :=
+  N.mode == .default || !N.alterable.isEmpty ||
+    (VE.Norms.preds N.guard).any openNames.contains ||
+    N.carveOuts.any (fun f => (VE.Norms.preds f).any openNames.contains)
+
+def sourceRuleNames (line : Json) : List String :=
+  ["norm", "liberty", "recognition"].filterMap (fun field =>
+    ((line.getObjValD field).getObjValD "name").getStr?.toOption)
+
+def unitRuleNames (unit : Json) : List String :=
+  let body := if (unit.getObjVal? "right").toBool then unit.getObjValD "right"
+              else unit.getObjValD "right_lines"
+  match body.getObjValD "lines" with
+  | .arr lines => lines.toList.flatMap sourceRuleNames
+  | _ => []
+
+def lineSourceName (N : Line) : String :=
+  match N.ikind with
+  | .powerLiberty => (N.source.liberty.map (·.name)).getD ""
+  | .powerRecognition => (N.source.recognition.map (·.name)).getD ""
+  | _ => (N.source.norm.map (·.name)).getD ""
+
+def unitOpen (D : RightsDoc) (openNames : List String) (unit : Json) : Bool :=
+  if (unit.getObjVal? "limitation").toBool || (unit.getObjVal? "bar").toBool then true
+  else if (unit.getObjVal? "norm").toBool then
+    let name := ((unit.getObjValD "norm").getObjValD "name").getStr?.toOption.getD ""
+    (outsideRules D).any (fun n => n.name == name && nodeOpen openNames n)
+  else
+    let names := unitRuleNames unit
+    (linesOf D).any (fun (_, line) => names.contains (lineSourceName line) &&
+      (nodeOpen openNames (nodeOf D line) || !(scopeLimits D line).isEmpty ||
+        (D.bars != [] && (line.ikind == .liberty || line.ikind == .powerLiberty))))
+
+def unitStatuses (D : RightsDoc) (openNames : List String) (document : Json) : Json :=
+  let names := openNames ++ (genEntries D).map (·.1) ++ VE.SoftNorms.decisionNames (correlate D)
+  match document with
+  | .arr units => toJson (units.toList.map (unitOpen D names))
+  | _ => toJson ([] : List Bool)
 
 /-! ## Projections on a finite base model -/
 
@@ -281,8 +348,13 @@ def runRightsKind (id kind : String) (j : Json) : Except String Json := do
     return ← runAdmission id (← j.getObjVal? "environment") (← j.getObjVal? "document")
   if kind == "rights-elaborate" then
     let environment ← j.getObjVal? "environment"
-    let src ← decodeRightsSource environment (j.getObjValD "document")
-    return VE.Route.Wire.ok id (regenerated src.D environment)
+    let document ← j.getObjVal? "document"
+    let src ← decodeRightsSource environment document
+    let openNames ← match j.getObjVal? "open_predicates" with
+      | .ok value => VE.Bridge.strings value
+      | .error _ => pure []
+    return VE.Route.Wire.ok id (regenerated src.D environment ++
+      [("unit_open", unitStatuses src.D openNames document)])
   if kind == "rights-projections" then
     let src ← decodeRightsSource (← j.getObjVal? "environment") (j.getObjValD "document")
     return VE.Route.Wire.ok id (← projectionsResult src j)

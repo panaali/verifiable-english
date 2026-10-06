@@ -1,0 +1,49 @@
+{
+ "wall_s": 333.22,
+ "python_cpu_s": 211.75,
+ "children_cpu_s": 0.0,
+ "ops": {
+  "admission": {
+   "calls": 42,
+   "p50_ms": 15.693,
+   "p95_ms": 53.802,
+   "total_s": 1.18
+  },
+  "certificate": {
+   "calls": 41,
+   "p50_ms": 19.431,
+   "p95_ms": 1109.264,
+   "total_s": 6.91
+  },
+  "countermodel": {
+   "calls": 35,
+   "p50_ms": 6.258,
+   "p95_ms": 4075.84,
+   "total_s": 24.13
+  },
+  "elaborate": {
+   "calls": 11375,
+   "p50_ms": 3.505,
+   "p95_ms": 18.602,
+   "total_s": 72.71
+  },
+  "environment": {
+   "calls": 584,
+   "p50_ms": 1.515,
+   "p95_ms": 6.865,
+   "total_s": 1.38
+  },
+  "meaning_id": {
+   "calls": 62,
+   "p50_ms": 7.836,
+   "p95_ms": 18.984,
+   "total_s": 0.48
+  },
+  "prove": {
+   "calls": 724,
+   "p50_ms": 152.46,
+   "p95_ms": 1199.261,
+   "total_s": 226.36
+  }
+ }
+}

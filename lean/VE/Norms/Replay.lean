@@ -28,6 +28,17 @@ def targets (D : Doc) : List (String × List String × VE.Formula) :=
   (syms D.T).filterMap (fun | .reg r => some (r.name, r.sorts, conflict D r) | .defn _ => none) ++
     (pairs D.T).map (fun pr => (pr.req ++ "->" ++ pr.perm, pr.sorts, pairConflict D pr))
 
+theorem targetsIn_eq (D : Doc) : targetsIn D (layersOf D) = targets D := by
+  simp only [targetsIn, targets, layersOf_syms, conflictIn_eq, pairConflictIn_eq]
+  all_goals rfl
+
+/-- `targets` with the layers computed once (`VE.Norms.LayersOnce`, lean-first batch 7 review B1). -/
+def targetsOnce (D : Doc) : List (String × List String × VE.Formula) := targetsIn D (layersOf D)
+
+/-- Compiled code after this point, here and in every importer, builds the targets with `targetsOnce`. -/
+@[csimp] theorem targets_eq_once : @targets = @targetsOnce :=
+  funext fun D => (targetsIn_eq D).symm
+
 /-- `∀x̄. ¬conflict`, the certified conclusion of a target. -/
 def targetConclusion (t : String × List String × VE.Formula) : VE.Formula :=
   bindAll t.2.1 (.not t.2.2)

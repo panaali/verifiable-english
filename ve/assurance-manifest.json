@@ -33,9 +33,11 @@
     "python:argument-diagnostics": "CheckerConflict, ContradictoryPremises, Incomplete, ResourceLimit and InvalidInput statuses; display that asserts no consequence"
   },
   "reviewed_broad_handlers": {
+    "ve/environment.py:Environment.__init__": "W6 environments: Lean's check mode accepts first (its rejection is raised before the handler); a Python failure constructing an environment Lean accepted becomes CheckerUnavailable, never a verdict (LEAN-FIRST-PLAN.md rule 2)",
     "ve/document.py:load_document": "CheckerUnavailable is re-raised first; a @2 document Lean rejected raises Lean's diagnostic before Python loads it, and a Python failure on one Lean admitted becomes CheckerUnavailable (unavailable_report), never a Python verdict",
     "ve/document.py:_check_document": "CheckerUnavailable is re-raised first; a Python failure reporting a @2 document Lean admitted becomes CheckerUnavailable (unavailable_report), never a verdict",
     "ve/reports.py:ReportsDocument.__init__": "a Lean accepted reports environment that Python cannot construct becomes CheckerUnavailable; no report status or verdict is returned",
+    "ve/rights.py:RightsDocument.__init__": "Lean accepts the rights source before Python constructs display and search containers; any container construction failure is CheckerUnavailable, never a Python rights verdict",
     "ve/__main__.py:_main": "display only: an English rendering of an already computed record is omitted (`display_omitted`); the verdict fields are untouched",
     "ve/assist/api.py:call_tool": "CheckerUnavailable is caught first and keeps its code; other RuntimeErrors are logged as a rejected BackendError call, never a verdict",
     "ve/assist/cli.py:main": "CheckerUnavailable, raised or returned in an action or tool result (exit_code), exits 5 and the action is not saved; other failures print an error and exit 2",
@@ -47,15 +49,15 @@
     "ve/assist/session.py:AssistSession.apply": "CheckerUnavailable is caught with VEError and keeps its code; other RuntimeErrors are logged as BackendError",
     "ve/assist/session.py:AssistSession.paraphrase_formula": "display only: falls back to the canonical rendering",
     "ve/backends/lean_service.py:LeanServicePool.run_bound.worker": "captures a worker error and re-raises it in request order after every worker joins; never converts it into a result",
-    "ve/backends/dispatch.py:_shadow": "shadow authority only (execute and shadowed): the Python result is returned (a Python exception is re-raised unchanged); a candidate backend exception, CheckerUnavailable included, is only recorded as a shadow difference and never becomes the returned verdict",
     "ve/natural.py:render_natural_sentence": "display only: selects an English wording whose one-reading audit passes",
     "ve/printer.py:natural_document": "display only: retries with a different wording and re-raises when that fails too",
     "ve/search.py:_models_with_terminal_error": "buffers a terminal model-stream error for every scoped reader, which re-raises the original error before reporting a verdict",
     "ve/softnorms_contract.py:public_rejection": "diagnosis runs only after the legacy soft validator rejects; a diagnosis failure returns the same error, leaving its verdict, code and original text intact",
-    "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
+    "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome",
+    "ve/backends/dispatch.py:_shadow": "shadow authority only (execute and shadowed): the Python result is returned (a Python exception is re-raised unchanged); a candidate backend exception, CheckerUnavailable included, is only recorded as a shadow difference and never becomes the returned verdict"
   },
   "lean_decoders": {
-    "total_lines": 21796,
+    "total_lines": 22267,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -180,7 +182,7 @@
       {
         "file": "lean/VE/Bridge.lean",
         "lines": 282,
-        "sha256": "967a6ee399612d1b8b88c0f8d36c29a2d88ec7136c0c5f7bd9b42f312d01d318",
+        "sha256": "2d4e432b9698b07722d2a5f494cdf3797f14ab5036068fd31faaca8fb5a95d64",
         "ranges": [
           [
             14,
@@ -226,7 +228,7 @@
       {
         "file": "lean/VE/Closure/Bridge.lean",
         "lines": 99,
-        "sha256": "9711c23a178688eadab849f89912cc5f3f9dea032018d76c5ae870130cd54a1b",
+        "sha256": "b9c7a15be6bbfd183b22452774e118d0e95e617f52437fc1e3a928a6590b46f3",
         "ranges": [
           [
             9,
@@ -290,12 +292,12 @@
       },
       {
         "file": "lean/VE/EnglishGrammar/Encode.lean",
-        "lines": 139,
-        "sha256": "5fd6c65cffd9bb85b6cbd47a5069b68702599e4454399c16f8044538dd24f223",
+        "lines": 297,
+        "sha256": "92446de419ef1e59c22dc2c9a773df524d7f2b8a411f24ad0ce39f564bdff419",
         "ranges": [
           [
             1,
-            139
+            297
           ]
         ],
         "declarations": [
@@ -305,29 +307,31 @@
           "optFields",
           "Env.decode"
         ],
-        "reason": "english-lean S2 (docs/spec/english-lean-s2.md 2.3, 2.10): Env.decode reads the environment and an English vocabulary overlay into the reader's Env; typedDocument decides check_document's verdict through the standalone typing service's decoders; the full file is pinned conservatively"
+        "reason": "english-lean S2 (docs/spec/english-lean-s2.md 2.3, 2.10): Env.decode reads the environment and an English vocabulary overlay into the reader's Env; typedDocument decides check_document's verdict through the standalone typing service's decoders; S3 extends the same trusted decoder with profile symbols, forms and typing views (docs/spec/english-lean-s3.md 2.3); the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/EnglishGrammar/Run.lean",
-        "lines": 331,
-        "sha256": "1e0d02fad48418a1daaa74c0614ee0f2b9fa4161680cf2b682a4665780435ccb",
+        "lines": 393,
+        "sha256": "1e5db6b062d6366ffcf70600e1f676a693b1974c539669d72eda810cb3d31373",
         "ranges": [
           [
             1,
-            331
+            393
           ]
         ],
         "declarations": [
           "pairs",
           "triples",
           "decodeLexicon",
+          "blockRouteView",
+          "validateDeclarations",
           "environmentId",
           "grammarId",
           "decodeCase",
           "readCase",
           "grammarCase"
         ],
-        "reason": "english-lean S2.4 (docs/spec/english-lean-s2.md 2.10, 4.3, 4.4): ve_english_route decodes the case (environment through Env.decode, overlay, the ve.english-lexicon@1 lexicon, which must name the environment), computes the six identities and writes the english.read and english.grammar answers; shadow only while english.admission keeps authority python; the full file is pinned conservatively"
+        "reason": "english-lean S2.4 (docs/spec/english-lean-s2.md 2.10, 4.3, 4.4): ve_english_route decodes the case (environment through Env.decode, overlay, the ve.english-lexicon@1 lexicon, which must name the environment), computes the six identities and writes the english.read and english.grammar answers; shadow only while english.admission keeps authority python; S3 validates alternatives and risk profile environments at the reader boundary (docs/spec/english-lean-s3.md 2.3); the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Json.lean",
@@ -406,7 +410,6 @@
           "decodeFilling",
           "replayStatus",
           "replayGaps",
-          "reachedFromU",
           "replayReached"
         ],
         "reason": "norm-defaults@0 witness, status and gap decoder; the full file is pinned conservatively"
@@ -444,7 +447,7 @@
         ],
         "declarations": [
           "placeholderJson",
-          "checkAuthorN",
+          "checkAuthor",
           "decodeSourceU",
           "baseEnvironmentJsonU",
           "decodePackageU",
@@ -491,16 +494,16 @@
       },
       {
         "file": "lean/VE/Norms/Replay.lean",
-        "lines": 393,
-        "sha256": "dfc40bd4fb007d06107833999c5c8413e623a6e096e4d7b93c4023e999f50eea",
+        "lines": 404,
+        "sha256": "741968e0457a1e196589f05d7c26580a2dddbbec765a29b252eec476b02cd14b",
         "ranges": [
           [
-            92,
-            140
+            103,
+            151
           ],
           [
-            272,
-            291
+            283,
+            302
           ]
         ],
         "declarations": [
@@ -512,12 +515,12 @@
       },
       {
         "file": "lean/VE/Norms/Wire.lean",
-        "lines": 314,
-        "sha256": "9e2638cc83529162bd8fff6c6927fa1a82e407149483e9978b14b735ff8b1d31",
+        "lines": 331,
+        "sha256": "608bb613cc6a3490a5f523c48c0dac2f02e2672ffe81e73343b38b5fad2c8371",
         "ranges": [
           [
             25,
-            313
+            330
           ]
         ],
         "declarations": [
@@ -627,12 +630,12 @@
       },
       {
         "file": "lean/VE/Rights/Wire.lean",
-        "lines": 698,
-        "sha256": "fc25e57bed1adf2d72edcf7c0cd20409b427829d7eb5838028422151ca02e82f",
+        "lines": 696,
+        "sha256": "858495e911e81693547aba6fea1bb0cb3cceedcb23c9620380316b7b61389b4a",
         "ranges": [
           [
             1,
-            698
+            696
           ]
         ],
         "declarations": [
@@ -821,6 +824,47 @@
         ]
       },
       {
+        "file": "lean/VE/Senses/Decode.lean",
+        "lines": 93,
+        "sha256": "5f0f5265fe8d81f015e7b7cf2e038b5f0d2065c3f806c485d3365b800dbe678e",
+        "ranges": [
+          [
+            1,
+            93
+          ]
+        ],
+        "declarations": [
+          "checkFields",
+          "natOf",
+          "decodeSense",
+          "decodePackSort",
+          "decodePack",
+          "decodePackText",
+          "dictionaryId"
+        ],
+        "reason": "senses pack decoder over the restricted JSON boundary and dictionary_id over re-encoded packs; W1 to W7 are Dictionary.failures; called by the senses runner; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Senses/Run.lean",
+        "lines": 144,
+        "sha256": "7015a002b04ead4c27462cda1a59f2d36c17165b713bc2d945fce72285952303",
+        "ranges": [
+          [
+            1,
+            144
+          ]
+        ],
+        "declarations": [
+          "decodeDictionary",
+          "faultFields",
+          "s2Fields",
+          "outcomeJson",
+          "readCase",
+          "runCaseReported"
+        ],
+        "reason": "senses admission runner: exact request fields, restricted pack decoder, and response rows (units with their sentence and state, sense faults with their arguments, S2 outcomes with S2's fields); the full file is pinned conservatively"
+      },
+      {
         "file": "lean/VE/Service/Family.lean",
         "lines": 817,
         "sha256": "e1e00be4379626252de90286a857d800f98086bf48b734093ab6d0e8d0f546c0",
@@ -956,12 +1000,12 @@
       },
       {
         "file": "lean/VE/SoftNorms/Wire.lean",
-        "lines": 462,
-        "sha256": "641a13b4cd6917aad8444951d4ea4e89da0afd5ba10706a2bb0c62aa8caf0ce4",
+        "lines": 461,
+        "sha256": "0669c3cb696602de5b74730259a7c4ec34181af76bd0c7e88f0a3f4ef4b01bac",
         "ranges": [
           [
             1,
-            462
+            461
           ]
         ],
         "declarations": [
@@ -1053,7 +1097,7 @@
       {
         "file": "lean/VE/Time/Wire.lean",
         "lines": 843,
-        "sha256": "7f9c8b54dc820197ad0e59033763a063ed75ff728542fcf094dc93bc5059f925",
+        "sha256": "43eff830ca8c106715f61eb50f957eb8103ab40336f251947f956dd3464aebd4",
         "ranges": [
           [
             1,
@@ -1077,9 +1121,6 @@
       "lean/VE/Discourse/Theorems.lean": "lean:discourse-wire: statements about the discourse wire decoder (getObjValD_ok) and the profile adapter; no runtime JSON handling",
       "lean/VE/Audit.lean": "audit manifest only: #print axioms of theorem names containing a JSON accessor name (VE.Discourse.getObjValD_ok); no JSON handling",
       "lean/VE/Norms/FlaggedSpec.lean": "statements about the norms conflict replay and Norms.Run.runCase answers (getObjValD of the case and the verdict field) and decoder rejection lemmas; no runtime JSON handling",
-      "lean/VE/Route/WireSound.lean": "statements about the route runners' answers (getObjValD of the case and the valid, refutes and values fields), the family decoders as the runners call them, and decoder rejection lemmas; no runtime JSON handling",
-      "lean/VE/Route/RunSound.lean": "statements about Route.Run.runCase answers (getObjValD of the case's environment and answer fields); no runtime JSON handling",
-      "lean/VE/Norms/RunSound.lean": "statements about Norms.Run.runCase norms-certificate answers (getObjValD of the case and the valid field); no runtime JSON handling",
       "lean/Main.lean": "lean:runner-glue: argument dispatch and result arrays of ve_conformance",
       "lean/VE/Route/Run.lean": "lean:runner-glue: route case dispatch and error rows (route_gate pins the envelope check)",
       "lean/VE/SoftNorms/Run.lean": "lean:runner-glue: ve_soft_norms_route case dispatch and response rows",
@@ -1101,20 +1142,28 @@
       "lean/VE/Order/TableauChecks.lean": "executable regressions (#eval checks); not on any runner path",
       "lean/VE/Route/Checks.lean": "executable regressions (#eval checks); not on any runner path",
       "lean/ResponseDecode.lean": "test-only service response oracle; no executable production path or theorem imports it",
-      "lean/VE/EnglishGrammar/ReadExamples.lean": "fixtures only: #guard checks of docs/spec/english-lean-s2.md section 8 build environment JSON for Env.decode; no runner path",
       "lean/ResponseShape.lean": "the service's response shapes (lib ResponseShape, outside the trusted VE tree): renders the client's schema files and checks responses for ve_response_decode; no runner, executable production path or theorem imports it",
       "lean/ResponseShape/Schemas.lean": "collects the response shapes and renders the client's schema files; test tooling beside lean/ResponseShape.lean, not on any runner path",
-      "lean/ResponseShape/Schemas/Norms.lean": "the norms mode's response shape; reads the case environment only to call Norms.Plain.layered beside its path selector (test tooling, not on any runner path)",
+      "lean/ResponseShape/CaseDeciders.lean": "the runners' tests of the request case that the response shapes select on (CaseDecider.fn calls each runner's own test; the norms one reads the case environment for Norms.Plain.layered); test tooling, not on any runner path",
       "lean/ResponseShape/Skeleton.lean": "the skeletons of the response shapes and Fits, the field-level conformance the encoder theorems prove; JSON only in lemma statements about Json.mkObj and setObjVal! (theorems, not on any runner path)",
       "lean/ResponseShape/FitsTactic.lean": "tactics that build the encoder theorems' proofs, reading Json.mkObj and setObjVal! terms of goals (proof automation, checked by the kernel; not on any runner path)",
       "lean/ResponseShape/Audit.lean": "the dependency audit of the response-shape theorems (#print axioms only); JSON only in theorem names",
+      "lean/ResponseShape/Encoders/Common.lean": "lemmas the encoder theorems share (claims, reports, the case kind a runner read); JSON access only in statements and proofs (not on any runner path)",
+      "lean/ResponseShape/Encoders/Conformance.lean": "theorems that standalone conformance rows fit their response shapes; JSON access only in statements and proofs (not on any runner path)",
+      "lean/ResponseShape/Encoders/Norms.lean": "theorems that norms rows fit their response shapes; JSON access only in statements and proofs (not on any runner path)",
+      "lean/ResponseShape/Encoders/Route.lean": "theorems that the route mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/SoftNorms.lean": "theorems that the soft-norms mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
+      "lean/ResponseShape/Encoders/Rights.lean": "theorems that rights rows and generated predicate entries fit their response shapes; JSON access only in statements and proofs (not on any runner path)",
+      "lean/ResponseShape/Encoders/Risk.lean": "theorems that risk rows fit their response shapes; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/Reports.lean": "theorems that the reports mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/ReadingsRoute.lean": "theorems that the readings-route mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/English.lean": "theorems that the english and diagnose modes' rows fit their shapes; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/Envelope.lean": "theorems that the service's response lines fit envelope.json; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/Alternatives.lean": "theorems that the alternatives mode's rows fit its shape, with the decoded block's taken tied to the case (getObjVal? in statements and proofs only; not on any runner path)",
       "lean/ResponseShape/Encoders/Quantity.lean": "theorems that the quantity mode's rows fit its shape, with value and evaluations tied to the case's model (getObjVal? in statements and proofs only; not on any runner path)",
+      "lean/ResponseShape/Encoders/RiskEval.lean": "theorems that the risk-eval mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
+      "lean/ResponseShape/Encoders/SpeechActs.lean": "theorems that the speech-acts mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
+      "lean/ResponseShape/EnumSites.lean": "lists every enum and const of the response shapes and the fields that resolve to one, for tests/test_enum_domains.py (test tooling; JSON only to print the list and in proof helpers; not on any runner path)",
       "lean/VE/Risk/Eval.lean": "test-only differential harness (risk.md 8.3; service mode risk-eval): decodes its case envelope, then calls the pinned risk decoders; no production path or theorem uses it",
       "lean/VE/Service/EnglishRun.lean": "stage-1 service copy of the English runner; additive dispatch, not yet on an assurance operation path",
       "lean/VE/Service/Protocol.lean": "the service request decoder and dispatcher: each mode is its runner's per-case function, pinned by runMode_* (the statement-layer route modes since lean-first batch 1)",
@@ -1128,7 +1177,14 @@
       "lean/VE/WireContract/Hooks/Corpus.lean": "diagnostic only: no verdict depends on it. Hand-written hooks and view of the engine corpus contracts (docs/spec/wire-contract.md 8.1)",
       "lean/VE/WireContract/Hooks/SoftNorms.lean": "diagnostic only: no verdict depends on it. Hooks, classifiers and the soft_source adapter of the pilot contract soft-norms@0 (docs/spec/wire-contract.md section 6); they call SoftNorms.Phases, Wire.primeVocabulary, validateSoft and checkW1 read-only and only read their results",
       "lean/VE/WireContract/Hooks/Norms.lean": "diagnostic only: no verdict depends on it. Hooks, classifiers and the norm_source adapter of the contract norms@0 (docs/spec/wire-contract-s5.md 2.3, 2.5); they call Norms.Wire.decodeNormsEnvironment, the route's environment decoder, Route.dependencyOrder and Norms.height read-only, never decodeSource, and hold the diagnostic syntax and typing walks of 2.5",
-      "lean/VE/WireContract/Diagnose.lean": "diagnostic only: no verdict depends on it. The ve_diagnose runner: case dispatch through VE.JsonInput.parseCases, the contract registry and response rows (docs/spec/wire-contract.md 4.2)"
+      "lean/VE/WireContract/Diagnose.lean": "diagnostic only: no verdict depends on it. The ve_diagnose runner: case dispatch through VE.JsonInput.parseCases, the contract registry and response rows (docs/spec/wire-contract.md 4.2)",
+      "lean/VE/Route/WireSound.lean": "statements about the route runners' answers (getObjValD of the case and the valid, refutes and values fields), the family decoders as the runners call them, and decoder rejection lemmas; no runtime JSON handling",
+      "lean/VE/Route/RunSound.lean": "statements about Route.Run.runCase answers (getObjValD of the case's environment and answer fields); no runtime JSON handling",
+      "lean/VE/Norms/RunSound.lean": "statements about Norms.Run.runCase norms-certificate answers (getObjValD of the case and the valid field); no runtime JSON handling",
+      "lean/VE/EnglishGrammar/ReadExamples.lean": "fixtures only: #guard checks of docs/spec/english-lean-s2.md section 8 build environment JSON for Env.decode; no runner path",
+      "lean/VE/Senses/Examples.lean": "fixtures only: #guard checks of docs/spec/senses.md section 8 compare projected environment JSON; no runner path",
+      "lean/VE/Senses/Project.lean": "senses projection (docs/spec/senses.md 2.5): builds the projected environment JSON from the validated environment JSON for the admitted reading; this module does not decode JSON",
+      "lean/VE/EnglishGrammar/ProfileExamples.lean": "fixtures only: S3 profile environment and reader #guard checks; no runner path"
     }
   },
   "plan_operations": {
@@ -2684,9 +2740,7 @@
         ]
       },
       "rust": null,
-      "lean_call_sites": [
-        "ve.admission:_lean_quantity_admission"
-      ],
+      "lean_call_sites": [],
       "tests": [
         "tests/test_p0_three_way.py::test_report_identity_binds_environment_and_document",
         "tests/test_p0_three_way.py::test_data_background_deduction_admission_matches_lean",
@@ -3199,6 +3253,99 @@
       "notes": [
         "Recorded conflation, not changed: the Earley wall-clock budget (surface/unambiguity.py EARLEY_SECONDS) reports ResourceLimit, while the migration plan reserves ResourceLimit for deterministic budgets. Changing a public code needs the plan's section-2.3 product decision.",
         "Recorded conflation, not changed: a marked English conclusion whose bounded proof search returns NotFound or ResourceLimit is rejected as SyntaxError (english.py _check_conclusions), so search UNKNOWN surfaces as a rejection; the search result is not replayed there."
+      ]
+    },
+    {
+      "id": "senses.read",
+      "summary": "English with senses (docs/spec/senses.md): the dictionary, the preamble, the projection and the reading, with open units listed",
+      "class": "surface",
+      "authority": "lean-only",
+      "target": "lean",
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "Lean decides every reading (VE.Senses.readWithSenses, nine statements of spec 5.3 proved); the pack decoder and the response encoder are trusted; no intent check and no proof of the text's claims"
+      },
+      "python": [],
+      "outcomes": {
+        "verdict": [
+          "one",
+          "open"
+        ],
+        "unknown": [],
+        "rejection": [
+          "InvalidDictionary",
+          "UnknownWord",
+          "UnknownGloss",
+          "MalformedPreamble",
+          "RepeatedDefault",
+          "PreambleLate",
+          "Collision",
+          "VocabularyLimit",
+          "TooManyCandidates",
+          "CandidatesDiverge",
+          "QuotedSense",
+          "NoDerivation",
+          "Ambiguous",
+          "IllTyped"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
+      "lean": {
+        "bindings": [
+          {
+            "executable": "ve_senses_route",
+            "mode": "",
+            "kinds": [],
+            "response": {
+              "result": "object"
+            },
+            "dispatch": [
+              "lean/SensesMain.lean",
+              "lean/VE/Senses/Run.lean"
+            ]
+          }
+        ],
+        "planned_modes": [],
+        "theorems": [
+          "VE.Senses.senses_resolved_one_reading",
+          "VE.Senses.senses_unit_sound",
+          "VE.Senses.senses_candidate_sound",
+          "VE.Senses.candidates_complete",
+          "VE.Senses.mixed_exact"
+        ],
+        "planned_theorems": [],
+        "decoders": [
+          "lean/VE/Senses/Decode.lean",
+          "lean/VE/Senses/Run.lean"
+        ]
+      },
+      "rust": null,
+      "lean_call_sites": [
+        "ve.backends.senses:read"
+      ],
+      "tests": [
+        "tests/test_senses_route.py::test_spec_reading_fixtures",
+        "tests/test_senses_route.py::test_every_refusal_carries_its_arguments",
+        "tests/test_senses_route.py::test_genuine_response_field_mutations_are_rejected"
+      ],
+      "trusted": [
+        "lean:kernel",
+        "lean:compiler",
+        "lean:decoders",
+        "lean:runner-glue",
+        "python:wire",
+        "python:backend-adapter"
+      ],
+      "notes": [
+        "The relay in ve.backends.senses:read only transports packs and validates the answer's shape and identities; no Python function decides a reading.",
+        "Rust has no senses implementation: the conformance of this operation is spec fixtures against Lean, not three-way.",
+        "The budget class is the reading's status `budget`, with the code PreambleBudget (a preamble line) or Budget (a body sentence)."
       ]
     },
     {

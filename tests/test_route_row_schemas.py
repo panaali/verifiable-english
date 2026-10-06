@@ -335,8 +335,7 @@ def test_a_soft_rejection_with_another_checks_code_breaks_a_lean_invariant(genui
 
 # Objects deliberately open, with why: a predicate declaration of E' echoes the request's (and the
 # generated ones add theirs); its domain is the environment decoder's and the caller compares E' whole.
-# The same holds for the base environment of the norm-defaults soft and rights branches.
-OPEN_ALLOWED = {"common.json#/$defs/environment/properties/vocabulary/properties/predicates/additionalProperties",
+OPEN_ALLOWED = {"common.json#/$defs/environment_predicate",
                 "norm-defaults.json#/$defs/base_environment/properties/vocabulary/properties/predicates/additionalProperties"}
 
 

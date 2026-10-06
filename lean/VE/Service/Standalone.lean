@@ -6,6 +6,8 @@ import VE.Closure.Surface
 import VE.Order.Surface
 import VE.Route.Run
 import VE.Service.TypingDiagnostic
+import VE.Risk.Wire
+import VE.Time.Wire
 
 /-! Standalone service validation and identity endpoints. These wrap the same
 decoders used by the route; successful model answers require a checked model. -/
@@ -81,6 +83,37 @@ def alternativesReduced (environment : Json) : Except String Json := do
   let fields := (← VE.Bridge.fields environment).filter (·.1 != "alternatives")
   pure (((Json.mkObj fields).setObjVal! "profiles" (toJson profiles)).setObjVal! "vocabulary"
     (vocabulary.setObjVal! "predicates" (Json.mkObj (predicates ++ words))))
+
+/-- A `risk@0` environment as typing reads it (docs/spec/english-lean-s3.md 2.3): the risk declarations
+removed exactly as `Risk.Wire.riskNormsView` removes them (the `risk` block, `unit_schema`, `units`, each
+predicate's `argument_units`, each constant's `unit` and `verbalisation`), the `alternatives` block kept, the
+profile dropped, and the severity sort, its classes and the five risk predicates declared with the signatures
+of Python's `Environment` (`ve/environment.py:668–680`). Applied before `alternativesReduced`, while the block
+still names the role sorts. -/
+def riskReduced (environment : Json) : Except String Json := do
+  let ps ← VE.Route.Gate.profilesOf environment
+  let block ← environment.getObjVal? "alternatives"
+  let severity ← (← environment.getObjVal? "risk").getObjVal? "severity"
+  let sort ← VE.Bridge.stringField severity "sort"
+  let classes ← VE.Bridge.strings (← severity.getObjVal? "classes")
+  let action ← VE.Bridge.stringField block "action"
+  let harm ← VE.Bridge.stringField block "harm"
+  let view ← VE.Risk.Wire.riskNormsView environment ps
+  let view := (view.setObjVal! "alternatives" block).setObjVal! "profiles" (toJson (ps.erase "risk@0"))
+  let vocabulary ← view.getObjVal? "vocabulary"
+  let sorts ← VE.Bridge.fields (← vocabulary.getObjVal? "sorts")
+  let constants ← VE.Bridge.fields (← vocabulary.getObjVal? "constants")
+  let predicates ← VE.Bridge.fields (← vocabulary.getObjVal? "predicates")
+  let word := fun (args : List String) => Json.mkObj [("arguments", toJson args),
+    ("description", .str "risk@0 generated word")]
+  let words := [("risk__might_lead_to", word [action, harm]), ("risk__class", word [harm, sort]),
+    ("risk__more_severe", word [sort, sort]), ("risk__or_worse", word [harm, sort]),
+    ("risk__less_worst", word [action, action])]
+  let severityClasses := classes.map fun c => (c, Json.mkObj [("sort", .str sort),
+    ("description", .str "risk severity class")])
+  pure (view.setObjVal! "vocabulary" (((vocabulary.setObjVal! "sorts"
+    (Json.mkObj (sorts ++ [(sort, Json.mkObj [("description", .str "risk severity")])]))).setObjVal! "constants"
+    (Json.mkObj (constants ++ severityClasses))).setObjVal! "predicates" (Json.mkObj (predicates ++ words))))
 
 /-- The environment typing decodes: statement-layer profiles that add no typing
 constraint removed (`reports@0`, `soft-norms@0`, `rights@0`, `speech-acts@0`
@@ -409,6 +442,15 @@ def legacyCheckCase (id : String) (environment ast : Json) (formula : Bool) (ite
 def checkCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let environment ← j.getObjVal? "environment"
+  -- W6: either extension field selects the quantity decoder, which owns typing, erasure and
+  -- the three identities (Lean-first batch 9).
+  if (environment.getObjVal? "unit_schema").isOk || (environment.getObjVal? "units").isOk then
+    let w ← VE.Time.Wire.decodeEnvironment environment
+    let a ← VE.Time.Wire.decodeQuantity w (← j.getObjVal? "quantity")
+    return VE.Route.Wire.ok id [("well_typed", .bool true),
+      ("meaning_id", .str a.meaningId), ("Q", a.Q), ("core", a.core),
+      ("environment_id", .str w.environmentId),
+      ("target_environment_id", .str w.targetId)]
   let ast ← j.getObjVal? "ast"
   if environment.getObjValD "language" != Json.str "ve.core@0.2" then
     let items ← ast.getArr?

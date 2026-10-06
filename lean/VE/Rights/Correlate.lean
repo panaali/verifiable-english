@@ -1,5 +1,6 @@
 import VE.Rights.Tree
 import VE.SoftNorms.Coherence
+import VE.SoftNorms.Once
 
 /-! The elaboration `correlate(D) = (E″, T″)` and `Lim_D` (docs/spec/rights.md 1.3–1.6,
 4.1, 4.2, 5.1), the syntactic narrowing inventory of 4.5 and the executable check
@@ -560,5 +561,28 @@ theorem correlate_identity_top_env (D : RightsDoc) (h : WellFormedRights D = tru
   have := (correlate_shape D h).1
   rw [← this, correlate_identity_top D h hn ht]
   rfl
+
+end VE.Rights
+
+namespace VE.Rights
+open VE.Norms (envAt size)
+open VE.SoftNorms (soften)
+
+/-- `validateRights` with soft well-formedness checked by `validateSoftOnce` (lean-first plan F5d). -/
+def validateRightsOnce (D : RightsDoc) : Except String Unit :=
+  match checkRights D with
+  | .error e => .error e
+  | .ok () =>
+    match VE.SoftNorms.validateSoftOnce (correlate D) with
+    | .error e => .error e
+    | .ok () =>
+      match (VE.SoftNorms.decisionNames (correlate D)).find? (fun n => n.utf8ByteSize > 64) with
+      | some n => .error s!"ResourceLimit: identifier {n} exceeds 64 bytes"
+      | none => if rightsSemanticCheck D then .ok () else .error "InvalidInput: rights document is not stratified"
+
+theorem validateRightsOnce_eq (D : RightsDoc) : validateRightsOnce D = validateRights D := by
+  unfold validateRightsOnce validateRights
+  rw [VE.SoftNorms.validateSoftOnce_eq]
+  all_goals rfl
 
 end VE.Rights

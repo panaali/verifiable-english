@@ -697,7 +697,7 @@ RECORD_FIELDS = {"contract": "string", "revision": "nat", "check": "string", "ph
                  "code": "string", "class": "string", "path": "string", "text": "string", "args": "object"}
 
 # Rust `ve conformance` rows by request kind: (the statuses of an answer, its fields, counted fields);
-# the encoders are `rust/ve-core/src/{order,units}.rs`. An error row is `{"id", "status": "error",
+# the encoders are `rust/ve-core/src/order.rs` and the core dispatch. An error row is `{"id", "status": "error",
 # "error": {"code", "message"}}`.
 RUST_ROWS = {
     "label": ({"ok"}, {"label": "string"}, {}),
@@ -706,8 +706,6 @@ RUST_ROWS = {
     "parse": ({"ok"}, {"ast": "json", "canonical": "string", "meaning_id": "string"}, {}),
     "countermodel": ({"ok", "Valid", "NotCountermodel"}, {"valid": "bool"}, {}),
     "search": ({"Found", "NotFound", "ResourceLimit"}, {"model": "json"}, {}),
-    "quantity": ({"ok"}, {"environment_id": "string", "target_environment_id": "string",
-                          "meaning_id": "string"}, {}),
 }
 
 
@@ -717,7 +715,7 @@ def rust_operation(case):
     check with a model and a search without, else a document is evaluated with a model and parsed
     without."""
     kind = case.get("kind")
-    if kind in ("label", "dependency-order", "quantity", "countermodel"):
+    if kind in ("label", "dependency-order", "countermodel"):
         return kind
     if "premises" in case and "conclusion" in case:
         return "countermodel" if "model" in case else "search"
@@ -1211,10 +1209,6 @@ def _rust_label(env):
     return {"kind": "label", "label": "asserted", "environment": env}
 
 
-def _rust_quantity(env):
-    return {"kind": "quantity", "environment": env, "quantity": TOP_QUANTITY}
-
-
 ROUTES = {
     "envelope": Route("ve_service", None, _rust_label, identity=True),
     "alternatives": Route("ve_alternatives_route", {"kind": "alt-elaborate", "norms": []},
@@ -1229,8 +1223,8 @@ ROUTES = {
                      no_rust="Rust reads the four core envelope fields only (no reports profile)"),
     "norm-defaults": Route("ve_norm_defaults_route", {"kind": "norm-defaults-elaborate", "norms": []},
                            no_rust="Rust evaluates Python's filled premise lists only (conformance/norm_defaults.py)"),
-    "quantity": Route("ve_quantity", {"kind": "admission", "quantity": TOP_QUANTITY}, _rust_quantity,
-                      identity=True),
+    "quantity": Route("ve_quantity", {"kind": "admission", "quantity": TOP_QUANTITY},
+                      no_rust="Lean owns W6 (Lean-first batch 9 deleted Rust's quantity route)", identity=True),
 }
 
 # The block route each profile takes, first match first; then the blocks an envelope carries when its
@@ -1367,7 +1361,7 @@ class EnvironmentSurface(Surface):
             elif row["status"] == "error":
                 out.append(error(row["error"]["code"], row["error"]["message"]))
             else:
-                out.append(ok({"environment_id": row["environment_id"]} if case["kind"] == "quantity" else None))
+                out.append(ok(None))
         return out
 
     def text_fixed(self, seed, left, right):
