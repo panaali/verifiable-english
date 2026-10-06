@@ -128,4 +128,6 @@ def test_risk_admission_calls_risk_owner(monkeypatch):
     monkeypatch.setattr(relay, "decide", record_owner)
     result = admit_document(accepted, document)
     assert result["admitted"] is True
+    assert result["conditional_on"] == run_case({"id": "direct", "kind": "admission",
+                                                    "environment": env, "document": document})["conditional_on"]
     assert routed == ["risk"]

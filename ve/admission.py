@@ -480,7 +480,8 @@ def _lean_block_admission(env, document) -> dict:
     case = {"id": "admission", "kind": "admission", "environment": env.to_dict(),
             "document": document}
     row = decide("risk" if env.risk is not None else "alternatives", [case])[0]
-    return {key: row[key] for key in ("admitted", "report", "report_id", "kinds")}
+    return {key: row[key] for key in ("admitted", "report", "report_id", "kinds",
+                                      "conditional_on")}
 
 
 def _lean_quantity_admission(env, document) -> dict:
