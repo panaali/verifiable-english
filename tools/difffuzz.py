@@ -676,6 +676,8 @@ LEAN_ROUTE_FIELDS = {
              "risk_premises": "array<json>", "unranked_severities": "array<json>"},
     "soft-norms": {**_ELABORATED, "colliding_pairs": "array<json>", "conditional_on": "array<json>",
                    "decisions": "array<json>", "derived": "array<json>", "environment_prime": "object",
+                   "document_hash": "string", "ranks_above": "object", "soft_residual": "object",
+                   "soft_status": "string", "default_exceptions_by_decider": "object",
                    "warnings": "array<json>"},
     "norm-defaults": {**_ELABORATED, "fill": "array<json>", "fragment_fill": "bool", "reached": "array<json>",
                       "unsaid": "array<json>", "unspecified": "array<json>"},

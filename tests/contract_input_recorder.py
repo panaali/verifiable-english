@@ -63,9 +63,9 @@ def _record(environment, norms, unit="soft-norms@0"):
 
 
 def _install():
-    from ve import soft_route, softnorms, softnorms_contract
+    from ve import soft_route, softnorms
+    from conformance import softnorms_contract, wire_contract_engine as engine
     from conformance.softnorms_contract import soft_source
-    from ve.wire_contract import engine
     from tests import lean_routes
 
     original_run, original_load = engine.run, softnorms.load_soft_document
