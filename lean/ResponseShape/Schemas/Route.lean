@@ -99,10 +99,8 @@ def label : Shape :=
       ("status", constS "ok"),
       ("label", n [ref "common.json#/$defs/label", .equals "/label"])]]
 
-def «row» : Shape :=
-  .anyOf [
-    ref "common.json#/$defs/case_error",
-    ref "#/$defs/error",
+def ok : Shape :=
+  c "The answer the case kind selects (Route.Run.dispatch)." [
     .select [
       (ref "common.json#/$defs/no_kind", ref "#/$defs/evaluate"),
       (ref "#/$defs/kind/evaluate", ref "#/$defs/evaluate"),
@@ -113,6 +111,12 @@ def «row» : Shape :=
       (ref "#/$defs/kind/background", ref "#/$defs/background"),
       (ref "#/$defs/kind/label", ref "#/$defs/label"),
       (ref "#/$defs/kind/admission", ref "common.json#/$defs/admission")]]
+
+def «row» : Shape :=
+  .anyOf [
+    ref "common.json#/$defs/case_error",
+    ref "#/$defs/error",
+    ref "#/$defs/ok"]
 
 def file : File where
   name := "route.json"
@@ -127,6 +131,7 @@ def file : File where
     ("dependency-order", .schema «dependency-order»),
     ("bundle", .schema bundle),
     ("background", .schema background),
-    ("label", .schema label)]
+    ("label", .schema label),
+    ("ok", .schema ok)]
 
 end ResponseShape.Schemas.Route

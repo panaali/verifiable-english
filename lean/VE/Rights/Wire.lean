@@ -357,9 +357,7 @@ def genEntries (D : RightsDoc) : List (String × Json) :=
         s!"{actPhrase D m} aimed at the destruction of a right")))
 
 def withGenerated (D : RightsDoc) (environment : Json) : Except String Json := do
-  let vocab ← environment.getObjVal? "vocabulary"
-  let preds ← fields (← vocab.getObjVal? "predicates")
-  pure (environment.setObjVal! "vocabulary" (vocab.setObjVal! "predicates" (Json.mkObj (preds ++ genEntries D))))
+  Norms.Wire.appendPredicates environment (genEntries D)
 
 /-- The regenerated `E″′_base`: no regulated predicate, no soft or rights construct, the
 rights-generated and decision predicates as base predicates; profiles without `norms@0`,

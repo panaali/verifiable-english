@@ -10994,6 +10994,15 @@ theorem VE.Norms.RunSound.valid_field
       Lean.Json.bool b
   -- uses VE.Route.Wire.ok@VE.Route.Wire
   -- expr 540553084
+theorem VE.Norms.Wire.appendPredicates_assembly
+  ∀ (environment : Lean.Json) (entries : List (String × Lean.Json)),
+    VE.Norms.Wire.appendPredicates environment entries = do
+      let vocab ← environment.getObjVal? "vocabulary"
+      let __do_lift ← vocab.getObjVal? "predicates"
+      let preds ← VE.Bridge.fields __do_lift
+      Pure.pure (environment.setObjVal! "vocabulary" (vocab.setObjVal! "predicates" (Lean.Json.mkObj (preds ++ entries))))
+  -- uses VE.Bridge.Fields@VE.Bridge VE.Bridge.fields@VE.Bridge VE.Norms.Wire.appendPredicates@VE.Norms.Wire
+  -- expr 2742402853
 theorem VE.Norms.agreesBelow_of_meanings
   ∀ {D : VE.Norms.Doc} {k : Nat} {S : VE.Structure}, VE.Norms.MeaningsBelow D k S → VE.Norms.AgreesBelow D k S
   -- uses VE.Norms.AgreesBelow@VE.Norms.Subst VE.Norms.Doc@VE.Norms.Tree VE.Norms.MeaningsBelow@VE.Norms.Prefix VE.Structure@VE.Semantics
