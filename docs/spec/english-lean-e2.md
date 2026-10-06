@@ -72,7 +72,8 @@
 >   environment.
 > - A paragraph after the overlay check (2.3) states that the check reads an overlay `display_environment` admitted.
 > - 8.10's overlay claim takes that as its premise, with ov11 as the premise's fixture.
-> - The overlay parity harness (2.10) compares no site for a mutant that `display_environment` refuses.
+> - The overlay parity harness (2.10) compares neither the raise nor the site for a mutant that
+>   `display_environment` refuses.
 > - rl8 covers ov11a.
 > - Section 9 states the limit.
 >
@@ -632,7 +633,7 @@ These are the harness items of E2.5, which GE2 reads.
   a negative that is not its negation, with a risk template under `risk@0`, or with another predicate's wording; a
   sort entry with a noun of lx27; or a constant entry from lx28. The expectations come from running Python, never
   from the port. A mutant that `display_environment` refuses (ov11) is refused before any Lean call on the admission
-  path too: the harness records it and compares no site for it.
+  path too: the harness records it and compares neither the raise nor the site for it.
 - **The three-way differential** on the 57,765 core texts, with fourteen fresh date seeds of the generated streams.
 - **Coverage.** Every lexical family and every fixed rule of every profile occurs in at least one compared text;
   the report lists the rules that the corpora do not reach and the texts written for them.
