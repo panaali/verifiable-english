@@ -11,7 +11,8 @@ holds when the five conditions of spec 2.9 hold:
   generated symbol without an English wording makes the lexicon invalid until it gets one.
 - V2 honesty: every selection is an honest wording of its own symbol (declared, profile, mechanical,
   fallback); negatives and aliases are the declared or profile-fixed ones.
-- V3 shape: a predicate wording has each hole `{0}` to `{k-1}` once, no other hole, and a word; and,
+- V3 shape: a predicate wording has each hole `{0}` to `{k-1}` once, no other hole, and a word, and (S3)
+  begins with `{0}` and a space with its holes in order (`subjectFirst`); and,
   with each hole lexed as a word of its own, it lexes as one sentence (S2 spec 2.6, Q6), so no wording
   puts a terminator inside a rule. The substitution is `wordingTokens`, the one the lexical rules read,
   so a wording that passes V3 gives its rules (`{0}s are {1}` fails both).
@@ -30,6 +31,13 @@ O7). The profile forms are computed from the profile blocks in S3; the base envi
 none. S2 adds the signatures that the lexical rules and the actions read (S2 spec 2.3): a predicate's
 argument sorts `args` and a constant's `sort`, and the environment JSON `source`, which only the typed
 check of `VE.EnglishGrammar.Encode` reads.
+
+S3 (docs/spec/english-lean-s3.md 2.3 and 2.9) adds, all with defaults: a predicate's `functional` and `total`
+flags, which the attribute rows read; `modal`, set for a predicate that `norms@0` regulates as a permission or
+an obligation, and `description`, which only `valid` reads; the environment's `alternatives` block. The risk
+flag is no field: `Env.risk` reads the profile list (D19). V3 gains subject first (D8): a selected wording,
+negative or alias begins with `{0}` and a space and has its holes in increasing order. V2 counts the modal form,
+which the profile fixes, as the only honest wording of a modal predicate (D17).
 -/
 
 namespace VE.EnglishGrammar
@@ -269,6 +277,12 @@ def shapeOk (w : String) (k : Nat) : Bool :=
   | (hs, rest) =>
     decide (hs.mergeSort (· ≤ ·) = List.range k) && !(splitWs rest).isEmpty && (wordingTokens w).isSome
 
+/-- The holes of a wording are `0, 1, …` in order of occurrence (S3 spec 5.2). -/
+def holeOrder (w : String) : Bool := (holes w).1 == List.range (holes w).1.length
+
+/-- Subject first (S3 spec 2.9, D8): the wording begins with `{0}` and a space and its holes are in order. -/
+def subjectFirst (w : String) : Bool := w.startsWith "{0} " && holeOrder w
+
 /-- V3 for a noun or a spelling: no hole. -/
 def noHole (w : String) : Bool := (holes w).1.isEmpty
 
@@ -284,6 +298,13 @@ structure PredDecl where
   negative : Option String := none
   /-- The argument sorts in order; `arity = args.length` for a decoded environment (S2 spec 2.3). -/
   args : List String := []
+  /-- The declaration's `functional` and `total` flags (S3 spec 2.3), read by the attribute rows. -/
+  functional : Bool := false
+  total : Bool := false
+  /-- Whether `norms@0` regulates the predicate as a permission or an obligation (S3 spec 2.3, D17). -/
+  modal : Bool := false
+  /-- The declaration's description; read by `valid` only (S3 spec 2.3). -/
+  description : String := ""
   deriving Repr
 
 structure ConstDecl where
@@ -301,6 +322,16 @@ structure ProfileForms where
   nouns : List (String × String) := []
   deriving Repr
 
+/-- The `alternatives@0` block that the guard rows read (S3 spec 5.2): the action, chooser and harm sorts and
+the `available` and `leads_to` predicates. -/
+structure AltBlock where
+  action : String
+  chooser : String
+  harm : String
+  available : String
+  leadsTo : String
+  deriving DecidableEq, Repr
+
 /-- The environment JSON is shown compressed. -/
 instance reprJson : Repr Lean.Json := ⟨fun j _ => .text j.compress⟩
 
@@ -314,6 +345,9 @@ structure Env where
   forms : ProfileForms := {}
   /-- The validated environment JSON; read by `typedDocument` only (S2 spec 2.3). -/
   source : Lean.Json := .null
+  /-- The `alternatives@0` block; present exactly when the profile is named, for a decoded `Env` (S3 spec
+  2.3). -/
+  alternatives : Option AltBlock := none
   deriving Repr
 
 /-- The replaced wordings of an English vocabulary overlay. A predicate entry replaces both the
@@ -358,6 +392,12 @@ def declaredSpelling (E : Env) (O : Overlay) (c : String) : Option String :=
   | none => (E.constants.find? (·.name == c)).bind (·.display)
 
 def arity (E : Env) (p : String) : Nat := ((E.predicate? p).map (·.arity)).getD 0
+
+/-- The risk flag (S3 spec 5.2, D19): whether the profile list names `risk@0`. Not a field. -/
+def risk (E : Env) : Bool := E.profiles.contains "risk@0"
+
+/-- Whether `p` is a modal predicate (S3 spec 2.3). -/
+def modal (E : Env) (p : String) : Bool := ((E.predicate? p).map (·.modal)).getD false
 
 end Env
 
@@ -406,15 +446,17 @@ def Lexicon.failures (E : Env) (O : Overlay) (L : Lexicon) : List Failure :=
   let v23w := L.wordings.flatMap fun (p, w) =>
     if !preds.contains p then [] else
     let k := E.arity p
-    let honest := [E.declaredWording O p, F.wordings.lookup p, mechanicalWording p k, fallbackWording p k]
+    -- a modal predicate has one honest wording, its modal form (S3 spec 2.9, D17)
+    let honest := if E.modal p then [F.wordings.lookup p]
+      else [E.declaredWording O p, F.wordings.lookup p, mechanicalWording p k, fallbackWording p k]
     (if honest.contains (some w) then [] else [("V2", "predicate", p)]) ++
-    (if shapeOk w k then [] else [("V3", "predicate", p)])
+    (if shapeOk w k && subjectFirst w then [] else [("V3", "predicate", p)])
   let v235n := L.negatives.flatMap fun (p, w) =>
     if !preds.contains p then [] else
     let k := E.arity p
     let fixed := F.negatives.lookup p
     (if [E.declaredNegative O p, fixed].contains (some w) then [] else [("V2", "negative", p)]) ++
-    (if shapeOk w k then [] else [("V3", "negative", p)]) ++
+    (if shapeOk w k && subjectFirst w then [] else [("V3", "negative", p)]) ++
     (if fixed == some w || negativeTemplate ((L.wordings.lookup p).getD "") k == some w then []
      else [("V5", "negative", p)])
   let aliasPreds := ((L.aliases.map (·.1)) ++ (F.aliases.map (·.1))).eraseDups
@@ -423,7 +465,7 @@ def Lexicon.failures (E : Env) (O : Overlay) (L : Lexicon) : List Failure :=
     let sel := (L.aliases.filter (·.1 == p)).map (·.2)
     let fix := (F.aliases.filter (·.1 == p)).map (·.2)
     (if sortPairs sel == sortPairs fix then [] else [("V2", "alias", p)]) ++
-    (if sel.all (fun a => shapeOk a.1 (E.arity p)) then [] else [("V3", "alias", p)])
+    (if sel.all (fun a => shapeOk a.1 (E.arity p) && subjectFirst a.1) then [] else [("V3", "alias", p)])
   let v23s := L.nouns.flatMap fun (s, n) =>
     if !sorts.contains s then [] else
     let honest := [E.declaredNoun O s, F.nouns.lookup s, some s, some ("entity of sort " ++ jsonQuote s)]
@@ -456,7 +498,7 @@ def Lexicon.failures (E : Env) (O : Overlay) (L : Lexicon) : List Failure :=
     else none
   v1 ++ v23w ++ v235n ++ v23a ++ v23s ++ v23c ++ v4
 
-/-- `Lexicon.valid` of spec 2.9: V1 to V5. -/
+/-- `Lexicon.valid` of spec 2.9: V1 to V5, with S3's subject first in V3 and the modal form in V2. -/
 def Lexicon.valid (E : Env) (O : Overlay) (L : Lexicon) : Bool := (L.failures E O).isEmpty
 
 /-- The work budget of one sentence, in steps of spec 2.6 (DRI ruling 5, 2026-10-04): ten times the

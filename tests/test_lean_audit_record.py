@@ -50,3 +50,24 @@ def test_audit_refuses_a_stale_record_and_write_regenerates_it(fake_lean, capsys
 def test_audit_refuses_unknown_arguments(fake_lean):
     with pytest.raises(SystemExit):
         audit.main(['--check'])
+
+
+@pytest.mark.parametrize('body', [
+    'by admit', 'by\n  · admit', 'by\n  case zero => admit',
+    'by\n  exact True.intro <;> admit', 'decreasing_by admit',
+    'by\n  admit; trivial',
+])
+def test_audit_refuses_admit_tactic_in_executable_definitions(tmp_path, body):
+    source = tmp_path / 'Hole.lean'
+    source.write_text(f'def hole : True := {body}\n')
+    with pytest.raises(AssertionError, match='forbidden admit tactic'):
+        audit.scan_sources(tmp_path)
+
+
+def test_audit_allows_the_admission_function_as_a_name_and_application(tmp_path):
+    (tmp_path / 'Admission.lean').write_text(
+        'def admit (n : Nat) : Nat := n\n'
+        'def use (n : Nat) : Nat := admit n\n'
+        'theorem keeps_name : admit 0 = 0 := by\n  unfold admit\n  rfl\n')
+    actual, _ = audit.scan_sources(tmp_path)
+    assert actual == {'keeps_name'}
