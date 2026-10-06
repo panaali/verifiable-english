@@ -167,7 +167,7 @@ def test_python_authority_gives_no_record_verdict(monkeypatch):
     for case in _decision_cases().values():
         with pytest.raises(CheckerUnavailable, match="Lean checker"):
             run_case(case)
-    with pytest.raises(VEError, match="risk route case"):
+    with pytest.raises(CheckerUnavailable, match="Lean checker"):
         run_case({"id": "x", "kind": [], "environment": {}})
 
 
