@@ -645,8 +645,14 @@ def test_admission_admits_the_claim_graph_over_the_projection(lean):
     result = admit(metadata, source, graph)
     assert result["status"] == "ok", result
     assert result["admitted"] is True
-    assert [leaf.get("label", "asserted") for leaf in result["report"]["assumptions"]] == \
-        ["background:profile"] * 3 + ["speech:answer:p:yes", "asserted"]
+    assumptions = result["report"]["assumptions"]
+    assert [leaf.get("label", "asserted") for leaf in assumptions[:4]] == \
+        ["background:profile"] * 3 + ["speech:answer:p:yes"]
+    # The answer certificate is bound to the complete regenerated premise list. Its
+    # provenance remains visible even when the graph uses the answer as one leaf.
+    assert [leaf["ast"] for leaf in assumptions[4:-1]] == run_source(metadata, source)["premises"]
+    assert [(leaf["name"], leaf.get("label", "asserted")) for leaf in assumptions[-4:]] == \
+        [("a", "asserted"), ("b", "asserted"), ("z", "asserted"), ("b", "asserted")]
     assert result["report"]["root"]["name"] == "root"
     assert result["document_id"] == run_source({**metadata, "graph": graph}, source)["document_id"]
     assert result["kinds"] == ["asserted", "asserted", "question", "question", "instruction", "asserted"]
@@ -661,6 +667,17 @@ def test_admission_admits_the_claim_graph_over_the_projection(lean):
     renamed = copy.deepcopy(metadata)
     renamed["units"][1]["support"] = "observation"
     assert admit(renamed, source, graph)["report_id"] != result["report_id"]
+
+
+def test_answer_only_graph_retains_certificate_premises(lean):
+    """A graph with only an answer leaf still reports every input of that answer certificate."""
+    metadata, source = certified(base_env())
+    result = admit(metadata, source, {"root": "ans", "nodes": [ANSWER_LEAF]})
+    assert result["status"] == "ok", result
+    assumptions = result["report"]["assumptions"]
+    assert assumptions[0] == ANSWER_LEAF
+    assert [leaf["ast"] for leaf in assumptions[1:]] == run_source(metadata, source)["premises"]
+    assert [leaf["name"] for leaf in assumptions[-3:]] == ["a", "b", "z"]
 
 
 def test_admission_presupposition_leaves_stay_assumptions(lean):
