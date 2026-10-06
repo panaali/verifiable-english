@@ -318,6 +318,7 @@ def decodeRiskSource (environment document : Json) : Except String RiskSource :=
   unless ne.rv.literals.isEmpty do throw "UnsupportedProfile: risk route with $string literals is not implemented"
   let (altExpanded, excludesOn) := expandExcludes altRaw
   let b ← VE.Alternatives.Wire.decodeBlock altExpanded
+  VE.Alternatives.Wire.checkReservedWording (← environment.getObjVal? "vocabulary")
   let risk ← decodeRiskBlock riskRaw
   let norms := document.getObjValD "norms"
   let unitsJ := document.getObjValD "units"
@@ -340,7 +341,10 @@ def decodeRiskSource (environment document : Json) : Except String RiskSource :=
   let R : RiskDoc := { R0 with Γ := gamma.map Prod.snd, labels := gamma.map Prod.fst }
   match hv : validateRisk R with
   | .error e => throw e
-  | .ok () => pure ⟨ps, ne, R, by unfold WellFormedRisk; rw [hv], b.avoidsOn.filter (fun o => !excludesOn.contains o),
+  | .ok () =>
+    if ext && (← VE.Norms.Wire.canonicalEnvironmentJson environment) != environment then
+      throw "W6 environment does not round-trip to its canonical declaration"
+    pure ⟨ps, ne, R, by unfold WellFormedRisk; rw [hv], b.avoidsOn.filter (fun o => !excludesOn.contains o),
       excludesOn⟩
 
 /-! ## Entries, supplied entries and the log (3.3) -/

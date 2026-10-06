@@ -20,6 +20,24 @@ theorem elaborate_fits (id : String) (src : Wire.AltSource) :
   simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte, Bool.false_eq_true]
   fits
 
+theorem elaborate_coverage_fits (id : String) (src : Wire.AltSource)
+    (environment units narrowings : Json) :
+    Fits req Skeletons.alternatives
+      (ok id (Wire.regenerated src ++
+        [("coverage", Wire.coverage src.A environment units narrowings)])) := by
+  unfold ok VE.Route.Wire.ok Wire.regenerated Wire.encodeNode Wire.labelled Wire.profileExists
+    VE.Norms.Wire.regenerated profileWords profileDef Wire.coverage
+  simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte, Bool.false_eq_true]
+  fits
+
+theorem elaborate_case_fits (id : String) (j : Json) :
+    OkFits j Skeletons.alternatives (runElaborate id j) := by
+  unfold runElaborate
+  okfits
+  split
+  · exact elaborate_coverage_fits (req := j) _ _ _ _ _
+  · simpa only [List.append_nil] using (elaborate_fits (req := j) id _)
+
 theorem fields_obj {j : Json} {fs : VE.Bridge.Fields} (h : VE.Bridge.fields j = .ok fs) : ∃ m, j = .obj m := by
   cases j <;> first | exact ⟨_, rfl⟩ | (simp [VE.Bridge.fields, Json.getObj?] at h; cases h)
 
@@ -122,7 +140,7 @@ theorem runCase_fits (j : Json) : OkFits j Skeletons.alternatives (runCase j) :=
   okfits
   all_goals first
     | (unfold runAdmission; okfits; exact admission_fits _ _ _)
-    | with_reducible exact elaborate_fits _ _
+    | exact elaborate_case_fits _ _
     | with_reducible exact validate_fits _ _
     | with_reducible exact conflict_fits _ _
     | with_reducible exact followable_fits _ _

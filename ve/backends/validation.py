@@ -32,6 +32,17 @@ _LIMIT = 1 << 14
 _LAYERED = STATEMENT_LAYERS
 
 
+def validated_statement_block(data: dict, kind: str) -> None:
+    """Ask the owning statement-layer route before Python materialises its container."""
+    from .relay import decide
+    case = {"id": "environment", "environment": data}
+    if kind == "risk":
+        case.update(kind="risk-elaborate", document={"norms": [], "units": []})
+    else:
+        case.update(kind="alt-elaborate", norms=[])
+    decide(kind, [case])
+
+
 def nary_core_definitions(profiles, predicates) -> bool:
     """A core-family vocabulary with an n-ary defined predicate: Lean's core
     layer glue projects unary and binary predicates only (a recorded gap)."""

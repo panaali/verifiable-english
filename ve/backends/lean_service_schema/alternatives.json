@@ -166,6 +166,62 @@
       "required": ["id", "status", "verdict", "target"],
       "type": "object"
     },
+    "coverage": {
+      "$comment": "Alternatives.Wire.coverage: accepted unit cells and their Lean-owned residual fold.",
+      "additionalProperties": false,
+      "properties": {
+        "alternatives": {
+          "additionalProperties": false,
+          "properties": {
+            "alternatives_declared": {"type": "array"},
+            "assumed_harm_free": {"type": "array"},
+            "counterfactual_leaves": {"type": "array"},
+            "dilemmas": {"maxItems": 0, "type": "array"},
+            "narrowings": {"type": "array"},
+            "proximate_judgments": {"type": "array"},
+            "table_complete": {"anyOf": [{"type": "null"}, {"type": "object"}]},
+            "unmapped_obligations": {"$ref": "common.json#/$defs/strings"}
+          },
+          "required": [
+            "alternatives_declared",
+            "counterfactual_leaves",
+            "assumed_harm_free",
+            "table_complete",
+            "proximate_judgments",
+            "unmapped_obligations",
+            "dilemmas",
+            "narrowings"
+          ],
+          "type": "object"
+        },
+        "residual": {
+          "additionalProperties": false,
+          "properties": {
+            "alternatives_declared": {"$ref": "common.json#/$defs/nat"},
+            "assumed_harm_free": {"$ref": "common.json#/$defs/nat"},
+            "counterfactual_leaves": {"$ref": "common.json#/$defs/nat"},
+            "dilemmas": {"$ref": "common.json#/$defs/nat"},
+            "narrowings": {"$ref": "common.json#/$defs/nat"},
+            "proximate_judgments": {"$ref": "common.json#/$defs/nat"},
+            "table_complete": {"$ref": "common.json#/$defs/nat"},
+            "unmapped_obligations": {"$ref": "common.json#/$defs/nat"}
+          },
+          "required": [
+            "alternatives_declared",
+            "counterfactual_leaves",
+            "assumed_harm_free",
+            "table_complete",
+            "proximate_judgments",
+            "unmapped_obligations",
+            "dilemmas",
+            "narrowings"
+          ],
+          "type": "object"
+        }
+      },
+      "required": ["alternatives", "residual"],
+      "type": "object"
+    },
     "elaborate": {
       "$comment": "Alternatives.Wire.regenerated: the legend, the inlined tree, the alternatives premises, the base premises, the followability formulas, the profile words' existential probes, the unmapped obligations, then Norms.Wire.regenerated of the inlined tree.",
       "additionalProperties": false,
@@ -174,6 +230,7 @@
         "background": {"$ref": "common.json#/$defs/norms_background"},
         "base_premises": {"$ref": "common.json#/$defs/labelled_list"},
         "conflict_targets": {"$ref": "common.json#/$defs/conflict_targets"},
+        "coverage": {"$ref": "#/$defs/coverage"},
         "followable": {"$ref": "#/$defs/regenerated/followable"},
         "fragment": {"type": "boolean"},
         "id": {"$ref": "common.json#/$defs/id_ok"},

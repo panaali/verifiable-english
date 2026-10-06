@@ -106,7 +106,38 @@ def elaborate : Shape :=
         ("background", ref "common.json#/$defs/norms_background"),
         ("premises", ref "common.json#/$defs/layer_premises"),
         ("conflict_targets", ref "common.json#/$defs/conflict_targets"),
-        ("fragment", .type ["boolean"])]]
+        ("fragment", .type ["boolean"]),
+        ("coverage", ref "#/$defs/coverage")]]
+
+def coverage : Shape :=
+  c "Alternatives.Wire.coverage: accepted unit cells and their Lean-owned residual fold." [
+    obj,
+    .required ["alternatives", "residual"],
+    closed [
+      ("alternatives", n [obj,
+        .required ["alternatives_declared", "counterfactual_leaves", "assumed_harm_free",
+          "table_complete", "proximate_judgments", "unmapped_obligations", "dilemmas", "narrowings"],
+        closed [
+          ("alternatives_declared", arr),
+          ("counterfactual_leaves", arr),
+          ("assumed_harm_free", arr),
+          ("table_complete", .anyOf [.type ["null"], obj]),
+          ("proximate_judgments", arr),
+          ("unmapped_obligations", ref "common.json#/$defs/strings"),
+          ("dilemmas", n [arr, .maxItems 0]),
+          ("narrowings", arr)]]),
+      ("residual", n [obj,
+        .required ["alternatives_declared", "counterfactual_leaves", "assumed_harm_free",
+          "table_complete", "proximate_judgments", "unmapped_obligations", "dilemmas", "narrowings"],
+        closed [
+          ("alternatives_declared", ref "common.json#/$defs/nat"),
+          ("counterfactual_leaves", ref "common.json#/$defs/nat"),
+          ("assumed_harm_free", ref "common.json#/$defs/nat"),
+          ("table_complete", ref "common.json#/$defs/nat"),
+          ("proximate_judgments", ref "common.json#/$defs/nat"),
+          ("unmapped_obligations", ref "common.json#/$defs/nat"),
+          ("dilemmas", ref "common.json#/$defs/nat"),
+          ("narrowings", ref "common.json#/$defs/nat")]])]]
 
 def chooser : Shape :=
   c "Alternatives.Run.chooserReport: violations and breaches exactly when the block names a taken predicate." [
@@ -267,6 +298,7 @@ def file : File where
     ("admission", .schema admission),
     ("regenerated", regenerated),
     ("elaborate", .schema elaborate),
+    ("coverage", .schema coverage),
     ("chooser", .schema chooser),
     ("validate", .schema validate),
     ("conflict_witness", .schema conflict_witness),

@@ -294,6 +294,7 @@
         "background": {"$ref": "common.json#/$defs/norms_background"},
         "base_premises": {"$ref": "common.json#/$defs/labelled_list"},
         "conflict_targets": {"$ref": "common.json#/$defs/conflict_targets"},
+        "coverage": {"$ref": "alternatives.json#/$defs/coverage"},
         "document_hash": {"$ref": "common.json#/$defs/hex64"},
         "e_risk": {
           "additionalProperties": false,
