@@ -114,7 +114,12 @@ has no theorem, and it is part of the trusted base.
 1. **Limits first.** A source over 65,536 bytes is rejected (`sourceTooLong`). A source whose length after
    collapsing every whitespace run outside quotes to one space is over 10,000 characters is rejected
    (`textTooLong`). These are today's limits (`MAX_SOURCE_BYTES`, `MAX_NODES`).
-2. **Whitespace** separates tokens and is otherwise ignored. Inside a quoted identifier it is kept.
+2. **Whitespace** separates tokens. Inside a quoted identifier it is kept. Where it may stand is a table
+   (DRI ruling 1 on finding F1 of `english-lean-s2-integrate.md`), checked when an item starts: none before
+   the first item or before a terminator; some after a terminator unless the text ends; some between two
+   tokens of the word kinds (word, quoted, label, numeral); around punctuation, free, the `glued` flags
+   carrying it to the rules. A breach is `badSpacing` at the byte offset of the item that starts. A
+   terminator after an empty sentence is `emptySentence` first.
 3. **A quoted identifier** runs from `"` to the next `"` that is not escaped by `\`. No closing quote:
    `openQuote`.
 4. **A chunk** is a maximal run of ASCII letters, ASCII digits, `_`, and characters outside ASCII that are not
@@ -1156,6 +1161,7 @@ def Lexicon.valid (E : Env) (O : Overlay) (L : Lexicon) : Bool          -- V1 to
 inductive Reject where
   | sourceTooLong | textTooLong | badCharacter (offset : Nat) | openQuote (offset : Nat)
   | badNumeral (offset : Nat) | emptyDocument | emptySentence (index : Nat) | unterminated
+  | badSpacing (offset : Nat)
   | unboundReference | shadowedName | sortMismatch | markerDepth | nestingLimit | numeralBound
   | pronounUnresolved | blockedWording (id : String)
   | internal
@@ -1473,6 +1479,11 @@ is `k + 1`. A test meaning `μ2`: the rejection `no` for every tree.
 | x17 | `ſervice café.` | one sentence of two words, `ſervice` and `café`: a character outside ASCII is a word character |
 | x15 | a source of 65,537 bytes; a source of 10,001 characters after collapsing | `sourceTooLong`; `textTooLong` |
 | x16 | x1 with every space replaced by a run of spaces, tabs and line breaks | the same tokens as x1 |
+| x18 | ` Legacy is deployed.`; the same after a no-break space | `badSpacing` at 1; at 2 |
+| x19 | `Legacy is deployed .`; a tab before the period | `badSpacing` at 19 |
+| x20 | `Legacy is deployed.It is reviewed.`; `Legacy is deployed.(a) x.` | `badSpacing` at 19 |
+| x21 | `relation"owner_of" to`, `relation "owner_of"to`, `"a""b"` | `badSpacing` at the second token |
+| x22 | `Legacy is deployed. .`; `Legacy is deployed. ` and a line break | `emptySentence` 1; one sentence |
 
 ### 8.5 Lexicon validity
 

@@ -1,14 +1,15 @@
-"""Every one-shot route transport contains every answer that is not Lean's answer to the request (lf-3
-looprecheck1 B1 and B2, build checklist 4 and 5).
+"""Every route transport contains every answer that is not Lean's answer to the request (lf-3 looprecheck1 B1
+and B2, build checklist 4 and 5), on the transports lean-first batch 1 leaves.
 
-The transports of `ve/backends/lean.py` (soft, rights, alternatives, risk, reports, discourse, norm-defaults,
-readings) share one reader, `read_rows`: the output is read as bytes inside the containment, and every row, an
-error row included, is bound to its case. B1: a genuine Lean error replayed against valid K1 with its `id`
-changed, emptied or omitted used to reject the document (`VEError`); only `ok` rows were bound. B2: a checker
-writing the byte 0xff made `validate` raise `UnicodeDecodeError`, since decoding happened in `subprocess.run`,
-outside the guard. Each output below, given by a real temporary executable that consumes the request, must raise
-`CheckerUnavailable` on every transport and nothing else. Genuine error rows of every built route (both of Lean's
-encoder shapes) stay rejections. The Rust JSON-lines transport gets the same treatment for its error records.
+Batch 1 made every statement-layer route a mode of the Lean service: its client binds each result to its case
+(position and digest) and checks every row against its mode's schema (`ve/backends/lean_service.py`,
+`lean_service_schema/`), and the one-shot transports of `ve/backends/lean.py` were deleted. `read_rows` remains
+the one reader of a one-shot runner's output (`lean.run`, for `ve_conformance`): the output is read as bytes
+inside the containment, and every row, an error row included, is bound to its case. Each output below must be
+no answer to it (B2: a checker writing the byte 0xff made `validate` raise `UnicodeDecodeError`). B1, a genuine
+Lean error replayed against valid K1 with its `id` changed, emptied or omitted, used to reject the document; it
+is replayed here through the service's client, which must refuse it. Genuine error rows of every route mode
+stay rejections. The Rust JSON-lines transport gets the same treatment for its error records.
 """
 from __future__ import annotations
 
@@ -22,35 +23,15 @@ import pytest
 import ve.backends.lean as lean_backend
 import ve.readings_route as route
 from subprocesses import HANG_TIMEOUT
+from tests import lean_routes
 from tests.test_readings_route_fuzz import units_of
 from tests.test_readings_s1_lean import env_k, k1_document
-from ve.backends import rust_jsonl
+from ve.backends import relay, rust_jsonl
+from ve.backends.lean_service import LeanServicePool
 from ve.errors import CheckerUnavailable, VEError
 
 ROOT = Path(__file__).resolve().parents[1]
-BIN = ROOT / "lean/.lake/build/bin"
 CASE = {"id": "c", "kind": "k"}
-
-
-def _soft(executable, case):
-    try:
-        return lean_backend.run_soft_case(executable, case)
-    except CheckerUnavailable:
-        raise
-    except VEError as error:
-        return {"status": "error", "error": str(error)}
-
-
-# Each transport called on one case, returning the case's row (the soft route raises Lean's error row as a
-# `VEError`, read back here as a row).
-TRANSPORTS = {
-    "soft": _soft,
-    "alternatives": lambda exe, case: lean_backend.run_alternatives_case(exe, case, timeout=HANG_TIMEOUT),
-    "reports": lambda exe, case: lean_backend.run_reports_case(exe, case, timeout=HANG_TIMEOUT),
-    "discourse": lambda exe, case: lean_backend.run_discourse_case(exe, case, timeout=HANG_TIMEOUT),
-    "norm-defaults": lambda exe, case: lean_backend.run_norm_defaults_cases(exe, [case], timeout=HANG_TIMEOUT)[0],
-    "readings": lambda exe, case: lean_backend.run_readings_cases(exe, [case], timeout=HANG_TIMEOUT)[0],
-}
 
 
 def checker(tmp_path, stdout: bytes, returncode: int = 0) -> Path:
@@ -116,17 +97,16 @@ MALFORMED = {
 }
 
 
+@pytest.mark.parametrize("coded", [False, True])
 @pytest.mark.parametrize("output", MALFORMED)
-@pytest.mark.parametrize("transport", TRANSPORTS)
-def test_no_answer_to_the_case_is_unavailable_on_every_transport(tmp_path, transport, output):
+def test_no_answer_to_the_case_is_no_answer_to_the_one_shot_reader(output, coded):
     stdout, returncode = MALFORMED[output]
-    with pytest.raises(CheckerUnavailable, match="^CheckerUnavailable: "):
-        TRANSPORTS[transport](checker(tmp_path, stdout, returncode), CASE)
+    with pytest.raises(lean_backend.NoAnswer):
+        lean_backend.read_rows(returncode, stdout, [CASE], coded=coded)
 
 
-# Error rows in the shapes Lean writes: each is Lean's rejection of the case. Only the soft route's rows name a
-# code (`read_rows(coded=True)`); on any other route a code is no answer (`tests/test_relay.py`).
-CODED = {"soft"}
+# Error rows in the shapes Lean writes: each is Lean's rejection of the case. Only a coded route's rows name a
+# code (`read_rows(coded=True)`); on any other a code is no answer (`tests/test_relay.py`).
 GENUINE_ERRORS = {
     "id echoed": ERROR,
     "soft route's code": {**ERROR, "code": "InvalidInput"},
@@ -136,104 +116,105 @@ GENUINE_ERRORS = {
 }
 
 
+@pytest.mark.parametrize("coded", [False, True])
 @pytest.mark.parametrize("shape", GENUINE_ERRORS)
-@pytest.mark.parametrize("transport", TRANSPORTS)
-def test_an_error_row_in_leans_shape_is_a_rejection(tmp_path, transport, shape):
-    if "code" in GENUINE_ERRORS[shape] and transport not in CODED:
-        with pytest.raises(CheckerUnavailable, match="^CheckerUnavailable: "):
-            TRANSPORTS[transport](checker(tmp_path, _rows(GENUINE_ERRORS[shape]), 1), CASE)
+def test_an_error_row_in_leans_shape_is_a_rejection(shape, coded):
+    stdout = _rows(GENUINE_ERRORS[shape])
+    if "code" in GENUINE_ERRORS[shape] and not coded:
+        with pytest.raises(lean_backend.NoAnswer):
+            lean_backend.read_rows(1, stdout, [CASE], coded=coded)
         return
-    row = TRANSPORTS[transport](checker(tmp_path, _rows(GENUINE_ERRORS[shape]), 1), CASE)
+    [row] = lean_backend.read_rows(1, stdout, [CASE], coded=coded)
     assert row["status"] == "error" and row["error"] == GENUINE_ERRORS[shape]["error"]
 
 
 def test_a_missing_executable_is_unavailable(tmp_path):
-    for transport in TRANSPORTS.values():
-        with pytest.raises(CheckerUnavailable):
-            transport(tmp_path / "absent", CASE)
+    with pytest.raises(CheckerUnavailable):
+        relay.rows("soft-norms", [CASE], executable=tmp_path / "absent")
 
 
-# -- every built route's genuine error rows pass the shared check (the schema covers Lean's encoders)
+# -- every route mode's genuine error rows pass the client's checks (the schemas cover Lean's encoders)
 
-ROUTES = {"ve_soft_norms_route": "soft", "ve_rights_route": "soft", "ve_alternatives_route": "alternatives",
-          "ve_risk_route": "alternatives", "ve_reports_route": "reports", "ve_discourse_route": "discourse",
-          "ve_norm_defaults_route": "norm-defaults", "ve_readings_route": "readings"}
-
-
-def _deep(n):
-    value = []
-    for _ in range(n):
-        value = [value]
-    return value
+ROUTE_MODES = ("soft-norms", "rights", "alternatives", "risk", "reports", "discourse", "norm-defaults",
+               "readings-route")
 
 
-@pytest.mark.parametrize("binary", ROUTES)
-def test_every_built_route_answers_its_genuine_errors(binary):
-    executable = BIN / binary
-    if not executable.exists():
-        pytest.skip(f"{binary} is not built")
-    transport = TRANSPORTS[ROUTES[binary]]
+@pytest.mark.parametrize("mode", ROUTE_MODES)
+def test_every_route_mode_answers_its_genuine_errors(mode):
+    if not lean_routes.SERVICE.exists():
+        pytest.skip("the Lean service is not built")
     for case in ({"id": "c", "kind": "no-such-kind", "environment": {}, "document": "x"},
                  {"id": "c", "kind": "admission"}):
-        row = transport(executable, case)
-        assert row["status"] == "error" and type(row["error"]) is str, (binary, case, row)
-    # runCaseReported's id echo for a case without one: JSON null. The routes read as VE's restricted JSON
-    # (`read_rows(restricted=True)`: alternatives, risk, reports) have no null, so there it is no answer; Python
-    # sends those routes no case without an id.
-    case = {"kind": "no-such-kind", "environment": {}}
-    if ROUTES[binary] in ("alternatives", "reports"):
-        with pytest.raises(CheckerUnavailable, match="^CheckerUnavailable: "):
-            transport(executable, case)
-    else:
-        row = transport(executable, case)
-        assert row["status"] == "error" and type(row["error"]) is str, (binary, row)
-    # `main`'s shape: a case its JSON reader rejects on its own (depth), named by its index. Python's canonical
-    # encoder refuses that depth itself, so the case is sent as plain JSON.
-    case = {"id": "c", "kind": "admission", "document": _deep(300)}
-    [row] = lean_backend._route_rows(binary, executable, [case], json.dumps([case]).encode(), timeout=HANG_TIMEOUT)
-    assert row == {"status": "error", "case_index": 0, "error": "ResourceLimit: JSON depth exceeds 256"}, binary
+        [row] = lean_routes.rows(mode, [case])
+        assert row["status"] == "error" and type(row["error"]) is str, (mode, case, row)
 
 
-# -- the reviewer's repros, through `ve.readings_route.validate` on valid K1
+# -- the reviewer's repros, through `ve.readings_route.validate` on valid K1 and the service's client
 
 @pytest.fixture(scope="module")
 def k1():
-    if not route.LEAN_ROUTE.exists():
-        pytest.skip("ve_readings_route is not built")
+    if not lean_routes.SERVICE.exists():
+        pytest.skip("the Lean service is not built")
     raw = env_k()
     document, _ = k1_document(raw)
     return raw, document
 
 
+def _request(document, raw):
+    return {"id": "readings-s1", "kind": "readings-validate", "environment": raw,
+            "document": route.document_wire(units_of(document), document["reading_sets"])}
+
+
 @pytest.fixture(scope="module")
 def genuine_error(k1):
-    """Lean's own error row for a K1 request it rejects (its situation's recorded value flipped)."""
+    """Lean's own error row for a K1 request it rejects (its situation's recorded value flipped), with the
+    code the service sets beside it."""
     raw, document = k1
     broken = copy.deepcopy(document)
     for situation in broken["reading_sets"][0]["situations"].values():
         situation["value"] = not situation["value"]
-    case = {"id": "readings-s1", "kind": "readings-validate", "environment": raw,
-            "document": route.document_wire(units_of(broken), broken["reading_sets"])}
-    [row] = route.run_lean([case])
+    with LeanServicePool(size=1) as pool:
+        [entry] = pool.run_bound("readings-route", route.wire([_request(broken, raw)]))
+    row = entry["result"]
     assert row["status"] == "error" and row["id"] == "readings-s1", row
-    return row
+    return row, entry["code"]
 
 
-def _validate(k1, executable):
+@pytest.fixture
+def answering(tmp_path, monkeypatch):
+    """`validate` against a scripted service that answers each request with the row given (bound to the
+    request's case by position and digest, as the service binds it), with `code` beside a rejection."""
+    from tests.test_lean_service import fake
+    pool = LeanServicePool(size=1, executable=fake(tmp_path, "scripted"), allow_unlisted_build=True)
+    monkeypatch.setattr(relay, "_pool_for", lambda executable: pool)
+    marker = tmp_path / "marker"
+
+    def answer(row, code):
+        marker.write_text(json.dumps({
+            "__bound__": True, "id": "__nonce__", "status": "ok", "mode": "readings-route",
+            "results": [{"index": 0, "digest": {"$digest": 0}, "result": row, **({"code": code} if code else {})}],
+            "counts": {"cases": 1, "bytes": "__bytes__", "errors": int(row.get("status") == "error")}}))
+    yield answer
+    pool.close()
+
+
+def _validate(k1):
     raw, document = k1
-    return route.validate(raw, units_of(document), document["reading_sets"], executable=executable)
+    return route.validate(raw, units_of(document), document["reading_sets"])
 
 
-def test_the_genuine_error_replayed_is_still_a_rejection(tmp_path, k1, genuine_error):
+def test_the_genuine_error_replayed_is_still_a_rejection(k1, genuine_error, answering):
+    row, code = genuine_error
+    answering(row, code)
     with pytest.raises(VEError) as caught:
-        _validate(k1, checker(tmp_path, _rows(genuine_error), 1))
-    assert str(caught.value) == genuine_error["error"]
+        _validate(k1)
+    assert str(caught.value) == row["error"] and not isinstance(caught.value, CheckerUnavailable)
 
 
 @pytest.mark.parametrize("identity", ["another-case", [], None, 7, False, "omitted", "case_index 1", "both"])
-def test_a_replayed_error_not_naming_the_request_is_unavailable(tmp_path, k1, genuine_error, identity):
+def test_a_replayed_error_not_naming_the_request_is_unavailable(k1, genuine_error, answering, identity):
     """lf-3 looprecheck1 B1: these raised `VEError`, rejecting a valid document on an answer to another case."""
-    row = copy.deepcopy(genuine_error)
+    row, code = copy.deepcopy(genuine_error[0]), genuine_error[1]
     if identity == "omitted":
         del row["id"]
     elif identity == "case_index 1":
@@ -243,16 +224,9 @@ def test_a_replayed_error_not_naming_the_request_is_unavailable(tmp_path, k1, ge
         row["case_index"] = 0
     else:
         row["id"] = identity
+    answering(row, code)
     with pytest.raises(CheckerUnavailable):
-        _validate(k1, checker(tmp_path, _rows(row), 1))
-
-
-@pytest.mark.parametrize("stdout", [b"\xff", b"\xff\xfe" + b"[]".decode().encode("utf-16-le"), b"\x80[]"])
-def test_bytes_that_are_not_utf8_are_unavailable(tmp_path, k1, stdout):
-    """lf-3 looprecheck1 B2: a checker writing 0xff made `validate` raise `UnicodeDecodeError`."""
-    for returncode in (0, 1):
-        with pytest.raises(CheckerUnavailable):
-            _validate(k1, checker(tmp_path, stdout, returncode))
+        _validate(k1)
 
 
 # -- the Rust JSON-lines transport: the same containment for its error records

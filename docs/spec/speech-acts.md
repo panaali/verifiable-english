@@ -1369,10 +1369,12 @@ that status. `JudgmentEvidence` is `follows_sound`'s or `gap_sound`'s hypothesis
 the second case no premise, leaf or `done` fact accompanies it. Hash equality is equality of recomputed canonical
 digests, not a claim that SHA-256 is injective.
 
-### 8.6 The executable `ve_speech_acts_route`
+### 8.6 The speech-act routes
 
-`lean/.lake/build/bin/ve_speech_acts_route <cases.json>`, root `SpeechActsMain.lean`, a new Lake target; `Run.main` is
-the executable root and no frozen file changes (norms.md 11.4). On raw input it runs the frozen envelope and profile
+The established `speech-acts` cases run through `ve_service`. The W2 `speech-source` and payload `admission`
+cases run through `lean/.lake/build/bin/ve_speech_acts_route <cases.json>`, root `SpeechActsMain.lean`;
+`Source.main` is the executable root. This transport split is the batch 11a merge boundary; Python has no caller
+for the new cases yet. On raw input the executable runs the frozen envelope and profile
 gate, requires `speech-acts@0` and `norms@0`, decodes the environment through the W1 norms decoder plus a strict scope
 decoder (unknown fields rejected; the original complete environment hashed), decodes units, queries, answers and
 compliance, runs `WellFormedSpeech`, regenerates `policy(D)`, `premises(D)`, every `H(q)`, `F(q, a)` and `Π_q`, validates

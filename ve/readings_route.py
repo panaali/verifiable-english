@@ -1,6 +1,7 @@
 """Admission of content-bearing reading sets by the S1 Lean route, relayed (docs/LEAN-FIRST-PLAN.md rule 2).
 
-`validate` sends the document to `ve_readings_route` (`readings-validate`, docs/spec/composition-s1.md 8.4) and
+`validate` sends the document to the Lean readings route (service mode `readings-route`, `readings-validate`,
+docs/spec/composition-s1.md 8.4) and
 returns Lean's row, or raises Lean's diagnostic with its text verbatim. Lean is the one owner of the answer: no
 Python regeneration and no Rust replay is compared with it any more (lean-first batch 3). A route that cannot
 answer, or answers a row that is not bound to the request (its shape, its sets, candidates, readings and
@@ -18,19 +19,15 @@ from __future__ import annotations
 
 import re
 from contextlib import contextmanager
-from pathlib import Path
 
 from .ast import decimal_value
-from .backends.lean import configured_timeout as lean_timeout, run_readings_cases
+from .backends.relay import rows
 from .errors import CheckerUnavailable, VEError
 from .readings_s1 import KEY_FIELDS, KEY_OPTIONAL, Decoded, Document, content_bearing, decode_key, wire
 from .readings_s2_english import s1_gated as _s1_gated
 
-LEAN_ROUTE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_readings_route"
-
-
 def document_wire(units, reading_sets, *, couplings=(), narrowings=()):
-    """The document as `ve_readings_route` reads it: every unit with its kind (1.2), content when it has one."""
+    """The document as the readings route reads it: every unit with its kind (1.2), content when it has one."""
     document = {"units": [{"id": unit["id"],
                            **({"kind": unit["kind"]} if unit.get("kind") is not None else {}),
                            **({"content": unit["content"]} if unit.get("content") is not None else {})}
@@ -42,7 +39,7 @@ def document_wire(units, reading_sets, *, couplings=(), narrowings=()):
     return document
 
 
-def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), executable=LEAN_ROUTE):
+def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), executable=None):
     """Ask the S2 Lean route to regenerate the admitted document's reading route.
 
     The choice search and the generated vocabulary, units, names and slot are
@@ -57,8 +54,7 @@ def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), 
     environment = wire(environment)
     document = wire(document_wire(units, reading_sets, couplings=couplings, narrowings=narrowings))
     [row] = run_lean([{"id": "readings-s2", "kind": "readings-elaborate",
-                       "environment": environment, "document": document}], executable=executable,
-                     timeout=lean_timeout(300.0))
+                       "environment": environment, "document": document}], executable=executable)
     try:
         senv = S1Environment(environment)
         source = Document(senv, document)
@@ -144,9 +140,10 @@ def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), 
     return {key: value for key, value in row.items() if key not in ("id", "status")}
 
 
-def run_lean(cases, *, executable=LEAN_ROUTE, timeout=None):
-    """Without a `timeout`, the call waits `VE_LEAN_TIMEOUT` seconds, else the route's default."""
-    return run_readings_cases(executable, wire(cases), timeout=timeout)
+def run_lean(cases, *, executable=None, timeout=None):
+    """Lean's readings route rows for `cases`, in order, rejections included (service mode `readings-route`;
+    `executable` names another service build, `timeout` replaces the mode's deadline)."""
+    return rows("readings-route", wire(cases), timeout=timeout, executable=executable)
 
 
 def _message(exc):
@@ -326,10 +323,10 @@ def _check(row, case):
         _need(ROW(row) and row["id"] == case["id"])
         _bind(row, case["document"])
     except (_Invalid, TypeError, KeyError, ValueError, AttributeError, IndexError, RecursionError) as exc:
-        raise CheckerUnavailable("ve_readings_route returned an invalid answer") from exc
+        raise CheckerUnavailable("the Lean readings route returned an invalid answer") from exc
 
 
-def validate(environment, units, reading_sets, *, executable=LEAN_ROUTE):
+def validate(environment, units, reading_sets, *, executable=None):
     """Return Lean's checked reading data, or raise its diagnostic.
 
     Transport failure and a row that is malformed or not bound to the request are operational failures
@@ -337,7 +334,7 @@ def validate(environment, units, reading_sets, *, executable=LEAN_ROUTE):
     # One normalised input (`wire`: an explicit null is an absent field), as Lean reads it.
     environment, document = wire(environment), wire(document_wire(units, reading_sets))
     case = {"id": "readings-s1", "kind": "readings-validate", "environment": environment, "document": document}
-    row = run_lean([case], executable=executable, timeout=lean_timeout(300.0))[0]
+    row = run_lean([case], executable=executable)[0]
     if row["status"] == "error":
         raise VEError(row["error"])
     _check(row, case)

@@ -55,12 +55,10 @@ INJECTED = {
     # An adversarial delay (a parent scheduled late); the outcome is decided by a lock, not by it.
     "tests/test_native_build_lock.py::test_orphaned_builder_keeps_exclusive_lock": "late-parent reproducer",
     # Instrumented waits: the test records the wait each call is given; no child runs against it.
-    "tests/test_hang_guards.py::test_each_lean_runner_caller_waits_the_setting_else_its_default":
-        "instrumented subprocess.run",
-    "tests/test_hang_guards.py::test_an_explicit_lean_timeout_is_kept": "instrumented subprocess.run",
+    "tests/test_hang_guards.py::test_an_explicit_route_timeout_is_kept": "instrumented service pool",
     "tests/test_hang_guards.py::test_every_precommit_wait_follows_the_setting_else_its_default":
         "instrumented subprocess.run and oracle clock",
-    "tests/test_lean_service.py::test_users_keep_the_wall_clock_defaults":
+    "tests/test_lean_service.py::test_users_keep_the_mode_deadlines":
         "expire_service_waits frozen clock; instrumented handshake",
     "tests/test_stage2_dispatch.py::test_rust_wait_is_the_default_unless_configured": "instrumented Rust checker",
     # Injected expired deadlines against never-answering fakes (expired_waits, expire_service_waits).
@@ -277,71 +275,53 @@ def test_the_guard_sees_a_product_constant_wait(tmp_path, monkeypatch):
     assert short_waits(path, constants=False) == []
 
 
-# Every product caller of a one-shot Lean runner: its default wait, and a call that reaches the runner.
+# Every product caller of a statement-layer Lean route, and a call that reaches it. Since lean-first batch 1
+# each route is a mode of the Lean service: a request waits its mode's CPU deadline, with the wall-clock cap
+# `VE_LEAN_SERVICE_TIMEOUT` sets (tests/test_lean_service.py), so a caller passes no wait of its own.
 CALLERS = {
-    "soft route": (120, lambda fake: lean_backend.run_soft_case(fake, {"id": "soft"})),
-    "norm-defaults route": (120, lambda fake: norm_defaults_route.run_cases([], fake)),
-    "readings route": (120, lambda fake: readings_route.run_lean([], executable=fake)),
-    "reports route": (60, lambda fake: reports_route.run_case("reports-elaborate", {}, {})),
-    "risk route": (180, lambda fake: risk.run_case({"id": "r", "kind": "risk-elaborate", "environment": {}},
-                                                   binary=fake)),
-    "alternatives route": (180, lambda fake: alternatives.run_case(
-        {"id": "a", "kind": "alt-elaborate", "environment": alternatives_environment()}, binary=fake)),
-    "discourse route": (300, lambda fake: discourse.lean_admission(b"x", fake.parent)),
-    "W6 quantity admission": (60, lambda fake: admission._lean_quantity_admission(
+    "soft route": ("soft-norms", lambda tmp: __import__("ve.soft_route", fromlist=["_run"])._run(
+        {"id": "soft", "kind": "soft-elaborate"})),
+    "norm-defaults route": ("norm-defaults", lambda tmp: norm_defaults_route.run_cases([{"id": "n"}])),
+    "readings route": ("readings-route", lambda tmp: readings_route.run_lean([{"id": "r"}])),
+    "reports route": ("reports", lambda tmp: reports_route.run_case("reports-elaborate", {}, {})),
+    "risk route": ("risk", lambda tmp: risk.run_case({"id": "r", "kind": "risk-elaborate", "environment": {}})),
+    "alternatives route": ("alternatives", lambda tmp: alternatives.run_case(
+        {"id": "a", "kind": "alt-elaborate", "environment": alternatives_environment()})),
+    "discourse route": ("discourse", lambda tmp: discourse.lean_admission(b"x", tmp)),
+    "W6 quantity admission": ("quantity", lambda tmp: admission._lean_quantity_admission(
         SimpleNamespace(to_dict=dict), {})),
 }
 
 
 @pytest.fixture
-def waits(tmp_path, monkeypatch):
-    """The timeout of every runner call, each of which then times out; the runner is a file."""
-    fake = tmp_path / "runner"
-    fake.write_text("")
-    monkeypatch.setattr(reports_route, "EXECUTABLE", fake)
-    monkeypatch.setenv("VE_DISCOURSE_ROUTE", str(fake))
+def waits(monkeypatch):
+    """The (mode, timeout) of every request a route caller makes, each of which is then unavailable."""
+    from ve.backends import relay
     monkeypatch.delenv("VE_AUTHORITY", raising=False)
     seen = []
 
-    def run(argv, **options):
-        seen.append(options["timeout"])
-        raise subprocess.TimeoutExpired(argv, options["timeout"])
-    monkeypatch.setattr(lean_backend, "subprocess", SimpleNamespace(run=run, TimeoutExpired=subprocess.TimeoutExpired))
-    return fake, seen
+    class Recording:
+        def run_bound(self, mode, cases, *, timeout=None):
+            seen.append((mode, timeout))
+            raise CheckerUnavailable("CheckerUnavailable: recorded")
+    monkeypatch.setattr(relay, "_pool_for", lambda executable=None: Recording())
+    return seen
 
 
 @pytest.mark.parametrize("name", CALLERS)
-def test_each_lean_runner_caller_waits_the_setting_else_its_default(waits, monkeypatch, name):
-    fake, seen = waits
-    default, call = CALLERS[name]
-    monkeypatch.delenv("VE_LEAN_TIMEOUT")
+def test_each_lean_route_caller_leaves_the_wait_to_its_mode(waits, tmp_path, name):
+    mode, call = CALLERS[name]
     with pytest.raises((CheckerUnavailable, VEError)):
-        call(fake)
-    monkeypatch.setenv("VE_LEAN_TIMEOUT", "1234.5")
-    with pytest.raises((CheckerUnavailable, VEError)):
-        call(fake)
-    assert seen == [default, 1234.5]
+        call(tmp_path)
+    assert waits == [(mode, None)]
 
 
-@pytest.mark.parametrize("text", ["0", "-1", "nan", "inf", "", "ten"])
-def test_an_invalid_lean_timeout_is_unavailable_before_any_runner_starts(waits, monkeypatch, text):
-    fake, seen = waits
-    monkeypatch.setenv("VE_LEAN_TIMEOUT", text)
-    for name, (_, call) in CALLERS.items():
-        with pytest.raises(CheckerUnavailable, match="VE_LEAN_TIMEOUT"):
-            call(fake)
-    assert seen == []
-
-
-def test_an_explicit_lean_timeout_is_kept(waits, monkeypatch):
-    fake, seen = waits
-    for call in (lambda: lean_backend.run_norm_defaults_cases(fake, [], timeout=7),
-                 lambda: lean_backend.run_readings_cases(fake, [], timeout=7),
-                 lambda: risk.run_case({"id": "r", "kind": "risk-elaborate", "environment": {}},
-                                       binary=fake, timeout=7)):
+def test_an_explicit_route_timeout_is_kept(waits):
+    for call in (lambda: readings_route.run_lean([{"id": "r"}], timeout=7),
+                 lambda: risk.run_case({"id": "r", "kind": "risk-elaborate", "environment": {}}, timeout=7)):
         with pytest.raises(CheckerUnavailable):
             call()
-    assert seen == [7, 7, 7]
+    assert waits == [("readings-route", 7), ("risk", 7)]
 
 
 def test_the_suite_raises_every_checker_setting_to_the_hang_guard():

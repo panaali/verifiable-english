@@ -1,14 +1,21 @@
 {
   "$id": "identity.json",
   "$comment": "Standalone domain-separated identity recomputation.",
-  "row": {"anyOf": [
-    {"$ref": "common.json#/$defs/case_error"},
-    {"$ref": "common.json#/$defs/error"},
-    {"type": "object", "required": ["id", "status", "kind", "identity_id"],
-      "additionalProperties": false,
-      "properties": {
-        "id": {"type": "string", "x-equals": "/id"},
-        "status": {"const": "ok"},
-        "kind": {"enum": ["source", "meaning", "model", "claim", "edge"], "x-equals": "/kind"},
-        "identity_id": {"$ref": "common.json#/$defs/hex64"}}}]}
+  "row": {
+    "anyOf": [
+      {"$ref": "common.json#/$defs/case_error"},
+      {"$ref": "common.json#/$defs/error"},
+      {
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "x-equals": "/id"},
+          "identity_id": {"$ref": "common.json#/$defs/hex64"},
+          "kind": {"enum": ["source", "meaning", "model", "claim", "edge"], "x-equals": "/kind"},
+          "status": {"const": "ok"}
+        },
+        "required": ["id", "status", "kind", "identity_id"],
+        "type": "object"
+      }
+    ]
+  }
 }

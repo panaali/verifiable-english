@@ -5,15 +5,15 @@ import VE.WireContract.Hooks.SoftNorms
 import VE.WireContract.Hooks.Norms
 import VE.WireContract.Hooks.NormDefaults
 
-/-! The `ve_diagnose` runner (docs/spec/wire-contract.md 4.2): the registry of
-contracts and the rows it prints.
+/-! The diagnose runner (docs/spec/wire-contract.md 4.2), the `ve_service` mode `diagnose`
+(`VE.Service.Diagnose`; formerly the one-shot `ve_diagnose`): the registry of contracts and the
+rows it gives.
 
-`ve_diagnose <unit> [cases.json|-]` reads the same case JSON as the unit's
-route, through `VE.JsonInput.parseCases`, builds each case's root with the
-unit's input adapter, runs the engine and prints one row per case: the
-outcome `fault` with its record, or `clean`. Rows keep `status` within `ok` and
-`error`. It decides no verdict: a route's legacy validator alone accepts or
-rejects, and this runner only names the first failing check of a rejection.
+For a case of the same JSON as the unit's route, `diagnoseCase` builds the case's root with the
+unit's input adapter, runs the engine and gives one row: the outcome `fault` with its record, or
+`clean`. Rows keep `status` within `ok` and `error`. It decides no verdict: a route's legacy
+validator alone accepts or rejects, and this runner only names the first failing check of a
+rejection.
 -/
 
 namespace VE.WireContract.Diagnose
@@ -50,36 +50,5 @@ def diagnoseCase (u : Registered) (case : Json) : Json :=
     | none => Json.mkObj [("id", id), ("status", .str "ok"), ("outcome", .str "clean")]
     | some f => Json.mkObj [("id", id), ("status", .str "ok"), ("outcome", .str "fault"),
         ("diagnostic", record u.table f)]
-
-def usage : String := "usage: ve_diagnose <unit> [cases.json|-]"
-
-def main (args : List String) : IO UInt32 := do
-  let stderr ← IO.getStderr
-  let (unit, paths) ← match args with
-    | unit :: paths => pure (unit, paths)
-    | [] => do
-      stderr.putStrLn usage
-      return 2
-  let some registered := units.lookup unit
-    | do
-      stderr.putStrLn s!"UnsupportedProfile: no wire contract {unit}"
-      return 2
-  let input ← match paths with
-    | [] | ["-"] => (← IO.getStdin).readToEnd
-    | [path] => IO.FS.readFile path
-    | _ =>
-      stderr.putStrLn usage
-      return 2
-  match VE.JsonInput.parseCases input with
-  | .error message =>
-    stderr.putStrLn message
-    return 2
-  | .ok cases =>
-    let rows := cases.mapIdx fun index c => match c with
-      | .ok j => diagnoseCase registered j
-      | .error message => Json.mkObj [("status", .str "error"),
-          ("case_index", toJson index), ("error", .str message)]
-    (← IO.getStdout).putStrLn (Json.arr rows).compress
-    return if rows.any (fun r => r.getObjValD "status" == .str "error") then 1 else 0
 
 end VE.WireContract.Diagnose
