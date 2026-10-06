@@ -479,6 +479,12 @@ fn run(args: &[String]) -> Result<i32> {
                 };
                 failed |= out["status"] == "error";
                 writeln!(stdout, "{out}").map_err(|e| Error::new("InvalidInput", e.to_string()))?;
+                // Each record is flushed as it is answered, so one process can serve a
+                // client that waits for every answer before it sends the next case
+                // (`ve/backends/rust_jsonl.py`, docs/LEAN-FIRST-PLAN.md F6).
+                stdout
+                    .flush()
+                    .map_err(|e| Error::new("InvalidInput", e.to_string()))?;
                 if count > MAX_PACKAGE_BYTES {
                     // Drop only the rest of this record, using the reader's
                     // fixed-size buffer rather than allocating the whole line.

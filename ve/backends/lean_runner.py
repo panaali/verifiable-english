@@ -62,10 +62,15 @@ def route_environment(env) -> dict:
     return data
 
 
+def cached_route_environment(env) -> dict:
+    """The same projection, encoded once for repeated route/evaluation cases."""
+    from ..environment_wire import encoded_environment
+    return encoded_environment(env, "lean-route", lambda: route_environment(env))
+
+
 def evaluation_case(env, case_id: str, ast: list, model: dict) -> tuple[str, dict]:
     """(mode, case) for evaluating the formulas `ast` on `model`; rows carry `values`."""
-    case = {"id": case_id, "environment": route_environment(env), "model": model, "ast": ast}
+    case = {"id": case_id, "environment": cached_route_environment(env), "model": model, "ast": ast}
     mode = lean_mode(env)
     # The legacy evaluation runner takes a kind-less case; the others name it.
     return mode, case if mode == "evaluate" else {**case, "kind": "evaluate"}
-

@@ -1966,6 +1966,13 @@
 'VE.Service.coding_error' depends on axioms: [propext]
 'VE.Service.rejectionCode_mem' depends on axioms: [propext]
 'VE.Service.respond_decoded' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.expand_plain' depends on axioms: [propext, Quot.sound]
+'VE.Service.expand_hit' depends on axioms: [propext, Quot.sound]
+'VE.Service.expand_miss' depends on axioms: [propext, Quot.sound]
+'VE.Service.expandCases_unexpanded' depends on axioms: [propext, Quot.sound]
+'VE.Service.register_none' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.registerOne_digest' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.registerOne_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Risk.termSum_cons' depends on axioms: [propext]
 'VE.Risk.termSum_nil' does not depend on any axioms
 'VE.Risk.termSum_append' depends on axioms: [propext, Quot.sound]
