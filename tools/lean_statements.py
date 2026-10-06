@@ -153,7 +153,10 @@ set_option pp.fullNames true in
     IO.println s!"theorem {s}"
     for line in body do
       IO.println line
-    IO.println s!"  -- uses {" ".intercalate uses.toList}"
+    if uses.isEmpty then
+      IO.println "  -- uses"
+    else
+      IO.println s!"  -- uses {" ".intercalate uses.toList}"
     IO.println s!"  -- expr {hash info.type}"
   IO.println "-- predicates"
   for m in tree do

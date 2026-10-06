@@ -9,9 +9,38 @@ open VE.Rights VE.Rights.Run VE.Rights.Wire
 
 variable {req : Json}
 
-theorem of_softNorms {v : Json} (h : Fits req Skeletons.softNorms v) : Fits req Skeletons.rights v := by
-  refine Fits.altSub ?_ h
-  alt_sub
+/-- Every newly generated rights predicate has the environment's predicate-entry shape. -/
+theorem generated_entries_fit (D : RightsDoc) :
+    ∀ p ∈ genEntries D,
+      Fits req (skel% "common.json#/$defs/environment_predicate") p.2 := by
+  intro p hp
+  by_cases hb : D.bars = []
+  · simp only [genEntries, hb, ↓reduceIte, List.append_nil, List.mem_append, List.mem_map] at hp
+    rcases hp with ⟨a, _, he⟩ | ⟨a, _, he⟩
+    · rw [← congrArg Prod.snd he]
+      exact Common.generatedEntry_fits _ _ _
+    · rw [← congrArg Prod.snd he]
+      exact Common.generatedEntry_fits _ _ _
+  · simp only [genEntries, hb, ↓reduceIte, List.mem_append, List.mem_map] at hp
+    rcases hp with hp | ⟨a, _, he⟩
+    · rcases hp with ⟨a, _, he⟩ | ⟨a, _, he⟩
+      · rw [← congrArg Prod.snd he]
+        exact Common.generatedEntry_fits _ _ _
+      · rw [← congrArg Prod.snd he]
+        exact Common.generatedEntry_fits _ _ _
+    · rw [← congrArg Prod.snd he]
+      exact Common.generatedEntry_fits _ _ _
+
+/-- The rights elaboration's environment field is its rights prime environment. -/
+theorem regenerated_environment (D : RightsDoc) (env : Json) :
+    (regenerated D env).lookup "environment_prime" =
+      some ((primeJsonR D env).toOption.getD .null) := by
+  rfl
+
+/-- The soft-norms mode's rows, off the rights path, are rows of this mode. -/
+theorem of_softNorms {v : Json} (hp : usesRightsPath req = false) (h : Fits req Skeletons.softNorms v) :
+    Fits req Skeletons.rights v :=
+  Fits.onCaseE (by simpa [CaseCond.holds, CaseDecider.fn] using hp) h
 
 /-- Every limitation premise label is a nonempty `rights:limitation:...` label. -/
 theorem limLabels_nonempty (D : RightsDoc) : ∀ x ∈ limPremisesLabelled D, x.1.isEmpty = false := by
@@ -51,6 +80,8 @@ theorem elaborate_fits (id : String) (D : RightsDoc) (env doc : Json) (openNames
   simp only [List.filter_cons, List.filter_nil, String.reduceBNe, Bool.false_eq_true, ↓reduceIte]
   fits
   all_goals try first
+    | exact Fits.rightsEnvironment D env (generated_entries_fit D)
+        (fun p _ => Common.decisionEntry_fits p.2) rfl
     | exact (labelled_contra (limLabels_nonempty D) ‹_› ‹_›).elim
     | exact (labelled_contra (SoftNorms.softLabelled_nonempty _) ‹_› ‹_›).elim
 
@@ -73,40 +104,45 @@ theorem admission_fits (id reportId : String) (res : Admission.Admitted) :
   fits
   all_goals exact Common.claimJson_fits _
 
-theorem runRightsKind_fits (id kind : String) (j : Json) :
-    OkFits req Skeletons.rights (runRightsKind id kind j) := by
+theorem runRightsKind_fits (id kind : String) (j : Json) {w : Json} (hobj : j.getObjVal? "id" = .ok w)
+    (hp : usesRightsPath j = true) (hK : KindRead "evaluate" j kind) :
+    OkFits j Skeletons.rights (runRightsKind id kind j) := by
   unfold runRightsKind
   simp only []
-  okfits
+  rcases hK with hK | ⟨hK, hd⟩
+  all_goals (try subst hd)
+  all_goals okfits
+  all_goals kind_norm
   all_goals first
-    | (unfold runAdmission; okfits; fits_as "rights.json#/$defs/admission"; exact admission_fits _ _ _)
-    | (fits_as "rights.json#/$defs/elaborate"; with_reducible exact elaborate_fits _ _ _ _ _)
-    | (fits_as "rights.json#/$defs/projections"
-       have h := projections_fits (req := req) id _ j _ ‹projectionsResult _ j = .ok _›
+    | (unfold runAdmission; okfits; fits_from admission_fits _ _ _)
+    | fits_from elaborate_fits _ _ _ _ _
+    | (have h := projections_fits (req := j) id _ j _ ‹projectionsResult _ j = .ok _›
        simp only [VE.Route.Wire.ok, List.cons_append, List.nil_append] at h
-       exact h)
-    | (fits_as "rights.json#/$defs/bar"; with_reducible exact bar_fits _ _ _ _ _)
-    | skip
-  all_goals (try simp only [VE.Route.Wire.ok])
-  all_goals fits
+       fits_from h)
+    | fits_from bar_fits _ _ _ _ _
+    | ((try simp only [VE.Route.Wire.ok]); fits)
   -- Not conflict-free with no failing target: impossible (`firstFailure_of_not_free`).
   all_goals
     exfalso
     have := firstFailure_of_not_free j _ ‹replayRightsConflict j = .ok _› (by simp_all)
     simp_all
 
-theorem runCase_fits (j : Json) : OkFits req Skeletons.rights (runCase j) := by
+theorem runCase_fits (j : Json) (hp : usesRightsPath j = true) : OkFits j Skeletons.rights (runCase j) := by
   unfold runCase
   okfits
-  · exact OkP.of (SoftNorms.runCase_fits j) fun _ => of_softNorms
-  · exact runRightsKind_fits _ _ _
+  all_goals first
+    | (exfalso; simp_all; done)
+    | read_kind
+  all_goals first
+    | exact runRightsKind_fits _ _ _ ‹_› hp (KindRead.of_str ‹_›)
+    | exact runRightsKind_fits _ _ _ ‹_› hp (Or.inr ⟨‹_›, rfl⟩)
 
-theorem runCaseReported_fits (j : Json) : Fits j Skeletons.rights (runCaseReported j) := by
+theorem runCaseReported_fits (j : Json) (hj : CaseWF j) : Fits j Skeletons.rights (runCaseReported j) := by
   unfold runCaseReported
   split
   · split
-    · exact runCase_fits j _ ‹_›
+    · exact runCase_fits j ‹_› _ ‹_›
     · fits
-  · exact of_softNorms (SoftNorms.runCaseReported_fits j)
+  · exact of_softNorms (Bool.eq_false_iff.mpr ‹_›) (SoftNorms.runCaseReported_fits j hj)
 
 end ResponseShape.Encoders.Rights

@@ -165,6 +165,23 @@ def canonicalEnvironmentJson (environment : Json) : Except String Json := do
   pure (environment.setObjVal! "vocabulary"
     (vocab.setObjVal! "predicates" (Json.mkObj canonical)))
 
+/-- Append generated predicate declarations to the actual environment vocabulary. Both
+soft-norms and rights use this operation, and the response-shape proof fixes its entries. -/
+def appendPredicates (environment : Json) (entries : List (String × Json)) : Except String Json := do
+  let vocab ← environment.getObjVal? "vocabulary"
+  let preds ← fields (← vocab.getObjVal? "predicates")
+  pure (environment.setObjVal! "vocabulary" (vocab.setObjVal! "predicates"
+    (Json.mkObj (preds ++ entries))))
+
+/-- The append operation exposes the predicate object of the returned environment. In
+particular the generated entries are in the final object, after the source entries. -/
+theorem appendPredicates_assembly (environment : Json) (entries : List (String × Json)) :
+    appendPredicates environment entries = (do
+      let vocab ← environment.getObjVal? "vocabulary"
+      let preds ← fields (← vocab.getObjVal? "predicates")
+      pure (environment.setObjVal! "vocabulary" (vocab.setObjVal! "predicates"
+        (Json.mkObj (preds ++ entries))))) := rfl
+
 /-! Python's `_Decoder` over the FOL fragment: `Bridge.decodeFormula 64` plus
 the node budget (`MAX_NODES`) and `MAX_INDEX`. One decoder counts every formula
 and term node in pre-order and checks the budget on entering a node, before its
