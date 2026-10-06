@@ -40,6 +40,8 @@ def run(root: Path, seed: int, scratch: Path) -> dict:
                            f"{result.stderr[-2000:]}")
     data = json.loads(report.read_text())
     data["trace"] = json.loads(trace.read_text())
+    if data["trace"].get("baseline_replay", {}).get("count") != data["baseline"]["entries"]:
+        raise RuntimeError(f"{root.name} seed {seed}: incomplete baseline replay trace")
     for name, mutants in data["mutants"].items():
         if data["trace"].get(name, {}).get("count") != sum(mutants.values()):
             raise RuntimeError(f"{root.name} seed {seed}: incomplete {name} trace")

@@ -6,6 +6,7 @@ from __future__ import annotations
 import importlib.util
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 ROOT = Path(__file__).resolve().parents[1]
 B10A = ROOT / "docs/lean-first/b10a"
@@ -59,7 +60,8 @@ def test_fourteen_date_seeds_preserve_the_differential_result():
     assert all(sum(sum(counts.values()) for counts in row["mutants"].values()) > 25000
                for row in evidence["seeds"])
     assert all(row["base_trace"] == row["head_trace"] and
-               {name: trace["count"] for name, trace in row["base_trace"].items()} ==
+               {name: trace["count"] for name, trace in row["base_trace"].items()
+                if name != "baseline_replay"} ==
                {name: sum(counts.values()) for name, counts in row["mutants"].items()}
                for row in evidence["seeds"])
 
@@ -107,6 +109,44 @@ def test_fuzzer_gate_detects_changed_verdicts_with_equal_summaries(tmp_path, mon
         assert base["trace"]["requests"]["inputs_sha256"] == head["trace"]["requests"]["inputs_sha256"]
         assert base["trace"]["requests"]["answers_sha256"] != head["trace"]["requests"]["answers_sha256"]
         assert gate.compare(base, head) == ["trace"]
+
+
+def test_fuzzer_gate_detects_changed_baseline_replay_answer():
+    gate, tracer = _tool("fuzzer_gate"), _tool("trace_fuzzer")
+    entry = {"id": "existing", "surface": "probe", "input": {"a": 1}}
+
+    def report(verdict):
+        surface = SimpleNamespace(name="probe", profile=lambda seed, root: "core")
+        seed = SimpleNamespace(id="sample")
+        df = SimpleNamespace(
+            canonical=lambda value: json.dumps(value, sort_keys=True, separators=(",", ":")),
+            sample=lambda *_: [(seed, {"a": 2})],
+            evaluate=lambda _, items: [(None, None, {"lean": {"ok": True}}, None) for _ in items],
+            replay=lambda entries, _: [(entry, "reproduces", {"classes": ["same"],
+                                         "answers": {"lean": {"verdict": verdict}}})
+                                        for entry in entries],
+        )
+
+        def run():
+            df.sample(surface)
+            df.evaluate(surface, [(seed, {"a": 2})])
+            df.replay([entry], {"probe": surface})
+            return {"corpus": {}, "mutants": {}, "answers": {}, "findings": {},
+                    "baseline": {key: [] if key in ("unreviewed", "not_reproduced") else 1
+                                 for key in ("entries", "seen_in_sample", "unreviewed", "not_reproduced")},
+                    "new": [], "exit": 0}
+
+        result, trace = tracer.trace_run(df, run)
+        result["trace"] = trace
+        return result
+
+    base, head = report(True), report(False)
+    assert base["trace"]["baseline_replay"]["count"] == 1
+    assert base["trace"]["baseline_replay"]["inputs_sha256"] == \
+           head["trace"]["baseline_replay"]["inputs_sha256"]
+    assert base["trace"]["baseline_replay"]["answers_sha256"] != \
+           head["trace"]["baseline_replay"]["answers_sha256"]
+    assert gate.compare(base, head) == ["trace"]
 
 
 def test_every_timed_run_exited_cleanly_on_both_sides():
