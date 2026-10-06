@@ -4116,6 +4116,7 @@
 'ResponseShape.Encoders.Alternatives.optString_isSome' does not depend on any axioms
 'ResponseShape.Encoders.Alternatives.runCaseReported_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Alternatives.runCase_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Alternatives.sourceOf_environment' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Alternatives.sourceOf_taken' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Alternatives.validate_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Common.claimJson_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -4234,6 +4235,7 @@
 'ResponseShape.Encoders.Risk.of_alternatives' depends on axioms: [propext]
 'ResponseShape.Encoders.Risk.runCaseReported_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Risk.runCase_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Risk.stringField_present' does not depend on any axioms
 'ResponseShape.Encoders.RiskEval.condition_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.RiskEval.evalCase_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.RiskEval.runCaseReported_fits' depends on axioms: [propext, Classical.choice, Quot.sound]

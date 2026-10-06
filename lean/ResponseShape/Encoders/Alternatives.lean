@@ -40,7 +40,7 @@ theorem elaborate_coverage_fits (id : String) (src : Wire.AltSource)
     subst_vars
     fits
 
-private theorem sourceOf_environment {j : Json} {src : Wire.AltSource}
+theorem sourceOf_environment {j : Json} {src : Wire.AltSource}
     (h : Replay.sourceOf j = .ok src) : ∃ environment, j.getObjVal? "environment" = .ok environment := by
   unfold Replay.sourceOf at h
   obtain ⟨environment, henv, _⟩ := VE.Order.ProfileGate.bind_ok h

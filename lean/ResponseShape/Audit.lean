@@ -24,6 +24,7 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.Alternatives.optString_isSome
 #print axioms ResponseShape.Encoders.Alternatives.runCaseReported_fits
 #print axioms ResponseShape.Encoders.Alternatives.runCase_fits
+#print axioms ResponseShape.Encoders.Alternatives.sourceOf_environment
 #print axioms ResponseShape.Encoders.Alternatives.sourceOf_taken
 #print axioms ResponseShape.Encoders.Alternatives.validate_fits
 #print axioms ResponseShape.Encoders.Common.claimJson_fits
@@ -138,6 +139,7 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.Risk.of_alternatives
 #print axioms ResponseShape.Encoders.Risk.runCaseReported_fits
 #print axioms ResponseShape.Encoders.Risk.runCase_fits
+#print axioms ResponseShape.Encoders.Risk.stringField_present
 #print axioms ResponseShape.Encoders.RiskEval.condition_fits
 #print axioms ResponseShape.Encoders.RiskEval.evalCase_fits
 #print axioms ResponseShape.Encoders.RiskEval.runCaseReported_fits
