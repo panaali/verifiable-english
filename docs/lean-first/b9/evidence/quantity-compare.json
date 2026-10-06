@@ -1,0 +1,2686 @@
+{
+ "differences": [
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "04a7091e4b368db4",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Decimal literal exceeds 40 digits"
+    }
+   },
+   "case": "064bb51b28e463b8",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Decimal literal exceeds 40 digits"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Quantity AST exceeds node or depth limit"
+    }
+   },
+   "case": "09d2a950cfcdcc35",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Quantity AST exceeds node or depth limit"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "0aa431b6bd3bb5a2",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+    }
+   },
+   "case": "0f02eba0809b1856",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "0fed7d8f41974db2",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "returned": false
+   },
+   "case": "107504ec59655ec2",
+   "class": "verdict",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: certificate replay exceeds 10,000 steps"
+    }
+   },
+   "listed": true,
+   "op": "certificate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Quantity AST exceeds node or depth limit"
+    }
+   },
+   "case": "115ef74a447ef956",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Quantity AST exceeds node or depth limit"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "1282d41a0c91942d",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Quantity AST exceeds node or depth limit"
+    }
+   },
+   "case": "17f8af1a757aae94",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Quantity AST exceeds node or depth limit"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Integer literal exceeds 40 characters"
+    }
+   },
+   "case": "190b64f35b08c03a",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: numeral length"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "case": "198bfc71bbd58e88",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+    }
+   },
+   "case": "1a415e2ec452c05c",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '111111111111111111111111111111111111111١'"
+    }
+   },
+   "case": "1b20466a7c2a2305",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "1c7f8e8e92aa6225",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Quantity AST exceeds node or depth limit"
+    }
+   },
+   "case": "22240113ef180bdd",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Quantity AST exceeds node or depth limit"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Quantity AST exceeds node or depth limit"
+    }
+   },
+   "case": "22ae81307a07a5c1",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Quantity AST exceeds node or depth limit"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Quantity AST exceeds node or depth limit"
+    }
+   },
+   "case": "23ba4b460f311965",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Quantity AST exceeds node or depth limit"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Integer literal exceeds 40 characters"
+    }
+   },
+   "case": "24cb5bf7435b2978",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: numeral length"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "case": "25c5debe40338ba8",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Integer literal exceeds 40 characters"
+    }
+   },
+   "case": "28f10d3a6a003a7f",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: numeral length"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Decimal literal exceeds 40 digits"
+    }
+   },
+   "case": "2cc29a1aa781371e",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Decimal literal exceeds 40 digits"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Quantity AST exceeds node or depth limit"
+    }
+   },
+   "case": "3832f691bebd4f57",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Quantity AST exceeds node or depth limit"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "case": "3af58a3a083e2654",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "listed": true,
+   "op": "certificate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "3dfb622a8d6acf48",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "4728037f7bed6ce3",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+    }
+   },
+   "case": "4ae698a6c149dee1",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "domain exceeds entity limit",
+     "path": "/domains/s"
+    }
+   },
+   "case": "54644fe6f94c1724",
+   "class": "verdict",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: domain size"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Decimal literal exceeds 40 digits"
+    }
+   },
+   "case": "57dd6f40d9f5b240",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Decimal literal exceeds 40 digits"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Quantity AST exceeds node or depth limit"
+    }
+   },
+   "case": "5fa2adbdfd671f24",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: JSON depth exceeds 256"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Quantity AST exceeds node or depth limit"
+    }
+   },
+   "case": "64d133fe6097045c",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Quantity AST exceeds node or depth limit"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Integer literal exceeds 40 characters"
+    }
+   },
+   "case": "653315c0f47fd7eb",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: numeral length"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Quantity AST exceeds node or depth limit"
+    }
+   },
+   "case": "6b9c9aca75fffc00",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Quantity AST exceeds node or depth limit"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Quantity AST exceeds node or depth limit"
+    }
+   },
+   "case": "6cf3a0b5545594d2",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Quantity AST exceeds node or depth limit"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "7607858c743a06c3",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Integer literal exceeds 40 characters"
+    }
+   },
+   "case": "78672231e29616bd",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: numeral length"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Decimal literal exceeds 40 digits"
+    }
+   },
+   "case": "84b7dfc089b35cf6",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Decimal literal exceeds 40 digits"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "8f723e3772e21902",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "case": "93181d6ae88229e0",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+    }
+   },
+   "case": "956dcba2ac95c652",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "case": "976e012c60eb422e",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "case": "9d9bf7c989f811de",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "9de0c0b5a27145f8",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "9fa855d5a29adfe6",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "returned": false
+   },
+   "case": "a36824490b381033",
+   "class": "verdict",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: certificate replay exceeds 10,000 steps"
+    }
+   },
+   "listed": true,
+   "op": "certificate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Quantity AST exceeds node or depth limit"
+    }
+   },
+   "case": "a6b828c6f1796a3f",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Quantity AST exceeds node or depth limit"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "a72a0dc3aafeb499",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Verbalisations must be nonempty strings"
+    }
+   },
+   "case": "ae21bbd45e413797",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "String expected"
+    }
+   },
+   "listed": true,
+   "op": "environment"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '111111111111111111111111111111111111111١'"
+    }
+   },
+   "case": "b068ccebc3fe7c85",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "case": "b42f4793abfed47c",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "listed": true,
+   "op": "certificate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '111111111111111111111111111111111111111١'"
+    }
+   },
+   "case": "c178ad8b998e13a6",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+    }
+   },
+   "case": "c3c53ebc1b8c76ac",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Integer literal exceeds 40 characters"
+    }
+   },
+   "case": "cadeff1c14499da6",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: numeral length"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Integer literal exceeds 40 characters"
+    }
+   },
+   "case": "d449cd3976721cbd",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: numeral length"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "dc9c376638bdc903",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '111111111111111111111111111111111111111١'"
+    }
+   },
+   "case": "dcca02c9ebea3937",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Integer literal exceeds 40 characters"
+    }
+   },
+   "case": "dec345d688a7d96d",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: numeral length"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "e728a679cfabb8f1",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "e927a883af7dcdc1",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "e9dd241333c582f5",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Verbalisations must be nonempty strings"
+    }
+   },
+   "case": "ed8ef46c0eb0e366",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Verbalisation must be nonempty"
+    }
+   },
+   "listed": true,
+   "op": "environment"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Decimal literal exceeds 40 digits"
+    }
+   },
+   "case": "f336bb6641ad988a",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Decimal literal exceeds 40 digits"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+    }
+   },
+   "case": "f4c1c7e825c27904",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "case": "f816aeb0142966f0",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Decimal literal exceeds 40 digits"
+    }
+   },
+   "case": "fe5aedff3d5628e9",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Decimal literal exceeds 40 digits"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "04a7091e4b368db4",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Decimal literal exceeds 40 digits"
+    }
+   },
+   "case": "064bb51b28e463b8",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Decimal literal exceeds 40 digits"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Quantity AST exceeds node or depth limit"
+    }
+   },
+   "case": "09d2a950cfcdcc35",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Quantity AST exceeds node or depth limit"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "0aa431b6bd3bb5a2",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+    }
+   },
+   "case": "0f02eba0809b1856",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "0fed7d8f41974db2",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "returned": false
+   },
+   "case": "107504ec59655ec2",
+   "class": "verdict",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: certificate replay exceeds 10,000 steps"
+    }
+   },
+   "listed": true,
+   "op": "certificate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Quantity AST exceeds node or depth limit"
+    }
+   },
+   "case": "115ef74a447ef956",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Quantity AST exceeds node or depth limit"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Invalid quantity certificate"
+    }
+   },
+   "case": "11b86812f03ce677",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Invalid quantity certificate: fields do not match: expected [format, environment_id, premise_meaning_ids, conclusion_meaning_id, core], got [checker_version, conclusion_meaning_id, environment_id, premise_meaning_ids, trace]"
+    }
+   },
+   "listed": true,
+   "op": "admission"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "1282d41a0c91942d",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Quantity AST exceeds node or depth limit"
+    }
+   },
+   "case": "17f8af1a757aae94",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Quantity AST exceeds node or depth limit"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Integer literal exceeds 40 characters"
+    }
+   },
+   "case": "190b64f35b08c03a",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: numeral length"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "case": "198bfc71bbd58e88",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+    }
+   },
+   "case": "1a415e2ec452c05c",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '111111111111111111111111111111111111111١'"
+    }
+   },
+   "case": "1b20466a7c2a2305",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "1c7f8e8e92aa6225",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Quantity AST exceeds node or depth limit"
+    }
+   },
+   "case": "22240113ef180bdd",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Quantity AST exceeds node or depth limit"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Quantity AST exceeds node or depth limit"
+    }
+   },
+   "case": "22ae81307a07a5c1",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Quantity AST exceeds node or depth limit"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Quantity AST exceeds node or depth limit"
+    }
+   },
+   "case": "23ba4b460f311965",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Quantity AST exceeds node or depth limit"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Integer literal exceeds 40 characters"
+    }
+   },
+   "case": "24cb5bf7435b2978",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: numeral length"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "case": "25c5debe40338ba8",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Integer literal exceeds 40 characters"
+    }
+   },
+   "case": "28f10d3a6a003a7f",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: numeral length"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['certificate'], unknown=[])"
+    }
+   },
+   "case": "2b59718bbf8267d5",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [name, conclusion, leaves, certificate], got [conclusion, leaves, name]"
+    }
+   },
+   "listed": true,
+   "op": "admission"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Decimal literal exceeds 40 digits"
+    }
+   },
+   "case": "2cc29a1aa781371e",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Decimal literal exceeds 40 digits"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Quantity AST exceeds node or depth limit"
+    }
+   },
+   "case": "3832f691bebd4f57",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Quantity AST exceeds node or depth limit"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "case": "3af58a3a083e2654",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "listed": true,
+   "op": "certificate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "3dfb622a8d6acf48",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "4728037f7bed6ce3",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+    }
+   },
+   "case": "4ae698a6c149dee1",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "domain exceeds entity limit",
+     "path": "/domains/s"
+    }
+   },
+   "case": "54644fe6f94c1724",
+   "class": "verdict",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: domain size"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Decimal literal exceeds 40 digits"
+    }
+   },
+   "case": "57dd6f40d9f5b240",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Decimal literal exceeds 40 digits"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Quantity AST exceeds node or depth limit"
+    }
+   },
+   "case": "5fa2adbdfd671f24",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: JSON depth exceeds 256"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Quantity AST exceeds node or depth limit"
+    }
+   },
+   "case": "64d133fe6097045c",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Quantity AST exceeds node or depth limit"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Integer literal exceeds 40 characters"
+    }
+   },
+   "case": "653315c0f47fd7eb",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: numeral length"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Quantity AST exceeds node or depth limit"
+    }
+   },
+   "case": "6b9c9aca75fffc00",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Quantity AST exceeds node or depth limit"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Quantity AST exceeds node or depth limit"
+    }
+   },
+   "case": "6cf3a0b5545594d2",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Quantity AST exceeds node or depth limit"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "7607858c743a06c3",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Integer literal exceeds 40 characters"
+    }
+   },
+   "case": "78672231e29616bd",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: numeral length"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Decimal literal exceeds 40 digits"
+    }
+   },
+   "case": "84b7dfc089b35cf6",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Decimal literal exceeds 40 digits"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "8f723e3772e21902",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['certificate'], unknown=[])"
+    }
+   },
+   "case": "91c346bfcd580524",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [name, conclusion, leaves, certificate], got [conclusion, leaves, name]"
+    }
+   },
+   "listed": true,
+   "op": "admission"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "case": "93181d6ae88229e0",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+    }
+   },
+   "case": "956dcba2ac95c652",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "case": "976e012c60eb422e",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "case": "9d9bf7c989f811de",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "9de0c0b5a27145f8",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "9fa855d5a29adfe6",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "returned": false
+   },
+   "case": "a36824490b381033",
+   "class": "verdict",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: certificate replay exceeds 10,000 steps"
+    }
+   },
+   "listed": true,
+   "op": "certificate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Quantity AST exceeds node or depth limit"
+    }
+   },
+   "case": "a6b828c6f1796a3f",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Quantity AST exceeds node or depth limit"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "a72a0dc3aafeb499",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Verbalisations must be nonempty strings"
+    }
+   },
+   "case": "ae21bbd45e413797",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "String expected"
+    }
+   },
+   "listed": true,
+   "op": "environment"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '111111111111111111111111111111111111111١'"
+    }
+   },
+   "case": "b068ccebc3fe7c85",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "case": "b42f4793abfed47c",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "listed": true,
+   "op": "certificate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '111111111111111111111111111111111111111١'"
+    }
+   },
+   "case": "c178ad8b998e13a6",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+    }
+   },
+   "case": "c3c53ebc1b8c76ac",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Integer literal exceeds 40 characters"
+    }
+   },
+   "case": "cadeff1c14499da6",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: numeral length"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Integer literal exceeds 40 characters"
+    }
+   },
+   "case": "d449cd3976721cbd",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: numeral length"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "dc9c376638bdc903",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '111111111111111111111111111111111111111١'"
+    }
+   },
+   "case": "dcca02c9ebea3937",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Integer literal exceeds 40 characters"
+    }
+   },
+   "case": "dec345d688a7d96d",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: numeral length"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "e728a679cfabb8f1",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "e927a883af7dcdc1",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Non-canonical integer literal '١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١١'"
+    }
+   },
+   "case": "e9dd241333c582f5",
+   "class": "order",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid integer"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Verbalisations must be nonempty strings"
+    }
+   },
+   "case": "ed8ef46c0eb0e366",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Verbalisation must be nonempty"
+    }
+   },
+   "listed": true,
+   "op": "environment"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Invalid quantity certificate"
+    }
+   },
+   "case": "f1a5889e6287bc8b",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Invalid quantity certificate: fields do not match: expected [format, environment_id, premise_meaning_ids, conclusion_meaning_id, core], got [checker_version, conclusion_meaning_id, environment_id, premise_meaning_ids, trace]"
+    }
+   },
+   "listed": true,
+   "op": "admission"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Decimal literal exceeds 40 digits"
+    }
+   },
+   "case": "f336bb6641ad988a",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Decimal literal exceeds 40 digits"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+    }
+   },
+   "case": "f4c1c7e825c27904",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "case": "f816aeb0142966f0",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: premises and conclusion exceed aggregate 10000-node limit"
+    }
+   },
+   "listed": true,
+   "op": "countermodel"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Decimal literal exceeds 40 digits"
+    }
+   },
+   "case": "fe5aedff3d5628e9",
+   "class": "wording",
+   "corpus": "quantity",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Decimal literal exceeds 40 digits"
+    }
+   },
+   "listed": true,
+   "op": "elaborate"
+  }
+ ],
+ "records": {
+  "quantity/lean": 12863,
+  "quantity/python": 12863
+ },
+ "totals": {
+  "order": 40,
+  "same": 25592,
+  "verdict": 6,
+  "wording": 88
+ },
+ "unavailable_both": {},
+ "unlisted": 0
+}

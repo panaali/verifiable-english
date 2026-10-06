@@ -422,6 +422,8 @@ class EnglishVocabulary:
                     'risk__class': '{0} is {1}',
                     'risk__or_worse': '{0} is {1} or worse',
                     'risk__less_worst': '{0} has a less severe worst case than {1}',
+                    # DRI ruling 2 (english-lean-s3.md D9): the severity order has its fixed wording.
+                    'risk__more_severe': '{0} is more severe than {1}',
                 })
                 # c2 and c4 are the canonical negated forms (2.1, 2.3): parsed and rendered,
                 # so `¬leads_to` never renders as "it is not the case that … leads to".

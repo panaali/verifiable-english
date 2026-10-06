@@ -658,31 +658,35 @@ Batch 1's new modules (`ResponseShape`, `VE/Service/*`) were classified by `--se
 Step 7 remeasured again after the merge of that ve-integration into english-lean-s2/integrate (2026-10-05):
 S2.4's `ve_english_route` (`EnglishGrammar.Run`'s `runCaseReported` and `main`, and `EnglishMain.lean`), a
 one-shot executable by english-lean-s2.md 2.10 and, at that point, the only one-shot route left beside
-`ve_conformance`, added 33 trusted lines to batch 1's 551. Batch 11a then added the W2 speech-source executable;
-the current measurements follow:
+`ve_conformance`, added 33 trusted lines to batch 1's 551. Batch 11a then added the W2 speech-source executable,
+and the senses integration adds `ve_senses_route` as another one-shot route with 26 trusted lines (remeasured at
+the merge of ve-integration into senses/integrate, 2026-10-06); the current measurements follow:
+
+The merged step 2a ledger now identifies 114 tied runner lines; the table below records
+that source classification alongside the previously measured steps.
 
 | Step | Removed | Tied | Reclassified [V]→[R] | Adds (est.) | Net | Days | Risk | Score |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | 1 | 0 | 23 | 0 | 0 | 23 | 5 | 1.5 | 3.1 |
-| 2a | 0 | 0 | 0 | 0 | 0 | 4 | 1 | 0.0 |
+| 2a | 0 | 114 | 0 | 0 | 114 | 4 | 1 | 28.5 |
 | 2b | 94 | 0 | 0 | 0 | 94 | 2 | 2 | 23.5 |
 | 3 | 39 | 0 | 0 | 10 | 29 | 14 | 2 | 1.0 |
 | 4 | 720 | 0 | 0 | 420 | 300 | 14 | 2 | 10.7 |
 | 5 | 0 | 485 | 0 | 0 | 485 | 14 | 1 | 34.6 |
 | 6 | 35 | 0 | 1758 | 0 | 35 | 3 | 1 | 11.7 |
-| 7 | 601 | 0 | 0 | 60 | 541 | 6 | 2 | 45.1 |
+| 7 | 627 | 0 | 0 | 60 | 567 | 6 | 2 | 47.2 |
 | 8a | 106 | 225 | 0 | 60 | 271 | 10 | 1.5 | 18.1 |
-| 8b | 0 | 3464 | 0 | 0 | 3464 | 30 | 3 | 38.5 |
+| 8b | 0 | 3460 | 0 | 0 | 3460 | 30 | 3 | 38.4 |
 | 9 | 88 | 0 | 0 | 0 | 88 | 18 | 2 | 2.4 |
 | 10 | 0 | 0 | 0 | 0 | 0 | 4 | 1 | 0.0 |
 
 What the measurement changes:
 
-* **Re-ranking of steps 5 to 10 by measured score:** 7 (44.8), 5 (34.6), 8a (18.1), 6 (11.7),
-  9 (2.4), 10. Step 8b's 3,464 is an upper bound (every untied line of the eight units' `Wire.lean`
+* **Re-ranking of steps 5 to 10 by measured score:** 7 (47.2), 5 (34.6), 8a (18.1), 6 (11.7),
+  9 (2.4), 10. Step 8b's 3,460 is an upper bound (every untied line of the eight units' `Wire.lean`
   files, on the assumption that every decoder gets `exact`), not a forecast; it stays ranked by its
   pilot (Alternatives) as section 3 says. Against the estimates, 7 overtakes 5 (762 trusted
-  dispatch and `main` lines, not 340; 603 before the bench executable; 551 once batch 1 deleted the one-shot routes; 584 with english-lean S2's `ve_english_route`; 587 after batch 11a added the W2 `ve_speech_acts_route`; 598 after the reports batch, 601 with its fault-order preflight) and 5 is smaller than estimated (485 measured against 1,500 to
+  dispatch and `main` lines, not 340; 603 before the bench executable; 551 once batch 1 deleted the one-shot routes; 584 with english-lean S2's `ve_english_route`; 587 after batch 11a added the W2 `ve_speech_acts_route`; 613 with `ve_senses_route`; 627 after the reports batch with its fault-order preflight) and 5 is smaller than estimated (485 measured against 1,500 to
   2,000): most of the rows' targets are short runners, and `scopedVerdict` and `weighingWitness`
   are already C.
 * **Step 6** removes almost nothing trusted: the SHA-256 copy and the `maxNodes` sites are [I] and

@@ -7,6 +7,11 @@ import VE.Grammar.Reading
 start type, then lexes the source, reads its sentences in order with the generic reader, and checks
 the document's formulas against the environment. `translate` reads one sentence from the initial state
 and returns its set of results, complete exactly when the parser returned fewer trees than the cap.
+
+S3 (docs/spec/english-lean-s3.md 2.10, 5.3): `admit` is `read` followed by the obligations of the marked
+sentences, each a marked sentence with the unmarked sentences before it; a marked sentence with none is
+`noPremise`. The proof of each obligation stays with the entailment operation (D10). `firstChecked` is the index
+of the first rendered candidate that reads back as the given formulas and marks (D13).
 -/
 
 namespace VE.EnglishGrammar
@@ -277,5 +282,130 @@ theorem translate_one_sentence : ∀ (E : Env) (O : Overlay) (L : Lexicon) (cap 
   · rename_i w hw
     exact absurd (by rw [← Array.length_toList, hw]; rfl) hn
   · rfl
+
+/-! ## Admission and the check of candidates (S3 spec 5.3, 5.5) -/
+
+def obligations (rs : List (EFormula × Bool)) : List (Nat × List Nat) :=
+  (List.range rs.length).filterMap fun i =>
+    match rs[i]? with
+    | some (_, true) => some (i, (List.range i).filter fun j => (rs[j]?).map (·.2) == some false)
+    | _ => none
+
+inductive AdmitOutcome where
+  | ok (rs : List (EFormula × Bool)) (obligations : List (Nat × List Nat))
+  | noPremise (index : Nat)
+  | refused (o : ReadOutcome)
+
+def admit (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (s : String) : AdmitOutcome :=
+  match read E O L b s with
+  | .ok rs =>
+    match (obligations rs).find? (fun o => o.2.isEmpty) with
+    | some (i, _) => .noPremise i
+    | none => .ok rs (obligations rs)
+  | o => .refused o
+
+def firstChecked (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (rs : List (EFormula × Bool))
+    (candidates : List String) : Option Nat :=
+  candidates.findIdx? (checkRendering E O L b rs)
+
+theorem obligations_exact : ∀ (rs : List (EFormula × Bool)) (i : Nat) (js : List Nat),
+    (i, js) ∈ obligations rs ↔
+      (∃ A, rs[i]? = some (A, true)) ∧ js = (List.range i).filter fun j => (rs[j]?).map (·.2) == some false := by
+  intro rs i js
+  unfold obligations
+  rw [List.mem_filterMap]
+  constructor
+  · rintro ⟨a, _, hf⟩
+    split at hf
+    · rename_i A h
+      cases hf
+      exact ⟨⟨A, h⟩, rfl⟩
+    · cases hf
+  · rintro ⟨⟨A, h⟩, rfl⟩
+    have hi : i < rs.length := (List.getElem?_eq_some_iff.mp h).1
+    refine ⟨i, List.mem_range.mpr hi, ?_⟩
+    simp only [h]
+
+/-- The outcome of `admit` when `read` accepted the text. -/
+theorem admit_of_read {E : Env} {O : Overlay} {L : Lexicon} {b : Nat} {s : String} {rs : List (EFormula × Bool)}
+    (h : read E O L b s = .ok rs) :
+    admit E O L b s = match (obligations rs).find? (fun o => o.2.isEmpty) with
+      | some (i, _) => .noPremise i
+      | none => .ok rs (obligations rs) := by
+  unfold admit
+  rw [h]
+
+/-- `admit` is `ok` only when `read` accepted the text and no obligation is without a premise. -/
+theorem admit_ok_read {E : Env} {O : Overlay} {L : Lexicon} {b : Nat} {s : String} {rs : List (EFormula × Bool)}
+    {obs : List (Nat × List Nat)} (h : admit E O L b s = .ok rs obs) :
+    read E O L b s = .ok rs ∧ obs = obligations rs ∧ ∀ o ∈ obs, o.2 ≠ [] := by
+  unfold admit at h
+  split at h
+  · rename_i rs2 hr
+    split at h
+    · cases h
+    · rename_i hn
+      cases h
+      refine ⟨hr, rfl, fun o ho he => ?_⟩
+      exact List.find?_eq_none.mp hn o ho (List.isEmpty_iff.mpr he)
+  · cases h
+
+theorem admit_ok : ∀ (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (s : String) (rs : List (EFormula × Bool))
+    (obs : List (Nat × List Nat)),
+    admit E O L b s = .ok rs obs →
+    EnglishOneReading E O L s rs ∧ obs = obligations rs ∧ ∀ o ∈ obs, o.2 ≠ [] := by
+  intro E O L b s rs obs h
+  obtain ⟨hr, ho, hp⟩ := admit_ok_read h
+  exact ⟨read_ok E O L b s rs hr, ho, hp⟩
+
+theorem admit_exact : ∀ (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (s : String) (rs : List (EFormula × Bool)),
+    (∃ obs, admit E O L b s = .ok rs obs) ↔ (read E O L b s = .ok rs ∧ ∀ o ∈ obligations rs, o.2 ≠ []) := by
+  intro E O L b s rs
+  constructor
+  · rintro ⟨obs, h⟩
+    obtain ⟨hr, rfl, hp⟩ := admit_ok_read h
+    exact ⟨hr, hp⟩
+  · rintro ⟨hr, hp⟩
+    refine ⟨obligations rs, ?_⟩
+    rw [admit_of_read hr]
+    have hn : (obligations rs).find? (fun o => o.2.isEmpty) = none :=
+      List.find?_eq_none.mpr fun o ho he => hp o ho (List.isEmpty_iff.mp he)
+    rw [hn]
+
+theorem admit_no_premise : ∀ (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (s : String) (i : Nat),
+    admit E O L b s = .noPremise i →
+    ∃ rs A, read E O L b s = .ok rs ∧ rs[i]? = some (A, true) ∧ ∀ j B, j < i → rs[j]? ≠ some (B, false) := by
+  intro E O L b s i h
+  unfold admit at h
+  split at h
+  · rename_i rs hr
+    split at h
+    · rename_i i2 js hf
+      cases h
+      have hm := List.mem_of_find?_eq_some hf
+      have he : js = [] := List.isEmpty_iff.mp (by simpa using List.find?_some hf)
+      obtain ⟨⟨A, hA⟩, hjs⟩ := (obligations_exact rs i js).mp hm
+      refine ⟨rs, A, hr, hA, fun j B hj hb => ?_⟩
+      have hmem : j ∈ (List.range i).filter fun j => (rs[j]?).map (·.2) == some false :=
+        List.mem_filter.mpr ⟨List.mem_range.mpr hj, by simp [hb]⟩
+      rw [← hjs, he] at hmem
+      exact List.not_mem_nil hmem
+    · cases h
+  · cases h
+
+theorem first_checked : ∀ (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (rs : List (EFormula × Bool))
+    (candidates : List String) (i : Nat),
+    firstChecked E O L b rs candidates = some i →
+    ∃ s, candidates[i]? = some s ∧ read E O L b s = .ok rs ∧
+      ∀ j t, j < i → candidates[j]? = some t → read E O L b t ≠ .ok rs := by
+  intro E O L b rs candidates i h
+  unfold firstChecked at h
+  obtain ⟨hi, hp, hbefore⟩ := List.findIdx?_eq_some_iff_getElem.mp h
+  refine ⟨candidates[i], List.getElem?_eq_getElem hi, (checked_rendering_exact E O L b rs _).mp hp, ?_⟩
+  intro j t hj ht hr
+  obtain ⟨hjl, hjt⟩ := List.getElem?_eq_some_iff.mp ht
+  apply hbefore j hj
+  rw [hjt]
+  exact (checked_rendering_exact E O L b rs t).mpr hr
 
 end VE.EnglishGrammar

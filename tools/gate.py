@@ -22,7 +22,7 @@ sys.path.insert(0, str(ROOT))
 from tools import nested_pytest, rust_build  # noqa: E402
 POLICY = ROOT / "tools/gate-optional.json"
 COLLECTION = ROOT / "tools/gate-collection.json"
-LEAN_BINARIES = ("ve_conformance", "ve_service")
+LEAN_BINARIES = ("ve_conformance", "ve_service", "ve_senses_route")
 # The documented refresh of COLLECTION after intended test changes.
 REFRESH = "uv run python tools/gate_collection.py --write"
 REQUIRED_STAGES = ("toolchains", "lean_build", "lean_audit", "rust_build",

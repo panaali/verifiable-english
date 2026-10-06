@@ -352,10 +352,16 @@ def test_every_public_api_name_is_an_entry_or_classified():
 
 
 def test_lean_only_operations_have_no_python_verdict_path():
+    """A lean-only operation has no Python verdict entry. Its only Python code is a relay of Lean's answer:
+    a declared call site of `ve.backends.lean.run` under one of its bindings (senses.read), never a
+    semantic entry."""
     for op in OPS:
         if op["authority"] == "lean-only":
-            assert op["python"] == [] and op["lean_call_sites"] == [], op["id"]
+            assert op["python"] == [], op["id"]
             assert op["id"] not in assurance.ENTRIES
+            assert not op["lean_call_sites"] or op["lean"]["bindings"], op["id"]
+            for site in op["lean_call_sites"]:
+                assert not hasattr(_resolve(site), "__ve_operation__"), (op["id"], site)
 
 
 # --- executable bindings: Lean and Rust ---------------------------------------

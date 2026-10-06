@@ -1,5 +1,5 @@
 import VE.Readings.Doc
-import VE.Readings.Layers
+import VE.SoftNorms.Once
 import VE.NormDefaults.Dag
 
 /-! Separating situations (docs/spec/composition-s1.md 1.5 to 1.7, 4.5, 4.6, 4.9, 8.3).
