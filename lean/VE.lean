@@ -9,6 +9,7 @@ import VE.EnglishGrammar.EngineExamples
 import VE.EnglishGrammar.LexiconFixtures
 import VE.EnglishGrammar.Fixed.Version
 import VE.EnglishGrammar.ReadExamples
+import VE.Senses.Examples
 import VE.Compose.Slot
 import VE.Compose.Dispatch
 import VE.Compose.Content
