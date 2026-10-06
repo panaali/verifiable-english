@@ -18,7 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from ve import norm_defaults as nd  # noqa: E402
+from conformance import frozen_norm_defaults as nd  # noqa: E402
 from ve import norm_defaults_route as route  # noqa: E402
 
 

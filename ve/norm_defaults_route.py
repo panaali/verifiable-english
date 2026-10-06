@@ -11,13 +11,11 @@ from __future__ import annotations
 
 from .assurance import semantic_entry
 from .backends.relay import decide, rows
-from .ast import _to_data, formula_to_data
+from .ast import formula_to_data
 from .background import background
 from .environment import Environment
 from .errors import VEError
-from .norms import NormDocument
 from .wire import digest
-from . import norm_defaults as nd
 
 def run_cases(cases):
     """Lean's rows for `cases`, in case order (rejections are rows)."""

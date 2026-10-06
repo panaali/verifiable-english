@@ -5,7 +5,7 @@ names. The diagnostic engine observes a source only after the legacy validator r
 acceptance or identity.
 """
 
-from ve import norm_defaults as nd
+from conformance import frozen_norm_defaults as nd
 from ve.ast import _Checker
 from ve.environment import Environment
 from ve.errors import ResourceLimit
