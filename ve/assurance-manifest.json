@@ -54,1065 +54,1068 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 21226,
-    "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
-    "files": [
-      {
-        "file": "lean/VE/Alternatives/Admission.lean",
-        "lines": 133,
-        "sha256": "64cacbdf9eb6906fcf61897a6fdc0f1c3876737345c58132626ac2b3fb15d0a2",
-        "ranges": [
-          [
-            1,
-            133
-          ]
-        ],
-        "declarations": [
-          "admitDocument"
-        ],
-        "reason": "decodes the alternatives document graph and checks its bindings; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Alternatives/Replay.lean",
-        "lines": 328,
-        "sha256": "1b69bb125b3dffc0c53e6e97099a5fe72f1759d3c492757a37c8e61eb06b0f78",
-        "ranges": [
-          [
-            1,
-            328
-          ]
-        ],
-        "declarations": [
-          "documentHash",
-          "decodePackage",
-          "sourceOf",
-          "decodeRows",
-          "decodeScenario"
-        ],
-        "reason": "package bindings and scenario replay from JSON; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Alternatives/Wire.lean",
-        "lines": 296,
-        "sha256": "26827ec1010c948832f3bd73100c392ab467197aa08740694e6a8ee64582e026",
-        "ranges": [
-          [
-            1,
-            296
-          ]
-        ],
-        "declarations": [
-          "profileGate",
-          "normsView",
-          "decodeBlock",
-          "decodeAltSource"
-        ],
-        "reason": "strict alternatives block, profile, source and regenerated premise decoder; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Attribution/Admission.lean",
-        "lines": 327,
-        "sha256": "357665dbfa39d9fb65f85e2829f593beb9f4451bd266fe1dd8924eda9d5af525",
-        "ranges": [
-          [
-            1,
-            327
-          ]
-        ],
-        "declarations": [
-          "admissionReports"
-        ],
-        "reason": "reports document admission and bindings; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Attribution/Content.lean",
-        "lines": 726,
-        "sha256": "42d7518d9a79a9c180ed9b463cad04d23c6ddc15cfdc8815e97dd9fe5791b26c",
-        "ranges": [
-          [
-            1,
-            726
-          ]
-        ],
-        "declarations": [
-          "canonicalObject",
-          "documentObject",
-          "documentId"
-        ],
-        "reason": "report content and document identity JSON; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Attribution/Wire.lean",
-        "lines": 510,
-        "sha256": "f8b2a8b0b38145d78d7ac90da84eb4c96aaef01fabaca781c14767739d715579",
-        "ranges": [
-          [
-            1,
-            510
-          ]
-        ],
-        "declarations": [
-          "decodeEnvironment",
-          "decodeContent",
-          "decodeUnit",
-          "decodeDocument"
-        ],
-        "reason": "reports environment and document decoder; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Bridge.lean",
-        "lines": 282,
-        "sha256": "967a6ee399612d1b8b88c0f8d36c29a2d88ec7136c0c5f7bd9b42f312d01d318",
-        "ranges": [
-          [
-            14,
-            248
-          ]
-        ],
-        "declarations": [
-          "fields",
-          "decodeEnvironment",
-          "decodeModelData",
-          "decodeModel",
-          "decodeFormula",
-          "decodeDocument",
-          "decodeCountermodel"
+  "total_lines": 21446,
+  "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
+  "files": [
+    {
+      "file": "lean/VE/Alternatives/Admission.lean",
+      "lines": 133,
+      "sha256": "64cacbdf9eb6906fcf61897a6fdc0f1c3876737345c58132626ac2b3fb15d0a2",
+      "ranges": [
+        [
+          1,
+          133
         ]
-      },
-      {
-        "file": "lean/VE/CertificateWire.lean",
-        "lines": 236,
-        "sha256": "3d002c705023b1b79eaffee591ec648c1f7f8a8e5426a9cb1098c1e42c5efdf6",
-        "ranges": [
-          [
-            11,
-            163
-          ],
-          [
-            177,
-            187
-          ]
-        ],
-        "declarations": [
-          "sha256",
-          "canonical",
-          "digest",
-          "decodeTrace",
-          "decodeCertificate",
-          "decodeClosureTrace",
-          "decodeClosureCertificate",
-          "meaningId",
-          "decodeQuery"
+      ],
+      "declarations": [
+        "admitDocument"
+      ],
+      "reason": "decodes the alternatives document graph and checks its bindings; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Alternatives/Replay.lean",
+      "lines": 328,
+      "sha256": "1b69bb125b3dffc0c53e6e97099a5fe72f1759d3c492757a37c8e61eb06b0f78",
+      "ranges": [
+        [
+          1,
+          328
         ]
-      },
-      {
-        "file": "lean/VE/Closure/Bridge.lean",
-        "lines": 99,
-        "sha256": "9711c23a178688eadab849f89912cc5f3f9dea032018d76c5ae870130cd54a1b",
-        "ranges": [
-          [
-            9,
-            66
-          ]
-        ],
-        "declarations": [
-          "decodeEnvironment",
-          "decodeKind",
-          "decodeFormula",
-          "decodeFormulas"
+      ],
+      "declarations": [
+        "documentHash",
+        "decodePackage",
+        "sourceOf",
+        "decodeRows",
+        "decodeScenario"
+      ],
+      "reason": "package bindings and scenario replay from JSON; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Alternatives/Wire.lean",
+      "lines": 296,
+      "sha256": "26827ec1010c948832f3bd73100c392ab467197aa08740694e6a8ee64582e026",
+      "ranges": [
+        [
+          1,
+          296
         ]
-      },
-      {
-        "file": "lean/VE/Core/Bridge.lean",
-        "lines": 159,
-        "sha256": "6cd616c3c6634d99306573aee3d40a2f3851c17d4c65e9b8103b3c8895eb625b",
-        "ranges": [
-          [
-            10,
-            126
-          ]
-        ],
-        "declarations": [
-          "decodeEnvironment",
-          "decodeKind",
-          "decodeFormula",
-          "decodeFormulas"
+      ],
+      "declarations": [
+        "profileGate",
+        "normsView",
+        "decodeBlock",
+        "decodeAltSource"
+      ],
+      "reason": "strict alternatives block, profile, source and regenerated premise decoder; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Attribution/Admission.lean",
+      "lines": 327,
+      "sha256": "357665dbfa39d9fb65f85e2829f593beb9f4451bd266fe1dd8924eda9d5af525",
+      "ranges": [
+        [
+          1,
+          327
         ]
-      },
-      {
-        "file": "lean/VE/Core/Wire.lean",
-        "lines": 166,
-        "sha256": "280802e8f79ad3bdbe39484aaa0915a70938fb8f21d141f719a8946a9ed956ce",
-        "ranges": [
-          [
-            1,
-            166
-          ]
-        ],
-        "declarations": [
-          "decodeModel",
-          "decodeTrace",
-          "decodeCertificate"
+      ],
+      "declarations": [
+        "admissionReports"
+      ],
+      "reason": "reports document admission and bindings; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Attribution/Content.lean",
+      "lines": 726,
+      "sha256": "42d7518d9a79a9c180ed9b463cad04d23c6ddc15cfdc8815e97dd9fe5791b26c",
+      "ranges": [
+        [
+          1,
+          726
         ]
-      },
-      {
-        "file": "lean/VE/Definitions/Bundle.lean",
-        "lines": 471,
-        "sha256": "fc86d51a7f848ba1ad4ca613f73494ef09c1e908c81ef1e0429b73c7351accbb",
-        "ranges": [
-          [
-            1,
-            471
-          ]
-        ],
-        "declarations": [
-          "decodeLeaf",
-          "decodeLemma"
+      ],
+      "declarations": [
+        "canonicalObject",
+        "documentObject",
+        "documentId"
+      ],
+      "reason": "report content and document identity JSON; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Attribution/Wire.lean",
+      "lines": 510,
+      "sha256": "f8b2a8b0b38145d78d7ac90da84eb4c96aaef01fabaca781c14767739d715579",
+      "ranges": [
+        [
+          1,
+          510
         ]
-      },
-      {
-        "file": "lean/VE/EnglishGrammar/Encode.lean",
-        "lines": 139,
-        "sha256": "5fd6c65cffd9bb85b6cbd47a5069b68702599e4454399c16f8044538dd24f223",
-        "ranges": [
-          [
-            1,
-            139
-          ]
-        ],
-        "declarations": [
-          "typedCheck",
-          "typedDocument",
-          "optString",
-          "optFields",
-          "Env.decode"
-        ],
-        "reason": "english-lean S2 (docs/spec/english-lean-s2.md 2.3, 2.10): Env.decode reads the environment and an English vocabulary overlay into the reader's Env; typedDocument decides check_document's verdict through the standalone typing service's decoders; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/EnglishGrammar/Run.lean",
-        "lines": 331,
-        "sha256": "1e0d02fad48418a1daaa74c0614ee0f2b9fa4161680cf2b682a4665780435ccb",
-        "ranges": [
-          [
-            1,
-            331
-          ]
-        ],
-        "declarations": [
-          "pairs",
-          "triples",
-          "decodeLexicon",
-          "environmentId",
-          "grammarId",
-          "decodeCase",
-          "readCase",
-          "grammarCase"
-        ],
-        "reason": "english-lean S2.4 (docs/spec/english-lean-s2.md 2.10, 4.3, 4.4): ve_english_route decodes the case (environment through Env.decode, overlay, the ve.english-lexicon@1 lexicon, which must name the environment), computes the six identities and writes the english.read and english.grammar answers; shadow only while english.admission keeps authority python; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Json.lean",
-        "lines": 136,
-        "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
-        "ranges": [
-          [
-            1,
-            136
-          ]
-        ],
-        "declarations": [
-          "value",
-          "parse",
-          "caseTexts",
-          "parseCases"
+      ],
+      "declarations": [
+        "decodeEnvironment",
+        "decodeContent",
+        "decodeUnit",
+        "decodeDocument"
+      ],
+      "reason": "reports environment and document decoder; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Bridge.lean",
+      "lines": 282,
+      "sha256": "967a6ee399612d1b8b88c0f8d36c29a2d88ec7136c0c5f7bd9b42f312d01d318",
+      "ranges": [
+        [
+          14,
+          248
         ]
-      },
-      {
-        "file": "lean/VE/NormDefaults/Admission.lean",
-        "lines": 350,
-        "sha256": "b60054268019832d7de8374fb800954933526f31d93ad86a42958b72da4895a5",
-        "ranges": [
-          [
-            1,
-            350
-          ]
+      ],
+      "declarations": [
+        "fields",
+        "decodeEnvironment",
+        "decodeModelData",
+        "decodeModel",
+        "decodeFormula",
+        "decodeDocument",
+        "decodeCountermodel"
+      ]
+    },
+    {
+      "file": "lean/VE/CertificateWire.lean",
+      "lines": 236,
+      "sha256": "3d002c705023b1b79eaffee591ec648c1f7f8a8e5426a9cb1098c1e42c5efdf6",
+      "ranges": [
+        [
+          11,
+          163
         ],
-        "declarations": [
-          "fillJson",
-          "decodeFilledDoc",
-          "admitNodes",
-          "admitDocument"
-        ],
-        "reason": "norm-defaults@0 W2 admission decoder over E‴; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/NormDefaults/Layered.lean",
-        "lines": 426,
-        "sha256": "dc7777651caf94d8401a11394e79bd0fc75882f0f8371dc8378558a1a084f67a",
-        "ranges": [
-          [
-            1,
-            426
-          ]
-        ],
-        "declarations": [
-          "decodeSoftU",
-          "decodeRightsU",
-          "decodeLayered",
-          "decodePackageX",
-          "situationX",
-          "tupleOf",
-          "filledX",
-          "witnessConflictX",
-          "replayStatusX",
-          "suppliedX",
-          "neverX",
-          "runLayered"
-        ],
-        "reason": "norm-defaults@0 soft and rights branch decoder: the placeholder source through the soft or rights decoder, packages bound to the source and the layered base background, base situations with a separate filling, statuses and supplied witnesses; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/NormDefaults/Replay.lean",
-        "lines": 391,
-        "sha256": "4242c79ff826cc94cee7f211f1a3f7d86e44537bb84702a3d7d570d4f70caad3",
-        "ranges": [
-          [
-            1,
-            391
-          ]
-        ],
-        "declarations": [
-          "witnessFromU",
-          "replayWitnessU",
-          "decodeFilling",
-          "replayStatus",
-          "replayGaps",
-          "reachedFromU",
-          "replayReached"
-        ],
-        "reason": "norm-defaults@0 witness, status and gap decoder; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/NormDefaults/Report.lean",
-        "lines": 475,
-        "sha256": "f00d2b66e18234792263f6bac27b7bc4629df397f15fffecaafb978828d02b10",
-        "ranges": [
-          [
-            1,
-            475
-          ]
-        ],
-        "declarations": [
-          "groundingCites",
-          "validateCompletions",
-          "reportWith",
-          "situationFrom",
-          "suppliedWitness",
-          "neverReached",
-          "reportFrom"
-        ],
-        "reason": "norm-defaults@0 report decoder: the completions block, the base situation, supplied filled witnesses and reached packages; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/NormDefaults/Wire.lean",
-        "lines": 383,
-        "sha256": "c59e1151313d522e071f624b428f302db515af5c9cb30e86a632a6e05c81a536",
-        "ranges": [
-          [
-            1,
-            383
-          ]
-        ],
-        "declarations": [
-          "placeholderJson",
-          "checkAuthorN",
-          "decodeSourceU",
-          "baseEnvironmentJsonU",
-          "decodePackageU",
-          "replayConflictU",
-          "replayEntailmentU"
-        ],
-        "reason": "norm-defaults@0 source, package and certificate decoder; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Norms/Admission.lean",
-        "lines": 465,
-        "sha256": "a57c5bf09a155631bfdfddcdf682eb45b16444ad9c18f530012ab60638c198df",
-        "ranges": [
-          [
-            22,
-            45
-          ]
-        ],
-        "declarations": [
-          "splitUnit",
-          "splitDocument"
-        ],
-        "reason": "rewrites the norms document (drops norm content from the FOL copy) before decoding; admitDocument_spec takes splitDocument's result as given. The JSON reads in admitDocument itself are specified by SourceDecoded (admitDocument_spec); envelopeGate only rejects, through the pinned Gate.decodeEnvelope"
-      },
-      {
-        "file": "lean/VE/Norms/Flagged.lean",
-        "lines": 389,
-        "sha256": "2921520480a4afc21083c3d2fd9d991cc289bcbe3587b1f8190e9d20d370d58c",
-        "ranges": [
-          [
-            1,
-            389
-          ]
-        ],
-        "declarations": [
-          "regenerated",
-          "replayEntailment",
-          "decodePackage",
-          "replayConflict",
-          "witnessFrom",
-          "replayWitness"
-        ],
-        "reason": "norms-elaborate, norms-certificate and norms-conflict with data@0 flags and Python's base Background; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Norms/Replay.lean",
-        "lines": 393,
-        "sha256": "dfc40bd4fb007d06107833999c5c8413e623a6e096e4d7b93c4023e999f50eea",
-        "ranges": [
-          [
-            92,
-            140
-          ],
-          [
-            272,
-            291
-          ]
-        ],
-        "declarations": [
-          "baseEnvironmentJson",
-          "documentHash",
-          "decodePackage",
-          "witnessFrom"
+        [
+          177,
+          187
         ]
-      },
-      {
-        "file": "lean/VE/Norms/Wire.lean",
-        "lines": 314,
-        "sha256": "9e2638cc83529162bd8fff6c6927fa1a82e407149483e9978b14b735ff8b1d31",
-        "ranges": [
-          [
-            25,
-            313
-          ]
-        ],
-        "declarations": [
-          "decodeRegulated",
-          "decodeNormsEnvironment",
-          "decodeNorm",
-          "decodeSource",
-          "regenerated"
+      ],
+      "declarations": [
+        "sha256",
+        "canonical",
+        "digest",
+        "decodeTrace",
+        "decodeCertificate",
+        "decodeClosureTrace",
+        "decodeClosureCertificate",
+        "meaningId",
+        "decodeQuery"
+      ]
+    },
+    {
+      "file": "lean/VE/Closure/Bridge.lean",
+      "lines": 99,
+      "sha256": "9711c23a178688eadab849f89912cc5f3f9dea032018d76c5ae870130cd54a1b",
+      "ranges": [
+        [
+          9,
+          66
         ]
-      },
-      {
-        "file": "lean/VE/Order/Wire.lean",
-        "lines": 292,
-        "sha256": "03f085f67a4450364a606663ea88fc126d7abf7e0d5d4a84348ccaf96208da47",
-        "ranges": [
-          [
-            24,
-            233
-          ],
-          [
-            247,
-            253
-          ]
-        ],
-        "declarations": [
-          "decodeEnvironment",
-          "decodeFormula",
-          "decodeModel",
-          "decodeTrace",
-          "decodeCertificate",
-          "environmentId",
-          "meaningId"
+      ],
+      "declarations": [
+        "decodeEnvironment",
+        "decodeKind",
+        "decodeFormula",
+        "decodeFormulas"
+      ]
+    },
+    {
+      "file": "lean/VE/Core/Bridge.lean",
+      "lines": 159,
+      "sha256": "6cd616c3c6634d99306573aee3d40a2f3851c17d4c65e9b8103b3c8895eb625b",
+      "ranges": [
+        [
+          10,
+          126
         ]
-      },
-      {
-        "file": "lean/VE/Readings/SupWire.lean",
-        "lines": 378,
-        "sha256": "f1efaaba3d67d4cdba675a9e40abe12e461124f324c3254ca6ab531bf8885937",
-        "ranges": [
-          [
-            1,
-            378
-          ]
-        ],
-        "declarations": [
-          "decodeCouplings",
-          "decodeNarrowings",
-          "admitS2",
-          "supReplayOf",
-          "replaySup",
-          "decodeChoice",
-          "decodeSupModel",
-          "decodeAssumed",
-          "decodeShared",
-          "decodeConflictCerts",
-          "replayCertificate",
-          "replayModel"
-        ],
-        "reason": "readings@1 S2a decoder: couplings and narrowings with W2's checks and texts, the superposed admission, choices, models over sup D's base vocabulary, and the certificate and model replays of readings_wire_all_sound and readings_wire_model_sound, and the superposed admission's refusals before any verdict (ReadingsUnsatisfiable, and the soft check of every compatible choice's document of DRI ruling 5: readings_wire_satisfiable, readings_wire_choice_wellFormed); the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Readings/Wire.lean",
-        "lines": 988,
-        "sha256": "311cfeb723160a8a2298b5133a4c43194a5ee7f861e403083eac39d015721d2a",
-        "ranges": [
-          [
-            1,
-            988
-          ]
-        ],
-        "declarations": [
-          "placeholderFrame",
-          "decodeEnvironment",
-          "decodeContent",
-          "decodeReading",
-          "decodeSet",
-          "decodeDocument",
-          "decodeKey",
-          "decodeTables",
-          "decodeProbe",
-          "decodeSituation",
-          "admitReadingsSpec",
-          "admitReadings",
-          "replayPair",
-          "replaySeparate"
-        ],
-        "reason": "readings@1 S1 decoder: environment on the three chains, W2 units and active reading sets, situations, keys and probes, and (DRI ruling 2 of 2026-10-03) the chain text that reports `ResourceLimit: decision predicate <n>` first, and (DRI ruling 4) the frame of a norm-defaults@0 environment read with each `unspecified` completion as the placeholder `deny`; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Rights/Admission.lean",
-        "lines": 471,
-        "sha256": "1b43543b7e666ae3874d748c88ce0a88665f996f5584888b71c94db76e527756",
-        "ranges": [
-          [
-            1,
-            471
-          ]
-        ],
-        "declarations": [
-          "splitUnit",
-          "checkSourceCites",
-          "validateCouplings",
-          "decodeRightsDoc",
-          "admitDocument"
-        ],
-        "reason": "rights W2 admission and coupling decoder; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Rights/Wire.lean",
-        "lines": 698,
-        "sha256": "fc25e57bed1adf2d72edcf7c0cd20409b427829d7eb5838028422151ca02e82f",
-        "ranges": [
-          [
-            1,
-            698
-          ]
-        ],
-        "declarations": [
-          "decodeRightsEnvironment",
-          "decodeRightsSource",
-          "replayRightsConflict",
-          "replayRightsEntailment"
-        ],
-        "reason": "rights source, package and certificate decoder; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Risk/Admission.lean",
-        "lines": 128,
-        "sha256": "f3927135556b65898bcfe94e147b29349a5eed1ccaf0ad600e212013336a2aca",
-        "ranges": [
-          [
-            1,
-            128
-          ]
-        ],
-        "declarations": [
-          "admitDocument"
-        ],
-        "reason": "decodes the risk document graph and checks its bindings; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Risk/Audit.lean",
-        "lines": 190,
-        "sha256": "62c518fee5d35cc985cf1293d4a5f365a5ea26baacf77b59a15211ee40e112e9",
-        "ranges": [
-          [
-            1,
-            190
-          ]
-        ],
-        "declarations": [
-          "snapshotOf",
-          "liveEstimates",
-          "allEstimatesRecord",
-          "auditQ12",
-          "auditQ3"
-        ],
-        "reason": "audit snapshot admission and the recorded-estimate replay read log entry contents; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Risk/Record.lean",
-        "lines": 1266,
-        "sha256": "9b9aa82f9a8dd88d66bccae8d8294683f4d25f8f209a52459e47468411313d7e",
-        "ranges": [
-          [
-            1,
-            1266
-          ]
-        ],
-        "declarations": [
-          "decodeRecord",
-          "elabTerm",
-          "elabCond",
-          "decodeItem",
-          "admitDecision"
-        ],
-        "reason": "decision record and cited-entry content decoder, condition elaboration and record admission; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Risk/Run.lean",
-        "lines": 632,
-        "sha256": "6d98b5de4c612db0dabb9349822e5d0cd0128128e4ec680ac4c13819a57606c8",
-        "ranges": [
-          [
-            1,
-            632
-          ]
-        ],
-        "declarations": [
-          "decodeRef",
-          "queried",
-          "riskBaseEnvironmentJson",
-          "decodePackage",
-          "decodeWitnessModel",
-          "runCase"
-        ],
-        "reason": "risk package bindings, audit references, witness models and ve_risk_route dispatch; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Risk/Wire.lean",
-        "lines": 487,
-        "sha256": "3c35ffb89361cf5bd6e6721289a0db0232ce20d4c523a7f31fff6bca67fcb90d",
-        "ranges": [
-          [
-            1,
-            487
-          ]
-        ],
-        "declarations": [
-          "profileGate",
-          "riskNormsView",
-          "extended",
-          "decodeUnits",
-          "checkVocabularyUnits",
-          "checkExtension",
-          "decodeRiskBlock",
-          "decodeRiskSource",
-          "decodeEntry",
-          "decodeSupplied",
-          "decodeLog"
-        ],
-        "reason": "risk profile gate, strict risk block, W6 units, source, entry and log decoder; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Route/Admission.lean",
-        "lines": 697,
-        "sha256": "230006c26a0730425a818788e034ac564178dc1c9e309cf5d3a45d0a287e8c74",
-        "ranges": [
-          [
-            1,
-            697
-          ]
-        ],
-        "declarations": [
-          "decodeKind",
-          "parseLabelRaw",
-          "parseLabel",
-          "decodeUnit",
-          "decodeLeaf",
-          "decodeLemma",
-          "decodeReadingSet",
-          "decodeNode",
-          "checkBindings",
-          "decodeDoc"
+      ],
+      "declarations": [
+        "decodeEnvironment",
+        "decodeKind",
+        "decodeFormula",
+        "decodeFormulas"
+      ]
+    },
+    {
+      "file": "lean/VE/Core/Wire.lean",
+      "lines": 166,
+      "sha256": "280802e8f79ad3bdbe39484aaa0915a70938fb8f21d141f719a8946a9ed956ce",
+      "ranges": [
+        [
+          1,
+          166
         ]
-      },
-      {
-        "file": "lean/VE/Route/Decode.lean",
-        "lines": 282,
-        "sha256": "7cd23701ca9597d409c929dc679826da8ee2e5c5f2d5330a17a219255f69a8d7",
-        "ranges": [
-          [
-            1,
-            282
-          ]
-        ],
-        "declarations": [
-          "modelLimits",
-          "localIds"
-        ],
-        "reason": "W6 route model decoder and optimized validation; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Route/Gate.lean",
-        "lines": 213,
-        "sha256": "afccc527197416046f7e07fa9b2ae08d31bc717291724fe71e92a2d7de58a686",
-        "ranges": [
-          [
-            126,
-            163
-          ]
-        ],
-        "declarations": [
-          "profilesOf",
-          "decodeEnvelope"
+      ],
+      "declarations": [
+        "decodeModel",
+        "decodeTrace",
+        "decodeCertificate"
+      ]
+    },
+    {
+      "file": "lean/VE/Definitions/Bundle.lean",
+      "lines": 471,
+      "sha256": "fc86d51a7f848ba1ad4ca613f73494ef09c1e908c81ef1e0429b73c7351accbb",
+      "ranges": [
+        [
+          1,
+          471
         ]
-      },
-      {
-        "file": "lean/VE/Route/Wire.lean",
-        "lines": 666,
-        "sha256": "7a9f5a63f666e2ce0f14d35deeaa25b6af0558f0da958c16392b4159852d2e1a",
-        "ranges": [
-          [
-            1,
-            666
-          ]
-        ],
-        "declarations": [
-          "decodeVocabulary",
-          "decodeOrderVocabulary",
-          "environmentId",
-          "meaningId",
-          "encodeFormula",
-          "decodeModel",
-          "decodeDataModel",
-          "decodeFormulas",
-          "decodeClosed",
-          "bindingOk",
-          "decodeOrderModel",
-          "decodeNodes"
+      ],
+      "declarations": [
+        "decodeLeaf",
+        "decodeLemma"
+      ]
+    },
+    {
+      "file": "lean/VE/EnglishGrammar/Encode.lean",
+      "lines": 297,
+      "sha256": "92446de419ef1e59c22dc2c9a773df524d7f2b8a411f24ad0ce39f564bdff419",
+      "ranges": [
+        [
+          1,
+          297
         ]
-      },
-      {
-        "file": "lean/VE/Service/Family.lean",
-        "lines": 817,
-        "sha256": "e1e00be4379626252de90286a857d800f98086bf48b734093ab6d0e8d0f546c0",
-        "ranges": [
-          [
-            1,
-            817
-          ]
+      ],
+      "declarations": [
+        "typedCheck",
+        "typedDocument",
+        "optString",
+        "optFields",
+        "Env.decode"
+      ],
+      "reason": "english-lean S2 (docs/spec/english-lean-s2.md 2.3, 2.10): Env.decode reads the environment and an English vocabulary overlay into the reader's Env; typedDocument decides check_document's verdict through the standalone typing service's decoders; S3 extends the same trusted decoder with profile symbols, forms and typing views (docs/spec/english-lean-s3.md 2.3); the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/EnglishGrammar/Run.lean",
+      "lines": 393,
+      "sha256": "1e5db6b062d6366ffcf70600e1f676a693b1974c539669d72eda810cb3d31373",
+      "ranges": [
+        [
+          1,
+          393
+        ]
+      ],
+      "declarations": [
+        "pairs",
+        "triples",
+        "decodeLexicon",
+        "blockRouteView",
+        "validateDeclarations",
+        "environmentId",
+        "grammarId",
+        "decodeCase",
+        "readCase",
+        "grammarCase"
+      ],
+      "reason": "english-lean S2.4 (docs/spec/english-lean-s2.md 2.10, 4.3, 4.4): ve_english_route decodes the case (environment through Env.decode, overlay, the ve.english-lexicon@1 lexicon, which must name the environment), computes the six identities and writes the english.read and english.grammar answers; shadow only while english.admission keeps authority python; S3 validates alternatives and risk profile environments at the reader boundary (docs/spec/english-lean-s3.md 2.3); the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Json.lean",
+      "lines": 136,
+      "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
+      "ranges": [
+        [
+          1,
+          136
+        ]
+      ],
+      "declarations": [
+        "value",
+        "parse",
+        "caseTexts",
+        "parseCases"
+      ]
+    },
+    {
+      "file": "lean/VE/NormDefaults/Admission.lean",
+      "lines": 350,
+      "sha256": "b60054268019832d7de8374fb800954933526f31d93ad86a42958b72da4895a5",
+      "ranges": [
+        [
+          1,
+          350
+        ]
+      ],
+      "declarations": [
+        "fillJson",
+        "decodeFilledDoc",
+        "admitNodes",
+        "admitDocument"
+      ],
+      "reason": "norm-defaults@0 W2 admission decoder over E\u2034; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/NormDefaults/Layered.lean",
+      "lines": 426,
+      "sha256": "dc7777651caf94d8401a11394e79bd0fc75882f0f8371dc8378558a1a084f67a",
+      "ranges": [
+        [
+          1,
+          426
+        ]
+      ],
+      "declarations": [
+        "decodeSoftU",
+        "decodeRightsU",
+        "decodeLayered",
+        "decodePackageX",
+        "situationX",
+        "tupleOf",
+        "filledX",
+        "witnessConflictX",
+        "replayStatusX",
+        "suppliedX",
+        "neverX",
+        "runLayered"
+      ],
+      "reason": "norm-defaults@0 soft and rights branch decoder: the placeholder source through the soft or rights decoder, packages bound to the source and the layered base background, base situations with a separate filling, statuses and supplied witnesses; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/NormDefaults/Replay.lean",
+      "lines": 391,
+      "sha256": "4242c79ff826cc94cee7f211f1a3f7d86e44537bb84702a3d7d570d4f70caad3",
+      "ranges": [
+        [
+          1,
+          391
+        ]
+      ],
+      "declarations": [
+        "witnessFromU",
+        "replayWitnessU",
+        "decodeFilling",
+        "replayStatus",
+        "replayGaps",
+        "reachedFromU",
+        "replayReached"
+      ],
+      "reason": "norm-defaults@0 witness, status and gap decoder; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/NormDefaults/Report.lean",
+      "lines": 475,
+      "sha256": "f00d2b66e18234792263f6bac27b7bc4629df397f15fffecaafb978828d02b10",
+      "ranges": [
+        [
+          1,
+          475
+        ]
+      ],
+      "declarations": [
+        "groundingCites",
+        "validateCompletions",
+        "reportWith",
+        "situationFrom",
+        "suppliedWitness",
+        "neverReached",
+        "reportFrom"
+      ],
+      "reason": "norm-defaults@0 report decoder: the completions block, the base situation, supplied filled witnesses and reached packages; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/NormDefaults/Wire.lean",
+      "lines": 383,
+      "sha256": "c59e1151313d522e071f624b428f302db515af5c9cb30e86a632a6e05c81a536",
+      "ranges": [
+        [
+          1,
+          383
+        ]
+      ],
+      "declarations": [
+        "placeholderJson",
+        "checkAuthorN",
+        "decodeSourceU",
+        "baseEnvironmentJsonU",
+        "decodePackageU",
+        "replayConflictU",
+        "replayEntailmentU"
+      ],
+      "reason": "norm-defaults@0 source, package and certificate decoder; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Norms/Admission.lean",
+      "lines": 465,
+      "sha256": "a57c5bf09a155631bfdfddcdf682eb45b16444ad9c18f530012ab60638c198df",
+      "ranges": [
+        [
+          22,
+          45
+        ]
+      ],
+      "declarations": [
+        "splitUnit",
+        "splitDocument"
+      ],
+      "reason": "rewrites the norms document (drops norm content from the FOL copy) before decoding; admitDocument_spec takes splitDocument's result as given. The JSON reads in admitDocument itself are specified by SourceDecoded (admitDocument_spec); envelopeGate only rejects, through the pinned Gate.decodeEnvelope"
+    },
+    {
+      "file": "lean/VE/Norms/Flagged.lean",
+      "lines": 389,
+      "sha256": "2921520480a4afc21083c3d2fd9d991cc289bcbe3587b1f8190e9d20d370d58c",
+      "ranges": [
+        [
+          1,
+          389
+        ]
+      ],
+      "declarations": [
+        "regenerated",
+        "replayEntailment",
+        "decodePackage",
+        "replayConflict",
+        "witnessFrom",
+        "replayWitness"
+      ],
+      "reason": "norms-elaborate, norms-certificate and norms-conflict with data@0 flags and Python's base Background; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Norms/Replay.lean",
+      "lines": 393,
+      "sha256": "dfc40bd4fb007d06107833999c5c8413e623a6e096e4d7b93c4023e999f50eea",
+      "ranges": [
+        [
+          92,
+          140
         ],
-        "declarations": [
-          "closureEnv",
-          "coreEnv",
-          "orderEnv",
-          "decodeNode",
-          "decodeEdge",
-          "compose",
-          "graphCase",
-          "readings",
-          "readingsCase"
+        [
+          272,
+          291
+        ]
+      ],
+      "declarations": [
+        "baseEnvironmentJson",
+        "documentHash",
+        "decodePackage",
+        "witnessFrom"
+      ]
+    },
+    {
+      "file": "lean/VE/Norms/Wire.lean",
+      "lines": 314,
+      "sha256": "9e2638cc83529162bd8fff6c6927fa1a82e407149483e9978b14b735ff8b1d31",
+      "ranges": [
+        [
+          25,
+          313
+        ]
+      ],
+      "declarations": [
+        "decodeRegulated",
+        "decodeNormsEnvironment",
+        "decodeNorm",
+        "decodeSource",
+        "regenerated"
+      ]
+    },
+    {
+      "file": "lean/VE/Order/Wire.lean",
+      "lines": 292,
+      "sha256": "03f085f67a4450364a606663ea88fc126d7abf7e0d5d4a84348ccaf96208da47",
+      "ranges": [
+        [
+          24,
+          233
         ],
-        "reason": "graph- and readings-mode decoders on the closure, core and order families: family contexts (formula, certificate, Background, binding, model), claims, deductions, recomputed identities, reading sets and evidence; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Service/FamilyBundle.lean",
-        "lines": 500,
-        "sha256": "75698a329690b03fb5843bfa3deb4fa91ab92ab94f6055830ba6be48b6ab908a",
-        "ranges": [
-          [
-            1,
-            500
-          ]
-        ],
-        "declarations": [
-          "decodeLeaf",
-          "decodeLemma",
-          "decodeReadingSet",
-          "run",
-          "folCtx",
-          "bundleCase"
-        ],
-        "reason": "bundle-mode decoder over the family contexts: lemmas, leaves, citations, reading sets and certificate bindings; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Service/FamilyNorms.lean",
-        "lines": 244,
-        "sha256": "f2e5ffd9ed57abbd61dd3cf67775195363271814e55f954c4323405209d4cc3c",
-        "ranges": [
-          [
-            1,
-            244
-          ]
-        ],
-        "declarations": [
-          "folView",
-          "viewModel",
-          "decodeFamily",
-          "certificateCase",
-          "targetPackage",
-          "conflictCase",
-          "runCase"
-        ],
-        "reason": "family-norms decoder: the FOL view of the environment and the witness model, the family certificates and their bindings to the submitted and base environments; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Service/Graph.lean",
-        "lines": 255,
-        "sha256": "cd0523e5ad4d580bc7de3076996974e060eb106eda981fd84aa4dc0f0b6fc212",
-        "ranges": [
-          [
-            1,
-            255
-          ]
-        ],
-        "declarations": [
-          "decodeNode",
-          "decodeEdge",
-          "routeCtx",
-          "legacyCtx",
-          "compose",
-          "graphCase"
-        ],
-        "reason": "graph-mode package decoder: claims, deductions, recomputed identities and certificate bindings (no refinement theorem; trusted, plan 2.1); the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Service/Readings.lean",
-        "lines": 215,
-        "sha256": "357a25dda81bfbce40b2361f8f437a74231e199228e53130f099f543e35816ed",
-        "ranges": [
-          [
-            1,
-            215
-          ]
-        ],
-        "declarations": [
-          "decodeModel",
-          "readingsCase"
-        ],
-        "reason": "readings-mode decoder: environment, fixed premises, reading sets, conclusion, verdict and evidence; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/SoftNorms/Admission.lean",
-        "lines": 332,
-        "sha256": "65c5511e845dca854ad374851393cb945aad630981434c77e0bd1a0db2ae1a8c",
-        "ranges": [
-          [
-            1,
-            332
-          ]
-        ],
-        "declarations": [
-          "decodeSoftDoc",
-          "admitDocument"
-        ],
-        "reason": "soft document admission decoder; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/SoftNorms/Phases.lean",
-        "lines": 362,
-        "sha256": "a19fb700f52c52564a1516fe74a1e6a0b06fa779ef4bd33470b1756b88c711d6",
-        "ranges": [
-          [
-            1,
-            362
-          ]
-        ],
-        "declarations": [
-          "envelope",
-          "declarations",
-          "ruleFields",
-          "checkSource"
-        ],
-        "reason": "soft environment and rule phase decoder; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/SoftNorms/Wire.lean",
-        "lines": 462,
-        "sha256": "641a13b4cd6917aad8444951d4ea4e89da0afd5ba10706a2bb0c62aa8caf0ce4",
-        "ranges": [
-          [
-            1,
-            462
-          ]
-        ],
-        "declarations": [
-          "decodeSoftNorm",
-          "decodeSoftSource",
-          "replaySoftConflict",
-          "replaySoftWitness",
-          "replaySoftEntailment"
-        ],
-        "reason": "soft wire and certificate decoder; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/SpeechActs/Source/Admission/Run.lean",
-        "lines": 630,
-        "sha256": "666d467b95bb495c05c226e1311588498d22bc7368986030e6766209a8817438",
-        "ranges": [
-          [
-            1,
-            630
-          ]
-        ],
-        "declarations": [
-          "p0Json",
-          "admitSpeech",
-          "runAdmission",
-          "isSourceAdmission",
-          "runCase"
-        ],
-        "reason": "speech-act admission (8.5, 8.6): the P0 projection of the decoded source, the speech leaves, the graph and the report identity; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/SpeechActs/Source/Run.lean",
-        "lines": 889,
-        "sha256": "965cd295dcb41ff7a5cc72b25de57f425be4bd32a155cf3755980be3256df51c",
-        "ranges": [
-          [
-            1,
-            889
-          ]
-        ],
-        "declarations": [
-          "readUnit",
-          "readUnits",
-          "speechReadings",
-          "readingSets",
-          "answerRecord",
-          "gapRecord",
-          "answerRecords",
-          "externalRecord",
-          "complianceRecords",
-          "decodeSpeechSource"
-        ],
-        "reason": "speech-act decoded-source wrapper (8.5): ve-document@2 units, reading sets, records and identity; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/SpeechActs/Wire.lean",
-        "lines": 993,
-        "sha256": "fbe08d985f7fc507397eb1e74d7c9cc6ee8504dfc2e43f7cd77d78bf53f3e618",
-        "ranges": [
-          [
-            1,
-            993
-          ]
-        ],
-        "declarations": [
-          "parseScope",
-          "decodeSpeechEnvironment",
-          "decodeUnit",
-          "decodeDocument"
-        ],
-        "reason": "speech scope, content, identity and document decoder; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Time/Document.lean",
-        "lines": 613,
-        "sha256": "4407e998d0073b5c1c7755d42d5ae6773e2d720c3c33cbfd7c436301e0bf407f",
-        "ranges": [
-          [
-            1,
-            613
-          ]
-        ],
-        "declarations": [
-          "decodeDocument",
-          "checkGraph"
-        ],
-        "reason": "W6 quantity document and citation decoder; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Time/Wire.lean",
-        "lines": 843,
-        "sha256": "7f9c8b54dc820197ad0e59033763a063ed75ff728542fcf094dc93bc5059f925",
-        "ranges": [
-          [
-            1,
-            843
-          ]
-        ],
-        "declarations": [
-          "decodeEnvironment",
-          "decodeQuantity",
-          "runCase"
-        ],
-        "reason": "W6 unit declarations, quantity syntax and runner; the full file is pinned conservatively"
-      }
-    ],
-    "other_json": {
-      "lean/EnglishLeanBenchMain.lean": "measurement only: the ve_english_lean_bench executable of the english-lean G1a measurement and the lexer differential reads grammars, sentences and sources from a JSON file and prints JSON rows; no admission path, service mode or record reads it",
-      "lean/VE/Discourse/Run.lean": "lean:runner-glue: ve_discourse_route case dispatch and response rows",
-      "lean/VE/Discourse/Wire.lean": "lean:discourse-wire: the ve.discourse@1 manifest decoder and discourse report rows; decoded values are validated, never trusted (discourse_wire_binding, discourse_report_sound)",
-      "lean/VE/Discourse/Admission.lean": "lean:discourse-wire: the profile adapter strips ve.discourse@1 from the environment JSON before every frozen call (setObjVal!, profile_adapter_base)",
-      "lean/VE/Discourse/Loader.lean": "lean:discourse-wire: the ve-document@2 loader reads the front matter and embedded or imported documents' metadata fields",
-      "lean/VE/Discourse/Theorems.lean": "lean:discourse-wire: statements about the discourse wire decoder (getObjValD_ok) and the profile adapter; no runtime JSON handling",
-      "lean/VE/Audit.lean": "audit manifest only: #print axioms of theorem names containing a JSON accessor name (VE.Discourse.getObjValD_ok); no JSON handling",
-      "lean/VE/Norms/FlaggedSpec.lean": "statements about the norms conflict replay and Norms.Run.runCase answers (getObjValD of the case and the verdict field) and decoder rejection lemmas; no runtime JSON handling",
-      "lean/VE/Route/WireSound.lean": "statements about the route runners' answers (getObjValD of the case and the valid, refutes and values fields), the family decoders as the runners call them, and decoder rejection lemmas; no runtime JSON handling",
-      "lean/VE/Route/RunSound.lean": "statements about Route.Run.runCase answers (getObjValD of the case's environment and answer fields); no runtime JSON handling",
-      "lean/VE/Norms/RunSound.lean": "statements about Norms.Run.runCase norms-certificate answers (getObjValD of the case and the valid field); no runtime JSON handling",
-      "lean/Main.lean": "lean:runner-glue: argument dispatch and result arrays of ve_conformance",
-      "lean/VE/Route/Run.lean": "lean:runner-glue: route case dispatch and error rows (route_gate pins the envelope check)",
-      "lean/VE/SoftNorms/Run.lean": "lean:runner-glue: ve_soft_norms_route case dispatch and response rows",
-      "lean/VE/Rights/Run.lean": "lean:runner-glue: ve_rights_route case dispatch and response rows",
-      "lean/VE/Readings/Run.lean": "lean:runner-glue: ve_readings_route case dispatch and response rows; readings-validate and readings-separate rows regenerated from the pinned Wire decoder; the S2a kinds dispatched to SupRun",
-      "lean/VE/Readings/SupRun.lean": "lean:runner-glue: ve_readings_route S2a case kinds; case fields are read through the pinned SupWire and Wire decoders, and the response rows are built from Lean checks (supCertificateCheck, supModelCheck, slotConflictFreeCheck, deadCheck, unsatCheck); readings-choice runs the lower route on the regenerated choice document with its regenerated assertions, accepts a chain certificate only when the lower conflict kind finds the case's conflict packages CONFLICT-FREE on the same document, and choice-model reads its model through the chain decoders (decodeModel, decodeModelR, decodeModelData)",
-      "lean/VE/Readings/Route.lean": "lean:runner-glue: the readings@1 route of 1.1 and the regenerated S2a elaboration rows (elaborateFields); builds JSON, reads none",
-      "lean/VE/Norms/Run.lean": "lean:runner-glue: ve_norms_route case dispatch and error rows",
-      "lean/VE/NormDefaults/Run.lean": "lean:runner-glue: ve_norm_defaults_route case dispatch and response rows",
-      "lean/VE/SpeechActs/Run.lean": "lean:runner-glue: ve_speech_acts_route case dispatch, regenerated model tables and response rows; separate opt-in profile slice",
-      "lean/VE/Alternatives/Run.lean": "lean:runner-glue: ve_alternatives_route case dispatch and response rows",
-      "lean/VE/Attribution/Run.lean": "lean:runner-glue: ve_reports_route case dispatch and response rows",
-      "lean/VE/Order/ProfileGate.lean": "lean:runner-glue: the default-mode evaluation dispatch (runEvaluationCaseReported_eq)",
-      "lean/VE/Order/Surface.lean": "lean:order-surface-parser: order text parser and its case wrapper",
-      "lean/VE/English/Run.lean": "harness only (conformance/english_lean.py); no executable and no theorem depends on it",
-      "lean/VE/Order/Gate.lean": "builds fixed envelopes for the profile-gate theorems; decodes nothing",
-      "lean/VE/Order/WireGate.lean": "JSON access only inside theorem statements (order route gate)",
-      "lean/VE/EvaluationCounts.lean": "JSON access only inside theorem statements (evaluation answers count the submitted formulas)",
-      "lean/VE/Order/TableauChecks.lean": "executable regressions (#eval checks); not on any runner path",
-      "lean/VE/Route/Checks.lean": "executable regressions (#eval checks); not on any runner path",
-      "lean/ResponseDecode.lean": "test-only service response oracle; no executable production path or theorem imports it",
-      "lean/VE/EnglishGrammar/ReadExamples.lean": "fixtures only: #guard checks of docs/spec/english-lean-s2.md section 8 build environment JSON for Env.decode; no runner path",
-      "lean/ResponseShape.lean": "the service's response shapes (lib ResponseShape, outside the trusted VE tree): renders the client's schema files and checks responses for ve_response_decode; no runner, executable production path or theorem imports it",
-      "lean/ResponseShape/Schemas.lean": "collects the response shapes and renders the client's schema files; test tooling beside lean/ResponseShape.lean, not on any runner path",
-      "lean/ResponseShape/Schemas/Norms.lean": "the norms mode's response shape; reads the case environment only to call Norms.Plain.layered beside its path selector (test tooling, not on any runner path)",
-      "lean/ResponseShape/Skeleton.lean": "the skeletons of the response shapes and Fits, the field-level conformance the encoder theorems prove; JSON only in lemma statements about Json.mkObj and setObjVal! (theorems, not on any runner path)",
-      "lean/ResponseShape/FitsTactic.lean": "tactics that build the encoder theorems' proofs, reading Json.mkObj and setObjVal! terms of goals (proof automation, checked by the kernel; not on any runner path)",
-      "lean/ResponseShape/Audit.lean": "the dependency audit of the response-shape theorems (#print axioms only); JSON only in theorem names",
-      "lean/ResponseShape/Encoders/SoftNorms.lean": "theorems that the soft-norms mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
-      "lean/ResponseShape/Encoders/Reports.lean": "theorems that the reports mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
-      "lean/ResponseShape/Encoders/ReadingsRoute.lean": "theorems that the readings-route mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
-      "lean/ResponseShape/Encoders/English.lean": "theorems that the english and diagnose modes' rows fit their shapes; JSON access only in statements and proofs (not on any runner path)",
-      "lean/ResponseShape/Encoders/Envelope.lean": "theorems that the service's response lines fit envelope.json; JSON access only in statements and proofs (not on any runner path)",
-      "lean/ResponseShape/Encoders/Alternatives.lean": "theorems that the alternatives mode's rows fit its shape, with the decoded block's taken tied to the case (getObjVal? in statements and proofs only; not on any runner path)",
-      "lean/ResponseShape/Encoders/Quantity.lean": "theorems that the quantity mode's rows fit its shape, with value and evaluations tied to the case's model (getObjVal? in statements and proofs only; not on any runner path)",
-      "lean/VE/Risk/Eval.lean": "test-only differential harness (risk.md 8.3; service mode risk-eval): decodes its case envelope, then calls the pinned risk decoders; no production path or theorem uses it",
-      "lean/VE/Service/EnglishRun.lean": "stage-1 service copy of the English runner; additive dispatch, not yet on an assurance operation path",
-      "lean/VE/Service/Protocol.lean": "the service request decoder and dispatcher: each mode is its runner's per-case function, pinned by runMode_* (the statement-layer route modes since lean-first batch 1)",
-      "lean/VE/Service/Diagnose.lean": "diagnostic only: no verdict depends on it. The service mode diagnose: reads a case's unit and inner case and returns the ve_diagnose row for them",
-      "lean/VE/Route/Steps.lean": "reads only a certificate case's optional max_steps field (the replay step cap, at most 1,000,000)",
-      "lean/VE/Core/Layers.lean": "stage-2 core-family glue: decodes definitions and data flags with the pinned FOL route decoders over the FOL projection, adds the computed defined tables to the model and delegates background, evaluate and countermodel cases to the unchanged core route",
-      "lean/VE/Norms/Plain.lean": "stage-2 norms-route glue: validates the regulated extension on any family, removes it and delegates background, evaluate and countermodel cases to the unchanged route, adding profile premises (embedded on the closure, core and order families) and the profile model check",
-      "lean/VE/Service/TypingDiagnostic.lean": "stage-2 diagnostic glue: names a typing rejection the proved decoder already made with Python's code and message; never accepts",
-      "lean/VE/Service/Standalone.lean": "stage-2 service modes environment, model, check, identity and parse: wrap the pinned family decoders and surface parsers and recompute identities; reached from the Python adapters in ve/backends (validation, typing, parse), which the manifest's one-shot bindings do not yet describe",
-      "lean/VE/WireContract/Engine.lean": "diagnostic only: no verdict depends on it. The wire contract engine reads the submitted case JSON to choose the first failing check of a rejection that the legacy validator already decided (docs/spec/wire-contract.md 2.8, 7.2); imported only by VE.WireContract.*, DiagnoseMain and VE.Audit (tools/check_lean_imports.py)",
-      "lean/VE/WireContract/Hooks/Corpus.lean": "diagnostic only: no verdict depends on it. Hand-written hooks and view of the engine corpus contracts (docs/spec/wire-contract.md 8.1)",
-      "lean/VE/WireContract/Hooks/SoftNorms.lean": "diagnostic only: no verdict depends on it. Hooks, classifiers and the soft_source adapter of the pilot contract soft-norms@0 (docs/spec/wire-contract.md section 6); they call SoftNorms.Phases, Wire.primeVocabulary, validateSoft and checkW1 read-only and only read their results",
-      "lean/VE/WireContract/Hooks/Norms.lean": "diagnostic only: no verdict depends on it. Hooks, classifiers and the norm_source adapter of the contract norms@0 (docs/spec/wire-contract-s5.md 2.3, 2.5); they call Norms.Wire.decodeNormsEnvironment, the route's environment decoder, Route.dependencyOrder and Norms.height read-only, never decodeSource, and hold the diagnostic syntax and typing walks of 2.5",
-      "lean/VE/WireContract/Diagnose.lean": "diagnostic only: no verdict depends on it. The ve_diagnose runner: case dispatch through VE.JsonInput.parseCases, the contract registry and response rows (docs/spec/wire-contract.md 4.2)"
+        [
+          247,
+          253
+        ]
+      ],
+      "declarations": [
+        "decodeEnvironment",
+        "decodeFormula",
+        "decodeModel",
+        "decodeTrace",
+        "decodeCertificate",
+        "environmentId",
+        "meaningId"
+      ]
+    },
+    {
+      "file": "lean/VE/Readings/SupWire.lean",
+      "lines": 378,
+      "sha256": "f1efaaba3d67d4cdba675a9e40abe12e461124f324c3254ca6ab531bf8885937",
+      "ranges": [
+        [
+          1,
+          378
+        ]
+      ],
+      "declarations": [
+        "decodeCouplings",
+        "decodeNarrowings",
+        "admitS2",
+        "supReplayOf",
+        "replaySup",
+        "decodeChoice",
+        "decodeSupModel",
+        "decodeAssumed",
+        "decodeShared",
+        "decodeConflictCerts",
+        "replayCertificate",
+        "replayModel"
+      ],
+      "reason": "readings@1 S2a decoder: couplings and narrowings with W2's checks and texts, the superposed admission, choices, models over sup D's base vocabulary, and the certificate and model replays of readings_wire_all_sound and readings_wire_model_sound, and the superposed admission's refusals before any verdict (ReadingsUnsatisfiable, and the soft check of every compatible choice's document of DRI ruling 5: readings_wire_satisfiable, readings_wire_choice_wellFormed); the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Readings/Wire.lean",
+      "lines": 988,
+      "sha256": "311cfeb723160a8a2298b5133a4c43194a5ee7f861e403083eac39d015721d2a",
+      "ranges": [
+        [
+          1,
+          988
+        ]
+      ],
+      "declarations": [
+        "placeholderFrame",
+        "decodeEnvironment",
+        "decodeContent",
+        "decodeReading",
+        "decodeSet",
+        "decodeDocument",
+        "decodeKey",
+        "decodeTables",
+        "decodeProbe",
+        "decodeSituation",
+        "admitReadingsSpec",
+        "admitReadings",
+        "replayPair",
+        "replaySeparate"
+      ],
+      "reason": "readings@1 S1 decoder: environment on the three chains, W2 units and active reading sets, situations, keys and probes, and (DRI ruling 2 of 2026-10-03) the chain text that reports `ResourceLimit: decision predicate <n>` first, and (DRI ruling 4) the frame of a norm-defaults@0 environment read with each `unspecified` completion as the placeholder `deny`; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Rights/Admission.lean",
+      "lines": 471,
+      "sha256": "1b43543b7e666ae3874d748c88ce0a88665f996f5584888b71c94db76e527756",
+      "ranges": [
+        [
+          1,
+          471
+        ]
+      ],
+      "declarations": [
+        "splitUnit",
+        "checkSourceCites",
+        "validateCouplings",
+        "decodeRightsDoc",
+        "admitDocument"
+      ],
+      "reason": "rights W2 admission and coupling decoder; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Rights/Wire.lean",
+      "lines": 698,
+      "sha256": "fc25e57bed1adf2d72edcf7c0cd20409b427829d7eb5838028422151ca02e82f",
+      "ranges": [
+        [
+          1,
+          698
+        ]
+      ],
+      "declarations": [
+        "decodeRightsEnvironment",
+        "decodeRightsSource",
+        "replayRightsConflict",
+        "replayRightsEntailment"
+      ],
+      "reason": "rights source, package and certificate decoder; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Risk/Admission.lean",
+      "lines": 128,
+      "sha256": "f3927135556b65898bcfe94e147b29349a5eed1ccaf0ad600e212013336a2aca",
+      "ranges": [
+        [
+          1,
+          128
+        ]
+      ],
+      "declarations": [
+        "admitDocument"
+      ],
+      "reason": "decodes the risk document graph and checks its bindings; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Risk/Audit.lean",
+      "lines": 190,
+      "sha256": "62c518fee5d35cc985cf1293d4a5f365a5ea26baacf77b59a15211ee40e112e9",
+      "ranges": [
+        [
+          1,
+          190
+        ]
+      ],
+      "declarations": [
+        "snapshotOf",
+        "liveEstimates",
+        "allEstimatesRecord",
+        "auditQ12",
+        "auditQ3"
+      ],
+      "reason": "audit snapshot admission and the recorded-estimate replay read log entry contents; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Risk/Record.lean",
+      "lines": 1266,
+      "sha256": "9b9aa82f9a8dd88d66bccae8d8294683f4d25f8f209a52459e47468411313d7e",
+      "ranges": [
+        [
+          1,
+          1266
+        ]
+      ],
+      "declarations": [
+        "decodeRecord",
+        "elabTerm",
+        "elabCond",
+        "decodeItem",
+        "admitDecision"
+      ],
+      "reason": "decision record and cited-entry content decoder, condition elaboration and record admission; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Risk/Run.lean",
+      "lines": 632,
+      "sha256": "6d98b5de4c612db0dabb9349822e5d0cd0128128e4ec680ac4c13819a57606c8",
+      "ranges": [
+        [
+          1,
+          632
+        ]
+      ],
+      "declarations": [
+        "decodeRef",
+        "queried",
+        "riskBaseEnvironmentJson",
+        "decodePackage",
+        "decodeWitnessModel",
+        "runCase"
+      ],
+      "reason": "risk package bindings, audit references, witness models and ve_risk_route dispatch; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Risk/Wire.lean",
+      "lines": 487,
+      "sha256": "3c35ffb89361cf5bd6e6721289a0db0232ce20d4c523a7f31fff6bca67fcb90d",
+      "ranges": [
+        [
+          1,
+          487
+        ]
+      ],
+      "declarations": [
+        "profileGate",
+        "riskNormsView",
+        "extended",
+        "decodeUnits",
+        "checkVocabularyUnits",
+        "checkExtension",
+        "decodeRiskBlock",
+        "decodeRiskSource",
+        "decodeEntry",
+        "decodeSupplied",
+        "decodeLog"
+      ],
+      "reason": "risk profile gate, strict risk block, W6 units, source, entry and log decoder; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Route/Admission.lean",
+      "lines": 697,
+      "sha256": "230006c26a0730425a818788e034ac564178dc1c9e309cf5d3a45d0a287e8c74",
+      "ranges": [
+        [
+          1,
+          697
+        ]
+      ],
+      "declarations": [
+        "decodeKind",
+        "parseLabelRaw",
+        "parseLabel",
+        "decodeUnit",
+        "decodeLeaf",
+        "decodeLemma",
+        "decodeReadingSet",
+        "decodeNode",
+        "checkBindings",
+        "decodeDoc"
+      ]
+    },
+    {
+      "file": "lean/VE/Route/Decode.lean",
+      "lines": 282,
+      "sha256": "7cd23701ca9597d409c929dc679826da8ee2e5c5f2d5330a17a219255f69a8d7",
+      "ranges": [
+        [
+          1,
+          282
+        ]
+      ],
+      "declarations": [
+        "modelLimits",
+        "localIds"
+      ],
+      "reason": "W6 route model decoder and optimized validation; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Route/Gate.lean",
+      "lines": 213,
+      "sha256": "afccc527197416046f7e07fa9b2ae08d31bc717291724fe71e92a2d7de58a686",
+      "ranges": [
+        [
+          126,
+          163
+        ]
+      ],
+      "declarations": [
+        "profilesOf",
+        "decodeEnvelope"
+      ]
+    },
+    {
+      "file": "lean/VE/Route/Wire.lean",
+      "lines": 666,
+      "sha256": "7a9f5a63f666e2ce0f14d35deeaa25b6af0558f0da958c16392b4159852d2e1a",
+      "ranges": [
+        [
+          1,
+          666
+        ]
+      ],
+      "declarations": [
+        "decodeVocabulary",
+        "decodeOrderVocabulary",
+        "environmentId",
+        "meaningId",
+        "encodeFormula",
+        "decodeModel",
+        "decodeDataModel",
+        "decodeFormulas",
+        "decodeClosed",
+        "bindingOk",
+        "decodeOrderModel",
+        "decodeNodes"
+      ]
+    },
+    {
+      "file": "lean/VE/Service/Family.lean",
+      "lines": 817,
+      "sha256": "e1e00be4379626252de90286a857d800f98086bf48b734093ab6d0e8d0f546c0",
+      "ranges": [
+        [
+          1,
+          817
+        ]
+      ],
+      "declarations": [
+        "closureEnv",
+        "coreEnv",
+        "orderEnv",
+        "decodeNode",
+        "decodeEdge",
+        "compose",
+        "graphCase",
+        "readings",
+        "readingsCase"
+      ],
+      "reason": "graph- and readings-mode decoders on the closure, core and order families: family contexts (formula, certificate, Background, binding, model), claims, deductions, recomputed identities, reading sets and evidence; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Service/FamilyBundle.lean",
+      "lines": 500,
+      "sha256": "75698a329690b03fb5843bfa3deb4fa91ab92ab94f6055830ba6be48b6ab908a",
+      "ranges": [
+        [
+          1,
+          500
+        ]
+      ],
+      "declarations": [
+        "decodeLeaf",
+        "decodeLemma",
+        "decodeReadingSet",
+        "run",
+        "folCtx",
+        "bundleCase"
+      ],
+      "reason": "bundle-mode decoder over the family contexts: lemmas, leaves, citations, reading sets and certificate bindings; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Service/FamilyNorms.lean",
+      "lines": 244,
+      "sha256": "f2e5ffd9ed57abbd61dd3cf67775195363271814e55f954c4323405209d4cc3c",
+      "ranges": [
+        [
+          1,
+          244
+        ]
+      ],
+      "declarations": [
+        "folView",
+        "viewModel",
+        "decodeFamily",
+        "certificateCase",
+        "targetPackage",
+        "conflictCase",
+        "runCase"
+      ],
+      "reason": "family-norms decoder: the FOL view of the environment and the witness model, the family certificates and their bindings to the submitted and base environments; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Service/Graph.lean",
+      "lines": 255,
+      "sha256": "cd0523e5ad4d580bc7de3076996974e060eb106eda981fd84aa4dc0f0b6fc212",
+      "ranges": [
+        [
+          1,
+          255
+        ]
+      ],
+      "declarations": [
+        "decodeNode",
+        "decodeEdge",
+        "routeCtx",
+        "legacyCtx",
+        "compose",
+        "graphCase"
+      ],
+      "reason": "graph-mode package decoder: claims, deductions, recomputed identities and certificate bindings (no refinement theorem; trusted, plan 2.1); the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Service/Readings.lean",
+      "lines": 215,
+      "sha256": "357a25dda81bfbce40b2361f8f437a74231e199228e53130f099f543e35816ed",
+      "ranges": [
+        [
+          1,
+          215
+        ]
+      ],
+      "declarations": [
+        "decodeModel",
+        "readingsCase"
+      ],
+      "reason": "readings-mode decoder: environment, fixed premises, reading sets, conclusion, verdict and evidence; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/SoftNorms/Admission.lean",
+      "lines": 332,
+      "sha256": "65c5511e845dca854ad374851393cb945aad630981434c77e0bd1a0db2ae1a8c",
+      "ranges": [
+        [
+          1,
+          332
+        ]
+      ],
+      "declarations": [
+        "decodeSoftDoc",
+        "admitDocument"
+      ],
+      "reason": "soft document admission decoder; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/SoftNorms/Phases.lean",
+      "lines": 362,
+      "sha256": "a19fb700f52c52564a1516fe74a1e6a0b06fa779ef4bd33470b1756b88c711d6",
+      "ranges": [
+        [
+          1,
+          362
+        ]
+      ],
+      "declarations": [
+        "envelope",
+        "declarations",
+        "ruleFields",
+        "checkSource"
+      ],
+      "reason": "soft environment and rule phase decoder; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/SoftNorms/Wire.lean",
+      "lines": 462,
+      "sha256": "641a13b4cd6917aad8444951d4ea4e89da0afd5ba10706a2bb0c62aa8caf0ce4",
+      "ranges": [
+        [
+          1,
+          462
+        ]
+      ],
+      "declarations": [
+        "decodeSoftNorm",
+        "decodeSoftSource",
+        "replaySoftConflict",
+        "replaySoftWitness",
+        "replaySoftEntailment"
+      ],
+      "reason": "soft wire and certificate decoder; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/SpeechActs/Source/Admission/Run.lean",
+      "lines": 630,
+      "sha256": "666d467b95bb495c05c226e1311588498d22bc7368986030e6766209a8817438",
+      "ranges": [
+        [
+          1,
+          630
+        ]
+      ],
+      "declarations": [
+        "p0Json",
+        "admitSpeech",
+        "runAdmission",
+        "isSourceAdmission",
+        "runCase"
+      ],
+      "reason": "speech-act admission (8.5, 8.6): the P0 projection of the decoded source, the speech leaves, the graph and the report identity; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/SpeechActs/Source/Run.lean",
+      "lines": 889,
+      "sha256": "965cd295dcb41ff7a5cc72b25de57f425be4bd32a155cf3755980be3256df51c",
+      "ranges": [
+        [
+          1,
+          889
+        ]
+      ],
+      "declarations": [
+        "readUnit",
+        "readUnits",
+        "speechReadings",
+        "readingSets",
+        "answerRecord",
+        "gapRecord",
+        "answerRecords",
+        "externalRecord",
+        "complianceRecords",
+        "decodeSpeechSource"
+      ],
+      "reason": "speech-act decoded-source wrapper (8.5): ve-document@2 units, reading sets, records and identity; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/SpeechActs/Wire.lean",
+      "lines": 993,
+      "sha256": "fbe08d985f7fc507397eb1e74d7c9cc6ee8504dfc2e43f7cd77d78bf53f3e618",
+      "ranges": [
+        [
+          1,
+          993
+        ]
+      ],
+      "declarations": [
+        "parseScope",
+        "decodeSpeechEnvironment",
+        "decodeUnit",
+        "decodeDocument"
+      ],
+      "reason": "speech scope, content, identity and document decoder; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Time/Document.lean",
+      "lines": 613,
+      "sha256": "4407e998d0073b5c1c7755d42d5ae6773e2d720c3c33cbfd7c436301e0bf407f",
+      "ranges": [
+        [
+          1,
+          613
+        ]
+      ],
+      "declarations": [
+        "decodeDocument",
+        "checkGraph"
+      ],
+      "reason": "W6 quantity document and citation decoder; the full file is pinned conservatively"
+    },
+    {
+      "file": "lean/VE/Time/Wire.lean",
+      "lines": 843,
+      "sha256": "7f9c8b54dc820197ad0e59033763a063ed75ff728542fcf094dc93bc5059f925",
+      "ranges": [
+        [
+          1,
+          843
+        ]
+      ],
+      "declarations": [
+        "decodeEnvironment",
+        "decodeQuantity",
+        "runCase"
+      ],
+      "reason": "W6 unit declarations, quantity syntax and runner; the full file is pinned conservatively"
     }
-  },
+  ],
+  "other_json": {
+    "lean/EnglishLeanBenchMain.lean": "measurement only: the ve_english_lean_bench executable of the english-lean G1a measurement and the lexer differential reads grammars, sentences and sources from a JSON file and prints JSON rows; no admission path, service mode or record reads it",
+    "lean/VE/Discourse/Run.lean": "lean:runner-glue: ve_discourse_route case dispatch and response rows",
+    "lean/VE/Discourse/Wire.lean": "lean:discourse-wire: the ve.discourse@1 manifest decoder and discourse report rows; decoded values are validated, never trusted (discourse_wire_binding, discourse_report_sound)",
+    "lean/VE/Discourse/Admission.lean": "lean:discourse-wire: the profile adapter strips ve.discourse@1 from the environment JSON before every frozen call (setObjVal!, profile_adapter_base)",
+    "lean/VE/Discourse/Loader.lean": "lean:discourse-wire: the ve-document@2 loader reads the front matter and embedded or imported documents' metadata fields",
+    "lean/VE/Discourse/Theorems.lean": "lean:discourse-wire: statements about the discourse wire decoder (getObjValD_ok) and the profile adapter; no runtime JSON handling",
+    "lean/VE/Audit.lean": "audit manifest only: #print axioms of theorem names containing a JSON accessor name (VE.Discourse.getObjValD_ok); no JSON handling",
+    "lean/VE/Norms/FlaggedSpec.lean": "statements about the norms conflict replay and Norms.Run.runCase answers (getObjValD of the case and the verdict field) and decoder rejection lemmas; no runtime JSON handling",
+    "lean/VE/Route/WireSound.lean": "statements about the route runners' answers (getObjValD of the case and the valid, refutes and values fields), the family decoders as the runners call them, and decoder rejection lemmas; no runtime JSON handling",
+    "lean/VE/Route/RunSound.lean": "statements about Route.Run.runCase answers (getObjValD of the case's environment and answer fields); no runtime JSON handling",
+    "lean/VE/Norms/RunSound.lean": "statements about Norms.Run.runCase norms-certificate answers (getObjValD of the case and the valid field); no runtime JSON handling",
+    "lean/Main.lean": "lean:runner-glue: argument dispatch and result arrays of ve_conformance",
+    "lean/VE/Route/Run.lean": "lean:runner-glue: route case dispatch and error rows (route_gate pins the envelope check)",
+    "lean/VE/SoftNorms/Run.lean": "lean:runner-glue: ve_soft_norms_route case dispatch and response rows",
+    "lean/VE/Rights/Run.lean": "lean:runner-glue: ve_rights_route case dispatch and response rows",
+    "lean/VE/Readings/Run.lean": "lean:runner-glue: ve_readings_route case dispatch and response rows; readings-validate and readings-separate rows regenerated from the pinned Wire decoder; the S2a kinds dispatched to SupRun",
+    "lean/VE/Readings/SupRun.lean": "lean:runner-glue: ve_readings_route S2a case kinds; case fields are read through the pinned SupWire and Wire decoders, and the response rows are built from Lean checks (supCertificateCheck, supModelCheck, slotConflictFreeCheck, deadCheck, unsatCheck); readings-choice runs the lower route on the regenerated choice document with its regenerated assertions, accepts a chain certificate only when the lower conflict kind finds the case's conflict packages CONFLICT-FREE on the same document, and choice-model reads its model through the chain decoders (decodeModel, decodeModelR, decodeModelData)",
+    "lean/VE/Readings/Route.lean": "lean:runner-glue: the readings@1 route of 1.1 and the regenerated S2a elaboration rows (elaborateFields); builds JSON, reads none",
+    "lean/VE/Norms/Run.lean": "lean:runner-glue: ve_norms_route case dispatch and error rows",
+    "lean/VE/NormDefaults/Run.lean": "lean:runner-glue: ve_norm_defaults_route case dispatch and response rows",
+    "lean/VE/SpeechActs/Run.lean": "lean:runner-glue: ve_speech_acts_route case dispatch, regenerated model tables and response rows; separate opt-in profile slice",
+    "lean/VE/Alternatives/Run.lean": "lean:runner-glue: ve_alternatives_route case dispatch and response rows",
+    "lean/VE/Attribution/Run.lean": "lean:runner-glue: ve_reports_route case dispatch and response rows",
+    "lean/VE/Order/ProfileGate.lean": "lean:runner-glue: the default-mode evaluation dispatch (runEvaluationCaseReported_eq)",
+    "lean/VE/Order/Surface.lean": "lean:order-surface-parser: order text parser and its case wrapper",
+    "lean/VE/English/Run.lean": "harness only (conformance/english_lean.py); no executable and no theorem depends on it",
+    "lean/VE/Order/Gate.lean": "builds fixed envelopes for the profile-gate theorems; decodes nothing",
+    "lean/VE/Order/WireGate.lean": "JSON access only inside theorem statements (order route gate)",
+    "lean/VE/EvaluationCounts.lean": "JSON access only inside theorem statements (evaluation answers count the submitted formulas)",
+    "lean/VE/Order/TableauChecks.lean": "executable regressions (#eval checks); not on any runner path",
+    "lean/VE/Route/Checks.lean": "executable regressions (#eval checks); not on any runner path",
+    "lean/ResponseDecode.lean": "test-only service response oracle; no executable production path or theorem imports it",
+    "lean/VE/EnglishGrammar/ReadExamples.lean": "fixtures only: #guard checks of docs/spec/english-lean-s2.md section 8 build environment JSON for Env.decode; no runner path",
+    "lean/ResponseShape.lean": "the service's response shapes (lib ResponseShape, outside the trusted VE tree): renders the client's schema files and checks responses for ve_response_decode; no runner, executable production path or theorem imports it",
+    "lean/ResponseShape/Schemas.lean": "collects the response shapes and renders the client's schema files; test tooling beside lean/ResponseShape.lean, not on any runner path",
+    "lean/ResponseShape/Schemas/Norms.lean": "the norms mode's response shape; reads the case environment only to call Norms.Plain.layered beside its path selector (test tooling, not on any runner path)",
+    "lean/ResponseShape/Skeleton.lean": "the skeletons of the response shapes and Fits, the field-level conformance the encoder theorems prove; JSON only in lemma statements about Json.mkObj and setObjVal! (theorems, not on any runner path)",
+    "lean/ResponseShape/FitsTactic.lean": "tactics that build the encoder theorems' proofs, reading Json.mkObj and setObjVal! terms of goals (proof automation, checked by the kernel; not on any runner path)",
+    "lean/ResponseShape/Audit.lean": "the dependency audit of the response-shape theorems (#print axioms only); JSON only in theorem names",
+    "lean/ResponseShape/Encoders/SoftNorms.lean": "theorems that the soft-norms mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
+    "lean/ResponseShape/Encoders/Reports.lean": "theorems that the reports mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
+    "lean/ResponseShape/Encoders/ReadingsRoute.lean": "theorems that the readings-route mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
+    "lean/ResponseShape/Encoders/English.lean": "theorems that the english and diagnose modes' rows fit their shapes; JSON access only in statements and proofs (not on any runner path)",
+    "lean/ResponseShape/Encoders/Envelope.lean": "theorems that the service's response lines fit envelope.json; JSON access only in statements and proofs (not on any runner path)",
+    "lean/ResponseShape/Encoders/Alternatives.lean": "theorems that the alternatives mode's rows fit its shape, with the decoded block's taken tied to the case (getObjVal? in statements and proofs only; not on any runner path)",
+    "lean/ResponseShape/Encoders/Quantity.lean": "theorems that the quantity mode's rows fit its shape, with value and evaluations tied to the case's model (getObjVal? in statements and proofs only; not on any runner path)",
+    "lean/VE/Risk/Eval.lean": "test-only differential harness (risk.md 8.3; service mode risk-eval): decodes its case envelope, then calls the pinned risk decoders; no production path or theorem uses it",
+    "lean/VE/Service/EnglishRun.lean": "stage-1 service copy of the English runner; additive dispatch, not yet on an assurance operation path",
+    "lean/VE/Service/Protocol.lean": "the service request decoder and dispatcher: each mode is its runner's per-case function, pinned by runMode_* (the statement-layer route modes since lean-first batch 1)",
+    "lean/VE/Service/Diagnose.lean": "diagnostic only: no verdict depends on it. The service mode diagnose: reads a case's unit and inner case and returns the ve_diagnose row for them",
+    "lean/VE/Route/Steps.lean": "reads only a certificate case's optional max_steps field (the replay step cap, at most 1,000,000)",
+    "lean/VE/Core/Layers.lean": "stage-2 core-family glue: decodes definitions and data flags with the pinned FOL route decoders over the FOL projection, adds the computed defined tables to the model and delegates background, evaluate and countermodel cases to the unchanged core route",
+    "lean/VE/Norms/Plain.lean": "stage-2 norms-route glue: validates the regulated extension on any family, removes it and delegates background, evaluate and countermodel cases to the unchanged route, adding profile premises (embedded on the closure, core and order families) and the profile model check",
+    "lean/VE/Service/TypingDiagnostic.lean": "stage-2 diagnostic glue: names a typing rejection the proved decoder already made with Python's code and message; never accepts",
+    "lean/VE/Service/Standalone.lean": "stage-2 service modes environment, model, check, identity and parse: wrap the pinned family decoders and surface parsers and recompute identities; reached from the Python adapters in ve/backends (validation, typing, parse), which the manifest's one-shot bindings do not yet describe",
+    "lean/VE/WireContract/Engine.lean": "diagnostic only: no verdict depends on it. The wire contract engine reads the submitted case JSON to choose the first failing check of a rejection that the legacy validator already decided (docs/spec/wire-contract.md 2.8, 7.2); imported only by VE.WireContract.*, DiagnoseMain and VE.Audit (tools/check_lean_imports.py)",
+    "lean/VE/WireContract/Hooks/Corpus.lean": "diagnostic only: no verdict depends on it. Hand-written hooks and view of the engine corpus contracts (docs/spec/wire-contract.md 8.1)",
+    "lean/VE/WireContract/Hooks/SoftNorms.lean": "diagnostic only: no verdict depends on it. Hooks, classifiers and the soft_source adapter of the pilot contract soft-norms@0 (docs/spec/wire-contract.md section 6); they call SoftNorms.Phases, Wire.primeVocabulary, validateSoft and checkW1 read-only and only read their results",
+    "lean/VE/WireContract/Hooks/Norms.lean": "diagnostic only: no verdict depends on it. Hooks, classifiers and the norm_source adapter of the contract norms@0 (docs/spec/wire-contract-s5.md 2.3, 2.5); they call Norms.Wire.decodeNormsEnvironment, the route's environment decoder, Route.dependencyOrder and Norms.height read-only, never decodeSource, and hold the diagnostic syntax and typing walks of 2.5",
+    "lean/VE/WireContract/Diagnose.lean": "diagnostic only: no verdict depends on it. The ve_diagnose runner: case dispatch through VE.JsonInput.parseCases, the contract registry and response rows (docs/spec/wire-contract.md 4.2)",
+    "lean/VE/EnglishGrammar/ProfileExamples.lean": "fixtures only: S3 profile environment and reader #guard checks; no runner path"
+  }
+},
   "plan_operations": {
     "note": "Every operation named in SEMANTICS-MIGRATION-PLAN.md section 2.3 (Operations) and every new Lean mode of section 2.1, mapped to the manifest operations that carry it; the test parses the plan.",
     "operations": {
