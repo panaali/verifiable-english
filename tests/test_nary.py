@@ -151,7 +151,7 @@ def test_fret_user_sort_time_and_arity_six():
             "predicates": {"value": {
                 "arguments": ["signal", "time", "reading"],
                 "description": "Signal value at a time",
-                "verbalisation": "the value of {0} at {1} is {2}"}},
+                "verbalisation": "{0} records {1} as {2}"}},
             "constants": {"speed": {"sort": "signal", "description": "speed"},
                           "instant": {"sort": "time", "description": "instant"},
                           "high": {"sort": "reading", "description": "high"}},
@@ -160,7 +160,7 @@ def test_fret_user_sort_time_and_arity_six():
     value = Atom("value", (Const("speed"), Const("instant"), Const("high")))
     assert parse(fret, print_document(fret, Document((value,)))) == Document((value,))
     rendered = render_english(Document((value,)), fret)
-    assert rendered == "The value of speed at instant is high.\n"
+    assert rendered == "Speed records instant as high.\n"
     assert parse_english(fret, rendered) == Document((value,))
     assert not lint_vocabulary(fret)
 
