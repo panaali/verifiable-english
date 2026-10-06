@@ -9,16 +9,12 @@ for byte, and `admit_norm_defaults_document` is W1's admission on `fill U`
 """
 from __future__ import annotations
 
-from dataclasses import replace
-
 from .assurance import semantic_entry
 from .backends.relay import decide, rows
-from . import admission as w2
 from .ast import _to_data, formula_to_data
 from .background import background
 from .environment import Environment
-from .errors import ResourceLimit, UnsupportedProfile, VEError
-from .identity import meaning_id
+from .errors import VEError
 from .norms import NormDocument
 from .wire import digest
 from . import norm_defaults as nd
@@ -125,106 +121,8 @@ def filled_environment_json(document):
 
 @semantic_entry("admission")
 def admit_norm_defaults_document(environment, document):
-    """W1's admission on `fill U`: nodes over `E‴`, certificates bound to `E‴`, and
-    leaves that are W2 provenance, a regenerated layer of `T‴`, a pair premise
-    (`background:profile`) or a `Fill_T` premise under its label."""
+    """Relay W1 admission on `fill U` to the Lean owner."""
     env = environment if type(environment) is Environment else Environment(environment)
-    if nd.PROFILE not in env.profiles:
-        raise UnsupportedProfile("UnsupportedProfile: norm-defaults@0 is required")
-    if env.closure or env.order:
-        raise UnsupportedProfile("norm document admission is FOL-only")
-    w2._fields(document, ("units", "graph"), ("lemmas", "open_terms", "reading_sets", "narrowings"))
-    raw_units = w2._array(document["units"])
-    if len(raw_units) > 10000:
-        raise ResourceLimit("ResourceLimit: unit count")
-    split, active, quoted = [], [], []
-    for raw in raw_units:
-        if type(raw) is not dict:
-            raise VEError("invalid unit")
-        content = raw.get("content")
-        if type(content) is dict and "norm" in content:
-            w2._fields(raw, ("id", "span", "kind", "content"))
-            if not w2.token(raw["id"]):
-                raise VEError(f"invalid unit id {raw['id']}")
-            span = w2._array(raw["span"])
-            if len(span) != 2:
-                raise VEError("invalid span")
-            start, stop = (w2._nat(x) for x in span)
-            if start > stop:
-                raise VEError("invalid span")
-            kind = w2._check_kind(raw["kind"])
-            if kind == "norm":
-                active.append(content)
-            elif w2._quoted(kind):
-                quoted.append(content)
-            else:
-                raise VEError("norm content requires a norm or quoted kind")
-            split.append(("norm", w2._Unit(raw["id"], start, stop, kind, content)))
-        else:
-            split.append(("other", raw))
-    source = nd.UnspecifiedDocument(env, [NormDocument._decode(c) for c in active])
-    # A quoted norm is checked over the source with each `unspecified` read as the
-    # placeholder `deny` (Lean `checkQuoted` on the decoded source).
-    placeholder = Environment(nd._placeholder(env.to_dict())) if quoted else None
-    for content in quoted:
-        rule = NormDocument._decode(content)
-        NormDocument(placeholder, [replace(rule, over=())])
-    filled = source.filled.env
-    units = [item if tag == "norm" else w2._decode_unit(filled, item) for tag, item in split]
-    if len({u.id for u in units}) != len(units):
-        raise VEError("duplicate unit id")
-    if any(a.stop > b.start for a, b in zip(units, units[1:])):
-        raise VEError("unit spans must be sorted and non-overlapping")
-    decoded = w2._decode_doc(filled, {**document, "units": []})
-    doc = w2._Doc(units, decoded.lemmas, decoded.open_terms, decoded.reading_sets,
-                  decoded.narrowings, decoded.background)
-    layers = dict(source.filled.premises())
-    fill = fill_labels(source)
-
-    graph = document["graph"]
-    w2._fields(graph, ("root", "nodes"))
-    if type(graph["root"]) is not str:
-        raise VEError("expected a string")
-    raw_nodes = w2._array(graph["nodes"])
-    if len(raw_nodes) > 1000:
-        raise ResourceLimit("ResourceLimit: graph node count")
-    nodes = [w2._decode_node(filled, n) for n in raw_nodes]
-    by_name = {}
-    for node in nodes:
-        by_name.setdefault(node.name, node)
-    for node in nodes:
-        if node.premises is None:
-            continue
-        for p in node.premises:
-            if p not in by_name:
-                raise VEError(f"dangling premise {p}")
-        cert = node.certificate
-        expected = ([meaning_id(filled, by_name[p].formula,
-                                _generated=by_name[p].label.startswith("background:"))
-                     for p in node.premises], meaning_id(filled, node.formula))
-        if (type(cert) is not dict or cert.get("environment_id") != filled.environment_id
-                or (cert.get("premise_meaning_ids"), cert.get("conclusion_meaning_id")) != expected):
-            raise VEError("certificate is stale or bound to different inputs")
-    for node in nodes:
-        leaf = node.premises is None and node.unit is None
-        if leaf and node.label.startswith("layer:norms:") and layers.get(node.label) == node.formula:
-            continue
-        if leaf and node.label in fill and fill[node.label] == node.formula:
-            continue
-        if not w2._node_admitted(doc, node):
-            raise w2.AdmissionError(w2._diagnostic(doc, node))
-    root, assumptions = w2._check_graph(filled, nodes, graph["root"])
-    for leaf in assumptions:
-        label = w2.parse_label(leaf[2])
-        if label is not None and label.kind == "cite":
-            lemma = next(m for m in doc.lemmas if m[0] == f"{label.args[0]}/{label.args[1]}")
-            if not all(any(y[1] == f and y[2] == lab for y in assumptions) for f, lab in lemma[2]):
-                raise w2.AdmissionError("AdmissionError: a cited lemma's leaves are missing from the report")
-    if not all(w2._compatible(a[2], b[2]) for a in assumptions for b in assumptions):
-        raise w2.AdmissionError("AdmissionError: incompatible reading choices")
-    report = {"root": w2._claim_json(filled, root),
-              "assumptions": [w2._claim_json(filled, a) for a in assumptions]}
-    payload = {"environment_id": env.environment_id, "document": document, "report": report}
-    return {"admitted": True, "report": report,
-            "report_id": digest(f"ve-report-{env.identity_version}\n", payload),
-            "kinds": [u.kind for u in units]}
+    answer = run_case({"id": "admission", "kind": "admission",
+                       "environment": env.to_dict(), "document": document})
+    return {key: value for key, value in answer.items() if key not in ("id", "status")}
