@@ -1,0 +1,15 @@
+{
+  "wording": [],
+  "order": [],
+  "verdict": [],
+  "availability": [],
+  "unavailable": [
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261004T1800Z:usecases/claude-constitution-pilot/run-20261004T1800Z/readings/s1.ve.md",
+      "op": "document_check",
+      "reason": "The historical readings document reached the recorder's 600-second limit on both base and head. It remains unavailable under both versions."
+    }
+  ]
+}
