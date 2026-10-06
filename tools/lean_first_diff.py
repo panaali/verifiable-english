@@ -45,6 +45,9 @@ Corpora (``--corpus``, default all):
   each through its one operation (`QUANTITY_OPS`: `Environment`, `elaborate_quantity`,
   `quantity_meaning_id`, `quantity_countermodel`, `check_quantity_certificate`, `prove_quantity`,
   `admit_document`), under each authority (`--workers` processes).
+* ``norm_defaults``: 1,000 generated profile documents and ten malformed variants from
+  `conformance/norm_defaults_differential.py`, each through `check_document` and
+  `render_document` at both revisions.
 
 A record is ``{"corpus", "authority", "case", "op", "source_sha256", "outcome"}``; the outcome is
 ``{"returned": <public record>}`` or ``{"raised": <error record>}``, as mig3's recorder writes
@@ -109,7 +112,8 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-CORPORA = ("probe", "conformance", "pilots", "readings", "discourse", "rights", "quantity")
+CORPORA = ("probe", "conformance", "pilots", "readings", "discourse", "rights", "quantity",
+           "norm_defaults")
 DISCOURSE = Path("docs/lean-first/discourse-corpus.json.gz")
 DOCUMENT_OPS = ("document_check", "document_render")
 QUANTITY = Path("docs/lean-first/quantity-corpus.json.gz")
@@ -131,11 +135,9 @@ READINGS_COUNT = 1000  # the readings differential's documents (composition-s1.m
 RIGHTS_COUNT = 1000  # the rights differential's generator seeds (rights.md 10)
 RIGHTS_HEADED = 4  # every fourth rights source is recorded again under readings@1
 # The differential generators of `conformance/` that are a corpus here, and those that are not, with the reason.
-GENERATED_CORPORA = {"rights": "conformance/rights_differential.py"}
-GENERATORS_NOT_RECORDED = {
-    "conformance/norm_defaults_differential.py":
-        "norm-defaults@0 keeps its Python fill; the lean-first batch that moves it adds this corpus",
-}
+GENERATED_CORPORA = {"rights": "conformance/rights_differential.py",
+                     "norm_defaults": "conformance/norm_defaults_differential.py"}
+GENERATORS_NOT_RECORDED = {}
 PROBE_BASELINE = "conformance/baseline-2026-09/python.json"
 PROBE_SECTIONS = ("graph_probes", "budget_boundaries", "feature_probes")
 
@@ -401,6 +403,49 @@ def rights_records(path: Path, scratch: Path, workers: int):
             yield from rows
 
 
+def norm_defaults_cases() -> list[str]:
+    return [f"s{seed}" for seed in range(1000)] + [f"invalid/{seed}" for seed in range(10)]
+
+
+def norm_defaults_corpus(out: Path) -> None:
+    """Freeze the profile generator's documents once for both revisions."""
+    from conformance import norm_defaults_differential as generator
+    rows, invalid = [], []
+    for seed in range(1000):
+        env, rules, _ = generator.case(seed, profiled=True)
+        phrases = [f"Rule {index}.\n" for index in range(len(rules))] or ["No rule.\n"]
+        cursor, units = 0, []
+        for index, phrase in enumerate(phrases):
+            end = cursor + len(phrase.encode())
+            unit = {"id": f"u{index}", "span": [cursor, end],
+                    "kind": "norm" if rules else "exposition", "meaning": "specified", "support": "none"}
+            if rules:
+                unit["content"] = rules[index].to_dict()
+            units.append(unit)
+            cursor = end
+        front = {"format": "ve-document@1", "environment": env.to_dict(), "units": units}
+        def encode(metadata):
+            return "---\n" + json.dumps(metadata, ensure_ascii=False) + "\n---\n" + "".join(phrases)
+        rows.append({"case": f"s{seed}", "text": encode(front)})
+        if rules and len(invalid) < 10:
+            damaged = json.loads(json.dumps(front))
+            damaged["units"][0]["content"]["norm"]["predicate"] = "not_declared"
+            invalid.append({"case": f"invalid/{len(invalid)}", "text": encode(damaged)})
+    assert [row["case"] for row in rows + invalid] == norm_defaults_cases()
+    out.write_text(json.dumps(rows + invalid, ensure_ascii=False))
+
+
+def norm_defaults_records(path: Path, scratch: Path, workers: int):
+    """The public document checks of each generated source in the recorded checkout."""
+    import multiprocessing
+    source = digest(path)
+    os.environ.pop("VE_AUTHORITY", None)
+    entries = [(str(scratch), source, entry) for entry in json.loads(path.read_text())]
+    with multiprocessing.get_context("fork").Pool(workers) as pool:
+        for rows in pool.imap(_rights_case, entries, chunksize=8):
+            yield from rows
+
+
 def _discourse_case(item):
     """`check_document` and `render_document` of one corpus document (in a pool worker)."""
     scratch, entry = item
@@ -526,6 +571,11 @@ def child(args) -> int:
                                              Path(args.out).with_suffix(".rights"), args.workers):
                     write({"corpus": corpus, **record})
                 continue
+            if corpus == "norm_defaults":
+                for record in norm_defaults_records(Path(args.out).with_suffix(".norm_defaults.json"),
+                                                    Path(args.out).with_suffix(".norm_defaults"), args.workers):
+                    write({"corpus": corpus, **record})
+                continue
             if corpus == "discourse":
                 for record in discourse_records(Path(args.out).with_suffix(".discourse"), args.workers):
                     write({"corpus": corpus, **record})
@@ -545,7 +595,7 @@ def child(args) -> int:
 
 def record(args) -> int:
     root = Path(args.root).resolve()
-    for name in ("readings", "rights"):
+    for name in ("readings", "rights", "norm_defaults"):
         if name not in args.corpus:
             continue
         corpus = Path(args.out).resolve().with_suffix(f".{name}.json")
@@ -568,7 +618,8 @@ class Unusable(Exception):
 
 
 def authorities_of(corpus: str, authorities=AUTHORITIES) -> tuple[str, ...]:
-    return ("default",) if corpus in ("pilots", "readings", "discourse", "rights") else tuple(authorities)
+    return (("default",) if corpus in ("pilots", "readings", "discourse", "rights", "norm_defaults")
+            else tuple(authorities))
 
 
 def only(op: str):
@@ -600,6 +651,8 @@ def expected_cases(root: Path, corpora=CORPORA, authorities=AUTHORITIES) -> dict
             cases[corpus] = {entry["id"]: (lambda held: set(DOCUMENT_OPS)) for entry in discourse_corpus(root)}
         elif corpus == "rights":
             cases[corpus] = {name: (lambda held: set(DOCUMENT_OPS)) for name in rights_cases()}
+        elif corpus == "norm_defaults":
+            cases[corpus] = {name: (lambda held: set(DOCUMENT_OPS)) for name in norm_defaults_cases()}
         elif corpus == "quantity":
             cases[corpus] = {entry["id"]: only(entry["op"]) for entry in quantity_corpus(root)}
         else:
@@ -649,7 +702,7 @@ def _source_group(key: tuple) -> tuple:
     the readings corpus, a discourse corpus entry, the rights corpus."""
     corpus, _, case, _ = key
     return {"conformance": (corpus, case.split("/")[0]), "probe": (corpus,), "readings": (corpus,),
-            "rights": (corpus,)}.get(
+            "rights": (corpus,), "norm_defaults": (corpus,)}.get(
         corpus, (corpus, case))
 
 
@@ -885,7 +938,7 @@ def main(argv=None) -> int:
         p.add_argument("--corpus", nargs="+", default=list(CORPORA), choices=CORPORA)
         p.add_argument("--authority", nargs="+", default=list(AUTHORITIES), choices=AUTHORITIES)
         p.add_argument("--workers", type=int, default=4)
-    for name in ("_readings_corpus", "_rights_corpus"):
+    for name in ("_readings_corpus", "_rights_corpus", "_norm_defaults_corpus"):
         p = sub.add_parser(name)
         p.add_argument("--out", required=True)
     p = sub.add_parser("compare")
@@ -905,6 +958,9 @@ def main(argv=None) -> int:
         return 0
     if args.command == "_rights_corpus":
         rights_corpus(Path(args.out))
+        return 0
+    if args.command == "_norm_defaults_corpus":
+        norm_defaults_corpus(Path(args.out))
         return 0
     delta = json.loads(args.delta.read_text()) if args.delta else None
     try:
