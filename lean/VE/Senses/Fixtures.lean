@@ -137,7 +137,7 @@ def out : SensesOutcome → Out
   | .fault f => .fault f
   | .lexical r => .lexical r
   | .invalidGrammar g => .invalid g
-  | .stopped i o => .stopped i (O.of o)
+  | .stopped i o _ => .stopped i (O.of o)
   | .illTyped => .illTyped
 
 def rs (D : Dictionary) (E : Env) (L : Lexicon) (s : String) (b : Nat := workBudget) : Out :=

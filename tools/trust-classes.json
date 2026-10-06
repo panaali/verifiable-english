@@ -6627,6 +6627,9 @@
     "VE.Senses.Examples.EJ17",
     "VE.Senses.Examples.EJk",
     "VE.Senses.Examples.EJt",
+    "VE.Senses.Examples.F30",
+    "VE.Senses.Examples.Fg",
+    "VE.Senses.Examples.Ft",
     "VE.Senses.Examples.LJ17",
     "VE.Senses.Examples.LJk",
     "VE.Senses.Examples.LJt",
@@ -6638,18 +6641,23 @@
     "VE.Senses.Examples.envN",
     "VE.Senses.Examples.envP",
     "VE.Senses.Examples.extendsB",
+    "VE.Senses.Examples.gThing",
     "VE.Senses.Examples.glossed",
     "VE.Senses.Examples.instDecidableExtendsMkNilProdStringOption",
     "VE.Senses.Examples.junk",
     "VE.Senses.Examples.lexN",
     "VE.Senses.Examples.lexSummary",
     "VE.Senses.Examples.long",
+    "VE.Senses.Examples.many30",
     "VE.Senses.Examples.manyPreds",
+    "VE.Senses.Examples.manyWords",
     "VE.Senses.Examples.packText",
     "VE.Senses.Examples.rJ",
     "VE.Senses.Examples.sDry",
     "VE.Senses.Examples.samePack",
     "VE.Senses.Examples.statusOf",
+    "VE.Senses.Examples.twoSenses",
+    "VE.Senses.Examples.unitsOf",
     "VE.Senses.Examples.withField"
    ]
   },
@@ -6754,6 +6762,8 @@
     "VE.Senses.dictKeys",
     "VE.Senses.docKeys",
     "VE.Senses.freshSorts",
+    "VE.Senses.glossAfter",
+    "VE.Senses.glossMark",
     "VE.Senses.isDefaultIn",
     "VE.Senses.maxPredicates",
     "VE.Senses.maxSorts",
@@ -6767,6 +6777,9 @@
     "VE.Senses.projectionOf",
     "VE.Senses.senseDecl",
     "VE.Senses.sharedSorts",
+    "VE.Senses.startsWithParts",
+    "VE.Senses.unglossed",
+    "VE.Senses.unglossedFrom",
     "VE.Senses.usedWords"
    ]
   },
@@ -6780,7 +6793,8 @@
     "VE.Senses.occurrenceAt",
     "VE.Senses.occurrencesIn",
     "VE.Senses.occurrencesKids",
-    "VE.Senses.senseMapOf"
+    "VE.Senses.senseMapOf",
+    "VE.Senses.tagsOf"
    ],
    "P": [
     "VE.Senses.CandidateGood",
@@ -6798,8 +6812,8 @@
     "VE.Senses.actPredicate",
     "VE.Senses.candidateCap",
     "VE.Senses.candidatesOf",
+    "VE.Senses.choiceCount",
     "VE.Senses.choicesOf",
-    "VE.Senses.glossFollows",
     "VE.Senses.grammarFault",
     "VE.Senses.mixedOf",
     "VE.Senses.openUnit",
@@ -6827,12 +6841,14 @@
    ],
    "G[V]": [
     "VE.Senses.Run.candidateJson",
+    "VE.Senses.Run.faultFields",
     "VE.Senses.Run.main",
     "VE.Senses.Run.occurrenceJson",
     "VE.Senses.Run.outcomeJson",
     "VE.Senses.Run.pairJson",
     "VE.Senses.Run.readCase",
     "VE.Senses.Run.runCaseReported",
+    "VE.Senses.Run.s2Fields",
     "VE.Senses.Run.unitJson"
    ]
   },
