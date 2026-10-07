@@ -1,21 +1,11 @@
 {
+  "differences": [],
   "records": {
     "pilots/default": 294
   },
   "totals": {
-    "availability": 1,
-    "same": 293
+    "same": 294
   },
-  "differences": [
-    {
-      "corpus": "pilots",
-      "case": "pilot/udhr-20261003T0600Z:usecases/udhr-pilot/run-20261003T0600Z/translation.ve.md",
-      "class": "availability",
-      "classification": null,
-      "authority": "default",
-      "op": "document_check",
-      "base_exit": 0,
-      "head_timeout": 600
-    }
-  ]
+  "unavailable_both": {},
+  "unlisted": 0
 }
