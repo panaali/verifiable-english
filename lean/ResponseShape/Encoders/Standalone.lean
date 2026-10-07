@@ -53,22 +53,22 @@ theorem parse_fits (j : Json) : OkFits req Skeletons.parse (parseCase j) := by
 theorem environment_reported (j : Json) : Fits j Skeletons.environment (reported environmentCase j) := by
   unfold reported; split
   · exact environment_fits j _ ‹_›
-  · fits
+  · split <;> fits
 
 theorem model_reported (j : Json) : Fits j Skeletons.model (reported modelCase j) := by
   unfold reported; split
   · exact model_fits j _ ‹_›
-  · fits
+  · split <;> fits
 
 theorem check_reported (j : Json) : Fits j Skeletons.check (reported checkCase j) := by
   unfold reported; split
   · exact check_fits j _ ‹_›
-  · fits
+  · split <;> fits
 
 theorem identity_reported (j : Json) : Fits j Skeletons.identity (reported identityCase j) := by
   unfold reported; split
   · exact identity_fits j _ ‹_›
-  · fits
+  · split <;> fits
 
 theorem parse_reported (j : Json) : Fits j Skeletons.parse (reportedParse j) := by
   unfold reportedParse; split
