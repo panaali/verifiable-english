@@ -69,7 +69,8 @@
           {"contains": {"const": "norm-defaults"}},
           {"contains": {"const": "discourse"}},
           {"contains": {"const": "readings-route"}},
-          {"contains": {"const": "diagnose"}}
+          {"contains": {"const": "diagnose"}},
+          {"contains": {"const": "document"}}
         ]
       },
       "protocol": {"const": 2},

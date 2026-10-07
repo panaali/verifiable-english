@@ -91,7 +91,7 @@ def allowedMetadata (format : String) : List String :=
     (if format == "ve-document@2" then ["discourse"] else [])
 
 /-- `_split`: front matter, body, fences. -/
-def splitText (t : String) : Except String Split := do
+def splitTextWith (allowed : String → List String) (t : String) : Except String Split := do
   unless t.utf8ByteSize ≤ maxDocumentBytes do throw "document byte budget exceeded"
   unless t.startsWith "---\n" do throw "ve-document@1 needs JSON front matter"
   match (t.drop 4).splitOn "\n---\n" with
@@ -107,10 +107,12 @@ def splitText (t : String) : Except String Split := do
       | _ => throw "unsupported document format"
     let format := (fm.getObjValD "format").getStr?.toOption.getD ""
     unless formats.contains format do throw "unsupported document format"
-    unless keys.all (allowedMetadata format).contains do throw "unknown document metadata"
+    unless keys.all (allowed format).contains do throw "unknown document metadata"
     let (source, fences) ← bodyOf (linesOf ("\n---\n".intercalate rest))
     pure ⟨fm, source, fences⟩
   | _ => throw "unclosed JSON front matter"
+
+def splitText (t : String) : Except String Split := splitTextWith allowedMetadata t
 
 /-- The loaded document object the discourse route admits: the identity payload of
 document.md (`metadata`, `source`, `fences`) and the sibling files an import may name. -/
