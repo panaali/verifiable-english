@@ -40,21 +40,19 @@ def inputs():
                 yield raw, bad
 
 
-def test_environments_and_models_match_python_on_every_profile_combination(monkeypatch):
-    seen = []
-    original = relay.decide
-    def traced(mode, cases, **kw):
-        seen.append(mode)
-        return original(mode, cases, **kw)
-    monkeypatch.setattr(relay, "decide", traced)
-    monkeypatch.setattr(validation, "_ACCEPTED", {})
+def test_environments_and_models_match_frozen_python_on_every_profile_combination(
+        monkeypatch, tmp_path, capfd):
+    """The pre-deletion Python oracle runs in a separate, pinned checkout.
+
+    Switching VE_AUTHORITY in this checkout does not switch these constructors:
+    both settings call Lean. Keep the comparison independent of the relay.
+    """
+    from tools import lean_first_oracle
+
+    cases = []
     for raw, bad in inputs():
-        for data in (raw, bad):
-            monkeypatch.setenv("VE_AUTHORITY", "python")
-            expected = outcome(lambda: Environment(data))
-            monkeypatch.setenv("VE_AUTHORITY", "lean")
-            assert outcome(lambda: Environment(data)) == expected, data["profiles"]
-        monkeypatch.setenv("VE_AUTHORITY", "python")
+        cases.append({"environment": raw, "models": []})
+        cases.append({"environment": bad, "models": []})
         try:
             env = Environment(raw)
         except VEError:
@@ -62,11 +60,64 @@ def test_environments_and_models_match_python_on_every_profile_combination(monke
         good = pm.model_wire(env)
         wrong = json.loads(json.dumps(good))
         wrong["constants"]["x"] = "absent"
-        for wire in (good, wrong):
-            monkeypatch.setenv("VE_AUTHORITY", "python")
-            expected = outcome(lambda: FiniteModel.from_dict(env, wire))
-            monkeypatch.setenv("VE_AUTHORITY", "lean")
-            assert outcome(lambda: FiniteModel.from_dict(env, wire)) == expected, raw["profiles"]
+        cases[-2]["models"] = [good, wrong]
+
+    payload = tmp_path / "cases.json"
+    payload.write_text(json.dumps(cases))
+    script = tmp_path / "oracle.py"
+    script.write_text(
+        "import json, sys\n"
+        "from ve.environment import Environment\n"
+        "from ve.model import FiniteModel\n"
+        "from ve.errors import VEError\n"
+        "rows = []\n"
+        "for case in json.load(open(sys.argv[1])):\n"
+        "    try:\n"
+        "        env = Environment(case['environment'])\n"
+        "    except VEError:\n"
+        "        rows.append(['rejected', []])\n"
+        "        continue\n"
+        "    models = []\n"
+        "    for wire in case['models']:\n"
+        "        try:\n"
+        "            models.append(['accepted', FiniteModel.from_dict(env, wire).model_id])\n"
+        "        except VEError:\n"
+        "            models.append(['rejected'])\n"
+        "    rows.append(['accepted', env.environment_id, models])\n"
+        "print(json.dumps(rows))\n"
+    )
+    # oracle.run executes the script with the frozen package on PYTHONPATH.
+    # Supply the payload path through argv in a tiny wrapper so the oracle's
+    # runner need not acquire another interface for this test.
+    wrapper = tmp_path / "run_oracle.py"
+    wrapper.write_text("import runpy, sys\n"
+                       f"sys.argv = [{str(script)!r}, {str(payload)!r}]\n"
+                       f"runpy.run_path({str(script)!r}, run_name='__main__')\n")
+    assert lean_first_oracle.run(wrapper, scratch=tmp_path) == 0
+    expected = json.loads(capfd.readouterr().out)
+
+    seen = []
+    original = relay.decide
+    def traced(mode, requests, **kw):
+        seen.append(mode)
+        return original(mode, requests, **kw)
+    monkeypatch.setattr(relay, "decide", traced)
+    monkeypatch.setattr(validation, "_ACCEPTED", {})
+    actual = []
+    for case in cases:
+        try:
+            env = Environment(case["environment"])
+        except VEError:
+            actual.append(["rejected", []])
+            continue
+        models = []
+        for wire in case["models"]:
+            try:
+                models.append(["accepted", FiniteModel.from_dict(env, wire).model_id])
+            except VEError:
+                models.append(["rejected"])
+        actual.append(["accepted", env.environment_id, models])
+    assert actual == expected
     assert "environment" in seen and "model" in seen
 
 
