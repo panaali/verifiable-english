@@ -1,0 +1,1475 @@
+{
+  "u022a.anyone_negative": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_life_required",
+      "row": [
+        "b0",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_life_required",
+      "row": [
+        "b1",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u022a.entitlement": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "has_the_right_to_life",
+      "row": [
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u022a.state_combined": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_and_secure_life_required",
+      "row": [
+        "b0",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_and_secure_life_required",
+      "row": [
+        "b1",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u022a.state_negative": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_life_required",
+      "row": [
+        "b0",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_life_required",
+      "row": [
+        "b1",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u022a.state_positive": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "secure_life_required",
+      "row": [
+        "b0",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "secure_life_required",
+      "row": [
+        "b1",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u022b.anyone_negative": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_liberty_required",
+      "row": [
+        "b0",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_liberty_required",
+      "row": [
+        "b1",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u022b.entitlement": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "has_the_right_to_liberty",
+      "row": [
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u022b.state_combined": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_and_secure_liberty_required",
+      "row": [
+        "b0",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_and_secure_liberty_required",
+      "row": [
+        "b1",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u022b.state_negative": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_liberty_required",
+      "row": [
+        "b0",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_liberty_required",
+      "row": [
+        "b1",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u022b.state_positive": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "secure_liberty_required",
+      "row": [
+        "b0",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "secure_liberty_required",
+      "row": [
+        "b1",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u022c.anyone_negative": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_security_of_person_required",
+      "row": [
+        "b0",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_security_of_person_required",
+      "row": [
+        "b1",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u022c.entitlement": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "has_the_right_to_security_of_person",
+      "row": [
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u022c.state_combined": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_and_secure_security_of_person_required",
+      "row": [
+        "b0",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_and_secure_security_of_person_required",
+      "row": [
+        "b1",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u022c.state_negative": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_security_of_person_required",
+      "row": [
+        "b0",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_security_of_person_required",
+      "row": [
+        "b1",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u022c.state_positive": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "secure_security_of_person_required",
+      "row": [
+        "b0",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "secure_security_of_person_required",
+      "row": [
+        "b1",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u046.entitlement_any": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "is_protected_by_law",
+      "row": [
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "is_protected_by_law",
+      "row": [
+        "c1"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "is_protected_by_law",
+      "row": [
+        "c2"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "is_protected_by_law",
+      "row": [
+        "c3"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "is_protected_by_law",
+      "row": [
+        "c4"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "witness",
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "predicate": "is_protected_by_law",
+      "row": [
+        "c5"
+      ],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "is_protected_by_law",
+      "row": [
+        "c6"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "is_protected_by_law",
+      "row": [
+        "c7"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u046.entitlement_arbitrary": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "is_protected_by_law",
+      "row": [
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "is_protected_by_law",
+      "row": [
+        "c1"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "is_protected_by_law",
+      "row": [
+        "c2"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "is_protected_by_law",
+      "row": [
+        "c3"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "witness",
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "predicate": "is_protected_by_law",
+      "row": [
+        "c4"
+      ],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "evidence": "witness",
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "predicate": "is_protected_by_law",
+      "row": [
+        "c5"
+      ],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "is_protected_by_law",
+      "row": [
+        "c6"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "is_protected_by_law",
+      "row": [
+        "c7"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u046.state_any": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b0",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b0",
+        "c1"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b0",
+        "c2"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b0",
+        "c3"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b0",
+        "c4"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "witness",
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b0",
+        "c5"
+      ],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b0",
+        "c6"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b0",
+        "c7"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b1",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b1",
+        "c1"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b1",
+        "c2"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b1",
+        "c3"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b1",
+        "c4"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "witness",
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b1",
+        "c5"
+      ],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b1",
+        "c6"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b1",
+        "c7"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u046.state_arbitrary": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b0",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b0",
+        "c1"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b0",
+        "c2"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b0",
+        "c3"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "witness",
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b0",
+        "c4"
+      ],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "evidence": "witness",
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b0",
+        "c5"
+      ],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b0",
+        "c6"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b0",
+        "c7"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b1",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b1",
+        "c1"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b1",
+        "c2"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b1",
+        "c3"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "witness",
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b1",
+        "c4"
+      ],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "evidence": "witness",
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b1",
+        "c5"
+      ],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b1",
+        "c6"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+        "b1",
+        "c7"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u054.entitlement": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "is_entitled_to_a_nationality",
+      "row": [
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u087.anyone_negative": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_trade_unions_required",
+      "row": [
+        "b0",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_trade_unions_required",
+      "row": [
+        "b1",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u087.entitlement": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "has_the_right_to_form_and_join_trade_unions",
+      "row": [
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u087.liberty": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "person_may_form_and_join_trade_unions",
+      "row": [
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u087.state_negative": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_trade_unions_required",
+      "row": [
+        "b0",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_trade_unions_required",
+      "row": [
+        "b1",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u087.state_positive": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "secure_trade_unions_required",
+      "row": [
+        "b0",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "secure_trade_unions_required",
+      "row": [
+        "b1",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u098.guardian_ensures": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "see_to_compulsory_elementary_education_required",
+      "row": [
+        "g0",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u098.person_attends": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "attend_compulsory_elementary_education_required",
+      "row": [
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u098.state_requires": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "make_elementary_education_compulsory_required",
+      "row": [
+        "b0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "make_elementary_education_compulsory_required",
+      "row": [
+        "b1"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u099a.state": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "make_education_generally_available_required",
+      "row": [
+        "b0",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "make_education_generally_available_required",
+      "row": [
+        "b0",
+        "c1"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "witness",
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "predicate": "make_education_generally_available_required",
+      "row": [
+        "b0",
+        "c2"
+      ],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "make_education_generally_available_required",
+      "row": [
+        "b1",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "make_education_generally_available_required",
+      "row": [
+        "b1",
+        "c1"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "witness",
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "predicate": "make_education_generally_available_required",
+      "row": [
+        "b1",
+        "c2"
+      ],
+      "status": "UNDECIDED",
+      "value": null
+    }
+  ],
+  "u099b.state": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "make_higher_education_accessible_required",
+      "row": [
+        "b0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "make_higher_education_accessible_required",
+      "row": [
+        "b1"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ]
+}

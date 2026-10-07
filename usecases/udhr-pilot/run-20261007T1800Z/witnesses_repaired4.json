@@ -1,0 +1,555 @@
+{
+  "u035.tribunal_claim": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "provide_effective_remedy_required",
+      "row": [
+        "t0",
+        "v0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "provide_effective_remedy_required",
+      "row": [
+        "t1",
+        "v1"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "witness",
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "predicate": "provide_effective_remedy_required",
+      "row": [
+        "t0",
+        "v1"
+      ],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "evidence": "witness",
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "predicate": "provide_effective_remedy_required",
+      "row": [
+        "t1",
+        "v0"
+      ],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "evidence": "witness",
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "predicate": "provide_effective_remedy_required",
+      "row": [
+        "t2",
+        "v0"
+      ],
+      "status": "UNDECIDED",
+      "value": null
+    }
+  ],
+  "u048.anyone_negative": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_right_u048_required",
+      "row": [
+        "b0",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_right_u048_required",
+      "row": [
+        "b1",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u048.state_combined": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_and_secure_right_u048_required",
+      "row": [
+        "b0",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_and_secure_right_u048_required",
+      "row": [
+        "b1",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u048.state_negative": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_right_u048_required",
+      "row": [
+        "b0",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_right_u048_required",
+      "row": [
+        "b1",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u048.state_positive": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "secure_right_u048_required",
+      "row": [
+        "b0",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "secure_right_u048_required",
+      "row": [
+        "b1",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u063.anyone_negative": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_right_u063_required",
+      "row": [
+        "b0",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_right_u063_required",
+      "row": [
+        "b1",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u063.state_combined": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_and_secure_right_u063_required",
+      "row": [
+        "b0",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_and_secure_right_u063_required",
+      "row": [
+        "b1",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u063.state_negative": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_right_u063_required",
+      "row": [
+        "b0",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_right_u063_required",
+      "row": [
+        "b1",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u063.state_positive": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "secure_right_u063_required",
+      "row": [
+        "b0",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "secure_right_u063_required",
+      "row": [
+        "b1",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u066.state_combined": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_and_secure_right_u066_required",
+      "row": [
+        "b0",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_and_secure_right_u066_required",
+      "row": [
+        "b1",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u073.state_combined": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_and_secure_right_u073_required",
+      "row": [
+        "b0",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_and_secure_right_u073_required",
+      "row": [
+        "b1",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u084a.state_combined": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_and_secure_right_u084a_required",
+      "row": [
+        "b0",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_and_secure_right_u084a_required",
+      "row": [
+        "b1",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u098.guardian_ensures": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "see_to_compulsory_elementary_education_required",
+      "row": [
+        "g0",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "witness",
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "predicate": "see_to_compulsory_elementary_education_required",
+      "row": [
+        "g0",
+        "p1"
+      ],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "evidence": "witness",
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "predicate": "see_to_compulsory_elementary_education_required",
+      "row": [
+        "g1",
+        "p0"
+      ],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "evidence": "witness",
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "predicate": "see_to_compulsory_elementary_education_required",
+      "row": [
+        "g1",
+        "p1"
+      ],
+      "status": "UNDECIDED",
+      "value": null
+    }
+  ],
+  "u098.person_attends": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "attend_compulsory_elementary_education_required",
+      "row": [
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "witness",
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "predicate": "attend_compulsory_elementary_education_required",
+      "row": [
+        "p1"
+      ],
+      "status": "UNDECIDED",
+      "value": null
+    }
+  ],
+  "u105a.state_combined": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_and_secure_right_u105a_required",
+      "row": [
+        "b0",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_and_secure_right_u105a_required",
+      "row": [
+        "b1",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ]
+}
