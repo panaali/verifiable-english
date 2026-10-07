@@ -272,6 +272,80 @@ def test_malformed_senses_raise_only_veerror(tmp_path, senses):
         load_document(write(tmp_path, S9, senses))
 
 
+CONFUSERS = [7, True, None, [], {}, ["u1"], {"u1": 1}, "u1", [[[]]]]
+
+
+def _paths(value, path=()):
+    yield path
+    if type(value) is dict:
+        for key, item in value.items():
+            yield from _paths(item, path + (key,))
+    elif type(value) is list:
+        for n, item in enumerate(value):
+            yield from _paths(item, path + (n,))
+
+
+def _replaced(value, paths, new):
+    value = deepcopy(value)
+    for path in paths:
+        if not path:
+            return new
+        node = value
+        for key in path[:-1]:
+            node = node[key]
+        node[path[-1]] = new
+    return value
+
+
+def _reading_set(texts):
+    [candidate] = check(texts)["units"][0]["candidates"]
+    return {"id": "r1", "unit": "u1", "version": 1, "status": "authored", "signature": "alice",
+            "readings": [{"id": "strange", "kind": "asserted", "content": candidate["formula"],
+                          "meaning_id": "m", "admission": {"who": "alice", "why": "w", "distinguishing_models": {}}}]}
+
+
+@pytest.mark.parametrize("base", ["open fence with a reading set", "defaults"])
+def test_every_front_matter_node_confused_raises_only_veerror(tmp_path, base):
+    """Type confusion (build checklist 5) over a senses document's front matter outside the environment: each
+    node, and every node holding the unit id at once (the fence, the unit and the reading set's unit), is
+    replaced by each confuser. Loading either succeeds or raises VEError; a reading set's `unit` of the wrong
+    type was a TypeError."""
+    path = (write(tmp_path, S16, {"packs": ["fixtures@1"]}, reading_sets=[_reading_set(S16)])
+            if base == "open fence with a reading set" else
+            write(tmp_path, S9[2:], {"packs": ["fixtures@1"], "defaults": {"funny": 1, "odd": 1}}))
+    front, body = path.read_bytes()[4:].split(b"\n---\n", 1)
+    meta = json.loads(front)
+    nodes = [[p] for p in _paths(meta) if p[:1] != ("environment",)]
+    nodes.append([p for p in _paths(meta) if p[:1] != ("environment",) and _get(meta, p) == "u1"])
+    assert len(nodes[-1]) == (3 if base != "defaults" else 2)
+    mutant = tmp_path / "mutant.ve.md"
+    for paths in nodes:
+        for new in CONFUSERS:
+            mutant.write_bytes(b"---\n" + json.dumps(_replaced(meta, paths, new)).encode() + b"\n---\n" + body)
+            try:
+                load_document(mutant)
+            except VEError:
+                pass
+
+
+def _get(value, path):
+    for key in path:
+        value = value[key]
+    return value
+
+
+def test_a_reading_set_unit_of_another_type_is_refused_not_a_crash(tmp_path):
+    """The review's example: `{"unit": ["u1"]}` (or a dict) gave a TypeError traceback. It names no fence, so the
+    open fence is refused with Lean's Unresolved text."""
+    expected = route.read_fences(Environment(environment()), S16, [PACK], fence_ids=["u1"],
+                                 reading_set_units=[])["reading"]["text"]
+    for unit in (["u1"], {"u1": 1}, 7, None):
+        reading_set = {**_reading_set(S16), "unit": unit}
+        with pytest.raises(VEError) as info:
+            load_document(write(tmp_path, S16, {"packs": ["fixtures@1"]}, reading_sets=[reading_set]))
+        assert info.value.message == expected, unit
+
+
 # --- entry points agree: one fence read by the document and by `ve senses check` ----------------------------
 
 VARIANTS = ["Riddle is odd.", "Riddle is odd.", "Riddle  is odd.", "Riddle\tis odd.", "Riddle is odd.\r",
