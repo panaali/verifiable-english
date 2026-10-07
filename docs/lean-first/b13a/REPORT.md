@@ -4,7 +4,7 @@ Base: `7345e3ed`. Branch: `lean-first/b13a`. Scope: Lean parse diagnostics with
 spans, the order-family printer, and certificate binding prechecks and step
 budgets. The [deletion ledger](LEDGER.md) names the owner and caller for every
 removed decision site. Source diff (excluding generated inventories and schema
-snapshots): 568 Lean lines added, 82 Lean lines deleted, 106 Python lines
+snapshots): 570 Lean lines added, 82 Lean lines deleted, 106 Python lines
 deleted. The gross source deletion count is 188 lines (`git diff --numstat
 7345e3ed`, limited to `.lean` and the four changed Python modules).
 
@@ -17,7 +17,7 @@ deleted. The gross source deletion count is 188 lines (`git diff --numstat
 | AGENT — latency | [`evidence/latency-ab.json`](evidence/latency-ab.json): five paired 100-call samples per changed path, matching request hashes. All median Lean CPU changes are at most 20%; all head median CPU values are below 2 ms and all head p95 wall values below 10 ms. |
 | AGENT — focused tests | `VE_AUTHORITY=lean` focused parser and response-schema suites: 142 passed. The source inventory, producer schema, frozen inventory, wire contract, Lean import graph, and full clean-head gate are checked at handoff. |
 | HUMAN — wording block | DRI, exact review of the 16 before/after text pairs in `DELTA.json`. DRI answer 3 (2026-10-04) already approves Lean as canonical text owner; exact pair signoff is deferred to that owner. |
-| HUMAN — theorem statement | DRI, approval of the one changed audited statement, `VE.Service.runMode_parse`. `tools/lean_statements.py --diff` against the base reports zero added, zero removed, one changed. This states the new parse dispatch; its `rfl` proof builds. |
+| HUMAN — theorem statements | DRI, approval of the changed `VE.Service.runMode_parse` statement and two added helper statements, `VE.Route.WireSound.valid_field_steps` and `VE.Norms.RunSound.valid_field_steps`. `tools/lean_statements.py --diff` against the base reports two added, zero removed, one changed. The new statements and the parse dispatch `rfl` proof build. |
 | EXTERNAL — operational soak | Owner: DRI after batch 13b, per DRI answer 1. This batch does not begin that soak. |
 
 ## Mutation proof
