@@ -61,9 +61,5 @@ ignore_imports =
     ve.parser -> ve.backends.validation
     ve.rights -> ve.rights_route
     ve.softnorms -> ve.search
-    ve.speech_acts -> ve.admission
-    ve.speech_acts -> ve.norm_admission
-    ve.speech_acts -> ve.speech_english
-    ve.speech_acts -> ve.vacuity
     ve.units -> ve.backends.relay
     ve.units -> ve.search
