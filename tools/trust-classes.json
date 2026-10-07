@@ -7415,6 +7415,7 @@
     "VE.Senses.readBody",
     "VE.Senses.readOne",
     "VE.Senses.readProjected",
+    "VE.Senses.readSents",
     "VE.Senses.readUnit",
     "VE.Senses.readWithSenses",
     "VE.Senses.senseMap_ids",
@@ -7428,11 +7429,14 @@
   },
   "VE/Senses/Run.lean": {
    "D[V]": [
-    "VE.Senses.Run.decodeDictionary"
+    "VE.Senses.Run.decodeDefaults",
+    "VE.Senses.Run.decodeDictionary",
+    "VE.Senses.Run.has"
    ],
    "G[V]": [
     "VE.Senses.Run.candidateJson",
     "VE.Senses.Run.faultFields",
+    "VE.Senses.Run.fenceJson",
     "VE.Senses.Run.main",
     "VE.Senses.Run.occurrenceJson",
     "VE.Senses.Run.outcomeJson",
@@ -9253,6 +9257,42 @@
     "VE.Norms.WellFormedOnce",
     "VE.Norms.semanticCheckOnce",
     "VE.Norms.validateOnce"
+   ]
+  },
+  "VE/Senses/Document.lean": {
+   "G[R]": [
+    "VE.Senses.andList",
+    "VE.Senses.bothText",
+    "VE.Senses.choiceGloss",
+    "VE.Senses.choiceLines",
+    "VE.Senses.countWord",
+    "VE.Senses.defaultText",
+    "VE.Senses.fenceText",
+    "VE.Senses.senseOf",
+    "VE.Senses.unresolvedText"
+   ],
+   "S": [
+    "VE.Senses.SenseText",
+    "VE.Senses.SenseText.sents",
+    "VE.Senses.badDefault",
+    "VE.Senses.defaultSents",
+    "VE.Senses.documentInput",
+    "VE.Senses.fenceSents",
+    "VE.Senses.fenceUnits",
+    "VE.Senses.readDocument",
+    "VE.Senses.writtenLine"
+   ]
+  },
+  "VE/Senses/DocumentExamples.lean": {
+   "T": [
+    "VE.Senses.DocumentExamples.is",
+    "VE.Senses.DocumentExamples.rd",
+    "VE.Senses.DocumentExamples.refused",
+    "VE.Senses.DocumentExamples.s16",
+    "VE.Senses.DocumentExamples.s22",
+    "VE.Senses.DocumentExamples.s9",
+    "VE.Senses.DocumentExamples.texts",
+    "VE.Senses.DocumentExamples.units"
    ]
   },
   "VE/SoftNorms/Once.lean": {

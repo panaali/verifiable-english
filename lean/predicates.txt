@@ -358,6 +358,8 @@ module VE.Semantics
 module VE.Senses.Assignment
 module VE.Senses.Decode
 module VE.Senses.Dictionary
+module VE.Senses.Document
+module VE.Senses.DocumentExamples
 module VE.Senses.Examples
 module VE.Senses.Fixtures
 module VE.Senses.Preamble
