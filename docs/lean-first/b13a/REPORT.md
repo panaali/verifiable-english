@@ -21,6 +21,22 @@ deleted. The gross source deletion count is 196 lines (`git diff --numstat
 | HUMAN — trust budget | DRI, signed allowance for the growth reported by `tools/trust_map.py --check`. Declaration classification has zero problems; the baseline check reports S +960 and untied V +703 across this tree, including pre-existing senses work and the 13a diagnostic. No allowance was invented in this batch. |
 | EXTERNAL — operational soak | Owner: DRI after batch 13b, per DRI answer 1. This batch does not begin that soak. |
 
+## Final review fixes
+
+The B parse diagnostic finding is closed by adding `no` to the Lean surface
+reserved vocabulary (also used by the diagnostic scanner), mirroring the Python
+and Rust lists. The lexical proof now enumerates the Lean list by decision
+instead of a hand-counted disjunction. Regression tests compare every reserved
+word in term and binder position, including malformed `no@`, against Python's
+code, message and span.
+
+The B replay budget finding is closed at `CertificateWire.limit`: only an absent
+`max_steps` uses the default. Present values must be nonnegative integers; the
+shared `Except` result reaches FOL, closure, order, core and norms replay
+runners. Regressions cover `false`, `"0"`, `[]`, `{}`, `null`, negative and
+fractional values. The exact previously unlisted effects are recorded in
+`DELTA.md` and `DELTA.json`.
+
 ## Mutation proof
 
 Three seeded changes were run and removed. Raw failing and restored outputs are

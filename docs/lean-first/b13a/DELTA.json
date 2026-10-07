@@ -61,6 +61,14 @@
       "head": "SyntaxError: reserved word 'must' cannot be a term"
     },
     {
+      "base": "reserved word 'no' cannot be a term",
+      "head": "SyntaxError: reserved word 'no' cannot be a term"
+    },
+    {
+      "base": "invalid binder name 'no'",
+      "head": "SyntaxError: invalid binder name 'no'"
+    },
+    {
       "base": "source exceeds 65536 bytes",
       "head": "ResourceLimit: source exceeds 65536 bytes"
     }
