@@ -374,7 +374,8 @@ def test_m8_precedence_leak_forces_enumeration(lean):
                                                          over=("waive-x",))}]
     assert validate(raw, units, [reading_set_])["status"] == "ok"
     checked = elaborate(raw, units, [reading_set_])
-    assert checked == {"route": "enumerated", "finding": {
+    assert checked == {"route": "enumerated", "generated_predicates": [
+        {"name": "ve__bit__1__0", "layer": "readings", "key": None}], "finding": {
         "text": "ReadingsNotSuperposable: rs1", "cause": "precedence under waive-x"},
         "choice_count": 2, "choices": [[['rs1', 0]], [['rs1', 1]]], "choices_checked": 2, "narrowings_stale": []}
 

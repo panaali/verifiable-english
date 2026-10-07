@@ -240,12 +240,45 @@ def sizesJson (D : Doc) (basePredicates : Nat) : Json :=
       (decisions X).length)), ("nodes", toJson nodes),
     ("limits", Json.mkObj [("sorts", toJson 32), ("predicates", toJson 256), ("nodes", toJson 10000)])]
 
+/-- Declaration provenance for wording. The key comes from the same `genKeys` that
+    builds the model vocabulary; its constructor, never its spelling, owns the layer. -/
+def generatedKeyJson (g : GenKey × String × List String) : Json :=
+  let layer := match g.1 with
+    | .excepted .. | .off .. | .outweighs .. => "soft"
+    | .lim .. | .cond .. | .aimed .. => "rights"
+  Json.mkObj [("name", .str g.2.1), ("layer", .str layer), ("key", Wire.keyJson g.1)]
+
+/-- The JSON encoder names exactly the generated declaration it describes. -/
+theorem generatedKeyJson_name (g : GenKey × String × List String) :
+    (generatedKeyJson g).getObjValD "name" = .str g.2.1 := by
+  cases g with
+  | mk k rest => cases k <;> rfl
+
+/-- The declarations fed to the superposed encoder are precisely the soft and
+    rights declarations of the elaborated vocabulary, by `genKeys_names`. -/
+theorem generatedSuperposed_names (D : Doc) :
+    ((genKeys (sup D).1).map (fun g => (g.2.1, g.2.2))) =
+      VE.SoftNorms.decisions (correlate (sup D).1) ++ VE.Rights.genDecls (sup D).1 :=
+  genKeys_names _
+
+def generatedPredicatesJson (route : Route) (D : Doc) : Json :=
+  let bits := (bitDecls D).map (fun d =>
+    Json.mkObj [("name", .str d.1), ("layer", .str "readings"), ("key", .null)])
+  let keys := match route with
+    | .superposed => genKeys (sup D).1
+    | .enumerated => ((choices D).flatMap (fun c => genKeys (choiceDoc D c).1)).eraseDupsBy
+        (fun a b => a.2.1 == b.2.1)
+    | _ => []
+  let active := if D.chain == .norms then [] else keys.map generatedKeyJson
+  Json.arr (bits ++ active).toArray
+
 /-- The `readings-elaborate` answer (3): the route; on the soft and norms chains past the first three rows the
     finding of 1.8; on the superposed route the choice vocabulary, the units of `sup D`, the labelled slot, the
     name map, the compatible choices and the sizes; on the enumerated route the compatible choices. -/
 def elaborateFields (normDefaults : Bool) (basePredicates : Nat) (D : Doc) : List (String × Json) :=
   let route := routeOf normDefaults D
-  let head : List (String × Json) := [("route", .str route.text)]
+  let head : List (String × Json) := [("route", .str route.text),
+    ("generated_predicates", generatedPredicatesJson route D)]
   match route with
   | .w2 | .pending | .abstention => head
   | .superposed =>

@@ -385,3 +385,50 @@ asks `supReady`, and `readings-choice` runs on any admitted document.
   document (`choiceConflictCase`, never a witness) and answers `conflict_free`, and `accepted` exactly when the
   certificate is `valid` and the conflict status is CONFLICT-FREE (14.8, as `readings-certificate` asks on `sup D`;
   compose-s2 looprecheck2 review B). A certificate case without `conflict` is refused.
+
+# Readings under unspecified defaults in Lean (readings-defaults, batch RD-1)
+
+Specification: [docs/spec/readings-defaults.md](../docs/spec/readings-defaults.md) section 6.2 (draft 2) and plan
+[readings-defaults-PLAN.md](../docs/spec/readings-defaults-PLAN.md) RD-1. `lean/audit.py` passes with no `sorry`
+and only `propext`, `Classical.choice` and `Quot.sound`. Nothing calls these files yet, so no answer changes; no
+frozen file changed (the two modules are listed in `VE/Route/frozen-sources.sha256`).
+`tools/check_readings_defaults_statements.py` compares each statement with the approved text.
+
+## Files
+
+| File | Contents |
+|---|---|
+| `Unspecified.lean` | `NDoc`, `asU` and the four documents as norm-defaults documents (`freeU`, `oneU`, `choiceU`, `supU`); `normsShaped`; `fillDoc` (`fillSoftNode`, `fillContent`, `fillItem`, `strictNodeOf`, `fillUnits`, `fillFrameEnv`); `fillNamesFree`; `WellFormedND`; `AchievesU`, `SeparatedU`, `fillHolds`; the statements of 6.2 |
+| `UnspecifiedExamples.lean` | the fixtures of 8.1 as `#guard`: F-ND1 (rows 1.1 to 1.10), F-ND5 (5.1 to 5.3), F-ND0, and F-ND11 |
+
+## The statements of 6.2
+
+In plain words, each with the hypotheses it states. `normsShaped N.D` is the norms chain's shape (strict rules, no
+rights content); `fillNamesFree N` says no unit id or declared name begins `unsaid--`.
+
+* `fillDoc_one`, `fillDoc_free`, `fillDoc_choice`, `fillDoc_sup` (under `normsShaped N.D` and `fillNamesFree N`):
+  taking a reading's document, the free document, a choice's document or the superposed document of the filled
+  readings document gives, after `soften ∘ correlate`, exactly norm-defaults' `fill` of the same document taken from
+  the author's; the assertions are unchanged. So every S1 and S2a theorem about `fillDoc N` is a theorem about the
+  filled documents of norm-defaults 2.3.
+* `compatible_fillDoc` (no hypothesis): the compatible choices of `fillDoc N` are those of `N.D`.
+* `attached_fillDoc` (under `fillNamesFree N` and `singlyAttached N.D`, part of `WellFormedDoc`): a fixed unit is
+  attached to the same list of sets in `fillDoc N` as in `N.D`. The first approved statement had `fillNamesFree`
+  only; the DRI approved the added hypothesis on 2026-10-07 and spec 6.2 now states it. F-ND11 is a norms-shaped
+  document with free names whose unit `u0` is attached to `[s2, s0, s1]` in `N.D` and to `[s0, s1, s2]` in
+  `fillDoc N`: `attached` iterates its levels once per item, `fillDoc` adds items, and the level lists of a unit
+  attached to several sets alternate in order. The members always agree (`mem_attached_fillDoc`, `fillNamesFree`
+  only), and that is what the four equalities use.
+* `fillDoc_conservative` (no hypothesis but `N.unspec = []`): without unspecified predicates `fillDoc N = N.D`.
+* `separates_soundU`, `separates_separatedU` (under `WellFormedDoc (fillDoc N)`, both candidates with content, a
+  valid base, and `fillHolds`): a situation that S1's check accepts on `fillDoc N`, whose witness's `Fill_T` holds on
+  the base (`fillHolds`), shows the witness achieving the probe value under the completion and the other reading not
+  achieving it; so the two readings are separated (one base, one shared filling).
+* `achievesU_iff` (under `normsShaped N.D` and `fillNamesFree N`): on the norms chain no key is generated, so
+  achieving a probe value under the completion is an admissible base of the author's filled vocabulary, admissible
+  for the reading's filled document (norm-defaults' `BaseAdmissibleU`, `Fill_T` included), on which the probe has
+  the value.
+
+The helper lemmas say how: building `fillDoc N` is building `N.D` and then filling (`build_fillDoc`, `sup_fillDoc`),
+`soften` is the identity on strict documents (`soften_strict`, `soften_hard_identity`'s core without its unused
+hypothesis), and the choice vocabulary and `E‴` override disjoint names (`choiceEnv_fill`).
