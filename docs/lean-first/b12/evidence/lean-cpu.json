@@ -1,0 +1,49 @@
+{
+  "runs": [
+    {
+      "side": "base",
+      "order": "first",
+      "services": 14,
+      "lean_cpu_s": 264.18,
+      "wall_s": 244.64,
+      "stdout_sha256": "a66dd5128f617e05c337878a1619514dbed7bb0516fbf91f98a65a0f374ba7a5"
+    },
+    {
+      "side": "head",
+      "order": "second",
+      "services": 14,
+      "lean_cpu_s": 437.83,
+      "wall_s": 409.01,
+      "stdout_sha256": "a66dd5128f617e05c337878a1619514dbed7bb0516fbf91f98a65a0f374ba7a5"
+    },
+    {
+      "side": "head",
+      "order": "first",
+      "services": 14,
+      "lean_cpu_s": 265.63,
+      "wall_s": 250.83,
+      "stdout_sha256": "a66dd5128f617e05c337878a1619514dbed7bb0516fbf91f98a65a0f374ba7a5"
+    },
+    {
+      "side": "base",
+      "order": "second",
+      "services": 14,
+      "lean_cpu_s": 399.3,
+      "wall_s": 367.53,
+      "stdout_sha256": "a66dd5128f617e05c337878a1619514dbed7bb0516fbf91f98a65a0f374ba7a5"
+    }
+  ],
+  "median": {
+    "base": {
+      "lean_cpu_s": 331.74,
+      "wall_s": 306.085
+    },
+    "head": {
+      "lean_cpu_s": 351.73,
+      "wall_s": 329.92
+    }
+  },
+  "lean_cpu_ratio": 1.0602580333996503,
+  "wall_ratio": 1.0778705261610337,
+  "same_output": true
+}
