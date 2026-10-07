@@ -56,7 +56,7 @@
     "ve/backends/dispatch.py:_shadow": "shadow authority only (execute and shadowed): the Python result is returned (a Python exception is re-raised unchanged); a candidate backend exception, CheckerUnavailable included, is only recorded as a shadow difference and never becomes the returned verdict"
   },
   "lean_decoders": {
-    "total_lines": 21827,
+    "total_lines": 21813,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -297,19 +297,18 @@
       },
       {
         "file": "lean/VE/EnglishGrammar/Run.lean",
-        "lines": 393,
-        "sha256": "1e5db6b062d6366ffcf70600e1f676a693b1974c539669d72eda810cb3d31373",
+        "lines": 379,
+        "sha256": "a5a85b2684fe9fbbdf1108e0d59aa323498d6d3fff18c82531b84eed3aaec6e5",
         "ranges": [
           [
             1,
-            393
+            379
           ]
         ],
         "declarations": [
           "pairs",
           "triples",
           "decodeLexicon",
-          "blockRouteView",
           "validateDeclarations",
           "environmentId",
           "grammarId",
