@@ -1,0 +1,15 @@
+{
+  "udhr_translation": {
+    "base_wall_seconds": 38.99,
+    "base_cpu_seconds": 37.63,
+    "earlier_head_wall_seconds": 150.37,
+    "earlier_head_cpu_seconds": 150.12
+  },
+  "udhr_large": {
+    "base_wall_seconds": 58.9,
+    "base_cpu_seconds": 58.6,
+    "head_wall_seconds": 426.19,
+    "head_cpu_seconds": 425.72,
+    "parsed_json_equal": true
+  }
+}
