@@ -107,6 +107,7 @@ class Slots:
     # Prefixes owned by optional layers, hidden only where the document activates those layers.
     # Without an environment, hide every one conservatively.
     reserved: tuple = field(default_factory=lambda: _all_reserved())
+    author_names: frozenset = field(default_factory=frozenset)
 
     def options(self, name):
         if name == "n":
@@ -147,11 +148,19 @@ def _hidden_pattern(reserved):
     return re.compile(rf"(?<![\w-])(?:{prefixes})|{re.escape(_MAY_NOT)}")
 
 
-def hidden_in(text, reserved=None):
+def hidden_in(text, reserved=None, author_names=()):
     """The first generated name, active layer name (`reserved`, default every one) or `may not` that `text` shows,
     else None (2.4, G6, G9; readings-defaults 2.5). The gate and the tests' oracles read this."""
-    found = _hidden_pattern(tuple(_all_reserved() if reserved is None else reserved)).search(text)
-    return found.group() if found else None
+    pattern = _hidden_pattern(tuple(_all_reserved() if reserved is None else reserved))
+    for found in pattern.finditer(text):
+        if found.group() == _MAY_NOT:
+            return found.group()
+        end = found.end()
+        while end < len(text) and (text[end].isalnum() or text[end] in "_-"):
+            end += 1
+        if text[found.start():end] not in author_names:
+            return found.group()
+    return None
 
 
 def _match(elements, text, pos, slots, binds):
@@ -202,7 +211,7 @@ def derivations(text, slots):
 def gated(intended, text, slots):
     """W7's all-derivations gate: `text` has exactly one derivation, from `intended`; and no generated name, no
     reserved prefix of the document's environment and no `may not` (2.4, G6, G9)."""
-    if type(text) is not str or hidden_in(text, slots.reserved) is not None:
+    if type(text) is not str or hidden_in(text, slots.reserved, slots.author_names) is not None:
         raise VEError(f"InvalidInput: S2 wording {intended} shows a generated name or `may not`")
     found = derivations(text, slots)
     if len(found) != 1 or found[0][0] != intended:

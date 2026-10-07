@@ -1014,6 +1014,9 @@ def test_review_a3_class_every_generated_decision_is_worded(tmp_path):
     assert "suppose the decider decides that limitation 1 holds where e0 arrests e0" in line
     _one_derivation(lines, wording)
     unknown = {**strict["model"], "relations": {**strict["model"]["relations"], "rights__lim__9": [["e0", "e0"]]}}
+    # Only a declaration reported by Lean as generated must have decision wording.
+    wording.generated["rights__lim__9"] = {"name": "rights__lim__9", "layer": "rights",
+                                            "key": {"lim": "missing", "act": "arrest_permitted"}}
     with pytest.raises(VEError, match="decision table rights__lim__9 has no wording"):
         wording.situation(unknown, strict["choice"])
 
