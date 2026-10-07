@@ -523,23 +523,24 @@ def _norm_certificate_python(document, premises, conclusion, certificate):
 
 
 def _norm_certificate_lean(document, premises, conclusion, certificate):
-    """Python's input and binding checks, then Lean's `norms-certificate` replay.
-
-    Lean regenerates Background (flags first) and the layer premises itself and
-    binds the certificate to them; the layers named in the pre-checks are
-    Lean's too (`premises()` is dispatched).
-    """
+    """Lean owns the regenerated premises, binding, replay and step charge."""
     from .ast import _to_data
     from .backends.relay import decide
-    from .entailment import EntailmentCertificateCheck, _lean_replay_record, _replay_prechecks
-    max_steps = 10_000
-    layers = tuple(formula for _, formula in document.premises())
-    nodes = _replay_prechecks(document.env, (*layers, *premises), conclusion, certificate, max_steps)
-    if isinstance(nodes, EntailmentCertificateCheck):
-        return nodes
-    case = _lean_case(document, "norms-certificate", premises=[_to_data(p) for p in premises],
-                      conclusion=_to_data(conclusion), certificate=certificate)
-    return _lean_replay_record(lambda: decide(_lean_mode(document), [case])[0]["valid"], nodes, max_steps)
+    from .entailment import EntailmentCertificateCheck
+    try:
+        case = _lean_case(document, "norms-certificate", premises=[_to_data(p) for p in premises],
+                          conclusion=_to_data(conclusion), certificate=certificate)
+        row = decide(_lean_mode(document), [case])[0]
+    except ResourceLimit as exc:
+        if str(exc).startswith("ResourceLimit: certificate replay exceeds"):
+            return EntailmentCertificateCheck(False, "ResourceLimit", 10_000,
+                                              "certificate replay budget exhausted")
+        return EntailmentCertificateCheck(False, "ResourceLimit", 0, str(exc))
+    except VEError as exc:
+        return EntailmentCertificateCheck(False, "InvalidCertificate", 0, str(exc))
+    if row["valid"]:
+        return EntailmentCertificateCheck(True, "Valid", row["steps"])
+    return EntailmentCertificateCheck(False, "InvalidCertificate", 0, "certificate does not replay")
 
 
 def _base_model(document, env, model):

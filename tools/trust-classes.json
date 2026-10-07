@@ -576,6 +576,9 @@
    "G[V]": [
     "ResponseShape.Schemas.Parse.file",
     "ResponseShape.Schemas.Parse.row"
+   ],
+   "G[R]": [
+    "ResponseShape.Schemas.Parse.parse_error"
    ]
   },
   "ResponseShape/Schemas/Quantity.lean": {
@@ -1598,6 +1601,7 @@
    ],
    "D[V]": [
     "VE.CertificateWire.Query",
+    "VE.CertificateWire.certificateFields",
     "VE.CertificateWire.decodeCertificate",
     "VE.CertificateWire.decodeClosureCertificate",
     "VE.CertificateWire.decodeClosureTrace",
@@ -1616,9 +1620,21 @@
    ],
    "G[V]": [
     "VE.CertificateWire.Query.accepts",
+    "VE.CertificateWire.caseCap",
+    "VE.CertificateWire.closureSteps",
+    "VE.CertificateWire.closureStepsList",
+    "VE.CertificateWire.folSteps",
+    "VE.CertificateWire.folStepsList",
+    "VE.CertificateWire.legacyCertificate",
     "VE.CertificateWire.runCase",
     "VE.CertificateWire.runCaseReported",
+    "VE.CertificateWire.runCaseReportedSteps",
     "VE.CertificateWire.runClosureCase"
+   ],
+   "G[R]": [
+    "VE.CertificateWire.limit",
+    "VE.CertificateWire.maxSteps",
+    "VE.CertificateWire.stepLimit"
    ]
   },
   "VE/Checks.lean": {
@@ -4766,12 +4782,15 @@
     "VE.Order.Surface.parseRaw",
     "VE.Order.Surface.parseStatements",
     "VE.Order.Surface.parseTerm",
+    "VE.Order.Surface.printAux",
     "VE.Order.Surface.readNumeral",
     "VE.Order.Surface.termJson"
    ],
    "G[V]": [
     "VE.Order.Surface.oversizedIdentifier",
     "VE.Order.Surface.oversizedNumeral",
+    "VE.Order.Surface.print",
+    "VE.Order.Surface.printTerm",
     "VE.Order.Surface.runCase",
     "VE.Order.Surface.runCaseReported"
    ]
@@ -6980,11 +6999,9 @@
    "G[V]": [
     "VE.Route.Steps.caseCap",
     "VE.Route.Steps.closure",
-    "VE.Route.Steps.closureList",
     "VE.Route.Steps.core",
     "VE.Route.Steps.coreList",
     "VE.Route.Steps.fol",
-    "VE.Route.Steps.folList",
     "VE.Route.Steps.order",
     "VE.Route.Steps.orderList"
    ],
@@ -7721,7 +7738,9 @@
   "VE/Service/Standalone.lean": {
    "S": [
     "VE.Service.Standalone.isLegacy",
-    "VE.Service.Standalone.legacyMeaningId"
+    "VE.Service.Standalone.legacyMeaningId",
+    "VE.Service.Standalone.rawParseAst",
+    "VE.Service.Standalone.reportedParse"
    ],
    "D[V]": [
     "VE.Service.Standalone.Legacy",
@@ -7764,7 +7783,8 @@
     "VE.Service.Standalone.validatedEnvironment"
    ],
    "G[R]": [
-    "VE.Service.Standalone.maxSourceBytes"
+    "VE.Service.Standalone.maxSourceBytes",
+    "VE.Service.Standalone.parseRejection"
    ],
    "G[I]": [
     "VE.Service.Standalone.identityCase"
@@ -9248,6 +9268,31 @@
    ],
    "G[R]": [
     "VE.SoftNorms.defaultDecidesOn"
+   ]
+  },
+  "VE/Service/ParseDiagnostic.lean": {
+   "G[V]": [
+    "VE.Service.ParseDiagnostic.Cursor",
+    "VE.Service.ParseDiagnostic.Error",
+    "VE.Service.ParseDiagnostic.Scan",
+    "VE.Service.ParseDiagnostic.advance",
+    "VE.Service.ParseDiagnostic.binder",
+    "VE.Service.ParseDiagnostic.complete",
+    "VE.Service.ParseDiagnostic.current",
+    "VE.Service.ParseDiagnostic.fails",
+    "VE.Service.ParseDiagnostic.formula",
+    "VE.Service.ParseDiagnostic.hasPrefix",
+    "VE.Service.ParseDiagnostic.ident",
+    "VE.Service.ParseDiagnostic.identChar",
+    "VE.Service.ParseDiagnostic.literal",
+    "VE.Service.ParseDiagnostic.numeral",
+    "VE.Service.ParseDiagnostic.pyQuote",
+    "VE.Service.ParseDiagnostic.reserved",
+    "VE.Service.ParseDiagnostic.term"
+   ],
+   "G[R]": [
+    "VE.Service.ParseDiagnostic.scan",
+    "VE.Service.ParseDiagnostic.span"
    ]
   }
  }

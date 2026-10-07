@@ -1,0 +1,80 @@
+{
+  "wording": [
+    {
+      "base": "VE semantic syntax must be ASCII",
+      "head": "SyntaxError: VE semantic syntax must be ASCII"
+    },
+    {
+      "base": "binder 's' shadows an active binder",
+      "head": "ShadowedVariable: binder 's' shadows an active binder"
+    },
+    {
+      "base": "binder name exceeds 64 ASCII bytes",
+      "head": "ResourceLimit: binder name exceeds 64 ASCII bytes"
+    },
+    {
+      "base": "document exceeds 10000 AST nodes",
+      "head": "ResourceLimit: document exceeds 10000 AST nodes"
+    },
+    {
+      "base": "document must contain at least one statement",
+      "head": "SyntaxError: document must contain at least one statement"
+    },
+    {
+      "base": "expected ') and (' or ') or ('",
+      "head": "SyntaxError: expected ') and (' or ') or ('"
+    },
+    {
+      "base": "expected ')'",
+      "head": "SyntaxError: expected ')'"
+    },
+    {
+      "base": "expected '), then ('",
+      "head": "SyntaxError: expected '), then ('"
+    },
+    {
+      "base": "expected '.\\n'",
+      "head": "SyntaxError: expected '.\\n'"
+    },
+    {
+      "base": "expected term",
+      "head": "SyntaxError: expected term"
+    },
+    {
+      "base": "formula exceeds nesting limit 64",
+      "head": "ResourceLimit: formula exceeds nesting limit 64"
+    },
+    {
+      "base": "invalid binder name 'deployed'",
+      "head": "SyntaxError: invalid binder name 'deployed'"
+    },
+    {
+      "base": "invalid binder name 'not'",
+      "head": "SyntaxError: invalid binder name 'not'"
+    },
+    {
+      "base": "invalid binder name 'person'",
+      "head": "SyntaxError: invalid binder name 'person'"
+    },
+    {
+      "base": "reserved word 'must' cannot be a term",
+      "head": "SyntaxError: reserved word 'must' cannot be a term"
+    },
+    {
+      "base": "reserved word 'no' cannot be a term",
+      "head": "SyntaxError: reserved word 'no' cannot be a term"
+    },
+    {
+      "base": "invalid binder name 'no'",
+      "head": "SyntaxError: invalid binder name 'no'"
+    },
+    {
+      "base": "source exceeds 65536 bytes",
+      "head": "ResourceLimit: source exceeds 65536 bytes"
+    }
+  ],
+  "order": [],
+  "verdict": [],
+  "availability": [],
+  "unavailable": []
+}

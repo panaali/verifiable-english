@@ -58,7 +58,6 @@ ignore_imports =
     ve.norms -> ve.search
     ve.parser -> ve.backends.dispatch
     ve.parser -> ve.backends.relay
-    ve.parser -> ve.backends.validation
     ve.rights -> ve.rights_route
     ve.softnorms -> ve.search
     ve.units -> ve.backends.relay
