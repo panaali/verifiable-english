@@ -4,11 +4,15 @@ Both checkouts run against the base's reviewed baseline, so every sampled input 
 every replayed entry is the same on both sides (`trace_items.py`). Batch 10b's
 committed baseline is the base's minus `RETIRED`: the norm-defaults decoder now
 accepts a constant's `verbalisation`, as Python does (DF-19). An answer may differ
-between base and head only in that way:
+between base and head only in these ways:
 
 - a sampled input mentioning norm-defaults whose base Lean answer is the DF-19
   rejection, whose Python and Rust answers are unchanged, and whose Lean answer
-  changed;
+  changed (`df19`);
+- a sampled input mentioning norm-defaults whose Python and Rust answers are
+  unchanged and whose head Lean answer is now Python's own text for a repeated
+  profile: setting `norm-defaults@0` aside used to drop every copy, so the base
+  Lean accepted a repeated profile or reported a later fault (`repeated-profile`);
 - a replayed `RETIRED` entry that reproduces on the base and is fixed on the head;
 - a finding only the head makes, on an input DF-19 masked on the base, where the
   engines now differ in diagnostic text alone (`unmasked`: wording or fault order of
@@ -32,6 +36,7 @@ SEEDS = tuple(range(20260921, 20260931)) + tuple(range(20261001, 20261005))
 SAME = ("corpus", "mutants")
 RETIRED = frozenset({"environment-d253e2ea451c5fa3"})
 DF19 = "fields do not match: expected [sort, description], got ["
+REPEATED = "UnsupportedProfile: profiles must be sorted and unique"
 TRACE = Path(__file__).with_name("trace_items.py")
 BASELINE = "conformance/difffuzz-baseline.json"
 
@@ -69,14 +74,19 @@ def run(root: Path, baseline: Path, seed: int, scratch: Path) -> dict:
     return data
 
 
-def explained_sample(a: dict, b: dict) -> bool:
+def explained_sample(a: dict, b: dict) -> str | None:
+    """Why a sampled answer changed (`df19` or `repeated-profile`), or None if it is unexplained."""
     if "answers" not in a or "answers" not in b:
-        return False
+        return None
     old, new = a["answers"], b["answers"]
     lean = old.get("lean", {})
-    return (lean.get("outcome") == "error" and lean.get("text", "").startswith(DF19)
-            and "verbalisation" in lean["text"] and old.get("python") == new.get("python")
-            and old.get("rust") == new.get("rust") and new.get("lean") != lean)
+    if old.get("python") != new.get("python") or old.get("rust") != new.get("rust") or new.get("lean") == lean:
+        return None
+    if lean.get("outcome") == "error" and lean.get("text", "").startswith(DF19) and "verbalisation" in lean["text"]:
+        return "df19"
+    if new["lean"].get("text") == new.get("python", {}).get("text") == REPEATED:
+        return "repeated-profile"
+    return None
 
 
 def compare(base: dict, head: dict) -> dict:
@@ -94,11 +104,12 @@ def compare(base: dict, head: dict) -> dict:
         for index, (a, b) in enumerate(zip(rows_a, rows_b)):
             if a["answers_sha256"] == b["answers_sha256"]:
                 continue
-            row = {"surface": name, "index": index, "profile": a.get("profile"),
+            kind = explained_sample(a, b)
+            row = {"surface": name, "index": index, "profile": a.get("profile"), "kind": kind,
                    "base_lean": a.get("answers", {}).get("lean"), "head_lean": b.get("answers", {}).get("lean"),
                    "head_lean_agrees_with_python": b.get("answers", {}).get("lean", {}).get("outcome")
                    == b.get("answers", {}).get("python", {}).get("outcome")}
-            (explained if explained_sample(a, b) else unexplained).append(row)
+            (explained if kind else unexplained).append(row)
     replay_a, replay_b = base["items"]["replayed"], head["items"]["replayed"]
     if [(r["id"], r["input"]) for r in replay_a] != [(r["id"], r["input"]) for r in replay_b]:
         unexplained.append("replayed entries")
