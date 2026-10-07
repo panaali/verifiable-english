@@ -144,12 +144,16 @@ def test_definition_sentence_rejections(sentence, message):
         parse_definition(env, sentence)
 
 
-def test_definition_sentence_parts_pass_the_all_derivations_check(monkeypatch):
-    from ve.surface import unambiguity
+def test_definition_sentence_parts_are_read_by_lean(monkeypatch):
+    """Review A3 of E2: a definition's head and body are user-written formula sentences, so Lean's
+    `english.read` decides them (one reading each), not Python's hand parser and Lark audit."""
+    from ve import english
+    from ve.backends import english_lean
     seen = []
-    original = unambiguity.require_unique_derivation
-    monkeypatch.setattr(unambiguity, "require_unique_derivation",
-                        lambda env, source, **o: seen.append(source) or original(env, source, **o))
+    original = english_lean.read
+    monkeypatch.setattr(english_lean, "read",
+                        lambda env, source, words, options: seen.append(source) or original(env, source, words, options))
+    monkeypatch.setattr(english, "_python_reading", lambda *_args: pytest.fail("Python decided a definition"))
     parse_definition(Environment(staff_env(("definitions@0", "relational-fol@0"))), TRUSTED)
     assert seen == ["for every person, that person is trusted.",
                     "for every person, both that person is staff and that person is badged."]
