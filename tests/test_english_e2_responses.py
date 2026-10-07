@@ -311,3 +311,27 @@ def test_ill_typed_names_the_sentence_whose_formula_fails():
     assert response["code"] == "IllTyped" and response["class"] == "TypeMismatch", response
     assert response["sentence"] == 1 and response["text"].startswith("Sentence 2 "), response
     assert source[slice(*response["span"])] == reach
+
+
+def test_a_reading_under_an_environment_the_core_checker_refuses_raises_that_refusal():
+    """E2.5 (the reverse corpus on `usecases/eligibility`): Lean reads a text under a `ve-units@1`
+    environment, whose formulas the core checker refuses whatever they are (`ast.core_gate`). The public
+    outcome is that refusal, as Python's reader gives it, not `CheckerUnavailable`; the comparison and the
+    shadow record name it without decoding the formulas."""
+    from pathlib import Path
+    from ve import ast
+    from ve.errors import UnsupportedProfile
+    env = Environment.from_json((Path(__file__).resolve().parents[1] /
+                                 "usecases/eligibility/environment.json").read_bytes())
+    with pytest.raises(UnsupportedProfile):
+        ast.core_gate(env)
+    text = "Every inpatient person is entitled."
+    with pytest.raises(UnsupportedProfile) as raised:
+        EN.parse_english(env, text)
+    assert not isinstance(raised.value, CheckerUnavailable)
+    with pytest.raises(UnsupportedProfile):
+        EN._python_reading(env, text, EN.EnglishVocabulary(env), {})
+    reading = L.read(env, text, EN.EnglishVocabulary(env), {})
+    assert reading.status == "one"
+    assert reading.comparison("UnsupportedProfile") == {"code": "UnsupportedProfile", "verdict": "rejected"}
+    assert "canonical" not in reading.record() and reading.record()["formulas"] == reading.response["ast"]

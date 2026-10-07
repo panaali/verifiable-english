@@ -203,7 +203,15 @@ def response_problem(response, expected: dict, env, source: str) -> str | None:
     formulas, conclusions = body["ast"], body["conclusions"]
     if type(formulas) is not list or not formulas:
         return "ast is not a non-empty list of formulas"
-    for formula in formulas:
+    try:
+        ast.core_gate(env)
+    except VEError:
+        # The core checker refuses every formula under this environment, so its decoding cannot judge Lean's
+        # answer; the reading's own decoding raises the gate's refusal, as Python's reader does (E2.5).
+        gated = True
+    else:
+        gated = False
+    for formula in [] if gated else formulas:
         try:
             ast.formula_from_data(env, formula)
         except VEError as exc:
@@ -252,11 +260,21 @@ class LeanReading:
         self.response, self.env, self.source = response, env, source
         self.status = response["status"]
 
+    def gate(self) -> VEError | None:
+        """The core checker's refusal of the environment (`ast.core_gate`), which decoding a reading's formulas
+        raises whatever they are; None when there is none."""
+        try:
+            ast.core_gate(self.env)
+        except VEError as exc:
+            return exc
+        return None
+
     def classes(self) -> tuple[str, ...]:
         """The Python classes the comparator accepts for this outcome: Lean's class, with the tolerance the
-        comparator keeps (spec 2.9)."""
+        comparator keeps (spec 2.9). A reading under a gated environment is the gate's refusal."""
         if self.status == "one":
-            return ("accepted",)
+            gate = self.gate()
+            return ("accepted",) if gate is None else (type(gate).__name__,)
         code = self.response["code"]
         return COMPARATOR_CLASSES.get(code, (self.response["class"],))
 
@@ -298,7 +316,7 @@ class LeanReading:
         allowed = self.classes()
         out = {"code": python_class if python_class in allowed else allowed[0]}
         out["verdict"] = _verdict(out["code"])
-        if self.status == "one":
+        if self.status == "one" and out["code"] == "accepted":
             out.update(formulas=self.response["ast"], canonical=self.canonical(),
                        conclusions=self.response["conclusions"], witnesses=1)
         elif self.status == "many":
@@ -310,7 +328,8 @@ class LeanReading:
                if key in self.response}
         if "ast" in self.response:
             out["formulas"] = self.response["ast"]
-            out["canonical"] = self.canonical()
+            if self.gate() is None:
+                out["canonical"] = self.canonical()
         if self.status in ("one", "many"):
             out["witnesses"] = 1 if self.status == "one" else len(self.response["witnesses"])
         return out
