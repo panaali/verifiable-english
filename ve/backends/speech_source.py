@@ -10,6 +10,7 @@ import hashlib
 from pathlib import Path
 
 from ..errors import CheckerUnavailable
+from ..environment import Environment
 from .lean import row_problem, run_route_cases
 from .relay import rejection
 from .service_schema import Invalid, check_row
@@ -31,6 +32,84 @@ SOURCE_FIELDS = {
 
 def _invalid(field: str) -> None:
     raise CheckerUnavailable(f"CheckerUnavailable: speech-source route returned invalid {field}")
+
+
+def _source_units(metadata: dict) -> list[dict]:
+    """Flatten the submitted source units in the same order as the report."""
+    units = []
+    pending = list(reversed(metadata.get("units", [])))
+    while pending:
+        unit = pending.pop()
+        if "parts" in unit:
+            pending.extend(reversed(unit["parts"]))
+        else:
+            units.append(unit)
+    return units
+
+
+def _latest_sets(metadata: dict) -> dict:
+    latest = {}
+    for item in metadata.get("reading_sets", []):
+        old = latest.get(item["unit"])
+        if old is None or item["version"] > old["version"]:
+            latest[item["unit"]] = item
+    return latest
+
+
+def _bound_environment(metadata: dict, units: list[dict], latest: dict) -> Environment:
+    """Regenerate the effective scope from authored binding units, never from the response."""
+    base = Environment(metadata["environment"])
+    scope = base.to_dict()["speech_acts"]
+    seen = set()
+    for unit in units:
+        chosen = latest.get(unit["id"])
+        kind, content = unit["kind"], unit.get("content")
+        if chosen is not None:
+            if chosen["status"] == "open":
+                continue
+            reading = chosen["readings"][0]
+            kind, content = reading["kind"], reading["content"]
+        if kind != "binding" or type(content) is not dict or type(content.get("binding")) is not dict:
+            continue
+        binding = content["binding"]
+        if "task" in binding:
+            key, actual = "task", binding["task"]
+        elif "you" in binding:
+            key, actual = "you", binding["you"]
+        else:
+            key, actual = binding["phrase"], binding["constant"]
+        if key in seen:
+            _invalid("scope")
+        seen.add(key)
+        if key == "task":
+            if scope["task"] != actual:
+                _invalid("scope")
+        elif key == "you":
+            if "addressee" in scope and scope["addressee"]["constant"] != actual:
+                _invalid("scope")
+            scope["addressee"] = {"sort": base.constants[actual].sort, "constant": actual}
+        else:
+            if key in scope.get("definites", {}) and scope["definites"][key] != actual:
+                _invalid("scope")
+            scope.setdefault("definites", {})[key] = actual
+    return Environment({**metadata["environment"], "speech_acts": scope})
+
+
+def _coverage_pair(unit: dict, chosen: dict | None) -> tuple[str, str]:
+    """W2 status and section 6 class from the submitted unit and latest set."""
+    meaning = unit["meaning"]
+    word = meaning if type(meaning) is str else next(iter(meaning))
+    if chosen is not None:
+        asserted = all(reading["kind"] == "asserted" for reading in chosen["readings"])
+        status = "CHECKED" if chosen["status"] == "authored" and asserted else "OPEN"
+        cls = "U" if word == "unformalised" else "R" if status == "OPEN" else "C"
+    else:
+        content = unit.get("content") is not None
+        status = ("CHECKED" if content and word == "specified" else "OPEN" if word == "open" else
+                  "UNFORMALISED" if word == "unformalised" else "LABELLED")
+        cls = ("U" if word == "unformalised" else "O" if word == "open" else
+               "C" if content and word == "specified" else "L")
+    return status, cls
 
 
 def _premise_fields(item: dict, field: str) -> None:
@@ -226,6 +305,16 @@ def decide_source(metadata: dict, source: str, fences: dict | None = None, *,
         _invalid("document_id")
     if row["source_id"] != expected_source:
         _invalid("source_id")
+    try:
+        source_units = _source_units(metadata)
+        latest = _latest_sets(metadata)
+        bound_environment = _bound_environment(metadata, source_units, latest)
+        if row["scope"] != bound_environment.to_dict()["speech_acts"]:
+            _invalid("scope")
+    except (KeyError, TypeError, ValueError, StopIteration, IndexError) as exc:
+        raise CheckerUnavailable("CheckerUnavailable: speech-source route could not bind its environment") from exc
+    if row["environment_id"] != bound_environment.environment_id:
+        _invalid("environment_id")
     coverage = row["coverage"]
     if type(coverage) is not dict or set(coverage) != {"bytes_by_class", "bytes_by_status", "residual"}:
         raise CheckerUnavailable("CheckerUnavailable: speech-source route returned invalid coverage")
@@ -248,12 +337,21 @@ def decide_source(metadata: dict, source: str, fences: dict | None = None, *,
         raise CheckerUnavailable("CheckerUnavailable: speech-source route returned invalid units")
     if sum(unit["bytes"] for unit in units) != len(source.encode()):
         raise CheckerUnavailable("CheckerUnavailable: speech-source route returned invalid unit byte counts")
+    if len(units) != len(source_units):
+        _invalid("unit coverage")
+    for reported, submitted in zip(units, source_units, strict=True):
+        status, cls = _coverage_pair(submitted, latest.get(submitted["id"]))
+        if reported["status"] != status or reported["class"] != cls:
+            _invalid("unit coverage")
     for field, name in (("bytes_by_class", "class"), ("bytes_by_status", "status")):
         projected = {}
         for unit in units:
             projected[unit[name]] = projected.get(unit[name], 0) + unit["bytes"]
         if coverage[field] != projected:
             raise CheckerUnavailable(f"CheckerUnavailable: speech-source route returned inconsistent {field}")
+    if coverage["residual"] != {"open_terms": len(metadata.get("open_terms", [])),
+                                "unresolved_sets": sum(item["status"] == "open" for item in latest.values())}:
+        _invalid("residual")
     if any(type(rule) is not dict or set(rule) != {"name", "predicate", "sign", "guard", "unless", "over"}
            or type(rule["name"]) is not str or type(rule["predicate"]) is not str
            or type(rule["sign"]) is not bool or type(rule["guard"]) is not list

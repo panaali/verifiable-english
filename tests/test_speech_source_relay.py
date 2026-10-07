@@ -71,6 +71,10 @@ def test_every_producer_field_is_required_and_typed(monkeypatch):
 @pytest.mark.parametrize("case,mutation", [
     ("polar", "document_id_same_shape"),
     ("polar", "source_id_same_shape"),
+    ("polar", "environment_id_same_shape"),
+    ("polar", "scope_with_rehashed_environment"),
+    ("polar", "overclaimed_checked_coverage"),
+    ("polar", "underclaimed_checked_coverage"),
     ("answered", "unknown_question"),
     ("answered", "boolean_answer"),
     ("answered", "missing_answer"),
@@ -98,6 +102,28 @@ def test_report_records_are_typed_and_bound_to_the_request(monkeypatch, case, mu
         result["document_id"] = "0" * 64
     elif mutation == "source_id_same_shape":
         result["source_id"] = "0" * 64
+    elif mutation == "environment_id_same_shape":
+        result["environment_id"] = "0" * 64
+    elif mutation == "scope_with_rehashed_environment":
+        from ve.environment import Environment
+        result["scope"]["task"] = "other"
+        result["environment_id"] = Environment({**metadata["environment"],
+                                                 "speech_acts": result["scope"]}).environment_id
+    elif mutation in {"overclaimed_checked_coverage", "underclaimed_checked_coverage"}:
+        unit_row = result["units"][0]
+        old_status, old_class = unit_row["status"], unit_row["class"]
+        new_status, new_class = (("CHECKED", "C") if mutation == "overclaimed_checked_coverage"
+                                 else ("OPEN", "R"))
+        # The totals remain internally consistent; only the source can refute this claim.
+        if (old_status, old_class) == (new_status, new_class):
+            new_status, new_class = ("OPEN", "R") if new_status == "CHECKED" else ("CHECKED", "C")
+        unit_row["status"], unit_row["class"] = new_status, new_class
+        result["coverage"]["bytes_by_status"] = {}
+        result["coverage"]["bytes_by_class"] = {}
+        for unit_row in result["units"]:
+            for field, key in (("bytes_by_status", "status"), ("bytes_by_class", "class")):
+                counts = result["coverage"][field]
+                counts[unit_row[key]] = counts.get(unit_row[key], 0) + unit_row["bytes"]
     elif mutation == "unknown_question":
         result["answers"][0]["question"] = "absent"
     elif mutation == "boolean_answer":
@@ -149,3 +175,33 @@ def test_every_report_record_field_rejects_type_confusion(monkeypatch):
                         monkeypatch.setattr("ve.backends.lean.subprocess.run", original)
     finally:
         monkeypatch.setattr("ve.backends.lean.subprocess.run", original)
+
+
+@pytest.mark.parametrize("name,metadata,source", templates(), ids=lambda case: case if isinstance(case, str) else None)
+def test_every_coverage_class_is_bound_to_the_source(monkeypatch, name, metadata, source):
+    report = decide_source(metadata, source)
+    for index in range(len(report["units"])):
+        tampered = copy.deepcopy(report)
+        unit = tampered["units"][index]
+        unit["status"], unit["class"] = (("OPEN", "R") if unit["status"] == "CHECKED"
+                                           else ("CHECKED", "C"))
+        for field, key in (("bytes_by_status", "status"), ("bytes_by_class", "class")):
+            counts = {}
+            for item in tampered["units"]:
+                counts[item[key]] = counts.get(item[key], 0) + item["bytes"]
+            tampered["coverage"][field] = counts
+        monkeypatch.setattr("ve.backends.lean.subprocess.run", lambda *a, row=tampered, **k:
+                            subprocess.CompletedProcess([], 0, json.dumps([row]).encode(), b""))
+        with pytest.raises(CheckerUnavailable):
+            decide_source(metadata, source)
+        monkeypatch.undo()
+
+
+def test_residual_coverage_is_bound_to_open_terms_and_active_sets(monkeypatch):
+    metadata, source = sample()
+    report = copy.deepcopy(decide_source(metadata, source))
+    report["coverage"]["residual"]["open_terms"] += 1
+    monkeypatch.setattr("ve.backends.lean.subprocess.run", lambda *a, **k:
+                        subprocess.CompletedProcess([], 0, json.dumps([report]).encode(), b""))
+    with pytest.raises(CheckerUnavailable):
+        decide_source(metadata, source)
