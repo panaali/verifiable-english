@@ -29,7 +29,7 @@
       "compliance": [],
       "nominations": []
     },
-    "dri_signature": null
+    "dri_signature": "DRI signoff: DELTA.md, commit 50b5a23b, 2026-10-07"
   },
   {
     "case": "external_compliance",
@@ -52,7 +52,7 @@
       ],
       "nominations": []
     },
-    "dri_signature": null
+    "dri_signature": "DRI signoff: DELTA.md, commit 50b5a23b, 2026-10-07"
   },
   {
     "case": "nomination",
@@ -86,6 +86,6 @@
         }
       ]
     },
-    "dri_signature": null
+    "dri_signature": "DRI signoff: DELTA.md, commit 50b5a23b, 2026-10-07"
   }
 ]

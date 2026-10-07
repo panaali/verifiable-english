@@ -16,6 +16,10 @@ from ve.errors import VEError  # noqa: E402
 
 
 def main():
+    out = ROOT / "docs/lean-first/b11b/evidence/speech-availability.json"
+    # Human attestations are not measurements. Preserve them when the measured
+    # base/head rows are regenerated, and keep the attestation tied to its case.
+    signed = {row["case"]: row.get("dri_signature") for row in json.loads(out.read_text())} if out.exists() else {}
     cases = {
         "gap": judged(base_env()),
         "external_compliance": done_document(base_env()),
@@ -34,8 +38,7 @@ def main():
                 "answers": new.answer_lines, "compliance": new.compliance_lines,
                 "nominations": new.report["nominations"]}
         rows.append({"case": name, "class": "availability", "base": base, "head": head,
-                     "dri_signature": None})
-    out = ROOT / "docs/lean-first/b11b/evidence/speech-availability.json"
+                     "dri_signature": signed.get(name)})
     out.write_text(json.dumps(rows, indent=2, ensure_ascii=False) + "\n")
     print(f"wrote {len(rows)} availability rows to {out}")
 
