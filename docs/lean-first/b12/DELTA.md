@@ -120,7 +120,10 @@ restoration; the logs are in `evidence/mutant-*.log` and
 | Operational soak after batch 13b | EXTERNAL — lead/DRI | Deferred by the plan; not a batch-12 acceptance item |
 
 The human signatures are required by plan §5.1. Listing these changes does
-not supply the signatures.
+not supply the signatures. `test_dri_signed_every_batch_12_delta_record`
+checks `evidence/signoff.json` against the exact wording/order block and each
+verdict record; it fails while that DRI record is absent. The full-gate result
+above is the automated test result, not a claim that plan §5.1 has passed.
 
 ### DRI signature record
 

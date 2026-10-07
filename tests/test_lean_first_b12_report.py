@@ -11,6 +11,40 @@ HERE = ROOT / "docs/lean-first/b12"
 spec = importlib.util.spec_from_file_location("lean_first_b12_report", HERE / "report.py")
 report = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(report)
+spec = importlib.util.spec_from_file_location("lean_first_b12_signoff", HERE / "signoff.py")
+signoff = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(signoff)
+
+
+def test_dri_signoff_requires_exactly_the_listed_changes():
+    delta = report.load("delta.json")
+    block, records = signoff.required(delta)
+    assert block is not None and len(records) == 48
+    signature = lambda identifier: {"sha256": identifier, "signed_by": "DRI",
+                                    "date": "2026-10-07", "decision": "approved",
+                                    "source": "explicit DRI decision"}
+    approved = {"format": "lean-first-b12-signoff@1", "wording_order": signature(block),
+                "verdicts": [signature(record) for record in sorted(records)]}
+    assert signoff.problems(delta, approved) == []
+    assert signoff.problems(delta, None) == ["DRI signoff is absent"]
+    assert any("unsigned" in problem for problem in signoff.problems(
+        delta, {**approved, "verdicts": approved["verdicts"][:-1]}))
+    changed = json.loads(json.dumps(delta))
+    changed["verdict"][0]["head"]["raised"]["message"] += " changed"
+    assert any("unsigned" in problem for problem in signoff.problems(changed, approved))
+    assert any("digest differs" in problem for problem in signoff.problems(
+        delta, {**approved, "wording_order": signature("0" * 64)}))
+    assert any("duplicate" in problem for problem in signoff.problems(
+        delta, {**approved, "verdicts": approved["verdicts"] + approved["verdicts"][:1]}))
+    assert any("no DRI approval" in problem for problem in signoff.problems(
+        delta, {**approved, "verdicts": [{**approved["verdicts"][0], "signed_by": "agent"},
+                                         *approved["verdicts"][1:]]}))
+    assert any("invalid digest" in problem for problem in signoff.problems(
+        delta, {**approved, "verdicts": [{"sha256": []}, *approved["verdicts"]]}))
+
+
+def test_dri_signed_every_batch_12_delta_record():
+    assert signoff.check() == []
 
 
 def test_delta_numbers_are_regenerated_from_evidence():
