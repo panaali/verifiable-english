@@ -368,7 +368,7 @@ class UnspecifiedDocument:
             relations = model.get("relations")
             if type(relations) is dict:
                 for name in sorted(relations):
-                    if type(name) is str and name.startswith("unsaid__"):
+                    if type(name) is str and name.startswith(UNSAID_PREFIX):
                         raise InvalidModel(f"{name} is a filling; supply it as a filling, not a table",
                                            generator="norm-defaults")
             model = FiniteModel.from_dict(env, model)
@@ -756,7 +756,7 @@ def _package(document, target, certificate):
 
 
 def _render_under(document, atoms_values):
-    return tuple((name[len("unsaid__"):], row, value) for (name, row), value in sorted(atoms_values.items()))
+    return tuple((name[len(UNSAID_PREFIX):], row, value) for (name, row), value in sorted(atoms_values.items()))
 
 
 def check_conflict(document: UnspecifiedDocument, *, model=None, certificates=None, prove=False,
