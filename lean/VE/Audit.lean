@@ -170,6 +170,7 @@ import VE.Readings.SupWireSound
 import VE.Readings.ChoiceWF
 import VE.Readings.Force
 import VE.Readings.Unspecified
+import VE.Readings.SupExtra
 import VE.WireContract.Engine
 import VE.Grammar.Derives
 import VE.Grammar.Extension
@@ -4266,6 +4267,15 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.observes_rel_congr
 #print axioms VE.Readings.observes_withTables_nil
 #print axioms VE.Readings.achievesU_iff
+-- readings-defaults RD-6a (docs/spec/readings-defaults.md 6.7): S2a with a carried base-premise family.
+#print axioms VE.Readings.sat_pull_up
+#print axioms VE.Readings.superpose_conflict_free_extra
+#print axioms VE.Readings.superpose_all_extra
+#print axioms VE.Readings.superpose_countermodel_extra
+#print axioms VE.Readings.transfers_nil
+#print axioms VE.Readings.supCertificateCheckExtra_nil
+#print axioms VE.Readings.supModelCheckExtra_nil
+#print axioms VE.Readings.baseAdmissibleR_nil
 -- english-lean (docs/spec/english-lean.md 5.9): the grammar engine and the English instance.
 #print axioms VE.Grammar.yieldAll_nil
 #print axioms VE.Grammar.yieldAll_cons
