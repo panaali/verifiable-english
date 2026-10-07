@@ -7,6 +7,7 @@ import subprocess
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
 from tests.probe_matrix import model_wire, raw_environment
 from ve import Environment, FiniteModel
 from ve.ast import (And, Atom, Binary, Body, Bottom, Const, Document, Eq, Exists,
@@ -22,7 +23,7 @@ FAMILIES = ((), ("closure@0",), ("closure@0", "nary@0"), ("order@0",))
 
 def run(cases):
     answer = subprocess.run([str(EXE)], input=json.dumps(cases), text=True,
-                            capture_output=True, check=True)
+                            capture_output=True, check=True, timeout=HANG_TIMEOUT)
     return json.loads(answer.stdout)
 
 
@@ -121,7 +122,7 @@ def test_bad_budget_types_are_bounded_errors():
              for i, value in enumerate((True, None, [], {}, "3", -1))]
     for case in cases:
         completed = subprocess.run([str(EXE)], input=json.dumps([case]), text=True,
-                                   capture_output=True)
+                                   capture_output=True, timeout=HANG_TIMEOUT)
         if completed.returncode == 0:
             assert json.loads(completed.stdout)[0]["status"] == "error"
         else:
