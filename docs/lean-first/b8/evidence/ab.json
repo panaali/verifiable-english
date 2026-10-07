@@ -1,0 +1,52 @@
+{
+  "base_commit": "9aaf918d",
+  "corpora": {
+    "core": {
+      "records": {
+        "conformance/lean": 19806,
+        "conformance/python": 19806,
+        "probe/lean": 9435,
+        "probe/python": 9435
+      },
+      "totals": {
+        "same": 58482
+      },
+      "unavailable_both": {},
+      "unlisted": 0
+    },
+    "readings": {
+      "records": {
+        "readings/default": 1137
+      },
+      "totals": {
+        "same": 1137
+      },
+      "unavailable_both": {},
+      "unlisted": 0
+    },
+    "rest": {
+      "records": {
+        "discourse/default": 6350,
+        "pilots/default": 278
+      },
+      "totals": {
+        "same": 6628
+      },
+      "unavailable_both": {},
+      "unlisted": 0
+    }
+  },
+  "raw_sha256": {
+    "base": "430f8f0a04a7a93d3e770dfeccf94000cbdb739fd6e7dae4d30ec6439ce63fde",
+    "head_core": "efffb2021fd0e5ed3cd762199b08d865109ba6903e5c4382f52853bc864d5e79",
+    "head_pilots_discourse": "6aa640b44617cd40712852ca074b45316414d07be12c4ffa3306926c55045d09",
+    "head_readings": "45e7533bc98d83b0464ed56e669947bef76d796f7fea5e086707336c32667e9b",
+    "profile_base": "4635755b300d1b414d11f756b1605e0e239b57929d675e5066c21164495e84fb",
+    "profile_head": "4635755b300d1b414d11f756b1605e0e239b57929d675e5066c21164495e84fb"
+  },
+  "reports_profile": {
+    "cases": 1000,
+    "changed": [],
+    "same": 1000
+  }
+}

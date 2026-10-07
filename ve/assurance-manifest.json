@@ -36,6 +36,7 @@
     "ve/environment.py:Environment.__init__": "W6 environments: Lean's check mode accepts first (its rejection is raised before the handler); a Python failure constructing an environment Lean accepted becomes CheckerUnavailable, never a verdict (LEAN-FIRST-PLAN.md rule 2)",
     "ve/document.py:load_document": "CheckerUnavailable is re-raised first; a @2 document Lean rejected raises Lean's diagnostic before Python loads it, and a Python failure on one Lean admitted becomes CheckerUnavailable (unavailable_report), never a Python verdict",
     "ve/document.py:_check_document": "CheckerUnavailable is re-raised first; a Python failure reporting a @2 document Lean admitted becomes CheckerUnavailable (unavailable_report), never a verdict",
+    "ve/reports.py:ReportsDocument.__init__": "a Lean accepted reports environment that Python cannot construct becomes CheckerUnavailable; no report status or verdict is returned",
     "ve/rights.py:RightsDocument.__init__": "Lean accepts the rights source before Python constructs display and search containers; any container construction failure is CheckerUnavailable, never a Python rights verdict",
     "ve/__main__.py:_main": "display only: an English rendering of an already computed record is omitted (`display_omitted`); the verdict fields are untouched",
     "ve/assist/api.py:call_tool": "CheckerUnavailable is caught first and keeps its code; other RuntimeErrors are logged as a rejected BackendError call, never a verdict",
@@ -56,7 +57,7 @@
     "ve/backends/dispatch.py:_shadow": "shadow authority only (execute and shadowed): the Python result is returned (a Python exception is re-raised unchanged); a candidate backend exception, CheckerUnavailable included, is only recorded as a shadow difference and never becomes the returned verdict"
   },
   "lean_decoders": {
-    "total_lines": 21813,
+    "total_lines": 22383,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -117,12 +118,12 @@
       },
       {
         "file": "lean/VE/Attribution/Admission.lean",
-        "lines": 327,
-        "sha256": "357665dbfa39d9fb65f85e2829f593beb9f4451bd266fe1dd8924eda9d5af525",
+        "lines": 343,
+        "sha256": "de9ae29eed4d8964900ef593c5a46a32094f08adfacbe013c5ed40dfd458b4d9",
         "ranges": [
           [
             1,
-            327
+            343
           ]
         ],
         "declarations": [
@@ -149,12 +150,12 @@
       },
       {
         "file": "lean/VE/Attribution/Wire.lean",
-        "lines": 510,
-        "sha256": "f8b2a8b0b38145d78d7ac90da84eb4c96aaef01fabaca781c14767739d715579",
+        "lines": 514,
+        "sha256": "4eadc30b6ea7aa48059794724edc301213b9fca4ef7e8c3bd2100fc4271f0ee5",
         "ranges": [
           [
             1,
-            510
+            514
           ]
         ],
         "declarations": [
@@ -164,6 +165,23 @@
           "decodeDocument"
         ],
         "reason": "reports environment and document decoder; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Attribution/Preflight.lean",
+        "lines": 550,
+        "sha256": "e54406c9b67683b603b85378829e76002f7e5b359503b25cb1de64cdc275ff9f",
+        "ranges": [
+          [
+            1,
+            550
+          ]
+        ],
+        "declarations": [
+          "check",
+          "restore",
+          "formulaFault"
+        ],
+        "reason": "the reports document's public fault order and texts, read before the decoder; it only rejects; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Bridge.lean",
@@ -1117,7 +1135,7 @@
       "lean/VE/NormDefaults/Run.lean": "lean:runner-glue: ve_norm_defaults_route case dispatch and response rows",
       "lean/VE/SpeechActs/Run.lean": "lean:runner-glue: ve_speech_acts_route case dispatch, regenerated model tables and response rows; separate opt-in profile slice",
       "lean/VE/Alternatives/Run.lean": "lean:runner-glue: ve_alternatives_route case dispatch and response rows",
-      "lean/VE/Attribution/Run.lean": "lean:runner-glue: ve_reports_route case dispatch and response rows",
+      "lean/VE/Attribution/Run.lean": "lean:runner-glue: ve_reports_route case dispatch (the pinned Preflight.check, then the pinned Wire decoder) and response rows",
       "lean/VE/Order/ProfileGate.lean": "lean:runner-glue: the default-mode evaluation dispatch (runEvaluationCaseReported_eq)",
       "lean/VE/Order/Surface.lean": "lean:order-surface-parser: order text parser and its case wrapper",
       "lean/VE/English/Run.lean": "harness only (conformance/english_lean.py); no executable and no theorem depends on it",
@@ -1145,7 +1163,6 @@
       "lean/ResponseShape/Encoders/English.lean": "theorems that the english and diagnose modes' rows fit their shapes; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/Envelope.lean": "theorems that the service's response lines fit envelope.json; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/Alternatives.lean": "theorems that the alternatives mode's rows fit its shape, with the decoded block's taken tied to the case (getObjVal? in statements and proofs only; not on any runner path)",
-      "lean/ResponseShape/Encoders/Risk.lean": "theorems that the risk mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/Quantity.lean": "theorems that the quantity mode's rows fit its shape, with value and evaluations tied to the case's model (getObjVal? in statements and proofs only; not on any runner path)",
       "lean/ResponseShape/Encoders/RiskEval.lean": "theorems that the risk-eval mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/SpeechActs.lean": "theorems that the speech-acts mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",

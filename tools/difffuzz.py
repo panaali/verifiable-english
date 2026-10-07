@@ -683,7 +683,8 @@ LEAN_ROUTE_FIELDS = {
                "legend": "array<json>", "policy": "object", "premises": "array<json>", "queries": "array<json>",
                "questions": "array<json>", "scope": "object"},
     "reports": {"bridge_formulas": "array<json>", "content_ids": "array<json>", "envelope": "object",
-                "environment_reports_id": "string", "keys": "array<json>", "open_terms": "array<json>",
+                "environment_reports": "object", "environment_reports_id": "string",
+                "keys": "array<json>", "meaning_ids": "array<json>", "open_terms": "array<json>",
                 "premises": "array<json>", "warnings": "array<json>"},
     # `lean/VE/Time/Wire.lean` `runCase`, kind `admission`.
     "quantity": {"assurance": "string", "Q": "json", "core": "json", "meaning_id": "string",

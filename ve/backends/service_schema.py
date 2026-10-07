@@ -415,6 +415,22 @@ class Compiler:
                     raise Invalid(f"[{i}]: {exc}") from None
         return check
 
+    def _x_zip_or_empty(self, rule, schema, base):
+        pointer, sub = rule["of"], self.compile(rule["items"], base)
+
+        def check(value, ctx, fuel):
+            contexts = _resolve(ctx.value, pointer)
+            if contexts is _MISSING:
+                contexts = []
+            if not isinstance(value, list) or not isinstance(contexts, list) or len(value) != len(contexts):
+                _fail(f"not one element per element of the request's {pointer}")
+            for i, (element, context) in enumerate(zip(value, contexts)):
+                try:
+                    sub(element, Context(context, i), fuel)
+                except Invalid as exc:
+                    raise Invalid(f"[{i}]: {exc}") from None
+        return check
+
     def _x_case(self, sub_schema, schema, base):
         sub = self.compile(sub_schema, base)
         return lambda value, ctx, fuel: sub(ctx.value, ctx, {})
@@ -477,7 +493,8 @@ class Compiler:
 _ORDER = ("$ref", "type", "enum", "const", "pattern", "minLength", "maxLength", "minimum", "required",
           "properties", "additionalProperties", "prefixItems", "items", "minItems", "maxItems",
           "contains", "anyOf", "allOf", "not", "if", "x-tagged", "x-echo", "x-equals", "x-length",
-          "x-count", "x-references", "x-index", "x-digest", "x-zip", "x-case", "x-select", "x-count-where", "x-count-presence", "x-rows",
+          "x-count", "x-references", "x-index", "x-digest", "x-zip", "x-zip-or-empty", "x-case",
+          "x-select", "x-count-where", "x-count-presence", "x-rows",
           "x-row")
 _KEYWORDS = frozenset(_ORDER) | {"then", "else", "$defs", "$comment", "$id", "x-fuel"}
 
