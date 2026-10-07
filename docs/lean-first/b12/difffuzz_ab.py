@@ -43,6 +43,8 @@ def main() -> None:
     parser.add_argument("--jobs", type=int, default=4)
     parser.add_argument("--reuse-base", type=Path,
                         help="reuse the base reports of a previous run with the same checkout and seeds")
+    parser.add_argument("--reuse-head", type=Path,
+                        help="reuse the head reports of a previous run with the same checkout and seeds")
     args = parser.parse_args()
     base_known = {entry["signature"] for entry in json.loads(
         (args.base / "conformance/difffuzz-baseline.json").read_text())["entries"]}
@@ -54,6 +56,8 @@ def main() -> None:
         name = f"{side}-{'-'.join(run)}.json"
         if side == "base" and args.reuse_base is not None:
             return json.loads((args.reuse_base / name).read_text())
+        if side == "head" and args.reuse_head is not None:
+            return json.loads((args.reuse_head / name).read_text())
         return _run(root, run, scratch / name)
     with ThreadPoolExecutor(args.jobs) as pool:
         reports = list(pool.map(run_job, jobs))
