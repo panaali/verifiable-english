@@ -1,5 +1,6 @@
 import VE.NormDefaults.Layered
 import VE.NormDefaults.Admission
+import VE.NormDefaults.Explain
 import VE.Norms.Run
 
 /-! The `ve_service` mode `norm-defaults` (docs/spec/norm-defaults.md 3, 6 and 8), formerly the one-shot `ve_norm_defaults_route`. The frozen
@@ -15,10 +16,14 @@ delegates every other case to it.
 * `norm-defaults-conflict` with `witness` (`target`, a `model` of `E‴_base` whose
   `unsaid__` tables are the filling, `tuple`) → `CONFLICT` when the model passes
   `Background_base` and `Fill_T` and the target is true at the tuple
-  (`Wire.normDefaults_wire_witness_sound`: settled or latent), else `UNKNOWN`.
+  (`Wire.normDefaults_wire_witness_sound`: settled or latent), else `UNKNOWN`. A CONFLICT
+  also carries what its English needs (`Explain.lean`): the `tuple`, the `kind`, the
+  deciding assignment `under` (`Wire.underOf_sufficient`) and the deciding author `rules`.
 * `norm-defaults-status`: a base `model`, `predicate`, `tuple` and `method`
   (`table3`, `enumerate`, or `undecided` with fillings `yes` and `no`) → `point_status`
-  `SETTLED yes|no`, `UNDECIDED` or `UNKNOWN` (`Wire.normDefaults_wire_status_sound`).
+  `SETTLED yes|no`, `UNDECIDED` or `UNKNOWN` (`Wire.normDefaults_wire_status_sound`), with
+  the `tuple`, the deciding author `rules` and, when UNDECIDED, the atoms where the two
+  fillings `differs` (`Wire.statusFields`).
 * `norm-defaults-gaps`: `predicate` and `packages` (key `reached:<p>`) → `gaps: none`
   when the certificate for `∀x̄. ¬reached_p` is bound and accepted
   (`Wire.normDefaults_wire_gaps_sound`), else `unknown`; with a filled `model` and
@@ -26,7 +31,8 @@ delegates every other case to it.
 * `norm-defaults-report`: the 3.2 lines of every regulated predicate (`Report.lean`,
   `Wire.normDefaults_wire_report_sound`): `completion`, `gaps`/`default reached`
   (`reachable` from the supplied base `model`, searched here, or a supplied filled
-  `witnesses` entry; `none` from a `reached:<p>` package; else `unknown`), the
+  `witnesses` entry, with the completed `value` there, `Wire.value3_gap`; `none` from a
+  `reached:<p>` package; else `unknown`), the
   `completions` grounding or `UngroundedDefault` (with `translation`), `inherits_from`,
   and the residual `gaps` and `ungrounded_defaults`.
 * The soft and rights branches (`Layered.lean`): under the profile with `soft-norms@0`
@@ -135,15 +141,36 @@ def runOtherCase (id kind : String) (j : Json) : Except String Json := do
   if Wire.hasProfile env && (Wire.layeredRoute env).isSome && kind.startsWith "norm-defaults-" then
     return ← Wire.runLayered id kind j
   if kind == "norm-defaults-elaborate" then
-    let s ← Wire.decodeSourceU (← j.getObjVal? "environment") (j.getObjValD "norms")
-    return VE.Route.Wire.ok id (Wire.regeneratedU s.U)
+    let environment ← j.getObjVal? "environment"
+    let s ← Wire.decodeSourceU environment (j.getObjValD "norms")
+    let filled ← Admission.fillJson environment s.U
+    let filledId ← VE.Route.Wire.environmentId (Wire.profilesOf filled) filled
+    let sourceId ← VE.Route.Wire.environmentId (Wire.profilesOf environment)
+      (← Wire.canonicalEnvironmentJsonU environment)
+    let documentHash ← VE.Norms.Replay.documentHash (Wire.profilesOf environment)
+      environment (j.getObjValD "norms")
+    let labelled := Json.arr ((Admission.fillLabelled s.U).map (fun (label, formula) =>
+      Json.arr #[.str label, Wire.enc formula])).toArray
+    let fillHash ← VE.CertificateWire.digest
+      s!"ve-norm-defaults-fill-{VE.Route.Wire.identityVersion (Wire.profilesOf environment)}\n"
+      (Json.mkObj [("environment_id", .str sourceId), ("premises", labelled)])
+    return VE.Route.Wire.ok id (Wire.regeneratedU s.U ++
+      [("filled_environment_id", .str filledId), ("fill_hash", .str fillHash),
+       ("fill_labels", toJson (Admission.fillLabels s.U)),
+       ("environment_id", .str sourceId), ("document_hash", .str documentHash)])
   if kind == "norm-defaults-conflict" && (j.getObjVal? "witness").toBool then
     let ⟨s, w⟩ ← Wire.replayWitnessU j
-    return VE.Route.Wire.ok id [("verdict", .str (if w.conflict then "CONFLICT" else "UNKNOWN")),
-      ("target", .str w.target.1), ("targets", toJson ((VE.Norms.targets (fill s.U)).map (·.1)))]
+    return VE.Route.Wire.ok id ([("verdict", .str (if w.conflict then "CONFLICT" else "UNKNOWN")),
+      ("target", .str w.target.1), ("targets", toJson ((VE.Norms.targets (fill s.U)).map (·.1)))] ++
+      if w.conflict then Wire.conflictFields s.U w.M w.target.1 w.target.2.2 w.tuple else [])
   if kind == "norm-defaults-status" then
     let d ← Wire.replayStatus j
-    return VE.Route.Wire.ok id [("point_status", .str d.status.label), ("predicate", .str d.r.name)]
+    let fillings ← if d.status = .undecided then
+        some <$> ((·, ·) <$> Wire.decodeFilling d.s.U d.M (j.getObjValD "yes") <*>
+          Wire.decodeFilling d.s.U d.M (j.getObjValD "no"))
+      else pure none
+    return VE.Route.Wire.ok id ([("point_status", .str d.status.label), ("predicate", .str d.r.name)] ++
+      Wire.statusFields d.s.U d.M d.r.name d.tuple (d.status != .undecided && d.status != .unknown) fillings)
   if kind == "norm-defaults-gaps" && (j.getObjVal? "model").toBool then
     let ⟨_, d⟩ ← Wire.replayReached j
     return VE.Route.Wire.ok id [("gaps", .str (if d.reached then "reachable" else "unknown")),

@@ -114,6 +114,7 @@ class Index:
         head = subprocess.run(["git", "rev-parse", "--verify", "-q", "HEAD^{commit}"],
                               capture_output=True, text=True, check=False).stdout.strip()
         self.base = head or git("hash-object", "-t", "tree", "--stdin", data=b"").decode().strip()
+        self.git_dir = git("rev-parse", "--absolute-git-dir").decode().strip()
         self.changed: dict[str, Change] = {}
         fields = git("diff-index", "--cached", "-z", "--no-renames", "--ignore-submodules=all",
                      self.base).split(b"\0")
@@ -492,6 +493,7 @@ def check_wire_contract(index: Index) -> list[str]:
     names = [path for path in index.listing()
              if path.startswith(("ve/", "conformance/wire-contract/contracts/",
                                  "lean/VE/WireContract/")) or WIRE_UNIT_PATHS.match(path) or path in {
+                 "conformance/frozen_norm_defaults.py",
                  "conformance/__init__.py", "conformance/softnorms_contract.py",
                  "conformance/wire_contract_engine.py",
                  "lean/audit.py", "tools/wire_contract.py", "tools/wire_contract_lean.py",
@@ -503,8 +505,9 @@ def check_wire_contract(index: Index) -> list[str]:
         target = index.snapshot / path
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(blob)
-    env = {**os.environ, "PYTHONPATH": str(index.snapshot), "PYTHONDONTWRITEBYTECODE": "1",
-           "VE_WIRE_CONTRACT_STAGED": "1"}
+    env = {**os.environ, "PYTHONPATH": str(index.snapshot), "PYTHONDONTWRITEBYTECODE": "1", "VE_WIRE_CONTRACT_STAGED": "1"}
+    if getattr(index, "git_dir", None):
+        env["GIT_DIR"] = index.git_dir
     done = subprocess.run([sys.executable, "tools/wire_contract.py", "--check"],
                           cwd=index.snapshot, env=env, capture_output=True, text=True,
                           timeout=configured_wait(WIRE_CHECK_TIMEOUT), check=False)

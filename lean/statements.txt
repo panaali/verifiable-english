@@ -7996,7 +7996,7 @@ theorem VE.NormDefaults.Wire.decodeSourceU_plain
       VE.NormDefaults.Wire.hasProfile environment = Bool.false →
         VE.Norms.Wire.decodeSource environment norms = Except.ok s.src ∧ s.U = { D := s.src.D, unspec := [] }
   -- uses VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.SourceU.U@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU.src@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.decodeSourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.hasProfile@VE.NormDefaults.Wire VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire
-  -- expr 1807169005
+  -- expr 944801133
 theorem VE.NormDefaults.Wire.decode_conservative
   ∀ (environment norms : Lean.Json),
     VE.NormDefaults.Wire.hasProfile environment = Bool.false →
@@ -8005,7 +8005,7 @@ theorem VE.NormDefaults.Wire.decode_conservative
             Except.map (fun s => (s, { D := s.D, unspec := [] })) (VE.Norms.Wire.decodeSource environment norms) ∧
           VE.NormDefaults.Wire.canonicalEnvironmentJsonU environment = VE.Norms.Wire.canonicalEnvironmentJson environment
   -- uses VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.SourceU.U@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU.src@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.canonicalEnvironmentJsonU@VE.NormDefaults.Wire VE.NormDefaults.Wire.decodeSourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.hasProfile@VE.NormDefaults.Wire VE.NormDefaults.Wire.unspecifiedNames@VE.NormDefaults.Wire VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.canonicalEnvironmentJson@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire
-  -- expr 240161095
+  -- expr 211054475
 theorem VE.NormDefaults.Wire.fillPremises_wellFormed
   ∀ {U : VE.NormDefaults.UDoc},
     VE.NormDefaults.WellFormedU U = Bool.true →
@@ -8021,6 +8021,19 @@ theorem VE.NormDefaults.Wire.grounding_ungrounded_iff
         VE.Bridge.lookup cited r.name = Option.none ∧ translation = Bool.true ∧ reachable = Bool.true
   -- uses VE.Bridge.lookup@VE.Bridge VE.NormDefaults.Completion.unspecified@VE.NormDefaults.Tree VE.NormDefaults.Completion@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.Grounding.ungrounded@VE.NormDefaults.Report VE.NormDefaults.Wire.Grounding@VE.NormDefaults.Report VE.NormDefaults.Wire.groundingOf@VE.NormDefaults.Report VE.NormDefaults.completionOf@VE.NormDefaults.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree
   -- expr 951398524
+theorem VE.NormDefaults.Wire.kept_sound
+  ∀ (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel VE.Bridge.Entity) (K : List (String × List VE.Bridge.Entity))
+    (R : String → List VE.Bridge.Entity → Prop),
+    (∀ (a : String × List VE.Bridge.Entity), a ∈ K → (R a.fst a.snd ↔ a.snd ∈ M.relations a.fst)) →
+      (∀ (p : String) (vs : List VE.Bridge.Entity), ¬p ∈ VE.NormDefaults.unsaidNames U → (R p vs ↔ vs ∈ M.relations p)) →
+        ∀ (φ : VE.Formula) (ρ : List VE.Bridge.Entity),
+          VE.NormDefaults.kleene M (VE.NormDefaults.Wire.keptV U M K) ρ φ = Option.some Bool.true →
+            VE.Formula.denote
+              (let __src := M.asStructure;
+              { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R })
+              ρ φ
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.keptV@VE.NormDefaults.Explain VE.NormDefaults.kleene@VE.NormDefaults.Evidence VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2161152331
 theorem VE.NormDefaults.Wire.layered_cert_sound
   ∀ (L : VE.NormDefaults.Wire.LayeredU) (ss : List String) (φ : VE.Formula) (c : VE.Tableau.Certificate),
     VE.Tableau.checkCertificate (VE.Norms.envAt (VE.NormDefaults.fill L.U) 0) L.background (VE.Norms.bindAll ss φ.not) c =
@@ -8144,6 +8157,26 @@ theorem VE.NormDefaults.Wire.report_sound
     VE.NormDefaults.Wire.ReportSound src rep
   -- uses VE.NormDefaults.Wire.ReportG@VE.NormDefaults.Report VE.NormDefaults.Wire.ReportSound@VE.NormDefaults.Report VE.NormDefaults.Wire.ReportSource@VE.NormDefaults.Report
   -- expr 2486045729
+theorem VE.NormDefaults.Wire.selectedRules_sound
+  ∀ (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel VE.Bridge.Entity) (ρ : List VE.Bridge.Entity) (p n : String),
+    n ∈ VE.NormDefaults.Wire.selectedRules U M ρ p →
+      ∃ N,
+        N ∈ List.map (VE.NormDefaults.fillRoot U) U.D.T.nodes ∧
+          N.name = n ∧ N.pred = p ∧ VE.Formula.denote M.asStructure ρ (VE.NormDefaults.Wire.selectionBase U N)
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.selectedRules@VE.NormDefaults.Explain VE.NormDefaults.Wire.selectionBase@VE.NormDefaults.Explain VE.NormDefaults.fillRoot@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree
+  -- expr 520827832
+theorem VE.NormDefaults.Wire.settled_every_filling
+  ∀ (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel VE.Bridge.Entity) (ρ : List VE.Bridge.Entity) (φ : VE.Formula),
+    VE.NormDefaults.Wire.settledConflict U M ρ φ = Bool.true →
+      ∀ (R : String → List VE.Bridge.Entity → Prop),
+        (∀ (p : String) (vs : List VE.Bridge.Entity),
+            ¬p ∈ VE.NormDefaults.unsaidNames U → (R p vs ↔ vs ∈ M.relations p)) →
+          VE.Formula.denote
+            (let __src := M.asStructure;
+            { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R })
+            ρ φ
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.settledConflict@VE.NormDefaults.Explain VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2062146703
 theorem VE.NormDefaults.Wire.targetU_refutes
   ∀ (U : VE.NormDefaults.UDoc),
     VE.Norms.WellFormed (VE.NormDefaults.fill U) = Bool.true →
@@ -8166,6 +8199,25 @@ theorem VE.NormDefaults.Wire.target_not_conflictFree
               VE.Formula.denote B (VE.Norms.tupleVal vs) t.snd.snd → ¬VE.Norms.ConflictFree (VE.NormDefaults.fill U) B
   -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.WellFormed@VE.Norms.Tree VE.Norms.targets@VE.Norms.Replay VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 2327373120
+theorem VE.NormDefaults.Wire.underOf_sufficient
+  ∀ (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel VE.Bridge.Entity) (ρ : List VE.Bridge.Entity) (φ : VE.Formula)
+    (K : List (String × List VE.Bridge.Entity)),
+    VE.NormDefaults.Wire.underOf U M ρ φ = Option.some K →
+      ∀ (R : String → List VE.Bridge.Entity → Prop),
+        (∀ (a : String × List VE.Bridge.Entity), a ∈ K → (R a.fst a.snd ↔ a.snd ∈ M.relations a.fst)) →
+          (∀ (p : String) (vs : List VE.Bridge.Entity),
+              ¬p ∈ VE.NormDefaults.unsaidNames U → (R p vs ↔ vs ∈ M.relations p)) →
+            VE.Formula.denote
+              (let __src := M.asStructure;
+              { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R })
+              ρ φ
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.underOf@VE.NormDefaults.Explain VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2703775532
+theorem VE.NormDefaults.Wire.value3_gap
+  ∀ (P N : Prop) (c : VE.NormDefaults.Completion),
+    ¬P → ¬N → VE.NormDefaults.Wire.outcomeLabel (VE.NormDefaults.value3 P N c) = VE.NormDefaults.Wire.completedLabel c
+  -- uses VE.NormDefaults.Completion@VE.NormDefaults.Tree VE.NormDefaults.Wire.completedLabel@VE.NormDefaults.Report VE.NormDefaults.Wire.outcomeLabel@VE.NormDefaults.Explain VE.NormDefaults.value3@VE.NormDefaults.Semantics
+  -- expr 4245164468
 theorem VE.NormDefaults.aboveCount_over
   ∀ {T : VE.Norms.Tree},
     VE.Route.DagAcyclic (VE.Norms.precedenceNodes T) →
@@ -10375,7 +10427,7 @@ theorem VE.Norms.Flagged.norms_flagged_acceptance
                     ∀ (B : VE.Structure),
                       VE.Norms.BaseAdmissible r.src.D B → VE.Norms.Sat B r.premises → VE.Formula.denote B [] r.conclusion)
   -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Flagged.replayEntailment@VE.Norms.Flagged VE.Norms.Flagged.valid@VE.Norms.Flagged VE.Norms.Replay.EntailmentReplay.conclusion@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.premises@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.src@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay@VE.Norms.Replay VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Norms.backgroundBase@VE.Norms.Prefix VE.Norms.definitionsHold@VE.Norms.Layer VE.Norms.envAt@VE.Norms.Tree VE.Norms.holdsCatala@VE.Norms.Elaborate VE.Norms.profileHold@VE.Norms.Layer VE.Norms.size@VE.Norms.Tree VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
-  -- expr 2739843086
+  -- expr 939488592
 theorem VE.Norms.Flagged.norms_flagged_conflict_sound
   ∀ (j : Lean.Json) (r : VE.Norms.Flagged.ConflictReplay),
     VE.Norms.Flagged.replayConflict j = Except.ok r →
@@ -10388,7 +10440,7 @@ theorem VE.Norms.Flagged.norms_flagged_conflict_sound
                 S.Admissible (VE.Norms.Flagged.baseEnv r.src.D) →
                   VE.Norms.Sat S (VE.Norms.Flagged.baseBackground r.src) → VE.Norms.Flagged.BaseConflictFree r.src S)
   -- uses VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Flagged.BaseConflictFree@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay.conflictFree@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay.plain@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay.src@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay@VE.Norms.Flagged VE.Norms.Flagged.baseBackground@VE.Norms.Flagged VE.Norms.Flagged.baseEnv@VE.Norms.Flagged VE.Norms.Flagged.replayConflict@VE.Norms.Flagged VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Structure.Admissible@VE.Semantics VE.Structure@VE.Semantics
-  -- expr 1827459211
+  -- expr 3771390035
 theorem VE.Norms.Flagged.norms_flagged_witness_sound
   ∀ (j : Lean.Json) (src : VE.Norms.Wire.Source) (w : VE.Norms.Flagged.Witness src),
     VE.Norms.Flagged.replayWitness j = Except.ok ⟨src, w⟩ →
@@ -10401,19 +10453,19 @@ theorem VE.Norms.Flagged.norms_flagged_witness_sound
                     VE.Norms.BaseAdmissible src.D B →
                       VE.Norms.Sat B (VE.Norms.Flagged.flagPremises src) → VE.Norms.ConflictFree src.D B
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Flagged.Witness.toWitnessData@VE.Norms.Flagged VE.Norms.Flagged.Witness@VE.Norms.Flagged VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Flagged.replayWitness@VE.Norms.Flagged VE.Norms.Replay.WitnessData.M@VE.Norms.Replay VE.Norms.Replay.WitnessData.conflict@VE.Norms.Replay VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Structure@VE.Semantics
-  -- expr 3475038009
+  -- expr 3120720372
 theorem VE.Norms.Flagged.replayConflict_source
   ∀ (j : Lean.Json) (r : VE.Norms.Flagged.ConflictReplay),
     VE.Norms.Flagged.replayConflict j = Except.ok r →
       VE.Norms.Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") Bool.true = Except.ok r.src
   -- uses VE.Norms.Flagged.ConflictReplay.src@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay@VE.Norms.Flagged VE.Norms.Flagged.replayConflict@VE.Norms.Flagged VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire
-  -- expr 3490619958
+  -- expr 735911209
 theorem VE.Norms.Flagged.replayEntailment_source
   ∀ (j : Lean.Json) (r : VE.Norms.Replay.EntailmentReplay),
     VE.Norms.Flagged.replayEntailment j = Except.ok r →
       VE.Norms.Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") Bool.true = Except.ok r.src
   -- uses VE.Norms.Flagged.replayEntailment@VE.Norms.Flagged VE.Norms.Replay.EntailmentReplay.src@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay@VE.Norms.Replay VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire
-  -- expr 1440082822
+  -- expr 1722857595
 theorem VE.Norms.FlaggedSpec.baseEnv_hidden
   ∀ (D : VE.Norms.Doc) (n : String),
     n ∈ VE.Norms.FlaggedSpec.regNames D → (VE.Norms.Flagged.baseEnv D).predicates n = Option.none
@@ -10488,13 +10540,13 @@ theorem VE.Norms.FlaggedSpec.decodeSource_flag_not_defined
       ∀ (f : VE.Data.Background.Flag),
         f ∈ src.ne.rv.flags → ∀ (d : VE.Norms.Definition), d ∈ src.D.T.definitions → f.name ≠ d.name
   -- uses VE.Data.Background.Flag.name@VE.Data.Background VE.Data.Background.Flag@VE.Data.Background VE.Norms.Definition.name@VE.Norms.Tree VE.Norms.Definition@VE.Norms.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Tree.definitions@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source.ne@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.flags@VE.Route.Wire
-  -- expr 3314156819
+  -- expr 332523094
 theorem VE.Norms.FlaggedSpec.decodeVocabulary_flag_not_defined
   ∀ (profiles : List String) (v : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary),
     VE.Route.Wire.decodeVocabulary profiles v = Except.ok rv →
       ∀ (f : VE.Data.Background.Flag), f ∈ rv.flags → ∀ (d : VE.Definitions.Def), d ∈ rv.definitions → f.name ≠ d.name
   -- uses VE.Data.Background.Flag.name@VE.Data.Background VE.Data.Background.Flag@VE.Data.Background VE.Definitions.Def.name@VE.Definitions.Layer VE.Definitions.Def@VE.Definitions.Layer VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary.flags@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.decodeVocabulary@VE.Route.Wire
-  -- expr 3127472073
+  -- expr 1480496401
 theorem VE.Norms.FlaggedSpec.definition_body_wellFormed
   ∀ {E : VE.Environment} (d : VE.Norms.Definition),
     VE.Formula.WellFormed E [] d.premise → VE.Formula.WellFormed E d.args.reverse d.body
@@ -10617,7 +10669,7 @@ theorem VE.Norms.FlaggedSpec.normsEnvironment_flag_not_defined
       ∀ (f : VE.Data.Background.Flag),
         f ∈ ne.rv.flags → ∀ (d : VE.Definitions.Def), d ∈ ne.rv.definitions → f.name ≠ d.name
   -- uses VE.Data.Background.Flag.name@VE.Data.Background VE.Data.Background.Flag@VE.Data.Background VE.Definitions.Def.name@VE.Definitions.Layer VE.Definitions.Def@VE.Definitions.Layer VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironment@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary.flags@VE.Route.Wire
-  -- expr 1715331330
+  -- expr 2043582660
 theorem VE.Norms.FlaggedSpec.norms_flagged_conflict_free
   ∀ (j : Lean.Json) (r : VE.Norms.Flagged.ConflictReplay),
     VE.Norms.Flagged.replayConflict j = Except.ok r →
@@ -10627,7 +10679,7 @@ theorem VE.Norms.FlaggedSpec.norms_flagged_conflict_free
             VE.Norms.BaseAdmissible r.src.D B →
               VE.Norms.Sat B (VE.Norms.Flagged.flagPremises r.src) → VE.Norms.ConflictFree r.src.D B
   -- uses VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Flagged.ConflictReplay.conflictFree@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay.src@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay@VE.Norms.Flagged VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Flagged.replayConflict@VE.Norms.Flagged VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Structure@VE.Semantics
-  -- expr 2183590775
+  -- expr 1072783205
 theorem VE.Norms.FlaggedSpec.norms_wire_conflict_exclusive
   ∀ (j₁ j₂ a₁ a₂ : Lean.Json),
     VE.Norms.Run.runCase j₁ = Except.ok a₁ →
@@ -10651,7 +10703,7 @@ theorem VE.Norms.FlaggedSpec.norms_wire_conflict_free
                 VE.Norms.BaseAdmissible src.D B →
                   VE.Norms.Sat B (VE.Norms.Flagged.flagPremises src) → VE.Norms.ConflictFree src.D B
   -- uses VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Run.runCase@VE.Norms.Run VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Route.Run.caseKind@VE.Route.Run VE.Structure@VE.Semantics
-  -- expr 1754971354
+  -- expr 1393834369
 theorem VE.Norms.FlaggedSpec.norms_wire_conflict_refuted
   ∀ (j answer : Lean.Json),
     VE.Norms.Run.runCase j = Except.ok answer →
@@ -10663,7 +10715,7 @@ theorem VE.Norms.FlaggedSpec.norms_wire_conflict_refuted
                   VE.Norms.BaseAdmissible src.D B →
                     VE.Norms.Sat B (VE.Norms.Flagged.flagPremises src) → VE.Norms.ConflictFree src.D B
   -- uses VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Run.runCase@VE.Norms.Run VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Route.Run.caseKind@VE.Route.Run VE.Structure@VE.Semantics
-  -- expr 915280145
+  -- expr 1673647704
 theorem VE.Norms.FlaggedSpec.outcomePy_iff
   ∀ {D : VE.Norms.Doc},
     VE.Norms.Valid D →
@@ -10900,7 +10952,7 @@ theorem VE.Norms.Replay.norms_wire_acceptance
                   ∀ (B : VE.Structure),
                     VE.Norms.BaseAdmissible r.src.D B → VE.Norms.Sat B r.premises → VE.Formula.denote B [] r.conclusion)
   -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Replay.EntailmentReplay.conclusion@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.premises@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.src@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.valid@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay@VE.Norms.Replay VE.Norms.Replay.replayEntailment@VE.Norms.Replay VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Norms.backgroundBase@VE.Norms.Prefix VE.Norms.definitionsHold@VE.Norms.Layer VE.Norms.envAt@VE.Norms.Tree VE.Norms.holdsCatala@VE.Norms.Elaborate VE.Norms.profileHold@VE.Norms.Layer VE.Norms.size@VE.Norms.Tree VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
-  -- expr 3592433756
+  -- expr 753735342
 theorem VE.Norms.Replay.norms_wire_conflict_free_expands
   ∀ (j : Lean.Json) (res : VE.Norms.Replay.ConflictReplay),
     VE.Norms.Replay.replayConflict j = Except.ok res →
@@ -10916,7 +10968,7 @@ theorem VE.Norms.Replay.norms_wire_conflict_sound
         VE.Norms.Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") = Except.ok res.src ∧
           ∀ (B : VE.Structure), VE.Norms.BaseAdmissible res.src.D B → VE.Norms.ConflictFree res.src.D B
   -- uses VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Replay.ConflictReplay.conflictFree@VE.Norms.Replay VE.Norms.Replay.ConflictReplay.src@VE.Norms.Replay VE.Norms.Replay.ConflictReplay@VE.Norms.Replay VE.Norms.Replay.replayConflict@VE.Norms.Replay VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Structure@VE.Semantics
-  -- expr 607403085
+  -- expr 3680640773
 theorem VE.Norms.Replay.norms_wire_conflict_witness_sound
   ∀ (j : Lean.Json) (src : VE.Norms.Wire.Source) (w : VE.Norms.Replay.WitnessData src),
     VE.Norms.Replay.replayWitness j = Except.ok ⟨src, w⟩ →
@@ -10926,7 +10978,7 @@ theorem VE.Norms.Replay.norms_wire_conflict_witness_sound
             ¬VE.Route.Unique (VE.Norms.DocumentExpansion src.D w.M.asStructure) ∧
               ¬∀ (B : VE.Structure), VE.Norms.BaseAdmissible src.D B → VE.Norms.ConflictFree src.D B
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.DocumentExpansion@VE.Norms.Conflict VE.Norms.Replay.WitnessData.M@VE.Norms.Replay VE.Norms.Replay.WitnessData.conflict@VE.Norms.Replay VE.Norms.Replay.WitnessData@VE.Norms.Replay VE.Norms.Replay.replayWitness@VE.Norms.Replay VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Route.Unique@VE.Route.Layer VE.Structure@VE.Semantics
-  -- expr 3750285751
+  -- expr 1261579604
 theorem VE.Norms.Replay.target_refutes
   ∀ (D : VE.Norms.Doc),
     VE.Norms.WellFormed D = Bool.true →
@@ -10982,7 +11034,7 @@ theorem VE.Norms.RunSound.norms_wire_certificate_acceptance
                             VE.Norms.BaseAdmissible r.src.D B →
                               VE.Norms.Sat B r.premises → VE.Formula.denote B [] r.conclusion)
   -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Flagged.replayEntailment@VE.Norms.Flagged VE.Norms.Replay.EntailmentReplay.conclusion@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.premises@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.src@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay@VE.Norms.Replay VE.Norms.Run.runCase@VE.Norms.Run VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Norms.backgroundBase@VE.Norms.Prefix VE.Norms.definitionsHold@VE.Norms.Layer VE.Norms.envAt@VE.Norms.Tree VE.Norms.holdsCatala@VE.Norms.Elaborate VE.Norms.profileHold@VE.Norms.Layer VE.Norms.size@VE.Norms.Tree VE.Route.Run.caseKind@VE.Route.Run VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
-  -- expr 3327095928
+  -- expr 3492020895
 theorem VE.Norms.RunSound.runCase_certificate
   ∀ (j answer : Lean.Json),
     VE.Norms.Run.runCase j = Except.ok answer →
