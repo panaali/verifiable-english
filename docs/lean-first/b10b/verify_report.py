@@ -1,9 +1,11 @@
 """Verify batch 10b's evidence and print the numbers `DELTA.md` reports.
 
 `evidence()` reads only committed files (A/B comparisons, fourteen-seed fuzzer
-evidence, timing) and the Git diff against the base; the report test calls it.
-`--gate` adds the full-suite gate JSON, which is written outside the checkout
-because it names the commit it ran on.
+evidence, timing, line counts); the report test calls it and never runs Git, so
+it keeps passing after the batch merges and `main` moves on. `--record` recomputes
+`evidence/lines.json` from the batch's own commits (run it on the branch, before
+the merge). `--gate` adds the full-suite gate JSON, which is written outside the
+checkout because it names the commit it ran on.
 """
 from __future__ import annotations
 
@@ -22,11 +24,16 @@ def _json(name: str) -> dict:
     return json.loads((EVIDENCE / name).read_text())
 
 
-def lines() -> dict:
-    """Python lines deleted under `ve/` and Lean lines added under `lean/`, against the base."""
-    out = subprocess.check_output(["git", "diff", "--numstat", f"{BASE}..HEAD"], cwd=ROOT, text=True)
+def _git(*args: str) -> str:
+    return subprocess.check_output(["git", *args], cwd=ROOT, text=True)
+
+
+def _totals(numstat: str) -> dict:
+    """Python lines deleted / added under `ve/` and Lean lines added / deleted under `lean/`."""
     totals = {"python_deleted": 0, "python_added": 0, "lean_added": 0, "lean_deleted": 0}
-    for row in out.splitlines():
+    for row in numstat.splitlines():
+        if not row:
+            continue
         added, deleted, path = row.split("\t")
         if path.startswith("ve/") and path.endswith(".py"):
             totals["python_deleted"] += int(deleted)
@@ -35,6 +42,30 @@ def lines() -> dict:
             totals["lean_added"] += int(added)
             totals["lean_deleted"] += int(deleted)
     return totals
+
+
+def record_lines(upstream: str = "main") -> dict:
+    """The batch's own line delta: its non-merge commits (`upstream..HEAD`) and their net diff.
+
+    The net diff is taken against the merge base with `upstream`, so changes merged in from
+    `upstream` are not counted; summing each commit's numstat would count lines that a later
+    batch commit rewrites twice, so that sum is kept only as `churn`.
+    """
+    commits = _git("log", "--no-merges", "--format=%H", f"{upstream}..HEAD").split()
+    assert commits, f"no batch commits in {upstream}..HEAD: record on the branch, before the merge"
+    assert _git("merge-base", "--is-ancestor", BASE, upstream) == ""
+    churn = _totals(_git("log", "--no-merges", "--numstat", "--no-renames", "--format=",
+                         f"{upstream}..HEAD"))
+    net = _totals(_git("diff", "--numstat", "--no-renames", f"{upstream}...HEAD"))
+    return {"base": _git("rev-parse", BASE).strip(), "upstream": _git("rev-parse", upstream).strip(),
+            "head": _git("rev-parse", "HEAD").strip(), "commits": commits, "totals": net, "churn": churn}
+
+
+def lines() -> dict:
+    """The saved line delta (`--record` writes it)."""
+    saved = _json("lines.json")
+    assert saved["base"].startswith(BASE) and saved["commits"]
+    return saved["totals"]
 
 
 def evidence() -> dict:
@@ -95,7 +126,11 @@ def render(report: dict | None = None) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--gate", type=Path)
+    parser.add_argument("--record", action="store_true", help="rewrite evidence/lines.json from Git")
+    parser.add_argument("--upstream", default="main", help="the branch the batch merges into")
     args = parser.parse_args()
+    if args.record:
+        (EVIDENCE / "lines.json").write_text(json.dumps(record_lines(args.upstream), indent=2) + "\n")
     report = evidence()
     if args.gate:
         head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
