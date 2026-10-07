@@ -55,6 +55,11 @@
     "main"
    ]
   },
+  "MeteredMain.lean": {
+   "G[V]": [
+    "main"
+   ]
+  },
   "ResponseDecode.lean": {
    "T": [
     "ResponseDecode.Check",
@@ -6972,6 +6977,78 @@
     "VE.Route.Layer.comp",
     "VE.Route.Layer.compose",
     "VE.Route.Layer.id"
+   ]
+  },
+  "VE/Route/Metered.lean": {
+   "G[V]": [
+    "VE.Route.Metered.Result",
+    "VE.Route.Metered.budget",
+    "VE.Route.Metered.evaluate",
+    "VE.Route.Metered.resultFields",
+    "VE.Route.Metered.scan",
+    "VE.Route.Metered.scanState",
+    "VE.Route.Metered.traceRequested"
+   ],
+   "G[R]": [
+    "VE.Route.Metered.limit"
+   ]
+  },
+  "VE/Route/MeteredRun.lean": {
+   "G[V]": [
+    "VE.Route.MeteredRun.coreLayers",
+    "VE.Route.MeteredRun.main",
+    "VE.Route.MeteredRun.nonVacuityResult",
+    "VE.Route.MeteredRun.runCase",
+    "VE.Route.MeteredRun.runCaseReported",
+    "VE.Route.MeteredRun.runNonVacuity",
+    "VE.Route.MeteredRun.tick",
+    "VE.Route.MeteredRun.tickCache"
+   ]
+  },
+  "VE/Route/MeteredTrace.lean": {
+   "G[V]": [
+    "VE.Route.MeteredTrace.Entity",
+    "VE.Route.MeteredTrace.Ops",
+    "VE.Route.MeteredTrace.closure",
+    "VE.Route.MeteredTrace.core",
+    "VE.Route.MeteredTrace.detailB",
+    "VE.Route.MeteredTrace.detailC",
+    "VE.Route.MeteredTrace.detailF",
+    "VE.Route.MeteredTrace.detailN",
+    "VE.Route.MeteredTrace.document",
+    "VE.Route.MeteredTrace.fol",
+    "VE.Route.MeteredTrace.kindB",
+    "VE.Route.MeteredTrace.kindC",
+    "VE.Route.MeteredTrace.kindF",
+    "VE.Route.MeteredTrace.kindN",
+    "VE.Route.MeteredTrace.localB",
+    "VE.Route.MeteredTrace.localF",
+    "VE.Route.MeteredTrace.node",
+    "VE.Route.MeteredTrace.order",
+    "VE.Route.MeteredTrace.orderValue",
+    "VE.Route.MeteredTrace.reachKind",
+    "VE.Route.MeteredTrace.reachKindN",
+    "VE.Route.MeteredTrace.render",
+    "VE.Route.MeteredTrace.tupleText"
+   ],
+   "G[I]": [
+    "VE.Route.MeteredTrace.bindingsJson"
+   ]
+  },
+  "VE/Route/NonVacuity.lean": {
+   "G[V]": [
+    "VE.Route.NonVacuity.Hits",
+    "VE.Route.NonVacuity.Ops",
+    "VE.Route.NonVacuity.View",
+    "VE.Route.NonVacuity.check",
+    "VE.Route.NonVacuity.guards",
+    "VE.Route.NonVacuity.hit",
+    "VE.Route.NonVacuity.record",
+    "VE.Route.NonVacuity.viewB",
+    "VE.Route.NonVacuity.viewC",
+    "VE.Route.NonVacuity.viewF",
+    "VE.Route.NonVacuity.viewN",
+    "VE.Route.NonVacuity.walk"
    ]
   },
   "VE/Route/Readings.lean": {

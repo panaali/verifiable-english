@@ -1,6 +1,7 @@
 import VE.Order.Conservativity
 import VE.Time.Wire
 import VE.Route.Budget
+import VE.Route.MeteredProofs
 import VE.Route.Closure
 import VE.Route.Decode
 import VE.Route.Flags
@@ -4538,3 +4539,10 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Senses.senses_candidate_sound
 #print axioms VE.Senses.candidates_complete
 #print axioms VE.Senses.mixed_exact
+#print axioms VE.Route.Metered.scan_exhausted_unknown
+#print axioms VE.Route.Metered.scan_sound
+#print axioms VE.Route.Metered.scanState_sound
+#print axioms VE.Route.MeteredProofs.fol_sound
+#print axioms VE.Route.MeteredProofs.order_sound
+#print axioms VE.Route.MeteredProofs.closure_sound
+#print axioms VE.Route.MeteredProofs.core_sound

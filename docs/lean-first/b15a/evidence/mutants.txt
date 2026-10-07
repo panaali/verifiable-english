@@ -1,0 +1,163 @@
+## count
+source mutation: ⟨"Violated", some false, work'⟩ -> ⟨"Violated", some false, work' + 1⟩
+build exit: 0; focused pytest exit: 1
+F..F                                                                     [100%]
+=================================== FAILURES ===================================
+____ test_document_budget_is_shared_and_stops_at_first_violation[profiles0] ____
+
+profiles = ()
+
+    @pytest.mark.skipif(not EXE.exists(), reason="ve_metered has not been built")
+    @pytest.mark.parametrize("profiles", FAMILIES)
+    def test_document_budget_is_shared_and_stops_at_first_violation(profiles):
+        raw, env, model = fixture(profiles)
+        documents = (Document((Top(), Bottom(), Top())), Document((Top(), Top())))
+        cases, expected = [], []
+        for document in documents:
+            for budget in (0, 1, 2, 3, 4):
+                cases.append({"id": str(len(cases)), "kind": "evaluate-budgeted",
+                              "environment": raw, "model": model.to_dict(),
+                              "ast": [formula_to_data(env, f) for f in document.formulas],
+                              "max_evaluations": budget, "trace": True})
+                expected.append(evaluate(env, document, model, max_evaluations=budget,
+                                         trace=True).to_dict())
+        for row, answer in zip(run(cases), expected, strict=True):
+>           assert row["evaluation"] == answer
+E           AssertionError: assert {'evaluations...value': False} == {'status': 'V...olated', ...}}
+E             
+E             Omitting 3 identical items, use -vv to show
+E             Differing items:
+E             {'evaluations': 3} != {'evaluations': 2}
+E             Use -v to get more diff
+
+tests/test_metered_lean.py:92: AssertionError
+____ test_document_budget_is_shared_and_stops_at_first_violation[profiles3] ____
+
+profiles = ('order@0',)
+
+    @pytest.mark.skipif(not EXE.exists(), reason="ve_metered has not been built")
+    @pytest.mark.parametrize("profiles", FAMILIES)
+    def test_document_budget_is_shared_and_stops_at_first_violation(profiles):
+        raw, env, model = fixture(profiles)
+        documents = (Document((Top(), Bottom(), Top())), Document((Top(), Top())))
+        cases, expected = [], []
+        for document in documents:
+            for budget in (0, 1, 2, 3, 4):
+                cases.append({"id": str(len(cases)), "kind": "evaluate-budgeted",
+                              "environment": raw, "model": model.to_dict(),
+                              "ast": [formula_to_data(env, f) for f in document.formulas],
+                              "max_evaluations": budget, "trace": True})
+                expected.append(evaluate(env, document, model, max_evaluations=budget,
+                                         trace=True).to_dict())
+        for row, answer in zip(run(cases), expected, strict=True):
+>           assert row["evaluation"] == answer
+E           AssertionError: assert {'evaluations...value': False} == {'status': 'V...olated', ...}}
+E             
+E             Omitting 3 identical items, use -vv to show
+E             Differing items:
+E             {'evaluations': 3} != {'evaluations': 2}
+E             Use -v to get more diff
+
+tests/test_metered_lean.py:92: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_metered_lean.py::test_document_budget_is_shared_and_stops_at_first_violation[profiles0]
+FAILED tests/test_metered_lean.py::test_document_budget_is_shared_and_stops_at_first_violation[profiles3]
+2 failed, 2 passed, 13 deselected in 0.46s
+
+
+## trace
+source mutation: node "or" (some value) bindings "right branch not needed" [a] -> node "or" (some value) bindings "right branch needed" [a]
+build exit: 0; focused pytest exit: 1
+tisfied', ...}})
+E           assert {'evaluations...'value': True} == {'status': 'S...isfied', ...}}
+E             
+E             Omitting 3 identical items, use -vv to show
+E             Differing items:
+E             {'explanation': {'bindings': [], 'children': [{'bindings': [], 'children': [{'bindings': [], 'children': [], 'detail':..., 'detail': 'right branch needed', 'kind': 'or', ...}], 'detail': 'all statements satisfied', 'kind': 'document', ...}} != {'explanation': {'kind': 'document', 'value': True, 'bindings': [], 'detail': 'all statements satisfied', ...}}
+E             Use -v to get more diff
+
+tests/test_metered_lean.py:74: AssertionError
+________ test_budgeted_values_counts_and_traces_match_python[profiles3] ________
+
+profiles = ('order@0',)
+
+    @pytest.mark.skipif(not EXE.exists(), reason="ve_metered has not been built")
+    @pytest.mark.parametrize("profiles", FAMILIES)
+    def test_budgeted_values_counts_and_traces_match_python(profiles):
+        raw, env, model = fixture(profiles)
+        cases, expected = [], []
+        for formula in formulas(profiles):
+            for budget, trace_budget, trace in ((0, 4, False), (1, 4, True),
+                                                (2, 1, True), (4, 4, True), (20, 20, True)):
+                cases.append({"id": str(len(cases)), "kind": "evaluate-budgeted",
+                              "environment": raw, "model": model.to_dict(),
+                              "ast": [formula_to_data(env, formula)],
+                              "max_evaluations": budget, "max_trace_nodes": trace_budget,
+                              "trace": trace})
+                expected.append(evaluate(env, formula, model, max_evaluations=budget,
+                                         max_trace_nodes=trace_budget, trace=trace).to_dict())
+        rows = run(cases)
+        assert len(rows) == len(cases)
+        for case, row, answer in zip(cases, rows, expected, strict=True):
+            assert row["status"] == "ok", (case, row)
+>           assert row["evaluation"] == answer, (case, row["evaluation"], answer)
+E           AssertionError: ({'id': '23', 'kind': 'evaluate-budgeted', 'environment': {'language': 've.core@0.2', 'profiles': ['order@0', 'relatio...ns': 2, 'explanation': {'kind': 'document', 'value': True, 'bindings': [], 'detail': 'all statements satisfied', ...}})
+E           assert {'evaluations...'value': True} == {'status': 'S...isfied', ...}}
+E             
+E             Omitting 3 identical items, use -vv to show
+E             Differing items:
+E             {'explanation': {'bindings': [], 'children': [{'bindings': [], 'children': [{'bindings': [], 'children': [], 'detail':..., 'detail': 'right branch needed', 'kind': 'or', ...}], 'detail': 'all statements satisfied', 'kind': 'document', ...}} != {'explanation': {'kind': 'document', 'value': True, 'bindings': [], 'detail': 'all statements satisfied', ...}}
+E             Use -v to get more diff
+
+tests/test_metered_lean.py:74: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_metered_lean.py::test_budgeted_values_counts_and_traces_match_python[profiles0]
+FAILED tests/test_metered_lean.py::test_budgeted_values_counts_and_traces_match_python[profiles1]
+FAILED tests/test_metered_lean.py::test_budgeted_values_counts_and_traces_match_python[profiles2]
+FAILED tests/test_metered_lean.py::test_budgeted_values_counts_and_traces_match_python[profiles3]
+4 failed, 13 deselected in 0.62s
+
+
+## nonvacuity
+source mutation: h.2 || value -> h.2 && value
+build exit: 0; focused pytest exit: 1
+..F.                                                                     [100%]
+=================================== FAILURES ===================================
+_ test_nonvacuity_charge_exhaustion_and_semantic_guards_match_python[profiles2] _
+
+profiles = ('closure@0', 'nary@0')
+
+    @pytest.mark.skipif(not EXE.exists(), reason="ve_metered has not been built")
+    @pytest.mark.parametrize("profiles", FAMILIES)
+    def test_nonvacuity_charge_exhaustion_and_semantic_guards_match_python(profiles):
+        raw, env, model = fixture(profiles)
+        candidates = (Top(), Forall("item", Implies(Unary("base", Var(0)), Top())),
+                      Forall("item", Implies(Bottom(), Top())),
+                      Forall("item", Or(Not(Unary("base", Var(0))), Bottom())))
+        cases, expected = [], []
+        for formula in candidates:
+            for semantic in (False, True):
+                for budget in (0, 1, 3, 20):
+                    cases.append({"id": str(len(cases)), "kind": "non-vacuity",
+                                  "environment": raw, "model": model.to_dict(),
+                                  "formula": formula_to_data(env, formula),
+                                  "max_evaluations": budget, "semantic_nonvacuity": semantic})
+                    expected.append(_nonvacuous(env, formula, model, budget, semantic=semantic))
+        for row, answer in zip(run(cases), expected, strict=True):
+            assert row["status"] == "ok", row
+>           assert (row["suitable"], row["evaluations"], row["exhausted"]) == answer
+E           assert (False, 9, False) == (True, 9, False)
+E             
+E             At index 0 diff: False != True
+E             Use -v to get more diff
+
+tests/test_metered_lean.py:113: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_metered_lean.py::test_nonvacuity_charge_exhaustion_and_semantic_guards_match_python[profiles2]
+1 failed, 3 passed, 13 deselected in 0.46s
+
+
+## restored
+clean build exit: 0; focused pytest exit: 0
+.................                                                        [100%]
+17 passed in 2.24s
