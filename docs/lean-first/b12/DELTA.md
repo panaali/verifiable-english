@@ -64,8 +64,8 @@ measurement because it exercised a different, much smaller workload.
 | pilots | 294 | 294 | 0 | 0 | 0 | 0 |
 | **All** | **94,489** | **93,167** | **730** | **544** | **48** | **0** |
 
-Code lines (base to head): production Python +221/−790 (net -569); Lean +268/−33 (net +235).
-Differential fuzz: 15 runs (CI and 14 date seeds); baseline 331 → 286; 0 head-only new signatures; 0 head entries not reproduced.
+Code lines (base to head): production Python +221/−790 (net -569); Lean +269/−33 (net +236).
+Differential fuzz: 15 runs (CI and 14 date seeds); baseline 331 → 273; 0 head-only new signatures; 0 head entries not reproduced.
 First-pass date-seed review found 24 distinct head-only signatures.
 UDHR: base 54.679 s → head 54.651 s; 0.999× wall; 1.000× child CPU; output identical; budget pass.
 Eligibility: base 342.496 s → head 355.024 s; 1.037× wall; 1.263× child CPU; output identical; budget pass.
@@ -77,11 +77,11 @@ The reviewed differential baseline's environment entries are replayed by
 `test_reviewed_environment_findings_have_one_python_lean_diagnostic`: every
 current Python and Lean `(outcome, code, text)` agrees. The baseline keeps
 Rust and later-batch route discrepancies with their existing follow-up IDs.
-The final baseline has 286 entries against 331 at the batch base. The CI sample
+The final baseline has 273 entries against 331 at the batch base. The CI sample
 and all 14 date seeds have zero head-only signatures and reproduce every head
 entry. The follow-up review groups request model and decoder codes under DF-7
 and DF-9, dependency order under DF-8, Rust envelope differences under DF-4
-and DF-19, and norm-defaults wire phase differences under DF-13.
+and DF-19, and norm-defaults wire phase differences under DF-13 and DF-20.
 The original latency harness measures process-tree child CPU, including Rust.
 The separate [`lean-cpu.json`](evidence/lean-cpu.json) uses four full eligibility
 runs in alternating base/head and head/base order. It records all 14 Lean
