@@ -128,6 +128,7 @@ conflict theorems, `decodeSourceU_plain` and `decode_conservative`). `lean/state
 | Suite, A/B, fuzzer, ledger, latency | AGENT | done above; the final gate in the hand-off report |
 | The listed `order` item (DF-3 instance on the norm-defaults profile, fuzz-only) | HUMAN (DRI) | deferred: sign with the wording/order block |
 | 17 statement hashes moved with unchanged text (default argument) | HUMAN (DRI) | deferred: acknowledge as no statement change, or ask for approval |
+| Trust map: +29 trusted Lean lines (D +10, G +19: `NormDefaults/Run.lean` +15 for the identities Lean now owns, `Route/Wire.lean` +5, the response schema +4, `NormDefaults/Wire.lean` +3). `tools/trust_map.py --check` already fails at the base (V +346 with no signed allowance); the consolidation ledger's 8b figure is regenerated (3,456 to 3,458) | HUMAN (DRI) | deferred: sign the allowance with the other batches' growth |
 | External check | EXTERNAL | none in this batch |
 
 DRI rulings used:
