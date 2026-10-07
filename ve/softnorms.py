@@ -152,10 +152,8 @@ def _rule_source(env: SoftEnvironment):
 
 def decode_rule(env: SoftEnvironment, content):
     """Ask Lean to check a quoted rule, then construct its display container."""
-    from .backends.soft_relay import run as _run, wire as _wire
-    source = _rule_source(env)
-    _run({"id": "soft-rule", "kind": "soft-rule", "environment": _wire(source),
-          "norm": _wire(content)})
+    from .backends.soft_relay import check_rule, wire as _wire
+    check_rule(_wire(_rule_source(env)), _wire(content))
     try:
         return _hydrate_rule(content)
     except Exception as error:
@@ -165,11 +163,9 @@ def decode_rule(env: SoftEnvironment, content):
 
 def check_rule_batch(env: SoftEnvironment, contents):
     """Check many rules under one Lean-decoded source, retaining per-rule outcomes."""
-    from .backends.soft_relay import run as _run, wire as _wire
+    from .backends.soft_relay import check_rules, wire as _wire
     contents = list(contents)
-    row = _run({"id": "soft-rules", "kind": "soft-rules", "environment": _wire(_rule_source(env)),
-                "norms": _wire(contents)})
-    results = row["results"]
+    results = check_rules(_wire(_rule_source(env)), _wire(contents))
     if len(results) != len(contents):
         raise CheckerUnavailable("CheckerUnavailable: Lean soft rule count differs from the request")
     return results
