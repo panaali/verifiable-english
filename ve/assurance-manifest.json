@@ -58,7 +58,7 @@
     "ve/english.py:_parse_english_document_uncached": "Comparator only: Python parser exceptions are recorded after Lean has decided; they never change the returned Lean result or error."
   },
   "lean_decoders": {
-    "total_lines": 23260,
+    "total_lines": 23328,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -233,12 +233,12 @@
       },
       {
         "file": "lean/VE/EnglishGrammar/Encode.lean",
-        "lines": 782,
-        "sha256": "b1dc5f105ae7c7c162307598b3678a3da52c7f6d3d5941578400266d2a05cce5",
+        "lines": 755,
+        "sha256": "f884e8d56dc67e586c5c5a4cfa6dffc0b25f0fa880c9455a39414839568b5f82",
         "ranges": [
           [
             1,
-            782
+            755
           ]
         ],
         "declarations": [
@@ -248,7 +248,7 @@
           "optFields",
           "Env.decode"
         ],
-        "reason": "english-lean S2 (docs/spec/english-lean-s2.md 2.3, 2.10): Env.decode reads the environment and an English vocabulary overlay into the reader's Env; typedDocument decides check_document's verdict through the standalone typing service's decoders; S3 extends the same trusted decoder with profile symbols, forms and typing views (docs/spec/english-lean-s3.md 2.3); the full file is pinned conservatively"
+        "reason": "english-lean S2 (docs/spec/english-lean-s2.md 2.3, 2.10): Env.decode reads the environment and an English vocabulary overlay into the reader's Env; typedDocument decides check_document's verdict through the standalone typing service's own check (VE/Route/Typed.lean); S3 extends the same trusted decoder with profile symbols, forms and typing views (docs/spec/english-lean-s3.md 2.3); the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/EnglishGrammar/Run.lean",
@@ -1027,6 +1027,25 @@
           "decodeLog"
         ],
         "reason": "risk profile gate, strict risk block, W6 units, source, entry and log decoder; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Route/Typed.lean",
+        "lines": 95,
+        "sha256": "51f9ceb0f783f68f0f81def0cb86449778610d76441cb2848b8a3d7e632a4693",
+        "ranges": [
+          [
+            1,
+            95
+          ]
+        ],
+        "declarations": [
+          "check",
+          "legacy",
+          "routeVocabulary",
+          "typingEnvironment",
+          "stripPredicates"
+        ],
+        "reason": "the typed check of formulas family by family, the one function the standalone typing service (Service.Standalone.decodeTyped, legacyTyped) and the English reader's typed check (EnglishGrammar.typedCheck) call over their typing views; it reads the vocabulary's predicates and the AST array only to hand them to the pinned family decoders; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Route/Wire.lean",

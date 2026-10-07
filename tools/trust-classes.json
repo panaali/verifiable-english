@@ -6998,6 +6998,15 @@
     "VE.Route.Steps.stepLimit"
    ]
   },
+  "VE/Route/Typed.lean": {
+   "D[V]": [
+    "VE.Route.Typed.check",
+    "VE.Route.Typed.legacy",
+    "VE.Route.Typed.routeVocabulary",
+    "VE.Route.Typed.stripPredicates",
+    "VE.Route.Typed.typingEnvironment"
+   ]
+  },
   "VE/Route/Wire.lean": {
    "S": [
     "VE.Route.Wire.environmentId",

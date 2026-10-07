@@ -357,6 +357,7 @@ module VE.Route.Route
 module VE.Route.Run
 module VE.Route.RunSound
 module VE.Route.Steps
+module VE.Route.Typed
 module VE.Route.Wire
 module VE.Route.WireSound
 module VE.Semantics
