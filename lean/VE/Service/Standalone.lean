@@ -516,7 +516,7 @@ def modelCase (j : Json) : Except String Json := do
       -- checked and defined tables computed, then the core model with them.
       let rv ← VE.Core.Layers.decodeLayers e.profiles layered
       let names := (← VE.Core.Layers.folPredicates layered).map Prod.fst
-      let M ← (VE.Route.Wire.decodeDataModel rv (← VE.Core.Layers.folModel names model)).mapError modelError
+      let M ← VE.Route.Wire.decodeDataModel rv (← VE.Core.Layers.folModel names model)
       let tables := (VE.Definitions.names rv.definitions).map fun p =>
         (p, VE.Core.Layers.tableJson (M.relations p))
       let relations ← VE.Bridge.fields (← model.getObjVal? "relations")
@@ -531,11 +531,11 @@ def modelCase (j : Json) : Except String Json := do
       pure ()
   | .order =>
     let v ← VE.Route.Wire.decodeOrderVocabulary e.vocabulary
-    let _ ← (VE.Route.Wire.decodeOrderModel v model).mapError modelError
+    let _ ← VE.Route.Wire.decodeOrderModel v model
     pure ()
   | .fol | .closure =>
     let v ← VE.Route.Run.decodeRouteVocabulary e
-    let _ ← (VE.Route.Wire.decodeDataModel v model).mapError modelError
+    let _ ← VE.Route.Wire.decodeDataModel v model
     pure ()
   -- The norms profile generator last, as Python's `validate_background` orders
   -- it: each required relation within its permission (`Plain.profileOk`).
@@ -831,6 +831,8 @@ def parseCase (j : Json) : Except String Json := do
 the same submitted tables, in decoder order, so the service preserves the
 public JSON pointer without putting presentation fields in the proof decoders. -/
 private def modelErrorPath (j : Json) (message : String) : Option String := do
+  let message := if message.startsWith "InvalidModel:" || message.startsWith "ResourceLimit:" then
+    message else s!"InvalidModel: {message}"
   let model ← (j.getObjVal? "model").toOption
   let environment ← (j.getObjVal? "environment").toOption
   let vocabulary ← (environment.getObjVal? "vocabulary").toOption

@@ -7775,6 +7775,7 @@
    "G[R]": [
     "VE.Service.Standalone.maxSourceBytes",
     "VE.Service.Standalone.modelError",
+    "VE.Service.Standalone.modelErrorPath",
     "VE.Service.Standalone.parseRejection"
    ],
    "G[I]": [
