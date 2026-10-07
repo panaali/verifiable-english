@@ -246,6 +246,9 @@ theorem getObjValD_of_ok {j v : Json} {k : String} (h : j.getObjVal? k = .ok v) 
 theorem valid_field (id : String) (b : Bool) (n : Json) :
     (Wire.ok id [("valid", .bool b), ("background", n)]).getObjValD "valid" = .bool b := rfl
 
+theorem valid_field_steps (id : String) (b : Bool) (n s : Json) :
+    (Wire.ok id [("valid", .bool b), ("background", n), ("steps", s)]).getObjValD "valid" = .bool b := rfl
+
 theorem refutes_field (id : String) (b : Bool) :
     (Wire.ok id [("refutes", .bool b)]).getObjValD "refutes" = .bool b := rfl
 
@@ -551,10 +554,11 @@ theorem runFol_accepted (profiles : List String) (environment : Json) (rv : Rout
   obtain ⟨arr, harr, h⟩ := bind_ok h
   obtain ⟨cj', hcj', h⟩ := bind_ok h
   obtain ⟨_, hb, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
   split at h
   · obtain ⟨_, hx, _⟩ := bind_ok h; cases hx
   cases h
-  rw [valid_field] at hv
+  rw [valid_field_steps] at hv
   cases hvalid : VE.Tableau.checkCertificate rv.environment ((fullBackground rv).map Prod.fst ++ ps) c cert
   · rw [hvalid] at hv; cases hv
   refine ⟨ps, c, cert, ?_, ?_, ?_, ⟨arr, ?_, ?_⟩, ?_⟩
@@ -603,7 +607,8 @@ theorem runFol_countermodel (profiles : List String) (environment : Json) (rv : 
   unfold runFol at h
   simp only [show ("countermodel" == "background") = false from rfl,
     show ("countermodel" == "evaluate") = false from rfl,
-    show ("countermodel" == "countermodel") = true from rfl, Bool.false_eq_true, ↓reduceIte,
+    show ("countermodel" == "countermodel") = true from rfl,
+    show ("countermodel" == "certificate") = false from rfl, Bool.false_eq_true, ↓reduceIte,
     pure_bind] at h
   obtain ⟨pj, hpj, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
@@ -820,10 +825,11 @@ theorem runClosure_accepted (profiles : List String) (environment : Json) (rv : 
   obtain ⟨arr, harr, h⟩ := bind_ok h
   obtain ⟨cj', hcj', h⟩ := bind_ok h
   obtain ⟨_, hb, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
   split at h
   · obtain ⟨_, hx, _⟩ := bind_ok h; cases hx
   cases h
-  rw [valid_field] at hv
+  rw [valid_field_steps] at hv
   cases hvalid : VE.Closure.Tableau.checkCertificate rv.environment
       (((fullBackground rv).map Prod.fst).map VE.Closure.embed ++ ps) c cert
   · rw [hvalid] at hv; cases hv
@@ -867,7 +873,8 @@ theorem runClosure_countermodel (profiles : List String) (environment : Json) (r
   unfold runClosure at h
   simp only [show ("countermodel" == "background") = false from rfl,
     show ("countermodel" == "evaluate") = false from rfl,
-    show ("countermodel" == "countermodel") = true from rfl, Bool.false_eq_true, ↓reduceIte,
+    show ("countermodel" == "countermodel") = true from rfl,
+    show ("countermodel" == "certificate") = false from rfl, Bool.false_eq_true, ↓reduceIte,
     pure_bind] at h
   obtain ⟨pj, hpj, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
@@ -973,10 +980,11 @@ theorem runOrder_accepted (profiles : List String) (environment : Json) (rv : Ro
   obtain ⟨arr, harr, h⟩ := bind_ok h
   obtain ⟨cj', hcj', h⟩ := bind_ok h
   obtain ⟨_, hb, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
   split at h
   · obtain ⟨_, hx, _⟩ := bind_ok h; cases hx
   cases h
-  rw [valid_field] at hv
+  rw [valid_field_steps] at hv
   cases hvalid : VE.Order.Tableau.checkCertificate rv.vocabulary.environment
       (Background.orderLiterals rv.literals ++ ps) c cert
   · rw [hvalid] at hv; cases hv

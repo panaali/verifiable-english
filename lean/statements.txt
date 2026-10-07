@@ -10998,6 +10998,13 @@ theorem VE.Norms.RunSound.valid_field
       Lean.Json.bool b
   -- uses VE.Route.Wire.ok@VE.Route.Wire
   -- expr 540553084
+theorem VE.Norms.RunSound.valid_field_steps
+  ∀ (id : String) (b : Bool) (n m s : Lean.Json),
+    (VE.Route.Wire.ok id [("valid", Lean.Json.bool b), ("background", n), ("layers", m), ("steps", s)]).getObjValD
+        "valid" =
+      Lean.Json.bool b
+  -- uses VE.Route.Wire.ok@VE.Route.Wire
+  -- expr 3546012665
 theorem VE.Norms.WellFormedOnce_eq
   ∀ (D : VE.Norms.Doc), VE.Norms.WellFormedOnce D = VE.Norms.WellFormed D
   -- uses VE.Norms.Doc@VE.Norms.Tree VE.Norms.WellFormed@VE.Norms.Tree VE.Norms.WellFormedOnce@VE.Norms.Once
@@ -26311,6 +26318,12 @@ theorem VE.Route.WireSound.valid_field
     (VE.Route.Wire.ok id [("valid", Lean.Json.bool b), ("background", n)]).getObjValD "valid" = Lean.Json.bool b
   -- uses VE.Route.Wire.ok@VE.Route.Wire
   -- expr 3006534112
+theorem VE.Route.WireSound.valid_field_steps
+  ∀ (id : String) (b : Bool) (n s : Lean.Json),
+    (VE.Route.Wire.ok id [("valid", Lean.Json.bool b), ("background", n), ("steps", s)]).getObjValD "valid" =
+      Lean.Json.bool b
+  -- uses VE.Route.Wire.ok@VE.Route.Wire
+  -- expr 2217152937
 theorem VE.Route.WireSound.values_field
   ∀ (id : String) (v : Lean.Json), (VE.Route.Wire.ok id [("values", v)]).getObjValD "values" = v
   -- uses VE.Route.Wire.ok@VE.Route.Wire
@@ -27637,9 +27650,9 @@ theorem VE.Service.runMode_check
   -- uses VE.Service.Mode.check@VE.Service.Protocol VE.Service.Standalone.checkCase@VE.Service.Standalone VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 1698987194
 theorem VE.Service.runMode_checkCertificate
-  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.checkCertificate j = VE.CertificateWire.runCaseReported j
-  -- uses VE.CertificateWire.runCaseReported@VE.CertificateWire VE.Service.Mode.checkCertificate@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
-  -- expr 851478933
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.checkCertificate j = VE.CertificateWire.runCaseReportedSteps j
+  -- uses VE.CertificateWire.runCaseReportedSteps@VE.CertificateWire VE.Service.Mode.checkCertificate@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- expr 4248002304
 theorem VE.Service.runMode_diagnose
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.diagnose j = VE.Service.Diagnose.diagnoseCase j
   -- uses VE.Service.Diagnose.diagnoseCase@VE.Service.Diagnose VE.Service.Mode.diagnose@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
@@ -27702,10 +27715,9 @@ theorem VE.Service.runMode_order
   -- uses VE.Order.Surface.runCaseReported@VE.Order.Surface VE.Service.Mode.order@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
   -- expr 4003062785
 theorem VE.Service.runMode_parse
-  ∀ (j : Lean.Json),
-    VE.Service.runMode VE.Service.Mode.parse j = VE.Service.Standalone.reported VE.Service.Standalone.parseCase j
-  -- uses VE.Service.Mode.parse@VE.Service.Protocol VE.Service.Standalone.parseCase@VE.Service.Standalone VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
-  -- expr 3654196355
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.parse j = VE.Service.Standalone.reportedParse j
+  -- uses VE.Service.Mode.parse@VE.Service.Protocol VE.Service.Standalone.reportedParse@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- expr 2217412199
 theorem VE.Service.runMode_quantity
   ∀ (j : Lean.Json),
     VE.Service.runMode VE.Service.Mode.quantity j = VE.Time.Wire.runCaseReported j VE.Time.Document.extension

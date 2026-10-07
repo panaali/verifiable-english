@@ -70,9 +70,12 @@ theorem identity_reported (j : Json) : Fits j Skeletons.identity (reported ident
   · exact identity_fits j _ ‹_›
   · fits
 
-theorem parse_reported (j : Json) : Fits j Skeletons.parse (reported parseCase j) := by
-  unfold reported; split
+theorem parse_reported (j : Json) : Fits j Skeletons.parse (reportedParse j) := by
+  unfold reportedParse; split
   · exact parse_fits j _ ‹_›
-  · fits
+  · split
+    · unfold VE.Service.ParseDiagnostic.span
+      fits
+    · fits
 
 end ResponseShape.Encoders.Standalone

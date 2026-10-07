@@ -1,0 +1,772 @@
+{
+  "base": "7345e3ed",
+  "head": "lean-first/b13a",
+  "runs": [
+    {
+      "sample": "ci",
+      "mutants": [
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        },
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        }
+      ],
+      "findings_equal": true,
+      "new": [
+        0,
+        0
+      ],
+      "head_only_new": [],
+      "baseline_entries": [
+        357,
+        357
+      ],
+      "head_unreviewed": 0,
+      "head_not_reproduced": 0
+    },
+    {
+      "sample": "20260923",
+      "mutants": [
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        },
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        }
+      ],
+      "findings_equal": true,
+      "new": [
+        45,
+        45
+      ],
+      "head_only_new": [],
+      "baseline_entries": [
+        357,
+        357
+      ],
+      "head_unreviewed": 0,
+      "head_not_reproduced": 0
+    },
+    {
+      "sample": "20260924",
+      "mutants": [
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        },
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        }
+      ],
+      "findings_equal": true,
+      "new": [
+        72,
+        72
+      ],
+      "head_only_new": [],
+      "baseline_entries": [
+        357,
+        357
+      ],
+      "head_unreviewed": 0,
+      "head_not_reproduced": 0
+    },
+    {
+      "sample": "20260925",
+      "mutants": [
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        },
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        }
+      ],
+      "findings_equal": true,
+      "new": [
+        48,
+        48
+      ],
+      "head_only_new": [],
+      "baseline_entries": [
+        357,
+        357
+      ],
+      "head_unreviewed": 0,
+      "head_not_reproduced": 0
+    },
+    {
+      "sample": "20260926",
+      "mutants": [
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        },
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        }
+      ],
+      "findings_equal": true,
+      "new": [
+        38,
+        38
+      ],
+      "head_only_new": [],
+      "baseline_entries": [
+        357,
+        357
+      ],
+      "head_unreviewed": 0,
+      "head_not_reproduced": 0
+    },
+    {
+      "sample": "20260927",
+      "mutants": [
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        },
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        }
+      ],
+      "findings_equal": true,
+      "new": [
+        47,
+        47
+      ],
+      "head_only_new": [],
+      "baseline_entries": [
+        357,
+        357
+      ],
+      "head_unreviewed": 0,
+      "head_not_reproduced": 0
+    },
+    {
+      "sample": "20260928",
+      "mutants": [
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        },
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        }
+      ],
+      "findings_equal": true,
+      "new": [
+        49,
+        49
+      ],
+      "head_only_new": [],
+      "baseline_entries": [
+        357,
+        357
+      ],
+      "head_unreviewed": 0,
+      "head_not_reproduced": 0
+    },
+    {
+      "sample": "20260929",
+      "mutants": [
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        },
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        }
+      ],
+      "findings_equal": true,
+      "new": [
+        51,
+        51
+      ],
+      "head_only_new": [],
+      "baseline_entries": [
+        357,
+        357
+      ],
+      "head_unreviewed": 0,
+      "head_not_reproduced": 0
+    },
+    {
+      "sample": "20260930",
+      "mutants": [
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        },
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        }
+      ],
+      "findings_equal": true,
+      "new": [
+        55,
+        55
+      ],
+      "head_only_new": [],
+      "baseline_entries": [
+        357,
+        357
+      ],
+      "head_unreviewed": 0,
+      "head_not_reproduced": 0
+    },
+    {
+      "sample": "20261001",
+      "mutants": [
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        },
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        }
+      ],
+      "findings_equal": true,
+      "new": [
+        49,
+        49
+      ],
+      "head_only_new": [],
+      "baseline_entries": [
+        357,
+        357
+      ],
+      "head_unreviewed": 0,
+      "head_not_reproduced": 0
+    },
+    {
+      "sample": "20261002",
+      "mutants": [
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        },
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        }
+      ],
+      "findings_equal": true,
+      "new": [
+        42,
+        42
+      ],
+      "head_only_new": [],
+      "baseline_entries": [
+        357,
+        357
+      ],
+      "head_unreviewed": 0,
+      "head_not_reproduced": 0
+    },
+    {
+      "sample": "20261003",
+      "mutants": [
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        },
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        }
+      ],
+      "findings_equal": true,
+      "new": [
+        51,
+        51
+      ],
+      "head_only_new": [],
+      "baseline_entries": [
+        357,
+        357
+      ],
+      "head_unreviewed": 0,
+      "head_not_reproduced": 0
+    },
+    {
+      "sample": "20261004",
+      "mutants": [
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        },
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        }
+      ],
+      "findings_equal": true,
+      "new": [
+        0,
+        0
+      ],
+      "head_only_new": [],
+      "baseline_entries": [
+        357,
+        357
+      ],
+      "head_unreviewed": 0,
+      "head_not_reproduced": 0
+    },
+    {
+      "sample": "20261005",
+      "mutants": [
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        },
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        }
+      ],
+      "findings_equal": true,
+      "new": [
+        54,
+        54
+      ],
+      "head_only_new": [],
+      "baseline_entries": [
+        357,
+        357
+      ],
+      "head_unreviewed": 0,
+      "head_not_reproduced": 0
+    },
+    {
+      "sample": "20261006",
+      "mutants": [
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        },
+        {
+          "requests": {
+            "zero-fault": 2458,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "environment": {
+            "zero-fault": 257,
+            "one-fault": 6000,
+            "two-fault": 1500
+          },
+          "wire": {
+            "zero-fault": 579,
+            "one-fault": 6000,
+            "two-fault": 1500
+          }
+        }
+      ],
+      "findings_equal": true,
+      "new": [
+        46,
+        46
+      ],
+      "head_only_new": [],
+      "baseline_entries": [
+        357,
+        357
+      ],
+      "head_unreviewed": 0,
+      "head_not_reproduced": 0
+    }
+  ],
+  "pass": true
+}

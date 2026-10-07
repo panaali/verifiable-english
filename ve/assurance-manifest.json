@@ -57,7 +57,7 @@
     "ve/backends/dispatch.py:_shadow": "shadow authority only (execute and shadowed): the Python result is returned (a Python exception is re-raised unchanged); a candidate backend exception, CheckerUnavailable included, is only recorded as a shadow difference and never becomes the returned verdict"
   },
   "lean_decoders": {
-    "total_lines": 22429,
+    "total_lines": 22452,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -149,6 +149,23 @@
         "reason": "report content and document identity JSON; the full file is pinned conservatively"
       },
       {
+        "file": "lean/VE/Attribution/Preflight.lean",
+        "lines": 550,
+        "sha256": "e54406c9b67683b603b85378829e76002f7e5b359503b25cb1de64cdc275ff9f",
+        "ranges": [
+          [
+            1,
+            550
+          ]
+        ],
+        "declarations": [
+          "check",
+          "restore",
+          "formulaFault"
+        ],
+        "reason": "the reports document's public fault order and texts, read before the decoder; it only rejects; the full file is pinned conservatively"
+      },
+      {
         "file": "lean/VE/Attribution/Wire.lean",
         "lines": 514,
         "sha256": "4eadc30b6ea7aa48059794724edc301213b9fca4ef7e8c3bd2100fc4271f0ee5",
@@ -165,23 +182,6 @@
           "decodeDocument"
         ],
         "reason": "reports environment and document decoder; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Attribution/Preflight.lean",
-        "lines": 550,
-        "sha256": "e54406c9b67683b603b85378829e76002f7e5b359503b25cb1de64cdc275ff9f",
-        "ranges": [
-          [
-            1,
-            550
-          ]
-        ],
-        "declarations": [
-          "check",
-          "restore",
-          "formulaFault"
-        ],
-        "reason": "the reports document's public fault order and texts, read before the decoder; it only rejects; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Bridge.lean",
@@ -205,16 +205,16 @@
       },
       {
         "file": "lean/VE/CertificateWire.lean",
-        "lines": 236,
-        "sha256": "3d002c705023b1b79eaffee591ec648c1f7f8a8e5426a9cb1098c1e42c5efdf6",
+        "lines": 294,
+        "sha256": "8541e1523844a57d3c08e561f8eb85b576524a6ec7108860b7c82206e69e53eb",
         "ranges": [
           [
-            11,
-            163
+            46,
+            203
           ],
           [
-            177,
-            187
+            218,
+            227
           ]
         ],
         "declarations": [
@@ -226,7 +226,8 @@
           "decodeClosureTrace",
           "decodeClosureCertificate",
           "meaningId",
-          "decodeQuery"
+          "decodeQuery",
+          "certificateFields"
         ]
       },
       {
@@ -265,12 +266,12 @@
       },
       {
         "file": "lean/VE/Core/Wire.lean",
-        "lines": 166,
-        "sha256": "280802e8f79ad3bdbe39484aaa0915a70938fb8f21d141f719a8946a9ed956ce",
+        "lines": 180,
+        "sha256": "e4643f425ec89be4b7e1c6584d7d2fea383e7e558ae1c3d89e067efc973e630a",
         "ranges": [
           [
             1,
-            166
+            180
           ]
         ],
         "declarations": [
@@ -536,11 +537,11 @@
       },
       {
         "file": "lean/VE/Order/Wire.lean",
-        "lines": 292,
-        "sha256": "03f085f67a4450364a606663ea88fc126d7abf7e0d5d4a84348ccaf96208da47",
+        "lines": 295,
+        "sha256": "2c8fe48a3007436efd33f4a47bc65cfd3c22973a6bc15f9214514442ed82515e",
         "ranges": [
           [
-            24,
+            25,
             233
           ],
           [
@@ -804,7 +805,7 @@
       {
         "file": "lean/VE/Route/Wire.lean",
         "lines": 666,
-        "sha256": "7a9f5a63f666e2ce0f14d35deeaa25b6af0558f0da958c16392b4159852d2e1a",
+        "sha256": "72342ac56c7067936bcd59db6d9ff29f1d23819542a64f69848fb67c7b2a3b01",
         "ranges": [
           [
             1,
@@ -912,12 +913,12 @@
       },
       {
         "file": "lean/VE/Service/FamilyNorms.lean",
-        "lines": 244,
-        "sha256": "f2e5ffd9ed57abbd61dd3cf67775195363271814e55f954c4323405209d4cc3c",
+        "lines": 250,
+        "sha256": "b7d6f9f6767a146babd5acb1f25348340745fb50f50b0715945615439c5460ae",
         "ranges": [
           [
             1,
-            244
+            250
           ]
         ],
         "declarations": [
@@ -1135,7 +1136,7 @@
       "lean/VE/NormDefaults/Run.lean": "lean:runner-glue: ve_norm_defaults_route case dispatch and response rows",
       "lean/VE/SpeechActs/Run.lean": "lean:runner-glue: ve_speech_acts_route case dispatch, regenerated model tables and response rows; separate opt-in profile slice",
       "lean/VE/Alternatives/Run.lean": "lean:runner-glue: ve_alternatives_route case dispatch and response rows",
-      "lean/VE/Attribution/Run.lean": "lean:runner-glue: ve_reports_route case dispatch (the pinned Preflight.check, then the pinned Wire decoder) and response rows",
+      "lean/VE/Attribution/Run.lean": "lean:runner-glue: ve_reports_route case dispatch and response rows",
       "lean/VE/Order/ProfileGate.lean": "lean:runner-glue: the default-mode evaluation dispatch (runEvaluationCaseReported_eq)",
       "lean/VE/Order/Surface.lean": "lean:order-surface-parser: order text parser and its case wrapper",
       "lean/VE/English/Run.lean": "harness only (conformance/english_lean.py); no executable and no theorem depends on it",
@@ -1171,7 +1172,6 @@
       "lean/VE/Service/EnglishRun.lean": "stage-1 service copy of the English runner; additive dispatch, not yet on an assurance operation path",
       "lean/VE/Service/Protocol.lean": "the service request decoder and dispatcher: each mode is its runner's per-case function, pinned by runMode_* (the statement-layer route modes since lean-first batch 1)",
       "lean/VE/Service/Diagnose.lean": "diagnostic only: no verdict depends on it. The service mode diagnose: reads a case's unit and inner case and returns the ve_diagnose row for them",
-      "lean/VE/Route/Steps.lean": "reads only a certificate case's optional max_steps field (the replay step cap, at most 1,000,000)",
       "lean/VE/Core/Layers.lean": "stage-2 core-family glue: decodes definitions and data flags with the pinned FOL route decoders over the FOL projection, adds the computed defined tables to the model and delegates background, evaluate and countermodel cases to the unchanged core route",
       "lean/VE/Norms/Plain.lean": "stage-2 norms-route glue: validates the regulated extension on any family, removes it and delegates background, evaluate and countermodel cases to the unchanged route, adding profile premises (embedded on the closure, core and order families) and the profile model check",
       "lean/VE/Service/TypingDiagnostic.lean": "stage-2 diagnostic glue: names a typing rejection the proved decoder already made with Python's code and message; never accepts",
@@ -1187,7 +1187,8 @@
       "lean/VE/EnglishGrammar/ReadExamples.lean": "fixtures only: #guard checks of docs/spec/english-lean-s2.md section 8 build environment JSON for Env.decode; no runner path",
       "lean/VE/Senses/Examples.lean": "fixtures only: #guard checks of docs/spec/senses.md section 8 compare projected environment JSON; no runner path",
       "lean/VE/Senses/Project.lean": "senses projection (docs/spec/senses.md 2.5): builds the projected environment JSON from the validated environment JSON for the admitted reading; this module does not decode JSON",
-      "lean/VE/EnglishGrammar/ProfileExamples.lean": "fixtures only: S3 profile environment and reader #guard checks; no runner path"
+      "lean/VE/EnglishGrammar/ProfileExamples.lean": "fixtures only: S3 profile environment and reader #guard checks; no runner path",
+      "lean/VE/Service/ParseDiagnostic.lean": "diagnostic only after a rejected checked parse: builds the first source fault and span; cannot accept"
     }
   },
   "plan_operations": {

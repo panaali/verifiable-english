@@ -6,6 +6,7 @@ import VE.Closure.Surface
 import VE.Order.Surface
 import VE.Route.Run
 import VE.Service.TypingDiagnostic
+import VE.Service.ParseDiagnostic
 import VE.Risk.Wire
 import VE.Time.Wire
 
@@ -601,7 +602,7 @@ def parseCase (j : Json) : Except String Json := do
         pure (fs.map encodeClosure, some (VE.Closure.Surface.print fs))
       | .order v => do
         let some fs := VE.Order.Surface.parse v.environment source | throw rejected
-        pure (fs.map VE.Order.Surface.formulaJson, none)
+        pure (fs.map VE.Order.Surface.formulaJson, some (VE.Order.Surface.print fs))
     VE.Route.AstLimit.check asts
     return VE.Route.Wire.ok id ([("ast", Json.arr asts.toArray)] ++
       match canonical with
@@ -626,7 +627,7 @@ def parseCase (j : Json) : Except String Json := do
     | .order => do
       let v ← VE.Route.Wire.decodeOrderVocabulary e.vocabulary
       let some fs := VE.Order.Surface.parse v.vocabulary.environment source | throw rejected
-      pure (fs.map VE.Order.Surface.formulaJson, none)
+      pure (fs.map VE.Order.Surface.formulaJson, some (VE.Order.Surface.print fs))
   VE.Route.AstLimit.check asts
   pure (VE.Route.Wire.ok id ([("ast", Json.arr asts.toArray)] ++
     match canonical with
@@ -638,5 +639,72 @@ def reported (run : Json → Except String Json) (j : Json) : Json :=
   | .ok result => result
   | .error message => Json.mkObj [("id", j.getObjValD "id"),
       ("status", .str "error"), ("error", .str message)]
+
+/-- A raw strict parse may succeed while the family's typing check rejects.
+In that case the existing diagnostic walker names the first typing fault. -/
+def rawParseAst (environment : Json) (source : String) : Option (List Json) := Id.run do
+  let chars := source.toList
+  let fuel := chars.length + 1
+  if isLegacy environment then
+    let .ok l := decodeLegacy environment | return none
+    return match l with
+      | .v0 v => (VE.Surface.parseStatements v.environment fuel chars).map
+          (·.map VE.Route.Wire.encodeFormula)
+      | .closure v => (VE.Closure.Surface.parseStatements v.environment fuel chars).map
+          (·.map encodeClosure)
+      | .order v => (VE.Order.Surface.parseStatements v.environment fuel chars).map
+          (·.map VE.Order.Surface.formulaJson)
+  let .ok checked := validated environment | return none
+  let e := checked.envelope
+  return match e.family with
+    | .fol => do
+      let rv ← (VE.Route.Run.decodeRouteVocabulary e).toOption
+      (VE.Surface.parseStatements rv.environment fuel chars).map (·.map VE.Route.Wire.encodeFormula)
+    | .closure => do
+      let rv ← (VE.Route.Run.decodeRouteVocabulary e).toOption
+      (VE.Closure.Surface.parseStatements rv.environment fuel chars).map (·.map encodeClosure)
+    | .closureNary => do
+      let v ← (VE.Core.Bridge.decodeEnvironment checked.decodable).toOption
+      (VE.Core.Surface.parseStatements v.environment fuel chars).map (·.map encodeCore)
+    | .order => do
+      let v ← (VE.Route.Wire.decodeOrderVocabulary e.vocabulary).toOption
+      (VE.Order.Surface.parseStatements v.vocabulary.environment fuel chars).map
+        (·.map VE.Order.Surface.formulaJson)
+
+/-- A diagnostic and span for a source the checked family parser rejected. -/
+def parseRejection (j : Json) (message : String) : Option (String × String × ParseDiagnostic.Error) := do
+  guard (message == "SyntaxError: the source is not accepted by the Lean surface parser" ||
+      message == "ResourceLimit: source identifier exceeds 64 bytes" ||
+      message == "ResourceLimit: formula depth exceeds 64" ||
+      message == "ResourceLimit: AST node count")
+  let source ← (j.getObjValAs? String "source").toOption
+  let environment ← (j.getObjVal? "environment").toOption
+  let vocabulary ← (environment.getObjVal? "vocabulary").toOption
+  let profiles := match (environment.getObjVal? "profiles").toOption with
+    | some value => (VE.Bridge.strings value).toOption.getD []
+    | none => [(environment.getObjValAs? String "profile").toOption.getD ""]
+  let signature ← (TypingDiagnostic.decodeSignature profiles vocabulary).toOption
+  let diagnostic := match source.toList.findIdx? (fun c => c.toNat > 127) with
+    | some pos => some (⟨"SyntaxError", "VE semantic syntax must be ASCII", pos, pos + 1⟩ : ParseDiagnostic.Error)
+    | none => ParseDiagnostic.scan signature source (profiles.contains "order@0")
+        (profiles.contains "closure@0") (profiles.contains "nary@0")
+  if let some error := diagnostic then
+    return (error.code ++ ": " ++ error.message, source, error)
+  let asts ← rawParseAst environment source
+  let text ← TypingDiagnostic.diagnose profiles vocabulary asts
+  let entire : ParseDiagnostic.Error := ⟨"", "", 0, source.length⟩
+  return (text, source, entire)
+
+/-- Accepted AST and canonical text come from `parseCase`; rejected syntax
+gets the Lean diagnostic with its source span. -/
+def reportedParse (j : Json) : Json :=
+  match parseCase j with
+  | .ok result => result
+  | .error message =>
+    match parseRejection j message with
+    | some (text, source, diagnostic) => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"),
+        ("error", .str text), ("span", ParseDiagnostic.span source diagnostic)]
+    | none => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"),
+        ("error", .str message)]
 
 end VE.Service.Standalone

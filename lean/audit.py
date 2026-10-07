@@ -100,6 +100,8 @@ def scan_sources(root):
                 scopes.append(namespace[1])
             elif re.match(r"\s*section\b", line):
                 scopes.append("")
+            elif re.match(r"\s*mutual(?:\s|$)", line):
+                scopes.append("")
             elif re.match(r"\s*end(?:\s|$)", line):
                 if scopes:
                     scopes.pop()
