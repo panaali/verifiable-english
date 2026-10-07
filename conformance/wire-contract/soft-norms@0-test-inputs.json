@@ -1,5 +1,3166 @@
 [
  [
+  "tests/test_soft_candidate_economy.py::test_a_deferred_document_asks_lean_once_when_a_field_lean_supplies_is_read",
+  {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "norms@0",
+    "relational-fol@0",
+    "soft-norms@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "constants": {},
+    "predicates": {
+     "aa_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do aa",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "aa_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do aa",
+       "default": "deny",
+       "permission": "aa_permitted",
+       "role": "obligation"
+      }
+     },
+     "ab_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ab",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ab_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ab",
+       "default": "deny",
+       "permission": "ab_permitted",
+       "role": "obligation"
+      }
+     },
+     "ac_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ac",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ac_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ac",
+       "default": "deny",
+       "permission": "ac_permitted",
+       "role": "obligation"
+      }
+     },
+     "ad_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ad",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ad_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ad",
+       "default": "deny",
+       "permission": "ad_permitted",
+       "role": "obligation"
+      }
+     },
+     "ae_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ae",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ae_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ae",
+       "default": "deny",
+       "permission": "ae_permitted",
+       "role": "obligation"
+      }
+     },
+     "af_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do af",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "af_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do af",
+       "default": "deny",
+       "permission": "af_permitted",
+       "role": "obligation"
+      }
+     },
+     "ag_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ag",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ag_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ag",
+       "default": "deny",
+       "permission": "ag_permitted",
+       "role": "obligation"
+      }
+     },
+     "ah_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ah",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ah_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ah",
+       "default": "deny",
+       "permission": "ah_permitted",
+       "role": "obligation"
+      }
+     },
+     "ba_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ba",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ba_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ba",
+       "default": "deny",
+       "permission": "ba_permitted",
+       "role": "obligation"
+      }
+     },
+     "bb_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do bb",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "bb_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do bb",
+       "default": "deny",
+       "permission": "bb_permitted",
+       "role": "obligation"
+      }
+     },
+     "bc_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do bc",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "bc_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do bc",
+       "default": "deny",
+       "permission": "bc_permitted",
+       "role": "obligation"
+      }
+     },
+     "bd_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do bd",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "bd_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do bd",
+       "default": "deny",
+       "permission": "bd_permitted",
+       "role": "obligation"
+      }
+     },
+     "be_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do be",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "be_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do be",
+       "default": "deny",
+       "permission": "be_permitted",
+       "role": "obligation"
+      }
+     },
+     "bf_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do bf",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "bf_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do bf",
+       "default": "deny",
+       "permission": "bf_permitted",
+       "role": "obligation"
+      }
+     },
+     "bg_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do bg",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "bg_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do bg",
+       "default": "deny",
+       "permission": "bg_permitted",
+       "role": "obligation"
+      }
+     },
+     "bh_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do bh",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "bh_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do bh",
+       "default": "deny",
+       "permission": "bh_permitted",
+       "role": "obligation"
+      }
+     },
+     "ca_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ca",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ca_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ca",
+       "default": "deny",
+       "permission": "ca_permitted",
+       "role": "obligation"
+      }
+     },
+     "cb_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do cb",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "cb_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do cb",
+       "default": "deny",
+       "permission": "cb_permitted",
+       "role": "obligation"
+      }
+     },
+     "cc_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do cc",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "cc_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do cc",
+       "default": "deny",
+       "permission": "cc_permitted",
+       "role": "obligation"
+      }
+     },
+     "cd_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do cd",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "cd_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do cd",
+       "default": "deny",
+       "permission": "cd_permitted",
+       "role": "obligation"
+      }
+     },
+     "ce_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ce",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ce_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ce",
+       "default": "deny",
+       "permission": "ce_permitted",
+       "role": "obligation"
+      }
+     },
+     "cf_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do cf",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "cf_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do cf",
+       "default": "deny",
+       "permission": "cf_permitted",
+       "role": "obligation"
+      }
+     },
+     "cg_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do cg",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "cg_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do cg",
+       "default": "deny",
+       "permission": "cg_permitted",
+       "role": "obligation"
+      }
+     },
+     "ch_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ch",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ch_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ch",
+       "default": "deny",
+       "permission": "ch_permitted",
+       "role": "obligation"
+      }
+     },
+     "da_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do da",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "da_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do da",
+       "default": "deny",
+       "permission": "da_permitted",
+       "role": "obligation"
+      }
+     },
+     "db_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do db",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "db_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do db",
+       "default": "deny",
+       "permission": "db_permitted",
+       "role": "obligation"
+      }
+     },
+     "dc_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do dc",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "dc_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do dc",
+       "default": "deny",
+       "permission": "dc_permitted",
+       "role": "obligation"
+      }
+     },
+     "dd_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do dd",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "dd_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do dd",
+       "default": "deny",
+       "permission": "dd_permitted",
+       "role": "obligation"
+      }
+     },
+     "de_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do de",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "de_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do de",
+       "default": "deny",
+       "permission": "de_permitted",
+       "role": "obligation"
+      }
+     },
+     "df_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do df",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "df_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do df",
+       "default": "deny",
+       "permission": "df_permitted",
+       "role": "obligation"
+      }
+     },
+     "dg_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do dg",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "dg_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do dg",
+       "default": "deny",
+       "permission": "dg_permitted",
+       "role": "obligation"
+      }
+     },
+     "dh_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do dh",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "dh_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do dh",
+       "default": "deny",
+       "permission": "dh_permitted",
+       "role": "obligation"
+      }
+     }
+    },
+    "sorts": {
+     "assistant": {
+      "description": "assistant"
+     },
+     "user": {
+      "description": "user"
+     }
+    }
+   }
+  },
+  [
+   {
+    "norm": {
+     "exception": {
+      "decided_by": "assistant",
+      "factors": [],
+      "necessary": [],
+      "sufficient": []
+     },
+     "guard": [
+      "top"
+     ],
+     "mode": "default",
+     "name": "a",
+     "over": [],
+     "predicate": "aa_required",
+     "sign": true,
+     "unless": []
+    }
+   },
+   {
+    "norm": {
+     "exception": {
+      "decided_by": "assistant",
+      "factors": [],
+      "necessary": [],
+      "sufficient": []
+     },
+     "guard": [
+      "top"
+     ],
+     "mode": "default",
+     "name": "b",
+     "over": [],
+     "predicate": "aa_permitted",
+     "sign": false,
+     "unless": []
+    }
+   }
+  ]
+ ],
+ [
+  "tests/test_soft_candidate_economy.py::test_a_deferred_document_lean_rejects_raises_lean_diagnostic_on_every_read",
+  {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "norms@0",
+    "relational-fol@0",
+    "soft-norms@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "constants": {},
+    "predicates": {
+     "aa_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do aa",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "aa_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do aa",
+       "default": "deny",
+       "permission": "aa_permitted",
+       "role": "obligation"
+      }
+     },
+     "ab_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ab",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ab_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ab",
+       "default": "deny",
+       "permission": "ab_permitted",
+       "role": "obligation"
+      }
+     },
+     "ac_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ac",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ac_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ac",
+       "default": "deny",
+       "permission": "ac_permitted",
+       "role": "obligation"
+      }
+     },
+     "ad_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ad",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ad_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ad",
+       "default": "deny",
+       "permission": "ad_permitted",
+       "role": "obligation"
+      }
+     },
+     "ae_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ae",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ae_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ae",
+       "default": "deny",
+       "permission": "ae_permitted",
+       "role": "obligation"
+      }
+     },
+     "af_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do af",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "af_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do af",
+       "default": "deny",
+       "permission": "af_permitted",
+       "role": "obligation"
+      }
+     },
+     "ag_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ag",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ag_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ag",
+       "default": "deny",
+       "permission": "ag_permitted",
+       "role": "obligation"
+      }
+     },
+     "ah_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ah",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ah_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ah",
+       "default": "deny",
+       "permission": "ah_permitted",
+       "role": "obligation"
+      }
+     },
+     "ba_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ba",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ba_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ba",
+       "default": "deny",
+       "permission": "ba_permitted",
+       "role": "obligation"
+      }
+     },
+     "bb_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do bb",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "bb_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do bb",
+       "default": "deny",
+       "permission": "bb_permitted",
+       "role": "obligation"
+      }
+     },
+     "bc_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do bc",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "bc_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do bc",
+       "default": "deny",
+       "permission": "bc_permitted",
+       "role": "obligation"
+      }
+     },
+     "bd_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do bd",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "bd_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do bd",
+       "default": "deny",
+       "permission": "bd_permitted",
+       "role": "obligation"
+      }
+     },
+     "be_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do be",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "be_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do be",
+       "default": "deny",
+       "permission": "be_permitted",
+       "role": "obligation"
+      }
+     },
+     "bf_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do bf",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "bf_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do bf",
+       "default": "deny",
+       "permission": "bf_permitted",
+       "role": "obligation"
+      }
+     },
+     "bg_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do bg",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "bg_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do bg",
+       "default": "deny",
+       "permission": "bg_permitted",
+       "role": "obligation"
+      }
+     },
+     "bh_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do bh",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "bh_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do bh",
+       "default": "deny",
+       "permission": "bh_permitted",
+       "role": "obligation"
+      }
+     },
+     "ca_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ca",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ca_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ca",
+       "default": "deny",
+       "permission": "ca_permitted",
+       "role": "obligation"
+      }
+     },
+     "cb_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do cb",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "cb_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do cb",
+       "default": "deny",
+       "permission": "cb_permitted",
+       "role": "obligation"
+      }
+     },
+     "cc_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do cc",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "cc_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do cc",
+       "default": "deny",
+       "permission": "cc_permitted",
+       "role": "obligation"
+      }
+     },
+     "cd_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do cd",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "cd_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do cd",
+       "default": "deny",
+       "permission": "cd_permitted",
+       "role": "obligation"
+      }
+     },
+     "ce_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ce",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ce_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ce",
+       "default": "deny",
+       "permission": "ce_permitted",
+       "role": "obligation"
+      }
+     },
+     "cf_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do cf",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "cf_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do cf",
+       "default": "deny",
+       "permission": "cf_permitted",
+       "role": "obligation"
+      }
+     },
+     "cg_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do cg",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "cg_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do cg",
+       "default": "deny",
+       "permission": "cg_permitted",
+       "role": "obligation"
+      }
+     },
+     "ch_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ch",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ch_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ch",
+       "default": "deny",
+       "permission": "ch_permitted",
+       "role": "obligation"
+      }
+     },
+     "da_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do da",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "da_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do da",
+       "default": "deny",
+       "permission": "da_permitted",
+       "role": "obligation"
+      }
+     },
+     "db_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do db",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "db_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do db",
+       "default": "deny",
+       "permission": "db_permitted",
+       "role": "obligation"
+      }
+     },
+     "dc_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do dc",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "dc_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do dc",
+       "default": "deny",
+       "permission": "dc_permitted",
+       "role": "obligation"
+      }
+     },
+     "dd_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do dd",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "dd_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do dd",
+       "default": "deny",
+       "permission": "dd_permitted",
+       "role": "obligation"
+      }
+     },
+     "de_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do de",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "de_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do de",
+       "default": "deny",
+       "permission": "de_permitted",
+       "role": "obligation"
+      }
+     },
+     "df_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do df",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "df_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do df",
+       "default": "deny",
+       "permission": "df_permitted",
+       "role": "obligation"
+      }
+     },
+     "dg_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do dg",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "dg_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do dg",
+       "default": "deny",
+       "permission": "dg_permitted",
+       "role": "obligation"
+      }
+     },
+     "dh_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do dh",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "dh_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do dh",
+       "default": "deny",
+       "permission": "dh_permitted",
+       "role": "obligation"
+      }
+     }
+    },
+    "sorts": {
+     "assistant": {
+      "description": "assistant"
+     },
+     "user": {
+      "description": "user"
+     }
+    }
+   }
+  },
+  [
+   {
+    "norm": {
+     "guard": [
+      "top"
+     ],
+     "name": "s",
+     "over": [],
+     "predicate": "aa_required",
+     "sign": true,
+     "unless": []
+    }
+   },
+   {
+    "norm": {
+     "exception": {
+      "decided_by": "assistant",
+      "factors": [],
+      "necessary": [],
+      "sufficient": []
+     },
+     "guard": [
+      "top"
+     ],
+     "mode": "default",
+     "name": "d",
+     "over": [
+      "s"
+     ],
+     "predicate": "aa_required",
+     "sign": false,
+     "unless": []
+    }
+   }
+  ]
+ ],
+ [
+  "tests/test_soft_candidate_economy.py::test_a_deferred_document_python_cannot_hold_gives_lean_diagnostic_first",
+  {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "norms@0",
+    "relational-fol@0",
+    "soft-norms@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "constants": {},
+    "predicates": {
+     "aa_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do aa",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "aa_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do aa",
+       "default": "deny",
+       "permission": "aa_permitted",
+       "role": "obligation"
+      }
+     },
+     "ab_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ab",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ab_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ab",
+       "default": "deny",
+       "permission": "ab_permitted",
+       "role": "obligation"
+      }
+     },
+     "ac_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ac",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ac_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ac",
+       "default": "deny",
+       "permission": "ac_permitted",
+       "role": "obligation"
+      }
+     },
+     "ad_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ad",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ad_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ad",
+       "default": "deny",
+       "permission": "ad_permitted",
+       "role": "obligation"
+      }
+     },
+     "ae_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ae",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ae_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ae",
+       "default": "deny",
+       "permission": "ae_permitted",
+       "role": "obligation"
+      }
+     },
+     "af_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do af",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "af_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do af",
+       "default": "deny",
+       "permission": "af_permitted",
+       "role": "obligation"
+      }
+     },
+     "ag_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ag",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ag_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ag",
+       "default": "deny",
+       "permission": "ag_permitted",
+       "role": "obligation"
+      }
+     },
+     "ah_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ah",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ah_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ah",
+       "default": "deny",
+       "permission": "ah_permitted",
+       "role": "obligation"
+      }
+     },
+     "ba_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ba",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ba_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ba",
+       "default": "deny",
+       "permission": "ba_permitted",
+       "role": "obligation"
+      }
+     },
+     "bb_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do bb",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "bb_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do bb",
+       "default": "deny",
+       "permission": "bb_permitted",
+       "role": "obligation"
+      }
+     },
+     "bc_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do bc",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "bc_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do bc",
+       "default": "deny",
+       "permission": "bc_permitted",
+       "role": "obligation"
+      }
+     },
+     "bd_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do bd",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "bd_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do bd",
+       "default": "deny",
+       "permission": "bd_permitted",
+       "role": "obligation"
+      }
+     },
+     "be_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do be",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "be_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do be",
+       "default": "deny",
+       "permission": "be_permitted",
+       "role": "obligation"
+      }
+     },
+     "bf_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do bf",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "bf_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do bf",
+       "default": "deny",
+       "permission": "bf_permitted",
+       "role": "obligation"
+      }
+     },
+     "bg_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do bg",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "bg_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do bg",
+       "default": "deny",
+       "permission": "bg_permitted",
+       "role": "obligation"
+      }
+     },
+     "bh_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do bh",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "bh_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do bh",
+       "default": "deny",
+       "permission": "bh_permitted",
+       "role": "obligation"
+      }
+     },
+     "ca_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ca",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ca_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ca",
+       "default": "deny",
+       "permission": "ca_permitted",
+       "role": "obligation"
+      }
+     },
+     "cb_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do cb",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "cb_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do cb",
+       "default": "deny",
+       "permission": "cb_permitted",
+       "role": "obligation"
+      }
+     },
+     "cc_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do cc",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "cc_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do cc",
+       "default": "deny",
+       "permission": "cc_permitted",
+       "role": "obligation"
+      }
+     },
+     "cd_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do cd",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "cd_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do cd",
+       "default": "deny",
+       "permission": "cd_permitted",
+       "role": "obligation"
+      }
+     },
+     "ce_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ce",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ce_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ce",
+       "default": "deny",
+       "permission": "ce_permitted",
+       "role": "obligation"
+      }
+     },
+     "cf_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do cf",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "cf_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do cf",
+       "default": "deny",
+       "permission": "cf_permitted",
+       "role": "obligation"
+      }
+     },
+     "cg_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do cg",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "cg_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do cg",
+       "default": "deny",
+       "permission": "cg_permitted",
+       "role": "obligation"
+      }
+     },
+     "ch_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ch",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ch_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ch",
+       "default": "deny",
+       "permission": "ch_permitted",
+       "role": "obligation"
+      }
+     },
+     "da_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do da",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "da_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do da",
+       "default": "deny",
+       "permission": "da_permitted",
+       "role": "obligation"
+      }
+     },
+     "db_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do db",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "db_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do db",
+       "default": "deny",
+       "permission": "db_permitted",
+       "role": "obligation"
+      }
+     },
+     "dc_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do dc",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "dc_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do dc",
+       "default": "deny",
+       "permission": "dc_permitted",
+       "role": "obligation"
+      }
+     },
+     "dd_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do dd",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "dd_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do dd",
+       "default": "deny",
+       "permission": "dd_permitted",
+       "role": "obligation"
+      }
+     },
+     "de_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do de",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "de_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do de",
+       "default": "deny",
+       "permission": "de_permitted",
+       "role": "obligation"
+      }
+     },
+     "df_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do df",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "df_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do df",
+       "default": "deny",
+       "permission": "df_permitted",
+       "role": "obligation"
+      }
+     },
+     "dg_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do dg",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "dg_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do dg",
+       "default": "deny",
+       "permission": "dg_permitted",
+       "role": "obligation"
+      }
+     },
+     "dh_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do dh",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "dh_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do dh",
+       "default": "deny",
+       "permission": "dh_permitted",
+       "role": "obligation"
+      }
+     }
+    },
+    "sorts": {
+     "assistant": {
+      "description": "assistant"
+     },
+     "user": {
+      "description": "user"
+     }
+    }
+   }
+  },
+  [
+   {
+    "norm": {
+     "exception": {
+      "decided_by": "assistant",
+      "factors": [],
+      "necessary": [],
+      "sufficient": []
+     },
+     "guard": [
+      "no-such-connective"
+     ],
+     "mode": "default",
+     "name": "a",
+     "over": [],
+     "predicate": "aa_required",
+     "sign": true,
+     "unless": []
+    }
+   }
+  ]
+ ],
+ [
+  "tests/test_soft_candidate_economy.py::test_a_missing_attribute_is_missing_after_elaboration",
+  {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "norms@0",
+    "relational-fol@0",
+    "soft-norms@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "constants": {},
+    "predicates": {
+     "aa_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do aa",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "aa_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do aa",
+       "default": "deny",
+       "permission": "aa_permitted",
+       "role": "obligation"
+      }
+     },
+     "ab_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ab",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ab_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ab",
+       "default": "deny",
+       "permission": "ab_permitted",
+       "role": "obligation"
+      }
+     },
+     "ac_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ac",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ac_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ac",
+       "default": "deny",
+       "permission": "ac_permitted",
+       "role": "obligation"
+      }
+     },
+     "ad_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ad",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ad_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ad",
+       "default": "deny",
+       "permission": "ad_permitted",
+       "role": "obligation"
+      }
+     },
+     "ae_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ae",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ae_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ae",
+       "default": "deny",
+       "permission": "ae_permitted",
+       "role": "obligation"
+      }
+     },
+     "af_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do af",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "af_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do af",
+       "default": "deny",
+       "permission": "af_permitted",
+       "role": "obligation"
+      }
+     },
+     "ag_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ag",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ag_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ag",
+       "default": "deny",
+       "permission": "ag_permitted",
+       "role": "obligation"
+      }
+     },
+     "ah_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ah",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ah_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ah",
+       "default": "deny",
+       "permission": "ah_permitted",
+       "role": "obligation"
+      }
+     },
+     "ba_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ba",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ba_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ba",
+       "default": "deny",
+       "permission": "ba_permitted",
+       "role": "obligation"
+      }
+     },
+     "bb_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do bb",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "bb_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do bb",
+       "default": "deny",
+       "permission": "bb_permitted",
+       "role": "obligation"
+      }
+     },
+     "bc_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do bc",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "bc_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do bc",
+       "default": "deny",
+       "permission": "bc_permitted",
+       "role": "obligation"
+      }
+     },
+     "bd_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do bd",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "bd_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do bd",
+       "default": "deny",
+       "permission": "bd_permitted",
+       "role": "obligation"
+      }
+     },
+     "be_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do be",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "be_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do be",
+       "default": "deny",
+       "permission": "be_permitted",
+       "role": "obligation"
+      }
+     },
+     "bf_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do bf",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "bf_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do bf",
+       "default": "deny",
+       "permission": "bf_permitted",
+       "role": "obligation"
+      }
+     },
+     "bg_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do bg",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "bg_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do bg",
+       "default": "deny",
+       "permission": "bg_permitted",
+       "role": "obligation"
+      }
+     },
+     "bh_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do bh",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "bh_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do bh",
+       "default": "deny",
+       "permission": "bh_permitted",
+       "role": "obligation"
+      }
+     },
+     "ca_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ca",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ca_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ca",
+       "default": "deny",
+       "permission": "ca_permitted",
+       "role": "obligation"
+      }
+     },
+     "cb_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do cb",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "cb_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do cb",
+       "default": "deny",
+       "permission": "cb_permitted",
+       "role": "obligation"
+      }
+     },
+     "cc_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do cc",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "cc_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do cc",
+       "default": "deny",
+       "permission": "cc_permitted",
+       "role": "obligation"
+      }
+     },
+     "cd_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do cd",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "cd_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do cd",
+       "default": "deny",
+       "permission": "cd_permitted",
+       "role": "obligation"
+      }
+     },
+     "ce_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ce",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ce_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ce",
+       "default": "deny",
+       "permission": "ce_permitted",
+       "role": "obligation"
+      }
+     },
+     "cf_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do cf",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "cf_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do cf",
+       "default": "deny",
+       "permission": "cf_permitted",
+       "role": "obligation"
+      }
+     },
+     "cg_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do cg",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "cg_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do cg",
+       "default": "deny",
+       "permission": "cg_permitted",
+       "role": "obligation"
+      }
+     },
+     "ch_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do ch",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "ch_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do ch",
+       "default": "deny",
+       "permission": "ch_permitted",
+       "role": "obligation"
+      }
+     },
+     "da_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do da",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "da_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do da",
+       "default": "deny",
+       "permission": "da_permitted",
+       "role": "obligation"
+      }
+     },
+     "db_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do db",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "db_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do db",
+       "default": "deny",
+       "permission": "db_permitted",
+       "role": "obligation"
+      }
+     },
+     "dc_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do dc",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "dc_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do dc",
+       "default": "deny",
+       "permission": "dc_permitted",
+       "role": "obligation"
+      }
+     },
+     "dd_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do dd",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "dd_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do dd",
+       "default": "deny",
+       "permission": "dd_permitted",
+       "role": "obligation"
+      }
+     },
+     "de_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do de",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "de_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do de",
+       "default": "deny",
+       "permission": "de_permitted",
+       "role": "obligation"
+      }
+     },
+     "df_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do df",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "df_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do df",
+       "default": "deny",
+       "permission": "df_permitted",
+       "role": "obligation"
+      }
+     },
+     "dg_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do dg",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "dg_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do dg",
+       "default": "deny",
+       "permission": "dg_permitted",
+       "role": "obligation"
+      }
+     },
+     "dh_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do dh",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "dh_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do dh",
+       "default": "deny",
+       "permission": "dh_permitted",
+       "role": "obligation"
+      }
+     }
+    },
+    "sorts": {
+     "assistant": {
+      "description": "assistant"
+     },
+     "user": {
+      "description": "user"
+     }
+    }
+   }
+  },
+  [
+   {
+    "norm": {
+     "exception": {
+      "decided_by": "assistant",
+      "factors": [],
+      "necessary": [],
+      "sufficient": []
+     },
+     "guard": [
+      "top"
+     ],
+     "mode": "default",
+     "name": "a",
+     "over": [],
+     "predicate": "aa_required",
+     "sign": true,
+     "unless": []
+    }
+   }
+  ]
+ ],
+ [
   "tests/test_soft_norms_conformance.py::test_inherited_null_decider_is_admitted_by_python_route",
   {
    "language": "ve.core@0.2",
