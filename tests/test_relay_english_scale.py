@@ -10,12 +10,9 @@ This module is not one of wire-contract-s5 7.1's recorded globs (`tests/test_nor
 which the batch's fuzzer-gate evidence compares with the base, so it is listed for the next
 corpus refresh (docs/lean-first/b10b/DELTA.md).
 """
-import time
-
 from tests.test_norm_defaults import environment, permission, rule
-from ve import norm_defaults_english as english
+from tests.test_norm_defaults_relay_english import render_cpu_bounded
 from ve.ast import And, Binary, Exists, Not, Var
-from ve.model import FiniteModel
 from ve.norm_defaults import UnspecifiedDocument, report
 
 
@@ -31,10 +28,7 @@ def test_sixty_act_gap_renders_lean_reachable_witness():
     document = _link_document()
     raw = {"complete": True, "domains": {"act": [f"a{i}" for i in range(60)]}, "constants": {},
            "relations": {"link": []}}
-    situation = FiniteModel.from_dict(document.situation_environment(), raw)
     (line,) = report(document, model=raw)["report"]
     assert (line["reached"], line["witness"]["tuple"], line["value"]) == ("reachable", ["a0"], "no")
-    started = time.perf_counter()
-    sentence = english.gap_sentence(document, situation, line)
-    assert time.perf_counter() - started < 2.0
+    (sentence,) = render_cpu_bounded(document, raw, line, ("gap_sentence",))
     assert sentence == "No rule decides whether a0 may be done; the default decides that a0 must not be done."

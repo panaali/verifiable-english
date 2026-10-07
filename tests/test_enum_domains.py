@@ -252,9 +252,16 @@ def test_packages_conflict_verdict(lake, tmp_path, verdict, proved):
     assert _row(lake, tmp_path, "common.json#/$defs/packages_conflict", fields) is proved
 
 
-@pytest.mark.parametrize("status, proved", [("SETTLED yes", True), ("UNKNOWN", True), ("BOGUS", False)])
-def test_point_status(lake, tmp_path, status, proved):
-    fields = f'[("id", .str id), ("status", .str "ok"), ("point_status", .str "{status}"), ("predicate", .str t)]'
+# The status row carries `Wire.statusFields` (tuple, deciding rules, differing atoms): a row without them is refused.
+STATUS_FIELDS = ', ("tuple", toJson ts), ("rules", toJson ts), ("differs", Json.arr #[])'
+
+
+@pytest.mark.parametrize("status, extra, proved", [("SETTLED yes", STATUS_FIELDS, True),
+                                                   ("UNKNOWN", STATUS_FIELDS, True),
+                                                   ("BOGUS", STATUS_FIELDS, False), ("SETTLED yes", "", False)],
+                         ids=["SETTLED yes-True", "UNKNOWN-True", "BOGUS-False", "no statusFields-False"])
+def test_point_status(lake, tmp_path, status, extra, proved):
+    fields = f'[("id", .str id), ("status", .str "ok"), ("point_status", .str "{status}"), ("predicate", .str t){extra}]'
     assert _row(lake, tmp_path, "norm-defaults.json#/$defs/status", fields) is proved
 
 

@@ -7,7 +7,8 @@ those fields: no evaluation, enumeration or work limit, so the cost does not gro
 situation (lf-10b fix 4)."""
 import ast
 import copy
-import time
+import json
+import sys
 from pathlib import Path
 
 import pytest
@@ -20,8 +21,38 @@ from ve.errors import CheckerUnavailable, VEError
 from ve.model import FiniteModel
 from ve.norm_defaults import UnspecifiedDocument, report, search_reached
 from ve.norm_defaults_route import run_case, source_case
+from tests.subprocesses import run_cpu_bounded
 
 LATENT_TARGET = "x_required->x_permitted"
+ROOT = Path(__file__).resolve().parents[1]
+# CPU seconds the renderers may spend on one row (the directive's "renders in under 2 s").
+RENDER_CPU = 2
+# A child rebuilds the container through Lean, then caps its own CPU at what it has spent plus
+# RENDER_CPU before rendering: the kernel stops a renderer that does more than format the row.
+RENDER = f"""
+import json, math, resource, sys
+sys.path.insert(0, {str(ROOT)!r})
+from ve import norm_defaults_english as english
+from ve.environment import Environment
+from ve.model import FiniteModel
+from ve.norm_defaults import UnspecifiedDocument
+data = json.load(sys.stdin)
+document = UnspecifiedDocument(Environment(data["environment"]), data["norms"])
+situation = FiniteModel.from_dict(document.situation_environment(), data["situation"])
+usage = resource.getrusage(resource.RUSAGE_SELF)
+cap = math.ceil(usage.ru_utime + usage.ru_stime) + {RENDER_CPU}
+resource.setrlimit(resource.RLIMIT_CPU, (cap, cap + 1))
+print(json.dumps([getattr(english, name)(document, situation, data["row"]) for name in data["renderers"]]))
+"""
+
+
+def render_cpu_bounded(document, raw, row, renderers):
+    """The renderers' output for Lean's `row`, from a child whose rendering may spend RENDER_CPU."""
+    payload = {"environment": document.env.to_dict(), "norms": document.norms, "situation": raw, "row": row,
+               "renderers": list(renderers)}
+    completed, _ = run_cpu_bounded([sys.executable, "-c", RENDER], json.dumps(payload), 120)
+    assert completed.returncode == 0, completed.stderr[-2000:]
+    return json.loads(completed.stdout)
 
 
 def _acts(n):
@@ -134,13 +165,10 @@ def test_latent_fixture_renders_in_under_two_seconds(acts):
     """lf-10bc recheck: 13 acts took 6.7 s, 16 took 56 s and 18 took 148 s and 950 MiB,
     doubling per act. Lean answers at once, and rendering formats its row."""
     document = _latent_document()
-    situation = _situation(document, _acts(acts))
     verdict = _latent_row(document, acts)
     assert verdict["under"] == [{"predicate": "y_permitted", "tuple": ["a0"], "value": True}]
-    started = time.perf_counter()
-    sentence = english.latent_conflict_sentence(document, situation, verdict)
-    finding = english.latent_conflict_finding(document, situation, verdict)
-    assert time.perf_counter() - started < 2.0
+    sentence, finding = render_cpu_bounded(document, _acts(acts), verdict,
+                                           ("latent_conflict_sentence", "latent_conflict_finding"))
     assert sentence == (
         "Rules 1 and 2 contradict each other if a0 may be tried, and the text does not say whether a0 may "
         "be tried. To settle it, add a rule about whether a0 may be tried, or add a condition to one of the rules.")

@@ -2624,6 +2624,7 @@
   "tests/test_enum_domains.py::test_point_status[BOGUS-False]",
   "tests/test_enum_domains.py::test_point_status[SETTLED yes-True]",
   "tests/test_enum_domains.py::test_point_status[UNKNOWN-True]",
+  "tests/test_enum_domains.py::test_point_status[no statusFields-False]",
   "tests/test_enum_domains.py::test_witness_conflict_verdict[BOGUS-False]",
   "tests/test_enum_domains.py::test_witness_conflict_verdict[CONFLICT-FREE-False]",
   "tests/test_enum_domains.py::test_witness_conflict_verdict[CONFLICT-True]",

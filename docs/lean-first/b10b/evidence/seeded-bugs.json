@@ -108,6 +108,15 @@
       "mutated_summary": "build failed: value3_gap has unsolved goals once `deny` is completed as yes",
       "restored_exit": 0,
       "restored_summary": "build completed (restored build 2c296233, the pinned hash)"
+    },
+    {
+      "mutant": "pre-fix-renderer-enumerates-fillings",
+      "file": "ve/norm_defaults_english.py",
+      "test": "tests/test_norm_defaults_relay_english.py::test_latent_fixture_renders_in_under_two_seconds",
+      "mutated_exit": 1,
+      "mutated_summary": "5 failed in 18.88s: f0756983's renderer is stopped by SIGXCPU at 13, 16, 18 and 40 acts, and tests/test_relay_english_scale.py fails",
+      "restored_exit": 0,
+      "restored_summary": "73 passed in 15.36s (with tests/test_hang_guards.py)"
     }
   ]
 }
