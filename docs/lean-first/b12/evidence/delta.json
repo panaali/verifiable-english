@@ -2,32 +2,44 @@
  "format": "lean-first-delta@1",
  "wording": [
   {
-   "base": "Incorrect fields (missing=[], unknown=['extra'])",
-   "head": "fields do not match: expected [language, profile, spec_revision, vocabulary], got [extra, language, profile, spec_revision, vocabulary]"
-  },
-  {
    "base": "Descriptions must be nonempty Unicode strings",
    "head": "empty description"
   },
   {
-   "base": "Predicate arguments must be an array of one to 2 sort identifiers",
-   "head": "invalid signature: owns"
+   "base": "Incorrect fields (missing=[], unknown=['extra'])",
+   "head": "fields do not match: expected [language, profile, spec_revision, vocabulary], got [extra, language, profile, spec_revision, vocabulary]"
   },
   {
    "base": "Invalid ASCII identifier: 'éééééééééééééééééééééééééééééééééééééééé'",
    "head": "invalid or reserved declaration: éééééééééééééééééééééééééééééééééééééééé"
   },
   {
-   "base": "model identity does not match its contents",
-   "head": "InvalidModel: model identity does not match its contents"
+   "base": "UnknownSymbol: Undeclared predicate argument sort: 'absent'",
+   "head": "UnknownSymbol: Undeclared predicate argument sort"
   },
   {
    "base": "UnknownSymbol: Undeclared predicate argument sort: 'absent'",
    "head": "UnknownSymbol: unknown predicate argument sort"
   },
   {
+   "base": "UnknownSymbol: Undeclared predicate argument sort: 'unknown'",
+   "head": "UnknownSymbol: Undeclared predicate argument sort"
+  },
+  {
    "base": "Vocabulary exceeds sort or predicate limit",
    "head": "ResourceLimit: vocabulary size"
+  },
+  {
+   "base": "fields do not match (missing=['complete', 'constants', 'domains', 'relations'], unknown=[])",
+   "head": "InvalidModel: fields do not match: expected [complete, domains, constants, relations], got []"
+  },
+  {
+   "base": "fields do not match (missing=[], unknown=['extra'])",
+   "head": "InvalidModel: fields do not match: expected [complete, domains, constants, relations], got [complete, constants, domains, extra, relations]"
+  },
+  {
+   "base": "model identity does not match its contents",
+   "head": "InvalidModel: model identity does not match its contents"
   }
  ],
  "order": [
@@ -52,18 +64,18 @@
   {
    "corpus": "conformance",
    "authority": "lean",
-   "case": "validation/validation_003",
+   "case": "validation/validation_004",
    "op": "environment",
    "base": {
     "raised": {
-     "code": "UnknownSymbol",
-     "message": "UnknownSymbol: Undeclared predicate argument sort: 'unknown'"
+     "code": "InvalidInput",
+     "message": "Predicate arguments must be an array of one to 2 sort identifiers"
     }
    },
    "head": {
     "raised": {
-     "code": "InvalidInput",
-     "message": "invalid signature: owns"
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort"
     }
    }
   },
@@ -106,214 +118,6 @@
   {
    "corpus": "conformance",
    "authority": "lean",
-   "case": "validation/validation_007",
-   "op": "model",
-   "base": {
-    "raised": {
-     "code": "InvalidModel",
-     "message": "complete must be the Boolean true",
-     "path": "/complete"
-    }
-   },
-   "head": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "complete must be true"
-    }
-   }
-  },
-  {
-   "corpus": "conformance",
-   "authority": "lean",
-   "case": "validation/validation_008",
-   "op": "model",
-   "base": {
-    "raised": {
-     "code": "InvalidModel",
-     "message": "complete must be the Boolean true",
-     "path": "/complete"
-    }
-   },
-   "head": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "Bool expected"
-    }
-   }
-  },
-  {
-   "corpus": "conformance",
-   "authority": "lean",
-   "case": "validation/validation_009",
-   "op": "model",
-   "base": {
-    "raised": {
-     "code": "InvalidModel",
-     "message": "fields do not match (missing=[], unknown=['extra'])"
-    }
-   },
-   "head": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "fields do not match: expected [complete, domains, constants, relations], got [complete, constants, domains, extra, relations]"
-    }
-   }
-  },
-  {
-   "corpus": "conformance",
-   "authority": "lean",
-   "case": "validation/validation_010",
-   "op": "model",
-   "base": {
-    "raised": {
-     "code": "InvalidModel",
-     "message": "relations must contain exactly the base predicates; defined tables are computed",
-     "path": "/relations"
-    }
-   },
-   "head": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "fields do not match: expected [deployed, owns, reviewed], got [deployed, reviewed]"
-    }
-   }
-  },
-  {
-   "corpus": "conformance",
-   "authority": "lean",
-   "case": "validation/validation_011",
-   "op": "model",
-   "base": {
-    "raised": {
-     "code": "InvalidModel",
-     "message": "domains must contain exactly the declared sorts",
-     "path": "/domains"
-    }
-   },
-   "head": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "fields do not match: expected [person, service], got [service]"
-    }
-   }
-  },
-  {
-   "corpus": "conformance",
-   "authority": "lean",
-   "case": "validation/validation_012",
-   "op": "model",
-   "base": {
-    "raised": {
-     "code": "InvalidModel",
-     "message": "duplicate domain entity",
-     "path": "/domains/person"
-    }
-   },
-   "head": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "duplicate domain entity"
-    }
-   }
-  },
-  {
-   "corpus": "conformance",
-   "authority": "lean",
-   "case": "validation/validation_013",
-   "op": "model",
-   "base": {
-    "raised": {
-     "code": "InvalidModel",
-     "message": "local ID must match [a-z][a-z0-9_]*",
-     "path": "/domains/person/1"
-    }
-   },
-   "head": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "invalid local identifier"
-    }
-   }
-  },
-  {
-   "corpus": "conformance",
-   "authority": "lean",
-   "case": "validation/validation_014",
-   "op": "model",
-   "base": {
-    "raised": {
-     "code": "InvalidModel",
-     "message": "duplicate relation tuple",
-     "path": "/relations/owns"
-    }
-   },
-   "head": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "duplicate relation tuple"
-    }
-   }
-  },
-  {
-   "corpus": "conformance",
-   "authority": "lean",
-   "case": "validation/validation_015",
-   "op": "model",
-   "base": {
-    "raised": {
-     "code": "InvalidModel",
-     "message": "relation tuple contains a dangling or wrong-sort entity",
-     "path": "/relations/owns/0/0"
-    }
-   },
-   "head": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "dangling or wrong-sort tuple"
-    }
-   }
-  },
-  {
-   "corpus": "conformance",
-   "authority": "lean",
-   "case": "validation/validation_016",
-   "op": "model",
-   "base": {
-    "raised": {
-     "code": "InvalidModel",
-     "message": "relation tuple contains a dangling or wrong-sort entity",
-     "path": "/relations/owns/0/0"
-    }
-   },
-   "head": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "dangling or wrong-sort tuple"
-    }
-   }
-  },
-  {
-   "corpus": "conformance",
-   "authority": "lean",
-   "case": "validation/validation_017",
-   "op": "model",
-   "base": {
-    "raised": {
-     "code": "InvalidModel",
-     "message": "relation tuple has wrong arity",
-     "path": "/relations/owns/0"
-    }
-   },
-   "head": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "wrong relation arity"
-    }
-   }
-  },
-  {
-   "corpus": "conformance",
-   "authority": "lean",
    "case": "validation/validation_027",
    "op": "environment",
    "base": {
@@ -326,25 +130,6 @@
     "raised": {
      "code": "InvalidInput",
      "message": "invalid or reserved declaration: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    }
-   }
-  },
-  {
-   "corpus": "conformance",
-   "authority": "lean",
-   "case": "validation/validation_028",
-   "op": "model",
-   "base": {
-    "raised": {
-     "code": "ResourceLimit",
-     "message": "local ID exceeds 64 ASCII bytes",
-     "path": "/domains/person/1"
-    }
-   },
-   "head": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "invalid local identifier"
     }
    }
   },
@@ -380,8 +165,8 @@
    },
    "head": {
     "raised": {
-     "code": "InvalidInput",
-     "message": "invalid local identifier"
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: local ID exceeds 64 ASCII bytes"
     }
    }
   },
@@ -399,8 +184,8 @@
    },
    "head": {
     "raised": {
-     "code": "InvalidInput",
-     "message": "invalid local identifier"
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: local ID exceeds 64 ASCII bytes"
     }
    }
   },
@@ -436,8 +221,8 @@
    },
    "head": {
     "raised": {
-     "code": "InvalidInput",
-     "message": "invalid local identifier"
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: local ID exceeds 64 ASCII bytes"
     }
    }
   },
@@ -462,18 +247,18 @@
   {
    "corpus": "conformance",
    "authority": "python",
-   "case": "validation/validation_003",
+   "case": "validation/validation_004",
    "op": "environment",
    "base": {
     "raised": {
-     "code": "UnknownSymbol",
-     "message": "UnknownSymbol: Undeclared predicate argument sort: 'unknown'"
+     "code": "InvalidInput",
+     "message": "Predicate arguments must be an array of one to 2 sort identifiers"
     }
    },
    "head": {
     "raised": {
-     "code": "InvalidInput",
-     "message": "invalid signature: owns"
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort"
     }
    }
   },
@@ -516,214 +301,6 @@
   {
    "corpus": "conformance",
    "authority": "python",
-   "case": "validation/validation_007",
-   "op": "model",
-   "base": {
-    "raised": {
-     "code": "InvalidModel",
-     "message": "complete must be the Boolean true",
-     "path": "/complete"
-    }
-   },
-   "head": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "complete must be true"
-    }
-   }
-  },
-  {
-   "corpus": "conformance",
-   "authority": "python",
-   "case": "validation/validation_008",
-   "op": "model",
-   "base": {
-    "raised": {
-     "code": "InvalidModel",
-     "message": "complete must be the Boolean true",
-     "path": "/complete"
-    }
-   },
-   "head": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "Bool expected"
-    }
-   }
-  },
-  {
-   "corpus": "conformance",
-   "authority": "python",
-   "case": "validation/validation_009",
-   "op": "model",
-   "base": {
-    "raised": {
-     "code": "InvalidModel",
-     "message": "fields do not match (missing=[], unknown=['extra'])"
-    }
-   },
-   "head": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "fields do not match: expected [complete, domains, constants, relations], got [complete, constants, domains, extra, relations]"
-    }
-   }
-  },
-  {
-   "corpus": "conformance",
-   "authority": "python",
-   "case": "validation/validation_010",
-   "op": "model",
-   "base": {
-    "raised": {
-     "code": "InvalidModel",
-     "message": "relations must contain exactly the base predicates; defined tables are computed",
-     "path": "/relations"
-    }
-   },
-   "head": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "fields do not match: expected [deployed, owns, reviewed], got [deployed, reviewed]"
-    }
-   }
-  },
-  {
-   "corpus": "conformance",
-   "authority": "python",
-   "case": "validation/validation_011",
-   "op": "model",
-   "base": {
-    "raised": {
-     "code": "InvalidModel",
-     "message": "domains must contain exactly the declared sorts",
-     "path": "/domains"
-    }
-   },
-   "head": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "fields do not match: expected [person, service], got [service]"
-    }
-   }
-  },
-  {
-   "corpus": "conformance",
-   "authority": "python",
-   "case": "validation/validation_012",
-   "op": "model",
-   "base": {
-    "raised": {
-     "code": "InvalidModel",
-     "message": "duplicate domain entity",
-     "path": "/domains/person"
-    }
-   },
-   "head": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "duplicate domain entity"
-    }
-   }
-  },
-  {
-   "corpus": "conformance",
-   "authority": "python",
-   "case": "validation/validation_013",
-   "op": "model",
-   "base": {
-    "raised": {
-     "code": "InvalidModel",
-     "message": "local ID must match [a-z][a-z0-9_]*",
-     "path": "/domains/person/1"
-    }
-   },
-   "head": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "invalid local identifier"
-    }
-   }
-  },
-  {
-   "corpus": "conformance",
-   "authority": "python",
-   "case": "validation/validation_014",
-   "op": "model",
-   "base": {
-    "raised": {
-     "code": "InvalidModel",
-     "message": "duplicate relation tuple",
-     "path": "/relations/owns"
-    }
-   },
-   "head": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "duplicate relation tuple"
-    }
-   }
-  },
-  {
-   "corpus": "conformance",
-   "authority": "python",
-   "case": "validation/validation_015",
-   "op": "model",
-   "base": {
-    "raised": {
-     "code": "InvalidModel",
-     "message": "relation tuple contains a dangling or wrong-sort entity",
-     "path": "/relations/owns/0/0"
-    }
-   },
-   "head": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "dangling or wrong-sort tuple"
-    }
-   }
-  },
-  {
-   "corpus": "conformance",
-   "authority": "python",
-   "case": "validation/validation_016",
-   "op": "model",
-   "base": {
-    "raised": {
-     "code": "InvalidModel",
-     "message": "relation tuple contains a dangling or wrong-sort entity",
-     "path": "/relations/owns/0/0"
-    }
-   },
-   "head": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "dangling or wrong-sort tuple"
-    }
-   }
-  },
-  {
-   "corpus": "conformance",
-   "authority": "python",
-   "case": "validation/validation_017",
-   "op": "model",
-   "base": {
-    "raised": {
-     "code": "InvalidModel",
-     "message": "relation tuple has wrong arity",
-     "path": "/relations/owns/0"
-    }
-   },
-   "head": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "wrong relation arity"
-    }
-   }
-  },
-  {
-   "corpus": "conformance",
-   "authority": "python",
    "case": "validation/validation_027",
    "op": "environment",
    "base": {
@@ -736,25 +313,6 @@
     "raised": {
      "code": "InvalidInput",
      "message": "invalid or reserved declaration: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    }
-   }
-  },
-  {
-   "corpus": "conformance",
-   "authority": "python",
-   "case": "validation/validation_028",
-   "op": "model",
-   "base": {
-    "raised": {
-     "code": "ResourceLimit",
-     "message": "local ID exceeds 64 ASCII bytes",
-     "path": "/domains/person/1"
-    }
-   },
-   "head": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "invalid local identifier"
     }
    }
   },
@@ -790,8 +348,8 @@
    },
    "head": {
     "raised": {
-     "code": "InvalidInput",
-     "message": "invalid local identifier"
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: local ID exceeds 64 ASCII bytes"
     }
    }
   },
@@ -809,8 +367,8 @@
    },
    "head": {
     "raised": {
-     "code": "InvalidInput",
-     "message": "invalid local identifier"
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: local ID exceeds 64 ASCII bytes"
     }
    }
   },
@@ -846,54 +404,9 @@
    },
    "head": {
     "raised": {
-     "code": "InvalidInput",
-     "message": "invalid local identifier"
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: local ID exceeds 64 ASCII bytes"
     }
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "lean",
-   "case": "[\"ve.core@0\", [\"relational-fol@0\"], \"environment_validation\", \"rejection\"]",
-   "op": "environment_validation",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "UnknownSymbol",
-     "message": "UnknownSymbol: Undeclared predicate argument sort: 'absent'"
-    },
-    "status": "UnknownSymbol"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "invalid signature: base"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "lean",
-   "case": "[\"ve.core@0\", [\"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "op": "model_validation",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "constant denotes an entity outside its sort",
-     "path": "/constants/x"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
-    },
-    "status": "InvalidInput"
    }
   },
   {
@@ -921,29 +434,6 @@
   {
    "corpus": "probe",
    "authority": "lean",
-   "case": "[\"ve.core@0.1\", [\"closure@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "op": "model_validation",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "constant denotes an entity outside its sort",
-     "path": "/constants/x"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "lean",
    "case": "[\"ve.core@0.1\", [\"order@0\", \"relational-fol@0\"], \"environment_validation\", \"rejection\"]",
    "op": "environment_validation",
    "base": {
@@ -955,35 +445,12 @@
     "status": "UnknownSymbol"
    },
    "head": {
-    "cell": "R",
+    "cell": "U",
     "output": {
-     "code": "InvalidInput",
-     "message": "unknown sort: absent"
+     "code": "UnsupportedProfile",
+     "message": "UnsupportedProfile: unknown sort: absent"
     },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "lean",
-   "case": "[\"ve.core@0.1\", [\"order@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "op": "model_validation",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "constant denotes an entity outside its sort",
-     "path": "/constants/x"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "dangling or wrong-sort value"
-    },
-    "status": "InvalidInput"
+    "status": "UnsupportedProfile"
    }
   },
   {
@@ -3677,142 +3144,6 @@
   {
    "corpus": "probe",
    "authority": "lean",
-   "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"norms@0\", \"relational-fol@0\", \"time@0\"], \"model_validation\", \"rejection\"]",
-   "op": "model_validation",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "constant denotes an entity outside its sort",
-     "path": "/constants/x"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "lean",
-   "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"norms@0\", \"relational-fol@0\", \"time@0\"], \"norms_conflict\", \"rejection\"]",
-   "op": "norms_conflict",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "fields do not match (missing=['complete', 'constants', 'domains', 'relations'], unknown=[])"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "fields do not match: expected [complete, domains, constants, relations], got []"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "lean",
-   "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"norms@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "op": "model_validation",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "constant denotes an entity outside its sort",
-     "path": "/constants/x"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "lean",
-   "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"norms@0\", \"relational-fol@0\"], \"norms_conflict\", \"rejection\"]",
-   "op": "norms_conflict",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "fields do not match (missing=['complete', 'constants', 'domains', 'relations'], unknown=[])"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "fields do not match: expected [complete, domains, constants, relations], got []"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "lean",
-   "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"relational-fol@0\", \"time@0\"], \"model_validation\", \"rejection\"]",
-   "op": "model_validation",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "constant denotes an entity outside its sort",
-     "path": "/constants/x"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "lean",
-   "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "op": "model_validation",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "constant denotes an entity outside its sort",
-     "path": "/constants/x"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "lean",
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"norms@0\", \"relational-fol@0\", \"time@0\"], \"environment_validation\", \"rejection\"]",
    "op": "environment_validation",
    "base": {
@@ -4015,142 +3346,6 @@
    "corpus": "probe",
    "authority": "lean",
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "op": "model_validation",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "constant denotes an entity outside its sort",
-     "path": "/constants/x"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "lean",
-   "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"norms@0\", \"relational-fol@0\", \"time@0\"], \"model_validation\", \"rejection\"]",
-   "op": "model_validation",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "constant denotes an entity outside its sort",
-     "path": "/constants/x"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "lean",
-   "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"norms@0\", \"relational-fol@0\", \"time@0\"], \"norms_conflict\", \"rejection\"]",
-   "op": "norms_conflict",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "fields do not match (missing=['complete', 'constants', 'domains', 'relations'], unknown=[])"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "fields do not match: expected [complete, domains, constants, relations], got []"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "lean",
-   "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"norms@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "op": "model_validation",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "constant denotes an entity outside its sort",
-     "path": "/constants/x"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "lean",
-   "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"norms@0\", \"relational-fol@0\"], \"norms_conflict\", \"rejection\"]",
-   "op": "norms_conflict",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "fields do not match (missing=['complete', 'constants', 'domains', 'relations'], unknown=[])"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "fields do not match: expected [complete, domains, constants, relations], got []"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "lean",
-   "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"relational-fol@0\", \"time@0\"], \"model_validation\", \"rejection\"]",
-   "op": "model_validation",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "constant denotes an entity outside its sort",
-     "path": "/constants/x"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "lean",
-   "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
    "op": "model_validation",
    "base": {
     "cell": "R",
@@ -7085,51 +6280,6 @@
   {
    "corpus": "probe",
    "authority": "python",
-   "case": "[\"ve.core@0\", [\"relational-fol@0\"], \"environment_validation\", \"rejection\"]",
-   "op": "environment_validation",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "UnknownSymbol",
-     "message": "UnknownSymbol: Undeclared predicate argument sort: 'absent'"
-    },
-    "status": "UnknownSymbol"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "invalid signature: base"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "python",
-   "case": "[\"ve.core@0\", [\"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "op": "model_validation",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "constant denotes an entity outside its sort",
-     "path": "/constants/x"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "python",
    "case": "[\"ve.core@0.1\", [\"closure@0\", \"relational-fol@0\"], \"environment_validation\", \"rejection\"]",
    "op": "environment_validation",
    "base": {
@@ -7152,29 +6302,6 @@
   {
    "corpus": "probe",
    "authority": "python",
-   "case": "[\"ve.core@0.1\", [\"closure@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "op": "model_validation",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "constant denotes an entity outside its sort",
-     "path": "/constants/x"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "python",
    "case": "[\"ve.core@0.1\", [\"order@0\", \"relational-fol@0\"], \"environment_validation\", \"rejection\"]",
    "op": "environment_validation",
    "base": {
@@ -7186,35 +6313,12 @@
     "status": "UnknownSymbol"
    },
    "head": {
-    "cell": "R",
+    "cell": "U",
     "output": {
-     "code": "InvalidInput",
-     "message": "unknown sort: absent"
+     "code": "UnsupportedProfile",
+     "message": "UnsupportedProfile: unknown sort: absent"
     },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "python",
-   "case": "[\"ve.core@0.1\", [\"order@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "op": "model_validation",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "constant denotes an entity outside its sort",
-     "path": "/constants/x"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "dangling or wrong-sort value"
-    },
-    "status": "InvalidInput"
+    "status": "UnsupportedProfile"
    }
   },
   {
@@ -9908,142 +9012,6 @@
   {
    "corpus": "probe",
    "authority": "python",
-   "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"norms@0\", \"relational-fol@0\", \"time@0\"], \"model_validation\", \"rejection\"]",
-   "op": "model_validation",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "constant denotes an entity outside its sort",
-     "path": "/constants/x"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "python",
-   "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"norms@0\", \"relational-fol@0\", \"time@0\"], \"norms_conflict\", \"rejection\"]",
-   "op": "norms_conflict",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "fields do not match (missing=['complete', 'constants', 'domains', 'relations'], unknown=[])"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "fields do not match: expected [complete, domains, constants, relations], got []"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "python",
-   "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"norms@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "op": "model_validation",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "constant denotes an entity outside its sort",
-     "path": "/constants/x"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "python",
-   "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"norms@0\", \"relational-fol@0\"], \"norms_conflict\", \"rejection\"]",
-   "op": "norms_conflict",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "fields do not match (missing=['complete', 'constants', 'domains', 'relations'], unknown=[])"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "fields do not match: expected [complete, domains, constants, relations], got []"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "python",
-   "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"relational-fol@0\", \"time@0\"], \"model_validation\", \"rejection\"]",
-   "op": "model_validation",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "constant denotes an entity outside its sort",
-     "path": "/constants/x"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "python",
-   "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "op": "model_validation",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "constant denotes an entity outside its sort",
-     "path": "/constants/x"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "python",
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"norms@0\", \"relational-fol@0\", \"time@0\"], \"environment_validation\", \"rejection\"]",
    "op": "environment_validation",
    "base": {
@@ -10246,142 +9214,6 @@
    "corpus": "probe",
    "authority": "python",
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "op": "model_validation",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "constant denotes an entity outside its sort",
-     "path": "/constants/x"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "python",
-   "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"norms@0\", \"relational-fol@0\", \"time@0\"], \"model_validation\", \"rejection\"]",
-   "op": "model_validation",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "constant denotes an entity outside its sort",
-     "path": "/constants/x"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "python",
-   "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"norms@0\", \"relational-fol@0\", \"time@0\"], \"norms_conflict\", \"rejection\"]",
-   "op": "norms_conflict",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "fields do not match (missing=['complete', 'constants', 'domains', 'relations'], unknown=[])"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "fields do not match: expected [complete, domains, constants, relations], got []"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "python",
-   "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"norms@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "op": "model_validation",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "constant denotes an entity outside its sort",
-     "path": "/constants/x"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "python",
-   "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"norms@0\", \"relational-fol@0\"], \"norms_conflict\", \"rejection\"]",
-   "op": "norms_conflict",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "fields do not match (missing=['complete', 'constants', 'domains', 'relations'], unknown=[])"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "fields do not match: expected [complete, domains, constants, relations], got []"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "python",
-   "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"relational-fol@0\", \"time@0\"], \"model_validation\", \"rejection\"]",
-   "op": "model_validation",
-   "base": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidModel",
-     "message": "constant denotes an entity outside its sort",
-     "path": "/constants/x"
-    },
-    "status": "InvalidModel"
-   },
-   "head": {
-    "cell": "R",
-    "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
-    },
-    "status": "InvalidInput"
-   }
-  },
-  {
-   "corpus": "probe",
-   "authority": "python",
-   "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
    "op": "model_validation",
    "base": {
     "cell": "R",
@@ -13316,6 +12148,677 @@
  ],
  "verdict": [
   {
+   "corpus": "conformance",
+   "authority": "lean",
+   "case": "validation/validation_007",
+   "op": "model",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "complete must be the Boolean true",
+     "path": "/complete"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: complete must be true"
+    }
+   }
+  },
+  {
+   "corpus": "conformance",
+   "authority": "lean",
+   "case": "validation/validation_008",
+   "op": "model",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "complete must be the Boolean true",
+     "path": "/complete"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: Bool expected"
+    }
+   }
+  },
+  {
+   "corpus": "conformance",
+   "authority": "lean",
+   "case": "validation/validation_010",
+   "op": "model",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "relations must contain exactly the base predicates; defined tables are computed",
+     "path": "/relations"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: fields do not match: expected [deployed, owns, reviewed], got [deployed, reviewed]"
+    }
+   }
+  },
+  {
+   "corpus": "conformance",
+   "authority": "lean",
+   "case": "validation/validation_011",
+   "op": "model",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "domains must contain exactly the declared sorts",
+     "path": "/domains"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: fields do not match: expected [person, service], got [service]"
+    }
+   }
+  },
+  {
+   "corpus": "conformance",
+   "authority": "lean",
+   "case": "validation/validation_012",
+   "op": "model",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "duplicate domain entity",
+     "path": "/domains/person"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: duplicate domain entity"
+    }
+   }
+  },
+  {
+   "corpus": "conformance",
+   "authority": "lean",
+   "case": "validation/validation_013",
+   "op": "model",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: invalid local identifier"
+    }
+   }
+  },
+  {
+   "corpus": "conformance",
+   "authority": "lean",
+   "case": "validation/validation_014",
+   "op": "model",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "duplicate relation tuple",
+     "path": "/relations/owns"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: duplicate relation tuple"
+    }
+   }
+  },
+  {
+   "corpus": "conformance",
+   "authority": "lean",
+   "case": "validation/validation_015",
+   "op": "model",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "relation tuple contains a dangling or wrong-sort entity",
+     "path": "/relations/owns/0/0"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling or wrong-sort tuple"
+    }
+   }
+  },
+  {
+   "corpus": "conformance",
+   "authority": "lean",
+   "case": "validation/validation_016",
+   "op": "model",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "relation tuple contains a dangling or wrong-sort entity",
+     "path": "/relations/owns/0/0"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling or wrong-sort tuple"
+    }
+   }
+  },
+  {
+   "corpus": "conformance",
+   "authority": "lean",
+   "case": "validation/validation_017",
+   "op": "model",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "relation tuple has wrong arity",
+     "path": "/relations/owns/0"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: wrong relation arity"
+    }
+   }
+  },
+  {
+   "corpus": "conformance",
+   "authority": "lean",
+   "case": "validation/validation_028",
+   "op": "model",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "local ID exceeds 64 ASCII bytes",
+     "path": "/domains/person/1"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: local ID exceeds 64 ASCII bytes"
+    }
+   }
+  },
+  {
+   "corpus": "conformance",
+   "authority": "python",
+   "case": "validation/validation_007",
+   "op": "model",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "complete must be the Boolean true",
+     "path": "/complete"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: complete must be true"
+    }
+   }
+  },
+  {
+   "corpus": "conformance",
+   "authority": "python",
+   "case": "validation/validation_008",
+   "op": "model",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "complete must be the Boolean true",
+     "path": "/complete"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: Bool expected"
+    }
+   }
+  },
+  {
+   "corpus": "conformance",
+   "authority": "python",
+   "case": "validation/validation_010",
+   "op": "model",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "relations must contain exactly the base predicates; defined tables are computed",
+     "path": "/relations"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: fields do not match: expected [deployed, owns, reviewed], got [deployed, reviewed]"
+    }
+   }
+  },
+  {
+   "corpus": "conformance",
+   "authority": "python",
+   "case": "validation/validation_011",
+   "op": "model",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "domains must contain exactly the declared sorts",
+     "path": "/domains"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: fields do not match: expected [person, service], got [service]"
+    }
+   }
+  },
+  {
+   "corpus": "conformance",
+   "authority": "python",
+   "case": "validation/validation_012",
+   "op": "model",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "duplicate domain entity",
+     "path": "/domains/person"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: duplicate domain entity"
+    }
+   }
+  },
+  {
+   "corpus": "conformance",
+   "authority": "python",
+   "case": "validation/validation_013",
+   "op": "model",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: invalid local identifier"
+    }
+   }
+  },
+  {
+   "corpus": "conformance",
+   "authority": "python",
+   "case": "validation/validation_014",
+   "op": "model",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "duplicate relation tuple",
+     "path": "/relations/owns"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: duplicate relation tuple"
+    }
+   }
+  },
+  {
+   "corpus": "conformance",
+   "authority": "python",
+   "case": "validation/validation_015",
+   "op": "model",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "relation tuple contains a dangling or wrong-sort entity",
+     "path": "/relations/owns/0/0"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling or wrong-sort tuple"
+    }
+   }
+  },
+  {
+   "corpus": "conformance",
+   "authority": "python",
+   "case": "validation/validation_016",
+   "op": "model",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "relation tuple contains a dangling or wrong-sort entity",
+     "path": "/relations/owns/0/0"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling or wrong-sort tuple"
+    }
+   }
+  },
+  {
+   "corpus": "conformance",
+   "authority": "python",
+   "case": "validation/validation_017",
+   "op": "model",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "relation tuple has wrong arity",
+     "path": "/relations/owns/0"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: wrong relation arity"
+    }
+   }
+  },
+  {
+   "corpus": "conformance",
+   "authority": "python",
+   "case": "validation/validation_028",
+   "op": "model",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "local ID exceeds 64 ASCII bytes",
+     "path": "/domains/person/1"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: local ID exceeds 64 ASCII bytes"
+    }
+   }
+  },
+  {
+   "corpus": "probe",
+   "authority": "lean",
+   "case": "[\"ve.core@0\", [\"relational-fol@0\"], \"model_validation\", \"rejection\"]",
+   "op": "model_validation",
+   "base": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "constant denotes an entity outside its sort",
+     "path": "/constants/x"
+    },
+    "status": "InvalidModel"
+   },
+   "head": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
+    },
+    "status": "InvalidModel"
+   }
+  },
+  {
+   "corpus": "probe",
+   "authority": "lean",
+   "case": "[\"ve.core@0.1\", [\"closure@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
+   "op": "model_validation",
+   "base": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "constant denotes an entity outside its sort",
+     "path": "/constants/x"
+    },
+    "status": "InvalidModel"
+   },
+   "head": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
+    },
+    "status": "InvalidModel"
+   }
+  },
+  {
+   "corpus": "probe",
+   "authority": "lean",
+   "case": "[\"ve.core@0.1\", [\"order@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
+   "op": "model_validation",
+   "base": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "constant denotes an entity outside its sort",
+     "path": "/constants/x"
+    },
+    "status": "InvalidModel"
+   },
+   "head": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling or wrong-sort value"
+    },
+    "status": "InvalidModel"
+   }
+  },
+  {
+   "corpus": "probe",
+   "authority": "lean",
+   "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"norms@0\", \"relational-fol@0\", \"time@0\"], \"model_validation\", \"rejection\"]",
+   "op": "model_validation",
+   "base": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "constant denotes an entity outside its sort",
+     "path": "/constants/x"
+    },
+    "status": "InvalidModel"
+   },
+   "head": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
+    },
+    "status": "InvalidModel"
+   }
+  },
+  {
+   "corpus": "probe",
+   "authority": "lean",
+   "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"norms@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
+   "op": "model_validation",
+   "base": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "constant denotes an entity outside its sort",
+     "path": "/constants/x"
+    },
+    "status": "InvalidModel"
+   },
+   "head": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
+    },
+    "status": "InvalidModel"
+   }
+  },
+  {
+   "corpus": "probe",
+   "authority": "lean",
+   "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"relational-fol@0\", \"time@0\"], \"model_validation\", \"rejection\"]",
+   "op": "model_validation",
+   "base": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "constant denotes an entity outside its sort",
+     "path": "/constants/x"
+    },
+    "status": "InvalidModel"
+   },
+   "head": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
+    },
+    "status": "InvalidModel"
+   }
+  },
+  {
+   "corpus": "probe",
+   "authority": "lean",
+   "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
+   "op": "model_validation",
+   "base": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "constant denotes an entity outside its sort",
+     "path": "/constants/x"
+    },
+    "status": "InvalidModel"
+   },
+   "head": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
+    },
+    "status": "InvalidModel"
+   }
+  },
+  {
+   "corpus": "probe",
+   "authority": "lean",
+   "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"norms@0\", \"relational-fol@0\", \"time@0\"], \"model_validation\", \"rejection\"]",
+   "op": "model_validation",
+   "base": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "constant denotes an entity outside its sort",
+     "path": "/constants/x"
+    },
+    "status": "InvalidModel"
+   },
+   "head": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
+    },
+    "status": "InvalidModel"
+   }
+  },
+  {
+   "corpus": "probe",
+   "authority": "lean",
+   "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"norms@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
+   "op": "model_validation",
+   "base": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "constant denotes an entity outside its sort",
+     "path": "/constants/x"
+    },
+    "status": "InvalidModel"
+   },
+   "head": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
+    },
+    "status": "InvalidModel"
+   }
+  },
+  {
+   "corpus": "probe",
+   "authority": "lean",
+   "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"relational-fol@0\", \"time@0\"], \"model_validation\", \"rejection\"]",
+   "op": "model_validation",
+   "base": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "constant denotes an entity outside its sort",
+     "path": "/constants/x"
+    },
+    "status": "InvalidModel"
+   },
+   "head": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
+    },
+    "status": "InvalidModel"
+   }
+  },
+  {
+   "corpus": "probe",
+   "authority": "lean",
+   "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
+   "op": "model_validation",
+   "base": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "constant denotes an entity outside its sort",
+     "path": "/constants/x"
+    },
+    "status": "InvalidModel"
+   },
+   "head": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
+    },
+    "status": "InvalidModel"
+   }
+  },
+  {
    "corpus": "probe",
    "authority": "lean",
    "case": "budget_boundaries/MAX_ENTITIES",
@@ -13391,6 +12894,259 @@
      },
      "status": "ResourceLimit"
     }
+   }
+  },
+  {
+   "corpus": "probe",
+   "authority": "python",
+   "case": "[\"ve.core@0\", [\"relational-fol@0\"], \"model_validation\", \"rejection\"]",
+   "op": "model_validation",
+   "base": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "constant denotes an entity outside its sort",
+     "path": "/constants/x"
+    },
+    "status": "InvalidModel"
+   },
+   "head": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
+    },
+    "status": "InvalidModel"
+   }
+  },
+  {
+   "corpus": "probe",
+   "authority": "python",
+   "case": "[\"ve.core@0.1\", [\"closure@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
+   "op": "model_validation",
+   "base": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "constant denotes an entity outside its sort",
+     "path": "/constants/x"
+    },
+    "status": "InvalidModel"
+   },
+   "head": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
+    },
+    "status": "InvalidModel"
+   }
+  },
+  {
+   "corpus": "probe",
+   "authority": "python",
+   "case": "[\"ve.core@0.1\", [\"order@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
+   "op": "model_validation",
+   "base": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "constant denotes an entity outside its sort",
+     "path": "/constants/x"
+    },
+    "status": "InvalidModel"
+   },
+   "head": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling or wrong-sort value"
+    },
+    "status": "InvalidModel"
+   }
+  },
+  {
+   "corpus": "probe",
+   "authority": "python",
+   "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"norms@0\", \"relational-fol@0\", \"time@0\"], \"model_validation\", \"rejection\"]",
+   "op": "model_validation",
+   "base": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "constant denotes an entity outside its sort",
+     "path": "/constants/x"
+    },
+    "status": "InvalidModel"
+   },
+   "head": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
+    },
+    "status": "InvalidModel"
+   }
+  },
+  {
+   "corpus": "probe",
+   "authority": "python",
+   "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"norms@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
+   "op": "model_validation",
+   "base": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "constant denotes an entity outside its sort",
+     "path": "/constants/x"
+    },
+    "status": "InvalidModel"
+   },
+   "head": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
+    },
+    "status": "InvalidModel"
+   }
+  },
+  {
+   "corpus": "probe",
+   "authority": "python",
+   "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"relational-fol@0\", \"time@0\"], \"model_validation\", \"rejection\"]",
+   "op": "model_validation",
+   "base": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "constant denotes an entity outside its sort",
+     "path": "/constants/x"
+    },
+    "status": "InvalidModel"
+   },
+   "head": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
+    },
+    "status": "InvalidModel"
+   }
+  },
+  {
+   "corpus": "probe",
+   "authority": "python",
+   "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
+   "op": "model_validation",
+   "base": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "constant denotes an entity outside its sort",
+     "path": "/constants/x"
+    },
+    "status": "InvalidModel"
+   },
+   "head": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
+    },
+    "status": "InvalidModel"
+   }
+  },
+  {
+   "corpus": "probe",
+   "authority": "python",
+   "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"norms@0\", \"relational-fol@0\", \"time@0\"], \"model_validation\", \"rejection\"]",
+   "op": "model_validation",
+   "base": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "constant denotes an entity outside its sort",
+     "path": "/constants/x"
+    },
+    "status": "InvalidModel"
+   },
+   "head": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
+    },
+    "status": "InvalidModel"
+   }
+  },
+  {
+   "corpus": "probe",
+   "authority": "python",
+   "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"norms@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
+   "op": "model_validation",
+   "base": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "constant denotes an entity outside its sort",
+     "path": "/constants/x"
+    },
+    "status": "InvalidModel"
+   },
+   "head": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
+    },
+    "status": "InvalidModel"
+   }
+  },
+  {
+   "corpus": "probe",
+   "authority": "python",
+   "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"relational-fol@0\", \"time@0\"], \"model_validation\", \"rejection\"]",
+   "op": "model_validation",
+   "base": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "constant denotes an entity outside its sort",
+     "path": "/constants/x"
+    },
+    "status": "InvalidModel"
+   },
+   "head": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
+    },
+    "status": "InvalidModel"
+   }
+  },
+  {
+   "corpus": "probe",
+   "authority": "python",
+   "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
+   "op": "model_validation",
+   "base": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "constant denotes an entity outside its sort",
+     "path": "/constants/x"
+    },
+    "status": "InvalidModel"
+   },
+   "head": {
+    "cell": "R",
+    "output": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
+    },
+    "status": "InvalidModel"
    }
   },
   {
@@ -13472,5 +13228,6 @@
    }
   }
  ],
- "availability": []
+ "availability": [],
+ "unavailable": []
 }

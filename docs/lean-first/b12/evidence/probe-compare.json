@@ -35,15 +35,15 @@
     "status": "UnknownSymbol"
    },
    "case": "[\"ve.core@0\", [\"relational-fol@0\"], \"environment_validation\", \"rejection\"]",
-   "class": "order",
+   "class": "wording",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "invalid signature: base"
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort"
     },
-    "status": "InvalidInput"
+    "status": "UnknownSymbol"
    },
    "listed": true,
    "op": "environment_validation"
@@ -108,15 +108,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0\", [\"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "class": "order",
+   "class": "verdict",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "model_validation"
@@ -229,15 +229,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.1\", [\"closure@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "class": "order",
+   "class": "verdict",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "model_validation"
@@ -280,12 +280,12 @@
    "class": "order",
    "corpus": "probe",
    "head": {
-    "cell": "R",
+    "cell": "U",
     "output": {
-     "code": "InvalidInput",
-     "message": "unknown sort: absent"
+     "code": "UnsupportedProfile",
+     "message": "UnsupportedProfile: unknown sort: absent"
     },
-    "status": "InvalidInput"
+    "status": "UnsupportedProfile"
    },
    "listed": true,
    "op": "environment_validation"
@@ -350,15 +350,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.1\", [\"order@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "class": "order",
+   "class": "verdict",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "dangling or wrong-sort value"
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling or wrong-sort value"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "model_validation"
@@ -6855,15 +6855,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"norms@0\", \"relational-fol@0\", \"time@0\"], \"model_validation\", \"rejection\"]",
-   "class": "order",
+   "class": "verdict",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "model_validation"
@@ -6879,15 +6879,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"norms@0\", \"relational-fol@0\", \"time@0\"], \"norms_conflict\", \"rejection\"]",
-   "class": "order",
+   "class": "wording",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "fields do not match: expected [complete, domains, constants, relations], got []"
+     "code": "InvalidModel",
+     "message": "InvalidModel: fields do not match: expected [complete, domains, constants, relations], got []"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "norms_conflict"
@@ -7000,15 +7000,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"norms@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "class": "order",
+   "class": "verdict",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "model_validation"
@@ -7024,15 +7024,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"norms@0\", \"relational-fol@0\"], \"norms_conflict\", \"rejection\"]",
-   "class": "order",
+   "class": "wording",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "fields do not match: expected [complete, domains, constants, relations], got []"
+     "code": "InvalidModel",
+     "message": "InvalidModel: fields do not match: expected [complete, domains, constants, relations], got []"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "norms_conflict"
@@ -7145,15 +7145,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"relational-fol@0\", \"time@0\"], \"model_validation\", \"rejection\"]",
-   "class": "order",
+   "class": "verdict",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "model_validation"
@@ -7266,15 +7266,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "class": "order",
+   "class": "verdict",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "model_validation"
@@ -7919,15 +7919,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"norms@0\", \"relational-fol@0\", \"time@0\"], \"model_validation\", \"rejection\"]",
-   "class": "order",
+   "class": "verdict",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "model_validation"
@@ -7943,15 +7943,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"norms@0\", \"relational-fol@0\", \"time@0\"], \"norms_conflict\", \"rejection\"]",
-   "class": "order",
+   "class": "wording",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "fields do not match: expected [complete, domains, constants, relations], got []"
+     "code": "InvalidModel",
+     "message": "InvalidModel: fields do not match: expected [complete, domains, constants, relations], got []"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "norms_conflict"
@@ -8064,15 +8064,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"norms@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "class": "order",
+   "class": "verdict",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "model_validation"
@@ -8088,15 +8088,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"norms@0\", \"relational-fol@0\"], \"norms_conflict\", \"rejection\"]",
-   "class": "order",
+   "class": "wording",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "fields do not match: expected [complete, domains, constants, relations], got []"
+     "code": "InvalidModel",
+     "message": "InvalidModel: fields do not match: expected [complete, domains, constants, relations], got []"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "norms_conflict"
@@ -8209,15 +8209,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"relational-fol@0\", \"time@0\"], \"model_validation\", \"rejection\"]",
-   "class": "order",
+   "class": "verdict",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "model_validation"
@@ -8330,15 +8330,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "class": "order",
+   "class": "verdict",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "model_validation"
@@ -15456,15 +15456,15 @@
     "status": "UnknownSymbol"
    },
    "case": "[\"ve.core@0\", [\"relational-fol@0\"], \"environment_validation\", \"rejection\"]",
-   "class": "order",
+   "class": "wording",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "invalid signature: base"
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort"
     },
-    "status": "InvalidInput"
+    "status": "UnknownSymbol"
    },
    "listed": true,
    "op": "environment_validation"
@@ -15529,15 +15529,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0\", [\"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "class": "order",
+   "class": "verdict",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "model_validation"
@@ -15650,15 +15650,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.1\", [\"closure@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "class": "order",
+   "class": "verdict",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "model_validation"
@@ -15701,12 +15701,12 @@
    "class": "order",
    "corpus": "probe",
    "head": {
-    "cell": "R",
+    "cell": "U",
     "output": {
-     "code": "InvalidInput",
-     "message": "unknown sort: absent"
+     "code": "UnsupportedProfile",
+     "message": "UnsupportedProfile: unknown sort: absent"
     },
-    "status": "InvalidInput"
+    "status": "UnsupportedProfile"
    },
    "listed": true,
    "op": "environment_validation"
@@ -15771,15 +15771,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.1\", [\"order@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "class": "order",
+   "class": "verdict",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "dangling or wrong-sort value"
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling or wrong-sort value"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "model_validation"
@@ -22276,15 +22276,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"norms@0\", \"relational-fol@0\", \"time@0\"], \"model_validation\", \"rejection\"]",
-   "class": "order",
+   "class": "verdict",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "model_validation"
@@ -22300,15 +22300,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"norms@0\", \"relational-fol@0\", \"time@0\"], \"norms_conflict\", \"rejection\"]",
-   "class": "order",
+   "class": "wording",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "fields do not match: expected [complete, domains, constants, relations], got []"
+     "code": "InvalidModel",
+     "message": "InvalidModel: fields do not match: expected [complete, domains, constants, relations], got []"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "norms_conflict"
@@ -22421,15 +22421,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"norms@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "class": "order",
+   "class": "verdict",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "model_validation"
@@ -22445,15 +22445,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"norms@0\", \"relational-fol@0\"], \"norms_conflict\", \"rejection\"]",
-   "class": "order",
+   "class": "wording",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "fields do not match: expected [complete, domains, constants, relations], got []"
+     "code": "InvalidModel",
+     "message": "InvalidModel: fields do not match: expected [complete, domains, constants, relations], got []"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "norms_conflict"
@@ -22566,15 +22566,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"relational-fol@0\", \"time@0\"], \"model_validation\", \"rejection\"]",
-   "class": "order",
+   "class": "verdict",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "model_validation"
@@ -22687,15 +22687,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"documents@1\", \"nary@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "class": "order",
+   "class": "verdict",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "model_validation"
@@ -23340,15 +23340,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"norms@0\", \"relational-fol@0\", \"time@0\"], \"model_validation\", \"rejection\"]",
-   "class": "order",
+   "class": "verdict",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "model_validation"
@@ -23364,15 +23364,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"norms@0\", \"relational-fol@0\", \"time@0\"], \"norms_conflict\", \"rejection\"]",
-   "class": "order",
+   "class": "wording",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "fields do not match: expected [complete, domains, constants, relations], got []"
+     "code": "InvalidModel",
+     "message": "InvalidModel: fields do not match: expected [complete, domains, constants, relations], got []"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "norms_conflict"
@@ -23485,15 +23485,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"norms@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "class": "order",
+   "class": "verdict",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "model_validation"
@@ -23509,15 +23509,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"norms@0\", \"relational-fol@0\"], \"norms_conflict\", \"rejection\"]",
-   "class": "order",
+   "class": "wording",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "fields do not match: expected [complete, domains, constants, relations], got []"
+     "code": "InvalidModel",
+     "message": "InvalidModel: fields do not match: expected [complete, domains, constants, relations], got []"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "norms_conflict"
@@ -23630,15 +23630,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"relational-fol@0\", \"time@0\"], \"model_validation\", \"rejection\"]",
-   "class": "order",
+   "class": "verdict",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "model_validation"
@@ -23751,15 +23751,15 @@
     "status": "InvalidModel"
    },
    "case": "[\"ve.core@0.2\", [\"closure@0\", \"nary@0\", \"relational-fol@0\"], \"model_validation\", \"rejection\"]",
-   "class": "order",
+   "class": "verdict",
    "corpus": "probe",
    "head": {
     "cell": "R",
     "output": {
-     "code": "InvalidInput",
-     "message": "dangling constant"
+     "code": "InvalidModel",
+     "message": "InvalidModel: dangling constant"
     },
-    "status": "InvalidInput"
+    "status": "InvalidModel"
    },
    "listed": true,
    "op": "model_validation"
@@ -30848,10 +30848,10 @@
   "probe/python": 9435
  },
  "totals": {
-  "order": 556,
+  "order": 524,
   "same": 17600,
-  "verdict": 4,
-  "wording": 710
+  "verdict": 26,
+  "wording": 720
  },
  "unavailable_both": {},
  "unlisted": 0
