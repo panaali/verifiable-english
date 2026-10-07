@@ -65,6 +65,7 @@ def sitesOf (file : String) : Nat → String → String → Shape → List Site
       (table.map fun (tag, slots) => (slots.zipIdx.map fun (x, i) =>
         go s!"{p}/x-tagged/{escape tag}/{i}" (if role == "value" then "grammar" else role) x).flatten).flatten
     | .zip _ x => go s!"{p}/x-zip/items" role x
+    | .zipOrEmpty _ x => go s!"{p}/x-zip-or-empty/items" role x
     | .onCase x => go s!"{p}/x-case" cond x
     | .select cs =>
       (cs.zipIdx.map fun ((w, t), i) => go s!"{p}/x-select/{i}/when" cond w ++
@@ -97,7 +98,7 @@ def refsOf : Nat → String → Shape → List (String × String)
     | .ref target => [(target, role)]
     | .object ps extra => (ps.map fun (_, v) => go role v).flatten ++ (extra.map (go role)).getD []
     | .prefixItems ss | .anyOf ss | .allOf ss => (ss.map (go role)).flatten
-    | .items x | .zip _ x | .rows x | .lean _ x _ | .encodedEnvironment x => go role x
+    | .items x | .zip _ x | .zipOrEmpty _ x | .rows x | .lean _ x _ | .encodedEnvironment x => go role x
     | .contains x | .not x | .onCase x | .countWhere _ x _ => go cond x
     | .ite c t e => go cond c ++ go role t ++ go role e
     | .tagged table => (table.map fun (_, slots) => (slots.map (go (compose role "grammar"))).flatten).flatten
@@ -228,6 +229,7 @@ def probesOf (files : List File) (file : String) : Nat → String → Shape → 
         | b => go s!"{p}/{k}" b
       branch "then" t ++ branch "else" e
     | .zip _ x => go s!"{p}/x-zip/items" x
+    | .zipOrEmpty _ x => go s!"{p}/x-zip-or-empty/items" x
     | .select cs => (cs.zipIdx.map fun ((_, t), i) => go s!"{p}/x-select/{i}/then" t).flatten
     | .rows x => go s!"{p}/x-rows" x
     | .node _ keywords => (keywords.map (go p)).flatten

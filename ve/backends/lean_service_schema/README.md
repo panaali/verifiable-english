@@ -94,6 +94,7 @@ element of an array (every element must resolve).
 | `x-index: true` | the position of the result in the response |
 | `x-digest: true` | the digest of the result's case (`digests[i]` of the request) |
 | `x-zip: {of: p, items: s}` | an array with element `i` valid under `s` with context element `i` of the context array at `p` |
+| `x-zip-or-empty: {of: p, items: s}` | as `x-zip`, with a missing context array treated as empty; a present non-array is invalid |
 | `x-case: s` | the context is valid under `s` |
 | `x-select: [{when, then}, ...]` | the first `when` valid for the context selects `then`; none fails |
 | `x-count-where: {array, where, equals}` | the number of elements of `array` valid under `where` equals `equals` |

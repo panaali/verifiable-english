@@ -40,6 +40,10 @@ The W2 route is one-shot because `speech-source` is not yet a persistent `ve_ser
 
 The fuzzer's baseline does not grow: every sampled signature, answer, and baseline replay matches the base run. The first full gate at `515f86dd` was superseded by the pin and regression fixes; it reported a resource-sensitive Lean service timeout under simultaneous corpus/fuzzer load. The next full gate at `586650ad` found one stale test inventory assertion after the shared transport refactor. The assertion was updated in `72479f0e`; the complete gate passed at `7ea56df0`.
 
+## Integration with reports batch 8
+
+The merge with `ve-integration` keeps both independent Lean routes: reports preflight and response-shape checks, and the speech-source caller. The decoder assurance table and frozen Lean inventory contain both sets of pins. The relay lint covers both reports modules and both speech-source modules. Its import-closure rule excludes `ve.speech_english` explicitly: that experimental English E3 parser still owns text-to-structure, and the speech-source route checks the structured fence it supplies. This is the existing E3 proof gap, not a second speech verdict owner. Mixed `reports@0` and `speech-acts@0` route composition remains outside the current composition profile as specified in `docs/spec/composition.md` (sections 2.9 and 8); neither batch adds such a dispatch.
+
 ## Seeded failures
 
 Three temporary faults were applied one at a time in a detached checkout at `515f86dd`, with the unchanged route build, then removed. The raw failing test IDs and exit codes are in `evidence/mutants.txt`.

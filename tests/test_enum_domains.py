@@ -38,8 +38,8 @@ COPIED = {("discourse.json", "/$defs/reference/properties/form/enum")}
 KEYWORDS = {"$ref", "$comment", "type", "enum", "const", "pattern", "minLength", "maxLength", "minimum",
             "required", "properties", "additionalProperties", "prefixItems", "items", "minItems", "maxItems",
             "contains", "anyOf", "allOf", "not", "if", "then", "else", "x-tagged", "x-fuel", "x-echo",
-            "x-equals", "x-length", "x-count", "x-index", "x-digest", "x-zip", "x-case", "x-select",
-            "x-count-where", "x-rows", "x-row"}
+            "x-equals", "x-length", "x-count", "x-index", "x-digest", "x-zip", "x-zip-or-empty", "x-case",
+            "x-select", "x-count-where", "x-rows", "x-row"}
 
 
 @pytest.fixture(scope="module")
@@ -103,7 +103,7 @@ def _walk(node, pointer: str, role: str, out: list) -> None:
             for i, entry in enumerate(value):
                 _walk(entry["when"], f"{here}/{i}/when", condition, out)
                 _walk(entry["then"], f"{here}/{i}/then", role, out)
-        elif key == "x-zip":
+        elif key in ("x-zip", "x-zip-or-empty"):
             _walk(value["items"], f"{here}/items", role, out)
         elif key == "x-count-where":
             _walk(value["where"], f"{here}/where", condition, out)
