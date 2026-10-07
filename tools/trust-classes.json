@@ -214,7 +214,8 @@
   "ResponseShape/Encoders/ReadingsRoute.lean": {
    "S": [
     "ResponseShape.Encoders.ReadingsRoute.PairEntry",
-    "ResponseShape.Encoders.ReadingsRoute.SetEntry"
+    "ResponseShape.Encoders.ReadingsRoute.SetEntry",
+    "ResponseShape.Encoders.ReadingsRoute.ValidateRows"
    ],
    "G[V]": [
     "ResponseShape.Encoders.ReadingsRoute.atomInv",
@@ -625,6 +626,8 @@
     "ResponseShape.Schemas.ReadingsRoute.elaborateRoute",
     "ResponseShape.Schemas.ReadingsRoute.elaborateSuperposed",
     "ResponseShape.Schemas.ReadingsRoute.file",
+    "ResponseShape.Schemas.ReadingsRoute.fill_premises",
+    "ResponseShape.Schemas.ReadingsRoute.filled",
     "ResponseShape.Schemas.ReadingsRoute.generatedPredicates",
     "ResponseShape.Schemas.ReadingsRoute.key",
     "ResponseShape.Schemas.ReadingsRoute.keys",
@@ -4093,7 +4096,8 @@
     "VE.NormDefaults.Wire.reportWith",
     "VE.NormDefaults.Wire.situationWitness",
     "VE.NormDefaults.Wire.sortAtoms",
-    "VE.NormDefaults.Wire.suppliedWitness"
+    "VE.NormDefaults.Wire.suppliedWitness",
+    "VE.NormDefaults.modelCheckU"
    ],
    "D[V]": [
     "VE.NormDefaults.Wire.Cited",
@@ -4230,6 +4234,9 @@
     "VE.NormDefaults.Wire.baseBackgroundU",
     "VE.NormDefaults.Wire.profile",
     "VE.NormDefaults.Wire.unspecifiedNames"
+   ],
+   "S": [
+    "VE.NormDefaults.EntailsU"
    ]
   },
   "VE/Norms/Admission.lean": {
@@ -5306,6 +5313,9 @@
     "VE.Readings.unsatText",
     "VE.Readings.untakenText",
     "VE.Readings.vocabularyJson"
+   ],
+   "D[R]": [
+    "VE.Readings.completionFinding"
    ]
   },
   "VE/Readings/Run.lean": {
@@ -5326,17 +5336,24 @@
     "VE.Readings.Run.PairFacts",
     "VE.Readings.Run.candidateJsonSpec",
     "VE.Readings.Run.chainFindings",
+    "VE.Readings.Run.completionEnvironment",
     "VE.Readings.Run.decisionOnlyText",
+    "VE.Readings.Run.ndPairFacts",
     "VE.Readings.Run.pairFactsIn",
     "VE.Readings.Run.runCase",
     "VE.Readings.Run.runCaseReported",
     "VE.Readings.Run.runLower",
+    "VE.Readings.Run.runS2ND",
+    "VE.Readings.Run.runSeparateND",
+    "VE.Readings.Run.runValidateND",
     "VE.Readings.Run.setFindings",
     "VE.Readings.Run.setFindingsSpec",
     "VE.Readings.Run.setPairs",
     "VE.Readings.Run.setPairsSpec",
+    "VE.Readings.Run.setPairsWith",
     "VE.Readings.Run.sideIn",
-    "VE.Readings.Run.validateResult"
+    "VE.Readings.Run.validateResult",
+    "VE.Readings.Run.validateResultWith"
    ],
    "G[I]": [
     "VE.Readings.Run.documentHash"
@@ -5509,6 +5526,7 @@
     "VE.Readings.Run.choiceModel",
     "VE.Readings.Run.conflictFreeAnswer",
     "VE.Readings.Run.conflictKind",
+    "VE.Readings.Run.deadAnswer",
     "VE.Readings.Run.encodedChoice",
     "VE.Readings.Run.evidenceKinds",
     "VE.Readings.Run.firstFailing",
@@ -5607,9 +5625,12 @@
    "T": [
     "VE.Readings.UnspecifiedExamples.ND0",
     "VE.Readings.UnspecifiedExamples.ND1",
+    "VE.Readings.UnspecifiedExamples.ND10",
     "VE.Readings.UnspecifiedExamples.ND1n",
+    "VE.Readings.UnspecifiedExamples.ND4",
     "VE.Readings.UnspecifiedExamples.ND5",
     "VE.Readings.UnspecifiedExamples.NK",
+    "VE.Readings.UnspecifiedExamples.authorText",
     "VE.Readings.UnspecifiedExamples.base1",
     "VE.Readings.UnspecifiedExamples.beHelpful",
     "VE.Readings.UnspecifiedExamples.cand",
@@ -5619,14 +5640,18 @@
     "VE.Readings.UnspecifiedExamples.mustHelp",
     "VE.Readings.UnspecifiedExamples.mustHelpAsks",
     "VE.Readings.UnspecifiedExamples.names1",
+    "VE.Readings.UnspecifiedExamples.oneRuleSet",
     "VE.Readings.UnspecifiedExamples.probe1",
     "VE.Readings.UnspecifiedExamples.regs1",
+    "VE.Readings.UnspecifiedExamples.regs4",
     "VE.Readings.UnspecifiedExamples.rs1",
     "VE.Readings.UnspecifiedExamples.rs5",
     "VE.Readings.UnspecifiedExamples.ruleOver",
+    "VE.Readings.UnspecifiedExamples.rulesOnP",
     "VE.Readings.UnspecifiedExamples.sameOn",
     "VE.Readings.UnspecifiedExamples.sit1",
-    "VE.Readings.UnspecifiedExamples.unspec1"
+    "VE.Readings.UnspecifiedExamples.unspec1",
+    "VE.Readings.UnspecifiedExamples.unspec4"
    ]
   },
   "VE/Readings/UpSlot.lean": {
@@ -9293,6 +9318,53 @@
    "G[R]": [
     "VE.Service.ParseDiagnostic.scan",
     "VE.Service.ParseDiagnostic.span"
+   ]
+  },
+  "VE/Readings/UnspecifiedWire.lean": {
+   "C": [
+    "VE.Readings.Wire.AdmittedND",
+    "VE.Readings.Wire.ChoiceReplayU",
+    "VE.Readings.Wire.FilledAdmitted",
+    "VE.Readings.Wire.SeparateReplayU",
+    "VE.Readings.Wire.admitND",
+    "VE.Readings.Wire.admitNDOf",
+    "VE.Readings.Wire.choiceLayered",
+    "VE.Readings.Wire.filledAdmitted",
+    "VE.Readings.Wire.filledEnvironment",
+    "VE.Readings.Wire.filledRV",
+    "VE.Readings.Wire.ndRest",
+    "VE.Readings.Wire.replayChoiceAt",
+    "VE.Readings.Wire.replayChoiceU",
+    "VE.Readings.Wire.replayPairU",
+    "VE.Readings.Wire.replaySeparateU",
+    "VE.Readings.Wire.unsaidDecls"
+   ],
+   "D[R]": [
+    "VE.Readings.Wire.choiceStepText",
+    "VE.Readings.Wire.completionRefusal",
+    "VE.Readings.Wire.ndChoiceText",
+    "VE.Readings.Wire.ndDocText",
+    "VE.Readings.Wire.ndText",
+    "VE.Readings.Wire.reservedUnsaid",
+    "VE.Readings.Wire.setDeclared"
+   ],
+   "D[V]": [
+    "VE.Readings.Run.ndFormulas",
+    "VE.Readings.Wire.conflictPackages",
+    "VE.Readings.Wire.encF",
+    "VE.Readings.Wire.fillPremisesJson",
+    "VE.Readings.Wire.filledJson",
+    "VE.Readings.Wire.filledUnitsJson",
+    "VE.Readings.Wire.unspecOf"
+   ],
+   "G[V]": [
+    "VE.Readings.Run.ndCertificate",
+    "VE.Readings.Run.ndChoiceModel",
+    "VE.Readings.Run.ndInner",
+    "VE.Readings.Run.runChoiceND",
+    "VE.Readings.Run.runElaborateND",
+    "VE.Readings.Wire.normDefaultsProfile",
+    "VE.Readings.Wire.underCompletion"
    ]
   }
  }

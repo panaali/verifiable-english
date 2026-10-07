@@ -305,6 +305,7 @@ module VE.Readings.SupWitness
 module VE.Readings.Superpose
 module VE.Readings.Unspecified
 module VE.Readings.UnspecifiedExamples
+module VE.Readings.UnspecifiedWire
 module VE.Readings.UpPremises
 module VE.Readings.UpSlot
 module VE.Readings.Wire
@@ -439,6 +440,7 @@ ResponseShape.Encoders.Discourse.StatusesOk@ResponseShape.Encoders.Discourse
 ResponseShape.Encoders.English.ClassesIn@ResponseShape.Encoders.English
 ResponseShape.Encoders.ReadingsRoute.PairEntry@ResponseShape.Encoders.ReadingsRoute
 ResponseShape.Encoders.ReadingsRoute.SetEntry@ResponseShape.Encoders.ReadingsRoute
+ResponseShape.Encoders.ReadingsRoute.ValidateRows@ResponseShape.Encoders.ReadingsRoute
 ResponseShape.Encoders.SoftNorms.Classified@ResponseShape.Encoders.SoftNorms
 ResponseShape.Encoders.SoftNorms.CodeOk@ResponseShape.Encoders.SoftNorms
 ResponseShape.ErrP@ResponseShape.Skeleton
@@ -613,6 +615,7 @@ VE.NormDefaults.BaseAdmissibleU@VE.NormDefaults.Premises
 VE.NormDefaults.CheckOK@VE.NormDefaults.Check
 VE.NormDefaults.ConflictFreeU@VE.NormDefaults.Premises
 VE.NormDefaults.DefOK@VE.NormDefaults.Check
+VE.NormDefaults.EntailsU@VE.NormDefaults.Wire
 VE.NormDefaults.Expansion3@VE.NormDefaults.Semantics
 VE.NormDefaults.IntendedAt3@VE.NormDefaults.Semantics
 VE.NormDefaults.NodeOK@VE.NormDefaults.Check

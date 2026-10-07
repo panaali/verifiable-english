@@ -27,11 +27,13 @@ def Route.text : Route → String
   | .superposed => "superposed"
   | .enumerated => "enumerated"
 
-/-- 1.1, in its row order: the first row that applies. -/
+/-- 1.1, in its row order: the first row that applies. Under `norm-defaults@0` the norms chain takes the enumerated
+    route (the unspecified completion, readings-defaults.md 1.1, until RD-6); the soft and rights chains keep the
+    abstention. -/
 def routeOf (normDefaults : Bool) (D : Doc) : Route :=
   if !(D.sets.any Wire.contentBearing) then .w2
   else if D.sets.any (fun R => R.candidates.any (·.content.isNone)) then .pending
-  else if normDefaults then .abstention
+  else if normDefaults then (if D.chain == .norms then .enumerated else .abstention)
   else if D.chain != .rights && superposable D then .superposed
   else .enumerated
 
@@ -43,7 +45,7 @@ theorem routeOf_superposed {nd : Bool} {D : Doc} (h : routeOf nd D = .superposed
   · split at h
     · cases h
     · split at h
-      · cases h
+      · split at h <;> cases h
       · split at h
         · rename_i hs
           simp only [Bool.and_eq_true, bne_iff_ne, ne_eq] at hs
@@ -103,6 +105,10 @@ def notSuperposable (D : Doc) : Option (String × String) :=
       | none => none
 
 def notSuperposableText (sets : String) : String := s!"ReadingsNotSuperposable: {sets}"
+
+/-- The finding of 1.1 under the unspecified completion (readings-defaults.md 1.1): every open set, and the cause. -/
+def completionFinding (D : Doc) : String × String :=
+  (", ".intercalate (D.sets.map (·.id)), "the unspecified completion")
 
 /-- The narrowings not in force: recorded on a version that is not the active one (1.2, 6). -/
 def staleNarrowings (D : Doc) : List String :=
@@ -287,7 +293,7 @@ def elaborateFields (normDefaults : Bool) (basePredicates : Nat) (D : Doc) : Lis
       ("names", nameMapJson D)] ++ choicesJson D ++ [("choices_checked", checkedJson route D),
       ("sizes", sizesJson D basePredicates)]
   | .enumerated =>
-    head ++ [("finding", match notSuperposable D with
+    head ++ [("finding", match (if normDefaults then some (completionFinding D) else notSuperposable D) with
         | some (sets, cause) => Json.mkObj [("text", .str (notSuperposableText sets)), ("cause", .str cause)]
         | none => .null),
       ("narrowings_stale", toJson (staleNarrowings D))] ++ choicesJson D ++
