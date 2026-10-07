@@ -86,6 +86,24 @@ def test_a_base_answer_other_than_df19_is_not_explained():
     assert _gate().compare(base, HEAD)["unexplained"]
 
 
+def test_a_repeated_profile_is_explained_only_with_pythons_own_text():
+    gate = _gate()
+    refused = {"outcome": "error", "code": "UnsupportedProfile", "text": gate.REPEATED}
+
+    def pair(head_lean, python_text):
+        base, head = _run({"outcome": "ok", "value": None}), _run(head_lean, replay_status="fixed")
+        for run in (base, head):
+            row = run["items"]["sampled"]["environment"][0]
+            row["answers"]["python"] = {"outcome": "error", "code": "UnsupportedProfile", "text": python_text}
+            row["answers_sha256"] = json.dumps(row["answers"], sort_keys=True)
+        return gate.compare(base, head)
+
+    result = pair(refused, gate.REPEATED)
+    assert result["unexplained"] == [] and result["explained"][0]["kind"] == "repeated-profile"
+    assert pair(refused, "UnsupportedProfile: something else")["unexplained"]
+    assert pair({**refused, "text": "UnsupportedProfile: other"}, gate.REPEATED)["unexplained"]
+
+
 def test_fourteen_date_seeds_have_no_unexplained_difference():
     evidence = json.loads((B10B / "evidence/fuzzer-seeds.json").read_text())
     gate = _gate()
@@ -101,7 +119,11 @@ def test_fourteen_date_seeds_have_no_unexplained_difference():
         replays = [e for e in row["explained"] if "replayed" in e]
         assert [e["replayed"] for e in replays] == sorted(gate.RETIRED)
         sampled = [e for e in row["explained"] if "index" in e]
-        assert sampled and all(e["base_lean"]["text"].startswith(gate.DF19) for e in sampled)
+        assert {e["kind"] for e in sampled} <= {"df19", "repeated-profile"}
+        assert any(e["kind"] == "df19" for e in sampled)
+        assert all(e["base_lean"]["text"].startswith(gate.DF19) for e in sampled if e["kind"] == "df19")
+        assert all(e["head_lean"]["text"] == gate.REPEATED and e["head_lean_agrees_with_python"]
+                   for e in sampled if e["kind"] == "repeated-profile")
         unmasked = [e for e in row["explained"] if "unmasked" in e]
         assert all(e["classes"] == ["diagnostic"] for e in unmasked)
         assert row["head_new"] == row["base_new"] + len(unmasked) - row["base_only_new"]
