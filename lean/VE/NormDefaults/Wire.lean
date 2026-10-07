@@ -58,6 +58,23 @@ def placeholderJson (environment : Json) : Except String Json := do
   pure ((environment.setObjVal! "vocabulary" (vocab.setObjVal! "predicates" (Json.mkObj preds'))).setObjVal!
     "profiles" (toJson (profiles.filter (· != profile))))
 
+/-- Validate the authored environment without charging document-level fill
+limits. Those limits belong to `decodeSourceU` when a norm document is read. -/
+def decodeEnvironmentU (environment : Json) : Except String VE.Norms.Wire.NormsEnvironment := do
+  let profiled := hasProfile environment
+  let frame ← if profiled then do
+    for n in declaredNames environment do
+      if n.startsWith "unsaid__" then throw s!"InvalidInput: reserved name {n}"
+    placeholderJson environment
+  else do
+    unless (unspecifiedNames environment).isEmpty do
+      throw "UnsupportedProfile: unspecified completion requires norm-defaults@0"
+    pure environment
+  let ne ← VE.Norms.Wire.decodeNormsEnvironment frame
+  unless ne.rv.definitions.isEmpty || ne.profiles.contains "definitions@0" do
+    throw "Definitions require definitions@0"
+  pure ne
+
 /-- A decoded source under the profile (or without it): the author document, its
 unspecified predicates and the facts the replay uses. -/
 structure SourceU where
@@ -89,10 +106,10 @@ def checkAuthorN (environment : Json) (generated : Nat) (U : UDoc) : Except Stri
 /-- The norms route's author check: no generated predicates. -/
 def checkAuthor (environment : Json) (U : UDoc) : Except String Unit := checkAuthorN environment 0 U
 
-def decodeSourceU (environment norms : Json) : Except String SourceU :=
+def decodeSourceU (environment norms : Json) (flags : Bool := false) : Except String SourceU :=
   if hasProfile environment then do
     let env' ← placeholderJson environment
-    let src ← VE.Norms.Wire.decodeSource env' norms
+    let src ← VE.Norms.Wire.decodeSource env' norms flags
     let names := unspecifiedNames environment
     let U : UDoc := ⟨src.D, (src.D.T.regulated.map Regulated.name).filter (names.contains ·)⟩
     checkAuthor environment U
@@ -102,7 +119,7 @@ def decodeSourceU (environment norms : Json) : Except String SourceU :=
   else do
     unless (unspecifiedNames environment).isEmpty do
       throw "UnsupportedProfile: unspecified completion requires norm-defaults@0"
-    let src ← VE.Norms.Wire.decodeSource environment norms
+    let src ← VE.Norms.Wire.decodeSource environment norms flags
     pure ⟨src, ⟨src.D, []⟩, rfl, (by rw [fill_eq_self _ rfl]; exact src.wf), false, (fun h => by cases h),
       fun _ => rfl⟩
 
