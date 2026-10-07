@@ -42,7 +42,7 @@
 'VE.Surface.canonicalName_injective' depends on axioms: [propext, Quot.sound]
 'VE.Surface.generated_identifier' depends on axioms: [propext, Quot.sound]
 'VE.Surface.canonicalName_identifier' depends on axioms: [propext, Quot.sound]
-'VE.Surface.generated_not_reserved' depends on axioms: [propext, Quot.sound]
+'VE.Surface.generated_not_reserved' depends on axioms: [propext]
 'VE.Surface.span_ident_loop' depends on axioms: [propext]
 'VE.Surface.span_ident_append' depends on axioms: [propext]
 'VE.Surface.readIdent_append' depends on axioms: [propext, Quot.sound]
