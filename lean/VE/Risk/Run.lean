@@ -586,14 +586,21 @@ theorem runAdmission_sound (id : String) (environment document answer : Json)
   exact ⟨res, envId, reportId, hr, he, hd, rfl, res.src.wf,
     fun S hS hg ho => Admission.report_consequence res S hS hg ho⟩
 
+def runElaborate (id : String) (j : Json) : Except String Json := do
+  let src ← decodeRiskSource (j.getObjValD "environment") (j.getObjValD "document")
+  let coverage := match j.getObjVal? "coverage_units" with
+    | .ok units => [("coverage", VE.Alternatives.Wire.coverage (toAlt src.R)
+        (j.getObjValD "environment") units (j.getObjValD "narrowings"))]
+    | .error _ => []
+  return ok id (Wire.regenerated src ++ coverage)
+
 def runCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let kind ← VE.Route.Run.caseKind j
   if kind == "admission" then
     return ← runAdmission id (← j.getObjVal? "environment") (← j.getObjVal? "document")
   if kind == "risk-elaborate" then
-    let src ← decodeRiskSource (j.getObjValD "environment") (j.getObjValD "document")
-    return ok id (Wire.regenerated src)
+    return ← runElaborate id j
   if kind == "risk-decision" then return ← runDecision id j
   if kind == "risk-conflict" then return ← runConflict id j
   if kind == "risk-followable" then return ← runFollowable id j
