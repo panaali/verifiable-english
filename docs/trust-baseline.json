@@ -32,6 +32,13 @@
    "allow": {
     "S": 128
    }
+  },
+  {
+   "change": "lean-first batch 6 (soft norms to Lean): untied [V] +164 over the parent tree 9aaf918d measured by tools/trust_map.py --since (V 28474 -> 28638): VE.SoftNorms.Once +144 (the layered checks moved from VE.Readings.Layers, which loses the same lines), SoftNorms.Run +64, the soft response schema +63, SoftNorms.Wire +30, Rights.Wire +12 (validateRightsOnce, moved), SoftNorms.Phases +7. The lines replace the deleted Python soft decision logic; the layered twins added for latency are tied to their equality theorems. Growth merged before 9aaf918d is not part of this allowance.",
+   "signed": "DRI (orchestrator), lf-6 fix directive, 2026-10-06",
+   "allow": {
+    "V": 164
+   }
   }
  ],
  "history": [

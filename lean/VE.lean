@@ -15,7 +15,7 @@ import VE.Compose.Content
 import VE.Compose.Adjoin
 import VE.Compose.Examples
 import VE.Readings.Doc
-import VE.Readings.Layers
+import VE.SoftNorms.Once
 import VE.Readings.Separate
 import VE.Readings.Lines
 import VE.Readings.Wire

@@ -269,7 +269,6 @@ module VE.Readings.Examples
 module VE.Readings.Faithful
 module VE.Readings.Force
 module VE.Readings.Labels
-module VE.Readings.Layers
 module VE.Readings.Lines
 module VE.Readings.Live
 module VE.Readings.Names
@@ -357,6 +356,7 @@ module VE.Service.Standalone
 module VE.Service.TypingDiagnostic
 module VE.SoftNorms.Admission
 module VE.SoftNorms.Coherence
+module VE.SoftNorms.Once
 module VE.SoftNorms.Phases
 module VE.SoftNorms.RankProof
 module VE.SoftNorms.Run

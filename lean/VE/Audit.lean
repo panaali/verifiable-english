@@ -130,7 +130,7 @@ import VE.NormDefaults.Layered
 import VE.NormDefaults.Admission
 import VE.NormDefaults.Run
 import VE.Readings.Doc
-import VE.Readings.Layers
+import VE.SoftNorms.Once
 import VE.Readings.Separate
 import VE.Readings.Lines
 import VE.Readings.Examples
@@ -3390,11 +3390,15 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Norms.outcomeBaseIn_eq
 #print axioms VE.Norms.pairConflictIn_eq
 #print axioms VE.Norms.targetsIn_eq
+#print axioms VE.Norms.inFragmentIn_eq
 #print axioms VE.SoftNorms.selectsOn_soften
 #print axioms VE.SoftNorms.softPremisesIn_eq
 #print axioms VE.SoftNorms.checkSoftOnce_eq
 #print axioms VE.SoftNorms.softSemanticCheckOnce_eq
 #print axioms VE.SoftNorms.validateSoftOnce_eq
+#print axioms VE.SoftNorms.cohPremiseIn_eq
+#print axioms VE.SoftNorms.inFragmentOnce_eq
+#print axioms VE.SoftNorms.Wire.softLabelledIn_eq
 #print axioms VE.Rights.validateRightsOnce_eq
 #print axioms VE.Readings.cellsOn_sideOf
 #print axioms VE.Readings.assignmentsOn_sideOf

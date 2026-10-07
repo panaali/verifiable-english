@@ -23,6 +23,15 @@ theorem softLabelled_nonempty (D : SoftDoc) : ∀ x ∈ softLabelled D, x.1.isEm
     · cases h
   · simp +decide [cohLabel, isEmpty_append, toString]
 
+/-- The same labels, with the coherence premises built from given layers. -/
+theorem softLabelledIn_nonempty (D : SoftDoc) (S : VE.Norms.Doc) (L : VE.Norms.Layers) :
+    ∀ x ∈ softLabelledIn D S L, x.1.isEmpty = false := by
+  intro x hx
+  simp only [softLabelledIn, List.mem_append, List.mem_map] at hx
+  rcases hx with hx | ⟨⟨M, N⟩, _, rfl⟩
+  · exact softLabelled_nonempty D x (by simp only [softLabelled, List.mem_append]; exact .inl hx)
+  · simp +decide [cohLabel, isEmpty_append, toString]
+
 set_option maxHeartbeats 1000000 in
 theorem elaborate_fits (id : String) (D : SoftDoc) (env : Json) (documentHash : String)
     (overlaps cycles : Option (List Json)) :
@@ -33,7 +42,7 @@ theorem elaborate_fits (id : String) (D : SoftDoc) (env : Json) (documentHash : 
   cases overlaps <;> cases cycles <;>
     simp only [Option.toList, List.map_cons, List.map_nil, List.append_nil] <;>
     unfold VE.Route.Wire.ok regenerated regeneratedCore bgEntry <;> fits
-  all_goals (try { exfalso; rename_i x hx h; have := softLabelled_nonempty D x hx; simp_all })
+  all_goals (try { exfalso; rename_i x hx h; have := softLabelledIn_nonempty D _ _ x hx; simp_all })
 
 /-- A pair's status and detail: a detail exactly beside a weighing point or UNKNOWN. -/
 def Classified (r : PairStatus × String) : Prop :=

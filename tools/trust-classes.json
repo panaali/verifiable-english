@@ -4800,7 +4800,7 @@
     "VE.Readings.instDecidableNoSep"
    ]
   },
-  "VE/Readings/Layers.lean": {
+  "VE/SoftNorms/Once.lean": {
    "G[V]": [
     "VE.Norms.Layers",
     "VE.Norms.conflictIn",
@@ -4808,14 +4808,25 @@
     "VE.Norms.expAt",
     "VE.Norms.expEntries",
     "VE.Norms.expStep",
+    {
+     "name": "VE.Norms.inFragmentIn",
+     "tied": [
+      "VE.Norms.inFragmentIn_eq"
+     ]
+    },
     "VE.Norms.layersOf",
     "VE.Norms.outcomeBaseIn",
     "VE.Norms.pairConflictIn",
     "VE.Norms.substIn",
     "VE.Norms.targetsIn",
-    "VE.Rights.validateRightsOnce",
     "VE.SoftNorms.checkSoftOnce",
     "VE.SoftNorms.cohPremiseIn",
+    {
+     "name": "VE.SoftNorms.inFragmentOnce",
+     "tied": [
+      "VE.SoftNorms.inFragmentOnce_eq"
+     ]
+    },
     "VE.SoftNorms.selectsOn",
     "VE.SoftNorms.softPremisesIn",
     "VE.SoftNorms.softSemanticCheckOnce",
@@ -5621,6 +5632,9 @@
     "VE.Rights.Wire.canonicalRaw",
     "VE.Rights.Wire.canonicalUnit",
     "VE.Rights.Wire.rightsDocumentHash"
+   ],
+   "G[V]": [
+    "VE.Rights.validateRightsOnce"
    ]
   },
   "VE/Risk/Admission.lean": {
@@ -7396,6 +7410,12 @@
     "VE.SoftNorms.Wire.regeneratedCore",
     "VE.SoftNorms.Wire.softKeys",
     "VE.SoftNorms.Wire.softLabelled",
+    {
+     "name": "VE.SoftNorms.Wire.softLabelledIn",
+     "tied": [
+      "VE.SoftNorms.Wire.softLabelledIn_eq"
+     ]
+    },
     "VE.SoftNorms.Wire.undeclaredTies",
     "VE.SoftNorms.Wire.w1Keys"
    ]

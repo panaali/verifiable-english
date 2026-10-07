@@ -51,7 +51,7 @@ theorem elaborate_fits (id : String) (D : RightsDoc) (env : Json) :
   fits
   all_goals try first
     | exact (labelled_contra (limLabels_nonempty D) ‹_› ‹_›).elim
-    | exact (labelled_contra (SoftNorms.softLabelled_nonempty _) ‹_› ‹_›).elim
+    | exact (labelled_contra (SoftNorms.softLabelledIn_nonempty _ _ _) ‹_› ‹_›).elim
 
 theorem projections_fits (id : String) (src : RightsSource) (j : Json) :
     OkP (fun l => Fits req (skel% "rights.json#/$defs/projections") (VE.Route.Wire.ok id l)) (projectionsResult src j) := by
