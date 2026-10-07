@@ -161,3 +161,7 @@ The historical gate above describes its actual earlier run. The final-HEAD gate 
 report commit completes the commit list as the `self` entry, and the report test checks that list against Git.
 The final gate runs `lake build`, `python3 lean/audit.py`, and the full pytest suite in the foreground on that
 exact committed HEAD.
+
+The first full pytest attempt exposed stale generated bookkeeping: the assurance table, the gate's collected
+test IDs, and a one-space separator in the frozen Lean source inventory. The generated table and collection
+were refreshed, the separator restored, and all five directly affected tests passed before the final gate.
