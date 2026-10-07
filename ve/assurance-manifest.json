@@ -52,12 +52,19 @@
     "ve/natural.py:render_natural_sentence": "display only: selects an English wording whose one-reading audit passes",
     "ve/printer.py:natural_document": "display only: retries with a different wording and re-raises when that fails too",
     "ve/search.py:_models_with_terminal_error": "buffers a terminal model-stream error for every scoped reader, which re-raises the original error before reporting a verdict",
-    "ve/softnorms_contract.py:public_rejection": "diagnosis runs only after the legacy soft validator rejects; a diagnosis failure returns the same error, leaving its verdict, code and original text intact",
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome",
-    "ve/backends/dispatch.py:_shadow": "shadow authority only (execute and shadowed): the Python result is returned (a Python exception is re-raised unchanged); a candidate backend exception, CheckerUnavailable included, is only recorded as a shadow difference and never becomes the returned verdict"
+    "ve/backends/dispatch.py:_shadow": "shadow authority only (execute and shadowed): the Python result is returned (a Python exception is re-raised unchanged); a candidate backend exception, CheckerUnavailable included, is only recorded as a shadow difference and never becomes the returned verdict",
+    "ve/readings.py:_warm_alone_rights": "Wraps the assembly of the warm-up's unit lists only (no Lean call); malformed reading sets skip the warm-up and the checks that follow raise in order; never a result.",
+    "ve/readings_s1.py:Decoded._warm_rules": "CheckerUnavailable is re-raised first; a side that cannot be assembled is left out of the warm-up and raises when it is read; never a result.",
+    "ve/softnorms.py:SoftEnvironment.__init__": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors.",
+    "ve/softnorms.py:SoftNormDocument.__init__": "A deferred document whose rules Python cannot hold asks Lean at once (`_elaborate`), so Lean's diagnostic, or CheckerUnavailable, is raised as eager construction raises it; nothing is built from the failure.",
+    "ve/softnorms.py:SoftNormDocument._elaborate": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors.",
+    "ve/softnorms.py:batch_rule": "After Lean accepts the batched quoted rule, Python AST construction failures are operational CheckerUnavailable errors.",
+    "ve/softnorms.py:decode_rule": "After Lean accepts the quoted rule, Python AST construction failures are operational CheckerUnavailable errors.",
+    "ve/softnorms.py:load_soft_document": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors."
   },
   "lean_decoders": {
-    "total_lines": 22452,
+    "total_lines": 22516,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -635,7 +642,7 @@
       {
         "file": "lean/VE/Rights/Wire.lean",
         "lines": 696,
-        "sha256": "858495e911e81693547aba6fea1bb0cb3cceedcb23c9620380316b7b61389b4a",
+        "sha256": "753feb56dae0d875a63d8059e8a9fc7947a7fc0ab24793067fd4503ab7d89d40",
         "ranges": [
           [
             1,
@@ -971,7 +978,7 @@
       {
         "file": "lean/VE/SoftNorms/Admission.lean",
         "lines": 332,
-        "sha256": "65c5511e845dca854ad374851393cb945aad630981434c77e0bd1a0db2ae1a8c",
+        "sha256": "5f867e8a26a78cf4b0a1aba6716354a32d9c609b0ed45d94311143e5a5e4d82b",
         "ranges": [
           [
             1,
@@ -986,12 +993,12 @@
       },
       {
         "file": "lean/VE/SoftNorms/Phases.lean",
-        "lines": 362,
-        "sha256": "a19fb700f52c52564a1516fe74a1e6a0b06fa779ef4bd33470b1756b88c711d6",
+        "lines": 369,
+        "sha256": "4d71a7a96261f51f3129c25a4ef3a0d45e405aff8df03521825eda52fe2c20ce",
         "ranges": [
           [
             1,
-            362
+            369
           ]
         ],
         "declarations": [
@@ -1004,12 +1011,12 @@
       },
       {
         "file": "lean/VE/SoftNorms/Wire.lean",
-        "lines": 461,
-        "sha256": "0669c3cb696602de5b74730259a7c4ec34181af76bd0c7e88f0a3f4ef4b01bac",
+        "lines": 518,
+        "sha256": "4a597aed178e9f9cc039247e654bc0ed607f3bad8a46396094e6dbf7b0fc9a0c",
         "ranges": [
           [
             1,
-            461
+            518
           ]
         ],
         "declarations": [

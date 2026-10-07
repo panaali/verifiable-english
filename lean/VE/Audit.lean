@@ -3409,6 +3409,8 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.SoftNorms.checkSoftOnce_eq
 #print axioms VE.SoftNorms.softSemanticCheckOnce_eq
 #print axioms VE.SoftNorms.validateSoftOnce_eq
+#print axioms VE.SoftNorms.cohPremiseIn_eq
+#print axioms VE.SoftNorms.Wire.softLabelledIn_eq
 #print axioms VE.Rights.validateRightsOnce_eq
 #print axioms VE.SoftNorms.WellFormedSoftOnce_eq
 #print axioms VE.SoftNorms.checkSoft_eq_once

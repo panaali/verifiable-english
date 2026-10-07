@@ -28521,6 +28521,12 @@ theorem VE.SoftNorms.Wire.replaySoftEntailment_decodes
       VE.SoftNorms.Wire.decodeSoftSource (j.getObjValD "environment") (j.getObjValD "norms") = Except.ok r.src
   -- uses VE.SoftNorms.Wire.SoftEntailmentReplay.src@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftEntailmentReplay@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.replaySoftEntailment@VE.SoftNorms.Wire
   -- expr 2269965371
+theorem VE.SoftNorms.Wire.softLabelledIn_eq
+  ∀ (D : VE.SoftNorms.SoftDoc),
+    VE.SoftNorms.Wire.softLabelledIn D (VE.SoftNorms.soften D) (VE.Norms.layersOf (VE.SoftNorms.soften D)) =
+      VE.SoftNorms.Wire.softLabelled D
+  -- uses VE.Formula@VE.Syntax VE.Norms.layersOf@VE.Norms.LayersOnce VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.Wire.softLabelled@VE.SoftNorms.Wire VE.SoftNorms.Wire.softLabelledIn@VE.SoftNorms.Wire VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 3880218568
 theorem VE.SoftNorms.Wire.soft_wire_acceptance
   ∀ (j : Lean.Json) (r : VE.SoftNorms.Wire.SoftEntailmentReplay),
     VE.SoftNorms.Wire.replaySoftEntailment j = Except.ok r →
@@ -28693,6 +28699,12 @@ theorem VE.SoftNorms.circ_defaultDecides
             N.sign = sign ∧ VE.Formula.denote B ρ (VE.SoftNorms.circ D (VE.SoftNorms.selects' D N))
   -- uses VE.Formula.denote@VE.Semantics VE.Norms.Node.sign@VE.Norms.Tree VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.circ@VE.SoftNorms.Semantics VE.SoftNorms.defaultDecidesF@VE.SoftNorms.Soften VE.SoftNorms.rulesOn@VE.SoftNorms.Tree VE.SoftNorms.selects'@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 2801847928
+theorem VE.SoftNorms.cohPremiseIn_eq
+  ∀ (D : VE.SoftNorms.SoftDoc) (M N : VE.SoftNorms.SoftNode),
+    VE.SoftNorms.cohPremiseIn D (VE.SoftNorms.soften D) (VE.Norms.layersOf (VE.SoftNorms.soften D)) M N =
+      VE.SoftNorms.cohPremise D M N
+  -- uses VE.Formula@VE.Syntax VE.Norms.layersOf@VE.Norms.LayersOnce VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.cohPremise@VE.SoftNorms.Soften VE.SoftNorms.cohPremiseIn@VE.SoftNorms.Once VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 1296876868
 theorem VE.SoftNorms.coh_canon
   ∀ {D : VE.SoftNorms.SoftDoc},
     VE.SoftNorms.SoftValid D →

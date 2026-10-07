@@ -78,10 +78,6 @@ EXCEPTIONS: dict[tuple[str, str, str, str], str] = {
     ("ve.norm_defaults", "UnspecifiedDocument._check_ast", "ve.ast", "_Checker"):
         SURFACE + " (checks author guards and generated fill guards; NormDefaults.Wire re-decodes them in Lean)",
     ("ve.norm_english", "_parse_guard", "ve.ast", "_Checker"): SURFACE,
-    ("ve.soft_route", "_open_data", "ve.ast", "_Checker"):
-        SURFACE + " (soft norms are a Lean-only route; soft_route.check_regenerated compares Lean's regeneration)",
-    ("ve.softnorms", "_rule_references", "ve.ast", "_Checker"): SURFACE + " (soft norms: Lean-only route)",
-    ("ve.softnorms", "_within_limits", "ve.ast", "_Checker"): SURFACE + " (soft norms: Lean-only route)",
     ("ve.speech_english", "_body", "ve.ast", "_Checker"):
         SURFACE + " (English E3 remains the parser owner; the speech-source route checks its structured result)",
     ("ve.norms_contract", "typing_failure", "ve.ast", "_Checker"): DIAGNOSTIC,
