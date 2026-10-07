@@ -43,13 +43,25 @@ def main() -> None:
     parser.add_argument("--base", required=True, type=Path)
     parser.add_argument("--out", required=True, type=Path)
     parser.add_argument("--jobs", type=int, default=6)
+    parser.add_argument("--scratch", type=Path, help="directory for per-run reports")
+    parser.add_argument("--reuse", action="store_true", help="reuse complete reports in --scratch")
     args = parser.parse_args()
+    if args.reuse and args.scratch is None:
+        parser.error("--reuse requires --scratch")
     runs = [["--ci"]] + [["--deep", "1", "--seed", seed] for seed in SEEDS]
-    scratch = Path(tempfile.mkdtemp(prefix="difffuzz-ab-"))
+    scratch = args.scratch.resolve() if args.scratch else Path(tempfile.mkdtemp(prefix="difffuzz-ab-"))
+    scratch.mkdir(parents=True, exist_ok=True)
     jobs = [(side, root, run) for run in runs for side, root in (("base", args.base.resolve()), ("head", HEAD))]
+    def run_job(job):
+        report = scratch / f"{job[0]}-{'-'.join(job[2])}.json"
+        if args.reuse and report.exists():
+            try:
+                return json.loads(report.read_text())
+            except json.JSONDecodeError:
+                report.unlink()
+        return _run(job[1], job[2], report)
     with ThreadPoolExecutor(args.jobs) as pool:
-        reports = list(pool.map(lambda job: _run(job[1], job[2], scratch / f"{job[0]}-{'-'.join(job[2])}.json"),
-                                jobs))
+        reports = list(pool.map(run_job, jobs))
     rows, ok = [], True
     for index, run in enumerate(runs):
         base, head = _summary(reports[2 * index]), _summary(reports[2 * index + 1])

@@ -86,6 +86,7 @@ module VE.Attribution.Conservative
 module VE.Attribution.Content
 module VE.Attribution.Elaborate
 module VE.Attribution.Facts
+module VE.Attribution.Preflight
 module VE.Attribution.Route
 module VE.Attribution.Run
 module VE.Attribution.Scoped
