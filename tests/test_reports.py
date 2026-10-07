@@ -8,6 +8,7 @@ from ve.environment import Environment
 from ve.errors import UnsupportedProfile, VEError
 from ve.profiles import LANGUAGE, SPEC_REVISION
 from ve.reports import ReportsDocument
+from ve.reports_route import run_case
 from ve.report_english import render_report_unit, parse_rendered_report
 
 
@@ -101,6 +102,15 @@ def test_literal_and_paraphrase_have_distinct_keys():
     assert doc.premises[0][1] != doc.premises[1][1]
 
 
+def test_meaning_id_relay_uses_lean_content_identity():
+    node = report()
+    doc = ReportsDocument(environment(), contexts(), [], [unit(node)])
+    direct = run_case("reports-content", environment().to_dict(),
+                      {"units": [unit(node)], "contexts": contexts(), "assessments": [],
+                       "bridges": [], "scoped": [], "open_terms": [], "choices": []}, content=node)
+    assert doc.meaning_id(node) == direct["meaning_id"]
+
+
 def test_bound_review_wording_rejects_changed_context_and_text():
     doc = ReportsDocument(environment(), contexts(), [], [unit(report())])
     rendered = render_report_unit(doc, "u1")
@@ -176,6 +186,9 @@ def test_w2_assessment_graph_stays_open_and_is_admitted(tmp_path):
     result = check_document(path)
     assert result["status"] == "OPEN" and result["admission"]["admitted"] is True
     assert result["coverage"]["residual"]["open_terms"] == 1
+    text = run_case("reports-status", env, {key: metadata[key] for key in
+                     ("units", "contexts", "assessments", "graph")})["status_text"]
+    assert any(line.startswith("ASSESSMENT u1: OPEN; may per assessment a1") for line in text)
 
 
 def test_w2_nested_bridge_needs_a_record(tmp_path):
@@ -203,6 +216,14 @@ def test_w2_nested_bridge_needs_a_record(tmp_path):
     assert residual["bridges_nested"] == 1 and residual["bridge_leaves"] == 0
     assert result["coverage"]["residual"]["reports"] == 1  # the says premise itself
     assert result["coverage"]["residual_total"] == 2
+    status_text = run_case("reports-status", env, {key: metadata[key] for key in
+                      ("units", "contexts", "bridges", "graph")})["status_text"]
+    assert any(line.startswith("BRIDGE bridge:accepts_at(alice,u1,1):") for line in status_text)
+    wrong_holder = json.loads(json.dumps(metadata))
+    wrong_holder["graph"]["nodes"][0]["label"] = "bridge:accepts_at(article,u1,1)"
+    path.write_text("---\n" + json.dumps(wrong_holder) + "\n---\n" + source)
+    with pytest.raises(VEError, match="BridgeHolder: u1, 1"):
+        check_document(path)
     root = dict(metadata, units=[dict(metadata["units"][0], content=inner,
                                       kind=["attributed", "alice", "believes", "asserted"])],
                 bridges=[], graph={"root": "B", "nodes": [{"name": "B", "label": "bridge:accepts(alice,u1)",
@@ -213,7 +234,7 @@ def test_w2_nested_bridge_needs_a_record(tmp_path):
     assert result["coverage"]["residual"]["bridge_leaves"] == 1 and result["coverage"]["residual"]["bridges_nested"] == 0
     del metadata["bridges"]
     path.write_text("---\n" + json.dumps(metadata) + "\n---\n" + source)
-    with pytest.raises(VEError):
+    with pytest.raises(VEError, match="MissingBridgeRecord: u1, 1"):
         check_document(path)
 
 

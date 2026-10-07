@@ -1,0 +1,13 @@
+M1 identity: exit=1;  ============================
+FAILED tests/test_speech_source_switch.py::test_public_speech_projection_matches_frozen[polar-metadata0-Is atlas reviewed?\n]
+1 failed, 7 deselected in 2.19s
+
+
+M2 certified answers: exit=1;  ============================
+FAILED tests/test_speech_source_switch.py::test_public_speech_projection_matches_frozen[certified-metadata6-Atlas is reviewed.\nTom is a cat.\nIs atlas reviewed?\nDoes it follow from these premises that tom is a cat?\nProve that tom is a cat using these premises.\nBeacon is reviewed.\n]
+1 failed, 7 deselected in 1.96s
+
+
+M3 English fences: exit=1;  ============================
+FAILED tests/test_speech_source_switch.py::test_fenced_english_is_checked_after_resolution
+1 failed, 7 deselected in 1.17s

@@ -26,7 +26,8 @@
                   "when": {"allOf": [{"$ref": "#/$defs/kind/alt-followable"}, {"required": ["witness"]}]}
                 },
                 {"then": {"$ref": "#/$defs/followable"}, "when": {"$ref": "#/$defs/kind/alt-followable"}},
-                {"then": {"$ref": "#/$defs/certificate"}, "when": {"$ref": "#/$defs/kind/alt-certificate"}}
+                {"then": {"$ref": "#/$defs/certificate"}, "when": {"$ref": "#/$defs/kind/alt-certificate"}},
+                {"then": {"$ref": "#/$defs/environment"}, "when": {"$ref": "#/$defs/kind/alt-environment"}}
               ]
             }
           ]
@@ -166,14 +167,193 @@
       "required": ["id", "status", "verdict", "target"],
       "type": "object"
     },
+    "coverage": {
+      "$comment": "Alternatives.Wire.coverage: accepted unit cells and their Lean-owned residual fold.",
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "x-count-where": {
+            "array": "/alternatives/alternatives_declared",
+            "equals": "/residual/alternatives_declared",
+            "where": true
+          }
+        },
+        {
+          "x-count-where": {
+            "array": "/alternatives/counterfactual_leaves",
+            "equals": "/residual/counterfactual_leaves",
+            "where": true
+          }
+        },
+        {
+          "x-count-where": {"array": "/alternatives/assumed_harm_free", "equals": "/residual/assumed_harm_free", "where": true}
+        },
+        {
+          "x-count-where": {
+            "array": "/alternatives/proximate_judgments",
+            "equals": "/residual/proximate_judgments",
+            "where": true
+          }
+        },
+        {
+          "x-count-where": {
+            "array": "/alternatives/unmapped_obligations",
+            "equals": "/residual/unmapped_obligations",
+            "where": true
+          }
+        },
+        {"x-count-where": {"array": "/alternatives/dilemmas", "equals": "/residual/dilemmas", "where": true}},
+        {
+          "x-count-where": {"array": "/alternatives/narrowings", "equals": "/residual/narrowings", "where": true}
+        },
+        {
+          "x-references": {"array": "/alternatives/alternatives_declared", "field": "unit", "in": "/coverage_units/*/id"}
+        },
+        {
+          "x-references": {"array": "/alternatives/counterfactual_leaves", "field": "unit", "in": "/coverage_units/*/id"}
+        },
+        {
+          "x-references": {"array": "/alternatives/proximate_judgments", "field": "unit", "in": "/coverage_units/*/id"}
+        },
+        {"x-count-presence": {"equals": "/residual/table_complete", "value": "/alternatives/table_complete"}}
+      ],
+      "properties": {
+        "alternatives": {
+          "additionalProperties": false,
+          "properties": {
+            "alternatives_declared": {
+              "items": {
+                "$comment": "Alternatives.Wire.coverage: an asserted available(action, chooser) leaf.",
+                "additionalProperties": false,
+                "properties": {
+                  "action": {"type": "string"},
+                  "chooser": {"type": "string"},
+                  "support": {"type": "string"},
+                  "unit": {"type": "string"}
+                },
+                "required": ["action", "chooser", "unit", "support"],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "assumed_harm_free": {
+              "items": {
+                "$comment": "Alternatives.Wire.coverage: an outcome assumed by the complete table.",
+                "additionalProperties": false,
+                "properties": {
+                  "action": {"type": "string"},
+                  "decider": {"type": "string"},
+                  "harm": {"type": "string"},
+                  "premise": {"const": "alternatives:table_complete"}
+                },
+                "required": ["action", "harm", "decider", "premise"],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "counterfactual_leaves": {
+              "items": {
+                "$comment": "Alternatives.Wire.coverage: an asserted leads_to(action, harm) leaf.",
+                "additionalProperties": false,
+                "properties": {
+                  "action": {"type": "string"},
+                  "decider": {"type": "string"},
+                  "harm": {"type": "string"},
+                  "leads_to": {"type": "boolean"},
+                  "support": {"type": "string"},
+                  "unit": {"type": "string"}
+                },
+                "required": ["action", "harm", "leads_to", "decider", "unit", "support"],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "dilemmas": {"maxItems": 0, "type": "array"},
+            "narrowings": {
+              "else": {"maxItems": 0},
+              "if": {"x-case": {"required": ["narrowings"]}},
+              "then": {"x-equals": "/narrowings"},
+              "type": "array"
+            },
+            "proximate_judgments": {
+              "items": {
+                "$comment": "Alternatives.Wire.coverage: an asserted proximate(action, harm) leaf.",
+                "additionalProperties": false,
+                "properties": {
+                  "action": {"type": "string"},
+                  "decider": {"type": "string"},
+                  "harm": {"type": "string"},
+                  "support": {"type": "string"},
+                  "unit": {"type": "string"}
+                },
+                "required": ["action", "harm", "decider", "unit", "support"],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "table_complete": {
+              "anyOf": [
+                {"type": "null"},
+                {
+                  "additionalProperties": false,
+                  "properties": {"decider": {"type": "string"}, "premise": {"const": "alternatives:table_complete"}},
+                  "required": ["decider", "premise"],
+                  "type": "object"
+                }
+              ]
+            },
+            "unmapped_obligations": {"$ref": "common.json#/$defs/strings"}
+          },
+          "required": [
+            "alternatives_declared",
+            "counterfactual_leaves",
+            "assumed_harm_free",
+            "table_complete",
+            "proximate_judgments",
+            "unmapped_obligations",
+            "dilemmas",
+            "narrowings"
+          ],
+          "type": "object"
+        },
+        "residual": {
+          "additionalProperties": false,
+          "properties": {
+            "alternatives_declared": {"$ref": "common.json#/$defs/nat"},
+            "assumed_harm_free": {"$ref": "common.json#/$defs/nat"},
+            "counterfactual_leaves": {"$ref": "common.json#/$defs/nat"},
+            "dilemmas": {"$ref": "common.json#/$defs/nat"},
+            "narrowings": {"$ref": "common.json#/$defs/nat"},
+            "proximate_judgments": {"$ref": "common.json#/$defs/nat"},
+            "table_complete": {"$ref": "common.json#/$defs/nat"},
+            "unmapped_obligations": {"$ref": "common.json#/$defs/nat"}
+          },
+          "required": [
+            "alternatives_declared",
+            "counterfactual_leaves",
+            "assumed_harm_free",
+            "table_complete",
+            "proximate_judgments",
+            "unmapped_obligations",
+            "dilemmas",
+            "narrowings"
+          ],
+          "type": "object"
+        }
+      },
+      "required": ["alternatives", "residual"],
+      "type": "object"
+    },
     "elaborate": {
       "$comment": "Alternatives.Wire.regenerated: the legend, the inlined tree, the alternatives premises, the base premises, the followability formulas, the profile words' existential probes, the unmapped obligations, then Norms.Wire.regenerated of the inlined tree.",
       "additionalProperties": false,
+      "if": {"x-case": {"required": ["coverage_units"]}},
       "properties": {
         "alternatives": {"$ref": "#/$defs/regenerated/alternatives"},
         "background": {"$ref": "common.json#/$defs/norms_background"},
         "base_premises": {"$ref": "common.json#/$defs/labelled_list"},
         "conflict_targets": {"$ref": "common.json#/$defs/conflict_targets"},
+        "coverage": {"$ref": "#/$defs/coverage"},
         "followable": {"$ref": "#/$defs/regenerated/followable"},
         "fragment": {"type": "boolean"},
         "id": {"$ref": "common.json#/$defs/id_ok"},
@@ -211,6 +391,14 @@
         "conflict_targets",
         "fragment"
       ],
+      "then": {"required": ["coverage"]},
+      "type": "object"
+    },
+    "environment": {
+      "$comment": "Alternatives.Run.runCase alt-environment: the environment alone decodes.",
+      "additionalProperties": false,
+      "properties": {"id": {"$ref": "common.json#/$defs/id_ok"}, "status": {"const": "ok"}, "valid": {"const": true}},
+      "required": ["id", "status", "valid"],
       "type": "object"
     },
     "followable": {
@@ -275,6 +463,7 @@
       "alt-certificate": {"properties": {"kind": {"const": "alt-certificate"}}, "required": ["kind"], "type": "object"},
       "alt-conflict": {"properties": {"kind": {"const": "alt-conflict"}}, "required": ["kind"], "type": "object"},
       "alt-elaborate": {"properties": {"kind": {"const": "alt-elaborate"}}, "required": ["kind"], "type": "object"},
+      "alt-environment": {"properties": {"kind": {"const": "alt-environment"}}, "required": ["kind"], "type": "object"},
       "alt-followable": {"properties": {"kind": {"const": "alt-followable"}}, "required": ["kind"], "type": "object"},
       "alt-validate": {"properties": {"kind": {"const": "alt-validate"}}, "required": ["kind"], "type": "object"}
     },

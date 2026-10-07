@@ -111,6 +111,19 @@ def bridgeLeafB (D : ReportDoc) (w : VE.Route.Admission.WireNode) : Bool :=
      | .nested _ u n => D.bridges.any (fun b => b.target == ⟨u, n⟩)) &&
     (w.unit.isNone || w.unit == some l.path.unit)
 
+/-- The two bridge-specific diagnostics precede the generic graph rejection. -/
+def bridgeLeafDiagnostic (D : ReportDoc) (w : VE.Route.Admission.WireNode) : Option String :=
+  match parseBridge w.claim.label with
+  | none => none
+  | some l =>
+    if !(isAssessmentAt D l.path || holderAt D l.path == some l.agent) then
+      some s!"BridgeHolder: {l.path.unit}, {l.path.depth}"
+    else match l with
+      | .root .. => none
+      | .nested _ u n =>
+        if D.bridges.any (fun b => b.target == ⟨u, n⟩) then none
+        else some s!"MissingBridgeRecord: {u}, {n}"
+
 theorem bridgeLeafB_sound {D : ReportDoc} {w : VE.Route.Admission.WireNode} (h : bridgeLeafB D w = true) :
     BridgeAdmitted D w.claim ∧ (w.unit = none ∨ ∃ l, parseBridge w.claim.label = some l ∧ w.unit = some l.path.unit) := by
   unfold bridgeLeafB at h
@@ -244,6 +257,8 @@ def admissionReports (profiles : List String) (environment : Json) (j : Json) :
   let decoded ← (nodeArray.toList.map stripEnvelope).mapM (VE.Route.Admission.decodeNode (envReports D) false)
   VE.Route.Admission.checkBindings profiles (Wire.environmentReportsJson environment D) decoded
   let wires := decoded.map Prod.fst
+  let diagnosis := wires.findSome? (bridgeLeafDiagnostic D)
+  VE.Route.Admission.require diagnosis.isNone (diagnosis.getD "")
   admitNodes D wires
   let g : VE.Graph.ClaimGraph VE.Tableau.Certificate := ⟨wires.map WireNode.toNode, root⟩
   let r ← VE.Route.Admission.checkGraph (envReports D) g
@@ -286,6 +301,7 @@ theorem reports_admission_sound (profiles : List String) (environment : Json) (j
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, hout, h⟩ := bind_ok h
   obtain ⟨decoded, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, hadm, h⟩ := bind_ok h
   obtain ⟨r, hr, h⟩ := bind_ok h
