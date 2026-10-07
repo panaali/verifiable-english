@@ -8,11 +8,22 @@ identical. The 49 differences are all diagnostic **wording**, represented by
 16 exact before/after pairs in `DELTA.json`: the Lean answer carries its
 diagnostic code prefix, followed by the same message that Python supplied.
 There are zero order, verdict, identity, count, or availability changes and
-zero unlisted differences. All 294 pilot records are identical.
+zero unlisted differences in that corpus. All 294 pilot records are identical.
+
+The final review found two more wording pairs outside that recorded corpus:
+`reserved word 'no' cannot be a term` and `invalid binder name 'no'` gain
+their `SyntaxError: ` prefix on the Lean path. The latter includes malformed
+`for every service no@, (true).\n`, whose diagnostic span is the two bytes of
+`no`. Both pairs are listed in `DELTA.json`; the reserved-word parity regression
+checks code, message, and span across every reserved word. A present malformed
+`max_steps` in certificate replay now raises `InvalidInput: max_steps must be a
+nonnegative integer` instead of silently using 10,000. This behavior change was
+also outside the recorded A/B corpus and has typed-input regressions.
 
 The DRI's 2026-10-04 answer 3 to the Lean-first plan signs the policy for this
 wording block: Lean texts are canonical, and Python's better messages move into
-Lean. The block contains precisely that transfer. Exact pair review remains a
+Lean. The block contains that transfer, including the two pairs found in final
+review. Exact pair review remains a
 HUMAN item for the DRI; this document does not claim a new DRI signature.
 
 The full A/B comparison is in [`evidence/corpus-ab.json`](evidence/corpus-ab.json).
