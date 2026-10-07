@@ -122,10 +122,34 @@ def _right_situation(env, content, wire, unit_ids=()):
     return model.model_id, (tuple(outcomes), tuple(sorted(selected)))
 
 
+def _s1_bearing(env, readings):
+    return "readings@1" in env.profiles and any(
+        type(r) is dict and s1_content_kind(r.get("content")) in S1_CONTENT_KINDS for r in readings)
+
+
+def _warm_alone_rights(env, values, unit_ids):
+    """The line rules of every right candidate `validate_reading_sets` checks alone, asked of Lean in one
+    request per source rather than one per candidate (`RightsDocument.warm_rules`, which raises no diagnostic)."""
+    from .rights import RightsDocument
+    try:
+        documents = [[{"source_units": sorted(unit_ids)}, reading["content"]]
+                     for item in values if type(item) is dict and type(item.get("readings")) is list
+                     for reading in item["readings"] if type(reading) is dict
+                     and type(reading.get("content")) is dict and set(reading["content"]) == {"right"}
+                     and not (_s1_bearing(env, item["readings"])
+                              and s1_content_kind(reading["content"]) in S1_CONTENT_KINDS)]
+    except Exception:  # noqa: BLE001  (the checks below raise it in order)
+        return
+    if documents:
+        RightsDocument.warm_rules(env, documents)
+
+
 def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None,
                           lean_replay=False):
     if type(values) is not list:
         raise VEError("reading_sets must be a list")
+    if "rights@0" in env.profiles:
+        _warm_alone_rights(env, values, unit_ids)
     rule_results = {}
     if "soft-norms@0" in env.profiles and "readings@1" in env.profiles:
         from .softnorms import check_rule_batch
@@ -166,9 +190,7 @@ def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None
         readings = item["readings"]
         if type(readings) is not list or not 1 <= len(readings) <= 64:
             raise VEError("reading sets hold 1 to 64 readings")
-        s1_bearing = "readings@1" in env.profiles and any(
-            type(r) is dict and s1_content_kind(r.get("content")) in S1_CONTENT_KINDS
-            for r in readings)
+        s1_bearing = _s1_bearing(env, readings)
         if item["status"] == "authored" and (len(readings) != 1 or not token(item.get("signature"))):
             raise VEError("authored reading needs one signed choice")
         if item["status"] == "open" and "signature" in item:

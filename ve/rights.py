@@ -7,11 +7,13 @@ from __future__ import annotations
 
 from copy import deepcopy
 from dataclasses import replace
+import json
 import re
 
 from .ast import And, Atom, Binary, Bottom, Implies, Or, Top, Unary, Var, _Checker, _Decoder, _to_data
 from .environment import valid_identifier
-from .errors import DuplicateDeclaration, ResourceLimit, UnknownSymbol, UnsupportedProfile, VEError
+from .errors import (CheckerUnavailable, DuplicateDeclaration, ResourceLimit, UnknownSymbol,
+                     UnsupportedProfile, VEError)
 from .norms import Norm, _bind, _instantiate
 from .search import _used_predicates
 from .softnorms import SoftEnvironment, SoftNormDocument, batch_rule, check_rule_batch, decode_rule
@@ -206,9 +208,47 @@ def _line_shape(env, right, kind, rule, slot):
 
 
 class RightsDocument:
-    """Validate source units and regenerate E'', T'', and limitation premises."""
+    """Validate source units and regenerate E'', T'', and limitation premises.
+    `deferred`: the soft document is `SoftNormDocument`'s deferred container."""
 
-    def __init__(self, env: RightsEnvironment, units):
+    def __init__(self, env: RightsEnvironment, units, *, deferred=False):
+        self.deferred = deferred
+        entries, names = self._read(env, units)
+        self.instances = tuple(self._instances(entries, names))
+        self._correlate()
+
+    @classmethod
+    def warm_rules(cls, env, documents):
+        """Ask Lean about the quoted line rules of every document in `documents` (unit lists under `env`) in
+        one request per lower soft source; `soft_relay.check_rules` keeps the accepted rules, so building the
+        documents one by one sends no rule request (docs/lean-first/b6/DELTA.md, Latency). It builds nothing
+        and raises no diagnostic: a document that fails before its rule request, a rule Lean rejects and a
+        request Lean refuses are asked about again when the document is built, with that document's
+        diagnostic. An operational failure (`CheckerUnavailable`) is raised, as building would raise it."""
+        groups, built = {}, {}
+        for units in documents:
+            document = cls.__new__(cls)
+            document.deferred = True
+            try:
+                entries, names = document._read(env, units, built)
+                candidates, _ = document._line_rules(entries, names)
+            except CheckerUnavailable:
+                raise
+            except Exception:  # noqa: BLE001  (building the document raises it in order)
+                continue
+            # Documents with one lower source share one line environment (`built`).
+            contents = groups.setdefault(id(document.line_env), (document.line_env, {}))[1]
+            for candidate in candidates:
+                content = {"norm": candidate[8]}
+                contents.setdefault(json.dumps(content, sort_keys=True), content)
+        for line_env, contents in groups.values():
+            try:
+                check_rule_batch(line_env, list(contents.values()))
+            except VEError:
+                pass
+
+    def _read(self, env, units, built=None):
+        """The units' structure, limitations, citations and line environment, before any rule is asked about."""
         if not isinstance(env, RightsEnvironment):
             raise UnsupportedProfile("rights@0 is required")
         self.env = env
@@ -309,12 +349,21 @@ class RightsDocument:
         self.source_units = source_units or ()
         self._validate_limitations(names)
         self._validate_citations(entries)
-        self.line_env = self._line_environment(entries)
-        self.instances = tuple(self._instances(entries, names))
-        self._correlate()
+        self.line_env = self._line_environment(entries, built)
+        return entries, names
 
-    def _line_environment(self, entries):
-        """Declare source-key predicates before typing authored line guards."""
+    def _line_environment(self, entries, built=None):
+        """Declare source-key predicates before typing authored line guards. `built`: environments already
+        built, by source."""
+        source = self._line_source(entries)
+        if built is None:
+            return SoftEnvironment(source, generated=True)
+        key = json.dumps(source, sort_keys=True)
+        if key not in built:
+            built[key] = SoftEnvironment(source, generated=True)
+        return built[key]
+
+    def _line_source(self, entries):
         source = self.env.to_dict()
         source["profiles"].remove("rights@0")
         source["vocabulary"].pop("rights")
@@ -349,7 +398,7 @@ class RightsDocument:
             predicates[f"rights__cond__{index}"] = {
                 "arguments": list(self.env.predicates[act].arguments),
                 "description": f"condition {condition} of limitation {name} on {act}"}
-        return SoftEnvironment(source, generated=True)
+        return source
 
     def _instance_candidates(self, entries, names):
         fan = 0
@@ -400,7 +449,7 @@ class RightsDocument:
                     yield (right_name, right, kind, line, instance_kind, raw, bearer,
                            predicate, norm, fan_map)
 
-    def _instances(self, entries, names):
+    def _line_rules(self, entries, names):
         # Assemble the authored order without running post-rule rights checks. A
         # later structural fault is saved until all earlier Lean rule outcomes
         # and rights checks have been replayed in their original order.
@@ -411,6 +460,10 @@ class RightsDocument:
                 candidates.append(candidate)
         except VEError as error:
             pending = error
+        return candidates, pending
+
+    def _instances(self, entries, names):
+        candidates, pending = self._line_rules(entries, names)
         outcomes = check_rule_batch(self.line_env, ({"norm": c[8]} for c in candidates)) if candidates else []
         for (right_name, right, kind, line, instance_kind, raw, bearer, predicate,
              norm, fan_map), outcome in zip(candidates, outcomes, strict=True):
@@ -603,7 +656,7 @@ class RightsDocument:
                                 (), parents)
                 rules.append(decode_rule(env, {"norm": {**bar_rule.to_dict()["norm"], "hard": True}}))
         self.environment = env
-        self.soft_document = SoftNormDocument(env, [rule.to_dict() for rule in rules])
+        self.soft_document = SoftNormDocument(env, [rule.to_dict() for rule in rules], deferred=self.deferred)
         self.limitation_names = lim_names
         self.condition_names = cond_names
         self.bar_names = bar_names
@@ -618,9 +671,7 @@ class RightsDocument:
             label = f"rights:limitation:{name}:{act}:{condition['role']}:{condition_name}"
             premises.append((label, _bind(implication, env.predicates[act].arguments)))
         self.limitation_premises = tuple(premises)
-        object.__setattr__(self.soft_document.extended_env, "rights_premises",
-                           self.limitation_premises)
-        object.__setattr__(self.soft_document.extended_env, "rights_wordings", wordings)
+        self.soft_document.extend(rights_premises=self.limitation_premises, rights_wordings=wordings)
         self.wordings = wordings
 
 

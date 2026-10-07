@@ -212,10 +212,44 @@ class SoftenedNormDocument(NormDocument):
 
 
 class SoftNormDocument:
-    """Validated soft tree, its W1 elaboration, and regenerated base premises."""
-    def __init__(self, env: SoftEnvironment, units):
+    """Validated soft tree, its W1 elaboration, and regenerated base premises.
+
+    `deferred` (docs/lean-first/b6/DELTA.md, Latency): a container of a document that Lean checks
+    elsewhere, such as a readings candidate's chain document (`readings_s1.Side`, which Lean's
+    readings route checks as `sideWF`), holds only `env`, `rules` and `core` until a field Lean
+    supplies is first read. That read asks Lean for the document, as eager construction does, and
+    raises its diagnostic; nothing Lean supplies is ever read without Lean's answer. Readers that
+    need only the rules no longer cost one whole-document Lean request per candidate."""
+    def __init__(self, env: SoftEnvironment, units, *, deferred=False):
         from .backends.soft_relay import wire
         units = wire(units)
+        self._source = (env, units)
+        self._extended = {}
+        self._deferred = deferred
+        if deferred:
+            try:
+                self._init_rules(env, units)
+                return
+            except Exception:  # noqa: BLE001  (Lean's diagnostic for the source comes first)
+                self._deferred = False
+        self._elaborate()
+
+    def __getattr__(self, name):
+        # Reached only for an attribute the instance lacks: a field Lean supplies, on a deferred document.
+        if name.startswith("__") or not self.__dict__.get("_deferred"):
+            raise AttributeError(name)
+        self._elaborate()
+        return getattr(self, name)
+
+    def extend(self, **attributes):
+        """Set `attributes` on `extended_env`, now or once Lean's answer builds it."""
+        self._extended.update(attributes)
+        if not self._deferred:
+            for name, value in attributes.items():
+                object.__setattr__(self.extended_env, name, value)
+
+    def _elaborate(self):
+        env, units = self._source
         profiles = env.to_dict().get("profiles", ())
         row = check_soft_source(env.to_dict(), units,
                                 layers=frozenset(p for p in profiles
@@ -226,14 +260,20 @@ class SoftNormDocument:
             raise CheckerUnavailable(
                 f"CheckerUnavailable: Python could not construct Lean-accepted soft document: {exc}") from exc
         self.document_hash = row["document_hash"]
+        for name, value in self._extended.items():
+            object.__setattr__(self.extended_env, name, value)
+        self._deferred = False
 
-    def _init_soft(self, env: SoftEnvironment, units, row):
+    def _init_rules(self, env: SoftEnvironment, units):
         if not isinstance(env, SoftEnvironment):
             raise UnsupportedProfile('soft-norms@0 is required')
         self.env = env
         self.rules = tuple(_hydrate_rule(unit) for unit in units)
-        by_name = {rule.core.name: rule for rule in self.rules}
         self.core = NormDocument(env, [rule.core for rule in self.rules])
+
+    def _init_soft(self, env: SoftEnvironment, units, row):
+        self._init_rules(env, units)
+        by_name = {rule.core.name: rule for rule in self.rules}
         self.decisions = {item['name']: item['arguments'] for item in row['decisions']}
         self.collisions = tuple((by_name[item['pair'][0]], by_name[item['pair'][1]])
                                 for item in row['colliding_pairs'])
