@@ -20,13 +20,13 @@ def candidateJson (c : Candidate) : Json := Json.mkObj
 
 /-- Unit `i` of a text whose body starts at sentence `k`: its sentence, and the state after it (spec 4.1, as
 S2's `readingJson` gives it per reading); an open unit also has its English (`unresolvedText`). -/
-def unitJson (D : Dictionary) (k i : Nat) (u : SenseUnit) : Json := Json.mkObj
+def unitJson (D : Dictionary) (showText : Bool) (k i : Nat) (u : SenseUnit) : Json := Json.mkObj
   ([("sentence", toJson (k + i)), ("candidates", Json.arr (u.candidates.map candidateJson).toArray),
     ("unresolved", toJson u.unresolved), ("referents", toJson u.after.referents),
     ("binder_seen", .bool u.after.binderSeen)] ++
     match u.formula with
     | some (f, mark) => [("formula", f.encode), ("mark", .bool mark)]
-    | none => if u.candidates.isEmpty then [] else [("text", .str (unresolvedText D (k + i) u))])
+    | none => if !showText || u.candidates.isEmpty then [] else [("text", .str (unresolvedText D (k + i) u))])
 
 /-- `fenceUnits` on the wire: a unit index, or `"line"` for a fence that is a preamble line (the transport
 reads no JSON null). -/
@@ -94,7 +94,7 @@ def outcomeJson (c : VE.EnglishGrammar.Run.Case) (D : Dictionary) (count : Nat) 
   match out with
   | .ok units senses mixed unused P =>
     pure (Json.mkObj (common ++
-      [("units", Json.arr (units.mapIdx (unitJson D (count - units.length))).toArray),
+      [("units", Json.arr (units.mapIdx (unitJson D fences.isSome (count - units.length))).toArray),
        ("sense_map", Json.arr (senses.map occurrenceJson).toArray),
        ("mixed", toJson mixed), ("unused", toJson unused),
        ("environment", P.envJson)] ++
@@ -118,14 +118,35 @@ def decodeDefaults (j : Json) : Except String Assignment := do
 
 def has (j : Json) (k : String) : Bool := (j.getObjVal? k).toOption.isSome
 
+/-- The first unresolved fence without a reading set. Lean alone decides whether an open reading is admitted. -/
+def uncoveredFence (D : Dictionary) (count : Nat) (units : List SenseUnit)
+    (mapped : List (Option Nat)) (ids allowed : List String) : Option (String × String) := Id.run do
+  for (id, entry) in ids.zip mapped do
+    if !allowed.contains id then
+      if let some index := entry then
+        if let some unit := units[index]? then
+          if !unit.candidates.isEmpty then
+            return some (id, unresolvedText D (count - units.length + index) unit)
+  return none
+
 def readCase (j : Json) : Except String Json := do
+  let fenced := has j "fences"
   VE.Bridge.exactFields j (["id", "environment", "lexicon", "packs", "own", "budget",
-    if has j "fences" then "fences" else "source"] ++ (["overlay", "defaults"].filter (has j)))
+    if fenced then "fences" else "source"] ++
+    (if fenced then ["fence_ids", "reading_set_units"] else []) ++
+    (["overlay", "defaults"].filter (has j)))
   let id ← VE.Bridge.stringField j "id"
   let c ← VE.EnglishGrammar.Run.decodeCase j
   let D ← decodeDictionary j
   let text ← if has j "fences" then do pure (SenseText.fences (← VE.Bridge.strings (← j.getObjVal? "fences")))
     else do pure (SenseText.source (← VE.Bridge.stringField j "source"))
+  let ids ← if fenced then VE.Bridge.strings (← j.getObjVal? "fence_ids") else pure []
+  let allowed ← if fenced then VE.Bridge.strings (← j.getObjVal? "reading_set_units") else pure []
+  if fenced then
+    unless ids.length == (match text with | .fences fs => fs.length | _ => 0) &&
+        ids.all (!·.isEmpty) && ids.eraseDups.length == ids.length &&
+        allowed.eraseDups.length == allowed.length && allowed.all ids.contains do
+      throw "fence identities or reading-set units are malformed"
   let A ← if has j "defaults" then decodeDefaults (← j.getObjVal? "defaults") else pure ⟨[]⟩
   let budget ← VE.Senses.natOf (← j.getObjVal? "budget")
   let requestId ← VE.CertificateWire.digest "ve-senses-request-v1\n" j
@@ -134,6 +155,13 @@ def readCase (j : Json) : Except String Json := do
     | .ok (.ok (d, sents)), .fences fs => (sents.length, some (fenceUnits D budget d sents fs.length))
     | .ok (.ok (_, sents)), .source _ => (sents.length, none)
     | _, _ => (0, none)
+  if let .ok units _ _ _ _ := out then
+    if let some mapped := fences then
+      if let some (unit, message) := uncoveredFence D count units mapped ids allowed then
+        let result := Json.mkObj [("status", .str "rejected"), ("code", .str "Unresolved"),
+          ("unit", .str unit), ("text", .str message)]
+        return VE.Route.Wire.ok id [("result", Json.mkObj
+          [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)), ("reading", result)])]
   let result ← outcomeJson c D count fences out
   pure (VE.Route.Wire.ok id [("result", Json.mkObj
     [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)), ("reading", result)])])

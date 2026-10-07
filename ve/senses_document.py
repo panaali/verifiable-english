@@ -43,16 +43,19 @@ def _pack(entry, directory: Path) -> bytes:
 def read_senses(env: Environment, senses, fences: list[tuple[str, str]], directory: Path,
                 reading_set_units=frozenset()) -> SensesReading:
     """Lean's reading of `fences` (unit id and text, in unit order) under the front matter's `senses`. A
-    fence whose sentence has candidates is refused with Lean's text unless its unit has a reading set."""
+    fence whose sentence has candidates is admitted only when Lean finds its unit in the reading-set units."""
     from .backends.senses import read_fences
     if type(senses) is not dict or not set(senses) <= {"packs", "own", "defaults"} \
             or type(senses.get("packs", [])) is not list:
         raise VEError("InvalidInput: senses has packs, own and defaults only")
     packs = [_pack(entry, directory) for entry in senses.get("packs", [])]
     result = read_fences(env, [text for _, text in fences], packs, own=senses.get("own"),
-                         defaults=senses.get("defaults"))
+                         defaults=senses.get("defaults"), fence_ids=[uid for uid, _ in fences],
+                         reading_set_units=sorted(reading_set_units & {uid for uid, _ in fences}))
     reading = result["reading"]
     if reading["status"] not in ("one", "open"):
+        if reading.get("code") == "Unresolved":
+            raise VEError(reading["text"], diagnostic={"unit": reading["unit"], "code": reading["code"]})
         raise VEError(reading.get("text", reading["code"]), diagnostic=reading)
     formulas, unresolved, lines = {}, {}, set()
     for (uid, _), entry in zip(fences, reading["fences"], strict=True):
@@ -64,7 +67,4 @@ def read_senses(env: Environment, senses, fences: list[tuple[str, str]], directo
             formulas[uid] = unit["formula"]
         else:
             unresolved[uid] = unit["text"]
-    for uid, text in unresolved.items():
-        if uid not in reading_set_units:
-            raise VEError(text, diagnostic={"unit": uid, "code": reading["code"]})
     return SensesReading(Environment(reading["environment"]), formulas, unresolved, frozenset(lines), reading)

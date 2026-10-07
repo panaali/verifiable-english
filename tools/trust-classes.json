@@ -7444,6 +7444,7 @@
     "VE.Senses.Run.readCase",
     "VE.Senses.Run.runCaseReported",
     "VE.Senses.Run.s2Fields",
+    "VE.Senses.Run.uncoveredFence",
     "VE.Senses.Run.unitJson"
    ]
   },
