@@ -5,6 +5,14 @@ Batch RD-6a of [readings-defaults-PLAN.md](../../spec/readings-defaults-PLAN.md)
 at `167eb8ff`. Built by one Lean builder session on 2026-10-07; no model was called. Off the UDHR path: RD-6b needs
 it to run the superposed route under the completion.
 
+**Review-fix status.** The gate below is the historical run on `bc413880`, not the final batch gate. The
+review-fix commit adds `tools/batch_evidence.py`, which refuses a saved gate that is not on clean HEAD or is missing
+the complete suite, corpus A/B, or latency evidence. Its stale-HEAD and missing-evidence regressions are in
+`tests/test_batch_evidence.py`. Final evidence is attached to the final commit as `refs/notes/ve-rd6a-gate`; the
+note holds the gate result, corpus comparison, latency measurements and the verification output without changing
+the checked commit. The theorem statement still needs the targeted external re-review named below; a green code
+gate does not approve a changed theorem.
+
 Every number, commit and seeded bug below is checked against the saved evidence
 [gate-evidence.json](gate-evidence.json) by `tests/test_readings_defaults_rd6a_report.py`. That evidence was
 written from the gate's logs and from `git log main..<gated commit> --no-merges`, and the test reads no git.
