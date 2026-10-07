@@ -1,0 +1,11 @@
+{
+  "accepted_trees": 1000,
+  "seeds_examined": 1000,
+  "environment_matches": 1000,
+  "layer_matches": 1000,
+  "soft_background_matches": 1000,
+  "decision_matches": 1000,
+  "rejected_inputs": 4843,
+  "near_limit_accepted": 90,
+  "near_limit_rejected": 137
+}

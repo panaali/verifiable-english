@@ -1,0 +1,13 @@
+{
+  "seed": 20261004,
+  "base_new": 11,
+  "head_new": 11,
+  "same_signature_ids": true,
+  "added": [],
+  "removed": [],
+  "same_corpus": true,
+  "same_mutants": true,
+  "baseline_entries": 384,
+  "baseline_unreviewed": [],
+  "baseline_not_reproduced": []
+}

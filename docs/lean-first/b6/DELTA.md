@@ -1,6 +1,6 @@
-# Batch 6 delta and fix report (2026-10-06)
+# Batch 6 delta and fix report (2026-10-07)
 
-**Status: gate in progress; do not merge yet.** Local branch `lean-first/b6` is based on `9aaf918d`. Nothing was pushed. The producer schema regression corpus is `tests/data/route-cases.jsonl`, 292 cases after adding standalone and batched soft-rule answers.
+**Status: incomplete; do not merge.** Local branch `lean-first/b6` is based on `9aaf918d`. Nothing was pushed. The implementation is committed, but the full gate has one failing CI-fuzzer test, the large UDHR pilot exceeds the latency allowance, one eight-worker pilot timed out, and trusted Lean growth needs a DRI signature. The producer schema regression corpus has 292 cases, including standalone and batched soft-rule answers.
 
 ## Ownership and deletion ledger
 
@@ -13,7 +13,7 @@
 | Rust soft premises | `SoftNormDocument` passes Lean's bound background and pair formulas to Rust's search adapter. Rust remains an untrusted witness generator under the plan. |
 | Soft wire contract and generic interpreter | The former `ve/softnorms_contract.py` and `ve/wire_contract/engine.py` are under `conformance/` as test-only oracles, per DRI answer 7. The Python regeneration comparison is deleted. |
 
-Against `9aaf918d`, `ve/**/*.py` has **1,131 deleted and 244 added lines** (net −887 runtime Python lines). The 837 lines removed from the two contract modules remain in test-only `conformance/`; excluding those moves, 294 old runtime lines were deleted and 244 relay/container lines added. Lean `.lean` files have **247 added and 18 deleted lines** (net +229), including the response schema and encoder proof. These numbers come from `git diff --numstat 9aaf918d..HEAD` and will be refreshed at the final head.
+Against `9aaf918d`, `ve/**/*.py` has **1,970 deleted and 351 added lines** (net −1,619 runtime Python lines, counted with `git diff --numstat --no-renames`). The 837 lines removed from the two contract modules remain in test-only `conformance/`; excluding those moves, 1,133 old runtime lines were deleted and 351 relay/container lines added. Lean `.lean` files have **271 added and 21 deleted lines** (net +250), including the response schemas and encoder proofs.
 
 The relay caches only successful pure `soft-elaborate`, `soft-rule` and `soft-rules` answers through the existing bounded `decide_once` pool. Each caller receives a deep copy. The batch route validates several rules under one decoded source. An isolated large UDHR document still took 426.19 s wall / 425.72 s CPU against 58.90 s wall / 58.60 s CPU at the base; parsed JSON output was identical. This violates the latency allowance. The 822.53-second instrumented run logged 763 soft-elaborate, 253 soft-rules and 961 soft-rule calls, including cache hits; wall time spent inside those wrappers was 325.13, 225.39 and 176.82 seconds respectively under heavier load. The remaining distinct generated sources require repeated Lean checks.
 
@@ -21,18 +21,17 @@ The relay caches only successful pure `soft-elaborate`, `soft-rule` and `soft-ru
 
 | Check | Result |
 | --- | --- |
-| Lean build and response schemas | Full `lake build` passed (743 jobs); final `ve_service` rebuild passed (542 jobs). `tools/response_schemas.py --check`, frozen-source audit and relay lint passed. |
-| Focused tests | 459 of 460 selected tests passed; the sole manifest review-list omission was fixed and its test and the new batch-rule test then passed. Earlier 112 norm-default tests passed after moving the shared placeholder producer. |
-| A/B probe and conformance | 58,482 recorded results identical across base and head, zero differences (`/tmp/ve-b6-core-compare.json`). |
-| A/B readings and discourse | 7,487 recorded results identical, zero differences (`/tmp/ve-b6-rd-compare.json`). |
-| Soft-specific corpus | 1,000 accepted trees and 4,843 rejected inputs on both base and head; all 1,000 environment, layer, background and decision comparisons matched. The near-limit cohorts were 90 accepted and 137 rejected on each side. A final-head rerun is pending. |
-| Differential fuzzer CI sample | Zero new, zero unreviewed, zero missing baseline signatures (`/tmp/ve-b6-difffuzz-ci-final.json`). Fourteen date seeds at the final head are pending. |
-| Historical pilots | The base recorded 278 documents. Final-head recording is in progress. The first 52 head records had one 600-second wall timeout on a constitution S1 document under host load above 32 cores; the earlier head run of that document returned an identical result. All other first 52 records matched. |
-| Full offline gate on clean head | Pending. The previous completed run, before the fixes in `c60cb4ca`, had 11,011 passed and 65 failed; its failures drove the focused repairs above. |
-| Latency | The isolated UDHR translation completed with identical output in 38.99 s wall / 37.63 s CPU at the base and 150.37 s wall / 150.12 s CPU at the earlier head. The larger UDHR document completed with identical parsed JSON in 58.90 s wall / 58.60 s CPU at the base and 426.19 s wall / 425.72 s CPU at the current code head. Both exceed the plan's 120 s pilot wall budget and 20% CPU-growth allowance. |
-| Disk | 68 GiB free at the last check. |
+| Lean build and response schemas | Full `lake build` passed (743 jobs); the theorem audit covered 4,311 declarations in 408 source files. `tools/response_schemas.py --check`, frozen-source audit and relay lint passed. |
+| Focused tests | The first selected run had 459 passed and one manifest omission; the omission was fixed. All five failures from the first full gate then passed in a focused rerun. |
+| A/B probe, conformance, readings, discourse | **65,969 identical**, zero differences: 58,482 probe/conformance and 7,487 readings/discourse. See [core-readings-compare.json](evidence/core-readings-compare.json). |
+| Soft corpus | 1,000 accepted trees and 4,843 rejected inputs, with all 1,000 environment, layer, background and decision comparisons matching; 90 near-limit accepted and 137 rejected. See [soft-corpus.json](evidence/soft-corpus.json). |
+| Differential fuzzer | All 14 date seeds used the same base/head corpus and mutant counts, with **zero added or removed signature IDs**. The fixed CI seed has 11 unreviewed signatures on both base and head after the test-input corpus expanded; its tracked 384-entry baseline was unchanged. `test_ci_run` requires zero and fails. See [difffuzz-14-seeds.json](evidence/difffuzz-14-seeds.json) and [difffuzz-ci.json](evidence/difffuzz-ci.json). |
+| Historical pilots | 294 documents on each side; 293 identical, one **availability** difference: `pilot/udhr-20261003T0600Z:usecases/udhr-pilot/run-20261003T0600Z/translation.ve.md` returned at the base and hit the 600-second wall limit at the head under eight workers. The same source completed alone with identical parsed JSON in 426.19 s. See [pilots-compare.json](evidence/pilots-compare.json). |
+| Full offline gate on clean head | Commit `a6d896b5`, clean worktree: 11,078 passed, 7 skipped, **1 failed** (`tests/test_difffuzz.py::test_ci_run`), 1 deselected; Rust 50 passed. See [full-gate.json](evidence/full-gate.json). |
+| Latency | The isolated UDHR translation took 38.99 s wall / 37.63 s CPU at the base and 150.37 s wall / 150.12 s CPU at the earlier head. The larger UDHR document took 58.90 s wall / 58.60 s CPU at the base and 426.19 s wall / 425.72 s CPU at the final code head; parsed JSON matched. Both exceed the plan's 120 s pilot wall budget and 20% CPU-growth allowance. See [timings.json](evidence/timings.json). |
+| Disk | 60 GiB free at the final check. |
 
-The producer schema has closed witness-model fields (`complete`, `domains`, `constants`, `relations`); the route-row mutation test rejects dropped, emptied and retyped required fields. `lean/declarations.txt` was regenerated. The trust class table now covers every declaration, and the consolidation-plan ledger figures were updated mechanically. `trust_map.py --since 9aaf918d` still reports **145 additional trusted Lean lines** against zero signed allowance. The inherited whole-tree S/V budget drift exists on the base as well. Neither budget was silently signed or rebased.
+The producer schema has closed witness-model fields (`complete`, `domains`, `constants`, `relations`); the route-row mutation test rejects dropped, emptied and retyped required fields. `lean/declarations.txt` was regenerated. The trust class table now covers every declaration, and the consolidation-plan ledger figures were updated mechanically. `trust_map.py --since 9aaf918d` reports **164 additional verdict-bearing Lean lines** against zero signed allowance (`SoftNorms.Run` +64, the soft response schema +63, `SoftNorms.Wire` +30, `SoftNorms.Phases` +7). The inherited whole-tree S/V budget drift exists on the base as well. Neither budget was silently signed or rebased.
 
 ## Seeded bug checks
 
@@ -43,12 +42,12 @@ Each mutant was planted temporarily in changed code, made the named test fail, a
 3. Negated the Lean dependency condition for `DualGuardCycle`; `test_theta_dual_guard_cycle_on_t_prime` failed because the hint disappeared.
 4. Ignored `identity_environment` in the Lean soft document hash; `test_readings_identity_environment_is_bound` failed, then passed with the restored service binary and lock.
 
-The earlier incomplete report also recorded three removed mutants for residual count, document hash and diagnostic attachment. The new cache-isolation test passes; its mutant check is pending.
+The earlier incomplete report also recorded three removed mutants for residual count, document hash and diagnostic attachment. The new cache-isolation and batched-rule tests pass; the four mutants above satisfy the batch's three-behaviour requirement.
 
 ## Acceptance ownership
 
-- **AGENT:** Complete the final-head pilot A/B, 14 date-seed comparison, final soft-corpus run and full offline gate on a clean committed head. Record every output or availability difference and final gate counts from its JSON.
-- **HUMAN (DRI):** Review the 145-line trusted-code growth and any remaining latency or availability deltas. The plan requires a signature for the pilot CPU growth and each availability difference. No signature is claimed here.
+- **AGENT:** The implementation, deletion, A/B recording, 14-seed comparison, soft corpus and foreground full gate are complete. Resolve the fixed CI sample's 11 inherited disagreements without enlarging its baseline, then rerun the full gate.
+- **HUMAN (DRI):** Review the 164-line trusted-code growth, the latency breach and the one pilot availability difference. The plan requires a signature for the pilot CPU growth and each availability difference. No signature is claimed here.
 - **EXTERNAL:** No model call or external service was used. The plan's later operational soak remains outside batch 6.
 
-Checklist coverage: the generated response shape and mutation corpus cover items 1 and 4; the differential fuzzer covers item 2; the focused malformed-source and near-limit corpus covers item 5; Lean owns the three-valued soft status (6); the seeded mutants cover item 13; pinned binary and source hashes cover item 14; the bound readings identity test covers item 15; the route-case corpus and gate collection pin cover item 16; the statement dump and trust-map check cover item 17; the gate JSON and this report cover item 20; and the acceptance owners above cover item 21. Items 3, 7–12, 18 and 19 are unchanged concerns of other batches. Item 22 is pending the final clean-head gate and report commit.
+Checklist coverage: the generated response shape and mutation corpus cover items 1 and 4; the differential fuzzer exercises item 2 but its CI gate fails as recorded; the focused malformed-source and near-limit corpus covers item 5; Lean owns the three-valued soft status (6); the seeded mutants cover item 13; pinned binary and source hashes cover item 14; the bound readings identity test covers item 15; the route-case corpus and gate collection pin cover item 16; the statement dump and trust-map check cover item 17; the gate JSON and this report cover item 20; and the acceptance owners above cover item 21. Items 3, 7–12, 18 and 19 are unchanged concerns of other batches. Item 22 has a committed implementation and a full gate on a clean code head, but the gate failed as stated.
