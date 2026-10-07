@@ -1427,7 +1427,7 @@ predicate `asks(agent, user)`; obligations `avoid_required`, `help_required`, de
 | # | Instance | Expected |
 |---|---|---|
 | G5 | E10 and E11 | never both in one report; E11 only under the fallback of 4.4 (none in this draft) |
-| G6 | every sentence of section 2 rendered on M1 to M18 | no `ve__`, `rd-`, `soft__` or `rights__` substring; candidate rules named as written |
+| G6 | every sentence of section 2 rendered on M1 to M18 | no generated name beginning with `ve__` or `rd-`; `soft__` and `rights__` are hidden only while their owning profiles are active, and `unsaid__` and `unsaid--` only under `norm-defaults@0`; prefixes inside author names are shown; candidate rules named as written |
 | G9 | every sentence of section 2 | no rendered sentence contains "may not" |
 | N1 | E26 and E13 on M4's `φ` | the texts of 2.5; one derivation each |
 | N2 | E12 on M4's `φ′` | two lines, naming *must* and *should*; the countermodel's situation includes "suppose the decider decides the exception applies to a and u" and no fact stated for the decision |
