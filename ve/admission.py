@@ -442,6 +442,13 @@ def admit_document(environment, document) -> dict:
     from .backends.relay import decide
     from .backends.lean_service import CheckerUnavailable
 
+    if getattr(environment, "unit_schema", None) is not None or (
+            type(environment) is dict and "unit_schema" in environment):
+        # W6: the Lean quantity route admits every annotated statement before erasure,
+        # under every authority (Lean-first batch 9 deleted the Python copy).
+        env = environment if type(environment) is Environment else Environment(environment)
+        return _lean_quantity_admission(env, document)
+
     if authority_for("admission") == "python":
         return _admit_document_python(environment, document)
     from .softnorms import SoftEnvironment
@@ -461,8 +468,6 @@ def admit_document(environment, document) -> dict:
             # The alternatives route is Lean's (Lean-only operation); the Python
             # entry only transports the case to it.
             return _admit_document_python(env, document)
-        if env.unit_schema is not None:
-            return _lean_quantity_admission(env, document)
         row = decide("norms" if "norms@0" in env.profiles and (
             any(d.regulated is not None for d in env.predicates.values()) or
             (type(document) is dict and type(document.get("units")) is list and
@@ -480,10 +485,9 @@ def admit_document(environment, document) -> dict:
 def _lean_quantity_admission(env, document) -> dict:
     """W6 quantity admission by the Lean quantity route (service mode `quantity`, case kind
     `document`); a rejection raises Lean's diagnostic."""
-    from .backends import lean as backend
-    [row] = backend.run("admission", None,
-                        [{"id": "admission", "kind": "document", "environment": env.to_dict(),
-                          "document": document}], runner="ve_service", mode="quantity")
+    from .backends.relay import decide
+    [row] = decide("quantity", [{"id": "admission", "kind": "document",
+                                 "environment": env.to_dict(), "document": document}])
     return {key: row[key] for key in ("admitted", "report", "report_id", "kinds")}
 
 
@@ -498,10 +502,6 @@ def _admit_document_python(environment, document) -> dict:
         from .soft_route import admit_soft_document
         return admit_soft_document(environment, document)
     env = environment if type(environment) is Environment else Environment(environment)
-    if env.unit_schema is not None:
-        # W6: every statement is an annotated quantity, admitted before erasure.
-        from .quantity_admission import admit_quantity_document
-        return admit_quantity_document(env, document)
     if env.alternatives is not None:
         from .alternatives import run_case
         result = run_case({"id": "admission", "kind": "admission",

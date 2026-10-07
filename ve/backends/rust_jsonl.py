@@ -23,7 +23,7 @@ import time
 
 from ..errors import ResourceLimit
 from .diagnostics import require_ok
-from ..environment_wire import EncodedEnvironment, encoded_environment
+from ..environment_wire import EncodedEnvironment, encoded_environment, wire_checked
 from .lean_service import CheckerUnavailable, _decode_json, configured_seconds, executable_sha256
 from .service_schema import Compiler, Context, Invalid
 
@@ -282,6 +282,7 @@ def run(case: dict, *, executable: str | os.PathLike | None = None,
     record is killed. A selected Rust backend never falls back to Python. Without a
     `timeout`, the call waits `configured_timeout()` seconds.
     """
+    [case] = wire_checked([case])
     if timeout is None:
         timeout = configured_timeout()
     binary = Path(executable or os.environ.get("VE_RUST_JSONL") or DEFAULT_EXECUTABLE)

@@ -156,8 +156,8 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/NormDefaults/Wire.lean` | 383 | 383 | 1–383 | `c59e1151313d…` |
 | `lean/VE/Norms/Admission.lean` | 465 | 24 | 22–45 | `a57c5bf09a15…` |
 | `lean/VE/Norms/Flagged.lean` | 389 | 389 | 1–389 | `2921520480a4…` |
-| `lean/VE/Norms/Replay.lean` | 393 | 69 | 92–140, 272–291 | `dfc40bd4fb00…` |
-| `lean/VE/Norms/Wire.lean` | 331 | 306 | 25–330 | `56661ba08a3f…` |
+| `lean/VE/Norms/Replay.lean` | 404 | 69 | 103–151, 283–302 | `741968e0457a…` |
+| `lean/VE/Norms/Wire.lean` | 331 | 306 | 25–330 | `608bb613cc6a…` |
 | `lean/VE/Order/Wire.lean` | 292 | 217 | 24–233, 247–253 | `03f085f67a44…` |
 | `lean/VE/Readings/SupWire.lean` | 378 | 378 | 1–378 | `f1efaaba3d67…` |
 | `lean/VE/Readings/Wire.lean` | 988 | 988 | 1–988 | `311cfeb72316…` |
@@ -181,13 +181,13 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Service/Readings.lean` | 215 | 215 | 1–215 | `357a25dda81b…` |
 | `lean/VE/SoftNorms/Admission.lean` | 332 | 332 | 1–332 | `65c5511e845d…` |
 | `lean/VE/SoftNorms/Phases.lean` | 362 | 362 | 1–362 | `a19fb700f52c…` |
-| `lean/VE/SoftNorms/Wire.lean` | 460 | 460 | 1–460 | `4cc42cc7a7ca…` |
+| `lean/VE/SoftNorms/Wire.lean` | 461 | 461 | 1–461 | `0669c3cb6966…` |
 | `lean/VE/SpeechActs/Source/Admission/Run.lean` | 630 | 630 | 1–630 | `666d467b95bb…` |
 | `lean/VE/SpeechActs/Source/Run.lean` | 889 | 889 | 1–889 | `965cd295dcb4…` |
 | `lean/VE/SpeechActs/Wire.lean` | 993 | 993 | 1–993 | `fbe08d985f7f…` |
 | `lean/VE/Time/Document.lean` | 613 | 613 | 1–613 | `4407e998d007…` |
 | `lean/VE/Time/Wire.lean` | 843 | 843 | 1–843 | `43eff830ca8c…` |
-| **total** | | **22,002** | | |
+| **total** | | **22,003** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner

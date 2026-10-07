@@ -10965,6 +10965,10 @@ theorem VE.Norms.FlaggedSpec.wf_preds_congr
             ∀ (Γ : List String), VE.Formula.WellFormed E Γ a → VE.Formula.WellFormed E' Γ a
   -- uses VE.Environment.constants@VE.Syntax VE.Environment.predicates@VE.Syntax VE.Environment.sorts@VE.Syntax VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Norms.preds@VE.Norms.Tree
   -- expr 3673167134
+theorem VE.Norms.InFragmentIn_eq
+  ∀ (D : VE.Norms.Doc), VE.Norms.InFragmentIn D (VE.Norms.layersOf D) = VE.Norms.InFragment D
+  -- uses VE.Norms.Doc@VE.Norms.Tree VE.Norms.InFragment@VE.Norms.SmallModel VE.Norms.InFragmentIn@VE.Norms.LayersOnce VE.Norms.layersOf@VE.Norms.LayersOnce
+  -- expr 506851688
 theorem VE.Norms.Replay.baseModel_valid
   ∀ (ne : VE.Norms.Wire.NormsEnvironment) (D : VE.Norms.Doc),
     D.E = ne.rv.environment →
@@ -11094,6 +11098,10 @@ theorem VE.Norms.RunSound.valid_field
       Lean.Json.bool b
   -- uses VE.Route.Wire.ok@VE.Route.Wire
   -- expr 540553084
+theorem VE.Norms.WellFormedOnce_eq
+  ∀ (D : VE.Norms.Doc), VE.Norms.WellFormedOnce D = VE.Norms.WellFormed D
+  -- uses VE.Norms.Doc@VE.Norms.Tree VE.Norms.WellFormed@VE.Norms.Tree VE.Norms.WellFormedOnce@VE.Norms.Once
+  -- expr 3855117690
 theorem VE.Norms.Wire.appendPredicates_assembly
   ∀ (environment : Lean.Json) (entries : List (String × Lean.Json)),
     VE.Norms.Wire.appendPredicates environment entries = do
@@ -11336,7 +11344,7 @@ theorem VE.Norms.conflictFree_prefix_idx
   -- expr 772706758
 theorem VE.Norms.conflictIn_eq
   ∀ (D : VE.Norms.Doc) (r : VE.Norms.Regulated), VE.Norms.conflictIn D (VE.Norms.layersOf D) r = VE.Norms.conflict D r
-  -- uses VE.Formula@VE.Syntax VE.Norms.Doc@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.conflict@VE.Norms.Conflict VE.Norms.conflictIn@VE.Readings.Layers VE.Norms.layersOf@VE.Readings.Layers
+  -- uses VE.Formula@VE.Syntax VE.Norms.Doc@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.conflict@VE.Norms.Conflict VE.Norms.conflictIn@VE.Norms.LayersOnce VE.Norms.layersOf@VE.Norms.LayersOnce
   -- expr 557050251
 theorem VE.Norms.conflict_denote
   ∀ {D : VE.Norms.Doc},
@@ -11597,7 +11605,7 @@ theorem VE.Norms.elaborate_iff_at
 theorem VE.Norms.entryTable_take
   ∀ (T : VE.Norms.Tree) (k : Nat),
     VE.Norms.entryTable (List.foldl (VE.Norms.expStep T) [] (List.take k (VE.Norms.syms T))) = VE.Norms.expTable T k
-  -- uses VE.Formula@VE.Syntax VE.Norms.Sym@VE.Norms.Tree VE.Norms.Table@VE.Norms.Subst VE.Norms.Tree@VE.Norms.Tree VE.Norms.entryTable@VE.Readings.Layers VE.Norms.expStep@VE.Readings.Layers VE.Norms.expTable@VE.Norms.Subst VE.Norms.syms@VE.Norms.Tree
+  -- uses VE.Formula@VE.Syntax VE.Norms.Sym@VE.Norms.Tree VE.Norms.Table@VE.Norms.Subst VE.Norms.Tree@VE.Norms.Tree VE.Norms.entryTable@VE.Norms.LayersOnce VE.Norms.expStep@VE.Norms.LayersOnce VE.Norms.expTable@VE.Norms.Subst VE.Norms.syms@VE.Norms.Tree
   -- expr 3684920859
 theorem VE.Norms.envAt_base
   ∀ {D : VE.Norms.Doc} {k : Nat} {r : String},
@@ -11653,17 +11661,17 @@ theorem VE.Norms.envAt_zero_later
   -- expr 988705681
 theorem VE.Norms.expAt_expEntries
   ∀ (T : VE.Norms.Tree) (i : Nat), VE.Norms.expAt (VE.Norms.expEntries T) i = VE.Norms.expTable T i
-  -- uses VE.Norms.Table@VE.Norms.Subst VE.Norms.Tree@VE.Norms.Tree VE.Norms.expAt@VE.Readings.Layers VE.Norms.expEntries@VE.Readings.Layers VE.Norms.expTable@VE.Norms.Subst
+  -- uses VE.Norms.Table@VE.Norms.Subst VE.Norms.Tree@VE.Norms.Tree VE.Norms.expAt@VE.Norms.LayersOnce VE.Norms.expEntries@VE.Norms.LayersOnce VE.Norms.expTable@VE.Norms.Subst
   -- expr 284892388
 theorem VE.Norms.expStep_foldl_drop
   ∀ (T : VE.Norms.Tree) (l : List VE.Norms.Sym) (es : List (String × Thunk VE.Formula)),
     List.drop l.length (List.foldl (VE.Norms.expStep T) es l) = es
-  -- uses VE.Formula@VE.Syntax VE.Norms.Sym@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.expStep@VE.Readings.Layers
+  -- uses VE.Formula@VE.Syntax VE.Norms.Sym@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.expStep@VE.Norms.LayersOnce
   -- expr 1251015849
 theorem VE.Norms.expStep_foldl_length
   ∀ (T : VE.Norms.Tree) (l : List VE.Norms.Sym) (es : List (String × Thunk VE.Formula)),
     (List.foldl (VE.Norms.expStep T) es l).length = es.length + l.length
-  -- uses VE.Formula@VE.Syntax VE.Norms.Sym@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.expStep@VE.Readings.Layers
+  -- uses VE.Formula@VE.Syntax VE.Norms.Sym@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.expStep@VE.Norms.LayersOnce
   -- expr 1224743614
 theorem VE.Norms.expTable_at
   ∀ {D : VE.Norms.Doc},
@@ -11814,6 +11822,10 @@ theorem VE.Norms.iffF_denote
     VE.Formula.denote S ρ (VE.Norms.iffF a b) ↔ (VE.Formula.denote S ρ a ↔ VE.Formula.denote S ρ b)
   -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.iffF@VE.Norms.Basic VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 2811582827
+theorem VE.Norms.inFragment_eq_once
+  VE.Norms.InFragment = VE.Norms.InFragmentOnce
+  -- uses VE.Norms.Doc@VE.Norms.Tree VE.Norms.InFragment@VE.Norms.SmallModel VE.Norms.InFragmentOnce@VE.Norms.LayersOnce
+  -- expr 3805447124
 theorem VE.Norms.index_before
   ∀ {D : VE.Norms.Doc},
     VE.Norms.Valid D →
@@ -11893,15 +11905,15 @@ theorem VE.Norms.layer_premises
   -- expr 1951683621
 theorem VE.Norms.layersOf_entries
   ∀ (D : VE.Norms.Doc), (VE.Norms.layersOf D).entries = VE.Norms.expEntries D.T
-  -- uses VE.Formula@VE.Syntax VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.Layers.entries@VE.Readings.Layers VE.Norms.expEntries@VE.Readings.Layers VE.Norms.layersOf@VE.Readings.Layers
+  -- uses VE.Formula@VE.Syntax VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.Layers.entries@VE.Norms.LayersOnce VE.Norms.expEntries@VE.Norms.LayersOnce VE.Norms.layersOf@VE.Norms.LayersOnce
   -- expr 3889056335
 theorem VE.Norms.layersOf_names
   ∀ (D : VE.Norms.Doc), (VE.Norms.layersOf D).names = VE.Norms.layerNames D.T
-  -- uses VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.Layers.names@VE.Readings.Layers VE.Norms.layerNames@VE.Norms.Tree VE.Norms.layersOf@VE.Readings.Layers
+  -- uses VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.Layers.names@VE.Norms.LayersOnce VE.Norms.layerNames@VE.Norms.Tree VE.Norms.layersOf@VE.Norms.LayersOnce
   -- expr 1035868955
 theorem VE.Norms.layersOf_syms
   ∀ (D : VE.Norms.Doc), (VE.Norms.layersOf D).syms = VE.Norms.syms D.T
-  -- uses VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.Layers.syms@VE.Readings.Layers VE.Norms.Sym@VE.Norms.Tree VE.Norms.layersOf@VE.Readings.Layers VE.Norms.syms@VE.Norms.Tree
+  -- uses VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.Layers.syms@VE.Norms.LayersOnce VE.Norms.Sym@VE.Norms.Tree VE.Norms.layersOf@VE.Norms.LayersOnce VE.Norms.syms@VE.Norms.Tree
   -- expr 4073621951
 theorem VE.Norms.length_filterMap_le
   ∀ {α : Type u_1} {β : Type u_2} (f : α → Option β) (l : List α), (List.filterMap f l).length ≤ l.length
@@ -12090,7 +12102,7 @@ theorem VE.Norms.norms_route_intended
   -- expr 3308544969
 theorem VE.Norms.outcomeBaseIn_eq
   ∀ (D : VE.Norms.Doc) (n : String), VE.Norms.outcomeBaseIn D (VE.Norms.layersOf D) n = VE.Norms.outcomeBase D n
-  -- uses VE.Formula@VE.Syntax VE.Norms.Doc@VE.Norms.Tree VE.Norms.layersOf@VE.Readings.Layers VE.Norms.outcomeBase@VE.Norms.Conflict VE.Norms.outcomeBaseIn@VE.Readings.Layers
+  -- uses VE.Formula@VE.Syntax VE.Norms.Doc@VE.Norms.Tree VE.Norms.layersOf@VE.Norms.LayersOnce VE.Norms.outcomeBase@VE.Norms.Conflict VE.Norms.outcomeBaseIn@VE.Norms.LayersOnce
   -- expr 2498531783
 theorem VE.Norms.outcomeBase_denote
   ∀ {D : VE.Norms.Doc},
@@ -12146,7 +12158,7 @@ theorem VE.Norms.outcome_wellFormed
 theorem VE.Norms.pairConflictIn_eq
   ∀ (D : VE.Norms.Doc) (pr : VE.Norms.Pair),
     VE.Norms.pairConflictIn D (VE.Norms.layersOf D) pr = VE.Norms.pairConflict D pr
-  -- uses VE.Formula@VE.Syntax VE.Norms.Doc@VE.Norms.Tree VE.Norms.Pair@VE.Norms.Tree VE.Norms.layersOf@VE.Readings.Layers VE.Norms.pairConflict@VE.Norms.Conflict VE.Norms.pairConflictIn@VE.Readings.Layers
+  -- uses VE.Formula@VE.Syntax VE.Norms.Doc@VE.Norms.Tree VE.Norms.Pair@VE.Norms.Tree VE.Norms.layersOf@VE.Norms.LayersOnce VE.Norms.pairConflict@VE.Norms.Conflict VE.Norms.pairConflictIn@VE.Norms.LayersOnce
   -- expr 342829470
 theorem VE.Norms.pairConflict_wellFormed
   ∀ {D : VE.Norms.Doc},
@@ -12384,6 +12396,14 @@ theorem VE.Norms.self_hidden
           ∀ (r : String), r ∈ [q.name] → (VE.Norms.envAt D k).predicates r = Option.none
   -- uses VE.Environment.predicates@VE.Syntax VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.Sym.name@VE.Norms.Tree VE.Norms.Sym@VE.Norms.Tree VE.Norms.Valid@VE.Norms.Valid VE.Norms.envAt@VE.Norms.Tree VE.Norms.syms@VE.Norms.Tree
   -- expr 1735387121
+theorem VE.Norms.semanticCheckOnce_eq
+  ∀ (D : VE.Norms.Doc), VE.Norms.semanticCheckOnce D = VE.Norms.semanticCheck D
+  -- uses VE.Norms.Doc@VE.Norms.Tree VE.Norms.semanticCheck@VE.Norms.Tree VE.Norms.semanticCheckOnce@VE.Norms.Once
+  -- expr 2092279520
+theorem VE.Norms.semanticCheck_eq_once
+  VE.Norms.semanticCheck = VE.Norms.semanticCheckOnce
+  -- uses VE.Norms.Doc@VE.Norms.Tree VE.Norms.semanticCheck@VE.Norms.Tree VE.Norms.semanticCheckOnce@VE.Norms.Once
+  -- expr 2238294150
 theorem VE.Norms.semanticCheck_of_wellFormed
   ∀ (D : VE.Norms.Doc), VE.Norms.WellFormed D = Bool.true → VE.Norms.semanticCheck D = Bool.true
   -- uses VE.Norms.Doc@VE.Norms.Tree VE.Norms.WellFormed@VE.Norms.Tree VE.Norms.semanticCheck@VE.Norms.Tree
@@ -12449,7 +12469,7 @@ theorem VE.Norms.subModel_witness
   -- expr 3681337279
 theorem VE.Norms.substIn_eq
   ∀ (D : VE.Norms.Doc) (i : Nat) (φ : VE.Formula), VE.Norms.substIn (VE.Norms.layersOf D) i φ = VE.Norms.subst D.T i φ
-  -- uses VE.Formula@VE.Syntax VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.layersOf@VE.Readings.Layers VE.Norms.subst@VE.Norms.Subst VE.Norms.substIn@VE.Readings.Layers
+  -- uses VE.Formula@VE.Syntax VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.layersOf@VE.Norms.LayersOnce VE.Norms.subst@VE.Norms.Subst VE.Norms.substIn@VE.Norms.LayersOnce
   -- expr 1393635279
 theorem VE.Norms.substWith_denote
   ∀ (tbl : VE.Norms.Table) (Ehi Elo : VE.Environment) (S : VE.Structure),
@@ -12493,7 +12513,7 @@ theorem VE.Norms.subst_denote
 theorem VE.Norms.subst_expAt
   ∀ (T : VE.Norms.Tree) (i : Nat) (φ : VE.Formula),
     VE.Norms.substWith (VE.Norms.expAt (VE.Norms.expEntries T) i) φ = VE.Norms.subst T i φ
-  -- uses VE.Formula@VE.Syntax VE.Norms.Tree@VE.Norms.Tree VE.Norms.expAt@VE.Readings.Layers VE.Norms.expEntries@VE.Readings.Layers VE.Norms.subst@VE.Norms.Subst VE.Norms.substWith@VE.Norms.Subst
+  -- uses VE.Formula@VE.Syntax VE.Norms.Tree@VE.Norms.Tree VE.Norms.expAt@VE.Norms.LayersOnce VE.Norms.expEntries@VE.Norms.LayersOnce VE.Norms.subst@VE.Norms.Subst VE.Norms.substWith@VE.Norms.Subst
   -- expr 542823003
 theorem VE.Norms.subst_restrict_denote
   ∀ {D : VE.Norms.Doc},
@@ -12579,8 +12599,12 @@ theorem VE.Norms.sym_arity
   -- expr 2360584311
 theorem VE.Norms.targetsIn_eq
   ∀ (D : VE.Norms.Doc), VE.Norms.targetsIn D (VE.Norms.layersOf D) = VE.Norms.targets D
-  -- uses VE.Formula@VE.Syntax VE.Norms.Doc@VE.Norms.Tree VE.Norms.layersOf@VE.Readings.Layers VE.Norms.targets@VE.Norms.Replay VE.Norms.targetsIn@VE.Readings.Layers
+  -- uses VE.Formula@VE.Syntax VE.Norms.Doc@VE.Norms.Tree VE.Norms.layersOf@VE.Norms.LayersOnce VE.Norms.targets@VE.Norms.Replay VE.Norms.targetsIn@VE.Norms.LayersOnce
   -- expr 1903424496
+theorem VE.Norms.targets_eq_once
+  VE.Norms.targets = VE.Norms.targetsOnce
+  -- uses VE.Formula@VE.Syntax VE.Norms.Doc@VE.Norms.Tree VE.Norms.targets@VE.Norms.Replay VE.Norms.targetsOnce@VE.Norms.Replay
+  -- expr 2071634511
 theorem VE.Norms.term_defined_consts
   ∀ {E : VE.Environment} {S : VE.Structure},
     (∀ (c s : String), E.constants c = Option.some s → ∃ v, S.constant c = Option.some v ∧ S.domain s v) →
@@ -12671,6 +12695,18 @@ theorem VE.Norms.valid_of_wellFormed
   ∀ (D : VE.Norms.Doc), VE.Norms.WellFormed D = Bool.true → VE.Norms.Valid D
   -- uses VE.Norms.Doc@VE.Norms.Tree VE.Norms.Valid@VE.Norms.Valid VE.Norms.WellFormed@VE.Norms.Tree
   -- expr 976113069
+theorem VE.Norms.validateOnce_eq
+  ∀ (D : VE.Norms.Doc), VE.Norms.validateOnce D = VE.Norms.validate D
+  -- uses VE.Norms.Doc@VE.Norms.Tree VE.Norms.validate@VE.Norms.Tree VE.Norms.validateOnce@VE.Norms.Once
+  -- expr 76232709
+theorem VE.Norms.validate_eq_once
+  VE.Norms.validate = VE.Norms.validateOnce
+  -- uses VE.Norms.Doc@VE.Norms.Tree VE.Norms.validate@VE.Norms.Tree VE.Norms.validateOnce@VE.Norms.Once
+  -- expr 2744502715
+theorem VE.Norms.wellFormed_eq_once
+  VE.Norms.WellFormed = VE.Norms.WellFormedOnce
+  -- uses VE.Norms.Doc@VE.Norms.Tree VE.Norms.WellFormed@VE.Norms.Tree VE.Norms.WellFormedOnce@VE.Norms.Once
+  -- expr 3448041084
 theorem VE.Norms.wf_hide_mono
   ∀ (E : VE.Environment) {ns ms : List String},
     (∀ (r : String), r ∈ ms → r ∈ ns) →
@@ -22886,7 +22922,7 @@ theorem VE.Rights.strictYields_eq
   -- expr 2258909714
 theorem VE.Rights.validateRightsOnce_eq
   ∀ (D : VE.Rights.RightsDoc), VE.Rights.validateRightsOnce D = VE.Rights.validateRights D
-  -- uses VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.validateRights@VE.Rights.Correlate VE.Rights.validateRightsOnce@VE.Readings.Layers
+  -- uses VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.validateRights@VE.Rights.Correlate VE.Rights.validateRightsOnce@VE.Rights.Correlate
   -- expr 3204116268
 theorem VE.Rights.valueSoft_of_decides
   ∀ (D : VE.Rights.RightsDoc) (p : String) (S : VE.Structure) (vs : List S.Carrier) (sign : Bool),
@@ -27881,6 +27917,10 @@ theorem VE.SoftNorms.Admission.soft_wire_report_consequence
                 VE.Formula.denote S [] res.report.root.formula
   -- uses VE.Data.Background.generate@VE.Data.Background VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Graph.Claim.formula@VE.ClaimGraph VE.Graph.Claim@VE.ClaimGraph VE.Graph.Report.root@VE.ClaimGraph VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Sat@VE.Norms.Prefix VE.Norms.elaborate@VE.Norms.Elaborate VE.Route.Admission.Doc.flags@VE.Route.Admission VE.SoftNorms.Admission.Admitted.doc@VE.SoftNorms.Admission VE.SoftNorms.Admission.Admitted.report@VE.SoftNorms.Admission VE.SoftNorms.Admission.Admitted.src@VE.SoftNorms.Admission VE.SoftNorms.Admission.Admitted@VE.SoftNorms.Admission VE.SoftNorms.Admission.admitDocument@VE.SoftNorms.Admission VE.SoftNorms.Admission.otherAssumptions@VE.SoftNorms.Admission VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.background'@VE.SoftNorms.Coherence VE.SoftNorms.envPrime@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 2821147257
+theorem VE.SoftNorms.InFragmentOnce_eq
+  ∀ (D : VE.SoftNorms.SoftDoc), VE.SoftNorms.InFragmentOnce D = VE.SoftNorms.InFragment D
+  -- uses VE.SoftNorms.InFragment@VE.SoftNorms.Coherence VE.SoftNorms.InFragmentOnce@VE.SoftNorms.Once VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
+  -- expr 811656944
 theorem VE.SoftNorms.Run.runAdmission_sound
   ∀ (id : String) (environment document answer : Lean.Json),
     VE.SoftNorms.Run.runAdmission id environment document = Except.ok answer →
@@ -27897,6 +27937,10 @@ theorem VE.SoftNorms.Run.soft_wire_acceptance
               VE.SoftNorms.Run.SoftAdmissionAnswer id (j.getObjValD "environment") (j.getObjValD "document") answer
   -- uses VE.Bridge.stringField@VE.Bridge VE.Route.Run.caseKind@VE.Route.Run VE.SoftNorms.Run.SoftAdmissionAnswer@VE.SoftNorms.Run VE.SoftNorms.Run.runCase@VE.SoftNorms.Run VE.SoftNorms.Run.usesSoftPath@VE.SoftNorms.Run
   -- expr 3819520681
+theorem VE.SoftNorms.WellFormedSoftOnce_eq
+  ∀ (D : VE.SoftNorms.SoftDoc), VE.SoftNorms.WellFormedSoftOnce D = VE.SoftNorms.WellFormedSoft D
+  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.WellFormedSoftOnce@VE.SoftNorms.Once
+  -- expr 704053055
 theorem VE.SoftNorms.Wire.envAt_soften_zero
   ∀ (D : VE.SoftNorms.SoftDoc) (p : String),
     (VE.Norms.envAt (VE.SoftNorms.soften D) 0).predicates p =
@@ -28059,8 +28103,12 @@ theorem VE.SoftNorms.canon_subst
   -- expr 2544425933
 theorem VE.SoftNorms.checkSoftOnce_eq
   ∀ (D : VE.SoftNorms.SoftDoc), VE.SoftNorms.checkSoftOnce D = VE.SoftNorms.checkSoft D
-  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.checkSoft@VE.SoftNorms.Soften VE.SoftNorms.checkSoftOnce@VE.Readings.Layers
+  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.checkSoft@VE.SoftNorms.Soften VE.SoftNorms.checkSoftOnce@VE.SoftNorms.Once
   -- expr 888319514
+theorem VE.SoftNorms.checkSoft_eq_once
+  VE.SoftNorms.checkSoft = VE.SoftNorms.checkSoftOnce
+  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.checkSoft@VE.SoftNorms.Soften VE.SoftNorms.checkSoftOnce@VE.SoftNorms.Once
+  -- expr 2825379811
 theorem VE.SoftNorms.child_strict
   ∀ {D : VE.SoftNorms.SoftDoc},
     VE.SoftNorms.SoftValid D →
@@ -28560,6 +28608,10 @@ theorem VE.SoftNorms.idxOf_lt_length
   ∀ {o : List String} {x : String}, x ∈ o → List.idxOf x o < o.length
   -- uses
   -- expr 2368135214
+theorem VE.SoftNorms.inFragment_eq_once
+  VE.SoftNorms.InFragment = VE.SoftNorms.InFragmentOnce
+  -- uses VE.SoftNorms.InFragment@VE.SoftNorms.Coherence VE.SoftNorms.InFragmentOnce@VE.SoftNorms.Once VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
+  -- expr 3372455071
 theorem VE.SoftNorms.incompatible_symm
   ∀ (D : VE.SoftNorms.SoftDoc) (M N : VE.SoftNorms.SoftNode),
     VE.SoftNorms.Incompatible D M N = VE.SoftNorms.Incompatible D N M
@@ -29005,7 +29057,7 @@ theorem VE.SoftNorms.selectsD_prime
   -- expr 610801347
 theorem VE.SoftNorms.selectsOn_soften
   ∀ (D : VE.SoftNorms.SoftDoc), VE.SoftNorms.selectsOn (VE.SoftNorms.soften D) D = VE.SoftNorms.selects' D
-  -- uses VE.Formula@VE.Syntax VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.selects'@VE.SoftNorms.Soften VE.SoftNorms.selectsOn@VE.Readings.Layers VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- uses VE.Formula@VE.Syntax VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.selects'@VE.SoftNorms.Soften VE.SoftNorms.selectsOn@VE.SoftNorms.Once VE.SoftNorms.soften@VE.SoftNorms.Soften
   -- expr 1535391612
 theorem VE.SoftNorms.selectsPrime_denote
   ∀ (D : VE.SoftNorms.SoftDoc) (S : VE.Structure) (ρ : VE.Valuation S) (N : VE.SoftNorms.SoftNode),
@@ -29050,7 +29102,7 @@ theorem VE.SoftNorms.softPremisesIn_eq
   ∀ (D : VE.SoftNorms.SoftDoc),
     VE.SoftNorms.softPremisesIn D (VE.SoftNorms.soften D) (VE.Norms.layersOf (VE.SoftNorms.soften D)) =
       VE.SoftNorms.softPremises D
-  -- uses VE.Formula@VE.Syntax VE.Norms.layersOf@VE.Readings.Layers VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.softPremises@VE.SoftNorms.Soften VE.SoftNorms.softPremisesIn@VE.Readings.Layers VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- uses VE.Formula@VE.Syntax VE.Norms.layersOf@VE.Norms.LayersOnce VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.softPremises@VE.SoftNorms.Soften VE.SoftNorms.softPremisesIn@VE.SoftNorms.Once VE.SoftNorms.soften@VE.SoftNorms.Soften
   -- expr 3269242038
 theorem VE.SoftNorms.softRouteChain_premises
   ∀ (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = Bool.true) (hc : VE.SoftNorms.SoftConflictFree D)
@@ -29065,8 +29117,12 @@ theorem VE.SoftNorms.softRouteChain_restrict
   -- expr 2557690547
 theorem VE.SoftNorms.softSemanticCheckOnce_eq
   ∀ (D : VE.SoftNorms.SoftDoc), VE.SoftNorms.softSemanticCheckOnce D = VE.SoftNorms.softSemanticCheck D
-  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.softSemanticCheck@VE.SoftNorms.Soften VE.SoftNorms.softSemanticCheckOnce@VE.Readings.Layers
+  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.softSemanticCheck@VE.SoftNorms.Soften VE.SoftNorms.softSemanticCheckOnce@VE.SoftNorms.Once
   -- expr 1421172963
+theorem VE.SoftNorms.softSemanticCheck_eq_once
+  VE.SoftNorms.softSemanticCheck = VE.SoftNorms.softSemanticCheckOnce
+  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.softSemanticCheck@VE.SoftNorms.Soften VE.SoftNorms.softSemanticCheckOnce@VE.SoftNorms.Once
+  -- expr 1205963393
 theorem VE.SoftNorms.softSemanticCheck_of_wellFormed
   ∀ (D : VE.SoftNorms.SoftDoc), VE.SoftNorms.WellFormedSoft D = Bool.true → VE.SoftNorms.softSemanticCheck D = Bool.true
   -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.softSemanticCheck@VE.SoftNorms.Soften
@@ -29404,8 +29460,12 @@ theorem VE.SoftNorms.universal_down
   -- expr 1866275955
 theorem VE.SoftNorms.validateSoftOnce_eq
   ∀ (D : VE.SoftNorms.SoftDoc), VE.SoftNorms.validateSoftOnce D = VE.SoftNorms.validateSoft D
-  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.validateSoft@VE.SoftNorms.Soften VE.SoftNorms.validateSoftOnce@VE.Readings.Layers
+  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.validateSoft@VE.SoftNorms.Soften VE.SoftNorms.validateSoftOnce@VE.SoftNorms.Once
   -- expr 3898544092
+theorem VE.SoftNorms.validateSoft_eq_once
+  VE.SoftNorms.validateSoft = VE.SoftNorms.validateSoftOnce
+  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.validateSoft@VE.SoftNorms.Soften VE.SoftNorms.validateSoftOnce@VE.SoftNorms.Once
+  -- expr 3896787527
 theorem VE.SoftNorms.weighing_point_sound
   ∀ {α : Type u} [inst : DecidableEq α] (D : VE.SoftNorms.SoftDoc),
     VE.SoftNorms.WellFormedSoft D = Bool.true →
@@ -29456,6 +29516,10 @@ theorem VE.SoftNorms.weighing_sub_decisions
   ∀ (D : VE.SoftNorms.SoftDoc) {q : String}, q ∈ VE.SoftNorms.weighingSyms D → q ∈ VE.SoftNorms.decisionNames D
   -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.decisionNames@VE.SoftNorms.Tree VE.SoftNorms.weighingSyms@VE.SoftNorms.Tree
   -- expr 2709874058
+theorem VE.SoftNorms.wellFormedSoft_eq_once
+  VE.SoftNorms.WellFormedSoft = VE.SoftNorms.WellFormedSoftOnce
+  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.WellFormedSoftOnce@VE.SoftNorms.Once
+  -- expr 3868516673
 theorem VE.SoftNorms.withinLimits_iff
   ∀ (φ : VE.Formula), VE.SoftNorms.withinLimits φ = VE.SoftNorms.fits (VE.SoftNorms.fsize VE.SoftNorms.noSubst φ)
   -- uses VE.Formula@VE.Syntax VE.SoftNorms.fits@VE.SoftNorms.Soften VE.SoftNorms.fsize@VE.SoftNorms.Soften VE.SoftNorms.noSubst@VE.SoftNorms.Soften VE.SoftNorms.withinLimits@VE.SoftNorms.Soften

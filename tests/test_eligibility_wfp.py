@@ -9,7 +9,6 @@ from hashlib import sha256
 import json
 from pathlib import Path
 import re
-import subprocess
 import sys
 
 import pytest
@@ -19,13 +18,11 @@ from tests import lean_routes
 ROOT = Path(__file__).resolve().parents[1]
 HERE = ROOT / "usecases" / "eligibility"
 LEAN = "ve_quantity"  # its service mode, through tests/lean_routes.py
-RUST = ROOT / "rust" / "target" / "release" / "ve"
 sys.path.insert(0, str(HERE))
 
 import reference  # noqa: E402
 import run  # noqa: E402
 import translation as T  # noqa: E402
-from subprocesses import HANG_TIMEOUT  # noqa: E402
 from ve import ast  # noqa: E402
 from ve.environment import Environment  # noqa: E402
 from ve.entailment import prove_entailment  # noqa: E402
@@ -430,9 +427,10 @@ def test_r7_recheck_examples_get_the_source_answer(staged_runs):
         assert T.key(T.B(started, a, h)) in r14a and T.key(T.B(ended, a, h)) in r14a
 
 
-def _python_lean_rust(cases_and_expected):
-    """Evaluate each (id, quantity, model, expected) in Python, Lean and Rust; all three
-    must agree with each other and with the expected value."""
+def _python_and_lean(cases_and_expected):
+    """Evaluate each (id, quantity, model, expected) in Python (its evaluator, on Lean's
+    erasure) and in Lean's quantity route; both must agree with each other and with the
+    expected value. Lean-first batch 9 deleted Rust's quantity route."""
     raw = T.environment()
     env = Environment(raw)
     target = erased_environment(env)
@@ -444,15 +442,12 @@ def _python_lean_rust(cases_and_expected):
         rows.append((cid, python, expected))
         cases.append({"id": cid, "environment": raw, "quantity": quantity, "model": model_data})
     lean_values = [r.get("value") for r in run.lean(cases)]
-    process = subprocess.run([str(RUST), "conformance", "-"], text=True, capture_output=True, timeout=HANG_TIMEOUT,
-                             input=json.dumps([{**c, "kind": "quantity"} for c in cases]))
-    rust_values = [r.get("value") for r in json.loads(process.stdout)]
     assert [(cid, p) for cid, p, _ in rows] == [(cid, e) for cid, _, e in rows]
-    assert lean_values == rust_values == [p for _, p, _ in rows]
+    assert lean_values == [p for _, p, _ in rows]
 
 
-@pytest.mark.skipif(not (lean_routes.SERVICE.exists() and RUST.exists()), reason="build the Lean service and Rust ve first")
-def test_whole_week_household_rules_evaluate_alike_in_python_lean_and_rust():
+@pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="build the Lean service first")
+def test_whole_week_household_rules_evaluate_alike_in_python_and_lean():
     """R7a, R7b and R7, and the mutants M26 to M29 that drop or tighten "throughout", in
     the reference fixture models of B24 to B29 and of an undated couple (B01). The rules
     are true in every model; each mutant is false in the model of the profile it misreads."""
@@ -468,11 +463,11 @@ def test_whole_week_household_rules_evaluate_alike_in_python_lean_and_rust():
                 if rule["rule"] in ("R7a", "R7b", "R7"):
                     misread = mutant is not None and pid in wrong[mutant][0] and rule["rule"] in wrong[mutant][1]
                     items.append((f"{pid}/{mutant}/{rule['id']}", T.q(rule["formula"]), model, not misread))
-    _python_lean_rust(items)
+    _python_and_lean(items)
 
 
-@pytest.mark.skipif(not (lean_routes.SERVICE.exists() and RUST.exists()), reason="build the Lean service and Rust ve first")
-def test_common_day_rules_evaluate_alike_in_python_lean_and_rust():
+@pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="build the Lean service first")
+def test_common_day_rules_evaluate_alike_in_python_and_lean():
     """R14a and R14.3, and the mutants M31 (no common day) and M32 (strict bounds), in
     the reference fixture models of B30 to B34, A08 and B01. The rules are true in every
     model; M31's R14.3 is false where the periods share no day (the 300.00 the recheck
@@ -488,17 +483,17 @@ def test_common_day_rules_evaluate_alike_in_python_lean_and_rust():
                 if rule["rule"] in ("R14a", "R14.3"):
                     misread = mutant is not None and pid in wrong[mutant][0] and rule["rule"] == wrong[mutant][1]
                     items.append((f"{pid}/{mutant}/{rule['id']}", T.q(rule["formula"]), model, not misread))
-    _python_lean_rust(items)
+    _python_and_lean(items)
 
 
-@pytest.mark.skipif(not (lean_routes.SERVICE.exists() and RUST.exists()), reason="build the Lean service and Rust ve first")
+@pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="build the Lean service first")
 def test_common_day_is_interval_intersection_for_every_dated_household():
     """The class of the R7 recheck: R14a states the common day of two periods by two
     pairwise bounds, which equals interval intersection only because each period
     includes a day of QW (AR5). Over every household whose partnership and shared home
     take their first and last days from a grid around QW (or none), R14a's condition
     must equal the reference's intersection of the partnership, the home and QW, in
-    Python, Lean and Rust."""
+    Python and Lean."""
     data = keyed_cases()
     starts, ends = (None, "2026-09-21", "2026-09-23", "2026-09-24"), (None, "2026-09-22", "2026-09-23", "2026-09-27")
     periods = [{k: v for k, v in (("from", f), ("until", u)) if v is not None}
@@ -519,13 +514,13 @@ def test_common_day_is_interval_intersection_for_every_dated_household():
             cid = f"{partnership}/{home}"
             items += [(cid + "/condition", T.q(condition), model, expected), (cid + "/R14a", T.q(r14a["formula"]), model, True)]
     assert seen == {True, False} and len(items) == 2 * 13 * 13
-    _python_lean_rust(items)
+    _python_and_lean(items)
 
 
-@pytest.mark.skipif(not (lean_routes.SERVICE.exists() and RUST.exists()), reason="build the Lean service and Rust ve first")
-def test_care_end_rule_evaluates_alike_in_python_lean_and_rust():
+@pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="build the Lean service first")
+def test_care_end_rule_evaluates_alike_in_python_and_lean():
     """R5b and its mutants M24 (end date ignored) and M25 (end bound strict), evaluated
-    in each recheck profile's reference fixture model. Python, Lean and Rust must give
+    in each recheck profile's reference fixture model. Python and Lean must give
     the same value, the rule must be true, and each mutant false where it misreads."""
     raw = T.environment()
     env = Environment(raw)
@@ -547,11 +542,8 @@ def test_care_end_rule_evaluates_alike_in_python_lean_and_rust():
             rows.append((pid, mutant, python, expected))
             cases.append({"id": f"{pid}/{mutant}", "environment": raw, "quantity": quantity, "model": model_data})
     lean_values = [r.get("value") for r in run.lean(cases)]
-    process = subprocess.run([str(RUST), "conformance", "-"], text=True, capture_output=True, timeout=HANG_TIMEOUT,
-                             input=json.dumps([{**c, "kind": "quantity"} for c in cases]))
-    rust_values = [r.get("value") for r in json.loads(process.stdout)]
     assert [(pid, m, p) for pid, m, p, _ in rows] == [(pid, m, e) for pid, m, _, e in rows]
-    assert lean_values == rust_values == [p for _, _, p, _ in rows]
+    assert lean_values == [p for _, _, p, _ in rows]
 
 
 @pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="build the Lean service first")

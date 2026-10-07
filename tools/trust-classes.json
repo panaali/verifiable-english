@@ -4470,7 +4470,8 @@
    ],
    "G[V]": [
     "VE.Norms.Replay.ConflictReplay.conflictFree",
-    "VE.Norms.targets"
+    "VE.Norms.targets",
+    "VE.Norms.targetsOnce"
    ]
   },
   "VE/Norms/Run.lean": {
@@ -5161,31 +5162,6 @@
     "VE.Readings.instDecidableNoSep"
    ]
   },
-  "VE/Readings/Layers.lean": {
-   "G[V]": [
-    "VE.Norms.Layers",
-    "VE.Norms.conflictIn",
-    "VE.Norms.entryTable",
-    "VE.Norms.expAt",
-    "VE.Norms.expEntries",
-    "VE.Norms.expStep",
-    "VE.Norms.layersOf",
-    "VE.Norms.outcomeBaseIn",
-    "VE.Norms.pairConflictIn",
-    "VE.Norms.substIn",
-    "VE.Norms.targetsIn",
-    "VE.Rights.validateRightsOnce",
-    "VE.SoftNorms.checkSoftOnce",
-    "VE.SoftNorms.cohPremiseIn",
-    "VE.SoftNorms.selectsOn",
-    "VE.SoftNorms.softPremisesIn",
-    "VE.SoftNorms.softSemanticCheckOnce",
-    "VE.SoftNorms.validateSoftOnce"
-   ],
-   "G[R]": [
-    "VE.SoftNorms.defaultDecidesOn"
-   ]
-  },
   "VE/Readings/Lines.lean": {
    "S": [
     "VE.Readings.GenKey.tag",
@@ -5685,6 +5661,9 @@
     "VE.Rights.checkBlock",
     "VE.Rights.checkRights",
     "VE.Rights.checkSourceLine"
+   ],
+   "G[V]": [
+    "VE.Rights.validateRightsOnce"
    ]
   },
   "VE/Rights/Distinction.lean": {
@@ -5783,22 +5762,28 @@
    ],
    "D[V]": [
     "VE.Rights.Run.baseWithout",
+    "VE.Rights.Run.conjugatedAct",
     "VE.Rights.Run.distinctionJson",
     "VE.Rights.Run.encodeAdmitted",
     "VE.Rights.Run.entailmentUses",
     "VE.Rights.Run.entryJson",
+    "VE.Rights.Run.generatedWordings",
     "VE.Rights.Run.ikindText",
     "VE.Rights.Run.kindText",
     "VE.Rights.Run.licence",
     "VE.Rights.Run.lineJson",
+    "VE.Rights.Run.lineSourceName",
     "VE.Rights.Run.narrowingsJson",
     "VE.Rights.Run.nodeJson",
-    "VE.Rights.Run.regenerated"
+    "VE.Rights.Run.regenerated",
+    "VE.Rights.Run.sourceRuleNames",
+    "VE.Rights.Run.unitRuleNames"
    ],
    "G[V]": [
     "VE.Rights.Run.RightsAdmissionAnswer",
     "VE.Rights.Run.barResult",
     "VE.Rights.Run.generatedKeys",
+    "VE.Rights.Run.nodeOpen",
     "VE.Rights.Run.projectionsResult",
     "VE.Rights.Run.rightsLabelled",
     "VE.Rights.Run.runAdmission",
@@ -5806,6 +5791,8 @@
     "VE.Rights.Run.runCaseReported",
     "VE.Rights.Run.runRightsKind",
     "VE.Rights.Run.tuples",
+    "VE.Rights.Run.unitOpen",
+    "VE.Rights.Run.unitStatuses",
     "VE.Rights.Run.usesRightsPath",
     "VE.Rights.Run.witnessKind"
    ]
@@ -9218,6 +9205,45 @@
   "VE/EnglishGrammar/SensesRequest.lean": {
    "G[V]": [
     "VE.EnglishGrammar.sensesRequest"
+   ]
+  },
+  "VE/Norms/LayersOnce.lean": {
+   "G[V]": [
+    "VE.Norms.InFragmentIn",
+    "VE.Norms.InFragmentOnce",
+    "VE.Norms.Layers",
+    "VE.Norms.conflictIn",
+    "VE.Norms.entryTable",
+    "VE.Norms.expAt",
+    "VE.Norms.expEntries",
+    "VE.Norms.expStep",
+    "VE.Norms.layersOf",
+    "VE.Norms.outcomeBaseIn",
+    "VE.Norms.pairConflictIn",
+    "VE.Norms.substIn",
+    "VE.Norms.targetsIn"
+   ]
+  },
+  "VE/Norms/Once.lean": {
+   "G[V]": [
+    "VE.Norms.WellFormedOnce",
+    "VE.Norms.semanticCheckOnce",
+    "VE.Norms.validateOnce"
+   ]
+  },
+  "VE/SoftNorms/Once.lean": {
+   "G[V]": [
+    "VE.SoftNorms.InFragmentOnce",
+    "VE.SoftNorms.WellFormedSoftOnce",
+    "VE.SoftNorms.checkSoftOnce",
+    "VE.SoftNorms.cohPremiseIn",
+    "VE.SoftNorms.selectsOn",
+    "VE.SoftNorms.softPremisesIn",
+    "VE.SoftNorms.softSemanticCheckOnce",
+    "VE.SoftNorms.validateSoftOnce"
+   ],
+   "G[R]": [
+    "VE.SoftNorms.defaultDecidesOn"
    ]
   }
  }
