@@ -1022,7 +1022,9 @@ def test_latent_conflict_finding_and_the_authoring_question():
     report = nd.check_conflict(doc, model=ONE_ACT)
     assert english.latent_conflict_finding(doc, situation, report) == (
         "LatentConflict: must-x, not-x under y_permitted(a) = yes")
-    doc = nd.UnspecifiedDocument(csam("unspecified"), [CSAM_RULE])
+    # The authoring question is product code: ask it of the Lean-relayed container.
+    from ve.norm_defaults import UnspecifiedDocument
+    doc = UnspecifiedDocument(csam("unspecified"), [CSAM_RULE])
     question = english.completion_question(doc, "csam_generation_permitted")
     assert question["selected"] is None
     assert question["options"] == [

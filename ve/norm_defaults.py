@@ -157,11 +157,6 @@ def validate_completions(document, block, unit_ids):
 
 def search_reached(document, predicate, *, max_domain_size=2):
     """Propose a reached witness and have Lean replay it before returning it."""
-    if not isinstance(document, UnspecifiedDocument):
-        # The frozen oracle's tests use the old document type. It is not a
-        # production container and never supplies a public verdict.
-        from conformance.frozen_norm_defaults import search_reached as frozen_search
-        return frozen_search(document, predicate, max_domain_size=max_domain_size)
     from .model import FiniteModel
     from .norm_defaults_route import run_case, source_case
     witnesses, _ = _propose_report_evidence(document, (predicate,),
@@ -179,7 +174,11 @@ def search_reached(document, predicate, *, max_domain_size=2):
     base = copy.deepcopy(raw)
     base["relations"] = {name: values for name, values in base["relations"].items()
                          if not name.startswith("unsaid__")}
-    return FiniteModel.from_dict(document.env, base), tuple(candidate["tuple"]), filling
+    # The situation is over the author's base vocabulary: E‴'s base without the unsaid tables.
+    situation_env = document.filled.base_environment().to_dict()
+    situation_env["vocabulary"]["predicates"] = {
+        p: decl for p, decl in situation_env["vocabulary"]["predicates"].items() if not p.startswith("unsaid__")}
+    return FiniteModel.from_dict(Environment(situation_env), base), tuple(candidate["tuple"]), filling
 
 
 def _profiled(raw, switched=()):
