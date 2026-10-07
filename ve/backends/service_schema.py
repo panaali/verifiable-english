@@ -385,6 +385,17 @@ class Compiler:
                 _fail(f"is not the number of the request's {pointer}")
         return check
 
+    def _x_references(self, rule, schema, base):
+        def check(value, ctx, fuel):
+            entries = _resolve(value, rule["array"])
+            members = _resolve(ctx.value, rule["in"])
+            if not isinstance(entries, list) or not isinstance(members, list) or any(
+                    not isinstance(entry, dict) or type(entry.get(rule["field"])) is not str or
+                    not any(same_json(entry[rule["field"]], member) for member in members)
+                    for entry in entries):
+                _fail(f"{rule['array']} contains an unbound {rule['field']} outside the request's {rule['in']}")
+        return check
+
     def _x_index(self, flag, schema, base):
         def check(value, ctx, fuel):
             if _kind(value) != "integer" or value != ctx.index:
@@ -446,6 +457,13 @@ class Compiler:
                 _fail(f"{rule['equals']} does not count {rule['array']}")
         return check
 
+    def _x_count_presence(self, rule, schema, base):
+        def check(value, ctx, fuel):
+            item, expected = _resolve(value, rule["value"]), _resolve(value, rule["equals"])
+            if item is _MISSING or _kind(expected) != "integer" or expected != int(item is not None):
+                _fail(f"{rule['equals']} does not count the presence of {rule['value']}")
+        return check
+
     def _x_rows(self, bound, schema, base):
         sub = self.compile(bound, base)
 
@@ -476,7 +494,8 @@ class Compiler:
 _ORDER = ("$ref", "type", "enum", "const", "pattern", "minLength", "maxLength", "minimum", "required",
           "properties", "additionalProperties", "prefixItems", "items", "minItems", "maxItems",
           "contains", "anyOf", "allOf", "not", "if", "x-tagged", "x-echo", "x-equals", "x-length",
-          "x-count", "x-index", "x-digest", "x-zip", "x-zip-or-empty", "x-case", "x-select", "x-count-where", "x-rows",
+          "x-count", "x-references", "x-index", "x-digest", "x-zip", "x-zip-or-empty", "x-case",
+          "x-select", "x-count-where", "x-count-presence", "x-rows",
           "x-row")
 _KEYWORDS = frozenset(_ORDER) | {"then", "else", "$defs", "$comment", "$id", "x-fuel"}
 

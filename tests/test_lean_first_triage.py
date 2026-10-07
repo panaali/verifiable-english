@@ -73,12 +73,12 @@ def test_df8_dependency_order_accepts_a_misspelt_vocabulary_field(monkeypatch):
 
 
 @needs_service
-def test_df12_risk_route_accepts_an_nbsp_act_phrase(monkeypatch):
+def test_df12_risk_route_rejects_an_nbsp_act_phrase(monkeypatch):
     monkeypatch.setenv("VE_AUTHORITY", "python")
     environment = GROUPS["DF-12"]["fixture"]["input"]
     code, message = _python(lambda: Environment(deepcopy(environment)))
     assert code == "InvalidInput" and "round-trip" in message
-    assert lean_route_rows("risk", [deepcopy(environment)]) == [("ok", "")]
+    assert lean_route_rows("risk", [deepcopy(environment)]) == [("InvalidInput", "W6 environment does not round-trip to its canonical declaration")]
 
 
 def _norms_environment(act):

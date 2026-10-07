@@ -20,6 +20,12 @@ def test_every_relayed_module_exists_and_passes():
     assert relay_lint.main([]) == 0
 
 
+def test_speech_english_keeps_its_surface_owner():
+    assert "ve.speech_english" in relay_lint.OWNED_SURFACES
+    assert ROOT / "ve/speech_english.py" not in relay_lint.helpers(
+        [ROOT / path for path in relay_lint.RELAYED])
+
+
 def test_the_classes_come_from_python(classes):
     assert {"VEError", "UnknownSymbol", "SyntaxError", "AmbiguousDerivation", "AdmissionError",
             "ResourceLimit"} <= classes

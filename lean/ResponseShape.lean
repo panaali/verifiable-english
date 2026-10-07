@@ -151,6 +151,8 @@ inductive Shape where
   | equals (pointer : String)
   | length (pointer : String)
   | count (pointer : String)
+  /-- Every object's `field` in the response array is a request ID selected by `target`. -/
+  | references (array field target : String)
   | index
   | digest
   | zip (pointer : String) (s : Shape)
@@ -158,6 +160,7 @@ inductive Shape where
   | onCase (s : Shape)
   | select (choices : List (Shape × Shape))
   | countWhere (array : String) (where_ : Shape) (equals : String)
+  | presenceCount (value equals : String)
   | rows (s : Shape)
   | row
   | node (comment : Option String) (keywords : List Shape)
@@ -268,6 +271,8 @@ def render (file : String) : Nat → Shape → Except String Json
     | .equals p => pure (Json.mkObj [("x-equals", .str p)])
     | .length p => pure (Json.mkObj [("x-length", .str p)])
     | .count p => pure (Json.mkObj [("x-count", .str p)])
+    | .references a f p => pure (Json.mkObj [("x-references", Json.mkObj [
+        ("array", .str a), ("field", .str f), ("in", .str p)])])
     | .index => pure (Json.mkObj [("x-index", .bool true)])
     | .digest => pure (Json.mkObj [("x-digest", .bool true)])
     | .zip p x => pure (Json.mkObj [("x-zip", Json.mkObj [("of", .str p), ("items", ← go x)])])
@@ -278,6 +283,8 @@ def render (file : String) : Nat → Shape → Except String Json
       pure (Json.mkObj [("x-select", .arr entries.toArray)])
     | .countWhere a w e =>
       pure (Json.mkObj [("x-count-where", Json.mkObj [("array", .str a), ("where", ← go w), ("equals", .str e)])])
+    | .presenceCount v e =>
+      pure (Json.mkObj [("x-count-presence", Json.mkObj [("value", .str v), ("equals", .str e)])])
     | .rows x => pure (Json.mkObj [("x-rows", ← go x)])
     | .row => pure (Json.mkObj [("x-row", .bool true)])
     | .lean _ x _ => go x
@@ -555,6 +562,13 @@ def check (files : List File) : Nat → Shape → Ctx → Counters → Json → 
       | some (.arr ys), .num x => if kind value == "integer" && numEq x ⟨(ys.size : Int), 0⟩ then pure ()
           else fail s!"is not the number of the request's {p}"
       | _, _ => fail s!"is not the number of the request's {p}"
+    | .references a f p => match resolve value a, resolve ctx.value p with
+      | some (.arr xs), some (.arr ys) =>
+        if xs.all (fun x => match x.getObjVal? f with
+          | .ok v => kind v == "string" && ys.any (sameJson v)
+          | .error _ => false) then pure ()
+        else fail s!"{a} contains an unbound {f} outside the request's {p}"
+      | _, _ => fail s!"{a} contains an unbound {f} outside the request's {p}"
     | .index => match value, ctx.index with
       | .num x, some i => if kind value == "integer" && numEq x ⟨(i : Int), 0⟩ then pure () else fail "is not the result's position"
       | _, _ => fail "is not the result's position"
@@ -586,6 +600,12 @@ def check (files : List File) : Nat → Shape → Ctx → Counters → Json → 
           if ← ok? w ctx counters v then k := k + 1
         if kind (.num x) == "integer" && numEq x ⟨(k : Int), 0⟩ then pure () else fail s!"{e} does not count {a}"
       | _, _ => fail s!"{e} does not count {a}"
+    | .presenceCount v e => match resolve value v, resolve value e with
+      | some item, some (.num n) =>
+        let expected : Int := if item == .null then 0 else 1
+        if kind (.num n) == "integer" && numEq n ⟨expected, 0⟩ then pure ()
+        else fail s!"{e} does not count the presence of {v}"
+      | _, _ => fail s!"{e} does not count the presence of {v}"
     | .rows x => match resolve ctx.value "/cases", resolve ctx.value "/digests", value with
       | some (.arr cases), some (.arr digests), .arr results =>
         if results.size != cases.size || digests.size != cases.size then fail "one result per case" else do

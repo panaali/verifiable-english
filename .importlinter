@@ -41,7 +41,6 @@ ignore_imports =
     ve.environment -> ve.backends.validation
     ve.environment -> ve.definitions
     ve.environment -> ve.profiles
-    ve.environment -> ve.risk
     ve.environment -> ve.speech_acts
     ve.environment -> ve.units
     ve.evaluate -> ve.backends.dispatch
@@ -59,12 +58,7 @@ ignore_imports =
     ve.norms -> ve.search
     ve.parser -> ve.backends.dispatch
     ve.parser -> ve.backends.relay
-    ve.parser -> ve.backends.validation
     ve.rights -> ve.rights_route
     ve.softnorms -> ve.search
-    ve.speech_acts -> ve.admission
-    ve.speech_acts -> ve.norm_admission
-    ve.speech_acts -> ve.speech_english
-    ve.speech_acts -> ve.vacuity
     ve.units -> ve.backends.relay
     ve.units -> ve.search

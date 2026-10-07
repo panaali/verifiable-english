@@ -79,9 +79,9 @@ def folCertificate (profiles : List String) (environment : Json) (rv : VE.Route.
     (background.map VE.Route.Wire.encodeFormula ++ (← premisesJson.getArr?).toList)
     (← j.getObjVal? "conclusion") certificate.environment_id certificate.premise_meaning_ids
     certificate.conclusion_meaning_id
-  if VE.Route.Steps.fol certificate.trace > VE.Route.Steps.limit j then throw VE.Route.Steps.stepLimit
+  if VE.Route.Steps.fol certificate.trace > (← VE.Route.Steps.limit j) then throw VE.Route.Steps.stepLimit
   return VE.Route.Wire.ok id [("valid", .bool (VE.Tableau.checkCertificate E (background ++ ps) c certificate)),
-    ("background", toJson background.length)]
+    ("background", toJson background.length), ("steps", toJson (VE.Route.Steps.fol certificate.trace))]
 
 /-- The closure route's certificate branch over `background` (embedded), bound
 to the submitted `environment` (`VE.Closure.Tableau.checkCertificate_sound`). -/
@@ -104,10 +104,11 @@ def closureCertificate (profiles : List String) (environment : Json) (rv : VE.Ro
     (background.map VE.Route.Wire.encodeFormula ++ (← premisesJson.getArr?).toList)
     (← j.getObjVal? "conclusion") certificate.environment_id certificate.premise_meaning_ids
     certificate.conclusion_meaning_id
-  if VE.Route.Steps.closure certificate.trace > VE.Route.Steps.limit j then
+  if VE.Route.Steps.closure certificate.trace > (← VE.Route.Steps.limit j) then
     throw VE.Route.Steps.stepLimit
   return VE.Route.Wire.ok id [("valid", .bool (VE.Closure.Tableau.checkCertificate E
-      (background.map VE.Closure.embed ++ ps) c certificate)), ("background", toJson background.length)]
+      (background.map VE.Closure.embed ++ ps) c certificate)), ("background", toJson background.length),
+      ("steps", toJson (VE.Route.Steps.closure certificate.trace))]
 
 /-- The order route's certificate branch over the literals and the norms
 profile premises (embedded, `VE.Order.embed`), bound to the submitted
@@ -128,10 +129,10 @@ def orderCertificate (profiles : List String) (environment : Json) (rv : VE.Rout
     ((literals ++ profile).map VE.Route.Wire.encodeFormula ++ (← premisesJson.getArr?).toList)
     (← j.getObjVal? "conclusion") certificate.environment_id certificate.premise_meaning_ids
     certificate.conclusion_meaning_id
-  if VE.Route.Steps.order certificate.trace > VE.Route.Steps.limit j then throw VE.Route.Steps.stepLimit
+  if VE.Route.Steps.order certificate.trace > (← VE.Route.Steps.limit j) then throw VE.Route.Steps.stepLimit
   let background := VE.Route.Background.orderLiterals rv.literals ++ profile.map VE.Order.embed
   return VE.Route.Wire.ok id [("valid", .bool (VE.Order.Tableau.checkCertificate E (background ++ ps) c certificate)),
-    ("background", toJson background.length)]
+    ("background", toJson background.length), ("steps", toJson (VE.Route.Steps.order certificate.trace))]
 
 /-- A certificate case over the environment without the validated extension,
 bound to the submitted one: the family's Background, then the profile premises. -/

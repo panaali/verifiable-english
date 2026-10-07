@@ -26,7 +26,6 @@
   "ve.environment -> ve.backends.validation": "Stage 2 authority adapter (SEMANTICS-MIGRATION-PLAN.md 2a): the class-A function dispatches its verdict through ve.backends; place the dispatch and checker clients below the kernel when stage 5 deletes the Python bodies.",
   "ve.environment -> ve.definitions": "Environment constructor compiles profile definitions; move profile validation out of kernel construction.",
   "ve.environment -> ve.profiles": "Environment constructor validates the profile route; separate kernel vocabulary from profile dispatch.",
-  "ve.environment -> ve.risk": "Environment validation checks the risk@0 declaration block, which lives beside the route transport; split the block checks into a profile module.",
   "ve.environment -> ve.speech_acts": "Environment validation decodes the speech-acts vocabulary block; extract a profile-owned decoder hook.",
   "ve.environment -> ve.units": "Environment validation checks the W6 unit schema and profiles; extract a profile-owned decoder hook.",
   "ve.evaluate -> ve.backends.dispatch": "Stage 2 authority adapter (SEMANTICS-MIGRATION-PLAN.md 2a): the class-A function dispatches its verdict through ve.backends; place the dispatch and checker clients below the kernel when stage 5 deletes the Python bodies.",
@@ -44,13 +43,8 @@
   "ve.norms -> ve.search": "Norm dependency analysis reuses search's predicate walker; move that walker to profiles.",
   "ve.parser -> ve.backends.dispatch": "Stage 2 authority adapter (SEMANTICS-MIGRATION-PLAN.md 2a): the class-A function dispatches its verdict through ve.backends; place the dispatch and checker clients below the kernel when stage 5 deletes the Python bodies.",
   "ve.parser -> ve.backends.relay": "Stage 2 authority adapter (SEMANTICS-MIGRATION-PLAN.md 2a): the class-A function dispatches its verdict through ve.backends; place the dispatch and checker clients below the kernel when stage 5 deletes the Python bodies.",
-  "ve.parser -> ve.backends.validation": "Stage 2 authority adapter (SEMANTICS-MIGRATION-PLAN.md 2a): the class-A function dispatches its verdict through ve.backends; place the dispatch and checker clients below the kernel when stage 5 deletes the Python bodies.",
   "ve.rights -> ve.rights_route": "Lean-first batch 7: RightsDocument asks the rights route for the accepted elaboration before constructing Python views; move the constructor beside the route when remaining profile constructors relay.",
   "ve.softnorms -> ve.search": "Soft norms read used predicates from search helpers; move the helper to the kernel.",
-  "ve.speech_acts -> ve.admission": "Speech acts reuse admission checks; split the shared checks into a profile module.",
-  "ve.speech_acts -> ve.norm_admission": "Speech acts reuse quoted-norm admission; split the shared checks into a profile module.",
-  "ve.speech_acts -> ve.speech_english": "Speech acts render their English wording; move rendering to the surface caller.",
-  "ve.speech_acts -> ve.vacuity": "Speech acts compute premise status; move the call to a route module.",
   "ve.units -> ve.backends.relay": "Lean-first batch 9: W6 typing, identities, certificates and countermodels are Lean's answers; place the relay client below the profiles when batch 18 moves the checker clients.",
-  "ve.units -> ve.search":"Units read used predicates from search helpers; move the helper to the kernel."
+  "ve.units -> ve.search": "Units read used predicates from search helpers; move the helper to the kernel."
 }

@@ -8,9 +8,9 @@ from ve.ast import Binary, Const, Eq, Not, Unary, Var, _to_data
 from ve.environment import Environment
 from ve.errors import VEError
 from ve.profiles import LANGUAGE, SPEC_REVISION
-from ve.speech_acts import SpeechDocument, combine
+from tests.frozen_speech.speech_acts import SpeechDocument, combine
 from ve.speech_english import parse_speech
-from ve.speech_document import load_speech_document
+from tests.frozen_speech.speech_document import load_speech_document
 from ve.entailment import prove_entailment
 
 
@@ -325,7 +325,7 @@ def _candidate(kind, content, rid="r1", others=()):
 
 
 def _source(unit_kind, content, sets, meaning="specified", status=None, text=b"Open the desk.\n"):
-    from ve.speech_document import SpeechSource
+    from tests.frozen_speech.speech_document import SpeechSource
     env = environment()
     unit_ = {"id": "u", "span": [0, len(text)], "kind": unit_kind, "meaning": meaning, "support": "none",
              **({"content": content} if content is not None else {}),
@@ -399,7 +399,7 @@ def test_source_reading_set_and_narrowing_references_are_typed_before_they_are_r
     # reject it cleanly; a narrowing's `set: []` or `version: []` crashed too, and `version: true` was taken as
     # version 1.  Every source reference is a name (or a version number) before it is looked up, with the cores'
     # diagnostic for reading sets, and a narrowing's cited version is a set id and a version number.
-    from ve.speech_document import SpeechSource
+    from tests.frozen_speech.speech_document import SpeechSource
     open_cmd = {"command": {"force": "require", "act": "open_required", "args": ["desk1"], "guard": ["top"]}}
     typed = "InvalidInput: reading sets on the speech-acts route need their unit, version and status"
     speech = _candidate("instruction", open_cmd)
@@ -441,7 +441,7 @@ def test_reading_questions_name_an_existing_set_and_carry_their_open_term():
     # required open term; Python also accepted a numeric set.  Every reading question, asked, quoted or a
     # candidate, names an existing set id at an existing version (4.1(4)), and every one that is or could be
     # chosen carries its derived open term (4.6).
-    from ve.speech_document import SpeechSource
+    from tests.frozen_speech.speech_document import SpeechSource
     env = environment()
     text = b"Open the desk.\n"
     open_cmd = {"command": {"force": "require", "act": "open_required", "args": ["desk1"], "guard": ["top"]}}
@@ -479,7 +479,7 @@ def test_reading_questions_name_an_existing_set_and_carry_their_open_term():
 def test_answer_and_compliance_records_reference_units_by_name():
     # Regression: a record whose question or command was not a string crashed the source wrapper with a
     # TypeError instead of a diagnostic; a dangling name keeps its record diagnostic.
-    from ve.speech_document import SpeechSource
+    from tests.frozen_speech.speech_document import SpeechSource
     env = environment()
     text = b"Open the desk.\n"
     open_cmd = {"command": {"force": "require", "act": "open_required", "args": ["desk1"], "guard": ["top"]}}

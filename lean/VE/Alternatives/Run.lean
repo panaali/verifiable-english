@@ -20,6 +20,9 @@ environment and `alternatives@0`, `norms@0` among its profiles.
   (`alternatives_wire_dilemma_sound`) with the untrusted diagnosis; UNKNOWN otherwise; `not
   computed: conflict status UNKNOWN` without CONFLICT-FREE packages for the same source.
 * `alt-certificate` → `valid` (`alternatives_wire_acceptance`).
+* `alt-environment` → `valid` when the environment alone decodes in `Wire.Scope.environment`:
+  the block as on every case, and the declarations of the other profiles (definitions, data
+  flags) validated by W1 rather than refused as the document cases still do.
 * Any case without the profile, the block or an `alt-*` kind is delegated unchanged to
   `VE.Norms.Run`. -/
 namespace VE.Alternatives.Run
@@ -250,14 +253,24 @@ theorem runAdmission_sound (id : String) (environment document answer : Json)
   exact ⟨res, envId, reportId, hr, he, hd, rfl, res.src.wf,
     fun S hS hg ho => Admission.report_consequence res S hS hg ho⟩
 
+def runElaborate (id : String) (j : Json) : Except String Json := do
+  let src ← sourceOf j
+  let coverage := match j.getObjVal? "coverage_units" with
+    | .ok units => [("coverage", Wire.coverage src.A (j.getObjValD "environment") units
+        (j.getObjValD "narrowings"))]
+    | .error _ => []
+  return ok id (Wire.regenerated src ++ coverage)
+
 def runCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let kind ← VE.Route.Run.caseKind j
   if kind == "admission" then
     return ← runAdmission id (← j.getObjVal? "environment") (← j.getObjVal? "document")
   if kind == "alt-elaborate" then
-    let src ← sourceOf j
-    return ok id (Wire.regenerated src)
+    return ← runElaborate id j
+  if kind == "alt-environment" then
+    let _ ← Wire.decodeAltSource (← j.getObjVal? "environment") (Json.arr #[]) .null .environment
+    return ok id [("valid", .bool true)]
   if kind == "alt-validate" then return ← runValidate id j
   if kind == "alt-conflict" then return ← runConflict id j
   if kind == "alt-followable" then return ← runFollowable id j

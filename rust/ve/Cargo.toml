@@ -7,4 +7,3 @@ license.workspace = true
 [dependencies]
 ve-core.workspace = true
 serde_json.workspace = true
-num-bigint = "0.4"

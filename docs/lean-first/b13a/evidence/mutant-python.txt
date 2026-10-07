@@ -1,0 +1,50 @@
+parse_caller test exit: 1
+^^^^^^^^^^^
+ve/parser.py:411: in _parse_lean
+    return python()
+           ^^^^^^^^
+ve/parser.py:380: in python
+    return _parse_python(env, source)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+_ = (Environment(language='ve.core@0.1', profile=None, profiles=('order@0', 'relational-fol@0'), spec_revision='ve-v0.1-or...tion=None)}), speech_acts=None, unit_schema=None, units=None, reports=None, alternatives=None, risk=None), 'true  .\n')
+
+>   monkeypatch.setattr(parser, "_parse_python", lambda *_: pytest.fail("Python parser decided a Lean rejection"))
+                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: Python parser decided a Lean rejection
+
+tests/test_lean_first_b13a.py:66: Failed
+=========================== short test summary info ============================
+FAILED tests/test_lean_first_b13a.py::test_public_lean_parse_uses_lean_rejection
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed in 0.58s
+
+parse_caller restored test exit: 0 .                                                                        [100%]
+1 passed in 0.45s
+
+certificate_caller test exit: 1
+ld/bin/ve_service')
+
+    def test_public_certificate_budget_is_sent_to_lean(monkeypatch, service_executable):
+        environment = Environment.from_dict(json.loads((ROOT / "conformance/evaluation.json").read_text())[0]
+                                            ["environment"])
+        monkeypatch.setenv("VE_AUTHORITY", "python")
+        found = prove_entailment(environment, [Top()], Top())
+        assert found.certificate is not None
+        monkeypatch.setenv("VE_AUTHORITY", "lean")
+        result = check_entailment_certificate(environment, [Top()], Top(), found.certificate, max_steps=0)
+>       assert result.status == "ResourceLimit" and result.steps == 0
+E       AssertionError: assert ('Valid' == 'ResourceLimit'
+E
+E         - ResourceLimit
+E         + Valid)
+
+tests/test_lean_first_b13a.py:111: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_lean_first_b13a.py::test_public_certificate_budget_is_sent_to_lean
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed in 0.56s
+
+certificate_caller restored test exit: 0 .                                                                        [100%]
+1 passed in 0.49s

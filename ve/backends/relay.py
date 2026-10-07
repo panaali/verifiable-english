@@ -32,7 +32,7 @@ from pathlib import Path
 import threading
 import weakref
 
-from ..errors import (CheckerUnavailable, DuplicateDeclaration, InvalidModel, ResourceLimit, SyntaxError,
+from ..errors import (CheckerUnavailable, DuplicateDeclaration, InvalidModel, ResourceLimit, ShadowedVariable, Span, SyntaxError,
                       TypeMismatch, UnboundVariable, UnknownSymbol, UnsupportedProfile, VEError)
 from ..environment_wire import wire_checked
 from .lean_service import DEFAULT_EXECUTABLE, LeanServicePool
@@ -57,6 +57,7 @@ def _admission_error():
 CLASSES: dict[str, type | None] = {
     "InvalidInput": VEError, "SyntaxError": SyntaxError, "UnknownSymbol": UnknownSymbol,
     "DuplicateDeclaration": DuplicateDeclaration, "UnboundVariable": UnboundVariable,
+    "ShadowedVariable": ShadowedVariable,
     "TypeMismatch": TypeMismatch, "InvalidModel": InvalidModel, "UnsupportedProfile": UnsupportedProfile,
     "ResourceLimit": ResourceLimit, "AdmissionError": None, "CheckerUnavailable": CheckerUnavailable,
 }
@@ -106,6 +107,8 @@ def _raised(entry: dict) -> BaseException:
     row = entry["result"]
     error = rejection(entry["code"], row["error"], generator=entry.get("generator"))
     if isinstance(error, VEError):
+        if type(row.get("span")) is dict:
+            error.span = Span(**row["span"])
         if type(row.get("code")) is str:
             error.code = row["code"]
         # Provenance only: the Gate 2 parity tool counts a rejection cell as
