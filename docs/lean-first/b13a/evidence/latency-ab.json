@@ -1,0 +1,455 @@
+{
+  "base": "7345e3ed",
+  "method": "five paired runs, 100 warm service calls per operation per run; CPU time from /proc/<pid>/schedstat; same request hash in both checkouts",
+  "pass": true,
+  "samples": {
+    "base": [
+      {
+        "load": 27.47,
+        "workloads": {
+          "certificate_accept": {
+            "calls": 100,
+            "case_sha256": "b16b81bc0510fd8fa9505d66ed6de6f66c67c07528532403dfff2c331c352970",
+            "mode": "check-certificate",
+            "runqueue_wait_ms_per_call": 0.029,
+            "service_cpu_ms_per_call": 0.614,
+            "wall_p50_ms": 1.45,
+            "wall_p95_ms": 1.805
+          },
+          "certificate_budget": {
+            "calls": 100,
+            "case_sha256": "f1930ecfbbbd84841de522ce78546be9d5368efa9e6cb7d4be244020fe9b3492",
+            "mode": "check-certificate",
+            "runqueue_wait_ms_per_call": 0.011,
+            "service_cpu_ms_per_call": 0.625,
+            "wall_p50_ms": 1.339,
+            "wall_p95_ms": 1.806
+          },
+          "parse_accept": {
+            "calls": 100,
+            "case_sha256": "29178ff6ac6660da7936328250f357c1d3a0f356c096d6730f810bfe4ecbc114",
+            "mode": "parse",
+            "runqueue_wait_ms_per_call": 0.009,
+            "service_cpu_ms_per_call": 0.219,
+            "wall_p50_ms": 0.922,
+            "wall_p95_ms": 1.319
+          },
+          "parse_reject": {
+            "calls": 100,
+            "case_sha256": "f25f8a9b02ee8710a6c90bfccfd6762bb01d4f611cfcb0b638fce755ca274a39",
+            "mode": "parse",
+            "runqueue_wait_ms_per_call": 0.009,
+            "service_cpu_ms_per_call": 0.212,
+            "wall_p50_ms": 0.973,
+            "wall_p95_ms": 1.254
+          }
+        }
+      },
+      {
+        "load": 27.47,
+        "workloads": {
+          "certificate_accept": {
+            "calls": 100,
+            "case_sha256": "b16b81bc0510fd8fa9505d66ed6de6f66c67c07528532403dfff2c331c352970",
+            "mode": "check-certificate",
+            "runqueue_wait_ms_per_call": 0.0,
+            "service_cpu_ms_per_call": 0.65,
+            "wall_p50_ms": 1.532,
+            "wall_p95_ms": 1.751
+          },
+          "certificate_budget": {
+            "calls": 100,
+            "case_sha256": "f1930ecfbbbd84841de522ce78546be9d5368efa9e6cb7d4be244020fe9b3492",
+            "mode": "check-certificate",
+            "runqueue_wait_ms_per_call": 0.001,
+            "service_cpu_ms_per_call": 0.645,
+            "wall_p50_ms": 1.549,
+            "wall_p95_ms": 1.89
+          },
+          "parse_accept": {
+            "calls": 100,
+            "case_sha256": "29178ff6ac6660da7936328250f357c1d3a0f356c096d6730f810bfe4ecbc114",
+            "mode": "parse",
+            "runqueue_wait_ms_per_call": 0.012,
+            "service_cpu_ms_per_call": 0.244,
+            "wall_p50_ms": 1.11,
+            "wall_p95_ms": 1.311
+          },
+          "parse_reject": {
+            "calls": 100,
+            "case_sha256": "f25f8a9b02ee8710a6c90bfccfd6762bb01d4f611cfcb0b638fce755ca274a39",
+            "mode": "parse",
+            "runqueue_wait_ms_per_call": 0.011,
+            "service_cpu_ms_per_call": 0.231,
+            "wall_p50_ms": 1.088,
+            "wall_p95_ms": 1.433
+          }
+        }
+      },
+      {
+        "load": 26.87,
+        "workloads": {
+          "certificate_accept": {
+            "calls": 100,
+            "case_sha256": "b16b81bc0510fd8fa9505d66ed6de6f66c67c07528532403dfff2c331c352970",
+            "mode": "check-certificate",
+            "runqueue_wait_ms_per_call": 0.001,
+            "service_cpu_ms_per_call": 0.63,
+            "wall_p50_ms": 1.592,
+            "wall_p95_ms": 2.027
+          },
+          "certificate_budget": {
+            "calls": 100,
+            "case_sha256": "f1930ecfbbbd84841de522ce78546be9d5368efa9e6cb7d4be244020fe9b3492",
+            "mode": "check-certificate",
+            "runqueue_wait_ms_per_call": 0.001,
+            "service_cpu_ms_per_call": 0.632,
+            "wall_p50_ms": 1.555,
+            "wall_p95_ms": 1.75
+          },
+          "parse_accept": {
+            "calls": 100,
+            "case_sha256": "29178ff6ac6660da7936328250f357c1d3a0f356c096d6730f810bfe4ecbc114",
+            "mode": "parse",
+            "runqueue_wait_ms_per_call": 0.014,
+            "service_cpu_ms_per_call": 0.245,
+            "wall_p50_ms": 1.239,
+            "wall_p95_ms": 1.512
+          },
+          "parse_reject": {
+            "calls": 100,
+            "case_sha256": "f25f8a9b02ee8710a6c90bfccfd6762bb01d4f611cfcb0b638fce755ca274a39",
+            "mode": "parse",
+            "runqueue_wait_ms_per_call": 0.003,
+            "service_cpu_ms_per_call": 0.266,
+            "wall_p50_ms": 1.229,
+            "wall_p95_ms": 1.515
+          }
+        }
+      },
+      {
+        "load": 26.87,
+        "workloads": {
+          "certificate_accept": {
+            "calls": 100,
+            "case_sha256": "b16b81bc0510fd8fa9505d66ed6de6f66c67c07528532403dfff2c331c352970",
+            "mode": "check-certificate",
+            "runqueue_wait_ms_per_call": 0.0,
+            "service_cpu_ms_per_call": 0.461,
+            "wall_p50_ms": 1.151,
+            "wall_p95_ms": 1.327
+          },
+          "certificate_budget": {
+            "calls": 100,
+            "case_sha256": "f1930ecfbbbd84841de522ce78546be9d5368efa9e6cb7d4be244020fe9b3492",
+            "mode": "check-certificate",
+            "runqueue_wait_ms_per_call": 0.001,
+            "service_cpu_ms_per_call": 0.453,
+            "wall_p50_ms": 1.143,
+            "wall_p95_ms": 1.267
+          },
+          "parse_accept": {
+            "calls": 100,
+            "case_sha256": "29178ff6ac6660da7936328250f357c1d3a0f356c096d6730f810bfe4ecbc114",
+            "mode": "parse",
+            "runqueue_wait_ms_per_call": 0.0,
+            "service_cpu_ms_per_call": 0.229,
+            "wall_p50_ms": 0.91,
+            "wall_p95_ms": 1.248
+          },
+          "parse_reject": {
+            "calls": 100,
+            "case_sha256": "f25f8a9b02ee8710a6c90bfccfd6762bb01d4f611cfcb0b638fce755ca274a39",
+            "mode": "parse",
+            "runqueue_wait_ms_per_call": 0.001,
+            "service_cpu_ms_per_call": 0.234,
+            "wall_p50_ms": 0.97,
+            "wall_p95_ms": 1.416
+          }
+        }
+      },
+      {
+        "load": 26.87,
+        "workloads": {
+          "certificate_accept": {
+            "calls": 100,
+            "case_sha256": "b16b81bc0510fd8fa9505d66ed6de6f66c67c07528532403dfff2c331c352970",
+            "mode": "check-certificate",
+            "runqueue_wait_ms_per_call": 0.001,
+            "service_cpu_ms_per_call": 0.457,
+            "wall_p50_ms": 1.125,
+            "wall_p95_ms": 1.473
+          },
+          "certificate_budget": {
+            "calls": 100,
+            "case_sha256": "f1930ecfbbbd84841de522ce78546be9d5368efa9e6cb7d4be244020fe9b3492",
+            "mode": "check-certificate",
+            "runqueue_wait_ms_per_call": 0.001,
+            "service_cpu_ms_per_call": 0.45,
+            "wall_p50_ms": 1.118,
+            "wall_p95_ms": 1.232
+          },
+          "parse_accept": {
+            "calls": 100,
+            "case_sha256": "29178ff6ac6660da7936328250f357c1d3a0f356c096d6730f810bfe4ecbc114",
+            "mode": "parse",
+            "runqueue_wait_ms_per_call": 0.0,
+            "service_cpu_ms_per_call": 0.226,
+            "wall_p50_ms": 0.908,
+            "wall_p95_ms": 0.995
+          },
+          "parse_reject": {
+            "calls": 100,
+            "case_sha256": "f25f8a9b02ee8710a6c90bfccfd6762bb01d4f611cfcb0b638fce755ca274a39",
+            "mode": "parse",
+            "runqueue_wait_ms_per_call": 0.0,
+            "service_cpu_ms_per_call": 0.229,
+            "wall_p50_ms": 0.888,
+            "wall_p95_ms": 0.971
+          }
+        }
+      }
+    ],
+    "head": [
+      {
+        "load": 27.47,
+        "workloads": {
+          "certificate_accept": {
+            "calls": 100,
+            "case_sha256": "b16b81bc0510fd8fa9505d66ed6de6f66c67c07528532403dfff2c331c352970",
+            "mode": "check-certificate",
+            "runqueue_wait_ms_per_call": 0.027,
+            "service_cpu_ms_per_call": 0.662,
+            "wall_p50_ms": 1.499,
+            "wall_p95_ms": 1.921
+          },
+          "certificate_budget": {
+            "calls": 100,
+            "case_sha256": "f1930ecfbbbd84841de522ce78546be9d5368efa9e6cb7d4be244020fe9b3492",
+            "mode": "check-certificate",
+            "runqueue_wait_ms_per_call": 0.001,
+            "service_cpu_ms_per_call": 0.688,
+            "wall_p50_ms": 1.519,
+            "wall_p95_ms": 2.109
+          },
+          "parse_accept": {
+            "calls": 100,
+            "case_sha256": "29178ff6ac6660da7936328250f357c1d3a0f356c096d6730f810bfe4ecbc114",
+            "mode": "parse",
+            "runqueue_wait_ms_per_call": 0.038,
+            "service_cpu_ms_per_call": 0.243,
+            "wall_p50_ms": 1.26,
+            "wall_p95_ms": 1.472
+          },
+          "parse_reject": {
+            "calls": 100,
+            "case_sha256": "f25f8a9b02ee8710a6c90bfccfd6762bb01d4f611cfcb0b638fce755ca274a39",
+            "mode": "parse",
+            "runqueue_wait_ms_per_call": 0.001,
+            "service_cpu_ms_per_call": 0.275,
+            "wall_p50_ms": 1.223,
+            "wall_p95_ms": 1.594
+          }
+        }
+      },
+      {
+        "load": 27.47,
+        "workloads": {
+          "certificate_accept": {
+            "calls": 100,
+            "case_sha256": "b16b81bc0510fd8fa9505d66ed6de6f66c67c07528532403dfff2c331c352970",
+            "mode": "check-certificate",
+            "runqueue_wait_ms_per_call": 0.023,
+            "service_cpu_ms_per_call": 0.619,
+            "wall_p50_ms": 1.492,
+            "wall_p95_ms": 1.845
+          },
+          "certificate_budget": {
+            "calls": 100,
+            "case_sha256": "f1930ecfbbbd84841de522ce78546be9d5368efa9e6cb7d4be244020fe9b3492",
+            "mode": "check-certificate",
+            "runqueue_wait_ms_per_call": 0.0,
+            "service_cpu_ms_per_call": 0.615,
+            "wall_p50_ms": 1.434,
+            "wall_p95_ms": 1.909
+          },
+          "parse_accept": {
+            "calls": 100,
+            "case_sha256": "29178ff6ac6660da7936328250f357c1d3a0f356c096d6730f810bfe4ecbc114",
+            "mode": "parse",
+            "runqueue_wait_ms_per_call": 0.001,
+            "service_cpu_ms_per_call": 0.239,
+            "wall_p50_ms": 1.128,
+            "wall_p95_ms": 1.283
+          },
+          "parse_reject": {
+            "calls": 100,
+            "case_sha256": "f25f8a9b02ee8710a6c90bfccfd6762bb01d4f611cfcb0b638fce755ca274a39",
+            "mode": "parse",
+            "runqueue_wait_ms_per_call": 0.001,
+            "service_cpu_ms_per_call": 0.254,
+            "wall_p50_ms": 1.197,
+            "wall_p95_ms": 1.587
+          }
+        }
+      },
+      {
+        "load": 26.87,
+        "workloads": {
+          "certificate_accept": {
+            "calls": 100,
+            "case_sha256": "b16b81bc0510fd8fa9505d66ed6de6f66c67c07528532403dfff2c331c352970",
+            "mode": "check-certificate",
+            "runqueue_wait_ms_per_call": 0.001,
+            "service_cpu_ms_per_call": 0.537,
+            "wall_p50_ms": 1.419,
+            "wall_p95_ms": 1.912
+          },
+          "certificate_budget": {
+            "calls": 100,
+            "case_sha256": "f1930ecfbbbd84841de522ce78546be9d5368efa9e6cb7d4be244020fe9b3492",
+            "mode": "check-certificate",
+            "runqueue_wait_ms_per_call": 0.001,
+            "service_cpu_ms_per_call": 0.501,
+            "wall_p50_ms": 1.125,
+            "wall_p95_ms": 1.749
+          },
+          "parse_accept": {
+            "calls": 100,
+            "case_sha256": "29178ff6ac6660da7936328250f357c1d3a0f356c096d6730f810bfe4ecbc114",
+            "mode": "parse",
+            "runqueue_wait_ms_per_call": 0.001,
+            "service_cpu_ms_per_call": 0.248,
+            "wall_p50_ms": 1.126,
+            "wall_p95_ms": 1.576
+          },
+          "parse_reject": {
+            "calls": 100,
+            "case_sha256": "f25f8a9b02ee8710a6c90bfccfd6762bb01d4f611cfcb0b638fce755ca274a39",
+            "mode": "parse",
+            "runqueue_wait_ms_per_call": 0.011,
+            "service_cpu_ms_per_call": 0.307,
+            "wall_p50_ms": 1.301,
+            "wall_p95_ms": 1.83
+          }
+        }
+      },
+      {
+        "load": 26.87,
+        "workloads": {
+          "certificate_accept": {
+            "calls": 100,
+            "case_sha256": "b16b81bc0510fd8fa9505d66ed6de6f66c67c07528532403dfff2c331c352970",
+            "mode": "check-certificate",
+            "runqueue_wait_ms_per_call": 0.0,
+            "service_cpu_ms_per_call": 0.478,
+            "wall_p50_ms": 1.144,
+            "wall_p95_ms": 1.691
+          },
+          "certificate_budget": {
+            "calls": 100,
+            "case_sha256": "f1930ecfbbbd84841de522ce78546be9d5368efa9e6cb7d4be244020fe9b3492",
+            "mode": "check-certificate",
+            "runqueue_wait_ms_per_call": 0.002,
+            "service_cpu_ms_per_call": 0.451,
+            "wall_p50_ms": 1.118,
+            "wall_p95_ms": 1.395
+          },
+          "parse_accept": {
+            "calls": 100,
+            "case_sha256": "29178ff6ac6660da7936328250f357c1d3a0f356c096d6730f810bfe4ecbc114",
+            "mode": "parse",
+            "runqueue_wait_ms_per_call": 0.001,
+            "service_cpu_ms_per_call": 0.227,
+            "wall_p50_ms": 0.931,
+            "wall_p95_ms": 1.428
+          },
+          "parse_reject": {
+            "calls": 100,
+            "case_sha256": "f25f8a9b02ee8710a6c90bfccfd6762bb01d4f611cfcb0b638fce755ca274a39",
+            "mode": "parse",
+            "runqueue_wait_ms_per_call": 0.0,
+            "service_cpu_ms_per_call": 0.246,
+            "wall_p50_ms": 0.907,
+            "wall_p95_ms": 1.432
+          }
+        }
+      },
+      {
+        "load": 26.24,
+        "workloads": {
+          "certificate_accept": {
+            "calls": 100,
+            "case_sha256": "b16b81bc0510fd8fa9505d66ed6de6f66c67c07528532403dfff2c331c352970",
+            "mode": "check-certificate",
+            "runqueue_wait_ms_per_call": 0.001,
+            "service_cpu_ms_per_call": 0.694,
+            "wall_p50_ms": 1.509,
+            "wall_p95_ms": 1.655
+          },
+          "certificate_budget": {
+            "calls": 100,
+            "case_sha256": "f1930ecfbbbd84841de522ce78546be9d5368efa9e6cb7d4be244020fe9b3492",
+            "mode": "check-certificate",
+            "runqueue_wait_ms_per_call": 0.001,
+            "service_cpu_ms_per_call": 0.635,
+            "wall_p50_ms": 1.544,
+            "wall_p95_ms": 1.894
+          },
+          "parse_accept": {
+            "calls": 100,
+            "case_sha256": "29178ff6ac6660da7936328250f357c1d3a0f356c096d6730f810bfe4ecbc114",
+            "mode": "parse",
+            "runqueue_wait_ms_per_call": 0.011,
+            "service_cpu_ms_per_call": 0.251,
+            "wall_p50_ms": 1.041,
+            "wall_p95_ms": 1.218
+          },
+          "parse_reject": {
+            "calls": 100,
+            "case_sha256": "f25f8a9b02ee8710a6c90bfccfd6762bb01d4f611cfcb0b638fce755ca274a39",
+            "mode": "parse",
+            "runqueue_wait_ms_per_call": 0.001,
+            "service_cpu_ms_per_call": 0.263,
+            "wall_p50_ms": 1.079,
+            "wall_p95_ms": 1.164
+          }
+        }
+      }
+    ]
+  },
+  "summary": {
+    "certificate_accept": {
+      "base_cpu_median_ms": 0.614,
+      "case_sha256": "b16b81bc0510fd8fa9505d66ed6de6f66c67c07528532403dfff2c331c352970",
+      "cpu_change_percent": 0.8,
+      "head_cpu_median_ms": 0.619,
+      "head_wall_p50_median_ms": 1.492,
+      "head_wall_p95_max_ms": 1.921
+    },
+    "certificate_budget": {
+      "base_cpu_median_ms": 0.625,
+      "case_sha256": "f1930ecfbbbd84841de522ce78546be9d5368efa9e6cb7d4be244020fe9b3492",
+      "cpu_change_percent": -1.6,
+      "head_cpu_median_ms": 0.615,
+      "head_wall_p50_median_ms": 1.434,
+      "head_wall_p95_max_ms": 2.109
+    },
+    "parse_accept": {
+      "base_cpu_median_ms": 0.229,
+      "case_sha256": "29178ff6ac6660da7936328250f357c1d3a0f356c096d6730f810bfe4ecbc114",
+      "cpu_change_percent": 6.1,
+      "head_cpu_median_ms": 0.243,
+      "head_wall_p50_median_ms": 1.126,
+      "head_wall_p95_max_ms": 1.576
+    },
+    "parse_reject": {
+      "base_cpu_median_ms": 0.231,
+      "case_sha256": "f25f8a9b02ee8710a6c90bfccfd6762bb01d4f611cfcb0b638fce755ca274a39",
+      "cpu_change_percent": 13.9,
+      "head_cpu_median_ms": 0.263,
+      "head_wall_p50_median_ms": 1.197,
+      "head_wall_p95_max_ms": 1.83
+    }
+  }
+}
