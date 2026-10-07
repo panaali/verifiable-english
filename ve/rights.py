@@ -5,6 +5,7 @@ from copy import deepcopy
 import re
 
 from .errors import DuplicateDeclaration, UnknownSymbol, UnsupportedProfile, VEError
+from .environment import validate_authored_source
 from .softnorms import SoftEnvironment, SoftNormDocument
 
 _RULE = re.compile(r"[a-z][a-z0-9-]*\Z", re.ASCII)
@@ -58,6 +59,7 @@ class RightsEnvironment(SoftEnvironment):
     LAYERS = frozenset({"rights@0"})
 
     def __init__(self, data):
+        validate_authored_source(data)
         profiles = data.get("profiles") if type(data) is dict else None
         if type(profiles) is not list or any(type(p) is not str for p in profiles):
             # VE.Rights.Wire.decodeRightsEnvironment reads the profiles first.

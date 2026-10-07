@@ -491,6 +491,8 @@ def modelCase (j : Json) : Except String Json := do
   let model ← j.getObjVal? "model"
   if isLegacy environment then return ← legacyModelCase id environment model j
   let _ ← validatedComposedEnvironment environment
+  unless model.getObj?.isOk do
+    throw "InvalidModel: object expected"
   let modelEnv ← modelEnvironment environment
   let checked ← validated modelEnv
   let e := checked.envelope

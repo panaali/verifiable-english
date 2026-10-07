@@ -551,7 +551,7 @@ class SoftEnvironment(Environment):
             raise
 
     def _init_soft(self, data, *, generated=False):
-        if not generated:
+        if not generated and "rights@0" not in self.LAYERS:
             validate_authored_source(data)
         ctx, _, above = check_soft_source(data, generated=generated, layers=self.LAYERS)
         raw = deepcopy(data)
