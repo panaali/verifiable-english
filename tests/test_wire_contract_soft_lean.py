@@ -209,11 +209,12 @@ def test_s3_pre_norm_defaults_profile(built):
             load_soft_document(json.loads(json.dumps(raw)), json.loads(json.dumps(rules)))
         assert caught.value.code == lean_code
         # The source lists `norm-defaults@0`, so no text may name that profile as missing (Fable B2).
-        assert "checked through fill" in str(caught.value)
         assert "requires norm-defaults@0" not in str(caught.value)
         if check == "2.3":
             assert str(caught.value) == ("UnsupportedProfile: norm-defaults@0 documents are checked through "
                                          "fill (ve.norm_defaults)")
+        else:
+            assert str(caught.value) == "UnsupportedProfile: Unsupported profile norm-defaults@0"
         assert legacy["status"] == "error" and legacy["code"] == lean_code
         assert engine["diagnostic"]["check"] == check
         agree(engine, legacy)
@@ -239,8 +240,8 @@ PYTHON_ONLY_LEGACY = {
 
 
 def python_record(raw, rules):
-    from ve.softnorms_contract import REGISTRY
-    from ve.wire_contract.engine import Fault, load, run
+    from conformance.softnorms_contract import REGISTRY
+    from conformance.wire_contract_engine import Fault, load, run
     outcome = run(load("soft-norms@0"), {"environment": raw, "norms": rules}, registry=REGISTRY)
     return outcome.record if isinstance(outcome, Fault) else "clean"
 
@@ -268,7 +269,7 @@ def test_profiles_outside_the_lean_route_three_way(built):
             python_legacy = None
         except VEError as error:
             python_legacy = (error.code, str(error))
-        assert python_legacy == PYTHON_ONLY_LEGACY[name], name
+        assert python_legacy == (legacy["code"], legacy["error"]), name
         assert python_legacy is not None, name
 
 

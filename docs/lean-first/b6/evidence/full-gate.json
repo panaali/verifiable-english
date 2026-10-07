@@ -1,0 +1,112 @@
+{
+ "schema_version": 1,
+ "commit_sha": "51a89eca258bd9865573e874417940259bd3d3a0",
+ "dirty": false,
+ "status": "passed",
+ "runner": "the gate's stages in the foreground on the clean head: `lake build`, `python lean/audit.py`, `cargo test --locked --release --workspace` (pinned toolchain), then the full pytest suite with the gate's options (`-p xdist -n auto -m 'not live'`, plugin autoload off) in seven file-disjoint chunks covering all 265 test files once; tools/gate.py itself exceeded the 60-minute call limit at load 43 to 50",
+ "stages": [
+  "lean_build",
+  "lean_audit",
+  "cargo_test",
+  "pytest"
+ ],
+ "counts": {
+  "collected": 11099,
+  "deselected": 1,
+  "selected": 11098,
+  "passed": 11092,
+  "failed": 0,
+  "skipped": 6,
+  "rust_passed": 50,
+  "rust_ignored": 0
+ },
+ "lean": {
+  "build_jobs": 743,
+  "audited_theorems": 4316,
+  "source_files": 408
+ },
+ "chunks": [
+  {
+   "files": 72,
+   "tests": 3699,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 4,
+   "seconds": 1669.3
+  },
+  {
+   "files": 32,
+   "tests": 1234,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 0,
+   "seconds": 191.0
+  },
+  {
+   "files": 32,
+   "tests": 1233,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 0,
+   "seconds": 516.4
+  },
+  {
+   "files": 33,
+   "tests": 1233,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 1,
+   "seconds": 309.3
+  },
+  {
+   "files": 48,
+   "tests": 1850,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 0,
+   "seconds": 1581.0
+  },
+  {
+   "files": 24,
+   "tests": 925,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 1,
+   "seconds": 1165.6
+  },
+  {
+   "files": 24,
+   "tests": 924,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 0,
+   "seconds": 446.9
+  }
+ ],
+ "skips": [
+  {
+   "nodeid": "tests.test_grammar_backends::test_llguidance_compiles_lark_and_gbnf_exports",
+   "reason": "could not import 'llguidance': No module named 'llguidance'"
+  },
+  {
+   "nodeid": "tests.test_grammar_backends::test_xgrammar_compiles_and_matches_ebnf_exports",
+   "reason": "could not import 'xgrammar': No module named 'xgrammar'"
+  },
+  {
+   "nodeid": "tests.test_p0_three_way::test_rust_matches_expected[admission]",
+   "reason": "admission is outside Rust scope"
+  },
+  {
+   "nodeid": "tests.test_p1_native_counter::test_retained_deepinfra_smoke_native_count[weak-21]",
+   "reason": "pinned tokenizer not cached; test never downloads"
+  },
+  {
+   "nodeid": "tests.test_assist::test_p5_real_dev_file_loads_when_present",
+   "reason": "P5 materials not available"
+  },
+  {
+   "nodeid": "tests.test_nary_folio::test_full_nary_folio_accounting_when_corpus_is_available",
+   "reason": "optional pinned FOLIO v2 corpus is not downloaded"
+  }
+ ]
+}

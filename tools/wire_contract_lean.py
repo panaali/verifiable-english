@@ -2,7 +2,7 @@
 
 import json
 
-from ve.wire_contract.engine import pieces as split_template
+from conformance.wire_contract_engine import pieces as split_template
 
 
 def q(value):

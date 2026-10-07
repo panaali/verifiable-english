@@ -9,7 +9,7 @@ recorded for the unit whose domain holds it. For the
 pilot:
 
 Loaded with `-p tests.contract_input_recorder` before any test module is imported, it wraps the ways a
-test reaches the pilot: the Python engine (`ve.wire_contract.engine.run` on `soft-norms@0`), the Python
+test reaches the pilot: the Python engine (`conformance.wire_contract_engine.run` on `soft-norms@0`), the Python
 legacy validator (`ve.softnorms.load_soft_document`, and `SoftNormDocument` over a `SoftEnvironment` the
 test built from its raw environment), the soft route's runner (`ve.soft_route._run`), and the Lean service
 modes `diagnose` (unit `soft-norms@0`) and `soft-norms` (through `tests/lean_routes.py`; an `admission` case
@@ -63,9 +63,9 @@ def _record(environment, norms, unit="soft-norms@0"):
 
 
 def _install():
-    from ve import soft_route, softnorms, softnorms_contract
-    from ve.softnorms_contract import soft_source
-    from ve.wire_contract import engine
+    from ve import soft_route, softnorms
+    from conformance import softnorms_contract, wire_contract_engine as engine
+    from conformance.softnorms_contract import soft_source
     from tests import lean_routes
 
     original_run, original_load = engine.run, softnorms.load_soft_document

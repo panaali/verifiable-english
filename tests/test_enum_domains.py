@@ -33,7 +33,10 @@ open Lean ResponseShape ResponseShape.Skeletons ResponseShape.EnumSites
 
 # The declarations a runner copies from the request (`Shape.copied`): the client checks them, the
 # encoder theorems do not. A new one must be added here on purpose.
-COPIED = {("discourse.json", "/$defs/reference/properties/form/enum")}
+COPIED = {
+    ("discourse.json", "/$defs/reference/properties/form/enum"),
+    ("soft-norms.json", "/$defs/elaborated/colliding_pairs/items/properties/outweighs/anyOf/0/const"),
+}
 
 KEYWORDS = {"$ref", "$comment", "type", "enum", "const", "pattern", "minLength", "maxLength", "minimum",
             "required", "properties", "additionalProperties", "prefixItems", "items", "minItems", "maxItems",
