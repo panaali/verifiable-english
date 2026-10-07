@@ -6,6 +6,7 @@ from copy import deepcopy
 import pytest
 
 from tools.batch_evidence import REQUIRED_STAGES, problems
+from tools.readings_batch_latency import make_case
 
 
 HEAD = "a" * 40
@@ -21,6 +22,16 @@ LATENCY = {"head_commit": HEAD, "pass": True,
 def test_complete_head_evidence_passes():
     errors = problems(HEAD, GATE, AB, LATENCY)
     assert errors == []
+
+
+def test_latency_request_uses_the_public_readings_normalizer():
+    # The raw corpus can carry explicit nulls; the public validator omits them
+    # before Lean parses the request.
+    item = {"environment": {"optional": None},
+            "document": {"units": [{"id": "u", "kind": None}], "reading_sets": []}}
+    assert make_case(item) == {"id": "readings-s1", "kind": "readings-validate",
+                               "environment": {},
+                               "document": {"units": [{"id": "u"}], "reading_sets": []}}
 
 
 @pytest.mark.parametrize("which,change", [
