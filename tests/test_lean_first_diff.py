@@ -344,6 +344,16 @@ def _pilot_record(tmp_path):
             "op": "document_check", "source_sha256": blob, "outcome": diff.pilot_check(ROOT, document, env)}
 
 
+def test_probe_record_excludes_nested_instrumentation():
+    result = {"at": {"cell": "S", "status": "accepted", "output": "id", "routed": ["model_validation"]},
+              "over": {"cell": "R", "status": "ResourceLimit", "backend_rejection": True,
+                       "output": {"code": "ResourceLimit", "message": "too large"}}}
+    assert diff.probe_public(result) == {
+        "at": {"cell": "S", "status": "accepted", "output": "id"},
+        "over": {"cell": "R", "status": "ResourceLimit",
+                 "output": {"code": "ResourceLimit", "message": "too large"}}}
+
+
 def _genuine(records, tmp_path):
     """One genuine record of each shape: every conformance operation's returned and raised outcome
     (with and without span or path), every probe operation's cell kinds and sections, a pilot."""
