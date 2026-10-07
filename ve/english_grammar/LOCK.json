@@ -1,11 +1,11 @@
 {
  "format": "ve.english-grammar-lock@1",
- "actions_version": "23",
+ "actions_version": "24",
  "files": {
   "lean/VE/EnglishGrammar/Actions.lean": "725c0a5982dc28db36837afc26ff600ab9e5c570ba7e68b9dbcf20a9dabe7edf",
   "lean/VE/EnglishGrammar/Advice.lean": "a5b8fbf8dfc23f8d689b10b8c1053365385335955078d04148c62140ac9ff79f",
   "lean/VE/EnglishGrammar/Catalogue.lean": "1a2ee6f5dd19d990936dc6bd8ede723931b41be14e0e5ac0b39edf075aa338b6",
-  "lean/VE/EnglishGrammar/Encode.lean": "b1dc5f105ae7c7c162307598b3678a3da52c7f6d3d5941578400266d2a05cce5",
+  "lean/VE/EnglishGrammar/Encode.lean": "f884e8d56dc67e586c5c5a4cfa6dffc0b25f0fa880c9455a39414839568b5f82",
   "lean/VE/EnglishGrammar/Fixed/Alternatives.lean": "e892f23e98920ee2d01d75ed7891d3096487f394f28610e4ad444edd007edfb1",
   "lean/VE/EnglishGrammar/Fixed/Order.lean": "1436122b3e5f80fa5eee0869fc5d318d8a5983529d88a23d8a2b255a63237269",
   "lean/VE/EnglishGrammar/Fixed/RelationalFol.lean": "4f61ad7703c694f041086de9501f0c43c41ba978b38f915215bdae0473c614e0",

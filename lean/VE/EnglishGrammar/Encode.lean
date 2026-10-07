@@ -1,6 +1,7 @@
 import VE.EnglishGrammar.Actions
 import VE.Route.Gate
 import VE.Route.Wire
+import VE.Route.Typed
 import VE.Core.Bridge
 import VE.Norms.Plain
 import VE.Risk.Wire
@@ -195,44 +196,16 @@ def typingView (environment : Json) : Except String Json := do
   else pure env
 
 /-- The typed check of a document of encoded formulas against an environment JSON, by the standalone
-typing service's decoders, family by family, over the environment's typing view (S3 spec 2.3). -/
+typing service's own check (`VE.Route.Typed.check`), over the environment's typing view (S3 spec 2.3). -/
 def typedCheck (environment ast : Json) : Except String Unit := do
   let language ← VE.Bridge.stringField environment "language"
-  if language == "ve.core@0" then
-    let v ← VE.Bridge.decodeEnvironment environment
-    let _ ← VE.Bridge.decodeDocument v.environment ast
+  if language == "ve.core@0" || language == "ve.core@0.1" then
+    let _ ← VE.Route.Typed.legacy environment ast
     pure ()
-  else if language == "ve.core@0.1" then
-    if environment.getObjValD "profiles" == toJson ["order@0", "relational-fol@0"] then
-      let v ← VE.Order.Wire.decodeEnvironment environment
-      let _ ← VE.Order.Wire.decodeFormulas v.environment ast
-      pure ()
-    else
-      let v ← VE.Closure.Bridge.decodeEnvironment environment
-      let _ ← VE.Closure.Bridge.decodeFormulas v.environment ast
-      pure ()
   else
-    let e ← VE.Route.Gate.decodeEnvelope (← typingView environment)
-    VE.Route.AstLimit.check (← ast.getArr?).toList
-    match e.family with
-    | .fol =>
-      let rv ← VE.Route.Wire.decodeVocabulary e.profiles e.vocabulary
-      unless rv.definitions.isEmpty || e.profiles.contains "definitions@0" do
-        throw "defined declarations require the definitions@0 profile"
-      let _ ← VE.Route.Wire.decodeFormulas rv.environment ast (e.profiles.contains "data@0")
-      pure ()
-    | .closure =>
-      let rv ← VE.Route.Wire.decodeVocabulary e.profiles e.vocabulary
-      let _ ← VE.Closure.Bridge.decodeFormulas rv.environment ast
-      pure ()
-    | .closureNary =>
-      let v ← VE.Core.Bridge.decodeEnvironment environment
-      let _ ← VE.Core.Bridge.decodeFormulas v.environment ast
-      pure ()
-    | .order =>
-      let v ← VE.Route.Wire.decodeOrderVocabulary e.vocabulary
-      let _ ← VE.Order.Wire.decodeFormulas v.vocabulary.environment ast
-      pure ()
+    let view ← typingView environment
+    let (e, view) ← VE.Route.Typed.typingEnvironment (← VE.Route.Gate.decodeEnvelope view) view
+    VE.Route.Typed.check e view ast false
 
 /-- Whether the formulas of a document are well typed under the environment (spec 2.3). -/
 def typedDocument (E : Env) (As : List EFormula) : Bool :=
