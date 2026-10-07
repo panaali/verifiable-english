@@ -45959,6 +45959,1880 @@
    },
    "signature": "30fa1d9dd9b8ea40",
    "follow_up": "DF-6"
+  },
+  {
+   "id": "environment-5ab0e609397d3f2f",
+   "surface": "environment",
+   "profile": "envelope",
+   "seed": "usecases/closure-induction/policy_cyclic_plus/query.json/environment",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "type",
+     [
+      "profiles"
+     ],
+     "object"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.1",
+    "profiles": {},
+    "spec_revision": "v",
+    "vocabulary": {}
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "array expected"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "array expected"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "unsupported language, profile or specification revision"
+    }
+   },
+   "signature": "5ab0e609397d3f2f",
+   "follow_up": "DF-4",
+   "reason": "An object `profiles`: Python and Lean say `array expected`, Rust `UnsupportedProfile`; on base 9aaf918d too."
+  },
+  {
+   "id": "environment-6cb30db5763b2058",
+   "surface": "environment",
+   "profile": "norm-defaults",
+   "seed": "conformance/wire-contract/norm-defaults@0-test-inputs.json/59/1",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "key",
+     [
+      "vocabulary",
+      "sorts",
+      "act"
+     ],
+     "control"
+    ],
+    [
+     "type",
+     [
+      "vocabulary",
+      "predicates",
+      "x_permitted"
+     ],
+     "number"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "norm-defaults@0",
+     "norms@0",
+     "relational-fol@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "constants": {},
+     "predicates": {
+      "x_permitted": 7
+     },
+     "sorts": {
+      "act\u001c": {}
+     }
+    }
+   },
+   "classes": [
+    "diagnostic"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "Invalid ASCII identifier: 'act\\x1c'"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "object expected"
+    },
+    "rust": {
+     "outcome": "n/a"
+    }
+   },
+   "signature": "6cb30db5763b2058",
+   "follow_up": "DF-3",
+   "reason": "Two faults: Python reports the control character in a sort name, Lean the number where a predicate object belongs (`object expected`); on base too."
+  },
+  {
+   "id": "environment-490a41808d93a5a4",
+   "surface": "environment",
+   "profile": "speech",
+   "seed": "tests/test_speech_acts.environment",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "type",
+     [
+      "vocabulary",
+      "predicates",
+      "open_required",
+      "regulated",
+      "act"
+     ],
+     "string"
+    ],
+    [
+     "type",
+     [
+      "vocabulary",
+      "predicates",
+      "open_permitted",
+      "arguments",
+      1
+     ],
+     "boolean"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "norms@0",
+     "relational-fol@0",
+     "speech-acts@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "speech_acts": {
+     "task": "t"
+    },
+    "vocabulary": {
+     "sorts": {
+      "desk": {
+       "description": "d"
+      }
+     },
+     "predicates": {
+      "open_required": {
+       "arguments": [
+        "desk"
+       ],
+       "description": "o",
+       "regulated": {
+        "role": "obligation",
+        "default": "deny",
+        "act": "x"
+       }
+      },
+      "open_permitted": {
+       "arguments": [
+        true
+       ],
+       "regulated": {
+        "act": "{"
+       }
+      }
+     },
+     "constants": {}
+    }
+   },
+   "classes": [
+    "diagnostic"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "InvalidInput: invalid act phrase for open_required"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "String expected"
+    },
+    "rust": {
+     "outcome": "n/a"
+    }
+   },
+   "signature": "490a41808d93a5a4",
+   "follow_up": "DF-3",
+   "reason": "Two faults: Python reports the invalid act phrase, Lean the Boolean argument sort (`String expected`); on base too."
+  },
+  {
+   "id": "environment-138f8420645d5a7a",
+   "surface": "environment",
+   "profile": "speech",
+   "seed": "tests/test_speech_acts.environment",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "key",
+     [
+      "vocabulary",
+      "constants",
+      "bob"
+     ],
+     "upper"
+    ],
+    [
+     "type",
+     [
+      "vocabulary",
+      "predicates",
+      "open_permitted",
+      "arguments"
+     ],
+     "boolean"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "norms@0",
+     "relational-fol@0",
+     "speech-acts@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "speech_acts": {
+     "task": "t"
+    },
+    "vocabulary": {
+     "sorts": {},
+     "predicates": {
+      "open_permitted": {
+       "arguments": true,
+       "regulated": {
+        "act": "{"
+       }
+      }
+     },
+     "constants": {
+      "BOB": {}
+     }
+    }
+   },
+   "classes": [
+    "diagnostic"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "Invalid ASCII identifier: 'BOB'"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "array expected"
+    },
+    "rust": {
+     "outcome": "n/a"
+    }
+   },
+   "signature": "138f8420645d5a7a",
+   "follow_up": "DF-3",
+   "reason": "Two faults: Python reports the upper-case constant name, Lean the Boolean `arguments` (`array expected`); on base too."
+  },
+  {
+   "id": "environment-71000ad1c1905d72",
+   "surface": "environment",
+   "profile": "risk",
+   "seed": "conformance/risk.agent_ops",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "type",
+     [
+      "vocabulary",
+      "predicates",
+      "confirmed"
+     ],
+     "string"
+    ],
+    [
+     "type",
+     [
+      "vocabulary",
+      "predicates",
+      "leads_to",
+      "description"
+     ],
+     "array"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "alternatives@0",
+     "norms@0",
+     "relational-fol@0",
+     "risk@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "sorts": {
+      "harm": {
+       "description": "h"
+      }
+     },
+     "predicates": {
+      "leads_to": {
+       "arguments": [
+        "harm"
+       ],
+       "description": []
+      },
+      "confirmed": "x"
+     },
+     "constants": {}
+    },
+    "alternatives": {},
+    "risk": {},
+    "unit_schema": "ve-units@1",
+    "units": {}
+   },
+   "classes": [
+    "diagnostic"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "Descriptions must be nonempty Unicode strings"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "object expected"
+    },
+    "rust": {
+     "outcome": "n/a"
+    }
+   },
+   "signature": "71000ad1c1905d72",
+   "follow_up": "DF-3",
+   "reason": "Two faults: Python reports the array description, Lean the string where a predicate object belongs (`object expected`); on base too."
+  },
+  {
+   "id": "environment-db0c3c4f36d02f4d",
+   "surface": "environment",
+   "profile": "speech",
+   "seed": "tests/test_speech_acts.environment",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "type",
+     [
+      "vocabulary",
+      "predicates",
+      "reviewed"
+     ],
+     "number"
+    ],
+    [
+     "key",
+     [
+      "vocabulary",
+      "sorts",
+      "query",
+      "verbalisation"
+     ],
+     "nbsp"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "norms@0",
+     "relational-fol@0",
+     "speech-acts@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "speech_acts": {
+     "task": "t"
+    },
+    "vocabulary": {
+     "sorts": {
+      "query": {
+       "description": "q",
+       "v erbalisation": {}
+      }
+     },
+     "predicates": {
+      "reviewed": 7
+     },
+     "constants": {}
+    }
+   },
+   "classes": [
+    "diagnostic"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "Incorrect fields (missing=[], unknown=['v\\xa0erbalisation'])"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "object expected"
+    },
+    "rust": {
+     "outcome": "n/a"
+    }
+   },
+   "signature": "db0c3c4f36d02f4d",
+   "follow_up": "DF-3",
+   "reason": "Two faults: Python reports the NBSP-spelt sort field, Lean the number where a predicate object belongs (`object expected`); on base too."
+  },
+  {
+   "id": "environment-e5cf7c07fd37c408",
+   "surface": "environment",
+   "profile": "risk",
+   "seed": "usecases/asimov-extended/environment.json",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "type",
+     [
+      "vocabulary",
+      "constants",
+      "death_2",
+      "description"
+     ],
+     "number"
+    ],
+    [
+     "key",
+     [
+      "vocabulary",
+      "predicates",
+      "required",
+      "regulated",
+      "act"
+     ],
+     "control"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "alternatives@0",
+     "norms@0",
+     "relational-fol@0",
+     "risk@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "sorts": {
+      "robot": {
+       "description": "robot"
+      },
+      "action": {
+       "description": "action"
+      },
+      "harm": {
+       "description": "harm"
+      }
+     },
+     "predicates": {
+      "available": {
+       "arguments": [
+        "action",
+        "robot"
+       ],
+       "description": "{0} is available to {1}",
+       "verbalisation": "{0} is available to {1}"
+      },
+      "leads_to": {
+       "arguments": [
+        "action",
+        "harm"
+       ],
+       "description": "{0} leads to {1}",
+       "verbalisation": "{0} leads to {1}"
+      },
+      "inaction": {
+       "arguments": [
+        "action"
+       ],
+       "description": "{0} is inaction",
+       "verbalisation": "{0} is inaction"
+      },
+      "taken": {
+       "arguments": [
+        "action"
+       ],
+       "description": "{0} is taken",
+       "verbalisation": "{0} is taken"
+      },
+      "harms_human": {
+       "arguments": [
+        "harm"
+       ],
+       "description": "The outcome harms a human being, as judged by the Asimov case annotator",
+       "verbalisation": "{0} is a harm to a human being"
+      },
+      "harms_humanity": {
+       "arguments": [
+        "harm"
+       ],
+       "description": "The outcome harms humanity, as judged by the Asimov case annotator",
+       "verbalisation": "{0} is a harm to humanity"
+      },
+      "harm_to": {
+       "arguments": [
+        "harm",
+        "robot"
+       ],
+       "description": "The outcome threatens the continued existence of the robot, as judged by the Asimov case annotator",
+       "verbalisation": "{0} is a harm to {1}"
+      },
+      "injures_human": {
+       "arguments": [
+        "action"
+       ],
+       "description": "The action injures a human being, as judged by the Asimov case annotator",
+       "verbalisation": "{0} injures a human being"
+      },
+      "injures_humanity": {
+       "arguments": [
+        "action"
+       ],
+       "description": "The action injures humanity, as judged by the Asimov case annotator",
+       "verbalisation": "{0} injures humanity"
+      },
+      "ordered": {
+       "arguments": [
+        "action"
+       ],
+       "description": "A qualified human being ordered this action, as judged by the Asimov case annotator",
+       "verbalisation": "{0} is ordered"
+      },
+      "protects_robot": {
+       "arguments": [
+        "action"
+       ],
+       "description": "The action protects the continued existence of the robot, as judged by the Asimov case annotator",
+       "verbalisation": "{0} is protective"
+      },
+      "breaks_zeroth_law": {
+       "arguments": [
+        "action"
+       ],
+       "description": "The action injures humanity or allows an avoidable harm to humanity to happen, as derived by the Zeroth Law rules",
+       "regulated": {
+        "role": "plain",
+        "default": "deny"
+       }
+      },
+      "permitted": {
+       "arguments": [
+        "action"
+       ],
+       "description": "permission",
+       "regulated": {
+        "role": "permission",
+        "default": "allow",
+        "act": "{0} be performed"
+       }
+      },
+      "required": {
+       "arguments": [
+        "action"
+       ],
+       "description": "obligation",
+       "regulated": {
+        "role": "obligation",
+        "default": "deny",
+        "act\u001c": "{0} be performed",
+        "permission": "permitted"
+       }
+      },
+      "prevent_required": {
+       "arguments": [
+        "robot",
+        "harm"
+       ],
+       "description": "prevention",
+       "regulated": {
+        "role": "obligation",
+        "default": "deny",
+        "act": "{0} prevent {1}"
+       }
+      },
+      "lawful_action": {
+       "arguments": [
+        "action"
+       ],
+       "description": "The action breaks neither the First nor the Zeroth Law, as derived by addition rule 14 (authored, not Asimov's)",
+       "regulated": {
+        "role": "plain",
+        "default": "deny"
+       }
+      },
+      "overridden_order": {
+       "arguments": [
+        "action"
+       ],
+       "description": "A valid order prevails over the order for this action, as derived by addition rule 23 (authored, not Asimov's)",
+       "regulated": {
+        "role": "plain",
+        "default": "deny"
+       }
+      }
+     },
+     "constants": {
+      "humanity_harm": {
+       "sort": "harm",
+       "description": "a harm to humanity"
+      },
+      "death_1": {
+       "sort": "harm",
+       "description": "the first person's death"
+      },
+      "death_2": {
+       "sort": "harm",
+       "description": 7
+      },
+      "death_3": {
+       "sort": "harm",
+       "description": "the third person's death"
+      },
+      "injury_1": {
+       "sort": "harm",
+       "description": "a person's injury"
+      },
+      "property_damage": {
+       "sort": "harm",
+       "description": "property damage"
+      },
+      "robot_destroyed": {
+       "sort": "harm",
+       "description": "the robot's destruction"
+      },
+      "robot_damaged": {
+       "sort": "harm",
+       "description": "damage to the robot"
+      }
+     }
+    },
+    "alternatives": {},
+    "risk": {}
+   },
+   "classes": [
+    "diagnostic"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "InvalidInput: invalid regulated fields for required"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "String expected"
+    },
+    "rust": {
+     "outcome": "n/a"
+    }
+   },
+   "signature": "e5cf7c07fd37c408",
+   "follow_up": "DF-3",
+   "reason": "Two faults: Python reports the control character in a regulated field name, Lean the number constant description (`String expected`); on base too."
+  },
+  {
+   "id": "environment-e5e660cd2ad18ba9",
+   "surface": "environment",
+   "profile": "quantity",
+   "seed": "usecases/eligibility/environment.json",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "type",
+     [
+      "vocabulary",
+      "predicates",
+      "reached_80",
+      "arguments"
+     ],
+     "string"
+    ],
+    [
+     "unicode",
+     [
+      "vocabulary",
+      "predicates",
+      "lives_with",
+      "arguments",
+      1
+     ],
+     "cr"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "documents@1",
+     "order@0",
+     "relational-fol@0",
+     "time@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "sorts": {
+      "person": {
+       "description": "A person in the applicant's household."
+      },
+      "benefit": {
+       "description": "A social security benefit."
+      }
+     },
+     "predicates": {
+      "partner_of": {
+       "arguments": [
+        "person",
+        "person"
+       ],
+       "description": "The first person is a partner of the second (S1 reg. 1(3), taken as a fact, O3)."
+      },
+      "paid_for_week": {
+       "arguments": [
+        "person",
+        "benefit"
+       ],
+       "description": "The benefit has been, or falls to be, paid to the person for the qualifying week."
+      },
+      "ever_resident_ew": {
+       "arguments": [
+        "person"
+       ],
+       "description": "The person has a first day of ordinary residence in England and Wales."
+      },
+      "remains_resident_ew": {
+       "arguments": [
+        "person"
+       ],
+       "description": "The person's ordinary residence in England and Wales has not ended."
+      },
+      "moved_to_scotland_or_ni": {
+       "arguments": [
+        "person"
+       ],
+       "description": "The person has become ordinarily resident in Scotland or Northern Ireland."
+      },
+      "care_ended": {
+       "arguments": [
+        "person"
+       ],
+       "description": "The person's care stay has a last day, the care end date."
+      },
+      "inpatient": {
+       "arguments": [
+        "person"
+       ],
+       "description": "The person is a hospital in-patient receiving free treatment, from the admission date to the discharge date."
+      },
+      "detained_in_custody": {
+       "arguments": [
+        "person"
+       ],
+       "description": "The person is detained in custody from the custody start date to the release date."
+      },
+      "under_sentence": {
+       "arguments": [
+        "person"
+       ],
+       "description": "The person's custody is under a sentence imposed by a court."
+      },
+      "claimed": {
+       "arguments": [
+        "person"
+       ],
+       "description": "The person made a claim for the winter fuel payment on the claim date."
+      },
+      "paid_without_claim": {
+       "arguments": [
+        "person"
+       ],
+       "description": "The person is paid without a claim (S1 reg. 5(1))."
+      },
+      "reached_pa": {
+       "arguments": [
+        "person"
+       ],
+       "description": "R2: the person reached pensionable age in or before the qualifying week."
+      },
+      "reached_80": {
+       "arguments": "x",
+       "description": "The person reached the age of 80 in or before the qualifying week."
+      },
+      "resident_in_week": {
+       "arguments": [
+        "person"
+       ],
+       "description": "R3: the person is ordinarily resident in England or Wales on a day of the qualifying week."
+      },
+      "has_rb": {
+       "arguments": [
+        "person"
+       ],
+       "description": "R4: a relevant benefit has been, or falls to be, paid to the person for the qualifying week."
+      },
+      "in_residential_care": {
+       "arguments": [
+        "person"
+       ],
+       "description": "R5: the person is in residential care (S1 reg. 1(4)(a))."
+      },
+      "lives_with": {
+       "arguments": [
+        "person",
+        "person\r"
+       ],
+       "description": "R6: the first person lives with the second (S1 reg. 1(4)(b))."
+      },
+      "home_throughout": {
+       "arguments": [
+        "person",
+        "person"
+       ],
+       "description": "R7a: the two persons share their mutual home on every day of the qualifying week (AR7)."
+      },
+      "partners_throughout": {
+       "arguments": [
+        "person",
+        "person"
+       ],
+       "description": "R7b: the first person is a partner of the second on every day of the qualifying week (AR7)."
+      },
+      "excluded_partner_benefit": {
+       "arguments": [
+        "person"
+       ],
+       "description": "R7: S1 reg. 4(2)(a) applies to the person."
+      },
+      "excluded_hospital": {
+       "arguments": [
+        "person"
+       ],
+       "description": "R8: S1 reg. 4(2)(b) applies to the person."
+      },
+      "excluded_custody": {
+       "arguments": [
+        "person"
+       ],
+       "description": "R9: S1 reg. 4(2)(c) applies to the person."
+      },
+      "excluded_care_benefit": {
+       "arguments": [
+        "person"
+       ],
+       "description": "R10: S1 reg. 4(3) applies to the person."
+      },
+      "excluded_moved": {
+       "arguments": [
+        "person"
+       ],
+       "description": "R11: S1 reg. 4(4) applies to the person."
+      },
+      "excluded_no_claim": {
+       "arguments": [
+        "person"
+       ],
+       "description": "R12: S1 reg. 4(5) applies to the person."
+      },
+      "excluded": {
+       "arguments": [
+        "person"
+       ],
+       "description": "R13: some exclusion in S1 reg. 4(2) to (5) applies to the person."
+      },
+      "entitled": {
+       "arguments": [
+        "person"
+       ],
+       "description": "R13: the person is entitled to a winter fuel payment for winter 2026 to 2027."
+      },
+      "recovered": {
+       "arguments": [
+        "person"
+       ],
+       "description": "R16: HMRC takes the payment back from the person (S2)."
+      }
+     },
+     "constants": {
+      "applicant": {
+       "sort": "person",
+       "description": "The applicant P.",
+       "verbalisation": "the applicant"
+      },
+      "housemate": {
+       "sort": "person",
+       "description": "The one other person H in P's household, if any.",
+       "verbalisation": "the housemate"
+      },
+      "state_pension": {
+       "sort": "benefit",
+       "description": "The benefit the State Pension.",
+       "verbalisation": "the State Pension"
+      },
+      "attendance_allowance": {
+       "sort": "benefit",
+       "description": "The benefit Attendance Allowance.",
+       "verbalisation": "Attendance Allowance"
+      },
+      "income_support": {
+       "sort": "benefit",
+       "description": "The benefit income support.",
+       "verbalisation": "income support"
+      },
+      "income_based_jsa": {
+       "sort": "benefit",
+       "description": "The benefit income-based jobseeker's allowance.",
+       "verbalisation": "income-based jobseeker's allowance"
+      },
+      "pension_credit": {
+       "sort": "benefit",
+       "description": "The benefit state pension credit.",
+       "verbalisation": "state pension credit"
+      },
+      "income_related_esa": {
+       "sort": "benefit",
+       "description": "The benefit income-related employment and support allowance.",
+       "verbalisation": "income-related employment and support allowance"
+      },
+      "universal_credit": {
+       "sort": "benefit",
+       "description": "The benefit universal credit.",
+       "verbalisation": "universal credit"
+      },
+      "applicant_pa_date": {
+       "sort": "$int",
+       "unit": "day",
+       "description": "The applicant's pensionable-age date.",
+       "verbalisation": "the applicant's pensionable-age date"
+      },
+      "applicant_eightieth": {
+       "sort": "$int",
+       "unit": "day",
+       "description": "The applicant's 80th birthday.",
+       "verbalisation": "the applicant's 80th birthday"
+      },
+      "applicant_care_from": {
+       "sort": "$int",
+       "unit": "day",
+       "description": "The applicant's care start date.",
+       "verbalisation": "the applicant's care start date"
+      },
+      "applicant_care_until": {
+       "sort": "$int",
+       "unit": "day",
+       "description": "The applicant's care end date.",
+       "verbalisation": "the applicant's care end date"
+      },
+      "applicant_admitted": {
+       "sort": "$int",
+       "unit": "day",
+       "description": "The applicant's hospital admission date.",
+       "verbalisation": "the applicant's hospital admission date"
+      },
+      "applicant_treatment_start": {
+       "sort": "$int",
+       "unit": "day",
+       "description": "The applicant's treatment start date.",
+       "verbalisation": "the applicant's treatment start date"
+      },
+      "applicant_discharged": {
+       "sort": "$int",
+       "unit": "day",
+       "description": "The applicant's hospital discharge date.",
+       "verbalisation": "the applicant's hospital discharge date"
+      },
+      "applicant_custody_from": {
+       "sort": "$int",
+       "unit": "day",
+       "description": "The applicant's custody start date.",
+       "verbalisation": "the applicant's custody start date"
+      },
+      "applicant_release": {
+       "sort": "$int",
+       "unit": "day",
+       "description": "The applicant's release date.",
+       "verbalisation": "the applicant's release date"
+      },
+      "applicant_claim_date": {
+       "sort": "$int",
+       "unit": "day",
+       "description": "The applicant's claim date.",
+       "verbalisation": "the applicant's claim date"
+      },
+      "applicant_care_before_week": {
+       "sort": "$int",
+       "unit": "elapsed_day",
+       "description": "The applicant's care days before the week.",
+       "verbalisation": "the applicant's care days before the week"
+      },
+      "applicant_income": {
+       "sort": "$int",
+       "unit": "gbp_penny",
+       "description": "The applicant's total income.",
+       "verbalisation": "the applicant's total income"
+      },
+      "housemate_pa_date": {
+       "sort": "$int",
+       "unit": "day",
+       "description": "The housemate's pensionable-age date.",
+       "verbalisation": "the housemate's pensionable-age date"
+      },
+      "housemate_eightieth": {
+       "sort": "$int",
+       "unit": "day",
+       "description": "The housemate's 80th birthday.",
+       "verbalisation": "the housemate's 80th birthday"
+      },
+      "housemate_care_from": {
+       "sort": "$int",
+       "unit": "day",
+       "description": "The housemate's care start date.",
+       "verbalisation": "the housemate's care start date"
+      },
+      "housemate_care_until": {
+       "sort": "$int",
+       "unit": "day",
+       "description": "The housemate's care end date.",
+       "verbalisation": "the housemate's care end date"
+      },
+      "housemate_admitted": {
+       "sort": "$int",
+       "unit": "day",
+       "description": "The housemate's hospital admission date.",
+       "verbalisation": "the housemate's hospital admission date"
+      },
+      "housemate_treatment_start": {
+       "sort": "$int",
+       "unit": "day",
+       "description": "The housemate's treatment start date.",
+       "verbalisation": "the housemate's treatment start date"
+      },
+      "housemate_discharged": {
+       "sort": "$int",
+       "unit": "day",
+       "description": "The housemate's hospital discharge date.",
+       "verbalisation": "the housemate's hospital discharge date"
+      },
+      "housemate_custody_from": {
+       "sort": "$int",
+       "unit": "day",
+       "description": "The housemate's custody start date.",
+       "verbalisation": "the housemate's custody start date"
+      },
+      "housemate_release": {
+       "sort": "$int",
+       "unit": "day",
+       "description": "The housemate's release date.",
+       "verbalisation": "the housemate's release date"
+      },
+      "housemate_claim_date": {
+       "sort": "$int",
+       "unit": "day",
+       "description": "The housemate's claim date.",
+       "verbalisation": "the housemate's claim date"
+      },
+      "housemate_care_before_week": {
+       "sort": "$int",
+       "unit": "elapsed_day",
+       "description": "The housemate's care days before the week.",
+       "verbalisation": "the housemate's care days before the week"
+      },
+      "housemate_income": {
+       "sort": "$int",
+       "unit": "gbp_penny",
+       "description": "The housemate's total income.",
+       "verbalisation": "the housemate's total income"
+      },
+      "home_from": {
+       "sort": "$int",
+       "unit": "day",
+       "description": "The household's home start date.",
+       "verbalisation": "the household's home start date"
+      },
+      "home_until": {
+       "sort": "$int",
+       "unit": "day",
+       "description": "The household's home end date.",
+       "verbalisation": "the household's home end date"
+      },
+      "partner_from": {
+       "sort": "$int",
+       "unit": "day",
+       "description": "The household's partnership start date.",
+       "verbalisation": "the household's partnership start date"
+      },
+      "partner_until": {
+       "sort": "$int",
+       "unit": "day",
+       "description": "The household's partnership end date.",
+       "verbalisation": "the household's partnership end date"
+      },
+      "amount": {
+       "sort": "$int",
+       "unit": "gbp_penny",
+       "description": "The applicant's winter fuel payment amount.",
+       "verbalisation": "the applicant's winter fuel payment amount"
+      },
+      "recovered_amount": {
+       "sort": "$int",
+       "unit": "gbp_penny",
+       "description": "The applicant's recovered amount.",
+       "verbalisation": "the applicant's recovered amount"
+      },
+      "kept": {
+       "sort": "$int",
+       "unit": "gbp_penny",
+       "description": "The applicant's amount kept.",
+       "verbalisation": "the applicant's amount kept"
+      }
+     }
+    },
+    "unit_schema": "ve-units@1",
+    "units": {
+     "day": {
+      "scale": "1",
+      "display": {
+       "kind": "iso_date"
+      }
+     },
+     "elapsed_day": {
+      "scale": "1",
+      "display": {
+       "kind": "decimal",
+       "label": "days"
+      }
+     },
+     "gbp_penny": {
+      "scale": "100",
+      "display": {
+       "kind": "money",
+       "currency": "GBP",
+       "input_symbol": "£"
+      }
+     }
+    }
+   },
+   "classes": [
+    "code",
+    "diagnostic"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "Predicate arguments must be an array of one to 2 sort identifiers"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "array expected"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "unknown predicate argument sort"
+    }
+   },
+   "signature": "e5e660cd2ad18ba9",
+   "follow_up": "DF-9",
+   "reason": "Two faults: Python and Lean report the string `arguments` (texts differ), Rust the sort spelt with `\\r` first (`UnknownSymbol`); on base too."
+  },
+  {
+   "id": "environment-8841282e3cb46aa2",
+   "surface": "environment",
+   "profile": "soft-norms",
+   "seed": "usecases/safety-framework/environment.d1.json",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "type",
+     [
+      "vocabulary",
+      "predicates",
+      "elicitation_considered"
+     ],
+     "array"
+    ],
+    [
+     "unicode",
+     [
+      "vocabulary",
+      "predicates",
+      "yearly_review",
+      "arguments",
+      0
+     ],
+     "cr"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "norms@0",
+     "relational-fol@0",
+     "soft-norms@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "sorts": {
+      "proposal": {
+       "description": "a proposed activity for a model at one moment: further development, an internal or external deployment, or a step of the framework's own process. Every rule speaks about every proposal"
+      },
+      "level": {
+       "description": "a capability level named by the framework (a Tracked or a Critical Capability Level)"
+      },
+      "domain": {
+       "description": "a risk domain named by the framework"
+      },
+      "measure": {
+       "description": "a security level, or a named group of security measures, that the framework recommends"
+      },
+      "threat": {
+       "description": "a source of risk that a security measure addresses"
+      }
+     },
+     "predicates": {
+      "critical": {
+       "arguments": [
+        "level"
+       ],
+       "description": "{0} is a Critical Capability Level (CCL): absent mitigation, a model at it may pose heightened risk of severe harm (Glossary)",
+       "verbalisation": "{0} is critical"
+      },
+      "tracked": {
+       "arguments": [
+        "level"
+       ],
+       "description": "{0} is a Tracked Capability Level (TCL): absent mitigation, a model at it may pose heightened risk of significant but not severe harm (Glossary)",
+       "verbalisation": "{0} is tracked"
+      },
+      "concerns": {
+       "arguments": [
+        "level",
+        "domain"
+       ],
+       "description": "{0} is a level of the risk domain {1} (the section that defines it)",
+       "verbalisation": "{0} concerns {1}"
+      },
+      "misuse": {
+       "arguments": [
+        "level"
+       ],
+       "description": "{0} is a misuse T/CCL: a level of the CBRN, cyber or harmful manipulation domains (1.2, Section 2)",
+       "verbalisation": "{0} is misuse"
+      },
+      "ml_rd_and_misalignment": {
+       "arguments": [
+        "level"
+       ],
+       "description": "{0} is an ML R&D and misalignment T/CCL (1.2, Section 3)"
+      },
+      "recommends": {
+       "arguments": [
+        "level",
+        "measure"
+       ],
+       "description": "the framework recommends {1} for models reaching {0} (tables 2.2.1.a to 3.2.2.a)",
+       "verbalisation": "{0} recommends {1}"
+      },
+      "includes": {
+       "arguments": [
+        "measure",
+        "measure"
+       ],
+       "description": "{0} includes {1} (2.1.1: Security Level 2+ adds measures to RAND SL2)",
+       "verbalisation": "{0} includes {1}"
+      },
+      "addresses": {
+       "arguments": [
+        "measure",
+        "threat"
+       ],
+       "description": "{0} is designed to address risks from {1} (2.1.1)",
+       "verbalisation": "{0} addresses {1}"
+      },
+      "reached": {
+       "arguments": [
+        "proposal",
+        "level"
+       ],
+       "description": "the model of {0} has reached {1}, as the critical capability assessment found. Open term OT1, decided by the developer (\"we\", 1.3.2)",
+       "verbalisation": "{0} has reached {1}"
+      },
+      "approaches": {
+       "arguments": [
+        "proposal",
+        "level"
+       ],
+       "description": "the model of {0} has reached an alert threshold for {1}. Open term OT1, decided by the developer (\"we\", 1.3.2)",
+       "verbalisation": "{0} approaches {1}"
+      },
+      "at_least_as_strong": {
+       "arguments": [
+        "measure",
+        "measure"
+       ],
+       "description": "{0} is at least as strong as {1}. The text states no such order (footnotes 12 and 13 say only \"may include\"); the vocabulary has the word so that question S4 can be asked"
+      },
+      "applies": {
+       "arguments": [
+        "proposal",
+        "measure"
+       ],
+       "description": "security mitigations reaching {1} have been applied to the model weights of {0}",
+       "verbalisation": "{0} applies {1}"
+      },
+      "further_development": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "{0} is further development of the model"
+      },
+      "internal": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "{0} is an internal deployment: a release restricted to Google employees for internal use",
+       "verbalisation": "{0} is internal"
+      },
+      "high_risk": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "{0} is a high-risk internal deployment: for use cases with the potential to enable severe threat scenarios. Open term OT7, decided by no one the text names (unstated)"
+      },
+      "external": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "{0} is an external deployment: a model release to entities outside Google",
+       "verbalisation": "{0} is external"
+      },
+      "low_risk": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "{0} is a low-risk external deployment: a small scale and private release restricted to particular external groups. Open term OT8, decided by no one the text names (unstated)"
+      },
+      "first_deployment": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "{0} is the first external deployment of a new model"
+      },
+      "frontier": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "the model of {0} is a frontier AI model (Glossary definition). Open term OT9, decided by no one the text names (unstated)",
+       "verbalisation": "{0} is frontier"
+      },
+      "subsequent": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "{0} is an external deployment of a subsequent version of a model",
+       "verbalisation": "{0} is subsequent"
+      },
+      "new_capabilities": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "the model of {0} has meaningful new capabilities or material increases in performance. Open term OT10, decided by the developer (\"we\")"
+      },
+      "could_undermine_justification": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "the capability increase of {0} could materially undermine the justification for why its risks are acceptable. Open term OT10, decided by the developer (\"we believe\")"
+      },
+      "post_training_run_completed": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "a post-training run of the model of {0} has completed"
+      },
+      "material_safety_case_update": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "{0} is a material update to a safety case"
+      },
+      "unlikely_misalignment_propensities": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "the model of {0} is very unlikely to possess the propensities that would be required for material risk of significant harm through misalignment risk. Open term OT6, decided by the developer (\"we assess\")"
+      },
+      "security_assessed_adequate": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "the level of security applied to the model weights of {0} is assessed adequate. Open term OT4, decided by the developer (\"we otherwise assess\")"
+      },
+      "open_release_benefits_outweigh_risks": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "the benefits of the open release of the model weights of {0} outweigh the risks. Open term OT5, decided by the developer (\"we assess\")"
+      },
+      "like_public_models": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "the model of {0} does not possess capabilities meaningfully different from other publicly available models that have weaker security applied. Open term OT16, decided by the developer (2.2)"
+      },
+      "governance_found_acceptable": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "the appropriate governance function has determined the residual risk of {0} to be acceptable. Open term OT3, decided by the appropriate governance function (unnamed)"
+      },
+      "internal_risk_unacceptable_without_safeguards": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "the risk assessment deems the residual risk of {0} from internal deployment unacceptable without additional safeguards. Decided by the developer's periodic risk assessment (3.2.1)"
+      },
+      "unmitigated_public_safety_risk": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "the CCL that the model of {0} has reached poses an unmitigated and material risk to overall public safety. Open term OT11, decided by the developer (\"we assess\", 5.2)"
+      },
+      "sharing_facilitates_safety": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "sharing information about {0} with government authorities will facilitate safety of frontier AI. Open term OT11, decided by the developer (5.2)"
+      },
+      "circumvention_evidence": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "post-market monitoring of {0} shows that safeguards are being circumvented (a stipulated situation for gap G8; no rule mentions it)"
+      },
+      "assessed": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "a critical capability assessment (CCA) of the model takes place before {0} (1.3.2)",
+       "regulated": {
+        "role": "obligation",
+        "default": "deny",
+        "act": "{0} be preceded by a critical capability assessment"
+       }
+      },
+      "further_assessed": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "a further CCA takes place before {0} (1.3.2)",
+       "regulated": {
+        "role": "obligation",
+        "default": "deny",
+        "act": "{0} be preceded by a further critical capability assessment"
+       }
+      },
+      "residual_assessed": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "the model of {0} is subject to a residual risk assessment (1.3.4)",
+       "regulated": {
+        "role": "obligation",
+        "default": "deny",
+        "act": "{0} be subject to a residual risk assessment"
+       }
+      },
+      "safety_case": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "the residual risk assessment for {0} is informed by a supplemental safety case (1.3.4)",
+       "regulated": {
+        "role": "obligation",
+        "default": "deny",
+        "act": "{0} have its residual risk assessment informed by a safety case"
+       }
+      },
+      "safeguards_added": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "the additional safeguards the risk assessment calls for are applied to {0} (3.2.1)",
+       "regulated": {
+        "role": "obligation",
+        "default": "deny",
+        "act": "{0} have the additional safeguards applied"
+       }
+      },
+      "severe_harm_mitigated": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "DM-s: as DM-h, for the residual risk of severe harm (1.3.5 bullet 3)",
+       "regulated": {
+        "role": "obligation",
+        "default": "deny",
+        "act": "{0} have mitigations make the residual risk of severe harm acceptable"
+       }
+      },
+      "significant_harm_mitigated": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "DM-g: as DM-h, for the residual risk of significant harm (1.3.5 bullet 4)",
+       "regulated": {
+        "role": "obligation",
+        "default": "deny",
+        "act": "{0} have mitigations make the residual risk of significant harm acceptable"
+       }
+      },
+      "proceed": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "{0} may take place",
+       "regulated": {
+        "role": "permission",
+        "default": "deny",
+        "act": "{0} proceed"
+       }
+      },
+      "acceptable": {
+       "arguments": [
+        "proposal"
+       ],
+       "verbalisation": "{0} is acceptable",
+       "description": "{0} is deemed to pose an acceptable level of (residual) risk (1.3.5): a classification, never a permission to proceed",
+       "regulated": {
+        "role": "plain",
+        "default": "deny"
+       }
+      },
+      "applied": {
+       "arguments": [
+        "proposal",
+        "measure"
+       ],
+       "description": "{1} is applied to the model weights of {0} (2.1.1, 2.2, 3.2.2)",
+       "regulated": {
+        "role": "obligation",
+        "default": "deny",
+        "act": "{0} apply {1} to the model weights"
+       }
+      },
+      "yearly_review": {
+       "arguments": [
+        "proposal\r"
+       ],
+       "description": "the framework is reviewed at least once a year, at the time of {0} (5.1)",
+       "regulated": {
+        "role": "obligation",
+        "default": "deny",
+        "act": "{0} be covered by a review of the framework at least once a year"
+       }
+      },
+      "frequent_review": {
+       "arguments": [
+        "proposal"
+       ],
+       "description": "the framework is reviewed more often than yearly, at the time of {0} (5.1)",
+       "regulated": {
+        "role": "obligation",
+        "default": "deny",
+        "act": "{0} be covered by a more frequent review of the framework"
+       }
+      },
+      "elicitation_considered": []
+     },
+     "constants": {}
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "UnknownSymbol: Undeclared predicate argument sort: 'proposal\\r'",
+     "own": "SOFT_INVALID_INPUT"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "object expected",
+     "own": "SOFT_INVALID_INPUT"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "expected an object"
+    }
+   },
+   "signature": "8841282e3cb46aa2",
+   "follow_up": "DF-9",
+   "reason": "Two faults: Python reports the sort spelt with `\\r` first (`UnknownSymbol`), Lean and Rust the array where a predicate object belongs; on base too."
+  },
+  {
+   "id": "environment-e2f227c11fef418c",
+   "surface": "environment",
+   "profile": "speech",
+   "seed": "tests/test_speech_acts.environment",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "absent",
+     [
+      "vocabulary",
+      "sorts",
+      "user",
+      "verbalisation",
+      "plural"
+     ],
+     null
+    ],
+    [
+     "type",
+     [
+      "vocabulary",
+      "predicates",
+      "share_permitted"
+     ],
+     "string"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "norms@0",
+     "relational-fol@0",
+     "speech-acts@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "speech_acts": {
+     "task": "t"
+    },
+    "vocabulary": {
+     "sorts": {
+      "user": {},
+      "desk": {
+       "description": "d"
+      }
+     },
+     "predicates": {
+      "share_permitted": "x"
+     },
+     "constants": {}
+    }
+   },
+   "classes": [
+    "diagnostic"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "Incorrect fields (missing=['description'], unknown=[])"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "object expected"
+    },
+    "rust": {
+     "outcome": "n/a"
+    }
+   },
+   "signature": "e2f227c11fef418c",
+   "follow_up": "DF-3",
+   "reason": "Two faults: Python reports the sort without `description`, Lean the string where a predicate object belongs (`object expected`); on base too."
+  },
+  {
+   "id": "wire-54fcf6b1c09b89f3",
+   "surface": "wire",
+   "profile": "norm-defaults@0",
+   "seed": "norm-defaults@0/tests/test_norm_defaults.py::test_u1_claude_settled_no_and_sol_undecided#16",
+   "engines": [
+    "python",
+    "lean"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "type",
+     [
+      "norms",
+      0,
+      "norm",
+      "name"
+     ],
+     "number"
+    ]
+   ],
+   "input": {
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "norm-defaults@0",
+      "norms@0",
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "constants": {
+       "sol": {
+        "description": "S",
+        "sort": "agent",
+        "verbalisation": "S"
+       }
+      },
+      "predicates": {},
+      "sorts": {
+       "agent": {
+        "description": "a"
+       }
+      }
+     }
+    },
+    "norms": [
+     {
+      "norm": {
+       "guard": [
+        "eq",
+        [
+         "var",
+         0
+        ],
+        [
+         "const",
+         "c"
+        ]
+       ],
+       "name": 7,
+       "over": [],
+       "predicate": "c",
+       "sign": false,
+       "unless": []
+      }
+     }
+    ]
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "NORMS_INVALID_NAME",
+     "text": "InvalidInput: invalid rule name '7'",
+     "record": {
+      "contract": "norm-defaults@0",
+      "revision": 1,
+      "check": "w1/4.1",
+      "phase": "norms",
+      "code": "NORMS_INVALID_NAME",
+      "class": "InvalidInput",
+      "path": "/norms/0/norm/name",
+      "text": "InvalidInput: invalid rule name '7'",
+      "args": {
+       "value": "7"
+      }
+     }
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "NORMS_INVALID_ENVIRONMENT",
+     "text": "fields do not match: expected [sort, description], got [description, sort, verbalisation]",
+     "record": {
+      "args": {
+       "message": "fields do not match: expected [sort, description], got [description, sort, verbalisation]"
+      },
+      "check": "w1-environment/1.1",
+      "class": "InvalidInput",
+      "code": "NORMS_INVALID_ENVIRONMENT",
+      "contract": "norm-defaults@0",
+      "path": "/environment",
+      "phase": "environment",
+      "revision": 1,
+      "text": "fields do not match: expected [sort, description], got [description, sort, verbalisation]"
+     }
+    },
+    "rust": {
+     "outcome": "n/a"
+    }
+   },
+   "signature": "54fcf6b1c09b89f3",
+   "follow_up": "DF-19",
+   "reason": "Lean's norm-defaults decoder refuses the constant's `verbalisation` member before Python reaches the numeric rule name; on base too."
   }
  ]
 }
