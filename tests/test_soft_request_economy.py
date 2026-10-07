@@ -21,7 +21,7 @@ from tests import lean_routes
 from tests.test_norms import environment, obligation, permission
 from tests.test_readings_s1_document import default, s1_document, strict
 from tests.test_readings_s1_lean import norm as s1_norm
-from ve.backends import soft_relay
+from ve.backends import lean_service, relay, soft_relay
 from ve.document import check_document
 from ve.errors import CheckerUnavailable, VEError
 from ve.softnorms import SoftEnvironment, check_rule_batch, decode_rule
@@ -88,9 +88,11 @@ def sent_pairs(sent):
 # -- Lean: one soft source, its layers computed once
 
 
-def test_soft_requests_on_the_widest_environment_stay_within_a_cpu_deadline(service):
-    """Each kind on 64 regulated predicates: the old checks spent about 1.5 s of CPU per case on a 62-predicate
-    UDHR source; with the layers computed once a case needs a small fraction of the 0.5 s allowed here."""
+def test_soft_requests_on_the_widest_environment_stay_within_a_cpu_deadline(service, monkeypatch):
+    """Each kind on 64 regulated predicates, through the production relay on a fresh service: the old checks
+    spent about 1.5 s of CPU per case on a 62-predicate UDHR source; with the layers computed once a case needs a
+    small fraction of the 0.5 s of service CPU allowed here (`lean_service.DEADLINES`: the service is stopped and
+    the call is CheckerUnavailable past it)."""
     raw, names = wide_environment()
     cases = [{"id": f"rule-{n}", "kind": "soft-rule", "environment": raw,
               "norm": should(f"r{n}", f"{name}_required")} for n, name in enumerate(names[:3])]
@@ -99,9 +101,13 @@ def test_soft_requests_on_the_widest_environment_stay_within_a_cpu_deadline(serv
     cases.append({"id": "elaborate", "kind": "soft-elaborate", "environment": raw,
                   "norms": [should("a", f"{names[0]}_required"), should("b", f"{names[0]}_permitted", False),
                             rule("c", f"{names[1]}_required")]})
-    done = lean_routes.completed_within("ve_soft_norms_route", cases, 0.5 * len(cases))
-    assert done.returncode == 0, done.stderr
-    rows = json.loads(done.stdout)
+    monkeypatch.setitem(lean_service.DEADLINES, "soft-norms", (0.5, 0.0))
+    pool = lean_service.LeanServicePool(size=1)
+    monkeypatch.setattr(relay, "_pool", pool)
+    try:
+        rows = relay.decide("soft-norms", cases)
+    finally:
+        pool.close()
     assert [row["status"] for row in rows] == ["ok"] * len(cases), rows
     assert rows[3]["results"] == [{"status": "ok"}] * len(names)
     assert {item["label"] for item in rows[4]["background"] if item["generator"] == "soft"} == {

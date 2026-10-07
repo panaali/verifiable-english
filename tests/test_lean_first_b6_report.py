@@ -1,6 +1,6 @@
 """Lean-first batch 6: the latency table of `docs/lean-first/b6/DELTA.md` is rendered from the evidence files
-(build checklist 20), every paired UDHR run gave identical reports within the plan's CPU and wall allowances, and
-the report's comparison and fuzzer figures are the saved evidence's (`check_evidence.py`)."""
+(build checklist 20), every paired UDHR run gave identical reports, and the report's comparison, fuzzer and
+latency figures are the saved evidence's (`check_evidence.py`)."""
 from __future__ import annotations
 
 import importlib.util
@@ -24,15 +24,12 @@ def test_the_latency_table_is_generated_from_the_evidence():
     assert text.split(report.BEGIN, 1)[1].split(report.END, 1)[0] == report.render()
 
 
-def test_every_udhr_run_is_identical_and_within_the_allowances():
-    report = _module("report")
-    runs = report.timing()["runs"]
+def test_every_udhr_run_gave_identical_reports():
+    runs = _module("report").timing()["runs"]
     assert any("20261003T0600Z" in r["document"] for r in runs)
     assert runs and all(r["output_equal"] and r["base"]["exit"] == r["head"]["exit"] == 0 for r in runs)
-    summary = report.summary()
-    assert summary["max_ratio"] <= report.CPU_RATIO_LIMIT
-    assert summary["max_head_wall"] < report.PILOT_WALL_LIMIT
 
 
 def test_the_report_states_the_saved_evidence():
+    """The recorded figures, the allowances they are read against included (`check_evidence.main`)."""
     _module("check_evidence").main()
