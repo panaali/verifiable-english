@@ -169,6 +169,17 @@ def scaleN : Nat → ETerm → ETerm
   "Legacy costs [budget +1].", "Legacy costs [ budget + 1].", "Legacy costs [budget + 1 ].", "Legacy costs legacy.",
   "Legacy is the same as budget.", "Budget is the same as legacy.", "Legacy costs twice the 5."].all
   (verdicts FO LO · == zero)
+-- An integer mark glued to a word on the side away from its term has no derivation, as the hand parser
+-- refuses it (the reverse corpus of E2.5; spec english-lean-e2.md 13): a sign or `[` after a word, `]`
+-- before one. Glued to another integer mark, or `]` before the terminator, it is read.
+#guard ["Legacy costs-5.", "Legacy costs-budget.", "Legacy costs--budget.", "Legacy costs-[budget + 1].",
+  "Legacy costs[budget + 1].", "Budget is at least-5.", "Budget is more than-limit.", "Budget is at most[limit + 1].",
+  "Either budget is at most [limit + 1]or legacy is deployed, or both.",
+  "Either-5 is the same as budget or legacy is deployed, or both.", "Legacy costs [budget -limit]."].all
+  (verdicts FO LO · == zero)
+#guard rd FO LO "Legacy costs [-budget + -5]." == ok1 (costs (.add (.scale (-1) (c "budget")) (n (-5)))) &&
+  rd FO LO "Legacy costs -[[budget + 1] - --budget]." ==
+    ok1 (costs (.scale (-1) (.add (.add (c "budget") (n 1)) (.scale (-1) (.scale (-1) (.scale (-1) (c "budget")))))))
 #guard rd FO LO "Legacy costs 007." == .lexical (.badNumeral 13)
 #guard rd FO LO "Legacy is deployed. It costs 5." == .ok [(u "deployed" (c "legacy"), false), (costs (n 5), false)]
 #guard rd FO LO "It costs 5." == rej .pronounUnresolved && rd FO LO "That service costs 5." == rej .unboundReference
@@ -514,7 +525,7 @@ def Lcb : Lexicon := { LD with
     ("available", "{0} is available to {1}"), ("positive", "{0} is positive")],
   spellings := LD.spellings ++ [("budget", "budget")] }
 def Gcb : Grammar Terminal := grammar Fcb Lcb
-#guard Gcb.wf && terminatorFree Gcb && Gcb.typed sig (ty Fcb Lcb) (acts Fcb Lcb) && Gcb.rules.size == 201
+#guard Gcb.wf && terminatorFree Gcb && Gcb.typed sig (ty Fcb Lcb) (acts Fcb Lcb) && Gcb.rules.size == 198
 #guard ((lexRows Fcb Lcb).filter (·.rhs.head? == some (.n ntIntTerm))).length == 4
 #guard ["Legacy costs [budget + 1].", "The owner_of of legacy is senior.", "Every service that is deployed is reviewed.",
   "Every service available to alice costs 5."].all (verdicts Fcb Lcb · == one)
@@ -555,13 +566,14 @@ def marks (ms : List Bool) : List (EFormula × Bool) := ms.map (dl, ·)
 
 /-! ## 8.10 Sizes and steps -/
 
-#guard orderRows.size == 25 && alternativesRows.size == 8 &&
+#guard orderRows.size == 22 && alternativesRows.size == 8 &&
   ((lexRows FA LA).filter fun r => r.lhs == ntAltGuard || r.lhs == ntAltHead || r.tag.startsWith "term.that-other").length == 8
 def size (E : Env) (L : Lexicon) : Nat × Nat :=
   ((grammar E L).rules.size, (grammar E L).rules.foldl (fun n r => n + r.rhs.length) 0)
 -- `FO` has one rule more than spec 8.10's stub figure (159 and 575): `relation → "exceeds"`, which the S2
--- relation family and Python's grammar give a binary predicate over one sort, `$int` included
-#guard size FO LO == (160, 576) && size FD LD == (147, 587) && size FA LA == (159, 646) && size FR LR == (185, 746)
+-- relation family and Python's grammar give a binary predicate over one sort, `$int` included; and three fewer,
+-- the `glued` rows of `minus`, `lbracket` and `rbracket` (english-lean-e2.md 13)
+#guard size FO LO == (157, 573) && size FD LD == (147, 587) && size FA LA == (159, 646) && size FR LR == (185, 746)
 -- sz3: 128 attributes into one sort with 128 properties: 384 rows factored, 16,512 in Python's shape
 def Fsz : Env := {
   sorts := [{ name := "item" }, { name := "kind" }],
@@ -571,7 +583,8 @@ def Fsz : Env := {
   constants := [], profiles := ["data@0", "relational-fol@0"] }
 #guard ((Fsz.predicates.flatMap (attributeRows Fsz)) ++ Fsz.predicates.flatMap (propertyRows Fsz)).length == 384
 #guard 128 * 128 + 128 == 16512
--- sz4 on `FO`, and on `FO` without `relation → "exceeds"`, which reproduces spec 8.10's stub figures
+-- sz4 on `FO`, and on `FO` without `relation → "exceeds"` (spec 8.10's stub figures were 8801, 8797 and 5262 before the
+-- three `glued` rows left the table)
 def withoutRow (G : Grammar Terminal) (tag : String) : Grammar Terminal := { G with rules := G.rules.filter (·.tag != tag) }
 def stepsIn (G : Grammar Terminal) (s : String) : List (Option Nat) :=
   match lex s with
@@ -579,8 +592,8 @@ def stepsIn (G : Grammar Terminal) (s : String) : List (Option Nat) :=
   | .ok sents => sents.toList.map fun w => G.prepare.steps 2 workBudget w
 def sz4 : List String := ["For every service that is deployed, there is a person who owns that service.",
   "Legacy costs [[budget + 1] + [2 * limit]].", "Budget is at least [limit + 1]."]
-#guard sz4.map (steps FO LO) == [[some 8816], [some 8812], [some 5271]]
-#guard sz4.map (stepsIn (withoutRow (grammar FO LO) "relation.exceeds")) == [[some 8801], [some 8797], [some 5262]]
+#guard sz4.map (steps FO LO) == [[some 8771], [some 8767], [some 5244]]
+#guard sz4.map (stepsIn (withoutRow (grammar FO LO) "relation.exceeds")) == [[some 8756], [some 8752], [some 5235]]
 #guard steps FD LD "For every service, the owner_of of that service is senior." == [some 6606]
 #guard steps FA LA ("For every action named A1, for every action named A2, every other action available to robot " ++
   "excluding A1 is safe.") == [some 14503]

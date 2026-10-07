@@ -3268,6 +3268,7 @@
     "VE.EnglishGrammar.collapsedLength",
     "VE.EnglishGrammar.digitsValue",
     "VE.EnglishGrammar.endChunk",
+    "VE.EnglishGrammar.gluedFlags",
     "VE.EnglishGrammar.isConclusionMarker",
     "VE.EnglishGrammar.isSpace",
     "VE.EnglishGrammar.lex",
@@ -3276,12 +3277,14 @@
     "VE.EnglishGrammar.markerAt",
     "VE.EnglishGrammar.markers",
     "VE.EnglishGrammar.normalStep",
+    "VE.EnglishGrammar.opensTerm",
     "VE.EnglishGrammar.punctChars",
     "VE.EnglishGrammar.scanGo",
     "VE.EnglishGrammar.spaceCodes",
     "VE.EnglishGrammar.spacing",
     "VE.EnglishGrammar.spacingOk",
-    "VE.EnglishGrammar.startsWith"
+    "VE.EnglishGrammar.startsWith",
+    "VE.EnglishGrammar.wordChar"
    ],
    "G[R]": [
     "VE.EnglishGrammar.maxSourceBytes",
