@@ -74,7 +74,7 @@ def run(root: Path, baseline: Path, seed: int, scratch: Path) -> dict:
     return data
 
 
-def explained_sample(a: dict, b: dict) -> str | None:
+def explained_sample(a: dict, b: dict, *, diagnostic_finding: bool = False) -> str | None:
     """Why a sampled answer changed (`df19` or `repeated-profile`), or None if it is unexplained."""
     if "answers" not in a or "answers" not in b:
         return None
@@ -82,7 +82,11 @@ def explained_sample(a: dict, b: dict) -> str | None:
     lean = old.get("lean", {})
     if old.get("python") != new.get("python") or old.get("rust") != new.get("rust") or new.get("lean") == lean:
         return None
-    if lean.get("outcome") == "error" and lean.get("text", "").startswith(DF19) and "verbalisation" in lean["text"]:
+    if (lean.get("outcome") == "error" and lean.get("text", "").startswith(DF19)
+            and "verbalisation" in lean["text"]
+            and (new["lean"] == new["python"] or diagnostic_finding and
+                 new["lean"].get("outcome") == new["python"].get("outcome") == "error" and
+                 new["lean"].get("code") == new["python"].get("code"))):
         return "df19"
     if new["lean"].get("text") == new.get("python", {}).get("text") == REPEATED:
         return "repeated-profile"
@@ -96,6 +100,10 @@ def compare(base: dict, head: dict) -> dict:
     sampled_a, sampled_b = base["items"]["sampled"], head["items"]["sampled"]
     if sorted(sampled_a) != sorted(sampled_b):
         unexplained.append("sampled surfaces")
+    old_signatures = {e["signature"] for e in base["new"]}
+    diagnostic_inputs = {head["items"].get("new", {}).get(e["signature"])
+                         for e in head["new"] if e["classes"] == ["diagnostic"]
+                         and e["signature"] not in old_signatures}
     for name in sorted(set(sampled_a) & set(sampled_b)):
         rows_a, rows_b = sampled_a[name], sampled_b[name]
         if [r["input"] for r in rows_a] != [r["input"] for r in rows_b]:
@@ -104,7 +112,7 @@ def compare(base: dict, head: dict) -> dict:
         for index, (a, b) in enumerate(zip(rows_a, rows_b)):
             if a["answers_sha256"] == b["answers_sha256"]:
                 continue
-            kind = explained_sample(a, b)
+            kind = explained_sample(a, b, diagnostic_finding=a["input"] in diagnostic_inputs)
             row = {"surface": name, "index": index, "profile": a.get("profile"), "kind": kind,
                    "base_lean": a.get("answers", {}).get("lean"), "head_lean": b.get("answers", {}).get("lean"),
                    "head_lean_agrees_with_python": b.get("answers", {}).get("lean", {}).get("outcome")
