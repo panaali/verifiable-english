@@ -347,6 +347,7 @@
     "ResponseShape.Schemas.Alternatives.coverage",
     "ResponseShape.Schemas.Alternatives.declaredCell",
     "ResponseShape.Schemas.Alternatives.elaborate",
+    "ResponseShape.Schemas.Alternatives.environment",
     "ResponseShape.Schemas.Alternatives.file",
     "ResponseShape.Schemas.Alternatives.followable",
     "ResponseShape.Schemas.Alternatives.followable_witness",
@@ -1134,6 +1135,7 @@
    "D[V]": [
     "VE.Alternatives.Wire.AltSource",
     "VE.Alternatives.Wire.Block",
+    "VE.Alternatives.Wire.Scope",
     "VE.Alternatives.Wire.actWords",
     "VE.Alternatives.Wire.checkAvoids",
     "VE.Alternatives.Wire.checkReservedWording",
@@ -1145,10 +1147,12 @@
     "VE.Alternatives.Wire.decodeBlock",
     "VE.Alternatives.Wire.decodeOutcomes",
     "VE.Alternatives.Wire.decodePremises",
+    "VE.Alternatives.Wire.fixedPredicates",
     "VE.Alternatives.Wire.enc",
     "VE.Alternatives.Wire.encodeNode",
     "VE.Alternatives.Wire.labelled",
     "VE.Alternatives.Wire.legend",
+    "VE.Alternatives.Wire.otherDeclarations",
     "VE.Alternatives.Wire.positiveCells",
     "VE.Alternatives.Wire.profileGate"
    ],
