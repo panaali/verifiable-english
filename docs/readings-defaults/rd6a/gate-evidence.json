@@ -1,0 +1,135 @@
+{
+ "schema": 1,
+ "gated_commit": "bc413880ae7e88e436f88288eb6e8639708dbfc5",
+ "base": "167eb8ff09ea693824cd0aedaf52588828f04afc",
+ "clean_worktree": true,
+ "commits": [
+  {
+   "sha": "53bb8fbd",
+   "subject": "readings-defaults RD-6a: S2a with a carried base-premise family"
+  },
+  {
+   "sha": "053e8f50",
+   "subject": "readings-defaults RD-6a: check the statements against the approved 6.7 text"
+  },
+  {
+   "sha": "bc413880",
+   "subject": "readings-defaults RD-6a: READINGS.md lists the 6.7 theorems in plain words"
+  }
+ ],
+ "lean": {
+  "build_jobs": 788,
+  "audit_files": 433,
+  "audit_theorems": 4680,
+  "statements": 4319,
+  "statements_added": 8,
+  "statements_removed": 0,
+  "lean_modules": 433
+ },
+ "statement_checker": {
+  "rd1_exact": 31,
+  "rd1_pending": 0,
+  "rd6a_checked": 7,
+  "rd6a_exact": 6,
+  "rd6a_pending": [
+   "superpose_all_extra"
+  ],
+  "rd6a_later": [
+   "fill_transfers",
+   "nd_superpose_all",
+   "nd_superpose_conflict_free"
+  ]
+ },
+ "pytest": {
+  "workers": 16,
+  "chunks": [
+   {
+    "files": 60,
+    "passed": 2022,
+    "skipped": 1,
+    "failed": 0
+   },
+   {
+    "files": 54,
+    "passed": 3929,
+    "skipped": 2,
+    "failed": 0
+   },
+   {
+    "files": 59,
+    "passed": 1799,
+    "skipped": 3,
+    "failed": 0
+   },
+   {
+    "files": 56,
+    "passed": 2453,
+    "skipped": 0,
+    "failed": 0
+   },
+   {
+    "files": 55,
+    "passed": 1578,
+    "skipped": 0,
+    "failed": 0
+   }
+  ],
+  "slow": {
+   "tests": 4,
+   "workers": 4,
+   "passed": 28,
+   "failed": 0
+  }
+ },
+ "trust_map": {
+  "check": "fails on main before this batch (S budget)",
+  "rd6a_S": 7
+ },
+ "seeded_bugs": [
+  {
+   "id": "M1",
+   "file": "lean/VE/Readings/SupExtra.lean",
+   "bug": "Transfers carries Q one way only (→ for ↔)",
+   "failed": "lake build: 5 errors, in superpose_conflict_free_extra (both directions), superpose_all_extra, superpose_countermodel_extra and transfers_nil"
+  },
+  {
+   "id": "M2",
+   "file": "lean/VE/Readings/SupExtra.lean",
+   "bug": "supCertificateCheckExtra drops Q from the slot",
+   "failed": "lake build: superpose_all_extra (the certificate no longer covers Q)"
+  },
+  {
+   "id": "M3",
+   "file": "lean/VE/Readings/SupExtra.lean",
+   "bug": "supModelCheckExtra reads Q through the outcome substitution with the assertions, not on the base",
+   "failed": "lake build: superpose_countermodel_extra (Q no longer holds of the base)"
+  },
+  {
+   "id": "M4",
+   "file": "tools/check_readings_defaults_statements.py",
+   "bug": "a pending declaration is not compared with its one approved edit",
+   "failed": "pytest: test_rd6a_checker_fails_on_every_changed_declaration[theorem-superpose_all_extra]"
+  },
+  {
+   "id": "M5",
+   "file": "tools/check_readings_defaults_statements.py",
+   "bug": "an RD-6b declaration is skipped even when it is in the file",
+   "failed": "pytest: test_rd6a_checker_compares_an_rd6b_declaration_once_built"
+  },
+  {
+   "id": "M6",
+   "file": "tests/test_readings_defaults_rd6a_report.py",
+   "bug": "the report check finds no mismatch, whatever the evidence",
+   "failed": "pytest: 81 of the report tests (every changed-leaf case and the empty report)"
+  }
+ ],
+ "tests_added": {
+  "statements": 11,
+  "rd6a": 2,
+  "collection_ids_added": 13,
+  "collection_ids_removed": 0,
+  "report_ids_added": 83,
+  "collection_commit": "053e8f50"
+ },
+ "disk_free_gb": 66
+}
