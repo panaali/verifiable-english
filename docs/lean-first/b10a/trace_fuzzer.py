@@ -44,11 +44,14 @@ def trace_run(df, run):
 
     def replay(entries, surfaces):
         results = original_replay(entries, surfaces)
-        if len(results) != len(entries):
-            raise RuntimeError("baseline replay trace length mismatch")
-        for entry, (returned_entry, status, now) in zip(entries, results):
-            if returned_entry != entry:
-                raise RuntimeError("baseline replay trace order mismatch")
+        # `replay` answers surface by surface, and the baseline is not grouped by surface:
+        # match each answer to its entry, then hash in baseline order.
+        by_entry = {id(returned): (status, now) for returned, status, now in results}
+        if len(results) != len(entries) or len(by_entry) != len(entries) or \
+                any(id(entry) not in by_entry for entry in entries):
+            raise RuntimeError("baseline replay trace entry mismatch")
+        for entry in entries:
+            status, now = by_entry[id(entry)]
             replayed["inputs"].update(df.canonical(entry).encode("utf-8") + b"\n")
             replayed["answers"].update(df.canonical([status, now]).encode("utf-8") + b"\n")
             replayed["count"] += 1
