@@ -57,7 +57,7 @@
     "ve/backends/dispatch.py:_shadow": "shadow authority only (execute and shadowed): the Python result is returned (a Python exception is re-raised unchanged); a candidate backend exception, CheckerUnavailable included, is only recorded as a shadow difference and never becomes the returned verdict"
   },
   "lean_decoders": {
-    "total_lines": 22452,
+    "total_lines": 22473,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -850,23 +850,24 @@
       },
       {
         "file": "lean/VE/Senses/Run.lean",
-        "lines": 144,
-        "sha256": "7015a002b04ead4c27462cda1a59f2d36c17165b713bc2d945fce72285952303",
+        "lines": 165,
+        "sha256": "8fe7ef915c5d89e2e2fcaef48ab082a2027ad5de131f7e92cf346ae535548f11",
         "ranges": [
           [
             1,
-            144
+            165
           ]
         ],
         "declarations": [
           "decodeDictionary",
+          "decodeDefaults",
           "faultFields",
           "s2Fields",
           "outcomeJson",
           "readCase",
           "runCaseReported"
         ],
-        "reason": "senses admission runner: exact request fields, restricted pack decoder, and response rows (units with their sentence and state, sense faults with their arguments, S2 outcomes with S2's fields); the full file is pinned conservatively"
+        "reason": "senses admission runner: exact request fields, restricted pack decoder, and response rows (units with their sentence and state, sense faults with their arguments, S2 outcomes with S2's fields); RD-8: a `source` or a document's English `fences`, optional front-matter `defaults` decoded as an assignment, the open units' English and the fence-to-unit map; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Service/Family.lean",
@@ -3321,7 +3322,12 @@
           "VE.Senses.senses_unit_sound",
           "VE.Senses.senses_candidate_sound",
           "VE.Senses.candidates_complete",
-          "VE.Senses.mixed_exact"
+          "VE.Senses.mixed_exact",
+          "VE.Senses.readDocument_source",
+          "VE.Senses.readDocument_both",
+          "VE.Senses.defaults_read_as_lines",
+          "VE.Senses.document_unit_sound",
+          "VE.Senses.document_line_sound"
         ],
         "planned_theorems": [],
         "decoders": [
