@@ -204,60 +204,30 @@ class Environment:
     unit_schema: str | None
     units: object
     reports: object
+    rights: bytes | None
     alternatives: bytes | None
     risk: bytes | None
     _environment_id: str = field(repr=False, compare=False)
 
     @semantic_entry("environment")
-    def __init__(self, data, *, _generated_reports=False):
-        """Decode and validate an environment under the selected authority."""
-        from .backends.dispatch import authority_for, execute
-
-        if (not _generated_reports and type(data) is dict and
-                ("unit_schema" in data or "units" in data) and
-                type(data.get("profiles")) is list and
-                "time@0" in data["profiles"] and "risk@0" not in data["profiles"]):
-            # W6's decoder owns the extended environment. A top statement asks
-            # the same decoder used by every quantity check to admit it first.
-            from .backends.relay import decide
-            from .errors import CheckerUnavailable
-            [row] = decide("check", [{"id": "environment", "environment": data,
-                                      "quantity": {"format": "ve-quantity@1", "formula": ["top"]}}])
-            try:
-                self._decode(data, _generated_reports=False)
-            except Exception as exc:
-                raise CheckerUnavailable(
-                    "CheckerUnavailable: Python could not construct a Lean-accepted W6 environment") from exc
-            if self.environment_id != row["environment_id"]:
-                raise CheckerUnavailable("CheckerUnavailable: W6 environment identity mismatch")
-            return
+    def __init__(self, data, *, _generated_reports=False, _validated_projection=False):
+        """Build the container after Lean accepts its source."""
 
         def python():
             self._decode(data, _generated_reports=_generated_reports)
             return self
 
-        # rust-experimental covers evaluation and search only; environments
-        # keep the Python decoder there, as before any adapter existed.
-        if _generated_reports or authority_for("environment_validation") in ("python", "rust-experimental"):
+        # The reports generator and statement-layer constructors build
+        # projections of sources already accepted by their owning routes.
+        if _generated_reports or _validated_projection:
             python()
             return
-        from .backends.validation import environment_in_scope, validated_environment
-        if not environment_in_scope(data):
-            # Statement-layer and legacy envelopes are validated by their own
-            # routes; Lean's environment mode does not take them.
-            python()
-            return
-        execute("environment_validation", {"kind": "environment"}, python,
-                lean=lambda: validated_environment(self, data, python))
+        from .backends.validation import validated_environment
+        validated_environment(self, data, python)
 
     def _decode(self, data, *, _generated_reports=False):
         canonical_json(data)  # Check size, Unicode, and the restricted wire subset.
-        # The two block routes own acceptance and its first diagnostic. The
-        # remainder of this constructor only materialises an accepted source.
         block_kind = route_kind(data) if type(data) is dict else None
-        if block_kind in ("alternatives", "risk") and data.get("language") not in (LANGUAGE, CLOSURE_LANGUAGE):
-            from .backends.validation import validated_statement_block
-            validated_statement_block(data, block_kind)
         language = data.get("language") if type(data) is dict else None
         # Lean's decoders read a language that is not a string, or absent, as
         # the route's (VE.Service.Standalone.isLegacy): the route's fields, in
@@ -281,7 +251,6 @@ class Environment:
             # before the envelope's field set and language: VE.SpeechActs.Wire.
             # decodeSpeechEnvironmentFull, VE.Alternatives.Wire.decodeAltSource,
             # VE.Risk.Wire.decodeRiskSource.
-            profile_registry.route_gate(kind, data.get("profiles"))
             if kind == "speech":
                 vocabulary = data.get("vocabulary")
                 if type(vocabulary) is not dict or type(vocabulary.get("predicates")) is not dict:
@@ -312,7 +281,9 @@ class Environment:
                     raise VEError("array expected")
                 if not _string_array(data["profiles"]):
                     raise VEError("String expected")
-            family = profile_registry.checker_family(data["profiles"])
+            family = ("order" if "order@0" in data["profiles"] else
+                      "closure+n-ary" if "nary@0" in data["profiles"] else
+                      "closure" if "closure@0" in data["profiles"] else "fol")
             # Every top-level field's type is checked before its value is used,
             # with the diagnostics of Lean's decoders (VE.Route.Gate.decodeEnvelope).
             if type(data["spec_revision"]) is not str:
@@ -365,7 +336,8 @@ class Environment:
             raise VEError("object expected")
         unit_route = kind
         require_fields(vocab, {"sorts", "predicates", "constants"} |
-                       ({"reports"} if route and "reports@0" in data["profiles"] else set()),
+                       ({"reports"} if route and "reports@0" in data["profiles"] else set()) |
+                       ({"rights"} if route and "rights@0" in data["profiles"] and "rights" in vocab else set()),
                        path="/vocabulary")
         if route and "reports@0" in data["profiles"]:
             # VE.Attribution.Wire reads the block's fields and types before the vocabulary.
@@ -608,6 +580,12 @@ class Environment:
             object.__setattr__(self, field, value)
         object.__setattr__(self, "risk", risk)
         object.__setattr__(self, "reports", reports)
+        if "rights" in vocab:
+            object.__setattr__(self, "rights", canonical_json(vocab["rights"]))
+        elif not hasattr(self, "rights"):
+            # RightsEnvironment already holds the declaration removed from its
+            # internal soft projection before this constructor runs.
+            object.__setattr__(self, "rights", None)
         # W6's profile and vocabulary extension were checked by Lean before
         # construction; a risk environment was checked after its vocabulary.
         if extended and risk is None:
@@ -679,7 +657,8 @@ class Environment:
                                                     if v.verbalisation is not None else {})}
                                              for k, v in self.constants.items()},
                                **({"reports": {"holders": list(self.reports["holders"]), "evidence": self.reports["evidence"]}}
-                                  if self.reports is not None else {})},
+                                  if self.reports is not None else {}),
+                               **({"rights": loads_json(self.rights)} if type(self.rights) is bytes else {})},
                 **({"unit_schema": self.unit_schema,
                     "units": {tag: {"scale": record["scale"], "display": dict(record["display"])}
                               for tag, record in self.units.items()}}

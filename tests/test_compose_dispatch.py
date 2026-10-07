@@ -12,7 +12,8 @@ from pathlib import Path
 import pytest
 
 from ve.errors import UnsupportedProfile
-from ve.profiles import BY_NAME, checker_family
+from ve.profiles import BY_NAME
+from tests.profile_gate_oracle import checker_family
 
 
 # S0's literal table is frozen over its original sixteen profiles. S1 adds a

@@ -565,7 +565,7 @@ class SoftEnvironment(Environment):
         object.__setattr__(self, 'ranks_above', above)
         object.__setattr__(self, 'soft_premises', ())
         # Every declaration passed 2.3 under the same profiles; this cannot fail.
-        super().__init__(raw)
+        super().__init__(raw, _validated_projection=True)
 
     def to_dict(self):
         data = super().to_dict()

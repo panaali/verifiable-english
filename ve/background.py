@@ -195,10 +195,6 @@ def _background_hooks(env):
 
 
 def _background_python(env) -> tuple[Premise, ...]:
-    # Every checking site consults Background, so the gate on checker families
-    # that have not landed sits here and in validate_background.
-    from .profiles import require_checker
-    require_checker(env)
     return tuple(Premise(formula, generator)
                  for generator, (make, _) in _background_hooks(env) for formula in make(env))
 
@@ -270,8 +266,6 @@ def validate_background(env, model) -> None:
 
 
 def _validate_background_python(env, model) -> None:
-    from .profiles import require_checker
-    require_checker(env)
     for generator, (_, validate) in _background_hooks(env):
         try:
             validate(env, model)

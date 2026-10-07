@@ -3,7 +3,7 @@ import pytest
 from conformance.p0 import environment
 from ve.environment import Environment
 from ve.errors import UnsupportedProfile
-from ve.profiles import checker_family
+from tests.profile_gate_oracle import checker_family
 
 
 def test_route_families_and_identity():
@@ -29,7 +29,7 @@ def test_string_literals_are_equality_only_and_bounded():
         check_formula(env, Forall("$string", Top()))
     raw["vocabulary"]["predicates"]["named"] = {
         "arguments": ["$string"], "description": "Not in stage one."}
-    with pytest.raises(Exception, match="Undeclared predicate argument sort"):
+    with pytest.raises(Exception, match="invalid signature: named"):
         Environment(raw)
     raw = environment()
     raw["vocabulary"]["constants"] = {

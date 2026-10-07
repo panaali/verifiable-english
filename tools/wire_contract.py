@@ -585,13 +585,14 @@ def _through_includes(catalogue, contracts):
     return result
 
 
-def _check_unit(unit, contracts, directory, limits, names, write, findings, issue):
+def _check_unit(unit, contracts, directory, limits, names, write, findings, issue,
+                generated_only=False):
     """The checks of one shipped unit (7.1): every hook, classifier, view and adapter its table names is in
     its registry, its examples are accepted by its legacy validation and found clean by the engine, and its
     English table is the generated one."""
     module, (legacy_module, legacy_name) = UNITS[unit]
     registry = importlib.import_module(module).REGISTRY
-    legacy = getattr(importlib.import_module(legacy_module), legacy_name)
+    legacy = None if generated_only else getattr(importlib.import_module(legacy_module), legacy_name)
     path = directory / f"{unit}.json"
     def registered(entries):
         for entry in entries:
@@ -610,10 +611,11 @@ def _check_unit(unit, contracts, directory, limits, names, write, findings, issu
     examples = sorted((directory / "examples" / unit).glob("*.json"))
     if len(examples) < 2:
         issue(directory / "examples" / unit, "WC10", "fewer than two examples")
-    for example in examples:
+    for example in (() if generated_only else examples):
         try:
             root = loads_json(example.read_bytes())
-            legacy(root["environment"], root["norms"])
+            if legacy is not None:
+                legacy(root["environment"], root["norms"])
             if run(contracts[unit], root, registry=registry, contracts=contracts,
                    limits=limits, names=names) is not CLEAN:
                 issue(example, "WC10", "engine does not report clean")
@@ -627,7 +629,7 @@ def _check_unit(unit, contracts, directory, limits, names, write, findings, issu
         issue(target, "WC11", "generated English table differs")
 
 
-def process(directory=DATA, *, write=False, catalogue=None):
+def process(directory=DATA, *, write=False, catalogue=None, generated_only=False):
     """Lint, lock and regenerate (4.3). `catalogue` maps a contract to the checks with a catalogue fault;
     by default it is `default_catalogue(directory)`, and a contract it does not name has none."""
     findings = []
@@ -698,7 +700,8 @@ def process(directory=DATA, *, write=False, catalogue=None):
         if unit not in UNITS:
             issue(directory / f"{unit}.json", "WC08", "no registry for the unit in tools/wire_contract.py")
     for unit in shipped:
-        _check_unit(unit, contracts, directory, limits, names, write, findings, issue)
+        _check_unit(unit, contracts, directory, limits, names, write, findings, issue,
+                    generated_only=generated_only)
     if shipped and not findings:
         rendered = generated_lean(contracts, limits, names)
         inventory = ROOT / "lean/VE/Route/frozen-sources.sha256"
@@ -731,9 +734,11 @@ def main():
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--check", action="store_true")
     mode.add_argument("--write", action="store_true")
+    parser.add_argument("--generated-only", action="store_true",
+                        help="check generated tables without live validation (staged snapshots)")
     parser.add_argument("--directory", type=Path, default=DATA)
     args = parser.parse_args()
-    findings = process(args.directory, write=args.write)
+    findings = process(args.directory, write=args.write, generated_only=args.generated_only)
     for line in findings:
         print(line)
     return bool(findings)

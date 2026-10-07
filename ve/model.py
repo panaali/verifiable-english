@@ -78,8 +78,6 @@ class FiniteModel:
         `model_id` an existing `FiniteModel` claims; each must be the
         recomputed identity.
         """
-        from .backends.dispatch import authority_for, execute
-
         def python():
             if _claimed is not None and _claimed["environment_id"] != env.environment_id:
                 raise InvalidModel("model belongs to a different environment")
@@ -88,15 +86,11 @@ class FiniteModel:
                 raise InvalidModel("model identity does not match its contents")
             return built
 
-        # rust-experimental covers evaluation and search only; its witnesses
-        # keep the Python decoder, as before any adapter existed.
-        if _defer_model_id or authority_for("model_validation") in ("python", "rust-experimental"):
+        # Search candidates are unreported until a Lean witness check.
+        if _defer_model_id:
             return python()
-        from .backends.validation import model_in_scope, validated_model
-        if not model_in_scope(env):
-            return python()
-        return execute("model_validation", {"kind": "model"}, python,
-                       lean=lambda: validated_model(env, wire, python, claimed=_claimed))
+        from .backends.validation import validated_model
+        return validated_model(env, wire, python, claimed=_claimed)
 
     @classmethod
     def _decode(cls, env: Any, wire: Any, *, _defer_model_id: bool = False) -> "FiniteModel":
