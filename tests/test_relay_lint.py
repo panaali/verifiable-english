@@ -92,3 +92,17 @@ def test_a_check_moved_into_its_own_module_is_still_linted(tmp_path, monkeypatch
     assert relay_lint.main([]) == 1
     (package / "other.py").write_text("from .preflight import prepare\nimport ve.shared\n")
     assert relay_lint.helpers([package / "relayed.py"]) == []
+
+
+def test_the_english_admission_path_is_relayed_by_function(tmp_path, classes):
+    """English E2 (spec 2.9): the admission functions of `ve/english.py` are relayed; the module's producer,
+    renderer, statement reader and comparator are not. A text of the path's own is a finding, one outside the
+    named functions is not, and a named function that is missing fails."""
+    assert relay_lint.RELAYED_FUNCTIONS["ve/english.py"] and "ve/backends/english_lean.py" in relay_lint.RELAYED
+    module = tmp_path / "english.py"
+    module.write_text("def parse_english(env, source):\n    raise SyntaxError('own words')\n\n"
+                      "def render_english(value, env):\n    raise SyntaxError('renderer words')\n")
+    found = relay_lint.findings(module, classes, functions=("parse_english",))
+    assert len(found) == 1 and ":2:" in found[0]
+    assert relay_lint.findings(module, classes, functions=("render_english",))
+    assert "not found" in relay_lint.findings(module, classes, functions=("parse_english_argument",))[0]

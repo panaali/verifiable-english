@@ -1769,7 +1769,7 @@ def _parse_english_document_uncached(env, source, *, _with_structure=False, _wit
     if isinstance(source, bytes):
         try: source = source.decode('utf-8')
         except UnicodeDecodeError as exc:
-            raise SyntaxError('English input must be UTF-8.', span=Span(exc.start, exc.end, 1, exc.start + 1)) from exc
+            raise SyntaxError('English input must be UTF-8.', span=Span(exc.start, exc.end, 1, exc.start + 1)) from exc  # relay-lint: file I/O
     if not isinstance(source, str): raise TypeError('source must be str or bytes')
     words = EnglishVocabulary(env, _defer_overlay_refusals=True, **options)
     from .backends import dispatch
@@ -1909,7 +1909,9 @@ def parse_english_argument(env, source, **options):
     graph = ArgumentGraph(env, claims, tuple(checked_edges), claims[-1].name)
     result = check_argument(graph, search=False).require_available()
     if any('follows' not in result.findings.get(edge.name, ()) for edge in checked_edges):
-        raise SyntaxError('The marked conclusion certificate did not replay in the claim graph.')
+        # The prover found a certificate the claim graph does not replay: a checker fault, not the text's.
+        raise CheckerUnavailable('CheckerUnavailable: the marked conclusion certificate did not replay in the '
+                                 'claim graph')
     return graph
 
 
