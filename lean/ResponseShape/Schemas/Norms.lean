@@ -96,13 +96,14 @@ def «norms-elaborate» : Shape :=
 def «norms-certificate» : Shape :=
   n [
     obj,
-    .required ["id", "status", "valid", "background", "layers"],
+    .required ["id", "status", "valid", "background", "layers", "steps"],
     closed [
       ("id", n [str, .equals "/id"]),
       ("status", constS "ok"),
       ("valid", .type ["boolean"]),
       ("background", ref "common.json#/$defs/nat"),
-      ("layers", ref "common.json#/$defs/nat")]]
+      ("layers", ref "common.json#/$defs/nat"),
+      ("steps", ref "common.json#/$defs/nat")]]
 
 def «norms-witness» : Shape :=
   c "Norms.Flagged.witnessFrom (norms_flagged_witness_sound): the requested target; the regenerated targets are the service's." [

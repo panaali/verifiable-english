@@ -6,6 +6,54 @@ formulas still pass through `Formula.check` before use by semantic routes. -/
 namespace VE.Order.Surface
 open VE.Surface (consume readIdent boundary identChar)
 
+/-- Canonical order text uses the same binder allocation as the core surface. -/
+def printTerm (names : List String) : Term → String
+  | .var i => (names[i]?).getD "#unbound"
+  | .const c => "@" ++ c
+  | .num n => toString n
+  | .scale (-1) (.num n) => "[-1 * " ++ toString n ++ "]"
+  | .scale (-1) t => "-" ++ printTerm names t
+  | .scale k t => "[" ++ toString k ++ " * " ++ printTerm names t ++ "]"
+  | .add t (.scale (-1) u) => "[" ++ printTerm names t ++ " - " ++ printTerm names u ++ "]"
+  | .add t u => "[" ++ printTerm names t ++ " + " ++ printTerm names u ++ "]"
+
+def printAux (names : List String) (next : Nat) : Formula → String × Nat
+  | .top => ("true", next)
+  | .bottom => ("false", next)
+  | .unary p t => (printTerm names t ++ " is " ++ p, next)
+  | .binary p t u => (printTerm names t ++ " " ++ p ++ " " ++ printTerm names u, next)
+  | .eq t u => (printTerm names t ++ " equals " ++ printTerm names u, next)
+  | .lt t u => (printTerm names t ++ " < " ++ printTerm names u, next)
+  | .le t u => (printTerm names t ++ " <= " ++ printTerm names u, next)
+  | .not a =>
+      let (text, n) := printAux names next a
+      ("not (" ++ text ++ ")", n)
+  | .and a b =>
+      let (left, n) := printAux names next a
+      let (right, n') := printAux names n b
+      ("(" ++ left ++ ") and (" ++ right ++ ")", n')
+  | .or a b =>
+      let (left, n) := printAux names next a
+      let (right, n') := printAux names n b
+      ("(" ++ left ++ ") or (" ++ right ++ ")", n')
+  | .implies a b =>
+      let (left, n) := printAux names next a
+      let (right, n') := printAux names n b
+      ("if (" ++ left ++ "), then (" ++ right ++ ")", n')
+  | .all s a =>
+      let name := "x" ++ toString next
+      let (body, n) := printAux (name :: names) (next + 1) a
+      ("for every " ++ s ++ " " ++ name ++ ", (" ++ body ++ ")", n)
+  | .ex s a =>
+      let name := "x" ++ toString next
+      let (body, n) := printAux (name :: names) (next + 1) a
+      ("there exists " ++ s ++ " " ++ name ++ ", (" ++ body ++ ")", n)
+
+def print (formulas : List Formula) : String :=
+  String.join (formulas.map fun a => (printAux [] 0 a).1 ++ ".\n")
+
+#guard print [.le (.num 1) (.num 2)] == "1 <= 2.\n"
+
 /-- Apply the runtime identifier budget without changing the unbounded lexical
 reader used by the source round-trip proofs. -/
 def oversizedIdentifier (source : String) : Bool :=
