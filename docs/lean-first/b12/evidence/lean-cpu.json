@@ -45,5 +45,6 @@
   },
   "lean_cpu_ratio": 1.0602580333996503,
   "wall_ratio": 1.0778705261610337,
-  "same_output": true
+  "same_output": true,
+  "within_budget": true
 }

@@ -36,10 +36,11 @@ def render() -> dict:
     assert len({row["stdout_sha256"] for row in runs}) == 1
     median = {side: {key: statistics.median(row[key] for row in runs if row["side"] == side)
                      for key in ("lean_cpu_s", "wall_s")} for side in ("base", "head")}
+    cpu_ratio = median["head"]["lean_cpu_s"] / median["base"]["lean_cpu_s"]
+    wall_ratio = median["head"]["wall_s"] / median["base"]["wall_s"]
     return {"runs": runs, "median": median,
-            "lean_cpu_ratio": median["head"]["lean_cpu_s"] / median["base"]["lean_cpu_s"],
-            "wall_ratio": median["head"]["wall_s"] / median["base"]["wall_s"],
-            "same_output": True}
+            "lean_cpu_ratio": cpu_ratio, "wall_ratio": wall_ratio,
+            "same_output": True, "within_budget": cpu_ratio <= 1.20 and wall_ratio <= 1.25}
 
 
 def main() -> None:
