@@ -318,3 +318,53 @@ def test_a_malformed_fence_answer_is_checker_unavailable(monkeypatch):
     monkeypatch.setattr(route.lean_backend, "run", drop)
     with pytest.raises(CheckerUnavailable, match="fence map"):
         _genuine(S9)
+
+
+# --- budgets, deadlines and identity -------------------------------------------------------------------------
+
+def test_budget_zero_is_never_an_admission():
+    """A fence request with no budget stops on the budget (Lean's `preambleBudget` or `Budget`), never `one`."""
+    env = Environment(environment())
+    for texts in (S9, S16, ["Alice tells riddle."]):
+        reading = route.read_fences(env, texts, [PACK], budget=0)["reading"]
+        assert reading["status"] == "budget", texts
+
+
+def test_deadline_covers_the_fence_request(monkeypatch):
+    """An injected clock that passes the deadline while the packs are prepared stops before the runner starts."""
+    from types import SimpleNamespace
+    clock = [0.0]
+    monkeypatch.setattr(route, "time", SimpleNamespace(monotonic=lambda: clock[0]))
+    original = route._text
+
+    def delayed(raw):
+        clock[0] = 1_000_000_000
+        return original(raw)
+    monkeypatch.setattr(route, "_text", delayed)
+
+    def must_not_run(*_args, **_kwargs):
+        pytest.fail("the runner started after the deadline")
+    monkeypatch.setattr(route.lean_backend, "run", must_not_run)
+    with pytest.raises(CheckerUnavailable, match="deadline"):
+        route.read_fences(Environment(environment()), S9, [PACK])
+
+
+@pytest.mark.parametrize("change", [
+    lambda s: {**s, "defaults": {"funny": 1, "odd": 1}},
+    lambda s: {**s, "own": [{"word": "zany", "index": 1, "gloss": "wild", "description": "a sense of zany",
+                             "kinds": ["joke"], "wording": "{0} is zany"}]},
+    lambda s: {**s, "packs": ["fixtures@1", "fixtures@1"]},
+])
+def test_every_senses_field_is_bound_by_the_request_and_document_ids(tmp_path, change):
+    """Each field of `senses` changes the document id (front matter) and Lean's request id (the envelope)."""
+    base = {"packs": ["fixtures@1"]}
+    texts = S9[2:]
+    first = write(tmp_path, texts, base, name="first.ve.md")
+    second = write(tmp_path, texts, change(base), name="second.ve.md")
+    from ve.document import stored_identities
+    assert stored_identities(first.read_bytes())[2] != stored_identities(second.read_bytes())[2]
+    env = Environment(environment())
+    requests = [route.request(env, None, [PACK.decode()] * len(s.get("packs", [])), own=s.get("own", []),
+                              fences=texts, defaults=s.get("defaults")) for s in (base, change(base))]
+    from ve.wire import digest
+    assert digest("ve-senses-request-v1\n", requests[0]) != digest("ve-senses-request-v1\n", requests[1])
