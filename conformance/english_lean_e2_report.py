@@ -65,6 +65,9 @@ def g3_section(g3: dict) -> list[str]:
     for kind in ("sealed", "documents", "fresh"):
         out.append(f"| {kind} | {kinds[f'{kind}:texts']:,} | {kinds[f'{kind}:agree']:,} | {kinds[f'{kind}:differ']:,} |")
     out.append("")
+    if g3.get("empty"):
+        out.append("No text was generated for: " + ", ".join(f"`{name}`" for name in g3["empty"]) + ".")
+        out.append("")
     stalled = g3.get("generator_stalled") or {}
     if stalled:
         out.append("The formula generator of `conformance.english_surface` found no formula within its time limit on: "
@@ -128,7 +131,8 @@ def reverse_section(reverse: dict) -> list[str]:
             f"({reverse['samples_per_config']:,} draws per configuration); Lean read {read:,} of them, the rest failing "
             f"a context condition the context-free sample cannot see (an unbound reference, an ordinal, a marker). "
             f"Every text Lean reads, with its spacing and word-split mutants that Lean also reads, was read by Python: "
-            f"**{agree:,}** agree, **{differ}** differ.", ""]
+            f"**{agree:,}** agree, **{differ}** differ. Lean's answer unavailable: "
+            f"**{sum(v for k, v in c.items() if k.endswith(':lean-unavailable'))}**.", ""]
 
 
 def mutation_section(m: dict) -> list[str]:
