@@ -93,3 +93,25 @@ def test_the_cli_reads_the_document_spans(tmp_path, capsys):
     assert "zz is not a unit of the document" in capsys.readouterr().err
     answer.write_bytes(b"\xff")
     assert L.main([str(path), "--answer", str(answer)]) == 1
+
+
+@pytest.mark.parametrize("text", ["7", "true", "null", "[]", "{}", "[" * 10_000 + "]" * 10_000,
+                                  '{"decided_units": ' + "[" * 10_000 + "]" * 10_000 + "}"])
+def test_every_malformed_answer_file_is_a_refusal(tmp_path, capsys, text):
+    """Each JSON node replaced by 7, true, null, [], {} or a 10,000-deep nest: only a refusal, exit 1."""
+    path = write_doc(tmp_path, SOURCE, [unit("a", 0, len(SOURCE), content={"ast": ["top"]})])
+    answer = tmp_path / "answer.json"
+    answer.write_text(text)
+    assert L.main([str(path), "--answer", str(answer)]) == 1
+    assert capsys.readouterr().err.startswith("InvalidInput: ")
+    # As the units checked outside, `[]` is a genuine empty list; every other value is refused.
+    expected = 0 if text == "[]" else 1
+    assert L.main([str(path), "--answer", str(write_answer(tmp_path, [])), "--checked-outside", str(answer)]) \
+        == expected
+    assert capsys.readouterr().err.startswith("InvalidInput: ") is bool(expected)
+
+
+def write_answer(tmp_path, decided):
+    path = tmp_path / "genuine.json"
+    path.write_text(json.dumps({"decided_units": decided}))
+    return path
