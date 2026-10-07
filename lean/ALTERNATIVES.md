@@ -100,6 +100,7 @@ entities of the action and harm domains; a missing `leads_to` table is the set o
 | `alt-followable` | `packages` and `package`, or `packages` and `witness` (`model`, `outcomes`, `chooser`) | `FOLLOWABLE` / `DILEMMA` (with the diagnosis) / `UNKNOWN` / `not computed` |
 | `alt-certificate` | `premises`, `conclusion`, `certificate` | `valid`, `background`, `layers`, `conditional_on` |
 | `admission` | W2 `document` with units and graph | `admitted`, `report`, `report_id`, `kinds`, `conditional_on` |
+| `alt-environment` | none (the environment alone) | `valid`; the block as on every case, and the declarations of the other profiles (definitions, data flags) validated by W1's `decodeSource` instead of refused as the document cases do (`Wire.Scope.environment`) |
 
 Cases without the profile, the block or an `alt-*` kind are delegated unchanged to
 `VE.Norms.Run`.

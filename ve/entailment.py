@@ -561,7 +561,8 @@ def _binding(env: Any, premises: tuple[Any, ...], conclusion: Any, *,
 
 
 def prove_entailment(env: Any, premises: Sequence[Any], conclusion: Any, *,
-                     max_steps: int = 10_000, invariants: Sequence[Any] = ()) -> EntailmentResult:
+                     max_steps: int = 10_000, invariants: Sequence[Any] = (),
+                     _background: bool = True) -> EntailmentResult:
     """Search for a closed tableau. Failure is inconclusive, never refutation.
 
     In closure@0, invariants accepts unary formulas (index 0 is the node), or
@@ -570,7 +571,7 @@ def prove_entailment(env: Any, premises: Sequence[Any], conclusion: Any, *,
     """
     if getattr(env, "alternatives", None) is not None:
         raise CheckerUnavailable("alternatives@0 requires the Lean checker")
-    premises = _validate_inputs(env, premises, conclusion)
+    premises = _validate_inputs(env, premises, conclusion, background=_background)
     if type(max_steps) is not int or isinstance(max_steps, bool) or max_steps < 0:
         raise ValueError("max_steps must be a nonnegative integer")
     if invariants and not env.closure:

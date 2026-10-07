@@ -1,4 +1,5 @@
 import VE.SpeechActs.Source.Run
+import VE.Service.Protocol
 import VE.Norms.Run
 
 /-! # Speech-act admission over the decoded source (docs/spec/speech-acts.md 8.5, 8.6 `admission`)
@@ -571,7 +572,8 @@ def runCaseReported (j : Json) : Json :=
   if usesSourcePath j then
     match runCase j with
     | .ok result => result
-    | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)]
+    | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"),
+        ("error", .str message), ("code", .str (VE.Service.rejectionCode message))]
   else Run.runCaseReported j
 
 def main (paths : List String) : IO UInt32 := do

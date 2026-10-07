@@ -1089,7 +1089,7 @@ def objectFree (files : List File) : Nat → List String → Shape → Bool
     | .type ts => !ts.contains "object"
     | .required _ | .object _ _ => false
     | .prefixItems ss | .anyOf ss | .allOf ss => ss.all go
-    | .items x | .contains x | .not x | .zip _ x | .rows x | .lean _ x _ | .copied _ x => go x
+    | .items x | .contains x | .not x | .zip _ x | .zipOrEmpty _ x | .rows x | .lean _ x _ | .copied _ x => go x
     | .encodedEnvironment x => go x
     | .ite _ t e => go t && go e
     | .tagged table => table.all fun (_, slots) => slots.all go
@@ -1201,10 +1201,11 @@ def skeletonOf (files : List File) : Nat → Shape → StateT Extract (Except St
         unless slots.all (objectFree files depth []) do
           throw s!"a tagged slot of {tag} holds an object; skeletons do not describe it"
       pure .any
-    | .fuel _ _ | .echo _ | .equals _ | .length _ | .count _ | .index | .digest | .pattern _
-    | .minLength _ | .maxLength _ | .minimum _ | .minItems _ | .maxItems _ | .contains _ | .countWhere _ _ _
+    | .fuel _ _ | .echo _ | .equals _ | .length _ | .count _ | .references _ _ _ | .index | .digest | .pattern _
+    | .minLength _ | .maxLength _ | .minimum _ | .minItems _ | .maxItems _ | .contains _ | .countWhere _ _ _ | .presenceCount _ _
     | .onCase _ | .row => pure .any
     | .zip _ x => do pure (.arr [] (← go x))
+    | .zipOrEmpty _ x => do pure (.arr [] (← go x))
     | .rows x => do pure (.arr [] (← go x))
     | .select cs => do
       -- The first entry whose condition the case meets gives the shape; no entry, no value.

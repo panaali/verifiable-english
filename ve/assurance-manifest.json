@@ -36,6 +36,7 @@
     "ve/environment.py:Environment.__init__": "W6 environments: Lean's check mode accepts first (its rejection is raised before the handler); a Python failure constructing an environment Lean accepted becomes CheckerUnavailable, never a verdict (LEAN-FIRST-PLAN.md rule 2)",
     "ve/document.py:load_document": "CheckerUnavailable is re-raised first; a @2 document Lean rejected raises Lean's diagnostic before Python loads it, and a Python failure on one Lean admitted becomes CheckerUnavailable (unavailable_report), never a Python verdict",
     "ve/document.py:_check_document": "CheckerUnavailable is re-raised first; a Python failure reporting a @2 document Lean admitted becomes CheckerUnavailable (unavailable_report), never a verdict",
+    "ve/reports.py:ReportsDocument.__init__": "a Lean accepted reports environment that Python cannot construct becomes CheckerUnavailable; no report status or verdict is returned",
     "ve/rights.py:RightsDocument.__init__": "Lean accepts the rights source before Python constructs display and search containers; any container construction failure is CheckerUnavailable, never a Python rights verdict",
     "ve/__main__.py:_main": "display only: an English rendering of an already computed record is omitted (`display_omitted`); the verdict fields are untouched",
     "ve/assist/api.py:call_tool": "CheckerUnavailable is caught first and keeps its code; other RuntimeErrors are logged as a rejected BackendError call, never a verdict",
@@ -56,7 +57,7 @@
     "ve/backends/dispatch.py:_shadow": "shadow authority only (execute and shadowed): the Python result is returned (a Python exception is re-raised unchanged); a candidate backend exception, CheckerUnavailable included, is only recorded as a shadow difference and never becomes the returned verdict"
   },
   "lean_decoders": {
-    "total_lines": 21720,
+    "total_lines": 22452,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -95,30 +96,34 @@
       },
       {
         "file": "lean/VE/Alternatives/Wire.lean",
-        "lines": 296,
-        "sha256": "26827ec1010c948832f3bd73100c392ab467197aa08740694e6a8ee64582e026",
+        "lines": 415,
+        "sha256": "2bca023f9fb77dd82ae6b2bd6b777ea277c533022c95bead6028a2421a728a22",
         "ranges": [
           [
             1,
-            296
+            415
           ]
         ],
         "declarations": [
           "profileGate",
           "normsView",
           "decodeBlock",
-          "decodeAltSource"
+          "fixedPredicates",
+          "otherDeclarations",
+          "decodeAltSource",
+          "checkReservedWording",
+          "coverage"
         ],
         "reason": "strict alternatives block, profile, source and regenerated premise decoder; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Attribution/Admission.lean",
-        "lines": 327,
-        "sha256": "357665dbfa39d9fb65f85e2829f593beb9f4451bd266fe1dd8924eda9d5af525",
+        "lines": 343,
+        "sha256": "de9ae29eed4d8964900ef593c5a46a32094f08adfacbe013c5ed40dfd458b4d9",
         "ranges": [
           [
             1,
-            327
+            343
           ]
         ],
         "declarations": [
@@ -144,13 +149,30 @@
         "reason": "report content and document identity JSON; the full file is pinned conservatively"
       },
       {
-        "file": "lean/VE/Attribution/Wire.lean",
-        "lines": 510,
-        "sha256": "f8b2a8b0b38145d78d7ac90da84eb4c96aaef01fabaca781c14767739d715579",
+        "file": "lean/VE/Attribution/Preflight.lean",
+        "lines": 550,
+        "sha256": "e54406c9b67683b603b85378829e76002f7e5b359503b25cb1de64cdc275ff9f",
         "ranges": [
           [
             1,
-            510
+            550
+          ]
+        ],
+        "declarations": [
+          "check",
+          "restore",
+          "formulaFault"
+        ],
+        "reason": "the reports document's public fault order and texts, read before the decoder; it only rejects; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Attribution/Wire.lean",
+        "lines": 514,
+        "sha256": "4eadc30b6ea7aa48059794724edc301213b9fca4ef7e8c3bd2100fc4271f0ee5",
+        "ranges": [
+          [
+            1,
+            514
           ]
         ],
         "declarations": [
@@ -294,19 +316,18 @@
       },
       {
         "file": "lean/VE/EnglishGrammar/Run.lean",
-        "lines": 393,
-        "sha256": "1e5db6b062d6366ffcf70600e1f676a693b1974c539669d72eda810cb3d31373",
+        "lines": 379,
+        "sha256": "a5a85b2684fe9fbbdf1108e0d59aa323498d6d3fff18c82531b84eed3aaec6e5",
         "ranges": [
           [
             1,
-            393
+            379
           ]
         ],
         "declarations": [
           "pairs",
           "triples",
           "decodeLexicon",
-          "blockRouteView",
           "validateDeclarations",
           "environmentId",
           "grammarId",
@@ -684,12 +705,12 @@
       },
       {
         "file": "lean/VE/Risk/Run.lean",
-        "lines": 632,
-        "sha256": "6d98b5de4c612db0dabb9349822e5d0cd0128128e4ec680ac4c13819a57606c8",
+        "lines": 639,
+        "sha256": "a08b876d4363393c61c62108fb9bc5a7b432801a447c3081af80e0d87d8e0f64",
         "ranges": [
           [
             1,
-            632
+            639
           ]
         ],
         "declarations": [
@@ -704,12 +725,12 @@
       },
       {
         "file": "lean/VE/Risk/Wire.lean",
-        "lines": 487,
-        "sha256": "3c35ffb89361cf5bd6e6721289a0db0232ce20d4c523a7f31fff6bca67fcb90d",
+        "lines": 491,
+        "sha256": "c0b8be77ca2bc85007939d5e7151a3ca769726e0159426a29eec8a6a0fcd4ff6",
         "ranges": [
           [
             1,
-            487
+            491
           ]
         ],
         "declarations": [
@@ -1002,12 +1023,12 @@
       },
       {
         "file": "lean/VE/SpeechActs/Source/Admission/Run.lean",
-        "lines": 630,
-        "sha256": "666d467b95bb495c05c226e1311588498d22bc7368986030e6766209a8817438",
+        "lines": 632,
+        "sha256": "776cebdcc648a0fa59fce70025b84c2f84b843e247f8a1633fdfa24dd2c61070",
         "ranges": [
           [
             1,
-            630
+            632
           ]
         ],
         "declarations": [
@@ -1021,12 +1042,12 @@
       },
       {
         "file": "lean/VE/SpeechActs/Source/Run.lean",
-        "lines": 889,
-        "sha256": "965cd295dcb41ff7a5cc72b25de57f425be4bd32a155cf3755980be3256df51c",
+        "lines": 933,
+        "sha256": "6d39ec0b8b5b21c0a4b10ff2acdbe15cf352dfd7ce39863219c13d940d163b1a",
         "ranges": [
           [
             1,
-            889
+            933
           ]
         ],
         "declarations": [
