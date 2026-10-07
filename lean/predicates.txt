@@ -213,6 +213,7 @@ module VE.NormDefaults.Check
 module VE.NormDefaults.Dag
 module VE.NormDefaults.Evidence
 module VE.NormDefaults.Examples
+module VE.NormDefaults.Explain
 module VE.NormDefaults.Fill
 module VE.NormDefaults.FillCheck
 module VE.NormDefaults.Layered

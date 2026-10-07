@@ -57,7 +57,7 @@
     "ve/norm_defaults.py:UnspecifiedDocument.__init__": "after Lean accepts a source, a Python container construction failure is reported as CheckerUnavailable"
   },
   "lean_decoders": {
-    "total_lines": 21707,
+    "total_lines": 21724,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -353,12 +353,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Layered.lean",
-        "lines": 426,
-        "sha256": "dc7777651caf94d8401a11394e79bd0fc75882f0f8371dc8378558a1a084f67a",
+        "lines": 437,
+        "sha256": "f7f6a3bd0ca1564be736f1bf7acf4fb7601f23e201c51efcda694e329493e0e4",
         "ranges": [
           [
             1,
-            426
+            437
           ]
         ],
         "declarations": [
@@ -399,12 +399,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Report.lean",
-        "lines": 475,
-        "sha256": "f00d2b66e18234792263f6bac27b7bc4629df397f15fffecaafb978828d02b10",
+        "lines": 481,
+        "sha256": "a21ddddd9c1d5f87e7c1dbca97fd25c52450799e46ec834e3106b78c85a179e9",
         "ranges": [
           [
             1,
-            475
+            481
           ]
         ],
         "declarations": [
@@ -1113,6 +1113,7 @@
       "lean/VE/Readings/Route.lean": "lean:runner-glue: the readings@1 route of 1.1 and the regenerated S2a elaboration rows (elaborateFields); builds JSON, reads none",
       "lean/VE/Norms/Run.lean": "lean:runner-glue: ve_norms_route case dispatch and error rows",
       "lean/VE/NormDefaults/Run.lean": "lean:runner-glue: ve_norm_defaults_route case dispatch and response rows",
+      "lean/VE/NormDefaults/Explain.lean": "lean:runner-glue: the norm-defaults English fields (a CONFLICT's kind, deciding assignment and rules, a status's deciding rules and differing atoms) built from checked models; builds JSON, reads none",
       "lean/VE/SpeechActs/Run.lean": "lean:runner-glue: ve_speech_acts_route case dispatch, regenerated model tables and response rows; separate opt-in profile slice",
       "lean/VE/Alternatives/Run.lean": "lean:runner-glue: ve_alternatives_route case dispatch and response rows",
       "lean/VE/Attribution/Run.lean": "lean:runner-glue: ve_reports_route case dispatch and response rows",

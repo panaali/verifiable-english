@@ -524,6 +524,7 @@
   },
   "ResponseShape/Schemas/NormDefaults.lean": {
    "G[V]": [
+    "ResponseShape.Schemas.NormDefaults.atom",
     "ResponseShape.Schemas.NormDefaults.base_environment",
     "ResponseShape.Schemas.NormDefaults.certificate",
     "ResponseShape.Schemas.NormDefaults.elaborate",
@@ -537,7 +538,8 @@
     "ResponseShape.Schemas.NormDefaults.report_line",
     "ResponseShape.Schemas.NormDefaults.report_row",
     "ResponseShape.Schemas.NormDefaults.row",
-    "ResponseShape.Schemas.NormDefaults.status"
+    "ResponseShape.Schemas.NormDefaults.status",
+    "ResponseShape.Schemas.NormDefaults.witness_conflict"
    ],
    "G[R]": [
     "ResponseShape.Schemas.NormDefaults.norm_defaults_path"
@@ -3870,6 +3872,52 @@
     "VE.NormDefaults.Examples.yperm"
    ]
   },
+  "VE/NormDefaults/Explain.lean": {
+   "C": [
+    "VE.NormDefaults.Wire.shrink",
+    "VE.NormDefaults.Wire.supportAtom",
+    "VE.NormDefaults.Wire.supportEval",
+    "VE.NormDefaults.Wire.supportJoin",
+    "VE.NormDefaults.Wire.supportList"
+   ],
+   "D[V]": [
+    "VE.NormDefaults.Wire.atomsJson",
+    "VE.NormDefaults.Wire.conflictFields",
+    "VE.NormDefaults.Wire.outcomeLabel",
+    "VE.NormDefaults.Wire.statusFields",
+    "VE.NormDefaults.Wire.underJson",
+    "VE.NormDefaults.Wire.unsaidPredicate"
+   ],
+   "G[V]": [
+    "VE.NormDefaults.Wire.fillingsDiffer",
+    {
+     "name": "VE.NormDefaults.Wire.keptV",
+     "tied": [
+      "VE.NormDefaults.Wire.kept_sound"
+     ]
+    },
+    "VE.NormDefaults.Wire.pairPartners",
+    "VE.NormDefaults.Wire.selectionBase",
+    {
+     "name": "VE.NormDefaults.Wire.selectedRules",
+     "tied": [
+      "VE.NormDefaults.Wire.selectedRules_sound"
+     ]
+    },
+    {
+     "name": "VE.NormDefaults.Wire.settledConflict",
+     "tied": [
+      "VE.NormDefaults.Wire.settled_every_filling"
+     ]
+    },
+    {
+     "name": "VE.NormDefaults.Wire.underOf",
+     "tied": [
+      "VE.NormDefaults.Wire.underOf_sufficient"
+     ]
+    }
+   ]
+  },
   "VE/NormDefaults/Fill.lean": {
    "P": [
     "VE.NormDefaults.UValid",
@@ -3999,6 +4047,12 @@
     "VE.NormDefaults.Wire.ReportG.toJson",
     "VE.NormDefaults.Wire.WitnessRow.toJson",
     "VE.NormDefaults.Wire.completionLabel",
+    {
+     "name": "VE.NormDefaults.Wire.completedLabel",
+     "tied": [
+      "VE.NormDefaults.Wire.value3_gap"
+     ]
+    },
     "VE.NormDefaults.Wire.groundingCites",
     "VE.NormDefaults.Wire.situationFrom",
     "VE.NormDefaults.Wire.validateCompletions",

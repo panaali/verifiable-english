@@ -8021,6 +8021,19 @@ theorem VE.NormDefaults.Wire.grounding_ungrounded_iff
         VE.Bridge.lookup cited r.name = Option.none ∧ translation = Bool.true ∧ reachable = Bool.true
   -- uses VE.Bridge.lookup@VE.Bridge VE.NormDefaults.Completion.unspecified@VE.NormDefaults.Tree VE.NormDefaults.Completion@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.Grounding.ungrounded@VE.NormDefaults.Report VE.NormDefaults.Wire.Grounding@VE.NormDefaults.Report VE.NormDefaults.Wire.groundingOf@VE.NormDefaults.Report VE.NormDefaults.completionOf@VE.NormDefaults.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree
   -- expr 951398524
+theorem VE.NormDefaults.Wire.kept_sound
+  ∀ (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel VE.Bridge.Entity) (K : List (String × List VE.Bridge.Entity))
+    (R : String → List VE.Bridge.Entity → Prop),
+    (∀ (a : String × List VE.Bridge.Entity), a ∈ K → (R a.fst a.snd ↔ a.snd ∈ M.relations a.fst)) →
+      (∀ (p : String) (vs : List VE.Bridge.Entity), ¬p ∈ VE.NormDefaults.unsaidNames U → (R p vs ↔ vs ∈ M.relations p)) →
+        ∀ (φ : VE.Formula) (ρ : List VE.Bridge.Entity),
+          VE.NormDefaults.kleene M (VE.NormDefaults.Wire.keptV U M K) ρ φ = Option.some Bool.true →
+            VE.Formula.denote
+              (let __src := M.asStructure;
+              { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R })
+              ρ φ
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.keptV@VE.NormDefaults.Explain VE.NormDefaults.kleene@VE.NormDefaults.Evidence VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2161152331
 theorem VE.NormDefaults.Wire.layered_cert_sound
   ∀ (L : VE.NormDefaults.Wire.LayeredU) (ss : List String) (φ : VE.Formula) (c : VE.Tableau.Certificate),
     VE.Tableau.checkCertificate (VE.Norms.envAt (VE.NormDefaults.fill L.U) 0) L.background (VE.Norms.bindAll ss φ.not) c =
@@ -8144,6 +8157,26 @@ theorem VE.NormDefaults.Wire.report_sound
     VE.NormDefaults.Wire.ReportSound src rep
   -- uses VE.NormDefaults.Wire.ReportG@VE.NormDefaults.Report VE.NormDefaults.Wire.ReportSound@VE.NormDefaults.Report VE.NormDefaults.Wire.ReportSource@VE.NormDefaults.Report
   -- expr 2486045729
+theorem VE.NormDefaults.Wire.selectedRules_sound
+  ∀ (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel VE.Bridge.Entity) (ρ : List VE.Bridge.Entity) (p n : String),
+    n ∈ VE.NormDefaults.Wire.selectedRules U M ρ p →
+      ∃ N,
+        N ∈ List.map (VE.NormDefaults.fillRoot U) U.D.T.nodes ∧
+          N.name = n ∧ N.pred = p ∧ VE.Formula.denote M.asStructure ρ (VE.NormDefaults.Wire.selectionBase U N)
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.selectedRules@VE.NormDefaults.Explain VE.NormDefaults.Wire.selectionBase@VE.NormDefaults.Explain VE.NormDefaults.fillRoot@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree
+  -- expr 520827832
+theorem VE.NormDefaults.Wire.settled_every_filling
+  ∀ (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel VE.Bridge.Entity) (ρ : List VE.Bridge.Entity) (φ : VE.Formula),
+    VE.NormDefaults.Wire.settledConflict U M ρ φ = Bool.true →
+      ∀ (R : String → List VE.Bridge.Entity → Prop),
+        (∀ (p : String) (vs : List VE.Bridge.Entity),
+            ¬p ∈ VE.NormDefaults.unsaidNames U → (R p vs ↔ vs ∈ M.relations p)) →
+          VE.Formula.denote
+            (let __src := M.asStructure;
+            { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R })
+            ρ φ
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.settledConflict@VE.NormDefaults.Explain VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2062146703
 theorem VE.NormDefaults.Wire.targetU_refutes
   ∀ (U : VE.NormDefaults.UDoc),
     VE.Norms.WellFormed (VE.NormDefaults.fill U) = Bool.true →
@@ -8166,6 +8199,25 @@ theorem VE.NormDefaults.Wire.target_not_conflictFree
               VE.Formula.denote B (VE.Norms.tupleVal vs) t.snd.snd → ¬VE.Norms.ConflictFree (VE.NormDefaults.fill U) B
   -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.WellFormed@VE.Norms.Tree VE.Norms.targets@VE.Norms.Replay VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 2327373120
+theorem VE.NormDefaults.Wire.underOf_sufficient
+  ∀ (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel VE.Bridge.Entity) (ρ : List VE.Bridge.Entity) (φ : VE.Formula)
+    (K : List (String × List VE.Bridge.Entity)),
+    VE.NormDefaults.Wire.underOf U M ρ φ = Option.some K →
+      ∀ (R : String → List VE.Bridge.Entity → Prop),
+        (∀ (a : String × List VE.Bridge.Entity), a ∈ K → (R a.fst a.snd ↔ a.snd ∈ M.relations a.fst)) →
+          (∀ (p : String) (vs : List VE.Bridge.Entity),
+              ¬p ∈ VE.NormDefaults.unsaidNames U → (R p vs ↔ vs ∈ M.relations p)) →
+            VE.Formula.denote
+              (let __src := M.asStructure;
+              { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R })
+              ρ φ
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.underOf@VE.NormDefaults.Explain VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2703775532
+theorem VE.NormDefaults.Wire.value3_gap
+  ∀ (P N : Prop) (c : VE.NormDefaults.Completion),
+    ¬P → ¬N → VE.NormDefaults.Wire.outcomeLabel (VE.NormDefaults.value3 P N c) = VE.NormDefaults.Wire.completedLabel c
+  -- uses VE.NormDefaults.Completion@VE.NormDefaults.Tree VE.NormDefaults.Wire.completedLabel@VE.NormDefaults.Report VE.NormDefaults.Wire.outcomeLabel@VE.NormDefaults.Explain VE.NormDefaults.value3@VE.NormDefaults.Semantics
+  -- expr 4245164468
 theorem VE.NormDefaults.aboveCount_over
   ∀ {T : VE.Norms.Tree},
     VE.Route.DagAcyclic (VE.Norms.precedenceNodes T) →

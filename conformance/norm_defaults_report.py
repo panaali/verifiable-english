@@ -48,6 +48,9 @@ def search_evidence(document, **options):
     return lines, (witnesses, packages)
 
 
+COMPLETED = {"deny": "no", "allow": "yes", "unspecified": "unsaid"}
+
+
 def python_rows(lines):
     """Python's report in the shape of Lean's `report` rows (the witness when found here)."""
     rows = []
@@ -58,6 +61,9 @@ def python_rows(lines):
             values, filling = line.witness
             row["witness"] = {"tuple": list(values),
                               "filling": {k: sorted(list(r) for r in v) for k, v in filling.items()}}
+        if line.reached == "reachable":
+            # Where no author rule decides, the value is the completion's (spec 3.2; Lean `value3_gap`).
+            row["value"] = COMPLETED[line.completion]
         rows.append(row)
     return rows
 
