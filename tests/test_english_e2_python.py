@@ -86,6 +86,7 @@ def test_argument_failure_text_preserves_prover_status(monkeypatch):
         calls.append(premises)
         return SimpleNamespace(status="Unknown")
     monkeypatch.setattr(entailment, "prove_entailment", unknown)
+    monkeypatch.setenv("VE_ENGLISH_COMPARATOR", "0")  # count the relay's own entailment calls only
     with pytest.raises(VESyntaxError) as caught:
         english.parse_english_argument(env, "Legacy is deployed. Therefore legacy is reviewed.")
     assert str(caught.value) == ("Sentence 2 is marked as a conclusion, and no checked derivation from the "

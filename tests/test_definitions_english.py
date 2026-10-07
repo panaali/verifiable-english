@@ -153,6 +153,7 @@ def test_definition_sentence_parts_are_read_by_lean(monkeypatch):
     original = english_lean.read
     monkeypatch.setattr(english_lean, "read",
                         lambda env, source, words, options: seen.append(source) or original(env, source, words, options))
+    monkeypatch.setenv("VE_ENGLISH_COMPARATOR", "0")
     monkeypatch.setattr(english, "_python_reading", lambda *_args: pytest.fail("Python decided a definition"))
     parse_definition(Environment(staff_env(("definitions@0", "relational-fol@0"))), TRUSTED)
     assert seen == ["for every person, that person is trusted.",
