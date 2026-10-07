@@ -1,0 +1,25 @@
+{
+  "recorded_utc": "2026-10-07T01:19:43.467920+00:00",
+  "status": "passed",
+  "commit_sha": "7ea56df04962ff3dfd32f7cf23327cd7d4f3121c",
+  "dirty": false,
+  "counts": {
+    "collected": 11473,
+    "deselected": 1,
+    "failed": 0,
+    "passed": 11465,
+    "rust_ignored": 0,
+    "rust_passed": 48,
+    "selected": 11472,
+    "skipped": 7
+  },
+  "stages": [
+    "toolchains",
+    "lean_build",
+    "lean_audit",
+    "rust_build",
+    "cargo_test",
+    "pytest"
+  ],
+  "failures": []
+}

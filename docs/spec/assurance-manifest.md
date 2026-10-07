@@ -183,12 +183,12 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/SoftNorms/Admission.lean` | 332 | 332 | 1–332 | `65c5511e845d…` |
 | `lean/VE/SoftNorms/Phases.lean` | 362 | 362 | 1–362 | `a19fb700f52c…` |
 | `lean/VE/SoftNorms/Wire.lean` | 461 | 461 | 1–461 | `0669c3cb6966…` |
-| `lean/VE/SpeechActs/Source/Admission/Run.lean` | 630 | 630 | 1–630 | `666d467b95bb…` |
-| `lean/VE/SpeechActs/Source/Run.lean` | 889 | 889 | 1–889 | `965cd295dcb4…` |
+| `lean/VE/SpeechActs/Source/Admission/Run.lean` | 632 | 632 | 1–632 | `776cebdcc648…` |
+| `lean/VE/SpeechActs/Source/Run.lean` | 933 | 933 | 1–933 | `6d39ec0b8b5b…` |
 | `lean/VE/SpeechActs/Wire.lean` | 993 | 993 | 1–993 | `fbe08d985f7f…` |
 | `lean/VE/Time/Document.lean` | 613 | 613 | 1–613 | `4407e998d007…` |
 | `lean/VE/Time/Wire.lean` | 843 | 843 | 1–843 | `43eff830ca8c…` |
-| **total** | | **22,383** | | |
+| **total** | | **22,429** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
