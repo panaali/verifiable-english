@@ -14,11 +14,29 @@ B10B = ROOT / "docs/lean-first/b10b"
 DF19 = "fields do not match: expected [sort, description], got [description, sort, verbalisation]"
 
 
-def _gate():
-    spec = importlib.util.spec_from_file_location("lean_first_b10b_fuzzer_gate", B10B / "fuzzer_gate.py")
+def _load(name):
+    spec = importlib.util.spec_from_file_location(f"lean_first_b10b_{name}", B10B / f"{name}.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+def _gate():
+    return _load("fuzzer_gate")
+
+
+def test_delta_evidence_table_is_generated_from_the_evidence():
+    report = _load("verify_report")
+    text = (B10B / "DELTA.md").read_text()
+    assert report.BEGIN in text and report.END in text
+    assert text.split(report.BEGIN, 1)[1].split(report.END, 1)[0].strip("\n") == report.render().strip("\n")
+
+
+def test_every_seeded_bug_was_caught():
+    bugs = json.loads((B10B / "evidence/seeded-bugs.json").read_text())["mutants"]
+    assert len(bugs) >= 3
+    assert all(bug["mutated_exit"] != 0 and bug["restored_exit"] == 0 for bug in bugs)
+    assert all((ROOT / bug["test"].split("::")[0]).exists() for bug in bugs)
 
 
 def _finding(signature, classes):
