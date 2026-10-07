@@ -10,7 +10,7 @@ import pytest
 from ve.errors import VEError
 from ve.readings_s2_english import (DEFAULTS, PROVIDED, S2A, TEMPLATES, Slots, checked_alone, derivations,
                                     each_alone, every_result, every_result_of_sentence, gap_sentences, gated,
-                                    named_result, pair_line, result_sentence, sentence_slots)
+                                    named_result, pair_line, result_sentence, sentence_slots, shown)
 
 EVERY = "*Every agent must help each user*"
 ASKING = "*Every agent must help each user, if that user asks that agent*"
@@ -88,14 +88,14 @@ def test_reserved_names_are_never_shown(hidden):
 
 
 def test_sentence_slots():
-    """Review A4: the candidate's own sentence in italics without its final period; a candidate without content has
-    no name; two candidates shown by one sentence are refused."""
-    assert sentence_slots("rs_1", ["Every agent must help each user.", None, "A must B. It is an exception to rule x."]) \
-        == [EVERY, None, "*A must B. It is an exception to rule x*"]
-    with pytest.raises(VEError, match="two readings of rs_1 are shown by the same sentence"):
-        sentence_slots("rs_1", ["Every agent must help each user.", "Every agent must help each user."])
+    """Review A4: the candidate's own sentence in italics without its final period; two candidates shown by one
+    sentence are named by neither, and an answer naming one is refused (tests/test_readings_defaults_names.py)."""
+    assert sentence_slots("rs_1", ["Every agent must help each user.", "A must B. It is an exception to rule x."]) \
+        == [EVERY, "*A must B. It is an exception to rule x*"]
+    with pytest.raises(VEError, match="two different readings of rs_1 are shown by the same sentence"):
+        shown(sentence_slots("rs_1", ["Every agent must help each user.", "Every agent must help each user."])[0])
     with pytest.raises(VEError, match="the same sentence"):
-        sentence_slots("rs_1", ["Every agent must help each user.", "Every agent must help each user"])
+        shown(sentence_slots("rs_1", ["Every agent must help each user.", "Every agent must help each user"])[1])
 
 
 def _pair_frame():

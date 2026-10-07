@@ -26,6 +26,18 @@ ORDER_REVISION = "ve-v0.1-order-2026-09-22"
 INT_SORT = "$int"
 STRING_SORT = "$string"
 RESERVED = frozenset("true false is equals not and or if then for every there exists believes must eventually no".split())
+# norm-defaults 2.1: the prefixes of the names `fill` adds (the unsaid tables, the rules `F_p`). They are reserved, and
+# never shown, only under `norm-defaults@0`; without it they are ordinary author names. The one table: the checker,
+# the S2 wording gate and tools/relay_lint.py read it.
+NORM_DEFAULTS_PROFILE = "norm-defaults@0"
+UNSAID_PREFIX = "unsaid__"
+FILL_PREFIX = "unsaid--"
+RESERVED_PREFIXES = (UNSAID_PREFIX, FILL_PREFIX)
+
+
+def reserved_prefixes(profiles) -> tuple[str, ...]:
+    """The reserved name prefixes of an environment with `profiles`: none without `norm-defaults@0`."""
+    return RESERVED_PREFIXES if NORM_DEFAULTS_PROFILE in profiles else ()
 _IDENTIFIER = re.compile(r"[a-z][a-z0-9_]*\Z", re.ASCII)
 _ASCII_LOWER = str.maketrans("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")
 
@@ -461,10 +473,10 @@ class Environment:
                                              entry.get("functional"), entry.get("total"),
                                              canonical_json(entry["defined"]) if defined else None,
                                              argument_units)
-        if route and "norm-defaults@0" in data["profiles"]:
+        if route and NORM_DEFAULTS_PROFILE in data["profiles"]:
             # norm-defaults 2.1: `unsaid__` names the fillings `fill` adds.
             for name in predicates:
-                if name.startswith("unsaid__"):
+                if name.startswith(UNSAID_PREFIX):
                     raise VEError(f"InvalidInput: reserved name {name}")
         regulated_names = [n for n, p in predicates.items() if p.regulated is not None]
         if len(regulated_names) > 64:

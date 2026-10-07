@@ -33,6 +33,7 @@ class S2Wording:
 
     def __init__(self, doc, route):
         from . import readings_s2_english as E
+        from .environment import reserved_prefixes
         self.E = E
         self.doc, self.route = doc, route
         self.s1 = Wording(doc)
@@ -41,7 +42,8 @@ class S2Wording:
         self.set_number = {R.id: self.numbers[R.unit] for R in self.sets}
         self.names = {R.id: self.s1.reading_names(R.id) for R in self.sets}
         self.slots = E.Slots(numbers={str(n) for n in self.numbers.values()},
-                             readings={name for names in self.names.values() for name in names if name is not None})
+                             readings={name for names in self.names.values() for name in names if type(name) is str},
+                             reserved=reserved_prefixes(doc["environment"].profiles))
         senv = self.s1.admission.senv
         self.frame = senv.frame
         self.author = set(senv.author_environment().predicates)
@@ -52,7 +54,11 @@ class S2Wording:
     def readings(self, choice):
         """[(sentence number, reading name)] for a choice or assumed list, in source order."""
         chosen = {s: i for s, i in choice}
-        return [(self.set_number[R.id], self.names[R.id][chosen[R.id]]) for R in self.sets if R.id in chosen]
+        return [(self.set_number[R.id], self.name(R.id, chosen[R.id])) for R in self.sets if R.id in chosen]
+
+    def name(self, set_id, i):
+        """The `<reading>` name of candidate `i` of `set_id`; a reading the slot cannot show is refused here."""
+        return self.E.shown(self.names[set_id][i])
 
     def conclusion(self, ast):
         """`<conclusion>`: the conclusion's canonical sentence on the existing English surface, in italics; it is
@@ -252,7 +258,7 @@ class S2Wording:
                 cited = [self.numbers[u] for u in narrowing["reason_spans"]]
                 for i, a in enumerate(R.candidates):
                     if a.id not in narrowing["keeps"]:
-                        lines.append(E.narrowed(self.set_number[R.id], self.names[R.id][i], cited, self.slots))
+                        lines.append(E.narrowed(self.set_number[R.id], self.name(R.id, i), cited, self.slots))
             else:
                 raise VEError(f"InvalidInput: unknown slot label kind {decoded.kind}")
         if quiet:
@@ -349,7 +355,7 @@ class S2Wording:
             lines += self.provided(used)
             lines += self.independent(self._mentions(used))
         for dead in route.dead_readings() or []:
-            lines.append(E.dead_reading(self.set_number[dead["set"]], self.names[dead["set"]][dead["index"]],
+            lines.append(E.dead_reading(self.set_number[dead["set"]], self.name(dead["set"], dead["index"]),
                                         self.slots))
         return lines
 

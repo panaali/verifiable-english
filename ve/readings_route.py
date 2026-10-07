@@ -425,6 +425,7 @@ class Wording:
             self.admission = Decoded(self.environment, self.document)
             self.words = EnglishVocabulary(self.admission.senv.frame)
             self.numbers = {unit["id"]: n for n, unit in enumerate(doc["units"], 1)}
+        self._names = {}
 
     def set_raw(self, set_id):
         return self.admission.doc.set_by_id(set_id).raw
@@ -443,54 +444,50 @@ class Wording:
 
     def reading_names(self, set_id):
         """`<reading>` (2.1, as readings-defaults 2.3 amends it, review A4): the deontic verb in italics when the
-        candidates are rules that differ only in it; otherwise each candidate's own rendered sentence, in italics,
-        without its final period. "reading <i>" is never shown. A candidate without content has no name (None):
-        no answer names it. Two candidates shown by the same sentence are refused, since the slot would then read
-        two ways."""
-        from .norm_english import render_rule_sentence
-        from .softnorms import decode_rule
-        R = self.admission.doc.set_by_id(set_id)
-        if all(a.content is not None and a.content.kind == "norm" for a in R.candidates):
-            env = self.admission.side(set_id, 0).soft.env
-            verbs, frames = [], []
-            for a in R.candidates:
-                rule = decode_rule(env, {"norm": a.content.body})
-                sentence = render_rule_sentence(rule, env)
-                verb = _modal(env, rule)
-                if f" {verb} " not in sentence:
-                    break
-                verbs.append(verb)
-                frames.append(sentence.replace(f" {verb} ", " _ ", 1))
-            else:
-                if len(set(frames)) == 1 and len(set(verbs)) == len(verbs):
-                    return [f"*{verb}*" for verb in verbs]
-        from .readings_s2_english import sentence_slots
-        return sentence_slots(set_id, [None if a.content is None else self.candidate_sentence(set_id, i)
-                                       for i, a in enumerate(R.candidates)])
+        candidates are rules whose full sentences, notes included, differ only in it; otherwise each candidate's
+        own rendered sentence, in italics, without its final period (`sentence_slots`, the one rule for both).
+        "reading <i>" is never shown. A candidate the slot cannot show (no content, a sentence that does not read
+        back, or one sentence for two different contents) is `Unnamed`: only an answer that names it is refused.
+        Computed once per set."""
+        if set_id not in self._names:
+            from .readings_s2_english import sentence_slots
+            from .wire import canonical_json
+            R = self.admission.doc.set_by_id(set_id)
+            shown = [self.candidate_sentence(set_id, i) for i in range(len(R.candidates))]
+            keys = [i if a.content is None else
+                    rule_key(self.admission.side(set_id, i).soft.env, a.content.body) if a.content.kind == "norm" else
+                    canonical_json(a.content.raw) for i, a in enumerate(R.candidates)]
+            self._names[set_id] = sentence_slots(set_id, [text for text, _ in shown], [verb for _, verb in shown],
+                                                 keys)
+        return self._names[set_id]
 
     def candidate_sentence(self, set_id, i):
-        """The candidate's own sentence, rendered as the document's renderer shows that kind of content: a rule
-        by its canonical rule sentence followed by the notes for the fields that sentence leaves out (precedence,
-        switches, rank, exception conditions; `rule_notes`, under which two rules differing in any field render
-        differently), an assertion by its canonical VE English sentence, read back to the same formula, and a
-        right, its incident lines or a limitation by the rights renderer."""
-        from .norm_english import render_rule_sentence
-        from .softnorms import decode_rule
-        from .surface.rights import rule_notes
+        """(sentence, verb): the candidate's own sentence, rendered as the document's renderer shows that kind of
+        content, and a rule's deontic verb (else None). A rule by its canonical rule sentence followed by the
+        notes for the fields that sentence leaves out (precedence, switches, rank, exception conditions;
+        `rule_notes`, under which two rules differing in any field render differently), an assertion by its
+        canonical VE English sentence, read back to the same formula, and a right, its incident lines or a
+        limitation by the rights renderer. A candidate that cannot be shown gets an `Unnamed` with the reason."""
+        from .readings_s2_english import Unnamed
         content = self.admission.doc.set_by_id(set_id).candidates[i].content
+        if content is None:
+            return Unnamed(f"an answer names a reading of {set_id} without content"), None
         side = self.admission.side(set_id, i)
         if content.kind == "norm":
-            env = side.soft.env
-            rule = decode_rule(env, {"norm": content.body})
-            return " ".join((render_rule_sentence(rule, env), *rule_notes(rule, env)))
+            return rule_sentence(side.soft.env, content.body)
         if content.kind == "assertion":
             from .ast import formula_from_data
             from .readings_s2_english import canonical_sentence
             frame = self.admission.senv.frame
-            return canonical_sentence(frame, formula_from_data(frame, content.body),
-                                      f"a reading of {set_id} does not read back to its content")
+            failure = f"a reading of {set_id} does not read back to its content"
+            try:
+                return canonical_sentence(frame, formula_from_data(frame, content.body), failure), None
+            except VEError as error:
+                if error.message != f"InvalidInput: {failure}":
+                    raise
+                return Unnamed(failure), None
         from .surface.rights import render_unit
-        return render_unit(side.rights, content.raw)
+        return render_unit(side.rights, content.raw), None
 
     def decider(self, value):
         who = value or "unstated"
@@ -703,6 +700,47 @@ def _article(noun):
     if word.startswith(("hour", "honest", "honour", "heir")):
         return "an"
     return "an" if word[:1] in "aeiou" else "a"
+
+
+def rule_sentence(env, body):
+    """(sentence, verb) of a rule candidate's `norm` object (the `<reading>` slot, 2.3): its canonical rule sentence,
+    then `rule_notes` (precedence, switches, rank, exception conditions and factors), then, for a default rule
+    whose exception is decided by someone other than the document's default decider, who decides it; and its
+    deontic verb. Two rules that differ in what `rule_key` keeps render differently."""
+    from .norm_english import render_rule_sentence
+    from .softnorms import decode_rule
+    from .surface.rights import rule_notes
+    rule = decode_rule(env, {"norm": body})
+    notes = list(rule_notes(rule, env))
+    decider, usual = _deciders(env, rule)
+    if decider != usual:
+        notes.append(f"Its exception is decided by {decider}." if decider != "unstated" else
+                     "The source names no decider for its exception.")
+    return " ".join((render_rule_sentence(rule, env), *notes)), _modal(env, rule)
+
+
+def rule_key(env, body):
+    """What a rule candidate means to a reader, the `<reading>` slot's identity of it: the decoded rule without its
+    own name (other units refer to it by name, so two readings of one set that differ in it alone mean the same)
+    and without `hard` (a declaration check: strict and unswitchable, which the rule states anyway), with the
+    decider that decides its exception."""
+    from .softnorms import decode_rule
+    from .wire import canonical_json
+    rule = decode_rule(env, {"norm": body})
+    raw = rule.to_dict()["norm"]
+    raw.pop("name"), raw.pop("hard", None)
+    if "exception" in raw:
+        raw["exception"]["decided_by"] = _deciders(env, rule)[0]
+    return canonical_json(raw)
+
+
+def _deciders(env, rule):
+    """(who decides the rule's exception, who decides an exception the rule names no decider for); both "unstated"
+    for a strict rule."""
+    if rule.mode != "default":
+        return "unstated", "unstated"
+    usual = env.soft.get("exception_decider") or "unstated"
+    return (rule.exception or {}).get("decided_by") or usual, usual
 
 
 def _modal(env, rule):

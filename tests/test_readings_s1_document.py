@@ -113,9 +113,13 @@ def test_h2_h3_e19_on_k6_and_k14_without_e25(tmp_path):
     asks = ["binary", "asks", ["var", 1], ["var", 0]]
     path = s1_document(tmp_path / "k14", [strict(), default(sufficient=[asks], necessary=[["bottom"]])])
     [pair] = check_document(path)["readings"]["sets"][0]["pairs"]
+    # Review B of readings-defaults RD-1: the readings differ in the exception's conditions as well as the verb, so
+    # the slot shows each full sentence, notes included (before: *must* and *should*, the conditions hidden).
     assert pair["text"] == ("These two readings differ here: a is an agent; u is a user; a has the recorded "
-                            "relation \"asks\" to u. Under *must*, a still must. Under *should*, this situation is "
-                            "ruled out, whatever is decided.")
+                            "relation \"asks\" to u. Under *Every agent must avoid deceiving each user*, a still "
+                            "must. Under *Every agent should avoid deceiving each user. Its exception applies when "
+                            "that agent has the recorded relation \"asks\" to that user. Its exception applies only "
+                            "when this is impossible*, this situation is ruled out, whatever is decided.")
     assert "It is not certified" not in rendered(path)
 
 
