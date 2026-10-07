@@ -1,6 +1,6 @@
 # Batch 6 delta and fix report (2026-10-07)
 
-**Status: complete; ready for review.** Local branch `lean-first/b6` is based on `9aaf918d`. Nothing was pushed. The fix directive's items are done. Soft-norms latency is within the plan's allowances (largest UDHR CPU ratio 1.17; the slowest head run took 78.11 s wall). The 11 inherited CI-fuzzer signatures are reviewed into the baseline. The DRI's signature for the 164 trusted Lean lines is recorded. The producer schema regression corpus is `tests/data/route-cases.jsonl`, 292 cases, including standalone and batched soft-rule answers.
+**Status: complete; ready for review.** Local branch `lean-first/b6` is based on `9aaf918d`. Nothing was pushed. The fix directive's items are done. Soft-norms latency is within the plan's allowances for `ve document check` and `ve document render` (largest UDHR CPU ratio 1.11; the slowest head run took 69.91 s wall). The 11 inherited CI-fuzzer signatures are reviewed into the baseline. The DRI's signature for the 164 trusted Lean lines is recorded. The producer schema regression corpus is `tests/data/route-cases.jsonl`, 292 cases, including standalone and batched soft-rule answers.
 
 ## Ownership and deletion ledger
 
@@ -32,33 +32,66 @@ Against `9aaf918d`, `ve/**/*.py` has **1,974 deleted and 430 added lines** (coun
 
 Not run: a separate mutant that restores `targets`/`InFragment` in `regeneratedCore` alone.
 
+## Recheck fix: render's per-candidate requests (lf-6c, 2026-10-07)
+
+**Finding B.** `ve document render` of the large UDHR translation, which the UDHR pilot runs (`finish.py` calls `render_document`), still cost 1.32 to 1.49 times the base CPU; the fix above had measured `check` only. Render sent 273 `soft-elaborate` and 116 `soft-rules` requests (base: none). Every right candidate's display document (`render_document.candidate_rights`, 115) and every readings side the English wording built (`readings_s1.Side`, 156) was a whole soft document Lean was asked to elaborate, and each asked about its own line rules. All of them carry one environment, and a soft request costs Lean 0.06 to 0.1 s of environment-wide validation however few rules it holds.
+
+**Fix, as a class** (`2ffbe0c1`). Building a candidate's document no longer costs a Lean request of its own:
+
+1. *Deferred soft documents.* `SoftNormDocument(deferred=True)` holds its Python-hydrated `env`, `rules` and `core`. The first read of any field Lean supplies asks Lean for the whole document, exactly as eager construction does, and raises its diagnostic (on every read). A document Python cannot hydrate asks Lean at once, so its error is the eager one. Readings sides (which Lean's readings route checks as `sideWF`) and render's candidate display documents are deferred. `Side._checked_elaborate` and S2's `_ChoiceDocument`, which are checks, stay eager.
+2. *One rule request per source.* `RightsDocument.warm_rules` asks Lean about the line rules of many documents in one `soft-rules` request per lower source, through the accepted-rule memo, before they are built one by one. It builds nothing. It absorbs only a content refusal, which each document then raises when built; `CheckerUnavailable` propagates. Render warms its right candidates, `Decoded` warms every side once, and `validate_reading_sets` warms the right candidates it checks alone (rights documents without `readings@1`, whose whole documents admission still checks one by one).
+
+On the large document, render now sends 29 `soft-elaborate` and 3 `soft-rules` requests, and check 30 and 3 (it sent 95 and 34). Of the `soft-elaborate` requests, 27 are E22/E23 reading Lean's rule acts and incompatible pairs of a twin's side. Render's and check's outputs are identical to the base's and to the previous head's.
+
+What a deferred document leaves unchecked: a readings@1 right candidate's display document alone over the source units is no longer elaborated by Lean as a whole. Its line rules are Lean-checked (`soft-rules`), and Lean's readings route checks the candidate's side, with Lean's own correlation. S2's Python regeneration of the route refusal (`route_refusal`) still asks Lean about each compatible choice's document, up to 64; it is a conformance comparison of Python's correlation with Lean's and is left as it is. No UDHR document reaches it.
+
+**Regression tests** (`tests/test_soft_candidate_economy.py`): the soft requests of render and check do not grow from seven to nine sets of right candidates (one rule request in all), nor admission's rule requests from one to three sets; outputs equal those of eager construction; a deferred document asks Lean once for all of its Lean fields (the list is generated from eager construction), raises Lean's diagnostic on every read, and gives the eager error when Python cannot hydrate it; `extend` reaches `extended_env` either way; the warm-up raises no diagnostic, raises an outage, sends one request, and keeps each document's diagnostic.
+
 **Measured side by side** (`docs/lean-first/b6/udhr_timing.py`, evidence `evidence/udhr-timing.json`; the earlier figures are kept in `evidence/timings.json`). Before the fix, the isolated UDHR translation took 38.99 s at the base and 150.37 s at the head; the large document took 58.90 s at the base and 426.19 s at the head.
 
 <!-- BEGIN GENERATED LATENCY: python3 docs/lean-first/b6/report.py --write -->
-Base `9aaf918d` against head `8fbae87c`, both sides started together on each document (CPU is user + system, Lean services included).
+Base `9aaf918d` against head `2ffbe0c1`, both sides started together on each document (CPU is user + system, Lean services included).
 
-| Document | Run | Bytes | Base wall s | Base CPU s | Head wall s | Head CPU s | CPU ratio | Same JSON | Load |
-|---|---:|---:|---:|---:|---:|---:|---:|---|---:|
-| udhr-20260927T0646Z | 1 | 44,627 | 0.27 | 0.27 | 0.28 | 0.27 | — | yes | 21.6 |
-| udhr-20260927T1800Z | 1 | 43,580 | 0.28 | 0.27 | 0.29 | 0.28 | — | yes | 21.6 |
-| udhr-20260928T1800Z | 1 | 46,850 | 0.29 | 0.28 | 0.26 | 0.26 | — | yes | 21.6 |
-| udhr-20260929T0600Z | 1 | 48,260 | 0.28 | 0.27 | 0.31 | 0.30 | — | yes | 21.6 |
-| udhr-20260929T1800Z | 1 | 58,557 | 0.28 | 0.27 | 0.29 | 0.29 | — | yes | 21.6 |
-| udhr-20260930T0600Z | 1 | 288,342 | 45.68 | 45.21 | 44.34 | 44.10 | 0.98 | yes | 22.7 |
-| udhr-20260930T1800Z | 1 | 258,521 | 26.53 | 26.47 | 28.13 | 28.05 | 1.06 | yes | 21.8 |
-| udhr-20261001T1800Z | 1 | 241,065 | 23.20 | 23.17 | 21.08 | 21.04 | 0.91 | yes | 22.4 |
-| udhr-20261002T0600Z | 1 | 224,845 | 13.80 | 13.79 | 11.34 | 11.33 | 0.82 | yes | 20.8 |
-| udhr-20261002T1800Z | 1 | 228,316 | 13.29 | 13.28 | 11.91 | 11.91 | 0.90 | yes | 20.0 |
-| udhr-20261003T0600Z | 1 | 869,161 | 59.66 | 59.65 | 63.51 | 63.51 | 1.06 | yes | 16.0 |
-| udhr-20261003T0600Z | 2 | 869,161 | 65.98 | 65.92 | 75.85 | 75.81 | 1.15 | yes | 19.9 |
-| udhr-20261003T0600Z | 3 | 869,161 | 67.05 | 66.97 | 78.11 | 78.07 | 1.17 | yes | 21.9 |
-| udhr-20261004T0600Z | 1 | 237,049 | 0.41 | 0.41 | 0.31 | 0.31 | — | yes | 21.9 |
-| udhr-20261004T1800Z | 1 | 244,289 | 0.45 | 0.45 | 0.39 | 0.39 | — | yes | 21.9 |
-| udhr-20261005T0600Z | 1 | 270,770 | 0.42 | 0.42 | 0.43 | 0.42 | — | yes | 21.9 |
-| udhr-20261005T1800Z | 1 | 269,413 | 0.26 | 0.26 | 0.49 | 0.48 | — | yes | 22.0 |
-| udhr-20261006T1800Z | 1 | 287,435 | 0.42 | 0.42 | 0.43 | 0.43 | — | yes | 22.0 |
+| Document | Command | Run | Bytes | Base wall s | Base CPU s | Head wall s | Head CPU s | CPU ratio | Same output | Load |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---|---:|
+| udhr-20260927T0646Z | check | 1 | 44,627 | 0.48 | 0.43 | 0.33 | 0.32 | — | yes | 17.3 |
+| udhr-20260927T0646Z | render | 1 | 44,627 | 0.31 | 0.31 | 0.26 | 0.25 | — | yes | 17.3 |
+| udhr-20260927T1800Z | check | 1 | 43,580 | 0.27 | 0.26 | 0.40 | 0.40 | — | yes | 17.3 |
+| udhr-20260927T1800Z | render | 1 | 43,580 | 0.25 | 0.24 | 0.31 | 0.30 | — | yes | 17.3 |
+| udhr-20260928T1800Z | check | 1 | 46,850 | 0.27 | 0.26 | 0.25 | 0.25 | — | yes | 17.3 |
+| udhr-20260928T1800Z | render | 1 | 46,850 | 0.30 | 0.29 | 0.32 | 0.32 | — | yes | 17.3 |
+| udhr-20260929T0600Z | check | 1 | 48,260 | 0.25 | 0.24 | 0.32 | 0.32 | — | yes | 17.3 |
+| udhr-20260929T0600Z | render | 1 | 48,260 | 0.49 | 0.49 | 0.38 | 0.37 | — | yes | 17.3 |
+| udhr-20260929T1800Z | check | 1 | 58,557 | 0.33 | 0.32 | 0.31 | 0.31 | — | yes | 17.3 |
+| udhr-20260929T1800Z | render | 1 | 58,557 | 0.55 | 0.53 | 0.46 | 0.46 | 0.87 | yes | 17.3 |
+| udhr-20260930T0600Z | check | 1 | 288,342 | 47.49 | 47.21 | 45.60 | 45.29 | 0.96 | yes | 20.3 |
+| udhr-20260930T0600Z | render | 1 | 288,342 | 47.71 | 47.70 | 40.17 | 40.17 | 0.84 | yes | 15.3 |
+| udhr-20260930T1800Z | check | 1 | 258,521 | 26.13 | 26.12 | 21.79 | 21.79 | 0.83 | yes | 13.6 |
+| udhr-20260930T1800Z | render | 1 | 258,521 | 26.98 | 26.98 | 26.17 | 26.16 | 0.97 | yes | 13.4 |
+| udhr-20261001T1800Z | check | 1 | 241,065 | 20.48 | 20.47 | 17.22 | 17.22 | 0.84 | yes | 12.8 |
+| udhr-20261001T1800Z | render | 1 | 241,065 | 23.38 | 23.37 | 18.66 | 18.65 | 0.80 | yes | 12.2 |
+| udhr-20261002T0600Z | check | 1 | 224,845 | 26.12 | 22.44 | 21.84 | 17.69 | 0.79 | yes | 22.0 |
+| udhr-20261002T0600Z | render | 1 | 224,845 | 19.62 | 19.56 | 15.83 | 15.78 | 0.81 | yes | 21.1 |
+| udhr-20261002T1800Z | check | 1 | 228,316 | 14.75 | 14.70 | 12.64 | 12.59 | 0.86 | yes | 20.3 |
+| udhr-20261002T1800Z | render | 1 | 228,316 | 16.02 | 16.02 | 12.64 | 12.63 | 0.79 | yes | 18.8 |
+| udhr-20261003T0600Z | check | 1 | 869,161 | 72.76 | 71.85 | 68.08 | 67.31 | 0.94 | yes | 27.7 |
+| udhr-20261003T0600Z | check | 2 | 869,161 | 62.54 | 59.74 | 56.64 | 55.07 | 0.92 | yes | 29.5 |
+| udhr-20261003T0600Z | check | 3 | 869,161 | 73.65 | 70.21 | 69.91 | 65.70 | 0.94 | yes | 29.0 |
+| udhr-20261003T0600Z | render | 1 | 869,161 | 60.96 | 59.64 | 56.66 | 56.00 | 0.94 | yes | 25.9 |
+| udhr-20261003T0600Z | render | 2 | 869,161 | 80.63 | 77.88 | 67.75 | 65.41 | 0.84 | yes | 30.7 |
+| udhr-20261003T0600Z | render | 3 | 869,161 | 63.42 | 62.78 | 57.87 | 56.65 | 0.90 | yes | 26.1 |
+| udhr-20261004T0600Z | check | 1 | 237,049 | 0.27 | 0.26 | 0.26 | 0.26 | — | yes | 26.1 |
+| udhr-20261004T0600Z | render | 1 | 237,049 | 0.46 | 0.45 | 0.51 | 0.50 | 1.11 | yes | 26.1 |
+| udhr-20261004T1800Z | check | 1 | 244,289 | 0.31 | 0.30 | 0.29 | 0.28 | — | yes | 26.1 |
+| udhr-20261004T1800Z | render | 1 | 244,289 | 0.52 | 0.51 | 0.42 | 0.41 | 0.80 | yes | 26.1 |
+| udhr-20261005T0600Z | check | 1 | 270,770 | 0.27 | 0.26 | 0.24 | 0.23 | — | yes | 26.1 |
+| udhr-20261005T0600Z | render | 1 | 270,770 | 0.49 | 0.48 | 0.46 | 0.45 | — | yes | 26.1 |
+| udhr-20261005T1800Z | check | 1 | 269,413 | 0.32 | 0.32 | 0.33 | 0.33 | — | yes | 26.1 |
+| udhr-20261005T1800Z | render | 1 | 269,413 | 0.55 | 0.54 | 0.52 | 0.51 | 0.94 | yes | 26.1 |
+| udhr-20261006T1800Z | check | 1 | 287,435 | 0.32 | 0.31 | 0.32 | 0.32 | — | yes | 26.1 |
+| udhr-20261006T1800Z | render | 1 | 287,435 | 0.51 | 0.51 | 0.45 | 0.44 | 0.86 | yes | 26.1 |
 
-18 runs of 16 documents, every report identical: yes. Largest CPU ratio 1.17 (allowance 1.25); slowest head run 78.11 s wall (pilot limit 120 s). A ratio is omitted when both sides spent under 0.5 s of CPU.
+36 runs of 16 documents (check and render), every output identical: yes. Largest CPU ratio 1.11 (check 0.96, render 1.11; allowance 1.25); slowest head run 69.91 s wall (pilot limit 120 s). A ratio is omitted when both sides spent under 0.5 s of CPU.
 <!-- END GENERATED LATENCY -->
 
 ## Gate evidence
@@ -85,6 +118,7 @@ Each mutant was planted temporarily in changed code, made the named test fail, a
 4. Ignored `identity_environment` in the Lean soft document hash; `test_readings_identity_environment_is_bound` failed, then passed with the restored service binary and lock.
 5. Restored `validateSoft` in `decodeSoftSource`; `test_soft_requests_on_the_widest_environment_stay_within_a_cpu_deadline` failed when the service used more than its 2.5 s CPU deadline. The restored build hashes to the pinned `f759c318…`.
 6. Disabled the accepted-rule memo; six tests of `tests/test_soft_request_economy.py` failed, including the whole-document readings test.
+7. Recheck fix (`tests/test_soft_candidate_economy.py`), ten mutants, each killed by at least one test: readings sides built eagerly; render's candidate documents built eagerly; render's warm-up off; the side warm-up off; admission's warm-up off; a deferred read that returns without asking Lean; `extend` dropped; a hydration failure kept deferred; a rejected rule kept by the warm-up; an outage absorbed by the warm-up.
 
 ## Acceptance ownership
 
