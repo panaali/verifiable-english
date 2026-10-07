@@ -1,0 +1,50 @@
+{
+  "conformance": {
+    "base": {
+      "path": "/tmp/ve-b12-ab-base-conformance.jsonl",
+      "sha256": "86b59967ac446e3f183b5c243d26cfc3bb04af95bc08024923845b06ceaa9b3d",
+      "records": 39612
+    },
+    "head": {
+      "path": "/tmp/ve-b12-ab-head-conformance-final.jsonl",
+      "sha256": "a4dc69bce8ea24893aeea3b788b50fdbefcccad5a69906c296f19daa2397f8bc",
+      "records": 39612
+    }
+  },
+  "probe": {
+    "base": {
+      "path": "/tmp/ve-b12-ab-base-probe-v2.jsonl",
+      "sha256": "0b537f2fa13026fe77f462cce19e7a8289350140435893bffd5b1a8f8eb0d1b6",
+      "records": 18870
+    },
+    "head": {
+      "path": "/tmp/ve-b12-ab-head-probe-v2.jsonl",
+      "sha256": "808befcfd0d27113aa15d59cca6c6394c10e0e292831924f5022aa51657cf1a0",
+      "records": 18870
+    }
+  },
+  "profiles": {
+    "base": {
+      "path": "/tmp/ve-b12-ab-base-other.jsonl",
+      "sha256": "6df7ed8343f93886253e1e2f35db627ad76e1562cb1cdf42afdf0b050e71adf8",
+      "records": 35713
+    },
+    "head": {
+      "path": "/tmp/ve-b12-ab-head-other.jsonl",
+      "sha256": "6df7ed8343f93886253e1e2f35db627ad76e1562cb1cdf42afdf0b050e71adf8",
+      "records": 35713
+    }
+  },
+  "pilots": {
+    "base": {
+      "path": "/tmp/ve-b12-ab-base-pilots.jsonl",
+      "sha256": "d59e7274d0185662c0e49cc07e0a5dad8af4ae1ae7d57457c6b924c2b03f5efe",
+      "records": 294
+    },
+    "head": {
+      "path": "/tmp/ve-b12-ab-head-pilots-v2.jsonl",
+      "sha256": "d59e7274d0185662c0e49cc07e0a5dad8af4ae1ae7d57457c6b924c2b03f5efe",
+      "records": 294
+    }
+  }
+}
