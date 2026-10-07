@@ -1,6 +1,14 @@
 # Pick a reading under unspecified defaults (`readings@1` × `norm-defaults@0`): buildable plan
 
-> Status: plan, draft 2 (2026-10-07). Draft 2 applies the converged review (Astra and Fable, debate
+> Status: plan, draft 3 (2026-10-07). Draft 3 carries into the plan the converged statement review of the spec's
+> draft 1 (Astra and Fable, debate `readings-defaults-spec`, converged in round 3: **FIX**, five items, build
+> closed), which the spec's draft 2 applies: **SR1** per-choice admission (`ndChoiceText`, 3.2 step 5, F-ND10);
+> **SR2** the product gate on ALL, SOME and NONE (3.6, RD-4b); **SR3** `restrictionsFor` computed locally, with a
+> compatible choice taking `assumed` as its hypothesis (3.5, RD-3); **SR4** decided units per compatible choice
+> (3.9); **SR5** conservativity as three guarantees (3.11, F-ND7). RD-1 stays closed until the targeted re-review of
+> those changes gives PASS (RD-0). Draft 2 follows.
+>
+> Draft 2 (2026-10-07) applies the converged review (Astra and Fable, debate
 > `design-readings-defaults`, converged in round 3): **BUILD with mandatory RD-0 corrections**, edits E1 to E5 and A1 to
 > A4, each marked where it lands. The statement spec [readings-defaults.md](readings-defaults.md) (RD-0) elaborated
 > every statement of this plan; where its Lean differs from the blocks below, the spec is authoritative and its
@@ -199,6 +207,13 @@ The order (RD-2a), stopping at the first error:
 4. S1's checks on `fillDoc N` (`admissionText`). By RD-1's equalities and `fill_wellFormed`, they can fail only on
    the soft chain's limits for generated formulas, which apply to the filled tree (`checkSoft` 6.11 to 6.15). This
    is *derived*, and fixture F-ND9 in RD-2a checks one such limit. Their texts carry the reading's suffix.
+5. Each choice (SR1). When the compatible choices number at most 64, for each in canonical order: S2a's step 5 on
+   the filled document (`choiceChainText (fillDoc N) c`), then `ndChoiceText`: norm-defaults' author checks and
+   `WellFormedU` on `choiceU N c`, the text suffixed ` under <choice>` in `choiceText`'s form. Step 3 does not cover
+   a choice: its document holds the chosen readings of several sets, and the rule limit is per document, so each
+   reading's document can be within it while their choice is not (F-ND10). Beyond 64 no choice is checked here, as
+   today. `replayChoiceU` runs `ndChoiceText` on its own choice too, so every replayed choice has `WellFormedU`
+   checked.
 
 `AdmittedND` carries `WellFormedND N` and `WellFormedDoc (fillDoc N)`. Every later kind starts from it.
 
@@ -233,8 +248,9 @@ route:
 | `choice-model` (a base model with a separate `filling`) | `modelCheckU` | `modelCheckU_sound` |
 | `norm-defaults-status`, `norm-defaults-report` | 10a's status replay and report on `choiceU N c` | `normDefaults_wire_status_sound`, `report_sound` (cores) |
 
-The certificates in packages are bound to `E‴_base` of the choice (`baseEnvironmentJsonU`) and to the choice's
-document hash (`choiceHash`, as today). Python's generators get the choice's filled document from Lean
+Every check of the table runs on a choice whose `WellFormedU` `replayChoiceU` has checked with `ndChoiceText`
+(3.2 step 5; SR1). The certificates in packages are bound to `E‴_base` of the choice (`baseEnvironmentJsonU`) and to
+the choice's document hash (`choiceHash`, as today). Python's generators get the choice's filled document from Lean
 (`norm-defaults-elaborate` as an inner kind, 10a's `regeneratedU`). They run the generic prover and model search on
 Lean's formulas and never build `fill` (D12).
 
@@ -260,9 +276,13 @@ and folds, as composition-s2 4.6 states:
   from checked models and certificates of ⊥. A choice is INCONSISTENT only when it is also CONFLICT-FREE (4.5's
   table; `Holds.inconsistent` carries `ConflictFreeU`, A2).
 - **Conditions:** `restrictions` (the couplings and narrowings in force that exclude some complete choice taking
-  `assumed`), computed in Lean by `restrictionsFor`. `conditional_on` is computed by `usedLabels`, Lean's greedy
-  replay: each slot or `Fill_T` label's formulas are replaced by `⊤`, in label order, while every certificate the
-  answer rests on still checks. This is the rule composition-s2 2.3 "as built" gave Python, now Lean's.
+  `assumed`), computed in Lean by `restrictionsFor`. It computes them locally, as Python's `restrictions` does (each
+  coupling's consecutive sets, each narrowing against the sets `assumed` fixes), never over the complete choices,
+  with no cap: thirty binary sets narrowed to one compatible choice give 30 labels without 2^30 complete choices
+  (SR3). Its equivalence with the meaning above needs a compatible choice taking `assumed`, which the untaken check
+  (`ReadingsUnsatisfiable`) establishes first, as in Python. `conditional_on` is computed by `usedLabels`, Lean's
+  greedy replay: each slot or `Fill_T` label's formulas are replaced by `⊤`, in label order, while every certificate
+  the answer rests on still checks. This is the rule composition-s2 2.3 "as built" gave Python, now Lean's.
 - **English plan:** the list of sentences the answer gets, by composition-s2 2.3, with the readings each names, the
   model it shows and the condition each E3 line states. For a shown model, it also lists which filled gaps the
   result depends on: the model's unsaid atoms in the cone of the conclusion or target (10a's `coneOf`). Python
@@ -321,8 +341,12 @@ fold of RD-4b gives:
 - **per reading:** `model` when its component has one under that reading and every other component has a model;
 - **a query** is typed against exactly one component's frame. The CLI flag `--sentence <unit>` picks it when the
   terms fit several, and a conclusion with no fitting component is refused. ALL in that component is ALL for the
-  document (restriction). NONE and SOME for the document also need every other component to have a model under
-  every compatible choice (NONE) or under some choice (SOME); otherwise UNKNOWN, with that reason.
+  document (restriction) when every other component is CONFLICT-FREE under every compatible choice (SR2). NONE and
+  SOME for the document also need every other component CONFLICT-FREE, with a model under every compatible choice
+  (NONE) or under some choice (SOME). Otherwise UNKNOWN: `UNKNOWN (conflict status: CONFLICT | UNKNOWN)` naming the
+  other sentence's choice when another component is not CONFLICT-FREE, else that reason. The queried component's
+  own verdict stays in its entry. A reading of the whole document is CONFLICT-FREE only when each component's choice
+  is, so composition-s2's gate (A2) applies to it, and the three product statements conclude it (spec 4.5, 6.6).
 
 ### 3.7 English
 
@@ -387,8 +411,11 @@ is not UNKNOWN:
 
 - a fixed unit with content: its component's conflict status (CONFLICT-FREE or CONFLICT) and premise status
   (`model` or `INCONSISTENT`) are decided;
-- the unit of an open set: its component's conflict status under every reading is decided, and every reading's
-  premise status is `model`, `INCONSISTENT`, `dead` or `narrowed`;
+- the unit of an open set: its component's conflict result under every compatible choice is decided (CONFLICT-FREE
+  or CONFLICT; a choice without checked evidence is UNKNOWN), read per choice so that a CONFLICT under one choice
+  cannot hide an UNKNOWN under another, and every reading's premise status is `model`, `INCONSISTENT`, `dead` or
+  `narrowed`. A `dead` or `narrowed` reading is in no compatible choice, so its own status, from S2a's existing
+  checks, decides it (SR4);
 - labelled and unformalised units are never Lean-decided (they have no formal content).
 
 Lean's answer (`readings-verdicts` with components, RD-4b) lists the decided unit ids. The measuring script
@@ -421,14 +448,23 @@ checks into Lean inside the document, not new assurance; section 5 says so.
 | Decided units | Lean | sums span bytes (W2 coverage arithmetic) |
 | Files, CLI, rendering, the UDHR migration | Python, and pilot tooling under `usecases/` | — |
 
-### 3.11 Conservativity
+### 3.11 Conservativity (SR5)
 
-- `readings@1` or `norm-defaults@0` off, or on the soft or rights chain: nothing here is reachable, and every
-  answer, identity and text is byte-identical. K18 keeps its abstention.
-- A document whose sets have no content keeps W2's route (S1 4.9), so the committed UDHR and constitution runs
-  answer as today.
-- `fill` without unspecified predicates is the identity (`fill_conservative`), so `fillDoc` is the identity there
-  (`fillDoc_conservative`, RD-1).
+Three guarantees, one per kind of change (spec 4.6), then what none of them changes:
+
+- **Completion support** (RD-1, RD-2a). Only a document under the completion (`readings@1` and `norm-defaults@0` on
+  the norms chain, with content) reaches it. Such a document that reached the abstention now gets the enumerated
+  route, an `availability` change (F-ND1). A document outside it keeps its route: with `readings@1` off nothing here
+  is reachable; with `norm-defaults@0` off, or on the soft or rights chain, nothing specific to the completion runs,
+  and K18 keeps its abstention. A document whose sets have no content keeps W2's route (S1 4.9), so the committed
+  UDHR and constitution runs answer as today. `fill` without unspecified predicates is the identity
+  (`fill_conservative`), so `fillDoc` is the identity there (`fillDoc_conservative`, RD-1).
+- **Companion splitting** (RD-4a, RD-4b). Only a document with `companion` reaches it; RD-4a and RD-4b change
+  nothing for a document without `companion` (their A/B claim, and only theirs).
+- **Fold and wording migration** (RD-3). The Lean fold replaces Python's for every `readings@1` document on the
+  enumerated route, with or without `norm-defaults@0`, and the `<reading>` slot rule (3.7, A4) reaches every answer
+  that shows the slot. Verdicts are byte-identical; the English is byte-identical except that slot, the one signed
+  English exception (S2a's M8, M9 and M12 among the S1 and S2a fixtures).
 - No frozen file, canonical byte, existing identity or approved theorem statement changes. New statements go in new
   files. Definitions that change (`abstention`, `routeOf`, the inner kinds of `readings-choice`) change no
   statement.
@@ -480,7 +516,13 @@ declared dependency, which Astra's text names, since F-C1 needs RD-2a's admissio
   `Q' c` condition is stated in the spec, off the pilot path.
 - The corrections of the converged review (E1 to E5, A1 to A4) are in the spec before PASS; the draft-1 statements
   are not implemented verbatim.
-- Done when the stub elaborates, the spec is committed, and the review has converged.
+- The statement review of the spec's draft 1 (debate `readings-defaults-spec`) converged in round 3 on **FIX**, five
+  items (SR1 to SR5, this draft's status), with the build closed. The spec's draft 2 applies them. The gate is then
+  a targeted re-review of exactly what SR1 to SR5 changed (definitions, hypotheses and conclusions, diagnostics,
+  fixtures, the measurement rule, the conservativity prose), for truth under their hypotheses and elaboration;
+  statements no SR item touches keep their acceptance. RD-1 opens on that re-review's PASS, not before; RD-6 keeps
+  its own review before its build.
+- Done when the stub elaborates, the spec is committed, and the review has converged on PASS.
 
 ### RD-1. `fillDoc` and separation under the completion (Lean, 5–6 h)
 
@@ -708,6 +750,9 @@ def unspecOf (re : ReadingsEnvironment) (D : Doc) : List String :=
 /-- 3.2 steps 2 and 3: reserved names, then norm-defaults' author checks and `WellFormedU` on `free D` and on each
     reading's document with content, in admission order, a reading's text suffixed ` under <set>@<v>:<i>`. -/
 def ndText (re : ReadingsEnvironment) (N : NDoc) : Option String
+/-- 3.2 step 5 for one choice (SR1): norm-defaults' author checks and `WellFormedU` on `choiceU N c`, the text
+    suffixed ` under <choice>`; `replayChoiceU` runs it on its own choice, which establishes `wfc`. -/
+def ndChoiceText (re : ReadingsEnvironment) (N : NDoc) (c : Choice) : Option String
 
 structure AdmittedND where
   b : Admitted2
@@ -771,8 +816,8 @@ Wire answers:
   and every `unsaid__p` added as in 10a's `withUnsaid`; `units`: the filled contents and the `F_p` units). Python's
   search and English read `filled`.
 - `readings-elaborate`: the enumerated row with `finding` `{"text": "ReadingsNotSuperposable: <every open set>",
-  "cause": "the unspecified completion"}`; `enumeratedCheckText` also runs `ndText`'s checks on each enumerated
-  choice's UDoc.
+  "cause": "the unspecified completion"}`; `enumeratedCheckText` runs on `fillDoc N` and also runs `ndChoiceText` on
+  each of the at most 64 compatible choices (3.2 step 5; SR1).
 - `readings-choice` with the inner kinds of 3.4, answered on `choiceU N c` with the norm-defaults route's answer
   shapes (`ResponseShape` encoders reused; new rows get `*_fits` theorems).
 
@@ -787,9 +832,10 @@ Fixtures (`tests/test_readings_nd_lean.py` through the service; expected values 
 | F-ND4 | 252 fixed rules on `p` (`unspecified`, 4 unspecified predicates in the frame), one set with one rule on `p` | `ResourceLimit: rules under rs_1@1:0` (free has 252 + 4; the reading's document 253 + 4) |
 | F-ND5 | RD-1's collision document: a fixed root rule on `help_required` and a reading's rule named `unsaid--help-required` | `InvalidInput: reserved name unsaid--help-required` (3.2 step 2, before any document's check, so no suffix) |
 | F-ND6 | K18 (the soft chain under the profile) | the abstention text, unchanged |
-| F-ND7 | every S1 fixture K1 to K22 and S2a fixture M1 to M20 | byte-identical answers |
+| F-ND7 | every S1 fixture K1 to K22 and S2a fixture M1 to M20 | byte-identical verdicts, identities and English, except the signed `<reading>` slot (3.7, A4) on M8, M9, M12 from RD-3 on (3.11, SR5) |
 | F-ND8 | tampering: a package bound to choice 0's document replayed for choice 1; a filling with an ill-typed tuple; `unsaid__` table supplied as a base table outside the profile | refused or UNKNOWN, never CONFLICT-FREE, `proved` or `model` |
 | F-ND9 | a reading whose rule's guard is large enough that the filled tree's generated layer for its predicate passes `checkAuthorN`'s 10,000-node author budget but not the soft chain's limit for one generated layer (built by the test, sized from `generatedSizes`) | `ResourceLimit: generated norm layer layer:norms:<p> under rs_1@1:0` (3.2 step 4) |
+| F-ND10 (SR1) | 251 fixed rules on `p` (F-ND4's frame), two sets of one reading each, each holding one more rule on `p` | steps 1 to 4 pass (free 251 + 4 = 255, each reading's document 252 + 4 = 256); step 5 refuses the choice's document (253 + 4 = 257) with `ResourceLimit: rules under rs_1@1:0, rs_2@1:0` (counts *computed* in the spec) |
 
 Deleted, not duplicated: none deleted. The three 10a wire theorems now call the UDoc lemmas, so their proofs exist
 once. No readings function evaluates `Fill_T` except `fillHolds`.
@@ -902,9 +948,12 @@ theorem fold_conflict_sound (N : NDoc) (A : Choice) (rs : List (Choice × Choice
 
 /-! ## Conditions -/
 
-/-- The couplings and narrowings in force that exclude some complete choice taking `A` (composition-s2 4.6). -/
+/-- The couplings and narrowings in force that exclude some complete choice taking `A` (composition-s2 4.6),
+    computed locally as Python computes them, never over the complete choices (SR3; the body is the spec's 6.5). -/
 def restrictionsFor (D : Doc) (A : Choice) : List String
-theorem restrictionsFor_spec (D : Doc) (A : Choice) (l : String) :
+theorem restrictionsFor_spec (D : Doc) (hn : (D.sets.map (·.id)).Nodup)
+    (hk : D.couplings.all (couplingShape D) = true) (A : Choice) (hA : ∃ c, Compatible D c ∧ ∀ x ∈ A, x ∈ c)
+    (l : String) :
     l ∈ restrictionsFor D A ↔ ∃ c, complete D c = true ∧ (∀ x ∈ A, x ∈ c) ∧ excludedBy D l c = true
 /-- `L` with the formulas of every label outside `keep` replaced by `⊤`. -/
 def blank (L : VE.Compose.Labelled) (keep : List String) : List VE.Formula :=
@@ -969,6 +1018,8 @@ Fixtures (expected values *derived*):
 | Missing evidence for one of two choices | UNKNOWN naming that choice |
 | A certificate for choice 0 supplied as choice 1's | that choice `unknown`; never ALL |
 | `usedLabels` on a certificate that never reads a slot label | `[]`; on one that needs it | `[label]` |
+| Restrictions (SR3): F-ND1 with a narrowing keeping reading 0, the query under `--under rs_1:1` | `ReadingsUnsatisfiable: no compatible reading takes rs_1@1:1`, before any condition (the local check would give `[]` there, the meaning `[narrowing:n1]`) |
+| Restrictions (SR3): thirty binary sets, each narrowed to reading 0 (one compatible choice of 2^30 complete ones) | the 30 `narrowing:` labels, computed locally, within the latency budgets; a coupling case both ways as spec 8.2 row 3.12 |
 | The gate (review A2): conflict rows all CONFLICT-FREE, query rows `[proved, refuted, unknown]` | SOME |
 | The gate: conflict rows `[free, free, unknown]`, any query rows | `UNKNOWN (conflict status: UNKNOWN)`, naming choice 2 |
 | The gate: conflict rows `[free, conflict]`, query rows `[proved, proved]` | `UNKNOWN (conflict status: CONFLICT)`, naming choice 1; never ALL |
@@ -978,8 +1029,8 @@ Fixtures (expected values *derived*):
 Deleted, not duplicated: Python's enumerated fold, its label replay and its restrictions, and the wording selection
 for the enumerated route. None of these is left behind as a fallback.
 
-Done when: the fixtures pass, the A/B over the readings and pilots corpora is identical except for listed wording or
-order changes (DRI-signed, the A4 slot change among them), and the gate passes.
+Done when: the fixtures pass, the A/B over the readings and pilots corpora has identical verdicts and identical
+English except the A4 slot change (DRI-signed, the one English exception of 3.11; SR5), and the gate passes.
 
 ### RD-4a. Readings with their own vocabulary (Lean wire, 5–6 h)
 
@@ -1078,7 +1129,8 @@ theorem foldK_consistent (K : Components) (rows : List (List (Choice × ChoiceRe
     (hr : RowsSound.{u} K rows [] .bottom) (h : rows.all (fun r => r.any (·.2 == .model)) = true) :
     ∃ cs, CompatibleK K cs ∧ ConsistentK K cs
 /-- A query typed in component `k`: ALL there is ALL for the document (restriction). The fold takes component
-    `k`'s conflict rows `cs` (review A2). -/
+    `k`'s conflict rows `cs` (review A2). Superseded by the spec's 6.6 (SR2): there it also needs every other
+    component CONFLICT-FREE and concludes `ConflictFreeK`, as the note after this block says. -/
 theorem foldK_all (K : Components) (k : Nat) (N : NDoc) (hk : K.all[k]? = some N) (Γ : List VE.Formula)
     (φ : VE.Formula) (cs r : List (Choice × ChoiceResult)) (hcc : Covers N [] cs) (hc : Covers N [] r)
     (hrc : ∀ x ∈ cs, Holds.{u} N [] .bottom x.1 x.2) (hrs : ∀ x ∈ r, Holds.{u} N Γ φ x.1 x.2)
@@ -1099,6 +1151,11 @@ theorem foldK_none (K : Components) (k : Nat) (N : NDoc) (hk : K.all[k]? = some 
 end VE.Readings
 ```
 
+The spec's 6.6 is authoritative for these statements (its 12.4 lists the differences). After the statement review
+(SR2), `foldK_all` there also takes `RowsSound` and the other components' conflict rows
+(`ho : ∀ (j : Nat) (r' : ComponentRows), j ≠ k → rows[j]? = some r' → foldConflict r'.conflicts = .free`) and
+concludes `ConflictFreeK` of every compatible product choice; `foldK_none` and the added `foldK_some` conclude it too.
+
 The answer adds `components` (per component: the unit, route, verdict rows, English), the product verdicts, and
 `decided_units` by 3.9's rule. English: E32 and, per companion component, E31 and E30. CLI:
 `ve document readings --conclusion … --sentence <unit>`. A conclusion that types in no component, or in more than one
@@ -1117,10 +1174,14 @@ companion environment Lean accepted (display only).
 Fixtures: F-C1 through `ve document check` (CONFLICT-FREE, `model`, three components, E31 twice); a query typed in
 one component (ALL, E30); F-C1 with the second component's reading 1 made inconsistent (an asserted reading with ⊥),
 where a query's NONE in the first component becomes UNKNOWN with the reason "another sentence's readings are not all
-consistent" (*derived*); `decided_units` on F-C1 lists every unit with content. Split contract (A3), one fixture
-each: `--under` naming the other component's set is refused with the text above, and naming the query's own set is
-accepted; F-C11's answer lists `narrowing:<id>` under its component only; F-C12's main component reports the
-unseparated set's W2 UNKNOWN.
+consistent" (*derived*); `decided_units` on F-C1 lists every unit with content, and a set whose component has
+conflict rows CONFLICT and UNKNOWN under two choices is not decided (SR4); the product gate on ALL (SR2, spec F-C17):
+F-C1 with F-ND2's `no-x` and set added to the main case, where a query that is ALL in the first companion component
+is `UNKNOWN (conflict status: CONFLICT)` for the document, naming `rs_2@1:0`, then
+`UNKNOWN (conflict status: UNKNOWN)` with the main component's evidence missing, and ALL on F-C1 itself. Split
+contract (A3), one fixture each: `--under` naming the other component's set is refused with the text above, and
+naming the query's own set is accepted; F-C11's answer lists `narrowing:<id>` under its component only; F-C12's main
+component reports the unseparated set's W2 UNKNOWN.
 
 Deleted, not duplicated: none. Python's W2 validation passes `companion` through unread.
 
@@ -1419,3 +1480,7 @@ needs no document mode.
     `foldEntailment` and its soundness statements, and `Holds.inconsistent` (A2); the split contract (A3, E3); the
     `<reading>` slot (A4); no renaming (E1); E2's qualifiers beside the share; `D` bound in
     `plan_model_names_every_set` (E5); `Transfers`' typing conjunct (RD-6a).
+14. (Draft 3, the spec's statement review, targeted re-review.) Per-choice admission and `replayChoiceU`'s `wfc`
+    (SR1); the product gate on ALL, SOME and NONE (SR2); `restrictionsFor`'s local body and its hypotheses `hn`, `hk`,
+    `hA` (SR3); decided units per compatible choice (SR4); conservativity as three guarantees with the one signed
+    English exception (SR5). Each true under its hypotheses, not only well typed.
