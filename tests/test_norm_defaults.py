@@ -5,6 +5,7 @@ import pytest
 
 from ve.ast import And, Const, Eq, Not, Or, Top, Unary, Var, _Checker
 from ve.environment import Environment
+from ve.model import FiniteModel
 from ve.errors import InvalidModel, ResourceLimit, UnsupportedProfile, VEError
 from ve.norms import Norm, NormDocument, check_conflict as w1_check_conflict
 from ve.profiles import LANGUAGE, SPEC_REVISION, checker_family
@@ -658,9 +659,14 @@ def test_u13_carve_out_soft_and_status_paraphrases():
         "An agent must not generate child sexual abuse material unless rule 12's exception applies there; "
         "where it applies and no other rule decides, the text does not say whether an agent may generate "
         "child sexual abuse material.")
-    doc = nd.UnspecifiedDocument(env, [CSAM_RULE])
-    situation = doc.situation(CSAM_SITUATION)
-    claude, sol = doc.statuses(situation)
+    # The status, gap and conflict sentences format Lean's rows (lf-10b fix 4).
+    from tests.test_norm_defaults_relay_english import status_row
+    from ve.norm_defaults import UnspecifiedDocument, report
+    doc = UnspecifiedDocument(env, [CSAM_RULE])
+    situation = FiniteModel.from_dict(doc.situation_environment(), CSAM_SITUATION)
+    claude = status_row(doc, CSAM_SITUATION, "csam_generation_permitted", ("claude0",), "table3")
+    sol = status_row(doc, CSAM_SITUATION, "csam_generation_permitted", ("sol0",), "undecided",
+                     yes={"unsaid__csam_generation_permitted": [["sol0"]]}, no={})
     assert english.status_sentence(doc, situation, claude) == (
         "The text says Claude must not generate child sexual abuse material (rule 1).")
     assert english.status_sentence(doc, situation, sol) == (
@@ -668,7 +674,7 @@ def test_u13_carve_out_soft_and_status_paraphrases():
         "no rule decides this situation.")
     assert english.silence_sentence(doc, "csam_generation_permitted") == (
         "the text does not say whether an agent other than Claude may generate child sexual abuse material")
-    (line,) = nd.report(doc, model=CSAM_SITUATION)
+    (line,) = report(doc, model=CSAM_SITUATION)["report"]
     assert english.gap_sentence(doc, situation, line) == (
         "The text does not say whether Sol may generate child sexual abuse material: "
         "no rule decides this situation.")
@@ -677,25 +683,46 @@ def test_u13_carve_out_soft_and_status_paraphrases():
         "this situation answers 'yes'.")
 
 
+def _lean_status(doc, predicate, values, situation=ONE_ACT):
+    """Lean's status row with the frozen oracle's method: its UNDECIDED fillings are replayed."""
+    from tests.test_norm_defaults_relay_english import status_row
+    frozen = nd.UnspecifiedDocument(doc.env, doc.author.rules)
+    oracle = frozen.status(frozen.situation(situation), predicate, values)
+    if oracle.status == "UNDECIDED":
+        yes, no = ({name: [list(row) for row in sorted(rows)] for name, rows in filling.items()}
+                   for filling in oracle.fillings)
+        return status_row(doc, situation, predicate, values, "undecided", yes=yes, no=no)
+    return status_row(doc, situation, predicate, values)
+
+
+def _lean_conflict(doc, situation=ONE_ACT):
+    """Lean's row for the frozen oracle's CONFLICT witness."""
+    from tests.test_norm_defaults_relay_english import conflict_row
+    oracle = nd.check_conflict(nd.UnspecifiedDocument(doc.env, doc.author.rules), model=situation)
+    filling = {name: frozenset(map(tuple, rows)) for name, rows in oracle.filling.items()}
+    return conflict_row(doc, situation, filling, oracle.target, oracle.tuple)
+
+
 def test_u13_pair_inherited_and_latent_paraphrases():
+    from ve.norm_defaults import UnspecifiedDocument
     env = environment({"x_required": obligation("deny"), "x_permitted": permission("unspecified")})
-    doc = nd.UnspecifiedDocument(env, [rule("must", "x_required", True)])
-    situation = doc.situation(ONE_ACT)
-    assert english.status_sentence(doc, situation, doc.status(situation, "x_permitted", ("a",))) == (
+    doc = UnspecifiedDocument(env, [rule("must", "x_required", True)])
+    situation = FiniteModel.from_dict(doc.situation_environment(), ONE_ACT)
+    assert english.status_sentence(doc, situation, _lean_status(doc, "x_permitted", ("a",))) == (
         "A may be done: rule 1 requires it, and whatever must be done may be done.")
     env = environment({"x_required": obligation("unspecified"), "x_permitted": permission("deny")})
-    doc = nd.UnspecifiedDocument(env, [])
-    assert english.status_sentence(doc, situation, doc.status(situation, "x_required", ("a",))) == (
+    doc = UnspecifiedDocument(env, [])
+    assert english.status_sentence(doc, situation, _lean_status(doc, "x_required", ("a",))) == (
         "A need not be done: it is not permitted by default, and whatever must be done may be done.")
     env = environment({"report_required": obligation("deny", None, act="{0} be reported"),
                        "permitted": permission("unspecified")})
-    doc = nd.UnspecifiedDocument(env, [rule("rule-1", "report_required", True, Unary("permitted", Var(0)))])
-    assert english.status_sentence(doc, situation, doc.status(situation, "report_required", ("a",))) == (
+    doc = UnspecifiedDocument(env, [rule("rule-1", "report_required", True, Unary("permitted", Var(0)))])
+    assert english.status_sentence(doc, situation, _lean_status(doc, "report_required", ("a",))) == (
         "The text does not say whether a must be reported: rule 1 decides only if a may be done, "
         "and the text does not say whether a may be done.")
-    doc = latent("unspecified")
-    report = nd.check_conflict(doc, model=ONE_ACT)
-    assert english.latent_conflict_sentence(doc, situation, report) == (
+    frozen = latent("unspecified")
+    doc = UnspecifiedDocument(frozen.env, frozen.author.rules)
+    assert english.latent_conflict_sentence(doc, situation, _lean_conflict(doc)) == (
         "Rules 1 and 2 contradict each other if a may be tried, and the text does not say whether a may be "
         "tried. To settle it, add a rule about whether a may be tried, or add a condition to one of the rules.")
 
@@ -729,11 +756,14 @@ def test_u13_norms_2_6_row_2_third_reading():
 
 
 def test_u13_fill_rules_are_never_rendered():
-    doc = latent("unspecified")
-    situation = doc.situation(ONE_ACT)
+    from ve.norm_defaults import UnspecifiedDocument
+    frozen = latent("unspecified")
+    doc = UnspecifiedDocument(frozen.env, frozen.author.rules)
+    situation = FiniteModel.from_dict(doc.situation_environment(), ONE_ACT)
     texts = [render_english(doc.author)[0], *english.legend(doc.env)]
-    texts += [english.status_sentence(doc, situation, s) for s in doc.statuses(situation)]
-    texts.append(english.latent_conflict_sentence(doc, situation, nd.check_conflict(doc, model=ONE_ACT)))
+    texts += [english.status_sentence(doc, situation, _lean_status(doc, s.predicate, s.values))
+              for s in frozen.statuses(frozen.situation(ONE_ACT))]
+    texts.append(english.latent_conflict_sentence(doc, situation, _lean_conflict(doc)))
     assert all("unsaid" not in text for text in texts)
     assert "unsaid--" in " ".join(r.name for r in doc.filled.rules)
 
@@ -1017,15 +1047,16 @@ def test_rust_fixture_is_the_python_regeneration():
 
 
 def test_latent_conflict_finding_and_the_authoring_question():
-    doc = latent("unspecified")
-    situation = doc.situation(ONE_ACT)
-    report = nd.check_conflict(doc, model=ONE_ACT)
-    assert english.latent_conflict_finding(doc, situation, report) == (
+    from ve.norm_defaults import UnspecifiedDocument, search_reached
+    frozen = latent("unspecified")
+    doc = UnspecifiedDocument(frozen.env, frozen.author.rules)
+    situation = FiniteModel.from_dict(doc.situation_environment(), ONE_ACT)
+    assert english.latent_conflict_finding(doc, situation, _lean_conflict(doc)) == (
         "LatentConflict: must-x, not-x under y_permitted(a) = yes")
     # The authoring question is product code: ask it of the Lean-relayed container.
-    from ve.norm_defaults import UnspecifiedDocument
     doc = UnspecifiedDocument(csam("unspecified"), [CSAM_RULE])
-    question = english.completion_question(doc, "csam_generation_permitted")
+    question = english.completion_question(doc, "csam_generation_permitted",
+                                           search_reached(doc, "csam_generation_permitted"))
     assert question["selected"] is None
     assert question["options"] == [
         "By default, an agent must not generate child sexual abuse material.",
