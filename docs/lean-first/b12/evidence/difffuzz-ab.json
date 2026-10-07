@@ -129,7 +129,7 @@
       "validation:evaluate:code": 229
      },
      "environment": {
-      "envelope:code": 178,
+      "envelope:code": 163,
       "envelope:outcome": 2,
       "soft-norms:code": 100,
       "soft-norms:outcome": 149
@@ -137,8 +137,6 @@
      "wire": {
       "demo@0:outcome": 1,
       "forms@0:outcome": 13,
-      "norm-defaults@0:code": 436,
-      "norm-defaults@0:outcome": 238,
       "soft-norms@0:outcome": 3
      }
     }
@@ -157,8 +155,8 @@
      "not_reproduced": 0
     },
     {
-     "entries": 286,
-     "seen_in_sample": 270,
+     "entries": 273,
+     "seen_in_sample": 258,
      "unreviewed": 0,
      "not_reproduced": 0
     }
@@ -166,12 +164,12 @@
    "head_not_reproduced": [],
    "cpu_seconds": [
     {
-     "python": 101.2,
-     "children": 13.9
+     "python": 104.8,
+     "children": 14.0
     },
     {
-     "python": 90.1,
-     "children": 25.4
+     "python": 128.0,
+     "children": 35.9
     }
    ],
    "ok": true
@@ -297,7 +295,7 @@
       "validation:evaluate:outcome": 1
      },
      "environment": {
-      "envelope:code": 182,
+      "envelope:code": 163,
       "envelope:outcome": 2,
       "soft-norms:code": 126,
       "soft-norms:outcome": 142
@@ -305,15 +303,14 @@
      "wire": {
       "demo@0:outcome": 5,
       "forms@0:outcome": 18,
-      "norm-defaults@0:code": 416,
-      "norm-defaults@0:outcome": 237,
+      "norm-defaults@0:outcome": 1,
       "soft-norms@0:outcome": 3
      }
     }
    ],
    "new": [
     38,
-    14
+    15
    ],
    "base_only_new": [
     "07dc1c91caa8d0b8",
@@ -333,7 +330,6 @@
     "9e0e0e70c1baa0b2",
     "abebe30cebdb6ae0",
     "abf2928b962ac4a4",
-    "b4849cadd64316b9",
     "bc19a4c8b9261b53",
     "bfa22da1e571cfd4",
     "c7bca4b6bd109284",
@@ -352,8 +348,8 @@
      "not_reproduced": 0
     },
     {
-     "entries": 286,
-     "seen_in_sample": 244,
+     "entries": 273,
+     "seen_in_sample": 232,
      "unreviewed": 0,
      "not_reproduced": 0
     }
@@ -361,12 +357,12 @@
    "head_not_reproduced": [],
    "cpu_seconds": [
     {
-     "python": 90.6,
-     "children": 17.6
+     "python": 104.4,
+     "children": 16.9
     },
     {
-     "python": 92.0,
-     "children": 27.5
+     "python": 129.3,
+     "children": 37.8
     }
    ],
    "ok": true
@@ -498,7 +494,7 @@
       "validation:evaluate:code": 220
      },
      "environment": {
-      "envelope:code": 179,
+      "envelope:code": 169,
       "envelope:outcome": 1,
       "soft-norms:code": 107,
       "soft-norms:outcome": 170
@@ -506,15 +502,14 @@
      "wire": {
       "demo@0:outcome": 3,
       "forms@0:outcome": 17,
-      "norm-defaults@0:code": 421,
-      "norm-defaults@0:outcome": 236,
+      "norm-defaults@0:outcome": 4,
       "soft-norms@0:outcome": 2
      }
     }
    ],
    "new": [
     61,
-    29
+    30
    ],
    "base_only_new": [
     "0c729d5629a2ec29",
@@ -543,7 +538,6 @@
     "9603aa99e0cdf4d3",
     "9e0e0e70c1baa0b2",
     "a9935a7890b61fc7",
-    "b4849cadd64316b9",
     "ba6117143e719fee",
     "c18e9c3ef8a5c084",
     "df2823ad77e84bd5",
@@ -561,8 +555,8 @@
      "not_reproduced": 0
     },
     {
-     "entries": 286,
-     "seen_in_sample": 244,
+     "entries": 273,
+     "seen_in_sample": 232,
      "unreviewed": 0,
      "not_reproduced": 0
     }
@@ -570,12 +564,12 @@
    "head_not_reproduced": [],
    "cpu_seconds": [
     {
-     "python": 83.6,
-     "children": 15.3
+     "python": 105.7,
+     "children": 18.3
     },
     {
-     "python": 91.3,
-     "children": 27.8
+     "python": 129.9,
+     "children": 39.2
     }
    ],
    "ok": true
@@ -699,7 +693,7 @@
       "validation:evaluate:code": 235
      },
      "environment": {
-      "envelope:code": 183,
+      "envelope:code": 168,
       "envelope:outcome": 1,
       "soft-norms:code": 117,
       "soft-norms:outcome": 117
@@ -707,15 +701,14 @@
      "wire": {
       "demo@0:outcome": 4,
       "forms@0:outcome": 13,
-      "norm-defaults@0:code": 430,
-      "norm-defaults@0:outcome": 246,
+      "norm-defaults@0:code": 1,
       "soft-norms@0:outcome": 2
      }
     }
    ],
    "new": [
     42,
-    17
+    18
    ],
    "base_only_new": [
     "07f0948bcb55088a",
@@ -734,7 +727,6 @@
     "77cd659388b7fc2b",
     "7ff255ad6f828843",
     "866b72d3836c07d7",
-    "9e079b5faa8d7c6a",
     "a5d6edf0bea48c31",
     "ab7004ad4db1e345",
     "bed38f3abe9394b5",
@@ -753,8 +745,8 @@
      "not_reproduced": 0
     },
     {
-     "entries": 286,
-     "seen_in_sample": 243,
+     "entries": 273,
+     "seen_in_sample": 231,
      "unreviewed": 0,
      "not_reproduced": 0
     }
@@ -762,12 +754,12 @@
    "head_not_reproduced": [],
    "cpu_seconds": [
     {
-     "python": 121.3,
-     "children": 17.2
+     "python": 102.8,
+     "children": 17.3
     },
     {
-     "python": 90.0,
-     "children": 26.7
+     "python": 127.7,
+     "children": 37.7
     }
    ],
    "ok": true
@@ -896,7 +888,7 @@
       "validation:evaluate:outcome": 1
      },
      "environment": {
-      "envelope:code": 179,
+      "envelope:code": 169,
       "envelope:outcome": 1,
       "soft-norms:code": 121,
       "soft-norms:outcome": 170
@@ -904,8 +896,6 @@
      "wire": {
       "demo@0:outcome": 1,
       "forms@0:outcome": 23,
-      "norm-defaults@0:code": 454,
-      "norm-defaults@0:outcome": 243,
       "soft-norms@0:outcome": 1
      }
     }
@@ -943,8 +933,8 @@
      "not_reproduced": 0
     },
     {
-     "entries": 286,
-     "seen_in_sample": 243,
+     "entries": 273,
+     "seen_in_sample": 231,
      "unreviewed": 0,
      "not_reproduced": 0
     }
@@ -952,12 +942,12 @@
    "head_not_reproduced": [],
    "cpu_seconds": [
     {
-     "python": 165.2,
-     "children": 24.8
+     "python": 138.9,
+     "children": 17.3
     },
     {
-     "python": 90.2,
-     "children": 26.0
+     "python": 130.6,
+     "children": 37.4
     }
    ],
    "ok": true
@@ -1087,7 +1077,7 @@
       "validation:evaluate:code": 231
      },
      "environment": {
-      "envelope:code": 183,
+      "envelope:code": 169,
       "envelope:outcome": 3,
       "soft-norms:code": 102,
       "soft-norms:outcome": 145
@@ -1095,8 +1085,6 @@
      "wire": {
       "demo@0:outcome": 4,
       "forms@0:outcome": 22,
-      "norm-defaults@0:code": 459,
-      "norm-defaults@0:outcome": 247,
       "soft-norms@0:outcome": 2
      }
     }
@@ -1142,8 +1130,8 @@
      "not_reproduced": 0
     },
     {
-     "entries": 286,
-     "seen_in_sample": 243,
+     "entries": 273,
+     "seen_in_sample": 231,
      "unreviewed": 0,
      "not_reproduced": 0
     }
@@ -1151,12 +1139,12 @@
    "head_not_reproduced": [],
    "cpu_seconds": [
     {
-     "python": 146.1,
-     "children": 23.8
+     "python": 141.8,
+     "children": 18.1
     },
     {
-     "python": 89.5,
-     "children": 26.7
+     "python": 135.3,
+     "children": 37.7
     }
    ],
    "ok": true
@@ -1282,7 +1270,7 @@
       "validation:evaluate:code": 239
      },
      "environment": {
-      "envelope:code": 196,
+      "envelope:code": 185,
       "envelope:outcome": 1,
       "soft-norms:code": 108,
       "soft-norms:outcome": 156
@@ -1290,15 +1278,14 @@
      "wire": {
       "demo@0:outcome": 5,
       "forms@0:outcome": 17,
-      "norm-defaults@0:code": 409,
-      "norm-defaults@0:outcome": 238,
+      "norm-defaults@0:outcome": 1,
       "soft-norms@0:outcome": 3
      }
     }
    ],
    "new": [
     44,
-    15
+    16
    ],
    "base_only_new": [
     "0f74e38e59356ce1",
@@ -1320,7 +1307,6 @@
     "8be81a22ea410df1",
     "abf2928b962ac4a4",
     "ae219c50f8468e1d",
-    "b4849cadd64316b9",
     "b7fe53079de48dad",
     "bfa22da1e571cfd4",
     "cf0c753c293e7008",
@@ -1341,8 +1327,8 @@
      "not_reproduced": 0
     },
     {
-     "entries": 286,
-     "seen_in_sample": 239,
+     "entries": 273,
+     "seen_in_sample": 226,
      "unreviewed": 0,
      "not_reproduced": 0
     }
@@ -1350,12 +1336,12 @@
    "head_not_reproduced": [],
    "cpu_seconds": [
     {
-     "python": 112.5,
-     "children": 19.3
+     "python": 136.4,
+     "children": 17.8
     },
     {
-     "python": 87.0,
-     "children": 26.6
+     "python": 134.5,
+     "children": 38.3
     }
    ],
    "ok": true
@@ -1486,7 +1472,7 @@
       "validation:evaluate:code": 236
      },
      "environment": {
-      "envelope:code": 180,
+      "envelope:code": 167,
       "envelope:outcome": 1,
       "soft-norms:code": 118,
       "soft-norms:outcome": 140
@@ -1494,8 +1480,6 @@
      "wire": {
       "demo@0:outcome": 3,
       "forms@0:outcome": 21,
-      "norm-defaults@0:code": 388,
-      "norm-defaults@0:outcome": 231,
       "soft-norms@0:outcome": 1
      }
     }
@@ -1539,8 +1523,8 @@
      "not_reproduced": 0
     },
     {
-     "entries": 286,
-     "seen_in_sample": 241,
+     "entries": 273,
+     "seen_in_sample": 228,
      "unreviewed": 0,
      "not_reproduced": 0
     }
@@ -1548,12 +1532,12 @@
    "head_not_reproduced": [],
    "cpu_seconds": [
     {
-     "python": 117.4,
-     "children": 19.8
+     "python": 139.3,
+     "children": 18.8
     },
     {
-     "python": 90.4,
-     "children": 26.9
+     "python": 137.8,
+     "children": 39.6
     }
    ],
    "ok": true
@@ -1679,7 +1663,7 @@
       "validation:evaluate:outcome": 1
      },
      "environment": {
-      "envelope:code": 179,
+      "envelope:code": 163,
       "envelope:outcome": 1,
       "soft-norms:code": 121,
       "soft-norms:outcome": 144
@@ -1687,15 +1671,15 @@
      "wire": {
       "demo@0:outcome": 3,
       "forms@0:outcome": 23,
-      "norm-defaults@0:code": 413,
-      "norm-defaults@0:outcome": 240,
+      "norm-defaults@0:code": 1,
+      "norm-defaults@0:outcome": 1,
       "soft-norms@0:outcome": 4
      }
     }
    ],
    "new": [
     48,
-    17
+    19
    ],
    "base_only_new": [
     "23c3d2ae76f2e78a",
@@ -1720,12 +1704,10 @@
     "96cc0cad8cbc9ea2",
     "a1d561898cf1c7af",
     "abebe30cebdb6ae0",
-    "b4849cadd64316b9",
     "b8df8df4a76afcb3",
     "bfa22da1e571cfd4",
     "c18e9c3ef8a5c084",
     "c42a7d7c1837f273",
-    "d413380ada1a16c4",
     "df653fc664bec956",
     "e07848ece680e36e",
     "f8873829e5cabbda",
@@ -1740,8 +1722,8 @@
      "not_reproduced": 0
     },
     {
-     "entries": 286,
-     "seen_in_sample": 243,
+     "entries": 273,
+     "seen_in_sample": 230,
      "unreviewed": 0,
      "not_reproduced": 0
     }
@@ -1749,12 +1731,12 @@
    "head_not_reproduced": [],
    "cpu_seconds": [
     {
-     "python": 146.8,
-     "children": 21.1
+     "python": 140.8,
+     "children": 23.9
     },
     {
-     "python": 90.2,
-     "children": 26.6
+     "python": 122.0,
+     "children": 34.4
     }
    ],
    "ok": true
@@ -1894,7 +1876,7 @@
       "validation:evaluate:outcome": 1
      },
      "environment": {
-      "envelope:code": 179,
+      "envelope:code": 165,
       "envelope:outcome": 2,
       "soft-norms:code": 104,
       "soft-norms:outcome": 134
@@ -1902,8 +1884,6 @@
      "wire": {
       "demo@0:outcome": 3,
       "forms@0:outcome": 25,
-      "norm-defaults@0:code": 425,
-      "norm-defaults@0:outcome": 236,
       "soft-norms@0:outcome": 6
      }
     }
@@ -1947,8 +1927,8 @@
      "not_reproduced": 0
     },
     {
-     "entries": 286,
-     "seen_in_sample": 237,
+     "entries": 273,
+     "seen_in_sample": 225,
      "unreviewed": 0,
      "not_reproduced": 0
     }
@@ -1956,12 +1936,12 @@
    "head_not_reproduced": [],
    "cpu_seconds": [
     {
-     "python": 157.1,
-     "children": 24.8
+     "python": 134.0,
+     "children": 23.9
     },
     {
-     "python": 90.2,
-     "children": 27.2
+     "python": 123.4,
+     "children": 34.4
     }
    ],
    "ok": true
@@ -2095,7 +2075,7 @@
       "validation:evaluate:code": 237
      },
      "environment": {
-      "envelope:code": 166,
+      "envelope:code": 158,
       "envelope:outcome": 2,
       "soft-norms:code": 112,
       "soft-norms:outcome": 141
@@ -2103,8 +2083,6 @@
      "wire": {
       "demo@0:outcome": 1,
       "forms@0:outcome": 20,
-      "norm-defaults@0:code": 429,
-      "norm-defaults@0:outcome": 240,
       "soft-norms@0:outcome": 4
      }
     }
@@ -2144,8 +2122,8 @@
      "not_reproduced": 0
     },
     {
-     "entries": 286,
-     "seen_in_sample": 247,
+     "entries": 273,
+     "seen_in_sample": 234,
      "unreviewed": 0,
      "not_reproduced": 0
     }
@@ -2153,12 +2131,12 @@
    "head_not_reproduced": [],
    "cpu_seconds": [
     {
-     "python": 105.3,
-     "children": 18.9
+     "python": 139.6,
+     "children": 23.3
     },
     {
-     "python": 91.2,
-     "children": 27.6
+     "python": 124.0,
+     "children": 35.8
     }
    ],
    "ok": true
@@ -2294,7 +2272,7 @@
       "validation:evaluate:outcome": 1
      },
      "environment": {
-      "envelope:code": 169,
+      "envelope:code": 156,
       "envelope:outcome": 2,
       "soft-norms:code": 101,
       "soft-norms:outcome": 129
@@ -2302,15 +2280,14 @@
      "wire": {
       "demo@0:outcome": 2,
       "forms@0:outcome": 16,
-      "norm-defaults@0:code": 416,
-      "norm-defaults@0:outcome": 240,
+      "norm-defaults@0:outcome": 1,
       "soft-norms@0:outcome": 3
      }
     }
    ],
    "new": [
     47,
-    17
+    18
    ],
    "base_only_new": [
     "06a582ae46341448",
@@ -2336,7 +2313,6 @@
     "9eadf7b64cd4b339",
     "abebe30cebdb6ae0",
     "afbc3135d8b8a5f4",
-    "b4849cadd64316b9",
     "b7fe53079de48dad",
     "b8df8df4a76afcb3",
     "cc46fa4976de1f30",
@@ -2354,8 +2330,8 @@
      "not_reproduced": 0
     },
     {
-     "entries": 286,
-     "seen_in_sample": 249,
+     "entries": 273,
+     "seen_in_sample": 236,
      "unreviewed": 0,
      "not_reproduced": 0
     }
@@ -2363,12 +2339,12 @@
    "head_not_reproduced": [],
    "cpu_seconds": [
     {
-     "python": 107.2,
-     "children": 16.1
+     "python": 138.5,
+     "children": 22.5
     },
     {
-     "python": 91.5,
-     "children": 27.8
+     "python": 125.0,
+     "children": 36.4
     }
    ],
    "ok": true
@@ -2500,7 +2476,7 @@
       "validation:evaluate:code": 229
      },
      "environment": {
-      "envelope:code": 178,
+      "envelope:code": 163,
       "envelope:outcome": 2,
       "soft-norms:code": 100,
       "soft-norms:outcome": 149
@@ -2508,8 +2484,6 @@
      "wire": {
       "demo@0:outcome": 1,
       "forms@0:outcome": 13,
-      "norm-defaults@0:code": 436,
-      "norm-defaults@0:outcome": 238,
       "soft-norms@0:outcome": 3
      }
     }
@@ -2528,8 +2502,8 @@
      "not_reproduced": 0
     },
     {
-     "entries": 286,
-     "seen_in_sample": 270,
+     "entries": 273,
+     "seen_in_sample": 258,
      "unreviewed": 0,
      "not_reproduced": 0
     }
@@ -2537,12 +2511,12 @@
    "head_not_reproduced": [],
    "cpu_seconds": [
     {
-     "python": 119.2,
-     "children": 16.4
+     "python": 110.8,
+     "children": 16.2
     },
     {
-     "python": 91.0,
-     "children": 25.2
+     "python": 184.3,
+     "children": 45.1
     }
    ],
    "ok": true
@@ -2664,7 +2638,7 @@
       "validation:evaluate:outcome": 2
      },
      "environment": {
-      "envelope:code": 173,
+      "envelope:code": 160,
       "envelope:outcome": 1,
       "soft-norms:code": 103,
       "soft-norms:outcome": 135
@@ -2672,15 +2646,14 @@
      "wire": {
       "demo@0:outcome": 4,
       "forms@0:outcome": 22,
-      "norm-defaults@0:code": 426,
-      "norm-defaults@0:outcome": 246,
+      "norm-defaults@0:outcome": 1,
       "soft-norms@0:outcome": 2
      }
     }
    ],
    "new": [
     47,
-    21
+    22
    ],
    "base_only_new": [
     "23c3d2ae76f2e78a",
@@ -2705,7 +2678,6 @@
     "abebe30cebdb6ae0",
     "abf2928b962ac4a4",
     "afbc3135d8b8a5f4",
-    "b4849cadd64316b9",
     "b7fe53079de48dad",
     "d4da8f03ad0a8e21",
     "d868eb0d99c01d5c",
@@ -2721,8 +2693,8 @@
      "not_reproduced": 0
     },
     {
-     "entries": 286,
-     "seen_in_sample": 238,
+     "entries": 273,
+     "seen_in_sample": 226,
      "unreviewed": 0,
      "not_reproduced": 0
     }
@@ -2730,12 +2702,12 @@
    "head_not_reproduced": [],
    "cpu_seconds": [
     {
-     "python": 135.6,
-     "children": 20.9
+     "python": 109.1,
+     "children": 18.0
     },
     {
-     "python": 89.6,
-     "children": 26.4
+     "python": 187.9,
+     "children": 52.3
     }
    ],
    "ok": true
@@ -2867,7 +2839,7 @@
       "validation:evaluate:outcome": 1
      },
      "environment": {
-      "envelope:code": 154,
+      "envelope:code": 145,
       "envelope:outcome": 2,
       "soft-norms:code": 132,
       "soft-norms:outcome": 152
@@ -2875,8 +2847,6 @@
      "wire": {
       "demo@0:outcome": 2,
       "forms@0:outcome": 17,
-      "norm-defaults@0:code": 420,
-      "norm-defaults@0:outcome": 234,
       "soft-norms@0:outcome": 3
      }
     }
@@ -2924,8 +2894,8 @@
      "not_reproduced": 0
     },
     {
-     "entries": 286,
-     "seen_in_sample": 239,
+     "entries": 273,
+     "seen_in_sample": 227,
      "unreviewed": 0,
      "not_reproduced": 0
     }
@@ -2933,12 +2903,12 @@
    "head_not_reproduced": [],
    "cpu_seconds": [
     {
-     "python": 167.2,
-     "children": 25.7
+     "python": 108.9,
+     "children": 16.9
     },
     {
-     "python": 92.0,
-     "children": 25.9
+     "python": 191.2,
+     "children": 50.1
     }
    ],
    "ok": true
