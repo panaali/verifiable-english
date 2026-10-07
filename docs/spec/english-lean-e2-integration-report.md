@@ -45,8 +45,8 @@ The statuses here refer to the integrated E2 work. An open status means the line
 | 14. Hermetic tests | Done | The clean-HEAD full gate on `38eb65ff` passed with a clean source identity; the Rust cache was seeded into the gate's isolated Cargo home. |
 | 15. Identity binding | Open | All six E2 request identities have mutation tests; the requested per-field schema identity matrix is incomplete. |
 | 16. Registered lists | Done | Grammar lock, frozen inventory, theorem inventories, service modes and test collection are generated or checked. |
-| 17. Statement diff | Done | `tools/check_english_e2_statements.py` finds 12/12; `decode_encode` is proved. |
-| 18. Spec-stage fixtures | Open | S2/S3 three-way fixtures and E2 Lean guards exist; the complete E2 iff-boundary matrix is absent. |
+| 17. Statement diff | Done | `tools/check_english_e2_statements.py` has Lean elaborate each of the 12 approved statements and check that the built theorem proves it (no Lean source read as text); mutated statements are refused (`tests/test_english_e2_statements.py`); `decode_encode` is proved. |
+| 18. Spec-stage fixtures | Open | S2/S3 three-way fixtures; section 8's fixtures are guards in `lean/VE/EnglishGrammar/E2Examples.lean` (review fix round) and the E2.5 evidence is [the E2 report](english-lean-e2-report.md); an iff-boundary matrix per theorem is still absent. |
 | 19. Use-case formalisation | Not applicable | This merge changes no use-case rule or answer key. |
 | 20. Regenerated report numbers | Done | The gate JSON and S3 case records are committed; `tests/test_english_e2_report.py::test_report_counts_follow_gate_json` checks the printed counts. |
 | 21. Acceptance ownership | Open | The E2 acceptance cases and DRI rulings still need complete AGENT/HUMAN/EXTERNAL ownership tags with test IDs. |
