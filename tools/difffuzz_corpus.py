@@ -40,6 +40,8 @@ EXCLUDED = {
         "artifact", "recorded Python/Lean fixture outcomes from the S3 dispatched-boundary comparison"),
     "conformance/english-lean/e2-gate-result.json": (
         "artifact", "the E2 integration gate result; its environment metadata is not a VE fixture"),
+    "conformance/english-lean/e2-evidence.json": (
+        "artifact", "the E2.5 evidence counts and records (conformance/english_lean_e2_evidence.py), not a VE fixture"),
     "conformance/english-lean/engine.json": (
         "no-input", "English-in-Lean grammar-engine vectors (tests/test_english_lean_engine.py); no route reads them yet"),
     "conformance/english-lean/lexer.json": (
