@@ -516,7 +516,7 @@ def modelCase (j : Json) : Except String Json := do
       -- checked and defined tables computed, then the core model with them.
       let rv ← VE.Core.Layers.decodeLayers e.profiles layered
       let names := (← VE.Core.Layers.folPredicates layered).map Prod.fst
-      let M ← VE.Route.Wire.decodeDataModel rv (← VE.Core.Layers.folModel names model)
+      let M ← (VE.Route.Wire.decodeDataModel rv (← VE.Core.Layers.folModel names model)).mapError modelError
       let tables := (VE.Definitions.names rv.definitions).map fun p =>
         (p, VE.Core.Layers.tableJson (M.relations p))
       let relations ← VE.Bridge.fields (← model.getObjVal? "relations")
@@ -531,11 +531,11 @@ def modelCase (j : Json) : Except String Json := do
       pure ()
   | .order =>
     let v ← VE.Route.Wire.decodeOrderVocabulary e.vocabulary
-    let _ ← VE.Route.Wire.decodeOrderModel v model
+    let _ ← (VE.Route.Wire.decodeOrderModel v model).mapError modelError
     pure ()
   | .fol | .closure =>
     let v ← VE.Route.Run.decodeRouteVocabulary e
-    let _ ← VE.Route.Wire.decodeDataModel v model
+    let _ ← (VE.Route.Wire.decodeDataModel v model).mapError modelError
     pure ()
   -- The norms profile generator last, as Python's `validate_background` orders
   -- it: each required relation within its permission (`Plain.profileOk`).
@@ -827,11 +827,82 @@ def parseCase (j : Json) : Except String Json := do
     | some text => [("canonical", .str text)]
     | none => []))
 
+/-! A model decoder reports its first fault as text. Recover the location from
+the same submitted tables, in decoder order, so the service preserves the
+public JSON pointer without putting presentation fields in the proof decoders. -/
+private def modelErrorPath (j : Json) (message : String) : Option String := do
+  let model ← (j.getObjVal? "model").toOption
+  let environment ← (j.getObjVal? "environment").toOption
+  let vocabulary ← (environment.getObjVal? "vocabulary").toOption
+  let declarations ← (vocabulary.getObjVal? "predicates").toOption
+  let sorts ← (vocabulary.getObjVal? "sorts").toOption
+  let constants ← (vocabulary.getObjVal? "constants").toOption
+  let domains := model.getObjValD "domains"
+  let values := model.getObjValD "constants"
+  let relations := model.getObjValD "relations"
+  let sortNames := ((VE.Bridge.fields sorts).toOption.getD []).map Prod.fst
+  let predicateNames := ((VE.Bridge.fields declarations).toOption.getD []).map Prod.fst
+  let constantNames := ((VE.Bridge.fields constants).toOption.getD []).map Prod.fst
+  let sameFields := fun (value : Json) (names : List String) =>
+    match VE.Bridge.fields value with
+    | .ok fields => fields.length == names.length && names.all (fields.map Prod.fst).contains
+    | .error _ => false
+  if message == "InvalidModel: complete must be true" ||
+      message == "InvalidModel: Bool expected" then return "/complete"
+  if message.startsWith "InvalidModel: fields do not match:" then
+    if !sameFields domains sortNames then return "/domains"
+    if !sameFields values constantNames then return "/constants"
+    if !sameFields relations predicateNames then return "/relations"
+  let domainEntries := (VE.Bridge.fields domains).toOption.getD []
+  if message == "ResourceLimit: domain size" then
+    for (sort, entries) in domainEntries do
+      if (entries.getArr?.toOption.getD #[]).size > 1000 then return s!"/domains/{sort}"
+  if message == "InvalidModel: duplicate domain entity" then
+    for (sort, entries) in domainEntries do
+      let cells := (entries.getArr?.toOption.getD #[]).toList
+      if cells.eraseDups.length != cells.length then return s!"/domains/{sort}"
+  if message == "InvalidModel: invalid local identifier" ||
+      message == "ResourceLimit: local ID exceeds 64 ASCII bytes" then
+    for (sort, entries) in domainEntries do
+      for (cell, index) in (entries.getArr?.toOption.getD #[]).toList.zipIdx do
+        if let .str value := cell then
+          if !VE.Bridge.identifier value then return s!"/domains/{sort}/{index}"
+  if message == "InvalidModel: dangling constant" ||
+      message == "InvalidModel: dangling or wrong-sort value" then
+    for (name, entry) in (VE.Bridge.fields constants).toOption.getD [] do
+      let sort := entry.getObjValD "sort" |>.getStr?.toOption.getD ""
+      let value := values.getObjValD name
+      let members := (domains.getObjValD sort).getArr?.toOption.getD #[]
+      if !members.contains value then return s!"/constants/{name}"
+  let relationEntries := (VE.Bridge.fields relations).toOption.getD []
+  if message == "InvalidModel: duplicate relation tuple" then
+    for (name, entries) in relationEntries do
+      let rows := (entries.getArr?.toOption.getD #[]).toList
+      if rows.eraseDups.length != rows.length then return s!"/relations/{name}"
+  if message == "InvalidModel: wrong relation arity" ||
+      message == "InvalidModel: dangling or wrong-sort tuple" then
+    for (name, entries) in relationEntries do
+      let signature := (declarations.getObjValD name).getObjValD "arguments"
+      let names := (VE.Bridge.strings signature).toOption.getD []
+      for (row, rowIndex) in (entries.getArr?.toOption.getD #[]).toList.zipIdx do
+        let cells := (row.getArr?.toOption.getD #[]).toList
+        if message == "InvalidModel: wrong relation arity" && cells.length != names.length then
+          return s!"/relations/{name}/{rowIndex}"
+        if message == "InvalidModel: dangling or wrong-sort tuple" then
+          for ((sort, cell), cellIndex) in (names.zip cells).zipIdx do
+            let members := (domains.getObjValD sort).getArr?.toOption.getD #[]
+            if !members.contains cell then return s!"/relations/{name}/{rowIndex}/{cellIndex}"
+  if message == "ResourceLimit: tuple count" then return "/relations"
+  none
+
 def reported (run : Json → Except String Json) (j : Json) : Json :=
   match run j with
   | .ok result => result
-  | .error message => Json.mkObj [("id", j.getObjValD "id"),
-      ("status", .str "error"), ("error", .str message)]
+  | .error message => Json.mkObj ([("id", j.getObjValD "id"),
+      ("status", .str "error"), ("error", .str message)] ++
+      match modelErrorPath j message with
+      | some path => [("path", .str path)]
+      | none => [])
 
 /-- A raw strict parse may succeed while the family's typing check rejects.
 In that case the existing diagnostic walker names the first typing fault. -/

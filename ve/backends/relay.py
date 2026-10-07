@@ -109,6 +109,8 @@ def _raised(entry: dict) -> BaseException:
     if isinstance(error, VEError):
         if type(row.get("span")) is dict:
             error.span = Span(**row["span"])
+        if type(row.get("path")) is str:
+            error.path = row["path"]
         if type(row.get("code")) is str:
             error.code = row["code"]
         # Provenance only: the Gate 2 parity tool counts a rejection cell as
