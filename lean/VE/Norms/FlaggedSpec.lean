@@ -626,14 +626,12 @@ theorem decodeVocabulary_flag_not_defined (profiles : List String) (v : Json) (r
   extract_lets ps flags at h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨cs, _, h⟩ := bind_ok h
-  extract_lets literals result jpD jpC at h
+  extract_lets literals result jpC at h
   split at h
   case isTrue => cases h
   dsimp (config := { zeta := false }) only [jpC] at h
-  obtain ⟨_, _, h⟩ := bind_ok h
   split at h
   case isFalse => cases h
-  dsimp (config := { zeta := false }) only [jpD] at h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨entries, hentries, h⟩ := bind_ok h
   split at h

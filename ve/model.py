@@ -1,13 +1,13 @@
 """Validated finite structures for the relational v0 profile."""
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from types import MappingProxyType
 from typing import Any, Mapping
 from itertools import product
 
 from .assurance import semantic_entry
-from .errors import ResourceLimit
+from .errors import InvalidModel, ResourceLimit
 from .limits import MAX_TUPLES
 
 INT_SORT = "$int"
@@ -46,6 +46,23 @@ class FiniteModel:
         # Search candidates are unreported until a Lean witness check.
         if _defer_model_id:
             return python()
+        # A soft/rights document adds generated relations and private premises
+        # to a search environment. It is not an authored envelope the service
+        # can register. Its candidate evaluator remains the generator-internal
+        # duplicate tracked for batch 15; witnesses are replayed by Lean.
+        if (any(getattr(env, slot, ()) for slot in
+                ("soft_premises", "rights_premises", "fill_premises")) or
+                any(name.startswith(("soft__", "rights__")) for name in env.predicates)):
+            built = cls._decode(env, wire, _defer_model_id=True)
+            from .wire import digest
+            model_id = digest(f"ve-model-{env.identity_version}\n", {
+                "environment_id": env.environment_id, "model": built.to_dict()})
+            if _claimed is not None:
+                if _claimed["environment_id"] != env.environment_id:
+                    raise InvalidModel("model belongs to a different environment")
+                if _claimed["model_id"] != model_id:
+                    raise InvalidModel("model identity does not match its contents")
+            return replace(built, model_id=model_id)
         from .backends.validation import validated_model
         return validated_model(env, wire, python, claimed=_claimed)
 

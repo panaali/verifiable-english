@@ -106,6 +106,30 @@ def test_a_lean_only_rejection_carries_leans_diagnostic(monkeypatch):
         Environment(pm.raw_environment(()))
 
 
+def test_speech_scope_references_are_checked_before_construction():
+    from tests.test_environment_field_types import _speech
+    raw = _speech()
+    raw["speech_acts"]["addressee"]["sort"] = "absent"
+    with pytest.raises(VEError, match="^UnknownSymbol: sort absent$"):
+        Environment(raw)
+
+
+def test_soft_metadata_survives_the_lean_environment_identity():
+    from tools.difffuzz_corpus import environments
+    raw = next(data for origin, data in environments()
+               if origin == "conformance/soft_norms_rust.json/9/source/environment")
+    env = Environment(raw)
+    assert env.to_dict() == raw
+    assert relay.decide("environment", [{"id": "e", "environment": raw}])[0]["environment_id"] == env.environment_id
+
+
+def test_model_identity_is_bound_from_leans_answer(monkeypatch):
+    env = Environment(pm.raw_environment(()))
+    fake_lean(monkeypatch, lambda mode, case: {"id": "model", "status": "ok",
+                                               "valid": True, "model_id": "f" * 64})
+    assert FiniteModel.from_dict(env, pm.model_wire(env)).model_id == "f" * 64
+
+
 def test_lean_names_a_rejection_both_checkers_make(monkeypatch):
     from ve.backends.diagnostics import checker_error
     raw = pm.raw_environment(())
