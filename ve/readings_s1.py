@@ -97,7 +97,9 @@ class S1Environment:
         data["profiles"] = sorted({*data["profiles"], "soft-norms@0"})
         data["vocabulary"]["soft"] = {"parties": [], "ranks": [], "outranks": [], "ties": [],
                                       "outranking": {"mode": "strict"}}
-        return SoftEnvironment(data)
+        # This is an internal soft view of a norms-only source. The source has no soft
+        # layer, so an author's ordinary soft__ predicate remains legal here.
+        return SoftEnvironment(data, generated=True)
 
     def author_environment(self):
         """The author's base vocabulary: the frame without regulated predicates (4.5 step 1)."""
@@ -494,7 +496,7 @@ class Side:
                     if c.kind == "norm"):
                 raise VEError("InvalidInput: invalid norm fields")
             from .softnorms import check_soft_source
-            check_soft_source(self.senv.soft_frame().to_dict(), norms)
+            check_soft_source(self.senv.soft_frame().to_dict(), norms, generated=(chain == "norms"))
         self._elaborate()
         from .ast import formula_from_data
         env = self.soft.extended_env

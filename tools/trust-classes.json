@@ -625,6 +625,7 @@
     "ResponseShape.Schemas.ReadingsRoute.elaborateRoute",
     "ResponseShape.Schemas.ReadingsRoute.elaborateSuperposed",
     "ResponseShape.Schemas.ReadingsRoute.file",
+    "ResponseShape.Schemas.ReadingsRoute.generatedPredicates",
     "ResponseShape.Schemas.ReadingsRoute.key",
     "ResponseShape.Schemas.ReadingsRoute.keys",
     "ResponseShape.Schemas.ReadingsRoute.kind",
@@ -5285,6 +5286,8 @@
     "VE.Readings.enumeratedCheckText",
     "VE.Readings.exceptionJson",
     "VE.Readings.firstNonUniform",
+    "VE.Readings.generatedKeyJson",
+    "VE.Readings.generatedPredicatesJson",
     "VE.Readings.nameMapJson",
     "VE.Readings.notSuperposable",
     "VE.Readings.notSuperposableText",
@@ -5558,6 +5561,72 @@
     "VE.Readings.bitsVal",
     "VE.Readings.deadCheck",
     "VE.Readings.unsatCheck"
+   ]
+  },
+  "VE/Readings/Unspecified.lean": {
+   "S": [
+    "VE.Readings.AchievesU",
+    "VE.Readings.NDoc",
+    "VE.Readings.SeparatedU",
+    "VE.Readings.WellFormedND",
+    "VE.Readings.asU",
+    "VE.Readings.choiceU",
+    "VE.Readings.contentStrict",
+    "VE.Readings.fillNamesFree",
+    "VE.Readings.freeU",
+    "VE.Readings.normsShaped",
+    "VE.Readings.oneU",
+    "VE.Readings.strictRule",
+    "VE.Readings.supU"
+   ],
+   "C": [
+    "VE.Readings.fillContent",
+    "VE.Readings.fillDoc",
+    "VE.Readings.fillFrameEnv",
+    "VE.Readings.fillHolds",
+    "VE.Readings.fillItem",
+    "VE.Readings.fillSoftNode",
+    "VE.Readings.fillUnits",
+    "VE.Readings.strictNodeOf"
+   ],
+   "P": [
+    "VE.Readings.NamesFree",
+    "VE.Readings.Shaped",
+    "VE.Readings.StrictDoc",
+    "VE.Readings.StrictNodes",
+    "VE.Readings.addNodes",
+    "VE.Readings.candStep",
+    "VE.Readings.fillCand",
+    "VE.Readings.fillSet",
+    "VE.Readings.fillUnitNodes",
+    "VE.Readings.fillX",
+    "VE.Readings.setsOf"
+   ]
+  },
+  "VE/Readings/UnspecifiedExamples.lean": {
+   "T": [
+    "VE.Readings.UnspecifiedExamples.ND0",
+    "VE.Readings.UnspecifiedExamples.ND1",
+    "VE.Readings.UnspecifiedExamples.ND1n",
+    "VE.Readings.UnspecifiedExamples.ND5",
+    "VE.Readings.UnspecifiedExamples.NK",
+    "VE.Readings.UnspecifiedExamples.base1",
+    "VE.Readings.UnspecifiedExamples.beHelpful",
+    "VE.Readings.UnspecifiedExamples.cand",
+    "VE.Readings.UnspecifiedExamples.frame1",
+    "VE.Readings.UnspecifiedExamples.frameOf",
+    "VE.Readings.UnspecifiedExamples.itemsK",
+    "VE.Readings.UnspecifiedExamples.mustHelp",
+    "VE.Readings.UnspecifiedExamples.mustHelpAsks",
+    "VE.Readings.UnspecifiedExamples.names1",
+    "VE.Readings.UnspecifiedExamples.probe1",
+    "VE.Readings.UnspecifiedExamples.regs1",
+    "VE.Readings.UnspecifiedExamples.rs1",
+    "VE.Readings.UnspecifiedExamples.rs5",
+    "VE.Readings.UnspecifiedExamples.ruleOver",
+    "VE.Readings.UnspecifiedExamples.sameOn",
+    "VE.Readings.UnspecifiedExamples.sit1",
+    "VE.Readings.UnspecifiedExamples.unspec1"
    ]
   },
   "VE/Readings/UpSlot.lean": {
