@@ -4220,6 +4220,8 @@
 'VE.EnglishGrammar.checkRequest_some' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.EnglishGrammar.sensesRequest_policy' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.EnglishGrammar.Run.codeClasses_total' does not depend on any axioms
+'VE.EnglishGrammar.Run.rejectCodes_total' depends on axioms: [propext]
+'VE.EnglishGrammar.Run.statusCodes_classed' does not depend on any axioms
 'VE.EnglishGrammar.DecodeEncode.anyAux_at' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.EnglishGrammar.DecodeEncode.digitChar_facts' depends on axioms: [propext, Quot.sound]
 'VE.EnglishGrammar.DecodeEncode.digits_props' depends on axioms: [propext, Quot.sound]

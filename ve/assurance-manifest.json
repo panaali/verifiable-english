@@ -57,7 +57,7 @@
     "ve/english.py:_parse_english_document_uncached": "Comparator only: Python parser exceptions are recorded after Lean has decided; they never change the returned Lean result or error."
   },
   "lean_decoders": {
-    "total_lines": 22008,
+    "total_lines": 22481,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -275,12 +275,12 @@
       },
       {
         "file": "lean/VE/EnglishGrammar/Encode.lean",
-        "lines": 781,
-        "sha256": "e8cb65209c5d6625dab517561994f5b3778e27c7d0f33e844c894669b9536b1d",
+        "lines": 782,
+        "sha256": "b1dc5f105ae7c7c162307598b3678a3da52c7f6d3d5941578400266d2a05cce5",
         "ranges": [
           [
             1,
-            449
+            782
           ]
         ],
         "declarations": [
@@ -294,12 +294,12 @@
       },
       {
         "file": "lean/VE/EnglishGrammar/Run.lean",
-        "lines": 552,
-        "sha256": "13d98d03205f7953b1fc4533f3133ff40a1913cec0592d14b633502e3215a53a",
+        "lines": 689,
+        "sha256": "ef68f91ead0166ec45d3a3c8c595a30dcde1f5568aec338e89784d973edfd92b",
         "ranges": [
           [
             1,
-            552
+            689
           ]
         ],
         "declarations": [
@@ -829,12 +829,12 @@
       },
       {
         "file": "lean/VE/Senses/Run.lean",
-        "lines": 144,
-        "sha256": "4402b02195b78ce17068663426cc51bb6017e83515c89e67be92e4f40a10d137",
+        "lines": 147,
+        "sha256": "cc6635b7b2d4f0cafe8a761e5686f4d8f1111f7a40fa55cef8d6703e5539019d",
         "ranges": [
           [
             1,
-            144
+            147
           ]
         ],
         "declarations": [
@@ -1167,7 +1167,8 @@
       "lean/VE/EnglishGrammar/ReadExamples.lean": "fixtures only: #guard checks of docs/spec/english-lean-s2.md section 8 build environment JSON for Env.decode; no runner path",
       "lean/VE/Senses/Examples.lean": "fixtures only: #guard checks of docs/spec/senses.md section 8 compare projected environment JSON; no runner path",
       "lean/VE/Senses/Project.lean": "senses projection (docs/spec/senses.md 2.5): builds the projected environment JSON from the validated environment JSON for the admitted reading; this module does not decode JSON",
-      "lean/VE/EnglishGrammar/ProfileExamples.lean": "fixtures only: S3 profile environment and reader #guard checks; no runner path"
+      "lean/VE/EnglishGrammar/ProfileExamples.lean": "fixtures only: S3 profile environment and reader #guard checks; no runner path",
+      "lean/VE/EnglishGrammar/E2Examples.lean": "fixtures only: E2 port, overlay check, guards, texts and advice #guard checks (spec section 8); no runner path"
     }
   },
   "plan_operations": {
@@ -3272,9 +3273,11 @@
         "lean:compiler",
         "lean:runner-glue",
         "python:implementation",
-        "python:display"
+        "python:display",
+        "python:backend-adapter"
       ],
       "notes": [
+        "The relay (ve/backends/english_lean.py) validates every english.read answer against Lean's generated table of codes, classes and statuses (ve/english_grammar/codes.json, tools/english_codes.py) and raises the class Lean names with Lean's text; it holds no class table of its own.",
         "The norm and norm-default English statement readers still use their own Python grammar until E3."
       ]
     },

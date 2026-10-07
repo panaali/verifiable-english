@@ -19,7 +19,7 @@ from .assurance import semantic_entry
 from . import ast
 from .errors import CheckerUnavailable, ResourceLimit, Span, SyntaxError, VEError
 from .limits import MAX_DEPTH, MAX_NODES, MAX_SOURCE_BYTES
-from .english_phrases import nearest, phrase_end, unary_phrase, wording_key, BOUNDARIES
+from .english_phrases import nearest, phrase_end, unary_phrase, unknown_phrase, wording_key, BOUNDARIES
 from .printer import (_NaturalVocabulary, _LOGICAL_WORDS, render_int_term,
                       _fluent_variable_letters, _template_head, _AUXILIARIES, VocabularyLint)
 from .english_vocabulary import IDIOMS, negative_template, display_environment, overlay_provenance
@@ -1734,11 +1734,24 @@ def parse_statement_english(env, source, **options):
     return reading.document
 
 
+def _nearest_help(reading, source, words):
+    """The nearest-wording help for a sentence without a reading (spec 2.8): help only, over Lean's span."""
+    if reading.status != 'none':
+        return None
+    start, end = reading.response['span']
+    found = unknown_phrase(source[start:end], words)
+    if found is None:
+        return None
+    begin, stop, wordings = found
+    return (f"Unknown English phrase {source[start + begin:start + stop]!r}. Nearest declared wordings: "
+            + '; '.join(repr(w) for w in wordings) + '.')
+
+
 def _lean_reading(env, source, words, options):
     from .backends import english_lean
     reading = english_lean.read(env, source, words, options)
     if reading.status != 'one':
-        raise reading.rejection()
+        raise reading.rejection(_nearest_help(reading, source, words))
     return _Reading(env, reading.document(), words, reading.response['conclusions'],
                     tuple(tuple(span) for span in reading.response.get('spans', ())), lean=reading)
 
@@ -1863,28 +1876,25 @@ def parse_english_argument(env, source, **options):
     from .argument import ArgumentGraph, Claim, Deduction, check_argument, deduction_identity
     from .entailment import prove_entailment
     from .printer import print_formula
-    parsed = _parse_english_document(env, source, _with_reading=True, _check=False, **options)
-    document, _, _, conclusions = parsed[:4]
-    obligations = parsed[4].obligations if len(parsed) > 4 else ()
-    premises_by_conclusion = {item['conclusion']: item['premises'] for item in obligations}
-    text_by_conclusion = {item['conclusion']: item['unproved'] for item in obligations}
-    marked = set(conclusions)
+    document, _, _, conclusions, reading = _parse_english_document(
+        env, source, _with_reading=True, _check=False, **options)
+    # Lean's obligations name each marked conclusion's premises (spec 2.8, 2.9: owned by Lean); the relay
+    # validated one obligation per conclusion, so Python computes no premise.
+    obligations = {item['conclusion']: item for item in reading.obligations}
+    if reading.lean is None or sorted(obligations) != list(conclusions):
+        raise CheckerUnavailable('CheckerUnavailable: the marked conclusions have no Lean obligations')
     claims = tuple(Claim.create(env, f's{i + 1}', print_formula(env, formula) + '.\n',
                                 candidate_ast=formula)
                    for i, formula in enumerate(document.formulas))
-    edges = tuple(Deduction(f'd{i + 1}', tuple(f's{j + 1}' for j in premises_by_conclusion.get(
-                                i, [j for j in range(i) if j not in marked])),
-                            f's{i + 1}') for i in conclusions)
+    edges = tuple(Deduction(f'd{i + 1}', tuple(f's{j + 1}' for j in obligations[i]['premises']), f's{i + 1}')
+                  for i in conclusions)
     graph = ArgumentGraph(env, claims, edges, claims[-1].name)
     checked_edges = []
     for i, edge in zip(conclusions, edges):
-        premises = tuple(document.formulas[j] for j in premises_by_conclusion.get(
-            i, [j for j in range(i) if j not in marked]))
+        premises = tuple(document.formulas[j] for j in obligations[i]['premises'])
         proof = prove_entailment(env, premises, document.formulas[i])
         if proof.status != 'Found':
-            raise SyntaxError(text_by_conclusion.get(
-                i, 'The marked conclusion has no checked derivation from earlier premises: {status}').replace(
-                    '{status}', proof.status))
+            raise SyntaxError(obligations[i]['unproved'].replace('{status}', proof.status))
         checked_edges.append(Deduction(edge.name, edge.premises, edge.conclusion,
                                        ({'edge_id': deduction_identity(graph, edge),
                                          'direction': 'follows', 'proof': proof.certificate},)))

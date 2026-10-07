@@ -46,7 +46,9 @@ def adviceRows : List AdviceRow :=
    ⟨"alternatives-human-harm", "alternatives@0", [aw "allows a harm to a human being to happen"],
      "Write the long form: there is a harm such that both that harm is a harm to a human being and that action allows that harm to happen."⟩,
    ⟨"alternatives-person", "alternatives@0", [[.w "allows", .any, .w "to", .anyBut "happen"]],
-     "Permission for a person uses the W1 'may' wording, not causal 'allows'."⟩]
+     "Permission for a person uses the W1 'may' wording, not causal 'allows'."⟩,
+   ⟨"alternatives-another", "alternatives@0", [aw "another action"],
+     "Another action needs a rule on an action as its reference."⟩]
 
 def advWords (toks : List Tok) : List (Option String) :=
   toks.map fun t => match t with

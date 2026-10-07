@@ -23,7 +23,7 @@ import warnings
 from conformance import english_lean_s3_python as fixtures
 from ve import Environment
 from ve.backends import english_lean as adapter
-from ve.backends.lean import run_english_cases
+from ve.backends import relay
 from ve.english import (EnglishParser, EnglishVocabulary, UnreviewedVocabularyWarning,
                         _normalise_english_source, _python_reading)
 from ve.errors import CheckerUnavailable
@@ -98,16 +98,21 @@ def _lean_result(row: dict, request_id: str, env, source: str, words):
     response = row["result"]
     expected = adapter.identities(env, source, words, adapter.export(words))
     try:
-        problem = adapter.response_problem(response, expected, env)
+        problem = adapter.response_problem(response, expected, env, source)
     except RecursionError:
         problem = "the response is nested too deeply"
     if problem:
         return CheckerUnavailable(f"CheckerUnavailable: the Lean English reader's answer is malformed: {problem}")
-    reading = adapter.LeanReading(response, env)
+    reading = adapter.LeanReading(response, env, source)
     return SimpleNamespace(lean=reading) if reading.status == "one" else reading.rejection()
 
 
-def compare(rows: list[dict] | None = None, *, transport=run_english_cases) -> dict:
+def service_rows(_executable, mode: str, cases: list[dict]) -> list[dict]:
+    """The persistent service's rows for `cases` (spec 2.7: the one-shot route is retired as a transport)."""
+    return relay.rows(mode, cases)
+
+
+def compare(rows: list[dict] | None = None, *, transport=service_rows) -> dict:
     """Return every comparison record and counts derived from those records."""
     rows = cases() if rows is None else rows
     if not rows:

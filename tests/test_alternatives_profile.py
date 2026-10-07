@@ -466,7 +466,9 @@ def test_available_guard_forms_bind_owner_and_distinguish_other_action():
     assert explicit.rules[0].guard == parse_norm_english(
         env, "Rule 1. Every action may be done, if every other action "
              "available to r prevents h.").rules[0].guard
-    with pytest.raises(VEError, match="uses a name before introducing it"):
+    # Lean's code and text, with Lean's advice naming what Python's hint named (review B2)
+    with pytest.raises(VEError, match="uses a name before introducing it.*Another action needs a rule on an "
+                                      "action as its reference"):
         parse_english_with_metadata(env, "another action available to r prevents h.")
     with pytest.raises(VEError, match="there is a robot such that"):
         parse_norm_english(env, "Rule 1. Every action may be done, if every other "

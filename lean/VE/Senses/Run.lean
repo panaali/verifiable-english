@@ -60,10 +60,12 @@ open VE.EnglishGrammar.Run in
 /-- The fields of S2's outcomes as S2's authoring answer writes them (english-lean-s2.md 4.3): the code
 with S2's text, the sentence, the two witness trees of an ambiguity and the lexicon failure; the sentence
 index counts the preamble. `tests/test_senses_route.py` compares them with `ve_english_route`'s. -/
-def s2Fields (c : VE.EnglishGrammar.Run.Case) : SensesOutcome → Except String (List (String × Json))
-  | .lexical r => pure (status "rejected" ++ coded r.code (rejectText 0 r))
-  | .invalidGrammar g => pure (invalidFields c g)
-  | .illTyped => pure (status "rejected" ++ coded "IllTyped" illTypedText)
+def s2Fields (c : VE.EnglishGrammar.Run.Case) (source : String) :
+    SensesOutcome → Except String (List (String × Json))
+  | .lexical r => pure (status "rejected" ++ coded r.code (rejectText 0 r) ++
+      ((lexicalSpan source r).toList.map fun s => ("span", spanJson s)))
+  | .invalidGrammar g => pure (invalidFields "senses.read" c g)
+  | .illTyped => pure (status "rejected" ++ coded "IllTyped" (illTypedText none))
   | .stopped i o tags =>
     let pos := [("sentence", toJson i)]
     match o with
@@ -73,12 +75,13 @@ def s2Fields (c : VE.EnglishGrammar.Run.Case) : SensesOutcome → Except String 
     | .ambiguous t u => pure (status "many" ++ coded "Ambiguous"
         s!"Sentence {i + 1} can be read in more than one way. Two of the ways are shown." ++ pos ++
         [("witnesses", Json.arr #[treeJson tags t, treeJson tags u])])
-    | .rejected r => pure (status "rejected" ++ coded r.code (rejectText i r) ++ pos)
+    | .rejected r => pure (status "rejected" ++ coded r.code (rejectionText source i r) ++ pos)
     | .budget => pure (budgetFields i)
   | .ok .. | .fault _ => throw "not an outcome of S2"
 
 /-- The answer to a text of `count` sentences (`lex`'s); the units are its last sentences (`readBody_good`). -/
-def outcomeJson (c : VE.EnglishGrammar.Run.Case) (count : Nat) (out : SensesOutcome) : Except String Json := do
+def outcomeJson (c : VE.EnglishGrammar.Run.Case) (source : String) (count : Nat) (out : SensesOutcome) :
+    Except String Json := do
   let (status, code) ← out.statusCode
   let common := [("status", .str status)] ++ (code.toList.map fun c => ("code", .str c))
   match out with
@@ -90,9 +93,9 @@ def outcomeJson (c : VE.EnglishGrammar.Run.Case) (count : Nat) (out : SensesOutc
        ("environment", P.envJson)]))
   | .fault f => pure (Json.mkObj (common ++ faultFields f))
   | _ =>
-    let fields ← s2Fields c out
+    let fields ← s2Fields c source out
     unless fields.take 2 == common do throw "S2's status and code differ from the reader's"
-    pure (Json.mkObj fields)
+    pure (Json.mkObj (VE.EnglishGrammar.Run.refusalExtras c.E.profiles source fields))
 
 def decodeDictionary (j : Json) : Except String Dictionary := do
   let packs ← (← j.getObjVal? "packs").getArr?
@@ -112,7 +115,7 @@ def readCase (j : Json) : Except String Json := do
   let count := match lex source with
     | .ok sents => sents.size
     | .error _ => 0
-  let result ← outcomeJson c count (sensesRequest D c.E c.L budget source)
+  let result ← outcomeJson c source count (sensesRequest D c.E c.L budget source)
   pure (VE.Route.Wire.ok id [("result", Json.mkObj
     [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)), ("reading", result)])])
 

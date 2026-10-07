@@ -74,17 +74,20 @@ def test_deferred_overlay_refusals_still_require_suggested_consent():
 
 
 def test_argument_failure_text_preserves_prover_status(monkeypatch):
+    """The argument's premises and its refusal text are Lean's obligation (spec 2.8), with the prover's status
+    in the slot, verbatim."""
     from types import SimpleNamespace
-    from ve import Const, Document, Unary
     from ve import english, entailment
     from ve.errors import SyntaxError as VESyntaxError
 
     env = Environment(fixtures.F())
-    document = Document((Unary("deployed", Const("legacy")),
-                         Unary("reviewed", Const("legacy"))))
-    monkeypatch.setattr(english, "_parse_english_document",
-                        lambda *_args, **_kwargs: (document, "source", None, (1,)))
-    monkeypatch.setattr(entailment, "prove_entailment",
-                        lambda *_args, **_kwargs: SimpleNamespace(status="Unknown"))
-    with pytest.raises(VESyntaxError, match="earlier premises: Unknown"):
-        english.parse_english_argument(env, "source")
+    calls = []
+    def unknown(env, premises, conclusion, *_args, **_kwargs):
+        calls.append(premises)
+        return SimpleNamespace(status="Unknown")
+    monkeypatch.setattr(entailment, "prove_entailment", unknown)
+    with pytest.raises(VESyntaxError) as caught:
+        english.parse_english_argument(env, "Legacy is deployed. Therefore legacy is reviewed.")
+    assert str(caught.value) == ("Sentence 2 is marked as a conclusion, and no checked derivation from the "
+                                 "earlier premises was found: Unknown")
+    assert len(calls) == 1 and len(calls[0]) == 1
