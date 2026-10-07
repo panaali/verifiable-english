@@ -403,27 +403,31 @@ frozen file changed (the two modules are listed in `VE/Route/frozen-sources.sha2
 
 ## The statements of 6.2
 
-In plain words, under `normsShaped N.D` (the norms chain's shape: strict rules, no rights content) and
-`fillNamesFree N` (no unit id or declared name begins `unsaid--`):
+In plain words, each with the hypotheses it states. `normsShaped N.D` is the norms chain's shape (strict rules, no
+rights content); `fillNamesFree N` says no unit id or declared name begins `unsaid--`.
 
-* `fillDoc_one`, `fillDoc_free`, `fillDoc_choice`, `fillDoc_sup`: taking a reading's document, the free document, a
-  choice's document or the superposed document of the filled readings document gives, after `soften ∘ correlate`,
-  exactly norm-defaults' `fill` of the same document taken from the author's; the assertions are unchanged. So
-  every S1 and S2a theorem about `fillDoc N` is a theorem about the filled documents of norm-defaults 2.3.
-* `compatible_fillDoc`: the compatible choices of `fillDoc N` are those of `N.D`.
-* `attached_fillDoc`: a fixed unit is attached to the same list of sets in `fillDoc N` as in `N.D`. **Changed in the
-  build, pending the statement re-review:** the approved statement had `fillNamesFree` only; it also needs
-  `singlyAttached N.D` (part of `WellFormedDoc`). F-ND11 is a norms-shaped document with free names whose unit
-  `u0` is attached to `[s2, s0, s1]` in `N.D` and to `[s0, s1, s2]` in `fillDoc N`: `attached` iterates its levels
-  once per item, `fillDoc` adds items, and the level lists of a unit attached to several sets alternate in order.
-  The members always agree (`mem_attached_fillDoc`, `fillNamesFree` only), and that is what the four equalities use.
-* `fillDoc_conservative`: without unspecified predicates `fillDoc N = N.D`.
-* `separates_soundU`, `separates_separatedU`: a situation that S1's check accepts on `fillDoc N`, whose witness's
-  `Fill_T` holds on the base (`fillHolds`), shows the witness achieving the probe value under the completion and the
-  other reading not achieving it; so the two readings are separated (one base, one shared filling).
-* `achievesU_iff`: on the norms chain no key is generated, so achieving a probe value under the completion is an
-  admissible base of the author's filled vocabulary, admissible for the reading's filled document (norm-defaults'
-  `BaseAdmissibleU`, `Fill_T` included), on which the probe has the value.
+* `fillDoc_one`, `fillDoc_free`, `fillDoc_choice`, `fillDoc_sup` (under `normsShaped N.D` and `fillNamesFree N`):
+  taking a reading's document, the free document, a choice's document or the superposed document of the filled
+  readings document gives, after `soften ∘ correlate`, exactly norm-defaults' `fill` of the same document taken from
+  the author's; the assertions are unchanged. So every S1 and S2a theorem about `fillDoc N` is a theorem about the
+  filled documents of norm-defaults 2.3.
+* `compatible_fillDoc` (no hypothesis): the compatible choices of `fillDoc N` are those of `N.D`.
+* `attached_fillDoc` (under `fillNamesFree N` and `singlyAttached N.D`, part of `WellFormedDoc`): a fixed unit is
+  attached to the same list of sets in `fillDoc N` as in `N.D`. The first approved statement had `fillNamesFree`
+  only; the DRI approved the added hypothesis on 2026-10-07 and spec 6.2 now states it. F-ND11 is a norms-shaped
+  document with free names whose unit `u0` is attached to `[s2, s0, s1]` in `N.D` and to `[s0, s1, s2]` in
+  `fillDoc N`: `attached` iterates its levels once per item, `fillDoc` adds items, and the level lists of a unit
+  attached to several sets alternate in order. The members always agree (`mem_attached_fillDoc`, `fillNamesFree`
+  only), and that is what the four equalities use.
+* `fillDoc_conservative` (no hypothesis but `N.unspec = []`): without unspecified predicates `fillDoc N = N.D`.
+* `separates_soundU`, `separates_separatedU` (under `WellFormedDoc (fillDoc N)`, both candidates with content, a
+  valid base, and `fillHolds`): a situation that S1's check accepts on `fillDoc N`, whose witness's `Fill_T` holds on
+  the base (`fillHolds`), shows the witness achieving the probe value under the completion and the other reading not
+  achieving it; so the two readings are separated (one base, one shared filling).
+* `achievesU_iff` (under `normsShaped N.D` and `fillNamesFree N`): on the norms chain no key is generated, so
+  achieving a probe value under the completion is an admissible base of the author's filled vocabulary, admissible
+  for the reading's filled document (norm-defaults' `BaseAdmissibleU`, `Fill_T` included), on which the probe has
+  the value.
 
 The helper lemmas say how: building `fillDoc N` is building `N.D` and then filling (`build_fillDoc`, `sup_fillDoc`),
 `soften` is the identity on strict documents (`soften_strict`, `soften_hard_identity`'s core without its unused

@@ -496,8 +496,10 @@ theorem fillDoc_sup (N : NDoc) (hn : normsShaped N.D = true) (hf : fillNamesFree
   soften (correlate (sup (fillDoc N)).1) = VE.NormDefaults.fill (supU N) ∧ (sup (fillDoc N)).2 = (sup N.D).2
 /-- The open sets, their candidates, labels, couplings and narrowings are untouched. -/
 theorem compatible_fillDoc (N : NDoc) (c : Choice) : Compatible (fillDoc N) c ↔ Compatible N.D c
-theorem attached_fillDoc (N : NDoc) (hf : fillNamesFree N = true) (u : String) (hu : u ∈ fixedNames N.D) :
-  attached (fillDoc N) u = attached N.D u
+/-- DRI 2026-10-07: `hs` added (F-ND11: without it the lists can differ in order); `singlyAttached` is part of
+    `WellFormedDoc`, so every admitted document has it. The membership-only form `mem_attached_fillDoc` is kept. -/
+theorem attached_fillDoc (N : NDoc) (hf : fillNamesFree N = true) (hs : singlyAttached N.D = true) (u : String)
+    (hu : u ∈ fixedNames N.D) : attached (fillDoc N) u = attached N.D u
 theorem fillDoc_conservative (N : NDoc) (h0 : N.unspec = []) : fillDoc N = N.D
 
 def WellFormedND (N : NDoc) : Bool :=
