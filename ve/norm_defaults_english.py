@@ -11,6 +11,8 @@ shown as a rule, and a filling is rendered as "this situation answers".
 from __future__ import annotations
 
 import json
+from itertools import product
+from types import SimpleNamespace
 
 from .errors import SyntaxError, VEError
 from .norm_english import (UNSPECIFIED_KEYWORD, _bindings, _words, default_sentence, pair_sentence,
@@ -251,9 +253,76 @@ def _atoms(formula):
     return set(_used_predicates(formula))
 
 
+def _conflict_view(document, situation, report):
+    """Give both the former report object and Lean's verdict row one display shape.
+
+    Lean deliberately returns only the checked verdict and target. For its row,
+    reconstruct the finite situation witness and a sufficient conjunction of
+    unsaid answers for this conflict. Replay the chosen witness
+    through Lean before using it for English display.
+    """
+    if not isinstance(report, dict):
+        return report
+    if report.get("verdict") != "CONFLICT":
+        raise VEError("InvalidInput: not a conflict")
+    from .evaluate import _Evaluator
+    from .norm_defaults_route import run_case, source_case
+
+    target = report.get("target")
+    matches = [(sorts, formula) for name, sorts, formula in document.filled._display.conflict_targets()
+               if name == target]
+    if len(matches) != 1:
+        raise VEError("InvalidInput: unknown conflict target")
+    sorts, formula = matches[0]
+    relevant = _atoms(formula)
+    dependencies = [_atoms(premise) for _, premise in document.fill_premises]
+    while True:
+        expanded = relevant | set().union(*(names for names in dependencies if relevant & names))
+        if expanded == relevant:
+            break
+        relevant = expanded
+    atoms = [(item["name"], values)
+             for item in document.elaboration["unsaid"] if item["name"] in relevant
+             for values in product(*(situation.domains[s] for s in item["sorts"]))]
+    if len(atoms) > 12:
+        raise VEError("ResourceLimit: too many unsaid atoms to render a conflict")
+    table_names = [item["name"] for item in document.elaboration["unsaid"]]
+    for values in product(*(situation.domains[s] for s in sorts)):
+        outcomes = []
+        for bits in product((False, True), repeat=len(atoms)):
+            filling = {name: frozenset(row for (n, row), bit in zip(atoms, bits) if n == name and bit)
+                       for name in table_names}
+            model = document.with_filling(situation, filling, checked=False)
+            evaluator = _Evaluator(document._raw_base(), model, 1_000_000, trace=False)
+            if not all(evaluator.formula(premise, ())[0] for _, premise in document.fill_premises):
+                continue
+            conflict = evaluator.formula(formula, _point_bindings(sorts, values))[0]
+            outcomes.append((bits, filling, model, conflict))
+        found = next((outcome for outcome in outcomes if outcome[3]), None)
+        if found is None:
+            continue
+        bits, filling, model, _ = found
+        witness = {"target": target, "model": model.to_dict(), "tuple": list(values)}
+        checked = run_case(source_case(document, "norm-defaults-conflict", witness=witness))
+        if checked.get("verdict") != "CONFLICT" or checked.get("target") != target:
+            raise VEError("CheckerUnavailable: conflict display witness was not confirmed")
+        fixed = set(range(len(atoms)))
+        for index in range(len(atoms)):
+            candidate = fixed - {index}
+            if all(other[3] for other in outcomes
+                   if all(other[0][i] == bits[i] for i in candidate)):
+                fixed = candidate
+        under = tuple((name.removeprefix("unsaid__"), row, bits[i])
+                      for i, (name, row) in enumerate(atoms) if i in fixed)
+        return SimpleNamespace(kind="latent" if any(not outcome[3] for outcome in outcomes) else "settled",
+                               target=target, tuple=values, filling=filling, under=under)
+    raise VEError("CheckerUnavailable: conflict verdict has no witness in this situation")
+
+
 def latent_conflict_sentence(document, situation, report):
     """4.2's latent conflict: which rules contradict, under which answer."""
     env = document.env
+    report = _conflict_view(document, situation, report)
     if report.kind != "latent":
         raise VEError("InvalidInput: not a latent conflict")
     numbers = _rule_numbers(document)
@@ -275,13 +344,22 @@ def latent_conflict_sentence(document, situation, report):
 def gap_sentence(document, situation, line):
     """A `gaps: reachable` or `default reached` witness line, in English."""
     env = document.env
-    values, filling = line.witness
-    clause = point_clause(env, situation, line.predicate, values)
-    if line.completion == "unspecified":
+    if isinstance(line, dict):
+        if line.get("reached") != "reachable" or "witness" not in line:
+            raise VEError("InvalidInput: a reachable gap witness is required")
+        witness = line["witness"]
+        values = tuple(witness["tuple"])
+        filling = {name: frozenset(map(tuple, rows)) for name, rows in witness["filling"].items()}
+        predicate, completion = line["predicate"], line["completion"]
+    else:
+        values, filling = line.witness
+        predicate, completion = line.predicate, line.completion
+    clause = point_clause(env, situation, predicate, values)
+    if completion == "unspecified":
         return f"The text does not say whether {clause}: no rule decides this situation."
-    value = document.value(situation, filling, line.predicate, values)
-    decided = point_clause(env, situation, line.predicate, values,
-                           None if value else _negative_modal(env, line.predicate))
+    value = document.value(situation, filling, predicate, values)
+    decided = point_clause(env, situation, predicate, values,
+                           None if value else _negative_modal(env, predicate))
     return f"No rule decides whether {clause}; the default decides that {decided}."
 
 
@@ -358,6 +436,7 @@ def silence_sentence(document, predicate):
 
 def latent_conflict_finding(document, situation, report):
     """Spec 8's report finding for a latent CONFLICT: `LatentConflict: <rules> under <p>(<situation>)`."""
+    report = _conflict_view(document, situation, report)
     if report.kind != "latent":
         raise VEError("InvalidInput: not a latent conflict")
     filling = {name: frozenset(tuple(row) for row in rows) for name, rows in report.filling.items()}
