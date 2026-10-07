@@ -371,8 +371,8 @@ def _load_document(raw: bytes, path: str | Path, lean):
     soft_enabled = "soft-norms@0" in profiles
     defaults_enabled = "norm-defaults@0" in profiles
     if defaults_enabled and soft_enabled:
-        # The soft and rights document routes are checked by Lean, which has no
-        # norm-defaults branch yet; ve.norm_defaults builds their fill in Python.
+        # The soft and rights document routes are checked by Lean, whose
+        # norm-defaults route has no admission kind for them yet.
         raise VEError("UnsupportedProfile: norm-defaults@0 documents on the soft and rights "
                       "routes await the Lean route")
     attached = _s1_attached(environment_data, meta)

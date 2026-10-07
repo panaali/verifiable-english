@@ -322,8 +322,3 @@ def load_audit_source(raw: bytes):
     if type(data) is not dict or set(data) != {"environment", "norms"} or type(data["norms"]) is not list:
         raise VEError("InvalidInput: expected a ve-document@1 or {environment, norms}")  # relay-lint: file I/O
     return Environment(data["environment"]), data["norms"]
-
-# The integration branch's soft and rights composition keeps its existing
-# Python implementation while the base norm-defaults route is Lean-owned.
-# The document loader still records the missing combined Lean admission route.
-from .norm_defaults_legacy import (UnspecifiedSoftDocument, UnspecifiedRightsDocument)
