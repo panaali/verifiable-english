@@ -3770,6 +3770,8 @@
 'VE.Readings.append_left_inj' does not depend on any axioms
 'VE.Readings.slot_wellLabelled' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Readings.routeOf_superposed' depends on axioms: [propext, Quot.sound]
+'VE.Readings.generatedKeyJson_name' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Readings.generatedSuperposed_names' depends on axioms: [propext, Quot.sound]
 'VE.Readings.canon_term' depends on axioms: [propext, Quot.sound]
 'VE.Readings.term_defined' depends on axioms: [propext, Quot.sound]
 'VE.Readings.substWith_canon' depends on axioms: [propext, Classical.choice, Quot.sound]
