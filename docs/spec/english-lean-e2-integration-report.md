@@ -13,7 +13,7 @@ Branch `english-lean-e2/integrate`. The Python and Lean branches were merged loc
 
 ## Evidence and open points
 
-The exact E2 statement diff finds 11 of 12 declarations. `decode_encode` remains unproved. The Lean tree contains no `sorry` or extra axiom for it. E2 acceptance remains open until the proof and the applicable checklist work below are complete.
+The exact E2 statement diff finds 12 of 12 declarations. `decode_encode` is proved in `lean/VE/EnglishGrammar/Encode.lean` with the standard axioms only: the encoder writes integers with `intText`, whose text is `toString`'s (checked on the compiled code in `E2Examples.lean`), because `toString` of a negative integer joins its sign with a runtime primitive the logic cannot unfold.
 
 The clean gate on `38eb65ff` passed: **11,275 Python tests passed, 7 allowed skips, 0 failures; 50 Rust tests passed**. Its complete result is [e2-gate-result.json](../../conformance/english-lean/e2-gate-result.json), and `tests/test_english_e2_report.py::test_report_counts_follow_gate_json` checks the numbers above against that file. The S3 comparison records **200 cases, 198 agreements, 2 disposed differences, 0 unexplained differences**; the same test derives these figures from the case records.
 
@@ -45,7 +45,7 @@ The statuses here refer to the integrated E2 work. An open status means the line
 | 14. Hermetic tests | Done | The clean-HEAD full gate on `38eb65ff` passed with a clean source identity; the Rust cache was seeded into the gate's isolated Cargo home. |
 | 15. Identity binding | Open | All six E2 request identities have mutation tests; the requested per-field schema identity matrix is incomplete. |
 | 16. Registered lists | Done | Grammar lock, frozen inventory, theorem inventories, service modes and test collection are generated or checked. |
-| 17. Statement diff | Open | The exact checker finds 11/12; `decode_encode` is unproved. |
+| 17. Statement diff | Done | `tools/check_english_e2_statements.py` finds 12/12; `decode_encode` is proved. |
 | 18. Spec-stage fixtures | Open | S2/S3 three-way fixtures and E2 Lean guards exist; the complete E2 iff-boundary matrix is absent. |
 | 19. Use-case formalisation | Not applicable | This merge changes no use-case rule or answer key. |
 | 20. Regenerated report numbers | Done | The gate JSON and S3 case records are committed; `tests/test_english_e2_report.py::test_report_counts_follow_gate_json` checks the printed counts. |
@@ -62,7 +62,7 @@ The E2 decisions D1–D18 and fixture obligations in section 8 are AGENT-owned i
 | D5–D7: new fields, display identity, boundary | AGENT | `tests/test_english_lean_route.py::test_every_identity_is_the_adapters`; use-case boundary matrix open |
 | D8: request order | AGENT | `VE.EnglishGrammar.admitRequest_policy`, `VE.EnglishGrammar.grammarFault_none`; mode mutation matrix open |
 | D9–D12: response class, obligations, advice | AGENT | `tests/test_english_lean_adapter.py::test_class_and_span_are_part_of_diagnostic_schema`; full advice matrix open |
-| D13: formula decoder | AGENT, HUMAN proof approval | `decode_encode` is open; owner: English E2 DRI |
+| D13: formula decoder | AGENT | `VE.EnglishGrammar.decode_encode`, proved; `E2Examples.lean` checks `intText` against `toString` |
 | D14: prepared grammar cache | AGENT | open; cache hit/miss fixture IDs ev3 and ev3b |
 | D15: comparator | AGENT | `tests/test_english_lean_adapter.py::test_comparator_failure_cannot_change_lean_verdict` |
 | D16–D17: producer and overlay refusal | AGENT | `tests/test_english_e2_python.py::test_overlay_refusals_can_be_deferred_for_lean_admission`; full overlay matrix open |

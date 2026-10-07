@@ -175,6 +175,7 @@ module VE.English.Statements
 module VE.EnglishGrammar.Actions
 module VE.EnglishGrammar.Advice
 module VE.EnglishGrammar.Catalogue
+module VE.EnglishGrammar.E2Examples
 module VE.EnglishGrammar.Encode
 module VE.EnglishGrammar.EngineExamples
 module VE.EnglishGrammar.Examples
