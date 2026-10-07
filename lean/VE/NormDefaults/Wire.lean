@@ -106,10 +106,10 @@ def checkAuthorN (environment : Json) (generated : Nat) (U : UDoc) : Except Stri
 /-- The norms route's author check: no generated predicates. -/
 def checkAuthor (environment : Json) (U : UDoc) : Except String Unit := checkAuthorN environment 0 U
 
-def decodeSourceU (environment norms : Json) (flags : Bool := false) : Except String SourceU :=
+def decodeSourceU (environment norms : Json) : Except String SourceU :=
   if hasProfile environment then do
     let env' ← placeholderJson environment
-    let src ← VE.Norms.Wire.decodeSource env' norms flags
+    let src ← VE.Norms.Wire.decodeSource env' norms
     let names := unspecifiedNames environment
     let U : UDoc := ⟨src.D, (src.D.T.regulated.map Regulated.name).filter (names.contains ·)⟩
     checkAuthor environment U
@@ -119,7 +119,7 @@ def decodeSourceU (environment norms : Json) (flags : Bool := false) : Except St
   else do
     unless (unspecifiedNames environment).isEmpty do
       throw "UnsupportedProfile: unspecified completion requires norm-defaults@0"
-    let src ← VE.Norms.Wire.decodeSource environment norms flags
+    let src ← VE.Norms.Wire.decodeSource environment norms
     pure ⟨src, ⟨src.D, []⟩, rfl, (by rw [fill_eq_self _ rfl]; exact src.wf), false, (fun h => by cases h),
       fun _ => rfl⟩
 

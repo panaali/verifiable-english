@@ -25967,6 +25967,13 @@ theorem VE.Route.Wire.decodeOrderModel_valid
       VE.Route.Background.orderLiteralsValid d.toModel rv.literals = Bool.true
   -- uses VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Wire.Entity@VE.Order.Wire VE.Route.Background.orderLiteralsValid@VE.Route.Background VE.Route.Wire.RouteOrderVocabulary.literals@VE.Route.Wire VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.decodeOrderModel@VE.Route.Wire
   -- expr 63781846
+theorem VE.Route.Wire.decodeVocabulary_valid
+  ∀ (profiles : List String) (j : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary),
+    VE.Route.Wire.decodeVocabulary profiles j = Except.ok rv →
+      rv.vocabulary.namesValid = Bool.true ∧
+        rv.literals.Nodup ∧ VE.Definitions.Chain rv.vocabulary.environment rv.definitions
+  -- uses VE.Bridge.Vocabulary.environment@VE.Bridge VE.Bridge.Vocabulary.namesValid@VE.Bridge VE.Definitions.Chain@VE.Definitions.Layer VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary.literals@VE.Route.Wire VE.Route.Wire.RouteVocabulary.vocabulary@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.decodeVocabulary@VE.Route.Wire
+  -- expr 4016821461
 theorem VE.Route.Wire.definitionsCheck_ok
   ∀ (mem : String → List VE.Bridge.Entity → Bool) (M : VE.FiniteModel VE.Bridge.Entity),
     (∀ (p : String) (row : List VE.Bridge.Entity), mem p row = Bool.true ↔ row ∈ M.relations p) →
