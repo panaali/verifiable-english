@@ -106,12 +106,15 @@ def test_s9_formula_and_meaning_id_are_leans(tmp_path):
 def test_open_fence_refused_with_leans_unresolved_text(tmp_path, texts):
     reading = check(texts)
     assert (reading["status"], reading["code"]) == ("open", "Unresolved")
-    [lean_unit] = reading["units"]
-    assert lean_unit["text"] == ("Sentence 1 uses odd, which has two senses here, and only strange gives a reading "
-                                 'of this sentence. Add the line "In this document, odd means strange." to say so.')
+    assert "text" not in reading["units"][0]  # the source-mode wire contract is unchanged
+    refused = route.read_fences(Environment(environment()), texts, [PACK], fence_ids=["u1"],
+                                reading_set_units=[])["reading"]
+    assert refused["status"] == "rejected" and refused["code"] == "Unresolved"
+    assert refused["text"] == ("Sentence 1 uses odd, which has two senses here, and only strange gives a reading "
+                               'of this sentence. Add the line "In this document, odd means strange." to say so.')
     with pytest.raises(VEError) as info:
         load_document(write(tmp_path, texts, {"packs": ["fixtures@1"]}))
-    assert info.value.message == lean_unit["text"]
+    assert info.value.message == refused["text"]
     assert info.value.diagnostic == {"unit": "u1", "code": "Unresolved"}
 
 
@@ -126,6 +129,48 @@ def test_open_fence_with_a_reading_set_loads(tmp_path):
     doc = load_document(write(tmp_path, S16, {"packs": ["fixtures@1"]}, reading_sets=[reading_set]))
     assert units_of(doc)["u1"]["content"] is None
     assert units_of(doc)["u1"]["status"] == "CHECKED"
+
+
+def test_lean_selects_the_first_open_fence_without_a_reading_set():
+    assert route.read_fences(Environment(environment()), S16, [PACK])["reading"]["code"] == "Unresolved"
+    result = route.read_fences(Environment(environment()), S16 * 2, [PACK],
+                               fence_ids=["first", "second"], reading_set_units=["first"])
+    assert result["reading"]["status"] == "rejected"
+    assert result["reading"]["unit"] == "second"
+    assert result["reading"]["text"].startswith("Sentence 2 uses odd")
+    admitted = route.read_fences(Environment(environment()), S16 * 2, [PACK],
+                                 fence_ids=["first", "second"], reading_set_units=["first", "second"])
+    assert admitted["reading"]["status"] == "open"
+
+
+@pytest.mark.parametrize("texts, defaults", [
+    (S9, None),
+    (S16, {"funny": 1}),
+    (S16 * 2, None),
+])
+def test_shifted_genuine_sentence_numbers_are_rejected(texts, defaults):
+    """A response's consecutive units and linked sense-map entries still need the request's start sentence."""
+    result = _genuine(texts, defaults)
+    count = len(defaults or {})
+    assert route._response_problem(result, result["dictionary_id"], result["request_id"], len(texts),
+                                   defaults_count=count) is None
+    for shift in (1, 10):
+        mutant = deepcopy(result)
+        for unit in mutant["reading"]["units"]:
+            unit["sentence"] += shift
+        for occurrence in mutant["reading"]["sense_map"]:
+            occurrence["sentence"] += shift
+        assert "request's preamble" in route._response_problem(
+            mutant, result["dictionary_id"], result["request_id"], len(texts), defaults_count=count)
+
+
+def test_uncovered_open_fence_cannot_be_forged_as_admitted():
+    result = route.read_fences(Environment(environment()), S16, [PACK], fence_ids=["u1"],
+                               reading_set_units=["u1"])
+    assert route._response_problem(result, result["dictionary_id"], result["request_id"], 1,
+                                   fence_ids=["u1"], reading_set_units=["u1"]) is None
+    assert "no reading set" in route._response_problem(result, result["dictionary_id"], result["request_id"], 1,
+                                                       fence_ids=["u1"], reading_set_units=[])
 
 
 # --- front-matter defaults ----------------------------------------------------------------------------------
@@ -245,7 +290,9 @@ def test_one_fence_gets_the_answer_senses_check_gives(tmp_path, text):
         if reading["status"] == "one":
             expected = ("formula", reading["units"][0]["formula"])
         elif reading["status"] == "open":
-            expected = ("error", reading["units"][0]["text"])
+            refused = route.read_fences(Environment(environment()), [text], [PACK], fence_ids=["u1"],
+                                        reading_set_units=[])["reading"]
+            expected = ("error", refused["text"])
         else:
             expected = ("error", reading.get("text", reading.get("code")))
     try:
@@ -262,7 +309,8 @@ def test_one_fence_gets_the_answer_senses_check_gives(tmp_path, text):
 
 def _genuine(texts, defaults=None):
     env = Environment(environment())
-    result = route.read_fences(env, texts, [PACK], defaults=defaults)
+    result = route.read_fences(env, texts, [PACK], defaults=defaults,
+                               reading_set_units=list(map(str, range(len(texts)))))
     return result
 
 
