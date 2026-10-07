@@ -1,0 +1,38 @@
+{
+  "wording": [
+    {
+      "base": "UnsupportedProfile: alternatives@0 with norm-defaults@0 is not implemented",
+      "head": "UnsupportedProfile: Unsupported profile norm-defaults@0"
+    }
+  ],
+  "order": [],
+  "verdict": [],
+  "availability": [],
+  "unavailable": [
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261004T1800Z:usecases/claude-constitution-pilot/run-20261004T1800Z/readings/s1.ve.md",
+      "op": "document_check",
+      "reason": "The historical readings document reached the recorder's 600-second limit on both base and head. It remains unavailable under both versions."
+    }
+  ],
+  "outside_corpus": [
+    {
+      "entrypoint": "Environment construction with alternatives@0 and norm-defaults@0",
+      "class": "wording",
+      "test": "tests/test_asimov_laws.py::test_permission_default_stays_allow_until_norm_defaults_combines_with_alternatives",
+      "base": {"code": "UnsupportedProfile", "message": "UnsupportedProfile: alternatives@0 with norm-defaults@0 is not implemented"},
+      "head": {"code": "UnsupportedProfile", "message": "UnsupportedProfile: Unsupported profile norm-defaults@0"},
+      "dri": {"owner": "DRI", "status": "pending", "reason": "This direct construction was outside the recorded A/B corpora; no signature is on record."}
+    },
+    {
+      "entrypoint": "Direct risk route on DF-12 NBSP act phrase",
+      "class": "verdict",
+      "test": "tests/test_lean_first_triage.py::test_df12_risk_route_rejects_an_nbsp_act_phrase",
+      "base": {"code": "ok", "message": ""},
+      "head": {"code": "InvalidInput", "message": "W6 environment does not round-trip to its canonical declaration"},
+      "dri": {"owner": "DRI", "status": "pending", "reason": "The direct route accepted on the base and rejects on the head; it was outside the recorded A/B corpora and has no DRI signature on record."}
+    }
+  ]
+}

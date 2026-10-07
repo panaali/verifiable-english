@@ -408,5 +408,5 @@ def test_an_open_answer_is_found(tmp_path):
 def test_the_delta_states_the_corpus_it_ran():
     import re
     delta = (ROOT / "docs/lean-first/b1/DELTA.md").read_text()
-    stated = re.search(r"`tests/data/route-cases\.jsonl`, (\d[\d,]*) cases", delta)
+    stated = re.search(r"current\s+merged corpus has (\d[\d,]*) cases", delta)
     assert stated and int(stated.group(1).replace(",", "")) == len(CASES.read_text().splitlines())
