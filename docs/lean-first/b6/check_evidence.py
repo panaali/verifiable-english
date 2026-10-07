@@ -24,6 +24,9 @@ def check_gate(text):
     gate = read("full-gate.json")
     counts = gate["counts"]
     assert gate["status"] == "passed" and gate["dirty"] is False and counts["failed"] == 0, gate["status"]
+    assert counts["selected"] == sum(c["tests"] for c in gate["chunks"]) == counts["collected"] - counts["deselected"]
+    assert counts["passed"] + counts["skipped"] == counts["selected"] and len(gate["skips"]) == counts["skipped"]
+    assert sum(c["files"] for c in gate["chunks"]) == 265
     assert f"Commit `{gate['commit_sha'][:8]}`" in text
     assert f"{counts['passed']:,} passed, {counts['skipped']} skipped, 0 failed" in text
     assert f"Rust {counts['rust_passed']} passed" in text
