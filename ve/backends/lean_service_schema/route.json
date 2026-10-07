@@ -35,9 +35,10 @@
         "background": {"$ref": "common.json#/$defs/nat"},
         "id": {"type": "string", "x-equals": "/id"},
         "status": {"const": "ok"},
+        "steps": {"$ref": "common.json#/$defs/nat"},
         "valid": {"type": "boolean"}
       },
-      "required": ["id", "status", "valid", "background"],
+      "required": ["id", "status", "valid", "background", "steps"],
       "type": "object"
     },
     "countermodel": {

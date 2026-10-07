@@ -132,7 +132,7 @@ def runMode : Mode → Json → Json
   | .model, j => Standalone.reported Standalone.modelCase j
   | .check, j => Standalone.reported Standalone.checkCase j
   | .identity, j => Standalone.reported Standalone.identityCase j
-  | .parse, j => Standalone.reported Standalone.parseCase j
+  | .parse, j => Standalone.reportedParse j
   | .graph, j => Standalone.reported Family.graphMode j
   | .readings, j => Standalone.reported Family.readingsMode j
   | .bundle, j => Standalone.reported FamilyBundle.bundleCase j
@@ -168,9 +168,9 @@ does it. It is set beside the runner's result in the bound entry (`bound`), so n
 and no runner row changes. -/
 
 /-- The public diagnostic codes a rejection can carry (`ve/errors.py`). A runner prefix that
-is not one of them (`DependencyCycle`, `ShadowedVariable`, ...) is `InvalidInput`. -/
+is not one of them (`DependencyCycle`, ...) is `InvalidInput`. -/
 def rejectionCodes : List String := ["InvalidInput", "SyntaxError", "UnknownSymbol",
-  "DuplicateDeclaration", "UnboundVariable", "TypeMismatch", "InvalidModel", "UnsupportedProfile",
+  "DuplicateDeclaration", "UnboundVariable", "ShadowedVariable", "TypeMismatch", "InvalidModel", "UnsupportedProfile",
   "ResourceLimit", "AdmissionError", "CheckerUnavailable"]
 
 /-- The code of a rejection message: `InvalidModel` when it names a generator
@@ -675,7 +675,7 @@ theorem runMode_check (j : Json) :
 theorem runMode_identity (j : Json) :
     runMode .identity j = Standalone.reported Standalone.identityCase j := rfl
 theorem runMode_parse (j : Json) :
-    runMode .parse j = Standalone.reported Standalone.parseCase j := rfl
+    runMode .parse j = Standalone.reportedParse j := rfl
 theorem runMode_graph (j : Json) :
     runMode .graph j = Standalone.reported Family.graphMode j := rfl
 theorem runMode_readings (j : Json) :
