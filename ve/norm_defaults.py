@@ -9,10 +9,10 @@ from __future__ import annotations
 import copy
 from itertools import product
 
-from .ast import Not, _Decoder, formula_from_data
+from .ast import Binary, Not, Unary, Var, _Decoder, formula_from_data, formula_to_data
 from .environment import Environment
 from .errors import CheckerUnavailable, VEError
-from .norms import NormDocument, _bind
+from .norms import Norm, NormDocument, _bind
 
 PROFILE = "norm-defaults@0"
 
@@ -22,7 +22,7 @@ def unsaid_name(predicate):
 
 
 def fill_name(predicate):
-    return f"unsaid--{predicate}"
+    return "unsaid--" + predicate.replace("_", "-")
 
 
 def fill_description(predicate):
@@ -41,12 +41,35 @@ def _placeholder(data):
 
 
 class _Filled:
-    def __init__(self, env, row, fill_premises):
+    def __init__(self, env, row, fill_premises, author_rules):
         self.env = env
         self.order = tuple(row["order"])
         self.fill_premises = fill_premises
         self._premises = tuple((item["label"], formula_from_data(env, item["ast"], _generated=True))
                                for item in row["premises"])
+        # A W1 display view of Lean's accepted fill. The generated names and sorts
+        # come from the elaboration row; no verdict is taken from this view.
+        generated = []
+        unspec = {item["name"].removeprefix("unsaid__"): item for item in row["unsaid"]}
+        for predicate, item in unspec.items():
+            terms = tuple(Var(len(item["sorts"]) - i - 1) for i in range(len(item["sorts"])))
+            guard = Unary(item["name"], terms[0]) if len(terms) == 1 else Binary(item["name"], *terms)
+            generated.append(Norm(fill_name(predicate), predicate, True, guard))
+        roots = [Norm(rule.name, rule.predicate, rule.sign, rule.guard, rule.unless,
+                      (fill_name(rule.predicate),) if rule.predicate in unspec and not rule.over else rule.over)
+                 for rule in author_rules]
+        self._display = NormDocument(env, [*roots, *generated])
+        self.rules = self._display.rules
+        if tuple(self._display.order) != self.order or any(
+                formula_to_data(env, self._display._elaborate_python(item["label"].removeprefix("layer:norms:")),
+                                _generated=True) != item["ast"] for item in row["premises"]):
+            raise CheckerUnavailable("CheckerUnavailable: norm-defaults display selection differs from Lean")
+
+    def selection(self, predicate):
+        return self._display.selection(predicate)
+
+    def _expand(self, formula, predicate):
+        return self._display._expand(formula, predicate)
 
     def premises(self):
         return self._premises
@@ -78,7 +101,7 @@ class UnspecifiedDocument:
             self.author = NormDocument(self.env, units)
             self.fill_premises = tuple((label, formula_from_data(filled_env, item["ast"], _generated=True))
                                        for label, item in zip(row["fill_labels"], row["fill"], strict=True))
-            self.filled = _Filled(filled_env, row, self.fill_premises)
+            self.filled = _Filled(filled_env, row, self.fill_premises, self.author.rules)
         except Exception as exc:
             raise CheckerUnavailable("CheckerUnavailable: Lean accepted norm defaults that Python could not construct") from exc
         if filled_env.environment_id != row["filled_environment_id"] or self.env.environment_id != row["environment_id"]:
@@ -87,6 +110,47 @@ class UnspecifiedDocument:
         self.fill_hash = row["fill_hash"]
         self.document_hash = row["document_hash"]
         self.elaboration = row
+
+    def situation_environment(self):
+        """The source situation vocabulary, without Lean's filling tables."""
+        raw = self.filled.base_environment().to_dict()
+        raw["vocabulary"]["predicates"] = {
+            name: decl for name, decl in raw["vocabulary"]["predicates"].items()
+            if not name.startswith("unsaid__")}
+        return Environment(raw)
+
+    def _raw_base(self):
+        return self.filled.base_environment()
+
+    def with_filling(self, situation, filling, *, checked=True):
+        from .model import FiniteModel
+        raw = situation.to_dict() if hasattr(situation, "to_dict") else copy.deepcopy(situation)
+        raw["relations"] = {**raw["relations"], **{
+            name: [list(values) for values in sorted(rows)] for name, rows in filling.items()}}
+        return FiniteModel.from_dict(self._raw_base(), raw)
+
+    def pairs(self):
+        return tuple((required, decl.regulated.permission, None)
+                     for required, decl in self.env.predicates.items()
+                     if decl.regulated is not None and decl.regulated.permission is not None)
+
+    def canonical_filling(self, situation):
+        permissions = {permission for _, permission, _ in self.pairs()}
+        return {item["name"]: frozenset(product(*(situation.domains[sort] for sort in item["sorts"])))
+                if item["name"].removeprefix("unsaid__") in permissions else frozenset()
+                for item in self.elaboration["unsaid"]}
+
+    def reached(self, predicate):
+        item = next(item for item in self.elaboration["reached"] if item["predicate"] == predicate)
+        return _Decoder().decode(item["ast"])
+
+    def value(self, situation, filling, predicate, values):
+        from .evaluate import _Evaluator
+        model = self.with_filling(situation, filling)
+        formula = self.filled._display.outcome(predicate, base=True)
+        sorts = self.env.predicates[predicate].arguments
+        return _Evaluator(self._raw_base(), model, 1_000_000, trace=False).formula(
+            formula, tuple(zip(reversed(sorts), reversed(values))))[0]
 
 
 def _propose_report_evidence(document, predicates, *, search_domain_size=2, prove=True,

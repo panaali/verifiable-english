@@ -7,6 +7,7 @@ results mark finite-model complete (M8); a40 to a42 leave facts open, so their
 situation is not one finite model and they are outside this check.
 """
 import json
+import importlib.util
 import sys
 from pathlib import Path
 
@@ -171,5 +172,15 @@ def test_gaps_breaches_and_lean_replay():
     assert UNSPECIFIED["reporting_breaches"]["settled"] == KEY["obligation"]["breach_neednot"]
     assert UNSPECIFIED["reporting_breaches"]["undecided"] == [a for a in APPROVED_UNREPORTED if a in COMPLETE]
     lean = UNSPECIFIED["lean"]
-    # 39 records x 2 points, the a10 conflict witness and the two gap witnesses.
-    assert lean == {"elaborate": "regenerated", "cases": 81, "agree": 81, "mismatches": []}
+    # Statuses, every finite filling and conflict target, and the gap report.
+    assert lean == {"elaborate": "regenerated", "cases": 426, "agree": 426, "mismatches": []}
+
+
+def test_unspecified_rerun_is_computed_from_lean_rows():
+    spec = importlib.util.spec_from_file_location("agent_policy_unspecified", HERE / "unspecified.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    actual = module.run()
+    for key in ("actions", "changes", "conflict", "gaps", "inherits_from", "reporting_breaches", "lean"):
+        assert actual[key] == UNSPECIFIED[key]
+    assert module.nd.__name__ == "ve.norm_defaults"
