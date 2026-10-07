@@ -13,7 +13,7 @@ import json
 from .ast import (And, Binary, Const, Eq, Exists, Forall, Implies, Not, Or, Top, Bottom, Unary, Var,
                   _Checker, _Decoder, _to_data)
 from .background import background, dependency_order
-from .environment import Environment, valid_identifier
+from .environment import Environment, valid_identifier, validate_authored_source
 from .errors import DuplicateDeclaration, ResourceLimit, UnknownSymbol, UnsupportedProfile, VEError
 from .limits import MAX_DEPTH, MAX_IDENTIFIER_BYTES, MAX_NODES, MAX_PREDICATES
 from .norms import _NAME, Norm, NormDocument, _all, _any, _atom, _bind
@@ -551,6 +551,8 @@ class SoftEnvironment(Environment):
             raise
 
     def _init_soft(self, data, *, generated=False):
+        if not generated:
+            validate_authored_source(data)
         ctx, _, above = check_soft_source(data, generated=generated, layers=self.LAYERS)
         raw = deepcopy(data)
         vocab = raw['vocabulary']

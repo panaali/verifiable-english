@@ -29,6 +29,12 @@ RESERVED = frozenset("true false is equals not and or if then for every there ex
 _IDENTIFIER = re.compile(r"[a-z][a-z0-9_]*\Z", re.ASCII)
 
 
+def validate_authored_source(data):
+    """Ask Lean to validate an authored statement-layer source before projection."""
+    from .backends.relay import decide
+    decide("environment", [{"id": "environment", "environment": data}])
+
+
 def listed_profiles(data) -> tuple[str, ...]:
     """The profiles named by environment JSON that may not be valid yet: `()`
     unless `profiles` is an array of strings. Routing that reads the profiles

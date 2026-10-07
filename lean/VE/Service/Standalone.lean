@@ -164,6 +164,58 @@ def environmentIdOf (profiles : List String) (environment : Json) : Except Strin
 which every family decoder checks) lacks: `no`, a definitions keyword. -/
 def pythonReserved : List String := ["no"]
 
+private def naryDefined (environment : Json) : List String :=
+  (VE.Core.Layers.predicatesOf environment).filterMap fun (p, entry) =>
+    if VE.Core.Layers.arity entry > 2 && (entry.getObjVal? "defined").isOk then some p else none
+
+private def usedPredicates : VE.Core.Formula → List String
+  | .top | .bottom | .eq _ _ => []
+  | .unary p _ | .binary p _ _ | .atom p _ | .reachNamed _ p _ _ => [p]
+  | .not a | .all _ a | .ex _ a => usedPredicates a
+  | .and a b | .or a b | .implies a b => usedPredicates a ++ usedPredicates b
+  | .reachBody _ _ a _ _ => usedPredicates a
+
+private def visitDefinition (deps : List (String × List String)) (name : String)
+    (stack : List String) (fuel : Nat) : Except String Unit := do
+  if stack.contains name then throw s!"DependencyCycle: {name}"
+  match fuel with
+  | 0 => throw s!"DependencyCycle: {name}"
+  | n + 1 =>
+    for p in (VE.Bridge.lookup deps name).getD [] do
+      if (VE.Bridge.lookup deps p).isSome then
+        visitDefinition deps p (name :: stack) n
+
+/-- Check n-ary definition bodies in the core family before Python constructs
+their retained batch-14 tables. Unary and binary bodies use `decodeLayers`. -/
+private def checkNaryDefinitions (environment : Json) : Except String Unit := do
+  let core ← VE.Core.Layers.coreEnvironment environment
+  let v ← VE.Core.Bridge.decodeEnvironment core
+  let predicates ← VE.Bridge.fields (← (← environment.getObjVal? "vocabulary").getObjVal? "predicates")
+  let mut deps : List (String × List String) := []
+  for (p, entry) in predicates do
+    if VE.Core.Layers.arity entry > 2 then
+      if let .ok payload := entry.getObjVal? "defined" then
+        VE.Bridge.exactFields payload ["arguments", "body"]
+        let args ← VE.Bridge.strings (← payload.getObjVal? "arguments")
+        unless args == (← VE.Bridge.strings (← entry.getObjVal? "arguments")) do
+          throw "definition argument sorts differ"
+        let body ← VE.Core.Bridge.decodeFormula 64 (← payload.getObjVal? "body")
+        unless body.check v.environment args.reverse do
+          throw "the body is not a typed formula over the symbols below it"
+        deps := (p, usedPredicates body) :: deps
+  for (p, _) in deps do
+    visitDefinition deps p [] (deps.length + 1)
+
+private def checkDataFlagFields (profiles : List String)
+    (predicates : List (String × Json)) : Except String Unit := do
+  for (_, entry) in predicates do
+    if !profiles.contains "data@0" &&
+        ((entry.getObjVal? "functional").isOk || (entry.getObjVal? "total").isOk) then
+      throw "UnsupportedProfile: Predicate flags require data@0"
+    for field in ["functional", "total"] do
+      if let .ok value := entry.getObjVal? field then
+        if !value.getBool?.isOk then throw s!"{field} must be a Boolean"
+
 /-- With `typing`, the core family's decoder, which has no `defined` or data
 flag fields, reads each predicate by its argument sorts alone, and a `reports@0`
 environment is read without its statement-layer profiles (`typingReduced`): typing
@@ -177,6 +229,7 @@ def validated (environment : Json) (typing : Bool := false) : Except String Vali
     for (name, _) in ← VE.Bridge.fields (← e.vocabulary.getObjVal? kind) do
       if pythonReserved.contains name then throw s!"invalid or reserved declaration: {name}"
   let predicates ← VE.Bridge.fields (← e.vocabulary.getObjVal? "predicates")
+  checkDataFlagFields e.profiles predicates
   let mut v : Validated := { envelope := e, decodable := environment }
   if e.profiles.contains "norms@0" &&
       predicates.any (fun (_, entry) => (entry.getObjVal? "regulated").isOk) then
@@ -191,9 +244,8 @@ def validated (environment : Json) (typing : Bool := false) : Except String Vali
     -- projection by the FOL route's decoders, as the core route does. An n-ary
     -- defined predicate is outside the projection, so nothing here would check
     -- its body or compute its table.
-    if (VE.Core.Layers.predicatesOf v.decodable).any (fun (_, entry) =>
-        (entry.getObjVal? "defined").isOk && VE.Core.Layers.arity entry > 2) then
-      throw (VE.Route.Gate.unsupported "n-ary definitions on the core family are deferred")
+    if !(naryDefined v.decodable).isEmpty then
+      checkNaryDefinitions v.decodable
     let _ ← VE.Core.Layers.decodeLayers e.profiles v.decodable
     let layered := v.decodable
     v ← stripPredicates v.envelope v.decodable VE.Core.Layers.layerFields
@@ -208,6 +260,10 @@ def validatedEnvironment (environment : Json) : Except String VE.Route.Gate.Enve
 statement layer validates its own declarations; the core decoder handles the
 remaining families. `todayGate` is the single gate for the full registry. -/
 def validatedComposedEnvironment (environment : Json) : Except String VE.Route.Gate.Envelope := do
+  let rawProfiles := (VE.Bridge.strings (environment.getObjValD "profiles")).toOption.getD []
+  if rawProfiles.contains "norm-defaults@0" && !rawProfiles.contains "norms@0" then
+    let _ ← VE.Compose.todayGate rawProfiles
+    pure ()
   let named := (VE.Route.Gate.profilesOf environment).toOption.getD []
   let empty := Json.arr #[]
   if named.contains "risk@0" || (environment.getObjVal? "risk").isOk then
@@ -240,8 +296,8 @@ def validatedComposedEnvironment (environment : Json) : Except String VE.Route.G
     match VE.SoftNorms.Phases.checkSource frame empty with
     | .ok _ => pure ()
     | .error f => throw f.message
-  else if named.contains "norm-defaults@0" then
-    let _ ← VE.NormDefaults.Wire.decodeSourceU environment empty
+  else if named.contains "norms@0" then
+    let _ ← VE.NormDefaults.Wire.decodeEnvironmentU environment
     pure ()
   else
     let _ ← validated environment
@@ -300,10 +356,20 @@ def isLegacy (environment : Json) : Bool :=
 
 def decodeLegacy (environment : Json) : Except String Legacy := do
   let language ← VE.Bridge.stringField environment "language"
-  if language == "ve.core@0" then pure (.v0 (← VE.Bridge.decodeEnvironment environment))
+  if language == "ve.core@0" then
+    match VE.Bridge.decodeEnvironment environment with
+    | .ok v => pure (.v0 v)
+    | .error message =>
+      if message.startsWith "invalid signature:" then
+        throw "UnknownSymbol: Undeclared predicate argument sort"
+      throw message
   else if language == "ve.core@0.1" then
     if environment.getObjValD "profiles" == toJson ["order@0", "relational-fol@0"] then
-      pure (.order (← VE.Order.Wire.decodeEnvironment environment))
+      match VE.Order.Wire.decodeEnvironment environment with
+      | .ok v => pure (.order v)
+      | .error message => throw s!"UnsupportedProfile: {message}"
+    else if (VE.Route.Gate.profilesOf environment).toOption.getD [] |>.contains "order@0" then
+      throw "UnsupportedProfile: unsupported order environment version/profiles"
     else pure (.closure (← VE.Closure.Bridge.decodeEnvironment environment))
   else throw "UnsupportedProfile: Unsupported language"
 
@@ -375,15 +441,43 @@ def checkClaimed (j : Json) (environmentId modelId : String) : Except String Uni
     unless (← VE.Bridge.stringField claimed "model_id") == modelId do
       throw "InvalidModel: model identity does not match its contents"
 
+private def modelError (message : String) : String :=
+  if message.startsWith "ResourceLimit:" || message.startsWith "InvalidModel" then message
+  else s!"InvalidModel: {message}"
+
+private def longModelAtom : Json → Bool
+  | .str value => value.utf8ByteSize > 64
+  | _ => false
+
+private def longModelString (model : Json) : Bool :=
+  let domains := (VE.Bridge.fields (model.getObjValD "domains")).toOption.getD []
+  let constants := (VE.Bridge.fields (model.getObjValD "constants")).toOption.getD []
+  let relations := (VE.Bridge.fields (model.getObjValD "relations")).toOption.getD []
+  domains.any (fun (_, values) => match values with
+      | .arr items => items.toList.any longModelAtom
+      | _ => false) ||
+    constants.any (fun (_, value) => longModelAtom value) ||
+    relations.any (fun (_, tuples) => match tuples with
+      | .arr rows => rows.toList.any (fun row => match row with
+          | .arr items => items.toList.any longModelAtom
+          | _ => false)
+      | _ => false)
+
 def legacyModelCase (id : String) (environment model : Json) (j : Json) : Except String Json := do
   let l ← decodeLegacy environment
-  match l with
+  let decoded : Except String Unit := do match l with
   | .v0 v | .closure v =>
     let _ ← VE.Bridge.decodeModel v model
     pure ()
   | .order v =>
     let _ ← VE.Order.Wire.decodeValidModel v model
     pure ()
+  match decoded with
+  | .ok () => pure ()
+  | .error message =>
+    if message == "invalid local identifier" && longModelString model then
+      throw "ResourceLimit: local ID exceeds 64 ASCII bytes"
+    throw (modelError message)
   let environmentId ← legacyEnvironmentId l environment
   let modelId ← VE.CertificateWire.digest s!"ve-model-{l.version}\n"
     (Json.mkObj [("environment_id", .str environmentId),
@@ -405,7 +499,7 @@ def modelCase (j : Json) : Except String Json := do
     let v ← VE.Core.Bridge.decodeEnvironment checked.decodable
     match checked.layers with
     | none =>
-      let _ ← VE.Core.Wire.decodeModel v model
+      let _ ← (VE.Core.Wire.decodeModel v model).mapError modelError
       pure ()
     | some layered =>
       -- As `Core.Layers.run`: the FOL projection of the model with its flags
@@ -416,7 +510,14 @@ def modelCase (j : Json) : Except String Json := do
       let tables := (VE.Definitions.names rv.definitions).map fun p =>
         (p, VE.Core.Layers.tableJson (M.relations p))
       let relations ← VE.Bridge.fields (← model.getObjVal? "relations")
-      let _ ← VE.Core.Wire.decodeModel v (model.setObjVal! "relations" (Json.mkObj (relations ++ tables)))
+      let derived := naryDefined layered
+      if relations.any (fun (p, _) => derived.contains p) then
+        throw "InvalidModel: supplied table for a defined predicate"
+      let core ← VE.Core.Layers.withPredicates checked.decodable
+        ((VE.Core.Layers.predicatesOf checked.decodable).filter (fun (p, _) => !derived.contains p))
+      let modelVocabulary ← if derived.isEmpty then pure v else VE.Core.Bridge.decodeEnvironment core
+      let _ ← (VE.Core.Wire.decodeModel modelVocabulary
+        (model.setObjVal! "relations" (Json.mkObj (relations ++ tables)))).mapError modelError
       pure ()
   | .order =>
     let v ← VE.Route.Wire.decodeOrderVocabulary e.vocabulary

@@ -52,7 +52,7 @@ class FiniteModel:
         # duplicate tracked for batch 15; witnesses are replayed by Lean.
         if (any(getattr(env, slot, ()) for slot in
                 ("soft_premises", "rights_premises", "fill_premises")) or
-                any(name.startswith(("soft__", "rights__")) for name in env.predicates)):
+                any(name.startswith(("soft__", "rights__", "reports__")) for name in env.predicates)):
             built = cls._decode(env, wire, _defer_model_id=True)
             from .wire import digest
             model_id = digest(f"ve-model-{env.identity_version}\n", {
