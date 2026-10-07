@@ -134,6 +134,17 @@ def elaborateChoices : List (String × Shape) := [
   ("choices", .anyOf [n [arr, .items (ref "#/$defs/choice")], constS "over"]),
   ("choices_checked", .anyOf [ref "common.json#/$defs/nat", n [str, .pattern (Re.prefixes ["over "])]])]
 
+def generatedPredicates : Shape :=
+  n [
+    arr,
+    .items (n [
+      obj,
+      .required ["name", "layer", "key"],
+      closed [
+        ("name", str),
+        ("layer", enumS ["readings", "soft", "rights"]),
+        ("key", .anyOf [.type ["null"], ref "#/$defs/key"])]])]
+
 def elaborateSuperposed : List (String × Shape) := [
   ("vocabulary", n [
     obj,
@@ -185,9 +196,10 @@ def elaborate : Shape :=
     "Readings.Run.runElaborate (Route.elaborateFields): the route of 1.1; past its first three rows the finding of 1.8, the stale narrowings, the compatible choices (or over the limit) and the number checked; on the superposed route also the choice vocabulary, the units of sup D, the labelled slot, the name map and the sizes. The units and the name map are compared whole with Python's regeneration (ve/readings_route.py elaborate)."
     [
       .anyOf [
-        elaborateRoute ["w2", "pending", "abstention"] [],
-        elaborateRoute ["enumerated"] elaborateChoices,
-        elaborateRoute ["superposed"] (elaborateChoices ++ elaborateSuperposed)]]
+        elaborateRoute ["w2", "pending", "abstention"] [("generated_predicates", generatedPredicates)],
+        elaborateRoute ["enumerated"] (("generated_predicates", generatedPredicates) :: elaborateChoices),
+        elaborateRoute ["superposed"] (("generated_predicates", generatedPredicates) ::
+          (elaborateChoices ++ elaborateSuperposed))]]
 
 def conflict : Shape :=
   c

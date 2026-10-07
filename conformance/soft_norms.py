@@ -16,7 +16,7 @@ from ve.errors import VEError
 from ve.evaluate import evaluate
 from ve.model import FiniteModel
 from ve.softnorms import SoftEnvironment, SoftNormDocument, load_soft_document
-from ve.soft_route import check_regenerated
+from conformance.soft_oracle import check_regenerated
 from tests import lean_routes
 from tests.test_soft_norms_lean import env, norm, should, ranks
 from conformance.wire_contract import choose_combinations, first_fault

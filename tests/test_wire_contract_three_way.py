@@ -16,9 +16,9 @@ from tests.test_soft_norms_lean import elaborate, env, should
 from ve.admission import admit_document
 from ve.errors import VEError
 from ve.softnorms import load_soft_document
-from ve.softnorms_contract import REGISTRY
+from conformance.softnorms_contract import REGISTRY
 from ve.wire import canonical_json
-from ve.wire_contract.engine import CLEAN, Deferred, Fault, load, run
+from conformance.wire_contract_engine import CLEAN, Deferred, Fault, load, run
 
 from tests.test_wire_contract_lean import LEAN
 
@@ -306,7 +306,7 @@ def test_forms_corpus_spec_python_lean():
 
 def _lean_outcome(unit, root):
     """`ve_diagnose`'s answer as an engine outcome, for the overlay's `lean` argument (2.8)."""
-    from ve.wire_contract.engine import Fault as EngineFault
+    from conformance.wire_contract_engine import Fault as EngineFault
     [row] = _lean(unit, [root], "corpus")
     return CLEAN if row["outcome"] == "clean" else EngineFault(row["diagnostic"])
 
@@ -315,7 +315,7 @@ def test_overlay_e40_e41_lean_answers_for_a_python_deferral():
     """Spec 8.1, E40 and E41 (wire review, Fable B6): when Python defers and Lean answers, the overlay
     reports Lean's record, or the residual record when Lean's answer is clean."""
     from ve.errors import VEError
-    from ve.wire_contract.engine import overlay
+    from conformance.wire_contract_engine import overlay
     contract = CONTRACTS["defer@0"]
     legacy = VEError("legacy says no")
     e34, e36 = {"v": 1, "w": "x"}, {"v": 1, "w": 2}
@@ -337,7 +337,7 @@ def test_engine_corpus_covers_every_form():
     type form matches and does not, and every renderer renders a value and an absent one. Measured by
     instrumenting the Python engine; the same cases run in Lean in the tests above."""
     from collections import defaultdict
-    import ve.wire_contract.engine as engine
+    import conformance.wire_contract_engine as engine
     from tests.test_wire_contract_corpus import CASES
     seen = defaultdict(set)
     fails, guard, type_of, render = engine._fails, engine._guard, engine._type, engine._render

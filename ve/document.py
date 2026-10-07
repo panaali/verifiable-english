@@ -143,7 +143,7 @@ def _quantity_content(env, unit, content, fences):
     return canonical, quantity_meaning_id(env, canonical)
 
 
-def _content(env, unit, fences, *, formula_env=None, rights=False):
+def _content(env, unit, fences, *, formula_env=None, rights=False, rule_result=None):
     formula_env = env if formula_env is None else formula_env
     content = unit.get("content")
     if content is None:
@@ -153,7 +153,7 @@ def _content(env, unit, fences, *, formula_env=None, rights=False):
         # 3.2: a norm unit outside rights may carry `narrows:<line>` citations,
         # which the rights document validates; the meaning binds them too.
         canonical, _ = _content(env, {**unit, "content": {"norm": content["norm"]}}, fences,
-                                formula_env=formula_env)
+                                formula_env=formula_env, rule_result=rule_result)
         from .readings import rights_meaning_id
         canonical = {**canonical, "cites": content["cites"]}
         return canonical, rights_meaning_id(env, canonical)
@@ -167,8 +167,10 @@ def _content(env, unit, fences, *, formula_env=None, rights=False):
         return content, None  # The reports decoder binds its identity after all declarations.
     if "norm" in content:
         if "soft-norms@0" in env.profiles:
-            from .softnorms import decode_rule, soft_digest
-            canonical = decode_rule(env, content).to_dict()
+            from .softnorms import batch_rule, decode_rule, soft_digest
+            rule = (batch_rule(env, content, rule_result) if rule_result is not None
+                    else decode_rule(env, content))
+            canonical = rule.to_dict()
             mid = soft_digest(f"ve-meaning-{env.identity_version}\n",
                               {"environment_id": env.environment_id, "ast": canonical})
             return canonical, mid
@@ -378,7 +380,8 @@ def _load_document(raw: bytes, path: str | Path, lean):
         from .softnorms import check_soft_source
         if type(meta.get("units")) is list:
             # The environment and the norm units are one soft source (8).
-            check_soft_source(environment_data, _soft_contents(meta["units"], attached))
+            check_soft_source(environment_data, _soft_contents(meta["units"], attached),
+                              layers=frozenset({"readings@1"} if "readings@1" in profiles else ()))
     env = _environment(environment_data)
     if "reports@0" not in env.profiles and set(meta) & {"contexts", "assessments", "bridges", "scoped"}:
         raise VEError("unknown document metadata")
@@ -406,6 +409,22 @@ def _load_document(raw: bytes, path: str | Path, lean):
         soft_document = SoftNormDocument(env, _soft_contents(units, attached))
         formula_env = soft_document.extended_env
         open_names = set(open_names) | soft_document.extended_env.decision_names
+    rule_results = {}
+    if soft_enabled:
+        from .softnorms import check_rule_batch
+        authored = []
+        try:
+            for raw, _ in _parts(units):
+                content = raw.get("content")
+                if type(content) is dict and "norm" in content:
+                    authored.append((raw, {"norm": content["norm"]}))
+        except VEError:
+            # The ordinary unit loop below reports this structural fault in
+            # source order, after any earlier per-rule Lean outcome.
+            pass
+        if authored:
+            outcomes = check_rule_batch(formula_env, (content for _, content in authored))
+            rule_results = {id(raw): outcome for (raw, _), outcome in zip(authored, outcomes, strict=True)}
     compiled = []
     unit_ids = set()
     cursor = 0
@@ -443,7 +462,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
         content_env = (env if rights_enabled and kind in ("right", "right_lines", "limitation", "bar")
                        else formula_env)
         content, mid = (_content(content_env, unit, fences, formula_env=formula_env,
-                                 rights=rights_enabled)
+                                 rights=rights_enabled, rule_result=rule_results.get(id(unit)))
                         if unit.get("content") is not None else (None, None))
         is_norm = type(content) is dict and "norm" in content
         if is_norm:
@@ -809,22 +828,11 @@ def coverage(doc, scoped=None, rights_report=None):
         residual.update(row["coverage"]["residual"])
     soft = doc.get("soft_document")
     if soft is not None:
-        decisions = soft.extended_env.decision_names
-        open_pairs = [
-            f"soft:coherence:{left.core.name},{right.core.name}"
-            for left, right in soft.collisions
-            if (left.rank is None or right.rank is None or
-                (left.rank not in soft.env.ranks_above[right.rank] and
-                 right.rank not in soft.env.ranks_above[left.rank]))]
-        residual["default_exceptions"] = sum(r.mode == "default" for r in soft.rules)
-        residual["instruction_switches"] = sum(len(r.alterable) for r in soft.rules)
-        residual["holistic_overrides"] = sum(name.startswith("soft__outweighs__") for name in decisions)
-        residual["weighing_points"] = len(open_pairs)
-        by_decider = {}
-        for rule in soft.rules:
-            if rule.mode == "default":
-                who = (rule.exception or {}).get("decided_by") or soft.env.soft.get("exception_decider") or "unstated"
-                by_decider[who] = by_decider.get(who, 0) + 1
+        from .soft_route import elaborate_soft_document
+        soft_row = elaborate_soft_document(_lower_soft_document(doc) if "environment" in doc else soft)
+        residual.update(soft_row["soft_residual"])
+        by_decider = soft_row["default_exceptions_by_decider"]
+        open_pairs = soft_row["conditional_on"]
     rights = doc.get("rights_document")
     if rights is not None:
         residual["limitation_terms"] = len(rights.limitation_names) + len(rights.condition_names)
@@ -864,8 +872,7 @@ def coverage(doc, scoped=None, rights_report=None):
         gaps = defaults_lines["residual"]
         residual["gaps"] = len(gaps["gaps"])
         residual["ungrounded_defaults"] = gaps["ungrounded_defaults"]
-    soft_open = ("default_exceptions", "instruction_switches", "holistic_overrides", "weighing_points",
-                 "limitation_terms", "bar_terms")
+    rights_open = ("limitation_terms", "bar_terms")
     return {"source_bytes": len(source), "accounted_bytes": sum(kinds.values()),
             "coverage_percent": 100, "bytes_by_kind": kinds, "bytes_by_status": statuses,
             "unformalised_reasons": reasons,
@@ -876,10 +883,13 @@ def coverage(doc, scoped=None, rights_report=None):
                 "gaps": gaps["gaps"],
                 "findings": defaults_lines["findings"]}}
                if defaults_lines is not None else {}),
-            **({"soft_status": "OPEN" if any(residual.get(key) for key in soft_open) else "CHECKED",
+            **({"soft_status": "OPEN" if soft_row["soft_status"] == "OPEN" or
+                any(residual.get(key) for key in rights_open) else "CHECKED",
                 "default_exceptions_by_decider": by_decider,
-                "soft_residual_labels": [*sorted(soft.extended_env.decision_names), *open_pairs],
-                "soft_background_labels": [label for label, _ in soft.exception_premises]}
+                "soft_residual_labels": [*sorted(item["name"] for item in soft_row["decisions"]), *open_pairs],
+                "soft_background_labels": [item["label"] for item in soft_row["background"]
+                                           if item["generator"] == "soft" and
+                                           item["label"].startswith("soft:exception:")]}
                if soft is not None else {}),
             **({"rights_residual_labels": [
                 *[f"limitation {name} on {act}: {generated}; decider " +
@@ -1297,17 +1307,29 @@ def render_document(path):
             return claim
         return f"{claim} The source presents this as {kind_description(kind)}."
 
-    def candidate_rights(content):
+    def candidate_units(content):
         # A right candidate is checked alone over the document's source units
         # (validate_reading_sets), not in the base document: its line objects
         # and right name live only in that correlated document.
         if doc["rights_document"] is None or _rights_block(content) != "right":
             return None
+        return [{"source_units": sorted(u["id"] for u in doc["units"])}, content]
+
+    def candidate_rights(content):
+        # Its wording reads the rules alone, so the soft document is deferred (`SoftNormDocument`).
+        units = candidate_units(content)
+        if units is None:
+            return None
         from .rights import RightsDocument
-        return RightsDocument(doc["environment"], [
-            {"source_units": sorted(u["id"] for u in doc["units"])}, content])
+        return RightsDocument(doc["environment"], units, deferred=True)
 
     active_by_unit = {r["unit"]: r for r in active_reading_sets(doc["meta"].get("reading_sets", []))}
+    # Every right candidate's line rules in one Lean request per source, not one per candidate.
+    shown = [candidate_units(candidate["content"]) for u in doc["units"]
+             for candidate in active_by_unit.get(u["id"], {}).get("readings", ())]
+    if any(units is not None for units in shown):
+        from .rights import RightsDocument
+        RightsDocument.warm_rules(doc["environment"], [units for units in shown if units is not None])
     s1_wording = None
     if _content_bearing(doc):
         from .readings_route import Wording

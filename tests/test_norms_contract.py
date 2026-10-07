@@ -15,7 +15,7 @@ from ve.ast import _Decoder
 from ve.errors import UnsupportedProfile, VEError
 from ve.norms_contract import (OUTSIDE, REGISTRY, Refused, legacy_validation, norm_source, syntax_walk)
 from ve.wire import loads_json
-from ve.wire_contract.engine import CLEAN, Fault, load, run
+from conformance.wire_contract_engine import CLEAN, Fault, load, run
 
 ROOT = Path(__file__).resolve().parents[1]
 DIRECTORY = ROOT / "ve/wire_contract"
@@ -340,7 +340,7 @@ def test_adapter_builds_the_root_and_refuses_cases_outside_the_domain():
 def test_rule_name_class_is_the_validators():
     """T8, in Python: `rule_name` admits `a-b` and refuses `a_b`, `A` and a 65-byte name, as `_NAME` and the
     64-byte bound of `NormDocument` do."""
-    from ve.wire_contract.engine import _name
+    from conformance.wire_contract_engine import _name
     assert _name("a-b", NAMES["rule_name"]) and _name("a" * 64, NAMES["rule_name"])
     assert not any(_name(value, NAMES["rule_name"]) for value in ("a_b", "A", "a" * 65, "", "1a", "a-B"))
 
