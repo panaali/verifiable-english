@@ -47,6 +47,21 @@ def test_dri_signed_every_batch_12_delta_record():
     assert signoff.check() == []
 
 
+def test_quoted_sort_name_loss_remains_in_delta_until_signed():
+    """The recorded wording change cannot silently disappear from DRI review."""
+    delta = report.load("delta.json")
+    pairs = {(row["base"], row["head"]) for row in delta["wording"]}
+    for sort in ("absent", "unknown"):
+        assert (f"UnknownSymbol: Undeclared predicate argument sort: '{sort}'",
+                "UnknownSymbol: Undeclared predicate argument sort") in pairs
+    original, _ = signoff.required(delta)
+    changed = json.loads(json.dumps(delta))
+    changed["wording"] = [row for row in changed["wording"] if not (
+        row["base"].endswith("sort: 'absent'") and
+        row["head"] == "UnknownSymbol: Undeclared predicate argument sort")]
+    assert signoff.required(changed)[0] != original
+
+
 def test_delta_numbers_are_regenerated_from_evidence():
     text = (HERE / "DELTA.md").read_text()
     assert text.split(report.BEGIN, 1)[1].split(report.END, 1)[0] == report.render()
