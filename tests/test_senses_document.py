@@ -164,6 +164,72 @@ def test_shifted_genuine_sentence_numbers_are_rejected(texts, defaults):
             mutant, result["dictionary_id"], result["request_id"], len(texts), defaults_count=count)
 
 
+ODD_DEFAULT = ("Sentence {n} uses odd, which has two senses here, and only strange gives a reading of this sentence. "
+               'Add the default "odd": 1 to the front matter to say so.')
+
+
+@pytest.mark.parametrize("texts, n", [(S16, 1), (["Alice tells riddle.", *S16], 2), (S22, 1)])
+def test_open_fence_under_defaults_counts_fences_and_asks_for_a_default(tmp_path, texts, n):
+    """The rendered default lines are not the author's sentences, and a written line is then refused: the text
+    numbers the fence and asks for a default, and following its advice admits the document."""
+    with pytest.raises(VEError) as info:
+        load_document(write(tmp_path, texts, {"packs": ["fixtures@1"], "defaults": {"funny": 1}}, name="a.ve.md"))
+    assert info.value.message == ODD_DEFAULT.format(n=n)
+    assert info.value.diagnostic == {"unit": f"u{n}", "code": "Unresolved"}
+    advised = load_document(write(tmp_path, texts, {"packs": ["fixtures@1"], "defaults": {"funny": 1, "odd": 1}},
+                                  name="b.ve.md"))
+    assert units_of(advised)[f"u{n}"]["status"] == "CHECKED"
+    with pytest.raises(VEError, match="both in the front matter and as lines"):
+        load_document(write(tmp_path, [LINE_ODD, *texts], {"packs": ["fixtures@1"], "defaults": {"funny": 1}},
+                            name="c.ve.md"))
+
+
+@pytest.mark.parametrize("texts, defaults", [(S16, None), (S16, {"funny": 1}), (S22, None),
+                                             (["Alice tells riddle.", *S16], {"funny": 1}),
+                                             (["Riddle is funny."], None),
+                                             (["Riddle is funny."], {"odd": 1})])
+def test_admitted_open_fence_text_is_the_refusal_text(texts, defaults):
+    """The `text` of an open unit a reading set admits is the text Lean refuses the same fence with."""
+    env, ids = Environment(environment()), [f"u{i}" for i in range(1, len(texts) + 1)]
+    refused = route.read_fences(env, texts, [PACK], defaults=defaults, fence_ids=ids, reading_set_units=[])["reading"]
+    assert (refused["status"], refused["code"], refused["unit"]) == ("rejected", "Unresolved", ids[-1])
+    admitted = route.read_fences(env, texts, [PACK], defaults=defaults, fence_ids=ids,
+                                 reading_set_units=[ids[-1]])["reading"]
+    assert admitted["status"] == "open"
+    assert admitted["units"][admitted["fences"][-1]]["text"] == refused["text"]
+
+
+def test_document_relays_the_admitted_text(tmp_path):
+    refused = route.read_fences(Environment(environment()), S16, [PACK], fence_ids=["u1"],
+                                reading_set_units=[])["reading"]["text"]
+    doc = load_document(write(tmp_path, S16, {"packs": ["fixtures@1"]}, reading_sets=[_reading_set(S16)]))
+    assert doc["senses"].unresolved == {"u1": refused}
+
+
+@pytest.mark.parametrize("ids, covered, text", [
+    (["u1", "u1"], [], "InvalidInput: unit id u1 names more than one English fence"),
+    (["u1"], [], "InvalidInput: 1 fence identities are given for 2 English fences"),
+    (["u1", ""], [], "InvalidInput: an English fence has an empty unit id"),
+    (["u1", "u2"], ["u2", "u2"], "InvalidInput: reading-set unit u2 is given more than once"),
+    (["u1", "u2"], ["u3"], "InvalidInput: reading-set unit u3 names no English fence"),
+])
+def test_fence_identity_refusals_name_the_fault(ids, covered, text):
+    with pytest.raises(VEError) as info:
+        route.read_fences(Environment(environment()), S16 * 2, [PACK], fence_ids=ids, reading_set_units=covered)
+    assert info.value.message == text
+
+
+def test_a_document_whose_units_share_a_fence_id_is_refused_as_a_duplicate(tmp_path):
+    path = write(tmp_path, S9, {"packs": ["fixtures@1"]})
+    front, body = path.read_bytes()[4:].split(b"\n---\n", 1)
+    meta = json.loads(front)
+    meta["units"][1]["id"] = meta["units"][1]["content"]["fence"] = "u1"
+    path.write_bytes(b"---\n" + json.dumps(meta).encode() + b"\n---\n" + body)
+    with pytest.raises(VEError) as info:
+        load_document(path)
+    assert info.value.message == "InvalidInput: unit id u1 names more than one English fence"
+
+
 def test_uncovered_open_fence_cannot_be_forged_as_admitted():
     result = route.read_fences(Environment(environment()), S16, [PACK], fence_ids=["u1"],
                                reading_set_units=["u1"])
@@ -298,10 +364,13 @@ def _replaced(value, paths, new):
 
 
 def _reading_set(texts):
-    [candidate] = check(texts)["units"][0]["candidates"]
+    reading = check(texts)
+    [candidate] = reading["units"][0]["candidates"]
+    projected = Environment(reading["environment"])
     return {"id": "r1", "unit": "u1", "version": 1, "status": "authored", "signature": "alice",
             "readings": [{"id": "strange", "kind": "asserted", "content": candidate["formula"],
-                          "meaning_id": "m", "admission": {"who": "alice", "why": "w", "distinguishing_models": {}}}]}
+                          "meaning_id": meaning_id(projected, formula_from_data(projected, candidate["formula"])),
+                          "admission": {"who": "alice", "why": "w", "distinguishing_models": {}}}]}
 
 
 @pytest.mark.parametrize("base", ["open fence with a reading set", "defaults"])
@@ -313,6 +382,7 @@ def test_every_front_matter_node_confused_raises_only_veerror(tmp_path, base):
     path = (write(tmp_path, S16, {"packs": ["fixtures@1"]}, reading_sets=[_reading_set(S16)])
             if base == "open fence with a reading set" else
             write(tmp_path, S9[2:], {"packs": ["fixtures@1"], "defaults": {"funny": 1, "odd": 1}}))
+    load_document(path)  # the base is admitted, so each mutant reaches as far as its fault
     front, body = path.read_bytes()[4:].split(b"\n---\n", 1)
     meta = json.loads(front)
     nodes = [[p] for p in _paths(meta) if p[:1] != ("environment",)]

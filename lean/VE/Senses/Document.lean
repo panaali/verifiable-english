@@ -129,27 +129,45 @@ def choiceLines (D : Dictionary) (c : List (String × Nat)) : String :=
 def choiceGloss (D : Dictionary) (c : Candidate) (w : String) : String :=
   ((c.choice.lookup w).bind (senseOf D w)).map (·.gloss) |>.getD ""
 
-/-- The text of an open unit at `sentence` (from 0, preamble included): one word with one candidate (R11),
-one word with several (plan 2.8), several words with one candidate or several. -/
-def unresolvedText (D : Dictionary) (sentence : Nat) (u : SenseUnit) : String :=
+/-- The defaults of a choice, each as the front matter writes it: `"odd": 1`. -/
+def choiceDefaults (D : Dictionary) (c : List (String × Nat)) : String :=
+  andList (c.filterMap fun (w, i) => (senseOf D w i).map fun _ => "\"" ++ w ++ "\": " ++ toString i)
+
+/-- What to add for a choice, after `Add `: its preamble lines (introduced by `lines`), or, when the front
+matter gives defaults and a written line is refused (`bothText`), its defaults (introduced by `defaults`) in
+the front matter. -/
+def choiceAdd (D : Dictionary) (front : Bool) (lines defaults : String) (c : List (String × Nat)) : String :=
+  if front then defaults ++ " " ++ choiceDefaults D c ++ " to the front matter" else lines ++ " " ++ choiceLines D c
+
+/-- The text of an open unit at `sentence` (from 0, the author's written sentences only): one word with one
+candidate (R11), one word with several (plan 2.8), several words with one candidate or several. `front` says
+the front matter gives defaults, so the author is told to add a default, not a line. -/
+def unresolvedText (D : Dictionary) (sentence : Nat) (u : SenseUnit) (front : Bool := false) : String :=
   let head := "Sentence " ++ toString (sentence + 1) ++ " uses "
   match u.unresolved, u.candidates with
   | _, [] => ""
   | [w], [c] =>
     head ++ w ++ ", which has " ++ countWord (D.sensesOf w).length ++ " senses here, and only " ++
-      choiceGloss D c w ++ " gives a reading of this sentence. Add the line " ++ choiceLines D c.choice ++
-      " to say so."
+      choiceGloss D c w ++ " gives a reading of this sentence. Add " ++
+      choiceAdd D front "the line" "the default" c.choice ++ " to say so."
   | [w], c :: c2 :: _ =>
     head ++ w ++ ", which has " ++ countWord (D.sensesOf w).length ++ " senses here: " ++
-      "; ".intercalate ((D.sensesOf w).map (·.gloss)) ++ ". Add the line " ++ choiceLines D c.choice ++
-      " or write " ++ w ++ " (meaning " ++ choiceGloss D c2 w ++ ")."
+      "; ".intercalate ((D.sensesOf w).map (·.gloss)) ++ ". Add " ++
+      choiceAdd D front "the line" "the default" c.choice ++ " or write " ++ w ++ " (meaning " ++
+      choiceGloss D c2 w ++ ")."
   | ws, [c] =>
     head ++ andList ws ++ ", which have more than one sense here, and only one choice of their senses gives " ++
-      "a reading of this sentence. Add the lines " ++ choiceLines D c.choice ++ " to say so."
+      "a reading of this sentence. Add " ++ choiceAdd D front "the lines" "the defaults" c.choice ++ " to say so."
   | ws, c :: cs =>
     head ++ andList ws ++ ", which have more than one sense here, and " ++ countWord (cs.length + 1) ++
-      " choices of their senses give a reading of this sentence. Add lines such as " ++ choiceLines D c.choice ++
-      " to choose their senses."
+      " choices of their senses give a reading of this sentence. Add " ++
+      choiceAdd D front "lines such as" "defaults such as" c.choice ++ " to choose their senses."
+
+/-- The text of an open unit at `sentence` (from 0) of a request whose first `d` sentences are `A`'s rendered
+defaults. The author never wrote those lines, so they are not counted, and the author is told to add a
+default, since a written line is then refused (`bothText`). -/
+def documentText (D : Dictionary) (A : Assignment) (d sentence : Nat) (u : SenseUnit) : String :=
+  unresolvedText D (sentence - d) u !A.defaults.isEmpty
 
 /-! ## Statements -/
 
