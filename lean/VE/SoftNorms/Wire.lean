@@ -15,7 +15,7 @@ rejected) and checks the profiles, rules and references in table order;
 checks `WellFormedSoft` with `validateSoftOnce`, and `regeneratedCore` reads the coherence
 premises, conflict targets and fragment test from the layers. Each equals the function it
 replaces (`validateSoftOnce_eq`, `softLabelledIn_eq`, `cohPremiseIn_eq`, `targetsIn_eq`,
-`inFragmentOnce_eq`), so the answers and diagnostics are unchanged.
+`InFragmentOnce_eq`), so the answers and diagnostics are unchanged.
 
 Nothing on the wire supplies an elaboration: `E′`, `T′`, `Exc_T`, `Coh_T`,
 `Background_base′`, `background′`, layer premises and targets are regenerated from
@@ -128,10 +128,8 @@ def decisionEntry (sorts : List String) : Json :=
   Json.mkObj [("arguments", toJson sorts), ("description", .str "soft-norms decision")]
 
 def withDecisions (D : SoftDoc) (environment : Json) : Except String Json := do
-  let vocab ← environment.getObjVal? "vocabulary"
-  let preds ← fields (← vocab.getObjVal? "predicates")
-  pure (environment.setObjVal! "vocabulary" (vocab.setObjVal! "predicates"
-    (Json.mkObj (preds ++ (decisions D).map (fun (n, ss) => (n, decisionEntry ss))))))
+  Norms.Wire.appendPredicates environment
+    ((decisions D).map (fun (n, ss) => (n, decisionEntry ss)))
 
 /-- The regenerated `E′_base`: no regulated predicate, no soft construct, the decision
 predicates as base predicates; profiles without `norms@0` and `soft-norms@0`. -/
@@ -240,7 +238,7 @@ def regeneratedCore (D : SoftDoc) (environment : Json) : List (String × Json) :
    ("conflict_targets", Json.arr ((targetsIn S L).map (fun t => Json.mkObj
      [("target", .str t.1), ("sorts", toJson t.2.1), ("ast", enc t.2.2)])).toArray),
    ("conditional_on", toJson (openCoherence D)),
-   ("fragment", .bool (inFragmentOnce D)),
+   ("fragment", .bool (InFragmentOnce D)),
    ("warnings", toJson (warnings D))]
 
 /-- The soft route's additional decisions. Rights elaboration uses the common

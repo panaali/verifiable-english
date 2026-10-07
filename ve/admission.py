@@ -442,6 +442,15 @@ def admit_document(environment, document) -> dict:
     from .backends.relay import decide
     from .backends.lean_service import CheckerUnavailable
 
+    if (getattr(environment, "unit_schema", None) is not None or (
+            type(environment) is dict and "unit_schema" in environment)) and "risk@0" not in (
+            environment.profiles if type(environment) is Environment else listed_profiles(environment)):
+        # W6: the Lean quantity route admits every annotated statement before erasure,
+        # under every authority (Lean-first batch 9 deleted the Python copy). A risk
+        # environment's W6 extension is the Lean risk route's, which admits it below.
+        env = environment if type(environment) is Environment else Environment(environment)
+        return _lean_quantity_admission(env, document)
+
     if authority_for("admission") == "python":
         return _admit_document_python(environment, document)
     from .softnorms import SoftEnvironment
@@ -458,11 +467,7 @@ def admit_document(environment, document) -> dict:
         if env.language != LANGUAGE:
             raise VEError("admission requires a ve.core@0.2 environment")
         if env.alternatives is not None:
-            # The alternatives route is Lean's (Lean-only operation); the Python
-            # entry only transports the case to it.
-            return _admit_document_python(env, document)
-        if env.unit_schema is not None:
-            return _lean_quantity_admission(env, document)
+            return _lean_block_admission(env, document)
         row = decide("norms" if "norms@0" in env.profiles and (
             any(d.regulated is not None for d in env.predicates.values()) or
             (type(document) is dict and type(document.get("units")) is list and
@@ -477,13 +482,21 @@ def admit_document(environment, document) -> dict:
     return execute("admission", case, lambda: _admit_document_python(env, document), lean=lean)
 
 
+def _lean_block_admission(env, document) -> dict:
+    from .backends.relay import decide
+    case = {"id": "admission", "kind": "admission", "environment": env.to_dict(),
+            "document": document}
+    row = decide("risk" if env.risk is not None else "alternatives", [case])[0]
+    return {key: row[key] for key in ("admitted", "report", "report_id", "kinds",
+                                      "conditional_on")}
+
+
 def _lean_quantity_admission(env, document) -> dict:
     """W6 quantity admission by the Lean quantity route (service mode `quantity`, case kind
     `document`); a rejection raises Lean's diagnostic."""
-    from .backends import lean as backend
-    [row] = backend.run("admission", None,
-                        [{"id": "admission", "kind": "document", "environment": env.to_dict(),
-                          "document": document}], runner="ve_service", mode="quantity")
+    from .backends.relay import decide
+    [row] = decide("quantity", [{"id": "admission", "kind": "document",
+                                 "environment": env.to_dict(), "document": document}])
     return {key: row[key] for key in ("admitted", "report", "report_id", "kinds")}
 
 
@@ -498,17 +511,8 @@ def _admit_document_python(environment, document) -> dict:
         from .soft_route import admit_soft_document
         return admit_soft_document(environment, document)
     env = environment if type(environment) is Environment else Environment(environment)
-    if env.unit_schema is not None:
-        # W6: every statement is an annotated quantity, admitted before erasure.
-        from .quantity_admission import admit_quantity_document
-        return admit_quantity_document(env, document)
     if env.alternatives is not None:
-        from .alternatives import run_case
-        result = run_case({"id": "admission", "kind": "admission",
-                           "environment": env.to_dict(), "document": document})
-        if result.get("status") != "ok":
-            raise AdmissionError(result.get("error", "alternatives admission failed"))
-        return {key: value for key, value in result.items() if key not in ("id", "status")}
+        return _lean_block_admission(env, document)
     if "norm-defaults@0" in env.profiles:
         from .norm_defaults_route import admit_norm_defaults_document
         return admit_norm_defaults_document(env, document)

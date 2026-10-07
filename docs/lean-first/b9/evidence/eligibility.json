@@ -1,0 +1,18 @@
+{
+ "base": {
+  "wall_s": 424.89,
+  "user_s": 224.36,
+  "sys_s": 9.3,
+  "stdout_sha256": "a66dd5128f617e05c337878a1619514dbed7bb0516fbf91f98a65a0f374ba7a5"
+ },
+ "head": {
+  "wall_s": 394.77,
+  "user_s": 181.56,
+  "sys_s": 3.62,
+  "stdout_sha256": "a66dd5128f617e05c337878a1619514dbed7bb0516fbf91f98a65a0f374ba7a5"
+ },
+ "command": "usecases/eligibility/run.py --no-write (VE_NATIVE_PREBUILT=1), base then head, /usr/bin/time",
+ "summary": {
+  "mutants_killed": "32/32"
+ }
+}

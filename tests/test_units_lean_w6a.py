@@ -1,12 +1,12 @@
-"""Three-way W6a conformance: Lean `ve_quantity` admission against Python and Rust.
+"""W6a conformance: Lean `ve_quantity` admission, and Python's relay of it.
 
-Lean is the authority for admission, erasure and certificate binding; Python
-gives early diagnostics and produces certificates; Rust regenerates and evaluates.
+Lean owns admission, typing, erasure, identities and certificate binding; Python
+relays Lean's answers and generates certificates (Lean-first batch 9, which
+deleted Rust's quantity route and Python's elaborator).
 """
 import copy
 from datetime import date, timedelta
 import json
-import os
 from pathlib import Path
 import subprocess
 
@@ -29,7 +29,6 @@ from ve.units import (check_quantity_certificate, day_number, decimal_exact, ela
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = "ve_quantity"  # its service mode, through tests/lean_routes.py
-RUST = Path(os.environ.get("VE_RUST_BINARY", str(ROOT / "rust" / "target" / "release" / "ve")))
 FIXTURE = ROOT / "usecases" / "news-article" / "w6a-quantity-fixtures.json"
 pytestmark = pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="build the Lean ve_quantity runner first")
 
@@ -40,13 +39,6 @@ def lean(cases):
     results = json.loads(process.stdout)
     assert len(results) == len(cases)
     return results
-
-
-def rust(cases):
-    process = subprocess.run([str(RUST), "conformance", "-"], input=json.dumps(cases), text=True,
-                             capture_output=True, timeout=HANG_TIMEOUT)
-    assert process.returncode in (0, 1), process.stderr[:500]
-    return json.loads(process.stdout)
 
 
 def quantity(formula, **more):
@@ -64,7 +56,7 @@ def news_model(raw):
 
 # --- Admission, regeneration and identities --------------------------------
 
-def test_news_admission_agrees_three_ways():
+def test_news_admission_agrees_with_the_relay():
     fixture = news()
     raw = fixture["environment"]
     env = Environment(raw)
@@ -74,18 +66,17 @@ def test_news_admission_agrees_three_ways():
     cases = [{"id": item["id"], "environment": raw, "quantity": quantity(item["formula"]),
               "model": model_data} for item in fixture["cases"]]
     lean_results = lean(cases)
-    rust_results = rust([{**case, "kind": "quantity"} for case in cases])
-    for item, got, other in zip(fixture["cases"], lean_results, rust_results):
+    for item, got in zip(fixture["cases"], lean_results, strict=True):
         canonical, core = elaborate_quantity(env, quantity(item["formula"]))
         assert got["status"] == "ok", got
         assert got["assurance"] == "lean-admitted"
-        assert got["Q"] == canonical["formula"] == other["Q"]
-        assert got["core"] == core == other["core"]
-        assert got["environment_id"] == env.environment_id == other["environment_id"]
-        assert got["target_environment_id"] == target.environment_id == other["target_environment_id"]
-        assert got["meaning_id"] == quantity_meaning_id(env, quantity(item["formula"])) == other["meaning_id"]
+        assert got["Q"] == canonical["formula"]
+        assert got["core"] == core
+        assert got["environment_id"] == env.environment_id
+        assert got["target_environment_id"] == target.environment_id
+        assert got["meaning_id"] == quantity_meaning_id(env, quantity(item["formula"]))
         value = evaluate(target, ast.formula_from_data(target, core), model, trace=False).value
-        assert got["value"] is value is other["value"] is True
+        assert got["value"] is value is True
 
 
 HOSTILE = [
@@ -121,14 +112,12 @@ HOSTILE = [
 
 
 @pytest.mark.parametrize("formula,message", HOSTILE)
-def test_hostile_statements_reject_in_python_rust_and_lean(formula, message):
+def test_hostile_statements_reject_in_lean_and_the_relay(formula, message):
     raw = news()["environment"]
     with pytest.raises(VEError, match=message.replace("(", r"\(").replace(")", r"\)")):
         elaborate_quantity(Environment(raw), quantity(formula))
     [got] = lean([{"id": "h", "environment": raw, "quantity": quantity(formula)}])
     assert got["status"] == "error" and message in got["error"], got
-    [other] = rust([{"id": "h", "kind": "quantity", "environment": raw, "quantity": quantity(formula)}])
-    assert other["status"] == "error" and message in other["error"]["message"], other
 
 
 def test_claimed_q_is_regenerated_not_trusted():
@@ -308,12 +297,6 @@ def test_decimal_lowering_and_rendering_agree_three_ways():
         display = render_coordinate(tag, q, env)
         amount = display.removesuffix("%").removeprefix("fine ").removesuffix(" items")
         assert got["amount"] == amount
-    rust_cases = [{"id": str(i), "kind": "quantity", "environment": raw,
-                   "quantity": quantity(["eq", ["decimal", tag, case["decimal"]],
-                                         ["num", tag, str(q)]])}
-                  for i, (case, q) in enumerate(zip(lean_cases, expected)) if isinstance(q, int)
-                  for tag in [case["id"].split(":")[0]]]
-    assert all(r["status"] == "ok" for r in rust(rust_cases))
 
 
 # --- Counting expansion ------------------------------------------------------
@@ -445,7 +428,7 @@ def test_relabelled_or_raw_evidence_never_certifies():
     assert got["status"] == "ok" and got["valid"] is False
 
 
-def test_countermodels_agree_three_ways():
+def test_countermodels_agree_with_the_relay():
     raw = news()["environment"]
     env = Environment(raw)
     premises = [quantity(["eq", ["const", "bp", "new_target_lower"], ["decimal", "bp", "3.75"]])]
@@ -461,12 +444,6 @@ def test_countermodels_agree_three_ways():
         assert got["premise_meaning_ids"] == [quantity_meaning_id(env, p) for p in premises]
         assert got["conclusion_meaning_id"] == quantity_meaning_id(env, conclusion)
         assert got["environment_id"] == env.environment_id
-        [other] = rust([{"id": "m", "kind": "quantity", "mode": "countermodel", "environment": raw,
-                         "premises": premises, "conclusion": conclusion, "model": model}])
-        assert other["refutes"] is refutes
-    [unsupported] = rust([{"id": "c", "kind": "quantity", "mode": "certificate", "environment": raw,
-                           "premises": premises, "conclusion": conclusion, "model": model}])
-    assert unsupported["status"] == "error" and "Lean checks" in unsupported["error"]["message"]
 
 
 def test_generic_route_still_rejects_extended_environments():

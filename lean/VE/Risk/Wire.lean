@@ -318,6 +318,7 @@ def decodeRiskSource (environment document : Json) : Except String RiskSource :=
   unless ne.rv.literals.isEmpty do throw "UnsupportedProfile: risk route with $string literals is not implemented"
   let (altExpanded, excludesOn) := expandExcludes altRaw
   let b ← VE.Alternatives.Wire.decodeBlock altExpanded
+  VE.Alternatives.Wire.checkReservedWording (← environment.getObjVal? "vocabulary")
   let risk ← decodeRiskBlock riskRaw
   let norms := document.getObjValD "norms"
   let unitsJ := document.getObjValD "units"
@@ -329,7 +330,7 @@ def decodeRiskSource (environment document : Json) : Except String RiskSource :=
   let envId ← VE.Alternatives.Replay.environmentId ps environment
   let docHash ← VE.Alternatives.Replay.documentHash ps environment norms unitsJ
   let R0 : RiskDoc := ⟨ne.rv.vocabulary, units, [], b.alt, risk, ⟨ne.regulated, [], nodes⟩, [], (envId, docHash), []⟩
-  VE.Alternatives.checkBlock (toAlt R0)
+  VE.Alternatives.checkBlock (toAlt R0) (VE.Alternatives.Wire.fixedPredicates (environment.getObjValD "vocabulary"))
   VE.Alternatives.Wire.checkVerbalisations b.alt (← environment.getObjVal? "vocabulary")
   VE.Alternatives.Wire.checkAvoids (toAlt R0) (b.avoidsOn.filter (fun o => !excludesOn.contains o))
   for o in excludesOn do
@@ -340,7 +341,10 @@ def decodeRiskSource (environment document : Json) : Except String RiskSource :=
   let R : RiskDoc := { R0 with Γ := gamma.map Prod.snd, labels := gamma.map Prod.fst }
   match hv : validateRisk R with
   | .error e => throw e
-  | .ok () => pure ⟨ps, ne, R, by unfold WellFormedRisk; rw [hv], b.avoidsOn.filter (fun o => !excludesOn.contains o),
+  | .ok () =>
+    if ext && (← VE.Norms.Wire.canonicalEnvironmentJson environment) != environment then
+      throw "W6 environment does not round-trip to its canonical declaration"
+    pure ⟨ps, ne, R, by unfold WellFormedRisk; rw [hv], b.avoidsOn.filter (fun o => !excludesOn.contains o),
       excludesOn⟩
 
 /-! ## Entries, supplied entries and the log (3.3) -/

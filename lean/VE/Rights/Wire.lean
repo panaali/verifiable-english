@@ -29,27 +29,6 @@ the unchanged tableau checker. Bindings (all recomputed here):
   `Background_base″` and the target's conclusion;
 * entailment certificates: the regenerated full `E″′` JSON (`primeJsonR`),
   `background″ ++ layer premises ++ Γ` and the conclusion. -/
-namespace VE.Rights
-
-/-- `validateRights` with soft well-formedness checked by `validateSoftOnce` (lean-first plan F5d). -/
-def validateRightsOnce (D : RightsDoc) : Except String Unit :=
-  match checkRights D with
-  | .error e => .error e
-  | .ok () =>
-    match VE.SoftNorms.validateSoftOnce (correlate D) with
-    | .error e => .error e
-    | .ok () =>
-      match (VE.SoftNorms.decisionNames (correlate D)).find? (fun n => n.utf8ByteSize > 64) with
-      | some n => .error s!"ResourceLimit: identifier {n} exceeds 64 bytes"
-      | none => if rightsSemanticCheck D then .ok () else .error "InvalidInput: rights document is not stratified"
-
-theorem validateRightsOnce_eq (D : RightsDoc) : validateRightsOnce D = validateRights D := by
-  unfold validateRightsOnce validateRights
-  rw [VE.SoftNorms.validateSoftOnce_eq]
-  all_goals rfl
-
-end VE.Rights
-
 namespace VE.Rights.Wire
 open Lean
 open VE.Norms
@@ -378,9 +357,7 @@ def genEntries (D : RightsDoc) : List (String × Json) :=
         s!"{actPhrase D m} aimed at the destruction of a right")))
 
 def withGenerated (D : RightsDoc) (environment : Json) : Except String Json := do
-  let vocab ← environment.getObjVal? "vocabulary"
-  let preds ← fields (← vocab.getObjVal? "predicates")
-  pure (environment.setObjVal! "vocabulary" (vocab.setObjVal! "predicates" (Json.mkObj (preds ++ genEntries D))))
+  Norms.Wire.appendPredicates environment (genEntries D)
 
 /-- The regenerated `E″′_base`: no regulated predicate, no soft or rights construct, the
 rights-generated and decision predicates as base predicates; profiles without `norms@0`,

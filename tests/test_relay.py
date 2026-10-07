@@ -178,8 +178,8 @@ def test_genuine_profile_rejection_is_leans(monkeypatch):
         relay.decide("environment", [{"id": "e", "environment": raw}])
 
 
-# The one-shot runner transports (`ve/backends/lean.py` `run`, for `ve_conformance`, and `run_english_cases`,
-# for english-lean S2's `ve_english_route`; lean-first batch 1 made every statement-layer route a service mode
+# The one-shot runner transports (`ve/backends/lean.py` `run`, for `ve_conformance`, and `run_route_cases`,
+# shared by English and speech routes; lean-first batch 1 made every statement-layer route a service mode
 # and deleted their one-shot transports): each reads its runner's output with `read_rows`, so output that is
 # no answer is `CheckerUnavailable`, never a rejection (lf-0 review B1 and B2; reproducers from the difffuzz
 # looprecheck3 review).
@@ -229,8 +229,12 @@ def test_every_runner_transport_is_listed():
         node.name for node in tree.body if isinstance(node, ast_module.FunctionDef)
         and any(getattr(c.func, "id", None) == "_route_rows" for c in ast_module.walk(node)
                 if isinstance(c, ast_module.Call))}
-    names = {"run": "run", "english": "run_english_cases"}
+    names = {"run": "run", "english": "run_route_cases"}
     assert public == {names[key] for key in TRANSPORTS}
+    english = next(node for node in tree.body if isinstance(node, ast_module.FunctionDef)
+                   and node.name == "run_english_cases")
+    assert any(isinstance(call, ast_module.Call) and getattr(call.func, "id", None) == "run_route_cases"
+               for call in ast_module.walk(english))
     restricted = {node.name for node in tree.body if isinstance(node, ast_module.FunctionDef)
                   and any(isinstance(k, ast_module.keyword) and k.arg == "restricted"
                           and getattr(k.value, "value", None) is True for k in ast_module.walk(node))}

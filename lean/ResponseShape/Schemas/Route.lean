@@ -47,12 +47,13 @@ def countermodel : Shape :=
 def certificate : Shape :=
   c "background: the number of regenerated Background premises (fullBackground)." [
     obj,
-    .required ["id", "status", "valid", "background"],
+    .required ["id", "status", "valid", "background", "steps"],
     closed [
       ("id", n [str, .equals "/id"]),
       ("status", constS "ok"),
       ("valid", .type ["boolean"]),
-      ("background", ref "common.json#/$defs/nat")]]
+      ("background", ref "common.json#/$defs/nat"),
+      ("steps", ref "common.json#/$defs/nat")]]
 
 def «dependency-order» : Shape :=
   c
@@ -99,10 +100,8 @@ def label : Shape :=
       ("status", constS "ok"),
       ("label", n [ref "common.json#/$defs/label", .equals "/label"])]]
 
-def «row» : Shape :=
-  .anyOf [
-    ref "common.json#/$defs/case_error",
-    ref "#/$defs/error",
+def ok : Shape :=
+  c "The answer the case kind selects (Route.Run.dispatch)." [
     .select [
       (ref "common.json#/$defs/no_kind", ref "#/$defs/evaluate"),
       (ref "#/$defs/kind/evaluate", ref "#/$defs/evaluate"),
@@ -113,6 +112,12 @@ def «row» : Shape :=
       (ref "#/$defs/kind/background", ref "#/$defs/background"),
       (ref "#/$defs/kind/label", ref "#/$defs/label"),
       (ref "#/$defs/kind/admission", ref "common.json#/$defs/admission")]]
+
+def «row» : Shape :=
+  .anyOf [
+    ref "common.json#/$defs/case_error",
+    ref "#/$defs/error",
+    ref "#/$defs/ok"]
 
 def file : File where
   name := "route.json"
@@ -127,6 +132,7 @@ def file : File where
     ("dependency-order", .schema «dependency-order»),
     ("bundle", .schema bundle),
     ("background", .schema background),
-    ("label", .schema label)]
+    ("label", .schema label),
+    ("ok", .schema ok)]
 
 end ResponseShape.Schemas.Route

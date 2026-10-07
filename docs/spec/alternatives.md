@@ -996,6 +996,7 @@ regenerated data. Case kinds:
 | `alt-followable` | `certificate` for `∀r. followable°(r)` over `Background_baseAlt ++ Γ_base`, or `witness` (model, signed rows, chooser); requires a CONFLICT-FREE result for the same source in the batch or by bound package | FOLLOWABLE (`conditional_on`) / DILEMMA (certified `¬followable°` on the validated witness, rendered diagnosis) / UNKNOWN / `not computed` |
 | `alt-certificate` | `premises`, `conclusion`, `certificate` over `backgroundAlt ++ layer premises ++ premises` | `valid`, `background`, `layers`, `conditional_on` |
 | `admission` | W2 document with norm units and cells, graph | `admitted`, `report`, `report_id`, `kinds`, `conditional_on` |
+| `alt-environment` | none | `valid` when the environment alone is well formed: the block (3.1), and the declarations of other profiles (definitions, data flags) validated by their W1 owner; the document kinds above still refuse those declarations as unsupported |
 
 P0 and W1 cases without the block delegate unchanged to `Norms.Run.runCase`; malformed alternatives inputs never fall
 back after a failed decode. Python's proof search consumes `alt-elaborate` output and returns certificates to

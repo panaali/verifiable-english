@@ -14,7 +14,28 @@ import sys
 ROOT = Path(__file__).resolve().parent
 RECORD = ROOT / "axioms.txt"
 ALLOWED = {"propext", "Classical.choice", "Quot.sound"}
-FORBIDDEN = re.compile(r"\b(sorry|sorryAx|admit|axiom|unsafe|native_decide|implemented_by|partial|opaque|extern)\b")
+FORBIDDEN = re.compile(r"\b(sorry|sorryAx|axiom|unsafe|native_decide|implemented_by|partial|opaque|extern)\b")
+# S3 names its admission function `admit`. A bare occurrence in tactic syntax is a
+# hole, while `def admit`, `unfold admit` and `admit E ...` name/apply the function.
+# Check token boundaries rather than a line prefix: bullets, `=>` and `<;>` can
+# precede the tactic on the same line.
+ADMIT_TOKEN = re.compile(r"(?<![\w'])admit(?![\w'])")
+ADMIT_CONTEXT = re.compile(r"(?:\bby|=>|<;>|\bdecreasing_by|[·;])\s*$")
+
+
+def admit_tactic(code):
+    for match in ADMIT_TOKEN.finditer(code):
+        before, after = code[:match.start()], code[match.end():]
+        prefix = before.splitlines()[-1] if before else ""
+        if re.search(r"\b(?:def|unfold)\s+$", prefix):
+            continue
+        if ADMIT_CONTEXT.search(prefix):
+            return match
+        # A function application has an argument on the same line. A bare
+        # occurrence also includes `admit; ...` and `admit` before a closer.
+        if not re.match(r"[ \t]+(?:[\w'(]|\.[A-Za-z])", after):
+            return match
+    return None
 
 
 def code_only(text):
@@ -68,12 +89,18 @@ def scan_sources(root):
             line = text.count("\n", 0, forbidden.start()) + 1
             raise AssertionError(f"{source.relative_to(root)}:{line}: forbidden {forbidden[0]}")
         code = code_only(text)
+        tactic = admit_tactic(code)
+        if tactic:
+            line = code.count("\n", 0, tactic.start()) + 1
+            raise AssertionError(f"{source.relative_to(root)}:{line}: forbidden admit tactic")
         scopes = []
         for line in code.splitlines():
             namespace = re.match(r"\s*namespace\s+(\S+)", line)
             if namespace:
                 scopes.append(namespace[1])
             elif re.match(r"\s*section\b", line):
+                scopes.append("")
+            elif re.match(r"\s*mutual(?:\s|$)", line):
                 scopes.append("")
             elif re.match(r"\s*end(?:\s|$)", line):
                 if scopes:

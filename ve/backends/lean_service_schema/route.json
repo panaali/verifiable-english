@@ -1,25 +1,7 @@
 {
   "$id": "route.json",
   "$comment": "Mode route: Route.Run.runCaseReported. The case kind (default evaluate) selects the result shape.",
-  "row": {
-    "anyOf": [
-      {"$ref": "common.json#/$defs/case_error"},
-      {"$ref": "#/$defs/error"},
-      {
-        "x-select": [
-          {"then": {"$ref": "#/$defs/evaluate"}, "when": {"$ref": "common.json#/$defs/no_kind"}},
-          {"then": {"$ref": "#/$defs/evaluate"}, "when": {"$ref": "#/$defs/kind/evaluate"}},
-          {"then": {"$ref": "#/$defs/countermodel"}, "when": {"$ref": "#/$defs/kind/countermodel"}},
-          {"then": {"$ref": "#/$defs/certificate"}, "when": {"$ref": "#/$defs/kind/certificate"}},
-          {"then": {"$ref": "#/$defs/dependency-order"}, "when": {"$ref": "#/$defs/kind/dependency-order"}},
-          {"then": {"$ref": "#/$defs/bundle"}, "when": {"$ref": "#/$defs/kind/bundle"}},
-          {"then": {"$ref": "#/$defs/background"}, "when": {"$ref": "#/$defs/kind/background"}},
-          {"then": {"$ref": "#/$defs/label"}, "when": {"$ref": "#/$defs/kind/label"}},
-          {"then": {"$ref": "common.json#/$defs/admission"}, "when": {"$ref": "#/$defs/kind/admission"}}
-        ]
-      }
-    ]
-  },
+  "row": {"anyOf": [{"$ref": "common.json#/$defs/case_error"}, {"$ref": "#/$defs/error"}, {"$ref": "#/$defs/ok"}]},
   "$defs": {
     "background": {
       "$comment": "Route.Wire.runBackground: the regenerated Background twice, with one generator per premise; its contents are the service's.",
@@ -53,9 +35,10 @@
         "background": {"$ref": "common.json#/$defs/nat"},
         "id": {"type": "string", "x-equals": "/id"},
         "status": {"const": "ok"},
+        "steps": {"$ref": "common.json#/$defs/nat"},
         "valid": {"type": "boolean"}
       },
-      "required": ["id", "status", "valid", "background"],
+      "required": ["id", "status", "valid", "background", "steps"],
       "type": "object"
     },
     "countermodel": {
@@ -121,6 +104,20 @@
       },
       "required": ["id", "status", "label"],
       "type": "object"
+    },
+    "ok": {
+      "$comment": "The answer the case kind selects (Route.Run.dispatch).",
+      "x-select": [
+        {"then": {"$ref": "#/$defs/evaluate"}, "when": {"$ref": "common.json#/$defs/no_kind"}},
+        {"then": {"$ref": "#/$defs/evaluate"}, "when": {"$ref": "#/$defs/kind/evaluate"}},
+        {"then": {"$ref": "#/$defs/countermodel"}, "when": {"$ref": "#/$defs/kind/countermodel"}},
+        {"then": {"$ref": "#/$defs/certificate"}, "when": {"$ref": "#/$defs/kind/certificate"}},
+        {"then": {"$ref": "#/$defs/dependency-order"}, "when": {"$ref": "#/$defs/kind/dependency-order"}},
+        {"then": {"$ref": "#/$defs/bundle"}, "when": {"$ref": "#/$defs/kind/bundle"}},
+        {"then": {"$ref": "#/$defs/background"}, "when": {"$ref": "#/$defs/kind/background"}},
+        {"then": {"$ref": "#/$defs/label"}, "when": {"$ref": "#/$defs/kind/label"}},
+        {"then": {"$ref": "common.json#/$defs/admission"}, "when": {"$ref": "#/$defs/kind/admission"}}
+      ]
     }
   }
 }

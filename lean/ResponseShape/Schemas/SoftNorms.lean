@@ -1,12 +1,13 @@
 import VE.Service.Protocol
 import ResponseShape
+import ResponseShape.CaseDeciders
 
 /-! The source of `ve/backends/lean_service_schema/soft-norms.json` (`file`; `tools/response_schemas.py` writes it). -/
 namespace ResponseShape.Schemas.SoftNorms
 open Lean ResponseShape
 
 def soft_path : Shape :=
-  decidedBy "SoftNorms.Run.usesSoftPath" VE.SoftNorms.Run.usesSoftPath <|
+  decidedCase .softPath <|
   c
     "SoftNorms.Run.usesSoftPath: the soft-norms@0 profile, the vocabulary's soft block, an instruction_of predicate, a soft-* kind, or a soft field (Phases.softKeys) on a norm of `norms` or of a document unit."
     [

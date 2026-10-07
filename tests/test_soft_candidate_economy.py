@@ -109,8 +109,9 @@ def test_candidates_cost_no_soft_request_each(service, sent, tmp_path, command):
         _, count = requests(sent, lambda: run(path))
         counts.append(count)
     assert counts[0] == counts[1], counts
-    # Every candidate document of this one has the same lower source: one rule request in all.
-    assert counts[1]["soft-rules"] == 1, counts
+    # Rights elaboration now validates each complete source, including its line
+    # rules. There is no separate soft rule request to batch.
+    assert counts[1]["soft-rules"] == 0, counts
 
 
 @pytest.mark.parametrize("command", ["render", "check"])
@@ -133,7 +134,7 @@ def test_eager_documents_cost_a_request_per_candidate(service, sent, tmp_path, m
         _, count = requests(sent, lambda: render_document(path))
         counts.append(count)
     assert counts[1]["soft-elaborate"] > counts[0]["soft-elaborate"]
-    assert counts[1]["soft-rules"] > counts[0]["soft-rules"]
+    assert counts[1]["soft-rules"] == counts[0]["soft-rules"] == 0
 
 
 def q_document(tmp_path, sets):
@@ -286,36 +287,24 @@ def test_warming_raises_no_diagnostic_and_asks_about_no_rule(service, sent, unit
     assert "soft-rules" not in sent
 
 
-def test_warming_absorbs_a_refusal_and_raises_an_operational_failure(service, monkeypatch):
-    """A request Lean refuses as a whole is each document's to raise when it is built; an operational failure is
-    never absorbed (`CheckerUnavailable` is no `VEError`), and is raised as building would raise it."""
+def test_rights_route_failure_is_not_absorbed_by_candidate_warming(service, monkeypatch):
+    """Candidate warming is a no-op after the rights route became the line-rule authority.
+    A failure of that route is still raised when the document is built."""
     env = RightsEnvironment(env_rights())
     documents = [[{"source_units": ["u0"]}, claim("strict", 0)]]
-
-    def refusing(source, norms):
-        raise VEError("InvalidInput: refused")
-
-    monkeypatch.setattr(soft_relay, "check_rules", refusing)
     RightsDocument.warm_rules(env, documents)
+    from ve import rights_route
 
-    def down(source, norms):
+    def down(*args, **kwargs):
         raise CheckerUnavailable("CheckerUnavailable: the Lean service is not running")
-
-    monkeypatch.setattr(soft_relay, "check_rules", down)
+    monkeypatch.setattr(rights_route, "run_rights_case", down)
     with pytest.raises(CheckerUnavailable, match="not running"):
-        RightsDocument.warm_rules(env, documents)
-
-    def line_environment(self, entries, built=None):
-        raise CheckerUnavailable("CheckerUnavailable: the Lean service is not running")
-
-    monkeypatch.setattr(RightsDocument, "_line_environment", line_environment)
-    with pytest.raises(CheckerUnavailable, match="not running"):
-        RightsDocument.warm_rules(env, documents)
+        RightsDocument(env, documents[0])
 
 
 def test_warmed_documents_send_no_rule_request_and_keep_their_diagnostics(service, sent):
-    """Three documents' rules in one request; building them afterwards asks about none. A rule Lean rejects is
-    not kept, so its document raises the diagnostic it raises built cold."""
+    """The rights route checks each source; no separate soft rule request is needed.
+    A rejected source has the same diagnostic after candidate warming."""
     env = RightsEnvironment(env_rights())
     documents = [[{"source_units": ["u0"]}, claim(mode, k)] for k, mode in enumerate(("strict", "default", "strict"))]
     bad = claim("strict", 9)
@@ -324,10 +313,10 @@ def test_warmed_documents_send_no_rule_request_and_keep_their_diagnostics(servic
         RightsDocument(env, [{"source_units": ["u0"]}, bad])
     sent.clear()
     RightsDocument.warm_rules(env, [*documents, [{"source_units": ["u0"]}, bad]])
-    assert sent.count("soft-rules") == 1
+    assert sent.count("soft-rules") == 0
     for units in documents:
         RightsDocument(env, units, deferred=True)
-    assert sent.count("soft-rules") == 1 and "soft-elaborate" not in sent
+    assert sent.count("soft-rules") == 0 and "soft-elaborate" not in sent
     with pytest.raises(VEError) as warmed:
         RightsDocument(env, [{"source_units": ["u0"]}, bad])
     assert (type(warmed.value), str(warmed.value), getattr(warmed.value, "code", None)) == (

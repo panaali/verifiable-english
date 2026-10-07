@@ -358,11 +358,11 @@ def test_permission_default_stays_allow_until_norm_defaults_combines_with_risk_a
     switched = json.loads(json.dumps(env))
     switched["profiles"] = sorted({*switched["profiles"], "norm-defaults@0"})
     switched["vocabulary"]["predicates"]["permitted"]["regulated"]["default"] = "unspecified"
-    with pytest.raises(UnsupportedProfile, match="risk@0 with norm-defaults@0 is not implemented"):
+    with pytest.raises(UnsupportedProfile, match="Unsupported profile norm-defaults@0"):
         Environment(switched)
     without_risk = {k: v for k, v in switched.items() if k != "risk"}
     without_risk["profiles"] = [p for p in switched["profiles"] if p != "risk@0"]
-    with pytest.raises(UnsupportedProfile, match="alternatives@0 with norm-defaults@0 is not implemented"):
+    with pytest.raises(UnsupportedProfile, match="Unsupported profile norm-defaults@0"):
         Environment(without_risk)
     (row,) = lean_routes.rows("risk", [{"id": "switched", "kind": "risk-elaborate", "environment": switched,
                                         "norms": []}])

@@ -194,8 +194,11 @@ def altSemanticCheck (A : AltDoc) : Bool :=
 
 def sortTuple (ss : List String) : String := "(" ++ ", ".intercalate ss ++ ")"
 
-/-- Clause 2: the sorts, reserved names and role predicates, with the diagnostics of 6. -/
-def checkBlock (A : AltDoc) : Except String Unit := do
+/-- Clause 2: the sorts, reserved names and role predicates, with the diagnostics of 6.
+`fixed` names the predicates whose declarations fix their extension (`defined`,
+`functional` or `total`, read by `Wire.fixedPredicates`); a role predicate is a base
+predicate and may be none of them. -/
+def checkBlock (A : AltDoc) (fixed : List String := []) : Except String Unit := do
   let a := A.alt
   for (role, s) in [("chooser", a.chooser), ("action", a.action), ("harm", a.harm)] do
     unless A.E.sorts.contains s do throw s!"UnknownSymbol: alternatives.{role} {s}"
@@ -204,7 +207,7 @@ def checkBlock (A : AltDoc) : Except String Unit := do
   for w in profileWords do
     if A.E.sorts.contains w || (A.E.predicates w).isSome || (A.E.constants w).isSome then
       throw s!"AlternativesReserved: {w}"
-  let layer := regulatedNames A.T ++ A.T.definitions.map Definition.name
+  let layer := regulatedNames A.T ++ A.T.definitions.map Definition.name ++ fixed
   for (role, p, ss) in roleSorts a do
     match A.E.predicates p with
     | none => throw s!"UnknownSymbol: alternatives.{role} {p}"

@@ -1,0 +1,205 @@
+{
+  "commit_sha": "515f86dd19aeafff2c8caf7202ac7b04ade855a9",
+  "counts": {
+    "collected": 11468,
+    "deselected": 1,
+    "failed": 9,
+    "passed": 11451,
+    "rust_ignored": 0,
+    "rust_passed": 48,
+    "selected": 11467,
+    "skipped": 7
+  },
+  "dirty": false,
+  "environment": {
+    "base": {
+      "CARGO_HOME": "/tmp/ve-gate-4s1btnrf/cargo-home",
+      "GIT_CONFIG_NOSYSTEM": "1",
+      "HOME": "/tmp/ve-gate-4s1btnrf/home",
+      "LAKE_CACHE_DIR": "/tmp/ve-gate-4s1btnrf/lake-cache",
+      "LANG": "C.UTF-8",
+      "LC_ALL": "C.UTF-8",
+      "PATH": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin:/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin:/tmp/ve-gate-4s1btnrf/bin:/usr/bin:/bin",
+      "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+      "PYTHONNOUSERSITE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/ve-gate-4s1btnrf/pycache",
+      "TMPDIR": "/tmp/ve-gate-4s1btnrf/tmp",
+      "UV_CACHE_DIR": "/tmp/ve-gate-4s1btnrf/uv-cache",
+      "UV_NO_CONFIG": "1",
+      "XDG_CACHE_HOME": "/tmp/ve-gate-4s1btnrf/home/.cache",
+      "XDG_CONFIG_HOME": "/tmp/ve-gate-4s1btnrf/home/.config",
+      "XDG_DATA_HOME": "/tmp/ve-gate-4s1btnrf/home/.local/share"
+    },
+    "cargo": {
+      "CARGO_ENCODED_RUSTFLAGS": "--remap-path-prefix=/home/seyran/code/ve-lf-11b=/ve\u001f--remap-path-prefix=/tmp/ve-gate-4s1btnrf/cargo-home=/cargo-home\u001f--remap-path-prefix=/home/seyran/code/ve-lf-11b/rust/target=/ve-target",
+      "CARGO_HOME": "/tmp/ve-gate-4s1btnrf/cargo-home",
+      "CARGO_NET_OFFLINE": "true",
+      "GIT_CONFIG_NOSYSTEM": "1",
+      "HOME": "/tmp/ve-gate-4s1btnrf/home",
+      "LAKE_CACHE_DIR": "/tmp/ve-gate-4s1btnrf/lake-cache",
+      "LANG": "C.UTF-8",
+      "LC_ALL": "C.UTF-8",
+      "PATH": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin:/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin:/tmp/ve-gate-4s1btnrf/bin:/usr/bin:/bin",
+      "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+      "PYTHONNOUSERSITE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/ve-gate-4s1btnrf/pycache",
+      "TMPDIR": "/tmp/ve-gate-4s1btnrf/tmp",
+      "UV_CACHE_DIR": "/tmp/ve-gate-4s1btnrf/uv-cache",
+      "UV_NO_CONFIG": "1",
+      "XDG_CACHE_HOME": "/tmp/ve-gate-4s1btnrf/home/.cache",
+      "XDG_CONFIG_HOME": "/tmp/ve-gate-4s1btnrf/home/.config",
+      "XDG_DATA_HOME": "/tmp/ve-gate-4s1btnrf/home/.local/share"
+    },
+    "pytest": {
+      "CARGO_HOME": "/tmp/ve-gate-4s1btnrf/cargo-home",
+      "GIT_CONFIG_NOSYSTEM": "1",
+      "HOME": "/tmp/ve-gate-4s1btnrf/home",
+      "LAKE_CACHE_DIR": "/tmp/ve-gate-4s1btnrf/lake-cache",
+      "LANG": "C.UTF-8",
+      "LC_ALL": "C.UTF-8",
+      "PATH": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin:/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin:/tmp/ve-gate-4s1btnrf/bin:/usr/bin:/bin",
+      "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+      "PYTHONNOUSERSITE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/ve-gate-4s1btnrf/pycache",
+      "TMPDIR": "/tmp/ve-gate-4s1btnrf/tmp",
+      "UV_CACHE_DIR": "/tmp/ve-gate-4s1btnrf/uv-cache",
+      "UV_NO_CONFIG": "1",
+      "VE_GATE_PYTEST_PROGRESS": "/tmp/ve-gate-4s1btnrf/current-test.txt",
+      "VE_GATE_PYTEST_RESULT": "/tmp/ve-gate-4s1btnrf/pytest-collection.json",
+      "VE_LEAN_PREBUILT": "1",
+      "VE_NATIVE_PREBUILT": "1",
+      "VE_RUST_BINARY": "/home/seyran/code/ve-lf-11b/rust/target/release/ve",
+      "VE_RUST_PREBUILT": "1",
+      "XDG_CACHE_HOME": "/tmp/ve-gate-4s1btnrf/home/.cache",
+      "XDG_CONFIG_HOME": "/tmp/ve-gate-4s1btnrf/home/.config",
+      "XDG_DATA_HOME": "/tmp/ve-gate-4s1btnrf/home/.local/share"
+    }
+  },
+  "failures": [
+    {
+      "reason": "Python suite: exit 1",
+      "stage": "pytest command"
+    },
+    {
+      "reason": "The pinned baseline tools/gate-collection.json differs from the collected tests: 13 collected but not pinned, 0 pinned but not collected.\nCollected but not pinned:\n  tests/test_speech_source_relay.py::test_source_rejection_keeps_leans_code_and_text\n  tests/test_speech_source_relay.py::test_source_report_comes_from_lean\n  tests/test_speech_source_relay.py::test_source_transport_fails_closed_on_tampered_report[coverage]\n  tests/test_speech_source_relay.py::test_source_transport_fails_closed_on_tampered_report[document_id]\n  tests/test_speech_source_relay.py::test_source_transport_fails_closed_on_tampered_report[id]\n  tests/test_speech_source_switch.py::test_fenced_english_is_checked_after_resolution\n  tests/test_speech_source_switch.py::test_public_speech_projection_matches_frozen[answered-metadata2-In this task, you are alice.\\nClick check.\\nIs atlas reviewed?\\n]\n  tests/test_speech_source_switch.py::test_public_speech_projection_matches_frozen[certified-metadata6-Atlas is reviewed.\\nTom is a cat.\\nIs atlas reviewed?\\nDoes it follow from these premises that tom is a cat?\\nProve that tom is a cat using these premises.\\nBeacon is reviewed.\\n]\n  tests/test_speech_source_switch.py::test_public_speech_projection_matches_frozen[chosen-metadata3-Click check.\\n]\n  tests/test_speech_source_switch.py::test_public_speech_projection_matches_frozen[meanings-metadata4-Atlas is reviewed.\\nIt depends.\\nThe desk is fine.\\nAtlas is clear.\\nHeading\\n]\n  tests/test_speech_source_switch.py::test_public_speech_projection_matches_frozen[mixed-metadata5-Atlas is reviewed. Beacon is reviewed.\\n]\n  tests/test_speech_source_switch.py::test_public_speech_projection_matches_frozen[polar-metadata0-Is atlas reviewed?\\n]\n  tests/test_speech_source_switch.py::test_public_speech_projection_matches_frozen[reading-metadata1-Click check.\\nWhich reading did you mean?\\n]\nIf these test changes are intended, run `uv run python tools/gate_collection.py --write` after `(cd lean && lake build)`, check every removed ID is meant to go, and commit the file with the change.",
+      "stage": "coverage"
+    },
+    {
+      "nodeid": "tests/test_assurance_manifest.py::test_decoder_files_are_pinned_whole",
+      "reason": "def test_decoder_files_are_pinned_whole():\n        \"\"\"Range-boundary checks accept a new declaration right after a range; the file pin does not.\"\"\"\n        problems = _pin_problems(ROOT, MANIFEST[\"lean_decoders\"][\"files\"])\n>       assert not problems, \"\\n\".join(problems)\nE       AssertionError: lean/VE/SpeechActs/Source/Admission/Run.lean: review the ranges, then pin \"lines\": 632, \"sha256\": \"776cebdcc648a0fa59fce70025b84c2f84b843e247f8a1633fdfa24dd2c61070\"\nE         lean/VE/SpeechActs/Source/Run.lean: review the ranges, then pin \"lines\": 933, \"sha256\": \"6d39ec0b8b5b21c0a4b10ff2acdbe15cf352dfd7ce39863219c13d940d163b1a\"\nE       assert not ['lean/VE/SpeechActs/Source/Admission/Run.lean: review the ranges, then pin \"lines\": 632, \"sha256\": \"776cebdcc648a0fa5...eview the ranges, then pin \"lines\": 933, \"sha256\": \"6d39ec0b8b5b21c0a4b10ff2acdbe15cf352dfd7ce39863219c13d940d163b1a\"']\n\ntests/test_assurance_manifest.py:590: AssertionError",
+      "stage": "pytest"
+    },
+    {
+      "nodeid": "tests/test_assurance_manifest.py::test_only_the_backend_starts_processes",
+      "reason": "def test_only_the_backend_starts_processes():\n        starters = set()\n        for module, rel, tree in _modules():\n            for node in ast.walk(tree):\n                names = ([a.name for a in node.names] if isinstance(node, ast.Import) else\n                         [node.module] if isinstance(node, ast.ImportFrom) and node.level == 0 else [])\n                if any(name in (\"subprocess\", \"multiprocessing\") or name.startswith(\"subprocess.\") for name in names):\n                    starters.add(rel.as_posix())\n>       assert starters == {\"ve/backends/lean.py\", \"ve/backends/lean_service.py\",\n                            \"ve/backends/rust_jsonl.py\"}\nE       AssertionError: assert {'ve/backends...ch_source.py'} == {'ve/backends...ust_jsonl.py'}\nE         \nE         Extra items in the left set:\nE         've/backends/speech_source.py'\nE         Use -v to get more diff\n\ntests/test_assurance_manifest.py:251: AssertionError",
+      "stage": "pytest"
+    },
+    {
+      "nodeid": "tests/test_assurance_manifest.py::test_trusted_decoder_line_ranges_are_pinned",
+      "reason": "def test_trusted_decoder_line_ranges_are_pinned():\n        total = 0\n        for entry in MANIFEST[\"lean_decoders\"][\"files\"]:\n            lines = (ROOT / entry[\"file\"]).read_text().split(\"\\n\")\n            if lines[-1] == \"\":\n                lines.pop()\n            previous = 0\n            for start, end in entry[\"ranges\"]:\n                assert previous < start <= end <= len(lines), entry[\"file\"]\n                assert start == 1 or DECLARATION.match(lines[start - 1]), (entry[\"file\"], start)\n                after = lines[end] if end < len(lines) else \"\"\n>               assert (after == \"\" or DECLARATION.match(after) or after.startswith((\"theorem \", \"end \", \"/-\"))), \\\n                    (entry[\"file\"], end, after)\nE               AssertionError: ('lean/VE/SpeechActs/Source/Run.lean', 889, 'stated answer an answer in every admissible model of the regenerated premises (conditionally on the presupposition')\nE               assert ('stated answe...resupposition' == ''\nE                 \nE                 + stated answer an answer in every admissible model of the regenerated premises (conditionally on the presupposition or None or False)\nE                +  where None = <built-in method match of re.Pattern object at 0x12011dc0>('stated answer an answer in every admissible model of the regenerated premises (conditionally on the presupposition')\nE                +    where <built-in method match of re.Pattern object at 0x12011dc0> = re.compile('^(?:private |protected )?(?:def|abbrev|structure|inductive) ').match\nE                +  and   False = <built-in method startswith of str object at 0x784440e4d7f0>(('theorem ', 'end ', '/-'))\nE                +    where <built-in method startswith of str object at 0x784440e4d7f0> = 'stated answer an answer in every admissible model of the regenerated premises (conditionally on the presupposition'.startswith\n\ntests/test_assurance_manifest.py:564: AssertionError",
+      "stage": "pytest"
+    },
+    {
+      "nodeid": "tests/test_consolidation_tools.py::test_committed_trust_table_covers_every_declaration",
+      "reason": "def test_committed_trust_table_covers_every_declaration():\n        files, problems = trust_map.measure()\n        assert problems == []\n        totals = trust_map.totals(files)\n>       assert totals[\"unclassified\"] == 0\nE       assert 20 == 0\n\ntests/test_consolidation_tools.py:1311: AssertionError",
+      "stage": "pytest"
+    },
+    {
+      "nodeid": "tests/test_gate.py::test_the_collection_baseline_is_what_the_gate_collects",
+      "reason": "tmp_path = PosixPath('/tmp/ve-gate-4s1btnrf/tmp/pytest-of-seyran/pytest-0/popen-gw4/test_the_collection_baseline_i0')\n\n    def test_the_collection_baseline_is_what_the_gate_collects(tmp_path):\n        \"\"\"Review: the baseline lacked the deselected tests/test_llm.py::test_live_smoke, which\n        the gate's recorder collects, and the gate's pytest (plugin autoload off) stopped with\n        an internal error on an xdist-only conftest hook. The gate's own collection command,\n        in this environment, must succeed and collect exactly the committed baseline;\n        `python tools/gate.py --write-collection` regenerates it.\"\"\"\n        events = gate.collect({**os.environ, \"VE_NATIVE_PREBUILT\": \"1\"}, tmp_path / \"collection.json\")\n        baseline = json.loads(gate.COLLECTION.read_text())\n        assert events[\"collection_reports\"] == []\n        assert len(events[\"collected\"]) == len(set(events[\"collected\"]))\n        missing = sorted(set(baseline) - set(events[\"collected\"]))\n        unexpected = sorted(set(events[\"collected\"]) - set(baseline))\n>       assert (missing, unexpected) == ([], []), \"run python tools/gate.py --write-collection\"\nE       AssertionError: run python tools/gate.py --write-collection\nE       assert ([], ['tests/...lution', ...]) == ([], [])\nE         \nE         At index 1 diff: ['tests/test_speech_source_relay.py::test_source_rejection_keeps_leans_code_and_text', 'tests/test_speech_source_relay.py::test_source_report_comes_from_lean', 'tests/test_speech_source_relay.py::test_source_transport_fails_closed_on_tampered_report[coverage]', 'tests/test_speech_source_relay.py::test_source_transport_fails_closed_on_tampered_report[document_id]', 'tests/test_speech_source_relay.py::test_source_transport_fails_closed_on_tampered_report[id]', 'tests/test_speech_source_switch.py::test_fenced_english_is_checked_after_resolution', 'tests/test_speech_source_switc...\nE         \nE         ...Full output truncated (2 lines hidden), use '-vv' to show\n\ntests/test_gate.py:46: AssertionError",
+      "stage": "pytest"
+    },
+    {
+      "nodeid": "tests/test_gate_collection.py::test_gate_baseline_is_the_gate_collection",
+      "reason": "def test_gate_baseline_is_the_gate_collection():\n        # The merge train's verify runs this, so it fails on the merge that forgot\n        # the baseline instead of the release gate failing later on main.\n        collected = gate_collection.collect(prebuilt=True)\n        expected = json.loads(gate.COLLECTION.read_text())\n        added, removed = gate_collection.difference(expected, collected)\n>       assert not (added or removed), gate.collection_difference(added, removed)\nE       AssertionError: The pinned baseline tools/gate-collection.json differs from the collected tests: 13 collected but not pinned, 0 pinned but not collected.\nE         Collected but not pinned:\nE           tests/test_speech_source_relay.py::test_source_rejection_keeps_leans_code_and_text\nE           tests/test_speech_source_relay.py::test_source_report_comes_from_lean\nE           tests/test_speech_source_relay.py::test_source_transport_fails_closed_on_tampered_report[coverage]\nE           tests/test_speech_source_relay.py::test_source_transport_fails_closed_on_tampered_report[document_id]\nE           tests/test_speech_source_relay.py::test_source_transport_fails_closed_on_tampered_report[id]\nE           tests/test_speech_source_switch.py::test_fenced_english_is_checked_after_resolution\nE           tests/test_speech_source_switch.py::test_public_speech_projection_matches_frozen[answered-metadata2-In this task, you are alice.\\nClick check.\\nIs atlas reviewed?\\n]\nE           tests/test_speech_source_switch.py::test_public_speech_projection_matches_frozen[certified-metadata6-Atlas is reviewed.\\nTom is a cat.\\nIs atlas reviewed?\\nDoes it follow from these premises that tom is a cat?\\nProve that tom is a cat using these premises.\\nBeacon is reviewed.\\n]\nE           tests/test_speech_source_switch.py::test_public_speech_projection_matches_frozen[chosen-metadata3-Click check.\\n]\nE           tests/test_speech_source_switch.py::test_public_speech_projection_matches_frozen[meanings-metadata4-Atlas is reviewed.\\nIt depends.\\nThe desk is fine.\\nAtlas is clear.\\nHeading\\n]\nE           tests/test_speech_source_switch.py::test_public_speech_projection_matches_frozen[mixed-metadata5-Atlas is reviewed. Beacon is reviewed.\\n]\nE           tests/test_speech_source_switch.py::test_public_speech_projection_matches_frozen[polar-metadata0-Is atlas reviewed?\\n]\nE           tests/test_speech_source_switch.py::test_public_speech_projection_matches_frozen[reading-metadata1-Click check.\\nWhich reading did you mean?\\n]\nE         If these test changes are intended, run `uv run python tools/gate_collection.py --write` after `(cd lean && lake build)`, check every removed ID is meant to go, and commit the file with the change.\nE       assert not (['tests/test_speech_source_relay.py::test_source_rejection_keeps_leans_code_and_text', 'tests/test_speech_source_relay...ed_on_tampered_report[id]', 'tests/test_speech_source_switch.py::test_fenced_english_is_checked_after_resolution', ...])\n\ntests/test_gate_collection.py:24: AssertionError",
+      "stage": "pytest"
+    },
+    {
+      "nodeid": "tests/test_inventory_lint.py::test_every_recorded_exception_is_still_used",
+      "reason": "def test_every_recorded_exception_is_still_used():\n        _, excepted = lint.violations()\n        used = {(row[\"consumer\"].split(\":\")[0], row[\"consumer\"].split(\":\")[1],\n                 row[\"provider\"].split(\":\")[0], row[\"provider\"].split(\":\")[1]) for row in excepted}\n>       assert used == set(lint.EXCEPTIONS)\nE       AssertionError: assert {('ve.closure...hecker'), ...} == {('ve.closure...hecker'), ...}\nE         \nE         Extra items in the right set:\nE         ('ve.speech_acts', 'SpeechDocument._question', 've.ast', '_Checker')\nE         Use -v to get more diff\n\ntests/test_inventory_lint.py:18: AssertionError",
+      "stage": "pytest"
+    },
+    {
+      "nodeid": "tests/test_inventory_lint.py::test_no_retained_code_imports_a_class_a_body",
+      "reason": "def test_no_retained_code_imports_a_class_a_body():\n        found, excepted = lint.violations()\n>       assert found == []\nE       AssertionError: assert [{'consumer':...ument.py:86'}] == []\nE         \nE         Left contains one more item: {'consumer': 've.speech_document:_premise_evidence', 'provider': 've.vacuity:_premise_status', 'line': 've/speech_document.py:86'}\nE         Use -v to get more diff\n\ntests/test_inventory_lint.py:10: AssertionError",
+      "stage": "pytest"
+    },
+    {
+      "nodeid": "tests/test_relay_wire_check.py::test_depth_past_256_is_still_leans_to_answer",
+      "reason": "news = ({'format': 've-w6a-fixtures@1', 'source_sha256': 'b905818ecbc38c479a273d1503430745d1f2c9697215752572922ccedd73545b', ...ingproxy({'scale': '1', 'display': mappingproxy({'kind': 'iso_date'})})}), reports=None, alternatives=None, risk=None))\n\n    @needs_service\n    def test_depth_past_256_is_still_leans_to_answer(news):\n        \"\"\"Signed row W9.3: the transport does not preempt Lean's depth limit.\"\"\"\n        _, env = news\n        for depth in (300, TRANSPORT_DEPTH // 2):\n            with pytest.raises(ResourceLimit, match=\"^ResourceLimit: JSON depth exceeds 256$\"):\n>               elaborate_quantity(env, {\"format\": \"ve-quantity@1\", \"formula\": _nested(depth)})\n\ntests/test_relay_wire_check.py:166: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nve/units.py:330: in elaborate_quantity\n    row = _checked_quantity(env, payload)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/units.py:320: in _checked_quantity\n    [row] = decide(\"check\", [{\"id\": \"quantity\", \"environment\": env.to_dict(),\nve/backends/relay.py:128: in decide\n    entries = _pool_for(executable).run_bound(mode, wire_checked(cases), timeout=timeout)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/backends/lean_service.py:912: in run_bound\n    return self._on_idle(lambda service: service.run_bound(mode, cases, timeout=timeout))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/backends/lean_service.py:902: in _on_idle\n    return call(service)\n           ^^^^^^^^^^^^^\nve/backends/lean_service.py:912: in <lambda>\n    return self._on_idle(lambda service: service.run_bound(mode, cases, timeout=timeout))\n                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/backends/lean_service.py:819: in run_bound\n    entries.extend(self._run_chunk(mode, chunk, timeout))\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/backends/lean_service.py:775: in _run_chunk\n    response = self._handle_request(mode, chunk, timeout)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/backends/lean_service.py:803: in _handle_request\n    response = self._request(mode, texts, timeout, environments=environments,\nve/backends/lean_service.py:765: in _request\n    _, response = self.exchange(mode, cases_text, len(chunk), timeout=timeout, budget=budget, texts=chunk,\nve/backends/lean_service.py:715: in exchange\n    raw, response = self._roundtrip(mode, cases_text, count, timeout, nonce, line, texts,\nve/backends/lean_service.py:647: in _roundtrip\n    raw = self._read_line(deadline)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^\nve/backends/lean_service.py:594: in _read_line\n    if not sel.select(self._wait(deadline, \"waiting for the response\")):\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <ve.backends.lean_service.LeanService object at 0x78444211c830>\ndeadline = <ve.backends.lean_service._Deadline object at 0x78443e661380>\nwhat = 'waiting for the response'\n\n    def _wait(self, deadline: _Deadline, what: str) -> float:\n        \"\"\"Seconds to wait before `deadline` is checked again; raises once it has passed. A CPU\n        deadline is checked at least as often as the process could have used up what is left of\n        it (it runs one thread).\"\"\"\n        remaining = deadline.wall - time.monotonic()\n        if remaining <= 0:\n            raise _Failure(f\"timeout {what}\" + (f\" (mode {deadline.mode})\" if deadline.mode else \"\"))\n        if deadline.cpu is None:\n            return remaining\n        used = _cpu_seconds(self._proc.pid)\n        if used is not None and used - deadline.start > deadline.cpu:\n            self._stop(graceful=False)\n>           raise CheckerUnavailable(\n                f\"CheckerUnavailable: the Lean service mode {deadline.mode} used more than its deadline \"\n                f\"of {deadline.cpu:.6g} s of CPU\", operation=deadline.mode, backend=\"lean\")\nE           ve.errors.CheckerUnavailable: CheckerUnavailable: the Lean service mode check used more than its deadline of 6.14907 s of CPU\n\nve/backends/lean_service.py:560: CheckerUnavailable",
+      "stage": "pytest"
+    }
+  ],
+  "schema_version": 1,
+  "skips": [
+    {
+      "allowed": true,
+      "nodeid": "tests/test_assist.py::test_p5_real_dev_file_loads_when_present",
+      "reason": "('/home/seyran/code/ve-lf-11b/tests/test_assist.py', 90, 'Skipped: P5 materials not available')"
+    },
+    {
+      "allowed": true,
+      "nodeid": "tests/test_grammar_backends.py::test_llguidance_compiles_lark_and_gbnf_exports",
+      "reason": "('/home/seyran/code/ve-lf-11b/tests/test_grammar_backends.py', 22, \"Skipped: could not import 'llguidance': No module named 'llguidance'\")"
+    },
+    {
+      "allowed": true,
+      "nodeid": "tests/test_grammar_backends.py::test_xgrammar_compiles_and_matches_ebnf_exports",
+      "reason": "('/home/seyran/code/ve-lf-11b/tests/test_grammar_backends.py', 51, \"Skipped: could not import 'xgrammar': No module named 'xgrammar'\")"
+    },
+    {
+      "allowed": true,
+      "nodeid": "tests/test_nary_folio.py::test_full_nary_folio_accounting_when_corpus_is_available",
+      "reason": "('/home/seyran/code/ve-lf-11b/tests/test_nary_folio.py', 18, 'Skipped: optional pinned FOLIO v2 corpus is not downloaded')"
+    },
+    {
+      "allowed": true,
+      "nodeid": "tests/test_p0_three_way.py::test_rust_matches_expected[admission]",
+      "reason": "('/home/seyran/code/ve-lf-11b/tests/test_p0_three_way.py', 92, 'Skipped: admission is outside Rust scope')"
+    },
+    {
+      "allowed": true,
+      "nodeid": "tests/test_p1_native_counter.py::test_retained_deepinfra_smoke_native_count[weak-21]",
+      "reason": "('/home/seyran/code/ve-lf-11b/tests/test_p1_native_counter.py', 60, 'Skipped: pinned tokenizer not cached; test never downloads')"
+    },
+    {
+      "allowed": true,
+      "nodeid": "tests/test_safety_framework.py::test_build_check_writes_nothing_beside_the_source",
+      "reason": "('/home/seyran/code/ve-lf-11b/tests/test_safety_framework.py', 180, 'Skipped: the pinned source is not stored on this machine')"
+    },
+    {
+      "allowed": true,
+      "deselected": true,
+      "nodeid": "tests/test_llm.py::test_live_smoke",
+      "reason": "excluded live model call"
+    }
+  ],
+  "stages": [
+    "toolchains",
+    "lean_build",
+    "lean_audit",
+    "rust_build",
+    "cargo_test",
+    "pytest"
+  ],
+  "status": "failed",
+  "toolchains": {
+    "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+    "lake": "Lake version 5.0.0-src+797c613 (Lean version 4.24.0)",
+    "lean": "Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)",
+    "lean_pin": "4.24.0",
+    "paths": {
+      "cargo": "/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin/cargo",
+      "lake": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lake",
+      "lean": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean",
+      "rustc": "/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin/rustc",
+      "uv": "/tmp/ve-gate-4s1btnrf/bin/uv"
+    },
+    "python": "Python 3.14.7",
+    "rust_pin": "1.98.1",
+    "rust_toolchain": "1.98.1-x86_64-unknown-linux-gnu",
+    "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+    "uv": "uv 0.12.19 (x86_64-unknown-linux-gnu)",
+    "uv_lock_sha256": "312825c8c53903f3dcacc5aa9fea5514183a99aa155f4df9ee056d163011b75b"
+  }
+}

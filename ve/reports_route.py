@@ -1,10 +1,7 @@
-"""Checked reports route and independent Python/Lean elaboration comparison."""
+"""Checked reports route."""
 from __future__ import annotations
 
 from .backends.relay import decide
-from .errors import VEError
-FIELDS = ("environment_reports_id", "keys", "premises", "open_terms",
-          "bridge_formulas", "content_ids", "envelope", "warnings")
 
 
 def _without_null(value):
@@ -17,17 +14,36 @@ def _without_null(value):
     return value
 
 
-def run_case(kind, environment, document):
+def _split_nulls(value, path, nulls):
+    """`value` without JSON null, and each removed null's path in `nulls`: a member is
+    dropped, a list item becomes `{}` so later indices stay. Lean restores them for its
+    fault walk (`Preflight.restore`), which treats them as the pre-batch Python did."""
+    if type(value) is dict:
+        out = {}
+        for key, item in value.items():
+            if item is None:
+                nulls.append(path + [key])
+            else:
+                out[key] = _split_nulls(item, path + [key], nulls)
+        return out
+    if type(value) in (list, tuple):
+        out = []
+        for index, item in enumerate(value):
+            if item is None:
+                nulls.append(path + [index])
+                out.append({})
+            else:
+                out.append(_split_nulls(item, path + [index], nulls))
+        return out
+    return value
+
+
+def run_case(kind, environment, document, **extra):
     """Lean's reports route row (service mode `reports`); a rejection raises Lean's diagnostic."""
+    nulls = []
+    document = _split_nulls(document, [], nulls)
     case = _without_null({"id": "document", "kind": kind,
-                          "environment": environment, "document": document})
+                          "environment": environment, "document": document, **extra})
+    if nulls:
+        case["nulls"] = nulls
     return decide("reports", [case])[0]
-
-
-def checked_elaboration(reports, environment, document):
-    result = run_case("reports-elaborate", environment, document)
-    python = reports.elaborated()
-    for field in FIELDS:
-        if python[field] != result.get(field):
-            raise VEError(f"ReportsConformance: Python and Lean differ at {field}")
-    return result

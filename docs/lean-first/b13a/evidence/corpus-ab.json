@@ -1,0 +1,1614 @@
+{
+ "differences": [
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "document must contain at least one statement",
+     "span": {
+      "column": 1,
+      "end": 0,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "parser/parser_edge_006",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: document must contain at least one statement",
+     "span": {
+      "column": 1,
+      "end": 0,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "document must contain at least one statement",
+     "span": {
+      "column": 1,
+      "end": 0,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "parser/parser_edge_006",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: document must contain at least one statement",
+     "span": {
+      "column": 1,
+      "end": 0,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "case": "parser/parser_edge_007",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "case": "parser/parser_edge_007",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "case": "parser/parser_edge_008",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "case": "parser/parser_edge_008",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 7,
+      "line": 2,
+      "start": 6
+     }
+    }
+   },
+   "case": "parser/parser_edge_009",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 7,
+      "line": 2,
+      "start": 6
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 7,
+      "line": 2,
+      "start": 6
+     }
+    }
+   },
+   "case": "parser/parser_edge_009",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 7,
+      "line": 2,
+      "start": 6
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "parser/parser_edge_010",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "parser/parser_edge_010",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "case": "parser/parser_edge_011",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "case": "parser/parser_edge_011",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected ') and (' or ') or ('",
+     "span": {
+      "column": 6,
+      "end": 6,
+      "line": 1,
+      "start": 5
+     }
+    }
+   },
+   "case": "parser/parser_edge_012",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected ') and (' or ') or ('",
+     "span": {
+      "column": 6,
+      "end": 6,
+      "line": 1,
+      "start": 5
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected ') and (' or ') or ('",
+     "span": {
+      "column": 6,
+      "end": 6,
+      "line": 1,
+      "start": 5
+     }
+    }
+   },
+   "case": "parser/parser_edge_012",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected ') and (' or ') or ('",
+     "span": {
+      "column": 6,
+      "end": 6,
+      "line": 1,
+      "start": 5
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "case": "parser/parser_edge_013",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "case": "parser/parser_edge_013",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "parser/parser_edge_014",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "parser/parser_edge_014",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 7,
+      "line": 2,
+      "start": 6
+     }
+    }
+   },
+   "case": "parser/parser_edge_015",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 7,
+      "line": 2,
+      "start": 6
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 7,
+      "line": 2,
+      "start": 6
+     }
+    }
+   },
+   "case": "parser/parser_edge_015",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 7,
+      "line": 2,
+      "start": 6
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "case": "parser/parser_edge_016",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "case": "parser/parser_edge_016",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 6,
+      "end": 12,
+      "line": 2,
+      "start": 11
+     }
+    }
+   },
+   "case": "parser/parser_edge_017",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 6,
+      "end": 12,
+      "line": 2,
+      "start": 11
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 6,
+      "end": 12,
+      "line": 2,
+      "start": 11
+     }
+    }
+   },
+   "case": "parser/parser_edge_017",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 6,
+      "end": 12,
+      "line": 2,
+      "start": 11
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "VE semantic syntax must be ASCII",
+     "span": {
+      "column": 6,
+      "end": 6,
+      "line": 1,
+      "start": 5
+     }
+    }
+   },
+   "case": "parser/parser_edge_018",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: VE semantic syntax must be ASCII",
+     "span": {
+      "column": 6,
+      "end": 6,
+      "line": 1,
+      "start": 5
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "VE semantic syntax must be ASCII",
+     "span": {
+      "column": 6,
+      "end": 6,
+      "line": 1,
+      "start": 5
+     }
+    }
+   },
+   "case": "parser/parser_edge_018",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: VE semantic syntax must be ASCII",
+     "span": {
+      "column": 6,
+      "end": 6,
+      "line": 1,
+      "start": 5
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ShadowedVariable",
+     "message": "binder 's' shadows an active binder",
+     "span": {
+      "column": 41,
+      "end": 41,
+      "line": 1,
+      "start": 40
+     }
+    }
+   },
+   "case": "parser/parser_edge_019",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "ShadowedVariable",
+     "message": "ShadowedVariable: binder 's' shadows an active binder",
+     "span": {
+      "column": 41,
+      "end": 41,
+      "line": 1,
+      "start": 40
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ShadowedVariable",
+     "message": "binder 's' shadows an active binder",
+     "span": {
+      "column": 41,
+      "end": 41,
+      "line": 1,
+      "start": 40
+     }
+    }
+   },
+   "case": "parser/parser_edge_019",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "ShadowedVariable",
+     "message": "ShadowedVariable: binder 's' shadows an active binder",
+     "span": {
+      "column": 41,
+      "end": 41,
+      "line": 1,
+      "start": 40
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "invalid binder name 'person'",
+     "span": {
+      "column": 19,
+      "end": 24,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "case": "parser/parser_edge_020",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: invalid binder name 'person'",
+     "span": {
+      "column": 19,
+      "end": 24,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "invalid binder name 'person'",
+     "span": {
+      "column": 19,
+      "end": 24,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "case": "parser/parser_edge_020",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: invalid binder name 'person'",
+     "span": {
+      "column": 19,
+      "end": 24,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "invalid binder name 'not'",
+     "span": {
+      "column": 19,
+      "end": 21,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "case": "parser/parser_edge_021",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: invalid binder name 'not'",
+     "span": {
+      "column": 19,
+      "end": 21,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "invalid binder name 'not'",
+     "span": {
+      "column": 19,
+      "end": 21,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "case": "parser/parser_edge_021",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: invalid binder name 'not'",
+     "span": {
+      "column": 19,
+      "end": 21,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "invalid binder name 'deployed'",
+     "span": {
+      "column": 19,
+      "end": 26,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "case": "parser/parser_edge_022",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: invalid binder name 'deployed'",
+     "span": {
+      "column": 19,
+      "end": 26,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "invalid binder name 'deployed'",
+     "span": {
+      "column": 19,
+      "end": 26,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "case": "parser/parser_edge_022",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: invalid binder name 'deployed'",
+     "span": {
+      "column": 19,
+      "end": 26,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected ')'",
+     "span": {
+      "column": 10,
+      "end": 10,
+      "line": 1,
+      "start": 9
+     }
+    }
+   },
+   "case": "parser/parser_edge_032",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected ')'",
+     "span": {
+      "column": 10,
+      "end": 10,
+      "line": 1,
+      "start": 9
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected ')'",
+     "span": {
+      "column": 10,
+      "end": 10,
+      "line": 1,
+      "start": 9
+     }
+    }
+   },
+   "case": "parser/parser_edge_032",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected ')'",
+     "span": {
+      "column": 10,
+      "end": 10,
+      "line": 1,
+      "start": 9
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '), then ('",
+     "span": {
+      "column": 9,
+      "end": 9,
+      "line": 1,
+      "start": 8
+     }
+    }
+   },
+   "case": "parser/parser_edge_033",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '), then ('",
+     "span": {
+      "column": 9,
+      "end": 9,
+      "line": 1,
+      "start": 8
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '), then ('",
+     "span": {
+      "column": 9,
+      "end": 9,
+      "line": 1,
+      "start": 8
+     }
+    }
+   },
+   "case": "parser/parser_edge_033",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '), then ('",
+     "span": {
+      "column": 9,
+      "end": 9,
+      "line": 1,
+      "start": 8
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 40,
+      "end": 40,
+      "line": 1,
+      "start": 39
+     }
+    }
+   },
+   "case": "parser/parser_edge_034",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 40,
+      "end": 40,
+      "line": 1,
+      "start": 39
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 40,
+      "end": 40,
+      "line": 1,
+      "start": 39
+     }
+    }
+   },
+   "case": "parser/parser_edge_034",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 40,
+      "end": 40,
+      "line": 1,
+      "start": 39
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "reserved word 'must' cannot be a term",
+     "span": {
+      "column": 1,
+      "end": 4,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "parser/parser_edge_037",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: reserved word 'must' cannot be a term",
+     "span": {
+      "column": 1,
+      "end": 4,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "reserved word 'must' cannot be a term",
+     "span": {
+      "column": 1,
+      "end": 4,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "parser/parser_edge_037",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: reserved word 'must' cannot be a term",
+     "span": {
+      "column": 1,
+      "end": 4,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "formula exceeds nesting limit 64",
+     "span": {
+      "column": 321,
+      "end": 321,
+      "line": 1,
+      "start": 320
+     }
+    }
+   },
+   "case": "parser/parser_edge_038",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: formula exceeds nesting limit 64",
+     "span": {
+      "column": 321,
+      "end": 321,
+      "line": 1,
+      "start": 320
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "formula exceeds nesting limit 64",
+     "span": {
+      "column": 321,
+      "end": 321,
+      "line": 1,
+      "start": 320
+     }
+    }
+   },
+   "case": "parser/parser_edge_038",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: formula exceeds nesting limit 64",
+     "span": {
+      "column": 321,
+      "end": 321,
+      "line": 1,
+      "start": 320
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "binder name exceeds 64 ASCII bytes",
+     "span": {
+      "column": 19,
+      "end": 83,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "case": "parser/parser_edge_039",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: binder name exceeds 64 ASCII bytes",
+     "span": {
+      "column": 19,
+      "end": 83,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "binder name exceeds 64 ASCII bytes",
+     "span": {
+      "column": 19,
+      "end": 83,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "case": "parser/parser_edge_039",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: binder name exceeds 64 ASCII bytes",
+     "span": {
+      "column": 19,
+      "end": 83,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "document exceeds 10000 AST nodes",
+     "span": {
+      "column": 1,
+      "end": 60004,
+      "line": 10001,
+      "start": 60000
+     }
+    }
+   },
+   "case": "parser/parser_edge_040",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: document exceeds 10000 AST nodes",
+     "span": {
+      "column": 1,
+      "end": 60004,
+      "line": 10001,
+      "start": 60000
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "document exceeds 10000 AST nodes",
+     "span": {
+      "column": 1,
+      "end": 60004,
+      "line": 10001,
+      "start": 60000
+     }
+    }
+   },
+   "case": "parser/parser_edge_040",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: document exceeds 10000 AST nodes",
+     "span": {
+      "column": 1,
+      "end": 60004,
+      "line": 10001,
+      "start": 60000
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "at": {
+     "cell": "S",
+     "output": 10000,
+     "routed": [
+      "parse",
+      "typing"
+     ],
+     "status": "accepted"
+    },
+    "cap": 65536,
+    "over": {
+     "backend_rejection": true,
+     "cell": "R",
+     "output": {
+      "code": "ResourceLimit",
+      "message": "source exceeds 65536 bytes"
+     },
+     "routed": [
+      "parse"
+     ],
+     "status": "ResourceLimit"
+    }
+   },
+   "case": "budget_boundaries/MAX_SOURCE_BYTES",
+   "class": "wording",
+   "corpus": "probe",
+   "head": {
+    "at": {
+     "cell": "S",
+     "output": 10000,
+     "routed": [
+      "parse",
+      "typing"
+     ],
+     "status": "accepted"
+    },
+    "cap": 65536,
+    "over": {
+     "backend_rejection": true,
+     "cell": "R",
+     "output": {
+      "code": "ResourceLimit",
+      "message": "ResourceLimit: source exceeds 65536 bytes"
+     },
+     "routed": [
+      "parse"
+     ],
+     "status": "ResourceLimit"
+    }
+   },
+   "listed": true,
+   "op": "budget_boundaries"
+  }
+ ],
+ "records": {
+  "conformance/lean": 19806,
+  "conformance/python": 19806,
+  "discourse/default": 6350,
+  "pilots/default": 294,
+  "probe/lean": 9435,
+  "probe/python": 9435,
+  "quantity/lean": 12863,
+  "quantity/python": 12863,
+  "readings/default": 1137,
+  "rights/default": 2500
+ },
+ "totals": {
+  "same": 94440,
+  "wording": 49
+ },
+ "unavailable_both": {},
+ "unlisted": 0
+}
