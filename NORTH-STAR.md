@@ -32,6 +32,9 @@ Readability eval 2026-10-03 (Claude Sonnet 5.5 as proxy reader/writer with only 
 ### Vocabulary out of the box (lead-approved 2026-10-04)
 Shared sense dictionary (one sense per document, editor asks once), automatic negatives for simple adjectives, starter vocabulary packs per domain. Keeps one reading; removes most per-word declaration work. After english-lean S2.
 
+### Coverage estimates (2026-10-07, orchestrator; sentences expressible in VE, ETA to 95%)
+Eligibility ~100% (done); agent policy ~100% (done); Asimov ~100% (done); Asimov extended ~70% (late Oct: preferences between actions); VE web page ~45% (late Oct: commands/questions, senses in documents); UDHR ~44% expressible / 23.3% verified (mid-late Nov: readings x defaults [building], act phrases, time); BlueDot grant ~45% (mid Nov: causation, attribution, commands, quantities); DeepMind safety framework answers ~98%, ~9% fully checked (Dec: soft norms, judgment terms); AI deployment safety case 0% (Nov); VE's own paper/docs 0% (Dec; needs math backlog); EU AI Act 0% (Dec-Jan); Anthropic constitution ~1.6% (Jan+, uncertain: soft norms, weighing, judgment are research). Dates assume the current pace.
+
 ### Scalable-oversight experiments (2026-10-05)
 Research: [oversight opportunities](/home/seyran/code/manage-agents/reviews/oversight-opportunities-2026-10.md). Ranked: (1) spec-defect audit of real agent policies (pre-registration in progress: docs/experiments/policy-audit-PREREG.md on design/policy-audit); (2) offline judging of tau2-bench airline/retail actions, small vs large judge with and without VE; (3) 'the policy doesn't say' as a reranking filter, later an RL reward (needs a GPU). Fair baselines: Datalog/Z3 written by the same LLM. Obfuscated arguments (Barnes-Christiano): see experiments/obfuscated-arguments/ and the math backlog.
 
