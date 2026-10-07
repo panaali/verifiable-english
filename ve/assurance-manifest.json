@@ -54,7 +54,11 @@
     "ve/softnorms.py:load_soft_document": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors.",
     "ve/softnorms.py:decode_rule": "After Lean accepts the quoted rule, Python AST construction failures are operational CheckerUnavailable errors.",
     "ve/softnorms.py:SoftEnvironment.__init__": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors.",
-    "ve/softnorms.py:SoftNormDocument.__init__": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors.",
+    "ve/softnorms.py:SoftNormDocument.__init__": "A deferred document whose rules Python cannot hold asks Lean at once (`_elaborate`), so Lean's diagnostic, or CheckerUnavailable, is raised as eager construction raises it; nothing is built from the failure.",
+    "ve/softnorms.py:SoftNormDocument._elaborate": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors.",
+    "ve/rights.py:RightsDocument.warm_rules": "CheckerUnavailable is re-raised first; a document that fails before its rule request is skipped and raises when it is built; the warm-up only fills the accepted-rule memo, never a result.",
+    "ve/readings_s1.py:Decoded._warm_rules": "CheckerUnavailable is re-raised first; a side that cannot be assembled is left out of the warm-up and raises when it is read; never a result.",
+    "ve/readings.py:_warm_alone_rights": "Wraps the assembly of the warm-up's unit lists only (no Lean call); malformed reading sets skip the warm-up and the checks that follow raise in order; never a result.",
     "ve/softnorms.py:batch_rule": "After Lean accepts the batched quoted rule, Python AST construction failures are operational CheckerUnavailable errors."
   },
   "lean_decoders": {
