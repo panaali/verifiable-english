@@ -14,9 +14,9 @@ from pathlib import Path
 from typing import Callable
 
 from .. import ast
-from ..english_grammar import actions_version, export, grammar_id, lexicon_id
-from ..errors import (AmbiguousDerivation, CheckerUnavailable, ResourceLimit, SyntaxError, TypeMismatch,
-                      UnknownSymbol, UnsupportedProfile, VEError, Span)
+from .. import errors
+from ..english_grammar import actions_version, codes, export, grammar_id, lexicon_id
+from ..errors import AmbiguousDerivation, CheckerUnavailable, ResourceLimit, VEError, Span
 from . import dispatch
 from . import relay
 
@@ -25,32 +25,20 @@ EXECUTABLE = ROOT / "lean/.lake/build/bin/ve_english_route"  # S2/S3 conformance
 MODE = "english.read"
 CAP = 2
 IDENTITIES = ("source_sha256", "environment_id", "overlay_digest", "lexicon_id", "grammar_id", "actions_version")
-STATUSES = ("one", "none", "many", "rejected", "budget", "invalidGrammar")
+# Lean's class of every code and the codes of every status (`Run.codeClasses`, `Run.statusCodes`): the
+# `english.grammar` export, written to `ve/english_grammar/codes.json` by `tools/english_codes.py`. The relay
+# holds no class or code table of its own (spec 2.6, D9).
+CODE_CLASSES, STATUS_CODES, UNSENTENCED = codes()
+STATUSES = ("one", *STATUS_CODES)
 FAULTS = ("lexicon", "notWellFormed", "notTyped")
-ILL_TYPED = ("UnknownSymbol", "TypeMismatch", "UnsupportedProfile")
-# The Python classes each Lean rejection code maps onto: base 4.2 with this stage's four codes and its
-# amended `IllTyped` row (spec 4.2). `RelativeForm` maps onto two classes by the text (2.8): either agrees.
-# `CoefficientNotNumeral` is `order@0`'s (S3 2.8; Python's `SyntaxError`, `english.py:1213–1214`).
-CLASSES = {
-    "SourceTooLong": ("ResourceLimit",), "TextTooLong": ("ResourceLimit",),
-    "BadCharacter": ("SyntaxError",), "OpenQuote": ("SyntaxError",), "BadNumeral": ("SyntaxError",),
-    "EmptyDocument": ("SyntaxError",), "EmptySentence": ("SyntaxError",), "Unterminated": ("SyntaxError",),
-    "BadSpacing": ("SyntaxError",),
-    "UnboundReference": ("SyntaxError",), "ShadowedName": ("SyntaxError",), "SortMismatch": ("SyntaxError",),
-    "MarkerDepth": ("SyntaxError",), "NestingLimit": ("ResourceLimit",), "NumeralBound": ("ResourceLimit",),
-    "CoefficientNotNumeral": ("SyntaxError",),
-    "PronounUnresolved": ("SyntaxError",), "BlockedWording": ("SyntaxError",), "IllTyped": ILL_TYPED,
-    "CoordinationRepeated": ("SyntaxError",), "CoordinationForm": ("SyntaxError",),
-    "NaturalScoped": ("SyntaxError",), "RelativeForm": ("SyntaxError", *ILL_TYPED),
-    "ConclusionWithoutPremise": ("SyntaxError",), "ConclusionNotDerived": ("SyntaxError",),
-    "NotOneSentence": ("SyntaxError",), "Internal": ("CheckerUnavailable",),
-}
-# The Python class of each status other than `rejected` (base 4.1), and the code Lean gives it.
-STATUS_CLASSES = {"one": ("accepted",), "none": ("SyntaxError",), "many": ("AmbiguousDerivation",),
-                  "budget": ("ResourceLimit",), "invalidGrammar": ("CheckerUnavailable",)}
-STATUS_CODES = {"none": "NoDerivation", "many": "Ambiguous", "budget": "Budget", "invalidGrammar": "InvalidGrammar"}
-ERRORS = {cls.__name__: cls for cls in (SyntaxError, AmbiguousDerivation, ResourceLimit, UnknownSymbol,
-                                        TypeMismatch, UnsupportedProfile)}
+OVERLAY_SITES = {"O1": ("predicate",), "O2": ("predicate",), "O3": ("sort", "predicate")}
+# Every class a response may name, by its Python name: the classes of `ve.errors`, never a list kept here.
+ERROR_CLASSES = {name: cls for name, cls in vars(errors).items()
+                 if isinstance(cls, type) and issubclass(cls, (VEError, CheckerUnavailable))}
+# The comparator's tolerance (spec 2.9: kept by the comparator only): Python raised a typing class where Lean
+# writes `IllTyped`, and for `RelativeForm` either Python's `SyntaxError` or a typing class.
+TYPING = ("UnknownSymbol", "TypeMismatch", "UnsupportedProfile")
+COMPARATOR_CLASSES = {"IllTyped": TYPING, "RelativeForm": ("SyntaxError", *TYPING)}
 # Python's one wall-clock limit on this path (`ve/surface/unambiguity.py`): excluded from G2 and listed.
 WALL_CLOCK = "English Earley time budget exhausted"
 
@@ -77,6 +65,10 @@ def identities(env, source: str, words, lexicon: dict) -> dict:
 
 def _nat(value) -> bool:
     return type(value) is int and value >= 0
+
+
+def _text(value) -> bool:
+    return type(value) is str and bool(value)
 
 
 def _tree(value) -> bool:
@@ -116,140 +108,128 @@ def _has_null(value) -> bool:
     return False
 
 
-def response_problem(response, expected: dict, env) -> str | None:
-    """Why `response` is not a well-formed `english.read` answer to the request over `env` whose identities
-    are `expected`, or None (base 4.1, 4.3; spec 4.5). Every formula must decode under `env`."""
+def _span(value, source: str) -> bool:
+    return (type(value) is list and len(value) == 2 and all(_nat(x) for x in value)
+            and value[0] <= value[1] <= len(source))
+
+
+# The fields of each status of an `english.read` answer (spec 4.4), besides `status` and `identities`:
+# required, then optional. `advice` is Lean's for a sentence without a reading or that it refused.
+FIELDS = {"one": ({"ast", "conclusions", "derivation", "obligations", "spans"}, set()),
+          "none": ({"code", "text", "class", "sentence", "span"}, {"advice"}),
+          "many": ({"code", "text", "class", "sentence", "span", "witnesses"}, set()),
+          "budget": ({"code", "text", "class", "sentence", "span"}, set()),
+          "rejected": ({"code", "text", "class", "span"}, {"sentence", "advice"}),
+          "invalidGrammar": ({"code", "text", "class"}, {"fault", "failure"})}
+
+
+def refusal_problem(response: dict, source: str, *, unlocated: frozenset[str] = frozenset()) -> str | None:
+    """Why a refusal (any status but `one`) is not Lean's, or None: its exact fields (spec 4.4), a code of its
+    status, the class Lean gives the code, whether it names a sentence (Lean's `unsentenced` codes never do,
+    and the codes of `unlocated` may not), a span inside the source, the advice, the witnesses and the
+    invalid-grammar fields. The senses relay checks the outcomes it shares with this; its reader names no
+    sentence for `IllTyped`."""
+    status = response.get("status")
+    if type(status) is not str or status not in FIELDS or status == "one":
+        return f"unknown refusal status {status!r}"
+    required, optional = FIELDS[status]
+    required = required | {"status"}
+    missing, extra = required - response.keys(), response.keys() - required - optional
+    if missing or extra:
+        return f"a {status} response with fields missing {sorted(missing)}, unknown {sorted(extra)}"
+    if not _text(response["code"]) or not _text(response["text"]) or not _text(response["class"]):
+        return "code, text and class are not non-empty strings"
+    code = response["code"]
+    if code not in STATUS_CODES[status]:
+        return f"a {status} response with the code {code!r}"
+    if response["class"] != CODE_CLASSES.get(code):
+        return f"the class {response['class']!r} is not Lean's class of {code}"
+    if response["class"] not in ERROR_CLASSES:
+        return f"the class {response['class']!r} is not a class of ve.errors"
+    if "sentence" in response and not _nat(response["sentence"]):
+        return "sentence is not a natural number"
+    if status == "rejected" and code not in unlocated and ("sentence" in response) == (code in UNSENTENCED):
+        return f"a {code} rejection {'names' if code in UNSENTENCED else 'does not name'} a sentence"
+    if "span" in response and not _span(response["span"], source):
+        return "invalid source span"
+    if "advice" in response:
+        advice = response["advice"]
+        if type(advice) is not dict or advice.keys() != {"id", "text"} or not all(_text(x) for x in advice.values()):
+            return "malformed advice"
+        if status == "rejected" and "sentence" not in response:
+            return "advice for a rejection that names no sentence"
+    if status == "many" and not _trees(response["witnesses"], 2):
+        return "a many response does not carry two witness trees"
+    if status == "invalidGrammar":
+        failure = response.get("failure")
+        if code == "InvalidOverlay":
+            if "fault" in response or not (type(failure) is list and len(failure) == 3 and all(
+                    _text(x) for x in failure) and failure[1] in OVERLAY_SITES.get(failure[0], ())):
+                return "invalid overlay failure"
+        else:
+            if response.get("fault") not in FAULTS:
+                return f"invalidGrammar fault {response.get('fault')!r}"
+            # A refused vocabulary names its first failure (`lexiconFailure`); no other fault has one.
+            if (failure is not None) != (response["fault"] == "lexicon") or failure is not None and not (
+                    type(failure) is list and len(failure) == 3 and all(_text(x) for x in failure)):
+                return "invalidGrammar failure is not the first (condition, kind, name) of a lexicon fault"
+    return None
+
+
+def response_problem(response, expected: dict, env, source: str) -> str | None:
+    """Why `response` is not a well-formed `english.read` answer (spec 4.4) to the request over `env` whose
+    identities are `expected`, or None. Every formula must decode under `env`; every transport, the test
+    override included, is checked by this one function."""
     if type(response) is not dict:
         return "the response is not an object"
     if _has_null(response):
         return "the response has a null"
-    status = response.get("status")
-    if type(status) is not str or status not in STATUSES:
-        return f"unknown status {status!r}"
-    fields = {"one": ({"ast", "conclusions", "derivation"}, set()),
-              "none": ({"code", "text", "sentence"}, set()),
-              "many": ({"code", "text", "sentence", "witnesses"}, set()),
-              "budget": ({"code", "text", "sentence"}, set()),
-              "rejected": ({"code", "text"}, {"sentence"}),
-              "invalidGrammar": ({"code", "text", "fault"}, {"failure"})}
-    required, optional = fields[status]
-    required = required | {"status", "identities"}
-    missing, extra = required - response.keys(), response.keys() - required - optional
-    if missing or extra:
-        return f"a {status} response with fields missing {sorted(missing)}, unknown {sorted(extra)}"
-    found = response["identities"]
+    found = response.get("identities")
     if type(found) is not dict or found.keys() != expected.keys() or \
             not all(type(value) is str for value in found.values()):
         return f"identities {sorted(found) if type(found) is dict else found!r}, expected {sorted(expected)}"
     for name in IDENTITIES:
         if found.get(name) != expected.get(name):
             return f"{name} {found.get(name)!r} is not the request's {expected.get(name)!r}"
-    for name in ("code", "text"):
-        if name in response and (type(response[name]) is not str or not response[name]):
-            return f"{name} is not a non-empty string"
-    if status in STATUS_CODES and response["code"] != STATUS_CODES[status]:
-        return f"a {status} response with the code {response['code']!r}"
-    if "sentence" in response and not _nat(response["sentence"]):
-        return "sentence is not a natural number"
-    if status == "rejected" and (response["code"] not in CLASSES or response["code"] in STATUS_CODES.values()):
-        return f"rejection code {response['code']!r} is not one of base 4.2 or spec 4.2"
-    if status == "many" and not _trees(response["witnesses"], 2):
-        return "a many response does not carry two witness trees"
-    if status == "invalidGrammar":
-        if response["fault"] not in FAULTS:
-            return f"invalidGrammar fault {response['fault']!r}"
-        failure = response.get("failure")
-        if failure is not None and not (response["fault"] == "lexicon" and type(failure) is list
-                                        and len(failure) == 3 and all(type(x) is str for x in failure)):
-            return "invalidGrammar failure is not the first (condition, kind, name) of a lexicon fault"
-    if status == "one":
-        formulas, conclusions = response["ast"], response["conclusions"]
-        if type(formulas) is not list or not formulas:
-            return "ast is not a non-empty list of formulas"
-        for formula in formulas:
-            try:
-                ast.formula_from_data(env, formula)
-            except VEError as exc:
-                return f"a formula does not decode under the environment: {exc}"
-        if type(conclusions) is not list or not all(_nat(i) and i < len(formulas) for i in conclusions) \
-                or conclusions != sorted(set(conclusions)):
-            return "conclusions are not increasing indices of the formulas"
-        if not _trees(response["derivation"], len(formulas)):
-            return "derivation does not give one tree per sentence"
-    return None
-
-
-def e2_response_problem(response: dict, expected: dict, env, source: str) -> str | None:
-    """Validate the full E2 answer before any formula or diagnostic is used."""
-    if type(response) is not dict or _has_null(response):
-        return "the response is not an object or contains null"
-    status = response.get("status")
-    if status not in STATUSES:
-        return "unknown status"
-    additions = {"one": {"obligations", "spans"}, "none": {"class", "span"},
-                 "many": {"class", "span"}, "budget": {"class", "span"},
-                 "rejected": {"class", "span"}, "invalidGrammar": {"class"}}[status]
-    if status == "none" and "advice" in response:
-        additions.add("advice")
-    base = {k: v for k, v in response.items() if k not in additions}
-    if status == "invalidGrammar" and base.get("code") == "InvalidOverlay":
-        base = {k: v for k, v in base.items() if k != "failure"}
-        base.update(code="InvalidGrammar", fault="lexicon")
-    problem = response_problem(base, expected, env)
-    if problem:
-        return problem
-    if not additions <= response.keys():
-        return f"missing E2 fields {sorted(additions - response.keys())}"
-    def span_ok(value):
-        return (type(value) is list and len(value) == 2 and all(_nat(x) for x in value)
-                and value[0] <= value[1] <= len(source))
-    if "span" in response and not span_ok(response["span"]):
-        return "invalid source span"
-    if status == "one":
-        n = len(response["ast"])
-        spans = response["spans"]
-        if type(spans) is not list or len(spans) != n or not all(span_ok(s) for s in spans):
-            return "spans do not match the sentences"
-        if any(spans[i][1] > spans[i + 1][0] for i in range(n - 1)):
-            return "sentence spans overlap"
-        obligations = response["obligations"]
-        if type(obligations) is not list or len(obligations) != len(response["conclusions"]):
-            return "obligations do not match conclusions"
-        for marked, item in zip(response["conclusions"], obligations):
-            if type(item) is not dict or item.keys() != {"conclusion", "premises", "unproved"}:
-                return "malformed obligation"
-            premises = item["premises"]
-            if (type(item["conclusion"]) is not int or item["conclusion"] != marked
-                    or type(premises) is not list or not premises
-                    or not all(_nat(j) and j < marked for j in premises)
-                    or premises != sorted(set(premises))
-                    or type(item["unproved"]) is not str or item["unproved"].count("{status}") != 1):
-                return "invalid obligation premises or text"
-    else:
-        if type(response.get("class")) is not str or not response["class"]:
-            return "missing diagnostic class"
-        if status == "invalidGrammar":
-            expected_class = "VEError" if response.get("code") == "InvalidOverlay" else "CheckerUnavailable"
-        elif status == "rejected":
-            expected_class = ("TypeMismatch" if response.get("code") == "IllTyped" else
-                              CLASSES.get(response.get("code"), (None,))[0])
-        else:
-            expected_class = {"none": "SyntaxError", "many": "AmbiguousDerivation",
-                              "budget": "ResourceLimit"}[status]
-        if response["class"] != expected_class:
-            return "diagnostic class does not match the code"
-        if status == "invalidGrammar" and response["code"] == "InvalidOverlay":
-            failure = response.get("failure")
-            if (type(failure) is not list or len(failure) != 3
-                    or not all(type(x) is str and x for x in failure)
-                    or failure[0] not in {"O1", "O2", "O3"}
-                    or failure[1] not in {"sort", "predicate"} or "fault" in response):
-                return "invalid overlay failure"
-        if "advice" in response:
-            advice = response["advice"]
-            if status != "none" or type(advice) is not dict or advice.keys() != {"id", "text"} or not all(
-                    type(x) is str and x for x in advice.values()):
-                return "malformed advice"
+    body = {k: v for k, v in response.items() if k != "identities"}
+    if body.get("status") != "one":
+        return refusal_problem(body, source)
+    required = FIELDS["one"][0] | {"status"}
+    if body.keys() != required:
+        return f"a one response with fields missing {sorted(required - body.keys())}, " \
+               f"unknown {sorted(body.keys() - required)}"
+    formulas, conclusions = body["ast"], body["conclusions"]
+    if type(formulas) is not list or not formulas:
+        return "ast is not a non-empty list of formulas"
+    for formula in formulas:
+        try:
+            ast.formula_from_data(env, formula)
+        except VEError as exc:
+            return f"a formula does not decode under the environment: {exc}"
+    if type(conclusions) is not list or not all(_nat(i) and i < len(formulas) for i in conclusions) \
+            or conclusions != sorted(set(conclusions)):
+        return "conclusions are not increasing indices of the formulas"
+    if not _trees(body["derivation"], len(formulas)):
+        return "derivation does not give one tree per sentence"
+    n = len(formulas)
+    spans = body["spans"]
+    if type(spans) is not list or len(spans) != n or not all(_span(s, source) for s in spans):
+        return "spans do not match the sentences"
+    if any(spans[i][1] > spans[i + 1][0] for i in range(n - 1)):
+        return "sentence spans overlap"
+    obligations = body["obligations"]
+    if type(obligations) is not list or len(obligations) != len(conclusions):
+        return "obligations do not match conclusions"
+    for marked, item in zip(conclusions, obligations):
+        if type(item) is not dict or item.keys() != {"conclusion", "premises", "unproved"}:
+            return "malformed obligation"
+        premises = item["premises"]
+        if (not _nat(item["conclusion"]) or item["conclusion"] != marked
+                or type(premises) is not list or not premises
+                or not all(_nat(j) and j < marked and j not in conclusions for j in premises)
+                or premises != sorted(set(premises))
+                or type(item["unproved"]) is not str or item["unproved"].count("{status}") != 1):
+            return "invalid obligation premises or text"
     return None
 
 
@@ -271,15 +251,12 @@ class LeanReading:
         self.status = response["status"]
 
     def classes(self) -> tuple[str, ...]:
-        """The Python classes this outcome maps onto (base 4.1, spec 4.2)."""
-        if "class" in self.response:
-            code = self.response.get("code")
-            if code in ("RelativeForm", "IllTyped"):
-                return CLASSES[code]
-            return (self.response["class"],)
-        if self.status == "rejected":
-            return CLASSES[self.response["code"]]
-        return STATUS_CLASSES[self.status]
+        """The Python classes the comparator accepts for this outcome: Lean's class, with the tolerance the
+        comparator keeps (spec 2.9)."""
+        if self.status == "one":
+            return ("accepted",)
+        code = self.response["code"]
+        return COMPARATOR_CLASSES.get(code, (self.response["class"],))
 
     def document(self) -> ast.Document:
         """The formulas, which `response_problem` decoded once already."""
@@ -290,20 +267,27 @@ class LeanReading:
         from ..printer import print_document
         return print_document(self.env, self.document())
 
-    def rejection(self) -> Exception:
-        """Lean's outcome other than `one` as the exception of its (first) Python class, with Lean's text;
+    def message(self, help_text: str | None = None) -> str:
+        """Lean's text, then Lean's advice, then the relay's editor help (spec 2.8: the nearest wording)."""
+        parts = [self.response["text"]]
+        advice = self.response.get("advice")
+        if advice is not None:
+            parts.append(advice["text"])
+        elif help_text:
+            parts.append(help_text)
+        return " ".join(parts)
+
+    def rejection(self, help_text: str | None = None) -> Exception:
+        """Lean's outcome other than `one` as the exception of the class Lean names, with Lean's text and span;
         the answer rides along as `lean_reading` for the shadow record."""
-        if self.status == "invalidGrammar" and self.response["code"] == "InvalidGrammar":
-            failure = self.response.get("failure")
-            error = CheckerUnavailable(f"CheckerUnavailable: invalidGrammar {self.response['fault']}"
-                                       + (f": {' '.join(failure)}" if failure else ""))
+        cls = ERROR_CLASSES[self.response["class"]]
+        if issubclass(cls, CheckerUnavailable):
+            error = cls(self.message(), operation="english.admission", backend="lean")
         else:
-            cls = self.response.get("class", self.classes()[0])
-            span = self.response.get("span")
-            where = None if span is None else Span(span[0], span[1],
-                                                   self.source.count("\n", 0, span[0]) + 1,
-                                                   span[0] - self.source.rfind("\n", 0, span[0]))
-            error = ERRORS.get(cls, VEError)(self.response["text"], span=where)
+            span = self.response.get("span")  # an overlay refusal reads no text, so it has none
+            where = None if span is None else Span(span[0], span[1], self.source.count("\n", 0, span[0]) + 1,
+                                                    span[0] - self.source.rfind("\n", 0, span[0]))
+            error = cls(self.message(help_text), span=where)
         error.lean_reading = self
         return error
 
@@ -336,8 +320,7 @@ def read(env, source: str, words, options: dict) -> LeanReading:
     expected = identities(env, source, words, case["lexicon"])
     response = _transport(case)
     try:
-        problem = (response_problem(response, expected, env) if TRANSPORT is not None else
-                   e2_response_problem(response, expected, env, source))
+        problem = response_problem(response, expected, env, source)
     except RecursionError:
         problem = "the response is nested too deeply"
     if problem:
@@ -361,13 +344,18 @@ def check(env, words, options: dict, formulas: list, marks: list[bool], candidat
     if result.get("identities") != expected:
         raise CheckerUnavailable("CheckerUnavailable: English check identities differ from the request")
     if "status" in result:
-        if result.get("status") != "invalidGrammar" or result.get("class") not in ("CheckerUnavailable", "VEError"):
-            raise CheckerUnavailable("CheckerUnavailable: malformed English check refusal")
-        if type(result.get("text")) is not str or not result["text"]:
-            raise CheckerUnavailable("CheckerUnavailable: English check refusal has no text")
-        if result["class"] == "CheckerUnavailable":
-            raise CheckerUnavailable(result["text"])
-        raise VEError(result["text"])
+        refusal = {k: v for k, v in result.items() if k != "identities"}
+        try:
+            problem = refusal_problem(refusal, "") if refusal.get("status") == "invalidGrammar" else \
+                "an English check answers only invalidGrammar"
+        except RecursionError:
+            problem = "the refusal is nested too deeply"
+        if problem:
+            raise CheckerUnavailable(f"CheckerUnavailable: malformed English check refusal: {problem}")
+        cls = ERROR_CLASSES[refusal["class"]]
+        if issubclass(cls, CheckerUnavailable):
+            raise cls(refusal["text"], operation="english.check", backend="lean")
+        raise cls(refusal["text"])
     if result.keys() == {"identities"}:
         return None
     index = result.get("index")

@@ -77,21 +77,21 @@ def test_genuine_response_and_field_mutations_fail_closed():
     case = L.request(ENV, SOURCE, words, {})
     response = L._transport(case)
     expected = L.identities(ENV, SOURCE, words, case["lexicon"])
-    assert L.e2_response_problem(response, expected, ENV, SOURCE) is None
+    assert L.response_problem(response, expected, ENV, SOURCE) is None
     for field in response:
         mutated = copy.deepcopy(response)
         del mutated[field]
-        assert L.e2_response_problem(mutated, expected, ENV, SOURCE), field
+        assert L.response_problem(mutated, expected, ENV, SOURCE), field
         for value in (7, True, None, [], {}, ""):
             if type(value) is type(response[field]) and value == response[field]:
                 continue
             mutated = copy.deepcopy(response)
             mutated[field] = value
-            assert L.e2_response_problem(mutated, expected, ENV, SOURCE), (field, value)
+            assert L.response_problem(mutated, expected, ENV, SOURCE), (field, value)
     for field in expected:
         mutated = copy.deepcopy(response)
         mutated["identities"][field] = "0" * 64
-        assert L.e2_response_problem(mutated, expected, ENV, SOURCE), field
+        assert L.response_problem(mutated, expected, ENV, SOURCE), field
 
 
 def test_class_and_span_are_part_of_diagnostic_schema():
@@ -100,14 +100,14 @@ def test_class_and_span_are_part_of_diagnostic_schema():
     case = L.request(ENV, source, words, {})
     answer = L._transport(case)
     expected = L.identities(ENV, source, words, case["lexicon"])
-    assert L.e2_response_problem(answer, expected, ENV, source) is None
+    assert L.response_problem(answer, expected, ENV, source) is None
     for field in ("class", "span"):
         mutated = copy.deepcopy(answer)
         del mutated[field]
-        assert L.e2_response_problem(mutated, expected, ENV, source)
+        assert L.response_problem(mutated, expected, ENV, source)
     mutated = copy.deepcopy(answer)
     mutated["class"] = "ResourceLimit"
-    assert L.e2_response_problem(mutated, expected, ENV, source)
+    assert L.response_problem(mutated, expected, ENV, source)
 
 
 def test_request_and_lock_identities():

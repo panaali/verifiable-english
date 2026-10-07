@@ -6,6 +6,9 @@ import VE.Json
 import VE.NormDefaults.Wire
 import VE.SoftNorms.Wire
 import VE.EnglishGrammar.Advice
+import VE.SpeechActs.Wire
+import VE.Attribution.Wire
+import VE.Readings.Wire
 
 /-! The `ve_english_route` executable (docs/spec/english-lean-s2.md 2.10, 4.3 and 4.4; base spec 2.12 and
 4.1 to 4.3), invoked as `lean/.lake/build/bin/ve_english_route MODE [cases.json|-]`, one row per case.
@@ -71,9 +74,34 @@ def rejectText (i : Nat) : Reject → String
     "available. Write the clause in full, with for every or there is."
   | .internal => "The reader found no meaning for a derivation."
 
-def illTypedText : String := "The text was read, and its formulas do not pass the type check."
+/-- `IllTyped`'s text names the first sentence whose formula, with those before it, fails the typed check,
+when the mode can find it. -/
+def illTypedText : Option Nat → String
+  | some i => s!"Sentence {i + 1} was read, and its formula does not pass the type check."
+  | none => "The text was read, and its formulas do not pass the type check."
 def notOneSentenceText : String := "This text has more than one sentence. Translation mode reads exactly one."
-def invalidGrammarText : String := "The vocabulary selection sent with this text was not accepted. No text was read."
+
+/-- What a refused request did not do, by the mode that refused it: `english.read` reads no text,
+`english.grammar` exports no grammar, `english.check` checks no candidate. -/
+def notDone (mode : String) : String :=
+  if mode == "english.grammar" then "No grammar was exported."
+  else if mode == "english.check" then "No candidate was checked." else "No text was read."
+
+/-- `InvalidGrammar`'s text: the fault and, for a refused vocabulary, the first failure, so the relay shows
+Lean's text and writes none of its own. -/
+def invalidGrammarText (mode fault : String) (failure : Option Failure) : String :=
+  s!"The vocabulary selection was not accepted (invalidGrammar {fault}" ++
+    (match failure with
+     | some (c, k, n) => s!": {c} {k} {n}"
+     | none => "") ++ s!"). {notDone mode}"
+
+/-- The rewrites of a sentence `every action available to C cannot lead to H` (Python's text,
+`english.py:78–82`): `chooser` and `harm` are the sentence's own words. -/
+def riskEveryCannotText (i : Nat) (chooser harm : String) : String :=
+  s!"Sentence {i + 1} has two readings. Choose whether no available action might lead to the harm: 'it is not " ++
+  s!"the case that there is an action such that both that action is available to {chooser} and that action " ++
+  s!"might lead to {harm}'; or some available action cannot lead to it: 'there is an action such that both " ++
+  s!"that action is available to {chooser} and that action cannot lead to {harm}'."
 
 def codeClasses : List (String × String) :=
   [("SourceTooLong", "ResourceLimit"), ("TextTooLong", "ResourceLimit"), ("BadCharacter", "SyntaxError"),
@@ -92,6 +120,33 @@ def codeClasses : List (String × String) :=
 theorem codeClasses_total : ∀ r : Reject, (codeClasses.lookup r.code).isSome = true := by
   intro r
   cases r <;> rfl
+
+/-- Every code of `Reject.code`, in constructor order. -/
+def rejectCodes : List String :=
+  ["SourceTooLong", "TextTooLong", "BadCharacter", "OpenQuote", "BadNumeral", "EmptyDocument", "EmptySentence",
+   "Unterminated", "BadSpacing", "UnboundReference", "ShadowedName", "SortMismatch", "MarkerDepth", "NestingLimit",
+   "NumeralBound", "CoefficientNotNumeral", "PronounUnresolved", "BlockedWording", "CoordinationRepeated",
+   "CoordinationForm", "NaturalScoped", "RelativeForm", "Internal"]
+
+theorem rejectCodes_total : ∀ r : Reject, r.code ∈ rejectCodes := by
+  intro r
+  cases r <;> simp [Reject.code, rejectCodes]
+
+/-- The codes each status of a response may carry (spec 4.4), exported by `english.grammar` with the class
+table: together they are the relay's whole table of codes, classes and statuses. -/
+def statusCodes : List (String × List String) :=
+  [("none", ["NoDerivation"]), ("many", ["Ambiguous"]), ("budget", ["Budget"]),
+   ("invalidGrammar", ["InvalidGrammar", "InvalidOverlay"]),
+   ("rejected", rejectCodes ++ ["ConclusionWithoutPremise", "IllTyped", "NotOneSentence"])]
+
+theorem statusCodes_classed : ∀ s ∈ statusCodes, ∀ c ∈ s.2, (codeClasses.lookup c).isSome = true := by
+  decide
+
+/-- The rejection codes that name no sentence: the lexer's, which refuse the whole source before any sentence is
+read, and translation mode's `NotOneSentence`. Every other refusal names its sentence (spec 4.4). -/
+def unsentencedCodes : List String :=
+  ["SourceTooLong", "TextTooLong", "BadCharacter", "OpenQuote", "BadNumeral", "EmptyDocument", "EmptySentence",
+   "Unterminated", "BadSpacing", "NotOneSentence"]
 
 def noPremiseText (i : Nat) : String :=
   s!"Sentence {i + 1} is marked as a conclusion, and no earlier sentence is a premise."
@@ -181,6 +236,14 @@ def validateDeclarations (environment : Json) : Except String Unit := do
     let units ← VE.Risk.Wire.decodeUnits environment
     VE.Risk.Wire.checkVocabularyUnits environment units ext
     VE.Risk.Wire.checkExtension environment units
+  -- The statement-layer profiles: their declarations are validated as submitted by their routes' own
+  -- environment decoders before the typing view drops them (review B2 of E2).
+  if ps.contains "speech-acts@0" || (environment.getObjVal? "speech_acts").isOk then
+    let _ ← VE.SpeechActs.Wire.decodeSpeechEnvironmentFull environment
+  if ps.contains "reports@0" then
+    let _ ← VE.Reports.Wire.decodeEnvironment environment
+  if ps.contains "readings@1" then
+    let _ ← VE.Readings.Wire.decodeEnvironment environment
 
 /-- The environment identity, as the typing service computes it; for an environment with a profile block, after
 the three parts of the boundary (S3 spec 2.3). -/
@@ -286,17 +349,69 @@ def faultName : GrammarFault → String
   | .notWellFormed => "notWellFormed"
   | .notTyped => "notTyped"
 
-def invalidFields (c : Case) (g : GrammarFault) : List (String × Json) :=
-  status "invalidGrammar" ++ coded "InvalidGrammar" invalidGrammarText ++ [("fault", .str (faultName g))] ++
-    (if g == .lexicon then failureJson c.E c.L else [])
+def invalidFields (mode : String) (c : Case) (g : GrammarFault) : List (String × Json) :=
+  let failure := if g == .lexicon then lexiconFailure c.E {} c.L else none
+  status "invalidGrammar" ++ coded "InvalidGrammar" (invalidGrammarText mode (faultName g) failure) ++
+    [("fault", .str (faultName g))] ++ (if g == .lexicon then failureJson c.E c.L else [])
 
-def invalidOverlayFields (f : Failure) : List (String × Json) :=
-  status "invalidGrammar" ++ coded "InvalidOverlay" (overlayText f) ++
+def invalidOverlayFields (mode : String) (f : Failure) : List (String × Json) :=
+  status "invalidGrammar" ++ coded "InvalidOverlay" (overlayText f ++ " " ++ notDone mode) ++
     [("failure", Json.arr #[.str f.1, .str f.2.1, .str f.2.2])]
 
 def budgetFields (i : Nat) : List (String × Json) :=
   status "budget" ++ coded "Budget" s!"Sentence {i + 1} needs more work than the limit allows. No verdict was reached." ++
     [("sentence", toJson i)]
+
+/-- The code points of the offending character of a lexical rejection that names one (spec 4.4). -/
+def lexicalSpan (source : String) : Reject → Option (Nat × Nat)
+  | .badCharacter o | .openQuote o | .badNumeral o | .badSpacing o =>
+    let start := codepointsBefore source o
+    some (start, min (start + 1) source.length)
+  | _ => none
+
+/-- The first sentence whose formula, with the formulas before it, fails the typed check: the sentence an
+`IllTyped` refusal names (spec 4.4). `read` checks the whole document; this finds the prefix that fails. -/
+def illTypedSentence (c : Case) (source : String) : Nat :=
+  match lex source with
+  | .error _ => 0
+  | .ok sents =>
+    match readDocument (grammar c.E c.L) (meaning (grammar c.E c.L) (acts c.E c.L)) DState.init workBudget
+        sents.toList with
+    | (.ok rs, _) =>
+      let fs := rs.map (·.1)
+      ((List.range fs.length).find? fun i => !typedDocument c.E (fs.take (i + 1))).getD 0
+    | _ => 0
+
+/-- The source text from the start of token `a` to the end of token `b` of a sentence. -/
+def between (source : String) (toks : Array Spanned) (a b : Nat) : Option String := do
+  let first ← toks[a]?
+  let last ← toks[b]?
+  if a ≤ b then pure (source.extract ⟨first.2.1⟩ ⟨last.2.2⟩) else none
+
+/-- The chooser and the harm of `every action available to C cannot lead to H`, as the sentence writes them. -/
+def everyCannotParts (source : String) (toks : Array Spanned) : Option (String × String) := do
+  let words := toks.toList.map fun t => match t.1 with
+    | .word w _ => some (fold w)
+    | _ => none
+  let avail ← (List.range words.length).find? fun k =>
+    words[k]? == some (some "available") && words[k + 1]? == some (some "to")
+  let cannot ← (List.range words.length).find? fun m =>
+    avail + 2 < m && words[m]? == some (some "cannot") && words[m + 1]? == some (some "lead") &&
+      words[m + 2]? == some (some "to")
+  let chooser ← between source toks (avail + 2) (cannot - 1)
+  let harm ← between source toks (cannot + 3) (toks.size - 1)
+  pure (chooser, harm)
+
+/-- The text of a rejection of sentence `i`; a blocked wording with rewrites names the sentence's words. -/
+def rejectionText (source : String) (i : Nat) (r : Reject) : String :=
+  match r with
+  | .blockedWording "risk-every-cannot" =>
+    let parts := match lexSpans source with
+      | .ok sents => (sents[i]?).bind (everyCannotParts source)
+      | .error _ => none
+    let (chooser, harm) := parts.getD ("the chooser", "the harm")
+    riskEveryCannotText i chooser harm
+  | _ => rejectText i r
 
 /-- The derivation of each sentence of an accepted text: the parser's one tree, read again. -/
 def derivations (G : Grammar Terminal) (source : String) : Except String (List Json) := do
@@ -309,7 +424,7 @@ def derivations (G : Grammar Terminal) (source : String) : Except String (List J
       | _ => throw "an accepted sentence has no single tree"
 
 def authoring (c : Case) (source : String) : Except String (List (String × Json)) := do
-  if let some f := c.overlayFailure then return invalidOverlayFields f
+  if let some f := c.overlayFailure then return invalidOverlayFields "english.read" f
   let G := grammar c.E c.L
   let tags := G.rules.map (·.tag)
   match admitRequest c.E {} c.L workBudget source with
@@ -323,9 +438,12 @@ def authoring (c : Case) (source : String) : Except String (List (String × Json
   | .noPremise i => pure (status "rejected" ++ coded "ConclusionWithoutPremise" (noPremiseText i) ++
       [("sentence", toJson i)])
   | .refused (.ok _) => throw "a refused reading cannot be ok"
-  | .refused (.invalidGrammar g) => pure (invalidFields c g)
-  | .refused (.lexical r) => pure (status "rejected" ++ coded r.code (rejectText 0 r))
-  | .refused (.illTyped) => pure (status "rejected" ++ coded "IllTyped" illTypedText)
+  | .refused (.invalidGrammar g) => pure (invalidFields "english.read" c g)
+  | .refused (.lexical r) => pure (status "rejected" ++ coded r.code (rejectText 0 r) ++
+      ((lexicalSpan source r).toList.map fun s => ("span", spanJson s)))
+  | .refused (.illTyped) =>
+    let i := illTypedSentence c source
+    pure (status "rejected" ++ coded "IllTyped" (illTypedText (some i)) ++ [("sentence", toJson i)])
   | .refused (.stopped i o) =>
     let pos := [("sentence", toJson i)]
     match o with
@@ -335,7 +453,7 @@ def authoring (c : Case) (source : String) : Except String (List (String × Json
     | .ambiguous t u => pure (status "many" ++ coded "Ambiguous"
         s!"Sentence {i + 1} can be read in more than one way. Two of the ways are shown." ++ pos ++
         [("witnesses", Json.arr #[treeJson tags t, treeJson tags u])])
-    | .rejected r => pure (status "rejected" ++ coded r.code (rejectText i r) ++ pos)
+    | .rejected r => pure (status "rejected" ++ coded r.code (rejectionText source i r) ++ pos)
     | .budget => pure (budgetFields i)
 
 def readingJson (r : EFormula × Bool × DState) : Json :=
@@ -346,7 +464,7 @@ def readingJson (r : EFormula × Bool × DState) : Json :=
 complete is a verdict only when it already has two readings (`many`); with fewer it is `budget`, never
 `none` or `one`: the parser stopped at the cap. -/
 def translation (c : Case) (cap : Nat) (source : String) : List (String × Json) :=
-  if let some f := c.overlayFailure then invalidOverlayFields f else
+  if let some f := c.overlayFailure then invalidOverlayFields "english.read" f else
   match translateRequest c.E {} c.L cap workBudget source with
   | .readings rs complete =>
     let found := [("readings", Json.arr (rs.map readingJson).toArray), ("complete", .bool complete)]
@@ -356,10 +474,32 @@ def translation (c : Case) (cap : Nat) (source : String) : List (String × Json)
     else if rs.isEmpty then
       status "none" ++ coded "NoDerivation" "Sentence 1 has no reading with the current vocabulary." ++ found
     else status "one" ++ found
-  | .invalidGrammar g => invalidFields c g
-  | .lexical r => status "rejected" ++ coded r.code (rejectText 0 r)
+  | .invalidGrammar g => invalidFields "english.read" c g
+  | .lexical r => status "rejected" ++ coded r.code (rejectText 0 r) ++
+      ((lexicalSpan source r).toList.map fun s => ("span", spanJson s))
   | .notOneSentence => status "rejected" ++ coded "NotOneSentence" notOneSentenceText
   | .budget => budgetFields 0
+
+/-- What every refusal of a reading adds (spec 4.4), in `english.read` and `senses.read` alike: the span of the
+sentence it names, or of the whole source when it names none (a lexical rejection already carries its
+character's), and Lean's advice for a sentence without a reading or that the reader refused (spec 4.3). -/
+def refusalExtras (profiles : List String) (source : String) (fields : List (String × Json)) :
+    List (String × Json) :=
+  let status := (VE.Bridge.lookup fields "status").getD .null
+  let sentence := (VE.Bridge.lookup fields "sentence").bind (fun j => j.getNat?.toOption)
+  let fields := if [.str "rejected", .str "none", .str "many", .str "budget"].contains status &&
+      (VE.Bridge.lookup fields "span").isNone then
+    let span := ((sentence.bind fun i => (sentenceSpans source)[i]?)).getD (0, source.length)
+    fields ++ [("span", spanJson span)]
+  else fields
+  if status == .str "none" || (status == .str "rejected" && sentence.isSome) then
+    let toks := match lex source with
+      | .ok ss => ((ss[sentence.getD 0]?).getD #[]).toList
+      | .error _ => []
+    match advice profiles toks with
+    | some (name, tip) => fields ++ [("advice", Json.mkObj [("id", .str name), ("text", .str tip)])]
+    | none => fields
+  else fields
 
 def readCase (j : Json) : Except String Json := do
   VE.Bridge.exactFields j ((["id", "environment", "lexicon", "source", "mode", "cap"] ++
@@ -375,21 +515,7 @@ def readCase (j : Json) : Except String Json := do
       authoring c source
     | "translation" => pure (translation c cap source)
     | m => throw s!"InvalidInput: unknown reading mode {m}"
-  let status := (VE.Bridge.lookup fields "status").getD .null
-  let fields := if [.str "rejected", .str "none", .str "many", .str "budget"].contains status then
-    let index := ((VE.Bridge.lookup fields "sentence").bind (fun j => j.getNat?.toOption)).getD 0
-    let span := ((sentenceSpans source)[index]?).getD (0, source.length)
-    fields ++ [("span", spanJson span)]
-  else fields
-  let fields := if status == .str "none" then
-    let index := ((VE.Bridge.lookup fields "sentence").bind (fun j => j.getNat?.toOption)).getD 0
-    let toks := match lex source with
-      | .ok ss => ((ss[index]?).getD #[]).toList
-      | .error _ => []
-    match advice c.E.profiles toks with
-    | some (name, tip) => fields ++ [("advice", Json.mkObj [("id", .str name), ("text", .str tip)])]
-    | none => fields
-  else fields
+  let fields := refusalExtras c.E.profiles source fields
   pure (VE.Route.Wire.ok id [("result", Json.mkObj (fields ++ [("identities", identities)]))])
 
 /-! ## `english.grammar` -/
@@ -435,16 +561,25 @@ def lexActText : LexAct → String
   | .altHead ref => s!"altHead {q ref}"
   | .termOther n => s!"termOther {q n}"
 
+/-- The port's selection (spec 2.3): Python's choice of every predicate's wording and negative, every noun and
+every spelling, as V6 compares a lexicon with it. Exported so the parity harness (spec 2.10) compares the port
+with Python's `EnglishVocabulary` symbol by symbol; it decides nothing here. -/
+def policyJson (E : Env) : Json :=
+  let chosen := E.predicates.filterMap fun d => (policyPredicate E {} d.name).map (d.name, ·)
+  Json.mkObj [("wordings", toJson (chosen.map fun (p, w, _) => (p, w))),
+    ("negatives", toJson (chosen.filterMap fun (p, _, n) => n.map (p, ·))),
+    ("nouns", toJson (policyNouns E {})), ("spellings", toJson (policySpellings E {}))]
+
 def grammarCase (j : Json) : Except String Json := do
   VE.Bridge.exactFields j ((["id", "environment", "lexicon"] ++
     if (j.getObjVal? "overlay").toOption.isSome then ["overlay"] else []))
   let id ← VE.Bridge.stringField j "id"
   let c ← decodeCase j
   if let some f := c.overlayFailure then
-    return VE.Route.Wire.ok id [("result", Json.mkObj (invalidOverlayFields f ++
+    return VE.Route.Wire.ok id [("result", Json.mkObj (invalidOverlayFields "english.grammar" f ++
       [("identities", Json.mkObj c.identities)]))]
   if let some g := grammarFault c.E {} c.L then
-    return VE.Route.Wire.ok id [("result", Json.mkObj (invalidFields c g ++
+    return VE.Route.Wire.ok id [("result", Json.mkObj (invalidFields "english.grammar" c g ++
       [("identities", Json.mkObj c.identities)]))]
   let G := grammar c.E c.L
   let fixed := (fixedTable c.E.profiles).size
@@ -467,7 +602,9 @@ def grammarCase (j : Json) : Except String Json := do
      ("patterns", toJson (r.patterns.map fun pat => pat.map awJson)), ("text", .str r.text)]
   pure (VE.Route.Wire.ok id [("result", Json.mkObj [("identities", Json.mkObj c.identities),
     ("nonterminals", toJson names), ("ranks", toJson G.rank), ("rules", Json.arr rules.toArray),
-    ("codes", toJson codeClasses), ("advice", toJson advice)])])
+    ("codes", toJson codeClasses), ("statuses", toJson statusCodes), ("unsentenced", toJson unsentencedCodes),
+    ("advice", toJson advice),
+    ("policy", policyJson c.E)])])
 
 def checkCase (j : Json) : Except String Json := do
   VE.Bridge.exactFields j ((["id", "environment", "lexicon", "formulas", "marks", "candidates"] ++
@@ -476,8 +613,8 @@ def checkCase (j : Json) : Except String Json := do
   let c ← decodeCase j
   let result (fields : List (String × Json)) :=
     VE.Route.Wire.ok id [("result", Json.mkObj (fields ++ [("identities", Json.mkObj c.identities)]))]
-  if let some f := c.overlayFailure then return result (invalidOverlayFields f)
-  if let some g := grammarFault c.E {} c.L then return result (invalidFields c g)
+  if let some f := c.overlayFailure then return result (invalidOverlayFields "english.check" f)
+  if let some g := grammarFault c.E {} c.L then return result (invalidFields "english.check" c g)
   let raw ← (← j.getObjVal? "formulas").getArr?
   let formulas ← raw.toList.mapM fun f =>
     match EFormula.decode f with

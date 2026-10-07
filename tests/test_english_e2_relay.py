@@ -27,24 +27,24 @@ def answer():
 
 def test_e2_response_has_bound_formulas_spans_and_obligations(answer):
     env, source, response = answer
-    assert english_lean.e2_response_problem(response, response['identities'], env, source) is None
+    assert english_lean.response_problem(response, response['identities'], env, source) is None
     for field in ('ast', 'derivation', 'spans', 'obligations'):
         bad = copy.deepcopy(response)
         del bad[field]
-        assert english_lean.e2_response_problem(bad, response['identities'], env, source)
+        assert english_lean.response_problem(bad, response['identities'], env, source)
 
 
 def test_e2_response_rejects_bool_indices_and_substituted_identity(answer):
     env, source, response = answer
     bad = copy.deepcopy(response)
     bad['conclusions'] = [True]
-    assert english_lean.e2_response_problem(bad, response['identities'], env, source)
+    assert english_lean.response_problem(bad, response['identities'], env, source)
     bad = copy.deepcopy(response)
     bad['derivation'][0][0][1] = False
-    assert english_lean.e2_response_problem(bad, response['identities'], env, source)
+    assert english_lean.response_problem(bad, response['identities'], env, source)
     bad = copy.deepcopy(response)
     bad['identities']['environment_id'] = '0' * 64
-    assert english_lean.e2_response_problem(bad, response['identities'], env, source)
+    assert english_lean.response_problem(bad, response['identities'], env, source)
 
 
 def test_e2_response_binds_each_obligation_to_an_earlier_premise(answer):
@@ -56,8 +56,8 @@ def test_e2_response_binds_each_obligation_to_an_earlier_premise(answer):
     response['conclusions'] = [1]
     response['obligations'] = [{"conclusion": 1, "premises": [0],
                                 "unproved": "No proof: {status}"}]
-    assert english_lean.e2_response_problem(response, response['identities'], env, source) is None
+    assert english_lean.response_problem(response, response['identities'], env, source) is None
     for changed in ([], [1], [True], [0, 0]):
         bad = copy.deepcopy(response)
         bad['obligations'][0]['premises'] = changed
-        assert english_lean.e2_response_problem(bad, response['identities'], env, source)
+        assert english_lean.response_problem(bad, response['identities'], env, source)

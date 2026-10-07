@@ -409,10 +409,11 @@ def Overlay.decode (overlay : Json) : Except String Overlay := do
     pure (c, ← VE.Bridge.stringField e "verbalisation")
   pure { sorts, predicates, constants }
 
+/-- The text of an overlay refusal; the mode appends what it did not do (`Run.notDone`). -/
 def overlayText : Failure → String
-  | ("O1", _, n) => s!"The vocabulary overlay gives {n} a wording that another symbol already has. No text was read."
-  | ("O2", _, n) => s!"The vocabulary overlay gives {n} a wording that risk@0 reserves. No text was read."
-  | (_, _, n) => s!"The vocabulary overlay entry for {n} cannot be used as written. No text was read."
+  | ("O1", _, n) => s!"The vocabulary overlay gives {n} a wording that another symbol already has."
+  | ("O2", _, n) => s!"The vocabulary overlay gives {n} a wording that risk@0 reserves."
+  | (_, _, n) => s!"The vocabulary overlay entry for {n} cannot be used as written."
 
 def ETerm.decode : Json → Option ETerm
   | .arr #[.str "var", i] => (i.getNat?.toOption).map ETerm.var

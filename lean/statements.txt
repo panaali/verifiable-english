@@ -6162,10 +6162,20 @@ theorem VE.EnglishGrammar.Run.codeClasses_total
   ∀ (r : VE.EnglishGrammar.Reject), (List.lookup r.code VE.EnglishGrammar.Run.codeClasses).isSome = Bool.true
   -- uses VE.EnglishGrammar.Reject.code@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Reject@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Run.codeClasses@VE.EnglishGrammar.Run
   -- expr 1871180427
+theorem VE.EnglishGrammar.Run.rejectCodes_total
+  ∀ (r : VE.EnglishGrammar.Reject), r.code ∈ VE.EnglishGrammar.Run.rejectCodes
+  -- uses VE.EnglishGrammar.Reject.code@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Reject@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Run.rejectCodes@VE.EnglishGrammar.Run
+  -- expr 1274290881
 theorem VE.EnglishGrammar.Run.riskView_eq
   VE.EnglishGrammar.riskView = VE.Service.Standalone.riskReduced
   -- uses VE.EnglishGrammar.riskView@VE.EnglishGrammar.Encode VE.Service.Standalone.riskReduced@VE.Service.Standalone
   -- expr 4294295292
+theorem VE.EnglishGrammar.Run.statusCodes_classed
+  ∀ (s : String × List String),
+    s ∈ VE.EnglishGrammar.Run.statusCodes →
+      ∀ (c : String), c ∈ s.snd → (List.lookup c VE.EnglishGrammar.Run.codeClasses).isSome = Bool.true
+  -- uses VE.EnglishGrammar.Run.codeClasses@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.statusCodes@VE.EnglishGrammar.Run
+  -- expr 3006979126
 theorem VE.EnglishGrammar.adjectiveRows_small
   ∀ {L : VE.EnglishGrammar.Lexicon} {p s a : String} (r : VE.EnglishGrammar.LexRow),
     r ∈ VE.EnglishGrammar.adjectiveRows L p s a → r.Small

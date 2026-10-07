@@ -10,7 +10,7 @@ import time
 
 from .. import ast
 from ..backends import lean as lean_backend
-from ..backends.english_lean import CLASSES as ENGLISH_CLASSES, response_problem as s2_response_problem
+from ..backends.english_lean import refusal_problem
 from ..backends.lean import ROUTE_TIMEOUT, configured_timeout
 from ..environment import Environment
 from ..errors import CheckerUnavailable, VEError
@@ -76,8 +76,8 @@ def _text(raw: bytes) -> str:
 
 
 def _refusal_problem(reading: dict, source: str) -> str | None:
-    """A refused reading: a sense fault with its arguments, or one of S2's outcomes as S2's authoring answer
-    writes it (`english_lean.response_problem`, the one validator of those fields)."""
+    """A refused reading: a sense fault with its arguments, or one of S2's outcomes as `english.read` writes
+    it (`english_lean.refusal_problem`, the one validator of those fields)."""
     code = reading.get("code")
     if type(code) is not str:
         return "a refused reading has no code"
@@ -100,29 +100,11 @@ def _refusal_problem(reading: dict, source: str) -> str | None:
         return None
     if reading.get("status") in ("one", "open"):
         return "a refused reading has an admitting status"
-    if "class" not in reading:
-        return "a refused reading has no diagnostic class"
-    extras = {key: reading[key] for key in ("class", "span", "advice") if key in reading}
-    base = {key: value for key, value in reading.items() if key not in extras}
-    problem = s2_response_problem({**base, "identities": {}}, {}, None)
+    # S2's outcomes: the fields, codes, classes, spans and advice of `english.read`'s refusals (one validator
+    # of those fields, reading Lean's table of codes and classes).
+    problem = refusal_problem(reading, source, unlocated=frozenset({"IllTyped"}))
     if problem:
         return "a refused reading is not S2's: " + problem
-    if "class" in extras:
-        expected = ({"none": "SyntaxError", "many": "AmbiguousDerivation",
-                     "budget": "ResourceLimit", "invalidGrammar": "CheckerUnavailable"}.get(reading["status"])
-                    or ("TypeMismatch" if code == "IllTyped" else ENGLISH_CLASSES.get(code, (None,))[0]))
-        if extras["class"] != expected:
-            return "a refused reading's class does not match its code"
-    if "span" in extras:
-        span = extras["span"]
-        if not (type(span) is list and len(span) == 2 and all(_nat(i) for i in span)
-                and span[0] <= span[1] <= len(source)):
-            return "a refused reading's span is malformed"
-    if "advice" in extras:
-        advice = extras["advice"]
-        if reading["status"] != "none" or type(advice) is not dict or advice.keys() != {"id", "text"} \
-                or not all(_word(value) for value in advice.values()):
-            return "a refused reading's advice is malformed"
     return None
 
 
