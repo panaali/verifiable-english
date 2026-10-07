@@ -391,6 +391,13 @@
     "ResponseShape.Schemas.Discourse.validity_map"
    ]
   },
+  "ResponseShape/Schemas/Document.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.Document.file",
+    "ResponseShape.Schemas.Document.row",
+    "ResponseShape.Schemas.Document.unit"
+   ]
+  },
   "ResponseShape/Schemas/English.lean": {
    "G[V]": [
     "ResponseShape.Schemas.English.file",
@@ -748,6 +755,7 @@
     "ResponseShape.Skeletons.check",
     "ResponseShape.Skeletons.checkCertificate",
     "ResponseShape.Skeletons.discourse",
+    "ResponseShape.Skeletons.document",
     "ResponseShape.Skeletons.english",
     "ResponseShape.Skeletons.environment",
     "ResponseShape.Skeletons.evaluate",
@@ -2640,6 +2648,9 @@
     "VE.Discourse.Loader.identityMetadata",
     "VE.Discourse.Loader.modelId",
     "VE.Discourse.Loader.sourceId"
+   ],
+   "G[V]": [
+    "VE.Discourse.Loader.splitTextWith"
    ]
   },
   "VE/Discourse/Manifest.lean": {
@@ -7473,6 +7484,24 @@
   "VE/Service/Diagnose.lean": {
    "G[R]": [
     "VE.Service.Diagnose.diagnoseCase"
+   ]
+  },
+  "VE/Service/Document.lean": {
+   "G[V]": [
+    "VE.Service.Document.Unit",
+    "VE.Service.Document.addCount",
+    "VE.Service.Document.allowedMetadata",
+    "VE.Service.Document.countJson",
+    "VE.Service.Document.counts",
+    "VE.Service.Document.documentCase",
+    "VE.Service.Document.kindName",
+    "VE.Service.Document.openNamesOf",
+    "VE.Service.Document.reasons",
+    "VE.Service.Document.residual",
+    "VE.Service.Document.runCaseReported",
+    "VE.Service.Document.sourceUnit",
+    "VE.Service.Document.unitJson",
+    "VE.Service.Document.unitsOf"
    ]
   },
   "VE/Service/EnglishRun.lean": {

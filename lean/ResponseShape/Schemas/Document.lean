@@ -32,8 +32,10 @@ def «row» : Shape :=
             ("source_bytes", ref "common.json#/$defs/nat"),
             ("accounted_bytes", ref "common.json#/$defs/nat"),
             ("coverage_percent", .const (toJson (100 : Nat))),
-            ("bytes_by_kind", obj), ("bytes_by_status", obj),
-            ("unformalised_reasons", obj), ("residual", obj),
+            ("bytes_by_kind", n [obj, .object [] (some (ref "common.json#/$defs/nat"))]),
+            ("bytes_by_status", n [obj, .object [] (some (ref "common.json#/$defs/nat"))]),
+            ("unformalised_reasons", n [obj, .object [] (some (ref "common.json#/$defs/nat"))]),
+            ("residual", n [obj, .object [] (some (ref "common.json#/$defs/nat"))]),
             ("residual_total", ref "common.json#/$defs/nat")]])]]]
 
 def file : File where
