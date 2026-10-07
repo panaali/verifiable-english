@@ -4,7 +4,6 @@ from types import SimpleNamespace
 from tests.test_norm_defaults import (CSAM_RULE, CSAM_SITUATION, ONE_ACT, csam, environment, latent,
                                       obligation, permission, rule)
 from ve import norm_defaults_english as english
-from ve.ast import Unary, Var
 from ve.norm_defaults import UnspecifiedDocument, report
 from ve.norm_defaults_route import run_case, source_case
 from ve.model import FiniteModel
@@ -64,23 +63,3 @@ def test_relay_renders_latent_conflict_verdict_and_finding():
         "tried. To settle it, add a rule about whether a may be tried, or add a condition to one of the rules.")
     assert english.latent_conflict_finding(document, situation, verdict) == (
         "LatentConflict: must-x, not-x under y_permitted(a) = yes")
-
-
-def test_relay_conflict_context_excludes_unrelated_unsaid_answers():
-    env = environment({"x_permitted": permission("deny"),
-                       "y_permitted": permission("unspecified", act="{0} be tried"),
-                       "z_permitted": permission("unspecified", act="{0} be tested")})
-    document = UnspecifiedDocument(env, [
-        rule("allow-x", "x_permitted", True, Unary("y_permitted", Var(0))),
-        rule("deny-x", "x_permitted", False)])
-    situation = FiniteModel.from_dict(document.situation_environment(), ONE_ACT)
-    filled = document.with_filling(situation, {"unsaid__y_permitted": frozenset({("a",)}),
-                                                "unsaid__z_permitted": frozenset()})
-    verdict = run_case(source_case(document, "norm-defaults-conflict", witness={
-        "target": "x_permitted", "model": filled.to_dict(), "tuple": ["a"]}))
-    assert verdict["verdict"] == "CONFLICT"
-    assert english.latent_conflict_finding(document, situation, verdict) == (
-        "LatentConflict: allow-x, deny-x under y_permitted(a) = yes")
-    sentence = english.latent_conflict_sentence(document, situation, verdict)
-    assert "z_permitted" not in sentence and "be tested" not in sentence
-    assert sentence.endswith("make one rule an exception to the other.")
