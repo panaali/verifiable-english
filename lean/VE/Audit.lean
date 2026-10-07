@@ -592,6 +592,7 @@ import VE.Senses.Read
 #print axioms VE.Route.Run.route_gate_rejects
 #print axioms VE.Route.Run.route_rejects_before_checking
 #print axioms VE.Route.Wire.backgroundViolation_none
+#print axioms VE.Route.Wire.decodeVocabulary_valid
 #print axioms VE.Route.Wire.decodeModel_valid
 #print axioms VE.Route.Wire.decodeDataModel_valid
 #print axioms VE.Route.Wire.decodeDataModel_combined

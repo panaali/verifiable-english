@@ -384,6 +384,7 @@
 'VE.Route.Run.route_gate_rejects' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.Run.route_rejects_before_checking' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.Wire.backgroundViolation_none' depends on axioms: [propext, Quot.sound]
+'VE.Route.Wire.decodeVocabulary_valid' depends on axioms: [propext, Quot.sound]
 'VE.Route.Wire.decodeModel_valid' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.Wire.decodeDataModel_valid' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.Wire.decodeDataModel_combined' depends on axioms: [propext, Classical.choice, Quot.sound]
