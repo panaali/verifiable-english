@@ -674,7 +674,7 @@ the current source classification alongside the previously measured steps.
 | 4 | 720 | 0 | 0 | 420 | 300 | 14 | 2 | 10.7 |
 | 5 | 0 | 485 | 0 | 0 | 485 | 14 | 1 | 34.6 |
 | 6 | 35 | 0 | 1758 | 0 | 35 | 3 | 1 | 11.7 |
-| 7 | 627 | 0 | 0 | 60 | 567 | 6 | 2 | 47.2 |
+| 7 | 630 | 0 | 0 | 60 | 570 | 6 | 2 | 47.5 |
 | 8a | 106 | 225 | 0 | 60 | 271 | 10 | 1.5 | 18.1 |
 | 8b | 0 | 3460 | 0 | 0 | 3460 | 30 | 3 | 38.4 |
 | 9 | 88 | 0 | 0 | 0 | 88 | 18 | 2 | 2.4 |
@@ -682,7 +682,7 @@ the current source classification alongside the previously measured steps.
 
 What the measurement changes:
 
-* **Re-ranking of steps 5 to 10 by measured score:** 7 (47.2), 5 (34.6), 8a (18.1), 6 (11.7),
+* **Re-ranking of steps 5 to 10 by measured score:** 7 (47.5), 5 (34.6), 8a (18.1), 6 (11.7),
   9 (2.4), 10. Step 8b's 3,460 is an upper bound (every untied line of the eight units' `Wire.lean`
   files, on the assumption that every decoder gets `exact`), not a forecast; it stays ranked by its
   pilot (Alternatives) as section 3 says. Against the estimates, 7 overtakes 5 (762 trusted
