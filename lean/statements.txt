@@ -16900,6 +16900,17 @@ theorem VE.Readings.genKeys_strict
   ∀ (X : VE.Rights.RightsDoc), VE.Readings.StrictDoc X → VE.Readings.genKeys X = []
   -- uses VE.Readings.GenKey@VE.Readings.Separate VE.Readings.StrictDoc@VE.Readings.Unspecified VE.Readings.genKeys@VE.Readings.Separate VE.Rights.RightsDoc@VE.Rights.Tree
   -- expr 604206234
+theorem VE.Readings.generatedKeyJson_name
+  ∀ (g : VE.Readings.GenKey × String × List String),
+    (VE.Readings.generatedKeyJson g).getObjValD "name" = Lean.Json.str g.snd.fst
+  -- uses VE.Readings.GenKey@VE.Readings.Separate VE.Readings.generatedKeyJson@VE.Readings.Route
+  -- expr 3448372749
+theorem VE.Readings.generatedSuperposed_names
+  ∀ (D : VE.Readings.Doc),
+    List.map (fun g => (g.snd.fst, g.snd.snd)) (VE.Readings.genKeys (VE.Readings.sup D).fst) =
+      VE.SoftNorms.decisions (VE.Rights.correlate (VE.Readings.sup D).fst) ++ VE.Rights.genDecls (VE.Readings.sup D).fst
+  -- uses VE.Formula@VE.Syntax VE.Readings.Doc@VE.Readings.Doc VE.Readings.GenKey@VE.Readings.Separate VE.Readings.genKeys@VE.Readings.Separate VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.Rights.genDecls@VE.Rights.Tree VE.SoftNorms.decisions@VE.SoftNorms.Tree
+  -- expr 3412191757
 theorem VE.Readings.get_end
   ∀ (s : String) (A : List Char), s.data = A → s.get { byteIdx := String.utf8ByteSize.go A } = Inhabited.default
   -- uses
