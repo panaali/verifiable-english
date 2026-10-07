@@ -43,10 +43,14 @@ class S2Wording:
         self.names = {R.id: self.s1.reading_names(R.id) for R in self.sets}
         self.slots = E.Slots(numbers={str(n) for n in self.numbers.values()},
                              readings={name for names in self.names.values() for name in names if type(name) is str},
-                             reserved=wording_reserved_prefixes(doc["environment"].profiles))
+                             reserved=wording_reserved_prefixes(doc["environment"].profiles),
+                             author_names=frozenset(self.s1.admission.senv.author_environment().predicates))
         senv = self.s1.admission.senv
         self.frame = senv.frame
         self.author = set(senv.author_environment().predicates)
+        # Lean's elaboration names each generated declaration and its producing
+        # layer. A spelling is never evidence that a model table is a decision.
+        self.generated = _active_generated(route.row["generated_predicates"], doc["environment"].profiles)
         self.decisions = self._decision_names()
 
     # -- slots
@@ -114,12 +118,14 @@ class S2Wording:
         chosen = {(s, i) for s, i in choice}
         own = self._choice_decisions(choice)
         for predicate in sorted(relations):
+            if predicate in self.author or predicate not in self.generated:
+                continue
             for row in sorted(relations[predicate]):
                 phrase = (self._decision(predicate, row, chosen) if own is None else
                           self._choice_decision(own, predicate, row, chosen))
                 if phrase is not None:
                     facts.append("suppose " + phrase)
-                elif predicate not in self.author and predicate.startswith(_DECISION_PREFIXES):
+                elif self.generated[predicate]["layer"] in ("soft", "rights"):
                     # Review A of compose-s2 looprecheck2: a decision the situation needs is never left out.
                     raise VEError(f"InvalidInput: a situation's decision table {predicate} has no wording")
         text = "; ".join(facts) if facts else "nothing exists"
@@ -189,8 +195,9 @@ class S2Wording:
     def _decision(self, predicate, row, chosen):
         subject = _series(list(row))
         soft = getattr(self.frame, "soft", None) or {}
-        if predicate.startswith("soft__outweighs__"):
-            _, _, low, high, _ = predicate.split("__", 4)
+        key = self.generated[predicate]["key"]
+        if key is not None and "outweighs" in key:
+            low, high = key["lower"], key["higher"]
             outranking = soft.get("outranking", {})
             return f"{self.s1.decider(outranking.get('decided_by'))} decides that {low} outweighs {high} for {subject}"
         entry = self.decisions.get(predicate)
@@ -425,7 +432,16 @@ class S2Wording:
 
 
 PAIR_LABEL = "unsaid:pair:"
-_DECISION_PREFIXES = ("soft__excepted__", "soft__off__", "soft__outweighs__", "rights__")
+
+
+def _active_generated(entries, profiles):
+    """Read Lean's declaration provenance only for layers this document activates."""
+    active = {"readings"}
+    if "soft-norms@0" in profiles:
+        active.add("soft")
+    if "rights@0" in profiles:
+        active.add("rights")
+    return {entry["name"]: entry for entry in entries if entry["layer"] in active}
 
 
 def _series(values):

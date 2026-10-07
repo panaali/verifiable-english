@@ -7,6 +7,7 @@ Reserved completion names are hidden only under `norm-defaults@0` (Fable's revie
 from __future__ import annotations
 
 import copy
+import ast
 import dataclasses
 import itertools
 import json
@@ -410,6 +411,108 @@ def test_soft_prefix_is_an_author_predicate_without_soft_layer(tmp_path):
     assert data["verdict"] == "ALL" and wording.slots.reserved == ()
     assert any('"soft__x" to that user.*' in line for line in lines), lines
     assert all(hidden_in(line, wording.slots.reserved) is None for line in lines)
+
+
+@pytest.mark.parametrize("predicate", [
+    "soft__outweighs__x", "soft__outweighs__a__b__c", "soft__excepted__y",
+    "soft__off__z", "rights__x", "unsaid__p",
+])
+def test_generated_looking_author_tables_are_not_decisions(tmp_path, predicate):
+    """Each prefix can name an ordinary author relation on the norms-only chain."""
+    from ve.document import check_document
+    raw = env_k(profiles=("norms@0", "readings@1", "relational-fol@0"))
+    raw["vocabulary"]["predicates"][predicate] = {"arguments": ["agent", "user"], "description": "base"}
+    exists = ["exists", "agent", ["exists", "user", ["binary", predicate, ["var", 1], ["var", 0]]]]
+    path = s2_document(tmp_path, [
+        ("set", "rs1", "u1", [("a", norm("no-deception", "avoid_required", True), "norm", None),
+                               ("b", norm("no-deception", "avoid_required", False), "norm", None)]),
+        ("fixed", "u2", exists)], raw=raw)
+    report = check_document(path)
+    assert report["readings"]["route"] == "superposed"
+    assert any(predicate in line for line in report["readings"]["english"])
+    assert all(f"suppose {predicate}" not in line for line in report["readings"]["english"])
+    # Exercise the formatting boundary with an active layer too. Admission
+    # reserves these names in that layer; a response must still never relabel
+    # an author table if such a name reaches the wording boundary.
+    from ve.document import load_document
+    from ve.readings_verdicts import context
+    from ve.readings_s2_wording import S2Wording, _active_generated
+    doc = load_document(path)
+    route = context(doc)
+    layer, profile, prefix = (("rights", "rights@0", "rights__") if predicate.startswith("rights__") else
+                              ("soft", "soft-norms@0", "soft__") if predicate.startswith("soft__") else
+                              ("readings", "norm-defaults@0", "unsaid__"))
+    entry = {"name": predicate, "layer": layer, "key": {"excepted": "ghost"}}
+    route.row["generated_predicates"].append(entry)
+    wording = S2Wording(doc, route)
+    wording.generated = _active_generated(route.row["generated_predicates"],
+                                          (*doc["environment"].profiles, profile))
+    wording.slots.reserved = (prefix,)
+    found = route.premises()
+    situation = wording.situation(found["model"], found["choice"])
+    assert predicate in situation and "suppose" not in situation
+    assert predicate in wording.E.named_result(wording.readings(found["choice"]), "premise_model",
+                                               wording.slots, situation=situation)
+
+
+@pytest.mark.parametrize("layer,profile,predicate", [
+    ("soft", "soft-norms@0", "soft__outweighs__a__b__c"),
+    ("soft", "soft-norms@0", "soft__excepted__y"),
+    ("soft", "soft-norms@0", "soft__off__z"),
+    ("rights", "rights@0", "rights__x"),
+])
+def test_wording_requires_active_producer_for_a_generated_table(tmp_path, layer, profile, predicate):
+    """A claimed generated declaration is inert when its producer is absent, even if Lean names it."""
+    from ve.document import load_document
+    from ve.readings_verdicts import context
+    from ve.readings_s2_wording import S2Wording, _active_generated
+    raw = env_k(profiles=("norms@0", "readings@1", "relational-fol@0"))
+    path = s2_document(tmp_path, [
+        ("set", "rs1", "u1", [("a", norm("no-deception", "avoid_required", True), "norm", None),
+                               ("b", norm("no-deception", "avoid_required", False), "norm", None)])], raw=raw)
+    doc = load_document(path)
+    route = context(doc)
+    entry = {"name": predicate, "layer": layer, "key": {"excepted": "ghost"}}
+    route.row["generated_predicates"].append(entry)
+    assert predicate not in _active_generated(route.row["generated_predicates"], doc["environment"].profiles)
+    assert predicate in _active_generated(route.row["generated_predicates"], (*doc["environment"].profiles, profile))
+    model = {"domains": {"agent": ["a"], "user": ["u"]}, "relations": {predicate: [["a", "u"]]}}
+    wording = S2Wording(doc, route)
+    assert "suppose" not in wording.situation(model, [["rs1", 0]])
+    # Activating the producer makes the same unworded decision a detectable error.
+    wording.generated = _active_generated(route.row["generated_predicates"],
+                                          (*doc["environment"].profiles, profile))
+    with pytest.raises(VEError, match="decision table"):
+        wording.situation(model, [["rs1", 0]])
+
+
+def test_no_report_or_wording_module_classifies_decisions_by_prefix():
+    """A spelling check reintroduced for any one reserved prefix fails this structural gate."""
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[1] / "ve"
+    prefixes = ("soft__", "rights__", "unsaid__")
+    paths = sorted({*root.rglob("*wording*.py"), *root.rglob("*report*.py")})
+    for path in paths:
+        tree = ast.parse(path.read_text())
+        named = {}
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Assign):
+                names = [target.id for target in node.targets if isinstance(target, ast.Name)]
+                literals = [value.value for value in ast.walk(node.value)
+                            if isinstance(value, ast.Constant) and isinstance(value.value, str)]
+                for name in names:
+                    named[name] = literals
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call):
+                continue
+            method = node.func.attr if isinstance(node.func, ast.Attribute) else None
+            if method not in ("startswith", "match", "search", "compile"):
+                continue
+            literals = [value.value for arg in node.args for value in ast.walk(arg)
+                        if isinstance(value, ast.Constant) and isinstance(value.value, str)]
+            literals += [text for arg in node.args if isinstance(arg, ast.Name)
+                         for text in named.get(arg.id, [])]
+            assert not any(any(prefix in value for prefix in prefixes) for value in literals), (path, node.lineno)
 
 
 def test_s2_hidden_prefixes_follow_every_optional_layer_combination():
