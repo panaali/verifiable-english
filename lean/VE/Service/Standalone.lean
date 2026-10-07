@@ -229,7 +229,6 @@ def validated (environment : Json) (typing : Bool := false) : Except String Vali
     for (name, _) in ← VE.Bridge.fields (← e.vocabulary.getObjVal? kind) do
       if pythonReserved.contains name then throw s!"invalid or reserved declaration: {name}"
   let predicates ← VE.Bridge.fields (← e.vocabulary.getObjVal? "predicates")
-  checkDataFlagFields e.profiles predicates
   let mut v : Validated := { envelope := e, decodable := environment }
   if e.profiles.contains "norms@0" &&
       predicates.any (fun (_, entry) => (entry.getObjVal? "regulated").isOk) then
@@ -237,6 +236,7 @@ def validated (environment : Json) (typing : Bool := false) : Except String Vali
     -- regulated predicates as ordinary ones.
     checkRegulated predicates
     v ← stripPredicates v.envelope v.decodable ["regulated"]
+  checkDataFlagFields e.profiles predicates
   if typing && e.family == .closureNary then
     v ← stripPredicates v.envelope v.decodable ["defined", "functional", "total"]
   else if e.family == .closureNary && VE.Core.Layers.usesLayers v.decodable then
@@ -303,6 +303,10 @@ def validatedComposedEnvironment (environment : Json) : Except String VE.Route.G
     let _ ← validated frame
     pure ()
   else if named.contains "norms@0" then
+    let predicates ← VE.Bridge.fields (← (← environment.getObjVal? "vocabulary").getObjVal? "predicates")
+    if !named.contains "norm-defaults@0" &&
+        predicates.any (fun (_, entry) => (entry.getObjVal? "regulated").isOk) then
+      checkRegulated predicates
     let _ ← VE.NormDefaults.Wire.decodeEnvironmentU environment
     pure ()
   else
@@ -459,15 +463,12 @@ private def longModelString (model : Json) : Bool :=
   let domains := (VE.Bridge.fields (model.getObjValD "domains")).toOption.getD []
   let constants := (VE.Bridge.fields (model.getObjValD "constants")).toOption.getD []
   let relations := (VE.Bridge.fields (model.getObjValD "relations")).toOption.getD []
-  domains.any (fun (_, values) => match values with
-      | .arr items => items.toList.any longModelAtom
-      | _ => false) ||
+  domains.any (fun (_, values) =>
+      (values.getArr?.toOption.getD #[]).toList.any longModelAtom) ||
     constants.any (fun (_, value) => longModelAtom value) ||
-    relations.any (fun (_, tuples) => match tuples with
-      | .arr rows => rows.toList.any (fun row => match row with
-          | .arr items => items.toList.any longModelAtom
-          | _ => false)
-      | _ => false)
+    relations.any (fun (_, tuples) =>
+      (tuples.getArr?.toOption.getD #[]).toList.any (fun row =>
+        (row.getArr?.toOption.getD #[]).toList.any longModelAtom))
 
 def legacyModelCase (id : String) (environment model : Json) (j : Json) : Except String Json := do
   let l ← decodeLegacy environment

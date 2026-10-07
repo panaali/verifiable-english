@@ -1155,9 +1155,9 @@
     "VE.Alternatives.Wire.decodeBlock",
     "VE.Alternatives.Wire.decodeOutcomes",
     "VE.Alternatives.Wire.decodePremises",
-    "VE.Alternatives.Wire.fixedPredicates",
     "VE.Alternatives.Wire.enc",
     "VE.Alternatives.Wire.encodeNode",
+    "VE.Alternatives.Wire.fixedPredicates",
     "VE.Alternatives.Wire.labelled",
     "VE.Alternatives.Wire.legend",
     "VE.Alternatives.Wire.otherDeclarations",
@@ -4227,6 +4227,7 @@
    "G[V]": [
     "VE.NormDefaults.Wire.ConflictReplayU.conflictFree",
     "VE.NormDefaults.Wire.baseBackgroundU",
+    "VE.NormDefaults.Wire.decodeEnvironmentU",
     "VE.NormDefaults.Wire.profile",
     "VE.NormDefaults.Wire.unspecifiedNames"
    ]
@@ -4474,6 +4475,30 @@
    "C": [
     "VE.Norms.Chain",
     "VE.Norms.chain"
+   ]
+  },
+  "VE/Norms/LayersOnce.lean": {
+   "G[V]": [
+    "VE.Norms.InFragmentIn",
+    "VE.Norms.InFragmentOnce",
+    "VE.Norms.Layers",
+    "VE.Norms.conflictIn",
+    "VE.Norms.entryTable",
+    "VE.Norms.expAt",
+    "VE.Norms.expEntries",
+    "VE.Norms.expStep",
+    "VE.Norms.layersOf",
+    "VE.Norms.outcomeBaseIn",
+    "VE.Norms.pairConflictIn",
+    "VE.Norms.substIn",
+    "VE.Norms.targetsIn"
+   ]
+  },
+  "VE/Norms/Once.lean": {
+   "G[V]": [
+    "VE.Norms.WellFormedOnce",
+    "VE.Norms.semanticCheckOnce",
+    "VE.Norms.validateOnce"
    ]
   },
   "VE/Norms/Plain.lean": {
@@ -7579,6 +7604,31 @@
     "VE.Service.Graph.topological"
    ]
   },
+  "VE/Service/ParseDiagnostic.lean": {
+   "G[V]": [
+    "VE.Service.ParseDiagnostic.Cursor",
+    "VE.Service.ParseDiagnostic.Error",
+    "VE.Service.ParseDiagnostic.Scan",
+    "VE.Service.ParseDiagnostic.advance",
+    "VE.Service.ParseDiagnostic.binder",
+    "VE.Service.ParseDiagnostic.complete",
+    "VE.Service.ParseDiagnostic.current",
+    "VE.Service.ParseDiagnostic.fails",
+    "VE.Service.ParseDiagnostic.formula",
+    "VE.Service.ParseDiagnostic.hasPrefix",
+    "VE.Service.ParseDiagnostic.ident",
+    "VE.Service.ParseDiagnostic.identChar",
+    "VE.Service.ParseDiagnostic.literal",
+    "VE.Service.ParseDiagnostic.numeral",
+    "VE.Service.ParseDiagnostic.pyQuote",
+    "VE.Service.ParseDiagnostic.reserved",
+    "VE.Service.ParseDiagnostic.term"
+   ],
+   "G[R]": [
+    "VE.Service.ParseDiagnostic.scan",
+    "VE.Service.ParseDiagnostic.span"
+   ]
+  },
   "VE/Service/Protocol.lean": {
    "D[V]": [
     "VE.Service.Handles.expand",
@@ -7699,26 +7749,37 @@
     "VE.Service.Standalone.Validated",
     "VE.Service.Standalone.alternativesReduced",
     "VE.Service.Standalone.checkCase",
+    "VE.Service.Standalone.checkDataFlagFields",
+    "VE.Service.Standalone.checkNaryDefinitions",
     "VE.Service.Standalone.environmentCase",
     "VE.Service.Standalone.environmentIdOf",
     "VE.Service.Standalone.folBackground",
     "VE.Service.Standalone.legacyCheckCase",
     "VE.Service.Standalone.legacyModelCase",
+    "VE.Service.Standalone.longModelAtom",
+    "VE.Service.Standalone.longModelString",
     "VE.Service.Standalone.modelCase",
+    "VE.Service.Standalone.modelEnvironment",
+    "VE.Service.Standalone.naryDefined",
     "VE.Service.Standalone.pythonReserved",
     "VE.Service.Standalone.reported",
     "VE.Service.Standalone.reportsReduced",
     "VE.Service.Standalone.typingReduced",
+    "VE.Service.Standalone.usedPredicates",
     "VE.Service.Standalone.validateFamily",
     "VE.Service.Standalone.validated",
-    "VE.Service.Standalone.validatedEnvironment"
+    "VE.Service.Standalone.validatedComposedEnvironment",
+    "VE.Service.Standalone.validatedEnvironment",
+    "VE.Service.Standalone.visitDefinition"
    ],
    "G[R]": [
     "VE.Service.Standalone.maxSourceBytes",
+    "VE.Service.Standalone.modelError",
     "VE.Service.Standalone.parseRejection"
    ],
    "G[I]": [
-    "VE.Service.Standalone.identityCase"
+    "VE.Service.Standalone.identityCase",
+    "VE.Service.Standalone.identityEnvironment"
    ]
   },
   "VE/Service/TypingDiagnostic.lean": {
@@ -7790,6 +7851,21 @@
     "VE.SoftNorms.softConflictFreeCheck",
     "VE.SoftNorms.softSymLayer",
     "VE.SoftNorms.universalQF"
+   ]
+  },
+  "VE/SoftNorms/Once.lean": {
+   "G[V]": [
+    "VE.SoftNorms.InFragmentOnce",
+    "VE.SoftNorms.WellFormedSoftOnce",
+    "VE.SoftNorms.checkSoftOnce",
+    "VE.SoftNorms.cohPremiseIn",
+    "VE.SoftNorms.selectsOn",
+    "VE.SoftNorms.softPremisesIn",
+    "VE.SoftNorms.softSemanticCheckOnce",
+    "VE.SoftNorms.validateSoftOnce"
+   ],
+   "G[R]": [
+    "VE.SoftNorms.defaultDecidesOn"
    ]
   },
   "VE/SoftNorms/Phases.lean": {
@@ -8452,6 +8528,9 @@
     "VE.SpeechActs.Wire.checkBinding",
     "VE.SpeechActs.Wire.decodeBinding",
     "VE.SpeechActs.Wire.mergeBindings"
+   ],
+   "G[V]": [
+    "VE.SpeechActs.Wire.checkEnvironmentScope"
    ]
   },
   "VE/Surface.lean": {
@@ -9160,70 +9239,6 @@
   "VE/WireContract/Tables/SoftNorms.lean": {
    "G[V]": [
     "VE.WireContract.Tables.SoftNorms.table"
-   ]
-  },
-  "VE/Norms/LayersOnce.lean": {
-   "G[V]": [
-    "VE.Norms.InFragmentIn",
-    "VE.Norms.InFragmentOnce",
-    "VE.Norms.Layers",
-    "VE.Norms.conflictIn",
-    "VE.Norms.entryTable",
-    "VE.Norms.expAt",
-    "VE.Norms.expEntries",
-    "VE.Norms.expStep",
-    "VE.Norms.layersOf",
-    "VE.Norms.outcomeBaseIn",
-    "VE.Norms.pairConflictIn",
-    "VE.Norms.substIn",
-    "VE.Norms.targetsIn"
-   ]
-  },
-  "VE/Norms/Once.lean": {
-   "G[V]": [
-    "VE.Norms.WellFormedOnce",
-    "VE.Norms.semanticCheckOnce",
-    "VE.Norms.validateOnce"
-   ]
-  },
-  "VE/SoftNorms/Once.lean": {
-   "G[V]": [
-    "VE.SoftNorms.InFragmentOnce",
-    "VE.SoftNorms.WellFormedSoftOnce",
-    "VE.SoftNorms.checkSoftOnce",
-    "VE.SoftNorms.cohPremiseIn",
-    "VE.SoftNorms.selectsOn",
-    "VE.SoftNorms.softPremisesIn",
-    "VE.SoftNorms.softSemanticCheckOnce",
-    "VE.SoftNorms.validateSoftOnce"
-   ],
-   "G[R]": [
-    "VE.SoftNorms.defaultDecidesOn"
-   ]
-  },
-  "VE/Service/ParseDiagnostic.lean": {
-   "G[V]": [
-    "VE.Service.ParseDiagnostic.Cursor",
-    "VE.Service.ParseDiagnostic.Error",
-    "VE.Service.ParseDiagnostic.Scan",
-    "VE.Service.ParseDiagnostic.advance",
-    "VE.Service.ParseDiagnostic.binder",
-    "VE.Service.ParseDiagnostic.complete",
-    "VE.Service.ParseDiagnostic.current",
-    "VE.Service.ParseDiagnostic.fails",
-    "VE.Service.ParseDiagnostic.formula",
-    "VE.Service.ParseDiagnostic.hasPrefix",
-    "VE.Service.ParseDiagnostic.ident",
-    "VE.Service.ParseDiagnostic.identChar",
-    "VE.Service.ParseDiagnostic.literal",
-    "VE.Service.ParseDiagnostic.numeral",
-    "VE.Service.ParseDiagnostic.pyQuote",
-    "VE.Service.ParseDiagnostic.reserved",
-    "VE.Service.ParseDiagnostic.term"
-   ],
-   "G[R]": [
-    "VE.Service.ParseDiagnostic.scan",
-    "VE.Service.ParseDiagnostic.span"
    ]
   }
  }

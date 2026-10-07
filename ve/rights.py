@@ -59,7 +59,6 @@ class RightsEnvironment(SoftEnvironment):
     LAYERS = frozenset({"rights@0"})
 
     def __init__(self, data):
-        validate_authored_source(data)
         profiles = data.get("profiles") if type(data) is dict else None
         if type(profiles) is not list or any(type(p) is not str for p in profiles):
             # VE.Rights.Wire.decodeRightsEnvironment reads the profiles first.
@@ -81,6 +80,11 @@ class RightsEnvironment(SoftEnvironment):
                 # 3.1's null recognition is the absent key: canonical JSON has no null,
                 # and the Lean wire sends the field absent.
                 del entry["recognition"]
+        # The authored rights wire treats null recognition as an absent field.
+        # Validate the canonical source that the rights route and identity use.
+        vocabulary["rights"] = rights
+        validate_authored_source(raw)
+        del vocabulary["rights"]
         _decode_block(rights)
         predicates = vocabulary.get("predicates")
         for predicate in (predicates if type(predicates) is dict else ()):
