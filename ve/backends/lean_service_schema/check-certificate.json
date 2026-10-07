@@ -11,8 +11,13 @@
   "$defs": {
     "certificate": {
       "additionalProperties": false,
-      "properties": {"id": {"type": "string", "x-equals": "/id"}, "status": {"const": "ok"}, "valid": {"type": "boolean"}},
-      "required": ["id", "status", "valid"],
+      "properties": {
+        "id": {"type": "string", "x-equals": "/id"},
+        "status": {"const": "ok"},
+        "steps": {"$ref": "common.json#/$defs/nat"},
+        "valid": {"type": "boolean"}
+      },
+      "required": ["id", "status", "valid", "steps"],
       "type": "object"
     }
   }

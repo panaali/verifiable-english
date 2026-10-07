@@ -370,6 +370,7 @@ module VE.Service.FamilyNorms
 module VE.Service.GenericGraph
 module VE.Service.GenericReadings
 module VE.Service.Graph
+module VE.Service.ParseDiagnostic
 module VE.Service.Protocol
 module VE.Service.Readings
 module VE.Service.Standalone

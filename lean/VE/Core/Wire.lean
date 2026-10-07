@@ -57,8 +57,7 @@ def decodeTrace : Nat → Json → Except String Tableau.Trace
     else throw "unknown tableau rule"
 
 def decodeCertificate (j : Json) : Except String Tableau.Certificate := do
-  VE.Bridge.exactFields j ["checker_version", "environment_id", "premise_meaning_ids",
-    "conclusion_meaning_id", "trace"]
+  VE.CertificateWire.certificateFields j
   pure ⟨← VE.Bridge.stringField j "checker_version", ← VE.Bridge.stringField j "environment_id",
     ← VE.Bridge.strings (← j.getObjVal? "premise_meaning_ids"),
     ← VE.Bridge.stringField j "conclusion_meaning_id", ← decodeTrace 125 (← j.getObjVal? "trace")⟩
@@ -96,10 +95,11 @@ def run (profiles : List String) (environment : Json) (id kind : String)
     (background.map VE.Route.Wire.encodeFormula ++ (← premisesJson.getArr?).toList)
     (← j.getObjVal? "conclusion") certificate.environment_id certificate.premise_meaning_ids
     certificate.conclusion_meaning_id
-  if VE.Route.Steps.core certificate.trace > VE.Route.Steps.limit j then
+  if VE.Route.Steps.core certificate.trace > (← VE.Route.Steps.limit j) then
     throw VE.Route.Steps.stepLimit
   return VE.Route.Wire.ok id [("valid", .bool (Tableau.checkCertificate E
-      (background.map embed ++ ps) c certificate)), ("background", toJson background.length)]
+      (background.map embed ++ ps) c certificate)), ("background", toJson background.length),
+      ("steps", toJson (VE.Route.Steps.core certificate.trace))]
 
 theorem validField (id : String) (b : Bool) (n : Nat) :
     (VE.Route.Wire.ok id [("valid", .bool b), ("background", toJson n)]).getObjVal? "valid" =
@@ -145,12 +145,26 @@ theorem run_certificate_acceptance (profiles : List String) (environment : Json)
   have hbound := hbind
   split at hrun
   · cases hrun
+  split at hrun
+  · cases hrun
   cases hrun
   have hcheck : Tableau.checkCertificate v.environment
       ((VE.Route.Background.literals (literals v)).map embed ++ ps) c certificate = true := by
     cases ht : Tableau.checkCertificate v.environment
         ((VE.Route.Background.literals (literals v)).map embed ++ ps) c certificate
-    · simp [ht, validField] at hvalid
+    · have hfield : (Json.mkObj [("id", .str id), ("status", .str "ok"),
+          ("valid", .bool false),
+          ("background", toJson (VE.Route.Background.literals (literals v)).length),
+          ("steps", toJson (VE.Route.Steps.core certificate.trace))]).getObjVal? "valid" =
+          .ok (.bool false) := rfl
+      simp only [ht] at hvalid
+      change (Json.mkObj [("id", .str id), ("status", .str "ok"),
+        ("valid", .bool false),
+        ("background", toJson (VE.Route.Background.literals (literals v)).length),
+        ("steps", toJson (VE.Route.Steps.core certificate.trace))]).getObjVal? "valid" =
+        .ok (.bool true) at hvalid
+      rw [hfield] at hvalid
+      cases hvalid
     · rfl
   refine ⟨hbound, ?_⟩
   intro S hS hbgSat hp

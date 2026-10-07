@@ -1,6 +1,7 @@
 import VE.Order.Tableau
 import VE.Order.ModelCheck
 import VE.CertificateWire
+import VE.Route.Steps
 
 /-! The order@0 wire adapter, reached only through the separate `order`
 subcommand. The existing certificate entry point and its profile gate are
@@ -225,8 +226,7 @@ def decodeTrace : Nat → Json → Except String Tableau.Trace
     else throw "unknown tableau rule"
 
 def decodeCertificate (j : Json) : Except String Tableau.Certificate := do
-  exactFields j ["checker_version", "environment_id", "premise_meaning_ids",
-    "conclusion_meaning_id", "trace"]
+  VE.CertificateWire.certificateFields j
   pure ⟨← stringField j "checker_version", ← stringField j "environment_id",
     ← strings (← j.getObjVal? "premise_meaning_ids"),
     ← stringField j "conclusion_meaning_id", ← decodeTrace 125 (← j.getObjVal? "trace")⟩
@@ -280,8 +280,11 @@ def runCase (j : Json) : Except String Json := do
   unless certificate.environment_id == environmentId && certificate.premise_meaning_ids == premises &&
       certificate.conclusion_meaning_id == conclusion do
     throw "certificate is stale or bound to different inputs"
+  let steps := VE.Route.Steps.order certificate.trace
+  if steps > (← VE.Route.Steps.limit j) then throw VE.Route.Steps.stepLimit
   let q : Query E := ⟨ps, c, certificate⟩
-  pure (Json.mkObj [("id", .str id), ("status", .str "ok"), ("valid", .bool q.accepts)])
+  pure (Json.mkObj [("id", .str id), ("status", .str "ok"), ("valid", .bool q.accepts),
+    ("steps", toJson steps)])
 
 def runCaseReported (j : Json) : Json :=
   match runCase j with
