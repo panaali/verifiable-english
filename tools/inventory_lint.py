@@ -78,7 +78,7 @@ EXCEPTIONS: dict[tuple[str, str, str, str], str] = {
     ("ve.norm_defaults", "UnspecifiedDocument._check_ast", "ve.ast", "_Checker"):
         SURFACE + " (checks author guards and generated fill guards; NormDefaults.Wire re-decodes them in Lean)",
     ("ve.norm_english", "_parse_guard", "ve.ast", "_Checker"): SURFACE,
-    ("ve.rights", "RightsDocument.__init__", "ve.ast", "_Checker"):
+    ("ve.rights", "RightsDocument._read", "ve.ast", "_Checker"):
         SURFACE + " (rights: Lean-only route; rights_route replays the document through the service mode rights)",
     ("ve.rights_route", "check_rights_regenerated", "ve.ast", "_Checker"):
         SURFACE + " (rights: Lean-only route; check_rights_regenerated compares Lean's regeneration)",
