@@ -43,6 +43,23 @@ regenerated (one ID renamed). Full suite in five chunks (`-n 16`, `VE_LEAN_PREBU
 1929 passed, 1 skipped; 4001 passed, 2 skipped; 1822 passed, 3 skipped; 2420 passed; 1517 passed. The four slow
 tests alone (`-n 4`): 28 passed.
 
+## Recheck fixes (2026-10-07: `readings-defaults-looprecheck1.final.md`)
+
+| Finding | Fix (the class removed) | Commit |
+|---|---|---|
+| New B: reading names that quote author text are refused (`standard-x` holds `rd-`) | The S2 gate tested the whole line for the generated and reserved prefixes as substrings, in every slot that shows author text: rule names in notes, predicates in conclusions and situations, clauses. Names are generated and reserved by prefix (Lean's `startsWith`), so one function, `hidden_in`, matches a prefix only where no name character (letter, digit, `_`, `-`) precedes it. `may not` stays a substring test (G9 has no exception, composition.md 13.20). The gate and the tests' G6/G9 oracles all read `hidden_in`. Class tests: every prefix (`ve__`, `rd-`, `soft__`, `rights__`, `unsaid__`, `unsaid--`) in each of the four author-text slots, shown inside a name after five kinds of name character and refused at a name's start after eight kinds of boundary; the recheck's document with `standard-x`, `record-keeping`, `hazard-rd-x`, `ward-rd-2` (answers SOME); author predicates `save__x`, `microsoft__x`, `copyrights__x` in a conclusion | `63f44a46` |
+| Follow-up: `"unsaid__"` hard-coded in `norms.py`, `norm_defaults.py` | These, and `norm_defaults_english.py`, read `environment.UNSAID_PREFIX` | `21f64a33` |
+
+Not taken here (follow-up, no trigger found by the recheck): `named_pair` before E14/E24; multi-line assertion
+names inside one-line sentences and "an user"; `rule_key`'s docstring. Seeded bug: the old substring test put back
+in `hidden_in`, 12 of the new tests failed, then removed.
+
+Gate on `21f64a33`: `lake build` 784 jobs, success; `python lean/audit.py` PASS (430 files, 4668 theorems, standard
+axioms only); `tools/check_python_layers.py`, `tools/test_layer_policy.py` PASS; gate collection regenerated (13
+IDs added, none removed). Full suite in five chunks (`-n 16`, `VE_LEAN_PREBUILT=1`, four slow tests deselected):
+1929 passed, 1 skipped; 4001 passed, 2 skipped; 1835 passed, 3 skipped; 2420 passed; 1517 passed. The four slow
+tests alone (`-n 4`): 28 passed.
+
 ## Open work and acceptance
 
 - **Done (DRI 2026-10-07):** the corrected `attached_fillDoc` statement is approved and now in spec 6.2.
