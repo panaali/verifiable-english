@@ -57,7 +57,7 @@
     "ve/norm_defaults.py:UnspecifiedDocument.__init__": "after Lean accepts a source, a Python container construction failure is reported as CheckerUnavailable"
   },
   "lean_decoders": {
-    "total_lines": 21699,
+    "total_lines": 21707,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -420,12 +420,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Wire.lean",
-        "lines": 383,
-        "sha256": "c59e1151313d522e071f624b428f302db515af5c9cb30e86a632a6e05c81a536",
+        "lines": 386,
+        "sha256": "c065f104a75e02280cd211dca31c29608b419979d3b0997913b3b591fb9bf54a",
         "ranges": [
           [
             1,
-            383
+            386
           ]
         ],
         "declarations": [
@@ -498,12 +498,12 @@
       },
       {
         "file": "lean/VE/Norms/Wire.lean",
-        "lines": 331,
-        "sha256": "608bb613cc6a3490a5f523c48c0dac2f02e2672ffe81e73343b38b5fad2c8371",
+        "lines": 333,
+        "sha256": "d85fe5c7b9c67aba3d6191137d48c520e2c95cbefa562e7b3f3756cc723869fe",
         "ranges": [
           [
             25,
-            330
+            332
           ]
         ],
         "declarations": [
@@ -783,12 +783,12 @@
       },
       {
         "file": "lean/VE/Route/Wire.lean",
-        "lines": 668,
-        "sha256": "c17038603022404f61f416f093840551ef0999a0b5f7612f27bd2d7b7ffd9562",
+        "lines": 671,
+        "sha256": "32f80627c6b03cb0a10b62cb0da8c66052c41ff12d577e73e8b2e58b0da7eea2",
         "ranges": [
           [
             1,
-            668
+            671
           ]
         ],
         "declarations": [
