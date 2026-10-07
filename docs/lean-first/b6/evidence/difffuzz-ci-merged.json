@@ -1,0 +1,40 @@
+{
+  "commit": "88b913a0",
+  "note": "The batch-six CI signatures after the merge of main (49d18263): `difffuzz.py --ci` (seed 20261004) on the rebuilt merge, and each of the 11 batch-six entries of 7b7b10ef's baseline replayed with `replay`. The saved batch-six record is difffuzz-ci.json.",
+  "seed": 20261004,
+  "passed": true,
+  "new": 0,
+  "baseline_entries": 352,
+  "baseline_not_reproduced": [],
+  "baseline_unreviewed": [],
+  "reproduces": [
+    "138f8420645d5a7a",
+    "490a41808d93a5a4",
+    "54fcf6b1c09b89f3",
+    "5ab0e609397d3f2f",
+    "6cb30db5763b2058",
+    "8841282e3cb46aa2",
+    "db0c3c4f36d02f4d",
+    "e2f227c11fef418c"
+  ],
+  "resolved": {
+    "71000ad1c1905d72": {
+      "follow_up": "DF-3",
+      "profile": "risk",
+      "status": "fixed",
+      "why": "Main moved risk block ownership to Lean and relays risk admission (4bb12447, 4a09b7c6): Python now gives Lean's `object expected` instead of `Descriptions must be nonempty Unicode strings`, so the two answers agree."
+    },
+    "e5cf7c07fd37c408": {
+      "follow_up": "DF-3",
+      "profile": "risk",
+      "status": "fixed",
+      "why": "Main moved risk block ownership to Lean and relays risk admission (4bb12447, 4a09b7c6): Python now gives Lean's `String expected` instead of `invalid regulated fields for required`, so the two answers agree."
+    },
+    "e5e660cd2ad18ba9": {
+      "follow_up": "DF-9",
+      "profile": "quantity",
+      "status": "fixed",
+      "why": "Lean-first batch 9 (b2a9dd84, 0228095b): Python's quantity admission relays Lean and Rust's quantity route is deleted, so Python and Lean both say `array expected` and Rust no longer takes part."
+    }
+  }
+}
