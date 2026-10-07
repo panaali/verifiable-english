@@ -81,7 +81,7 @@ ROUTE_MODES = ("quantity", "norms", "discourse", "speech-acts", "soft-norms", "r
                "risk", "norm-defaults", "readings-route")
 # Executables that read no case list; `harness_invocations` gives their inputs.
 HARNESS_EXECUTABLES = frozenset({"ve_service", "ve_english_run", "ve_response_decode", "ve_english_lean_bench",
-                                 "ve_english_route", "ve_senses_route"})
+                                 "ve_english_route", "ve_senses_route", "ve_metered"})
 
 
 class Invocation(NamedTuple):
@@ -211,6 +211,20 @@ def harness_invocations(baseline: Path) -> list[Invocation]:
     malformed = {**senses_case, "id": "senses-invalid-pack", "packs": ["null"]}
     found.append(Invocation("ve_senses_route", "senses s7 and malformed pack", ("-",),
                             json.dumps([senses_case, malformed], ensure_ascii=False).encode()))
+    from tests.test_metered_lean import FAMILIES, fixture, formulas
+    from ve.ast import formula_to_data
+    metered = []
+    for index, profiles in enumerate(FAMILIES):
+        raw, env, model = fixture(profiles)
+        formula = formula_to_data(env, formulas(profiles)[-1])
+        metered.extend((
+            {"id": f"metered-{index}", "kind": "evaluate-budgeted", "environment": raw,
+             "model": model.to_dict(), "ast": [formula], "max_evaluations": 20, "trace": True},
+            {"id": f"nonvacuity-{index}", "kind": "non-vacuity", "environment": raw,
+             "model": model.to_dict(), "formula": formula, "max_evaluations": 20},
+        ))
+    found.append(Invocation("ve_metered", "four families, value and non-vacuity", ("-",),
+                            json.dumps(metered, ensure_ascii=False).encode()))
     code, out, err = run(baseline / "ve_service", found[0])
     responses = [json.loads(line) for line in out.decode().splitlines()[1:]]
     if code != 0 or len(responses) != len(requests):
