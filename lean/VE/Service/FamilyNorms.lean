@@ -117,7 +117,7 @@ def certificateCase {F C : Type} (k : Checker F C) (profiles : List String) (can
   VE.Route.Wire.bindingOk profiles canonical
     (regenerated.map VE.Route.Wire.encodeFormula ++ (← premisesJson.getArr?).toList) conclusionJson e pids q
   let steps := k.steps cert
-  if steps > VE.Route.Steps.limit j then throw VE.Route.Steps.stepLimit
+  if steps > (← VE.Route.Steps.limit j) then throw VE.Route.Steps.stepLimit
   pure (k.valid cert (regenerated.map k.embed ++ ps) c, steps)
 
 /-- One conflict target's package, as `Flagged.decodePackage` binds it, with the

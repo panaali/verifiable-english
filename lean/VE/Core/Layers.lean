@@ -94,7 +94,7 @@ def coreCertificate (profiles : List String) (environment core : Json) (backgrou
     (background.map VE.Route.Wire.encodeFormula ++ (← premisesJson.getArr?).toList)
     (← j.getObjVal? "conclusion") certificate.environment_id certificate.premise_meaning_ids
     certificate.conclusion_meaning_id
-  if VE.Route.Steps.core certificate.trace > VE.Route.Steps.limit j then
+  if VE.Route.Steps.core certificate.trace > (← VE.Route.Steps.limit j) then
     throw VE.Route.Steps.stepLimit
   return VE.Route.Wire.ok id [("valid", .bool (VE.Core.Tableau.checkCertificate E
       (background.map VE.Core.embed ++ ps) c certificate)), ("background", toJson background.length),

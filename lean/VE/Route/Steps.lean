@@ -18,7 +18,7 @@ namespace VE.Route.Steps
 abbrev maxSteps : Nat := VE.CertificateWire.maxSteps
 abbrev stepLimit : String := VE.CertificateWire.stepLimit
 abbrev caseCap : Nat := VE.CertificateWire.caseCap
-abbrev limit (j : Lean.Json) : Nat := VE.CertificateWire.limit j
+abbrev limit (j : Lean.Json) : Except String Nat := VE.CertificateWire.limit j
 abbrev fol (trace : VE.Tableau.Trace) : Nat := VE.CertificateWire.folSteps trace
 abbrev closure (trace : VE.Closure.Tableau.Trace) : Nat := VE.CertificateWire.closureSteps trace
 

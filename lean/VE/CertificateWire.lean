@@ -16,10 +16,13 @@ def stepLimit : String := "ResourceLimit: certificate replay exceeds 10,000 step
 
 def caseCap : Nat := 1000000
 
-def limit (j : Json) : Nat :=
-  match j.getObjVal? "max_steps" >>= (·.getNat?) with
-  | .ok n => min n caseCap
-  | .error _ => maxSteps
+def limit (j : Json) : Except String Nat := do
+  match j.getObjVal? "max_steps" with
+  | .error _ => pure maxSteps
+  | .ok value =>
+    match value.getNat? with
+    | .ok n => pure (min n caseCap)
+    | .error _ => throw "InvalidInput: max_steps must be a nonnegative integer"
 
 mutual
 def folSteps : VE.Tableau.Trace → Nat
@@ -254,7 +257,7 @@ def runClosureCase (j : Json) : Except String Json := do
       certificate.conclusion_meaning_id == conclusion do
     throw "certificate is stale or bound to different inputs"
   let steps := closureSteps certificate.trace
-  if steps > limit j then throw stepLimit
+  if steps > (← limit j) then throw stepLimit
   let q : ClosureQuery v.environment := ⟨ps,c,certificate⟩
   pure (Json.mkObj [("id", .str id), ("status", .str "ok"), ("valid", .bool q.accepts),
     ("steps", toJson steps)])
@@ -267,7 +270,7 @@ def runCase (j : Json) : Except String Json := do
   let v ← Bridge.decodeEnvironment environment
   let q ← decodeQuery environment v j
   let steps := folSteps q.certificate.trace
-  if steps > limit j then throw stepLimit
+  if steps > (← limit j) then throw stepLimit
   pure (Json.mkObj [("id", .str id), ("status", .str "ok"), ("valid", .bool q.accepts),
     ("steps", toJson steps)])
 

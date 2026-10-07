@@ -79,7 +79,7 @@ def folCertificate (profiles : List String) (environment : Json) (rv : VE.Route.
     (background.map VE.Route.Wire.encodeFormula ++ (← premisesJson.getArr?).toList)
     (← j.getObjVal? "conclusion") certificate.environment_id certificate.premise_meaning_ids
     certificate.conclusion_meaning_id
-  if VE.Route.Steps.fol certificate.trace > VE.Route.Steps.limit j then throw VE.Route.Steps.stepLimit
+  if VE.Route.Steps.fol certificate.trace > (← VE.Route.Steps.limit j) then throw VE.Route.Steps.stepLimit
   return VE.Route.Wire.ok id [("valid", .bool (VE.Tableau.checkCertificate E (background ++ ps) c certificate)),
     ("background", toJson background.length), ("steps", toJson (VE.Route.Steps.fol certificate.trace))]
 
@@ -104,7 +104,7 @@ def closureCertificate (profiles : List String) (environment : Json) (rv : VE.Ro
     (background.map VE.Route.Wire.encodeFormula ++ (← premisesJson.getArr?).toList)
     (← j.getObjVal? "conclusion") certificate.environment_id certificate.premise_meaning_ids
     certificate.conclusion_meaning_id
-  if VE.Route.Steps.closure certificate.trace > VE.Route.Steps.limit j then
+  if VE.Route.Steps.closure certificate.trace > (← VE.Route.Steps.limit j) then
     throw VE.Route.Steps.stepLimit
   return VE.Route.Wire.ok id [("valid", .bool (VE.Closure.Tableau.checkCertificate E
       (background.map VE.Closure.embed ++ ps) c certificate)), ("background", toJson background.length),
@@ -129,7 +129,7 @@ def orderCertificate (profiles : List String) (environment : Json) (rv : VE.Rout
     ((literals ++ profile).map VE.Route.Wire.encodeFormula ++ (← premisesJson.getArr?).toList)
     (← j.getObjVal? "conclusion") certificate.environment_id certificate.premise_meaning_ids
     certificate.conclusion_meaning_id
-  if VE.Route.Steps.order certificate.trace > VE.Route.Steps.limit j then throw VE.Route.Steps.stepLimit
+  if VE.Route.Steps.order certificate.trace > (← VE.Route.Steps.limit j) then throw VE.Route.Steps.stepLimit
   let background := VE.Route.Background.orderLiterals rv.literals ++ profile.map VE.Order.embed
   return VE.Route.Wire.ok id [("valid", .bool (VE.Order.Tableau.checkCertificate E (background ++ ps) c certificate)),
     ("background", toJson background.length), ("steps", toJson (VE.Route.Steps.order certificate.trace))]

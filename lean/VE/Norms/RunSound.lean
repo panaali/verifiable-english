@@ -35,6 +35,7 @@ theorem runCase_certificate (j answer : Json) (h : Run.runCase j = .ok answer)
     show ("norms-certificate" == "norms-elaborate") = false from rfl,
     beq_self_eq_true, Bool.false_and, Bool.false_eq_true, ↓reduceIte, pure_bind] at h
   obtain ⟨r, hr, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
   split at h
   · cases h
   cases h
