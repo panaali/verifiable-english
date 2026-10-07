@@ -28,8 +28,10 @@ note); before, both were "reading <i>".
    and exception conditions (`ve/surface/rights.py` `rule_notes`: "two rules differing in any of them render
    differently"). Assertions use their canonical VE sentence, read back by the English parser to the same formula;
    rights units the rights renderer (multi-sentence, long; a point for the reader test).
-2. **Two candidates shown by one sentence are refused** (`InvalidInput: two readings of <set> are shown by the same
-   sentence`), Python-only English construction, never a fallback to "reading <i>".
+2. **Two candidates shown by one sentence name neither** (superseded by the review fix of 2026-10-07; see
+   `integration/FIX.md`): such a candidate is `Unnamed`, and only an answer that names it is refused
+   (`InvalidInput: two different readings of <set> are shown by the same sentence`); candidates with the same
+   meaning share their sentence. Never a fallback to "reading <i>".
 3. **The sentence keeps its capital.** The spec's derived example shows "*every agent must help each user*"; the
    rendered sentence is kept as rendered ("*Every agent must …*"), as the `<conclusion>` slot already is, since
    lowercasing would break a sentence that starts with a name. The spec leaves exact sentences to RD-3's renderer.
