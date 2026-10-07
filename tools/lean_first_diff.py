@@ -117,6 +117,7 @@ QUANTITY_OPS = ("environment", "elaborate", "meaning_id", "countermodel", "certi
 AUTHORITIES = ("python", "lean")
 CONFORMANCE = ("evaluation", "parser", "identity", "validation", "closure", "countermodels")
 DROPPED = frozenset({"checker_build", "record_id"})
+PROBE_METADATA = frozenset({"routed", "backend_rejection"})
 CLASSES = ("availability", "verdict", "order", "wording")
 TEXTS = ("message", "detail", "stderr")
 # A report's statement of who checked what is descriptive text: a change to it is wording.
@@ -199,12 +200,23 @@ def probe_rows(data: dict, source: str):
     `PROBE_BASELINE`), read from the file of digest `source`."""
     for row in data["cells"]:
         yield {"case": probe_case(row), "op": row["operation"], "source_sha256": source,
-               "outcome": {"cell": row["cell"], "status": row["status"], "output": public(row["output"])}}
+               "outcome": {"cell": row["cell"], "status": row["status"],
+                           "output": probe_public(row["output"])}}
     for section in PROBE_SECTIONS:
         for name, row in data[section].items():
             yield {"case": f"{section}/{name}", "op": section, "source_sha256": source,
-                   "outcome": public({k: v for k, v in row.items() if k != "routed"})
-                   if isinstance(row, dict) else public(row)}
+                   "outcome": probe_public(row)}
+
+
+def probe_public(value):
+    """The probe matrix's route observer and backend marker are test instrumentation,
+    not fields returned by the public operation. Keep nested budget results public."""
+    value = public(value)
+    if isinstance(value, dict):
+        return {k: probe_public(v) for k, v in value.items() if k not in PROBE_METADATA}
+    if isinstance(value, list):
+        return [probe_public(v) for v in value]
+    return value
 
 
 def identified(value, identity: str) -> dict:
