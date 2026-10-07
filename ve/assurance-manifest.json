@@ -3278,7 +3278,62 @@
       ],
       "notes": [
         "The relay (ve/backends/english_lean.py) validates every english.read answer against Lean's generated table of codes, classes and statuses (ve/english_grammar/codes.json, tools/english_codes.py) and raises the class Lean names with Lean's text; it holds no class table of its own.",
-        "The norm and norm-default English statement readers still use their own Python grammar until E3."
+        "Definition and citation sentences are read by this operation (ve/surface/definitions.py). The statement layers' own English readers are the operation english.statement until E3."
+      ]
+    },
+    {
+      "id": "english.statement",
+      "summary": "Statement-layer English: the norm and norm-default English readers and the E3 statement wording, with their all-derivations audit",
+      "class": "surface",
+      "authority": "python",
+      "target": "lean",
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "E3 moves the statement layers' English to Lean (docs/spec/english-lean-E2-PLAN.md, not in this stage); until then Python's hand parser and Lark audit decide these texts"
+      },
+      "python": [
+        "ve.norm_english:parse_english",
+        "ve.english:parse_statement_english",
+        "ve.surface.unambiguity:require_unique_derivation"
+      ],
+      "outcomes": {
+        "verdict": [
+          "admitted document"
+        ],
+        "unknown": [],
+        "rejection": [
+          "SyntaxError",
+          "UnknownSymbol",
+          "TypeMismatch"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
+      "lean": {
+        "bindings": [],
+        "planned_modes": [],
+        "harness": "none: E3 owns the Lean reader of statement-layer English",
+        "theorems": [],
+        "planned_theorems": [],
+        "decoders": []
+      },
+      "rust": null,
+      "lean_call_sites": [],
+      "tests": [
+        "tests/test_english_unambiguity.py::test_two_derivations_reject_before_ast_admission",
+        "tests/test_norm_english.py::test_deontic_guard_and_carveout_round_trip"
+      ],
+      "trusted": [
+        "python:implementation",
+        "python:surface"
+      ],
+      "notes": [
+        "Ledger rows: docs/lean-first/e2/LEDGER.md (EnglishParser and require_unique_derivation kept for the statement layers until E3; S2Wording.conclusion reads back its own rendering over a frame whose generated decision and rights atoms are outside the E2 reader)."
       ]
     },
     {

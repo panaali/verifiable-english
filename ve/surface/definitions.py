@@ -25,8 +25,7 @@ import re
 from .. import ast
 from ..ast import Document
 from ..definitions import Definition, _atom, compile_definitions, premise
-from ..english import (EnglishTraversal, EnglishVocabulary, _max_scope,
-                       parse_statement_english, render_english)
+from ..english import EnglishTraversal, EnglishVocabulary, _max_scope, parse_english, render_english
 from ..environment import Environment
 from ..errors import VEError
 from ..printer import print_document
@@ -90,8 +89,8 @@ def parse_definition(env: Environment, sentence: str) -> Definition:
     if not left.startswith("for every ") or cut < 0:
         raise VEError("A definition sentence introduces its arguments with 'for every'")
     prefix, head_text = left[:cut + 2], left[cut + 2:]
-    head_doc = parse_statement_english(env, prefix + head_text + ".")
-    body_doc = parse_statement_english(env, prefix + body_text + ".")
+    head_doc = parse_english(env, prefix + head_text + ".")
+    body_doc = parse_english(env, prefix + body_text + ".")
     if len(head_doc.formulas) != 1 or len(body_doc.formulas) != 1:
         raise VEError("A definition sentence has exactly one head and one body statement")
     head, body = head_doc.formulas[0], body_doc.formulas[0]
@@ -188,7 +187,7 @@ def parse_citation(env: Environment, sentence: str, lemma_names) -> tuple[tuple[
         if unknown:
             raise VEError(f"Citation names an unknown lemma: {unknown[0]}")
         text = text[match.end():]
-    document = parse_statement_english(env, text)
+    document = parse_english(env, text)
     if len(document.formulas) != 1:
         raise VEError("A citation sentence has one conclusion")
     return cited, document.formulas[0]

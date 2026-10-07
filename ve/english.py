@@ -1726,6 +1726,7 @@ def _python_reading(env, source, words, options):
     return _Reading(env, document, parser.words, parser.conclusions, spans)
 
 
+@semantic_entry("english.statement")
 def parse_statement_english(env, source, **options):
     """Read E3 statement wording, whose generated atoms are not E2 vocabulary."""
     words = EnglishVocabulary(env, _defer_overlay_refusals=True, **options)

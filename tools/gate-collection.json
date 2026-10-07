@@ -1308,7 +1308,7 @@
   "tests/test_definitions_english.py::test_citation_sentences_round_trip",
   "tests/test_definitions_english.py::test_definition_rejects_extra_english_statement[By definition, for every person, that person is trusted exactly when that person is staff. Ann is badged.]",
   "tests/test_definitions_english.py::test_definition_rejects_extra_english_statement[By definition, for every person, that person is trusted exactly when that person is staff. This is impossible.]",
-  "tests/test_definitions_english.py::test_definition_sentence_parts_pass_the_all_derivations_check",
+  "tests/test_definitions_english.py::test_definition_sentence_parts_are_read_by_lean",
   "tests/test_definitions_english.py::test_definition_sentence_rejections[By definition, for every first person, for every second person, the second person has the recorded relation \"manages\" to the first person exactly when this holds in all cases.-arguments in order]",
   "tests/test_definitions_english.py::test_definition_sentence_rejections[By definition, for every person, that person is staff exactly when that person is trusted.-None]",
   "tests/test_definitions_english.py::test_definition_sentence_rejections[By definition, for every person, that person is trusted exactly when that person is staff exactly when both that person is staff and that person is badged.\\n-exactly once]",
