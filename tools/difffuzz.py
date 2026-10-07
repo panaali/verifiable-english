@@ -1284,60 +1284,29 @@ class EnvironmentSurface(Surface):
         return engine != "rust" or ROUTES[lean_route(root)].rust is not None
 
     def python(self, seed, root):
-        """`Environment`'s answer; on a route with its own codes, with Python's own code for the route
-        (`own`), from the route's Python counterpart."""
+        """The public constructor relays the owning service environment mode."""
         from ve.environment import Environment
 
         def decode():
             return ok({"environment_id": Environment(deepcopy(root)).environment_id})
-        answer = call_python(decode, self.harness)
-        own = ROUTES[lean_route(root)].own
-        if own is None or answer["outcome"] not in ("ok", "error"):
-            return answer
-
-        def counterpart():
-            own.python(deepcopy(root))
-            return ok()
-        mirrored = call_python(counterpart, self.harness)
-        if mirrored["outcome"] in ("crash", "timeout"):
-            return mirrored  # the counterpart's crash or timeout is the finding
-        return {**answer, "own": mirrored.get("code")} if mirrored["outcome"] in ("ok", "error") else answer
+        return call_python(decode, self.harness)
 
     def lean(self, items):
         from ve.backends.diagnostics import checker_error
         roots = [root for _, root in items]
-        by_route = {}
-        for index, root in enumerate(roots):
-            by_route.setdefault(lean_route(root), []).append(index)
-        out = [None] * len(roots)
-        for name, indices in by_route.items():
-            route = ROUTES[name]
-            if route.case is None:
-                cases = [{"id": str(i), "environment": roots[i]} for i in indices]
-                # The service client checks each row against the service's `environment` schema too.
-                rows = self._service(cases)
-                problem_of = fields_row_problem({"environment_id": "string"})
+        cases = [{"id": str(i), "environment": root} for i, root in enumerate(roots)]
+        rows = self._service(cases)
+        problem_of = fields_row_problem({"environment_id": "string"})
+        out = []
+        for case, row in zip(cases, rows):
+            row, bad = checked(problem_of, case, row)
+            if bad:
+                out.append(bad)
+            elif row["status"] == "error":
+                diagnostic = checker_error(row["error"]).to_dict()
+                out.append(error(diagnostic["code"], diagnostic["message"]))
             else:
-                cases = [{"id": str(i), "environment": roots[i], **route.case} for i in indices]
-                rows = batched([BIN / route.lean, "-"], cases)
-                problem_of = route_row_check(name)
-            for i, case, row in zip(indices, cases, rows):
-                row, bad = checked(problem_of, case, row)
-                if bad:
-                    out[i] = bad
-                elif row["status"] == "error" and route.own is not None and "id" in row:
-                    # The route's own code is kept; the code compared with Python's `Environment` and Rust
-                    # is its class in the route's contract.
-                    own = row[route.own.field]
-                    out[i] = {**error(route.own.codes()[own]["class"], row["error"]), "own": own}
-                elif row["status"] == "error":
-                    # The other routes' texts carry their code, read as the Lean backend reads it.
-                    diagnostic = checker_error(row["error"]).to_dict()
-                    out[i] = error(diagnostic["code"], diagnostic["message"])
-                else:
-                    out[i] = ok({"environment_id": row["environment_id"]} if route.identity else None)
-                    if route.own is not None:
-                        out[i]["own"] = None
+                out.append(ok({"environment_id": row["environment_id"]}))
         return out
 
     def _service(self, cases):
