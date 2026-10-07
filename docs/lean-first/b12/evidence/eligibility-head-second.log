@@ -1,0 +1,43 @@
+{
+ "profiles": 80,
+ "strict": 80,
+ "per_question": {
+  "Q1": "80/80",
+  "Q2": "63/63",
+  "Q3": "63/63",
+  "Q4": "63/63"
+ },
+ "total": "269/269",
+ "answered": 269,
+ "correct_answered": 269,
+ "disagreements": [],
+ "groups": {
+  "unflagged": {
+   "profiles": 67,
+   "strict": 67,
+   "correct": 226,
+   "scored": 226
+  },
+  "guide": {
+   "profiles": 38,
+   "strict": 38,
+   "correct": 131,
+   "scored": 131
+  }
+ },
+ "lean": {
+  "certificates": 2352,
+  "certificates_accepted": 2352,
+  "documents": 269,
+  "documents_admitted": 269,
+  "model_premises": 6777,
+  "model_premises_true": 6777
+ },
+ "single_shot": {
+  "answered": 0,
+  "profiles": 80
+ },
+ "mutants_killed": "32/32",
+ "open": []
+}
+wall=409.01 user=215.65 sys=5.67

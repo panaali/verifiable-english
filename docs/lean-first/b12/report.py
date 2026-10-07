@@ -65,7 +65,7 @@ def render() -> str:
                  f"{len(before['entries']):,} → {len(after['entries']):,}; "
                  f"{head_only} head-only new signatures; "
                  f"{sum(len(row['head_not_reproduced']) for row in runs)} head entries not reproduced.")
-    lines.append(f"Date-seed review added {len(reviewed)} distinct signatures before the confirming run.")
+    lines.append(f"First-pass date-seed review found {len(reviewed)} distinct head-only signatures.")
     latency = load("latency.json")
     for op, label in (("udhr", "UDHR"), ("eligibility", "Eligibility")):
         row = latency[op]
@@ -74,6 +74,11 @@ def render() -> str:
                      f"{row['child_cpu_ratio']:.3f}× child CPU; "
                      f"output {'identical' if row['same_output'] else 'different'}; "
                      f"budget {'pass' if row['within_budget'] else 'FAIL'}.")
+    cpu = load("lean-cpu.json")
+    lines.append(f"Eligibility isolated Lean CPU: base {cpu['median']['base']['lean_cpu_s']:.3f} s → head "
+                 f"{cpu['median']['head']['lean_cpu_s']:.3f} s; {cpu['lean_cpu_ratio']:.3f}×; "
+                 f"output {'identical' if cpu['same_output'] else 'different'}; "
+                 f"budget {'pass' if cpu['lean_cpu_ratio'] <= 1.20 else 'FAIL'}.")
     gate_path = EVIDENCE / "gate.json"
     if gate_path.exists():
         gate = load("gate.json")

@@ -4,6 +4,7 @@ from __future__ import annotations
 import importlib.util
 import json
 from pathlib import Path
+import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 HERE = ROOT / "docs/lean-first/b12"
@@ -33,11 +34,26 @@ def test_delta_numbers_are_regenerated_from_evidence():
     first = report.load("difffuzz-first-pass.json")
     reviewed = {entry["signature"] for row in first["runs"] for entry in row["head_only_new"]}
     baseline = json.loads((ROOT / "conformance/difffuzz-baseline.json").read_text())
-    assert reviewed <= {entry["signature"] for entry in baseline["entries"]}
+    assert reviewed
+    base = json.loads(subprocess.check_output(
+        ["git", "show", f"{report.BASE}:conformance/difffuzz-baseline.json"], cwd=ROOT))
+    assert len(baseline["entries"]) < len(base["entries"])
+    assert all(entry["follow_up"] != "TODO" for entry in baseline["entries"])
+    assert all(not row["head_only_new"] and not row["head_not_reproduced"] for row in fuzz["runs"])
     for row in report.load("latency.json").values():
         assert row["same_output"] and row["within_budget"]
-    for name in ("mutant-environment", "mutant-model-id", "mutant-probe-record"):
+    source = HERE / "cpu_report.py"
+    spec = importlib.util.spec_from_file_location("lean_first_b12_cpu_report", source)
+    cpu_report = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(cpu_report)
+    cpu = cpu_report.render()
+    assert cpu == report.load("lean-cpu.json")
+    assert cpu["same_output"] and cpu["lean_cpu_ratio"] <= 1.20 and cpu["wall_ratio"] <= 1.25
+    for name in ("mutant-environment", "mutant-model-id", "mutant-probe-record",
+                 "mutant-rights-null-review", "mutant-soft-profile-review",
+                 "mutant-norm-defaults-review"):
         assert "1 failed" in (report.EVIDENCE / f"{name}.log").read_text()
     assert "3 passed" in (report.EVIDENCE / "mutants-restored.log").read_text()
+    assert "6 passed" in (report.EVIDENCE / "mutants-restored-review.log").read_text()
     if (report.EVIDENCE / "gate.json").exists():
         assert report.load("gate.json")["status"] == "passed"

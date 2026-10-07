@@ -41,10 +41,11 @@ The source recordings and complete classified changes are in
 [`evidence/delta.json`](evidence/delta.json) and the four `*-compare.json`
 files. Each comparison replays against that listing with zero unlisted
 changes. The conformance, profile, and pilot corpora preserve all accepted
-outputs and identities. The probe verdict class contains only the four
-`MAX_ENTITIES` and `MAX_TUPLES` error-shape records (both authorities): Lean's
-error omits the old `path` field. The seven distinct wording pairs and all
-fault-order records are listed in the same delta file.
+outputs and identities. The 48 verdict-class records are rejected model
+validation cases: 44 model diagnostics in conformance and probe (both
+authorities), plus four `MAX_ENTITIES` and `MAX_TUPLES` budget diagnostics.
+Lean's model errors omit the old `path` field. The ten distinct wording pairs
+and all fault-order records are listed in the same delta file.
 
 Latency uses the historical readings-bearing UDHR translation at
 `pilot/udhr-20261003T0600Z:usecases/udhr-pilot/run-20261003T0600Z/translation.ve.md`
@@ -57,17 +58,18 @@ measurement because it exercised a different, much smaller workload.
 <!-- BEGIN GENERATED: python docs/lean-first/b12/report.py --write -->
 | Corpus | Records per side | Same | Wording | Order | Verdict | Availability |
 |---|---:|---:|---:|---:|---:|---:|
-| conformance | 39,612 | 39,560 | 8 | 44 | 0 | 0 |
-| probe | 18,870 | 17,600 | 710 | 556 | 4 | 0 |
+| conformance | 39,612 | 39,560 | 10 | 20 | 22 | 0 |
+| probe | 18,870 | 17,600 | 720 | 524 | 26 | 0 |
 | profiles | 35,713 | 35,713 | 0 | 0 | 0 | 0 |
 | pilots | 294 | 294 | 0 | 0 | 0 | 0 |
-| **All** | **94,489** | **93,167** | **718** | **600** | **4** | **0** |
+| **All** | **94,489** | **93,167** | **730** | **544** | **48** | **0** |
 
-Code lines (base to head): production Python +204/−789 (net -585); Lean +128/−23 (net +105).
-Differential fuzz: 15 runs (CI and 14 date seeds); baseline 331 → 252; 0 head-only new signatures; 0 head entries not reproduced.
-Date-seed review added 24 distinct signatures before the confirming run.
+Code lines (base to head): production Python +221/−790 (net -569); Lean +268/−33 (net +235).
+Differential fuzz: 15 runs (CI and 14 date seeds); baseline 331 → 286; 0 head-only new signatures; 0 head entries not reproduced.
+First-pass date-seed review found 24 distinct head-only signatures.
 UDHR: base 54.679 s → head 54.651 s; 0.999× wall; 1.000× child CPU; output identical; budget pass.
 Eligibility: base 342.496 s → head 355.024 s; 1.037× wall; 1.263× child CPU; output identical; budget pass.
+Eligibility isolated Lean CPU: base 331.740 s → head 351.730 s; 1.060×; output identical; budget pass.
 Full gate: pending committed HEAD run.
 <!-- END GENERATED -->
 
@@ -75,32 +77,46 @@ The reviewed differential baseline's environment entries are replayed by
 `test_reviewed_environment_findings_have_one_python_lean_diagnostic`: every
 current Python and Lean `(outcome, code, text)` agrees. The baseline keeps
 Rust and later-batch route discrepancies with their existing follow-up IDs.
-The latency harness measures process-tree child CPU; it does not isolate Lean
-CPU from Rust CPU. Eligibility's aggregate child CPU rose 26.3%; the section-4
-Lean-only CPU item needs either an isolated measurement within its 20% budget
-or a DRI-signed exception. The wall latency item is within 1.25×.
+The final baseline has 286 entries against 331 at the batch base. The CI sample
+and all 14 date seeds have zero head-only signatures and reproduce every head
+entry. The follow-up review groups request model and decoder codes under DF-7
+and DF-9, dependency order under DF-8, Rust envelope differences under DF-4
+and DF-19, and norm-defaults wire phase differences under DF-13.
+The original latency harness measures process-tree child CPU, including Rust.
+The separate [`lean-cpu.json`](evidence/lean-cpu.json) uses four full eligibility
+runs in alternating base/head and head/base order. It records all 14 Lean
+service processes per run before shutdown, with raw counters and identical
+stdout in `evidence/lean-cpu-*.jsonl` and `eligibility-*.log`. Median Lean CPU
+is 331.74 s base and 351.73 s head (1.060×); median wall is 306.09 s base and
+329.92 s head (1.078×). Both budgets pass. The individual CPU values varied
+substantially with host load (264–399 s base, 266–438 s head), so the paired
+medians are the reported measure.
 
 ## Seeded failures
 
-Each bug was planted in an isolated worktree at this batch's code, made its
-named test fail, then was removed. The three tests pass together after
+Each bug was planted in this batch's code, made its named test fail, then
+removed. The first three used isolated worktrees; the last three were
+temporarily planted and restored in this worktree. All six tests pass after
 restoration; the logs are in `evidence/mutant-*.log` and
-`evidence/mutants-restored.log`.
+`evidence/mutants-restored*.log`.
 
 | Seeded bug | Test that failed |
 |---|---|
 | Bypass Lean in `validated_environment` | `test_a_lean_only_rejection_carries_leans_diagnostic` |
 | Replace the bound Lean model ID with zeroes | `test_model_identity_is_bound_from_leans_answer` |
 | Include the route observer in public probe records | `test_probe_record_excludes_nested_instrumentation` |
+| Preserve a null rights recognition on the restricted Lean wire | `test_phi_null_recognition_is_the_absent_field` |
+| Send a rights-profile source through the composed environment gate on the soft route | `test_soft_route_alone_refuses_rights_profile` |
+| Apply the binary-flag precheck to unspecified norm defaults | `test_u1_claude_settled_no_and_sol_undecided` |
 
 ## Acceptance ownership
 
 | Item | Owner | State |
 |---|---|---|
 | Build, frozen-source check, corpus comparison, fuzzer replay, latency, full suite, and deletion inventory | AGENT | Evidence above and in the committed gate JSON |
-| One signature for the seven wording pairs and fault-order block | HUMAN — DRI | Pending review of `evidence/delta.json` |
-| Four model-budget error-shape verdict records | HUMAN — DRI | Pending individual signatures on the two cases for each authority |
-| Eligibility Lean CPU budget if isolated measurement exceeds 1.20× | HUMAN — DRI | Aggregate child CPU is 1.263×; isolation pending |
+| One signature for the ten wording pairs and fault-order block | HUMAN — DRI | Pending review of `evidence/delta.json` |
+| 48 model diagnostic error-shape verdict records | HUMAN — DRI | Pending individual signatures in `evidence/delta.json` |
+| Eligibility Lean CPU budget | AGENT | Isolated full-harness median is 1.060×; raw service counters in `evidence/lean-cpu-*.jsonl` |
 | Operational soak after batch 13b | EXTERNAL — lead/DRI | Deferred by the plan; not a batch-12 acceptance item |
 
 The human signatures are required by plan §5.1. Listing these changes does
@@ -108,8 +124,11 @@ not supply the signatures.
 
 ### DRI signature record
 
-- [ ] Wording and order block: the 7 text pairs, 718 wording records, and
-  600 order records in `evidence/delta.json`. DRI, date, and decision: ___
+- [ ] Wording and order block: the 10 text pairs, 730 wording records, and
+  544 order records in `evidence/delta.json`. DRI, date, and decision: ___
+- [ ] The 44 model validation error-shape records in `evidence/delta.json`
+  (conformance and probe, both authorities). Each record requires a DRI
+  decision; reviewer, date, and decisions: ___
 - [ ] `probe/lean`, `MAX_ENTITIES`: rejected with the same `ResourceLimit`
   code, but the old `/domains/item` path is absent. DRI, date, and decision: ___
 - [ ] `probe/python`, `MAX_ENTITIES`: same path change. DRI, date, and decision: ___
