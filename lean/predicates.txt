@@ -5,6 +5,7 @@ module EnglishLeanBenchMain
 module EnglishMain
 module Iceberg
 module Main
+module MeteredMain
 module ResponseDecode
 module ResponseShape.Audit
 module ResponseShape.CaseDeciders
@@ -347,6 +348,11 @@ module VE.Route.Examples
 module VE.Route.Flags
 module VE.Route.Gate
 module VE.Route.Layer
+module VE.Route.Metered
+module VE.Route.MeteredProofs
+module VE.Route.MeteredRun
+module VE.Route.MeteredTrace
+module VE.Route.NonVacuity
 module VE.Route.Readings
 module VE.Route.Route
 module VE.Route.Run
