@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 from itertools import product
+from math import inf
 from types import SimpleNamespace
 
 from .errors import SyntaxError, VEError
@@ -156,7 +157,7 @@ def _selected_author_rules(document, situation, filling, predicate, values):
     sorts = document.env.predicates[predicate].arguments
     selected = document.filled.selection(predicate)[2]
     model = document.with_filling(situation, filling, checked=False)
-    evaluator = _Evaluator(document._raw_base(), model, 1_000_000, trace=False)
+    evaluator = _Evaluator(document._raw_base(), model, inf, trace=False)
     return tuple(rule for rule in document.author.rules if rule.predicate == predicate and
                  evaluator.formula(document.filled._expand(selected[rule.name], predicate),
                                    _point_bindings(sorts, values))[0])
@@ -284,8 +285,6 @@ def _conflict_view(document, situation, report):
     atoms = [(item["name"], values)
              for item in document.elaboration["unsaid"] if item["name"] in relevant
              for values in product(*(situation.domains[s] for s in item["sorts"]))]
-    if len(atoms) > 12:
-        raise VEError("ResourceLimit: too many unsaid atoms to render a conflict")
     table_names = [item["name"] for item in document.elaboration["unsaid"]]
     for values in product(*(situation.domains[s] for s in sorts)):
         outcomes = []
@@ -293,7 +292,7 @@ def _conflict_view(document, situation, report):
             filling = {name: frozenset(row for (n, row), bit in zip(atoms, bits) if n == name and bit)
                        for name in table_names}
             model = document.with_filling(situation, filling, checked=False)
-            evaluator = _Evaluator(document._raw_base(), model, 1_000_000, trace=False)
+            evaluator = _Evaluator(document._raw_base(), model, inf, trace=False)
             if not all(evaluator.formula(premise, ())[0] for _, premise in document.fill_premises):
                 continue
             conflict = evaluator.formula(formula, _point_bindings(sorts, values))[0]

@@ -1,4 +1,6 @@
 """The English display works on the Lean accepted norm-defaults container."""
+import ast
+from pathlib import Path
 from types import SimpleNamespace
 
 from tests.test_norm_defaults import (CSAM_RULE, CSAM_SITUATION, ONE_ACT, csam, environment, latent,
@@ -63,3 +65,28 @@ def test_relay_renders_latent_conflict_verdict_and_finding():
         "tried. To settle it, add a rule about whether a may be tried, or add a condition to one of the rules.")
     assert english.latent_conflict_finding(document, situation, verdict) == (
         "LatentConflict: must-x, not-x under y_permitted(a) = yes")
+
+
+def test_relay_renders_lean_conflict_with_thirteen_unspecified_rows():
+    frozen = latent("unspecified")
+    document = UnspecifiedDocument(frozen.env, frozen.author.rules)
+    raw = {"complete": True, "domains": {"act": [f"a{i}" for i in range(13)]},
+           "constants": {}, "relations": {}}
+    situation = FiniteModel.from_dict(document.situation_environment(), raw)
+    filled = document.with_filling(situation, {"unsaid__y_permitted": frozenset({("a0",)})})
+    verdict = run_case(source_case(document, "norm-defaults-conflict", witness={
+        "target": "x_required->x_permitted", "model": filled.to_dict(), "tuple": ["a0"]}))
+    assert verdict["verdict"] == "CONFLICT"
+    assert english.latent_conflict_sentence(document, situation, verdict) == (
+        "Rules 1 and 2 contradict each other if a0 may be tried, and the text does not say whether a0 may "
+        "be tried. To settle it, add a rule about whether a0 may be tried, or add a condition to one of the rules.")
+    assert english.latent_conflict_finding(document, situation, verdict) == (
+        "LatentConflict: must-x, not-x under y_permitted(a0) = yes")
+
+
+def test_english_adapter_has_no_conflict_work_limit():
+    source = Path(english.__file__).read_text()
+    tree = ast.parse(source)
+    assert "ResourceLimit" not in source
+    assert not any(isinstance(node, ast.Constant) and node.value in (12, 1_000_000)
+                   for node in ast.walk(tree))
