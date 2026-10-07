@@ -1,6 +1,12 @@
 # Pick a reading under unspecified defaults (`readings@1` × `norm-defaults@0`): buildable plan
 
-> Status: plan, draft 1 (2026-10-06), branch `design/readings-defaults` from `main` at `6cbe1a26`. Written from the
+> Status: plan, draft 2 (2026-10-07). Draft 2 applies the converged review (Astra and Fable, debate
+> `design-readings-defaults`, converged in round 3): **BUILD with mandatory RD-0 corrections**, edits E1 to E5 and A1 to
+> A4, each marked where it lands. The statement spec [readings-defaults.md](readings-defaults.md) (RD-0) elaborated
+> every statement of this plan; where its Lean differs from the blocks below, the spec is authoritative and its
+> section 12 lists each difference. Draft 1 follows.
+>
+> Draft 1 (2026-10-06), branch `design/readings-defaults` from `main` at `6cbe1a26`. Written from the
 > brief (`manage-agents/prompts/brief-readings-defaults.txt`), ARCH-ROADMAP's line of 2026-10-05, the UDHR pilot runs
 > `udhr-translate-20261005T1800Z` and `-20261006T1800Z` (pilot commit `bd6c7ab2`, read with `git show`), and, at
 > `6cbe1a26`: [composition-s1.md](composition-s1.md), [composition-s2.md](composition-s2.md) (S2a, merged),
@@ -39,10 +45,10 @@ the document. This plan builds the composition in Lean in four steps, each with 
    carry its companion's environment inline. A set whose readings all do so becomes a **component** with its own
    frame: its readings' declarations merged, and identical declarations unified. The document's meaning is the
    product of its components, and the report says, in English, that each such sentence was checked by itself.
-4. **The UDHR, migrated and measured.** A script inlines the companions, renames the declarations that differ
-   inside one set, gives the three asserted readings that have no companion one copied from the main frame,
-   proposes separating situations, and records the load time, the limits and the **Lean-decided share** before and
-   after, all measured at one commit.
+4. **The UDHR, migrated and measured.** A script inlines the companions, leaves on W2 every set whose readings
+   declare a name differently (listed as needing one vocabulary, not decided; E1), gives the three asserted
+   readings that have no companion one copied from the main frame, proposes separating situations, and records the
+   load time, the limits and the **Lean-decided share** before and after, all measured at one commit.
 
 Superposition under the completion (S2a's route with `Fill_T` carried) and the Lean fold for the superposed route
 follow. They are not on the UDHR's path, since every UDHR component has at most 6 readings. Wiring the sense
@@ -78,11 +84,14 @@ script recounts them:
 - **29 sets have a predicate name that two or more of their readings' companions declare**: `rs_u020`, `u022a`,
   `u022b`, `u022c`, `u024`, `u027`, `u037`, `u045a`, `u045b`, `u046`, `u048`, `u049`, `u051`, `u055`, `u059`,
   `u063`, `u064`, `u066`, `u070`, `u073`, `u077`, `u081`, `u084a`, `u084b`, `u087`, `u096`, `u105a`, `u105b`,
-  `u111`. At least one such pair declares the name differently: in `rs_u022a`, `avoid_life_required` takes
-  `(bearer, person)` in `anyone_negative` and `(state, person)` in `state_negative`.
-- **The longest repeated predicate name has 53 bytes** (`avoid_marriage_without_free_and_full_consent_required`).
-  An unspecified predicate name may have at most 56 (norm-defaults 8, `checkAuthorN`), so a three-byte suffix fits
-  exactly.
+  `u111`. Some pairs declare the name differently: `rs_u022a`, `rs_u027` and `rs_u055` each declare one predicate
+  whose first sort is `state` in one reading and `bearer` ("a State, group or person") in another (in `rs_u022a`,
+  `avoid_life_required` takes `(bearer, person)` in `anyone_negative` and `(state, person)` in `state_negative`).
+  These are the UDHR's State-or-anyone axis; E1 leaves such sets on W2.
+- *Derived in draft 2* (`git show` at `bd6c7ab2`): the main frame declares `arises_from_non_political_crime` and
+  `arises_from_acts_contrary_to_un` without the `verbalisation` that `u052.invocation_barred`'s companion gives
+  them, so a companion for `case_excluded` copied from the main frame (RD-5) declares them differently, and
+  `rs_u052` is not migrated either. RD-5's script recounts this for `rs_u052`, `rs_u112` and `rs_u114`.
 
 ### 1.2 What the code does today (read at `6cbe1a26`)
 
@@ -123,13 +132,13 @@ script recounts them:
 | D1 | On the norms chain, the composition is S1 and S2a run on `fillDoc N`, the readings document with `fill` applied to it, with `Fill_T` added where admissibility is read | `fill` adds one base predicate and one strict rule per unspecified predicate, and parents only. With every rule strict, `soften` is the identity on the tree (`soften_hard_identity`), so `fill` commutes with taking any reading's or choice's document (3.1). Every S1 and S2a theorem is then reused on `fillDoc N` as stated | a second readings theory for UDocs, which would duplicate S2a's simulation |
 | D2 | The soft and rights chains keep the abstention, with today's text | norm-defaults 2.3 runs `fill` after `soften`. Inside `soften`, a strict `F_p` would block every default rule, so D1's commutation fails there. The soft chain (the constitution's strict and default readings) needs the after-`soften` theory of `Layered.lean`, carried through S2a: RD-9 | lifting the abstention everywhere |
 | D3 | Under the completion, one compatible choice at a time first (the enumerated route), superposed later (RD-6) | Every UDHR component has at most 6 readings. Superposition needs `Fill_T` carried through S2a's five theorems, which is RD-6's work | superposition first |
-| D4 | Separation under the completion compares two readings on **one base and one filling**. The witness's filling must satisfy the witness's `Fill_T`; the other reading is not achieving where the filling breaks its `Fill_T` | The unsaid tables are base predicates of the filled frame, so S1's `separates` reads them as shared base tables and needs no change. A filling is "how the text's silences are answered". Two readings that leave the same point unsaid agree on it under every shared filling; a reading that decides a point the other leaves unsaid is separated by the filling that answers the other way | enumerating the other side's fillings over the probe's cone (more cells to check; whether it would separate pairs that shared fillings cannot is measured by RD-5's list of unseparated pairs, Q2) |
+| D4 | Separation under the completion compares two readings on **one base and one filling**. The witness's filling must satisfy the witness's `Fill_T`; the other reading is not achieving where the filling breaks its `Fill_T` | The unsaid tables are base predicates of the filled frame, so S1's `separates` reads them as shared base tables and needs no change. A filling is "how the text's silences are answered". Two readings that leave the same point unsaid agree on it under every shared filling; a reading that decides a point the other leaves unsaid is separated by the filling that answers the other way. Shared fillings are the definition, not an approximation (E5, closing Q2): with independent fillings a reading would be separated from itself at any gap. An unseparated pair is equal meaning or a search miss | enumerating the other side's fillings over the probe's cone (it would separate a reading from itself) |
 | D5 | ALL, SOME, NONE, the conflict and premise statuses, the conditions (`conditional_on`, restrictions), the labels used, and which English sentences an answer gets are computed in Lean from the evidence. Python searches for evidence and renders sentences | lean-first rule 1 (Lean owns verdicts and folds); the brief | a Python fold over Lean-checked parts (today) |
-| D6 | A reading may carry its own vocabulary: `"companion": {"environment": {…}}` on the candidate, inline | The UDHR's 156 regulated predicates exceed the frozen limit of 64 per environment. Inline keeps one file, one identity and no Python file reading, and Lean reads only JSON it already receives | companions by file path and digest (Python I/O plus a Lean front-matter parser); raising the frozen limit (a frozen-contract change, kept as open question Q1) |
+| D6 | A reading may carry its own vocabulary: `"companion": {"environment": {…}, "open_terms": […]}` on the candidate, inline (`open_terms` beside `environment`: E4) | The UDHR's 156 regulated predicates exceed the frozen limit of 64 per environment. Inline keeps one file, one identity and no Python file reading, and Lean reads only JSON it already receives | companions by file path and digest (Python I/O plus a Lean front-matter parser); raising the frozen limit (a frozen-contract change, kept as open question Q1) |
 | D7 | A set whose readings all carry companions is a **component**: its frame is the merge of its readings' environments. A name declared twice must be declared byte-identically, otherwise the document is refused. Components share nothing. The document's meaning is the product of the components' meanings | One sentence's readings must share one vocabulary, or the questions "do they differ?" and "does this follow under every reading?" have no common terms. Different sentences' companions declare terms independently, so nothing in the document relates them | auto-renaming conflicting names (hidden machinery); merging every component into one frame (over the limit) |
 | D8 | The English says that a component was checked by itself (E31). No document-level sentence claims more than the conjunction of the components' results | The product is the meaning VE checks. A reader who identifies "person" across two sentences reads a joint meaning that VE did not check, so the sentence says what was done | an unqualified "the document is consistent" |
-| D9 | The UDHR is migrated by a script, not by hand: companions are inlined, a name declared inside one set differently from the first reading that declares it is renamed throughout the later reading's companion by appending `_r<k>` (`k` that reading's index), and situations are proposed and checked by Lean | Renaming inside one companion is α-renaming, so no reading's meaning changes; the English uses act phrases, not predicate names. With `k` ≤ 9 the longest repeated name becomes 56 bytes, the limit (1.1); the script stops if any name would exceed its limit | re-translation (a pilot's job, and it would not isolate the language change) |
-| D10 | The measure is the **Lean-decided share** (3.9), reported beside the unchanged claimed and audit-verified shares | "Verified" is ambiguous in this project. Audit-verified bytes come from independent audits, which this plan does not run | reporting audit-verified bytes as the effect |
+| D9 | The UDHR is migrated by a script, not by hand: companions are inlined, and situations are proposed and checked by Lean. A set whose readings declare a name differently is **not migrated** (E1): it stays on W2 with content null and no companions, is listed as "needs one vocabulary", and is not decided | D7's own reason: readings that share no vocabulary cannot be asked "do they differ?". Renaming makes the two declarations two predicates: a query on one never reads the other reading, and separation passes because the other reading's gap is filled "no", so the script's choice would manufacture Lean's certificate (for `rs_u022a`, query 1 of draft 1 would have answered SOME while omitting the `anyone` reading) | renaming inside one set by `_r<k>` (draft 1; review E1); re-translation onto one `bearer` sort (a pilot task, and it would not isolate the language change) |
+| D10 | The measure is the **Lean-decided share** (3.9), reported beside the unchanged claimed and audit-verified shares, and beside what qualifies it (E2): the maximum rules per choice document, the decided bytes whose companions were already checked outside the document, and that a one-rule reading is CONFLICT-FREE by construction | "Verified" is ambiguous in this project. Audit-verified bytes come from independent audits, which this plan does not run. Most UDHR readings hold one rule each, and their companions already pass outside the document, so a rise in the share measures routing into Lean, not new assurance | reporting audit-verified bytes as the effect; the share alone |
 | D11 | Wiring senses into `ve document` is the next batch (RD-8), not part of these | It does not touch the UDHR (whose units carry JSON content, not English fences). It changes the environment and meaning identities of fenced units, which the Python-owned W2 loader computes, and it needs Lean to render front-matter defaults as preamble lines. Section 6 | folding it into RD-4 |
 | D12 | No new Python semantics (lean-first rule 6). Python's generators read Lean's regenerated filled document instead of building `fill` | one owner of `fill` | Python `UnspecifiedDocument` building the generators' input |
 
@@ -145,12 +154,16 @@ script recounts them:
 3. after every item, one strict fixed unit per unspecified predicate, in the frame's regulated order, holding
    `F_p` (`fillNode`). Its unit id is its rule name.
 
-The `F_p` units use no name a set declares, so they are attached to no set. They are in `free`, in every reading's
-document `one`, in every choice's document and in `sup`, and they come last, as `fill` puts `fillNodes` last.
+When no unit id and no declared name of the document begins `unsaid--` (`fillNamesFree`, which admission's step 2
+enforces, 3.2), the `F_p` units use no name a set declares, so they are attached to no set, and the `over` entries
+`fill` adds attach no fixed unit to a set. They are in `free`, in every reading's document `one`, in every choice's
+document and in `sup`, and they come last, as `fill` puts `fillNodes` last. The hypothesis is needed (review A1):
+if a candidate declares the rule name `unsaid--p`, a fixed root rule on `p` gains `over = [unsaid--p]` and becomes
+attached to that candidate's set, so `free (fillDoc N)` drops it while `fill (freeU N)` keeps it (fixture F-ND5).
 `fill`'s condition for placing a rule under `F_p` reads only that rule's predicate and `over`. S2a's qualification
 renames rules but keeps `over`, and its gating changes guards. So the change commutes with `one`, `free`,
 `choiceDoc` and `sup`. With every rule strict and no party, `soften` keeps the environment and maps each rule to
-its W1 node (`soften_hard_identity`). Hence (RD-1):
+its W1 node (`soften_hard_identity`). Hence (RD-1), under `normsShaped N.D` and `fillNamesFree N`:
 
 ```text
 soften (correlate (one (fillDoc N) s i).1)      = fill (oneU N s i)
@@ -176,7 +189,8 @@ The order (RD-2a), stopping at the first error:
    the abstention no longer applies under `norm-defaults@0`.
 2. Reserved names. A unit id, rule name or declared name of the document beginning `unsaid--` is
    `InvalidInput: reserved name <n>` (norm-defaults 2.1's text). Predicate names beginning `unsaid__` are already
-   refused by `checkAuthorN`.
+   refused by `checkAuthorN`. This step is what makes RD-1's hypothesis `fillNamesFree` hold of every admitted
+   document (A1).
 3. For `free D`, then every reading with content in set and index order, norm-defaults' author checks on that
    document's UDoc, with `checkAuthorN`'s texts and order. Then `WellFormedU`, refused with
    `InvalidInput: norm-defaults document is not well formed`. A reading's text carries
@@ -233,12 +247,18 @@ and folds, as composition-s2 4.6 states:
 
 - **Conflict:** CONFLICT when some choice has a checked witness (the witness's choice is named), CONFLICT-FREE when
   every choice's certificates are accepted, UNKNOWN otherwise, naming the first unchecked choice.
-- **Query:** ALL when every choice is `proved` (certificate accepted and CONFLICT-FREE); NONE when every choice is
-  `refuted` (checked countermodel); SOME with at least one of each; UNKNOWN otherwise, naming the first choice
-  without a result. Beyond 64 choices: `UNKNOWN (not ALL: countermodel under <choice>)` when a countermodel was
-  checked, else the budget answer.
+- **Query:** first the gate of composition-s2 4.6 as built (14.8; review A2): no entailment verdict unless every
+  choice taking `assumed` is CONFLICT-FREE. The fold takes the conflict rows of those choices beside the query rows
+  and answers `UNKNOWN (conflict status: <CONFLICT | UNKNOWN>)`, naming the first choice with that status, unless
+  `foldConflict` on the conflict rows is CONFLICT-FREE. Past the gate: ALL when every choice is `proved`
+  (certificate accepted and CONFLICT-FREE); NONE when every choice is `refuted` (checked countermodel); SOME with at
+  least one of each, query rows without a result tolerated; UNKNOWN otherwise, naming the first choice without a
+  result. Beyond 64 choices: `UNKNOWN (not ALL: countermodel under <choice>)` when a countermodel was checked, else
+  the budget answer. The soundness statements take the conflict rows' hypotheses and also conclude that every
+  covered choice is CONFLICT-FREE.
 - **Premises:** per document and per reading, S2a 6's `model`, `dead`, `narrowed`, `INCONSISTENT` or `UNKNOWN`,
-  from checked models and certificates of ⊥.
+  from checked models and certificates of ⊥. A choice is INCONSISTENT only when it is also CONFLICT-FREE (4.5's
+  table; `Holds.inconsistent` carries `ConflictFreeU`, A2).
 - **Conditions:** `restrictions` (the couplings and narrowings in force that exclude some complete choice taking
   `assumed`), computed in Lean by `restrictionsFor`. `conditional_on` is computed by `usedLabels`, Lean's greedy
   replay: each slot or `Fill_T` label's formulas are replaced by `⊤`, in label order, while every certificate the
@@ -246,14 +266,16 @@ and folds, as composition-s2 4.6 states:
 - **English plan:** the list of sentences the answer gets, by composition-s2 2.3, with the readings each names, the
   model it shows and the condition each E3 line states. For a shown model, it also lists which filled gaps the
   result depends on: the model's unsaid atoms in the cone of the conclusion or target (10a's `coneOf`). Python
-  renders the frames and the situations; it selects nothing.
+  renders the frames and the situations; it selects nothing. Each line names its readings by set and index, so the
+  `<reading>` slot can show the candidate's own sentence (3.7, A4).
 
 ### 3.6 Readings that carry their own vocabulary, and components
 
-**Wire.** A candidate may carry `"companion": {"environment": E}`, where `E` is a complete environment (the
-companion's). Its `content` is written over `E`. Its `meaning_id` is computed by Lean, with the existing identity
-function, over `E`'s `environment_id` and the canonical content. The recorded `meaning_id` must equal it (W2's text,
-`reading meaning id does not match content`).
+**Wire.** A candidate may carry `"companion": {"environment": E, "open_terms": T}`, where `E` is a complete
+environment (the companion's) and `T` the companion's open-term declarations (E4; `[]` when it has none). Its
+`content` is written over `E`, and its `meaning.open` references name entries of `T`. Its `meaning_id` is computed
+by Lean, with the existing identity function, over `E`'s `environment_id` and the canonical content. The recorded
+`meaning_id` must equal it (W2's text, `reading meaning id does not match content`).
 
 **The split (Lean, RD-4a).** A set whose readings all carry a companion is a companion set. A set that mixes
 readings with and without a companion is refused:
@@ -266,13 +288,28 @@ Lean builds a component case:
   declarations (else `InvalidInput: readings <set>@<v>:<i> and <set>@<v>:<j> declare <name> differently`), and
   `readings@1` is added. The merged environment is decoded by the frozen decoders, so every frozen limit applies to
   it;
-- the document is the set's unit and the set.
+- the document is the set's unit, the set, the narrowings on the set (they travel with it; A3), and the set's open
+  terms: the companions' `open_terms` united by name, a repeated name only with byte-identical entries (else
+  `InvalidInput: readings <set>@<v>:<i> and <set>@<v>:<j> declare open term <name> differently`), each validated
+  against the merged frame, so conditions that use companion terms are checked in the companion vocabulary (E4).
 
-The main case is the document without the companion sets. Their units stay in it, without a set and without
-content, so the main component's checks do not read them. Profiles containing `soft-norms@0` or `rights@0` in a companion are
+The main case is the document without the companion sets. It keeps only its own open terms (E4). Their units stay
+in it, without a set and without content, so the main component's checks do not read them. Profiles containing
+`soft-norms@0` or `rights@0` in a companion are
 `UnsupportedProfile: readings with their own vocabulary on the soft or rights chain are not implemented` (D2). A main
 fixed unit that uses a rule name a companion reading declares does not find it in its own component, and the chain
 reports `UnknownRule: rule <name>`, its existing text.
+
+**The split contract (review A3, E3).** By the split each companion set is its own component, so a cross-component
+coupling is exactly one that names a companion set together with another set. It is refused:
+`InvalidInput: coupling <id> links <set> and <set'>, which do not share one vocabulary`. Nothing is dropped or
+duplicated: every reading set, coupling and narrowing lands in exactly one case. A companion set's narrowings, and
+their restriction labels, travel with it. `restrictionsFor` and `usedLabels` run per component on its own `Doc`, and
+the product answer lists each component's `restrictions` and `conditional_on` under it. `--under` naming a set
+outside the query's component is refused:
+`InvalidInput: --under names <set>, which is not a reading set of the sentence the conclusion is about`. A set left
+unseparated stays in the main case as content-less W2 without companions, never a component, and pending W2 sets stay
+visible there with W2's UNKNOWN. Each of these has a fixture (RD-4a, RD-4b).
 
 **Meaning.** Components share no symbol, because each is decoded only against its own frame. The document's meaning
 is their product: under one compatible choice per component, the document is CONFLICT-FREE when every component's
@@ -307,6 +344,14 @@ Reused verbatim (their existing gates apply):
   `Whenever a <noun> must <act>, it may <act>.`;
 - for a latent conflict under a reading, R4 followed by norm-defaults 4.2's latent-conflict sentence.
 
+**The reading's own sentence (review A4, in RD-3).** Composition-s2 2.1's `<reading>` slot rule changes: when a
+set's candidates differ beyond the deontic verb, `<reading>` is the candidate's own rendered sentence, in italics;
+a set whose candidates differ only in the verb keeps the italic verb. "Reading 2" is no longer shown. The change is to
+the slot rule itself, so every sentence carrying the slot shows the candidate's sentence: E6, E7 and E9 (conditions),
+E12 with its R4 witness line, E17, and the "Under <reading>" sentences. Lean's `Line.readings` already carries set
+and index; Python's `reading_names` already renders each candidate's sentence to compare frames. It is a W7 wording
+change, DRI-signed in RD-3's DELTA.
+
 Non-wordings: any `unsaid__` or `unsaid--` name, `F_p`, a qualified `rd-` name, a component, a bit or `ve__here`.
 The quote marks of the reused filled-gap sentence are existing wording. Whether they meet the zero-training rule is
 for norm-defaults' reader test (its 4.3); this plan does not change them, and the new sentences carry none.
@@ -315,9 +360,10 @@ for norm-defaults' reader test (its 4.3); this plan does not change them, and th
 
 - conflict: "Under every reading of the open sentence, no two rules on the same act contradict each other. This
   holds provided that: Whenever an agent must help a user, it may help that user.";
-- query "every agent must help each user": "Read sentence 1 as reading 1: the conclusion follows: …" and "Read
-  sentence 1 as reading 2: the conclusion does not follow. It fails here: a is an agent; u is a user. Here the text
-  does not say whether a must help u; this situation answers 'no'."
+- query "every agent must help each user": "Read sentence 1 as *every agent must help each user*: the conclusion
+  follows: …" and "Read sentence 1 as *every agent must help each user who asks that agent*: the conclusion does
+  not follow. It fails here: a is an agent; u is a user. Here the text does not say whether a must help u; this
+  situation answers 'no'." (the `<reading>` slot as A4 words it; the exact sentences are RD-3's renderer's).
 
 ### 3.8 Limits
 
@@ -356,6 +402,12 @@ bound the rule allows is the CHECKED and READINGS bytes, 57 + 4,200 = 4,257 (39.
 prediction. Claimed coverage (43.90%) and audit-verified coverage (23.30%) are reported unchanged beside it. The
 pilot's own per-companion checks, run outside the document, are reported separately as context.
 
+**What qualifies the share (review E2).** Beside the share the report gives: the maximum number of rules in any
+choice's document; the decided bytes whose companions were already checked outside the document (the pilot's
+per-companion checks); and the sentence that a reading holding one rule is CONFLICT-FREE by construction (a single
+rule cannot contradict another). Most UDHR companions hold one rule each, so the move from 0 measures routing those
+checks into Lean inside the document, not new assurance; section 5 says so.
+
 ### 3.10 One owner per piece of logic
 
 | Logic | Owner | Python |
@@ -365,7 +417,7 @@ pilot's own per-companion checks, run outside the document, are reported separat
 | Separation, with the witness's `Fill_T` | Lean (`separates` on `fillDoc N`, `fillHolds`) | proposes situations (the retained S1 search) over Lean's filled document |
 | Each choice's checks | Lean 10a checkers on `choiceU N c` | proposes certificates, models and fillings (generic prover and search over Lean's formulas) |
 | Fold, conditions, restrictions, labels used, wording selection | Lean `readings-verdicts` | renders sentences from Lean's plan |
-| Companion merge, components, their meaning ids, the product fold | Lean | passes `companion` through W2's structural validation unread |
+| Companion merge (environments and open terms), components, the split contract, their meaning ids, the product fold | Lean | passes `companion` through W2's structural validation unread |
 | Decided units | Lean | sums span bytes (W2 coverage arithmetic) |
 | Files, CLI, rendering, the UDHR migration | Python, and pilot tooling under `usecases/` | — |
 
@@ -393,7 +445,7 @@ statement.
 
 | # | Batch | Hours | Owner | Needs |
 |---|---|---:|---|---|
-| RD-0 | Statement spec `docs/spec/readings-defaults.md`, the stub elaborated against the merged build, statement review (Astra and Fable, converged) | 3–4 | planner | — |
+| RD-0 | Statement spec `docs/spec/readings-defaults.md`, the stub elaborated against the merged build, statement review (Astra and Fable, converged; PASS only when both accept every statement as true under its hypotheses) | 3–4 | planner | — |
 | RD-1 | `fillDoc`, its four equalities, separation under the completion (theory) | 5–6 | Lean | RD-0 |
 | RD-2a | Admission, separation and per-choice checks under the completion (wire) | 5–6 | Lean | RD-1 |
 | RD-2b | Relay and generators under the completion; fixtures through `ve document` | 4–5 | Python | RD-2a |
@@ -407,9 +459,12 @@ statement.
 | RD-8 | Senses in `ve document` (next batch, section 6) | 4–6 | Lean, Python | none of these |
 | RD-9 | Soft chain under the completion (the constitution's strict and default readings): design batch | 3 | planner | RD-6b |
 
-**The brief's path:** RD-0 → RD-1 → RD-2a → RD-2b → RD-3 → RD-4b → RD-5, about 30 to 38 builder hours by these
-estimates, with RD-4a (5–6 h) in parallel after RD-2a. RD-6a can run beside RD-2a; RD-6b, RD-7 and RD-8 are off the
-path.
+**The pilot path (converged review):** RD-0 PASS → RD-1 → RD-2a → RD-2b → RD-3 → RD-4a → RD-4b → RD-5, about 35
+to 44 builder hours by these estimates (estimates, not evidence of buildability or speed). RD-4a needs only RD-2a,
+its declared dependency, so it may run beside RD-2b and RD-3; RD-4b waits for both RD-3 and RD-4a. RD-6a, RD-6b,
+RD-7, RD-8 and RD-9 are off the pilot path; their statements are re-reviewed before their own build. (The reviewers'
+round-3 texts crossed on RD-4a's earliest start, "after RD-0" and "after RD-2a"; this draft keeps the table's
+declared dependency, which Astra's text names, since F-C1 needs RD-2a's admission.)
 
 ### RD-0. Statement spec and review (planner, 3–4 h)
 
@@ -420,7 +475,11 @@ path.
   statement as a `def … : Prop`. Elaborated with `lake env lean` against a build of `main` (or
   `lake --dir <worktree with the build>/lean env lean <stub>`). Every elaboration failure is fixed in the spec, not
   in the merged code.
-- Statement review (Astra and Fable, converged). RD-1 opens on a PASS.
+- Statement review (Astra and Fable, converged). RD-1 opens on a PASS. PASS requires both reviewers to accept each
+  statement as true under its hypotheses, F-ND5 included; that the stub elaborates is not enough (review). RD-6's
+  `Q' c` condition is stated in the spec, off the pilot path.
+- The corrections of the converged review (E1 to E5, A1 to A4) are in the spec before PASS; the draft-1 statements
+  are not implemented verbatim.
 - Done when the stub elaborates, the spec is committed, and the review has converged.
 
 ### RD-1. `fillDoc` and separation under the completion (Lean, 5–6 h)
@@ -496,20 +555,27 @@ def fillDoc (N : NDoc) : Doc :=
   { N.D with frame := { N.D.frame with soft := { N.D.frame.soft with E := fillFrameEnv N } },
              items := N.D.items.map (fillItem N) ++ fillUnits N }
 
-/-- Taking a reading's, the free, a choice's or the superposed document commutes with `fill` (3.1). -/
-theorem fillDoc_one (N : NDoc) (hn : normsShaped N.D = true) (s : String) (i : Nat) :
+/-- No unit id and no declared name begins `unsaid--` (the names `fill` adds are free; 3.2 step 2). -/
+def fillNamesFree (N : NDoc) : Bool :=
+  N.D.items.all (fun it => !(itemUnit it).startsWith "unsaid--" && it.names.all (fun n => !n.startsWith "unsaid--")) &&
+    N.D.sets.all (fun R => (declaredBy R).all (fun n => !n.2.startsWith "unsaid--"))
+
+/-- Taking a reading's, the free, a choice's or the superposed document commutes with `fill` (3.1). Each needs
+    `fillNamesFree` (review A1; fixture F-ND5 fails without it). -/
+theorem fillDoc_one (N : NDoc) (hn : normsShaped N.D = true) (hf : fillNamesFree N = true) (s : String) (i : Nat) :
     soften (correlate (one (fillDoc N) s i).1) = VE.NormDefaults.fill (oneU N s i) ∧
       (one (fillDoc N) s i).2 = (one N.D s i).2
-theorem fillDoc_free (N : NDoc) (hn : normsShaped N.D = true) :
+theorem fillDoc_free (N : NDoc) (hn : normsShaped N.D = true) (hf : fillNamesFree N = true) :
     soften (correlate (free (fillDoc N)).1) = VE.NormDefaults.fill (freeU N) ∧ (free (fillDoc N)).2 = (free N.D).2
-theorem fillDoc_choice (N : NDoc) (hn : normsShaped N.D = true) (c : Choice) :
+theorem fillDoc_choice (N : NDoc) (hn : normsShaped N.D = true) (hf : fillNamesFree N = true) (c : Choice) :
     soften (correlate (choiceDoc (fillDoc N) c).1) = VE.NormDefaults.fill (choiceU N c) ∧
       (choiceDoc (fillDoc N) c).2 = (choiceDoc N.D c).2
-theorem fillDoc_sup (N : NDoc) (hn : normsShaped N.D = true) :
+theorem fillDoc_sup (N : NDoc) (hn : normsShaped N.D = true) (hf : fillNamesFree N = true) :
     soften (correlate (sup (fillDoc N)).1) = VE.NormDefaults.fill (supU N) ∧ (sup (fillDoc N)).2 = (sup N.D).2
 /-- The open sets, their candidates, labels, couplings and narrowings are untouched. -/
 theorem compatible_fillDoc (N : NDoc) (c : Choice) : Compatible (fillDoc N) c ↔ Compatible N.D c
-theorem attached_fillDoc (N : NDoc) (u : String) (hu : u ∈ fixedNames N.D) : attached (fillDoc N) u = attached N.D u
+theorem attached_fillDoc (N : NDoc) (hf : fillNamesFree N = true) (u : String) (hu : u ∈ fixedNames N.D) :
+    attached (fillDoc N) u = attached N.D u
 theorem fillDoc_conservative (N : NDoc) (h0 : N.unspec = []) : fillDoc N = N.D
 
 /-! ## Admission's facts (3.2) -/
@@ -517,10 +583,6 @@ theorem fillDoc_conservative (N : NDoc) (h0 : N.unspec = []) : fillDoc N = N.D
 def unspecDeclared (N : NDoc) : Bool :=
   decide N.unspec.Nodup &&
     N.unspec.all (fun p => N.D.frame.soft.T.regulated.any (fun r => r.name == p && !r.allowByDefault))
-/-- No unit id and no declared name begins `unsaid--` (the names `fill` adds are free). -/
-def fillNamesFree (N : NDoc) : Bool :=
-  N.D.items.all (fun it => !(itemUnit it).startsWith "unsaid--" && it.names.all (fun n => !n.startsWith "unsaid--")) &&
-    N.D.sets.all (fun R => (declaredBy R).all (fun n => !n.2.startsWith "unsaid--"))
 def WellFormedND (N : NDoc) : Bool :=
   WellFormedDoc N.D && normsShaped N.D && unspecDeclared N && fillNamesFree N &&
   VE.NormDefaults.WellFormedU (freeU N) &&
@@ -555,8 +617,8 @@ theorem separates_separatedU {α : Type u} [DecidableEq α] (N : NDoc) (hF : Wel
     (hf : fillHolds N s i σ.base = true) : SeparatedU.{u} N s i j
 /-- On the norms chain no key is generated: `AchievesU` is an admissible filled situation of the reading's filled
     document (norm-defaults' `BaseAdmissibleU`) where the probe has the value. -/
-theorem achievesU_iff (N : NDoc) (hn : normsShaped N.D = true) (s : String) (i : Nat) (B : VE.Structure.{u})
-    (F : Tables B.Carrier) (q : Probe B.Carrier) (v : Bool) :
+theorem achievesU_iff (N : NDoc) (hn : normsShaped N.D = true) (hf : fillNamesFree N = true) (s : String)
+    (i : Nat) (B : VE.Structure.{u}) (F : Tables B.Carrier) (q : Probe B.Carrier) (v : Bool) :
     AchievesU N s i B F q v ↔
       B.Admissible (authorEnv (fillDoc N)) ∧ VE.NormDefaults.BaseAdmissibleU (oneU N s i) B ∧
         Observes (one (fillDoc N) s i).1 (one (fillDoc N) s i).2 B q v
@@ -569,9 +631,11 @@ any `pick` that are the same on `N.D` and on `fillDoc N` gives the filled docume
 its proof; the lemma needed is `envPrime_of_no_decisions` with the strict rules), and `correlate_noRights` across
 `correlate`. Environments are equal by `funext` on `predicates`: `choiceEnv` overrides `ve__` names and the fill
 override `unsaid__` names, so the two overrides commute. `separates_soundU` is `separates_sound` on `fillDoc N` plus
-`hf`; `achievesU_iff` uses `fillDoc_one` and the empty `genKeys` of a strict document.
+`hf`; `achievesU_iff` uses `fillDoc_one` and the empty `genKeys` of a strict document. `build_fillDoc` needs
+`fillNamesFree`: it is what keeps `attached` unchanged (`attached_fillDoc`), hence `keep` the same on both documents,
+and keeps `copies` from expanding an added `unsaid--` entry in `sup` (review A1).
 
-Fixtures (`UnspecifiedExamples.lean`, `#guard`, *derived*):
+Fixtures (`UnspecifiedExamples.lean`, `#guard`; draft 1's values were *derived*, the spec computes them):
 
 - **F-ND1.** Environment `E1`: sorts `agent`, `user`; base predicate `asks(user, agent)`; `help_required(agent,
   user)` an obligation, `unspecified`, act `{0} help {1}`, permission `help_permitted`; `help_permitted(agent, user)`
@@ -583,6 +647,11 @@ Fixtures (`UnspecifiedExamples.lean`, `#guard`, *derived*):
   - The situation of 3.3 (one agent, one user, empty `asks`, filling `help_permitted(a, u)` yes, `help_required`
     empty) separates with witness 0, and `fillHolds` is true.
   - The same base with `help_permitted` empty has `fillHolds` false (witness 0 breaks `Fill_T`).
+- **F-ND5 (collision, review A1).** F-ND1's frame, a fixed unit `u0` with the root rule `be-helpful` on
+  `help_required`, and a set whose reading declares a rule named `unsaid--help-required`. `fillNamesFree` is false;
+  `u0` is attached to no set in the document and to `rs_1` in `fillDoc`, so `free (fillDoc N)` drops `be-helpful`
+  while `fill (freeU N)` keeps it: `fillDoc_free` fails without its hypothesis. Admission refuses the document at 3.2
+  step 2 (RD-2a's F-ND5).
 - **F-ND0.** With `unspec = []`, `fillDoc N = N.D` on K1's norms-chain twin (`fillDoc_conservative`).
 
 Deleted, not duplicated: nothing deleted. No second `fill`: `fillDoc` calls `fillName`, `fillNode` and `unsaidName`
@@ -716,7 +785,7 @@ Fixtures (`tests/test_readings_nd_lean.py` through the service; expected values 
 | F-ND2 | norm-defaults' u6 as readings. Fixed `no-x`, "Every agent must not X." (`x_permitted`, sign −). Set `rs_2`: reading 0 "Every agent must X, if that agent may Y." (`x_required`, guard `y_permitted(agent)`); reading 1 "Every agent may Y." (`y_permitted`, sign +). All completions `unspecified` | admitted. Choice 0 has a filled witness (`y_permitted(a)` yes) with verdict CONFLICT at the pair target of `(x_required, x_permitted)`, a latent conflict. Choice 1 is CONFLICT-FREE (packages); `x_required(a)` is SETTLED no (`norm-defaults-status`, `table3`). Pair (1, 0) is separated by probe `y_permitted(a)`, value true, witness 1, filling empty |
 | F-ND3 | 7 sets of 2 readings, each as F-ND1 | `readings-elaborate`: enumerated, `choice_count: "over 64"`, `choices_checked: "over 64"` |
 | F-ND4 | 252 fixed rules on `p` (`unspecified`, 4 unspecified predicates in the frame), one set with one rule on `p` | `ResourceLimit: rules under rs_1@1:0` (free has 252 + 4; the reading's document 253 + 4) |
-| F-ND5 | a reading's rule named `unsaid--x` | `InvalidInput: reserved name unsaid--x` (3.2 step 2, before any document's check, so no suffix) |
+| F-ND5 | RD-1's collision document: a fixed root rule on `help_required` and a reading's rule named `unsaid--help-required` | `InvalidInput: reserved name unsaid--help-required` (3.2 step 2, before any document's check, so no suffix) |
 | F-ND6 | K18 (the soft chain under the profile) | the abstention text, unchanged |
 | F-ND7 | every S1 fixture K1 to K22 and S2a fixture M1 to M20 | byte-identical answers |
 | F-ND8 | tampering: a package bound to choice 0's document replayed for choice 1; a filling with an ill-typed tuple; `unsaid__` table supplied as a base table outside the profile | refused or UNKNOWN, never CONFLICT-FREE, `proved` or `model` |
@@ -765,16 +834,18 @@ inductive ChoiceResult | proved | refuted | free | conflict | model | inconsiste
 inductive ReadingVerdict | all | some | none | unknown
   deriving DecidableEq, Repr
 
-/-- composition-s2 4.6 over the checked choices. -/
-def foldEntailment (rs : List (Choice × ChoiceResult)) : ReadingVerdict :=
-  if rs.isEmpty then .unknown
+def foldConflict (rs : List (Choice × ChoiceResult)) : ChoiceResult :=
+  if rs.any (·.2 == .conflict) then .conflict
+  else if !rs.isEmpty && rs.all (·.2 == .free) then .free else .unknown
+/-- composition-s2 4.6 over the checked choices, with its gate (14.8; review A2): `conflicts` are the conflict rows
+    of the same choices, and no entailment verdict is given unless `foldConflict conflicts` is CONFLICT-FREE. -/
+def foldEntailment (conflicts rs : List (Choice × ChoiceResult)) : ReadingVerdict :=
+  if foldConflict conflicts != .free then .unknown
+  else if rs.isEmpty then .unknown
   else if rs.all (·.2 == .proved) then .all
   else if rs.all (·.2 == .refuted) then .none
   else if rs.any (·.2 == .proved) && rs.any (·.2 == .refuted) then .some
   else .unknown
-def foldConflict (rs : List (Choice × ChoiceResult)) : ChoiceResult :=
-  if rs.any (·.2 == .conflict) then .conflict
-  else if !rs.isEmpty && rs.all (·.2 == .free) then .free else .unknown
 
 /-- A situation of a reading's filled document where the premises hold and the conclusion fails. -/
 def CounterU (U : VE.NormDefaults.UDoc) (Γ : List VE.Formula) (φ : VE.Formula) : Prop :=
@@ -793,24 +864,32 @@ def Holds (N : NDoc) (Γ : List VE.Formula) (φ : VE.Formula) (c : Choice) : Cho
       VE.NormDefaults.BaseAdmissibleU (choiceU N c) (VE.Norms.restrictAll (VE.NormDefaults.fill (choiceU N c)).T S) ∧
       VE.Norms.DocumentExpansion (VE.NormDefaults.fill (choiceU N c))
         (VE.Norms.restrictAll (VE.NormDefaults.fill (choiceU N c)).T S) S ∧ VE.Norms.Sat S (choiceDoc N.D c).2
-  | .inconsistent => VE.NormDefaults.EntailsU.{u} (choiceU N c) (choiceDoc N.D c).2 .bottom
+  | .inconsistent => VE.NormDefaults.ConflictFreeU.{u} (choiceU N c) ∧
+      VE.NormDefaults.EntailsU.{u} (choiceU N c) (choiceDoc N.D c).2 .bottom   -- 4.5's table (review A2)
   | .unknown => True
 /-- The rows are exactly the compatible choices taking `A`. -/
 def Covers (N : NDoc) (A : Choice) (rs : List (Choice × ChoiceResult)) : Prop :=
   ∀ c, (Compatible N.D c ∧ ∀ x ∈ A, x ∈ c) ↔ c ∈ rs.map (·.1)
 
+/-- Each takes the conflict rows `cs` beside the query rows `rs` and also concludes that every covered choice is
+    CONFLICT-FREE (review A2). -/
 theorem fold_all_sound (N : NDoc) (A : Choice) (Γ : List VE.Formula) (φ : VE.Formula)
-    (rs : List (Choice × ChoiceResult)) (hc : Covers N A rs) (hr : ∀ x ∈ rs, Holds.{u} N Γ φ x.1 x.2)
-    (h : foldEntailment rs = .all) :
-    ∀ c, Compatible N.D c → (∀ x ∈ A, x ∈ c) →
+    (cs rs : List (Choice × ChoiceResult)) (hcc : Covers N A cs) (hc : Covers N A rs)
+    (hrc : ∀ x ∈ cs, Holds.{u} N [] .bottom x.1 x.2) (hr : ∀ x ∈ rs, Holds.{u} N Γ φ x.1 x.2)
+    (h : foldEntailment cs rs = .all) :
+    ∀ c, Compatible N.D c → (∀ x ∈ A, x ∈ c) → VE.NormDefaults.ConflictFreeU.{u} (choiceU N c) ∧
       VE.NormDefaults.EntailsU.{u} (choiceU N c) ((choiceDoc N.D c).2 ++ Γ) φ
 theorem fold_none_sound (N : NDoc) (A : Choice) (Γ : List VE.Formula) (φ : VE.Formula)
-    (rs : List (Choice × ChoiceResult)) (hc : Covers N A rs) (hr : ∀ x ∈ rs, Holds.{u} N Γ φ x.1 x.2)
-    (h : foldEntailment rs = .none) :
-    ∀ c, Compatible N.D c → (∀ x ∈ A, x ∈ c) → CounterU (choiceU N c) ((choiceDoc N.D c).2 ++ Γ) φ
+    (cs rs : List (Choice × ChoiceResult)) (hcc : Covers N A cs) (hc : Covers N A rs)
+    (hrc : ∀ x ∈ cs, Holds.{u} N [] .bottom x.1 x.2) (hr : ∀ x ∈ rs, Holds.{u} N Γ φ x.1 x.2)
+    (h : foldEntailment cs rs = .none) :
+    ∀ c, Compatible N.D c → (∀ x ∈ A, x ∈ c) → VE.NormDefaults.ConflictFreeU.{u} (choiceU N c) ∧
+      CounterU (choiceU N c) ((choiceDoc N.D c).2 ++ Γ) φ
 theorem fold_some_sound (N : NDoc) (A : Choice) (Γ : List VE.Formula) (φ : VE.Formula)
-    (rs : List (Choice × ChoiceResult)) (hc : Covers N A rs) (hr : ∀ x ∈ rs, Holds.{u} N Γ φ x.1 x.2)
-    (h : foldEntailment rs = .some) :
+    (cs rs : List (Choice × ChoiceResult)) (hcc : Covers N A cs) (hc : Covers N A rs)
+    (hrc : ∀ x ∈ cs, Holds.{u} N [] .bottom x.1 x.2) (hr : ∀ x ∈ rs, Holds.{u} N Γ φ x.1 x.2)
+    (h : foldEntailment cs rs = .some) :
+    (∀ c, Compatible N.D c → (∀ x ∈ A, x ∈ c) → VE.NormDefaults.ConflictFreeU.{u} (choiceU N c)) ∧
     (∃ c, Compatible N.D c ∧ (∀ x ∈ A, x ∈ c) ∧
        VE.NormDefaults.EntailsU.{u} (choiceU N c) ((choiceDoc N.D c).2 ++ Γ) φ) ∧
     (∃ c, Compatible N.D c ∧ (∀ x ∈ A, x ∈ c) ∧ CounterU (choiceU N c) ((choiceDoc N.D c).2 ++ Γ) φ)
@@ -848,18 +927,20 @@ structure Line where
   model : Option String           -- the id of the checked model shown
   gaps : List (String × List String × Bool)  -- filled gaps the result depends on: predicate, tuple, value
   label : Option String           -- an E3, E5 or E7 line's premise label
-def englishPlan (route : Route) (question : String) (answer : Lean.Json) : List Line
+/-- The plan of the case's decoded document `D` (review E5: `D` is bound to the case). -/
+def englishPlan (D : Doc) (route : Route) (question : String) (answer : Lean.Json) : List Line
 /-- composition-s2 2.4's non-wordings hold of every plan. -/
-theorem plan_no_every_for_models (route : Route) (q : String) (a : Lean.Json) :
-    ∀ l ∈ englishPlan route q a, l.model.isSome → l.frame ∉ ["E10", "E26", "E30"]
-theorem plan_model_names_every_set (route : Route) (q : String) (a : Lean.Json) (D : Doc) :
-    ∀ l ∈ englishPlan route q a, l.model.isSome → (l.readings.map (·.1)) = D.sets.map (·.id) ∨ l.readings = []
+theorem plan_no_every_for_models (D : Doc) (route : Route) (q : String) (a : Lean.Json) :
+    ∀ l ∈ englishPlan D route q a, l.model.isSome → l.frame ∉ ["E10", "E26", "E30"]
+theorem plan_model_names_every_set (D : Doc) (route : Route) (q : String) (a : Lean.Json) :
+    ∀ l ∈ englishPlan D route q a, l.model.isSome → l.readings.map (·.1) = D.sets.map (·.id)
 end VE.Readings
 ```
 
 `excludedBy D l c` is the Boolean that coupling or narrowing `l` fails on `c` (`couplingHolds`, `narrowingHolds`).
-`plan_model_names_every_set` is stated against the case's decoded `Doc`; RD-0 fixes the form (an answer-level
-theorem through the decoder).
+`englishPlan` takes the case's decoded `Doc`, so `plan_model_names_every_set` speaks of the document the plan was
+made for (E5; draft 1's `D` was unbound, which made the statement false). The `<reading>` slot of every line shows
+the named candidate's own sentence (3.7, A4).
 
 The kind `readings-verdicts`: `question`, optional `assumed`, `premises`, `conclusion`, and `evidence` as a list of
 `{choice, conflict, model, unsat, certificate, countermodel}`. Lean decodes each piece and checks it as in 3.4.
@@ -888,13 +969,17 @@ Fixtures (expected values *derived*):
 | Missing evidence for one of two choices | UNKNOWN naming that choice |
 | A certificate for choice 0 supplied as choice 1's | that choice `unknown`; never ALL |
 | `usedLabels` on a certificate that never reads a slot label | `[]`; on one that needs it | `[label]` |
-| S2a's enumerated fixtures (M8, M9, M12) | the same verdicts and English as today (Python fold before, Lean fold after), listed in DELTA as `none` |
+| The gate (review A2): conflict rows all CONFLICT-FREE, query rows `[proved, refuted, unknown]` | SOME |
+| The gate: conflict rows `[free, free, unknown]`, any query rows | `UNKNOWN (conflict status: UNKNOWN)`, naming choice 2 |
+| The gate: conflict rows `[free, conflict]`, query rows `[proved, proved]` | `UNKNOWN (conflict status: CONFLICT)`, naming choice 1; never ALL |
+| Reading display (review A4): F-ND1's SOME | each E12 shows the candidate's own sentence in its `<reading>` slot, never "reading 2"; a verb-only set (S2a's M4) keeps the italic verb |
+| S2a's enumerated fixtures (M8, M9, M12) | the same verdicts and English as today (Python fold before, Lean fold after), listed in DELTA as `none`; the A4 slot change listed as a signed `wording` change |
 
 Deleted, not duplicated: Python's enumerated fold, its label replay and its restrictions, and the wording selection
 for the enumerated route. None of these is left behind as a fallback.
 
 Done when: the fixtures pass, the A/B over the readings and pilots corpora is identical except for listed wording or
-order changes (DRI-signed), and the gate passes.
+order changes (DRI-signed, the A4 slot change among them), and the gate passes.
 
 ### RD-4a. Readings with their own vocabulary (Lean wire, 5–6 h)
 
@@ -915,8 +1000,12 @@ theorem mergeCompanions_extends (sources : List (String × Json)) (m : Json) (h 
     ∀ src ∈ sources, ∀ k ∈ ["sorts", "constants", "predicates"], ∀ (n : String) (d : Json),
       ((src.2.getObjValD "vocabulary").getObjValD k).getObjVal? n = .ok d →
         ((m.getObjValD "vocabulary").getObjValD k).getObjVal? n = .ok d
-/-- The case of one companion set (its unit and set, over the merged environment) and the main case (the document
-    without its companion sets). -/
+/-- The open terms of a set's companions (E4): united by name, a repeated name only with byte-identical entries;
+    each validated against the merged environment. -/
+def mergeOpenTerms (sources : List (String × Json)) : Except String (List Json)
+/-- The case of one companion set (its unit, the set, the narrowings on it and its merged open terms, over the merged
+    environment) and the main case (the document without its companion sets, with its own open terms). A coupling
+    that names a companion set together with another set is refused (E3, A3). -/
 def componentCase (environment document : Json) (set : String) : Except String (Json × Json)
 def mainCase (environment document : Json) : Except String (Json × Json)
 /-- A reading's identity over its own environment: `VE.Route.Wire.meaningId` over the companion's `environment_id`
@@ -941,6 +1030,10 @@ Fixtures (*derived*):
 | F-C6 | a main fixed rule whose `over` names a companion reading's rule | `UnknownRule: rule <name>` in the main component |
 | F-C7 | `companionMeaningId` on three UDHR companions (`u022a.entitlement`, `u048.state_negative`, `u074.prohibition`) | equal to the `meaning_id` recorded in run 20261006T1800Z's main document, or to the companion unit's id for u074. If they differ, the batch adds the canonical norm encoder Python's `rule.to_dict()` uses, with a byte-parity fixture |
 | F-C8 | a companion with `soft-norms@0` | `UnsupportedProfile: readings with their own vocabulary on the soft or rights chain are not implemented` |
+| F-C9 (E3, A3) | F-C1 with a coupling over the two companion sets | `InvalidInput: coupling <id> links <set> and <set'>, which do not share one vocabulary`; a coupling over two main sets is kept in the main case |
+| F-C10 (E4) | two readings of one set whose companions declare open term `ill_treatment` differently; then identically | refused, `… declare open term ill_treatment differently`; identical entries give one entry in the component's document, its conditions checked against the merged frame; the main case keeps only its own open terms |
+| F-C11 (A3) | F-C1 with a narrowing on the first companion set | the narrowing, with its label `narrowing:<id>`, is in that component's case only; that component's `restrictions` list it, the other component's do not |
+| F-C12 (A3) | F-C1 with the second companion set left unseparated (its candidates written with `content: null`, no companions) | the set is in the main case as W2, with W2's UNKNOWN, never a component; nothing else changes |
 
 Deleted, not duplicated: nothing deleted. Python computes no companion meaning id and merges nothing.
 
@@ -984,22 +1077,25 @@ theorem foldK_conflict_free (K : Components) (rows : List (List (Choice × Choic
 theorem foldK_consistent (K : Components) (rows : List (List (Choice × ChoiceResult)))
     (hr : RowsSound.{u} K rows [] .bottom) (h : rows.all (fun r => r.any (·.2 == .model)) = true) :
     ∃ cs, CompatibleK K cs ∧ ConsistentK K cs
-/-- A query typed in component `k`: ALL there is ALL for the document (restriction). -/
+/-- A query typed in component `k`: ALL there is ALL for the document (restriction). The fold takes component
+    `k`'s conflict rows `cs` (review A2). -/
 theorem foldK_all (K : Components) (k : Nat) (N : NDoc) (hk : K.all[k]? = some N) (Γ : List VE.Formula)
-    (φ : VE.Formula) (r : List (Choice × ChoiceResult)) (hc : Covers N [] r) (hrs : ∀ x ∈ r, Holds.{u} N Γ φ x.1 x.2)
-    (h : foldEntailment r = .all) :
-    ∀ cs, CompatibleK K cs → ∀ c, cs[k]? = some c →
+    (φ : VE.Formula) (cs r : List (Choice × ChoiceResult)) (hcc : Covers N [] cs) (hc : Covers N [] r)
+    (hrc : ∀ x ∈ cs, Holds.{u} N [] .bottom x.1 x.2) (hrs : ∀ x ∈ r, Holds.{u} N Γ φ x.1 x.2)
+    (h : foldEntailment cs r = .all) :
+    ∀ cs', CompatibleK K cs' → ∀ c, cs'[k]? = some c → VE.NormDefaults.ConflictFreeU.{u} (choiceU N c) ∧
       VE.NormDefaults.EntailsU.{u} (choiceU N c) ((choiceDoc N.D c).2 ++ Γ) φ
 /-- NONE for the document: NONE in component `k` and a model of every other component under every compatible
     choice. -/
 theorem foldK_none (K : Components) (k : Nat) (N : NDoc) (hk : K.all[k]? = some N) (Γ : List VE.Formula)
     (φ : VE.Formula) (rows : List (List (Choice × ChoiceResult))) (hr : RowsSound.{u} K rows [] .bottom)
-    (r : List (Choice × ChoiceResult)) (hc : Covers N [] r) (hrs : ∀ x ∈ r, Holds.{u} N Γ φ x.1 x.2)
-    (h : foldEntailment r = .none)
+    (cs r : List (Choice × ChoiceResult)) (hcc : Covers N [] cs) (hc : Covers N [] r)
+    (hrc : ∀ x ∈ cs, Holds.{u} N [] .bottom x.1 x.2) (hrs : ∀ x ∈ r, Holds.{u} N Γ φ x.1 x.2)
+    (h : foldEntailment cs r = .none)
     (hm : ∀ j r', j ≠ k → rows[j]? = some r' → r'.all (·.2 == .model) = true) :
-    ∀ cs, CompatibleK K cs → (∀ j (M : NDoc) c, j ≠ k → K.all[j]? = some M → cs[j]? = some c →
+    ∀ cs', CompatibleK K cs' → (∀ j (M : NDoc) c, j ≠ k → K.all[j]? = some M → cs'[j]? = some c →
       ConsistentU (choiceU M c) (choiceDoc M.D c).2) ∧
-      ∀ c, cs[k]? = some c → CounterU (choiceU N c) ((choiceDoc N.D c).2 ++ Γ) φ
+      ∀ c, cs'[k]? = some c → CounterU (choiceU N c) ((choiceDoc N.D c).2 ++ Γ) φ
 end VE.Readings
 ```
 
@@ -1008,7 +1104,10 @@ The answer adds `components` (per component: the unit, route, verdict rows, Engl
 `ve document readings --conclusion … --sentence <unit>`. A conclusion that types in no component, or in more than one
 without `--sentence`, is refused with
 `InvalidInput: the conclusion uses terms of no sentence checked by itself` or
-`InvalidInput: the conclusion's terms fit sentences <n>, <m>; name one with --sentence`.
+`InvalidInput: the conclusion's terms fit sentences <n>, <m>; name one with --sentence`. `--under` naming a set
+outside the query's component is refused (A3):
+`InvalidInput: --under names <set>, which is not a reading set of the sentence the conclusion is about`. The product
+answer lists each component's `restrictions` and `conditional_on` under that component (A3).
 
 Python: `ve/readings.py` `validate_reading_sets` allows `companion` under `readings@1` and does not compute
 `s1_content_meaning_id` for such a reading, since Lean computes and compares it. `ve/document.py` counts a
@@ -1018,7 +1117,10 @@ companion environment Lean accepted (display only).
 Fixtures: F-C1 through `ve document check` (CONFLICT-FREE, `model`, three components, E31 twice); a query typed in
 one component (ALL, E30); F-C1 with the second component's reading 1 made inconsistent (an asserted reading with ⊥),
 where a query's NONE in the first component becomes UNKNOWN with the reason "another sentence's readings are not all
-consistent" (*derived*); `decided_units` on F-C1 lists every unit with content.
+consistent" (*derived*); `decided_units` on F-C1 lists every unit with content. Split contract (A3), one fixture
+each: `--under` naming the other component's set is refused with the text above, and naming the query's own set is
+accepted; F-C11's answer lists `narrowing:<id>` under its component only; F-C12's main component reports the
+unseparated set's W2 UNKNOWN.
 
 Deleted, not duplicated: none. Python's W2 validation passes `companion` through unread.
 
@@ -1031,17 +1133,21 @@ On a pilot branch (`pilot/udhr-readings-defaults`), with scripts under
 
 1. **`migrate.py`** reads run 20261006T1800Z at `bd6c7ab2` and writes a new main document:
    - add `readings@1` to the main profiles;
-   - for every reading with a companion, set `content` to the companion unit's content, `kind` to its kind, and
-     `companion.environment` to the companion's environment. Inside one set, a sort, constant or predicate declared
-     differently from the first reading that declares it is renamed to `<name>_r<k>` throughout the later reading
-     `k`'s companion and content (D9). The script stops if a renamed unspecified predicate would exceed 56 bytes or
-     any other name 64;
+   - for every reading with a companion, set `content` to the companion unit's content, `kind` to its kind,
+     `companion.environment` to the companion's environment and `companion.open_terms` to the companion's open
+     terms (E4);
    - for the three asserted readings without a companion, write a companion whose environment is the main
      environment restricted to the symbols the assertion mentions, with the norm companions' profiles, language and
      revision;
+   - **no renaming (E1).** A set in which two readings declare a sort, constant or predicate differently is not
+     migrated: it stays as it was on W2 (content null, no companions), is listed as "needs one vocabulary" with the
+     first differing name, and is not decided. Re-translating such a set onto one `bearer` sort is a pilot task, not
+     this batch's. A set in which two readings declare an open term differently stops the migration, naming the set
+     and the term (E4). The sets whose merged frame the frozen decoder refuses (for example `DuplicateActRole`,
+     `Norms/Tree.lean:273`) are listed the same way;
    - drop W2's `models`, add S1's `situations` and `distinguishing_models` (step 2), and take every `meaning_id`
      from Lean's `readings-validate` answer;
-   - record every rename and every copied declaration in `renames.json`.
+   - record every set not migrated (with its reason) and every copied declaration in `unmigrated.json`.
 2. **`situations.py`** proposes, for each ordered pair `(a, b)` of a set, the 3.3 pattern: a base with one element
    per sort the probe needs, guards made true, every filling empty except what the witness's `Fill_T` forces, and
    the probe the witness's regulated predicate at that tuple. It asks Lean (`readings-separate`) and tries a second
@@ -1062,22 +1168,34 @@ On a pilot branch (`pilot/udhr-readings-defaults`), with scripts under
    | Premises verdict | UNKNOWN *recorded* | measured |
    | Conflict verdict | — | measured |
    | Lean-decided bytes and share (3.9) | measured (0 *derived*) | measured |
+   | Maximum rules in one choice's document; decided bytes whose companions were already checked outside the document (E2) | — | measured |
    | Claimed covered; audit-verified | 4,792 (43.90%); 2,543 (23.30%) *recorded* | unchanged unless units changed status |
    | Sets admitted with every pair separated; unseparated pairs | — | measured |
+   | Sets not migrated ("needs one vocabulary", E1) | — | measured, listed |
 
-5. **Queries**, a demonstration of ALL, SOME and NONE with conditions, each answer recorded verbatim: in the
-   component of `u022a`, "every State must avoid depriving each person of life"; in `u055`, the duty on nationality
-   for the State readings; in `u052`, whether the asylum right can be invoked in the prosecution's case. Expected
-   *derived* for the first: SOME (the State negative reading proves it; under the entitlement reading the gap is
-   filled no).
+5. **Queries**, a demonstration of ALL, SOME and NONE with conditions, each answer recorded verbatim, each on a set
+   that merges unchanged (E1; draft 1's three demonstrations were on `rs_u022a`, `rs_u055` and `rs_u052`, none of
+   which migrates unchanged, 1.1). Expected answers per reading, *derived* from the companions at `bd6c7ab2`:
+   - `rs_u029` (readings `entitlement`, `state_claim`), "every State must recognise each person everywhere as a
+     person before the law": SOME. Under `state_claim` the conclusion follows (its rule's guard is ⊤). Under
+     `entitlement` it does not follow: no rule decides the duty, and a situation whose filling answers that gap 'no'
+     is a countermodel.
+   - `rs_u081` (readings `entitlement`, `state_claim`, `state_claim_within_resources`), "every State whose
+     organization and resources allow it must secure each person social security": SOME over every reading
+     (`entitlement` does not follow, gap answered 'no'; both State readings follow), and ALL under
+     `--under rs_u081:2`, naming that reading.
+   - `rs_u081`, "no State must secure any person social security": NONE. Under each reading a checked situation
+     with one State and one person refutes it: by the rule under `state_claim`, by the rule where the resources allow
+     it under `state_claim_within_resources`, and under `entitlement` by a filling that answers the gap 'yes' (the
+     filled-gap sentence shows it).
 
 `tools/lean_decided_share.py` (new, Python, display): sums the span bytes of Lean's `decided_units`.
 
 Deleted, not duplicated: nothing in `ve/`. The migration is data tooling and decides nothing Lean decides.
 
 Done when: the migrated document loads within every limit of 3.8, the table is filled with measured values, the
-`DELTA.md` and the pilot's `SUMMARY.md` report before and after, and every unseparated pair or failed check is
-listed rather than worked around.
+`DELTA.md` and the pilot's `SUMMARY.md` report before and after, and every unseparated pair, set not migrated or
+failed check is listed rather than worked around.
 
 ### RD-6a. S2a with a carried base-premise family (Lean, 5–6 h)
 
@@ -1089,9 +1207,11 @@ namespace VE.Readings
 open VE.Compose (BaseAdmissibleP ConflictFreeP)
 universe u
 
-/-- A base-premise family that superposition carries: at a slot-admissible base of `sup D` encoding a compatible
-    choice, `Q` holds exactly when the choice's own family holds of the pulled base. -/
+/-- A base-premise family that superposition carries: `Q' c` is over the vocabulary of `c`'s own document, so it
+    mentions no choice symbol (review A1), and at a slot-admissible base of `sup D` encoding a compatible choice, `Q`
+    holds exactly when the choice's own family holds of the pulled base. -/
 def Transfers (D : Doc) (Q : List VE.Formula) (Q' : Choice → List VE.Formula) : Prop :=
+  (∀ c, Compatible D c → ∀ a ∈ Q' c, a.WellFormed (choiceEnvFull D c) []) ∧
   ∀ c, Compatible D c → ∀ B : VE.Structure.{u}, BaseAdmissibleP (correlate (sup D).1) (slotP D) B →
     Encodes D c B → (VE.Norms.Sat B Q ↔ VE.Norms.Sat (pull D c B) (Q' c))
 
@@ -1129,9 +1249,11 @@ theorem transfers_nil (D : Doc) : Transfers.{u} D [] (fun _ => [])
 end VE.Readings
 ```
 
-`supCertificateCheckExtra` is `supCertificateCheck` with `Q` after `slotUnder D A`. The up-direction needs no
-separate condition: `base_up`'s extension agrees with the original base on every predicate except the choice
-vocabulary, which `Q' c` does not mention. Each old theorem's proof becomes its `_extra` form at `transfers_nil`.
+`supCertificateCheckExtra` is `supCertificateCheck` with `Q` after `slotUnder D A`. The up-direction uses
+`Transfers`' first conjunct (review A1; draft 1 assumed it without stating it): `Q' c` is well formed over the
+vocabulary of `c`'s own document, which has no choice symbol, and `base_up`'s extension agrees with the original base
+on every predicate except the choice vocabulary. Each old theorem's proof becomes its `_extra` form at
+`transfers_nil`. RD-6a and RD-6b are off the pilot path; their statements are re-reviewed before their own build.
 
 Fixtures: every S2a fixture answers byte-identically (the kinds still call the old statements' functions).
 
@@ -1215,7 +1337,11 @@ with host load recorded, except the three *recorded* figures, which are copied w
   migrated units;
 - that every sentence with readings was checked by itself (E31), so the share says nothing about whether two
   sentences' readings fit together;
-- the unseparated pairs, the renames and the copied declarations, as lists.
+- beside the share (E2): the maximum rules in one choice's document, the decided bytes whose companions were already
+  checked outside the document, and that a reading holding one rule is CONFLICT-FREE by construction. Most UDHR
+  readings hold one rule, and their companions already passed their checks as separate documents, so the move from 0
+  measures those checks routed into Lean inside the document, not new assurance;
+- the unseparated pairs, the sets not migrated ("needs one vocabulary", E1) and the copied declarations, as lists.
 
 ## 6. Senses in `ve document`: the next batch (RD-8)
 
@@ -1259,11 +1385,12 @@ needs no document mode.
 - **Q1, the regulated limit.** Should the LIMITS CONTRACT (ARCH-ROADMAP P1) raise 64 for frames whose rules are
   per-component? That is a frozen-contract change with a DRI signature. It is not needed by this plan, but it is
   needed for cross-sentence questions on the UDHR.
-- **Q2, completeness of separation.** D4 shares fillings. Enumerating the other side's fillings over the probe's
-  cone would separate more pairs; RD-5's unseparated list measures whether this matters.
+- **Q2, closed (E5).** D4's shared fillings are the definition of separation under the completion: with
+  independent fillings a reading would be separated from itself at any gap. An unseparated pair is equal meaning or a
+  search miss; RD-5 lists them.
 - **Q3, the reused quote marks** in the filled-gap sentence (3.7): for norm-defaults' reader test.
-- **Q4, the `<reading>` slot** names readings by position ("reading 2"). For sets like the UDHR's, a reader needs
-  each reading's own sentence. This is display work on composition 2.1's slot, not this plan's.
+- **Q4, moved into RD-3 (A4).** The `<reading>` slot shows the candidate's own sentence (3.7); zero-training English
+  cannot defer it.
 - **Risk.** Lean-first 10b will delete `ve/norm_defaults.py`. RD-2b's generators use only the generic prover and
   search over Lean's regenerated formulas, so 10b removes nothing they need. The batch checks this (relay lint and
   the A/B).
@@ -1287,3 +1414,8 @@ needs no document mode.
 10. 3.9's rule for Lean-decided units, and that the script decides nothing.
 11. Conservativity (3.11) and fixture F-ND7.
 12. Every batch's deletion list, and that no batch leaves a Python fallback for logic it moves.
+13. (Draft 2, converged review.) Every statement true under its hypotheses, not only well typed: `fillNamesFree` on
+    the four equalities, `attached_fillDoc` and `achievesU_iff`, with F-ND5 (A1); the conflict gate in
+    `foldEntailment` and its soundness statements, and `Holds.inconsistent` (A2); the split contract (A3, E3); the
+    `<reading>` slot (A4); no renaming (E1); E2's qualifiers beside the share; `D` bound in
+    `plan_model_names_every_set` (E5); `Transfers`' typing conjunct (RD-6a).
