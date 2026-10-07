@@ -64,7 +64,7 @@
     "ve/softnorms.py:load_soft_document": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors."
   },
   "lean_decoders": {
-    "total_lines": 22516,
+    "total_lines": 22699,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -874,6 +874,23 @@
           "runCaseReported"
         ],
         "reason": "senses admission runner: exact request fields, restricted pack decoder, and response rows (units with their sentence and state, sense faults with their arguments, S2 outcomes with S2's fields); the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Service/Document.lean",
+        "lines": 183,
+        "sha256": "5bad952372f0e9d8f0ede7a055e43a9bd46b17af19f90d3c438b01c4499821b0",
+        "ranges": [
+          [
+            1,
+            183
+          ]
+        ],
+        "declarations": [
+          "sourceUnit",
+          "unitsOf",
+          "documentCase"
+        ],
+        "reason": "W2 document service wrapper: front matter, unit partition, statuses and coverage; full file pinned conservatively"
       },
       {
         "file": "lean/VE/Service/Family.lean",

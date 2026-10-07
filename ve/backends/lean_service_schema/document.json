@@ -12,13 +12,13 @@
             "additionalProperties": false,
             "properties": {
               "accounted_bytes": {"$ref": "common.json#/$defs/nat"},
-              "bytes_by_kind": {"type": "object"},
-              "bytes_by_status": {"type": "object"},
+              "bytes_by_kind": {"additionalProperties": {"$ref": "common.json#/$defs/nat"}, "type": "object"},
+              "bytes_by_status": {"additionalProperties": {"$ref": "common.json#/$defs/nat"}, "type": "object"},
               "coverage_percent": {"const": 100},
-              "residual": {"type": "object"},
+              "residual": {"additionalProperties": {"$ref": "common.json#/$defs/nat"}, "type": "object"},
               "residual_total": {"$ref": "common.json#/$defs/nat"},
               "source_bytes": {"$ref": "common.json#/$defs/nat"},
-              "unformalised_reasons": {"type": "object"}
+              "unformalised_reasons": {"additionalProperties": {"$ref": "common.json#/$defs/nat"}, "type": "object"}
             },
             "required": [
               "source_bytes",
