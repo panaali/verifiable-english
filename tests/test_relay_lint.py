@@ -71,3 +71,24 @@ def test_discourse_is_relayed_with_two_file_io_diagnostics(classes):
 
 def test_a_missing_relayed_module_fails(tmp_path):
     assert relay_lint.main([str(tmp_path / "absent.py")]) == 1
+
+
+def test_a_check_moved_into_its_own_module_is_still_linted(tmp_path, monkeypatch, classes):
+    """lf-8 recheck B2: the reports relay's record checks moved into `ve/reports_preflight.py`,
+    which no relayed-module list named. A module only relayed modules import is linted with them;
+    one that other modules import too is not theirs alone."""
+    package = tmp_path / "ve"
+    package.mkdir()
+    (package / "__init__.py").write_text("")
+    (package / "errors.py").write_text("class VEError(ValueError):\n    pass\n")
+    (package / "relayed.py").write_text("from .preflight import prepare\nfrom . import shared\n")
+    (package / "preflight.py").write_text("from .errors import VEError\n\n\ndef prepare(rows):\n"
+                                         "    raise VEError('InvalidInput: contexts must be a list')\n")
+    (package / "shared.py").write_text("from .errors import VEError\n\n\ndef f():\n    raise VEError('own words')\n")
+    (package / "other.py").write_text("import ve.shared\n")
+    monkeypatch.setattr(relay_lint, "ROOT", tmp_path)
+    monkeypatch.setattr(relay_lint, "RELAYED", ("ve/relayed.py",))
+    assert relay_lint.helpers([package / "relayed.py"]) == [package / "preflight.py"]
+    assert relay_lint.main([]) == 1
+    (package / "other.py").write_text("from .preflight import prepare\nimport ve.shared\n")
+    assert relay_lint.helpers([package / "relayed.py"]) == []
