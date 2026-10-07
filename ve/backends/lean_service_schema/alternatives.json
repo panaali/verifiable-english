@@ -26,7 +26,8 @@
                   "when": {"allOf": [{"$ref": "#/$defs/kind/alt-followable"}, {"required": ["witness"]}]}
                 },
                 {"then": {"$ref": "#/$defs/followable"}, "when": {"$ref": "#/$defs/kind/alt-followable"}},
-                {"then": {"$ref": "#/$defs/certificate"}, "when": {"$ref": "#/$defs/kind/alt-certificate"}}
+                {"then": {"$ref": "#/$defs/certificate"}, "when": {"$ref": "#/$defs/kind/alt-certificate"}},
+                {"then": {"$ref": "#/$defs/environment"}, "when": {"$ref": "#/$defs/kind/alt-environment"}}
               ]
             }
           ]
@@ -393,6 +394,13 @@
       "then": {"required": ["coverage"]},
       "type": "object"
     },
+    "environment": {
+      "$comment": "Alternatives.Run.runCase alt-environment: the environment alone decodes.",
+      "additionalProperties": false,
+      "properties": {"id": {"$ref": "common.json#/$defs/id_ok"}, "status": {"const": "ok"}, "valid": {"const": true}},
+      "required": ["id", "status", "valid"],
+      "type": "object"
+    },
     "followable": {
       "$comment": "Alternatives.Run.runFollowable over a certificate package.",
       "anyOf": [
@@ -455,6 +463,7 @@
       "alt-certificate": {"properties": {"kind": {"const": "alt-certificate"}}, "required": ["kind"], "type": "object"},
       "alt-conflict": {"properties": {"kind": {"const": "alt-conflict"}}, "required": ["kind"], "type": "object"},
       "alt-elaborate": {"properties": {"kind": {"const": "alt-elaborate"}}, "required": ["kind"], "type": "object"},
+      "alt-environment": {"properties": {"kind": {"const": "alt-environment"}}, "required": ["kind"], "type": "object"},
       "alt-followable": {"properties": {"kind": {"const": "alt-followable"}}, "required": ["kind"], "type": "object"},
       "alt-validate": {"properties": {"kind": {"const": "alt-validate"}}, "required": ["kind"], "type": "object"}
     },
