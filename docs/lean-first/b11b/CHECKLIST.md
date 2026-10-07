@@ -23,6 +23,6 @@ This applies `/home/seyran/code/manage-agents/prompts/build-checklist.txt` to th
 | 17 | `tools/lean_statements.py --check`: 4,211 statements, no additions/removals/changes. `tools/check_lean_imports.py` passed; generated assurance tables and source hashes are pinned. No theorem statement changed. |
 | 18 | No new spec-stage theorem or iff was introduced in 11b; 11a owns the W2 source/admission theorems. |
 | 19 | No use-case rule was formalised in 11b; historical use-case/pilot checks are in the A/B corpus and full gate. |
-| 20 | `test_batch_report_metrics_match_evidence` runs `report.py`, regenerating the numeric block of `DELTA.md` from the evidence JSON and source diff. Full-gate counts are cited from the gate JSON after the clean-HEAD run. |
+| 20 | `test_batch_report_metrics_match_evidence` runs `report.py`, regenerating the numeric block of `DELTA.md` from the evidence JSON and source diff. `evidence/full-gate.json` records the clean-HEAD gate's 11,465 Python passes, 7 allowed skips, 48 Rust passes and zero failures. |
 | 21 | `DELTA.md` tags agent, human and external items. The three availability rows and Lean-CPU exception explicitly await the speech-acts DRI; English E3 is external. |
-| 22 | Source, tests, pins and this nonempty report are committed before the final full gate on clean HEAD. Free disk is checked and reported with the final gate result. |
+| 22 | Source, tests, pins, this nonempty report and its first passing full-gate result are committed before the final full gate on clean HEAD. Free disk is checked and reported with the final gate result. |

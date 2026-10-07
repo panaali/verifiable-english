@@ -16,7 +16,7 @@ The numbers in this block are generated and checked by `report.py` from the comm
 
 <!-- END GENERATED B11B METRICS -->
 
-Evidence: [typed corpus comparison](evidence/ab-compare.json), [15-run differential fuzzer](evidence/difffuzz-ab.json), [speech availability pairs](evidence/speech-availability.json), [latency samples](evidence/latency.json), and [seeded failures](evidence/mutants.txt). The corpus recorder ran both commits' own rebuilt Lean route on the same probe, conformance, pilots, readings, discourse, rights, and quantity corpora. The speech switch tests also compare seven accepted W2 templates to the frozen Python caller; the new record kinds are listed separately because the general recorder has no speech corpus.
+Evidence: [full automated gate](evidence/full-gate.json), [typed corpus comparison](evidence/ab-compare.json), [15-run differential fuzzer](evidence/difffuzz-ab.json), [speech availability pairs](evidence/speech-availability.json), [latency samples](evidence/latency.json), and [seeded failures](evidence/mutants.txt). The corpus recorder ran both commits' own rebuilt Lean route on the same probe, conformance, pilots, readings, discourse, rights, and quantity corpora. The speech switch tests also compare seven accepted W2 templates to the frozen Python caller; the new record kinds are listed separately because the general recorder has no speech corpus.
 
 ## Ownership and acceptance
 
@@ -33,12 +33,12 @@ The W2 route is one-shot because `speech-source` is not yet a persistent `ve_ser
 
 ## Gate 5.1
 
-1. **Suite.** The focused speech suite passed on the final code. The assurance, collection and inventory findings from the first full gate were fixed: the generated table and source pins, three new trust classes, the test collection, shared process launcher, and stale inventory exception. The full clean-HEAD gate result is recorded after this report commit.
+1. **Suite.** The full gate passed on clean commit `7ea56df0`: 11,465 Python passed, 7 allowed skips, 48 Rust passed, zero failures; Lean build and audit passed. The result is in `evidence/full-gate.json`. The focused speech suite and all 347 relay tests also passed. Earlier assurance, collection and inventory findings were fixed: the generated table and source pins, three new trust classes, the test collection, shared process launcher, stale inventory exception, and transport inventory test. The gate is rerun after this report commit to verify the final HEAD.
 2. **Corpus A/B.** The general recorder's every typed result is identical, including all historical pilots; see generated block. The seven accepted W2 templates match the frozen caller in IDs, rules, legends, warnings, answers, compliance and coverage. The three new availability rows have no signature yet.
 3. **Deletion ledger.** See `LEDGER.md`; `tools/relay_lint.py` finds no content diagnostic authored by the relayed W2 adapter, and `tools/inventory_lint.py` finds no retained cross-owner body import.
 4. **Latency.** The measured W2 p95 is below the 2 s document-check wall budget. The new Lean CPU exceeds the 20% baseline threshold because the frozen caller used no Lean process; the explicit DRI exception remains pending.
 
-The fuzzer's baseline does not grow: every sampled signature, answer, and baseline replay matches the base run. The first full gate at `515f86dd` was intentionally superseded by the pin and regression fixes; it reported a resource-sensitive Lean service timeout under simultaneous corpus/fuzzer load. The final gate is rerun on a clean committed HEAD.
+The fuzzer's baseline does not grow: every sampled signature, answer, and baseline replay matches the base run. The first full gate at `515f86dd` was superseded by the pin and regression fixes; it reported a resource-sensitive Lean service timeout under simultaneous corpus/fuzzer load. The next full gate at `586650ad` found one stale test inventory assertion after the shared transport refactor. The assertion was updated in `72479f0e`; the complete gate passed at `7ea56df0`.
 
 ## Seeded failures
 
