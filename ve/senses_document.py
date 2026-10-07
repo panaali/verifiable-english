@@ -40,18 +40,28 @@ def _pack(entry, directory: Path) -> bytes:
     return bundled_pack(entry)
 
 
+def covered_units(reading_sets) -> set[str]:
+    """The fence units the front matter's `reading_sets` name. The reading sets are untrusted and not yet
+    checked: an entry or unit of any other shape names nothing here, and the readings checks refuse it."""
+    if type(reading_sets) is not list:
+        return set()
+    return {r["unit"] for r in reading_sets if type(r) is dict and type(r.get("unit")) is str}
+
+
 def read_senses(env: Environment, senses, fences: list[tuple[str, str]], directory: Path,
-                reading_set_units=frozenset()) -> SensesReading:
+                reading_sets=()) -> SensesReading:
     """Lean's reading of `fences` (unit id and text, in unit order) under the front matter's `senses`. A
-    fence whose sentence has candidates is admitted only when Lean finds its unit in the reading-set units."""
+    fence whose sentence has candidates is admitted only when Lean finds its unit among the units of the
+    front matter's `reading_sets` (`covered_units`)."""
     from .backends.senses import read_fences
     if type(senses) is not dict or not set(senses) <= {"packs", "own", "defaults"} \
             or type(senses.get("packs", [])) is not list:
         raise VEError("InvalidInput: senses has packs, own and defaults only")
     packs = [_pack(entry, directory) for entry in senses.get("packs", [])]
+    ids = [uid for uid, _ in fences]
     result = read_fences(env, [text for _, text in fences], packs, own=senses.get("own"),
-                         defaults=senses.get("defaults"), fence_ids=[uid for uid, _ in fences],
-                         reading_set_units=sorted(reading_set_units & {uid for uid, _ in fences}))
+                         defaults=senses.get("defaults"), fence_ids=ids,
+                         reading_set_units=sorted(covered_units(reading_sets) & set(ids)))
     reading = result["reading"]
     if reading["status"] not in ("one", "open"):
         if reading.get("code") == "Unresolved":

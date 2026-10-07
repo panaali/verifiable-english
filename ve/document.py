@@ -421,13 +421,11 @@ def _load_document(raw: bytes, path: str | Path, lean):
                 or set(env.profiles) & {"soft-norms@0", "rights@0", "reports@0", "norm-defaults@0", "readings@1"}):
             raise VEError("UnsupportedProfile: senses are read in ve-document@1 documents without the soft-norms@0, "
                           "rights@0, reports@0, norm-defaults@0, readings@1 and quantity routes")
+        # Only a string id names a fence; any other id is refused by the unit checks below.
         english = [(u["id"], fences[u["id"]]) for u, _ in _parts(units)
                    if type(u) is dict and u.get("surface") == "english" and type(u.get("content")) is dict
-                   and u["content"].get("fence") == u.get("id") and u.get("id") in fences]
-        reading_sets = meta.get("reading_sets", [])
-        senses = read_senses(env, meta["senses"], english, Path(path).parent,
-                             {r.get("unit") for r in reading_sets if type(r) is dict}
-                             if type(reading_sets) is list else set())
+                   and type(u.get("id")) is str and u["content"].get("fence") == u["id"] and u["id"] in fences]
+        senses = read_senses(env, meta["senses"], english, Path(path).parent, meta.get("reading_sets", []))
         formula_env = senses.environment
     compiled = []
     unit_ids = set()
