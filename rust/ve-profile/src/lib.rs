@@ -1,8 +1,7 @@
 #![forbid(unsafe_code)]
-//! VE profiles over the kernel: evaluation, routes, countermodel search, order and risk.
+//! VE profiles over the kernel: evaluation, routes, countermodel search and order.
 mod eval;
 mod order;
-mod risk;
 mod route;
 mod search;
 
@@ -11,7 +10,6 @@ mod search;
 pub use eval::EvaluationKernel;
 pub use eval::{Evaluation, TracedEvaluation, evaluate, evaluate_formula, evaluate_traced};
 pub use order::order_case;
-pub use risk::{Range as RiskRange, evaluate_risk_condition, regenerate_risk_cells};
 pub use route::{check_label, check_reading_binding, label_is_canonical};
 pub use search::{
     CandidateIterator, CountermodelCheck, CountermodelProblem, SearchBounds, SearchResult, find_countermodel,

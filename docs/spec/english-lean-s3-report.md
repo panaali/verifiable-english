@@ -33,8 +33,8 @@ The refreshed lexicon report derives validity over all 39 corpus environments, a
 `test_every_corpus_environment_has_a_valid_selected_lexicon` verifies the complete report. This surface
 change was signed in S3 D9; S0/S1's unchanged-behavior merge scope does not govern S3.
 
-The later profile-boundary repair changed `Run.lean`, so the English grammar lock requires
-`actions_version` 8 (formerly 7). The regenerated 200-case comparison records version 8 for
+The submitted-environment boundary repair changed `Run.lean`, so the English grammar lock requires
+`actions_version` 9 (formerly 8). The regenerated 200-case comparison records version 9 for
 every case; the version identifies the changed reader even where its verdict is unchanged.
 
 Python agrees with the spec's mapped class, formulas, and marks on 147 of the 163 exact texts. All 16 exact-text

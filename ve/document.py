@@ -788,64 +788,18 @@ def coverage(doc, scoped=None, rights_report=None):
     soft = doc.get("soft_document")
     environment = doc.get("environment") or (soft.env if soft is not None else None)
     if environment is not None and environment.alternatives is not None:
-        from .wire import loads_json
-        block = loads_json(environment.alternatives)
-        declared, cells, proximate = [], [], []
-        for unit in units:
-            if unit["kind"] != "asserted":
-                continue
-            content = unit["content"]
-            # Compiled formula content is the AST itself; norm content is a dict.
-            ast = content
-            if type(ast) is not list:
-                continue
-            negative = len(ast) == 2 and ast[0] == "not"
-            atom = ast[1] if negative else ast
-            if type(atom) is not list or len(atom) != 4 or atom[0] != "binary":
-                continue
-            if any(type(term) is not list or len(term) != 2 or term[0] != "const"
-                   for term in atom[2:]):
-                continue
-            first, second = atom[2][1], atom[3][1]
-            leaf = {"unit": unit["id"], "support": unit["support"]}
-            if atom[1] == block["available"] and not negative:
-                declared.append({"action": first, "chooser": second, **leaf})
-            elif atom[1] == block["leads_to"]:
-                cells.append({"action": first, "harm": second, "leads_to": not negative,
-                              "decider": block.get("decided_by", "unstated"), **leaf})
-            elif atom[1] == block.get("proximate") and not negative:
-                proximate.append({"action": first, "harm": second,
-                                  "decider": block.get("decided_by", "unstated"), **leaf})
-        mapped = {item["obligation"] for item in block.get("fulfilments", [])}
-        performed = block.get("performed", {}).get("obligation")
-        unmapped = [name for name, predicate in environment.predicates.items()
-                    if predicate.regulated is not None and predicate.regulated.role == "obligation"
-                    and name != performed and name not in mapped]
-        completion = ({"decider": block["outcomes"]["complete_by"],
-                       "premise": "alternatives:table_complete"}
-                      if type(block["outcomes"]) is dict else None)
-        # Enumerate the named cells for which the general completion premise
-        # supplies a negative answer, excluding every explicitly stated cell.
-        actions = {name for name, const in environment.constants.items()
-                   if const.sort == block["action"]}
-        actions.update(item["action"] for item in declared)
-        harms = {name for name, const in environment.constants.items()
-                 if const.sort == block["harm"]}
-        harms.update(item["harm"] for item in cells)
-        stated = {(item["action"], item["harm"]) for item in cells}
-        assumed = ([{"action": action, "harm": harm, **completion}
-                    for action in sorted(actions) for harm in sorted(harms)
-                    if (action, harm) not in stated] if completion else [])
-        alternatives = {"alternatives_declared": declared, "counterfactual_leaves": cells,
-                        "assumed_harm_free": assumed, "table_complete": completion,
-                        "proximate_judgments": proximate, "unmapped_obligations": unmapped,
-                        "dilemmas": [], "narrowings": meta.get("narrowings", [])}
-        residual.update({"alternatives_declared": len(declared), "counterfactual_leaves": len(cells),
-                         "assumed_harm_free": len(assumed),
-                         "table_complete": int(completion is not None),
-                         "proximate_judgments": len(proximate),
-                         "unmapped_obligations": len(unmapped), "dilemmas": 0,
-                         "narrowings": len(alternatives["narrowings"])})
+        from .backends.relay import decide
+        risk = environment.risk is not None
+        case = {"id": "coverage", "kind": "risk-elaborate" if risk else "alt-elaborate",
+                "environment": environment.to_dict(), "coverage_units": units,
+                "narrowings": meta.get("narrowings", [])}
+        if risk:
+            case["document"] = {"norms": [], "units": []}
+        else:
+            case["norms"] = []
+        row = decide("risk" if risk else "alternatives", [case])[0]
+        alternatives = row["coverage"]["alternatives"]
+        residual.update(row["coverage"]["residual"])
     soft = doc.get("soft_document")
     if soft is not None:
         decisions = soft.extended_env.decision_names
