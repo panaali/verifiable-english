@@ -137,9 +137,10 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Alternatives/Admission.lean` | 133 | 133 | 1–133 | `64cacbdf9eb6…` |
 | `lean/VE/Alternatives/Replay.lean` | 328 | 328 | 1–328 | `1b69bb125b3d…` |
 | `lean/VE/Alternatives/Wire.lean` | 296 | 296 | 1–296 | `26827ec1010c…` |
-| `lean/VE/Attribution/Admission.lean` | 327 | 327 | 1–327 | `357665dbfa39…` |
+| `lean/VE/Attribution/Admission.lean` | 343 | 343 | 1–343 | `de9ae29eed4d…` |
 | `lean/VE/Attribution/Content.lean` | 726 | 726 | 1–726 | `42d7518d9a79…` |
-| `lean/VE/Attribution/Wire.lean` | 510 | 510 | 1–510 | `f8b2a8b0b381…` |
+| `lean/VE/Attribution/Wire.lean` | 514 | 514 | 1–514 | `4eadc30b6ea7…` |
+| `lean/VE/Attribution/Preflight.lean` | 550 | 550 | 1–550 | `e54406c9b676…` |
 | `lean/VE/Bridge.lean` | 282 | 235 | 14–248 | `2d4e432b9698…` |
 | `lean/VE/CertificateWire.lean` | 236 | 164 | 11–163, 177–187 | `3d002c705023…` |
 | `lean/VE/Closure/Bridge.lean` | 99 | 58 | 9–66 | `b9c7a15be6bb…` |
@@ -187,7 +188,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/SpeechActs/Wire.lean` | 993 | 993 | 1–993 | `fbe08d985f7f…` |
 | `lean/VE/Time/Document.lean` | 613 | 613 | 1–613 | `4407e998d007…` |
 | `lean/VE/Time/Wire.lean` | 843 | 843 | 1–843 | `43eff830ca8c…` |
-| **total** | | **21,743** | | |
+| **total** | | **22,313** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner

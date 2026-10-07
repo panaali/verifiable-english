@@ -1,0 +1,487 @@
+{
+ "base": "/tmp/ve-lf8-base",
+ "head": "/home/seyran/code/ve-lf-8",
+ "runs": [
+  {
+   "run": "--ci",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    0,
+    0
+   ],
+   "baseline_seen": [
+    351,
+    351
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 131.9,
+     "children": 20.9
+    },
+    {
+     "python": 114.7,
+     "children": 17.2
+    }
+   ],
+   "equal": true
+  },
+  {
+   "run": "--deep 1 --seed 20260923",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    47,
+    47
+   ],
+   "baseline_seen": [
+    291,
+    291
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 277.7,
+     "children": 81.7
+    },
+    {
+     "python": 329.0,
+     "children": 105.1
+    }
+   ],
+   "equal": true
+  },
+  {
+   "run": "--deep 1 --seed 20260924",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    78,
+    78
+   ],
+   "baseline_seen": [
+    294,
+    294
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 245.5,
+     "children": 104.1
+    },
+    {
+     "python": 245.7,
+     "children": 104.9
+    }
+   ],
+   "equal": true
+  },
+  {
+   "run": "--deep 1 --seed 20260925",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    50,
+    50
+   ],
+   "baseline_seen": [
+    284,
+    284
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 306.9,
+     "children": 136.4
+    },
+    {
+     "python": 309.6,
+     "children": 138.7
+    }
+   ],
+   "equal": true
+  },
+  {
+   "run": "--deep 1 --seed 20260926",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    41,
+    41
+   ],
+   "baseline_seen": [
+    280,
+    280
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 295.3,
+     "children": 97.1
+    },
+    {
+     "python": 283.0,
+     "children": 95.4
+    }
+   ],
+   "equal": true
+  },
+  {
+   "run": "--deep 1 --seed 20260927",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    47,
+    47
+   ],
+   "baseline_seen": [
+    291,
+    291
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 234.6,
+     "children": 89.6
+    },
+    {
+     "python": 238.3,
+     "children": 89.9
+    }
+   ],
+   "equal": true
+  },
+  {
+   "run": "--deep 1 --seed 20260928",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    52,
+    52
+   ],
+   "baseline_seen": [
+    281,
+    281
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 359.5,
+     "children": 126.7
+    },
+    {
+     "python": 359.5,
+     "children": 121.6
+    }
+   ],
+   "equal": true
+  },
+  {
+   "run": "--deep 1 --seed 20260929",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    55,
+    55
+   ],
+   "baseline_seen": [
+    291,
+    291
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 163.7,
+     "children": 142.1
+    },
+    {
+     "python": 155.9,
+     "children": 139.9
+    }
+   ],
+   "equal": true
+  },
+  {
+   "run": "--deep 1 --seed 20260930",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    56,
+    56
+   ],
+   "baseline_seen": [
+    288,
+    288
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 326.1,
+     "children": 109.6
+    },
+    {
+     "python": 332.0,
+     "children": 112.3
+    }
+   ],
+   "equal": true
+  },
+  {
+   "run": "--deep 1 --seed 20261001",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    52,
+    52
+   ],
+   "baseline_seen": [
+    294,
+    294
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 261.2,
+     "children": 96.5
+    },
+    {
+     "python": 255.1,
+     "children": 95.9
+    }
+   ],
+   "equal": true
+  },
+  {
+   "run": "--deep 1 --seed 20261002",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    44,
+    44
+   ],
+   "baseline_seen": [
+    297,
+    297
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 311.4,
+     "children": 101.3
+    },
+    {
+     "python": 317.3,
+     "children": 104.3
+    }
+   ],
+   "equal": true
+  },
+  {
+   "run": "--deep 1 --seed 20261003",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    53,
+    53
+   ],
+   "baseline_seen": [
+    297,
+    297
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 278.7,
+     "children": 84.1
+    },
+    {
+     "python": 277.2,
+     "children": 85.3
+    }
+   ],
+   "equal": true
+  },
+  {
+   "run": "--deep 1 --seed 20261004",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    0,
+    0
+   ],
+   "baseline_seen": [
+    351,
+    351
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 117.3,
+     "children": 17.0
+    },
+    {
+     "python": 117.1,
+     "children": 17.3
+    }
+   ],
+   "equal": true
+  },
+  {
+   "run": "--deep 1 --seed 20261005",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    56,
+    56
+   ],
+   "baseline_seen": [
+    290,
+    290
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 416.4,
+     "children": 123.9
+    },
+    {
+     "python": 410.6,
+     "children": 122.5
+    }
+   ],
+   "equal": true
+  },
+  {
+   "run": "--deep 1 --seed 20261006",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    51,
+    51
+   ],
+   "baseline_seen": [
+    288,
+    288
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 273.4,
+     "children": 94.1
+    },
+    {
+     "python": 273.4,
+     "children": 95.6
+    }
+   ],
+   "equal": true
+  }
+ ],
+ "all_equal": true
+}
