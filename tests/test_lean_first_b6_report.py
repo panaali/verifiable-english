@@ -30,6 +30,16 @@ def test_every_udhr_run_gave_identical_reports():
     assert runs and all(r["output_equal"] and r["base"]["exit"] == r["head"]["exit"] == 0 for r in runs)
 
 
+def test_every_udhr_document_is_checked_and_rendered():
+    """Recheck finding B (lf-6c): the latency evidence measured `check` only, while the UDHR pilot also renders
+    (`finish.py` calls `render_document`). Every document is timed under both commands."""
+    runs = _module("report").timing()["runs"]
+    documents = {r["document"] for r in runs}
+    assert {(d, c) for d in documents for c in ("check", "render")} == {(r["document"], r["command"]) for r in runs}
+    large = [r["command"] for r in runs if "20261003T0600Z" in r["document"]]
+    assert large.count("check") == large.count("render") == 3
+
+
 def test_the_report_states_the_saved_evidence():
     """The recorded figures, the allowances they are read against included (`check_evidence.main`)."""
     _module("check_evidence").main()
