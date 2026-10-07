@@ -69,11 +69,15 @@ def share(units, source_bytes, answer=None, checked_outside=None):
 
 
 def _json_file(path):
+    """A given file's JSON value; null is refused, so a given file is never read as no file."""
     from ve.errors import VEError
     try:
-        return json.loads(Path(path).read_text(encoding="utf-8"))
-    except (OSError, UnicodeDecodeError, ValueError) as error:
+        value = json.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, ValueError, RecursionError) as error:
         raise VEError(f"InvalidInput: {path} is not a JSON file: {error}") from None
+    if value is None:
+        raise VEError(f"InvalidInput: {path} holds null")
+    return value
 
 
 def main(argv=None):
