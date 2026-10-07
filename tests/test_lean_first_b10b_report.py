@@ -45,7 +45,7 @@ def _finding(signature, classes):
 
 
 def _run(lean, replay_status="reproduces", new=()):
-    python = {"outcome": "ok", "value": {"environment_id": "e"}}
+    python = {"outcome": "ok", "value": None}
     answers = {"python": python, "lean": lean, "rust": {"outcome": "n/a"}}
     return {"corpus": {"environment": {"norm-defaults": 1}}, "mutants": {"environment": {"zero-fault": 1}},
             "new": list(new),
@@ -65,6 +65,16 @@ def test_the_retired_df19_difference_is_explained():
     result = _gate().compare(BASE, HEAD)
     assert result["unexplained"] == [] and len(result["explained"]) == 2
     assert _gate().compare(BASE, copy.deepcopy(BASE)) == {"explained": [], "unexplained": []}
+
+
+@pytest.mark.parametrize("answer", [
+    {"outcome": "error", "code": "ResourceLimit", "text": "ResourceLimit: arbitrary"},
+    {"outcome": "error", "code": "InvalidInput", "text": "InvalidInput: another fault"},
+    {"outcome": "ok", "value": {"wrong": True}},
+])
+def test_df19_rejection_does_not_explain_an_unrelated_lean_answer(answer):
+    head = _run(answer, replay_status="fixed")
+    assert _gate().compare(BASE, head)["unexplained"]
 
 
 @pytest.mark.parametrize("mutate", [
