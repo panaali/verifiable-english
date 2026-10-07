@@ -6579,6 +6579,11 @@ theorem VE.EnglishGrammar.overlayCheck_constants
       VE.EnglishGrammar.overlayCheck E O
   -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Failure@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay.mk@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay.predicates@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay.sorts@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.overlayCheck@VE.EnglishGrammar.Policy
   -- expr 615795187
+theorem VE.EnglishGrammar.policyPredicate_tables
+  ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (p : String),
+    VE.EnglishGrammar.policyPredicateIn (VE.EnglishGrammar.PolicyCtx.of E O) E p = VE.EnglishGrammar.policyPredicate E O p
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.PolicyCtx.of@VE.EnglishGrammar.Policy VE.EnglishGrammar.policyPredicate@VE.EnglishGrammar.Policy VE.EnglishGrammar.policyPredicateIn@VE.EnglishGrammar.Policy
+  -- expr 295312916
 theorem VE.EnglishGrammar.policy_iff_no_failure
   ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon),
     VE.EnglishGrammar.Lexicon.policyOk E O L = Bool.true ↔ VE.EnglishGrammar.Lexicon.policyFailures E O L = []

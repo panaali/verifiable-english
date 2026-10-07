@@ -1,4 +1,5 @@
 import VE.EnglishGrammar.ProfileExamples
+import VE.EnglishGrammar.PolicyReference
 
 /-! The acceptance fixtures of docs/spec/english-lean-e2.md section 8 as `#guard` checks on the built port,
 the overlay check, the request guards, the response texts and the advice table.
@@ -528,5 +529,76 @@ def lexSpanOf (s : String) : Option (String × Option (Nat × Nat)) :=
 #guard Run.rejectionText "Every action available to robot cannot lead to injury." 0
     (.blockedWording "risk-every-cannot") ==
   Run.riskEveryCannotText 0 "robot" "injury"
+
+/-! ## The policy against spec 5.2's text (GE2 item 9)
+
+`Policy.lean` computes the environment's tables once (`PolicyCtx`); `PolicyReference.lean` is spec 5.2's text. On
+every environment of this file, with and without overlays, and on a crowded one whose wordings collide, every
+selection, verdict, lint code, noun, spelling, V6 failure and overlay refusal is the same. -/
+
+/-- Forty predicates whose wordings repeat, collide with heads and nouns, and include 8.1's refused shapes. -/
+def crowded : Env := Fp (sorts := [("item", nounOf "every item"), ("box", nounOf "deployed service")])
+  (consts := [("hence", "service", []), ("api", "service", [])])
+  ((List.range 40).map fun k =>
+    let words := ["{0} never fails", "{0} is reviewed", "{0} is archived", "{0} is checked daily",
+      "{0} is v1.2 compliant", "{0} runs", "{0} is service ready", "{0} is deployed", "{0} is undeployed",
+      "{0} is legacy"]
+    let pairs := ["{0} manages {1}", "{0} reports to {1}", "{0} belongs to {1}", "{0} owns {1}",
+      "{0} undermines {1}", "{0} voted for {1}", "{0} relates X1 {1}", "{0} was appointed by {1}"]
+    if k % 2 == 0 then (s!"q{k}", ["service"], wording (words.getD (k % 10) "{0} is ok"))
+    else (s!"r{k}", ["person", "service"], wording (pairs.getD (k % 8) "{0} sees {1}")))
+
+def noOverlay : Overlay := {}
+
+def policyEnvs : List (Env × Overlay) :=
+  [(F, noOverlay), (FA, noOverlay), (FR, noOverlay), (ProfileExamples.FM, noOverlay), (ProfileExamples.FO, noOverlay), (ProfileExamples.FD, noOverlay),
+   (FRh "{0} risks {1}", noOverlay), (FRh "{0} endangers {1}", noOverlay), (Fitem "every item", noOverlay), (Fitem "deployed service", noOverlay),
+   (Fhence, noOverlay), (Fapi, noOverlay), (Fapi2, noOverlay), (envOf jFOsame, noOverlay), (Fassigns, noOverlay), (envOf jFApre, noOverlay),
+   (envOf jFRslight, noOverlay), (envOf jFMa, noOverlay), (FRlevel, noOverlay), (crowded, noOverlay),
+   (Fp [bin "undermines" "{0} undermines {1}", bin "erodes" "{0} undermines the oversight role of {1}"], noOverlay),
+   (Fp [(("undocumented_parent", ["person"], wording "{0} has an undocumented noncitizen parent")),
+     (("documented", ["person"], wording "{0} is documented"))], noOverlay),
+   (Fp [bin "ballot" "{0} voted for {1}" ["person", "person"] (described "A member voted for a proposal.")], noOverlay),
+   (Fp [un "checked" "{0} is checked", un "inspected" "{0} is checked"], noOverlay)] ++
+  [(jFast, predOverlay [("fast", "{0} is a fast service", true, none)]),
+   (jFast, predOverlay [("fast", "{0} is a fast service", false, none)]),
+   (jKeen, predOverlay [("keen", "{0} is " ++ kelvin ++ "een", true, none)]),
+   (jObscure, predOverlay [("obscure", "{0} is un" ++ kelvin ++ "nown", true, none)]),
+   (jGreen, predOverlay [("green", "{0} is " ++ kelvin ++ "elp green", true, none)]),
+   (jInspected, predOverlay [("inspected", "{0} is reviewed", false, none)]),
+   (jChecked, predOverlay [("checked", "{0} is checked", false, some "{0} is never checked")]),
+   (fJson (sorts := [("item", [])]), predOverlay [] [("item", "every item")]),
+   (ProfileExamples.jFA, predOverlay [("available", "{0} is available to {1}", false, some "{0} leads to {1}")]),
+   (jFRh "{0} endangers {1}", predOverlay [("hazard", "{0} risks {1}", false, none)])].map
+    fun (j, o) => withOverlay j o
+
+/-- Every symbol-level result of the policy, on one environment and overlay, against the reference. -/
+def agreesWithReference (E : Env) (O : Overlay) : Bool :=
+  let L := portLex E O
+  E.predicates.all (fun d => policyPredicate E O d.name == PolicyReference.policyPredicate E O d.name &&
+    acceptsDeclared E O d.name == PolicyReference.acceptsDeclared E O d.name &&
+    duplicateWording E O d.name == PolicyReference.duplicateWording E O d.name &&
+    mainSelection E O d == PolicyReference.mainSelection E O d &&
+    ((E.declaredWording O d.name).map fun w => lintCodes E O d.name w d.arity ==
+      PolicyReference.lintCodes E O d.name w d.arity).getD true &&
+    ((E.declaredWording O d.name).map fun w => templateCodes E O w == PolicyReference.templateCodes E O w).getD true) &&
+  policyNouns E O == PolicyReference.policyNouns E O &&
+  policySpellings E O == PolicyReference.policySpellings E O &&
+  L.policyFailures E O == PolicyReference.policyFailures E O L &&
+  E.predicates.all (fun d => (select L d.name ((fallbackWording d.name d.arity).getD "x")).policyFailures E O ==
+    PolicyReference.policyFailures E O (select L d.name ((fallbackWording d.name d.arity).getD "x"))) &&
+  E.predicates.all (fun d => ((E.declaredWording O d.name).map fun w =>
+    (select L d.name w).policyFailures E O == PolicyReference.policyFailures E O (select L d.name w)).getD true) &&
+  overlayCheck E O == PolicyReference.overlayCheck E O
+
+-- `wordOccursIn` is `wordOccurs` on every token of word characters, and defers to it on any other
+#guard (["owns", "own", "x1", "_a", "un-safe", "safe", "A", "café", "", "re view", "Kelvin"].all fun tok =>
+  ["owns legacy", "x1 owns", "un-safe owns", "the_a b", "safe-ish", "unclear", "A b", "café au lait",
+   "reviewed", "re view", "Kelvin", "own", ""].all fun phrase =>
+    wordOccursIn (runs isW phrase) phrase tok == wordOccurs tok phrase)
+#guard policyEnvs.length == 34
+#guard policyEnvs.all fun (E, O) => agreesWithReference E O
+#guard crowded.predicates.length == 43 &&
+  (crowded.predicates.map fun d => (policyPredicate crowded {} d.name).isSome).all id
 
 end VE.EnglishGrammar.E2Examples

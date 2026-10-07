@@ -446,7 +446,7 @@ theorem policy_selection : ∀ (E : Env) (O : Overlay) (L : Lexicon), L.policyOk
   (∀ c sp, (c, sp) ∈ L.spellings → ∀ m, (policySpellings E O).lookup c = some m → sp = m ∨ sp = jsonQuote c) := by
   intro E O L hp
   simp only [Lexicon.policyOk, List.isEmpty_iff, Lexicon.policyFailures,
-    List.append_eq_nil_iff, List.filterMap_eq_nil_iff] at hp
+    List.append_eq_nil_iff, List.filterMap_eq_nil_iff, policyPredicate_tables] at hp
   rcases hp with ⟨⟨⟨hword, hneg⟩, hnoun⟩, hspell⟩
   refine ⟨?_, ?_, ?_, ?_⟩
   · intro p w hmem hpred
@@ -459,7 +459,7 @@ theorem policy_selection : ∀ (E : Env) (O : Overlay) (L : Lexicon), L.policyOk
     cases hpol : policyPredicate E O p with
     | none =>
       have hs : (policyPredicate E O p).isSome = true := by
-        unfold policyPredicate
+        unfold policyPredicate policyPredicateIn
         cases hp : E.predicate? p with
         | none => simp [hp] at hpred
         | some d => simp only [hp]; split <;> cases hform : List.lookup p E.forms.wordings <;> simp [hform]
@@ -485,7 +485,7 @@ theorem policy_selection : ∀ (E : Env) (O : Overlay) (L : Lexicon), L.policyOk
     cases hpol : policyPredicate E O p with
     | none =>
       have hs : (policyPredicate E O p).isSome = true := by
-        unfold policyPredicate
+        unfold policyPredicate policyPredicateIn
         cases hp : E.predicate? p with
         | none => simp [hp] at hpred
         | some d => simp only [hp]; split <;> cases hform : List.lookup p E.forms.wordings <;> simp [hform]
