@@ -149,6 +149,8 @@ REVIEWED = {
     ('ve/english.py', 'int(part[1])'): 'a slot {0}..{5} of a template',
     ('ve/english.py', 'int(p[1])'): 'a slot {0}..{5} of a template',
     ('ve/english.py', 'int(listed)'): 'a Boolean',
+    ('ve/model.py', 'int(cell)'): 'an order-model cell after Lean validated the bound input',
+    ('ve/model.py', 'int(raw)'): 'an order-model constant after Lean validated the bound input',
     ('ve/norms_contract.py', 'int(token)'): 'a path the contract engine built from list positions',
     ('ve/norms_contract.py', 'int(items[1][-1])'): 'a path the contract engine built from list positions',
     ('ve/norms_contract.py', 'int(items[0][-1])'): 'a path the contract engine built from list positions',

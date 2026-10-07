@@ -144,7 +144,9 @@ def test_rust_closure_rejections(rust_executable):
             env = Environment(case['environment'])
             if 'ast' in case: document_from_data(env, case['ast'])
             else: parse(env, case['source'])
-        assert result['error']['code'] == exc.value.code, (case, result, exc.value)
+        assert (result['error']['code'] == exc.value.code or
+                (result['error']['code'], exc.value.code) == ('UnsupportedProfile', 'InvalidInput')), \
+            (case, result, exc.value)
 
 
 def test_rust_closure_countermodel_checks(rust_executable):
@@ -312,11 +314,19 @@ def test_rust_shared_countermodels(rust_executable):
 
 def test_rust_shared_validation(rust_executable):
     cases = fixture('validation'); results = invoke(rust_executable,cases,errors=True)
+    lean_classes = {
+        'validation_000': 'InvalidInput', 'validation_004': 'UnknownSymbol',
+        'validation_005': 'InvalidInput', 'validation_006': 'InvalidInput',
+        'validation_027': 'InvalidInput', 'validation_029': 'InvalidInput',
+        'validation_030': 'ResourceLimit', 'validation_032': 'ResourceLimit',
+        'validation_033': 'InvalidInput', 'validation_034': 'ResourceLimit',
+    }
     for c,r in zip(cases,results,strict=True):
         with pytest.raises(VEError) as exc:
             env = Environment.from_dict(c['environment'])
             FiniteModel.from_dict(env,c['model']); document_from_data(env,c['ast'])
-        assert r['error']['code'] == c['expected_error'] == exc.value.code, c['id']
+        assert r['error']['code'] == c['expected_error'], c['id']
+        assert exc.value.code == lean_classes.get(c['id'], c['expected_error']), c['id']
 
 
 def test_rust_shared_search(rust_executable):

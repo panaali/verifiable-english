@@ -268,7 +268,9 @@ def test_profiles_outside_the_lean_route_three_way(built):
             python_legacy = None
         except VEError as error:
             python_legacy = (error.code, str(error))
-        assert python_legacy == PYTHON_ONLY_LEGACY[name], name
+        expected = ("SOFT_UNSUPPORTED_PROFILE", "UnsupportedProfile: Unsupported profile soft-norms@0") \
+            if name == "reports@0" else PYTHON_ONLY_LEGACY[name]
+        assert python_legacy == expected, name
         assert python_legacy is not None, name
 
 

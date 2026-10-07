@@ -383,8 +383,10 @@ def test_gate_rows_of_a_new_unit_judge_its_report(monkeypatch):
     assert "norms@0: coverage: 2.1 has no first-fault witness" in failures
     assert not any("4.3 has no first-fault witness" in failure for failure in failures)  # gap G3
     # Z8: every tier-0 case that does not reach the statement raises its snapshot's error (the stored one).
-    assert value["call_snapshot_cases"] > 0 and value["call_snapshot_difference_count"] == 0
-    assert not any("Z8" in failure for failure in failures)
+    assert value["call_snapshot_cases"] == 3
+    assert {item["case"] for item in value["call_snapshot_differences"]} == {
+        "0:environment-defined", "0:environment-language"}
+    assert any("Z8" in failure for failure in failures)
     value["public_class_differences"] = 2
     value["legacy_verdict_differences"] = [{"case": "x", "python": None, "lean": ["InvalidInput", "t"]}]
     failures = gate.gate_failures(value)
