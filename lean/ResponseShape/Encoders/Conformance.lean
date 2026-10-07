@@ -1,8 +1,8 @@
 import ResponseShape.Encoders.Common
 
 /-! The `ve_conformance` modes: `evaluate` (`Order.runEvaluationCaseReported`),
-`check-certificate` (`CertificateWire.runCaseReported`) and `order` (`Order.Surface.runCaseReported`)
-against their row shapes. -/
+`check-certificate` (the service's metered `CertificateWire.runCaseReportedSteps`)
+and `order` (`Order.Surface.runCaseReported`) against their row shapes. -/
 
 namespace ResponseShape.Encoders.Conformance
 open Lean ResponseShape ResponseShape.Skeletons
@@ -31,8 +31,8 @@ theorem certificateCase_fits (j : Json) :
   all_goals fits
 
 theorem checkCertificate_fits (j : Json) :
-    Fits req Skeletons.checkCertificate (VE.CertificateWire.runCaseReported j) := by
-  unfold VE.CertificateWire.runCaseReported
+    Fits req Skeletons.checkCertificate (VE.CertificateWire.runCaseReportedSteps j) := by
+  unfold VE.CertificateWire.runCaseReportedSteps
   split
   · exact certificateCase_fits j _ ‹_›
   · fits

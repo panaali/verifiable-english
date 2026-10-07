@@ -1,0 +1,187 @@
+{
+ "seed": 20261004,
+ "scale": 1,
+ "corpus": {
+  "requests": {
+   "admission:admission": 21,
+   "closure:evaluate": 46,
+   "countermodels:countermodel": 669,
+   "dependency-order:dependency-order": 207,
+   "elaborated-document:background": 1,
+   "elaborated-document:certificate": 13,
+   "elaborated-document:countermodel": 5,
+   "elaborated-document:evaluate": 39,
+   "elaborated-document:search": 4,
+   "evaluation:evaluate": 701,
+   "identity:evaluate": 583,
+   "invalid-background-model:countermodel": 2,
+   "invalid-background-model:evaluate": 5,
+   "labels:label": 52,
+   "parser:evaluate": 7,
+   "search:countermodel": 2,
+   "search:search": 24,
+   "usecase:birthright-citizenship-debate:evaluate": 2,
+   "usecase:cedar-attributes:evaluate": 1,
+   "usecase:claude-constitution-excerpt:evaluate": 4,
+   "usecase:closure-induction:certificate": 4,
+   "usecase:math-mini-paper:evaluate": 19,
+   "usecase:news-article:evaluate": 2,
+   "usecase:us-constitution-14th-s1:evaluate": 2,
+   "validation:evaluate": 43
+  },
+  "environment": {
+   "alternatives": 3,
+   "envelope": 176,
+   "norm-defaults": 45,
+   "quantity": 2,
+   "reports": 1,
+   "risk": 2,
+   "soft-norms": 27,
+   "speech": 1
+  },
+  "wire": {
+   "defer@0": 4,
+   "demo@0": 37,
+   "forms@0": 32,
+   "norm-defaults@0": 308,
+   "norms@0": 136,
+   "soft-norms@0": 62
+  }
+ },
+ "mutants": {
+  "requests": {
+   "zero-fault": 2458,
+   "one-fault": 6000,
+   "two-fault": 1500
+  },
+  "environment": {
+   "zero-fault": 257,
+   "one-fault": 6000,
+   "two-fault": 1500
+  },
+  "wire": {
+   "zero-fault": 579,
+   "one-fault": 6000,
+   "two-fault": 1500
+  }
+ },
+ "answers": {
+  "requests": {
+   "lean:error": 6902,
+   "lean:n/a": 618,
+   "lean:ok": 2438,
+   "python:error": 7033,
+   "python:n/a": 211,
+   "python:ok": 2714,
+   "rust:error": 6551,
+   "rust:n/a": 757,
+   "rust:ok": 2650
+  },
+  "environment": {
+   "lean:error": 6873,
+   "lean:ok": 884,
+   "python:error": 6887,
+   "python:ok": 870,
+   "rust:error": 2648,
+   "rust:n/a": 4600,
+   "rust:ok": 509
+  },
+  "wire": {
+   "lean:error": 7183,
+   "lean:ok": 896,
+   "python:error": 7094,
+   "python:n/a": 88,
+   "python:ok": 897,
+   "rust:n/a": 8079
+  }
+ },
+ "findings": {
+  "requests": {
+   "admission:admission:code": 101,
+   "closure:evaluate:code": 244,
+   "closure:evaluate:outcome": 1,
+   "countermodels:countermodel:code": 181,
+   "countermodels:countermodel:outcome": 2,
+   "dependency-order:dependency-order:code": 62,
+   "dependency-order:dependency-order:diagnostic": 9,
+   "dependency-order:dependency-order:outcome": 26,
+   "elaborated-document:background:code": 124,
+   "elaborated-document:certificate:code": 86,
+   "elaborated-document:certificate:diagnostic": 2,
+   "elaborated-document:countermodel:code": 155,
+   "elaborated-document:countermodel:diagnostic": 1,
+   "elaborated-document:evaluate:code": 89,
+   "elaborated-document:evaluate:diagnostic": 4,
+   "elaborated-document:evaluate:outcome": 1,
+   "elaborated-document:search:code": 4,
+   "elaborated-document:search:outcome": 1,
+   "evaluation:evaluate:code": 229,
+   "evaluation:evaluate:outcome": 2,
+   "identity:evaluate:code": 227,
+   "invalid-background-model:countermodel:code": 126,
+   "invalid-background-model:countermodel:diagnostic": 6,
+   "invalid-background-model:countermodel:outcome": 4,
+   "invalid-background-model:evaluate:code": 111,
+   "invalid-background-model:evaluate:diagnostic": 9,
+   "invalid-background-model:evaluate:outcome": 4,
+   "labels:label:code": 18,
+   "labels:label:diagnostic": 10,
+   "parser:evaluate:code": 188,
+   "parser:evaluate:outcome": 1,
+   "search:countermodel:code": 143,
+   "search:countermodel:outcome": 4,
+   "search:search:code": 11,
+   "search:search:outcome": 1,
+   "usecase:birthright-citizenship-debate:evaluate:code": 230,
+   "usecase:cedar-attributes:evaluate:code": 139,
+   "usecase:cedar-attributes:evaluate:diagnostic": 3,
+   "usecase:cedar-attributes:evaluate:outcome": 2,
+   "usecase:claude-constitution-excerpt:evaluate:code": 218,
+   "usecase:closure-induction:certificate:code": 93,
+   "usecase:math-mini-paper:evaluate:code": 250,
+   "usecase:news-article:evaluate:code": 176,
+   "usecase:us-constitution-14th-s1:evaluate:code": 198,
+   "usecase:us-constitution-14th-s1:evaluate:outcome": 2,
+   "validation:evaluate:code": 221,
+   "validation:evaluate:diagnostic": 9
+  },
+  "environment": {
+   "envelope:code": 150,
+   "envelope:diagnostic": 136,
+   "envelope:outcome": 2,
+   "norm-defaults:code": 113,
+   "norm-defaults:diagnostic": 89,
+   "norm-defaults:outcome": 19,
+   "quantity:code": 227,
+   "quantity:diagnostic": 130,
+   "reports:code": 131,
+   "reports:diagnostic": 138,
+   "soft-norms:code": 120,
+   "soft-norms:diagnostic": 75,
+   "soft-norms:outcome": 184,
+   "speech:code": 117,
+   "speech:diagnostic": 113
+  },
+  "wire": {
+   "demo@0:outcome": 1,
+   "forms@0:outcome": 13,
+   "norm-defaults@0:code": 2,
+   "norm-defaults@0:outcome": 4,
+   "norms@0:code": 3,
+   "norms@0:outcome": 1,
+   "soft-norms@0:outcome": 3
+  }
+ },
+ "new": [],
+ "baseline": {
+  "entries": 358,
+  "seen_in_sample": 329,
+  "unreviewed": [],
+  "not_reproduced": []
+ },
+ "passed": true,
+ "cpu_seconds": {
+  "python": 112.3,
+  "children": 16.0
+ }
+}

@@ -106,11 +106,11 @@ theorem canonicalName_identifier (n : Nat) : identifier (canonicalName n) = true
 
 theorem generated_not_reserved (s : String) (h : generatedName s = true) :
     reserved.contains s = false := by
+  have excludesGenerated : ∀ word ∈ reserved, generatedName word = false := by decide
   have hn : s ∉ reserved := by
     intro hm
-    simp only [reserved, List.mem_cons, List.not_mem_nil, or_false] at hm
-    rcases hm with h' | h' | h' | h' | h' | h' | h' | h' | h' | h' | h' | h' | h' | h' | h' | h' <;>
-      subst s <;> simp [generatedName] at h
+    rw [excludesGenerated s hm] at h
+    contradiction
   simpa using hn
 
 theorem span_ident_loop (cs tail acc : List Char) (hc : cs.all identChar = true)

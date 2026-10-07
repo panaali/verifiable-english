@@ -49,7 +49,7 @@ def test_named_fol_applies_identifier_length_limit_to_binders_and_references(env
     assert caught.value.path.endswith("/term/var")
 
 
-@pytest.mark.parametrize("name", ["true", "there", "service", "deployed", "api"])
+@pytest.mark.parametrize("name", ["true", "there", "no", "service", "deployed", "api"])
 def test_named_fol_rejects_reserved_and_schema_colliding_variables(env, name):
     with pytest.raises(SyntaxError):
         document_from_named_fol(env, {"formulas": [quantified(name)]})

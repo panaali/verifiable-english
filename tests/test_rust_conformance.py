@@ -14,6 +14,7 @@ from tools import rust_build
 from ve import Environment, FiniteModel, evaluate, parse, print_document
 from ve.ast import document_from_data, document_to_data
 from ve.errors import VEError
+from ve.environment import RESERVED
 from ve.identity import meaning_id
 from ve.wire import canonical_json, loads_json
 
@@ -253,6 +254,20 @@ def test_rust_shared_parser(rust_executable):
             doc = parse(env,c['source'])
             assert r['canonical'] == expected['canonical'] == print_document(env,doc), c['id']
             assert r['ast'] == expected['ast']
+
+
+def test_rust_reserved_words_track_python_in_binders_and_terms(rust_executable):
+    env = fixture('parser')[0]['environment']
+    cases = [{'id': f'{word}-{context}', 'environment': env, 'source': source}
+             for word in sorted(RESERVED)
+             for context, source in (
+                 ('binder', f'for every service {word}, (true).\n'),
+                 ('term', f'for every service x, ({word} equals x).\n'))]
+    cases.append({'id': 'no-punctuation', 'environment': env,
+                  'source': 'for every service no@, (true).\n'})
+    results = invoke(rust_executable, cases, errors=True)
+    assert len(results) == len(cases)
+    assert all(row['error']['code'] == 'SyntaxError' for row in results)
 
 
 def test_rust_shared_identities(rust_executable):

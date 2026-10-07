@@ -13,7 +13,11 @@ in the report.
 Which classes are content diagnostics is read from Python itself: every subclass of
 `ve.errors.VEError` reachable from the `ve` package, by the name a module calls it with
 (imported name or attribute). The list of relayed modules is `RELAYED`; each batch that
-relays a surface adds its modules (its row of section 5.2).
+relays a surface adds its modules (its row of section 5.2). A `ve` module that only relayed
+modules import is relayed with them (`helpers`), so a check cannot leave the lint by moving
+into a module of its own.
+An explicitly owned surface parser remains outside the relay even when only a
+relayed file adapter imports it.
 
 Usage: ``python tools/relay_lint.py [PATH ...]`` (default: `RELAYED`). Exit 1 on a finding.
 """
@@ -29,9 +33,15 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 # The modules whose diagnostics are Lean's (batch 0: the relay itself; batch 3: the readings route;
-# batch 4: discourse; batch 7: rights; batch 10b: norm defaults).
+# batch 4: discourse; batch 7: rights; batch 8: reports; batch 10b: norm defaults;
+# batch 11b: speech source).
 RELAYED = ("ve/backends/relay.py", "ve/readings_route.py", "ve/discourse.py",
-           "ve/rights_route.py", "ve/norm_defaults.py", "ve/norm_defaults_route.py")
+           "ve/rights_route.py", "ve/reports.py", "ve/reports_route.py",
+           "ve/norm_defaults.py", "ve/norm_defaults_route.py",
+           "ve/backends/speech_source.py", "ve/speech_document.py")
+# W2's English text-to-structure parser remains the experimental English E3
+# owner. SpeechDocument only supplies its structured fence to Lean for checking.
+OWNED_SURFACES = frozenset({"ve.speech_english"})
 FILE_IO = "# relay-lint: file I/O"
 
 
@@ -99,8 +109,60 @@ def findings(path: Path, classes: frozenset[str], marked: list | None = None) ->
     return out
 
 
+def _module_files() -> dict[str, Path]:
+    """Every module of the `ve` package by dotted name."""
+    files = {}
+    for path in (ROOT / "ve").rglob("*.py"):
+        parts = list(path.relative_to(ROOT).with_suffix("").parts)
+        if parts[-1] == "__init__":
+            parts.pop()
+        files[".".join(parts)] = path
+    return files
+
+
+def _imports(name: str, path: Path, files: dict[str, Path]) -> set[str]:
+    """The `ve` modules `path` imports, at any depth of its code, by Python's own parser."""
+    package = name.split(".") if path.name == "__init__.py" else name.split(".")[:-1]
+    found = set()
+    for node in ast.walk(ast.parse(path.read_text(), filename=str(path))):
+        if isinstance(node, ast.Import):
+            found.update(alias.name for alias in node.names)
+        elif isinstance(node, ast.ImportFrom):
+            base = package[:len(package) - node.level + 1] if node.level else []
+            stem = ".".join(base + ([node.module] if node.module else []))
+            found.add(stem)
+            found.update(f"{stem}.{alias.name}" for alias in node.names)
+    return {module for module in found if module in files and module != name}
+
+
+def helpers(relayed: list[Path]) -> list[Path]:
+    """The `ve` modules that only relayed modules import, found from the relayed ones: a check
+    moved out of a relayed module into a module of its own is still the relayed surface's
+    (lf-8 recheck B2: `ve/reports_preflight.py` held the reports relay's checks).
+    Explicitly owned surface parsers are excluded from this import-closure rule."""
+    files = _module_files()
+    names = {path.resolve(): name for name, path in files.items()}
+    graph = {name: _imports(name, path, files) for name, path in files.items()}
+    importers: dict[str, set[str]] = {}
+    for name, imported in graph.items():
+        for module in imported:
+            importers.setdefault(module, set()).add(name)
+    covered = {names[p] for p in relayed if p in names}
+    todo, found = list(covered), []
+    while todo:
+        for module in sorted(graph[todo.pop()]):
+            if (module not in covered and module not in OWNED_SURFACES
+                    and importers[module] <= covered and files[module].name != "__init__.py"):
+                covered.add(module)
+                todo.append(module)
+                found.append(files[module])
+    return found
+
+
 def main(argv: list[str] | None = None) -> int:
     paths = [Path(p).resolve() for p in (argv if argv else [str(ROOT / r) for r in RELAYED])]
+    if not argv:
+        paths += helpers(paths)
     missing = [p for p in paths if not p.is_file()]
     if missing:
         print("\n".join(f"relayed module not found: {p}" for p in missing))

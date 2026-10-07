@@ -536,9 +536,9 @@ def runFol (profiles : List String) (environment : Json) (rv : RouteVocabulary) 
   bindingOk profiles environment (background.map encodeFormula ++ (← premisesJson.getArr?).toList)
     (← j.getObjVal? "conclusion") certificate.environment_id certificate.premise_meaning_ids
     certificate.conclusion_meaning_id
-  if Steps.fol certificate.trace > Steps.limit j then throw Steps.stepLimit
+  if Steps.fol certificate.trace > (← Steps.limit j) then throw Steps.stepLimit
   return ok id [("valid", .bool (VE.Tableau.checkCertificate E (background ++ ps) c certificate)),
-    ("background", toJson background.length)]
+    ("background", toJson background.length), ("steps", toJson (Steps.fol certificate.trace))]
 
 /-- Closure family: the same cases over closure formulas; Background embedded. -/
 def runClosure (profiles : List String) (environment : Json) (rv : RouteVocabulary) (id kind : String)
@@ -578,10 +578,10 @@ def runClosure (profiles : List String) (environment : Json) (rv : RouteVocabula
   bindingOk profiles environment (background.map encodeFormula ++ (← premisesJson.getArr?).toList)
     (← j.getObjVal? "conclusion") certificate.environment_id certificate.premise_meaning_ids
     certificate.conclusion_meaning_id
-  if Steps.closure certificate.trace > Steps.limit j then throw Steps.stepLimit
+  if Steps.closure certificate.trace > (← Steps.limit j) then throw Steps.stepLimit
   return ok id [("valid", .bool (VE.Closure.Tableau.checkCertificate E
       (background.map VE.Closure.embed ++ ps) c certificate)),
-    ("background", toJson background.length)]
+    ("background", toJson background.length), ("steps", toJson (Steps.closure certificate.trace))]
 
 /-- An order model: decoded, structurally admissible, then Background
 (`InvalidModel(literals)` on aliasing literals, never a truth value). -/
@@ -643,9 +643,9 @@ def runOrder (profiles : List String) (environment : Json) (rv : RouteOrderVocab
     ((Background.literals rv.literals).map encodeFormula ++ (← premisesJson.getArr?).toList)
     (← j.getObjVal? "conclusion") certificate.environment_id certificate.premise_meaning_ids
     certificate.conclusion_meaning_id
-  if Steps.order certificate.trace > Steps.limit j then throw Steps.stepLimit
+  if Steps.order certificate.trace > (← Steps.limit j) then throw Steps.stepLimit
   return ok id [("valid", .bool (VE.Order.Tableau.checkCertificate E (background ++ ps) c certificate)),
-    ("background", toJson background.length)]
+    ("background", toJson background.length), ("steps", toJson (Steps.order certificate.trace))]
 
 /-- The `background` case (the differential elaboration check, PLAN-EXPAND2
 W3(7)): the regenerated Background, in order, with each premise's generator. -/

@@ -339,14 +339,20 @@
     "ResponseShape.Schemas.Alternatives.admission",
     "ResponseShape.Schemas.Alternatives.alt_labels",
     "ResponseShape.Schemas.Alternatives.alt_path",
+    "ResponseShape.Schemas.Alternatives.assumedCell",
     "ResponseShape.Schemas.Alternatives.certificate",
     "ResponseShape.Schemas.Alternatives.chooser",
     "ResponseShape.Schemas.Alternatives.conflict_witness",
+    "ResponseShape.Schemas.Alternatives.counterfactualCell",
+    "ResponseShape.Schemas.Alternatives.coverage",
+    "ResponseShape.Schemas.Alternatives.declaredCell",
     "ResponseShape.Schemas.Alternatives.elaborate",
+    "ResponseShape.Schemas.Alternatives.environment",
     "ResponseShape.Schemas.Alternatives.file",
     "ResponseShape.Schemas.Alternatives.followable",
     "ResponseShape.Schemas.Alternatives.followable_witness",
     "ResponseShape.Schemas.Alternatives.kind",
+    "ResponseShape.Schemas.Alternatives.proximateCell",
     "ResponseShape.Schemas.Alternatives.regenerated",
     "ResponseShape.Schemas.Alternatives.row",
     "ResponseShape.Schemas.Alternatives.validate"
@@ -572,6 +578,9 @@
    "G[V]": [
     "ResponseShape.Schemas.Parse.file",
     "ResponseShape.Schemas.Parse.row"
+   ],
+   "G[R]": [
+    "ResponseShape.Schemas.Parse.parse_error"
    ]
   },
   "ResponseShape/Schemas/Quantity.lean": {
@@ -632,13 +641,18 @@
   "ResponseShape/Schemas/Reports.lean": {
    "G[V]": [
     "ResponseShape.Schemas.Reports.admission",
+    "ResponseShape.Schemas.Reports.boundVerdicts",
     "ResponseShape.Schemas.Reports.certificate",
+    "ResponseShape.Schemas.Reports.content",
     "ResponseShape.Schemas.Reports.countermodel",
+    "ResponseShape.Schemas.Reports.counts",
     "ResponseShape.Schemas.Reports.elaborate",
     "ResponseShape.Schemas.Reports.envelope",
     "ResponseShape.Schemas.Reports.file",
     "ResponseShape.Schemas.Reports.key",
     "ResponseShape.Schemas.Reports.kind",
+    "ResponseShape.Schemas.Reports.nested",
+    "ResponseShape.Schemas.Reports.object_map",
     "ResponseShape.Schemas.Reports.report_kind",
     "ResponseShape.Schemas.Reports.reports_path",
     "ResponseShape.Schemas.Reports.row",
@@ -1066,6 +1080,7 @@
     "VE.Alternatives.Run.runCaseReported",
     "VE.Alternatives.Run.runConflict",
     "VE.Alternatives.Run.runConflictWitness",
+    "VE.Alternatives.Run.runElaborate",
     "VE.Alternatives.Run.runFollowable",
     "VE.Alternatives.Run.runValidate",
     "VE.Alternatives.Run.unmappedText",
@@ -1130,16 +1145,24 @@
    "D[V]": [
     "VE.Alternatives.Wire.AltSource",
     "VE.Alternatives.Wire.Block",
+    "VE.Alternatives.Wire.Scope",
     "VE.Alternatives.Wire.actWords",
     "VE.Alternatives.Wire.checkAvoids",
+    "VE.Alternatives.Wire.checkReservedWording",
+    "VE.Alternatives.Wire.coverageAtom",
+    "VE.Alternatives.Wire.coverageBinary",
+    "VE.Alternatives.Wire.coverageConstNames",
+    "VE.Alternatives.Wire.coverageField",
     "VE.Alternatives.Wire.decodeAltSource",
     "VE.Alternatives.Wire.decodeBlock",
     "VE.Alternatives.Wire.decodeOutcomes",
     "VE.Alternatives.Wire.decodePremises",
+    "VE.Alternatives.Wire.fixedPredicates",
     "VE.Alternatives.Wire.enc",
     "VE.Alternatives.Wire.encodeNode",
     "VE.Alternatives.Wire.labelled",
     "VE.Alternatives.Wire.legend",
+    "VE.Alternatives.Wire.otherDeclarations",
     "VE.Alternatives.Wire.positiveCells",
     "VE.Alternatives.Wire.profileGate"
    ],
@@ -1149,6 +1172,7 @@
    "G[V]": [
     "VE.Alternatives.Wire.blockString",
     "VE.Alternatives.Wire.checkVerbalisations",
+    "VE.Alternatives.Wire.coverage",
     "VE.Alternatives.Wire.mandatoryFields",
     "VE.Alternatives.Wire.normsView",
     "VE.Alternatives.Wire.optString",
@@ -1169,6 +1193,7 @@
    "C": [
     "VE.Reports.admitNodes",
     "VE.Reports.authorPath",
+    "VE.Reports.bridgeLeafDiagnostic",
     "VE.Reports.checkOuter",
     "VE.Reports.hasField",
     "VE.Reports.nodeB",
@@ -1338,16 +1363,76 @@
     "VE.Reports.WF"
    ]
   },
+  "VE/Attribution/Preflight.lean": {
+   "D[R]": [
+    "VE.Reports.Preflight.Facts",
+    "VE.Reports.Preflight.Scope",
+    "VE.Reports.Preflight.Step",
+    "VE.Reports.Preflight.Typing",
+    "VE.Reports.Preflight.Walk",
+    "VE.Reports.Preflight.acts",
+    "VE.Reports.Preflight.arr",
+    "VE.Reports.Preflight.assessment",
+    "VE.Reports.Preflight.atomTerms",
+    "VE.Reports.Preflight.bridgeRow",
+    "VE.Reports.Preflight.check",
+    "VE.Reports.Preflight.context",
+    "VE.Reports.Preflight.decimal",
+    "VE.Reports.Preflight.decodeNode",
+    "VE.Reports.Preflight.decodeStep",
+    "VE.Reports.Preflight.decoderFault",
+    "VE.Reports.Preflight.descend",
+    "VE.Reports.Preflight.field",
+    "VE.Reports.Preflight.firstRepeat",
+    "VE.Reports.Preflight.formulaArity",
+    "VE.Reports.Preflight.formulaFault",
+    "VE.Reports.Preflight.formulaOk",
+    "VE.Reports.Preflight.hasKey",
+    "VE.Reports.Preflight.int?",
+    "VE.Reports.Preflight.isArr",
+    "VE.Reports.Preflight.isNonEmptyStr",
+    "VE.Reports.Preflight.isObj",
+    "VE.Reports.Preflight.isReportContent",
+    "VE.Reports.Preflight.isStr",
+    "VE.Reports.Preflight.isToken",
+    "VE.Reports.Preflight.keys",
+    "VE.Reports.Preflight.kindMatches",
+    "VE.Reports.Preflight.localScope",
+    "VE.Reports.Preflight.meaningOk",
+    "VE.Reports.Preflight.members",
+    "VE.Reports.Preflight.node",
+    "VE.Reports.Preflight.nullPaths",
+    "VE.Reports.Preflight.pathObject",
+    "VE.Reports.Preflight.pyList",
+    "VE.Reports.Preflight.pyRepr",
+    "VE.Reports.Preflight.pyStr",
+    "VE.Reports.Preflight.quote",
+    "VE.Reports.Preflight.reachEdge",
+    "VE.Reports.Preflight.records",
+    "VE.Reports.Preflight.reportKeys",
+    "VE.Reports.Preflight.resolve",
+    "VE.Reports.Preflight.restore",
+    "VE.Reports.Preflight.sameKeys",
+    "VE.Reports.Preflight.scopeOf",
+    "VE.Reports.Preflight.scopedRow",
+    "VE.Reports.Preflight.setNull",
+    "VE.Reports.Preflight.termArity",
+    "VE.Reports.Preflight.units"
+   ]
+  },
   "VE/Attribution/Run.lean": {
    "C": [
     "VE.Reports.Run.assessItems",
     "VE.Reports.Run.depthPath",
     "VE.Reports.Run.elaborated",
     "VE.Reports.Run.hasContent",
+    "VE.Reports.Run.literalPaths",
+    "VE.Reports.Run.manifestUnknown",
     "VE.Reports.Run.nestedResults",
     "VE.Reports.Run.outerBound",
     "VE.Reports.Run.scopedBound",
     "VE.Reports.Run.scopedCertificate",
+    "VE.Reports.Run.scopedUnreplayed",
     "VE.Reports.Run.scopedVerdict"
    ],
    "D[V]": [
@@ -1360,7 +1445,10 @@
     "VE.Reports.Run.premiseLabel",
     "VE.Reports.Run.recordJson",
     "VE.Reports.Run.reportJson",
+    "VE.Reports.Run.reportLine",
     "VE.Reports.Run.scopedCertified",
+    "VE.Reports.Run.unitStatusText",
+    "VE.Reports.Run.unknownPredicate",
     "VE.Reports.Run.unreviewedActs",
     "VE.Reports.Run.verdictOf"
    ],
@@ -1368,14 +1456,18 @@
     "VE.Reports.Run.ReportsAdmissionAnswer",
     "VE.Reports.Run.certificateFor",
     "VE.Reports.Run.countermodelAnswer",
+    "VE.Reports.Run.counts",
     "VE.Reports.Run.reportDomain",
     "VE.Reports.Run.reportPayload",
+    "VE.Reports.Run.residualLines",
     "VE.Reports.Run.runAdmission",
     "VE.Reports.Run.runCase",
     "VE.Reports.Run.runCaseReported",
     "VE.Reports.Run.runCertificate",
     "VE.Reports.Run.runCountermodel",
     "VE.Reports.Run.runStatus",
+    "VE.Reports.Run.statusText",
+    "VE.Reports.Run.textPath",
     "VE.Reports.Run.unformalisedKinds",
     "VE.Reports.Run.usesReportsPath"
    ],
@@ -1510,6 +1602,7 @@
    ],
    "D[V]": [
     "VE.CertificateWire.Query",
+    "VE.CertificateWire.certificateFields",
     "VE.CertificateWire.decodeCertificate",
     "VE.CertificateWire.decodeClosureCertificate",
     "VE.CertificateWire.decodeClosureTrace",
@@ -1528,9 +1621,21 @@
    ],
    "G[V]": [
     "VE.CertificateWire.Query.accepts",
+    "VE.CertificateWire.caseCap",
+    "VE.CertificateWire.closureSteps",
+    "VE.CertificateWire.closureStepsList",
+    "VE.CertificateWire.folSteps",
+    "VE.CertificateWire.folStepsList",
+    "VE.CertificateWire.legacyCertificate",
     "VE.CertificateWire.runCase",
     "VE.CertificateWire.runCaseReported",
+    "VE.CertificateWire.runCaseReportedSteps",
     "VE.CertificateWire.runClosureCase"
+   ],
+   "G[R]": [
+    "VE.CertificateWire.limit",
+    "VE.CertificateWire.maxSteps",
+    "VE.CertificateWire.stepLimit"
    ]
   },
   "VE/Checks.lean": {
@@ -3490,7 +3595,6 @@
    "G[V]": [
     "VE.EnglishGrammar.Run.Case",
     "VE.EnglishGrammar.Run.authoring",
-    "VE.EnglishGrammar.Run.blockRouteView",
     "VE.EnglishGrammar.Run.boolText",
     "VE.EnglishGrammar.Run.budgetFields",
     "VE.EnglishGrammar.Run.coded",
@@ -4731,12 +4835,15 @@
     "VE.Order.Surface.parseRaw",
     "VE.Order.Surface.parseStatements",
     "VE.Order.Surface.parseTerm",
+    "VE.Order.Surface.printAux",
     "VE.Order.Surface.readNumeral",
     "VE.Order.Surface.termJson"
    ],
    "G[V]": [
     "VE.Order.Surface.oversizedIdentifier",
     "VE.Order.Surface.oversizedNumeral",
+    "VE.Order.Surface.print",
+    "VE.Order.Surface.printTerm",
     "VE.Order.Surface.runCase",
     "VE.Order.Surface.runCaseReported"
    ]
@@ -6454,6 +6561,7 @@
     "VE.Risk.Run.runCertificate",
     "VE.Risk.Run.runConflict",
     "VE.Risk.Run.runDecision",
+    "VE.Risk.Run.runElaborate",
     "VE.Risk.Run.runFollowable",
     "VE.Risk.Run.statusText",
     "VE.Risk.Run.withCase",
@@ -6876,11 +6984,9 @@
    "G[V]": [
     "VE.Route.Steps.caseCap",
     "VE.Route.Steps.closure",
-    "VE.Route.Steps.closureList",
     "VE.Route.Steps.core",
     "VE.Route.Steps.coreList",
     "VE.Route.Steps.fol",
-    "VE.Route.Steps.folList",
     "VE.Route.Steps.order",
     "VE.Route.Steps.orderList"
    ],
@@ -7617,7 +7723,9 @@
   "VE/Service/Standalone.lean": {
    "S": [
     "VE.Service.Standalone.isLegacy",
-    "VE.Service.Standalone.legacyMeaningId"
+    "VE.Service.Standalone.legacyMeaningId",
+    "VE.Service.Standalone.rawParseAst",
+    "VE.Service.Standalone.reportedParse"
    ],
    "D[V]": [
     "VE.Service.Standalone.Legacy",
@@ -7660,7 +7768,8 @@
     "VE.Service.Standalone.validatedEnvironment"
    ],
    "G[R]": [
-    "VE.Service.Standalone.maxSourceBytes"
+    "VE.Service.Standalone.maxSourceBytes",
+    "VE.Service.Standalone.parseRejection"
    ],
    "G[I]": [
     "VE.Service.Standalone.identityCase"
@@ -8167,10 +8276,6 @@
    "D[I]": [
     "VE.SpeechActs.Source.Admission.reportId"
    ],
-   "G[R]": [
-    "VE.SpeechActs.Source.Admission.nodeDiagnostic",
-    "VE.SpeechActs.Source.admissionPayloadError"
-   ],
    "G[V]": [
     "VE.SpeechActs.Source.Admission.SpeechAdmitted.kinds",
     "VE.SpeechActs.Source.Admission.runAdmission",
@@ -8179,9 +8284,28 @@
     "VE.SpeechActs.Source.runCase",
     "VE.SpeechActs.Source.runCaseReported",
     "VE.SpeechActs.Source.usesSourcePath"
+   ],
+   "G[R]": [
+    "VE.SpeechActs.Source.Admission.nodeDiagnostic",
+    "VE.SpeechActs.Source.admissionPayloadError"
    ]
   },
   "VE/SpeechActs/Source/Run.lean": {
+   "S": [
+    "VE.SpeechActs.Source.Coverage",
+    "VE.SpeechActs.Source.DoneFact",
+    "VE.SpeechActs.Source.Row",
+    "VE.SpeechActs.Source.actVerb",
+    "VE.SpeechActs.Source.coverage",
+    "VE.SpeechActs.Source.doneFact",
+    "VE.SpeechActs.Source.expectedOpenTerm",
+    "VE.SpeechActs.Source.meaningWord",
+    "VE.SpeechActs.Source.reconciles",
+    "VE.SpeechActs.Source.sumBytes",
+    "VE.SpeechActs.Source.totals",
+    "VE.SpeechActs.Source.unitClass",
+    "VE.SpeechActs.Source.unitStatus"
+   ],
    "D[V]": [
     "VE.SpeechActs.Source.SetInfo",
     "VE.SpeechActs.Source.SourceUnit",
@@ -8196,6 +8320,7 @@
     "VE.SpeechActs.Source.nominationKeys",
     "VE.SpeechActs.Source.ordinary",
     "VE.SpeechActs.Source.partitionError",
+    "VE.SpeechActs.Source.premiseFields",
     "VE.SpeechActs.Source.premiseText",
     "VE.SpeechActs.Source.queryJson",
     "VE.SpeechActs.Source.readUnit",
@@ -8214,22 +8339,8 @@
    "D[I]": [
     "VE.SpeechActs.Source.SpeechSource.documentId",
     "VE.SpeechActs.Source.SpeechSource.identityPayload",
-    "VE.SpeechActs.Source.completedModelId"
-   ],
-   "S": [
-    "VE.SpeechActs.Source.Coverage",
-    "VE.SpeechActs.Source.DoneFact",
-    "VE.SpeechActs.Source.Row",
-    "VE.SpeechActs.Source.actVerb",
-    "VE.SpeechActs.Source.coverage",
-    "VE.SpeechActs.Source.doneFact",
-    "VE.SpeechActs.Source.expectedOpenTerm",
-    "VE.SpeechActs.Source.meaningWord",
-    "VE.SpeechActs.Source.reconciles",
-    "VE.SpeechActs.Source.sumBytes",
-    "VE.SpeechActs.Source.totals",
-    "VE.SpeechActs.Source.unitClass",
-    "VE.SpeechActs.Source.unitStatus"
+    "VE.SpeechActs.Source.completedModelId",
+    "VE.SpeechActs.Source.statusModelId"
    ],
    "G[V]": [
     "VE.SpeechActs.Source.AnswerRecord",
@@ -8259,6 +8370,9 @@
     "VE.SpeechActs.Source.recordJson",
     "VE.SpeechActs.Source.report",
     "VE.SpeechActs.Source.statusText"
+   ],
+   "G[R]": [
+    "VE.SpeechActs.Source.trivialWarnings"
    ]
   },
   "VE/SpeechActs/Tree.lean": {
@@ -9139,6 +9253,31 @@
    ],
    "G[R]": [
     "VE.SoftNorms.defaultDecidesOn"
+   ]
+  },
+  "VE/Service/ParseDiagnostic.lean": {
+   "G[V]": [
+    "VE.Service.ParseDiagnostic.Cursor",
+    "VE.Service.ParseDiagnostic.Error",
+    "VE.Service.ParseDiagnostic.Scan",
+    "VE.Service.ParseDiagnostic.advance",
+    "VE.Service.ParseDiagnostic.binder",
+    "VE.Service.ParseDiagnostic.complete",
+    "VE.Service.ParseDiagnostic.current",
+    "VE.Service.ParseDiagnostic.fails",
+    "VE.Service.ParseDiagnostic.formula",
+    "VE.Service.ParseDiagnostic.hasPrefix",
+    "VE.Service.ParseDiagnostic.ident",
+    "VE.Service.ParseDiagnostic.identChar",
+    "VE.Service.ParseDiagnostic.literal",
+    "VE.Service.ParseDiagnostic.numeral",
+    "VE.Service.ParseDiagnostic.pyQuote",
+    "VE.Service.ParseDiagnostic.reserved",
+    "VE.Service.ParseDiagnostic.term"
+   ],
+   "G[R]": [
+    "VE.Service.ParseDiagnostic.scan",
+    "VE.Service.ParseDiagnostic.span"
    ]
   }
  }

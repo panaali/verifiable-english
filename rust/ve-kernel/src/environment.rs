@@ -25,6 +25,7 @@ pub(crate) const RESERVED: &[&str] = &[
     "believes",
     "must",
     "eventually",
+    "no",
 ];
 pub(crate) fn identifier(s: &str, code: &str) -> Result<()> {
     // Schema names follow Python's character-count check before ASCII syntax.

@@ -378,8 +378,8 @@ def open_objects(directory=DIRECTORY):
                 walk(value, file, f"{where}/{key}", False)
             elif key in ("then", "else"):
                 walk(value, file, f"{where}/{key}", True)
-            elif key == "x-zip":
-                walk(value["items"], file, f"{where}/x-zip/items", False)
+            elif key in ("x-zip", "x-zip-or-empty"):
+                walk(value["items"], file, f"{where}/{key}/items", False)
 
     while stack:
         file, pointer = stack.pop()
@@ -408,5 +408,5 @@ def test_an_open_answer_is_found(tmp_path):
 def test_the_delta_states_the_corpus_it_ran():
     import re
     delta = (ROOT / "docs/lean-first/b1/DELTA.md").read_text()
-    stated = re.search(r"`tests/data/route-cases\.jsonl`, (\d[\d,]*) cases", delta)
+    stated = re.search(r"current\s+merged corpus has (\d[\d,]*) cases", delta)
     assert stated and int(stated.group(1).replace(",", "")) == len(CASES.read_text().splitlines())

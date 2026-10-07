@@ -84,6 +84,7 @@ module VE.Attribution.Conservative
 module VE.Attribution.Content
 module VE.Attribution.Elaborate
 module VE.Attribution.Facts
+module VE.Attribution.Preflight
 module VE.Attribution.Route
 module VE.Attribution.Run
 module VE.Attribution.Scoped
@@ -370,6 +371,7 @@ module VE.Service.FamilyNorms
 module VE.Service.GenericGraph
 module VE.Service.GenericReadings
 module VE.Service.Graph
+module VE.Service.ParseDiagnostic
 module VE.Service.Protocol
 module VE.Service.Readings
 module VE.Service.Standalone
