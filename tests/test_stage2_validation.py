@@ -114,6 +114,25 @@ def test_speech_scope_references_are_checked_before_construction():
         Environment(raw)
 
 
+def test_reviewed_environment_findings_have_one_python_lean_diagnostic():
+    """Replay every reviewed environment mutation, including stale minimized ones."""
+    from tools.difffuzz import EnvironmentSurface, evaluate, seed_of
+
+    entries = [entry for entry in json.loads(
+        (ROOT / "conformance/difffuzz-baseline.json").read_text())["entries"]
+        if entry["surface"] == "environment"]
+    surface = EnvironmentSurface()
+    try:
+        for entry, (_, _, answers, _) in zip(
+                entries, evaluate(surface, [(seed_of(entry), entry["input"]) for entry in entries]),
+                strict=True):
+            python, lean = answers["python"], answers["lean"]
+            fields = ("outcome", "code", "text")
+            assert tuple(python.get(field) for field in fields) == tuple(lean.get(field) for field in fields), entry["id"]
+    finally:
+        surface.close()
+
+
 def test_soft_metadata_survives_the_lean_environment_identity():
     from tools.difffuzz_corpus import environments
     raw = next(data for origin, data in environments()
