@@ -7,7 +7,8 @@ from ve.ast import And, Const, Eq, Not, Or, Top, Unary, Var, _Checker
 from ve.environment import Environment
 from ve.errors import InvalidModel, ResourceLimit, UnsupportedProfile, VEError
 from ve.norms import Norm, NormDocument, check_conflict as w1_check_conflict
-from ve.profiles import LANGUAGE, SPEC_REVISION, checker_family
+from ve.profiles import LANGUAGE, SPEC_REVISION
+from tests.profile_gate_oracle import checker_family
 from ve import norm_defaults as nd
 
 PROFILES = ["norm-defaults@0", "norms@0", "relational-fol@0"]

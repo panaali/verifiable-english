@@ -24,7 +24,7 @@ open VE.Bridge (exactFields fields stringField strings)
 /-- Python `ve/environment.py` `RESERVED`, the words an act phrase may not use. -/
 def actReserved : List String :=
   ["true", "false", "is", "equals", "not", "and", "or", "if", "then", "for", "every", "there",
-   "exists", "believes", "must", "eventually"]
+   "exists", "believes", "must", "eventually", "no"]
 
 /-- `{d}` slot occurrences in order, and the text with every slot replaced by
 `slot` (Python `re.findall`/`re.sub` on `\{([0-9]+)\}`); fuel is the length. -/

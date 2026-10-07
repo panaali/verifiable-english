@@ -288,13 +288,13 @@ def lean_route_rows(route, environments):
 
 
 def lean_diagnostic(data):
-    """The diagnostic of the Lean route that decodes `data`."""
+    """The diagnostic of the owning Lean environment endpoint."""
     try:
         canonical_json(data)
     except VEError as exc:
         # Not on the restricted wire (null): no Lean runner can read it.
         return exc.code, "not on the restricted wire"
-    [row] = lean_route_rows(lean_route(data), [data])
+    [row] = lean_route_rows("envelope", [data])
     return row
 
 
@@ -353,17 +353,14 @@ def test_pairs_of_wrong_typed_fields_have_the_routes_diagnostics(monkeypatch, ba
     monkeypatch.setenv("VE_AUTHORITY", "python")
     cases = list(_paired(base))
     python = {}
-    by_route = {}
     for name, data in cases:
         try:
             Environment(deepcopy(data))
             python[name] = ("ok", "")
         except VEError as exc:
             python[name] = pair(exc.to_dict())
-        by_route.setdefault(lean_route(data), []).append((name, data))
-    lean = {}
-    for route, routed in by_route.items():
-        lean.update(zip([name for name, _ in routed], lean_route_rows(route, [data for _, data in routed])))
+    lean = dict(zip([name for name, _ in cases],
+                    lean_route_rows("envelope", [data for _, data in cases])))
     accepted = [name for name, _ in cases if "ok" in (python[name][0], lean[name][0])
                 and python[name] != lean[name]]
     differing = [(name, python[name], lean[name]) for name, _ in cases
@@ -551,8 +548,7 @@ def test_definition_body_with_a_non_string_name_is_rejected_by_both(monkeypatch,
     monkeypatch.setenv("VE_AUTHORITY", "python")
     data = pm.raw_environment(("definitions@0",))
     data["vocabulary"]["predicates"]["derived"]["defined"]["body"][1] = value
-    assert pair(outcome(lambda: Environment(data))) == (
-        "InvalidInput", "Definition derived: the body is not a typed formula over the symbols below it")
+    assert pair(outcome(lambda: Environment(data))) == ("InvalidInput", "invalid indexed formula")
     if (BIN / "ve_service").exists():
         lean_environment_mode(data)  # fails the test unless Lean rejects too
 

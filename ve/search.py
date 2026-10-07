@@ -580,8 +580,6 @@ def _find_countermodel_python(env: Any, premises: Sequence[Any], conclusion: Any
                       max_evaluations: int = 1_000_000) -> CountermodelResult:
     """Search used-relation interpretations; fix all unused predicates to empty."""
     premises = _premises(premises)
-    from .profiles import require_checker
-    require_checker(env)
     minimum_size = _validate_options(min_domain_size, max_domain_size, max_models,
                                      max_evaluations, nonempty_domains,
                                      nonvacuous_for, semantic_nonvacuity)
@@ -657,7 +655,6 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
     from .backends.dispatch import authority_for, execute
     from .backends.lean_service import CheckerUnavailable
     from .backends.rust_jsonl import run as rust_run, cached_rust_environment, soft_case
-    from .profiles import require_checker
 
     if authority_for("countermodel_search") == "python":
         return _find_countermodel_python(
@@ -667,7 +664,6 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
             max_models=max_models, max_evaluations=max_evaluations)
 
     premises = _premises(premises)
-    require_checker(env)
     _validate_options(min_domain_size, max_domain_size, max_models, max_evaluations,
                       nonempty_domains, nonvacuous_for, semantic_nonvacuity)
     _check_aggregate_ast(premises, conclusion)
@@ -749,8 +745,6 @@ def _find_distinguishing_model_python(env: Any, a: Any, b: Any, *, max_domain_si
                               max_models: int = 10_000,
                               max_evaluations: int = 1_000_000) -> CountermodelResult:
     """Find a bounded finite model on which two closed formulas differ."""
-    from .profiles import require_checker
-    require_checker(env)
     minimum_size = _validate_options(min_domain_size, max_domain_size, max_models,
                                      max_evaluations, nonempty_domains,
                                      nonvacuous_for, semantic_nonvacuity)
@@ -829,7 +823,6 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
     from .backends.dispatch import authority_for, execute
     from .backends.lean_service import CheckerUnavailable
     from .backends.rust_jsonl import run as rust_run, cached_rust_environment, soft_case
-    from .profiles import require_checker
 
     def python():
         return _find_distinguishing_model_python(
@@ -840,7 +833,6 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
 
     if authority_for("distinguishing_model") == "python":
         return python()
-    require_checker(env)
     _validate_options(min_domain_size, max_domain_size, max_models, max_evaluations,
                       nonempty_domains, nonvacuous_for, semantic_nonvacuity)
     if _node_count(a) + _node_count(b) > MAX_NODES:

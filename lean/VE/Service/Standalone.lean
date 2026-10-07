@@ -9,6 +9,14 @@ import VE.Service.TypingDiagnostic
 import VE.Service.ParseDiagnostic
 import VE.Risk.Wire
 import VE.Time.Wire
+import VE.Compose.Dispatch
+import VE.Alternatives.Wire
+import VE.SpeechActs.Wire
+import VE.Attribution.Wire
+import VE.SoftNorms.Phases
+import VE.Rights.Wire
+import VE.Readings.Wire
+import VE.NormDefaults.Wire
 
 /-! Standalone service validation and identity endpoints. These wrap the same
 decoders used by the route; successful model answers require a checked model. -/
@@ -196,6 +204,72 @@ def validated (environment : Json) (typing : Bool := false) : Except String Vali
 def validatedEnvironment (environment : Json) : Except String VE.Route.Gate.Envelope :=
   (·.envelope) <$> validated environment
 
+/-- The public environment endpoint follows the composed profile head. Each
+statement layer validates its own declarations; the core decoder handles the
+remaining families. `todayGate` is the single gate for the full registry. -/
+def validatedComposedEnvironment (environment : Json) : Except String VE.Route.Gate.Envelope := do
+  let named := (VE.Route.Gate.profilesOf environment).toOption.getD []
+  let empty := Json.arr #[]
+  if named.contains "risk@0" || (environment.getObjVal? "risk").isOk then
+    let _ ← VE.Risk.Wire.decodeRiskSource environment
+      (Json.mkObj [("norms", empty), ("units", empty)])
+    pure ()
+  else if named.contains "alternatives@0" || (environment.getObjVal? "alternatives").isOk then
+    let _ ← VE.Alternatives.Wire.decodeAltSource environment empty empty .environment
+    pure ()
+  else if named.contains "speech-acts@0" || (environment.getObjVal? "speech_acts").isOk then
+    let _ ← VE.SpeechActs.Wire.decodeSpeechEnvironmentFull environment
+    pure ()
+  else if named.contains "reports@0" then
+    let _ ← VE.Reports.Wire.decodeEnvironment environment
+    pure ()
+  else if (environment.getObjVal? "unit_schema").isOk || (environment.getObjVal? "units").isOk then
+    let _ ← VE.Time.Wire.decodeEnvironment environment
+    pure ()
+  else if named.contains "readings@1" then
+    let _ ← VE.Readings.Wire.decodeEnvironment environment
+    pure ()
+  else if named.contains "rights@0" then
+    let _ ← VE.Rights.Wire.decodeRightsEnvironment environment
+    pure ()
+  else if named.contains "soft-norms@0" then
+    match VE.SoftNorms.Phases.checkSource environment empty with
+    | .ok _ => pure ()
+    | .error f => throw f.message
+  else if named.contains "norm-defaults@0" then
+    let _ ← VE.NormDefaults.Wire.decodeSourceU environment empty
+    pure ()
+  else
+    let _ ← validated environment
+    pure ()
+  let ps ← VE.Route.Gate.profilesOf environment
+  if ps.contains "readings@1" then
+    let _ ← VE.Compose.dispatch ps
+    pure ()
+  else VE.Compose.todayGate ps
+  let family := if ps.contains "order@0" then VE.Route.Gate.Family.order
+    else if ps.contains "nary@0" then .closureNary
+    else if ps.contains "closure@0" then .closure else .fol
+  pure ⟨ps, family, ← environment.getObjVal? "vocabulary"⟩
+
+/-- A model's tables use the checker vocabulary, including profile words, but
+its identity stays bound to the complete submitted environment. The owning
+profile decoders validate the source before these projections are used. -/
+def modelEnvironment (environment : Json) : Except String Json := do
+  let ps ← VE.Route.Gate.profilesOf environment
+  let mut view := environment
+  if ps.contains "risk@0" then view ← VE.Risk.Wire.riskNormsView view ps
+  else if ps.contains "alternatives@0" then view ← VE.Alternatives.Wire.normsView view ps
+  if (view.getObjVal? "unit_schema").isOk then view ← VE.Time.Wire.eraseEnvironment view
+  if ps.contains "readings@1" then view ← VE.Readings.Wire.stripReadings view
+  if ps.contains "norm-defaults@0" then view ← VE.NormDefaults.Wire.placeholderJson view
+  typingReduced view
+
+def identityEnvironment (environment : Json) (profiles : List String) : Except String Json :=
+  if profiles.contains "speech-acts@0" then
+    VE.SpeechActs.Wire.canonicalEnvironmentJson environment
+  else pure environment
+
 /-! ## The frozen pre-route envelopes -/
 
 /-- A frozen pre-route envelope, decoded by its frozen decoder: `ve.core@0`
@@ -247,8 +321,8 @@ def environmentCase (j : Json) : Except String Json := do
       (match l with
        | .v0 _ => [("profile", environment.getObjValD "profile")]
        | _ => [("profiles", environment.getObjValD "profiles")]) ++ [("family", .str l.family)])
-  let e ← validatedEnvironment environment
-  let environmentId ← environmentIdOf e.profiles environment
+  let e ← validatedComposedEnvironment environment
+  let environmentId ← environmentIdOf e.profiles (← identityEnvironment environment e.profiles)
   pure (VE.Route.Wire.ok id [("environment_id", .str environmentId),
     ("profiles", toJson e.profiles), ("family", .str e.family.name)])
 
@@ -318,7 +392,9 @@ def modelCase (j : Json) : Except String Json := do
   let environment ← j.getObjVal? "environment"
   let model ← j.getObjVal? "model"
   if isLegacy environment then return ← legacyModelCase id environment model j
-  let checked ← validated environment
+  let _ ← validatedComposedEnvironment environment
+  let modelEnv ← modelEnvironment environment
+  let checked ← validated modelEnv
   let e := checked.envelope
   match e.family with
   | .closureNary =>
@@ -351,11 +427,13 @@ def modelCase (j : Json) : Except String Json := do
   let predicates ← VE.Bridge.fields (← (← environment.getObjVal? "vocabulary").getObjVal? "predicates")
   if predicates.any (fun (_, entry) => (entry.getObjVal? "regulated").isOk) then
     VE.Norms.Plain.profileOk ⟨← VE.Norms.Plain.decodeRegulatedAll predicates, [], []⟩ model
-  let environmentId ← environmentIdOf e.profiles environment
+  let originalProfiles ← VE.Route.Gate.profilesOf environment
+  let environmentId ← environmentIdOf originalProfiles
+    (← identityEnvironment environment originalProfiles)
   let modelId ← VE.CertificateWire.digest
-    s!"ve-model-{VE.Route.Wire.identityVersion e.profiles}\n"
+    s!"ve-model-{VE.Route.Wire.identityVersion originalProfiles}\n"
     (Json.mkObj [("environment_id", .str environmentId),
-      ("model", ← normalizedModel environment model)])
+      ("model", ← normalizedModel modelEnv model)])
   checkClaimed j environmentId modelId
   pure (VE.Route.Wire.ok id [("valid", .bool true), ("model_id", .str modelId)])
 

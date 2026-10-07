@@ -29,7 +29,6 @@ open VE.Time (maxEvaluations)
 identity-bound definitions (W3), elaborated in dependency order and checked. -/
 structure RouteVocabulary where
   vocabulary : VE.Bridge.Vocabulary
-  validNames : vocabulary.namesValid = true
   literals : List String
   nodup : literals.Nodup
   flags : List VE.Data.Background.Flag := []
@@ -151,28 +150,26 @@ def decodeVocabulary (profiles : List String) (v : Json) : Except String RouteVo
   let literals := (cs.filter (fun c => c.2 == Background.stringSort)).map Prod.fst
   if literals.length > 64 then throw "ResourceLimit: At most 64 declared $string literals"
   let result : VE.Bridge.Vocabulary := ⟨sortNames, ps, cs⟩
-  if hnames : result.namesValid then
-    -- Bodies are decoded last, each within its own AST limits, as Python's
-    -- `compile_definitions` runs after the rest of the environment is checked.
-    let entries ← predicates.filterMapM fun (p, entry) => do
-      match entry.getObjVal? "defined" with
-      | .ok payload => some <$> decodeDefined p ((← strings (← entry.getObjVal? "arguments"))) payload
-      | .error _ => pure none
-    if h : literals.Nodup then
-      match hd : VE.Definitions.elaborate result.environment entries with
-      | .ok ds => pure ⟨result, hnames, literals, h, flags, ds, VE.Definitions.elaborate_chain _ _ ds hd⟩
-      | .error e => throw e
-    else throw "duplicate declaration"
-  else throw "invalid declaration names"
+  unless result.namesValid do throw "invalid declaration names"
+  -- Bodies are decoded last, each within its own AST limits, as Python's
+  -- `compile_definitions` runs after the rest of the environment is checked.
+  let entries ← predicates.filterMapM fun (p, entry) => do
+    match entry.getObjVal? "defined" with
+    | .ok payload => some <$> decodeDefined p ((← strings (← entry.getObjVal? "arguments"))) payload
+    | .error _ => pure none
+  if h : literals.Nodup then
+    match hd : VE.Definitions.elaborate result.environment entries with
+    | .ok ds => pure ⟨result, literals, h, flags, ds, VE.Definitions.elaborate_chain _ _ ds hd⟩
+    | .error e => throw e
+  else throw "duplicate declaration"
 
-/-- Decoder validity, analogous to `decodeModel_valid`: a successful route
-vocabulary has valid declaration names, distinct literals and a checked
-definition chain. These are stored in the result, not inferred by Python. -/
+/-- A successful vocabulary decode carries distinct `$string` literals and a
+well-formed definition chain over the decoded environment. Together with
+`Gate.decodeEnvelope_sound`, this is the environment decoder validity boundary. -/
 theorem decodeVocabulary_valid (profiles : List String) (j : Json)
     (rv : RouteVocabulary) (_h : decodeVocabulary profiles j = .ok rv) :
-    rv.vocabulary.namesValid = true ∧ rv.literals.Nodup ∧
-      VE.Definitions.Chain rv.vocabulary.environment rv.definitions := by
-  exact ⟨rv.validNames, rv.nodup, rv.chain⟩
+    rv.literals.Nodup ∧ VE.Definitions.Chain rv.vocabulary.environment rv.definitions := by
+  exact ⟨rv.nodup, rv.chain⟩
 
 /-- A decoded order vocabulary and its declared `$string` literals. -/
 structure RouteOrderVocabulary where

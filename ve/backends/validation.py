@@ -1,21 +1,7 @@
-"""Lean validation adapters for the `Environment` and `FiniteModel` constructors
-(and, through `decided`, for `definitions.compile_definitions`).
+"""Lean decides environment and model validity; Python builds accepted containers.
 
-Lean's `environment` and `model` service modes decide whether an environment or
-a model is valid and recompute its identity. The Python constructor stays the
-structural decoder that builds the container (SEMANTICS-MIGRATION-PLAN.md
-section 1.1, "kept"); under a backend authority its own validation is never
-the verdict:
-
-* Lean rejects: the call raises. When Python's decoder also rejects, its
-  diagnostic names the rejection (code and wording are Python's, as the
-  typing diagnostics are); otherwise Lean's diagnostic is raised.
-* Lean accepts: the container Python built is returned if its identity equals
-  the one Lean recomputed. If Python's decoder rejects what Lean accepts, or
-  the identities differ, no container exists that Lean vouches for, and the
-  call is CheckerUnavailable, never Python's rejection.
-
-Lean's accepted verdicts are cached by the digest of the canonical input.
+A constructor failure after Lean acceptance is an operational checker failure,
+never a second diagnostic. Accepted verdicts are cached by canonical input.
 """
 from __future__ import annotations
 
@@ -30,22 +16,6 @@ from .diagnostics import backend_rejection
 _ACCEPTED: dict[tuple, bool] = {}
 _LIMIT = 1 << 14
 _LAYERED = STATEMENT_LAYERS
-
-
-def validated_statement_block(data: dict, kind: str) -> None:
-    """Ask the owning statement-layer route before Python materialises its container.
-
-    An alternatives environment is asked about alone (`alt-environment`): the
-    route validates the declarations of the other profiles with their W1 owner,
-    where its document cases refuse them. The risk route refuses them for the
-    environment too, as risk.md 6 orders."""
-    from .relay import decide
-    case = {"id": "environment", "environment": data}
-    if kind == "risk":
-        case.update(kind="risk-elaborate", document={"norms": [], "units": []})
-    else:
-        case.update(kind="alt-environment")
-    decide(kind, [case])
 
 
 def nary_core_definitions(profiles, predicates) -> bool:
@@ -67,24 +37,6 @@ def legacy_language(data: dict) -> bool:
     stand there before the decoder runs."""
     language = data.get("language")
     return type(language) is str and language in LEGACY_LANGUAGES
-
-
-def environment_in_scope(data) -> bool:
-    """Whether Lean's `environment` mode validates this environment input."""
-    if type(data) is dict and legacy_language(data):
-        return True
-    if type(data) is not dict or data.get("language") != "ve.core@0.2":
-        return False
-    if {"unit_schema", "units", "alternatives", "speech_acts"} & set(data):
-        return False
-    profiles = data.get("profiles")
-    if type(profiles) is not list:
-        return True
-    profiles = {p for p in profiles if type(p) is str}
-    vocabulary = data.get("vocabulary")
-    predicates = vocabulary.get("predicates") if type(vocabulary) is dict else None
-    return not (_LAYERED & profiles) and not (
-        type(predicates) is dict and nary_core_definitions(profiles, predicates.values()))
 
 
 def model_in_scope(env) -> bool:
@@ -123,16 +75,12 @@ def _remember(key: tuple) -> None:
 
 def decided(decode: Callable[[], object], cache: tuple | None, ask: Callable[[], dict],
              identity: Callable[[object, dict], bool], what: str):
-    """Run the structural decoder, then apply Lean's verdict to its outcome.
-
-    `cache` keys Lean's acceptance (None: the input cannot be sent)."""
+    """Legacy adapter for bundle and definitions, pending their owner migration."""
     try:
         built, error = decode(), None
     except VEError as exc:
         built, error = None, exc
     if cache is None:
-        # The input is not JSON on the restricted wire subset, so no checker
-        # can read it; the wire check is Python's and is not a verdict.
         if error is not None:
             raise error
         raise CheckerUnavailable(f"CheckerUnavailable: {what} cannot be sent to the checker")
@@ -151,17 +99,40 @@ def decided(decode: Callable[[], object], cache: tuple | None, ask: Callable[[],
     return built
 
 
+def construct_after_lean(decode: Callable[[], object], cache: tuple | None,
+                         ask: Callable[[], dict], identity: Callable[[object, dict], bool], what: str):
+    """Ask Lean first, then construct only the accepted environment or model."""
+    row = None
+    if cache is None or cache not in _ACCEPTED:
+        row = ask()
+    try:
+        built = decode()
+    except Exception as exc:
+        raise CheckerUnavailable(f"CheckerUnavailable: Python could not construct a Lean-accepted {what}") from exc
+    if row is None:
+        return built
+    if not identity(built, row):
+        raise CheckerUnavailable(f"CheckerUnavailable: Lean and Python {what} identities differ")
+    if cache is not None:
+        _remember(cache)
+    return built
+
+
 def validated_environment(env, data, decode: Callable[[], object]):
     """`decode()` builds `env` from `data`; Lean decides its validity."""
     from .relay import decide
+    # Restricted JSON is a wire primitive. Check the environment value itself
+    # before wrapping it in a service case, so an offset names the same bytes
+    # at every public entry point.
+    canonical_json(data)
     try:
         cache = key("environment", data)
     except (VEError, TypeError, ValueError, RecursionError):
         cache = None
-    return decided(decode, cache,
+    return construct_after_lean(decode, cache,
                     lambda: decide("environment", [{"id": "environment", "environment": data}])[0],
                     lambda built, row: row.get("environment_id") == built.environment_id,
-                    "an environment")
+                    "environment")
 
 
 def validated_model(env, wire, decode: Callable[[], object], *, claimed: dict | None = None):
@@ -175,7 +146,7 @@ def validated_model(env, wire, decode: Callable[[], object], *, claimed: dict | 
         cache = key("model", env.environment_id, wire, *(() if claimed is None else (claimed,)))
     except (VEError, TypeError, ValueError, RecursionError):
         cache = None
-    return decided(decode, cache,
+    return construct_after_lean(decode, cache,
                     lambda: decide("model", [request])[0],
                     lambda built, row: row.get("valid") is True and row.get("model_id") == built.model_id,
-                    "a model")
+                    "model")

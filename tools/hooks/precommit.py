@@ -501,7 +501,7 @@ def check_wire_contract(index: Index) -> list[str]:
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(blob)
     env = {**os.environ, "PYTHONPATH": str(index.snapshot), "PYTHONDONTWRITEBYTECODE": "1"}
-    done = subprocess.run([sys.executable, "tools/wire_contract.py", "--check"],
+    done = subprocess.run([sys.executable, "tools/wire_contract.py", "--check", "--generated-only"],
                           cwd=index.snapshot, env=env, capture_output=True, text=True,
                           timeout=configured_wait(WIRE_CHECK_TIMEOUT), check=False)
     if done.returncode:
