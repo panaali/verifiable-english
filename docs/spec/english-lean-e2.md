@@ -2176,3 +2176,58 @@ and it exited with no error. None of the Lean files changed by the merge holds a
 - the boundary extension's parts 1 and 2 (ev14b), except part 1 for `norm-defaults@0` (md1c to md3);
 - the modes' order in `Run.lean`, and the relay;
 - latency.
+
+## 13. Changes made by the review fix round of the integration (2026-10-07)
+
+The reviews of the integrated build (`manage-agents/english-lean-e2-review-astra.final.md`,
+`manage-agents/reviews/english-lean-e2-review-fable.md`) found the gaps below. Each change is listed with the section
+it amends; no statement of 5.5 changed, and `decode_encode` is now proved. The fixtures named are in
+`lean/VE/EnglishGrammar/E2Examples.lean` and the tests named in `docs/lean-first/e2/LEDGER.md`.
+
+- **5.5, `decode_encode`.** `ETerm.encode` writes an integer with `intText`, the text `toString` writes:
+  `toString` of a negative `Int` joins its sign with `String.Internal.append`, a runtime primitive with no definition
+  the logic can unfold, so the round trip could not be proved of it. `E2Examples` checks `intText v = toString v` on
+  the compiled code; the proof computes `String.toInt?`'s byte-position loops over character lists.
+- **4.4, spans.** A lexical rejection with an offset spans that character in code points (`Run.lexicalSpan`);
+  `IllTyped` names the first sentence whose formula, with the formulas before it, fails the typed check, and its text
+  names that sentence (`illTypedText`); a refusal that names no sentence spans the whole source, never sentence 1.
+  `english.read` and `senses.read` add the span and the advice by one function (`refusalExtras`); the senses reader
+  names no sentence for its `IllTyped`.
+- **4.2 and 4.4, texts.** `InvalidGrammar`'s text names its fault and first failure and says what the mode did not
+  do (`english.read` reads no text, `english.grammar` exports no grammar, `english.check` checks no candidate); the
+  overlay texts end the same way (`notDone`). `BlockedWording` `risk-every-cannot` gives Python's two rewrites with
+  the sentence's own chooser and harm (`riskEveryCannotText`) instead of the identifier.
+- **4.3, advice.** Advice is also given for a sentence the reader refused (a `rejected` response that names a
+  sentence); the row `alternatives-another` (`another action`, Python's `Another action needs a rule on an action
+  as its reference.`) is added.
+- **2.6 and 2.7, the code contract.** `english.grammar` also exports `statuses` (`statusCodes`: the codes each
+  status may carry; `rejectCodes_total` and `statusCodes_classed` are proved), `unsentenced` (the rejection codes
+  that name no sentence) and `policy` (the port's selection, for the parity harness). The relay holds no class or
+  code table: it reads `ve/english_grammar/codes.json`, generated from that export by `tools/english_codes.py` and
+  checked against the service by the suite, and raises the class Lean names, taken from `ve.errors` by name (so
+  `Internal` is `CheckerUnavailable`).
+- **D7 and 2.2, the boundary.** The declarations of `speech-acts@0`, `reports@0` and `readings@1`, which the typing
+  view drops, are validated as submitted by their routes' environment decoders (`SpeechActs.Wire
+  .decodeSpeechEnvironmentFull`, `Reports.Wire.decodeEnvironment`, `Readings.Wire.decodeEnvironment`) in part 1.
+- **5.2, the port's cost.** Spec 5.2's functions re-derived, for every symbol, tables that depend only on the
+  environment and the overlay, which made V6 cubic (1.5 s at 256 predicates against GE2 item 9's 100 ms).
+  `PolicyCtx.of E O` computes them once; each function is 5.2's body reading those tables, with 5.2's signature kept
+  as a wrapper, and a word-boundary search of a token of word characters compares it with the phrase's maximal word
+  runs. `PolicyReference.lean` holds 5.2's text verbatim; `E2Examples` checks that the two agree on 34 environments.
+  V6 at 256 predicates: 61 ms.
+- **2.8, the relay.** One validator checks every transport, the test override included; `parse_english_argument`
+  takes premises from Lean's obligations only; the nearest-wording help is given over Lean's sentence span; the
+  comparator runs in the suite (`tests/conftest.py`), and its records compare Python's public outcome (its source
+  limit first, its premise check against `ConclusionWithoutPremise`).
+- **S3 2.2 and 2.5, the spacing of the integer marks** (found by the E2.5 reverse corpus, not by the
+  reviews). S3's table let `[` and a sign be glued before and `]` glued after to anything, so Lean read
+  `costs-5`, `is at least[budget - 24]`, `[budget + 1]and` and `[budget + 1]- 2`, which the hand parser refuses:
+  152 texts of the reverse corpus, all in `order`. The class is an integer mark's spacing on the side away from
+  its term. The lexer's `gluedFlags` counts `[` and a sign as free before when the character before opens a term
+  too (`[`, `-`), and `]` as glued after only to a word character; `order@0` keeps one row per mark (22 rows).
+  The rule is the lexer's one table, mirrored in `conformance/english_lean_lexer.py` and the Lark conversion
+  (`conformance/english_lean_tokens.py`); `tests/test_english_e2_integer_marks.py` compares both readers on
+  every spacing mutant at every mark. `actions_version` 22.
+- **2.9, the ledger.** Definition and citation sentences are read by Lean again; the Python statement readers are
+  the operation `english.statement` until E3; the producer's overlay refusals stay on in the statement reader and
+  the statement-layer renderer, where no Lean overlay check runs; `tools/relay_lint.py` covers the admission path.

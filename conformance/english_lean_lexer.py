@@ -88,6 +88,11 @@ def _chunk_char(c: str) -> bool:
     return (c.isascii() and (c.isalnum() or c == '_')) or (not c.isascii() and c not in WHITESPACE)
 
 
+def _word_char(c: str) -> bool:
+    """Lean's `wordChar`: a character of a token of a word kind (a chunk or a quoted identifier)."""
+    return _chunk_char(c) or c == '"'
+
+
 # Python's `int(str)` and `str(int)` refuse numbers of more than `sys.get_int_max_str_digits()` digits
 # (4,300 by default, 640 at the least). The lexer bounds a numeral only by the text limit (spec 2.2;
 # `NumeralBound` is a later check), so decimal text and values convert in blocks below that limit,
@@ -128,6 +133,12 @@ def lex_spans(source: str) -> list[list[tuple[tuple, int, int]]]:
     def punct(text: str, start: int, end: int) -> tuple:
         before = start > 0 and source[start - 1] not in WHITESPACE
         after = end < n and source[end] not in WHITESPACE
+        # Lean's `gluedFlags`: `[` and a sign are free before after a mark that opens a term too; `]` is glued
+        # after only to a word character.
+        if text in ('[', '-'):
+            before = before and source[start - 1] not in '[-'
+        elif text == ']':
+            after = end < n and _word_char(source[end])
         return ('punct', text, before, after)
 
     last = 'start'

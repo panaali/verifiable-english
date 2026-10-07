@@ -131,15 +131,27 @@ def test_the_order_table_has_no_numeral_or_twice_under_a_sign():
 
 
 def test_the_spacing_of_the_integer_marks_is_the_hand_parsers():
-    """Spec 2.2 (DRI ruling 1): `[` and a sign are glued after and free before, `]` glued before and free
-    after, an operator free on both sides; each free flag has its two rows."""
+    """Spec 2.2 as amended by english-lean-e2.md 13: `[` and a sign are glued after and free before, `]` glued
+    before and free after, an operator free on both sides, one row each; the lexer counts an integer mark's glue
+    on the side away from its term only against a word character, so `[-3`, `--3`, `]]` and `].` are free there
+    and `costs-3`, `least[` and `]and` match no row."""
     flags = {(row["lhs"], sym_key(row["rhs"][0])[1]) for row in rows(ORDER)
              if row["lhs"] in {"minus", "lbracket", "rbracket", "int_op"}}
-    assert flags == {("minus", ("punct", "-", False, True)), ("minus", ("punct", "-", True, True)),
-                     ("lbracket", ("punct", "[", False, True)), ("lbracket", ("punct", "[", True, True)),
-                     ("rbracket", ("punct", "]", True, False)), ("rbracket", ("punct", "]", True, True)),
+    assert flags == {("minus", ("punct", "-", False, True)), ("lbracket", ("punct", "[", False, True)),
+                     ("rbracket", ("punct", "]", True, False)),
                      ("int_op", ("punct", "+", False, False)), ("int_op", ("punct", "-", False, False)),
                      ("int_op", ("punct", "*", False, False))}
+    from conformance.english_lean_lexer import lex_spans
+    tokens = [t for t, _, _ in lex_spans("Least [-[n + 1] - --2]]. Costs-3 least[n]and non-compliant.")[0]]
+    assert [t for t in tokens if t[0] == "punct"] == [
+        ("punct", "[", False, True), ("punct", "-", False, True), ("punct", "[", False, True),
+        ("punct", "+", False, False), ("punct", "]", True, False), ("punct", "-", False, False),
+        ("punct", "-", False, True), ("punct", "-", False, True), ("punct", "]", True, False),
+        ("punct", "]", True, False)]
+    tokens = [t for t, _, _ in lex_spans("Costs-3 least[n]and non-compliant.")[0]]
+    assert [t for t in tokens if t[0] == "punct"] == [
+        ("punct", "-", True, True), ("punct", "[", True, True), ("punct", "]", True, True),
+        ("punct", "-", True, True)]
 
 
 def test_the_alternatives_table_is_pythons_guard_grammar_under_the_correspondence():
@@ -164,7 +176,7 @@ def test_the_alternatives_table_is_pythons_guard_grammar_under_the_correspondenc
 
 
 def test_sz1_the_sizes_of_the_two_tables():
-    assert (len(rows(ORDER)), len(rows(ALTERNATIVES))) == (25, 8)
+    assert (len(rows(ORDER)), len(rows(ALTERNATIVES))) == (22, 8)
 
 
 def test_the_tags_of_the_spec_tables():
@@ -172,8 +184,8 @@ def test_the_tags_of_the_spec_tables():
     assert [row["tag"] for row in rows(ORDER)] == [
         "int-term.atom", "int-term.minus", "int-atom.constant", "int-atom.numeral", "int-atom.bracket",
         "int-atom.twice", "int-neg.constant", "int-neg.bracket", "int-neg.minus", "numeral.plain",
-        "numeral.signed", "int-op.plus", "int-op.minus", "int-op.times", "minus.free", "minus.glued",
-        "lbracket.free", "lbracket.glued", "rbracket.free", "rbracket.glued", "atom.int-eq", "atom.less",
+        "numeral.signed", "int-op.plus", "int-op.minus", "int-op.times", "minus.free", "lbracket.free",
+        "rbracket.free", "atom.int-eq", "atom.less",
         "atom.at-most", "atom.more", "atom.at-least"]
     assert [row["tag"] for row in rows(ALTERNATIVES)] == [
         "formula.alternatives", "verb-phrase.one", "verb-phrase.either", "verb-phrase.either-both",
