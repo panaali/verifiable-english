@@ -3994,6 +3994,8 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.append_left_inj
 #print axioms VE.Readings.slot_wellLabelled
 #print axioms VE.Readings.routeOf_superposed
+#print axioms VE.Readings.generatedKeyJson_name
+#print axioms VE.Readings.generatedSuperposed_names
 #print axioms VE.Readings.canon_term
 #print axioms VE.Readings.term_defined
 #print axioms VE.Readings.substWith_canon
