@@ -205,9 +205,9 @@ def test_g6_g9_no_generated_name_and_no_may_not(tmp_path):
     pairs = check_document(path)["readings"]["sets"][0]["pairs"]
     assert pairs[0]["wording"] == "E19"
     s1_lines = [p["text"] for p in pairs]
+    from ve.readings_s2_english import hidden_in
     for sentence in s1_lines:
-        assert not any(name in sentence for name in ("ve__", "rd-", "soft__", "rights__"))
-        assert "may not" not in sentence
+        assert hidden_in(sentence) is None, sentence
     assert "This sentence says" not in text
 
 

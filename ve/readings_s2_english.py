@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
+from functools import lru_cache
 
 from .errors import VEError
 
@@ -127,12 +128,30 @@ _NUMERAL = re.compile(r"[1-9][0-9]*")
 ANSWERS = frozenset({"yes", "no"})
 # Names no wording shows (2.4, G6; readings-defaults 2.5): generated vocabulary, qualified rule names and `may not`;
 # and, under `norm-defaults@0` only, the completion's reserved names (`Slots.reserved`).
-_HIDDEN = ("ve__", "rd-", "soft__", "rights__", "may not")  # relay-lint: non-wording
+_HIDDEN = ("ve__", "rd-", "soft__", "rights__")  # relay-lint: non-wording
+_MAY_NOT = "may not"  # relay-lint: non-wording
 
 
 def _all_reserved():
     from .environment import RESERVED_PREFIXES
     return RESERVED_PREFIXES
+
+
+@lru_cache(maxsize=None)
+def _hidden_pattern(reserved):
+    # A name is generated or reserved by its prefix (Lean's `startsWith`), so a hidden name is a name that begins
+    # with one: a prefix counts only where no name character (a letter, digit, `_` or `-`) comes before it. An
+    # author's name that merely contains one (`standard-x`, `save__x`, `my_unsaid__x`) is named as written (G6).
+    # `may not` counts anywhere: G9 has no exception (composition.md 13.20).
+    prefixes = "|".join(re.escape(prefix) for prefix in sorted({*_HIDDEN, *reserved}, key=len, reverse=True))
+    return re.compile(rf"(?<![\w-])(?:{prefixes})|{re.escape(_MAY_NOT)}")
+
+
+def hidden_in(text, reserved=None):
+    """The first generated name, reserved name (`reserved`, default every one) or `may not` that `text` shows, else
+    None (2.4, G6, G9; readings-defaults 2.5). The one test of it: the gate and the tests' oracles read this."""
+    found = _hidden_pattern(tuple(_all_reserved() if reserved is None else reserved)).search(text)
+    return found.group() if found else None
 
 
 def _match(elements, text, pos, slots, binds):
@@ -183,7 +202,7 @@ def derivations(text, slots):
 def gated(intended, text, slots):
     """W7's all-derivations gate: `text` has exactly one derivation, from `intended`; and no generated name, no
     reserved prefix of the document's environment and no `may not` (2.4, G6, G9)."""
-    if type(text) is not str or any(x in text for x in (*_HIDDEN, *slots.reserved)):
+    if type(text) is not str or hidden_in(text, slots.reserved) is not None:
         raise VEError(f"InvalidInput: S2 wording {intended} shows a generated name or `may not`")
     found = derivations(text, slots)
     if len(found) != 1 or found[0][0] != intended:
@@ -425,6 +444,6 @@ def excludes(first, second, slots):
 __all__ = ["ANSWERS", "CHECKED_ALONE", "canonical_sentence", "named_pair", "sentence_slots", "shown", "Unnamed",
            "DEFAULTS", "EACH_ALONE", "OVER_BUDGET", "PROVIDED", "QUIET", "S2A", "Slots",
            "TEMPLATES", "checked_alone", "citation", "dead_reading", "derivations", "each_alone", "every_result",
-           "every_result_of_sentence", "excludes", "gap_sentences", "gated", "independent", "named_result",
+           "every_result_of_sentence", "excludes", "gap_sentences", "gated", "hidden_in", "independent", "named_result",
            "narrowed", "none_result", "not_superposed", "one_reading", "over_budget", "pair_line", "provided",
            "quiet", "requires", "result_sentence", "s1_gated"]
