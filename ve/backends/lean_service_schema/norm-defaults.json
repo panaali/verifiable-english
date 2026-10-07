@@ -16,7 +16,7 @@
                   "when": {"$ref": "#/$defs/kind/norm-defaults-elaborate"}
                 },
                 {
-                  "then": {"$ref": "common.json#/$defs/witness_conflict"},
+                  "then": {"$ref": "#/$defs/witness_conflict"},
                   "when": {"allOf": [{"$ref": "#/$defs/kind/norm-defaults-conflict"}, {"required": ["witness"]}]}
                 },
                 {
@@ -44,6 +44,12 @@
     ]
   },
   "$defs": {
+    "atom": {
+      "additionalProperties": false,
+      "properties": {"predicate": {"type": "string"}, "tuple": {"$ref": "common.json#/$defs/strings"}},
+      "required": ["predicate", "tuple"],
+      "type": "object"
+    },
     "base_environment": {
       "$comment": "NormDefaults.Wire.withUnsaid of SoftNorms.Wire.basePrimeJson or Rights.Wire.basePrimeJsonR: Norms.Replay.baseEnvironmentJson of the request environment, with the decision predicates and the unsaid predicates added.",
       "additionalProperties": false,
@@ -320,14 +326,17 @@
       "type": "object"
     },
     "report_line": {
-      "$comment": "NormDefaults.Wire.LineU.toJson: one regulated predicate's lines (spec 3.2); `witness` (NormDefaults.Wire.WitnessRow.toJson: the tuple's entity ids and every unsaid table of the checked filled situation) exactly on a reachable line.",
+      "$comment": "NormDefaults.Wire.LineU.toJson: one regulated predicate's lines (spec 3.2); `witness` (NormDefaults.Wire.WitnessRow.toJson: the tuple's entity ids and every unsaid table of the checked filled situation) and `value` (NormDefaults.Wire.completedLabel: the completion's value where no author rule decides) exactly on a reachable line.",
       "additionalProperties": false,
+      "else": {"not": {"required": ["value"]}},
+      "if": {"required": ["witness"]},
       "properties": {
         "completion": {"enum": ["deny", "allow", "unspecified"]},
         "inherits_from": {"$ref": "common.json#/$defs/strings"},
         "lines": {"$ref": "common.json#/$defs/strings"},
         "predicate": {"type": "string"},
         "reached": {"enum": ["none", "reachable", "unknown"]},
+        "value": {"enum": ["yes", "no", "unsaid"]},
         "witness": {
           "additionalProperties": false,
           "properties": {
@@ -342,6 +351,7 @@
         }
       },
       "required": ["predicate", "completion", "reached", "lines", "inherits_from"],
+      "then": {"required": ["value"]},
       "type": "object"
     },
     "report_row": {
@@ -366,15 +376,57 @@
       "type": "object"
     },
     "status": {
-      "$comment": "NormDefaults.Run.runOtherCase norm-defaults-status: the requested predicate's point status.",
+      "$comment": "NormDefaults.Run.runOtherCase and Wire.runLayered norm-defaults-status: the requested predicate's point status, then NormDefaults.Wire.statusFields: the tuple's entity ids, the deciding author rules and the atoms where two UNDECIDED fillings differ.",
       "additionalProperties": false,
       "properties": {
+        "differs": {"items": {"$ref": "#/$defs/atom"}, "type": "array"},
         "id": {"$ref": "common.json#/$defs/id_ok"},
         "point_status": {"enum": ["SETTLED yes", "SETTLED no", "UNDECIDED", "UNKNOWN"]},
         "predicate": {"type": "string", "x-equals": "/predicate"},
-        "status": {"const": "ok"}
+        "rules": {"$ref": "common.json#/$defs/strings"},
+        "status": {"const": "ok"},
+        "tuple": {"$ref": "common.json#/$defs/strings"}
       },
-      "required": ["id", "status", "point_status", "predicate"],
+      "required": ["id", "status", "point_status", "predicate", "tuple", "rules", "differs"],
+      "type": "object"
+    },
+    "witness_conflict": {
+      "$comment": "A conflict witness replay (NormDefaults.Wire.replayWitnessU and Wire.witnessConflictX): the requested target; exactly a CONFLICT also carries NormDefaults.Wire.conflictFields: the tuple's entity ids, the kind, the deciding assignment and the deciding author rules.",
+      "additionalProperties": false,
+      "else": {
+        "allOf": [
+          {"not": {"required": ["tuple"]}},
+          {"not": {"required": ["kind"]}},
+          {"not": {"required": ["under"]}},
+          {"not": {"required": ["rules"]}}
+        ]
+      },
+      "if": {"properties": {"verdict": {"const": "CONFLICT"}}},
+      "properties": {
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "kind": {"enum": ["settled", "latent"]},
+        "rules": {"$ref": "common.json#/$defs/strings"},
+        "status": {"const": "ok"},
+        "target": {"type": "string", "x-equals": "/witness/target"},
+        "targets": {"$ref": "common.json#/$defs/strings"},
+        "tuple": {"$ref": "common.json#/$defs/strings"},
+        "under": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "predicate": {"type": "string"},
+              "tuple": {"$ref": "common.json#/$defs/strings"},
+              "value": {"type": "boolean"}
+            },
+            "required": ["predicate", "tuple", "value"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "verdict": {"enum": ["CONFLICT", "UNKNOWN"]}
+      },
+      "required": ["id", "status", "verdict", "target", "targets"],
+      "then": {"required": ["tuple", "kind", "under", "rules"]},
       "type": "object"
     }
   }
