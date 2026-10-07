@@ -366,6 +366,42 @@ def test_alternatives_boundary_validates_unrelated_declarations_separately(varia
     assert row['status'] == 'error', row
 
 
+@pytest.mark.parametrize('fixture', ['FA', 'FR'])
+@pytest.mark.parametrize('role', ['available', 'leads_to'])
+@pytest.mark.parametrize('field,value', [
+    ('functional', False), ('functional', True), ('total', False), ('total', True),
+    ('defined', {'arguments': ['action', 'agent'], 'body': ['top']}),
+])
+@pytest.mark.parametrize('mode', ['english.read', 'english.grammar'])
+def test_block_role_declarations_are_rejected_at_both_english_entries(fixture, role, field, value, mode):
+    """The English boundary gives the same verdict as Environment for every fixed role declaration.
+
+    In particular, a false flag still fixes the role: key presence, rather than
+    the flag's truth value, is the alternatives contract.
+    """
+    from conformance.english_lean_s3_fixtures import FA, FR
+    raw = {'FA': FA, 'FR': FR}[fixture]()
+    if field == 'defined':
+        raw['profiles'] = sorted([*raw['profiles'], 'definitions@0'])
+        value = {**value, 'arguments': raw['vocabulary']['predicates'][role]['arguments']}
+    else:
+        raw['profiles'] = sorted([*raw['profiles'], 'data@0'])
+    raw['vocabulary']['predicates'][role][field] = value
+    with pytest.raises(VEError):
+        Environment(raw)
+
+    base = Environment({'FA': FA, 'FR': FR}[fixture]())
+    words = EN.EnglishVocabulary(base)
+    case = L.request(base, 'Wait leads to injury.', words, {})
+    case['environment'] = raw
+    if mode == 'english.grammar':
+        case = {key: case[key] for key in ('id', 'environment', 'lexicon')}
+    [row] = route([case], mode)
+    assert row['status'] == 'error', row
+    if fixture == 'FA' or (field == 'functional' and value is False) or (field == 'total' and value is False):
+        assert f'AlternativesRegulated: {role} {role}' in row['error'], row
+
+
 def test_i1_i2_the_identities_of_one_text_twice_and_respaced():
     first, second = answer(request("F", "Alice owns legacy.")), answer(request("F", "Alice owns legacy."))
     assert first == second
