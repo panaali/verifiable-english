@@ -1293,10 +1293,16 @@ class EnvironmentSurface(Surface):
 
     def lean(self, items):
         from ve.backends.diagnostics import checker_error
+        from ve.backends.service_schema import Invalid, check_row
         roots = [root for _, root in items]
         cases = [{"id": str(i), "environment": root} for i, root in enumerate(roots)]
         rows = self._service(cases)
-        problem_of = fields_row_problem({"environment_id": "string"})
+        def problem_of(case, row, index):
+            try:
+                check_row("environment", row, case, index)
+            except Invalid as exc:
+                return str(exc)
+            return None
         out = []
         for case, row in zip(cases, rows):
             row, bad = checked(problem_of, case, row)

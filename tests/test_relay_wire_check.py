@@ -97,7 +97,9 @@ def test_unsendable_caller_data_is_the_wires_veerror(news, monkeypatch, entry, n
     fixture, env = news
     pool = _Pool()
     monkeypatch.setattr(relay, "_pool_for", lambda executable: pool)
-    with pytest.raises(VEError, match=WIRE_TEXT[name]):
+    expected = ("JSON nesting exceeds 256 levels" if entry == "environment" and
+                name in ("cycle", "past-transport-depth") else WIRE_TEXT[name])
+    with pytest.raises(VEError, match=expected):
         _entry_points(fixture, env)[entry](UNSENDABLE[name]())
     assert pool.calls == []  # nothing reached Lean
 

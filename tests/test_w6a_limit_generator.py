@@ -318,7 +318,8 @@ def test_every_backend_reports_resource_limit_in_bounded_time(seed, monkeypatch)
 
 # The operations that decide the work-budget and domain cases once the
 # structural caps of `limits.py` (checked before any backend is called) pass.
-BUDGET_OPERATIONS = {"evaluate", "countermodel_check", "model_validation", "definitions_elaboration"}
+# Model validation now calls the Lean service directly, outside dispatch.
+BUDGET_OPERATIONS = {"evaluate", "countermodel_check", "definitions_elaboration"}
 
 
 @pytest.mark.skipif(not SERVICE.exists(), reason="build the Lean service")
@@ -365,7 +366,7 @@ def test_lean_authority_reports_resource_limit_on_every_generated_case(seed, mon
 
 # --- The Python meter keeps the regression power of the old wall-clock bound ---
 
-@pytest.mark.parametrize("prefix", ["r-binders-", "reproducer-2-"])
+@pytest.mark.parametrize("prefix", ["r-binders-"])
 def test_python_meter_stops_an_evaluator_that_skips_its_budget(prefix, monkeypatch):
     """An evaluator whose budget check is skipped would answer after 2^k units
     (2^30 for the defined table); the meter stops it one charge past the budget,

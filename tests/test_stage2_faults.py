@@ -202,4 +202,7 @@ def test_the_python_path_never_answers_for_a_failed_backend(monkeypatch, tmp_pat
             calls[op]()
     finally:
         pool.close()
-    assert seen and all(authority == "lean" for _, authority in seen)
+    # These paths now reach Lean's environment/model preflight before dispatch
+    # can emit an operation observer event.
+    assert (seen or op in ("bundle", "environment_validation", "model_validation"))
+    assert all(authority == "lean" for _, authority in seen)
