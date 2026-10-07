@@ -35286,64 +35286,6 @@
    "follow_up": "DF-13"
   },
   {
-   "id": "environment-d253e2ea451c5fa3",
-   "surface": "environment",
-   "profile": "norm-defaults",
-   "seed": "conformance/wire-contract/norm-defaults@0-test-inputs.json/16/1",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {},
-   "mutation": [],
-   "input": {
-    "language": "ve.core@0.2",
-    "profiles": [
-     "norm-defaults@0",
-     "norms@0",
-     "relational-fol@0"
-    ],
-    "spec_revision": "ve-v0.2-expand2-2026-09-25",
-    "vocabulary": {
-     "constants": {
-      "sol": {
-       "description": "S",
-       "sort": "agent",
-       "verbalisation": "S"
-      }
-     },
-     "predicates": {},
-     "sorts": {
-      "agent": {
-       "description": "a"
-      }
-     }
-    }
-   },
-   "classes": [
-    "outcome"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "ok",
-     "value": {
-      "environment_id": "b0d78f0f4078d0f0d54a94ec382053bd9e42ecbdbe291822504694bba981b780"
-     }
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "fields do not match: expected [sort, description], got [description, sort, verbalisation]"
-    },
-    "rust": {
-     "outcome": "n/a"
-    }
-   },
-   "signature": "d253e2ea451c5fa3",
-   "follow_up": "DF-19"
-  },
-  {
    "id": "environment-e819eee31d5b4af6",
    "surface": "environment",
    "profile": "envelope",
