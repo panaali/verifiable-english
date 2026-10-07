@@ -81,8 +81,9 @@ private `_Exhausted`). Both were Python re-deriving answers Lean owns. The class
 - **The renderers only format those fields** (`ve/norm_defaults_english.py`: the model enumeration, the
   evaluator, `document.value`, the conflict replay and the authoring question's search are gone). A missing or
   unknown field is `CheckerUnavailable`, never a recomputation.
-- **Regressions.** The 13-, 16-, 18- and 40-act `latent` fixtures render in under 2 s. The 60-act repro renders
-  from Lean's line at a0 (`tests/test_relay_english_scale.py`). `test_renderers_reach_no_evaluation_search_or_limit`
+- **Regressions.** The 13-, 16-, 18- and 40-act `latent` fixtures render within 2 CPU seconds, and the 60-act
+  repro renders from Lean's line at a0 (`tests/test_relay_english_scale.py`). The bound is a kernel CPU limit on
+  a child that rebuilds the container and then caps its own CPU (`run_cpu_bounded`), never a clock assertion. `test_renderers_reach_no_evaluation_search_or_limit`
   walks the AST call graph from every public function and allows only display helpers; seeded recomputations
   fail it. `test_rendered_text_follows_leans_fields_not_a_recomputation` changes Lean's fields and checks the
   sentence follows them. The u13 tests now render Lean's rows for the frozen oracle's fixtures.
@@ -191,7 +192,7 @@ DRI rulings used:
 | 10 | AGENT | Document, admission and audit paths all call the one Lean route; A/B compares public entry points. |
 | 11 | AGENT | No regex over a real language added. |
 | 12 | AGENT | No state-machine or ledger code changed. |
-| 13 | AGENT | Twelve seeded bugs, below. |
+| 13 | AGENT | Thirteen seeded bugs, below. |
 | 14-16 | AGENT | Hermetic gate; identities from Lean; `relay_lint`'s list extended; assurance manifest re-pinned. |
 | 17-18 | AGENT / HUMAN | Statement diff above; no spec-stage theorem. |
 | 19 | AGENT | No use-case rule or answer key changed; agent-policy `unspecified` harness in the suite. |
@@ -224,3 +225,5 @@ failed, and the file was restored and the test passed again:
     `test_latent_fixture_renders_in_under_two_seconds` cases and the one-act latent test fail; the restored build
     reproduces the pinned hash.
 12. Fix 4, Lean: `completedLabel` completes `deny` as yes. The build fails: `value3_gap` no longer proves.
+13. Fix 4: the renderer of `f0756983` (the model enumeration and `document.value`). Its child is stopped by
+    SIGXCPU in the four latent-fixture tests, and the 60-act repro fails.
