@@ -6,7 +6,7 @@ A classifies a verdict-producing body, including its helper methods; it does not
 
 ## Coverage
 
-Parsed 501 local Python files and 11 pinned external package files; found 2920 import edges into section 1.1 modules.
+Parsed 502 local Python files and 11 pinned external package files; found 2920 import edges into section 1.1 modules.
 External scans include only the native `ve_webapp/` and `bench/` packages; vendored `ve/`, tests, and conformance copies are excluded. Their paths and source SHA-256 values are pinned in `conformance/baseline-2026-09/external-imports.json`, so replay does not depend on local clones or home paths. Refresh with `--refresh-external` only after reviewing external changes.
 
 ## Symbols
@@ -4108,16 +4108,16 @@ One row per import statement binding. `*module*` and `*` need a later use-site r
 | `tests/test_stage2_standalone.py` | `ve.environment` | `PROFILE` | 113 |
 | `tests/test_stage2_standalone.py` | `ve.environment` | `SPEC_REVISION` | 113 |
 | `tests/test_stage2_standalone.py` | `ve.model` | `FiniteModel` | 9 |
-| `tests/test_stage2_validation.py` | `ve.ast` | `Const` | 194 |
-| `tests/test_stage2_validation.py` | `ve.ast` | `Const` | 287 |
-| `tests/test_stage2_validation.py` | `ve.ast` | `Unary` | 194 |
-| `tests/test_stage2_validation.py` | `ve.ast` | `Unary` | 287 |
-| `tests/test_stage2_validation.py` | `ve.definitions` | `compile_definitions` | 242 |
+| `tests/test_stage2_validation.py` | `ve.ast` | `Const` | 213 |
+| `tests/test_stage2_validation.py` | `ve.ast` | `Const` | 306 |
+| `tests/test_stage2_validation.py` | `ve.ast` | `Unary` | 213 |
+| `tests/test_stage2_validation.py` | `ve.ast` | `Unary` | 306 |
 | `tests/test_stage2_validation.py` | `ve.definitions` | `compile_definitions` | 261 |
-| `tests/test_stage2_validation.py` | `ve.definitions` | `compile_definitions` | 271 |
+| `tests/test_stage2_validation.py` | `ve.definitions` | `compile_definitions` | 280 |
+| `tests/test_stage2_validation.py` | `ve.definitions` | `compile_definitions` | 290 |
 | `tests/test_stage2_validation.py` | `ve.environment` | `Environment` | 11 |
-| `tests/test_stage2_validation.py` | `ve.evaluate` | `evaluate` | 195 |
-| `tests/test_stage2_validation.py` | `ve.evaluate` | `evaluate` | 288 |
+| `tests/test_stage2_validation.py` | `ve.evaluate` | `evaluate` | 214 |
+| `tests/test_stage2_validation.py` | `ve.evaluate` | `evaluate` | 307 |
 | `tests/test_stage2_validation.py` | `ve.model` | `FiniteModel` | 13 |
 | `tests/test_statement_block_environment.py` | `ve.environment` | `Environment` | 26 |
 | `tests/test_surface_registry.py` | `ve.argument` | `_checker_build` | 39 |
