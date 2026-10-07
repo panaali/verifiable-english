@@ -38,6 +38,21 @@ RESERVED_PREFIXES = (UNSAID_PREFIX, FILL_PREFIX)
 def reserved_prefixes(profiles) -> tuple[str, ...]:
     """The reserved name prefixes of an environment with `profiles`: none without `norm-defaults@0`."""
     return RESERVED_PREFIXES if NORM_DEFAULTS_PROFILE in profiles else ()
+
+
+# S2 wording hides generated names only while their producing layer is active. The readings
+# layer itself always owns ve__ and rd-; its gate lists those separately. Keep the optional
+# prefixes here with the completion's reserved table so every wording slot uses one policy.
+WORDING_LAYER_PREFIXES = {"soft-norms@0": ("soft__",), "rights@0": ("rights__",)}
+
+
+def wording_reserved_prefixes(profiles) -> tuple[str, ...]:
+    """Optional generated-name prefixes that S2 wording must hide for these profiles."""
+    return (*reserved_prefixes(profiles),
+            *(prefix for profile, prefixes in WORDING_LAYER_PREFIXES.items() if profile in profiles
+              for prefix in prefixes))
+
+
 _IDENTIFIER = re.compile(r"[a-z][a-z0-9_]*\Z", re.ASCII)
 _ASCII_LOWER = str.maketrans("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")
 

@@ -33,7 +33,7 @@ class S2Wording:
 
     def __init__(self, doc, route):
         from . import readings_s2_english as E
-        from .environment import reserved_prefixes
+        from .environment import wording_reserved_prefixes
         self.E = E
         self.doc, self.route = doc, route
         self.s1 = Wording(doc)
@@ -43,7 +43,7 @@ class S2Wording:
         self.names = {R.id: self.s1.reading_names(R.id) for R in self.sets}
         self.slots = E.Slots(numbers={str(n) for n in self.numbers.values()},
                              readings={name for names in self.names.values() for name in names if type(name) is str},
-                             reserved=reserved_prefixes(doc["environment"].profiles))
+                             reserved=wording_reserved_prefixes(doc["environment"].profiles))
         senv = self.s1.admission.senv
         self.frame = senv.frame
         self.author = set(senv.author_environment().predicates)

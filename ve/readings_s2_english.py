@@ -104,8 +104,8 @@ class Slots:
     conclusions: set = field(default_factory=set)
     situations: set = field(default_factory=set)
     clauses: set = field(default_factory=set)
-    # The completion's reserved name prefixes, hidden like generated names (readings-defaults 2.5) only where the
-    # document's environment reserves them (`environment.reserved_prefixes`). Without an environment, every one.
+    # Prefixes owned by optional layers, hidden only where the document activates those layers.
+    # Without an environment, hide every one conservatively.
     reserved: tuple = field(default_factory=lambda: _all_reserved())
 
     def options(self, name):
@@ -126,15 +126,15 @@ class Slots:
 
 _NUMERAL = re.compile(r"[1-9][0-9]*")
 ANSWERS = frozenset({"yes", "no"})
-# Names no wording shows (2.4, G6; readings-defaults 2.5): generated vocabulary, qualified rule names and `may not`;
-# and, under `norm-defaults@0` only, the completion's reserved names (`Slots.reserved`).
-_HIDDEN = ("ve__", "rd-", "soft__", "rights__")  # relay-lint: non-wording
+# Names no wording shows (2.4, G6; readings-defaults 2.5): the readings layer's generated vocabulary and qualified
+# rule names, plus optional layers' generated names only while active (`Slots.reserved`), and `may not`.
+_HIDDEN = ("ve__", "rd-")  # the readings layer is active on every S2 wording path
 _MAY_NOT = "may not"  # relay-lint: non-wording
 
 
 def _all_reserved():
-    from .environment import RESERVED_PREFIXES
-    return RESERVED_PREFIXES
+    from .environment import RESERVED_PREFIXES, WORDING_LAYER_PREFIXES
+    return (*RESERVED_PREFIXES, *(prefix for prefixes in WORDING_LAYER_PREFIXES.values() for prefix in prefixes))
 
 
 @lru_cache(maxsize=None)
@@ -148,8 +148,8 @@ def _hidden_pattern(reserved):
 
 
 def hidden_in(text, reserved=None):
-    """The first generated name, reserved name (`reserved`, default every one) or `may not` that `text` shows, else
-    None (2.4, G6, G9; readings-defaults 2.5). The one test of it: the gate and the tests' oracles read this."""
+    """The first generated name, active layer name (`reserved`, default every one) or `may not` that `text` shows,
+    else None (2.4, G6, G9; readings-defaults 2.5). The gate and the tests' oracles read this."""
     found = _hidden_pattern(tuple(_all_reserved() if reserved is None else reserved)).search(text)
     return found.group() if found else None
 

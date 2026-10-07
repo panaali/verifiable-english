@@ -297,7 +297,7 @@ def test_fable_b1_a_plain_readings_document_shows_its_own_unsaid_predicate(tmp_p
     path = s2_document(tmp_path, [("set", "rs1", "u1", [S, DF]), ("fixed", "u0", HELP_X),
                                   ("fixed", "u2", every("unsaid__x"))], raw=raw)
     data, lines, wording = _query(path, every("unsaid__x"))
-    assert data["verdict"] == "ALL" and wording.slots.reserved == ()
+    assert data["verdict"] == "ALL" and wording.slots.reserved == ("soft__",)
     assert any('the conclusion follows: *For every agent, for every user, that agent has the recorded relation '
                '"unsaid__x" to that user.*' in line for line in lines), lines
 
@@ -307,9 +307,9 @@ def test_fable_b1_a_plain_readings_document_shows_its_own_unsaid_predicate(tmp_p
 
 
 def _hidden_prefixes():
-    from ve.environment import RESERVED_PREFIXES
+    from ve.environment import RESERVED_PREFIXES, WORDING_LAYER_PREFIXES
     from ve.readings_s2_english import _HIDDEN
-    return (*_HIDDEN, *RESERVED_PREFIXES)
+    return (*_HIDDEN, *RESERVED_PREFIXES, *(p for prefixes in WORDING_LAYER_PREFIXES.values() for p in prefixes))
 
 
 def _in_slot(slot, text):
@@ -383,6 +383,65 @@ def test_author_predicates_containing_a_generated_prefix_are_shown(tmp_path, pre
     data, lines, _ = _query(path, every(predicate))
     assert data["verdict"] == "ALL"
     assert any(f'"{predicate}" to that user.*' in line for line in lines), lines
+
+
+def test_rights_prefix_is_an_author_predicate_without_rights_layer(tmp_path):
+    """Looprecheck2 B: the admitted `rights__x` conclusion is worded, not turned into InvalidInput."""
+    raw = env_k()  # soft-norms@0 is active; rights@0 is absent
+    raw["vocabulary"]["predicates"]["rights__x"] = {"arguments": ["agent", "user"], "description": "base"}
+    path = s2_document(tmp_path, [("set", "rs1", "u1", [S, DF]), ("fixed", "u0", HELP_X),
+                                  ("fixed", "u2", every("rights__x"))], raw=raw)
+    data, lines, wording = _query(path, every("rights__x"))
+    assert data["verdict"] == "ALL"
+    assert any('"rights__x" to that user.*' in line for line in lines), lines
+    assert "rights__" not in wording.slots.reserved
+    assert all(hidden_in(line, wording.slots.reserved) is None for line in lines)
+
+
+def test_soft_prefix_is_an_author_predicate_without_soft_layer(tmp_path):
+    """The norms-only route accepts and words an author's soft__ predicate across a reading set."""
+    raw = env_k(profiles=("norms@0", "readings@1", "relational-fol@0"))
+    raw["vocabulary"]["predicates"]["soft__x"] = {"arguments": ["agent", "user"], "description": "base"}
+    path = s2_document(tmp_path, [
+        ("set", "rs1", "u1", [("a", norm("no-deception", "avoid_required", True), "norm", None),
+                              ("b", norm("no-deception", "avoid_required", False), "norm", None)]),
+        ("fixed", "u2", every("soft__x"))], raw=raw)
+    data, lines, wording = _query(path, every("soft__x"))
+    assert data["verdict"] == "ALL" and wording.slots.reserved == ()
+    assert any('"soft__x" to that user.*' in line for line in lines), lines
+    assert all(hidden_in(line, wording.slots.reserved) is None for line in lines)
+
+
+def test_s2_hidden_prefixes_follow_every_optional_layer_combination():
+    """Each optional producer's prefix is hidden exactly when its profile is active, in every wording slot."""
+    import itertools
+    from ve.environment import WORDING_LAYER_PREFIXES, wording_reserved_prefixes
+
+    optional = ("norm-defaults@0", *WORDING_LAYER_PREFIXES)
+    for flags in itertools.product((False, True), repeat=len(optional)):
+        profiles = {profile for profile, on in zip(optional, flags) if on}
+        reserved = wording_reserved_prefixes(profiles)
+        for profile, prefix in (("norm-defaults@0", "unsaid__"),
+                                ("norm-defaults@0", "unsaid--"),
+                                *((profile, p) for profile, prefixes in WORDING_LAYER_PREFIXES.items()
+                                  for p in prefixes)):
+            for slot in SLOT_KINDS:
+                text = f"a {prefix}x u"
+                reading = text if slot == "reading" else "*must*"
+                slots = Slots(numbers={"1"}, readings={reading}, clauses={text}, situations={text},
+                              conclusions={text}, reserved=reserved)
+                kind, field = {"reading": ("conflict_free", None), "clause": ("undecided", "clause"),
+                               "situation": ("conflict", "situation"),
+                               "conclusion": ("follows", "conclusion")}[slot]
+                build = lambda: named_result([(1, reading)], kind, slots,
+                                             **({field: text} if field else {}))
+                if profile in profiles:
+                    with pytest.raises(VEError, match="generated name"):
+                        build()
+                else:
+                    assert text in build()
+        assert hidden_in("rule ve__here", reserved) == "ve__"
+        assert hidden_in("rule rd-1-x", reserved) == "rd-"
 
 
 def test_the_lint_and_the_checker_share_one_reserved_table():
