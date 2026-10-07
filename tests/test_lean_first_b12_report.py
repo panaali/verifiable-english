@@ -46,9 +46,9 @@ def test_delta_numbers_are_regenerated_from_evidence():
     spec = importlib.util.spec_from_file_location("lean_first_b12_cpu_report", source)
     cpu_report = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(cpu_report)
-    cpu = cpu_report.render()
-    assert cpu == report.load("lean-cpu.json")
-    assert cpu["same_output"] and cpu["lean_cpu_ratio"] <= 1.20 and cpu["wall_ratio"] <= 1.25
+    measurement = cpu_report.render()
+    assert measurement == report.load("lean-cpu.json")
+    assert measurement["same_output"] and measurement["within_budget"]
     for name in ("mutant-environment", "mutant-model-id", "mutant-probe-record",
                  "mutant-rights-null-review", "mutant-soft-profile-review",
                  "mutant-norm-defaults-review"):
