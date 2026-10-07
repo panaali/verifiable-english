@@ -6027,6 +6027,112 @@ theorem VE.English.tree_unique
           VE.English.Tree.Syntactic L t₂ → VE.English.Tree.yield L d t₁ = VE.English.Tree.yield L d t₂ → t₁ = t₂
   -- uses VE.English.Admitted@VE.English.Lexicon VE.English.Lexicon@VE.English.Lexicon VE.English.Tok@VE.English.Lexicon VE.English.Tree.Syntactic@VE.English.Grammar VE.English.Tree.yield@VE.English.Grammar VE.English.Tree@VE.English.Grammar
   -- expr 4079222823
+theorem VE.EnglishGrammar.DecodeEncode.anyAux_at
+  ∀ (p : Char → Bool) (pre rest : List Char),
+    { data := pre ++ rest }.anyAux { byteIdx := String.utf8ByteSize.go (pre ++ rest) } p
+        { byteIdx := String.utf8ByteSize.go pre } =
+      rest.any p
+  -- uses
+  -- expr 4151182300
+theorem VE.EnglishGrammar.DecodeEncode.digitChar_facts
+  ∀ (n : Nat), n < 10 → n.digitChar.isDigit = Bool.true ∧ n.digitChar.toNat - '0'.toNat = n ∧ n.digitChar ≠ '-'
+  -- uses
+  -- expr 511977445
+theorem VE.EnglishGrammar.DecodeEncode.digits_props
+  ∀ (n : Nat),
+    Nat.toDigits 10 n ≠ [] ∧
+      (∀ (c : Char), c ∈ Nat.toDigits 10 n → c.isDigit = Bool.true ∧ c ≠ '-') ∧
+        List.foldl (fun v c => v * 10 + (c.toNat - '0'.toNat)) 0 (Nat.toDigits 10 n) = n
+  -- uses
+  -- expr 2000893886
+theorem VE.EnglishGrammar.DecodeEncode.foldlAux_at
+  ∀ {α : Type} (f : α → Char → α) (pre rest : List Char) (a : α),
+    String.foldlAux f { data := pre ++ rest } { byteIdx := String.utf8ByteSize.go (pre ++ rest) }
+        { byteIdx := String.utf8ByteSize.go pre } a =
+      List.foldl f a rest
+  -- uses
+  -- expr 3903980745
+theorem VE.EnglishGrammar.DecodeEncode.getAux_at
+  ∀ (pre rest : List Char) (c : Char) (i : Nat),
+    String.utf8GetAux (pre ++ c :: rest) { byteIdx := i } { byteIdx := i + String.utf8ByteSize.go pre } = c
+  -- uses
+  -- expr 774790539
+theorem VE.EnglishGrammar.DecodeEncode.get_at
+  ∀ (pre rest : List Char) (c : Char), { data := pre ++ c :: rest }.get { byteIdx := String.utf8ByteSize.go pre } = c
+  -- uses
+  -- expr 1620585266
+theorem VE.EnglishGrammar.DecodeEncode.go_append
+  ∀ (a b : List Char), String.utf8ByteSize.go (a ++ b) = String.utf8ByteSize.go a + String.utf8ByteSize.go b
+  -- uses
+  -- expr 4228080144
+theorem VE.EnglishGrammar.DecodeEncode.go_cons
+  ∀ (c : Char) (a : List Char), String.utf8ByteSize.go (c :: a) = String.utf8ByteSize.go a + c.utf8Size
+  -- uses
+  -- expr 3505534038
+theorem VE.EnglishGrammar.DecodeEncode.go_nil
+  String.utf8ByteSize.go [] = 0
+  -- uses
+  -- expr 3085064670
+theorem VE.EnglishGrammar.DecodeEncode.go_pos
+  ∀ (c : Char) (cs : List Char), String.utf8ByteSize.go (c :: cs) ≠ 0
+  -- uses
+  -- expr 4164746841
+theorem VE.EnglishGrammar.DecodeEncode.intText_toIntOpt
+  ∀ (v : Int), (VE.EnglishGrammar.intText v).toInt? = Option.some v
+  -- uses VE.EnglishGrammar.intText@VE.EnglishGrammar.Encode
+  -- expr 954410624
+theorem VE.EnglishGrammar.DecodeEncode.pos_add_char
+  ∀ (i : Nat) (c : Char), { byteIdx := i } + c = { byteIdx := i + c.utf8Size }
+  -- uses
+  -- expr 1424417686
+theorem VE.EnglishGrammar.DecodeEncode.string_any
+  ∀ (p : Char → Bool) (cs : List Char), { data := cs }.any p = cs.any p
+  -- uses
+  -- expr 1683196473
+theorem VE.EnglishGrammar.DecodeEncode.string_foldl
+  ∀ {α : Type} (f : α → Char → α) (a : α) (cs : List Char), String.foldl f a { data := cs } = List.foldl f a cs
+  -- uses
+  -- expr 1217288279
+theorem VE.EnglishGrammar.DecodeEncode.toDigitsCore_digits
+  ∀ (fuel n : Nat) (ds : List Char),
+    (∀ (c : Char), c ∈ ds → c.isDigit = Bool.true ∧ c ≠ '-') →
+      ∀ (c : Char), c ∈ Nat.toDigitsCore 10 fuel n ds → c.isDigit = Bool.true ∧ c ≠ '-'
+  -- uses
+  -- expr 2843559796
+theorem VE.EnglishGrammar.DecodeEncode.toDigitsCore_ne_nil
+  ∀ (fuel n : Nat) (ds : List Char), 0 < fuel → Nat.toDigitsCore 10 fuel n ds ≠ []
+  -- uses
+  -- expr 1068719414
+theorem VE.EnglishGrammar.DecodeEncode.toDigitsCore_value
+  ∀ (fuel n : Nat) (ds : List Char),
+    n < fuel →
+      List.foldl (fun v c => v * 10 + (c.toNat - '0'.toNat)) 0 (Nat.toDigitsCore 10 fuel n ds) =
+        List.foldl (fun v c => v * 10 + (c.toNat - '0'.toNat)) n ds
+  -- uses
+  -- expr 1779778821
+theorem VE.EnglishGrammar.DecodeEncode.toNatOpt_of_digits
+  ∀ (cs : List Char),
+    cs ≠ [] →
+      (∀ (c : Char), c ∈ cs → c.isDigit = Bool.true) →
+        { data := cs }.toNat? = Option.some (List.foldl (fun n c => n * 10 + (c.toNat - '0'.toNat)) 0 cs)
+  -- uses
+  -- expr 568378752
+theorem VE.EnglishGrammar.DecodeEncode.toNatOpt_toString
+  ∀ (n : Nat), (ToString.toString n).toNat? = Option.some n
+  -- uses
+  -- expr 3096537471
+theorem VE.EnglishGrammar.DecodeEncode.toString_nat
+  ∀ (n : Nat), ToString.toString n = { data := Nat.toDigits 10 n }
+  -- uses
+  -- expr 2489872994
+theorem VE.EnglishGrammar.EFormula.decode_encode
+  ∀ (A : VE.EnglishGrammar.EFormula), VE.EnglishGrammar.EFormula.decode A.encode = Option.some A
+  -- uses VE.EnglishGrammar.EFormula.decode@VE.EnglishGrammar.Encode VE.EnglishGrammar.EFormula.encode@VE.EnglishGrammar.Encode VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax
+  -- expr 2929378696
+theorem VE.EnglishGrammar.ETerm.decode_encode
+  ∀ (t : VE.EnglishGrammar.ETerm), VE.EnglishGrammar.ETerm.decode t.encode = Option.some t
+  -- uses VE.EnglishGrammar.ETerm.decode@VE.EnglishGrammar.Encode VE.EnglishGrammar.ETerm.encode@VE.EnglishGrammar.Encode VE.EnglishGrammar.ETerm@VE.EnglishGrammar.Syntax
+  -- expr 2165347204
 theorem VE.EnglishGrammar.LexRow.Small.dom
   ∀ {E : VE.EnglishGrammar.Env} {r : VE.EnglishGrammar.LexRow},
     r.Small → VE.EnglishGrammar.LexRow.NtsIn (VE.EnglishGrammar.InDom E) r
@@ -6224,6 +6330,10 @@ theorem VE.EnglishGrammar.decl_sub
         d ∈ VE.EnglishGrammar.declsOf E p → ∃ q, q ∈ VE.EnglishGrammar.declsOf E2 p ∧ q.args = d.args
   -- uses VE.EnglishGrammar.Env.predicates@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.PredDecl.args@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.PredDecl.arity@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.PredDecl.functional@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.PredDecl.name@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.PredDecl.total@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.PredDecl@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.declsOf@VE.EnglishGrammar.Rules
   -- expr 264709562
+theorem VE.EnglishGrammar.decode_encode
+  ∀ (A : VE.EnglishGrammar.EFormula), VE.EnglishGrammar.EFormula.decode A.encode = Option.some A
+  -- uses VE.EnglishGrammar.EFormula.decode@VE.EnglishGrammar.Encode VE.EnglishGrammar.EFormula.encode@VE.EnglishGrammar.Encode VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax
+  -- expr 2929378696
 theorem VE.EnglishGrammar.english_reading_unique
   ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon) (s : String)
     (rs rs2 : List (VE.EnglishGrammar.EFormula × Bool)),
@@ -6386,6 +6496,11 @@ theorem VE.EnglishGrammar.lexRules_terminatorFree
     VE.EnglishGrammar.terminatorFree { rules := VE.EnglishGrammar.lexRules E L, start := 0, rank := #[] } = Bool.true
   -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.lexRules@VE.EnglishGrammar.Rules VE.EnglishGrammar.terminatorFree@VE.EnglishGrammar.Token VE.Grammar.Grammar.mk@VE.Grammar.Basic
   -- expr 1686808867
+theorem VE.EnglishGrammar.mapM_decode
+  ∀ (ts : List VE.EnglishGrammar.ETerm),
+    List.mapM VE.EnglishGrammar.ETerm.decode (List.map VE.EnglishGrammar.ETerm.encode ts) = Option.some ts
+  -- uses VE.EnglishGrammar.ETerm.decode@VE.EnglishGrammar.Encode VE.EnglishGrammar.ETerm.encode@VE.EnglishGrammar.Encode VE.EnglishGrammar.ETerm@VE.EnglishGrammar.Syntax
+  -- expr 1482741627
 theorem VE.EnglishGrammar.map_rename_id
   ∀ (xs : List (VE.Grammar.Sym VE.EnglishGrammar.Terminal)), List.map (VE.Grammar.Sym.rename fun A => A) xs = xs
   -- uses VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.Grammar.Sym.rename@VE.Grammar.Extension VE.Grammar.Sym@VE.Grammar.Basic
@@ -6509,6 +6624,10 @@ theorem VE.EnglishGrammar.propertyRows_sub
                   VE.EnglishGrammar.propertyRows E2 q
   -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.LexRow.rename@VE.EnglishGrammar.Extends VE.EnglishGrammar.LexRow@VE.EnglishGrammar.Rules VE.EnglishGrammar.PredDecl.args@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.PredDecl.name@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.PredDecl@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.envSub@VE.EnglishGrammar.Extends VE.EnglishGrammar.propRename@VE.EnglishGrammar.Extends VE.EnglishGrammar.propertyRows@VE.EnglishGrammar.Rules
   -- expr 1519919079
+theorem VE.EnglishGrammar.reachRefl_kind
+  ∀ (k : Bool), VE.EnglishGrammar.reachRefl (VE.EnglishGrammar.reachKind k) = Option.some k
+  -- uses VE.EnglishGrammar.reachKind@VE.EnglishGrammar.Encode VE.EnglishGrammar.reachRefl@VE.EnglishGrammar.Encode
+  -- expr 4170575946
 theorem VE.EnglishGrammar.read_checks
   ∀ {E : VE.EnglishGrammar.Env} {O : VE.EnglishGrammar.Overlay} {L : VE.EnglishGrammar.Lexicon} {b : Nat} {s : String}
     {o : VE.EnglishGrammar.ReadOutcome},
