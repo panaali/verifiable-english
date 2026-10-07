@@ -56,7 +56,7 @@
     "ve/backends/dispatch.py:_shadow": "shadow authority only (execute and shadowed): the Python result is returned (a Python exception is re-raised unchanged); a candidate backend exception, CheckerUnavailable included, is only recorded as a shadow difference and never becomes the returned verdict"
   },
   "lean_decoders": {
-    "total_lines": 21718,
+    "total_lines": 21720,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -183,16 +183,16 @@
       },
       {
         "file": "lean/VE/CertificateWire.lean",
-        "lines": 291,
-        "sha256": "21aacf78b19c9f0f81ee92b9b8925ef568d89d5ee32eb25ca7be40fcac0d62e9",
+        "lines": 294,
+        "sha256": "8541e1523844a57d3c08e561f8eb85b576524a6ec7108860b7c82206e69e53eb",
         "ranges": [
           [
-            43,
-            200
+            46,
+            203
           ],
           [
-            215,
-            224
+            218,
+            227
           ]
         ],
         "declarations": [
@@ -244,12 +244,12 @@
       },
       {
         "file": "lean/VE/Core/Wire.lean",
-        "lines": 178,
-        "sha256": "e22fe1f5b1a4f4e3440e4ec99840cb812a9453be84a29a2bdb371fc0e4563700",
+        "lines": 180,
+        "sha256": "e4643f425ec89be4b7e1c6584d7d2fea383e7e558ae1c3d89e067efc973e630a",
         "ranges": [
           [
             1,
-            178
+            180
           ]
         ],
         "declarations": [
@@ -517,7 +517,7 @@
       {
         "file": "lean/VE/Order/Wire.lean",
         "lines": 295,
-        "sha256": "b7b34ab26a20055af5f61f83b504139e1d32086814938424fc6e5ba9b4de096a",
+        "sha256": "2c8fe48a3007436efd33f4a47bc65cfd3c22973a6bc15f9214514442ed82515e",
         "ranges": [
           [
             25,
@@ -784,7 +784,7 @@
       {
         "file": "lean/VE/Route/Wire.lean",
         "lines": 666,
-        "sha256": "fdb958bd4076366599c3674d20feb2a7f9740cdb70f0334cca14e40f371cf93d",
+        "sha256": "72342ac56c7067936bcd59db6d9ff29f1d23819542a64f69848fb67c7b2a3b01",
         "ranges": [
           [
             1,
@@ -893,7 +893,7 @@
       {
         "file": "lean/VE/Service/FamilyNorms.lean",
         "lines": 250,
-        "sha256": "cbe5225b22e50b51f297a731c0871e7cbdcd35899bc4f669af1107c8945c90a1",
+        "sha256": "b7d6f9f6767a146babd5acb1f25348340745fb50f50b0715945615439c5460ae",
         "ranges": [
           [
             1,
