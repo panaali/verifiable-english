@@ -1,6 +1,8 @@
 import VE.Attribution.Admission
+import VE.Attribution.Preflight
 import VE.Attribution.Status
 import VE.Route.Run
+import VE.Service.TypingDiagnostic
 
 /-! The `ve_service` mode `reports` (spec 9.4), formerly the one-shot `ve_reports_route`. Each case is
 `{"id", "kind", "environment", "document", ...}`. Every formula, key, name,
@@ -61,6 +63,29 @@ def usesReportsPath (j : Json) : Bool :=
 def envelopeJson (D : ReportDoc) (envId : String) : Json :=
   Json.mkObj [("environment_id", .str envId), ("document_id", .str (documentId D))]
 
+private def unknownPredicate (E : VE.Environment) : VE.Formula → Option String
+  | .unary p _ | .binary p _ _ => if (E.predicates p).isNone then some p else none
+  | .not a | .all _ a | .ex _ a => unknownPredicate E a
+  | .and a b | .or a b | .implies a b =>
+      (unknownPredicate E a).orElse fun _ => unknownPredicate E b
+  | _ => none
+
+def manifestUnknown (E : VE.Environment) (j : Json) : Nat → Option String
+  | 0 => none
+  | fuel + 1 =>
+  match j.getObjVal? "ast" with
+  | .ok ast => match VE.Bridge.decodeFormula 64 ast with
+      | .ok a => unknownPredicate E a
+      | .error _ => none
+  | .error _ =>
+    match j.getObjVal? "report" with
+    | .ok r => manifestUnknown E (r.getObjValD "content") fuel
+    | .error _ => match j.getObjVal? "assessment" with
+      | .ok r => manifestUnknown E (r.getObjValD "content") fuel
+      | .error _ => match j.getObjVal? "negated" with
+        | .ok n => manifestUnknown E n fuel
+        | .error _ => none
+
 /-! ## reports-elaborate -/
 
 def premiseLabel (u : Unit) : String :=
@@ -103,6 +128,7 @@ def elaborated (dec : Wire.Decoded) (environment : Json) : List (String × Json)
   let D := dec.D
   [("environment_reports_id",
       .str ((VE.Route.Wire.environmentId D.profiles (Wire.environmentReportsJson environment D)).toOption.getD "")),
+   ("environment_reports", Wire.environmentReportsJson environment D),
    ("keys", Json.arr ((Wire.generated D).map fun (n, ss, key) =>
       Json.mkObj [("name", .str n), ("arguments", toJson ss), ("key", key)]).toArray),
    ("premises", Json.arr (D.units.filterMap fun u => (unitPremise D u).map fun φ =>
@@ -119,6 +145,9 @@ def elaborated (dec : Wire.Decoded) (environment : Json) : List (String × Json)
         | none => [])).toArray),
    ("content_ids", Json.arr (D.units.map fun u =>
       Json.mkObj [("unit", .str u.id), ("content_id", .str (contentId D u.content))]).toArray),
+   ("meaning_ids", Json.arr (D.units.map fun u =>
+      Json.mkObj [("unit", .str u.id), ("meaning_id", .str
+        ((VE.Route.Wire.meaningId D.profiles D.environmentId (canonicalObject D u.content).toJson).toOption.getD ""))]).toArray),
    ("envelope", envelopeJson D D.environmentId),
    ("warnings", toJson (warnings dec))]
 
@@ -360,6 +389,17 @@ def scopedVerdict (c : Wire.Checked) (j : Json) (s : ScopedCheck) : Except Strin
     | none => pure (Json.mkObj (base ++ [("status", .str "UNKNOWN"),
         ("detail", .str detail)]))
 
+/-- Coverage displays evidence without replay; a carried bound certificate is pending. -/
+def scopedUnreplayed (c : Wire.Checked) (j : Json) (s : ScopedCheck) : Json :=
+  let D := c.dec.D
+  match payloadFormulas D s with
+  | none => Json.mkObj [("id", .str s.id), ("status", .str "UNKNOWN"), ("detail", .str "payloads")]
+  | some (Eq, _) =>
+    let (cert, outer) := scopedCertificate c j s
+    let detail := if cert.isNone then "no evidence" else if !outer then "envelope" else "not replayed"
+    Json.mkObj [("id", .str s.id), ("environment_id", .str Eq.id),
+      ("background", toJson (background Eq).length), ("status", .str "UNKNOWN"), ("detail", .str detail)]
+
 /-! ## reports-status -/
 
 def depthPath (d : Nat) : String := String.intercalate "." (List.replicate d "1")
@@ -395,9 +435,92 @@ def verdictOf (v : Json) : Status :=
   | .str s => verdictStatus s
   | _ => .unknown
 
+private def counts (xs : List String) : Json :=
+  Json.mkObj (xs.eraseDups.map fun x => (x, toJson (xs.filter (· == x)).length))
+
+private def literalPaths : Content → String → String → List (String × String)
+  | .negated n, uid, path => literalPaths n uid path
+  | .report _ _ _ body lit, uid, path =>
+      (if lit.isSome then [(uid, path)] else []) ++
+        literalPaths body uid (childPath path 1)
+  | .assessment _ _ body, uid, path => literalPaths body uid (childPath path 1)
+  | _, _, _ => []
+
+private def reportLine (D : ReportDoc) (u : Unit) : Option (String × String) :=
+  let (node, polarity) := match u.content with
+    | .negated n => (n, "denied")
+    | n => (n, "asserted")
+  match node with
+  | .report _ act ctx _ _ =>
+      (D.contexts.find? (·.id == ctx)).map fun c =>
+        ("reports", s!"{act.name} {c.tense.name} {polarity}")
+  | .assessment _ aid _ =>
+      (D.assessments.find? (·.id == aid)).map fun a =>
+        ("assessments", s!"{a.decidedBy} {polarity}")
+  | _ => none
+
+/-- Section 6 residual lines, generated from the same decoded document as the statuses. -/
+def residualLines (c : Wire.Checked) (verdicts : List Json) : Json :=
+  let D := c.dec.D
+  let lines := D.units.filterMap (reportLine D)
+  let literals := D.units.flatMap fun u => literalPaths u.content u.id ""
+  Json.mkObj [
+    ("open_terms", toJson (D.w2.openTerms ++ (akeys D).map (assessName D))),
+    ("reports", counts (lines.filterMap fun (kind, line) => if kind == "reports" then some line else none)),
+    ("assessments", counts (lines.filterMap fun (kind, line) => if kind == "assessments" then some line else none)),
+    ("literal_quotations", Json.arr (literals.map fun (uid, path) =>
+      Json.mkObj [("unit", .str uid), ("path", .str path)]).toArray),
+    ("scoped_checks", Json.arr verdicts.toArray),
+    ("unreviewed_acts", counts (c.dec.units.flatMap fun u => (unreviewedActs "" u.kind).map Prod.snd)),
+    ("unformalised_kinds", counts (c.dec.units.flatMap fun u => (unformalisedKinds "" u.kind).map Prod.snd))]
+
+private def textPath (p : Path) : String :=
+  p.unit ++ (if p.depth == 0 then "" else s!", path {depthPath p.depth}")
+
+private def unitStatusText (D : ReportDoc) (u : Unit) : Option String :=
+  let (node, denied) := match u.content with
+    | .negated n => (n, true)
+    | n => (n, false)
+  match node with
+  | .report holder act ctx body literal =>
+    (D.contexts.find? (·.id == ctx)).map fun c =>
+      let subject := s!"{holder} {act.name} ({ctx}, {c.tense.name}) content {contentId D body}"
+      if denied then
+        s!"REPORT {u.id}: denied: {subject}; claimed: that the report did not occur; not claimed: the content, its negation, any other act of {holder}"
+      else
+        s!"REPORT {u.id}: {subject}" ++ (if literal.isSome then " [literal]" else "") ++
+          s!"; claimed: the report; not claimed: the content, any other act of {holder}"
+  | .assessment judgment aid _ =>
+    (D.assessments.find? (·.id == aid)).map fun a =>
+      s!"ASSESSMENT {u.id}: OPEN; {judgment.name} per assessment {aid}, decided by {a.decidedBy}; admission establishes neither possibility nor likelihood"
+  | _ => none
+
+/-- The reports layer's section 7.2 display lines. The separate P0 premise line is
+added by the document caller after its premise-set check. -/
+def statusText (c : Wire.Checked) (verdicts : List Json) (status : Status) : List String :=
+  let D := c.dec.D
+  let reports := D.units.filterMap (unitStatusText D)
+  let scopedLines := (D.«scoped».zip verdicts).map fun (s, v) =>
+    let verdict := match v.getObjValD "status" with | .str x => x | _ => "UNKNOWN"
+    let scope := match v.getObjValD "environment_id" with | .str x => x | _ => "unresolved"
+    let paths := String.intercalate ", " (s.payloads.map textPath)
+    let detail := match v.getObjValD "detail" with | .str x => s!" ({x})" | _ => ""
+    s!"SCOPED {s.id}: {verdict} from {paths} under {scope}{detail}"
+  let bridges := D.bridges.map fun b =>
+    let holder := (holderAt D b.target).getD "unresolved"
+    let label := if b.target.depth == 0 then s!"bridge:accepts({holder},{b.target.unit})"
+      else s!"bridge:accepts_at({holder},{b.target.unit},{depthPath b.target.depth})"
+    let formula := match bridgeFormula D b.target with
+      | some φ => (enc φ).compress
+      | none => "unresolved"
+    s!"BRIDGE {label}: assumes {formula} at {textPath b.target} for {b.acceptedBy}, reason {String.intercalate ", " b.reason}; not discharged"
+  reports ++ scopedLines ++ bridges ++ [s!"DOCUMENT: {status.render}"]
+
 def runStatus (c : Wire.Checked) (id : String) (j : Json) : Except String Json := do
   let D := c.dec.D
-  let verdicts ← D.«scoped».mapM (scopedVerdict c j)
+  let verdicts ← if j.getObjValD "replay" == .bool false then
+    pure (D.«scoped».map (scopedUnreplayed c j))
+  else D.«scoped».mapM (scopedVerdict c j)
   let units := (c.dec.units.zip D.unitMeta).map fun (u, m) =>
     let nested := nestedResults D u
     (u.id, unitStatus (meaningStatus (hasContent u) m.meaning) (nested.map Prod.snd), nested.map Prod.fst)
@@ -407,6 +530,8 @@ def runStatus (c : Wire.Checked) (id : String) (j : Json) : Except String Json :
       Json.mkObj [("id", .str uid), ("status", .str s.render), ("nested", Json.arr nested.toArray)]).toArray),
     ("scoped", Json.arr verdicts.toArray),
     ("document_status", .str status.render),
+    ("status_text", toJson (statusText c verdicts status)),
+    ("residual_lines", residualLines c verdicts),
     ("envelope", envelopeJson D D.environmentId),
     ("bindings", Json.mkObj [("envelope", .bool (outerBound D j))])])
 
@@ -471,9 +596,23 @@ def runCase (j : Json) : Except String Json := do
     return ← runAdmission id environment document
   if kind.startsWith "reports-" then
     let environment ← j.getObjVal? "environment"
-    let c ← Wire.decodeDocument environment (← j.getObjVal? "document")
+    let document ← j.getObjVal? "document"
+    -- The public fault order and texts first (`Preflight.check`); then the decoder.
+    Preflight.check VE.Service.TypingDiagnostic.diagnose environment document (← Preflight.nullPaths j)
+    let c ← Wire.decodeDocument environment document
     if kind == "reports-elaborate" then
       return VE.Route.Wire.ok id (elaborated c.dec environment)
+    if kind == "reports-content" then
+      let raw ← j.getObjVal? "content"
+      match manifestUnknown c.dec.D.E raw 40 with
+      | some p => throw s!"UnknownSymbol: undeclared predicate {p}"
+      | none => pure ()
+      let content ← Wire.decodeContent c.dec.D.E "manifest" 40 raw
+      VE.Route.Admission.require (content.depth ≤ 16) "ResourceLimit: content depth"
+      VE.Route.Admission.require (content.nodes.all (nodeOk c.dec.D)) "InvalidInput: manifest content"
+      let meaningId ← VE.Route.Wire.meaningId c.dec.D.profiles c.dec.D.environmentId
+        (canonicalObject c.dec.D content).toJson
+      return VE.Route.Wire.ok id [("meaning_id", .str meaningId)]
     if kind == "reports-certificate" then
       return ← runCertificate c environment id j
     if kind == "reports-countermodel" then

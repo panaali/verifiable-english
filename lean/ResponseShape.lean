@@ -154,6 +154,7 @@ inductive Shape where
   | index
   | digest
   | zip (pointer : String) (s : Shape)
+  | zipOrEmpty (pointer : String) (s : Shape)
   | onCase (s : Shape)
   | select (choices : List (Shape × Shape))
   | countWhere (array : String) (where_ : Shape) (equals : String)
@@ -270,6 +271,7 @@ def render (file : String) : Nat → Shape → Except String Json
     | .index => pure (Json.mkObj [("x-index", .bool true)])
     | .digest => pure (Json.mkObj [("x-digest", .bool true)])
     | .zip p x => pure (Json.mkObj [("x-zip", Json.mkObj [("of", .str p), ("items", ← go x)])])
+    | .zipOrEmpty p x => pure (Json.mkObj [("x-zip-or-empty", Json.mkObj [("of", .str p), ("items", ← go x)])])
     | .onCase x => pure (Json.mkObj [("x-case", ← go x)])
     | .select cs => do
       let entries ← cs.mapM fun (w, t) => do pure (Json.mkObj [("when", ← go w), ("then", ← go t)])
@@ -417,6 +419,7 @@ def qualify (file : String) : Nat → Shape → Shape
     | .ite a b e => .ite (q a) (q b) (q e)
     | .tagged table => .tagged (table.map fun (t, slots) => (t, slots.map q))
     | .zip p x => .zip p (q x)
+    | .zipOrEmpty p x => .zipOrEmpty p (q x)
     | .onCase x => .onCase (q x)
     | .select cs => .select (cs.map fun (w, t) => (q w, q t))
     | .countWhere a w e => .countWhere a (q w) e
@@ -559,6 +562,13 @@ def check (files : List File) : Nat → Shape → Ctx → Counters → Json → 
       | .str x, some (.str d) => if x == d then pure () else fail "is not the digest of the result's case"
       | _, _ => fail "is not the digest of the result's case"
     | .zip p x => match resolve ctx.value p, value with
+      | some (.arr contexts), .arr xs =>
+        if xs.size != contexts.size then fail s!"not one element per element of the request's {p}" else do
+          for ((v, cx), i) in (xs.toList.zip contexts.toList).zipIdx do
+            within s!"[{i}]" (go x { value := cx, index := some i } counters v)
+      | _, _ => fail s!"not one element per element of the request's {p}"
+    | .zipOrEmpty p x => match resolve ctx.value p, value with
+      | none, .arr xs => if xs.isEmpty then pure () else fail s!"not one element per element of the request's {p}"
       | some (.arr contexts), .arr xs =>
         if xs.size != contexts.size then fail s!"not one element per element of the request's {p}" else do
           for ((v, cx), i) in (xs.toList.zip contexts.toList).zipIdx do

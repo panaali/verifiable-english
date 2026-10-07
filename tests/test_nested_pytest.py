@@ -112,6 +112,10 @@ def test_environment_drops_the_outer_runs_settings():
 
 # Pytest commands built outside the builder, each with its reason.
 UNBUILT = {
+    # Outermost, isolated mutant runs: each script changes one file, runs one targeted failing
+    # test, restores the source, and records the failure before moving to the next mutant.
+    "docs/lean-first/b8/seeds.py",
+    "docs/lean-first/b8/lean_seeds.py",
     # Frozen with the P1 preregistration (experiments/P1-deference/freeze.json); a serial outermost run
     # from a shell that passes no plugin option.
     "experiments/p1_preflight.py",

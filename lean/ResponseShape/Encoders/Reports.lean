@@ -25,6 +25,11 @@ theorem elaborate_fits (id : String) (dec : Wire.Decoded) (environment : Json) :
   simp only []
   fits using generated_key
 
+theorem content_fits (id meaningId : String) :
+    Fits req (skel% "reports.json#/$defs/content") (VE.Route.Wire.ok id [("meaning_id", .str meaningId)]) := by
+  simp only [VE.Route.Wire.ok]
+  fits
+
 theorem certificate_fits (c : Wire.Checked) (environment : Json) (id : String) (j : Json) :
     OkFits req (skel% "reports.json#/$defs/certificate") (runCertificate c environment id j) := by
   unfold runCertificate
@@ -45,6 +50,29 @@ theorem scopedVerdict_fits (c : Wire.Checked) (j : Json) (s : ScopedCheck) :
   okfits
   all_goals fits
 
+theorem scopedUnreplayed_fits (c : Wire.Checked) (j : Json) (s : ScopedCheck) :
+    Fits req (skel% "reports.json#/$defs/verdict") (scopedUnreplayed c j s) := by
+  unfold scopedUnreplayed
+  split <;> fits
+
+theorem nested_fits (D : ReportDoc) (u : Wire.DecodedUnit) (x : Json × Status)
+    (h : x ∈ nestedResults D u) :
+    Fits req (skel% "reports.json#/$defs/nested") x.fst := by
+  simp only [nestedResults, List.mem_append] at h
+  rcases h with (h | h) | h
+  · cases u with
+    | reports x start stop kind =>
+        simp only [List.mem_map] at h
+        rcases h with ⟨p, _, rfl⟩
+        fits
+    | w2 x => simp at h
+  · simp only [List.mem_map] at h
+    rcases h with ⟨p, _, rfl⟩
+    fits
+  · simp only [List.mem_map] at h
+    rcases h with ⟨p, _, rfl⟩
+    fits
+
 /-- Every status word renders into the schema's `status_word` domain (read from the schema). -/
 theorem status_render_fits (s : Status) :
     Fits req (skel% "reports.json#/$defs/status_word") (.str s.render) := by
@@ -55,8 +83,8 @@ theorem status_fits (c : Wire.Checked) (id : String) (j : Json) :
   unfold runStatus
   okfits
   simp only [VE.Route.Wire.ok, envelopeJson, nestedResults]
-  fits using status_render_fits
-  exact OkP.mapM (fun x _ => scopedVerdict_fits c j x) _ ‹_› _ ‹_›
+  all_goals fits using status_render_fits, scopedUnreplayed_fits, nested_fits
+  all_goals try (exact OkP.mapM (fun x _ => scopedVerdict_fits c j x) _ (by assumption) _ (by assumption))
 
 /-- A report's kind renders as one of `report_kind`'s words or a tagged array (`kindOf`). -/
 theorem kindOf_fits (c : VE.Reports.Content) :
@@ -90,6 +118,7 @@ theorem runCase_fits (j : Json) (hp : usesReportsPath j = true) : OkFits j Skele
   all_goals first
     | (unfold runAdmission; okfits; fits_from admission_fits _ _ _)
     | fits_from elaborate_fits _ _ _
+    | fits_from content_fits _ _
     | (intro v hv; fits_from certificate_fits _ _ _ _ _ hv)
     | (intro v hv; fits_from countermodel_fits _ _ _ _ hv)
     | fits_from scoped_fits _ _ _ _ ‹_›
