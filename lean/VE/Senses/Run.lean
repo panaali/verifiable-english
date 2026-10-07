@@ -28,10 +28,11 @@ def unitJson (D : Dictionary) (k i : Nat) (u : SenseUnit) : Json := Json.mkObj
     | some (f, mark) => [("formula", f.encode), ("mark", .bool mark)]
     | none => if u.candidates.isEmpty then [] else [("text", .str (unresolvedText D (k + i) u))])
 
-/-- `fenceUnits` on the wire: a unit index, or null for a fence that is a preamble line. -/
+/-- `fenceUnits` on the wire: a unit index, or `"line"` for a fence that is a preamble line (the transport
+reads no JSON null). -/
 def fenceJson : Option Nat → Json
   | some i => toJson i
-  | none => .null
+  | none => .str "line"
 
 def occurrenceJson (o : SenseOccurrence) : Json := Json.mkObj
   ([("sentence", toJson o.sentence), ("token_start", toJson o.start),
