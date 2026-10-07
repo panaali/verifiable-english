@@ -2077,6 +2077,7 @@
   "tests/test_english_e2_report.py::test_report_counts_follow_gate_json",
   "tests/test_english_e2_responses.py::test_a_class_other_than_leans_is_checker_unavailable",
   "tests/test_english_e2_responses.py::test_a_lexical_rejection_spans_the_offending_character_in_code_points",
+  "tests/test_english_e2_responses.py::test_a_reading_under_an_environment_the_core_checker_refuses_raises_that_refusal",
   "tests/test_english_e2_responses.py::test_an_argument_without_lean_obligations_is_checker_unavailable",
   "tests/test_english_e2_responses.py::test_every_code_is_raised_as_the_class_lean_names[Ambiguous]",
   "tests/test_english_e2_responses.py::test_every_code_is_raised_as_the_class_lean_names[BadCharacter]",

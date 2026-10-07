@@ -758,7 +758,7 @@ def bench_policy(case: dict, repetitions: int = 5) -> dict:
     with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as handle:
         json.dump(case, handle)
     done = subprocess.run([str(bench), "--policy", handle.name, str(repetitions)], capture_output=True, text=True,
-                          timeout=600)
+                          timeout=1800)
     os.unlink(handle.name)
     if done.returncode != 0:
         return {"error": done.stderr.strip()[-300:]}
