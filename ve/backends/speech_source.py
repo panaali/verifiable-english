@@ -6,12 +6,14 @@ binding; it does not recalculate a speech decision.
 """
 from __future__ import annotations
 
+import hashlib
 from pathlib import Path
 
 from ..errors import CheckerUnavailable
 from .lean import row_problem, run_route_cases
 from .relay import rejection
 from .service_schema import Invalid, check_row
+from ..wire import digest
 
 EXECUTABLE = Path(__file__).resolve().parents[2] / "lean/.lake/build/bin/ve_speech_acts_route"
 
@@ -25,6 +27,156 @@ SOURCE_FIELDS = {
     "coverage": "object", "warnings": "array<string>", "answers": "array<object>", "nominations": "array<object>",
     "compliance": "array<object>", "status_text": "array<string>",
 }
+
+
+def _invalid(field: str) -> None:
+    raise CheckerUnavailable(f"CheckerUnavailable: speech-source route returned invalid {field}")
+
+
+def _premise_fields(item: dict, field: str) -> None:
+    premise = item.get("premises")
+    if type(premise) is not dict:
+        _invalid(field)
+    status = premise.get("status")
+    if status == "model":
+        if set(premise) != {"status", "model_id"} or type(premise["model_id"]) is not str or \
+                item.get("vacuous") != "no":
+            _invalid(field)
+    elif status in {"INCONSISTENT", "UNKNOWN"}:
+        if set(premise) != {"status"} or \
+                item.get("vacuous") != ("yes" if status == "INCONSISTENT" else "unknown"):
+            _invalid(field)
+    else:
+        _invalid(field)
+
+
+def _records(row: dict, metadata: dict) -> None:
+    """Check the report variants and their references against the submitted records.
+
+    These are the shapes emitted by Source.recordJson, nominationLines and
+    complianceJson. The order and owners come from the request, while the
+    contents of a decision remain Lean's responsibility.
+    """
+    source_units = []
+    pending = [(unit, None) for unit in reversed(metadata.get("units", []))]
+    while pending:
+        unit, parent = pending.pop()
+        if "parts" in unit:
+            pending.extend((part, unit["id"]) for part in reversed(unit["parts"]))
+        else:
+            source_units.append((unit["id"], unit["span"][1] - unit["span"][0], parent))
+    if [(unit["id"], unit["bytes"], unit.get("parent")) for unit in row["units"]] != source_units:
+        _invalid("units")
+    unit_ids = {unit[0] for unit in source_units}
+    if len(unit_ids) != len(source_units) or \
+            any(question["unit"] not in unit_ids for question in row["questions"]) or \
+            any(command["unit"] not in unit_ids for command in row["commands"]) or \
+            len({q["unit"] for q in row["questions"]}) != len(row["questions"]) or \
+            len({c["unit"] for c in row["commands"]}) != len(row["commands"]):
+        _invalid("speech units")
+    if [query["id"] for query in row["queries"]] != \
+            [query["id"] for query in metadata.get("queries", [])]:
+        _invalid("queries")
+    questions = {q["unit"]: q for q in row["questions"]}
+    commands = {c["unit"] for c in row["commands"]}
+    queries = {q["id"] for q in row["queries"]}
+    requested_answers = metadata.get("answers", [])
+    ordinary = [a for a in requested_answers if "nominate" not in a]
+    if len(row["answers"]) != len(ordinary):
+        _invalid("answers")
+    for answer, request in zip(row["answers"], ordinary, strict=True):
+        if type(answer) is not dict or type(answer.get("question")) is not str or \
+                answer["question"] != request["question"] or answer["question"] not in questions or \
+                type(answer.get("line")) is not str or type(answer.get("status")) is not str:
+            _invalid("answers")
+        mode = questions[answer["question"]]["mode"]
+        keys = set(answer)
+        if mode == "follows":
+            if keys not in ({"question", "query", "status", "evidence", "premises", "vacuous", "line"},
+                            {"question", "query", "status", "line"}) or \
+                    answer.get("query") != questions[answer["question"]]["query"] or \
+                    answer["query"] not in queries or answer["status"] not in {"follows", "gap"} or \
+                    (answer["status"] == "gap") != (keys == {"question", "query", "status", "line"}):
+                _invalid("answers")
+            if answer["status"] == "follows":
+                if answer["evidence"] != "certificate":
+                    _invalid("answers")
+                _premise_fields(answer, "answers")
+        elif mode in {"polar", "which_one", "which_all"}:
+            evidence = answer.get("evidence")
+            status = answer["status"]
+            base = {"question", "status", "evidence", "line"}
+            if evidence == "certificate":
+                expected = base | {"premises", "vacuous"}
+                if status in {"supported", "supported given presupposition"}:
+                    expected |= {"answer", "assumptions"}
+                elif status != "PRESUPPOSITION-FAILED":
+                    _invalid("answers")
+                _premise_fields(answer, "answers")
+                if "assumptions" in expected and (type(answer.get("assumptions")) is not list or
+                                                   any(type(x) is not str for x in answer["assumptions"])):
+                    _invalid("answers")
+            elif evidence == "model":
+                if status not in {"evaluated", "PRESUPPOSITION-FAILED"}:
+                    _invalid("answers")
+                expected = base | {"model_id", "scope"}
+                if status == "evaluated":
+                    expected.add("answer")
+                if type(answer.get("model_id")) is not str or answer.get("scope") != "this model only":
+                    _invalid("answers")
+            else:
+                _invalid("answers")
+            if keys != expected:
+                _invalid("answers")
+            if "answer" in answer:
+                value = answer["answer"]
+                if (mode == "polar" and value not in ("yes", "no")) or \
+                        (mode == "which_one" and (type(value) is not dict or set(value) != {"one"} or
+                                                  type(value["one"]) is not str)) or \
+                        (mode == "which_all" and (type(value) is not dict or set(value) != {"all"} or
+                                                  type(value["all"]) is not list or
+                                                  any(type(x) is not str for x in value["all"]))):
+                    _invalid("answers")
+            elif answer["status"] != "PRESUPPOSITION-FAILED":
+                _invalid("answers")
+        else:
+            _invalid("answers")
+
+    reading = [q for q in row["questions"] if q["mode"] == "reading"]
+    if len(row["nominations"]) != len(reading):
+        _invalid("nominations")
+    for nomination, question in zip(row["nominations"], reading, strict=True):
+        if type(nomination) is not dict or set(nomination) not in \
+                ({"question", "line"}, {"question", "line", "narrowing"}) or \
+                nomination.get("question") != question["unit"] or type(nomination.get("line")) is not str:
+            _invalid("nominations")
+        if "narrowing" in nomination:
+            n = nomination["narrowing"]
+            if type(n) is not dict or set(n) != {"set", "version", "keeps", "by", "reason_spans", "support"} or \
+                    n["set"] != question["set"] or type(n["version"]) is not int or \
+                    n["version"] != question["version"] or type(n["keeps"]) is not list or \
+                    len(n["keeps"]) != 1 or type(n["keeps"][0]) is not str or \
+                    type(n["by"]) is not str or n["reason_spans"] != [question["unit"]] or \
+                    n["support"] != "testimony":
+                _invalid("nominations")
+
+    if len(row["compliance"]) != len(metadata.get("compliance", [])):
+        _invalid("compliance")
+    for compliance, request in zip(row["compliance"], metadata.get("compliance", []), strict=True):
+        if type(compliance) is not dict or compliance.get("command") != request["command"] or \
+                compliance["command"] not in commands or type(compliance.get("line")) is not str:
+            _invalid("compliance")
+        if set(compliance) == {"command", "unit", "line"}:
+            if type(compliance["unit"]) is not str or \
+                    compliance["unit"] != request["evidence"].get("unit"):
+                _invalid("compliance")
+        elif set(compliance) == {"command", "query", "status", "premises", "vacuous", "line"}:
+            if type(compliance["query"]) is not str or compliance["query"] not in queries or \
+                    compliance["status"] != "certificate":
+                _invalid("compliance")
+            _premise_fields(compliance, "compliance")
+        else:
+            _invalid("compliance")
 
 
 def decide_source(metadata: dict, source: str, fences: dict | None = None, *,
@@ -57,6 +209,23 @@ def decide_source(metadata: dict, source: str, fences: dict | None = None, *,
         value = row[field]
         if len(value) != 64 or any(c not in "0123456789abcdef" for c in value):
             raise CheckerUnavailable(f"CheckerUnavailable: speech-source route returned an invalid {field}")
+    # Source.Run uses Loader.identityMetadata and Loader.sourceId. Recompute
+    # only these request identities; no speech decision is repeated here.
+    try:
+        identity_payload = {"metadata": {key: value for key, value in metadata.items() if key != "weights"},
+                            "source": source, "fences": fences or {}}
+        expected_document = digest("ve-document@2\n", identity_payload)
+        profiles = metadata["environment"]["profiles"]
+        if type(profiles) is not list or any(type(profile) is not str for profile in profiles):
+            _invalid("source_id")
+        version = "v0.2:" + ",".join(profiles)
+        expected_source = hashlib.sha256((f"ve-source-{version}\n" + source).encode("utf-8")).hexdigest()
+    except (KeyError, TypeError, ValueError) as exc:
+        raise CheckerUnavailable("CheckerUnavailable: speech-source route could not bind its identities") from exc
+    if row["document_id"] != expected_document:
+        _invalid("document_id")
+    if row["source_id"] != expected_source:
+        _invalid("source_id")
     coverage = row["coverage"]
     if type(coverage) is not dict or set(coverage) != {"bytes_by_class", "bytes_by_status", "residual"}:
         raise CheckerUnavailable("CheckerUnavailable: speech-source route returned invalid coverage")
@@ -91,8 +260,5 @@ def decide_source(metadata: dict, source: str, fences: dict | None = None, *,
            or type(rule["unless"]) is not list or type(rule["over"]) is not list
            for rule in row["rules"]):
         raise CheckerUnavailable("CheckerUnavailable: speech-source route returned invalid rules")
-    for field, owner in (("answers", "question"), ("nominations", "question"), ("compliance", "command")):
-        if any(type(item.get(owner)) is not str or type(item.get("line")) is not str
-               for item in row[field]):
-            raise CheckerUnavailable(f"CheckerUnavailable: speech-source route returned invalid {field}")
+    _records(row, metadata)
     return row
