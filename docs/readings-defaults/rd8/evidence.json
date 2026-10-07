@@ -62,7 +62,9 @@
     "tools_tests_passed": 51
   },
   "review_fix_commits": [
-    {"hash": "f687b55c", "subject": "senses: let Lean decide open fence admission and bind fence sentences"}
+    {"hash": "f687b55c", "subject": "senses: let Lean decide open fence admission and bind fence sentences"},
+    {"hash": "6656559f", "subject": "docs: RD-8 review fixes and final gate evidence"},
+    {"hash": "493cb831", "subject": "build: refresh RD-8 generated tables and test inventory"}
   ],
   "final_gate": {
     "target": "self",
