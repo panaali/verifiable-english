@@ -22,8 +22,8 @@ New refusals, each Lean's text relayed verbatim:
   text, for example `Sentence 1 uses odd, which has two senses here, and only strange gives a reading of this
   sentence. Add the line "In this document, odd means strange." to say so.`
 
-`ve senses check` reads as before (`readDocument_source`), with one addition: an open unit of its JSON now carries
-Lean's English as `text`.
+`ve senses check` retains its source-mode JSON shape (`readDocument_source`). Lean includes unresolved English
+only for document fence requests.
 
 ## What changed
 
@@ -31,7 +31,7 @@ Lean's English as `text`.
   for fences). `lean/VE/Senses/Document.lean` (new): `SenseText` (a source, or fences), `fenceSents`,
   `badDefault`, `defaultSents` (the defaults rendered with `Assignment.lines` and lexed), `documentInput`,
   `readDocument`, `fenceUnits` (each fence's unit, or a preamble line) and `unresolvedText`.
-  `lean/VE/Senses/Run.lean`: the request takes `source` or `fences`, and optional `defaults`; an open unit gets
+  `lean/VE/Senses/Run.lean`: the request takes `source` or `fences`, and optional `defaults`; an open fence unit gets
   `text`; a fence request's admitted answer gets `fences` (a unit index, or `"line"`, since the transport reads no
   JSON null). `lean/VE/Senses/DocumentExamples.lean` (new): the fixtures as `#guard`.
 - **Python.** `ve/senses_document.py` (new) reads the pack files (a bundled name, or a path relative to the
@@ -101,7 +101,7 @@ The report's own test (`tests/test_readings_defaults_rd8_report.py`, 8 tests, ad
 seeded with three errors in this file, one at a time: a changed pytest count, a dropped mutant row and a
 renamed theorem. Each made it fail.
 
-## Gate (run on HEAD `787781a9`, worktree clean)
+## Historical gate (run on `787781a9`, before the report commit)
 
 | Check | Result |
 |---|---|
@@ -145,4 +145,19 @@ V 31373. The baseline was not rewritten, since that would sign the base's growth
   their build; they were written in this batch.
 - EXTERNAL (Astra + Fable) and HUMAN (a reader): the English of `unresolvedText` for several words and for several
   candidates of several words, which the senses plan does not give; and the new refusal texts.
-- HUMAN: the user-visible additions (the `senses` key, the open unit's `text` in `ve senses check`).
+- HUMAN: the user-visible `senses` key.
+
+## Review fixes and final gate
+
+The B review identified three code issues. Lean now receives fence IDs and the units with reading sets, and it
+refuses the first uncovered open fence itself. The Python document path only relays that refusal. Fence responses
+are checked against the request's exact sentence start, including written preamble fences and rendered defaults.
+Source-mode open units keep their original JSON shape; only fence-mode units contain `text`. Regression tests
+cover the original failing examples and adjacent cases: two open fences with only one reading set, an omitted
+reading-set list, and coherent shifts of both units and sense-map occurrences by one or ten sentences.
+
+The historical gate above describes its actual earlier run. The final-HEAD gate is recorded separately in
+`evidence.json` as `final_gate`. Its `HEAD` target is symbolic because a commit cannot embed its own hash. The
+report commit completes the commit list as the `self` entry, and the report test checks that list against Git.
+The final gate runs `lake build`, `python3 lean/audit.py`, and the full pytest suite in the foreground on that
+exact committed HEAD.

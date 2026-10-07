@@ -6,7 +6,8 @@
     {"hash": "c3d86995", "subject": "lean: senses requests read a document's fences and front-matter defaults (RD-8)"},
     {"hash": "fd807ff9", "subject": "manifest: pin the RD-8 senses runner and list its theorems"},
     {"hash": "b87766c5", "subject": "document: senses documents read their English fences through Lean (RD-8)"},
-    {"hash": "787781a9", "subject": "tests: RD-8 budget, deadline and identity checks for fence requests"}
+    {"hash": "787781a9", "subject": "tests: RD-8 budget, deadline and identity checks for fence requests"},
+    {"hash": "d7f8055b", "subject": "docs: RD-8 report, saved evidence and the test that checks one against the other"}
   ],
   "theorems": [
     "VE.Senses.readSents_ok",
@@ -59,6 +60,14 @@
     "failed": 0,
     "slow_tests_passed": 28,
     "tools_tests_passed": 51
+  },
+  "review_fix_commits": [
+    {"hash": "f687b55c", "subject": "senses: let Lean decide open fence admission and bind fence sentences"}
+  ],
+  "final_gate": {
+    "target": "self",
+    "checks": ["lake build", "python3 lean/audit.py", "full pytest"],
+    "results": {"lake build": "PASS", "python3 lean/audit.py": "PASS", "full pytest": "PASS"}
   },
   "trust_budget": {"base": {"S": 9334, "V": 31353}, "head": {"S": 9416, "V": 31373}}
 }
