@@ -618,11 +618,11 @@ def test_review_a_named_readings_keep_their_restriction_in_english(tmp_path, cap
     under_d = _cli(path, phi, "rs2:1")
     assert under_d["verdict"] == "ALL" and under_d["assumed"] == [["rs2", 1]]
     warn = "*For every agent, for every user, that agent must warn that user.*"
-    assert under_d["english"] == [f"Read sentence 3 as reading 2: the conclusion follows: {warn}"]
+    assert under_d["english"] == [f"Read sentence 3 as {M9_RS2_1}: the conclusion follows: {warn}"]
     under_c = _cli(path, phi, "rs2:0")
     assert under_c["verdict"] == "NONE" and under_c["assumed"] == [["rs2", 0]]
     assert len(under_c["english"]) == 2 and not any(line.startswith("Under ") for line in under_c["english"])
-    assert all(line.startswith("Read sentence 2 as ") and " and sentence 3 as reading 1: the conclusion does not follow."
+    assert all(line.startswith("Read sentence 2 as ") and f" and sentence 3 as {M9_RS2_0}: the conclusion does not follow."
                in line for line in under_c["english"])
     _, route, wording = _wording(path)
     for data in (under_d, under_c):
@@ -640,7 +640,7 @@ def test_review_a_class_every_reading_wordings_need_no_assumption(tmp_path):
     data = route.entailment(phi, assumed=[("rs1", 0), ("rs2", 1)])
     assert data["verdict"] == "ALL" and data["assumed"] == [["rs1", 0], ["rs2", 1]]
     assert wording.query(phi, data) == [
-        "Read sentence 2 as reading 1 and sentence 3 as reading 2: the conclusion follows: *For every agent, for every user that "
+        f"Read sentence 2 as {M9_RS1_0} and sentence 3 as {M9_RS2_1}: the conclusion follows: *For every agent, for every user that "
         "that agent has the recorded relation \"asks\" to, that agent must warn that user.*"]
     with pytest.raises(VEError) as caught:
         route.entailment(phi, assumed=[("rs1", 7)])
@@ -911,6 +911,21 @@ def _m9_narrowed(tmp_path):
 
 
 WARN_ALL = "*For every agent, for every user, that agent must warn that user.*"
+# The `<reading>` slot (readings-defaults 2.3, review A4): each candidate's own sentence in italics, without its final
+# period, for sets whose candidates differ beyond the deontic verb; "reading <i>" is never shown.
+M9_RS1_0 = "*Every agent must avoid deceiving each user, if that agent must help that user*"
+M9_RS2_0 = "*Every agent must warn each user, if that agent must avoid deceiving that user*"
+M9_RS2_1 = "*Every agent must warn each user*"
+_RIGHT_1 = ("Right 1. Every person has the right described by its incident lines; the right requires or permits nothing "
+            "by itself.")
+M12_STRICT = (f"*{_RIGHT_1} Claim of right 1. Every state must not arrest each person, if that state has the recorded "
+              "relation \"arbitrary_arrest\" to that person*")
+M12_DEFAULT = (f"*{_RIGHT_1} Claim of right 1. Every state should not arrest each person, if that state has the "
+               "recorded relation \"arbitrary_arrest\" to that person. This is a default line; the source names no "
+               "exception decider*")
+POWER_DEFAULT = (f"*{_RIGHT_1} Power of right 1. Every person may marry. Every state should recognise each person. "
+                 "This is a default line; the source names no exception decider. Recognition required; later effects "
+                 "not modelled*")
 
 
 def test_review_a2_enumerated_narrowing_kept_in_english(tmp_path):
@@ -921,12 +936,12 @@ def test_review_a2_enumerated_narrowing_kept_in_english(tmp_path):
     assert data["verdict"] == "ALL" and data["route"] == "enumerated"
     assert data["restrictions"] == ["narrowing:n1"] and data["conditional_on"] == ["narrowing:n1"]
     assert lines == [f"Under every reading of the 2 open sentences, the conclusion follows: {WARN_ALL}",
-                     "This holds provided that:", "Sentence 3 is not read as reading 1, because of sentence 1."]
+                     "This holds provided that:", f"Sentence 3 is not read as {M9_RS2_0}, because of sentence 1."]
     _one_derivation(lines, wording)
     report, wording = _report(path)
     assert report[1:5] == ["Under every reading of the 2 open sentences, no two rules on the same act contradict "
                            "each other.", "This holds provided that:",
-                           "Sentence 3 is not read as reading 1, because of sentence 1.",
+                           f"Sentence 3 is not read as {M9_RS2_0}, because of sentence 1.",
                            "This does not depend on how sentence 2 is read."]
     assert check_document(path)["readings"]["conflict"]["conditional_on"] == ["narrowing:n1"]
     _one_derivation(report, wording)
@@ -943,12 +958,12 @@ def test_review_a2_class_every_combined_verdict_keeps_its_restrictions(tmp_path)
     under = route.entailment(every("warn_required"), assumed=[("rs1", 0)])
     assert under["verdict"] == "ALL" and under["restrictions"] == ["narrowing:n1"]
     assert wording.query(every("warn_required"), under)[1:] == [
-        "This holds provided that:", "Sentence 3 is not read as reading 1, because of sentence 1."]
+        "This holds provided that:", f"Sentence 3 is not read as {M9_RS2_0}, because of sentence 1."]
     nobody = ["forall", "agent", ["forall", "user", ["not", ASKS]]]
     none = route.entailment(nobody)
     assert none["verdict"] == "NONE" and none["restrictions"] == ["narrowing:n1"]
     assert wording.query(nobody, none)[-2:] == ["This holds provided that:",
-                                                 "Sentence 3 is not read as reading 1, because of sentence 1."]
+                                                 f"Sentence 3 is not read as {M9_RS2_0}, because of sentence 1."]
     with pytest.raises(VEError, match="needs its restrictions"):
         wording.query(nobody, {k: v for k, v in none.items() if k != "restrictions"})
     # The superposed route's combination over its choices (M6 with a narrowing: every choice is listed).
@@ -976,7 +991,7 @@ def test_review_a3_rights_countermodel_names_its_exception(tmp_path):
     assert data["verdict"] == "SOME"
     model = data["countermodel"]["model"]
     assert model["relations"]["soft__excepted__no_arbitrary_arrest"], model
-    assert lines[1].startswith("Read sentence 1 as reading 2: the conclusion does not follow. It fails here: ")
+    assert lines[1].startswith(f"Read sentence 1 as {M12_DEFAULT}: the conclusion does not follow. It fails here: ")
     assert lines[1].endswith("; suppose the decider decides the exception applies to e0 and e0."), lines[1]
     _one_derivation(lines, wording)
 
@@ -992,7 +1007,8 @@ def test_review_a3_class_every_generated_decision_is_worded(tmp_path):
     assert data["verdict"] == "NONE"
     strict = next(c for c in data["countermodels"] if c["choice"] == [["rs9", 0]])
     assert strict["model"]["relations"]["rights__lim__1"] and strict["model"]["relations"]["rights__cond__1"]
-    line = next(line for line in lines if line.startswith("Read sentence 1 as reading 1: "))
+    carved = f"{M12_STRICT[:-1]}, unless limitation 1 holds where that state arrests that person*"
+    line = next(line for line in lines if line.startswith(f"Read sentence 1 as {carved}: "))
     assert "suppose the decider decides that the limitation is determined by law where e0 arrests e0" in line
     assert "suppose the decider decides that limitation 1 holds where e0 arrests e0" in line
     _one_derivation(lines, wording)
@@ -1351,7 +1367,7 @@ def test_fix4_a2_power_right_countermodel_names_its_recognition_rule(tmp_path):
     data, lines, wording = _query(path, conclusion)
     assert data["verdict"] == "SOME", data
     assert data["countermodel"]["model"]["relations"]["soft__excepted__recognise_marriage"]
-    assert lines[1].startswith("Read sentence 1 as reading 2: the conclusion does not follow. It fails here: ")
+    assert lines[1].startswith(f"Read sentence 1 as {POWER_DEFAULT}: the conclusion does not follow. It fails here: ")
     assert lines[1].endswith("; suppose the decider decides the exception applies to e0 and e0."), lines[1]
     _one_derivation(lines, wording)
 

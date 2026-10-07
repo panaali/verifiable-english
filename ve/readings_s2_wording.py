@@ -41,7 +41,7 @@ class S2Wording:
         self.set_number = {R.id: self.numbers[R.unit] for R in self.sets}
         self.names = {R.id: self.s1.reading_names(R.id) for R in self.sets}
         self.slots = E.Slots(numbers={str(n) for n in self.numbers.values()},
-                             readings={name for names in self.names.values() for name in names})
+                             readings={name for names in self.names.values() for name in names if name is not None})
         senv = self.s1.admission.senv
         self.frame = senv.frame
         self.author = set(senv.author_environment().predicates)
