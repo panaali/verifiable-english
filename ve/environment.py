@@ -77,6 +77,7 @@ class PredicateDecl:
     total: bool | None = None
     defined: bytes | None = None
     argument_units: object = None
+    instruction_of: str | None = None
 
 
 class _ProfilePredicates(Mapping):
@@ -130,6 +131,7 @@ class Environment:
     unit_schema: str | None
     units: object
     reports: object
+    soft: bytes | None
     rights: bytes | None
     alternatives: bytes | None
     risk: bytes | None
@@ -195,7 +197,8 @@ class Environment:
                 regulated, entry.get("functional"), entry.get("total"),
                 canonical_json(entry["defined"]) if "defined" in entry else None,
                 MappingProxyType(dict(entry["argument_units"]))
-                if "argument_units" in entry else None)
+                if "argument_units" in entry else None,
+                entry.get("instruction_of"))
 
         constants = {name: ConstantDecl(entry["sort"], entry.get("description"),
                                         entry.get("unit"), entry.get("verbalisation"))
@@ -264,6 +267,10 @@ class Environment:
         )
         for field, value in values:
             object.__setattr__(self, field, value)
+        if "soft" in vocabulary:
+            object.__setattr__(self, "soft", canonical_json(vocabulary["soft"]))
+        elif not hasattr(self, "soft"):
+            object.__setattr__(self, "soft", None)
         if "rights" in vocabulary:
             object.__setattr__(self, "rights", canonical_json(vocabulary["rights"]))
         elif not hasattr(self, "rights"):
@@ -309,6 +316,8 @@ class Environment:
                 entry["defined"] = loads_json(declaration.defined)
             if declaration.argument_units is not None:
                 entry["argument_units"] = dict(declaration.argument_units)
+            if declaration.instruction_of is not None:
+                entry["instruction_of"] = declaration.instruction_of
             return entry
 
         return {"language": self.language, **({"profiles": list(self.profiles)} if self.profile is None else {"profile": self.profile}), "spec_revision": self.spec_revision,
@@ -330,6 +339,7 @@ class Environment:
                                              for k, v in self.constants.items()},
                                **({"reports": {"holders": list(self.reports["holders"]), "evidence": self.reports["evidence"]}}
                                   if self.reports is not None else {}),
+                               **({"soft": loads_json(self.soft)} if type(self.soft) is bytes else {}),
                                **({"rights": loads_json(self.rights)} if type(self.rights) is bytes else {})},
                 **({"unit_schema": self.unit_schema,
                     "units": {tag: {"scale": record["scale"], "display": dict(record["display"])}
