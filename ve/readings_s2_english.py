@@ -103,6 +103,9 @@ class Slots:
     conclusions: set = field(default_factory=set)
     situations: set = field(default_factory=set)
     clauses: set = field(default_factory=set)
+    # The completion's reserved name prefixes, hidden like generated names (readings-defaults 2.5) only where the
+    # document's environment reserves them (`environment.reserved_prefixes`). Without an environment, every one.
+    reserved: tuple = field(default_factory=lambda: _all_reserved())
 
     def options(self, name):
         if name == "n":
@@ -122,9 +125,14 @@ class Slots:
 
 _NUMERAL = re.compile(r"[1-9][0-9]*")
 ANSWERS = frozenset({"yes", "no"})
-# Names no wording shows (2.4, G6; readings-defaults 2.5): generated vocabulary, qualified rule names, the completion's
-# reserved names, and `may not`.
-_HIDDEN = ("ve__", "rd-", "soft__", "rights__", "unsaid__", "unsaid--", "may not")  # relay-lint: non-wording
+# Names no wording shows (2.4, G6; readings-defaults 2.5): generated vocabulary, qualified rule names and `may not`;
+# and, under `norm-defaults@0` only, the completion's reserved names (`Slots.reserved`).
+_HIDDEN = ("ve__", "rd-", "soft__", "rights__", "may not")  # relay-lint: non-wording
+
+
+def _all_reserved():
+    from .environment import RESERVED_PREFIXES
+    return RESERVED_PREFIXES
 
 
 def _match(elements, text, pos, slots, binds):
@@ -174,8 +182,8 @@ def derivations(text, slots):
 
 def gated(intended, text, slots):
     """W7's all-derivations gate: `text` has exactly one derivation, from `intended`; and no generated name, no
-    reserved prefix and no `may not` (2.4, G6, G9)."""
-    if type(text) is not str or any(x in text for x in _HIDDEN):
+    reserved prefix of the document's environment and no `may not` (2.4, G6, G9)."""
+    if type(text) is not str or any(x in text for x in (*_HIDDEN, *slots.reserved)):
         raise VEError(f"InvalidInput: S2 wording {intended} shows a generated name or `may not`")
     found = derivations(text, slots)
     if len(found) != 1 or found[0][0] != intended:
@@ -197,32 +205,71 @@ def s1_gated(lead, text):
 # The `<reading>` slot (readings-defaults 2.3, review A4) and canonical sentences
 
 
-def sentence_slots(set_id, sentences):
-    """The `<reading>` names of a set whose candidates differ beyond the deontic verb: each candidate's own rendered
-    sentence, in italics, without its final period; None for a candidate without content, which no answer names.
-    Two candidates shown by the same sentence are refused: the slot would read two ways."""
-    names = [None if text is None else f"*{text[:-1] if text.endswith('.') else text}*" for text in sentences]
-    shown = [name for name in names if name is not None]
-    if len(set(shown)) != len(shown):
-        raise VEError(f"InvalidInput: two readings of {set_id} are shown by the same sentence")
-    return names
+@dataclass(frozen=True)
+class Unnamed:
+    """A reading the `<reading>` slot cannot show, with the refusal an answer that names it gets. Only such an
+    answer is refused: the other answers of the document are shown as before."""
+    reason: str
+
+
+def sentence_slots(set_id, sentences, verbs=None, keys=None):
+    """The `<reading>` names of one set (readings-defaults 2.3; review A4 and its B), one per candidate, distinct
+    for distinct contents. `sentences[i]` is candidate i's full rendered sentence (a rule's notes included) or an
+    `Unnamed`; `verbs[i]` a rule candidate's deontic verb, else None; `keys[i]` the candidate's content identity
+    (default: every candidate different).
+
+    The italic verb when every candidate has a verb and the full sentences differ only in it (the first occurrence
+    of each verb replaced, they are one frame); otherwise each sentence, in italics, without its final period. A
+    sentence that would show two different contents names neither of them; candidates with the same content share
+    their sentence."""
+    count = len(sentences)
+    verbs = [None] * count if verbs is None else list(verbs)
+    keys = list(range(count)) if keys is None else list(keys)
+    if count and all(type(text) is str and verb is not None and f" {verb} " in text
+                     for text, verb in zip(sentences, verbs)):
+        frames = {text.replace(f" {verb} ", " _ ", 1) for text, verb in zip(sentences, verbs)}
+        if len(frames) == 1 and len(set(verbs)) == count:
+            return [f"*{verb}*" for verb in verbs]
+    names = [text if type(text) is not str else f"*{text[:-1] if text.endswith('.') else text}*"
+             for text in sentences]
+    contents = {}
+    for name, key in zip(names, keys):
+        if type(name) is str:
+            contents.setdefault(name, set()).add(key)
+    return [Unnamed(f"two different readings of {set_id} are shown by the same sentence")
+            if type(name) is str and len(contents[name]) > 1 else name for name in names]
+
+
+def shown(name):
+    """A `<reading>` name as an answer shows it: an `Unnamed` reading is refused here, where an answer names it."""
+    if type(name) is not str:
+        raise VEError(f"InvalidInput: {name.reason}")
+    return name
 
 
 def named_pair(set_id, names, i, j):
-    """`names` when readings `i` and `j` both have a name; a pair never names a reading without content."""
-    if names[i] is None or names[j] is None:
-        raise VEError(f"InvalidInput: a pair of {set_id} names a reading without content")
+    """`names` when readings `i` and `j` can both be shown; a pair never names a reading the slot cannot show."""
+    shown(names[i]), shown(names[j])
     return names
 
 
 def canonical_sentence(frame, formula, failure):
     """A formula's canonical sentence on the existing English surface, admitted only when that surface's
-    all-derivations parser reads it back to the formula itself; else `InvalidInput: <failure>`."""
+    all-derivations parser reads it back to the formula itself; else `InvalidInput: <failure>`, also when the
+    surface has no writable form for it (the renderer's ValueError) or its parser refuses it. A resource limit is
+    not a failure to read back and is raised as it is."""
     from .ast import Document as Formulas
     from .english import parse_english
+    from .errors import ResourceLimit
     from .printer import render
-    text = render(Formulas((formula,)), frame, "ve_english").strip()
-    if parse_english(frame, text).formulas != (formula,):
+    try:
+        text = render(Formulas((formula,)), frame, "ve_english").strip()
+        read = parse_english(frame, text).formulas
+    except ResourceLimit:
+        raise
+    except ValueError:  # VEError is a ValueError
+        raise VEError(f"InvalidInput: {failure}") from None
+    if read != (formula,):
         raise VEError(f"InvalidInput: {failure}")
     return text
 
@@ -375,7 +422,8 @@ def excludes(first, second, slots):
     return gated("E6b", f"Sentence {n} is not read as {a} while sentence {m} is read as {b}.", slots)
 
 
-__all__ = ["ANSWERS", "CHECKED_ALONE", "canonical_sentence", "named_pair", "sentence_slots", "DEFAULTS", "EACH_ALONE", "OVER_BUDGET", "PROVIDED", "QUIET", "S2A", "Slots",
+__all__ = ["ANSWERS", "CHECKED_ALONE", "canonical_sentence", "named_pair", "sentence_slots", "shown", "Unnamed",
+           "DEFAULTS", "EACH_ALONE", "OVER_BUDGET", "PROVIDED", "QUIET", "S2A", "Slots",
            "TEMPLATES", "checked_alone", "citation", "dead_reading", "derivations", "each_alone", "every_result",
            "every_result_of_sentence", "excludes", "gap_sentences", "gated", "independent", "named_result",
            "narrowed", "none_result", "not_superposed", "one_reading", "over_budget", "pair_line", "provided",

@@ -49,7 +49,7 @@ OWNED_SURFACES = frozenset({"ve.speech_english"})
 FILE_IO = "# relay-lint: file I/O"
 # The modules that may not build the completion's names, and the reserved prefixes (norm-defaults 2.1).
 READINGS_GLOB = "ve/readings*.py"
-RESERVED = ("unsaid__", "unsaid--")
+from ve.environment import RESERVED_PREFIXES as RESERVED  # noqa: E402  (one table with the checker's)
 NON_WORDING = "# relay-lint: non-wording"
 
 
