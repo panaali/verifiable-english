@@ -5060,7 +5060,7 @@ module VE.EnglishGrammar.Fixed.Staged 7f36dfd984be9bea2d564f5e3c28dda38c11dcb152
 85:0-86:185 def VE.EnglishGrammar.ranksStaged@VE.EnglishGrammar.Fixed.Staged
 module VE.EnglishGrammar.Fixed.Tables 57a10c1a113d6986c878fffa390ef77b148f933f67ebea53c7b5a72cf0d79deb
 11:0-15:1 def VE.EnglishGrammar.tableSources@VE.EnglishGrammar.Fixed.Tables
-module VE.EnglishGrammar.Fixed.Version 71a2e80247570d07c9b6d1ea57fb65701deb4e7b5e7a681cdc5b7f0b92ce315a
+module VE.EnglishGrammar.Fixed.Version 79e7fb72ce9c0cf7303bc7658159123cfaa4fc3b3cb156efa8d9605b53b8a736
 7:0-7:35 def VE.EnglishGrammar.Fixed.actionsVersion@VE.EnglishGrammar.Fixed.Version
 module VE.EnglishGrammar.FoldAgree 8c38ae9bf3bba0e49e2e425cdce0ee8976d36148562c7833dc17f375bcd62e75
 10:0-14:68 theorem VE.EnglishGrammar.foldChar_agrees@VE.EnglishGrammar.FoldAgree
@@ -5226,7 +5226,7 @@ module VE.EnglishGrammar.LexiconFixtures 2e56730ea35eaf0083882ab7098044ad5cd9ffb
 17:0-23:78 def VE.EnglishGrammar.LexiconFixtures.envF@VE.EnglishGrammar.LexiconFixtures
 25:0-32:78 def VE.EnglishGrammar.LexiconFixtures.envF2@VE.EnglishGrammar.LexiconFixtures
 34:0-40:78 def VE.EnglishGrammar.LexiconFixtures.envF3@VE.EnglishGrammar.LexiconFixtures
-module VE.EnglishGrammar.Policy 96a79368abe9bd0868d3d3521057ac6a848c4be40c2c7dc2c21a8ec1108374f7
+module VE.EnglishGrammar.Policy 2d676ea13ed936fe48da0c4930268b83a7f0b299499b7d733d1b8452970fd74d
 13:0-16:14 def VE.EnglishGrammar.Env.roles@VE.EnglishGrammar.Policy
 17:0-17:104 def VE.EnglishGrammar.Env.pluralOf@VE.EnglishGrammar.Policy
 18:0-18:102 def VE.EnglishGrammar.Env.suggestedPred@VE.EnglishGrammar.Policy

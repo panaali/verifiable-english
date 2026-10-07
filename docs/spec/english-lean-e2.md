@@ -998,7 +998,7 @@ def connector (s : String) (trail : Bool) : Bool :=
   let s := if trail && s.endsWith " " && s.length ≥ 2 && !(s.dropRight 1).endsWith " " then s.dropRight 1 else s
   s.startsWith " " && ((s.drop 1).splitOn " ").all lowerWord
 
-/-- `template_parts` (`ve/surface/nary.py:13–33`). -/
+/-- `template_parts` (`ve/surface/nary.py:13–34`): subject first, as V3 requires (S3 D8). -/
 def templateParts (v : String) (k : Nat) : Option (List String) :=
   if braceSlots v != (List.range k).map (fun i => "{" ++ toString i ++ "}") then none else
   let parts := splitSlots v
@@ -1006,11 +1006,11 @@ def templateParts (v : String) (k : Nat) : Option (List String) :=
   let mids := (parts.drop 1).take (k - 1)
   if !mids.all (·.startsWith " ") then none else
   let first := parts.headD ""
-  if !(first.isEmpty || first == "the value of ") then none else
+  if !first.isEmpty then none else
   if !mids.all (connector · true) then none else
   let last := parts.getLastD ""
   if !(last.isEmpty || connector last false) then none else
-  if !((splitWs (parts.getD 1 "")).any naryHeads.contains || first.startsWith "the value of ") then none else
+  if !(splitWs (parts.getD 1 "")).any naryHeads.contains then none else
   some parts
 
 /-- A phrase against a pattern: `some adjective?` when it matches. -/
@@ -2231,3 +2231,26 @@ it amends; no statement of 5.5 changed, and `decode_encode` is now proved. The f
 - **2.9, the ledger.** Definition and citation sentences are read by Lean again; the Python statement readers are
   the operation `english.statement` until E3; the producer's overlay refusals stay on in the statement reader and
   the statement-layer renderer, where no Lean overlay check runs; `tools/relay_lint.py` covers the admission path.
+
+## 14. Changes made by the fix round of recheck 1 (2026-10-07)
+
+`manage-agents/english-lean-e2-looprecheck1.final.md` found one A and two B items. Each is fixed as a class, with
+the section it amends; no statement of 5.5 changed.
+
+- **2.3, the typed check (A).** `typedCheck` decoded an `nary@0` environment as submitted while every other family
+  decoded its typing view, so beside `norms@0`, `data@0` or `definitions@0` every sentence was `IllTyped` in Lean
+  and read by Python. The class is two copies of the family typing dispatch: `VE/Route/Typed.lean` holds the one
+  dispatch (`check`, `legacy`, `routeVocabulary`, `typingEnvironment`), and both the standalone typing service
+  (`Service.Standalone.decodeTyped`, `legacyTyped`) and `typedCheck` call it. `tests/test_english_e2_profile_matrix.py`
+  compares the two readers on every predicate of every family and layer subset of the probe matrix that Python
+  admits (112 environments). `actions_version` 24.
+- **5.2 and S3 D8, subject first (B).** Python's `template_parts` admitted an n-ary wording beginning `the value
+  of`, which V3 refuses, so every text of such an environment was `CheckerUnavailable`; an edited test hid it.
+  `template_parts` and the port's `templateParts` now refuse text before `{0}`, so the mechanical form is selected
+  (DELTA V1). `tests/test_english_e2_selection.py` requires Lean to accept every selection Python makes over
+  generated wordings of arity one to four, and the original test wording is restored with its new outcome.
+  `actions_version` 25.
+- **2.9, the ledger (B).** `render_citation` and `wordings` asked Python's statement-layer reader to check their
+  renderings; they now go through `english.check`, which the first item makes pass on the hidden `nary@0` case.
+  `tests/test_english_e2_ledger_sites.py` lists every caller of Python's reader from the source (`ast`) and requires
+  each to be a row of `LEDGER.md`.
