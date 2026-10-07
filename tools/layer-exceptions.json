@@ -47,7 +47,6 @@
   "ve.reports -> ve.admission": "Reports reuse admission label parsing; move shared label syntax to the kernel.",
   "ve.rights -> ve.search": "Rights reads used predicates from search helpers; move the helper to the kernel.",
   "ve.softnorms -> ve.backends.soft_relay": "Lean-first batch 6: the soft document container obtains validated rows from the Lean soft service before Python display construction.",
-  "ve.softnorms -> ve.search": "Soft norms read used predicates from search helpers; move the helper to the kernel.",
   "ve.speech_acts -> ve.admission": "Speech acts reuse admission checks; split the shared checks into a profile module.",
   "ve.speech_acts -> ve.norm_admission": "Speech acts reuse quoted-norm admission; split the shared checks into a profile module.",
   "ve.speech_acts -> ve.speech_english": "Speech acts render their English wording; move rendering to the surface caller.",

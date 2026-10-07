@@ -62,7 +62,6 @@ ignore_imports =
     ve.reports -> ve.admission
     ve.rights -> ve.search
     ve.softnorms -> ve.backends.soft_relay
-    ve.softnorms -> ve.search
     ve.speech_acts -> ve.admission
     ve.speech_acts -> ve.norm_admission
     ve.speech_acts -> ve.speech_english

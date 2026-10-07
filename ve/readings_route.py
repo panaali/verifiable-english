@@ -425,6 +425,7 @@ class Wording:
             self.admission = Decoded(self.environment, self.document)
             self.words = EnglishVocabulary(self.admission.senv.frame)
             self.numbers = {unit["id"]: n for n, unit in enumerate(doc["units"], 1)}
+        self._names = {}
 
     def set_raw(self, set_id):
         return self.admission.doc.set_by_id(set_id).raw
@@ -442,17 +443,25 @@ class Wording:
     # -- slots (2.1)
 
     def reading_names(self, set_id):
-        """`<reading>`: the deontic verb in italics when the candidates differ only in it, else `reading <i>`."""
+        """`<reading>`: the deontic verb in italics when the candidates differ only in it, else `reading <i>`.
+        Computed once per set; its candidate rules are checked in one Lean batch."""
+        if set_id not in self._names:
+            self._names[set_id] = self._reading_names(set_id)
+        return list(self._names[set_id])
+
+    def _reading_names(self, set_id):
         from .norm_english import render_rule_sentence
-        from .softnorms import decode_rule
+        from .softnorms import batch_rule, check_rule_batch
         R = self.admission.doc.set_by_id(set_id)
         names = [f"reading {i + 1}" for i in range(len(R.candidates))]
         if not all(a.content is not None and a.content.kind == "norm" for a in R.candidates):
             return names
         env = self.admission.side(set_id, 0).soft.env
+        contents = [{"norm": a.content.body} for a in R.candidates]
+        outcomes = check_rule_batch(env, contents)
         verbs, frames = [], []
-        for a in R.candidates:
-            rule = decode_rule(env, {"norm": a.content.body})
+        for content, outcome in zip(contents, outcomes, strict=True):
+            rule = batch_rule(env, content, outcome)
             sentence = render_rule_sentence(rule, env)
             verb = _modal(env, rule)
             if f" {verb} " not in sentence:
