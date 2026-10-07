@@ -2343,7 +2343,7 @@ module VE.Attribution.Wire 4eadc30b6ea7aa48059794724edc301213b9fca4ef7e8c3bd2100
 492:0-497:65 def VE.Reports.Wire.generated@VE.Attribution.Wire
 499:0-506:75 def VE.Reports.Wire.environmentReportsJson@VE.Attribution.Wire
 508:0-512:101 def VE.Reports.Wire.reportsModelVocabulary@VE.Attribution.Wire
-module VE.Audit 881e1484001776b1f2ad67821b0694040e8bdfb0fa3e9551bfd316f6e66c3d9a
+module VE.Audit 04f0ec813eb5f705a9a5c44cc9b0f2dcdefcab6a9081aac821447f17b760c134
 module VE.Bridge 2d4e432b9698b07722d2a5f494cdf3797f14ab5036068fd31faaca8fb5a95d64
 8:0-8:32 def VE.Bridge.Entity@VE.Bridge
 9:0-9:37 def VE.Bridge.Fields@VE.Bridge
@@ -9055,6 +9055,22 @@ module VE.Readings.SupEnv 09f873ea97a32b2d394fe3ef5c486ba1ceac5ba25c25fa31b774a9
 325:0-345:29 theorem VE.Readings.quietFormula_wf@VE.Readings.SupEnv
 347:0-409:37 theorem VE.Readings.slot_formula_wf@VE.Readings.SupEnv
 411:0-427:33 theorem VE.Readings.slot_wellFormed@VE.Readings.SupEnv
+module VE.Readings.SupExtra 736b1fb1787017a6338b4cca010f2990123f9e20a2bff15c79066167ab72043e
+28:0-34:55 def VE.Readings.Transfers@VE.Readings.SupExtra
+35:0-40:113 def VE.Readings.supCertificateCheckExtra@VE.Readings.SupExtra
+41:0-45:123 def VE.Readings.supModelCheckExtra@VE.Readings.SupExtra
+47:0-65:74 theorem VE.Readings.sat_pull_up@VE.Readings.SupExtra
+67:0-114:66 theorem VE.Readings.superpose_conflict_free_extra@VE.Readings.SupExtra
+116:0-229:65 theorem VE.Readings.superpose_all_extra@VE.Readings.SupExtra
+231:0-277:31 theorem VE.Readings.superpose_countermodel_extra@VE.Readings.SupExtra
+279:0-280:113 theorem VE.Readings.transfers_nil@VE.Readings.SupExtra
+284:0-286:76 theorem VE.Readings.supCertificateCheckExtra_nil@VE.Readings.SupExtra
+288:0-290:64 theorem VE.Readings.supModelCheckExtra_nil@VE.Readings.SupExtra
+292:0-294:37 theorem VE.Readings.baseAdmissibleR_nil@VE.Readings.SupExtra
+module VE.Readings.SupExtraExamples 3c75953f25da5bdc8dbe1c56b8e623163b943261b70dc004fd4ebdc0c7587402
+23:0-23:106 def VE.Readings.SupExtraExamples.noAvoid@VE.Readings.SupExtraExamples
+24:0-24:86 def VE.Readings.SupExtraExamples.closeCert@VE.Readings.SupExtraExamples
+25:0-29:19 def VE.Readings.SupExtraExamples.bare@VE.Readings.SupExtraExamples
 module VE.Readings.SupFree 642e51a68d1670dc968f6a5ff583aa76052439315a44dfac7d1bf4535a61190b
 20:0-35:24 theorem VE.Readings.conflictFree_empty@VE.Readings.SupFree
 42:0-67:92 theorem VE.Readings.up_conflictFree@VE.Readings.SupFree
@@ -15179,4 +15195,4 @@ module VE.WireContract.Tables.Norms cf516e65887456fbad6dd7e1ca9d78fc2def5715a9c3
 6:0-7:8193 def VE.WireContract.Tables.Norms.table@VE.WireContract.Tables.Norms
 module VE.WireContract.Tables.SoftNorms 3e908854735a35d1a317a048643b8ae3e30e98100e24ffbbbaaa4c10a0d37975
 6:0-7:33179 def VE.WireContract.Tables.SoftNorms.table@VE.WireContract.Tables.SoftNorms
-module VE 1d8d3063a717711e74bba8bd7dead0a9bf35af74d9016c5718d82e66a080b282
+module VE 49cc9bdd7a16a5820b547ed4badc31d30e59ecc27fac8104ebc9da2ff3aeb2fa
