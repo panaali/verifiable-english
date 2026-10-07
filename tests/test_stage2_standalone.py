@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import json
 
 import pytest
 
@@ -12,6 +13,58 @@ from ve.backends.relay import decide as run
 from ve.identity import meaning_id, source_id
 
 SERVICE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_service"
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+@pytest.mark.parametrize(("case_id", "path"), [
+    ("validation_007", "/complete"),
+    ("validation_008", "/complete"),
+    ("validation_010", "/relations"),
+    ("validation_011", "/domains"),
+    ("validation_012", "/domains/person"),
+    ("validation_013", "/domains/person/1"),
+    ("validation_014", "/relations/owns"),
+    ("validation_015", "/relations/owns/0/0"),
+    ("validation_016", "/relations/owns/0/0"),
+    ("validation_017", "/relations/owns/0"),
+    ("validation_028", "/domains/person/1"),
+])
+def test_model_rejection_retains_public_path(case_id, path):
+    from ve.errors import VEError
+    cases = json.loads((SERVICE.parents[4] / "conformance/validation.json").read_text())
+    case = next(item for item in cases if item["id"] == case_id)
+    with pytest.raises(VEError) as caught:
+        run("model", [case])
+    assert caught.value.to_dict()["path"] == path
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+@pytest.mark.parametrize("profiles", [(), ("closure@0",), ("closure@0", "nary@0"),
+                                     ("order@0",), ("data@0", "definitions@0")])
+def test_model_constant_fault_retains_path_across_families(profiles):
+    from ve.errors import VEError
+    env = Environment(raw_environment(profiles))
+    model = model_wire(env)
+    model["constants"]["x"] = "absent"
+    with pytest.raises(VEError) as caught:
+        run("model", [{"id": "constant", "environment": env.to_dict(), "model": model}])
+    assert caught.value.to_dict()["path"] == "/constants/x"
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+@pytest.mark.parametrize(("count", "path"), [(1001, "/domains/item"),
+                                             (100001, "/relations")])
+def test_model_budget_fault_retains_path(count, path):
+    from ve.errors import VEError
+    env = Environment(raw_environment(()))
+    model = model_wire(env)
+    if path.startswith("/domains"):
+        model["domains"]["item"] = [f"i{index}" for index in range(count)]
+    else:
+        model["relations"]["base"] = [[f"i{index}"] for index in range(count)]
+    with pytest.raises(VEError) as caught:
+        run("model", [{"id": "limit", "environment": env.to_dict(), "model": model}])
+    assert caught.value.to_dict()["path"] == path
 
 
 @pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
