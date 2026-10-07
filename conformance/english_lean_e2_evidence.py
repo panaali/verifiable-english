@@ -188,6 +188,14 @@ def streams(index: int, per_config: int, documents: int, fresh: list[int],
     def render(formula):
         return EnglishTraversal(env, words).render(formula) + "."
 
+    try:
+        ast.core_gate(env)
+        check = lambda formula: ast.check_formula(env, formula)  # noqa: E731
+    except Exception:
+        # The core checker refuses every formula under this environment (`ve-units@1`): the generated formulas
+        # are compared unchecked, and both readers reach that refusal after reading (E2.5).
+        check = lambda formula: None  # noqa: E731
+
     def stream(label, rng, count, directed=()):
         seen, made, queue = set(), 0, list(directed)
         draws = 0
@@ -195,7 +203,7 @@ def streams(index: int, per_config: int, documents: int, fresh: list[int],
             draws += 1
             try:
                 formula = queue.pop(0) if queue else random_formula(rng, env, rng.randrange(2, 9))
-                ast.check_formula(env, formula)
+                check(formula)
                 text = render(formula)
             except Stalled:
                 STALLED[name] = STALLED.get(name, 0) + 1
@@ -220,7 +228,7 @@ def streams(index: int, per_config: int, documents: int, fresh: list[int],
             tries += 1
             try:
                 formula = random_formula(rng, env, rng.randrange(6, 10))
-                ast.check_formula(env, formula)
+                check(formula)
                 formulas.append(formula)
             except Stalled:
                 STALLED[name] = STALLED.get(name, 0) + 1
@@ -293,6 +301,7 @@ def part_g3(pool, per_config: int, per_usecase: int, fresh_count: int, documents
             "agree": sum(v for k, v in rows.items() if k.endswith(":agree")),
             "differ": sum(v for k, v in rows.items() if k.endswith(":differ")),
             "excluded": rows["excluded"], "by_config": by_config,
+            "empty": sorted(name for name, counts in by_config.items() if not counts),
             "roundtrip_failures": roundtrip, "differences": differences, "coverage": coverage}
 
 

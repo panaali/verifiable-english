@@ -254,12 +254,18 @@ class Document:
         object.__setattr__(self, "formulas", tuple(self.formulas))
 
 
+def core_gate(env):
+    """The core checker's refusal of an environment as a whole, before any formula: raised for every formula
+    under it, whatever its shape (the English relay applies it before it checks Lean's formulas)."""
+    if not isinstance(env, Environment):
+        raise VEError("Expected a validated Environment")
+    if env.unit_schema is not None:
+        raise UnsupportedProfile("ve-units@1 statements require the W6 annotated admission route before core checking")
+
+
 class _Checker:
     def __init__(self, env, *, generated=False):
-        if not isinstance(env, Environment):
-            raise VEError("Expected a validated Environment")
-        if env.unit_schema is not None:
-            raise UnsupportedProfile("ve-units@1 statements require the W6 annotated admission route before core checking")
+        core_gate(env)
         self.env, self.nodes, self.generated = env, 0, generated
 
     def tick(self):
