@@ -371,8 +371,8 @@ def _load_document(raw: bytes, path: str | Path, lean):
     soft_enabled = "soft-norms@0" in profiles
     defaults_enabled = "norm-defaults@0" in profiles
     if defaults_enabled and soft_enabled:
-        # The soft and rights document routes are checked by Lean, which has no
-        # norm-defaults branch yet; ve.norm_defaults builds their fill in Python.
+        # The soft and rights document routes are checked by Lean, whose
+        # norm-defaults route has no admission kind for them yet.
         raise VEError("UnsupportedProfile: norm-defaults@0 documents on the soft and rights "
                       "routes await the Lean route")
     attached = _s1_attached(environment_data, meta)
@@ -576,7 +576,13 @@ def _load_document(raw: bytes, path: str | Path, lean):
     if defaults_enabled:
         # norm-defaults 2.3: the layers are those of `fill U`, over E‴ with Fill_T.
         from .norm_defaults import UnspecifiedDocument, validate_completions
-        norm_defaults = UnspecifiedDocument(env, selected_norms)
+        defaults_env = env
+        if "readings@1" in env.profiles and not s1_content:
+            # A non-content-bearing reading set uses the lower W2 route.
+            lowered = env.to_dict()
+            lowered["profiles"] = [p for p in lowered["profiles"] if p != "readings@1"]
+            defaults_env = _environment(lowered)
+        norm_defaults = UnspecifiedDocument(defaults_env, selected_norms)
         validate_completions(norm_defaults, meta.get("completions", {}), unit_ids)
         norms = None
     if "lemmas" in meta and type(meta["lemmas"]) is not list:
@@ -755,7 +761,8 @@ def coverage_defaults(doc):
         from .norm_defaults import report
         doc["_norm_defaults_report"] = report(
             doc["norm_defaults"], prove=True, search_domain_size=2, translation=True,
-            completions=doc["meta"].get("completions", {}))
+            completions=doc["meta"].get("completions", {}),
+            unit_ids={u["id"] for u in doc["units"]})
     return doc["_norm_defaults_report"]
 
 
@@ -861,9 +868,8 @@ def coverage(doc, scoped=None, rights_report=None):
     defaults_lines = None
     if doc.get("norm_defaults") is not None:
         # norm-defaults 3.2: a gap is no open term and changes no unit status.
-        from .norm_defaults import gaps_residual
         defaults_lines = coverage_defaults(doc)
-        gaps = gaps_residual(defaults_lines)
+        gaps = defaults_lines["residual"]
         residual["gaps"] = len(gaps["gaps"])
         residual["ungrounded_defaults"] = gaps["ungrounded_defaults"]
     rights_open = ("limitation_terms", "bar_terms")
@@ -874,9 +880,8 @@ def coverage(doc, scoped=None, rights_report=None):
             **({"residual_lines": lines} if lines else {}),
             **({"alternatives": alternatives} if alternatives is not None else {}),
             **({"norm_defaults": {
-                "gaps": gaps_residual(defaults_lines)["gaps"],
-                "findings": [line.grounding for line in defaults_lines
-                             if line.grounding.startswith("UngroundedDefault")]}}
+                "gaps": gaps["gaps"],
+                "findings": defaults_lines["findings"]}}
                if defaults_lines is not None else {}),
             **({"soft_status": "OPEN" if soft_row["soft_status"] == "OPEN" or
                 any(residual.get(key) for key in rights_open) else "CHECKED",
@@ -1086,7 +1091,7 @@ def _report(doc):
             "fill_hash": defaults.fill_hash,
             "unsaid_predicates": [f"unsaid__{p}" for p in defaults.unspec],
             "background_labels": [label for label, _ in defaults.fill_premises],
-            "report": {line.predicate: list(line.lines()) for line in lines}}
+            "report": {line["predicate"]: line["lines"] for line in lines["report"]}}
     if "graph" in doc["meta"] and joint_pending:
         result["admission"] = {"status": "UNKNOWN",
                                "reason": "discourse citation and report extension pending"}
@@ -1141,7 +1146,7 @@ def _report(doc):
         elif defaults is not None:
             # W1's admission on `fill U`, from the source environment (Lean
             # `VE.NormDefaults.Admission`); the report is over E‴ (`env`).
-            result["admission"] = admit_document(doc["environment"], admission)
+            result["admission"] = admit_document(lower_env, admission)
         else:
             result["admission"] = admit_document(env, admission)
         latest = {}

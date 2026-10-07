@@ -15,7 +15,7 @@ from conformance.norm_defaults_report import compare, python_rows, report_case, 
 from conformance.norm_defaults_three_way import fixtures
 from tests.test_norm_defaults_differential import case as differential_case
 from tests.test_norm_defaults_three_way import lean_executable  # noqa: F401  (the route fixture)
-from ve import norm_defaults as nd
+from conformance import frozen_norm_defaults as nd
 from ve import norm_defaults_route as route
 from ve.environment import Environment
 from ve.errors import VEError

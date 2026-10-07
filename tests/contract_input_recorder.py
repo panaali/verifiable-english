@@ -193,6 +193,7 @@ def _install_norms():
     environment (wire-contract-s5.md 7.1). Only calls from a test file count."""
     import importlib
     from ve import norm_admission, norm_defaults, norm_defaults_route, norms
+    from conformance import frozen_norm_defaults
     for module_name, unit in (("ve.norms_contract", "norms@0"), ("ve.norm_defaults_contract", "norm-defaults@0")):
         try:
             module = importlib.import_module(module_name)
@@ -216,7 +217,8 @@ def _install_norms():
                 _record_norm(environment, active_norms(document))
             return original(environment, document, *args, **kwargs)
         setattr(module, function, admit)
-    for cls in (norms.NormDocument, norm_defaults.UnspecifiedDocument):
+    for cls in (norms.NormDocument, norm_defaults.UnspecifiedDocument,
+                frozen_norm_defaults.UnspecifiedDocument):
         original = cls.__init__
         def init(self, env, units, *args, original=original, **kwargs):
             if _from_tests() and hasattr(env, "to_dict"):
