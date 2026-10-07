@@ -1378,17 +1378,29 @@ def render_document(path):
             return claim
         return f"{claim} The source presents this as {kind_description(kind)}."
 
-    def candidate_rights(content):
+    def candidate_units(content):
         # A right candidate is checked alone over the document's source units
         # (validate_reading_sets), not in the base document: its line objects
         # and right name live only in that correlated document.
         if doc["rights_document"] is None or _rights_block(content) != "right":
             return None
+        return [{"source_units": sorted(u["id"] for u in doc["units"])}, content]
+
+    def candidate_rights(content):
+        # Its wording reads the rules alone, so the soft document is deferred (`SoftNormDocument`).
+        units = candidate_units(content)
+        if units is None:
+            return None
         from .rights import RightsDocument
-        return RightsDocument(doc["environment"], [
-            {"source_units": sorted(u["id"] for u in doc["units"])}, content])
+        return RightsDocument(doc["environment"], units, deferred=True)
 
     active_by_unit = {r["unit"]: r for r in active_reading_sets(doc["meta"].get("reading_sets", []))}
+    # Every right candidate's line rules in one Lean request per source, not one per candidate.
+    shown = [candidate_units(candidate["content"]) for u in doc["units"]
+             for candidate in active_by_unit.get(u["id"], {}).get("readings", ())]
+    if any(units is not None for units in shown):
+        from .rights import RightsDocument
+        RightsDocument.warm_rules(doc["environment"], [units for units in shown if units is not None])
     s1_wording = None
     if _content_bearing(doc):
         from .readings_route import Wording

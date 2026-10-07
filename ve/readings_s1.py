@@ -21,7 +21,7 @@ from __future__ import annotations
 import json
 from itertools import product
 
-from .errors import VEError
+from .errors import CheckerUnavailable, VEError
 from .wire import digest
 
 READINGS = "readings@1"
@@ -417,7 +417,8 @@ class Document:
 
 class Side:
     """A candidate's chain document assembled from contents in source order (`place`) and elaborated by Python's
-    chain classes, unchecked: Lean checks it (`sideWF`)."""
+    chain classes, unchecked: Lean checks it (`sideWF`). Its soft document is deferred (`SoftNormDocument`): Lean
+    is asked for this side alone only when a reader needs a field Lean supplies."""
 
     def __init__(self, senv, contents, unit_ids):
         self.senv, self.contents, self.unit_ids = senv, contents, unit_ids
@@ -425,21 +426,26 @@ class Side:
         self.rights = None
         self.soft = None
 
-    def _elaborate(self):
+    def rights_units(self):
+        """The units of the side's rights document (the rights chain)."""
+        units = [{"source_units": list(self.unit_ids)}]
+        for c in self.contents:
+            if not isinstance(c, Content):
+                units.append(lean_defaults({"bar": c[1]}))
+            elif c.kind != "assertion":
+                units.append(lean_defaults(c.raw))
+        return units
+
+    def _elaborate(self, deferred=True):
         chain = self.senv.chain
         if chain == "rights":
             from .rights import RightsDocument
-            units = [{"source_units": list(self.unit_ids)}]
-            for c in self.contents:
-                if not isinstance(c, Content):
-                    units.append(lean_defaults({"bar": c[1]}))
-                elif c.kind != "assertion":
-                    units.append(lean_defaults(c.raw))
-            self.rights = RightsDocument(self.senv.frame, units)
+            self.rights = RightsDocument(self.senv.frame, self.rights_units(), deferred=deferred)
             self.soft = self.rights.soft_document
         else:
             from .softnorms import SoftNormDocument
-            self.soft = SoftNormDocument(self.senv.soft_frame(), [c.raw for c in self.contents if c.kind == "norm"])
+            self.soft = SoftNormDocument(self.senv.soft_frame(), [c.raw for c in self.contents if c.kind == "norm"],
+                                         deferred=deferred)
 
     # -- S2's regeneration of a choice document's chain refusal (composition-s2.md 4.1 step 5, `route_refusal`)
     #
@@ -498,7 +504,7 @@ class Side:
                 raise VEError("InvalidInput: invalid norm fields")
             from .softnorms import check_soft_source
             check_soft_source(self.senv.soft_frame().to_dict(), norms)
-        self._elaborate()
+        self._elaborate(deferred=False)
         from .ast import formula_from_data
         env = self.soft.extended_env
         try:
@@ -744,10 +750,32 @@ class Decoded:
         self.doc = Document(self.senv, document)
         self.attached = self.doc.attached()
         self.sides = {}
+        self._rules_warm = self.senv.chain != "rights"
+
+    def _warm_rules(self):
+        """Every candidate side's line rules in one Lean request per source, not one per side
+        (`RightsDocument.warm_rules`). A side that cannot be assembled is built, and raises, when it is read."""
+        from .rights import RightsDocument
+        documents = []
+        for R in self.doc.sets:
+            for k in range(len(R.candidates)):
+                try:
+                    documents.append(self._plain_side(R.id, k).rights_units())
+                except CheckerUnavailable:
+                    raise
+                except Exception:  # noqa: BLE001
+                    continue
+        RightsDocument.warm_rules(self.senv.frame, documents)
+
+    def _plain_side(self, s, i):
+        return Side(self.senv, self.doc.one(self.attached, s, i), self.doc.unit_ids)
 
     def side(self, s, i):
         if (s, i) not in self.sides:
-            side = Side(self.senv, self.doc.one(self.attached, s, i), self.doc.unit_ids)
+            if not self._rules_warm:
+                self._rules_warm = True
+                self._warm_rules()
+            side = self._plain_side(s, i)
             side._elaborate()
             self.sides[(s, i)] = side
         return self.sides[(s, i)]
