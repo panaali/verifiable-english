@@ -24,6 +24,7 @@ from ve.softnorms import SoftEnvironment
 
 SHALL = b"Agents shall avoid deceiving users."
 ASKS_ALL = ["forall", "agent", ["forall", "user", ["binary", "asks", ["var", 1], ["var", 0]]]]
+ASKS_ALL_SLOT = "*For every agent, for every user, that agent has the recorded relation \"asks\" to that user*"
 
 
 def candidate(env, set_id, cid, content, kind="norm"):
@@ -112,9 +113,13 @@ def test_h2_h3_e19_on_k6_and_k14_without_e25(tmp_path):
     asks = ["binary", "asks", ["var", 1], ["var", 0]]
     path = s1_document(tmp_path / "k14", [strict(), default(sufficient=[asks], necessary=[["bottom"]])])
     [pair] = check_document(path)["readings"]["sets"][0]["pairs"]
+    # Review B of readings-defaults RD-1: the readings differ in the exception's conditions as well as the verb, so
+    # the slot shows each full sentence, notes included (before: *must* and *should*, the conditions hidden).
     assert pair["text"] == ("These two readings differ here: a is an agent; u is a user; a has the recorded "
-                            "relation \"asks\" to u. Under *must*, a still must. Under *should*, this situation is "
-                            "ruled out, whatever is decided.")
+                            "relation \"asks\" to u. Under *Every agent must avoid deceiving each user*, a still "
+                            "must. Under *Every agent should avoid deceiving each user. Its exception applies when "
+                            "that agent has the recorded relation \"asks\" to that user. Its exception applies only "
+                            "when this is impossible*, this situation is ruled out, whatever is decided.")
     assert "It is not certified" not in rendered(path)
 
 
@@ -134,7 +139,9 @@ def test_h3_e19_case_3_on_k12_and_h5_e24_for_holds(tmp_path):
     path = s1_document(tmp_path / "k12", cands)
     [pair] = check_document(path)["readings"]["sets"][0]["pairs"]
     assert pair["wording"] == "E19"
-    assert "Under reading 1, a is not required to. Under reading 2, a still must." in pair["text"]
+    # The `<reading>` slot (readings-defaults 2.3, review A4): each candidate's own sentence, in italics.
+    assert f"Under {ASKS_ALL_SLOT}, a is not required to. Under *Every agent must avoid deceiving each user*, "\
+        "a still must." in pair["text"]
 
     def holds(reading_set):
         entry = {"base": {"domains": {"agent": ["a"], "user": ["u"]}, "constants": {}, "relations": {"asks": []}},
@@ -162,8 +169,8 @@ def test_e21_between_two_assertions(tmp_path):
     pairs = check_document(path)["readings"]["sets"][0]["pairs"]
     [e21] = [p for p in pairs if set(p["readings"]) == {"asks", "not-asks"}]
     assert e21["wording"] == "E21"
-    assert e21["text"].endswith("the sentence is true there. Under reading 1, it is false there.") or \
-        e21["text"].endswith("the sentence is true there. Under reading 2, it is false there.")
+    assert e21["text"].endswith(f"the sentence is true there. Under {ASKS_ALL_SLOT}, it is false there.")
+    assert "reading 1" not in e21["text"] and "reading 2" not in e21["text"]
 
 
 def test_h6_e16_on_k4(tmp_path):
@@ -198,9 +205,9 @@ def test_g6_g9_no_generated_name_and_no_may_not(tmp_path):
     pairs = check_document(path)["readings"]["sets"][0]["pairs"]
     assert pairs[0]["wording"] == "E19"
     s1_lines = [p["text"] for p in pairs]
+    from ve.readings_s2_english import hidden_in
     for sentence in s1_lines:
-        assert not any(name in sentence for name in ("ve__", "rd-", "soft__", "rights__"))
-        assert "may not" not in sentence
+        assert hidden_in(sentence) is None, sentence
     assert "This sentence says" not in text
 
 

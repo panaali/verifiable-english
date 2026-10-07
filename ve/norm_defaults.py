@@ -26,21 +26,21 @@ from dataclasses import dataclass, field
 from itertools import product
 
 from .ast import And, Binary, Bottom, Exists, Forall, Implies, Not, Or, Unary, _Checker, _to_data
-from .environment import Environment
+from .environment import FILL_PREFIX, NORM_DEFAULTS_PROFILE, UNSAID_PREFIX, Environment
 from .errors import InvalidModel, ResourceLimit, UnsupportedProfile, VEError
 from .limits import MAX_EVALUATIONS, MAX_PREDICATES
 from .norms import Norm, NormDocument, _atom, _bind, _any
 from .search import _used_predicates
 from .wire import digest
 
-PROFILE = "norm-defaults@0"
+PROFILE = NORM_DEFAULTS_PROFILE
 MAX_UNSAID_ATOMS = 12
 MAX_NAME_BYTES = 56
 
 
 def unsaid_name(predicate):
     """The fresh base predicate that fills the gaps of `predicate`."""
-    return "unsaid__" + predicate
+    return UNSAID_PREFIX + predicate
 
 
 def fill_description(predicate):
@@ -50,7 +50,7 @@ def fill_description(predicate):
 
 def fill_name(predicate):
     """The synthetic rule `F_p`; `_` becomes `-` so that it is a rule name."""
-    return "unsaid--" + predicate.replace("_", "-")
+    return FILL_PREFIX + predicate.replace("_", "-")
 
 
 class FilledBaseEnvironment(Environment):
@@ -368,7 +368,7 @@ class UnspecifiedDocument:
             relations = model.get("relations")
             if type(relations) is dict:
                 for name in sorted(relations):
-                    if type(name) is str and name.startswith("unsaid__"):
+                    if type(name) is str and name.startswith(UNSAID_PREFIX):
                         raise InvalidModel(f"{name} is a filling; supply it as a filling, not a table",
                                            generator="norm-defaults")
             model = FiniteModel.from_dict(env, model)
@@ -756,7 +756,7 @@ def _package(document, target, certificate):
 
 
 def _render_under(document, atoms_values):
-    return tuple((name[len("unsaid__"):], row, value) for (name, row), value in sorted(atoms_values.items()))
+    return tuple((name[len(UNSAID_PREFIX):], row, value) for (name, row), value in sorted(atoms_values.items()))
 
 
 def check_conflict(document: UnspecifiedDocument, *, model=None, certificates=None, prove=False,
