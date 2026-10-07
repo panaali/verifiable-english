@@ -14028,6 +14028,12 @@ theorem VE.Readings.Wire.lookup_mem
     List.lookup a l = Option.some b → (a, b) ∈ l
   -- uses
   -- expr 3122011733
+theorem VE.Readings.Wire.ndRest_of_ndText
+  ∀ {re : VE.Readings.Wire.ReadingsEnvironment} {N : VE.Readings.NDoc},
+    VE.Readings.Wire.ndText re N = Option.none →
+      VE.Readings.normsShaped N.D = Bool.true → VE.Readings.Wire.ndRest N = Bool.true
+  -- uses VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Readings.Wire.ndRest@VE.Readings.UnspecifiedWire VE.Readings.Wire.ndText@VE.Readings.UnspecifiedWire VE.Readings.normsShaped@VE.Readings.Unspecified
+  -- expr 3089912444
 theorem VE.Readings.Wire.oneOf_eq
   ∀ (D : VE.Readings.Doc) (s : String) (i : Nat),
     VE.Readings.Wire.oneOf D (VE.Readings.Wire.onesOf D) s i = VE.Readings.one D s i
@@ -14048,6 +14054,10 @@ theorem VE.Readings.Wire.onesOf_holds
             (List.lookup (R.id, i) (VE.Readings.Wire.onesOf D)).isSome = Bool.true
   -- uses VE.Formula@VE.Syntax VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Doc.sets@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.ReadingSet.candidates@VE.Readings.Doc VE.Readings.ReadingSet.id@VE.Readings.Doc VE.Readings.ReadingSet@VE.Readings.Doc VE.Readings.Wire.onesOf@VE.Readings.Wire VE.Readings.Wire.pendingAt@VE.Readings.Wire VE.Rights.RightsDoc@VE.Rights.Tree
   -- expr 1924490570
+theorem VE.Readings.Wire.option_or_none
+  ∀ {α : Type} {a b : Option α}, a.or b = Option.none → a = Option.none ∧ b = Option.none
+  -- uses
+  -- expr 511594929
 theorem VE.Readings.Wire.readings_wire_all_sound
   ∀ (j : Lean.Json) (r : VE.Readings.Wire.CertificateReplay),
     VE.Readings.Wire.replayCertificate j = Except.ok r →

@@ -116,6 +116,27 @@ def ndRest (N : NDoc) : Bool :=
 theorem wellFormedND_eq (N : NDoc) : WellFormedND N = (WellFormedDoc N.D && ndRest N) := by
   simp only [WellFormedND, ndRest, Bool.and_assoc]
 
+theorem option_or_none {α : Type} {a b : Option α} (h : a.or b = none) : a = none ∧ b = none := by
+  cases a <;> simp_all
+
+/-- A passing `ndText` has established every conjunct of `WellFormedND` after S1's but `normsShaped`: admission
+    evaluates each norm-defaults check once. -/
+theorem ndRest_of_ndText {re : ReadingsEnvironment} {N : NDoc} (h : ndText re N = none)
+    (hs : normsShaped N.D = true) : ndRest N = true := by
+  unfold ndText at h
+  obtain ⟨h1, h23⟩ := option_or_none h
+  obtain ⟨h2, h3⟩ := option_or_none h23
+  have hfree := fillNamesFree_of_reservedUnsaid N (Option.map_eq_none_iff.mp h1)
+  have hU := wellFormedU_of_ndDocText h2
+  have hone := firstSome_eq_none h3
+  simp only [ndRest, hs, hfree, hU, Bool.true_and, List.all_eq_true, Bool.or_eq_true]
+  intro R hR i hi
+  by_cases hp : (R.candidates[i]?.bind (·.content)).isNone = true
+  · exact Or.inl hp
+  · refine Or.inr (wellFormedU_of_ndDocText (Option.map_eq_none_iff.mp (hone (R, i) ?_)))
+    refine List.mem_filter.mpr ⟨List.mem_flatMap.mpr ⟨R, hR, List.mem_map.mpr ⟨i, hi, rfl⟩⟩, ?_⟩
+    cases hb : R.candidates[i]?.bind (·.content) <;> simp_all [pendingAt]
+
 structure AdmittedND where
   b : Admitted2
   N : NDoc
@@ -129,7 +150,7 @@ structure AdmittedND where
 def admitNDOf (b : Admitted2) : Except String AdmittedND :=
   let re := b.a.re
   let N : NDoc := ⟨b.D, unspecOf re b.D⟩
-  match ndText re N with
+  match hT : ndText re N with
   | some e => .error e
   | none =>
     match hA : admissionText re (fillDoc N) with
@@ -139,8 +160,8 @@ def admitNDOf (b : Admitted2) : Except String AdmittedND :=
         match choiceStepText re N with
         | some e => .error e
         | none =>
-          if hU : ndRest N = true then
-            .ok ⟨b, N, rfl, by rw [wellFormedND_eq, hU, Bool.and_true]; exact b.wf,
+          if hs : normsShaped N.D = true then
+            .ok ⟨b, N, rfl, by rw [wellFormedND_eq, ndRest_of_ndText hT hs, Bool.and_true]; exact b.wf,
               (wellFormedDoc_of_admissionText re _ hA).trans hF⟩
           else .error "InvalidInput: norm-defaults document is not well formed"
       else .error "InvalidInput: readings document is not well-formed"
@@ -360,18 +381,20 @@ def conflictPackages (inner : Json) : Json :=
   | .ok c => c.getObjValD "packages"
   | .error _ => inner.getObjValD "packages"
 
-/-- Runs `ndChoiceText` on its choice (after S2a's chain check on the filled choice) and refuses with its text, so
-    `wfc` is checked for every replayed choice, one beyond the 64 of 4.1 step 5 included (SR1). The certificates are
+/-- Runs `ndChoiceText` on its choice (after S2a's chain check on the filled choice; its text is `ndDocText`'s
+    suffixed, as `ndChoiceText` words it) and refuses with its text, so `wfc` is checked for every replayed choice, one beyond the 64 of 4.1 step 5 included (SR1). The certificates are
     the conflict packages decoded against the choice's targets and bindings. -/
 def replayChoiceAt (r : AdmittedND) (c : Choice) (inner : Json) :
     Except String (ChoiceReplayU × {L : VE.NormDefaults.Wire.LayeredU // L.U = choiceU r.N c}) := do
   if hc : compatible r.N.D c = true then
-    if let some e := (choiceChainText (fillDoc r.N) c).or (ndChoiceText r.b.a.re r.N c) then throw e
-    if hw : VE.NormDefaults.WellFormedU (choiceU r.N c) = true then
+    if let some e := choiceChainText (fillDoc r.N) c then throw e
+    match hn : ndDocText r.b.a.re (choiceU r.N c) with
+    | some e => throw (e ++ " under " ++ choiceText r.N.D c)
+    | none =>
+      let hw := wellFormedU_of_ndDocText hn
       let L ← choiceLayered r c hw
       pure (⟨r, c, hc, hw, (targets (VE.NormDefaults.fill L.1.U)).map
         (VE.NormDefaults.Wire.decodePackageX L.1 (conflictPackages inner))⟩, L)
-    else throw "InvalidInput: norm-defaults document is not well formed"
   else throw "InvalidInput: the choice is not a compatible complete choice"
 
 def replayChoiceU (j : Lean.Json) : Except String ChoiceReplayU := do
@@ -417,11 +440,14 @@ def runElaborateND (id : String) (r : AdmittedND) : Except String Json := do
     the choice first. -/
 def ndFormulas (x : ChoiceReplayU) (inner : Json) : Except String (List VE.Formula × VE.Formula) := do
   let E := envAt (fill (choiceU x.r.N x.c)) (size (fill (choiceU x.r.N x.c)))
-  let (Γ, φ) ← choiceFormulas E inner
+  -- Absent premises are none, as `runChoice` sends the regenerated assertions alone.
+  let (Γ, φ) ← choiceFormulas E (if inner.getObjValD "premises" == .null then inner.setObjVal! "premises" (.arr #[])
+    else inner)
   pure ((choiceDoc x.r.N.D x.c).2 ++ Γ, φ)
 
 /-- A certificate of the choice's filled document, bound as the norm-defaults route binds it: the regenerated
-    premises of `fill U` and the choice's assertions, then the case's premises as written. -/
+    premises of `fill U` and the choice's assertions, then the case's premises as written. The answer is the
+    norm-defaults route's (`valid`, the number of premises); `runChoiceND` adds the conflict status. -/
 def ndCertificate (x : ChoiceReplayU) (inner : Json) : Except String (List (String × Json)) := do
   let re := x.r.b.a.re
   let U := choiceU x.r.N x.c
@@ -438,9 +464,7 @@ def ndCertificate (x : ChoiceReplayU) (inner : Json) : Except String (List (Stri
     ((VE.NormDefaults.Wire.premisesU U (choiceDoc x.r.N.D x.c).2).map encF ++ own)
     (inner.getObjValD "conclusion") cert.environment_id cert.premise_meaning_ids cert.conclusion_meaning_id
   let valid := VE.Tableau.checkCertificate (envAt (fill U) (size (fill U))) (VE.NormDefaults.Wire.premisesU U Γ) φ cert
-  let free := VE.NormDefaults.Wire.conflictFreeCheckU U x.certs
-  pure [("valid", .bool valid), ("premises", toJson (VE.NormDefaults.Wire.premisesU U Γ).length),
-    ("conflict_free", .bool free), ("accepted", .bool (free && valid))]
+  pure [("valid", .bool valid), ("premises", toJson (VE.NormDefaults.Wire.premisesU U Γ).length)]
 
 /-- A base model of the choice's document with a separate `filling` (`modelCheckU`). -/
 def ndChoiceModel (x : ChoiceReplayU) (L : VE.NormDefaults.Wire.LayeredU) (id : String) (inner : Json)
@@ -493,8 +517,12 @@ def runChoiceND (id : String) (r : AdmittedND) (j : Json) : Except String Json :
   let answer := match ndInner x L.1 id kind inner assertions with
     | .ok a => a
     | .error e => Json.mkObj [("id", .str id), ("status", .str "error"), ("error", .str e)]
+  -- As `runChoice`: a certificate is accepted only with the choice's conflict packages CONFLICT-FREE (S2a 14.8),
+  -- here `conflictFreeCheckU` on the replayed certificates, the hypothesis of `readings_wire_nd_choice_entails`.
+  let free := VE.NormDefaults.Wire.conflictFreeCheckU (choiceU x.r.N x.c) x.certs
+  let valid := answer.getObjValD "valid" == .bool true
   let accepted := if kind == "norm-defaults-certificate" then
-      [("conflict_free", answer.getObjValD "conflict_free"), ("accepted", answer.getObjValD "accepted")]
+      [("conflict_free", .bool free), ("accepted", .bool (free && valid))]
     else []
   pure (okWith id ([("choice", choiceJson c), ("document_hash", .str (← choiceHash r.b units)),
     ("assertions", toJson assertions), ("inner", answer)] ++ accepted))

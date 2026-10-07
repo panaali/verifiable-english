@@ -4048,6 +4048,8 @@
 'VE.Readings.Wire.fillNamesFree_of_reservedUnsaid' depends on axioms: [propext, Quot.sound]
 'VE.Readings.Wire.wellFormedU_of_ndDocText' depends on axioms: [propext, Quot.sound]
 'VE.Readings.Wire.wellFormedND_eq' depends on axioms: [propext, Quot.sound]
+'VE.Readings.Wire.option_or_none' depends on axioms: [propext]
+'VE.Readings.Wire.ndRest_of_ndText' depends on axioms: [propext, Quot.sound]
 'VE.Readings.Wire.lookup_map_key' depends on axioms: [propext]
 'VE.Readings.Wire.frameOf_filled' depends on axioms: [propext, Quot.sound]
 'VE.Readings.Wire.candidate_filled' depends on axioms: [propext, Quot.sound]
