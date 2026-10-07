@@ -1,7 +1,7 @@
 {
   "base_commit": "7345e3ed",
   "head_commit": "3bd70e2a",
-  "also_recorded_at": ["ee8a38c6"],
+  "also_recorded_at": ["ee8a38c6", "864f8a7e"],
   "command": "tools/lean_first_diff.py record --root ROOT --out FILE --corpus ... --workers 4, then compare BASE HEAD --corpus ... --json ab-NAME-compare.json",
   "recordings_sha256": {
     "core": {"corpora": ["probe", "conformance"],
