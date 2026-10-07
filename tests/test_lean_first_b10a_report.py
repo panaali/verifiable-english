@@ -149,6 +149,40 @@ def test_fuzzer_gate_detects_changed_baseline_replay_answer():
     assert gate.compare(base, head) == ["trace"]
 
 
+def test_baseline_replay_trace_follows_baseline_order_across_interleaved_surfaces(monkeypatch):
+    """The real `replay` answers surface by surface and the committed baseline interleaves surfaces
+    (requests, environment, wire, requests, environment): the trace still covers every entry and
+    hashes it in baseline order, so swapping two entries' answers changes the digest."""
+    from tools import difffuzz as df
+
+    tracer = _tool("trace_fuzzer")
+    order = [entry["surface"] for entry in df.load_baseline()["entries"]]
+    assert any(a != b and a in order[i + 1:] for i, (a, b) in enumerate(zip(order, order[1:])))
+    entries = [{"id": f"{surface}-{n}", "surface": surface, "profile": "core", "seed": "s", "engines": ["lean"],
+                "input": {"n": n}, "signature": f"sig-{n}"}
+               for n, surface in enumerate(["requests", "environment", "requests", "environment"])]
+
+    surface = SimpleNamespace(name="probe", profile=lambda seed, root: "core")
+    monkeypatch.setattr(df, "sample", lambda *_: [(SimpleNamespace(id="sample"), {"n": 0})])
+
+    def trace(verdicts):
+        monkeypatch.setattr(df, "evaluate", lambda surface, items: [
+            (["outcome"], None, {"lean": {"verdict": verdicts[root["n"]]}}, f"sig-{root['n']}")
+            for _, root in items])
+
+        def run():
+            df.evaluate(surface, df.sample(surface))
+            df.replay(entries, {name: SimpleNamespace(name=name) for name in ("requests", "environment")})
+            return {}
+
+        return tracer.trace_run(df, run)[1]["baseline_replay"]
+
+    first, swapped = trace([True, False, True, True]), trace([True, True, False, True])
+    assert first["count"] == swapped["count"] == 4
+    assert first["inputs_sha256"] == swapped["inputs_sha256"]
+    assert first["answers_sha256"] != swapped["answers_sha256"]
+
+
 def test_every_timed_run_exited_cleanly_on_both_sides():
     runs = _evidence("timing-route.json")["runs"] + _evidence("timing.json")["runs"]
     assert runs and all(run["exit"] == 0 for run in runs)
