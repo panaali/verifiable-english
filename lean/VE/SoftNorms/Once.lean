@@ -43,6 +43,10 @@ theorem softPremisesIn_eq (D : SoftDoc) : softPremisesIn D (soften D) (layersOf 
   simp only [softPremisesIn, softPremises, cohPremises, cohPremiseIn, cohPremise, substIn_eq, layersOf_syms,
     selectsOn_soften, size]
 
+theorem cohPremiseIn_eq (D : SoftDoc) (M N : SoftNode) :
+    cohPremiseIn D (soften D) (layersOf (soften D)) M N = cohPremise D M N := by
+  simp only [cohPremiseIn, cohPremise, substIn_eq, layersOf_syms, selectsOn_soften, size]
+
 /-- `checkSoft` with the conflict targets and the soft premises built from the layers of `soften D`. -/
 def checkSoftOnce (D : SoftDoc) : Except String Unit := do
   let env := D.soft

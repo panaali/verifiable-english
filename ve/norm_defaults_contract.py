@@ -12,7 +12,7 @@ from ve.errors import ResourceLimit
 from ve.limits import MAX_PREDICATES
 from ve.norms import NormDocument
 from ve.norms_contract import CLASSIFIERS, HOOKS, heights, source
-from ve.wire_contract.engine import Registry
+from ve.wire_contract.registry import Registry
 
 
 def legacy_validation(environment, norms):

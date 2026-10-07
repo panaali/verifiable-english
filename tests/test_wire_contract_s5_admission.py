@@ -21,12 +21,12 @@ from ve import norm_defaults_contract, norms_contract
 from ve.errors import VEError
 from ve.norm_admission import _admit_norm_document_python
 from ve.norm_defaults_route import admit_norm_defaults_document
-from ve.wire_contract.engine import load
+from conformance.wire_contract_engine import load
 
 ROOT = Path(__file__).resolve().parents[1]
 UNITS = {"norms@0": (norms_contract, _admit_norm_document_python, s1),
          "norm-defaults@0": (norm_defaults_contract, admit_norm_defaults_document, s16)}
-DIAGNOSTIC_MODULES = ("ve.norms_contract", "ve.norm_defaults_contract", "ve.softnorms_contract", "ve.wire_contract")
+DIAGNOSTIC_MODULES = ("ve.norms_contract", "ve.norm_defaults_contract", "conformance.softnorms_contract", "ve.wire_contract")
 
 
 @pytest.mark.parametrize("unit", sorted(UNITS))

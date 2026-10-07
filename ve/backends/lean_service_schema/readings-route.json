@@ -214,11 +214,24 @@
         {
           "additionalProperties": false,
           "properties": {
+            "generated_predicates": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "key": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/key"}]},
+                  "layer": {"enum": ["readings", "soft", "rights"]},
+                  "name": {"type": "string"}
+                },
+                "required": ["name", "layer", "key"],
+                "type": "object"
+              },
+              "type": "array"
+            },
             "id": {"$ref": "common.json#/$defs/id_ok"},
             "route": {"enum": ["w2", "pending", "abstention"]},
             "status": {"const": "ok"}
           },
-          "required": ["id", "status", "route"],
+          "required": ["id", "status", "route", "generated_predicates"],
           "type": "object"
         },
         {
@@ -238,12 +251,35 @@
                 }
               ]
             },
+            "generated_predicates": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "key": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/key"}]},
+                  "layer": {"enum": ["readings", "soft", "rights"]},
+                  "name": {"type": "string"}
+                },
+                "required": ["name", "layer", "key"],
+                "type": "object"
+              },
+              "type": "array"
+            },
             "id": {"$ref": "common.json#/$defs/id_ok"},
             "narrowings_stale": {"$ref": "common.json#/$defs/strings"},
             "route": {"enum": ["enumerated"]},
             "status": {"const": "ok"}
           },
-          "required": ["id", "status", "route", "finding", "narrowings_stale", "choice_count", "choices", "choices_checked"],
+          "required": [
+            "id",
+            "status",
+            "route",
+            "generated_predicates",
+            "finding",
+            "narrowings_stale",
+            "choice_count",
+            "choices",
+            "choices_checked"
+          ],
           "type": "object"
         },
         {
@@ -262,6 +298,19 @@
                   "type": "object"
                 }
               ]
+            },
+            "generated_predicates": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "key": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/key"}]},
+                  "layer": {"enum": ["readings", "soft", "rights"]},
+                  "name": {"type": "string"}
+                },
+                "required": ["name", "layer", "key"],
+                "type": "object"
+              },
+              "type": "array"
             },
             "id": {"$ref": "common.json#/$defs/id_ok"},
             "names": {"type": "array"},
@@ -321,6 +370,7 @@
             "id",
             "status",
             "route",
+            "generated_predicates",
             "finding",
             "narrowings_stale",
             "choice_count",

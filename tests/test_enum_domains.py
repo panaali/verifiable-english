@@ -33,7 +33,10 @@ open Lean ResponseShape ResponseShape.Skeletons ResponseShape.EnumSites
 
 # The declarations a runner copies from the request (`Shape.copied`): the client checks them, the
 # encoder theorems do not. A new one must be added here on purpose.
-COPIED = {("discourse.json", "/$defs/reference/properties/form/enum")}
+COPIED = {
+    ("discourse.json", "/$defs/reference/properties/form/enum"),
+    ("soft-norms.json", "/$defs/elaborated/colliding_pairs/items/properties/outweighs/anyOf/0/const"),
+}
 
 KEYWORDS = {"$ref", "$comment", "type", "enum", "const", "pattern", "minLength", "maxLength", "minimum",
             "required", "properties", "additionalProperties", "prefixItems", "items", "minItems", "maxItems",
@@ -213,8 +216,13 @@ def test_every_field_keeps_its_domain(lake, tmp_path, listed):
     _, probes = listed
     body, positive, negative = _probe_examples(probes)
     assert positive > 500 and negative > 500, (positive, negative)
-    done = _lean(lake, tmp_path, body)
-    assert done.returncode == 0 and "error" not in done.stdout, (done.stdout + done.stderr)[-4000:]
+    # Keep each Lean elaboration bounded: one huge source exhausts the
+    # interpreter stack after many otherwise independent proofs.
+    groups = ["abbrev probe" + group for group in body.split("abbrev probe")[1:]]
+    for start in range(0, len(groups), 20):
+        done = _lean(lake, tmp_path, "\n".join(groups[start:start + 20]))
+        assert done.returncode == 0 and "error" not in done.stdout, \
+            (start, (done.stdout + done.stderr)[-4000:])
 
 
 def test_a_bogus_value_is_not_proved(lake, tmp_path, listed):

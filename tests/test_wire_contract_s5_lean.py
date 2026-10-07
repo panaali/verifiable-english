@@ -517,7 +517,7 @@ def test_l8_syntax_walk_is_budget_formula_on_the_corpus():
     """Every guard and carve-out of both units' corpora whose name positions hold strings, from its running
     count: the same formula and count, or a failure with the same text."""
     from conformance.wire_contract_gate import gate_cases
-    from ve.wire_contract.engine import load
+    from conformance.wire_contract_engine import load
     rules = sorted(set(l8_rules(gate_cases(load("norms@0")))) | set(l8_rules(gate_cases(load("norm-defaults@0")))))
     rows = l8(rules)
     differ = [(rule[:200], row["differ"]) for rule, row in zip(rules, rows) if row.get("differ") is not None]
@@ -613,8 +613,8 @@ def python_adapter_row(unit, case):
     from ve.errors import UnsupportedProfile
     from ve.norm_defaults_contract import REGISTRY as DEFAULTS
     from ve.norms_contract import REGISTRY as NORMS
-    from ve.wire_contract.engine import Fault, load
-    from ve.wire_contract.engine import run as engine_run
+    from conformance.wire_contract_engine import Fault, load
+    from conformance.wire_contract_engine import run as engine_run
     registry = NORMS if unit == "norms@0" else DEFAULTS
     contract = load(unit)
     try:

@@ -482,7 +482,8 @@ def configured_wait(default: float) -> float:
 
 def check_wire_contract(index: Index) -> list[str]:
     """Run the wire generator on staged sources and generated output."""
-    watched = ("ve/wire_contract/", "ve/softnorms_contract.py", "ve/softnorms.py",
+    watched = ("ve/wire_contract/", "conformance/softnorms_contract.py",
+               "conformance/wire_contract_engine.py", "ve/softnorms.py",
                "ve/norms_contract.py", "ve/norms.py", "ve/norm_defaults_contract.py", "ve/norm_defaults.py",
                "ve/wire.py", "tools/wire_contract.py", "tools/wire_contract_lean.py",
                "lean/VE/WireContract/",
@@ -493,6 +494,8 @@ def check_wire_contract(index: Index) -> list[str]:
              if path.startswith(("ve/", "conformance/wire-contract/contracts/",
                                  "lean/VE/WireContract/")) or WIRE_UNIT_PATHS.match(path) or path in {
                  "conformance/frozen_norm_defaults.py",
+                 "conformance/__init__.py", "conformance/softnorms_contract.py",
+                 "conformance/wire_contract_engine.py",
                  "lean/audit.py", "tools/wire_contract.py", "tools/wire_contract_lean.py",
                  "lean/VE/Route/frozen-sources.sha256",
                  "conformance/wire-contract/engine-golden.json"}]
@@ -502,7 +505,7 @@ def check_wire_contract(index: Index) -> list[str]:
         target = index.snapshot / path
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(blob)
-    env = {**os.environ, "PYTHONPATH": str(index.snapshot), "PYTHONDONTWRITEBYTECODE": "1"}
+    env = {**os.environ, "PYTHONPATH": str(index.snapshot), "PYTHONDONTWRITEBYTECODE": "1", "VE_WIRE_CONTRACT_STAGED": "1"}
     if getattr(index, "git_dir", None):
         env["GIT_DIR"] = index.git_dir
     done = subprocess.run([sys.executable, "tools/wire_contract.py", "--check"],
