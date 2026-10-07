@@ -28,7 +28,17 @@ def test_without_a_lean_answer_nothing_is_decided():
     out = L.share(UNITS, len(SOURCE))
     assert (out["decided_bytes"], out["decided_share_percent"], out["max_choice_rules"]) == (0, "0.00", None)
     assert out["basis"] == "no Lean answer across readings"
+    # Astra's review C: no CONFLICT-FREE sentence stands without a Lean answer.
+    assert out["one_rule"] is None and "CONFLICT-FREE" not in json.dumps(out)
     assert L.share(UNITS, len(SOURCE), {"decided_units": []})["decided_bytes"] == 0
+
+
+def test_the_one_rule_sentence_is_about_the_isolated_rule():
+    """Astra's review C: S2a's M8 has a one-rule reading whose choice is a CONFLICT with the document's other rules
+    (tests/test_readings_s2_document.py), so the sentence claims CONFLICT-FREE only for a rule checked by itself."""
+    assert L.ONE_RULE.startswith("A rule checked by itself is CONFLICT-FREE by construction")
+    assert "reading checked with the document's other rules" in L.ONE_RULE
+    assert not L.ONE_RULE.startswith("A reading")
 
 
 @pytest.mark.parametrize("decided, total, percent", [(4257, 10916, "39.00"), (4792, 10916, "43.90"),

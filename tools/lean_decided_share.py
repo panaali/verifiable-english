@@ -7,8 +7,10 @@ the units' span bytes, the spans the report's coverage block already uses (`ve/d
 
 Beside the share it prints what qualifies it (review E2): the maximum number of rules in one choice's document as
 Lean reports it (`max_choice_rules`, null when the answer does not carry it), the decided bytes whose companions were
-already checked outside the document (`--checked-outside`, a JSON list of unit ids), and the sentence that a reading
-holding one rule is CONFLICT-FREE by construction.
+already checked outside the document (`--checked-outside`, a JSON list of unit ids), and the sentence that a rule
+checked by itself is CONFLICT-FREE by construction. That sentence is about the isolated rule only, never about a
+reading checked with the document's other rules (S2a's M8 has a one-rule reading whose choice is a CONFLICT), and it
+is printed only beside a Lean answer: without one it is null, so no CONFLICT-FREE claim stands without Lean.
 
 Without `--answer` there is no Lean answer across readings (a document without a readings block, such as the UDHR
 run of 2026-10-06), so no unit is decided and the share is 0.
@@ -26,7 +28,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-ONE_RULE = "A reading holding one rule is CONFLICT-FREE by construction: a single rule cannot contradict another."
+ONE_RULE = ("A rule checked by itself is CONFLICT-FREE by construction: a single rule cannot contradict another. "
+            "This says nothing of a reading checked with the document's other rules; Lean's answer decides that.")
 
 
 def _unit_ids(value, what):
@@ -64,7 +67,7 @@ def share(units, source_bytes, answer=None, checked_outside=None):
             "decided_share_percent": str(percent),
             "max_choice_rules": max_rules,
             "decided_bytes_checked_outside": sum(spans[u] for u in decided if u in set(outside)),
-            "one_rule": ONE_RULE,
+            "one_rule": ONE_RULE if answer is not None else None,
             "basis": "readings-verdicts decided_units" if answer is not None else "no Lean answer across readings"}
 
 
