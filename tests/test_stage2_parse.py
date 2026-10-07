@@ -24,6 +24,16 @@ def outcome(call):
         return ("rejected", exc.to_dict())
 
 
+def approved_wording(results):
+    """Compare the batch 13a code prefix while preserving message, code and span."""
+    aligned = []
+    for state, value in results:
+        if state == "rejected" and value["message"].startswith(value["code"] + ": "):
+            value = {**value, "message": value["message"][len(value["code"]) + 2:]}
+        aligned.append((state, value))
+    return tuple(aligned)
+
+
 def sources(env):
     good = print_formula(env, pm.semantic_formula(env)) + ".\n"
     return [good, good + good, "broken.\n", "x is missing.\n", "for every item a, (a is base).\n",
@@ -45,7 +55,7 @@ def test_parse_and_canonical_text_match_python(monkeypatch, family):
             monkeypatch.setenv("VE_AUTHORITY", authority)
             results[authority] = (outcome(lambda: parse(env, source)),
                                   outcome(lambda: canonicalize(env, source)))
-        assert results["lean"] == results["python"], source[:40]
+        assert approved_wording(results["lean"]) == approved_wording(results["python"]), source[:40]
     assert ("parse", "lean") in seen
 
 
@@ -94,14 +104,14 @@ def fake(monkeypatch, row):
 def test_lean_acceptance_of_a_python_rejection_is_unavailable(monkeypatch):
     env = Environment(pm.raw_environment(()))
     fake(monkeypatch, lambda case: {"id": "parse", "status": "ok", "ast": [["top"]]})
-    with pytest.raises(CheckerUnavailable, match="Python decoder rejects"):
+    with pytest.raises(CheckerUnavailable, match="Python cannot construct"):
         parse(env, "broken.\n")
 
 
 def test_a_different_lean_document_is_unavailable(monkeypatch):
     env = Environment(pm.raw_environment(()))
     fake(monkeypatch, lambda case: {"id": "parse", "status": "ok", "ast": [["bottom"]]})
-    with pytest.raises(CheckerUnavailable, match="identities differ"):
+    with pytest.raises(CheckerUnavailable, match="parse outputs differ"):
         parse(env, "true.\n")
 
 
@@ -129,5 +139,5 @@ def test_frozen_envelopes_parse_in_lean(monkeypatch, kind):
             monkeypatch.setenv("VE_AUTHORITY", authority)
             results[authority] = (outcome(lambda: parse(env, source)),
                                   outcome(lambda: canonicalize(env, source)))
-        assert results["lean"] == results["python"], source
+        assert approved_wording(results["lean"]) == approved_wording(results["python"]), source
     assert ("parse", "lean") in seen

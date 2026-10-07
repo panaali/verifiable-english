@@ -271,10 +271,21 @@ def runCase (j : Json) : Except String Json := do
   pure (Json.mkObj [("id", .str id), ("status", .str "ok"), ("valid", .bool q.accepts),
     ("steps", toJson steps)])
 
-def runCaseReported (j : Json) : Json :=
+def runCaseReportedSteps (j : Json) : Json :=
   match runCase j with
   | .ok result => result
   | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"),
       ("valid", .bool false), ("error", .str message)]
+
+/-- The one-shot certificate executable keeps its frozen three-field success
+row; the service retains the metered `steps` answer. -/
+def legacyCertificate (result : Json) : Json :=
+  if result.getObjValD "status" == .str "ok" && (result.getObjVal? "steps").isOk then
+    match result.getObj? with
+    | .ok fields => Json.mkObj (fields.toList.filter (fun field => field.1 != "steps"))
+    | .error _ => result
+  else result
+
+def runCaseReported (j : Json) : Json := legacyCertificate (runCaseReportedSteps j)
 
 end VE.CertificateWire

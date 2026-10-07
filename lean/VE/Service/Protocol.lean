@@ -123,7 +123,7 @@ statement-layer modes from `soft-norms` on are the per-case functions of the one
 executables (docs/LEAN-FIRST-PLAN.md, batch 1), which leave the default build targets. -/
 def runMode : Mode → Json → Json
   | .evaluate, j => VE.Order.runEvaluationCaseReported j
-  | .checkCertificate, j => VE.CertificateWire.runCaseReported j
+  | .checkCertificate, j => VE.CertificateWire.runCaseReportedSteps j
   | .order, j => VE.Order.Surface.runCaseReported j
   | .route, j => VE.Route.Run.runCaseReported j
   | .norms, j => VE.Norms.Run.runCaseReported j
@@ -657,7 +657,7 @@ def handshake : Json :=
 
 theorem runMode_evaluate (j : Json) : runMode .evaluate j = VE.Order.runEvaluationCaseReported j := rfl
 theorem runMode_checkCertificate (j : Json) :
-    runMode .checkCertificate j = VE.CertificateWire.runCaseReported j := rfl
+    runMode .checkCertificate j = VE.CertificateWire.runCaseReportedSteps j := rfl
 theorem runMode_order (j : Json) : runMode .order j = VE.Order.Surface.runCaseReported j := rfl
 theorem runMode_route (j : Json) : runMode .route j = VE.Route.Run.runCaseReported j := rfl
 theorem runMode_norms (j : Json) : runMode .norms j = VE.Norms.Run.runCaseReported j := rfl

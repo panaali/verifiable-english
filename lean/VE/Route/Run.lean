@@ -3,6 +3,7 @@ import VE.Definitions.Bundle
 import VE.Json
 import VE.Core.Wire
 import VE.Core.Layers
+import VE.CertificateWire
 
 /-! The `route` subcommand of `ve_conformance` (PLAN-EXPAND2 3.4). Each case
 is `{"id", "environment", "kind"?, ...}` with a `ve.core@0.2` environment; the
@@ -179,7 +180,11 @@ def main (paths : List String) : IO UInt32 := do
     return 2
   | .ok cases =>
     let results := cases.mapIdx fun index c => match c with
-      | .ok j => runCaseReported j
+      | .ok j =>
+        let result := runCaseReported j
+        if (j.getObjValD "kind").getStr?.toOption == some "certificate" then
+          VE.CertificateWire.legacyCertificate result
+        else result
       | .error message => Json.mkObj [("status", .str "error"),
           ("case_index", toJson index), ("error", .str message)]
     (← IO.getStdout).putStrLn (Json.arr results).compress

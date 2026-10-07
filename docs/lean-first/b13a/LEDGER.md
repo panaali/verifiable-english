@@ -12,3 +12,8 @@ Base: `7345e3ed`. The Lean service owns the decisions below. Python keeps input 
 | Order parse lacked a canonical answer, leaving its text to the Python comparison | `VE.Order.Surface.print` supplies the order family's canonical text in the service parse row. |
 
 `rg` finds no consumer of `_trace_nodes`, `_replay_prechecks`, or `_lean_replay_record`. The default Python authority's replay remains until the planned core-operation switch in 13b; the prover-internal replay has the separate batch-15 measurement gate. Definitions surface sugar is also assigned to 13b. No Rust decision site changed in 13a.
+
+The frozen `ve_conformance` one-shot certificate rows project out the new
+`steps` display field while preserving their other bound fields, including
+`background`. The service returns `steps` to the Lean-authority Python caller.
+Both interfaces call the same Lean binding and replay decision.

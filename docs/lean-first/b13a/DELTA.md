@@ -21,5 +21,5 @@ The paired 15-run differential-fuzzer comparison is in
 stays at 357, with no head-only signature or unreviewed finding. The service
 latency samples are in [`evidence/latency-ab.json`](evidence/latency-ab.json).
 Five paired samples of 100 calls per operation kept the largest median CPU
-change below 20%; the slowest head p95 was 2.109 ms and every head median CPU
-was below 0.62 ms.
+change below 20%; the slowest head p95 was 1.732 ms and every head median CPU
+was below 0.49 ms.

@@ -27650,9 +27650,9 @@ theorem VE.Service.runMode_check
   -- uses VE.Service.Mode.check@VE.Service.Protocol VE.Service.Standalone.checkCase@VE.Service.Standalone VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 1698987194
 theorem VE.Service.runMode_checkCertificate
-  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.checkCertificate j = VE.CertificateWire.runCaseReported j
-  -- uses VE.CertificateWire.runCaseReported@VE.CertificateWire VE.Service.Mode.checkCertificate@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
-  -- expr 851478933
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.checkCertificate j = VE.CertificateWire.runCaseReportedSteps j
+  -- uses VE.CertificateWire.runCaseReportedSteps@VE.CertificateWire VE.Service.Mode.checkCertificate@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- expr 4248002304
 theorem VE.Service.runMode_diagnose
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.diagnose j = VE.Service.Diagnose.diagnoseCase j
   -- uses VE.Service.Diagnose.diagnoseCase@VE.Service.Diagnose VE.Service.Mode.diagnose@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
