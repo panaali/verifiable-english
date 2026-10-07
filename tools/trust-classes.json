@@ -24,6 +24,10 @@
    ],
    "G[R]": [
     "EnglishLeanBench.rejectJson"
+   ],
+   "T": [
+    "EnglishLeanBench.leastNanos",
+    "EnglishLeanBench.policyMain"
    ]
   },
   "EnglishMain.lean": {
@@ -3115,6 +3119,9 @@
    ],
    "G[R]": [
     "VE.EnglishGrammar.normDefaultsView"
+   ],
+   "D[V]": [
+    "VE.EnglishGrammar.intText"
    ]
   },
   "VE/EnglishGrammar/EngineExamples.lean": {
@@ -3624,11 +3631,23 @@
     "VE.EnglishGrammar.Run.unprovedText"
    ],
    "G[R]": [
+    "VE.EnglishGrammar.Run.between",
+    "VE.EnglishGrammar.Run.everyCannotParts",
     "VE.EnglishGrammar.Run.faultName",
+    "VE.EnglishGrammar.Run.illTypedSentence",
     "VE.EnglishGrammar.Run.invalidFields",
     "VE.EnglishGrammar.Run.invalidGrammarText",
+    "VE.EnglishGrammar.Run.invalidOverlayFields",
+    "VE.EnglishGrammar.Run.lexicalSpan",
+    "VE.EnglishGrammar.Run.notDone",
+    "VE.EnglishGrammar.Run.policyJson",
+    "VE.EnglishGrammar.Run.refusalExtras",
+    "VE.EnglishGrammar.Run.rejectCodes",
     "VE.EnglishGrammar.Run.rejectText",
-    "VE.EnglishGrammar.Run.invalidOverlayFields"
+    "VE.EnglishGrammar.Run.rejectionText",
+    "VE.EnglishGrammar.Run.riskEveryCannotText",
+    "VE.EnglishGrammar.Run.statusCodes",
+    "VE.EnglishGrammar.Run.unsentencedCodes"
    ],
    "G[I]": [
     "VE.EnglishGrammar.Run.environmentId",
@@ -9208,7 +9227,12 @@
     "VE.EnglishGrammar.Lexicon.policyFailures",
     "VE.EnglishGrammar.Lexicon.policyOk",
     "VE.EnglishGrammar.PatWord",
+    "VE.EnglishGrammar.PolicyCtx",
+    "VE.EnglishGrammar.PolicyCtx.of",
+    "VE.EnglishGrammar.PredFacts",
+    "VE.EnglishGrammar.PredFacts.of",
     "VE.EnglishGrammar.acceptsDeclared",
+    "VE.EnglishGrammar.acceptsDeclaredIn",
     "VE.EnglishGrammar.activePatterns",
     "VE.EnglishGrammar.altWords",
     "VE.EnglishGrammar.asciiLower",
@@ -9225,6 +9249,7 @@
     "VE.EnglishGrammar.contentWords",
     "VE.EnglishGrammar.converseEndings",
     "VE.EnglishGrammar.duplicateWording",
+    "VE.EnglishGrammar.duplicateWordingIn",
     "VE.EnglishGrammar.eligibleCodes",
     "VE.EnglishGrammar.extraReserved",
     "VE.EnglishGrammar.fallbackNoun",
@@ -9235,9 +9260,11 @@
     "VE.EnglishGrammar.isUpper",
     "VE.EnglishGrammar.isW",
     "VE.EnglishGrammar.letterWords",
+    "VE.EnglishGrammar.lintCodesIn",
     "VE.EnglishGrammar.lits",
     "VE.EnglishGrammar.logicalWords",
     "VE.EnglishGrammar.mainSelection",
+    "VE.EnglishGrammar.mainSelectionIn",
     "VE.EnglishGrammar.matchPattern",
     "VE.EnglishGrammar.mechanicalVerbs",
     "VE.EnglishGrammar.naryHeads",
@@ -9246,6 +9273,7 @@
     "VE.EnglishGrammar.overlayCheck",
     "VE.EnglishGrammar.policyNouns",
     "VE.EnglishGrammar.policyPredicate",
+    "VE.EnglishGrammar.policyPredicateIn",
     "VE.EnglishGrammar.policySpellings",
     "VE.EnglishGrammar.pyLower",
     "VE.EnglishGrammar.reIExtra",
@@ -9261,6 +9289,7 @@
     "VE.EnglishGrammar.splitSlots",
     "VE.EnglishGrammar.strictWording",
     "VE.EnglishGrammar.templateCodes",
+    "VE.EnglishGrammar.templateCodesIn",
     "VE.EnglishGrammar.templateHead",
     "VE.EnglishGrammar.templateParts",
     "VE.EnglishGrammar.tokens",
@@ -9269,6 +9298,7 @@
     "VE.EnglishGrammar.wordList",
     "VE.EnglishGrammar.wordOccurs",
     "VE.EnglishGrammar.wordOccursI",
+    "VE.EnglishGrammar.wordOccursIn",
     "VE.EnglishGrammar.wordsPhrase"
    ],
    "G[R]": [
@@ -9317,6 +9347,106 @@
    ],
    "G[R]": [
     "VE.SoftNorms.defaultDecidesOn"
+   ]
+  },
+  "VE/EnglishGrammar/E2Examples.lean": {
+   "T": [
+    "VE.EnglishGrammar.E2Examples.Decl",
+    "VE.EnglishGrammar.E2Examples.F",
+    "VE.EnglishGrammar.E2Examples.FA",
+    "VE.EnglishGrammar.E2Examples.FR",
+    "VE.EnglishGrammar.E2Examples.FRh",
+    "VE.EnglishGrammar.E2Examples.FRlevel",
+    "VE.EnglishGrammar.E2Examples.Fapi",
+    "VE.EnglishGrammar.E2Examples.Fapi2",
+    "VE.EnglishGrammar.E2Examples.Fassigns",
+    "VE.EnglishGrammar.E2Examples.Fbare",
+    "VE.EnglishGrammar.E2Examples.Fhence",
+    "VE.EnglishGrammar.E2Examples.Fitem",
+    "VE.EnglishGrammar.E2Examples.Fp",
+    "VE.EnglishGrammar.E2Examples.LA",
+    "VE.EnglishGrammar.E2Examples.LF",
+    "VE.EnglishGrammar.E2Examples.LR",
+    "VE.EnglishGrammar.E2Examples.V6",
+    "VE.EnglishGrammar.E2Examples.adm",
+    "VE.EnglishGrammar.E2Examples.admOk",
+    "VE.EnglishGrammar.E2Examples.adviceOf",
+    "VE.EnglishGrammar.E2Examples.agreesWithReference",
+    "VE.EnglishGrammar.E2Examples.alts",
+    "VE.EnglishGrammar.E2Examples.assignsNeg",
+    "VE.EnglishGrammar.E2Examples.avail",
+    "VE.EnglishGrammar.E2Examples.base",
+    "VE.EnglishGrammar.E2Examples.bin",
+    "VE.EnglishGrammar.E2Examples.checkOf",
+    "VE.EnglishGrammar.E2Examples.choice",
+    "VE.EnglishGrammar.E2Examples.constOverlay",
+    "VE.EnglishGrammar.E2Examples.crowded",
+    "VE.EnglishGrammar.E2Examples.described",
+    "VE.EnglishGrammar.E2Examples.dl",
+    "VE.EnglishGrammar.E2Examples.envOf",
+    "VE.EnglishGrammar.E2Examples.fJson",
+    "VE.EnglishGrammar.E2Examples.fallback",
+    "VE.EnglishGrammar.E2Examples.hazardFallback",
+    "VE.EnglishGrammar.E2Examples.jChecked",
+    "VE.EnglishGrammar.E2Examples.jFApre",
+    "VE.EnglishGrammar.E2Examples.jFAreg",
+    "VE.EnglishGrammar.E2Examples.jFMa",
+    "VE.EnglishGrammar.E2Examples.jFOsame",
+    "VE.EnglishGrammar.E2Examples.jFRh",
+    "VE.EnglishGrammar.E2Examples.jFRlevel",
+    "VE.EnglishGrammar.E2Examples.jFRslight",
+    "VE.EnglishGrammar.E2Examples.jFast",
+    "VE.EnglishGrammar.E2Examples.jGreen",
+    "VE.EnglishGrammar.E2Examples.jInspected",
+    "VE.EnglishGrammar.E2Examples.jKeen",
+    "VE.EnglishGrammar.E2Examples.jObscure",
+    "VE.EnglishGrammar.E2Examples.kelvin",
+    "VE.EnglishGrammar.E2Examples.laSafe",
+    "VE.EnglishGrammar.E2Examples.lettersFor",
+    "VE.EnglishGrammar.E2Examples.lexJson",
+    "VE.EnglishGrammar.E2Examples.lexSpanOf",
+    "VE.EnglishGrammar.E2Examples.longWording",
+    "VE.EnglishGrammar.E2Examples.lrHazard",
+    "VE.EnglishGrammar.E2Examples.lrSafe",
+    "VE.EnglishGrammar.E2Examples.lx24",
+    "VE.EnglishGrammar.E2Examples.noOverlay",
+    "VE.EnglishGrammar.E2Examples.nounOf",
+    "VE.EnglishGrammar.E2Examples.overlayOf",
+    "VE.EnglishGrammar.E2Examples.policyEnvs",
+    "VE.EnglishGrammar.E2Examples.portLex",
+    "VE.EnglishGrammar.E2Examples.predOverlay",
+    "VE.EnglishGrammar.E2Examples.risk",
+    "VE.EnglishGrammar.E2Examples.riskBlockLevel",
+    "VE.EnglishGrammar.E2Examples.row",
+    "VE.EnglishGrammar.E2Examples.safeFallback",
+    "VE.EnglishGrammar.E2Examples.select",
+    "VE.EnglishGrammar.E2Examples.selectNoun",
+    "VE.EnglishGrammar.E2Examples.spell",
+    "VE.EnglishGrammar.E2Examples.un",
+    "VE.EnglishGrammar.E2Examples.withOverlay",
+    "VE.EnglishGrammar.E2Examples.wording"
+   ]
+  },
+  "VE/EnglishGrammar/PolicyReference.lean": {
+   "T": [
+    "VE.EnglishGrammar.PolicyReference.acceptsDeclared",
+    "VE.EnglishGrammar.PolicyReference.bareOk",
+    "VE.EnglishGrammar.PolicyReference.duplicateWording",
+    "VE.EnglishGrammar.PolicyReference.fallbackNoun",
+    "VE.EnglishGrammar.PolicyReference.letterWords",
+    "VE.EnglishGrammar.PolicyReference.lintCodes",
+    "VE.EnglishGrammar.PolicyReference.mainSelection",
+    "VE.EnglishGrammar.PolicyReference.negativeLeft",
+    "VE.EnglishGrammar.PolicyReference.overlayCheck",
+    "VE.EnglishGrammar.PolicyReference.policyFailures",
+    "VE.EnglishGrammar.PolicyReference.policyNouns",
+    "VE.EnglishGrammar.PolicyReference.policyOk",
+    "VE.EnglishGrammar.PolicyReference.policyPredicate",
+    "VE.EnglishGrammar.PolicyReference.policySpellings",
+    "VE.EnglishGrammar.PolicyReference.riskKeyed",
+    "VE.EnglishGrammar.PolicyReference.sortNouns",
+    "VE.EnglishGrammar.PolicyReference.spellingKeys",
+    "VE.EnglishGrammar.PolicyReference.templateCodes"
    ]
   }
  }
