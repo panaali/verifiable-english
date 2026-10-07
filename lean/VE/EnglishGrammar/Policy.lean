@@ -127,6 +127,12 @@ def wordOccurs (tok phrase : String) : Bool :=
     i + t.length ≤ p.length && (p.drop i).take t.length == t &&
     wb i != w i && wb (i + t.length) != w (i + t.length)
 
+/-- `wordOccurs tok phrase`, where `phraseRuns` is `runs isW phrase`: a token of word characters occurs between word
+boundaries exactly when it is one of the phrase's maximal runs of word characters, so the policy compares it with
+those once computed; any other token is searched as `wordOccurs` searches. -/
+def wordOccursIn (phraseRuns : List String) (phrase tok : String) : Bool :=
+  if !tok.isEmpty && tok.all isW then phraseRuns.contains tok else wordOccurs tok phrase
+
 /-- The letters `[A-Za-z]` matches under `re.I` beyond ASCII: `İ`, `ı`, `ſ` and the Kelvin sign. -/
 def reIExtra : List Char := [Char.ofNat 0x130, Char.ofNat 0x131, Char.ofNat 0x17F, Char.ofNat 0x212A]
 def reILetter (c : Char) : Bool := isLetter c || reIExtra.contains c
@@ -260,33 +266,90 @@ def unaryPhrase (t : String) : Option String :=
     if low == "a" || low == "an" || (splitWs low).any (fun w => boundaryWords.contains w || blockedWords.contains w)
     then none else some phrase
 
-/-! Python's vocabulary policy (english.py:230–527, printer.py:183–338) -/
+/-! Python's vocabulary policy (english.py:230–527, printer.py:183–338)
+
+Spec 5.2's functions re-derive, for every symbol they judge, tables that depend only on the environment and the
+overlay: every other predicate's declared wording (each by a lookup through the list of predicates), its template
+heads, keys and content words, the sort nouns and their tokens. That made V6 cubic in the number of predicates
+(1.5 s at 256, against GE2 item 9's budget of 100 ms). `PolicyCtx.of E O` computes those tables once; each function
+below is spec 5.2's, reading a table where the spec recomputed it, and keeps its spec signature as a wrapper.
+`PolicyReference.lean` holds spec 5.2's text verbatim, and `E2Examples.lean` checks that the two agree. -/
 def sortNouns (E : Env) (O : Overlay) (s : SortDecl) : List String :=
   match E.declaredNoun O s.name with
   | some n => [n] ++ (E.pluralOf s.name).toList
   | none => []
 
+/-- A declared predicate and what the policy reads of it, computed once: its declared wording and negative, the
+keys `duplicateWording` compares, the heads `lintCodes` and `acceptsDeclared` read, its content words and the key
+of its wording. -/
+structure PredFacts where
+  decl : PredDecl
+  wording : Option String
+  negative : Option String
+  ownKeys : List String
+  lintHead : Option String
+  head : Option String
+  content : List String
+  key : Option String
+
+def PredFacts.of (E : Env) (O : Overlay) (d : PredDecl) : PredFacts :=
+  let w := E.declaredWording O d.name
+  let n := E.declaredNegative O d.name
+  { decl := d, wording := w, negative := n,
+    ownKeys := ([w.getD (strictWording d.name d.arity)] ++ n.toList).map wordingKey,
+    lintHead := templateHead (w.getD (strictWording d.name d.arity)) d.arity,
+    head := templateHead (w.getD "") d.arity, content := contentWords (w.getD ""), key := w.map wordingKey }
+
+/-- The tables of an environment and an overlay that the policy reads for every symbol. -/
+structure PolicyCtx where
+  E : Env
+  O : Overlay
+  preds : List PredFacts
+  predNames : List String
+  constNames : List String
+  names : List String
+  lintHeads : List (String × String)
+  nounLasts : List (Option String × String)
+  nounTokens : List (List String)
+  negatedHeads : List String
+  isHeadNegations : List String
+  adjBlocked : List String
+  suggestedNegHeads : List String
+
+def PolicyCtx.of (E : Env) (O : Overlay) : PolicyCtx :=
+  let preds := E.declaredPreds.map (PredFacts.of E O)
+  let predNames := E.declaredPreds.map (·.name)
+  let sortNames := E.declaredSorts.map (·.name)
+  let constNames := E.declaredConsts.map (·.name)
+  let lintHeads := preds.filterMap fun f => f.lintHead.map (·, f.decl.name)
+  let isHeads := preds.filterMap fun f => match f.wording with
+    | some v => if v.startsWith "{0} is " then (splitWs v)[2]? else none
+    | none => none
+  let sHeads := predNames ++ preds.filterMap (·.head)
+  { E, O, preds, predNames, constNames, names := sortNames ++ predNames ++ constNames, lintHeads,
+    nounLasts := E.declaredSorts.flatMap fun s => (sortNouns E O s).map fun n => ((tokens n).getLast?, s.name),
+    nounTokens := (sortNames ++ E.declaredSorts.flatMap (sortNouns E O)).map tokens,
+    negatedHeads := ["un", "non", "un-", "non-"].flatMap fun pre => (predNames ++ lintHeads.map (·.1)).map (pre ++ ·),
+    isHeadNegations := (predNames ++ isHeads).flatMap fun h => ["un" ++ h, "non" ++ h],
+    adjBlocked := reserved ++ auxiliaries ++ sortNames ++ E.declaredSorts.flatMap fun s =>
+      (sortNouns E O s).flatMap splitWs,
+    suggestedNegHeads := ["un", "non", "un-", "non-"].flatMap fun pre => sHeads.map (pre ++ asciiLower ·) }
+
 /-- `template_checks` (printer.py:223–232): the length and sort-noun codes of a wording or a negative. -/
-def templateCodes (E : Env) (O : Overlay) (value : String) : List String :=
-  let nouns := E.declaredSorts.map (·.name) ++ E.declaredSorts.flatMap (sortNouns E O)
+def templateCodesIn (c : PolicyCtx) (value : String) : List String :=
   let tw := tokens value
   (if value.length > 80 || (splitWs value).length > 8 then ["TEMPLATE_LENGTH"] else []) ++
-  (if nouns.any (fun n => let ts := tokens n; !ts.isEmpty &&
+  (if c.nounTokens.any (fun ts => !ts.isEmpty &&
       (List.range (tw.length + 1)).any fun i => (tw.drop i).take ts.length == ts) then ["SORT_NOUN"] else [])
 
+def templateCodes (E : Env) (O : Overlay) (value : String) : List String := templateCodesIn (PolicyCtx.of E O) value
+
 /-- The lint codes of a declared wording `value` of predicate `name` (`_NaturalVocabulary`). -/
-def lintCodes (E : Env) (O : Overlay) (name value : String) (k : Nat) : List String :=
-  let predNames := E.declaredPreds.map (·.name)
-  let names := E.declaredSorts.map (·.name) ++ predNames ++ E.declaredConsts.map (·.name)
-  let heads : List (String × String) := E.declaredPreds.filterMap fun d =>
-    (templateHead ((E.declaredWording O d.name).getD (strictWording d.name d.arity)) d.arity).map (·, d.name)
-  let nounTexts : List (String × String) := E.declaredSorts.flatMap fun s => (sortNouns E O s).map (·, s.name)
+def lintCodesIn (c : PolicyCtx) (name value : String) (k : Nat) : List String :=
   let owned (w : String) : Bool :=
-    names.any (fun x => x == w && x != name) || heads.any (fun (h, p) => h == w && p != name) ||
-    nounTexts.any fun (n, s) => (tokens n).getLast? == some w && s != name
-  let predicateHeads := predNames ++ heads.map (·.1)
-  let negatedHeads := ["un", "non", "un-", "non-"].flatMap fun pre => predicateHeads.map (pre ++ ·)
-  let forbidden := logicalWords ++ (if E.profiles.contains "closure@0" then closureWords else [])
+    c.names.any (fun x => x == w && x != name) || c.lintHeads.any (fun (h, p) => h == w && p != name) ||
+    c.nounLasts.any fun (n, s) => n == some w && s != name
+  let forbidden := logicalWords ++ (if c.E.profiles.contains "closure@0" then closureWords else [])
   let phraseCodes (phrase : String) (conn : Bool) : List String :=
     let wds := tokens phrase
     let forb := if conn && phrase == "at" then forbidden.filter (· != "at") else forbidden
@@ -294,8 +357,8 @@ def lintCodes (E : Env) (O : Overlay) (name value : String) (k : Nat) : List Str
     (if wds.any forb.contains then ["LOGICAL_WORD"] else []) ++
     (if wds.any variableWord then ["VARIABLE_TOKEN"] else []) ++
     (if wds.any owned then ["SYMBOL_COLLISION"] else []) ++
-    (if wds.any negatedHeads.contains then ["NEGATED_HEAD"] else [])
-  let dup := if (E.declaredPreds.filter fun d => E.declaredWording O d.name == some value).length > 1
+    (if wds.any c.negatedHeads.contains then ["NEGATED_HEAD"] else [])
+  let dup := if (c.preds.filter fun f => f.wording == some value).length > 1
     then ["DUPLICATE_TEMPLATE"] else []
   if k > 2 then
     let len := if value.length > 160 || (splitWs value).length > 24 then ["TEMPLATE_LENGTH"] else []
@@ -319,60 +382,59 @@ def lintCodes (E : Env) (O : Overlay) (name value : String) (k : Nat) : List Str
             (if converseEndings.contains last then ["BINARY_CONVERSE"] else []) ++
             (if !first.endsWith "s" then ["BINARY_VERB"] else [])
           | _, _ => [])
-    (templateCodes E O value ++ dup ++ shape).eraseDups
+    (templateCodesIn c value ++ dup ++ shape).eraseDups
+
+def lintCodes (E : Env) (O : Overlay) (name value : String) (k : Nat) : List String :=
+  lintCodesIn (PolicyCtx.of E O) name value k
 
 /-- Step 4 of `acceptsDeclared` (english.py:368–372): the key of `p`'s declared wording or negative is the key of
 another declared predicate's wording (its strict wording when it declares none) or declared negative. -/
-def duplicateWording (E : Env) (O : Overlay) (p : String) : Bool :=
-  let ownTexts (d2 : PredDecl) : List String :=
-    [(E.declaredWording O d2.name).getD (strictWording d2.name d2.arity)] ++ (E.declaredNegative O d2.name).toList
-  let mine := (E.declaredWording O p).toList ++ (E.declaredNegative O p).toList
-  (E.declaredPreds.filter (·.name != p)).any fun d2 =>
-    (ownTexts d2).any fun x => mine.any fun y => wordingKey x == wordingKey y
+def duplicateWordingIn (c : PolicyCtx) (p : String) : Bool :=
+  let mine := ((c.E.declaredWording c.O p).toList ++ (c.E.declaredNegative c.O p).toList).map wordingKey
+  (c.preds.filter (·.decl.name != p)).any fun f => f.ownKeys.any fun x => mine.any (x == ·)
+
+def duplicateWording (E : Env) (O : Overlay) (p : String) : Bool := duplicateWordingIn (PolicyCtx.of E O) p
 
 /-- Whether Python accepts the declared wording of `name` (english.py:264–372). -/
-def acceptsDeclared (E : Env) (O : Overlay) (name : String) : Bool :=
-  match E.predicate? name, E.declaredWording O name with
+def acceptsDeclaredIn (c : PolicyCtx) (name : String) : Bool :=
+  let E := c.E
+  match E.predicate? name, E.declaredWording c.O name with
   | some d, some t =>
     let k := d.arity
-    let codes := lintCodes E O name t k
+    let codes := lintCodesIn c name t k
     if k > 2 then codes.isEmpty else
     let idiom := (idioms k).contains t
     let p0 := if t.startsWith "{0} " then t.drop 4 else t
     let phrase := if k == 1 then p0 else if p0.endsWith " {1}" then p0.dropRight 4 else p0
     let shaped := t == "{0} " ++ phrase ++ (if k == 1 then "" else " {1}")
-    let others := E.declaredPreds.filter (·.name != name)
+    let others := c.preds.filter (·.decl.name != name)
+    let phraseRuns := runs isW phrase
+    let occurs := wordOccursIn phraseRuns phrase
     let collision :=
-      ((E.declaredPreds.map (·.name) ++ E.declaredConsts.map (·.name)).filter (· != name)).any
-        (wordOccurs · phrase) ||
-      others.any fun d2 => match templateHead ((E.declaredWording O d2.name).getD "") d2.arity with
-        | some h => !["is", "was", "a", "an"].contains h && wordOccurs h phrase
+      ((c.predNames ++ c.constNames).filter (· != name)).any occurs ||
+      others.any fun f => match f.head with
+        | some h => !["is", "was", "a", "an"].contains h && occurs h
         | none => false
-    let isHeads := E.declaredPreds.filterMap fun d2 => match E.declaredWording O d2.name with
-      | some v => if v.startsWith "{0} is " then (splitWs v)[2]? else none
-      | none => none
-    let negated := (splitWs phrase).any fun w =>
-      (E.declaredPreds.map (·.name) ++ isHeads).any fun h => w == "un" ++ h || w == "non" ++ h
+    let negated := (splitWs phrase).any c.isHeadNegations.contains
     let ms := (if k == 1 then complementPatterns else activePatterns).filterMap (matchPattern phrase)
-    let nounWords := E.declaredSorts.map (·.name) ++ E.declaredSorts.flatMap fun s => (sortNouns E O s).flatMap splitWs
     let safeAdj := ms.all fun a => match a with
-      | some w => !(reserved ++ auxiliaries ++ nounWords).contains w
+      | some w => !c.adjBlocked.contains w
       | none => true
     let rescue := shaped && codes.all eligibleCodes.contains && !collision && !negated && t.length ≤ 80 &&
       !ms.isEmpty && safeAdj
     let content := contentWords t
     let anchored := content.any (contentWords (name ++ " " ++ d.description)).contains
-    let idiomCollision := E.declaredConsts.any (fun c => wordOccurs c.name phrase) ||
-      others.any fun d2 =>
-        let other := (E.declaredWording O d2.name).getD ""
-        let head := templateHead other d2.arity
+    let idiomCollision := c.constNames.any occurs ||
+      others.any fun f =>
+        let d2 := f.decl
+        let head := f.head
         [some d2.name, head].any fun tok? => match tok? with
           | none => false
           | some tok =>
             !tok.isEmpty && !["is", "was", "a", "an", "has"].contains tok &&
             let shared := (name.splitOn "_").contains tok && (d2.name.splitOn "_").contains tok
-            let headCollision := some tok == head && content.all (contentWords other).contains
-            !shared && (tok == d2.name || headCollision) && wordOccurs tok phrase
+            let headCollision := some tok == head && content.all f.content.contains
+            !shared && (tok == d2.name || headCollision) && occurs tok
     let converse := phrase.endsWith " by" && !name.endsWith "_by"
     let idiomOk := codes.all (eligibleCodes ++ ["VARIABLE_TOKEN"]).contains && anchored && !idiomCollision &&
       !converse && !negated && !codes.contains "DUPLICATE_TEMPLATE"
@@ -380,25 +442,25 @@ def acceptsDeclared (E : Env) (O : Overlay) (name : String) : Bool :=
     let suggestedOk := E.suggestedPred name && k == 1 && match unaryPhrase t with
       | none => false
       | some ph =>
-        let sHeads := (E.declaredPreds.map (·.name)) ++
-          E.declaredPreds.filterMap fun d2 => templateHead ((E.declaredWording O d2.name).getD "") d2.arity
-        let negHeads := ["un", "non", "un-", "non-"].flatMap fun pre => sHeads.map (pre ++ asciiLower ·)
         let phWords := (runs (fun c => isLower c || isDigit c || c == '_' || c == '-') (pyLower ph)).filterMap
           fun w => let cs := w.toList.dropWhile (fun c => !isLower c)
                    if cs.isEmpty then none else some (String.mk cs)
-        !E.declaredConsts.any (fun c => wordOccursI c.name ph) &&
-        !E.declaredPreds.any (fun d2 => d2.name != name &&
-          ((E.declaredWording O d2.name).map wordingKey) == some (wordingKey t)) &&
-        !phWords.any negHeads.contains && !codes.contains "NEGATED_HEAD"
+        !c.constNames.any (fun x => wordOccursI x ph) &&
+        !c.preds.any (fun f => f.decl.name != name && f.key == some (wordingKey t)) &&
+        !phWords.any c.suggestedNegHeads.contains && !codes.contains "NEGATED_HEAD"
     let accepted2 := accepted1 || suggestedOk
     let accepted3 := accepted2 && (idiom || !(runs isLower t).any extraReserved.contains)
     let accepted4 := accepted3 && !(E.profiles.contains "order@0" &&
       (runs isLower (pyLower t)).any comparisonWords.contains)
-    accepted4 && !duplicateWording E O name
+    accepted4 && !duplicateWordingIn c name
   | _, _ => false
 
+def acceptsDeclared (E : Env) (O : Overlay) (name : String) : Bool := acceptsDeclaredIn (PolicyCtx.of E O) name
+
 /-- Python's wording and negative for a predicate before the profile steps (english.py:264–389). -/
-def mainSelection (E : Env) (O : Overlay) (d : PredDecl) : String × Option String :=
+def mainSelectionIn (c : PolicyCtx) (d : PredDecl) : String × Option String :=
+  let E := c.E
+  let O := c.O
   let k := d.arity
   match E.declaredWording O d.name with
   | none =>
@@ -407,21 +469,25 @@ def mainSelection (E : Env) (O : Overlay) (d : PredDecl) : String × Option Stri
       (strictWording d.name k, none)
     else ((fallbackWording d.name k).getD (strictWording d.name k), none)
   | some t =>
-    if k > 2 then (if acceptsDeclared E O d.name then (t, none) else (strictWording d.name k, none))
-    else if acceptsDeclared E O d.name then
+    if k > 2 then (if acceptsDeclaredIn c d.name then (t, none) else (strictWording d.name k, none))
+    else if acceptsDeclaredIn c d.name then
       let neg := match E.declaredNegative O d.name with
         | some n => if negativeTemplate t k == some n && n.length ≤ 120 && (splitWs n).length ≤ 18 then some n else none
         | none => none
       (t, neg)
     else ((fallbackWording d.name k).getD t, none)
 
-/-- Python's selected wording and negative of a predicate (english.py:390–527). -/
-def policyPredicate (E : Env) (O : Overlay) (p : String) : Option (String × Option String) :=
+def mainSelection (E : Env) (O : Overlay) (d : PredDecl) : String × Option String :=
+  mainSelectionIn (PolicyCtx.of E O) d
+
+/-- Python's selected wording and negative of a predicate (english.py:390–527), over the tables `c` of `E` and
+`O`. -/
+def policyPredicateIn (c : PolicyCtx) (E : Env) (p : String) : Option (String × Option String) :=
   let F := E.forms
   match E.predicate? p with
   | none => none
   | some d =>
-    let (w, n) := mainSelection E O d
+    let (w, n) := mainSelectionIn c d
     let (w, n) := match F.wordings.lookup p with                  -- roles, the four words, risk forms
       | some fw => if E.modal p then (w, n) else (fw, n)
       | none => (w, n)
@@ -440,6 +506,13 @@ def policyPredicate (E : Env) (O : Overlay) (p : String) : Option (String × Opt
       | some fw => some (fw, none)
       | none => some (w, none)
     else some (w, n)
+
+/-- Python's selected wording and negative of a predicate (english.py:390–527). -/
+def policyPredicate (E : Env) (O : Overlay) (p : String) : Option (String × Option String) :=
+  policyPredicateIn (PolicyCtx.of E O) E p
+
+theorem policyPredicate_tables (E : Env) (O : Overlay) (p : String) :
+    policyPredicateIn (PolicyCtx.of E O) E p = policyPredicate E O p := rfl
 
 def fallbackNoun (s : String) : String := "entity of sort " ++ jsonQuote s
 def letterWords (s : String) : Bool := (s.splitOn " ").all fun w => !w.isEmpty && w.all isLetter
@@ -491,14 +564,15 @@ def Lexicon.policyFailures (E : Env) (O : Overlay) (L : Lexicon) : List Failure 
   let preds := E.predicates.map (·.name)
   let nouns := policyNouns E O
   let spellings := policySpellings E O
+  let c := PolicyCtx.of E O
   (L.wordings.filterMap fun (p, w) =>
     if !preds.contains p then none else
-    match policyPredicate E O p with
+    match policyPredicateIn c E p with
     | some (pw, _) => if w == pw || some w == fallbackWording p (E.arity p) then none else some ("V6", "predicate", p)
     | none => none) ++
   (L.negatives.filterMap fun (p, n) =>
     if !preds.contains p then none else
-    match policyPredicate E O p with
+    match policyPredicateIn c E p with
     | some (pw, pn) => if pn == some n && L.wordings.lookup p == some pw then none else some ("V6", "negative", p)
     | none => none) ++
   (L.nouns.filterMap fun (s, n) =>

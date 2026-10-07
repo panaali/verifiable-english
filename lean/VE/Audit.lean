@@ -4449,6 +4449,7 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.EnglishGrammar.Run.codeClasses_total
 #print axioms VE.EnglishGrammar.Run.rejectCodes_total
 #print axioms VE.EnglishGrammar.Run.statusCodes_classed
+#print axioms VE.EnglishGrammar.policyPredicate_tables
 #print axioms VE.EnglishGrammar.DecodeEncode.anyAux_at
 #print axioms VE.EnglishGrammar.DecodeEncode.digitChar_facts
 #print axioms VE.EnglishGrammar.DecodeEncode.digits_props

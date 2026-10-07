@@ -97,6 +97,7 @@ UNTRUSTED = {
     "lean/VE/EnglishGrammar/ReadExamples.lean": "fixtures",
     "lean/VE/EnglishGrammar/ProfileExamples.lean": "profile fixtures",
     "lean/VE/EnglishGrammar/E2Examples.lean": "E2 acceptance fixtures",
+    "lean/VE/EnglishGrammar/PolicyReference.lean": "spec 5.2's policy text, the reference E2Examples compares with",
     "lean/VE/EnglishGrammar/Extends.lean": "`Extends` and the theorem `grammar_extension`: proved",
     VERSION_TARGET: "generated from this lock file; it holds the version itself",
 }

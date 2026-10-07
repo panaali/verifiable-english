@@ -192,6 +192,7 @@ module VE.EnglishGrammar.Lexer
 module VE.EnglishGrammar.Lexicon
 module VE.EnglishGrammar.LexiconFixtures
 module VE.EnglishGrammar.Policy
+module VE.EnglishGrammar.PolicyReference
 module VE.EnglishGrammar.ProfileExamples
 module VE.EnglishGrammar.Read
 module VE.EnglishGrammar.ReadExamples
