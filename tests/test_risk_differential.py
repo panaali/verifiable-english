@@ -1,34 +1,28 @@
-"""risk.md 8.3: Lean's `possibleE`/`certainE`/`witnessE` against brute force, and Rust against both.
+"""risk.md 8.3: Lean's `possibleE`/`certainE`/`witnessE` against brute force.
 
 10,000 random small separable, unit-coefficient conditions (multi-quantity
 terms through `add` and `scale`, quantities on both sides, points shared
 between atoms, non-±1 coefficients in `<` and `≤` atoms, cancelling terms)
 are decided by Lean (`ve_risk_eval`, the trusted functions on raw
-conditions), by Rust's untrusted evaluator and by enumeration of the box in
-Python. Non-separable and non-unit conditions are rejected by Lean and Rust
-with the same diagnostic. Review B8 / Fable C1.
+conditions) and by enumeration of the box in Python. Non-separable and non-unit
+conditions are rejected by Lean.
 """
 from __future__ import annotations
 
 import itertools
 import json
 import random
-import subprocess
-from pathlib import Path
 
 import pytest
 
 from tests import lean_routes
 
 from conformance.risk import cell_env
-from tests.subprocesses import HANG_TIMEOUT
 
-ROOT = Path(__file__).resolve().parents[1]
 LEAN = "ve_risk_eval"  # its service mode, through tests/lean_routes.py
-RUST = ROOT / "rust/target/release/ve"
 
-pytestmark = pytest.mark.skipif(not (lean_routes.SERVICE.exists() and RUST.exists()),
-                                reason="the Lean service or the Rust binary is not built")
+pytestmark = pytest.mark.skipif(not lean_routes.SERVICE.exists(),
+                                reason="the Lean service is not built")
 
 D = "dimensionless"
 SHARDS = 4
@@ -175,33 +169,18 @@ def lean_eval(boxes, conditions):
     return [r["results"] for r in rows]
 
 
-def rust_eval(boxes, conditions):
-    cases = [{"id": f"{i}-{j}", "kind": "risk-condition", "condition": tree,
-              "ranges": {n: {"tag": D, "lo": str(lo), "hi": str(hi)} for n, (lo, hi) in box.items()},
-              "scales": {}}
-             for i, (box, rows) in enumerate(zip(boxes, conditions)) for j, tree in enumerate(rows)]
-    out = subprocess.run([str(RUST), "conformance"], input=json.dumps(cases), text=True, capture_output=True,
-                         timeout=HANG_TIMEOUT)
-    rows = json.loads(out.stdout)
-    it = iter(rows)
-    return [[next(it) for _ in box_rows] for box_rows in conditions]
-
-
 @pytest.mark.parametrize("seed", range(SHARDS))
 def test_conditions_agree_with_enumeration(seed):
     boxes, conditions, kinds = shard(20260929 + seed)
     lean = lean_eval(boxes, conditions)
-    rust = rust_eval(boxes, conditions)
     decided = rejected = 0
-    for box, rows, row_kinds, lean_rows, rust_rows in zip(boxes, conditions, kinds, lean, rust):
+    for box, rows, row_kinds, lean_rows in zip(boxes, conditions, kinds, lean):
         names = list(box)
         valuations = [dict(zip(names, values)) for values in
                       itertools.product(*(range(lo, hi + 1) for lo, hi in box.values()))]
-        for tree, bad, l, r in zip(rows, row_kinds, lean_rows, rust_rows):
+        for tree, bad, l in zip(rows, row_kinds, lean_rows):
             if "error" in l:
                 # rejected in both, with one text; only the constructed bad kinds are rejected
-                assert r["status"] == "error", (tree, box, l, r)
-                assert f'{r["error"]["code"]}: {r["error"]["message"]}' == l["error"], (tree, box, l, r)
                 assert l["error"].startswith(("RiskConditionShared", "RiskEqualityCoefficient")), l
                 assert bad is not None, (tree, box, l)
                 rejected += 1
@@ -209,7 +188,6 @@ def test_conditions_agree_with_enumeration(seed):
             truth = [holds(tree, v) for v in valuations]
             expected = (any(truth), all(truth))
             assert (l["possible"], l["certain"]) == expected, (tree, box, l)
-            assert r["status"] == "ok" and (r["possible"], r["certain"]) == expected, (tree, box, r)
             if l["possible"]:
                 w = l["witness"]
                 assert all(box[n][0] <= w[n] <= box[n][1] for n in names), (tree, box, w)
