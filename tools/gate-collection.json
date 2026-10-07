@@ -5668,7 +5668,7 @@
   "tests/test_lean_first_b3d_report.py::test_delta_tables_are_generated_from_the_evidence",
   "tests/test_lean_first_b3d_report.py::test_every_paired_route_run_gave_identical_answers",
   "tests/test_lean_first_b3d_report.py::test_the_ab_lists_every_difference_and_the_delta_lists_only_the_udhr_translation",
-  "tests/test_lean_first_b6_report.py::test_every_udhr_run_is_identical_and_within_the_allowances",
+  "tests/test_lean_first_b6_report.py::test_every_udhr_run_gave_identical_reports",
   "tests/test_lean_first_b6_report.py::test_the_latency_table_is_generated_from_the_evidence",
   "tests/test_lean_first_b6_report.py::test_the_report_states_the_saved_evidence",
   "tests/test_lean_first_diff.py::test_a_delta_entry_without_its_outcomes_lists_nothing",
