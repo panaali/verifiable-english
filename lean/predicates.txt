@@ -7,6 +7,7 @@ module Iceberg
 module Main
 module ResponseDecode
 module ResponseShape.Audit
+module ResponseShape.CaseDeciders
 module ResponseShape.Encoders.Alternatives
 module ResponseShape.Encoders.Common
 module ResponseShape.Encoders.Conformance
@@ -27,6 +28,7 @@ module ResponseShape.Encoders.SoftNorms
 module ResponseShape.Encoders.SpeechActs
 module ResponseShape.Encoders.Standalone
 module ResponseShape.Encoders
+module ResponseShape.EnumSites
 module ResponseShape.FitsTactic
 module ResponseShape.Schemas.Alternatives
 module ResponseShape.Schemas.Bundle
@@ -61,6 +63,7 @@ module ResponseShape.Schemas
 module ResponseShape.Skeleton
 module ResponseShape.Skeletons
 module ResponseShape
+module SensesMain
 module Serve
 module SpeechActsMain
 module VE.Alternatives.Admission
@@ -81,6 +84,7 @@ module VE.Attribution.Conservative
 module VE.Attribution.Content
 module VE.Attribution.Elaborate
 module VE.Attribution.Facts
+module VE.Attribution.Preflight
 module VE.Attribution.Route
 module VE.Attribution.Run
 module VE.Attribution.Scoped
@@ -173,12 +177,17 @@ module VE.EnglishGrammar.Encode
 module VE.EnglishGrammar.EngineExamples
 module VE.EnglishGrammar.Examples
 module VE.EnglishGrammar.Extends
+module VE.EnglishGrammar.Fixed.Alternatives
+module VE.EnglishGrammar.Fixed.Order
 module VE.EnglishGrammar.Fixed.RelationalFol
+module VE.EnglishGrammar.Fixed.Staged
+module VE.EnglishGrammar.Fixed.Tables
 module VE.EnglishGrammar.Fixed.Version
 module VE.EnglishGrammar.FoldAgree
 module VE.EnglishGrammar.Lexer
 module VE.EnglishGrammar.Lexicon
 module VE.EnglishGrammar.LexiconFixtures
+module VE.EnglishGrammar.ProfileExamples
 module VE.EnglishGrammar.Read
 module VE.EnglishGrammar.ReadExamples
 module VE.EnglishGrammar.Rules
@@ -227,6 +236,8 @@ module VE.Norms.Examples
 module VE.Norms.Flagged
 module VE.Norms.FlaggedSpec
 module VE.Norms.Layer
+module VE.Norms.LayersOnce
+module VE.Norms.Once
 module VE.Norms.Plain
 module VE.Norms.Prefix
 module VE.Norms.Replay
@@ -342,6 +353,15 @@ module VE.Route.Steps
 module VE.Route.Wire
 module VE.Route.WireSound
 module VE.Semantics
+module VE.Senses.Assignment
+module VE.Senses.Decode
+module VE.Senses.Dictionary
+module VE.Senses.Examples
+module VE.Senses.Fixtures
+module VE.Senses.Preamble
+module VE.Senses.Project
+module VE.Senses.Read
+module VE.Senses.Run
 module VE.Service.Diagnose
 module VE.Service.EnglishRun
 module VE.Service.Family
@@ -350,6 +370,7 @@ module VE.Service.FamilyNorms
 module VE.Service.GenericGraph
 module VE.Service.GenericReadings
 module VE.Service.Graph
+module VE.Service.ParseDiagnostic
 module VE.Service.Protocol
 module VE.Service.Readings
 module VE.Service.Standalone
@@ -411,11 +432,17 @@ module VE.WireContract.Tables.SoftNorms
 module VE
 Iceberg.Within@Iceberg
 ResponseShape.CaseWF@ResponseShape.Skeleton
+ResponseShape.Encoders.Common.KindsRendered@ResponseShape.Encoders.Common
+ResponseShape.Encoders.Discourse.StatusesOk@ResponseShape.Encoders.Discourse
+ResponseShape.Encoders.English.ClassesIn@ResponseShape.Encoders.English
 ResponseShape.Encoders.ReadingsRoute.PairEntry@ResponseShape.Encoders.ReadingsRoute
 ResponseShape.Encoders.ReadingsRoute.SetEntry@ResponseShape.Encoders.ReadingsRoute
 ResponseShape.Encoders.SoftNorms.Classified@ResponseShape.Encoders.SoftNorms
+ResponseShape.Encoders.SoftNorms.CodeOk@ResponseShape.Encoders.SoftNorms
+ResponseShape.ErrP@ResponseShape.Skeleton
 ResponseShape.Fits.below@ResponseShape.Skeleton
 ResponseShape.Fits@ResponseShape.Skeleton
+ResponseShape.KindRead@ResponseShape.Skeleton
 ResponseShape.OkFits@ResponseShape.Skeleton
 ResponseShape.OkP@ResponseShape.Skeleton
 VE.Alternatives.AltConflictFree@VE.Alternatives.Background
@@ -534,6 +561,9 @@ VE.English.Tree.Syntactic@VE.English.Grammar
 VE.English.UniqueDerivation@VE.English.Statements
 VE.EnglishGrammar.EnglishOneReading@VE.EnglishGrammar.Read
 VE.EnglishGrammar.Extends@VE.EnglishGrammar.Extends
+VE.EnglishGrammar.InDom@VE.EnglishGrammar.Extends
+VE.EnglishGrammar.LexRow.NtsIn@VE.EnglishGrammar.Extends
+VE.EnglishGrammar.LexRow.Small@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.envSub@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.lexiconSub@VE.EnglishGrammar.Extends
 VE.Entails@VE.Semantics
@@ -836,6 +866,12 @@ VE.Route.closureValid@VE.Route.Checker
 VE.Route.coreValid@VE.Core.Route
 VE.Route.folValid@VE.Route.Checker
 VE.Route.orderValid@VE.Route.Checker
+VE.Senses.CandidateGood@VE.Senses.Read
+VE.Senses.UnitGood@VE.Senses.Read
+VE.Senses.glossed_negative@VE.Senses.Dictionary
+VE.Senses.lines_read@VE.Senses.Preamble
+VE.Senses.project_total@VE.Senses.Project
+VE.Senses.senseMap_ids@VE.Senses.Read
 VE.Service.FamilyBundle.ReadingBound@VE.Service.FamilyBundle
 VE.Service.FamilyBundle.ReadingCompatible@VE.Service.FamilyBundle
 VE.Service.FamilyBundle.Sound@VE.Service.FamilyBundle

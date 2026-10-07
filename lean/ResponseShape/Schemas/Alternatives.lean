@@ -1,12 +1,13 @@
 import VE.Service.Protocol
 import ResponseShape
+import ResponseShape.CaseDeciders
 
 /-! The source of `ve/backends/lean_service_schema/alternatives.json` (`file`; `tools/response_schemas.py` writes it). -/
 namespace ResponseShape.Schemas.Alternatives
 open Lean ResponseShape
 
 def alt_path : Shape :=
-  decidedBy "Alternatives.Run.usesAltPath" VE.Alternatives.Run.usesAltPath <|
+  decidedCase .altPath <|
   c
     "Alternatives.Run.usesAltPath: the alternatives@0 profile, the environment's alternatives block or an alt-* kind."
     [
@@ -29,7 +30,8 @@ def kind : Def :=
     ("alt-validate", kindIs "alt-validate"),
     ("alt-conflict", kindIs "alt-conflict"),
     ("alt-followable", kindIs "alt-followable"),
-    ("alt-certificate", kindIs "alt-certificate")]
+    ("alt-certificate", kindIs "alt-certificate"),
+    ("alt-environment", kindIs "alt-environment")]
 
 def alt_labels : Shape :=
   c "Alternatives.Background.altPremiseLabels." [
@@ -106,7 +108,80 @@ def elaborate : Shape :=
         ("background", ref "common.json#/$defs/norms_background"),
         ("premises", ref "common.json#/$defs/layer_premises"),
         ("conflict_targets", ref "common.json#/$defs/conflict_targets"),
-        ("fragment", .type ["boolean"])]]
+        ("fragment", .type ["boolean"]),
+        ("coverage", ref "#/$defs/coverage")],
+      .ite (.onCase (.required ["coverage_units"]))
+        (.required ["coverage"])
+        (.bool true)]
+
+def declaredCell : Shape :=
+  c "Alternatives.Wire.coverage: an asserted available(action, chooser) leaf." [
+    obj, .required ["action", "chooser", "unit", "support"],
+    closed [("action", str), ("chooser", str), ("unit", str), ("support", str)]]
+
+def counterfactualCell : Shape :=
+  c "Alternatives.Wire.coverage: an asserted leads_to(action, harm) leaf." [
+    obj, .required ["action", "harm", "leads_to", "decider", "unit", "support"],
+    closed [("action", str), ("harm", str), ("leads_to", .type ["boolean"]),
+      ("decider", str), ("unit", str), ("support", str)]]
+
+def assumedCell : Shape :=
+  c "Alternatives.Wire.coverage: an outcome assumed by the complete table." [
+    obj, .required ["action", "harm", "decider", "premise"],
+    closed [("action", str), ("harm", str), ("decider", str),
+      ("premise", constS "alternatives:table_complete")]]
+
+def proximateCell : Shape :=
+  c "Alternatives.Wire.coverage: an asserted proximate(action, harm) leaf." [
+    obj, .required ["action", "harm", "decider", "unit", "support"],
+    closed [("action", str), ("harm", str), ("decider", str),
+      ("unit", str), ("support", str)]]
+
+def coverage : Shape :=
+  c "Alternatives.Wire.coverage: accepted unit cells and their Lean-owned residual fold." [
+    obj,
+    .required ["alternatives", "residual"],
+    .allOf [
+      .countWhere "/alternatives/alternatives_declared" (.bool true) "/residual/alternatives_declared",
+      .countWhere "/alternatives/counterfactual_leaves" (.bool true) "/residual/counterfactual_leaves",
+      .countWhere "/alternatives/assumed_harm_free" (.bool true) "/residual/assumed_harm_free",
+      .countWhere "/alternatives/proximate_judgments" (.bool true) "/residual/proximate_judgments",
+      .countWhere "/alternatives/unmapped_obligations" (.bool true) "/residual/unmapped_obligations",
+      .countWhere "/alternatives/dilemmas" (.bool true) "/residual/dilemmas",
+      .countWhere "/alternatives/narrowings" (.bool true) "/residual/narrowings",
+      .references "/alternatives/alternatives_declared" "unit" "/coverage_units/*/id",
+      .references "/alternatives/counterfactual_leaves" "unit" "/coverage_units/*/id",
+      .references "/alternatives/proximate_judgments" "unit" "/coverage_units/*/id",
+      .presenceCount "/alternatives/table_complete" "/residual/table_complete"],
+    closed [
+      ("alternatives", n [obj,
+        .required ["alternatives_declared", "counterfactual_leaves", "assumed_harm_free",
+          "table_complete", "proximate_judgments", "unmapped_obligations", "dilemmas", "narrowings"],
+        closed [
+          ("alternatives_declared", n [arr, .items declaredCell]),
+          ("counterfactual_leaves", n [arr, .items counterfactualCell]),
+          ("assumed_harm_free", n [arr, .items assumedCell]),
+          ("table_complete", .anyOf [.type ["null"], n [obj,
+            .required ["decider", "premise"],
+            closed [("decider", str), ("premise", constS "alternatives:table_complete")]]]),
+          ("proximate_judgments", n [arr, .items proximateCell]),
+          ("unmapped_obligations", ref "common.json#/$defs/strings"),
+          ("dilemmas", n [arr, .maxItems 0]),
+          ("narrowings", n [arr,
+            .ite (.onCase (.required ["narrowings"]))
+              (.equals "/narrowings") (.maxItems 0)])]]),
+      ("residual", n [obj,
+        .required ["alternatives_declared", "counterfactual_leaves", "assumed_harm_free",
+          "table_complete", "proximate_judgments", "unmapped_obligations", "dilemmas", "narrowings"],
+        closed [
+          ("alternatives_declared", ref "common.json#/$defs/nat"),
+          ("counterfactual_leaves", ref "common.json#/$defs/nat"),
+          ("assumed_harm_free", ref "common.json#/$defs/nat"),
+          ("table_complete", ref "common.json#/$defs/nat"),
+          ("proximate_judgments", ref "common.json#/$defs/nat"),
+          ("unmapped_obligations", ref "common.json#/$defs/nat"),
+          ("dilemmas", ref "common.json#/$defs/nat"),
+          ("narrowings", ref "common.json#/$defs/nat")]])]]
 
 def chooser : Shape :=
   c "Alternatives.Run.chooserReport: violations and breaches exactly when the block names a taken predicate." [
@@ -240,6 +315,15 @@ def certificate : Shape :=
       ("layers", ref "common.json#/$defs/nat"),
       ("conditional_on", ref "#/$defs/alt_labels")]]
 
+def environment : Shape :=
+  c "Alternatives.Run.runCase alt-environment: the environment alone decodes." [
+    obj,
+    .required ["id", "status", "valid"],
+    closed [
+      ("id", ref "common.json#/$defs/id_ok"),
+      ("status", constS "ok"),
+      ("valid", .const (.bool true))]]
+
 def «row» : Shape :=
   .select [
     (ref "#/$defs/alt_path", .anyOf [
@@ -253,7 +337,8 @@ def «row» : Shape :=
         (ref "#/$defs/kind/alt-conflict", ref "common.json#/$defs/packages_conflict"),
         (.allOf [ref "#/$defs/kind/alt-followable", .required ["witness"]], ref "#/$defs/followable_witness"),
         (ref "#/$defs/kind/alt-followable", ref "#/$defs/followable"),
-        (ref "#/$defs/kind/alt-certificate", ref "#/$defs/certificate")]]),
+        (ref "#/$defs/kind/alt-certificate", ref "#/$defs/certificate"),
+        (ref "#/$defs/kind/alt-environment", ref "#/$defs/environment")]]),
     ((.bool true), ref "norms.json#/row")]
 
 def file : File where
@@ -267,11 +352,13 @@ def file : File where
     ("admission", .schema admission),
     ("regenerated", regenerated),
     ("elaborate", .schema elaborate),
+    ("coverage", .schema coverage),
     ("chooser", .schema chooser),
     ("validate", .schema validate),
     ("conflict_witness", .schema conflict_witness),
     ("followable_witness", .schema followable_witness),
     ("followable", .schema followable),
-    ("certificate", .schema certificate)]
+    ("certificate", .schema certificate),
+    ("environment", .schema environment)]
 
 end ResponseShape.Schemas.Alternatives

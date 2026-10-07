@@ -1,7 +1,5 @@
 #![forbid(unsafe_code)]
 use serde_json::{Value, json};
-use num_bigint::BigInt;
-use std::collections::BTreeMap;
 use std::io::{self, BufRead, Read, Write};
 use ve_core::*;
 
@@ -98,37 +96,10 @@ fn case(v: &Value) -> Result<Value> {
     if v.get("kind") == Some(&json!("readings-superposed-evaluate")) {
         return readings_superposed_evaluate_case(v);
     }
-    if v.get("kind") == Some(&json!("risk-condition"))
-        || v.get("kind") == Some(&json!("risk-cells")) {
-        let id = v.get("id").cloned().unwrap_or(json!(""));
-        let entries = field(v, "ranges")?.as_object()
-            .ok_or_else(|| Error::new("InvalidInput", "risk ranges"))?;
-        let mut ranges = BTreeMap::new();
-        for (name, row) in entries {
-            let tag = field(row, "tag")?.as_str()
-                .ok_or_else(|| Error::new("InvalidInput", "risk range tag"))?;
-            let parse = |key| -> Result<BigInt> {
-                field(row, key)?.as_str().ok_or_else(|| Error::new("InvalidInput", "risk range endpoint"))?
-                    .parse().map_err(|_| Error::new("InvalidInput", "risk range endpoint"))
-            };
-            ranges.insert(name.clone(), RiskRange { tag: tag.into(), lo: parse("lo")?, hi: parse("hi")? });
-        }
-        let mut scales = BTreeMap::new();
-        for (tag, value) in field(v, "scales")?.as_object()
-            .ok_or_else(|| Error::new("InvalidInput", "risk scales"))? {
-            let scale = value.as_str().ok_or_else(|| Error::new("InvalidInput", "risk scale"))?
-                .parse().map_err(|_| Error::new("InvalidInput", "risk scale"))?;
-            scales.insert(tag.clone(), scale);
-        }
-        if v.get("kind") == Some(&json!("risk-cells")) {
-            let rows = regenerate_risk_cells(field(v, "record")?, &ranges, &scales)?;
-            return Ok(json!({"id":id,"status":"ok","tables":rows}));
-        }
-        let (possible, certain) = evaluate_risk_condition(field(v, "condition")?, &ranges, &scales)?;
-        return Ok(json!({"id":id,"status":"ok","possible":possible,"certain":certain}));
-    }
+    // Rust checks no quantity: the Lean quantity route owns W6 typing, certificates,
+    // countermodels and documents (docs/LEAN-FIRST-PLAN.md, batch 9), so the case is refused.
     if v.get("kind") == Some(&json!("quantity")) {
-        return quantity_case(v);
+        return Err(Error::new("UnsupportedProfile", "quantities are checked by the Lean quantity route"));
     }
     // A reports case names its profile. Rust checks no discourse elaboration: the Lean discourse
     // route owns the profile (docs/LEAN-FIRST-PLAN.md, batch 4), so any other family is refused.
@@ -353,6 +324,20 @@ mod readings_s2_tests {
         let mut unmarked = input;
         unmarked["untrusted"] = json!(false);
         assert!(case(&unmarked).is_err());
+    }
+}
+
+#[cfg(test)]
+mod quantity_tests {
+    use super::*;
+
+    #[test]
+    fn quantity_cases_are_the_lean_routes() {
+        for mode in ["admission", "countermodel", "certificate", "document"] {
+            let input = json!({"id":"q", "kind":"quantity", "mode":mode, "environment":{},
+                               "quantity":{"format":"ve-quantity@1","formula":["top"]}});
+            assert_eq!(case(&input).unwrap_err().code, "UnsupportedProfile");
+        }
     }
 }
 

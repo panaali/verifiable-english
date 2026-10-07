@@ -51,6 +51,30 @@ def _main(argv=None):
     if argv[:1] == ["assist"]:
         from .assist.cli import main as assist_main
         return assist_main(argv[1:])
+    if argv[:2] == ["senses", "check"]:
+        senses_parser = argparse.ArgumentParser(
+            prog="python -m ve senses check",
+            description="Admission only: Lean reads the text with the sense packs. Marked conclusions are "
+                        "not checked (`conclusions: not_checked`); exit 0 means one reading per sentence.")
+        senses_parser.add_argument("--env", required=True, help="environment JSON file")
+        senses_parser.add_argument("--pack", action="append", required=True, help="sense pack JSON file")
+        senses_parser.add_argument("source", help="English text file")
+        options = senses_parser.parse_args(argv[2:])
+        try:
+            from .assurance import operation
+            from .senses import load_pack
+            from .backends.senses import OPERATION, read
+            env = Environment(loads_json(_read(options.env)))
+            result = read(env, _read(options.source, MAX_SOURCE_BYTES).decode("utf-8"),
+                          [load_pack(path) for path in options.pack])
+            # Lean's reading, not a `check` record: the honesty fields say what it does not establish, and
+            # no marked conclusion is checked against its premises.
+            _emit({"operation": OPERATION, "assurance": operation(OPERATION)["assurance"]["current"],
+                   "intent": "unconfirmed", "proof": "not_checked", "conclusions": "not_checked", **result})
+            return 0 if result["reading"]["status"] == "one" else 3
+        except (VEError, UnicodeError, OSError) as exc:
+            _emit({"status": "InvalidInput", "error": str(exc)})
+            return 2
     if argv[:2] == ["adapter", "run"]:
         from .adapters.cli import main as adapter_main
         return adapter_main(argv[2:])
@@ -115,23 +139,27 @@ def _main(argv=None):
         options = speech_parser.parse_args(argv[1:])
         try:
             from .speech_document import load_speech_document
-            from .ast import _to_data
-            from .speech_english import legend
             source = load_speech_document(options.path)
-            doc = source.document
+            report = source.report
             _emit({"status": "experimental", "document_id": source.document_id,
                    # 1.1: the effective scope's environment, bindings included.
-                   "environment_id": doc.env.environment_id,
-                   "legend": legend(doc.env),
-                   "rules": [rule.to_dict() for rule in doc.policy.rules],
-                   "questions": [{"unit": q.unit, "mode": q.mode,
-                                  "presupposition": None if q.mode == "reading"
-                                  else _to_data(doc.presupposition(q))}
-                                 for q in doc.questions],
-                   "warnings": doc.warnings, "reading_plan": source.reading_plan,
+                   "environment_id": report["environment_id"],
+                   "legend": source.legend,
+                   "rules": [{"norm": rule} for rule in report["rules"]],
+                   "questions": [{"unit": q["unit"], "mode": q["mode"],
+                                  "presupposition": None if q["mode"] == "reading"
+                                  else q["presupposition"]}
+                                 for q in report["questions"]],
+                   "warnings": report["warnings"],
+                   "reading_plan": source.reading_plan,
                    "answers": source.answer_lines, "compliance": source.compliance_lines,
-                   "coverage": source.coverage()})
+                   "coverage": source.coverage(),
+                   **({"nominations": report["nominations"]} if any(
+                       type(row) is dict and "nominate" in row
+                       for row in source.metadata.get("answers", [])) else {})})
             return 0
+        except CheckerUnavailable:
+            raise
         except VEError as exc:
             _emit({"status": "InvalidInput", "error": exc.to_dict()})
             return 2

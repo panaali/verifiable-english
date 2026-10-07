@@ -81,8 +81,6 @@ def test_w6_profile_diagnostic_is_unchanged_without_risk(profiles):
     root = Path(__file__).resolve().parents[1]
     text = W6_FROZEN.removeprefix("UnsupportedProfile: ")
     assert f'"UnsupportedProfile: {text}"' in (root / "lean/VE/Time/Wire.lean").read_text()
-    [units] = root.glob("rust/*/src/units.rs")  # exactly one, whichever crate holds it
-    assert f'"{text}"' in units.read_text()
     from ve.units import validate_extension
     with pytest.raises(VEError) as caught:
         validate_extension(profiles, {}, {}, {})
@@ -167,7 +165,7 @@ def test_python_authority_gives_no_record_verdict(monkeypatch):
     for case in _decision_cases().values():
         with pytest.raises(CheckerUnavailable, match="Lean checker"):
             run_case(case)
-    with pytest.raises(VEError, match="risk route case"):
+    with pytest.raises(CheckerUnavailable, match="Lean checker"):
         run_case({"id": "x", "kind": [], "environment": {}})
 
 

@@ -1,142 +1,16 @@
 import VE.SoftNorms.Coherence
+import VE.Norms.LayersOnce
 
 /-! The layers of a soft document computed once (lean-first plan F5d).
 
-The soft checks rebuilt, for every formula they typed or expanded, the layer order of `soften D` (a topological
-sort of its stratum DAG), the layered environment `envAt` and the outcome expansion table `expTable`. The functions
-here compute them once per document. Each is declared in the namespace of the function it replaces, with a lemma
-that the two are equal, so every theorem about the original holds of the run. The soft decoder
-(`Wire.decodeSoftSource`) and the readings route (`VE.Readings.Layers`) check documents with them. -/
-
-namespace VE.Norms
-
-/-! ## The expansion table built once
-
-`expTable T i` answers a lookup by computing the layer order (`syms T`, a topological sort) at each of the `i`
-levels and the meaning of the symbol it finds afresh, recursively; nothing is kept between lookups. `expEntries T`
-holds one entry per layer symbol, newest first, each symbol's base formula built when first read and then kept
-(a `Thunk`), and `expAt` reads the table of any prefix from it. `expAt_expEntries` says it is `expTable`. -/
-
-/-- The table of an entry list kept newest first: a name's newest entry. -/
-def entryTable (es : List (String × Thunk VE.Formula)) : Table := fun n => (es.find? (·.1 == n)).map (·.2.get)
-
-/-- The entries with the next layer symbol added: its meaning under the entries before it. -/
-def expStep (T : Tree) (es : List (String × Thunk VE.Formula)) (q : Sym) : List (String × Thunk VE.Formula) :=
-  (q.name, Thunk.mk (fun _ => substWith (entryTable es) (q.meaning T))) :: es
-
-/-- One entry per layer symbol of `T`, newest first. -/
-def expEntries (T : Tree) : List (String × Thunk VE.Formula) := (syms T).foldl (expStep T) []
-
-/-- The table of the first `i` layer symbols, read from the entries of all of them. -/
-def expAt (es : List (String × Thunk VE.Formula)) (i : Nat) : Table := entryTable (es.drop (es.length - i))
-
-theorem expStep_foldl_length (T : Tree) : ∀ (l : List Sym) (es : List (String × Thunk VE.Formula)),
-    (l.foldl (expStep T) es).length = es.length + l.length
-  | [], _ => rfl
-  | q :: l, es => by
-    rw [List.foldl_cons, expStep_foldl_length T l, expStep, List.length_cons, List.length_cons]
-    omega
-
-theorem expStep_foldl_drop (T : Tree) : ∀ (l : List Sym) (es : List (String × Thunk VE.Formula)),
-    (l.foldl (expStep T) es).drop l.length = es
-  | [], _ => rfl
-  | q :: l, es => by
-    rw [List.foldl_cons, List.length_cons, ← List.drop_drop, expStep_foldl_drop T l, expStep, List.drop_one,
-      List.tail_cons]
-
-theorem entryTable_take (T : Tree) : ∀ k : Nat, entryTable (((syms T).take k).foldl (expStep T) []) = expTable T k
-  | 0 => by funext n; simp [entryTable, expTable]
-  | k + 1 => by
-    funext n
-    cases hq : (syms T)[k]? with
-    | some q =>
-      have hk : (syms T).take (k + 1) = (syms T).take k ++ [q] := by rw [List.take_succ, hq]; rfl
-      have ih := entryTable_take T k
-      rw [hk, List.foldl_append, List.foldl_cons, List.foldl_nil, expStep]
-      simp only [expTable, hq, ← ih]
-      by_cases h : q.name = n
-      · simp [entryTable, h, Thunk.get]
-      · simp [entryTable, h, Ne.symm h]
-    | none =>
-      have hk : (syms T).take (k + 1) = (syms T).take k := by rw [List.take_succ, hq]; simp
-      rw [hk, entryTable_take T k]
-      simp only [expTable, hq]
-
-theorem expAt_expEntries (T : Tree) (i : Nat) : expAt (expEntries T) i = expTable T i := by
-  have hs : syms T = (syms T).take i ++ (syms T).drop i := (List.take_append_drop i (syms T)).symm
-  have hl : (expEntries T).length - i = ((syms T).drop i).length := by
-    rw [expEntries, expStep_foldl_length, List.length_drop]
-    simp
-  unfold expAt
-  rw [hl, expEntries, hs, List.foldl_append, ← hs, expStep_foldl_drop, entryTable_take]
-
-/-- `subst` read from the entries. -/
-theorem subst_expAt (T : Tree) (i : Nat) (φ : VE.Formula) : substWith (expAt (expEntries T) i) φ = subst T i φ := by
-  rw [expAt_expEntries]
-  rfl
-
-/-- What every formula of a document reads from its layers, computed once per document: the layer symbols in
-order, their names, and the expansion table's entries. -/
-structure Layers where
-  syms : List Sym
-  names : List String
-  entries : List (String × Thunk VE.Formula)
-
-def layersOf (D : Doc) : Layers :=
-  let ss := syms D.T
-  ⟨ss, ss.map Sym.name, ss.foldl (expStep D.T) []⟩
-
-theorem layersOf_syms (D : Doc) : (layersOf D).syms = syms D.T := rfl
-theorem layersOf_names (D : Doc) : (layersOf D).names = layerNames D.T := rfl
-theorem layersOf_entries (D : Doc) : (layersOf D).entries = expEntries D.T := rfl
-
-/-- `subst D.T i` from a document's layers. -/
-def substIn (L : Layers) (i : Nat) (φ : VE.Formula) : VE.Formula := substWith (expAt L.entries i) φ
-
-theorem substIn_eq (D : Doc) (i : Nat) (φ : VE.Formula) : substIn (layersOf D) i φ = subst D.T i φ :=
-  subst_expAt D.T i φ
-
-/-- `conflict`, `outcomeBase` and `pairConflict` from the document's layers, computed once (plan F5d). -/
-def conflictIn (D : Doc) (L : Layers) (r : Regulated) : VE.Formula :=
-  let i := L.names.idxOf r.name
-  .and (substIn L i (pos D.T r.name)) (substIn L i (neg D.T r.name))
-
-def outcomeBaseIn (D : Doc) (L : Layers) (n : String) : VE.Formula :=
-  match D.T.regulated.find? (·.name == n) with
-  | some r => substIn L (L.names.idxOf n) (outcome D.T r)
-  | none => .bottom
-
-def pairConflictIn (D : Doc) (L : Layers) (pr : Pair) : VE.Formula :=
-  .and (outcomeBaseIn D L pr.req) (.not (outcomeBaseIn D L pr.perm))
-
-theorem conflictIn_eq (D : Doc) (r : Regulated) : conflictIn D (layersOf D) r = conflict D r := by
-  simp only [conflictIn, conflict, substIn_eq, layersOf_names, before]
-
-theorem outcomeBaseIn_eq (D : Doc) (n : String) : outcomeBaseIn D (layersOf D) n = outcomeBase D n := by
-  simp only [outcomeBaseIn, outcomeBase, substIn_eq, layersOf_names, before]
-  all_goals rfl
-
-theorem pairConflictIn_eq (D : Doc) (pr : Pair) : pairConflictIn D (layersOf D) pr = pairConflict D pr := by
-  simp only [pairConflictIn, pairConflict, outcomeBaseIn_eq]
-
-/-- `targets` from the document's layers, computed once (plan F5d). -/
-def targetsIn (D : Doc) (L : Layers) : List (String × List String × VE.Formula) :=
-  L.syms.filterMap (fun | .reg r => some (r.name, r.sorts, conflictIn D L r) | .defn _ => none) ++
-    (pairs D.T).map (fun pr => (pr.req ++ "->" ++ pr.perm, pr.sorts, pairConflictIn D L pr))
-
-theorem targetsIn_eq (D : Doc) : targetsIn D (layersOf D) = targets D := by
-  simp only [targetsIn, targets, layersOf_syms, conflictIn_eq, pairConflictIn_eq]
-  all_goals rfl
-
-/-- `InFragment` from the document's layers. -/
-def inFragmentIn (D : Doc) (L : Layers) : Bool :=
-  D.T.regulated.all (fun r => VE.Norms.Formula.qfree (conflictIn D L r)) &&
-    (pairs D.T).all (fun pr => VE.Norms.Formula.qfree (pairConflictIn D L pr))
-
-theorem inFragmentIn_eq (D : Doc) : inFragmentIn D (layersOf D) = InFragment D := by
-  simp only [inFragmentIn, InFragment, conflictIn_eq, pairConflictIn_eq]
-
-end VE.Norms
+Validating a soft document (`checkSoft`, `softSemanticCheck`) rebuilt, for every formula it typed or expanded, the
+layer order of `soften D` (a topological sort of its stratum DAG), the layered environment `envAt` and the outcome
+expansion table `expTable` (`VE.Norms.LayersOnce`): work quartic in the regulated predicates of the environment.
+The functions here compute them once per document. Each is declared in the namespace of the function it replaces,
+with a lemma that the two are equal, so every theorem about the original holds of the run. The `@[csimp]` lemmas at
+the end make the compiler run the hoisted function wherever compiled code calls the original, so every route that
+decodes a soft or rights source (soft-norms, rights, readings, admission, the wire-contract hooks) runs it, not only
+the readings route (lean-first batch 7 review B1). -/
 
 namespace VE.SoftNorms
 open VE.Norms
@@ -172,15 +46,6 @@ theorem softPremisesIn_eq (D : SoftDoc) : softPremisesIn D (soften D) (layersOf 
 theorem cohPremiseIn_eq (D : SoftDoc) (M N : SoftNode) :
     cohPremiseIn D (soften D) (layersOf (soften D)) M N = cohPremise D M N := by
   simp only [cohPremiseIn, cohPremise, substIn_eq, layersOf_syms, selectsOn_soften, size]
-
-/-- `InFragment` with the conflict targets and the soft premises built from the layers of `soften D`. -/
-def inFragmentOnce (D : SoftDoc) : Bool :=
-  let S := soften D
-  let L := layersOf S
-  VE.Norms.inFragmentIn S L && (softPremisesIn D S L).all universalQF
-
-theorem inFragmentOnce_eq (D : SoftDoc) : inFragmentOnce D = InFragment D := by
-  simp only [inFragmentOnce, InFragment, VE.Norms.inFragmentIn_eq, softPremisesIn_eq]
 
 /-- `checkSoft` with the conflict targets and the soft premises built from the layers of `soften D`. -/
 def checkSoftOnce (D : SoftDoc) : Except String Unit := do
@@ -282,5 +147,49 @@ theorem validateSoftOnce_eq (D : SoftDoc) : validateSoftOnce D = validateSoft D 
   unfold validateSoftOnce validateSoft
   rw [checkSoftOnce_eq, softSemanticCheckOnce_eq]
   all_goals rfl
+
+end VE.SoftNorms
+
+namespace VE.SoftNorms
+
+/-- `WellFormedSoft` over `validateSoftOnce`. -/
+def WellFormedSoftOnce (D : SoftDoc) : Bool :=
+  match validateSoftOnce D with
+  | .ok () => true
+  | .error _ => false
+
+theorem WellFormedSoftOnce_eq (D : SoftDoc) : WellFormedSoftOnce D = WellFormedSoft D := by
+  unfold WellFormedSoftOnce WellFormedSoft
+  rw [validateSoftOnce_eq]
+  all_goals rfl
+
+/-! ## The compiled code runs the hoisted functions
+
+Each lemma below replaces, in code compiled by a module that imports this one, a call of the original by a call of
+the hoisted function equal to it. -/
+
+@[csimp] theorem checkSoft_eq_once : @checkSoft = @checkSoftOnce :=
+  funext fun D => (checkSoftOnce_eq D).symm
+
+@[csimp] theorem softSemanticCheck_eq_once : @softSemanticCheck = @softSemanticCheckOnce :=
+  funext fun D => (softSemanticCheckOnce_eq D).symm
+
+@[csimp] theorem validateSoft_eq_once : @validateSoft = @validateSoftOnce :=
+  funext fun D => (validateSoftOnce_eq D).symm
+
+@[csimp] theorem wellFormedSoft_eq_once : @WellFormedSoft = @WellFormedSoftOnce :=
+  funext fun D => (WellFormedSoftOnce_eq D).symm
+
+/-- `InFragment` with `soften D` and its layers computed once. -/
+def InFragmentOnce (D : SoftDoc) : Bool :=
+  let S := soften D
+  let L := VE.Norms.layersOf S
+  VE.Norms.InFragmentIn S L && (softPremisesIn D S L).all universalQF
+
+theorem InFragmentOnce_eq (D : SoftDoc) : InFragmentOnce D = InFragment D := by
+  simp only [InFragmentOnce, InFragment, VE.Norms.InFragmentIn_eq, softPremisesIn_eq]
+
+@[csimp] theorem inFragment_eq_once : @InFragment = @InFragmentOnce :=
+  funext fun D => (InFragmentOnce_eq D).symm
 
 end VE.SoftNorms

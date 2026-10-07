@@ -191,118 +191,6 @@ class ConstantDecl:
     unit: str | None = None
     verbalisation: str | None = None
 
-def _alternatives_block(raw, sorts, predicates, constants, *, risk_enabled=False):
-    """Check declarations only; Lean owns inlining, validity and followability."""
-    mandatory = {"chooser", "action", "harm", "available", "leads_to", "outcomes"}
-    optional = {"decided_by", "performed", "inaction", "taken", "proximate", "fulfilments"}
-    if type(raw) is not dict:
-        raise VEError("InvalidInput: alternatives.block")  # VE.Alternatives.Wire.decodeBlock
-    if not mandatory <= raw.keys():
-        raise VEError(f"InvalidInput: alternatives.{sorted(mandatory - raw.keys())[0]}")
-    if unknown := sorted(raw.keys() - mandatory - optional):
-        raise VEError(f"InvalidInput: alternatives.{unknown[0]}")
-    for word in ("avoidable", "unavoidable", "allows", "prevents"):
-        if word in sorts or word in predicates or word in constants:
-            raise VEError(f"AlternativesReserved: {word}")
-    profile_wordings = {"{0} is avoidable by {1}", "{0} is unavoidable by {1}",
-                        "{0} allows {1} to happen", "{0} prevents {1}"}
-    for name, declaration in predicates.items():
-        if declaration.verbalisation in profile_wordings:
-            raise VEError(f"AlternativesReserved: wording for {name}")
-    role_sorts = {}
-    for role in ("chooser", "action", "harm"):
-        name = raw[role]
-        if type(name) is not str or name not in sorts:
-            raise UnknownSymbol(f"alternatives.{role} {name}")
-        role_sorts[role] = name
-    if len(set(role_sorts.values())) != 3:
-        raise VEError("AlternativesSort: sorts must be distinct")
-    role_spec = {
-        "available": ((role_sorts["action"], role_sorts["chooser"]), "{0} is available to {1}"),
-        "leads_to": ((role_sorts["action"], role_sorts["harm"]), "{0} leads to {1}"),
-        "inaction": ((role_sorts["action"],), "{0} is inaction"),
-        "taken": ((role_sorts["action"],), "{0} is taken"),
-        "proximate": ((role_sorts["action"], role_sorts["harm"]), "{0} causes {1}"),
-    }
-    declared_roles = [raw[role] for role in role_spec if role in raw]
-    if any(type(name) is not str for name in declared_roles):
-        raise VEError("InvalidInput: alternatives.role")
-    role_names = []
-    for role, (arguments, wording) in role_spec.items():
-        if role not in raw:
-            continue
-        name = raw[role]
-        if type(name) is not str or name not in predicates:
-            raise UnknownSymbol(f"alternatives.{role} {name}")
-        decl = predicates[name]
-        if decl.regulated is not None or decl.defined is not None or decl.functional is not None or decl.total is not None:
-            raise VEError(f"AlternativesRegulated: {role} {name}")
-        if decl.arguments != arguments:
-            raise VEError(f"AlternativesSort: {role} expects ({', '.join(arguments)})")
-        if decl.verbalisation != wording:
-            raise VEError(f'AlternativesVerbalisation: {role} must read "{wording}"')
-        role_names.append(name)
-    if len(set(role_names)) != len(role_names):
-        raise VEError("AlternativesSort: role predicates must be distinct")
-    for role, (_, wording) in role_spec.items():
-        for name, decl in predicates.items():
-            if decl.verbalisation == wording and (role not in raw or raw[role] != name):
-                raise VEError(f'AlternativesVerbalisation: {role} must be declared for "{wording}"')
-    outcomes = raw["outcomes"]
-    if outcomes != "signed":
-        if type(outcomes) is dict and "complete_by" not in outcomes:
-            raise VEError("MissingOutcomeDecider: alternatives.outcomes")
-        if type(outcomes) is not dict or set(outcomes) != {"complete_by"}:
-            raise VEError("InvalidInput: alternatives.outcomes")
-        if type(outcomes["complete_by"]) is not str or not outcomes["complete_by"].strip():
-            raise VEError("MissingOutcomeDecider: alternatives.outcomes")
-    if "decided_by" in raw and (type(raw["decided_by"]) is not str or
-                                len(raw["decided_by"].encode("utf-8")) > 64):
-        raise VEError("InvalidInput: alternatives.decided_by")
-    if "performed" in raw:
-        performed = raw["performed"]
-        if type(performed) is not dict or set(performed) != {"permission", "obligation"}:
-            raise VEError("InvalidInput: alternatives.performed")
-        m, q = performed["permission"], performed["obligation"]
-        pair = (predicates.get(m) if type(m) is str else None,
-                predicates.get(q) if type(q) is str else None)
-        if (any(d is None or d.arguments != (role_sorts["action"],) or d.regulated is None
-                for d in pair) or pair[0].regulated.role != "permission"
-                or pair[1].regulated.role != "obligation"
-                or pair[1].regulated.permission != m):
-            raise VEError(f"AlternativesPerformed: {m}, {q}")
-    fulfilments = raw.get("fulfilments", [])
-    if type(fulfilments) is not list:
-        raise VEError("InvalidInput: alternatives.fulfilments")
-    if len(fulfilments) > 16:
-        raise ResourceLimit("fulfilments")
-    seen = set()
-    for item in fulfilments:
-        if type(item) is not dict or set(item) != {"obligation", "body"}:
-            raise VEError("InvalidInput: alternatives.fulfilments")
-        name = item["obligation"]
-        if type(name) is not str:
-            raise VEError("InvalidInput: alternatives.fulfilments")
-        if name in seen:
-            raise DuplicateDeclaration(f"fulfilment {name}")
-        seen.add(name)
-        decl = predicates.get(name)
-        if decl is None or decl.regulated is None or decl.regulated.role != "obligation" or not decl.arguments or decl.arguments[0] != role_sorts["chooser"]:
-            raise VEError(f"FulfilmentSort: {name}")
-        if "performed" in raw and name == raw["performed"]["obligation"]:
-            raise VEError(f"FulfilmentOnPerformed: {name}")
-        body = item["body"]
-        if body == "avoids":
-            if decl.arguments != (role_sorts["chooser"], role_sorts["harm"]):
-                raise VEError(f"FulfilmentSort: {name}")
-        elif body == "excludes" and risk_enabled:
-            if decl.arguments != (role_sorts["chooser"], role_sorts["harm"]):
-                raise VEError(f"FulfilmentSort: {name}")
-        elif type(body) is not list:
-            raise VEError("InvalidInput: alternatives.fulfilments")
-    return canonical_json(raw)
-
-
 @dataclass(frozen=True, slots=True, init=False)
 class Environment:
     language: str
@@ -325,6 +213,25 @@ class Environment:
         """Decode and validate an environment under the selected authority."""
         from .backends.dispatch import authority_for, execute
 
+        if (not _generated_reports and type(data) is dict and
+                ("unit_schema" in data or "units" in data) and
+                type(data.get("profiles")) is list and
+                "time@0" in data["profiles"] and "risk@0" not in data["profiles"]):
+            # W6's decoder owns the extended environment. A top statement asks
+            # the same decoder used by every quantity check to admit it first.
+            from .backends.relay import decide
+            from .errors import CheckerUnavailable
+            [row] = decide("check", [{"id": "environment", "environment": data,
+                                      "quantity": {"format": "ve-quantity@1", "formula": ["top"]}}])
+            try:
+                self._decode(data, _generated_reports=False)
+            except Exception as exc:
+                raise CheckerUnavailable(
+                    "CheckerUnavailable: Python could not construct a Lean-accepted W6 environment") from exc
+            if self.environment_id != row["environment_id"]:
+                raise CheckerUnavailable("CheckerUnavailable: W6 environment identity mismatch")
+            return
+
         def python():
             self._decode(data, _generated_reports=_generated_reports)
             return self
@@ -345,6 +252,12 @@ class Environment:
 
     def _decode(self, data, *, _generated_reports=False):
         canonical_json(data)  # Check size, Unicode, and the restricted wire subset.
+        # The two block routes own acceptance and its first diagnostic. The
+        # remainder of this constructor only materialises an accepted source.
+        block_kind = route_kind(data) if type(data) is dict else None
+        if block_kind in ("alternatives", "risk") and data.get("language") not in (LANGUAGE, CLOSURE_LANGUAGE):
+            from .backends.validation import validated_statement_block
+            validated_statement_block(data, block_kind)
         language = data.get("language") if type(data) is dict else None
         # Lean's decoders read a language that is not a string, or absent, as
         # the route's (VE.Service.Standalone.isLegacy): the route's fields, in
@@ -432,12 +345,13 @@ class Environment:
                 raise UnsupportedProfile("Unsupported language, semantic profile, or specification revision")
         vocab = data["vocabulary"]
         if extended:
-            from .units import validate_units
-            if type(data["unit_schema"]) is not str and "risk@0" not in data["profiles"]:
-                # VE.Time.Wire.decodeEnvironment; the risk route compares the
-                # value (VE.Risk.Wire), which validate_units does.
-                raise VEError("String expected")
-            checked_units = validate_units(data["unit_schema"], data["units"])
+            if kind == "risk":
+                from .units import validate_units
+                checked_units = validate_units(data["unit_schema"], data["units"])
+            else:
+                # The W6 check mode admitted these declarations before this
+                # constructor ran; copy them without another decision.
+                checked_units = data["units"]
             units = {tag: MappingProxyType({"scale": record["scale"],
                                           "display": MappingProxyType(dict(record["display"]))})
                      for tag, record in checked_units.items()}
@@ -449,6 +363,7 @@ class Environment:
             raise UnsupportedProfile("reports@0 needs a reports block")
         if type(vocab) is not dict:
             raise VEError("object expected")
+        unit_route = kind
         require_fields(vocab, {"sorts", "predicates", "constants"} |
                        ({"reports"} if route and "reports@0" in data["profiles"] else set()),
                        path="/vocabulary")
@@ -515,9 +430,12 @@ class Environment:
             # An explicit map, even an empty one, is part of the submitted identity.
             argument_units = None
             if "argument_units" in entry:
-                from .units import validate_slot_units
-                argument_units = MappingProxyType(
-                    validate_slot_units(entry["argument_units"], args, units))
+                if unit_route == "risk":
+                    from .units import validate_slot_units
+                    argument_units = MappingProxyType(
+                        validate_slot_units(entry["argument_units"], args, units))
+                else:
+                    argument_units = MappingProxyType(dict(entry["argument_units"]))
             if flagged and len(args) != 2:
                 raise VEError("Functional and total flags require a binary predicate")
             if flagged and INT_SORT in args:
@@ -594,12 +512,13 @@ class Environment:
                                           and not (route and sort == STRING_SORT)):
                 raise UnknownSymbol(f"Undeclared constant sort: {sort!r}")
             if has_unit:
-                from .units import validate_tag
-                if sort != INT_SORT:
-                    raise VEError(f"Unit on non-integer constant {name}")
-                if type(entry["unit"]) is not str:
-                    raise VEError("String expected")
-                validate_tag(entry["unit"], units)
+                if unit_route == "risk":
+                    from .units import validate_tag
+                    if sort != INT_SORT:
+                        raise VEError(f"Unit on non-integer constant {name}")
+                    if type(entry["unit"]) is not str:
+                        raise VEError("String expected")
+                    validate_tag(entry["unit"], units)
             constants[name] = ConstantDecl(sort, _description(entry["description"])
                                            if "description" in entry else None,
                                            entry.get("unit") if has_unit else None,
@@ -610,8 +529,6 @@ class Environment:
             if extended:
                 from .units import validate_extension
                 validate_extension(data["profiles"], units, sorts, constants)
-            from .risk import check_route_declarations
-            check_route_declarations(predicates, constants)
         speech_acts = None
         if route and "speech-acts@0" in data["profiles"]:
             from .speech_acts import validate_scope
@@ -646,13 +563,10 @@ class Environment:
             raise ResourceLimit("At most 64 declared $string literals")
         alternatives = None
         if route and "alternatives@0" in data["profiles"]:
-            alternatives = _alternatives_block(data.get("alternatives"), sorts, predicates, constants,
-                                               risk_enabled="risk@0" in data["profiles"])
+            alternatives = canonical_json(data["alternatives"])
         risk = None
         if route and "risk@0" in data["profiles"]:
-            from .risk import validate_block
-            risk = validate_block(data.get("risk"), sorts, predicates, constants,
-                                  loads_json(alternatives), units)
+            risk = canonical_json(data["risk"])
         profile_predicates = {}
         profile_sorts = {}
         profile_constants = {}
@@ -694,10 +608,9 @@ class Environment:
             object.__setattr__(self, field, value)
         object.__setattr__(self, "risk", risk)
         object.__setattr__(self, "reports", reports)
-        if extended and risk is None:  # a risk environment was checked after its vocabulary
-            from .units import validate_extension
-            validate_extension(self.profiles, units, sorts, constants)
-        if extended:
+        # W6's profile and vocabulary extension were checked by Lean before
+        # construction; a risk environment was checked after its vocabulary.
+        if extended and risk is None:
             # Rust and Lean digest the submitted environment; Python digests
             # to_dict(). Any spelling that does not survive the round trip would
             # give the same input two identities, so it is rejected.

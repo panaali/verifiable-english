@@ -1,0 +1,11 @@
+order printer mutant build exit: 1
+ild/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-lf-13a/lean/VE/Order/Surface.lean -o /home/seyran/code/ve-lf-13a/lean/.lake/build/lib/lean/VE/Order/Surface.olean -i /home/seyran/code/ve-lf-13a/lean/.lake/build/lib/lean/VE/Order/Surface.ilean -c /home/seyran/code/ve-lf-13a/lean/.lake/build/ir/VE/Order/Surface.c --setup /home/seyran/code/ve-lf-13a/lean/.lake/build/ir/VE/Order/Surface.setup.json --json
+error: VE/Order/Surface.lean:55:0: Expression
+  print [Formula.le (Term.num 1) (Term.num 2)] == "1 <= 2.\n"
+did not evaluate to `true`
+error: Lean exited with code 1
+Some required targets logged failures:
+- VE.Order.Surface
+error: build failed
+
+restored build exit: 0

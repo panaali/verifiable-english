@@ -308,6 +308,100 @@ def answer(case: dict) -> dict:
     return row["result"]
 
 
+def test_alternatives_and_data_flags_share_the_english_boundary():
+    """A data attribute is independent of the alternatives document route's restrictions."""
+    from conformance.english_lean_s3_fixtures import FA
+    raw = FA()
+    raw['profiles'].insert(1, 'data@0')
+    raw['vocabulary']['predicates']['owner_of'] = {
+        'arguments': ['action', 'agent'], 'description': 'action owner',
+        'functional': True, 'total': True,
+    }
+    env = Environment(raw)
+    words = EN.EnglishVocabulary(env)
+    for source in ('Wait leads to injury.', 'The owner_of of wait is robot.'):
+        result = answer({**L.request(env, source, words, {}), 'id': source})
+        assert result['status'] == 'one', result
+        assert result['identities']['environment_id'] == env.environment_id
+        python = python_reading(env, source, words, {})
+        assert not isinstance(python, BaseException), python
+        lean = lean_reading(env, source, words, {})
+        assert L.shadow_record(env, source, words, python, lean)["classes"] == []
+    # The route projection cannot silently discard malformed data declarations.
+    bad = copy.deepcopy(raw)
+    bad['vocabulary']['predicates']['owner_of']['functional'] = 'yes'
+    case = L.request(env, 'Wait leads to injury.', words, {})
+    case['environment'] = bad
+    [row] = route([case])
+    assert row['status'] == 'error', row
+
+
+@pytest.mark.parametrize('variant', ['definition', 'string literal'])
+def test_alternatives_boundary_validates_unrelated_declarations_separately(variant):
+    from conformance.english_lean_s3_fixtures import FA
+    raw = FA()
+    if variant == 'definition':
+        raw['profiles'].insert(1, 'definitions@0')
+        raw['vocabulary']['predicates']['safe']['defined'] = {
+            'arguments': ['action'], 'body': ['top'],
+        }
+    else:
+        raw['profiles'].insert(1, 'data@0')
+        raw['vocabulary']['constants']['label'] = {'sort': '$string', 'description': 'label'}
+    env = Environment(raw)
+    words = EN.EnglishVocabulary(env)
+    source = 'Wait leads to injury.'
+    python = python_reading(env, source, words, {})
+    assert not isinstance(python, BaseException), python
+    lean = lean_reading(env, source, words, {})
+    assert L.shadow_record(env, source, words, python, lean)['classes'] == []
+    malformed = copy.deepcopy(raw)
+    if variant == 'definition':
+        malformed['vocabulary']['predicates']['safe']['defined']['body'] = ['var', 0]
+    else:
+        malformed['vocabulary']['constants']['label']['description'] = 7
+    case = L.request(env, source, words, {})
+    case['environment'] = malformed
+    [row] = route([case])
+    assert row['status'] == 'error', row
+
+
+@pytest.mark.parametrize('fixture', ['FA', 'FR'])
+@pytest.mark.parametrize('role', ['available', 'leads_to'])
+@pytest.mark.parametrize('field,value', [
+    ('functional', False), ('functional', True), ('total', False), ('total', True),
+    ('defined', {'arguments': ['action', 'agent'], 'body': ['top']}),
+])
+@pytest.mark.parametrize('mode', ['english.read', 'english.grammar'])
+def test_block_role_declarations_are_rejected_at_both_english_entries(fixture, role, field, value, mode):
+    """The English boundary gives the same verdict as Environment for every fixed role declaration.
+
+    In particular, a false flag still fixes the role: key presence, rather than
+    the flag's truth value, is the alternatives contract.
+    """
+    from conformance.english_lean_s3_fixtures import FA, FR
+    raw = {'FA': FA, 'FR': FR}[fixture]()
+    if field == 'defined':
+        raw['profiles'] = sorted([*raw['profiles'], 'definitions@0'])
+        value = {**value, 'arguments': raw['vocabulary']['predicates'][role]['arguments']}
+    else:
+        raw['profiles'] = sorted([*raw['profiles'], 'data@0'])
+    raw['vocabulary']['predicates'][role][field] = value
+    with pytest.raises(VEError):
+        Environment(raw)
+
+    base = Environment({'FA': FA, 'FR': FR}[fixture]())
+    words = EN.EnglishVocabulary(base)
+    case = L.request(base, 'Wait leads to injury.', words, {})
+    case['environment'] = raw
+    if mode == 'english.grammar':
+        case = {key: case[key] for key in ('id', 'environment', 'lexicon')}
+    [row] = route([case], mode)
+    assert row['status'] == 'error', row
+    if fixture == 'FA' or (field == 'functional' and value is False) or (field == 'total' and value is False):
+        assert f'AlternativesRegulated: {role} {role}' in row['error'], row
+
+
 def test_i1_i2_the_identities_of_one_text_twice_and_respaced():
     first, second = answer(request("F", "Alice owns legacy.")), answer(request("F", "Alice owns legacy."))
     assert first == second

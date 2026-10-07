@@ -1,12 +1,13 @@
 import VE.Service.Protocol
 import ResponseShape
+import ResponseShape.CaseDeciders
 
 /-! The source of `ve/backends/lean_service_schema/risk.json` (`file`; `tools/response_schemas.py` writes it). -/
 namespace ResponseShape.Schemas.Risk
 open Lean ResponseShape
 
 def risk_path : Shape :=
-  decidedBy "Risk.Run.usesRiskPath" VE.Risk.Run.usesRiskPath <|
+  decidedCase .riskPath <|
   c "Risk.Run.usesRiskPath: the risk@0 profile, the environment's risk block or a risk-* kind." [
     obj,
     .anyOf [
@@ -101,7 +102,11 @@ def elaborate : Shape :=
         ("background", ref "common.json#/$defs/norms_background"),
         ("premises", ref "common.json#/$defs/layer_premises"),
         ("conflict_targets", ref "common.json#/$defs/conflict_targets"),
-        ("fragment", .type ["boolean"])]]
+        ("fragment", .type ["boolean"]),
+        ("coverage", ref "alternatives.json#/$defs/coverage")],
+      .ite (.onCase (.required ["coverage_units"]))
+        (.required ["coverage"])
+        (.bool true)]
 
 def cell : Shape :=
   n [obj, .required ["alternative", "harm"], closed [("alternative", str), ("harm", str)]]

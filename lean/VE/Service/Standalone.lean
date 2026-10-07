@@ -6,6 +6,9 @@ import VE.Closure.Surface
 import VE.Order.Surface
 import VE.Route.Run
 import VE.Service.TypingDiagnostic
+import VE.Service.ParseDiagnostic
+import VE.Risk.Wire
+import VE.Time.Wire
 
 /-! Standalone service validation and identity endpoints. These wrap the same
 decoders used by the route; successful model answers require a checked model. -/
@@ -81,6 +84,37 @@ def alternativesReduced (environment : Json) : Except String Json := do
   let fields := (← VE.Bridge.fields environment).filter (·.1 != "alternatives")
   pure (((Json.mkObj fields).setObjVal! "profiles" (toJson profiles)).setObjVal! "vocabulary"
     (vocabulary.setObjVal! "predicates" (Json.mkObj (predicates ++ words))))
+
+/-- A `risk@0` environment as typing reads it (docs/spec/english-lean-s3.md 2.3): the risk declarations
+removed exactly as `Risk.Wire.riskNormsView` removes them (the `risk` block, `unit_schema`, `units`, each
+predicate's `argument_units`, each constant's `unit` and `verbalisation`), the `alternatives` block kept, the
+profile dropped, and the severity sort, its classes and the five risk predicates declared with the signatures
+of Python's `Environment` (`ve/environment.py:668–680`). Applied before `alternativesReduced`, while the block
+still names the role sorts. -/
+def riskReduced (environment : Json) : Except String Json := do
+  let ps ← VE.Route.Gate.profilesOf environment
+  let block ← environment.getObjVal? "alternatives"
+  let severity ← (← environment.getObjVal? "risk").getObjVal? "severity"
+  let sort ← VE.Bridge.stringField severity "sort"
+  let classes ← VE.Bridge.strings (← severity.getObjVal? "classes")
+  let action ← VE.Bridge.stringField block "action"
+  let harm ← VE.Bridge.stringField block "harm"
+  let view ← VE.Risk.Wire.riskNormsView environment ps
+  let view := (view.setObjVal! "alternatives" block).setObjVal! "profiles" (toJson (ps.erase "risk@0"))
+  let vocabulary ← view.getObjVal? "vocabulary"
+  let sorts ← VE.Bridge.fields (← vocabulary.getObjVal? "sorts")
+  let constants ← VE.Bridge.fields (← vocabulary.getObjVal? "constants")
+  let predicates ← VE.Bridge.fields (← vocabulary.getObjVal? "predicates")
+  let word := fun (args : List String) => Json.mkObj [("arguments", toJson args),
+    ("description", .str "risk@0 generated word")]
+  let words := [("risk__might_lead_to", word [action, harm]), ("risk__class", word [harm, sort]),
+    ("risk__more_severe", word [sort, sort]), ("risk__or_worse", word [harm, sort]),
+    ("risk__less_worst", word [action, action])]
+  let severityClasses := classes.map fun c => (c, Json.mkObj [("sort", .str sort),
+    ("description", .str "risk severity class")])
+  pure (view.setObjVal! "vocabulary" (((vocabulary.setObjVal! "sorts"
+    (Json.mkObj (sorts ++ [(sort, Json.mkObj [("description", .str "risk severity")])]))).setObjVal! "constants"
+    (Json.mkObj (constants ++ severityClasses))).setObjVal! "predicates" (Json.mkObj (predicates ++ words))))
 
 /-- The environment typing decodes: statement-layer profiles that add no typing
 constraint removed (`reports@0`, `soft-norms@0`, `rights@0`, `speech-acts@0`
@@ -409,6 +443,15 @@ def legacyCheckCase (id : String) (environment ast : Json) (formula : Bool) (ite
 def checkCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let environment ← j.getObjVal? "environment"
+  -- W6: either extension field selects the quantity decoder, which owns typing, erasure and
+  -- the three identities (Lean-first batch 9).
+  if (environment.getObjVal? "unit_schema").isOk || (environment.getObjVal? "units").isOk then
+    let w ← VE.Time.Wire.decodeEnvironment environment
+    let a ← VE.Time.Wire.decodeQuantity w (← j.getObjVal? "quantity")
+    return VE.Route.Wire.ok id [("well_typed", .bool true),
+      ("meaning_id", .str a.meaningId), ("Q", a.Q), ("core", a.core),
+      ("environment_id", .str w.environmentId),
+      ("target_environment_id", .str w.targetId)]
   let ast ← j.getObjVal? "ast"
   if environment.getObjValD "language" != Json.str "ve.core@0.2" then
     let items ← ast.getArr?
@@ -559,7 +602,7 @@ def parseCase (j : Json) : Except String Json := do
         pure (fs.map encodeClosure, some (VE.Closure.Surface.print fs))
       | .order v => do
         let some fs := VE.Order.Surface.parse v.environment source | throw rejected
-        pure (fs.map VE.Order.Surface.formulaJson, none)
+        pure (fs.map VE.Order.Surface.formulaJson, some (VE.Order.Surface.print fs))
     VE.Route.AstLimit.check asts
     return VE.Route.Wire.ok id ([("ast", Json.arr asts.toArray)] ++
       match canonical with
@@ -584,7 +627,7 @@ def parseCase (j : Json) : Except String Json := do
     | .order => do
       let v ← VE.Route.Wire.decodeOrderVocabulary e.vocabulary
       let some fs := VE.Order.Surface.parse v.vocabulary.environment source | throw rejected
-      pure (fs.map VE.Order.Surface.formulaJson, none)
+      pure (fs.map VE.Order.Surface.formulaJson, some (VE.Order.Surface.print fs))
   VE.Route.AstLimit.check asts
   pure (VE.Route.Wire.ok id ([("ast", Json.arr asts.toArray)] ++
     match canonical with
@@ -596,5 +639,72 @@ def reported (run : Json → Except String Json) (j : Json) : Json :=
   | .ok result => result
   | .error message => Json.mkObj [("id", j.getObjValD "id"),
       ("status", .str "error"), ("error", .str message)]
+
+/-- A raw strict parse may succeed while the family's typing check rejects.
+In that case the existing diagnostic walker names the first typing fault. -/
+def rawParseAst (environment : Json) (source : String) : Option (List Json) := Id.run do
+  let chars := source.toList
+  let fuel := chars.length + 1
+  if isLegacy environment then
+    let .ok l := decodeLegacy environment | return none
+    return match l with
+      | .v0 v => (VE.Surface.parseStatements v.environment fuel chars).map
+          (·.map VE.Route.Wire.encodeFormula)
+      | .closure v => (VE.Closure.Surface.parseStatements v.environment fuel chars).map
+          (·.map encodeClosure)
+      | .order v => (VE.Order.Surface.parseStatements v.environment fuel chars).map
+          (·.map VE.Order.Surface.formulaJson)
+  let .ok checked := validated environment | return none
+  let e := checked.envelope
+  return match e.family with
+    | .fol => do
+      let rv ← (VE.Route.Run.decodeRouteVocabulary e).toOption
+      (VE.Surface.parseStatements rv.environment fuel chars).map (·.map VE.Route.Wire.encodeFormula)
+    | .closure => do
+      let rv ← (VE.Route.Run.decodeRouteVocabulary e).toOption
+      (VE.Closure.Surface.parseStatements rv.environment fuel chars).map (·.map encodeClosure)
+    | .closureNary => do
+      let v ← (VE.Core.Bridge.decodeEnvironment checked.decodable).toOption
+      (VE.Core.Surface.parseStatements v.environment fuel chars).map (·.map encodeCore)
+    | .order => do
+      let v ← (VE.Route.Wire.decodeOrderVocabulary e.vocabulary).toOption
+      (VE.Order.Surface.parseStatements v.vocabulary.environment fuel chars).map
+        (·.map VE.Order.Surface.formulaJson)
+
+/-- A diagnostic and span for a source the checked family parser rejected. -/
+def parseRejection (j : Json) (message : String) : Option (String × String × ParseDiagnostic.Error) := do
+  guard (message == "SyntaxError: the source is not accepted by the Lean surface parser" ||
+      message == "ResourceLimit: source identifier exceeds 64 bytes" ||
+      message == "ResourceLimit: formula depth exceeds 64" ||
+      message == "ResourceLimit: AST node count")
+  let source ← (j.getObjValAs? String "source").toOption
+  let environment ← (j.getObjVal? "environment").toOption
+  let vocabulary ← (environment.getObjVal? "vocabulary").toOption
+  let profiles := match (environment.getObjVal? "profiles").toOption with
+    | some value => (VE.Bridge.strings value).toOption.getD []
+    | none => [(environment.getObjValAs? String "profile").toOption.getD ""]
+  let signature ← (TypingDiagnostic.decodeSignature profiles vocabulary).toOption
+  let diagnostic := match source.toList.findIdx? (fun c => c.toNat > 127) with
+    | some pos => some (⟨"SyntaxError", "VE semantic syntax must be ASCII", pos, pos + 1⟩ : ParseDiagnostic.Error)
+    | none => ParseDiagnostic.scan signature source (profiles.contains "order@0")
+        (profiles.contains "closure@0") (profiles.contains "nary@0")
+  if let some error := diagnostic then
+    return (error.code ++ ": " ++ error.message, source, error)
+  let asts ← rawParseAst environment source
+  let text ← TypingDiagnostic.diagnose profiles vocabulary asts
+  let entire : ParseDiagnostic.Error := ⟨"", "", 0, source.length⟩
+  return (text, source, entire)
+
+/-- Accepted AST and canonical text come from `parseCase`; rejected syntax
+gets the Lean diagnostic with its source span. -/
+def reportedParse (j : Json) : Json :=
+  match parseCase j with
+  | .ok result => result
+  | .error message =>
+    match parseRejection j message with
+    | some (text, source, diagnostic) => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"),
+        ("error", .str text), ("span", ParseDiagnostic.span source diagnostic)]
+    | none => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"),
+        ("error", .str message)]
 
 end VE.Service.Standalone

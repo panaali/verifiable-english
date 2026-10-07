@@ -13,11 +13,10 @@ pub use ve_kernel::{
 #[doc(hidden)]
 pub use ve_profile::EvaluationKernel;
 pub use ve_profile::{
-    CandidateIterator, CountermodelCheck, CountermodelProblem, Evaluation, RiskRange, SearchBounds, SearchResult,
+    CandidateIterator, CountermodelCheck, CountermodelProblem, Evaluation, SearchBounds, SearchResult,
     TracedEvaluation, check_label, check_reading_binding, evaluate, evaluate_formula,
-    evaluate_risk_condition, evaluate_traced, find_countermodel, find_countermodel_min,
+    evaluate_traced, find_countermodel, find_countermodel_min,
     find_countermodel_with_nonvacuity, find_distinguishing_model,
-    find_distinguishing_model_with_nonvacuity, label_is_canonical, order_case, quantity_case,
-    regenerate_risk_cells,
+    find_distinguishing_model_with_nonvacuity, label_is_canonical, order_case,
 };
 pub use ve_surface::{ParseResult, SourceNode, parse, parse_with_metadata, print_document};

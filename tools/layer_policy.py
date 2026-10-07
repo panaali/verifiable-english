@@ -17,14 +17,14 @@ NAMES = {1: "kernel", 2: "profiles", 3: "surface", 4: "tools", 5: "apps-and-meas
 PYTHON = {
     1: "ast environment environment_wire errors identity limits model wire wire_contract assurance".split(),
     2: ("background closure definitions entailment evaluate norms order profiles "
-        "alternatives reports rights softnorms norms_contract speech_acts units").split(),
+        "alternatives rights softnorms norms_contract speech_acts units").split(),
     3: ("english english_grammar english_phrases english_vocabulary fluent fol grammar natural "
         "norm_english parser printer surface lexicon report_english speech_english readings_english "
-        "readings_s2_english").split(),
+        "readings_s2_english senses").split(),
     4: ("__main__ adapters admission argument attacks authoring backends bundle check "
         "document equivalence norm_admission norm_defaults norm_defaults_contract norm_defaults_english norm_defaults_route norm_strict "
-        "openterms propose readings search stream_audit vacuity assist discourse quantity_admission "
-        "reports_route risk rights_route soft_route speech_document readings_route readings_s1 "
+        "openterms propose readings search stream_audit vacuity assist discourse "
+        "reports reports_route risk rights_route soft_route speech_document readings_route readings_s1 "
         "readings_sup readings_verdicts readings_s2_wording").split(),
     5: ["argument_fixtures"],
 }
@@ -113,6 +113,8 @@ def lean_entry(module: str) -> bool:
 def lean_layer(module: str) -> int | None:
     if module in {"VE", "VE.Audit", "Iceberg", "VE.Checks", "VE.Route.Checks"}:
         return 5  # aggregation and audit targets
+    if module == "VE.EnglishGrammar.ProfileExamples":
+        return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run
     if lean_entry(module) or module.endswith(".Run") or module.startswith("VE.Service."):
         return 4
     if module == "ResponseShape" or module.startswith("ResponseShape."):
@@ -121,7 +123,7 @@ def lean_layer(module: str) -> int | None:
         return 4  # states theorems on Norms.Run.runCase (docs/CONSOLIDATION-PLAN.md step 1a)
     if module in {"VE.Route.RunSound", "VE.Norms.RunSound"}:
         return 4  # states theorems on Route.Run.runCase and Norms.Run.runCase (step 2a)
-    if module.startswith(("VE.English.", "VE.Grammar.", "VE.EnglishGrammar.")) or module in {
+    if module.startswith(("VE.English.", "VE.Grammar.", "VE.EnglishGrammar.", "VE.Senses.")) or module in {
         "VE.Surface", "VE.SurfaceProofs", "VE.ParserContracts", "VE.LexicalProofs",
         "VE.Order.Surface", "VE.Core.Surface", "VE.Closure.Surface",
     }:

@@ -11,8 +11,17 @@ answers with a code this client has no class for.
 
 `rows(mode, cases)` returns every row, rejections included, for the callers that read a
 route's rejection rows themselves (one row per case, as the one-shot route executables printed
-them before batch 1). Every statement-layer route is a service mode, so this module and
-`lean.run` (the manifest-bound calls) are the only ways `ve` reaches Lean.
+them before batch 1).
+
+Both check every case before it is sent (`ve.environment_wire.wire_checked`, shared with the
+Rust transport): a value `json` cannot send as itself (a lone surrogate, a set, bytes, a tuple, a
+non-string key, a non-finite float, a cycle) raises the wire's `VEError`, never a `TypeError` or
+`UnicodeEncodeError` from the encoder and never a silent conversion. That check is Python's and
+is not a verdict; whether a JSON value is on the restricted subset stays Lean's to say.
+
+Every statement-layer route is a service mode, so this module and `lean.run` (the
+manifest-bound calls, whose `canonical_json` is the same wire check) are the only ways `ve`
+reaches Lean.
 """
 from __future__ import annotations
 
@@ -23,8 +32,9 @@ from pathlib import Path
 import threading
 import weakref
 
-from ..errors import (CheckerUnavailable, DuplicateDeclaration, InvalidModel, ResourceLimit, SyntaxError,
+from ..errors import (CheckerUnavailable, DuplicateDeclaration, InvalidModel, ResourceLimit, ShadowedVariable, Span, SyntaxError,
                       TypeMismatch, UnboundVariable, UnknownSymbol, UnsupportedProfile, VEError)
+from ..environment_wire import wire_checked
 from .lean_service import DEFAULT_EXECUTABLE, LeanServicePool
 
 # The pool of the default service (`VE_LEAN_SERVICE`, else the lake build), and one pool per
@@ -47,6 +57,7 @@ def _admission_error():
 CLASSES: dict[str, type | None] = {
     "InvalidInput": VEError, "SyntaxError": SyntaxError, "UnknownSymbol": UnknownSymbol,
     "DuplicateDeclaration": DuplicateDeclaration, "UnboundVariable": UnboundVariable,
+    "ShadowedVariable": ShadowedVariable,
     "TypeMismatch": TypeMismatch, "InvalidModel": InvalidModel, "UnsupportedProfile": UnsupportedProfile,
     "ResourceLimit": ResourceLimit, "AdmissionError": None, "CheckerUnavailable": CheckerUnavailable,
 }
@@ -96,6 +107,8 @@ def _raised(entry: dict) -> BaseException:
     row = entry["result"]
     error = rejection(entry["code"], row["error"], generator=entry.get("generator"))
     if isinstance(error, VEError):
+        if type(row.get("span")) is dict:
+            error.span = Span(**row["span"])
         if type(row.get("code")) is str:
             error.code = row["code"]
         if row.get("dual_guard_cycle") is True:
@@ -110,13 +123,14 @@ def rows(mode: str, cases: list[dict], *, timeout: float | None = None,
          executable: str | os.PathLike | None = None) -> list[dict]:
     """Lean's rows for `cases`, in order, rejection rows included. `timeout` replaces the
     mode's deadline with a wall-clock limit (`lean_service.DEADLINES`)."""
-    return [entry["result"] for entry in _pool_for(executable).run_bound(mode, cases, timeout=timeout)]
+    return [entry["result"] for entry in
+            _pool_for(executable).run_bound(mode, wire_checked(cases), timeout=timeout)]
 
 
 def decide(mode: str, cases: list[dict], *, timeout: float | None = None,
            executable: str | os.PathLike | None = None) -> list[dict]:
     """Lean's rows for `cases`, in order; the first rejection row raises its diagnostic."""
-    entries = _pool_for(executable).run_bound(mode, cases, timeout=timeout)
+    entries = _pool_for(executable).run_bound(mode, wire_checked(cases), timeout=timeout)
     for entry in entries:
         if entry["result"].get("status") == "error":
             raise _raised(entry)

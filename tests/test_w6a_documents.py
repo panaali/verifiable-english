@@ -1,6 +1,7 @@
-"""W6a quantity documents: Lean admission (`ve_quantity` case `document`) against
-Python early admission and Rust regeneration, the news-article document, the
-whole-grammar English gate, and every provenance/binding rejection class."""
+"""W6a quantity documents: Lean admission (`ve_quantity` case `document`) and Python's
+relay of it (Lean-first batch 9 deleted Python's copy and Rust's quantity route), the
+news-article document, the whole-grammar English gate, and every provenance/binding
+rejection class."""
 from collections import Counter
 import copy
 import json
@@ -13,7 +14,7 @@ import pytest
 from tests import lean_routes
 
 from tests.subprocesses import HANG_TIMEOUT
-from tests.test_units_lean_w6a import LEAN, lean, rust
+from tests.test_units_lean_w6a import LEAN, lean
 from tests.test_w6a_review_regressions import money, named, raw_environment
 from ve.admission import admit_document
 from ve.document import check_document, load_document, quantity_admission_input
@@ -59,23 +60,21 @@ def base_document(env):
                  "certificate": certificate}]}}
 
 
-def three_ways(raw, document):
-    """Python admission, Lean admission and Rust regeneration of one document."""
+def relay_and_lean(raw, document):
+    """Python's admission (the relay) and Lean's admission of one document."""
     try:
         python = admit_document(Environment(raw), document)
     except VEError as exc:
         python = exc
     [got] = lean([{"id": "d", "kind": "document", "environment": raw, "document": document}])
-    [other] = rust([{"id": "d", "kind": "quantity", "mode": "document", "environment": raw,
-                     "document": document}])
-    return python, got, other
+    return python, got
 
 
-def test_document_admission_agrees_three_ways():
+def test_document_admission_agrees_relay_and_lean():
     raw = doc_env()
     env = Environment(raw)
     document = base_document(env)
-    python, got, other = three_ways(raw, document)
+    python, got = relay_and_lean(raw, document)
     assert got["status"] == "ok" and got["assurance"] == "lean-admitted", got
     assert got["report_id"] == python["report_id"] and got["report"] == python["report"]
     assert got["kinds"] == python["kinds"] == [u["kind"] for u in document["units"]]
@@ -83,8 +82,6 @@ def test_document_admission_agrees_three_ways():
     assert labels == [("low", "asserted"), ("high", "bridge:accepts(fed,u_high)")]
     # The report binds the annotated statements, not their erasures.
     assert got["report"]["root"]["meaning_id"] == quantity_meaning_id(env, ORDER)
-    assert other["status"] == "ok" and other["assurance"] == "regeneration-only"
-    assert other["node_meaning_ids"] == [quantity_meaning_id(env, x) for x in (LOW, HIGH, ORDER)]
 
 
 def mutate(document, path, value):
@@ -160,26 +157,16 @@ def rejection_cases(env):
 def test_every_rejection_class_agrees(index):
     raw = doc_env()
     name, document, message = rejection_cases(Environment(raw))[index]
-    python, got, _ = three_ways(raw, document)
+    python, got = relay_and_lean(raw, document)
     assert isinstance(python, VEError) and message in str(python), (name, python)
     assert got["status"] == "error" and message in got["error"], (name, got)
 
 
-def test_rust_rejects_the_statement_classes():
-    raw = doc_env()
-    cases = {name: document for name, document, _ in rejection_cases(Environment(raw))}
-    for name, message in (("forged Q", "Q differs"), ("unit mismatch", "UnitMismatch(bp,usd_cent)"),
-                          ("unchecked lemma", "fields")):
-        [other] = rust([{"id": name, "kind": "quantity", "mode": "document", "environment": raw,
-                         "document": cases[name]}])
-        assert other["status"] == "error" and message in other["error"]["message"], (name, other)
-
-
-def test_documents_need_the_documents_profile_three_ways():
+def test_documents_need_the_documents_profile_relay_and_lean():
     raw = doc_env() | {"profiles": ["order@0", "relational-fol@0", "time@0"]}
-    python, got, other = three_ways(raw, base_document(Environment(doc_env())))
+    python, got = relay_and_lean(raw, base_document(Environment(doc_env())))
     assert isinstance(python, UnsupportedProfile) and "documents@1" in str(python)
-    assert "documents@1" in got["error"] and "documents@1" in other["error"]["message"]
+    assert "documents@1" in got["error"]
 
 
 def test_reading_choices_bind_and_must_agree():
@@ -195,9 +182,8 @@ def test_reading_choices_bind_and_must_agree():
                 "graph": {"root": "c", "nodes": [
                     {"name": "all", "quantity": disjunction, "label": "readings:rs@1:all"},
                     {"name": "c", "quantity": lower, "premises": ["all"], "certificate": certificate}]}}
-    python, got, other = three_ways(raw, document)
+    python, got = relay_and_lean(raw, document)
     assert got["status"] == "ok" and got["report_id"] == python["report_id"], got
-    assert other["status"] == "ok"
     # Two different concrete choices of one set are incompatible.
     pair = q(["and", readings[0]["formula"], readings[1]["formula"]])
     both = {**document, "graph": {"root": "c", "nodes": [
@@ -205,13 +191,13 @@ def test_reading_choices_bind_and_must_agree():
         {"name": "r1", "quantity": readings[1], "label": "readings:rs@1:1"},
         {"name": "c", "quantity": pair, "premises": ["r0", "r1"],
          "certificate": prove_quantity(env, readings, pair)}]}}
-    python, got, _ = three_ways(raw, both)
+    python, got = relay_and_lean(raw, both)
     assert "incompatible reading choices" in str(python)
     assert "incompatible reading choices" in got["error"]
     # A readings leaf with content other than the chosen reading is not admitted.
     wrong = copy.deepcopy(document)
     wrong["graph"]["nodes"][0]["label"] = "readings:rs@1:0"
-    python, got, _ = three_ways(raw, wrong)
+    python, got = relay_and_lean(raw, wrong)
     assert "not admitted" in str(python) and "not admitted" in got["error"]
 
 
@@ -238,9 +224,6 @@ def test_news_document_is_admitted_by_lean_with_the_python_report():
     assert got["status"] == "ok", got
     assert got["report_id"] == result["admission"]["core_report_id"]
     assert got["report"] == result["admission"]["report"]
-    [other] = rust([{"id": "news", "kind": "quantity", "mode": "document",
-                     "environment": doc["meta"]["environment"], "document": admission}])
-    assert other["status"] == "ok"
     labels = {a.get("label", "asserted") for a in got["report"]["assumptions"]}
     assert "readings:first_target_year@1:all" in labels
     assert {"bridge:accepts(fomc,s6_range)", "bridge:accepts(warsh,s14_goal)"} <= labels

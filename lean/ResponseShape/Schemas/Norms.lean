@@ -1,12 +1,13 @@
 import VE.Service.Protocol
 import ResponseShape
+import ResponseShape.CaseDeciders
 
 /-! The source of `ve/backends/lean_service_schema/norms.json` (`file`; `tools/response_schemas.py` writes it). -/
 namespace ResponseShape.Schemas.Norms
 open Lean ResponseShape
 
 def norms_path : Shape :=
-  decidedBy "Norms.Run.usesNormsPath or Norms.Plain.layered" (fun j => VE.Norms.Run.usesNormsPath j || VE.Norms.Plain.layered (j.getObjValD "environment")) <|
+  decidedCase .normsPath <|
   c
     "Norms.Run.usesNormsPath (a regulated predicate, a norms field, a norms-* kind or a unit with norm content) or Plain.layered (a profile of Plain.statementLayers: reports@0, soft-norms@0, rights@0 or speech-acts@0)."
     [
@@ -95,13 +96,14 @@ def «norms-elaborate» : Shape :=
 def «norms-certificate» : Shape :=
   n [
     obj,
-    .required ["id", "status", "valid", "background", "layers"],
+    .required ["id", "status", "valid", "background", "layers", "steps"],
     closed [
       ("id", n [str, .equals "/id"]),
       ("status", constS "ok"),
       ("valid", .type ["boolean"]),
       ("background", ref "common.json#/$defs/nat"),
-      ("layers", ref "common.json#/$defs/nat")]]
+      ("layers", ref "common.json#/$defs/nat"),
+      ("steps", ref "common.json#/$defs/nat")]]
 
 def «norms-witness» : Shape :=
   c "Norms.Flagged.witnessFrom (norms_flagged_witness_sound): the requested target; the regenerated targets are the service's." [
@@ -131,6 +133,7 @@ def «row» : Shape :=
       ref "common.json#/$defs/case_error",
       ref "common.json#/$defs/error",
       .select [
+        (ref "common.json#/$defs/no_kind", ref "route.json#/$defs/evaluate"),
         (ref "#/$defs/kind/admission", ref "common.json#/$defs/admission"),
         (ref "#/$defs/kind/background", ref "route.json#/$defs/background"),
         (ref "route.json#/$defs/kind/evaluate", ref "route.json#/$defs/evaluate"),
@@ -144,7 +147,7 @@ def «row» : Shape :=
 
 def file : File where
   name := "norms.json"
-  comment := some "Mode norms: Norms.Run.runCaseReported. A case on the norms path (Norms.Run.usesNormsPath) is answered by the norms runner; every other case is delegated unchanged to route."
+  comment := some "Mode norms: Norms.Run.runCaseReported. A case on the norms path (Norms.Run.usesNormsPath) is answered by the norms runner (a case without a kind is an evaluation, Route.Run.caseKind's default, answered through Norms.Plain.run); every other case is delegated unchanged to route."
   top := [("row", «row»)]
   defs := [
     ("norms_path", .schema norms_path),

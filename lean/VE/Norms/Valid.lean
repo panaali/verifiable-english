@@ -1,4 +1,4 @@
-import VE.Norms.Tree
+import VE.Norms.Once
 
 /-! The conditions of the metatheory (`Valid`), derived from the executable
 `WellFormed`, and the prefix-environment facts they give: `envAt D k` declares

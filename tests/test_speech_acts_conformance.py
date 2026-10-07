@@ -19,8 +19,8 @@ from tools import rust_build
 from ve.ast import _to_data
 from ve.environment import Environment
 from ve.errors import VEError
-from ve.speech_acts import SpeechDocument
-from ve.speech_document import SpeechSource, load_speech_document
+from tests.frozen_speech.speech_acts import SpeechDocument
+from tests.frozen_speech.speech_document import SpeechSource, load_speech_document
 from ve.speech_english import parse_speech
 
 from test_speech_acts_lean import F0, MODEL, ROOT, U, command, elaborate, lean, model, polar, run, run1, unit, which
@@ -365,7 +365,7 @@ def test_only_a_signed_version_is_a_choice(lean):
 def test_combine_keeps_pending_commands_dormant(lean):
     # Regression: combine() rebuilt the document without its reading sets or queries and
     # reactivated a pending command.
-    from ve.speech_acts import combine
+    from tests.frozen_speech.speech_acts import combine
     env = F0()
     click = command("require", "click_required", ["check"])
     first = core(env, {"units": [unit("u", 0, "instruction", click)],
@@ -1313,7 +1313,7 @@ def test_surface_normalisation_is_one_ascii_definition_in_both_cores(lean):
     # "Atlas is reviewed?\x0c" was a question in Python and a declarative in Lean.  Both cores now read wordings
     # through one ASCII-only normalisation (3.2).  Differentially over whitespace, case and control characters,
     # each of the three speech-act choices has one outcome in Python and in Lean.
-    from ve.speech_acts import surface_kind, surface_words
+    from tests.frozen_speech.speech_acts import surface_kind, surface_words
     env = F0()
     env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
     E = Environment(env)
@@ -1427,7 +1427,7 @@ def test_every_parsed_speech_act_has_its_surface_kind(lean):
     # surface kind, so no signed choice can contradict the reading the parser gives it.  Over unary, binary and
     # multi-word acts, conditions, definites, and whitespace, case and Unicode variants, every parsed wording's
     # kind is its surface kind, in Python and (through the choice check) in Lean.
-    from ve.speech_acts import surface_kind
+    from tests.frozen_speech.speech_acts import surface_kind
     wordings = ["Click.", "Click, if atlas is reviewed.", "Do not click.", "Click check.", "Do not click check.",
                 "Open the desk.", "Open the writing desk.", "Do not share the token.", "Is atlas reviewed?",
                 "Is it the case that atlas is reviewed?", "Which one of atlas and beacon is reviewed?",

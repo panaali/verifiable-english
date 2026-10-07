@@ -1,0 +1,39 @@
+{
+ "document_sha256": "868f47c6baca8f4db51ff55ae3632c6354c07926b81369ea178ae92a21f21e77",
+ "rounds": [
+  {
+   "base": {
+    "cpu": 100.5,
+    "exit": 0,
+    "stdout_sha256": "27942342f8ee01dff2c8b21c585427dc3b593c40dbacf7962ad9fc4a8c1fb8ef",
+    "wall": 159.9
+   },
+   "head": {
+    "cpu": 119.4,
+    "exit": 0,
+    "stdout_sha256": "27942342f8ee01dff2c8b21c585427dc3b593c40dbacf7962ad9fc4a8c1fb8ef",
+    "wall": 229.2
+   },
+   "identical": true,
+   "load_after": 46.3,
+   "load_before": 37.0
+  },
+  {
+   "base": {
+    "cpu": 94.4,
+    "exit": 0,
+    "stdout_sha256": "27942342f8ee01dff2c8b21c585427dc3b593c40dbacf7962ad9fc4a8c1fb8ef",
+    "wall": 144.1
+   },
+   "head": {
+    "cpu": 108.5,
+    "exit": 0,
+    "stdout_sha256": "27942342f8ee01dff2c8b21c585427dc3b593c40dbacf7962ad9fc4a8c1fb8ef",
+    "wall": 168.0
+   },
+   "identical": true,
+   "load_after": 37.0,
+   "load_before": 46.3
+  }
+ ]
+}

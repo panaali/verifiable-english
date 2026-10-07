@@ -1,12 +1,13 @@
 import VE.Service.Protocol
 import ResponseShape
+import ResponseShape.CaseDeciders
 
 /-! The source of `ve/backends/lean_service_schema/rights.json` (`file`; `tools/response_schemas.py` writes it). -/
 namespace ResponseShape.Schemas.Rights
 open Lean ResponseShape
 
 def rights_path : Shape :=
-  decidedBy "Rights.Run.usesRightsPath" VE.Rights.Run.usesRightsPath <|
+  decidedCase .rightsPath <|
   c
     "Rights.Run.usesRightsPath: the rights@0 profile, the vocabulary's rights block, a rights-* kind, or a rights unit (right, right_lines, limitation or bar) in a document array or in a document's units' content."
     [
@@ -120,11 +121,13 @@ def elaborate : Shape :=
     "Rights.Run.regenerated: E'' (primeJsonR), the generated predicates, the lines, the limitation premises, the bar nodes, the rights Background, the narrowings, the distinction rows and findings, then every SoftNorms.Wire.regeneratedCore field over the correlated document but its environment_prime."
     [
       obj,
-      .required ["id", "status", "environment_prime", "generated", "lines", "limitations", "bars", "rights_background", "narrowings", "distinction", "findings", "decisions", "derived", "order", "background", "premises", "colliding_pairs", "conflict_targets", "conditional_on", "fragment", "warnings"],
+      .required ["id", "status", "environment_prime", "generated", "wordings", "unit_open", "lines", "limitations", "bars", "rights_background", "narrowings", "distinction", "findings", "decisions", "derived", "order", "background", "premises", "colliding_pairs", "conflict_targets", "conditional_on", "fragment", "warnings"],
       closed [
         ("id", ref "common.json#/$defs/id_ok"),
         ("status", constS "ok"),
         ("environment_prime", ref "common.json#/$defs/environment"),
+        ("wordings", ref "common.json#/$defs/string_map"),
+        ("unit_open", n [arr, .items (.type ["boolean"]), .length "/document"]),
         ("generated", n [
           arr,
           .items (.anyOf [

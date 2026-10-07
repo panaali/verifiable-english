@@ -65,7 +65,7 @@ def readIdent (input : List Char) : Option (String × List Char) := do
     some (String.mk name, rest)
 
 def reserved : List String := ["true", "false", "is", "equals", "not", "and", "or",
-  "if", "then", "for", "every", "there", "exists", "believes", "must", "eventually"]
+  "if", "then", "for", "every", "there", "exists", "believes", "must", "eventually", "no"]
 
 /-- Unbudgeted ASCII identifier grammar. Runtime byte limits belong to the bridge. -/
 def identifier (s : String) : Bool :=

@@ -151,12 +151,16 @@ inductive Shape where
   | equals (pointer : String)
   | length (pointer : String)
   | count (pointer : String)
+  /-- Every object's `field` in the response array is a request ID selected by `target`. -/
+  | references (array field target : String)
   | index
   | digest
   | zip (pointer : String) (s : Shape)
+  | zipOrEmpty (pointer : String) (s : Shape)
   | onCase (s : Shape)
   | select (choices : List (Shape × Shape))
   | countWhere (array : String) (where_ : Shape) (equals : String)
+  | presenceCount (value equals : String)
   | rows (s : Shape)
   | row
   | node (comment : Option String) (keywords : List Shape)
@@ -166,6 +170,10 @@ inductive Shape where
   so its fields are the request's, not an encoder's; the encoder theorems
   (`ResponseShape.Encoders`) leave it to the client's validation (`ResponseShape.Skeleton`). -/
   | copied (why : String) (s : Shape)
+  /-- The environment is assembled from a decoded source and generated predicate entries.
+  The response checker uses `s`; the producer skeleton extracts the predicate-entry shape
+  and ties the field to the corresponding prime-environment encoder. -/
+  | encodedEnvironment (s : Shape)
   deriving Inhabited
 
 /-- An entry of a file's `$defs`: a schema, or a group of named schemas (`kind/admission`). -/
@@ -199,6 +207,7 @@ def constS (v : String) : Shape := .const (.str v)
 def decidedBy (name : String) (f : Json → Bool) (s : Shape) : Shape := .lean name s f
 /-- `s`, a value copied from the request (`Shape.copied`). -/
 def copied (why : String) (s : Shape) : Shape := .copied why s
+def encodedEnvironment (s : Shape) : Shape := .encodedEnvironment s
 
 /-- A request case whose `kind` is `k`. -/
 def kindIs (k : String) : Shape := n [obj, .required ["kind"], props [("kind", constS k)]]
@@ -262,19 +271,25 @@ def render (file : String) : Nat → Shape → Except String Json
     | .equals p => pure (Json.mkObj [("x-equals", .str p)])
     | .length p => pure (Json.mkObj [("x-length", .str p)])
     | .count p => pure (Json.mkObj [("x-count", .str p)])
+    | .references a f p => pure (Json.mkObj [("x-references", Json.mkObj [
+        ("array", .str a), ("field", .str f), ("in", .str p)])])
     | .index => pure (Json.mkObj [("x-index", .bool true)])
     | .digest => pure (Json.mkObj [("x-digest", .bool true)])
     | .zip p x => pure (Json.mkObj [("x-zip", Json.mkObj [("of", .str p), ("items", ← go x)])])
+    | .zipOrEmpty p x => pure (Json.mkObj [("x-zip-or-empty", Json.mkObj [("of", .str p), ("items", ← go x)])])
     | .onCase x => pure (Json.mkObj [("x-case", ← go x)])
     | .select cs => do
       let entries ← cs.mapM fun (w, t) => do pure (Json.mkObj [("when", ← go w), ("then", ← go t)])
       pure (Json.mkObj [("x-select", .arr entries.toArray)])
     | .countWhere a w e =>
       pure (Json.mkObj [("x-count-where", Json.mkObj [("array", .str a), ("where", ← go w), ("equals", .str e)])])
+    | .presenceCount v e =>
+      pure (Json.mkObj [("x-count-presence", Json.mkObj [("value", .str v), ("equals", .str e)])])
     | .rows x => pure (Json.mkObj [("x-rows", ← go x)])
     | .row => pure (Json.mkObj [("x-row", .bool true)])
     | .lean _ x _ => go x
     | .copied _ x => go x
+    | .encodedEnvironment x => go x
     | .node comment keywords => do
       let mut out : List (String × Json) := comment.toList.map fun c => ("$comment", Json.str c)
       for k in keywords do
@@ -411,6 +426,7 @@ def qualify (file : String) : Nat → Shape → Shape
     | .ite a b e => .ite (q a) (q b) (q e)
     | .tagged table => .tagged (table.map fun (t, slots) => (t, slots.map q))
     | .zip p x => .zip p (q x)
+    | .zipOrEmpty p x => .zipOrEmpty p (q x)
     | .onCase x => .onCase (q x)
     | .select cs => .select (cs.map fun (w, t) => (q w, q t))
     | .countWhere a w e => .countWhere a (q w) e
@@ -418,6 +434,7 @@ def qualify (file : String) : Nat → Shape → Shape
     | .node comment keywords => .node comment (keywords.map q)
     | .lean name x f => .lean name (q x) f
     | .copied why x => .copied why (q x)
+    | .encodedEnvironment x => .encodedEnvironment (q x)
     | other => other
 
 def File.qualified (f : File) : File :=
@@ -545,6 +562,13 @@ def check (files : List File) : Nat → Shape → Ctx → Counters → Json → 
       | some (.arr ys), .num x => if kind value == "integer" && numEq x ⟨(ys.size : Int), 0⟩ then pure ()
           else fail s!"is not the number of the request's {p}"
       | _, _ => fail s!"is not the number of the request's {p}"
+    | .references a f p => match resolve value a, resolve ctx.value p with
+      | some (.arr xs), some (.arr ys) =>
+        if xs.all (fun x => match x.getObjVal? f with
+          | .ok v => kind v == "string" && ys.any (sameJson v)
+          | .error _ => false) then pure ()
+        else fail s!"{a} contains an unbound {f} outside the request's {p}"
+      | _, _ => fail s!"{a} contains an unbound {f} outside the request's {p}"
     | .index => match value, ctx.index with
       | .num x, some i => if kind value == "integer" && numEq x ⟨(i : Int), 0⟩ then pure () else fail "is not the result's position"
       | _, _ => fail "is not the result's position"
@@ -552,6 +576,13 @@ def check (files : List File) : Nat → Shape → Ctx → Counters → Json → 
       | .str x, some (.str d) => if x == d then pure () else fail "is not the digest of the result's case"
       | _, _ => fail "is not the digest of the result's case"
     | .zip p x => match resolve ctx.value p, value with
+      | some (.arr contexts), .arr xs =>
+        if xs.size != contexts.size then fail s!"not one element per element of the request's {p}" else do
+          for ((v, cx), i) in (xs.toList.zip contexts.toList).zipIdx do
+            within s!"[{i}]" (go x { value := cx, index := some i } counters v)
+      | _, _ => fail s!"not one element per element of the request's {p}"
+    | .zipOrEmpty p x => match resolve ctx.value p, value with
+      | none, .arr xs => if xs.isEmpty then pure () else fail s!"not one element per element of the request's {p}"
       | some (.arr contexts), .arr xs =>
         if xs.size != contexts.size then fail s!"not one element per element of the request's {p}" else do
           for ((v, cx), i) in (xs.toList.zip contexts.toList).zipIdx do
@@ -569,6 +600,12 @@ def check (files : List File) : Nat → Shape → Ctx → Counters → Json → 
           if ← ok? w ctx counters v then k := k + 1
         if kind (.num x) == "integer" && numEq x ⟨(k : Int), 0⟩ then pure () else fail s!"{e} does not count {a}"
       | _, _ => fail s!"{e} does not count {a}"
+    | .presenceCount v e => match resolve value v, resolve value e with
+      | some item, some (.num n) =>
+        let expected : Int := if item == .null then 0 else 1
+        if kind (.num n) == "integer" && numEq n ⟨expected, 0⟩ then pure ()
+        else fail s!"{e} does not count the presence of {v}"
+      | _, _ => fail s!"{e} does not count the presence of {v}"
     | .rows x => match resolve ctx.value "/cases", resolve ctx.value "/digests", value with
       | some (.arr cases), some (.arr digests), .arr results =>
         if results.size != cases.size || digests.size != cases.size then fail "one result per case" else do
@@ -581,6 +618,7 @@ def check (files : List File) : Nat → Shape → Ctx → Counters → Json → 
       | some x => go x { value := ctx.value, index := ctx.index } [] value
       | none => throw (.broken "x-row outside x-rows")
     | .copied _ x => go x ctx counters value
+    | .encodedEnvironment x => go x ctx counters value
     | .lean name x decide => do
       if ctx.inside.contains name then return ← go x ctx counters value
       let ctx := { ctx with inside := name :: ctx.inside }

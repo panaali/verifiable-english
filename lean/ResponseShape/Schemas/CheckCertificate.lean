@@ -7,8 +7,9 @@ open Lean ResponseShape
 def certificate : Shape :=
   n [
     obj,
-    .required ["id", "status", "valid"],
-    closed [("id", n [str, .equals "/id"]), ("status", constS "ok"), ("valid", .type ["boolean"])]]
+    .required ["id", "status", "valid", "steps"],
+    closed [("id", n [str, .equals "/id"]), ("status", constS "ok"),
+      ("valid", .type ["boolean"]), ("steps", ref "common.json#/$defs/nat")]]
 
 def «row» : Shape :=
   .anyOf [

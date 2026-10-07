@@ -396,7 +396,8 @@ def _load_document(raw: bytes, path: str | Path, lean):
         from .rights import RightsDocument
         # Citations name source units (3.2): the rights source carries every unit id.
         ids = [u.get("id") for u, _ in _parts(units) if type(u) is dict and type(u.get("id")) is str]
-        rights_document = RightsDocument(env, _rights_units(units, attached))
+        rights_document = RightsDocument(env, _rights_units(units, attached),
+                                         open_predicates=open_names)
         soft_document = rights_document.soft_document
         formula_env = soft_document.extended_env
         open_names = (set(open_names) | formula_env.decision_names |
@@ -543,43 +544,14 @@ def _load_document(raw: bytes, path: str | Path, lean):
                                   for c in reading_set["readings"]) else "OPEN")
     if rights_document is not None:
         rights = rights_document
-        from .search import _used_predicates
-
-        # Correlation keeps the incident order and appends outside rules after
-        # them. Inspect the resulting guards and carve-outs, not source lines.
-        correlated = {id(instance): rule for instance, rule in
-                      zip(rights.instances, rights.soft_document.rules)}
-
-        def open_rule(rule):
-            return (rule.mode == "default" or bool(rule.alterable) or
-                    bool(_used_predicates(rule.core.guard) & open_names) or
-                    any(_used_predicates(f) & open_names for f in rule.core.unless))
-
+        statuses = rights.elaborated["unit_open"]
+        source_ids = [u["id"] for u, _ in _parts(units)
+                      if type(u.get("content")) is dict and u.get("id") not in attached and
+                      u.get("kind") in ("right", "right_lines", "limitation", "bar", "norm")]
+        source_status = dict(zip(source_ids, statuses[1:], strict=True))
         for unit in compiled:
-            if unit["status"] != "CHECKED" or unit["kind"] not in (
-                    "right", "right_lines", "limitation", "bar", "norm"):
-                continue
-            content = unit["content"]
-            if type(content) is not dict:
-                continue
-            # The content's block, not the unit kind, is what was correlated.
-            kind = _rights_block(content) or "norm"
-            if kind in ("limitation", "bar"):
+            if unit["status"] == "CHECKED" and source_status.get(unit["id"], False):
                 unit["status"] = "OPEN"
-            elif kind == "norm":
-                from .softnorms import decode_rule
-                if open_rule(decode_rule(rights.environment, {"norm": content["norm"]})):
-                    unit["status"] = "OPEN"
-            else:
-                body = content[kind]
-                name = body["name"] if kind == "right" else body["right"]
-                active_lines = [i for i in rights.instances if i["right"] == name and
-                                any(i["source_line"] is line for line in body["lines"])]
-                if any(open_rule(correlated[id(i)]) or
-                       any(rights._in_scope(limit, i) for limit in rights.limitations) or
-                       (rights.bar is not None and i["kind"] in ("liberty", "powerLiberty"))
-                       for i in active_lines):
-                    unit["status"] = "OPEN"
     if meta["format"] == "ve-document@1":
         for unit in compiled:
             if unit.pop("explicit_status") not in (None, unit["status"]):
@@ -804,10 +776,12 @@ def coverage(doc, scoped=None, rights_report=None):
             reason = u["meaning"]["unformalised"]
             reasons[reason] = reasons.get(reason, 0) + 1
         if doc.get("reports") is not None:
-            # 6: a nested unformalised kind is a part of the unit left unformalised
-            # (the root one needs an unformalised meaning, counted above).
-            from .reports import unformalised_kinds
-            for node in unformalised_kinds(u["kind"]):
+            # Lean supplies every nested status and its reason.
+            nested = next(row["nested"] for row in doc["reports"].statuses()["units"]
+                          if row["id"] == u["id"])
+            for node in nested:
+                if node["item"] != "unformalised":
+                    continue
                 if node["path"]:
                     reasons[node["reason"]] = reasons.get(node["reason"], 0) + 1
     meta = doc["meta"]
@@ -826,71 +800,25 @@ def coverage(doc, scoped=None, rights_report=None):
         # does, and every report or assessment premise is an identified assumption
         # whatever its support, so each line counts into the total.
         residual["bridges_nested"] = sum(label.startswith("bridge:accepts_at(") for label in labels)
-        lines = doc["reports"].residual_lines(scoped)
+        lines = doc["reports"].residual_lines()
         residual.update({line: sum(detail.values()) if type(detail) is dict else len(detail)
                          for line, detail in lines.items()})
     alternatives = None
     soft = doc.get("soft_document")
     environment = doc.get("environment") or (soft.env if soft is not None else None)
     if environment is not None and environment.alternatives is not None:
-        from .wire import loads_json
-        block = loads_json(environment.alternatives)
-        declared, cells, proximate = [], [], []
-        for unit in units:
-            if unit["kind"] != "asserted":
-                continue
-            content = unit["content"]
-            # Compiled formula content is the AST itself; norm content is a dict.
-            ast = content
-            if type(ast) is not list:
-                continue
-            negative = len(ast) == 2 and ast[0] == "not"
-            atom = ast[1] if negative else ast
-            if type(atom) is not list or len(atom) != 4 or atom[0] != "binary":
-                continue
-            if any(type(term) is not list or len(term) != 2 or term[0] != "const"
-                   for term in atom[2:]):
-                continue
-            first, second = atom[2][1], atom[3][1]
-            leaf = {"unit": unit["id"], "support": unit["support"]}
-            if atom[1] == block["available"] and not negative:
-                declared.append({"action": first, "chooser": second, **leaf})
-            elif atom[1] == block["leads_to"]:
-                cells.append({"action": first, "harm": second, "leads_to": not negative,
-                              "decider": block.get("decided_by", "unstated"), **leaf})
-            elif atom[1] == block.get("proximate") and not negative:
-                proximate.append({"action": first, "harm": second,
-                                  "decider": block.get("decided_by", "unstated"), **leaf})
-        mapped = {item["obligation"] for item in block.get("fulfilments", [])}
-        performed = block.get("performed", {}).get("obligation")
-        unmapped = [name for name, predicate in environment.predicates.items()
-                    if predicate.regulated is not None and predicate.regulated.role == "obligation"
-                    and name != performed and name not in mapped]
-        completion = ({"decider": block["outcomes"]["complete_by"],
-                       "premise": "alternatives:table_complete"}
-                      if type(block["outcomes"]) is dict else None)
-        # Enumerate the named cells for which the general completion premise
-        # supplies a negative answer, excluding every explicitly stated cell.
-        actions = {name for name, const in environment.constants.items()
-                   if const.sort == block["action"]}
-        actions.update(item["action"] for item in declared)
-        harms = {name for name, const in environment.constants.items()
-                 if const.sort == block["harm"]}
-        harms.update(item["harm"] for item in cells)
-        stated = {(item["action"], item["harm"]) for item in cells}
-        assumed = ([{"action": action, "harm": harm, **completion}
-                    for action in sorted(actions) for harm in sorted(harms)
-                    if (action, harm) not in stated] if completion else [])
-        alternatives = {"alternatives_declared": declared, "counterfactual_leaves": cells,
-                        "assumed_harm_free": assumed, "table_complete": completion,
-                        "proximate_judgments": proximate, "unmapped_obligations": unmapped,
-                        "dilemmas": [], "narrowings": meta.get("narrowings", [])}
-        residual.update({"alternatives_declared": len(declared), "counterfactual_leaves": len(cells),
-                         "assumed_harm_free": len(assumed),
-                         "table_complete": int(completion is not None),
-                         "proximate_judgments": len(proximate),
-                         "unmapped_obligations": len(unmapped), "dilemmas": 0,
-                         "narrowings": len(alternatives["narrowings"])})
+        from .backends.relay import decide
+        risk = environment.risk is not None
+        case = {"id": "coverage", "kind": "risk-elaborate" if risk else "alt-elaborate",
+                "environment": environment.to_dict(), "coverage_units": units,
+                "narrowings": meta.get("narrowings", [])}
+        if risk:
+            case["document"] = {"norms": [], "units": []}
+        else:
+            case["norms"] = []
+        row = decide("risk" if risk else "alternatives", [case])[0]
+        alternatives = row["coverage"]["alternatives"]
+        residual.update(row["coverage"]["residual"])
     soft = doc.get("soft_document")
     if soft is not None:
         from .soft_route import elaborate_soft_document
@@ -1079,7 +1007,7 @@ def _report(doc):
     joint_pending = joint is not None and joint["status"] == "UNKNOWN"
     soft = doc["soft_document"]
     if doc["reports"] is not None:
-        from .reports_route import checked_elaboration, run_case
+        from .reports_route import run_case
         meta = doc["meta"]
         route_doc = {"units": [_wire_unit(u) for u in doc["units"]],
                      "contexts": meta.get("contexts", []), "assessments": meta.get("assessments", []),
@@ -1088,13 +1016,9 @@ def _report(doc):
                      **({"graph": meta["graph"]} if "graph" in meta else {})}
         environment = meta["environment"]
         reports = doc["reports"]
-        checked = checked_elaboration(reports, environment, route_doc)
-        # 6: the scoped checks' replayed verdicts, and every unit's and the
-        # document's status as the meet of all nested results, in Python and Lean.
-        replayed = run_case("reports-status", environment, route_doc)
-        statuses = reports.statuses(reports.scoped_verdicts(replayed["scoped"]))
-        if any(replayed.get(key) != statuses[key] for key in ("units", "document_status")):
-            raise VEError("ReportsConformance: Python and Lean differ at statuses")
+        reports.replay()
+        checked = reports.route_answer()
+        statuses = reports.statuses()
         result = {"format": doc["meta"]["format"], "status": "UNVERIFIED",
                   "source_id": doc["source_id"], "document_id": doc["document_id"],
                   "coverage": coverage(doc, statuses["scoped"]), "reports": checked,

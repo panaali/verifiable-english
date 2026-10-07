@@ -240,13 +240,17 @@
           "type": "array"
         },
         "status": {"const": "ok"},
-        "warnings": {"$ref": "common.json#/$defs/nonempty_strings"}
+        "unit_open": {"items": {"type": "boolean"}, "type": "array", "x-length": "/document"},
+        "warnings": {"$ref": "common.json#/$defs/nonempty_strings"},
+        "wordings": {"$ref": "common.json#/$defs/string_map"}
       },
       "required": [
         "id",
         "status",
         "environment_prime",
         "generated",
+        "wordings",
+        "unit_open",
         "lines",
         "limitations",
         "bars",

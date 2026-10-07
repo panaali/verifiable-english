@@ -9,6 +9,8 @@ import VE.EnglishGrammar.EngineExamples
 import VE.EnglishGrammar.LexiconFixtures
 import VE.EnglishGrammar.Fixed.Version
 import VE.EnglishGrammar.ReadExamples
+import VE.EnglishGrammar.ProfileExamples
+import VE.Senses.Examples
 import VE.Compose.Slot
 import VE.Compose.Dispatch
 import VE.Compose.Content
@@ -16,6 +18,8 @@ import VE.Compose.Adjoin
 import VE.Compose.Examples
 import VE.Readings.Doc
 import VE.SoftNorms.Once
+import VE.Norms.Once
+import VE.Norms.LayersOnce
 import VE.Readings.Separate
 import VE.Readings.Lines
 import VE.Readings.Wire

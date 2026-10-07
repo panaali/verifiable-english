@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import copy
 import json
+import re
 import shutil
 import subprocess
 
@@ -24,8 +25,8 @@ from ve.entailment import prove_entailment
 from ve.environment import Environment
 from ve.errors import VEError
 from ve.identity import meaning_id
-from ve.speech_acts import SpeechDocument
-from ve.speech_document import SpeechSource
+from tests.frozen_speech.speech_acts import SpeechDocument
+from tests.frozen_speech.speech_document import SpeechSource
 
 NON_ASCII = "InvalidInput: non-ASCII speech wording"
 
@@ -244,7 +245,8 @@ def test_template_reports_cover_every_class_and_record(lean):
     assert [a["line"] for a in certified["answers"]] == [
         "supported yes (certificate; premises: UNKNOWN (no premise-status evidence); vacuous: unknown)",
         "follows (certificate; premises: UNKNOWN (no premise-status evidence); vacuous: unknown)"]
-    assert certified["compliance"] == [{"command": "t", "query": "q1", "line":
+    assert certified["compliance"] == [{"command": "t", "query": "q1", "status": "certificate",
+        "premises": {"status": "UNKNOWN"}, "vacuous": "unknown", "line":
         "certificate: query q1 (premises: UNKNOWN (no premise-status evidence); vacuous: unknown)"}]
     assert certified["status_text"][2:] == [
         "questions: 2 answered (2 by certificate, 0 in a model), 0 presupposition failures, 0 unknown, 0 unanswered",
@@ -530,10 +532,12 @@ def test_premise_status_evidence_comes_from_the_case(lean):
     result = run_source(metadata, source, premise_status={"answers": {"0": status, "1": status},
                                                           "compliance": {"0": status}})
     assert result["status"] == "ok", result
+    model_ids = [a["premises"]["model_id"] for a in result["answers"]]
+    assert len(set(model_ids)) == 1 and re.fullmatch(r"[0-9a-f]{64}", model_ids[0])
     assert [a["line"] for a in result["answers"]] == [
-        "supported yes (certificate; premises: model m; vacuous: no)",
-        "follows (certificate; premises: model m; vacuous: no)"]
-    assert result["compliance"][0]["line"] == "certificate: query q1 (premises: model m; vacuous: no)"
+        f"supported yes (certificate; premises: model {model_ids[0]}; vacuous: no)",
+        f"follows (certificate; premises: model {model_ids[0]}; vacuous: no)"]
+    assert result["compliance"][0]["line"] == f"certificate: query q1 (premises: model {model_ids[0]}; vacuous: no)"
     # Evidence that is no model of the checked list is rejected, never read as UNKNOWN.
     bad = {"model": model()}
     assert run_source(metadata, source, premise_status={"answers": {"0": bad}})["error"].startswith("InvalidModel")
