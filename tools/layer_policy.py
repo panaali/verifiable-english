@@ -22,7 +22,7 @@ PYTHON = {
         "norm_english parser printer surface lexicon report_english speech_english readings_english "
         "readings_s2_english senses").split(),
     4: ("__main__ adapters admission argument attacks authoring backends bundle check "
-        "document equivalence norm_admission norm_defaults norm_defaults_contract norm_defaults_english norm_defaults_legacy norm_defaults_english_legacy norm_defaults_route norm_strict "
+        "document equivalence norm_admission norm_defaults norm_defaults_contract norm_defaults_english norm_defaults_route norm_strict "
         "openterms propose readings search stream_audit vacuity assist discourse "
         "reports reports_route risk rights_route soft_route speech_document readings_route readings_s1 "
         "readings_sup readings_verdicts readings_s2_wording").split(),

@@ -162,6 +162,34 @@ conflict theorems, `decodeSourceU_plain` and `decode_conservative`). `lean/state
 Fix 4 adds 5 theorems and changes none: `kept_sound`, `settled_every_filling`, `underOf_sufficient`,
 `selectedRules_sound` and `value3_gap` (`VE.NormDefaults.Wire`, `lean/VE/NormDefaults/Explain.lean`).
 
+## Merge with `main` (`198d7bc6`)
+
+The merge kept `main`'s whole `ve/norm_defaults.py` as `ve/norm_defaults_legacy.py` (1,079 lines, byte for byte)
+and `main`'s `ve/norm_defaults_english.py` as `ve/norm_defaults_english_legacy.py` (380 lines; only two imports
+renamed), so that `ve.norm_defaults` could re-export `UnspecifiedSoftDocument` and `UnspecifiedRightsDocument`.
+Both files were copies, not moves:
+
+- The base logic they carry (fill, `table3`, statuses, conflict, report, audit, the English renderers) is what this
+  batch deleted for the Lean route, and the pinned oracle `conformance/frozen_norm_defaults.py` (`9160d326`) holds
+  the same Python. Against `main`'s file the oracle differs only in using three shared constants
+  (`NORM_DEFAULTS_PROFILE`, `UNSAID_PREFIX`, `FILL_PREFIX`) and in where `_placeholder` is defined.
+- Nothing imported the soft and rights classes from `ve.norm_defaults`, on `main` or after the merge. The tests and
+  conformance modules that build them (`tests/test_norm_defaults.py`, `conformance/norm_defaults.py`,
+  `conformance/norm_defaults_layered.py`) take them from the frozen oracle. `ve/document.py` refuses
+  `norm-defaults@0` beside `soft-norms@0` on both branches.
+
+Both copies and the re-export are deleted, and so are their layer-policy entries. `tools/inventory_lint.py` passes
+with no new entry. `conformance/softnorms_legacy.py` is `main`'s own test oracle at its path on `main`, unchanged.
+
+**Follow-up (AGENT, batch 16a):** soft and rights norm defaults still have a Python implementation. It is the
+frozen oracle's `UnspecifiedSoftDocument` and `UnspecifiedRightsDocument`, used only by tests. Lean has the
+elaboration, conflict, status and report kinds for these branches (`VE/NormDefaults/Layered.lean`, batch 10a), but
+not the `admission`, `-gaps` or `-certificate` kinds (10a's "Not done"), so documents on these branches are still
+refused. Batch 13b switches only operations that Lean already covers, and 14a to 14d are the four stage-2c gaps, so
+neither lists this work. Batch 16a's Lean `document` mode routes a document's profiles; it should admit these
+documents through `Layered.lean`. After that, the oracle's soft and rights classes and their differential tests
+can go.
+
 ## Acceptance items
 
 | Item | Owner | Status |
