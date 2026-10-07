@@ -1,11 +1,11 @@
 """Python entry points for the Lean norm-defaults route (service mode `norm-defaults`)
 (docs/spec/norm-defaults.md 3, 6 and 8).
 
-Python builds `fill U`, `Fill_T` and the evidence; Lean regenerates `fill U`
-from the same source and replays every piece of evidence. `check_regenerated`
-compares Lean's `norm-defaults-elaborate` row with Python's regeneration byte
-for byte, and `admit_norm_defaults_document` is W1's admission on `fill U`
-(Lean `Admission.admitDocument`).
+Lean owns `fill U`, `Fill_T` and their identities (`elaborate`, the
+`norm-defaults-elaborate` row) and replays every piece of evidence;
+`admit_norm_defaults_document` relays W1's admission on `fill U` (Lean
+`Admission.admitDocument`). `prove_filled_entailment` is an untrusted generator
+whose certificate Lean replays.
 """
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ from .backends.relay import decide, rows
 from .ast import formula_to_data
 from .background import background
 from .environment import Environment
-from .errors import VEError
+from .errors import CheckerUnavailable
 from .wire import digest
 
 def run_cases(cases):
@@ -70,7 +70,8 @@ def prove_filled_entailment(document, premises, conclusion, **kwargs):
     regenerated = [f for _, f in document.fill_premises] + [f for _, f in document.filled.premises()]
     proof = prove_entailment(document.filled.env, (*regenerated, *premises), conclusion, **kwargs)
     if proof.status != "Found":
-        raise VEError(f"no certificate: {proof.status}")
+        # An exhausted generator yields no verdict (plan rule 3).
+        raise CheckerUnavailable(f"CheckerUnavailable: no certificate: {proof.status}")
     return {**proof.certificate, **_source_binding(document, premises, conclusion)}
 
 

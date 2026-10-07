@@ -29,9 +29,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 # The modules whose diagnostics are Lean's (batch 0: the relay itself; batch 3: the readings route;
-# batch 4: discourse).
+# batch 4: discourse; batch 7: rights; batch 10b: norm defaults).
 RELAYED = ("ve/backends/relay.py", "ve/readings_route.py", "ve/discourse.py",
-           "ve/rights_route.py")
+           "ve/rights_route.py", "ve/norm_defaults.py", "ve/norm_defaults_route.py")
 FILE_IO = "# relay-lint: file I/O"
 
 
