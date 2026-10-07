@@ -9,6 +9,7 @@ import pytest
 from conformance.order import environment as order_environment
 from test_lean_service import service_executable  # noqa: F401
 from ve import Environment
+from ve.environment import RESERVED
 from ve.ast import document_to_data
 from ve.backends.relay import rows
 from ve.entailment import check_entailment_certificate, prove_entailment
@@ -58,6 +59,34 @@ def test_parse_lexical_edges_share_first_fault_and_span(service_executable):
             error.code + ": " + error.message
         assert row["status"] == "error" and row["error"] == expected
         assert row["span"] == error.to_dict()["span"]
+
+
+@pytest.mark.parametrize("word", sorted(RESERVED))
+@pytest.mark.parametrize("context", ["term", "binder"])
+def test_reserved_word_rejections_match_python(service_executable, word, context):
+    environment = order_environment()
+    source = (f"for every item x, ({word} equals x).\n" if context == "term"
+              else f"for every item {word}, (true).\n")
+    row = rows("parse", [_case(environment.to_dict(), source)],
+               executable=service_executable)[0]
+    with pytest.raises(VEError) as raised:
+        _parse_python(environment, source)
+    error = raised.value
+    assert row["status"] == "error"
+    assert row["error"] == f"{error.code}: {error.message}"
+    assert row["span"] == error.to_dict()["span"]
+
+
+def test_reserved_word_followed_by_punctuation_keeps_first_fault(service_executable):
+    environment = order_environment()
+    source = "for every item no@, (true).\n"
+    row = rows("parse", [_case(environment.to_dict(), source)],
+               executable=service_executable)[0]
+    with pytest.raises(VEError) as raised:
+        _parse_python(environment, source)
+    error = raised.value
+    assert row["error"] == f"{error.code}: {error.message}"
+    assert row["span"] == error.to_dict()["span"]
 
 
 def test_public_lean_parse_uses_lean_rejection(monkeypatch, service_executable):
