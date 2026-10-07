@@ -14,6 +14,10 @@ universe u
 
 theorem valid_field (id : String) (b : Bool) (n m : Json) :
     (VE.Route.Wire.ok id [("valid", .bool b), ("background", n), ("layers", m)]).getObjValD "valid" =
+      .bool b := rfl
+
+theorem valid_field_steps (id : String) (b : Bool) (n m s : Json) :
+    (VE.Route.Wire.ok id [("valid", .bool b), ("background", n), ("layers", m), ("steps", s)]).getObjValD "valid" =
       .bool b :=
   rfl
 
@@ -31,8 +35,10 @@ theorem runCase_certificate (j answer : Json) (h : Run.runCase j = .ok answer)
     show ("norms-certificate" == "norms-elaborate") = false from rfl,
     beq_self_eq_true, Bool.false_and, Bool.false_eq_true, ↓reduceIte, pure_bind] at h
   obtain ⟨r, hr, h⟩ := bind_ok h
+  split at h
+  · cases h
   cases h
-  exact ⟨r, hr, valid_field _ _ _ _⟩
+  exact ⟨r, hr, valid_field_steps _ _ _ _ _⟩
 
 /-- At the public entry, a `norms-certificate` answer whose `valid` field is
 `true` means, for the document decoded from the case's environment and norms,

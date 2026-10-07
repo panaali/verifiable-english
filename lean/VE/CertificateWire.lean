@@ -8,6 +8,38 @@ are tested boundary code, not additional premises of tableau soundness. -/
 namespace VE.CertificateWire
 open Lean
 
+/-- The replay charge is one step per trace node. The wire adapters share
+this limit and these counters rather than recounting their own certificates. -/
+def maxSteps : Nat := 10000
+
+def stepLimit : String := "ResourceLimit: certificate replay exceeds 10,000 steps"
+
+def caseCap : Nat := 1000000
+
+def limit (j : Json) : Nat :=
+  match j.getObjVal? "max_steps" >>= (·.getNat?) with
+  | .ok n => min n caseCap
+  | .error _ => maxSteps
+
+mutual
+def folSteps : VE.Tableau.Trace → Nat
+  | .close => 1
+  | .expand _ _ cs => 1 + folStepsList cs
+def folStepsList : List VE.Tableau.Trace → Nat
+  | [] => 0
+  | c :: cs => folSteps c + folStepsList cs
+end
+
+mutual
+def closureSteps : VE.Closure.Tableau.Trace → Nat
+  | .close => 1
+  | .expand _ _ _ cs => 1 + closureStepsList cs
+  | .induct _ _ _ cs => 1 + closureStepsList cs
+def closureStepsList : List VE.Closure.Tableau.Trace → Nat
+  | [] => 0
+  | c :: cs => closureSteps c + closureStepsList cs
+end
+
 private def roundConstants : Array UInt32 := #[
   0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
   0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
@@ -100,6 +132,14 @@ def canonical : Nat → Json → Except String String
 def digest (domain : String) (j : Json) : Except String String := do
   pure (sha256 (domain ++ (← canonical 257 j)).toUTF8)
 
+/-- The certificate envelope has one diagnostic and one field order across
+the FOL, closure, core and order wire decoders. -/
+def certificateFields (j : Json) : Except String Unit :=
+  match Bridge.exactFields j ["checker_version", "environment_id", "premise_meaning_ids",
+      "conclusion_meaning_id", "trace"] with
+  | .ok _ => pure ()
+  | .error _ => throw "certificate fields do not match the wire schema"
+
 def decodeTrace : Nat → Json → Except String Tableau.Trace
   | 0, _ => throw "ResourceLimit: certificate expansion depth exceeds 124"
   | fuel + 1, j => do
@@ -118,8 +158,7 @@ def decodeTrace : Nat → Json → Except String Tableau.Trace
     else throw "unknown tableau rule"
 
 def decodeCertificate (j : Json) : Except String Tableau.Certificate := do
-  Bridge.exactFields j ["checker_version", "environment_id", "premise_meaning_ids",
-    "conclusion_meaning_id", "trace"]
+  certificateFields j
   pure ⟨← Bridge.stringField j "checker_version", ← Bridge.stringField j "environment_id",
     ← Bridge.strings (← j.getObjVal? "premise_meaning_ids"),
     ← Bridge.stringField j "conclusion_meaning_id", ← decodeTrace 125 (← j.getObjVal? "trace")⟩
@@ -152,8 +191,7 @@ def decodeClosureTrace : Nat → Json → Except String Closure.Tableau.Trace
     else throw "unknown tableau rule"
 
 def decodeClosureCertificate (j : Json) : Except String Closure.Tableau.Certificate := do
-  Bridge.exactFields j ["checker_version", "environment_id", "premise_meaning_ids",
-    "conclusion_meaning_id", "trace"]
+  certificateFields j
   pure ⟨← Bridge.stringField j "checker_version", ← Bridge.stringField j "environment_id",
     ← Bridge.strings (← j.getObjVal? "premise_meaning_ids"),
     ← Bridge.stringField j "conclusion_meaning_id", ← decodeClosureTrace 125 (← j.getObjVal? "trace")⟩
@@ -215,8 +253,11 @@ def runClosureCase (j : Json) : Except String Json := do
   unless certificate.environment_id == environmentId && certificate.premise_meaning_ids == premises &&
       certificate.conclusion_meaning_id == conclusion do
     throw "certificate is stale or bound to different inputs"
+  let steps := closureSteps certificate.trace
+  if steps > limit j then throw stepLimit
   let q : ClosureQuery v.environment := ⟨ps,c,certificate⟩
-  pure (Json.mkObj [("id", .str id), ("status", .str "ok"), ("valid", .bool q.accepts)])
+  pure (Json.mkObj [("id", .str id), ("status", .str "ok"), ("valid", .bool q.accepts),
+    ("steps", toJson steps)])
 
 def runCase (j : Json) : Except String Json := do
   let id ← Bridge.stringField j "id"
@@ -225,7 +266,10 @@ def runCase (j : Json) : Except String Json := do
     return ← runClosureCase j
   let v ← Bridge.decodeEnvironment environment
   let q ← decodeQuery environment v j
-  pure (Json.mkObj [("id", .str id), ("status", .str "ok"), ("valid", .bool q.accepts)])
+  let steps := folSteps q.certificate.trace
+  if steps > limit j then throw stepLimit
+  pure (Json.mkObj [("id", .str id), ("status", .str "ok"), ("valid", .bool q.accepts),
+    ("steps", toJson steps)])
 
 def runCaseReported (j : Json) : Json :=
   match runCase j with

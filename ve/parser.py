@@ -7,7 +7,7 @@ from typing import Any
 
 from .assurance import semantic_entry
 from . import ast
-from .errors import (ResourceLimit, ShadowedVariable, Span, SyntaxError, VEError,
+from .errors import (CheckerUnavailable, ResourceLimit, ShadowedVariable, Span, SyntaxError, VEError,
                      UnboundVariable, UnknownSymbol)
 from .limits import MAX_DEPTH, MAX_IDENTIFIER_BYTES, MAX_NODES, MAX_SOURCE_BYTES
 
@@ -386,7 +386,6 @@ def parse_with_metadata(env: Any, source: str | bytes) -> ParseResult:
 
 def _parse_lean(env: Any, source: str | bytes, python) -> ParseResult:
     from .backends.relay import decide
-    from .backends.validation import decided, key
     if "definitions@0" in env.profiles:
         # The definitions@0 surface sugar (`no`, `every ... that is`, `iff`,
         # `define`) is in no Lean surface parser: a source the Python reader
@@ -400,9 +399,8 @@ def _parse_lean(env: Any, source: str | bytes, python) -> ParseResult:
             return result
     try:
         text = source if isinstance(source, str) else source.decode("ascii")
-        cache = key("parse", env.environment_id, text)
-    except (UnicodeError, VEError, TypeError, ValueError, AttributeError):
-        text, cache = None, None
+    except (UnicodeError, TypeError, AttributeError):
+        return python()
 
     def same(result: ParseResult, row: dict) -> bool:
         from .printer import print_document
@@ -410,9 +408,15 @@ def _parse_lean(env: Any, source: str | bytes, python) -> ParseResult:
             return False
         return "canonical" not in row or row["canonical"] == print_document(env, result.document)
 
-    return decided(python, cache,
-                   lambda: decide("parse", [{"id": "parse", "environment": env.to_dict(), "source": text}])[0],
-                   same, "a source")
+    row = decide("parse", [{"id": "parse", "environment": env.to_dict(), "source": text}])[0]
+    try:
+        result = python()
+    except VEError as exc:
+        raise CheckerUnavailable(f"CheckerUnavailable: Lean accepts a source that Python cannot construct "
+                                 f"({exc.code}: {exc.message})") from exc
+    if not same(result, row):
+        raise CheckerUnavailable("CheckerUnavailable: Lean and Python parse outputs differ")
+    return result
 
 
 def _parse_python(env: Any, source: str | bytes) -> ParseResult:

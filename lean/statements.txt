@@ -27702,10 +27702,9 @@ theorem VE.Service.runMode_order
   -- uses VE.Order.Surface.runCaseReported@VE.Order.Surface VE.Service.Mode.order@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
   -- expr 4003062785
 theorem VE.Service.runMode_parse
-  ∀ (j : Lean.Json),
-    VE.Service.runMode VE.Service.Mode.parse j = VE.Service.Standalone.reported VE.Service.Standalone.parseCase j
-  -- uses VE.Service.Mode.parse@VE.Service.Protocol VE.Service.Standalone.parseCase@VE.Service.Standalone VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
-  -- expr 3654196355
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.parse j = VE.Service.Standalone.reportedParse j
+  -- uses VE.Service.Mode.parse@VE.Service.Protocol VE.Service.Standalone.reportedParse@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- expr 2217412199
 theorem VE.Service.runMode_quantity
   ∀ (j : Lean.Json),
     VE.Service.runMode VE.Service.Mode.quantity j = VE.Time.Wire.runCaseReported j VE.Time.Document.extension
