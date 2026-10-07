@@ -353,7 +353,7 @@ gate; no S2a document can show it (0).
 |---|---|---|
 | `<k>` in E4 | the number of candidates of the open set, as a numeral | E4 |
 | `<k>` in E10, E27 | the number of open sets of the document, as a numeral; at least 2 (E26 is the one-set form) | E10, E27 |
-| `<reading>` | composition.md 2.1's: `reading <i>` with the 1-based position, or the deontic verb in italics when the set's candidates differ only in it | E7, E12, E17 |
+| `<reading>` | the deontic verb in italics when the set's candidates differ only in it; otherwise the candidate's own rendered sentence (a rule's sentence with the notes for precedence, switches, rank and exception conditions; an assertion's canonical VE sentence; a rights unit's rendering), in italics, without its final period. `reading <i>` is never shown (amended by [readings-defaults.md](readings-defaults.md) 2.3, review A4; before: composition.md 2.1's `reading <i>`) | E6, E7, E12, E17, S1's "Under <reading>" sentences |
 | `<citation>` | composition.md 2.1's, over the narrowing's or coupling's cited units, by display number | E7 |
 | `<result sentence>` | one of the closed forms below | E10, E11, E12, E26 |
 | `<situation>` | composition-s1.md 2.1's slot, on the pulled situation `pull D c B` of the reading named (1.7): no choice vocabulary; the decisions of the chosen readings' own rules as suppositions, of fixed rules as S1 words them | result sentences R3 to R5 |

@@ -442,26 +442,55 @@ class Wording:
     # -- slots (2.1)
 
     def reading_names(self, set_id):
-        """`<reading>`: the deontic verb in italics when the candidates differ only in it, else `reading <i>`."""
+        """`<reading>` (2.1, as readings-defaults 2.3 amends it, review A4): the deontic verb in italics when the
+        candidates are rules that differ only in it; otherwise each candidate's own rendered sentence, in italics,
+        without its final period. "reading <i>" is never shown. A candidate without content has no name (None):
+        no answer names it. Two candidates shown by the same sentence are refused, since the slot would then read
+        two ways."""
         from .norm_english import render_rule_sentence
         from .softnorms import decode_rule
         R = self.admission.doc.set_by_id(set_id)
-        names = [f"reading {i + 1}" for i in range(len(R.candidates))]
-        if not all(a.content is not None and a.content.kind == "norm" for a in R.candidates):
-            return names
-        env = self.admission.side(set_id, 0).soft.env
-        verbs, frames = [], []
-        for a in R.candidates:
-            rule = decode_rule(env, {"norm": a.content.body})
-            sentence = render_rule_sentence(rule, env)
-            verb = _modal(env, rule)
-            if f" {verb} " not in sentence:
-                return names
-            verbs.append(verb)
-            frames.append(sentence.replace(f" {verb} ", " _ ", 1))
-        if len(set(frames)) == 1 and len(set(verbs)) == len(verbs):
-            return [f"*{verb}*" for verb in verbs]
-        return names
+        if all(a.content is not None and a.content.kind == "norm" for a in R.candidates):
+            env = self.admission.side(set_id, 0).soft.env
+            verbs, frames = [], []
+            for a in R.candidates:
+                rule = decode_rule(env, {"norm": a.content.body})
+                sentence = render_rule_sentence(rule, env)
+                verb = _modal(env, rule)
+                if f" {verb} " not in sentence:
+                    break
+                verbs.append(verb)
+                frames.append(sentence.replace(f" {verb} ", " _ ", 1))
+            else:
+                if len(set(frames)) == 1 and len(set(verbs)) == len(verbs):
+                    return [f"*{verb}*" for verb in verbs]
+        from .readings_s2_english import sentence_slots
+        return sentence_slots(set_id, [None if a.content is None else self.candidate_sentence(set_id, i)
+                                       for i, a in enumerate(R.candidates)])
+
+    def candidate_sentence(self, set_id, i):
+        """The candidate's own sentence, rendered as the document's renderer shows that kind of content: a rule
+        by its canonical rule sentence followed by the notes for the fields that sentence leaves out (precedence,
+        switches, rank, exception conditions; `rule_notes`, under which two rules differing in any field render
+        differently), an assertion by its canonical VE English sentence, read back to the same formula, and a
+        right, its incident lines or a limitation by the rights renderer."""
+        from .norm_english import render_rule_sentence
+        from .softnorms import decode_rule
+        from .surface.rights import rule_notes
+        content = self.admission.doc.set_by_id(set_id).candidates[i].content
+        side = self.admission.side(set_id, i)
+        if content.kind == "norm":
+            env = side.soft.env
+            rule = decode_rule(env, {"norm": content.body})
+            return " ".join((render_rule_sentence(rule, env), *rule_notes(rule, env)))
+        if content.kind == "assertion":
+            from .ast import formula_from_data
+            from .readings_s2_english import canonical_sentence
+            frame = self.admission.senv.frame
+            return canonical_sentence(frame, formula_from_data(frame, content.body),
+                                      f"a reading of {set_id} does not read back to its content")
+        from .surface.rights import render_unit
+        return render_unit(side.rights, content.raw)
 
     def decider(self, value):
         who = value or "unstated"
@@ -541,7 +570,8 @@ class Wording:
         ids = [a.id for a in R.candidates]
         i, j = ids.index(facts["witness"]), ids.index(pair["other"] if pair["reading"] == facts["witness"]
                                                        else pair["reading"])
-        names = self.reading_names(set_id)
+        from .readings_s2_english import named_pair
+        names = named_pair(set_id, self.reading_names(set_id), i, j)
         lines = []
         twins = self.twins(set_id, i, j)
         source_word = self.source_word(R.raw)

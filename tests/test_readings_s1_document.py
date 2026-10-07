@@ -24,6 +24,7 @@ from ve.softnorms import SoftEnvironment
 
 SHALL = b"Agents shall avoid deceiving users."
 ASKS_ALL = ["forall", "agent", ["forall", "user", ["binary", "asks", ["var", 1], ["var", 0]]]]
+ASKS_ALL_SLOT = "*For every agent, for every user, that agent has the recorded relation \"asks\" to that user*"
 
 
 def candidate(env, set_id, cid, content, kind="norm"):
@@ -134,7 +135,9 @@ def test_h3_e19_case_3_on_k12_and_h5_e24_for_holds(tmp_path):
     path = s1_document(tmp_path / "k12", cands)
     [pair] = check_document(path)["readings"]["sets"][0]["pairs"]
     assert pair["wording"] == "E19"
-    assert "Under reading 1, a is not required to. Under reading 2, a still must." in pair["text"]
+    # The `<reading>` slot (readings-defaults 2.3, review A4): each candidate's own sentence, in italics.
+    assert f"Under {ASKS_ALL_SLOT}, a is not required to. Under *Every agent must avoid deceiving each user*, "\
+        "a still must." in pair["text"]
 
     def holds(reading_set):
         entry = {"base": {"domains": {"agent": ["a"], "user": ["u"]}, "constants": {}, "relations": {"asks": []}},
@@ -162,8 +165,8 @@ def test_e21_between_two_assertions(tmp_path):
     pairs = check_document(path)["readings"]["sets"][0]["pairs"]
     [e21] = [p for p in pairs if set(p["readings"]) == {"asks", "not-asks"}]
     assert e21["wording"] == "E21"
-    assert e21["text"].endswith("the sentence is true there. Under reading 1, it is false there.") or \
-        e21["text"].endswith("the sentence is true there. Under reading 2, it is false there.")
+    assert e21["text"].endswith(f"the sentence is true there. Under {ASKS_ALL_SLOT}, it is false there.")
+    assert "reading 1" not in e21["text"] and "reading 2" not in e21["text"]
 
 
 def test_h6_e16_on_k4(tmp_path):

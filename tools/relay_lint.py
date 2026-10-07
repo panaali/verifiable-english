@@ -19,7 +19,13 @@ into a module of its own.
 An explicitly owned surface parser remains outside the relay even when only a
 relayed file adapter imports it.
 
-Usage: ``python tools/relay_lint.py [PATH ...]`` (default: `RELAYED`). Exit 1 on a finding.
+A second rule keeps the unspecified completion's `fill` in Lean (readings-defaults plan, RD-2b and D12): no
+readings module (`ve/readings*.py`) holds a string literal containing a reserved completion name prefix
+(`RESERVED`), so none builds a filled name. A literal that only keeps such names out of the English (a non-wording
+guard) carries the marker `# relay-lint: non-wording` on its line; marked literals are counted in the report.
+
+Usage: ``python tools/relay_lint.py [PATH ...]`` (default: `RELAYED`, and the readings modules for the second
+rule; given paths, both rules read each path). Exit 1 on a finding.
 """
 from __future__ import annotations
 
@@ -41,6 +47,10 @@ RELAYED = ("ve/backends/relay.py", "ve/readings_route.py", "ve/discourse.py",
 # owner. SpeechDocument only supplies its structured fence to Lean for checking.
 OWNED_SURFACES = frozenset({"ve.speech_english"})
 FILE_IO = "# relay-lint: file I/O"
+# The modules that may not build the completion's names, and the reserved prefixes (norm-defaults 2.1).
+READINGS_GLOB = "ve/readings*.py"
+RESERVED = ("unsaid__", "unsaid--")
+NON_WORDING = "# relay-lint: non-wording"
 
 
 def content_classes() -> frozenset[str]:
@@ -156,20 +166,44 @@ def helpers(relayed: list[Path]) -> list[Path]:
                 found.append(files[module])
     return found
 
+def reserved_literals(path: Path, marked: list | None = None) -> list[str]:
+    """Every string literal of the module (f-string parts and docstrings included) that contains a reserved
+    completion prefix, read with Python's own parser; a literal whose line carries `NON_WORDING` is counted in
+    `marked` instead."""
+    lines = path.read_text().splitlines()
+    tree = ast.parse("\n".join(lines), filename=str(path))
+    out = []
+    for node in ast.walk(tree):
+        if not (isinstance(node, ast.Constant) and isinstance(node.value, str)
+                and any(prefix in node.value for prefix in RESERVED)):
+            continue
+        if any(line.rstrip().endswith(NON_WORDING) for line in lines[node.lineno - 1:node.end_lineno]):
+            if marked is not None:
+                marked.append(f"{path.name}:{node.lineno}")
+            continue
+        out.append(f"{path.relative_to(ROOT) if path.is_relative_to(ROOT) else path}:{node.lineno}: "
+                   "a readings module holds a reserved completion name")
+    return out
+
 
 def main(argv: list[str] | None = None) -> int:
     paths = [Path(p).resolve() for p in (argv if argv else [str(ROOT / r) for r in RELAYED])]
     if not argv:
         paths += helpers(paths)
+    readings = paths if argv else sorted(ROOT.glob(READINGS_GLOB))
     missing = [p for p in paths if not p.is_file()]
     if missing:
         print("\n".join(f"relayed module not found: {p}" for p in missing))
         return 1
     classes = content_classes()
     marked: list[str] = []
+    guards: list[str] = []
     found = [f for p in paths for f in findings(p, classes, marked)]
+    found += [f for p in readings for f in reserved_literals(p, guards)]
     io = f"; {len(marked)} file I/O diagnostic(s): {', '.join(marked)}" if marked else ""
-    print("\n".join(found) if found else f"PASS: {len(paths)} relayed module(s), no own content diagnostic{io}")
+    io += f"; {len(guards)} non-wording guard(s): {', '.join(guards)}" if guards else ""
+    print("\n".join(found) if found else f"PASS: {len(paths)} relayed module(s), no own content diagnostic; "
+          f"{len(readings)} readings module(s), no reserved completion name{io}")
     return 1 if found else 0
 
 
