@@ -1191,7 +1191,9 @@ nothing. Before: 0 bytes (*derived*). The upper bound the rule allows is the CHE
 57 + 4,200 = 4,257 of 10,916, 39.00% (*computed*), arithmetic and not a prediction; claimed coverage 43.90% and
 audit-verified 23.30% (*computed* from the recorded 4,792 and 2,543 bytes) are reported unchanged beside it. Beside
 the share (review E2): the maximum rules in one choice's document, the decided bytes whose companions were already
-checked outside the document, and the sentence that a reading holding one rule is CONFLICT-FREE by construction. The
+checked outside the document, and, beside a Lean answer only, the sentence that a rule checked by itself is
+CONFLICT-FREE by construction (the isolated rule; a one-rule reading checked with the other rules can be a CONFLICT,
+as S2a's M8 is under one choice). The
 report says that a rise measures checks routed into Lean inside the document, not new assurance.
 
 ## 11. Statement review checklist (Astra + Fable, before RD-1)
