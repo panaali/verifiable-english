@@ -257,5 +257,5 @@ def load_audit_source(raw: bytes):
         return Environment(meta["environment"]), norms
     data = loads_json(raw)
     if type(data) is not dict or set(data) != {"environment", "norms"} or type(data["norms"]) is not list:
-        raise VEError("InvalidInput: expected a ve-document@1 or {environment, norms}")
+        raise VEError("InvalidInput: expected a ve-document@1 or {environment, norms}")  # relay-lint: file I/O
     return Environment(data["environment"]), data["norms"]
