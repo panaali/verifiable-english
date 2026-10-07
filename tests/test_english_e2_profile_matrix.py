@@ -78,7 +78,7 @@ def test_the_matrix_reaches_every_family_with_every_layer():
     assert {"data@0", "definitions@0", "norms@0"} <= nary
 
 
-@pytest.mark.parametrize("profiles", sorted(ENVIRONMENTS), ids=lambda p: "+".join(p))
+@pytest.mark.parametrize("profiles", sorted(ENVIRONMENTS), ids=lambda p: "+".join(p) or "base")
 def test_lean_reads_every_matrix_sentence_as_python_does(profiles):
     env = ENVIRONMENTS[profiles]
     words = EN.EnglishVocabulary(env)
