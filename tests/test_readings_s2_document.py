@@ -18,6 +18,7 @@ import pytest
 
 from ve.document import _environment, check_document
 from ve.errors import VEError
+from ve.readings_s2_english import hidden_in
 
 ROOT = Path(__file__).resolve().parents[1]
 PILOT = ROOT / "tests/data/readings_s2/constitution-nd-readings.ve.md"
@@ -381,7 +382,7 @@ def _one_derivation(lines, wording):
         if line.startswith("CONFLICT"):
             continue  # the lower route's classification line, not an S2a wording (2.1 R4)
         assert len(derivations(line, wording.slots)) == 1, line
-        assert not any(x in line for x in ("ve__", "rd-", "soft__", "rights__", "may not")), line  # G6, G9
+        assert hidden_in(line, wording.slots.reserved) is None, line  # G6, G9
 
 
 HELP_ALL = "*For every agent, for every user, that agent must help that user.*"

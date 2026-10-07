@@ -16,7 +16,8 @@ import pytest
 from tests.test_readings_s1_lean import env_k, norm_object
 from tests.test_readings_s2_document import ASKS, DF, HELP_X, S, _query, _report, every, norm, s2_document
 from ve.errors import VEError
-from ve.readings_s2_english import Slots, Unnamed, canonical_sentence, gated, named_result, sentence_slots, shown
+from ve.readings_s2_english import (Slots, Unnamed, canonical_sentence, gated, hidden_in, named_result,
+                                    sentence_slots, shown)
 
 # ---------------------------------------------------------------------------------------------------------------
 # The class: every field of a rule, mutated alone and together with the deontic verb
@@ -299,6 +300,89 @@ def test_fable_b1_a_plain_readings_document_shows_its_own_unsaid_predicate(tmp_p
     assert data["verdict"] == "ALL" and wording.slots.reserved == ()
     assert any('the conclusion follows: *For every agent, for every user, that agent has the recorded relation '
                '"unsaid__x" to that user.*' in line for line in lines), lines
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Recheck B: a generated or reserved name is a name that begins with its prefix, wherever author text is shown
+
+
+def _hidden_prefixes():
+    from ve.environment import RESERVED_PREFIXES
+    from ve.readings_s2_english import _HIDDEN
+    return (*_HIDDEN, *RESERVED_PREFIXES)
+
+
+def _in_slot(slot, text):
+    """E12 with `text` in one slot kind: the `<reading>` name, R7's `<clause>`, R4's `<situation>` or R2's
+    `<conclusion>`, gated with every reserved prefix hidden."""
+    reading = text if slot == "reading" else "*must*"
+    slots = Slots(numbers={"1"}, readings={reading}, clauses={text}, situations={text}, conclusions={text})
+    kind, field = {"reading": ("conflict_free", None), "clause": ("undecided", "clause"),
+                   "situation": ("conflict", "situation"), "conclusion": ("follows", "conclusion")}[slot]
+    return named_result([(1, reading)], kind, slots, **({field: text} if field else {}))
+
+
+SLOT_KINDS = ("reading", "clause", "situation", "conclusion")
+# Inside a name: after a letter, a digit, `_`, `-` or a non-ASCII letter. At a name's start: after anything else.
+INSIDE = ("standa", "x-", "x_", "x9", "é")
+AT_START = ("", " ", "*", '"', "(", "'", ", ", "rule ")
+
+
+@pytest.mark.parametrize("slot", SLOT_KINDS)
+def test_a_prefix_inside_an_author_name_is_shown(slot):
+    """The reviewer's `standard-x` (the `rd-` inside it) as a class: every hidden prefix inside a name, in every
+    slot that shows author text, is shown; the same prefix where a name begins is refused."""
+    for prefix in _hidden_prefixes():
+        for before in INSIDE:
+            text = f"a {before}{prefix}y u"
+            assert text in _in_slot(slot, text), (slot, prefix, before)
+        for before in AT_START:
+            with pytest.raises(VEError, match="generated name"):
+                _in_slot(slot, f"a {before}{prefix}y u".replace("a  ", "a "))
+
+
+def test_may_not_is_refused_anywhere():
+    """G9 has no exception (composition.md 13.20): `may not` is refused inside a word too."""
+    for text in ("a user may not", "dismay nothing", "x may notify u"):
+        assert hidden_in(text) == "may not"
+        for slot in SLOT_KINDS:
+            with pytest.raises(VEError, match="may not"):
+                _in_slot(slot, text)
+
+
+def test_hidden_in_reads_the_reserved_prefixes_given():
+    assert hidden_in("rule unsaid--x", ()) is None
+    assert hidden_in("rule unsaid--x", ("unsaid__", "unsaid--")) == "unsaid--"
+    assert hidden_in("rule unsaid--x") == "unsaid--"  # no environment: every reserved prefix is hidden
+    assert hidden_in("rule my_unsaid--x") is None and hidden_in("standard-x and rd-1-x") == "rd-"
+
+
+@pytest.mark.parametrize("fixed", ["standard-x", "record-keeping", "hazard-rd-x", "ward-rd-2"])
+def test_recheck_b_rule_names_containing_rd_are_named(tmp_path, fixed):
+    """The recheck's reproduction: Astra's review-B document with the fixed rule renamed. The precedence note
+    names it, and the query answers SOME with the full sentences, as it does for `base-x`."""
+    path = s2_document(tmp_path, [
+        ("fixed", "u0", norm(fixed, "avoid_required", True)),
+        ("set", "rs1", "u1", [("a", norm("waive-x", "avoid_required", True, guard=ASKS), "norm", None),
+                              ("b", norm("waive-x", "avoid_required", False, over=(fixed,), guard=ASKS), "norm",
+                               None)])])
+    data, lines, wording = _query(path, every("avoid_required", negated=True, guard=ASKS))
+    assert data["verdict"] == "SOME"
+    assert any(f"It is an exception to rule {fixed}*" in line for line in lines), lines
+    assert all(hidden_in(line, wording.slots.reserved) is None for line in lines)
+
+
+@pytest.mark.parametrize("predicate", ["save__x", "microsoft__x", "copyrights__x"])
+def test_author_predicates_containing_a_generated_prefix_are_shown(tmp_path, predicate):
+    """The same class in the `<conclusion>` slot: an author predicate that contains `ve__`, `soft__` or `rights__`
+    (but does not begin with it) is shown in the conclusion, as Fable's `unsaid__x` is."""
+    raw = env_k()
+    raw["vocabulary"]["predicates"][predicate] = {"arguments": ["agent", "user"], "description": "base"}
+    path = s2_document(tmp_path, [("set", "rs1", "u1", [S, DF]), ("fixed", "u0", HELP_X),
+                                  ("fixed", "u2", every(predicate))], raw=raw)
+    data, lines, _ = _query(path, every(predicate))
+    assert data["verdict"] == "ALL"
+    assert any(f'"{predicate}" to that user.*' in line for line in lines), lines
 
 
 def test_the_lint_and_the_checker_share_one_reserved_table():
