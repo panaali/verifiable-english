@@ -123,6 +123,7 @@ DEADLINES: dict[str, tuple[float, float]] = {
     "reports": (60.0, 60.0), "alternatives": (180.0, 180.0), "risk": (180.0, 180.0),
     "risk-eval": (60.0, 60.0), "quantity": (60.0, 60.0), "norm-defaults": (120.0, 120.0),
     "discourse": (300.0, 300.0), "readings-route": (120.0, 240.0), "diagnose": (120.0, 120.0),
+    "document": (120.0, 120.0),
 }
 WALL_FACTOR = 10.0
 _MIB = 1 << 20

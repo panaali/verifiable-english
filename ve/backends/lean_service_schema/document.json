@@ -1,0 +1,63 @@
+{
+  "$id": "document.json",
+  "$comment": "Mode document: W2 wrapper byte partition, inferred unit statuses and base coverage.",
+  "row": {
+    "anyOf": [
+      {"$ref": "common.json#/$defs/case_error"},
+      {"$ref": "common.json#/$defs/error"},
+      {
+        "additionalProperties": false,
+        "properties": {
+          "coverage": {
+            "additionalProperties": false,
+            "properties": {
+              "accounted_bytes": {"$ref": "common.json#/$defs/nat"},
+              "bytes_by_kind": {"type": "object"},
+              "bytes_by_status": {"type": "object"},
+              "coverage_percent": {"const": 100},
+              "residual": {"type": "object"},
+              "residual_total": {"$ref": "common.json#/$defs/nat"},
+              "source_bytes": {"$ref": "common.json#/$defs/nat"},
+              "unformalised_reasons": {"type": "object"}
+            },
+            "required": [
+              "source_bytes",
+              "accounted_bytes",
+              "coverage_percent",
+              "bytes_by_kind",
+              "bytes_by_status",
+              "unformalised_reasons",
+              "residual",
+              "residual_total"
+            ],
+            "type": "object"
+          },
+          "document_id": {"$ref": "common.json#/$defs/hex64"},
+          "id": {"type": "string", "x-equals": "/id"},
+          "source": {"type": "string"},
+          "source_id": {"$ref": "common.json#/$defs/hex64"},
+          "status": {"const": "ok"},
+          "units": {"items": {"$ref": "#/$defs/unit"}, "type": "array"}
+        },
+        "required": ["id", "status", "document_id", "source_id", "source", "units", "coverage"],
+        "type": "object"
+      }
+    ]
+  },
+  "$defs": {
+    "unit": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string"},
+        "kind": true,
+        "meaning": true,
+        "parent_id": {"type": "string"},
+        "span": {"items": {"$ref": "common.json#/$defs/nat"}, "type": "array"},
+        "status": {"type": "string"},
+        "support": {"type": "string"}
+      },
+      "required": ["id", "span", "kind", "meaning", "support", "status"],
+      "type": "object"
+    }
+  }
+}
