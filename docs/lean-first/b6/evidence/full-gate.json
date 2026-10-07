@@ -1,161 +1,112 @@
 {
-  "commit_sha": "a6d896b54b0c5d65fac7921c7a40ecf6cbe9d614",
-  "counts": {
-    "collected": 11087,
-    "deselected": 1,
-    "failed": 1,
-    "passed": 11078,
-    "rust_ignored": 0,
-    "rust_passed": 50,
-    "selected": 11086,
-    "skipped": 7
+ "schema_version": 1,
+ "commit_sha": "51a89eca258bd9865573e874417940259bd3d3a0",
+ "dirty": false,
+ "status": "passed",
+ "runner": "the gate's stages in the foreground on the clean head: `lake build`, `python lean/audit.py`, `cargo test --locked --release --workspace` (pinned toolchain), then the full pytest suite with the gate's options (`-p xdist -n auto -m 'not live'`, plugin autoload off) in seven file-disjoint chunks covering all 265 test files once; tools/gate.py itself exceeded the 60-minute call limit at load 43 to 50",
+ "stages": [
+  "lean_build",
+  "lean_audit",
+  "cargo_test",
+  "pytest"
+ ],
+ "counts": {
+  "collected": 11099,
+  "deselected": 1,
+  "selected": 11098,
+  "passed": 11092,
+  "failed": 0,
+  "skipped": 6,
+  "rust_passed": 50,
+  "rust_ignored": 0
+ },
+ "lean": {
+  "build_jobs": 743,
+  "audited_theorems": 4316,
+  "source_files": 408
+ },
+ "chunks": [
+  {
+   "files": 72,
+   "tests": 3699,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 4,
+   "seconds": 1669.3
   },
-  "dirty": false,
-  "environment": {
-    "base": {
-      "CARGO_HOME": "/tmp/ve-gate-l7bgicxu/cargo-home",
-      "GIT_CONFIG_NOSYSTEM": "1",
-      "HOME": "/tmp/ve-gate-l7bgicxu/home",
-      "LAKE_CACHE_DIR": "/tmp/ve-gate-l7bgicxu/lake-cache",
-      "LANG": "C.UTF-8",
-      "LC_ALL": "C.UTF-8",
-      "PATH": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin:/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin:/tmp/ve-gate-l7bgicxu/bin:/usr/bin:/bin",
-      "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
-      "PYTHONNOUSERSITE": "1",
-      "PYTHONPYCACHEPREFIX": "/tmp/ve-gate-l7bgicxu/pycache",
-      "TMPDIR": "/tmp/ve-gate-l7bgicxu/tmp",
-      "UV_CACHE_DIR": "/tmp/ve-gate-l7bgicxu/uv-cache",
-      "UV_NO_CONFIG": "1",
-      "XDG_CACHE_HOME": "/tmp/ve-gate-l7bgicxu/home/.cache",
-      "XDG_CONFIG_HOME": "/tmp/ve-gate-l7bgicxu/home/.config",
-      "XDG_DATA_HOME": "/tmp/ve-gate-l7bgicxu/home/.local/share"
-    },
-    "cargo": {
-      "CARGO_ENCODED_RUSTFLAGS": "--remap-path-prefix=/home/seyran/code/ve-lf-6=/ve\u001f--remap-path-prefix=/tmp/ve-gate-l7bgicxu/cargo-home=/cargo-home\u001f--remap-path-prefix=/home/seyran/code/ve-lf-6/rust/target=/ve-target",
-      "CARGO_HOME": "/tmp/ve-gate-l7bgicxu/cargo-home",
-      "CARGO_NET_OFFLINE": "true",
-      "GIT_CONFIG_NOSYSTEM": "1",
-      "HOME": "/tmp/ve-gate-l7bgicxu/home",
-      "LAKE_CACHE_DIR": "/tmp/ve-gate-l7bgicxu/lake-cache",
-      "LANG": "C.UTF-8",
-      "LC_ALL": "C.UTF-8",
-      "PATH": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin:/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin:/tmp/ve-gate-l7bgicxu/bin:/usr/bin:/bin",
-      "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
-      "PYTHONNOUSERSITE": "1",
-      "PYTHONPYCACHEPREFIX": "/tmp/ve-gate-l7bgicxu/pycache",
-      "TMPDIR": "/tmp/ve-gate-l7bgicxu/tmp",
-      "UV_CACHE_DIR": "/tmp/ve-gate-l7bgicxu/uv-cache",
-      "UV_NO_CONFIG": "1",
-      "XDG_CACHE_HOME": "/tmp/ve-gate-l7bgicxu/home/.cache",
-      "XDG_CONFIG_HOME": "/tmp/ve-gate-l7bgicxu/home/.config",
-      "XDG_DATA_HOME": "/tmp/ve-gate-l7bgicxu/home/.local/share"
-    },
-    "pytest": {
-      "CARGO_HOME": "/tmp/ve-gate-l7bgicxu/cargo-home",
-      "GIT_CONFIG_NOSYSTEM": "1",
-      "HOME": "/tmp/ve-gate-l7bgicxu/home",
-      "LAKE_CACHE_DIR": "/tmp/ve-gate-l7bgicxu/lake-cache",
-      "LANG": "C.UTF-8",
-      "LC_ALL": "C.UTF-8",
-      "PATH": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin:/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin:/tmp/ve-gate-l7bgicxu/bin:/usr/bin:/bin",
-      "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
-      "PYTHONNOUSERSITE": "1",
-      "PYTHONPYCACHEPREFIX": "/tmp/ve-gate-l7bgicxu/pycache",
-      "TMPDIR": "/tmp/ve-gate-l7bgicxu/tmp",
-      "UV_CACHE_DIR": "/tmp/ve-gate-l7bgicxu/uv-cache",
-      "UV_NO_CONFIG": "1",
-      "VE_GATE_PYTEST_PROGRESS": "/tmp/ve-gate-l7bgicxu/current-test.txt",
-      "VE_GATE_PYTEST_RESULT": "/tmp/ve-gate-l7bgicxu/pytest-collection.json",
-      "VE_LEAN_PREBUILT": "1",
-      "VE_NATIVE_PREBUILT": "1",
-      "VE_RUST_BINARY": "/home/seyran/code/ve-lf-6/rust/target/release/ve",
-      "VE_RUST_PREBUILT": "1",
-      "XDG_CACHE_HOME": "/tmp/ve-gate-l7bgicxu/home/.cache",
-      "XDG_CONFIG_HOME": "/tmp/ve-gate-l7bgicxu/home/.config",
-      "XDG_DATA_HOME": "/tmp/ve-gate-l7bgicxu/home/.local/share"
-    }
+  {
+   "files": 32,
+   "tests": 1234,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 0,
+   "seconds": 191.0
   },
-  "failures": [
-    {
-      "reason": "Python suite: exit 1",
-      "stage": "pytest command"
-    },
-    {
-      "nodeid": "tests/test_difffuzz.py::test_ci_run",
-      "reason": "built = None\n\n    def test_ci_run(built):\n        \"\"\"`difffuzz.py --ci`: every seed and the seeded sample of every surface, compared three ways, within 5\n        minutes of CPU.\"\"\"\n        report = df.fuzz()\n>       assert report[\"new\"] == [], _summary(report)\nE       AssertionError: {\nE          \"new\": [\nE           {\nE            \"surface\": \"environment\",\nE            \"profile\": \"envelope\",\nE            \"classes\": [\nE             \"code\"\nE            ],\nE            \"input\": {\nE             \"language\": \"ve.core@0.1\",\nE             \"profiles\": {},\nE             \"spec_revision\": \"v\",\nE             \"vocabulary\": {}\nE            },\nE            \"answers\": {\nE             \"python\": {\nE              \"outcome\": \"error\",\nE              \"code\": \"InvalidInput\",\nE              \"text\": \"array expected\"\nE             },\nE             \"lean\": {\nE              \"outcome\": \"error\",\nE              \"code\": \"InvalidInput\",\nE              \"text\": \"array expected\"\nE             },\nE             \"rust\": {\nE              \"outcome\": \"error\",\nE              \"code\": \"UnsupportedProfile\",\nE              \"text\": \"unsupported language, profile or specification revision\"\nE             }\nE            }\nE           },\nE           {\nE            \"surface\": \"environment\",\nE            \"profile\": \"norm-defaults\",\nE            \"classes\": [\nE             \"diagnostic\"\nE            ],\nE            \"input\": {\nE             \"language\": \"ve.core@0.2\",\nE             \"profiles\": [\nE              \"norm-defaults@0\",\nE              \"norms@0\",\nE              \"relational-fol@0\"\nE             ],\nE             \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\",\nE             \"vocabulary\": {\nE              \"constants\": {},\nE              \"predicates\": {\nE               \"x_permitted\": 7\nE              },\nE              \"sorts\": {\nE               \"act\\u001c\": {}\nE              }\nE             }\nE            },\nE            \"answers\": {\nE             \"python\": {\nE              \"outcome\": \"error\",\nE              \"code\": \"InvalidInput\",\nE              \"text\": \"Invalid ASCII identifier: 'act\\\\x1c'\"\nE             },\nE             \"lean\": {\nE              \"outcome\": \"error\",\nE              \"code\": \"InvalidInput\",\nE              \"text\": \"object expected\"\nE             },\nE             \"rust\": {\nE              \"outcome\": \"n/a\"\nE             }\nE            }\nE           },\nE           {\nE            \"surface\": \"environment\",\nE            \"profile\": \"speech\",\nE            \"classes\": [\nE             \"diagnostic\"\nE            ],\nE            \"input\": {\nE             \"language\": \"ve.core@0.2\",\nE             \"profiles\": [\nE              \"norms@0\",\nE              \"relational-fol@0\",\nE              \"speech-acts@0\"\nE             ],\nE             \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\",\nE             \"speech_acts\": {\nE              \"task\": \"t\"\nE             },\nE             \"vocabulary\": {\nE              \"sorts\": {\nE               \"desk\": {\nE                \"description\": \"d\"\nE               }\nE              },\nE              \"predicates\": {\nE               \"open_required\": {\nE                \"arguments\": [\nE                 \"desk\"\nE                ],\nE                \"description\": \"o\",\nE                \"regulated\": {\nE                 \"role\": \"obligation\",\nE                 \"default\": \"deny\",\nE                 \"act\": \"x\"\nE                }\nE               },\nE               \"open_permitted\": {\nE                \"arguments\": [\nE                 true\nE                ],\nE                \"regulated\": {\nE                 \"act\": \"{\"\nE                }\nE               }\nE              },\nE              \"constants\": {}\nE             }\nE            },\nE            \"answers\": {\nE             \"python\": {\nE              \"outcome\": \"error\",\nE              \"code\": \"InvalidInput\",\nE              \"text\": \"InvalidInput: invalid act phrase for open_required\"\nE             },\nE             \"lean\": {\nE              \"outcome\": \"error\",\nE              \"code\": \"InvalidInput\",\nE              \"text\": \"String expected\"\nE             },\nE             \"rust\": {\nE              \"outcome\": \"n/a\"\nE             }\nE            }\nE           },\nE           {\nE            \"surface\": \"environment\",\nE            \"profile\": \"speech\",\nE            \"classes\": [\nE             \"diagnostic\"\nE            ],\nE            \"input\": {\nE             \"language\": \"ve.core@0.2\",\nE             \"profiles\": [\nE              \"norms@0\",\nE              \"relational-fol@0\",\nE              \"speech-acts@0\"\nE             ],\nE             \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\",\nE             \"speech_acts\": {\nE              \"task\": \"t\"\nE             },\nE             \"vocabulary\": {\nE              \"sorts\": {},\nE              \"predicates\": {\nE               \"open_permitted\": {\nE                \"arguments\": true,\nE                \"regulated\": {\nE                 \"act\": \"{\"\nE                }\nE               }\nE              },\nE              \"constants\": {\nE               \"BOB\": {}\nE              }\nE             }\nE            },\nE            \"answers\": {\nE             \"python\": {\nE              \"outcome\": \"error\",\nE              \"code\": \"InvalidInput\",\nE              \"text\": \"Invalid ASCII identifier: 'BOB'\"\nE             },\nE             \"lean\": {\nE              \"outcome\": \"error\",\nE              \"code\": \"InvalidInput\",\nE              \"text\": \"array expected\"\nE             },\nE             \"rust\": {\nE              \"outcome\": \"n/a\"\nE             }\nE            }\nE           },\nE           {\nE            \"surface\": \"environment\",\nE            \"profile\": \"risk\",\nE            \"classes\": [\nE             \"diagnostic\"\nE            ],\nE            \"input\": {\nE             \"language\": \"ve.core@0.2\",\nE             \"profiles\": [\nE              \"alternatives@0\",\nE              \"norms@0\",\nE              \"relational-fol@0\",\nE              \"risk@0\"\nE             ],\nE             \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\",\nE             \"vocabulary\": {\nE              \"sorts\": {\nE               \"harm\": {\nE                \"description\": \"h\"\nE               }\nE              },\nE              \"predicates\": {\nE               \"leads_to\": {\nE                \"arguments\": [\nE                 \"harm\"\nE                ],\nE                \"description\": []\nE               },\nE               \"confirmed\": \"x\"\nE              },\nE              \"constants\": {}\nE             },\nE             \"alternatives\": {},\nE             \"risk\": {},\nE             \"unit_schema\": \"ve-units@1\",\nE             \"units\": {}\nE            },\nE            \"answers\": {\nE             \"python\": {\nE              \"outcome\": \"error\",\nE              \"code\": \"InvalidInput\",\nE              \"text\": \"Descriptions must be nonempty Unicode strings\"\nE             },\nE             \"lean\": {\nE              \"outcome\": \"error\",\nE              \"code\": \"InvalidInput\",\nE              \"text\": \"object expected\"\nE             },\nE             \"rust\": {\nE              \"outcome\": \"n/a\"\nE             }\nE            }\nE           }\nE          ],\nE          \"baseline\": {\nE           \"entries\": 384,\nE           \"seen_in_sample\": 330,\nE           \"unreviewed\": [],\nE           \"not_reproduced\": []\nE          }\nE         }\nE       assert [{'id': 'envi...t', ...}, ...] == []\nE         \nE         Left contains 11 more items, first extra item: {'id': 'environment-5ab0e609397d3f2f', 'surface': 'environment', 'profile': 'envelope', 'seed': 'usecases/closure-induction/policy_cyclic_plus/query.json/environment', ...}\nE         Use -v to get more diff\n\ntests/test_difffuzz.py:47: AssertionError",
-      "stage": "pytest"
-    }
-  ],
-  "schema_version": 1,
-  "skips": [
-    {
-      "allowed": true,
-      "nodeid": "tests/test_assist.py::test_p5_real_dev_file_loads_when_present",
-      "reason": "('/home/seyran/code/ve-lf-6/tests/test_assist.py', 90, 'Skipped: P5 materials not available')"
-    },
-    {
-      "allowed": true,
-      "nodeid": "tests/test_grammar_backends.py::test_llguidance_compiles_lark_and_gbnf_exports",
-      "reason": "('/home/seyran/code/ve-lf-6/tests/test_grammar_backends.py', 22, \"Skipped: could not import 'llguidance': No module named 'llguidance'\")"
-    },
-    {
-      "allowed": true,
-      "nodeid": "tests/test_grammar_backends.py::test_xgrammar_compiles_and_matches_ebnf_exports",
-      "reason": "('/home/seyran/code/ve-lf-6/tests/test_grammar_backends.py', 51, \"Skipped: could not import 'xgrammar': No module named 'xgrammar'\")"
-    },
-    {
-      "allowed": true,
-      "nodeid": "tests/test_nary_folio.py::test_full_nary_folio_accounting_when_corpus_is_available",
-      "reason": "('/home/seyran/code/ve-lf-6/tests/test_nary_folio.py', 18, 'Skipped: optional pinned FOLIO v2 corpus is not downloaded')"
-    },
-    {
-      "allowed": true,
-      "nodeid": "tests/test_p0_three_way.py::test_rust_matches_expected[admission]",
-      "reason": "('/home/seyran/code/ve-lf-6/tests/test_p0_three_way.py', 92, 'Skipped: admission is outside Rust scope')"
-    },
-    {
-      "allowed": true,
-      "nodeid": "tests/test_p1_native_counter.py::test_retained_deepinfra_smoke_native_count[weak-21]",
-      "reason": "('/home/seyran/code/ve-lf-6/tests/test_p1_native_counter.py', 60, 'Skipped: pinned tokenizer not cached; test never downloads')"
-    },
-    {
-      "allowed": true,
-      "nodeid": "tests/test_safety_framework.py::test_build_check_writes_nothing_beside_the_source",
-      "reason": "('/home/seyran/code/ve-lf-6/tests/test_safety_framework.py', 180, 'Skipped: the pinned source is not stored on this machine')"
-    },
-    {
-      "allowed": true,
-      "deselected": true,
-      "nodeid": "tests/test_llm.py::test_live_smoke",
-      "reason": "excluded live model call"
-    }
-  ],
-  "stages": [
-    "toolchains",
-    "lean_build",
-    "lean_audit",
-    "rust_build",
-    "cargo_test",
-    "pytest"
-  ],
-  "status": "failed",
-  "toolchains": {
-    "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
-    "lake": "Lake version 5.0.0-src+797c613 (Lean version 4.24.0)",
-    "lean": "Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)",
-    "lean_pin": "4.24.0",
-    "paths": {
-      "cargo": "/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin/cargo",
-      "lake": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lake",
-      "lean": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean",
-      "rustc": "/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin/rustc",
-      "uv": "/tmp/ve-gate-l7bgicxu/bin/uv"
-    },
-    "python": "Python 3.14.7",
-    "rust_pin": "1.98.1",
-    "rust_toolchain": "1.98.1-x86_64-unknown-linux-gnu",
-    "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
-    "uv": "uv 0.12.19 (x86_64-unknown-linux-gnu)",
-    "uv_lock_sha256": "312825c8c53903f3dcacc5aa9fea5514183a99aa155f4df9ee056d163011b75b"
+  {
+   "files": 32,
+   "tests": 1233,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 0,
+   "seconds": 516.4
+  },
+  {
+   "files": 33,
+   "tests": 1233,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 1,
+   "seconds": 309.3
+  },
+  {
+   "files": 48,
+   "tests": 1850,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 0,
+   "seconds": 1581.0
+  },
+  {
+   "files": 24,
+   "tests": 925,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 1,
+   "seconds": 1165.6
+  },
+  {
+   "files": 24,
+   "tests": 924,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 0,
+   "seconds": 446.9
   }
+ ],
+ "skips": [
+  {
+   "nodeid": "tests.test_grammar_backends::test_llguidance_compiles_lark_and_gbnf_exports",
+   "reason": "could not import 'llguidance': No module named 'llguidance'"
+  },
+  {
+   "nodeid": "tests.test_grammar_backends::test_xgrammar_compiles_and_matches_ebnf_exports",
+   "reason": "could not import 'xgrammar': No module named 'xgrammar'"
+  },
+  {
+   "nodeid": "tests.test_p0_three_way::test_rust_matches_expected[admission]",
+   "reason": "admission is outside Rust scope"
+  },
+  {
+   "nodeid": "tests.test_p1_native_counter::test_retained_deepinfra_smoke_native_count[weak-21]",
+   "reason": "pinned tokenizer not cached; test never downloads"
+  },
+  {
+   "nodeid": "tests.test_assist::test_p5_real_dev_file_loads_when_present",
+   "reason": "P5 materials not available"
+  },
+  {
+   "nodeid": "tests.test_nary_folio::test_full_nary_folio_accounting_when_corpus_is_available",
+   "reason": "optional pinned FOLIO v2 corpus is not downloaded"
+  }
+ ]
 }

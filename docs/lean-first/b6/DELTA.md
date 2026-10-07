@@ -70,7 +70,7 @@ Base `9aaf918d` against head `8fbae87c`, both sides started together on each doc
 | Soft corpus | 1,000 accepted trees and 4,843 rejected inputs, with all 1,000 environment, layer, background and decision comparisons matching; 90 near-limit accepted and 137 rejected. See [soft-corpus.json](evidence/soft-corpus.json). |
 | Differential fuzzer | All 14 date seeds used the same base/head corpus and mutant counts, with **zero added or removed signature IDs**. The fixed CI seed finds the same 11 signature IDs on base and head after the soft test-input corpus grew; they are not regressions. Each is now in `conformance/difffuzz-baseline.json` (395 entries) with its follow-up id and a one-line `reason`: seven DF-3, two DF-9, one DF-4, one DF-19. `test_ci_run` passes. See [difffuzz-14-seeds.json](evidence/difffuzz-14-seeds.json) and [difffuzz-ci.json](evidence/difffuzz-ci.json). |
 | Historical pilots | 294 documents on each side, re-recorded at the fixed head with eight workers: **294 identical**, no availability difference. The large UDHR translation that hit the 600-second limit before the fix now completes. See [pilots-compare.json](evidence/pilots-compare.json). |
-| Full offline gate on clean head | Pending: recorded after this commit. |
+| Full offline gate on clean head | Commit `51a89eca`, clean worktree, every stage in the foreground: `lake build` (743 jobs), `lean/audit.py` (4,316 theorems), Rust 50 passed, and the full suite with the gate's options in seven file-disjoint chunks covering all 265 test files: 11,092 passed, 6 skipped, 0 failed, 1 deselected (`live`). `tools/gate.py` itself ran out of the 60-minute call limit twice at load 43 to 50; its first attempt had found the two collection and lint failures fixed in `51a89eca`. See [full-gate.json](evidence/full-gate.json). |
 | Disk | 67 GiB free at the final check. |
 
 `trust_map.py --since 9aaf918d` passes. It measures **164 additional verdict-bearing Lean lines** (`VE.SoftNorms.Once` +144, which `VE.Readings.Layers` loses; `SoftNorms.Run` +64; the soft response schema +63; `SoftNorms.Wire` +30; `Rights.Wire` +12; `SoftNorms.Phases` +7). The DRI signed this on 2026-10-06 because the lines replace deleted Python decision logic; the signature is recorded in `docs/trust-baseline.json`. The latency fix adds no untied trusted line: its layered twins are tied to their equality theorems, and its explanations sit in module comments. The inherited whole-tree S/V drift exists on the base as well and was not rebased.
@@ -88,7 +88,7 @@ Each mutant was planted temporarily in changed code, made the named test fail, a
 
 ## Acceptance ownership
 
-- **AGENT:** Done: the implementation, deletion, A/B recording, 14-seed comparison, soft corpus, latency fix with side-by-side measurement, the fuzzer baseline review and the foreground full gate.
+- **AGENT:** Done: the implementation, deletion, A/B recording, 14-seed comparison, soft corpus, latency fix with side-by-side measurement, the fuzzer baseline review and the foreground full suite (in chunks; see the gate row).
 - **HUMAN (DRI):** Signed 2026-10-06: the 164-line trusted-code growth. Review the 11 fuzzer baseline entries' grouping with the rest of DF-3 to DF-19 (an existing deferred item in `conformance/DIFFFUZZ.md`).
 - **EXTERNAL:** No model call or external service was used. The plan's later operational soak remains outside batch 6.
 
@@ -106,4 +106,4 @@ Checklist coverage:
 - Item 20: the gate JSON, the generated latency table (`tests/test_lean_first_b6_report.py`) and this report.
 - Item 21: the acceptance owners above.
 
-Items 3, 7–12, 18 and 19 are unchanged concerns of other batches. Item 22: everything is committed and the full gate runs on a clean code head.
+Items 3, 7–12, 18 and 19 are unchanged concerns of other batches. Item 22: everything is committed, and the full suite passed on the clean code head `51a89eca`.
