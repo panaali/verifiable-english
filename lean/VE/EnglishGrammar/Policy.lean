@@ -222,7 +222,7 @@ def connector (s : String) (trail : Bool) : Bool :=
   let s := if trail && s.endsWith " " && s.length ≥ 2 && !(s.dropRight 1).endsWith " " then s.dropRight 1 else s
   s.startsWith " " && ((s.drop 1).splitOn " ").all lowerWord
 
-/-- `template_parts` (`ve/surface/nary.py:13–33`). -/
+/-- `template_parts` (`ve/surface/nary.py:13–34`): subject first, as V3 requires (S3 D8). -/
 def templateParts (v : String) (k : Nat) : Option (List String) :=
   if braceSlots v != (List.range k).map (fun i => "{" ++ toString i ++ "}") then none else
   let parts := splitSlots v
@@ -230,11 +230,11 @@ def templateParts (v : String) (k : Nat) : Option (List String) :=
   let mids := (parts.drop 1).take (k - 1)
   if !mids.all (·.startsWith " ") then none else
   let first := parts.headD ""
-  if !(first.isEmpty || first == "the value of ") then none else
+  if !first.isEmpty then none else
   if !mids.all (connector · true) then none else
   let last := parts.getLastD ""
   if !(last.isEmpty || connector last false) then none else
-  if !((splitWs (parts.getD 1 "")).any naryHeads.contains || first.startsWith "the value of ") then none else
+  if !(splitWs (parts.getD 1 "")).any naryHeads.contains then none else
   some parts
 
 /-- A phrase against a pattern: `some adjective?` when it matches. -/

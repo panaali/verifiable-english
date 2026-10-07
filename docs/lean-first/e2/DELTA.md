@@ -7,7 +7,7 @@ are in [the E2 report](../../spec/english-lean-e2-report.md), generated from
 maps each recorded difference to a row here (`DISPOSITIONS`) and counts what no row covers.
 
 **Signatures.** GE2 asks the DRI to sign each `verdict` and `availability` row. They are recorded here, unsigned:
-owner the English E2 DRI (HUMAN, deferred). No `verdict` row is listed.
+owner the English E2 DRI (HUMAN, deferred). One `verdict` row is listed (V1).
 
 ## wording
 
@@ -29,6 +29,12 @@ owner the English E2 DRI (HUMAN, deferred). No `verdict` row is listed.
 | O1 | S2's F3: the hand parser's 64-level nesting limit (`ResourceLimit`) before a word or spacing it would refuse later | Lean reads the words first and refuses with their code |
 | O2 | S3's or38 class: Python's `ResourceLimit` where its depth check precedes a malformed integer shape | Lean has no reading (`none`) |
 | O3 | the producer's overlay refusal before any text is read | Lean's order of spec 2.5: the boundary, the overlay check, V6, V1 to V5, then the text |
+
+## verdict
+
+| Row | Base (Python) | Head (Lean) | Evidence |
+|---|---|---|---|
+| V1 | an `nary@0` wording with words before `{0}` (`the value of {0} at {1} is {2}`): Python's `template_parts` accepted it, Python selected it and its reader admitted texts written with it (`The value of speed at instant is high.`) | V3 refuses a selected wording that does not begin with `{0}` (S3 D8). Python's `template_parts` and the port's `templateParts` (5.2) now refuse it as well, so the mechanical form is selected and the environment is read; a text written with the refused wording has no reading (`SyntaxError`). Before this row the request was `invalidGrammar lexicon: V3` for every text (recheck 1 of E2, B) | `tests/test_nary.py::test_fret_user_sort_time_and_arity_six`; `tests/test_english_e2_selection.py` |
 
 ## availability
 
