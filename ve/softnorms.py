@@ -81,6 +81,7 @@ class SoftEnvironment(Environment):
         row = check_soft_source(data, generated=generated, layers=frozenset(layers))
         try:
             self._init_soft(data, row)
+            object.__setattr__(self, '_generated_source', generated)
         except Exception as error:
             raise CheckerUnavailable(
                 f"CheckerUnavailable: Python could not construct Lean-accepted soft environment: {error}") from error
@@ -252,6 +253,7 @@ class SoftNormDocument:
         env, units = self._source
         profiles = env.to_dict().get("profiles", ())
         row = check_soft_source(env.to_dict(), units,
+                                generated=getattr(env, '_generated_source', False),
                                 layers=frozenset(p for p in profiles
                                                  if p in ("norm-defaults@0", "readings@1", "rights@0")))
         try:
@@ -284,7 +286,18 @@ class SoftNormDocument:
             if item['outweighs'] is not None}
         self.document_hash = row['document_hash']
         self.warnings = tuple(row['warnings'])
-        self.extended_env = SoftEnvironment(row['environment_prime'], generated=True)
+        prime = deepcopy(row['environment_prime'])
+        if getattr(env, '_generated_source', False):
+            # A norms-only source may declare an ordinary soft__ predicate. The
+            # internal soft relay removes that prefix while validating its
+            # generated layer; restore the author's declarations for Python's
+            # subsequent assertion typing and situation search.
+            source = env.to_dict()['vocabulary']['predicates']
+            target = prime['vocabulary']['predicates']
+            for name, declaration in source.items():
+                if name.startswith('soft__') and name not in target:
+                    target[name] = deepcopy(declaration)
+        self.extended_env = SoftEnvironment(prime, generated=True)
         object.__setattr__(self.extended_env, 'decision_names', frozenset(self.decisions))
         derived = {item['rule']: item['ast'] for item in row['derived']}
         softened = []

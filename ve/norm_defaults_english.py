@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 
+from .environment import UNSAID_PREFIX
 from .errors import SyntaxError, VEError
 from .norm_english import (UNSPECIFIED_KEYWORD, _bindings, _words, default_sentence, pair_sentence,
                            unspecified_clause)
@@ -227,7 +228,7 @@ def _inherited_reason(document, situation, status):
     lower = []
     for name in sorted(set(first) | set(second)):
         for row in sorted(first.get(name, frozenset()) ^ second.get(name, frozenset())):
-            lower.append((name[len("unsaid__"):], row))
+            lower.append((name[len(UNSAID_PREFIX):], row))
     parts = []
     for q, row in lower:
         clause = point_clause(env, situation, q, row)
