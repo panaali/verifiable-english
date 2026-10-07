@@ -197,39 +197,49 @@ def declaresBlock (environment : Json) : Bool :=
     (environment.getObjVal? "unit_schema").isOk ||
     (environment.getObjVal? "alternatives").isOk || (environment.getObjVal? "risk").isOk
 
-/-- The source routes also enforce document-scope restrictions on flags, definitions and literals. Those
-declarations are checked on the submitted environment by `validated (typingView environment)` below. Remove
-only those declarations from the source-route view, so the routes can check the alternatives/risk blocks and
-W6 annotations without deciding whether an unrelated profile may be combined with them. -/
-def blockRouteView (environment : Json) : Json := Id.run do
+/-- The submitted environment without the statement layers' profiles and declarations (`readings@1`,
+`reports@0`, `speech-acts@0`, `rights@0`), which the block routes do not combine with their own; those are
+validated by their own decoders below, and the typing view drops them. -/
+def layerView (environment : Json) : Json := Id.run do
   let vocabulary := environment.getObjValD "vocabulary"
   let profiles := (VE.Route.Gate.profilesOf environment).toOption.getD []
   let profiles := profiles.filter (fun p => p != "readings@1" && p != "reports@0" &&
     p != "speech-acts@0" && p != "rights@0")
+  let vocabulary := VE.Risk.Wire.dropField "reports" (VE.Risk.Wire.dropField "rights" vocabulary)
+  let environment := VE.Risk.Wire.dropField "speech_acts" environment
+  return (environment.setObjVal! "profiles" (toJson profiles)).setObjVal! "vocabulary" vocabulary
+
+/-- The norms routes also enforce document-scope restrictions on flags, definitions and literals. Those
+declarations are checked on the submitted environment by `validated (typingView environment)` below. Remove
+only those declarations from the norms routes' view, so the routes can check the W6 annotations without
+deciding whether an unrelated profile may be combined with them (md1c). -/
+def blockRouteView (environment : Json) : Json := Id.run do
+  let environment := layerView environment
+  let vocabulary := environment.getObjValD "vocabulary"
   let predicates := VE.Risk.Wire.mapEntries (fun entry =>
     VE.Risk.Wire.dropField "defined" (VE.Risk.Wire.dropField "total"
       (VE.Risk.Wire.dropField "functional" entry))) (vocabulary.getObjValD "predicates")
   let constants := match VE.Bridge.fields (vocabulary.getObjValD "constants") with
     | .ok cs => Json.mkObj (cs.filter fun (_, entry) => entry.getObjValD "sort" != .str "$string")
     | .error _ => vocabulary.getObjValD "constants"
-  let vocabulary := (vocabulary.setObjVal! "predicates" predicates).setObjVal! "constants" constants
-  let vocabulary := VE.Risk.Wire.dropField "reports" (VE.Risk.Wire.dropField "rights" vocabulary)
-  let environment := VE.Risk.Wire.dropField "speech_acts" environment
-  return (environment.setObjVal! "profiles" (toJson profiles)).setObjVal! "vocabulary" vocabulary
+  return environment.setObjVal! "vocabulary"
+    ((vocabulary.setObjVal! "predicates" predicates).setObjVal! "constants" constants)
 
 /-- Part 1 of the boundary (S3 spec 2.3): check the profile blocks and W6 declarations by the route
-decoders, using an empty document. The typing check below reads the complete submitted declarations. -/
+decoders on the submitted environment (without the statement layers), using an empty document. The
+alternatives environment scope validates other profiles' declarations with their owner while preserving
+fixed role predicates. -/
 def validateDeclarations (environment : Json) : Except String Unit := do
   let ps := (VE.Route.Gate.profilesOf environment).toOption.getD []
-  let routeView := blockRouteView environment
   if ps.contains "risk@0" || (environment.getObjVal? "risk").isOk then
-    let _ ← VE.Risk.Wire.decodeRiskSource routeView (Json.mkObj [("norms", Json.arr #[])])
+    let _ ← VE.Risk.Wire.decodeRiskSource (layerView environment) (Json.mkObj [("norms", Json.arr #[])])
   else if ps.contains "alternatives@0" || (environment.getObjVal? "alternatives").isOk then
-    let _ ← VE.Alternatives.Wire.decodeAltSource routeView (Json.arr #[]) (Json.arr #[])
+    let _ ← VE.Alternatives.Wire.decodeAltSource (layerView environment) (Json.arr #[]) (Json.arr #[])
+      .environment
   if ps.contains "norm-defaults@0" then
-    let _ ← VE.NormDefaults.Wire.decodeSourceU routeView (Json.arr #[])
+    let _ ← VE.NormDefaults.Wire.decodeSourceU (blockRouteView environment) (Json.arr #[])
   else if ps.contains "soft-norms@0" then
-    let _ ← VE.SoftNorms.Wire.decodeSoftSource routeView (Json.arr #[])
+    let _ ← VE.SoftNorms.Wire.decodeSoftSource (blockRouteView environment) (Json.arr #[])
   if ((environment.getObjVal? "units").isOk || (environment.getObjVal? "unit_schema").isOk) &&
       !ps.contains "risk@0" then
     let ext ← VE.Risk.Wire.extended environment

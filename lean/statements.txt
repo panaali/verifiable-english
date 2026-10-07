@@ -135,8 +135,8 @@ theorem VE.Alternatives.Replay.alternatives_wire_acceptance
                   ∀ (B : VE.Structure),
                     VE.Alternatives.BaseAdmissibleAlt r.src.A B →
                       VE.Norms.Sat B r.premises → VE.Formula.denote B [] r.conclusion)
-  -- uses VE.Alternatives.AltConflictFree@VE.Alternatives.Background VE.Alternatives.BaseAdmissibleAlt@VE.Alternatives.Background VE.Alternatives.Replay.AltEntailmentReplay.conclusion@VE.Alternatives.Replay VE.Alternatives.Replay.AltEntailmentReplay.premises@VE.Alternatives.Replay VE.Alternatives.Replay.AltEntailmentReplay.src@VE.Alternatives.Replay VE.Alternatives.Replay.AltEntailmentReplay.valid@VE.Alternatives.Replay VE.Alternatives.Replay.AltEntailmentReplay@VE.Alternatives.Replay VE.Alternatives.Replay.replayAltEntailment@VE.Alternatives.Replay VE.Alternatives.Wire.AltSource.A@VE.Alternatives.Wire VE.Alternatives.Wire.AltSource@VE.Alternatives.Wire VE.Alternatives.Wire.decodeAltSource@VE.Alternatives.Wire VE.Alternatives.altPremises@VE.Alternatives.Background VE.Alternatives.inlineTree@VE.Alternatives.Decl VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Sat@VE.Norms.Prefix VE.Norms.backgroundBase@VE.Norms.Prefix VE.Norms.definitionsHold@VE.Norms.Layer VE.Norms.envAt@VE.Norms.Tree VE.Norms.holdsCatala@VE.Norms.Elaborate VE.Norms.profileHold@VE.Norms.Layer VE.Norms.size@VE.Norms.Tree VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
-  -- expr 1307307961
+  -- uses VE.Alternatives.AltConflictFree@VE.Alternatives.Background VE.Alternatives.BaseAdmissibleAlt@VE.Alternatives.Background VE.Alternatives.Replay.AltEntailmentReplay.conclusion@VE.Alternatives.Replay VE.Alternatives.Replay.AltEntailmentReplay.premises@VE.Alternatives.Replay VE.Alternatives.Replay.AltEntailmentReplay.src@VE.Alternatives.Replay VE.Alternatives.Replay.AltEntailmentReplay.valid@VE.Alternatives.Replay VE.Alternatives.Replay.AltEntailmentReplay@VE.Alternatives.Replay VE.Alternatives.Replay.replayAltEntailment@VE.Alternatives.Replay VE.Alternatives.Wire.AltSource.A@VE.Alternatives.Wire VE.Alternatives.Wire.AltSource@VE.Alternatives.Wire VE.Alternatives.Wire.Scope.document@VE.Alternatives.Wire VE.Alternatives.Wire.decodeAltSource@VE.Alternatives.Wire VE.Alternatives.altPremises@VE.Alternatives.Background VE.Alternatives.inlineTree@VE.Alternatives.Decl VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Sat@VE.Norms.Prefix VE.Norms.backgroundBase@VE.Norms.Prefix VE.Norms.definitionsHold@VE.Norms.Layer VE.Norms.envAt@VE.Norms.Tree VE.Norms.holdsCatala@VE.Norms.Elaborate VE.Norms.profileHold@VE.Norms.Layer VE.Norms.size@VE.Norms.Tree VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 258840525
 theorem VE.Alternatives.Replay.alternatives_wire_conflict_sound
   ∀ (j : Lean.Json) (res : VE.Alternatives.Replay.AltConflictReplay),
     VE.Alternatives.Replay.replayAltConflict j = Except.ok res →
@@ -144,8 +144,8 @@ theorem VE.Alternatives.Replay.alternatives_wire_conflict_sound
         VE.Alternatives.Wire.decodeAltSource (j.getObjValD "environment") (j.getObjValD "norms") (j.getObjValD "units") =
             Except.ok res.src ∧
           VE.Alternatives.WellFormedAlt res.src.A = Bool.true ∧ VE.Alternatives.AltConflictFree res.src.A
-  -- uses VE.Alternatives.AltConflictFree@VE.Alternatives.Background VE.Alternatives.Replay.AltConflictReplay.conflictFree@VE.Alternatives.Replay VE.Alternatives.Replay.AltConflictReplay.src@VE.Alternatives.Replay VE.Alternatives.Replay.AltConflictReplay@VE.Alternatives.Replay VE.Alternatives.Replay.replayAltConflict@VE.Alternatives.Replay VE.Alternatives.WellFormedAlt@VE.Alternatives.Decl VE.Alternatives.Wire.AltSource.A@VE.Alternatives.Wire VE.Alternatives.Wire.AltSource@VE.Alternatives.Wire VE.Alternatives.Wire.decodeAltSource@VE.Alternatives.Wire
-  -- expr 1247376525
+  -- uses VE.Alternatives.AltConflictFree@VE.Alternatives.Background VE.Alternatives.Replay.AltConflictReplay.conflictFree@VE.Alternatives.Replay VE.Alternatives.Replay.AltConflictReplay.src@VE.Alternatives.Replay VE.Alternatives.Replay.AltConflictReplay@VE.Alternatives.Replay VE.Alternatives.Replay.replayAltConflict@VE.Alternatives.Replay VE.Alternatives.WellFormedAlt@VE.Alternatives.Decl VE.Alternatives.Wire.AltSource.A@VE.Alternatives.Wire VE.Alternatives.Wire.AltSource@VE.Alternatives.Wire VE.Alternatives.Wire.Scope.document@VE.Alternatives.Wire VE.Alternatives.Wire.decodeAltSource@VE.Alternatives.Wire
+  -- expr 3986625385
 theorem VE.Alternatives.Replay.alternatives_wire_dilemma_sound
   ∀ (j : Lean.Json) (src : VE.Alternatives.Wire.AltSource) (w : VE.Alternatives.Replay.DilemmaData src),
     VE.Alternatives.Replay.replayDilemma j = Except.ok ⟨src, w⟩ →
@@ -160,8 +160,8 @@ theorem VE.Alternatives.Replay.alternatives_wire_dilemma_sound
                     ¬∀ (B : VE.Structure),
                         VE.Alternatives.BaseAdmissibleAlt src.A B →
                           VE.Norms.Sat B src.A.Γ → VE.Formula.denote B [] (VE.Alternatives.allFollowable src.A)
-  -- uses VE.Alternatives.AltConflictFree@VE.Alternatives.Background VE.Alternatives.AltDoc.alt@VE.Alternatives.Decl VE.Alternatives.AltDoc.Γ@VE.Alternatives.Decl VE.Alternatives.AltEnv.chooser@VE.Alternatives.Decl VE.Alternatives.BaseAdmissibleAlt@VE.Alternatives.Background VE.Alternatives.Replay.DilemmaData.M@VE.Alternatives.Replay VE.Alternatives.Replay.DilemmaData.dilemma@VE.Alternatives.Replay VE.Alternatives.Replay.DilemmaData.r@VE.Alternatives.Replay VE.Alternatives.Replay.DilemmaData.rows@VE.Alternatives.Replay VE.Alternatives.Replay.DilemmaData@VE.Alternatives.Replay VE.Alternatives.Replay.replayDilemma@VE.Alternatives.Replay VE.Alternatives.WellFormedAlt@VE.Alternatives.Decl VE.Alternatives.Wire.AltSource.A@VE.Alternatives.Wire VE.Alternatives.Wire.AltSource@VE.Alternatives.Wire VE.Alternatives.Wire.decodeAltSource@VE.Alternatives.Wire VE.Alternatives.allFollowable@VE.Alternatives.Followable VE.Alternatives.instEntityNameEntity@VE.Alternatives.Validate VE.Alternatives.notFollowableF@VE.Alternatives.Followable VE.Alternatives.validateAlternatives@VE.Alternatives.Validate VE.Bridge.Entity@VE.Bridge VE.FiniteModel.inDomain@VE.Alternatives.Followable VE.Formula.denote@VE.Semantics VE.Formula.eval@VE.Finite VE.Norms.Sat@VE.Norms.Prefix VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
-  -- expr 1295564090
+  -- uses VE.Alternatives.AltConflictFree@VE.Alternatives.Background VE.Alternatives.AltDoc.alt@VE.Alternatives.Decl VE.Alternatives.AltDoc.Γ@VE.Alternatives.Decl VE.Alternatives.AltEnv.chooser@VE.Alternatives.Decl VE.Alternatives.BaseAdmissibleAlt@VE.Alternatives.Background VE.Alternatives.Replay.DilemmaData.M@VE.Alternatives.Replay VE.Alternatives.Replay.DilemmaData.dilemma@VE.Alternatives.Replay VE.Alternatives.Replay.DilemmaData.r@VE.Alternatives.Replay VE.Alternatives.Replay.DilemmaData.rows@VE.Alternatives.Replay VE.Alternatives.Replay.DilemmaData@VE.Alternatives.Replay VE.Alternatives.Replay.replayDilemma@VE.Alternatives.Replay VE.Alternatives.WellFormedAlt@VE.Alternatives.Decl VE.Alternatives.Wire.AltSource.A@VE.Alternatives.Wire VE.Alternatives.Wire.AltSource@VE.Alternatives.Wire VE.Alternatives.Wire.Scope.document@VE.Alternatives.Wire VE.Alternatives.Wire.decodeAltSource@VE.Alternatives.Wire VE.Alternatives.allFollowable@VE.Alternatives.Followable VE.Alternatives.instEntityNameEntity@VE.Alternatives.Validate VE.Alternatives.notFollowableF@VE.Alternatives.Followable VE.Alternatives.validateAlternatives@VE.Alternatives.Validate VE.Bridge.Entity@VE.Bridge VE.FiniteModel.inDomain@VE.Alternatives.Followable VE.Formula.denote@VE.Semantics VE.Formula.eval@VE.Finite VE.Norms.Sat@VE.Norms.Prefix VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 272433295
 theorem VE.Alternatives.Replay.alternatives_wire_followable_sound
   ∀ (j : Lean.Json) (res : VE.Alternatives.Replay.FollowableReplay),
     VE.Alternatives.Replay.replayFollowable j = Except.ok res →
@@ -176,15 +176,15 @@ theorem VE.Alternatives.Replay.alternatives_wire_followable_sound
                     ∀ (S : VE.Structure),
                       VE.Norms.DocumentExpansion (VE.Alternatives.inlineTree res.src.A) B S →
                         VE.Alternatives.FollowableIn res.src.A S
-  -- uses VE.Alternatives.AltConflictFree@VE.Alternatives.Background VE.Alternatives.AltDoc.Γ@VE.Alternatives.Decl VE.Alternatives.BaseAdmissibleAlt@VE.Alternatives.Background VE.Alternatives.FollowableIn@VE.Alternatives.Followable VE.Alternatives.Replay.FollowableReplay.followable@VE.Alternatives.Replay VE.Alternatives.Replay.FollowableReplay.src@VE.Alternatives.Replay VE.Alternatives.Replay.FollowableReplay@VE.Alternatives.Replay VE.Alternatives.Replay.replayFollowable@VE.Alternatives.Replay VE.Alternatives.WellFormedAlt@VE.Alternatives.Decl VE.Alternatives.Wire.AltSource.A@VE.Alternatives.Wire VE.Alternatives.Wire.AltSource@VE.Alternatives.Wire VE.Alternatives.Wire.decodeAltSource@VE.Alternatives.Wire VE.Alternatives.inlineTree@VE.Alternatives.Decl VE.Norms.DocumentExpansion@VE.Norms.Conflict VE.Norms.Sat@VE.Norms.Prefix VE.Structure@VE.Semantics
-  -- expr 4035712926
+  -- uses VE.Alternatives.AltConflictFree@VE.Alternatives.Background VE.Alternatives.AltDoc.Γ@VE.Alternatives.Decl VE.Alternatives.BaseAdmissibleAlt@VE.Alternatives.Background VE.Alternatives.FollowableIn@VE.Alternatives.Followable VE.Alternatives.Replay.FollowableReplay.followable@VE.Alternatives.Replay VE.Alternatives.Replay.FollowableReplay.src@VE.Alternatives.Replay VE.Alternatives.Replay.FollowableReplay@VE.Alternatives.Replay VE.Alternatives.Replay.replayFollowable@VE.Alternatives.Replay VE.Alternatives.WellFormedAlt@VE.Alternatives.Decl VE.Alternatives.Wire.AltSource.A@VE.Alternatives.Wire VE.Alternatives.Wire.AltSource@VE.Alternatives.Wire VE.Alternatives.Wire.Scope.document@VE.Alternatives.Wire VE.Alternatives.Wire.decodeAltSource@VE.Alternatives.Wire VE.Alternatives.inlineTree@VE.Alternatives.Decl VE.Norms.DocumentExpansion@VE.Norms.Conflict VE.Norms.Sat@VE.Norms.Prefix VE.Structure@VE.Semantics
+  -- expr 555593604
 theorem VE.Alternatives.Replay.sourceOf_ok
   ∀ {j : Lean.Json} {src : VE.Alternatives.Wire.AltSource},
     VE.Alternatives.Replay.sourceOf j = Except.ok src →
       VE.Alternatives.Wire.decodeAltSource (j.getObjValD "environment") (j.getObjValD "norms") (j.getObjValD "units") =
         Except.ok src
-  -- uses VE.Alternatives.Replay.sourceOf@VE.Alternatives.Replay VE.Alternatives.Wire.AltSource@VE.Alternatives.Wire VE.Alternatives.Wire.decodeAltSource@VE.Alternatives.Wire
-  -- expr 2755063828
+  -- uses VE.Alternatives.Replay.sourceOf@VE.Alternatives.Replay VE.Alternatives.Wire.AltSource@VE.Alternatives.Wire VE.Alternatives.Wire.Scope.document@VE.Alternatives.Wire VE.Alternatives.Wire.decodeAltSource@VE.Alternatives.Wire
+  -- expr 1687594220
 theorem VE.Alternatives.Replay.validate_sound_decoded
   ∀ (src : VE.Alternatives.Wire.AltSource) (sc : VE.Alternatives.Replay.Scenario src),
     VE.Alternatives.validateAlternatives src.A sc.M sc.rows = Except.ok () →
@@ -11232,6 +11232,13 @@ theorem VE.Norms.RunSound.valid_field
       Lean.Json.bool b
   -- uses VE.Route.Wire.ok@VE.Route.Wire
   -- expr 540553084
+theorem VE.Norms.RunSound.valid_field_steps
+  ∀ (id : String) (b : Bool) (n m s : Lean.Json),
+    (VE.Route.Wire.ok id [("valid", Lean.Json.bool b), ("background", n), ("layers", m), ("steps", s)]).getObjValD
+        "valid" =
+      Lean.Json.bool b
+  -- uses VE.Route.Wire.ok@VE.Route.Wire
+  -- expr 3546012665
 theorem VE.Norms.WellFormedOnce_eq
   ∀ (D : VE.Norms.Doc), VE.Norms.WellFormedOnce D = VE.Norms.WellFormed D
   -- uses VE.Norms.Doc@VE.Norms.Tree VE.Norms.WellFormed@VE.Norms.Tree VE.Norms.WellFormedOnce@VE.Norms.Once
@@ -26545,6 +26552,12 @@ theorem VE.Route.WireSound.valid_field
     (VE.Route.Wire.ok id [("valid", Lean.Json.bool b), ("background", n)]).getObjValD "valid" = Lean.Json.bool b
   -- uses VE.Route.Wire.ok@VE.Route.Wire
   -- expr 3006534112
+theorem VE.Route.WireSound.valid_field_steps
+  ∀ (id : String) (b : Bool) (n s : Lean.Json),
+    (VE.Route.Wire.ok id [("valid", Lean.Json.bool b), ("background", n), ("steps", s)]).getObjValD "valid" =
+      Lean.Json.bool b
+  -- uses VE.Route.Wire.ok@VE.Route.Wire
+  -- expr 2217152937
 theorem VE.Route.WireSound.values_field
   ∀ (id : String) (v : Lean.Json), (VE.Route.Wire.ok id [("values", v)]).getObjValD "values" = v
   -- uses VE.Route.Wire.ok@VE.Route.Wire
@@ -27871,9 +27884,9 @@ theorem VE.Service.runMode_check
   -- uses VE.Service.Mode.check@VE.Service.Protocol VE.Service.Standalone.checkCase@VE.Service.Standalone VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 1698987194
 theorem VE.Service.runMode_checkCertificate
-  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.checkCertificate j = VE.CertificateWire.runCaseReported j
-  -- uses VE.CertificateWire.runCaseReported@VE.CertificateWire VE.Service.Mode.checkCertificate@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
-  -- expr 851478933
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.checkCertificate j = VE.CertificateWire.runCaseReportedSteps j
+  -- uses VE.CertificateWire.runCaseReportedSteps@VE.CertificateWire VE.Service.Mode.checkCertificate@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- expr 4248002304
 theorem VE.Service.runMode_diagnose
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.diagnose j = VE.Service.Diagnose.diagnoseCase j
   -- uses VE.Service.Diagnose.diagnoseCase@VE.Service.Diagnose VE.Service.Mode.diagnose@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
@@ -27948,10 +27961,9 @@ theorem VE.Service.runMode_order
   -- uses VE.Order.Surface.runCaseReported@VE.Order.Surface VE.Service.Mode.order@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
   -- expr 4003062785
 theorem VE.Service.runMode_parse
-  ∀ (j : Lean.Json),
-    VE.Service.runMode VE.Service.Mode.parse j = VE.Service.Standalone.reported VE.Service.Standalone.parseCase j
-  -- uses VE.Service.Mode.parse@VE.Service.Protocol VE.Service.Standalone.parseCase@VE.Service.Standalone VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
-  -- expr 3654196355
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.parse j = VE.Service.Standalone.reportedParse j
+  -- uses VE.Service.Mode.parse@VE.Service.Protocol VE.Service.Standalone.reportedParse@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- expr 2217412199
 theorem VE.Service.runMode_quantity
   ∀ (j : Lean.Json),
     VE.Service.runMode VE.Service.Mode.quantity j = VE.Time.Wire.runCaseReported j VE.Time.Document.extension

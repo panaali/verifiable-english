@@ -267,6 +267,78 @@ def test_coverage_names_declared_alternatives_and_counterfactual_support():
     assert report["residual"]["counterfactual_leaves"] == 1
 
 
+def test_coverage_response_shape_rejects_dropped_and_boolean_counts():
+    from ve.backends.service_schema import Context, Invalid, _compiler
+    check = _compiler.ref("alternatives.json", "#/$defs/coverage")[0]
+    case = {"id": "coverage", "kind": "alt-elaborate", "environment": source(),
+            "norms": [], "coverage_units": []}
+    row = run_case(case)
+    coverage_answer = row["coverage"]
+    check(coverage_answer, Context(case), {})
+    changed = deepcopy(coverage_answer)
+    changed["residual"]["alternatives_declared"] = True
+    with pytest.raises(Invalid):
+        check(changed, Context(case), {})
+    missing = deepcopy(coverage_answer)
+    del missing["alternatives"]["counterfactual_leaves"]
+    with pytest.raises(Invalid):
+        check(missing, Context(case), {})
+
+
+def test_coverage_response_binds_every_unit_and_residual_count():
+    """An invented unit and a count of zero beside one cell must fail closed."""
+    from ve.backends.service_schema import Context, Invalid, _compiler
+
+    case = {"id": "coverage", "kind": "alt-elaborate", "environment": source(),
+            "norms": [], "coverage_units": [{
+                "id": "choice", "kind": "asserted", "support": "testimony",
+                "content": ["binary", "available", ["const", "pull"], ["const", "r"]]}]}
+    good = run_case(case)["coverage"]
+    check = _compiler.ref("alternatives.json", "#/$defs/coverage")[0]
+    check(good, Context(case), {})
+    assert good["alternatives"]["alternatives_declared"][0]["unit"] == "choice"
+
+    for section in ("alternatives_declared", "counterfactual_leaves", "proximate_judgments"):
+        bad = deepcopy(good)
+        cell = deepcopy(good["alternatives"]["alternatives_declared"][0])
+        if section == "counterfactual_leaves":
+            cell = {"action": "pull", "harm": "h", "leads_to": True, "decider": "unstated",
+                    "unit": "invented", "support": "testimony"}
+        elif section == "proximate_judgments":
+            cell = {"action": "pull", "harm": "h", "decider": "unstated",
+                    "unit": "invented", "support": "testimony"}
+        else:
+            cell["unit"] = "invented"
+        bad["alternatives"][section] = [cell]
+        bad["residual"][section] = 1
+        with pytest.raises(Invalid):
+            check(bad, Context(case), {})
+
+    for section, cells in good["alternatives"].items():
+        if section == "table_complete":
+            wrong = 1 if cells is None else 0
+        else:
+            wrong = len(cells) + 1
+        bad = deepcopy(good)
+        bad["residual"][section] = wrong
+        with pytest.raises(Invalid):
+            check(bad, Context(case), {})
+
+    bad = deepcopy(good)
+    bad["residual"]["alternatives_declared"] = 0
+    with pytest.raises(Invalid):
+        check(bad, Context(case), {})
+
+    completed = deepcopy(case)
+    completed["environment"]["alternatives"]["outcomes"] = {"complete_by": "case annotator"}
+    completed_answer = run_case(completed)["coverage"]
+    check(completed_answer, Context(completed), {})
+    assert completed_answer["residual"]["table_complete"] == 1
+    completed_answer["residual"]["table_complete"] = 0
+    with pytest.raises(Invalid):
+        check(completed_answer, Context(completed), {})
+
+
 @pytest.mark.parametrize("kind", [
     ["attributed", "witness", "says", "asserted"],
     ["hedged", "likely", "asserted"],

@@ -16,6 +16,8 @@ Which classes are content diagnostics is read from Python itself: every subclass
 relays a surface adds its modules (its row of section 5.2). A `ve` module that only relayed
 modules import is relayed with them (`helpers`), so a check cannot leave the lint by moving
 into a module of its own.
+An explicitly owned surface parser remains outside the relay even when only a
+relayed file adapter imports it.
 
 Usage: ``python tools/relay_lint.py [PATH ...]`` (default: `RELAYED`). Exit 1 on a finding.
 """
@@ -31,15 +33,19 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 # The modules whose diagnostics are Lean's (batch 0: the relay itself; batch 3: the readings route;
-# batch 4: discourse; batch 7: rights; batch 8: reports).
+# batch 4: discourse; batch 7: rights; batch 8: reports; batch 11b: speech source).
 RELAYED = ("ve/backends/relay.py", "ve/readings_route.py", "ve/discourse.py",
-           "ve/rights_route.py", "ve/reports.py", "ve/reports_route.py", "ve/backends/english_lean.py")
+           "ve/rights_route.py", "ve/reports.py", "ve/reports_route.py",
+           "ve/backends/speech_source.py", "ve/speech_document.py", "ve/backends/english_lean.py")
 # Relayed functions of a module that also holds Python's own code (English E2, spec 2.9: the admission path of
 # `ve/english.py`; the producer, the renderer, the statement reader and the comparator in the same module write
 # their own diagnostics and are outside it).
 RELAYED_FUNCTIONS = {"ve/english.py": ("_lean_reading", "_nearest_help", "_parse_english_document_uncached",
                                        "_parse_english_document", "parse_english_with_metadata", "parse_english",
                                        "parse_english_argument")}
+# W2's English text-to-structure parser remains the experimental English E3
+# owner. SpeechDocument only supplies its structured fence to Lean for checking.
+OWNED_SURFACES = frozenset({"ve.speech_english"})
 FILE_IO = "# relay-lint: file I/O"
 
 
@@ -146,7 +152,8 @@ def _imports(name: str, path: Path, files: dict[str, Path]) -> set[str]:
 def helpers(relayed: list[Path]) -> list[Path]:
     """The `ve` modules that only relayed modules import, found from the relayed ones: a check
     moved out of a relayed module into a module of its own is still the relayed surface's
-    (lf-8 recheck B2: `ve/reports_preflight.py` held the reports relay's checks)."""
+    (lf-8 recheck B2: `ve/reports_preflight.py` held the reports relay's checks).
+    Explicitly owned surface parsers are excluded from this import-closure rule."""
     files = _module_files()
     names = {path.resolve(): name for name, path in files.items()}
     graph = {name: _imports(name, path, files) for name, path in files.items()}
@@ -158,7 +165,8 @@ def helpers(relayed: list[Path]) -> list[Path]:
     todo, found = list(covered), []
     while todo:
         for module in sorted(graph[todo.pop()]):
-            if module not in covered and importers[module] <= covered and files[module].name != "__init__.py":
+            if (module not in covered and module not in OWNED_SURFACES
+                    and importers[module] <= covered and files[module].name != "__init__.py"):
                 covered.add(module)
                 todo.append(module)
                 found.append(files[module])

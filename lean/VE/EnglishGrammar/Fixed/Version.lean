@@ -4,6 +4,6 @@ trusted definition of the English reader, which the lock file lists with their h
 
 namespace VE.EnglishGrammar.Fixed
 
-def actionsVersion : String := "22"
+def actionsVersion : String := "23"
 
 end VE.EnglishGrammar.Fixed

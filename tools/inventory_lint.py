@@ -82,10 +82,8 @@ EXCEPTIONS: dict[tuple[str, str, str, str], str] = {
         SURFACE + " (soft norms are a Lean-only route; soft_route.check_regenerated compares Lean's regeneration)",
     ("ve.softnorms", "_rule_references", "ve.ast", "_Checker"): SURFACE + " (soft norms: Lean-only route)",
     ("ve.softnorms", "_within_limits", "ve.ast", "_Checker"): SURFACE + " (soft norms: Lean-only route)",
-    ("ve.speech_acts", "SpeechDocument._question", "ve.ast", "_Checker"):
-        SURFACE + " (speech acts: Lean-only route with no Python admission dispatch)",
     ("ve.speech_english", "_body", "ve.ast", "_Checker"):
-        SURFACE + " (speech acts: Lean-only route with no Python admission dispatch)",
+        SURFACE + " (English E3 remains the parser owner; the speech-source route checks its structured result)",
     ("ve.norms_contract", "typing_failure", "ve.ast", "_Checker"): DIAGNOSTIC,
     ("ve.norm_defaults_contract", "filled_ast_fits", "ve.ast", "_Checker"): DIAGNOSTIC,
 }

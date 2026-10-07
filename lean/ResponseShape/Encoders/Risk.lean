@@ -67,12 +67,48 @@ theorem labelled_fits {R : RiskDoc} {p : String × VE.Formula} (h : p ∈ (riskP
       "risk:class_functional", "risk:class"]) (.str p.1) :=
   Fits.strIn (premiseLabels_mem R _ (List.of_mem_zip h).1)
 
-theorem elaborate_fits (id : String) (src : Wire.RiskSource) :
+theorem elaborate_fits (id : String) (src : Wire.RiskSource)
+    (hcoverage : (CaseCond.path ["coverage_units"]).holds req = false) :
     Fits req (skel% "risk.json#/$defs/elaborate") (ok id (Wire.regenerated src)) := by
   unfold ok VE.Route.Wire.ok Wire.regenerated VE.Alternatives.Wire.encodeNode Wire.labelled
     VE.Norms.Wire.regenerated orWorseName lessWorstName
   simp only []
   fits using labelled_fits, Alternatives.labelled_fits
+
+theorem elaborate_coverage_fits (id : String) (src : Wire.RiskSource)
+    (environment units narrowings : Json)
+    (hcoverage : (CaseCond.path ["coverage_units"]).holds req = true) :
+    Fits req (skel% "risk.json#/$defs/elaborate")
+      (ok id (Wire.regenerated src ++
+        [("coverage", VE.Alternatives.Wire.coverage (toAlt src.R)
+          environment units narrowings)])) := by
+  unfold ok VE.Route.Wire.ok Wire.regenerated VE.Alternatives.Wire.encodeNode Wire.labelled
+    VE.Norms.Wire.regenerated orWorseName lessWorstName VE.Alternatives.Wire.coverage
+  simp only []
+  fits using labelled_fits, Alternatives.labelled_fits
+  case h_2 x completion item heq hx =>
+    simp only [List.mem_flatMap, List.mem_filterMap] at hx
+    rcases hx with ⟨action, _, harm, _, h⟩
+    split at h <;> simp only [Option.some.injEq, reduceCtorEq] at h
+    subst_vars
+    fits
+    -- The complete table's own cell, read from the declared outcomes decider.
+    all_goals
+      split at heq <;> simp only [Option.some.injEq, reduceCtorEq] at heq
+      subst_vars
+      fits
+
+theorem elaborate_case_fits (id : String) (j : Json) {w : Json} (hobj : j.getObjVal? "id" = .ok w)
+    (hp : usesRiskPath j = true) (hK : j.getObjValD "kind" = .str "risk-elaborate") :
+    OkFits j Skeletons.risk (runElaborate id j) := by
+  unfold runElaborate
+  okfits
+  split
+  · fits_from elaborate_coverage_fits (req := j) id _ _ _ _
+      (CaseCond.path_ok ‹j.getObjVal? "coverage_units" = .ok _›)
+  · simp only [List.append_nil]
+    fits_from elaborate_fits (req := j) id _
+      (CaseCond.path_error hobj ‹j.getObjVal? "coverage_units" = .error _›)
 
 /-- Every admission's kinds are its units' rendered kinds. -/
 theorem admitDocument_kinds (environment document : Json) :
@@ -93,7 +129,7 @@ theorem runCase_fits (j : Json) (hp : usesRiskPath j = true) : OkFits j Skeleton
   all_goals read_kind
   all_goals first
     | (unfold runAdmission; okfits; fits_from admission_fits _ _ _ (admitDocument_kinds _ _ _ ‹Admission.admitDocument _ _ = .ok _›))
-    | fits_from elaborate_fits _ _
+    | exact elaborate_case_fits _ _ ‹_› hp ‹_›
     | exact decision_fits _ _ ‹_› hp ‹_›
     | exact conflict_fits _ _ ‹_› hp ‹_›
     | exact followable_fits _ _ ‹_› hp ‹_›

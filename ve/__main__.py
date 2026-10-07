@@ -139,23 +139,27 @@ def _main(argv=None):
         options = speech_parser.parse_args(argv[1:])
         try:
             from .speech_document import load_speech_document
-            from .ast import _to_data
-            from .speech_english import legend
             source = load_speech_document(options.path)
-            doc = source.document
+            report = source.report
             _emit({"status": "experimental", "document_id": source.document_id,
                    # 1.1: the effective scope's environment, bindings included.
-                   "environment_id": doc.env.environment_id,
-                   "legend": legend(doc.env),
-                   "rules": [rule.to_dict() for rule in doc.policy.rules],
-                   "questions": [{"unit": q.unit, "mode": q.mode,
-                                  "presupposition": None if q.mode == "reading"
-                                  else _to_data(doc.presupposition(q))}
-                                 for q in doc.questions],
-                   "warnings": doc.warnings, "reading_plan": source.reading_plan,
+                   "environment_id": report["environment_id"],
+                   "legend": source.legend,
+                   "rules": [{"norm": rule} for rule in report["rules"]],
+                   "questions": [{"unit": q["unit"], "mode": q["mode"],
+                                  "presupposition": None if q["mode"] == "reading"
+                                  else q["presupposition"]}
+                                 for q in report["questions"]],
+                   "warnings": report["warnings"],
+                   "reading_plan": source.reading_plan,
                    "answers": source.answer_lines, "compliance": source.compliance_lines,
-                   "coverage": source.coverage()})
+                   "coverage": source.coverage(),
+                   **({"nominations": report["nominations"]} if any(
+                       type(row) is dict and "nominate" in row
+                       for row in source.metadata.get("answers", [])) else {})})
             return 0
+        except CheckerUnavailable:
+            raise
         except VEError as exc:
             _emit({"status": "InvalidInput", "error": exc.to_dict()})
             return 2
