@@ -92,7 +92,7 @@ def checkAuthor (environment : Json) (U : UDoc) : Except String Unit := checkAut
 def decodeSourceU (environment norms : Json) : Except String SourceU :=
   if hasProfile environment then do
     let env' ← placeholderJson environment
-    let src ← VE.Norms.Wire.decodeSource env' norms
+    let src ← VE.Norms.Wire.decodeSource env' norms false true
     let names := unspecifiedNames environment
     let U : UDoc := ⟨src.D, (src.D.T.regulated.map Regulated.name).filter (names.contains ·)⟩
     checkAuthor environment U

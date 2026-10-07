@@ -86,7 +86,8 @@ def isLiteralEntry (entry : Json) : Bool :=
 
 /-- The v0 vocabulary rules plus `$string` as the sort of declared literal
 constants. -/
-def decodeVocabulary (profiles : List String) (v : Json) : Except String RouteVocabulary := do
+def decodeVocabulary (profiles : List String) (v : Json)
+    (displayConstants : Bool := false) : Except String RouteVocabulary := do
   exactFields v ["sorts", "predicates", "constants"]
   let sorts ← fields (← v.getObjVal? "sorts")
   let predicates ← fields (← v.getObjVal? "predicates")
@@ -142,10 +143,12 @@ def decodeVocabulary (profiles : List String) (v : Json) : Except String RouteVo
   let cs ← constants.mapM fun (c, entry) => do
     if isLiteralEntry entry then literalEntry entry
     else
-      VE.Bridge.displayFields entry ["sort", "description"] ["verbalisation"]
+      VE.Bridge.displayFields entry ["sort", "description"]
+        (if displayConstants then ["verbalisation"] else [])
       VE.Bridge.description entry
-      if let .ok words := entry.getObjVal? "verbalisation" then
-        VE.Bridge.displayString words
+      if displayConstants then
+        if let .ok words := entry.getObjVal? "verbalisation" then
+          VE.Bridge.displayString words
     let s ← stringField entry "sort"
     unless allowed s do throw s!"unknown constant sort: {c}"
     pure (c, s)
