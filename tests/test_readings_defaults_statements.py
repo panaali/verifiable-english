@@ -104,3 +104,83 @@ def test_rd1_checker_fails_on_a_missing_declaration(tmp_path, capsys):
     checker.SOURCE = path
     assert checker.main() == 1
     assert "fillHolds: expected one Lean def, found 0" in capsys.readouterr().out
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# RD-6a: lean/VE/Readings/SupExtra.lean against 6.7
+
+RD6B = ["fill_transfers", "nd_superpose_all", "nd_superpose_conflict_free"]
+
+
+def _approved_6a_names():
+    return sorted(key for key in _checker().approved_6a() if key[1] not in RD6B)
+
+
+def _run_6a(tmp_path, source, checker=None):
+    checker = checker or _checker()
+    path = tmp_path / "SupExtra.lean"
+    path.write_text(source)
+    checker.SOURCE_6A = path
+    return checker, checker.main()
+
+
+def test_rd6a_statements_match_the_approved_text(capsys):
+    checker = _checker()
+    assert checker.main() == 0
+    out = capsys.readouterr().out
+    assert "checked 7 approved RD-6a declarations (4 theorems)" in out
+    assert f"not built yet (a later batch): {', '.join(RD6B)}" in out
+    assert "RD-6a PASS: 6 exact after whitespace normalization; 1 pending the statement re-review" in out
+    assert set(checker.PENDING_6A) == set(checker.EDITS_6A) == {"superpose_all_extra"}
+    assert checker.LATER_6A == set(RD6B)
+
+
+@pytest.mark.parametrize("kind, name", _approved_6a_names(), ids=lambda v: str(v))
+def test_rd6a_checker_fails_on_every_changed_declaration(tmp_path, capsys, kind, name):
+    """Each RD-6a declaration of 6.7, changed in Lean, fails by name, the pending one included (its pending edit
+    is exact)."""
+    checker = _checker()
+    checker, code = _run_6a(tmp_path, _mutate(checker.SOURCE_6A.read_text(), kind, name, checker), checker)
+    assert code == 1
+    out = capsys.readouterr().out
+    expected = "differs from the approved text by more than its pending edit" if name in checker.EDITS_6A \
+        else f"{kind} differs"
+    assert f"{name}: {expected}" in out
+
+
+def test_rd6a_checker_fails_on_the_approved_all_statement(tmp_path, capsys):
+    """The approved `superpose_all_extra` (without `hQw`, false: fixture X1) is no longer pending: it matches."""
+    checker = _checker()
+    source = checker.SOURCE_6A.read_text()
+    restored = source.replace("(hQw : VE.Compose.SlotWellFormed (correlate (sup D).1) Q)\n    ", "", 1)
+    assert restored != source
+    checker, code = _run_6a(tmp_path, restored, checker)
+    assert code == 1
+    assert "superpose_all_extra: listed as pending but matches the approved text" in capsys.readouterr().out
+
+
+def test_rd6a_checker_fails_on_a_missing_declaration(tmp_path, capsys):
+    checker = _checker()
+    source = checker.SOURCE_6A.read_text().replace("theorem transfers_nil ", "theorem transfers_nil' ", 1)
+    checker, code = _run_6a(tmp_path, source, checker)
+    assert code == 1
+    assert "transfers_nil: expected one Lean theorem, found 0" in capsys.readouterr().out
+
+
+def test_rd6a_checker_compares_an_rd6b_declaration_once_built(tmp_path, capsys):
+    """A later (RD-6b) declaration in the file is compared: the approved text passes, a changed one fails."""
+    checker = _checker()
+    spec_text = checker.SPEC.read_text().split("### 6.7 RD-6a", 1)[1].split("```lean", 1)[1].split("```", 1)[0]
+    start = spec_text.index("theorem fill_transfers")
+    stop = spec_text.index("theorem nd_superpose_conflict_free")
+    statement = spec_text[start:stop].rstrip() + " := by\n  sorry\n"
+    source = checker.SOURCE_6A.read_text().replace("end Extra", statement + "\nend Extra", 1)
+    checker, code = _run_6a(tmp_path, source, checker)
+    assert code == 0
+    out = capsys.readouterr().out
+    assert "checked 8 approved RD-6a declarations (5 theorems)" in out
+    assert "not built yet (a later batch): nd_superpose_all, nd_superpose_conflict_free" in out
+    changed = source.replace("(hs : superposable (fillDoc N) = true) (hsu", "(hsu", 1)
+    checker, code = _run_6a(tmp_path, changed)
+    assert code == 1
+    assert "fill_transfers: theorem differs" in capsys.readouterr().out
