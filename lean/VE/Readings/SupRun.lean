@@ -111,9 +111,9 @@ def runModel (id : String) (j : Json) : Except String Json := do
 
 /-! ## `readings-dead` -/
 
-def runDead (id : String) (j : Json) : Except String Json := do
-  let b ← admitS2 (← j.getObjVal? "environment") (← j.getObjVal? "document")
-  let D := b.D
+/-- The `readings-dead` answer on an admitted document: it reads the couplings, narrowings and candidates only
+    (`choiceCore`), so it is the same under the unspecified completion (`compatible_fillDoc`). -/
+def deadAnswer (id : String) (D : Doc) (j : Json) : Except String Json := do
   let cert ← VE.CertificateWire.decodeCertificate (← j.getObjVal? "certificate")
   match j.getObjValD "index" with
   | .null =>
@@ -130,6 +130,10 @@ def runDead (id : String) (j : Json) : Except String Json := do
     let ok := supReady D && deadCheck D s i cert
     pure (okWith id [("accepted", .bool ok),
       ("finding", if ok && !dropped then .str s!"DeadReading: {s}:{i}" else .null)])
+
+def runDead (id : String) (j : Json) : Except String Json := do
+  let b ← admitS2 (← j.getObjVal? "environment") (← j.getObjVal? "document")
+  deadAnswer id b.D j
 
 /-! ## `readings-choice` -/
 

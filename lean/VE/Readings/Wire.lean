@@ -77,8 +77,9 @@ def decodeEnvironment (environment : Json) : Except String ReadingsEnvironment :
   | .error e => throw e
   let lowerJson ← stripReadings environment
   let lower := profiles.filter (· != readingsProfile)
-  -- `norm-defaults@0` beside content is S1's named abstention (1.1): the frame is decoded without it, its
-  -- `unspecified` completions read as the placeholder `deny` (DRI ruling 4).
+  -- The frame is decoded without `norm-defaults@0`, its `unspecified` completions read as the placeholder `deny`
+  -- (DRI ruling 4): content beside it is S1's named abstention off the norms chain (1.1), and on the norms chain
+  -- the completion's admission reads `unspecified` from `lowerJson` (`UnspecifiedWire.unspecOf`).
   let frameJson := (if lower.contains "norm-defaults@0" then placeholderFrame lowerJson else lowerJson).setObjVal!
     "profiles" (toJson (lower.filter (· != "norm-defaults@0")))
   match chainOf profiles with
@@ -507,9 +508,11 @@ def contentBearing (R : ReadingSet) : Bool :=
 /-- The first answer of `f` along `l`; `f` is not evaluated past it. -/
 def firstSome {α β : Type} (l : List α) (f : α → Option β) : Option β := l.findSome? f
 
-/-- 1.1, 1.2: the named abstentions. -/
+/-- 1.1, 1.2: the named abstentions. Content beside `norm-defaults@0` is refused on the soft and rights chains;
+    on the norms chain it is under the unspecified completion (readings-defaults.md 1.1, `UnspecifiedWire.lean`),
+    whose admission follows this one. -/
 def abstention (re : ReadingsEnvironment) (D : Doc) : Option String :=
-  if re.lower.contains "norm-defaults@0" && D.sets.any contentBearing then
+  if re.lower.contains "norm-defaults@0" && re.chain != .norms && D.sets.any contentBearing then
     some "UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented"
   else firstSome D.sets (fun R => firstSome R.candidates (fun a => match a.content with
     | some c => match c.needs with

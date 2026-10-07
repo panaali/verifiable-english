@@ -170,6 +170,7 @@ import VE.Readings.SupWireSound
 import VE.Readings.ChoiceWF
 import VE.Readings.Force
 import VE.Readings.Unspecified
+import VE.Readings.UnspecifiedWire
 import VE.WireContract.Engine
 import VE.Grammar.Derives
 import VE.Grammar.Extension
@@ -4266,6 +4267,23 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.observes_rel_congr
 #print axioms VE.Readings.observes_withTables_nil
 #print axioms VE.Readings.achievesU_iff
+-- readings-defaults RD-2a (docs/spec/readings-defaults.md 6.3): the wire under the unspecified completion.
+#print axioms VE.NormDefaults.acceptance_of_fillTyped
+#print axioms VE.NormDefaults.acceptanceU
+#print axioms VE.NormDefaults.modelCheckU_sound
+#print axioms VE.Readings.Wire.fillNamesFree_of_reservedUnsaid
+#print axioms VE.Readings.Wire.wellFormedU_of_ndDocText
+#print axioms VE.Readings.Wire.wellFormedND_eq
+#print axioms VE.Readings.Wire.lookup_map_key
+#print axioms VE.Readings.Wire.frameOf_filled
+#print axioms VE.Readings.Wire.candidate_filled
+#print axioms VE.Readings.Wire.authorEnv_filled
+#print axioms VE.Readings.Wire.replayPair_D
+#print axioms VE.Readings.Wire.readings_wire_nd_separate_sound
+#print axioms VE.Readings.Wire.strict_choice
+#print axioms VE.Readings.Wire.choiceU_E
+#print axioms VE.Readings.Wire.readings_wire_nd_choice_conflict
+#print axioms VE.Readings.Wire.readings_wire_nd_choice_entails
 -- english-lean (docs/spec/english-lean.md 5.9): the grammar engine and the English instance.
 #print axioms VE.Grammar.yieldAll_nil
 #print axioms VE.Grammar.yieldAll_cons
