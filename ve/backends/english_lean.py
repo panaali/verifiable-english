@@ -41,6 +41,8 @@ TYPING = ("UnknownSymbol", "TypeMismatch", "UnsupportedProfile")
 COMPARATOR_CLASSES = {"IllTyped": TYPING, "RelativeForm": ("SyntaxError", *TYPING)}
 # Python's one wall-clock limit on this path (`ve/surface/unambiguity.py`): excluded from G2 and listed.
 WALL_CLOCK = "English Earley time budget exhausted"
+# Python's premise check (`english._check_conclusions`), owned by Lean as `ConclusionWithoutPremise`.
+NO_PREMISE = "A conclusion needs an earlier premise."
 
 TRANSPORT: Callable[[dict], dict] | None = None
 
@@ -391,6 +393,11 @@ def shadow_record(env, source: str, words, python, lean) -> dict:
         refused = python.conclusion_error()
         if refused is not None:
             record["conclusion_rejected"] = True
+            if str(refused) == NO_PREMISE:
+                # Python's admission refused the document at its premise check, which Lean now owns as
+                # `ConclusionWithoutPremise` (spec 2.9): compare the public outcome, not the reading alone.
+                left = {"verdict": "rejected", "code": python_class(refused)}
+                record["python"] = {"class": python_class(refused), "message": str(refused)}
     reading = getattr(lean, "lean_reading", None) if isinstance(lean, BaseException) else lean.lean
     if reading is None:
         right = {"verdict": "unavailable", "code": python_class(lean)}
@@ -400,4 +407,6 @@ def shadow_record(env, source: str, words, python, lean) -> dict:
         record["lean"] = reading.record()
         record["identities"] = reading.response["identities"]
     record["classes"] = [] if "excluded" in record else dispatch._classes(left, right)
+    if TRANSPORT is not None:
+        record["planted"] = "test transport"  # a test's answer, not Lean's: no evidence either way
     return record

@@ -35,6 +35,7 @@ def test_default_admission_calls_lean_and_not_python(monkeypatch):
         calls.append((args, kwargs))
         return original(*args, **kwargs)
     monkeypatch.setattr(L, "read", recorded)
+    monkeypatch.setenv("VE_ENGLISH_COMPARATOR", "0")  # ev6: with the switch off, Python's reader never runs
     monkeypatch.setattr(EN, "_python_reading", lambda *_args: pytest.fail("Python decided admission"))
     document = EN.parse_english(ENV, SOURCE)
     assert [EN.ast._to_data(f) for f in document.formulas] == [

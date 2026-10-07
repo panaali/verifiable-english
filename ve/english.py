@@ -819,7 +819,9 @@ def render_english(value, env, *, conclusions=(), _statement_layer=False, **opti
         ast.check_document(env, value)
     else:
         ast.check_formula(env, value)
-    words = EnglishVocabulary(env, _defer_overlay_refusals=True, **options)
+    # Lean's overlay check refuses an overlay on the english.check path; the statement layer's check is
+    # Python's own reading, so there the producer keeps its overlay refusals (spec 2.8).
+    words = EnglishVocabulary(env, _defer_overlay_refusals=not _statement_layer, **options)
     if words.review_status == 'unreviewed':
         warnings.warn('English overlay ' + words.overlay_digest + ': unreviewed',
                       UnreviewedVocabularyWarning, stacklevel=2)
@@ -1702,6 +1704,10 @@ class _Reading:
 
 
 def _python_reading(env, source, words, options):
+    # Python's source limit, before its hand parser, as Python's admission checked it (Lean's `sourceTooLong`
+    # on the admission path; the comparator and the statement reader keep Python's order).
+    if len(source.encode('utf-8')) > MAX_SOURCE_BYTES:
+        raise ResourceLimit(f'English source exceeds {MAX_SOURCE_BYTES} bytes')
     normalised, boundaries = _normalise_english_source(source, words)
     parser = EnglishParser(env, normalised, words)
     try:
@@ -1728,8 +1734,9 @@ def _python_reading(env, source, words, options):
 
 @semantic_entry("english.statement")
 def parse_statement_english(env, source, **options):
-    """Read E3 statement wording, whose generated atoms are not E2 vocabulary."""
-    words = EnglishVocabulary(env, _defer_overlay_refusals=True, **options)
+    """Read E3 statement wording, whose generated atoms are not E2 vocabulary. No Lean overlay check runs on
+    this path, so the producer keeps its overlay refusals (spec 2.8: only the admission path defers them)."""
+    words = EnglishVocabulary(env, **options)
     reading = _python_reading(env, source, words, options)
     reading.check_conclusions()
     return reading.document

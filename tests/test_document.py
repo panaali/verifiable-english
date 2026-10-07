@@ -374,6 +374,7 @@ def test_document_fence_parses_one_checked_sentence(tmp_path, monkeypatch, surfa
         return original(*args, **kwargs)
 
     monkeypatch.setattr(unambiguity, "require_unique_derivation", checked)
+    monkeypatch.setenv("VE_ENGLISH_COMPARATOR", "0")  # ev6: Python's reader runs only as the comparator
     def lean_read(*args, **kwargs):
         lean_calls.append(True)
         return original_read(*args, **kwargs)
