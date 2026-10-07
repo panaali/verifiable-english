@@ -8397,6 +8397,7 @@
   "tests/test_relay_lint.py::test_seeded_modules[raise cls(row[\"error\"])-False]",
   "tests/test_relay_lint.py::test_seeded_modules[raise errors.TypeMismatch(f\"bad {x}\")-True]",
   "tests/test_relay_lint.py::test_the_classes_come_from_python",
+  "tests/test_relay_lint.py::test_the_english_admission_path_is_relayed_by_function",
   "tests/test_relay_wire_check.py::test_a_batch_is_a_list[None]",
   "tests/test_relay_wire_check.py::test_a_batch_is_a_list[cases0]",
   "tests/test_relay_wire_check.py::test_a_batch_is_a_list[cases1]",
