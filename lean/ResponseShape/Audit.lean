@@ -31,6 +31,8 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.Alternatives.conflict_fits
 #print axioms ResponseShape.Encoders.Alternatives.decodeAltSource_taken
 #print axioms ResponseShape.Encoders.Alternatives.decodeBlock_taken
+#print axioms ResponseShape.Encoders.Alternatives.elaborate_case_fits
+#print axioms ResponseShape.Encoders.Alternatives.elaborate_coverage_fits
 #print axioms ResponseShape.Encoders.Alternatives.elaborate_fits
 #print axioms ResponseShape.Encoders.Alternatives.fields_obj
 #print axioms ResponseShape.Encoders.Alternatives.firstFailure_of_not_free
@@ -181,14 +183,17 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.ReadingsRoute.validate_fits
 #print axioms ResponseShape.Encoders.Reports.admission_fits
 #print axioms ResponseShape.Encoders.Reports.certificate_fits
+#print axioms ResponseShape.Encoders.Reports.content_fits
 #print axioms ResponseShape.Encoders.Reports.countermodel_fits
 #print axioms ResponseShape.Encoders.Reports.elaborate_fits
 #print axioms ResponseShape.Encoders.Reports.generated_key
 #print axioms ResponseShape.Encoders.Reports.kindOf_fits
+#print axioms ResponseShape.Encoders.Reports.nested_fits
 #print axioms ResponseShape.Encoders.Reports.of_route
 #print axioms ResponseShape.Encoders.Reports.runCaseReported_fits
 #print axioms ResponseShape.Encoders.Reports.runCase_fits
 #print axioms ResponseShape.Encoders.Reports.scopedVerdict_fits
+#print axioms ResponseShape.Encoders.Reports.scopedUnreplayed_fits
 #print axioms ResponseShape.Encoders.Reports.scoped_fits
 #print axioms ResponseShape.Encoders.Reports.status_fits
 #print axioms ResponseShape.Encoders.Reports.status_render_fits
@@ -211,6 +216,8 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.Risk.certificate_fits
 #print axioms ResponseShape.Encoders.Risk.conflict_fits
 #print axioms ResponseShape.Encoders.Risk.decision_fits
+#print axioms ResponseShape.Encoders.Risk.elaborate_case_fits
+#print axioms ResponseShape.Encoders.Risk.elaborate_coverage_fits
 #print axioms ResponseShape.Encoders.Risk.elaborate_fits
 #print axioms ResponseShape.Encoders.Risk.followable_fits
 #print axioms ResponseShape.Encoders.Risk.labelled_fits

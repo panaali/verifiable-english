@@ -54,6 +54,7 @@ structure Checker (F C : Type) where
   certificate : Json → Except String C
   fields : C → String × List String × String
   valid : C → List F → F → Bool
+  steps : C → Nat
 
 def closureChecker (E : VE.Environment) : Checker VE.Closure.Formula VE.Closure.Tableau.Certificate where
   embed := VE.Closure.embed
@@ -64,6 +65,7 @@ def closureChecker (E : VE.Environment) : Checker VE.Closure.Formula VE.Closure.
   certificate := VE.CertificateWire.decodeClosureCertificate
   fields := fun c => (c.environment_id, c.premise_meaning_ids, c.conclusion_meaning_id)
   valid := fun c ps r => VE.Closure.Tableau.checkCertificate E ps r c
+  steps := fun c => VE.Route.Steps.closure c.trace
 
 def coreChecker (E : VE.Environment) : Checker VE.Core.Formula VE.Core.Tableau.Certificate where
   embed := VE.Core.embed
@@ -74,6 +76,7 @@ def coreChecker (E : VE.Environment) : Checker VE.Core.Formula VE.Core.Tableau.C
   certificate := VE.Core.Wire.decodeCertificate
   fields := fun c => (c.environment_id, c.premise_meaning_ids, c.conclusion_meaning_id)
   valid := fun c ps r => VE.Core.Tableau.checkCertificate E ps r c
+  steps := fun c => VE.Route.Steps.core c.trace
 
 def orderChecker (E : VE.Order.Environment) : Checker VE.Order.Formula VE.Order.Tableau.Certificate where
   embed := VE.Order.embed
@@ -84,6 +87,7 @@ def orderChecker (E : VE.Order.Environment) : Checker VE.Order.Formula VE.Order.
   certificate := VE.Order.Wire.decodeCertificate
   fields := fun c => (c.environment_id, c.premise_meaning_ids, c.conclusion_meaning_id)
   valid := fun c ps r => VE.Order.Tableau.checkCertificate E ps r c
+  steps := fun c => VE.Route.Steps.order c.trace
 
 /-- A family environment decoded by its own route decoder. -/
 inductive Family where
@@ -102,7 +106,7 @@ def decodeFamily (environment : Json) : Except String Family := do
 /-- `norms-certificate`: the family certificate over the embedded regenerated
 `flags ++ Background ++ layer premises`, then `Γ`, bound to the submitted environment. -/
 def certificateCase {F C : Type} (k : Checker F C) (profiles : List String) (canonical : Json)
-    (regenerated : List VE.Formula) (j : Json) : Except String Bool := do
+    (regenerated : List VE.Formula) (j : Json) : Except String (Bool × Nat) := do
   let premisesJson ← j.getObjVal? "premises"
   let conclusionJson ← j.getObjVal? "conclusion"
   let asts ← VE.Route.Wire.formulasJson premisesJson (some conclusionJson)
@@ -112,7 +116,9 @@ def certificateCase {F C : Type} (k : Checker F C) (profiles : List String) (can
   let (e, pids, q) := k.fields cert
   VE.Route.Wire.bindingOk profiles canonical
     (regenerated.map VE.Route.Wire.encodeFormula ++ (← premisesJson.getArr?).toList) conclusionJson e pids q
-  pure (k.valid cert (regenerated.map k.embed ++ ps) c)
+  let steps := k.steps cert
+  if steps > (← VE.Route.Steps.limit j) then throw VE.Route.Steps.stepLimit
+  pure (k.valid cert (regenerated.map k.embed ++ ps) c, steps)
 
 /-- One conflict target's package, as `Flagged.decodePackage` binds it, with the
 family's certificate: `none` unless bound. -/
@@ -180,13 +186,13 @@ def runCase (j : Json) : Except String Json := do
     let canonical ← VE.Norms.Wire.canonicalEnvironmentJson environment
     let regenerated := VE.Norms.Flagged.flagPremises src ++ VE.Norms.background src.D ++
       VE.Norms.elaborate src.D.T
-    let valid ← match ← decodeFamily environment with
+    let (valid, steps) ← match ← decodeFamily environment with
       | .closure E => certificateCase (closureChecker E) profiles canonical regenerated j
       | .core E => certificateCase (coreChecker E) profiles canonical regenerated j
       | .order E => certificateCase (orderChecker E) profiles canonical regenerated j
     return VE.Route.Wire.ok id [("valid", .bool valid),
       ("background", toJson (VE.Norms.Flagged.flagPremises src ++ VE.Norms.background src.D).length),
-      ("layers", toJson (VE.Norms.elaborate src.D.T).length)]
+      ("layers", toJson (VE.Norms.elaborate src.D.T).length), ("steps", toJson steps)]
   if kind == "norms-conflict" then
     let (answer, _) ← match ← decodeFamily (← VE.Norms.Replay.baseEnvironmentJson environment) with
       | .closure E => pure (conflictCase (closureChecker E) profiles environment norms src j)

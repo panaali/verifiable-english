@@ -230,10 +230,9 @@ every certificate is replayed by Lean.
   the block is only validated by the frozen W1 decoder.
 - `reports-scoped` replays witness models only over the author's `E`; a witness for a quoted package's scope is
   reported UNKNOWN (certificates are replayed at either scope).
-- Admission rejects a nested bridge with the wrong holder or without a record, but with W2's `AdmissionError`
-  text, not section 8's `BridgeHolder` / `MissingBridgeRecord`; residual lines (section 6) and status text (7.2)
-  are not produced by the Lean route (its `reports-status` gives the statuses and nested results they report).
-- Python checks each carried scoped certificate's outer binding on its own (`ReportsDocument.scoped_verdicts`)
-  but leaves the inner replay to this route: a bound certificate is FOLLOWS only from the Lean replay, and
-  `ve document coverage`, which runs no replay, reports it UNKNOWN with detail `not replayed`.
+- Admission reports section 8's `BridgeHolder` and `MissingBridgeRecord` diagnostics before the generic graph
+  rejection. `reports-status` supplies the nested statuses, section 6 residual lines and section 7.2 report,
+  assessment, scoped and bridge display lines. The P0 premise-set line is produced after the separate premise
+  check. Coverage requests statuses without replay; a carried bound certificate remains UNKNOWN with detail
+  `not replayed` until the checked document call asks Lean to replay it.
 - Fixtures not exercised: κ, ν (parser part), ξ, ρ, υ, χ, ψ (a, c) and most of B₁ to B₁₆.

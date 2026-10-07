@@ -191,118 +191,6 @@ class ConstantDecl:
     unit: str | None = None
     verbalisation: str | None = None
 
-def _alternatives_block(raw, sorts, predicates, constants, *, risk_enabled=False):
-    """Check declarations only; Lean owns inlining, validity and followability."""
-    mandatory = {"chooser", "action", "harm", "available", "leads_to", "outcomes"}
-    optional = {"decided_by", "performed", "inaction", "taken", "proximate", "fulfilments"}
-    if type(raw) is not dict:
-        raise VEError("InvalidInput: alternatives.block")  # VE.Alternatives.Wire.decodeBlock
-    if not mandatory <= raw.keys():
-        raise VEError(f"InvalidInput: alternatives.{sorted(mandatory - raw.keys())[0]}")
-    if unknown := sorted(raw.keys() - mandatory - optional):
-        raise VEError(f"InvalidInput: alternatives.{unknown[0]}")
-    for word in ("avoidable", "unavoidable", "allows", "prevents"):
-        if word in sorts or word in predicates or word in constants:
-            raise VEError(f"AlternativesReserved: {word}")
-    profile_wordings = {"{0} is avoidable by {1}", "{0} is unavoidable by {1}",
-                        "{0} allows {1} to happen", "{0} prevents {1}"}
-    for name, declaration in predicates.items():
-        if declaration.verbalisation in profile_wordings:
-            raise VEError(f"AlternativesReserved: wording for {name}")
-    role_sorts = {}
-    for role in ("chooser", "action", "harm"):
-        name = raw[role]
-        if type(name) is not str or name not in sorts:
-            raise UnknownSymbol(f"alternatives.{role} {name}")
-        role_sorts[role] = name
-    if len(set(role_sorts.values())) != 3:
-        raise VEError("AlternativesSort: sorts must be distinct")
-    role_spec = {
-        "available": ((role_sorts["action"], role_sorts["chooser"]), "{0} is available to {1}"),
-        "leads_to": ((role_sorts["action"], role_sorts["harm"]), "{0} leads to {1}"),
-        "inaction": ((role_sorts["action"],), "{0} is inaction"),
-        "taken": ((role_sorts["action"],), "{0} is taken"),
-        "proximate": ((role_sorts["action"], role_sorts["harm"]), "{0} causes {1}"),
-    }
-    declared_roles = [raw[role] for role in role_spec if role in raw]
-    if any(type(name) is not str for name in declared_roles):
-        raise VEError("InvalidInput: alternatives.role")
-    role_names = []
-    for role, (arguments, wording) in role_spec.items():
-        if role not in raw:
-            continue
-        name = raw[role]
-        if type(name) is not str or name not in predicates:
-            raise UnknownSymbol(f"alternatives.{role} {name}")
-        decl = predicates[name]
-        if decl.regulated is not None or decl.defined is not None or decl.functional is not None or decl.total is not None:
-            raise VEError(f"AlternativesRegulated: {role} {name}")
-        if decl.arguments != arguments:
-            raise VEError(f"AlternativesSort: {role} expects ({', '.join(arguments)})")
-        if decl.verbalisation != wording:
-            raise VEError(f'AlternativesVerbalisation: {role} must read "{wording}"')
-        role_names.append(name)
-    if len(set(role_names)) != len(role_names):
-        raise VEError("AlternativesSort: role predicates must be distinct")
-    for role, (_, wording) in role_spec.items():
-        for name, decl in predicates.items():
-            if decl.verbalisation == wording and (role not in raw or raw[role] != name):
-                raise VEError(f'AlternativesVerbalisation: {role} must be declared for "{wording}"')
-    outcomes = raw["outcomes"]
-    if outcomes != "signed":
-        if type(outcomes) is dict and "complete_by" not in outcomes:
-            raise VEError("MissingOutcomeDecider: alternatives.outcomes")
-        if type(outcomes) is not dict or set(outcomes) != {"complete_by"}:
-            raise VEError("InvalidInput: alternatives.outcomes")
-        if type(outcomes["complete_by"]) is not str or not outcomes["complete_by"].strip():
-            raise VEError("MissingOutcomeDecider: alternatives.outcomes")
-    if "decided_by" in raw and (type(raw["decided_by"]) is not str or
-                                len(raw["decided_by"].encode("utf-8")) > 64):
-        raise VEError("InvalidInput: alternatives.decided_by")
-    if "performed" in raw:
-        performed = raw["performed"]
-        if type(performed) is not dict or set(performed) != {"permission", "obligation"}:
-            raise VEError("InvalidInput: alternatives.performed")
-        m, q = performed["permission"], performed["obligation"]
-        pair = (predicates.get(m) if type(m) is str else None,
-                predicates.get(q) if type(q) is str else None)
-        if (any(d is None or d.arguments != (role_sorts["action"],) or d.regulated is None
-                for d in pair) or pair[0].regulated.role != "permission"
-                or pair[1].regulated.role != "obligation"
-                or pair[1].regulated.permission != m):
-            raise VEError(f"AlternativesPerformed: {m}, {q}")
-    fulfilments = raw.get("fulfilments", [])
-    if type(fulfilments) is not list:
-        raise VEError("InvalidInput: alternatives.fulfilments")
-    if len(fulfilments) > 16:
-        raise ResourceLimit("fulfilments")
-    seen = set()
-    for item in fulfilments:
-        if type(item) is not dict or set(item) != {"obligation", "body"}:
-            raise VEError("InvalidInput: alternatives.fulfilments")
-        name = item["obligation"]
-        if type(name) is not str:
-            raise VEError("InvalidInput: alternatives.fulfilments")
-        if name in seen:
-            raise DuplicateDeclaration(f"fulfilment {name}")
-        seen.add(name)
-        decl = predicates.get(name)
-        if decl is None or decl.regulated is None or decl.regulated.role != "obligation" or not decl.arguments or decl.arguments[0] != role_sorts["chooser"]:
-            raise VEError(f"FulfilmentSort: {name}")
-        if "performed" in raw and name == raw["performed"]["obligation"]:
-            raise VEError(f"FulfilmentOnPerformed: {name}")
-        body = item["body"]
-        if body == "avoids":
-            if decl.arguments != (role_sorts["chooser"], role_sorts["harm"]):
-                raise VEError(f"FulfilmentSort: {name}")
-        elif body == "excludes" and risk_enabled:
-            if decl.arguments != (role_sorts["chooser"], role_sorts["harm"]):
-                raise VEError(f"FulfilmentSort: {name}")
-        elif type(body) is not list:
-            raise VEError("InvalidInput: alternatives.fulfilments")
-    return canonical_json(raw)
-
-
 @dataclass(frozen=True, slots=True, init=False)
 class Environment:
     language: str
@@ -364,6 +252,12 @@ class Environment:
 
     def _decode(self, data, *, _generated_reports=False):
         canonical_json(data)  # Check size, Unicode, and the restricted wire subset.
+        # The two block routes own acceptance and its first diagnostic. The
+        # remainder of this constructor only materialises an accepted source.
+        block_kind = route_kind(data) if type(data) is dict else None
+        if block_kind in ("alternatives", "risk") and data.get("language") not in (LANGUAGE, CLOSURE_LANGUAGE):
+            from .backends.validation import validated_statement_block
+            validated_statement_block(data, block_kind)
         language = data.get("language") if type(data) is dict else None
         # Lean's decoders read a language that is not a string, or absent, as
         # the route's (VE.Service.Standalone.isLegacy): the route's fields, in
@@ -635,8 +529,6 @@ class Environment:
             if extended:
                 from .units import validate_extension
                 validate_extension(data["profiles"], units, sorts, constants)
-            from .risk import check_route_declarations
-            check_route_declarations(predicates, constants)
         speech_acts = None
         if route and "speech-acts@0" in data["profiles"]:
             from .speech_acts import validate_scope
@@ -671,13 +563,10 @@ class Environment:
             raise ResourceLimit("At most 64 declared $string literals")
         alternatives = None
         if route and "alternatives@0" in data["profiles"]:
-            alternatives = _alternatives_block(data.get("alternatives"), sorts, predicates, constants,
-                                               risk_enabled="risk@0" in data["profiles"])
+            alternatives = canonical_json(data["alternatives"])
         risk = None
         if route and "risk@0" in data["profiles"]:
-            from .risk import validate_block
-            risk = validate_block(data.get("risk"), sorts, predicates, constants,
-                                  loads_json(alternatives), units)
+            risk = canonical_json(data["risk"])
         profile_predicates = {}
         profile_sorts = {}
         profile_constants = {}
@@ -720,8 +609,8 @@ class Environment:
         object.__setattr__(self, "risk", risk)
         object.__setattr__(self, "reports", reports)
         # W6's profile and vocabulary extension were checked by Lean before
-        # construction. The risk profile takes its own route's legacy decoder.
-        if extended:
+        # construction; a risk environment was checked after its vocabulary.
+        if extended and risk is None:
             # Rust and Lean digest the submitted environment; Python digests
             # to_dict(). Any spelling that does not survive the round trip would
             # give the same input two identities, so it is rejected.

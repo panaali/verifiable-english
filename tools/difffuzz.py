@@ -685,7 +685,8 @@ LEAN_ROUTE_FIELDS = {
                "legend": "array<json>", "policy": "object", "premises": "array<json>", "queries": "array<json>",
                "questions": "array<json>", "scope": "object"},
     "reports": {"bridge_formulas": "array<json>", "content_ids": "array<json>", "envelope": "object",
-                "environment_reports_id": "string", "keys": "array<json>", "open_terms": "array<json>",
+                "environment_reports": "object", "environment_reports_id": "string",
+                "keys": "array<json>", "meaning_ids": "array<json>", "open_terms": "array<json>",
                 "premises": "array<json>", "warnings": "array<json>"},
     # `lean/VE/Time/Wire.lean` `runCase`, kind `admission`.
     "quantity": {"assurance": "string", "Q": "json", "core": "json", "meaning_id": "string",
@@ -741,8 +742,14 @@ def route_row_problem(case, row, index):
     """A `ve_conformance route` row against the service's `route` schema, which tests/test_lean_service_schema.py
     checks against the Lean decoders (`ve_response_decode`)."""
     from ve.backends.service_schema import Invalid, check_row
+    checked_row = row
+    if type(row) is dict and case.get("kind") == "certificate" and row.get("status") == "ok":
+        if "steps" in row:
+            return "one-shot route certificate unexpectedly carries service steps"
+        # The frozen one-shot projection omits this service-only display field.
+        checked_row = {**row, "steps": 0}
     try:
-        check_row("route", row, case, index)
+        check_row("route", checked_row, case, index)
     except Invalid as exc:
         return str(exc)
     return None

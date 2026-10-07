@@ -91,6 +91,7 @@
         "UnknownSymbol",
         "DuplicateDeclaration",
         "UnboundVariable",
+        "ShadowedVariable",
         "TypeMismatch",
         "InvalidModel",
         "UnsupportedProfile",

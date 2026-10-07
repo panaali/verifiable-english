@@ -59,9 +59,10 @@
         "id": {"type": "string", "x-equals": "/id"},
         "layers": {"$ref": "common.json#/$defs/nat"},
         "status": {"const": "ok"},
+        "steps": {"$ref": "common.json#/$defs/nat"},
         "valid": {"type": "boolean"}
       },
-      "required": ["id", "status", "valid", "background", "layers"],
+      "required": ["id", "status", "valid", "background", "layers", "steps"],
       "type": "object"
     },
     "norms-conflict": {

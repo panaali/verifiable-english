@@ -984,6 +984,7 @@ import VE.Senses.Read
 #print axioms VE.Route.WireSound.Runner.acceptance
 #print axioms VE.Route.WireSound.getObjValD_of_ok
 #print axioms VE.Route.WireSound.valid_field
+#print axioms VE.Route.WireSound.valid_field_steps
 #print axioms VE.Route.WireSound.refutes_field
 #print axioms VE.Route.WireSound.values_field
 #print axioms VE.Route.WireSound.mem_zip_map
@@ -1052,6 +1053,7 @@ import VE.Senses.Read
 #print axioms VE.Route.RunSound.route_order_countermodel
 #print axioms VE.Route.RunSound.route_order_evaluate
 #print axioms VE.Norms.RunSound.valid_field
+#print axioms VE.Norms.RunSound.valid_field_steps
 #print axioms VE.Norms.RunSound.runCase_certificate
 #print axioms VE.Norms.RunSound.norms_wire_certificate_acceptance
 #print axioms VE.Service.Graph.graph_sound
