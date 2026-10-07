@@ -71,3 +71,34 @@ def test_discourse_is_relayed_with_two_file_io_diagnostics(classes):
 
 def test_a_missing_relayed_module_fails(tmp_path):
     assert relay_lint.main([str(tmp_path / "absent.py")]) == 1
+
+
+# The second rule (readings-defaults plan RD-2b, D12): no readings module builds a name of the unspecified completion.
+
+@pytest.mark.parametrize("line, found", [
+    ('name = "unsaid__" + predicate', True),
+    ('name = f"unsaid--{rule}"', True),
+    ('names = ("x", "a unsaid__p b")', True),
+    ('"""Docstrings count: unsaid__p."""', True),
+    ('hidden = ("unsaid__", "unsaid--")  # relay-lint: non-wording', False),
+    ('hidden = ("unsaid__",)  # relay-lint: non-wording, really', True),
+    ('label = "unsaid:pair:" + body', False),
+    ('name = "unsaid_" + "_p"', False),
+])
+def test_seeded_readings_modules(tmp_path, line, found):
+    module = tmp_path / "readings_x.py"
+    module.write_text(f"def f(predicate, rule, body):\n    {line}\n")
+    guards = []
+    assert bool(relay_lint.reserved_literals(module, guards)) is found
+    assert bool(guards) is (not found and "non-wording" in line)
+    assert relay_lint.main([str(module)]) == (1 if found else 0)
+
+
+def test_every_readings_module_is_read_by_the_reserved_rule():
+    """The rule reads the glob, not a hand-kept list: every `ve/readings*.py` file, and nothing fewer."""
+    modules = sorted(ROOT.glob(relay_lint.READINGS_GLOB))
+    assert {p.name for p in modules} >= {"readings.py", "readings_route.py", "readings_s1.py",
+                                          "readings_s2_english.py", "readings_s2_wording.py",
+                                          "readings_verdicts.py", "readings_sup.py", "readings_english.py"}
+    for path in modules:
+        assert relay_lint.reserved_literals(path) == [], path

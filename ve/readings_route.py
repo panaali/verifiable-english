@@ -464,12 +464,9 @@ class Wording:
             else:
                 if len(set(frames)) == 1 and len(set(verbs)) == len(verbs):
                     return [f"*{verb}*" for verb in verbs]
-        names = [None if a.content is None else f"*{_without_period(self.candidate_sentence(set_id, i))}*"
-                 for i, a in enumerate(R.candidates)]
-        shown = [name for name in names if name is not None]
-        if len(set(shown)) != len(shown):
-            raise VEError(f"InvalidInput: two readings of {set_id} are shown by the same sentence")
-        return names
+        from .readings_s2_english import sentence_slots
+        return sentence_slots(set_id, [None if a.content is None else self.candidate_sentence(set_id, i)
+                                       for i, a in enumerate(R.candidates)])
 
     def candidate_sentence(self, set_id, i):
         """The candidate's own sentence, rendered as the document's renderer shows that kind of content: a rule
@@ -487,15 +484,11 @@ class Wording:
             rule = decode_rule(env, {"norm": content.body})
             return " ".join((render_rule_sentence(rule, env), *rule_notes(rule, env)))
         if content.kind == "assertion":
-            from .ast import Document as Formulas, formula_from_data
-            from .english import parse_english
-            from .printer import render
+            from .ast import formula_from_data
+            from .readings_s2_english import canonical_sentence
             frame = self.admission.senv.frame
-            formula = formula_from_data(frame, content.body)
-            text = render(Formulas((formula,)), frame, "ve_english").strip()
-            if parse_english(frame, text).formulas != (formula,):
-                raise VEError(f"InvalidInput: a reading of {set_id} does not read back to its content")
-            return text
+            return canonical_sentence(frame, formula_from_data(frame, content.body),
+                                      f"a reading of {set_id} does not read back to its content")
         from .surface.rights import render_unit
         return render_unit(side.rights, content.raw)
 
@@ -577,9 +570,8 @@ class Wording:
         ids = [a.id for a in R.candidates]
         i, j = ids.index(facts["witness"]), ids.index(pair["other"] if pair["reading"] == facts["witness"]
                                                        else pair["reading"])
-        names = self.reading_names(set_id)
-        if names[i] is None or names[j] is None:
-            raise VEError(f"InvalidInput: a pair of {set_id} names a reading without content")
+        from .readings_s2_english import named_pair
+        names = named_pair(set_id, self.reading_names(set_id), i, j)
         lines = []
         twins = self.twins(set_id, i, j)
         source_word = self.source_word(R.raw)
@@ -701,11 +693,6 @@ def _finding_pairs(entry, code):
     """The candidate indices of each of Lean's findings with this code, in Lean's order (`parse_finding`, the
     reader `validate` checked them with)."""
     return [(i, j) for found, _, i, j in map(parse_finding, entry["findings"]) if found == code]
-
-
-def _without_period(sentence):
-    """A rendered sentence without its final period, as the `<reading>` slot shows it (readings-defaults 2.3)."""
-    return sentence[:-1] if sentence.endswith(".") else sentence
 
 
 def _article(noun):
