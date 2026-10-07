@@ -683,6 +683,7 @@
   "tests/test_background.py::test_one_dependency_dag",
   "tests/test_background.py::test_proofs_and_argument_replay_include_background",
   "tests/test_batch_evidence.py::test_complete_head_evidence_passes",
+  "tests/test_batch_evidence.py::test_latency_request_uses_the_public_readings_normalizer",
   "tests/test_batch_evidence.py::test_stale_or_incomplete_evidence_fails[comparison-change3]",
   "tests/test_batch_evidence.py::test_stale_or_incomplete_evidence_fails[comparison-change4]",
   "tests/test_batch_evidence.py::test_stale_or_incomplete_evidence_fails[comparison-change5]",

@@ -12,17 +12,38 @@ import json
 from pathlib import Path
 
 from ve.backends.lean_service import LeanService
+from ve.errors import VEError
+from ve.readings_route import document_wire
+from ve.readings_s1 import wire
 
 
 def cpu_ns(pid: int) -> int:
     return int(Path(f"/proc/{pid}/schedstat").read_text().split()[0])
 
 
+def make_case(item: dict) -> dict:
+    """Send the same normalized request as the public readings validator."""
+    document = item["document"]
+    units = [{"id": unit["id"], "kind": unit.get("kind"),
+              **({"content": unit["content"]} if "content" in unit else {})}
+             for unit in document["units"]]
+    return {"id": "readings-s1", "kind": "readings-validate",
+            "environment": wire(item["environment"]),
+            "document": wire(document_wire(units, document["reading_sets"]))}
+
+
+def answer(service: LeanService, case: dict):
+    try:
+        return ("returned", service.run("readings-route", [case]))
+    except VEError as exc:
+        return ("raised", exc.code, exc.message)
+
+
 def measure(service: LeanService, case: dict, calls: int) -> float:
-    service.run("readings-route", [case])
+    answer(service, case)
     before = cpu_ns(service.pid)
     for _ in range(calls):
-        service.run("readings-route", [case])
+        answer(service, case)
     return (cpu_ns(service.pid) - before) / calls / 1_000_000
 
 
@@ -43,9 +64,8 @@ def main() -> int:
     with LeanService(executable=binary[0]) as base, LeanService(executable=binary[1]) as head:
         samples = {}
         for item in selected:
-            case = {"id": "readings-latency", "kind": "readings-validate",
-                    "environment": item["environment"], "document": item["document"]}
-            if base.run("readings-route", [case]) != head.run("readings-route", [case]):
+            case = make_case(item)
+            if answer(base, case) != answer(head, case):
                 raise RuntimeError(f"base and head disagree on {item['case']}")
             base_cpu, head_cpu = [], []
             for _ in range(args.pairs):
