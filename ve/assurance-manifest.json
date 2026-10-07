@@ -58,7 +58,7 @@
     "ve/softnorms.py:batch_rule": "After Lean accepts the batched quoted rule, Python AST construction failures are operational CheckerUnavailable errors."
   },
   "lean_decoders": {
-    "total_lines": 21277,
+    "total_lines": 21312,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -613,12 +613,12 @@
       },
       {
         "file": "lean/VE/Rights/Wire.lean",
-        "lines": 698,
-        "sha256": "fc25e57bed1adf2d72edcf7c0cd20409b427829d7eb5838028422151ca02e82f",
+        "lines": 719,
+        "sha256": "cd271c2e4b7374bf427e1dedc4f0ba3eb18e6dd8c85fe6917b429f02a42ce332",
         "ranges": [
           [
             1,
-            698
+            719
           ]
         ],
         "declarations": [
@@ -909,7 +909,7 @@
       {
         "file": "lean/VE/SoftNorms/Admission.lean",
         "lines": 332,
-        "sha256": "65c5511e845dca854ad374851393cb945aad630981434c77e0bd1a0db2ae1a8c",
+        "sha256": "5f867e8a26a78cf4b0a1aba6716354a32d9c609b0ed45d94311143e5a5e4d82b",
         "ranges": [
           [
             1,
@@ -942,12 +942,12 @@
       },
       {
         "file": "lean/VE/SoftNorms/Wire.lean",
-        "lines": 506,
-        "sha256": "413548c54ce417db5ce2b24d150be154bbbda9c4b23db532996f6d11fa3e1be4",
+        "lines": 520,
+        "sha256": "01f1fc08808db62401cfd5bb3f4dbb051565d9d8266194f51b754740bfe8b37b",
         "ranges": [
           [
             1,
-            506
+            520
           ]
         ],
         "declarations": [

@@ -29,6 +29,27 @@ the unchanged tableau checker. Bindings (all recomputed here):
   `Background_base″` and the target's conclusion;
 * entailment certificates: the regenerated full `E″′` JSON (`primeJsonR`),
   `background″ ++ layer premises ++ Γ` and the conclusion. -/
+namespace VE.Rights
+
+/-- `validateRights` with soft well-formedness checked by `validateSoftOnce` (lean-first plan F5d). -/
+def validateRightsOnce (D : RightsDoc) : Except String Unit :=
+  match checkRights D with
+  | .error e => .error e
+  | .ok () =>
+    match VE.SoftNorms.validateSoftOnce (correlate D) with
+    | .error e => .error e
+    | .ok () =>
+      match (VE.SoftNorms.decisionNames (correlate D)).find? (fun n => n.utf8ByteSize > 64) with
+      | some n => .error s!"ResourceLimit: identifier {n} exceeds 64 bytes"
+      | none => if rightsSemanticCheck D then .ok () else .error "InvalidInput: rights document is not stratified"
+
+theorem validateRightsOnce_eq (D : RightsDoc) : validateRightsOnce D = validateRights D := by
+  unfold validateRightsOnce validateRights
+  rw [VE.SoftNorms.validateSoftOnce_eq]
+  all_goals rfl
+
+end VE.Rights
+
 namespace VE.Rights.Wire
 open Lean
 open VE.Norms
@@ -288,9 +309,9 @@ def decodeRightsSource (environment document : Json) : Except String RightsSourc
   let D : RightsDoc :=
     ⟨⟨re.se.ne.rv.environment, re.se.ne.rv.literals, re.se.soft, ⟨re.se.ne.regulated, [], us.outside⟩⟩,
      re.block, us.rs, us.limits, us.bars, us.cites, some us.order, us.sourceUnits.getD []⟩
-  match hv : validateRights D with
+  match hv : validateRightsOnce D with
   | .error e => throw e
-  | .ok () => pure ⟨re, D, by unfold WellFormedRights; rw [hv], rfl, rfl, rfl⟩
+  | .ok () => pure ⟨re, D, by unfold WellFormedRights; rw [← validateRightsOnce_eq, hv], rfl, rfl, rfl⟩
 
 /-! ## Identity (3.5) -/
 

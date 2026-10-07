@@ -1,13 +1,12 @@
-import VE.Rights.Route
+import VE.SoftNorms.Coherence
 
-/-! The layers of a chain document computed once (lean-first plan F5d), for the readings route.
+/-! The layers of a soft document computed once (lean-first plan F5d).
 
-A readings request validates `free D` and every candidate's `one D s i` and evaluates every pair's completions.
-Each of those rebuilt, for every formula it typed or expanded, the layer order of `soften (correlate X)` (a
-topological sort of its stratum DAG), the layered environment `envAt` and the outcome expansion table `expTable`.
-The functions here compute them once per document. Each is declared in the namespace of the function it replaces,
-with a lemma that the two are equal, so every theorem about the original holds of the run. This module is
-imported only by the readings route, so no other executable changes. -/
+The soft checks rebuilt, for every formula they typed or expanded, the layer order of `soften D` (a topological
+sort of its stratum DAG), the layered environment `envAt` and the outcome expansion table `expTable`. The functions
+here compute them once per document. Each is declared in the namespace of the function it replaces, with a lemma
+that the two are equal, so every theorem about the original holds of the run. The soft decoder
+(`Wire.decodeSoftSource`) and the readings route (`VE.Readings.Layers`) check documents with them. -/
 
 namespace VE.Norms
 
@@ -129,6 +128,14 @@ theorem targetsIn_eq (D : Doc) : targetsIn D (layersOf D) = targets D := by
   simp only [targetsIn, targets, layersOf_syms, conflictIn_eq, pairConflictIn_eq]
   all_goals rfl
 
+/-- `InFragment` from the document's layers. -/
+def inFragmentIn (D : Doc) (L : Layers) : Bool :=
+  D.T.regulated.all (fun r => VE.Norms.Formula.qfree (conflictIn D L r)) &&
+    (pairs D.T).all (fun pr => VE.Norms.Formula.qfree (pairConflictIn D L pr))
+
+theorem inFragmentIn_eq (D : Doc) : inFragmentIn D (layersOf D) = InFragment D := by
+  simp only [inFragmentIn, InFragment, conflictIn_eq, pairConflictIn_eq]
+
 end VE.Norms
 
 namespace VE.SoftNorms
@@ -161,6 +168,19 @@ def softPremisesIn (D : SoftDoc) (S : Doc) (L : Layers) : List VE.Formula :=
 theorem softPremisesIn_eq (D : SoftDoc) : softPremisesIn D (soften D) (layersOf (soften D)) = softPremises D := by
   simp only [softPremisesIn, softPremises, cohPremises, cohPremiseIn, cohPremise, substIn_eq, layersOf_syms,
     selectsOn_soften, size]
+
+theorem cohPremiseIn_eq (D : SoftDoc) (M N : SoftNode) :
+    cohPremiseIn D (soften D) (layersOf (soften D)) M N = cohPremise D M N := by
+  simp only [cohPremiseIn, cohPremise, substIn_eq, layersOf_syms, selectsOn_soften, size]
+
+/-- `InFragment` with the conflict targets and the soft premises built from the layers of `soften D`. -/
+def inFragmentOnce (D : SoftDoc) : Bool :=
+  let S := soften D
+  let L := layersOf S
+  VE.Norms.inFragmentIn S L && (softPremisesIn D S L).all universalQF
+
+theorem inFragmentOnce_eq (D : SoftDoc) : inFragmentOnce D = InFragment D := by
+  simp only [inFragmentOnce, InFragment, VE.Norms.inFragmentIn_eq, softPremisesIn_eq]
 
 /-- `checkSoft` with the conflict targets and the soft premises built from the layers of `soften D`. -/
 def checkSoftOnce (D : SoftDoc) : Except String Unit := do
@@ -264,26 +284,3 @@ theorem validateSoftOnce_eq (D : SoftDoc) : validateSoftOnce D = validateSoft D 
   all_goals rfl
 
 end VE.SoftNorms
-
-namespace VE.Rights
-open VE.Norms (envAt size)
-open VE.SoftNorms (soften)
-
-/-- `validateRights` with soft well-formedness checked by `validateSoftOnce` (lean-first plan F5d). -/
-def validateRightsOnce (D : RightsDoc) : Except String Unit :=
-  match checkRights D with
-  | .error e => .error e
-  | .ok () =>
-    match VE.SoftNorms.validateSoftOnce (correlate D) with
-    | .error e => .error e
-    | .ok () =>
-      match (VE.SoftNorms.decisionNames (correlate D)).find? (fun n => n.utf8ByteSize > 64) with
-      | some n => .error s!"ResourceLimit: identifier {n} exceeds 64 bytes"
-      | none => if rightsSemanticCheck D then .ok () else .error "InvalidInput: rights document is not stratified"
-
-theorem validateRightsOnce_eq (D : RightsDoc) : validateRightsOnce D = validateRights D := by
-  unfold validateRightsOnce validateRights
-  rw [VE.SoftNorms.validateSoftOnce_eq]
-  all_goals rfl
-
-end VE.Rights

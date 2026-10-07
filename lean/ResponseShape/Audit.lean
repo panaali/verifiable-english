@@ -159,6 +159,7 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.SoftNorms.runCase_fits
 #print axioms ResponseShape.Encoders.SoftNorms.runSoftKind_fits
 #print axioms ResponseShape.Encoders.SoftNorms.softLabelled_nonempty
+#print axioms ResponseShape.Encoders.SoftNorms.softLabelledIn_nonempty
 #print axioms ResponseShape.Encoders.SpeechActs.elaborate_fits
 #print axioms ResponseShape.Encoders.SpeechActs.firstFailure_of_not_free
 #print axioms ResponseShape.Encoders.SpeechActs.of_norms
