@@ -1,0 +1,313 @@
+{
+ "base": "9aaf918d",
+ "head": "8fbae87c",
+ "method": "docs/lean-first/b6/udhr_timing.py: `ve document check` of every UDHR translation.ve.md on the pilot/udhr-* branches, base and head started together for each document; wall and CPU (user + system, the Lean services the process starts and closes included) from /usr/bin/time; the large document three times.",
+ "runs": [
+  {
+   "document": "pilot/udhr-20260927T0646Z:usecases/udhr-pilot/run-20260927T0646Z/translation.ve.md",
+   "run": 1,
+   "bytes": 44627,
+   "base": {
+    "exit": 0,
+    "wall": 0.27,
+    "cpu": 0.27
+   },
+   "head": {
+    "exit": 0,
+    "wall": 0.28,
+    "cpu": 0.27
+   },
+   "output_equal": true,
+   "load": 21.6
+  },
+  {
+   "document": "pilot/udhr-20260927T1800Z:usecases/udhr-pilot/run-20260927T1800Z/translation.ve.md",
+   "run": 1,
+   "bytes": 43580,
+   "base": {
+    "exit": 0,
+    "wall": 0.28,
+    "cpu": 0.27
+   },
+   "head": {
+    "exit": 0,
+    "wall": 0.29,
+    "cpu": 0.28
+   },
+   "output_equal": true,
+   "load": 21.6
+  },
+  {
+   "document": "pilot/udhr-20260928T1800Z:usecases/udhr-pilot/run-20260928T1800Z/translation.ve.md",
+   "run": 1,
+   "bytes": 46850,
+   "base": {
+    "exit": 0,
+    "wall": 0.29,
+    "cpu": 0.28
+   },
+   "head": {
+    "exit": 0,
+    "wall": 0.26,
+    "cpu": 0.26
+   },
+   "output_equal": true,
+   "load": 21.6
+  },
+  {
+   "document": "pilot/udhr-20260929T0600Z:usecases/udhr-pilot/run-20260929T0600Z/translation.ve.md",
+   "run": 1,
+   "bytes": 48260,
+   "base": {
+    "exit": 0,
+    "wall": 0.28,
+    "cpu": 0.27
+   },
+   "head": {
+    "exit": 0,
+    "wall": 0.31,
+    "cpu": 0.3
+   },
+   "output_equal": true,
+   "load": 21.6
+  },
+  {
+   "document": "pilot/udhr-20260929T1800Z:usecases/udhr-pilot/run-20260929T1800Z/translation.ve.md",
+   "run": 1,
+   "bytes": 58557,
+   "base": {
+    "exit": 0,
+    "wall": 0.28,
+    "cpu": 0.27
+   },
+   "head": {
+    "exit": 0,
+    "wall": 0.29,
+    "cpu": 0.29
+   },
+   "output_equal": true,
+   "load": 21.6
+  },
+  {
+   "document": "pilot/udhr-20260930T0600Z:usecases/udhr-pilot/run-20260930T0600Z/translation.ve.md",
+   "run": 1,
+   "bytes": 288342,
+   "base": {
+    "exit": 0,
+    "wall": 45.68,
+    "cpu": 45.21
+   },
+   "head": {
+    "exit": 0,
+    "wall": 44.34,
+    "cpu": 44.1
+   },
+   "output_equal": true,
+   "load": 22.7
+  },
+  {
+   "document": "pilot/udhr-20260930T1800Z:usecases/udhr-pilot/run-20260930T1800Z/translation.ve.md",
+   "run": 1,
+   "bytes": 258521,
+   "base": {
+    "exit": 0,
+    "wall": 26.53,
+    "cpu": 26.47
+   },
+   "head": {
+    "exit": 0,
+    "wall": 28.13,
+    "cpu": 28.05
+   },
+   "output_equal": true,
+   "load": 21.8
+  },
+  {
+   "document": "pilot/udhr-20261001T1800Z:usecases/udhr-pilot/run-20261001T1800Z/translation.ve.md",
+   "run": 1,
+   "bytes": 241065,
+   "base": {
+    "exit": 0,
+    "wall": 23.2,
+    "cpu": 23.17
+   },
+   "head": {
+    "exit": 0,
+    "wall": 21.08,
+    "cpu": 21.04
+   },
+   "output_equal": true,
+   "load": 22.4
+  },
+  {
+   "document": "pilot/udhr-20261002T0600Z:usecases/udhr-pilot/run-20261002T0600Z/translation.ve.md",
+   "run": 1,
+   "bytes": 224845,
+   "base": {
+    "exit": 0,
+    "wall": 13.8,
+    "cpu": 13.79
+   },
+   "head": {
+    "exit": 0,
+    "wall": 11.34,
+    "cpu": 11.33
+   },
+   "output_equal": true,
+   "load": 20.8
+  },
+  {
+   "document": "pilot/udhr-20261002T1800Z:usecases/udhr-pilot/run-20261002T1800Z/translation.ve.md",
+   "run": 1,
+   "bytes": 228316,
+   "base": {
+    "exit": 0,
+    "wall": 13.29,
+    "cpu": 13.28
+   },
+   "head": {
+    "exit": 0,
+    "wall": 11.91,
+    "cpu": 11.91
+   },
+   "output_equal": true,
+   "load": 20.0
+  },
+  {
+   "document": "pilot/udhr-20261003T0600Z:usecases/udhr-pilot/run-20261003T0600Z/translation.ve.md",
+   "run": 1,
+   "bytes": 869161,
+   "base": {
+    "exit": 0,
+    "wall": 59.66,
+    "cpu": 59.65
+   },
+   "head": {
+    "exit": 0,
+    "wall": 63.51,
+    "cpu": 63.51
+   },
+   "output_equal": true,
+   "load": 16.0
+  },
+  {
+   "document": "pilot/udhr-20261003T0600Z:usecases/udhr-pilot/run-20261003T0600Z/translation.ve.md",
+   "run": 2,
+   "bytes": 869161,
+   "base": {
+    "exit": 0,
+    "wall": 65.98,
+    "cpu": 65.92
+   },
+   "head": {
+    "exit": 0,
+    "wall": 75.85,
+    "cpu": 75.81
+   },
+   "output_equal": true,
+   "load": 19.9
+  },
+  {
+   "document": "pilot/udhr-20261003T0600Z:usecases/udhr-pilot/run-20261003T0600Z/translation.ve.md",
+   "run": 3,
+   "bytes": 869161,
+   "base": {
+    "exit": 0,
+    "wall": 67.05,
+    "cpu": 66.97
+   },
+   "head": {
+    "exit": 0,
+    "wall": 78.11,
+    "cpu": 78.07
+   },
+   "output_equal": true,
+   "load": 21.9
+  },
+  {
+   "document": "pilot/udhr-20261004T0600Z:usecases/udhr-pilot/run-20261004T0600Z/translation.ve.md",
+   "run": 1,
+   "bytes": 237049,
+   "base": {
+    "exit": 0,
+    "wall": 0.41,
+    "cpu": 0.41
+   },
+   "head": {
+    "exit": 0,
+    "wall": 0.31,
+    "cpu": 0.31
+   },
+   "output_equal": true,
+   "load": 21.9
+  },
+  {
+   "document": "pilot/udhr-20261004T1800Z:usecases/udhr-pilot/run-20261004T1800Z/translation.ve.md",
+   "run": 1,
+   "bytes": 244289,
+   "base": {
+    "exit": 0,
+    "wall": 0.45,
+    "cpu": 0.45
+   },
+   "head": {
+    "exit": 0,
+    "wall": 0.39,
+    "cpu": 0.39
+   },
+   "output_equal": true,
+   "load": 21.9
+  },
+  {
+   "document": "pilot/udhr-20261005T0600Z:usecases/udhr-pilot/run-20261005T0600Z/translation.ve.md",
+   "run": 1,
+   "bytes": 270770,
+   "base": {
+    "exit": 0,
+    "wall": 0.42,
+    "cpu": 0.42
+   },
+   "head": {
+    "exit": 0,
+    "wall": 0.43,
+    "cpu": 0.42
+   },
+   "output_equal": true,
+   "load": 21.9
+  },
+  {
+   "document": "pilot/udhr-20261005T1800Z:usecases/udhr-pilot/run-20261005T1800Z/translation.ve.md",
+   "run": 1,
+   "bytes": 269413,
+   "base": {
+    "exit": 0,
+    "wall": 0.26,
+    "cpu": 0.26
+   },
+   "head": {
+    "exit": 0,
+    "wall": 0.49,
+    "cpu": 0.48
+   },
+   "output_equal": true,
+   "load": 22.0
+  },
+  {
+   "document": "pilot/udhr-20261006T1800Z:usecases/udhr-pilot/run-20261006T1800Z/translation.ve.md",
+   "run": 1,
+   "bytes": 287435,
+   "base": {
+    "exit": 0,
+    "wall": 0.42,
+    "cpu": 0.42
+   },
+   "head": {
+    "exit": 0,
+    "wall": 0.43,
+    "cpu": 0.43
+   },
+   "output_equal": true,
+   "load": 22.0
+  }
+ ]
+}
