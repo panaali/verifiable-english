@@ -188,6 +188,32 @@ def decodePremises (premises : Json) : Except String (List (String × VE.Formula
 
 /-! ## The source -/
 
+/-- The predicates whose declarations fix their extension: a `defined` body or a
+`functional` or `total` flag, read by key presence (`"functional": false` included). -/
+def fixedPredicates (vocabulary : Json) : List String :=
+  ((fields (vocabulary.getObjValD "predicates")).toOption.getD []).filterMap fun (p, entry) =>
+    if ["defined", "functional", "total"].any (fun k => (entry.getObjVal? k).isOk) then some p else none
+
+/-- What a decode vouches for. `document` runs the route, which does not carry
+definitions or data flags into its documents yet and refuses them. `environment`
+vouches for the environment alone (the `Environment` constructor's question): the
+declarations of the other profiles are then validated by their owner, W1's
+`decodeSource` with flags, and never refused or dropped. -/
+inductive Scope | environment | document
+  deriving DecidableEq, Repr
+
+/-- The declarations of the profiles other than the block's, by `scope`. -/
+def otherDeclarations (scope : Scope) (view : Json) (ne : VE.Norms.Wire.NormsEnvironment) :
+    Except String Unit :=
+  match scope with
+  | .document => do
+    unless ne.rv.definitions.isEmpty do
+      throw "UnsupportedProfile: alternatives route with definitions is not implemented"
+    unless ne.rv.flags.isEmpty do
+      throw "UnsupportedProfile: alternatives route with data flags is not implemented"
+  | .environment => do
+    let _ ← VE.Norms.Wire.decodeSource view (Json.arr #[]) (flags := true)
+
 /-- A decoded, well-formed alternatives source. -/
 structure AltSource where
   profiles : List String
@@ -199,16 +225,15 @@ structure AltSource where
 
 /-- Decode the environment with its block, the norm objects and the base premises; regenerate
 `table_complete` under `complete_by`; run `WellFormedAlt` with its diagnostics. -/
-def decodeAltSource (environment norms premises : Json) : Except String AltSource := do
+def decodeAltSource (environment norms premises : Json) (scope : Scope := .document) :
+    Except String AltSource := do
   let ps ← profileGate environment
   let block ← match environment.getObjVal? "alternatives" with
     | .ok b => pure b
     | .error _ => throw "InvalidInput: alternatives.block"
-  let ne ← VE.Norms.Wire.decodeNormsEnvironment (← normsView environment ps)
-  unless ne.rv.definitions.isEmpty do
-    throw "UnsupportedProfile: alternatives route with definitions is not implemented"
-  unless ne.rv.flags.isEmpty do
-    throw "UnsupportedProfile: alternatives route with data flags is not implemented"
+  let view ← normsView environment ps
+  let ne ← VE.Norms.Wire.decodeNormsEnvironment view
+  otherDeclarations scope view ne
   let b ← decodeBlock block
   checkReservedWording (← environment.getObjVal? "vocabulary")
   let units ← match norms with
@@ -218,7 +243,7 @@ def decodeAltSource (environment norms premises : Json) : Except String AltSourc
   let nodes ← units.mapM VE.Norms.Wire.decodeNorm
   let raw ← decodePremises premises
   let A0 : AltDoc := ⟨ne.rv.environment, ne.rv.literals, b.alt, ⟨ne.regulated, [], nodes⟩, []⟩
-  checkBlock A0
+  checkBlock A0 (fixedPredicates (environment.getObjValD "vocabulary"))
   checkVerbalisations b.alt (← environment.getObjVal? "vocabulary")
   checkAvoids A0 b.avoidsOn
   for (label, a) in raw do

@@ -330,7 +330,7 @@ def decodeRiskSource (environment document : Json) : Except String RiskSource :=
   let envId ← VE.Alternatives.Replay.environmentId ps environment
   let docHash ← VE.Alternatives.Replay.documentHash ps environment norms unitsJ
   let R0 : RiskDoc := ⟨ne.rv.vocabulary, units, [], b.alt, risk, ⟨ne.regulated, [], nodes⟩, [], (envId, docHash), []⟩
-  VE.Alternatives.checkBlock (toAlt R0)
+  VE.Alternatives.checkBlock (toAlt R0) (VE.Alternatives.Wire.fixedPredicates (environment.getObjValD "vocabulary"))
   VE.Alternatives.Wire.checkVerbalisations b.alt (← environment.getObjVal? "vocabulary")
   VE.Alternatives.Wire.checkAvoids (toAlt R0) (b.avoidsOn.filter (fun o => !excludesOn.contains o))
   for o in excludesOn do

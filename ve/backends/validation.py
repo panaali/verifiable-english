@@ -33,13 +33,18 @@ _LAYERED = STATEMENT_LAYERS
 
 
 def validated_statement_block(data: dict, kind: str) -> None:
-    """Ask the owning statement-layer route before Python materialises its container."""
+    """Ask the owning statement-layer route before Python materialises its container.
+
+    An alternatives environment is asked about alone (`alt-environment`): the
+    route validates the declarations of the other profiles with their W1 owner,
+    where its document cases refuse them. The risk route refuses them for the
+    environment too, as risk.md 6 orders."""
     from .relay import decide
     case = {"id": "environment", "environment": data}
     if kind == "risk":
         case.update(kind="risk-elaborate", document={"norms": [], "units": []})
     else:
-        case.update(kind="alt-elaborate", norms=[])
+        case.update(kind="alt-environment")
     decide(kind, [case])
 
 

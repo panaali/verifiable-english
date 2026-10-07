@@ -30,7 +30,8 @@ def kind : Def :=
     ("alt-validate", kindIs "alt-validate"),
     ("alt-conflict", kindIs "alt-conflict"),
     ("alt-followable", kindIs "alt-followable"),
-    ("alt-certificate", kindIs "alt-certificate")]
+    ("alt-certificate", kindIs "alt-certificate"),
+    ("alt-environment", kindIs "alt-environment")]
 
 def alt_labels : Shape :=
   c "Alternatives.Background.altPremiseLabels." [
@@ -314,6 +315,15 @@ def certificate : Shape :=
       ("layers", ref "common.json#/$defs/nat"),
       ("conditional_on", ref "#/$defs/alt_labels")]]
 
+def environment : Shape :=
+  c "Alternatives.Run.runCase alt-environment: the environment alone decodes." [
+    obj,
+    .required ["id", "status", "valid"],
+    closed [
+      ("id", ref "common.json#/$defs/id_ok"),
+      ("status", constS "ok"),
+      ("valid", .const (.bool true))]]
+
 def «row» : Shape :=
   .select [
     (ref "#/$defs/alt_path", .anyOf [
@@ -327,7 +337,8 @@ def «row» : Shape :=
         (ref "#/$defs/kind/alt-conflict", ref "common.json#/$defs/packages_conflict"),
         (.allOf [ref "#/$defs/kind/alt-followable", .required ["witness"]], ref "#/$defs/followable_witness"),
         (ref "#/$defs/kind/alt-followable", ref "#/$defs/followable"),
-        (ref "#/$defs/kind/alt-certificate", ref "#/$defs/certificate")]]),
+        (ref "#/$defs/kind/alt-certificate", ref "#/$defs/certificate"),
+        (ref "#/$defs/kind/alt-environment", ref "#/$defs/environment")]]),
     ((.bool true), ref "norms.json#/row")]
 
 def file : File where
@@ -347,6 +358,7 @@ def file : File where
     ("conflict_witness", .schema conflict_witness),
     ("followable_witness", .schema followable_witness),
     ("followable", .schema followable),
-    ("certificate", .schema certificate)]
+    ("certificate", .schema certificate),
+    ("environment", .schema environment)]
 
 end ResponseShape.Schemas.Alternatives
