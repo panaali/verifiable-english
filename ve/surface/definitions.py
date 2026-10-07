@@ -163,7 +163,7 @@ def render_citation(env: Environment, cited, conclusion) -> str:
     English statement; lemmas are cited by their stable names."""
     cited = list(cited)
     _check_lemma_names(cited)
-    statement = render_english(Document((conclusion,)), env, _statement_layer=True)
+    statement = render_english(Document((conclusion,)), env)
     if not cited:
         return statement
     names = cited[0] if len(cited) == 1 else ", ".join(cited[:-1]) + " and " + cited[-1]
@@ -239,6 +239,6 @@ def wordings(env: Environment) -> tuple[dict, ...]:
             raise VEError(f"English definition wording has another reading: {definition.name}")
         document = Document((premise(definition),))
         result.append({"predicate": definition.name, "english": english,
-                       "biconditional": render_english(document, env, _statement_layer=True),
+                       "biconditional": render_english(document, env),
                        "strict": print_document(env, document)})
     return tuple(result)

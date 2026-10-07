@@ -160,6 +160,33 @@ def test_definition_sentence_parts_are_read_by_lean(monkeypatch):
                     "for every person, both that person is staff and that person is badged."]
 
 
+def test_citation_and_definition_renderings_are_checked_by_lean(monkeypatch):
+    """Recheck 1 of E2, B: the citation's conclusion and a definition's biconditional are formula sentences,
+    so Lean's `english.check` reads each rendering back (LEDGER), not Python's statement-layer reader."""
+    from ve import english
+    from ve.backends import english_lean
+    seen = []
+    original = english_lean.check
+    monkeypatch.setattr(english_lean, "check", lambda *args: seen.append(args[-1]) or original(*args))
+    monkeypatch.setenv("VE_ENGLISH_COMPARATOR", "0")
+    monkeypatch.setattr(english, "_python_reading", lambda *_args: pytest.fail("Python checked a rendering"))
+    env = Environment(adopt(staff_env(), TRUSTED))
+    [row] = wordings(env)
+    conclusion = formula_from_data(env, ["unary", "trusted", ["const", "ann"]])
+    citation = render_citation(env, ["T1"], conclusion)
+    assert citation == "By T1, ann is trusted.\n"
+    assert [row["biconditional"]] in seen and any(c.startswith("Ann is trusted") for cs in seen for c in cs)
+
+
+def test_a_citation_over_an_nary_environment_with_a_layer_renders():
+    """The failure the statement-layer flag hid (`tests/test_stage2_bundle.py` family4): Lean's typed check
+    refused every sentence of an `nary@0` environment beside `data@0`, so no citation passed its check."""
+    from tests import probe_matrix as pm
+    env = Environment(pm.raw_environment(("closure@0", "nary@0", "data@0")))
+    conclusion = pm.semantic_formula(env)
+    assert parse_citation(env, render_citation(env, ["first"], conclusion), ["first"]) == (("first",), conclusion)
+
+
 @pytest.mark.parametrize("sentence", [
     "By definition, for every person, that person is trusted exactly when that person is staff. Ann is badged.",
     "By definition, for every person, that person is trusted exactly when that person is staff. This is impossible.",
