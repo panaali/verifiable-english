@@ -142,7 +142,8 @@ signature: **the baseline does not grow.** The fuzzer's child processes used 1,5
   (`ve/backends/lean_service_schema/<mode>.json`, each field the encoder writes, typed to the leaves, the
   route's own dispatch test as the selector) with `ve_response_decode` deciding the same responses with
   the runners' dispatch tests (`ResponseDecode.Routes`). `tests/test_route_row_schemas.py` runs a recorded
-  corpus of every answer kind (`tests/data/route-cases.jsonl`, 291 cases; cases 249–282, compose-s2's
+  corpus of every answer kind (`tests/data/route-cases.jsonl`, 291 cases at batch 1; the current
+  merged corpus has 292 cases; cases 249–282, compose-s2's
   six S2a readings kinds, were recorded from `tests/test_readings_s2_lean.py` at the merge of ve-integration, and the
   8 before it, lean-first b10a's `norm-defaults-report` and soft and rights branch answers, from
   `conformance/norm_defaults_layered.py` and `conformance/norm_defaults_report.py` at its merge of ve-integration, and the

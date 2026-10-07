@@ -133,6 +133,8 @@ def decodeJudgment : String → Except String Judgment
 def decodeNormNode (j : Json) : Except String Content := do
   exactFields j ["environment", "norms"]
   let env ← j.getObjVal? "environment"
+  let envelope ← VE.Route.Gate.decodeEnvelope env
+  require (envelope.profiles.contains "norms@0") "UnsupportedProfile: quoted norm needs norms@0 locally"
   let src ← VE.Norms.Wire.decodeSource env (← j.getObjVal? "norms")
   let canonical ← VE.Norms.Wire.canonicalEnvironmentJson env
   let id ← VE.Route.Wire.environmentId src.ne.profiles canonical
@@ -377,8 +379,10 @@ def optionalArray (j : Json) (key : String) : Except String (List Json) :=
 def decodeDocumentRaw (environment document : Json) : Except String Decoded := do
   let re ← decodeEnvironment environment
   let E := re.rv.environment
+  let choices ← optionalArray document "choices"
+  require choices.isEmpty "UnsupportedProfile: reports reading choices await the Lean route"
   displayFields document ["units"] ["graph", "lemmas", "open_terms", "reading_sets", "narrowings",
-    "contexts", "assessments", "bridges", "scoped"]
+    "contexts", "assessments", "bridges", "scoped", "choices"]
   let unitsJson := (← (← document.getObjVal? "units").getArr?).toList
   let units ← unitsJson.mapM (decodeUnit E)
   let metas ← unitsJson.mapM decodeMeta
