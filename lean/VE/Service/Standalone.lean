@@ -297,7 +297,7 @@ def validatedComposedEnvironment (environment : Json) : Except String VE.Route.G
     | .ok _ => pure ()
     | .error f => throw f.message
   else if named.contains "norms@0" &&
-      (named.contains "closure@0" || named.contains "nary@0") then
+      (named.contains "closure@0" || named.contains "nary@0" || named.contains "order@0") then
     let frame ← if named.contains "norm-defaults@0" then
       VE.NormDefaults.Wire.placeholderJson environment else pure environment
     let _ ← validated frame
