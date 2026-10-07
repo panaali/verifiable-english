@@ -67,10 +67,10 @@ def key(*parts) -> tuple:
     return tuple(hashlib.sha256(canonical_json(part)).hexdigest() for part in parts)
 
 
-def _remember(key: tuple) -> None:
+def _remember(key: tuple, row=True) -> None:
     if len(_ACCEPTED) >= _LIMIT:
         _ACCEPTED.clear()
-    _ACCEPTED[key] = True
+    _ACCEPTED[key] = row
 
 
 def decided(decode: Callable[[], object], cache: tuple | None, ask: Callable[[], dict],
@@ -100,21 +100,22 @@ def decided(decode: Callable[[], object], cache: tuple | None, ask: Callable[[],
 
 
 def construct_after_lean(decode: Callable[[], object], cache: tuple | None,
-                         ask: Callable[[], dict], identity: Callable[[object, dict], bool], what: str):
+                         ask: Callable[[], dict], identity: Callable[[object, dict], bool], what: str,
+                         bind: Callable[[object, dict], object] | None = None):
     """Ask Lean first, then construct only the accepted environment or model."""
-    row = None
-    if cache is None or cache not in _ACCEPTED:
+    row = _ACCEPTED.get(cache) if cache is not None else None
+    if row is None:
         row = ask()
     try:
         built = decode()
     except Exception as exc:
         raise CheckerUnavailable(f"CheckerUnavailable: Python could not construct a Lean-accepted {what}") from exc
-    if row is None:
-        return built
     if not identity(built, row):
         raise CheckerUnavailable(f"CheckerUnavailable: Lean and Python {what} identities differ")
+    if bind is not None:
+        built = bind(built, row)
     if cache is not None:
-        _remember(cache)
+        _remember(cache, row)
     return built
 
 
@@ -132,7 +133,8 @@ def validated_environment(env, data, decode: Callable[[], object]):
     return construct_after_lean(decode, cache,
                     lambda: decide("environment", [{"id": "environment", "environment": data}])[0],
                     lambda built, row: row.get("environment_id") == built.environment_id,
-                    "environment")
+                    "environment",
+                    lambda built, row: (object.__setattr__(built, "_environment_id", row["environment_id"]), built)[1])
 
 
 def validated_model(env, wire, decode: Callable[[], object], *, claimed: dict | None = None):
@@ -146,7 +148,8 @@ def validated_model(env, wire, decode: Callable[[], object], *, claimed: dict | 
         cache = key("model", env.environment_id, wire, *(() if claimed is None else (claimed,)))
     except (VEError, TypeError, ValueError, RecursionError):
         cache = None
+    from dataclasses import replace
     return construct_after_lean(decode, cache,
                     lambda: decide("model", [request])[0],
-                    lambda built, row: row.get("valid") is True and row.get("model_id") == built.model_id,
-                    "model")
+                    lambda built, row: row.get("valid") is True,
+                    "model", lambda built, row: replace(built, model_id=row["model_id"]))

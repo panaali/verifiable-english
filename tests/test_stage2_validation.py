@@ -115,9 +115,18 @@ def test_lean_names_a_rejection_both_checkers_make(monkeypatch):
         Environment(raw)
 
 
-def test_lean_acceptance_of_a_python_rejection_is_unavailable(monkeypatch):
+def test_lean_acceptance_with_wrong_identity_is_unavailable(monkeypatch):
     raw = pm.raw_environment(())
     raw["vocabulary"]["predicates"]["base"]["arguments"] = ["absent"]
+    fake_lean(monkeypatch, lambda mode, case: {"id": "environment", "status": "ok",
+                                               "environment_id": "0" * 64})
+    with pytest.raises(CheckerUnavailable, match="identities differ"):
+        Environment(raw)
+
+
+def test_lean_acceptance_of_an_unconstructible_source_is_unavailable(monkeypatch):
+    raw = pm.raw_environment(())
+    del raw["vocabulary"]["sorts"]
     fake_lean(monkeypatch, lambda mode, case: {"id": "environment", "status": "ok",
                                                "environment_id": "0" * 64})
     with pytest.raises(CheckerUnavailable, match="Python could not construct a Lean-accepted environment"):
