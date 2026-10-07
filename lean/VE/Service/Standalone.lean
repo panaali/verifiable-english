@@ -230,10 +230,14 @@ def validatedComposedEnvironment (environment : Json) : Except String VE.Route.G
     let _ ← VE.Readings.Wire.decodeEnvironment environment
     pure ()
   else if named.contains "rights@0" then
-    let _ ← VE.Rights.Wire.decodeRightsEnvironment environment
+    let frame ← if named.contains "norm-defaults@0" then
+      VE.NormDefaults.Wire.placeholderJson environment else pure environment
+    let _ ← VE.Rights.Wire.decodeRightsEnvironment frame
     pure ()
   else if named.contains "soft-norms@0" then
-    match VE.SoftNorms.Phases.checkSource environment empty with
+    let frame ← if named.contains "norm-defaults@0" then
+      VE.NormDefaults.Wire.placeholderJson environment else pure environment
+    match VE.SoftNorms.Phases.checkSource frame empty with
     | .ok _ => pure ()
     | .error f => throw f.message
   else if named.contains "norm-defaults@0" then
@@ -424,7 +428,7 @@ def modelCase (j : Json) : Except String Json := do
     pure ()
   -- The norms profile generator last, as Python's `validate_background` orders
   -- it: each required relation within its permission (`Plain.profileOk`).
-  let predicates ← VE.Bridge.fields (← (← environment.getObjVal? "vocabulary").getObjVal? "predicates")
+  let predicates ← VE.Bridge.fields (← (← modelEnv.getObjVal? "vocabulary").getObjVal? "predicates")
   if predicates.any (fun (_, entry) => (entry.getObjVal? "regulated").isOk) then
     VE.Norms.Plain.profileOk ⟨← VE.Norms.Plain.decodeRegulatedAll predicates, [], []⟩ model
   let originalProfiles ← VE.Route.Gate.profilesOf environment
