@@ -554,6 +554,7 @@ theorem runFol_accepted (profiles : List String) (environment : Json) (rv : Rout
   obtain ⟨arr, harr, h⟩ := bind_ok h
   obtain ⟨cj', hcj', h⟩ := bind_ok h
   obtain ⟨_, hb, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
   split at h
   · obtain ⟨_, hx, _⟩ := bind_ok h; cases hx
   cases h
@@ -824,6 +825,7 @@ theorem runClosure_accepted (profiles : List String) (environment : Json) (rv : 
   obtain ⟨arr, harr, h⟩ := bind_ok h
   obtain ⟨cj', hcj', h⟩ := bind_ok h
   obtain ⟨_, hb, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
   split at h
   · obtain ⟨_, hx, _⟩ := bind_ok h; cases hx
   cases h
@@ -978,6 +980,7 @@ theorem runOrder_accepted (profiles : List String) (environment : Json) (rv : Ro
   obtain ⟨arr, harr, h⟩ := bind_ok h
   obtain ⟨cj', hcj', h⟩ := bind_ok h
   obtain ⟨_, hb, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
   split at h
   · obtain ⟨_, hx, _⟩ := bind_ok h; cases hx
   cases h

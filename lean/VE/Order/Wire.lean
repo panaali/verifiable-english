@@ -281,7 +281,7 @@ def runCase (j : Json) : Except String Json := do
       certificate.conclusion_meaning_id == conclusion do
     throw "certificate is stale or bound to different inputs"
   let steps := VE.Route.Steps.order certificate.trace
-  if steps > VE.Route.Steps.limit j then throw VE.Route.Steps.stepLimit
+  if steps > (← VE.Route.Steps.limit j) then throw VE.Route.Steps.stepLimit
   let q : Query E := ⟨ps, c, certificate⟩
   pure (Json.mkObj [("id", .str id), ("status", .str "ok"), ("valid", .bool q.accepts),
     ("steps", toJson steps)])

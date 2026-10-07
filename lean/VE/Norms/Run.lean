@@ -147,7 +147,7 @@ def runCase (j : Json) : Except String Json := do
   if kind == "norms-certificate" then
     let r ← Flagged.replayEntailment j
     let steps := VE.Route.Steps.fol r.cert.trace
-    if steps > VE.Route.Steps.limit j then throw VE.Route.Steps.stepLimit
+    if steps > (← VE.Route.Steps.limit j) then throw VE.Route.Steps.stepLimit
     return VE.Route.Wire.ok id [("valid", .bool (Flagged.valid r)),
       ("background", toJson (Flagged.flagPremises r.src ++ background r.src.D).length),
       ("layers", toJson (elaborate r.src.D.T).length), ("steps", toJson steps)]
