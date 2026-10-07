@@ -24,8 +24,13 @@ readings module (`ve/readings*.py`) holds a string literal containing a reserved
 (`RESERVED`), so none builds a filled name. A literal that only keeps such names out of the English (a non-wording
 guard) carries the marker `# relay-lint: non-wording` on its line; marked literals are counted in the report.
 
-Usage: ``python tools/relay_lint.py [PATH ...]`` (default: `RELAYED`, and the readings modules for the second
-rule; given paths, both rules read each path). Exit 1 on a finding.
+A third rule keeps the senses path's English in Lean (readings-defaults plan, RD-8): no module of the senses path
+(`PARSE_FREE`) names `parse_english`, and in `ve/document.py` no `if` statement whose test reads `senses` names it
+in its body, so a fence of a senses document is never read by Python's English reader. Names are read with
+Python's own parser (a call, an attribute, an import).
+
+Usage: ``python tools/relay_lint.py [PATH ...]`` (default: `RELAYED`, the readings modules for the second rule
+and the senses path for the third; given paths, every rule reads each path). Exit 1 on a finding.
 """
 from __future__ import annotations
 
@@ -51,6 +56,11 @@ FILE_IO = "# relay-lint: file I/O"
 READINGS_GLOB = "ve/readings*.py"
 from ve.environment import RESERVED_PREFIXES as RESERVED  # noqa: E402  (one table with the checker's)
 NON_WORDING = "# relay-lint: non-wording"
+# The senses path (RD-8): the modules that may not name Python's English reader, and the loader whose senses
+# branches may not.
+PARSE_FREE = ("ve/senses_document.py", "ve/backends/senses.py", "ve/senses/__init__.py")
+SENSES_LOADER = "ve/document.py"
+ENGLISH_READER = "parse_english"
 
 
 def content_classes() -> frozenset[str]:
@@ -186,6 +196,32 @@ def reserved_literals(path: Path, marked: list | None = None) -> list[str]:
     return out
 
 
+def _names_reader(node: ast.AST) -> list[int]:
+    """The lines under `node` that name `ENGLISH_READER`: a name, an attribute or an imported name."""
+    lines = []
+    for sub in ast.walk(node):
+        if (isinstance(sub, ast.Name) and sub.id == ENGLISH_READER
+                or isinstance(sub, ast.Attribute) and sub.attr == ENGLISH_READER
+                or isinstance(sub, ast.alias) and ENGLISH_READER in (sub.name, sub.asname)):
+            lines.append(getattr(sub, "lineno", None) or node.lineno)
+    return lines
+
+
+def english_reads(path: Path, *, branches_only: bool = False) -> list[str]:
+    """The places where `path` names Python's English reader: anywhere, or with `branches_only` only in the body
+    of an `if` whose test reads the name `senses`."""
+    tree = ast.parse(path.read_text(), filename=str(path))
+    where = path.relative_to(ROOT) if path.is_relative_to(ROOT) else path
+    if not branches_only:
+        return [f"{where}:{line}: the senses path names {ENGLISH_READER}" for line in sorted(set(_names_reader(tree)))]
+    out = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.If) and any(isinstance(n, ast.Name) and n.id == "senses" for n in ast.walk(node.test)):
+            for line in sorted({line for stmt in node.body for line in _names_reader(stmt)}):
+                out.append(f"{where}:{line}: a senses branch names {ENGLISH_READER}")
+    return out
+
+
 def main(argv: list[str] | None = None) -> int:
     paths = [Path(p).resolve() for p in (argv if argv else [str(ROOT / r) for r in RELAYED])]
     if not argv:
@@ -200,10 +236,16 @@ def main(argv: list[str] | None = None) -> int:
     guards: list[str] = []
     found = [f for p in paths for f in findings(p, classes, marked)]
     found += [f for p in readings for f in reserved_literals(p, guards)]
+    # The senses path's files are pinned by tests/test_relay_lint.py; a tree without them has no senses path.
+    senses = paths if argv else [ROOT / p for p in PARSE_FREE if (ROOT / p).is_file()]
+    found += [f for p in senses for f in english_reads(p)]
+    if not argv and (ROOT / SENSES_LOADER).is_file():
+        found += english_reads(ROOT / SENSES_LOADER, branches_only=True)
     io = f"; {len(marked)} file I/O diagnostic(s): {', '.join(marked)}" if marked else ""
     io += f"; {len(guards)} non-wording guard(s): {', '.join(guards)}" if guards else ""
     print("\n".join(found) if found else f"PASS: {len(paths)} relayed module(s), no own content diagnostic; "
-          f"{len(readings)} readings module(s), no reserved completion name{io}")
+          f"{len(readings)} readings module(s), no reserved completion name; {len(senses)} senses module(s), "
+          f"no English reader{io}")
     return 1 if found else 0
 
 

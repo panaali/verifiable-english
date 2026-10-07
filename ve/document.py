@@ -87,7 +87,7 @@ def _split(raw: bytes):
         raise VEError("unsupported document format")
     allowed = {"format", "environment", "units", "open_terms", "reading_sets",
                "narrowings", "couplings", "weights", "graph", "lemmas",
-               "contexts", "assessments", "bridges", "scoped", "completions"}
+               "contexts", "assessments", "bridges", "scoped", "completions", "senses"}
     if meta["format"] == "ve-document@2":
         allowed.add("discourse")
     if set(meta) - allowed:
@@ -143,7 +143,7 @@ def _quantity_content(env, unit, content, fences):
     return canonical, quantity_meaning_id(env, canonical)
 
 
-def _content(env, unit, fences, *, formula_env=None, rights=False):
+def _content(env, unit, fences, *, formula_env=None, rights=False, senses=None):
     formula_env = env if formula_env is None else formula_env
     content = unit.get("content")
     if content is None:
@@ -190,6 +190,13 @@ def _content(env, unit, fences, *, formula_env=None, rights=False):
     if unit["id"] not in fences:
         raise VEError("missing VE fence")
     text = fences[unit["id"]]
+    if senses is not None and unit.get("surface") == "english":
+        # RD-8: Lean read the fence (`ve.senses_document`); a preamble line or an open unit has no formula.
+        data = senses.formulas.get(unit["id"])
+        if data is None:
+            return None, None
+        formula = formula_from_data(formula_env, data)
+        return formula_to_data(formula_env, formula), meaning_id(formula_env, formula)
     if unit.get("surface") == "english":
         from .english import parse_english
         document = parse_english(formula_env, text)
@@ -406,6 +413,22 @@ def _load_document(raw: bytes, path: str | Path, lean):
         soft_document = SoftNormDocument(env, _soft_contents(units, attached))
         formula_env = soft_document.extended_env
         open_names = set(open_names) | soft_document.extended_env.decision_names
+    senses = None
+    if "senses" in meta:
+        # RD-8: Lean reads the English fences; their units' environment is Lean's projected one.
+        from .senses_document import read_senses
+        if (meta["format"] != "ve-document@1" or env.unit_schema is not None
+                or set(env.profiles) & {"soft-norms@0", "rights@0", "reports@0", "norm-defaults@0", "readings@1"}):
+            raise VEError("UnsupportedProfile: senses are read in ve-document@1 documents without the soft-norms@0, "
+                          "rights@0, reports@0, norm-defaults@0, readings@1 and quantity routes")
+        english = [(u["id"], fences[u["id"]]) for u, _ in _parts(units)
+                   if type(u) is dict and u.get("surface") == "english" and type(u.get("content")) is dict
+                   and u["content"].get("fence") == u.get("id") and u.get("id") in fences]
+        reading_sets = meta.get("reading_sets", [])
+        senses = read_senses(env, meta["senses"], english, Path(path).parent,
+                             {r.get("unit") for r in reading_sets if type(r) is dict}
+                             if type(reading_sets) is list else set())
+        formula_env = senses.environment
     compiled = []
     unit_ids = set()
     cursor = 0
@@ -443,7 +466,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
         content_env = (env if rights_enabled and kind in ("right", "right_lines", "limitation", "bar")
                        else formula_env)
         content, mid = (_content(content_env, unit, fences, formula_env=formula_env,
-                                 rights=rights_enabled)
+                                 rights=rights_enabled, senses=senses)
                         if unit.get("content") is not None else (None, None))
         is_norm = type(content) is dict and "norm" in content
         if is_norm:
@@ -581,7 +604,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
     doc = {"meta": meta, "environment": env, "source": source, "source_id": sid,
            "document_id": document_id, "directory": Path(path).parent,
            "units": compiled, "norms": norms, "soft_document": soft_document,
-           "norm_defaults": norm_defaults,
+           "norm_defaults": norm_defaults, "senses": senses,
            "reports": reports, "rights_document": rights_document,
            "readings_s1": readings_s1,
            "readings_s2": readings_s2,
@@ -623,6 +646,8 @@ def _checking_environment(doc):
         return doc["soft_document"].extended_env
     if doc.get("norm_defaults") is not None:
         return doc["norm_defaults"].filled.env
+    if doc.get("senses") is not None:
+        return doc["senses"].environment
     return doc["environment"]
 
 
