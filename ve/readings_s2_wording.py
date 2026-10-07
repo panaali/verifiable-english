@@ -41,7 +41,7 @@ class S2Wording:
         self.set_number = {R.id: self.numbers[R.unit] for R in self.sets}
         self.names = {R.id: self.s1.reading_names(R.id) for R in self.sets}
         self.slots = E.Slots(numbers={str(n) for n in self.numbers.values()},
-                             readings={name for names in self.names.values() for name in names})
+                             readings={name for names in self.names.values() for name in names if name is not None})
         senv = self.s1.admission.senv
         self.frame = senv.frame
         self.author = set(senv.author_environment().predicates)
@@ -57,13 +57,9 @@ class S2Wording:
     def conclusion(self, ast):
         """`<conclusion>`: the conclusion's canonical sentence on the existing English surface, in italics; it is
         read back by that surface's all-derivations parser to the conclusion itself before it is shown."""
-        from .ast import Document as Formulas, formula_from_data
-        from .english import parse_english
-        from .printer import render
-        formula = formula_from_data(self.frame, ast)
-        text = render(Formulas((formula,)), self.frame, "ve_english").strip()
-        if parse_english(self.frame, text).formulas != (formula,):
-            raise VEError("InvalidInput: the conclusion's sentence does not read back to the conclusion")
+        from .ast import formula_from_data
+        text = self.E.canonical_sentence(self.frame, formula_from_data(self.frame, ast),
+                                         "the conclusion's sentence does not read back to the conclusion")
         slot = f"*{text}*"
         self.slots.conclusions.add(slot)
         return slot
@@ -236,6 +232,9 @@ class S2Wording:
         E, lines = self.E, []
         quiet = False
         for label in used:
+            if label.startswith(PAIR_LABEL):
+                lines.append(E.pair_line(self.pair_premise(label), self.slots))
+                continue
             decoded = slot_label(label)
             if decoded.kind == "one":
                 R = self._set(decoded.set, decoded.version, label)
@@ -259,6 +258,20 @@ class S2Wording:
         if quiet:
             lines.append(E.quiet(self.slots))
         return ([E.provided(self.slots)] + lines) if lines else []
+
+    def pair_premise(self, label):
+        """norm-defaults 4.1's pair sentence for a used `Fill_T` label `unsaid:pair:<r>,<m>` (readings-defaults 2.2):
+        `r` must be a regulated obligation of the frame whose declared permission is `m`; any other label is refused,
+        never worded."""
+        from .norm_english import pair_sentence
+        body = label[len(PAIR_LABEL):]
+        required, _, permission = body.partition(",")
+        decl = self.frame.predicates.get(required) if required else None
+        regulated = getattr(decl, "regulated", None)
+        if (regulated is None or regulated.role != "obligation" or not permission
+                or regulated.permission != permission):
+            raise VEError(f"InvalidInput: slot label {label} names no declared pair")
+        return pair_sentence(self.frame, required)
 
     def _set(self, set_id, version, label):
         R = next((R for R in self.sets if (R.id, R.version) == (set_id, version)), None)
@@ -284,6 +297,8 @@ class S2Wording:
         from .readings_sup import slot_label
         restricted = set()
         for label in used:
+            if label.startswith(PAIR_LABEL):
+                continue  # a pair premise of the completion mentions no open set
             decoded = slot_label(label)
             if decoded.kind == "coupling":
                 coupling = self._restriction(self.route.couplings, decoded, label)
@@ -403,6 +418,7 @@ class S2Wording:
                                    situation=self.situation(model, counter["choice"]))
 
 
+PAIR_LABEL = "unsaid:pair:"
 _DECISION_PREFIXES = ("soft__excepted__", "soft__off__", "soft__outweighs__", "rights__")
 
 
