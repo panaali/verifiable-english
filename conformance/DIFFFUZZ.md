@@ -157,7 +157,10 @@ DF-12 closed in lean-first batch 5: the risk route now rejects the NBSP act phra
 
 Lean-first batch 6 (2026-10-07) added 11 entries that the CI sample finds on both its parent `9aaf918d` and its
 head, with the same signature IDs on both, after the `soft-norms@0` test-input corpus grew. They are not
-regressions: seven are DF-3, two DF-9, one DF-4 and one DF-19. Each entry gives its one-line `reason`.
+regressions: seven are DF-3, two DF-9, one DF-4 and one DF-19. Each entry gives its one-line `reason`. After the
+merge of main, three no longer reproduce and are removed: `71000ad1c1905d72` and `e5cf7c07fd37c408` (DF-3, risk:
+Python relays Lean's risk decoder) and `e5e660cd2ad18ba9` (DF-9, quantity: Python relays Lean's W6 admission and
+Rust's quantity route is deleted).
 
 Fixed and retired (no entry reproduces since the merge of `ve-integration` with `fix/env-field-types`): DF-1, Python's
 `TypeError` for a numeric or Boolean `profiles`; DF-2, Python's `TypeError` for an array or object where a

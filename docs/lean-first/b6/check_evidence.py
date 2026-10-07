@@ -53,14 +53,25 @@ def main():
     ci = read("difffuzz-ci.json")
     assert ci["base_new"] == ci["head_new"] == len(ci["signatures"]) == ci["reviewed_with_reason"] == 11
     assert ci["same_signature_ids"] and ci["added"] == ci["removed"] == [] and ci["head_new_after_review"] == 0
-    baseline = json.loads((ROOT / "conformance/difffuzz-baseline.json").read_text())["entries"]
-    reviewed = [e for e in baseline if e["signature"] in ci["signatures"]]
-    # Later integration batches may replace or consolidate unrelated baseline entries.
-    # The batch-six count belongs to its saved gate record; its reviewed signatures
-    # must still be present in the current baseline.
-    assert len(reviewed) == 11
-    assert all(e.get("reason") and e["follow_up"].startswith("DF-") for e in reviewed)
     assert f"({ci['baseline_entries_after_review']} entries)" in text
+    # The 11 belong to the saved batch-six record. Later merges may fix a signature or consolidate it into
+    # another entry; the post-merge record names each one and why. The current baseline must hold every
+    # signature that still reproduces, each resolved one's covering entry if it has one, and no fixed one.
+    merged = read("difffuzz-ci-merged.json")
+    assert merged["passed"] and merged["new"] == 0 and merged["baseline_not_reproduced"] == []
+    resolved = merged["resolved"]
+    assert sorted(merged["reproduces"] + list(resolved)) == sorted(ci["signatures"])
+    baseline = {e["signature"]: e for e in
+                json.loads((ROOT / "conformance/difffuzz-baseline.json").read_text())["entries"]}
+    for signature in merged["reproduces"]:
+        entry = baseline[signature]
+        assert entry.get("reason") and entry["follow_up"].startswith("DF-"), signature
+    for signature, why in resolved.items():
+        assert why["why"] and f"`{signature}`" in text, signature
+        if why["status"] == "fixed":
+            assert signature not in baseline, signature
+        else:
+            assert why["status"] == "consolidated" and why["covered_by"] in baseline, signature
 
     soft = read("soft-corpus.json")
     assert soft["accepted_trees"] == soft["environment_matches"] == soft["layer_matches"] == 1000
