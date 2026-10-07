@@ -29,12 +29,12 @@ def units (A : List (String × Nat)) (fs : List String) : List (Option Nat) :=
   | .ok (.ok (d, sents)) => fenceUnits F workBudget d sents fs.length
   | _ => []
 
-/-- The English of each open unit of a request, as the runner writes it. -/
+/-- The English of each open unit of a request, as the runner writes it (`documentText`). -/
 def texts (D : Dictionary) (A : List (String × Nat)) (t : SenseText) : List String :=
   match readDocument D EJ LJ workBudget ⟨A⟩ t, documentInput D ⟨A⟩ t with
-  | .ok (.ok us _ _ _ _), .ok (.ok (_, sents)) =>
+  | .ok (.ok us _ _ _ _), .ok (.ok (d, sents)) =>
     (us.mapIdx fun i u => (i, u)).filterMap fun (i, u) =>
-      if u.candidates.isEmpty then none else some (unresolvedText D (sents.length - us.length + i) u)
+      if u.candidates.isEmpty then none else some (documentText D ⟨A⟩ d (sents.length - us.length + i) u)
   | _, _ => []
 
 def s9 : String := doc [lineFunny, "In this document, odd means strange.", "Every funny joke is odd."]
@@ -110,6 +110,22 @@ def s22 : String := "Both the riddle is odd and the riddle is funny (meaning str
    "\"In this document, tells means says aloud.\" to choose their senses."]
 -- a resolved document has no such text
 #guard texts F [("odd", 1)] (.fences [s16]) == []
+-- With front-matter defaults the rendered lines are not the author's sentences, so they are not counted, and
+-- a written line is refused (`bothText`), so the text asks for a default in the front matter.
+#guard texts F [("funny", 1)] (.fences [s16]) == ["Sentence 1 uses odd, which has two senses here, and only " ++
+  "strange gives a reading of this sentence. Add the default \"odd\": 1 to the front matter to say so."]
+#guard texts F [("funny", 1)] (.fences ["Alice tells the riddle.", s16]) == ["Sentence 2 uses odd, which has two " ++
+  "senses here, and only strange gives a reading of this sentence. Add the default \"odd\": 1 to the front " ++
+  "matter to say so."]
+#guard texts F [("odd", 1)] (.fences ["The riddle is funny."]) == ["Sentence 1 uses funny, which has two senses " ++
+  "here: amusing; strange. Add the default \"funny\": 1 to the front matter or write funny (meaning strange)."]
+#guard texts F2 [("odd", 1)] (.fences ["Both alice tells the riddle and the riddle is funny."]) ==
+  ["Sentence 1 uses funny and tells, which have more than one sense here, and four choices of their senses " ++
+   "give a reading of this sentence. Add defaults such as \"funny\": 1 and \"tells\": 1 to the front matter " ++
+   "to choose their senses."]
+-- the written line the old text asked for is refused under defaults
+#guard refused (rd [("funny", 1)] (.fences ["In this document, odd means strange.", s16])) bothText
+#guard choiceDefaults F [("funny", 1), ("odd", 1), ("zany", 1)] == "\"funny\": 1 and \"odd\": 1"
 #guard countWord 2 == "two" && countWord 11 == "11" && andList ["a", "b", "c"] == "a, b and c"
 
 end VE.Senses.DocumentExamples
