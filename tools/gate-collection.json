@@ -10629,6 +10629,7 @@
   "tests/test_stage2_validation.py::test_lean_rejects_a_model_whose_claimed_identity_is_stale",
   "tests/test_stage2_validation.py::test_model_identity_is_bound_from_leans_answer",
   "tests/test_stage2_validation.py::test_model_identity_sorts_domains_as_python_does",
+  "tests/test_stage2_validation.py::test_reviewed_environment_findings_have_one_python_lean_diagnostic",
   "tests/test_stage2_validation.py::test_soft_metadata_survives_the_lean_environment_identity",
   "tests/test_stage2_validation.py::test_speech_scope_references_are_checked_before_construction",
   "tests/test_statement_block_environment.py::test_a_role_predicate_whose_declaration_fixes_it_is_regulated[FA-available-defined-None]",
