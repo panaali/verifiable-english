@@ -151,7 +151,7 @@ entry may sit under a neighbouring id.
 
 DF-12 closed in lean-first batch 5: the risk route now rejects the NBSP act phrase with the W6 canonical-round-trip diagnostic. Its baseline signature no longer reproduces.
 | DF-18 | Python's `Environment` rejects the `soft` vocabulary block of the soft-norms sources of `conformance/soft_norms_rust.json` (`unknown=['soft']`), which Rust accepts and Lean's soft-norms route accepts or rejects by a soft check of its own (Python's soft counterpart gives the same code). | `wire-contract-PLAN.md` 7, S3 row (`soft-norms@0` environment) |
-| DF-19 | A constant with a `verbalisation` member (the `norms@0` and `norm-defaults@0` test inputs): Python's `Environment` and the units' Python engines accept it; Lean's envelope, norm-defaults and `ve_diagnose` decoders say `fields do not match: expected [sort, description]` and Rust `expected exactly fields ["sort", "description"]`, before any check the mutant targets. | new: the constant declaration decoders of Lean and Rust (or Python's refusal) |
+| DF-19 | A constant with a `verbalisation` member in a norms environment: Python and Lean's environment mode accept it; Rust's older envelope decoder requires exactly `sort` and `description`. The norm-defaults wire route can report a different first fault. | Rust's constant declaration decoder and the norm-defaults wire phase order |
 
 Fixed and retired (no entry reproduces since the merge of `ve-integration` with `fix/env-field-types`): DF-1, Python's
 `TypeError` for a numeric or Boolean `profiles`; DF-2, Python's `TypeError` for an array or object where a
