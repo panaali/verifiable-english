@@ -12,7 +12,7 @@ public reexport facade, not an architectural dependency source.
 | 1 kernel | `assurance`, `ast`, `environment`, `environment_wire`, `errors`, `identity`, `limits`, `model`, `wire`, `wire_contract` | `VE.Syntax`, `Semantics`, `Typing`, `Finite`, `Consequence`, `Bridge`, `RoundTrip`, `CertificateWire`, `ClaimGraph`, `GraphChecks`, `ModelProofs`, `EnvironmentProofs`, `Tableau*`, `VE.Core.*`, `VE.Json` except `VE.Core.Surface` | `ve-core` crate root and `ast`, `environment`, `model`, `wire`, `semantics`, `graph` (one crate holds all three groups until the crate split) |
 | 2 profiles | `alternatives`, `background`, `closure`, `definitions`, `entailment`, `evaluate`, `norms`, `order`, `profiles`, `reports`, `rights`, `softnorms`, `softnorms_contract`, `norms_contract`, `speech_acts`, `units` | `VE.Closure.*` except `VE.Closure.Surface`, `Order.*`, `Norms.*` except `Norms.FlaggedSpec` and `Norms.RunSound`, `Definitions.*`, `Data.*`, `Route.*` except `Route.Run`, `Route.RunSound` and `Route.Checks`; other `VE.*` profile modules | Profile files inside `ve-core/src` (`eval`, `route`, `search`, `order`, `units`, `risk`, `discourse`); intra-crate module groups are checked by `tools/check_rust_deps.py` |
 | 3 surface | `english*`, `fluent`, `fol`, `grammar`, `natural`, `norm_english`, `parser`, `printer`, `readings_english`, `readings_s2_english`, `report_english`, `senses`, `speech_english`, `surface.*`, `lexicon.*` | `VE.Surface*`, `LexicalProofs`, `ParserContracts`, `VE.English.*`, `VE.Order.Surface`, `VE.Core.Surface`, `VE.Closure.Surface` | `ve-core/src/surface.rs` (same crate limitation) |
-| 4 tools | `__main__`, `adapters.*`, `admission`, `argument`, `attacks`, `authoring`, `backends.*`, `bundle`, `check`, `document`, `equivalence`, `norm_admission`, `norm_defaults`, `norm_defaults_contract`, `norm_defaults_english`, `norm_defaults_route`, `norm_strict`, `openterms`, `propose`, `readings`, `readings_route`, `readings_s1`, `readings_sup`, `readings_verdicts`, `readings_s2_wording`, `search`, `stream_audit`, `vacuity`, `assist.*`, `discourse`, `quantity_admission`, `reports_route`, `risk`, `rights_route`, `soft_route`, `speech_document` | Entry points: every `lean_exe` root in `lean/lakefile.toml` (`Main`, `NormsMain`, `SoftNormsMain`, `RightsMain`, `SpeechActsMain`, `AlternativesMain`, `RiskMain`, `RiskEvalMain`, `QuantityMain`, `ReportsMain`, `DiscourseMain`, `Serve`, `ResponseDecode`, `VE.English.Run`) and every top-level `*Main`; `VE.*.Run`, `VE.Service.*`, `VE.Norms.FlaggedSpec` (theorems on `Norms.Run.runCase`), `VE.Route.RunSound` and `VE.Norms.RunSound` (theorems on `Route.Run.runCase` and `Norms.Run.runCase`) | `ve` binary crate |
+| 4 tools | `__main__`, `adapters.*`, `admission`, `argument`, `attacks`, `authoring`, `backends.*`, `bundle`, `check`, `document`, `equivalence`, `norm_admission`, `norm_defaults`, `norm_defaults_contract`, `norm_defaults_english`, `norm_defaults_route`, `norm_strict`, `openterms`, `propose`, `readings`, `readings_route`, `readings_s1`, `readings_sup`, `readings_verdicts`, `readings_s2_wording`, `search`, `stream_audit`, `vacuity`, `assist.*`, `discourse`, `reports_route`, `risk`, `rights_route`, `soft_route`, `speech_document` | Entry points: every `lean_exe` root in `lean/lakefile.toml` (`Main`, `NormsMain`, `SoftNormsMain`, `RightsMain`, `SpeechActsMain`, `AlternativesMain`, `RiskMain`, `RiskEvalMain`, `QuantityMain`, `ReportsMain`, `DiscourseMain`, `Serve`, `ResponseDecode`, `VE.English.Run`) and every top-level `*Main`; `VE.*.Run`, `VE.Service.*`, `VE.Norms.FlaggedSpec` (theorems on `Norms.Run.runCase`), `VE.Route.RunSound` and `VE.Norms.RunSound` (theorems on `Route.Run.runCase` and `Norms.Run.runCase`) | `ve` binary crate |
 | 5 apps and measurements | `argument_fixtures`, `ve_experiments.*` | `VE`, `Iceberg`, `VE.Audit`, `VE.Checks`, `VE.Route.Checks` aggregation and audit targets | `rust/benchmark.py`, `rust/fuzz_closure.py`, reports |
 
 The exact assignments, including exceptions to these patterns, live in
@@ -24,7 +24,7 @@ its `lakefile.toml` root, or a top-level `*Main` module, is tool layer by rule. 
 split is separate Rust kernel, profile and surface crates. Until then the same
 checker also assigns each `ve-core/src/*.rs` module a group (kernel: the crate
 root, `ast`, `environment`, `model`, `wire`, `semantics`, `graph`; profile:
-`eval`, `route`, `search`, `order`, `units`, `risk`, `readings`;
+`eval`, `route`, `search`, `order`, `risk`;
 surface: `surface`) and rejects
 outward paths except the exact edges in
 [`tools/rust-module-exceptions.json`](../tools/rust-module-exceptions.json). This
@@ -42,8 +42,8 @@ inline modules named like an imported name or a crate module, crate paths in
 attribute or macro strings and in macro definitions, `#[path]`, `#[macro_use]`,
 `#[macro_export]` (also under `cfg_attr`), `include!` (also renamed),
 `extern crate self`, macros 2.0 and macro metavariables after `::`.
-Rust's `units` and `risk` are profile modules (its `readings` replay was deleted in
-lean-first batch 3 and its `discourse` re-check in batch 4), as in Lean
+Rust's `risk` is a profile module (its `readings` replay was deleted in
+lean-first batch 3, its `discourse` re-check in batch 4 and its `units` quantity route in batch 9), as in Lean
 (`VE.Risk.*`, `VE.Route.Readings` and the `VE.Discourse.*` checks are
 layer 2). Python files the same duties differently: `ve.units` is a profile
 module but `ve.risk`, `ve.readings` and `ve.discourse` are layer-4 route

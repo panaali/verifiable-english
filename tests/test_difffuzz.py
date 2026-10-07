@@ -696,7 +696,8 @@ def test_every_route_is_a_built_lean_executable_with_a_named_rust_path():
 
 def test_every_engine_with_a_path_answers_every_environment_seed(built):
     """The review's B3: an engine that rejects a seed still takes part; quantity seeds get a valid route
-    request (Lean and Rust decode them and report Python's identity), and norm-defaults seeds reach Lean."""
+    request (Lean decodes them and reports Python's identity; Rust has no quantity route since Lean-first
+    batch 9), and norm-defaults seeds reach Lean."""
     surface = df.EnvironmentSurface()
     try:
         seeds = surface.seeds()
@@ -709,8 +710,8 @@ def test_every_engine_with_a_path_answers_every_environment_seed(built):
             expected = ("ok", "error") if surface.path(engine, seed, seed.root) else ("n/a",)
             assert answers[engine]["outcome"] in expected, (seed.id, engine, answers[engine])
         if seed.profile == "quantity":
-            assert answers["lean"] == answers["rust"] == answers["python"], (seed.id, answers)
-            assert answers["python"]["outcome"] == "ok"
+            assert answers["lean"] == answers["python"], (seed.id, answers)
+            assert answers["python"]["outcome"] == "ok" and answers["rust"]["outcome"] == "n/a"
 
 
 # ---------------------------------------------------------------- B4: runner rows

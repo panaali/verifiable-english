@@ -130,7 +130,7 @@ import VE.NormDefaults.Layered
 import VE.NormDefaults.Admission
 import VE.NormDefaults.Run
 import VE.Readings.Doc
-import VE.Readings.Layers
+import VE.SoftNorms.Once
 import VE.Readings.Separate
 import VE.Readings.Lines
 import VE.Readings.Examples
@@ -3395,10 +3395,26 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Norms.targetsIn_eq
 #print axioms VE.SoftNorms.selectsOn_soften
 #print axioms VE.SoftNorms.softPremisesIn_eq
+#print axioms VE.Norms.InFragmentIn_eq
+#print axioms VE.Norms.targets_eq_once
+#print axioms VE.Norms.inFragment_eq_once
+#print axioms VE.Norms.semanticCheckOnce_eq
+#print axioms VE.Norms.validateOnce_eq
+#print axioms VE.Norms.WellFormedOnce_eq
+#print axioms VE.Norms.semanticCheck_eq_once
+#print axioms VE.Norms.validate_eq_once
+#print axioms VE.Norms.wellFormed_eq_once
 #print axioms VE.SoftNorms.checkSoftOnce_eq
 #print axioms VE.SoftNorms.softSemanticCheckOnce_eq
 #print axioms VE.SoftNorms.validateSoftOnce_eq
 #print axioms VE.Rights.validateRightsOnce_eq
+#print axioms VE.SoftNorms.WellFormedSoftOnce_eq
+#print axioms VE.SoftNorms.checkSoft_eq_once
+#print axioms VE.SoftNorms.softSemanticCheck_eq_once
+#print axioms VE.SoftNorms.validateSoft_eq_once
+#print axioms VE.SoftNorms.wellFormedSoft_eq_once
+#print axioms VE.SoftNorms.InFragmentOnce_eq
+#print axioms VE.SoftNorms.inFragment_eq_once
 #print axioms VE.Readings.cellsOn_sideOf
 #print axioms VE.Readings.assignmentsOn_sideOf
 #print axioms VE.Readings.tablesModelOn_sideOf

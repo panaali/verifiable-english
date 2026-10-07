@@ -1,12 +1,8 @@
-"""Rights fixtures (docs/spec/rights.md 10): Python correlation, Lean rights, and Lean soft replay.
+"""Rights fixtures and the independently checked soft embedding (rights.md 10).
 
-Each fixture source is correlated by Python and regenerated independently by the Lean rights
-route and, on the correlated soft document, by the Lean soft route; `check_rights_regenerated`
-compares every output (generated keys, E″′ byte for byte, line instances and nodes, Lim_D,
-bar nodes, layer order, premises, background, targets, warnings). Fixture θ is checked as its
-own statement: every shape-fitting rule of the soft conformance trees, wrapped as a one-line
-right with `H_R = ⊤`, correlates to exactly the flattened soft document on both routes, and
-with a holder guard the nodes differ exactly by the conjunct."""
+Lean owns rights correlation. Fixture θ checks that every fitting soft rule wrapped as
+a right with `H_R = ⊤` has the same layer result as the soft route. A holder guard
+must add exactly one conjunct to the Lean line node."""
 from __future__ import annotations
 
 import json
@@ -16,7 +12,7 @@ from pathlib import Path
 from tests.test_norms import obligation, permission
 from tests.test_rights import claim, right, rights_env
 from ve.rights import correlate
-from ve.rights_route import check_rights_regenerated, run_rights_case
+from ve.rights_route import run_rights_case
 from ve.backends.relay import decide
 from ve.softnorms import SoftEnvironment, SoftNormDocument
 
@@ -209,7 +205,7 @@ def fixtures():
 def theta_rows(seeds=range(60)):
     """θ: every shape-fitting rule of the soft conformance trees wrapped as a one-line right
     (`H_R = ⊤`, no limitation, no bar) correlates to the flattened soft document on the
-    Python route, the Lean rights route and the Lean soft route; with `H_R = u(h)` the Lean
+    Lean rights route and the Lean soft route; with `H_R = u(h)` the Lean
     line nodes differ exactly by the conjunct. Rows with no fitting rule are skipped."""
     from conformance.soft_norms import generated
     compared = skipped = 0
@@ -237,7 +233,6 @@ def theta_rows(seeds=range(60)):
         assert [r.to_dict() for r in rights.soft_document.rules] == [r.to_dict() for r in flat.rules], seed
         assert rights.soft_document.extended_env.to_dict() == flat.extended_env.to_dict(), seed
         lean = run_rights_case(rights.env, units, "rights-elaborate")
-        check_rights_regenerated(rights, lean)
         soft = decide("soft-norms", [{"id": "f", "kind": "soft-elaborate", "environment": raw,
                                       "norms": fitting + outside}])[0]
         for field in ("order", "premises", "derived", "colliding_pairs", "conflict_targets",
@@ -254,27 +249,25 @@ def theta_rows(seeds=range(60)):
                                                               ["unary", "u", ["var", 0]]]}, seed
         compared += 1
     return {"fixture": "theta", "wrapped_documents": compared, "skipped_documents": skipped,
-            "three_way": "PASS"}
+            "embedding": "PASS"}
 
 
 def run():
     summary = []
     for name, (raw, units) in fixtures().items():
-        # Each route receives the source independently. No Python elaboration is
-        # supplied to the rights executable.
+        # The container and the explicit route both receive Lean's elaboration.
         rights = correlate(deepcopy(raw), deepcopy(units))
         lean = run_rights_case(rights.env, units, "rights-elaborate")
-        check_rights_regenerated(rights, lean)
         summary.append({"fixture": name, "lines": len(lean["lines"]),
                         "limitations": len(lean["limitations"]),
                         "conflict_targets": len(lean["conflict_targets"]),
-                        "three_way": "PASS"})
+                        "embedding": "PASS"})
     summary.append(theta_rows())
-    return {"format": "rights-three-way@0", "fixtures": summary, "passed": len(summary)}
+    return {"format": "rights-embedding@0", "fixtures": summary, "passed": len(summary)}
 
 
 if __name__ == "__main__":
     result = run()
     Path(__file__).with_name("rights-three-way-report.json").write_text(
         json.dumps(result, indent=2, sort_keys=True) + "\n")
-    print(f"PASS: {result['passed']} rights fixtures across Python, rights Lean, and soft Lean")
+    print(f"PASS: {result['passed']} rights relay and soft embedding fixtures")
