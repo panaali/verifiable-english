@@ -1,4 +1,5 @@
 import VE.NormDefaults.Replay
+import VE.Route.Flags
 
 /-! The `norm-defaults-report` case (docs/spec/norm-defaults.md 3.2 and 5): the lines of
 every regulated predicate, decided here from checked evidence.
@@ -422,6 +423,8 @@ def situationFrom (s : SourceU) (m : Json) : Except String (SituationG s.U) := d
   let v := VE.Norms.Replay.baseModelVocabulary s.src.ne s.src.D
   let data ← VE.Bridge.decodeModelData v m
   if hv : data.valid v = true then
+    unless VE.Route.Flags.fastFlags data.toModel s.src.ne.rv.flags do
+      throw (VE.Route.Wire.invalidModel "flags")
     if hb : backgroundValid s.U.D data.toModel = true then
       pure ⟨data.toModel, by
         rw [s.doc]
