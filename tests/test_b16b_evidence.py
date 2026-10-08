@@ -66,6 +66,15 @@ def test_every_seeded_fault_was_caught_and_restored():
     assert all(row["failed"][0].split("::")[1].startswith(row["test"]) for row in rows)
 
 
+def test_every_seeded_fault_still_applies_to_the_tree():
+    """A seeded fault whose text is gone from its file cannot run (looprecheck1: `unbound_answer` named a line
+    the binding fix had replaced); each must match its file exactly once, as `mutants.py` requires."""
+    import mutants
+    for name, _, file, old, _, test in mutants.MUTANTS:
+        assert (ROOT / file).read_text().count(old) == 1, name
+        assert f"def {test}(" in (ROOT / mutants.TESTS).read_text(), name
+
+
 def test_prose_numbers_are_the_saved_ones():
     text = " ".join((HERE / "DELTA.md").read_text().split())
     share = load("share.json")
