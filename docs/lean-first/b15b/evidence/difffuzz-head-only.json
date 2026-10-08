@@ -1,0 +1,121 @@
+{
+ "note": "Head-only new signatures per run, each with the base finding of the same seed and mutation (computed from the per-run reports in the A/B's scratch directory).",
+ "runs": {
+  "--ci": {
+   "base_new": 0,
+   "head_new": 0,
+   "head_only": []
+  },
+  "--deep-1---seed-20260923": {
+   "base_new": 33,
+   "head_new": 30,
+   "head_only": []
+  },
+  "--deep-1---seed-20260924": {
+   "base_new": 45,
+   "head_new": 40,
+   "head_only": []
+  },
+  "--deep-1---seed-20260925": {
+   "base_new": 42,
+   "head_new": 39,
+   "head_only": []
+  },
+  "--deep-1---seed-20260926": {
+   "base_new": 37,
+   "head_new": 31,
+   "head_only": []
+  },
+  "--deep-1---seed-20260927": {
+   "base_new": 40,
+   "head_new": 36,
+   "head_only": []
+  },
+  "--deep-1---seed-20260928": {
+   "base_new": 39,
+   "head_new": 34,
+   "head_only": []
+  },
+  "--deep-1---seed-20260929": {
+   "base_new": 46,
+   "head_new": 42,
+   "head_only": [
+    {
+     "head": "9f00e2f3a0a7c983",
+     "engines": [
+      "python",
+      "lean"
+     ],
+     "answers": {
+      "python": {
+       "outcome": "error",
+       "code": "InvalidInput",
+       "text": "InvalidInput: Incorrect fields (missing=['constants', 'predicates', 'sorts'], unknown=[])"
+      },
+      "lean": {
+       "outcome": "error",
+       "code": "ResourceLimit",
+       "text": "ResourceLimit: dependency graph size"
+      },
+      "rust": {
+       "outcome": "n/a"
+      }
+     },
+     "base": "db6d6c1e5bf0b9ab",
+     "base_answers": {
+      "python": {
+       "outcome": "error",
+       "code": "InvalidInput",
+       "text": "InvalidInput: Incorrect fields (missing=['constants', 'predicates', 'sorts'], unknown=[])"
+      },
+      "lean": {
+       "outcome": "error",
+       "code": "ResourceLimit",
+       "text": "ResourceLimit: dependency graph size"
+      },
+      "rust": {
+       "outcome": "error",
+       "code": "InvalidInput",
+       "text": "InvalidInput: expected exactly fields [\"sorts\", \"predicates\", \"constants\"]"
+      }
+     }
+    }
+   ]
+  },
+  "--deep-1---seed-20260930": {
+   "base_new": 43,
+   "head_new": 39,
+   "head_only": []
+  },
+  "--deep-1---seed-20261001": {
+   "base_new": 41,
+   "head_new": 35,
+   "head_only": []
+  },
+  "--deep-1---seed-20261002": {
+   "base_new": 40,
+   "head_new": 37,
+   "head_only": []
+  },
+  "--deep-1---seed-20261003": {
+   "base_new": 46,
+   "head_new": 41,
+   "head_only": []
+  },
+  "--deep-1---seed-20261004": {
+   "base_new": 0,
+   "head_new": 0,
+   "head_only": []
+  },
+  "--deep-1---seed-20261005": {
+   "base_new": 38,
+   "head_new": 34,
+   "head_only": []
+  },
+  "--deep-1---seed-20261006": {
+   "base_new": 35,
+   "head_new": 32,
+   "head_only": []
+  }
+ }
+}
