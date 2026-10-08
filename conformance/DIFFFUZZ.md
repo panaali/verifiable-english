@@ -175,6 +175,7 @@ definition body or AST node has a name or tag.
 | Review of the baseline's grouping into DF-3 to DF-19 | HUMAN | deferred to the branch review (owner: reviewer) |
 | The nightly script calls `--deep 20` | EXTERNAL | deferred: the nightly script is outside the repository (owner: orchestrator); the instruction is in `docs/ARCHITECTURE-LAYERS.md` |
 | Merge `fix/env-field-types`, then run `--update-baseline` to drop DF-1 and the Python-against-Lean part of DF-5 | AGENT | done: merged with `ve-integration`; DF-1 and DF-2 retired, the new signatures filed under DF-3 to DF-6, DF-9, DF-13 and DF-19 (two `--update-baseline` passes: a changed entry is dropped on the first and found again on the second) |
+| Refresh after batch 12 decoder location repairs | AGENT | done: removed repaired signatures in two `--update-baseline` passes; retained four sampled constant-sort discrepancies under DF-9 (requests), DF-6 (core envelope), and DF-13 (soft-norms route). These are Rust/Python or v0 route code differences; the reviewed environment Python/Lean diagnostics agree. |
 
 ## Not covered
 
