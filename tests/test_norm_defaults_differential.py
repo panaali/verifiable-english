@@ -19,7 +19,7 @@ from conformance.norm_defaults_differential import CONSTANTS, atom as _atom
 from ve.environment import Environment
 from ve.evaluate import _Evaluator
 from ve.norms import Norm, NormDocument
-from ve import norm_defaults as nd
+from conformance import frozen_norm_defaults as nd
 from tests.test_norm_defaults import obligation, permission, raw_environment
 
 # Guards may mention only predicates earlier in this order (no dependency cycles).

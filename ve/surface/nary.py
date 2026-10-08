@@ -18,7 +18,9 @@ def template_parts(value: str, arity: int) -> tuple[str, ...] | None:
     parts = tuple(re.split(r"\{[0-5]\}", value))
     if len(parts) != arity + 1 or any(not part.startswith(" ") for part in parts[1:-1]):
         return None
-    if parts[0] and parts[0] != "the value of ":
+    # Subject first, as Lean's lexicon validity V3 requires of every selected wording (S3 spec 2.9, D8): a
+    # wording such as "the value of {0} at {1} is {2}" is not selected, so the mechanical form is.
+    if parts[0]:
         return None
     if not all(re.fullmatch(r"(?: [a-z]+)+ ?", part) for part in parts[1:-1]):
         return None
@@ -27,8 +29,7 @@ def template_parts(value: str, arity: int) -> tuple[str, ...] | None:
     # A sequence of colours or adjectives between slots names no relation or
     # argument role. Require an overt relational head in the first connector.
     first = parts[1].split()
-    if not (set(first) & {"reports", "records", "has", "is", "at", "maps", "relates", "links"}
-            or parts[0].startswith("the value of ")):
+    if not set(first) & {"reports", "records", "has", "is", "at", "maps", "relates", "links"}:
         return None
     return parts
 

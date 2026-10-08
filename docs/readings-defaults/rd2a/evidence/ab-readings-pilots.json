@@ -1,0 +1,12 @@
+{
+ "differences": [],
+ "records": {
+  "pilots/default": 303,
+  "readings/default": 1137
+ },
+ "totals": {
+  "same": 1440
+ },
+ "unavailable_both": {},
+ "unlisted": 0
+}

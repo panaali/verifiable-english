@@ -1,0 +1,12 @@
+{
+  "what": "tools/lean_first_diff.py record --corpus norm_defaults --workers 4 (1,000 generated profile documents and ten malformed variants, each through check_document and admission), alternating base and head, VE_NATIVE_PREBUILT=1, /usr/bin/time (user and sys include the reaped workers and Lean service)",
+  "host_load_after": "load average 10.19, 13.44, 18.60 on 32 cores",
+  "base_commit": "7345e3ed",
+  "head_commit": "ee8a38c6",
+  "runs": [
+    {"side": "base", "run": 1, "wall": 93.13, "user": 354.34, "sys": 1.02, "exit": 0},
+    {"side": "head", "run": 1, "wall": 90.96, "user": 322.29, "sys": 3.10, "exit": 0},
+    {"side": "base", "run": 2, "wall": 82.63, "user": 311.53, "sys": 1.45, "exit": 0},
+    {"side": "head", "run": 2, "wall": 90.77, "user": 321.03, "sys": 3.26, "exit": 0}
+  ]
+}

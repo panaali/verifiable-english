@@ -12,7 +12,7 @@ namespace VE.EnglishGrammar
 open VE.Grammar
 
 /-- The SHA-256 of `ve/english_grammar/order@0.json`, which `grammar_id` covers (spec 2.10). -/
-def orderSha256 : String := "fabd387b758085203effbac8d4e1b9314e0ecd76edde2a2f99e44271914d6f02"
+def orderSha256 : String := "ad9a8467f94c6807cb313423cca836117e107f41baf784d49afcb00173723495"
 
 /-- The action of fixed rule `k`, as the `act` text of the `english.grammar` export (spec 4.4). -/
 def orderActs : Array String := #[
@@ -30,9 +30,6 @@ def orderActs : Array String := #[
   "op",
   "op",
   "op",
-  "unit",
-  "unit",
-  "unit",
   "unit",
   "unit",
   "unit",
@@ -60,11 +57,8 @@ def orderRows : Array FixedRow := #[
   { tag := "int-op.minus", lhs := 43, act := .op, rhs := [.t (.exact (.punct "-" false false))] },
   { tag := "int-op.times", lhs := 43, act := .op, rhs := [.t (.exact (.punct "*" false false))] },
   { tag := "minus.free", lhs := 44, act := .unit, rhs := [.t (.exact (.punct "-" false true))] },
-  { tag := "minus.glued", lhs := 44, act := .unit, rhs := [.t (.exact (.punct "-" true true))] },
   { tag := "lbracket.free", lhs := 45, act := .unit, rhs := [.t (.exact (.punct "[" false true))] },
-  { tag := "lbracket.glued", lhs := 45, act := .unit, rhs := [.t (.exact (.punct "[" true true))] },
   { tag := "rbracket.free", lhs := 46, act := .unit, rhs := [.t (.exact (.punct "]" true false))] },
-  { tag := "rbracket.glued", lhs := 46, act := .unit, rhs := [.t (.exact (.punct "]" true true))] },
   { tag := "atom.int-eq", lhs := 3, act := (.intCmp .eq false), rhs := [.n 37, .t (.content "is"), .t (.content "the"), .t (.content "same"), .t (.content "as"), .n 37] },
   { tag := "atom.less", lhs := 3, act := (.intCmp .lt false), rhs := [.n 37, .t (.content "is"), .t (.content "less"), .t (.content "than"), .n 37] },
   { tag := "atom.at-most", lhs := 3, act := (.intCmp .le false), rhs := [.n 37, .t (.content "is"), .t (.content "at"), .t (.content "most"), .n 37] },
@@ -72,7 +66,7 @@ def orderRows : Array FixedRow := #[
   { tag := "atom.at-least", lhs := 3, act := (.intCmp .le true), rhs := [.n 37, .t (.content "is"), .t (.content "at"), .t (.content "least"), .n 37] }
 ]
 
-#guard orderRows.size == 25
+#guard orderRows.size == 22
 #guard orderActs.size == orderRows.size
 #guard ({ rules := orderRows.mapIdx fun i r => { lhs := r.lhs, rhs := r.rhs, act := i, tag := r.tag }, start := 0, rank := ranksStaged : Grammar Terminal }).wf
 #guard terminatorFree ({ rules := orderRows.mapIdx fun i r => { lhs := r.lhs, rhs := r.rhs, act := i, tag := r.tag }, start := 0, rank := ranksStaged } : Grammar Terminal)

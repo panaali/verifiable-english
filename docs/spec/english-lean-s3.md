@@ -97,12 +97,20 @@ flags; a numeral token is not negative. The fixed rules accept exactly the spaci
 
 | Mark | Flags accepted | Python |
 |---|---|---|
-| `[` | `gluedAfter` true; `gluedBefore` either | a term follows at once (`english.py:1166–1169`) |
-| `]` | `gluedBefore` true; `gluedAfter` either | (`:1175–1177`) |
-| a sign `-` before a term or a numeral | `gluedAfter` true; `gluedBefore` either | (`:1157`, `:1196`, the numeral pattern `:1139`) |
+| `[` | `gluedAfter` true; `gluedBefore` false | a term follows at once (`english.py:1166–1169`) |
+| `]` | `gluedBefore` true; `gluedAfter` false | (`:1175–1177`) |
+| a sign `-` before a term or a numeral | `gluedAfter` true; `gluedBefore` false | (`:1157`, `:1196`, the numeral pattern `:1139`) |
 | an operator `+`, `-`, `*` | both flags false | the operator is `' + '`, `' - '` or `' * '` (`:1171–1172`) |
 
 So `[budget+1]`, `[ budget + 1]` and `- budget` have no derivation (or22 to or26).
+
+*Amended by english-lean-e2.md 13.* The table first read "`gluedBefore` either" for `[` and a sign and
+"`gluedAfter` either" for `]`, with a second row for each, so Lean read a mark glued to a word (`costs-5`,
+`least[budget + 1]`, `[budget + 1]and`), which the hand parser refuses; the E2.5 reverse corpus found it. The
+hand parser reads such a mark glued only to another integer mark (`[-5`, `--budget`, `-[`, `[[`, `]]`) or `]`
+glued to the terminator or a comma. The lexer now counts those neighbours as free (`Lexer.gluedFlags`): `[`
+and a sign are free before after `[` or a sign, and `]` is glued after only to a word character. Each mark
+has one row, the one above.
 
 ### 2.3 The reader's inputs
 
@@ -227,10 +235,9 @@ certificate; S2's certificate does not fit the integer rows (sz7).
 
 ### 2.5 The fixed rules of `order@0` and `alternatives@0`
 
-Notation as S2 2.5. A mark written `[·` is `[` with `gluedAfter` true; the two rows of `lbracket`, `rbracket`
-and `minus` are the two values of the free flag (2.2).
+Notation as S2 2.5. A mark written `[·` is `[` with `gluedAfter` true and `gluedBefore` false (2.2).
 
-**`order@0`** (25 rows; `english.py:1984–1997` and `:50–51`):
+**`order@0`** (22 rows, 25 before english-lean-e2.md 13; `english.py:1984–1997` and `:50–51`):
 
 | Tag | Rule | Action |
 |---|---|---|
@@ -246,9 +253,9 @@ and `minus` are the two values of the free flag (2.2).
 | `numeral.plain` | `numeral → cls numeral` | `numeral false` |
 | `numeral.signed` | `numeral → ⟨minus⟩ cls numeral` | `numeral true` |
 | `int-op.plus` `.minus` `.times` | `int_op → +` \| `-` \| `*`, free on both sides | `op` |
-| `minus.free` `minus.glued` | `minus → -·` | `unit` |
-| `lbracket.free` `lbracket.glued` | `lbracket → [·` | `unit` |
-| `rbracket.free` `rbracket.glued` | `rbracket → ·]` | `unit` |
+| `minus.free` | `minus → -·` | `unit` |
+| `lbracket.free` | `lbracket → [·` | `unit` |
+| `rbracket.free` | `rbracket → ·]` | `unit` |
 | `atom.int-eq` | `atom → ⟨int_term⟩ c:is c:the c:same c:as ⟨int_term⟩` | `intCmp eq` |
 | `atom.less` | `atom → ⟨int_term⟩ c:is c:less c:than ⟨int_term⟩` | `intCmp lt` |
 | `atom.at-most` | `atom → ⟨int_term⟩ c:is c:at c:most ⟨int_term⟩` | `intCmp le` |

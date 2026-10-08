@@ -147,21 +147,22 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Core/Bridge.lean` | 159 | 117 | 10–126 | `6cd616c3c663…` |
 | `lean/VE/Core/Wire.lean` | 180 | 180 | 1–180 | `e4643f425ec8…` |
 | `lean/VE/Definitions/Bundle.lean` | 471 | 471 | 1–471 | `fc86d51a7f84…` |
-| `lean/VE/EnglishGrammar/Encode.lean` | 297 | 297 | 1–297 | `92446de419ef…` |
-| `lean/VE/EnglishGrammar/Run.lean` | 379 | 379 | 1–379 | `a5a85b2684fe…` |
+| `lean/VE/EnglishGrammar/Encode.lean` | 755 | 755 | 1–755 | `f884e8d56dc6…` |
+| `lean/VE/EnglishGrammar/Run.lean` | 699 | 699 | 1–699 | `db3251d94cbe…` |
 | `lean/VE/Json.lean` | 136 | 136 | 1–136 | `c5891a586979…` |
 | `lean/VE/NormDefaults/Admission.lean` | 350 | 350 | 1–350 | `b60054268019…` |
-| `lean/VE/NormDefaults/Layered.lean` | 426 | 426 | 1–426 | `dc7777651caf…` |
+| `lean/VE/NormDefaults/Layered.lean` | 445 | 445 | 1–445 | `7e9484be44f9…` |
 | `lean/VE/NormDefaults/Replay.lean` | 391 | 391 | 1–391 | `4242c79ff826…` |
-| `lean/VE/NormDefaults/Report.lean` | 475 | 475 | 1–475 | `f00d2b66e182…` |
-| `lean/VE/NormDefaults/Wire.lean` | 383 | 383 | 1–383 | `c59e1151313d…` |
+| `lean/VE/NormDefaults/Report.lean` | 520 | 520 | 1–520 | `26bc86313053…` |
+| `lean/VE/NormDefaults/Wire.lean` | 421 | 421 | 1–421 | `5ba66fb1559c…` |
 | `lean/VE/Norms/Admission.lean` | 465 | 24 | 22–45 | `a57c5bf09a15…` |
 | `lean/VE/Norms/Flagged.lean` | 389 | 389 | 1–389 | `2921520480a4…` |
 | `lean/VE/Norms/Replay.lean` | 404 | 69 | 103–151, 283–302 | `741968e0457a…` |
-| `lean/VE/Norms/Wire.lean` | 331 | 306 | 25–330 | `608bb613cc6a…` |
+| `lean/VE/Norms/Wire.lean` | 333 | 308 | 25–332 | `d85fe5c7b9c6…` |
 | `lean/VE/Order/Wire.lean` | 295 | 216 | 25–233, 247–253 | `2c8fe48a3007…` |
-| `lean/VE/Readings/SupWire.lean` | 378 | 378 | 1–378 | `f1efaaba3d67…` |
-| `lean/VE/Readings/Wire.lean` | 988 | 988 | 1–988 | `311cfeb72316…` |
+| `lean/VE/Readings/SupWire.lean` | 397 | 397 | 1–397 | `5d8393aeea86…` |
+| `lean/VE/Readings/UnspecifiedWire.lean` | 592 | 592 | 1–592 | `79a08f410381…` |
+| `lean/VE/Readings/Wire.lean` | 1006 | 1006 | 1–1006 | `637e7310b7de…` |
 | `lean/VE/Rights/Admission.lean` | 471 | 471 | 1–471 | `1b43543b7e66…` |
 | `lean/VE/Rights/Wire.lean` | 696 | 696 | 1–696 | `753feb56dae0…` |
 | `lean/VE/Risk/Admission.lean` | 128 | 128 | 1–128 | `f3927135556b…` |
@@ -172,11 +173,12 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Route/Admission.lean` | 697 | 697 | 1–697 | `230006c26a07…` |
 | `lean/VE/Route/Decode.lean` | 282 | 282 | 1–282 | `7cd23701ca95…` |
 | `lean/VE/Route/Gate.lean` | 213 | 38 | 126–163 | `afccc5271974…` |
-| `lean/VE/Route/Wire.lean` | 666 | 666 | 1–666 | `72342ac56c70…` |
+| `lean/VE/Route/Typed.lean` | 95 | 95 | 1–95 | `51f9ceb0f783…` |
+| `lean/VE/Route/Wire.lean` | 671 | 671 | 1–671 | `1f79af9816d5…` |
 | `lean/VE/Senses/Decode.lean` | 93 | 93 | 1–93 | `5f0f5265fe8d…` |
-| `lean/VE/Senses/Run.lean` | 144 | 144 | 1–144 | `7015a002b04e…` |
+| `lean/VE/Senses/Run.lean` | 248 | 248 | 1–248 | `1755c5e6766a…` |
 | `lean/VE/Service/Document.lean` | 481 | 481 | 1–481 | `6f81c137c4b6…` |
-| `lean/VE/Service/Family.lean` | 817 | 817 | 1–817 | `e1e00be43796…` |
+| `lean/VE/Service/Family.lean` | 812 | 812 | 1–812 | `0220b75b70c8…` |
 | `lean/VE/Service/FamilyBundle.lean` | 500 | 500 | 1–500 | `75698a329690…` |
 | `lean/VE/Service/FamilyNorms.lean` | 250 | 250 | 1–250 | `b7d6f9f6767a…` |
 | `lean/VE/Service/Graph.lean` | 255 | 255 | 1–255 | `cd0523e5ad4d…` |
@@ -189,7 +191,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/SpeechActs/Wire.lean` | 993 | 993 | 1–993 | `fbe08d985f7f…` |
 | `lean/VE/Time/Document.lean` | 613 | 613 | 1–613 | `4407e998d007…` |
 | `lean/VE/Time/Wire.lean` | 843 | 843 | 1–843 | `43eff830ca8c…` |
-| **total** | | **22,997** | | |
+| **total** | | **24,707** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
@@ -283,8 +285,9 @@ the manifest `notes`, not changed:
 | `readings` | combination | python → lean | experimental / reference-theorems-checked | `ve.readings:check_readings` | none | `VE.Route.readings_all_iff`<br>`VE.Service.Readings.readings_all_sound`<br>`VE.Service.Readings.readings_none_sound`<br>`VE.Service.Readings.readings_some_sound`<br>`VE.Service.Family.closure_readings_all_sound`<br>`VE.Service.Family.closure_readings_none_sound`<br>`VE.Service.Family.closure_readings_some_sound`<br>`VE.Service.Family.core_readings_all_sound`<br>`VE.Service.Family.core_readings_none_sound`<br>`VE.Service.Family.core_readings_some_sound`<br>`VE.Service.Family.order_readings_all_sound`<br>`VE.Service.Family.order_readings_none_sound`<br>`VE.Service.Family.order_readings_some_sound`<br>`VE.Service.Family.fol_readings_all_sound`<br>`VE.Service.Family.fol_readings_none_sound`<br>`VE.Service.Family.fol_readings_some_sound` | none | `python:implementation`<br>`python:readings-rule`<br>`python:wire` |
 | `graph.compose` | combination | python → lean | experimental / reference-theorems-checked | `ve.argument:check_argument` | `ve_conformance route certificate`<br>`ve_conformance check-certificate` | `VE.Graph.check_sound`<br>`VE.Graph.check_entails`<br>`VE.Graph.check_unfolds`<br>`VE.Graph.tableau_certificateSound`<br>`VE.composition_sound`<br>`VE.Service.Graph.graph_sound`<br>`VE.Service.Graph.graph_entails`<br>`VE.Service.Graph.graph_unfolds`<br>`VE.Service.Family.closure_graph_sound`<br>`VE.Service.Family.closure_graph_entails`<br>`VE.Service.Family.closure_graph_unfolds`<br>`VE.Service.Family.core_graph_sound`<br>`VE.Service.Family.core_graph_entails`<br>`VE.Service.Family.core_graph_unfolds`<br>`VE.Service.Family.order_graph_sound`<br>`VE.Service.Family.order_graph_entails`<br>`VE.Service.Family.order_graph_unfolds` | none | `python:implementation`<br>`python:composition-rule`<br>`python:argument-diagnostics`<br>`python:record-identity`<br>`python:backend-adapter`<br>`python:wire`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders` |
 | `bundle.check` | leaf | python → lean | experimental / experimental | `ve.bundle:check_bundle` | `ve_conformance route bundle` | `VE.Definitions.Bundle.bundle_sound`<br>`VE.Definitions.Bundle.checkAll_sound`<br>`VE.Definitions.Bundle.checkAll_length`<br>`VE.Definitions.Bundle.backgroundLeaves_hold`<br>`VE.Service.FamilyBundle.bundle_sound`<br>`VE.Service.FamilyBundle.fol_bundle_sound`<br>`VE.Service.FamilyBundle.closure_bundle_sound`<br>`VE.Service.FamilyBundle.core_bundle_sound`<br>`VE.Service.FamilyBundle.order_bundle_sound` | none | `python:implementation`<br>`python:record-identity`<br>`python:backend-adapter`<br>`python:wire`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
-| `english.admission` | surface | python → python | experimental / experimental | `ve.english:parse_english_with_metadata`<br>`ve.english:parse_english`<br>`ve.english:parse_english_argument`<br>`ve.norm_english:parse_english`<br>`ve.surface.unambiguity:require_unique_derivation` | none | `VE.English.checked_unique_derivation`<br>`VE.English.checked_one_reading`<br>`VE.English.checked_parse_render`<br>`VE.English.checked_render_injective`<br>`VE.English.admissible_sound`<br>`VE.English.core_parse_sound` | none | `python:implementation`<br>`python:surface`<br>`python:backend-adapter` |
-| `senses.read` | surface | lean-only → lean | experimental / experimental | none | `ve_senses_route (default)` | `VE.Senses.senses_resolved_one_reading`<br>`VE.Senses.senses_unit_sound`<br>`VE.Senses.senses_candidate_sound`<br>`VE.Senses.candidates_complete`<br>`VE.Senses.mixed_exact` | none | `lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue`<br>`python:wire`<br>`python:backend-adapter` |
+| `english.admission` | surface | python → lean | experimental / experimental | `ve.english:parse_english_with_metadata`<br>`ve.english:parse_english`<br>`ve.english:parse_english_argument` | `ve_service english.read`<br>`ve_service english.grammar`<br>`ve_service english.check` | `VE.EnglishGrammar.policy_iff_no_failure`<br>`VE.EnglishGrammar.policy_selection`<br>`VE.EnglishGrammar.admitRequest_ok`<br>`VE.EnglishGrammar.admitRequest_exact`<br>`VE.EnglishGrammar.admitRequest_policy`<br>`VE.EnglishGrammar.translateRequest_policy`<br>`VE.EnglishGrammar.grammarFault_none`<br>`VE.EnglishGrammar.overlayCheck_constants`<br>`VE.EnglishGrammar.checkRequest_some`<br>`VE.EnglishGrammar.sensesRequest_policy`<br>`VE.EnglishGrammar.Run.codeClasses_total`<br>`VE.EnglishGrammar.decode_encode` | none | `lean:kernel`<br>`lean:compiler`<br>`lean:runner-glue`<br>`python:implementation`<br>`python:display`<br>`python:backend-adapter` |
+| `english.statement` | surface | python → lean | experimental / experimental | `ve.norm_english:parse_english`<br>`ve.english:parse_statement_english`<br>`ve.surface.unambiguity:require_unique_derivation` | none | none | none | `python:implementation`<br>`python:surface` |
+| `senses.read` | surface | lean-only → lean | experimental / experimental | none | `ve_senses_route (default)` | `VE.Senses.senses_resolved_one_reading`<br>`VE.Senses.senses_unit_sound`<br>`VE.Senses.senses_candidate_sound`<br>`VE.Senses.candidates_complete`<br>`VE.Senses.mixed_exact`<br>`VE.Senses.readDocument_source`<br>`VE.Senses.readDocument_both`<br>`VE.Senses.defaults_read_as_lines`<br>`VE.Senses.document_unit_sound`<br>`VE.Senses.document_line_sound`<br>`VE.Senses.documentRequest_policy`<br>`VE.Senses.documentRequest_source` | none | `lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue`<br>`python:wire`<br>`python:backend-adapter` |
 | `premise-status` | combination | python → lean | experimental / experimental | `ve.vacuity:premise_status` | none | none | none | `python:implementation` |
 | `compare` | combination | python → python | experimental / experimental | `ve.equivalence:compare` | none | none | none | `python:implementation`<br>`python:equivalence.compare` |
 | `reference.validate` | combination | python → python | experimental / experimental | `ve.equivalence:validate_reference` | none | none | none | `python:implementation`<br>`python:reference-rule` |
