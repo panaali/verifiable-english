@@ -1,9 +1,10 @@
 #![forbid(unsafe_code)]
 //! Experimental VE v0 and closure@0 core. Checked values have private fields; raw indexed
-//! syntax becomes a claim only through `Document::check` or `parse`.
+//! syntax becomes a claim only through `Document::check` or the wire decoders.
 //!
-//! A facade over the kernel, profile and surface crates: it re-exports exactly the public API
-//! the single `ve-core` crate had, and none of `ve_kernel::internal`.
+//! A facade over the kernel and profile crates: it re-exports their public API and none of
+//! `ve_kernel::internal`. Rust reads no VE source text: Python parses and prints, and Lean
+//! checks (docs/LEAN-FIRST-PLAN.md, batch 15b).
 pub use ve_kernel::{
     Document, Edge, Environment, Error, FiniteModel, Formula, MAX_DEPTH, MAX_EVALUATIONS,
     MAX_INDEX, MAX_NODES, MAX_PACKAGE_BYTES, MAX_SOURCE_BYTES, ReachKind, Result, Span, Term,
@@ -14,9 +15,7 @@ pub use ve_kernel::{
 pub use ve_profile::{EvaluationKernel, order_candidates};
 pub use ve_profile::{
     CandidateIterator, CountermodelCheck, CountermodelProblem, Evaluation, SearchBounds, SearchResult,
-    TracedEvaluation, check_label, check_reading_binding, evaluate, evaluate_formula,
-    evaluate_traced, find_countermodel, find_countermodel_min,
-    find_countermodel_with_nonvacuity, find_distinguishing_model,
-    find_distinguishing_model_with_nonvacuity, label_is_canonical, order_case,
+    TracedEvaluation, evaluate, evaluate_formula, evaluate_traced, find_countermodel,
+    find_countermodel_min, find_countermodel_with_nonvacuity, find_distinguishing_model,
+    find_distinguishing_model_with_nonvacuity, order_case,
 };
-pub use ve_surface::{ParseResult, SourceNode, parse, parse_with_metadata, print_document};
