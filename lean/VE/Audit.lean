@@ -1,6 +1,7 @@
 import VE.Order.Conservativity
 import VE.Time.Wire
 import VE.Route.Budget
+import VE.Route.MeteredProofs
 import VE.Route.Closure
 import VE.Route.Decode
 import VE.Route.Flags
@@ -171,6 +172,7 @@ import VE.Readings.SupWireSound
 import VE.Readings.ChoiceWF
 import VE.Readings.Force
 import VE.Readings.Unspecified
+import VE.Readings.UnspecifiedWire
 import VE.Readings.SupExtra
 import VE.Readings.SupExtraExamples
 import VE.WireContract.Engine
@@ -4279,6 +4281,33 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.observes_rel_congr
 #print axioms VE.Readings.observes_withTables_nil
 #print axioms VE.Readings.achievesU_iff
+-- readings-defaults RD-2a (docs/spec/readings-defaults.md 6.3): the wire under the unspecified completion.
+#print axioms VE.NormDefaults.acceptance_of_fillTyped
+#print axioms VE.NormDefaults.acceptanceU
+#print axioms VE.NormDefaults.modelCheckU_sound
+#print axioms VE.Readings.Wire.fillNamesFree_of_reservedUnsaid
+#print axioms VE.Readings.Wire.wellFormedU_of_ndDocText
+#print axioms VE.Readings.Wire.wellFormedND_eq
+#print axioms VE.Readings.Wire.option_or_none
+#print axioms VE.Readings.Wire.ndRest_of_ndText
+#print axioms VE.Readings.Wire.lookup_map_key
+#print axioms VE.Readings.Wire.frameOf_filled
+#print axioms VE.Readings.Wire.candidate_filled
+#print axioms VE.Readings.Wire.authorEnv_filled
+#print axioms VE.Readings.Wire.replayPair_D
+#print axioms VE.Readings.Wire.readings_wire_nd_separate_sound
+#print axioms VE.Readings.Wire.strict_choice
+#print axioms VE.Readings.Wire.choiceU_E
+#print axioms VE.Readings.Wire.readings_wire_nd_choice_conflict
+#print axioms VE.Readings.Wire.readings_wire_nd_choice_entails
+#print axioms VE.Readings.Wire.admitDecoded_ok
+#print axioms VE.Readings.Wire.ndTextWith_eq
+#print axioms VE.Readings.Wire.one_links
+#print axioms VE.Readings.Wire.one_congr
+#print axioms VE.Readings.Wire.owned_links
+#print axioms VE.Readings.Wire.separates_links
+#print axioms VE.Readings.Wire.separates_filled
+#print axioms VE.Readings.Wire.fillHoldsOf_eq
 -- readings-defaults RD-6a (docs/spec/readings-defaults.md 6.7): S2a with a carried base-premise family.
 #print axioms VE.Readings.sat_pull_up
 #print axioms VE.Readings.superpose_conflict_free_extra
@@ -4567,6 +4596,13 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Senses.senses_candidate_sound
 #print axioms VE.Senses.candidates_complete
 #print axioms VE.Senses.mixed_exact
+#print axioms VE.Route.Metered.scan_exhausted_unknown
+#print axioms VE.Route.Metered.scan_sound
+#print axioms VE.Route.Metered.scanState_sound
+#print axioms VE.Route.MeteredProofs.fol_sound
+#print axioms VE.Route.MeteredProofs.order_sound
+#print axioms VE.Route.MeteredProofs.closure_sound
+#print axioms VE.Route.MeteredProofs.core_sound
 #print axioms VE.EnglishGrammar.policy_iff_no_failure
 #print axioms VE.EnglishGrammar.policy_selection
 #print axioms VE.EnglishGrammar.admitRequest_ok

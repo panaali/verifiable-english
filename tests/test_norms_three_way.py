@@ -18,6 +18,7 @@ import pytest
 from tests import lean_routes
 from tests.subprocesses import HANG_TIMEOUT
 
+from conformance.three_way import rust_evaluations
 from tools import rust_build
 from ve.ast import Const, Exists, Not, Top, Unary, Var, _to_data, formula_to_data
 from ve.adapters.cedar import translate
@@ -73,12 +74,16 @@ def run(executable, cases):
         assert len(rows) == len(cases)
         return rows
     command = [str(executable)] + (["conformance"] if executable == RUST else []) + ["-"]
-    result = subprocess.run(command, input=json.dumps(cases),
-                            text=True, capture_output=True, timeout=HANG_TIMEOUT)
-    assert result.returncode in (0, 1), result.stderr
-    rows = json.loads(result.stdout)
-    assert len(rows) == len(cases)
-    return rows
+
+    def rows_of(batch):
+        result = subprocess.run(command, input=json.dumps(batch),
+                                text=True, capture_output=True, timeout=HANG_TIMEOUT)
+        assert result.returncode in (0, 1), result.stderr
+        rows = json.loads(result.stdout)
+        assert len(rows) == len(batch)
+        return rows
+    # Rust's statement values come from its evaluate-budgeted kind (`three_way.rust_evaluations`).
+    return rust_evaluations(rows_of, cases) if executable == RUST else rows_of(cases)
 
 
 def corpus(count=1000):
@@ -199,7 +204,11 @@ def test_act_whitespace_canonicalises_identically_across_languages(lean_executab
                            "norms": [r.to_dict() for r in doc.rules], "premises": [["top"]],
                            "conclusion": formula_to_data(doc.env, conclusion),
                            "certificate": proof.certificate})
-        rust_cases.append({"id": str(i), "environment": raw, "ast": [["top"]]})
+        # Rust reports an environment identity in its countermodel check (an empty model).
+        empty = {"complete": True, "domains": {s: [] for s in raw["vocabulary"]["sorts"]},
+                 "constants": {}, "relations": {p: [] for p in raw["vocabulary"]["predicates"]}}
+        rust_cases.append({"id": str(i), "environment": raw, "model": empty,
+                           "premises": [], "conclusion": ["top"]})
     lean_rows, rust_rows = run(lean_executable, lean_cases), run(rust_executable, rust_cases)
     for sep, lean_row, rust_row in zip(PY_WHITESPACE, lean_rows, rust_rows):
         raw = lean_cases[int(lean_row["id"])]["environment"]

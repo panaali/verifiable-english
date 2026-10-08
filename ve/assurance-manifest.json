@@ -51,7 +51,6 @@
     "ve/backends/lean_service.py:LeanServicePool.run_bound.worker": "captures a worker error and re-raises it in request order after every worker joins; never converts it into a result",
     "ve/natural.py:render_natural_sentence": "display only: selects an English wording whose one-reading audit passes",
     "ve/printer.py:natural_document": "display only: retries with a different wording and re-raises when that fails too",
-    "ve/search.py:_models_with_terminal_error": "buffers a terminal model-stream error for every scoped reader, which re-raises the original error before reporting a verdict",
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome",
     "ve/backends/dispatch.py:_shadow": "shadow authority only (execute and shadowed): the Python result is returned (a Python exception is re-raised unchanged); a candidate backend exception, CheckerUnavailable included, is only recorded as a shadow difference and never becomes the returned verdict",
     "ve/norm_defaults.py:UnspecifiedDocument.__init__": "after Lean accepts a source, a Python container construction failure is reported as CheckerUnavailable",
@@ -66,7 +65,7 @@
     "ve/english.py:_parse_english_document_uncached": "Comparator only: Python parser exceptions are recorded after Lean has decided; they never change the returned Lean result or error."
   },
   "lean_decoders": {
-    "total_lines": 23582,
+    "total_lines": 24781,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -104,6 +103,28 @@
         "reason": "package bindings and scenario replay from JSON; the full file is pinned conservatively"
       },
       {
+        "file": "lean/VE/Alternatives/Wire.lean",
+        "lines": 415,
+        "sha256": "2bca023f9fb77dd82ae6b2bd6b777ea277c533022c95bead6028a2421a728a22",
+        "ranges": [
+          [
+            1,
+            415
+          ]
+        ],
+        "declarations": [
+          "profileGate",
+          "normsView",
+          "decodeBlock",
+          "fixedPredicates",
+          "otherDeclarations",
+          "decodeAltSource",
+          "checkReservedWording",
+          "coverage"
+        ],
+        "reason": "strict alternatives block, profile, source and regenerated premise decoder; the full file is pinned conservatively"
+      },
+      {
         "file": "lean/VE/Attribution/Admission.lean",
         "lines": 343,
         "sha256": "de9ae29eed4d8964900ef593c5a46a32094f08adfacbe013c5ed40dfd458b4d9",
@@ -136,6 +157,23 @@
         "reason": "report content and document identity JSON; the full file is pinned conservatively"
       },
       {
+        "file": "lean/VE/Attribution/Preflight.lean",
+        "lines": 550,
+        "sha256": "e54406c9b67683b603b85378829e76002f7e5b359503b25cb1de64cdc275ff9f",
+        "ranges": [
+          [
+            1,
+            550
+          ]
+        ],
+        "declarations": [
+          "check",
+          "restore",
+          "formulaFault"
+        ],
+        "reason": "the reports document's public fault order and texts, read before the decoder; it only rejects; the full file is pinned conservatively"
+      },
+      {
         "file": "lean/VE/Attribution/Wire.lean",
         "lines": 514,
         "sha256": "4eadc30b6ea7aa48059794724edc301213b9fca4ef7e8c3bd2100fc4271f0ee5",
@@ -152,23 +190,6 @@
           "decodeDocument"
         ],
         "reason": "reports environment and document decoder; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Attribution/Preflight.lean",
-        "lines": 550,
-        "sha256": "e54406c9b67683b603b85378829e76002f7e5b359503b25cb1de64cdc275ff9f",
-        "ranges": [
-          [
-            1,
-            550
-          ]
-        ],
-        "declarations": [
-          "check",
-          "restore",
-          "formulaFault"
-        ],
-        "reason": "the reports document's public fault order and texts, read before the decoder; it only rejects; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Bridge.lean",
@@ -188,6 +209,33 @@
           "decodeFormula",
           "decodeDocument",
           "decodeCountermodel"
+        ]
+      },
+      {
+        "file": "lean/VE/CertificateWire.lean",
+        "lines": 294,
+        "sha256": "8541e1523844a57d3c08e561f8eb85b576524a6ec7108860b7c82206e69e53eb",
+        "ranges": [
+          [
+            46,
+            203
+          ],
+          [
+            218,
+            227
+          ]
+        ],
+        "declarations": [
+          "sha256",
+          "canonical",
+          "digest",
+          "decodeTrace",
+          "decodeCertificate",
+          "decodeClosureTrace",
+          "decodeClosureCertificate",
+          "meaningId",
+          "decodeQuery",
+          "certificateFields"
         ]
       },
       {
@@ -222,6 +270,22 @@
           "decodeKind",
           "decodeFormula",
           "decodeFormulas"
+        ]
+      },
+      {
+        "file": "lean/VE/Core/Wire.lean",
+        "lines": 180,
+        "sha256": "e4643f425ec89be4b7e1c6584d7d2fea383e7e558ae1c3d89e067efc973e630a",
+        "ranges": [
+          [
+            1,
+            180
+          ]
+        ],
+        "declarations": [
+          "decodeModel",
+          "decodeTrace",
+          "decodeCertificate"
         ]
       },
       {
@@ -280,7 +344,7 @@
           "readCase",
           "grammarCase"
         ],
-        "reason": "english-lean S2.4 (docs/spec/english-lean-s2.md 2.10, 4.3, 4.4): ve_english_route decodes the case (environment through Env.decode, overlay, the ve.english-lexicon@1 lexicon, which must name the environment), computes the six identities and writes the english.read and english.grammar answers, with the diagnosis of a sentence without a reading (E2.6); the authority of english.admission; S3 validates alternatives and risk profile environments at the reader boundary (docs/spec/english-lean-s3.md 2.3); the full file is pinned conservatively"
+        "reason": "english-lean S2.4 (docs/spec/english-lean-s2.md 2.10, 4.3, 4.4): ve_english_route decodes the case (environment through Env.decode, overlay, the ve.english-lexicon@1 lexicon, which must name the environment), computes the six identities and writes the english.read and english.grammar answers; shadow only while english.admission keeps authority python; S3 validates alternatives and risk profile environments at the reader boundary (docs/spec/english-lean-s3.md 2.3); the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Json.lean",
@@ -319,12 +383,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Layered.lean",
-        "lines": 437,
-        "sha256": "f7f6a3bd0ca1564be736f1bf7acf4fb7601f23e201c51efcda694e329493e0e4",
+        "lines": 445,
+        "sha256": "7e9484be44f96cdd53a72f62943e918e47a4d98a4124b20f00727fc215b3d212",
         "ranges": [
           [
             1,
-            437
+            445
           ]
         ],
         "declarations": [
@@ -341,7 +405,7 @@
           "neverX",
           "runLayered"
         ],
-        "reason": "norm-defaults@0 soft and rights branch decoder: the placeholder source through the soft or rights decoder, packages bound to the source and the layered base background, base situations with a separate filling, statuses and supplied witnesses; the full file is pinned conservatively"
+        "reason": "norm-defaults@0 soft and rights branch decoder: the placeholder source through the soft or rights decoder, packages bound to the source and the layered base background, base situations with a separate filling, statuses and supplied witnesses; the full file is pinned conservatively; `layeredCase` is the one dispatch of this branch, shared with a readings choice's inner case under the completion"
       },
       {
         "file": "lean/VE/NormDefaults/Replay.lean",
@@ -366,12 +430,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Report.lean",
-        "lines": 480,
-        "sha256": "81e14b42107153fecc32b02d37cc9310b70e2e36ff472c374648b0446c259e41",
+        "lines": 519,
+        "sha256": "b4e17dd5611c5551f075ec04b9ca68d16ccd9bbc0de681e9697b7edbd22ba646",
         "ranges": [
           [
             1,
-            480
+            519
           ]
         ],
         "declarations": [
@@ -383,16 +447,16 @@
           "neverReached",
           "reportFrom"
         ],
-        "reason": "norm-defaults@0 report decoder: the completions block, the base situation, supplied filled witnesses and reached packages; the full file is pinned conservatively"
+        "reason": "norm-defaults@0 report decoder: the completions block, the base situation, supplied filled witnesses and reached packages; the full file is pinned conservatively; readings-defaults RD-2a: `modelCheckU` and its soundness (no decoder)"
       },
       {
         "file": "lean/VE/NormDefaults/Wire.lean",
-        "lines": 388,
-        "sha256": "0a3fc22bb376ace5b4db202cc6fc1c5d56fbb42e0f8acdee77e63a4b4e43cee6",
+        "lines": 423,
+        "sha256": "c6fc1964e6247758a4c76c2ab2fce7500f2e3485365a7d08b23adf6e63774486",
         "ranges": [
           [
             1,
-            388
+            423
           ]
         ],
         "declarations": [
@@ -404,7 +468,7 @@
           "replayConflictU",
           "replayEntailmentU"
         ],
-        "reason": "norm-defaults@0 source, package and certificate decoder; the full file is pinned conservatively"
+        "reason": "norm-defaults@0 source, package and certificate decoder; the full file is pinned conservatively; readings-defaults RD-2a: `EntailsU` and `acceptanceU`, the acceptance core on any UDoc (no decoder)"
       },
       {
         "file": "lean/VE/Norms/Admission.lean",
@@ -482,19 +546,45 @@
         ]
       },
       {
+        "file": "lean/VE/Order/Wire.lean",
+        "lines": 295,
+        "sha256": "2c8fe48a3007436efd33f4a47bc65cfd3c22973a6bc15f9214514442ed82515e",
+        "ranges": [
+          [
+            25,
+            233
+          ],
+          [
+            247,
+            253
+          ]
+        ],
+        "declarations": [
+          "decodeEnvironment",
+          "decodeFormula",
+          "decodeModel",
+          "decodeTrace",
+          "decodeCertificate",
+          "environmentId",
+          "meaningId"
+        ]
+      },
+      {
         "file": "lean/VE/Readings/SupWire.lean",
-        "lines": 378,
-        "sha256": "f1efaaba3d67d4cdba675a9e40abe12e461124f324c3254ca6ab531bf8885937",
+        "lines": 397,
+        "sha256": "5d8393aeea86b02e48b61c398e2dfd9a5408a5df64112fb470fb043aee3d6366",
         "ranges": [
           [
             1,
-            378
+            397
           ]
         ],
         "declarations": [
           "decodeCouplings",
           "decodeNarrowings",
+          "admitS2Rest",
           "admitS2",
+          "admitS2Of",
           "supReplayOf",
           "replaySup",
           "decodeChoice",
@@ -502,19 +592,49 @@
           "decodeAssumed",
           "decodeShared",
           "decodeConflictCerts",
+          "replayCertificateOf",
           "replayCertificate",
+          "replayModelOf",
           "replayModel"
         ],
-        "reason": "readings@1 S2a decoder: couplings and narrowings with W2's checks and texts, the superposed admission, choices, models over sup D's base vocabulary, and the certificate and model replays of readings_wire_all_sound and readings_wire_model_sound, and the superposed admission's refusals before any verdict (ReadingsUnsatisfiable, and the soft check of every compatible choice's document of DRI ruling 5: readings_wire_satisfiable, readings_wire_choice_wellFormed); the full file is pinned conservatively"
+        "reason": "readings@1 S2a decoder: couplings and narrowings with W2's checks and texts, the superposed admission, choices, models over sup D's base vocabulary, and the certificate and model replays of readings_wire_all_sound and readings_wire_model_sound, and the superposed admission's refusals before any verdict (ReadingsUnsatisfiable, and the soft check of every compatible choice's document of DRI ruling 5: readings_wire_satisfiable, readings_wire_choice_wellFormed); the full file is pinned conservatively; the admission and the certificate and model replays also take an admitted document (`admitS2Rest`, `admitS2Of`, `replayCertificateOf`, `replayModelOf`) so a case is admitted once (readings-defaults RD-2a review B2)"
       },
       {
-        "file": "lean/VE/Readings/Wire.lean",
-        "lines": 988,
-        "sha256": "311cfeb723160a8a2298b5133a4c43194a5ee7f861e403083eac39d015721d2a",
+        "file": "lean/VE/Readings/UnspecifiedWire.lean",
+        "lines": 604,
+        "sha256": "907566fe5481583492b61c255261bca8b23ca0baac394a26129ba439eade7d9a",
         "ranges": [
           [
             1,
-            988
+            604
+          ]
+        ],
+        "declarations": [
+          "admitNDFull",
+          "admitNDFullJ",
+          "admitND",
+          "replayPairU",
+          "replaySeparateU",
+          "choiceLayered",
+          "conflictPackages",
+          "replayChoiceAt",
+          "replayChoiceU",
+          "ndFormulas",
+          "ndCertificate",
+          "ndChoiceModel",
+          "ndInner",
+          "runChoiceND"
+        ],
+        "reason": "readings-defaults RD-2a: admission, separation and each choice under the unspecified completion; the inner case of readings-choice (its kind, conflict packages, premises, certificate, model and filling) read through the pinned NormDefaults and SupWire decoders and by `conflictPackages` and `ndCertificate`; readings-defaults RD-2b: `readings-elaborate` also answers the filled document (`runElaborateNDFilled`, no new decoding); the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Readings/Wire.lean",
+        "lines": 1006,
+        "sha256": "637e7310b7de06c22f754fa2bf4aa77ccfe42910e6f2aaced543a6916d60dc41",
+        "ranges": [
+          [
+            1,
+            1006
           ]
         ],
         "declarations": [
@@ -529,11 +649,12 @@
           "decodeProbe",
           "decodeSituation",
           "admitReadingsSpec",
+          "admitDecoded",
           "admitReadings",
           "replayPair",
           "replaySeparate"
         ],
-        "reason": "readings@1 S1 decoder: environment on the three chains, W2 units and active reading sets, situations, keys and probes, and (DRI ruling 2 of 2026-10-03) the chain text that reports `ResourceLimit: decision predicate <n>` first, and (DRI ruling 4) the frame of a norm-defaults@0 environment read with each `unspecified` completion as the placeholder `deny`; the full file is pinned conservatively"
+        "reason": "readings@1 S1 decoder: environment on the three chains, W2 units and active reading sets, situations, keys and probes, and (DRI ruling 2 of 2026-10-03) the chain text that reports `ResourceLimit: decision predicate <n>` first, and (DRI ruling 4) the frame of a norm-defaults@0 environment read with each `unspecified` completion as the placeholder `deny`; the full file is pinned conservatively; readings-defaults RD-2a: the abstention only off the norms chain, and S1's admission after decoding (`admitDecoded`), which the filled document's admission also runs"
       },
       {
         "file": "lean/VE/Rights/Admission.lean",
@@ -626,6 +747,51 @@
         "reason": "decision record and cited-entry content decoder, condition elaboration and record admission; the full file is pinned conservatively"
       },
       {
+        "file": "lean/VE/Risk/Run.lean",
+        "lines": 639,
+        "sha256": "a08b876d4363393c61c62108fb9bc5a7b432801a447c3081af80e0d87d8e0f64",
+        "ranges": [
+          [
+            1,
+            639
+          ]
+        ],
+        "declarations": [
+          "decodeRef",
+          "queried",
+          "riskBaseEnvironmentJson",
+          "decodePackage",
+          "decodeWitnessModel",
+          "runCase"
+        ],
+        "reason": "risk package bindings, audit references, witness models and ve_risk_route dispatch; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Risk/Wire.lean",
+        "lines": 491,
+        "sha256": "c0b8be77ca2bc85007939d5e7151a3ca769726e0159426a29eec8a6a0fcd4ff6",
+        "ranges": [
+          [
+            1,
+            491
+          ]
+        ],
+        "declarations": [
+          "profileGate",
+          "riskNormsView",
+          "extended",
+          "decodeUnits",
+          "checkVocabularyUnits",
+          "checkExtension",
+          "decodeRiskBlock",
+          "decodeRiskSource",
+          "decodeEntry",
+          "decodeSupplied",
+          "decodeLog"
+        ],
+        "reason": "risk profile gate, strict risk block, W6 units, source, entry and log decoder; the full file is pinned conservatively"
+      },
+      {
         "file": "lean/VE/Route/Admission.lean",
         "lines": 697,
         "sha256": "230006c26a0730425a818788e034ac564178dc1c9e309cf5d3a45d0a287e8c74",
@@ -680,6 +846,50 @@
         ]
       },
       {
+        "file": "lean/VE/Route/Typed.lean",
+        "lines": 95,
+        "sha256": "51f9ceb0f783f68f0f81def0cb86449778610d76441cb2848b8a3d7e632a4693",
+        "ranges": [
+          [
+            1,
+            95
+          ]
+        ],
+        "declarations": [
+          "check",
+          "legacy",
+          "routeVocabulary",
+          "typingEnvironment",
+          "stripPredicates"
+        ],
+        "reason": "the typed check of formulas family by family, the one function the standalone typing service (Service.Standalone.decodeTyped, legacyTyped) and the English reader's typed check (EnglishGrammar.typedCheck) call over their typing views; it reads the vocabulary's predicates and the AST array only to hand them to the pinned family decoders; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Route/Wire.lean",
+        "lines": 671,
+        "sha256": "1f79af9816d5ee96c8eeca40c81a25977acd7b5caeeda72eaf014ee6ccfb0acc",
+        "ranges": [
+          [
+            1,
+            671
+          ]
+        ],
+        "declarations": [
+          "decodeVocabulary",
+          "decodeOrderVocabulary",
+          "environmentId",
+          "meaningId",
+          "encodeFormula",
+          "decodeModel",
+          "decodeDataModel",
+          "decodeFormulas",
+          "decodeClosed",
+          "bindingOk",
+          "decodeOrderModel",
+          "decodeNodes"
+        ]
+      },
+      {
         "file": "lean/VE/Senses/Decode.lean",
         "lines": 93,
         "sha256": "5f0f5265fe8d81f015e7b7cf2e038b5f0d2065c3f806c485d3365b800dbe678e",
@@ -724,13 +934,36 @@
         "reason": "senses admission runner: exact request fields, restricted pack decoder, and response rows; RD-8: source or fenced documents with defaults. Fence identities and reading-set units enter Lean, which refuses a bad one by its fault (`fenceIdsProblem`) and decides open-fence admission; only fence units carry unresolved English, preserving source-mode output. The full file is pinned conservatively"
       },
       {
-        "file": "lean/VE/Service/Family.lean",
-        "lines": 817,
-        "sha256": "e1e00be4379626252de90286a857d800f98086bf48b734093ab6d0e8d0f546c0",
+        "file": "lean/VE/Service/Document.lean",
+        "lines": 481,
+        "sha256": "6f81c137c4b66f9f090b63c4a96632bb7cf5d1ab5d94a709f8d1daf629e33d17",
         "ranges": [
           [
             1,
-            817
+            481
+          ]
+        ],
+        "declarations": [
+          "split",
+          "environmentOf",
+          "contentOf",
+          "sourceUnit",
+          "unitsOf",
+          "blockCoverage",
+          "admitGraph",
+          "check",
+          "documentCase"
+        ],
+        "reason": "W2 document service wrapper: front matter and its gates, unit partition and contents, reading sets and their status fold, narrowings, graph admission, statuses and coverage; full file pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Service/Family.lean",
+        "lines": 812,
+        "sha256": "0220b75b70c8452f0b75fc1142aa658de3081f96b7ea610612985f90a60c375b",
+        "ranges": [
+          [
+            1,
+            812
           ]
         ],
         "declarations": [
@@ -765,6 +998,27 @@
           "bundleCase"
         ],
         "reason": "bundle-mode decoder over the family contexts: lemmas, leaves, citations, reading sets and certificate bindings; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Service/FamilyNorms.lean",
+        "lines": 250,
+        "sha256": "b7d6f9f6767a146babd5acb1f25348340745fb50f50b0715945615439c5460ae",
+        "ranges": [
+          [
+            1,
+            250
+          ]
+        ],
+        "declarations": [
+          "folView",
+          "viewModel",
+          "decodeFamily",
+          "certificateCase",
+          "targetPackage",
+          "conflictCase",
+          "runCase"
+        ],
+        "reason": "family-norms decoder: the FOL view of the environment and the witness model, the family certificates and their bindings to the submitted and base environments; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Service/Graph.lean",
@@ -856,6 +1110,49 @@
         "reason": "soft wire and certificate decoder; the full file is pinned conservatively"
       },
       {
+        "file": "lean/VE/SpeechActs/Source/Admission/Run.lean",
+        "lines": 632,
+        "sha256": "776cebdcc648a0fa59fce70025b84c2f84b843e247f8a1633fdfa24dd2c61070",
+        "ranges": [
+          [
+            1,
+            632
+          ]
+        ],
+        "declarations": [
+          "p0Json",
+          "admitSpeech",
+          "runAdmission",
+          "isSourceAdmission",
+          "runCase"
+        ],
+        "reason": "speech-act admission (8.5, 8.6): the P0 projection of the decoded source, the speech leaves, the graph and the report identity; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/SpeechActs/Source/Run.lean",
+        "lines": 933,
+        "sha256": "6d39ec0b8b5b21c0a4b10ff2acdbe15cf352dfd7ce39863219c13d940d163b1a",
+        "ranges": [
+          [
+            1,
+            933
+          ]
+        ],
+        "declarations": [
+          "readUnit",
+          "readUnits",
+          "speechReadings",
+          "readingSets",
+          "answerRecord",
+          "gapRecord",
+          "answerRecords",
+          "externalRecord",
+          "complianceRecords",
+          "decodeSpeechSource"
+        ],
+        "reason": "speech-act decoded-source wrapper (8.5): ve-document@2 units, reading sets, records and identity; the full file is pinned conservatively"
+      },
+      {
         "file": "lean/VE/SpeechActs/Wire.lean",
         "lines": 993,
         "sha256": "fbe08d985f7fc507397eb1e74d7c9cc6ee8504dfc2e43f7cd77d78bf53f3e618",
@@ -905,248 +1202,6 @@
           "runCase"
         ],
         "reason": "W6 unit declarations, quantity syntax and runner; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Alternatives/Wire.lean",
-        "lines": 415,
-        "sha256": "2bca023f9fb77dd82ae6b2bd6b777ea277c533022c95bead6028a2421a728a22",
-        "ranges": [
-          [
-            1,
-            415
-          ]
-        ],
-        "declarations": [
-          "profileGate",
-          "normsView",
-          "decodeBlock",
-          "fixedPredicates",
-          "otherDeclarations",
-          "decodeAltSource",
-          "checkReservedWording",
-          "coverage"
-        ],
-        "reason": "strict alternatives block, profile, source and regenerated premise decoder; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/CertificateWire.lean",
-        "lines": 294,
-        "sha256": "8541e1523844a57d3c08e561f8eb85b576524a6ec7108860b7c82206e69e53eb",
-        "ranges": [
-          [
-            46,
-            203
-          ],
-          [
-            218,
-            227
-          ]
-        ],
-        "declarations": [
-          "sha256",
-          "canonical",
-          "digest",
-          "decodeTrace",
-          "decodeCertificate",
-          "decodeClosureTrace",
-          "decodeClosureCertificate",
-          "meaningId",
-          "decodeQuery",
-          "certificateFields"
-        ]
-      },
-      {
-        "file": "lean/VE/Core/Wire.lean",
-        "lines": 180,
-        "sha256": "e4643f425ec89be4b7e1c6584d7d2fea383e7e558ae1c3d89e067efc973e630a",
-        "ranges": [
-          [
-            1,
-            180
-          ]
-        ],
-        "declarations": [
-          "decodeModel",
-          "decodeTrace",
-          "decodeCertificate"
-        ]
-      },
-      {
-        "file": "lean/VE/Order/Wire.lean",
-        "lines": 295,
-        "sha256": "2c8fe48a3007436efd33f4a47bc65cfd3c22973a6bc15f9214514442ed82515e",
-        "ranges": [
-          [
-            25,
-            233
-          ],
-          [
-            247,
-            253
-          ]
-        ],
-        "declarations": [
-          "decodeEnvironment",
-          "decodeFormula",
-          "decodeModel",
-          "decodeTrace",
-          "decodeCertificate",
-          "environmentId",
-          "meaningId"
-        ]
-      },
-      {
-        "file": "lean/VE/Risk/Run.lean",
-        "lines": 639,
-        "sha256": "a08b876d4363393c61c62108fb9bc5a7b432801a447c3081af80e0d87d8e0f64",
-        "ranges": [
-          [
-            1,
-            639
-          ]
-        ],
-        "declarations": [
-          "decodeRef",
-          "queried",
-          "riskBaseEnvironmentJson",
-          "decodePackage",
-          "decodeWitnessModel",
-          "runCase"
-        ],
-        "reason": "risk package bindings, audit references, witness models and ve_risk_route dispatch; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Risk/Wire.lean",
-        "lines": 491,
-        "sha256": "c0b8be77ca2bc85007939d5e7151a3ca769726e0159426a29eec8a6a0fcd4ff6",
-        "ranges": [
-          [
-            1,
-            491
-          ]
-        ],
-        "declarations": [
-          "profileGate",
-          "riskNormsView",
-          "extended",
-          "decodeUnits",
-          "checkVocabularyUnits",
-          "checkExtension",
-          "decodeRiskBlock",
-          "decodeRiskSource",
-          "decodeEntry",
-          "decodeSupplied",
-          "decodeLog"
-        ],
-        "reason": "risk profile gate, strict risk block, W6 units, source, entry and log decoder; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Route/Typed.lean",
-        "lines": 95,
-        "sha256": "51f9ceb0f783f68f0f81def0cb86449778610d76441cb2848b8a3d7e632a4693",
-        "ranges": [
-          [
-            1,
-            95
-          ]
-        ],
-        "declarations": [
-          "check",
-          "legacy",
-          "routeVocabulary",
-          "typingEnvironment",
-          "stripPredicates"
-        ],
-        "reason": "the typed check of formulas family by family, the one function the standalone typing service (Service.Standalone.decodeTyped, legacyTyped) and the English reader's typed check (EnglishGrammar.typedCheck) call over their typing views; it reads the vocabulary's predicates and the AST array only to hand them to the pinned family decoders; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Route/Wire.lean",
-        "lines": 671,
-        "sha256": "1f79af9816d5ee96c8eeca40c81a25977acd7b5caeeda72eaf014ee6ccfb0acc",
-        "ranges": [
-          [
-            1,
-            671
-          ]
-        ],
-        "declarations": [
-          "decodeVocabulary",
-          "decodeOrderVocabulary",
-          "environmentId",
-          "meaningId",
-          "encodeFormula",
-          "decodeModel",
-          "decodeDataModel",
-          "decodeFormulas",
-          "decodeClosed",
-          "bindingOk",
-          "decodeOrderModel",
-          "decodeNodes"
-        ]
-      },
-      {
-        "file": "lean/VE/Service/FamilyNorms.lean",
-        "lines": 250,
-        "sha256": "b7d6f9f6767a146babd5acb1f25348340745fb50f50b0715945615439c5460ae",
-        "ranges": [
-          [
-            1,
-            250
-          ]
-        ],
-        "declarations": [
-          "folView",
-          "viewModel",
-          "decodeFamily",
-          "certificateCase",
-          "targetPackage",
-          "conflictCase",
-          "runCase"
-        ],
-        "reason": "family-norms decoder: the FOL view of the environment and the witness model, the family certificates and their bindings to the submitted and base environments; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/SpeechActs/Source/Admission/Run.lean",
-        "lines": 632,
-        "sha256": "776cebdcc648a0fa59fce70025b84c2f84b843e247f8a1633fdfa24dd2c61070",
-        "ranges": [
-          [
-            1,
-            632
-          ]
-        ],
-        "declarations": [
-          "p0Json",
-          "admitSpeech",
-          "runAdmission",
-          "isSourceAdmission",
-          "runCase"
-        ],
-        "reason": "speech-act admission (8.5, 8.6): the P0 projection of the decoded source, the speech leaves, the graph and the report identity; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/SpeechActs/Source/Run.lean",
-        "lines": 933,
-        "sha256": "6d39ec0b8b5b21c0a4b10ff2acdbe15cf352dfd7ce39863219c13d940d163b1a",
-        "ranges": [
-          [
-            1,
-            933
-          ]
-        ],
-        "declarations": [
-          "readUnit",
-          "readUnits",
-          "speechReadings",
-          "readingSets",
-          "answerRecord",
-          "gapRecord",
-          "answerRecords",
-          "externalRecord",
-          "complianceRecords",
-          "decodeSpeechSource"
-        ],
-        "reason": "speech-act decoded-source wrapper (8.5): ve-document@2 units, reading sets, records and identity; the full file is pinned conservatively"
       }
     ],
     "other_json": {
@@ -1160,6 +1215,9 @@
       "lean/VE/Norms/FlaggedSpec.lean": "statements about the norms conflict replay and Norms.Run.runCase answers (getObjValD of the case and the verdict field) and decoder rejection lemmas; no runtime JSON handling",
       "lean/Main.lean": "lean:runner-glue: argument dispatch and result arrays of ve_conformance",
       "lean/VE/Route/Run.lean": "lean:runner-glue: route case dispatch and error rows (route_gate pins the envelope check)",
+      "lean/VE/Route/Metered.lean": "lean:runner-glue: opt-in metered case budget fields and evaluation result rows; existing family decoders validate formulas and models",
+      "lean/VE/Route/MeteredRun.lean": "lean:runner-glue: opt-in ve_metered case dispatch and result rows; the environment is validated by the service's Standalone.evaluable (frozen envelopes by their frozen decoders) and formulas and models by the existing family decoders",
+      "lean/VE/Route/MeteredTrace.lean": "lean:runner-glue: explanation JSON display after the proved metered value; reads no untrusted input",
       "lean/VE/SoftNorms/Run.lean": "lean:runner-glue: ve_soft_norms_route case dispatch and response rows",
       "lean/VE/Rights/Run.lean": "lean:runner-glue: ve_rights_route case dispatch and response rows",
       "lean/VE/Readings/Run.lean": "lean:runner-glue: ve_readings_route case dispatch and response rows; readings-validate and readings-separate rows regenerated from the pinned Wire decoder; the S2a kinds dispatched to SupRun",
@@ -1223,7 +1281,9 @@
       "lean/VE/Senses/Project.lean": "senses projection (docs/spec/senses.md 2.5): builds the projected environment JSON from the validated environment JSON for the admitted reading; this module does not decode JSON",
       "lean/VE/EnglishGrammar/ProfileExamples.lean": "fixtures only: S3 profile environment and reader #guard checks; no runner path",
       "lean/VE/EnglishGrammar/E2Examples.lean": "fixtures only: E2 port, overlay check, guards, texts and advice #guard checks (spec section 8); no runner path",
-      "lean/VE/Service/ParseDiagnostic.lean": "diagnostic only after a rejected checked parse: builds the first source fault and span; cannot accept"
+      "lean/VE/Service/ParseDiagnostic.lean": "diagnostic only after a rejected checked parse: builds the first source fault and span; cannot accept",
+      "lean/VE/Readings/UnspecifiedExamples.lean": "fixtures: an empty environment JSON for `checkAuthorN` in `#guard` (readings-defaults 8.3); on no runner path",
+      "lean/ResponseShape/Encoders/Document.lean": "Document response-shape encoder proves the JSON wrapper shape; the document admission decoder is pinned in lean/VE/Service/Document.lean."
     }
   },
   "plan_operations": {
@@ -1499,18 +1559,11 @@
           "lean/VE/Bridge.lean"
         ]
       },
-      "rust": {
-        "commands": [
-          "parse",
-          "format"
-        ],
-        "role": "parse diagnostics with codes and spans; canonical formatting"
-      },
+      "rust": null,
       "lean_call_sites": [],
       "tests": [
         "tests/test_parser_renderer.py::test_strict_syntax_rejects_variants",
-        "tests/test_lean_conformance.py::test_lean_source_resolution_and_canonical_binder_order",
-        "tests/test_rust_conformance.py::test_rust_shared_parser"
+        "tests/test_lean_conformance.py::test_lean_source_resolution_and_canonical_binder_order"
       ],
       "trusted": [
         "python:implementation",
@@ -1661,7 +1714,7 @@
         "commands": [
           "conformance"
         ],
-        "role": "environment decoding and environment_id in every Rust case"
+        "role": "environment decoding in every Rust case; environment_id in its countermodel check"
       },
       "lean_call_sites": [],
       "tests": [
@@ -1732,13 +1785,13 @@
         "commands": [
           "conformance"
         ],
-        "role": "model decoding and model_id in every Rust case"
+        "role": "model decoding in every Rust case with a model; model_id in its countermodel check"
       },
       "lean_call_sites": [],
       "tests": [
         "tests/test_evaluate_search.py::test_model_rejects_nonliteral_complete_duplicates_dangling_and_missing",
         "tests/test_lean_conformance.py::test_countermodel_rejects_inadmissible_model",
-        "tests/test_rust_conformance.py::test_rust_shared_identities"
+        "tests/test_rust_conformance.py::test_rust_shared_validation"
       ],
       "trusted": [
         "python:implementation",
@@ -1831,6 +1884,22 @@
             "dispatch": [
               "lean/VE/Order/Wire.lean"
             ]
+          },
+          {
+            "executable": "ve_metered",
+            "mode": "",
+            "kinds": [
+              "evaluate-budgeted"
+            ],
+            "response": {
+              "evaluation": "object"
+            },
+            "dispatch": [
+              "lean/VE/Route/MeteredRun.lean",
+              "lean/VE/Route/Metered.lean",
+              "lean/VE/Route/MeteredTrace.lean"
+            ],
+            "note": "lean-first 15b: the reported value, count, trace and ResourceLimit of an evaluation (ve.evaluate:_evaluate_lean checks the evaluation object's members)"
           }
         ],
         "planned_modes": [],
@@ -1853,7 +1922,11 @@
           "VE.Route.WireSound.runOrder_evaluate",
           "VE.Route.RunSound.route_fol_evaluate",
           "VE.Route.RunSound.route_closure_evaluate",
-          "VE.Route.RunSound.route_order_evaluate"
+          "VE.Route.RunSound.route_order_evaluate",
+          "VE.Route.MeteredProofs.fol_sound",
+          "VE.Route.MeteredProofs.closure_sound",
+          "VE.Route.MeteredProofs.core_sound",
+          "VE.Route.MeteredProofs.order_sound"
         ],
         "planned_theorems": [],
         "decoders": [
@@ -1866,12 +1939,13 @@
       },
       "rust": {
         "commands": [
-          "evaluate",
           "conformance"
         ],
-        "role": "hot evaluation and, after stage 2e, budgeted traces"
+        "role": "the conformance tooling's evaluation leg only (the evaluate-budgeted case kind); since lean-first 15b no public evaluation reads it"
       },
-      "lean_call_sites": [],
+      "lean_call_sites": [
+        "ve.backends.lean_runner:metered_evaluation"
+      ],
       "tests": [
         "tests/test_lean_conformance.py::test_lean_agrees_on_every_shared_case",
         "tests/test_rust_conformance.py::test_rust_shared_evaluation",
@@ -1998,7 +2072,6 @@
       },
       "rust": {
         "commands": [
-          "check-countermodel",
           "conformance"
         ],
         "role": "fast validation; Lean validates every Rust witness before it is reported"
@@ -2052,15 +2125,42 @@
           "CheckerUnavailable"
         ]
       },
-      "lean": null,
+      "lean": {
+        "bindings": [
+          {
+            "executable": "ve_metered",
+            "mode": "",
+            "kinds": [
+              "non-vacuity"
+            ],
+            "response": {
+              "suitable": "bool",
+              "evaluations": "nat",
+              "exhausted": "bool"
+            },
+            "uncounted": {
+              "evaluations": "the work Lean charged; ve.search:_nonvacuous checks it is within the case's max_evaluations"
+            },
+            "dispatch": [
+              "lean/VE/Route/MeteredRun.lean",
+              "lean/VE/Route/NonVacuity.lean"
+            ],
+            "note": "lean-first 15b: the non-vacuity of every reported search witness"
+          }
+        ],
+        "planned_modes": [],
+        "theorems": []
+      },
       "rust": {
         "commands": [
-          "countermodel",
+          "jsonl",
           "conformance"
         ],
-        "role": "search, extended with every Python search option in stage 2e"
+        "role": "the only search (lean-first 15b): proposes candidates and witnesses; its candidate evaluator is generator-internal and its witnesses are checked by Lean"
       },
-      "lean_call_sites": [],
+      "lean_call_sites": [
+        "ve.backends.lean_runner:metered_nonvacuity"
+      ],
       "tests": [
         "tests/test_evaluate_search.py::test_search_finds_empty_domain_countermodel_and_checks_it",
         "tests/test_search_options.py::test_public_countermodel_check_always_revalidates_forged_model_identity",
@@ -2073,7 +2173,7 @@
       ],
       "notes": [
         "Search has no theorem; its soundness is countermodel.check's. Every candidate passes the `ve.search:check_countermodel` verdict entry before `Found` is reported (a distinguishing model is checked as a countermodel to the direction it refutes), so a migrated countermodel.check makes search CheckerUnavailable rather than bypassed.",
-        "The non-vacuity filter (`nonvacuous_for`, `semantic_nonvacuity`) is a search-side constraint with no checker counterpart; it is trusted as python:implementation."
+        "Lean-first batch 15b: Python has no search of its own. Rust's search proposes under every authority; Lean checks every reported witness (the countermodel.check entry under Lean's authority) and its non-vacuity (`ve_metered`, `VE.Route.NonVacuity`). Rust's candidate evaluator stays generator-internal (rule 3): the batch-15b measurement (docs/lean-first/b15b) found Lean evaluation of every candidate over the bluedot search deadline."
       ]
     },
     {
@@ -2307,7 +2407,7 @@
         "commands": [
           "conformance"
         ],
-        "role": "defined tables and the dependency-order route kind"
+        "role": "defined tables"
       },
       "lean_call_sites": [],
       "tests": [
@@ -2919,12 +3019,12 @@
         "commands": [
           "conformance"
         ],
-        "role": "environment_id, meaning_id and model_id in every Rust case"
+        "role": "environment_id, premise and conclusion meaning_ids and model_id in its countermodel check"
       },
       "lean_call_sites": [],
       "tests": [
         "tests/test_conformance.py::test_identity_preimages_have_exact_domain_and_shape",
-        "tests/test_rust_conformance.py::test_rust_shared_identities",
+        "tests/test_rust_conformance.py::test_rust_shared_countermodels",
         "tests/test_p0_three_way.py::test_report_identity_binds_environment_and_document"
       ],
       "trusted": [

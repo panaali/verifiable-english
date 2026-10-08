@@ -433,6 +433,41 @@ The helper lemmas say how: building `fillDoc N` is building `N.D` and then filli
 `soften` is the identity on strict documents (`soften_strict`, `soften_hard_identity`'s core without its unused
 hypothesis), and the choice vocabulary and `E‴` override disjoint names (`choiceEnv_fill`).
 
+## The wire under the unspecified completion: the statements of 6.3 (RD-2a)
+
+`lean/VE/Readings/UnspecifiedWire.lean`, with the UDoc lemmas beside the 10a theorems whose cores they are. A
+document is under the completion when `readings@1` and `norm-defaults@0` are on the norms chain and a set is
+content-bearing; the abstention stays on the soft and rights chains (`Wire.abstention`), and `routeOf` takes the
+enumerated route there with the finding `ReadingsNotSuperposable: <every open set>`, cause `the unspecified
+completion`. Admission (`admitND`, spec 4.1) runs S1's and S2a's admission, then the reserved `unsaid--` names, then
+norm-defaults' author checks and `WellFormedU` on the free document and on each reading's document (`ndText`), then
+S1's admission of the filled document with its own request table (`admitDecoded`), then each of the at most 64
+compatible choices (`choiceChainText` on the filled choice, `ndChoiceText` on `choiceU N c`). Each reading's document
+is built once, in a request table.
+
+In plain words, each with the hypotheses it states:
+
+* `acceptanceU` (under `WellFormedU U`): a certificate that checks over `premisesU U Γ` proves `φ` in every filled
+  expansion of an admissible filling that satisfies `Γ` (`EntailsU`). `normDefaults_wire_acceptance` keeps its
+  statement and calls the same proof (`acceptance_of_fillTyped`).
+* `modelCheckU_sound` (under `WellFormedU U` and the base model's validity): a passing model check with a separate
+  filling is an admissible filled situation where every premise holds, read through `fill U`'s outcome
+  substitution, and the conclusion has the value the check reports.
+* `readings_wire_nd_separate_sound` (a replay of `readings-separate` under the completion, `separates` on
+  `fillDoc N`, and the witness's `Fill_T` on the base): the witness achieves the probe value under the completion
+  and the other reading does not. `separates_filled` says the answer's `separated` is exactly that `separates`.
+* `readings_wire_nd_choice_conflict` (a replay of `readings-choice` under the completion, and certificates for every
+  target of the choice's filled document): the choice is compatible and its filled document is CONFLICT-FREE under
+  every admissible filling.
+* `readings_wire_nd_choice_entails` (the same, and a certificate over the choice's regenerated premises): the filled
+  choice document is CONFLICT-FREE and entails the conclusion from its assertions and the case's premises.
+
+The helpers: `ndRest_of_ndText` (a passing `ndText` establishes `WellFormedND`'s norm-defaults conjuncts, so each
+check runs once), `frameOf_filled` (the filled environment's frame is `fillDoc`'s), `one_links` and
+`separates_links` (S1 reads no coupling or narrowing), `choiceU_E` (a choice's filled document reads the frame's
+environment, so a base model of it is valid), `fillHoldsOf_eq` (the witness's `Fill_T`, read from the table, is
+`fillHolds`).
+
 # S2a with a carried base-premise family in Lean (readings-defaults, batch RD-6a)
 
 Specification: [docs/spec/readings-defaults.md](../docs/spec/readings-defaults.md) section 6.7 and plan

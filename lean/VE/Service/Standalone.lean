@@ -227,6 +227,29 @@ def decodeLegacy (environment : Json) : Except String Legacy := do
     else pure (.closure (← VE.Closure.Bridge.decodeEnvironment environment))
   else throw "UnsupportedProfile: Unsupported language"
 
+/-- The profiles Python reports for a frozen envelope. -/
+def Legacy.profiles : Legacy → List String
+  | .v0 _ => ["relational-fol@0"]
+  | .closure _ => ["closure@0", "relational-fol@0"]
+  | .order _ => ["order@0", "relational-fol@0"]
+
+/-- The checker family a frozen envelope selects. -/
+def Legacy.checker : Legacy → VE.Route.Gate.Family
+  | .v0 _ => .fol
+  | .closure _ => .closure
+  | .order _ => .order
+
+/-- An environment the evaluation modes read, checked: a frozen envelope by
+its frozen decoder and then read as the route envelope of its family (whose
+vocabulary decoders accept every frozen vocabulary), a `ve.core@0.2` one by
+`validated`. -/
+def evaluable (environment : Json) : Except String Validated := do
+  if isLegacy environment then
+    let l ← decodeLegacy environment
+    pure { envelope := ⟨l.profiles, l.checker, ← environment.getObjVal? "vocabulary"⟩,
+           decodable := environment }
+  else validated environment
+
 def legacyEnvironmentId (l : Legacy) (environment : Json) : Except String String :=
   VE.CertificateWire.digest s!"ve-environment-{l.version}\n" environment
 
@@ -326,15 +349,10 @@ def modelCase (j : Json) : Except String Json := do
       let _ ← VE.Core.Wire.decodeModel v model
       pure ()
     | some layered =>
-      -- As `Core.Layers.run`: the FOL projection of the model with its flags
-      -- checked and defined tables computed, then the core model with them.
+      -- The core model with the defined tables computed over the FOL
+      -- projection (`Core.Layers.completeModel`).
       let rv ← VE.Core.Layers.decodeLayers e.profiles layered
-      let names := (← VE.Core.Layers.folPredicates layered).map Prod.fst
-      let M ← VE.Route.Wire.decodeDataModel rv (← VE.Core.Layers.folModel names model)
-      let tables := (VE.Definitions.names rv.definitions).map fun p =>
-        (p, VE.Core.Layers.tableJson (M.relations p))
-      let relations ← VE.Bridge.fields (← model.getObjVal? "relations")
-      let _ ← VE.Core.Wire.decodeModel v (model.setObjVal! "relations" (Json.mkObj (relations ++ tables)))
+      let _ ← VE.Core.Wire.decodeModel v (← VE.Core.Layers.completeModel rv layered model)
       pure ()
   | .order =>
     let v ← VE.Route.Wire.decodeOrderVocabulary e.vocabulary

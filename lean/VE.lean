@@ -63,6 +63,7 @@ import VE.Readings.Examples
 import VE.Readings.Force
 import VE.Readings.RunExamples
 import VE.Readings.Unspecified
+import VE.Readings.UnspecifiedWire
 import VE.Readings.UnspecifiedExamples
 import VE.Readings.SupExtra
 import VE.Readings.SupExtraExamples

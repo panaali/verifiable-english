@@ -22,7 +22,6 @@ from ve.readings_s2_english import hidden_in
 
 ROOT = Path(__file__).resolve().parents[1]
 PILOT = ROOT / "tests/data/readings_s2/constitution-nd-readings.ve.md"
-ABSTENTION = "UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented"
 
 
 def _split(path):
@@ -65,10 +64,12 @@ def test_ruling4_pilot_document_answers_as_without_readings(tmp_path):
     assert with_readings["admission"]["report"] == without["admission"]["report"]
 
 
-def test_ruling4_rule_candidate_beside_norm_defaults_is_the_named_abstention(tmp_path):
-    """The pilot's probe (b): a strict rule as one candidate's content. Lean and Python now both reach S1's
-    abstention (before: Lean `invalid regulated role or default`, Python `unspecified completion requires
-    norm-defaults@0`, so `CheckerUnavailable`)."""
+def test_ruling4_rule_candidate_beside_norm_defaults_is_under_the_completion(tmp_path):
+    """The pilot's probe (b): a strict rule as one candidate's content. Before readings-defaults RD-2a Lean and Python
+    both reached S1's abstention; on the norms chain the document is now under the unspecified completion, which
+    Lean admits (readings-defaults.md 4.6, an `availability` change). The other candidate is pending, so the set
+    stays unresolved and no verdict is claimed. Off the norms chain the abstention stays (K18,
+    `test_readings_nd_lean.py::test_fnd6_soft_chain_keeps_the_abstention`)."""
     meta, rest = _split(PILOT)
     reading_set = meta["reading_sets"][0]
     reading_set.pop("models", None)
@@ -81,23 +82,75 @@ def test_ruling4_rule_candidate_beside_norm_defaults_is_the_named_abstention(tmp
     strict["meaning_id"] = s1_content_meaning_id(env, reading_set["id"], strict)
     for r in reading_set["readings"]:
         r["admission"]["distinguishing_models"] = {o: "pending" for o in r["admission"]["distinguishing_models"]}
-    with pytest.raises(VEError) as caught:
-        check_document(_write(tmp_path, "rule.ve.md", meta, rest))
-    assert caught.value.message == ABSTENTION
+    result = check_document(_write(tmp_path, "rule.ve.md", meta, rest))
+    residual = result["coverage"]["residual"]
+    assert (residual["unresolved_reading_sets"], residual["pending_candidates"]) == (1, 1)
 
 
-def test_ruling4_lean_frame_reads_unspecified_as_deny(lean_route):
-    """Lean's decoder and Python's S1 environment agree on a `norm-defaults@0` frame: `unspecified` is the
-    placeholder `deny` there (E‴), so readings-validate answers instead of failing to decode."""
+def _completion_document(tmp_path):
+    """F-ND1 (readings-defaults.md 8.3) as a document: one open set on `u1` whose two readings both carry a rule, on the
+    norms chain under `norm-defaults@0`, with the pair's distinguishing situation recorded."""
+    from tests.test_document import unit, write_doc
+    from tests.test_readings_nd_lean import doc1, env1
+    from ve.readings import s1_content_meaning_id
+    raw = env1()
+    document, _ = doc1(raw)
+    env = _environment(raw)
+    for reading_set in document["reading_sets"]:
+        for r in reading_set["readings"]:
+            r["meaning_id"] = s1_content_meaning_id(env, reading_set["id"], r)
+    text = b"Every agent must help each user.\n"
+    units = [unit("u1", 0, len(text), "norm", "specified")]
+    return raw, document, write_doc(tmp_path, text, units, environment_json=raw,
+                                    reading_sets=document["reading_sets"])
+
+
+def test_rd2b_completion_document_is_checked_not_refused(tmp_path):
+    """Review B3 of RD-2a, then RD-2b: a document under the unspecified completion (every candidate with content, the
+    norms chain, `norm-defaults@0`) is admitted by Lean on the enumerated route with the completion as the cause, and
+    `ve document` relays its checks: no conformance alarm (B3), and no named refusal any more (RD-2a's, until RD-2b)."""
+    _, _, path = _completion_document(tmp_path)
+    report = check_document(path)
+    assert (report["readings"]["route"], report["readings"]["not_superposable"]) == (
+        "enumerated", {"text": "ReadingsNotSuperposable: rs_1", "cause": "the unspecified completion"})
+    assert report["readings"]["conflict"]["status"] == "CONFLICT-FREE"
+
+
+def test_rd2a_review_b3_route_table_is_lean_s(tmp_path, lean_route):
+    """Review B3's class: under `norm-defaults@0` the relay takes Lean's route of 1.1 (`routeOf`) and regenerates
+    none of it: the completion's route and cause are Lean's, relayed with the filled document (RD-2b)."""
+    from ve.readings_route import COMPLETION_CAUSE, elaborate, run_lean
+    from ve.readings_s1 import wire
+    raw, document, _ = _completion_document(tmp_path)
+    units = [{"id": "u1", "kind": "norm"}]
+    [row] = run_lean([{"id": "r", "kind": "readings-elaborate", "environment": wire(raw),
+                       "document": wire({"units": units, "reading_sets": document["reading_sets"]})}])
+    assert (row["route"], row["finding"]["cause"]) == ("enumerated", COMPLETION_CAUSE)
+    relayed = elaborate(raw, units, document["reading_sets"])
+    assert relayed == {key: value for key, value in row.items() if key not in ("id", "status")}
+
+
+def test_ruling4_lean_frame_reads_unspecified_as_deny(tmp_path, lean_route):
+    """Lean's decoder reads a `norm-defaults@0` frame with `unspecified` as the placeholder `deny` (E‴), so
+    readings-validate answers instead of failing to decode. Python's S1 frame under the profile is Lean's filled one
+    (readings-defaults RD-2b: `_placeholder_frame` is deleted): built from `filled` it reads `deny`, and without
+    `filled` there is no frame."""
+    from ve.errors import CheckerUnavailable
     from ve.readings_route import document_wire, run_lean
     from ve.readings_s1 import S1Environment
     meta, _ = _split(PILOT)
-    senv = S1Environment(meta["environment"])
-    assert senv.frame.predicates["clarification_required"].regulated.default == "deny"
     units = [{"id": u["id"], "kind": u["kind"], "content": None} for u in meta["units"]]
     [row] = run_lean([{"id": "v", "kind": "readings-validate", "environment": meta["environment"],
                        "document": document_wire(units, meta["reading_sets"])}], executable=lean_route)
     assert row["status"] == "ok" and row["content_bearing"] is False, row
+    raw, document, _ = _completion_document(tmp_path)
+    [row] = run_lean([{"id": "v", "kind": "readings-validate", "environment": raw,
+                       "document": document_wire([{"id": "u1", "kind": "norm"}], document["reading_sets"])}],
+                     executable=lean_route)
+    senv = S1Environment(raw, row["filled"])
+    assert senv.frame.predicates["help_required"].regulated.default == "deny"
+    with pytest.raises(CheckerUnavailable, match="^ReadingsConstruction: under norm-defaults@0 the frame is"):
+        S1Environment(raw)
 
 
 @pytest.fixture

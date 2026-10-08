@@ -13,6 +13,10 @@ fn env(unused: bool, constants: bool) -> Environment {
     }
     Environment::from_value(&v).unwrap()
 }
+/// A document from its wire AST (Rust reads no source text).
+fn doc(e: &Environment, ast: serde_json::Value) -> Document {
+    Document::from_value(e, &ast).unwrap()
+}
 #[test]
 fn measurement_iterator_uses_the_search_order() {
     let e = env(false, false);
@@ -57,11 +61,8 @@ fn flagged_relation_absent_from_query_is_enumerated() {
 fn unused_predicates_do_not_expand_search() {
     for unused in [false, true] {
         let e = env(unused, false);
-        let d = parse(
-            &e,
-            b"for every item a, ((a is marked) or (not (a is marked))).\n",
-        )
-        .unwrap();
+        // for every item a, ((a is marked) or (not (a is marked))).
+        let d = doc(&e, json!([["forall","item",["or",["unary","marked",["var",0]],["not",["unary","marked",["var",0]]]]]]));
         let p = CountermodelProblem::new(&e, vec![], d.formulas()[0].clone()).unwrap();
         let r = find_countermodel(
             &e,
@@ -90,7 +91,7 @@ fn unused_predicates_do_not_expand_search() {
 #[test]
 fn constants_may_alias_and_empty_domains_are_not_inferred_inhabited() {
     let e = env(false, true);
-    let d = parse(&e, b"not (@first equals @second).\n").unwrap();
+    let d = doc(&e, json!([["not",["eq",["const","first"],["const","second"]]]]));
     let p = CountermodelProblem::new(&e, vec![], d.formulas()[0].clone()).unwrap();
     let r = find_countermodel(&e, &p, Default::default()).unwrap();
     assert_eq!(r.status, "Found");
@@ -112,7 +113,7 @@ fn constants_may_alias_and_empty_domains_are_not_inferred_inhabited() {
     assert_eq!(r.status, "NotFound");
     assert_eq!(r.models_checked, 0);
     let e = env(false, false);
-    let d = parse(&e, b"there exists item a, (true).\n").unwrap();
+    let d = doc(&e, json!([["exists","item",["top"]]]));
     let p = CountermodelProblem::new(&e, vec![], d.formulas()[0].clone()).unwrap();
     let r = find_countermodel(&e, &p, Default::default()).unwrap();
     assert_eq!(r.status, "Found");
@@ -162,11 +163,11 @@ fn limits_are_operational_and_checked_at_exhaustion_boundary() {
     .unwrap();
     assert_eq!(r.status, "Found");
     let model = r.model.unwrap();
-    let doc = parse(&e, b"false.\ntrue.\n").unwrap();
-    assert_eq!(evaluate(&doc, &model, 0).unwrap().value, None);
-    assert_eq!(evaluate(&doc, &model, 1).unwrap().value, Some(false));
+    let d = doc(&e, json!([["bottom"], ["top"]]));
+    assert_eq!(evaluate(&d, &model, 0).unwrap().value, None);
+    assert_eq!(evaluate(&d, &model, 1).unwrap().value, Some(false));
     assert_eq!(
-        evaluate(&doc, &model, MAX_EVALUATIONS + 1)
+        evaluate(&d, &model, MAX_EVALUATIONS + 1)
             .unwrap_err()
             .code,
         "ResourceLimit"
@@ -183,7 +184,7 @@ fn environment_binding_cannot_be_substituted() {
         &json!({"complete":true,"domains":{"item":[]},"constants":{},"relations":{"marked":[]}}),
     )
     .unwrap();
-    let d = parse(&e, b"true.\n").unwrap();
+    let d = doc(&e, json!([["top"]]));
     assert_eq!(evaluate(&d, &m, 100).unwrap_err().code, "InvalidModel");
     let p = CountermodelProblem::new(&e, vec![], Formula::Bottom).unwrap();
     assert!(find_countermodel(&other, &p, Default::default()).is_err());
@@ -197,7 +198,10 @@ fn mixed_sort_constant_and_relation_products_are_exhaustive() {
     data["vocabulary"]["predicates"]["owns"] =
         json!({"arguments":["person","item"],"description":"Owns."});
     let e = Environment::from_value(&data).unwrap();
-    let d=parse(&e,b"(for every item a, ((a is marked) or (not (a is marked)))) and (for every person p, (for every item a, ((p owns a) or (not (p owns a))))).\n").unwrap();
+    // (every item is marked or not) and (every person owns every item or not)
+    let owns = json!(["binary","owns",["var",1],["var",0]]);
+    let d = doc(&e, json!([["and", ["forall","item",["or",["unary","marked",["var",0]],["not",["unary","marked",["var",0]]]]],
+        ["forall","person",["forall","item",["or",owns,["not",owns]]]]]]));
     let p = CountermodelProblem::new(&e, vec![], d.formulas()[0].clone()).unwrap();
     let r = find_countermodel(&e, &p, Default::default()).unwrap();
     let expected: u64 = (1..=2)

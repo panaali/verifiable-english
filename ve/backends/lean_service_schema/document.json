@@ -1,0 +1,168 @@
+{
+  "$id": "document.json",
+  "$comment": "Mode document: W2 wrapper byte partition, inferred unit statuses and base coverage.",
+  "row": {
+    "anyOf": [
+      {"$ref": "common.json#/$defs/case_error"},
+      {"$ref": "common.json#/$defs/error"},
+      {
+        "additionalProperties": false,
+        "properties": {
+          "coverage": {"$ref": "#/$defs/coverage"},
+          "document_id": {"$ref": "common.json#/$defs/hex64"},
+          "id": {"type": "string", "x-equals": "/id"},
+          "source": {"type": "string"},
+          "source_id": {"$ref": "common.json#/$defs/hex64"},
+          "status": {"const": "ok"},
+          "units": {"items": {"$ref": "#/$defs/unit"}, "type": "array"}
+        },
+        "required": ["id", "status", "document_id", "source_id", "source", "units", "coverage"],
+        "type": "object"
+      }
+    ]
+  },
+  "$defs": {
+    "block_coverage": {
+      "additionalProperties": false,
+      "properties": {
+        "alternatives": {"$ref": "#/$defs/cells"},
+        "residual": {"additionalProperties": {"$ref": "common.json#/$defs/nat"}, "type": "object"}
+      },
+      "required": ["alternatives", "residual"],
+      "type": "object"
+    },
+    "cells": {
+      "$comment": "Alternatives.Wire.coverage's cells, as the document mode relays them.",
+      "additionalProperties": false,
+      "properties": {
+        "alternatives_declared": {
+          "items": {
+            "$comment": "Alternatives.Wire.coverage: an asserted available(action, chooser) leaf.",
+            "additionalProperties": false,
+            "properties": {
+              "action": {"type": "string"},
+              "chooser": {"type": "string"},
+              "support": {"type": "string"},
+              "unit": {"type": "string"}
+            },
+            "required": ["action", "chooser", "unit", "support"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "assumed_harm_free": {
+          "items": {
+            "$comment": "Alternatives.Wire.coverage: an outcome assumed by the complete table.",
+            "additionalProperties": false,
+            "properties": {
+              "action": {"type": "string"},
+              "decider": {"type": "string"},
+              "harm": {"type": "string"},
+              "premise": {"const": "alternatives:table_complete"}
+            },
+            "required": ["action", "harm", "decider", "premise"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "counterfactual_leaves": {
+          "items": {
+            "$comment": "Alternatives.Wire.coverage: an asserted leads_to(action, harm) leaf.",
+            "additionalProperties": false,
+            "properties": {
+              "action": {"type": "string"},
+              "decider": {"type": "string"},
+              "harm": {"type": "string"},
+              "leads_to": {"type": "boolean"},
+              "support": {"type": "string"},
+              "unit": {"type": "string"}
+            },
+            "required": ["action", "harm", "leads_to", "decider", "unit", "support"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "dilemmas": {"maxItems": 0, "type": "array"},
+        "narrowings": {"type": "array"},
+        "proximate_judgments": {
+          "items": {
+            "$comment": "Alternatives.Wire.coverage: an asserted proximate(action, harm) leaf.",
+            "additionalProperties": false,
+            "properties": {
+              "action": {"type": "string"},
+              "decider": {"type": "string"},
+              "harm": {"type": "string"},
+              "support": {"type": "string"},
+              "unit": {"type": "string"}
+            },
+            "required": ["action", "harm", "decider", "unit", "support"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "table_complete": {
+          "anyOf": [
+            {"type": "null"},
+            {
+              "additionalProperties": false,
+              "properties": {"decider": {"type": "string"}, "premise": {"const": "alternatives:table_complete"}},
+              "required": ["decider", "premise"],
+              "type": "object"
+            }
+          ]
+        },
+        "unmapped_obligations": {"$ref": "common.json#/$defs/strings"}
+      },
+      "required": [
+        "alternatives_declared",
+        "counterfactual_leaves",
+        "assumed_harm_free",
+        "table_complete",
+        "proximate_judgments",
+        "unmapped_obligations",
+        "dilemmas",
+        "narrowings"
+      ],
+      "type": "object"
+    },
+    "coverage": {
+      "additionalProperties": false,
+      "properties": {
+        "accounted_bytes": {"$ref": "common.json#/$defs/nat"},
+        "alternatives": {"$ref": "#/$defs/cells"},
+        "bytes_by_kind": {"additionalProperties": {"$ref": "common.json#/$defs/nat"}, "type": "object"},
+        "bytes_by_status": {"additionalProperties": {"$ref": "common.json#/$defs/nat"}, "type": "object"},
+        "coverage_percent": {"const": 100},
+        "residual": {"additionalProperties": {"$ref": "common.json#/$defs/nat"}, "type": "object"},
+        "residual_total": {"$ref": "common.json#/$defs/nat"},
+        "source_bytes": {"$ref": "common.json#/$defs/nat"},
+        "unformalised_reasons": {"additionalProperties": {"$ref": "common.json#/$defs/nat"}, "type": "object"}
+      },
+      "required": [
+        "source_bytes",
+        "accounted_bytes",
+        "coverage_percent",
+        "bytes_by_kind",
+        "bytes_by_status",
+        "unformalised_reasons",
+        "residual",
+        "residual_total"
+      ],
+      "type": "object"
+    },
+    "unit": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string"},
+        "kind": true,
+        "meaning": true,
+        "parent_id": {"type": "string"},
+        "span": {"items": {"$ref": "common.json#/$defs/nat"}, "type": "array"},
+        "status": {"type": "string"},
+        "support": {"type": "string"}
+      },
+      "required": ["id", "span", "kind", "meaning", "support", "status"],
+      "type": "object"
+    }
+  }
+}

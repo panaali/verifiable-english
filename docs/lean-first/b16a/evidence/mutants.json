@@ -1,0 +1,23 @@
+[
+  {
+    "mutant": "span_partition",
+    "test": "test_gap_and_wrong_status_are_rejected",
+    "build_exit": 0,
+    "test_exit": 1,
+    "failure_excerpt": "F                                                                        [100%]\n=================================== FAILURES ===================================\n____________________ test_gap_and_wrong_status_are_rejected ____________________\n\nservice = <ve.backends.lean_service.LeanService object at 0x73264ba92f90>\n\n    def test_gap_and_wrong_status_are_rejected(service):\n        gap = row(service, \"AB\", [unit(\"a\", [0, 1])])\n        assert gap[\"status\"] == \"error\"\n>       assert gap[\"error\"] == \"unit spans do not partition all source bytes\"\nE       AssertionError: assert 'coverage tab... source bytes' == 'unit spans d... source bytes'\nE         \nE         - unit spans do not partition all source bytes\nE         + coverage tables do not total the source bytes\n\ntests/test_lean_document_wrapper.py:63: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_lean_document_wrapper.py::test_gap_and_wrong_status_are_rejected\n1 failed in 0.63s\n"
+  },
+  {
+    "mutant": "mixed_provenance",
+    "test": "test_mixed_parent_counts_parts_once",
+    "build_exit": 0,
+    "test_exit": 1,
+    "failure_excerpt": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_____________________ test_mixed_parent_counts_parts_once ______________________\n\nservice = <ve.backends.lean_service.LeanService object at 0x7e720653ef90>\n\n    def test_mixed_parent_counts_parts_once(service):\n        parts = [unit(\"a\", [0, 1], kind=\"asserted\", content={\"ast\": [\"top\"]}, status=\"CHECKED\"),\n                 unit(\"b\", [1, 3], kind=[\"unformalised\", \"opaque\"],\n                      meaning={\"unformalised\": \"opaque\"}, status=\"UNFORMALISED\")]\n        result = row(service, \"A B\", [{\"id\": \"parent\", \"span\": [0, 3],\n                                         \"status\": \"MIXED\", \"parts\": parts}])\n        assert result[\"status\"] == \"ok\"\n>       assert [u[\"parent_id\"] for u in result[\"units\"]] == [\"parent\", \"parent\"]\n                ^^^^^^^^^^^^^^\nE       KeyError: 'parent_id'\n\ntests/test_lean_document_wrapper.py:55: KeyError\n=========================== short test summary info ============================\nFAILED tests/test_lean_document_wrapper.py::test_mixed_parent_counts_parts_once\n1 failed in 0.53s\n"
+  },
+  {
+    "mutant": "status_inference",
+    "test": "test_utf8_partition_status_and_counts",
+    "build_exit": 0,
+    "test_exit": 1,
+    "failure_excerpt": "F                                                                        [100%]\n=================================== FAILURES ===================================\n____________________ test_utf8_partition_status_and_counts _____________________\n\nservice = <ve.backends.lean_service.LeanService object at 0x700738892f90>\n\n    def test_utf8_partition_status_and_counts(service):\n        source = \"Caf\u00e9. Next.\\n\"\n        cut = len(\"Caf\u00e9. \".encode())\n        result = row(service, source, [\n            unit(\"a\", [0, cut], kind=\"asserted\", support=\"assumption\", content={\"ast\": [\"top\"]}),\n            unit(\"b\", [cut, len(source.encode())], kind=[\"unformalised\", \"future_profile\"],\n                 meaning={\"unformalised\": \"future_profile\"}, status=\"UNFORMALISED\")])\n>       assert result[\"status\"] == \"ok\"\nE       AssertionError: assert 'error' == 'ok'\nE         \nE         - ok\nE         + error\n\ntests/test_lean_document_wrapper.py:37: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_lean_document_wrapper.py::test_utf8_partition_status_and_counts\n1 failed in 0.58s\n"
+  }
+]

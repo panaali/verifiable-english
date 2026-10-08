@@ -5,6 +5,7 @@ module EnglishLeanBenchMain
 module EnglishMain
 module Iceberg
 module Main
+module MeteredMain
 module ResponseDecode
 module ResponseShape.Audit
 module ResponseShape.CaseDeciders
@@ -12,6 +13,7 @@ module ResponseShape.Encoders.Alternatives
 module ResponseShape.Encoders.Common
 module ResponseShape.Encoders.Conformance
 module ResponseShape.Encoders.Discourse
+module ResponseShape.Encoders.Document
 module ResponseShape.Encoders.English
 module ResponseShape.Encoders.EnglishLean
 module ResponseShape.Encoders.Envelope
@@ -38,6 +40,7 @@ module ResponseShape.Schemas.CheckCertificate
 module ResponseShape.Schemas.Common
 module ResponseShape.Schemas.Diagnose
 module ResponseShape.Schemas.Discourse
+module ResponseShape.Schemas.Document
 module ResponseShape.Schemas.English
 module ResponseShape.Schemas.EnglishLean
 module ResponseShape.Schemas.Envelope
@@ -317,6 +320,7 @@ module VE.Readings.SupWitness
 module VE.Readings.Superpose
 module VE.Readings.Unspecified
 module VE.Readings.UnspecifiedExamples
+module VE.Readings.UnspecifiedWire
 module VE.Readings.UpPremises
 module VE.Readings.UpSlot
 module VE.Readings.Wire
@@ -359,6 +363,11 @@ module VE.Route.Examples
 module VE.Route.Flags
 module VE.Route.Gate
 module VE.Route.Layer
+module VE.Route.Metered
+module VE.Route.MeteredProofs
+module VE.Route.MeteredRun
+module VE.Route.MeteredTrace
+module VE.Route.NonVacuity
 module VE.Route.Readings
 module VE.Route.Route
 module VE.Route.Run
@@ -381,6 +390,7 @@ module VE.Senses.Read
 module VE.Senses.Request
 module VE.Senses.Run
 module VE.Service.Diagnose
+module VE.Service.Document
 module VE.Service.EnglishRun
 module VE.Service.Family
 module VE.Service.FamilyBundle
@@ -455,6 +465,7 @@ ResponseShape.Encoders.Discourse.StatusesOk@ResponseShape.Encoders.Discourse
 ResponseShape.Encoders.English.ClassesIn@ResponseShape.Encoders.English
 ResponseShape.Encoders.ReadingsRoute.PairEntry@ResponseShape.Encoders.ReadingsRoute
 ResponseShape.Encoders.ReadingsRoute.SetEntry@ResponseShape.Encoders.ReadingsRoute
+ResponseShape.Encoders.ReadingsRoute.ValidateRows@ResponseShape.Encoders.ReadingsRoute
 ResponseShape.Encoders.SoftNorms.Classified@ResponseShape.Encoders.SoftNorms
 ResponseShape.Encoders.SoftNorms.CodeOk@ResponseShape.Encoders.SoftNorms
 ResponseShape.ErrP@ResponseShape.Skeleton
@@ -629,6 +640,7 @@ VE.NormDefaults.BaseAdmissibleU@VE.NormDefaults.Premises
 VE.NormDefaults.CheckOK@VE.NormDefaults.Check
 VE.NormDefaults.ConflictFreeU@VE.NormDefaults.Premises
 VE.NormDefaults.DefOK@VE.NormDefaults.Check
+VE.NormDefaults.EntailsU@VE.NormDefaults.Wire
 VE.NormDefaults.Expansion3@VE.NormDefaults.Semantics
 VE.NormDefaults.IntendedAt3@VE.NormDefaults.Semantics
 VE.NormDefaults.NodeOK@VE.NormDefaults.Check

@@ -53,7 +53,8 @@ def test_ci_run(built):
         assert seeds > 0, name
         assert report["mutants"][name] == {"zero-fault": seeds, "one-fault": ones, "two-fault": twos}, name
     # Every implementation really ran: each answered inputs both ways on every surface it has a path for.
-    for name, engines in (("requests", df.ENGINES), ("environment", df.ENGINES), ("wire", ("python", "lean"))):
+    for name, engines in (("requests", df.ENGINES), ("environment", df.ENGINES), ("wire", ("python", "lean")),
+                          ("document", ("python", "lean"))):
         for engine in engines:
             for outcome in ("ok", "error"):
                 assert report["answers"][name].get(f"{engine}:{outcome}", 0) > 0, (name, engine, outcome)
@@ -143,6 +144,46 @@ COMPARISON_MUTANTS = {
         monkeypatch.setattr(surface, "lean", lambda self, items: [df.error("InvalidInput", "") for _ in items])
         for surface in df.SURFACES.values()],
 }
+
+
+def _wrong_document_lean(mutant):
+    lean = df.DocumentSurface.lean
+
+    def wrong(self, items):
+        out = lean(self, items)
+        if mutant == "always accepts":
+            return [df.ok(None) for _ in out]
+        if mutant == "always rejects":
+            return [df.error("InvalidInput", "rejected") for _ in out]
+        if mutant == "always unavailable":
+            return [df.error("CheckerUnavailable", "CheckerUnavailable: no") for _ in out]
+        for answer in out:  # "bridge leaves uncounted"
+            if answer["outcome"] == "ok":
+                answer["value"]["coverage"]["residual"]["bridge_leaves"] = 0
+        return out
+    return wrong
+
+
+@pytest.mark.parametrize("mutant", ["always accepts", "always rejects", "bridge leaves uncounted"])
+def test_a_wrong_document_mode_is_a_finding(built, monkeypatch, tmp_path, mutant):
+    """The `document` surface compares values and texts: a Lean mode that accepts everything, rejects everything
+    or counts no bridge leaf disagrees with Python on its seeds (16a review B4)."""
+    monkeypatch.setitem(df.CI_BUDGET, "document", (20, 5))
+    monkeypatch.setattr(df, "MINIMISE_LIMIT", 0)  # a finding is enough; minimising it is not the point here
+    monkeypatch.setattr(df.DocumentSurface, "lean", _wrong_document_lean(mutant))
+    report = df.fuzz(surfaces=["document"], baseline_path=tmp_path / "baseline.json")
+    assert report["new"] and not report["passed"], mutant
+
+
+def test_a_document_mode_that_always_fails_closed_decides_no_seed(built, monkeypatch):
+    """`CheckerUnavailable` agrees with any answer, so the comparison alone cannot see a mode that always
+    refuses; the seed test does (`test_lean_document_wrapper.DECIDED`): every one of those seeds must agree."""
+    from conformance import document_wrapper as dw
+    from tests.test_lean_document_wrapper import DECIDED
+    seeds = [(name, doc) for name, doc in dw.seeds() if name in DECIDED]
+    answers = _wrong_document_lean("always unavailable")(df.DocumentSurface(), [(None, doc) for _, doc in seeds])
+    verdicts = {dw.verdict(dw.python_answer(dw.text_of(doc)), answer) for (_, doc), answer in zip(seeds, answers)}
+    assert verdicts == {"fail-closed"}  # what the seed test rejects: it requires "agree" on each
 
 
 def test_the_baseline_alone_passes(built):
@@ -577,14 +618,17 @@ def test_runner_output_that_is_not_unicode_text_does_not_answer(monkeypatch, whe
     """The looprecheck2 B reproducer: on an invalid-label request, runner stdout with the JSON escape `\\ud800`
     in Rust's `error.code` (or `error.message`) passed decoding and validation, then crashed the fuzzer
     (`UnicodeEncodeError` in `digest`). A lone surrogate anywhere in a runner's output (a value, a key, an ok
-    row) is output that is not text: the case's runner did not answer, and the fuzzer goes on."""
+    row) is output that is not text: the case's runner did not answer, and the fuzzer goes on. Rust has no
+    label route since lean-first batch 15b, so the request is an evaluation, which both runners answer."""
     make = SURROGATE_OUTPUTS[where]
     _fake_runner(monkeypatch, lambda cases: (
         1 if "error" in make(cases[0]) else 0, json.dumps([make(c) for c in cases])))
     assert "\\ud" in json.dumps([make({"id": "0"})])  # the escape, as a runner prints it
     [row] = df.run_rows(["runner"], [{"id": "0"}])
     assert type(row) is df.NoAnswer and "Unicode" in row.reason, row
-    seed, root = _invalid_label()
+    seed = next(s for s in df.Requests().seeds()
+                if s.meta["kind"] == "evaluate" and {"lean", "rust"} <= set(s.engines))
+    root = seed.root
     surface = df.Requests()
     [(found, projected, answers, signature)] = df.evaluate(surface, [(seed, root)])
     assert answers["rust"]["outcome"] == "panic" and answers["lean"]["outcome"] == "panic", answers

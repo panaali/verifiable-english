@@ -280,4 +280,15 @@ def corpus():
     return {"evaluate": evaluate_cases(), "check-certificate": certificate_cases(),
             "order": order_cases(), "route": route_cases(), "norms": norms_cases(),
             "english": english_cases(), "environment": standalone_env,
-            "model": standalone_model, "identity": identities}
+            "model": standalone_model, "identity": identities, "document": document_cases()}
+
+
+def document_cases():
+    """The `document` mode's answers: the wrapper's generated seed documents (accepted, MIXED parts, reading
+    sets, an admitted graph, a rejection and a refusal), the repository's accepted bluedot document, and
+    malformed requests."""
+    from conformance import document_wrapper as dw
+    chosen = {"plain", "mixed", "reading-sets", "graph-bridge", "open-terms", "fence",
+              "usecases/bluedot-grant/document.ve.md", "usecases/bluedot-grant/causal.ve.md"}
+    cases = [{"id": name, "document": dw.text_of(doc)} for name, doc in dw.seeds() if name in chosen]
+    return cases + [{"id": "empty", "document": ""}, {"id": "not-text", "document": 7}, *ADVERSARIAL]

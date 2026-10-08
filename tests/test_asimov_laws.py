@@ -10,6 +10,7 @@ from pathlib import Path
 import pytest
 
 from conformance.alternatives import base_environment, cases, scenario
+from conformance.three_way import run_rust_evaluations
 from subprocesses import HANG_TIMEOUT
 from tools import rust_build
 from ve.alternatives import run_case
@@ -369,13 +370,12 @@ def test_followability_agrees_across_python_rust_and_source_reading(rust_binary)
                        for f in formulas])
     rust_values = []
     for start in range(0, len(situations), 100):  # the CLI reads at most 16 MiB
-        rust = subprocess.run([str(rust_binary), "conformance"], input=json.dumps([
+        rust = run_rust_evaluations(rust_binary, [
             {"id": str(i), "kind": "evaluate", "environment": base, "ast": formulas,
              "model": situation["model"]}
-            for i, situation in enumerate(situations[start:start + 100], start)]),
-            capture_output=True, text=True, timeout=HANG_TIMEOUT)
-        assert rust.returncode == 0, rust.stdout + rust.stderr
-        rust_values += [row["values"] for row in json.loads(rust.stdout)]
+            for i, situation in enumerate(situations[start:start + 100], start)])
+        assert [row["status"] for row in rust] == ["ok"] * len(rust), rust
+        rust_values += [row["values"] for row in rust]
     assert rust_values == python
     assert [row[0] for row in python] == [bool(source_reading(s)["clear"]) for s in situations]
     assert all(full == unranked for full, unranked, _, _ in python)
