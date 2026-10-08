@@ -14328,390 +14328,6 @@
    "follow_up": "DF-5"
   },
   {
-   "id": "requests-22a8937266aa201d",
-   "surface": "requests",
-   "profile": "validation:evaluate",
-   "seed": "conformance/validation.json/5",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "evaluate",
-    "family": "v0",
-    "lean": "",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "ast"
-     ],
-     "constants": {},
-     "operation": "evaluate"
-    }
-   },
-   "mutation": [],
-   "input": {
-    "id": "conformance/validation.json/5",
-    "kind": "evaluate",
-    "environment": {
-     "language": "ve.core@0",
-     "profile": "relational-fol@0",
-     "spec_revision": "ve-v0-draft-2026-09-20",
-     "vocabulary": {
-      "sorts": {
-       "person": {
-        "description": "A person recorded in the inventory."
-       },
-       "service": {
-        "description": "A service recorded in the inventory."
-       },
-       "x0": {
-        "description": "Reserved."
-       }
-      },
-      "predicates": {
-       "deployed": {
-        "arguments": [
-         "service"
-        ],
-        "description": "Recorded as deployed in this inventory."
-       },
-       "owns": {
-        "arguments": [
-         "person",
-         "service"
-        ],
-        "description": "The person is recorded as an owner of the service."
-       },
-       "reviewed": {
-        "arguments": [
-         "service"
-        ],
-        "description": "Recorded as reviewed in this inventory."
-       }
-      },
-      "constants": {}
-     }
-    },
-    "model": {
-     "complete": true,
-     "domains": {
-      "person": [
-       "alice"
-      ],
-      "service": [
-       "api"
-      ]
-     },
-     "constants": {},
-     "relations": {
-      "deployed": [
-       [
-        "api"
-       ]
-      ],
-      "owns": [
-       [
-        "alice",
-        "api"
-       ]
-      ],
-      "reviewed": [
-       [
-        "api"
-       ]
-      ]
-     }
-    },
-    "ast": [
-     [
-      "exists",
-      "service",
-      [
-       "unary",
-       "deployed",
-       [
-        "var",
-        0
-       ]
-      ]
-     ],
-     [
-      "forall",
-      "service",
-      [
-       "implies",
-       [
-        "unary",
-        "deployed",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "exists",
-        "person",
-        [
-         "binary",
-         "owns",
-         [
-          "var",
-          0
-         ],
-         [
-          "var",
-          1
-         ]
-        ]
-       ]
-      ]
-     ],
-     [
-      "forall",
-      "service",
-      [
-       "implies",
-       [
-        "unary",
-        "deployed",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "unary",
-        "reviewed",
-        [
-         "var",
-         0
-        ]
-       ]
-      ]
-     ]
-    ]
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "InvalidInput: DuplicateDeclaration: Schema identifier 'x0' is reserved"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "DuplicateDeclaration",
-     "text": "DuplicateDeclaration: Schema identifier 'x0' is reserved"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "DuplicateDeclaration",
-     "text": "DuplicateDeclaration: duplicate or reserved schema name \"x0\""
-    }
-   },
-   "signature": "22a8937266aa201d",
-   "follow_up": "DF-15",
-   "minimised": false
-  },
-  {
-   "id": "requests-f0d60169c2184077",
-   "surface": "requests",
-   "profile": "validation:evaluate",
-   "seed": "conformance/validation.json/27",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "evaluate",
-    "family": "v0",
-    "lean": "",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "ast"
-     ],
-     "constants": {},
-     "operation": "evaluate"
-    }
-   },
-   "mutation": [],
-   "input": {
-    "id": "conformance/validation.json/27",
-    "kind": "evaluate",
-    "environment": {
-     "language": "ve.core@0",
-     "profile": "relational-fol@0",
-     "spec_revision": "ve-v0-draft-2026-09-20",
-     "vocabulary": {
-      "sorts": {
-       "person": {
-        "description": "A person recorded in the inventory."
-       },
-       "service": {
-        "description": "A service recorded in the inventory."
-       },
-       "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa": {
-        "description": "Length/order."
-       }
-      },
-      "predicates": {
-       "deployed": {
-        "arguments": [
-         "service"
-        ],
-        "description": "Recorded as deployed in this inventory."
-       },
-       "owns": {
-        "arguments": [
-         "person",
-         "service"
-        ],
-        "description": "The person is recorded as an owner of the service."
-       },
-       "reviewed": {
-        "arguments": [
-         "service"
-        ],
-        "description": "Recorded as reviewed in this inventory."
-       }
-      },
-      "constants": {}
-     }
-    },
-    "model": {
-     "complete": true,
-     "domains": {
-      "person": [
-       "alice"
-      ],
-      "service": [
-       "api"
-      ]
-     },
-     "constants": {},
-     "relations": {
-      "deployed": [
-       [
-        "api"
-       ]
-      ],
-      "owns": [
-       [
-        "alice",
-        "api"
-       ]
-      ],
-      "reviewed": [
-       [
-        "api"
-       ]
-      ]
-     }
-    },
-    "ast": [
-     [
-      "exists",
-      "service",
-      [
-       "unary",
-       "deployed",
-       [
-        "var",
-        0
-       ]
-      ]
-     ],
-     [
-      "forall",
-      "service",
-      [
-       "implies",
-       [
-        "unary",
-        "deployed",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "exists",
-        "person",
-        [
-         "binary",
-         "owns",
-         [
-          "var",
-          0
-         ],
-         [
-          "var",
-          1
-         ]
-        ]
-       ]
-      ]
-     ],
-     [
-      "forall",
-      "service",
-      [
-       "implies",
-       [
-        "unary",
-        "deployed",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "unary",
-        "reviewed",
-        [
-         "var",
-         0
-        ]
-       ]
-      ]
-     ]
-    ]
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "InvalidInput: ResourceLimit: Identifier exceeds 64 ASCII bytes"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "ResourceLimit",
-     "text": "ResourceLimit: Identifier exceeds 64 ASCII bytes"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "ResourceLimit",
-     "text": "ResourceLimit: identifier exceeds 64 bytes"
-    }
-   },
-   "signature": "f0d60169c2184077",
-   "follow_up": "DF-15",
-   "minimised": false
-  },
-  {
    "id": "requests-d607d609c3ac5784",
    "surface": "requests",
    "profile": "elaborated-document:countermodel",
@@ -20411,7 +20027,7 @@
    "minimised": false
   },
   {
-   "id": "requests-5793ddb03835a9ef",
+   "id": "requests-f0925390821a8fc4",
    "surface": "requests",
    "profile": "usecase:birthright-citizenship-debate:evaluate",
    "seed": "usecases/birthright-citizenship-debate/model-true.json@environment.json",
@@ -20870,8 +20486,8 @@
    "answers": {
     "python": {
      "outcome": "error",
-     "code": "InvalidInput",
-     "text": "InvalidInput: fields do not match: expected [language, profiles, spec_revision, vocabulary], got [language, profile, spec_revision, vocabulary]"
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported language"
     },
     "lean": {
      "outcome": "error",
@@ -20884,7 +20500,7 @@
      "text": "UnsupportedProfile: unsupported language, profile or specification revision"
     }
    },
-   "signature": "5793ddb03835a9ef",
+   "signature": "f0925390821a8fc4",
    "follow_up": "DF-15",
    "minimised": false
   },
@@ -22235,7 +21851,7 @@
    "minimised": false
   },
   {
-   "id": "requests-36fef682efa06308",
+   "id": "requests-cb7c0263b3111aec",
    "surface": "requests",
    "profile": "evaluation:evaluate",
    "seed": "conformance/evaluation.json/163",
@@ -22523,8 +22139,8 @@
    "answers": {
     "python": {
      "outcome": "error",
-     "code": "InvalidInput",
-     "text": "InvalidInput: fields do not match: expected [language, profiles, spec_revision, vocabulary], got [language, profile, spec_revision, vocabulary]"
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported language"
     },
     "lean": {
      "outcome": "error",
@@ -22537,7 +22153,7 @@
      "text": "UnsupportedProfile: unsupported language, profile or specification revision"
     }
    },
-   "signature": "36fef682efa06308",
+   "signature": "cb7c0263b3111aec",
    "follow_up": "DF-15",
    "minimised": false
   },
@@ -31557,74 +31173,6 @@
    "minimised": false
   },
   {
-   "id": "requests-f42d931920ea6642",
-   "surface": "requests",
-   "profile": "validation:evaluate",
-   "seed": "conformance/validation.json/4",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "evaluate",
-    "family": "v0",
-    "lean": "",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "ast"
-     ],
-     "constants": {},
-     "operation": "evaluate"
-    }
-   },
-   "mutation": [],
-   "input": {
-    "id": "conformance/validation.json/4",
-    "kind": "evaluate",
-    "environment": {
-     "language": "ve.core@0",
-     "profile": "relational-fol@0",
-     "spec_revision": "ve-v0-draft-2026-09-20",
-     "vocabulary": {
-      "sorts": {},
-      "predicates": {
-       "owns": {
-        "arguments": [],
-        "description": "T"
-       }
-      },
-      "constants": {}
-     }
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: Undeclared predicate argument sort"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: invalid signature: owns"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "InvalidInput: predicate arity must be one to 2"
-    }
-   },
-   "signature": "f42d931920ea6642",
-   "follow_up": "DF-9"
-  },
-  {
    "id": "requests-773b9b31a7328387",
    "surface": "requests",
    "profile": "validation:evaluate",
@@ -31829,124 +31377,6 @@
     }
    },
    "signature": "91c95e04c56ea3e6",
-   "follow_up": "DF-9"
-  },
-  {
-   "id": "requests-55987625f74f2834",
-   "surface": "requests",
-   "profile": "validation:evaluate",
-   "seed": "conformance/validation.json/30",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "evaluate",
-    "family": "v0",
-    "lean": "",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "ast"
-     ],
-     "constants": {},
-     "operation": "evaluate"
-    }
-   },
-   "mutation": [],
-   "input": {
-    "id": "conformance/validation.json/30",
-    "kind": "evaluate",
-    "environment": {
-     "language": "ve.core@0",
-     "profile": "relational-fol@0",
-     "spec_revision": "ve-v0-draft-2026-09-20",
-     "vocabulary": {
-      "sorts": {
-       "person": {
-        "description": "A"
-       },
-       "service": {
-        "description": "A"
-       }
-      },
-      "predicates": {
-       "deployed": {
-        "arguments": [
-         "service"
-        ],
-        "description": "R"
-       },
-       "owns": {
-        "arguments": [
-         "person"
-        ],
-        "description": "T"
-       },
-       "reviewed": {
-        "arguments": [
-         "service"
-        ],
-        "description": "R"
-       }
-      },
-      "constants": {}
-     }
-    },
-    "model": {
-     "complete": true,
-     "domains": {
-      "person": [
-       "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-      ],
-      "service": []
-     },
-     "constants": {},
-     "relations": {
-      "deployed": [],
-      "owns": [],
-      "reviewed": []
-     }
-    },
-    "ast": [
-     [
-      "exists",
-      "service",
-      [
-       "unary",
-       "deployed",
-       [
-        "var",
-        0
-       ]
-      ]
-     ]
-    ]
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "ResourceLimit",
-     "text": "ResourceLimit: local ID exceeds 64 ASCII bytes"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: invalid local identifier"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "InvalidModel",
-     "text": "InvalidModel: invalid ASCII identifier \"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\""
-    }
-   },
-   "signature": "55987625f74f2834",
    "follow_up": "DF-9"
   },
   {
@@ -35215,262 +34645,6 @@
    "follow_up": "DF-7"
   },
   {
-   "id": "requests-7ff255ad6f828843",
-   "surface": "requests",
-   "profile": "validation:evaluate",
-   "seed": "conformance/validation.json/30",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "evaluate",
-    "family": "v0",
-    "lean": "",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "ast"
-     ],
-     "constants": {},
-     "operation": "evaluate"
-    }
-   },
-   "mutation": [
-    [
-     "type",
-     [
-      "ast",
-      0,
-      2
-     ],
-     "array"
-    ]
-   ],
-   "input": {
-    "id": "conformance/validation.json/30",
-    "kind": "evaluate",
-    "environment": {
-     "language": "ve.core@0",
-     "profile": "relational-fol@0",
-     "spec_revision": "ve-v0-draft-2026-09-20",
-     "vocabulary": {
-      "sorts": {
-       "person": {
-        "description": "A"
-       },
-       "service": {
-        "description": "A"
-       }
-      },
-      "predicates": {
-       "deployed": {
-        "arguments": [
-         "service"
-        ],
-        "description": "R"
-       },
-       "owns": {
-        "arguments": [
-         "person"
-        ],
-        "description": "T"
-       },
-       "reviewed": {
-        "arguments": [
-         "service"
-        ],
-        "description": "R"
-       }
-      },
-      "constants": {}
-     }
-    },
-    "model": {
-     "complete": true,
-     "domains": {
-      "person": [
-       "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-      ],
-      "service": []
-     },
-     "constants": {},
-     "relations": {
-      "deployed": [],
-      "owns": [],
-      "reviewed": []
-     }
-    },
-    "ast": []
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "ResourceLimit",
-     "text": "ResourceLimit: local ID exceeds 64 ASCII bytes"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: invalid local identifier"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "SyntaxError",
-     "text": "SyntaxError: document must be nonempty"
-    }
-   },
-   "signature": "7ff255ad6f828843",
-   "follow_up": "DF-9"
-  },
-  {
-   "id": "requests-eed0dea15a64521b",
-   "surface": "requests",
-   "profile": "validation:evaluate",
-   "seed": "conformance/validation.json/32",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "evaluate",
-    "family": "v0",
-    "lean": "",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "ast"
-     ],
-     "constants": {},
-     "operation": "evaluate"
-    }
-   },
-   "mutation": [
-    [
-     "type",
-     [
-      "ast",
-      2,
-      2,
-      2,
-      1
-     ],
-     "array"
-    ]
-   ],
-   "input": {
-    "id": "conformance/validation.json/32",
-    "kind": "evaluate",
-    "environment": {
-     "language": "ve.core@0",
-     "profile": "relational-fol@0",
-     "spec_revision": "ve-v0-draft-2026-09-20",
-     "vocabulary": {
-      "sorts": {
-       "person": {
-        "description": "A"
-       },
-       "service": {
-        "description": "A"
-       }
-      },
-      "predicates": {
-       "deployed": {
-        "arguments": [
-         "service"
-        ],
-        "description": "R"
-       },
-       "owns": {
-        "arguments": [
-         "person"
-        ],
-        "description": "T"
-       },
-       "reviewed": {
-        "arguments": [
-         "service"
-        ],
-        "description": "R"
-       }
-      },
-      "constants": {}
-     }
-    },
-    "model": {
-     "complete": true,
-     "domains": {
-      "person": [
-       "éééééééééééééééééééééééééééééééééééééééé"
-      ],
-      "service": []
-     },
-     "constants": {},
-     "relations": {
-      "deployed": [],
-      "owns": [],
-      "reviewed": []
-     }
-    },
-    "ast": [
-     [
-      "forall",
-      "s",
-      [
-       "implies",
-       [
-        "unary",
-        "d",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "unary",
-        [],
-        [
-         "var",
-         0
-        ]
-       ]
-      ]
-     ]
-    ]
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "ResourceLimit",
-     "text": "ResourceLimit: local ID exceeds 64 ASCII bytes"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: invalid local identifier"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: unknown binder sort"
-    }
-   },
-   "signature": "eed0dea15a64521b",
-   "follow_up": "DF-9"
-  },
-  {
    "id": "requests-ef23380e9246a967",
    "surface": "requests",
    "profile": "closure:evaluate",
@@ -35762,167 +34936,6 @@
    "follow_up": "DF-7"
   },
   {
-   "id": "requests-4d8ae51242de04f7",
-   "surface": "requests",
-   "profile": "countermodels:countermodel",
-   "seed": "conformance/countermodels.json/69",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "countermodel",
-    "family": "v0",
-    "lean": "",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "premises",
-      "conclusion"
-     ],
-     "constants": {},
-     "operation": "countermodel"
-    }
-   },
-   "mutation": [
-    [
-     "duplicate",
-     [
-      "environment",
-      "vocabulary",
-      "predicates",
-      "edge",
-      "arguments"
-     ],
-     null
-    ]
-   ],
-   "input": {
-    "id": "conformance/countermodels.json/69",
-    "kind": "countermodel",
-    "environment": {
-     "language": "ve.core@0",
-     "profile": "relational-fol@0",
-     "spec_revision": "ve-v0-draft-2026-09-20",
-     "vocabulary": {
-      "sorts": {},
-      "predicates": {
-       "edge": {
-        "arguments": [],
-        "description": "A"
-       }
-      },
-      "constants": {}
-     }
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: Undeclared predicate argument sort"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: invalid signature: edge"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "InvalidInput: predicate arity must be one to 2"
-    }
-   },
-   "signature": "4d8ae51242de04f7",
-   "follow_up": "DF-9"
-  },
-  {
-   "id": "requests-b6cbe9bc5a5024fd",
-   "surface": "requests",
-   "profile": "usecase:us-constitution-14th-s1:evaluate",
-   "seed": "usecases/us-constitution-14th-s1/model-true.json@environment.json",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "evaluate",
-    "family": "v0",
-    "lean": "",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "ast"
-     ],
-     "constants": {},
-     "operation": "evaluate"
-    }
-   },
-   "mutation": [
-    [
-     "duplicate",
-     [
-      "environment",
-      "vocabulary",
-      "predicates",
-      "affords_due_process",
-      "arguments"
-     ],
-     null
-    ]
-   ],
-   "input": {
-    "id": "usecases/us-constitution-14th-s1/model-true.json@environment.json",
-    "kind": "evaluate",
-    "environment": {
-     "language": "ve.core@0",
-     "profile": "relational-fol@0",
-     "spec_revision": "ve-v0-draft-2026-09-20",
-     "vocabulary": {
-      "sorts": {},
-      "predicates": {
-       "affords_due_process": {
-        "arguments": [],
-        "description": "R"
-       }
-      },
-      "constants": {}
-     }
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: Undeclared predicate argument sort"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: invalid signature: affords_due_process"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "InvalidInput: predicate arity must be one to 2"
-    }
-   },
-   "signature": "b6cbe9bc5a5024fd",
-   "follow_up": "DF-9"
-  },
-  {
    "id": "requests-154fc716f3fbd041",
    "surface": "requests",
    "profile": "elaborated-document:evaluate",
@@ -36004,166 +35017,6 @@
    },
    "signature": "154fc716f3fbd041",
    "follow_up": "DF-7"
-  },
-  {
-   "id": "requests-e7ccd87539696dd0",
-   "surface": "requests",
-   "profile": "evaluation:evaluate",
-   "seed": "conformance/evaluation.json/98",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "evaluate",
-    "family": "v0",
-    "lean": "",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "ast"
-     ],
-     "constants": {},
-     "operation": "evaluate"
-    }
-   },
-   "mutation": [
-    [
-     "type",
-     [
-      "environment",
-      "vocabulary",
-      "predicates",
-      "active",
-      "arguments"
-     ],
-     "array"
-    ]
-   ],
-   "input": {
-    "id": "conformance/evaluation.json/98",
-    "kind": "evaluate",
-    "environment": {
-     "language": "ve.core@0",
-     "profile": "relational-fol@0",
-     "spec_revision": "ve-v0-draft-2026-09-20",
-     "vocabulary": {
-      "sorts": {},
-      "predicates": {
-       "active": {
-        "arguments": [],
-        "description": "A"
-       }
-      },
-      "constants": {}
-     }
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: Undeclared predicate argument sort"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: invalid signature: active"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "InvalidInput: predicate arity must be one to 2"
-    }
-   },
-   "signature": "e7ccd87539696dd0",
-   "follow_up": "DF-9"
-  },
-  {
-   "id": "requests-22b4ce63ecfce5d9",
-   "surface": "requests",
-   "profile": "identity:evaluate",
-   "seed": "conformance/identity.json/165",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "evaluate",
-    "family": "v0",
-    "lean": "",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "ast"
-     ],
-     "constants": {},
-     "operation": "evaluate"
-    }
-   },
-   "mutation": [
-    [
-     "type",
-     [
-      "environment",
-      "vocabulary",
-      "predicates",
-      "edge",
-      "arguments"
-     ],
-     "array"
-    ]
-   ],
-   "input": {
-    "id": "conformance/identity.json/165",
-    "kind": "evaluate",
-    "environment": {
-     "language": "ve.core@0",
-     "profile": "relational-fol@0",
-     "spec_revision": "ve-v0-draft-2026-09-20",
-     "vocabulary": {
-      "sorts": {},
-      "predicates": {
-       "edge": {
-        "arguments": [],
-        "description": "A"
-       }
-      },
-      "constants": {}
-     }
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: Undeclared predicate argument sort"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: invalid signature: edge"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "InvalidInput: predicate arity must be one to 2"
-    }
-   },
-   "signature": "22b4ce63ecfce5d9",
-   "follow_up": "DF-9"
   },
   {
    "id": "requests-fbb2a2d7c8ac6267",
@@ -36261,7 +35114,7 @@
    "follow_up": "DF-7"
   },
   {
-   "id": "requests-cc0250e0c6f5b931",
+   "id": "requests-7d14faed08664f4b",
    "surface": "requests",
    "profile": "validation:evaluate",
    "seed": "conformance/validation.json/30",
@@ -36355,8 +35208,8 @@
    "answers": {
     "python": {
      "outcome": "error",
-     "code": "ResourceLimit",
-     "text": "ResourceLimit: local ID exceeds 64 ASCII bytes"
+     "code": "InvalidModel",
+     "text": "InvalidModel: local ID must match [a-z][a-z0-9_]*"
     },
     "lean": {
      "outcome": "error",
@@ -36369,137 +35222,7 @@
      "text": "InvalidInput: missing source"
     }
    },
-   "signature": "cc0250e0c6f5b931",
-   "follow_up": "DF-9"
-  },
-  {
-   "id": "requests-67be09165ebe62c3",
-   "surface": "requests",
-   "profile": "validation:evaluate",
-   "seed": "conformance/validation.json/32",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "evaluate",
-    "family": "v0",
-    "lean": "",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "ast"
-     ],
-     "constants": {},
-     "operation": "evaluate"
-    }
-   },
-   "mutation": [
-    [
-     "type",
-     [
-      "ast",
-      0,
-      2,
-      2,
-      1
-     ],
-     "string"
-    ]
-   ],
-   "input": {
-    "id": "conformance/validation.json/32",
-    "kind": "evaluate",
-    "environment": {
-     "language": "ve.core@0",
-     "profile": "relational-fol@0",
-     "spec_revision": "ve-v0-draft-2026-09-20",
-     "vocabulary": {
-      "sorts": {
-       "person": {
-        "description": "A"
-       },
-       "service": {
-        "description": "A"
-       }
-      },
-      "predicates": {
-       "deployed": {
-        "arguments": [
-         "service"
-        ],
-        "description": "R"
-       },
-       "owns": {
-        "arguments": [
-         "person"
-        ],
-        "description": "T"
-       },
-       "reviewed": {
-        "arguments": [
-         "service"
-        ],
-        "description": "R"
-       }
-      },
-      "constants": {}
-     }
-    },
-    "model": {
-     "complete": true,
-     "domains": {
-      "person": [
-       "éééééééééééééééééééééééééééééééééééééééé"
-      ],
-      "service": []
-     },
-     "constants": {},
-     "relations": {
-      "deployed": [],
-      "owns": [],
-      "reviewed": []
-     }
-    },
-    "ast": [
-     [
-      "exists",
-      "s",
-      [
-       "unary",
-       "d",
-       [
-        "var",
-        "x"
-       ]
-      ]
-     ]
-    ]
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "ResourceLimit",
-     "text": "ResourceLimit: local ID exceeds 64 ASCII bytes"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: invalid local identifier"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "UnboundVariable",
-     "text": "UnboundVariable: index must be a bounded nonnegative integer"
-    }
-   },
-   "signature": "67be09165ebe62c3",
+   "signature": "7d14faed08664f4b",
    "follow_up": "DF-9"
   },
   {
@@ -36713,86 +35436,6 @@
    },
    "signature": "9f646a6f8ad354d1",
    "follow_up": "DF-7"
-  },
-  {
-   "id": "requests-af491502bac8c80c",
-   "surface": "requests",
-   "profile": "usecase:birthright-citizenship-debate:evaluate",
-   "seed": "usecases/birthright-citizenship-debate/model-true.json@environment.json",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "evaluate",
-    "family": "v0",
-    "lean": "",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "ast"
-     ],
-     "constants": {},
-     "operation": "evaluate"
-    }
-   },
-   "mutation": [
-    [
-     "type",
-     [
-      "environment",
-      "vocabulary",
-      "predicates",
-      "us_citizen",
-      "arguments"
-     ],
-     "array"
-    ]
-   ],
-   "input": {
-    "id": "usecases/birthright-citizenship-debate/model-true.json@environment.json",
-    "kind": "evaluate",
-    "environment": {
-     "language": "ve.core@0",
-     "profile": "relational-fol@0",
-     "spec_revision": "ve-v0-draft-2026-09-20",
-     "vocabulary": {
-      "sorts": {},
-      "predicates": {
-       "us_citizen": {
-        "arguments": [],
-        "description": "R"
-       }
-      },
-      "constants": {}
-     }
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: Undeclared predicate argument sort"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: invalid signature: us_citizen"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "InvalidInput: predicate arity must be one to 2"
-    }
-   },
-   "signature": "af491502bac8c80c",
-   "follow_up": "DF-9"
   },
   {
    "id": "requests-4eb17486d48b38a4",
@@ -46092,1296 +44735,6 @@
    "minimised": false
   },
   {
-   "id": "requests-4a012b27ca0cbee1",
-   "surface": "requests",
-   "profile": "usecase:news-article:evaluate",
-   "seed": "usecases/news-article/model-false.json@environment.json",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "evaluate",
-    "family": "v0",
-    "lean": "",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "ast"
-     ],
-     "constants": {},
-     "operation": "evaluate"
-    }
-   },
-   "mutation": [
-    [
-     "unicode",
-     [
-      "ast",
-      13,
-      2,
-      3,
-      0
-     ],
-     "nbsp"
-    ],
-    [
-     "type",
-     [
-      "environment",
-      "vocabulary",
-      "predicates",
-      "is_first_under",
-      "arguments"
-     ],
-     "array"
-    ]
-   ],
-   "input": {
-    "id": "usecases/news-article/model-false.json@environment.json",
-    "kind": "evaluate",
-    "environment": {
-     "language": "ve.core@0",
-     "profile": "relational-fol@0",
-     "spec_revision": "ve-v0-draft-2026-09-20",
-     "vocabulary": {
-      "sorts": {
-       "institution": {
-        "description": "A named institution in the article (the Federal Reserve / FOMC / 'the central bank', merged into one entity)."
-       },
-       "person": {
-        "description": "A named person in the article."
-       },
-       "decision": {
-        "description": "The Wednesday, September 16, 2026 rate decision, reified as an event-like entity."
-       },
-       "rate_range": {
-        "description": "A named federal funds target rate range, treated as an opaque tag, not a pair of numbers."
-       },
-       "moment": {
-        "description": "A date, meeting, or clock time referred to in the article, treated as an opaque tag, not a computable timestamp."
-       },
-       "year": {
-        "description": "A calendar year referred to as a target or projection horizon."
-       },
-       "goal": {
-        "description": "A named policy goal or promise the article attributes to someone."
-       },
-       "text": {
-        "description": "A statement, quoted remark, or pledge, reified as an opaque entity standing for its (unmodelled) propositional content."
-       },
-       "cause": {
-        "description": "A named cause-of-inflation label that a Fed statement may or may not attribute inflation to."
-       },
-       "event": {
-        "description": "A scheduled event other than the rate decision itself."
-       },
-       "figure": {
-        "description": "A specific reported economic statistic (e.g. one quarter's PCE inflation estimate), treated as an opaque tag, not a number."
-       }
-      },
-      "predicates": {
-       "unanimous": {
-        "arguments": [
-         "decision"
-        ],
-        "description": "Recorded as approved without a dissenting vote, per the reported vote."
-       },
-       "raised_on": {
-        "arguments": [
-         "institution",
-         "moment"
-        ],
-        "description": "Recorded as the institution having raised its policy rate on this date."
-       },
-       "voted_for": {
-        "arguments": [
-         "person",
-         "decision"
-        ],
-        "description": "Recorded as the person having voted for (joined) this decision."
-       },
-       "raised_to": {
-        "arguments": [
-         "institution",
-         "rate_range"
-        ],
-        "description": "Recorded as the institution having raised its policy rate to this named target range."
-       },
-       "promised": {
-        "arguments": [
-         "person",
-         "goal"
-        ],
-        "description": "OPAQUE marker predicate. Recorded as the person having promised this goal. The commissive force of 'promised' and the propositional content of the goal are not modelled; see GAPS.md."
-       },
-       "submitted_projection": {
-        "arguments": [
-         "person",
-         "moment"
-        ],
-        "description": "Recorded as the person having submitted an individual rate projection ('dot') for this meeting."
-       },
-       "is_first_under": {
-        "arguments": [],
-        "description": "OPAQUE marker predicate. Recorded as this decision being the first policy shift during this person's tenure. Hides the ordinal comparison against an unenumerated sequence of other decisions; see GAPS.md."
-       },
-       "appointed_by": {
-        "arguments": [
-         "person",
-         "person"
-        ],
-        "description": "Recorded as the first person having been selected/appointed by the second."
-       },
-       "took_office_in": {
-        "arguments": [
-         "person",
-         "moment"
-        ],
-        "description": "Recorded as the person having taken office during this (imprecisely named) period."
-       },
-       "projected_for": {
-        "arguments": [
-         "rate_range",
-         "year"
-        ],
-        "description": "Recorded as this rate range being the one projected to hold at the end of this year."
-       },
-       "stated": {
-        "arguments": [
-         "institution",
-         "text"
-        ],
-        "description": "OPAQUE marker predicate. Recorded as the institution having issued this statement. The quoted content of the statement is opaque; see GAPS.md."
-       },
-       "attributes_to": {
-        "arguments": [
-         "text",
-         "cause"
-        ],
-        "description": "Recorded as the statement attributing (elevated) inflation to this named cause."
-       },
-       "scheduled_for": {
-        "arguments": [
-         "event",
-         "moment"
-        ],
-        "description": "Recorded as the event being scheduled for this named clock time."
-       },
-       "exceeds": {
-        "arguments": [
-         "figure",
-         "figure"
-        ],
-        "description": "Recorded as the first reported figure being numerically greater than the second, as a ground fact asserted per named pair. This is NOT arithmetic: it carries no information about any figure not named in this vocabulary, and no magnitude; see GAPS.md."
-       },
-       "projected_year": {
-        "arguments": [
-         "goal",
-         "year"
-        ],
-        "description": "Recorded as this goal (e.g. reaching the 2% inflation target) being projected to occur in this year."
-       },
-       "pledged": {
-        "arguments": [
-         "person",
-         "text"
-        ],
-        "description": "OPAQUE marker predicate. Recorded as the person having pledged this statement. The commissive force of 'pledged' and the quoted content are not modelled; see GAPS.md."
-       }
-      },
-      "constants": {
-       "fed": {
-        "sort": "institution",
-        "description": "The Federal Reserve / FOMC / 'the central bank', as referred to in the article."
-       },
-       "warsh": {
-        "sort": "person",
-        "description": "Kevin Warsh, the Fed chair."
-       },
-       "trump": {
-        "sort": "person",
-        "description": "Donald Trump, the U.S. president."
-       },
-       "rate_decision": {
-        "sort": "decision",
-        "description": "The Wednesday, September 16, 2026 decision to raise the target rate."
-       },
-       "r375_400": {
-        "sort": "rate_range",
-        "description": "The 3.75%-4.00% target range the Fed moved to on September 16, 2026."
-       },
-       "r400_425": {
-        "sort": "rate_range",
-        "description": "The 4.00%-4.25% target range projected for year-end 2026 and 2027."
-       },
-       "sept16": {
-        "sort": "moment",
-        "description": "Wednesday, September 16, 2026, the day of the rate decision."
-       },
-       "late_may_2026": {
-        "sort": "moment",
-        "description": "The imprecisely named period ('late May') when Warsh took office."
-       },
-       "sept_meeting": {
-        "sort": "moment",
-        "description": "The September 2026 FOMC meeting, at which Warsh again did not submit a projection."
-       },
-       "t1430edt": {
-        "sort": "moment",
-        "description": "2:30 p.m. EDT, the scheduled start of Warsh's press conference."
-       },
-       "t1830gmt": {
-        "sort": "moment",
-        "description": "18:30 GMT, the article's own restatement of the same press-conference start time."
-       },
-       "y2026": {
-        "sort": "year",
-        "description": "Calendar year 2026 ('the end of this year')."
-       },
-       "y2027": {
-        "sort": "year",
-        "description": "Calendar year 2027."
-       },
-       "y2029": {
-        "sort": "year",
-        "description": "Calendar year 2029, the newly projected year for reaching the 2% inflation target."
-       },
-       "lower_prices_goal": {
-        "sort": "goal",
-        "description": "Trump's promised goal of lowering prices."
-       },
-       "two_percent_target": {
-        "sort": "goal",
-        "description": "The Fed's 2% inflation target."
-       },
-       "prev_statement": {
-        "sort": "text",
-        "description": "The FOMC's previous policy statement, which attributed elevated inflation partly to 'supply shocks'."
-       },
-       "new_statement": {
-        "sort": "text",
-        "description": "The FOMC's September 16, 2026 policy statement, which dropped the 'supply shocks' reference."
-       },
-       "statement_timelier": {
-        "sort": "text",
-        "description": "The quoted remark: 'Today's policy action will support a timelier return to the Committee's 2% goal.'"
-       },
-       "pledge_lower_inflation": {
-        "sort": "text",
-        "description": "Warsh's quoted pledge to lower inflation 'clearly and at sufficient speed'."
-       },
-       "supply_shocks": {
-        "sort": "cause",
-        "description": "The 'supply shocks' label for a driver of elevated inflation."
-       },
-       "press_conference": {
-        "sort": "event",
-        "description": "Warsh's press conference following the rate decision."
-       },
-       "pce_sep": {
-        "sort": "figure",
-        "description": "The September 2026 projection of PCE inflation (reported as 3.7%)."
-       },
-       "pce_jun": {
-        "sort": "figure",
-        "description": "The June 2026 projection of PCE inflation (reported as 3.6%)."
-       },
-       "growth_sep": {
-        "sort": "figure",
-        "description": "The September 2026 projection of economic growth (reported as 2.3%)."
-       },
-       "growth_jun": {
-        "sort": "figure",
-        "description": "The June 2026 projection of economic growth (reported as 2.2%)."
-       },
-       "unemployment_sep": {
-        "sort": "figure",
-        "description": "The September 2026 projection of year-end unemployment (reported as 4.1%)."
-       },
-       "unemployment_jun": {
-        "sort": "figure",
-        "description": "The June 2026 projection of year-end unemployment (reported as 4.3%)."
-       }
-      }
-     }
-    },
-    "model": {
-     "complete": true,
-     "domains": {
-      "institution": [
-       "fed"
-      ],
-      "person": [
-       "warsh",
-       "trump"
-      ],
-      "decision": [
-       "rate_decision"
-      ],
-      "rate_range": [
-       "r375_400",
-       "r400_425"
-      ],
-      "moment": [
-       "sept16",
-       "late_may_2026",
-       "sept_meeting",
-       "press_time"
-      ],
-      "year": [
-       "y2026",
-       "y2027",
-       "y2029"
-      ],
-      "goal": [
-       "lower_prices_goal",
-       "two_percent_target"
-      ],
-      "text": [
-       "prev_statement",
-       "new_statement",
-       "statement_timelier",
-       "pledge_lower_inflation"
-      ],
-      "cause": [
-       "supply_shocks"
-      ],
-      "event": [
-       "press_conference"
-      ],
-      "figure": [
-       "pce_sep",
-       "pce_jun",
-       "growth_sep",
-       "growth_jun",
-       "unemployment_sep",
-       "unemployment_jun"
-      ]
-     },
-     "constants": {
-      "fed": "fed",
-      "warsh": "warsh",
-      "trump": "trump",
-      "rate_decision": "rate_decision",
-      "r375_400": "r375_400",
-      "r400_425": "r400_425",
-      "sept16": "sept16",
-      "late_may_2026": "late_may_2026",
-      "sept_meeting": "sept_meeting",
-      "t1430edt": "press_time",
-      "t1830gmt": "press_time",
-      "y2026": "y2026",
-      "y2027": "y2027",
-      "y2029": "y2029",
-      "lower_prices_goal": "lower_prices_goal",
-      "two_percent_target": "two_percent_target",
-      "prev_statement": "prev_statement",
-      "new_statement": "new_statement",
-      "statement_timelier": "statement_timelier",
-      "pledge_lower_inflation": "pledge_lower_inflation",
-      "supply_shocks": "supply_shocks",
-      "press_conference": "press_conference",
-      "pce_sep": "pce_sep",
-      "pce_jun": "pce_jun",
-      "growth_sep": "growth_sep",
-      "growth_jun": "growth_jun",
-      "unemployment_sep": "unemployment_sep",
-      "unemployment_jun": "unemployment_jun"
-     },
-     "relations": {
-      "unanimous": [
-       [
-        "rate_decision"
-       ]
-      ],
-      "raised_on": [
-       [
-        "fed",
-        "sept16"
-       ]
-      ],
-      "voted_for": [
-       [
-        "warsh",
-        "rate_decision"
-       ]
-      ],
-      "raised_to": [
-       [
-        "fed",
-        "r375_400"
-       ]
-      ],
-      "promised": [
-       [
-        "trump",
-        "lower_prices_goal"
-       ]
-      ],
-      "submitted_projection": [],
-      "is_first_under": [
-       [
-        "rate_decision",
-        "warsh"
-       ]
-      ],
-      "appointed_by": [
-       [
-        "warsh",
-        "trump"
-       ]
-      ],
-      "took_office_in": [
-       [
-        "warsh",
-        "late_may_2026"
-       ]
-      ],
-      "projected_for": [
-       [
-        "r400_425",
-        "y2026"
-       ],
-       [
-        "r400_425",
-        "y2027"
-       ]
-      ],
-      "stated": [
-       [
-        "fed",
-        "statement_timelier"
-       ]
-      ],
-      "attributes_to": [
-       [
-        "prev_statement",
-        "supply_shocks"
-       ]
-      ],
-      "scheduled_for": [
-       [
-        "press_conference",
-        "press_time"
-       ]
-      ],
-      "exceeds": [
-       [
-        "growth_sep",
-        "growth_jun"
-       ],
-       [
-        "unemployment_jun",
-        "unemployment_sep"
-       ]
-      ],
-      "projected_year": [
-       [
-        "two_percent_target",
-        "y2029"
-       ]
-      ],
-      "pledged": [
-       [
-        "warsh",
-        "pledge_lower_inflation"
-       ]
-      ]
-     }
-    },
-    "ast": [
-     [
-      "binary",
-      "raised_on",
-      [
-       "const",
-       "fed"
-      ],
-      [
-       "const",
-       "sept16"
-      ]
-     ],
-     [
-      "and",
-      [
-       "unary",
-       "unanimous",
-       [
-        "const",
-        "rate_decision"
-       ]
-      ],
-      [
-       "binary",
-       "voted_for",
-       [
-        "const",
-        "warsh"
-       ],
-       [
-        "const",
-        "rate_decision"
-       ]
-      ]
-     ],
-     [
-      "binary",
-      "promised",
-      [
-       "const",
-       "trump"
-      ],
-      [
-       "const",
-       "lower_prices_goal"
-      ]
-     ],
-     [
-      "binary",
-      "raised_to",
-      [
-       "const",
-       "fed"
-      ],
-      [
-       "const",
-       "r375_400"
-      ]
-     ],
-     [
-      "not",
-      [
-       "binary",
-       "submitted_projection",
-       [
-        "const",
-        "warsh"
-       ],
-       [
-        "const",
-        "sept_meeting"
-       ]
-      ]
-     ],
-     [
-      "binary",
-      "is_first_under",
-      [
-       "const",
-       "rate_decision"
-      ],
-      [
-       "const",
-       "warsh"
-      ]
-     ],
-     [
-      "and",
-      [
-       "binary",
-       "appointed_by",
-       [
-        "const",
-        "warsh"
-       ],
-       [
-        "const",
-        "trump"
-       ]
-      ],
-      [
-       "binary",
-       "took_office_in",
-       [
-        "const",
-        "warsh"
-       ],
-       [
-        "const",
-        "late_may_2026"
-       ]
-      ]
-     ],
-     [
-      "and",
-      [
-       "binary",
-       "projected_for",
-       [
-        "const",
-        "r400_425"
-       ],
-       [
-        "const",
-        "y2026"
-       ]
-      ],
-      [
-       "binary",
-       "projected_for",
-       [
-        "const",
-        "r400_425"
-       ],
-       [
-        "const",
-        "y2027"
-       ]
-      ]
-     ],
-     [
-      "binary",
-      "stated",
-      [
-       "const",
-       "fed"
-      ],
-      [
-       "const",
-       "statement_timelier"
-      ]
-     ],
-     [
-      "and",
-      [
-       "binary",
-       "attributes_to",
-       [
-        "const",
-        "prev_statement"
-       ],
-       [
-        "const",
-        "supply_shocks"
-       ]
-      ],
-      [
-       "not",
-       [
-        "binary",
-        "attributes_to",
-        [
-         "const",
-         "new_statement"
-        ],
-        [
-         "const",
-         "supply_shocks"
-        ]
-       ]
-      ]
-     ],
-     [
-      "and",
-      [
-       "binary",
-       "scheduled_for",
-       [
-        "const",
-        "press_conference"
-       ],
-       [
-        "const",
-        "t1430edt"
-       ]
-      ],
-      [
-       "and",
-       [
-        "binary",
-        "scheduled_for",
-        [
-         "const",
-         "press_conference"
-        ],
-        [
-         "const",
-         "t1830gmt"
-        ]
-       ],
-       [
-        "eq",
-        [
-         "const",
-         "t1430edt"
-        ],
-        [
-         "const",
-         "t1830gmt"
-        ]
-       ]
-      ]
-     ],
-     [
-      "binary",
-      "exceeds",
-      [
-       "const",
-       "pce_sep"
-      ],
-      [
-       "const",
-       "pce_jun"
-      ]
-     ],
-     [
-      "binary",
-      "projected_year",
-      [
-       "const",
-       "two_percent_target"
-      ],
-      [
-       "const",
-       "y2029"
-      ]
-     ],
-     [
-      "and",
-      [
-       "binary",
-       "exceeds",
-       [
-        "const",
-        "growth_sep"
-       ],
-       [
-        "const",
-        "growth_jun"
-       ]
-      ],
-      [
-       "binary",
-       "exceeds",
-       [
-        "const",
-        "unemployment_jun"
-       ],
-       [
-        "c onst",
-        "unemployment_sep"
-       ]
-      ]
-     ],
-     [
-      "binary",
-      "pledged",
-      [
-       "const",
-       "warsh"
-      ],
-      [
-       "const",
-       "pledge_lower_inflation"
-      ]
-     ]
-    ]
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: Undeclared predicate argument sort"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: invalid signature: is_first_under"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "InvalidInput: predicate arity must be one to 2"
-    }
-   },
-   "signature": "4a012b27ca0cbee1",
-   "follow_up": "DF-9",
-   "minimised": false
-  },
-  {
-   "id": "requests-6fb5253464ee17f9",
-   "surface": "requests",
-   "profile": "parser:evaluate",
-   "seed": "conformance/parser.json/703",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "evaluate",
-    "family": "v0",
-    "lean": "",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "ast"
-     ],
-     "constants": {},
-     "operation": "evaluate"
-    }
-   },
-   "mutation": [
-    [
-     "type",
-     [
-      "environment",
-      "vocabulary",
-      "predicates",
-      "reviewed",
-      "arguments"
-     ],
-     "array"
-    ]
-   ],
-   "input": {
-    "id": "conformance/parser.json/703",
-    "kind": "evaluate",
-    "environment": {
-     "language": "ve.core@0",
-     "profile": "relational-fol@0",
-     "spec_revision": "ve-v0-draft-2026-09-20",
-     "vocabulary": {
-      "sorts": {
-       "person": {
-        "description": "A person recorded in the inventory."
-       },
-       "service": {
-        "description": "A service recorded in the inventory."
-       }
-      },
-      "predicates": {
-       "deployed": {
-        "arguments": [
-         "service"
-        ],
-        "description": "Recorded as deployed in this inventory."
-       },
-       "owns": {
-        "arguments": [
-         "person",
-         "service"
-        ],
-        "description": "The person is recorded as an owner of the service."
-       },
-       "reviewed": {
-        "arguments": [],
-        "description": "Recorded as reviewed in this inventory."
-       }
-      },
-      "constants": {}
-     }
-    },
-    "model": {
-     "complete": true,
-     "domains": {
-      "person": [
-       "alice"
-      ],
-      "service": [
-       "api"
-      ]
-     },
-     "constants": {},
-     "relations": {
-      "deployed": [
-       [
-        "api"
-       ]
-      ],
-      "owns": [
-       [
-        "alice",
-        "api"
-       ]
-      ],
-      "reviewed": [
-       [
-        "api"
-       ]
-      ]
-     }
-    },
-    "ast": [
-     [
-      "forall",
-      "service",
-      [
-       "exists",
-       "person",
-       [
-        "binary",
-        "owns",
-        [
-         "var",
-         0
-        ],
-        [
-         "var",
-         1
-        ]
-       ]
-      ]
-     ]
-    ]
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: Undeclared predicate argument sort"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: invalid signature: reviewed"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "InvalidInput: predicate arity must be one to 2"
-    }
-   },
-   "signature": "6fb5253464ee17f9",
-   "follow_up": "DF-9",
-   "minimised": false
-  },
-  {
-   "id": "requests-78440cbd58e86ed2",
-   "surface": "requests",
-   "profile": "usecase:math-mini-paper:evaluate",
-   "seed": "usecases/math-mini-paper/boundary/euclid-countermodel.json@environment.json",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "evaluate",
-    "family": "v0",
-    "lean": "",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "ast"
-     ],
-     "constants": {},
-     "operation": "evaluate"
-    }
-   },
-   "mutation": [
-    [
-     "duplicate",
-     [
-      "environment",
-      "vocabulary",
-      "predicates",
-      "lt",
-      "arguments"
-     ],
-     null
-    ],
-    [
-     "unicode",
-     [
-      "ast",
-      0,
-      2,
-      2,
-      1
-     ],
-     "nbsp"
-    ]
-   ],
-   "input": {
-    "id": "usecases/math-mini-paper/boundary/euclid-countermodel.json@environment.json",
-    "kind": "evaluate",
-    "environment": {
-     "language": "ve.core@0",
-     "profile": "relational-fol@0",
-     "spec_revision": "ve-v0-draft-2026-09-20",
-     "vocabulary": {
-      "sorts": {
-       "number": {
-        "description": "An uninterpreted element standing in for a positive integer. VE has no numeric sort; nothing here forces this domain to be the integers, to be infinite, or to be ordered.",
-        "verbalisation": {
-         "singular": "number",
-         "plural": "numbers"
-        }
-       }
-      },
-      "predicates": {
-       "prime": {
-        "arguments": [
-         "number"
-        ],
-        "description": "Uninterpreted unary symbol intended to mean 'is prime'. VE cannot state the definition, which quantifies over factorisations and needs a ternary multiplication relation.",
-        "verbalisation": "{0} is prime",
-        "negative_verbalisation": "{0} is not prime"
-       },
-       "unit": {
-        "arguments": [
-         "number"
-        ],
-        "description": "Uninterpreted unary symbol intended to mean 'equals 1'.",
-        "verbalisation": "{0} is trivial",
-        "negative_verbalisation": "{0} is not trivial"
-       },
-       "divides": {
-        "arguments": [
-         "number",
-         "number"
-        ],
-        "description": "Uninterpreted binary symbol intended to mean 'the first divides the second'.",
-        "verbalisation": "{0} divides {1}",
-        "negative_verbalisation": "{0} does not divide {1}"
-       },
-       "associate": {
-        "arguments": [
-         "number",
-         "number"
-        ],
-        "description": "Uninterpreted binary symbol intended to mean 'the two numbers are equal up to units'.",
-        "verbalisation": "{0} matches {1}",
-        "negative_verbalisation": "{0} does not match {1}"
-       },
-       "lt": {
-        "arguments": [
-         "number",
-         "number",
-         "number"
-        ],
-        "description": "Uninterpreted binary symbol intended to mean strict numeric order.",
-        "verbalisation": "{0} precedes {1}",
-        "negative_verbalisation": "{0} does not precede {1}"
-       }
-      },
-      "constants": {}
-     }
-    },
-    "model": {
-     "complete": true,
-     "domains": {
-      "number": [
-       "e0"
-      ]
-     },
-     "constants": {},
-     "relations": {
-      "associate": [],
-      "divides": [],
-      "lt": [],
-      "prime": [
-       [
-        "e0"
-       ]
-      ],
-      "unit": []
-     }
-    },
-    "ast": [
-     [
-      "forall",
-      "number",
-      [
-       "implies",
-       [
-        "unary",
-        "prime",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "exists",
-        "n umber",
-        [
-         "and",
-         [
-          "unary",
-          "prime",
-          [
-           "var",
-           0
-          ]
-         ],
-         [
-          "binary",
-          "lt",
-          [
-           "var",
-           1
-          ],
-          [
-           "var",
-           0
-          ]
-         ]
-        ]
-       ]
-      ]
-     ]
-    ]
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: Undeclared predicate argument sort"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: invalid signature: lt"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "InvalidInput: predicate arity must be one to 2"
-    }
-   },
-   "signature": "78440cbd58e86ed2",
-   "follow_up": "DF-9",
-   "minimised": false
-  },
-  {
-   "id": "requests-84b4fb41b010881d",
-   "surface": "requests",
-   "profile": "search:countermodel",
-   "seed": "conformance/search.json/28",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "countermodel",
-    "family": "v0",
-    "lean": "",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "premises",
-      "conclusion"
-     ],
-     "constants": {},
-     "operation": "countermodel"
-    }
-   },
-   "mutation": [
-    [
-     "key",
-     [
-      "premises"
-     ],
-     "tab"
-    ],
-    [
-     "type",
-     [
-      "environment",
-      "vocabulary",
-      "predicates",
-      "marked",
-      "arguments"
-     ],
-     "array"
-    ]
-   ],
-   "input": {
-    "id": "conformance/search.json/28",
-    "kind": "countermodel",
-    "environment": {
-     "language": "ve.core@0",
-     "profile": "relational-fol@0",
-     "spec_revision": "ve-v0-draft-2026-09-20",
-     "vocabulary": {
-      "sorts": {
-       "item": {
-        "description": "An item."
-       }
-      },
-      "predicates": {
-       "marked": {
-        "arguments": [],
-        "description": "Marked."
-       }
-      },
-      "constants": {}
-     }
-    },
-    "model": {
-     "complete": true,
-     "domains": {
-      "item": [
-       "a"
-      ]
-     },
-     "constants": {},
-     "relations": {
-      "marked": []
-     }
-    },
-    "p\tremises": [],
-    "conclusion": [
-     "forall",
-     "item",
-     [
-      "unary",
-      "marked",
-      [
-       "var",
-       0
-      ]
-     ]
-    ]
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: Undeclared predicate argument sort"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: invalid signature: marked"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "InvalidInput: predicate arity must be one to 2"
-    }
-   },
-   "signature": "84b4fb41b010881d",
-   "follow_up": "DF-9",
-   "minimised": false
-  },
-  {
    "id": "requests-d9e0027634632b77",
    "surface": "requests",
    "profile": "elaborated-document:evaluate",
@@ -47543,6 +44896,638 @@
    "signature": "d9e0027634632b77",
    "follow_up": "DF-9",
    "minimised": false
+  },
+  {
+   "id": "requests-40f4e679813733a1",
+   "surface": "requests",
+   "profile": "elaborated-document:evaluate",
+   "seed": "conformance/elaborated-document.json/41",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "evaluate",
+    "family": "core",
+    "lean": "route",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {},
+     "operation": "evaluate"
+    }
+   },
+   "mutation": [
+    [
+     "key",
+     [
+      "environment",
+      "vocabulary",
+      "constants"
+     ],
+     "curly-quote"
+    ]
+   ],
+   "input": {
+    "id": "conformance/elaborated-document.json/41",
+    "kind": "evaluate",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-other",
+     "vocabulary": {}
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "InvalidInput: fields do not match: expected [sorts, predicates, constants], got []"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported specification revision ve-v0.2-other"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported specification revision ve-v0.2-other"
+    }
+   },
+   "signature": "40f4e679813733a1",
+   "follow_up": "DF-9"
+  },
+  {
+   "id": "requests-17ba7c0827d91e72",
+   "surface": "requests",
+   "profile": "usecase:cedar-attributes:evaluate",
+   "seed": "usecases/cedar-attributes/model.json@environment.json",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "evaluate",
+    "family": "core",
+    "lean": "route",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {},
+     "operation": "evaluate"
+    }
+   },
+   "mutation": [
+    [
+     "type",
+     [
+      "environment",
+      "vocabulary",
+      "constants"
+     ],
+     "object"
+    ]
+   ],
+   "input": {
+    "id": "usecases/cedar-attributes/model.json@environment.json",
+    "kind": "evaluate",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {},
+      "predicates": {},
+      "constants": {}
+     }
+    },
+    "model": {},
+    "ast": [
+     [
+      "binary",
+      "d",
+      [
+       "const",
+       "a"
+      ],
+      [
+       "const",
+       "f"
+      ]
+     ]
+    ]
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidModel",
+     "text": "InvalidModel: fields do not match: expected [complete, domains, constants, relations], got []"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: ill-typed or unbound formula"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "UnknownSymbol: unknown predicate \"d\""
+    }
+   },
+   "signature": "17ba7c0827d91e72",
+   "follow_up": "DF-9"
+  },
+  {
+   "id": "requests-ec549ab2f4e2ef8b",
+   "surface": "requests",
+   "profile": "elaborated-document:evaluate",
+   "seed": "conformance/elaborated-document.json/34",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "evaluate",
+    "family": "core",
+    "lean": "route",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {},
+     "operation": "evaluate"
+    }
+   },
+   "mutation": [
+    [
+     "key",
+     [
+      "environment",
+      "vocabulary"
+     ],
+     "nbsp"
+    ]
+   ],
+   "input": {
+    "id": "conformance/elaborated-document.json/34",
+    "kind": "evaluate",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "closure@0"
+     ]
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Missing profile relational-fol@0"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: fields do not match: expected ['language', 'profiles', 'spec_revision', 'vocabulary'], got ['language', 'profiles']"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "InvalidInput: expected exactly fields [\"language\", \"profiles\", \"spec_revision\", \"vocabulary\"]"
+    }
+   },
+   "signature": "ec549ab2f4e2ef8b",
+   "follow_up": "DF-9"
+  },
+  {
+   "id": "requests-504d13bfdf6042ea",
+   "surface": "requests",
+   "profile": "invalid-background-model:evaluate",
+   "seed": "conformance/invalid-background-model.json/2",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "evaluate",
+    "family": "core",
+    "lean": "route",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {},
+     "operation": "evaluate"
+    }
+   },
+   "mutation": [
+    [
+     "unicode",
+     [
+      "environment",
+      "vocabulary",
+      "predicates",
+      "in_finance",
+      "arguments",
+      0
+     ],
+     "upper"
+    ]
+   ],
+   "input": {
+    "id": "conformance/invalid-background-model.json/2",
+    "kind": "evaluate",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {},
+      "predicates": {
+       "in_finance": {
+        "arguments": [
+         "P"
+        ],
+        "description": "w"
+       }
+      },
+      "constants": {}
+     }
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "UnknownSymbol: Undeclared predicate argument sort: 'P'"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: invalid signature: in_finance"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "UnknownSymbol: unknown predicate argument sort"
+    }
+   },
+   "signature": "504d13bfdf6042ea",
+   "follow_up": "DF-9"
+  },
+  {
+   "id": "requests-e2f15ba7be3fc3f9",
+   "surface": "requests",
+   "profile": "elaborated-document:certificate",
+   "seed": "conformance/elaborated-document.json/17",
+   "engines": [
+    "python",
+    "lean"
+   ],
+   "meta": {
+    "kind": "certificate",
+    "family": "core",
+    "lean": "route",
+    "rust": null
+   },
+   "mutation": [
+    [
+     "unicode",
+     [
+      "environment",
+      "language"
+     ],
+     "nbsp"
+    ]
+   ],
+   "input": {
+    "id": "conformance/elaborated-document.json/17",
+    "kind": "certificate",
+    "environment": {
+     "language": "v",
+     "profiles": [
+      "relational-fol@0"
+     ],
+     "spec_revision": "v",
+     "vocabulary": {}
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "InvalidInput: fields do not match: expected [language, profile, spec_revision, vocabulary], got [language, profiles, spec_revision, vocabulary]"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported language"
+    },
+    "rust": {
+     "outcome": "n/a"
+    }
+   },
+   "signature": "e2f15ba7be3fc3f9",
+   "follow_up": "DF-9"
+  },
+  {
+   "id": "requests-32e1bf859fa68613",
+   "surface": "requests",
+   "profile": "labels:label",
+   "seed": "conformance/labels.json/50",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "label",
+    "family": "core",
+    "lean": "route",
+    "rust": {
+     "fields": [
+      "id",
+      "kind",
+      "environment",
+      "label"
+     ],
+     "constants": {
+      "expected": {
+       "status": "error",
+       "code": "AdmissionError",
+       "error": "AdmissionError: invalid label cite:a/b\n"
+      }
+     },
+     "operation": "label"
+    }
+   },
+   "mutation": [
+    [
+     "unicode",
+     [
+      "environment",
+      "spec_revision"
+     ],
+     "double-space"
+    ],
+    [
+     "key",
+     [
+      "environment",
+      "vocabulary",
+      "predicates"
+     ],
+     "cr"
+    ]
+   ],
+   "input": {
+    "id": "conformance/labels.json/50",
+    "kind": "label",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "relational-fol@0"
+     ],
+     "spec_revision": "v  e-v0.2-expand2-2026-09-25",
+     "vocabulary": {}
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "InvalidInput: fields do not match: expected [sorts, predicates, constants], got []"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported specification revision v  e-v0.2-expand2-2026-09-25"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported specification revision v  e-v0.2-expand2-2026-09-25"
+    }
+   },
+   "signature": "32e1bf859fa68613",
+   "follow_up": "DF-9"
+  },
+  {
+   "id": "requests-169d7074bd9f0cbc",
+   "surface": "requests",
+   "profile": "elaborated-document:evaluate",
+   "seed": "conformance/elaborated-document.json/27",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "evaluate",
+    "family": "core",
+    "lean": "route",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {},
+     "operation": "evaluate"
+    }
+   },
+   "mutation": [
+    [
+     "unicode",
+     [
+      "model",
+      "constants",
+      "alice"
+     ],
+     "double-space"
+    ],
+    [
+     "type",
+     [
+      "ast",
+      0,
+      2,
+      0
+     ],
+     "object"
+    ]
+   ],
+   "input": {
+    "id": "conformance/elaborated-document.json/27",
+    "kind": "evaluate",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {},
+      "predicates": {},
+      "constants": {}
+     }
+    },
+    "model": {},
+    "ast": []
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidModel",
+     "text": "InvalidModel: fields do not match: expected [complete, domains, constants, relations], got []"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: empty document"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "SyntaxError",
+     "text": "SyntaxError: document must be nonempty"
+    }
+   },
+   "signature": "169d7074bd9f0cbc",
+   "follow_up": "DF-9"
+  },
+  {
+   "id": "requests-81763ebf19982998",
+   "surface": "requests",
+   "profile": "elaborated-document:countermodel",
+   "seed": "conformance/elaborated-document.json/22",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "countermodel",
+    "family": "core",
+    "lean": "route",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "premises",
+      "conclusion"
+     ],
+     "constants": {},
+     "operation": "countermodel"
+    }
+   },
+   "mutation": [
+    [
+     "type",
+     [
+      "premises"
+     ],
+     "object"
+    ],
+    [
+     "type",
+     [
+      "model",
+      "relations",
+      "dept"
+     ],
+     "object"
+    ]
+   ],
+   "input": {
+    "id": "conformance/elaborated-document.json/22",
+    "kind": "countermodel",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {},
+      "predicates": {},
+      "constants": {}
+     }
+    },
+    "model": {},
+    "premises": {},
+    "conclusion": [
+     "bottom"
+    ]
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidModel",
+     "text": "InvalidModel: fields do not match: expected [complete, domains, constants, relations], got []"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: array expected"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "SyntaxError",
+     "text": "SyntaxError: premises must be an array"
+    }
+   },
+   "signature": "81763ebf19982998",
+   "follow_up": "DF-9"
   },
   {
    "id": "environment-0a124c02f6507157",
@@ -47943,74 +45928,6 @@
    "follow_up": "DF-9"
   },
   {
-   "id": "environment-23fdf32b8bffa324",
-   "surface": "environment",
-   "profile": "envelope",
-   "seed": "conformance/validation.json/27/environment",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {},
-   "mutation": [
-    [
-     "key",
-     [
-      "vocabulary",
-      "sorts",
-      "service"
-     ],
-     "nbsp"
-    ],
-    [
-     "type",
-     [
-      "vocabulary",
-      "sorts",
-      "person",
-      "description"
-     ],
-     "number"
-    ]
-   ],
-   "input": {
-    "language": "ve.core@0",
-    "profile": "relational-fol@0",
-    "spec_revision": "ve-v0-draft-2026-09-20",
-    "vocabulary": {
-     "sorts": {
-      "s ervice": {},
-      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa": {}
-     },
-     "predicates": {},
-     "constants": {}
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "Invalid ASCII identifier: 's\\xa0ervice'"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "invalid or reserved declaration: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "ResourceLimit",
-     "text": "identifier exceeds 64 bytes"
-    }
-   },
-   "signature": "23fdf32b8bffa324",
-   "follow_up": "DF-9"
-  },
-  {
    "id": "environment-883070d8c18a79f8",
    "surface": "environment",
    "profile": "envelope",
@@ -48058,131 +45975,6 @@
    },
    "signature": "883070d8c18a79f8",
    "follow_up": "DF-5"
-  },
-  {
-   "id": "environment-2fe7028deaf61868",
-   "surface": "environment",
-   "profile": "envelope",
-   "seed": "conformance/search.json/0/environment",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {},
-   "mutation": [
-    [
-     "type",
-     [
-      "language"
-     ],
-     "object"
-    ]
-   ],
-   "input": {
-    "language": {},
-    "profile": "r",
-    "spec_revision": "v",
-    "vocabulary": {}
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "Incorrect fields (missing=['profiles'], unknown=['profile'])"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "fields do not match: expected [language, profiles, spec_revision, vocabulary], got [language, profile, spec_revision, vocabulary]"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "UnsupportedProfile",
-     "text": "unsupported language, profile or specification revision"
-    }
-   },
-   "signature": "2fe7028deaf61868",
-   "follow_up": "DF-6"
-  },
-  {
-   "id": "environment-bf82148512cf24d2",
-   "surface": "environment",
-   "profile": "envelope",
-   "seed": "conformance/validation.json/5/environment",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {},
-   "mutation": [],
-   "input": {
-    "language": "ve.core@0",
-    "profile": "relational-fol@0",
-    "spec_revision": "ve-v0-draft-2026-09-20",
-    "vocabulary": {
-     "sorts": {
-      "person": {
-       "description": "A person recorded in the inventory."
-      },
-      "service": {
-       "description": "A service recorded in the inventory."
-      },
-      "x0": {
-       "description": "Reserved."
-      }
-     },
-     "predicates": {
-      "deployed": {
-       "arguments": [
-        "service"
-       ],
-       "description": "Recorded as deployed in this inventory."
-      },
-      "owns": {
-       "arguments": [
-        "person",
-        "service"
-       ],
-       "description": "The person is recorded as an owner of the service."
-      },
-      "reviewed": {
-       "arguments": [
-        "service"
-       ],
-       "description": "Recorded as reviewed in this inventory."
-      }
-     },
-     "constants": {}
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "invalid or reserved declaration: x0"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "invalid or reserved declaration: x0"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "DuplicateDeclaration",
-     "text": "duplicate or reserved schema name \"x0\""
-    }
-   },
-   "signature": "bf82148512cf24d2",
-   "follow_up": "DF-15",
-   "minimised": false
   },
   {
    "id": "environment-0b8a4ff16b59e7f7",
@@ -49447,76 +47239,6 @@
    "minimised": false
   },
   {
-   "id": "environment-381919addab7eb62",
-   "surface": "environment",
-   "profile": "envelope",
-   "seed": "conformance/validation.json/4/environment",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {},
-   "mutation": [],
-   "input": {
-    "language": "ve.core@0",
-    "profile": "relational-fol@0",
-    "spec_revision": "ve-v0-draft-2026-09-20",
-    "vocabulary": {
-     "sorts": {
-      "person": {
-       "description": "A person recorded in the inventory."
-      },
-      "service": {
-       "description": "A service recorded in the inventory."
-      }
-     },
-     "predicates": {
-      "deployed": {
-       "arguments": [
-        "service"
-       ],
-       "description": "Recorded as deployed in this inventory."
-      },
-      "owns": {
-       "arguments": [],
-       "description": "The person is recorded as an owner of the service."
-      },
-      "reviewed": {
-       "arguments": [
-        "service"
-       ],
-       "description": "Recorded as reviewed in this inventory."
-      }
-     },
-     "constants": {}
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: Undeclared predicate argument sort"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: Undeclared predicate argument sort"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "predicate arity must be one to 2"
-    }
-   },
-   "signature": "381919addab7eb62",
-   "follow_up": "DF-9",
-   "minimised": false
-  },
-  {
    "id": "environment-29442c6727e3023c",
    "surface": "environment",
    "profile": "envelope",
@@ -50040,10 +47762,10 @@
    "follow_up": "DF-14"
   },
   {
-   "id": "requests-40f4e679813733a1",
+   "id": "requests-f7f4367ccf56f11d",
    "surface": "requests",
    "profile": "elaborated-document:evaluate",
-   "seed": "conformance/elaborated-document.json/41",
+   "seed": "conformance/elaborated-document.json/10",
    "engines": [
     "python",
     "lean",
@@ -50064,90 +47786,9 @@
      "operation": "evaluate"
     }
    },
-   "mutation": [
-    [
-     "key",
-     [
-      "environment",
-      "vocabulary",
-      "constants"
-     ],
-     "curly-quote"
-    ]
-   ],
+   "mutation": [],
    "input": {
-    "id": "conformance/elaborated-document.json/41",
-    "kind": "evaluate",
-    "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "relational-fol@0"
-     ],
-     "spec_revision": "ve-v0.2-other",
-     "vocabulary": {}
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "InvalidInput: fields do not match: expected [sorts, predicates, constants], got []"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "UnsupportedProfile",
-     "text": "UnsupportedProfile: Unsupported specification revision ve-v0.2-other"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "UnsupportedProfile",
-     "text": "UnsupportedProfile: Unsupported specification revision ve-v0.2-other"
-    }
-   },
-   "signature": "40f4e679813733a1",
-   "follow_up": "DF-9"
-  },
-  {
-   "id": "requests-17ba7c0827d91e72",
-   "surface": "requests",
-   "profile": "usecase:cedar-attributes:evaluate",
-   "seed": "usecases/cedar-attributes/model.json@environment.json",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "evaluate",
-    "family": "core",
-    "lean": "route",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "ast"
-     ],
-     "constants": {},
-     "operation": "evaluate"
-    }
-   },
-   "mutation": [
-    [
-     "type",
-     [
-      "environment",
-      "vocabulary",
-      "constants"
-     ],
-     "object"
-    ]
-   ],
-   "input": {
-    "id": "usecases/cedar-attributes/model.json@environment.json",
+    "id": "conformance/elaborated-document.json/10",
     "kind": "evaluate",
     "environment": {
      "language": "ve.core@0.2",
@@ -50157,25 +47798,17 @@
      "spec_revision": "ve-v0.2-expand2-2026-09-25",
      "vocabulary": {
       "sorts": {},
-      "predicates": {},
+      "predicates": {
+       "dept": {
+        "arguments": [
+         "$string"
+        ],
+        "description": "d"
+       }
+      },
       "constants": {}
      }
-    },
-    "model": {},
-    "ast": [
-     [
-      "binary",
-      "d",
-      [
-       "const",
-       "a"
-      ],
-      [
-       "const",
-       "f"
-      ]
-     ]
-    ]
+    }
    },
    "classes": [
     "code"
@@ -50183,28 +47816,28 @@
    "answers": {
     "python": {
      "outcome": "error",
-     "code": "InvalidModel",
-     "text": "InvalidModel: fields do not match: expected [complete, domains, constants, relations], got []"
+     "code": "InvalidInput",
+     "text": "InvalidInput: invalid signature: dept"
     },
     "lean": {
      "outcome": "error",
      "code": "InvalidInput",
-     "text": "rejected: ill-typed or unbound formula"
+     "text": "rejected: invalid signature: dept"
     },
     "rust": {
      "outcome": "error",
      "code": "UnknownSymbol",
-     "text": "UnknownSymbol: unknown predicate \"d\""
+     "text": "UnknownSymbol: unknown predicate argument sort"
     }
    },
-   "signature": "17ba7c0827d91e72",
+   "signature": "f7f4367ccf56f11d",
    "follow_up": "DF-9"
   },
   {
-   "id": "requests-ec549ab2f4e2ef8b",
+   "id": "requests-5ff71e1ed701a34c",
    "surface": "requests",
-   "profile": "elaborated-document:evaluate",
-   "seed": "conformance/elaborated-document.json/34",
+   "profile": "validation:evaluate",
+   "seed": "conformance/validation.json/0",
    "engines": [
     "python",
     "lean",
@@ -50225,24 +47858,84 @@
      "operation": "evaluate"
     }
    },
+   "mutation": [],
+   "input": {
+    "id": "conformance/validation.json/0",
+    "kind": "evaluate",
+    "environment": {
+     "language": "u",
+     "profile": "r",
+     "spec_revision": "v",
+     "vocabulary": {}
+    }
+   },
+   "classes": [
+    "code",
+    "diagnostic"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported language"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: fields do not match: expected [language, profiles, spec_revision, vocabulary], got [language, profile, spec_revision, vocabulary]"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: unsupported language, profile or specification revision"
+    }
+   },
+   "signature": "5ff71e1ed701a34c",
+   "follow_up": "DF-9"
+  },
+  {
+   "id": "requests-82e9b42808db4a2d",
+   "surface": "requests",
+   "profile": "identity:evaluate",
+   "seed": "conformance/identity.json/10",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "evaluate",
+    "family": "v0",
+    "lean": "",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {},
+     "operation": "evaluate"
+    }
+   },
    "mutation": [
     [
-     "key",
+     "unicode",
      [
       "environment",
-      "vocabulary"
+      "language"
      ],
-     "nbsp"
+     "cr"
     ]
    ],
    "input": {
-    "id": "conformance/elaborated-document.json/34",
+    "id": "conformance/identity.json/10",
     "kind": "evaluate",
     "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "closure@0"
-     ]
+     "language": "v",
+     "profile": "r",
+     "spec_revision": "v",
+     "vocabulary": {}
     }
    },
    "classes": [
@@ -50252,27 +47945,179 @@
     "python": {
      "outcome": "error",
      "code": "UnsupportedProfile",
-     "text": "UnsupportedProfile: Missing profile relational-fol@0"
+     "text": "UnsupportedProfile: Unsupported language"
     },
     "lean": {
      "outcome": "error",
      "code": "InvalidInput",
-     "text": "rejected: fields do not match: expected ['language', 'profiles', 'spec_revision', 'vocabulary'], got ['language', 'profiles']"
+     "text": "rejected: unsupported environment version"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: unsupported language, profile or specification revision"
+    }
+   },
+   "signature": "82e9b42808db4a2d",
+   "follow_up": "DF-9"
+  },
+  {
+   "id": "requests-c1fa0948bf4e1602",
+   "surface": "requests",
+   "profile": "elaborated-document:search",
+   "seed": "conformance/elaborated-document.json/23",
+   "engines": [
+    "python",
+    "rust"
+   ],
+   "meta": {
+    "kind": "search",
+    "family": "core",
+    "lean": null,
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "premises",
+      "conclusion",
+      "max_domain_size"
+     ],
+     "constants": {},
+     "operation": "search"
+    }
+   },
+   "mutation": [
+    [
+     "unicode",
+     [
+      "environment",
+      "language"
+     ],
+     "nbsp"
+    ]
+   ],
+   "input": {
+    "id": "conformance/elaborated-document.json/23",
+    "kind": "search",
+    "environment": {
+     "language": "v",
+     "profiles": [],
+     "spec_revision": "v",
+     "vocabulary": {}
+    },
+    "max_domain_size": 1
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported language"
+    },
+    "lean": {
+     "outcome": "n/a"
     },
     "rust": {
      "outcome": "error",
      "code": "InvalidInput",
-     "text": "InvalidInput: expected exactly fields [\"language\", \"profiles\", \"spec_revision\", \"vocabulary\"]"
+     "text": "InvalidInput: expected exactly fields [\"language\", \"profile\", \"spec_revision\", \"vocabulary\"]"
     }
    },
-   "signature": "ec549ab2f4e2ef8b",
+   "signature": "c1fa0948bf4e1602",
    "follow_up": "DF-9"
   },
   {
-   "id": "requests-504d13bfdf6042ea",
+   "id": "requests-3d2829baccc10447",
+   "surface": "requests",
+   "profile": "elaborated-document:search",
+   "seed": "conformance/elaborated-document.json/44",
+   "engines": [
+    "python",
+    "rust"
+   ],
+   "meta": {
+    "kind": "search",
+    "family": "core",
+    "lean": null,
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "premises",
+      "conclusion",
+      "max_domain_size"
+     ],
+     "constants": {},
+     "operation": "search"
+    }
+   },
+   "mutation": [
+    [
+     "type",
+     [
+      "environment",
+      "vocabulary",
+      "predicates",
+      "senior_finance",
+      "arguments",
+      0
+     ],
+     "string"
+    ]
+   ],
+   "input": {
+    "id": "conformance/elaborated-document.json/44",
+    "kind": "search",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "definitions@0",
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {},
+      "predicates": {
+       "senior_finance": {
+        "arguments": [
+         "x"
+        ],
+        "description": "i"
+       }
+      },
+      "constants": {}
+     }
+    },
+    "max_domain_size": 2
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "InvalidInput: invalid signature: senior_finance"
+    },
+    "lean": {
+     "outcome": "n/a"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "UnknownSymbol: unknown predicate argument sort"
+    }
+   },
+   "signature": "3d2829baccc10447",
+   "follow_up": "DF-9"
+  },
+  {
+   "id": "requests-a6b56b2a0ca179c2",
    "surface": "requests",
    "profile": "invalid-background-model:evaluate",
-   "seed": "conformance/invalid-background-model.json/2",
+   "seed": "conformance/invalid-background-model.json/6",
    "engines": [
     "python",
     "lean",
@@ -50300,30 +48145,31 @@
       "environment",
       "vocabulary",
       "predicates",
-      "in_finance",
+      "base",
       "arguments",
       0
      ],
-     "upper"
+     "double-space"
     ]
    ],
    "input": {
-    "id": "conformance/invalid-background-model.json/2",
+    "id": "conformance/invalid-background-model.json/6",
     "kind": "evaluate",
     "environment": {
      "language": "ve.core@0.2",
      "profiles": [
+      "definitions@0",
       "relational-fol@0"
      ],
      "spec_revision": "ve-v0.2-expand2-2026-09-25",
      "vocabulary": {
       "sorts": {},
       "predicates": {
-       "in_finance": {
+       "base": {
         "arguments": [
-         "P"
+         "p"
         ],
-        "description": "w"
+        "description": "B"
        }
       },
       "constants": {}
@@ -50336,13 +48182,13 @@
    "answers": {
     "python": {
      "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: Undeclared predicate argument sort: 'P'"
+     "code": "InvalidInput",
+     "text": "InvalidInput: invalid signature: base"
     },
     "lean": {
      "outcome": "error",
      "code": "InvalidInput",
-     "text": "rejected: invalid signature: in_finance"
+     "text": "rejected: invalid signature: base"
     },
     "rust": {
      "outcome": "error",
@@ -50350,41 +48196,43 @@
      "text": "UnknownSymbol: unknown predicate argument sort"
     }
    },
-   "signature": "504d13bfdf6042ea",
+   "signature": "a6b56b2a0ca179c2",
    "follow_up": "DF-9"
   },
   {
-   "id": "requests-e2f15ba7be3fc3f9",
+   "id": "requests-a287600cdb980c70",
    "surface": "requests",
-   "profile": "elaborated-document:certificate",
-   "seed": "conformance/elaborated-document.json/17",
+   "profile": "admission:admission",
+   "seed": "conformance/admission.json/17",
    "engines": [
     "python",
     "lean"
    ],
    "meta": {
-    "kind": "certificate",
+    "kind": "admission",
     "family": "core",
     "lean": "route",
     "rust": null
    },
    "mutation": [
     [
-     "unicode",
+     "type",
      [
       "environment",
-      "language"
+      "vocabulary",
+      "constants",
+      "finance"
      ],
-     "nbsp"
+     "string"
     ]
    ],
    "input": {
-    "id": "conformance/elaborated-document.json/17",
-    "kind": "certificate",
+    "id": "conformance/admission.json/17",
+    "kind": "admission",
     "environment": {
      "language": "v",
      "profiles": [
-      "relational-fol@0"
+      "order@0"
      ],
      "spec_revision": "v",
      "vocabulary": {}
@@ -50408,38 +48256,33 @@
      "outcome": "n/a"
     }
    },
-   "signature": "e2f15ba7be3fc3f9",
+   "signature": "a287600cdb980c70",
    "follow_up": "DF-9"
   },
   {
-   "id": "requests-32e1bf859fa68613",
+   "id": "requests-329aedf96a6bcf3d",
    "surface": "requests",
-   "profile": "labels:label",
-   "seed": "conformance/labels.json/50",
+   "profile": "search:countermodel",
+   "seed": "conformance/search.json/29",
    "engines": [
     "python",
     "lean",
     "rust"
    ],
    "meta": {
-    "kind": "label",
-    "family": "core",
-    "lean": "route",
+    "kind": "countermodel",
+    "family": "v0",
+    "lean": "",
     "rust": {
      "fields": [
       "id",
-      "kind",
       "environment",
-      "label"
+      "model",
+      "premises",
+      "conclusion"
      ],
-     "constants": {
-      "expected": {
-       "status": "error",
-       "code": "AdmissionError",
-       "error": "AdmissionError: invalid label cite:a/b\n"
-      }
-     },
-     "operation": "label"
+     "constants": {},
+     "operation": "countermodel"
     }
    },
    "mutation": [
@@ -50447,29 +48290,18 @@
      "unicode",
      [
       "environment",
-      "spec_revision"
+      "language"
      ],
-     "double-space"
-    ],
-    [
-     "key",
-     [
-      "environment",
-      "vocabulary",
-      "predicates"
-     ],
-     "cr"
+     "curly-quote"
     ]
    ],
    "input": {
-    "id": "conformance/labels.json/50",
-    "kind": "label",
+    "id": "conformance/search.json/29",
+    "kind": "countermodel",
     "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "relational-fol@0"
-     ],
-     "spec_revision": "v  e-v0.2-expand2-2026-09-25",
+     "language": "v",
+     "profile": "r",
+     "spec_revision": "v",
      "vocabulary": {}
     }
    },
@@ -50479,28 +48311,28 @@
    "answers": {
     "python": {
      "outcome": "error",
-     "code": "InvalidInput",
-     "text": "InvalidInput: fields do not match: expected [sorts, predicates, constants], got []"
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported language"
     },
     "lean": {
      "outcome": "error",
-     "code": "UnsupportedProfile",
-     "text": "UnsupportedProfile: Unsupported specification revision v  e-v0.2-expand2-2026-09-25"
+     "code": "InvalidInput",
+     "text": "rejected: unsupported environment version"
     },
     "rust": {
      "outcome": "error",
      "code": "UnsupportedProfile",
-     "text": "UnsupportedProfile: Unsupported specification revision v  e-v0.2-expand2-2026-09-25"
+     "text": "UnsupportedProfile: unsupported language, profile or specification revision"
     }
    },
-   "signature": "32e1bf859fa68613",
+   "signature": "329aedf96a6bcf3d",
    "follow_up": "DF-9"
   },
   {
-   "id": "requests-169d7074bd9f0cbc",
+   "id": "requests-0c4dd9385c1f603e",
    "surface": "requests",
-   "profile": "elaborated-document:evaluate",
-   "seed": "conformance/elaborated-document.json/27",
+   "profile": "validation:evaluate",
+   "seed": "conformance/validation.json/5",
    "engines": [
     "python",
     "lean",
@@ -50508,8 +48340,8 @@
    ],
    "meta": {
     "kind": "evaluate",
-    "family": "core",
-    "lean": "route",
+    "family": "v0",
+    "lean": "",
     "rust": {
      "fields": [
       "id",
@@ -50525,40 +48357,21 @@
     [
      "unicode",
      [
-      "model",
-      "constants",
-      "alice"
+      "environment",
+      "language"
      ],
-     "double-space"
-    ],
-    [
-     "type",
-     [
-      "ast",
-      0,
-      2,
-      0
-     ],
-     "object"
+     "nbsp"
     ]
    ],
    "input": {
-    "id": "conformance/elaborated-document.json/27",
+    "id": "conformance/validation.json/5",
     "kind": "evaluate",
     "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "relational-fol@0"
-     ],
-     "spec_revision": "ve-v0.2-expand2-2026-09-25",
-     "vocabulary": {
-      "sorts": {},
-      "predicates": {},
-      "constants": {}
-     }
-    },
-    "model": {},
-    "ast": []
+     "language": "v",
+     "profile": "r",
+     "spec_revision": "v",
+     "vocabulary": {}
+    }
    },
    "classes": [
     "code"
@@ -50566,25 +48379,94 @@
    "answers": {
     "python": {
      "outcome": "error",
-     "code": "InvalidModel",
-     "text": "InvalidModel: fields do not match: expected [complete, domains, constants, relations], got []"
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported language"
     },
     "lean": {
      "outcome": "error",
      "code": "InvalidInput",
-     "text": "rejected: empty document"
+     "text": "rejected: unsupported environment version"
     },
     "rust": {
      "outcome": "error",
-     "code": "SyntaxError",
-     "text": "SyntaxError: document must be nonempty"
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: unsupported language, profile or specification revision"
     }
    },
-   "signature": "169d7074bd9f0cbc",
+   "signature": "0c4dd9385c1f603e",
    "follow_up": "DF-9"
   },
   {
-   "id": "requests-81763ebf19982998",
+   "id": "requests-8c1f297210e8a606",
+   "surface": "requests",
+   "profile": "countermodels:countermodel",
+   "seed": "conformance/countermodels.json/182",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "countermodel",
+    "family": "v0",
+    "lean": "",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "premises",
+      "conclusion"
+     ],
+     "constants": {},
+     "operation": "countermodel"
+    }
+   },
+   "mutation": [
+    [
+     "unicode",
+     [
+      "environment",
+      "language"
+     ],
+     "upper"
+    ]
+   ],
+   "input": {
+    "id": "conformance/countermodels.json/182",
+    "kind": "countermodel",
+    "environment": {
+     "language": "V",
+     "profile": "r",
+     "spec_revision": "v",
+     "vocabulary": {}
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported language"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: unsupported environment version"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: unsupported language, profile or specification revision"
+    }
+   },
+   "signature": "8c1f297210e8a606",
+   "follow_up": "DF-9"
+  },
+  {
+   "id": "requests-51d46ac6021591a1",
    "surface": "requests",
    "profile": "elaborated-document:countermodel",
    "seed": "conformance/elaborated-document.json/22",
@@ -50611,42 +48493,30 @@
    },
    "mutation": [
     [
-     "type",
+     "key",
      [
-      "premises"
+      "conclusion"
      ],
-     "object"
+     "curly-quote"
     ],
     [
-     "type",
+     "unicode",
      [
-      "model",
-      "relations",
-      "dept"
+      "environment",
+      "language"
      ],
-     "object"
+     "upper"
     ]
    ],
    "input": {
     "id": "conformance/elaborated-document.json/22",
     "kind": "countermodel",
     "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "relational-fol@0"
-     ],
-     "spec_revision": "ve-v0.2-expand2-2026-09-25",
-     "vocabulary": {
-      "sorts": {},
-      "predicates": {},
-      "constants": {}
-     }
-    },
-    "model": {},
-    "premises": {},
-    "conclusion": [
-     "bottom"
-    ]
+     "language": "V",
+     "profiles": [],
+     "spec_revision": "v",
+     "vocabulary": {}
+    }
    },
    "classes": [
     "code"
@@ -50654,22 +48524,431 @@
    "answers": {
     "python": {
      "outcome": "error",
-     "code": "InvalidModel",
-     "text": "InvalidModel: fields do not match: expected [complete, domains, constants, relations], got []"
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported language"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported language"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "InvalidInput: expected exactly fields [\"language\", \"profile\", \"spec_revision\", \"vocabulary\"]"
+    }
+   },
+   "signature": "51d46ac6021591a1",
+   "follow_up": "DF-9"
+  },
+  {
+   "id": "requests-0c134ee8ae475ce1",
+   "surface": "requests",
+   "profile": "parser:evaluate",
+   "seed": "conformance/parser.json/704",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "evaluate",
+    "family": "v0",
+    "lean": "",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {},
+     "operation": "evaluate"
+    }
+   },
+   "mutation": [
+    [
+     "unicode",
+     [
+      "environment",
+      "vocabulary",
+      "predicates",
+      "reviewed",
+      "description"
+     ],
+     "cr"
+    ],
+    [
+     "unicode",
+     [
+      "environment",
+      "language"
+     ],
+     "double-space"
+    ]
+   ],
+   "input": {
+    "id": "conformance/parser.json/704",
+    "kind": "evaluate",
+    "environment": {
+     "language": "v",
+     "profile": "r",
+     "spec_revision": "v",
+     "vocabulary": {}
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported language"
     },
     "lean": {
      "outcome": "error",
      "code": "InvalidInput",
-     "text": "rejected: array expected"
+     "text": "rejected: unsupported environment version"
     },
     "rust": {
      "outcome": "error",
-     "code": "SyntaxError",
-     "text": "SyntaxError: premises must be an array"
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: unsupported language, profile or specification revision"
     }
    },
-   "signature": "81763ebf19982998",
+   "signature": "0c134ee8ae475ce1",
    "follow_up": "DF-9"
+  },
+  {
+   "id": "requests-3ad80ab16ca85229",
+   "surface": "requests",
+   "profile": "invalid-background-model:evaluate",
+   "seed": "conformance/invalid-background-model.json/5",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "evaluate",
+    "family": "core",
+    "lean": "route",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {},
+     "operation": "evaluate"
+    }
+   },
+   "mutation": [
+    [
+     "type",
+     [
+      "environment",
+      "vocabulary",
+      "sorts",
+      "person"
+     ],
+     "number"
+    ],
+    [
+     "unicode",
+     [
+      "environment",
+      "language"
+     ],
+     "tab"
+    ]
+   ],
+   "input": {
+    "id": "conformance/invalid-background-model.json/5",
+    "kind": "evaluate",
+    "environment": {
+     "language": "v",
+     "profiles": [],
+     "spec_revision": "v",
+     "vocabulary": {}
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported language"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported language"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "InvalidInput: expected exactly fields [\"language\", \"profile\", \"spec_revision\", \"vocabulary\"]"
+    }
+   },
+   "signature": "3ad80ab16ca85229",
+   "follow_up": "DF-9"
+  },
+  {
+   "id": "requests-ae2af1a50758d9f7",
+   "surface": "requests",
+   "profile": "labels:label",
+   "seed": "conformance/labels.json/10",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "label",
+    "family": "core",
+    "lean": "route",
+    "rust": {
+     "fields": [
+      "id",
+      "kind",
+      "environment",
+      "label"
+     ],
+     "constants": {
+      "expected": {
+       "status": "ok",
+       "label": "readings:s1@0:0"
+      }
+     },
+     "operation": "label"
+    }
+   },
+   "mutation": [
+    [
+     "unicode",
+     [
+      "environment",
+      "language"
+     ],
+     "digits"
+    ],
+    [
+     "unicode",
+     [
+      "environment",
+      "profiles",
+      0
+     ],
+     "cr"
+    ]
+   ],
+   "input": {
+    "id": "conformance/labels.json/10",
+    "kind": "label",
+    "environment": {
+     "language": "v",
+     "profiles": [],
+     "spec_revision": "v",
+     "vocabulary": {}
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported language"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported language"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "InvalidInput: expected exactly fields [\"language\", \"profile\", \"spec_revision\", \"vocabulary\"]"
+    }
+   },
+   "signature": "ae2af1a50758d9f7",
+   "follow_up": "DF-9"
+  },
+  {
+   "id": "environment-996535acb2977f50",
+   "surface": "environment",
+   "profile": "envelope",
+   "seed": "conformance/elaborated-document.json/10/environment",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "relational-fol@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "sorts": {},
+     "predicates": {
+      "dept": {
+       "arguments": [
+        "$string"
+       ],
+       "description": "d"
+      }
+     },
+     "constants": {}
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "invalid signature: dept"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "invalid signature: dept"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "unknown predicate argument sort"
+    }
+   },
+   "signature": "996535acb2977f50",
+   "follow_up": "DF-7"
+  },
+  {
+   "id": "environment-459e326da66f3031",
+   "surface": "environment",
+   "profile": "envelope",
+   "seed": "conformance/wire-contract/norms@0-test-inputs.json/0/1",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "unicode",
+     [
+      "language"
+     ],
+     "nbsp"
+    ]
+   ],
+   "input": {
+    "language": "v",
+    "profiles": [],
+    "spec_revision": "v",
+    "vocabulary": {}
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported language"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported language"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "expected exactly fields [\"language\", \"profile\", \"spec_revision\", \"vocabulary\"]"
+    }
+   },
+   "signature": "459e326da66f3031",
+   "follow_up": "DF-4"
+  },
+  {
+   "id": "environment-87492aa83e9a9a54",
+   "surface": "environment",
+   "profile": "envelope",
+   "seed": "conformance/wire-contract/norms@0-test-inputs.json/97/1",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "type",
+     [
+      "vocabulary",
+      "predicates",
+      "permitted",
+      "arguments",
+      0
+     ],
+     "boolean"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "norms@0",
+     "relational-fol@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "constants": {},
+     "predicates": {
+      "permitted": {
+       "arguments": [
+        true
+       ],
+       "description": "p"
+      }
+     },
+     "sorts": {}
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "String expected"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "String expected"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "expected a string"
+    }
+   },
+   "signature": "87492aa83e9a9a54",
+   "follow_up": "DF-7"
   }
  ]
 }
