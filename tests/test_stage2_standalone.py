@@ -57,6 +57,134 @@ def test_model_decoder_locates_wrong_shapes_and_invalid_cells(table, key, value,
 
 
 @pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+def test_composed_environment_missing_vocabulary_table_keeps_frozen_path():
+    from ve.errors import VEError
+    raw = raw_environment(("data@0",))
+    del raw["vocabulary"]["sorts"]
+    with pytest.raises(VEError) as caught:
+        run("environment", [{"id": "missing-sorts", "environment": raw}])
+    assert caught.value.to_dict()["code"] == "InvalidInput"
+    assert caught.value.to_dict()["path"] == "/vocabulary"
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+def test_legacy_environment_malformed_predicate_keeps_frozen_path():
+    from ve.errors import VEError
+    corpus = json.loads((SERVICE.parents[4] / "conformance/closure.json").read_text())
+    raw = next(row["environment"] for row in corpus
+               if row["environment"].get("language") == "ve.core@0.1")
+    name = next(iter(raw["vocabulary"]["predicates"]))
+    raw["vocabulary"]["predicates"][name] = []
+    with pytest.raises(VEError) as caught:
+        run("environment", [{"id": "bad-predicate", "environment": raw}])
+    assert caught.value.to_dict()["code"] == "InvalidInput"
+    assert caught.value.to_dict()["path"] == f"/vocabulary/predicates/{name}"
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+def test_model_null_relation_cell_reaches_located_decoder():
+    from ve.errors import VEError
+    env = Environment(raw_environment(()))
+    model = model_wire(env)
+    model["relations"]["base"] = [[None]]
+    with pytest.raises(VEError) as caught:
+        run("model", [{"id": "null-cell", "environment": env.to_dict(), "model": model}])
+    assert caught.value.to_dict()["code"] == "InvalidModel"
+    assert caught.value.to_dict()["path"] == "/relations/base/0/0"
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+def test_invalid_corpus_environment_precedes_model_shape():
+    from ve.errors import VEError
+    corpus = json.loads((SERVICE.parents[4] / "conformance/validation.json").read_text())
+    case = next(row for row in corpus if row["id"] == "validation_000")
+    case["model"] = []
+    with pytest.raises(VEError) as caught:
+        run("model", [case])
+    assert caught.value.to_dict()["code"] == "UnsupportedProfile"
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+def test_legacy_envelope_error_precedes_nested_vocabulary_location():
+    from ve.errors import VEError
+    corpus = json.loads((SERVICE.parents[4] / "conformance/validation.json").read_text())
+    case = next(row for row in corpus if row["id"] == "validation_008")
+    raw = deepcopy(case["environment"])
+    raw["extra"] = "unknown"
+    del raw["vocabulary"]["sorts"]
+    with pytest.raises(VEError) as caught:
+        run("environment", [{"id": "outer-first", "environment": raw}])
+    assert caught.value.to_dict()["code"] == "InvalidInput"
+    assert caught.value.to_dict().get("path") is None
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+def test_legacy_unknown_sort_precedes_description_type():
+    from ve.errors import VEError
+    corpus = json.loads((SERVICE.parents[4] / "conformance/validation.json").read_text())
+    case = next(row for row in corpus if row["id"] == "validation_003")
+    raw = deepcopy(case["environment"])
+    raw["vocabulary"]["predicates"]["owns"]["description"] = 7
+    with pytest.raises(VEError) as caught:
+        run("environment", [{"id": "sort-first", "environment": raw}])
+    assert caught.value.to_dict()["code"] == "UnknownSymbol"
+    assert caught.value.to_dict().get("path") is None
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+@pytest.mark.parametrize(("field", "replacement"), [("profile", []), ("spec_revision", 7)])
+def test_legacy_header_precedes_unknown_sort(field, replacement):
+    from ve.errors import VEError
+    corpus = json.loads((SERVICE.parents[4] / "conformance/validation.json").read_text())
+    case = deepcopy(next(row for row in corpus if row["id"] == "validation_003"))
+    case["environment"][field] = replacement
+    with pytest.raises(VEError) as caught:
+        run("environment", [case])
+    assert caught.value.to_dict()["code"] == "InvalidInput"
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+@pytest.mark.parametrize("field", ("arguments", "description"))
+def test_legacy_earlier_predicate_shape_precedes_later_unknown_sort(field):
+    from ve.errors import VEError
+    corpus = json.loads((SERVICE.parents[4] / "conformance/validation.json").read_text())
+    case = deepcopy(next(row for row in corpus if row["id"] == "validation_003"))
+    case["environment"]["vocabulary"]["predicates"]["deployed"][field] = 7
+    with pytest.raises(VEError) as caught:
+        run("environment", [case])
+    assert caught.value.to_dict()["code"] == "InvalidInput"
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+@pytest.mark.parametrize("mutation", ("missing_sort", "wrong_entry"))
+def test_legacy_sort_description_precedes_later_shape_faults(mutation):
+    from ve.errors import VEError
+    corpus = json.loads((SERVICE.parents[4] / "conformance/validation.json").read_text())
+    case = deepcopy(next(row for row in corpus if row["id"] == "validation_002"))
+    sorts = case["environment"]["vocabulary"]["sorts"]
+    if mutation == "missing_sort":
+        del sorts["service"]
+    else:
+        sorts["service"] = []
+    with pytest.raises(VEError) as caught:
+        run("environment", [case])
+    assert caught.value.to_dict()["code"] == "InvalidInput"
+    assert caught.value.to_dict().get("path") is None
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+def test_relation_cell_shape_precedes_earlier_dangling_entity():
+    from ve.errors import VEError
+    corpus = json.loads((SERVICE.parents[4] / "conformance/validation.json").read_text())
+    case = deepcopy(next(row for row in corpus if row["id"] == "validation_015"))
+    case["model"]["relations"]["owns"][0][1] = 7
+    with pytest.raises(VEError) as caught:
+        run("model", [case])
+    assert caught.value.to_dict()["code"] == "InvalidModel"
+    assert caught.value.to_dict()["path"] == "/relations/owns/0/1"
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
 def test_legacy_envelope_diagnostics_retain_quoted_extra_fields_and_arity():
     from ve.errors import VEError
     cases = {item["id"]: item for item in json.loads(
@@ -224,6 +352,147 @@ def _single_node_mutations(model):
             if encoded not in seen:
                 seen.add(encoded)
                 yield mutant
+
+
+def _corpus_inputs():
+    """Every frozen conformance model/environment, with duplicate inputs run once."""
+    from tools.lean_first_diff import CONFORMANCE
+
+    root = SERVICE.parents[4]
+    paths = [root / "conformance" / f"{name}.json" for name in CONFORMANCE]
+    seen_environments, seen_models = set(), set()
+    for path in paths:
+        rows = json.loads(path.read_text())
+        if not isinstance(rows, list):
+            continue
+        for row in rows:
+            if not isinstance(row, dict) or not isinstance(row.get("environment"), dict):
+                continue
+            environment = row["environment"]
+            key = json.dumps(environment, sort_keys=True)
+            if key not in seen_environments:
+                seen_environments.add(key)
+                yield "environment", environment, None
+            model = row.get("model")
+            if isinstance(model, dict):
+                key = json.dumps([environment, model], sort_keys=True)
+                if key not in seen_models:
+                    seen_models.add(key)
+                    yield "model", environment, model
+
+
+def _each_node_mutation(value):
+    """Retype and null every node; delete every member of every object."""
+    def walk(node, path=()):
+        yield path, node
+        if isinstance(node, dict):
+            for key, child in node.items():
+                yield from walk(child, (*path, key))
+        elif isinstance(node, list):
+            for index, child in enumerate(node):
+                yield from walk(child, (*path, index))
+
+    def changed(path, replacement, *, delete=False):
+        result = deepcopy(value)
+        if not path:
+            return replacement
+        parent = result
+        for step in path[:-1]:
+            parent = parent[step]
+        if delete:
+            del parent[path[-1]]
+        else:
+            parent[path[-1]] = replacement
+        return result
+
+    for path, node in walk(value):
+        wrong_type = ([] if isinstance(node, dict) else {}
+                      if isinstance(node, list) else 7
+                      if isinstance(node, str) else "bad!" if node is None else [])
+        yield path, "type", changed(path, wrong_type)
+        if node is not None:
+            yield path, "null", changed(path, None)
+        if isinstance(node, dict):
+            for key in node:
+                yield (*path, key), "absent", changed((*path, key), None, delete=True)
+
+
+@pytest.mark.nightly
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+def test_every_corpus_model_and_environment_node_matches_frozen_python(tmp_path):
+    """Compare the full decoder diagnostic, including missing versus null fields.
+
+    JSONL keeps corpus-scale mutations out of memory; both checkers read the
+    same file, and the frozen oracle runs once in its isolated checkout.
+    """
+    from tools import lean_first_oracle
+    from ve.backends.lean_service import LeanService
+    from ve.backends.diagnostics import checker_error
+    from ve.errors import VEError
+
+    cases_path = tmp_path / "mutations.jsonl"
+    counts = {"environment": 0, "model": 0}
+    with cases_path.open("w") as output:
+        for mode, environment, model in _corpus_inputs():
+            subject = environment if mode == "environment" else model
+            counts[mode] += 1
+            for path, operation, mutant in _each_node_mutation(subject):
+                case = {"mode": mode, "environment": mutant if mode == "environment" else environment}
+                if mode == "model":
+                    case["model"] = mutant
+                case["origin"] = [counts[mode], list(path), operation]
+                output.write(json.dumps(case, ensure_ascii=False) + "\n")
+    assert counts["environment"] >= 20 and counts["model"] >= 1100
+
+    answers_path = tmp_path / "oracle-answers.jsonl"
+    script = tmp_path / "oracle.py"
+    script.write_text(
+        "import json\n"
+        "from ve.environment import Environment\n"
+        "from ve.model import FiniteModel\n"
+        "from ve.errors import VEError\n"
+        f"with open({str(cases_path)!r}) as cases, open({str(answers_path)!r}, 'w') as answers:\n"
+        "    for line in cases:\n"
+        "        case = json.loads(line)\n"
+        "        try:\n"
+        "            env = Environment(case['environment'])\n"
+        "            if case['mode'] == 'model':\n"
+        "                FiniteModel.from_dict(env, case['model'])\n"
+        "            result = {'code': 'ok'}\n"
+        "        except VEError as exc:\n"
+        "            d = exc.to_dict()\n"
+        "            result = {'code': d['code'], 'path': d.get('path')}\n"
+        "        answers.write(json.dumps(result) + '\\n')\n"
+    )
+    assert lean_first_oracle.run(script, scratch=tmp_path) == 0
+
+    def outcomes(service, mode, requests):
+        try:
+            rows = service.run(mode, requests)
+        except VEError as exc:
+            if len(requests) > 1:
+                middle = len(requests) // 2
+                return (outcomes(service, mode, requests[:middle]) +
+                        outcomes(service, mode, requests[middle:]))
+            return [{"code": exc.code, "path": exc.to_dict().get("path")}]
+        return [({"code": "ok"} if row["status"] == "ok" else
+                 {"code": checker_error(row["error"]).code, "path": row.get("path")})
+                for row in rows]
+
+    with LeanService() as service, cases_path.open() as cases, answers_path.open() as answers:
+        while batch := [json.loads(line) for _, line in zip(range(200), cases)]:
+            expected = [json.loads(answers.readline()) for _ in batch]
+            actual = [None] * len(batch)
+            for mode in ("environment", "model"):
+                indexes = [i for i, case in enumerate(batch) if case["mode"] == mode]
+                requests = [{"id": str(i), "environment": batch[i]["environment"],
+                             **({"model": batch[i]["model"]} if mode == "model" else {})}
+                            for i in indexes]
+                for i, result in zip(indexes, outcomes(service, mode, requests), strict=True):
+                    actual[i] = result
+            for case, oracle, result in zip(batch, expected, actual, strict=True):
+                assert result == oracle, (case["mode"], case["origin"], result, oracle)
+        assert answers.readline() == ""
 
 
 @pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
