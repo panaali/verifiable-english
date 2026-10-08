@@ -114,3 +114,25 @@ def test_delta_numbers_are_regenerated_from_evidence():
     assert "6 passed" in (report.EVIDENCE / "mutants-restored-review.log").read_text()
     if (report.EVIDENCE / "gate.json").exists():
         assert report.load("gate.json")["status"] == "passed"
+
+
+def test_branch_trust_allowance_counts_only_batch_12_changes():
+    from tools import trust_map
+
+    baseline = json.loads((ROOT / "docs/trust-baseline.json").read_text())
+    main_baseline = json.loads(subprocess.check_output(
+        ["git", "show", "main:docs/trust-baseline.json"], cwd=ROOT))
+    assert baseline["totals"] == main_baseline["totals"]
+    assert baseline["files"] == main_baseline["files"]
+    current, problems = trust_map.measure(ROOT, ROOT / "tools/trust-classes.json",
+                                          ROOT / "lean/statements.txt")
+    parent, parent_problems, _ = trust_map.measure_rev(report.BASE)
+    assert not problems and not parent_problems
+    now = trust_map.budget(trust_map.totals(current))
+    before = trust_map.budget(trust_map.totals(parent))
+    growth = {key: now[key] - before[key] for key in ("K", "S", "V")}
+    assert baseline["signed"][-1]["allow"] == growth
+    text = (HERE / "DELTA.md").read_text()
+    assert f"**{sum(growth.values())} trusted Lean\nlines added**" in text
+    changes = report.line_changes()["production Python"]
+    assert f"**{changes[1]} production Python lines**" in text
