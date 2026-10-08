@@ -1,0 +1,87 @@
+{
+  "range": "main..HEAD --no-merges",
+  "captured_head": "bcc6aa53f20aaa88e7dc6945325750428637486a",
+  "base": "7550e08a704a1a08690c9b1df9c18ad75590b2bd",
+  "main_at_capture": "c85797de464d7b9a955b7e906a3d88e15c7b732f",
+  "commits": [
+    "bcc6aa53f20aaa88e7dc6945325750428637486a",
+    "533dd2907403dac325de8d198738309dd73bb03f",
+    "39ba909ab219190ca14968ec39fcaea2ac60c11f",
+    "1555942981587f945a33e334049995dfbf6abc71",
+    "5ca2794ca398fe09a1092711c7e14b05136d717e"
+  ],
+  "files": [
+    {
+      "commit": "bcc6aa53f20aaa88e7dc6945325750428637486a",
+      "path": "docs/lean-first/b17/seed_mutants.py",
+      "added": 74,
+      "deleted": 0
+    },
+    {
+      "commit": "bcc6aa53f20aaa88e7dc6945325750428637486a",
+      "path": "tests/test_b17_evidence.py",
+      "added": 85,
+      "deleted": 0
+    },
+    {
+      "commit": "bcc6aa53f20aaa88e7dc6945325750428637486a",
+      "path": "tools/gate-collection.json",
+      "added": 5,
+      "deleted": 0
+    },
+    {
+      "commit": "533dd2907403dac325de8d198738309dd73bb03f",
+      "path": "ve/assist/session.py",
+      "added": 11,
+      "deleted": 10
+    },
+    {
+      "commit": "39ba909ab219190ca14968ec39fcaea2ac60c11f",
+      "path": "tests/test_b17_owner.py",
+      "added": 17,
+      "deleted": 1
+    },
+    {
+      "commit": "39ba909ab219190ca14968ec39fcaea2ac60c11f",
+      "path": "tools/gate-collection.json",
+      "added": 1,
+      "deleted": 0
+    },
+    {
+      "commit": "39ba909ab219190ca14968ec39fcaea2ac60c11f",
+      "path": "ve/assist/session.py",
+      "added": 28,
+      "deleted": 6
+    },
+    {
+      "commit": "1555942981587f945a33e334049995dfbf6abc71",
+      "path": "tools/gate-collection.json",
+      "added": 3,
+      "deleted": 0
+    },
+    {
+      "commit": "5ca2794ca398fe09a1092711c7e14b05136d717e",
+      "path": "tests/test_b17_owner.py",
+      "added": 63,
+      "deleted": 0
+    },
+    {
+      "commit": "5ca2794ca398fe09a1092711c7e14b05136d717e",
+      "path": "ve/adapters/cedar.py",
+      "added": 22,
+      "deleted": 7
+    },
+    {
+      "commit": "5ca2794ca398fe09a1092711c7e14b05136d717e",
+      "path": "ve/assist/session.py",
+      "added": 26,
+      "deleted": 13
+    }
+  ],
+  "totals": {
+    "added": 335,
+    "deleted": 37,
+    "lean_added": 0,
+    "python_deleted": 37
+  }
+}

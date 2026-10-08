@@ -15,7 +15,10 @@
     {"nodeid": "tests/test_p1_amendment7.py::test_actual_dev_prefix_reconstructs_without_duplicate_trials", "reason": "local dev evidence absent in clean checkout"},
     {"nodeid": "tests/test_p1_amendment8.py::test_real_dev_evidence_is_retained_and_recovery_spends_nothing", "reason": "local dev evidence absent"},
     {"nodeid": "tests/test_t1c.py::*", "reason": "run `python -m ve_experiments.t1c.run prepare` first"},
-    {"nodeid": "tests/test_p0_three_way.py::test_rust_matches_expected[admission]", "reason": "admission is outside Rust scope"}
+    {"nodeid": "tests/test_p0_three_way.py::test_rust_matches_expected[admission]", "reason": "admission is outside Rust scope"},
+    {"nodeid": "tests/test_p0_three_way.py::test_rust_matches_expected[dependency-order]", "reason": "dependency-order is outside Rust scope"},
+    {"nodeid": "tests/test_p0_three_way.py::test_rust_matches_expected[labels]", "reason": "labels is outside Rust scope"},
+    {"nodeid": "tests/test_b17_evidence.py::test_b17_report_gate_from_saved_clean_run", "reason": "first full gate writes the saved run"}
   ],
   "deselected_tests": [
     {"nodeid": "tests/test_llm.py::test_live_*", "reason": "Calls real model CLIs; excluded by the non-live gate."}
