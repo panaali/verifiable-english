@@ -95,7 +95,9 @@ def checkAuthor (environment : Json) (U : UDoc) : Except String Unit := checkAut
 def decodeSourceU (environment norms : Json) : Except String SourceU :=
   if hasProfile environment then do
     let env' ← placeholderJson environment
-    let src ← VE.Norms.Wire.decodeSource env' norms false true
+    -- `data@0` flags are admitted as Python's base did; every model a case supplies must satisfy them
+    -- (`InvalidModel(flags)`, `Replay`, `Report`), and no check reads a flag premise, so each is conservative.
+    let src ← VE.Norms.Wire.decodeSource env' norms true true
     let names := unspecifiedNames environment
     let U : UDoc := ⟨src.D, (src.D.T.regulated.map Regulated.name).filter (names.contains ·)⟩
     checkAuthor environment U

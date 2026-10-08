@@ -144,22 +144,20 @@ def test_definition_sentence_rejections(sentence, message):
         parse_definition(env, sentence)
 
 
-def test_definition_sentence_parts_are_read_by_python_with_lean_shadow(monkeypatch):
-    """A definition's head and body use Python admission and still reach Lean's shadow reader."""
+def test_definition_sentence_parts_are_read_by_lean(monkeypatch):
+    """Review A3 of E2: a definition's head and body are user-written formula sentences, so Lean's
+    `english.read` decides them (one reading each), not Python's hand parser and Lark audit."""
     from ve import english
     from ve.backends import english_lean
     seen = []
     original = english_lean.read
     monkeypatch.setattr(english_lean, "read",
                         lambda env, source, words, options: seen.append(source) or original(env, source, words, options))
-    python_seen = []
-    original_python = english._python_reading
-    monkeypatch.setattr(english, "_python_reading",
-                        lambda *args: python_seen.append(args[1]) or original_python(*args))
+    monkeypatch.setenv("VE_ENGLISH_COMPARATOR", "0")
+    monkeypatch.setattr(english, "_python_reading", lambda *_args: pytest.fail("Python decided a definition"))
     parse_definition(Environment(staff_env(("definitions@0", "relational-fol@0"))), TRUSTED)
     assert seen == ["for every person, that person is trusted.",
                     "for every person, both that person is staff and that person is badged."]
-    assert python_seen == seen
 
 
 def test_citation_and_definition_renderings_are_checked_by_lean(monkeypatch):
@@ -170,6 +168,8 @@ def test_citation_and_definition_renderings_are_checked_by_lean(monkeypatch):
     seen = []
     original = english_lean.check
     monkeypatch.setattr(english_lean, "check", lambda *args: seen.append(args[-1]) or original(*args))
+    monkeypatch.setenv("VE_ENGLISH_COMPARATOR", "0")
+    monkeypatch.setattr(english, "_python_reading", lambda *_args: pytest.fail("Python checked a rendering"))
     env = Environment(adopt(staff_env(), TRUSTED))
     [row] = wordings(env)
     conclusion = formula_from_data(env, ["unary", "trusted", ["const", "ann"]])

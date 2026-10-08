@@ -84,27 +84,3 @@ def nearest(phrase, words):
                      'shared_stem': stem, 'content_overlap': overlap,
                      'near_duplicate': edit <= 2 or stem or bool(overlap)})
     return sorted(rows, key=lambda r: (r['edit_distance'], not r['shared_stem'], r['symbol']))
-
-
-def unknown_phrase(sentence, words):
-    """Editor help for a sentence Lean read no meaning for (spec 2.8: the nearest-wording suggestion, kept as
-    help). It decides nothing: Lean's verdict, class, code and span stand. The sentence is cut into phrases at
-    the boundary words, as the hand parser cut them; the first phrase whose words are in no selected wording,
-    noun or display form is returned with its offsets in `sentence` and the three nearest declared wordings, or
-    None when every phrase is known."""
-    known = [lexical(re.sub(r'\{[0-9]+\}', ' ', text)) for text in (
-        *words.predicates.values(), *words.negatives.values(), *words.sorts.values(), *words.constants.values())]
-    known = [' ' + k + ' ' for k in known if k]
-    starts = [0] + [token.end() for token in TOKEN.finditer(sentence)
-                    if token.group().lower() in BOUNDARIES or token.group() == ',']
-    for start in starts:
-        begin = re.compile(r'\s*').match(sentence, start).end()
-        end = phrase_end(sentence, begin)
-        target = lexical(sentence[begin:end])
-        if not target or any(' ' + target + ' ' in k for k in known):
-            continue
-        head = re.search(r'(?:\bis\s+(?:not\s+)?)?(?:\b(?:a|an)\s+)?$', sentence[:begin], re.I)
-        begin = head.start() if head and head.group() else begin
-        matches = nearest(sentence[begin:end], words)[:3]
-        return begin, end, [row['wording'] for row in matches]
-    return None

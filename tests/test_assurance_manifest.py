@@ -279,9 +279,9 @@ def test_broad_exception_handlers_are_reviewed():
     assert all(reason for reason in reviewed.values())
 
 
-def test_english_admission_is_python_authoritative():
+def test_english_admission_is_lean_authoritative():
     assert {op["authority"] for op in OPS} <= {"python", "migrated", "lean-only"}
-    assert assurance.enforced_operations() == frozenset()
+    assert assurance.enforced_operations() == frozenset({"english.admission"})
 
 
 # --- completeness: omissions that no decorator comparison can see ----------------
@@ -634,7 +634,7 @@ def test_guard_blocks_every_python_entry_once_migrated():
                     fn()
             assert caught.value.to_dict()["code"] == "CheckerUnavailable"
             assert caught.value.operation == op["id"]
-    assert assurance.enforced_operations() == frozenset()
+    assert assurance.enforced_operations() == frozenset({"english.admission"})
 
 
 def test_guard_allows_the_lean_engine():
@@ -899,8 +899,8 @@ def test_bundle_separates_rejection_from_unavailability(tmp_path, monkeypatch):
     from ve.bundle import check_bundle
     hang = _fake_lean(tmp_path, FAULTS["hang"], name="hang")
     configured_wait = HANG_TIMEOUT + 123.5
-    # The bundle's searches start the real Rust and Lean checkers (lean-first batch 15b: Python has no
-    # search of its own); start them before the timeout is lowered, as the hang is the fake runner's.
+    # The bundle's English uses the Lean service and its searches use the Rust and Lean checkers;
+    # start them before lowering the timeout, which applies to the fake runner's hang.
     assert check_bundle(_bundle())["lean_outcome"] == "not_requested"
     with monkeypatch.context() as setting:
         setting.setenv("VE_LEAN_TIMEOUT", str(configured_wait))
