@@ -30,7 +30,7 @@ from subprocesses import HANG_TIMEOUT, run_cpu_bounded
 from conformance.three_way import rust_evaluations
 from ve import Environment, FiniteModel, evaluate
 from ve.ast import document_from_data, formula_from_data
-from ve.backends import dispatch, rust_jsonl
+from ve.backends import dispatch, lean as lean_backend, rust_jsonl
 from ve.backends.lean_service import LeanService
 from ve.errors import ResourceLimit
 from ve.evaluate import _Evaluator
@@ -331,21 +331,27 @@ def test_lean_authority_reports_resource_limit_on_every_generated_case(seed, mon
     report `ResourceLimit`, and every operation they dispatch runs on Lean (no
     Python fallback). It counts no Python units: the verdicts are the backends'.
 
-    Lean-authority evaluation asks Rust first. Under load (a 2 h 14 min suite)
-    one such call outlasted the Rust client's 5-second default; every Rust call
-    and Lean service request here must wait the suite's hang guard instead
-    (`VE_RUST_TIMEOUT`, `VE_LEAN_SERVICE_TIMEOUT`: a request's wall-clock cap beside
-    its mode's CPU deadline, lean-first batch 1)."""
+    Under load (a 2 h 14 min suite) a backend call once outlasted its client's
+    default; every Lean service request and every `ve_metered` call here must wait
+    the suite's hang guard instead (`VE_LEAN_SERVICE_TIMEOUT`, `VE_LEAN_TIMEOUT`: a
+    request's wall-clock cap beside its mode's CPU deadline, lean-first batch 1).
+    No operation here is a search, so none asks Rust (lean-first batch 15b: the
+    Lean authority's evaluation and countermodel check are Lean's, review B3)."""
     monkeypatch.setenv("VE_AUTHORITY", "lean")
     monkeypatch.delenv("VE_AUTHORITY_OVERRIDES", raising=False)
     calls = []
     monkeypatch.setattr(dispatch, "observers", [*dispatch.observers, lambda op, a: calls.append((op, a))])
-    waits, lean_waits = [], []
-    checker, deadline = rust_jsonl._run_checker, LeanService._deadline
+    waits, lean_waits, metered_waits = [], [], []
+    checker, deadline, one_shot = rust_jsonl._run_checker, LeanService._deadline, lean_backend.run
 
     def recorded(argv, *, input, timeout):
         waits.append(timeout)
         return checker(argv, input=input, timeout=timeout)
+
+    def metered_recorded(operation, executable, cases, *, runner, mode="", timeout=None):
+        if runner == "ve_metered":
+            metered_waits.append(timeout)
+        return one_shot(operation, executable, cases, runner=runner, mode=mode, timeout=timeout)
 
     def lean_recorded(self, mode, size, cases, timeout):
         start = time.monotonic()
@@ -354,6 +360,7 @@ def test_lean_authority_reports_resource_limit_on_every_generated_case(seed, mon
         return result
     monkeypatch.setattr(rust_jsonl, "_run_checker", recorded)
     monkeypatch.setattr(LeanService, "_deadline", lean_recorded)
+    monkeypatch.setattr(lean_backend, "run", metered_recorded)
     dispatched = set()
     for name, verdict, _, _, _ in generate(seed):
         calls.clear()
@@ -361,7 +368,8 @@ def test_lean_authority_reports_resource_limit_on_every_generated_case(seed, mon
         assert all(authority == "lean" for _, authority in calls), (name, calls)
         dispatched.update(op for op, _ in calls)
     assert BUDGET_OPERATIONS <= dispatched, BUDGET_OPERATIONS - dispatched
-    assert waits and set(waits) == {HANG_TIMEOUT}, sorted(set(waits))
+    assert waits == [], "Rust was asked for a reported answer under the Lean authority"
+    assert metered_waits and set(metered_waits) == {HANG_TIMEOUT}, sorted(set(metered_waits))
     assert lean_waits and set(lean_waits) == {HANG_TIMEOUT}, sorted(set(lean_waits))
 
 
