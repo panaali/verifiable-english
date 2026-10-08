@@ -97,11 +97,11 @@ def test_gap_and_wrong_status_are_rejected(service):
 # ---------------------------------------------------------------- B4: Python against Lean on every seed
 
 # The seeds Lean must decide (no fail-closed answer): its owned profiles, every branch of the wrapper.
-DECIDED = {"usecases/bluedot-grant/document.ve.md", "plain", "mixed", "open-terms", "reading-sets",
-           "graph-bridge", "graph-readings", "definitions", "p0-envelope"}
+DECIDED = {"usecases/bluedot-grant/document.ve.md", "usecases/bluedot-grant/causal.ve.md", "plain", "mixed",
+           "open-terms", "reading-sets", "graph-bridge", "graph-readings", "definitions", "p0-envelope",
+           "alternatives-cells", "alternatives-graph", "risk"}
 # The seeds it must refuse, each with the reason it names.
-FAIL_CLOSED = {"usecases/bluedot-grant/causal.ve.md": "alternatives@0",
-               "usecases/news-article/news-w6a.ve.md": "order@0",
+FAIL_CLOSED = {"usecases/news-article/news-w6a.ve.md": "order@0",
                "tests/data/readings_s2/constitution-nd-readings.ve.md": "restricted JSON reader",
                "fence": "surface parser"}
 
@@ -134,6 +134,20 @@ def test_residual_counts_are_nonzero_and_python_s(seed_answers):
     assert residual["usecases/bluedot-grant/document.ve.md"]["assumptions"] == 19
     for line in ("bridge_leaves", "open_terms", "unresolved_reading_sets", "assumptions"):
         assert any(r[line] for r in residual.values()), line
+
+
+def test_composed_block_coverage_is_its_route_s_line(seed_answers):
+    """B1's profile-specific coverage: an `alternatives@0` or `risk@0` document's coverage carries its block
+    route's cells and residual counts (`Alternatives.Wire.coverage`, the call Python relays), each cell kind
+    nonzero on some seed, and the risk route's on the risk seed."""
+    cells = seed_answers["alternatives-cells"][2]["value"]["coverage"]
+    assert [x["unit"] for x in cells["alternatives"]["alternatives_declared"]] == ["u0"]
+    assert [x["unit"] for x in cells["alternatives"]["counterfactual_leaves"]] == ["u1"]
+    assert [x["unit"] for x in cells["alternatives"]["proximate_judgments"]] == ["u2"]
+    assert cells["residual"]["assumed_harm_free"] == 1 and cells["residual"]["table_complete"] == 1
+    risk = seed_answers["risk"][2]["value"]["coverage"]
+    assert risk["residual"]["alternatives_declared"] == 1 and risk["residual"]["counterfactual_leaves"] == 1
+    assert "alternatives" not in seed_answers["plain"][2]["value"]["coverage"]
 
 
 def test_reading_set_status_fold_follows_the_active_version(seed_answers):
@@ -210,12 +224,18 @@ def test_a_graph_is_admitted_before_its_labels_are_counted(service, graph):
 # ---------------------------------------------------------------- B3: what the mode cannot decide fails closed
 
 def test_profile_gate_runs_before_the_environment_decoder(service):
-    """An alternatives environment the plain envelope decoder would reject (`fields do not match`) is refused
-    as unavailable, naming its profile, as is a unit-schema block, a legacy envelope and a `@2` document."""
-    env = envelope(VOCAB, ["alternatives@0", "norms@0", "relational-fol@0"])
-    env["alternatives"] = {"anything": True}
+    """A profile the mode does not compose is refused as unavailable before any decoder reads the environment
+    (B3: the plain envelope decoder rejected the alternatives and quantity documents with `fields do not
+    match`), as is a unit-schema block, a legacy envelope and a `@2` document; an alternatives block is its
+    own route's to decode, with that route's text."""
+    env = envelope(VOCAB, ["norms@0", "relational-fol@0", "soft-norms@0"])
+    env["soft_norms"] = {"anything": True}
     answer = lean(service, document("AB", [unit("a", [0, 2])], environment_json=env))
-    assert answer["code"] == "CheckerUnavailable" and "alternatives@0" in answer["text"], answer
+    assert answer["code"] == "CheckerUnavailable" and "soft-norms@0" in answer["text"], answer
+    alternatives = envelope(VOCAB, ["alternatives@0", "norms@0", "relational-fol@0"])
+    alternatives["alternatives"] = {"anything": True}
+    python, answer = both(service, document("AB", [unit("a", [0, 2])], environment_json=alternatives))
+    assert python["outcome"] == answer["outcome"] == "error" and dw.verdict(python, answer) != "differ", answer
     block = envelope(VOCAB, ["relational-fol@0", "time@0"])
     block["unit_schema"] = {}
     answer = lean(service, document("AB", [unit("a", [0, 2])], environment_json=block))

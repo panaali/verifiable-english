@@ -31,7 +31,8 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 FAIL_CLOSED = ("CheckerUnavailable", "ResourceLimit")
 # `VE.Service.Document.ownedProfiles` (checked against the Lean mode by `tests/test_lean_document_wrapper.py`).
-OWNED = frozenset({"data@0", "definitions@0", "documents@1", "norms@0", "relational-fol@0", "time@0"})
+OWNED = frozenset({"alternatives@0", "data@0", "definitions@0", "documents@1", "norms@0", "relational-fol@0", "risk@0",
+                   "time@0"})
 
 
 def text_of(document) -> str:
@@ -301,10 +302,74 @@ def _generated():
     out.append(("p0-envelope", {"front": {"format": "ve-document@1", "environment": environment(), "units": [
         _unit("a", (0, 3), "asserted", content={"ast": ["eq", ["const", "alpha"], ["const", "beta"]]})]},
         "body": "A=B"}))
+    out += _block_seeds()
     fence_body = "Alice is in finance.\n```ve a\nAlice is in finance.\n```\n"
     out.append(("fence", {"front": {"format": "ve-document@1", "environment": env_json, "units": [
         _unit("a", (0, len("Alice is in finance.\n")), "asserted", content={"fence": "a"}, surface="strict")]},
         "body": fence_body}))
+    return out
+
+
+def _alternatives_environment():
+    """An `alternatives@0` environment with regulated permission and obligation words and a complete outcome
+    table (the alternatives profile tests' source)."""
+    from ve.profiles import LANGUAGE, SPEC_REVISION
+
+    def word(args, words):
+        return {"arguments": args, "description": words, "verbalisation": words}
+    predicates = {
+        "available": word(["action", "robot"], "{0} is available to {1}"),
+        "leads_to": word(["action", "harm"], "{0} leads to {1}"),
+        "inaction": word(["action"], "{0} is inaction"), "taken": word(["action"], "{0} is taken"),
+        "causes": word(["action", "harm"], "{0} causes {1}"),
+        "permitted": {"arguments": ["action"], "description": "permission",
+                      "regulated": {"role": "permission", "default": "deny", "act": "{0} be done"}},
+        "required": {"arguments": ["action"], "description": "obligation",
+                     "regulated": {"role": "obligation", "default": "deny", "act": "{0} be done",
+                                   "permission": "permitted"}}}
+    constants = {name: {"sort": sort, "description": name}
+                 for name, sort in (("pull", "action"), ("wait", "action"), ("r", "robot"), ("h", "harm"))}
+    block = {"chooser": "robot", "action": "action", "harm": "harm", "available": "available",
+             "leads_to": "leads_to", "outcomes": {"complete_by": "case annotator"},
+             "decided_by": "case annotator", "performed": {"permission": "permitted", "obligation": "required"},
+             "inaction": "inaction", "taken": "taken", "proximate": "causes"}
+    return {"language": LANGUAGE, "profiles": ["alternatives@0", "norms@0", "relational-fol@0"],
+            "spec_revision": SPEC_REVISION,
+            "vocabulary": {"sorts": {name: {"description": name} for name in ("robot", "action", "harm")},
+                           "predicates": predicates, "constants": constants},
+            "alternatives": block}
+
+
+def _block_seeds():
+    """Documents over the composed blocks: alternatives cells (declared, counterfactual, proximate and assumed
+    harm-free), a graph admitted on the alternatives route, and a `risk@0` environment."""
+    from ve.alternatives import run_case
+    alt = _alternatives_environment()
+    atoms = [["binary", "available", ["const", "pull"], ["const", "r"]],
+             ["not", ["binary", "leads_to", ["const", "pull"], ["const", "h"]]],
+             ["binary", "causes", ["const", "pull"], ["const", "h"]]]
+    units = [_unit(f"u{i}", (i, i + 1), "asserted", support="testimony", content={"ast": atom})
+             for i, atom in enumerate(atoms)]
+    out = [("alternatives-cells", {"front": {"format": "ve-document@1", "environment": alt, "units": units,
+                                             "narrowings": []}, "body": "abc"})]
+    premise = next(p for p in run_case({"id": "source", "kind": "alt-elaborate", "environment": alt,
+                                        "norms": []})["alternatives"] if p["label"] == "alternatives:own")
+    out.append(("alternatives-graph", {"front": {
+        "format": "ve-document@1", "environment": alt,
+        "units": [_unit("claim", (0, 1), "asserted", support="observation", content={"ast": ["top"]})],
+        "graph": {"root": "slot", "nodes": [{"name": "slot", "label": premise["label"], "ast": premise["ast"]}]}},
+        "body": "x"}))
+    risk = deepcopy(alt)
+    risk["profiles"] = ["alternatives@0", "norms@0", "relational-fol@0", "risk@0"]
+    risk["vocabulary"]["constants"]["outage"] = {"sort": "harm", "description": "outage"}
+    risk["alternatives"]["outcomes"] = "signed"
+    risk["risk"] = {"severity": {"sort": "severity", "classes": ["severe", "minor"],
+                                 "more_severe": [["severe", "minor"]], "unranked": [], "decided_by": "team"},
+                    "harm_classes": [["outage", "severe"], ["h", "minor"]], "unexamined": "possible"}
+    out.append(("risk", {"front": {"format": "ve-document@1", "environment": risk, "units": [
+        _unit("a", (0, 1), "asserted", support="assumption", content={"ast": atoms[0]}),
+        _unit("b", (1, 2), "asserted", content={"ast": ["binary", "leads_to", ["const", "wait"], ["const", "outage"]]}),
+        _unit("c", (2, 3))]}, "body": "abc"}))
     return out
 
 
