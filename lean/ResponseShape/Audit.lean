@@ -78,6 +78,7 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.Discourse.compileUnit_status
 #print axioms ResponseShape.Encoders.Discourse.compileUnits_status
 #print axioms ResponseShape.Encoders.Discourse.encodeAdmission_fits
+#print axioms ResponseShape.Encoders.Discourse.foldStatus_mem
 #print axioms ResponseShape.Encoders.Discourse.joint_fits
 #print axioms ResponseShape.Encoders.Discourse.loadFront_status
 #print axioms ResponseShape.Encoders.Discourse.loadedStatus_mem

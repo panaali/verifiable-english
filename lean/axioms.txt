@@ -4386,6 +4386,7 @@
 'ResponseShape.Encoders.Discourse.compileUnit_status' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Discourse.compileUnits_status' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Discourse.encodeAdmission_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Discourse.foldStatus_mem' depends on axioms: [propext]
 'ResponseShape.Encoders.Discourse.joint_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Discourse.loadFront_status' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Discourse.loadedStatus_mem' depends on axioms: [propext]

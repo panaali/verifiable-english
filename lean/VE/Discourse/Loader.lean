@@ -66,51 +66,79 @@ theorem linesOf_carriage_return :
 theorem byteStrip_vertical_space : byteStrip "\x0c```\x0b\r\n" = "```" ∧ byteStrip " u0\x0c\n" = "u0" := by
   decide
 
-/-- `_body`: the lines outside ```` ```ve <id> ```` fences are the source. -/
-def bodyOf : List String → Except String (String × List (String × String))
-  | [] => .ok ("", [])
+/-- `_body`: the lines outside ```` ```ve <id> ```` fences are the source, read left to right as Python reads
+them, so the first faulty fence is the one reported. With `python`, a fence name that is not ASCII has Python's
+own text (`invalid VE fence name`); the discourse route keeps its frozen `invalid or duplicate VE fence`. -/
+def bodyScan (python : Bool) (src : String) (fs : List (String × String)) :
+    List String → Except String (String × List (String × String))
+  | [] => .ok (src, fs.reverse)
   | l :: ls =>
     if l.startsWith "```ve " then
       let uid := byteStrip (l.drop 6)
-      match ls.findIdx? (fun x => byteStrip x == "```") with
-      | none => .error "unclosed VE fence"
-      | some k => do
-        let (src, fs) ← bodyOf (ls.drop (k + 1))
-        if !token uid || (fs.map Prod.fst).contains uid then throw "invalid or duplicate VE fence"
-        pure (src, (uid, String.join (ls.take k)) :: fs)
-    else do
-      let (src, fs) ← bodyOf ls
-      pure (l ++ src, fs)
+      if python && !uid.all (·.toNat < 128) then .error "invalid VE fence name"
+      else if !token uid || (fs.map Prod.fst).contains uid then .error "invalid or duplicate VE fence"
+      else match ls.findIdx? (fun x => byteStrip x == "```") with
+        | none => .error "unclosed VE fence"
+        | some k => bodyScan python src ((uid, String.join (ls.take k)) :: fs) (ls.drop (k + 1))
+    else bodyScan python (src ++ l) fs ls
 termination_by xs => xs.length
 decreasing_by all_goals simp_wf <;> omega
 
+def bodyOf (ls : List String) (python : Bool := false) : Except String (String × List (String × String)) :=
+  bodyScan python "" [] ls
+
 def formats : List String := ["ve-document@1", "ve-document@2"]
 
-def allowedMetadata (format : String) : List String :=
-  ["format", "environment", "units", "open_terms", "reading_sets", "narrowings", "weights", "graph", "lemmas"] ++
-    (if format == "ve-document@2" then ["discourse"] else [])
+/-- The one table of front-matter keys (`_split`'s `allowed`): each key with whether the discourse route's loader
+reads it. The `document` service mode reads them all; the discourse route rejects the others as unknown, as
+before (a `@2` document additionally carries `discourse`). -/
+def metadataKeys : List (String × Bool) :=
+  [("format", true), ("environment", true), ("units", true), ("open_terms", true), ("reading_sets", true),
+   ("narrowings", true), ("weights", true), ("graph", true), ("lemmas", true), ("couplings", false),
+   ("contexts", false), ("assessments", false), ("bridges", false), ("scoped", false), ("completions", false)]
 
-/-- `_split`: front matter, body, fences. -/
-def splitTextWith (allowed : String → List String) (t : String) : Except String Split := do
+def discourseKey (format : String) : List String := if format == "ve-document@2" then ["discourse"] else []
+
+/-- The discourse route's keys. -/
+def allowedMetadata (format : String) : List String :=
+  (metadataKeys.filter (·.2)).map Prod.fst ++ discourseKey format
+
+/-- Every key Python's `_split` allows. -/
+def documentMetadata (format : String) : List String := metadataKeys.map Prod.fst ++ discourseKey format
+
+/-- `front_matter`'s first steps: the byte budget, the opening line and the closing boundary; the front-matter
+text and the body text. -/
+def frontText (t : String) : Except String (String × String) := do
   unless t.utf8ByteSize ≤ maxDocumentBytes do throw "document byte budget exceeded"
   unless t.startsWith "---\n" do throw "ve-document@1 needs JSON front matter"
   match (t.drop 4).splitOn "\n---\n" with
-  | front :: rest@(_ :: _) =>
-    let fm ← match VE.JsonInput.parse front with
-      | .ok m => pure m
-      -- the parser's errors carry their offset (`offset n: ResourceLimit: JSON depth ...`)
-      | .error e => throw (if e.startsWith "ResourceLimit" then e
-          else if (e.splitOn "ResourceLimit: JSON depth").length > 1 then "ResourceLimit: JSON depth exceeds 256"
-          else "invalid JSON front matter")
-    let keys ← match fm with
-      | .obj kvs => pure (kvs.toList.map Prod.fst)
-      | _ => throw "unsupported document format"
-    let format := (fm.getObjValD "format").getStr?.toOption.getD ""
-    unless formats.contains format do throw "unsupported document format"
-    unless keys.all (allowed format).contains do throw "unknown document metadata"
-    let (source, fences) ← bodyOf (linesOf ("\n---\n".intercalate rest))
-    pure ⟨fm, source, fences⟩
+  | front :: rest@(_ :: _) => pure (front, "\n---\n".intercalate rest)
   | _ => throw "unclosed JSON front matter"
+
+/-- The restricted reader's diagnostic for a front matter it does not read, as `_split` names it. -/
+def frontJsonError (e : String) : String :=
+  -- the parser's errors carry their offset (`offset n: ResourceLimit: JSON depth ...`)
+  if e.startsWith "ResourceLimit" then e
+  else if (e.splitOn "ResourceLimit: JSON depth").length > 1 then "ResourceLimit: JSON depth exceeds 256"
+  else "invalid JSON front matter"
+
+/-- The front matter's `format`, checked, and its keys against `allowed`. -/
+def checkMetadata (allowed : String → List String) (fm : Json) : Except String String := do
+  let keys ← match fm with
+    | .obj kvs => pure (kvs.toList.map Prod.fst)
+    | _ => throw "unsupported document format"
+  let format := (fm.getObjValD "format").getStr?.toOption.getD ""
+  unless formats.contains format do throw "unsupported document format"
+  unless keys.all (allowed format).contains do throw "unknown document metadata"
+  pure format
+
+/-- `_split`: front matter, body, fences. -/
+def splitTextWith (allowed : String → List String) (t : String) : Except String Split := do
+  let (front, body) ← frontText t
+  let fm ← (VE.JsonInput.parse front).mapError frontJsonError
+  let _ ← checkMetadata allowed fm
+  let (source, fences) ← bodyOf (linesOf body)
+  pure ⟨fm, source, fences⟩
 
 def splitText (t : String) : Except String Split := splitTextWith allowedMetadata t
 
@@ -257,13 +285,13 @@ def compileUnit (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (e
 /-- `_parts`: a unit, or the parts of an explicitly partitioned `MIXED` unit (document.md). The
 parent is provenance only: its bytes are counted once, by its parts, which partition its span
 in order, and its id names no unit. -/
-def partsOf (u : Json) : Except String (List Json) := do
+def mixedOf (u : Json) : Except String (Option ((Nat × Nat) × List Json)) := do
   let keys ← match u with
     | .obj kvs => pure (kvs.toList.map Prod.fst)
     | _ => throw "invalid unit schema"
   if (u.getObjValD "status").getStr?.toOption != some "MIXED" then
     if keys.contains "parts" then throw "parts require MIXED status"
-    return [u]
+    return none
   unless keys.length == 4 && ["id", "span", "status", "parts"].all keys.contains &&
       token ((u.getObjValD "id").getStr?.toOption.getD "") do
     throw "invalid MIXED unit schema"
@@ -276,16 +304,35 @@ def partsOf (u : Json) : Except String (List Json) := do
   let parts ← match u.getObjValD "parts" with
     | .arr ps => if ps.size < 2 then throw needs else pure ps.toList
     | _ => throw needs
-  let partition := "MIXED parts must partition their parent span"
-  let stop ← parts.foldlM (fun cursor p => do
-    unless statuses.contains ((p.getObjValD "status").getStr?.toOption.getD "") do throw partition
-    match (p.getObjValD "span").getArr?.toOption.map Array.toList with
-    | some [x, y] => match x.getNat?.toOption, y.getNat?.toOption with
-      | some c, some d => if c == cursor then pure d else throw partition
-      | _, _ => throw partition
-    | _ => throw partition) a
-  unless stop == b do throw partition
-  pure parts
+  pure (some ((a, b), parts))
+
+def partitionText : String := "MIXED parts must partition their parent span"
+
+/-- Python's `==` of a JSON value with a natural number: a Boolean equals 0 or 1. -/
+def pyEqNat (x : Json) (n : Nat) : Bool :=
+  x.getNat?.toOption == some n || x == .bool (n == 1) && n ≤ 1
+
+/-- One part of a `MIXED` unit at the parent's `cursor`: a part with a known status and a two-element span that
+starts at the cursor (`==` as Python compares, `pyEqNat`). The part's own span is checked when it is compiled. -/
+def partOk (cursor : Nat) (p : Json) : Except String Unit := do
+  unless statuses.contains ((p.getObjValD "status").getStr?.toOption.getD "") do throw partitionText
+  match (p.getObjValD "span").getArr?.toOption.map Array.toList with
+  | some [x, _] => unless pyEqNat x cursor do throw partitionText
+  | _ => throw partitionText
+
+def partsOf (u : Json) : Except String (List Json) := do
+  match ← mixedOf u with
+  | none => pure [u]
+  | some ((a, b), parts) =>
+    let stop ← parts.foldlM (fun cursor p => do
+      partOk cursor p
+      match (p.getObjValD "span").getArr?.toOption.map Array.toList with
+      | some [x, y] => match x.getNat?.toOption, y.getNat?.toOption with
+        | some _, some d => pure d
+        | _, _ => throw partitionText
+      | _ => throw partitionText) a
+    unless stop == b do throw partitionText
+    pure parts
 
 /-- The ids of the `MIXED` parents: tokens, no two alike (`invalid MIXED unit id`, `duplicate
 MIXED unit id`), checked before any unit is compiled. -/
@@ -315,8 +362,8 @@ def compileUnits (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (
 every necessary and sufficient condition is a closed formula over the environment (document.md), typed as Python's
 `formula_from_data` types it, with its first diagnostic; the discourse route (`python = false`) reads only their
 structure, as it did before batch 11a. -/
-def openTermNames (rv : VE.Route.Wire.RouteVocabulary) (j : Json) (python : Bool := false) (data : Bool := false) :
-    Except String (List String) := do
+def openTermNames (rv : VE.Route.Wire.RouteVocabulary) (j : Json) (python : Bool := false) (data : Bool := false)
+    (formula : Option (Json → Except String Unit) := none) : Except String (List String) := do
   let items ← match j with
     | .arr xs => pure xs.toList
     | _ => throw "open_terms must be a list"
@@ -342,10 +389,13 @@ def openTermNames (rv : VE.Route.Wire.RouteVocabulary) (j : Json) (python : Bool
         | .arr xs => pure xs.toList
         | _ => throw s!"{key} must be a list"
       for f in fs do
-        let φ ← VE.Bridge.decodeFormula 64 f
-        if python then
-          VE.Norms.typeDiagnostic rv.environment [] φ
-          let _ ← VE.Route.Wire.decodeClosed rv.environment f data
+        match formula with
+        | some check => check f
+        | none =>
+          let φ ← VE.Bridge.decodeFormula 64 f
+          if python then
+            VE.Norms.typeDiagnostic rv.environment [] φ
+            let _ ← VE.Route.Wire.decodeClosed rv.environment f data
     let lists := "invalid open-term factors or precedents"
     let factors ← field python lists (do strings (← item.getObjVal? "factors"))
     let precedents ← field python lists (do strings (← item.getObjVal? "precedents"))
@@ -379,7 +429,8 @@ def modelId (profiles : List String) (envId : String) (m : Json) : Except String
 /-- One reading of a reading set: its id, kind, content and admission record. With `python`, its id is checked here
 against the readings before it (`seen`, Python's loop); otherwise `compileSets` has checked every id first. -/
 def compileReading (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (envId : String)
-    (ids seen : List String) (r : Json) (python : Bool := false) :
+    (ids seen : List String) (r : Json) (python : Bool := false)
+    (formula : Json → Except String Unit := fun _ => pure ()) :
     Except String (String × Bool × VE.Formula × List (String × String)) := do
   let keys ← match r with
     | .obj kvs => pure (kvs.toList.map Prod.fst)
@@ -392,6 +443,7 @@ def compileReading (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String)
   let _ ← VE.Route.Admission.decodeKind 16 kind
   let mid ← field python "invalid reading meaning id" (stringField r "meaning_id")
   unless token mid do throw "invalid reading meaning id"
+  formula (← r.getObjVal? "content")
   let f ← VE.Route.Wire.decodeClosed rv.environment (← r.getObjVal? "content") (profiles.contains "data@0")
   unless (← VE.Route.Wire.meaningId profiles envId (VE.Route.Wire.encodeFormula f)) == mid do
     throw "reading meaning id does not match content"
@@ -407,11 +459,12 @@ def compileReading (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String)
   let models ← match ← admission.getObjVal? "distinguishing_models" with
     | .obj kvs => pure kvs.toList
     | _ => throw "invalid reading admission"
-  let others := ids.filter (· != id)
+  -- Python compares sets: the other ids once each.
+  let others := (ids.filter (· != id)).eraseDups
   unless models.length == others.length && others.all (fun o => (models.map Prod.fst).contains o) do
     throw "each other reading needs a distinguishing model id"
   let pairs ← models.mapM fun (o, m) => do
-    let mid ← m.getStr?
+    let mid ← field python "invalid distinguishing model id" m.getStr?
     unless token mid do throw "invalid distinguishing model id"
     pure (o, mid)
   pure (id, kind == .str "asserted", f, pairs)
@@ -419,7 +472,9 @@ def compileReading (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String)
 /-- `validate_reading_sets` and `active_reading_sets`: the active sets (the latest version per
 unit) with their status and readings; `python` as for `field`. -/
 def compileSets (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (envId : String)
-    (unitIds : List String) (j : Json) (python : Bool := false) : Except String (List (FrontSet × List Bool)) := do
+    (unitIds : List String) (j : Json) (python : Bool := false)
+    (formula : Json → Except String Unit := fun _ => pure ())
+    (modelRefused : Option String := none) : Except String (List (FrontSet × List Bool)) := do
   let items ← match j with
     | .arr xs => pure xs.toList
     | _ => throw "reading_sets must be a list"
@@ -453,11 +508,11 @@ def compileSets (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (e
     let compiled ← if python then
         -- Each reading in order, its id checked against the ones before it (Python's loop).
         let ids := readings.map fun r => ((r.getObjValD "id").getStr?).toOption.getD ""
-        readings.zipIdx.mapM fun (r, i) => compileReading rv profiles envId ids (ids.take i) r true
+        readings.zipIdx.mapM fun (r, i) => compileReading rv profiles envId ids (ids.take i) r true formula
       else do
         let ids ← readings.mapM fun r => stringField r "id"
         unless ids.all token && ids.eraseDups.length == ids.length do throw "duplicate or invalid reading id"
-        readings.mapM (compileReading rv profiles envId ids [])
+        readings.mapM (compileReading rv profiles envId ids [] (formula := formula))
     let models ← match item.getObjVal? "models" with
       | .ok (.obj kvs) => pure kvs.toList
       | .ok _ => throw "distinguishing models must be supplied by id"
@@ -465,10 +520,21 @@ def compileSets (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (e
     let referenced := (compiled.flatMap fun (_, _, _, ps) => ps.map Prod.snd).eraseDups
     unless models.length == referenced.length && referenced.all (fun m => (models.map Prod.fst).contains m) do
       throw "distinguishing models must be supplied by id"
-    let decoded ← models.mapM fun (name, data) => do
-      let M ← VE.Route.Wire.decodeModel rv data
-      unless (← modelId profiles envId data) == name do throw "distinguishing model id does not match model"
-      pure (name, M)
+    -- With `modelRefused`, a model the Lean decoder refuses is that diagnostic (the caller cannot vouch for
+    -- the model decoder's own text); every model is decoded before any identity is compared.
+    let decoded ← match modelRefused with
+      | none => models.mapM fun (name, data) => do
+        let M ← VE.Route.Wire.decodeModel rv data
+        unless (← modelId profiles envId data) == name do throw "distinguishing model id does not match model"
+        pure (name, M)
+      | some text => do
+        let all ← models.mapM fun (name, data) =>
+          match VE.Route.Wire.decodeModel rv data, modelId profiles envId data with
+          | .ok M, .ok mid => pure (name, mid, M)
+          | _, _ => throw text
+        all.mapM fun (name, mid, M) => do
+          unless mid == name do throw "distinguishing model id does not match model"
+          pure (name, M)
     for (_, _, f, ps) in compiled do
       for (other, mid) in ps do
         match compiled.find? (·.1 == other), decoded.find? (·.1 == mid) with
@@ -529,6 +595,45 @@ def optionalList (front : Json) (key : String) : Json :=
   | .ok v => v
   | .error _ => .arr #[]
 
+/-- `lemmas`, when present, is a list. -/
+def checkLemmas (front : Json) : Except String Unit :=
+  match front.getObjVal? "lemmas" with
+  | .ok (.arr _) | .error _ => pure ()
+  | .ok _ => throw "lemmas must be a list"
+
+/-- The removable reading weights: a list of `{set, by, values}` objects. -/
+def checkWeights (front : Json) : Except String Unit :=
+  match optionalList front "weights" with
+  | .arr ws => ws.toList.forM fun w => match w with
+      | .obj kvs => unless kvs.toList.length == 3 && ["set", "by", "values"].all (fun k => (kvs.toList.map Prod.fst).contains k) do
+          throw "invalid removable reading weights"
+      | _ => throw "invalid removable reading weights"
+  | _ => throw "invalid removable reading weights"
+
+/-- A unit's W2 status (`load_document`): its active reading set's when it has one, else its own. -/
+def foldStatus (active : List (FrontSet × List Bool)) (unit own : String) : String :=
+  match active.find? (·.1.unit == unit) with
+  | some (rs, kinds) => w2SetStatus (rs.status == "authored") (kinds.all id)
+  | none => own
+
+/-- The W2 admission object of `_check_document` (`_report`): each unit with its checked content unless an active
+reading set speaks for it, the graph, the lemmas, the open-term names, the active all-assertion reading sets and
+the narrowing ids. A unit is `(id, span, kind, content)`. -/
+def admissionObject (units : List (String × (Nat × Nat) × Json × Option VE.Formula))
+    (active : List (FrontSet × List Bool)) (graph : Json) (front : Json) (openNames narrowings : List String) : Json :=
+  let activeUnits := active.map (·.1.unit)
+  let w2units := units.map fun (id, span, kind, content) => Json.mkObj ([("id", Json.str id),
+      ("span", Json.arr #[toJson span.1, toJson span.2]), ("kind", kind)] ++
+    match content with
+    | some f => if activeUnits.contains id then [] else [("content", VE.Route.Wire.encodeFormula f)]
+    | none => [])
+  let w2sets := (active.filter fun (_, kinds) => kinds.all id).map fun (rs, _) => Json.mkObj [
+    ("id", .str rs.id), ("version", toJson rs.version),
+    ("readings", Json.arr (rs.readings.map fun (_, f) => VE.Route.Wire.encodeFormula f).toArray)]
+  Json.mkObj [("units", Json.arr w2units.toArray), ("graph", graph),
+    ("lemmas", optionalList front "lemmas"), ("open_terms", Json.arr (openNames.map Json.str).toArray),
+    ("reading_sets", Json.arr w2sets.toArray), ("narrowings", Json.arr (narrowings.map Json.str).toArray)]
+
 /-- `load_document` and the admission object of `_check_document`, for a front matter under
 the base profiles `profiles` with environment identity `envId`. -/
 def loadFront (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (envId : String)
@@ -547,41 +652,21 @@ def loadFront (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (env
   unless fences.isEmpty do throw (notImplemented "fenced English or strict content")
   let all ← compileSets rv profiles envId (units.map Unit₀.id) (optionalList front "reading_sets")
   let active := activeOf all
-  let status := units.map fun x => (x.id, match active.find? (·.1.unit == x.id) with
-    | some (rs, kinds) => w2SetStatus (rs.status == "authored") (kinds.all id)
-    | none => x.status)
-  match front.getObjVal? "lemmas" with
-  | .ok (.arr _) | .error _ => pure ()
-  | .ok _ => throw "lemmas must be a list"
+  let status := units.map fun x => (x.id, foldStatus active x.id x.status)
+  checkLemmas front
   for x in units do
     if x.kind == .str "asserted" && x.content.isNone && !(all.any (·.1.unit == x.id)) then
       throw "asserted unit needs content or a reading set"
   let narrowings ← narrowingIds (all.map fun (s, _) => (s.id, s.version, s.readings.map Prod.fst))
     (units.map Unit₀.id) (optionalList front "narrowings")
-  match optionalList front "weights" with
-  | .arr ws => for w in ws.toList do
-      match w with
-      | .obj kvs => unless kvs.toList.length == 3 && ["set", "by", "values"].all (fun k => (kvs.toList.map Prod.fst).contains k) do
-          throw "invalid removable reading weights"
-      | _ => throw "invalid removable reading weights"
-  | _ => throw "invalid removable reading weights"
-  let activeUnits := active.map (·.1.unit)
-  let w2units := units.map fun x => Json.mkObj ([("id", Json.str x.id),
-      ("span", Json.arr #[toJson x.span.1, toJson x.span.2]), ("kind", x.kind)] ++
-    match x.content with
-    | some f => if activeUnits.contains x.id then [] else [("content", VE.Route.Wire.encodeFormula f)]
-    | none => [])
-  let w2sets := (active.filter fun (_, kinds) => kinds.all id).map fun (rs, _) => Json.mkObj [
-    ("id", .str rs.id), ("version", toJson rs.version),
-    ("readings", Json.arr (rs.readings.map fun (_, f) => VE.Route.Wire.encodeFormula f).toArray)]
+  checkWeights front
   -- a document without a claim graph is loaded but not admitted by Python (document.md); W2
   -- admission, which this route runs, needs a graph: the route abstains, it never rejects one
   let graph ← match front.getObjVal? "graph" with
-    | .ok g => pure [("graph", g)]
+    | .ok g => pure g
     | .error _ => throw (notImplemented "a document without a claim graph")
-  let w2 := Json.mkObj ([("units", Json.arr w2units.toArray)] ++ graph ++
-    [("lemmas", optionalList front "lemmas"), ("open_terms", Json.arr (openNames.map Json.str).toArray),
-     ("reading_sets", Json.arr w2sets.toArray), ("narrowings", Json.arr (narrowings.map Json.str).toArray)])
+  let w2 := admissionObject (units.map fun x => (x.id, x.span, x.kind, x.content)) active graph front
+    openNames narrowings
   pure ⟨format, w2, active.map Prod.fst, status,
     units.filterMap fun x => x.explicit.map (x.id, ·)⟩
 
