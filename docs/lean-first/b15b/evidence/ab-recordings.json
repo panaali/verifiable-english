@@ -1,0 +1,12 @@
+{
+ "base-ab": {
+  "bytes": 97949955,
+  "rows": 96608,
+  "sha256": "87d62e5af5e15fc4cb6007bd1ec5f0741d600791c827b16fb2e09c55328162f8"
+ },
+ "head-ab": {
+  "bytes": 97949956,
+  "rows": 96608,
+  "sha256": "97c3d1d1e5a64d4128e20b6793178fe8b061bb120716521fdaec51df47af6e91"
+ }
+}
