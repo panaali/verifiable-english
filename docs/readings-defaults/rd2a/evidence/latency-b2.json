@@ -1,0 +1,68 @@
+{
+  "method": "The document is F-ND1's open set (`tests/test_readings_nd_lean.py`) beside `n` fixed rules spread over 20 extra regulated pairs. Three requests per size: `readings-validate` with every completion `deny` (still the completion's route, whose checks are then trivial, so the author's admission is most of the cost), and `readings-validate` and `readings-elaborate` with unspecified completions. Before review B2 both validates admitted the author's document twice. Each request is sent to two `ve_service` builds, this tree's and the one `--before` names (pinned by its SHA-256; the build lock of this tree need not list it), in turn, and timed as the service process's CPU (every thread's user and system time, `/proc/<pid>/stat`) after one warm-up call; the two builds' answers must be the same.",
+  "calls": 6,
+  "before_build": "02803f6bf64044c06e11944d6646d85913432eb764af2647d14a373d6a08d9ca",
+  "after_build": "3fa65c683f549b91a66ac39a31fffb6fc15deaf809d28699643443fa3b56a8ca",
+  "rows": [
+    {
+      "fixed_units": 10,
+      "s1_only": {
+        "before": 0.41,
+        "after": 0.31
+      },
+      "validate": {
+        "before": 9.72,
+        "after": 7.71
+      },
+      "elaborate": {
+        "before": 2.97,
+        "after": 3.24
+      }
+    },
+    {
+      "fixed_units": 20,
+      "s1_only": {
+        "before": 0.66,
+        "after": 0.43
+      },
+      "validate": {
+        "before": 10.48,
+        "after": 11.7
+      },
+      "elaborate": {
+        "before": 4.37,
+        "after": 4.29
+      }
+    },
+    {
+      "fixed_units": 30,
+      "s1_only": {
+        "before": 1.01,
+        "after": 0.77
+      },
+      "validate": {
+        "before": 12.04,
+        "after": 12.01
+      },
+      "elaborate": {
+        "before": 7.17,
+        "after": 7.89
+      }
+    },
+    {
+      "fixed_units": 44,
+      "s1_only": {
+        "before": 5.0,
+        "after": 3.7
+      },
+      "validate": {
+        "before": 30.52,
+        "after": 25.89
+      },
+      "elaborate": {
+        "before": 18.58,
+        "after": 16.18
+      }
+    }
+  ]
+}

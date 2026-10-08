@@ -26,6 +26,15 @@ from .errors import CheckerUnavailable, VEError
 from .readings_s1 import KEY_FIELDS, KEY_OPTIONAL, Decoded, Document, content_bearing, decode_key, wire
 from .readings_s2_english import s1_gated as _s1_gated
 
+# readings-defaults.md 1.1 (Lean's `routeOf` and `completionFinding`): under `norm-defaults@0` the norms chain takes the
+# enumerated route with this cause; the soft and rights chains keep the abstention.
+COMPLETION_CAUSE = "the unspecified completion"
+# Lean admits such a document (RD-2a); this relay has no fold for its choices' inner kinds until RD-2b, so it refuses
+# the document by name instead of comparing a route it does not regenerate.
+UNDER_COMPLETION = ("UnsupportedProfile: readings with content under norm-defaults@0 on the norms chain (the "
+                    "unspecified completion) are admitted by Lean's readings route; ve document relays their checks "
+                    "from readings-defaults RD-2b")
+
 def document_wire(units, reading_sets, *, couplings=(), narrowings=()):
     """The document as the readings route reads it: every unit with its kind (1.2), content when it has one."""
     document = {"units": [{"id": unit["id"],
@@ -70,11 +79,18 @@ def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), 
     elif any(a.content is None for reading_set in sets for a in reading_set.candidates):
         expected_route = "pending"
     elif "norm-defaults@0" in senv.profiles:
-        expected_route = "abstention"
+        expected_route = "completion" if senv.chain == "norms" else "abstention"
     elif senv.chain == "rights":
         expected_route = "enumerated"
     else:
         expected_route = None
+    if expected_route == "completion":
+        # Lean's answer is relayed as Lean words it; only the route of 1.1 is bound before the named refusal.
+        if row["status"] == "error":
+            raise VEError(row["error"])
+        if row.get("route") != "enumerated" or (row.get("finding") or {}).get("cause") != COMPLETION_CAUSE:
+            raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on the S2 route")
+        raise VEError(UNDER_COMPLETION)
     regenerated = None
     cause = None
     expected_text = None
@@ -239,9 +255,15 @@ _PAIR_FACTS = _obj({"situation": _digest, "witness": _str, "separated": _lit(Tru
                    {"other_value": lambda v: v is None or type(v) is bool})
 _SET = _obj({"set": _str, "version": _nat, "candidates": _arr(_CANDIDATE, nonempty=True),
              "pairs": _arr(_obj({"reading": _str, "other": _str, "pair": _PAIR_FACTS})), "findings": _arr(_name)})
-ROW = _either(_obj({"id": _str, "status": _lit("ok"), "content_bearing": _lit(False)}),
+# Under the unspecified completion (readings-defaults.md 3) Lean adds, per reading, its `Fill_T` and, once, the filled
+# frame and units. They are checked for shape here and not read yet (their relay is batch RD-2b).
+_FILL_PREMISES = _arr(_obj({"set": _str, "index": _nat,
+                            "premises": _arr(_obj({"label": _str, "ast": lambda v: v is not None}))}))
+_FILLED = _obj({"environment": lambda v: type(v) is dict, "units": _arr(lambda v: type(v) is dict)})
+_COMPLETION = {"fill_premises": _FILL_PREMISES, "filled": _FILLED}
+ROW = _either(_obj({"id": _str, "status": _lit("ok"), "content_bearing": _lit(False)}, _COMPLETION),
               _obj({"id": _str, "status": _lit("ok"), "content_bearing": _lit(True),
-                    "sets": _arr(_SET, nonempty=True)}))
+                    "sets": _arr(_SET, nonempty=True)}, _COMPLETION))
 
 # `setFindings`: `<code>: <set>: <i>, <j>`, with ` (not certified)` on SeparatedByDecisionOnly; per unordered pair
 # (i < j) in order, the decision-only finding (either twin first) before the act-only one (i first).

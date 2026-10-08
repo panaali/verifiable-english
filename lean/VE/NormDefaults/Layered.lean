@@ -403,20 +403,21 @@ theorem layered_report_sound (L : LayeredU) (packages : Json) (rep : ReportG (la
 
 /-! ## Dispatch -/
 
-/-- A `norm-defaults-*` case on the soft or rights branch. -/
-def runLayered (id kind : String) (j : Json) : Except String Json := do
-  let L ← decodeLayered j
+/-- The `norm-defaults-*` kinds of a layered document, `none` for any other kind. The one dispatch of this branch
+and of a choice's inner case under the readings completion (`Readings.Run.ndInner`), so both answer each kind
+alike. -/
+def layeredCase (L : LayeredU) (id kind : String) (j : Json) : Except String (Option Json) := do
   let packages := j.getObjValD "packages"
   if kind == "norm-defaults-elaborate" then
-    return VE.Route.Wire.ok id (layeredElaborate L)
+    return some <| VE.Route.Wire.ok id (layeredElaborate L)
   if kind == "norm-defaults-conflict" && (j.getObjVal? "witness").toBool then
     let (target, w, M, φ, vs) ← witnessConflictX L (← j.getObjVal? "witness")
-    return VE.Route.Wire.ok id ([("verdict", .str (if w.isSome then "CONFLICT" else "UNKNOWN")),
+    return some <| VE.Route.Wire.ok id ([("verdict", .str (if w.isSome then "CONFLICT" else "UNKNOWN")),
       ("target", .str target), ("targets", toJson ((targets (fill L.U)).map (·.1)))] ++
       if w.isSome then conflictFields L.U M target φ vs else [])
   if kind == "norm-defaults-conflict" then
     let free := conflictFreeX L packages
-    return VE.Route.Wire.ok id ([("verdict", .str (if free then "CONFLICT-FREE" else "UNKNOWN")),
+    return some <| VE.Route.Wire.ok id ([("verdict", .str (if free then "CONFLICT-FREE" else "UNKNOWN")),
       ("targets", toJson ((targets (fill L.U)).map (·.1)))] ++
       match firstFailureX L packages with
       | some d => if free then [] else [("detail", .str d)]
@@ -427,11 +428,18 @@ def runLayered (id kind : String) (j : Json) : Except String Json := do
         some <$> ((·, ·) <$> decodeFilling L.U d.S.M (j.getObjValD "yes") <*>
           decodeFilling L.U d.S.M (j.getObjValD "no"))
       else pure none
-    return VE.Route.Wire.ok id ([("point_status", .str d.status.label), ("predicate", .str d.r.name)] ++
+    return some <| VE.Route.Wire.ok id ([("point_status", .str d.status.label), ("predicate", .str d.r.name)] ++
       statusFields L.U d.S.M d.r.name d.vs (d.status != .undecided && d.status != .unknown) fillings)
   if kind == "norm-defaults-report" then
     let rep ← reportWith (layeredSource L packages) j
-    return VE.Route.Wire.ok id rep.toJson
-  throw s!"UnsupportedProfile: case kind {kind} is not available on the {L.route} norm-defaults branch"
+    return some <| VE.Route.Wire.ok id rep.toJson
+  return none
+
+/-- A `norm-defaults-*` case on the soft or rights branch. -/
+def runLayered (id kind : String) (j : Json) : Except String Json := do
+  let L ← decodeLayered j
+  match ← layeredCase L id kind j with
+  | some a => pure a
+  | none => throw s!"UnsupportedProfile: case kind {kind} is not available on the {L.route} norm-defaults branch"
 
 end VE.NormDefaults.Wire
