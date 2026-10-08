@@ -57,6 +57,15 @@ restored (the two Lean faults rebuilt and pinned for the run, the original build
 The evidence test was also checked to fail on planted evidence faults (an unlisted A/B difference, an uncaught
 mutant, a changed prose number), each restored.
 
+## Review fix: response binding
+
+Commit `1e1acf48` closes the review's untrusted-answer finding. The receiver now compares every authored unit
+field and span, checks coverage byte tables and residual arithmetic, binds alternatives cells to unit IDs and
+supports, and verifies source, document and meaning IDs. Genuine Lean rows still provide the checked content,
+statuses and report. The response-mutation regressions cover the reported changed span and zero
+`accounted_bytes`, as well as nearby count, identity and cell mutations. The historical gate record above
+predates this fix; the final gate must be run again at handoff.
+
 ## Acceptance items
 
 - **AGENT, done:** the switch, the Lean changes, the binding checks, the corpus A/B with its signed list, the fuzz

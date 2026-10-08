@@ -5,7 +5,7 @@
 | 1 | one contract | Diagnostics come from Lean's mode verbatim; no text is copied into Python. The retained reasons are matched by code (`CheckerUnavailable`, `ResourceLimit`), not by text. |
 | 2 | differential fuzz | `tools/difffuzz.py` CI and 14 date seeds at base and head (`evidence/difffuzz.json`); the `document` surface compares the mode with Python's retained path. |
 | 3 | normalisation | Unchanged: the mode's reader is 16a's; the fuzz mutants include NBSP, tabs, `\r`, curly quotes and dotted I. |
-| 4 | untrusted output | The row is schema-checked by the client and bound to the request (source, unit ids, order, parents, content and meaning-id presence); `test_answers_not_bound_to_the_request_are_unavailable` mutates each. |
+| 4 | untrusted output | The generated response schema checks shape; `ve.document._bind_document_answer` checks authored unit fields, byte spans, coverage counts and residual totals against the request, and `_lean_document` checks source, document and meaning identities. `test_answers_not_bound_to_the_request_are_unavailable`, `test_identities_and_content_are_leans` and `test_alternatives_coverage_is_bound_to_units_and_counts` mutate those fields. |
 | 5 | malformed input | 1,800 fuzz mutants through `check_document` and `render_document` in the A/B: only `VEError` or `CheckerUnavailable` escapes. |
 | 6 | three-valued verdicts | An undecided row never becomes a verdict: it takes the retained path; a service failure is raised (`test_a_service_failure_is_never_answered_by_python`). |
 | 7 | deadlines | The mode's deadline is the service's (`DEADLINES["document"]`); no new budget. |
