@@ -476,6 +476,16 @@
     "ResponseShape.Schemas.Discourse.validity_map"
    ]
   },
+  "ResponseShape/Schemas/Document.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.Document.blockCoverage",
+    "ResponseShape.Schemas.Document.cells",
+    "ResponseShape.Schemas.Document.coverage",
+    "ResponseShape.Schemas.Document.file",
+    "ResponseShape.Schemas.Document.row",
+    "ResponseShape.Schemas.Document.unit"
+   ]
+  },
   "ResponseShape/Schemas/English.lean": {
    "G[V]": [
     "ResponseShape.Schemas.English.file",
@@ -830,6 +840,7 @@
     "ResponseShape.Skeletons.check",
     "ResponseShape.Skeletons.checkCertificate",
     "ResponseShape.Skeletons.discourse",
+    "ResponseShape.Skeletons.document",
     "ResponseShape.Skeletons.english",
     "ResponseShape.Skeletons.environment",
     "ResponseShape.Skeletons.evaluate",
@@ -2612,20 +2623,29 @@
     "VE.Discourse.Loader.Split",
     "VE.Discourse.Loader.Unit₀",
     "VE.Discourse.Loader.activeOf",
+    "VE.Discourse.Loader.admissionObject",
     "VE.Discourse.Loader.allowedMetadata",
     "VE.Discourse.Loader.bodyOf",
+    "VE.Discourse.Loader.bodyScan",
     "VE.Discourse.Loader.byteSpace",
     "VE.Discourse.Loader.byteStrip",
+    "VE.Discourse.Loader.checkLemmas",
+    "VE.Discourse.Loader.checkMetadata",
+    "VE.Discourse.Loader.checkWeights",
     "VE.Discourse.Loader.compileReading",
     "VE.Discourse.Loader.compileSets",
     "VE.Discourse.Loader.compileUnit",
     "VE.Discourse.Loader.compileUnits",
     "VE.Discourse.Loader.cutsCharacter",
+    "VE.Discourse.Loader.discourseKey",
+    "VE.Discourse.Loader.documentMetadata",
     "VE.Discourse.Loader.explicitOk",
     "VE.Discourse.Loader.fencesOf",
     "VE.Discourse.Loader.field",
     "VE.Discourse.Loader.filesOf",
+    "VE.Discourse.Loader.foldStatus",
     "VE.Discourse.Loader.formats",
+    "VE.Discourse.Loader.frontText",
     "VE.Discourse.Loader.isPayload",
     "VE.Discourse.Loader.linesAcc",
     "VE.Discourse.Loader.linesOf",
@@ -2633,14 +2653,18 @@
     "VE.Discourse.Loader.loadPayload",
     "VE.Discourse.Loader.meaningStatus",
     "VE.Discourse.Loader.metaOf",
+    "VE.Discourse.Loader.metadataKeys",
+    "VE.Discourse.Loader.mixedOf",
     "VE.Discourse.Loader.mixedParents",
     "VE.Discourse.Loader.narrowingIds",
     "VE.Discourse.Loader.normalizedModel",
     "VE.Discourse.Loader.notImplemented",
     "VE.Discourse.Loader.openTermNames",
     "VE.Discourse.Loader.optionalList",
+    "VE.Discourse.Loader.partOk",
     "VE.Discourse.Loader.partsOf",
     "VE.Discourse.Loader.payload",
+    "VE.Discourse.Loader.pyEqNat",
     "VE.Discourse.Loader.sortedStrings",
     "VE.Discourse.Loader.sourceOf",
     "VE.Discourse.Loader.spanOf",
@@ -2652,13 +2676,18 @@
     "VE.Discourse.Loader.w2Status"
    ],
    "D[R]": [
-    "VE.Discourse.Loader.maxDocumentBytes"
+    "VE.Discourse.Loader.frontJsonError",
+    "VE.Discourse.Loader.maxDocumentBytes",
+    "VE.Discourse.Loader.partitionText"
    ],
    "D[I]": [
     "VE.Discourse.Loader.documentId",
     "VE.Discourse.Loader.identityMetadata",
     "VE.Discourse.Loader.modelId",
     "VE.Discourse.Loader.sourceId"
+   ],
+   "G[V]": [
+    "VE.Discourse.Loader.splitTextWith"
    ]
   },
   "VE/Discourse/Manifest.lean": {
@@ -7807,6 +7836,54 @@
   "VE/Service/Diagnose.lean": {
    "G[R]": [
     "VE.Service.Diagnose.diagnoseCase"
+   ]
+  },
+  "VE/Service/Document.lean": {
+   "D[V]": [
+    "VE.Service.Document.Block",
+    "VE.Service.Document.BlockCoverage",
+    "VE.Service.Document.BlockCoverage.line",
+    "VE.Service.Document.BlockCoverage.residual",
+    "VE.Service.Document.Env",
+    "VE.Service.Document.Env.data",
+    "VE.Service.Document.SourceUnit",
+    "VE.Service.Document.admitGraph",
+    "VE.Service.Document.blockCoverage",
+    "VE.Service.Document.blockOf",
+    "VE.Service.Document.check",
+    "VE.Service.Document.contentOf",
+    "VE.Service.Document.coverageUnits",
+    "VE.Service.Document.envelopeKeys",
+    "VE.Service.Document.environmentOf",
+    "VE.Service.Document.formulaCheck",
+    "VE.Service.Document.formulaOf",
+    "VE.Service.Document.frontJson",
+    "VE.Service.Document.graphLabels",
+    "VE.Service.Document.listedProfiles",
+    "VE.Service.Document.ownedProfiles",
+    "VE.Service.Document.parsedLabels",
+    "VE.Service.Document.pythonMayRead",
+    "VE.Service.Document.residual",
+    "VE.Service.Document.sourceUnit",
+    "VE.Service.Document.split",
+    "VE.Service.Document.unitsOf"
+   ],
+   "D[R]": [
+    "VE.Service.Document.emptySource",
+    "VE.Service.Document.unavailable"
+   ],
+   "G[V]": [
+    "VE.Service.Document.Checked",
+    "VE.Service.Document.addCount",
+    "VE.Service.Document.countJson",
+    "VE.Service.Document.counts",
+    "VE.Service.Document.coverageJson",
+    "VE.Service.Document.documentCase",
+    "VE.Service.Document.encode",
+    "VE.Service.Document.kindName",
+    "VE.Service.Document.reasons",
+    "VE.Service.Document.runCaseReported",
+    "VE.Service.Document.unitJson"
    ]
   },
   "VE/Service/EnglishRun.lean": {
