@@ -452,8 +452,9 @@ class S2Wording:
         kind = PLAN_RESULTS[line["result"]] if line["result"] is not None else None
         readings = [(s, i) for s, i in line["readings"]]
         if line["model"] is not None:
+            from .ast import decimal_value
             piece, _, k = line["model"].partition("@")
-            entry = answer["per_choice"][int(k)]
+            entry = answer["per_choice"][decimal_value(k)]
             model, choice = entry["shown"][piece], [(s, i) for s, i in entry["choice"]]
             if frame != "E12" or readings != choice:
                 raise CheckerUnavailable("ReadingsConformance: Lean's plan shows a model under another frame")
