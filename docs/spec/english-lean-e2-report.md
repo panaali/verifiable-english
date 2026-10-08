@@ -51,7 +51,7 @@ changes are its section 13.
 
 | Item | Status |
 |---|---|
-| 1. Suite | the full suite at this head (the round's final run) |
+| 1. Suite | clean full gate on `2aad9b8f`: 11,850 Python tests passed, 7 allowed skips, 0 failures; 37 Rust tests passed ([saved gate result](../../conformance/english-lean/e2-gate-result.json)) |
 | 2. G3, reverse corpus, mutation replay, volume and coverage | 145,550 candidate comparisons agree. The directed stream now reaches all 45 previously unreached fixed rules in 31 compared texts, with zero Python/Lean differences ([rule-by-rule texts](../lean-first/e2/evidence/coverage-directed.md)). |
 | 3. Corpus A/B | **fails preservation** against base `9aaf918d`: 94,498 saved results on each side, 39,564 conformance agreements plus 54,178 other agreements; 48 + 319 wording changes, 192 order changes, 196 verdict changes and one availability change. The complete outcomes and classed rows are in [the A/B summary](../lean-first/e2/evidence/ab-summary.md). Verdict and availability rows remain unsigned. |
 | 4. Readability items | **failed**: 36 writing attempts, six changed messages; 30 reading items, five newly unavailable after replay compatibility adjustments. Python authority restored ([saved comparison](../lean-first/e2/evidence/readability-comparison.json)). |

@@ -15,7 +15,7 @@ Branch `english-lean-e2/integrate`. The Python and Lean branches were merged loc
 
 The exact E2 statement diff finds 12 of 12 declarations. `decode_encode` is proved in `lean/VE/EnglishGrammar/Encode.lean` with the standard axioms only: the encoder writes integers with `intText`, whose text is `toString`'s (checked on the compiled code in `E2Examples.lean`), because `toString` of a negative integer joins its sign with a runtime primitive the logic cannot unfold.
 
-The clean gate on `38eb65ff` passed: **11,275 Python tests passed, 7 allowed skips, 0 failures; 50 Rust tests passed**. Its complete result is [e2-gate-result.json](../../conformance/english-lean/e2-gate-result.json), and `tests/test_english_e2_report.py::test_report_counts_follow_gate_json` checks the numbers above against that file. The S3 comparison records **200 cases, 198 agreements, 2 disposed differences, 0 unexplained differences**; the same test derives these figures from the case records.
+The clean gate on `2aad9b8f` passed: **11,850 Python tests passed, 7 allowed skips, 0 failures; 37 Rust tests passed**. Its complete result is [e2-gate-result.json](../../conformance/english-lean/e2-gate-result.json), and `tests/test_english_e2_report.py::test_report_counts_follow_gate_json` checks the numbers above against that file. The S3 comparison records **200 cases, 198 agreements, 2 disposed differences, 0 unexplained differences**; the same test derives these figures from the case records.
 
 Three temporary mutations were introduced into `ve/backends/english_lean.py`, each made `tests/test_english_e2_relay.py` fail, and each was removed:
 
@@ -42,7 +42,7 @@ The statuses here refer to the integrated E2 work. An open status means the line
 | 11. Language parsing | Done | New Lean policy uses explicit scanners, and E2 transport uses JSON libraries rather than regex parsing of a programming language. |
 | 12. State machine and ledger | Not applicable | No state-machine or event-ledger code changed. |
 | 13. Seeded mutants | Done | The three seeded boundary bugs above each failed a committed test and were removed. |
-| 14. Hermetic tests | Done | The clean-HEAD full gate on `38eb65ff` passed with a clean source identity; the Rust cache was seeded into the gate's isolated Cargo home. |
+| 14. Hermetic tests | Done | The clean-HEAD full gate on `2aad9b8f` passed with a clean source identity; the Rust cache was seeded into the gate's isolated Cargo home. |
 | 15. Identity binding | Open | All six E2 request identities have mutation tests; the requested per-field schema identity matrix is incomplete. |
 | 16. Registered lists | Done | Grammar lock, frozen inventory, theorem inventories, service modes and test collection are generated or checked. |
 | 17. Statement diff | Done | `tools/check_english_e2_statements.py` has Lean elaborate each of the 12 approved statements and check that the built theorem proves it (no Lean source read as text); mutated statements are refused (`tests/test_english_e2_statements.py`); `decode_encode` is proved. |
@@ -50,7 +50,7 @@ The statuses here refer to the integrated E2 work. An open status means the line
 | 19. Use-case formalisation | Not applicable | This merge changes no use-case rule or answer key. |
 | 20. Regenerated report numbers | Done | The gate JSON and S3 case records are committed; `tests/test_english_e2_report.py::test_report_counts_follow_gate_json` checks the printed counts. |
 | 21. Acceptance ownership | Open | The E2 acceptance cases and DRI rulings still need complete AGENT/HUMAN/EXTERNAL ownership tags with test IDs. |
-| 22. Handoff | Open | This report commit still needs its own clean-HEAD gate and final disk check. |
+| 22. Handoff | Open | The passing source gate is saved; the evidence-only report commit follows that run. |
 
 ## Acceptance ownership
 
