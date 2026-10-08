@@ -1,8 +1,12 @@
 {
  "range": "main..HEAD --no-merges",
- "captured_head": "84064f2cb5ee771e6b95612595267982a1f26f24",
+ "captured_head": "d1e2e2348f4522c7ac3de5f69d132eae2bf450b1",
  "base": "8350e55f8e8ead02063ee17d05bf729c7e9e81b9",
  "commits": [
+  "d1e2e2348f4522c7ac3de5f69d132eae2bf450b1",
+  "7e405d8901df5b0c79b072e125bdc8de388c3220",
+  "64a774d4be2b933eacfb21dfd2413beee56c8190",
+  "df63629a1e264b804b9f5fdf86b2de7c05daa8ba",
   "84064f2cb5ee771e6b95612595267982a1f26f24",
   "496a16daf75003303e13e210805406f9779a3cab",
   "b4860efd78494ee5fcb54e719e8eaf925c872faf",
@@ -17,6 +21,42 @@
   "61ee007e355544b8eabca7db634dfda0d8a05ebb"
  ],
  "numstat": [
+  {
+   "commit": "d1e2e2348f4522c7ac3de5f69d132eae2bf450b1",
+   "path": "docs/lean-first/b16b/REPORT.md",
+   "added": 71,
+   "deleted": 0
+  },
+  {
+   "commit": "7e405d8901df5b0c79b072e125bdc8de388c3220",
+   "path": "docs/lean-first/b16b/mutants.py",
+   "added": 6,
+   "deleted": 2
+  },
+  {
+   "commit": "64a774d4be2b933eacfb21dfd2413beee56c8190",
+   "path": "tools/gate-collection.json",
+   "added": 34,
+   "deleted": 0
+  },
+  {
+   "commit": "df63629a1e264b804b9f5fdf86b2de7c05daa8ba",
+   "path": "docs/lean-first/b16b/DELTA.md",
+   "added": 9,
+   "deleted": 0
+  },
+  {
+   "commit": "df63629a1e264b804b9f5fdf86b2de7c05daa8ba",
+   "path": "docs/lean-first/b16b/evidence/scope.json",
+   "added": 249,
+   "deleted": 0
+  },
+  {
+   "commit": "df63629a1e264b804b9f5fdf86b2de7c05daa8ba",
+   "path": "tests/test_b16b_evidence.py",
+   "added": 1,
+   "deleted": 2
+  },
   {
    "commit": "84064f2cb5ee771e6b95612595267982a1f26f24",
    "path": "docs/lean-first/b16b/report.py",

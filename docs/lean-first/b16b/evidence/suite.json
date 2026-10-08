@@ -1,0 +1,35 @@
+{
+ "command": "tools/gate.py --workers 16, clean worktree",
+ "commit": "d1e2e2348f4522c7ac3de5f69d132eae2bf450b1",
+ "counts": {
+  "collected": 12459,
+  "deselected": 1,
+  "failed": 0,
+  "passed": 12451,
+  "rust_ignored": 0,
+  "rust_passed": 37,
+  "selected": 12458,
+  "skipped": 7
+ },
+ "dirty": false,
+ "failures": [],
+ "skips": [
+  "tests/test_assist.py::test_p5_real_dev_file_loads_when_present",
+  "tests/test_grammar_backends.py::test_llguidance_compiles_lark_and_gbnf_exports",
+  "tests/test_grammar_backends.py::test_xgrammar_compiles_and_matches_ebnf_exports",
+  "tests/test_nary_folio.py::test_full_nary_folio_accounting_when_corpus_is_available",
+  "tests/test_p0_three_way.py::test_rust_matches_expected[admission]",
+  "tests/test_p1_native_counter.py::test_retained_deepinfra_smoke_native_count[weak-21]",
+  "tests/test_safety_framework.py::test_build_check_writes_nothing_beside_the_source",
+  "tests/test_llm.py::test_live_smoke"
+ ],
+ "stages": [
+  "toolchains",
+  "lean_build",
+  "lean_audit",
+  "rust_build",
+  "cargo_test",
+  "pytest"
+ ],
+ "status": "passed"
+}

@@ -700,6 +700,7 @@
   "tests/test_b16b_evidence.py::test_generated_block_is_the_saved_evidence",
   "tests/test_b16b_evidence.py::test_prose_numbers_are_the_saved_ones",
   "tests/test_b16b_evidence.py::test_scope_is_a_saved_commit_list",
+  "tests/test_b16b_evidence.py::test_suite_line_is_the_saved_gate_run",
   "tests/test_background.py::test_all_public_model_sites_reject_alias_and_search_valid_models",
   "tests/test_background.py::test_checker_build_covers_all_python_modules",
   "tests/test_background.py::test_claim_labels_bind_new_graphs_without_moving_default_wire",

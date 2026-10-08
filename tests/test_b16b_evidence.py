@@ -81,3 +81,14 @@ def test_prose_numbers_are_the_saved_ones():
     ab = load("ab.json")
     assert f"{ab['listed']['wording']} wording pairs and {ab['listed']['order']} order records" in text
     assert f"{ab['listed']['verdict']} verdict-class records" in text
+
+
+def test_suite_line_is_the_saved_gate_run():
+    suite = load("suite.json")
+    assert suite["status"] == "passed" and suite["dirty"] is False and suite["failures"] == []
+    assert suite["counts"]["failed"] == 0 and suite["stages"][-1] == "pytest"
+    counts = suite["counts"]
+    line = (f"`tools/gate.py` at `{suite['commit'][:8]}` in a clean worktree: passed, {counts['passed']:,} passed, "
+            f"{counts['skipped']} allowed skips, 0 failed of {counts['collected']:,} collected")
+    assert line in " ".join((HERE / "REPORT.md").read_text().split())
+    assert suite["commit"] == load("scope.json")["captured_head"]
