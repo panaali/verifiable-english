@@ -1,10 +1,11 @@
-"""RD-6a (docs/spec/readings-defaults-PLAN.md): the premise of fixture X1 that Lean's `#guard`s cannot state.
+"""RD-6a (docs/spec/readings-defaults-PLAN.md): fixture X1's conflict-freedom premise, end to end on the route.
 
 X1 (lean/VE/Readings/SupExtraExamples.lean) shows that `superpose_all_extra` needs `hQw`: on S2a's K1 a carried
 family over a layer symbol satisfies `Transfers` and gets its certificate accepted, yet the conclusion fails on both
 readings. Its conflict-freedom hypothesis is that K1's slot is CONFLICT-FREE (`Q` holds of every admissible base,
-so it excludes none). Conflict-freedom is not a Boolean `#guard`; here the Lean route certifies it, on the
-superposed route, for the document of K1 (`rs1` = {strict, default} `no-deception` on `avoid_required`).
+so it excludes none). Fixture X3 proves it in Lean (`x1_conflict_free`, from the two conflict certificates the
+route finds); here the public route reports it, on the superposed route, for the document of K1 (`rs1` =
+{strict, default} `no-deception` on `avoid_required`), so the Lean certificates are the route's own.
 """
 from __future__ import annotations
 
