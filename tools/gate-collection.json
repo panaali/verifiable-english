@@ -7976,6 +7976,7 @@
   "tests/test_readings_companions_lean.py::test_malformed_companions_are_refused_by_name[value3]",
   "tests/test_readings_companions_lean.py::test_malformed_companions_are_refused_by_name[x]",
   "tests/test_readings_companions_lean.py::test_without_companions_the_answer_is_todays",
+  "tests/test_readings_component_names.py::test_companion_set_cannot_claim_the_main_component",
   "tests/test_readings_defaults_english.py::test_a_pair_label_that_names_no_declared_pair_is_refused[unsaid:pair:,help_permitted]",
   "tests/test_readings_defaults_english.py::test_a_pair_label_that_names_no_declared_pair_is_refused[unsaid:pair:asks,help_permitted]",
   "tests/test_readings_defaults_english.py::test_a_pair_label_that_names_no_declared_pair_is_refused[unsaid:pair:help_permitted,help_required]",
