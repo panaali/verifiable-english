@@ -296,9 +296,11 @@ def test_declared_wording_that_reuses_a_risk_form_keeps_its_identifier():
         words = EnglishVocabulary(env)
         assert words.predicates["alias"] == '{0} has the recorded relation "alias" to {1}'
         if wording == "{0} might lead to {1}":
-            # The producer rejects the colliding vocabulary before either reader can admit a text.
+            # A recorded narrowing (docs/lean-first/e2/DELTA.md, `availability`): V4 compares the risk form
+            # with every declared wording, so Lean refuses Python's lexicon. It is an operational refusal of
+            # the vocabulary, Lean's text verbatim, never an input error.
             with pytest.raises(CheckerUnavailable, match=r"^The vocabulary selection was not accepted "
-                               r"\(invalidGrammar lexicon: V4 predicate risk__might_lead_to\)\. No candidate was checked\.$"):
+                               r"\(invalidGrammar lexicon: V4 predicate risk__might_lead_to\)\. No text was read\.$"):
                 parse_english_with_metadata(env, "run might lead to loss.")
         else:
             assert parse_english_with_metadata(env, "run might lead to loss.").document.formulas == (

@@ -291,17 +291,12 @@ class LeanReading:
         from ..printer import print_document
         return print_document(self.env, self.document())
 
-    def message(self, help_text: str | None = None) -> str:
-        """Lean's text, then Lean's advice, then the relay's editor help (spec 2.8: the nearest wording)."""
-        parts = [self.response["text"]]
+    def message(self) -> str:
+        """Lean's text, with its diagnosis of a sentence without a reading, then Lean's advice (spec 4.3, 4.5)."""
         advice = self.response.get("advice")
-        if advice is not None:
-            parts.append(advice["text"])
-        elif help_text:
-            parts.append(help_text)
-        return " ".join(parts)
+        return self.response["text"] if advice is None else f'{self.response["text"]} {advice["text"]}'
 
-    def rejection(self, help_text: str | None = None) -> Exception:
+    def rejection(self) -> Exception:
         """Lean's outcome other than `one` as the exception of the class Lean names, with Lean's text and span;
         the answer rides along as `lean_reading` for the shadow record."""
         cls = ERROR_CLASSES[self.response["class"]]
@@ -311,7 +306,7 @@ class LeanReading:
             span = self.response.get("span")  # an overlay refusal reads no text, so it has none
             where = None if span is None else Span(span[0], span[1], self.source.count("\n", 0, span[0]) + 1,
                                                     span[0] - self.source.rfind("\n", 0, span[0]))
-            error = cls(self.message(help_text), span=where)
+            error = cls(self.message(), span=where)
         error.lean_reading = self
         return error
 

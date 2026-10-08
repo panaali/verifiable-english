@@ -279,9 +279,9 @@ def test_broad_exception_handlers_are_reviewed():
     assert all(reason for reason in reviewed.values())
 
 
-def test_english_admission_is_python_authoritative():
+def test_english_admission_is_lean_authoritative():
     assert {op["authority"] for op in OPS} <= {"python", "migrated", "lean-only"}
-    assert assurance.enforced_operations() == frozenset()
+    assert assurance.enforced_operations() == frozenset({"english.admission"})
 
 
 # --- completeness: omissions that no decorator comparison can see ----------------
@@ -634,7 +634,7 @@ def test_guard_blocks_every_python_entry_once_migrated():
                     fn()
             assert caught.value.to_dict()["code"] == "CheckerUnavailable"
             assert caught.value.operation == op["id"]
-    assert assurance.enforced_operations() == frozenset()
+    assert assurance.enforced_operations() == frozenset({"english.admission"})
 
 
 def test_guard_allows_the_lean_engine():
@@ -904,13 +904,14 @@ def _bundle():
 def test_bundle_separates_rejection_from_unavailability(tmp_path, monkeypatch):
     from ve.bundle import check_bundle
     hang = _fake_lean(tmp_path, FAULTS["hang"], name="hang")
+    # The bundle's English is read by the Lean service (english.admission), started here at its own settings.
+    assert check_bundle(_bundle())["lean_outcome"] == "not_requested"
     with monkeypatch.context() as setting:
         setting.setenv("VE_LEAN_TIMEOUT", "1234.5")
         waits = expired_waits(setting, lean_backend)
         with pytest.raises(CheckerUnavailable, match="no answer within 1234.5 s"):
             check_bundle(_bundle(), lean_executable=hang)
     assert waits == [1234.5]
-    assert check_bundle(_bundle())["lean_outcome"] == "not_requested"
     with pytest.raises(CheckerUnavailable):
         check_bundle(_bundle(), lean_executable=tmp_path / "absent")
     rejecting = _fake_lean(tmp_path, "print(json.dumps([{'id': c['id'], 'status': 'error', 'error': 'no'} "
