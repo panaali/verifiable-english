@@ -27,6 +27,7 @@ from tests import lean_routes
 
 from conformance.p0 import envelope
 from subprocesses import HANG_TIMEOUT, run_cpu_bounded
+from conformance.three_way import rust_evaluations
 from ve import Environment, FiniteModel, evaluate
 from ve.ast import document_from_data, formula_from_data
 from ve.backends import dispatch, rust_jsonl
@@ -309,7 +310,8 @@ def test_every_backend_reports_resource_limit_in_bounded_time(seed, monkeypatch)
     route = run([str(ROUTE), "route", "-"], [c[3] for c in cases if c[2] == "route"])
     for got in quantity + route:
         assert got["status"] == "error" and got["error"].startswith("ResourceLimit"), got
-    rust = run([str(RUST), "conformance"], [c[4] for c in cases if c[4] is not None])
+    rust = rust_evaluations(lambda batch: run([str(RUST), "conformance"], batch),
+                            [c[4] for c in cases if c[4] is not None])
     for got in rust:
         limited = (got.get("status") == "error" and got["error"]["code"] == "ResourceLimit") or \
             got.get("status") == "ResourceLimit"
