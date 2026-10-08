@@ -74,7 +74,7 @@ First-pass date-seed review found 24 distinct head-only signatures.
 UDHR: base 54.679 s → head 54.651 s; 0.999× wall; 1.000× child CPU; output identical; budget pass.
 Eligibility: base 342.496 s → head 355.024 s; 1.037× wall; 1.263× child CPU; output identical; budget pass.
 Eligibility isolated Lean CPU: base 331.740 s → head 351.730 s; 1.060×; output identical; budget pass.
-Full gate: passed; 11,655 passed, 7 skipped, 0 failures.
+Full gate: passed; 11,721 passed, 7 skipped, 0 failures.
 <!-- END GENERATED -->
 
 The reviewed differential baseline's environment entries are replayed by
