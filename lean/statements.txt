@@ -13543,6 +13543,44 @@ theorem VE.Readings.Run.soft_choice_model_sound
             ¬VE.Formula.denote r.M.asStructure [] (VE.SoftNorms.circ r.src.D r.φ)
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Readings.Run.SoftChoiceModel.M@VE.Readings.SupRun VE.Readings.Run.SoftChoiceModel.check@VE.Readings.SupRun VE.Readings.Run.SoftChoiceModel.src@VE.Readings.SupRun VE.Readings.Run.SoftChoiceModel.value@VE.Readings.SupRun VE.Readings.Run.SoftChoiceModel.Γ@VE.Readings.SupRun VE.Readings.Run.SoftChoiceModel.φ@VE.Readings.SupRun VE.Readings.Run.SoftChoiceModel@VE.Readings.SupRun VE.SoftNorms.BaseAdmissible'@VE.SoftNorms.Coherence VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.circ@VE.SoftNorms.Semantics VE.Structure.Carrier@VE.Semantics
   -- expr 199873469
+theorem VE.Readings.SupExtraExamples.bare_admissible
+  VE.Readings.SupExtraExamples.X1Checks →
+    VE.Compose.BaseAdmissibleP (VE.Rights.correlate (VE.Readings.choiceDoc VE.Readings.Examples.K1 [("rs1", 0)]).fst)
+      (VE.Rights.limPremises (VE.Readings.choiceDoc VE.Readings.Examples.K1 [("rs1", 0)]).fst ++
+        [VE.Readings.SupExtraExamples.noAvoid])
+      VE.Readings.SupExtraExamples.bare.asStructure
+  -- uses VE.Compose.BaseAdmissibleP@VE.Compose.Slot VE.FiniteModel.asStructure@VE.Finite VE.Formula@VE.Syntax VE.Readings.Examples.K1@VE.Readings.Examples VE.Readings.SupExtraExamples.X1Checks@VE.Readings.SupExtraExamples VE.Readings.SupExtraExamples.bare@VE.Readings.SupExtraExamples VE.Readings.SupExtraExamples.noAvoid@VE.Readings.SupExtraExamples VE.Readings.choiceDoc@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.Rights.limPremises@VE.Rights.Correlate
+  -- expr 304598846
+theorem VE.Readings.SupExtraExamples.k1_compatible
+  ∀ {c : VE.Readings.Choice}, VE.Readings.Compatible VE.Readings.Examples.K1 c → c = [("rs1", 0)] ∨ c = [("rs1", 1)]
+  -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Examples.K1@VE.Readings.Examples
+  -- expr 1553873171
+theorem VE.Readings.SupExtraExamples.k1_hyps
+  VE.Readings.SupExtraExamples.X1Checks → VE.Readings.Hyps VE.Readings.Examples.K1
+  -- uses VE.Readings.Examples.K1@VE.Readings.Examples VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.SupExtraExamples.X1Checks@VE.Readings.SupExtraExamples
+  -- expr 1120706144
+theorem VE.Readings.SupExtraExamples.noAvoid_of_empty
+  ∀ (B : VE.Structure),
+    (∀ (vs : List B.Carrier), ¬B.relation "avoid_required" vs) →
+      VE.Formula.denote B [] VE.Readings.SupExtraExamples.noAvoid
+  -- uses VE.Formula.denote@VE.Semantics VE.Readings.SupExtraExamples.noAvoid@VE.Readings.SupExtraExamples VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3398829444
+theorem VE.Readings.SupExtraExamples.superpose_all_extra_refuted
+  VE.Readings.SupExtraExamples.X1Checks → ¬VE.Readings.SupExtraExamples.SuperposeAllExtraApproved
+  -- uses VE.Readings.SupExtraExamples.SuperposeAllExtraApproved@VE.Readings.SupExtraExamples VE.Readings.SupExtraExamples.X1Checks@VE.Readings.SupExtraExamples
+  -- expr 3740794744
+theorem VE.Readings.SupExtraExamples.transfers_x1
+  VE.Readings.SupExtraExamples.X1Checks →
+    VE.Readings.Transfers VE.Readings.Examples.K1 [VE.Readings.SupExtraExamples.noAvoid] fun x =>
+      [VE.Readings.SupExtraExamples.noAvoid]
+  -- uses VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Examples.K1@VE.Readings.Examples VE.Readings.SupExtraExamples.X1Checks@VE.Readings.SupExtraExamples VE.Readings.SupExtraExamples.noAvoid@VE.Readings.SupExtraExamples VE.Readings.Transfers@VE.Readings.SupExtra
+  -- expr 1537026021
+theorem VE.Readings.SupExtraExamples.x1_conflict_free
+  VE.Readings.SupExtraExamples.X1Checks →
+    VE.Compose.ConflictFreeP (VE.Rights.correlate (VE.Readings.sup VE.Readings.Examples.K1).fst)
+      (VE.Readings.slotUnder VE.Readings.Examples.K1 [] ++ [VE.Readings.SupExtraExamples.noAvoid])
+  -- uses VE.Compose.ConflictFreeP@VE.Compose.Slot VE.Formula@VE.Syntax VE.Readings.Examples.K1@VE.Readings.Examples VE.Readings.SupExtraExamples.X1Checks@VE.Readings.SupExtraExamples VE.Readings.SupExtraExamples.noAvoid@VE.Readings.SupExtraExamples VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate
+  -- expr 3212794479
 theorem VE.Readings.Twin.act_ne
   ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
     VE.Readings.Twin C Nd →
@@ -14590,6 +14628,11 @@ theorem VE.Readings.backgroundValidR_of_admissible
     VE.Rights.BaseAdmissibleR X M.asStructure → VE.Rights.backgroundValidR X M = Bool.true
   -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Rights.BaseAdmissibleR@VE.Rights.Correlate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.backgroundValidR@VE.Rights.Route
   -- expr 120770680
+theorem VE.Readings.baseAdmissibleR_nil
+  ∀ (X : VE.Rights.RightsDoc) (B : VE.Structure),
+    VE.Compose.BaseAdmissibleP (VE.Rights.correlate X) (VE.Rights.limPremises X ++ []) B ↔ VE.Rights.BaseAdmissibleR X B
+  -- uses VE.Compose.BaseAdmissibleP@VE.Compose.Slot VE.Formula@VE.Syntax VE.Rights.BaseAdmissibleR@VE.Rights.Correlate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.Rights.limPremises@VE.Rights.Correlate VE.Structure@VE.Semantics
+  -- expr 3293888616
 theorem VE.Readings.base_down
   ∀ (D : VE.Readings.Doc),
     VE.Readings.WellFormedDoc D = Bool.true →
@@ -19127,6 +19170,20 @@ theorem VE.Readings.sat_of_mem_labelled
     VE.Norms.Sat S L.formulas → ∀ {l : String} {a : VE.Formula}, (l, a) ∈ L → VE.Formula.denote S [] a
   -- uses VE.Compose.Labelled.formulas@VE.Compose.Slot VE.Compose.Labelled@VE.Compose.Slot VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 2154534014
+theorem VE.Readings.sat_pull_up
+  ∀ {D : VE.Readings.Doc},
+    VE.Readings.Hyps D →
+      ∀ {Q' : VE.Readings.Choice → List VE.Formula},
+        (∀ (c : VE.Readings.Choice),
+            VE.Readings.Compatible D c →
+              ∀ (a : VE.Formula), a ∈ Q' c → VE.Formula.WellFormed (VE.Readings.choiceEnvFull D c) [] a) →
+          ∀ {c : VE.Readings.Choice},
+            VE.Readings.Compatible D c →
+              ∀ (B₀ : VE.Structure) (e : B₀.Carrier),
+                B₀.Admissible (VE.Norms.envAt (VE.SoftNorms.soften (VE.Readings.choiceDoc D c).fst.soft) 0) →
+                  (VE.Norms.Sat (VE.Readings.pull D c (VE.Readings.upB D c B₀ e)) (Q' c) ↔ VE.Norms.Sat B₀ (Q' c))
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Norms.envAt@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceEnvFull@VE.Readings.Choice VE.Readings.pull@VE.Readings.Choice VE.Readings.upB@VE.Readings.BaseUp VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1562697444
 theorem VE.Readings.scanOthers_eq
   ∀ {β : Type} (valid hits : β → Bool) (want : Bool) (Gs : List β) (adm : Bool),
     VE.Readings.scanOthers (fun G => Pure.pure (valid G)) (fun G => Pure.pure (hits G)) want Gs adm =
@@ -20012,6 +20069,11 @@ theorem VE.Readings.sum_take_succ
   ∀ (l : List Nat) (m : Nat) (hm : m < l.length), (List.take (m + 1) l).sum = (List.take m l).sum + l[m]
   -- uses
   -- expr 3929340598
+theorem VE.Readings.supCertificateCheckExtra_nil
+  ∀ (D : VE.Readings.Doc) (A : VE.Readings.Choice) (Γ : List VE.Formula) (φ : VE.Formula) (cert : VE.Tableau.Certificate),
+    VE.Readings.supCertificateCheckExtra D A [] Γ φ cert = VE.Readings.supCertificateCheck D A Γ φ cert
+  -- uses VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.supCertificateCheck@VE.Readings.Route VE.Readings.supCertificateCheckExtra@VE.Readings.SupExtra VE.Tableau.Certificate@VE.Tableau
+  -- expr 260027920
 theorem VE.Readings.supFrame_fillDoc
   ∀ (N : VE.Readings.NDoc),
     N.D.frame.soft.T.nodes = [] →
@@ -20027,6 +20089,11 @@ theorem VE.Readings.supFrame_no_sets
   ∀ {D : VE.Readings.Doc}, D.sets = [] → VE.Readings.supFrame D = D.frame
   -- uses VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.Doc.sets@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.ReadingSet@VE.Readings.Doc VE.Readings.supFrame@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree
   -- expr 2131597697
+theorem VE.Readings.supModelCheckExtra_nil
+  ∀ {α : Type u} [inst : DecidableEq α] (D : VE.Readings.Doc) (A : VE.Readings.Choice) (Γ : List VE.Formula)
+    (M : VE.FiniteModel α), VE.Readings.supModelCheckExtra D A [] Γ M = VE.Readings.supModelCheck D A Γ M
+  -- uses VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.supModelCheck@VE.Readings.Route VE.Readings.supModelCheckExtra@VE.Readings.SupExtra
+  -- expr 2326531894
 theorem VE.Readings.supReady_nodup
   ∀ {D : VE.Readings.Doc}, VE.Readings.supReady D = Bool.true → (List.map (fun x => x.id) D.sets).Nodup
   -- uses VE.Readings.Doc.sets@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.ReadingSet.id@VE.Readings.Doc VE.Readings.ReadingSet@VE.Readings.Doc VE.Readings.supReady@VE.Readings.Choice
@@ -20273,6 +20340,34 @@ theorem VE.Readings.superpose_all_base
                                       VE.Norms.Sat B ((VE.Readings.choiceDoc D c).snd ++ Γ) → VE.Formula.denote B [] φ
   -- uses VE.Compose.ConflictFreeP@VE.Compose.Slot VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Chain.rights@VE.Readings.Doc VE.Readings.Chain@VE.Readings.Doc VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc.chain@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.WellFormedDoc@VE.Readings.Doc VE.Readings.authorEnv@VE.Readings.Separate VE.Readings.candidate@VE.Readings.Doc VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Readings.supCertificateCheck@VE.Readings.Route VE.Readings.superposable@VE.Readings.Choice VE.Rights.BaseAdmissibleR@VE.Rights.Correlate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Tableau.Certificate@VE.Tableau
   -- expr 428276363
+theorem VE.Readings.superpose_all_extra
+  ∀ (D : VE.Readings.Doc),
+    VE.Readings.WellFormedDoc D = Bool.true →
+      D.chain ≠ VE.Readings.Chain.rights →
+        VE.Readings.superposable D = Bool.true →
+          ∀ (A : VE.Readings.Choice),
+            (∀ (x : String × Nat), x ∈ A → (VE.Readings.candidate D x.fst x.snd).isSome = Bool.true) →
+              ∀ (Q : List VE.Formula) (Q' : VE.Readings.Choice → List VE.Formula),
+                VE.Readings.Transfers D Q Q' →
+                  VE.Compose.SlotWellFormed (VE.Rights.correlate (VE.Readings.sup D).fst) Q →
+                    VE.Compose.ConflictFreeP (VE.Rights.correlate (VE.Readings.sup D).fst)
+                        (VE.Readings.slotUnder D A ++ Q) →
+                      ∀ (Γ : List VE.Formula) (φ : VE.Formula),
+                        (∀ (a : VE.Formula), a ∈ Γ → VE.Formula.WellFormed (VE.Readings.sharedEnv D) [] a) →
+                          VE.Formula.WellFormed (VE.Readings.sharedEnv D) [] φ →
+                            ∀ (cert : VE.Tableau.Certificate),
+                              VE.Readings.supCertificateCheckExtra D A Q Γ φ cert = Bool.true →
+                                ∀ (c : VE.Readings.Choice),
+                                  VE.Readings.Compatible D c →
+                                    (∀ (x : String × Nat), x ∈ A → x ∈ c) →
+                                      ∀ (B : VE.Structure),
+                                        VE.Compose.BaseAdmissibleP (VE.Rights.correlate (VE.Readings.choiceDoc D c).fst)
+                                            (VE.Rights.limPremises (VE.Readings.choiceDoc D c).fst ++ Q' c) B →
+                                          VE.Norms.Sat (VE.Readings.expand (VE.Readings.choiceDoc D c).fst B)
+                                              ((VE.Readings.choiceDoc D c).snd ++ Γ) →
+                                            VE.Formula.denote (VE.Readings.expand (VE.Readings.choiceDoc D c).fst B) [] φ
+  -- uses VE.Compose.BaseAdmissibleP@VE.Compose.Slot VE.Compose.ConflictFreeP@VE.Compose.Slot VE.Compose.SlotWellFormed@VE.Compose.Slot VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Chain.rights@VE.Readings.Doc VE.Readings.Chain@VE.Readings.Doc VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc.chain@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Transfers@VE.Readings.SupExtra VE.Readings.WellFormedDoc@VE.Readings.Doc VE.Readings.candidate@VE.Readings.Doc VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.expand@VE.Readings.Separate VE.Readings.sharedEnv@VE.Readings.Choice VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Readings.supCertificateCheckExtra@VE.Readings.SupExtra VE.Readings.superposable@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.Rights.limPremises@VE.Rights.Correlate VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Tableau.Certificate@VE.Tableau
+  -- expr 3958597765
 theorem VE.Readings.superpose_assertions
   ∀ (D : VE.Readings.Doc),
     VE.Readings.WellFormedDoc D = Bool.true →
@@ -20308,6 +20403,24 @@ theorem VE.Readings.superpose_conflict_free
                     (∀ (x : String × Nat), x ∈ A → x ∈ c) → VE.Rights.RightsConflictFree (VE.Readings.choiceDoc D c).fst)
   -- uses VE.Compose.ConflictFreeP@VE.Compose.Slot VE.Formula@VE.Syntax VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Chain.rights@VE.Readings.Doc VE.Readings.Chain@VE.Readings.Doc VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc.chain@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.WellFormedDoc@VE.Readings.Doc VE.Readings.candidate@VE.Readings.Doc VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Readings.superposable@VE.Readings.Choice VE.Rights.RightsConflictFree@VE.Rights.Correlate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate
   -- expr 4058606184
+theorem VE.Readings.superpose_conflict_free_extra
+  ∀ (D : VE.Readings.Doc),
+    VE.Readings.WellFormedDoc D = Bool.true →
+      D.chain ≠ VE.Readings.Chain.rights →
+        VE.Readings.superposable D = Bool.true →
+          ∀ (A : VE.Readings.Choice),
+            (∀ (x : String × Nat), x ∈ A → (VE.Readings.candidate D x.fst x.snd).isSome = Bool.true) →
+              ∀ (Q : List VE.Formula) (Q' : VE.Readings.Choice → List VE.Formula),
+                VE.Readings.Transfers D Q Q' →
+                  (VE.Compose.ConflictFreeP (VE.Rights.correlate (VE.Readings.sup D).fst)
+                      (VE.Readings.slotUnder D A ++ Q) ↔
+                    ∀ (c : VE.Readings.Choice),
+                      VE.Readings.Compatible D c →
+                        (∀ (x : String × Nat), x ∈ A → x ∈ c) →
+                          VE.Compose.ConflictFreeP (VE.Rights.correlate (VE.Readings.choiceDoc D c).fst)
+                            (VE.Rights.limPremises (VE.Readings.choiceDoc D c).fst ++ Q' c))
+  -- uses VE.Compose.ConflictFreeP@VE.Compose.Slot VE.Formula@VE.Syntax VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Chain.rights@VE.Readings.Doc VE.Readings.Chain@VE.Readings.Doc VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc.chain@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Transfers@VE.Readings.SupExtra VE.Readings.WellFormedDoc@VE.Readings.Doc VE.Readings.candidate@VE.Readings.Doc VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Readings.superposable@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.Rights.limPremises@VE.Rights.Correlate
+  -- expr 3851085560
 theorem VE.Readings.superpose_conflict_iff
   ∀ (D : VE.Readings.Doc),
     VE.Readings.WellFormedDoc D = Bool.true →
@@ -20378,6 +20491,38 @@ theorem VE.Readings.superpose_countermodel
                                         [] φ
   -- uses VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Norms.envAt@VE.Norms.Tree VE.Readings.Chain.rights@VE.Readings.Doc VE.Readings.Chain@VE.Readings.Doc VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc.chain@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Encodes@VE.Readings.Choice VE.Readings.WellFormedDoc@VE.Readings.Doc VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.expand@VE.Readings.Separate VE.Readings.pull@VE.Readings.Choice VE.Readings.sharedEnv@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Readings.supModelCheck@VE.Readings.Route VE.Readings.superposable@VE.Readings.Choice VE.Rights.BaseAdmissibleR@VE.Rights.Correlate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.circ@VE.SoftNorms.Semantics VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics
   -- expr 3608605402
+theorem VE.Readings.superpose_countermodel_extra
+  ∀ {α : Type u} [inst : DecidableEq α] (D : VE.Readings.Doc),
+    VE.Readings.WellFormedDoc D = Bool.true →
+      D.chain ≠ VE.Readings.Chain.rights →
+        VE.Readings.superposable D = Bool.true →
+          ∀ (A : VE.Readings.Choice) (Q : List VE.Formula) (Q' : VE.Readings.Choice → List VE.Formula),
+            VE.Readings.Transfers D Q Q' →
+              ∀ (Γ : List VE.Formula) (φ : VE.Formula),
+                (∀ (a : VE.Formula), a ∈ Γ → VE.Formula.WellFormed (VE.Readings.sharedEnv D) [] a) →
+                  VE.Formula.WellFormed (VE.Readings.sharedEnv D) [] φ →
+                    ∀ (M : VE.FiniteModel α),
+                      M.Valid (VE.Norms.envAt (VE.SoftNorms.soften (VE.Rights.correlate (VE.Readings.sup D).fst)) 0) →
+                        VE.Readings.supModelCheckExtra D A Q Γ M = Bool.true →
+                          VE.Formula.eval M [] (VE.SoftNorms.circ (VE.Rights.correlate (VE.Readings.sup D).fst) φ) =
+                              Bool.false →
+                            ∃ c,
+                              VE.Readings.Compatible D c ∧
+                                (∀ (x : String × Nat), x ∈ A → x ∈ c) ∧
+                                  VE.Readings.Encodes D c M.asStructure ∧
+                                    VE.Compose.BaseAdmissibleP (VE.Rights.correlate (VE.Readings.choiceDoc D c).fst)
+                                        (VE.Rights.limPremises (VE.Readings.choiceDoc D c).fst ++ Q' c)
+                                        (VE.Readings.pull D c M.asStructure) ∧
+                                      VE.Norms.Sat
+                                          (VE.Readings.expand (VE.Readings.choiceDoc D c).fst
+                                            (VE.Readings.pull D c M.asStructure))
+                                          ((VE.Readings.choiceDoc D c).snd ++ Γ) ∧
+                                        ¬VE.Formula.denote
+                                            (VE.Readings.expand (VE.Readings.choiceDoc D c).fst
+                                              (VE.Readings.pull D c M.asStructure))
+                                            [] φ
+  -- uses VE.Compose.BaseAdmissibleP@VE.Compose.Slot VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Norms.envAt@VE.Norms.Tree VE.Readings.Chain.rights@VE.Readings.Doc VE.Readings.Chain@VE.Readings.Doc VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc.chain@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Encodes@VE.Readings.Choice VE.Readings.Transfers@VE.Readings.SupExtra VE.Readings.WellFormedDoc@VE.Readings.Doc VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.expand@VE.Readings.Separate VE.Readings.pull@VE.Readings.Choice VE.Readings.sharedEnv@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Readings.supModelCheckExtra@VE.Readings.SupExtra VE.Readings.superposable@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.Rights.limPremises@VE.Rights.Correlate VE.SoftNorms.circ@VE.SoftNorms.Semantics VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics
+  -- expr 3888150950
 theorem VE.Readings.superpose_faithful
   ∀ (D : VE.Readings.Doc),
     VE.Readings.WellFormedDoc D = Bool.true →
@@ -20600,6 +20745,10 @@ theorem VE.Readings.toSubstring_bsize_ascii
   ∀ (p : String), VE.Readings.AsciiL p.data → p.toSubstring.bsize = p.data.length
   -- uses VE.Readings.AsciiL@VE.Readings.Strings
   -- expr 3197839193
+theorem VE.Readings.transfers_nil
+  ∀ (D : VE.Readings.Doc), VE.Readings.Transfers D [] fun x => []
+  -- uses VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.Transfers@VE.Readings.SupExtra
+  -- expr 821951760
 theorem VE.Readings.triple_pair
   ∀ {D : VE.Readings.Doc},
     VE.Readings.Hyps D →
