@@ -1,0 +1,6 @@
+python tools/lean_output_diff.py --save-baseline   (at b8fb17f4, the reviewed head)
+baseline of b8fb17f49e4a: 9 executables copied to lean/.lake/ve-output-baseline
+python tools/lean_output_diff.py                   (at bc2d88a9; Lean sources unchanged since ea94b363)
+baseline b8fb17f49e4a; executables rebuilt with a different digest: ve_conformance, ve_english_route, ve_metered, ve_response_decode, ve_senses_route, ve_service, ve_speech_acts_route
+ve_conformance 68, ve_english_lean_bench 1, ve_english_route 2, ve_english_run 6, ve_metered 1, ve_response_decode 2, ve_senses_route 1, ve_service 325, ve_speech_acts_route 17
+423 invocations, 416 run on both builds, 7 skipped as their executable is byte-identical to the baseline; 0 differences, 0 timed out
