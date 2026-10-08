@@ -104,17 +104,18 @@ No theorem was added, removed or restated (`tools/lean_statements.py`: 0/0/0); `
    raises Python's diagnostics.
 4. **Latency.** Within the section-4 budgets (one document check: ≤ 1 s Lean CPU, ≤ 2 s wall). The documents Lean
    now decides cost Lean CPU the base did not spend (it made no Lean call for most of them), so the
-   "≤ 20% more Lean CPU" row is exceeded and needs the DRI's signature, as batch 11b's did.
+   "≤ 20% more Lean CPU" row is exceeded; the DRI signed this on 2026-10-08 because the absolute
+   budgets (≤ 1 s Lean CPU, ≤ 2 s wall) hold, as in batch 11b.
 
-## Needs a DRI signature (HUMAN)
+## DRI ruling (HUMAN, signed 2026-10-08)
 
-| Item | Evidence |
+| Item | Ruling and evidence |
 |---|---|
-| The wording and order block: 36 wording pairs and 266 order records of `delta.json` (Lean's environment, formula and admission texts and codes, relayed; the pilots' scratch-path pairs) | `delta.json`, `evidence/ab.json` |
-| 166 verdict-class records: same code on both sides, the message and Python's `path` member differ | `delta.json` `verdict` |
-| 4 records unavailable on both sides (pilot `english.check` refusals, identical outputs) | `delta.json` `unavailable` |
-| New Lean CPU on `check_document` beyond the 20% rule | `evidence/latency.json` |
-| The deviation above: no deletion until 16c composes the retained routes | `evidence/share.json` |
+| Wording and order block: 36 wording pairs and 266 order records of `delta.json` | Signed where the base's names, location and specificity are kept. The current Lean decoder fixes the loss-of-name examples; `test_lean_names_a_rejection_as_python_did` and `test_signed_order_diagnostics_keep_python_names_and_specificity` cover the named faults and every distinct saved order case. `delta.json`, `evidence/ab.json`. |
+| 166 verdict-class records: same code on both sides, but message and Python's `path` differ | Signed **only as an interim path pending lf-12**. Every saved row carries that disposition. `test_pending_lf12_document_paths` is xfail-strict for each of the 83 distinct cases: an LF-12 path fix becomes an XPASS failure until the delta is re-recorded. |
+| 4 records unavailable on both sides (pilot `english.check` refusals, identical outputs) | Signed. `delta.json` `unavailable`. |
+| New Lean CPU on `check_document` beyond the 20% rule | Signed; each check remains within the absolute budgets. `evidence/latency.json`. |
+| The deviation above: no deletion until 16c composes the retained routes | Signed; the ~900-line deletion target moves to 16c. `evidence/share.json`. |
 
 ## Question 10
 

@@ -32,7 +32,7 @@ proposed there.
    and admission decoders' texts and codes, which Lean now supplies for the documents it owns (DF-3 and DF-9,
    batches 12b and 13b), and pilot harness artifacts. No acceptance changed.
 3. **Ledger.** LEDGER.md.
-4. **Latency.** Within budget; the new Lean CPU over the 20% rule needs the DRI's signature.
+4. **Latency.** Within the absolute budgets; the DRI signed the new Lean CPU over the 20% rule on 2026-10-08.
 
 The fuzzer's baseline does not grow (CI 0 new; 14 date seeds, 0 head-only signatures).
 
@@ -63,8 +63,15 @@ Commit `1e1acf48` closes the review's untrusted-answer finding. The receiver now
 field and span, checks coverage byte tables and residual arithmetic, binds alternatives cells to unit IDs and
 supports, and verifies source, document and meaning IDs. Genuine Lean rows still provide the checked content,
 statuses and report. The response-mutation regressions cover the reported changed span and zero
-`accounted_bytes`, as well as nearby count, identity and cell mutations. The historical gate record above
-predates this fix; the final gate must be run again at handoff.
+`accounted_bytes`, as well as nearby count, identity and cell mutations. A forged residual line with a balanced
+total is now rejected on both document entry points for plain and alternatives documents.
+
+## Review fix: diagnostic parity and pending paths
+
+Commit `456980eb` preserves Python's frozen-envelope diagnostic when a plain document has an unrecognised
+language string. The saved order cases now agree on code and text in `test_signed_order_diagnostics_keep_python_names_and_specificity`;
+the field-set regression also covers missing keys and Unicode language mutations. Commit `1648a5f4` records
+all 166 signed verdict rows as `path pending lf-12` and runs an xfail-strict check over their 83 distinct cases.
 
 ## Acceptance items
 
@@ -72,8 +79,9 @@ predates this fix; the final gate must be run again at handoff.
   runs, the latency record, the seeded faults, the full suite in a clean worktree.
 - **AGENT, not done:** the planned deletion (blocked, DELTA.md); `tools/relay_lint.py` does not cover
   `ve/document.py`, whose retained path still raises Python's diagnostics.
-- **HUMAN (DRI):** the signatures listed in DELTA.md (wording and order block, 166 verdict-class diagnostic
-  records, 4 unavailable pilot records, new Lean CPU, the deviation and batch 16c).
+- **HUMAN (DRI), signed 2026-10-08:** wording and order where names, location and specificity are kept; four
+  unavailable pilot records; new Lean CPU; and the deletion's move to 16c. The 166 verdict records are signed
+  only as `path pending lf-12`, with a strict xfail for every distinct saved case.
 - **EXTERNAL:** none.
 
 Not run: the UDHR readings budget row (no readings change) and the agent-policy and eligibility harnesses (they
