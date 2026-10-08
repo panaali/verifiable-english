@@ -189,7 +189,7 @@ def _english_case(mode):
     return base
 
 
-C, S = "ve_conformance", "ve_service"
+C, S, M = "ve_conformance", "ve_service", "ve_metered"
 BUILDERS = {
     ("english.admission", S, "english.read", None): lambda: _english_case("english.read"),
     ("english.admission", S, "english.grammar", None): lambda: _english_case("english.grammar"),
@@ -210,6 +210,11 @@ BUILDERS = {
     ("evaluate", C, "", None): lambda: _evaluate_case(_legacy(), "evaluate"),
     ("evaluate", C, "route", "evaluate"): lambda: _evaluate_case(_route(), "evaluate", "evaluate"),
     ("evaluate", C, "order", "evaluate"): lambda: _evaluate_case(_order(), "evaluate", "evaluate"),
+    ("evaluate", M, "", "evaluate-budgeted"):
+        lambda: {**_evaluate_case(_route(), "evaluate", "evaluate-budgeted"), "max_evaluations": 100, "trace": True},
+    ("countermodel.search", M, "", "non-vacuity"):
+        lambda: {"id": "non-vacuity", "kind": "non-vacuity", "environment": _route(), "model": _model(_route()),
+                 "formula": ["top"], "max_evaluations": 100},
     ("countermodel.check", C, "", "countermodel"): lambda: _countermodel_case(_legacy(), "countermodel"),
     ("countermodel.check", C, "route", "countermodel"): lambda: _countermodel_case(_route(), "countermodel"),
     ("countermodel.check", C, "order", "countermodel"): lambda: _countermodel_case(_order(), "countermodel"),

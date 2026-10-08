@@ -222,7 +222,8 @@ def run(operation: str, executable, cases: list[dict], *, runner: str, mode: str
     except OSError as exc:
         raise unavailable(f"cannot start {executable}: {exc.strerror or exc}") from None
     try:
-        rows = read_rows(proc.returncode, proc.stdout, cases, restricted=True)
+        # `ve_metered`'s rows carry JSON null (an exhausted value, an absent trace), as the service's do.
+        rows = read_rows(proc.returncode, proc.stdout, cases, restricted=runner != "ve_metered")
     except NoAnswer as exc:
         raise unavailable(str(exc)) from None
     for index, (case, row) in enumerate(zip(cases, rows)):

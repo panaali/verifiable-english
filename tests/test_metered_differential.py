@@ -42,8 +42,10 @@ def run(cases):
     rows = []
     for start in range(0, len(cases), CHUNK):
         answer = subprocess.run([str(EXE)], input=json.dumps(cases[start:start + CHUNK]),
-                                text=True, capture_output=True, check=True, timeout=HANG_TIMEOUT)
-        rows += json.loads(answer.stdout)
+                                text=True, capture_output=True, check=False, timeout=HANG_TIMEOUT)
+        chunk = json.loads(answer.stdout)
+        assert answer.returncode == int(any(row.get("status") == "error" for row in chunk)), answer
+        rows += chunk
     assert len(rows) == len(cases)
     return rows
 
