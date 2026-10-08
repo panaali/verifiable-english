@@ -1436,3 +1436,25 @@ fn order_countermodel_check(env: &Environment, v: &Value) -> Result<Value> {
         "premise_meaning_ids":premises.iter().map(meaning).collect::<Result<Vec<_>>>()?,
         "conclusion_meaning_id":meaning(conclusion)?}))
 }
+
+/// Measurement only (lean-first batch 15b): the candidates `order_search` examines, in its
+/// order, without evaluating them. The formulas, guard and used relations are `order_search`'s.
+#[cfg(feature = "bench-internals")]
+#[doc(hidden)]
+pub fn order_candidates(v: &Value, visit: &mut dyn FnMut(Value) -> Result<bool>) -> Result<()> {
+    let env = Environment::from_value(v.get("environment")
+        .ok_or_else(|| Error::new("InvalidInput", "environment missing"))?)?;
+    let premises = array(v.get("premises").ok_or_else(|| Error::new("InvalidInput", "premises missing"))?)?;
+    let mut formulas: Vec<&Value> = premises.iter().chain(v.get("conclusion")).collect();
+    formulas.extend(v.get("nonvacuous_for"));
+    let maximum = usize::try_from(number(v, "max_domain_size", 2)?)
+        .map_err(|_| Error::new("ResourceLimit", "domain bound overflow"))?;
+    let minimum = usize::try_from(number(v, "min_domain_size", 0)?)
+        .map_err(|_| Error::new("ResourceLimit", "minimum domain bound overflow"))?
+        .max(usize::from(v.get("nonempty_domains") == Some(&json!(true))));
+    let mut used = BTreeSet::new();
+    for f in &formulas {
+        used_predicates(f, &mut used);
+    }
+    order_models(&env, &formulas, minimum, maximum, &used, &mut |model| visit(model.canonical))
+}

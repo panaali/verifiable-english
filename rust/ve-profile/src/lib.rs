@@ -8,6 +8,9 @@ mod search;
 #[cfg(feature = "bench-internals")]
 #[doc(hidden)]
 pub use eval::EvaluationKernel;
+#[cfg(feature = "bench-internals")]
+#[doc(hidden)]
+pub use order::order_candidates;
 pub use eval::{Evaluation, TracedEvaluation, evaluate, evaluate_formula, evaluate_traced};
 pub use order::order_case;
 pub use route::{check_label, check_reading_binding, label_is_canonical};
