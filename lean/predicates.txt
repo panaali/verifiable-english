@@ -13,6 +13,7 @@ module ResponseShape.Encoders.Common
 module ResponseShape.Encoders.Conformance
 module ResponseShape.Encoders.Discourse
 module ResponseShape.Encoders.English
+module ResponseShape.Encoders.EnglishLean
 module ResponseShape.Encoders.Envelope
 module ResponseShape.Encoders.Family
 module ResponseShape.Encoders.NormDefaults
@@ -38,6 +39,7 @@ module ResponseShape.Schemas.Common
 module ResponseShape.Schemas.Diagnose
 module ResponseShape.Schemas.Discourse
 module ResponseShape.Schemas.English
+module ResponseShape.Schemas.EnglishLean
 module ResponseShape.Schemas.Envelope
 module ResponseShape.Schemas.Environment
 module ResponseShape.Schemas.Evaluate
@@ -172,7 +174,9 @@ module VE.English.RenderProofs
 module VE.English.Run
 module VE.English.Statements
 module VE.EnglishGrammar.Actions
+module VE.EnglishGrammar.Advice
 module VE.EnglishGrammar.Catalogue
+module VE.EnglishGrammar.E2Examples
 module VE.EnglishGrammar.Encode
 module VE.EnglishGrammar.EngineExamples
 module VE.EnglishGrammar.Examples
@@ -187,11 +191,14 @@ module VE.EnglishGrammar.FoldAgree
 module VE.EnglishGrammar.Lexer
 module VE.EnglishGrammar.Lexicon
 module VE.EnglishGrammar.LexiconFixtures
+module VE.EnglishGrammar.Policy
+module VE.EnglishGrammar.PolicyReference
 module VE.EnglishGrammar.ProfileExamples
 module VE.EnglishGrammar.Read
 module VE.EnglishGrammar.ReadExamples
 module VE.EnglishGrammar.Rules
 module VE.EnglishGrammar.Run
+module VE.EnglishGrammar.SensesRequest
 module VE.EnglishGrammar.Syntax
 module VE.EnglishGrammar.Token
 module VE.EnvironmentProofs
@@ -355,6 +362,7 @@ module VE.Route.Route
 module VE.Route.Run
 module VE.Route.RunSound
 module VE.Route.Steps
+module VE.Route.Typed
 module VE.Route.Wire
 module VE.Route.WireSound
 module VE.Semantics
@@ -368,6 +376,7 @@ module VE.Senses.Fixtures
 module VE.Senses.Preamble
 module VE.Senses.Project
 module VE.Senses.Read
+module VE.Senses.Request
 module VE.Senses.Run
 module VE.Service.Diagnose
 module VE.Service.EnglishRun

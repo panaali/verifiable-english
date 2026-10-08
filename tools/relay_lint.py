@@ -49,7 +49,10 @@ sys.path.insert(0, str(ROOT))
 RELAYED = ("ve/backends/relay.py", "ve/readings_route.py", "ve/discourse.py",
            "ve/rights_route.py", "ve/reports.py", "ve/reports_route.py",
            "ve/norm_defaults.py", "ve/norm_defaults_route.py",
-           "ve/backends/speech_source.py", "ve/speech_document.py")
+           "ve/backends/speech_source.py", "ve/speech_document.py", "ve/backends/english_lean.py")
+# English admission is Python authoritative after the E2.5 readability result. Its Lean adapter still relays
+# Lean's response, so lint that path while the public Python reader retains its own diagnostics.
+RELAYED_FUNCTIONS = {"ve/english.py": ("_lean_reading", "_nearest_help")}
 # W2's English text-to-structure parser remains the experimental English E3
 # owner. SpeechDocument only supplies its structured fence to Lean for checking.
 OWNED_SURFACES = frozenset({"ve.speech_english"})
@@ -111,10 +114,20 @@ def file_io(path: Path, node: ast.Call) -> bool:
     return any(line.rstrip().endswith(FILE_IO) for line in lines)
 
 
-def findings(path: Path, classes: frozenset[str], marked: list | None = None) -> list[str]:
+def findings(path: Path, classes: frozenset[str], marked: list | None = None,
+             functions: tuple[str, ...] | None = None) -> list[str]:
+    """The own content diagnostics of a module, or of its top-level `functions` only (each must exist)."""
     tree = ast.parse(path.read_text(), filename=str(path))
+    roots: list[ast.AST] = [tree]
+    if functions is not None:
+        defined = {node.name: node for node in tree.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))}
+        absent = sorted(set(functions) - set(defined))
+        if absent:
+            where = path.relative_to(ROOT) if path.is_relative_to(ROOT) else path
+            return [f"{where}: relayed function(s) not found: {', '.join(absent)}"]
+        roots = [defined[name] for name in functions]
     out = []
-    for node in ast.walk(tree):
+    for node in (child for root in roots for child in ast.walk(root)):
         if not isinstance(node, ast.Call) or _called_name(node.func) not in classes:
             continue
         if file_io(path, node):
@@ -228,8 +241,9 @@ def main(argv: list[str] | None = None) -> int:
     paths = [Path(p).resolve() for p in (argv if argv else [str(ROOT / r) for r in RELAYED])]
     if not argv:
         paths += helpers(paths)
+    scoped = {} if argv else {(ROOT / name).resolve(): functions for name, functions in RELAYED_FUNCTIONS.items()}
     readings = paths if argv else sorted(ROOT.glob(READINGS_GLOB))
-    missing = [p for p in paths if not p.is_file()]
+    missing = [p for p in [*paths, *scoped] if not p.is_file()]
     if missing:
         print("\n".join(f"relayed module not found: {p}" for p in missing))
         return 1
@@ -237,6 +251,7 @@ def main(argv: list[str] | None = None) -> int:
     marked: list[str] = []
     guards: list[str] = []
     found = [f for p in paths for f in findings(p, classes, marked)]
+    found += [f for p, functions in scoped.items() for f in findings(p, classes, marked, functions)]
     found += [f for p in readings for f in reserved_literals(p, guards)]
     # The senses path's files are pinned by tests/test_relay_lint.py; a tree without them has no senses path.
     senses = paths if argv else [ROOT / p for p in PARSE_FREE if (ROOT / p).is_file()]
@@ -245,9 +260,10 @@ def main(argv: list[str] | None = None) -> int:
         found += english_reads(ROOT / SENSES_LOADER, branches_only=True)
     io = f"; {len(marked)} file I/O diagnostic(s): {', '.join(marked)}" if marked else ""
     io += f"; {len(guards)} non-wording guard(s): {', '.join(guards)}" if guards else ""
-    print("\n".join(found) if found else f"PASS: {len(paths)} relayed module(s), no own content diagnostic; "
-          f"{len(readings)} readings module(s), no reserved completion name; {len(senses)} senses module(s), "
-          f"no English reader{io}")
+    print("\n".join(found) if found else
+          f"PASS: {len(paths)} relayed module(s) and {sum(len(f) for f in scoped.values())} relayed function(s), "
+          f"no own content diagnostic; {len(readings)} readings module(s), no reserved completion name; "
+          f"{len(senses)} senses module(s), no English reader{io}")
     return 1 if found else 0
 
 

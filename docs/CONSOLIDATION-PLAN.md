@@ -664,21 +664,23 @@ the merge of ve-integration into senses/integrate, 2026-10-06). Steps 7 and 8b r
 ve-integration into lean-first/b5 (2026-10-06), which moved risk and alternatives block ownership to Lean,
 and after its post-merge fix (2026-10-07), which added the alternatives environment scope;
 step 8b remeasured again at the merge of ve-integration into lean-first/b10b (2026-10-07), which adds
-batch 10b's norm-defaults decoder changes; the current measurements follow:
+batch 10b's norm-defaults decoder changes; the English Lean E2 integration adds three step 7 trusted lines in
+`EnglishGrammar.Run`, and steps 7 and 8b remeasured at the merge of ve-integration into it (2026-10-08); the
+current measurements follow:
 
-The merged step 2a ledger now identifies 114 tied runner lines; the table below records
-that source classification alongside the previously measured steps.
+The merged step 2a ledger now identifies no remaining runner lines in that row; the table below records
+the current source classification alongside the previously measured steps.
 
 | Step | Removed | Tied | Reclassified [V]→[R] | Adds (est.) | Net | Days | Risk | Score |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | 1 | 0 | 23 | 0 | 0 | 23 | 5 | 1.5 | 3.1 |
-| 2a | 0 | 114 | 0 | 0 | 114 | 4 | 1 | 28.5 |
+| 2a | 0 | 0 | 0 | 0 | 0 | 4 | 1 | 0.0 |
 | 2b | 94 | 0 | 0 | 0 | 94 | 2 | 2 | 23.5 |
 | 3 | 39 | 0 | 0 | 10 | 29 | 14 | 2 | 1.0 |
 | 4 | 720 | 0 | 0 | 420 | 300 | 14 | 2 | 10.7 |
 | 5 | 0 | 488 | 0 | 0 | 488 | 14 | 1 | 34.9 |
 | 6 | 35 | 0 | 1758 | 0 | 35 | 3 | 1 | 11.7 |
-| 7 | 635 | 0 | 0 | 60 | 575 | 6 | 2 | 47.9 |
+| 7 | 638 | 0 | 0 | 60 | 578 | 6 | 2 | 48.2 |
 | 8a | 106 | 225 | 0 | 60 | 271 | 10 | 1.5 | 18.1 |
 | 8b | 0 | 3618 | 0 | 0 | 3618 | 30 | 3 | 40.2 |
 | 9 | 88 | 0 | 0 | 0 | 88 | 18 | 2 | 2.4 |
@@ -686,11 +688,11 @@ that source classification alongside the previously measured steps.
 
 What the measurement changes:
 
-* **Re-ranking of steps 5 to 10 by measured score:** 7 (47.9), 5 (34.9), 8a (18.1), 6 (11.7),
+* **Re-ranking of steps 5 to 10 by measured score:** 7 (48.2), 5 (34.9), 8a (18.1), 6 (11.7),
   9 (2.4), 10. Step 8b's 3,618 is an upper bound (every untied line of the eight units' `Wire.lean`
   files, on the assumption that every decoder gets `exact`), not a forecast; it stays ranked by its
   pilot (Alternatives) as section 3 says. Against the estimates, 7 overtakes 5 (762 trusted
-  dispatch and `main` lines, not 340; 603 before the bench executable; 551 once batch 1 deleted the one-shot routes; 584 with english-lean S2's `ve_english_route`; 587 after batch 11a added the W2 `ve_speech_acts_route`; 613 with `ve_senses_route`; 627 after the reports batch with its fault-order preflight; 628 with the alternatives route's `alt-environment` case; 634 after batch 13a's one-shot projection) and 5 is smaller than estimated (488 measured against 1,500 to
+  dispatch and `main` lines, not 340; 603 before the bench executable; 551 once batch 1 deleted the one-shot routes; 584 with english-lean S2's `ve_english_route`; 587 after batch 11a added the W2 `ve_speech_acts_route`; 613 with `ve_senses_route`; 627 after the reports batch with its fault-order preflight; 628 with the alternatives route's `alt-environment` case; 634 after batch 13a's one-shot projection; 637 with English Lean E2's modes; 638 with batch 10b's merge) and 5 is smaller than estimated (488 measured against 1,500 to
   2,000): most of the rows' targets are short runners, and `scopedVerdict` and `weighingWitness`
   are already C.
 * **Step 6** removes almost nothing trusted: the SHA-256 copy and the `maxNodes` sites are [I] and

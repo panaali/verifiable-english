@@ -186,7 +186,9 @@ import VE.EnglishGrammar.Read
 import VE.EnglishGrammar.Extends
 import VE.EnglishGrammar.Run
 import VE.Senses.Read
+import VE.EnglishGrammar.SensesRequest
 import VE.Senses.Document
+import VE.Senses.Request
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -4565,6 +4567,48 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Senses.senses_candidate_sound
 #print axioms VE.Senses.candidates_complete
 #print axioms VE.Senses.mixed_exact
+#print axioms VE.EnglishGrammar.policy_iff_no_failure
+#print axioms VE.EnglishGrammar.policy_selection
+#print axioms VE.EnglishGrammar.admitRequest_ok
+#print axioms VE.EnglishGrammar.admitRequest_exact
+#print axioms VE.EnglishGrammar.admitRequest_policy
+#print axioms VE.EnglishGrammar.translateRequest_policy
+#print axioms VE.EnglishGrammar.grammarFault_none
+#print axioms VE.EnglishGrammar.overlayCheck_constants
+#print axioms VE.EnglishGrammar.checkRequest_some
+#print axioms VE.EnglishGrammar.sensesRequest_policy
+#print axioms VE.EnglishGrammar.Run.codeClasses_total
+#print axioms VE.EnglishGrammar.Run.rejectCodes_total
+#print axioms VE.EnglishGrammar.Run.statusCodes_classed
+#print axioms VE.EnglishGrammar.policyPredicate_tables
+#print axioms VE.EnglishGrammar.DecodeEncode.anyAux_at
+#print axioms VE.EnglishGrammar.DecodeEncode.digitChar_facts
+#print axioms VE.EnglishGrammar.DecodeEncode.digits_props
+#print axioms VE.EnglishGrammar.DecodeEncode.foldlAux_at
+#print axioms VE.EnglishGrammar.DecodeEncode.getAux_at
+#print axioms VE.EnglishGrammar.DecodeEncode.get_at
+#print axioms VE.EnglishGrammar.DecodeEncode.go_append
+#print axioms VE.EnglishGrammar.DecodeEncode.go_cons
+#print axioms VE.EnglishGrammar.DecodeEncode.go_nil
+#print axioms VE.EnglishGrammar.DecodeEncode.go_pos
+#print axioms VE.EnglishGrammar.DecodeEncode.intText_toIntOpt
+#print axioms VE.EnglishGrammar.DecodeEncode.pos_add_char
+#print axioms VE.EnglishGrammar.DecodeEncode.string_any
+#print axioms VE.EnglishGrammar.DecodeEncode.string_foldl
+#print axioms VE.EnglishGrammar.DecodeEncode.toDigitsCore_digits
+#print axioms VE.EnglishGrammar.DecodeEncode.toDigitsCore_ne_nil
+#print axioms VE.EnglishGrammar.DecodeEncode.toDigitsCore_value
+#print axioms VE.EnglishGrammar.DecodeEncode.toNatOpt_of_digits
+#print axioms VE.EnglishGrammar.DecodeEncode.toNatOpt_toString
+#print axioms VE.EnglishGrammar.DecodeEncode.toString_nat
+#print axioms VE.EnglishGrammar.EFormula.decode_encode
+#print axioms VE.EnglishGrammar.ETerm.decode_encode
+#print axioms VE.EnglishGrammar.decode_encode
+#print axioms VE.EnglishGrammar.mapM_decode
+#print axioms VE.EnglishGrammar.reachRefl_kind
+#print axioms VE.Service.runMode_englishRead
+#print axioms VE.Service.runMode_englishGrammar
+#print axioms VE.Service.runMode_englishCheck
 #print axioms VE.Senses.readDocument_source
 #print axioms VE.Senses.readDocument_bad_default
 #print axioms VE.Senses.badDefault_none
@@ -4576,3 +4620,5 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Senses.documentInput_fences
 #print axioms VE.Senses.document_unit_sound
 #print axioms VE.Senses.document_line_sound
+#print axioms VE.Senses.documentRequest_policy
+#print axioms VE.Senses.documentRequest_source

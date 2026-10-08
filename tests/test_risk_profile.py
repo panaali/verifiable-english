@@ -245,8 +245,9 @@ def test_policy_english_uses_risk_readings():
         ("run certainly leads to outage.", "Use 'leads to'"),
         ("run could lead to outage.", "Use 'might lead to'"),
     ):
-        with pytest.raises(VEError, match=rewrite):
+        with pytest.raises(VEError) as caught:
             parse_english_with_metadata(env, sentence)
+        assert rewrite in str(caught.value)
 
 
 def test_risk_word_in_norm_guard_has_one_reading():

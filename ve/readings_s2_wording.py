@@ -69,7 +69,8 @@ class S2Wording:
         read back by that surface's all-derivations parser to the conclusion itself before it is shown."""
         from .ast import formula_from_data
         text = self.E.canonical_sentence(self.frame, formula_from_data(self.frame, ast),
-                                         "the conclusion's sentence does not read back to the conclusion")
+                                         "the conclusion's sentence does not read back to the conclusion",
+                                         statement_layer=True)
         slot = f"*{text}*"
         self.slots.conclusions.add(slot)
         return slot
