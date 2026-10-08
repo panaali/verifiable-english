@@ -252,6 +252,8 @@ decoders on the submitted environment (without the statement layers), using an e
 alternatives environment scope validates other profiles' declarations with their owner while preserving
 fixed role predicates. -/
 def validateDeclarations (environment : Json) (generated : Bool := false) : Except String Unit := do
+  -- A generated soft frame is checked by every route as the soft route checks it: without its `soft__` predicates.
+  let environment := if generated then generatedView environment else environment
   let ps := (VE.Route.Gate.profilesOf environment).toOption.getD []
   if ps.contains "risk@0" || (environment.getObjVal? "risk").isOk then
     let _ ← VE.Risk.Wire.decodeRiskSource (layerView environment) (Json.mkObj [("norms", Json.arr #[])])
@@ -261,8 +263,7 @@ def validateDeclarations (environment : Json) (generated : Bool := false) : Exce
   if ps.contains "norm-defaults@0" then
     let _ ← VE.NormDefaults.Wire.decodeSourceU (blockRouteView environment) (Json.arr #[])
   else if ps.contains "soft-norms@0" then
-    let view := blockRouteView environment
-    let _ ← VE.SoftNorms.Wire.decodeSoftSource (if generated then generatedView view else view) (Json.arr #[])
+    let _ ← VE.SoftNorms.Wire.decodeSoftSource (blockRouteView environment) (Json.arr #[])
   if ((environment.getObjVal? "units").isOk || (environment.getObjVal? "unit_schema").isOk) &&
       !ps.contains "risk@0" then
     let ext ← VE.Risk.Wire.extended environment

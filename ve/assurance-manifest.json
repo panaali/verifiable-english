@@ -66,7 +66,7 @@
     "ve/english.py:_parse_english_document_uncached": "Comparator only: Python parser exceptions are recorded after Lean has decided; they never change the returned Lean result or error."
   },
   "lean_decoders": {
-    "total_lines": 23569,
+    "total_lines": 23570,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -260,12 +260,12 @@
       },
       {
         "file": "lean/VE/EnglishGrammar/Run.lean",
-        "lines": 734,
-        "sha256": "9aabfc9ffeff75159b4c1b3dbde8ef5eb85c5f4cfed840957ba58ffa577545e5",
+        "lines": 735,
+        "sha256": "f9355148f683d663abd23260fab6d3d318f9e575e7bdebaf910bb40f95b86245",
         "ranges": [
           [
             1,
-            734
+            735
           ]
         ],
         "declarations": [
