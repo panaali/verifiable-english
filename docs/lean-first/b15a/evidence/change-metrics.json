@@ -1,0 +1,127 @@
+{
+  "range": "29773091b436c14653fb21099152ecff4403476c..2e831d8007bc88d2838bf2196c60cdc222e8d44c --no-merges",
+  "base": "29773091b436c14653fb21099152ecff4403476c",
+  "implementation_head": "2e831d8007bc88d2838bf2196c60cdc222e8d44c",
+  "commits": [
+    "97e175d979bcb59119dc6b96a3ed5908a87052f3",
+    "1c43948809c160fcb2cf11c34252f44020cf4a35",
+    "371055034467a727edefd6b21358c93fbbee1282",
+    "767d350634310b612f2e67d622a6622ab3d1632c",
+    "2e831d8007bc88d2838bf2196c60cdc222e8d44c"
+  ],
+  "files": [
+    {
+      "path": "docs/CONSOLIDATION-PLAN.md",
+      "added": 1,
+      "deleted": 1
+    },
+    {
+      "path": "docs/lean-first/b15a/evidence/mutants.txt",
+      "added": 163,
+      "deleted": 0
+    },
+    {
+      "path": "lean/MeteredMain.lean",
+      "added": 4,
+      "deleted": 0
+    },
+    {
+      "path": "lean/VE/Audit.lean",
+      "added": 8,
+      "deleted": 0
+    },
+    {
+      "path": "lean/VE/Route/Metered.lean",
+      "added": 134,
+      "deleted": 0
+    },
+    {
+      "path": "lean/VE/Route/MeteredProofs.lean",
+      "added": 52,
+      "deleted": 0
+    },
+    {
+      "path": "lean/VE/Route/MeteredRun.lean",
+      "added": 188,
+      "deleted": 0
+    },
+    {
+      "path": "lean/VE/Route/MeteredTrace.lean",
+      "added": 247,
+      "deleted": 0
+    },
+    {
+      "path": "lean/VE/Route/NonVacuity.lean",
+      "added": 148,
+      "deleted": 0
+    },
+    {
+      "path": "lean/VE/Route/frozen-sources.sha256",
+      "added": 6,
+      "deleted": 1
+    },
+    {
+      "path": "lean/axioms.txt",
+      "added": 7,
+      "deleted": 0
+    },
+    {
+      "path": "lean/declarations.txt",
+      "added": 89,
+      "deleted": 1
+    },
+    {
+      "path": "lean/lakefile.toml",
+      "added": 5,
+      "deleted": 1
+    },
+    {
+      "path": "lean/predicates.txt",
+      "added": 6,
+      "deleted": 0
+    },
+    {
+      "path": "lean/statements.txt",
+      "added": 57,
+      "deleted": 0
+    },
+    {
+      "path": "tests/test_metered_lean.py",
+      "added": 154,
+      "deleted": 0
+    },
+    {
+      "path": "tools/gate-collection.json",
+      "added": 17,
+      "deleted": 0
+    },
+    {
+      "path": "tools/layer_policy.py",
+      "added": 1,
+      "deleted": 1
+    },
+    {
+      "path": "tools/lean_output_diff.py",
+      "added": 15,
+      "deleted": 1
+    },
+    {
+      "path": "tools/trust-classes.json",
+      "added": 77,
+      "deleted": 0
+    },
+    {
+      "path": "ve/assurance-manifest.json",
+      "added": 3,
+      "deleted": 0
+    }
+  ],
+  "totals": {
+    "added": 1382,
+    "deleted": 6,
+    "lean_added": 781,
+    "lean_deleted": 0,
+    "python_decision_deleted": 0,
+    "rust_deleted": 0
+  }
+}
