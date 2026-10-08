@@ -161,8 +161,9 @@ The policy states no default, so the four environments above each add one it doe
 (`docs/spec/norm-defaults.md`, fixture u4). [unspecified.py](unspecified.py) computes the status of
 `permitted(a)` and `report_required(a)` for the 39 records that are one finite model (a01 to a39; a40 to a42
 leave facts open, so their situation is not one model and they are not in this check). Lean's norm-defaults route
-replays every status, the a10 conflict witness and both gap witnesses: **81 of 81 agree**, on a flag-free copy of
-the environment, as for the norms route (the statuses are the same without the flags; the harness checks this).
+computes every status, checks every finite filling and conflict target, and supplies both gap lines:
+**426 of 426 Lean cases answered** on the flag-free copy of the environment. The environment fixture checks
+that the copy differs only in the tool flags.
 
 **The verdicts do not change.** The harness's verdict never reads the default, so all 42 verdicts, the deciding
 rules and the policy findings stay as above. What changes is the completed outcome, and only where a default

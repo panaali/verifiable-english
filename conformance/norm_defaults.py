@@ -24,7 +24,7 @@ from ve.environment import Environment  # noqa: E402
 from ve.errors import InvalidModel  # noqa: E402
 from ve.evaluate import _Evaluator  # noqa: E402
 from ve.model import FiniteModel  # noqa: E402
-from ve import norm_defaults as nd  # noqa: E402
+from conformance import frozen_norm_defaults as nd  # noqa: E402
 from ve.norms import NormDocument, _bind  # noqa: E402
 
 RUST_FIXTURES = ROOT / "conformance/norm_defaults_rust.json"

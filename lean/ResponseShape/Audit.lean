@@ -273,6 +273,7 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.SoftNorms.runSoftKind_fits
 #print axioms ResponseShape.Encoders.SoftNorms.softDiagnosticCode_mem
 #print axioms ResponseShape.Encoders.SoftNorms.softLabelled_nonempty
+#print axioms ResponseShape.Encoders.SoftNorms.softLabelledIn_nonempty
 #print axioms ResponseShape.Encoders.SoftNorms.softNames_ok
 #print axioms ResponseShape.Encoders.SoftNorms.softPairs_ok
 #print axioms ResponseShape.Encoders.SoftNorms.typed_ok

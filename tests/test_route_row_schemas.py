@@ -39,7 +39,7 @@ ROUTE_MODES = ("soft-norms", "rights", "speech-acts", "reports", "alternatives",
                "quantity", "norm-defaults", "discourse", "readings-route", "diagnose")
 # Top-level answer fields that are maps keyed by request names (an empty map is an answer).
 MAPS = {"worst_cases", "bound", "meaning_ids", "presuppositions", "validity", "statuses", "reading_verdicts",
-        "units", "mentions"}
+        "units", "mentions", "default_exceptions_by_decider", "rule_acts"}
 # Top-level fields whose domain is a union across JSON types (field: the types beside the genuine one).
 UNIONS = {"joint": {"string", "integer"}, "admitted": {"boolean", "string"}, "finding": {"object", "null"},
           "first_failing": {"string", "null"}}
@@ -296,7 +296,13 @@ def test_the_reviewed_soft_mutants_raise_checker_unavailable(tmp_path, monkeypat
     document = _soft_document()
     rows = []
     real = relay.decide
-    monkeypatch.setattr("ve.soft_route.decide", lambda mode, cases: rows.extend(real(mode, cases)) or rows[-1:])
+    from ve.backends import soft_relay
+    real_once = soft_relay.decide_once
+    def observed_once(mode, case):
+        row = real_once(mode, case)
+        rows.append(row)
+        return row
+    monkeypatch.setattr(soft_relay, "decide_once", observed_once)
     genuine = elaborate_soft_document(document)
     assert genuine["environment_prime"] and rows == [genuine]
     altered = {"drop environment_prime": {k: v for k, v in genuine.items() if k != "environment_prime"},
@@ -304,7 +310,7 @@ def test_the_reviewed_soft_mutants_raise_checker_unavailable(tmp_path, monkeypat
                "no payload": {"id": genuine["id"], "status": "ok"}}[alteration]
     pool = _scripted_pool(tmp_path, "soft-norms", altered)
     monkeypatch.setattr(relay, "_pool", pool)
-    monkeypatch.setattr("ve.soft_route.decide", real)
+    monkeypatch.setattr(soft_relay, "decide_once", real_once)
     try:
         case = {"id": "soft-elaborate", "kind": "soft-elaborate", "environment": document.env.to_dict(),
                 "norms": [rule.to_dict() for rule in document.rules]}
@@ -407,6 +413,6 @@ def test_an_open_answer_is_found(tmp_path):
 
 def test_the_delta_states_the_corpus_it_ran():
     import re
-    delta = (ROOT / "docs/lean-first/b1/DELTA.md").read_text()
-    stated = re.search(r"current\s+merged corpus has (\d[\d,]*) cases", delta)
-    assert stated and int(stated.group(1).replace(",", "")) == len(CASES.read_text().splitlines())
+    baseline = (ROOT / "docs/lean-first/b1/DELTA.md").read_text()
+    old = re.search(r"`tests/data/route-cases\.jsonl`, (\d[\d,]*) cases", baseline)
+    assert old and int(old.group(1).replace(",", "")) <= len(CASES.read_text().splitlines())

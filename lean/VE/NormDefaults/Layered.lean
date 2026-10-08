@@ -1,4 +1,5 @@
 import VE.NormDefaults.Report
+import VE.NormDefaults.Explain
 import VE.Rights.Wire
 
 /-! The soft and rights branches of `norm-defaults@0` (docs/spec/norm-defaults.md 2.3 and
@@ -23,10 +24,11 @@ replays against the regenerated document:
   bindings packages use (`environment_id`, `document_hash`, `base_environment`);
 * `replayConflictX`: certificates for every target of `fill U` over the base background
   give CONFLICT-FREE under every admissible filling (`layered_conflict_sound`); a filled
-  witness gives CONFLICT (`layered_witness_sound`);
+  witness gives CONFLICT (`layered_witness_sound`), with the English fields of the norms
+  route (`conflictFields`);
 * `replayStatusX`: `table3` and enumeration give SETTLED (`SettledAs`, over every filling
   `Fill_T` admits, so also over those `X` admits), two admissible fillings give
-  UNDECIDED (`UndecidedAtX`);
+  UNDECIDED (`UndecidedAtX`); the row carries `statusFields`, as on the norms route;
 * the report (`layeredSource`, `layered_report_sound`). -/
 namespace VE.NormDefaults.Wire
 open Lean
@@ -294,8 +296,11 @@ theorem FilledX.admissible {L : LayeredU} (w : FilledX L) :
 
 /-! ## CONFLICT witnesses -/
 
-/-- A filled witness of a target: CONFLICT when the target is true at the tuple. -/
-def witnessConflictX (L : LayeredU) (w : Json) : Except String (String × Option (PLift (¬ ConflictFreeX.{0} L.U L.X))) := do
+/-- A filled witness of a target: CONFLICT when the target is true at the tuple; with the
+filled model, the target formula and the tuple (for `conflictFields`). -/
+def witnessConflictX (L : LayeredU) (w : Json) :
+    Except String (String × Option (PLift (¬ ConflictFreeX.{0} L.U L.X)) ×
+      (VE.FiniteModel Entity × VE.Formula × List Entity)) := do
   let fw ← filledX L w
   let name ← VE.Bridge.stringField w "target"
   match hfind : (targets (fill L.U)).find? (·.1 == name) with
@@ -306,8 +311,8 @@ def witnessConflictX (L : LayeredU) (w : Json) : Except String (String × Option
       pure (name, some ⟨fun hc => target_not_conflictFree L.U (fill_wellFormed L.U L.wfU) t
         (List.mem_of_find?_eq_some hfind) _ vs
         ((tupleTyped_relation fw.S.M.asStructure _ _ vs).mpr ((mem_allTuples fw.S.M _ vs).mp hvs))
-        ((eval_withFill L.U fw.S.M fw.F _ _).mp hw) (hc _ fw.admissible)⟩)
-    else pure (name, none)
+        ((eval_withFill L.U fw.S.M fw.F _ _).mp hw) (hc _ fw.admissible)⟩, fw.S.M.withFill fw.F, t.2.2, vs)
+    else pure (name, none, fw.S.M.withFill fw.F, t.2.2, vs)
 
 /-! ## Statuses -/
 
@@ -405,9 +410,10 @@ def runLayered (id kind : String) (j : Json) : Except String Json := do
   if kind == "norm-defaults-elaborate" then
     return VE.Route.Wire.ok id (layeredElaborate L)
   if kind == "norm-defaults-conflict" && (j.getObjVal? "witness").toBool then
-    let (target, w) ← witnessConflictX L (← j.getObjVal? "witness")
-    return VE.Route.Wire.ok id [("verdict", .str (if w.isSome then "CONFLICT" else "UNKNOWN")),
-      ("target", .str target), ("targets", toJson ((targets (fill L.U)).map (·.1)))]
+    let (target, w, M, φ, vs) ← witnessConflictX L (← j.getObjVal? "witness")
+    return VE.Route.Wire.ok id ([("verdict", .str (if w.isSome then "CONFLICT" else "UNKNOWN")),
+      ("target", .str target), ("targets", toJson ((targets (fill L.U)).map (·.1)))] ++
+      if w.isSome then conflictFields L.U M target φ vs else [])
   if kind == "norm-defaults-conflict" then
     let free := conflictFreeX L packages
     return VE.Route.Wire.ok id ([("verdict", .str (if free then "CONFLICT-FREE" else "UNKNOWN")),
@@ -417,7 +423,12 @@ def runLayered (id kind : String) (j : Json) : Except String Json := do
       | none => [])
   if kind == "norm-defaults-status" then
     let d ← replayStatusX L j
-    return VE.Route.Wire.ok id [("point_status", .str d.status.label), ("predicate", .str d.r.name)]
+    let fillings ← if d.status = .undecided then
+        some <$> ((·, ·) <$> decodeFilling L.U d.S.M (j.getObjValD "yes") <*>
+          decodeFilling L.U d.S.M (j.getObjValD "no"))
+      else pure none
+    return VE.Route.Wire.ok id ([("point_status", .str d.status.label), ("predicate", .str d.r.name)] ++
+      statusFields L.U d.S.M d.r.name d.vs (d.status != .undecided && d.status != .unknown) fillings)
   if kind == "norm-defaults-report" then
     let rep ← reportWith (layeredSource L packages) j
     return VE.Route.Wire.ok id rep.toJson
