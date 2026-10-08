@@ -1,7 +1,7 @@
 {
-  "range": "c07377edbdbbbb48255aca6c29e02efac78387db..9770be82a2751bb9a72b3f643d501482fa8c5ea4 --no-merges",
+  "range": "c07377edbdbbbb48255aca6c29e02efac78387db..c43afbcc6d248e86633d5f82d2950c3121fb0f76 --no-merges",
   "base": "c07377edbdbbbb48255aca6c29e02efac78387db",
-  "implementation_head": "9770be82a2751bb9a72b3f643d501482fa8c5ea4",
+  "implementation_head": "c43afbcc6d248e86633d5f82d2950c3121fb0f76",
   "commits": [
     "bc580837e4939ba240413c760e6bf7447f4db56e",
     "395253945d8ddf66c3ce4b6a1df6eca0be87339c",
@@ -17,7 +17,12 @@
     "760572b937e065758944a4aef01c81e7244cbc21",
     "0509537dd2855a05c9064be979bd097fd33b1844",
     "427f6413ff3fc88b0b6895e87bd92f2ced6057ff",
-    "9770be82a2751bb9a72b3f643d501482fa8c5ea4"
+    "9770be82a2751bb9a72b3f643d501482fa8c5ea4",
+    "60ae5b006a078116439c1d44974222453f71e14f",
+    "f19d9466833a1b66a9274952abce7f61491ae55c",
+    "8f5251336a727c89693ee6ac197891c07af4c7a0",
+    "373a7dd5581234baa62775a42dfdc27aebc98941",
+    "c43afbcc6d248e86633d5f82d2950c3121fb0f76"
   ],
   "files": [
     {
@@ -32,8 +37,8 @@
     },
     {
       "path": "conformance/difffuzz-baseline.json",
-      "added": 60065,
-      "deleted": 44198
+      "added": 21260,
+      "deleted": 5393
     },
     {
       "path": "conformance/fuzz.py",
@@ -67,7 +72,7 @@
     },
     {
       "path": "docs/lean-first/b15b/REPORT.md",
-      "added": 115,
+      "added": 114,
       "deleted": 0
     },
     {
@@ -93,6 +98,11 @@
     {
       "path": "docs/lean-first/b15b/evidence/ab2-compare.json",
       "added": 36334,
+      "deleted": 0
+    },
+    {
+      "path": "docs/lean-first/b15b/evidence/change-metrics.json",
+      "added": 453,
       "deleted": 0
     },
     {
@@ -127,7 +137,7 @@
     },
     {
       "path": "docs/lean-first/b15b/mutants.py",
-      "added": 92,
+      "added": 93,
       "deleted": 0
     },
     {
@@ -336,9 +346,19 @@
       "deleted": 123
     },
     {
+      "path": "tests/test_rust_jsonl_schema.py",
+      "added": 4,
+      "deleted": 3
+    },
+    {
       "path": "tests/test_search_options.py",
       "added": 34,
       "deleted": 63
+    },
+    {
+      "path": "tests/test_speech_acts_conformance.py",
+      "added": 3,
+      "deleted": 4
     },
     {
       "path": "tests/test_stage2_evaluation.py",
@@ -412,7 +432,7 @@
     },
     {
       "path": "ve/backends/lean_runner.py",
-      "added": 6,
+      "added": 24,
       "deleted": 0
     },
     {
@@ -427,12 +447,12 @@
     },
     {
       "path": "ve/evaluate.py",
-      "added": 46,
+      "added": 43,
       "deleted": 36
     },
     {
       "path": "ve/search.py",
-      "added": 48,
+      "added": 45,
       "deleted": 528
     }
   ],
@@ -443,8 +463,8 @@
     "tests/data/nonvacuity-oracle.json.gz"
   ],
   "totals": {
-    "added": 181682,
-    "deleted": 46489,
+    "added": 143349,
+    "deleted": 7691,
     "lean_added": 2,
     "lean_deleted": 1,
     "python_decision_deleted": 571,
