@@ -320,9 +320,20 @@ def mutate_situation(raw, document, fault):
                     r["admission"]["distinguishing_models"][o] = new
 
 
-# The search proposes before Lean has seen the document: on a source Lean refuses it may fail in any way, and
-# then proposes nothing (rule 3: a generator's failure is never a verdict).
-SEARCH_FAILURES = (VEError, KeyError, TypeError, ValueError, AttributeError, IndexError, StopIteration)
+# The search proposes before Lean has seen the situations: on a source Lean refuses it may fail in any way, and
+# then proposes nothing (rule 3: a generator's failure is never a verdict). Under `norm-defaults@0` it needs Lean's
+# filled document, without which it cannot build (`CheckerUnavailable`).
+SEARCH_FAILURES = (VEError, KeyError, TypeError, ValueError, AttributeError, IndexError, StopIteration,
+                   CheckerUnavailable)
+
+
+def _filled(raw, document):
+    """Under `norm-defaults@0`, Lean's `readings-elaborate` answer, which carries the filled document the search reads
+    (readings-defaults RD-2b) before any situation is recorded; else, or when Lean refuses the document, None."""
+    if "norm-defaults@0" not in (raw.get("profiles") or ()):
+        return None
+    [row] = run_lean([{"id": "e", "kind": "readings-elaborate", "environment": raw, "document": document}])
+    return row if row.get("status") == "ok" and "filled" in row else None
 
 
 def generated_cases(count=COUNT):
@@ -337,7 +348,7 @@ def generated_cases(count=COUNT):
         rs = document["reading_sets"][0]
         found = {}
         try:
-            found = search(raw, document, rs["id"])
+            found = search(raw, document, rs["id"], filled=_filled(raw, document))
         except SEARCH_FAILURES:
             pass
         document["reading_sets"][0] = record_situations(rs, {k: v for k, v in found.items() if v is not None})

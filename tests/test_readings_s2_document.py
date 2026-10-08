@@ -105,47 +105,52 @@ def _completion_document(tmp_path):
                                     reading_sets=document["reading_sets"])
 
 
-def test_rd2a_review_b3_completion_document_is_refused_by_name(tmp_path):
-    """Review B3: a document under the unspecified completion (every candidate with content, the norms chain,
-    `norm-defaults@0`) is admitted by Lean on the enumerated route with the completion as the cause. `ve document` has
-    no fold for its choices until RD-2b, so it refuses the document by name; it used to expect the abstention and
-    raise `ReadingsConformance: Python and Lean differ on the S2 route`, a false conformance alarm, and after the
-    sync with main it built the norm-defaults document with `readings@1`, which that route refuses."""
-    from ve.readings_route import UNDER_COMPLETION
+def test_rd2b_completion_document_is_checked_not_refused(tmp_path):
+    """Review B3 of RD-2a, then RD-2b: a document under the unspecified completion (every candidate with content, the
+    norms chain, `norm-defaults@0`) is admitted by Lean on the enumerated route with the completion as the cause, and
+    `ve document` relays its checks: no conformance alarm (B3), and no named refusal any more (RD-2a's, until RD-2b)."""
     _, _, path = _completion_document(tmp_path)
-    with pytest.raises(VEError) as caught:
-        check_document(path)
-    assert str(caught.value) == UNDER_COMPLETION
-    assert type(caught.value).__name__ != "CheckerUnavailable"
+    report = check_document(path)
+    assert (report["readings"]["route"], report["readings"]["not_superposable"]) == (
+        "enumerated", {"text": "ReadingsNotSuperposable: rs_1", "cause": "the unspecified completion"})
+    assert report["readings"]["conflict"]["status"] == "CONFLICT-FREE"
 
 
 def test_rd2a_review_b3_route_table_is_lean_s(tmp_path, lean_route):
-    """Review B3's class: Python's copy of the route table of 1.1 (`ve/readings_route.py`) answers as Lean's `routeOf`
-    under `norm-defaults@0`: on the norms chain Lean's route and cause are bound before the refusal by name."""
-    from ve.readings_route import COMPLETION_CAUSE, UNDER_COMPLETION, elaborate, run_lean
+    """Review B3's class: under `norm-defaults@0` the relay takes Lean's route of 1.1 (`routeOf`) and regenerates
+    none of it: the completion's route and cause are Lean's, relayed with the filled document (RD-2b)."""
+    from ve.readings_route import COMPLETION_CAUSE, elaborate, run_lean
     from ve.readings_s1 import wire
     raw, document, _ = _completion_document(tmp_path)
     units = [{"id": "u1", "kind": "norm"}]
     [row] = run_lean([{"id": "r", "kind": "readings-elaborate", "environment": wire(raw),
                        "document": wire({"units": units, "reading_sets": document["reading_sets"]})}])
     assert (row["route"], row["finding"]["cause"]) == ("enumerated", COMPLETION_CAUSE)
-    with pytest.raises(VEError) as caught:
-        elaborate(raw, units, document["reading_sets"])
-    assert str(caught.value) == UNDER_COMPLETION
+    relayed = elaborate(raw, units, document["reading_sets"])
+    assert relayed == {key: value for key, value in row.items() if key not in ("id", "status")}
 
 
-def test_ruling4_lean_frame_reads_unspecified_as_deny(lean_route):
-    """Lean's decoder and Python's S1 environment agree on a `norm-defaults@0` frame: `unspecified` is the
-    placeholder `deny` there (E‴), so readings-validate answers instead of failing to decode."""
+def test_ruling4_lean_frame_reads_unspecified_as_deny(tmp_path, lean_route):
+    """Lean's decoder reads a `norm-defaults@0` frame with `unspecified` as the placeholder `deny` (E‴), so
+    readings-validate answers instead of failing to decode. Python's S1 frame under the profile is Lean's filled one
+    (readings-defaults RD-2b: `_placeholder_frame` is deleted): built from `filled` it reads `deny`, and without
+    `filled` there is no frame."""
+    from ve.errors import CheckerUnavailable
     from ve.readings_route import document_wire, run_lean
     from ve.readings_s1 import S1Environment
     meta, _ = _split(PILOT)
-    senv = S1Environment(meta["environment"])
-    assert senv.frame.predicates["clarification_required"].regulated.default == "deny"
     units = [{"id": u["id"], "kind": u["kind"], "content": None} for u in meta["units"]]
     [row] = run_lean([{"id": "v", "kind": "readings-validate", "environment": meta["environment"],
                        "document": document_wire(units, meta["reading_sets"])}], executable=lean_route)
     assert row["status"] == "ok" and row["content_bearing"] is False, row
+    raw, document, _ = _completion_document(tmp_path)
+    [row] = run_lean([{"id": "v", "kind": "readings-validate", "environment": raw,
+                       "document": document_wire([{"id": "u1", "kind": "norm"}], document["reading_sets"])}],
+                     executable=lean_route)
+    senv = S1Environment(raw, row["filled"])
+    assert senv.frame.predicates["help_required"].regulated.default == "deny"
+    with pytest.raises(CheckerUnavailable, match="^ReadingsConstruction: under norm-defaults@0 the frame is"):
+        S1Environment(raw)
 
 
 @pytest.fixture
