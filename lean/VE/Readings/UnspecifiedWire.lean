@@ -556,29 +556,12 @@ def ndChoiceModel (x : ChoiceReplayU) (L : VE.NormDefaults.Wire.LayeredU) (id : 
   pure (modelAnswer id res.1 res.2
     (Γ.map (fun a => (VE.Norms.subst (fill U).T (size (fill U)) a).eval (S.M.withFill F) [])) assertions)
 
-/-- The inner kinds of a choice under the completion (plan 3.4), answered on `choiceU N c` with the norm-defaults
-    route's answer shapes; any other kind is the norm-defaults route's refusal. -/
+/-- The inner kinds of a choice under the completion (plan 3.4), answered on `choiceU N c`: the layered kinds by the
+    norm-defaults branch's own dispatch (`layeredCase`), so each answer is that route's on the choice's document; any
+    other kind is the norm-defaults route's refusal. -/
 def ndInner (x : ChoiceReplayU) (L : VE.NormDefaults.Wire.LayeredU) (id kind : String) (inner : Json) (assertions : Nat) : Except String Json := do
-  let ok := VE.Route.Wire.ok id
-  if kind == "norm-defaults-elaborate" then return ok (VE.NormDefaults.Wire.layeredElaborate L)
-  if kind == "norm-defaults-conflict" && (inner.getObjVal? "witness").toBool then
-    let (target, w) ← VE.NormDefaults.Wire.witnessConflictX L (← inner.getObjVal? "witness")
-    return ok [("verdict", .str (if w.isSome then "CONFLICT" else "UNKNOWN")), ("target", .str target),
-      ("targets", toJson ((targets (fill L.U)).map (·.1)))]
-  if kind == "norm-defaults-conflict" then
-    let free := VE.NormDefaults.Wire.conflictFreeCheckU (choiceU x.r.N x.c) x.certs
-    return ok ([("verdict", .str (if free then "CONFLICT-FREE" else "UNKNOWN")),
-      ("targets", toJson ((targets (fill L.U)).map (·.1)))] ++
-      match VE.NormDefaults.Wire.firstFailureX L (inner.getObjValD "packages") with
-      | some d => if free then [] else [("detail", .str d)]
-      | none => [])
-  if kind == "norm-defaults-status" then
-    let d ← VE.NormDefaults.Wire.replayStatusX L inner
-    return ok [("point_status", .str d.status.label), ("predicate", .str d.r.name)]
-  if kind == "norm-defaults-report" then
-    let rep ← VE.NormDefaults.Wire.reportWith (VE.NormDefaults.Wire.layeredSource L (inner.getObjValD "packages")) inner
-    return ok rep.toJson
-  if kind == "norm-defaults-certificate" then return ok (← ndCertificate x inner)
+  if let some a ← VE.NormDefaults.Wire.layeredCase L id kind inner then return a
+  if kind == "norm-defaults-certificate" then return VE.Route.Wire.ok id (← ndCertificate x inner)
   if kind == "choice-model" then return ← ndChoiceModel x L id inner assertions
   throw s!"UnsupportedProfile: case kind {kind} is not available on the norm-defaults route"
 

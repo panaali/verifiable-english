@@ -160,7 +160,7 @@ def conformance_sources():
     if str(ROOT / "tests") not in sys.path:
         sys.path.append(str(ROOT / "tests"))
     from conformance import norm_defaults, norm_defaults_differential, norm_defaults_three_way
-    from ve.norm_defaults import UnspecifiedDocument
+    from conformance.frozen_norm_defaults import UnspecifiedDocument
     found = []
     for name, document, _ in norm_defaults.sources():
         if type(document) is UnspecifiedDocument:

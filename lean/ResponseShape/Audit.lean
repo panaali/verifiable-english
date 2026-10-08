@@ -123,6 +123,7 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.NormDefaults.admitDocument_kinds
 #print axioms ResponseShape.Encoders.NormDefaults.firstFailureX_of_not_free
 #print axioms ResponseShape.Encoders.NormDefaults.firstFailure_of_not_free
+#print axioms ResponseShape.Encoders.NormDefaults.layeredCase_fits
 #print axioms ResponseShape.Encoders.NormDefaults.line_fits
 #print axioms ResponseShape.Encoders.NormDefaults.of_norms
 #print axioms ResponseShape.Encoders.NormDefaults.runCaseReported_fits
@@ -284,6 +285,7 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.SoftNorms.runSoftKind_fits
 #print axioms ResponseShape.Encoders.SoftNorms.softDiagnosticCode_mem
 #print axioms ResponseShape.Encoders.SoftNorms.softLabelled_nonempty
+#print axioms ResponseShape.Encoders.SoftNorms.softLabelledIn_nonempty
 #print axioms ResponseShape.Encoders.SoftNorms.softNames_ok
 #print axioms ResponseShape.Encoders.SoftNorms.softPairs_ok
 #print axioms ResponseShape.Encoders.SoftNorms.typed_ok

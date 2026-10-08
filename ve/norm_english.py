@@ -600,7 +600,7 @@ def _parse_soft_english(env, source, manifest, *, existing_names):
     try:
         document = SoftNormDocument(soft_env, [rule.to_dict() for rule in rules])
     except VEError as exc:
-        if str(exc).startswith("DependencyCycle:"):
+        if getattr(exc, "dual_guard_cycle", False):
             raise VEError(f"{exc}; DualGuardCycle: a soft decision introduces a guard dependency") from exc
         raise
     if manifest is not None and manifest.get("document_hash") != document.document_hash:

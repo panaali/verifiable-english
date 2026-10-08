@@ -36,6 +36,9 @@ class Staging:
         self.env.pop("VE_SKIP_HOOKS", None)
         self.tmp = tmp
         self.git("read-tree", "HEAD")
+        # The merge updates the hook's staged audit API. Use that policy in the
+        # private index so these probes exercise the current hook contract.
+        self.stage("lean/audit.py", (ROOT / "lean/audit.py").read_bytes())
 
     def git(self, *args: str, data: bytes | None = None) -> bytes:
         return subprocess.run(["git", *args], cwd=ROOT, env=self.env, input=data,
@@ -240,7 +243,7 @@ def test_staged_policy_code_is_the_policy(staging):
     staging.stage("ve/planted_module.py", "from ve import parser\n")
     stderr = rejects(staging, "new outward import ve.planted_module -> ve.parser (layer 1 -> 3)")
     assert "unmapped" not in stderr
-    audit = staging.head("lean/audit.py")
+    audit = (ROOT / "lean/audit.py").read_bytes()
     assert b"|native_decide|" in audit
     staging.stage("lean/audit.py", audit.replace(b"|native_decide|", b"|native_decide|plantedword|"))
     staging.stage("lean/VE/Core/Planted.lean", "-- plantedword\n")
