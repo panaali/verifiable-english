@@ -59,12 +59,20 @@ def test_ab_totals_are_the_saved_compares():
         assert set(compare["totals"]) == {"same"}
     assert (records, same, unlisted) == (ab["records"], ab["same"], ab["unlisted"])
     assert f"{records} records, {same} the same, {unlisted} unlisted" in DELTA
+    assert f"at `{ab['head']}` before the review fixes" in DELTA
 
 
 def test_latency_rows():
-    timing = GATE["admission_seconds"]
-    for n, s1, nd in zip(timing["fixed_units"], timing["s1_only"], timing["completion"]):
-        assert f"| {n} | {s1} | {nd} |" in DELTA
+    """Review B2's paired timing: every row of the table is the saved evidence's, both builds named."""
+    timing = json.loads((HERE / "evidence" / GATE["latency"]).read_text())
+    assert timing["rows"] and timing["before_build"] != timing["after_build"]
+    assert f"(`{timing['before_build'][:8]}`)" in DELTA and f"(`{timing['after_build'][:8]}`)" in DELTA
+    assert "six calls after a warm-up" in DELTA and timing["calls"] == 6
+    for r in timing["rows"]:
+        cells = [r[k][side] for k in ("s1_only", "validate", "elaborate") for side in ("before", "after")]
+        assert f"| {r['fixed_units']} | " + " | ".join(str(c) for c in cells) + " |" in DELTA
+    # the `deny` column is where B2's second admission was most of the cost: lower after at every size
+    assert all(r["s1_only"]["after"] < r["s1_only"]["before"] for r in timing["rows"])
 
 
 def test_seeded_bugs_name_real_tests():

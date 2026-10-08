@@ -1,53 +1,171 @@
 {
   "batch": "RD-2a",
-  "base": "167eb8ff",
+  "base": "228f01da",
   "commits_before_report": [
-    "9a704742", "205a7e76", "15070d23", "8a734ae5", "48637dc0", "2d610c8b", "17470adc"
+    "9a704742",
+    "205a7e76",
+    "15070d23",
+    "8a734ae5",
+    "48637dc0",
+    "2d610c8b",
+    "17470adc",
+    "9d036112",
+    "16462b5d",
+    "e77b0b86",
+    "eb503391",
+    "1eb94f6f",
+    "b7d3822a"
   ],
   "lean": {
-    "build_jobs": 802,
-    "audit_source_files": 432,
-    "audit_theorems": 4709,
-    "audit_theorems_base": 4672,
-    "statements": 4337,
-    "statements_base": 4311,
+    "build_jobs": 809,
+    "audit_source_files": 437,
+    "audit_theorems": 4745,
+    "audit_theorems_base": 4707,
+    "statements": 4371,
+    "statements_base": 4345,
     "statements_changed": 0,
     "statements_removed": 0
   },
   "statement_check": {
-    "rd1": {"declarations": 31, "theorems": 10, "exact": 31, "pending": 0},
-    "rd2a": {"declarations": 16, "theorems": 5, "exact": 16, "pending": 0}
+    "rd1": {
+      "declarations": 31,
+      "theorems": 10,
+      "exact": 31,
+      "pending": 0
+    },
+    "rd2a": {
+      "declarations": 16,
+      "theorems": 5,
+      "exact": 16,
+      "pending": 0
+    }
   },
-  "service_fixtures": {"file": "tests/test_readings_nd_lean.py", "tests": 17, "serial_seconds": 1.24},
+  "service_fixtures": {
+    "file": "tests/test_readings_nd_lean.py",
+    "tests": 19,
+    "serial_seconds": 1.26
+  },
   "suite": {
     "chunks": [
-      {"passed": 2022, "skipped": 1, "failed": 0},
-      {"passed": 3929, "skipped": 2, "failed": 0},
-      {"passed": 1821, "skipped": 3, "failed": 0},
-      {"passed": 2453, "skipped": 0, "failed": 0},
-      {"passed": 1578, "skipped": 0, "failed": 0}
+      {
+        "passed": 2171,
+        "skipped": 1,
+        "failed": 0
+      },
+      {
+        "passed": 3862,
+        "skipped": 2,
+        "failed": 0
+      },
+      {
+        "passed": 1823,
+        "skipped": 3,
+        "failed": 0
+      },
+      {
+        "passed": 2499,
+        "skipped": 0,
+        "failed": 0
+      },
+      {
+        "passed": 1688,
+        "skipped": 0,
+        "failed": 0
+      }
     ],
-    "slow_tests": {"passed": 28, "failed": 0}
+    "slow_tests": {
+      "passed": 28,
+      "failed": 0
+    }
   },
-  "ab": {"files": ["ab-readings-pilots.json", "ab-other-corpora.json"], "records": 94498, "same": 94498, "unlisted": 0},
-  "admission_seconds": {
-    "fixed_units": [30, 60, 90],
-    "s1_only": [0.4, 3.4, 16.3],
-    "completion": [2.0, 11.1, 66.0]
+  "ab": {
+    "files": [
+      "ab-readings-pilots.json",
+      "ab-other-corpora.json"
+    ],
+    "records": 94498,
+    "same": 94498,
+    "unlisted": 0,
+    "head": "17470adc"
   },
   "seeded_bugs": [
-    {"id": "M1", "file": "lean/VE/Readings/UnspecifiedWire.lean", "change": "step 3's per-reading suffix replaced",
-     "failed": ["tests/test_readings_nd_lean.py::test_fnd4_a_readings_document_beyond_an_author_limit"]},
-    {"id": "M2", "file": "lean/VE/Readings/Run.lean", "change": "the witness's Fill_T check dropped from ndPairFacts",
-     "failed": ["tests/test_readings_nd_lean.py::test_fnd1_prime_the_witness_filling_must_satisfy_its_fill_premises"]},
-    {"id": "M3", "file": "lean/VE/Readings/Run.lean", "change": "readings-validate not dispatched under the completion",
-     "failed_count": 8},
-    {"id": "M4", "file": "lean/VE/Readings/UnspecifiedWire.lean",
-     "change": "a choice's packages bound to the first compatible choice's document hash",
-     "failed": ["tests/test_readings_nd_lean.py::test_fnd1_each_choice_conflict_free_and_certificate"]},
-    {"id": "M5", "file": "lean/VE/Readings/Wire.lean", "change": "the abstention kept on the norms chain",
-     "failed_count": 15},
-    {"id": "M6", "file": "ve/readings_route.py", "change": "the relay's row check without fill_premises and filled",
-     "failed": ["tests/test_readings_s2_document.py::test_ruling4_rule_candidate_beside_norm_defaults_is_under_the_completion"]}
-  ]
+    {
+      "id": "M1",
+      "file": "lean/VE/Readings/UnspecifiedWire.lean",
+      "change": "step 3's per-reading suffix replaced",
+      "failed": [
+        "tests/test_readings_nd_lean.py::test_fnd4_a_readings_document_beyond_an_author_limit"
+      ]
+    },
+    {
+      "id": "M2",
+      "file": "lean/VE/Readings/Run.lean",
+      "change": "the witness's Fill_T check dropped from ndPairFacts",
+      "failed": [
+        "tests/test_readings_nd_lean.py::test_fnd1_prime_the_witness_filling_must_satisfy_its_fill_premises"
+      ]
+    },
+    {
+      "id": "M3",
+      "file": "lean/VE/Readings/Run.lean",
+      "change": "readings-validate not dispatched under the completion",
+      "failed_count": 8
+    },
+    {
+      "id": "M4",
+      "file": "lean/VE/Readings/UnspecifiedWire.lean",
+      "change": "a choice's packages bound to the first compatible choice's document hash",
+      "failed": [
+        "tests/test_readings_nd_lean.py::test_fnd1_each_choice_conflict_free_and_certificate"
+      ]
+    },
+    {
+      "id": "M5",
+      "file": "lean/VE/Readings/Wire.lean",
+      "change": "the abstention kept on the norms chain",
+      "failed_count": 15
+    },
+    {
+      "id": "M6",
+      "file": "ve/readings_route.py",
+      "change": "the relay's row check without fill_premises and filled",
+      "failed": [
+        "tests/test_readings_s2_document.py::test_ruling4_rule_candidate_beside_norm_defaults_is_under_the_completion"
+      ]
+    },
+    {
+      "id": "R1",
+      "file": "lean/VE/Readings/UnspecifiedWire.lean",
+      "change": "ndInner answers a witness's CONFLICT itself, without conflictFields",
+      "failed": [
+        "tests/test_readings_nd_lean.py::test_inner_answers_are_the_norm_defaults_routes"
+      ]
+    },
+    {
+      "id": "R2",
+      "file": "ve/readings_route.py",
+      "change": "the route row back to the abstention under norm-defaults@0",
+      "failed": [
+        "tests/test_readings_s2_document.py::test_rd2a_review_b3_completion_document_is_refused_by_name",
+        "tests/test_readings_s2_document.py::test_rd2a_review_b3_route_table_is_lean_s"
+      ]
+    },
+    {
+      "id": "R3",
+      "file": "ve/document.py",
+      "change": "the norm-defaults document built with readings@1",
+      "failed": [
+        "tests/test_readings_s2_document.py::test_rd2a_review_b3_completion_document_is_refused_by_name"
+      ]
+    },
+    {
+      "id": "R4",
+      "file": "lean/VE/Readings/Run.lean",
+      "change": "readings-validate admitted again through admitNDFullJ",
+      "failed": [
+        "tests/test_readings_lean_sharing.py::test_the_route_admits_the_case_document_once"
+      ]
+    }
+  ],
+  "latency": "latency-b2.json"
 }

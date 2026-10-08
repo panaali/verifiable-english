@@ -4,9 +4,10 @@ Usage: python docs/readings-defaults/rd2a/latency.py OUT --before PATH --before-
                                                      [--calls 2]
 
 The document is F-ND1's open set (`tests/test_readings_nd_lean.py`) beside `n` fixed rules spread over 20 extra
-regulated pairs. Three requests per size: `readings-validate` with every completion `deny` (S1's admission only, the
-filled document is the author's), and `readings-validate` and `readings-elaborate` under the completion, which before
-review B2 admitted the author's document twice. Each request is sent to two `ve_service` builds, this tree's and the
+regulated pairs. Three requests per size: `readings-validate` with every completion `deny` (still the completion's
+route, whose checks are then trivial, so the author's admission is most of the cost), and `readings-validate` and
+`readings-elaborate` with unspecified completions. Before review B2 both validates admitted the author's document
+twice. Each request is sent to two `ve_service` builds, this tree's and the
 one `--before` names (pinned by its SHA-256; the build lock of this tree need not list it), in turn, and timed as the
 service process's CPU (every thread's user and system time, `/proc/<pid>/stat`) after one warm-up call; the two
 builds' answers must be the same.
