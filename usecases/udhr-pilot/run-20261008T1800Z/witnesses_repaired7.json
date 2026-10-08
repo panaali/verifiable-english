@@ -1,0 +1,40 @@
+{
+  "u098.person_receives": [
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "lean_point_status": "SETTLED yes",
+      "predicate": "elementary_education_received_required",
+      "row": [
+        "p0"
+      ],
+      "rules": [
+        "u098-person-receives"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u100b.unassigned": [
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "lean_point_status": "SETTLED yes",
+      "predicate": "education_directed_to_respect_for_rights_required",
+      "row": [
+        "c0"
+      ],
+      "rules": [
+        "u100b-unassigned"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ]
+}

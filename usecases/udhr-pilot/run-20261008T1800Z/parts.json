@@ -1,0 +1,110 @@
+[
+ {
+  "label": "part01",
+  "first": "u001",
+  "last": "u029",
+  "span": [
+   0,
+   3187
+  ],
+  "missing": [],
+  "limits": [],
+  "choices": 32
+ },
+ {
+  "label": "part02",
+  "first": "u030",
+  "last": "u046",
+  "span": [
+   3187,
+   4724
+  ],
+  "missing": [],
+  "limits": [],
+  "choices": 16
+ },
+ {
+  "label": "part03",
+  "first": "u047",
+  "last": "u052",
+  "span": [
+   4724,
+   5224
+  ],
+  "missing": [],
+  "limits": [],
+  "choices": 54
+ },
+ {
+  "label": "part04",
+  "first": "u053",
+  "last": "u071b",
+  "span": [
+   5224,
+   6573
+  ],
+  "missing": [],
+  "limits": [],
+  "choices": 54
+ },
+ {
+  "label": "part05",
+  "first": "u072",
+  "last": "u083",
+  "span": [
+   6573,
+   7573
+  ],
+  "missing": [],
+  "limits": [],
+  "choices": 24
+ },
+ {
+  "label": "part06",
+  "first": "u084a",
+  "last": "u086",
+  "span": [
+   7573,
+   8022
+  ],
+  "missing": [],
+  "limits": [],
+  "choices": 36
+ },
+ {
+  "label": "part07",
+  "first": "u087",
+  "last": "u103",
+  "span": [
+   8022,
+   9577
+  ],
+  "missing": [],
+  "limits": [],
+  "choices": 6
+ },
+ {
+  "label": "part08",
+  "first": "u104",
+  "last": "u108",
+  "span": [
+   9577,
+   10085
+  ],
+  "missing": [],
+  "limits": [],
+  "choices": 27
+ },
+ {
+  "label": "part09",
+  "first": "u109",
+  "last": "u114",
+  "span": [
+   10085,
+   10916
+  ],
+  "missing": [],
+  "limits": [],
+  "choices": 16
+ }
+]

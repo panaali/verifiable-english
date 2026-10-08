@@ -1,0 +1,129 @@
+{
+  "u051.anyone_avoid": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_barring_asylum_required",
+      "row": [
+        "b0",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_barring_asylum_required",
+      "row": [
+        "b1",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u051.entitlement": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "has_the_right_to_seek_and_enjoy_asylum",
+      "row": [
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u051.state_avoid": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_barring_asylum_required",
+      "row": [
+        "b0",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_barring_asylum_required",
+      "row": [
+        "b1",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u098.guardian_ensures": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "see_to_compulsory_elementary_education_required",
+      "row": [
+        "g0",
+        "p0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "witness",
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "predicate": "see_to_compulsory_elementary_education_required",
+      "row": [
+        "g0",
+        "p1"
+      ],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "evidence": "witness",
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "predicate": "see_to_compulsory_elementary_education_required",
+      "row": [
+        "g1",
+        "p0"
+      ],
+      "status": "UNDECIDED",
+      "value": null
+    }
+  ]
+}
