@@ -22,8 +22,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from ve import norm_defaults as nd  # noqa: E402
+from conformance import frozen_norm_defaults as nd  # noqa: E402
 from ve import norm_defaults_route as route  # noqa: E402
+from conformance import frozen_norm_defaults_route as frozen_route  # noqa: E402
 from ve.ast import _to_data  # noqa: E402
 from ve.wire import canonical_json  # noqa: E402
 from conformance.norm_defaults import _environment, _regulated  # noqa: E402
@@ -173,7 +174,7 @@ def filling_json(filling):
 
 
 def regeneration_problems(doc, row):
-    problems = [field for field, value in route.regeneration(doc).items() if row.get(field) != value]
+    problems = [field for field, value in frozen_route.regeneration(doc).items() if row.get(field) != value]
     base = doc.filled.base_environment()
     if canonical_json(base.to_dict()) != canonical_json(row["base_environment"]):
         problems.append("base_environment")

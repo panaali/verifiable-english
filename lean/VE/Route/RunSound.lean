@@ -86,7 +86,7 @@ theorem dispatch_order (id : String) (environment : Json) (e : Gate.Envelope) (j
 /-- The route's vocabulary decoder keeps flags off the defined predicates. -/
 theorem decodeRouteVocabulary_flagsBase (e : Gate.Envelope) (rv : RouteVocabulary)
     (h : Run.decodeRouteVocabulary e = .ok rv) : FlagsBase rv := by
-  unfold Run.decodeRouteVocabulary at h
+  unfold Run.decodeRouteVocabulary Typed.routeVocabulary at h
   obtain ⟨rv', hrv, h⟩ := bind_ok h
   split at h
   · cases h
