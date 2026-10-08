@@ -240,6 +240,21 @@ theorem runS2_fits (lower : List String → Json → Json) (id kind : String) (b
     | (intro v hv; fits_from dead_fits _ _ _ v hv)
     | (intro v hv; fits_from choice_fits _ _ _ _ v hv)
 
+theorem verdictsAnswer_fits (id question : String) (nd : Bool) (D : Doc) (A : Choice)
+    (named : List (String × Json)) (infos : Option (List RowInfo)) (over : List RowInfo) (dead : List Json) :
+    Fits req (skel% "readings-route.json#/$defs/verdicts") (verdictsAnswer id question nd D A named infos over dead) := by
+  unfold verdictsAnswer
+  simp only [okWith, VE.Route.Wire.ok]
+  fits
+
+theorem verdicts_fits (lower : List String → Json → Json) (id : String) (b : Wire.Admitted2) (j : Json) :
+    OkFits req (skel% "readings-route.json#/$defs/verdicts") (runVerdicts lower id b j) := by
+  unfold runVerdicts
+  okfits
+  all_goals first
+    | exact verdictsAnswer_fits _ _ _ _ _ _ _ _ _
+    | skip
+
 theorem runS2ND_fits (lower : List String → Json → Json) (id kind : String) (b : Wire.Admitted2) (j : Json)
     (hK : KindRead "evaluate" req kind) : OkFits req Skeletons.readingsRoute (runS2ND lower id kind b j) := by
   have hK0 := hK
@@ -250,6 +265,7 @@ theorem runS2ND_fits (lower : List String → Json → Json) (id kind : String) 
   all_goals first
     | exact runS2_fits _ _ _ _ _ hK0
     | skip
+  all_goals (try (intro v hv; fits_from verdicts_fits _ _ _ _ v hv))
   all_goals (try kind_norm)
   all_goals first
     | (intro v hv; fits_from elaborateNDFilled_fits _ _ v hv)
@@ -529,7 +545,7 @@ theorem lower {m e : Std.TreeMap.Raw String Json compare} {env' : Json} (wf : m.
 theorem of_lower_row {v : Json} {s : Skel} (hs : s ∈ [Skeletons.rights, Skeletons.softNorms, Skeletons.normDefaults,
       Skeletons.norms])
     (hn : ∀ k ∈ ["readings-validate", "readings-separate", "readings-elaborate", "readings-conflict",
-      "readings-certificate", "readings-model", "readings-dead", "readings-choice"], (CaseCond.kind k).holds req = false)
+      "readings-certificate", "readings-model", "readings-dead", "readings-choice", "readings-verdicts"], (CaseCond.kind k).holds req = false)
     (h : Fits req s v) : Fits req Skeletons.readingsRoute v := by
   skel_norm
   repeat (refine Fits.onCaseE (hn _ (by simp)) ?_)
@@ -540,7 +556,7 @@ theorem of_lower_row {v : Json} {s : Skel} (hs : s ∈ [Skeletons.rights, Skelet
 /-- The lower route's row, for a case of none of the readings kinds. -/
 theorem runLower_fits (j : Json) (hj : CaseWF j)
     (hn : ∀ k ∈ ["readings-validate", "readings-separate", "readings-elaborate", "readings-conflict",
-      "readings-certificate", "readings-model", "readings-dead", "readings-choice"], (CaseCond.kind k).holds j = false) :
+      "readings-certificate", "readings-model", "readings-dead", "readings-choice", "readings-verdicts"], (CaseCond.kind k).holds j = false) :
     Fits j Skeletons.readingsRoute (runLower j) := by
   unfold runLower
   split
@@ -611,7 +627,7 @@ theorem runCaseReported_fits (j : Json) (hj : CaseWF j) : Fits j Skeletons.readi
         simp only [s2Kinds, Bool.or_eq_true, beq_iff_eq, List.contains_cons, List.contains_nil,
           Bool.or_false] at hr
         simp only [or_assoc] at hr
-        rcases hr with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> fits
+        rcases hr with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> fits
     · rename_i hr
       refine runLower_fits j hj fun x hx => ?_
       cases hb : (CaseCond.kind x).holds j
@@ -620,7 +636,7 @@ theorem runCaseReported_fits (j : Json) (hj : CaseWF j) : Fits j Skeletons.readi
         rw [hk] at this
         cases this
         simp [s2Kinds] at hr hx
-        rcases hx with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> simp_all
+        rcases hx with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> simp_all
   · rename_i hk
     refine runLower_fits j hj fun x hx => ?_
     cases hb : (CaseCond.kind x).holds j
