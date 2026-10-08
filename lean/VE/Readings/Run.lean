@@ -326,15 +326,13 @@ def ndPairFacts (f : AdmittedNDFull) (p : PairFacts) : PairFacts :=
 
 /-- `readings-validate` under the completion: S1's rows on the filled document, then `fill_premises` per reading and
     `filled` once (3). -/
-def runValidateND (id : String) (j : Json) : Except String Json := do
-  let f ← admitNDFullJ (← j.getObjVal? "environment") (← j.getObjVal? "document")
+def runValidateND (id : String) (f : AdmittedNDFull) : Except String Json := do
   let rows ← validateResultWith (ndPairFacts f) f.fa.a
   pure (VE.Route.Wire.ok id (rows ++ [("fill_premises", fillPremisesJson f.r.N f.r.b.a.side),
     ("filled", ← filledJson f.r)]))
 
 /-- `readings-separate` under the completion: S1's pair on the filled document (`replaySeparateU`'s replay). -/
-def runSeparateND (id : String) (j : Json) : Except String Json := do
-  let f ← admitNDFullJ (← j.getObjVal? "environment") (← j.getObjVal? "document")
+def runSeparateND (id : String) (f : AdmittedNDFull) (j : Json) : Except String Json := do
   let s ← stringField j "set"
   let sid ← stringField j "situation"
   let p ← pairFactsIn f.fa.a (sideIn f.fa.a s) s sid (← stringField j "other")
@@ -342,22 +340,14 @@ def runSeparateND (id : String) (j : Json) : Except String Json := do
 
 /-- The S2a kinds under the completion: elaborate and choice as `UnspecifiedWire.lean` answers them, dead as today
     (it reads no rule), and the superposed kinds refused until RD-6. A document of such an environment without a
-    content-bearing set is today's (S1 4.9). -/
-def runS2ND (lower : List String → Json → Json) (id kind : String) (j : Json) : Except String Json := do
-  let b ← admitS2 (← j.getObjVal? "environment") (← j.getObjVal? "document")
-  if !underCompletion b.a.re b.D then return ← runS2 lower id kind j
+    content-bearing set, or of any other environment, is today's (S1 4.9). `b` is the case's one admission. -/
+def runS2ND (lower : List String → Json → Json) (id kind : String) (b : Admitted2) (j : Json) : Except String Json := do
+  if !underCompletion b.a.re b.D then return ← runS2 lower id kind b j
   let f ← admitNDFull b
   if kind == "readings-elaborate" then return ← runElaborateND id f.r
   if kind == "readings-choice" then return ← runChoiceND id f.r j
   if kind == "readings-dead" then return ← deadAnswer id f.r.N.D j
   throw (completionRefusal f.r.N.D)
-
-/-- The case's environment is on the norms chain under `norm-defaults@0` (1.1): its readings kinds may be under the
-    completion, which admission decides. -/
-def completionEnvironment (j : Json) : Bool :=
-  match (j.getObjValD "environment").getObjVal? "profiles" >>= strings with
-  | .ok ps => ps.contains normDefaultsProfile && chainOf ps == .norms
-  | .error _ => false
 
 /-! ## Dispatch -/
 
@@ -384,23 +374,26 @@ def runLowerWith (lower : List String) (j : Json) : Json :=
   | .ok .normDefaults => VE.NormDefaults.Run.runCaseReported j
   | _ => VE.Norms.Run.runCaseReported j
 
+/-- Every readings kind admits the case's document once: S1's `admitReadings`, continued by S2a's admission
+    (`admitS2Of`) and the completion's (`admitNDFull`) where the kind reads them. -/
 def runCase (j : Json) : Except String Json := do
   let id ← stringField j "id"
   let kind ← VE.Route.Run.caseKind j
   if kind == "readings-validate" then
     let a ← admitReadings (← j.getObjVal? "environment") (← j.getObjVal? "document")
-    if underCompletion a.re a.D then return ← runValidateND id j
+    if underCompletion a.re a.D then
+      return ← runValidateND id (← admitNDFull (← admitS2Of a (← j.getObjVal? "document")))
     return VE.Route.Wire.ok id (← validateResult a)
   if kind == "readings-separate" then
     let a ← admitReadings (← j.getObjVal? "environment") (← j.getObjVal? "document")
-    if underCompletion a.re a.D then return ← runSeparateND id j
+    if underCompletion a.re a.D then
+      return ← runSeparateND id (← admitNDFull (← admitS2Of a (← j.getObjVal? "document"))) j
     let s ← stringField j "set"
     let sid ← stringField j "situation"
     let f ← pairFactsIn a (sideIn a s) s sid (← stringField j "other")
     return VE.Route.Wire.ok id [("set", .str s), ("pair", pairJson f sid)]
   if s2Kinds.contains kind then
-    if completionEnvironment j then return ← runS2ND runLowerWith id kind j
-    return ← runS2 runLowerWith id kind j
+    return ← runS2ND runLowerWith id kind (← admitS2 (← j.getObjVal? "environment") (← j.getObjVal? "document")) j
   throw s!"UnsupportedProfile: case kind {kind} is not available on the readings route"
 
 def runCaseReported (j : Json) : Json :=

@@ -65,7 +65,7 @@
     "ve/softnorms.py:load_soft_document": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors."
   },
   "lean_decoders": {
-    "total_lines": 23300,
+    "total_lines": 23319,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -569,18 +569,20 @@
       },
       {
         "file": "lean/VE/Readings/SupWire.lean",
-        "lines": 378,
-        "sha256": "f1efaaba3d67d4cdba675a9e40abe12e461124f324c3254ca6ab531bf8885937",
+        "lines": 397,
+        "sha256": "5d8393aeea86b02e48b61c398e2dfd9a5408a5df64112fb470fb043aee3d6366",
         "ranges": [
           [
             1,
-            378
+            397
           ]
         ],
         "declarations": [
           "decodeCouplings",
           "decodeNarrowings",
+          "admitS2Rest",
           "admitS2",
+          "admitS2Of",
           "supReplayOf",
           "replaySup",
           "decodeChoice",
@@ -588,10 +590,12 @@
           "decodeAssumed",
           "decodeShared",
           "decodeConflictCerts",
+          "replayCertificateOf",
           "replayCertificate",
+          "replayModelOf",
           "replayModel"
         ],
-        "reason": "readings@1 S2a decoder: couplings and narrowings with W2's checks and texts, the superposed admission, choices, models over sup D's base vocabulary, and the certificate and model replays of readings_wire_all_sound and readings_wire_model_sound, and the superposed admission's refusals before any verdict (ReadingsUnsatisfiable, and the soft check of every compatible choice's document of DRI ruling 5: readings_wire_satisfiable, readings_wire_choice_wellFormed); the full file is pinned conservatively"
+        "reason": "readings@1 S2a decoder: couplings and narrowings with W2's checks and texts, the superposed admission, choices, models over sup D's base vocabulary, and the certificate and model replays of readings_wire_all_sound and readings_wire_model_sound, and the superposed admission's refusals before any verdict (ReadingsUnsatisfiable, and the soft check of every compatible choice's document of DRI ruling 5: readings_wire_satisfiable, readings_wire_choice_wellFormed); the full file is pinned conservatively; the admission and the certificate and model replays also take an admitted document (`admitS2Rest`, `admitS2Of`, `replayCertificateOf`, `replayModelOf`) so a case is admitted once (readings-defaults RD-2a review B2)"
       },
       {
         "file": "lean/VE/Readings/Wire.lean",

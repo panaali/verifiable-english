@@ -146,6 +146,30 @@ def test_the_route_builds_a_candidates_document_only_in_the_request_table(walks)
     assert callers(edges, FREE) == {"VE.Readings.Wire.frontText", SHARED, "VE.Readings.freeU"}
 
 
+ADMIT = ("VE.Readings.Wire.admitReadings", "VE.Readings.Wire.admitS2")
+# Admission from the case's JSON for the replay theorems' entry points; the route admits once and passes the result.
+JSON_ADMISSIONS = ("VE.Readings.Wire.admitNDFullJ", "VE.Readings.Wire.admitND", "VE.Readings.Wire.replaySup",
+                   "VE.Readings.Wire.replayCertificate", "VE.Readings.Wire.replayModel")
+
+
+def test_the_route_admits_the_case_document_once(walks):
+    """Review B2 (and C2): under the completion `readings-validate` and `readings-separate` ran `admitReadings`, then
+    `admitNDFullJ`, whose `admitS2` admitted the author's document again, and `runS2ND` admitted it again through
+    `runS2` for a document with no content-bearing set. Now `runCase` admits each case once (S1's `admitReadings`,
+    continued by `admitS2Of` and `admitNDFull`, or `admitS2` for the S2a kinds) and every runner takes the admitted
+    document: no other function of the route calls an admission, and no JSON admission is reachable."""
+    edges = walks[ENTRY]
+    # Calls of the admissions themselves (their compiled helpers, such as the unit-id check `admitS2Of` shares,
+    # admit nothing).
+    calling = {admit: {caller for caller, callees in edges.items() if admit in callees} for admit in ADMIT}
+    in_run_case = {n for n in edges if named_under(n, "VE.Readings.Run.runCase")}
+    assert calling[ADMIT[1]] and calling[ADMIT[1]] <= in_run_case, sorted(calling[ADMIT[1]])
+    assert calling[ADMIT[0]] and calling[ADMIT[0]] <= in_run_case | {ADMIT[1]}, sorted(calling[ADMIT[0]])
+    assert [n for n in edges if any(named_under(n, f) for f in JSON_ADMISSIONS)] == []
+    # `admitS2Of` continues an admission: it never admits S1 again.
+    assert not ({c for n, cs in edges.items() if named_under(n, "VE.Readings.Wire.admitS2Of") for c in cs} & set(ADMIT))
+
+
 @pytest.mark.parametrize("specified", SPECIFIED)
 def test_the_walk_finds_one_where_the_specified_computation_builds_it(walks, specified):
     assert ONE in walks[specified]
