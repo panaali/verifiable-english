@@ -47,7 +47,10 @@ class S2Wording:
                              author_names=frozenset(self.s1.admission.senv.author_environment().predicates))
         senv = self.s1.admission.senv
         self.frame = senv.frame
-        self.author = set(senv.author_environment().predicates)
+        # Under the completion the filled tables (Lean's, `filled_tables`) are base predicates of the filled frame
+        # but no author fact: a shown situation is followed by their points instead (`gaps`).
+        self.tables = route.source.filled_tables
+        self.author = set(senv.author_environment().predicates) - set(self.tables)
         # Lean's elaboration names each generated declaration and its producing
         # layer. A spelling is never evidence that a model table is a decision.
         self.generated = _active_generated(route.row["generated_predicates"], doc["environment"].profiles)
@@ -132,6 +135,13 @@ class S2Wording:
         text = "; ".join(facts) if facts else "nothing exists"
         self.slots.situations.add(text)
         return text
+
+    def gaps(self, data):
+        """The filled gaps shown after a situation of `data` under the completion (readings-defaults 2.2): every point
+        of every filled table, with the model's answer; none outside the completion."""
+        found = filled_gaps(self.frame, self.tables, data)
+        self.slots.clauses.update(clause for clause, _ in found)
+        return found
 
     def _choice_decisions(self, choice):
         """On the enumerated route a model is one of the choice's own document, so its decision tables are the ones
@@ -344,18 +354,21 @@ class S2Wording:
             lines += self.independent(self._mentions(used))
         elif conflict["status"] == "CONFLICT" and "model" in conflict:
             lines.append(E.named_result(self.readings(conflict["choice"]), "conflict", self.slots,
-                                        situation=self.situation(conflict["model"], conflict["choice"])))
+                                        situation=self.situation(conflict["model"], conflict["choice"]),
+                                        gaps=self.gaps(conflict["model"])))
             lines.append(self.classification(conflict))
         elif conflict["status"] == "CONFLICT":
             for witness in conflict.get("witnesses", []):
                 lines.append(E.named_result(self.readings(witness["choice"]), "conflict", self.slots,
-                                            situation=self.situation(witness["model"], witness["choice"])))
+                                            situation=self.situation(witness["model"], witness["choice"]),
+                                            gaps=self.gaps(witness["model"])))
                 if witness.get("status_text"):
                     lines.append(witness["status_text"])
         premises = route.premises()
         if premises["status"] == "model" and "model" in premises:
             lines.append(E.named_result(self.readings(premises["choice"]), "premise_model", self.slots,
-                                        situation=self.situation(premises["model"], premises["choice"])))
+                                        situation=self.situation(premises["model"], premises["choice"]),
+                                        gaps=self.gaps(premises["model"])))
         elif premises["status"] == "INCONSISTENT" and premises.get("evidence") == "certificate":
             # A certificate with A = [] (2.3 item 1): E3 and E13 from what it and its conflict certificates rely on.
             lines.append(E.every_result(k, "inconsistent", self.slots))
@@ -429,10 +442,29 @@ class S2Wording:
         if model is None:
             raise VEError("InvalidInput: a countermodel's wording needs its checked model")
         return self.E.named_result(self.readings(counter["choice"]), "countermodel", self.slots,
-                                   situation=self.situation(model, counter["choice"]))
+                                   situation=self.situation(model, counter["choice"]), gaps=self.gaps(model))
 
 
 PAIR_LABEL = "unsaid:pair:"
+
+
+def filled_gaps(frame, tables, model):
+    """[(clause, answer)] for every point of every filled table (`tables`: table → its predicate, from Lean's filled
+    document) over the elements of `model`, a situation's or model's JSON: the point's clause (norm-defaults'
+    `point_clause`) and whether the model's table holds there. In table order, then tuple order."""
+    from itertools import product
+    from types import SimpleNamespace
+    from .norm_defaults_english import point_clause
+    situation = SimpleNamespace(constants=model.get("constants") or {})
+    relations = model.get("relations") or {}
+    out = []
+    for table in sorted(tables):
+        predicate = tables[table]
+        rows = {tuple(row) for row in relations.get(table, ())}
+        domains = [sorted(model["domains"].get(sort, ())) for sort in frame.predicates[predicate].arguments]
+        for values in product(*domains):
+            out.append((point_clause(frame, situation, predicate, values), values in rows))
+    return out
 
 
 def _active_generated(entries, profiles):
@@ -465,4 +497,4 @@ def _predicates(ast):
     return out
 
 
-__all__ = ["S2Wording", "query_english", "report_english"]
+__all__ = ["S2Wording", "filled_gaps", "query_english", "report_english"]

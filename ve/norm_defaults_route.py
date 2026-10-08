@@ -63,12 +63,28 @@ def _source_binding(document, premises, conclusion):
             "conclusion_meaning_id": meaning(conclusion, False)}
 
 
-def prove_filled_entailment(document, premises, conclusion, **kwargs):
-    """A certificate for `Background(E‴) ++ Fill_T ++ T‴ ++ Γ ⊢ φ`, bound to the source."""
+def _filled_proof(document, premises, conclusion, **kwargs):
+    """The untrusted prover on `Background(E‴) ++ Fill_T ++ T‴ ++ Γ ⊢ φ`. `document` needs `env` (the source
+    environment), `fill_premises` and `filled` (`env`, `premises()`): an `UnspecifiedDocument`, or a view of a Lean
+    row that carries them (a readings choice's filled document, `ve/readings_verdicts.py`)."""
     from .entailment import prove_entailment
     # The prover lists Background(E‴) first; the rest is Fill_T ++ T‴ ++ Γ.
     regenerated = [f for _, f in document.fill_premises] + [f for _, f in document.filled.premises()]
-    proof = prove_entailment(document.filled.env, (*regenerated, *premises), conclusion, **kwargs)
+    return prove_entailment(document.filled.env, (*regenerated, *premises), conclusion, **kwargs)
+
+
+def filled_certificate(document, premises, conclusion, **kwargs):
+    """A certificate for `Background(E‴) ++ Fill_T ++ T‴ ++ Γ ⊢ φ`, bound to the source, or None when the prover
+    finds none within its budget."""
+    proof = _filled_proof(document, premises, conclusion, **kwargs)
+    if proof.status != "Found":
+        return None
+    return {**proof.certificate, **_source_binding(document, premises, conclusion)}
+
+
+def prove_filled_entailment(document, premises, conclusion, **kwargs):
+    """A certificate for `Background(E‴) ++ Fill_T ++ T‴ ++ Γ ⊢ φ`, bound to the source."""
+    proof = _filled_proof(document, premises, conclusion, **kwargs)
     if proof.status != "Found":
         # An exhausted generator yields no verdict (plan rule 3).
         raise CheckerUnavailable(f"CheckerUnavailable: no certificate: {proof.status}")
