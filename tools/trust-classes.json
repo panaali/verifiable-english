@@ -7724,12 +7724,15 @@
   },
   "VE/Service/Standalone.lean": {
    "S": [
+    "VE.Service.Standalone.Pointer.resolves",
     "VE.Service.Standalone.checkedModelTables",
+    "VE.Service.Standalone.checkedModelTablesPathResolves",
     "VE.Service.Standalone.earlyProfileGate",
     "VE.Service.Standalone.environmentFields",
     "VE.Service.Standalone.frozenFamilyProfiles",
     "VE.Service.Standalone.isLegacy",
     "VE.Service.Standalone.legacyMeaningId",
+    "VE.Service.Standalone.legacyVersionFault",
     "VE.Service.Standalone.locatedEnvironmentFields",
     "VE.Service.Standalone.locationOwnedEnvironment",
     "VE.Service.Standalone.modelAtom",
@@ -7767,6 +7770,10 @@
    ],
    "D[R]": [
     "VE.Service.Standalone.ModelFault",
+    "VE.Service.Standalone.Pointer",
+    "VE.Service.Standalone.Pointer.ofString",
+    "VE.Service.Standalone.Pointer.render",
+    "VE.Service.Standalone.PointerSegment",
     "VE.Service.Standalone.withVocabularyPath"
    ],
    "D[I]": [

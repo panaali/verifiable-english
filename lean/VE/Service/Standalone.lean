@@ -373,23 +373,36 @@ private def frozenFamilyProfiles (environment : Json) : Bool :=
   !profiles.isEmpty && profiles.all
     (["relational-fol@0", "closure@0", "nary@0", "order@0"].contains)
 
+/-- The frozen Python environment decoder classifies a well-shaped but
+unsupported legacy version or profile as `UnsupportedProfile` in every service
+mode. Keep that classification at the shared legacy decoder boundary. -/
+private def legacyVersionFault (message : String) : String :=
+  match message with
+  | "unsupported environment version" =>
+    "UnsupportedProfile: Unsupported language, semantic profile, or specification revision"
+  | "unsupported closure environment version/profiles" =>
+    "UnsupportedProfile: Unsupported profiles or specification revision"
+  | "unsupported order environment version/profiles" =>
+    "UnsupportedProfile: unsupported order environment version/profiles"
+  | _ => message
+
 def decodeLegacy (environment : Json) : Except String Legacy := do
   let language ← VE.Bridge.stringField environment "language"
   if language == "ve.core@0" then
     match VE.Bridge.decodeEnvironment environment with
     | .ok v => pure (.v0 v)
-    | .error message => throw message
+    | .error message => throw (legacyVersionFault message)
   else if language == "ve.core@0.1" then
     if environment.getObjValD "profiles" == toJson ["order@0", "relational-fol@0"] then
       match VE.Order.Wire.decodeEnvironment environment with
       | .ok v => pure (.order v)
-      | .error message =>
-        if message == "unsupported order environment version/profiles" then
-          throw s!"UnsupportedProfile: {message}"
-        else throw message
+      | .error message => throw (legacyVersionFault message)
     else if (VE.Route.Gate.profilesOf environment).toOption.getD [] |>.contains "order@0" then
       throw "UnsupportedProfile: unsupported order environment version/profiles"
-    else pure (.closure (← VE.Closure.Bridge.decodeEnvironment environment))
+    else
+      match VE.Closure.Bridge.decodeEnvironment environment with
+      | .ok v => pure (.closure v)
+      | .error message => throw (legacyVersionFault message)
   else do
     VE.Bridge.exactFields environment ["language", "profile", "spec_revision", "vocabulary"]
     throw "UnsupportedProfile: Unsupported language"
@@ -633,6 +646,7 @@ def legacyCheckCase (id : String) (environment ast : Json) (formula : Bool) (ite
   let (_, version) ← match legacyTyped environment ast formula with
     | .ok result => pure result
     | .error message =>
+      let message := legacyVersionFault message
       let profiles := if environment.getObjValD "language" == .str "ve.core@0" then ["relational-fol@0"]
         else match environment.getObjValD "profiles" with
           | .arr ps => ps.toList.filterMap (·.getStr?.toOption)
@@ -843,12 +857,46 @@ def parseCase (j : Json) : Except String Json := do
 tables are validated here in the frozen Python order; the family decoder still
 constructs and checks the typed model after these checks succeed. A fault is
 located when it is discovered, never reconstructed from its message. -/
+inductive PointerSegment where
+  | key (name : String)
+  | index (position : Nat)
+  deriving Repr, BEq
+
+/-- A location is a sequence of object keys and array indexes. The empty
+pointer names the input itself. -/
+structure Pointer where
+  segments : List PointerSegment
+  deriving Repr, BEq
+
+namespace Pointer
+
+def ofString (path : String) : Pointer :=
+  ⟨(path.splitOn "/").drop 1 |>.map fun token =>
+    match token.toNat? with
+    | some position => .index position
+    | none => .key token⟩
+
+def render (pointer : Pointer) : String :=
+  String.join (pointer.segments.map fun segment =>
+    "/" ++ match segment with
+      | .key name => (name.replace "~" "~0").replace "/" "~1"
+      | .index position => toString position)
+
+def resolves (input : Json) (pointer : Pointer) : Bool :=
+  pointer.segments.foldl (fun current segment =>
+    current.bind fun value =>
+      match segment with
+      | .key name => (value.getObjVal? name).toOption
+      | .index position => (value.getArr?.toOption.getD #[])[position]?) (some input) |>.isSome
+
+end Pointer
+
 structure ModelFault where
   message : String
-  path : String
+  path : Pointer
 
 private def modelFault (path message : String) : Except ModelFault α :=
-  .error ⟨message, path⟩
+  .error ⟨message, Pointer.ofString path⟩
 
 private def tableFields (value : Json) (expected : List String) (path : String) :
     Except ModelFault Unit := do
@@ -1063,15 +1111,27 @@ theorem checkedModelTables_error_preserved (environment model : Json)
     checkedModelTables environment model = .error fault := h
 
 /-- Checked examples of the pointer-carrying decoder, including faults in a
-table shape and a nested cell. The `ModelFault` type makes path mandatory. -/
+table shape and a nested cell. Locations are checked against their input. -/
 private def modelPathOf (result : Except ModelFault Unit) : String :=
-  match result with | .ok _ => "" | .error fault => fault.path
+  match result with | .ok _ => "" | .error fault => fault.path.render
+
+/-- A decidable location check for the table decoder's input. -/
+def checkedModelTablesPathResolves (environment model : Json) : Bool :=
+  match checkedModelTables environment model with
+  | .ok () => true
+  | .error fault => fault.path.resolves model || fault.path.resolves environment
 
 #guard modelPathOf (checkedModelTables
   (Json.mkObj [("vocabulary", Json.mkObj [("sorts", Json.mkObj [("item", .null)]),
     ("predicates", Json.mkObj []), ("constants", Json.mkObj [])])])
   (Json.mkObj [("complete", .bool true), ("domains", Json.mkObj [("item", .str "i")]),
     ("constants", Json.mkObj []), ("relations", Json.mkObj [])])) == "/domains/item"
+
+#guard checkedModelTablesPathResolves
+  (Json.mkObj [("vocabulary", Json.mkObj [("sorts", Json.mkObj [("item", .null)]),
+    ("predicates", Json.mkObj []), ("constants", Json.mkObj [])])])
+  (Json.mkObj [("complete", .bool true), ("domains", Json.mkObj [("item", .str "i")]),
+    ("constants", Json.mkObj []), ("relations", Json.mkObj [])])
 
 def reported (run : Json → Except String Json) (j : Json) : Json :=
   match run j with
@@ -1080,16 +1140,19 @@ def reported (run : Json → Except String Json) (j : Json) : Json :=
       ("status", .str "error"), ("error", .str message)]
 
 def reportedFault (j : Json) (fault : ModelFault) : Json :=
+  let located := fault.path.resolves (j.getObjValD "environment") ||
+    fault.path.resolves (j.getObjValD "model")
   Json.mkObj ([("id", j.getObjValD "id"), ("status", .str "error"),
     ("error", .str fault.message)] ++
-    if fault.path.isEmpty then [] else [("path", .str fault.path)])
+    if fault.path.segments.isEmpty || !located then [] else
+      [("path", .str fault.path.render)])
 
 /-- Keep the owning family's diagnostic text while carrying the location found
 by the shared vocabulary shape decoder. Only a reported rejection gets a path. -/
 def withVocabularyPath (j result : Json) (fault : ModelFault) : Json :=
   match result.getObjVal? "error" with
   | .ok (.str message) =>
-    if fault.path.isEmpty then result else reportedFault j ⟨message, fault.path⟩
+    if fault.path.segments.isEmpty then result else reportedFault j ⟨message, fault.path⟩
   | _ => result
 
 /-- Profile shape precedes vocabulary decoding. The base route owns its profile
@@ -1154,7 +1217,7 @@ def reportedEnvironment (j : Json) : Json :=
       else reportedOtherEnvironment j environment
     else
       match earlyProfileGate environment with
-      | .error message => reportedFault j ⟨message, ""⟩
+      | .error message => reportedFault j ⟨message, Pointer.ofString ""⟩
       | .ok () =>
         match locatedEnvironmentFields environment with
         | .ok () => reported environmentCase j
@@ -1164,7 +1227,7 @@ def reportedModel (j : Json) : Json :=
   let checkedEnvironment := reportedEnvironment j
   if checkedEnvironment.getObjValD "status" == .str "error" then
     reportedFault j ⟨(checkedEnvironment.getObjValD "error").getStr?.toOption.getD "",
-      (checkedEnvironment.getObjValD "path").getStr?.toOption.getD ""⟩
+      Pointer.ofString ((checkedEnvironment.getObjValD "path").getStr?.toOption.getD "")⟩
   else
     let located := do
       let environment ← j.getObjVal? "environment"
@@ -1184,7 +1247,7 @@ def reportedModel (j : Json) : Json :=
       | .error _ => reported modelCase j
       | .ok environment =>
         match earlyProfileGate environment with
-        | .error message => reportedFault j ⟨message, ""⟩
+        | .error message => reportedFault j ⟨message, Pointer.ofString ""⟩
         | .ok () =>
           if !locationOwnedEnvironment environment then reported modelCase j
           else

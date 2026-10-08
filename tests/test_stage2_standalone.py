@@ -82,6 +82,41 @@ def test_legacy_environment_malformed_predicate_keeps_frozen_path():
 
 
 @pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+@pytest.mark.parametrize("field", ["profile", "spec_revision"])
+def test_legacy_environment_bad_version_field_has_frozen_code(field):
+    from ve.errors import VEError
+    corpus = json.loads((SERVICE.parents[4] / "conformance/search.json").read_text())
+    raw = next(row["environment"] for row in corpus
+               if row["environment"].get("language") == "ve.core@0")
+    raw[field] = "bad!"
+    with pytest.raises(VEError) as caught:
+        run("environment", [{"id": "bad-legacy-version", "environment": raw}])
+    assert caught.value.to_dict()["code"] == "UnsupportedProfile"
+    assert caught.value.to_dict().get("path") is None
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+@pytest.mark.parametrize("replacement", ["bad!", "outside_sort_entity"])
+@pytest.mark.parametrize("mode", ["environment", "model", "check"])
+def test_legacy_closure_profile_element_has_frozen_code(replacement, mode):
+    from ve.errors import VEError
+    corpus = json.loads((SERVICE.parents[4] / "conformance/closure.json").read_text())
+    raw = next(row["environment"] for row in corpus
+               if row["environment"].get("profiles") == ["closure@0", "relational-fol@0"])
+    model = model_wire(Environment(raw)) if mode == "model" else None
+    raw["profiles"][0] = replacement
+    case = {"id": "bad-closure-profile", "environment": raw}
+    if mode == "model":
+        case["model"] = model
+    elif mode == "check":
+        case["ast"] = ["top"]
+    with pytest.raises(VEError) as caught:
+        run(mode, [case])
+    assert caught.value.to_dict()["code"] == "UnsupportedProfile"
+    assert caught.value.to_dict().get("path") is None
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
 def test_model_null_relation_cell_reaches_located_decoder():
     from ve.errors import VEError
     env = Environment(raw_environment(()))
@@ -91,6 +126,31 @@ def test_model_null_relation_cell_reaches_located_decoder():
         run("model", [{"id": "null-cell", "environment": env.to_dict(), "model": model}])
     assert caught.value.to_dict()["code"] == "InvalidModel"
     assert caught.value.to_dict()["path"] == "/relations/base/0/0"
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+@pytest.mark.parametrize(("location", "path"), [
+    ("constant", "/constants/n"),
+    ("relation", "/relations/marked/0/0"),
+])
+def test_order_numeral_resource_limit_has_decided_location(location, path):
+    from ve.errors import VEError
+    raw = raw_environment(("order@0",))
+    raw["vocabulary"]["constants"]["n"] = {"sort": "$int", "description": "number"}
+    raw["vocabulary"]["predicates"]["marked"] = {
+        "arguments": ["$int"], "description": "marked"}
+    env = Environment(raw)
+    model = model_wire(env)
+    if location == "constant":
+        model["constants"]["n"] = "1" * 41
+    else:
+        model["constants"]["n"] = "0"
+        model["relations"]["marked"] = [["1" * 41]]
+    assert _pointer_resolves(model, path)
+    with pytest.raises(VEError) as caught:
+        run("model", [{"id": location, "environment": raw, "model": model}])
+    assert caught.value.to_dict()["code"] == "ResourceLimit"
+    assert caught.value.to_dict()["path"] == path
 
 
 @pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
@@ -382,7 +442,7 @@ def _corpus_inputs():
 
 
 def _each_node_mutation(value):
-    """Retype and null every node; delete every member of every object."""
+    """Exercise shape, identifier, membership and field failures at every node."""
     def walk(node, path=()):
         yield path, node
         if isinstance(node, dict):
@@ -412,9 +472,29 @@ def _each_node_mutation(value):
         yield path, "type", changed(path, wrong_type)
         if node is not None:
             yield path, "null", changed(path, None)
+        yield path, "bad-identifier", changed(path, "bad!")
+        yield path, "out-of-sort-entity", changed(path, "outside_sort_entity")
+        extra = {**node, "unexpected_field": 7} if isinstance(node, dict) else {
+            "unexpected_field": deepcopy(node)}
+        yield path, "extra-field", changed(path, extra)
         if isinstance(node, dict):
             for key in node:
                 yield (*path, key), "absent", changed((*path, key), None, delete=True)
+
+
+def _pointer_resolves(value, pointer):
+    """The service's JSON pointer must name an existing input node."""
+    if pointer is None:
+        return True
+    if not isinstance(pointer, str) or not pointer.startswith("/"):
+        return False
+    try:
+        for token in pointer[1:].split("/"):
+            token = token.replace("~1", "/").replace("~0", "~")
+            value = value[int(token)] if isinstance(value, list) else value[token]
+    except (KeyError, IndexError, TypeError, ValueError):
+        return False
+    return True
 
 
 @pytest.mark.nightly
@@ -428,6 +508,7 @@ def test_every_corpus_model_and_environment_node_matches_frozen_python(tmp_path)
     from tools import lean_first_oracle
     from ve.backends.lean_service import LeanService
     from ve.backends.diagnostics import checker_error
+    from ve.backends.relay import rows as route_rows
     from ve.errors import VEError
 
     cases_path = tmp_path / "mutations.jsonl"
@@ -466,33 +547,50 @@ def test_every_corpus_model_and_environment_node_matches_frozen_python(tmp_path)
     )
     assert lean_first_oracle.run(script, scratch=tmp_path) == 0
 
-    def outcomes(service, mode, requests):
+    def outcomes(call, mode, requests):
         try:
-            rows = service.run(mode, requests)
+            rows = call(mode, requests)
         except VEError as exc:
             if len(requests) > 1:
                 middle = len(requests) // 2
-                return (outcomes(service, mode, requests[:middle]) +
-                        outcomes(service, mode, requests[middle:]))
+                return (outcomes(call, mode, requests[:middle]) +
+                        outcomes(call, mode, requests[middle:]))
             return [{"code": exc.code, "path": exc.to_dict().get("path")}]
         return [({"code": "ok"} if row["status"] == "ok" else
                  {"code": checker_error(row["error"]).code, "path": row.get("path")})
                 for row in rows]
 
+    mismatch_counts = {}
+    mismatch_examples = {}
     with LeanService() as service, cases_path.open() as cases, answers_path.open() as answers:
         while batch := [json.loads(line) for _, line in zip(range(200), cases)]:
             expected = [json.loads(answers.readline()) for _ in batch]
             actual = [None] * len(batch)
+            public = [None] * len(batch)
             for mode in ("environment", "model"):
                 indexes = [i for i, case in enumerate(batch) if case["mode"] == mode]
                 requests = [{"id": str(i), "environment": batch[i]["environment"],
                              **({"model": batch[i]["model"]} if mode == "model" else {})}
                             for i in indexes]
-                for i, result in zip(indexes, outcomes(service, mode, requests), strict=True):
+                for i, result in zip(indexes, outcomes(service.run, mode, requests), strict=True):
                     actual[i] = result
-            for case, oracle, result in zip(batch, expected, actual, strict=True):
-                assert result == oracle, (case["mode"], case["origin"], result, oracle)
+                for i, result in zip(indexes, outcomes(route_rows, mode, requests), strict=True):
+                    public[i] = result
+            for case, oracle, result, routed in zip(batch, expected, actual, public, strict=True):
+                subject = case["environment" if case["mode"] == "environment" else "model"]
+                if (result != oracle or routed != result or
+                        not _pointer_resolves(subject, result.get("path")) or
+                        not _pointer_resolves(subject, routed.get("path"))):
+                    key = (case["mode"], case["origin"][2],
+                           json.dumps(result, sort_keys=True),
+                           json.dumps(routed, sort_keys=True),
+                           json.dumps(oracle, sort_keys=True))
+                    mismatch_counts[key] = mismatch_counts.get(key, 0) + 1
+                    mismatch_examples.setdefault(key, case["origin"])
         assert answers.readline() == ""
+    assert not mismatch_counts, (sum(mismatch_counts.values()), [
+        (count, key, mismatch_examples[key]) for key, count in sorted(
+            mismatch_counts.items(), key=lambda item: -item[1])[:100]])
 
 
 @pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
