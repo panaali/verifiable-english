@@ -2,8 +2,22 @@
 
 Batch RD-2a of [readings-defaults-PLAN.md](../../spec/readings-defaults-PLAN.md) (its RD-2a section), statements of
 [readings-defaults.md](../../spec/readings-defaults.md) 6.3, on branch `readings-defaults/rd2a` from `167eb8ff`.
-Built by one Lean worker session on 2026-10-07 and 2026-10-08; no model was called. Every number below is in
-[evidence/gate.json](evidence/gate.json) and is checked against it by `tests/test_readings_defaults_rd2a_report.py`.
+Built by one Lean worker session on 2026-10-07 and 2026-10-08; the review's fixes (below) by one session on 2026-10-08,
+with the branch synced to `main` at `228f01da`; no model was called. Every number below is in
+[evidence/gate.json](evidence/gate.json) or [evidence/latency-b2.json](evidence/latency-b2.json) and is checked against
+it by `tests/test_readings_defaults_rd2a_report.py`.
+
+## Review fixes (rd-2a-review: B1, B2, B3; C2 and C3 with them)
+
+| Finding | Fix (the class, not the example) | Regression test | Commit |
+|---|---|---|---|
+| B1: the merge with main broke the build (`witnessConflictX` returns a triple), `ndInner` copied `runLayered`'s dispatch and lacked main's `conflictFields`/`statusFields`, the tests called the deleted `nd.check_conflict` | synced with `main` twice (`81d53b6b`, then `228f01da` with RD-6a); `layeredCase` is the one dispatch of the layered kinds, called by `runLayered` and by `ndInner`; the tests propose evidence with the pinned oracle `conformance.frozen_norm_defaults`, as main's do; main's Lean-backed `UnspecifiedDocument` is built with `readings@1` stripped beside content-bearing sets too (Lean's `runLower`) | `test_inner_answers_are_the_norm_defaults_routes`: each inner answer equals the norm-defaults route's on the choice's document, field for field (13 cases, R1) | `16462b5d`, `1eb94f6f` |
+| B2: under the completion validate and separate admitted the author's document twice; C2: so did the S2a kinds of a norm-defaults document with no content-bearing set | `runCase` admits once and passes the admission on (`admitS2Of` continues S1's admission; every S2a runner and `replayCertificateOf`/`replayModelOf` take the admitted document) | `test_the_route_admits_the_case_document_once` (compiled-IR walk: only `runCase` calls `admitS2`, only it and `admitS2` call `admitReadings`, no JSON admission is reachable; R4) | `eb503391` |
+| B3: the relay expected the abstention, so `ve document` raised `ReadingsConformance: ... S2 route` on every completion document; this file described it wrongly | Python's route row follows Lean's `routeOf` (the completion on the norms chain, the abstention elsewhere); for the completion the relay binds Lean's route and cause, then refuses by name (`UNDER_COMPLETION`) until RD-2b; the availability paragraph below is corrected | `test_rd2a_review_b3_completion_document_is_refused_by_name`, `test_rd2a_review_b3_route_table_is_lean_s` (R2, R3) | `e77b0b86` |
+| C3: the rights-chain abstention was untested | (no code change) | `test_fnd6_rights_chain_keeps_the_abstention` | `16462b5d` |
+
+Open: C1 (no service fixture reaches step 5's `choiceStepText`/`ndChoiceText`; `ND4` unused) and C4 (spec 8.3 rows
+F-ND4 and F-ND10, the planner's: EXTERNAL) are follow-ups, not done here.
 
 ## What changed
 
@@ -13,7 +27,7 @@ Built by one Lean worker session on 2026-10-07 and 2026-10-08; no model was call
   `FilledAdmitted`), `replaySeparateU`, `replayChoiceU`, the three 6.3 theorems, and the runners of
   `readings-elaborate` and `readings-choice` under the completion. Each choice is read as norm-defaults' layered
   source with no extra premise (`choiceLayered`), so the conflict (packages or a filled witness), status, report and
-  elaborate inner kinds reuse 10a's `LayeredU` cores; `norm-defaults-certificate` checks `premisesU` on the choice
+  elaborate inner kinds are the layered branch's own dispatch (`layeredCase`, review B1); `norm-defaults-certificate` checks `premisesU` on the choice
   (`acceptanceU`), `choice-model` a base model with a separate filling (`modelCheckU`).
 - `NormDefaults/Wire.lean`: `EntailsU`, `acceptanceU`; `normDefaults_wire_acceptance` keeps its statement and calls
   the shared proof `acceptance_of_fillTyped`. `NormDefaults/Report.lean`: `modelCheckU`, `modelCheckU_sound`.
@@ -62,8 +76,8 @@ Built by one Lean worker session on 2026-10-07 and 2026-10-08; no model was call
 5. **One more build of the free document per request under the completion** (`freeU`, step 3), recorded in
    `tests/test_readings_lean_sharing.py` beside `sharedEnv`'s; every reading's document is built once, in a table.
 6. **The 10a cores.** `acceptanceU` and `modelCheckU_sound` are new UDoc lemmas; the witness, status and report checks
-   reuse 10a's existing `LayeredU` functions and theorems (`witnessConflictX`, `replayStatusX`, `layered_report_sound`)
-   on the choice's document instead of new lemmas.
+   are the layered branch's dispatch (`layeredCase`) with its functions and theorems (`witnessConflictX`,
+   `replayStatusX`, `layered_report_sound`) on the choice's document instead of new lemmas.
 
 ## Availability change (HUMAN: DRI to sign)
 
@@ -82,37 +96,44 @@ with a pending candidate takes the pending route and loads unresolved: changed t
 and the rights chain (`test_fnd6_rights_chain_keeps_the_abstention`) keep the abstention, and every other document keeps
 its answer: the corpus A/B below has no difference.
 
-## Gate (HEAD before this report, `17470adc`, this worktree with a clean status)
+## Gate (HEAD before this report, `b7d3822a`, this worktree with a clean status)
 
 | Check | Result |
 |---|---|
-| `lake build` | 802 jobs, success |
-| `python3 lean/audit.py` | PASS: 432 source files, 4709 theorems (base 4672), standard axioms only |
+| `lake build` | 809 jobs, success |
+| `python3 lean/audit.py` | PASS: 437 source files, 4745 theorems (base 4707), standard axioms only |
 | `python3 VE/Route/frozen.py` | PASS |
-| `tools/lean_statements.py --check` | PASS: 4337 statements (base 4311), 0 changed, 0 removed |
-| `tools/check_readings_defaults_statements.py` | RD-1: 31 exact, 0 pending; RD-2a: 16 exact, 0 pending |
-| service fixtures `tests/test_readings_nd_lean.py` | 17 passed, 1.24 s serially |
-| full suite in 5 chunks (`-n 16`, `VE_LEAN_PREBUILT=1`, the 4 slow tests deselected) | 2022, 3929, 1821, 2453 and 1578 passed; 1, 2, 3, 0 and 0 skipped; 0 failed |
+| `tools/lean_statements.py --check` | PASS: 4371 statements (base 4345), 0 changed, 0 removed |
+| `tools/check_readings_defaults_statements.py` | RD-1: 31 exact, 0 pending; RD-2a: 16 exact, 0 pending (RD-6a, main's: 7 exact, 1 amended) |
+| service fixtures `tests/test_readings_nd_lean.py` | 19 passed, 1.26 s serially |
+| full suite in 5 chunks (`-n 16`, `VE_LEAN_PREBUILT=1`, the 4 slow tests and this report's test deselected) | 2171, 3862, 1823, 2499 and 1688 passed; 1, 2, 3, 0 and 0 skipped; 0 failed |
 | the 4 slow tests alone (`-n 4`) | 28 passed |
-| corpus A/B (`tools/lean_first_diff.py`, base `167eb8ff` built from this checkout's cache) | 94498 records, 94498 the same, 0 unlisted (`evidence/ab-*.json`) |
-| `tools/trust_map.py` | 0 unclassified; `--check` still fails on growth that predates RD-2a (RD-1's DELTA); RD-2a's own trusted growth is `UnspecifiedWire.lean` and `Run.lean`'s runners |
+| this report's test, after the report commit | 7 passed |
+| corpus A/B (`tools/lean_first_diff.py`, base `167eb8ff`, at `17470adc` before the review fixes) | 94498 records, 94498 the same, 0 unlisted (`evidence/ab-*.json`) |
+| `tools/trust_map.py` | 0 unclassified; `--check` still fails on growth that predates RD-2a (RD-1's DELTA) and on main's (RD-8, lf-10b); RD-2a's own trusted growth is `UnspecifiedWire.lean` and `Run.lean`'s runners |
 
-Not run: `tools/gate.py` in a fresh worktree (it does not fit one 60-minute foreground call; the chunks above are
-its suite); the plan's latency budgets on a quiet host.
+The base is `main` at `228f01da` (the second sync). Not run: `tools/gate.py` in a fresh worktree (it does not fit one
+60-minute foreground call; the chunks above are its suite); the corpus A/B again after the review fixes (the saved
+evidence is from `17470adc`); the plan's latency budgets on a quiet host.
 
 ## Latency
 
-Admission of a document with one reading set and `n` fixed rules spread over 60 regulated predicates (seconds,
-one request, load 13 to 24 on 32 cores):
+Admission of F-ND1's set beside `n` fixed rules over 20 extra regulated pairs, in CPU seconds per request of the
+`ve_service` process (every thread, six calls after a warm-up), the build before review B2 (`02803f6b`) and after it
+(`3fa65c68`) timed in turn on the same host (load 17 to 27 on 32 cores); `docs/readings-defaults/rd2a/latency.py`:
 
-| `n` fixed units | S1 only (completions `deny`) | under the completion |
-|---|---|---|
-| 30 | 0.4 | 2.0 |
-| 60 | 3.4 | 11.1 |
-| 90 | 16.3 | 66.0 |
+| `n` fixed units | `deny` validate, before | after | `unspecified` validate, before | after | elaborate, before | after |
+|---|---|---|---|---|---|---|
+| 10 | 0.41 | 0.31 | 9.72 | 7.71 | 2.97 | 3.24 |
+| 20 | 0.66 | 0.43 | 10.48 | 11.7 | 4.37 | 4.29 |
+| 30 | 1.01 | 0.77 | 12.04 | 12.01 | 7.17 | 7.89 |
+| 44 | 5.0 | 3.7 | 30.52 | 25.89 | 18.58 | 16.18 |
 
-The steep growth is S1's own admission (it predates RD-2a); the completion adds the norm-defaults checks and the
-filled document's admission, about four times S1's cost here (it was 6.5 times before each document was built once).
+With every completion `deny` the completion's own checks are trivial and the author's admission is most of the cost:
+the second admission B2 removed was a quarter to a third of it at every size. With unspecified completions the
+norm-defaults checks and the filled document's admission dominate (about ten times the `deny` cost), and the saved
+admission is within this loaded host's noise; `readings-elaborate` never admitted twice. Both builds' answers were
+the same on every request.
 
 ## Seeded bugs (each planted, the test run, then removed; the binary rebuilt and its pinned hash restored)
 
@@ -124,6 +145,10 @@ filled document's admission, about four times S1's cost here (it was 6.5 times b
 | M4 | a choice's packages bound to the first compatible choice's document hash | `test_fnd1_each_choice_conflict_free_and_certificate` (after the test gained an independent hash check: the first run passed, the bindings having been read from Lean's own answer) |
 | M5 | the abstention kept on the norms chain | 15 tests of `test_readings_nd_lean.py` |
 | M6 | the relay's row check without `fill_premises` and `filled` | `test_ruling4_rule_candidate_beside_norm_defaults_is_under_the_completion` |
+| R1 | `ndInner` answers a witness's CONFLICT itself, without main's `conflictFields` (review B1) | `test_inner_answers_are_the_norm_defaults_routes` (`test_fnd2_latent_conflict_under_one_reading`, which reads the verdict only, passed) |
+| R2 | the relay's route row back to the abstention for every `norm-defaults@0` document (review B3) | `test_rd2a_review_b3_completion_document_is_refused_by_name` and `test_rd2a_review_b3_route_table_is_lean_s` (the conformance alarm) |
+| R3 | the norm-defaults document built with `readings@1` beside content-bearing sets (review B3, after the sync) | `test_rd2a_review_b3_completion_document_is_refused_by_name` (`Unsupported profile readings@1`) |
+| R4 | `readings-validate` admitted again through `admitNDFullJ` (review B2) | `test_the_route_admits_the_case_document_once` |
 
 The statement checker's tests also fail on every changed 6.3 declaration, a dropped hypothesis and a missing
 declaration; the report test fails on a wrong A/B total in this file and on a seeded bug naming a test that does not
@@ -138,14 +163,14 @@ exist (each tried once, then restored).
 | 3 normalization | not applicable: no text input |
 | 4 untrusted output | partly: the relay checks the new fields' shape (M6); no fuzz of genuine responses for them yet (RD-2b reads them) |
 | 5 malformed input | partly: F-ND8's tampering (stolen packages, an ill-typed filling tuple, an `unsaid__` table as a table, outside the profile too); no 7/true/null sweep over the new inner kinds |
-| 6 three-valued verdicts | done for what exists: missing or unbound packages give UNKNOWN with `detail`, a refused inner case is an error row, Python's fold raises `CheckerUnavailable` on it |
+| 6 three-valued verdicts | done for what exists: missing or unbound packages give UNKNOWN with `detail`, a refused inner case is an error row; `ve document` refuses a completion document by name before any fold |
 | 7 deadlines | not applicable: the service's per-case CPU deadline wraps every new kind; no new loop has its own budget |
 | 8 exhaustive folds | done: the inner kinds fall through to the norm-defaults route's refusal |
 | 9 English | not applicable: no sentence (RD-3) |
-| 10 one admit() | done: every readings kind of a completion document goes through `admitNDFull` (validate, separate, elaborate, choice, dead; the superposed kinds after it) |
+| 10 one admit() | done: every readings kind of a completion document goes through `admitNDFull` (validate, separate, elaborate, choice, dead; the superposed kinds after it), and each case admits its document once (review B2, `test_the_route_admits_the_case_document_once`); `ve document` refuses a completion document by name (review B3) |
 | 11 no regex of a real language | partly: the statement checker reads Lean text by regex, as RD-1's |
 | 12 state machines | not applicable |
-| 13 tests can fail | done: M1 to M6 |
+| 13 tests can fail | done: M1 to M6, R1 to R4 |
 | 14 hermetic | done: the new tests write nothing, read no environment variable, no sleep |
 | 15 identity | done: each choice's packages are bound to its own document hash and environment id, checked against an independent hash (M4) |
 | 16 lists | done: audit manifests, frozen inventory, statement, predicate and declaration dumps, trust classes, assurance manifest, gate collection, ledger |
@@ -154,4 +179,4 @@ exist (each tried once, then restored).
 | 19 use-case formalisation | not applicable |
 | 20 reports | done: `tests/test_readings_defaults_rd2a_report.py` checks this file's numbers against `evidence/gate.json` and the A/B files |
 | 21 AGENT/HUMAN/EXTERNAL | done: the availability change is HUMAN (DRI); the 8.3 deviations EXTERNAL (planner, statement re-review); the rest AGENT |
-| 22 hand-off | partly: all committed, chunked suite on HEAD with a clean status, 61 GB free; `tools/gate.py` in a fresh worktree not run |
+| 22 hand-off | partly: all committed, chunked suite on HEAD with a clean status, 67 GB free; `tools/gate.py` in a fresh worktree not run |
