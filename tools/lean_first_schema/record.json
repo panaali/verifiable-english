@@ -5,7 +5,7 @@
     "type": "object", "required": ["corpus", "authority", "case", "op", "source_sha256", "outcome"],
     "additionalProperties": false,
     "properties": {
-      "corpus": {"enum": ["probe", "conformance", "pilots", "readings", "discourse", "rights", "quantity"]},
+      "corpus": {"enum": ["probe", "conformance", "pilots", "readings", "discourse", "rights", "quantity", "norm_defaults"]},
       "authority": {"$ref": "#/$defs/text"},
       "case": {"$ref": "#/$defs/text"},
       "op": {"$ref": "#/$defs/text"},
@@ -18,6 +18,7 @@
       {"if": {"properties": {"corpus": {"const": "readings"}}}, "then": {"$ref": "#/$defs/readings"}},
       {"if": {"properties": {"corpus": {"const": "discourse"}}}, "then": {"$ref": "#/$defs/discourse"}},
       {"if": {"properties": {"corpus": {"const": "rights"}}}, "then": {"$ref": "#/$defs/discourse"}},
+      {"if": {"properties": {"corpus": {"const": "norm_defaults"}}}, "then": {"$ref": "#/$defs/discourse"}},
       {"if": {"properties": {"corpus": {"const": "quantity"}}}, "then": {"$ref": "#/$defs/quantity"}}]
   },
   "$defs": {

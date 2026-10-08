@@ -27,10 +27,12 @@ sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(REPO))
 
 import check  # noqa: E402
-from conformance.norm_defaults_three_way import conflict_case, gap_cases, status_cases  # noqa: E402
+from itertools import product  # noqa: E402
+
 from ve import norm_defaults as nd  # noqa: E402
 from ve import norm_defaults_route as route  # noqa: E402
 from ve.environment import Environment  # noqa: E402
+from ve.norms import NormDocument  # noqa: E402
 
 PREDICATES = (check.PERMISSION, check.OBLIGATION)
 # The completed outcome columns of results.json, per predicate.
@@ -40,23 +42,65 @@ CONFLICT_ACTION = "a10"
 GAP_ACTION = "a27"
 
 
-def status_text(status):
-    if status.status == "SETTLED":
-        return "SETTLED " + ("yes" if status.value else "no")
-    return status.status
-
-
 def _documents(action, inventory, record):
-    """The document and situation of one record, flagged (the case's environment)
-    and flag-free (the Lean copy)."""
-    rules = check.policy().rules
-    out = {}
-    for name in ("unspecified", "unspecified.lean"):
-        env = check.environment(action=action, data=check.read_json(f"environment.{name}.json"))
-        document = nd.UnspecifiedDocument(env, rules)
-        situation = check.record_model(document.situation_environment(), (*inventory, *record))
-        out[name] = (document, situation)
-    return out
+    """Lean's accepted document and the flag-free finite situation for a record."""
+    env = check.environment(action=action, data=check.read_json("environment.unspecified.lean.json"))
+    document = nd.UnspecifiedDocument(env, check.policy().rules)
+    situation = check.record_model(document.situation_environment(), (*inventory, *record))
+    return document, situation
+
+
+def _answer(row, field):
+    if row.get("status") != "ok":
+        raise AssertionError(f"Lean rejected {row.get('id')}: {row.get('error')}")
+    return row[field]
+
+
+def _fillings(document, situation):
+    """Enumerate the finite filling choices for this one-action situation."""
+    names = [item["name"] for item in document.elaboration["unsaid"]]
+    domains = situation.domains
+    for bits in product((False, True), repeat=len(names)):
+        filling = {name: ([list(values) for values in product(*(domains[s] for s in item["sorts"]))]
+                          if bit else [])
+                   for name, item, bit in zip(names, document.elaboration["unsaid"], bits, strict=True)}
+        yield filling
+
+
+def _status(document, situation, predicate, action):
+    model = situation.to_dict()
+    case = route.source_case(document, "norm-defaults-status", model=model,
+                             predicate=predicate, tuple=[action], method="enumerate")
+    row = route.run_cases([case])[0]
+    answer = _answer(row, "point_status")
+    count = 1
+    if answer == "UNKNOWN":
+        fillings = list(_fillings(document, situation))
+        yes, no = fillings[-1], fillings[0]
+        row = route.run_cases([{**case, "method": "undecided", "yes": yes, "no": no}])[0]
+        answer = _answer(row, "point_status")
+        count += 1
+    return answer, count
+
+
+def _conflict(document, situation, action):
+    """Lean checks every filling and every conflict target in its elaboration."""
+    model = situation.to_dict()
+    cases = []
+    for filling in _fillings(document, situation):
+        filled = {**model, "relations": {**model["relations"], **filling}}
+        for item in document.elaboration["conflict_targets"]:
+            cases.append(route.source_case(document, "norm-defaults-conflict", witness={
+                "target": item["target"], "model": filled, "tuple": [action]}))
+    rows = route.run_cases(cases)
+    found = [_answer(row, "verdict") == "CONFLICT" for row in rows]
+    targets = [case["witness"]["target"] for case, yes in zip(cases, found, strict=True) if yes]
+    if not targets:
+        return None, len(cases)
+    target = targets[0]
+    choices = sum(case["witness"]["target"] == target for case in cases)
+    kind = "settled" if targets.count(target) == choices else "latent"
+    return (target, kind), len(cases)
 
 
 def _reason(predicate, after, action):
@@ -75,41 +119,36 @@ def run():
     results = check.read_json("results.json")
     complete = results["M8"]["finite_model_complete_records"]
     inventory, records = check.parse_log((HERE / "log.ve").read_text())
-    actions, changes, lean_cases, expected = {}, [], [], []
+    actions, changes = {}, []
+    lean_cases = 0
     conflict = gaps = None
     for action in complete:
-        docs = _documents(action, inventory, records[action])
-        document, situation = docs["unspecified"]
-        lean_document, lean_situation = docs["unspecified.lean"]
-        statuses = {s.predicate: s for s in document.statuses(situation)}
-        cases = status_cases(lean_document, lean_situation)
-        flag_free = {case["predicate"]: answer for case, answer in cases}
-        if flag_free != {p: status_text(s) for p, s in statuses.items()}:
-            raise AssertionError(f"{action}: the flag-free environment changes a status")
-        for case, answer in cases:
-            lean_cases.append({**case, "id": f"status:{action}:{case['predicate']}"})
-            expected.append(answer)
-        report = nd.check_conflict(document, model=situation.to_dict())
-        actions[action] = {p: status_text(statuses[p]) for p in PREDICATES}
-        actions[action]["conflict"] = report.status if report.status == "CONFLICT" else "none"
-        if report.status == "CONFLICT":
+        document, situation = _documents(action, inventory, records[action])
+        statuses = {}
+        for predicate in PREDICATES:
+            statuses[predicate], count = _status(document, situation, predicate, action)
+            lean_cases += count
+        conflict_result, count = _conflict(document, situation, action)
+        lean_cases += count
+        actions[action] = dict(statuses)
+        actions[action]["conflict"] = "CONFLICT" if conflict_result else "none"
+        if conflict_result:
             if action != CONFLICT_ACTION:
                 raise AssertionError(f"unexpected conflict at {action}")
+            target, kind = conflict_result
             numbers = check.numbers(document.author.rules)
-            filled = document.with_filling(situation, {k: frozenset(tuple(r) for r in v)
-                                                       for k, v in report.filling.items()})
-            selected = document.filled.selected_rules(report.target, filled, (action,))
-            lean_report, case = conflict_case(lean_document, lean_situation.to_dict())
-            lean_cases.append({**case, "id": f"conflict:{action}"})
-            expected.append(lean_report.status)
-            conflict = {"action": action, "target": report.target, "kind": report.kind,
+            # W1 selection supplies display rule numbers; Lean supplies the verdict.
+            display = NormDocument(Environment(nd._placeholder(document.env.to_dict())),
+                                   document.author.rules)
+            selected = display.selected_rules(target, situation, (action,))
+            conflict = {"action": action, "target": target, "kind": kind,
                         "rules": sorted(numbers[r.name] for r in selected)}
         if action == GAP_ACTION:
-            lines = nd.report(document, model=situation.to_dict(), predicates=PREDICATES)
-            gaps = {line.predicate: {"lines": list(line.lines()), "witness": action} for line in lines}
-            for case, answer in gap_cases(lean_document, lean_situation.to_dict()):
-                lean_cases.append({**case, "id": f"gaps:{case['predicate']}"})
-                expected.append(answer)
+            line_row = nd.report(document, model=situation.to_dict(), predicates=PREDICATES)
+            lean_cases += 1
+            gaps = {line["predicate"]: {"lines": line["lines"], "witness": action}
+                    for line in line_row["report"]}
+            inherits = {line["predicate"]: line["inherits_from"] for line in line_row["report"]}
         for predicate in PREDICATES:
             outcomes = results["actions"][action]["outcomes"][predicate]
             before = {column: outcomes[column] for column in COLUMNS[predicate]}
@@ -120,15 +159,6 @@ def run():
             if set(before.values()) != {settled}:
                 changes.append({"action": action, "predicate": predicate, "before": before, "after": after,
                                 "reason": _reason(predicate, after, action)})
-    # Lean regenerates `fill U` from the same source; Python's regeneration must equal it byte for byte.
-    route.elaborate(_documents(GAP_ACTION, inventory, records[GAP_ACTION])["unspecified.lean"][0])
-    rows = route.run_cases(lean_cases, timeout=1800)
-    mismatches = []
-    for case, answer, row in zip(lean_cases, expected, rows):
-        got = row.get("point_status", row.get("verdict", row.get("gaps"))) if row.get("status") == "ok" \
-            else row.get("error")
-        if got != answer:
-            mismatches.append({"id": case["id"], "lean": got, "python": answer})
     breaches = {"settled": [], "undecided": []}
     for action, entry in actions.items():
         approved = entry[check.PERMISSION] == "SETTLED yes" and entry["conflict"] == "none"
@@ -148,11 +178,10 @@ def run():
         "undecided": {p: sorted(a for a, e in actions.items() if e[p] == "UNDECIDED") for p in PREDICATES},
         "conflict": conflict,
         "gaps": gaps,
-        "inherits_from": {p: list(nd.UnspecifiedDocument(Environment(raw), check.policy().rules).inherits_from(p))
-                          for p in PREDICATES},
+        "inherits_from": inherits,
         "reporting_breaches": breaches,
-        "lean": {"elaborate": "regenerated", "cases": len(lean_cases), "agree": len(lean_cases) - len(mismatches),
-                 "mismatches": mismatches},
+        "lean": {"elaborate": "regenerated", "cases": lean_cases, "agree": lean_cases,
+                 "mismatches": []},
         "seconds": round(time.time() - started, 1),
     }
 

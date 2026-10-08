@@ -106,6 +106,11 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.English.run_fits
 #print axioms ResponseShape.Encoders.English.unit_class
 #print axioms ResponseShape.Encoders.English.units_classes
+#print axioms ResponseShape.Encoders.EnglishLean.read_fits
+#print axioms ResponseShape.Encoders.EnglishLean.grammar_fits
+#print axioms ResponseShape.Encoders.EnglishLean.check_fits
+#print axioms ResponseShape.Encoders.EnglishLean.ok_fits
+#print axioms ResponseShape.Encoders.EnglishLean.readCase_fits
 #print axioms ResponseShape.Encoders.Envelope.bound_fits
 #print axioms ResponseShape.Encoders.Envelope.getObjValD_str
 #print axioms ResponseShape.Encoders.Envelope.lacks
@@ -130,6 +135,7 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.NormDefaults.admitDocument_kinds
 #print axioms ResponseShape.Encoders.NormDefaults.firstFailureX_of_not_free
 #print axioms ResponseShape.Encoders.NormDefaults.firstFailure_of_not_free
+#print axioms ResponseShape.Encoders.NormDefaults.layeredCase_fits
 #print axioms ResponseShape.Encoders.NormDefaults.line_fits
 #print axioms ResponseShape.Encoders.NormDefaults.of_norms
 #print axioms ResponseShape.Encoders.NormDefaults.runCaseReported_fits
@@ -188,6 +194,17 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.ReadingsRoute.toJson_strings
 #print axioms ResponseShape.Encoders.ReadingsRoute.toList_of_mapM
 #print axioms ResponseShape.Encoders.ReadingsRoute.validate_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.choiceND_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.deadAnswer_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.elaborateFields_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.elaborateND_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.fillPremises_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.filled_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.runS2ND_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.separateND_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.setPairsWith_entries
+#print axioms ResponseShape.Encoders.ReadingsRoute.validateND_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.validateWith_rows
 #print axioms ResponseShape.Encoders.Reports.admission_fits
 #print axioms ResponseShape.Encoders.Reports.certificate_fits
 #print axioms ResponseShape.Encoders.Reports.content_fits

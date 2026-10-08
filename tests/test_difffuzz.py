@@ -690,6 +690,12 @@ def test_every_fixture_is_read_or_excluded_with_a_reason():
     assert matched == set(corpus.EXCLUDED), set(corpus.EXCLUDED) - matched
 
 
+def test_gate_result_metadata_is_not_an_environment_seed():
+    relative = "conformance/english-lean/e2-gate-result.json"
+    assert corpus.excluded(relative)[0] == "artifact"
+    assert all(not origin.startswith(relative) for origin, _ in corpus.environments())
+
+
 def test_environments_and_requests_come_from_every_fixture_that_holds_them():
     """The review's B3: environments inside use-case documents and requests, and the conformance families,
     are seeds; so are the route requests of every family and the use cases' models."""

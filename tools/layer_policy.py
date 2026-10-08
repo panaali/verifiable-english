@@ -25,7 +25,7 @@ PYTHON = {
         "document equivalence norm_admission norm_defaults norm_defaults_contract norm_defaults_english norm_defaults_route norm_strict "
         "openterms propose readings search stream_audit vacuity assist discourse "
         "reports reports_route risk rights_route soft_route speech_document readings_route readings_s1 "
-        "readings_sup readings_verdicts readings_s2_wording").split(),
+        "readings_sup readings_verdicts readings_s2_wording senses_document").split(),
     5: ["argument_fixtures"],
 }
 PYTHON_MODULES = {f"ve.{name}": layer for layer, names in PYTHON.items() for name in names}
@@ -113,9 +113,9 @@ def lean_entry(module: str) -> bool:
 def lean_layer(module: str) -> int | None:
     if module in {"VE", "VE.Audit", "Iceberg", "VE.Checks", "VE.Route.Checks"}:
         return 5  # aggregation and audit targets
-    if module == "VE.EnglishGrammar.ProfileExamples":
+    if module in {"VE.EnglishGrammar.ProfileExamples", "VE.EnglishGrammar.E2Examples"}:
         return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run
-    if lean_entry(module) or module.endswith(".Run") or module.startswith("VE.Service."):
+    if lean_entry(module) or module.endswith(".Run") or module == "VE.Route.MeteredRun" or module.startswith("VE.Service."):
         return 4
     if module == "ResponseShape" or module.startswith("ResponseShape."):
         return 4  # the service's response shapes: ve_response_decode and the client's schema source

@@ -1,6 +1,7 @@
 import VE.Order.Conservativity
 import VE.Time.Wire
 import VE.Route.Budget
+import VE.Route.MeteredProofs
 import VE.Route.Closure
 import VE.Route.Decode
 import VE.Route.Flags
@@ -129,6 +130,7 @@ import VE.NormDefaults.Report
 import VE.NormDefaults.Layered
 import VE.NormDefaults.Admission
 import VE.NormDefaults.Run
+import VE.NormDefaults.Explain
 import VE.Readings.Doc
 import VE.SoftNorms.Once
 import VE.Readings.Separate
@@ -170,6 +172,9 @@ import VE.Readings.SupWireSound
 import VE.Readings.ChoiceWF
 import VE.Readings.Force
 import VE.Readings.Unspecified
+import VE.Readings.UnspecifiedWire
+import VE.Readings.SupExtra
+import VE.Readings.SupExtraExamples
 import VE.WireContract.Engine
 import VE.Grammar.Derives
 import VE.Grammar.Extension
@@ -183,6 +188,9 @@ import VE.EnglishGrammar.Read
 import VE.EnglishGrammar.Extends
 import VE.EnglishGrammar.Run
 import VE.Senses.Read
+import VE.EnglishGrammar.SensesRequest
+import VE.Senses.Document
+import VE.Senses.Request
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -3225,6 +3233,11 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.NormDefaults.Admission.wire_report_consequence
 #print axioms VE.NormDefaults.Run.runAdmission_sound
 #print axioms VE.NormDefaults.Run.normDefaults_wire_admission
+#print axioms VE.NormDefaults.Wire.kept_sound
+#print axioms VE.NormDefaults.Wire.settled_every_filling
+#print axioms VE.NormDefaults.Wire.underOf_sufficient
+#print axioms VE.NormDefaults.Wire.selectedRules_sound
+#print axioms VE.NormDefaults.Wire.value3_gap
 #print axioms VE.Readings.mem_sets
 #print axioms VE.Readings.mem_fixedUnits
 #print axioms VE.Readings.mem_usesOfUnit
@@ -4268,6 +4281,50 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.observes_rel_congr
 #print axioms VE.Readings.observes_withTables_nil
 #print axioms VE.Readings.achievesU_iff
+-- readings-defaults RD-2a (docs/spec/readings-defaults.md 6.3): the wire under the unspecified completion.
+#print axioms VE.NormDefaults.acceptance_of_fillTyped
+#print axioms VE.NormDefaults.acceptanceU
+#print axioms VE.NormDefaults.modelCheckU_sound
+#print axioms VE.Readings.Wire.fillNamesFree_of_reservedUnsaid
+#print axioms VE.Readings.Wire.wellFormedU_of_ndDocText
+#print axioms VE.Readings.Wire.wellFormedND_eq
+#print axioms VE.Readings.Wire.option_or_none
+#print axioms VE.Readings.Wire.ndRest_of_ndText
+#print axioms VE.Readings.Wire.lookup_map_key
+#print axioms VE.Readings.Wire.frameOf_filled
+#print axioms VE.Readings.Wire.candidate_filled
+#print axioms VE.Readings.Wire.authorEnv_filled
+#print axioms VE.Readings.Wire.replayPair_D
+#print axioms VE.Readings.Wire.readings_wire_nd_separate_sound
+#print axioms VE.Readings.Wire.strict_choice
+#print axioms VE.Readings.Wire.choiceU_E
+#print axioms VE.Readings.Wire.readings_wire_nd_choice_conflict
+#print axioms VE.Readings.Wire.readings_wire_nd_choice_entails
+#print axioms VE.Readings.Wire.admitDecoded_ok
+#print axioms VE.Readings.Wire.ndTextWith_eq
+#print axioms VE.Readings.Wire.one_links
+#print axioms VE.Readings.Wire.one_congr
+#print axioms VE.Readings.Wire.owned_links
+#print axioms VE.Readings.Wire.separates_links
+#print axioms VE.Readings.Wire.separates_filled
+#print axioms VE.Readings.Wire.fillHoldsOf_eq
+-- readings-defaults RD-6a (docs/spec/readings-defaults.md 6.7): S2a with a carried base-premise family.
+#print axioms VE.Readings.sat_pull_up
+#print axioms VE.Readings.superpose_conflict_free_extra
+#print axioms VE.Readings.superpose_all_extra
+#print axioms VE.Readings.superpose_countermodel_extra
+#print axioms VE.Readings.transfers_nil
+#print axioms VE.Readings.supCertificateCheckExtra_nil
+#print axioms VE.Readings.supModelCheckExtra_nil
+#print axioms VE.Readings.baseAdmissibleR_nil
+-- RD-6a fixture X3 (DRI ruling 2026-10-07): the approved `superpose_all_extra` refuted at X1.
+#print axioms VE.Readings.SupExtraExamples.k1_hyps
+#print axioms VE.Readings.SupExtraExamples.k1_compatible
+#print axioms VE.Readings.SupExtraExamples.noAvoid_of_empty
+#print axioms VE.Readings.SupExtraExamples.transfers_x1
+#print axioms VE.Readings.SupExtraExamples.x1_conflict_free
+#print axioms VE.Readings.SupExtraExamples.bare_admissible
+#print axioms VE.Readings.SupExtraExamples.superpose_all_extra_refuted
 -- english-lean (docs/spec/english-lean.md 5.9): the grammar engine and the English instance.
 #print axioms VE.Grammar.yieldAll_nil
 #print axioms VE.Grammar.yieldAll_cons
@@ -4530,6 +4587,7 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Senses.stateFrom_init
 #print axioms VE.Senses.stateFrom_cons
 #print axioms VE.Senses.readBody_good
+#print axioms VE.Senses.readSents_ok
 #print axioms VE.Senses.readWithSenses_ok
 #print axioms VE.Senses.readBody_resolved
 #print axioms VE.Senses.filterMap_of_map_some
@@ -4538,3 +4596,65 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Senses.senses_candidate_sound
 #print axioms VE.Senses.candidates_complete
 #print axioms VE.Senses.mixed_exact
+#print axioms VE.Route.Metered.scan_exhausted_unknown
+#print axioms VE.Route.Metered.scan_sound
+#print axioms VE.Route.Metered.scanState_sound
+#print axioms VE.Route.MeteredProofs.fol_sound
+#print axioms VE.Route.MeteredProofs.order_sound
+#print axioms VE.Route.MeteredProofs.closure_sound
+#print axioms VE.Route.MeteredProofs.core_sound
+#print axioms VE.EnglishGrammar.policy_iff_no_failure
+#print axioms VE.EnglishGrammar.policy_selection
+#print axioms VE.EnglishGrammar.admitRequest_ok
+#print axioms VE.EnglishGrammar.admitRequest_exact
+#print axioms VE.EnglishGrammar.admitRequest_policy
+#print axioms VE.EnglishGrammar.translateRequest_policy
+#print axioms VE.EnglishGrammar.grammarFault_none
+#print axioms VE.EnglishGrammar.overlayCheck_constants
+#print axioms VE.EnglishGrammar.checkRequest_some
+#print axioms VE.EnglishGrammar.sensesRequest_policy
+#print axioms VE.EnglishGrammar.Run.codeClasses_total
+#print axioms VE.EnglishGrammar.Run.rejectCodes_total
+#print axioms VE.EnglishGrammar.Run.statusCodes_classed
+#print axioms VE.EnglishGrammar.policyPredicate_tables
+#print axioms VE.EnglishGrammar.DecodeEncode.anyAux_at
+#print axioms VE.EnglishGrammar.DecodeEncode.digitChar_facts
+#print axioms VE.EnglishGrammar.DecodeEncode.digits_props
+#print axioms VE.EnglishGrammar.DecodeEncode.foldlAux_at
+#print axioms VE.EnglishGrammar.DecodeEncode.getAux_at
+#print axioms VE.EnglishGrammar.DecodeEncode.get_at
+#print axioms VE.EnglishGrammar.DecodeEncode.go_append
+#print axioms VE.EnglishGrammar.DecodeEncode.go_cons
+#print axioms VE.EnglishGrammar.DecodeEncode.go_nil
+#print axioms VE.EnglishGrammar.DecodeEncode.go_pos
+#print axioms VE.EnglishGrammar.DecodeEncode.intText_toIntOpt
+#print axioms VE.EnglishGrammar.DecodeEncode.pos_add_char
+#print axioms VE.EnglishGrammar.DecodeEncode.string_any
+#print axioms VE.EnglishGrammar.DecodeEncode.string_foldl
+#print axioms VE.EnglishGrammar.DecodeEncode.toDigitsCore_digits
+#print axioms VE.EnglishGrammar.DecodeEncode.toDigitsCore_ne_nil
+#print axioms VE.EnglishGrammar.DecodeEncode.toDigitsCore_value
+#print axioms VE.EnglishGrammar.DecodeEncode.toNatOpt_of_digits
+#print axioms VE.EnglishGrammar.DecodeEncode.toNatOpt_toString
+#print axioms VE.EnglishGrammar.DecodeEncode.toString_nat
+#print axioms VE.EnglishGrammar.EFormula.decode_encode
+#print axioms VE.EnglishGrammar.ETerm.decode_encode
+#print axioms VE.EnglishGrammar.decode_encode
+#print axioms VE.EnglishGrammar.mapM_decode
+#print axioms VE.EnglishGrammar.reachRefl_kind
+#print axioms VE.Service.runMode_englishRead
+#print axioms VE.Service.runMode_englishGrammar
+#print axioms VE.Service.runMode_englishCheck
+#print axioms VE.Senses.readDocument_source
+#print axioms VE.Senses.readDocument_bad_default
+#print axioms VE.Senses.badDefault_none
+#print axioms VE.Senses.readDocument_both
+#print axioms VE.Senses.readDocument_defaults
+#print axioms VE.Senses.defaults_read_as_lines
+#print axioms VE.Senses.fenceSents_ok
+#print axioms VE.Senses.readDocument_ok
+#print axioms VE.Senses.documentInput_fences
+#print axioms VE.Senses.document_unit_sound
+#print axioms VE.Senses.document_line_sound
+#print axioms VE.Senses.documentRequest_policy
+#print axioms VE.Senses.documentRequest_source

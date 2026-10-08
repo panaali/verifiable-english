@@ -77,8 +77,9 @@ def decodeEnvironment (environment : Json) : Except String ReadingsEnvironment :
   | .error e => throw e
   let lowerJson ← stripReadings environment
   let lower := profiles.filter (· != readingsProfile)
-  -- `norm-defaults@0` beside content is S1's named abstention (1.1): the frame is decoded without it, its
-  -- `unspecified` completions read as the placeholder `deny` (DRI ruling 4).
+  -- The frame is decoded without `norm-defaults@0`, its `unspecified` completions read as the placeholder `deny`
+  -- (DRI ruling 4): content beside it is S1's named abstention off the norms chain (1.1), and on the norms chain
+  -- the completion's admission reads `unspecified` from `lowerJson` (`UnspecifiedWire.unspecOf`).
   let frameJson := (if lower.contains "norm-defaults@0" then placeholderFrame lowerJson else lowerJson).setObjVal!
     "profiles" (toJson (lower.filter (· != "norm-defaults@0")))
   match chainOf profiles with
@@ -507,9 +508,11 @@ def contentBearing (R : ReadingSet) : Bool :=
 /-- The first answer of `f` along `l`; `f` is not evaluated past it. -/
 def firstSome {α β : Type} (l : List α) (f : α → Option β) : Option β := l.findSome? f
 
-/-- 1.1, 1.2: the named abstentions. -/
+/-- 1.1, 1.2: the named abstentions. Content beside `norm-defaults@0` is refused on the soft and rights chains;
+    on the norms chain it is under the unspecified completion (readings-defaults.md 1.1, `UnspecifiedWire.lean`),
+    whose admission follows this one. -/
 def abstention (re : ReadingsEnvironment) (D : Doc) : Option String :=
-  if re.lower.contains "norm-defaults@0" && D.sets.any contentBearing then
+  if re.lower.contains "norm-defaults@0" && re.chain != .norms && D.sets.any contentBearing then
     some "UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented"
   else firstSome D.sets (fun R => firstSome R.candidates (fun a => match a.content with
     | some c => match c.needs with
@@ -835,9 +838,7 @@ theorem admissionText_of_stage {re : ReadingsEnvironment} {D : Doc}
 /-- Admission as run: `free D` and each candidate validated once, each candidate's document built once and kept in
     the request's table, which the answer reads again. `WellFormedDoc`'s chain checks are `admissionText`'s, so only
     `frameWF` is evaluated after it. -/
-def admitReadings (environment document : Json) : Except String Admitted := do
-  let re ← decodeEnvironment environment
-  let doc ← decodeDocument re document
+def admitDecoded (re : ReadingsEnvironment) (doc : Decoded2) : Except String Admitted :=
   match hf0 : frontText re (docOf re doc) with
   | some e => throw e
   | none =>
@@ -849,9 +850,26 @@ def admitReadings (environment document : Json) : Except String Admitted := do
           (candidateStage_ok hs).2⟩
       else throw "InvalidInput: readings document is not well-formed"
 
+/-- An admitted document is the decoded one it was given (the filled document's admission reads it back). -/
+theorem admitDecoded_ok {re : ReadingsEnvironment} {doc : Decoded2} {a : Admitted} (h : admitDecoded re doc = .ok a) :
+    a.re = re ∧ a.doc = doc := by
+  unfold admitDecoded at h
+  split at h
+  · cases h
+  · split at h
+    · cases h
+    · split at h
+      · cases h; exact ⟨rfl, rfl⟩
+      · cases h
+
+def admitReadings (environment document : Json) : Except String Admitted := do
+  let re ← decodeEnvironment environment
+  let doc ← decodeDocument re document
+  admitDecoded re doc
+
 theorem admitReadings_eq (environment document : Json) :
     admitReadings environment document = admitReadingsSpec environment document := by
-  unfold admitReadings admitReadingsSpec
+  unfold admitReadings admitReadingsSpec admitDecoded
   simp only [bind, Except.bind]
   split
   · rfl

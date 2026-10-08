@@ -11,6 +11,7 @@ from contextlib import contextmanager
 from contextvars import ContextVar
 from dataclasses import dataclass
 import json
+import os
 import re
 import warnings
 
@@ -18,7 +19,7 @@ from .assurance import semantic_entry
 from . import ast
 from .errors import CheckerUnavailable, ResourceLimit, Span, SyntaxError, VEError
 from .limits import MAX_DEPTH, MAX_NODES, MAX_SOURCE_BYTES
-from .english_phrases import nearest, phrase_end, unary_phrase, wording_key, BOUNDARIES
+from .english_phrases import nearest, phrase_end, unary_phrase, unknown_phrase, wording_key, BOUNDARIES
 from .printer import (_NaturalVocabulary, _LOGICAL_WORDS, render_int_term,
                       _fluent_variable_letters, _template_head, _AUXILIARIES, VocabularyLint)
 from .english_vocabulary import IDIOMS, negative_template, display_environment, overlay_provenance
@@ -229,7 +230,11 @@ class UnreviewedVocabularyWarning(UserWarning):
 
 class EnglishVocabulary:
     """Versioned precision pass; leaves the five historical views byte-stable."""
-    def __init__(self, env, vocabulary=None, accept_suggested_vocabulary=False):
+    def __init__(self, env, vocabulary=None, accept_suggested_vocabulary=False, *,
+                 _defer_overlay_refusals=False):
+        # E2's Lean admission path needs a lexicon even when its overlay check will
+        # refuse the submitted overlay. Other callers retain the producer's raises.
+        self._defer_overlay_refusals = _defer_overlay_refusals
         env, self.overlay_digest, self.overlay = display_environment(env, vocabulary, accept_suggested_vocabulary)
         self.provenance = overlay_provenance(vocabulary)
         self.review_status = self.provenance["review_status"]
@@ -370,7 +375,7 @@ class EnglishVocabulary:
             if duplicates:
                 accepted = False
                 issues.add(VocabularyLint(path, 'DUPLICATE_TEMPLATE'))
-                if name in self.overlay['predicates']:
+                if name in self.overlay['predicates'] and not self._defer_overlay_refusals:
                     raise VEError(f'Duplicate English wording {template!r} for {name!r}; '
                                   f'existing symbol(s): {", ".join(sorted(duplicates))}')
             if accepted:
@@ -439,7 +444,7 @@ class EnglishVocabulary:
                     forms = (self.predicates.get(name), self.negatives.get(name))
                     if not any(form and wording_key(form) in risk_keys for form in forms):
                         continue
-                    if name in self.overlay['predicates']:
+                    if name in self.overlay['predicates'] and not self._defer_overlay_refusals:
                         raise VEError(f'English wording for {name!r} reuses a risk@0 wording')
                     issues.add(VocabularyLint(f'/vocabulary/predicates/{name}/verbalisation', 'DUPLICATE_TEMPLATE'))
                     self.predicates[name] = ('{0} is classified as ' + quote(name) if len(decl.arguments) == 1
@@ -514,7 +519,8 @@ class EnglishVocabulary:
                 selected = self.sorts[name] if category == 'sorts' else self.predicates[name]
                 if (selected != (expected['singular'] if category == 'sorts' else expected)
                         or any(i.path.startswith(f'/vocabulary/{category}/{name}/') for i in self.issues)):
-                    raise VEError(f'English vocabulary entry fails the template linter: {category}/{name}')
+                    if not self._defer_overlay_refusals:
+                        raise VEError(f'English vocabulary entry fails the template linter: {category}/{name}')
         # A regulated atom in a norm guard has one deontic spelling. The norm
         # consequence parser handles must not / need not separately; ordinary
         # formula parsing and the independent Earley grammar share these atoms.
@@ -808,12 +814,14 @@ class EnglishTraversal:
         return text[0].upper() + text[1:]
 
 
-def render_english(value, env, *, conclusions=(), **options):
+def render_english(value, env, *, conclusions=(), _statement_layer=False, **options):
     if type(value) is ast.Document:
         ast.check_document(env, value)
     else:
         ast.check_formula(env, value)
-    words = EnglishVocabulary(env, **options)
+    # Lean's overlay check refuses an overlay on the english.check path; the statement layer's check is
+    # Python's own reading, so there the producer keeps its overlay refusals (spec 2.8).
+    words = EnglishVocabulary(env, _defer_overlay_refusals=not _statement_layer, **options)
     if words.review_status == 'unreviewed':
         warnings.warn('English overlay ' + words.overlay_digest + ': unreviewed',
                       UnreviewedVocabularyWarning, stacklevel=2)
@@ -824,27 +832,42 @@ def render_english(value, env, *, conclusions=(), **options):
             or any(type(i) is not int or not 0 <= i < len(formulas) for i in conclusions)):
         raise ValueError('Conclusion indices must identify distinct document statements')
     marked = set(conclusions)
+    if _statement_layer:
+        # E3 owns statement-layer wording. Its generated decision names can be
+        # outside the E2 formula lexicon, but the all-derivations check still
+        # has to read each displayed sentence back to the exact formula.
+        def check_rendering(env, words, options, formulas, marks, candidates):
+            for candidate_index, candidate in enumerate(candidates):
+                try:
+                    reading = _python_reading(env, candidate, words, options)
+                except VEError:
+                    continue
+                if ([ast._to_data(f) for f in reading.document.formulas] == formulas
+                        and [i in reading.conclusions for i in range(len(formulas))] == marks):
+                    return candidate_index
+            return None
+    else:
+        from .backends.english_lean import check as check_rendering
     sentences = []
     for index, formula in enumerate(formulas):
+        candidates = []
         for settings in ({}, {'avoid_negative_universal': True},
                          {'avoid_negative_universal': True, 'word_markers': True}):
             sentence = EnglishTraversal(env, words, **settings).render(formula)
-            try:
-                if _parse_english_document(env, sentence + '.', **options)[0] == ast.Document((formula,)):
-                    if index in marked:
-                        proper_name = any(
-                            name in words.declared_constants and display[0].isupper()
-                            and sentence.startswith(display)
-                            and (len(sentence) == len(display) or
-                                 not re.match(r'[A-Za-z0-9_]', sentence[len(display)]))
-                            for name, display in words.constants.items() if display)
-                        sentence = 'Therefore ' + (sentence if proper_name else sentence[0].lower() + sentence[1:])
-                    sentences.append(sentence)
-                    break
-            except VEError:
-                continue
-        else:
+            if index in marked:
+                proper_name = any(
+                    name in words.declared_constants and display[0].isupper()
+                    and sentence.startswith(display)
+                    and (len(sentence) == len(display) or
+                         not re.match(r'[A-Za-z0-9_]', sentence[len(display)]))
+                    for name, display in words.constants.items() if display)
+                sentence = 'Therefore ' + (sentence if proper_name else sentence[0].lower() + sentence[1:])
+            candidates.append(sentence)
+        chosen = check_rendering(env, words, options, [ast._to_data(formula)],
+                                 [index in marked], [sentence + '.' for sentence in candidates])
+        if chosen is None:
             raise ValueError('No writable English form passed the one-reading check')
+        sentences.append(candidates[chosen])
     text = (''.join(sentence + '.\n' for sentence in sentences)
             if type(value) is ast.Document else sentences[0])
     if len(text.encode('utf-8')) + (0 if type(value) is ast.Document else 2) > MAX_SOURCE_BYTES:
@@ -852,8 +875,8 @@ def render_english(value, env, *, conclusions=(), **options):
     if type(value) is ast.Document:
         if len(text) > MAX_NODES:
             raise ResourceLimit(f'Rendered ve_english text exceeds the derivation budget MAX_NODES ({MAX_NODES})')
-        parsed, _, _, parsed_conclusions = _parse_english_document(env, text, **options)
-        if parsed != value or parsed_conclusions != tuple(sorted(marked)):
+        if check_rendering(env, words, options, [ast._to_data(f) for f in formulas],
+                           [i in marked for i in range(len(formulas))], [text]) is None:
             raise ValueError('Rendered ve_english document has a different reading')
     return text
 
@@ -1636,15 +1659,16 @@ class EnglishParser:
 
 
 class _Reading:
-    """The grammatical reading of a document, the unit `english.admission` dispatches: the hand parser, the
-    Lark audit and `check_document` (docs/spec/english-lean-s2.md 2.10, D16). Conclusion marks are part of
-    it; whether a marked sentence follows is `check_conclusions`, after the dispatch, for either backend.
-    `spans` are the sentences' source spans (Python's reading only); `lean` is Lean's checked answer when
-    the reading is Lean's."""
+    """One document reading and its marked-conclusion obligations.
+
+    Public admission uses Lean's formulas, marks, spans and obligations. The retained
+    Python parser creates this type only for the optional comparator.
+    """
 
     def __init__(self, env, document, words, conclusions, spans=None, *, lean=None):
         self.env, self.document, self.words = env, document, words
         self.conclusions, self.spans, self.lean = tuple(conclusions), spans, lean
+        self.obligations = tuple(lean.response.get('obligations', ())) if lean is not None else ()
         self._refused = None
 
     def comparison(self):
@@ -1658,7 +1682,16 @@ class _Reading:
         """Python's conclusion check (`_check_conclusions`), run once: None, or the error it raised."""
         if self._refused is None:
             try:
-                _check_conclusions(self.env, self.document, self.conclusions)
+                if self.lean is None:
+                    _check_conclusions(self.env, self.document, self.conclusions)
+                else:
+                    from .entailment import prove_entailment
+                    for obligation in self.obligations:
+                        premises = tuple(self.document.formulas[j] for j in obligation['premises'])
+                        result = prove_entailment(self.env, premises,
+                                                  self.document.formulas[obligation['conclusion']])
+                        if result.status != 'Found':
+                            raise SyntaxError(obligation['unproved'].replace('{status}', result.status))
                 self._refused = False
             except VEError as exc:
                 self._refused = exc
@@ -1671,6 +1704,10 @@ class _Reading:
 
 
 def _python_reading(env, source, words, options):
+    # Python's source limit, before its hand parser, as Python's admission checked it (Lean's `sourceTooLong`
+    # on the admission path; the comparator and the statement reader keep Python's order).
+    if len(source.encode('utf-8')) > MAX_SOURCE_BYTES:
+        raise ResourceLimit(f'English source exceeds {MAX_SOURCE_BYTES} bytes')
     normalised, boundaries = _normalise_english_source(source, words)
     parser = EnglishParser(env, normalised, words)
     try:
@@ -1695,33 +1732,58 @@ def _python_reading(env, source, words, options):
     return _Reading(env, document, parser.words, parser.conclusions, spans)
 
 
+@semantic_entry("english.statement")
+def parse_statement_english(env, source, **options):
+    """Read E3 statement wording, whose generated atoms are not E2 vocabulary. No Lean overlay check runs on
+    this path, so the producer keeps its overlay refusals (spec 2.8: only the admission path defers them)."""
+    words = EnglishVocabulary(env, **options)
+    reading = _python_reading(env, source, words, options)
+    reading.check_conclusions()
+    return reading.document
+
+
+def _nearest_help(reading, source, words):
+    """The nearest-wording help for a sentence without a reading (spec 2.8): help only, over Lean's span."""
+    if reading.status != 'none':
+        return None
+    start, end = reading.response['span']
+    found = unknown_phrase(source[start:end], words)
+    if found is None:
+        return None
+    begin, stop, wordings = found
+    return (f"Unknown English phrase {source[start + begin:start + stop]!r}. Nearest declared wordings: "
+            + '; '.join(repr(w) for w in wordings) + '.')
+
+
 def _lean_reading(env, source, words, options):
     from .backends import english_lean
     reading = english_lean.read(env, source, words, options)
     if reading.status != 'one':
-        raise reading.rejection()
-    return _Reading(env, reading.document(), words, reading.response['conclusions'], lean=reading)
+        raise reading.rejection(_nearest_help(reading, source, words))
+    return _Reading(env, reading.document(), words, reading.response['conclusions'],
+                    tuple(tuple(span) for span in reading.response.get('spans', ())), lean=reading)
 
 
-def _parse_english_document_uncached(env, source, *, _with_structure=False, **options):
+def _parse_english_document_uncached(env, source, *, _with_structure=False, _with_reading=False,
+                                     _check=True, **options):
     if isinstance(source, bytes):
         try: source = source.decode('utf-8')
         except UnicodeDecodeError as exc:
-            raise SyntaxError('English input must be UTF-8.', span=Span(exc.start, exc.end, 1, exc.start + 1)) from exc
+            raise SyntaxError('English input must be UTF-8.', span=Span(exc.start, exc.end, 1, exc.start + 1)) from exc  # relay-lint: file I/O
     if not isinstance(source, str): raise TypeError('source must be str or bytes')
-    if len(source.encode('utf-8')) > MAX_SOURCE_BYTES:
-        raise ResourceLimit(f'English source exceeds {MAX_SOURCE_BYTES} bytes')
     words = EnglishVocabulary(env, **options)
     from .backends import dispatch
     from .backends.english_lean import shadow_record
-    # The Lean reader only shadows admission (DRI ruling 6): Python's reading is the one returned.
     reading = dispatch.shadowed(
         'english.admission', {'environment_id': env.environment_id, 'source': source},
         lambda: _python_reading(env, source, words, options),
         lambda: _lean_reading(env, source, words, options),
         lambda python, lean: shadow_record(env, source, words, python, lean))
-    reading.check_conclusions()
+    if _check:
+        reading.check_conclusions()
     result = reading.document, source, reading.words, reading.conclusions
+    if _with_reading:
+        return (*result, reading)
     if _with_structure:
         breaks = tuple(index for index in range(1, len(reading.spans))
                        if re.search(r'\n\s*\n', source[reading.spans[index - 1][1]:reading.spans[index][0]]))
@@ -1729,11 +1791,12 @@ def _parse_english_document_uncached(env, source, *, _with_structure=False, **op
     return result
 
 
-def _parse_english_document(env, source, *, _with_structure=False, **options):
+def _parse_english_document(env, source, *, _with_structure=False, _with_reading=False, _check=True, **options):
     """Reuse exact sentence audits within an explicitly scoped editor operation."""
     cache = _sentence_parse_cache.get()
-    if cache is None or options or _with_structure or type(source) is not str:
-        return _parse_english_document_uncached(env, source, _with_structure=_with_structure, **options)
+    if cache is None or options or _with_structure or _with_reading or not _check or type(source) is not str:
+        return _parse_english_document_uncached(env, source, _with_structure=_with_structure,
+                                                _with_reading=_with_reading, _check=_check, **options)
     key = (env.environment_id, source)
     if key not in cache:
         cache[key] = _parse_english_document_uncached(env, source)
@@ -1777,8 +1840,9 @@ def parse_english_with_metadata(env, source, **options):
         english = render_english(document, env, **options)
         if conclusions:
             english = source
-        if english != source and _parse_english_document(env, english, **options)[0] != document:
-            english = source
+        if english != source:
+            if _parse_english_document(env, english, **options)[0] != document:
+                english = source
     except (VEError, ValueError):
         # The input passed the complete audit. Never display an unchecked rewrite.
         english = source
@@ -1803,27 +1867,40 @@ def parse_english_argument(env, source, **options):
     from .argument import ArgumentGraph, Claim, Deduction, check_argument, deduction_identity
     from .entailment import prove_entailment
     from .printer import print_formula
-    document, _, _, conclusions = _parse_english_document(env, source, **options)
+    document, _, _, conclusions, reading = _parse_english_document(
+        env, source, _with_reading=True, _check=False, **options)
     marked = set(conclusions)
+    obligations = {item['conclusion']: item for item in reading.obligations}
+    if reading.lean is not None and sorted(obligations) != list(conclusions):
+        raise CheckerUnavailable('CheckerUnavailable: the marked conclusions have no Lean obligations')
     claims = tuple(Claim.create(env, f's{i + 1}', print_formula(env, formula) + '.\n',
                                 candidate_ast=formula)
                    for i, formula in enumerate(document.formulas))
-    edges = tuple(Deduction(f'd{i + 1}', tuple(f's{j + 1}' for j in range(i) if j not in marked),
-                            f's{i + 1}') for i in conclusions)
+    edges = tuple(Deduction(f'd{i + 1}',
+                            tuple(f's{j + 1}' for j in (obligations[i]['premises'] if reading.lean is not None
+                                                         else range(i)) if j not in marked), f's{i + 1}')
+                  for i in conclusions)
     graph = ArgumentGraph(env, claims, edges, claims[-1].name)
     checked_edges = []
     for i, edge in zip(conclusions, edges):
-        premises = tuple(document.formulas[j] for j in range(i) if j not in marked)
+        premise_indexes = obligations[i]['premises'] if reading.lean is not None else range(i)
+        premises = tuple(document.formulas[j] for j in premise_indexes if j not in marked)
         proof = prove_entailment(env, premises, document.formulas[i])
         if proof.status != 'Found':
-            raise SyntaxError('The marked conclusion has no checked derivation from earlier premises.')
+            text = (obligations[i]['unproved'].replace('{status}', proof.status) if reading.lean is not None
+                    else 'The marked conclusion has no checked derivation from earlier premises.')
+            raise SyntaxError(text)
         checked_edges.append(Deduction(edge.name, edge.premises, edge.conclusion,
                                        ({'edge_id': deduction_identity(graph, edge),
                                          'direction': 'follows', 'proof': proof.certificate},)))
     graph = ArgumentGraph(env, claims, tuple(checked_edges), claims[-1].name)
     result = check_argument(graph, search=False).require_available()
     if any('follows' not in result.findings.get(edge.name, ()) for edge in checked_edges):
-        raise SyntaxError('The marked conclusion certificate did not replay in the claim graph.')
+        # The prover found a certificate the claim graph does not replay: a checker fault, not the text's.
+        if reading.lean is None:
+            raise SyntaxError('The marked conclusion certificate did not replay in the claim graph.')
+        raise CheckerUnavailable('CheckerUnavailable: the marked conclusion certificate did not replay in the '
+                                 'claim graph')
     return graph
 
 

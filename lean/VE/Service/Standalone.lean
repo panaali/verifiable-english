@@ -47,11 +47,8 @@ def validateFamily (e : VE.Route.Gate.Envelope) (environment : Json) : Except St
 /-- Remove the named fields from every predicate entry. -/
 def stripPredicates (e : VE.Route.Gate.Envelope) (environment : Json) (names : List String) :
     Except String Validated := do
-  let predicates ← VE.Bridge.fields (← e.vocabulary.getObjVal? "predicates")
-  let stripped ← predicates.mapM fun (p, entry) => do
-    pure (p, Json.mkObj ((← VE.Bridge.fields entry).filter (fun f => !names.contains f.1)))
-  let vocabulary := e.vocabulary.setObjVal! "predicates" (Json.mkObj stripped)
-  pure { envelope := { e with vocabulary }, decodable := environment.setObjVal! "vocabulary" vocabulary }
+  let (envelope, decodable) ← VE.Route.Typed.stripPredicates e environment names
+  pure { envelope, decodable }
 
 /-- A `reports@0` environment as its FOL family reads it for typing: the
 profile, the `reports` block and constant verbalisations removed (the route
@@ -177,7 +174,8 @@ def validated (environment : Json) (typing : Bool := false) : Except String Vali
     checkRegulated predicates
     v ← stripPredicates v.envelope v.decodable ["regulated"]
   if typing && e.family == .closureNary then
-    v ← stripPredicates v.envelope v.decodable ["defined", "functional", "total"]
+    let (envelope, decodable) ← VE.Route.Typed.typingEnvironment v.envelope v.decodable
+    v := { envelope, decodable }
   else if e.family == .closureNary && VE.Core.Layers.usesLayers v.decodable then
     -- The core decoder has neither layer: they are validated over the FOL
     -- projection by the FOL route's decoders, as the core route does. An n-ary
@@ -228,6 +226,29 @@ def decodeLegacy (environment : Json) : Except String Legacy := do
       pure (.order (← VE.Order.Wire.decodeEnvironment environment))
     else pure (.closure (← VE.Closure.Bridge.decodeEnvironment environment))
   else throw "UnsupportedProfile: Unsupported language"
+
+/-- The profiles Python reports for a frozen envelope. -/
+def Legacy.profiles : Legacy → List String
+  | .v0 _ => ["relational-fol@0"]
+  | .closure _ => ["closure@0", "relational-fol@0"]
+  | .order _ => ["order@0", "relational-fol@0"]
+
+/-- The checker family a frozen envelope selects. -/
+def Legacy.checker : Legacy → VE.Route.Gate.Family
+  | .v0 _ => .fol
+  | .closure _ => .closure
+  | .order _ => .order
+
+/-- An environment the evaluation modes read, checked: a frozen envelope by
+its frozen decoder and then read as the route envelope of its family (whose
+vocabulary decoders accept every frozen vocabulary), a `ve.core@0.2` one by
+`validated`. -/
+def evaluable (environment : Json) : Except String Validated := do
+  if isLegacy environment then
+    let l ← decodeLegacy environment
+    pure { envelope := ⟨l.profiles, l.checker, ← environment.getObjVal? "vocabulary"⟩,
+           decodable := environment }
+  else validated environment
 
 def legacyEnvironmentId (l : Legacy) (environment : Json) : Except String String :=
   VE.CertificateWire.digest s!"ve-environment-{l.version}\n" environment
@@ -328,15 +349,10 @@ def modelCase (j : Json) : Except String Json := do
       let _ ← VE.Core.Wire.decodeModel v model
       pure ()
     | some layered =>
-      -- As `Core.Layers.run`: the FOL projection of the model with its flags
-      -- checked and defined tables computed, then the core model with them.
+      -- The core model with the defined tables computed over the FOL
+      -- projection (`Core.Layers.completeModel`).
       let rv ← VE.Core.Layers.decodeLayers e.profiles layered
-      let names := (← VE.Core.Layers.folPredicates layered).map Prod.fst
-      let M ← VE.Route.Wire.decodeDataModel rv (← VE.Core.Layers.folModel names model)
-      let tables := (VE.Definitions.names rv.definitions).map fun p =>
-        (p, VE.Core.Layers.tableJson (M.relations p))
-      let relations ← VE.Bridge.fields (← model.getObjVal? "relations")
-      let _ ← VE.Core.Wire.decodeModel v (model.setObjVal! "relations" (Json.mkObj (relations ++ tables)))
+      let _ ← VE.Core.Wire.decodeModel v (← VE.Core.Layers.completeModel rv layered model)
       pure ()
   | .order =>
     let v ← VE.Route.Wire.decodeOrderVocabulary e.vocabulary
@@ -362,66 +378,13 @@ def modelCase (j : Json) : Except String Json := do
 /-- A standalone typing request accepts one closed formula or a document of
 closed formulas. The family decoder performs the same typed AST check used by
 its route. -/
-def decodeTyped (checked : Validated) (ast : Json) (formula : Bool) : Except String Unit := do
-  let e := checked.envelope
-  -- Python's AST limits hold on every family, counted across a document; the
-  -- closure, core and order single-formula decoders check depth only.
-  VE.Route.AstLimit.check (← if formula then pure [ast] else (·.toList) <$> ast.getArr?)
-  match e.family with
-  | .fol =>
-    let rv ← VE.Route.Run.decodeRouteVocabulary e
-    if formula then
-      let _ ← VE.Route.Wire.decodeClosed rv.environment ast (e.profiles.contains "data@0")
-      pure ()
-    else
-      let _ ← VE.Route.Wire.decodeFormulas rv.environment ast (e.profiles.contains "data@0")
-      pure ()
-  | .closure =>
-    let rv ← VE.Route.Run.decodeRouteVocabulary e
-    if formula then
-      let a ← VE.Closure.Bridge.decodeFormula 64 ast
-      unless a.check rv.environment [] do throw "ill-typed or unbound formula"
-    else
-      let _ ← VE.Closure.Bridge.decodeFormulas rv.environment ast
-      pure ()
-  | .closureNary =>
-    let v ← VE.Core.Bridge.decodeEnvironment checked.decodable
-    if formula then
-      let a ← VE.Core.Bridge.decodeFormula 64 ast
-      VE.Core.Bridge.checkFormula v.environment a "formula"
-    else
-      let _ ← VE.Core.Bridge.decodeFormulas v.environment ast
-      pure ()
-  | .order =>
-    let v ← VE.Route.Wire.decodeOrderVocabulary e.vocabulary
-    if formula then
-      let a ← VE.Order.Wire.decodeFormula 64 ast
-      unless a.check v.vocabulary.environment [] do throw "ill-typed or unbound formula"
-    else
-      let _ ← VE.Order.Wire.decodeFormulas v.vocabulary.environment ast
-      pure ()
+def decodeTyped (checked : Validated) (ast : Json) (formula : Bool) : Except String Unit :=
+  VE.Route.Typed.check checked.envelope checked.decodable ast formula
 
-/-- The frozen pre-route envelopes: `ve.core@0` (v0) and `ve.core@0.1`
-(closure, or order with exactly the order profiles). Returns the profiles
-Python reports and the identity domain version. -/
+/-- The frozen pre-route envelopes (`VE.Route.Typed.legacy`). -/
 def legacyTyped (environment ast : Json) (formula : Bool) :
-    Except String (List String × String) := do
-  let language ← VE.Bridge.stringField environment "language"
-  let asts := if formula then Json.arr #[ast] else ast
-  if language == "ve.core@0" then
-    let v ← VE.Bridge.decodeEnvironment environment
-    let _ ← VE.Bridge.decodeDocument v.environment asts
-    pure (["relational-fol@0"], "v0")
-  else if language == "ve.core@0.1" then
-    if environment.getObjValD "profiles" == toJson ["order@0", "relational-fol@0"] then
-      let v ← VE.Order.Wire.decodeEnvironment environment
-      let _ ← VE.Order.Wire.decodeFormulas v.environment asts
-      pure (["order@0", "relational-fol@0"], "v0.1-order")
-    else
-      let v ← VE.Closure.Bridge.decodeEnvironment environment
-      let _ ← VE.Closure.Bridge.decodeFormulas v.environment asts
-      pure (["closure@0", "relational-fol@0"], "v0.1")
-  else throw "UnsupportedProfile: Unsupported language"
+    Except String (List String × String) :=
+  VE.Route.Typed.legacy environment (if formula then Json.arr #[ast] else ast)
 
 def legacyCheckCase (id : String) (environment ast : Json) (formula : Bool) (items : List Json) :
     Except String Json := do

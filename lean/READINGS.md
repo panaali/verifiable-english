@@ -432,3 +432,83 @@ rights content); `fillNamesFree N` says no unit id or declared name begins `unsa
 The helper lemmas say how: building `fillDoc N` is building `N.D` and then filling (`build_fillDoc`, `sup_fillDoc`),
 `soften` is the identity on strict documents (`soften_strict`, `soften_hard_identity`'s core without its unused
 hypothesis), and the choice vocabulary and `E‴` override disjoint names (`choiceEnv_fill`).
+
+## The wire under the unspecified completion: the statements of 6.3 (RD-2a)
+
+`lean/VE/Readings/UnspecifiedWire.lean`, with the UDoc lemmas beside the 10a theorems whose cores they are. A
+document is under the completion when `readings@1` and `norm-defaults@0` are on the norms chain and a set is
+content-bearing; the abstention stays on the soft and rights chains (`Wire.abstention`), and `routeOf` takes the
+enumerated route there with the finding `ReadingsNotSuperposable: <every open set>`, cause `the unspecified
+completion`. Admission (`admitND`, spec 4.1) runs S1's and S2a's admission, then the reserved `unsaid--` names, then
+norm-defaults' author checks and `WellFormedU` on the free document and on each reading's document (`ndText`), then
+S1's admission of the filled document with its own request table (`admitDecoded`), then each of the at most 64
+compatible choices (`choiceChainText` on the filled choice, `ndChoiceText` on `choiceU N c`). Each reading's document
+is built once, in a request table.
+
+In plain words, each with the hypotheses it states:
+
+* `acceptanceU` (under `WellFormedU U`): a certificate that checks over `premisesU U Γ` proves `φ` in every filled
+  expansion of an admissible filling that satisfies `Γ` (`EntailsU`). `normDefaults_wire_acceptance` keeps its
+  statement and calls the same proof (`acceptance_of_fillTyped`).
+* `modelCheckU_sound` (under `WellFormedU U` and the base model's validity): a passing model check with a separate
+  filling is an admissible filled situation where every premise holds, read through `fill U`'s outcome
+  substitution, and the conclusion has the value the check reports.
+* `readings_wire_nd_separate_sound` (a replay of `readings-separate` under the completion, `separates` on
+  `fillDoc N`, and the witness's `Fill_T` on the base): the witness achieves the probe value under the completion
+  and the other reading does not. `separates_filled` says the answer's `separated` is exactly that `separates`.
+* `readings_wire_nd_choice_conflict` (a replay of `readings-choice` under the completion, and certificates for every
+  target of the choice's filled document): the choice is compatible and its filled document is CONFLICT-FREE under
+  every admissible filling.
+* `readings_wire_nd_choice_entails` (the same, and a certificate over the choice's regenerated premises): the filled
+  choice document is CONFLICT-FREE and entails the conclusion from its assertions and the case's premises.
+
+The helpers: `ndRest_of_ndText` (a passing `ndText` establishes `WellFormedND`'s norm-defaults conjuncts, so each
+check runs once), `frameOf_filled` (the filled environment's frame is `fillDoc`'s), `one_links` and
+`separates_links` (S1 reads no coupling or narrowing), `choiceU_E` (a choice's filled document reads the frame's
+environment, so a base model of it is valid), `fillHoldsOf_eq` (the witness's `Fill_T`, read from the table, is
+`fillHolds`).
+
+# S2a with a carried base-premise family in Lean (readings-defaults, batch RD-6a)
+
+Specification: [docs/spec/readings-defaults.md](../docs/spec/readings-defaults.md) section 6.7 and plan
+[readings-defaults-PLAN.md](../docs/spec/readings-defaults-PLAN.md) RD-6a. Off the UDHR path: it is what RD-6b
+needs to run the superposed route under the completion (more than 64 choices in one frame). `lean/audit.py` passes
+with no `sorry` and only `propext`, `Classical.choice` and `Quot.sound`. Nothing calls these files yet, so no answer
+changes and every S2a fixture answers as before; the S2a theorems are not restated.
+`tools/check_readings_defaults_statements.py` compares each statement with the approved text.
+
+## Files
+
+| File | Contents |
+|---|---|
+| `SupExtra.lean` | `Transfers`, `supCertificateCheckExtra`, `supModelCheckExtra`; the RD-6a statements of 6.7; `sat_pull_up`; the checks at `Q = []` (`supCertificateCheckExtra_nil`, `supModelCheckExtra_nil`, `baseAdmissibleR_nil`) and three `example`s deriving S2a's `superpose_conflict_free`, `superpose_all` and `superpose_countermodel` from the `_extra` forms at `transfers_nil` |
+| `SupExtraExamples.lean` | the fixtures as `#guard` on S2a's K1: X1 (rows X1.1 to X1.6, the counterexample below) and X2 (the `_extra` checks at `Q = []` are S2a's) |
+
+## The statements of 6.7 (RD-6a)
+
+`Q` is a list of base premises added to the slot of `sup D`, and `Q' c` the list added to the limitation premises of
+choice `c`'s document. `Transfers D Q Q'` says that each `Q' c` is over the complete vocabulary of `c`'s own
+document (so it names no choice symbol), and that a slot-admissible base of `sup D` encoding `c` satisfies `Q`
+exactly when the pulled base satisfies `Q' c`.
+
+* `superpose_conflict_free_extra` (under `Transfers`): `sup D` is conflict-free under the slot, the atoms of `A` and
+  `Q` exactly when every compatible choice taking `A`'s candidates is conflict-free under its limitation premises and
+  `Q' c`. Downward, a base pulls back (`base_down`) and `Transfers` carries `Q` to `Q' c`. Upward, a base of the
+  choice's document is lifted (`upB`); the pulled lift reads `Q' c` as the base does (`sat_pull_up`, from `pull_up`),
+  so `Transfers` gives `Q` on the lift.
+* `superpose_all_extra` (under `Transfers` and `hQw`, below): a certificate on `sup D` with `Q` in its slot proves the
+  conclusion in every situation of every compatible reading taking `A`'s candidates whose base satisfies `Q' c`.
+* `superpose_countermodel_extra` (under `Transfers`): a finite model passing the model check with `Q` is a situation
+  of the reading its atoms encode, whose pulled base satisfies `Q' c`, and with the conclusion false there.
+* `transfers_nil`: `Q = []` and `Q' = fun _ => []` transfer, so the S2a statements are the instances.
+
+**One statement changed, pending the statement re-review.** `superpose_all_extra` also takes
+`hQw : SlotWellFormed (correlate (sup D).1) Q`: `Q` is over `sup D`'s base vocabulary, as every slot premise is
+(`slot_route_acceptance`). Without it the approved statement is false (X1). On K1,
+`Q = [∀agent ∀user. ¬avoid_required]` names a regulated predicate, which is a layer symbol and so outside the base
+vocabulary: an admissible base gives it no tuple, so `Q` holds of every admissible base (of `sup K1` and, pulled, of
+each reading's document), `Transfers` holds with `Q' c = Q`, and the slot stays CONFLICT-FREE. A one-step
+certificate proves the conclusion `Q` itself, since the certificate reads `Q` on the intended structure, where
+`avoid_required` is the expansion's. On a base with one agent and one user, both readings require
+`avoid_required`, so the conclusion is false on their expansions. The other two `_extra` statements and
+`Transfers` are as approved.

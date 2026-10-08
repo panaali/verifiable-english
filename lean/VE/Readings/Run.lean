@@ -1,6 +1,7 @@
 import VE.Readings.Wire
 import VE.Readings.Scan
 import VE.Readings.SupRun
+import VE.Readings.UnspecifiedWire
 import VE.NormDefaults.Run
 import VE.Rights.Run
 
@@ -212,8 +213,10 @@ def setPairsSpec (a : Admitted) (R : ReadingSet) (RJ : SetJ) : Except String (Li
       out := out ++ [Json.mkObj [("reading", .str x.id), ("other", .str y.id), ("pair", pairJson f sid)]]
   pure out
 
-/-- `setPairsSpec` with each candidate's side built once for the set (plan F5d, `setPairs_eq`). -/
-def setPairs (a : Admitted) (R : ReadingSet) (RJ : SetJ) : Except String (List Json) := do
+/-- `setPairsSpec` with each candidate's side built once for the set (plan F5d, `setPairs_eq`), each pair's facts
+    read through `adjust` (`id` here; under the unspecified completion `ndPairFacts`, readings-defaults.md 4.2). -/
+def setPairsWith (adjust : PairFacts → PairFacts) (a : Admitted) (R : ReadingSet) (RJ : SetJ) :
+    Except String (List Json) := do
   let sides := sidesOf a R.id R.candidates.length
   let mut out : List Json := []
   for (x, ix) in R.candidates.zip (List.range R.candidates.length) do
@@ -229,16 +232,18 @@ def setPairs (a : Admitted) (R : ReadingSet) (RJ : SetJ) : Except String (List J
       -- witness would check another pair and leave this one uncompared.
       unless w == x.id || w == y.id do throw s!"InvalidInput: invalid situation {sid}"
       let otherName := if w == x.id then y.id else x.id
-      let f ← pairFactsIn a (sideAt a R.id sides) R.id sid otherName
+      let f := adjust (← pairFactsIn a (sideAt a R.id sides) R.id sid otherName)
       unless f.witnessValid do throw "distinguishing model violates a generated premise"
       unless f.separated do throw "distinguishing model does not separate readings"
       out := out ++ [Json.mkObj [("reading", .str x.id), ("other", .str y.id), ("pair", pairJson f sid)]]
   pure out
 
+def setPairs (a : Admitted) (R : ReadingSet) (RJ : SetJ) : Except String (List Json) := setPairsWith id a R RJ
+
 theorem setPairs_eq (a : Admitted) (R : ReadingSet) (RJ : SetJ) : setPairs a R RJ = setPairsSpec a R RJ := by
   have h : ∀ sid other, pairFactsIn a (sideAt a R.id (sidesOf a R.id R.candidates.length)) R.id sid other =
       pairFactsSpec a R.id sid other := fun sid other => pairFactsIn_eq a _ R.id sid other (sideAt_sidesOf a R.id _)
-  simp only [setPairs, setPairsSpec, h]
+  simp only [setPairs, setPairsWith, setPairsSpec, h, id]
 
 /-- The finding of 1.7 for strict twin `i` and default twin `j`. Its theorem `decision_only_sound` is not proved
     yet (`lean/READINGS.md`), so the finding says on its face that it is not certified, and nothing reads it as a
@@ -294,18 +299,55 @@ theorem setFindings_eq (a : Admitted) (R : ReadingSet) : setFindings a R = setFi
       simp [h1, h2, h3]
     · rfl
 
-def validateResult (a : Admitted) : Except String (List (String × Json)) := do
+def validateResultWith (adjust : PairFacts → PairFacts) (a : Admitted) : Except String (List (String × Json)) := do
   let sets := a.D.sets.filter contentBearing
   if sets.isEmpty then return [("content_bearing", .bool false)]
   let mut rows : List Json := []
   for R in sets do
     let some RJ := setJ a.doc R.id | throw invalidSet
     let cands ← (List.range R.candidates.length).mapM (candidateJson a R)
-    let pairs ← setPairs a R RJ
+    let pairs ← setPairsWith adjust a R RJ
     rows := rows ++ [Json.mkObj [("set", .str R.id), ("version", toJson R.version),
       ("candidates", Json.arr cands.toArray), ("pairs", Json.arr pairs.toArray),
       ("findings", toJson (setFindings a R))]]
   pure [("content_bearing", .bool true), ("sets", Json.arr rows.toArray)]
+
+def validateResult (a : Admitted) : Except String (List (String × Json)) := validateResultWith id a
+
+/-! ## Under the unspecified completion (readings-defaults.md 3, 4.2; plan RD-2a) -/
+
+/-- The facts of a pair read under the completion: the witness is admissible only when its `Fill_T` holds on the base
+    (4.2; else `distinguishing model violates a generated premise`), its document read from the request's table
+    (`fillHoldsOf_eq`). `separated` is the scan's on the filled document, which is `separates (fillDoc N)`
+    (`separates_filled`), the hypothesis of `readings_wire_nd_separate_sound`. -/
+def ndPairFacts (f : AdmittedNDFull) (p : PairFacts) : PairFacts :=
+  { p with witnessValid := p.witnessValid &&
+      fillHoldsOf f.r.N (f.r.b.a.side p.replay.set p.replay.witness).1 p.replay.σ.base }
+
+/-- `readings-validate` under the completion: S1's rows on the filled document, then `fill_premises` per reading and
+    `filled` once (3). -/
+def runValidateND (id : String) (f : AdmittedNDFull) : Except String Json := do
+  let rows ← validateResultWith (ndPairFacts f) f.fa.a
+  pure (VE.Route.Wire.ok id (rows ++ [("fill_premises", fillPremisesJson f.r.N f.r.b.a.side),
+    ("filled", ← filledJson f.r)]))
+
+/-- `readings-separate` under the completion: S1's pair on the filled document (`replaySeparateU`'s replay). -/
+def runSeparateND (id : String) (f : AdmittedNDFull) (j : Json) : Except String Json := do
+  let s ← stringField j "set"
+  let sid ← stringField j "situation"
+  let p ← pairFactsIn f.fa.a (sideIn f.fa.a s) s sid (← stringField j "other")
+  pure (VE.Route.Wire.ok id [("set", .str s), ("pair", pairJson (ndPairFacts f p) sid)])
+
+/-- The S2a kinds under the completion: elaborate and choice as `UnspecifiedWire.lean` answers them, dead as today
+    (it reads no rule), and the superposed kinds refused until RD-6. A document of such an environment without a
+    content-bearing set, or of any other environment, is today's (S1 4.9). `b` is the case's one admission. -/
+def runS2ND (lower : List String → Json → Json) (id kind : String) (b : Admitted2) (j : Json) : Except String Json := do
+  if !underCompletion b.a.re b.D then return ← runS2 lower id kind b j
+  let f ← admitNDFull b
+  if kind == "readings-elaborate" then return ← runElaborateND id f.r
+  if kind == "readings-choice" then return ← runChoiceND id f.r j
+  if kind == "readings-dead" then return ← deadAnswer id f.r.N.D j
+  throw (completionRefusal f.r.N.D)
 
 /-! ## Dispatch -/
 
@@ -332,19 +374,26 @@ def runLowerWith (lower : List String) (j : Json) : Json :=
   | .ok .normDefaults => VE.NormDefaults.Run.runCaseReported j
   | _ => VE.Norms.Run.runCaseReported j
 
+/-- Every readings kind admits the case's document once: S1's `admitReadings`, continued by S2a's admission
+    (`admitS2Of`) and the completion's (`admitNDFull`) where the kind reads them. -/
 def runCase (j : Json) : Except String Json := do
   let id ← stringField j "id"
   let kind ← VE.Route.Run.caseKind j
   if kind == "readings-validate" then
     let a ← admitReadings (← j.getObjVal? "environment") (← j.getObjVal? "document")
+    if underCompletion a.re a.D then
+      return ← runValidateND id (← admitNDFull (← admitS2Of a (← j.getObjVal? "document")))
     return VE.Route.Wire.ok id (← validateResult a)
   if kind == "readings-separate" then
     let a ← admitReadings (← j.getObjVal? "environment") (← j.getObjVal? "document")
+    if underCompletion a.re a.D then
+      return ← runSeparateND id (← admitNDFull (← admitS2Of a (← j.getObjVal? "document"))) j
     let s ← stringField j "set"
     let sid ← stringField j "situation"
     let f ← pairFactsIn a (sideIn a s) s sid (← stringField j "other")
     return VE.Route.Wire.ok id [("set", .str s), ("pair", pairJson f sid)]
-  if s2Kinds.contains kind then return ← runS2 runLowerWith id kind j
+  if s2Kinds.contains kind then
+    return ← runS2ND runLowerWith id kind (← admitS2 (← j.getObjVal? "environment") (← j.getObjVal? "document")) j
   throw s!"UnsupportedProfile: case kind {kind} is not available on the readings route"
 
 def runCaseReported (j : Json) : Json :=

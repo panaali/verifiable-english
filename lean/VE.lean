@@ -10,7 +10,9 @@ import VE.EnglishGrammar.LexiconFixtures
 import VE.EnglishGrammar.Fixed.Version
 import VE.EnglishGrammar.ReadExamples
 import VE.EnglishGrammar.ProfileExamples
+import VE.EnglishGrammar.E2Examples
 import VE.Senses.Examples
+import VE.Senses.DocumentExamples
 import VE.Compose.Slot
 import VE.Compose.Dispatch
 import VE.Compose.Content
@@ -61,7 +63,10 @@ import VE.Readings.Examples
 import VE.Readings.Force
 import VE.Readings.RunExamples
 import VE.Readings.Unspecified
+import VE.Readings.UnspecifiedWire
 import VE.Readings.UnspecifiedExamples
+import VE.Readings.SupExtra
+import VE.Readings.SupExtraExamples
 import VE.Checks
 import VE.Closure.Checks
 import VE.Order.Checks
