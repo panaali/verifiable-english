@@ -4670,6 +4670,17 @@
 'ResponseShape.Encoders.ReadingsRoute.componentRows' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.ReadingsRoute.runComponents_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.ReadingsRoute.or_beq' depends on axioms: [propext]
+'ResponseShape.Encoders.ReadingsRoute.runAdmitted_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.runAdmitted_validate_fits' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.runAdmitted_elaborate_fits' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.admittedComponentRows' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.runAdmittedComponents_fits' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
 'ResponseShape.Encoders.Reports.admission_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Reports.certificate_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Reports.content_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
