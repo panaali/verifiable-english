@@ -65,7 +65,7 @@
     "ve/softnorms.py:load_soft_document": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors."
   },
   "lean_decoders": {
-    "total_lines": 23520,
+    "total_lines": 23515,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -723,12 +723,12 @@
       },
       {
         "file": "lean/VE/Service/Family.lean",
-        "lines": 817,
-        "sha256": "e1e00be4379626252de90286a857d800f98086bf48b734093ab6d0e8d0f546c0",
+        "lines": 812,
+        "sha256": "0220b75b70c8452f0b75fc1142aa658de3081f96b7ea610612985f90a60c375b",
         "ranges": [
           [
             1,
-            817
+            812
           ]
         ],
         "declarations": [
@@ -1158,6 +1158,9 @@
       "lean/VE/Norms/FlaggedSpec.lean": "statements about the norms conflict replay and Norms.Run.runCase answers (getObjValD of the case and the verdict field) and decoder rejection lemmas; no runtime JSON handling",
       "lean/Main.lean": "lean:runner-glue: argument dispatch and result arrays of ve_conformance",
       "lean/VE/Route/Run.lean": "lean:runner-glue: route case dispatch and error rows (route_gate pins the envelope check)",
+      "lean/VE/Route/Metered.lean": "lean:runner-glue: opt-in metered case budget fields and evaluation result rows; existing family decoders validate formulas and models",
+      "lean/VE/Route/MeteredRun.lean": "lean:runner-glue: opt-in ve_metered case dispatch and result rows; the environment is validated by the service's Standalone.evaluable (frozen envelopes by their frozen decoders) and formulas and models by the existing family decoders",
+      "lean/VE/Route/MeteredTrace.lean": "lean:runner-glue: explanation JSON display after the proved metered value; reads no untrusted input",
       "lean/VE/SoftNorms/Run.lean": "lean:runner-glue: ve_soft_norms_route case dispatch and response rows",
       "lean/VE/Rights/Run.lean": "lean:runner-glue: ve_rights_route case dispatch and response rows",
       "lean/VE/Readings/Run.lean": "lean:runner-glue: ve_readings_route case dispatch and response rows; readings-validate and readings-separate rows regenerated from the pinned Wire decoder; the S2a kinds dispatched to SupRun",

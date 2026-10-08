@@ -26793,6 +26793,63 @@ theorem VE.Route.Layer.sat_restrict
         (∀ (a : L.Formula), a ∈ as → L.WellFormed l.E_in a) → (L.Sat (l.restrict S) as ↔ L.Sat S as)
   -- uses VE.Route.Layer.Admissible_out@VE.Route.Layer VE.Route.Layer.E_in@VE.Route.Layer VE.Route.Layer.restrict@VE.Route.Layer VE.Route.Layer@VE.Route.Layer VE.Route.Semantics.Formula@VE.Route.Layer VE.Route.Semantics.Model@VE.Route.Layer VE.Route.Semantics.Sat@VE.Route.Layer VE.Route.Semantics.WellFormed@VE.Route.Layer VE.Route.Semantics@VE.Route.Layer
   -- expr 2079451913
+theorem VE.Route.Metered.scanState_sound
+  ∀ {α σ : Type} (step : α → σ → Option (Bool × σ)) (work : σ → Nat) (limit : Nat) (plain : α → Bool) (P : σ → Prop),
+    (∀ (f : α) (s : σ) (b : Bool) (s' : σ), P s → step f s = Option.some (b, s') → b = plain f ∧ P s') →
+      ∀ (fs : List α) (state : σ) (b : Bool),
+        P state → (VE.Route.Metered.scanState step work limit fs state).value = Option.some b → b = fs.all plain
+  -- uses VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.scanState@VE.Route.Metered
+  -- expr 2986658022
+theorem VE.Route.Metered.scan_exhausted_unknown
+  ∀ {α : Type} (step : α → Nat → Option (Bool × Nat)) (limit : Nat) (formulas : List α) (work : Nat),
+    (VE.Route.Metered.scan step limit formulas work).status = "ResourceLimit" →
+      (VE.Route.Metered.scan step limit formulas work).value = Option.none
+  -- uses VE.Route.Metered.Result.status@VE.Route.Metered VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.scan@VE.Route.Metered
+  -- expr 561835386
+theorem VE.Route.Metered.scan_sound
+  ∀ {α : Type} (step : α → Nat → Option (Bool × Nat)) (plain : α → Bool) (limit : Nat),
+    (∀ (f : α) (w : Nat) (b : Bool) (w' : Nat), step f w = Option.some (b, w') → b = plain f) →
+      ∀ (fs : List α) (work : Nat) (b : Bool),
+        (VE.Route.Metered.scan step limit fs work).value = Option.some b → b = fs.all plain
+  -- uses VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.scan@VE.Route.Metered
+  -- expr 4070307670
+theorem VE.Route.MeteredProofs.closure_sound
+  ∀ (mem : String → List VE.Bridge.Entity → Bool) (M : VE.FiniteModel VE.Bridge.Entity) (limit : Nat),
+    (∀ (p : String) (row : List VE.Bridge.Entity), mem p row = Bool.true ↔ row ∈ M.relations p) →
+      ∀ (fs : List VE.Closure.Formula) (b : Bool),
+        (VE.Route.Metered.scanState (fun f s => VE.Route.Budget.evalC mem M limit [] f s) (fun s => s.work) limit fs
+                { work := 0, cache := ∅ }).value =
+            Option.some b →
+          b = fs.all fun f => VE.Closure.Formula.eval M [] f
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Closure.Formula.eval@VE.Closure.Finite VE.Closure.Formula@VE.Closure.Syntax VE.Closure.instDecidableEqFormula@VE.Closure.Syntax VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Route.Budget.Entity@VE.Route.Budget VE.Route.Budget.evalC@VE.Route.Budget VE.Route.Budget.instHashableFormula@VE.Route.Budget VE.Route.Closure.EdgeKey@VE.Route.Closure VE.Route.Closure.Edges@VE.Route.Closure VE.Route.Closure.Entity@VE.Route.Closure VE.Route.Closure.Meter.mk@VE.Route.Closure VE.Route.Closure.Meter.work@VE.Route.Closure VE.Route.Closure.Meter@VE.Route.Closure VE.Route.Closure.instDecidableEqEdgeKey@VE.Route.Closure VE.Route.Closure.instHashableEdgeKey@VE.Route.Closure VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.scanState@VE.Route.Metered
+  -- expr 3325515227
+theorem VE.Route.MeteredProofs.core_sound
+  ∀ (mem : String → List VE.Bridge.Entity → Bool) (M : VE.FiniteModel VE.Bridge.Entity) (limit : Nat),
+    (∀ (p : String) (row : List VE.Bridge.Entity), mem p row = Bool.true ↔ row ∈ M.relations p) →
+      ∀ (fs : List VE.Core.Formula) (b : Bool),
+        (VE.Route.Metered.scanState (fun f s => VE.Route.Budget.evalN mem M limit [] f s) (fun s => s.work) limit fs
+                { work := 0, cache := ∅ }).value =
+            Option.some b →
+          b = fs.all fun f => VE.Core.Formula.eval M [] f
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Core.Formula.eval@VE.Core.Finite VE.Core.Formula@VE.Core.Syntax VE.Core.instDecidableEqFormula@VE.Core.Syntax VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Route.Budget.Entity@VE.Route.Budget VE.Route.Budget.evalN@VE.Route.Budget VE.Route.Budget.instHashableFormula_1@VE.Route.Budget VE.Route.Closure.EdgeKey@VE.Route.Closure VE.Route.Closure.Edges@VE.Route.Closure VE.Route.Closure.Entity@VE.Route.Closure VE.Route.Closure.Meter.mk@VE.Route.Closure VE.Route.Closure.Meter.work@VE.Route.Closure VE.Route.Closure.Meter@VE.Route.Closure VE.Route.Closure.instDecidableEqEdgeKey@VE.Route.Closure VE.Route.Closure.instHashableEdgeKey@VE.Route.Closure VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.scanState@VE.Route.Metered
+  -- expr 3942767755
+theorem VE.Route.MeteredProofs.fol_sound
+  ∀ (mem : String → List VE.Bridge.Entity → Bool) (M : VE.FiniteModel VE.Bridge.Entity) (limit : Nat),
+    (∀ (p : String) (row : List VE.Bridge.Entity), mem p row = Bool.true ↔ row ∈ M.relations p) →
+      ∀ (fs : List VE.Formula) (b : Bool),
+        (VE.Route.Metered.evaluate (fun f w => VE.Route.Budget.evalF mem M limit [] f w) limit fs).value = Option.some b →
+          b = fs.all fun f => VE.Formula.eval M [] f
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.Route.Budget.evalF@VE.Route.Budget VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.evaluate@VE.Route.Metered
+  -- expr 3811706886
+theorem VE.Route.MeteredProofs.order_sound
+  ∀ (mem : String → List (VE.Order.Value VE.Order.Wire.Entity) → Bool) (M : VE.Order.FiniteModel VE.Order.Wire.Entity)
+    (limit : Nat),
+    (∀ (p : String) (row : List (VE.Order.Value VE.Order.Wire.Entity)), mem p row = Bool.true ↔ row ∈ M.relations p) →
+      ∀ (fs : List VE.Order.Formula) (b : Bool),
+        (VE.Route.Metered.evaluate (fun f w => VE.Time.evalB mem M limit [] f w) limit fs).value = Option.some b →
+          b = fs.all fun f => VE.Order.Formula.eval M [] f
+  -- uses VE.Order.FiniteModel.relations@VE.Order.Finite VE.Order.FiniteModel@VE.Order.Finite VE.Order.Formula.eval@VE.Order.Finite VE.Order.Formula@VE.Order.Syntax VE.Order.Value@VE.Order.Semantics VE.Order.Wire.Entity@VE.Order.Wire VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.evaluate@VE.Route.Metered VE.Time.evalB@VE.Time.Budget
+  -- expr 1155899805
 theorem VE.Route.Run.route_gate
   ∀ (j r : Lean.Json),
     VE.Route.Run.runCase j = Except.ok r →

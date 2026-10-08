@@ -69,8 +69,7 @@ def dispatch (id : String) (environment : Json) (e : Gate.Envelope) (j : Json) :
     return ← Wire.runDependencyOrder id j
   if kind == "label" then
     if e.family == .closureNary && VE.Core.Layers.usesLayers environment then
-      let _ ← VE.Core.Layers.decodeLayers e.profiles environment
-      let _ ← VE.Core.Bridge.decodeEnvironment (← VE.Core.Layers.coreEnvironment environment)
+      let _ ← VE.Core.Layers.decodeLayered e.profiles environment
       pure ()
     else if e.family == .closureNary then
       let _ ← VE.Core.Bridge.decodeEnvironment environment
