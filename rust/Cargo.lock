@@ -218,7 +218,6 @@ dependencies = [
  "serde_json",
  "ve-kernel",
  "ve-profile",
- "ve-surface",
 ]
 
 [[package]]
@@ -237,13 +236,6 @@ dependencies = [
  "num-bigint",
  "serde",
  "serde_json",
- "ve-kernel",
-]
-
-[[package]]
-name = "ve-surface"
-version = "0.1.0"
-dependencies = [
  "ve-kernel",
 ]
 
