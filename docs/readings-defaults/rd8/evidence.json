@@ -64,7 +64,11 @@
   "review_fix_commits": [
     {"hash": "f687b55c", "subject": "senses: let Lean decide open fence admission and bind fence sentences"},
     {"hash": "6656559f", "subject": "docs: RD-8 review fixes and final gate evidence"},
-    {"hash": "493cb831", "subject": "build: refresh RD-8 generated tables and test inventory"}
+    {"hash": "493cb831", "subject": "build: refresh RD-8 generated tables and test inventory"},
+    {"hash": "837e2807", "subject": "docs: RD-8 review fixes and final gate evidence"},
+    {"hash": "b0739788", "subject": "senses: a malformed reading-set unit or fence id is refused, never a TypeError"},
+    {"hash": "60914d2c", "subject": "senses: open-fence text counts the author's fences and fence-id refusals name their fault"},
+    {"hash": "4fe6ceb5", "subject": "tests: the RD-8 report commit is looked up in HEAD's history only"}
   ],
   "final_gate": {
     "target": "self",

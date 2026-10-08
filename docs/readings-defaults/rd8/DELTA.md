@@ -21,6 +21,9 @@ New refusals, each Lean's text relayed verbatim:
 - a fence whose sentence has candidates, without a reading set for its unit, is refused with Lean's `Unresolved`
   text, for example `Sentence 1 uses odd, which has two senses here, and only strange gives a reading of this
   sentence. Add the line "In this document, odd means strange." to say so.`
+  Under front-matter defaults the number counts the author's fences only, and the text asks for a default:
+  `... Add the default "odd": 1 to the front matter to say so.`;
+- fence identities refused by their fault, for example `InvalidInput: unit id u1 names more than one English fence`.
 
 `ve senses check` retains its source-mode JSON shape (`readDocument_source`). Lean includes unresolved English
 only for document fence requests.
@@ -165,3 +168,21 @@ exact committed HEAD.
 The first full pytest attempt exposed stale generated bookkeeping: the assurance table, the gate's collected
 test IDs, and a one-space separator in the frozen Lean source inventory. The generated table and collection
 were refreshed, the separator restored, and all five directly affected tests passed before the final gate.
+
+## Second review round (rd-8-looprecheck1)
+
+| Finding | Fix | Commit |
+|---|---|---|
+| A reading set's `unit` of another type (`["u1"]`, a dict) made `ve document check` raise `TypeError` | `read_senses` takes the raw reading sets and keeps string units only (`covered_units`); only a string id names a fence, which also closes a unit id equal to its fence's list id. A type-confusion test replaces every front-matter node outside the environment, and every node holding the unit id at once, by nine values | `b0739788` |
+| Under defaults the open-fence text counted the hidden default lines and asked for a line that is then refused | Lean's `documentText` numbers the author's own sentences and, with defaults, asks for a front-matter default; the runner's unit text and its refusal share it. `#guard` fixtures for each text case under defaults; a test that following the advice admits the document | `60914d2c` |
+| Duplicate fence ids were reported as malformed identities | Lean's `fenceIdsProblem` names the fault (count, empty, duplicate, repeated or unknown reading-set unit) | `60914d2c` |
+| The report test found its commit with `git log --all` | It reads HEAD's history only | `4fe6ceb5` |
+| No test compared an admitted open fence's `text` with its refusal | Six cases (one and several candidates, with and without defaults) and the document's relayed text | `60914d2c` |
+
+This round adds V +15 (`fenceIdsProblem` in `Run.lean`); S is unchanged. The DRI's 20:15Z ruling on `text` in
+`ve senses check` is still open and was not touched.
+
+Gate on `4fe6ceb5` (the code of this commit), in the foreground: `lake build` completed (789 jobs);
+`python3 lean/audit.py` PASS (433 source files, 4684 theorems); full pytest in 5 file chunks with `-n 16`,
+`VE_LEAN_PREBUILT=1` and the 4 slow tests deselected: 2022 + 3958 + 1858 + 2464 + 1578 passed, 1 + 2 + 3 + 0 + 0
+skipped, 0 failed; the 4 slow tests alone: 28 passed; `tools/` tests: 38 passed.
