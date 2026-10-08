@@ -598,8 +598,10 @@ def _load_document(raw: bytes, path: str | Path, lean):
         # norm-defaults 2.3: the layers are those of `fill U`, over E‴ with Fill_T.
         from .norm_defaults import UnspecifiedDocument, validate_completions
         defaults_env = env
-        if "readings@1" in env.profiles and not s1_content:
-            # A non-content-bearing reading set uses the lower W2 route.
+        if "readings@1" in env.profiles:
+            # The free norms are the lower route's document, read with `readings@1` stripped as Lean's readings
+            # route hands every other kind down (`Readings.Run.runLower`): the W2 route of a non-content-bearing
+            # set, and the norm-defaults document beside content-bearing sets (the readings route admits those).
             lowered = env.to_dict()
             lowered["profiles"] = [p for p in lowered["profiles"] if p != "readings@1"]
             defaults_env = _environment(lowered)

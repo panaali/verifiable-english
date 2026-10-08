@@ -1,4 +1,5 @@
-"""Compare the RD-1 and RD-6a declarations with the approved text of docs/spec/readings-defaults.md 6.2 and 6.7.
+"""Compare the RD-1, RD-2a and RD-6a declarations with the approved text of docs/spec/readings-defaults.md 6.2, 6.3 and
+6.7.
 
 Every declaration of the spec's 6.2 block is compared, not only the theorems (review B2): the structure, every
 definition with its body (`AchievesU`, `fillDoc`, `fillNamesFree`, `normsShaped`, `WellFormedND`, ...), and every
@@ -7,6 +8,10 @@ added to the spec is compared without editing this file. Whitespace and doc comm
 compiler checks elaboration, and lean/audit.py checks proof dependencies. A declaration that differs from the
 approved text must be listed in PENDING with the reason, and is reported as pending the statement re-review; an
 unlisted difference, a missing or repeated declaration, or a PENDING entry that no longer differs fails.
+
+RD-2a's block (6.3) states some wire functions without a body (`ndText`, `admitND`, the replays: specified by their
+docstrings and sections 3 to 5 of the spec); such a definition is compared up to its Lean body's `:=`. Its
+declarations are found in the three files 6.1 places them in.
 
 RD-6a is checked the same way against 6.7 in `SupExtra.lean`. 6.7 also states RD-6b's declarations (LATER_6A); each
 is compared once it is in the file and listed as not built before.
@@ -33,6 +38,12 @@ EXPECTED = {"theorem": 10, "def": 20, "structure": 1}
 # Declarations changed in the build, each awaiting the targeted statement re-review (PLAN-EXPAND2 rule 10). Empty:
 # `attached_fillDoc`'s added `singlyAttached` hypothesis was approved by the DRI on 2026-10-07 and is in 6.2.
 PENDING: dict[str, str] = {}
+# RD-2a: spec 6.3, placed by 6.1 in the NormDefaults files (the UDoc lemmas) and `UnspecifiedWire.lean`.
+SECTION_RD2A = ("### 6.3 RD-2a", "### 6.4")
+SOURCES_RD2A = [ROOT / "lean/VE/NormDefaults/Wire.lean", ROOT / "lean/VE/NormDefaults/Report.lean",
+                ROOT / "lean/VE/Readings/UnspecifiedWire.lean"]
+EXPECTED_RD2A = {"theorem": 5, "def": 8, "structure": 3}
+PENDING_RD2A: dict[str, str] = {}
 SOURCE_6A = ROOT / "lean/VE/Readings/SupExtra.lean"
 # 6.7's declarations by kind, RD-6b's included.
 EXPECTED_6A = {"theorem": 7, "def": 3, "structure": 0}
@@ -100,6 +111,19 @@ def approved() -> dict[tuple[str, str], list[str]]:
     return block("### 6.2 RD-1", "### 6.3")
 
 
+def approved_rd2a() -> dict[tuple[str, str], list[str]]:
+    return block(*SECTION_RD2A)
+
+
+def lean_of(sources) -> dict[tuple[str, str], list[str]]:
+    """The Lean declarations of one source file or of several, merged (a name found twice is reported)."""
+    out: dict[tuple[str, str], list[str]] = {}
+    for source in [sources] if isinstance(sources, Path) else sources:
+        for key, texts in declarations(Path(source).read_text(), statements_only=True).items():
+            out.setdefault(key, []).extend(texts)
+    return out
+
+
 def approved_6a() -> dict[tuple[str, str], list[str]]:
     return block("### 6.7 RD-6a", "## 7.")
 
@@ -147,12 +171,13 @@ def refuted(name: str, approved_text: str, amendment: Amendment, refutations: Pa
     return errors
 
 
-def compare(batch: str, spec: dict, source: Path, expected: dict, pending_ok: dict[str, str],
+def compare(batch: str, spec: dict, source, expected: dict, pending_ok: dict[str, str],
             later: set[str], edits: dict[str, tuple[str, str]] | None = None,
             amended: dict[str, Amendment] | None = None, refutations: Path | None = None,
             namespace: str = "") -> tuple[list[str], int]:
-    """Print the batch's report; return its errors and its number of exact declarations."""
-    lean = declarations(source.read_text(), statements_only=True)
+    """Print the batch's report; return its errors and its number of exact declarations. `source` is one Lean file
+    or a list of them."""
+    lean = lean_of(source)
     amended = amended or {}
     errors, pending, waiting, amends = [], [], [], []
     counts = {kind: sum(1 for k, _ in spec if k == kind) for kind in KINDS}
@@ -174,6 +199,8 @@ def compare(batch: str, spec: dict, source: Path, expected: dict, pending_ok: di
         if len(found) != 1:
             errors.append(f"{name}: expected one Lean {kind}, found {len(found)}")
             continue
+        if kind == "def" and ":=" not in texts[0]:  # stated without a body: the signature is compared
+            found = [found[0].split(" :=", 1)[0]]
         if name in amended:
             edited = texts[0].replace(amended[name].edit[0], amended[name].edit[1], 1)
             if edited == texts[0] or found[0] != edited:
@@ -220,5 +247,13 @@ def main() -> int:
     return 0
 
 
+def main_rd2a() -> int:
+    errors, _ = compare("RD-2a", approved_rd2a(), SOURCES_RD2A, EXPECTED_RD2A, PENDING_RD2A, set())
+    if errors:
+        print("\n".join(errors))
+        return 1
+    return 0
+
+
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(max(main(), main_rd2a()))
