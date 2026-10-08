@@ -52,10 +52,12 @@ to the lead for question 10.
   non-vacuity check are deleted. Every authority now runs Rust's search; a witness is reported only after the
   countermodel.check entry accepts it and Lean's `VE.Route.NonVacuity` (through `ve_metered`) finds it
   non-vacuous. `check_document` no longer opens a model-pool scope.
-- **Reported evaluation** (`ve/evaluate.py`): under the `lean` (and `rust-experimental`) authority the value,
-  count, trace and `ResourceLimit` come from Lean's metered evaluator instead of Rust's, so nothing Rust's
-  evaluator computes is reported (rule 3). The A/B shows the one consequence: 9 closure@0 counts now equal the
-  Python authority's (DELTA V1).
+- **Reported evaluation** (`ve/evaluate.py`, `ve/search.py`): under the `lean` (and, for `evaluate`,
+  `rust-experimental`) authority the value, count, trace and `ResourceLimit` of `evaluate`, and the premise
+  values, conclusion value, count and status of the countermodel check, come from Lean's metered evaluator
+  instead of Rust's, so nothing Rust's evaluator computes is reported there (rule 3) except search counters
+  (unfinished, below). The A/B shows the one consequence: 9 closure@0 counts now equal the Python authority's
+  (DELTA V1).
 - **Rust** (merged from a sub-worker): the `ve-surface` crate (`surface.rs`, 528 lines), `route.rs` (167),
   order.rs's own source parser (243), and the `ve` binary's `parse`, `format`, `evaluate`, `countermodel` and
   `check-countermodel` commands, `label`/`dependency-order` kinds and no-kind canonical/identity branch.
@@ -63,8 +65,10 @@ to the lead for question 10.
   dependency order); the difffuzz baseline was re-recorded with the same follow-up ids (350 to 339 entries).
   `units.rs`, `risk.rs`, `discourse.rs` and `readings.rs` were already gone (batches 3, 4, 5, 9).
 - **Supporting changes**: `ve_metered` exits 1 when a case is rejected, as every one-shot runner (Lean, 1 line);
-  manifest bindings and probes for both `ve_metered` calls; `rust_environment` strips English `verbalisation`
-  fields (display only), which Rust's decoder refused, so Rust's search answers every environment Python's did;
+  manifest bindings and probes for both `ve_metered` calls; Rust's search and countermodel cases and both
+  `ve_metered` calls read one model environment (`profiles.model_environment`: a row per registered profile
+  saying what it adds that no model reads, plus English display text), so they answer every environment
+  Python's search did (review A1/B1, below);
   `check_countermodel`'s Rust path binds to the plain projection (it rebuilt an `Environment` from an immutable
   cached projection, a latent bug on speech-acts environments). The 15a tests that used Python's
   `_nonvacuous` as their oracle read its frozen answers (`tests/nonvacuity_oracle.py`, 72,031 requests recorded
@@ -75,10 +79,10 @@ to the lead for question 10.
 | Acceptance item | Status and saved evidence |
 |---|---|
 | AGENT — rule-3 measurement | [`rule3.json`](evidence/rule3.json): table above; condition does not hold (bluedot deadline). |
-| AGENT — corpus A/B | [`ab-compare.json`](evidence/ab-compare.json) over [both recordings](evidence/ab-recordings.json): 96,588 of 96,608 records identical; the rest listed in DELTA (9 `verdict` count rows, 7 recorder-path `wording` rows, 4 `unavailable` on both sides), 0 unlisted; 393 historical pilot rows. Head recorded at `1a3bd559`; recorded again at `176929a1` after the Rust deletion ([`ab2-compare.json`](evidence/ab2-compare.json), 96,587 identical, 0 unlisted), where the bluedot pilot document hit Rust's 5 s search deadline under load (DELTA A2). |
+| AGENT — corpus A/B | [`ab-compare.json`](evidence/ab-compare.json) over [both recordings](evidence/ab-recordings.json): 96,588 of 96,608 records identical; the rest listed in DELTA (9 `verdict` count rows, 7 recorder-path `wording` rows, 4 `unavailable` on both sides), 0 unlisted; 393 historical pilot rows. Head recorded at `1a3bd559`; recorded again at `176929a1` after the Rust deletion ([`ab2-compare.json`](evidence/ab2-compare.json), 96,587 identical, 0 unlisted), where the bluedot pilot document hit Rust's 5 s search deadline under load (DELTA A2). Recorded a third time at `0be2e4a5` after the review fixes ([`ab3-compare.json`](evidence/ab3-compare.json), 96,588 identical, 0 unlisted; the bluedot pilot document identical to base). |
 | AGENT — differential fuzz | [`difffuzz-ab.json`](evidence/difffuzz-ab.json): CI plus 14 date seeds at base and head. The head finds fewer disagreements in every run (for example seed 20260929: 42 against 46 new, 246 against 256 baseline entries seen), because Rust no longer answers the parser, label and dependency-order surfaces; the committed baseline shrinks from 350 to 339 entries. There is 1 head-only signature, and [`difffuzz-head-only.json`](evidence/difffuzz-head-only.json) maps it to base finding `db6d6c1e`: the same seed and mutation with the same Python and Lean answers, renamed because Rust left its engine set. So there is no head-only signature that is a new disagreement. |
 | AGENT — latency | [`latency.json`](evidence/latency.json): `evaluate` under Lean authority is 9.7 times slower (one-shot `ve_metered`, DELTA L1, needs the DRI); default search 1.9 times on the fixtures (no speed promised). |
-| AGENT — seeded bugs | [`mutants.txt`](evidence/mutants.txt), from `mutants.py` at `373a7dd5`: six seeds, one per claimed behaviour, each planted alone, each failing its named tests, then removed; the restored tree passes all 89 focused tests (below). |
+| AGENT — seeded bugs | [`mutants.txt`](evidence/mutants.txt), from `mutants.py` at `0be2e4a5`: 13 seeds, one per claimed behaviour (seven for the review fixes), each planted alone, each failing its named tests, then removed; the restored tree passes all 617 focused tests (below). |
 | AGENT — full suite | [`full-suite.json`](evidence/full-suite.json): at `feadf353` in a clean checkout (`VE_*_PREBUILT=1`, `-n 20`, `tests` plus `tools/test_layer_policy.py`): 12330 passed, 8 skipped, 0 failed; Rust 36 passed. An earlier run under heavier load had two `test_w6a_limit_generator` bounded-time failures that passed on rerun and in this run. `tools/gate.py` (serial) was not run. |
 | HUMAN — DELTA signatures | V1, W1, A1, A2, L1 (DRI). |
 | HUMAN — lead decision | question 10 on the rule-3 duplicates, with the table above. |
@@ -97,10 +101,30 @@ Items 2-3, 8-12, 15, 17-19 have no new decision site in this batch. Lean stateme
 |---|---|---|
 | `python-search-branch` | Python has no search of its own: every authority runs Rust's | `test_search_reports_found_only_through_the_countermodel_check` |
 | `lean-nonvacuity-ignores-semantic` | a witness's non-vacuity is Lean's, semantic mode included | `test_semantic_clause_guard_is_joint_per_occurrence_and_checks_hidden_branches` |
-| `lean-evaluation-count` | the reported evaluation count is Lean's metered count | 32 tests of `tests/test_stage2_evaluation.py` (traced and layered evaluation against Python) |
-| `rust-keeps-verbalisation` | Rust's search answers environments with English verbalisations | `test_document_ungrounded_and_grounded_defaults` |
+| `lean-evaluation-count` | the reported evaluation count is Lean's metered count | 40 tests of `tests/test_stage2_evaluation.py` (traced and layered evaluation against Python) |
+| `model-environment-keeps-display` | Rust's search and Lean's metered cases read no display text (A1/B1) | 113 tests of `tests/test_model_environment.py` |
+| `model-environment-keeps-unspecified` | the model environment carries every registered profile (A1) | 16 tests of `tests/test_model_environment.py` |
+| `metered-reads-the-route-environment` | Lean's non-vacuity and metered evaluation read the model environment (B1) | 118 tests of `tests/test_model_environment.py` |
+| `lean-countermodel-check-reports-rust` | the Lean authority's countermodel check reports Lean's values and counts (B3) | 47 tests of `tests/test_lean_authority_values.py` |
+| `execute-shadows-one-implementation` | no dispatch compares one implementation with itself (B2) | `test_execute_refuses_a_comparison_of_one_implementation_with_itself` |
+| `difffuzz-compares-search-with-itself` | difffuzz does not compare Python's (Rust's) search value with Rust's (B2) | `test_difffuzz_never_compares_a_single_owner_value_with_its_owner` |
 | `metered-exit-status` | `ve_metered` exits 1 on a rejected case (Lean, rebuilt) | `test_bad_budget_types_are_bounded_errors` |
 | `rule3-summary-ignores-deadline` | the rule-3 table counts the deadline | `test_rule3_rows_are_recomputed_from_the_saved_records` |
+| `rule3-certificate-sample` | the certificate rows count the whole cohorts (B4) | `test_rule3_rows_are_recomputed_from_the_saved_records` |
+| `rule3-certificate-order-constant` | the certificate rows measure order (B4) | `test_rule3_certificate_order_is_measured_not_assumed` |
+
+## Review fixes (`lf-15b-review.final.md`)
+
+Each finding was treated as a class, with a failing example kept as a regression test; every fix keeps the
+search, its witness checks and the frozen contracts as they were.
+
+| Finding | Class removed, and how | Commit | Regression |
+|---|---|---|---|
+| A1: default-authority search, `premise_status` and `compare` failed with Rust's own error on `norm-defaults@0`, `readings@1`, `alternatives@0` and `risk@0` environments | Engines given an environment Python accepts but they refuse. One table, `profiles.MODEL_REDUCTIONS` (a row per registered profile, checked against the registry), says what each profile adds that no model reads; `model_environment` applies it, plus display text, for every Rust case and every `ve_metered` case. `route_environment` is the statement-layer rows of the same table (byte-identical on every saved environment). | `0577b1bb` | `tests/test_model_environment.py`: search, guarded and semantic search, distinguishing search, `premise_status` and `compare` over 347 fixture environments covering all 17 profiles, each also with display text everywhere, equal Python's own answers at the base (1,962 answers; 545 differed before the fix); the projection keeps every model-relevant declaration and Background premise |
+| B1: non-vacuity search with a constant's `verbalisation` was `CheckerUnavailable` | Same class, Lean side: `ve_metered` reads the model environment | `0577b1bb` | the same test's display variants |
+| B2: search tests compared Rust with Rust | Differentials of an engine with itself. `dispatch.SINGLE_OWNER` names the single-owner operations: `execute` refuses them and any identical pair (the shadow mode compared Rust with Rust too), `owned()` runs them, `three_way.KIND_OPERATIONS` maps request kinds onto them, and difffuzz no longer compares Python's search value with Rust's | `41221717` | the three tests now compare the Rust binary with Python's own answers at the base (`tests/data/b15b-search-oracle.json`) and check witnesses with Python's check; `tests/test_single_owner.py` requires every request kind reaching a single-owner operation to be classified |
+| B3: under the Lean authority the countermodel check reported Rust's values and counts | Reported answers computed by Rust's evaluator. The check's sequencing is one function over an evaluator: Python's, or Lean's metered one under the Lean authority | `40b1553c` | `tests/test_lean_authority_values.py` fails any non-search Rust request under the Lean authority and requires Python's values and counts on every closure fixture (47 of 48 failed before) |
+| B4: certificate rows were samples, order hard-coded | Measurements re-deriving a corpus by hand. `rule3.py` captures every prover query the cohort generators make, and measures order as the prover's output with Lean's self-replay | `ad350b88` | `tests/test_b15b_evidence.py` recomputes order from the saved prover answers, checks the cohorts are whole, and runs the measurement with a sabotaged Lean replay |
 
 ## Unfinished
 

@@ -7,6 +7,10 @@
     {
       "base": "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/lf15b/base-ab.pilots/pack.json'",
       "head": "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/lf15b/head2-ab.pilots/pack.json'"
+    },
+    {
+      "base": "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/lf15b/base-ab.pilots/pack.json'",
+      "head": "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/lf15b/head3-ab.pilots/pack.json'"
     }
   ],
   "verdict": [

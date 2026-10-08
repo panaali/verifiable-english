@@ -147,7 +147,7 @@ def test_saved_commit_list_and_line_totals_match_frozen_numstat():
 
 def test_saved_corpus_comparison_matches_its_raw_recordings():
     records = saved("ab-recordings.json")
-    for side in ("base-ab", "head-ab"):
+    for side in ("base-ab", "head-ab", "head3-ab"):
         digest, rows, size = hashlib.sha256(), 0, 0
         with gzip.open(EVIDENCE / f"{side}.jsonl.gz", "rb") as stream:
             for line in stream:
@@ -163,6 +163,10 @@ def test_saved_corpus_comparison_matches_its_raw_recordings():
     text = report()
     assert f"{comparison['totals']['same']:,} of {records['head-ab']['rows']:,}" in text
     assert f"{comparison['records']['pilots/default']} historical pilot rows" in text
+    # The third head recording, after the review fixes (lf-15b-review.final.md), against the same base.
+    third = saved("ab3-compare.json")
+    assert third["unlisted"] == 0 and sum(third["records"].values()) == records["head3-ab"]["rows"]
+    assert f"[`ab3-compare.json`](evidence/ab3-compare.json), {third['totals']['same']:,} identical, 0 unlisted" in text
 
 
 def test_saved_fuzz_comparison_does_not_grow_the_baseline():
