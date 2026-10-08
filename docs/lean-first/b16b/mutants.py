@@ -14,6 +14,9 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT / "tools"))
+import nested_pytest  # noqa: E402
+
 HERE = Path(__file__).resolve().parent
 SERVICE = ROOT / "lean/.lake/build/bin/ve_service"
 LOCK = ROOT / "lean/checkers.lock"
@@ -82,8 +85,9 @@ def main() -> int:
                 lock = json.loads(lock_text)
                 lock["ve_service"].append(sha(SERVICE))
                 LOCK.write_text(json.dumps(lock, indent=2) + "\n")
-            done = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "-x",
-                                   f"{TESTS}::{test}"], cwd=ROOT, capture_output=True, text=True)
+            done = subprocess.run(nested_pytest.command(["-q", "-p", "no:cacheprovider", "-x", f"{TESTS}::{test}"]),
+                                  cwd=ROOT, env=nested_pytest.environment(os.environ), capture_output=True,
+                                  text=True)
         finally:
             path.write_text(source)
             LOCK.write_text(lock_text)
