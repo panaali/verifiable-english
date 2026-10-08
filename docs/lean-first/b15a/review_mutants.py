@@ -7,11 +7,15 @@ each mutant; the run ends with a clean build and a passing focused run.
 """
 from __future__ import annotations
 
+import os
 from pathlib import Path
 import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT / "tools"))
+import nested_pytest  # noqa: E402
+
 OUT = Path(__file__).resolve().parent / "evidence/review-mutants.txt"
 TESTS = ["tests/test_metered_differential.py", "tests/test_metered_lean.py"]
 
@@ -31,8 +35,8 @@ MUTANTS = [
 ]
 
 
-def run(command):
-    done = subprocess.run(command, cwd=ROOT, text=True, capture_output=True)
+def run(command, env=None):
+    done = subprocess.run(command, cwd=ROOT, text=True, capture_output=True, env=env)
     return done.returncode, done.stdout + done.stderr
 
 
@@ -41,7 +45,8 @@ def build():
 
 
 def focused():
-    code, output = run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", *TESTS])
+    code, output = run(nested_pytest.command(["-q", "-p", "no:cacheprovider", *TESTS]),
+                       nested_pytest.environment(os.environ))
     failed = sorted({line.split(" - ")[0] for line in output.splitlines() if line.startswith("FAILED ")})
     summary = [line for line in output.splitlines() if " passed" in line or " failed" in line][-1:]
     return code, failed, summary
