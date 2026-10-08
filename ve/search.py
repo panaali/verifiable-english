@@ -287,7 +287,7 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
                       max_evaluations: int = 1_000_000) -> CountermodelResult:
     """Search with a bounded Rust enumerator and Lean-checked witnesses."""
     from .ast import _to_data
-    from .backends.dispatch import execute
+    from .backends.dispatch import owned
     from .backends.rust_jsonl import run as rust_run, cached_rust_environment, soft_case
     from .profiles import require_checker
 
@@ -358,8 +358,8 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
                                   meaning_id(env, nonvacuous_for) if nonvacuous_for is not None else None,
                                   semantic_nonvacuity)
 
-    # Python has no search of its own: every authority runs Rust's, with Lean-checked witnesses.
-    return execute("countermodel_search", case, rust, lean=rust, rust=rust)
+    # Python has no search of its own: every authority runs Rust's, with checked witnesses.
+    return owned("countermodel_search", rust)
 
 
 @semantic_entry("countermodel.search")
@@ -370,7 +370,7 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
                               max_evaluations: int = 1_000_000) -> CountermodelResult:
     """Find a bounded distinguishing witness with Rust; verify it in Lean."""
     from .ast import _to_data
-    from .backends.dispatch import execute
+    from .backends.dispatch import owned
     from .backends.rust_jsonl import run as rust_run, cached_rust_environment, soft_case
     from .profiles import require_checker
 
@@ -438,4 +438,4 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
                                   meaning_id(env, nonvacuous_for) if nonvacuous_for is not None else None,
                                   semantic_nonvacuity)
 
-    return execute("distinguishing_model", case, rust, lean=rust, rust=rust)
+    return owned("distinguishing_model", rust)

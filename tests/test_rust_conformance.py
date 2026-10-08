@@ -186,37 +186,23 @@ def test_rust_closure_contextual_words_and_metadata(rust_executable):
 
 
 def test_rust_closure_search(rust_executable):
+    """Rust's search against Python's own answers at the base (find_countermodel runs Rust's search
+    since lean-first batch 15b, so it is no second engine: review B2)."""
+    from tests import b15b_search_oracle
     from ve.ast import formula_from_data
-    from ve.search import check_countermodel, find_countermodel
-    raw = fixture('closure')[3]['environment']
-    raw['vocabulary']['sorts'].pop('other')
-    raw['vocabulary']['predicates']['unused'] = {'arguments': ['node', 'node'], 'description': 'Unused.'}
+    from ve.search import check_countermodel
+    raw, cases = b15b_search_oracle.closure_search_cases()
     env = Environment(raw)
-    sources = [
-        ('rtc[edge](@start, @end).\n', 'tc[edge](@start, @end).\n'),
-        ('tc[edge](@start, @end).\n', 'false.\n'),
-        ('tc[node a, b | (a edge b)](@start, @end).\n', 'false.\n'),
-        ('tc[node a, b | (rtc[edge](a, b))](@start, @end).\n', 'false.\n'),
-        ('true.\n', 'for every node a, (rtc[edge](a, a)).\n'),
-        ('true.\n', 'for every node z, (rtc[node a, b | ((a edge b) and (not (b equals z)))](z, z)).\n'),
-    ]
-    cases = []
-    for left, right in sources:
-        p, q = parse(env, left).formulas[0], parse(env, right).formulas[0]
-        from ve.ast import formula_to_data
-        for size, models, work in [(0, 1000, 1_000_000), (1, 1000, 1_000_000), (2, 1000, 1_000_000),
-                                   (2, 0, 1_000_000), (2, 1000, 2)]:
-            cases.append({'environment': raw, 'premises': [formula_to_data(env, p)], 'conclusion': formula_to_data(env, q),
-                          'max_domain_size': size, 'max_models': models, 'max_evaluations': work})
-    for case, result in zip(cases, invoke(rust_executable, cases), strict=True):
+    oracle = json.loads((ROOT / 'tests/data/b15b-search-oracle.json').read_text())['closure_search']
+    assert len(oracle) == len(cases) == 30 and {o['status'] for o in oracle} == {'Found', 'NotFound', 'ResourceLimit'}
+    for case, result, expected in zip(cases, invoke(rust_executable, cases), oracle, strict=True):
         ps = [formula_from_data(env, f) for f in case['premises']]; q = formula_from_data(env, case['conclusion'])
-        expected = find_countermodel(env, ps, q, **{k: case[k] for k in ('max_domain_size', 'max_models', 'max_evaluations')})
-        assert result['status'] == expected.status, case
+        assert result['status'] == expected['status'], case
         # Enumeration order may differ; both exhaust exactly the same bounded space.
-        if result['status'] == 'NotFound': assert result['models_checked'] == expected.models_checked
+        if result['status'] == 'NotFound': assert result['models_checked'] == expected['models_checked']
         if result['status'] == 'Found':
             model = FiniteModel.from_dict(env, result['model'])
-            assert check_countermodel(env, ps, q, model).valid
+            assert check_countermodel(env, ps, q, model).valid  # Python's own check (default authority)
             assert not model.relations['unused']
 
 
@@ -298,11 +284,14 @@ def test_rust_shared_search(rust_executable):
             assert {k:r[k] for k in expected} == c['expected_check'] == expected
         else:
             py = find_countermodel(env,premises,conclusion,**{k:c[k] for k in ('max_domain_size','max_models','max_evaluations')})
-            assert {k:v for k,v in py.to_dict().items() if v is not None} == c['expected_search']
-            assert r['status'] == py.status, c['id']
+            expected = c['expected_search']  # Python's own search when the fixture was made
+            assert {k:v for k,v in py.to_dict().items() if v is not None} == expected
+            # The binary against the recorded answer, not against find_countermodel (Rust's own search
+            # since lean-first batch 15b: review B2).
+            assert r['status'] == expected['status'], c['id']
             if c['compare_counts']:
-                assert r['models_checked'] == py.models_checked, c['id']
-                assert r['evaluations'] == py.evaluations, c['id']
+                assert r['models_checked'] == expected['models_checked'], c['id']
+                assert r['evaluations'] == expected['evaluations'], c['id']
             if r['status'] == 'Found':
                 assert check_countermodel(env,premises,conclusion,FiniteModel.from_dict(env,r['model'])).valid
 
