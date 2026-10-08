@@ -9,7 +9,7 @@ recorded for the unit whose domain holds it. For the
 pilot:
 
 Loaded with `-p tests.contract_input_recorder` before any test module is imported, it wraps the ways a
-test reaches the pilot: the Python engine (`ve.wire_contract.engine.run` on `soft-norms@0`), the Python
+test reaches the pilot: the Python engine (`conformance.wire_contract_engine.run` on `soft-norms@0`), the Python
 legacy validator (`ve.softnorms.load_soft_document`, and `SoftNormDocument` over a `SoftEnvironment` the
 test built from its raw environment), the soft route's runner (`ve.soft_route._run`), and the Lean service
 modes `diagnose` (unit `soft-norms@0`) and `soft-norms` (through `tests/lean_routes.py`; an `admission` case
@@ -63,9 +63,9 @@ def _record(environment, norms, unit="soft-norms@0"):
 
 
 def _install():
-    from ve import soft_route, softnorms, softnorms_contract
-    from ve.softnorms_contract import soft_source
-    from ve.wire_contract import engine
+    from ve import soft_route, softnorms
+    from conformance import softnorms_contract, wire_contract_engine as engine
+    from conformance.softnorms_contract import soft_source
     from tests import lean_routes
 
     original_run, original_load = engine.run, softnorms.load_soft_document
@@ -193,6 +193,7 @@ def _install_norms():
     environment (wire-contract-s5.md 7.1). Only calls from a test file count."""
     import importlib
     from ve import norm_admission, norm_defaults, norm_defaults_route, norms
+    from conformance import frozen_norm_defaults
     for module_name, unit in (("ve.norms_contract", "norms@0"), ("ve.norm_defaults_contract", "norm-defaults@0")):
         try:
             module = importlib.import_module(module_name)
@@ -216,7 +217,8 @@ def _install_norms():
                 _record_norm(environment, active_norms(document))
             return original(environment, document, *args, **kwargs)
         setattr(module, function, admit)
-    for cls in (norms.NormDocument, norm_defaults.UnspecifiedDocument):
+    for cls in (norms.NormDocument, norm_defaults.UnspecifiedDocument,
+                frozen_norm_defaults.UnspecifiedDocument):
         original = cls.__init__
         def init(self, env, units, *args, original=original, **kwargs):
             if _from_tests() and hasattr(env, "to_dict"):

@@ -17,7 +17,7 @@ NAMES = {1: "kernel", 2: "profiles", 3: "surface", 4: "tools", 5: "apps-and-meas
 PYTHON = {
     1: "ast environment environment_wire errors identity limits model wire wire_contract assurance".split(),
     2: ("background closure definitions entailment evaluate norms order profiles "
-        "alternatives rights softnorms softnorms_contract norms_contract speech_acts units").split(),
+        "alternatives rights softnorms norms_contract speech_acts units").split(),
     3: ("english english_grammar english_phrases english_vocabulary fluent fol grammar natural "
         "norm_english parser printer surface lexicon report_english speech_english readings_english "
         "readings_s2_english senses").split(),

@@ -882,7 +882,7 @@ class _ChoiceDocument:
         from .readings_s1 import Side
         self.side = Side(senv, contents, route.source.unit_ids)
         if self.chain != "norms":
-            self.side._elaborate()
+            self.side._elaborate(deferred=False)
         # The layer premises in the lower route's certificate order: its Background (the soft premises, and `Lim_D`
         # on the rights chain, are the environment's, which the prover prepends) ++ these ++ assertions ++ Γ.
         if self.chain == "soft":

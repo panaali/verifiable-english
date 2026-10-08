@@ -44,9 +44,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 # The modules whose diagnostics are Lean's (batch 0: the relay itself; batch 3: the readings route;
-# batch 4: discourse; batch 7: rights; batch 8: reports; batch 11b: speech source).
+# batch 4: discourse; batch 7: rights; batch 8: reports; batch 10b: norm defaults;
+# batch 11b: speech source).
 RELAYED = ("ve/backends/relay.py", "ve/readings_route.py", "ve/discourse.py",
            "ve/rights_route.py", "ve/reports.py", "ve/reports_route.py",
+           "ve/norm_defaults.py", "ve/norm_defaults_route.py",
            "ve/backends/speech_source.py", "ve/speech_document.py")
 # W2's English text-to-structure parser remains the experimental English E3
 # owner. SpeechDocument only supplies its structured fence to Lean for checking.

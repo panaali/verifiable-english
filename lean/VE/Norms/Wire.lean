@@ -121,7 +121,8 @@ structure NormsEnvironment where
 
 /-- Separate `regulated` from each predicate entry, decode the rest with the
 frozen P0 decoder, then decode and retain every `regulated` extension. -/
-def decodeNormsEnvironment (environment : Json) : Except String NormsEnvironment := do
+def decodeNormsEnvironment (environment : Json)
+    (displayConstants : Bool := false) : Except String NormsEnvironment := do
   let e ← VE.Route.Gate.decodeEnvelope environment
   unless e.profiles.contains "norms@0" do throw "UnsupportedProfile: norms@0 is required"
   unless e.family == .fol do
@@ -131,7 +132,7 @@ def decodeNormsEnvironment (environment : Json) : Except String NormsEnvironment
   let stripped ← predicates.mapM fun (p, entry) => do
     pure (p, Json.mkObj ((← fields entry).filter (·.1 != "regulated")))
   let vocab' := vocab.setObjVal! "predicates" (Json.mkObj stripped)
-  let rv ← VE.Route.Wire.decodeVocabulary e.profiles vocab'
+  let rv ← VE.Route.Wire.decodeVocabulary e.profiles vocab' displayConstants
   let regs ← predicates.filterMapM fun (p, entry) => do
     match entry.getObjVal? "regulated" with
     | .error _ => pure none
@@ -288,8 +289,9 @@ regenerated from the decoded flags), and its report theorem takes the flag
 premises as a separate hypothesis. Every other norms case keeps the gate, since
 its regenerated Background and conflict checks are stated over literals and
 profile premises only (`backgroundBase`). -/
-def decodeSource (environment norms : Json) (flags : Bool := false) : Except String Source := do
-  let ne ← decodeNormsEnvironment environment
+def decodeSource (environment norms : Json) (flags : Bool := false)
+    (displayConstants : Bool := false) : Except String Source := do
+  let ne ← decodeNormsEnvironment environment displayConstants
   unless ne.rv.definitions.isEmpty || ne.profiles.contains "definitions@0" do
     throw "defined declarations require the definitions@0 profile"
   unless flags || ne.rv.flags.isEmpty do

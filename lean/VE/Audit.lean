@@ -129,6 +129,7 @@ import VE.NormDefaults.Report
 import VE.NormDefaults.Layered
 import VE.NormDefaults.Admission
 import VE.NormDefaults.Run
+import VE.NormDefaults.Explain
 import VE.Readings.Doc
 import VE.SoftNorms.Once
 import VE.Readings.Separate
@@ -3226,6 +3227,11 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.NormDefaults.Admission.wire_report_consequence
 #print axioms VE.NormDefaults.Run.runAdmission_sound
 #print axioms VE.NormDefaults.Run.normDefaults_wire_admission
+#print axioms VE.NormDefaults.Wire.kept_sound
+#print axioms VE.NormDefaults.Wire.settled_every_filling
+#print axioms VE.NormDefaults.Wire.underOf_sufficient
+#print axioms VE.NormDefaults.Wire.selectedRules_sound
+#print axioms VE.NormDefaults.Wire.value3_gap
 #print axioms VE.Readings.mem_sets
 #print axioms VE.Readings.mem_fixedUnits
 #print axioms VE.Readings.mem_usesOfUnit
@@ -3410,6 +3416,8 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.SoftNorms.checkSoftOnce_eq
 #print axioms VE.SoftNorms.softSemanticCheckOnce_eq
 #print axioms VE.SoftNorms.validateSoftOnce_eq
+#print axioms VE.SoftNorms.cohPremiseIn_eq
+#print axioms VE.SoftNorms.Wire.softLabelledIn_eq
 #print axioms VE.Rights.validateRightsOnce_eq
 #print axioms VE.SoftNorms.WellFormedSoftOnce_eq
 #print axioms VE.SoftNorms.checkSoft_eq_once

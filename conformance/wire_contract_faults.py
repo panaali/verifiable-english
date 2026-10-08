@@ -504,7 +504,7 @@ def owner(contract, check):
     """The contract that declares `check`: the included one for an include path (`w1/4.2`)."""
     if "/" not in check:
         return contract
-    from ve.wire_contract.engine import load
+    from conformance.wire_contract_engine import load
     return load(_include(contract, check.split("/", 1)[0])[2]["contract"])
 
 
