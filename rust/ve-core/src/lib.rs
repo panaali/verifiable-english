@@ -11,7 +11,7 @@ pub use ve_kernel::{
 };
 #[cfg(feature = "bench-internals")]
 #[doc(hidden)]
-pub use ve_profile::EvaluationKernel;
+pub use ve_profile::{EvaluationKernel, order_candidates};
 pub use ve_profile::{
     CandidateIterator, CountermodelCheck, CountermodelProblem, Evaluation, SearchBounds, SearchResult,
     TracedEvaluation, check_label, check_reading_binding, evaluate, evaluate_formula,
