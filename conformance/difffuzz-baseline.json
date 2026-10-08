@@ -45195,6 +45195,895 @@
       "signature": "23c3d2ae76f2e78a",
       "follow_up": "DF-20",
       "reason": "Norms wire contract: Python reports the duplicate rule before Lean reports the unsupported environment field."
+    },
+    {
+      "id": "environment-22496bdbc398cbf7",
+      "surface": "environment",
+      "profile": "soft-norms",
+      "seed": "conformance/wire-contract/soft-norms@0-test-inputs.json/49/1",
+      "engines": [
+        "python",
+        "lean",
+        "rust"
+      ],
+      "meta": {},
+      "mutation": [
+        [
+          "type",
+          [
+            "vocabulary",
+            "predicates",
+            "x_required",
+            "description"
+          ],
+          "number"
+        ]
+      ],
+      "input": {
+        "language": "ve.core@0.2",
+        "profiles": [
+          "norms@0",
+          "relational-fol@0",
+          "soft-norms@0"
+        ],
+        "spec_revision": "ve-v0.2-expand2-2026-09-25",
+        "vocabulary": {
+          "constants": {},
+          "predicates": {
+            "x_required": {
+              "arguments": [
+                "assistant"
+              ],
+              "description": 7,
+              "regulated": {
+                "default": "unspecified",
+                "role": "obligation"
+              }
+            }
+          },
+          "sorts": {
+            "assistant": {
+              "description": "a"
+            }
+          }
+        }
+      },
+      "classes": [
+        "code"
+      ],
+      "answers": {
+        "python": {
+          "outcome": "error",
+          "code": "UnsupportedProfile",
+          "text": "UnsupportedProfile: unspecified completion requires norm-defaults@0",
+          "own": "SOFT_INVALID_INPUT"
+        },
+        "lean": {
+          "outcome": "error",
+          "code": "InvalidInput",
+          "text": "UnsupportedProfile: unspecified completion requires norm-defaults@0",
+          "own": "SOFT_INVALID_INPUT"
+        },
+        "rust": {
+          "outcome": "error",
+          "code": "InvalidInput",
+          "text": "expected a string"
+        }
+      },
+      "signature": "22496bdbc398cbf7",
+      "follow_up": "DF-20",
+      "reason": "A malformed nested field (a type or spelling mutation): the engines name different faults or texts; found when E2.6's recorded test inputs shifted the CI sample's seed indices."
+    },
+    {
+      "id": "environment-393971279df52b86",
+      "surface": "environment",
+      "profile": "norm-defaults",
+      "seed": "conformance/wire-contract/norm-defaults@0-test-inputs.json/23/1",
+      "engines": [
+        "python",
+        "lean",
+        "rust"
+      ],
+      "meta": {},
+      "mutation": [
+        [
+          "type",
+          [
+            "vocabulary",
+            "constants",
+            "k",
+            "sort"
+          ],
+          "boolean"
+        ],
+        [
+          "unicode",
+          [
+            "vocabulary",
+            "predicates",
+            "x_required",
+            "regulated",
+            "permission"
+          ],
+          "nbsp"
+        ]
+      ],
+      "input": {
+        "language": "ve.core@0.2",
+        "profiles": [
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "spec_revision": "ve-v0.2-expand2-2026-09-25",
+        "vocabulary": {
+          "constants": {
+            "k": {
+              "description": "k",
+              "sort": true
+            }
+          },
+          "predicates": {
+            "x_required": {
+              "arguments": [
+                "act"
+              ],
+              "description": "o",
+              "regulated": {
+                "act": "{0} be done",
+                "default": "unspecified",
+                "permission": "x _permitted",
+                "role": "obligation"
+              }
+            }
+          },
+          "sorts": {
+            "act": {
+              "description": "a"
+            }
+          }
+        }
+      },
+      "classes": [
+        "diagnostic"
+      ],
+      "answers": {
+        "python": {
+          "outcome": "error",
+          "code": "InvalidInput",
+          "text": "MissingPermissionDual: x_required, x _permitted"
+        },
+        "lean": {
+          "outcome": "error",
+          "code": "InvalidInput",
+          "text": "String expected"
+        },
+        "rust": {
+          "outcome": "n/a"
+        }
+      },
+      "signature": "393971279df52b86",
+      "follow_up": "DF-20",
+      "reason": "A malformed nested field (a type or spelling mutation): the engines name different faults or texts; found when E2.6's recorded test inputs shifted the CI sample's seed indices."
+    },
+    {
+      "id": "environment-6bf27fc9b19b6e13",
+      "surface": "environment",
+      "profile": "envelope",
+      "seed": "conformance/elaborated-document.json/53/environment",
+      "engines": [
+        "python",
+        "lean",
+        "rust"
+      ],
+      "meta": {},
+      "mutation": [
+        [
+          "type",
+          [
+            "vocabulary",
+            "predicates",
+            "b",
+            "defined",
+            "arguments",
+            0
+          ],
+          "number"
+        ]
+      ],
+      "input": {
+        "language": "ve.core@0.2",
+        "profiles": [
+          "definitions@0",
+          "relational-fol@0"
+        ],
+        "spec_revision": "ve-v0.2-expand2-2026-09-25",
+        "vocabulary": {
+          "sorts": {
+            "point": {
+              "description": "a"
+            }
+          },
+          "predicates": {
+            "b": {
+              "arguments": [
+                "point"
+              ],
+              "description": "b",
+              "defined": {
+                "arguments": [
+                  7
+                ],
+                "body": []
+              }
+            }
+          },
+          "constants": {}
+        }
+      },
+      "classes": [
+        "diagnostic"
+      ],
+      "answers": {
+        "python": {
+          "outcome": "error",
+          "code": "InvalidInput",
+          "text": "Definition 'b' arguments differ from its declaration"
+        },
+        "lean": {
+          "outcome": "error",
+          "code": "InvalidInput",
+          "text": "String expected"
+        },
+        "rust": {
+          "outcome": "error",
+          "code": "InvalidInput",
+          "text": "Definition \"b\" arguments differ from its declaration"
+        }
+      },
+      "signature": "6bf27fc9b19b6e13",
+      "follow_up": "DF-20",
+      "reason": "A malformed nested field (a type or spelling mutation): the engines name different faults or texts; found when E2.6's recorded test inputs shifted the CI sample's seed indices."
+    },
+    {
+      "id": "environment-866b72d3836c07d7",
+      "surface": "environment",
+      "profile": "speech",
+      "seed": "tests/test_speech_acts.environment",
+      "engines": [
+        "python",
+        "lean",
+        "rust"
+      ],
+      "meta": {},
+      "mutation": [
+        [
+          "type",
+          [
+            "vocabulary",
+            "predicates",
+            "open_required",
+            "regulated"
+          ],
+          "array"
+        ],
+        [
+          "type",
+          [
+            "vocabulary",
+            "constants",
+            "atlas",
+            "sort"
+          ],
+          "array"
+        ]
+      ],
+      "input": {
+        "language": "ve.core@0.2",
+        "profiles": [
+          "norms@0",
+          "relational-fol@0",
+          "speech-acts@0"
+        ],
+        "spec_revision": "ve-v0.2-expand2-2026-09-25",
+        "speech_acts": {
+          "task": "t"
+        },
+        "vocabulary": {
+          "sorts": {
+            "desk": {
+              "description": "d"
+            }
+          },
+          "predicates": {
+            "open_required": {
+              "arguments": [
+                "desk"
+              ],
+              "description": "o",
+              "regulated": []
+            },
+            "open_permitted": {
+              "arguments": [
+                "desk"
+              ],
+              "description": "o",
+              "regulated": {
+                "role": "p",
+                "default": "a"
+              }
+            }
+          },
+          "constants": {
+            "atlas": {
+              "sort": [],
+              "description": "a"
+            }
+          }
+        }
+      },
+      "classes": [
+        "diagnostic"
+      ],
+      "answers": {
+        "python": {
+          "outcome": "error",
+          "code": "InvalidInput",
+          "text": "InvalidInput: regulated declaration open_required needs role and default"
+        },
+        "lean": {
+          "outcome": "error",
+          "code": "InvalidInput",
+          "text": "String expected"
+        },
+        "rust": {
+          "outcome": "n/a"
+        }
+      },
+      "signature": "866b72d3836c07d7",
+      "follow_up": "DF-20",
+      "reason": "A malformed nested field (a type or spelling mutation): the engines name different faults or texts; found when E2.6's recorded test inputs shifted the CI sample's seed indices."
+    },
+    {
+      "id": "environment-9eadf7b64cd4b339",
+      "surface": "environment",
+      "profile": "norm-defaults",
+      "seed": "conformance/wire-contract/norm-defaults@0-test-inputs.json/41/1",
+      "engines": [
+        "python",
+        "lean",
+        "rust"
+      ],
+      "meta": {},
+      "mutation": [
+        [
+          "type",
+          [
+            "vocabulary",
+            "predicates",
+            "x_required",
+            "arguments"
+          ],
+          "boolean"
+        ],
+        [
+          "type",
+          [
+            "vocabulary",
+            "predicates",
+            "x_required",
+            "description"
+          ],
+          "number"
+        ]
+      ],
+      "input": {
+        "language": "ve.core@0.2",
+        "profiles": [
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "spec_revision": "ve-v0.2-expand2-2026-09-25",
+        "vocabulary": {
+          "constants": {
+            "k": {
+              "sort": "a"
+            }
+          },
+          "predicates": {
+            "x_required": {
+              "arguments": true,
+              "description": 7
+            }
+          },
+          "sorts": {}
+        }
+      },
+      "classes": [
+        "diagnostic"
+      ],
+      "answers": {
+        "python": {
+          "outcome": "error",
+          "code": "InvalidInput",
+          "text": "Predicate arguments must be an array of one to 2 sort identifiers"
+        },
+        "lean": {
+          "outcome": "error",
+          "code": "InvalidInput",
+          "text": "String expected"
+        },
+        "rust": {
+          "outcome": "n/a"
+        }
+      },
+      "signature": "9eadf7b64cd4b339",
+      "follow_up": "DF-20",
+      "reason": "A malformed nested field (a type or spelling mutation): the engines name different faults or texts; found when E2.6's recorded test inputs shifted the CI sample's seed indices."
+    },
+    {
+      "id": "environment-c4b636afa315e2c4",
+      "surface": "environment",
+      "profile": "soft-norms",
+      "seed": "conformance/wire-contract/soft-norms@0-test-inputs.json/14/1",
+      "engines": [
+        "python",
+        "lean",
+        "rust"
+      ],
+      "meta": {},
+      "mutation": [],
+      "input": {
+        "language": "ve.core@0.2",
+        "profiles": [
+          "norms@0",
+          "relational-fol@0",
+          "soft-norms@0"
+        ],
+        "spec_revision": "ve-v0.2-expand2-2026-09-25",
+        "vocabulary": {
+          "constants": {
+            "alice": {
+              "description": "a",
+              "sort": "user",
+              "verbalisation": "A"
+            }
+          },
+          "predicates": {},
+          "soft": {
+            "outranking": {
+              "mode": "strict"
+            }
+          },
+          "sorts": {
+            "user": {
+              "description": "u"
+            }
+          }
+        }
+      },
+      "classes": [
+        "outcome"
+      ],
+      "answers": {
+        "python": {
+          "outcome": "error",
+          "code": "InvalidInput",
+          "text": "Incorrect fields (missing=[], unknown=['soft'])",
+          "own": null
+        },
+        "lean": {
+          "outcome": "ok",
+          "value": null,
+          "own": null
+        },
+        "rust": {
+          "outcome": "error",
+          "code": "InvalidInput",
+          "text": "expected exactly fields [\"sort\", \"description\"]"
+        }
+      },
+      "signature": "c4b636afa315e2c4",
+      "follow_up": "DF-19",
+      "reason": "E2.6's soft-route test input: a constant `verbalisation`, which Lean now reads; Rust's decoder refuses it (DF-19), and the environment surface's Python oracle refuses the soft block."
+    },
+    {
+      "id": "environment-ec3b6d16096ab668",
+      "surface": "environment",
+      "profile": "speech",
+      "seed": "tests/test_speech_acts.environment",
+      "engines": [
+        "python",
+        "lean",
+        "rust"
+      ],
+      "meta": {},
+      "mutation": [
+        [
+          "type",
+          [
+            "vocabulary",
+            "predicates",
+            "open_permitted",
+            "arguments"
+          ],
+          "number"
+        ],
+        [
+          "key",
+          [
+            "vocabulary",
+            "sorts",
+            "user",
+            "verbalisation",
+            "singular"
+          ],
+          "curly-quote"
+        ]
+      ],
+      "input": {
+        "language": "ve.core@0.2",
+        "profiles": [
+          "norms@0",
+          "relational-fol@0",
+          "speech-acts@0"
+        ],
+        "spec_revision": "ve-v0.2-expand2-2026-09-25",
+        "speech_acts": {
+          "task": "t"
+        },
+        "vocabulary": {
+          "sorts": {
+            "user": {
+              "description": "u",
+              "verbalisation": {
+                "singular’": "u",
+                "plural": "u"
+              }
+            },
+            "desk": {
+              "verbalisation": {
+                "singular": "d"
+              }
+            }
+          },
+          "predicates": {
+            "open_permitted": {
+              "arguments": 7,
+              "regulated": {
+                "act": "{"
+              }
+            }
+          },
+          "constants": {}
+        }
+      },
+      "classes": [
+        "diagnostic"
+      ],
+      "answers": {
+        "python": {
+          "outcome": "error",
+          "code": "InvalidInput",
+          "text": "Incorrect fields (missing=['singular'], unknown=['singular’'])"
+        },
+        "lean": {
+          "outcome": "error",
+          "code": "InvalidInput",
+          "text": "array expected"
+        },
+        "rust": {
+          "outcome": "n/a"
+        }
+      },
+      "signature": "ec3b6d16096ab668",
+      "follow_up": "DF-20",
+      "reason": "A malformed nested field (a type or spelling mutation): the engines name different faults or texts; found when E2.6's recorded test inputs shifted the CI sample's seed indices."
+    },
+    {
+      "id": "environment-f443f6603dae1daa",
+      "surface": "environment",
+      "profile": "norm-defaults",
+      "seed": "conformance/wire-contract/norm-defaults@0-test-inputs.json/303/1",
+      "engines": [
+        "python",
+        "lean",
+        "rust"
+      ],
+      "meta": {},
+      "mutation": [
+        [
+          "type",
+          [
+            "vocabulary",
+            "predicates",
+            "resides_in",
+            "arguments"
+          ],
+          "string"
+        ],
+        [
+          "unicode",
+          [
+            "vocabulary",
+            "predicates",
+            "report_required",
+            "regulated",
+            "act"
+          ],
+          "curly-quote"
+        ]
+      ],
+      "input": {
+        "language": "ve.core@0.2",
+        "profiles": [
+          "data@0",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "spec_revision": "ve-v0.2-expand2-2026-09-25",
+        "vocabulary": {
+          "constants": {},
+          "predicates": {
+            "report_required": {
+              "arguments": [
+                "action"
+              ],
+              "description": "the agent must report the action to the user",
+              "regulated": {
+                "act": "{0} be reported to the user’",
+                "default": "unspecified",
+                "role": "obligation"
+              }
+            },
+            "resides_in": {
+              "arguments": "x",
+              "description": "{0} resides in {1}, as resolved by the path resolver",
+              "negative_verbalisation": "{0} does not reside in {1}",
+              "verbalisation": "{0} resides in {1}"
+            }
+          },
+          "sorts": {
+            "action": {
+              "description": "an action in the agent's log"
+            },
+            "directory": {
+              "description": "a directory, such as the agent's workspace"
+            },
+            "host": {
+              "description": "a network host"
+            },
+            "person": {
+              "description": "a message recipient"
+            },
+            "secret": {
+              "description": "a secret value found by the data-loss scanner"
+            }
+          }
+        }
+      },
+      "classes": [
+        "diagnostic"
+      ],
+      "answers": {
+        "python": {
+          "outcome": "error",
+          "code": "InvalidInput",
+          "text": "InvalidInput: invalid act phrase for report_required"
+        },
+        "lean": {
+          "outcome": "error",
+          "code": "InvalidInput",
+          "text": "array expected"
+        },
+        "rust": {
+          "outcome": "n/a"
+        }
+      },
+      "signature": "f443f6603dae1daa",
+      "follow_up": "DF-20",
+      "reason": "A malformed nested field (a type or spelling mutation): the engines name different faults or texts; found when E2.6's recorded test inputs shifted the CI sample's seed indices."
+    },
+    {
+      "id": "environment-f95189f91ac3baac",
+      "surface": "environment",
+      "profile": "envelope",
+      "seed": "conformance/elaborated-document.json/55/environment",
+      "engines": [
+        "python",
+        "lean",
+        "rust"
+      ],
+      "meta": {},
+      "mutation": [
+        [
+          "type",
+          [
+            "vocabulary",
+            "predicates",
+            "boss",
+            "arguments",
+            0
+          ],
+          "number"
+        ]
+      ],
+      "input": {
+        "language": "ve.core@0.2",
+        "profiles": [
+          "relational-fol@0"
+        ],
+        "spec_revision": "ve-v0.2-expand2-2026-09-25",
+        "vocabulary": {
+          "sorts": {},
+          "predicates": {
+            "boss": {
+              "arguments": [
+                7
+              ],
+              "description": "s",
+              "defined": {}
+            }
+          },
+          "constants": {}
+        }
+      },
+      "classes": [
+        "diagnostic"
+      ],
+      "answers": {
+        "python": {
+          "outcome": "error",
+          "code": "InvalidInput",
+          "text": "Incorrect fields (missing=[], unknown=['defined'])"
+        },
+        "lean": {
+          "outcome": "error",
+          "code": "InvalidInput",
+          "text": "String expected"
+        },
+        "rust": {
+          "outcome": "error",
+          "code": "InvalidInput",
+          "text": "expected exactly fields [\"arguments\", \"description\"]"
+        }
+      },
+      "signature": "f95189f91ac3baac",
+      "follow_up": "DF-20",
+      "reason": "A malformed nested field (a type or spelling mutation): the engines name different faults or texts; found when E2.6's recorded test inputs shifted the CI sample's seed indices."
+    },
+    {
+      "id": "wire-62a58a950070337d",
+      "surface": "wire",
+      "profile": "norms@0",
+      "seed": "norms@0/tests/test_norm_defaults.py::test_document_graph_admits_the_layer_of_fill_u#6",
+      "engines": [
+        "python",
+        "lean"
+      ],
+      "meta": {},
+      "mutation": [
+        [
+          "type",
+          [
+            "norms",
+            0,
+            "norm",
+            "guard",
+            2,
+            1
+          ],
+          "number"
+        ]
+      ],
+      "input": {
+        "environment": {
+          "language": "ve.core@0.2",
+          "profiles": [
+            "norms@0",
+            "relational-fol@0"
+          ],
+          "spec_revision": "ve-v0.2-expand2-2026-09-25",
+          "vocabulary": {
+            "constants": {
+              "sol": {
+                "description": "S",
+                "sort": "agent",
+                "verbalisation": "S"
+              }
+            },
+            "predicates": {
+              "csam_generation_permitted": {
+                "arguments": [
+                  "agent"
+                ],
+                "description": "p",
+                "regulated": {
+                  "act": "{0} generate child sexual abuse material",
+                  "default": "deny",
+                  "role": "permission"
+                }
+              }
+            },
+            "sorts": {
+              "agent": {
+                "description": "a"
+              }
+            }
+          }
+        },
+        "norms": [
+          {
+            "norm": {
+              "guard": [
+                "eq",
+                [
+                  "var",
+                  0
+                ],
+                [
+                  "const",
+                  7
+                ]
+              ],
+              "name": "n",
+              "over": [],
+              "predicate": "csam_generation_permitted",
+              "sign": false,
+              "unless": []
+            }
+          }
+        ]
+      },
+      "classes": [
+        "code"
+      ],
+      "answers": {
+        "python": {
+          "outcome": "error",
+          "code": "NORMS_UNKNOWN_SYMBOL",
+          "text": "UnknownSymbol: Unknown constant 7",
+          "record": {
+            "contract": "norms@0",
+            "revision": 1,
+            "check": "4.7b",
+            "phase": "rules",
+            "code": "NORMS_UNKNOWN_SYMBOL",
+            "class": "UnknownSymbol",
+            "path": "/norms/0",
+            "text": "UnknownSymbol: Unknown constant 7",
+            "args": {
+              "message": "UnknownSymbol: Unknown constant 7"
+            }
+          }
+        },
+        "lean": {
+          "outcome": "error",
+          "code": "NORMS_INVALID_ENVIRONMENT",
+          "text": "fields do not match: expected [sort, description], got [description, sort, verbalisation]",
+          "record": {
+            "args": {
+              "message": "fields do not match: expected [sort, description], got [description, sort, verbalisation]"
+            },
+            "check": "1.1",
+            "class": "InvalidInput",
+            "code": "NORMS_INVALID_ENVIRONMENT",
+            "contract": "norms@0",
+            "path": "/environment",
+            "phase": "environment",
+            "revision": 1,
+            "text": "fields do not match: expected [sort, description], got [description, sort, verbalisation]"
+          }
+        },
+        "rust": {
+          "outcome": "n/a"
+        }
+      },
+      "signature": "62a58a950070337d",
+      "follow_up": "DF-19",
+      "reason": "A `norms@0` wire input with a constant `verbalisation`: Lean's norms decoder refuses it before the mutated guard (DF-19's remaining `norms@0` entries)."
     }
   ]
 }
