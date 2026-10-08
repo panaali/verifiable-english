@@ -28,7 +28,7 @@ from ve.ast import (WIRE_TAGS, Add, And, Atom, Binary, Body, Bottom, Const, Eq, 
                     Forall, Implies, Le, Lt, Named, Not, Num, Or, Reach, Scale, Top,
                     Unary, Var, formula_from_data, formula_to_data)
 from ve.evaluate import _evaluate_validated
-from ve.search import _nonvacuous
+from tests import nonvacuity_oracle
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -91,13 +91,16 @@ class Collector:
                          _evaluate_validated(formulas, model, max_evaluations=budget,
                                              max_trace_nodes=nodes, trace=trace).to_dict())
         for formula, item in zip(formulas, data):
-            full = _nonvacuous(env, formula, model, FULL, semantic=True)[1]
+            def oracle(budget, semantic):
+                return nonvacuity_oracle.answer(raw, wire, item, budget, semantic,
+                                                env=env, formula=formula, model=model)
+            full = oracle(FULL, True)[1]
             for semantic in (False, True):
                 for budget in budgets_of(full):
                     self.add({"kind": "non-vacuity", "environment": raw, "model": wire,
                               "formula": item, "max_evaluations": budget,
                               "semantic_nonvacuity": semantic},
-                             list(_nonvacuous(env, formula, model, budget, semantic=semantic)))
+                             oracle(budget, semantic))
 
     def mismatches(self):
         rows = run(self.cases)
