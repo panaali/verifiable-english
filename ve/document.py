@@ -17,7 +17,7 @@ from .admission import _check_kind, admit_document, token
 from .ast import Document, decimal_value, formula_from_data, formula_to_data
 from .backends.lean_service import CheckerUnavailable
 from .environment import Environment, listed_profiles
-from .errors import ResourceLimit, VEError
+from .errors import ResourceLimit, UnsupportedProfile, VEError
 from .identity import meaning_id, source_id
 from .openterms import validate_open_terms
 from .readings import (active_reading_sets, check_readings, plan_choices, s1_content_kind,
@@ -94,9 +94,9 @@ def _split(raw: bytes):
         raise VEError("unknown document metadata")
     if "couplings" in meta and not {"rights@0", "readings@1"}.intersection(
             listed_profiles(meta.get("environment"))):
-        raise VEError("UnsupportedProfile: rights@0 is required for couplings")
+        raise UnsupportedProfile("UnsupportedProfile: rights@0 is required for couplings")
     if "completions" in meta and "norm-defaults@0" not in listed_profiles(meta.get("environment")):
-        raise VEError("UnsupportedProfile: norm-defaults@0 is required for completions")
+        raise UnsupportedProfile("UnsupportedProfile: norm-defaults@0 is required for completions")
     return meta, *_body(body)
 
 
@@ -162,7 +162,7 @@ def _content(env, unit, fences, *, formula_env=None, rights=False, rule_result=N
     if env.unit_schema is not None and "norm" not in content:
         return _quantity_content(env, unit, content, fences)
     if "quantity" in content:
-        raise VEError("UnsupportedProfile: quantity content requires ve-units@1")
+        raise UnsupportedProfile("UnsupportedProfile: quantity content requires ve-units@1")
     if "reports@0" in env.profiles and set(content) & {"report", "assessment", "negated"}:
         return content, None  # The reports decoder binds its identity after all declarations.
     if "norm" in content:
@@ -176,12 +176,12 @@ def _content(env, unit, fences, *, formula_env=None, rights=False, rule_result=N
             return canonical, mid
         from .norms import NormDocument
         if "norms@0" not in env.profiles:
-            raise VEError("UnsupportedProfile: norms@0 is required")
+            raise UnsupportedProfile("UnsupportedProfile: norms@0 is required")
         rule = NormDocument._decode(content)
         return rule.to_dict(), None
     if next(iter(content)) in {"right", "right_lines", "limitation", "bar"}:
         if "rights@0" not in env.profiles:
-            raise VEError("UnsupportedProfile: rights@0 is required")
+            raise UnsupportedProfile("UnsupportedProfile: rights@0 is required")
         from .readings import rights_meaning_id
         return content, rights_meaning_id(env, content)
     if "ast" in content:
@@ -243,7 +243,7 @@ def _parts(units):
             raise VEError("MIXED unit needs partitioned parts")
         cursor = span[0]
         for part in parts:
-            if (type(part) is not dict or part.get("status") not in STATUSES or
+            if (type(part) is not dict or type(part.get("status")) is not str or part["status"] not in STATUSES or
                     type(part.get("span")) is not list or len(part["span"]) != 2 or
                     part["span"][0] != cursor):
                 raise VEError("MIXED parts must partition their parent span")
@@ -325,14 +325,14 @@ def base_environment(meta):
     data = meta["environment"]
     if meta["format"] == "ve-document@1":
         if type(data) is dict and type(data.get("profiles")) is list and PROFILE in data["profiles"]:
-            raise VEError("UnsupportedProfile: ve.discourse@1 requires ve-document@2")
+            raise UnsupportedProfile("UnsupportedProfile: ve.discourse@1 requires ve-document@2")
         return data
     if (type(data) is not dict or type(data.get("profiles")) is not list
             or any(type(p) is not str for p in data["profiles"])):
         raise VEError("invalid environment profiles")
     profiles = data["profiles"]
     if profiles != sorted(set(profiles)) or PROFILE not in profiles or "relational-fol@0" not in profiles:
-        raise VEError("UnsupportedProfile: ve.discourse@1 requires a sorted profile list with relational-fol@0")
+        raise UnsupportedProfile("UnsupportedProfile: ve.discourse@1 requires a sorted profile list with relational-fol@0")
     if "discourse" not in meta:
         raise VEError("InvalidInput: missing discourse block")
     return {**data, "profiles": [p for p in profiles if p != PROFILE]}
@@ -373,7 +373,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
     if defaults_enabled and soft_enabled:
         # The soft and rights document routes are checked by Lean, which has no
         # norm-defaults branch yet; ve.norm_defaults builds their fill in Python.
-        raise VEError("UnsupportedProfile: norm-defaults@0 documents on the soft and rights "
+        raise UnsupportedProfile("UnsupportedProfile: norm-defaults@0 documents on the soft and rights "
                       "routes await the Lean route")
     attached = _s1_attached(environment_data, meta)
     if soft_enabled and not rights_enabled:
@@ -428,7 +428,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
     compiled = []
     unit_ids = set()
     cursor = 0
-    parents = [u["id"] for u in units if type(u) is dict and u.get("status") == "MIXED"]
+    parents = [u.get("id") for u in units if type(u) is dict and u.get("status") == "MIXED"]
     if not all(token(uid) for uid in parents):
         raise VEError("invalid MIXED unit id")
     if len(set(parents)) != len(parents):
@@ -482,7 +482,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
         if "meaning_id" in unit and mid is not None and unit["meaning_id"] != mid:
             raise VEError("unit meaning id does not match content")
         explicit_status = unit.get("status")
-        if explicit_status is not None and explicit_status not in STATUSES:
+        if explicit_status is not None and (type(explicit_status) is not str or explicit_status not in STATUSES):
             raise VEError("invalid unit status")
         inferred_status = ("CHECKED" if content is not None and status == "specified" else
                            "OPEN" if status == "open" else
@@ -1091,14 +1091,15 @@ def _report(doc):
         result["admission"] = {"status": "UNKNOWN",
                                "reason": "discourse citation and report extension pending"}
     if "graph" in doc["meta"] and not joint_pending:
+        nodes = _graph_nodes(doc["meta"]["graph"])
         if (_unresolved_norm_reading(active) and
                 any(type(node) is dict and type(node.get("label")) is str
                     and node["label"].startswith("layer:norms:")
-                    for node in doc["meta"]["graph"].get("nodes", []))):
+                    for node in nodes)):
             raise VEError("non-assertion norm reading admission needs an elaborator")
         from .admission import parse_label
         active_keys = {(r["id"], r["version"]): r for r in active}
-        for node in doc["meta"]["graph"].get("nodes", []):
+        for node in nodes:
             label = parse_label(node.get("label")) if type(node) is dict else None
             if label is not None and label.kind == "readings":
                 reading_set = active_keys.get(label.args[:2])
@@ -1202,6 +1203,13 @@ def _report(doc):
         from .discourse import report_discourse
         report_discourse(doc, result)
     return result
+
+
+def _graph_nodes(graph):
+    """The nodes of a claim graph as the pre-admission checks read them: none for a graph or node list of the
+    wrong JSON type, which W2 admission then rejects with its own diagnostic."""
+    nodes = graph.get("nodes", []) if type(graph) is dict else []
+    return nodes if type(nodes) is list else []
 
 
 def render_document(path):
