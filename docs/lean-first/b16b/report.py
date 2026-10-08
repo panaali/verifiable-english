@@ -38,7 +38,9 @@ def capture() -> None:
     for commit in commits:
         for line in git("show", "--numstat", "--format=", commit).splitlines():
             added, deleted, path = line.split("\t")
-            rows.append({"commit": commit, "path": path, "added": int(added), "deleted": int(deleted)})
+            # A binary file (the gzipped corpus) has no line counts.
+            rows.append({"commit": commit, "path": path, "added": 0 if added == "-" else int(added),
+                         "deleted": 0 if deleted == "-" else int(deleted)})
     (EVIDENCE / "scope.json").write_text(json.dumps(
         {"range": "main..HEAD --no-merges", "captured_head": head, "base": base, "commits": commits,
          "numstat": rows}, indent=1) + "\n")
