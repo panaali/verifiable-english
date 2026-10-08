@@ -1079,14 +1079,17 @@ def reportedFault (j : Json) (fault : ModelFault) : Json :=
     ("error", .str fault.message)] ++
     if fault.path.isEmpty then [] else [("path", .str fault.path)])
 
-/-- Profile shape precedes vocabulary decoding. Newer composed envelopes may
-carry additional top-level fields, so this preflight checks only the profile
-gate shared with the four base checker families. -/
+/-- Profile shape precedes vocabulary decoding. The base route owns its profile
+combination; statement and wrapper routes keep their owning decoder's fault
+precedence. -/
 private def earlyProfileGate (environment : Json) : Except String Unit := do
   if environment.getObjValD "language" == .str "ve.core@0.2" then
     if (environment.getObjVal? "profiles").isOk then
       let profiles ← VE.Route.Gate.profilesOf environment
-      VE.Compose.todayGate profiles
+      if VE.Compose.todayHead profiles == .frozen &&
+          !(profiles.any VE.Compose.wrapperProfiles.contains) &&
+          !profiles.contains "time@0" then
+        VE.Compose.todayGate profiles
 
 def reportedEnvironment (j : Json) : Json :=
   match j.getObjVal? "environment" with
