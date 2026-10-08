@@ -65,7 +65,7 @@
     "ve/softnorms.py:load_soft_document": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors."
   },
   "lean_decoders": {
-    "total_lines": 22543,
+    "total_lines": 22608,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -858,23 +858,26 @@
       },
       {
         "file": "lean/VE/Senses/Run.lean",
-        "lines": 144,
-        "sha256": "7015a002b04ead4c27462cda1a59f2d36c17165b713bc2d945fce72285952303",
+        "lines": 209,
+        "sha256": "f3accc9b22974f266cd52973dafc3de9a52b087c0a24daedaf2c6272ff179614",
         "ranges": [
           [
             1,
-            144
+            209
           ]
         ],
         "declarations": [
           "decodeDictionary",
+          "decodeDefaults",
           "faultFields",
           "s2Fields",
           "outcomeJson",
           "readCase",
-          "runCaseReported"
+          "runCaseReported",
+          "uncoveredFence",
+          "fenceIdsProblem"
         ],
-        "reason": "senses admission runner: exact request fields, restricted pack decoder, and response rows (units with their sentence and state, sense faults with their arguments, S2 outcomes with S2's fields); the full file is pinned conservatively"
+        "reason": "senses admission runner: exact request fields, restricted pack decoder, and response rows; RD-8: source or fenced documents with defaults. Fence identities and reading-set units enter Lean, which refuses a bad one by its fault (`fenceIdsProblem`) and decides open-fence admission; only fence units carry unresolved English, preserving source-mode output. The full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Service/Family.lean",
@@ -3330,7 +3333,12 @@
           "VE.Senses.senses_unit_sound",
           "VE.Senses.senses_candidate_sound",
           "VE.Senses.candidates_complete",
-          "VE.Senses.mixed_exact"
+          "VE.Senses.mixed_exact",
+          "VE.Senses.readDocument_source",
+          "VE.Senses.readDocument_both",
+          "VE.Senses.defaults_read_as_lines",
+          "VE.Senses.document_unit_sound",
+          "VE.Senses.document_line_sound"
         ],
         "planned_theorems": [],
         "decoders": [
@@ -3340,12 +3348,15 @@
       },
       "rust": null,
       "lean_call_sites": [
-        "ve.backends.senses:read"
+        "ve.backends.senses:_read"
       ],
       "tests": [
         "tests/test_senses_route.py::test_spec_reading_fixtures",
         "tests/test_senses_route.py::test_every_refusal_carries_its_arguments",
-        "tests/test_senses_route.py::test_genuine_response_field_mutations_are_rejected"
+        "tests/test_senses_route.py::test_genuine_response_field_mutations_are_rejected",
+        "tests/test_senses_document.py::test_s9_formula_and_meaning_id_are_leans",
+        "tests/test_senses_document.py::test_defaults_read_as_the_same_text_with_the_lines_written",
+        "tests/test_senses_document.py::test_genuine_fence_answer_mutations_are_rejected"
       ],
       "trusted": [
         "lean:kernel",
@@ -3356,7 +3367,7 @@
         "python:backend-adapter"
       ],
       "notes": [
-        "The relay in ve.backends.senses:read only transports packs and validates the answer's shape and identities; no Python function decides a reading.",
+        "The relay in ve.backends.senses:_read (behind read and read_fences) only transports packs and validates the answer's shape and identities; no Python function decides a reading.",
         "Rust has no senses implementation: the conformance of this operation is spec fixtures against Lean, not three-way.",
         "The budget class is the reading's status `budget`, with the code PreambleBudget (a preamble line) or Budget (a body sentence)."
       ]

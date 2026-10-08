@@ -1,10 +1,12 @@
-import VE.Senses.Read
+import VE.Senses.Document
 import VE.Senses.Decode
 import VE.EnglishGrammar.Run
 
 /-! A one-shot admission boundary for the senses reader. The pack text reaches
 `decodePackText` unchanged; every reading and projection decision is made by
-`readWithSenses`. This runner is deliberately separate from the frozen S2
+`readDocument` (`readWithSenses` on a source with no defaults, `readDocument_source`). A
+request carries a `source`, or a document's English `fences` in unit order (RD-8), and
+optional front-matter `defaults`. This runner is deliberately separate from the frozen S2
 grammar implementation. -/
 
 namespace VE.Senses.Run
@@ -17,14 +19,22 @@ def candidateJson (c : Candidate) : Json := Json.mkObj
    ("formula", c.formula.encode), ("mark", .bool c.mark)]
 
 /-- Unit `i` of a text whose body starts at sentence `k`: its sentence, and the state after it (spec 4.1, as
-S2's `readingJson` gives it per reading). -/
-def unitJson (k i : Nat) (u : SenseUnit) : Json := Json.mkObj
+S2's `readingJson` gives it per reading); an open unit of a fence request also has its English (`text`, which
+is `documentText`). -/
+def unitJson (text : Option (Nat → SenseUnit → String)) (k i : Nat) (u : SenseUnit) : Json := Json.mkObj
   ([("sentence", toJson (k + i)), ("candidates", Json.arr (u.candidates.map candidateJson).toArray),
     ("unresolved", toJson u.unresolved), ("referents", toJson u.after.referents),
     ("binder_seen", .bool u.after.binderSeen)] ++
-    match u.formula with
-    | some (f, mark) => [("formula", f.encode), ("mark", .bool mark)]
-    | none => [])
+    match u.formula, text with
+    | some (f, mark), _ => [("formula", f.encode), ("mark", .bool mark)]
+    | none, some t => if u.candidates.isEmpty then [] else [("text", .str (t (k + i) u))]
+    | none, none => [])
+
+/-- `fenceUnits` on the wire: a unit index, or `"line"` for a fence that is a preamble line (the transport
+reads no JSON null). -/
+def fenceJson : Option Nat → Json
+  | some i => toJson i
+  | none => .str "line"
 
 def occurrenceJson (o : SenseOccurrence) : Json := Json.mkObj
   ([("sentence", toJson o.sentence), ("token_start", toJson o.start),
@@ -77,17 +87,21 @@ def s2Fields (c : VE.EnglishGrammar.Run.Case) : SensesOutcome → Except String 
     | .budget => pure (budgetFields i)
   | .ok .. | .fault _ => throw "not an outcome of S2"
 
-/-- The answer to a text of `count` sentences (`lex`'s); the units are its last sentences (`readBody_good`). -/
-def outcomeJson (c : VE.EnglishGrammar.Run.Case) (count : Nat) (out : SensesOutcome) : Except String Json := do
+/-- The answer to a text of `count` sentences (`documentInput`'s); the units are its last sentences
+(`readBody_good`). A fence request's admitted answer also maps each fence to its unit (`fenceUnits`), and its
+open units carry `text`. -/
+def outcomeJson (c : VE.EnglishGrammar.Run.Case) (count : Nat) (fences : Option (List (Option Nat)))
+    (text : Nat → SenseUnit → String) (out : SensesOutcome) : Except String Json := do
   let (status, code) ← out.statusCode
   let common := [("status", .str status)] ++ (code.toList.map fun c => ("code", .str c))
   match out with
   | .ok units senses mixed unused P =>
     pure (Json.mkObj (common ++
-      [("units", Json.arr (units.mapIdx (unitJson (count - units.length))).toArray),
+      [("units", Json.arr (units.mapIdx (unitJson (fences.map fun _ => text) (count - units.length))).toArray),
        ("sense_map", Json.arr (senses.map occurrenceJson).toArray),
        ("mixed", toJson mixed), ("unused", toJson unused),
-       ("environment", P.envJson)]))
+       ("environment", P.envJson)] ++
+      (fences.toList.map fun fs => ("fences", Json.arr (fs.map fenceJson).toArray))))
   | .fault f => pure (Json.mkObj (common ++ faultFields f))
   | _ =>
     let fields ← s2Fields c out
@@ -100,19 +114,70 @@ def decodeDictionary (j : Json) : Except String Dictionary := do
   let own ← (← j.getObjVal? "own").getArr?
   pure ⟨decoded, ← own.toList.mapM decodeSense⟩
 
+/-- Front-matter defaults, `{word: index}`, in the order of the words. -/
+def decodeDefaults (j : Json) : Except String Assignment := do
+  let o ← j.getObj?
+  pure ⟨← o.toList.mapM fun (w, i) => do pure (w, ← natOf i)⟩
+
+def has (j : Json) (k : String) : Bool := (j.getObjVal? k).toOption.isSome
+
+/-- The first unresolved fence without a reading set, with its `text`. Lean alone decides whether an open
+reading is admitted. -/
+def uncoveredFence (text : Nat → SenseUnit → String) (count : Nat) (units : List SenseUnit)
+    (mapped : List (Option Nat)) (ids allowed : List String) : Option (String × String) := Id.run do
+  for (id, entry) in ids.zip mapped do
+    if !allowed.contains id then
+      if let some index := entry then
+        if let some unit := units[index]? then
+          if !unit.candidates.isEmpty then
+            return some (id, text (count - units.length + index) unit)
+  return none
+
+/-- The refusal of a fence request's identities: one non-empty identity per fence, none repeated, and
+reading-set units that are distinct fence identities. -/
+def fenceIdsProblem (n : Nat) (ids allowed : List String) : Option String :=
+  if ids.length != n then
+    some s!"InvalidInput: {ids.length} fence identities are given for {n} English fences"
+  else if ids.any (·.isEmpty) then some "InvalidInput: an English fence has an empty unit id"
+  else if let some id := ids.find? (fun id => ids.count id > 1) then
+    some s!"InvalidInput: unit id {id} names more than one English fence"
+  else if let some id := allowed.find? (fun id => allowed.count id > 1) then
+    some s!"InvalidInput: reading-set unit {id} is given more than once"
+  else (allowed.find? (!ids.contains ·)).map fun id => s!"InvalidInput: reading-set unit {id} names no English fence"
+
 def readCase (j : Json) : Except String Json := do
-  VE.Bridge.exactFields j ((["id", "environment", "lexicon", "packs", "own", "source", "budget"] ++
-    if (j.getObjVal? "overlay").toOption.isSome then ["overlay"] else []))
+  let fenced := has j "fences"
+  VE.Bridge.exactFields j (["id", "environment", "lexicon", "packs", "own", "budget",
+    if fenced then "fences" else "source"] ++
+    (if fenced then ["fence_ids", "reading_set_units"] else []) ++
+    (["overlay", "defaults"].filter (has j)))
   let id ← VE.Bridge.stringField j "id"
   let c ← VE.EnglishGrammar.Run.decodeCase j
   let D ← decodeDictionary j
-  let source ← VE.Bridge.stringField j "source"
+  let text ← if has j "fences" then do pure (SenseText.fences (← VE.Bridge.strings (← j.getObjVal? "fences")))
+    else do pure (SenseText.source (← VE.Bridge.stringField j "source"))
+  let ids ← if fenced then VE.Bridge.strings (← j.getObjVal? "fence_ids") else pure []
+  let allowed ← if fenced then VE.Bridge.strings (← j.getObjVal? "reading_set_units") else pure []
+  if fenced then
+    if let some problem := fenceIdsProblem (match text with | .fences fs => fs.length | _ => 0) ids allowed then
+      throw problem
+  let A ← if has j "defaults" then decodeDefaults (← j.getObjVal? "defaults") else pure ⟨[]⟩
   let budget ← VE.Senses.natOf (← j.getObjVal? "budget")
   let requestId ← VE.CertificateWire.digest "ve-senses-request-v1\n" j
-  let count := match lex source with
-    | .ok sents => sents.size
-    | .error _ => 0
-  let result ← outcomeJson c count (readWithSenses D c.E c.L budget source)
+  let out ← readDocument D c.E c.L budget A text
+  let (count, d, fences) := match documentInput D A text, text with
+    | .ok (.ok (d, sents)), .fences fs => (sents.length, d, some (fenceUnits D budget d sents fs.length))
+    | .ok (.ok (d, sents)), .source _ => (sents.length, d, none)
+    | _, _ => (0, 0, none)
+  let unitText := documentText D A d
+  if let .ok units _ _ _ _ := out then
+    if let some mapped := fences then
+      if let some (unit, message) := uncoveredFence unitText count units mapped ids allowed then
+        let result := Json.mkObj [("status", .str "rejected"), ("code", .str "Unresolved"),
+          ("unit", .str unit), ("text", .str message)]
+        return VE.Route.Wire.ok id [("result", Json.mkObj
+          [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)), ("reading", result)])]
+  let result ← outcomeJson c count fences unitText out
   pure (VE.Route.Wire.ok id [("result", Json.mkObj
     [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)), ("reading", result)])])
 
