@@ -21,6 +21,12 @@ from ve.profiles import LANGUAGE, SPEC_REVISION
 from ve.surface.registry import by_tag, enabled
 
 
+def _diagnostic_text(error):
+    reading = getattr(error, "lean_reading", None)
+    advice = reading.response.get("advice") if reading is not None else None
+    return str(error) + (" " + advice["text"] if advice else "")
+
+
 def source():
     sorts = {name: {"description": name} for name in ("robot", "action", "harm")}
     def base(args, words):
@@ -205,8 +211,9 @@ def test_rejected_causal_wordings_offer_a_rewrite(wording, rewrite):
     raw["vocabulary"]["constants"] = {
         "pull": {"sort": "action", "description": "pull"},
         "h": {"sort": "harm", "description": "h"}}
-    with pytest.raises(VEError, match=rewrite):
+    with pytest.raises(VEError) as caught:
         parse_english_with_metadata(Environment(raw), f"pull {wording}.")
+    assert rewrite in _diagnostic_text(caught.value)
 
 
 def test_undeclared_proximate_and_deontic_allowance_are_distinguished():
@@ -215,12 +222,14 @@ def test_undeclared_proximate_and_deontic_allowance_are_distinguished():
         "pull": {"sort": "action", "description": "pull"},
         "h": {"sort": "harm", "description": "h"},
         "r": {"sort": "robot", "description": "r"}}
-    with pytest.raises(VEError, match="W1 'may'"):
+    with pytest.raises(VEError) as caught:
         parse_english_with_metadata(Environment(raw), "pull allows r to pull.")
+    assert "W1 'may'" in _diagnostic_text(caught.value)
     del raw["alternatives"]["proximate"]
     del raw["vocabulary"]["predicates"]["causes"]
-    with pytest.raises(VEError, match="declare it or write 'leads to'"):
+    with pytest.raises(VEError) as caught:
         parse_english_with_metadata(Environment(raw), "pull causes h.")
+    assert "declare it or write 'leads to'" in _diagnostic_text(caught.value)
 
 
 def test_coverage_names_declared_alternatives_and_counterfactual_support():
@@ -529,7 +538,8 @@ def test_available_guard_forms_bind_owner_and_distinguish_other_action():
     assert explicit.rules[0].guard == parse_norm_english(
         env, "Rule 1. Every action may be done, if every other action "
              "available to r prevents h.").rules[0].guard
-    with pytest.raises(VEError, match="Another action needs a rule on an action"):
+    # Python's authority retains its direct rewrite hint; Lean still checks the text in shadow.
+    with pytest.raises(VEError, match="Another action needs a rule on an action as its reference"):
         parse_english_with_metadata(env, "another action available to r prevents h.")
     with pytest.raises(VEError, match="there is a robot such that"):
         parse_norm_english(env, "Rule 1. Every action may be done, if every other "

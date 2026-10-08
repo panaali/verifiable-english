@@ -54,3 +54,18 @@ def grammar_id(profiles) -> str:
 
 def actions_version() -> str:
     return json.loads((HERE / 'LOCK.json').read_text())['actions_version']
+
+
+CODES_FORMAT = 've.english-codes@1'
+
+
+def codes() -> tuple[dict[str, str], dict[str, tuple[str, ...]], frozenset[str]]:
+    """Lean's class of every code, the codes each response status may carry and the rejection codes that name
+    no sentence (`Run.codeClasses`, `Run.statusCodes`, `Run.unsentencedCodes`), as the `english.grammar` export
+    gives them. `codes.json` is written from the service by `tools/english_codes.py --write`, and the suite
+    checks it against the service: the relay keeps no table of its own (spec 2.6, D9)."""
+    data = json.loads((HERE / 'codes.json').read_text())
+    if data.get('format') != CODES_FORMAT:
+        raise ValueError(f'{HERE / "codes.json"}: format is not {CODES_FORMAT}')
+    return ({code: cls for code, cls in data['codes']},
+            {status: tuple(found) for status, found in data['statuses']}, frozenset(data['unsentenced']))

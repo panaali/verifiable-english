@@ -10,7 +10,7 @@ import time
 
 from .. import ast
 from ..backends import lean as lean_backend
-from ..backends.english_lean import response_problem as s2_response_problem
+from ..backends.english_lean import refusal_problem
 from ..backends.lean import ROUTE_TIMEOUT, configured_timeout
 from ..environment import Environment
 from ..errors import CheckerUnavailable, VEError
@@ -75,10 +75,11 @@ def _text(raw: bytes) -> str:
         raise VEError("A sense pack is not UTF-8") from exc
 
 
-def _refusal_problem(reading: dict, fence_ids: list[str] | None = None,
+def _refusal_problem(reading: dict, source: str | None, fence_ids: list[str] | None = None,
                      reading_set_units: list[str] | None = None) -> str | None:
-    """A refused reading: a sense fault with its arguments, or one of S2's outcomes as S2's authoring answer
-    writes it (`english_lean.response_problem`, the one validator of those fields)."""
+    """A refused reading: a sense fault with its arguments, an uncovered fence, or one of S2's outcomes as
+    `english.read` writes it (`english_lean.refusal_problem`, the one validator of those fields), over `source`
+    (`_refusal_source`), or with no span when there is none."""
     code = reading.get("code")
     if type(code) is not str:
         return "a refused reading has no code"
@@ -108,16 +109,29 @@ def _refusal_problem(reading: dict, fence_ids: list[str] | None = None,
         return None
     if reading.get("status") in ("one", "open"):
         return "a refused reading has an admitting status"
-    problem = s2_response_problem({**reading, "identities": {}}, {}, None)
-    return problem and "a refused reading is not S2's: " + problem
+    # S2's outcomes: the fields, codes, classes, spans and advice of `english.read`'s refusals (one validator
+    # of those fields, reading Lean's table of codes and classes).
+    problem = refusal_problem(reading, source, unlocated=frozenset({"IllTyped"}))
+    if problem:
+        return "a refused reading is not S2's: " + problem
+    return None
+
+
+def _refusal_source(source: str | None, fences: list[str] | None, defaults) -> str | None:
+    """The text Lean's refusal spans are over (`refusalSource`), or one that contains it: the source, or the
+    fences joined by line breaks (Lean drops each fence's closing line break first); none under front-matter
+    defaults, whose lines the author did not write."""
+    if defaults:
+        return None
+    return source if fences is None else "\n".join(fences)
 
 
 def _response_problem(response: object, expected_id: str, request_id: str,
-                      fences: int | None = None, *, defaults_count: int = 0,
+                      fences: int | None = None, *, source: str | None = "", defaults_count: int = 0,
                       fence_ids: list[str] | None = None,
                       reading_set_units: list[str] | None = None) -> str | None:
     """`fences`: the number of fences a fence request sent (Lean's `fenceUnits` map is then required on an
-    admitted reading), or None for a source."""
+    admitted reading), or None for a source. `source`: the text a refusal's span is over (`_refusal_source`)."""
     if type(response) is not dict or response.keys() != {"request_id", "dictionary_id", "reading"}:
         return "the result does not have request and dictionary identities and a reading"
     if type(response["request_id"]) is not str or response["request_id"] != request_id:
@@ -234,7 +248,7 @@ def _response_problem(response: object, expected_id: str, request_id: str,
                     for index, entry in enumerate(mapped) if entry != "line"):
                 return "an open fence has no reading set in the request"
     else:
-        return _refusal_problem(reading, fence_ids, reading_set_units)
+        return _refusal_problem(reading, source, fence_ids, reading_set_units)
     return None
 
 
@@ -315,6 +329,7 @@ def _read(env, source, fences, packs, *, own, overlay, defaults, budget, executa
     if row["status"] != "ok" or row.keys() != {"id", "status", "result"}:
         raise VEError(row.get("error", "Invalid senses request"))
     problem = _response_problem(row["result"], expected_id, request_id, None if fences is None else len(fences),
+                                source=_refusal_source(source, fences, defaults),
                                 defaults_count=len(defaults) if type(defaults) is dict else 0,
                                 fence_ids=case.get("fence_ids"), reading_set_units=case.get("reading_set_units"))
     if problem:

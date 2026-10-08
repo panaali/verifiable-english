@@ -85,6 +85,21 @@ def test_s1_refused_as_senses_check_refuses_it(tmp_path):
     assert info.value.diagnostic == reading
 
 
+@pytest.mark.parametrize("texts", [["Alice tells riddle.", "Riddle is f@nny."],
+                                   ["Alice tells riddlé.", "Riddle is f@nny."], ["Alice tells riddle.", "."], S1])
+def test_fence_refusals_are_senses_checks_with_e2_spans(texts):
+    """E2's span and advice compose with RD-8: a fence request's refusal is `ve senses check`'s over the fences
+    joined by line breaks, a lexical one at its place in that text (a document fence's closing line break
+    dropped); under front-matter defaults, lines the author did not write, it has no span."""
+    reading = check(texts)
+    assert "span" in reading
+    env = Environment(environment())
+    for fences in (texts, [text + "\n" for text in texts]):
+        assert route.read_fences(env, fences, [PACK])["reading"] == reading
+    defaulted = route.read_fences(env, S1[1:], [PACK], defaults={"funny": 1})["reading"]
+    assert defaulted["code"] == "NoDerivation" and "span" not in defaulted
+
+
 def test_s9_formula_and_meaning_id_are_leans(tmp_path):
     reading = check(S9)
     [lean_unit] = reading["units"]
