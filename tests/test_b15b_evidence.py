@@ -41,7 +41,8 @@ def _passes(record: dict) -> dict:
                 "exhaustion": head["status"] == base["status"] and (
                     base["status"] in ("Found", "NotFound") or head["detail"] == base["detail"]),
                 "deadline": head["wall_s"] <= record["deadline_s"]}
-    return {"order": True, "first_witness": head["valid"] == base["valid"],
+    # A prover's order: its emitted status, certificate and step count with Lean's self-replay (review B4).
+    return {"order": head["prover"] == base["prover"], "first_witness": head["valid"] == base["valid"],
             "charging": head["steps"] == base["steps"], "counts": head["status"] == base["status"],
             "exhaustion": head["below"] == base["below"], "deadline": head["wall_s"] <= record["deadline_s"]}
 
@@ -76,6 +77,31 @@ def test_rule3_rows_are_recomputed_from_the_saved_records():
     assert queries["distinguishing-model search"] == 28 and queries["bluedot countermodel search"] == 1
     assert all(n > 0 for n in queries.values())
     assert table(rows) in report()
+
+
+def test_certificate_rows_measure_the_whole_cohorts():
+    """Every prover query of each cohort generator is a record (review B4: not the first 40 of each)."""
+    import sys
+    sys.path.insert(0, str(ROOT / "conformance"))
+    import certificates
+    import closure_certificates
+    import order
+    records = saved("rule3.json")["records"]
+    count = lambda operation: sum(r["operation"] == operation for r in records)
+    assert count("order prover replay") == sum(n for _, n in order.GENERATORS.values()) == 690
+    assert count("tableau prover replay") >= 320 + 320 + 160
+    assert count("closure prover replay") >= len(closure_certificates.reviewer_queries()[1])
+    assert certificates.SEED and order.SEED
+    proved = [r for r in records if r.get("certificate") is True]
+    assert len(proved) == sum(row["queries"] for row in saved("rule3.json")["rows"] if "prover" in row["operation"])
+    for r in proved:
+        for side in ("base", "head"):
+            assert r[side]["prover"]["status"] == "Found" and len(r[side]["prover"]["certificate_sha256"]) == 64
+    operations = ("tableau prover replay", "closure prover replay", "order prover replay")
+    totals = [count(operation) for operation in operations]
+    yielded = [sum(r["operation"] == operation for r in proved) for operation in operations]
+    assert (f"{totals[0]}, {totals[1]} and\n{totals[2]} queries, of which {yielded[0]}, {yielded[1]} and "
+            f"{yielded[2]} yield a certificate") in report()
 
 
 def test_the_report_states_the_failing_rows_and_keeps_the_three_duplicates():

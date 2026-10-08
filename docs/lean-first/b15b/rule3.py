@@ -16,10 +16,13 @@ script measures every row again with that evaluator, one record per query, base 
   batches, each case with the budget left at the start of its batch; a case whose answer depends on the smaller
   budget actually left at its turn (it ran out, or used more than was left) is asked again with that budget, so
   every count is Lean's own answer to the exact request.
-* **Certificates** (base: the prover's self-replay in Python, `check_entailment_certificate(_background=False)`;
-  head: the same certificate replayed by Lean's certificate route, `_check_certificate_lean`). The search is the
-  same, so the prover's status and certificate are preserved exactly when the replay's validity is; charging is
-  the replay's step count, and exhaustion is the replay at one step below that count.
+* **Certificates**: every prover query of the three cohorts, whole (`certificate_queries` runs each cohort
+  generator, `conformance/certificates.py`, `closure_certificates.py` and `order.py`, and captures every
+  `prove_entailment` call it makes). Base: the prover's answer with its own Python self-replay, and that
+  replay (`check_entailment_certificate(_background=False)`); head: the same prover with its self-replay
+  replaced by Lean's certificate route (`_check_certificate_lean`), and that replay. Order is the prover's
+  emitted status, certificate and step count, which must not change; the first witness is the replay's
+  validity, charging its step count, and exhaustion the replay at one step below that count.
 
 Deadlines: a search is held to Rust search's deadline (`rust_jsonl.DEFAULT_TIMEOUT`, wall), a replay to the
 certificate route's (`lean_service.DEADLINES["route"]`, CPU per case and per MiB; its wall is an upper bound).
@@ -30,10 +33,14 @@ rust/Cargo.toml -p ve --example rule3_enumerate` and the same with `-p ve-core -
 
     uv run --frozen python docs/lean-first/b2/rule3.py capture-bluedot --out /tmp/bluedot-search.jsonl
     uv run --frozen python docs/lean-first/b15b/rule3.py --bluedot /tmp/bluedot-search.jsonl --out rule3.json
+
+`--certificates-into SAVED` measures the certificate cohorts only and keeps SAVED's search records (the
+review-B4 re-measurement: the search rows did not change).
 """
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import resource
@@ -264,50 +271,69 @@ def search_queries(bluedot: Path | None) -> list[tuple[str, dict, bool]]:
     return queries
 
 
-def certificate_queries(per_cohort: int) -> list[tuple[str, str, object, list, object, int]]:
-    import random
+CERTIFICATE_COHORTS = (("tableau prover replay", "certificates"), ("closure prover replay", "closure_certificates"),
+                       ("order prover replay", "order"))
+
+
+def certificate_queries() -> list[tuple[str, str, dict, object]]:
+    """Every prover query of the three certificate cohorts, whole: each cohort generator's `positive_cases`
+    is run and every `prove_entailment` call it makes is captured with its bound arguments (defaults applied)
+    and its result, which is the base prover's answer (Python authority). Nothing is re-derived or sampled."""
+    import importlib
+    import inspect
+    from ve.backends.dispatch import pinned
     sys.path.insert(0, str(ROOT / "conformance"))
-    import certificates as cohorts
-    import closure_certificates
-    import order as order_corpus
-    rng = random.Random(cohorts.SEED)
-    fol = []
-    for i in range(320):
-        fol.append(("broadconstructive", i, cohorts.constructive(rng, i)))
-    for i in range(320):
-        fol.append(("constructive", i, cohorts.constructive(rng, i, simple=True)))
-    for i in range(160):
-        constants = bool(i % 2)
-        env = cohorts.environment(constants, i + 320)
-        ps = [cohorts.formula(rng, 3, constants=constants) for _ in range(rng.randrange(3))]
-        fol.append(("unconditioned", i, (env, ps, cohorts.formula(rng, 3, constants=constants))))
-    queries = [("tableau prover replay", f"{name}_{index:03d}", *query, 3000)
-               for wanted in ("broadconstructive", "constructive", "unconditioned")
-               for name, index, query in [q for q in fol if q[0] == wanted][:per_cohort]]
-    env, reviewer = closure_certificates.reviewer_queries()
-    queries += [("closure prover replay", f"closure_{name}", env, ps, goal, 400)
-                for name, (ps, goal) in reviewer.items()]
-    rng = random.Random(order_corpus.SEED)
-    index = 0
-    for name, (generate, _) in order_corpus.GENERATORS.items():
-        for i in range(per_cohort // 4):
-            env = order_corpus.environment(index % 7)
-            index += 1
-            premises, goal = generate(rng)
-            queries.append(("order prover replay", f"order_{name}_{i:03d}", env, premises, goal, 4000))
+    queries = []
+    for operation, name in CERTIFICATE_COHORTS:
+        module = importlib.import_module(name)
+        original = module.prove_entailment
+        signature = inspect.signature(original)
+
+        def record(*args, _operation=operation, _name=name, _original=original, _signature=signature, **kwargs):
+            bound = _signature.bind(*args, **kwargs)
+            bound.apply_defaults()
+            result = _original(*args, **kwargs)
+            index = sum(1 for q in queries if q[0] == _operation)
+            queries.append((_operation, f"{_name}_{index:04d}", dict(bound.arguments), result))
+            return result
+        module.prove_entailment = record
+        try:
+            with pinned("python"):
+                module.positive_cases()
+        finally:
+            module.prove_entailment = original
     return queries
 
 
-def certificate_record(operation: str, name: str, env, premises, conclusion, max_steps: int) -> dict | None:
+def _prover(result) -> dict:
+    certificate = None if result.certificate is None else hashlib.sha256(_dumps(result.certificate).encode()).hexdigest()
+    return {"status": result.status, "steps": result.steps, "certificate_sha256": certificate}
+
+
+def certificate_record(operation: str, name: str, arguments: dict, prover) -> dict:
+    """One certificate query: the base (the prover's own Python self-replay, as the cohort generator ran it)
+    against the head (the same prover with its self-replay replaced by Lean's certificate route). Order is
+    the prover's emitted status, certificate and step count, which the replay must leave unchanged."""
     from ve.backends.dispatch import pinned
     from ve.backends.lean_service import DEADLINES
-    from ve.entailment import _check_certificate_lean, _check_certificate_python, prove_entailment
-    with pinned("python"):
-        result = prove_entailment(env, premises, conclusion, max_steps=max_steps)
-    if result.certificate is None:
-        return {"operation": operation, "id": name, "certificate": False, "prover_status": result.status}
+    import ve.entailment as entailment
+    from ve.entailment import _check_certificate_lean, _check_certificate_python
+    if prover.certificate is None:
+        return {"operation": operation, "id": name, "certificate": False, "prover_status": prover.status}
+    env, premises, conclusion, max_steps = (arguments[k] for k in ("env", "premises", "conclusion", "max_steps"))
+
+    def lean_self_replay(env, premises, conclusion, certificate, *, max_steps, _background=True):
+        assert _background is False, "only the prover's self-replay is replaced"
+        return _check_certificate_lean(env, premises, conclusion, certificate, max_steps)
+    original = entailment.check_entailment_certificate
+    entailment.check_entailment_certificate = lean_self_replay
+    try:
+        with pinned("python"):
+            head_prover = entailment.prove_entailment(**arguments)
+    finally:
+        entailment.check_entailment_certificate = original
     budget = max(max_steps, 10_000) if getattr(env, "order", False) else max_steps
-    args = (env, premises, conclusion, result.certificate)
+    args = (env, premises, conclusion, prover.certificate)
     started = time.perf_counter()
     base = _check_certificate_python(*args, max_steps=budget, _background=False)
     base_wall = time.perf_counter() - started
@@ -316,17 +342,17 @@ def certificate_record(operation: str, name: str, env, premises, conclusion, max
     head_wall = time.perf_counter() - started
     below_base = _check_certificate_python(*args, max_steps=max(base.steps - 1, 0), _background=False)
     below_head = _check_certificate_lean(*args, max(base.steps - 1, 0))
-    size = len(_dumps(result.certificate).encode()) / (1 << 20)
+    size = len(_dumps(prover.certificate).encode()) / (1 << 20)
     per_case, per_mib = DEADLINES["route"]
     deadline = per_case + per_mib * size
-    return {"operation": operation, "id": name, "certificate": True, "prover_status": result.status,
-            "prover_steps": result.steps,
+    return {"operation": operation, "id": name, "certificate": True, "prover_status": prover.status,
+            "prover_steps": prover.steps,
             "base": {"valid": base.valid, "status": base.status, "steps": base.steps,
-                     "below": below_base.status, "wall_s": round(base_wall, 6)},
+                     "below": below_base.status, "wall_s": round(base_wall, 6), "prover": _prover(prover)},
             "head": {"valid": head.valid, "status": head.status, "steps": head.steps,
-                     "below": below_head.status, "wall_s": round(head_wall, 6)},
+                     "below": below_head.status, "wall_s": round(head_wall, 6), "prover": _prover(head_prover)},
             "deadline_s": round(deadline, 6),
-            "passes": {"order": True, "first_witness": head.valid == base.valid,
+            "passes": {"order": _prover(head_prover) == _prover(prover), "first_witness": head.valid == base.valid,
                        "charging": head.steps == base.steps, "counts": head.status == base.status,
                        "exhaustion": below_head.status == below_base.status,
                        "deadline": head_wall <= deadline}}
@@ -370,16 +396,25 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--bluedot", type=Path)
     parser.add_argument("--batch", type=int, default=256)
-    parser.add_argument("--cohort", type=int, default=40)
+    parser.add_argument("--certificates-into", type=Path,
+                        help="measure the certificate cohorts only, keeping this saved record's search records")
     parser.add_argument("--out", required=True)
     args = parser.parse_args()
-    metered = Metered()
-    records = [search_record(metered, operation, query, batch=args.batch, order=order)
-               for operation, query, order in search_queries(args.bluedot)]
-    for operation, name, env, premises, conclusion, max_steps in certificate_queries(args.cohort):
-        records.append(certificate_record(operation, name, env, premises, conclusion, max_steps))
+    certificate_operations = {operation for operation, _ in CERTIFICATE_COHORTS}
+    if args.certificates_into is not None:
+        saved = json.loads(args.certificates_into.read_text())
+        records = [r for r in saved["records"] if r["operation"] not in certificate_operations]
+        extra = {"load": saved["load"], "batch": saved["batch"]}
+    else:
+        metered = Metered()
+        records = [search_record(metered, operation, query, batch=args.batch, order=order)
+                   for operation, query, order in search_queries(args.bluedot)]
+        extra = {"load": Path("/proc/loadavg").read_text().split()[0], "batch": args.batch}
+    certificate_load = Path("/proc/loadavg").read_text().split()[0]
+    for operation, name, arguments, prover in certificate_queries():
+        records.append(certificate_record(operation, name, arguments, prover))
     rows = summary(records)
-    record = {"load": Path("/proc/loadavg").read_text().split()[0], "batch": args.batch,
+    record = {**extra, "certificate_load": certificate_load,
               "condition_holds": all(row["passes"] for row in rows), "rows": rows, "records": records}
     Path(args.out).write_text(json.dumps(record, indent=1) + "\n")
     print(json.dumps({"condition_holds": record["condition_holds"], "rows": rows}, indent=1))
