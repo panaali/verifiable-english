@@ -99,7 +99,7 @@ measurement because it exercised a different, much smaller workload.
 | **All** | **94,588** | **93,502** | **1,086** | **0** | **0** | **0** |
 
 Code lines (base to head): production Python +223/−790 (net -567); Lean +900/−101 (net +799).
-Differential fuzz: 15 runs (CI and 14 date seeds); baseline 331 → 250; 0 head-only new signatures; 0 head entries not reproduced.
+Differential fuzz: 15 runs (CI and 14 date seeds); baseline 331 → 253; 0 head-only new signatures; 0 head entries not reproduced.
 First-pass date-seed review found 24 distinct head-only signatures.
 UDHR: base 54.679 s → head 54.651 s; 0.999× wall; 1.000× child CPU; output identical; budget pass.
 Eligibility: base 342.496 s → head 355.024 s; 1.037× wall; 1.263× child CPU; output identical; budget pass.
@@ -111,6 +111,11 @@ The reviewed differential baseline's environment entries are replayed by
 `test_reviewed_environment_findings_have_one_python_lean_diagnostic`: every
 current Python and Lean `(outcome, code, text)` agrees. The baseline keeps
 Rust and later-batch route discrepancies with their existing follow-up IDs.
+The direct `ve_conformance` route keeps its frozen legacy version/profile
+error text, so its classification differences remain under DF-6. The refreshed
+baseline removes the repaired environment input, records its distinct remaining
+Rust envelope mutant, and tracks the request signatures changed by the shared
+service decoder. The new DF-6 entries were checked for that exact class.
 The reviewed baseline is smaller than the 331 entries at the batch base. The
 CI sample and all 14 recorded date seeds have zero head-only signatures and
 reproduce every entry in their recorded head baselines. The follow-up review
