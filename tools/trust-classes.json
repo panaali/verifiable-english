@@ -1951,7 +1951,9 @@
    "D[V]": [
     "VE.Core.Layers.arity",
     "VE.Core.Layers.background",
+    "VE.Core.Layers.completeModel",
     "VE.Core.Layers.coreEnvironment",
+    "VE.Core.Layers.decodeLayered",
     "VE.Core.Layers.decodeLayers",
     "VE.Core.Layers.folPredicates",
     "VE.Core.Layers.layerFields",
@@ -6995,12 +6997,21 @@
   },
   "VE/Route/MeteredRun.lean": {
    "G[V]": [
-    "VE.Route.MeteredRun.coreLayers",
+    "VE.Route.MeteredRun.Query",
+    "VE.Route.MeteredRun.Request",
+    "VE.Route.MeteredRun.Session",
+    "VE.Route.MeteredRun.answer",
+    "VE.Route.MeteredRun.closure",
+    "VE.Route.MeteredRun.core",
+    "VE.Route.MeteredRun.fol",
     "VE.Route.MeteredRun.main",
     "VE.Route.MeteredRun.nonVacuityResult",
+    "VE.Route.MeteredRun.order",
+    "VE.Route.MeteredRun.query",
+    "VE.Route.MeteredRun.request",
+    "VE.Route.MeteredRun.run",
     "VE.Route.MeteredRun.runCase",
     "VE.Route.MeteredRun.runCaseReported",
-    "VE.Route.MeteredRun.runNonVacuity",
     "VE.Route.MeteredRun.tick",
     "VE.Route.MeteredRun.tickCache"
    ]
@@ -7873,6 +7884,8 @@
    ],
    "D[V]": [
     "VE.Service.Standalone.Legacy",
+    "VE.Service.Standalone.Legacy.checker",
+    "VE.Service.Standalone.Legacy.profiles",
     "VE.Service.Standalone.Legacy.version",
     "VE.Service.Standalone.checkClaimed",
     "VE.Service.Standalone.checkRegulated",
@@ -7882,6 +7895,7 @@
     "VE.Service.Standalone.encodeCore",
     "VE.Service.Standalone.encodeCoreKind",
     "VE.Service.Standalone.encodeKind",
+    "VE.Service.Standalone.evaluable",
     "VE.Service.Standalone.legacyTyped",
     "VE.Service.Standalone.normalizedModel",
     "VE.Service.Standalone.parseCase",
