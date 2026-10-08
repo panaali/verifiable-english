@@ -24,6 +24,7 @@ import VE.NormDefaults.Run
 import VE.Discourse.Run
 import VE.Readings.Run
 import VE.Service.Diagnose
+import VE.Service.Document
 import Std.Data.HashMap
 
 /-! # `ve_service` protocol (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stage 1)
@@ -70,7 +71,7 @@ inductive Mode where
   | environment | model | check | identity
   | parse | graph | readings | bundle | familyNorms
   | softNorms | rights | speechActs | reports | alternatives | risk | riskEval | quantity | normDefaults
-  | discourse | readingsRoute | diagnose
+  | discourse | readingsRoute | diagnose | document
   deriving DecidableEq, Repr
 
 def Mode.name : Mode → String
@@ -104,12 +105,13 @@ def Mode.name : Mode → String
   | .discourse => "discourse"
   | .readingsRoute => "readings-route"
   | .diagnose => "diagnose"
+  | .document => "document"
 
 def modes : List Mode := [.evaluate, .checkCertificate, .order, .route, .norms, .english,
   .englishRead, .englishGrammar, .englishCheck,
   .environment, .model, .check, .identity, .parse, .graph, .readings, .bundle, .familyNorms,
   .softNorms, .rights, .speechActs, .reports, .alternatives, .risk, .riskEval, .quantity, .normDefaults,
-  .discourse, .readingsRoute, .diagnose]
+  .discourse, .readingsRoute, .diagnose, .document]
 
 def Mode.ofName? (name : String) : Option Mode := modes.find? (·.name == name)
 
@@ -158,6 +160,7 @@ def runMode : Mode → Json → Json
   | .discourse, j => VE.Discourse.Run.runCaseReported j
   | .readingsRoute, j => VE.Readings.Run.runCaseReported j
   | .diagnose, j => Diagnose.diagnoseCase j
+  | .document, j => Document.runCaseReported j
 
 /-- A case the batch decoder rejected on its own (JSON depth): the one-shot record. -/
 def caseError (m : Mode) (index : Nat) (message : String) : Json :=

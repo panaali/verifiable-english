@@ -100,8 +100,10 @@ def test_a_check_moved_into_its_own_module_is_still_linted(tmp_path, monkeypatch
     assert relay_lint.helpers([package / "relayed.py"]) == []
 
 
-def test_the_english_lean_adapter_is_relayed_by_function(tmp_path, classes):
-    """Lean's shadow adapter is relayed; Python's public admission path owns its diagnostics."""
+def test_the_english_admission_path_is_relayed_by_function(tmp_path, classes):
+    """English E2 (spec 2.9): the admission functions of `ve/english.py` are relayed; the module's producer,
+    renderer, statement reader and comparator are not. A text of the path's own is a finding, one outside the
+    named functions is not, and a named function that is missing fails."""
     assert relay_lint.RELAYED_FUNCTIONS["ve/english.py"] and "ve/backends/english_lean.py" in relay_lint.RELAYED
     module = tmp_path / "english.py"
     module.write_text("def parse_english(env, source):\n    raise SyntaxError('own words')\n\n"

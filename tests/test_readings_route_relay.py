@@ -247,7 +247,7 @@ def test_a_construction_failure_after_lean_admitted_is_unavailable(tmp_path, mon
     path = s1_document(tmp_path, [strict(), default()])
 
     class Broken:
-        def __init__(self, environment, document):
+        def __init__(self, environment, document, filled=None, fill_premises=None):
             raise KeyError("predicates")
     monkeypatch.setattr(route, "Decoded", Broken)
     with pytest.raises(CheckerUnavailable, match="ReadingsConstruction: .* KeyError"):

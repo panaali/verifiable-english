@@ -1,0 +1,473 @@
+{
+  "range": "c07377edbdbbbb48255aca6c29e02efac78387db..c43afbcc6d248e86633d5f82d2950c3121fb0f76 --no-merges",
+  "base": "c07377edbdbbbb48255aca6c29e02efac78387db",
+  "implementation_head": "c43afbcc6d248e86633d5f82d2950c3121fb0f76",
+  "commits": [
+    "bc580837e4939ba240413c760e6bf7447f4db56e",
+    "395253945d8ddf66c3ce4b6a1df6eca0be87339c",
+    "14b617808bd86419e5c408b48d9e268de37dd414",
+    "1a3bd559737ce3600de842e18dc9bd96d9d755db",
+    "b0f1c533b5d89fd69bd3a66497a77e56c5aed402",
+    "1d45f91205c1eb23ca49bb2948599f6ee9df0540",
+    "0dddf7d776c64dd63858f4402b751af1aea40453",
+    "62b5ef8edc73d10dcc08f18f43c91555a27538cf",
+    "ac6f94a2d9220d01964eec82b608d3bf7e45e81a",
+    "4e79a8242b1dd1769f3ef900074b790a560b9c07",
+    "176929a1abfa59f7eb75285cab811c82689922f6",
+    "760572b937e065758944a4aef01c81e7244cbc21",
+    "0509537dd2855a05c9064be979bd097fd33b1844",
+    "427f6413ff3fc88b0b6895e87bd92f2ced6057ff",
+    "9770be82a2751bb9a72b3f643d501482fa8c5ea4",
+    "60ae5b006a078116439c1d44974222453f71e14f",
+    "f19d9466833a1b66a9274952abce7f61491ae55c",
+    "8f5251336a727c89693ee6ac197891c07af4c7a0",
+    "373a7dd5581234baa62775a42dfdc27aebc98941",
+    "c43afbcc6d248e86633d5f82d2950c3121fb0f76"
+  ],
+  "files": [
+    {
+      "path": "conformance/DIFFFUZZ.md",
+      "added": 4,
+      "deleted": 4
+    },
+    {
+      "path": "conformance/binding_probes.py",
+      "added": 6,
+      "deleted": 1
+    },
+    {
+      "path": "conformance/difffuzz-baseline.json",
+      "added": 21260,
+      "deleted": 5393
+    },
+    {
+      "path": "conformance/fuzz.py",
+      "added": 8,
+      "deleted": 7
+    },
+    {
+      "path": "conformance/three_way.py",
+      "added": 81,
+      "deleted": 10
+    },
+    {
+      "path": "docs/ARCHITECTURE-LAYERS.md",
+      "added": 1,
+      "deleted": 1
+    },
+    {
+      "path": "docs/lean-first/b15b/DELTA.json",
+      "added": 36042,
+      "deleted": 0
+    },
+    {
+      "path": "docs/lean-first/b15b/DELTA.md",
+      "added": 14,
+      "deleted": 0
+    },
+    {
+      "path": "docs/lean-first/b15b/LEDGER.md",
+      "added": 30,
+      "deleted": 0
+    },
+    {
+      "path": "docs/lean-first/b15b/REPORT.md",
+      "added": 114,
+      "deleted": 0
+    },
+    {
+      "path": "docs/lean-first/b15b/capture_metrics.py",
+      "added": 60,
+      "deleted": 0
+    },
+    {
+      "path": "docs/lean-first/b15b/difffuzz_ab.py",
+      "added": 90,
+      "deleted": 0
+    },
+    {
+      "path": "docs/lean-first/b15b/evidence/ab-compare.json",
+      "added": 36257,
+      "deleted": 0
+    },
+    {
+      "path": "docs/lean-first/b15b/evidence/ab-recordings.json",
+      "added": 12,
+      "deleted": 0
+    },
+    {
+      "path": "docs/lean-first/b15b/evidence/ab2-compare.json",
+      "added": 36334,
+      "deleted": 0
+    },
+    {
+      "path": "docs/lean-first/b15b/evidence/change-metrics.json",
+      "added": 453,
+      "deleted": 0
+    },
+    {
+      "path": "docs/lean-first/b15b/evidence/difffuzz-ab.json",
+      "added": 487,
+      "deleted": 0
+    },
+    {
+      "path": "docs/lean-first/b15b/evidence/difffuzz-head-only.json",
+      "added": 121,
+      "deleted": 0
+    },
+    {
+      "path": "docs/lean-first/b15b/evidence/latency.json",
+      "added": 42,
+      "deleted": 0
+    },
+    {
+      "path": "docs/lean-first/b15b/evidence/mutants.txt",
+      "added": 61,
+      "deleted": 0
+    },
+    {
+      "path": "docs/lean-first/b15b/evidence/rule3.json",
+      "added": 10266,
+      "deleted": 0
+    },
+    {
+      "path": "docs/lean-first/b15b/latency.py",
+      "added": 79,
+      "deleted": 0
+    },
+    {
+      "path": "docs/lean-first/b15b/mutants.py",
+      "added": 93,
+      "deleted": 0
+    },
+    {
+      "path": "docs/lean-first/b15b/rule3.py",
+      "added": 389,
+      "deleted": 0
+    },
+    {
+      "path": "docs/rust.md",
+      "added": 14,
+      "deleted": 19
+    },
+    {
+      "path": "docs/spec/assurance-manifest.md",
+      "added": 4,
+      "deleted": 4
+    },
+    {
+      "path": "lean/VE/Route/MeteredRun.lean",
+      "added": 2,
+      "deleted": 1
+    },
+    {
+      "path": "lean/VE/Route/frozen-sources.sha256",
+      "added": 1,
+      "deleted": 1
+    },
+    {
+      "path": "lean/checkers.lock",
+      "added": 3,
+      "deleted": 1
+    },
+    {
+      "path": "lean/declarations.txt",
+      "added": 2,
+      "deleted": 2
+    },
+    {
+      "path": "rust/Cargo.lock",
+      "added": 0,
+      "deleted": 8
+    },
+    {
+      "path": "rust/Cargo.toml",
+      "added": 1,
+      "deleted": 2
+    },
+    {
+      "path": "rust/fuzz_closure.py",
+      "added": 6,
+      "deleted": 8
+    },
+    {
+      "path": "rust/ve-core/Cargo.toml",
+      "added": 4,
+      "deleted": 1
+    },
+    {
+      "path": "rust/ve-core/examples/rule3_order_enumerate.rs",
+      "added": 53,
+      "deleted": 0
+    },
+    {
+      "path": "rust/ve-core/src/lib.rs",
+      "added": 8,
+      "deleted": 9
+    },
+    {
+      "path": "rust/ve-core/tests/closure.rs",
+      "added": 26,
+      "deleted": 18
+    },
+    {
+      "path": "rust/ve-core/tests/conformance.rs",
+      "added": 5,
+      "deleted": 33
+    },
+    {
+      "path": "rust/ve-core/tests/nary.rs",
+      "added": 2,
+      "deleted": 5
+    },
+    {
+      "path": "rust/ve-core/tests/search.rs",
+      "added": 17,
+      "deleted": 13
+    },
+    {
+      "path": "rust/ve-profile/src/lib.rs",
+      "added": 4,
+      "deleted": 3
+    },
+    {
+      "path": "rust/ve-profile/src/order.rs",
+      "added": 27,
+      "deleted": 243
+    },
+    {
+      "path": "rust/ve-profile/src/route.rs",
+      "added": 0,
+      "deleted": 167
+    },
+    {
+      "path": "rust/ve-surface/Cargo.toml",
+      "added": 0,
+      "deleted": 8
+    },
+    {
+      "path": "rust/ve-surface/src/lib.rs",
+      "added": 0,
+      "deleted": 5
+    },
+    {
+      "path": "rust/ve-surface/src/surface.rs",
+      "added": 0,
+      "deleted": 528
+    },
+    {
+      "path": "rust/ve/src/main.rs",
+      "added": 55,
+      "deleted": 144
+    },
+    {
+      "path": "tests/nonvacuity_oracle.py",
+      "added": 61,
+      "deleted": 0
+    },
+    {
+      "path": "tests/test_alternatives_three_way.py",
+      "added": 25,
+      "deleted": 37
+    },
+    {
+      "path": "tests/test_asimov_laws.py",
+      "added": 5,
+      "deleted": 5
+    },
+    {
+      "path": "tests/test_assurance_manifest.py",
+      "added": 12,
+      "deleted": 12
+    },
+    {
+      "path": "tests/test_b15b_evidence.py",
+      "added": 178,
+      "deleted": 0
+    },
+    {
+      "path": "tests/test_compose_integration.py",
+      "added": 2,
+      "deleted": 6
+    },
+    {
+      "path": "tests/test_data_three_way.py",
+      "added": 2,
+      "deleted": 4
+    },
+    {
+      "path": "tests/test_definitions_differential.py",
+      "added": 9,
+      "deleted": 6
+    },
+    {
+      "path": "tests/test_difffuzz.py",
+      "added": 5,
+      "deleted": 2
+    },
+    {
+      "path": "tests/test_evaluate_search.py",
+      "added": 17,
+      "deleted": 12
+    },
+    {
+      "path": "tests/test_metered_differential.py",
+      "added": 10,
+      "deleted": 5
+    },
+    {
+      "path": "tests/test_metered_lean.py",
+      "added": 12,
+      "deleted": 7
+    },
+    {
+      "path": "tests/test_nary_differential.py",
+      "added": 16,
+      "deleted": 7
+    },
+    {
+      "path": "tests/test_norms_three_way.py",
+      "added": 16,
+      "deleted": 7
+    },
+    {
+      "path": "tests/test_order_round2.py",
+      "added": 25,
+      "deleted": 25
+    },
+    {
+      "path": "tests/test_p0_three_way.py",
+      "added": 19,
+      "deleted": 22
+    },
+    {
+      "path": "tests/test_rust_conformance.py",
+      "added": 70,
+      "deleted": 123
+    },
+    {
+      "path": "tests/test_rust_jsonl_schema.py",
+      "added": 4,
+      "deleted": 3
+    },
+    {
+      "path": "tests/test_search_options.py",
+      "added": 34,
+      "deleted": 63
+    },
+    {
+      "path": "tests/test_speech_acts_conformance.py",
+      "added": 3,
+      "deleted": 4
+    },
+    {
+      "path": "tests/test_stage2_evaluation.py",
+      "added": 5,
+      "deleted": 2
+    },
+    {
+      "path": "tests/test_stage2_faults.py",
+      "added": 3,
+      "deleted": 2
+    },
+    {
+      "path": "tests/test_w6a_limit_generator.py",
+      "added": 3,
+      "deleted": 1
+    },
+    {
+      "path": "tests/test_w6a_looprecheck2.py",
+      "added": 3,
+      "deleted": 1
+    },
+    {
+      "path": "tests/test_w6a_route_limits.py",
+      "added": 4,
+      "deleted": 1
+    },
+    {
+      "path": "tools/check_rust_deps.py",
+      "added": 4,
+      "deleted": 5
+    },
+    {
+      "path": "tools/difffuzz.py",
+      "added": 45,
+      "deleted": 21
+    },
+    {
+      "path": "tools/gate-collection.json",
+      "added": 15,
+      "deleted": 18
+    },
+    {
+      "path": "tools/inventory_lint.py",
+      "added": 0,
+      "deleted": 1
+    },
+    {
+      "path": "tools/layer_policy.py",
+      "added": 1,
+      "deleted": 1
+    },
+    {
+      "path": "tools/rust_output_diff.py",
+      "added": 3,
+      "deleted": 45
+    },
+    {
+      "path": "tools/test_layer_policy.py",
+      "added": 6,
+      "deleted": 7
+    },
+    {
+      "path": "ve/assurance-manifest.json",
+      "added": 65,
+      "deleted": 26
+    },
+    {
+      "path": "ve/backends/lean.py",
+      "added": 4,
+      "deleted": 1
+    },
+    {
+      "path": "ve/backends/lean_runner.py",
+      "added": 24,
+      "deleted": 0
+    },
+    {
+      "path": "ve/backends/rust_jsonl.py",
+      "added": 12,
+      "deleted": 3
+    },
+    {
+      "path": "ve/document.py",
+      "added": 1,
+      "deleted": 3
+    },
+    {
+      "path": "ve/evaluate.py",
+      "added": 43,
+      "deleted": 36
+    },
+    {
+      "path": "ve/search.py",
+      "added": 45,
+      "deleted": 528
+    }
+  ],
+  "binary_files": [
+    "docs/lean-first/b15b/evidence/base-ab.jsonl.gz",
+    "docs/lean-first/b15b/evidence/head-ab.jsonl.gz",
+    "docs/lean-first/b15b/evidence/head2-ab.jsonl.gz",
+    "tests/data/nonvacuity-oracle.json.gz"
+  ],
+  "totals": {
+    "added": 143349,
+    "deleted": 7691,
+    "lean_added": 2,
+    "lean_deleted": 1,
+    "python_decision_deleted": 571,
+    "rust_deleted": 1168
+  }
+}

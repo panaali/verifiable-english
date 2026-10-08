@@ -78,6 +78,7 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.Discourse.compileUnit_status
 #print axioms ResponseShape.Encoders.Discourse.compileUnits_status
 #print axioms ResponseShape.Encoders.Discourse.encodeAdmission_fits
+#print axioms ResponseShape.Encoders.Discourse.foldStatus_mem
 #print axioms ResponseShape.Encoders.Discourse.joint_fits
 #print axioms ResponseShape.Encoders.Discourse.loadFront_status
 #print axioms ResponseShape.Encoders.Discourse.loadedStatus_mem
@@ -116,6 +117,12 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.Envelope.one_field
 #print axioms ResponseShape.Encoders.Envelope.requestError_fits
 #print axioms ResponseShape.Encoders.Envelope.response_fits
+#print axioms ResponseShape.Encoders.Document.block_coverage_fits
+#print axioms ResponseShape.Encoders.Document.cells_fits
+#print axioms ResponseShape.Encoders.Document.coverage_fits
+#print axioms ResponseShape.Encoders.Document.document_fits
+#print axioms ResponseShape.Encoders.Document.runCaseReported_fits
+#print axioms ResponseShape.Encoders.Document.unit_fits
 #print axioms ResponseShape.Encoders.Family.answer_fits
 #print axioms ResponseShape.Encoders.Family.bundle_fits
 #print axioms ResponseShape.Encoders.Family.bundle_reported
@@ -191,6 +198,7 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.ReadingsRoute.deadAnswer_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.elaborateFields_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.elaborateND_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.elaborateNDFilled_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.fillPremises_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.filled_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.runS2ND_fits

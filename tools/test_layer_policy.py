@@ -682,8 +682,7 @@ class LayerSelectionTests(unittest.TestCase):
         groups = check_rust_deps.MODULE_GROUPS
         self.assertEqual({crate: set(modules) for crate, modules in groups.items()}, {
             "ve-kernel": {"lib", "ast", "environment", "graph", "internal", "model", "semantics", "wire"},
-            "ve-profile": {"lib", "eval", "order", "route", "search"},
-            "ve-surface": {"lib", "surface"},
+            "ve-profile": {"lib", "eval", "order", "search"},
             "ve-core": {"lib"},
         })
         for crate, modules in groups.items():
@@ -691,16 +690,16 @@ class LayerSelectionTests(unittest.TestCase):
 
     def test_rust_crate_split_layers(self):
         self.assertEqual(check_rust_deps.CRATE_LAYERS,
-                         {"ve-kernel": 1, "ve-profile": 2, "ve-surface": 3, "ve-core": 3, "ve": 4})
+                         {"ve-kernel": 1, "ve-profile": 2, "ve-core": 3, "ve": 4})
         for path, layer in (("rust/ve-kernel/src/semantics.rs", 1), ("rust/ve-core/src/lib.rs", 1),
                             ("rust/ve-core/tests/conformance.rs", 1), ("rust/ve-profile/src/eval.rs", 2),
-                            ("rust/ve-surface/src/surface.rs", 3), ("rust/ve/src/main.rs", 4),
+                            ("rust/ve/src/main.rs", 4),
                             ("rust/ve-profile/Cargo.toml", 1)):
             self.assertEqual(layer_policy.source_layer(path), layer, path)
         with TemporaryDirectory() as directory:
             root = Path(directory)
-            crates = {"ve-kernel": [], "ve-profile": ["ve-kernel"], "ve-surface": ["ve-kernel"],
-                      "ve-core": ["ve-kernel", "ve-profile", "ve-surface"], "ve": ["ve-core"]}
+            crates = {"ve-kernel": [], "ve-profile": ["ve-kernel"],
+                      "ve-core": ["ve-kernel", "ve-profile"], "ve": ["ve-core"]}
             (root / "Cargo.toml").write_text(f"[workspace]\nmembers = {json.dumps(list(crates))}\n")
             for crate, uses in crates.items():
                 (root / crate).mkdir()
@@ -709,7 +708,7 @@ class LayerSelectionTests(unittest.TestCase):
                                                          + dependencies)
             with patch.object(check_rust_deps, "WORKSPACE", root), redirect_stdout(io.StringIO()):
                 self.assertEqual(check_rust_deps.main(["--crates-only"]), 0)
-            for crate, use in (("ve-kernel", "ve-profile"), ("ve-profile", "ve-surface"), ("ve-core", "ve")):
+            for crate, use in (("ve-kernel", "ve-profile"), ("ve-profile", "ve-core"), ("ve-core", "ve")):
                 manifest = root / crate / "Cargo.toml"
                 original = manifest.read_text()
                 manifest.write_text(original + f'{use} = {{ path = "../{use}" }}\n')

@@ -19,7 +19,7 @@ from .assurance import semantic_entry
 from . import ast
 from .errors import CheckerUnavailable, ResourceLimit, Span, SyntaxError, VEError
 from .limits import MAX_DEPTH, MAX_NODES, MAX_SOURCE_BYTES
-from .english_phrases import nearest, phrase_end, unary_phrase, unknown_phrase, wording_key, BOUNDARIES
+from .english_phrases import nearest, phrase_end, unary_phrase, wording_key, BOUNDARIES
 from .printer import (_NaturalVocabulary, _LOGICAL_WORDS, render_int_term,
                       _fluent_variable_letters, _template_head, _AUXILIARIES, VocabularyLint)
 from .english_vocabulary import IDIOMS, negative_template, display_environment, overlay_provenance
@@ -1742,24 +1742,11 @@ def parse_statement_english(env, source, **options):
     return reading.document
 
 
-def _nearest_help(reading, source, words):
-    """The nearest-wording help for a sentence without a reading (spec 2.8): help only, over Lean's span."""
-    if reading.status != 'none':
-        return None
-    start, end = reading.response['span']
-    found = unknown_phrase(source[start:end], words)
-    if found is None:
-        return None
-    begin, stop, wordings = found
-    return (f"Unknown English phrase {source[start + begin:start + stop]!r}. Nearest declared wordings: "
-            + '; '.join(repr(w) for w in wordings) + '.')
-
-
 def _lean_reading(env, source, words, options):
     from .backends import english_lean
     reading = english_lean.read(env, source, words, options)
     if reading.status != 'one':
-        raise reading.rejection(_nearest_help(reading, source, words))
+        raise reading.rejection()
     return _Reading(env, reading.document(), words, reading.response['conclusions'],
                     tuple(tuple(span) for span in reading.response.get('spans', ())), lean=reading)
 
@@ -1771,14 +1758,29 @@ def _parse_english_document_uncached(env, source, *, _with_structure=False, _wit
         except UnicodeDecodeError as exc:
             raise SyntaxError('English input must be UTF-8.', span=Span(exc.start, exc.end, 1, exc.start + 1)) from exc  # relay-lint: file I/O
     if not isinstance(source, str): raise TypeError('source must be str or bytes')
-    words = EnglishVocabulary(env, **options)
+    words = EnglishVocabulary(env, _defer_overlay_refusals=True, **options)
     from .backends import dispatch
     from .backends.english_lean import shadow_record
-    reading = dispatch.shadowed(
-        'english.admission', {'environment_id': env.environment_id, 'source': source},
-        lambda: _python_reading(env, source, words, options),
-        lambda: _lean_reading(env, source, words, options),
-        lambda python, lean: shadow_record(env, source, words, python, lean))
+    selected = dispatch._overrides().get('english.admission')
+    if selected is not None and selected != 'lean':
+        raise CheckerUnavailable(f'CheckerUnavailable: english.admission is Lean-authoritative; '
+                                 f'{selected!r} cannot decide it')
+    for observer in dispatch.observers:
+        observer('english.admission', 'lean')
+    try:
+        reading = _lean_reading(env, source, words, options)
+    except (VEError, CheckerUnavailable) as lean_error:
+        if os.environ.get('VE_ENGLISH_COMPARATOR') == '1':
+            try: python = _python_reading(env, source, words, options)
+            except Exception as exc: python = exc
+            try: dispatch._append(shadow_record(env, source, words, python, lean_error))
+            except Exception: pass
+        raise
+    if os.environ.get('VE_ENGLISH_COMPARATOR') == '1':
+        try: python = _python_reading(env, source, words, options)
+        except Exception as exc: python = exc
+        try: dispatch._append(shadow_record(env, source, words, python, reading))
+        except Exception: pass
     if _check:
         reading.check_conclusions()
     result = reading.document, source, reading.words, reading.conclusions
@@ -1833,7 +1835,7 @@ def _check_conclusions(env, document, conclusions):
                               + result.status)
 
 
-@semantic_entry("english.admission")
+@semantic_entry("english.admission", engine="lean")
 def parse_english_with_metadata(env, source, **options):
     document, source, words, conclusions = _parse_english_document(env, source, **options)
     try:
@@ -1841,7 +1843,9 @@ def parse_english_with_metadata(env, source, **options):
         if conclusions:
             english = source
         if english != source:
-            if _parse_english_document(env, english, **options)[0] != document:
+            from .backends.english_lean import check as check_rendering
+            if check_rendering(env, words, options, [ast._to_data(f) for f in document.formulas],
+                               [i in conclusions for i in range(len(document.formulas))], [english]) is None:
                 english = source
     except (VEError, ValueError):
         # The input passed the complete audit. Never display an unchecked rewrite.
@@ -1851,12 +1855,12 @@ def parse_english_with_metadata(env, source, **options):
                               **words.provenance, conclusions=conclusions)
 
 
-@semantic_entry("english.admission")
+@semantic_entry("english.admission", engine="lean")
 def parse_english(env, source, **options):
     return _parse_english_document(env, source, **options)[0]
 
 
-@semantic_entry("english.admission")
+@semantic_entry("english.admission", engine="lean")
 def parse_english_argument(env, source, **options):
     """Build checked claim-graph edges for marked conclusions.
 
@@ -1869,27 +1873,23 @@ def parse_english_argument(env, source, **options):
     from .printer import print_formula
     document, _, _, conclusions, reading = _parse_english_document(
         env, source, _with_reading=True, _check=False, **options)
-    marked = set(conclusions)
+    # Lean's obligations name each marked conclusion's premises (spec 2.8, 2.9: owned by Lean); the relay
+    # validated one obligation per conclusion, so Python computes no premise.
     obligations = {item['conclusion']: item for item in reading.obligations}
-    if reading.lean is not None and sorted(obligations) != list(conclusions):
+    if reading.lean is None or sorted(obligations) != list(conclusions):
         raise CheckerUnavailable('CheckerUnavailable: the marked conclusions have no Lean obligations')
     claims = tuple(Claim.create(env, f's{i + 1}', print_formula(env, formula) + '.\n',
                                 candidate_ast=formula)
                    for i, formula in enumerate(document.formulas))
-    edges = tuple(Deduction(f'd{i + 1}',
-                            tuple(f's{j + 1}' for j in (obligations[i]['premises'] if reading.lean is not None
-                                                         else range(i)) if j not in marked), f's{i + 1}')
+    edges = tuple(Deduction(f'd{i + 1}', tuple(f's{j + 1}' for j in obligations[i]['premises']), f's{i + 1}')
                   for i in conclusions)
     graph = ArgumentGraph(env, claims, edges, claims[-1].name)
     checked_edges = []
     for i, edge in zip(conclusions, edges):
-        premise_indexes = obligations[i]['premises'] if reading.lean is not None else range(i)
-        premises = tuple(document.formulas[j] for j in premise_indexes if j not in marked)
+        premises = tuple(document.formulas[j] for j in obligations[i]['premises'])
         proof = prove_entailment(env, premises, document.formulas[i])
         if proof.status != 'Found':
-            text = (obligations[i]['unproved'].replace('{status}', proof.status) if reading.lean is not None
-                    else 'The marked conclusion has no checked derivation from earlier premises.')
-            raise SyntaxError(text)
+            raise SyntaxError(obligations[i]['unproved'].replace('{status}', proof.status))
         checked_edges.append(Deduction(edge.name, edge.premises, edge.conclusion,
                                        ({'edge_id': deduction_identity(graph, edge),
                                          'direction': 'follows', 'proof': proof.certificate},)))
@@ -1897,8 +1897,6 @@ def parse_english_argument(env, source, **options):
     result = check_argument(graph, search=False).require_available()
     if any('follows' not in result.findings.get(edge.name, ()) for edge in checked_edges):
         # The prover found a certificate the claim graph does not replay: a checker fault, not the text's.
-        if reading.lean is None:
-            raise SyntaxError('The marked conclusion certificate did not replay in the claim graph.')
         raise CheckerUnavailable('CheckerUnavailable: the marked conclusion certificate did not replay in the '
                                  'claim graph')
     return graph

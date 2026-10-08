@@ -10,7 +10,18 @@ maps each recorded difference to a row here (`DISPOSITIONS`) and counts what no 
 **Signatures.** GE2 asks the DRI to sign each `verdict` and `availability` row. They are recorded here, unsigned:
 owner the English E2 DRI (HUMAN, deferred). One `verdict` row is listed (V1).
 
-## E2.5 authority ruling at this head
+## E2.6 authority ruling at this head
+
+**LEAN.** `english.admission` is Lean-authoritative ([E2.6.md](E2.6.md)). The readability replay of the frozen
+evaluation at this head has no regression against E2.5's saved base: the six messages that were weaker keep every
+name, location and suggestion (Lean's diagnosis, spec 4.5), and all 30 reading items have their base verdict and
+message, the five that were unavailable answered by Lean
+([readability-changes.md](evidence/e2.6/readability-changes.md)). The corpus A/B has no unexplained verdict row and
+no availability row ([ab-dispositions.md](evidence/e2.6/ab-dispositions.md)). Two quantity verdict rows lose a
+`path` (the lf-12 class, outside English) and 66 main-side quantity wording and order rows lose a name; both are
+listed there for the DRI.
+
+## E2.5 authority ruling (superseded by E2.6)
 
 **SHADOW.** The saved readability replay found six changed writing messages across 36 attempts at `9cc8418d`.
 The changed messages lose a name or a suggestion from the base text. Five of 30 reading items, R23–R25 and
@@ -61,6 +72,8 @@ V2, V3 and A5 remain unsigned. Together with the readability failure, they precl
 | W6 | `Phrase '…' extends existing wording …` from the hand parser (a longer phrase beginning with a declared wording) | `Sentence i has no reading with the current vocabulary.` with the nearest-wording help naming the declared wording; `ve propose` keeps Python's message |
 | W7 | `The marked conclusion certificate did not replay in the claim graph.` (`SyntaxError`) | `CheckerUnavailable`: a prover certificate the claim graph does not replay is a checker fault, not the text's |
 | W8 | a lexical refusal's span from Python's parser position | the offending character's span in code points (`BadCharacter`, `OpenQuote`, `BadNumeral`, `BadSpacing`), the whole source for a refusal naming no sentence, the named sentence's span otherwise (spec 4.4) |
+| W12 | Python's hand-parser texts for a sentence without a reading (`Expected ', then ' here. Use the English paraphrase as a writing example.`, `Unknown English phrase 't'. Nearest declared wordings: …`, `Phrase '…' extends existing wording …`), at the hand parser's position | E2.6, spec 4.5: `Sentence i has no reading with the current vocabulary.` followed by Lean's diagnosis, which names what the hand parser named, at a span containing its position; where Python quoted a one-letter fragment of a word (`'t'` of `that`), Lean quotes the word. Checked on the frozen readability attempts and the propose fixtures (`tests/test_english_e26_diagnosis.py`) and on 230 probe cells (`tests/test_english_e26_ab.py`) |
+| W13 | a source over 65,536 bytes: `ResourceLimit` `English source exceeds 65536 bytes`, no span | `ResourceLimit` `The text is longer than 65,536 bytes.` (spec 4.2) with the span of the whole source (spec 4.4); the A/B's `V-english-source-limit-span`, 230 probe cells |
 | W9 | the base Lean conformance adapter reports the bare parser or budget diagnostic (`document must contain at least one statement`, for example) | the head prefixes it with its public class (`SyntaxError: document must contain at least one statement`); 48 conformance A/B records, 15 exact text pairs in [ab-conformance-delta.json](evidence/ab-conformance-delta.json), with unchanged verdicts |
 
 ## order
@@ -81,7 +94,9 @@ V2, V3 and A5 remain unsigned. Together with the readability failure, they precl
 
 | Row | Base (Python) | Head (Lean) | Evidence |
 |---|---|---|---|
-| A1 | an environment where one predicate's declared wording has the key of another symbol's selected wording (two predicates declaring one wording; a declared wording equal to a `risk@0` form; a sort noun equal to the severity noun): Python's producer quotes the declared one and admits texts | V4 compares every selection with every symbol's *declared* wording (S3's `Lexicon.valid`, D2: unchanged), so the request is `invalidGrammar lexicon: V4 …` (`CheckerUnavailable`) | the parity mutation set (the report's port-parity count of V1 to V5 refusals); `tests/test_risk_english.py::test_declared_wording_that_reuses_a_risk_form_keeps_its_identifier` |
+| A6 | a declared wording with an ASCII apostrophe (`a system prompt's existence-or-content`, the constitution pilots): Python read texts that use it | E2.6: the lexer reads the apostrophe as a word character, so the wording lexes and passes V3 and is read (before, V3 refused the whole lexicon: `CheckerUnavailable`, four pilots at main). Fixed: `tests/test_english_e26_boundary.py` |
+| A7 | Python's generated soft frame (`SoftEnvironment(prime, generated=True)`, with `soft__` decision predicates): Python read its English | E2.6: the relay sends `generated: true` and the boundary reads the frame as the soft route reads a generated frame (before: `InvalidInput: invalid soft name`, fourteen pilots). Fixed: `tests/test_english_e26_boundary.py` |
+| A1 | an environment where one predicate's declared wording has the key of another symbol's selected wording (two predicates declaring one wording; a declared wording equal to a `risk@0` form; a sort noun equal to the severity noun): Python's producer quotes the declared one and admits texts | V4 compares every selection with every symbol's *declared* wording (S3's `Lexicon.valid`, D2), so the request is `invalidGrammar lexicon: V4 …` (`CheckerUnavailable`). E2.6: two *modal* predicates may share their modal form, which no producer can avoid (spec 15); a sentence that uses it is `Ambiguous`, as the hand parser refuses it. The other collisions stand (no corpus text reaches them) | the parity mutation set (the report's port-parity count of V1 to V5 refusals); `tests/test_risk_english.py::test_declared_wording_that_reuses_a_risk_form_keeps_its_identifier` |
 | A2 | a `risk@0` severity class whose name is a reserved word (`every`) is a generated constant Python admits | Lean's typing view declares the classes as constants, and the frozen route decoder refuses a reserved name: the environment is refused at the boundary | `tests/test_risk_english.py::test_class_names_take_the_reserved_word_check` |
 | A3 | texts that Python's 30 s Earley wall-clock limit refused | Lean decides them within its work budget | the evidence's excluded count (none in this run) |
 | A4 | statement-layer conclusions over a `rights@0` frame or generated decision atoms read by Python | unchanged: `S2Wording.conclusion` (through `canonical_sentence` with `statement_layer`) stays on Python's statement reader (`english.statement`, until E3), since those atoms are outside the E2 reader | `docs/lean-first/e2/LEDGER.md` |

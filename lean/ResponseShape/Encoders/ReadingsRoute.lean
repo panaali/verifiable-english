@@ -160,8 +160,9 @@ theorem choice_fits (lower : List String → Json → Json) (id : String) (b : W
 
 theorem elaborateND_fits (id : String) (r : Wire.AdmittedND) :
     OkFits req (skel% "readings-route.json#/$defs/elaborate") (runElaborateND id r) := by
-  unfold runElaborateND
+  unfold runElaborateND runElaborateNDWith
   okfits
+  simp only [List.append_nil]
   exact elaborateFields_fits _ _ _ _
 
 theorem choiceND_fits (id : String) (r : Wire.AdmittedND) (j : Json) :
@@ -181,6 +182,22 @@ theorem filled_fits (r : Wire.AdmittedND) :
   unfold Wire.filledJson
   okfits
   fits
+
+theorem elaborateNDFilled_fits (id : String) (f : Wire.AdmittedNDFull) :
+    OkFits req (skel% "readings-route.json#/$defs/elaborate") (runElaborateNDFilled id f) := by
+  unfold runElaborateNDFilled runElaborateNDWith
+  okfits
+  rename_i extra hextra
+  cases hf : Wire.filledJson f.r with
+  | error e => simp only [hf, bind, Except.bind] at hextra; cases hextra
+  | ok fl =>
+    simp only [hf, bind, Except.bind, pure, Except.pure, Except.ok.injEq] at hextra
+    subst hextra
+    simp only [okWith, VE.Route.Wire.ok, elaborateFields]
+    split <;> (try simp only [choicesJson]) <;> (try split) <;>
+      simp only [List.cons_append, List.nil_append, vocabularyJson, slotJson, sizesJson]
+    all_goals fits
+    all_goals exact filled_fits _ _ hf
 
 theorem validateND_fits (id : String) (f : Wire.AdmittedNDFull) :
     OkFits req (skel% "readings-route.json#/$defs/validate") (runValidateND id f) := by
@@ -235,7 +252,7 @@ theorem runS2ND_fits (lower : List String → Json → Json) (id kind : String) 
     | skip
   all_goals (try kind_norm)
   all_goals first
-    | (intro v hv; fits_from elaborateND_fits _ _ v hv)
+    | (intro v hv; fits_from elaborateNDFilled_fits _ _ v hv)
     | (intro v hv; fits_from choiceND_fits _ _ _ v hv)
     | (intro v hv; fits_from deadAnswer_fits _ _ _ v hv)
 
@@ -255,7 +272,7 @@ theorem elaborateOne_fits (j : Json) (id : String) (environment document : Json)
   all_goals okfits
   all_goals first
     | (intro v hv; fits_from elaborate_fits _ _ v hv)
-    | (intro v hv; fits_from elaborateND_fits _ _ v hv)
+    | (intro v hv; fits_from elaborateNDFilled_fits _ _ v hv)
     | exact elaborate_fits _ _
     | exact elaborateND_fits _ _
 
@@ -338,7 +355,7 @@ theorem runAdmitted_fits (j : Json) (id kind : String) (ready : ComponentAdmissi
     | fits_from validate_fits _ _ _ ‹_›
     | (intro v hv; fits_from validateND_fits _ _ v hv)
     | (intro v hv; fits_from separateND_fits _ _ _ v hv)
-    | (intro v hv; fits_from elaborateND_fits _ _ v hv)
+    | (intro v hv; fits_from elaborateNDFilled_fits _ _ v hv)
     | (intro v hv; fits_from choiceND_fits _ _ _ v hv)
     | (intro v hv; fits_from deadAnswer_fits _ _ _ v hv)
     | (simp only [VE.Route.Wire.ok]; fits using pair_fits)
@@ -364,7 +381,7 @@ theorem runAdmitted_elaborate_fits (j : Json) (id : String) (ready : ComponentAd
   cases ready with
   | s1 _ => simp [runAdmitted, OkFits, OkP]
   | s2 b => simpa [runAdmitted, runS2] using elaborate_fits (req := j) id b
-  | nd f => simpa [runAdmitted] using elaborateND_fits (req := j) id f.r
+  | nd f => simpa [runAdmitted] using elaborateNDFilled_fits (req := j) id f
 
 theorem admittedComponentRows (j : Json) (id kind : String) (parts : List (String × ComponentAdmission))
     (hv : kind = "readings-validate" ∨ kind = "readings-elaborate") :
