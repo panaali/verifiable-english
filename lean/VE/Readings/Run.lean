@@ -316,29 +316,29 @@ def validateResult (a : Admitted) : Except String (List (String × Json)) := val
 
 /-! ## Under the unspecified completion (readings-defaults.md 3, 4.2; plan RD-2a) -/
 
-/-- The facts of a pair read under the completion: `separated` is `separates` on the filled document (the hypothesis
-    of `readings_wire_nd_separate_sound`), and the witness is admissible only when its `Fill_T` holds on the base
-    (4.2; else `distinguishing model violates a generated premise`). -/
-def ndPairFacts (N : NDoc) (f : PairFacts) : PairFacts :=
-  { f with separated := separates (fillDoc N) f.replay.set f.replay.witness f.replay.other f.replay.σ,
-           witnessValid := f.witnessValid && fillHolds N f.replay.set f.replay.witness f.replay.σ.base }
+/-- The facts of a pair read under the completion: the witness is admissible only when its `Fill_T` holds on the base
+    (4.2; else `distinguishing model violates a generated premise`), its document read from the request's table
+    (`fillHoldsOf_eq`). `separated` is the scan's on the filled document, which is `separates (fillDoc N)`
+    (`separates_filled`), the hypothesis of `readings_wire_nd_separate_sound`. -/
+def ndPairFacts (f : AdmittedNDFull) (p : PairFacts) : PairFacts :=
+  { p with witnessValid := p.witnessValid &&
+      fillHoldsOf f.r.N (f.r.b.a.side p.replay.set p.replay.witness).1 p.replay.σ.base }
 
 /-- `readings-validate` under the completion: S1's rows on the filled document, then `fill_premises` per reading and
     `filled` once (3). -/
 def runValidateND (id : String) (j : Json) : Except String Json := do
-  let r ← admitND (← j.getObjVal? "environment") (← j.getObjVal? "document")
-  let fa ← filledAdmitted r
-  let rows ← validateResultWith (ndPairFacts r.N) fa.a
-  pure (VE.Route.Wire.ok id (rows ++ [("fill_premises", fillPremisesJson r.N), ("filled", ← filledJson r)]))
+  let f ← admitNDFullJ (← j.getObjVal? "environment") (← j.getObjVal? "document")
+  let rows ← validateResultWith (ndPairFacts f) f.fa.a
+  pure (VE.Route.Wire.ok id (rows ++ [("fill_premises", fillPremisesJson f.r.N f.r.b.a.side),
+    ("filled", ← filledJson f.r)]))
 
 /-- `readings-separate` under the completion: S1's pair on the filled document (`replaySeparateU`'s replay). -/
 def runSeparateND (id : String) (j : Json) : Except String Json := do
-  let r ← admitND (← j.getObjVal? "environment") (← j.getObjVal? "document")
-  let fa ← filledAdmitted r
+  let f ← admitNDFullJ (← j.getObjVal? "environment") (← j.getObjVal? "document")
   let s ← stringField j "set"
   let sid ← stringField j "situation"
-  let f ← pairFactsIn fa.a (sideIn fa.a s) s sid (← stringField j "other")
-  pure (VE.Route.Wire.ok id [("set", .str s), ("pair", pairJson (ndPairFacts r.N f) sid)])
+  let p ← pairFactsIn f.fa.a (sideIn f.fa.a s) s sid (← stringField j "other")
+  pure (VE.Route.Wire.ok id [("set", .str s), ("pair", pairJson (ndPairFacts f p) sid)])
 
 /-- The S2a kinds under the completion: elaborate and choice as `UnspecifiedWire.lean` answers them, dead as today
     (it reads no rule), and the superposed kinds refused until RD-6. A document of such an environment without a
@@ -346,11 +346,11 @@ def runSeparateND (id : String) (j : Json) : Except String Json := do
 def runS2ND (lower : List String → Json → Json) (id kind : String) (j : Json) : Except String Json := do
   let b ← admitS2 (← j.getObjVal? "environment") (← j.getObjVal? "document")
   if !underCompletion b.a.re b.D then return ← runS2 lower id kind j
-  let r ← admitNDOf b
-  if kind == "readings-elaborate" then return ← runElaborateND id r
-  if kind == "readings-choice" then return ← runChoiceND id r j
-  if kind == "readings-dead" then return ← deadAnswer id r.N.D j
-  throw (completionRefusal r.N.D)
+  let f ← admitNDFull b
+  if kind == "readings-elaborate" then return ← runElaborateND id f.r
+  if kind == "readings-choice" then return ← runChoiceND id f.r j
+  if kind == "readings-dead" then return ← deadAnswer id f.r.N.D j
+  throw (completionRefusal f.r.N.D)
 
 /-- The case's environment is on the norms chain under `norm-defaults@0` (1.1): its readings kinds may be under the
     completion, which admission decides. -/

@@ -5708,6 +5708,7 @@
     "VE.Readings.Wire.active",
     "VE.Readings.Wire.activeOf",
     "VE.Readings.Wire.admissionText",
+    "VE.Readings.Wire.admitDecoded",
     "VE.Readings.Wire.admitReadings",
     "VE.Readings.Wire.authorVocabulary",
     "VE.Readings.Wire.chainTextSpec",
@@ -9323,13 +9324,16 @@
   "VE/Readings/UnspecifiedWire.lean": {
    "C": [
     "VE.Readings.Wire.AdmittedND",
+    "VE.Readings.Wire.AdmittedNDFull",
     "VE.Readings.Wire.ChoiceReplayU",
     "VE.Readings.Wire.FilledAdmitted",
     "VE.Readings.Wire.SeparateReplayU",
     "VE.Readings.Wire.admitND",
+    "VE.Readings.Wire.admitNDFull",
+    "VE.Readings.Wire.admitNDFullJ",
     "VE.Readings.Wire.admitNDOf",
     "VE.Readings.Wire.choiceLayered",
-    "VE.Readings.Wire.filledAdmitted",
+    "VE.Readings.Wire.fillHoldsOf",
     "VE.Readings.Wire.filledEnvironment",
     "VE.Readings.Wire.filledRV",
     "VE.Readings.Wire.ndRest",
@@ -9345,6 +9349,7 @@
     "VE.Readings.Wire.ndChoiceText",
     "VE.Readings.Wire.ndDocText",
     "VE.Readings.Wire.ndText",
+    "VE.Readings.Wire.ndTextWith",
     "VE.Readings.Wire.reservedUnsaid",
     "VE.Readings.Wire.setDeclared"
    ],

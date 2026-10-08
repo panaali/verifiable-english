@@ -13906,6 +13906,11 @@ theorem VE.Readings.Wire.admissionText_of_stage
       VE.Readings.Wire.candidateStage D = Except.ok t → VE.Readings.Wire.admissionText re D = Option.none
   -- uses VE.Formula@VE.Syntax VE.Readings.Doc@VE.Readings.Doc VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Readings.Wire.admissionText@VE.Readings.Wire VE.Readings.Wire.candidateStage@VE.Readings.Wire VE.Readings.Wire.frontText@VE.Readings.Wire VE.Rights.RightsDoc@VE.Rights.Tree
   -- expr 1350943602
+theorem VE.Readings.Wire.admitDecoded_ok
+  ∀ {re : VE.Readings.Wire.ReadingsEnvironment} {doc : VE.Readings.Wire.Decoded2} {a : VE.Readings.Wire.Admitted},
+    VE.Readings.Wire.admitDecoded re doc = Except.ok a → a.re = re ∧ a.doc = doc
+  -- uses VE.Readings.Wire.Admitted.doc@VE.Readings.Wire VE.Readings.Wire.Admitted.re@VE.Readings.Wire VE.Readings.Wire.Admitted@VE.Readings.Wire VE.Readings.Wire.Decoded2@VE.Readings.Wire VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Readings.Wire.admitDecoded@VE.Readings.Wire
+  -- expr 1046845786
 theorem VE.Readings.Wire.admitReadings_eq
   ∀ (environment document : Lean.Json),
     VE.Readings.Wire.admitReadings environment document = VE.Readings.Wire.admitReadingsSpec environment document
@@ -13971,6 +13976,12 @@ theorem VE.Readings.Wire.choiceU_E
     (VE.Readings.choiceU r.N c).D.E = r.b.a.re.se.ne.rv.environment
   -- uses VE.Environment@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.Norms.Doc.E@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Readings.Choice@VE.Readings.Choice VE.Readings.Wire.Admitted.re@VE.Readings.Wire VE.Readings.Wire.Admitted2.a@VE.Readings.SupWire VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.AdmittedND.b@VE.Readings.UnspecifiedWire VE.Readings.Wire.AdmittedND@VE.Readings.UnspecifiedWire VE.Readings.Wire.ReadingsEnvironment.se@VE.Readings.Wire VE.Readings.choiceU@VE.Readings.Unspecified VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.SoftNorms.Wire.SoftEnvironment.ne@VE.SoftNorms.Wire
   -- expr 1035165244
+theorem VE.Readings.Wire.fillHoldsOf_eq
+  ∀ (f : VE.Readings.Wire.AdmittedNDFull) {α : Type u} [inst : DecidableEq α] (s : String) (i : Nat)
+    (M : VE.FiniteModel α),
+    VE.Readings.Wire.fillHoldsOf f.r.N (f.r.b.a.side s i).fst M = VE.Readings.fillHolds f.r.N s i M
+  -- uses VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.Readings.Wire.Admitted.side@VE.Readings.Wire VE.Readings.Wire.Admitted2.a@VE.Readings.SupWire VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.AdmittedND.b@VE.Readings.UnspecifiedWire VE.Readings.Wire.AdmittedNDFull.r@VE.Readings.UnspecifiedWire VE.Readings.Wire.AdmittedNDFull@VE.Readings.UnspecifiedWire VE.Readings.Wire.fillHoldsOf@VE.Readings.UnspecifiedWire VE.Readings.fillHolds@VE.Readings.Unspecified VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 4175915485
 theorem VE.Readings.Wire.fillNamesFree_of_reservedUnsaid
   ∀ (N : VE.Readings.NDoc), VE.Readings.Wire.reservedUnsaid N = Option.none → VE.Readings.fillNamesFree N = Bool.true
   -- uses VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.reservedUnsaid@VE.Readings.UnspecifiedWire VE.Readings.fillNamesFree@VE.Readings.Unspecified
@@ -14034,11 +14045,30 @@ theorem VE.Readings.Wire.ndRest_of_ndText
       VE.Readings.normsShaped N.D = Bool.true → VE.Readings.Wire.ndRest N = Bool.true
   -- uses VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Readings.Wire.ndRest@VE.Readings.UnspecifiedWire VE.Readings.Wire.ndText@VE.Readings.UnspecifiedWire VE.Readings.normsShaped@VE.Readings.Unspecified
   -- expr 3089912444
+theorem VE.Readings.Wire.ndTextWith_eq
+  ∀ {re : VE.Readings.Wire.ReadingsEnvironment} {N : VE.Readings.NDoc}
+    {side : String → Nat → VE.Rights.RightsDoc × List VE.Formula},
+    (∀ (s : String) (i : Nat), side s i = VE.Readings.one N.D s i) →
+      VE.Readings.Wire.ndTextWith re N side = VE.Readings.Wire.ndText re N
+  -- uses VE.Formula@VE.Syntax VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Readings.Wire.ndText@VE.Readings.UnspecifiedWire VE.Readings.Wire.ndTextWith@VE.Readings.UnspecifiedWire VE.Readings.one@VE.Readings.Doc VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 3752454394
 theorem VE.Readings.Wire.oneOf_eq
   ∀ (D : VE.Readings.Doc) (s : String) (i : Nat),
     VE.Readings.Wire.oneOf D (VE.Readings.Wire.onesOf D) s i = VE.Readings.one D s i
   -- uses VE.Formula@VE.Syntax VE.Readings.Doc@VE.Readings.Doc VE.Readings.Wire.oneOf@VE.Readings.Wire VE.Readings.Wire.onesOf@VE.Readings.Wire VE.Readings.one@VE.Readings.Doc VE.Rights.RightsDoc@VE.Rights.Tree
   -- expr 2660760077
+theorem VE.Readings.Wire.one_congr
+  ∀ {D D' : VE.Readings.Doc},
+    D.chain = D'.chain →
+      D.frame = D'.frame → D.items = D'.items → ∀ (s : String) (i : Nat), VE.Readings.one D s i = VE.Readings.one D' s i
+  -- uses VE.Formula@VE.Syntax VE.Readings.Chain@VE.Readings.Doc VE.Readings.Doc.chain@VE.Readings.Doc VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.Doc.items@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Item@VE.Readings.Doc VE.Readings.one@VE.Readings.Doc VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 4233878142
+theorem VE.Readings.Wire.one_links
+  ∀ (D : VE.Readings.Doc) (cs : List VE.Readings.Coupling) (ns : List VE.Readings.Narrowing) (s : String) (i : Nat),
+    VE.Readings.one { chain := D.chain, frame := D.frame, items := D.items, couplings := cs, narrowings := ns } s i =
+      VE.Readings.one D s i
+  -- uses VE.Formula@VE.Syntax VE.Readings.Coupling@VE.Readings.Doc VE.Readings.Doc.chain@VE.Readings.Doc VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.Doc.items@VE.Readings.Doc VE.Readings.Doc.mk@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Narrowing@VE.Readings.Doc VE.Readings.one@VE.Readings.Doc VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 2082171034
 theorem VE.Readings.Wire.onesOf_active
   ∀ (D : VE.Readings.Doc) (e : (String × Nat) × VE.Rights.RightsDoc × List VE.Formula),
     e ∈ VE.Readings.Wire.onesOf D →
@@ -14058,6 +14088,12 @@ theorem VE.Readings.Wire.option_or_none
   ∀ {α : Type} {a b : Option α}, a.or b = Option.none → a = Option.none ∧ b = Option.none
   -- uses
   -- expr 511594929
+theorem VE.Readings.Wire.owned_links
+  ∀ (D : VE.Readings.Doc) (cs : List VE.Readings.Coupling) (ns : List VE.Readings.Narrowing) (s : String) (i : Nat),
+    VE.Readings.owned { chain := D.chain, frame := D.frame, items := D.items, couplings := cs, narrowings := ns } s i =
+      VE.Readings.owned D s i
+  -- uses VE.Readings.Coupling@VE.Readings.Doc VE.Readings.Doc.chain@VE.Readings.Doc VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.Doc.items@VE.Readings.Doc VE.Readings.Doc.mk@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.GenKey@VE.Readings.Separate VE.Readings.Narrowing@VE.Readings.Doc VE.Readings.owned@VE.Readings.Separate
+  -- expr 289265415
 theorem VE.Readings.Wire.readings_wire_all_sound
   ∀ (j : Lean.Json) (r : VE.Readings.Wire.CertificateReplay),
     VE.Readings.Wire.replayCertificate j = Except.ok r →
@@ -14160,6 +14196,20 @@ theorem VE.Readings.Wire.replayPair_D
     {sj : VE.Readings.Wire.SituationJ}, VE.Readings.Wire.replayPair a s sid other = Except.ok (x, sj) → x.D = a.D
   -- uses VE.Readings.Doc@VE.Readings.Doc VE.Readings.Wire.Admitted.D@VE.Readings.Wire VE.Readings.Wire.Admitted@VE.Readings.Wire VE.Readings.Wire.SeparateReplay.D@VE.Readings.Wire VE.Readings.Wire.SeparateReplay@VE.Readings.Wire VE.Readings.Wire.SituationJ@VE.Readings.Wire VE.Readings.Wire.replayPair@VE.Readings.Wire
   -- expr 3380054106
+theorem VE.Readings.Wire.separates_filled
+  ∀ {r : VE.Readings.Wire.AdmittedND} (fa : VE.Readings.Wire.FilledAdmitted r) {α : Type u} [inst : DecidableEq α]
+    (s : String) (i j : Nat) (σ : VE.Readings.Situation α),
+    VE.Readings.separates fa.a.D s i j σ = VE.Readings.separates (VE.Readings.fillDoc r.N) s i j σ
+  -- uses VE.Readings.Situation@VE.Readings.Separate VE.Readings.Wire.Admitted.D@VE.Readings.Wire VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.AdmittedND@VE.Readings.UnspecifiedWire VE.Readings.Wire.FilledAdmitted.a@VE.Readings.UnspecifiedWire VE.Readings.Wire.FilledAdmitted@VE.Readings.UnspecifiedWire VE.Readings.fillDoc@VE.Readings.Unspecified VE.Readings.separates@VE.Readings.Separate
+  -- expr 523068685
+theorem VE.Readings.Wire.separates_links
+  ∀ {α : Type u} [inst : DecidableEq α] (D : VE.Readings.Doc) (cs : List VE.Readings.Coupling)
+    (ns : List VE.Readings.Narrowing) (s : String) (i j : Nat) (σ : VE.Readings.Situation α),
+    VE.Readings.separates { chain := D.chain, frame := D.frame, items := D.items, couplings := cs, narrowings := ns } s i
+        j σ =
+      VE.Readings.separates D s i j σ
+  -- uses VE.Readings.Coupling@VE.Readings.Doc VE.Readings.Doc.chain@VE.Readings.Doc VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.Doc.items@VE.Readings.Doc VE.Readings.Doc.mk@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Narrowing@VE.Readings.Doc VE.Readings.Situation@VE.Readings.Separate VE.Readings.separates@VE.Readings.Separate
+  -- expr 3878920878
 theorem VE.Readings.Wire.sideWF_of_chainText
   ∀ (D : VE.Readings.Doc) (X : VE.Rights.RightsDoc × List VE.Formula),
     VE.Readings.Wire.chainText D.chain X = Option.none → VE.Readings.sideWF D X = Bool.true

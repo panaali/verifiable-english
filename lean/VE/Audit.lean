@@ -4286,6 +4286,14 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.Wire.choiceU_E
 #print axioms VE.Readings.Wire.readings_wire_nd_choice_conflict
 #print axioms VE.Readings.Wire.readings_wire_nd_choice_entails
+#print axioms VE.Readings.Wire.admitDecoded_ok
+#print axioms VE.Readings.Wire.ndTextWith_eq
+#print axioms VE.Readings.Wire.one_links
+#print axioms VE.Readings.Wire.one_congr
+#print axioms VE.Readings.Wire.owned_links
+#print axioms VE.Readings.Wire.separates_links
+#print axioms VE.Readings.Wire.separates_filled
+#print axioms VE.Readings.Wire.fillHoldsOf_eq
 -- english-lean (docs/spec/english-lean.md 5.9): the grammar engine and the English instance.
 #print axioms VE.Grammar.yieldAll_nil
 #print axioms VE.Grammar.yieldAll_cons
