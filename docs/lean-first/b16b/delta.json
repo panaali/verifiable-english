@@ -1,0 +1,8557 @@
+{
+ "availability": [],
+ "order": [
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'c  onst'"
+    }
+   },
+   "case": "mutant/0",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'c  onst'"
+    }
+   },
+   "case": "mutant/0",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1024",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1024",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'unary’'"
+    }
+   },
+   "case": "mutant/1038",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'unary’'"
+    }
+   },
+   "case": "mutant/1038",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'p\\terson'"
+    }
+   },
+   "case": "mutant/1042",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: in_finance"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'p\\terson'"
+    }
+   },
+   "case": "mutant/1042",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: in_finance"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'eq\\x1c'"
+    }
+   },
+   "case": "mutant/1054",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'eq\\x1c'"
+    }
+   },
+   "case": "mutant/1054",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1056",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1056",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'x'"
+    }
+   },
+   "case": "mutant/1074",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'x'"
+    }
+   },
+   "case": "mutant/1074",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Unknown predicate 7"
+    }
+   },
+   "case": "mutant/1076",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "admission"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1134",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1134",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1150",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1150",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/12",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "admission"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['profile'], unknown=['profiles'])"
+    }
+   },
+   "case": "mutant/120",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "UnsupportedProfile",
+     "message": "UnsupportedProfile: Unsupported language"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['profile'], unknown=['profiles'])"
+    }
+   },
+   "case": "mutant/120",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "UnsupportedProfile",
+     "message": "UnsupportedProfile: Unsupported language"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1206",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1206",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['profile'], unknown=['profiles'])"
+    }
+   },
+   "case": "mutant/1222",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "UnsupportedProfile",
+     "message": "UnsupportedProfile: Unsupported language"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['profile'], unknown=['profiles'])"
+    }
+   },
+   "case": "mutant/1222",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "UnsupportedProfile",
+     "message": "UnsupportedProfile: Unsupported language"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'const\\r'"
+    }
+   },
+   "case": "mutant/1232",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'const\\r'"
+    }
+   },
+   "case": "mutant/1232",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared constant sort: True"
+    }
+   },
+   "case": "mutant/1238",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "String expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared constant sort: True"
+    }
+   },
+   "case": "mutant/1238",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "String expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1240",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1240",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1260",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1260",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1262",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1262",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'unary\\x1c'"
+    }
+   },
+   "case": "mutant/1272",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "admission"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1274",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1274",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['profile'], unknown=['profiles'])"
+    }
+   },
+   "case": "mutant/1286",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "UnsupportedProfile",
+     "message": "UnsupportedProfile: Unsupported language"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['profile'], unknown=['profiles'])"
+    }
+   },
+   "case": "mutant/1286",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "UnsupportedProfile",
+     "message": "UnsupportedProfile: Unsupported language"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: []"
+    }
+   },
+   "case": "mutant/1298",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "String expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: []"
+    }
+   },
+   "case": "mutant/1298",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "String expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1302",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1302",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'unary’'"
+    }
+   },
+   "case": "mutant/1318",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'unary’'"
+    }
+   },
+   "case": "mutant/1318",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Unknown constant 'x'"
+    }
+   },
+   "case": "mutant/1330",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "ill-typed or unbound conclusion"
+    }
+   },
+   "op": "document_check",
+   "owner": "admission"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'o\\tr'"
+    }
+   },
+   "case": "mutant/1332",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'o\\tr'"
+    }
+   },
+   "case": "mutant/1332",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1336",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1336",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'BINARY'"
+    }
+   },
+   "case": "mutant/1344",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'BINARY'"
+    }
+   },
+   "case": "mutant/1344",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'x'"
+    }
+   },
+   "case": "mutant/1372",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'x'"
+    }
+   },
+   "case": "mutant/1372",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'p  erson'"
+    }
+   },
+   "case": "mutant/1380",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: in_legal"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'p  erson'"
+    }
+   },
+   "case": "mutant/1380",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: in_legal"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared constant sort: 'i\\ttem'"
+    }
+   },
+   "case": "mutant/1402",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "unknown constant sort: approximate_claims"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared constant sort: 'i\\ttem'"
+    }
+   },
+   "case": "mutant/1402",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "unknown constant sort: approximate_claims"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1428",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1428",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1430",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1430",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'CONST'"
+    }
+   },
+   "case": "mutant/1432",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'CONST'"
+    }
+   },
+   "case": "mutant/1432",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'PERSON'"
+    }
+   },
+   "case": "mutant/1436",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: in_legal"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'PERSON'"
+    }
+   },
+   "case": "mutant/1436",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: in_legal"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/150",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/150",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared constant sort: 'person’'"
+    }
+   },
+   "case": "mutant/1508",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "unknown constant sort: alice"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared constant sort: 'person’'"
+    }
+   },
+   "case": "mutant/1508",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "unknown constant sort: alice"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'c  onst'"
+    }
+   },
+   "case": "mutant/1509",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'c  onst'"
+    }
+   },
+   "case": "mutant/1509",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'vex'"
+    }
+   },
+   "case": "mutant/1522",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'vex'"
+    }
+   },
+   "case": "mutant/1522",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared constant sort: 'person\\x1c'"
+    }
+   },
+   "case": "mutant/1539",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "unknown constant sort: alice"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared constant sort: 'person\\x1c'"
+    }
+   },
+   "case": "mutant/1539",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "unknown constant sort: alice"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'p  erson'"
+    }
+   },
+   "case": "mutant/1548",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: in_finance"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'p  erson'"
+    }
+   },
+   "case": "mutant/1548",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: in_finance"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnboundVariable",
+     "message": "UnboundVariable: Invalid variable index"
+    }
+   },
+   "case": "mutant/1551",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Natural number expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnboundVariable",
+     "message": "UnboundVariable: Invalid variable index"
+    }
+   },
+   "case": "mutant/1551",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Natural number expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/158",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/158",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'b  inary'"
+    }
+   },
+   "case": "mutant/1596",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'b  inary'"
+    }
+   },
+   "case": "mutant/1596",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'TOP'"
+    }
+   },
+   "case": "mutant/162",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'TOP'"
+    }
+   },
+   "case": "mutant/162",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'CONST'"
+    }
+   },
+   "case": "mutant/1633",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'CONST'"
+    }
+   },
+   "case": "mutant/1633",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: {}"
+    }
+   },
+   "case": "mutant/1635",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "String expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: {}"
+    }
+   },
+   "case": "mutant/1635",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "String expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'o  r'"
+    }
+   },
+   "case": "mutant/1669",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'o  r'"
+    }
+   },
+   "case": "mutant/1669",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'p\\terson'"
+    }
+   },
+   "case": "mutant/1670",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: in_legal"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'p\\terson'"
+    }
+   },
+   "case": "mutant/1670",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: in_legal"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'proof_label'"
+    }
+   },
+   "case": "mutant/168",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'proof_label'"
+    }
+   },
+   "case": "mutant/168",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'u\\xa0nary'"
+    }
+   },
+   "case": "mutant/1687",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'u\\xa0nary'"
+    }
+   },
+   "case": "mutant/1687",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'binary\\x1c'"
+    }
+   },
+   "case": "mutant/170",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'binary\\x1c'"
+    }
+   },
+   "case": "mutant/170",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1720",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1720",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'p\\xa0erson'"
+    }
+   },
+   "case": "mutant/1721",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: in_legal"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'p\\xa0erson'"
+    }
+   },
+   "case": "mutant/1721",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: in_legal"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1743",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/1743",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared constant sort: 'person\\x1c'"
+    }
+   },
+   "case": "mutant/1752",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "unknown constant sort: bob"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared constant sort: 'person\\x1c'"
+    }
+   },
+   "case": "mutant/1752",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "unknown constant sort: bob"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'v\\tar'"
+    }
+   },
+   "case": "mutant/1772",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'v\\tar'"
+    }
+   },
+   "case": "mutant/1772",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'ITEM'"
+    }
+   },
+   "case": "mutant/1779",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: developed_to_improve"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'ITEM'"
+    }
+   },
+   "case": "mutant/1779",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: developed_to_improve"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/182",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/182",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/184",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "array expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/184",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "array expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/2",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/2",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/212",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/212",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'c  onst'"
+    }
+   },
+   "case": "mutant/214",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'c  onst'"
+    }
+   },
+   "case": "mutant/214",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 7"
+    }
+   },
+   "case": "mutant/228",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "String expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 7"
+    }
+   },
+   "case": "mutant/228",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "String expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'person\\x1c'"
+    }
+   },
+   "case": "mutant/230",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: in_legal"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'person\\x1c'"
+    }
+   },
+   "case": "mutant/230",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: in_legal"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'eq\\r'"
+    }
+   },
+   "case": "mutant/242",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'eq\\r'"
+    }
+   },
+   "case": "mutant/242",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'unary’'"
+    }
+   },
+   "case": "mutant/268",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'unary’'"
+    }
+   },
+   "case": "mutant/268",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/28",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/28",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'c\\tonst'"
+    }
+   },
+   "case": "mutant/280",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'c\\tonst'"
+    }
+   },
+   "case": "mutant/280",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'bob'"
+    }
+   },
+   "case": "mutant/288",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'bob'"
+    }
+   },
+   "case": "mutant/288",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'UNARY'"
+    }
+   },
+   "case": "mutant/292",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "admission"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'alice'"
+    }
+   },
+   "case": "mutant/320",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed term"
+    }
+   },
+   "op": "document_check",
+   "owner": "admission"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'x'"
+    }
+   },
+   "case": "mutant/324",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: in_legal"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'x'"
+    }
+   },
+   "case": "mutant/324",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: in_legal"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/338",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/338",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/344",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "array expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/344",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "array expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'p\\xa0erson'"
+    }
+   },
+   "case": "mutant/350",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: in_legal"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'p\\xa0erson'"
+    }
+   },
+   "case": "mutant/350",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: in_legal"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'u\\xa0nary'"
+    }
+   },
+   "case": "mutant/368",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'u\\xa0nary'"
+    }
+   },
+   "case": "mutant/368",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/38",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/38",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/382",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/382",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: True"
+    }
+   },
+   "case": "mutant/404",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "String expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: True"
+    }
+   },
+   "case": "mutant/404",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "String expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/420",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/420",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/426",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/426",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared constant sort: 'person’'"
+    }
+   },
+   "case": "mutant/44",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "unknown constant sort: bob"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared constant sort: 'person’'"
+    }
+   },
+   "case": "mutant/44",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "unknown constant sort: bob"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/448",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/448",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'p\\terson'"
+    }
+   },
+   "case": "mutant/452",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: in_finance"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'p\\terson'"
+    }
+   },
+   "case": "mutant/452",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: in_finance"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'const’'"
+    }
+   },
+   "case": "mutant/472",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'const’'"
+    }
+   },
+   "case": "mutant/472",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/478",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "array expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/478",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "array expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'CONST'"
+    }
+   },
+   "case": "mutant/496",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'CONST'"
+    }
+   },
+   "case": "mutant/496",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/534",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "array expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/534",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "array expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'p  erson'"
+    }
+   },
+   "case": "mutant/538",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: senior"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'p  erson'"
+    }
+   },
+   "case": "mutant/538",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: senior"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'u\\tnary'"
+    }
+   },
+   "case": "mutant/544",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "admission"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/552",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/552",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: []"
+    }
+   },
+   "case": "mutant/558",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "String expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: []"
+    }
+   },
+   "case": "mutant/558",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "String expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'v\\tar'"
+    }
+   },
+   "case": "mutant/562",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'v\\tar'"
+    }
+   },
+   "case": "mutant/562",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'c\\xa0onst'"
+    }
+   },
+   "case": "mutant/572",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'c\\xa0onst'"
+    }
+   },
+   "case": "mutant/572",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnboundVariable",
+     "message": "UnboundVariable: Invalid variable index"
+    }
+   },
+   "case": "mutant/576",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Natural number expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnboundVariable",
+     "message": "UnboundVariable: Invalid variable index"
+    }
+   },
+   "case": "mutant/576",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Natural number expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/590",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/590",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'const'"
+    }
+   },
+   "case": "mutant/592",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'const'"
+    }
+   },
+   "case": "mutant/592",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/60",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/60",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: {}"
+    }
+   },
+   "case": "mutant/614",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "String expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: {}"
+    }
+   },
+   "case": "mutant/614",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "String expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: {}"
+    }
+   },
+   "case": "mutant/62",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "String expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: {}"
+    }
+   },
+   "case": "mutant/62",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "String expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/628",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/628",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'person’'"
+    }
+   },
+   "case": "mutant/642",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: senior"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'person’'"
+    }
+   },
+   "case": "mutant/642",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: senior"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/646",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/646",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared constant sort: '$\\xa0string'"
+    }
+   },
+   "case": "mutant/676",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "unknown constant sort: finance"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared constant sort: '$\\xa0string'"
+    }
+   },
+   "case": "mutant/676",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "unknown constant sort: finance"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'u  nary'"
+    }
+   },
+   "case": "mutant/678",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'u  nary'"
+    }
+   },
+   "case": "mutant/678",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Unknown predicate 7"
+    }
+   },
+   "case": "mutant/686",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "admission"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/690",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/690",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/696",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/696",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'x'"
+    }
+   },
+   "case": "mutant/698",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: in_legal"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'x'"
+    }
+   },
+   "case": "mutant/698",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: in_legal"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'u\\tnary'"
+    }
+   },
+   "case": "mutant/70",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'u\\tnary'"
+    }
+   },
+   "case": "mutant/70",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/702",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/702",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared constant sort: 'PERSON'"
+    }
+   },
+   "case": "mutant/712",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "unknown constant sort: bob"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared constant sort: 'PERSON'"
+    }
+   },
+   "case": "mutant/712",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "unknown constant sort: bob"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'VAR'"
+    }
+   },
+   "case": "mutant/716",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed term"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'VAR'"
+    }
+   },
+   "case": "mutant/716",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed term"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: True"
+    }
+   },
+   "case": "mutant/72",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "String expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: True"
+    }
+   },
+   "case": "mutant/72",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "String expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/728",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/728",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/738",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/738",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'p\\terson'"
+    }
+   },
+   "case": "mutant/754",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: senior"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 'p\\terson'"
+    }
+   },
+   "case": "mutant/754",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: senior"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/758",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/758",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'const'"
+    }
+   },
+   "case": "mutant/784",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'const'"
+    }
+   },
+   "case": "mutant/784",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'f\\xa0orall'"
+    }
+   },
+   "case": "mutant/786",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'f\\xa0orall'"
+    }
+   },
+   "case": "mutant/786",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared constant sort: 'p\\xa0erson'"
+    }
+   },
+   "case": "mutant/796",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "unknown constant sort: bob"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared constant sort: 'p\\xa0erson'"
+    }
+   },
+   "case": "mutant/796",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "unknown constant sort: bob"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/80",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/80",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'c\\tonst'"
+    }
+   },
+   "case": "mutant/816",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'c\\tonst'"
+    }
+   },
+   "case": "mutant/816",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'c\\tonst'"
+    }
+   },
+   "case": "mutant/868",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'c\\tonst'"
+    }
+   },
+   "case": "mutant/868",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnboundVariable",
+     "message": "UnboundVariable: Invalid variable index"
+    }
+   },
+   "case": "mutant/870",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Natural number expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnboundVariable",
+     "message": "UnboundVariable: Invalid variable index"
+    }
+   },
+   "case": "mutant/870",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Natural number expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: []"
+    }
+   },
+   "case": "mutant/878",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "String expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: []"
+    }
+   },
+   "case": "mutant/878",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "String expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'u\\xa0nary'"
+    }
+   },
+   "case": "mutant/936",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "admission"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'b\\xa0inary'"
+    }
+   },
+   "case": "mutant/944",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'b\\xa0inary'"
+    }
+   },
+   "case": "mutant/944",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'x'"
+    }
+   },
+   "case": "mutant/954",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'x'"
+    }
+   },
+   "case": "mutant/954",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'u  nary'"
+    }
+   },
+   "case": "mutant/956",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'u  nary'"
+    }
+   },
+   "case": "mutant/956",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'CONST'"
+    }
+   },
+   "case": "mutant/96",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed term"
+    }
+   },
+   "op": "document_check",
+   "owner": "admission"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/98",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/98",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/980",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "array expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "AST nodes must be nonempty tagged JSON arrays"
+    }
+   },
+   "case": "mutant/980",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "array expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'const'"
+    }
+   },
+   "case": "mutant/984",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'const'"
+    }
+   },
+   "case": "mutant/984",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "TypeMismatch",
+     "message": "TypeMismatch: Expected a variable or constant term"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 7"
+    }
+   },
+   "case": "mutant/996",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "String expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Undeclared predicate argument sort: 7"
+    }
+   },
+   "case": "mutant/996",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "String expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'e\\tq'"
+    }
+   },
+   "case": "mutant/998",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_check",
+   "owner": "formula"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "Unknown AST tag or incorrect arity: 'e\\tq'"
+    }
+   },
+   "case": "mutant/998",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid indexed formula"
+    }
+   },
+   "op": "document_render",
+   "owner": "formula"
+  }
+ ],
+ "unavailable": [
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261003T0600Z:usecases/claude-constitution-pilot/run-20261003T0600Z/readings/s1.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "both sides answer the same english.check CheckerUnavailable (the pilot's vocabulary is refused by the V3 lexicon check); no document wrapper decision is involved"
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261004T0600Z:usecases/claude-constitution-pilot/run-20261004T0600Z/readings/s1.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "both sides answer the same english.check CheckerUnavailable (the pilot's vocabulary is refused by the V3 lexicon check); no document wrapper decision is involved"
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261004T1800Z:usecases/claude-constitution-pilot/run-20261004T1800Z/readings/s1.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "both sides answer the same english.check CheckerUnavailable (the pilot's vocabulary is refused by the V3 lexicon check); no document wrapper decision is involved"
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/readings/s1.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "both sides answer the same english.check CheckerUnavailable (the pilot's vocabulary is refused by the V3 lexicon check); no document wrapper decision is involved"
+  }
+ ],
+ "verdict": [
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=[])",
+     "path": "/vocabulary/sorts/person"
+    }
+   },
+   "case": "mutant/1078",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [description], got []"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=[])",
+     "path": "/vocabulary/sorts/person"
+    }
+   },
+   "case": "mutant/1078",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [description], got []"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=[])",
+     "path": "/vocabulary/sorts/person"
+    }
+   },
+   "case": "mutant/1098",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [description], got []"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=[])",
+     "path": "/vocabulary/sorts/person"
+    }
+   },
+   "case": "mutant/1098",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [description], got []"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=[])",
+     "path": "/vocabulary/predicates/senior"
+    }
+   },
+   "case": "mutant/110",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [description]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=[])",
+     "path": "/vocabulary/predicates/senior"
+    }
+   },
+   "case": "mutant/110",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [description]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['constants'], unknown=['constants’'])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/1118",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: constants"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['constants'], unknown=['constants’'])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/1118",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: constants"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/constants/bob"
+    }
+   },
+   "case": "mutant/116",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/constants/bob"
+    }
+   },
+   "case": "mutant/116",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=[])",
+     "path": "/vocabulary/constants/legal"
+    }
+   },
+   "case": "mutant/1160",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [sort]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=[])",
+     "path": "/vocabulary/constants/legal"
+    }
+   },
+   "case": "mutant/1160",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [sort]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['body'], unknown=['b  ody'])",
+     "path": "/vocabulary/predicates/staff/defined"
+    }
+   },
+   "case": "mutant/1164",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, body], got [arguments, b  ody]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['body'], unknown=['b  ody'])",
+     "path": "/vocabulary/predicates/staff/defined"
+    }
+   },
+   "case": "mutant/1164",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, body], got [arguments, b  ody]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=['a\\trguments'])",
+     "path": "/vocabulary/predicates/formula_pinned"
+    }
+   },
+   "case": "mutant/1178",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description, verbalisation], got [a\trguments, description, verbalisation]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=['a\\trguments'])",
+     "path": "/vocabulary/predicates/formula_pinned"
+    }
+   },
+   "case": "mutant/1178",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description, verbalisation], got [a\trguments, description, verbalisation]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['descrİption'])",
+     "path": "/vocabulary/predicates/in_finance"
+    }
+   },
+   "case": "mutant/1182",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments, descrİption]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['descrİption'])",
+     "path": "/vocabulary/predicates/in_finance"
+    }
+   },
+   "case": "mutant/1182",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments, descrİption]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['description’'])",
+     "path": "/vocabulary/constants/bob"
+    }
+   },
+   "case": "mutant/1190",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [description’, sort]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['description’'])",
+     "path": "/vocabulary/constants/bob"
+    }
+   },
+   "case": "mutant/1190",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [description’, sort]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/predicates/senior"
+    }
+   },
+   "case": "mutant/1192",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/predicates/senior"
+    }
+   },
+   "case": "mutant/1192",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=[])",
+     "path": "/vocabulary/constants/alpha"
+    }
+   },
+   "case": "mutant/1194",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [sort]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=[])",
+     "path": "/vocabulary/constants/alpha"
+    }
+   },
+   "case": "mutant/1194",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [sort]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=['ARGUMENTS'])",
+     "path": "/vocabulary/predicates/in_finance"
+    }
+   },
+   "case": "mutant/1218",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [ARGUMENTS, description]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=['ARGUMENTS'])",
+     "path": "/vocabulary/predicates/in_finance"
+    }
+   },
+   "case": "mutant/1218",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [ARGUMENTS, description]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['sort'], unknown=[])",
+     "path": "/vocabulary/constants/alice"
+    }
+   },
+   "case": "mutant/1220",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [description]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['sort'], unknown=[])",
+     "path": "/vocabulary/constants/alice"
+    }
+   },
+   "case": "mutant/1220",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [description]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=['ARGUMENTS'])",
+     "path": "/vocabulary/predicates/in_legal"
+    }
+   },
+   "case": "mutant/124",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [ARGUMENTS, description]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=['ARGUMENTS'])",
+     "path": "/vocabulary/predicates/in_legal"
+    }
+   },
+   "case": "mutant/124",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [ARGUMENTS, description]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=[], unknown=['description\\r'])",
+     "path": "/vocabulary/constants/finance"
+    }
+   },
+   "case": "mutant/1258",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort], got [description\r, sort]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=[], unknown=['description\\r'])",
+     "path": "/vocabulary/constants/finance"
+    }
+   },
+   "case": "mutant/1258",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort], got [description\r, sort]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=[])",
+     "path": "/vocabulary/constants/legal"
+    }
+   },
+   "case": "mutant/1268",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [sort]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=[])",
+     "path": "/vocabulary/constants/legal"
+    }
+   },
+   "case": "mutant/1268",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [sort]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['descrİption'])",
+     "path": "/vocabulary/sorts/person"
+    }
+   },
+   "case": "mutant/128",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [description], got [descrİption]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['descrİption'])",
+     "path": "/vocabulary/sorts/person"
+    }
+   },
+   "case": "mutant/128",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [description], got [descrİption]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/constants/legal"
+    }
+   },
+   "case": "mutant/1292",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/constants/legal"
+    }
+   },
+   "case": "mutant/1292",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['sorts'], unknown=['s\\torts'])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/1360",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: sorts"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['sorts'], unknown=['s\\torts'])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/1360",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: sorts"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=[])",
+     "path": "/vocabulary/constants/alpha"
+    }
+   },
+   "case": "mutant/1362",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [sort]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=[])",
+     "path": "/vocabulary/constants/alpha"
+    }
+   },
+   "case": "mutant/1362",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [sort]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['sort'], unknown=['sort\\r'])",
+     "path": "/vocabulary/constants/alice"
+    }
+   },
+   "case": "mutant/1378",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [description, sort\r]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['sort'], unknown=['sort\\r'])",
+     "path": "/vocabulary/constants/alice"
+    }
+   },
+   "case": "mutant/1378",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [description, sort\r]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=[])",
+     "path": "/vocabulary/constants/beta"
+    }
+   },
+   "case": "mutant/1390",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [sort]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=[])",
+     "path": "/vocabulary/constants/beta"
+    }
+   },
+   "case": "mutant/1390",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [sort]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/predicates/in_finance"
+    }
+   },
+   "case": "mutant/1412",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/predicates/in_finance"
+    }
+   },
+   "case": "mutant/1412",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['sorts'], unknown=['sorts’'])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/1444",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: sorts"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['sorts'], unknown=['sorts’'])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/1444",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: sorts"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['description’'])",
+     "path": "/vocabulary/predicates/in_legal"
+    }
+   },
+   "case": "mutant/1468",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments, description’]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['description’'])",
+     "path": "/vocabulary/predicates/in_legal"
+    }
+   },
+   "case": "mutant/1468",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments, description’]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['description\\r'])",
+     "path": "/vocabulary/predicates/senior"
+    }
+   },
+   "case": "mutant/1472",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments, description\r]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['description\\r'])",
+     "path": "/vocabulary/predicates/senior"
+    }
+   },
+   "case": "mutant/1472",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments, description\r]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['sorts'], unknown=['sorts\\x1c'])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/1488",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: sorts"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['sorts'], unknown=['sorts\\x1c'])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/1488",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: sorts"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['sorts'], unknown=[])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/1498",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: sorts"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['sorts'], unknown=[])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/1498",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: sorts"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['d\\xa0escription'])",
+     "path": "/vocabulary/predicates/in_legal"
+    }
+   },
+   "case": "mutant/1510",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments, d escription]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['d\\xa0escription'])",
+     "path": "/vocabulary/predicates/in_legal"
+    }
+   },
+   "case": "mutant/1510",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments, d escription]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['description’'])",
+     "path": "/vocabulary/predicates/senior"
+    }
+   },
+   "case": "mutant/1520",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments, description’]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['description’'])",
+     "path": "/vocabulary/predicates/senior"
+    }
+   },
+   "case": "mutant/1520",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments, description’]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['sorts'], unknown=['SORTS'])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/1531",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: sorts"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['sorts'], unknown=['SORTS'])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/1531",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: sorts"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['sort'], unknown=['SORT'])",
+     "path": "/vocabulary/constants/bob"
+    }
+   },
+   "case": "mutant/156",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [SORT, description]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['sort'], unknown=['SORT'])",
+     "path": "/vocabulary/constants/bob"
+    }
+   },
+   "case": "mutant/156",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [SORT, description]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['sorts'], unknown=['s\\torts'])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/1560",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: sorts"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['sorts'], unknown=['s\\torts'])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/1560",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: sorts"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['descrİption'])",
+     "path": "/vocabulary/sorts/person"
+    }
+   },
+   "case": "mutant/1564",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [description], got [descrİption]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['descrİption'])",
+     "path": "/vocabulary/sorts/person"
+    }
+   },
+   "case": "mutant/1564",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [description], got [descrİption]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['descrİption'])",
+     "path": "/vocabulary/predicates/certificate_checked"
+    }
+   },
+   "case": "mutant/1599",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description, verbalisation], got [arguments, descrİption, verbalisation]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['descrİption'])",
+     "path": "/vocabulary/predicates/certificate_checked"
+    }
+   },
+   "case": "mutant/1599",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description, verbalisation], got [arguments, descrİption, verbalisation]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=[])",
+     "path": "/vocabulary/constants/alpha"
+    }
+   },
+   "case": "mutant/1610",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [sort]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=[])",
+     "path": "/vocabulary/constants/alpha"
+    }
+   },
+   "case": "mutant/1610",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [sort]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/constants/formalisable_claims"
+    }
+   },
+   "case": "mutant/1650",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/constants/formalisable_claims"
+    }
+   },
+   "case": "mutant/1650",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['description’'])",
+     "path": "/vocabulary/constants/bob"
+    }
+   },
+   "case": "mutant/1681",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [description’, sort]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['description’'])",
+     "path": "/vocabulary/constants/bob"
+    }
+   },
+   "case": "mutant/1681",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [description’, sort]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['predicates'], unknown=['predİcates'])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/1682",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: predicates"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['predicates'], unknown=['predİcates'])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/1682",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: predicates"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['sort'], unknown=['sort’'])",
+     "path": "/vocabulary/constants/alice"
+    }
+   },
+   "case": "mutant/1696",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [description, sort’]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['sort'], unknown=['sort’'])",
+     "path": "/vocabulary/constants/alice"
+    }
+   },
+   "case": "mutant/1696",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [description, sort’]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=['arguments\\r'])",
+     "path": "/vocabulary/predicates/in_legal"
+    }
+   },
+   "case": "mutant/1702",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments\r, description]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=['arguments\\r'])",
+     "path": "/vocabulary/predicates/in_legal"
+    }
+   },
+   "case": "mutant/1702",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments\r, description]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=['ARGUMENTS'])",
+     "path": "/vocabulary/predicates/staff"
+    }
+   },
+   "case": "mutant/1714",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description, defined], got [ARGUMENTS, defined, description]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=['ARGUMENTS'])",
+     "path": "/vocabulary/predicates/staff"
+    }
+   },
+   "case": "mutant/1714",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description, defined], got [ARGUMENTS, defined, description]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['description\\r'])",
+     "path": "/vocabulary/constants/bob"
+    }
+   },
+   "case": "mutant/1718",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [description\r, sort]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['description\\r'])",
+     "path": "/vocabulary/constants/bob"
+    }
+   },
+   "case": "mutant/1718",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [description\r, sort]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/constants/finance"
+    }
+   },
+   "case": "mutant/1732",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/constants/finance"
+    }
+   },
+   "case": "mutant/1732",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=['arguments\\r'])",
+     "path": "/vocabulary/predicates/formula_pinned"
+    }
+   },
+   "case": "mutant/1741",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description, verbalisation], got [arguments\r, description, verbalisation]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=['arguments\\r'])",
+     "path": "/vocabulary/predicates/formula_pinned"
+    }
+   },
+   "case": "mutant/1741",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description, verbalisation], got [arguments\r, description, verbalisation]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description', 'sort'], unknown=['SORT'])",
+     "path": "/vocabulary/constants/legal"
+    }
+   },
+   "case": "mutant/1742",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [SORT]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description', 'sort'], unknown=['SORT'])",
+     "path": "/vocabulary/constants/legal"
+    }
+   },
+   "case": "mutant/1742",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [SORT]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description', 'sort'], unknown=['description\\r', 's  ort'])",
+     "path": "/vocabulary/constants/finance"
+    }
+   },
+   "case": "mutant/1784",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [description\r, s  ort]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description', 'sort'], unknown=['description\\r', 's  ort'])",
+     "path": "/vocabulary/constants/finance"
+    }
+   },
+   "case": "mutant/1784",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [description\r, s  ort]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description', 'sort'], unknown=['sort’'])",
+     "path": "/vocabulary/constants/legal"
+    }
+   },
+   "case": "mutant/1785",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [sort’]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description', 'sort'], unknown=['sort’'])",
+     "path": "/vocabulary/constants/legal"
+    }
+   },
+   "case": "mutant/1785",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [sort’]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/constants/beta"
+    }
+   },
+   "case": "mutant/1795",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/constants/beta"
+    }
+   },
+   "case": "mutant/1795",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=['ARGUMENTS'])",
+     "path": "/vocabulary/predicates/in_finance"
+    }
+   },
+   "case": "mutant/200",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [ARGUMENTS, description]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=['ARGUMENTS'])",
+     "path": "/vocabulary/predicates/in_finance"
+    }
+   },
+   "case": "mutant/200",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [ARGUMENTS, description]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/constants/alice"
+    }
+   },
+   "case": "mutant/208",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/constants/alice"
+    }
+   },
+   "case": "mutant/208",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=[], unknown=['description’'])",
+     "path": "/vocabulary/constants/finance"
+    }
+   },
+   "case": "mutant/294",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort], got [description’, sort]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=[], unknown=['description’'])",
+     "path": "/vocabulary/constants/finance"
+    }
+   },
+   "case": "mutant/294",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort], got [description’, sort]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['constants'], unknown=['constants’'])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/298",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: constants"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['constants'], unknown=['constants’'])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/298",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: constants"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description', 'sort'], unknown=['s\\tort'])",
+     "path": "/vocabulary/constants/legal"
+    }
+   },
+   "case": "mutant/306",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [s\tort]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description', 'sort'], unknown=['s\\tort'])",
+     "path": "/vocabulary/constants/legal"
+    }
+   },
+   "case": "mutant/306",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [s\tort]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=[])",
+     "path": "/vocabulary/predicates/in_legal"
+    }
+   },
+   "case": "mutant/376",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [description]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=[])",
+     "path": "/vocabulary/predicates/in_legal"
+    }
+   },
+   "case": "mutant/376",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [description]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['constants'], unknown=[])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/410",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: constants"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['constants'], unknown=[])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/410",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: constants"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/constants/bob"
+    }
+   },
+   "case": "mutant/418",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/constants/bob"
+    }
+   },
+   "case": "mutant/418",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=['a\\trguments'])",
+     "path": "/vocabulary/predicates/senior"
+    }
+   },
+   "case": "mutant/456",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [a\trguments, description]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=['a\\trguments'])",
+     "path": "/vocabulary/predicates/senior"
+    }
+   },
+   "case": "mutant/456",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [a\trguments, description]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/predicates/staff"
+    }
+   },
+   "case": "mutant/464",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/predicates/staff"
+    }
+   },
+   "case": "mutant/464",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['predicates'], unknown=['p  redicates'])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/484",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: predicates"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['predicates'], unknown=['p  redicates'])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/484",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: predicates"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=['arguments’'])",
+     "path": "/vocabulary/predicates/in_legal"
+    }
+   },
+   "case": "mutant/508",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments’, description]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=['arguments’'])",
+     "path": "/vocabulary/predicates/in_legal"
+    }
+   },
+   "case": "mutant/508",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments’, description]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/constants/bob"
+    }
+   },
+   "case": "mutant/516",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/constants/bob"
+    }
+   },
+   "case": "mutant/516",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=['arguments\\x1c'])",
+     "path": "/vocabulary/predicates/staff/defined"
+    }
+   },
+   "case": "mutant/548",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, body], got [arguments\u001c, body]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=['arguments\\x1c'])",
+     "path": "/vocabulary/predicates/staff/defined"
+    }
+   },
+   "case": "mutant/548",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, body], got [arguments\u001c, body]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/constants/bob"
+    }
+   },
+   "case": "mutant/6",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/constants/bob"
+    }
+   },
+   "case": "mutant/6",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/sorts/person"
+    }
+   },
+   "case": "mutant/604",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/sorts/person"
+    }
+   },
+   "case": "mutant/604",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['constants'], unknown=['constants\\r'])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/606",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: constants"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['constants'], unknown=['constants\\r'])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/606",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: constants"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['DESCRIPTION'])",
+     "path": "/vocabulary/predicates/establishes_fidelity_of"
+    }
+   },
+   "case": "mutant/618",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description, verbalisation], got [DESCRIPTION, arguments, verbalisation]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['DESCRIPTION'])",
+     "path": "/vocabulary/predicates/establishes_fidelity_of"
+    }
+   },
+   "case": "mutant/618",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description, verbalisation], got [DESCRIPTION, arguments, verbalisation]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/predicates/staff/defined"
+    }
+   },
+   "case": "mutant/632",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/predicates/staff/defined"
+    }
+   },
+   "case": "mutant/632",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description', 'sort'], unknown=[])",
+     "path": "/vocabulary/constants/finance"
+    }
+   },
+   "case": "mutant/684",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got []"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description', 'sort'], unknown=[])",
+     "path": "/vocabulary/constants/finance"
+    }
+   },
+   "case": "mutant/684",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got []"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description', 'sort'], unknown=['s\\xa0ort'])",
+     "path": "/vocabulary/constants/beta"
+    }
+   },
+   "case": "mutant/718",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [s ort]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description', 'sort'], unknown=['s\\xa0ort'])",
+     "path": "/vocabulary/constants/beta"
+    }
+   },
+   "case": "mutant/718",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [s ort]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/predicates/claims"
+    }
+   },
+   "case": "mutant/730",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/predicates/claims"
+    }
+   },
+   "case": "mutant/730",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['description\\x1c'])",
+     "path": "/vocabulary/constants/alice"
+    }
+   },
+   "case": "mutant/772",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [description\u001c, sort]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['description\\x1c'])",
+     "path": "/vocabulary/constants/alice"
+    }
+   },
+   "case": "mutant/772",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [description\u001c, sort]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/constants/alice"
+    }
+   },
+   "case": "mutant/810",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/constants/alice"
+    }
+   },
+   "case": "mutant/810",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['description\\r'])",
+     "path": "/vocabulary/constants/alice"
+    }
+   },
+   "case": "mutant/824",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [description\r, sort]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['description\\r'])",
+     "path": "/vocabulary/constants/alice"
+    }
+   },
+   "case": "mutant/824",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [description\r, sort]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['sorts'], unknown=['s\\xa0orts'])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/844",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: sorts"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['sorts'], unknown=['s\\xa0orts'])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/844",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: sorts"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/predicates/in_finance"
+    }
+   },
+   "case": "mutant/906",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object",
+     "path": "/vocabulary/predicates/in_finance"
+    }
+   },
+   "case": "mutant/906",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "object expected"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=[], unknown=['descrİption'])",
+     "path": "/vocabulary/constants/finance"
+    }
+   },
+   "case": "mutant/908",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort], got [descrİption, sort]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=[], unknown=['descrİption'])",
+     "path": "/vocabulary/constants/finance"
+    }
+   },
+   "case": "mutant/908",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort], got [descrİption, sort]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['sort'], unknown=['s  ort'])",
+     "path": "/vocabulary/constants/finance"
+    }
+   },
+   "case": "mutant/922",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [description, s  ort]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['sort'], unknown=['s  ort'])",
+     "path": "/vocabulary/constants/finance"
+    }
+   },
+   "case": "mutant/922",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sort, description], got [description, s  ort]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['predicates'], unknown=[])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/930",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: predicates"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['predicates'], unknown=[])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/930",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: predicates"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=['a  rguments'])",
+     "path": "/vocabulary/predicates/senior"
+    }
+   },
+   "case": "mutant/950",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [a  rguments, description]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['arguments'], unknown=['a  rguments'])",
+     "path": "/vocabulary/predicates/senior"
+    }
+   },
+   "case": "mutant/950",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [a  rguments, description]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['predicates'], unknown=['predicates\\x1c'])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/970",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: predicates"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['predicates'], unknown=['predicates\\x1c'])",
+     "path": "/vocabulary"
+    }
+   },
+   "case": "mutant/970",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: predicates"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['d\\xa0escription'])",
+     "path": "/vocabulary/sorts/person"
+    }
+   },
+   "case": "mutant/978",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [description], got [d escription]"
+    }
+   },
+   "op": "document_check",
+   "owner": "environment"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=['description'], unknown=['d\\xa0escription'])",
+     "path": "/vocabulary/sorts/person"
+    }
+   },
+   "case": "mutant/978",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [description], got [d escription]"
+    }
+   },
+   "op": "document_render",
+   "owner": "environment"
+  }
+ ],
+ "wording": [
+  {
+   "base": "Definition 'catastrophic_risk' arguments differ from its declaration",
+   "head": "array expected"
+  },
+  {
+   "base": "Definition 'staff' arguments differ from its declaration",
+   "head": "Definition staff arguments differ from its declaration"
+  },
+  {
+   "base": "Descriptions must be nonempty Unicode strings",
+   "head": "String expected"
+  },
+  {
+   "base": "Incorrect fields (missing=['ast'], unknown=['ast\\r'])",
+   "head": "fields do not match: expected [name, ast, label], got [ast\r, label, name]"
+  },
+  {
+   "base": "Incorrect fields (missing=['language', 'profiles', 'spec_revision', 'vocabulary'], unknown=[])",
+   "head": "fields do not match: expected [language, profiles, spec_revision, vocabulary], got []"
+  },
+  {
+   "base": "Incorrect fields (missing=['language'], unknown=[])",
+   "head": "fields do not match: expected [language, profiles, spec_revision, vocabulary], got [profiles, spec_revision, vocabulary]"
+  },
+  {
+   "base": "Incorrect fields (missing=['name'], unknown=['NAME'])",
+   "head": "fields do not match: expected [name, ast, label, unit], got [NAME, ast, label, unit]"
+  },
+  {
+   "base": "Incorrect fields (missing=['name'], unknown=['name\\x1c'])",
+   "head": "fields do not match: expected [name, ast, label, unit], got [ast, label, name\u001c, unit]"
+  },
+  {
+   "base": "Incorrect fields (missing=['vocabulary'], unknown=[])",
+   "head": "fields do not match: expected [language, profiles, spec_revision, vocabulary], got [language, profiles, spec_revision]"
+  },
+  {
+   "base": "Invalid ASCII identifier: 'IN_FINANCE'",
+   "head": "invalid or reserved declaration: IN_FINANCE"
+  },
+  {
+   "base": "Invalid ASCII identifier: 'PERSON'",
+   "head": "invalid or reserved declaration: PERSON"
+  },
+  {
+   "base": "Invalid ASCII identifier: 'b\\tob'",
+   "head": "invalid or reserved declaration: b\tob"
+  },
+  {
+   "base": "Invalid ASCII identifier: 'b\\xa0ob'",
+   "head": "invalid or reserved declaration: b ob"
+  },
+  {
+   "base": "Invalid ASCII identifier: 'bob’'",
+   "head": "invalid or reserved declaration: bob’"
+  },
+  {
+   "base": "Invalid ASCII identifier: 'f\\xa0inance'",
+   "head": "invalid or reserved declaration: f inance"
+  },
+  {
+   "base": "Invalid ASCII identifier: 'finance\\r'",
+   "head": "invalid or reserved declaration: finance\r"
+  },
+  {
+   "base": "Invalid ASCII identifier: 'i  n_legal'",
+   "head": "invalid or reserved declaration: i  n_legal"
+  },
+  {
+   "base": "Invalid ASCII identifier: 'in_finance\\x1c'",
+   "head": "invalid or reserved declaration: in_finance\u001c"
+  },
+  {
+   "base": "Invalid ASCII identifier: 'in_legal\\r'",
+   "head": "invalid or reserved declaration: in_legal\r"
+  },
+  {
+   "base": "Invalid ASCII identifier: 'indicated_sentence\\x1c'",
+   "head": "invalid or reserved declaration: indicated_sentence\u001c"
+  },
+  {
+   "base": "Invalid ASCII identifier: 'l  egal'",
+   "head": "invalid or reserved declaration: l  egal"
+  },
+  {
+   "base": "Invalid ASCII identifier: 'l\\xa0egal'",
+   "head": "invalid or reserved declaration: l egal"
+  },
+  {
+   "base": "Invalid ASCII identifier: 'legal\\x1c'",
+   "head": "invalid or reserved declaration: legal\u001c"
+  },
+  {
+   "base": "Invalid ASCII identifier: 'legal’'",
+   "head": "invalid or reserved declaration: legal’"
+  },
+  {
+   "base": "Invalid ASCII identifier: 'person\\r'",
+   "head": "invalid or reserved declaration: person\r"
+  },
+  {
+   "base": "Invalid ASCII identifier: 's  enior'",
+   "head": "invalid or reserved declaration: s  enior"
+  },
+  {
+   "base": "Predicate arguments must be an array of one to 2 sort identifiers",
+   "head": "array expected"
+  },
+  {
+   "base": "UnknownSymbol: Unknown constant 'g\\xa0uarantee'",
+   "head": "UnknownSymbol: Unknown constant 'g uarantee'"
+  },
+  {
+   "base": "UnknownSymbol: Unknown constant 'proof_label\\r'",
+   "head": "UnknownSymbol: Unknown constant 'proof_label\r'"
+  },
+  {
+   "base": "UnknownSymbol: Unknown predicate 'adopted\\x1c'",
+   "head": "UnknownSymbol: Unknown predicate 'adopted\u001c'"
+  },
+  {
+   "base": "UnknownSymbol: Unknown predicate 'i\\tn_finance'",
+   "head": "UnknownSymbol: Unknown predicate 'i\tn_finance'"
+  },
+  {
+   "base": "UnknownSymbol: Unknown predicate 'in_legal\\r'",
+   "head": "UnknownSymbol: Unknown predicate 'in_legal\r'"
+  },
+  {
+   "base": "UnknownSymbol: Unknown predicate 'u\\tnresolved'",
+   "head": "UnknownSymbol: Unknown predicate 'u\tnresolved'"
+  },
+  {
+   "base": "constants must be an object",
+   "head": "object expected"
+  },
+  {
+   "base": "predicates must be an object",
+   "head": "object expected"
+  },
+  {
+   "base": "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/lf16b/abfull/base.pilots/pack.json'",
+   "head": "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/lf16b/abfull/head.pilots/pack.json'"
+  }
+ ]
+}
