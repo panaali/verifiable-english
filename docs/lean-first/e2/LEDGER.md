@@ -1,9 +1,7 @@
-# English in Lean, E2: the proposed deletion ledger
+# English in Lean, E2: the deletion ledger
 
-**Current authority: Python, with Lean in shadow.** The E2.5 readability replay fails the DRI's condition;
-see [DELTA.md](DELTA.md). The table below records the E2.4 candidate switch and its proposed deletion sites,
-not permission to delete the Python reader. `_python_reading`, its hand parser, Lark audit and conclusion check
-are active on the public admission path. `dispatch.SHADOW_ONLY` contains `english.admission` again.
+**Current authority: Lean (E2.6, [E2.6.md](E2.6.md)).** The E2.5 authority revert is undone; the rows below are in
+effect, and those marked E2.6 were deleted or moved by it.
 
 Spec [english-lean-e2.md](../../spec/english-lean-e2.md) 2.9, plan item E2.4. One row per decision site of
 formula-level English admission, each with its disposition: **owned by Lean** (the Lean check named; the site
@@ -11,19 +9,19 @@ is off the admission path), **comparator** (run only with `VE_ENGLISH_COMPARATOR
 deciding; deleted in the next stage), or **kept** (its caller named). Line numbers are those of this branch's
 head; the sites are named so that a later edit can find them.
 
-`tools/relay_lint.py` passes for `ve/backends/english_lean.py` and the Lean shadow adapter functions of
-`ve/english.py` (`tests/test_relay_lint.py::test_the_english_lean_adapter_is_relayed_by_function`).
-The Python reader and all-derivations audit are active authority code, so the E2.4 deletion classifications
-below are historical until the DRI's preservation condition passes.
+`tools/relay_lint.py` passes on the admission path: `ve/backends/english_lean.py` whole, and the functions
+`_lean_reading`, `_parse_english_document_uncached`, `_parse_english_document`,
+`parse_english`, `parse_english_with_metadata` and `parse_english_argument` of `ve/english.py`
+(`tests/test_relay_lint.py::test_the_english_admission_path_is_relayed_by_function`).
 
 | Site | Disposition | Evidence |
 |---|---|---|
-| `ve/english.py` `_python_reading` (hand parser, Lark audit, `check_document`) | comparator, and kept for the statement layers through `parse_statement_english` (operation `english.statement`, until E3) | `tests/test_english_lean_adapter.py::test_default_admission_calls_python_and_lean_shadow`; `tests/test_english_e2_overlay.py::test_the_suite_runs_the_english_comparator` (ev7) |
-| `ve/english.py` `_parse_english_document_uncached`: the former `dispatch.shadowed('english.admission', …)` | owned by Lean: `admitRequest` through the relay; `english.admission` is out of `dispatch.SHADOW_ONLY` | `tests/test_english_lean_route.py::test_admission_refuses_non_python_authority` |
+| `ve/english.py` `_python_reading` (hand parser, Lark audit, `check_document`) | comparator, and kept for the statement layers through `parse_statement_english` (operation `english.statement`, until E3) | `tests/test_english_lean_adapter.py::test_default_admission_calls_lean_and_not_python` (ev6); `tests/test_english_e2_overlay.py::test_the_suite_runs_the_english_comparator` (ev7) |
+| `ve/english.py` `_parse_english_document_uncached`: the former `dispatch.shadowed('english.admission', …)` | owned by Lean: `admitRequest` through the relay; `english.admission` is out of `dispatch.SHADOW_ONLY` | `tests/test_english_lean_route.py::test_admission_refuses_non_lean_authority` |
 | the source byte limit (formerly `english.py` before the reading) | owned by Lean: `sourceTooLong`; the comparator's Python reading keeps Python's limit first (`_python_reading`) so it compares Python's public outcome | `conformance/english-lean/e2-evidence.json` (G3) |
 | `A conclusion needs an earlier premise.` (`_check_conclusions`) | owned by Lean: `noPremise` (`ConclusionWithoutPremise`); `_check_conclusions` runs only for a comparator reading | E2Examples cn16, cn17; the shadow record compares the two (`english_lean.NO_PREMISE`) |
-| the entailment refusal of a marked conclusion | kept (relay; S3 D10): the text is Lean's obligation `unproved`, its `{status}` slot filled with the prover's status verbatim, from `parse_english` and `parse_english_argument` alike | `tests/test_english_e2_python.py::test_argument_failure_text_preserves_python_message` (current shadow ruling) |
-| the premises of each marked conclusion | owned by Lean: `obligations`; `parse_english_argument` computes no premise and refuses a reading without Lean's obligations (`CheckerUnavailable`) | `tests/test_english_e2_responses.py::test_an_argument_without_lean_obligations_uses_python_premises` |
+| the entailment refusal of a marked conclusion | kept (relay; S3 D10): the text is Lean's obligation `unproved`, its `{status}` slot filled with the prover's status verbatim, from `parse_english` and `parse_english_argument` alike | `tests/test_english_e2_python.py::test_argument_failure_text_preserves_prover_status` (rl2) |
+| the premises of each marked conclusion | owned by Lean: `obligations`; `parse_english_argument` computes no premise and refuses a reading without Lean's obligations (`CheckerUnavailable`) | `tests/test_english_e2_responses.py::test_an_argument_without_lean_obligations_is_checker_unavailable` |
 | re-parse of renderings (`render_english`, `parse_english_with_metadata`) | owned by Lean: `checkRequest` (`english.check`); the statement layer's own rendering check (`_statement_layer`) is kept for E3 | `tests/test_english_lean_route.py`; spec rl4, rl5 |
 | `ve/english.py` `EnglishParser` | comparator for admission; kept for `norm_english.py` and `norm_defaults_english.py` and the E3 statement wording until E3 | operation `english.statement` in `ve/assurance-manifest.json` |
 | `ve/surface/unambiguity.py` `require_unique_derivation`, `require_correspondence` | comparator for admission; kept for the statement layers (`english.statement`) until E3 | the same |
@@ -36,8 +34,12 @@ below are historical until the DRI's preservation condition passes.
 | `ve/backends/english_lean.py` `_transport` over `ve_english_route` | owned by Lean: the `ve_service` modes; the S2 validator for the route's answers is gone, and the test override is checked like the service | `tests/test_english_e2_responses.py::test_the_test_transport_is_checked_like_the_service` |
 | `ve/backends/senses.py` its copy of the class table | owned by Lean: the senses relay validates S2's outcomes with `english_lean.refusal_problem` | `tests/test_senses_route.py` |
 | `ve/english.py` `english_lark_grammar` | comparator; an editor that reads it would regenerate it from the `english.grammar` export (LEAN-FIRST 5.2) | — |
-| `ve/surface/definitions.py` definition and citation sentences, and their renderings (`render_citation`, `wordings`) | owned by Lean: `parse_english` reads them and `english.check` reads each rendering back (review A3 of E2 reverted their move to the Python-only reader; recheck 1 removed the renderings' `_statement_layer`) | `tests/test_definitions_english.py::test_definition_sentence_parts_are_read_by_python_with_lean_shadow`, `::test_citation_and_definition_renderings_are_checked_by_lean`; every caller of Python's reader is a row here (`tests/test_english_e2_ledger_sites.py`) |
+| `ve/surface/definitions.py` definition and citation sentences, and their renderings (`render_citation`, `wordings`) | owned by Lean: `parse_english` reads them and `english.check` reads each rendering back (review A3 of E2 reverted their move to the Python-only reader; recheck 1 removed the renderings' `_statement_layer`) | `tests/test_definitions_english.py::test_definition_sentence_parts_are_read_by_lean`, `::test_citation_and_definition_renderings_are_checked_by_lean`; every caller of Python's reader is a row here (`tests/test_english_e2_ledger_sites.py`) |
 | `ve/readings_s2_english.py` `canonical_sentence` | kept for E3 (`english.statement`) when `statement_layer` is set, which only `S2Wording.conclusion` does: it reads back its own rendering of a checked conclusion over the frame environment, whose generated decision and `rights@0` atoms are outside the E2 reader | `tests/test_readings_s2_document.py` |
+| `ve/english.py` `_nearest_help` and `ve/english_phrases.py` `unknown_phrase` (the relay's nearest-wording help for a sentence without a reading) | E2.6: deleted; owned by Lean: `VE.EnglishGrammar.diagnose` (spec 4.5) writes the phrase, the nearest declared wordings and the span in Lean's answer | `tests/test_english_e26_diagnosis.py`; `tests/test_propose.py::test_closed_diagnostic_names_phrase_and_nearest_wording` |
+| `ve/backends/dispatch.py` `SHADOW_ONLY = {'english.admission'}` and the shadow dispatch of `_parse_english_document_uncached` (the E2.5 revert) | E2.6: deleted; owned by Lean: `admitRequest` through the relay; a named override other than `lean` is refused | `tests/test_english_lean_route.py::test_admission_refuses_non_lean_authority`; `tests/test_assurance_manifest.py::test_english_admission_is_lean_authoritative` |
+| `parse_english_argument`'s Python premises (`range(i)`), its Python refusal text and its `SyntaxError` for a certificate the claim graph does not replay (the E2.5 revert) | E2.6: deleted; owned by Lean: `obligations` and `unproved`; a certificate the graph does not replay is `CheckerUnavailable` | `tests/test_english_e2_responses.py::test_an_argument_without_lean_obligations_is_checker_unavailable` |
+| `parse_english_with_metadata`'s Python re-parse of its rendering (the E2.5 revert) | E2.6: deleted; owned by Lean: `english.check` | `tests/test_english_lean_route.py` |
 | `conformance/english_lean_{engine,lexer,lexicon}.py` | kept: still compared against by the S0 to S3 conformance tests (`tests/test_english_lean_{engine,lexer,lexicon,s0,s2,s3,tokens}.py`); deleted once nothing compares against them (LEAN-FIRST 6.3) | — |
 
 **Signature.** The ledger is the E2.4 deliverable that GE2 item 8 asks the DRI to sign. It is recorded here,

@@ -148,7 +148,6 @@ entry may sit under a neighbouring id.
 | DF-14 | The Python wire-contract engine accepts a JSON `null` (a contract field or the soft-norms decider) that every Lean and Rust package reader refuses. | `wire-contract-PLAN.md` 7 (restricted JSON at the contract boundary); spec 2.8 for the soft-norms decider |
 | DF-15 | A request without its `model` (or with a misspelt key): Lean's route says `property not found`; Rust reads a countermodel check as a search and accepts, or rejects an evaluation for its document before it misses the model (since lean-first batch 15b no case shape is read as a parse). Python's adapter cannot make the call. | new: the Rust conformance dispatch (one case shape per kind) |
 | DF-16 | Python's search and countermodel check accept an object where `premises` must be an array; Lean says `array expected` and Rust `premises must be an array`. | new: the Python premises decoder |
-| DF-17 | The norm-defaults route rejects data flags (`norms route with data flags is not implemented`) on an environment Python's `Environment` accepts. | norm-defaults plan (data flags on the norm-defaults route) |
 
 DF-12 closed in lean-first batch 5: the risk route now rejects the NBSP act phrase with the W6 canonical-round-trip diagnostic. Its baseline signature no longer reproduces.
 | DF-18 | Python's `Environment` rejects the `soft` vocabulary block of the soft-norms sources of `conformance/soft_norms_rust.json` (`unknown=['soft']`), which Rust accepts and Lean's soft-norms route accepts or rejects by a soft check of its own (Python's soft counterpart gives the same code). | `wire-contract-PLAN.md` 7, S3 row (`soft-norms@0` environment) |
@@ -157,7 +156,9 @@ DF-12 closed in lean-first batch 5: the risk route now rejects the NBSP act phra
 
 Fixed and retired (no entry reproduces since the merge of `ve-integration` with `fix/env-field-types`): DF-1, Python's
 `TypeError` for a numeric or Boolean `profiles`; DF-2, Python's `TypeError` for an array or object where a
-definition body or AST node has a name or tag.
+definition body or AST node has a name or tag. DF-17, the norm-defaults route's refusal of `data@0` flags (`norms route with data
+flags is not implemented`) on an environment Python's `Environment` accepts: since English E2.6 Lean admits the flags
+and refuses a supplied model that violates one (`InvalidModel(flags)`); its one `environment` entry is retired.
 
 ## Acceptance items
 

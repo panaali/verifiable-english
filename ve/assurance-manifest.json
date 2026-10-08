@@ -61,10 +61,11 @@
     "ve/softnorms.py:SoftNormDocument._elaborate": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors.",
     "ve/softnorms.py:batch_rule": "After Lean accepts the batched quoted rule, Python AST construction failures are operational CheckerUnavailable errors.",
     "ve/softnorms.py:decode_rule": "After Lean accepts the quoted rule, Python AST construction failures are operational CheckerUnavailable errors.",
-    "ve/softnorms.py:load_soft_document": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors."
+    "ve/softnorms.py:load_soft_document": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors.",
+    "ve/english.py:_parse_english_document_uncached": "Comparator only: Python parser exceptions are recorded after Lean has decided; they never change the returned Lean result or error."
   },
   "lean_decoders": {
-    "total_lines": 24719,
+    "total_lines": 24781,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -323,12 +324,12 @@
       },
       {
         "file": "lean/VE/EnglishGrammar/Run.lean",
-        "lines": 699,
-        "sha256": "db3251d94cbe18d76f5e46fce13b52f5393bc6e7eff09754443d199f8ef7a4ba",
+        "lines": 735,
+        "sha256": "f9355148f683d663abd23260fab6d3d318f9e575e7bdebaf910bb40f95b86245",
         "ranges": [
           [
             1,
-            699
+            735
           ]
         ],
         "declarations": [
@@ -408,15 +409,16 @@
       },
       {
         "file": "lean/VE/NormDefaults/Replay.lean",
-        "lines": 391,
-        "sha256": "4242c79ff826cc94cee7f211f1a3f7d86e44537bb84702a3d7d570d4f70caad3",
+        "lines": 411,
+        "sha256": "8a6191d5e0bc289dc3b81d95d0789eec96f3653b557369446b2caf9ac13fe8d5",
         "ranges": [
           [
             1,
-            391
+            411
           ]
         ],
         "declarations": [
+          "admitModel",
           "witnessFromU",
           "replayWitnessU",
           "decodeFilling",
@@ -428,12 +430,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Report.lean",
-        "lines": 520,
-        "sha256": "26bc86313053198f55adf395f674fa07a64b0bd33cdf32d1437557bebdf4dad5",
+        "lines": 519,
+        "sha256": "b4e17dd5611c5551f075ec04b9ca68d16ccd9bbc0de681e9697b7edbd22ba646",
         "ranges": [
           [
             1,
-            520
+            519
           ]
         ],
         "declarations": [
@@ -449,12 +451,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Wire.lean",
-        "lines": 421,
-        "sha256": "5ba66fb1559cbf5c95b101ae95f25bf58a671d300393f8438ca207b3abdc14e7",
+        "lines": 423,
+        "sha256": "c6fc1964e6247758a4c76c2ab2fce7500f2e3485365a7d08b23adf6e63774486",
         "ranges": [
           [
             1,
-            421
+            423
           ]
         ],
         "declarations": [
@@ -910,12 +912,12 @@
       },
       {
         "file": "lean/VE/Senses/Run.lean",
-        "lines": 248,
-        "sha256": "1755c5e6766a2bb5b704d45fd2f2bc41f7723acebc05536183845d18c5a4c658",
+        "lines": 252,
+        "sha256": "3f2d07fc6aed58af7591dbf3861fc28411dae0843b620f3565d8b57a925175ad",
         "ranges": [
           [
             1,
-            248
+            252
           ]
         ],
         "declarations": [
@@ -1072,12 +1074,12 @@
       },
       {
         "file": "lean/VE/SoftNorms/Phases.lean",
-        "lines": 369,
-        "sha256": "4d71a7a96261f51f3129c25a4ef3a0d45e405aff8df03521825eda52fe2c20ce",
+        "lines": 370,
+        "sha256": "4b807f2925e06279acf4d0d393b1f672e9b16b3994b8bb18aaf4e60e3b230e34",
         "ranges": [
           [
             1,
-            369
+            370
           ]
         ],
         "declarations": [
@@ -3325,14 +3327,14 @@
     },
     {
       "id": "english.admission",
-      "summary": "English surface admission: Python decides; Lean compares in shadow",
+      "summary": "English surface admission: Lean decides one reading per sentence and its obligations",
       "class": "surface",
-      "authority": "python",
+      "authority": "migrated",
       "target": "lean",
       "assurance": {
         "current": "experimental",
         "at_switch": "experimental",
-        "reason": "Python admission is retained after the E2.5 readability message regression; Lean english.read runs in shadow"
+        "reason": "Lean english.read decides admission; Python produces a checked lexicon and relays obligations to the entailment prover"
       },
       "python": [
         "ve.english:parse_english_with_metadata",
@@ -3396,7 +3398,7 @@
           }
         ],
         "planned_modes": [],
-        "harness": "The persistent service runs the E2 English reader in shadow; Python produces the public verdict.",
+        "harness": "The persistent service runs the E2 English reader and candidate checker; the Python relay validates request identities and the full read response before returning a verdict.",
         "theorems": [
           "VE.EnglishGrammar.policy_iff_no_failure",
           "VE.EnglishGrammar.policy_selection",

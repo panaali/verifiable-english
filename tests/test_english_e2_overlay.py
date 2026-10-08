@@ -75,12 +75,13 @@ TEXTS = {"O1": "The vocabulary overlay gives {} a wording that another symbol al
 
 @pytest.mark.parametrize("name", REFUSED)
 def test_rl9_lean_refuses_the_overlay_on_the_admission_path(name):
-    """Lean's shadow adapter still refuses the overlay with the E2 site and text."""
+    """The producer does not raise; Lean answers `InvalidOverlay` with the site; the relay raises `VEError`
+    (exactly that class) with Lean's text."""
     env, vocabulary, failure, _ = case(name)
-    words = EN.EnglishVocabulary(env, vocabulary=vocabulary, _defer_overlay_refusals=True)
+    EN.EnglishVocabulary(env, vocabulary=vocabulary, _defer_overlay_refusals=True)  # does not raise
     with pytest.raises(VEError) as caught:
-        EN._lean_reading(env, "Legacy is deployed." if "risk" not in name else "Wait leads to injury.",
-                         words, {'vocabulary': vocabulary})
+        EN.parse_english(env, "Legacy is deployed." if "risk" not in name else "Wait leads to injury.",
+                         vocabulary=vocabulary)
     error = caught.value
     assert type(error) is VEError, type(error)
     reading = error.lean_reading
