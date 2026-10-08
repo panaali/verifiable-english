@@ -19,6 +19,9 @@ how their answers compare:
 * `wire`: the wire-contract units (`demo@0`, `defer@0`, `forms@0`, `soft-norms@0`, `norms@0`,
   `norm-defaults@0`), by the Python engine and `ve_diagnose`; the whole diagnostic record is compared, except
   the text and args of an inherited check (the contract's `inherited` flag).
+* `document`: every `ve-document@1` seed of `conformance/document_wrapper.py`, Python's `load_document` and
+  `check_document` wrapper against the service's `document` mode on the document text; texts and values are
+  compared, a fail-closed answer agrees with any (`DocumentSurface`).
 
 Each seed is run as it is, and its 1-fault and 2-fault mutants (`one_faults`): every JSON node replaced by
 7, true, null, [], {} and "x"; an object member removed; keys and lists reversed; a list's first entry
@@ -94,7 +97,7 @@ BATCH_CPU = 300
 BATCH_CASES = 400
 
 # The CI sample: 1-fault and 2-fault mutants per surface. `--deep N` multiplies both.
-CI_BUDGET = {"requests": (6000, 1500), "environment": (6000, 1500), "wire": (6000, 1500)}
+CI_BUDGET = {"requests": (6000, 1500), "environment": (6000, 1500), "wire": (6000, 1500), "document": (500, 100)}
 CHUNK = 2000
 MINIMISE_EVALUATIONS = 3000
 # New signatures minimised in one run; any beyond are reported as found (`"minimised": false`).
@@ -1543,7 +1546,83 @@ def _diagnose_kind(unit):
     return "corpus"
 
 
-SURFACES = {"requests": Requests, "environment": EnvironmentSurface, "wire": Wire}
+# Documents ------------------------------------------------------------------------
+
+class DocumentSurface(Surface):
+    """Every `ve-document@1` seed of `conformance/document_wrapper.py` (the repository's documents and the
+    generated ones), as `{"front", "body"}`: Python's `load_document` and `check_document` wrapper against the
+    Lean service's `document` mode. What is sent is the document text, always a string on the wire: a front
+    matter the restricted JSON reader does not read (`null`, a float) is the mode's own `CheckerUnavailable`.
+    The mode's texts are Python's, so every text is compared; Lean's `CheckerUnavailable` or `ResourceLimit`
+    (and Python's) agrees with any answer, and so does a rejection of an environment Python's `Environment`
+    rejects by itself (`document_wrapper.verdict`). Rust has no document reader."""
+    name = "document"
+    harness = frozenset({"difffuzz.py", "document_wrapper.py"})
+    # Token limits (64 bytes) on the names a document declares, and the 64 readings of a reading set.
+    LIMITS = ((("front", "units", "*", "id"), "max_bytes", 64), (("front", "open_terms", "*", "name"), "max_bytes", 64),
+              (("front", "reading_sets", "*", "id"), "max_bytes", 64),
+              (("front", "reading_sets", "*", "readings"), "max_items", 64),
+              (("front", "reading_sets", "*", "readings", "*", "id"), "max_bytes", 64))
+
+    def __init__(self):
+        self._service = None
+
+    def close(self):
+        if self._service is not None:
+            self._service.close()
+            self._service = None
+
+    def seeds(self):
+        from conformance import document_wrapper as dw
+        return [Seed("document", "document@1" if dw.owned(doc) else "document@1:unowned", name, doc,
+                     ("python", "lean")) for name, doc in dw.seeds() if dw.fuzzed(doc)]
+
+    def limits(self, seed):
+        return list(self.LIMITS)
+
+    def path(self, engine, seed, root):
+        return engine in ("python", "lean")
+
+    def answers(self, items):
+        """Python and Lean on every input (no off-wire refusal: the input is the document's text)."""
+        out = [{"rust": NOT_APPLICABLE} for _ in items]
+        for index, (seed, root) in enumerate(items):
+            out[index]["python"] = held("python", self.python(seed, root))
+        for index, answer in enumerate(self.lean(items)):
+            out[index]["lean"] = held("lean", answer)
+        return out
+
+    def python(self, seed, root):
+        from conformance import document_wrapper as dw
+        return call_python(lambda: dw.python_answer(dw.text_of(root)), self.harness)
+
+    def lean(self, items):
+        from conformance import document_wrapper as dw
+        texts = [dw.text_of(root) for _, root in items]
+        try:
+            if self._service is None:
+                from ve.backends.lean_service import LeanService
+                self._service = LeanService(timeout=HANG_TIMEOUT)
+            return dw.lean_answers(self._service, texts)
+        except Exception as exc:  # noqa: BLE001 - CheckerUnavailable (a malformed row) or a crash: split
+            self.close()
+            if len(items) == 1:
+                return [{"outcome": "panic", "text": f"{type(exc).__name__}: {exc}"[:300]}]
+            middle = len(items) // 2
+            return self.lean(items[:middle]) + self.lean(items[middle:])
+
+    def text_fixed(self, seed, left, right):
+        return True
+
+    def equivalent(self, seed, left, right):
+        from conformance import document_wrapper as dw
+        answers = dict([left, right])
+        if "python" not in answers or "lean" not in answers:
+            return False
+        return dw.verdict(answers["python"], answers["lean"]) in ("fail-closed", *dw.OWNED_ELSEWHERE)
+
+
+SURFACES = {"requests": Requests, "environment": EnvironmentSurface, "wire": Wire, "document": DocumentSurface}
 
 
 # ---------------------------------------------------------------- comparison
