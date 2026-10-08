@@ -43,21 +43,21 @@ theorem familyNorms_fits (j : Json) : OkFits j Skeletons.familyNorms (FamilyNorm
 theorem graph_reported (j : Json) : Fits j Skeletons.graph (Standalone.reported Family.graphMode j) := by
   unfold Standalone.reported; split
   · exact graph_fits j _ ‹_›
-  · split <;> fits
+  · fits
 
 theorem readings_reported (j : Json) : Fits j Skeletons.readings (Standalone.reported Family.readingsMode j) := by
   unfold Standalone.reported; split
   · exact readings_fits j _ ‹_›
-  · split <;> fits
+  · fits
 
 theorem bundle_reported (j : Json) : Fits j Skeletons.bundle (Standalone.reported FamilyBundle.bundleCase j) := by
   unfold Standalone.reported; split
   · exact bundle_fits j _ ‹_›
-  · split <;> fits
+  · fits
 
 theorem familyNorms_reported (j : Json) : Fits j Skeletons.familyNorms (FamilyNorms.runCaseReported j) := by
   unfold FamilyNorms.runCaseReported Standalone.reported; split
   · exact familyNorms_fits j _ ‹_›
-  · split <;> fits
+  · fits
 
 end ResponseShape.Encoders.Family

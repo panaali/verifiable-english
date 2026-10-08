@@ -50,25 +50,58 @@ theorem parse_fits (j : Json) : OkFits req Skeletons.parse (parseCase j) := by
   all_goals (try simp only [VE.Route.Wire.ok])
   all_goals fits
 
-theorem environment_reported (j : Json) : Fits j Skeletons.environment (reported environmentCase j) := by
+private theorem environment_case_reported (j : Json) :
+    Fits j Skeletons.environment (reported environmentCase j) := by
   unfold reported; split
   · exact environment_fits j _ ‹_›
-  · split <;> fits
+  · fits
 
-theorem model_reported (j : Json) : Fits j Skeletons.model (reported modelCase j) := by
+private theorem model_case_reported (j : Json) :
+    Fits j Skeletons.model (reported modelCase j) := by
   unfold reported; split
   · exact model_fits j _ ‹_›
-  · split <;> fits
+  · fits
+
+private theorem environment_fault_fits (j : Json) (fault : ModelFault) :
+    Fits j Skeletons.environment (reportedFault j fault) := by
+  unfold reportedFault
+  split <;> fits
+
+private theorem model_fault_fits (j : Json) (fault : ModelFault) :
+    Fits j Skeletons.model (reportedFault j fault) := by
+  unfold reportedFault
+  split <;> fits
+
+theorem environment_reported (j : Json) : Fits j Skeletons.environment (reportedEnvironment j) := by
+  unfold reportedEnvironment
+  split
+  · exact environment_case_reported j
+  · split
+    · exact environment_case_reported j
+    · exact environment_fault_fits j _
+
+theorem model_reported (j : Json) : Fits j Skeletons.model (reportedModel j) := by
+  unfold reportedModel
+  dsimp only
+  split
+  · split
+    · exact model_case_reported j
+    · exact model_fault_fits j _
+  · split
+    · exact model_case_reported j
+    · split
+      · exact model_case_reported j
+      · exact model_fault_fits j _
 
 theorem check_reported (j : Json) : Fits j Skeletons.check (reported checkCase j) := by
   unfold reported; split
   · exact check_fits j _ ‹_›
-  · split <;> fits
+  · fits
 
 theorem identity_reported (j : Json) : Fits j Skeletons.identity (reported identityCase j) := by
   unfold reported; split
   · exact identity_fits j _ ‹_›
-  · split <;> fits
+  · fits
 
 theorem parse_reported (j : Json) : Fits j Skeletons.parse (reportedParse j) := by
   unfold reportedParse; split

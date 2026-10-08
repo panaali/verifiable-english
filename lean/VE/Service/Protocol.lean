@@ -128,8 +128,8 @@ def runMode : Mode → Json → Json
   | .route, j => VE.Route.Run.runCaseReported j
   | .norms, j => VE.Norms.Run.runCaseReported j
   | .english, j => englishReported j
-  | .environment, j => Standalone.reported Standalone.environmentCase j
-  | .model, j => Standalone.reported Standalone.modelCase j
+  | .environment, j => Standalone.reportedEnvironment j
+  | .model, j => Standalone.reportedModel j
   | .check, j => Standalone.reported Standalone.checkCase j
   | .identity, j => Standalone.reported Standalone.identityCase j
   | .parse, j => Standalone.reportedParse j
@@ -667,9 +667,9 @@ theorem runMode_english (j : Json) :
       | .ok result => result
       | .error message => Json.mkObj [("status", .str "error"), ("error", .str message)] := rfl
 theorem runMode_environment (j : Json) :
-    runMode .environment j = Standalone.reported Standalone.environmentCase j := rfl
+    runMode .environment j = Standalone.reportedEnvironment j := rfl
 theorem runMode_model (j : Json) :
-    runMode .model j = Standalone.reported Standalone.modelCase j := rfl
+    runMode .model j = Standalone.reportedModel j := rfl
 theorem runMode_check (j : Json) :
     runMode .check j = Standalone.reported Standalone.checkCase j := rfl
 theorem runMode_identity (j : Json) :
