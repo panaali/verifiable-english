@@ -38,6 +38,14 @@ Eligibility ~100% (done); agent policy ~100% (done); Asimov ~100% (done); Asimov
 ### Scalable-oversight experiments (2026-10-05)
 Research: [oversight opportunities](/home/seyran/code/manage-agents/reviews/oversight-opportunities-2026-10.md). Ranked: (1) spec-defect audit of real agent policies (pre-registration in progress: docs/experiments/policy-audit-PREREG.md on design/policy-audit); (2) offline judging of tau2-bench airline/retail actions, small vs large judge with and without VE; (3) 'the policy doesn't say' as a reranking filter, later an RL reward (needs a GPU). Fair baselines: Datalog/Z3 written by the same LLM. Obfuscated arguments (Barnes-Christiano): see experiments/obfuscated-arguments/ and the math backlog.
 
+
+### Question answering in VE (lead-approved 2026-10-08)
+Ask a question of a VE document and get a Lean-checked answer: **yes** (with proof and the sentences used), **no** (with a counterexample situation), **not settled by the text** (unspecified defaults), or for who/what questions the checked list of answers (or "the text names no one"). Oversight value: an AI answer about a policy becomes checkable (links to oversight experiment 3, the "policy doesn't say" filter).
+- **Today:** yes/no as entailment: the question is written as a statement and checked to see whether it follows.
+- **Q1 (quick win):** questions written as English questions ("Must every qualified person ...?"), parsed by the Lean English grammar into the same entailment check.
+- **Q2 (quick win):** English answers with reasons: "Yes. Sentence 26.1 says ...", built from the certificate or countermodel and rendered by Lean.
+- **Q3 (design item):** who/what/which questions: Rust searches for candidates, Lean checks each; completeness or "no one named" is proved where possible.
+- **Order:** Q1 and Q2 after English-in-Lean E2.6 (Lean is the English authority); Q3 after readings-defaults RD-3 (verdicts in Lean).
 ### Use-case backlog (added 2026-09-29, lead-approved; order = orchestrator's recommendation)
 
 | # | Use case | Why it matters | Needs | Status |
