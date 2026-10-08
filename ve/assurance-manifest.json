@@ -1884,7 +1884,7 @@
         "role": "the conformance tooling's evaluation leg only (the evaluate-budgeted case kind); since lean-first 15b no public evaluation reads it"
       },
       "lean_call_sites": [
-        "ve.evaluate:_evaluate_lean"
+        "ve.backends.lean_runner:metered_evaluation"
       ],
       "tests": [
         "tests/test_lean_conformance.py::test_lean_agrees_on_every_shared_case",
@@ -2099,7 +2099,7 @@
         "role": "the only search (lean-first 15b): proposes candidates and witnesses; its candidate evaluator is generator-internal and its witnesses are checked by Lean"
       },
       "lean_call_sites": [
-        "ve.search:_nonvacuous"
+        "ve.backends.lean_runner:metered_nonvacuity"
       ],
       "tests": [
         "tests/test_evaluate_search.py::test_search_finds_empty_domain_countermodel_and_checks_it",

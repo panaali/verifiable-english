@@ -80,3 +80,21 @@ def evaluation_case(env, case_id: str, ast: list, model: dict) -> tuple[str, dic
     mode = lean_mode(env)
     # The legacy evaluation runner takes a kind-less case; the others name it.
     return mode, case if mode == "evaluate" else {**case, "kind": "evaluate"}
+
+
+def _metered_timeout() -> float:
+    from .lean import ROUTE_TIMEOUT, configured_timeout
+    return configured_timeout(ROUTE_TIMEOUT)
+
+
+def metered_evaluation(case: dict) -> dict:
+    """One `evaluate-budgeted` case through `ve_metered`: its row (value, count, trace)."""
+    from . import lean
+    return lean.run("evaluate", METERED_EXECUTABLE, [case], runner="ve_metered", timeout=_metered_timeout())[0]
+
+
+def metered_nonvacuity(case: dict) -> dict:
+    """One `non-vacuity` case through `ve_metered`: its row (suitable, evaluations, exhausted)."""
+    from . import lean
+    return lean.run("countermodel.search", METERED_EXECUTABLE, [case], runner="ve_metered",
+                    timeout=_metered_timeout())[0]
