@@ -792,7 +792,8 @@ class Enumerated(_Route):
                 raise VEError(error)
             raise CheckerUnavailable(f"ReadingsConformance: Lean refused the readings-verdicts case Python built: "
                                      f"{error}")
-        _check_answer(row, question)
+        _check_answer(row, question, None if self.choices is None else [self.choice_json(c) for c in self.choices],
+                      exact=question != "query" and "assumed" not in fields)
         return row
 
     def _conflict_answer(self):
@@ -922,18 +923,41 @@ def _request_key(conclusion_ast, premises, assumed):
                       sort_keys=True)
 
 
-def _check_answer(row, question):
-    """The answer's shape as `Readings.Run.verdictsAnswer` builds it, and every piece of evidence Python sent
-    accepted: a refused piece (a witness, certificate or model Python's own check accepted, or a dead reading's
-    certificate) is `CheckerUnavailable`. A conflict package that does not certify CONFLICT-FREE is not refused: the
-    witness search follows (4.3)."""
-    try:
-        if row["route"] != "enumerated" or row["question"] != question or type(row["per_choice"]) is not list or \
-                type(row["english"]) is not list or type(row["result"]) is not dict:
+_ROWS = {"CONFLICT-FREE", "CONFLICT", "UNKNOWN", "proved", "refuted", "model", "INCONSISTENT"}
+_LINE = {"frame": str, "readings": list, "gaps": list}
+
+
+def _check_answer(row, question, choices=None, exact=True):
+    """The answer's shape as `Readings.Run.verdictsAnswer` builds it (every field, its type, booleans as booleans),
+    its rows bound to the request (each a compatible choice of Lean's elaborate row, none twice, all of them when
+    nothing is assumed), and every piece of evidence Python sent accepted: a refused piece (a witness, certificate or
+    model Python's own check accepted, or a dead reading's certificate) is `CheckerUnavailable`. A conflict package
+    that does not certify CONFLICT-FREE is not refused: the witness search follows (4.3)."""
+    def need(condition):
+        if not condition:
             raise ValueError
+    try:
+        need(row["route"] == "enumerated" and row["question"] == question)
+        need(type(row["result"]) is dict and type(row["per_choice"]) is list and type(row["english"]) is list)
+        for key in ("finding_sets", "restrictions", "labels", "untaken", "dead"):
+            need(type(row[key]) is list and all(type(x) is not bool for x in row[key]))
+        need(row["dead_readings"] is None or type(row["dead_readings"]) is list)
+        seen = []
         for entry in row["per_choice"]:
-            if type(entry.get("evidence")) is not dict or type(entry.get("errors")) is not dict:
-                raise ValueError
+            need(type(entry["choice"]) is list and entry["conflict"] in _ROWS and entry["choice"] not in seen)
+            seen.append(entry["choice"])
+            need(type(entry["evidence"]) is dict and all(type(v) is bool for v in entry["evidence"].values()))
+            need(type(entry["errors"]) is dict and all(type(v) is str for v in entry["errors"].values()))
+            need(type(entry["shown"]) is dict and type(entry["gaps"]) is dict)
+            for key in ("query", "premises"):
+                need(key not in entry or entry[key] in _ROWS)
+        if choices is not None and "budget" not in row["result"]:
+            need(all(c in choices for c in seen))
+            need(not exact or seen == choices)
+        for line in row["english"]:
+            need(type(line) is dict and all(type(line[k]) is t for k, t in _LINE.items()))
+            for key in ("result", "model", "label"):
+                need(line[key] is None or type(line[key]) is str)
     except (KeyError, TypeError, ValueError) as exc:
         raise CheckerUnavailable("the Lean readings route returned an invalid answer") from exc
     for entry in row["per_choice"]:
@@ -944,8 +968,8 @@ def _check_answer(row, question):
             if piece != "conflict" and accepted is not True:
                 raise CheckerUnavailable(f"ReadingsConformance: Lean does not confirm the {piece} Python's "
                                          "generators found on a reading's document")
-    for dead in row.get("dead") or []:
-        if dead.get("accepted") is not True:
+    for dead in row["dead"]:
+        if type(dead) is not dict or dead.get("accepted") is not True:
             raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the dead reading Python's prover "
                                      "certified")
 
