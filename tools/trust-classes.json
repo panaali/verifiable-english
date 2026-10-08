@@ -4164,6 +4164,7 @@
   },
   "VE/NormDefaults/Replay.lean": {
    "C": [
+    "VE.NormDefaults.Wire.AdmittedModel",
     "VE.NormDefaults.Wire.GapsReplay",
     "VE.NormDefaults.Wire.GapsReplay.none_",
     "VE.NormDefaults.Wire.ReachedData",
@@ -4171,6 +4172,7 @@
     "VE.NormDefaults.Wire.Status",
     "VE.NormDefaults.Wire.StatusData",
     "VE.NormDefaults.Wire.WitnessDataU",
+    "VE.NormDefaults.Wire.admitModel",
     "VE.NormDefaults.Wire.reachedFromU",
     "VE.NormDefaults.Wire.replayGaps",
     "VE.NormDefaults.Wire.replayReached",
