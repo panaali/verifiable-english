@@ -5640,8 +5640,12 @@
   },
   "VE/Readings/SupExtraExamples.lean": {
    "T": [
+    "VE.Readings.SupExtraExamples.SuperposeAllExtraApproved",
+    "VE.Readings.SupExtraExamples.X1Checks",
     "VE.Readings.SupExtraExamples.bare",
     "VE.Readings.SupExtraExamples.closeCert",
+    "VE.Readings.SupExtraExamples.conflictCert",
+    "VE.Readings.SupExtraExamples.instDecidableX1Checks",
     "VE.Readings.SupExtraExamples.noAvoid"
    ]
   },

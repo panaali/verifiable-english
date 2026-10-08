@@ -721,6 +721,8 @@ VE.Readings.Shaped@VE.Readings.Unspecified
 VE.Readings.Sim@VE.Readings.Simulate
 VE.Readings.StrictDoc@VE.Readings.Unspecified
 VE.Readings.StrictNodes@VE.Readings.Unspecified
+VE.Readings.SupExtraExamples.SuperposeAllExtraApproved@VE.Readings.SupExtraExamples
+VE.Readings.SupExtraExamples.X1Checks@VE.Readings.SupExtraExamples
 VE.Readings.Transfers@VE.Readings.SupExtra
 VE.Readings.Twin@VE.Readings.Force
 VE.Readings.TwinDocs@VE.Readings.Force

@@ -13453,6 +13453,44 @@ theorem VE.Readings.Run.soft_choice_model_sound
             ¬VE.Formula.denote r.M.asStructure [] (VE.SoftNorms.circ r.src.D r.φ)
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Readings.Run.SoftChoiceModel.M@VE.Readings.SupRun VE.Readings.Run.SoftChoiceModel.check@VE.Readings.SupRun VE.Readings.Run.SoftChoiceModel.src@VE.Readings.SupRun VE.Readings.Run.SoftChoiceModel.value@VE.Readings.SupRun VE.Readings.Run.SoftChoiceModel.Γ@VE.Readings.SupRun VE.Readings.Run.SoftChoiceModel.φ@VE.Readings.SupRun VE.Readings.Run.SoftChoiceModel@VE.Readings.SupRun VE.SoftNorms.BaseAdmissible'@VE.SoftNorms.Coherence VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.circ@VE.SoftNorms.Semantics VE.Structure.Carrier@VE.Semantics
   -- expr 199873469
+theorem VE.Readings.SupExtraExamples.bare_admissible
+  VE.Readings.SupExtraExamples.X1Checks →
+    VE.Compose.BaseAdmissibleP (VE.Rights.correlate (VE.Readings.choiceDoc VE.Readings.Examples.K1 [("rs1", 0)]).fst)
+      (VE.Rights.limPremises (VE.Readings.choiceDoc VE.Readings.Examples.K1 [("rs1", 0)]).fst ++
+        [VE.Readings.SupExtraExamples.noAvoid])
+      VE.Readings.SupExtraExamples.bare.asStructure
+  -- uses VE.Compose.BaseAdmissibleP@VE.Compose.Slot VE.FiniteModel.asStructure@VE.Finite VE.Formula@VE.Syntax VE.Readings.Examples.K1@VE.Readings.Examples VE.Readings.SupExtraExamples.X1Checks@VE.Readings.SupExtraExamples VE.Readings.SupExtraExamples.bare@VE.Readings.SupExtraExamples VE.Readings.SupExtraExamples.noAvoid@VE.Readings.SupExtraExamples VE.Readings.choiceDoc@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.Rights.limPremises@VE.Rights.Correlate
+  -- expr 304598846
+theorem VE.Readings.SupExtraExamples.k1_compatible
+  ∀ {c : VE.Readings.Choice}, VE.Readings.Compatible VE.Readings.Examples.K1 c → c = [("rs1", 0)] ∨ c = [("rs1", 1)]
+  -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Examples.K1@VE.Readings.Examples
+  -- expr 1553873171
+theorem VE.Readings.SupExtraExamples.k1_hyps
+  VE.Readings.SupExtraExamples.X1Checks → VE.Readings.Hyps VE.Readings.Examples.K1
+  -- uses VE.Readings.Examples.K1@VE.Readings.Examples VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.SupExtraExamples.X1Checks@VE.Readings.SupExtraExamples
+  -- expr 1120706144
+theorem VE.Readings.SupExtraExamples.noAvoid_of_empty
+  ∀ (B : VE.Structure),
+    (∀ (vs : List B.Carrier), ¬B.relation "avoid_required" vs) →
+      VE.Formula.denote B [] VE.Readings.SupExtraExamples.noAvoid
+  -- uses VE.Formula.denote@VE.Semantics VE.Readings.SupExtraExamples.noAvoid@VE.Readings.SupExtraExamples VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3398829444
+theorem VE.Readings.SupExtraExamples.superpose_all_extra_refuted
+  VE.Readings.SupExtraExamples.X1Checks → ¬VE.Readings.SupExtraExamples.SuperposeAllExtraApproved
+  -- uses VE.Readings.SupExtraExamples.SuperposeAllExtraApproved@VE.Readings.SupExtraExamples VE.Readings.SupExtraExamples.X1Checks@VE.Readings.SupExtraExamples
+  -- expr 3740794744
+theorem VE.Readings.SupExtraExamples.transfers_x1
+  VE.Readings.SupExtraExamples.X1Checks →
+    VE.Readings.Transfers VE.Readings.Examples.K1 [VE.Readings.SupExtraExamples.noAvoid] fun x =>
+      [VE.Readings.SupExtraExamples.noAvoid]
+  -- uses VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Examples.K1@VE.Readings.Examples VE.Readings.SupExtraExamples.X1Checks@VE.Readings.SupExtraExamples VE.Readings.SupExtraExamples.noAvoid@VE.Readings.SupExtraExamples VE.Readings.Transfers@VE.Readings.SupExtra
+  -- expr 1537026021
+theorem VE.Readings.SupExtraExamples.x1_conflict_free
+  VE.Readings.SupExtraExamples.X1Checks →
+    VE.Compose.ConflictFreeP (VE.Rights.correlate (VE.Readings.sup VE.Readings.Examples.K1).fst)
+      (VE.Readings.slotUnder VE.Readings.Examples.K1 [] ++ [VE.Readings.SupExtraExamples.noAvoid])
+  -- uses VE.Compose.ConflictFreeP@VE.Compose.Slot VE.Formula@VE.Syntax VE.Readings.Examples.K1@VE.Readings.Examples VE.Readings.SupExtraExamples.X1Checks@VE.Readings.SupExtraExamples VE.Readings.SupExtraExamples.noAvoid@VE.Readings.SupExtraExamples VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate
+  -- expr 3212794479
 theorem VE.Readings.Twin.act_ne
   ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
     VE.Readings.Twin C Nd →

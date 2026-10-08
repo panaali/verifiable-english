@@ -171,6 +171,7 @@ import VE.Readings.ChoiceWF
 import VE.Readings.Force
 import VE.Readings.Unspecified
 import VE.Readings.SupExtra
+import VE.Readings.SupExtraExamples
 import VE.WireContract.Engine
 import VE.Grammar.Derives
 import VE.Grammar.Extension
@@ -4276,6 +4277,14 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.supCertificateCheckExtra_nil
 #print axioms VE.Readings.supModelCheckExtra_nil
 #print axioms VE.Readings.baseAdmissibleR_nil
+-- RD-6a fixture X3 (DRI ruling 2026-10-07): the approved `superpose_all_extra` refuted at X1.
+#print axioms VE.Readings.SupExtraExamples.k1_hyps
+#print axioms VE.Readings.SupExtraExamples.k1_compatible
+#print axioms VE.Readings.SupExtraExamples.noAvoid_of_empty
+#print axioms VE.Readings.SupExtraExamples.transfers_x1
+#print axioms VE.Readings.SupExtraExamples.x1_conflict_free
+#print axioms VE.Readings.SupExtraExamples.bare_admissible
+#print axioms VE.Readings.SupExtraExamples.superpose_all_extra_refuted
 -- english-lean (docs/spec/english-lean.md 5.9): the grammar engine and the English instance.
 #print axioms VE.Grammar.yieldAll_nil
 #print axioms VE.Grammar.yieldAll_cons
