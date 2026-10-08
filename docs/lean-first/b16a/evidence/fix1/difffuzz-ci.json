@@ -1,5 +1,5 @@
 {
- "commit": "137a4dfbb1c25ebb3da7b29ac88d9b759a2aeaa9",
+ "commit": "8efa27f1dea862a36c7ad8d8526f79c1213e09ea",
  "seed": 20261004,
  "scale": 1,
  "corpus": {
@@ -71,8 +71,8 @@
   },
   "document": {
    "zero-fault": 15,
-   "one-fault": 2000,
-   "two-fault": 500
+   "one-fault": 500,
+   "two-fault": 100
   }
  },
  "answers": {
@@ -105,11 +105,11 @@
    "rust:n/a": 8086
   },
   "document": {
-   "lean:error": 2449,
-   "lean:ok": 66,
-   "python:error": 2337,
-   "python:ok": 178,
-   "rust:n/a": 2515
+   "lean:error": 587,
+   "lean:ok": 28,
+   "python:error": 561,
+   "python:ok": 54,
+   "rust:n/a": 615
   }
  },
  "findings": {
@@ -197,7 +197,7 @@
  },
  "passed": true,
  "cpu_seconds": {
-  "python": 144.1,
-  "children": 25.5
+  "python": 130.0,
+  "children": 19.5
  }
 }

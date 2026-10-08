@@ -57,19 +57,19 @@ test in `tests/test_lean_document_wrapper.py` (unless named otherwise).
 
 ### Fix 1: saved scope
 
-Range: `192e496335c248d848fc1816f0b3b4fc6dd2fbcc..HEAD --no-merges`, captured at `137a4dfbb1c25ebb3da7b29ac88d9b759a2aeaa9`. Fix commits (saved): 137a4dfbb1c25ebb3da7b29ac88d9b759a2aeaa9, 9cffc4e322afec4907316b0342659375e1a07f2b, 2fce5544ae67822370cdead3aaf1cd61e306fd84, 44b1a7dced894d2c405d5197c271a647b55dd488, 04ea4dc3b1e1b792dc73a2b11b3b168d031c43a8, 5afeee499b9f14f63cc0a3f6a10ba0a40eee02fd, b82aaac789246efb1abe09c3363695fd83035517, b005dc8a848f5469e37092eb8112ea1efcc12133, 489080ebb815da3da3e77ec6dbfd43386bd42809
+Range: `192e496335c248d848fc1816f0b3b4fc6dd2fbcc..HEAD --no-merges`, captured at `8efa27f1dea862a36c7ad8d8526f79c1213e09ea`. Fix commits (saved): 8efa27f1dea862a36c7ad8d8526f79c1213e09ea, 5f71984f4aef2717e36935be19226331e743e50d, 137a4dfbb1c25ebb3da7b29ac88d9b759a2aeaa9, 9cffc4e322afec4907316b0342659375e1a07f2b, 2fce5544ae67822370cdead3aaf1cd61e306fd84, 44b1a7dced894d2c405d5197c271a647b55dd488, 04ea4dc3b1e1b792dc73a2b11b3b168d031c43a8, 5afeee499b9f14f63cc0a3f6a10ba0a40eee02fd, b82aaac789246efb1abe09c3363695fd83035517, b005dc8a848f5469e37092eb8112ea1efcc12133, 489080ebb815da3da3e77ec6dbfd43386bd42809
 
-- Net lines: 2048 added, 435 deleted; source files (generated inventories excluded): 1554 added, 255 deleted
+- Net lines: 2708 added, 440 deleted; source files (generated inventories and this report with its evidence excluded): 1625 added, 255 deleted
 - Lean source lines added: 674
 - Python lines deleted: 35 (bug fixes; no Python semantic duplicate is deleted in 16a)
 
 The evidence below was measured at `2fce5544ae67822370cdead3aaf1cd61e306fd84`; the commits after it change only
-conformance/document_wrapper.py, tools/trust-classes.json (layout and the fuzz's profile label).
+conformance/document_wrapper.py, docs/lean-first/b16a/REPORT.md, docs/lean-first/b16a/evidence/fix1/ab.json, docs/lean-first/b16a/evidence/fix1/deep-document.json, docs/lean-first/b16a/evidence/fix1/difffuzz-ci.json, docs/lean-first/b16a/evidence/fix1/mutants.json, docs/lean-first/b16a/evidence/fix1/scope.json, tests/test_b16a_evidence.py, tools/difffuzz.py, tools/gate-collection.json, tools/trust-classes.json (layouts, the fuzz's profile label and CI sample, the report and its evidence).
 
 ### Fix 1: gate evidence
 
 - A/B identical: 94588 public outcomes between the first round's head `192e4963` and `2fce5544`, zero differences and zero unlisted cases; pilots identical: 393 documents (the pilot branches grew since the first round).
-- Difffuzz CI: 352 baseline entries, 0 new signatures, every entry replayed; the `document` surface ran 2515 inputs.
+- Difffuzz CI: 352 baseline entries, 0 new signatures, every entry replayed; the `document` surface ran 615 inputs.
 - Deep document fuzz: 2 seeds at 10 times the CI sample, 50030 inputs, 0 new signatures.
 - Fix seeded mutants: 9 failed as expected, each restored and the build hash re-checked: bridge_leaves_zero, no_status_fold, profile_gate_removed, unbound_fence_accepted, python_json_called_invalid, graph_not_admitted, block_line_dropped, mixed_parts_batched, python_unhashable_status.
 
