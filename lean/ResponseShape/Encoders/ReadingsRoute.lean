@@ -110,28 +110,28 @@ theorem elaborateFields_fits (id : String) (nd : Bool) (n : Nat) (D : Doc) :
     simp only [List.cons_append, List.nil_append, vocabularyJson, slotJson, sizesJson]
   all_goals fits
 
-theorem elaborate_fits (id : String) (j : Json) :
-    OkFits req (skel% "readings-route.json#/$defs/elaborate") (runElaborate id j) := by
+theorem elaborate_fits (id : String) (b : Wire.Admitted2) :
+    OkFits req (skel% "readings-route.json#/$defs/elaborate") (runElaborate id b) := by
   unfold runElaborate
   okfits
   exact elaborateFields_fits _ _ _ _
 
-theorem conflict_fits (id : String) (j : Json) :
-    OkFits req (skel% "readings-route.json#/$defs/conflict") (runConflict id j) := by
+theorem conflict_fits (id : String) (b : Wire.Admitted2) (j : Json) :
+    OkFits req (skel% "readings-route.json#/$defs/conflict") (runConflict id b j) := by
   unfold runConflict
   okfits
   all_goals (try simp only [okWith, VE.Route.Wire.ok])
   all_goals fits
 
-theorem certificate_fits (id : String) (j : Json) :
-    OkFits req (skel% "readings-route.json#/$defs/certificate") (runCertificate id j) := by
+theorem certificate_fits (id : String) (b : Wire.Admitted2) (j : Json) :
+    OkFits req (skel% "readings-route.json#/$defs/certificate") (runCertificate id b j) := by
   unfold runCertificate
   okfits
   simp only [okWith, VE.Route.Wire.ok]
   fits
 
-theorem model_fits (id : String) (j : Json) :
-    OkFits req (skel% "readings-route.json#/$defs/model") (runModel id j) := by
+theorem model_fits (id : String) (b : Wire.Admitted2) (j : Json) :
+    OkFits req (skel% "readings-route.json#/$defs/model") (runModel id b j) := by
   unfold runModel
   okfits
   all_goals (try simp only [okWith, VE.Route.Wire.ok])
@@ -144,13 +144,13 @@ theorem deadAnswer_fits (id : String) (D : Doc) (j : Json) :
   all_goals (try simp only [okWith, VE.Route.Wire.ok])
   all_goals fits
 
-theorem dead_fits (id : String) (j : Json) : OkFits req (skel% "readings-route.json#/$defs/dead") (runDead id j) := by
+theorem dead_fits (id : String) (b : Wire.Admitted2) (j : Json) :
+    OkFits req (skel% "readings-route.json#/$defs/dead") (runDead id b j) := by
   unfold runDead
-  okfits
   exact deadAnswer_fits _ _ _
 
-theorem choice_fits (lower : List String → Json → Json) (id : String) (j : Json) :
-    OkFits req (skel% "readings-route.json#/$defs/choice_answer") (runChoice lower id j) := by
+theorem choice_fits (lower : List String → Json → Json) (id : String) (b : Wire.Admitted2) (j : Json) :
+    OkFits req (skel% "readings-route.json#/$defs/choice_answer") (runChoice lower id b j) := by
   unfold runChoice
   okfits
   all_goals (try simp only [okWith, VE.Route.Wire.ok])
@@ -182,8 +182,8 @@ theorem filled_fits (r : Wire.AdmittedND) :
   okfits
   fits
 
-theorem validateND_fits (id : String) (j : Json) :
-    OkFits req (skel% "readings-route.json#/$defs/validate") (runValidateND id j) := by
+theorem validateND_fits (id : String) (f : Wire.AdmittedNDFull) :
+    OkFits req (skel% "readings-route.json#/$defs/validate") (runValidateND id f) := by
   unfold runValidateND
   okfits
   rename_i rows hrows env henv
@@ -201,15 +201,15 @@ theorem validateND_fits (id : String) (j : Json) :
          · obtain ⟨r, o, f, sid, rfl⟩ := hp _ ‹_›
            fits using pair_fits)
 
-theorem separateND_fits (id : String) (j : Json) :
-    OkFits j (skel% "readings-route.json#/$defs/separate") (runSeparateND id j) := by
+theorem separateND_fits (id : String) (f : Wire.AdmittedNDFull) (j : Json) :
+    OkFits j (skel% "readings-route.json#/$defs/separate") (runSeparateND id f j) := by
   unfold runSeparateND
   okfits
   simp only [VE.Route.Wire.ok]
   fits using pair_fits
 
-theorem runS2_fits (lower : List String → Json → Json) (id kind : String) (j : Json)
-    (hK : KindRead "evaluate" req kind) : OkFits req Skeletons.readingsRoute (runS2 lower id kind j) := by
+theorem runS2_fits (lower : List String → Json → Json) (id kind : String) (b : Wire.Admitted2) (j : Json)
+    (hK : KindRead "evaluate" req kind) : OkFits req Skeletons.readingsRoute (runS2 lower id kind b j) := by
   unfold runS2
   rcases hK with hK | ⟨hK, hd⟩
   all_goals (try subst hd)
@@ -217,21 +217,21 @@ theorem runS2_fits (lower : List String → Json → Json) (id kind : String) (j
   all_goals kind_norm
   all_goals first
     | (intro v hv; fits_from elaborate_fits _ _ v hv)
-    | (intro v hv; fits_from conflict_fits _ _ v hv)
-    | (intro v hv; fits_from certificate_fits _ _ v hv)
-    | (intro v hv; fits_from model_fits _ _ v hv)
-    | (intro v hv; fits_from dead_fits _ _ v hv)
-    | (intro v hv; fits_from choice_fits _ _ _ v hv)
+    | (intro v hv; fits_from conflict_fits _ _ _ v hv)
+    | (intro v hv; fits_from certificate_fits _ _ _ v hv)
+    | (intro v hv; fits_from model_fits _ _ _ v hv)
+    | (intro v hv; fits_from dead_fits _ _ _ v hv)
+    | (intro v hv; fits_from choice_fits _ _ _ _ v hv)
 
-theorem runS2ND_fits (lower : List String → Json → Json) (id kind : String) (j : Json)
-    (hK : KindRead "evaluate" req kind) : OkFits req Skeletons.readingsRoute (runS2ND lower id kind j) := by
+theorem runS2ND_fits (lower : List String → Json → Json) (id kind : String) (b : Wire.Admitted2) (j : Json)
+    (hK : KindRead "evaluate" req kind) : OkFits req Skeletons.readingsRoute (runS2ND lower id kind b j) := by
   have hK0 := hK
   unfold runS2ND
   rcases hK with hK | ⟨hK, hd⟩
   all_goals (try subst hd)
   all_goals okfits
   all_goals first
-    | exact runS2_fits _ _ _ _ hK0
+    | exact runS2_fits _ _ _ _ _ hK0
     | skip
   all_goals (try kind_norm)
   all_goals first
@@ -245,12 +245,10 @@ theorem runCase_fits (j : Json) : OkFits j Skeletons.readingsRoute (runCase j) :
   all_goals read_kind
   all_goals first
     | fits_from validate_fits _ _ _ ‹_›
-    | exact runS2_fits _ _ _ _ (KindRead.of_str ‹_›)
-    | exact runS2_fits _ _ _ _ (Or.inr ⟨‹_›, rfl⟩)
-    | exact runS2ND_fits _ _ _ _ (KindRead.of_str ‹_›)
-    | exact runS2ND_fits _ _ _ _ (Or.inr ⟨‹_›, rfl⟩)
+    | exact runS2ND_fits _ _ _ _ _ (KindRead.of_str ‹_›)
+    | exact runS2ND_fits _ _ _ _ _ (Or.inr ⟨‹_›, rfl⟩)
     | (intro v hv; fits_from validateND_fits _ _ v hv)
-    | (intro v hv; fits_from separateND_fits _ _ v hv)
+    | (intro v hv; fits_from separateND_fits _ _ _ v hv)
     | (simp only [VE.Route.Wire.ok]; fits using pair_fits)
 
 /-! ## The lower routes

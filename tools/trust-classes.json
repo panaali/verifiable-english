@@ -5429,7 +5429,6 @@
     "VE.Readings.Run.setPairsSpec",
     "VE.Readings.Run.sideIn",
     "VE.Readings.Run.validateResult",
-    "VE.Readings.Run.completionEnvironment",
     "VE.Readings.Run.ndPairFacts",
     "VE.Readings.Run.runS2ND",
     "VE.Readings.Run.runSeparateND",
@@ -5650,7 +5649,11 @@
     "VE.Readings.Wire.stringList",
     "VE.Readings.Wire.supReplayOf",
     "VE.Readings.Wire.supVocabulary",
-    "VE.Readings.Wire.unitIdsOf"
+    "VE.Readings.Wire.unitIdsOf",
+    "VE.Readings.Wire.admitS2Rest",
+    "VE.Readings.Wire.admitS2Of",
+    "VE.Readings.Wire.replayCertificateOf",
+    "VE.Readings.Wire.replayModelOf"
    ]
   },
   "VE/Readings/Superpose.lean": {
