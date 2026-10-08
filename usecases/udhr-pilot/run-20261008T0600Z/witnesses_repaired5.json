@@ -1,0 +1,222 @@
+{
+  "u099a.unassigned": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "education_generally_available_required",
+      "row": [
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "education_generally_available_required",
+      "row": [
+        "c1"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "witness",
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "predicate": "education_generally_available_required",
+      "row": [
+        "c2"
+      ],
+      "status": "UNDECIDED",
+      "value": null
+    }
+  ],
+  "u099b.unassigned": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "equal_access_to_higher_education_required",
+      "row": [
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u100a.unassigned": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "education_directed_to_personality_required",
+      "row": [
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u100b.unassigned": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "education_directed_to_respect_for_rights_required",
+      "row": [
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u105c.anyone_negative": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_right_u105c_required",
+      "row": [
+        "b0",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_right_u105c_required",
+      "row": [
+        "b1",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u105c.state_combined": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_and_secure_right_u105c_required",
+      "row": [
+        "b0",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_and_secure_right_u105c_required",
+      "row": [
+        "b1",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u105c.state_negative": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_right_u105c_required",
+      "row": [
+        "b0",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "avoid_denying_right_u105c_required",
+      "row": [
+        "b1",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u105c.state_positive": [
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "secure_right_u105c_required",
+      "row": [
+        "b0",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "evidence": "table3",
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "predicate": "secure_right_u105c_required",
+      "row": [
+        "b1",
+        "c0"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ]
+}
