@@ -1,0 +1,77 @@
+"""A differential never compares an engine with itself (lean-first batch 15b, review B2).
+
+Python has no search since batch 15b: `find_countermodel` runs Rust's under every authority. Shadow records
+and three-way tests that compared "Python" with Rust there compared Rust with Rust and could not fail. One
+table names the single-owner operations (`dispatch.SINGLE_OWNER`); `execute` refuses them and any pair of
+identical implementations, `owned` runs them, and the differential harnesses read the same table.
+"""
+from __future__ import annotations
+
+import pytest
+
+from conformance import three_way
+from tools import difffuzz
+from tools import difffuzz_corpus as corpus
+from ve.backends import dispatch
+
+
+def test_execute_refuses_a_comparison_of_one_implementation_with_itself():
+    def run():
+        return 1
+    for op in dispatch.SINGLE_OWNER:
+        with pytest.raises(ValueError, match="one implementation"):
+            dispatch.execute(op, {}, lambda: 1, lean=lambda: 2)
+    with pytest.raises(ValueError, match="one implementation"):
+        dispatch.execute("evaluate", {}, run, lean=run)
+    with pytest.raises(ValueError, match="one implementation"):
+        dispatch.execute("evaluate", {}, run, rust=run)
+    with pytest.raises(ValueError, match="not a single-owner"):
+        dispatch.owned("evaluate", run)
+
+
+@pytest.mark.parametrize("op", sorted(dispatch.SINGLE_OWNER))
+def test_single_owner_operations_write_no_shadow_record(op, monkeypatch, tmp_path):
+    log = tmp_path / "shadow.jsonl"
+    monkeypatch.setenv("VE_SHADOW_LOG", str(log))
+    monkeypatch.setenv("VE_AUTHORITY", "shadow")
+    seen = []
+    monkeypatch.setattr(dispatch, "observers", [lambda name, authority: seen.append((name, authority))])
+    assert dispatch.owned(op, lambda: "answer") == "answer"
+    assert seen == [(op, "shadow")] and not log.exists()
+
+
+def _reached(case):
+    """The single-owner operations `python_verdict` dispatches for `case`."""
+    seen = []
+    original = dispatch.observers
+    dispatch.observers = [lambda name, authority: seen.append(name)]
+    try:
+        three_way.python_verdict(case)
+    finally:
+        dispatch.observers = original
+    return {op for op in seen if op in dispatch.SINGLE_OWNER}
+
+
+def test_every_request_kind_reaching_a_single_owner_is_classified():
+    by_kind = {}
+    for _, kind, case, _ in corpus.requests():
+        by_kind.setdefault(kind, []).append(case)
+    assert set(difffuzz.REQUEST_VALUES) <= set(by_kind)
+    reaching = {kind for kind, cases in by_kind.items()
+                if any(_reached(case) for case in cases[:8])}
+    assert "search" in reaching
+    assert reaching == set(three_way.KIND_OPERATIONS) | set(three_way.KIND_COMPOSED) & reaching
+    for kind in three_way.KIND_OPERATIONS:
+        assert three_way.python_owner(kind) == dispatch.SINGLE_OWNER[three_way.KIND_OPERATIONS[kind]]
+
+
+def test_difffuzz_never_compares_a_single_owner_value_with_its_owner():
+    surface = difffuzz.Requests()
+    seeds = surface.seeds()
+    assert any(three_way.python_owner(seed.meta["kind"]) for seed in seeds)
+    for seed in seeds:
+        owner = three_way.python_owner(seed.meta["kind"])
+        compared = surface.value_compared(seed, "python")
+        assert compared is (owner is None or owner not in seed.engines), seed.id
+        if owner is not None:
+            assert owner in seed.engines and not compared, seed.id

@@ -1147,8 +1147,14 @@ class Requests(Surface):
         return out
 
     def value_compared(self, seed, engine):
+        from conformance.three_way import python_owner
         # Rust's certificate verdict is a bounded search, not a replay (three-way test, plan 3.7).
-        return not (engine == "rust" and seed.meta["kind"] == "certificate")
+        if engine == "rust" and seed.meta["kind"] == "certificate":
+            return False
+        # Python's answer to a single-owner kind is that engine's own (a search is Rust's): its value
+        # against that engine compares nothing (review B2). Outcomes and codes still differ where
+        # Python's validation does.
+        return not (engine == "python" and python_owner(seed.meta["kind"]) in seed.engines)
 
     def equivalent(self, seed, left, right):
         if seed.meta["kind"] == "evaluate":

@@ -54,6 +54,23 @@ def error_verdict(code, message, generator=None):
 
 # ---------------------------------------------------------------- Python
 
+# The dispatched operation behind each request kind that has one owner (`dispatch.SINGLE_OWNER`).
+KIND_OPERATIONS = {"search": "countermodel_search"}
+# Kinds whose Python answer reaches a single-owner operation inside a composition Python owns, so the
+# answer is Python's: the reason (tests/test_single_owner.py requires every kind reaching one to be listed
+# here or in KIND_OPERATIONS).
+KIND_COMPOSED = {"vacuity": "premise_status: a replayed contradiction first, a checked model next, else "
+                            "UNKNOWN; the search only proposes the model"}
+
+
+def python_owner(kind):
+    """The engine whose answer `python_verdict` gives for `kind`, when Python has no implementation of
+    its own (a bounded search is Rust's since lean-first batch 15b), else None. A differential compares
+    such an answer's value with recorded answers or another engine's check, never with that engine."""
+    from ve.backends.dispatch import SINGLE_OWNER
+    return SINGLE_OWNER.get(KIND_OPERATIONS.get(kind))
+
+
 def python_verdict(case):
     from ve import Environment, FiniteModel, evaluate
     from ve.admission import admit_document, parse_label, validate_label

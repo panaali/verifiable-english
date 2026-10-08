@@ -105,14 +105,24 @@ def test_rust_matches_expected(family, rust_executable):
 
 
 def test_rust_and_python_share_search_models(rust_executable):
-    """Beyond verdicts: the same model from bounded search. (Rust's identities are
-    compared in its countermodel check, tests/test_rust_conformance.py.)"""
+    """Beyond verdicts: the same model from bounded search as Python's own search gave at the base
+    (tests/data/b15b-search-oracle.json; `python_verdict` searches with Rust since lean-first batch 15b,
+    so it is no second engine: review B2), and a model Python's own check accepts. (Rust's identities
+    are compared in its countermodel check, tests/test_rust_conformance.py.)"""
+    from ve import Environment, FiniteModel
+    from ve.ast import formula_from_data
+    from ve.search import check_countermodel
+    oracle = json.loads((ROOT / "tests/data/b15b-search-oracle.json").read_text())["p0_search_models"]
     cases = [c for c in active("elaborated-document") if c["kind"] == "search"
              and c["expected"]["status"] == "ok"]
-    assert cases
+    assert cases and set(oracle) == {c["id"] for c in cases}
     results = run([str(rust_executable), "conformance"], [rust_request(c) for c in cases])
     for case, result in zip(cases, results, strict=True):
-        assert result["model"] == python_verdict(case)["model"], case["id"]
+        assert result["model"] == oracle[case["id"]], case["id"]
+        env = Environment(case["environment"])
+        assert check_countermodel(env, [formula_from_data(env, p) for p in case["premises"]],
+                                  formula_from_data(env, case["conclusion"]),
+                                  FiniteModel.from_dict(env, result["model"])).valid, case["id"]
 
 
 def test_lean_seed_cases_are_the_shared_families():
