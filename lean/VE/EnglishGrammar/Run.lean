@@ -6,6 +6,7 @@ import VE.Json
 import VE.NormDefaults.Wire
 import VE.SoftNorms.Wire
 import VE.EnglishGrammar.Advice
+import VE.EnglishGrammar.Diagnose
 import VE.SpeechActs.Wire
 import VE.Attribution.Wire
 import VE.Readings.Wire
@@ -372,6 +373,18 @@ def budgetFields (i : Nat) : List (String × Json) :=
   status "budget" ++ coded "Budget" s!"Sentence {i + 1} needs more work than the limit allows. No verdict was reached." ++
     [("sentence", toJson i)]
 
+/-- `NoDerivation` for sentence `i`: Lean's text, then what the sentence needs where it stops and the span of
+that place (`diagnose`, spec 4.5); the text alone when the budget does not allow finding it. -/
+def noReadingFields (c : Case) (source : String) (i : Nat) : List (String × Json) :=
+  let text := s!"Sentence {i + 1} has no reading with the current vocabulary."
+  let found := match lexSpans source with
+    | .ok sents => (sents[i]?).bind (diagnose c.E c.L source)
+    | .error _ => none
+  match found with
+  | some d => status "none" ++ coded "NoDerivation" (text ++ " " ++ d.text) ++
+      [("span", spanJson (codepointsBefore source d.span.1, codepointsBefore source d.span.2))]
+  | none => status "none" ++ coded "NoDerivation" text
+
 /-- The code points of the offending character of a lexical rejection that names one (spec 4.4). -/
 def lexicalSpan (source : String) : Reject → Option (Nat × Nat)
   | .badCharacter o | .openQuote o | .badNumeral o | .badSpacing o =>
@@ -458,8 +471,7 @@ def authoring (c : Case) (source : String) : Except String (List (String × Json
     let pos := [("sentence", toJson i)]
     match o with
     | .ok _ _ => throw "a stopped reading cannot be ok"
-    | .noDerivation => pure (status "none" ++ coded "NoDerivation"
-        s!"Sentence {i + 1} has no reading with the current vocabulary." ++ pos)
+    | .noDerivation => pure (noReadingFields c source i ++ pos)
     | .ambiguous t u => pure (status "many" ++ coded "Ambiguous"
         s!"Sentence {i + 1} can be read in more than one way. Two of the ways are shown." ++ pos ++
         [("witnesses", Json.arr #[treeJson tags t, treeJson tags u])])
@@ -482,7 +494,7 @@ def translation (c : Case) (cap : Nat) (source : String) : List (String × Json)
       status "many" ++ coded "Ambiguous" "Sentence 1 can be read in more than one way." ++ found
     else if !complete then budgetFields 0 ++ found
     else if rs.isEmpty then
-      status "none" ++ coded "NoDerivation" "Sentence 1 has no reading with the current vocabulary." ++ found
+      noReadingFields c source 0 ++ found
     else status "one" ++ found
   | .invalidGrammar g => invalidFields "english.read" c g
   | .lexical r => status "rejected" ++ coded r.code (rejectText 0 r) ++

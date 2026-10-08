@@ -13,7 +13,6 @@ spelling. No Lean source is read as text (build checklist 11). Needs the built `
 from pathlib import Path
 import os
 import re
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -21,7 +20,7 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = ROOT / "docs/spec/english-lean-e2.md"
-LAKE = shutil.which("lake") or "lake"
+LAKE = os.path.expanduser("~/.elan/bin/lake")
 # Where each approved theorem lives in the build, with the file's own `open` (the spec states them in
 # `VE.EnglishGrammar` over `VE.Grammar`; the class table's theorem is `Run`'s, beside `codeClasses`, and the senses
 # theorem is stated over `VE.Senses`).
