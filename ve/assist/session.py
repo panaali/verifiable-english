@@ -363,16 +363,17 @@ class AssistSession:
                                           max_evaluations=witness_budget).model
             if model is not None:
                 saturated = proof is not None and proof.status == "NotFound" and not self.env.closure
-                if not saturated:
-                    # This is only a search-budget screen. Its value is never
-                    # reported; Lean still decides whether the witness refutes.
-                    from ..search import _check_countermodel_values
-                    _, _, _, _, status = _check_countermodel_values(
-                        premises, conclusion, model, budget["max_evaluations"])
-                    if status == "ResourceLimit":
-                        return "unknown"
-                if self._lean_refutes(premises, conclusion, model):
-                    return "no"
+                if saturated:
+                    if self._lean_refutes(premises, conclusion, model):
+                        return "no"
+                else:
+                    from ..backends.dispatch import pinned
+                    with pinned("lean"):
+                        checked = check_countermodel(
+                            self.env, premises, conclusion, model,
+                            max_evaluations=budget["max_evaluations"])
+                    if checked.valid:
+                        return "no"
         except (ValueError, VEError):
             pass
         return "unknown"
