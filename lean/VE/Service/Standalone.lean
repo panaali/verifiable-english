@@ -366,10 +366,25 @@ def isLegacy (environment : Json) : Bool :=
   environment.getObjValD "language" == .str "ve.core@0" ||
     environment.getObjValD "language" == .str "ve.core@0.1"
 
+/-- A malformed language value with a frozen-family `profiles` envelope is
+decoded against the legacy field shape before any profile extension route. -/
+private def frozenFamilyProfiles (environment : Json) : Bool :=
+  let profiles := (VE.Bridge.strings (environment.getObjValD "profiles")).toOption.getD []
+  !profiles.isEmpty && profiles.all
+    (["relational-fol@0", "closure@0", "nary@0", "order@0"].contains)
+
 def decodeLegacy (environment : Json) : Except String Legacy := do
   let language ← VE.Bridge.stringField environment "language"
   if language == "ve.core@0" then
-    pure (.v0 (← VE.Bridge.decodeEnvironment environment))
+    match VE.Bridge.decodeEnvironment environment with
+    | .ok v => pure (.v0 v)
+    | .error message =>
+      if message.startsWith "invalid signature:" then
+        throw "UnknownSymbol: Undeclared predicate argument sort"
+      if message.startsWith "DuplicateDeclaration:" ||
+          message.startsWith "ResourceLimit: Identifier exceeds" then
+        throw s!"InvalidInput: {message}"
+      throw message
   else if language == "ve.core@0.1" then
     if environment.getObjValD "profiles" == toJson ["order@0", "relational-fol@0"] then
       match VE.Order.Wire.decodeEnvironment environment with
@@ -392,7 +407,9 @@ def legacyMeaningId (l : Legacy) (envId : String) (ast : Json) : Except String S
 def environmentCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let environment ← j.getObjVal? "environment"
-  if environment.getObjValD "language" != .str "ve.core@0.2" then
+  if isLegacy environment ||
+      (environment.getObjValD "language" != .str "ve.core@0.2" &&
+        frozenFamilyProfiles environment) then
     let l ← decodeLegacy environment
     let envId ← legacyEnvironmentId l environment
     -- v0 names its one profile in `profile`; ve.core@0.1 lists `profiles`.
@@ -844,9 +861,9 @@ private def tableFields (value : Json) (expected : List String) (path : String) 
 
 private def modelAtom (value : Json) (path : String) : Except ModelFault String := do
   let .str word := value | modelFault path "InvalidModel: local ID must match [a-z][a-z0-9_]*"
+  if word.utf8ByteSize > 64 then modelFault path "ResourceLimit: local ID exceeds 64 ASCII bytes"
   unless VE.Surface.identifier word do
     modelFault path "InvalidModel: local ID must match [a-z][a-z0-9_]*"
-  if word.utf8ByteSize > 64 then modelFault path "ResourceLimit: local ID exceeds 64 ASCII bytes"
   pure word
 
 private def modelCell (order : Bool) (sort : String) (value : Json) (path : String) :
@@ -919,11 +936,16 @@ private def locatedEnvironmentFields (environment : Json) : Except ModelFault Un
       let maximum := if nary then 6 else 2
       unless cells.size ≥ 1 && cells.size ≤ maximum do
         modelFault "" s!"Predicate arguments must be an array of one to {maximum} sort identifiers"
-      match VE.Bridge.argumentSorts arguments (fun sort =>
-          sortNames.contains sort || (order && sort == "$int") ||
-          (flagged && sort == "$string")) with
-      | .ok _ => pure ()
-      | .error message => modelFault "" message
+      -- The family decoder owns the reserved built-in sort's signature
+      -- diagnostic ("invalid signature" in stage one). Ordinary unknown
+      -- names use the shared quoted-name validator.
+      if !((!flagged && cells.contains (.str "$string")) ||
+          (!order && cells.contains (.str "$int"))) then
+        match VE.Bridge.argumentSorts arguments (fun sort =>
+            sortNames.contains sort || (order && sort == "$int") ||
+            (flagged && sort == "$string")) with
+        | .ok _ => pure ()
+        | .error message => modelFault "" message
     if let .ok defined := entry.getObjVal? "defined" then
       environmentFields defined ["arguments", "body"] s!"{path}/defined"
   for (name, entry) in constantEntries do
@@ -946,7 +968,13 @@ private def locatedModelTables (environment model : Json) : Except ModelFault Un
     modelFault "/environment/vocabulary/predicates" "InvalidInput: object expected"
   let .ok constants := VE.Bridge.fields (vocabulary.getObjValD "constants") |
     modelFault "/environment/vocabulary/constants" "InvalidInput: object expected"
-  let sortNames := sorts.map Prod.fst
+  -- A declared literal (or a stage-two string argument) adds the built-in
+  -- model domain, exactly as RouteVocabulary.modelVocabulary does.
+  let hasStrings := constants.any (fun (_, entry) =>
+    entry.getObjValD "sort" == .str "$string") ||
+    predicates.any (fun (_, entry) =>
+      (VE.Bridge.strings (entry.getObjValD "arguments")).toOption.getD [] |>.contains "$string")
+  let sortNames := sorts.map Prod.fst ++ (if hasStrings then ["$string"] else [])
   let predicateNames := (predicates.filter (fun (_, entry) =>
     !(entry.getObjVal? "defined").isOk)).map Prod.fst
   let constantNames := constants.map Prod.fst
@@ -1091,16 +1119,25 @@ private def earlyProfileGate (environment : Json) : Except String Unit := do
           !profiles.contains "time@0" then
         VE.Compose.todayGate profiles
 
+/-- Only the four frozen checker families have their entire vocabulary shape
+owned by the location decoder. Composed routes inspect their own envelope and
+must retain that route's diagnostic precedence. -/
+private def locationOwnedEnvironment (environment : Json) : Bool :=
+  environment.getObjValD "language" == .str "ve.core@0.2" &&
+    frozenFamilyProfiles environment
+
 def reportedEnvironment (j : Json) : Json :=
   match j.getObjVal? "environment" with
   | .error _ => reported environmentCase j
   | .ok environment =>
-    match earlyProfileGate environment with
-    | .error message => reportedFault j ⟨message, ""⟩
-    | .ok () =>
-      match locatedEnvironmentFields environment with
-      | .ok () => reported environmentCase j
-      | .error fault => reportedFault j fault
+    if !locationOwnedEnvironment environment then reported environmentCase j
+    else
+      match earlyProfileGate environment with
+      | .error message => reportedFault j ⟨message, ""⟩
+      | .ok () =>
+        match locatedEnvironmentFields environment with
+        | .ok () => reported environmentCase j
+        | .error fault => reportedFault j fault
 
 def reportedModel (j : Json) : Json :=
   let located := do
@@ -1123,9 +1160,11 @@ def reportedModel (j : Json) : Json :=
       match earlyProfileGate environment with
       | .error message => reportedFault j ⟨message, ""⟩
       | .ok () =>
-        match locatedEnvironmentFields environment with
-        | .ok () => reported modelCase j
-        | .error fault => reportedFault j fault
+        if !locationOwnedEnvironment environment then reported modelCase j
+        else
+          match locatedEnvironmentFields environment with
+          | .ok () => reported modelCase j
+          | .error fault => reportedFault j fault
 
 /-- A raw strict parse may succeed while the family's typing check rejects.
 In that case the existing diagnostic walker names the first typing fault. -/

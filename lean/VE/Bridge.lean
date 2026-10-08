@@ -17,9 +17,7 @@ def fields (j : Json) : Except String Fields := do
 def exactFields (j : Json) (expected : List String) : Except String Unit := do
   let actual := (← fields j).map Prod.fst
   unless actual.length == expected.length && expected.all actual.contains do
-    let quoted := fun (names : List String) =>
-      "[" ++ String.intercalate ", " (names.map fun name => "'" ++ name ++ "'") ++ "]"
-    throw s!"fields do not match: expected {quoted expected}, got {quoted actual}"
+    throw s!"fields do not match: expected {expected}, got {actual}"
 
 def stringField (j : Json) (name : String) : Except String String := do
   (← j.getObjVal? name).getStr?
