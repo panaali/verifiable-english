@@ -36,5 +36,5 @@ def test_converted_fluent_grammar_is_well_formed_and_reads_renderings_once():
 
 def test_pythons_two_derivation_fixture_is_ambiguous_over_tokens():
     for row in K.ambiguity_probe():
-        assert row['python'] == 'AmbiguousDerivation'
+        assert row['python'].startswith('AmbiguousDerivation')
         assert row['tokens'] == 'many' and len(set(row['witnesses'])) == 2

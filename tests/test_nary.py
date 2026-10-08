@@ -165,8 +165,8 @@ def test_fret_user_sort_time_and_arity_six():
     assert not lint_vocabulary(fret)
 
     # The wording this test used before E2 (commit 3388825a changed it): a wording with text before `{0}` fails
-    # Lean's V3 (subject first, S3 D8), so Python's lint refuses it and selects the mechanical form, which Lean
-    # reads; the old sentence has no reading (DELTA A5), and the environment stays available.
+    # Lean's V3 (subject first, S3 D8), so Python's lint refuses it and selects the mechanical form, which both
+    # readers accept; the old sentence remains outside the vocabulary.
     value_of = fret.to_dict()
     value_of["vocabulary"]["predicates"]["value"]["verbalisation"] = "the value of {0} at {1} is {2}"
     value_of = Environment(value_of)
@@ -174,7 +174,7 @@ def test_fret_user_sort_time_and_arity_six():
     rendered = render_english(Document((value,)), value_of)
     assert not rendered.lower().startswith("the value of")
     assert parse_english(value_of, rendered) == Document((value,))
-    with pytest.raises(VEError, match="no reading"):
+    with pytest.raises(VEError, match="Unknown English phrase"):
         parse_english(value_of, "The value of speed at instant is high.\n")
 
     ambiguous = fret.to_dict()
