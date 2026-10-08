@@ -441,9 +441,9 @@ structure Checked where
   front : Json
   block : Option BlockCoverage
 
-/-- `admit := false` is `load_document` alone: everything but `_report`'s claim-graph part (its reading checks, W2
+/-- `withGraph := false` is `load_document` alone: everything but `_report`'s claim-graph part (its reading checks, W2
 admission and the narrowing choices), which `check_document` adds (batch 16b). -/
-def check (text : String) (admit : Bool := true) : Except String Checked := do
+def check (text : String) (withGraph : Bool := true) : Except String Checked := do
   let doc ← split text
   let front := doc.front
   if doc.source.isEmpty then throw "document source is empty"
@@ -477,7 +477,7 @@ def check (text : String) (admit : Bool := true) : Except String Checked := do
   -- `_report`: the coverage (a block route's line may reject), then the claim graph.
   let block ← blockCoverage E front units
   if let .ok graph := front.getObjVal? "graph" then
-    if admit then admitGraph E front graph units all active openNames narrowings
+    if withGraph then admitGraph E front graph units all active openNames narrowings
   pure ⟨← Loader.documentId (Loader.payload doc (Json.mkObj [])), Loader.sourceId E.profiles doc.source,
     doc.source, units, front, block⟩
 
@@ -490,11 +490,11 @@ def encode (id : String) (c : Checked) : Json :=
 def documentCase (j : Json) : Except String Json := do
   let id ← stringField j "id"
   let text ← stringField j "document"
-  let admit ← match j.getObjVal? "admit" with
+  let withGraph ← match j.getObjVal? "admit" with
     | .ok (.bool b) => pure b
     | .ok _ => throw "InvalidInput: admit must be a boolean"
     | .error _ => pure true
-  pure (encode id (← check text admit))
+  pure (encode id (← check text withGraph))
 
 def runCaseReported (j : Json) : Json := Standalone.reported documentCase j
 
