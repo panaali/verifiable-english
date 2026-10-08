@@ -459,9 +459,25 @@ class Wording:
             from .readings_s2_english import sentence_slots
             from .wire import canonical_json
             R = self.admission.doc.set_by_id(set_id)
-            shown = [self.candidate_sentence(set_id, i) for i in range(len(R.candidates))]
+            # All candidates share the lower soft frame. Check their quoted rules in one Lean
+            # request, then use the checked containers for both the sentence and its identity.
+            rules = None
+            if R.candidates and all(a.content is not None and a.content.kind == "norm"
+                                    for a in R.candidates):
+                from .softnorms import batch_rule, check_rule_batch
+                env = self.admission.side(set_id, 0).soft.env
+                contents = [{"norm": a.content.body} for a in R.candidates]
+                outcomes = check_rule_batch(env, contents)
+                rules = [batch_rule(env, content, outcome)
+                         for content, outcome in zip(contents, outcomes, strict=True)]
+            self._batched_rules = rules
+            try:
+                shown = [self.candidate_sentence(set_id, i) for i in range(len(R.candidates))]
+            finally:
+                del self._batched_rules
             keys = [i if a.content is None else
-                    rule_key(self.admission.side(set_id, i).soft.env, a.content.body) if a.content.kind == "norm" else
+                    rule_key(self.admission.side(set_id, i).soft.env, a.content.body,
+                             rule=None if rules is None else rules[i]) if a.content.kind == "norm" else
                     canonical_json(a.content.raw) for i, a in enumerate(R.candidates)]
             self._names[set_id] = sentence_slots(set_id, [text for text, _ in shown], [verb for _, verb in shown],
                                                  keys)
@@ -480,7 +496,9 @@ class Wording:
             return Unnamed(f"an answer names a reading of {set_id} without content"), None
         side = self.admission.side(set_id, i)
         if content.kind == "norm":
-            return rule_sentence(side.soft.env, content.body)
+            rules = getattr(self, "_batched_rules", None)
+            rule = None if rules is None else rules[i]
+            return rule_sentence(side.soft.env, content.body, rule=rule)
         if content.kind == "assertion":
             from .ast import formula_from_data
             from .readings_s2_english import canonical_sentence
@@ -651,13 +669,15 @@ class Wording:
             return []
         related = _precedence_related(rules, twin_name)
         act = _act(sd, twin)
+        def incompatible(rule):
+            return frozenset((rule.core.name, twin_name)) in sd.incompatible_pairs
         out = []
         if any(r.mode == "strict" and r.core.name != twin_name and _act(sd, r) == act
-               and sd._incompatible(r, twin) and r.core.name not in related for r in rules):
+               and incompatible(r) and r.core.name not in related for r in rules):
             out.append(E.E22)
         if sd.env.soft["outranking"]["mode"] == "strict" and any(
                 r.mode == "default" and r.core.name != twin_name and _act(sd, r) == act
-                and (r.core.predicate == twin.core.predicate or sd._incompatible(r, twin))
+                and (r.core.predicate == twin.core.predicate or incompatible(r))
                 and r.core.name not in related for r in rules):
             out.append(E.E23)
         return out
@@ -708,7 +728,7 @@ def _article(noun):
     return "an" if word[:1] in "aeiou" else "a"
 
 
-def rule_sentence(env, body):
+def rule_sentence(env, body, *, rule=None):
     """(sentence, verb) of a rule candidate's `norm` object (the `<reading>` slot, 2.3): its canonical rule sentence,
     then `rule_notes` (precedence, switches, rank, exception conditions and factors), then, for a default rule
     whose exception is decided by someone other than the document's default decider, who decides it; and its
@@ -716,7 +736,7 @@ def rule_sentence(env, body):
     from .norm_english import render_rule_sentence
     from .softnorms import decode_rule
     from .surface.rights import rule_notes
-    rule = decode_rule(env, {"norm": body})
+    rule = decode_rule(env, {"norm": body}) if rule is None else rule
     notes = list(rule_notes(rule, env))
     decider, usual = _deciders(env, rule)
     if decider != usual:
@@ -725,14 +745,14 @@ def rule_sentence(env, body):
     return " ".join((render_rule_sentence(rule, env), *notes)), _modal(env, rule)
 
 
-def rule_key(env, body):
+def rule_key(env, body, *, rule=None):
     """What a rule candidate means to a reader, the `<reading>` slot's identity of it: the decoded rule without its
     own name (other units refer to it by name, so two readings of one set that differ in it alone mean the same)
     and without `hard` (a declaration check: strict and unswitchable, which the rule states anyway), with the
     decider that decides its exception."""
     from .softnorms import decode_rule
     from .wire import canonical_json
-    rule = decode_rule(env, {"norm": body})
+    rule = decode_rule(env, {"norm": body}) if rule is None else rule
     raw = rule.to_dict()["norm"]
     raw.pop("name"), raw.pop("hard", None)
     if "exception" in raw:
@@ -782,4 +802,3 @@ def _precedence_related(rules, name):
 
 __all__ = ["CHECKED_BY", "ROW", "Wording", "document_wire", "elaborate", "parse_finding", "report", "run_lean",
            "validate"]
-

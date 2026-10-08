@@ -4,8 +4,9 @@ A document is under the completion when `readings@1` and `norm-defaults@0` are o
 content-bearing. Lean admits it (4.1: S1's admission, reserved `unsaid--` names, norm-defaults' author checks on the
 free document and each reading's, S1's checks of the filled document, each compatible choice), separates its readings
 on one base and one shared filling (4.2) and checks each choice's evidence on the regenerated filled document (4.3).
-Python decides nothing here: certificates and witnesses are produced by Python's norm-defaults prover and search
-(test tooling, the generators RD-2b relays) and Lean replays them; every expected value is the spec's, written out.
+Python decides nothing here: certificates and witnesses are proposed by the pinned pre-switch norm-defaults oracle
+(`conformance.frozen_norm_defaults`, test tooling only) and Lean replays them; every expected value is the spec's,
+written out.
 """
 from __future__ import annotations
 
@@ -13,9 +14,10 @@ import copy
 
 import pytest
 
+from conformance import frozen_norm_defaults as oracle
 from tests import lean_routes
-from tests.test_readings_s1_lean import entry, env_k, k1_document, norm, norm_object, reading, reading_set, run, \
-    situation_id
+from tests.test_readings_s1_lean import entry, env_k, env_rights, k1_document, norm, norm_object, reading, \
+    reading_set, run, situation_id
 from ve import norm_defaults as nd
 from ve import norm_defaults_route as nd_route
 from ve.ast import Binary, Forall, Top, Unary, Var, formula_to_data
@@ -176,9 +178,15 @@ def python_document(raw, rules):
     return nd.UnspecifiedDocument(Environment(lower(raw)), rules)
 
 
+def proposed_conflict(raw, rules, **options):
+    """Conflict evidence proposed by the pinned pre-switch oracle (as main's norm-defaults tests propose it); Lean
+    replays every package and witness on the choice's own document."""
+    return oracle.check_conflict(oracle.UnspecifiedDocument(Environment(lower(raw)), rules), **options)
+
+
 def packages(lean, raw, document, choice, rules):
     bound, _ = bindings(lean, raw, document, choice)
-    report = nd.check_conflict(python_document(raw, rules), prove=True)
+    report = proposed_conflict(raw, rules, prove=True)
     assert report.status == "CONFLICT-FREE"
     return {target: {**package, **bound} for target, package in report.certificates.items()}
 
@@ -301,7 +309,7 @@ def test_fnd2_latent_conflict_under_one_reading(lean):
     must_x = Norm("must-x", "x_required", True, Unary("y_permitted", Var(0)), (), ())
     may_y = Norm("may-y", "y_permitted", True, Top(), (), ())
     act = {"complete": True, "domains": {"act": ["a"]}, "constants": {}, "relations": {}}
-    report = nd.check_conflict(python_document(raw, [no_x, must_x]), model=act)
+    report = proposed_conflict(raw, [no_x, must_x], model=act)
     assert (report.status, report.target) == ("CONFLICT", "x_required->x_permitted")
     witness = {"target": report.target, "model": act,
                "filling": {name: [list(r) for r in rows] for name, rows in report.filling.items()},
@@ -321,6 +329,51 @@ def test_fnd2_latent_conflict_under_one_reading(lean):
     row = run(lean, [choice_case(raw, document, [("rs_2", 1)], {"kind": "norm-defaults-conflict",
                                                                  "witness": witness})])[0]
     assert row["inner"].get("verdict") != "CONFLICT"
+
+
+def test_inner_answers_are_the_norm_defaults_routes(lean):
+    """Review B1's class: a choice's inner case is answered by the norm-defaults route's own dispatch
+    (`layeredCase`), so each answer equals that route's on the choice's document, field for field. A copied dispatch
+    dropped the fields main added (the CONFLICT row's `kind`, `rules`, `tuple` and `under`; the status row's)."""
+    raw = env2()
+    document, _ = doc2(raw)
+    no_x = Norm("no-x", "x_permitted", False, Top(), (), ())
+    must_x = Norm("must-x", "x_required", True, Unary("y_permitted", Var(0)), (), ())
+    may_y = Norm("may-y", "y_permitted", True, Top(), (), ())
+    act = {"complete": True, "domains": {"act": ["a"]}, "constants": {}, "relations": {}}
+    report = proposed_conflict(raw, [no_x, must_x], model=act)
+    filling = {f"unsaid__{p}": [] for p in ("x_permitted", "x_required", "y_permitted")}
+    filling.update({name: [list(r) for r in rows] for name, rows in report.filling.items()})
+    every = {name: [["a"]] for name in filling}
+    status = {"kind": "norm-defaults-status", "model": act, "predicate": "x_required", "tuple": ["a"]}
+    checked = 0
+    for choice, rules in (([("rs_2", 0)], [no_x, must_x]), ([("rs_2", 1)], [no_x, may_y])):
+        pydoc = python_document(raw, rules)
+        # (the inner case, the same case as the norm-defaults route reads it: there a witness's filling is in its model)
+        pairs = [
+            ({"kind": "norm-defaults-conflict", "witness": {"target": report.target, "model": act,
+                                                            "filling": filling, "tuple": list(report.tuple)}},
+             {"kind": "norm-defaults-conflict", "witness": {"target": report.target, "tuple": list(report.tuple),
+                                                            "model": {**act, "relations": filling}}}),
+            ({"kind": "norm-defaults-conflict", "packages": {}}, None),
+            ({**status, "method": "table3"}, None),
+            ({**status, "method": "enumerate"}, None),
+            ({**status, "predicate": "y_permitted", "method": "undecided", "yes": every, "no": {}}, None),
+            ({"kind": "norm-defaults-report", "model": act}, None)]
+        if choice == [("rs_2", 1)]:  # CONFLICT-FREE (reading 0 has the latent conflict)
+            pairs.append(({"kind": "norm-defaults-conflict",
+                           "packages": packages(lean, raw, document, choice, rules)}, None))
+        rows = run(lean, [choice_case(raw, document, choice, inner) for inner, _ in pairs])
+        for (inner, direct), row in zip(pairs, rows):
+            direct = direct or inner
+            expected = nd_route.run_case(nd_route.source_case(
+                pydoc, direct["kind"], **{k: v for k, v in direct.items() if k != "kind"}))
+            got = row["inner"]
+            assert got["status"] == "ok", (inner, got)
+            assert {k: v for k, v in got.items() if k != "id"} == {k: v for k, v in expected.items() if k != "id"}, \
+                inner
+            checked += 1
+    assert checked == 13
 
 
 # Limits and admission's order (4.1, section 5).
@@ -416,6 +469,29 @@ def test_fnd6_soft_chain_keeps_the_abstention(lean):
     document, _ = k1_document(raw)
     for kind in ("readings-validate", "readings-elaborate", "readings-choice"):
         row = one(lean, kind, raw, document, choice=[["rs1", 0]], inner={"kind": "soft-conflict"})
+        assert row["error"] == "UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented"
+
+
+def test_fnd6_rights_chain_keeps_the_abstention(lean):
+    """The completion is the norms chain's alone (1.1, `routeOf`): a rights-chain set of right readings beside
+    `norm-defaults@0` keeps the abstention on every readings kind, as the soft chain does (K18 above)."""
+    raw = env_rights()
+    raw["profiles"] = sorted({*raw["profiles"], "norm-defaults@0"})
+
+    def claim(mode):
+        return {"right": {"name": "r9", "holder": "person", "guard": ["top"], "lines": [
+            {"kind": "claim", "norm": norm_object("no-arrest", "arrest_permitted", False, mode)}]}}
+    sigma = entry({"domains": {"state": ["s"], "person": ["p"]}, "constants": {},
+                   "relations": {"arbitrary_arrest": [], "journalist": []}}, "default",
+                  {"outcome": {"predicate": "arrest_permitted", "tuple": ["s", "p"]}}, True,
+                  decisions=[{"key": {"excepted": "no-arrest"}, "tuples": [["s", "p"]]}])
+    sid = situation_id(raw, sigma)
+    rs9 = reading_set("rs9", "u9", [reading("strict", claim("strict"), {"default": sid}, kind="right"),
+                                    reading("default", claim("default"), {"strict": sid}, kind="right")],
+                      {sid: sigma})
+    document = {"units": [{"id": "u9"}], "reading_sets": [rs9]}
+    for kind in ("readings-validate", "readings-elaborate", "readings-choice"):
+        row = one(lean, kind, raw, document, choice=[["rs9", 0]], inner={"kind": "rights-conflict"})
         assert row["error"] == "UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented"
 
 

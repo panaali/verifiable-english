@@ -11,6 +11,12 @@ those three soft constructs, decodes the rest with W1's unchanged
 rejected) and checks the profiles, rules and references in table order;
 `decodeSoftSource` keeps the original complete environment for identity.
 
+`soften D` and its layers are built once per document (`VE.SoftNorms.Once`): `decodeSoftSource`
+checks `WellFormedSoft` with `validateSoftOnce`, and `regeneratedCore` reads the coherence
+premises, conflict targets and fragment test from the layers. Each equals the function it
+replaces (`validateSoftOnce_eq`, `softLabelledIn_eq`, `cohPremiseIn_eq`, `targetsIn_eq`,
+`InFragmentOnce_eq`), so the answers and diagnostics are unchanged.
+
 Nothing on the wire supplies an elaboration: `E′`, `T′`, `Exc_T`, `Coh_T`,
 `Background_base′`, `background′`, layer premises and targets are regenerated from
 the decoded `SoftDoc`, and certificates are replayed by the unchanged tableau
@@ -104,9 +110,9 @@ def decodeSoftSource (environment norms : Json) : Except String SoftSource := do
   let se : SoftEnvironment := ⟨c.ne, c.soft, c.profiles, environment⟩
   let D : SoftDoc := ⟨se.ne.rv.environment, se.ne.rv.literals, se.soft, ⟨se.ne.regulated, [], c.nodes⟩⟩
   primeVocabulary se D
-  match hv : validateSoft D with
+  match hv : validateSoftOnce D with
   | .error e => throw e
-  | .ok () => pure ⟨se, D, by unfold WellFormedSoft; rw [hv], rfl, rfl, rfl⟩
+  | .ok () => pure ⟨se, D, by unfold WellFormedSoft; rw [← validateSoftOnce_eq, hv], rfl, rfl, rfl⟩
 
 /-! ## Identity (3.4) -/
 
@@ -150,6 +156,13 @@ def cohLabel (M N : SoftNode) : String := s!"soft:coherence:{M.name},{N.name}"
 def softLabelled (D : SoftDoc) : List (String × VE.Formula) :=
   (excLabels D).zip (excPremises D) ++ (collidingPairs D).map (fun (M, N) => (cohLabel M N, cohPremise D M N))
 
+/-- `softLabelled` with the coherence premises built from the layers of `soften D`. -/
+def softLabelledIn (D : SoftDoc) (S : Doc) (L : Layers) : List (String × VE.Formula) :=
+  (excLabels D).zip (excPremises D) ++ (collidingPairs D).map (fun (M, N) => (cohLabel M N, cohPremiseIn D S L M N))
+
+theorem softLabelledIn_eq (D : SoftDoc) : softLabelledIn D (soften D) (layersOf (soften D)) = softLabelled D := by
+  simp only [softLabelledIn, softLabelled, cohPremiseIn_eq]
+
 /-- The coherence conjuncts not discharged by `rank_resolves`. Elaboration reports
 all of them; certified results further filter by the accepted proof's use. -/
 def openCoherence (D : SoftDoc) : List String :=
@@ -168,11 +181,38 @@ def warnings (D : SoftDoc) : List String :=
     | none => none)) ++
   (undeclaredTies D).map (fun (a, b) => s!"undeclared tie: {a}, {b}")
 
+/-- W2's soft residual counts and status share the route's regenerated tree. -/
+def residual (D : SoftDoc) : Json :=
+  let defaults := D.T.nodes.filter (·.mode == .default)
+  let switches := (D.T.nodes.map (·.alterable.length)).foldl (· + ·) 0
+  let overrides := ((decisions D).map (·.1)).filter (·.startsWith "soft__outweighs__")
+  let openPairs := openCoherence D
+  Json.mkObj [("default_exceptions", toJson defaults.length),
+    ("instruction_switches", toJson switches),
+    ("holistic_overrides", toJson overrides.length),
+    ("weighing_points", toJson openPairs.length)]
+
+def residualStatus (D : SoftDoc) : String :=
+  if D.T.nodes.any (fun N => N.mode == .default || !N.alterable.isEmpty) ||
+      ((decisions D).map (·.1)).any (·.startsWith "soft__outweighs__") ||
+      !(openCoherence D).isEmpty then "OPEN" else "CHECKED"
+
+def exceptionDecider (D : SoftDoc) (N : SoftNode) : String :=
+  ((N.exception.bind (·.decidedBy)).orElse fun _ => D.soft.exceptionDecider).getD "unstated"
+
+def deciderCounts (D : SoftDoc) : Json :=
+  let counts := (D.T.nodes.filter (·.mode == .default)).foldl (fun counts N =>
+    let decider := exceptionDecider D N
+    if counts.any (·.1 == decider) then
+      counts.map (fun (name, count) => (name, if name == decider then count + 1 else count))
+    else counts ++ [(decider, 1)]) ([] : List (String × Nat))
+  Json.mkObj (counts.map fun (name, count) => (name, toJson count))
+
 def bgEntry (g l : String) (a : VE.Formula) : Json :=
   Json.mkObj ([("generator", .str g), ("ast", enc a)] ++ (if l.isEmpty then [] else [("label", .str l)]))
 
-def regenerated (D : SoftDoc) (environment : Json) : List (String × Json) :=
-  let T' := (soften D).T
+def regeneratedCore (D : SoftDoc) (environment : Json) : List (String × Json) :=
+  let S := soften D; let L := layersOf S; let T' := S.T
   [("environment_prime", (primeJson D environment).toOption.getD .null),
    ("decisions", Json.arr ((decisions D).map (fun (n, ss) =>
       Json.mkObj [("name", .str n), ("arguments", toJson ss)])).toArray),
@@ -182,21 +222,38 @@ def regenerated (D : SoftDoc) (environment : Json) : List (String × Json) :=
         | _ => .null)])).toArray),
    ("order", toJson (layerNames T')),
    ("background", Json.arr (((definitionPremises T').map (bgEntry "definitions" "") ++
-       (backgroundBase (soften D)).map (bgEntry "literals" "") ++
+       (backgroundBase S).map (bgEntry "literals" "") ++
        (pairPremises T').map (bgEntry "profile" "") ++
-       (softLabelled D).map (fun x => bgEntry "soft" x.1 x.2))).toArray),
+       (softLabelledIn D S L).map (fun x => bgEntry "soft" x.1 x.2))).toArray),
    ("premises", Json.arr ((syms T').filterMap (fun
        | .reg r => some (Json.mkObj [("label", .str ("layer:norms:" ++ r.name)),
            ("ast", enc (elabPremise T' r))])
        | .defn _ => none)).toArray),
    ("colliding_pairs", Json.arr ((collidingPairs D).map (fun (M, N) => Json.mkObj
      [("pair", toJson [M.name, N.name]), ("act", .str (act D M)), ("comparable", .bool (Comparable D M N)),
-      ("label", .str (cohLabel M N)), ("ast", enc (cohPremise D M N))])).toArray),
-   ("conflict_targets", Json.arr ((targets (soften D)).map (fun t => Json.mkObj
+      ("label", .str (cohLabel M N)), ("ast", enc (cohPremiseIn D S L M N)),
+      ("outweighs", if D.soft.outranking == .holistic && Comparable D M N then
+        let (a, low, high) := pairTriple D M N
+        .str (outweighsName a low high) else .null)])).toArray),
+   ("conflict_targets", Json.arr ((targetsIn S L).map (fun t => Json.mkObj
      [("target", .str t.1), ("sorts", toJson t.2.1), ("ast", enc t.2.2)])).toArray),
    ("conditional_on", toJson (openCoherence D)),
-   ("fragment", .bool (InFragment D)),
+   ("fragment", .bool (InFragmentOnce D)),
    ("warnings", toJson (warnings D))]
+
+/-- The soft route's additional decisions. Rights elaboration uses the common
+core without computing these relations for every reading candidate. -/
+def regenerated (D : SoftDoc) (environment : Json) : List (String × Json) :=
+  regeneratedCore D environment ++
+    [("ranks_above", Json.mkObj (D.soft.ranks.map (fun lower =>
+       (lower, toJson (D.soft.ranks.filter (fun higher => outranksPlus D.soft higher lower)))))),
+     ("rule_acts", Json.mkObj (D.T.nodes.map (fun N => (N.name, .str (act D N))))),
+     ("incompatible_pairs", Json.arr (D.T.nodes.flatMap (fun M =>
+       D.T.nodes.filterMap (fun N => if decide (M.name < N.name) && Incompatible D M N then
+         some (toJson [M.name, N.name]) else none))).toArray),
+     ("soft_residual", residual D),
+     ("soft_status", .str (residualStatus D)),
+     ("default_exceptions_by_decider", deciderCounts D)]
 
 /-! ## Conflict packages (CONFLICT-FREE) -/
 

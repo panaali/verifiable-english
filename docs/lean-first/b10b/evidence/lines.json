@@ -1,0 +1,51 @@
+{
+  "base": "7345e3ed6871e2e810ea53d26b1d60902e27d071",
+  "upstream": "49d182636268b8c0102d1032d120cadaa9bb6b7e",
+  "head": "261eebe24fd58d8ee1b9782303f9d7e2900e0259",
+  "commits": [
+    "a46fe3d92c25516843d7c1e02ff2f12aa20ece06",
+    "5ef7ebd90d85f6de911de5a7e2b884931d498879",
+    "864f8a7e6f8de45b1773dc6ad504d6243fa43485",
+    "e3018171ed02ce4ec223a7ea8757d253024d610b",
+    "f075698378f8e42eb53bc2d0f4834340f84e652d",
+    "39daa163fd25dd12b2745413f6db763d5e3ca7d1",
+    "1eb7dcc79539acff2ed176ddf3762644a0238d11",
+    "68d9ad7fd6c2dd813b2f92d2e85cdc71ef69475f",
+    "e820573f3990b9bf3a27f366fb62040e52b37b9b",
+    "3580056f129c13e6fa8d877dd3156af72cf82e77",
+    "d32fdc023b1b9170ce876399826e519c7e6d5c74",
+    "4a235c9d1f6af87d3926baa87ecb5e3b7305e57a",
+    "d60cfd24268d4ea9237ff3e8c4f6b1607e40d0f4",
+    "16a8c4efb78f3adef67bb60698ac3ab18b5773b1",
+    "3bd70e2a3158d223dca96b12c65258ae2cd48d29",
+    "d022d98f8f1b0fd982eb1aff9aed5f798befd021",
+    "71055b630fc73141ab4aee331fb4e7cc73be47db",
+    "ee8a38c6c4bce21e7cbde6d3b77715806183ec0c",
+    "922275aab7e91e92121117313fcd816a8234d114",
+    "4e8035ea2c140583fc8f8fdc196944c69de7fb3f",
+    "d9744d61bd2c4a4720e53142e377f631cd5bfcc7",
+    "3754cfe38a136873f2e6c14a1f8533e6ef0898e9",
+    "663097fd3077a1a4fbb9363082053e61d24eddb2",
+    "7b56eca256ab40265d0c94781ddb7d731f811ed8",
+    "6ccc8c9d32e6e7f46444952720d517cec2a2928a",
+    "3c73992e7309daaee9c35b3db883cbb0a0f68f02",
+    "2a6cc6383c00caf1a49feba1281e1017c1df82e5",
+    "6cfe4e709ec8fa12f1de77245aa9d4153b16dff7",
+    "b60cbf456fc9634c45483c4d37ea8bd5975266a1",
+    "9160d3269f3b87bab5e19e5a5a5b09a03c5d5e99",
+    "9853d7bdb7fe032224b639b0d3f92dfa25377ad2",
+    "c564a1635842b2c3989b90ca9b57fc02ced2cfe1"
+  ],
+  "totals": {
+    "python_deleted": 1237,
+    "python_added": 357,
+    "lean_added": 359,
+    "lean_deleted": 35
+  },
+  "churn": {
+    "python_deleted": 1346,
+    "python_added": 466,
+    "lean_added": 362,
+    "lean_deleted": 38
+  }
+}

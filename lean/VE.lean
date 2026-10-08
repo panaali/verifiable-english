@@ -11,6 +11,7 @@ import VE.EnglishGrammar.Fixed.Version
 import VE.EnglishGrammar.ReadExamples
 import VE.EnglishGrammar.ProfileExamples
 import VE.Senses.Examples
+import VE.Senses.DocumentExamples
 import VE.Compose.Slot
 import VE.Compose.Dispatch
 import VE.Compose.Content

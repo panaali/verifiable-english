@@ -129,6 +129,7 @@ import VE.NormDefaults.Report
 import VE.NormDefaults.Layered
 import VE.NormDefaults.Admission
 import VE.NormDefaults.Run
+import VE.NormDefaults.Explain
 import VE.Readings.Doc
 import VE.SoftNorms.Once
 import VE.Readings.Separate
@@ -184,6 +185,7 @@ import VE.EnglishGrammar.Read
 import VE.EnglishGrammar.Extends
 import VE.EnglishGrammar.Run
 import VE.Senses.Read
+import VE.Senses.Document
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -3226,6 +3228,11 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.NormDefaults.Admission.wire_report_consequence
 #print axioms VE.NormDefaults.Run.runAdmission_sound
 #print axioms VE.NormDefaults.Run.normDefaults_wire_admission
+#print axioms VE.NormDefaults.Wire.kept_sound
+#print axioms VE.NormDefaults.Wire.settled_every_filling
+#print axioms VE.NormDefaults.Wire.underOf_sufficient
+#print axioms VE.NormDefaults.Wire.selectedRules_sound
+#print axioms VE.NormDefaults.Wire.value3_gap
 #print axioms VE.Readings.mem_sets
 #print axioms VE.Readings.mem_fixedUnits
 #print axioms VE.Readings.mem_usesOfUnit
@@ -3410,6 +3417,8 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.SoftNorms.checkSoftOnce_eq
 #print axioms VE.SoftNorms.softSemanticCheckOnce_eq
 #print axioms VE.SoftNorms.validateSoftOnce_eq
+#print axioms VE.SoftNorms.cohPremiseIn_eq
+#print axioms VE.SoftNorms.Wire.softLabelledIn_eq
 #print axioms VE.Rights.validateRightsOnce_eq
 #print axioms VE.SoftNorms.WellFormedSoftOnce_eq
 #print axioms VE.SoftNorms.checkSoft_eq_once
@@ -4556,6 +4565,7 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Senses.stateFrom_init
 #print axioms VE.Senses.stateFrom_cons
 #print axioms VE.Senses.readBody_good
+#print axioms VE.Senses.readSents_ok
 #print axioms VE.Senses.readWithSenses_ok
 #print axioms VE.Senses.readBody_resolved
 #print axioms VE.Senses.filterMap_of_map_some
@@ -4564,3 +4574,14 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Senses.senses_candidate_sound
 #print axioms VE.Senses.candidates_complete
 #print axioms VE.Senses.mixed_exact
+#print axioms VE.Senses.readDocument_source
+#print axioms VE.Senses.readDocument_bad_default
+#print axioms VE.Senses.badDefault_none
+#print axioms VE.Senses.readDocument_both
+#print axioms VE.Senses.readDocument_defaults
+#print axioms VE.Senses.defaults_read_as_lines
+#print axioms VE.Senses.fenceSents_ok
+#print axioms VE.Senses.readDocument_ok
+#print axioms VE.Senses.documentInput_fences
+#print axioms VE.Senses.document_unit_sound
+#print axioms VE.Senses.document_line_sound

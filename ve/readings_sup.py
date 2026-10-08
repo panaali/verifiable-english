@@ -512,12 +512,9 @@ def superposed_elaboration(doc, couplings=(), narrowings=()):
     if soft.env.soft["outranking"]["mode"] == "holistic":
         triples = {}
         for left, right in soft.collisions:
-            pair = soft._rank_pair(left, right)
-            if pair is None:
+            name = soft.override_for_pair.get(frozenset((left.core.name, right.core.name)))
+            if name is None:
                 continue
-            low, high = pair
-            name = soft._outweighs_name(low, high, soft._act(left),
-                                        soft.env.predicates[left.core.predicate].arguments)
             triples.setdefault(name, [])
             owner = list(dict.fromkeys(origin[n] for n in (left.core.name, right.core.name) if n in origin))
             if len(owner) == 2 and owner[0][0] == owner[1][0]:
