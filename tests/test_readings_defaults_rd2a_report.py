@@ -75,15 +75,21 @@ def test_latency_rows():
     assert all(r["s1_only"]["after"] < r["s1_only"]["before"] for r in timing["rows"])
 
 
+# Tests a later batch replaced, with their successors: RD-2b relays the completion, so RD-2a's named refusal (R2,
+# R3) became the check that the document is relayed (docs/readings-defaults/rd2b/DELTA.md).
+SUPERSEDED = {"tests/test_readings_s2_document.py::test_rd2a_review_b3_completion_document_is_refused_by_name":
+              "tests/test_readings_s2_document.py::test_rd2b_completion_document_is_checked_not_refused"}
+
+
 def test_seeded_bugs_name_real_tests():
     for bug in GATE["seeded_bugs"]:
         row = re.search(rf"^\| {bug['id']} \| (.*)$", DELTA, re.M)
         assert row, bug["id"]
         assert (ROOT / bug["file"]).exists()
         for test in bug.get("failed", []):
-            path, name = test.split("::")
+            path, name = SUPERSEDED.get(test, test).split("::")
             assert re.search(rf"^def {re.escape(name)}\(", (ROOT / path).read_text(), re.M), test
-            assert name in row[1], test
+            assert test.split("::")[1] in row[1], test
         if "failed_count" in bug:
             assert f"{bug['failed_count']} tests" in row[1]
     assert len(GATE["seeded_bugs"]) >= 3
