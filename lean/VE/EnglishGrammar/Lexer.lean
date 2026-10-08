@@ -47,10 +47,11 @@ def spaceCodes : List Nat :=
 
 def isSpace (c : Char) : Bool := spaceCodes.contains c.val.toNat
 
-/-- A character of a chunk: an ASCII letter or digit, `_`, or a character outside ASCII that is not
-whitespace. -/
+/-- A character of a chunk: an ASCII letter or digit, `_`, the apostrophe `'` (a declared wording such as
+`a system prompt's content` is read as the hand parser reads it, one word; English E2.6), or a character
+outside ASCII that is not whitespace (`’` among them). -/
 def chunkChar (c : Char) : Bool :=
-  if c.val < 128 then c.isAlphanum || c == '_' else !isSpace c
+  if c.val < 128 then c.isAlphanum || c == '_' || c == '\'' else !isSpace c
 
 /-- The punctuation characters that are one token each. `.` is the terminator. -/
 def punctChars : List Char := [',', ';', ':', '(', ')', '[', ']', '+', '-', '*']

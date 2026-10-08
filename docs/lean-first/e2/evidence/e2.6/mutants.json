@@ -1,0 +1,111 @@
+{
+ "format": "ve-e2.6-mutants@1",
+ "restored": "each mutant was removed and the build restored to the committed pin",
+ "mutants": [
+  {
+   "id": "M1",
+   "behaviour": "Lean's diagnosis keeps the hand parser's suggestion",
+   "file": "lean/VE/EnglishGrammar/Diagnose.lean",
+   "change": "`help` set to the empty text",
+   "failed": [
+    "tests/test_english_e26_diagnosis.py::test_lean_says_what_the_hand_parser_said_where_it_said_it (the three Expected cases)",
+    "tests/test_english_e26_diagnosis.py::test_the_diagnosis_is_lean_s_in_the_answer_not_the_relay_s"
+   ],
+   "reason": "- d '.' here. Use the English paraphrase as a writing example. / + d '.' here."
+  },
+  {
+   "id": "M2",
+   "behaviour": "two modal predicates may share their modal form (V4)",
+   "file": "lean/VE/EnglishGrammar/Lexicon.lean",
+   "change": "the V4 exception removed",
+   "failed": [
+    "tests/test_english_e26_boundary.py::test_two_modal_predicates_may_share_their_modal_form"
+   ],
+   "reason": "CheckerUnavailable: ... invalidGrammar lexicon: V4 predicate operator_unlock_permitted"
+  },
+  {
+   "id": "M3",
+   "behaviour": "the lexer reads an apostrophe as a word character",
+   "file": "lean/VE/EnglishGrammar/Lexer.lean",
+   "change": "`'` removed from `chunkChar`",
+   "failed": [
+    "tests/test_english_e26_boundary.py::test_a_declared_wording_with_an_apostrophe_is_read_as_python_reads_it"
+   ],
+   "reason": "CheckerUnavailable: ... invalidGrammar lexicon: V3 predicate deceive_permitted"
+  },
+  {
+   "id": "M4",
+   "behaviour": "the boundary reads a generated soft frame as the soft route does",
+   "file": "lean/VE/EnglishGrammar/Run.lean",
+   "change": "the generated view not applied",
+   "failed": [
+    "tests/test_english_e26_boundary.py::test_a_generated_soft_frame_is_read_with_its_decision_predicates"
+   ],
+   "reason": "VEError: InvalidInput: invalid soft name soft__excepted__a"
+  },
+  {
+   "id": "M5",
+   "behaviour": "a norm-defaults model must satisfy the data@0 flags",
+   "file": "lean/VE/NormDefaults/Replay.lean, Report.lean",
+   "change": "the `fastFlags` checks of the status replay and the report situation removed",
+   "failed": [
+    "tests/test_norm_defaults_switch.py::test_data_flags_are_admitted_and_every_supplied_model_must_satisfy_them"
+   ],
+   "reason": "Failed: DID NOT RAISE VEError"
+  },
+  {
+   "id": "M6",
+   "behaviour": "the soft route reads a constant's verbalisation",
+   "file": "lean/VE/SoftNorms/Phases.lean",
+   "change": "`displayConstants := true` removed",
+   "failed": [
+    "tests/test_soft_norms_lean.py::test_constant_wording_is_display_metadata_on_the_soft_route"
+   ],
+   "reason": "VEError: fields do not match: expected [sort, description], got [description, sort, verbalisation]"
+  },
+  {
+   "id": "M7",
+   "behaviour": "the relay marks a generated soft frame",
+   "file": "ve/backends/english_lean.py",
+   "change": "`generated: true` not sent",
+   "failed": [
+    "tests/test_english_e26_boundary.py::test_a_generated_soft_frame_is_read_with_its_decision_predicates"
+   ],
+   "reason": "InvalidInput: invalid soft name soft__excepted__a"
+  },
+  {
+   "id": "M8",
+   "behaviour": "the readability report finds a lost name",
+   "file": "conformance/english_lean_e2_readability_report.py",
+   "change": "a lost quoted name not recorded",
+   "failed": [
+    "tests/test_english_e26_evidence.py::test_a_lost_name_location_suggestion_or_outcome_is_a_regression",
+    "tests/test_english_e26_evidence.py::test_the_bare_code_text_and_a_lost_reading_item_are_regressions"
+   ],
+   "reason": "assert summary['regression'] is True"
+  },
+  {
+   "id": "M9",
+   "behaviour": "the A/B check finds a lost location",
+   "file": "conformance/english_lean_e2_ab.py",
+   "change": "a lost path or span not recorded",
+   "failed": [
+    "tests/test_english_e26_ab.py::test_the_names_and_locations_check_can_fail"
+   ],
+   "reason": "assert kept(...)['locations_lost']"
+  },
+  {
+   "id": "M10",
+   "behaviour": "every A/B verdict row has a rule",
+   "file": "conformance/english_lean_e2_ab.py",
+   "change": "the rights rule matches no row",
+   "failed": [
+    "tests/test_english_e26_ab.py::test_no_unexplained_verdict_and_no_availability_row",
+    "tests/test_english_e26_ab.py::test_rights_under_the_readings_head_is_a_python_bug",
+    "tests/test_english_e26_ab.py::test_the_summary_and_dispositions_are_regenerated_from_the_saved_comparisons",
+    "tests/test_english_e26_ab.py::test_an_unknown_verdict_or_availability_row_fails_the_report"
+   ],
+   "reason": "unexplained 190"
+  }
+ ]
+}

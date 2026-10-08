@@ -322,8 +322,14 @@ def failures(view: dict, lexicon: dict) -> list[tuple[str, str, str]]:
     selections = ([(w, 'predicate', p) for p, w in L['wordings'] + L['negatives']] +
                   [(w, 'predicate', p) for p, w, _ in L['aliases']] +
                   [(n, 'sort', s) for s, n in L['nouns']] + [(sp, 'constant', c) for c, sp in L['spellings']])
+    def modal(kind, name):
+        return kind == 'predicate' and name in pred and pred[name]['modal']
+
     for text, kind, name in selections:
-        if owners.get(wording_key_lean(text), set()) - {(kind, name)}:
+        # Two modal predicates may share their modal form, their one honest wording (Lean's V4, E2.6).
+        others = {(k, n) for k, n in owners.get(wording_key_lean(text), set()) - {(kind, name)}
+                  if not (modal(kind, name) and modal(k, n))}
+        if others:
             out.append(('V4', kind, name))
     return sorted(set(out))
 

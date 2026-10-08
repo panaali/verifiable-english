@@ -510,10 +510,22 @@ open VE.Norms (envAt size targets)
 open VE.NormDefaults (fill)
 
 /-- `readings-elaborate` under the completion: no verdict over no reading (4.1 step 3), then the enumerated row with
-    the completion's finding (`elaborateFields`). Step 5 ran in admission. -/
-def runElaborateND (id : String) (r : AdmittedND) : Except String Json := do
+    the completion's finding (`elaborateFields`), then `extra`. Step 5 ran in admission. -/
+def runElaborateNDWith (id : String) (r : AdmittedND) (extra : Except String (List (String × Json))) :
+    Except String Json := do
   if routeOf true r.N.D == .enumerated && (choices r.N.D).isEmpty then throw (unsatText r.N.D)
-  pure (okWith id (elaborateFields true r.b.a.re.se.ne.rv.vocabulary.predicates.length r.N.D))
+  pure (okWith id (elaborateFields true r.b.a.re.se.ne.rv.vocabulary.predicates.length r.N.D ++ (← extra)))
+
+/-- `readings-elaborate` under the completion with nothing after the route's fields. -/
+def runElaborateND (id : String) (r : AdmittedND) : Except String Json := runElaborateNDWith id r (pure [])
+
+/-- `readings-elaborate` as the route answers it under the completion (readings-defaults RD-2b): the route's fields,
+    then `fill_premises` per reading and `filled` once, as `readings-validate` answers them (3). Elaborate admits a
+    document whose separating situations are not yet recorded, so a generator reads Lean's filled document here
+    before it proposes them; each reading's document is read from the request's table. -/
+def runElaborateNDFilled (id : String) (f : AdmittedNDFull) : Except String Json :=
+  runElaborateNDWith id f.r (do
+    pure [("fill_premises", fillPremisesJson f.r.N f.r.b.a.side), ("filled", ← filledJson f.r)])
 
 /-- The case's own premises and conclusion over the complete environment of `fill U`, the regenerated assertions of
     the choice first. -/

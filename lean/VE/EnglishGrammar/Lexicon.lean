@@ -482,7 +482,10 @@ def Lexicon.failures (E : Env) (O : Overlay) (L : Lexicon) : List Failure :=
     let honest := [E.declaredSpelling O c, some c, some (jsonQuote c)]
     (if honest.contains (some sp) then [] else [("V2", "constant", c)]) ++
     (if noHole sp then [] else [("V3", "constant", c)])
-  -- V4: each selection against what every other symbol declares or selects
+  -- V4: each selection against what every other symbol declares or selects. Two modal predicates may share
+  -- their modal form (E2.6): it is the one honest wording of each (D17), so no producer can choose another,
+  -- and Python's producer selects it for both. The reader then finds two derivations of a sentence that uses
+  -- it and refuses it as ambiguous, as the hand parser refuses it ("more than one meaning").
   let own (text : Option String) (kind name : String) : List (String × String × String) :=
     match text with
     | some t => if t.isEmpty then [] else [(wordingKey t, kind, name)]
@@ -499,7 +502,8 @@ def Lexicon.failures (E : Env) (O : Overlay) (L : Lexicon) : List Failure :=
     L.spellings.map (fun (c, sp) => (sp, "constant", c))
   let v4 := selections.filterMap fun (text, kind, name) =>
     let key := wordingKey text
-    if owners.any (fun (k2, kind2, name2) => k2 == key && !(kind2 == kind && name2 == name)) then
+    if owners.any (fun (k2, kind2, name2) => k2 == key && !(kind2 == kind && name2 == name) &&
+        !(kind == "predicate" && kind2 == "predicate" && E.modal name && E.modal name2)) then
       some ("V4", kind, name)
     else none
   v1 ++ v23w ++ v235n ++ v23a ++ v23s ++ v23c ++ v4

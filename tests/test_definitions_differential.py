@@ -22,6 +22,7 @@ from pathlib import Path
 
 import pytest
 
+from conformance.three_way import rust_evaluations
 from tools import rust_build
 from ve.profiles import LANGUAGE, SPEC_REVISION
 
@@ -164,6 +165,11 @@ def _run(command, cases):
     return results
 
 
+def _rust(binary, cases):
+    """Rust's statement values (`conformance.three_way.rust_evaluations`: its evaluate-budgeted kind)."""
+    return rust_evaluations(lambda batch: _run([str(binary), "conformance"], batch), cases)
+
+
 @pytest.mark.parametrize("size", [316, 317])
 def test_sparse_defined_table_candidate_boundary(size):
     """Candidate pairs may exceed 100,000 while the computed table is empty."""
@@ -183,8 +189,7 @@ def test_sparse_defined_table_candidate_boundary(size):
         assert result.get("values") == [True], result
     rust = Path(os.environ.get("VE_RUST_BINARY", str(ROOT / "rust/target/release/ve")))
     if rust.exists():
-        result = _run([str(rust), "conformance"], [
-            {"id": "sparse", "environment": env, "model": model, "ast": ast}])[0]
+        result = _rust(rust, [{"id": "sparse", "environment": env, "model": model, "ast": ast}])[0]
         assert result.get("values") == [True], result
 
 
@@ -207,8 +212,7 @@ def test_populated_defined_table_limit_boundary():
         assert result["status"] == "error" and "ResourceLimit" in result["error"], result
     rust = Path(os.environ.get("VE_RUST_BINARY", str(ROOT / "rust/target/release/ve")))
     if rust.exists():
-        result = _run([str(rust), "conformance"], [
-            {"id": "full", "environment": env, "model": model, "ast": [["top"]]}])[0]
+        result = _rust(rust, [{"id": "full", "environment": env, "model": model, "ast": [["top"]]}])[0]
         assert result["status"] == "error" and result["error"]["code"] == "ResourceLimit", result
 
 
@@ -254,8 +258,7 @@ def test_rust_computes_the_same_tables(generated):
         ast = probes(env)
         requests.append({"id": f"ev{index}", "environment": env, "model": model, "ast": ast})
         expected.append(_python(env, model, ast)[1])
-    results = _run([os.environ.get("VE_RUST_BINARY", str(ROOT / "rust/target/release/ve")),
-                    "conformance"], requests)
+    results = _rust(os.environ.get("VE_RUST_BINARY", str(ROOT / "rust/target/release/ve")), requests)
     for values, result in zip(expected, results, strict=True):
         assert result.get("values") == values, result
 

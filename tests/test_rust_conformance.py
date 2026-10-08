@@ -1,4 +1,10 @@
-"""One shared corpus: Python/Rust, and the existing Lean bridge where applicable."""
+"""One shared corpus: Python/Rust, and the existing Lean bridge where applicable.
+
+Rust reads no source text and prints no canonical text or identities (batch 15b): its
+evaluation is compared through the `evaluate-budgeted` kind `ve/evaluate.py` sends, its
+typing through `check`, and its countermodel search and check as before. The parser,
+evaluation, identity and validation fixtures are checked against Lean in
+`test_lean_same_extended_files`."""
 from __future__ import annotations
 import json
 import copy
@@ -14,8 +20,6 @@ from tools import rust_build
 from ve import Environment, FiniteModel, evaluate, parse, print_document
 from ve.ast import document_from_data, document_to_data
 from ve.errors import VEError
-from ve.environment import RESERVED
-from ve.identity import meaning_id
 from ve.wire import canonical_json, loads_json
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -50,24 +54,29 @@ def invoke(executable, cases, errors=False):
     return json.loads(run.stdout)
 
 
+def budgeted(case):
+    """The `evaluate-budgeted` case of one statement of a corpus case (`ve/evaluate.py`'s kind)."""
+    return {'id': case['id'], 'kind': 'evaluate-budgeted', 'environment': case['environment'],
+            'model': case['model'], 'ast': case['ast']}
+
+
+def statement_values(executable, cases):
+    """Rust's value of each statement of each case: one `evaluate-budgeted` case per statement."""
+    requests = [budgeted({**case, 'ast': [formula]}) for case in cases for formula in case['ast']]
+    results = invoke(executable, requests)
+    assert all(r['status'] in ('Satisfied', 'Violated') for r in results), results
+    values = iter(r['value'] for r in results)
+    return [[next(values) for _ in case['ast']] for case in cases]
+
+
 def test_rust_closure_evaluation(rust_executable):
     cases = fixture('closure')
-    results = invoke(rust_executable, cases)
-    for case, result in zip(cases, results, strict=True):
-        assert result['values'] == case['expected'], case['id']
-        assert result['canonical'] == case['source'], case['id']
+    for case, values in zip(cases, statement_values(rust_executable, cases), strict=True):
+        assert values == case['expected'], case['id']
         env = Environment.from_dict(case['environment'])
         doc = document_from_data(env, case['ast'])
         model = FiniteModel.from_dict(env, case['model'])
-        assert result['values'] == [evaluate(env, f, model, trace=False).value for f in doc.formulas]
-        assert result['ast'] == case['ast']
-        assert result['environment_id'] == env.environment_id
-        assert result['meaning_id'] == meaning_id(env, doc)
-        assert result['formula_meaning_ids'] == [meaning_id(env, f) for f in doc.formulas]
-        assert result['model_id'] == model.model_id
-        for key, value in [('canonical_environment', env.to_dict()), ('canonical_ast', case['ast']),
-                           ('canonical_model', model.to_dict())]:
-            assert result[key].encode() == canonical_json(value)
+        assert values == [evaluate(env, f, model, trace=False).value for f in doc.formulas]
 
 
 def test_rust_closure_e0_witnesses(rust_executable):
@@ -78,22 +87,20 @@ def test_rust_closure_e0_witnesses(rust_executable):
         row = json.loads((directory/entry['file']).read_text())
         for key, expected in [('true_model', True), ('false_model', False)]:
             cases.append({'id': row['id'] + ':' + key, 'environment': row['environment'],
-                          'ast': row['ast'], 'source': row['strict'], 'model': row[key], 'expected': expected})
+                          'ast': row['ast'], 'model': row[key], 'expected': expected})
     assert len(cases) == 30
-    for case, result in zip(cases, invoke(rust_executable, cases), strict=True):
+    for case, result in zip(cases, invoke(rust_executable, [budgeted(c) for c in cases]), strict=True):
         env = Environment(case['environment']); doc = document_from_data(env, case['ast'])
         model = FiniteModel.from_dict(env, case['model'])
         assert result['value'] == case['expected'] == evaluate(env, doc, model, trace=False).value, case['id']
-        assert result['canonical'] == case['source']
-        assert result['meaning_id'] == meaning_id(env, doc)
-        assert result['model_id'] == model.model_id
 
 
 def test_rust_closure_rejections(rust_executable):
     raw = fixture('closure')[3]['environment']
     cases = []
     def add(env=raw, **fields):
-        cases.append({'id': f'closure_reject_{len(cases)}', 'environment': copy.deepcopy(env), **fields})
+        cases.append({'id': f'closure_reject_{len(cases)}', 'kind': 'check', 'environment': copy.deepcopy(env),
+                      **fields})
     sources = [
         'tc[marked](@start, @end).\n', 'tc[unknown](@start, @end).\n',
         'tc[node a, a | (true)](@start, @end).\n',
@@ -108,8 +115,9 @@ def test_rust_closure_rejections(rust_executable):
         'tc[other a, b | (true)](@start, @end).\n',
         'tc[node a, b | (a edge c)](@start, @end).\n',
     ]
-    for source in sources:
-        add(source=source)
+    for source in sources:  # Python's parser only: Rust reads no source text
+        with pytest.raises(VEError):
+            parse(Environment(raw), source)
     reach = ['reach', 'plus', ['named', 'edge'], ['const', 'start'], ['const', 'end']]
     for edge in [[], ['named'], ['named', 'edge', 'extra'], ['body', 'node'], ['unknown', 'edge'],
                  'edge', [False, 'edge'], ['named', False], ['body', False, ['top']],
@@ -129,7 +137,7 @@ def test_rust_closure_rejections(rust_executable):
         add(env={**raw, **change}, ast=[['top']])
     old = copy.deepcopy(raw); old.pop('profiles')
     old.update(language='ve.core@0', profile='relational-fol@0', spec_revision='ve-v0-draft-2026-09-20')
-    add(env=old, ast=[reach]); add(env=old, source='tc[edge](@start, @end).\n')
+    add(env=old, ast=[reach])
     add(env=old, ast=[['reach', 'bad', *reach[2:]]])
     hetero = copy.deepcopy(raw)
     hetero['vocabulary']['predicates']['edge']['arguments'] = ['node', 'other']
@@ -142,8 +150,7 @@ def test_rust_closure_rejections(rust_executable):
     for case, result in zip(cases, invoke(rust_executable, cases, errors=True), strict=True):
         with pytest.raises(VEError) as exc:
             env = Environment(case['environment'])
-            if 'ast' in case: document_from_data(env, case['ast'])
-            else: parse(env, case['source'])
+            document_from_data(env, case['ast'])
         assert result['error']['code'] == exc.value.code, (case, result, exc.value)
 
 
@@ -174,44 +181,28 @@ def test_rust_closure_contextual_words_and_metadata(rust_executable):
     raw['vocabulary']['predicates']['rtc'] = {'description': 'Contextual.', 'arguments': ['node']}
     source = 'for every node a, ((a tc a) and ((a is rtc) or (rtc[node b, c | (b edge c)](a, a)))).\n'
     env = Environment(raw); doc = parse(env, source)
-    result = invoke(rust_executable, {'environment': raw, 'source': source})[0]
-    assert result['ast'] == document_to_data(env, doc)
-    assert result['canonical'] == print_document(env, doc)
-    assert result['meaning_id'] == meaning_id(env, doc)
+    result = invoke(rust_executable, {'kind': 'check', 'environment': raw, 'ast': document_to_data(env, doc)})[0]
+    assert result['status'] == 'ok' and result['well_typed'] is True, result
 
 
 def test_rust_closure_search(rust_executable):
+    """Rust's search against Python's own answers at the base (find_countermodel runs Rust's search
+    since lean-first batch 15b, so it is no second engine: review B2)."""
+    from tests import b15b_search_oracle
     from ve.ast import formula_from_data
-    from ve.search import check_countermodel, find_countermodel
-    raw = fixture('closure')[3]['environment']
-    raw['vocabulary']['sorts'].pop('other')
-    raw['vocabulary']['predicates']['unused'] = {'arguments': ['node', 'node'], 'description': 'Unused.'}
+    from ve.search import check_countermodel
+    raw, cases = b15b_search_oracle.closure_search_cases()
     env = Environment(raw)
-    sources = [
-        ('rtc[edge](@start, @end).\n', 'tc[edge](@start, @end).\n'),
-        ('tc[edge](@start, @end).\n', 'false.\n'),
-        ('tc[node a, b | (a edge b)](@start, @end).\n', 'false.\n'),
-        ('tc[node a, b | (rtc[edge](a, b))](@start, @end).\n', 'false.\n'),
-        ('true.\n', 'for every node a, (rtc[edge](a, a)).\n'),
-        ('true.\n', 'for every node z, (rtc[node a, b | ((a edge b) and (not (b equals z)))](z, z)).\n'),
-    ]
-    cases = []
-    for left, right in sources:
-        p, q = parse(env, left).formulas[0], parse(env, right).formulas[0]
-        from ve.ast import formula_to_data
-        for size, models, work in [(0, 1000, 1_000_000), (1, 1000, 1_000_000), (2, 1000, 1_000_000),
-                                   (2, 0, 1_000_000), (2, 1000, 2)]:
-            cases.append({'environment': raw, 'premises': [formula_to_data(env, p)], 'conclusion': formula_to_data(env, q),
-                          'max_domain_size': size, 'max_models': models, 'max_evaluations': work})
-    for case, result in zip(cases, invoke(rust_executable, cases), strict=True):
+    oracle = json.loads((ROOT / 'tests/data/b15b-search-oracle.json').read_text())['closure_search']
+    assert len(oracle) == len(cases) == 30 and {o['status'] for o in oracle} == {'Found', 'NotFound', 'ResourceLimit'}
+    for case, result, expected in zip(cases, invoke(rust_executable, cases), oracle, strict=True):
         ps = [formula_from_data(env, f) for f in case['premises']]; q = formula_from_data(env, case['conclusion'])
-        expected = find_countermodel(env, ps, q, **{k: case[k] for k in ('max_domain_size', 'max_models', 'max_evaluations')})
-        assert result['status'] == expected.status, case
+        assert result['status'] == expected['status'], case
         # Enumeration order may differ; both exhaust exactly the same bounded space.
-        if result['status'] == 'NotFound': assert result['models_checked'] == expected.models_checked
+        if result['status'] == 'NotFound': assert result['models_checked'] == expected['models_checked']
         if result['status'] == 'Found':
             model = FiniteModel.from_dict(env, result['model'])
-            assert check_countermodel(env, ps, q, model).valid
+            assert check_countermodel(env, ps, q, model).valid  # Python's own check (default authority)
             assert not model.relations['unused']
 
 
@@ -224,63 +215,22 @@ def test_seeded_3000_closure_case_fuzz(rust_executable, tmp_path):
     assert len(output.read_text().splitlines()) == 3000
     assert output.with_suffix('.summary.json').exists()
     summary = json.loads(run.stdout)
-    assert summary['agreements'] == summary['identity_agreements'] == 3000
+    assert summary['agreements'] == 3000
     assert all(summary[k] > 0 for k in ('true', 'false', 'body_cases', 'nested_cases', 'empty_domain_cases',
                                       'forced_outer_parameter_cases', 'self_loop_models', 'forced_cycle_models'))
 
 
 def test_rust_shared_evaluation(rust_executable):
-    cases = fixture('evaluation'); results = invoke(rust_executable, cases)
-    assert len(cases) == len(results) == 701
+    cases = fixture('evaluation')
+    values = statement_values(rust_executable, cases)
+    assert len(cases) == len(values) == 701
     assert sum(len(c['ast']) for c in cases) == 4912
-    for c, r in zip(cases, results, strict=True):
+    results = invoke(rust_executable, [budgeted(c) for c in cases])
+    for c, v, r in zip(cases, values, results, strict=True):
         env = Environment.from_dict(c['environment']); model = FiniteModel.from_dict(env,c['model'])
         doc = document_from_data(env,c['ast'])
-        assert r['values'] == c['expected'] == [evaluate(env,f,model).value for f in doc.formulas], c['id']
-        assert r['value'] == all(c['expected'])
-        assert r['canonical'] == c['source'] == print_document(env,doc)
-        assert r['ast'] == c['ast']
-
-
-def test_rust_shared_parser(rust_executable):
-    cases = fixture('parser'); results = invoke(rust_executable,cases,errors=True)
-    for c,r in zip(cases,results,strict=True):
-        env = Environment.from_dict(c['environment']); expected = c['expected_parser']
-        if 'error_code' in expected:
-            with pytest.raises(VEError) as exc: parse(env,c['source'])
-            assert exc.value.code == expected['error_code'] == r['error']['code'], c['id']
-            assert 'span' in r['error'], c['id']
-        else:
-            doc = parse(env,c['source'])
-            assert r['canonical'] == expected['canonical'] == print_document(env,doc), c['id']
-            assert r['ast'] == expected['ast']
-
-
-def test_rust_reserved_words_track_python_in_binders_and_terms(rust_executable):
-    env = fixture('parser')[0]['environment']
-    cases = [{'id': f'{word}-{context}', 'environment': env, 'source': source}
-             for word in sorted(RESERVED)
-             for context, source in (
-                 ('binder', f'for every service {word}, (true).\n'),
-                 ('term', f'for every service x, ({word} equals x).\n'))]
-    cases.append({'id': 'no-punctuation', 'environment': env,
-                  'source': 'for every service no@, (true).\n'})
-    results = invoke(rust_executable, cases, errors=True)
-    assert len(results) == len(cases)
-    assert all(row['error']['code'] == 'SyntaxError' for row in results)
-
-
-def test_rust_shared_identities(rust_executable):
-    cases = fixture('identity'); results = invoke(rust_executable,cases)
-    for c,r in zip(cases,results,strict=True):
-        env = Environment.from_dict(c['environment']); doc = document_from_data(env,c['ast'])
-        model = FiniteModel.from_dict(env,c['model'])
-        expected = c['expected_identity']
-        assert r['environment_id'] == env.environment_id
-        assert r['meaning_id'] == meaning_id(env,doc)
-        assert r['formula_meaning_ids'] == [meaning_id(env,f) for f in doc.formulas]
-        assert r['model_id'] == model.model_id
-        assert {k:r[k] for k in expected} == expected, c['id']
+        assert v == c['expected'] == [evaluate(env,f,model).value for f in doc.formulas], c['id']
+        assert r['value'] == all(c['expected']), c['id']
 
 
 def test_rust_shared_wire(rust_executable):
@@ -311,7 +261,7 @@ def test_rust_shared_countermodels(rust_executable):
 
 
 def test_rust_shared_validation(rust_executable):
-    cases = fixture('validation'); results = invoke(rust_executable,cases,errors=True)
+    cases = fixture('validation'); results = invoke(rust_executable,[budgeted(c) for c in cases],errors=True)
     for c,r in zip(cases,results,strict=True):
         with pytest.raises(VEError) as exc:
             env = Environment.from_dict(c['environment'])
@@ -334,11 +284,14 @@ def test_rust_shared_search(rust_executable):
             assert {k:r[k] for k in expected} == c['expected_check'] == expected
         else:
             py = find_countermodel(env,premises,conclusion,**{k:c[k] for k in ('max_domain_size','max_models','max_evaluations')})
-            assert {k:v for k,v in py.to_dict().items() if v is not None} == c['expected_search']
-            assert r['status'] == py.status, c['id']
+            expected = c['expected_search']  # Python's own search when the fixture was made
+            assert {k:v for k,v in py.to_dict().items() if v is not None} == expected
+            # The binary against the recorded answer, not against find_countermodel (Rust's own search
+            # since lean-first batch 15b: review B2).
+            assert r['status'] == expected['status'], c['id']
             if c['compare_counts']:
-                assert r['models_checked'] == py.models_checked, c['id']
-                assert r['evaluations'] == py.evaluations, c['id']
+                assert r['models_checked'] == expected['models_checked'], c['id']
+                assert r['evaluations'] == expected['evaluations'], c['id']
             if r['status'] == 'Found':
                 assert check_countermodel(env,premises,conclusion,FiniteModel.from_dict(env,r['model'])).valid
 
@@ -375,43 +328,25 @@ def test_lean_same_extended_files(lean_shared_executable,name):
             if name in ('evaluation','identity'): assert r['values'] == c['expected'],c['id']
 
 
-def test_rust_source_binding_and_cli_outcomes(rust_executable,tmp_path):
+def test_rust_reads_no_source_text(rust_executable, tmp_path):
+    """The source commands and case shapes are gone: each is refused, never answered."""
     case = fixture('evaluation')[0]
-    mismatched = {**case,'source':'true.\n'}
-    rejected = invoke(rust_executable,mismatched,errors=True)[0]
-    assert rejected['error']['code'] == 'TypeMismatch'
-    assert rejected['error']['message'] == 'source/AST mismatch'
     env = tmp_path/'environment.json'; env.write_text(json.dumps(case['environment']))
-    model = tmp_path/'model.json'; model.write_text(json.dumps(case['model']))
-    source = tmp_path/'source.ve'
-    for text,code,status in [('true.\n',0,'Satisfied'),('false.\n',1,'Violated'),('true.\r\n',2,'error')]:
-        source.write_bytes(text.encode())
-        run = subprocess.run([str(rust_executable),'evaluate','--env',str(env),'--model',str(model),
-                              '--source',str(source)],text=True,capture_output=True,timeout=HANG_TIMEOUT)
-        assert run.returncode == code
-        assert json.loads(run.stdout or run.stderr)['status'] == status
-    premises = tmp_path/'premises.ve'; premises.write_text('')
-    conclusion = tmp_path/'conclusion.ve'; conclusion.write_text('false.\n')
-    command = [str(rust_executable),'countermodel','--env',str(env),'--premises',str(premises),
-               '--conclusion',str(conclusion)]
-    for check in (False, True):
-        args = ([str(rust_executable), 'check-countermodel', *command[2:], '--model', str(model)]
-                if check else command)
-        run = subprocess.run(args,text=True,capture_output=True,timeout=HANG_TIMEOUT)
-        assert run.returncode == 2
-        assert json.loads(run.stderr)['error']['code'] == 'SyntaxError'
-    premises.write_text('true.\n')
-    run = subprocess.run(command,text=True,capture_output=True,timeout=HANG_TIMEOUT)
-    assert run.returncode == 0, run.stderr
-    found = json.loads(run.stdout); assert found['status'] == 'Found'
-    model.write_text(json.dumps(found['model']))
-    run = subprocess.run([str(rust_executable),'check-countermodel',*command[2:],'--model',str(model)],
-                         text=True,capture_output=True,timeout=HANG_TIMEOUT)
-    assert run.returncode == 0, run.stderr
-    assert json.loads(run.stdout)['valid']
-    run = subprocess.run([*command,'--max-models','0'],text=True,capture_output=True,timeout=HANG_TIMEOUT)
-    assert run.returncode == 2
-    assert json.loads(run.stdout)['status'] == 'ResourceLimit'
+    source = tmp_path/'source.ve'; source.write_text('true.\n')
+    for command in ('parse', 'format', 'evaluate', 'countermodel', 'check-countermodel'):
+        run = subprocess.run([str(rust_executable), command, '--env', str(env), '--source', str(source)],
+                             text=True, capture_output=True, timeout=HANG_TIMEOUT)
+        assert run.returncode == 2 and not run.stdout, command
+        assert json.loads(run.stderr)['error']['message'] == 'unknown command; use --help', command
+    shapes = [{'id': 'source', 'environment': case['environment'], 'source': case['source']},
+              {'id': 'ast', 'environment': case['environment'], 'ast': case['ast'], 'model': case['model']},
+              {'id': 'label', 'kind': 'label', 'environment': case['environment'], 'label': 'asserted'},
+              {'id': 'order', 'kind': 'dependency-order', 'environment': case['environment'],
+               'nodes': [{'name': 'a', 'mentions': []}]}]
+    for shape, row in zip(shapes, invoke(rust_executable, shapes, errors=True), strict=True):
+        assert row['id'] == shape['id'] and row['status'] == 'error', row
+        assert row['error'] == {'code': 'InvalidInput',
+                                'message': 'unknown case: Rust checks search cases only'}, row
 
 
 @pytest.mark.parametrize('oversized_bytes,terminated', [
@@ -421,7 +356,7 @@ def test_rust_source_binding_and_cli_outcomes(rust_executable,tmp_path):
 ])
 def test_jsonl_continues_after_oversized_record(rust_executable, tmp_path, oversized_bytes, terminated):
     case = fixture('evaluation')[0]
-    valid = json.dumps(case).encode() + b'\n'
+    valid = json.dumps(budgeted(case)).encode() + b'\n'
     stream = tmp_path / 'oversized.jsonl'
     stream.write_bytes(valid + b'x' * oversized_bytes + (b'\n' + valid + valid if terminated else b''))
     run = subprocess.run([str(rust_executable), 'jsonl', str(stream)], capture_output=True, text=True, timeout=HANG_TIMEOUT)
@@ -431,19 +366,20 @@ def test_jsonl_continues_after_oversized_record(rust_executable, tmp_path, overs
     assert records[0]['id'] == case['id']
     assert records[1]['error']['code'] == 'ResourceLimit'
     for record in records[2:]:
-        assert record['status'] == 'ok'
+        assert record['status'] in ('Satisfied', 'Violated')
         assert record['id'] == case['id']
-        assert record['values'] == case['expected']
+        assert record['value'] == all(case['expected'])
 
 
-def test_rust_printer_resource_limit(rust_executable):
+def test_ast_budget_exceeds_the_printer_budget(rust_executable):
     case = fixture('evaluation')[0]
     case.pop('source')
-    # 9,000 AST nodes is valid, but printing these statements exceeds 64 KiB.
+    # 9,000 AST nodes is valid, but printing these statements exceeds 64 KiB: Python's printer
+    # refuses, and Rust (which prints nothing) evaluates the document within the AST budget.
     case['ast'] = [['implies',['top'],['top']]] * 3000
     env = Environment.from_dict(case['environment'])
     doc = document_from_data(env,case['ast'])
     with pytest.raises(VEError) as exc: print_document(env,doc)
     assert exc.value.code == 'ResourceLimit'
-    result = invoke(rust_executable,case,errors=True)[0]
-    assert result['error']['code'] == 'ResourceLimit'
+    result = invoke(rust_executable,budgeted(case))[0]
+    assert result['status'] == 'Satisfied' and result['value'] is True, result

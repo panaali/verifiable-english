@@ -345,7 +345,7 @@ def runSeparateND (id : String) (f : AdmittedNDFull) (j : Json) : Except String 
 def runS2ND (lower : List String → Json → Json) (id kind : String) (b : Admitted2) (j : Json) : Except String Json := do
   if !underCompletion b.a.re b.D then return ← runS2 lower id kind b j
   let f ← admitNDFull b
-  if kind == "readings-elaborate" then return ← runElaborateND id f.r
+  if kind == "readings-elaborate" then return ← runElaborateNDFilled id f
   if kind == "readings-choice" then return ← runChoiceND id f.r j
   if kind == "readings-dead" then return ← deadAnswer id f.r.N.D j
   throw (completionRefusal f.r.N.D)
@@ -452,7 +452,7 @@ def runAdmitted (j : Json) (id kind : String) (ready : ComponentAdmission) : Exc
   match ready with
   | .s2 b => runS2 runLowerWith id kind b j
   | .nd f =>
-    if kind == "readings-elaborate" then return ← runElaborateND id f.r
+    if kind == "readings-elaborate" then return ← runElaborateNDFilled id f
     if kind == "readings-choice" then return ← runChoiceND id f.r j
     if kind == "readings-dead" then return ← deadAnswer id f.r.N.D j
     throw (completionRefusal f.r.N.D)

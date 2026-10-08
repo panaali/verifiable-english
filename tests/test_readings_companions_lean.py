@@ -157,6 +157,9 @@ def test_fc1_three_components_each_answered_as_a_document_of_its_own(lean):
     elaborate, _ = components(one(lean, "readings-elaborate", env_main(), document))
     assert elaborate["rs_a"]["finding"] == {"text": "ReadingsNotSuperposable: rs_a", "cause": "the unspecified completion"}
     assert elaborate["rs_b"]["choices"] == [[["rs_b", 0]], [["rs_b", 1]]]
+    for name in ("rs_a", "rs_b"):
+        assert "fill_premises" in elaborate[name]
+        assert elaborate[name]["filled"] == answers[name]["filled"]
 
 
 def test_kinds_naming_one_component(lean):

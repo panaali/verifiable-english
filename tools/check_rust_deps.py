@@ -47,15 +47,14 @@ import unicodedata
 from layer_policy import ROOT
 
 WORKSPACE = ROOT / "rust"
-# `ve-core` is a facade over the three library crates, declared at the surface layer so it may
-# re-export all of them; `ve` is the binary.
-CRATE_LAYERS = {"ve-kernel": 1, "ve-profile": 2, "ve-surface": 3, "ve-core": 3, "ve": 4}
+# `ve-core` is a facade over the two library crates, declared above both so it may re-export
+# them; `ve` is the binary.
+CRATE_LAYERS = {"ve-kernel": 1, "ve-profile": 2, "ve-core": 3, "ve": 4}
 MODULE_LEDGER = ROOT / "tools/rust-module-exceptions.json"
 MODULE_GROUPS = {
     "ve-kernel": dict.fromkeys(("lib", "ast", "environment", "graph", "internal", "model", "semantics",
                                 "wire"), 1),
-    "ve-profile": dict.fromkeys(("lib", "eval", "order", "route", "search"), 2),
-    "ve-surface": dict.fromkeys(("lib", "surface"), 3),
+    "ve-profile": dict.fromkeys(("lib", "eval", "order", "search"), 2),
     "ve-core": {"lib": 3},
 }
 # What rustc skips between tokens (Pattern_White_Space, line comments), string literals

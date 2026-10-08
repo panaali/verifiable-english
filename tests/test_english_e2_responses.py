@@ -261,21 +261,21 @@ def test_the_test_transport_is_checked_like_the_service(monkeypatch):
     s2 = {k: v for k, v in response.items() if k not in ("obligations", "spans")}
     monkeypatch.setattr(L, "TRANSPORT", lambda _case: s2)
     with pytest.raises(CheckerUnavailable, match="malformed"):
-        EN._lean_reading(env, source, words, options)
+        EN.parse_english(env, source)
     no_obligation = {**response, "obligations": []}
     monkeypatch.setattr(L, "TRANSPORT", lambda _case: no_obligation)
     with pytest.raises(CheckerUnavailable, match="obligations do not match"):
-        EN._lean_reading(env, source, words, options)
+        EN.parse_english_argument(env, source)
 
 
-def test_an_argument_without_lean_obligations_uses_python_premises(monkeypatch):
-    """Python authority derives premises when no Lean obligation decides admission."""
+def test_an_argument_without_lean_obligations_is_checker_unavailable(monkeypatch):
+    """Review B4: `parse_english_argument` computes no premise of its own."""
     env = Environment(fixtures.F())
     document = EN.parse_english(env, "Legacy is deployed. Legacy is reviewed.")
     reading = EN._Reading(env, document, EN.EnglishVocabulary(env), (1,))
     monkeypatch.setattr(EN, "_parse_english_document",
                         lambda *_args, **_kwargs: (document, "source", None, (1,), reading))
-    with pytest.raises(VEError, match="no checked derivation"):
+    with pytest.raises(CheckerUnavailable, match="no Lean obligations"):
         EN.parse_english_argument(env, "source")
 
 
@@ -285,7 +285,7 @@ def test_a_lexical_rejection_spans_the_offending_character_in_code_points():
     response, expected, env, source, *_ = genuine("lexical")
     assert source[slice(*response["span"])] == "#" and response["span"] == [38, 39]
     with pytest.raises(VEError) as caught:
-        EN._lean_reading(env, source, EN.EnglishVocabulary(env), {})
+        EN.parse_english(env, source)
     assert source[caught.value.span.start:caught.value.span.end] == "#"
 
 
@@ -294,7 +294,7 @@ def test_a_lexical_rejection_spans_the_offending_character_in_code_points():
 def test_every_lexical_rejection_with_an_offset_spans_one_character(source, character):
     env = Environment(fixtures.F())
     with pytest.raises(VEError) as caught:
-        EN._lean_reading(env, source, EN.EnglishVocabulary(env), {})
+        EN.parse_english(env, source)
     span = caught.value.span
     assert span.end - span.start == 1 and source[span.start] == character, (source, span)
 

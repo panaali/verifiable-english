@@ -13,9 +13,9 @@ and exit code) over the same invocations:
 The invocations are `ve conformance` and `ve jsonl` over every
 `conformance/*.json` corpus and `lean/VE/Route/examples/route-cases.json`,
 `ve canonical-json` over those files and every `conformance/wire.json` raw
-input, and `parse`, `format`, `evaluate`, `countermodel` and
-`check-countermodel` over the sources, environments and models of the
-source-bearing corpora and `examples/`. A clean run is evidence of equivalence
+input. (Rust has no source commands since lean-first batch 15b: `parse`,
+`format`, `evaluate`, `countermodel` and `check-countermodel` are gone, and
+`ve conformance` refuses a case it reads no kind of.) A clean run is evidence of equivalence
 over these exercised inputs only, alongside the dependency argument and the
 required suites; it is not a proof independent of input coverage. A run that
 times out (either binary, any invocation) or an empty invocation list makes the
@@ -41,9 +41,6 @@ import rust_build  # noqa: E402
 ROOT = rust_build.ROOT
 BASELINE = ROOT / "rust/target/ve-baseline"
 CORPORA = [*sorted((ROOT / "conformance").glob("*.json")), ROOT / "lean/VE/Route/examples/route-cases.json"]
-# Corpora whose cases carry an environment and a canonical source with one statement per line.
-SOURCE_CORPORA = ("evaluation", "closure", "identity", "parser")
-SEARCH_BOUNDS = ("--max-domain-size", "2", "--max-evaluations", "200000")
 TIMEOUT = 300
 
 
@@ -60,26 +57,6 @@ def write(path: Path, data: str | bytes) -> str:
     return str(path)
 
 
-def cli_invocations(label: str, env: str, source: Path | None, model: str | None,
-                    lines: list[str], scratch: Path) -> list[Invocation]:
-    found = []
-    if source is not None:
-        found += [Invocation(name, label, (name, "--env", env, "--source", str(source)))
-                  for name in ("parse", "format")]
-        if model is not None:
-            found.append(Invocation("evaluate", label, ("evaluate", "--env", env, "--source", str(source),
-                                                        "--model", model)))
-    if lines:
-        premises = write(scratch / "premises.ve", "".join(lines[:-1]) or "true.\n")
-        conclusion = write(scratch / "conclusion.ve", lines[-1])
-        problem = ("--env", env, "--premises", premises, "--conclusion", conclusion)
-        found.append(Invocation("countermodel", label, ("countermodel", *problem, *SEARCH_BOUNDS)))
-        if model is not None:
-            found.append(Invocation("check-countermodel", label,
-                                    ("check-countermodel", *problem, "--model", model)))
-    return found
-
-
 def invocations(scratch: Path) -> list[Invocation]:
     found = []
     for corpus in CORPORA:
@@ -94,25 +71,6 @@ def invocations(scratch: Path) -> list[Invocation]:
     for case in json.loads((ROOT / "conformance/wire.json").read_text()):
         found.append(Invocation("canonical-json", f"conformance/wire.json:{case['id']}", ("canonical-json",),
                                 case["raw"].encode()))
-    examples = ROOT / "examples"
-    env, model = str(examples / "environment.json"), str(examples / "model.json")
-    for source in sorted(examples.glob("*.ve")):
-        found += cli_invocations(f"examples/{source.name}", env, source, model, [], scratch)
-    premise, conclusion = (examples / "premise.ve").read_text(), (examples / "conclusion.ve").read_text()
-    found += cli_invocations("examples/premise.ve+conclusion.ve", env, None, model,
-                             [premise, conclusion], scratch / "examples")
-    for corpus in SOURCE_CORPORA:
-        for number, case in enumerate(json.loads((ROOT / f"conformance/{corpus}.json").read_text())):
-            if "environment" not in case or not isinstance(case.get("source"), str):
-                continue
-            folder = scratch / corpus / str(number)
-            env = write(folder / "environment.json", json.dumps(case["environment"]))
-            model = (write(folder / "model.json", json.dumps(case["model"]))
-                     if "model" in case else None)
-            source = Path(write(folder / "source.ve", case["source"]))
-            lines = case["source"].splitlines(keepends=True) if corpus != "parser" else []
-            found += cli_invocations(f"conformance/{corpus}.json:{case.get('id', number)}", env, source,
-                                     model, lines, folder)
     return found
 
 

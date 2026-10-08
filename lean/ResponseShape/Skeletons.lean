@@ -56,6 +56,7 @@ abbrev normDefaults : Skel := skel% "norm-defaults.json#/row"
 abbrev discourse : Skel := skel% "discourse.json#/row"
 abbrev readingsRoute : Skel := skel% "readings-route.json#/row"
 abbrev diagnose : Skel := skel% "diagnose.json#/row"
+abbrev document : Skel := skel% "document.json#/row"
 
 def row : VE.Service.Mode → Skel
   | .evaluate => evaluate
@@ -88,6 +89,7 @@ def row : VE.Service.Mode → Skel
   | .discourse => discourse
   | .readingsRoute => readingsRoute
   | .diagnose => diagnose
+  | .document => document
 
 #guard VE.Service.modes.all fun m =>
   (skeleton Schemas.files s!"{m.name}.json#/row").toOption == some (row m, [])

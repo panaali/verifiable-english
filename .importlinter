@@ -45,8 +45,6 @@ ignore_imports =
     ve.environment -> ve.units
     ve.evaluate -> ve.backends.dispatch
     ve.evaluate -> ve.backends.lean_runner
-    ve.evaluate -> ve.backends.relay
-    ve.evaluate -> ve.backends.rust_jsonl
     ve.model -> ve.backends.dispatch
     ve.model -> ve.backends.validation
     ve.model -> ve.background
