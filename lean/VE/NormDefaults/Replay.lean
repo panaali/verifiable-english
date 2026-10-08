@@ -1,4 +1,5 @@
 import VE.NormDefaults.Wire
+import VE.Route.Flags
 
 /-! Witness, status and gap replays under `norm-defaults@0` (docs/spec/norm-defaults.md
 2.5, 3.1, 3.2 and 8): the evidence Python proposes, checked from raw JSON.
@@ -105,6 +106,7 @@ def witnessFromU (s : SourceU) (w : Json) : Except String (WitnessDataU s) := do
     let name ← VE.Bridge.stringField w "target"
     let ids ← VE.Bridge.strings (← w.getObjVal? "tuple")
     if hv : data.valid v = true then
+      unless VE.Route.Flags.fastFlags M s.src.ne.rv.flags do throw (VE.Route.Wire.invalidModel "flags")
       if hb : backgroundValid (fill s.U) M = true then
         if hf : (fillPremises s.U).all (fun φ => φ.eval M []) = true then
           match hfind : (targets (fill s.U)).find? (·.1 == name) with
@@ -230,6 +232,7 @@ def replayStatus (j : Json) : Except String (StatusData j) :=
     let ids ← VE.Bridge.strings (← j.getObjVal? "tuple")
     let method ← VE.Bridge.stringField j "method"
     if hv : data.valid v = true then
+      unless VE.Route.Flags.fastFlags M s.src.ne.rv.flags do throw (VE.Route.Wire.invalidModel "flags")
       if hb : backgroundValid s.U.D M = true then
         match hfind : s.U.D.T.regulated.find? (·.name == name) with
         | none => throw s!"InvalidInput: unknown regulated predicate {name}"
@@ -353,6 +356,7 @@ def reachedFromU (s : SourceU) (name : Except String String) (w : Json) : Except
     let name ← name
     let ids ← VE.Bridge.strings (← w.getObjVal? "tuple")
     if hv : data.valid v = true then
+      unless VE.Route.Flags.fastFlags M s.src.ne.rv.flags do throw (VE.Route.Wire.invalidModel "flags")
       if hb : backgroundValid (fill s.U) M = true then
         if hf : (fillPremises s.U).all (fun φ => φ.eval M []) = true then
           match hfind : s.U.D.T.regulated.find? (·.name == name) with
