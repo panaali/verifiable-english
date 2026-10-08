@@ -56,6 +56,22 @@ def test_model_decoder_locates_wrong_shapes_and_invalid_cells(table, key, value,
 
 
 @pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+@pytest.mark.parametrize("extension", ("soft", "rights", "reports"))
+def test_environment_decoder_preserves_composed_vocabulary_blocks(extension):
+    if extension == "soft":
+        from tests.test_soft_norms_lean import env
+        raw = env({"parties": ["user"], "outranking": {"mode": "strict"}})
+    elif extension == "rights":
+        from tests.test_rights_lean import ARREST, env
+        raw = env(ARREST)
+    else:
+        from tests.test_reports_lean import E0
+        raw = E0()
+    [row] = run("environment", [{"id": extension, "environment": raw}])
+    assert row["status"] == "ok"
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
 @pytest.mark.parametrize("profiles", [(), ("closure@0",),
                                       ("closure@0", "nary@0"), ("order@0",)])
 def test_environment_decoder_quotes_the_unknown_argument_sort(profiles):

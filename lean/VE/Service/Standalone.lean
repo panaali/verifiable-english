@@ -875,8 +875,13 @@ private def locatedEnvironmentFields (environment : Json) : Except ModelFault Un
   unless vocabulary.getObj?.isOk do modelFault "" "object expected"
   let profiles := (VE.Bridge.strings (environment.getObjValD "profiles")).toOption.getD []
   let reports := profiles.contains "reports@0"
-  environmentFields vocabulary
-    (["sorts", "predicates", "constants"] ++ if reports then ["reports"] else []) "/vocabulary"
+  -- Statement-layer blocks live beside the base vocabulary. Their owning
+  -- decoders validate the blocks; this decoder locates faults in base fields.
+  let extensions := [("reports@0", "reports"), ("soft-norms@0", "soft"),
+    ("rights@0", "rights")]
+  let present := extensions.filterMap fun (profile, field) =>
+    if profiles.contains profile && (vocabulary.getObjVal? field).isOk then some field else none
+  environmentFields vocabulary (["sorts", "predicates", "constants"] ++ present) "/vocabulary"
   let sorts := vocabulary.getObjValD "sorts"
   let predicates := vocabulary.getObjValD "predicates"
   let constants := vocabulary.getObjValD "constants"
@@ -894,7 +899,7 @@ private def locatedEnvironmentFields (environment : Json) : Except ModelFault Un
   let order := profiles.contains "order@0"
   let flagged := profiles.contains "data@0"
   let nary := profiles.contains "nary@0"
-  if reports then
+  if reports && (vocabulary.getObjVal? "reports").isOk then
     environmentFields (vocabulary.getObjValD "reports") ["holders", "evidence"]
       "/vocabulary/reports"
   for (name, entry) in sortEntries do
