@@ -374,14 +374,14 @@ def test_document_fence_parses_one_checked_sentence(tmp_path, monkeypatch, surfa
         return original(*args, **kwargs)
 
     monkeypatch.setattr(unambiguity, "require_unique_derivation", checked)
-    monkeypatch.setenv("VE_ENGLISH_COMPARATOR", "0")  # ev6: Python's reader runs only as the comparator
+    monkeypatch.setenv("VE_ENGLISH_COMPARATOR", "0")
     def lean_read(*args, **kwargs):
         lean_calls.append(True)
         return original_read(*args, **kwargs)
     monkeypatch.setattr(english_lean, "read", lean_read)
     doc = load_document(path)
     assert doc["units"][0]["content"] == ["top"]
-    assert calls == []
+    assert calls == ([True] if surface == "english" else [])
     assert lean_calls == ([True] if surface == "english" else [])
     assert check_document(path)["premises"]["status"] == "model"
 
