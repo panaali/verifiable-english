@@ -321,6 +321,9 @@ module VE.Readings.UnspecifiedExamples
 module VE.Readings.UnspecifiedWire
 module VE.Readings.UpPremises
 module VE.Readings.UpSlot
+module VE.Readings.Verdicts
+module VE.Readings.VerdictsExamples
+module VE.Readings.VerdictsWire
 module VE.Readings.Wire
 module VE.Rights.Admission
 module VE.Rights.Bar
@@ -726,10 +729,14 @@ VE.Readings.ChoiceExtension@VE.Readings.Choice
 VE.Readings.ChosenAt@VE.Readings.UpSlot
 VE.Readings.ChosenNorm@VE.Readings.ChoiceFacts
 VE.Readings.Compatible@VE.Readings.Choice
+VE.Readings.ConsistentU@VE.Readings.Verdicts
+VE.Readings.CounterU@VE.Readings.Verdicts
+VE.Readings.Covers@VE.Readings.Verdicts
 VE.Readings.Encodes@VE.Readings.Choice
 VE.Readings.Fits@VE.Readings.Choice
 VE.Readings.FixedNorm@VE.Readings.ChoiceFacts
 VE.Readings.Grows@VE.Readings.Shape
+VE.Readings.Holds@VE.Readings.Verdicts
 VE.Readings.Hyps@VE.Readings.ChoiceFacts
 VE.Readings.IsBit@VE.Readings.BaseUp
 VE.Readings.KeepsFrame@VE.Readings.Separate
@@ -739,6 +746,7 @@ VE.Readings.Observes@VE.Readings.Separate
 VE.Readings.OnBit@VE.Readings.BaseUp
 VE.Readings.PathTo@VE.Readings.Doc
 VE.Readings.RightsNames@VE.Readings.Lines
+VE.Readings.RowsHold@VE.Readings.Verdicts
 VE.Readings.Separated@VE.Readings.Separate
 VE.Readings.SeparatedU@VE.Readings.Unspecified
 VE.Readings.Shaped@VE.Readings.Unspecified

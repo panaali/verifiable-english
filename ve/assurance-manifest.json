@@ -65,7 +65,7 @@
     "ve/softnorms.py:load_soft_document": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors."
   },
   "lean_decoders": {
-    "total_lines": 24719,
+    "total_lines": 25823,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -625,6 +625,41 @@
           "runChoiceND"
         ],
         "reason": "readings-defaults RD-2a: admission, separation and each choice under the unspecified completion; the inner case of readings-choice (its kind, conflict packages, premises, certificate, model and filling) read through the pinned NormDefaults and SupWire decoders and by `conflictPackages` and `ndCertificate`; readings-defaults RD-2b: `readings-elaborate` also answers the filled document (`runElaborateNDFilled`, no new decoding); the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Readings/VerdictsWire.lean",
+        "lines": 1104,
+        "sha256": "02721122fb7aa6b890ddac3c5f55c6e69efbfe19d3c2af3011c59e11b6add376",
+        "ranges": [
+          [
+            1,
+            1104
+          ]
+        ],
+        "declarations": [
+          "membersOf",
+          "without",
+          "shownOk",
+          "shownOf",
+          "pieceOf",
+          "ndBoundCert",
+          "ndFilled",
+          "ndEvidenceOf",
+          "jstrings",
+          "jchoice",
+          "jgaps",
+          "perChoice",
+          "planItems",
+          "lowerRun",
+          "lowerInfo",
+          "entryFor",
+          "evidenceList",
+          "queryFormulas",
+          "replayND",
+          "replayVerdictsND",
+          "runVerdicts"
+        ],
+        "reason": "readings-defaults RD-3 readings-verdicts decoder: the question, assumed, the query's premises and conclusion, and each choice's evidence (conflict packages bound to the choice's E''' base and document hash, filled witnesses, certificates bound as the norm-defaults route binds them, base models with a separate filling, each shown model bound to the checked one) are decoded on the choice's document Lean regenerates; under the completion every row is a Lean check with its Holds proof (nd_rowsHold), on the lower route each piece is readings-choice's own inner case; the English plan reads only Lean's own answer; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Readings/Wire.lean",
@@ -1219,8 +1254,8 @@
       "lean/VE/Route/MeteredTrace.lean": "lean:runner-glue: explanation JSON display after the proved metered value; reads no untrusted input",
       "lean/VE/SoftNorms/Run.lean": "lean:runner-glue: ve_soft_norms_route case dispatch and response rows",
       "lean/VE/Rights/Run.lean": "lean:runner-glue: ve_rights_route case dispatch and response rows",
-      "lean/VE/Readings/Run.lean": "lean:runner-glue: ve_readings_route case dispatch and response rows; readings-validate and readings-separate rows regenerated from the pinned Wire decoder; the S2a kinds dispatched to SupRun",
-      "lean/VE/Readings/SupRun.lean": "lean:runner-glue: ve_readings_route S2a case kinds; case fields are read through the pinned SupWire and Wire decoders, and the response rows are built from Lean checks (supCertificateCheck, supModelCheck, slotConflictFreeCheck, deadCheck, unsatCheck); readings-choice runs the lower route on the regenerated choice document with its regenerated assertions, accepts a chain certificate only when the lower conflict kind finds the case's conflict packages CONFLICT-FREE on the same document, and choice-model reads its model through the chain decoders (decodeModel, decodeModelR, decodeModelData)",
+      "lean/VE/Readings/Run.lean": "lean:runner-glue: ve_readings_route case dispatch and response rows; readings-validate and readings-separate rows regenerated from the pinned Wire decoder; the S2a kinds dispatched to SupRun; readings-verdicts dispatched to VerdictsWire (runVerdicts) before the completion's kinds",
+      "lean/VE/Readings/SupRun.lean": "lean:runner-glue: ve_readings_route S2a case kinds; case fields are read through the pinned SupWire and Wire decoders, and the response rows are built from Lean checks (supCertificateCheck, supModelCheck, slotConflictFreeCheck, deadCheck, unsatCheck); readings-choice runs the lower route on the regenerated choice document with its regenerated assertions, accepts a chain certificate only when the lower conflict kind finds the case's conflict packages CONFLICT-FREE on the same document, and choice-model reads its model through the chain decoders (decodeModel, decodeModelR, decodeModelData); the kind list names readings-verdicts, which Run.lean dispatches",
       "lean/VE/Readings/Route.lean": "lean:runner-glue: the readings@1 route of 1.1 and the regenerated S2a elaboration rows (elaborateFields); builds JSON, reads none",
       "lean/VE/Norms/Run.lean": "lean:runner-glue: ve_norms_route case dispatch and error rows",
       "lean/VE/NormDefaults/Run.lean": "lean:runner-glue: ve_norm_defaults_route case dispatch and response rows",

@@ -173,6 +173,7 @@ import VE.Readings.ChoiceWF
 import VE.Readings.Force
 import VE.Readings.Unspecified
 import VE.Readings.UnspecifiedWire
+import VE.Readings.VerdictsWire
 import VE.Readings.SupExtra
 import VE.Readings.SupExtraExamples
 import VE.WireContract.Engine
@@ -4300,6 +4301,72 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.Wire.choiceU_E
 #print axioms VE.Readings.Wire.readings_wire_nd_choice_conflict
 #print axioms VE.Readings.Wire.readings_wire_nd_choice_entails
+#print axioms VE.Readings.foldConflict_free
+#print axioms VE.Readings.foldConflict_conflict
+#print axioms VE.Readings.foldEntailment_gate
+#print axioms VE.Readings.foldEntailment_all
+#print axioms VE.Readings.foldEntailment_none
+#print axioms VE.Readings.foldEntailment_some
+#print axioms VE.Readings.foldPremises_model
+#print axioms VE.Readings.foldPremises_inconsistent
+#print axioms VE.Readings.covers_row
+#print axioms VE.Readings.covers_mem
+#print axioms VE.Readings.fold_all_sound
+#print axioms VE.Readings.fold_none_sound
+#print axioms VE.Readings.fold_some_sound
+#print axioms VE.Readings.fold_conflict_free_sound
+#print axioms VE.Readings.fold_conflict_sound
+#print axioms VE.Readings.fold_premises_model_sound
+#print axioms VE.Readings.fold_premises_inconsistent_sound
+#print axioms VE.Readings.setAt_fst
+#print axioms VE.Readings.mem_setAt_of_ne
+#print axioms VE.Readings.mem_setAt_self
+#print axioms VE.Readings.index_eq_of_mem
+#print axioms VE.Readings.index_none_of_not_mem
+#print axioms VE.Readings.index_some_of_mem
+#print axioms VE.Readings.candidate_isSome_iff
+#print axioms VE.Readings.candidate_of_mem
+#print axioms VE.Readings.complete_setAt
+#print axioms VE.Readings.complete_nodup
+#print axioms VE.Readings.allows_of_taking
+#print axioms VE.Readings.taking_setAt
+#print axioms VE.Readings.index_setAt_self
+#print axioms VE.Readings.index_setAt_ne
+#print axioms VE.Readings.narrowingExcludes_iff
+#print axioms VE.Readings.zip_tail_ne
+#print axioms VE.Readings.couplingExcludes_iff
+#print axioms VE.Readings.restrictionsFor_spec
+#print axioms VE.Readings.blank_all
+#print axioms VE.Readings.usedLabels_sound
+#print axioms VE.Readings.Wire.conflictFree_of_localFree
+#print axioms VE.Readings.Wire.expansion_of_modelCheck
+#print axioms VE.Readings.Wire.ndFree_sound
+#print axioms VE.Readings.Wire.ndCertOk_sound
+#print axioms VE.Readings.Wire.ndModelOk_sound
+#print axioms VE.Readings.Wire.ndConflictRow_holds
+#print axioms VE.Readings.Wire.ndQueryRow_holds
+#print axioms VE.Readings.Wire.ndPremiseRow_holds
+#print axioms VE.Readings.Wire.mem_chosenOf
+#print axioms VE.Readings.Wire.NDVerdicts.covers
+#print axioms VE.Readings.Wire.mem_rows
+#print axioms VE.Readings.Wire.nd_rowsHold
+#print axioms VE.Readings.Wire.nd_premiseRowsHold
+#print axioms VE.Readings.Wire.notFreeU_of_notFreeX
+#print axioms VE.Readings.plan_no_every_for_models
+#print axioms VE.Readings.plan_model_names_every_set
+#print axioms VE.Readings.Run.ndInfos_rows
+#print axioms VE.Readings.Run.readings_wire_verdicts_all
+#print axioms VE.Readings.Run.readings_wire_verdicts_none
+#print axioms VE.Readings.Run.readings_wire_verdicts_some
+#print axioms VE.Readings.Run.readings_wire_verdicts_conflict_free
+#print axioms VE.Readings.Run.readings_wire_verdicts_conflict
+#print axioms VE.Readings.Run.readings_wire_verdicts_model
+#print axioms VE.Readings.Run.readings_wire_verdicts_inconsistent
+#print axioms VE.Readings.Run.lower_verdicts_rows
+#print axioms VE.Readings.Run.lower_verdicts_all
+#print axioms VE.Readings.Run.lower_verdicts_none
+#print axioms VE.Readings.Run.lower_verdicts_some
+#print axioms VE.Readings.Run.map_row_choice
 #print axioms VE.Readings.Wire.admitDecoded_ok
 #print axioms VE.Readings.Wire.ndTextWith_eq
 #print axioms VE.Readings.Wire.one_links
