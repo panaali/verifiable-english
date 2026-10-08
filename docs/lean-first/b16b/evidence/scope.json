@@ -1,0 +1,249 @@
+{
+ "range": "main..HEAD --no-merges",
+ "captured_head": "84064f2cb5ee771e6b95612595267982a1f26f24",
+ "base": "8350e55f8e8ead02063ee17d05bf729c7e9e81b9",
+ "commits": [
+  "84064f2cb5ee771e6b95612595267982a1f26f24",
+  "496a16daf75003303e13e210805406f9779a3cab",
+  "b4860efd78494ee5fcb54e719e8eaf925c872faf",
+  "68c0b54d8c1a1d6d85787554fc7fe57b69dd0ee6",
+  "6e9b141082a72757730deef694b66d6b9321bcbd",
+  "9a9a02ce46dd0bd122e13d7901241f346e98b97a",
+  "ee583b99f99eef2924aeb82a33dd7797a44235c3",
+  "bbc3ebeb75807f1cb112770e5785c0185b06a593",
+  "23641d2c868444ff7352a80213e3bfddf728dc18",
+  "cd6b84c0e9c612b7ac0e964a32a573a2ad8d7b49",
+  "3dcec54f641ffea5caae7ef952ab9dbeb0b137ab",
+  "61ee007e355544b8eabca7db634dfda0d8a05ebb"
+ ],
+ "numstat": [
+  {
+   "commit": "84064f2cb5ee771e6b95612595267982a1f26f24",
+   "path": "docs/lean-first/b16b/report.py",
+   "added": 3,
+   "deleted": 1
+  },
+  {
+   "commit": "496a16daf75003303e13e210805406f9779a3cab",
+   "path": "docs/lean-first/b16b/DELTA.md",
+   "added": 93,
+   "deleted": 8
+  },
+  {
+   "commit": "496a16daf75003303e13e210805406f9779a3cab",
+   "path": "docs/lean-first/b16b/LEDGER.md",
+   "added": 21,
+   "deleted": 0
+  },
+  {
+   "commit": "496a16daf75003303e13e210805406f9779a3cab",
+   "path": "docs/lean-first/b16b/report.py",
+   "added": 117,
+   "deleted": 0
+  },
+  {
+   "commit": "496a16daf75003303e13e210805406f9779a3cab",
+   "path": "tests/test_b16b_evidence.py",
+   "added": 84,
+   "deleted": 0
+  },
+  {
+   "commit": "b4860efd78494ee5fcb54e719e8eaf925c872faf",
+   "path": "docs/lean-first/b16b/evidence/mutants.json",
+   "added": 105,
+   "deleted": 0
+  },
+  {
+   "commit": "b4860efd78494ee5fcb54e719e8eaf925c872faf",
+   "path": "docs/lean-first/b16b/mutants.py",
+   "added": 102,
+   "deleted": 0
+  },
+  {
+   "commit": "68c0b54d8c1a1d6d85787554fc7fe57b69dd0ee6",
+   "path": "docs/lean-first/b16b/evidence/latency.json",
+   "added": 156,
+   "deleted": 0
+  },
+  {
+   "commit": "68c0b54d8c1a1d6d85787554fc7fe57b69dd0ee6",
+   "path": "docs/lean-first/b16b/latency.py",
+   "added": 68,
+   "deleted": 0
+  },
+  {
+   "commit": "6e9b141082a72757730deef694b66d6b9321bcbd",
+   "path": "docs/lean-first/b16b/delta.json",
+   "added": 8557,
+   "deleted": 0
+  },
+  {
+   "commit": "6e9b141082a72757730deef694b66d6b9321bcbd",
+   "path": "docs/lean-first/b16b/evidence/ab.json",
+   "added": 44,
+   "deleted": 0
+  },
+  {
+   "commit": "6e9b141082a72757730deef694b66d6b9321bcbd",
+   "path": "docs/lean-first/b16b/evidence/difffuzz.json",
+   "added": 313,
+   "deleted": 0
+  },
+  {
+   "commit": "6e9b141082a72757730deef694b66d6b9321bcbd",
+   "path": "docs/lean-first/b16b/evidence/share.json",
+   "added": 65,
+   "deleted": 0
+  },
+  {
+   "commit": "6e9b141082a72757730deef694b66d6b9321bcbd",
+   "path": "docs/lean-first/b16b/fuzz_seeds.py",
+   "added": 57,
+   "deleted": 0
+  },
+  {
+   "commit": "6e9b141082a72757730deef694b66d6b9321bcbd",
+   "path": "docs/lean-first/b16b/make_delta.py",
+   "added": 69,
+   "deleted": 0
+  },
+  {
+   "commit": "6e9b141082a72757730deef694b66d6b9321bcbd",
+   "path": "docs/lean-first/b16b/share.py",
+   "added": 55,
+   "deleted": 0
+  },
+  {
+   "commit": "9a9a02ce46dd0bd122e13d7901241f346e98b97a",
+   "path": "docs/lean-first/b16b/DELTA.md",
+   "added": 28,
+   "deleted": 0
+  },
+  {
+   "commit": "9a9a02ce46dd0bd122e13d7901241f346e98b97a",
+   "path": "tests/test_document_lean_switch.py",
+   "added": 280,
+   "deleted": 0
+  },
+  {
+   "commit": "ee583b99f99eef2924aeb82a33dd7797a44235c3",
+   "path": "docs/spec/assurance-manifest.md",
+   "added": 2,
+   "deleted": 2
+  },
+  {
+   "commit": "ee583b99f99eef2924aeb82a33dd7797a44235c3",
+   "path": "ve/assurance-manifest.json",
+   "added": 6,
+   "deleted": 5
+  },
+  {
+   "commit": "bbc3ebeb75807f1cb112770e5785c0185b06a593",
+   "path": "docs/trust-baseline.json",
+   "added": 31,
+   "deleted": 18
+  },
+  {
+   "commit": "bbc3ebeb75807f1cb112770e5785c0185b06a593",
+   "path": "lean/VE/Route/frozen-sources.sha256",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "bbc3ebeb75807f1cb112770e5785c0185b06a593",
+   "path": "lean/VE/Service/Document.lean",
+   "added": 5,
+   "deleted": 5
+  },
+  {
+   "commit": "bbc3ebeb75807f1cb112770e5785c0185b06a593",
+   "path": "lean/declarations.txt",
+   "added": 77,
+   "deleted": 76
+  },
+  {
+   "commit": "23641d2c868444ff7352a80213e3bfddf728dc18",
+   "path": "conformance/document_wrapper.py",
+   "added": 7,
+   "deleted": 6
+  },
+  {
+   "commit": "23641d2c868444ff7352a80213e3bfddf728dc18",
+   "path": "ve/backends/relay.py",
+   "added": 8,
+   "deleted": 0
+  },
+  {
+   "commit": "23641d2c868444ff7352a80213e3bfddf728dc18",
+   "path": "ve/document.py",
+   "added": 108,
+   "deleted": 10
+  },
+  {
+   "commit": "cd6b84c0e9c612b7ac0e964a32a573a2ad8d7b49",
+   "path": "lean/VE/Service/Document.lean",
+   "added": 4,
+   "deleted": 1
+  },
+  {
+   "commit": "cd6b84c0e9c612b7ac0e964a32a573a2ad8d7b49",
+   "path": "lean/checkers.lock",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "3dcec54f641ffea5caae7ef952ab9dbeb0b137ab",
+   "path": "lean/ResponseShape/Encoders/Document.lean",
+   "added": 2,
+   "deleted": 1
+  },
+  {
+   "commit": "3dcec54f641ffea5caae7ef952ab9dbeb0b137ab",
+   "path": "lean/ResponseShape/Schemas/Document.lean",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "3dcec54f641ffea5caae7ef952ab9dbeb0b137ab",
+   "path": "lean/VE/Service/Document.lean",
+   "added": 27,
+   "deleted": 10
+  },
+  {
+   "commit": "3dcec54f641ffea5caae7ef952ab9dbeb0b137ab",
+   "path": "lean/checkers.lock",
+   "added": 2,
+   "deleted": 1
+  },
+  {
+   "commit": "3dcec54f641ffea5caae7ef952ab9dbeb0b137ab",
+   "path": "ve/backends/lean_service_schema/document.json",
+   "added": 2,
+   "deleted": 0
+  },
+  {
+   "commit": "61ee007e355544b8eabca7db634dfda0d8a05ebb",
+   "path": "docs/lean-first/b16b/capture_documents.py",
+   "added": 60,
+   "deleted": 0
+  },
+  {
+   "commit": "61ee007e355544b8eabca7db634dfda0d8a05ebb",
+   "path": "docs/lean-first/document-corpus.json.gz",
+   "added": 0,
+   "deleted": 0
+  },
+  {
+   "commit": "61ee007e355544b8eabca7db634dfda0d8a05ebb",
+   "path": "tools/lean_first_diff.py",
+   "added": 32,
+   "deleted": 7
+  },
+  {
+   "commit": "61ee007e355544b8eabca7db634dfda0d8a05ebb",
+   "path": "tools/lean_first_schema/record.json",
+   "added": 2,
+   "deleted": 1
+  }
+ ]
+}

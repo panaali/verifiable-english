@@ -38,8 +38,7 @@ def test_ab_has_no_unlisted_difference_and_lists_only_other_decoders_texts():
     ab, delta = load("ab.json"), json.loads((HERE / "delta.json").read_text())
     assert ab["unlisted"] == 0
     assert ab["listed"] == {klass: len(entries) for klass, entries in delta.items()}
-    assert ab["totals"]["same"] + sum(v for k, v in ab["totals"].items() if k != "same") == sum(
-        ab["records"].values()) // 2
+    assert sum(ab["totals"].values()) == sum(ab["records"].values())
     assert delta["availability"] == []
     for entry in delta["order"] + delta["verdict"]:
         assert entry["corpus"] == "document" and entry["owner"] in ("environment", "formula", "admission")
