@@ -29,6 +29,22 @@
   {
    "commit": "dfacc51b",
    "subject": "E2.6 corpus A/B: no unexplained verdict and no availability row"
+  },
+  {
+   "commit": "658c0a75",
+   "subject": "E2.6 report, spec 4.5 and 15, DELTA and LEDGER: Lean is the English authority"
+  },
+  {
+   "commit": "c247ea21",
+   "subject": "Gate collection: the restored Lean-authority test names and the E2.6 tests"
+  },
+  {
+   "commit": "139c6ad0",
+   "subject": "Gate fixes: the statement dump, trust classes, recorded test inputs and lake lookup"
+  },
+  {
+   "commit": "a8d6eec0",
+   "subject": "Fuzzer baseline: the findings E2.6's recorded test inputs bring into the CI sample"
   }
  ]
 }
