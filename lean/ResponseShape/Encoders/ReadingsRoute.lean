@@ -324,11 +324,103 @@ theorem runComponents_fits (j : Json) (id kind : String) (parts : List (String �
 
 theorem or_beq {k a b : String} (h : (k == a || k == b) = true) : k = a ∨ k = b := by simpa using h
 
+theorem runAdmitted_fits (j : Json) (id kind : String) (ready : ComponentAdmission)
+    (hK : KindRead "evaluate" j kind) : OkFits j Skeletons.readingsRoute (runAdmitted j id kind ready) := by
+  have hK0 := hK
+  unfold runAdmitted
+  rcases hK with hK | ⟨hK, hd⟩
+  all_goals (try subst hd)
+  all_goals (cases ready)
+  all_goals okfits
+  all_goals (try kind_norm)
+  all_goals first
+    | exact runS2_fits _ _ _ _ _ hK0
+    | fits_from validate_fits _ _ _ ‹_›
+    | (intro v hv; fits_from validateND_fits _ _ v hv)
+    | (intro v hv; fits_from separateND_fits _ _ _ v hv)
+    | (intro v hv; fits_from elaborateND_fits _ _ v hv)
+    | (intro v hv; fits_from choiceND_fits _ _ _ v hv)
+    | (intro v hv; fits_from deadAnswer_fits _ _ _ v hv)
+    | (simp only [VE.Route.Wire.ok]; fits using pair_fits)
+
+theorem runAdmitted_validate_fits (j : Json) (id : String) (ready : ComponentAdmission) :
+    OkFits j (skel% "readings-route.json#/$defs/validate")
+      (runAdmitted j id "readings-validate" ready) := by
+  cases ready with
+  | s1 a =>
+    simp only [runAdmitted, beq_self_eq_true, reduceIte]
+    okfits
+    exact validate_fits _ _ _ ‹_›
+  | s2 b =>
+    simp only [runAdmitted, beq_self_eq_true, reduceIte]
+    okfits
+    exact validate_fits _ _ _ ‹_›
+  | nd f =>
+    simpa [runAdmitted] using validateND_fits (req := j) id f
+
+theorem runAdmitted_elaborate_fits (j : Json) (id : String) (ready : ComponentAdmission) :
+    OkFits j (skel% "readings-route.json#/$defs/elaborate")
+      (runAdmitted j id "readings-elaborate" ready) := by
+  cases ready with
+  | s1 _ => simp [runAdmitted, OkFits, OkP]
+  | s2 b => simpa [runAdmitted, runS2] using elaborate_fits (req := j) id b
+  | nd f => simpa [runAdmitted] using elaborateND_fits (req := j) id f.r
+
+theorem admittedComponentRows (j : Json) (id kind : String) (parts : List (String × ComponentAdmission))
+    (hv : kind = "readings-validate" ∨ kind = "readings-elaborate") :
+    OkP (fun rows => ∀ r ∈ rows, ∃ (name : String) (a : Json), r = componentRow name a ∧
+      (kind = "readings-validate" → Fits j (skel% "readings-route.json#/$defs/validate") a) ∧
+      (kind ≠ "readings-validate" → Fits j (skel% "readings-route.json#/$defs/elaborate") a))
+      (parts.mapM (fun p => do pure (componentRow p.1 (← runAdmitted j id kind p.2)))) := by
+  apply OkP.mapM
+  intro p _
+  by_cases hk : kind = "readings-validate"
+  · subst hk
+    apply OkP.bind
+    intro a ha
+    exact OkP.pure ⟨_, _, rfl, fun _ => runAdmitted_validate_fits _ _ _ a ha, fun h => absurd rfl h⟩
+  · apply OkP.bind
+    intro a ha
+    exact OkP.pure ⟨_, _, rfl, fun h => absurd h hk, fun _ =>
+      by have he : kind = "readings-elaborate" := hv.resolve_left hk
+         subst he
+         exact runAdmitted_elaborate_fits _ _ _ a ha⟩
+
+theorem runAdmittedComponents_fits (j : Json) (id kind : String)
+    (parts : List (String × ComponentAdmission)) (hK : KindRead "evaluate" j kind)
+    (hv : kind = "readings-validate" ∨ kind = "readings-elaborate") :
+    OkFits j Skeletons.readingsRoute (runAdmittedComponents j id kind parts) := by
+  unfold runAdmittedComponents
+  apply OkP.bind
+  intro rows hrows
+  apply OkP.pure
+  have hr := admittedComponentRows j id kind parts hv rows hrows
+  rcases hK with hK | ⟨hK, hd⟩
+  · rcases hv with rfl | rfl
+    · simp only [VE.Route.Wire.ok]
+      fits
+      obtain ⟨name, a, rfl, h1, _⟩ := hr _ ‹_›
+      unfold componentRow
+      fits
+      exact h1 rfl
+    · simp only [VE.Route.Wire.ok]
+      fits
+      obtain ⟨name, a, rfl, _, h2⟩ := hr _ ‹_›
+      unfold componentRow
+      fits
+      exact h2 (by decide)
+  · subst hd
+    simp at hv
+
 theorem runCase_fits (j : Json) : OkFits j Skeletons.readingsRoute (runCase j) := by
   unfold runCase
   okfits
   all_goals read_kind
   all_goals first
+    | exact runAdmitted_fits _ _ _ _ (KindRead.of_str ‹_›)
+    | exact runAdmitted_fits _ _ _ _ (Or.inr ⟨‹_›, rfl⟩)
+    | exact runAdmittedComponents_fits _ _ _ _ (KindRead.of_str ‹_›) (or_beq ‹_›)
+    | exact runAdmittedComponents_fits _ _ _ _ (Or.inr ⟨‹_›, rfl⟩) (or_beq ‹_›)
     | exact runOne_fits _ _ _ _ _ (KindRead.of_str ‹_›)
     | exact runOne_fits _ _ _ _ _ (Or.inr ⟨‹_›, rfl⟩)
     | exact runComponents_fits _ _ _ _ (KindRead.of_str ‹_›) (or_beq ‹_›)

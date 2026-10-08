@@ -415,6 +415,57 @@ def componentOfCase (j : Json) : Except String (Option String) :=
 def componentRow (name : String) (answer : Json) : Json :=
   Json.mkObj [("component", .str name), ("answer", answer)]
 
+/-- The last admission stage needed by a readings kind. Each constructor retains the admitted document for the
+    answer, so no component is decoded or admitted again after the whole split has passed admission. -/
+inductive ComponentAdmission where
+  | s1 (a : Admitted)
+  | s2 (b : Admitted2)
+  | nd (f : AdmittedNDFull)
+
+/-- Admit a component without running a query on it. Admission of the split runs in source order before dispatch. -/
+def admitComponent (kind : String) (environment document : Json) : Except String ComponentAdmission := do
+  if kind == "readings-validate" || kind == "readings-separate" then
+    let a ← admitReadings environment document
+    if underCompletion a.re a.D then
+      return .nd (← admitNDFull (← admitS2Of a document))
+    return .s1 a
+  let b ← admitS2 environment document
+  if underCompletion b.a.re b.D then
+    return .nd (← admitNDFull b)
+  return .s2 b
+
+/-- One answer from its already admitted component. The request fields are read only for the named component. -/
+def runAdmitted (j : Json) (id kind : String) (ready : ComponentAdmission) : Except String Json := do
+  if kind == "readings-validate" then
+    match ready with
+    | .s1 a => return VE.Route.Wire.ok id (← validateResult a)
+    | .nd f => return ← runValidateND id f
+    | .s2 b => return VE.Route.Wire.ok id (← validateResult b.a)
+  if kind == "readings-separate" then
+    match ready with
+    | .nd f => return ← runSeparateND id f j
+    | .s1 a | .s2 ⟨a, _, _, _⟩ =>
+      let s ← stringField j "set"
+      let sid ← stringField j "situation"
+      let f ← pairFactsIn a (sideIn a s) s sid (← stringField j "other")
+      return VE.Route.Wire.ok id [("set", .str s), ("pair", pairJson f sid)]
+  match ready with
+  | .s2 b => runS2 runLowerWith id kind b j
+  | .nd f =>
+    if kind == "readings-elaborate" then return ← runElaborateND id f.r
+    if kind == "readings-choice" then return ← runChoiceND id f.r j
+    if kind == "readings-dead" then return ← deadAnswer id f.r.N.D j
+    throw (completionRefusal f.r.N.D)
+  | .s1 _ => throw s!"UnsupportedProfile: case kind {kind} is not available on the readings route"
+
+def admitComponents (kind : String) (parts : List (String × Json × Json)) : Except String (List (String × ComponentAdmission)) :=
+  parts.mapM (fun p => do pure (p.1, ← admitComponent kind p.2.1 p.2.2))
+
+def runAdmittedComponents (j : Json) (id kind : String) (parts : List (String × ComponentAdmission)) :
+    Except String Json := do
+  let rows ← parts.mapM (fun p => do pure (componentRow p.1 (← runAdmitted j id kind p.2)))
+  pure (VE.Route.Wire.ok id [("components", Json.arr rows.toArray)])
+
 /-- `readings-validate` or `readings-elaborate` per case of the split, `main` first (4.1 step 0): the first error
     of any case is the answer. -/
 def runComponents (j : Json) (id kind : String) (parts : List (String × Json × Json)) : Except String Json := do
@@ -436,8 +487,14 @@ def runCase (j : Json) : Except String Json := do
   let document ← j.getObjVal? "document"
   let parts ← splitCase environment document
   let named ← componentOfCase j
-  if named.isNone && parts.length > 1 && (kind == "readings-validate" || kind == "readings-elaborate") then
-    return ← runComponents j id kind parts
+  if parts.length > 1 then
+    let ready ← admitComponents kind parts
+    if named.isNone && (kind == "readings-validate" || kind == "readings-elaborate") then
+      return ← runAdmittedComponents j id kind ready
+    let c := named.getD "main"
+    match ready.find? (·.1 == c) with
+    | some p => return ← runAdmitted j id kind p.2
+    | none => throw (unknownComponent c)
   let c := named.getD "main"
   match parts.find? (·.1 == c) with
   | some p => runOne j id kind p.2.1 p.2.2

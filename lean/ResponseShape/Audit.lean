@@ -204,6 +204,11 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.ReadingsRoute.componentRows
 #print axioms ResponseShape.Encoders.ReadingsRoute.runComponents_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.or_beq
+#print axioms ResponseShape.Encoders.ReadingsRoute.runAdmitted_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.runAdmitted_validate_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.runAdmitted_elaborate_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.admittedComponentRows
+#print axioms ResponseShape.Encoders.ReadingsRoute.runAdmittedComponents_fits
 #print axioms ResponseShape.Encoders.Reports.admission_fits
 #print axioms ResponseShape.Encoders.Reports.certificate_fits
 #print axioms ResponseShape.Encoders.Reports.content_fits
