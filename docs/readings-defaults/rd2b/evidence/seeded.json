@@ -147,5 +147,26 @@
   "summary": "18 failed, 138 passed",
   "binary": "6838c76d",
   "restored_binary": "0cc52a47"
+ },
+ {
+  "id": "S13",
+  "bug": "a filled choice's conflict check falls back to CONFLICT-FREE when no package or witness is found (review B1)",
+  "file": "ve/readings_verdicts.py",
+  "failed": [
+   "tests/test_readings_budget_zero.py::test_budget_zero_check_says_unknown_for_every_choice",
+   "tests/test_readings_budget_zero.py::test_budget_zero_every_verdict_op_is_unknown"
+  ],
+  "summary": "4 failed, 76 passed in 7.87s",
+  "failed_count": 4
+ },
+ {
+  "id": "S14",
+  "bug": "a lower-route choice's conflict check falls back to CONFLICT-FREE when no package or witness is found (B1's class)",
+  "file": "ve/readings_verdicts.py",
+  "failed": [
+   "tests/test_readings_budget_zero.py::test_budget_zero_every_verdict_op_is_unknown"
+  ],
+  "summary": "2 failed, 78 passed in 7.81s",
+  "failed_count": 2
  }
 ]

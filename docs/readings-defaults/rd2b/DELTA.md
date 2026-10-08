@@ -139,9 +139,25 @@ it only when a generator needs it would remove the second build; not done here.
 | S10 | a choice's model sent with its filled tables in the base | 4 tests, among them `test_fnd2_query_is_gated_by_the_conflict` (Lean refuses the model: the tables are a filling) |
 | S11 | S2a's situation shows filled tables as author facts | 1 test: `test_fnd2_check_conflict_under_one_reading_only` |
 | S12 | Lean: the completion's elaborate row with an empty `fill_premises` | 18 tests, among them `test_genuine_completion_answers_are_relayed` and `test_rd2a_review_b3_route_table_is_lean_s` (dropping `filled` instead is refused at build time by `elaborateNDFilled_fits`) |
+| S13 | a filled choice's conflict check falls back to CONFLICT-FREE when no package or witness is found (review B1) | 4 tests, among them `test_budget_zero_check_says_unknown_for_every_choice` (F-ND2, which has a real conflict, read CONFLICT-FREE at budget 0) |
+| S14 | a lower-route choice's conflict check falls back to CONFLICT-FREE when no package or witness is found (B1's class) | 2 tests: `test_budget_zero_every_verdict_op_is_unknown` (M8 and M9) |
 
 The report's own test fails on a wrong A/B total in this file, on a seeded bug naming a test that does not exist and
 on a wrong latency cell (each tried once, then restored).
+
+## Review fixes (rd-2b review)
+
+**B1** (the UNKNOWN fallback of a choice's conflict check had no test): fixed as its class, budget handled fail-open.
+`tests/test_readings_budget_zero.py` runs every public op of the superposed and enumerated routes and of both kinds of
+choice document (`_FilledChoiceDocument`, `_ChoiceDocument`) with every budget at 0, on F-ND1, F-ND2, M6, M8 and M9,
+and through `ve document check` and `readings --conclusion --under` on F-ND1 and F-ND2; a second pass certifies the
+conflict status at the full budget first, so the entailment and premise fallbacks behind the gate of 14.8 are reached
+too. Each answer that rests on evidence must be UNKNOWN (no certificate, no model). The op list is checked against the
+classes: a new public op fails the test until it is swept or named as not budgeted. The finding's mutant (S13) and the
+same fallback on the lower route (S14) are each caught; so were nine more fail-open mutants tried once (the superposed
+witness fallback, the enumerated conflict and premise totals, the choice premise and entailment fallbacks, the
+enumerated and superposed entailment fallbacks, a superposed candidate's fallback), each restored. No checker code
+changed: HEAD already answered UNKNOWN on every path.
 
 ## Build checklist
 
@@ -152,14 +168,14 @@ on a wrong latency cell (each tried once, then restored).
 | 3 normalization | not applicable: no text input |
 | 4 untrusted output | done: genuine validate and elaborate rows with each new field dropped, emptied, duplicated, retyped (bool for int, null), reordered or rebound to another request are `CheckerUnavailable` (S1, S2, S12) |
 | 5 malformed input | partly: the new fields' nodes are retyped in item 4; no 7/true/null/10k-deep sweep of the request |
-| 6 three-valued verdicts | done for what exists: no package, certificate or model within the budget is UNKNOWN; evidence Lean refuses is `CheckerUnavailable`; the gate of 14.8 holds (F-ND2's query) |
+| 6 three-valued verdicts | done: no package, certificate or model within the budget is UNKNOWN; evidence Lean refuses is `CheckerUnavailable`; the gate of 14.8 holds (F-ND2's query). Every public op of both routes and of both kinds of choice document runs at budget 0, before and after the conflict status is certified, on F-ND1, F-ND2, M6, M8 and M9 and through `ve document check` and `readings --conclusion` (`tests/test_readings_budget_zero.py`, which also fails when a new public op is neither swept nor named unbudgeted); S13, S14 |
 | 7 deadlines | not applicable: the service's per-case deadline and the generators' existing budgets; no new loop |
 | 8 exhaustive folds | not applicable: Python's fold is RD-3's |
 | 9 English | partly: every line goes through its gate (E12's, S1's `s1_gated`); the reused filled-gap and pair sentences are not re-read here (their own gates) |
 | 10 one admit() | done: `ve document` load, check, render and readings all relay Lean's one admission (`admitNDFull`) |
 | 11 no regex of a real language | done: the relay reads Lean's labels and JSON structurally |
 | 12 state machines | not applicable |
-| 13 tests can fail | done: S1 to S12 |
+| 13 tests can fail | done: S1 to S14 |
 | 14 hermetic | done: the new tests write under `tmp_path` only, read no environment variable, no sleep |
 | 15 identity | done: packages bound to the choice's own environment id and document hash from Lean's row, certificates to the source environment; Lean checks both (S7) |
 | 16 lists | done: gate collection, trust classes, assurance pin, frozen hashes, axioms, declarations, schema |
