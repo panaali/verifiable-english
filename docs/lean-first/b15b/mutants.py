@@ -11,8 +11,11 @@ from __future__ import annotations
 import os
 from pathlib import Path
 import subprocess
+import sys
 
 ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT / "tools"))
+import nested_pytest  # noqa: E402
 OUT = Path(__file__).with_name("evidence") / "mutants.txt"
 LAKE = str(Path.home() / ".elan/bin/lake")
 
@@ -47,12 +50,10 @@ SEEDS = (
 
 
 def pytest(tests: list[str]) -> tuple[int, str]:
-    env = {**os.environ, "VE_NATIVE_PREBUILT": "1", "VE_LEAN_PREBUILT": "1", "VE_RUST_PREBUILT": "1",
-           "VE_RUST_BINARY": str(ROOT / "rust/target/release/ve"), "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
-           "VE_GATE_PYTEST_RESULT": "/tmp/ve-b15b-mutants-pytest.json"}
-    proc = subprocess.run(["uv", "run", "--frozen", "python", "-m", "pytest", "-p", "xdist.plugin",
-                           "-p", "hypothesis.extra.pytestplugin", "-p", "tools.gate_pytest", "-n", "4", "-q",
-                           *tests], cwd=ROOT, env=env, capture_output=True, text=True)
+    env = {**nested_pytest.environment(os.environ), "VE_NATIVE_PREBUILT": "1", "VE_LEAN_PREBUILT": "1",
+           "VE_RUST_PREBUILT": "1", "VE_RUST_BINARY": str(ROOT / "rust/target/release/ve")}
+    proc = subprocess.run(nested_pytest.command(["-q", "-p", "no:cacheprovider", *tests], workers=4),
+                          cwd=ROOT, env=env, capture_output=True, text=True)
     lines = [line for line in proc.stdout.splitlines()
              if line.startswith("FAILED") or line.endswith(("passed", "failed")) or " passed" in line]
     return proc.returncode, "\n".join(lines)

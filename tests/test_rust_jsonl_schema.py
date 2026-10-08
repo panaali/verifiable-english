@@ -137,7 +137,9 @@ def test_every_record_shape_is_exercised(genuine):
     shapes = {"error" if record["status"] == "error" else case.get("kind", "countermodel" if "model" in case
                                                                      else "search")
               for case, record, _ in genuine.values()}
-    assert shapes == {"error", "check", "evaluate-budgeted", "countermodel", "search", "distinguishing-model",
+    # No adapter sends `evaluate-budgeted` since lean-first batch 15b (evaluation is Lean's metered
+    # evaluator's); the conformance tooling still does.
+    assert shapes == {"error", "check", "countermodel", "search", "distinguishing-model",
                       "readings-superposed-evaluate"}
     statuses = {record["status"] for _, record, _ in genuine.values()}
     assert statuses >= {"ok", "error", "Satisfied", "Violated", "ResourceLimit", "Valid", "NotCountermodel",

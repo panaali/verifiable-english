@@ -2,8 +2,7 @@
 
 Base `c07377ed` (main). Implementation commits on `lean-first/b15b`: `bc580837`, `39525394`, `14b61780`, `1a3bd559`, `b0f1c533`, `1d45f912`, `0dddf7d7`, `62b5ef8e`, `ac6f94a2`, `4e79a824`, `176929a1`, `760572b9`, `0509537d`, `427f6413`, `9770be82`. The immutable
 [change snapshot](evidence/change-metrics.json) (`main..HEAD --no-merges`, captured before this report's last
-commit) gives: Lean lines added: **2**; Total lines deleted: **46489**; Python lines deleted in `ve/`:
-**571**; Rust lines deleted: **1168**. The total counts every file: 44,215 of its deleted lines are the re-recorded fuzzer baseline (`conformance/difffuzz-baseline.json`, 350 to 339 entries), and its additions are mostly that file and this batch's evidence. The [ledger](LEDGER.md) maps every deleted decision site to
+commit) gives: Lean lines added: **2**; Total lines deleted: **46489**; Python lines deleted in `ve/`: **571**; Rust lines deleted: **1168**. The total counts every file: 44,215 of its deleted lines are the re-recorded fuzzer baseline (`conformance/difffuzz-baseline.json`, 350 to 339 entries), and its additions are mostly that file and this batch's evidence. The [ledger](LEDGER.md) maps every deleted decision site to
 its owner; [`DELTA.md`](DELTA.md) lists every change for signature.
 
 ## The rule-3 condition (plan row 15b): measured, does not hold
