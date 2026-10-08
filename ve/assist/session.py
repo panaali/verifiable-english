@@ -351,20 +351,42 @@ class AssistSession:
         try:
             found, model = ground_countermodel(self.env, premises, conclusion)
             if found == "Unsupported":
+                # A saturated open non-closure tableau already established a
+                # negative search result without spending the model-search
+                # budget. Materialise a witness for Lean even when that budget
+                # is zero; only Lean's countermodel answer may become "no".
+                witness_budget = (1_000_000 if proof is not None and proof.status == "NotFound"
+                                  and not self.env.closure else budget["max_evaluations"])
                 model = find_countermodel(self.env, premises, conclusion,
                                           max_domain_size=budget["max_domain_size"],
                                           max_models=budget["max_models"],
-                                          max_evaluations=budget["max_evaluations"]).model
+                                          max_evaluations=witness_budget).model
             if model is not None:
-                from ..backends.dispatch import pinned
-                with pinned("lean"):
-                    checked = check_countermodel(self.env, premises, conclusion, model,
-                                                 max_evaluations=budget["max_evaluations"])
-                if checked.valid:
+                saturated = proof is not None and proof.status == "NotFound" and not self.env.closure
+                if not saturated:
+                    # This is only a search-budget screen. Its value is never
+                    # reported; Lean still decides whether the witness refutes.
+                    from ..search import _check_countermodel_values
+                    _, _, _, _, status = _check_countermodel_values(
+                        premises, conclusion, model, budget["max_evaluations"])
+                    if status == "ResourceLimit":
+                        return "unknown"
+                if self._lean_refutes(premises, conclusion, model):
                     return "no"
         except (ValueError, VEError):
             pass
         return "unknown"
+
+    def _lean_refutes(self, premises, conclusion, model):
+        """Lean checks a proposed witness; search budgets never decide its truth."""
+        from ..ast import _to_data
+        from ..backends.lean_runner import cached_route_environment, lean_mode
+        from ..backends.relay import decide
+        case = {"id": "assist-countermodel", "kind": "countermodel",
+                "environment": cached_route_environment(self.env),
+                "premises": [_to_data(p) for p in premises], "conclusion": _to_data(conclusion),
+                "model": model.to_dict()}
+        return decide(lean_mode(self.env), [case])[0]["refutes"]
 
     def _lean_replays(self, proof, premises, conclusion):
         """A search result is evidence only after the Lean certificate checker accepts it."""
