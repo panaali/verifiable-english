@@ -1,0 +1,53 @@
+{
+  "batch": "RD-2a",
+  "base": "167eb8ff",
+  "commits_before_report": [
+    "9a704742", "205a7e76", "15070d23", "8a734ae5", "48637dc0", "2d610c8b", "17470adc"
+  ],
+  "lean": {
+    "build_jobs": 802,
+    "audit_source_files": 432,
+    "audit_theorems": 4709,
+    "audit_theorems_base": 4672,
+    "statements": 4337,
+    "statements_base": 4311,
+    "statements_changed": 0,
+    "statements_removed": 0
+  },
+  "statement_check": {
+    "rd1": {"declarations": 31, "theorems": 10, "exact": 31, "pending": 0},
+    "rd2a": {"declarations": 16, "theorems": 5, "exact": 16, "pending": 0}
+  },
+  "service_fixtures": {"file": "tests/test_readings_nd_lean.py", "tests": 17, "serial_seconds": 1.24},
+  "suite": {
+    "chunks": [
+      {"passed": 2022, "skipped": 1, "failed": 0},
+      {"passed": 3929, "skipped": 2, "failed": 0},
+      {"passed": 1821, "skipped": 3, "failed": 0},
+      {"passed": 2453, "skipped": 0, "failed": 0},
+      {"passed": 1578, "skipped": 0, "failed": 0}
+    ],
+    "slow_tests": {"passed": 28, "failed": 0}
+  },
+  "ab": {"files": ["ab-readings-pilots.json", "ab-other-corpora.json"], "records": 94498, "same": 94498, "unlisted": 0},
+  "admission_seconds": {
+    "fixed_units": [30, 60, 90],
+    "s1_only": [0.4, 3.4, 16.3],
+    "completion": [2.0, 11.1, 66.0]
+  },
+  "seeded_bugs": [
+    {"id": "M1", "file": "lean/VE/Readings/UnspecifiedWire.lean", "change": "step 3's per-reading suffix replaced",
+     "failed": ["tests/test_readings_nd_lean.py::test_fnd4_a_readings_document_beyond_an_author_limit"]},
+    {"id": "M2", "file": "lean/VE/Readings/Run.lean", "change": "the witness's Fill_T check dropped from ndPairFacts",
+     "failed": ["tests/test_readings_nd_lean.py::test_fnd1_prime_the_witness_filling_must_satisfy_its_fill_premises"]},
+    {"id": "M3", "file": "lean/VE/Readings/Run.lean", "change": "readings-validate not dispatched under the completion",
+     "failed_count": 8},
+    {"id": "M4", "file": "lean/VE/Readings/UnspecifiedWire.lean",
+     "change": "a choice's packages bound to the first compatible choice's document hash",
+     "failed": ["tests/test_readings_nd_lean.py::test_fnd1_each_choice_conflict_free_and_certificate"]},
+    {"id": "M5", "file": "lean/VE/Readings/Wire.lean", "change": "the abstention kept on the norms chain",
+     "failed_count": 15},
+    {"id": "M6", "file": "ve/readings_route.py", "change": "the relay's row check without fill_premises and filled",
+     "failed": ["tests/test_readings_s2_document.py::test_ruling4_rule_candidate_beside_norm_defaults_is_under_the_completion"]}
+  ]
+}
