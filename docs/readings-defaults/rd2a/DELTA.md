@@ -68,11 +68,19 @@ Built by one Lean worker session on 2026-10-07 and 2026-10-08; no model was call
 ## Availability change (HUMAN: DRI to sign)
 
 A `readings@1` document with content under `norm-defaults@0` on the norms chain no longer gets the abstention: Lean
-admits it. Through `ve document`, until RD-2b relays the inner kinds, Python's fold asks Lean for the chain's
-`norms-*` inner kinds, which Lean refuses under the completion, and Python raises `CheckerUnavailable` (no verdict,
-never a false one). Changed test: `test_ruling4_rule_candidate_beside_norm_defaults_is_under_the_completion` (the
-pilot's probe (b), one candidate pending, is admitted and stays unresolved). K18 and every other document keep their
-answers: the corpus A/B below has no difference.
+admits it (`readings-validate`; `readings-elaborate` on the enumerated route with the cause "the unspecified
+completion"; `readings-choice`). `ve document` has no fold for such a document's choices until RD-2b relays their inner
+kinds, so after binding Lean's route and cause the relay refuses the document by name (`ve/readings_route.py`,
+`UNDER_COMPLETION`): `UnsupportedProfile: readings with content under norm-defaults@0 on the norms chain (the
+unspecified completion) are admitted by Lean's readings route; ve document relays their checks from readings-defaults
+RD-2b`. That is a refusal, never a verdict and never a conformance alarm (review B3: the relay used to expect the
+abstention and raised `ReadingsConformance: Python and Lean differ on the S2 route`; the earlier text here, that
+Python's fold reaches inner kinds Lean refuses, was wrong). Tests:
+`test_rd2a_review_b3_completion_document_is_refused_by_name` and `test_rd2a_review_b3_route_table_is_lean_s`. A set
+with a pending candidate takes the pending route and loads unresolved: changed test
+`test_ruling4_rule_candidate_beside_norm_defaults_is_under_the_completion` (the pilot's probe (b)). The soft chain (K18)
+and the rights chain (`test_fnd6_rights_chain_keeps_the_abstention`) keep the abstention, and every other document keeps
+its answer: the corpus A/B below has no difference.
 
 ## Gate (HEAD before this report, `17470adc`, this worktree with a clean status)
 

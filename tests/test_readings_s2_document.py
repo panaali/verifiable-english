@@ -87,6 +87,53 @@ def test_ruling4_rule_candidate_beside_norm_defaults_is_under_the_completion(tmp
     assert (residual["unresolved_reading_sets"], residual["pending_candidates"]) == (1, 1)
 
 
+def _completion_document(tmp_path):
+    """F-ND1 (readings-defaults.md 8.3) as a document: one open set on `u1` whose two readings both carry a rule, on the
+    norms chain under `norm-defaults@0`, with the pair's distinguishing situation recorded."""
+    from tests.test_document import unit, write_doc
+    from tests.test_readings_nd_lean import doc1, env1
+    from ve.readings import s1_content_meaning_id
+    raw = env1()
+    document, _ = doc1(raw)
+    env = _environment(raw)
+    for reading_set in document["reading_sets"]:
+        for r in reading_set["readings"]:
+            r["meaning_id"] = s1_content_meaning_id(env, reading_set["id"], r)
+    text = b"Every agent must help each user.\n"
+    units = [unit("u1", 0, len(text), "norm", "specified")]
+    return raw, document, write_doc(tmp_path, text, units, environment_json=raw,
+                                    reading_sets=document["reading_sets"])
+
+
+def test_rd2a_review_b3_completion_document_is_refused_by_name(tmp_path):
+    """Review B3: a document under the unspecified completion (every candidate with content, the norms chain,
+    `norm-defaults@0`) is admitted by Lean on the enumerated route with the completion as the cause. `ve document` has
+    no fold for its choices until RD-2b, so it refuses the document by name; it used to expect the abstention and
+    raise `ReadingsConformance: Python and Lean differ on the S2 route`, a false conformance alarm, and after the
+    sync with main it built the norm-defaults document with `readings@1`, which that route refuses."""
+    from ve.readings_route import UNDER_COMPLETION
+    _, _, path = _completion_document(tmp_path)
+    with pytest.raises(VEError) as caught:
+        check_document(path)
+    assert str(caught.value) == UNDER_COMPLETION
+    assert type(caught.value).__name__ != "CheckerUnavailable"
+
+
+def test_rd2a_review_b3_route_table_is_lean_s(tmp_path, lean_route):
+    """Review B3's class: Python's copy of the route table of 1.1 (`ve/readings_route.py`) answers as Lean's `routeOf`
+    under `norm-defaults@0`: on the norms chain Lean's route and cause are bound before the refusal by name."""
+    from ve.readings_route import COMPLETION_CAUSE, UNDER_COMPLETION, elaborate, run_lean
+    from ve.readings_s1 import wire
+    raw, document, _ = _completion_document(tmp_path)
+    units = [{"id": "u1", "kind": "norm"}]
+    [row] = run_lean([{"id": "r", "kind": "readings-elaborate", "environment": wire(raw),
+                       "document": wire({"units": units, "reading_sets": document["reading_sets"]})}])
+    assert (row["route"], row["finding"]["cause"]) == ("enumerated", COMPLETION_CAUSE)
+    with pytest.raises(VEError) as caught:
+        elaborate(raw, units, document["reading_sets"])
+    assert str(caught.value) == UNDER_COMPLETION
+
+
 def test_ruling4_lean_frame_reads_unspecified_as_deny(lean_route):
     """Lean's decoder and Python's S1 environment agree on a `norm-defaults@0` frame: `unspecified` is the
     placeholder `deny` there (E‴), so readings-validate answers instead of failing to decode."""
