@@ -289,6 +289,8 @@ def noHole (w : String) : Bool := (holes w).1.isEmpty
 structure SortDecl where
   name : String
   noun : Option String := none
+  plural : Option String := none
+  generated : Bool := false
   deriving Repr
 
 structure PredDecl where
@@ -305,6 +307,8 @@ structure PredDecl where
   modal : Bool := false
   /-- The declaration's description; read by `valid` only (S3 spec 2.3). -/
   description : String := ""
+  suggested : Bool := false
+  generated : Bool := false
   deriving Repr
 
 structure ConstDecl where
@@ -312,6 +316,7 @@ structure ConstDecl where
   display : Option String := none
   /-- The constant's sort (S2 spec 2.3). -/
   sort : String := ""
+  generated : Bool := false
   deriving Repr
 
 /-- The forms that profile blocks fix (spec 2.9 notes, O7): wordings, negatives, aliases, nouns. -/
@@ -330,6 +335,7 @@ structure AltBlock where
   harm : String
   available : String
   leadsTo : String
+  optional : List String := []
   deriving DecidableEq, Repr
 
 /-- The environment JSON is shown compressed. -/

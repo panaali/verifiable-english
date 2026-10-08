@@ -281,18 +281,24 @@ def named_pair(set_id, names, i, j):
     return names
 
 
-def canonical_sentence(frame, formula, failure):
+def canonical_sentence(frame, formula, failure, *, statement_layer=False):
     """A formula's canonical sentence on the existing English surface, admitted only when that surface's
     all-derivations parser reads it back to the formula itself; else `InvalidInput: <failure>`, also when the
     surface has no writable form for it (the renderer's ValueError) or its parser refuses it. A resource limit is
-    not a failure to read back and is raised as it is."""
+    not a failure to read back and is raised as it is. `statement_layer`: a checked conclusion over the frame,
+    whose generated decision and `rights@0` atoms are outside the E2 reader, is rendered and read back by E3's
+    own reader (`english.statement`)."""
     from .ast import Document as Formulas
-    from .english import parse_english
+    from .english import parse_english, parse_statement_english, render_english
     from .errors import ResourceLimit
     from .printer import render
     try:
-        text = render(Formulas((formula,)), frame, "ve_english").strip()
-        read = parse_english(frame, text).formulas
+        if statement_layer:
+            text = render_english(Formulas((formula,)), frame, _statement_layer=True).strip()
+            read = parse_statement_english(frame, text).formulas
+        else:
+            text = render(Formulas((formula,)), frame, "ve_english").strip()
+            read = parse_english(frame, text).formulas
     except ResourceLimit:
         raise
     except ValueError:  # VEError is a ValueError

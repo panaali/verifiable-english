@@ -113,9 +113,9 @@ def lean_entry(module: str) -> bool:
 def lean_layer(module: str) -> int | None:
     if module in {"VE", "VE.Audit", "Iceberg", "VE.Checks", "VE.Route.Checks"}:
         return 5  # aggregation and audit targets
-    if module == "VE.EnglishGrammar.ProfileExamples":
+    if module in {"VE.EnglishGrammar.ProfileExamples", "VE.EnglishGrammar.E2Examples"}:
         return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run
-    if lean_entry(module) or module.endswith(".Run") or module.startswith("VE.Service."):
+    if lean_entry(module) or module.endswith(".Run") or module == "VE.Route.MeteredRun" or module.startswith("VE.Service."):
         return 4
     if module == "ResponseShape" or module.startswith("ResponseShape."):
         return 4  # the service's response shapes: ve_response_decode and the client's schema source

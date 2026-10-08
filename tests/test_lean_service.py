@@ -1087,6 +1087,9 @@ _SCHEMA_SEEDS = {
     "english": ({"cases": [{}]}, {"admissible": True, "covers": True,
                                  "results": [{"parsed": None, "checked": False,
                                               "rendered": None, "roundtrip": False}]}),
+    "english.read": ({"id": "c"}, {"id": "c", "status": "ok", "result": {}}),
+    "english.grammar": ({"id": "c"}, {"id": "c", "status": "ok", "result": {}}),
+    "english.check": ({"id": "c"}, {"id": "c", "status": "ok", "result": {}}),
     "environment": ({"id": "c", "environment": {"profiles": ["relational-fol@0"]}},
                     {"id": "c", "status": "ok", "environment_id": "a" * 64,
                      "profiles": ["relational-fol@0"], "family": "fol"}),
@@ -1154,7 +1157,8 @@ def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation
     elif mutation == "extra-row-field":
         answer["results"][0]["extra"] = 1
     elif mutation == "wrong-row-type":
-        field = ("id" if mode in ROUTE_MODES else
+        field = ("status" if mode in ("english.read", "english.grammar", "english.check") else
+                 "id" if mode in ROUTE_MODES else
                  "outcome" if mode == "diagnose" else
                  "results" if mode == "risk-eval" else
                  "admissible" if mode == "english" else

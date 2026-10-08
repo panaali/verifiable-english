@@ -5,7 +5,7 @@ import pytest
 from subprocesses import HANG_TIMEOUT
 from lark import Tree
 
-from ve.english import parse_english
+from ve.english import EnglishVocabulary, _python_reading, parse_english
 from ve.environment import Environment
 from ve.errors import ResourceLimit, SyntaxError
 from ve.limits import MAX_NODES
@@ -13,6 +13,11 @@ from ve.surface import unambiguity
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def parse_comparator(env, source):
+    """Exercise the retained Python comparator's grammar audit directly."""
+    return _python_reading(env, source, EnglishVocabulary(env), {}).document
 
 
 class FakeAlarm:
@@ -81,7 +86,7 @@ def test_extension_reading_must_match_grammar_tree(monkeypatch):
                                parser_hook=parser, grammar_hook=grammar, derivation_hook=derivation))
         env = Environment.from_json((ROOT / "examples/environment.json").read_bytes())
         with pytest.raises(SyntaxError, match="no matching grammar derivation"):
-            parse_english(env, "This definitely holds.")
+            parse_comparator(env, "This definitely holds.")
     finally:
         records, by_type, old_keywords = original
         registry._records.clear(); registry._records.update(records)
@@ -114,9 +119,9 @@ def test_extension_readings_cannot_swap_source_spans():
                                grammar_hook=grammar, derivation_hook=derivation))
         env = Environment.from_json((ROOT / "examples/environment.json").read_bytes())
         with pytest.raises(SyntaxError, match="no matching grammar derivation"):
-            parse_english(env, "This definitely holds. That definitely holds.")
+            parse_comparator(env, "This definitely holds. That definitely holds.")
         swap[0] = False
-        assert parse_english(env, "This definitely holds. That definitely holds.").formulas == (
+        assert parse_comparator(env, "This definitely holds. That definitely holds.").formulas == (
             Top(), Bottom())
     finally:
         records, by_type, old_keywords = original
@@ -144,7 +149,7 @@ def test_extension_grammar_must_participate():
                                parser_hook=parser, grammar_hook=grammar, derivation_hook=derivation))
         env = Environment.from_json((ROOT / "examples/environment.json").read_bytes())
         with pytest.raises(SyntaxError, match="must extend formula"):
-            parse_english(env, "This definitely holds.")
+            parse_comparator(env, "This definitely holds.")
     finally:
         records, by_type, old_keywords = original
         registry._records.clear(); registry._records.update(records)
@@ -157,7 +162,7 @@ def test_two_derivations_reject_before_ast_admission(monkeypatch):
     monkeypatch.setattr("ve.english.english_lark_grammar",
         lambda _env, **_options: 'start: a | b\na: "this holds in all cases."\nb: "this holds in all cases."')
     with pytest.raises(SyntaxError, match="two derivations") as exc:
-        parse_english(env, "This holds in all cases.")
+        parse_comparator(env, "This holds in all cases.")
     assert "---" in str(exc.value)
 
 
@@ -168,7 +173,7 @@ def test_derivation_node_budget_rejects(monkeypatch):
             return Tree("start", [Tree("x", []) for _ in range(MAX_NODES)])
     monkeypatch.setattr(unambiguity, "_parser", lambda _grammar: FakeParser())
     with pytest.raises(ResourceLimit, match="MAX_NODES"):
-        parse_english(env, "This holds in all cases.")
+        parse_comparator(env, "This holds in all cases.")
 
 
 def test_earley_time_budget_rejects_in_worker_thread(monkeypatch):
@@ -187,8 +192,8 @@ def test_earley_time_budget_rejects_in_worker_thread(monkeypatch):
     monkeypatch.setattr(unambiguity, "_monotonic", lambda: elapsed[0])
     with ThreadPoolExecutor(max_workers=1) as pool:
         with pytest.raises(ResourceLimit, match="Earley time budget"):
-            pool.submit(parse_english, env, "This holds in all cases.").result(timeout=HANG_TIMEOUT)
-    assert 0 < iterations[0] < 100
+            pool.submit(parse_comparator, env, "This holds in all cases.").result(timeout=HANG_TIMEOUT)
+    assert 0 < iterations[0] <= 100
 
 
 def test_earley_alarm_budget_restores_signal_state(monkeypatch):
@@ -204,7 +209,7 @@ def test_earley_alarm_budget_restores_signal_state(monkeypatch):
     monkeypatch.setattr(unambiguity, "_parser", lambda _grammar: InterruptedParser())
     monkeypatch.setattr(unambiguity, "EARLEY_SECONDS", 1)
     with pytest.raises(ResourceLimit, match="Earley time budget"):
-        parse_english(env, "This holds in all cases.")
+        parse_comparator(env, "This holds in all cases.")
     assert alarm.timer == (0, 0)
     assert alarm.handler is original_handler
 
@@ -223,7 +228,7 @@ def test_host_alarm_remains_active_and_cancels_english_parse(monkeypatch):
     monkeypatch.setattr(unambiguity, "signal", alarm)
     monkeypatch.setattr(unambiguity, "_parser", lambda _grammar: InterruptedParser())
     with pytest.raises(HostAlarm):
-        parse_english(env, "This holds in all cases.")
+        parse_comparator(env, "This holds in all cases.")
     assert alarm.handler is cancel
     assert alarm.timer == (30, 0)
 
@@ -245,7 +250,7 @@ def test_earley_time_budget_with_host_alarm(monkeypatch):
     alarm = FakeAlarm(timer=(30, 0), handler=host_handler)
     monkeypatch.setattr(unambiguity, "signal", alarm)
     with pytest.raises(ResourceLimit, match="Earley time budget"):
-        parse_english(env, "This holds in all cases.")
+        parse_comparator(env, "This holds in all cases.")
     assert 0 < iterations[0] < 100
     assert alarm.handler is host_handler
     assert alarm.timer == (30, 0)

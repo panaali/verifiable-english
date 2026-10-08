@@ -94,7 +94,19 @@ def rejects (s : String) (r : Reject) : Bool :=
 #guard toks "non - compliant." == #[#[wi "non", .punct "-" false false, w "compliant"]]
 #guard toks "non -compliant." == #[#[wi "non", .punct "-" false true, w "compliant"]]
 #guard toks "[n + 1]." ==
-  #[#[.punct "[" false true, w "n", .punct "+" false false, .numeral 1, .punct "]" true true]]
+  #[#[.punct "[" false true, w "n", .punct "+" false false, .numeral 1, .punct "]" true false]]
+-- The integer marks are read as the hand parser reads them (`gluedFlags`).
+#guard toks "least [-[n + 1] - --2]]." ==
+  #[#[wi "least", .punct "[" false true, .punct "-" false true, .punct "[" false true, w "n",
+      .punct "+" false false, .numeral 1, .punct "]" true false, .punct "-" false false, .punct "-" false true,
+      .punct "-" false true, .numeral 2, .punct "]" true false, .punct "]" true false]]
+#guard toks "least-3 least[n]and." ==
+  #[#[wi "least", .punct "-" true true, .numeral 3, w "least", .punct "[" true true, w "n",
+      .punct "]" true true, w "and"]]
+#guard toks "non-\"x\"-y." == #[#[wi "non", .punct "-" true true, .quoted "x", .punct "-" true true, w "y"]]
+#guard toks "[n]- 1, [n]." ==
+  #[#[.punct "[" false true, w "n", .punct "]" true false, .punct "-" true false, .numeral 1, .punct "," true false,
+      .punct "[" false true, w "n", .punct "]" true false]]
 
 -- The matching of 2.3 (fixtures g11 to g14 through `Terminal.accepts`).
 #guard (Terminal.content "service").accepts (w "SERVICE")

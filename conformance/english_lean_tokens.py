@@ -96,9 +96,10 @@ def convert(grammar: str) -> tuple[E.Grammar, list[str], dict]:
             class_rules['LABEL'] = [(E.T(('cls', ('label', l))),) for l in letters[1].split('|')]
             return [('n', 'LABEL')]
         if name == 'NUMERAL':
-            class_rules['NUMERAL'] = [(E.T(('cls', ('numeral',))),)] + [
-                (E.T(('exact', ('punct', '-', before, True))), E.T(('cls', ('numeral',))))
-                for before in (False, True)]
+            # A sign is free before: the lexer counts its glue there only against a word character
+            # (english-lean-e2.md 13), and Python reads no sign glued to a word.
+            class_rules['NUMERAL'] = [(E.T(('cls', ('numeral',))),),
+                                      (E.T(('exact', ('punct', '-', False, True))), E.T(('cls', ('numeral',))))]
             return [('n', 'NUMERAL')]
         if name == 'INT_OP':
             class_rules['INT_OP'] = [(E.T(('exact', ('punct', c, False, False))),) for c in '+-*']
@@ -135,12 +136,13 @@ def convert(grammar: str) -> tuple[E.Grammar, list[str], dict]:
                 continue
             punct = sym.a[1]
             forms = [punct]
+            # The integer marks: glued on the term's side, free on the other (english-lean-e2.md 13).
             if punct[1] == '[':
-                forms = [('punct', '[', before, True) for before in (False, True)]
+                forms = [('punct', '[', False, True)]
             elif punct[1] == ']':
-                forms = [('punct', ']', True, after) for after in (False, True)]
+                forms = [('punct', ']', True, False)]
             elif punct[1] == '-' and lhs in ('int_term', 'int_neg'):
-                forms = [('punct', '-', before, True) for before in (False, True)]
+                forms = [('punct', '-', False, True)]
             variants = [v[:pos] + [E.T(('exact', form))] + v[pos + 1:]
                         for v in variants for form in forms]
         raw.extend((lhs, variant) for variant in variants)

@@ -1,0 +1,2598 @@
+{
+  "base_evidence": "conformance/english-lean/e2-evidence.json",
+  "covered": 45,
+  "different": 0,
+  "environment": {
+    "language": "ve.core@0",
+    "profile": "relational-fol@0",
+    "spec_revision": "ve-v0-draft-2026-09-20",
+    "vocabulary": {
+      "constants": {
+        "alice": {
+          "description": "The named person Alice.",
+          "sort": "person"
+        },
+        "alpha": {
+          "description": "alpha",
+          "sort": "service"
+        },
+        "beta": {
+          "description": "beta",
+          "sort": "service"
+        },
+        "gamma": {
+          "description": "gamma",
+          "sort": "service"
+        },
+        "legacy": {
+          "description": "The named legacy service.",
+          "sort": "service"
+        }
+      },
+      "predicates": {
+        "active": {
+          "arguments": [
+            "service"
+          ],
+          "description": "active",
+          "negative_verbalisation": "{0} is not active",
+          "verbalisation": "{0} is active"
+        },
+        "deployed": {
+          "arguments": [
+            "service"
+          ],
+          "description": "Recorded as deployed.",
+          "verbalisation": "{0} is deployed"
+        },
+        "links": {
+          "arguments": [
+            "service",
+            "service"
+          ],
+          "description": "Directed link.",
+          "verbalisation": "{0} depends on {1}"
+        },
+        "owns": {
+          "arguments": [
+            "person",
+            "service"
+          ],
+          "description": "Recorded ownership; person first, service second.",
+          "negative_verbalisation": "{0} does not own {1}",
+          "verbalisation": "{0} owns {1}"
+        },
+        "reviewed": {
+          "arguments": [
+            "service"
+          ],
+          "description": "Recorded as reviewed.",
+          "negative_verbalisation": "{0} is not reviewed",
+          "verbalisation": "{0} is reviewed"
+        }
+      },
+      "sorts": {
+        "person": {
+          "description": "A recorded person."
+        },
+        "service": {
+          "description": "A service recorded in the inventory."
+        }
+      }
+    }
+  },
+  "format": "ve-english-e2-directed-coverage@1",
+  "records": [
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "formula.natural",
+        "natural-some",
+        "natural.some",
+        "some-tail.relative"
+      ],
+      "lean": {
+        "canonical": "there exists service x0, (x0 is deployed).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "exists",
+            "service",
+            [
+              "unary",
+              "deployed",
+              [
+                "var",
+                0
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "there exists service x0, (x0 is deployed).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "exists",
+            "service",
+            [
+              "unary",
+              "deployed",
+              [
+                "var",
+                0
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "Some service is deployed."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "formula.natural",
+        "natural-no",
+        "natural.no"
+      ],
+      "lean": {
+        "canonical": "not (there exists service x0, (x0 is deployed)).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "not",
+            [
+              "exists",
+              "service",
+              [
+                "unary",
+                "deployed",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "not (there exists service x0, (x0 is deployed)).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "not",
+            [
+              "exists",
+              "service",
+              [
+                "unary",
+                "deployed",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "No service is deployed."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "formula.natural",
+        "natural-some",
+        "natural.some",
+        "some-tail.two"
+      ],
+      "lean": {
+        "canonical": "there exists service x0, ((x0 is deployed) and (x0 is reviewed)).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "exists",
+            "service",
+            [
+              "and",
+              [
+                "unary",
+                "deployed",
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "unary",
+                "reviewed",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "there exists service x0, ((x0 is deployed) and (x0 is reviewed)).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "exists",
+            "service",
+            [
+              "and",
+              [
+                "unary",
+                "deployed",
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "unary",
+                "reviewed",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "Some service is deployed and is reviewed."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "formula.natural",
+        "natural-some",
+        "natural.some",
+        "some-tail.copula"
+      ],
+      "lean": {
+        "canonical": "there exists service x0, ((x0 is deployed) and (x0 is reviewed)).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "exists",
+            "service",
+            [
+              "and",
+              [
+                "unary",
+                "deployed",
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "unary",
+                "reviewed",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "there exists service x0, ((x0 is deployed) and (x0 is reviewed)).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "exists",
+            "service",
+            [
+              "and",
+              [
+                "unary",
+                "deployed",
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "unary",
+                "reviewed",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "Some service is deployed and reviewed."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "formula.natural",
+        "natural-every.subject",
+        "natural-tail.relative",
+        "natural.every"
+      ],
+      "lean": {
+        "canonical": "for every service x0, (if (x0 is deployed), then (x0 is reviewed)).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "forall",
+            "service",
+            [
+              "implies",
+              [
+                "unary",
+                "deployed",
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "unary",
+                "reviewed",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "for every service x0, (if (x0 is deployed), then (x0 is reviewed)).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "forall",
+            "service",
+            [
+              "implies",
+              [
+                "unary",
+                "deployed",
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "unary",
+                "reviewed",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "Every deployed service is reviewed."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "formula.natural",
+        "natural-every.owner",
+        "natural.every"
+      ],
+      "lean": {
+        "canonical": "for every service x0, (there exists person x1, (x1 owns x0)).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "forall",
+            "service",
+            [
+              "exists",
+              "person",
+              [
+                "binary",
+                "owns",
+                [
+                  "var",
+                  0
+                ],
+                [
+                  "var",
+                  1
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "for every service x0, (there exists person x1, (x1 owns x0)).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "forall",
+            "service",
+            [
+              "exists",
+              "person",
+              [
+                "binary",
+                "owns",
+                [
+                  "var",
+                  0
+                ],
+                [
+                  "var",
+                  1
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "Every service has an owner."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "formula.natural",
+        "natural-every.subject",
+        "natural-tail.owner",
+        "natural.every"
+      ],
+      "lean": {
+        "canonical": "for every service x0, (if (x0 is deployed), then (there exists person x1, (x1 owns x0))).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "forall",
+            "service",
+            [
+              "implies",
+              [
+                "unary",
+                "deployed",
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "exists",
+                "person",
+                [
+                  "binary",
+                  "owns",
+                  [
+                    "var",
+                    0
+                  ],
+                  [
+                    "var",
+                    1
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "for every service x0, (if (x0 is deployed), then (there exists person x1, (x1 owns x0))).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "forall",
+            "service",
+            [
+              "implies",
+              [
+                "unary",
+                "deployed",
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "exists",
+                "person",
+                [
+                  "binary",
+                  "owns",
+                  [
+                    "var",
+                    0
+                  ],
+                  [
+                    "var",
+                    1
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "Every deployed service has an owner."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "formula.natural",
+        "natural-every.subject",
+        "natural-tail.both",
+        "natural.every"
+      ],
+      "lean": {
+        "canonical": "for every service x0, (if (x0 is deployed), then ((x0 is reviewed) and (there exists person x1, (x1 owns x0)))).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "forall",
+            "service",
+            [
+              "implies",
+              [
+                "unary",
+                "deployed",
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "and",
+                [
+                  "unary",
+                  "reviewed",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "exists",
+                  "person",
+                  [
+                    "binary",
+                    "owns",
+                    [
+                      "var",
+                      0
+                    ],
+                    [
+                      "var",
+                      1
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "for every service x0, (if (x0 is deployed), then ((x0 is reviewed) and (there exists person x1, (x1 owns x0)))).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "forall",
+            "service",
+            [
+              "implies",
+              [
+                "unary",
+                "deployed",
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "and",
+                [
+                  "unary",
+                  "reviewed",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "exists",
+                  "person",
+                  [
+                    "binary",
+                    "owns",
+                    [
+                      "var",
+                      0
+                    ],
+                    [
+                      "var",
+                      1
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "Every deployed service is reviewed and has an owner."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "guard-rel.who"
+      ],
+      "lean": {
+        "canonical": "for every service x0, (if ((x0 is deployed) and (x0 is reviewed)), then (x0 is active)).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "forall",
+            "service",
+            [
+              "implies",
+              [
+                "and",
+                [
+                  "unary",
+                  "deployed",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "reviewed",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ],
+              [
+                "unary",
+                "active",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "for every service x0, (if ((x0 is deployed) and (x0 is reviewed)), then (x0 is active)).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "forall",
+            "service",
+            [
+              "implies",
+              [
+                "and",
+                [
+                  "unary",
+                  "deployed",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "reviewed",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ],
+              [
+                "unary",
+                "active",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "For every service that is deployed and who is reviewed, that service is active."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "guard-rel.that"
+      ],
+      "lean": {
+        "canonical": "for every service x0, (if ((x0 is deployed) and (x0 is reviewed)), then (x0 is active)).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "forall",
+            "service",
+            [
+              "implies",
+              [
+                "and",
+                [
+                  "unary",
+                  "deployed",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "reviewed",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ],
+              [
+                "unary",
+                "active",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "for every service x0, (if ((x0 is deployed) and (x0 is reviewed)), then (x0 is active)).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "forall",
+            "service",
+            [
+              "implies",
+              [
+                "and",
+                [
+                  "unary",
+                  "deployed",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "reviewed",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ],
+              [
+                "unary",
+                "active",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "For every service that is deployed and that is reviewed, that service is active."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "coordination.subject-and",
+        "formula.coordination"
+      ],
+      "lean": {
+        "canonical": "(@alpha is deployed) and ((@beta is deployed) and (@gamma is deployed)).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "and",
+            [
+              "unary",
+              "deployed",
+              [
+                "const",
+                "alpha"
+              ]
+            ],
+            [
+              "and",
+              [
+                "unary",
+                "deployed",
+                [
+                  "const",
+                  "beta"
+                ]
+              ],
+              [
+                "unary",
+                "deployed",
+                [
+                  "const",
+                  "gamma"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "(@alpha is deployed) and ((@beta is deployed) and (@gamma is deployed)).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "and",
+            [
+              "unary",
+              "deployed",
+              [
+                "const",
+                "alpha"
+              ]
+            ],
+            [
+              "and",
+              [
+                "unary",
+                "deployed",
+                [
+                  "const",
+                  "beta"
+                ]
+              ],
+              [
+                "unary",
+                "deployed",
+                [
+                  "const",
+                  "gamma"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "Alpha, beta and gamma are deployed."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "coordination.subject-or",
+        "formula.coordination"
+      ],
+      "lean": {
+        "canonical": "(@alpha is deployed) or ((@beta is deployed) or (@gamma is deployed)).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "or",
+            [
+              "unary",
+              "deployed",
+              [
+                "const",
+                "alpha"
+              ]
+            ],
+            [
+              "or",
+              [
+                "unary",
+                "deployed",
+                [
+                  "const",
+                  "beta"
+                ]
+              ],
+              [
+                "unary",
+                "deployed",
+                [
+                  "const",
+                  "gamma"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "(@alpha is deployed) or ((@beta is deployed) or (@gamma is deployed)).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "or",
+            [
+              "unary",
+              "deployed",
+              [
+                "const",
+                "alpha"
+              ]
+            ],
+            [
+              "or",
+              [
+                "unary",
+                "deployed",
+                [
+                  "const",
+                  "beta"
+                ]
+              ],
+              [
+                "unary",
+                "deployed",
+                [
+                  "const",
+                  "gamma"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "Alpha, beta or gamma is deployed."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "coordination.predicate-and",
+        "formula.coordination"
+      ],
+      "lean": {
+        "canonical": "(@alpha is deployed) and ((@alpha is reviewed) and (@alpha is active)).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "and",
+            [
+              "unary",
+              "deployed",
+              [
+                "const",
+                "alpha"
+              ]
+            ],
+            [
+              "and",
+              [
+                "unary",
+                "reviewed",
+                [
+                  "const",
+                  "alpha"
+                ]
+              ],
+              [
+                "unary",
+                "active",
+                [
+                  "const",
+                  "alpha"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "(@alpha is deployed) and ((@alpha is reviewed) and (@alpha is active)).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "and",
+            [
+              "unary",
+              "deployed",
+              [
+                "const",
+                "alpha"
+              ]
+            ],
+            [
+              "and",
+              [
+                "unary",
+                "reviewed",
+                [
+                  "const",
+                  "alpha"
+                ]
+              ],
+              [
+                "unary",
+                "active",
+                [
+                  "const",
+                  "alpha"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "Alpha is deployed, reviewed and active."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "coordination.predicate-or",
+        "formula.coordination"
+      ],
+      "lean": {
+        "canonical": "(@alpha is deployed) or ((@alpha is reviewed) or (@alpha is active)).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "or",
+            [
+              "unary",
+              "deployed",
+              [
+                "const",
+                "alpha"
+              ]
+            ],
+            [
+              "or",
+              [
+                "unary",
+                "reviewed",
+                [
+                  "const",
+                  "alpha"
+                ]
+              ],
+              [
+                "unary",
+                "active",
+                [
+                  "const",
+                  "alpha"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "(@alpha is deployed) or ((@alpha is reviewed) or (@alpha is active)).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "or",
+            [
+              "unary",
+              "deployed",
+              [
+                "const",
+                "alpha"
+              ]
+            ],
+            [
+              "or",
+              [
+                "unary",
+                "reviewed",
+                [
+                  "const",
+                  "alpha"
+                ]
+              ],
+              [
+                "unary",
+                "active",
+                [
+                  "const",
+                  "alpha"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "Alpha is deployed, reviewed or active."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "marker.therefore",
+        "sentence.marked"
+      ],
+      "lean": {
+        "canonical": "@legacy is deployed.\n@legacy is deployed.\n",
+        "code": "accepted",
+        "conclusions": [
+          1
+        ],
+        "formulas": [
+          [
+            "unary",
+            "deployed",
+            [
+              "const",
+              "legacy"
+            ]
+          ],
+          [
+            "unary",
+            "deployed",
+            [
+              "const",
+              "legacy"
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "@legacy is deployed.\n@legacy is deployed.\n",
+        "code": "accepted",
+        "conclusions": [
+          1
+        ],
+        "formulas": [
+          [
+            "unary",
+            "deployed",
+            [
+              "const",
+              "legacy"
+            ]
+          ],
+          [
+            "unary",
+            "deployed",
+            [
+              "const",
+              "legacy"
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "Legacy is deployed. Therefore legacy is deployed."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "marker.so",
+        "sentence.marked"
+      ],
+      "lean": {
+        "canonical": "@legacy is deployed.\n@legacy is deployed.\n",
+        "code": "accepted",
+        "conclusions": [
+          1
+        ],
+        "formulas": [
+          [
+            "unary",
+            "deployed",
+            [
+              "const",
+              "legacy"
+            ]
+          ],
+          [
+            "unary",
+            "deployed",
+            [
+              "const",
+              "legacy"
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "@legacy is deployed.\n@legacy is deployed.\n",
+        "code": "accepted",
+        "conclusions": [
+          1
+        ],
+        "formulas": [
+          [
+            "unary",
+            "deployed",
+            [
+              "const",
+              "legacy"
+            ]
+          ],
+          [
+            "unary",
+            "deployed",
+            [
+              "const",
+              "legacy"
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "Legacy is deployed. So legacy is deployed."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "marker.hence",
+        "sentence.marked"
+      ],
+      "lean": {
+        "canonical": "@legacy is deployed.\n@legacy is deployed.\n",
+        "code": "accepted",
+        "conclusions": [
+          1
+        ],
+        "formulas": [
+          [
+            "unary",
+            "deployed",
+            [
+              "const",
+              "legacy"
+            ]
+          ],
+          [
+            "unary",
+            "deployed",
+            [
+              "const",
+              "legacy"
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "@legacy is deployed.\n@legacy is deployed.\n",
+        "code": "accepted",
+        "conclusions": [
+          1
+        ],
+        "formulas": [
+          [
+            "unary",
+            "deployed",
+            [
+              "const",
+              "legacy"
+            ]
+          ],
+          [
+            "unary",
+            "deployed",
+            [
+              "const",
+              "legacy"
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "Legacy is deployed. Hence legacy is deployed."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "marker.it-follows-that",
+        "sentence.marked"
+      ],
+      "lean": {
+        "canonical": "@legacy is deployed.\n@legacy is deployed.\n",
+        "code": "accepted",
+        "conclusions": [
+          1
+        ],
+        "formulas": [
+          [
+            "unary",
+            "deployed",
+            [
+              "const",
+              "legacy"
+            ]
+          ],
+          [
+            "unary",
+            "deployed",
+            [
+              "const",
+              "legacy"
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "@legacy is deployed.\n@legacy is deployed.\n",
+        "code": "accepted",
+        "conclusions": [
+          1
+        ],
+        "formulas": [
+          [
+            "unary",
+            "deployed",
+            [
+              "const",
+              "legacy"
+            ]
+          ],
+          [
+            "unary",
+            "deployed",
+            [
+              "const",
+              "legacy"
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "Legacy is deployed. It follows that legacy is deployed."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "term.it"
+      ],
+      "lean": {
+        "canonical": "@legacy is deployed.\n@legacy is reviewed.\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "unary",
+            "deployed",
+            [
+              "const",
+              "legacy"
+            ]
+          ],
+          [
+            "unary",
+            "reviewed",
+            [
+              "const",
+              "legacy"
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "@legacy is deployed.\n@legacy is reviewed.\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "unary",
+            "deployed",
+            [
+              "const",
+              "legacy"
+            ]
+          ],
+          [
+            "unary",
+            "reviewed",
+            [
+              "const",
+              "legacy"
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "Legacy is deployed. It is reviewed."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "listing.all.words"
+      ],
+      "lean": {
+        "canonical": "(@alpha is deployed) and (@beta is reviewed).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "and",
+            [
+              "unary",
+              "deployed",
+              [
+                "const",
+                "alpha"
+              ]
+            ],
+            [
+              "unary",
+              "reviewed",
+              [
+                "const",
+                "beta"
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "(@alpha is deployed) and (@beta is reviewed).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "and",
+            [
+              "unary",
+              "deployed",
+              [
+                "const",
+                "alpha"
+              ]
+            ],
+            [
+              "unary",
+              "reviewed",
+              [
+                "const",
+                "beta"
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "All of the following hold: first clause: alpha is deployed; end first clause; second clause: beta is reviewed; end second clause."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "listing.both.words"
+      ],
+      "lean": {
+        "canonical": "(@alpha is deployed) and (@beta is reviewed).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "and",
+            [
+              "unary",
+              "deployed",
+              [
+                "const",
+                "alpha"
+              ]
+            ],
+            [
+              "unary",
+              "reviewed",
+              [
+                "const",
+                "beta"
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "(@alpha is deployed) and (@beta is reviewed).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "and",
+            [
+              "unary",
+              "deployed",
+              [
+                "const",
+                "alpha"
+              ]
+            ],
+            [
+              "unary",
+              "reviewed",
+              [
+                "const",
+                "beta"
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "Both of the following hold: first clause: alpha is deployed; end first clause; second clause: beta is reviewed; end second clause."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "listing.any.words"
+      ],
+      "lean": {
+        "canonical": "(@alpha is deployed) or (@beta is reviewed).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "or",
+            [
+              "unary",
+              "deployed",
+              [
+                "const",
+                "alpha"
+              ]
+            ],
+            [
+              "unary",
+              "reviewed",
+              [
+                "const",
+                "beta"
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "(@alpha is deployed) or (@beta is reviewed).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "or",
+            [
+              "unary",
+              "deployed",
+              [
+                "const",
+                "alpha"
+              ]
+            ],
+            [
+              "unary",
+              "reviewed",
+              [
+                "const",
+                "beta"
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "At least one of the following holds: first clause: alpha is deployed; end first clause; second clause: beta is reviewed; end second clause."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "listing.if.words"
+      ],
+      "lean": {
+        "canonical": "if (@alpha is deployed), then (@beta is reviewed).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "implies",
+            [
+              "unary",
+              "deployed",
+              [
+                "const",
+                "alpha"
+              ]
+            ],
+            [
+              "unary",
+              "reviewed",
+              [
+                "const",
+                "beta"
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "if (@alpha is deployed), then (@beta is reviewed).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "implies",
+            [
+              "unary",
+              "deployed",
+              [
+                "const",
+                "alpha"
+              ]
+            ],
+            [
+              "unary",
+              "reviewed",
+              [
+                "const",
+                "beta"
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "If the following holds: first clause: alpha is deployed; end first clause; second clause: beta is reviewed; end second clause."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "listing.if.markers"
+      ],
+      "lean": {
+        "canonical": "if (@alpha is deployed), then (@beta is reviewed).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "implies",
+            [
+              "unary",
+              "deployed",
+              [
+                "const",
+                "alpha"
+              ]
+            ],
+            [
+              "unary",
+              "reviewed",
+              [
+                "const",
+                "beta"
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "if (@alpha is deployed), then (@beta is reviewed).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "implies",
+            [
+              "unary",
+              "deployed",
+              [
+                "const",
+                "alpha"
+              ]
+            ],
+            [
+              "unary",
+              "reviewed",
+              [
+                "const",
+                "beta"
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "If the following holds: (a) alpha is deployed; then the following holds: (b) beta is reviewed."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "declaration.third",
+        "term.the-third"
+      ],
+      "lean": {
+        "canonical": "for every service x0, (for every service x1, (for every service x2, (x2 is deployed))).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "forall",
+            "service",
+            [
+              "forall",
+              "service",
+              [
+                "forall",
+                "service",
+                [
+                  "unary",
+                  "deployed",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "for every service x0, (for every service x1, (for every service x2, (x2 is deployed))).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "forall",
+            "service",
+            [
+              "forall",
+              "service",
+              [
+                "forall",
+                "service",
+                [
+                  "unary",
+                  "deployed",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "For every service, for every second service, for every third service, the third service is deployed."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "declaration.fourth",
+        "declaration.third",
+        "term.the-fourth"
+      ],
+      "lean": {
+        "canonical": "for every service x0, (for every service x1, (for every service x2, (for every service x3, (x3 is deployed)))).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "forall",
+            "service",
+            [
+              "forall",
+              "service",
+              [
+                "forall",
+                "service",
+                [
+                  "forall",
+                  "service",
+                  [
+                    "unary",
+                    "deployed",
+                    [
+                      "var",
+                      0
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "for every service x0, (for every service x1, (for every service x2, (for every service x3, (x3 is deployed)))).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "forall",
+            "service",
+            [
+              "forall",
+              "service",
+              [
+                "forall",
+                "service",
+                [
+                  "forall",
+                  "service",
+                  [
+                    "unary",
+                    "deployed",
+                    [
+                      "var",
+                      0
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "For every service, for every second service, for every third service, for every fourth service, the fourth service is deployed."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "declaration.fifth",
+        "declaration.fourth",
+        "declaration.third",
+        "term.the-fifth"
+      ],
+      "lean": {
+        "canonical": "for every service x0, (for every service x1, (for every service x2, (for every service x3, (for every service x4, (x4 is deployed))))).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "forall",
+            "service",
+            [
+              "forall",
+              "service",
+              [
+                "forall",
+                "service",
+                [
+                  "forall",
+                  "service",
+                  [
+                    "forall",
+                    "service",
+                    [
+                      "unary",
+                      "deployed",
+                      [
+                        "var",
+                        0
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "for every service x0, (for every service x1, (for every service x2, (for every service x3, (for every service x4, (x4 is deployed))))).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "forall",
+            "service",
+            [
+              "forall",
+              "service",
+              [
+                "forall",
+                "service",
+                [
+                  "forall",
+                  "service",
+                  [
+                    "forall",
+                    "service",
+                    [
+                      "unary",
+                      "deployed",
+                      [
+                        "var",
+                        0
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "For every service, for every second service, for every third service, for every fourth service, for every fifth service, the fifth service is deployed."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "declaration.fifth",
+        "declaration.fourth",
+        "declaration.sixth",
+        "declaration.third",
+        "term.the-sixth"
+      ],
+      "lean": {
+        "canonical": "for every service x0, (for every service x1, (for every service x2, (for every service x3, (for every service x4, (for every service x5, (x5 is deployed)))))).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "forall",
+            "service",
+            [
+              "forall",
+              "service",
+              [
+                "forall",
+                "service",
+                [
+                  "forall",
+                  "service",
+                  [
+                    "forall",
+                    "service",
+                    [
+                      "forall",
+                      "service",
+                      [
+                        "unary",
+                        "deployed",
+                        [
+                          "var",
+                          0
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "for every service x0, (for every service x1, (for every service x2, (for every service x3, (for every service x4, (for every service x5, (x5 is deployed)))))).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "forall",
+            "service",
+            [
+              "forall",
+              "service",
+              [
+                "forall",
+                "service",
+                [
+                  "forall",
+                  "service",
+                  [
+                    "forall",
+                    "service",
+                    [
+                      "forall",
+                      "service",
+                      [
+                        "unary",
+                        "deployed",
+                        [
+                          "var",
+                          0
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "For every service, for every second service, for every third service, for every fourth service, for every fifth service, for every sixth service, the sixth service is deployed."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "declaration.fifth",
+        "declaration.fourth",
+        "declaration.seventh",
+        "declaration.sixth",
+        "declaration.third",
+        "term.the-seventh"
+      ],
+      "lean": {
+        "canonical": "for every service x0, (for every service x1, (for every service x2, (for every service x3, (for every service x4, (for every service x5, (for every service x6, (x6 is deployed))))))).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "forall",
+            "service",
+            [
+              "forall",
+              "service",
+              [
+                "forall",
+                "service",
+                [
+                  "forall",
+                  "service",
+                  [
+                    "forall",
+                    "service",
+                    [
+                      "forall",
+                      "service",
+                      [
+                        "forall",
+                        "service",
+                        [
+                          "unary",
+                          "deployed",
+                          [
+                            "var",
+                            0
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "for every service x0, (for every service x1, (for every service x2, (for every service x3, (for every service x4, (for every service x5, (for every service x6, (x6 is deployed))))))).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "forall",
+            "service",
+            [
+              "forall",
+              "service",
+              [
+                "forall",
+                "service",
+                [
+                  "forall",
+                  "service",
+                  [
+                    "forall",
+                    "service",
+                    [
+                      "forall",
+                      "service",
+                      [
+                        "forall",
+                        "service",
+                        [
+                          "unary",
+                          "deployed",
+                          [
+                            "var",
+                            0
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "For every service, for every second service, for every third service, for every fourth service, for every fifth service, for every sixth service, for every seventh service, the seventh service is deployed."
+    },
+    {
+      "classes": [],
+      "environment": "directed-coverage",
+      "fixed_rules": [
+        "declaration.eighth",
+        "declaration.fifth",
+        "declaration.fourth",
+        "declaration.seventh",
+        "declaration.sixth",
+        "declaration.third",
+        "term.the-eighth"
+      ],
+      "lean": {
+        "canonical": "for every service x0, (for every service x1, (for every service x2, (for every service x3, (for every service x4, (for every service x5, (for every service x6, (for every service x7, (x7 is deployed)))))))).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "forall",
+            "service",
+            [
+              "forall",
+              "service",
+              [
+                "forall",
+                "service",
+                [
+                  "forall",
+                  "service",
+                  [
+                    "forall",
+                    "service",
+                    [
+                      "forall",
+                      "service",
+                      [
+                        "forall",
+                        "service",
+                        [
+                          "forall",
+                          "service",
+                          [
+                            "unary",
+                            "deployed",
+                            [
+                              "var",
+                              0
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "for every service x0, (for every service x1, (for every service x2, (for every service x3, (for every service x4, (for every service x5, (for every service x6, (for every service x7, (x7 is deployed)))))))).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "forall",
+            "service",
+            [
+              "forall",
+              "service",
+              [
+                "forall",
+                "service",
+                [
+                  "forall",
+                  "service",
+                  [
+                    "forall",
+                    "service",
+                    [
+                      "forall",
+                      "service",
+                      [
+                        "forall",
+                        "service",
+                        [
+                          "forall",
+                          "service",
+                          [
+                            "unary",
+                            "deployed",
+                            [
+                              "var",
+                              0
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "For every service, for every second service, for every third service, for every fourth service, for every fifth service, for every sixth service, for every seventh service, for every eighth service, the eighth service is deployed."
+    },
+    {
+      "classes": [],
+      "environment": "closure",
+      "fixed_rules": [
+        "reach.body.listed"
+      ],
+      "lean": {
+        "canonical": "tc[service x0, x1 | (x0 is deployed)](@legacy, @legacy).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "reach",
+            "plus",
+            [
+              "body",
+              "service",
+              [
+                "unary",
+                "deployed",
+                [
+                  "var",
+                  1
+                ]
+              ]
+            ],
+            [
+              "const",
+              "legacy"
+            ],
+            [
+              "const",
+              "legacy"
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "lean_status": "one",
+      "python": {
+        "canonical": "tc[service x0, x1 | (x0 is deployed)](@legacy, @legacy).\n",
+        "code": "accepted",
+        "conclusions": [],
+        "formulas": [
+          [
+            "reach",
+            "plus",
+            [
+              "body",
+              "service",
+              [
+                "unary",
+                "deployed",
+                [
+                  "var",
+                  1
+                ]
+              ]
+            ],
+            [
+              "const",
+              "legacy"
+            ],
+            [
+              "const",
+              "legacy"
+            ]
+          ]
+        ],
+        "verdict": "accepted",
+        "witnesses": 1
+      },
+      "text": "Starting from legacy, legacy is reachable by one or more steps, where a step from a service to a second service satisfies the following: (a) that service is deployed."
+    }
+  ],
+  "rule_record": {
+    "coordination.predicate-and": 12,
+    "coordination.predicate-or": 13,
+    "coordination.subject-and": 10,
+    "coordination.subject-or": 11,
+    "declaration.eighth": 29,
+    "declaration.fifth": 26,
+    "declaration.fourth": 25,
+    "declaration.seventh": 28,
+    "declaration.sixth": 27,
+    "declaration.third": 24,
+    "formula.coordination": 10,
+    "formula.natural": 0,
+    "guard-rel.that": 9,
+    "guard-rel.who": 8,
+    "listing.all.words": 19,
+    "listing.any.words": 21,
+    "listing.both.words": 20,
+    "listing.if.markers": 23,
+    "listing.if.words": 22,
+    "marker.hence": 16,
+    "marker.it-follows-that": 17,
+    "marker.so": 15,
+    "marker.therefore": 14,
+    "natural-every.owner": 5,
+    "natural-every.subject": 4,
+    "natural-no": 1,
+    "natural-some": 0,
+    "natural-tail.both": 7,
+    "natural-tail.owner": 6,
+    "natural-tail.relative": 4,
+    "natural.every": 4,
+    "natural.no": 1,
+    "natural.some": 0,
+    "reach.body.listed": 30,
+    "sentence.marked": 14,
+    "some-tail.copula": 3,
+    "some-tail.relative": 0,
+    "some-tail.two": 2,
+    "term.it": 18,
+    "term.the-eighth": 29,
+    "term.the-fifth": 26,
+    "term.the-fourth": 25,
+    "term.the-seventh": 28,
+    "term.the-sixth": 27,
+    "term.the-third": 24
+  },
+  "target_rules": [
+    "coordination.predicate-and",
+    "coordination.predicate-or",
+    "coordination.subject-and",
+    "coordination.subject-or",
+    "declaration.eighth",
+    "declaration.fifth",
+    "declaration.fourth",
+    "declaration.seventh",
+    "declaration.sixth",
+    "declaration.third",
+    "formula.coordination",
+    "formula.natural",
+    "guard-rel.that",
+    "guard-rel.who",
+    "listing.all.words",
+    "listing.any.words",
+    "listing.both.words",
+    "listing.if.markers",
+    "listing.if.words",
+    "marker.hence",
+    "marker.it-follows-that",
+    "marker.so",
+    "marker.therefore",
+    "natural-every.owner",
+    "natural-every.subject",
+    "natural-no",
+    "natural-some",
+    "natural-tail.both",
+    "natural-tail.owner",
+    "natural-tail.relative",
+    "natural.every",
+    "natural.no",
+    "natural.some",
+    "reach.body.listed",
+    "sentence.marked",
+    "some-tail.copula",
+    "some-tail.relative",
+    "some-tail.two",
+    "term.it",
+    "term.the-eighth",
+    "term.the-fifth",
+    "term.the-fourth",
+    "term.the-seventh",
+    "term.the-sixth",
+    "term.the-third"
+  ],
+  "uncovered": []
+}
