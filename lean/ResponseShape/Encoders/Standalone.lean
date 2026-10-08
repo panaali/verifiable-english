@@ -65,6 +65,7 @@ theorem model_case_reported (j : Json) :
 theorem environment_fault_fits (j : Json) (fault : ModelFault) :
     Fits j Skeletons.environment (reportedFault j fault) := by
   unfold reportedFault
+  dsimp
   split <;> fits
 
 theorem environment_with_path_fits (j result : Json) (fault : ModelFault)
@@ -79,6 +80,7 @@ theorem environment_with_path_fits (j result : Json) (fault : ModelFault)
 theorem model_fault_fits (j : Json) (fault : ModelFault) :
     Fits j Skeletons.model (reportedFault j fault) := by
   unfold reportedFault
+  dsimp
   split <;> fits
 
 theorem legacy_environment_fits (j environment : Json) :
