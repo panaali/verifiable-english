@@ -190,6 +190,13 @@ ASKING = [Norm("must-help", "help_required", True, Binary("asks", Var(0), Var(1)
 def test_fnd1_each_choice_conflict_free_and_certificate(lean):
     raw = env1()
     document, _ = doc1(raw)
+    # each choice's packages are bound to that choice's own document: the hash Lean reports is the norm-defaults
+    # route's hash of the choice's units, computed here independently (checklist 15: identity)
+    for choice, rules in (([("rs_1", 0)], EVERY), ([("rs_1", 1)], ASKING)):
+        bound, row = bindings(lean, raw, document, choice)
+        expected = python_document(raw, rules)
+        assert bound == {"environment_id": expected.env.environment_id, "document_hash": expected.document_hash}
+        assert row["document_hash"] == expected.document_hash
     rows = run(lean, [choice_case(raw, document, [("rs_1", 0)], {
                           "kind": "norm-defaults-conflict", "packages": packages(lean, raw, document, [("rs_1", 0)], EVERY)}),
                       choice_case(raw, document, [("rs_1", 1)], {
