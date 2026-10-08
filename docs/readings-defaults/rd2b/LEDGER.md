@@ -10,6 +10,6 @@
 | RD-2a's refusal by name of a completion document in `ve document` | — | — | 1 (`readings_route.UNDER_COMPLETION` and its branch: the relay now relays) |
 
 The plan (RD-2b) deletes `_placeholder_frame` "if the corpus A/B shows no other caller": it had one caller,
-`S1Environment`, and every corpus of the A/B answers byte for byte as at the base
-([DELTA.md](DELTA.md), evidence `ab-*.json`). `ve/document.py` `_s1_attached`, which built an `S1Environment` only to
+`S1Environment`, and the corpus A/B finds no changed record (96604 of 96608 the same; the other 4 are
+`CheckerUnavailable` on both sides, [DELTA.md](DELTA.md), evidence `ab-*.json`). `ve/document.py` `_s1_attached`, which built an `S1Environment` only to
 read names, now reads them from the document alone (`Document(None, …)`).
