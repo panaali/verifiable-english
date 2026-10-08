@@ -12,10 +12,13 @@ bench-internals = ["ve-profile/bench-internals"]
 name = "bench"
 required-features = ["bench-internals"]
 
+[[example]]
+name = "rule3_order_enumerate"
+required-features = ["bench-internals"]
+
 [dependencies]
 ve-kernel.workspace = true
 ve-profile.workspace = true
-ve-surface.workspace = true
 
 [dev-dependencies]
 serde_json.workspace = true

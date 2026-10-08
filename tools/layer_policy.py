@@ -165,7 +165,7 @@ def source_layer(path: str) -> int | None:
         if p.suffix == ".rs":
             # The ve-core facade's tests exercise the whole API, so a change there selects as kernel.
             crate = parts[1] if len(parts) > 1 else ""
-            return {"ve-kernel": 1, "ve-core": 1, "ve-profile": 2, "ve-surface": 3}.get(crate, 4)
+            return {"ve-kernel": 1, "ve-core": 1, "ve-profile": 2}.get(crate, 4)
         if p.suffix in {".py", ".json"} and p.name not in {"Cargo.lock"}:
             return 5  # benchmarks and generated measurement reports
         return 1 if p.name in {"Cargo.toml", "Cargo.lock"} else None

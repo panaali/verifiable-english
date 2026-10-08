@@ -154,37 +154,12 @@ def test_review_quantifier_swap_found_with_default_budgets(predicate_count):
     assert all(not rows for name, rows in result.model.relations.items() if name != 'owns')
 
 
-def test_unused_predicates_do_not_multiply_models_or_trigger_atom_limit(monkeypatch):
-    import ve.search as search
+def test_unused_predicates_do_not_multiply_models_or_trigger_atom_limit():
     env = review_search_environment()
-    # Unused declarations must not even consume the possible-atom space cap.
-    monkeypatch.setattr(search, 'MAX_TUPLES', 1)
+    # Unused declarations must not multiply the models Rust's search examines.
     result = find_distinguishing_model(env, Top(), Top(), min_domain_size=1)
     assert result.status == 'NotFound' and result.models_checked == 4
     assert find_countermodel(env, (), Top(), min_domain_size=1).models_checked == 4
-
-
-def test_enumeration_small_domains_and_globally_sparse_relations_first():
-    from itertools import product
-    from ve.search import _domain_sizes, _models, _relation_assignments, _subsets
-    vectors = list(_domain_sizes([0, 1, 0], 2))
-    assert len(vectors) == len(set(vectors)) == 18
-    assert vectors == sorted(product(range(3), range(1, 3), range(3)), key=lambda v: (sum(v), v))
-    assert list(_domain_sizes([], 2)) == [()]
-    assert list(_domain_sizes([1], 0)) == []
-    env = review_search_environment()
-    domains = {'service': ['e0', 'e1'], 'person': ['e0']}
-    assignments = list(_relation_assignments(env, domains, frozenset({'owns', 'dep'})))
-    assert len(assignments) == 16  # Four used atoms, each interpretation exactly once.
-    assert len({repr(rows) for rows in assignments}) == 16
-    counts = [sum(map(len, rows.values())) for rows in assignments]
-    assert counts == sorted(counts)
-    assert all(not rows['audits'] and not rows['rev'] for rows in assignments)
-    subsets = list(_subsets(domains, ('service',)))
-    assert [len(s) for s in subsets] == [0, 1, 1, 2]
-    models = list(_models(env, 1, 2, frozenset({'dep'})))
-    totals = [sum(map(len, model.domains.values())) for model in models]
-    assert totals == sorted(totals)
 
 
 @pytest.mark.parametrize('operation', ['countermodel', 'distinguishing'])
@@ -221,17 +196,37 @@ def test_review_clause_nonvacuity_excludes_empty_guard_relation(operation):
 
 
 def test_semantic_guard_matches_implication_across_all_small_interpretations():
-    from ve.search import _models, _nonvacuous
+    """Lean's non-vacuity check (the owner since batch 15b) treats a clause like its implication."""
+    from itertools import product
+    from tests.subprocesses import HANG_TIMEOUT
+    from ve.ast import formula_to_data
+    from ve.backends import lean as lean_backend
+    from ve.backends.lean_runner import METERED_EXECUTABLE, route_environment
     env = review_search_environment()
     p, q = Unary('dep', Var(0)), Unary('rev', Var(0))
     implication = Forall('service', Implies(p, q))
     clauses = [Forall('service', Or(Not(p), q)), Forall('service', Or(q, Not(p)))]
-    for model in _models(env, 0, 2, frozenset({'dep', 'rev'})):
-        expected, _, exhausted = _nonvacuous(env, implication, model, 10_000, semantic=True)
-        assert not exhausted
-        for clause in clauses:
-            actual, _, exhausted = _nonvacuous(env, clause, model, 10_000, semantic=True)
-            assert actual == expected and not exhausted
+    cases = []
+    for size in range(3):
+        services = [f'e{i}' for i in range(size)]
+        for dep, rev in product(product((False, True), repeat=size), repeat=2):
+            model = FiniteModel.from_dict(env, {
+                'complete': True, 'domains': {'service': services, 'person': ['p']}, 'constants': {},
+                'relations': {name: ([[s] for s, on in zip(services, dep) if on] if name == 'dep' else
+                                     [[s] for s, on in zip(services, rev) if on] if name == 'rev' else [])
+                              for name in env.predicates}})
+            for formula in (implication, *clauses):
+                cases.append({'id': str(len(cases)), 'kind': 'non-vacuity',
+                              'environment': route_environment(env), 'model': model.to_dict(),
+                              'formula': formula_to_data(env, formula), 'max_evaluations': 10_000,
+                              'semantic_nonvacuity': True})
+    rows = lean_backend.run('countermodel.search', METERED_EXECUTABLE, cases, runner='ve_metered',
+                            timeout=HANG_TIMEOUT)
+    assert len(rows) == 3 * 21 and all(row['status'] == 'ok' and not row['exhausted'] for row in rows)
+    answers = [row['suitable'] for row in rows]
+    assert {answers[i] for i in range(0, len(answers), 3)} == {False, True}
+    for i in range(0, len(answers), 3):
+        assert answers[i] == answers[i + 1] == answers[i + 2], i
 
 
 def test_semantic_clause_guard_is_joint_per_occurrence_and_checks_hidden_branches():
@@ -245,13 +240,13 @@ def test_semantic_clause_guard_is_joint_per_occurrence_and_checks_hidden_branche
                       for name in env.predicates}})
     for body in (Or(Not(p), Or(Top(), Not(q))), Or(Or(Not(q), Top()), Not(p))):
         hidden = Or(Top(), Forall('service', body))
-        assert _nonvacuous(env, hidden, model, 1000, semantic=True)[0] is False
+        assert _nonvacuous(env, hidden, model, 1000, semantic=True) is False
     # A hit at one disjunction must not satisfy a separate impossible guard.
     separate = Forall('service', And(Or(Not(p), Top()), Or(Not(And(p, q)), Top())))
-    assert _nonvacuous(env, separate, model, 1000, semantic=True)[0] is False
+    assert _nonvacuous(env, separate, model, 1000, semantic=True) is False
     # No universal binder: clause checking is deliberately not applied.
     existential = Exists('service', Or(Not(And(p, q)), Top()))
-    assert _nonvacuous(env, existential, model, 1000, semantic=True)[0] is True
+    assert _nonvacuous(env, existential, model, 1000, semantic=True) is True
 
 
 def test_semantic_nonvacuity_budget_is_shared_and_exhaustion_is_not_notfound():
@@ -279,9 +274,8 @@ def test_new_and_boolean_option_validation_is_shared(options):
 
 
 @pytest.mark.parametrize('operation', ['countermodel', 'distinguishing'])
-def test_scoped_order_search_replays_atom_space_limit(operation):
+def test_order_search_repeats_atom_space_limit(operation):
     from ve.ast import Binary, Num
-    from ve.search import model_search_scope
 
     env = Environment({
         'language': 've.core@0.1', 'profiles': ['order@0', 'relational-fol@0'],
@@ -300,29 +294,6 @@ def test_scoped_order_search_replays_atom_space_limit(operation):
         return (find_countermodel(env, (formula,), Bottom()) if operation == 'countermodel'
                 else find_distinguishing_model(env, formula, formula))
 
-    assert [search().status for _ in range(2)] == ['ResourceLimit'] * 2
-    with model_search_scope():
-        results = [search() for _ in range(2)]
+    results = [search() for _ in range(2)]
     assert [result.status for result in results] == ['ResourceLimit'] * 2
     assert [result.detail for result in results] == ['search relation atom space exceeds runtime limit'] * 2
-
-
-@pytest.mark.parametrize('error', [ResourceLimit('failed model stream'),
-                                   InvalidModel('invalid model stream')])
-def test_scoped_model_readers_replay_failure_after_buffered_models(monkeypatch, error):
-    import ve.search as search
-
-    marker = object()
-    def failing_models(*args, **kwargs):
-        yield marker
-        raise error
-
-    monkeypatch.setattr(search, '_models', failing_models)
-    with search.model_search_scope():
-        first = search._query_models(ENV, 0, 0, frozenset(), (), defer_model_id=True)
-        waiting = search._query_models(ENV, 0, 0, frozenset(), (), defer_model_id=True)
-        for reader in (first, waiting, search._query_models(
-                ENV, 0, 0, frozenset(), (), defer_model_id=True)):
-            assert next(reader) is marker
-            with pytest.raises(type(error), match='model stream'):
-                next(reader)

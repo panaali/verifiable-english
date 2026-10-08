@@ -1,0 +1,447 @@
+{
+ "closure_search": [
+  {
+   "evaluations": 0,
+   "model": null,
+   "models_checked": 0,
+   "status": "NotFound"
+  },
+  {
+   "evaluations": 2,
+   "model": {
+    "complete": true,
+    "constants": {
+     "end": "e0",
+     "start": "e0"
+    },
+    "domains": {
+     "node": [
+      "e0"
+     ]
+    },
+    "relations": {
+     "edge": [],
+     "marked": [],
+     "unused": []
+    }
+   },
+   "models_checked": 1,
+   "status": "Found"
+  },
+  {
+   "evaluations": 2,
+   "model": {
+    "complete": true,
+    "constants": {
+     "end": "e0",
+     "start": "e0"
+    },
+    "domains": {
+     "node": [
+      "e0"
+     ]
+    },
+    "relations": {
+     "edge": [],
+     "marked": [],
+     "unused": []
+    }
+   },
+   "models_checked": 1,
+   "status": "Found"
+  },
+  {
+   "evaluations": 0,
+   "model": null,
+   "models_checked": 0,
+   "status": "ResourceLimit"
+  },
+  {
+   "evaluations": 2,
+   "model": {
+    "complete": true,
+    "constants": {
+     "end": "e0",
+     "start": "e0"
+    },
+    "domains": {
+     "node": [
+      "e0"
+     ]
+    },
+    "relations": {
+     "edge": [],
+     "marked": [],
+     "unused": []
+    }
+   },
+   "models_checked": 1,
+   "status": "Found"
+  },
+  {
+   "evaluations": 0,
+   "model": null,
+   "models_checked": 0,
+   "status": "NotFound"
+  },
+  {
+   "evaluations": 6,
+   "model": {
+    "complete": true,
+    "constants": {
+     "end": "e0",
+     "start": "e0"
+    },
+    "domains": {
+     "node": [
+      "e0"
+     ]
+    },
+    "relations": {
+     "edge": [
+      [
+       "e0",
+       "e0"
+      ]
+     ],
+     "marked": [],
+     "unused": []
+    }
+   },
+   "models_checked": 2,
+   "status": "Found"
+  },
+  {
+   "evaluations": 6,
+   "model": {
+    "complete": true,
+    "constants": {
+     "end": "e0",
+     "start": "e0"
+    },
+    "domains": {
+     "node": [
+      "e0"
+     ]
+    },
+    "relations": {
+     "edge": [
+      [
+       "e0",
+       "e0"
+      ]
+     ],
+     "marked": [],
+     "unused": []
+    }
+   },
+   "models_checked": 2,
+   "status": "Found"
+  },
+  {
+   "evaluations": 0,
+   "model": null,
+   "models_checked": 0,
+   "status": "ResourceLimit"
+  },
+  {
+   "evaluations": 2,
+   "model": null,
+   "models_checked": 2,
+   "status": "ResourceLimit"
+  },
+  {
+   "evaluations": 0,
+   "model": null,
+   "models_checked": 0,
+   "status": "NotFound"
+  },
+  {
+   "evaluations": 8,
+   "model": {
+    "complete": true,
+    "constants": {
+     "end": "e0",
+     "start": "e0"
+    },
+    "domains": {
+     "node": [
+      "e0"
+     ]
+    },
+    "relations": {
+     "edge": [
+      [
+       "e0",
+       "e0"
+      ]
+     ],
+     "marked": [],
+     "unused": []
+    }
+   },
+   "models_checked": 2,
+   "status": "Found"
+  },
+  {
+   "evaluations": 8,
+   "model": {
+    "complete": true,
+    "constants": {
+     "end": "e0",
+     "start": "e0"
+    },
+    "domains": {
+     "node": [
+      "e0"
+     ]
+    },
+    "relations": {
+     "edge": [
+      [
+       "e0",
+       "e0"
+      ]
+     ],
+     "marked": [],
+     "unused": []
+    }
+   },
+   "models_checked": 2,
+   "status": "Found"
+  },
+  {
+   "evaluations": 0,
+   "model": null,
+   "models_checked": 0,
+   "status": "ResourceLimit"
+  },
+  {
+   "evaluations": 2,
+   "model": null,
+   "models_checked": 1,
+   "status": "ResourceLimit"
+  },
+  {
+   "evaluations": 0,
+   "model": null,
+   "models_checked": 0,
+   "status": "NotFound"
+  },
+  {
+   "evaluations": 5,
+   "model": {
+    "complete": true,
+    "constants": {
+     "end": "e0",
+     "start": "e0"
+    },
+    "domains": {
+     "node": [
+      "e0"
+     ]
+    },
+    "relations": {
+     "edge": [],
+     "marked": [],
+     "unused": []
+    }
+   },
+   "models_checked": 1,
+   "status": "Found"
+  },
+  {
+   "evaluations": 5,
+   "model": {
+    "complete": true,
+    "constants": {
+     "end": "e0",
+     "start": "e0"
+    },
+    "domains": {
+     "node": [
+      "e0"
+     ]
+    },
+    "relations": {
+     "edge": [],
+     "marked": [],
+     "unused": []
+    }
+   },
+   "models_checked": 1,
+   "status": "Found"
+  },
+  {
+   "evaluations": 0,
+   "model": null,
+   "models_checked": 0,
+   "status": "ResourceLimit"
+  },
+  {
+   "evaluations": 2,
+   "model": null,
+   "models_checked": 1,
+   "status": "ResourceLimit"
+  },
+  {
+   "evaluations": 0,
+   "model": null,
+   "models_checked": 0,
+   "status": "NotFound"
+  },
+  {
+   "evaluations": 9,
+   "model": null,
+   "models_checked": 2,
+   "status": "NotFound"
+  },
+  {
+   "evaluations": 1321,
+   "model": null,
+   "models_checked": 66,
+   "status": "NotFound"
+  },
+  {
+   "evaluations": 0,
+   "model": null,
+   "models_checked": 0,
+   "status": "ResourceLimit"
+  },
+  {
+   "evaluations": 2,
+   "model": null,
+   "models_checked": 1,
+   "status": "ResourceLimit"
+  },
+  {
+   "evaluations": 0,
+   "model": null,
+   "models_checked": 0,
+   "status": "NotFound"
+  },
+  {
+   "evaluations": 14,
+   "model": null,
+   "models_checked": 2,
+   "status": "NotFound"
+  },
+  {
+   "evaluations": 2414,
+   "model": null,
+   "models_checked": 66,
+   "status": "NotFound"
+  },
+  {
+   "evaluations": 0,
+   "model": null,
+   "models_checked": 0,
+   "status": "ResourceLimit"
+  },
+  {
+   "evaluations": 2,
+   "model": null,
+   "models_checked": 1,
+   "status": "ResourceLimit"
+  }
+ ],
+ "p0_search_models": {
+  "data-two-flags-search": {
+   "complete": true,
+   "constants": {
+    "alice": "e0"
+   },
+   "domains": {
+    "department": [
+     "e0"
+    ],
+    "person": [
+     "e0"
+    ]
+   },
+   "relations": {
+    "backup": [
+     [
+      "e0",
+      "e0"
+     ]
+    ],
+    "dept": [
+     [
+      "e0",
+      "e0"
+     ]
+    ]
+   }
+  },
+  "defs-search": {
+   "complete": true,
+   "constants": {
+    "alice": "e0",
+    "bob": "e0",
+    "finance": "e0",
+    "legal": "e1"
+   },
+   "domains": {
+    "$string": [
+     "e0",
+     "e1"
+    ],
+    "person": [
+     "e0"
+    ]
+   },
+   "relations": {
+    "in_finance": [],
+    "senior": [],
+    "supervises": [
+     [
+      "e0",
+      "e0"
+     ]
+    ]
+   }
+  },
+  "literals-search": {
+   "complete": true,
+   "constants": {
+    "alpha": "e0",
+    "beta": "e1"
+   },
+   "domains": {
+    "$string": [
+     "e0",
+     "e1"
+    ]
+   },
+   "relations": {}
+  },
+  "search-respects-background": {
+   "complete": true,
+   "constants": {
+    "alice": "e0",
+    "bob": "e0",
+    "finance": "e0",
+    "legal": "e1"
+   },
+   "domains": {
+    "$string": [
+     "e0",
+     "e1"
+    ],
+    "person": [
+     "e0"
+    ]
+   },
+   "relations": {
+    "in_finance": [
+     [
+      "e0"
+     ]
+    ],
+    "in_legal": [],
+    "senior": []
+   }
+  }
+ }
+}
