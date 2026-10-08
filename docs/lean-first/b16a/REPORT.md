@@ -68,6 +68,7 @@ conformance/document_wrapper.py, docs/lean-first/b16a/REPORT.md, docs/lean-first
 
 ### Fix 1: gate evidence
 
+- Full suite at `6f3ec724`, run in the foreground in 7 parts (`-n 16`; the four tests over 10 minutes alone; the gate's nightly tests): 11906 passed, 6 skipped, 0 failed, of the gate's 11913 collected tests (the live model smoke test excluded, as the gate does). `lake build` and `lean/audit.py` passed (4682 theorems); Rust: 37 passed.
 - A/B identical: 94588 public outcomes between the first round's head `192e4963` and `2fce5544`, zero differences and zero unlisted cases; pilots identical: 393 documents (the pilot branches grew since the first round).
 - Difffuzz CI: 352 baseline entries, 0 new signatures, every entry replayed; the `document` surface ran 615 inputs.
 - Deep document fuzz: 2 seeds at 10 times the CI sample, 50030 inputs, 0 new signatures.

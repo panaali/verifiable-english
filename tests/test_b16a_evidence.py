@@ -155,3 +155,17 @@ def test_fix_report_mutants_are_saved_failures():
                and item["test"].split("::")[1] in item["failure_excerpt"] for item in mutants)
     assert f"Fix seeded mutants: {len(mutants)} failed as expected" in report
     assert all(item["mutant"] in report for item in mutants)
+
+
+def test_fix_report_suite_numbers_are_the_saved_run():
+    scope, report = fix_scope_and_report()
+    suite = fix_saved("suite.json")
+    totals = suite["totals"]
+    assert totals == {k: sum(run[k] for run in suite["runs"]) for k in ("passed", "skipped", "failed")}
+    assert totals["failed"] == 0 and suite["rust"]["failed"] == 0
+    assert totals["passed"] + totals["skipped"] + len(suite["excluded"]) == suite["collection"]
+    # The suite ran on a commit after the captured scope: its later commits are evidence only.
+    assert suite["commit"] not in scope["commits"] or suite["commit"] == scope["captured_head"]
+    assert (f"{totals['passed']} passed, {totals['skipped']} skipped, {totals['failed']} failed, of the gate's "
+            f"{suite['collection']} collected tests") in report
+    assert f"Rust: {suite['rust']['passed']} passed." in report
