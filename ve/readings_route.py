@@ -239,9 +239,15 @@ _PAIR_FACTS = _obj({"situation": _digest, "witness": _str, "separated": _lit(Tru
                    {"other_value": lambda v: v is None or type(v) is bool})
 _SET = _obj({"set": _str, "version": _nat, "candidates": _arr(_CANDIDATE, nonempty=True),
              "pairs": _arr(_obj({"reading": _str, "other": _str, "pair": _PAIR_FACTS})), "findings": _arr(_name)})
-ROW = _either(_obj({"id": _str, "status": _lit("ok"), "content_bearing": _lit(False)}),
+# Under the unspecified completion (readings-defaults.md 3) Lean adds, per reading, its `Fill_T` and, once, the filled
+# frame and units. They are checked for shape here and not read yet (their relay is batch RD-2b).
+_FILL_PREMISES = _arr(_obj({"set": _str, "index": _nat,
+                            "premises": _arr(_obj({"label": _str, "ast": lambda v: v is not None}))}))
+_FILLED = _obj({"environment": lambda v: type(v) is dict, "units": _arr(lambda v: type(v) is dict)})
+_COMPLETION = {"fill_premises": _FILL_PREMISES, "filled": _FILLED}
+ROW = _either(_obj({"id": _str, "status": _lit("ok"), "content_bearing": _lit(False)}, _COMPLETION),
               _obj({"id": _str, "status": _lit("ok"), "content_bearing": _lit(True),
-                    "sets": _arr(_SET, nonempty=True)}))
+                    "sets": _arr(_SET, nonempty=True)}, _COMPLETION))
 
 # `setFindings`: `<code>: <set>: <i>, <j>`, with ` (not certified)` on SeparatedByDecisionOnly; per unordered pair
 # (i < j) in order, the decision-only finding (either twin first) before the act-only one (i first).

@@ -171,8 +171,8 @@ theorem choiceND_fits (id : String) (r : Wire.AdmittedND) (j : Json) :
   all_goals (try simp only [okWith, VE.Route.Wire.ok])
   all_goals fits
 
-theorem fillPremises_fits (N : NDoc) :
-    Fits req (skel% "readings-route.json#/$defs/fill_premises") (Wire.fillPremisesJson N) := by
+theorem fillPremises_fits (N : NDoc) (side : String → Nat → VE.Rights.RightsDoc × List VE.Formula) :
+    Fits req (skel% "readings-route.json#/$defs/fill_premises") (Wire.fillPremisesJson N side) := by
   unfold Wire.fillPremisesJson Wire.encF
   fits
 

@@ -22,7 +22,6 @@ from ve.readings_s2_english import hidden_in
 
 ROOT = Path(__file__).resolve().parents[1]
 PILOT = ROOT / "tests/data/readings_s2/constitution-nd-readings.ve.md"
-ABSTENTION = "UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented"
 
 
 def _split(path):
@@ -65,10 +64,12 @@ def test_ruling4_pilot_document_answers_as_without_readings(tmp_path):
     assert with_readings["admission"]["report"] == without["admission"]["report"]
 
 
-def test_ruling4_rule_candidate_beside_norm_defaults_is_the_named_abstention(tmp_path):
-    """The pilot's probe (b): a strict rule as one candidate's content. Lean and Python now both reach S1's
-    abstention (before: Lean `invalid regulated role or default`, Python `unspecified completion requires
-    norm-defaults@0`, so `CheckerUnavailable`)."""
+def test_ruling4_rule_candidate_beside_norm_defaults_is_under_the_completion(tmp_path):
+    """The pilot's probe (b): a strict rule as one candidate's content. Before readings-defaults RD-2a Lean and Python
+    both reached S1's abstention; on the norms chain the document is now under the unspecified completion, which
+    Lean admits (readings-defaults.md 4.6, an `availability` change). The other candidate is pending, so the set
+    stays unresolved and no verdict is claimed. Off the norms chain the abstention stays (K18,
+    `test_readings_nd_lean.py::test_fnd6_soft_chain_keeps_the_abstention`)."""
     meta, rest = _split(PILOT)
     reading_set = meta["reading_sets"][0]
     reading_set.pop("models", None)
@@ -81,9 +82,9 @@ def test_ruling4_rule_candidate_beside_norm_defaults_is_the_named_abstention(tmp
     strict["meaning_id"] = s1_content_meaning_id(env, reading_set["id"], strict)
     for r in reading_set["readings"]:
         r["admission"]["distinguishing_models"] = {o: "pending" for o in r["admission"]["distinguishing_models"]}
-    with pytest.raises(VEError) as caught:
-        check_document(_write(tmp_path, "rule.ve.md", meta, rest))
-    assert caught.value.message == ABSTENTION
+    result = check_document(_write(tmp_path, "rule.ve.md", meta, rest))
+    residual = result["coverage"]["residual"]
+    assert (residual["unresolved_reading_sets"], residual["pending_candidates"]) == (1, 1)
 
 
 def test_ruling4_lean_frame_reads_unspecified_as_deny(lean_route):

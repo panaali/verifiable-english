@@ -12,7 +12,9 @@ plan F5b; batch 3b review B1, B2).
   is reached otherwise only by `choiceDoc`, a compatible choice's whole document (composition-s2 4.1), which is
   not a candidate's. `free D` is built in admission and, for the certificate and model kinds, once more by
   `sharedEnv` (the shared vocabulary those kinds decode formulas over): one document per request, a gap recorded in
-  docs/lean-first/b3b/DELTA.md (merge of ve-integration).
+  docs/lean-first/b3b/DELTA.md (merge of ve-integration); under the unspecified completion once more by `freeU`
+  (norm-defaults' author checks, readings-defaults.md 4.1 step 3; docs/readings-defaults/rd2a/DELTA.md). The filled
+  document's admission builds its own table through the same staged admission (`admitDecoded`).
 * Admission stops at the first diagnostic (`firstSome` is `findSome?`): a document whose first set's candidate is
   ill-formed is refused without validating the 119 candidates after it (4.0 s of CPU before, 0.26 s after).
 * No pending candidate's document is built (batch 3b looprecheck B): admission builds the candidates with content
@@ -127,13 +129,21 @@ def test_the_route_builds_a_candidates_document_only_in_the_request_table(walks)
     assert built == [], [(name, sorted(callers(edges, name))) for name in built]
     # `build` itself only for S2a's choice documents, never inlined into another caller.
     assert {caller for caller in callers(edges, BUILD) if not named_under(caller, BUILD)} == {CHOICE}
-    # The table is built by admission alone, once per admitted document, and read through `oneOf`.
-    assert callers(edges, TABLE[0]) == {"VE.Readings.Wire.admitReadings"}
+    # The table is built by admission alone, once per admitted document, and read through `oneOf`: `admitDecoded`
+    # is S1's admission after decoding, which `admitReadings` runs on the decoded document and, under the unspecified
+    # completion, `admitNDFull` on the filled document (readings-defaults.md 4.1 step 4), each with its own table.
+    assert callers(edges, TABLE[0]) == {"VE.Readings.Wire.admitDecoded"}
+    assert {caller for caller in callers(edges, "VE.Readings.Wire.admitDecoded")
+            if not named_under(caller, "VE.Readings.Wire.admitDecoded")} == \
+        {"VE.Readings.Wire.admitReadings", "VE.Readings.Wire.admitNDFull"}
     assert "VE.Readings.Wire.onesOf" not in edges  # the table as specified
     assert "VE.Readings.Wire.oneOf" in edges
     assert {caller for caller in callers(edges, TABLE[1]) if not named_under(caller, TABLE[1])} == \
         {"VE.Readings.Wire.Admitted.side"}
-    assert callers(edges, FREE) == {"VE.Readings.Wire.frontText", SHARED}
+    # `free D` once more under the unspecified completion: norm-defaults' author checks read it as a UDoc
+    # (`freeU`, readings-defaults.md 4.1 step 3), one document per request, a gap recorded in
+    # docs/readings-defaults/rd2a/DELTA.md beside `sharedEnv`'s.
+    assert callers(edges, FREE) == {"VE.Readings.Wire.frontText", SHARED, "VE.Readings.freeU"}
 
 
 @pytest.mark.parametrize("specified", SPECIFIED)

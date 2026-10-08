@@ -838,9 +838,7 @@ theorem admissionText_of_stage {re : ReadingsEnvironment} {D : Doc}
 /-- Admission as run: `free D` and each candidate validated once, each candidate's document built once and kept in
     the request's table, which the answer reads again. `WellFormedDoc`'s chain checks are `admissionText`'s, so only
     `frameWF` is evaluated after it. -/
-def admitReadings (environment document : Json) : Except String Admitted := do
-  let re ← decodeEnvironment environment
-  let doc ← decodeDocument re document
+def admitDecoded (re : ReadingsEnvironment) (doc : Decoded2) : Except String Admitted :=
   match hf0 : frontText re (docOf re doc) with
   | some e => throw e
   | none =>
@@ -852,9 +850,26 @@ def admitReadings (environment document : Json) : Except String Admitted := do
           (candidateStage_ok hs).2⟩
       else throw "InvalidInput: readings document is not well-formed"
 
+/-- An admitted document is the decoded one it was given (the filled document's admission reads it back). -/
+theorem admitDecoded_ok {re : ReadingsEnvironment} {doc : Decoded2} {a : Admitted} (h : admitDecoded re doc = .ok a) :
+    a.re = re ∧ a.doc = doc := by
+  unfold admitDecoded at h
+  split at h
+  · cases h
+  · split at h
+    · cases h
+    · split at h
+      · cases h; exact ⟨rfl, rfl⟩
+      · cases h
+
+def admitReadings (environment document : Json) : Except String Admitted := do
+  let re ← decodeEnvironment environment
+  let doc ← decodeDocument re document
+  admitDecoded re doc
+
 theorem admitReadings_eq (environment document : Json) :
     admitReadings environment document = admitReadingsSpec environment document := by
-  unfold admitReadings admitReadingsSpec
+  unfold admitReadings admitReadingsSpec admitDecoded
   simp only [bind, Except.bind]
   split
   · rfl

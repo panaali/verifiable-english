@@ -87,12 +87,26 @@ theorem wellFormedU_of_ndDocText {re : ReadingsEnvironment} {U : VE.NormDefaults
     · assumption
     · cases h
 
-/-- 4.1 steps 2 and 3: reserved names, then norm-defaults' author checks and `WellFormedU` on the free document and
-    on each reading's document with content, in admission order, a reading's text suffixed ` under <set>@<v>:<i>`. -/
-def ndText (re : ReadingsEnvironment) (N : NDoc) : Option String :=
+/-- 4.1 steps 2 and 3, each reading's document read from `side` (at run time the request's table, so no reading's
+    document is built again; `one` as specified): reserved names, then norm-defaults' author checks and `WellFormedU`
+    on the free document and on each reading's document with content, in admission order, a reading's text suffixed
+    ` under <set>@<v>:<i>`. -/
+def ndTextWith (re : ReadingsEnvironment) (N : NDoc) (side : String → Nat → RightsDoc × List VE.Formula) :
+    Option String :=
   ((reservedUnsaid N).map (s!"InvalidInput: reserved name {·}")).or <|
   (ndDocText re (freeU N)).or <|
-  firstSome (activeOf N.D) (fun c => (ndDocText re (oneU N c.1.id c.2)).map (· ++ s!" under {c.1.id}@{c.1.version}:{c.2}"))
+  firstSome (activeOf N.D) (fun c =>
+    (ndDocText re (asU N (side c.1.id c.2).1)).map (· ++ s!" under {c.1.id}@{c.1.version}:{c.2}"))
+
+/-- 4.1 steps 2 and 3: reserved names, then norm-defaults' author checks and `WellFormedU` on the free document and
+    on each reading's document with content, in admission order, a reading's text suffixed ` under <set>@<v>:<i>`. -/
+def ndText (re : ReadingsEnvironment) (N : NDoc) : Option String := ndTextWith re N (one N.D)
+
+theorem ndTextWith_eq {re : ReadingsEnvironment} {N : NDoc} {side : String → Nat → RightsDoc × List VE.Formula}
+    (h : ∀ s i, side s i = one N.D s i) : ndTextWith re N side = ndText re N := by
+  have : side = one N.D := funext fun s => funext fun i => h s i
+  subst this
+  rfl
 
 /-- 4.1 step 5 for one choice, after S2a's `choiceChainText (fillDoc N) c`: norm-defaults' author checks on
     `choiceU N c` in `checkAuthorN`'s order, then `WellFormedU`, the text suffixed ` under <choice>` in
@@ -116,6 +130,8 @@ def ndRest (N : NDoc) : Bool :=
 theorem wellFormedND_eq (N : NDoc) : WellFormedND N = (WellFormedDoc N.D && ndRest N) := by
   simp only [WellFormedND, ndRest, Bool.and_assoc]
 
+/-- A passing `ndText` has established every conjunct of `WellFormedND` after S1's but `normsShaped`: admission
+    evaluates each norm-defaults check once. -/
 theorem option_or_none {α : Type} {a b : Option α} (h : a.or b = none) : a = none ∧ b = none := by
   cases a <;> simp_all
 
@@ -123,7 +139,7 @@ theorem option_or_none {α : Type} {a b : Option α} (h : a.or b = none) : a = n
     evaluates each norm-defaults check once. -/
 theorem ndRest_of_ndText {re : ReadingsEnvironment} {N : NDoc} (h : ndText re N = none)
     (hs : normsShaped N.D = true) : ndRest N = true := by
-  unfold ndText at h
+  unfold ndText ndTextWith at h
   obtain ⟨h1, h23⟩ := option_or_none h
   obtain ⟨h2, h3⟩ := option_or_none h23
   have hfree := fillNamesFree_of_reservedUnsaid N (Option.map_eq_none_iff.mp h1)
@@ -144,37 +160,7 @@ structure AdmittedND where
   wfU : WellFormedND N = true
   wfF : WellFormedDoc (fillDoc N) = true
 
-/-- 4.1 after S1's and S2a's admission: `ndText`; then S1's checks of the filled document
-    (`admissionText re (fillDoc N)`), each reading's document built once; then step 5 on the at most 64 compatible
-    choices. -/
-def admitNDOf (b : Admitted2) : Except String AdmittedND :=
-  let re := b.a.re
-  let N : NDoc := ⟨b.D, unspecOf re b.D⟩
-  match hT : ndText re N with
-  | some e => .error e
-  | none =>
-    match hA : admissionText re (fillDoc N) with
-    | some e => .error e
-    | none =>
-      if hF : frameWF (fillDoc N) = true then
-        match choiceStepText re N with
-        | some e => .error e
-        | none =>
-          if hs : normsShaped N.D = true then
-            .ok ⟨b, N, rfl, by rw [wellFormedND_eq, ndRest_of_ndText hT hs, Bool.and_true]; exact b.wf,
-              (wellFormedDoc_of_admissionText re _ hA).trans hF⟩
-          else .error "InvalidInput: norm-defaults document is not well formed"
-      else .error "InvalidInput: readings document is not well-formed"
-
-/-- 4.1: S1's and S2a's admission as today; then, under the completion, `ndText`; then S1's checks of the filled
-    document (`admissionText re (fillDoc N)`), each reading's document built once; then step 5 on the at most 64
-    compatible choices, `choiceChainText (fillDoc N) c` and `ndChoiceText re N c` for each (SR1). -/
-def admitND (environment document : Lean.Json) : Except String AdmittedND := do
-  let b ← admitS2 environment document
-  unless underCompletion b.a.re b.D do throw "UnsupportedProfile: the document is not under the unspecified completion"
-  admitNDOf b
-
-/-! ## The filled document as an admitted S1 document (4.2) -/
+/-! ## The filled document as an admitted S1 document (4.1 step 4, 4.2) -/
 
 /-- `unsaid__p` with `p`'s sorts, for every unspecified `p` (the filled frame's author vocabulary adds them). -/
 def unsaidDecls (N : NDoc) : List (String × List String) :=
@@ -221,29 +207,101 @@ theorem frameOf_filled (re : ReadingsEnvironment) (N : NDoc) (units : List Strin
     simp only [hl, Option.none_or, Option.map_some]
     rfl
 
-/-- The filled document as S1's admitted document: its frame and items are `fillDoc`'s, so every S1 row, pair and
-    situation is read on the filled document. -/
+/-- The filled document as S1's admitted document: its chain, frame and items are `fillDoc`'s (and it has no coupling
+    or narrowing, which S1 does not read), so every S1 row, pair and situation is read on the filled document, from
+    its own request table. -/
 structure FilledAdmitted (r : AdmittedND) where
   a : Admitted
+  chain : a.D.chain = (fillDoc r.N).chain
   frame : a.D.frame = (fillDoc r.N).frame
   items : a.D.items = (fillDoc r.N).items
 
-def filledAdmitted (r : AdmittedND) : Except String (FilledAdmitted r) :=
-  let re := r.b.a.re
-  if hfree : r.N.unspec.all (fun p => VE.Bridge.lookup re.se.ne.rv.vocabulary.predicates
-      (VE.NormDefaults.unsaidName p) == none) = true then
-    if hc : re.chain = r.N.D.chain then
-      let re' := filledEnvironment re r.N
-      let doc' : Decoded2 := ⟨(fillDoc r.N).items, r.b.a.doc.itemsJ, r.b.a.doc.units⟩
-      have hframe : frameOf re' doc'.units = (fillDoc r.N).frame :=
-        frameOf_filled re r.N _ (by rw [r.hN]; exact r.b.frame) hfree
-      have hD : docOf re' doc' = ⟨(fillDoc r.N).chain, (fillDoc r.N).frame, (fillDoc r.N).items, [], []⟩ := by
-        simp only [docOf, hframe]
-        rw [show re'.chain = (fillDoc r.N).chain from hc]
-      .ok ⟨⟨re', doc', by rw [hD, wellFormedDoc_links]; exact r.wfF, onesOf _, rfl⟩,
-        by simp only [Admitted.D, hD], by simp only [Admitted.D, hD]⟩
-    else .error "InvalidInput: readings document is not well-formed"
-  else .error "InvalidInput: norm-defaults document is not well formed"
+/-- An admitted document under the completion with what its run reads: the filled document admitted with its own
+    table (4.1 step 4), and the request's table of the author's document holding each reading's document. -/
+structure AdmittedNDFull where
+  r : AdmittedND
+  fa : FilledAdmitted r
+  side : ∀ s i, r.b.a.side s i = one r.N.D s i
+
+/-- A reading's document reads the chain, frame and items alone. -/
+theorem one_links (D : Doc) (cs : List Coupling) (ns : List Narrowing) (s : String) (i : Nat) :
+    one ⟨D.chain, D.frame, D.items, cs, ns⟩ s i = one D s i := by
+  simp only [one, attached_links]
+  rfl
+
+theorem one_congr {D D' : Doc} (hc : D.chain = D'.chain) (hf : D.frame = D'.frame) (hi : D.items = D'.items)
+    (s : String) (i : Nat) : one D s i = one D' s i := by
+  obtain ⟨c, f, it, cs, ns⟩ := D
+  obtain ⟨c', f', it', cs', ns'⟩ := D'
+  simp only at hc hf hi
+  subst hc hf hi
+  exact (one_links ⟨c, f, it, cs', ns'⟩ cs ns s i)
+
+theorem owned_links (D : Doc) (cs : List Coupling) (ns : List Narrowing) (s : String) (i : Nat) :
+    owned ⟨D.chain, D.frame, D.items, cs, ns⟩ s i = owned D s i := rfl
+
+/-- S1's separation reads the chain, frame and items alone. -/
+theorem separates_links {α : Type u} [DecidableEq α] (D : Doc) (cs : List Coupling) (ns : List Narrowing)
+    (s : String) (i j : Nat) (σ : Situation α) :
+    separates ⟨D.chain, D.frame, D.items, cs, ns⟩ s i j σ = separates D s i j σ := by
+  unfold separates situationWF sideValid sideValue cells assignments tablesFor ownedKeys ownedKeysOf situationWFOf
+  simp only [one_links, owned_links]
+
+/-- 4.1 after S1's and S2a's admission, each reading's document read from the request's table: `ndText` (steps 2
+    and 3); S1's admission of the filled document (step 4: `admissionText`'s checks on `fillDoc N`, staged, its own
+    table built once); step 5 on the at most 64 compatible choices. -/
+def admitNDFull (b : Admitted2) : Except String AdmittedNDFull :=
+  let re := b.a.re
+  let N : NDoc := ⟨b.D, unspecOf re b.D⟩
+  if hsd : b.D.chain = b.a.D.chain ∧ b.D.items = b.a.D.items then
+    have hside : ∀ s i, b.a.side s i = one N.D s i := fun s i => by
+      rw [b.a.side_eq]
+      exact one_congr hsd.1.symm (by rw [b.frame]; rfl) hsd.2.symm s i
+    match hT : ndTextWith re N b.a.side with
+    | some e => .error e
+    | none =>
+      have hT' : ndText re N = none := (ndTextWith_eq hside) ▸ hT
+      if hfree : N.unspec.all (fun p => VE.Bridge.lookup re.se.ne.rv.vocabulary.predicates
+          (VE.NormDefaults.unsaidName p) == none) = true then
+        if hc : re.chain = N.D.chain then
+          let re' := filledEnvironment re N
+          let doc' : Decoded2 := ⟨(fillDoc N).items, b.a.doc.itemsJ, b.a.doc.units⟩
+          have hF : frameOf re' doc'.units = (fillDoc N).frame := frameOf_filled re N _ b.frame hfree
+          have hD : docOf re' doc' = ⟨(fillDoc N).chain, (fillDoc N).frame, (fillDoc N).items, [], []⟩ := by
+            show (⟨re'.chain, frameOf re' doc'.units, doc'.items, [], []⟩ : Doc) = _
+            rw [hF, show re'.chain = (fillDoc N).chain from hc]
+          match ha : admitDecoded re' doc' with
+          | .error e => .error e
+          | .ok a' =>
+            have haD : a'.D = ⟨(fillDoc N).chain, (fillDoc N).frame, (fillDoc N).items, [], []⟩ := by
+              obtain ⟨h1, h2⟩ := admitDecoded_ok ha
+              simp only [Admitted.D, h1, h2, hD]
+            match choiceStepText re N with
+            | some e => .error e
+            | none =>
+              if hs : normsShaped N.D = true then
+                .ok ⟨⟨b, N, rfl, by rw [wellFormedND_eq, ndRest_of_ndText hT' hs, Bool.and_true]; exact b.wf,
+                    by have h : WellFormedDoc a'.D = true := a'.wf
+                       rw [haD, wellFormedDoc_links] at h
+                       exact h⟩,
+                  ⟨a', by simp only [haD], by simp only [haD], by simp only [haD]⟩, hside⟩
+              else .error "InvalidInput: norm-defaults document is not well formed"
+        else .error "InvalidInput: readings document is not well-formed"
+      else .error "InvalidInput: norm-defaults document is not well formed"
+  else .error "InvalidInput: readings document is not well-formed"
+
+/-- 4.1: S1's and S2a's admission as today; then, under the completion, `ndText`; then S1's checks of the filled
+    document (`admissionText re (fillDoc N)`), each reading's document built once; then step 5 on the at most 64
+    compatible choices, `choiceChainText (fillDoc N) c` and `ndChoiceText re N c` for each (SR1). -/
+def admitNDOf (b : Admitted2) : Except String AdmittedND := (admitNDFull b).map (·.r)
+
+/-- The case's admission under the completion, with what its run reads. -/
+def admitNDFullJ (environment document : Lean.Json) : Except String AdmittedNDFull := do
+  let b ← admitS2 environment document
+  unless underCompletion b.a.re b.D do throw "UnsupportedProfile: the document is not under the unspecified completion"
+  admitNDFull b
+
+def admitND (environment document : Lean.Json) : Except String AdmittedND := (admitNDFullJ environment document).map (·.r)
 
 theorem candidate_filled {r : AdmittedND} (fa : FilledAdmitted r) (s : String) (i : Nat) :
     candidate fa.a.D s i = candidate (fillDoc r.N) s i := by
@@ -251,6 +309,24 @@ theorem candidate_filled {r : AdmittedND} (fa : FilledAdmitted r) (s : String) (
 
 theorem authorEnv_filled {r : AdmittedND} (fa : FilledAdmitted r) : authorEnv fa.a.D = authorEnv (fillDoc r.N) := by
   simp only [authorEnv, fa.frame]
+
+/-- The filled document's admitted form separates as `fillDoc` does: the answer's `separated` is the hypothesis of
+    `readings_wire_nd_separate_sound`. -/
+theorem separates_filled {r : AdmittedND} (fa : FilledAdmitted r) {α : Type u} [DecidableEq α] (s : String) (i j : Nat)
+    (σ : Situation α) : separates fa.a.D s i j σ = separates (fillDoc r.N) s i j σ := by
+  have h : fa.a.D = ⟨(fillDoc r.N).chain, (fillDoc r.N).frame, (fillDoc r.N).items, [], []⟩ := by
+    rw [← fa.chain, ← fa.frame, ← fa.items]
+    rfl
+  rw [h, separates_links]
+
+/-- The witness's `Fill_T` on a base, its document read from the request's table (`fillHolds` as run). -/
+def fillHoldsOf {α : Type u} [DecidableEq α] (N : NDoc) (X : RightsDoc) (M : VE.FiniteModel α) : Bool :=
+  (VE.NormDefaults.fillPremises (asU N X)).all (fun φ => φ.eval M [])
+
+theorem fillHoldsOf_eq (f : AdmittedNDFull) {α : Type u} [DecidableEq α] (s : String) (i : Nat)
+    (M : VE.FiniteModel α) : fillHoldsOf f.r.N (f.r.b.a.side s i).1 M = fillHolds f.r.N s i M := by
+  rw [f.side]
+  rfl
 
 /-! ## Separation (4.2) -/
 
@@ -287,9 +363,8 @@ def replayPairU (r : AdmittedND) (fa : FilledAdmitted r) (s sid other : String) 
 /-- The `readings-separate` input under the completion: environment, document, set, situation id and the other
     reading. -/
 def replaySeparateU (j : Lean.Json) : Except String SeparateReplayU := do
-  let r ← admitND (← j.getObjVal? "environment") (← j.getObjVal? "document")
-  let fa ← filledAdmitted r
-  replayPairU r fa (← stringField j "set") (← stringField j "situation") (← stringField j "other")
+  let f ← admitNDFullJ (← j.getObjVal? "environment") (← j.getObjVal? "document")
+  replayPairU f.r f.fa (← stringField j "set") (← stringField j "situation") (← stringField j "other")
 
 theorem readings_wire_nd_separate_sound (j : Lean.Json) (x : SeparateReplayU) (h : replaySeparateU j = .ok x)
     (hs : separates (fillDoc x.r.N) x.set x.witness x.other x.σ = true)
@@ -304,10 +379,11 @@ theorem readings_wire_nd_separate_sound (j : Lean.Json) (x : SeparateReplayU) (h
 
 def encF (a : VE.Formula) : Json := VE.Route.Wire.encodeFormula a
 
-/-- Per reading with content, in admission order: its `Fill_T` with the labels `unsaid:pair:<r>,<m>`. -/
-def fillPremisesJson (N : NDoc) : Json :=
+/-- Per reading with content, in admission order: its `Fill_T` with the labels `unsaid:pair:<r>,<m>`, its document
+    read from `side` (the request's table). -/
+def fillPremisesJson (N : NDoc) (side : String → Nat → RightsDoc × List VE.Formula) : Json :=
   Json.arr ((activeOf N.D).map (fun c => Json.mkObj [("set", .str c.1.id), ("index", toJson c.2),
-    ("premises", Json.arr ((VE.NormDefaults.Admission.fillLabelled (oneU N c.1.id c.2)).map (fun (l, a) =>
+    ("premises", Json.arr ((VE.NormDefaults.Admission.fillLabelled (asU N (side c.1.id c.2).1)).map (fun (l, a) =>
       Json.mkObj [("label", .str l), ("ast", encF a)])).toArray)])).toArray
 
 /-- The units of `fillDoc N` in source order: each fixed unit's filled content (the `F_p` units last), each reading's
@@ -321,9 +397,11 @@ def filledUnitsJson (N : NDoc) : List Json :=
           ("version", toJson R.version), ("index", toJson i), ("content", contentJson c)])))
 
 /-- `filled`: the lower environment with each `unspecified` read as `deny`, `norm-defaults@0` removed and every
-    `unsaid__p` added (10a's `withUnsaid`), and the filled units. Python's search and English read it. -/
+    `unsaid__p` added (10a's `withUnsaid`, which reads only the frame's regulated predicates), and the filled units.
+    Python's search and English read it. -/
 def filledJson (r : AdmittedND) : Except String Json := do
-  let env ← VE.NormDefaults.Wire.withUnsaid (freeU r.N) (← VE.NormDefaults.Wire.placeholderJson r.b.a.re.lowerJson)
+  let env ← VE.NormDefaults.Wire.withUnsaid (asU r.N r.N.D.frame)
+    (← VE.NormDefaults.Wire.placeholderJson r.b.a.re.lowerJson)
   pure (Json.mkObj [("environment", env), ("units", Json.arr (filledUnitsJson r.N).toArray)])
 
 /-! ## Each choice (4.3) -/
