@@ -486,3 +486,18 @@ def test_admission_with_soft_units_and_regenerated_leaves(lean):
     assert [a["label"] for a in rows[0]["report"]["assumptions"]] == ["soft:coherence:a,b"]
     assert rows[1]["status"] == "ok" and rows[1]["conditional_on"] == []
     assert rows[2]["status"] == "error" and rows[3]["status"] == "error"
+
+
+def test_constant_wording_is_display_metadata_on_the_soft_route(lean):
+    """A constant's `verbalisation` is display metadata that Python's `Environment` admits (DF-19); the soft
+    route reads it as such, so the frozen readability items R29 and R30 get Lean answers (English E2.6)."""
+    environment_json = env(ranks(["a", "b"]))
+    environment_json["vocabulary"]["constants"] = {
+        "alice": {"sort": "user", "description": "a user", "verbalisation": "Alice"}}
+    from ve.softnorms import SoftEnvironment
+    SoftEnvironment(environment_json)
+    elaborate(lean, environment_json, [should("a", "x_required", True)])
+    environment_json["vocabulary"]["constants"]["alice"]["verbalisation"] = ""
+    row = run(lean, [{"id": "e", "kind": "soft-elaborate", "environment": environment_json,
+                      "norms": [should("a", "x_required", True)]}])[0]
+    assert row["status"] == "error", row
