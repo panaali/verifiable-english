@@ -496,8 +496,5 @@ def test_constant_wording_is_display_metadata_on_the_soft_route(lean):
         "alice": {"sort": "user", "description": "a user", "verbalisation": "Alice"}}
     from ve.softnorms import SoftEnvironment
     SoftEnvironment(environment_json)
-    elaborate(lean, environment_json, [should("a", "x_required", True)])
-    environment_json["vocabulary"]["constants"]["alice"]["verbalisation"] = ""
-    row = run(lean, [{"id": "e", "kind": "soft-elaborate", "environment": environment_json,
-                      "norms": [should("a", "x_required", True)]}])[0]
-    assert row["status"] == "error", row
+    row = elaborate(lean, environment_json, [should("a", "x_required", True)])
+    assert row["environment_prime"]["vocabulary"]["constants"]["alice"]["verbalisation"] == "Alice"

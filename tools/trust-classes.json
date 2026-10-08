@@ -3627,6 +3627,9 @@
   },
   "VE/EnglishGrammar/Run.lean": {
    "G[V]": [
+    "VE.EnglishGrammar.Run.generatedFrame",
+    "VE.EnglishGrammar.Run.generatedView",
+    "VE.EnglishGrammar.Run.optionalFields",
     "VE.EnglishGrammar.Run.Case",
     "VE.EnglishGrammar.Run.authoring",
     "VE.EnglishGrammar.Run.blockRouteView",
@@ -3673,6 +3676,7 @@
     "VE.EnglishGrammar.Run.validateDeclarations"
    ],
    "G[R]": [
+    "VE.EnglishGrammar.Run.noReadingFields",
     "VE.EnglishGrammar.Run.between",
     "VE.EnglishGrammar.Run.everyCannotParts",
     "VE.EnglishGrammar.Run.faultName",
@@ -3745,6 +3749,16 @@
     "VE.Grammar.Rule",
     "VE.Grammar.Rule.wf",
     "VE.Grammar.Sym"
+   ]
+  },
+  "VE/Grammar/Expect.lean": {
+   "G[R]": [
+    "VE.Grammar.Column",
+    "VE.Grammar.Column.add",
+    "VE.Grammar.EarleyItem",
+    "VE.Grammar.EarleyItem.next",
+    "VE.Grammar.byLhs",
+    "VE.Grammar.viable"
    ]
   },
   "VE/Grammar/Derives.lean": {
@@ -9536,6 +9550,27 @@
     "ResponseShape.Schemas.EnglishLean.grammarFile",
     "ResponseShape.Schemas.EnglishLean.readFile",
     "ResponseShape.Schemas.EnglishLean.row"
+   ]
+  },
+  "VE/EnglishGrammar/Diagnose.lean": {
+   "G[R]": [
+    "VE.EnglishGrammar.Diagnosis",
+    "VE.EnglishGrammar.LexAct.predicate?",
+    "VE.EnglishGrammar.Terminal.piece?",
+    "VE.EnglishGrammar.clauseHeads",
+    "VE.EnglishGrammar.diagnose",
+    "VE.EnglishGrammar.editDistance",
+    "VE.EnglishGrammar.joinPieces",
+    "VE.EnglishGrammar.lastWord",
+    "VE.EnglishGrammar.lexicalText",
+    "VE.EnglishGrammar.nearestWordings",
+    "VE.EnglishGrammar.orList",
+    "VE.EnglishGrammar.phraseBoundaries",
+    "VE.EnglishGrammar.phraseEnd",
+    "VE.EnglishGrammar.quoteText",
+    "VE.EnglishGrammar.runOf",
+    "VE.EnglishGrammar.tokWord?",
+    "VE.EnglishGrammar.wordsRead"
    ]
   },
   "VE/EnglishGrammar/Advice.lean": {
