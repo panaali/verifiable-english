@@ -100,9 +100,11 @@ def inputs():
     }
 
 
-# Operations whose verdict path runs Rust under the Lean authority (evaluation is Lean's metered
-# evaluator's since lean-first batch 15b).
-RUST = ("countermodel_check", "countermodel_search", "distinguishing_model")
+# Operations whose verdict path runs Rust under the Lean authority: search only (lean-first batch 15b;
+# evaluation and the countermodel check report Lean's metered evaluator).
+RUST = ("countermodel_search", "distinguishing_model")
+# Operations that report evaluation values and counts: Lean's alone under the Lean authority.
+LEAN_EVALUATION = ("evaluate", "countermodel_check")
 # Operations Lean alone answers under the Lean authority (search publishes
 # its witness through the Lean countermodel check).
 LEAN = (
@@ -188,6 +190,15 @@ def test_rust_faults_fail_closed_in_every_adapter(monkeypatch, tmp_path, calls, 
     with pytest.raises(CheckerUnavailable) as caught:
         calls[op]()
     assert not isinstance(caught.value, VEError)
+
+
+@pytest.mark.parametrize("fault", ["missing", "unlisted", "crash", "hang"])
+@pytest.mark.parametrize("op", LEAN_EVALUATION)
+def test_rust_faults_leave_lean_evaluation_answering(monkeypatch, tmp_path, calls, op, fault):
+    """Rust's evaluator is not on these paths (review B3): a broken Rust changes nothing."""
+    expected = calls[op]()
+    rust_fault(monkeypatch, tmp_path, fault)
+    assert calls[op]() == expected
 
 
 @pytest.mark.parametrize("op", LEAN)

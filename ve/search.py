@@ -90,19 +90,26 @@ class CountermodelCheck:
     conclusion_meaning_id: str
 
 
-def _check_countermodel_values(premises: tuple[Any, ...], conclusion: Any,
-                               model: FiniteModel, maximum: int):
+def _check_countermodel_values(premises: tuple[Any, ...], conclusion: Any, model: FiniteModel,
+                               maximum: int, evaluate=None):
+    """The countermodel check's one sequencing (shared budget, premises in order, stop at the first
+    false one, then the conclusion), over `evaluate(formula, budget) -> EvaluationResult`: Python's
+    evaluator by default, or Lean's metered one under the `lean` authority (so no reported value or
+    count is Rust's there)."""
+    if evaluate is None:
+        def evaluate(formula, budget):
+            return _evaluate_validated((formula,), model, max_evaluations=budget)
     values: list[bool] = []
     work = 0
     for formula in premises:
-        result = _evaluate_validated((formula,), model, max_evaluations=maximum - work)
+        result = evaluate(formula, maximum - work)
         work += result.evaluations
         if result.status == "ResourceLimit":
             return False, tuple(values), None, work, "ResourceLimit"
         values.append(bool(result.value))
         if not result.value:
             return False, tuple(values), None, work, "NotCountermodel"
-    result = _evaluate_validated((conclusion,), model, max_evaluations=maximum - work)
+    result = evaluate(conclusion, maximum - work)
     work += result.evaluations
     if result.status == "ResourceLimit":
         return False, tuple(values), None, work, "ResourceLimit"
@@ -135,13 +142,16 @@ def check_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, model
             "premises": [_to_data(f) for f in premises], "conclusion": _to_data(conclusion),
             "model": model.to_dict(), "max_evaluations": max_evaluations}
 
-    def python():
+    def checked(evaluate=None):
         valid, values, conclusion_value, work, status = _check_countermodel_values(
-            premises, conclusion, model, max_evaluations)
+            premises, conclusion, model, max_evaluations, evaluate)
         return CountermodelCheck(valid, values, conclusion_value, work, env.environment_id,
                                  model.model_id, status,
                                  tuple(meaning_id(env, x) for x in premises),
                                  meaning_id(env, conclusion))
+
+    def python():
+        return checked()
 
     def rust():
         row = rust_run(case)
@@ -163,13 +173,20 @@ def check_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, model
                                  tuple(meaning_id(env, f) for f in premises), meaning_id(env, conclusion))
 
     def lean():
-        result = rust()
+        # Values, counts and status from Lean's metered evaluator (rule 3: nothing Rust's evaluator
+        # computes is reported under the Lean authority), its verdict confirmed by Lean's route.
+        from .evaluate import _evaluate_lean
+        result = checked(lambda formula, budget: _evaluate_lean(env, {
+            "id": "countermodel", "kind": "evaluate-budgeted", "model": model.to_dict(),
+            "ast": [_to_data(formula)], "max_evaluations": budget, "max_trace_nodes": min(budget, 10_000),
+            "trace": False}))
         if result.status == "ResourceLimit":
             return result
         request = {**case, "kind": "countermodel", "environment": cached_route_environment(env)}
         row = decide(lean_mode(env), [request])[0]
         if row["refutes"] != result.valid:
-            raise CheckerUnavailable("CheckerUnavailable: Lean and Rust countermodel checks disagree")
+            raise CheckerUnavailable("CheckerUnavailable: Lean's countermodel route and its metered "
+                                     "evaluator disagree")
         return result
 
     return execute("countermodel_check", case, python, lean=lean, rust=rust)
