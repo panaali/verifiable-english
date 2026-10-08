@@ -7,7 +7,7 @@ import subprocess
 
 import pytest
 
-from subprocesses import HANG_TIMEOUT
+from tests.subprocesses import HANG_TIMEOUT
 from tests.probe_matrix import model_wire, raw_environment
 from ve import Environment, FiniteModel
 from ve.ast import (And, Atom, Binary, Body, Bottom, Const, Document, Eq, Exists,
