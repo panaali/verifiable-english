@@ -222,21 +222,24 @@ universe u
 
 /-- A finite base model with a separate filling: the base background, `Fill_T`, and each premise read through the
     outcome substitution of `fill U`; the second component is the conclusion's value. -/
-def modelCheckU {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (F : FiniteFill U α)
-    (Γ : List VE.Formula) (φ : VE.Formula) : Bool × Bool :=
-  (backgroundValid U.D M && fillValid U M F &&
-     Γ.all (fun a => (subst (fill U).T (size (fill U)) a).eval (M.withFill F) []),
-   (subst (fill U).T (size (fill U)) φ).eval (M.withFill F) [])
+def modelCheckU {α : Type u} [DecidableEq α] (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel α)
+    (F : VE.NormDefaults.FiniteFill U α) (Γ : List VE.Formula) (φ : VE.Formula) : Bool × Bool :=
+  (VE.Norms.backgroundValid U.D M && VE.NormDefaults.fillValid U M F &&
+     Γ.all (fun a => (VE.Norms.subst (VE.NormDefaults.fill U).T (size (VE.NormDefaults.fill U)) a).eval (M.withFill F) []),
+   (VE.Norms.subst (VE.NormDefaults.fill U).T (size (VE.NormDefaults.fill U)) φ).eval (M.withFill F) [])
 
 /-- A passing model check is an admissible filled situation where every premise holds, and the conclusion's value
     is the one the check reports (the core `choice-model` replays under the completion). -/
-theorem modelCheckU_sound {α : Type u} [DecidableEq α] (U : UDoc) (h : WellFormedU U = true)
-    (M : VE.FiniteModel α) (valid : M.Valid (envAt U.D 0)) (F : FiniteFill U α) (Γ : List VE.Formula)
-    (φ : VE.Formula) (hm : (modelCheckU U M F Γ φ).1 = true) :
-    BaseAdmissibleU U (withFill U M.asStructure (finFill M F)) ∧
-    (∀ a ∈ Γ, (subst (fill U).T (size (fill U)) a).denote (withFill U M.asStructure (finFill M F)) []) ∧
-    ((subst (fill U).T (size (fill U)) φ).denote (withFill U M.asStructure (finFill M F)) [] ↔
-      (modelCheckU U M F Γ φ).2 = true) := by
+theorem modelCheckU_sound {α : Type u} [DecidableEq α] (U : VE.NormDefaults.UDoc)
+    (h : VE.NormDefaults.WellFormedU U = true) (M : VE.FiniteModel α) (valid : M.Valid (envAt U.D 0))
+    (F : VE.NormDefaults.FiniteFill U α) (Γ : List VE.Formula) (φ : VE.Formula)
+    (hm : (modelCheckU U M F Γ φ).1 = true) :
+  VE.NormDefaults.BaseAdmissibleU U (VE.NormDefaults.withFill U M.asStructure (VE.NormDefaults.finFill M F)) ∧
+  (∀ a ∈ Γ, (VE.Norms.subst (VE.NormDefaults.fill U).T (size (VE.NormDefaults.fill U)) a).denote
+      (VE.NormDefaults.withFill U M.asStructure (VE.NormDefaults.finFill M F)) []) ∧
+  ((VE.Norms.subst (VE.NormDefaults.fill U).T (size (VE.NormDefaults.fill U)) φ).denote
+      (VE.NormDefaults.withFill U M.asStructure (VE.NormDefaults.finFill M F)) [] ↔
+    (modelCheckU U M F Γ φ).2 = true) := by
   simp only [modelCheckU, Bool.and_eq_true, List.all_eq_true] at hm
   obtain ⟨⟨hb, hF⟩, hΓ⟩ := hm
   exact ⟨admissible_of_fillValid U h M valid hb F hF,
