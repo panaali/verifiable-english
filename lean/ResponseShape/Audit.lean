@@ -199,6 +199,10 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.ReadingsRoute.elaborateFields_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.elaborateND_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.elaborateNDFilled_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.result_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.line_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.perChoiceJson_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.deadNote_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.verdictsAnswer_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.verdicts_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.fillPremises_fits

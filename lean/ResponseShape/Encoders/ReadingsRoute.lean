@@ -240,12 +240,40 @@ theorem runS2_fits (lower : List String → Json → Json) (id kind : String) (b
     | (intro v hv; fits_from dead_fits _ _ _ v hv)
     | (intro v hv; fits_from choice_fits _ _ _ _ v hv)
 
+theorem result_fits (question : String) (D : Doc) (A : Choice) (assumed : Option Choice)
+    (infos : Option (List RowInfo)) (over : List RowInfo) (dead : List Json) :
+    Fits req (skel% "readings-route.json#/$defs/verdicts_result") (resultOf question D A assumed infos over dead) := by
+  unfold resultOf conflictResult premisesResult entailmentResult overBudgetFields overBudgetRest
+  cases assumed <;> simp only [assumedFields] <;> (repeat' split) <;>
+    (try simp only [List.cons_append, List.nil_append, List.append_nil, List.append_assoc]) <;> fits
+
+theorem line_fits (l : Line) : Fits req (skel% "readings-route.json#/$defs/verdicts_line") l.json := by
+  unfold Line.json
+  fits
+
+theorem perChoiceJson_fits (question : String) (i : RowInfo) :
+    Fits req (skel% "readings-route.json#/$defs/verdicts_row") (perChoiceJson question i) := by
+  unfold perChoiceJson
+  (repeat' split) <;> simp only [List.cons_append, List.nil_append, List.append_nil] <;> fits
+
+theorem deadNote_fits (D : Doc) (infos : List RowInfo) (dead : List Json) :
+    ∀ x ∈ (deadOf D infos dead).2, Fits req (skel% "readings-route.json#/$defs/verdicts_dead") x := by
+  intro x hx
+  simp only [deadOf, List.mem_map] at hx
+  obtain ⟨d, _, rfl⟩ := hx
+  split <;> fits
+
 theorem verdictsAnswer_fits (id question : String) (nd : Bool) (D : Doc) (A : Choice)
-    (named : List (String × Json)) (infos : Option (List RowInfo)) (over : List RowInfo) (dead : List Json) :
-    Fits req (skel% "readings-route.json#/$defs/verdicts") (verdictsAnswer id question nd D A named infos over dead) := by
-  unfold verdictsAnswer
+    (assumed : Option Choice) (infos : Option (List RowInfo)) (over : List RowInfo) (dead : List Json) :
+    Fits req (skel% "readings-route.json#/$defs/verdicts") (verdictsAnswer id question nd D A assumed infos over dead) := by
+  unfold verdictsAnswer deadReadingsJson untakenJson
   simp only [okWith, VE.Route.Wire.ok]
   fits
+  all_goals first
+    | apply result_fits
+    | apply perChoiceJson_fits
+    | apply line_fits
+    | (apply deadNote_fits; assumption)
 
 theorem verdicts_fits (lower : List String → Json → Json) (id : String) (b : Wire.Admitted2) (j : Json) :
     OkFits req (skel% "readings-route.json#/$defs/verdicts") (runVerdicts lower id b j) := by

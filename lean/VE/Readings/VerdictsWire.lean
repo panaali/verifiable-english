@@ -864,9 +864,12 @@ def word : ChoiceResult → String
 /-- The first occurrence of each label, in order. -/
 def dedupStrings (l : List String) : List String := l.foldl (fun acc x => if acc.contains x then acc else acc ++ [x]) []
 
-def overBudgetFields (D : Doc) : List (String × Json) :=
-  [("status", .str "UNKNOWN"), ("route", .str "enumerated"), ("budget", Json.mkObj [("max_choices", toJson maxChoices)]),
+/-- W2's budget shape past 64 compatible choices, after its status. -/
+def overBudgetRest (D : Doc) : List (String × Json) :=
+  [("route", .str "enumerated"), ("budget", Json.mkObj [("max_choices", toJson maxChoices)]),
    ("units", toJson (D.sets.map (·.unit)))]
+
+def overBudgetFields (D : Doc) : List (String × Json) := ("status", .str "UNKNOWN") :: overBudgetRest D
 
 def statusesJson (infos : List RowInfo) (f : RowInfo → ChoiceResult) : Json :=
   Json.arr (infos.map (fun i => Json.mkObj [("choice", choiceJson i.choice), ("status", .str (word (f i)))])).toArray
@@ -939,6 +942,11 @@ def premisesResult (D : Doc) (infos : List RowInfo) (dead : Option (List (String
             if taking.isEmpty then [("status", .str "UNKNOWN"), ("reason", .str (untakenText D [(R.id, i)]))]
             else [("status", .str (word (foldPremises (taking.map (fun t => (t.choice, t.premise))))))]))).toArray)])
 
+/-- The `assumed` member a result keeps when the request named readings (composition-s2 review A of looprecheck1). -/
+def assumedFields : Option Choice → List (String × Json)
+  | some A => [("assumed", choiceJson A)]
+  | none => []
+
 def proofJson (i : RowInfo) : Json :=
   Json.mkObj [("choice", choiceJson i.choice), ("outcome", .str "proof"), ("conditional_on", toJson (i.on "certificate"))]
 def counterJson (i : RowInfo) : Json :=
@@ -946,11 +954,12 @@ def counterJson (i : RowInfo) : Json :=
 
 /-- The query's answer (4.4): the gate of 14.8, then `foldEntailment`, naming what an UNKNOWN rests on
     (`reasonOf`). -/
-def entailmentResult (D : Doc) (A : Choice) (named : List (String × Json)) (infos : List RowInfo) : Json :=
+def entailmentResult (D : Doc) (A : Choice) (assumed : Option Choice) (infos : List RowInfo) : Json :=
   let cs := infos.map (fun i => (i.choice, i.conflict))
   let rs := infos.map (fun i => (i.choice, i.query))
   let rest := restrictionsFor D A
   let route : String × Json := ("route", .str "enumerated")
+  let named := assumedFields assumed
   match reasonOf cs rs with
   | some (.conflictStatus s c) => Json.mkObj ([("verdict", .str "UNKNOWN"), route,
       ("status", .str s!"UNKNOWN (conflict status: {word s})"), ("conflict_status", .str (word s)),
@@ -987,57 +996,73 @@ def findingSets (nd : Bool) (D : Doc) : List String :=
   | some (sets, _) => sets.splitOn ", "
   | none => []
 
-/-- The values of a case whose rows are `infos` (none beyond 64 choices: W2's budget shape, and for a query the
-    first checked countermodel among the evidence, `UNKNOWN (not ALL: countermodel under <choice>)`): the result,
-    the per-choice rows, the labels E3 cites, the dead readings, the untaken candidates and the dead evidence. -/
-def verdictsValues (question : String) (nd : Bool) (D : Doc) (A : Choice) (named : List (String × Json))
-    (infos : Option (List RowInfo)) (over : List RowInfo) (dead : List Json) : Json × Json × Json × Json × Json × Json :=
-  match infos with
-  | none =>
-    let result := match question with
-      | "conflict" => Json.mkObj (overBudgetFields D ++ [("status_text", .str "UNKNOWN: more than 64 compatible readings")])
-      | "premises" => Json.mkObj (overBudgetFields D)
-      | _ => match over.find? (·.query == .refuted) with
-        | some i => Json.mkObj ([("verdict", .str "UNKNOWN")] ++ overBudgetFields D ++
-            [("status", .str s!"UNKNOWN (not ALL: countermodel under {choiceText D i.choice})"),
-             ("countermodel", counterJson i)] ++ named)
-        | none => Json.mkObj ([("verdict", .str "UNKNOWN")] ++ overBudgetFields D ++ named)
-    (result, Json.arr (over.map (perChoiceJson question)).toArray, Json.arr #[], .null, Json.arr #[], Json.arr #[])
-  | some infos =>
-    let result := match question with
-      | "conflict" => conflictResult D A infos
-      | "premises" => premisesResult D infos (deadOf D infos dead).1
-      | _ => entailmentResult D A named infos
-    let labels := if result.getObjValD "verdict" == .str "NONE" then Json.arr #[]
-      else match (if nd then result.getObjValD "conditional_on" else result.getObjValD "reading_premises_used") with
-        | .null => Json.arr #[]
-        | l => l
-    let (d, notes) := deadOf D infos dead
-    let premises := question == "premises"
-    (result, Json.arr (infos.map (perChoiceJson question)).toArray, labels,
-     if premises then (match d with
-       | some l => Json.arr (l.map (fun (s, i) => Json.mkObj [("set", .str s), ("index", toJson i),
-           ("finding", .str s!"DeadReading: {s}:{i}")])).toArray
-       | none => .null) else .null,
-     if premises then Json.arr ((untakenOf D infos).map (fun (s, i) => Json.arr #[.str s, toJson i])).toArray
-     else Json.arr #[],
-     if premises then Json.arr notes.toArray else Json.arr #[])
-
-/-- The answer: its fields, then the English plan Lean makes of them (`englishPlan`). -/
-def verdictsAnswer (id question : String) (nd : Bool) (D : Doc) (A : Choice) (named : List (String × Json))
+/-- The question's result (none beyond 64 choices: W2's budget shape, and for a query the first checked
+    countermodel among the evidence, `UNKNOWN (not ALL: countermodel under <choice>)`). -/
+def resultOf (question : String) (D : Doc) (A : Choice) (assumed : Option Choice)
     (infos : Option (List RowInfo)) (over : List RowInfo) (dead : List Json) : Json :=
-  let (result, perChoiceV, labels, deadReadings, untaken, deadNotes) :=
-    verdictsValues question nd D A named infos over dead
+  let named := assumedFields assumed
+  match infos with
+  | none => match question with
+    | "conflict" => Json.mkObj (overBudgetFields D ++ [("status_text", .str "UNKNOWN: more than 64 compatible readings")])
+    | "premises" => Json.mkObj (overBudgetFields D)
+    | _ => match over.find? (·.query == .refuted) with
+      | some i => Json.mkObj ([("verdict", .str "UNKNOWN"),
+          ("status", .str s!"UNKNOWN (not ALL: countermodel under {choiceText D i.choice})")] ++ overBudgetRest D ++
+          [("countermodel", counterJson i)] ++ named)
+      | none => Json.mkObj ([("verdict", .str "UNKNOWN")] ++ overBudgetFields D ++ named)
+  | some infos => match question with
+    | "conflict" => conflictResult D A infos
+    | "premises" => premisesResult D infos (deadOf D infos dead).1
+    | _ => entailmentResult D A assumed infos
+
+/-- The labels E3 cites (2.3 item 1): under the completion the labels the answer uses (`conditional_on`: the
+    `Fill_T` labels its certificates use, then the restrictions), on the lower route the restrictions; only for a
+    CONFLICT-FREE conflict answer and an ALL (NONE cites its restrictions from the result). -/
+def labelsOf (question : String) (nd : Bool) (D : Doc) (A : Choice) (infos : Option (List RowInfo)) : List String :=
+  match infos with
+  | none => []
+  | some infos =>
+    let cs := infos.map (fun i => (i.choice, i.conflict))
+    let rs := infos.map (fun i => (i.choice, i.query))
+    let rest := restrictionsFor D A
+    if question == "conflict" then
+      if foldConflict cs == .free then (if nd then dedupStrings (infos.flatMap (·.on "conflict") ++ rest) else rest)
+      else []
+    else if question == "query" && reasonOf cs rs == none && foldEntailment cs rs == .all then
+      (if nd then dedupStrings (infos.flatMap (·.on "certificate") ++ rest) else rest)
+    else []
+
+def deadReadingsJson (d : Option (List (String × Nat))) : Json :=
+  match d with
+  | some l => Json.arr (l.map (fun (s, i) => Json.mkObj [("set", .str s), ("index", toJson i),
+      ("finding", .str s!"DeadReading: {s}:{i}")])).toArray
+  | none => .null
+
+def untakenJson (l : List (String × Nat)) : Json := Json.arr (l.map (fun (s, i) => Json.arr #[.str s, toJson i])).toArray
+
+/-- The answer: the question's result, its rows, the labels E3 cites, the dead readings, the untaken candidates and
+    the dead evidence (the premises question's), then the English plan Lean makes of them (`englishPlan`). -/
+def verdictsAnswer (id question : String) (nd : Bool) (D : Doc) (A : Choice) (assumed : Option Choice)
+    (infos : Option (List RowInfo)) (over : List RowInfo) (dead : List Json) : Json :=
+  let rows := (infos.getD over).map (perChoiceJson question)
+  let premises := question == "premises" && infos.isSome
+  let d := deadOf D (infos.getD []) dead
   let fs : List (String × Json) := [("route", .str "enumerated"), ("question", .str question),
     ("finding_sets", toJson (findingSets nd D)),
     ("restrictions", toJson (match infos with | some _ => restrictionsFor D A | none => [])),
-    ("result", result), ("per_choice", perChoiceV), ("labels", labels), ("dead_readings", deadReadings),
-    ("untaken", untaken), ("dead", deadNotes)]
+    ("result", resultOf question D A assumed infos over dead), ("per_choice", Json.arr rows.toArray),
+    ("labels", toJson (labelsOf question nd D A infos)),
+    ("dead_readings", if premises then deadReadingsJson d.1 else .null),
+    ("untaken", untakenJson (if premises then untakenOf D (infos.getD []) else [])),
+    ("dead", Json.arr (if premises then d.2 else []).toArray)]
   okWith id [("route", .str "enumerated"), ("question", .str question),
     ("finding_sets", toJson (findingSets nd D)),
     ("restrictions", toJson (match infos with | some _ => restrictionsFor D A | none => [])),
-    ("result", result), ("per_choice", perChoiceV), ("labels", labels), ("dead_readings", deadReadings),
-    ("untaken", untaken), ("dead", deadNotes),
+    ("result", resultOf question D A assumed infos over dead), ("per_choice", Json.arr rows.toArray),
+    ("labels", toJson (labelsOf question nd D A infos)),
+    ("dead_readings", if premises then deadReadingsJson d.1 else .null),
+    ("untaken", untakenJson (if premises then untakenOf D (infos.getD []) else [])),
+    ("dead", Json.arr (if premises then d.2 else []).toArray),
     ("english", Json.arr ((englishPlan D .enumerated question (Json.mkObj fs)).map Line.json).toArray)]
 
 theorem map_row_choice (l : List Choice) (row : Choice → RowInfo) (h : ∀ c, (row c).choice = c) :
@@ -1057,9 +1082,9 @@ def runVerdicts (lower : List String → Json → Json) (id : String) (b : Admit
   unless routeOf ndProfile b.D == .enumerated do
     throw "UnsupportedProfile: readings-verdicts answers the enumerated route; use the superposed kinds"
   let A ← decodeChoice (j.getObjValD "assumed")
-  let named : List (String × Json) := match j.getObjVal? "assumed" with
-    | .ok v => if v == .null then [] else [("assumed", choiceJson A)]
-    | .error _ => []
+  let named : Option Choice := match j.getObjVal? "assumed" with
+    | .ok v => if v == .null then none else some A
+    | .error _ => none
   let evidence := evidenceList j
   let dead := match j.getObjValD "dead" with | .arr xs => xs.toList | _ => []
   let premisesJ := match j.getObjValD "premises" with | .null => Json.arr #[] | p => p

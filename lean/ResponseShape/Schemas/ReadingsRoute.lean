@@ -319,9 +319,69 @@ def choice_answer : Shape :=
         ("conflict_free", .type ["boolean"]),
         ("accepted", .type ["boolean"])]]
 
+def verdicts_result : Shape :=
+  c "Readings.Run.resultOf: the question's result in the form the report gives it (conflictResult, premisesResult, entailmentResult, or W2's budget shape); the caller relays it." [
+    obj,
+    .required ["route"],
+    closed [
+      ("status", c "relayed as Lean gives it" []),
+      ("route", constS "enumerated"),
+      ("conditional_on", c "relayed as Lean gives it" []),
+      ("restrictions", c "relayed as Lean gives it" []),
+      ("reading_premises_used", c "relayed as Lean gives it" []),
+      ("status_text", c "relayed as Lean gives it" []),
+      ("choices", c "relayed as Lean gives it" []),
+      ("witnesses", c "relayed as Lean gives it" []),
+      ("evidence", c "relayed as Lean gives it" []),
+      ("choice", c "relayed as Lean gives it" []),
+      ("model", c "relayed as Lean gives it" []),
+      ("candidates", c "relayed as Lean gives it" []),
+      ("verdict", c "relayed as Lean gives it" []),
+      ("conflict_status", c "relayed as Lean gives it" []),
+      ("proofs", c "relayed as Lean gives it" []),
+      ("countermodels", c "relayed as Lean gives it" []),
+      ("proof", c "relayed as Lean gives it" []),
+      ("countermodel", c "relayed as Lean gives it" []),
+      ("assumed", c "relayed as Lean gives it" []),
+      ("budget", c "relayed as Lean gives it" []),
+      ("units", c "relayed as Lean gives it" [])]]
+
+def verdicts_row : Shape :=
+  c "Readings.Run.perChoiceJson: one compatible choice taking assumed, its rows and what Lean made of each piece of its evidence (maps keyed by the piece: accepted, its refusal, its shown model, its filled gaps)." [
+    obj,
+    .required ["choice", "conflict", "evidence", "errors", "shown", "gaps", "status_text"],
+    closed [
+      ("choice", ref "#/$defs/choice"),
+      ("conflict", str),
+      ("query", str),
+      ("premises", str),
+      ("evidence", n [obj, .object [] (some (.type ["boolean"]))]),
+      ("errors", n [obj, .object [] (some str)]),
+      ("shown", n [obj, .object [] (some (c "a shown model, the generator's complete model" []))]),
+      ("gaps", n [obj, .object [] (some arr)]),
+      ("status_text", .type ["string", "null"])]]
+
+def verdicts_line : Shape :=
+  c "Readings.Line.json: one line of the English plan (readings-defaults 2.4)." [
+    obj,
+    .required ["frame", "result", "readings", "model", "gaps", "label"],
+    closed [
+      ("frame", str),
+      ("result", .type ["string", "null"]),
+      ("readings", ref "#/$defs/choice"),
+      ("model", .type ["string", "null"]),
+      ("gaps", arr),
+      ("label", .type ["string", "null"])]]
+
+def verdicts_dead : Shape :=
+  c "Readings.Run.deadOf: what Lean made of one dead reading's certificate." [
+    obj,
+    .required ["accepted"],
+    closed [("set", str), ("index", ref "common.json#/$defs/nat"), ("accepted", .type ["boolean"])]]
+
 def verdicts : Shape :=
   c
-    "Readings.Run.runVerdicts (readings-defaults RD-3): on the enumerated route, the question's answer folded in Lean over the compatible choices taking assumed: the result in the form the report gives it, one entry per choice with its rows and what Lean made of each piece of evidence, the labels E3 cites, the dead readings and the untaken candidates (premises), and the English plan. Each value is Lean's; the client reads it as Readings.Run.verdictsValues builds it."
+    "Readings.Run.runVerdicts (readings-defaults RD-3): on the enumerated route, the question's answer folded in Lean over the compatible choices taking assumed: the result in the form the report gives it, one entry per choice with its rows and what Lean made of each piece of evidence, the labels E3 cites, the dead readings, the untaken candidates and the dead evidence (premises), and the English plan."
     [
       obj,
       .required ["id", "status", "route", "question", "finding_sets", "restrictions", "result", "per_choice", "labels",
@@ -331,15 +391,21 @@ def verdicts : Shape :=
         ("status", constS "ok"),
         ("route", constS "enumerated"),
         ("question", str),
-        ("finding_sets", c "the sets of the route's finding (E29)" []),
-        ("restrictions", c "restrictionsFor D A" []),
-        ("result", c "the question's result" []),
-        ("per_choice", c "one entry per compatible choice taking assumed" []),
-        ("labels", c "the labels E3 cites" []),
-        ("dead_readings", c "the dead readings, or null" []),
-        ("untaken", c "the candidates no compatible choice takes" []),
-        ("dead", c "what Lean made of each dead certificate" []),
-        ("english", c "Readings.englishPlan: the lines of the answer" [])]]
+        ("finding_sets", ref "common.json#/$defs/strings"),
+        ("restrictions", ref "common.json#/$defs/strings"),
+        ("result", ref "#/$defs/verdicts_result"),
+        ("per_choice", n [arr, .items (ref "#/$defs/verdicts_row")]),
+        ("labels", ref "common.json#/$defs/strings"),
+        ("dead_readings", .anyOf [
+          .type ["null"],
+          n [arr, .items (n [
+            obj,
+            .required ["set", "index", "finding"],
+            closed [("set", str), ("index", ref "common.json#/$defs/nat"),
+              ("finding", n [str, .pattern (Re.prefixes ["DeadReading: "])])]])]]),
+        ("untaken", ref "#/$defs/choice"),
+        ("dead", n [arr, .items (ref "#/$defs/verdicts_dead")]),
+        ("english", n [arr, .items (ref "#/$defs/verdicts_line")])]]
 
 def «row» : Shape :=
   .select [
@@ -406,6 +472,10 @@ def file : File where
     ("model", .schema model),
     ("dead", .schema dead),
     ("choice_answer", .schema choice_answer),
+    ("verdicts_result", .schema verdicts_result),
+    ("verdicts_row", .schema verdicts_row),
+    ("verdicts_line", .schema verdicts_line),
+    ("verdicts_dead", .schema verdicts_dead),
     ("verdicts", .schema verdicts)]
 
 end ResponseShape.Schemas.ReadingsRoute
