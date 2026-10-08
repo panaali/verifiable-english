@@ -226,47 +226,54 @@ def evaluate(env: Any, value: Document | Any, model: FiniteModel, *, max_evaluat
     model = _validate_model(env, model)
     from .ast import _to_data
     from .backends.dispatch import execute
-    from .backends.lean_runner import evaluation_case
-    from .backends.relay import decide
-    from .backends.rust_jsonl import run as rust_run, cached_rust_environment, soft_case
 
-    case = {"id": "evaluate", "kind": "evaluate-budgeted", "environment": cached_rust_environment(env), **soft_case(env),
-            "model": model.to_dict(), "ast": [_to_data(f) for f in formulas],
-            "max_evaluations": max_evaluations,
-            "max_trace_nodes": min(max_evaluations, max_trace_nodes),
-            "trace": trace}
+    case = {"id": "evaluate", "kind": "evaluate-budgeted", "model": model.to_dict(),
+            "ast": [_to_data(f) for f in formulas], "max_evaluations": max_evaluations,
+            "max_trace_nodes": min(max_evaluations, max_trace_nodes), "trace": trace}
 
     def python():
         return _evaluate_validated(formulas, model, max_evaluations=max_evaluations,
                                    max_trace_nodes=max_trace_nodes, trace=trace)
 
-    def rust():
-        row = rust_run(case)
-        def explanation(wire):
-            if not isinstance(wire, dict) or set(wire) != {"kind", "value", "bindings", "detail", "children"}:
-                raise CheckerUnavailable("CheckerUnavailable: malformed Rust evaluation trace")
-            bindings = wire["bindings"]
-            if not isinstance(bindings, list) or any(
-                not isinstance(item, dict) or item.get("debruijn_index") != index
-                or set(item) != {"debruijn_index", "sort", "local_id"}
-                for index, item in enumerate(bindings)
-            ):
-                raise CheckerUnavailable("CheckerUnavailable: malformed Rust trace bindings")
-            return Explanation(wire["kind"], wire["value"],
-                               tuple((item["sort"], item["local_id"]) for item in bindings),
-                               wire["detail"], tuple(explanation(child) for child in wire["children"]))
-        return EvaluationResult(row["status"], row["value"],
-                                explanation(row["explanation"]) if trace else None,
-                                row["evaluations"])
-
     def lean():
-        result = rust()
-        if result.status == "ResourceLimit":
-            return result
-        mode, request = evaluation_case(env, "evaluate", case["ast"], model.to_dict())
-        value = all(decide(mode, [request])[0]["values"])
-        if value != result.value:
-            raise CheckerUnavailable("CheckerUnavailable: Lean and Rust evaluation disagree")
-        return result
+        return _evaluate_lean(env, case)
 
-    return execute("evaluate", case, python, lean=lean, rust=rust)
+    # Rust keeps search only (lean-first batch 15b): the value, the count, the trace and
+    # `ResourceLimit` of a reported evaluation are Lean's metered evaluator's.
+    return execute("evaluate", case, python, lean=lean, rust=lean)
+
+
+def _explanation(wire) -> Explanation:
+    """A trace from Lean's metered evaluator (`VE.Route.MeteredTrace`), in the public schema."""
+    if not isinstance(wire, dict) or set(wire) != {"kind", "value", "bindings", "detail", "children"}:
+        raise CheckerUnavailable("CheckerUnavailable: malformed Lean evaluation trace")
+    bindings = wire["bindings"]
+    if not isinstance(bindings, list) or any(
+        not isinstance(item, dict) or item.get("debruijn_index") != index
+        or set(item) != {"debruijn_index", "sort", "local_id"}
+        for index, item in enumerate(bindings)
+    ) or not isinstance(wire["children"], list):
+        raise CheckerUnavailable("CheckerUnavailable: malformed Lean trace bindings")
+    return Explanation(wire["kind"], wire["value"],
+                       tuple((item["sort"], item["local_id"]) for item in bindings),
+                       wire["detail"], tuple(_explanation(child) for child in wire["children"]))
+
+
+def _evaluate_lean(env: Any, case: dict) -> EvaluationResult:
+    """One `evaluate-budgeted` case through `ve_metered`; Python only rebuilds its answer."""
+    from .backends.lean_runner import metered_environment, metered_evaluation
+    row = metered_evaluation({**case, "environment": metered_environment(env)})
+    if row["status"] != "ok":
+        # Python validated the document and the model first: a Lean rejection is a disagreement.
+        raise CheckerUnavailable(f"CheckerUnavailable: Lean refused a checked evaluation: {row['error']}")
+    evaluation = row["evaluation"]
+    status, value, work = evaluation.get("status"), evaluation.get("value"), evaluation.get("evaluations")
+    expected = {"Satisfied": True, "Violated": False, "ResourceLimit": None}
+    if (set(evaluation) != {"status", "value", "evaluations", "explanation"} or status not in expected
+            or value is not expected[status] or type(work) is not int
+            or not 0 <= work <= case["max_evaluations"]):
+        raise CheckerUnavailable("CheckerUnavailable: malformed Lean evaluation result")
+    explanation = evaluation["explanation"]
+    if case["trace"] != (explanation is not None):
+        raise CheckerUnavailable("CheckerUnavailable: Lean evaluation trace does not match the request")
+    return EvaluationResult(status, value, None if explanation is None else _explanation(explanation), work)

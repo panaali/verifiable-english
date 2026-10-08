@@ -1016,9 +1016,7 @@ def _check_quantity_document(doc, active):
 
 @semantic_entry("document.check")
 def check_document(path):
-    from .search import model_search_scope
-    with model_search_scope():
-        return _check_document(path)
+    return _check_document(path)
 
 
 def _check_document(path):

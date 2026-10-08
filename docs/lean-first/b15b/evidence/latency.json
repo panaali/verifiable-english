@@ -1,0 +1,42 @@
+{
+ "base": {
+  "load": "14.36",
+  "evaluate_lean_traced": {
+   "calls": 40,
+   "wall_p50_ms": 45.934,
+   "wall_p95_ms": 54.11,
+   "cpu_p50_ms": 34.707
+  },
+  "search_default_authority": {
+   "calls": 10,
+   "wall_p50_ms": 9.948,
+   "wall_p95_ms": 10.67,
+   "cpu_p50_ms": 9.955
+  },
+  "per_call": {
+   "evaluate": 10,
+   "search": 28
+  }
+ },
+ "head": {
+  "load": "14.36",
+  "evaluate_lean_traced": {
+   "calls": 40,
+   "wall_p50_ms": 445.662,
+   "wall_p95_ms": 466.966,
+   "cpu_p50_ms": 446.877
+  },
+  "search_default_authority": {
+   "calls": 10,
+   "wall_p50_ms": 18.993,
+   "wall_p95_ms": 23.567,
+   "cpu_p50_ms": 15.309
+  },
+  "per_call": {
+   "evaluate": 10,
+   "search": 28
+  }
+ },
+ "base_commit": "c07377ed",
+ "head_commit": "1a3bd559"
+}

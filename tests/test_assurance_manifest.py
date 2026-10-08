@@ -707,25 +707,19 @@ def test_search_reports_found_only_through_the_countermodel_check(p0, monkeypatc
         calls.append((tuple(premises), conclusion))
         return replace(real(env, premises, conclusion, model, **kwargs), valid=False, status="NotCountermodel")
     monkeypatch.setattr(search, "check_countermodel", refuse)
-    if os.environ.get("VE_AUTHORITY", "python") != "python":
-        # A backend search returns one witness; a refused witness is a
-        # disagreement between generator and check, never NotFound.
+    # Rust's search returns one witness under every authority (lean-first batch 15b: Python has no
+    # search of its own); a refused witness is a disagreement between generator and check, never NotFound.
+    for authority in ("python", "lean"):
+        monkeypatch.setenv("VE_AUTHORITY", authority)
         with pytest.raises(CheckerUnavailable):
             search.find_countermodel(p0, (), senior)
         assert set(calls) == {((), senior)}
         calls.clear()
         with pytest.raises(CheckerUnavailable):
             search.find_distinguishing_model(p0, senior, Not(senior))
+        # Each direction of a distinguishing model is checked as a countermodel to it.
         assert set(calls) == {((senior,), Not(senior)), ((Not(senior),), senior)}
         calls.clear()
-    # Python's generator keeps searching past a refused candidate.
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    assert search.find_countermodel(p0, (), senior).status == "NotFound"
-    assert set(calls) == {((), senior)}
-    calls.clear()
-    assert search.find_distinguishing_model(p0, senior, Not(senior)).status == "NotFound"
-    # Each direction of a distinguishing model is checked as a countermodel to it.
-    assert set(calls) == {((senior,), Not(senior)), ((Not(senior),), senior)}
 
 
 def test_argument_record_reports_unavailability_not_incompleteness():
@@ -904,6 +898,9 @@ def _bundle():
 def test_bundle_separates_rejection_from_unavailability(tmp_path, monkeypatch):
     from ve.bundle import check_bundle
     hang = _fake_lean(tmp_path, FAULTS["hang"], name="hang")
+    # The bundle's searches start the real Rust and Lean checkers (lean-first batch 15b: Python has no
+    # search of its own); start them before the timeout is lowered, as the hang is the fake runner's.
+    assert check_bundle(_bundle())["lean_outcome"] == "not_requested"
     with monkeypatch.context() as setting:
         setting.setenv("VE_LEAN_TIMEOUT", "1234.5")
         waits = expired_waits(setting, lean_backend)
@@ -1054,9 +1051,12 @@ def test_malformed_argument_answers_are_unavailable(tmp_path, fault):
 def test_argument_separates_lean_rejection_from_unavailability(tmp_path, monkeypatch):
     from ve import check_argument, outstanding_obligations
     from ve.argument_fixtures import merged_vocabulary_example
+    graph = merged_vocabulary_example()
+    # The argument's searches start the real Rust and Lean checkers (lean-first batch 15b); start them
+    # before the timeout is lowered, as the hang is the fake runner's.
+    assert check_argument(graph).lean_outcome == "not_requested"
     monkeypatch.setenv("VE_LEAN_TIMEOUT", "1234.5")
     waits = expired_waits(monkeypatch, lean_backend, expire=lambda argv: Path(argv[0]).name == "hang")
-    graph = merged_vocabulary_example()
     outcomes = {}
     for name, body in (("absent", None), ("crash", FAULTS["crash"]), ("hang", FAULTS["hang"]),
                        ("rejecting", "print(json.dumps([{'id': c['id'], 'status': 'ok', 'valid': False} "
