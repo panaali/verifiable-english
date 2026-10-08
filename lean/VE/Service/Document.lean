@@ -1,5 +1,7 @@
 import VE.Service.Standalone
 import VE.Discourse.Admission
+import VE.Alternatives.Run
+import VE.Risk.Run
 
 /-! # The `document` service mode: the `ve-document@1` wrapper (docs/LEAN-FIRST-PLAN.md, row 16a)
 
@@ -10,7 +12,9 @@ units and their spans, `MIXED` parts, every unit's content, meaning and status, 
 with their status fold, the couplings and completions gates, lemmas, narrowings and removable weights, the graph's
 W2 admission, the identities, and the coverage tables with their residual counts. The steps it shares with the
 discourse route are `VE.Discourse.Loader`'s, read in their `python` mode; every formula is checked by the `check`
-mode's typed decoder with Python's typing texts (`formulaCheck`).
+mode's typed decoder with Python's typing texts (`formulaCheck`). An `alternatives@0` or `risk@0` document is
+composed from that block's own route, as Python composes it: the block route decodes the environment, admits the
+claim graph and owns the coverage line (`alternatives` and its residual counts, `Alternatives.Wire.coverage`).
 
 What the mode cannot decide yet is `CheckerUnavailable`, never a verdict (`unavailable`): a `ve-document@2`
 document (the discourse route's), front matter outside the restricted JSON reader (`null`, a negative,
@@ -30,10 +34,23 @@ def unavailable (what : String) : String := "CheckerUnavailable: " ++ what
 `load_document` steps and coverage lines are the plain wrapper's. A document listing any other profile is
 `CheckerUnavailable` before its environment is decoded (its own loader would add checks this mode lacks). -/
 def ownedProfiles : List String :=
-  ["data@0", "definitions@0", "documents@1", "norms@0", "relational-fol@0", "time@0"]
+  ["alternatives@0", "data@0", "definitions@0", "documents@1", "norms@0", "relational-fol@0", "risk@0", "time@0"]
 
-/-- The keys of the plain `ve.core@0.2` envelope (`Route.Gate.decodeEnvelope`). -/
-def envelopeKeys : List String := ["language", "profiles", "spec_revision", "vocabulary"]
+/-- The statement block whose route this mode composes: none, `alternatives@0`, or `risk@0` (over its
+alternatives block). -/
+inductive Block | none | alternatives | risk
+  deriving DecidableEq
+
+def blockOf (profiles : List String) : Block :=
+  if profiles.contains "risk@0" then .risk else if profiles.contains "alternatives@0" then .alternatives else .none
+
+/-- The keys of the `ve.core@0.2` envelope (`Route.Gate.decodeEnvelope`), with the composed block's own. -/
+def envelopeKeys (b : Block) : List String :=
+  ["language", "profiles", "spec_revision", "vocabulary"] ++
+    match b with
+    | .none => []
+    | .alternatives => ["alternatives"]
+    | .risk => ["alternatives", "risk"]
 
 /-- `listed_profiles`: the profiles of environment JSON when they are a list of strings, else none. -/
 def listedProfiles (environment : Json) : List String :=
@@ -75,13 +92,19 @@ def split (t : String) : Except String Loader.Split := do
 
 /-! ## The environment -/
 
-/-- The checked environment of a document and what its checks read. -/
+/-- The block routes' document with no norms and no units, as Python's `coverage` sends it. -/
+def emptySource : Json := Json.mkObj [("norms", Json.arr #[]), ("units", Json.arr #[])]
+
+/-- The checked environment of a document and what its checks read: the environment as written (its profiles
+and identity bind every meaning id), its typing envelope (a composed block's profile and fields replaced by the
+words they declare, `Standalone.typingReduced`) and route vocabulary. -/
 structure Env where
   json : Json
   checked : Standalone.Validated
   rv : VE.Route.Wire.RouteVocabulary
   profiles : List String
   envId : String
+  block : Block
 
 def Env.data (E : Env) : Bool := E.profiles.contains "data@0"
 
@@ -94,27 +117,41 @@ def environmentOf (environment : Json) : Except String Env := do
   | _ => pure ()
   if Standalone.isLegacy environment then
     throw (unavailable "a document over a ve.core@0 or ve.core@0.1 environment needs its legacy route")
-  if let some p := (listedProfiles environment).find? (!ownedProfiles.contains ·) then
+  let listed := listedProfiles environment
+  if let some p := listed.find? (!ownedProfiles.contains ·) then
     throw (unavailable s!"document checks under {p} need its Lean profile route")
+  let block := blockOf listed
   let keys := ((fields environment).toOption.getD []).map Prod.fst
-  if let some k := keys.find? (!envelopeKeys.contains ·) then
+  if let some k := keys.find? (!(envelopeKeys block).contains ·) then
     throw (unavailable s!"the environment block {k} needs its Lean route's decoder")
-  let checked ← Standalone.validated environment
+  -- A composed block's route decodes the environment first, as Python's `Environment` routes it.
+  match block with
+  | .alternatives => let _ ← VE.Alternatives.Wire.decodeAltSource environment (Json.arr #[]) .null .environment
+  | .risk => let _ ← VE.Risk.Wire.decodeRiskSource environment emptySource
+  | .none => pure ()
+  -- The typing envelope: risk's declarations replaced by the words they declare, then the alternatives words.
+  let typing ← if block == .risk then Standalone.riskReduced environment else pure environment
+  let checked ← Standalone.validated typing (typing := block != .none)
   let e := checked.envelope
   unless e.family == .fol do
     throw (unavailable s!"document checks on the {e.family.name} family need its Lean route")
   let predicates ← fields (← e.vocabulary.getObjVal? "predicates")
-  if e.profiles.contains "norms@0" && predicates.any (fun (_, entry) => (entry.getObjVal? "regulated").isOk) then
+  -- Without a block, Python admits a graph over regulated predicates on the norms route; a block route admits
+  -- its own graph, and both build the (empty) norm document of the declarations alone.
+  if block == .none && e.profiles.contains "norms@0" &&
+      predicates.any (fun (_, entry) => (entry.getObjVal? "regulated").isOk) then
     throw (unavailable "regulated predicates need the Lean norms route")
   let rv ← VE.Route.Run.decodeRouteVocabulary e
-  pure ⟨environment, checked, rv, e.profiles, ← Standalone.environmentIdOf e.profiles environment⟩
+  let profiles ← VE.Route.Gate.profilesOf environment
+  pure ⟨environment, checked, rv, profiles, ← Standalone.environmentIdOf profiles environment, block⟩
 
 /-- `formula_from_data` over the document's environment: the `check` mode's typed decoder, its rejection named as
 Python names it. -/
 def formulaCheck (E : Env) (ast : Json) : Except String Unit :=
   match Standalone.decodeTyped E.checked ast true with
   | .ok () => .ok ()
-  | .error message => .error ((TypingDiagnostic.diagnose E.profiles E.checked.envelope.vocabulary [ast]).getD message)
+  | .error message =>
+    .error ((TypingDiagnostic.diagnose E.checked.envelope.profiles E.checked.envelope.vocabulary [ast]).getD message)
 
 /-- A checked formula and its `meaning_id`. -/
 def formulaOf (E : Env) (ast : Json) : Except String (VE.Formula × String) := do
@@ -254,7 +291,7 @@ def graphLabels (front : Json) : List String :=
     | _ => none
   | _ => []
 
-/-- `coverage`'s residual counts for the owned profiles. -/
+/-- `coverage`'s residual counts of the wrapper itself. -/
 def residual (front : Json) (units : List SourceUnit) : List (String × Nat) :=
   let count (key : String) := match front.getObjValD key with
     | .arr xs => xs.toList
@@ -270,13 +307,57 @@ def unitJson (u : SourceUnit) : Json :=
     ("status", .str u.status)] ++
     (u.parent.toList.map fun p => ("parent_id", .str p)))
 
-/-- The coverage object of `coverage(doc)`. -/
-def coverageJson (front : Json) (units : List SourceUnit) (sourceBytes : Nat) : Json :=
-  let rest := residual front units
-  Json.mkObj [("source_bytes", toJson sourceBytes), ("accounted_bytes", toJson sourceBytes),
+/-- A composed block's coverage line, as its route computes it (`Alternatives.Wire.coverage` over the block's
+source and the document's units and narrowings). -/
+structure BlockCoverage where
+  doc : VE.Alternatives.AltDoc
+  environment : Json
+  units : Json
+  narrowings : Json
+
+def BlockCoverage.line (b : BlockCoverage) : Json :=
+  VE.Alternatives.Wire.coverage b.doc b.environment b.units b.narrowings
+
+/-- The line's residual counts. -/
+def BlockCoverage.residual (b : BlockCoverage) : List (String × Nat) :=
+  match b.line.getObjValD "residual" with
+  | .obj kvs => kvs.toList.map fun (k, v) => (k, v.getNat?.toOption.getD 0)
+  | _ => []
+
+/-- The units as Python's `coverage` hands them to the block route (`coverage_units`): each unit's id, kind,
+support and checked content. -/
+def coverageUnits (units : List SourceUnit) : Json :=
+  Json.arr (units.map fun u => Json.mkObj [("id", .str u.id), ("kind", u.kind), ("support", .str u.support),
+    ("content", match u.content with
+      | some f => VE.Route.Wire.encodeFormula f
+      | none => .null)]).toArray
+
+/-- `coverage`'s block line (`alt-elaborate` or `risk-elaborate` with `coverage_units`, the call Python relays):
+the alternatives route's `Wire.coverage` over the block's source with no norms. -/
+def blockCoverage (E : Env) (front : Json) (units : List SourceUnit) : Except String (Option BlockCoverage) := do
+  let A ← match E.block with
+    | .none => return none
+    | .alternatives => do
+      let src ← VE.Alternatives.Replay.sourceOf (Json.mkObj [("environment", E.json), ("norms", Json.arr #[])])
+      pure src.A
+    | .risk => do
+      let src ← VE.Risk.Wire.decodeRiskSource E.json emptySource
+      pure (VE.Risk.toAlt src.R)
+  pure (some ⟨A, E.json, coverageUnits units, Loader.optionalList front "narrowings"⟩)
+
+/-- The coverage object of `coverage(doc)`: the wrapper's tables and residual counts, then a composed block's line
+and its counts (Python's `residual.update`). -/
+def coverageJson (front : Json) (units : List SourceUnit) (sourceBytes : Nat) (block : Option BlockCoverage) :
+    Json :=
+  let rest := (residual front units).foldl (fun acc (k, v) => addCount acc k v)
+    ((block.map (·.residual)).getD [])
+  let tables := [("source_bytes", toJson sourceBytes), ("accounted_bytes", toJson sourceBytes),
     ("coverage_percent", toJson (100 : Nat)), ("bytes_by_kind", countJson (counts units (kindName ∘ SourceUnit.kind))),
     ("bytes_by_status", countJson (counts units SourceUnit.status)), ("unformalised_reasons", countJson (reasons units)),
     ("residual", countJson rest), ("residual_total", toJson ((rest.map Prod.snd).sum))]
+  match block with
+  | none => Json.mkObj tables
+  | some b => Json.mkObj (tables ++ [("alternatives", b.line.getObjValD "alternatives")])
 
 /-! ## The claim graph -/
 
@@ -310,8 +391,11 @@ def admitGraph (E : Env) (front graph : Json) (units : List SourceUnit) (all act
       | some (_, kinds) => unless kinds.all id do throw "non-assertion reading admission needs an elaborator"
   let document := Loader.admissionObject (units.map fun u => (u.id, u.span, u.kind, u.content)) active graph
     front openNames narrowings
-  let answer ← match VE.Route.Run.runAdmit E.profiles E.json E.rv "admission"
-      (Json.mkObj [("document", document)]) with
+  let admitted := match E.block with
+    | .none => VE.Route.Run.runAdmit E.profiles E.json E.rv "admission" (Json.mkObj [("document", document)])
+    | .alternatives => VE.Alternatives.Run.runAdmission "admission" E.json document
+    | .risk => VE.Risk.Run.runAdmission "admission" E.json document
+  let answer ← match admitted with
     | .ok a => pure a
     | .error e => if e.startsWith "UnsupportedProfile" then throw (unavailable ("claim graph: " ++ e)) else throw e
   let labels := (((answer.getObjValD "report").getObjValD "assumptions").getArr?.toOption.getD #[]).toList.filterMap
@@ -342,6 +426,7 @@ structure Checked where
   source : String
   units : List SourceUnit
   front : Json
+  block : Option BlockCoverage
 
 def check (text : String) : Except String Checked := do
   let doc ← split text
@@ -374,15 +459,17 @@ def check (text : String) : Except String Checked := do
   let narrowings ← Loader.narrowingIds (all.map fun (s, _) => (s.id, s.version, s.readings.map Prod.fst))
     unitIds (Loader.optionalList front "narrowings") (python := true)
   Loader.checkWeights front
+  -- `_report`: the coverage (a block route's line may reject), then the claim graph.
+  let block ← blockCoverage E front units
   if let .ok graph := front.getObjVal? "graph" then
     admitGraph E front graph units all active openNames narrowings
   pure ⟨← Loader.documentId (Loader.payload doc (Json.mkObj [])), Loader.sourceId E.profiles doc.source,
-    doc.source, units, front⟩
+    doc.source, units, front, block⟩
 
 def encode (id : String) (c : Checked) : Json :=
   VE.Route.Wire.ok id [("document_id", .str c.documentId), ("source_id", .str c.sourceId),
     ("source", .str c.source), ("units", toJson (c.units.map unitJson)),
-    ("coverage", coverageJson c.front c.units c.source.utf8ByteSize)]
+    ("coverage", coverageJson c.front c.units c.source.utf8ByteSize c.block)]
 
 def documentCase (j : Json) : Except String Json := do
   let id ← stringField j "id"

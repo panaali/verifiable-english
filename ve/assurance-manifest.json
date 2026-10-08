@@ -64,7 +64,7 @@
     "ve/softnorms.py:load_soft_document": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors."
   },
   "lean_decoders": {
-    "total_lines": 22910,
+    "total_lines": 22997,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -877,12 +877,12 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 394,
-        "sha256": "bf75f1964888d878739224973c2316cd549aaf1b4852e9d042369422e53402de",
+        "lines": 481,
+        "sha256": "6f81c137c4b66f9f090b63c4a96632bb7cf5d1ab5d94a709f8d1daf629e33d17",
         "ranges": [
           [
             1,
-            394
+            481
           ]
         ],
         "declarations": [
@@ -891,6 +891,7 @@
           "contentOf",
           "sourceUnit",
           "unitsOf",
+          "blockCoverage",
           "admitGraph",
           "check",
           "documentCase"
@@ -1189,6 +1190,7 @@
       "lean/ResponseShape/Encoders/Rights.lean": "theorems that rights rows and generated predicate entries fit their response shapes; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/Risk.lean": "theorems that risk rows fit their response shapes; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/Reports.lean": "theorems that the reports mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
+      "lean/ResponseShape/Encoders/Document.lean": "theorems that the document mode's rows fit its shape, with a composed block's cells projected from its route's coverage line (getObjVal? in statements and proofs only; not on any runner path)",
       "lean/ResponseShape/Encoders/ReadingsRoute.lean": "theorems that the readings-route mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/English.lean": "theorems that the english and diagnose modes' rows fit their shapes; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/Envelope.lean": "theorems that the service's response lines fit envelope.json; JSON access only in statements and proofs (not on any runner path)",
