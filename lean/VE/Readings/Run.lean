@@ -2,6 +2,7 @@ import VE.Readings.Wire
 import VE.Readings.Scan
 import VE.Readings.SupRun
 import VE.Readings.UnspecifiedWire
+import VE.Readings.VerdictsWire
 import VE.NormDefaults.Run
 import VE.Rights.Run
 
@@ -342,6 +343,7 @@ def runSeparateND (id : String) (f : AdmittedNDFull) (j : Json) : Except String 
     (it reads no rule), and the superposed kinds refused until RD-6. A document of such an environment without a
     content-bearing set, or of any other environment, is today's (S1 4.9). `b` is the case's one admission. -/
 def runS2ND (lower : List String → Json → Json) (id kind : String) (b : Admitted2) (j : Json) : Except String Json := do
+  if kind == "readings-verdicts" then return ← runVerdicts lower id b j
   if !underCompletion b.a.re b.D then return ← runS2 lower id kind b j
   let f ← admitNDFull b
   if kind == "readings-elaborate" then return ← runElaborateNDFilled id f

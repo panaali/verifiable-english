@@ -13,7 +13,8 @@ def kind : Def :=
     ("readings-certificate", kindIs "readings-certificate"),
     ("readings-model", kindIs "readings-model"),
     ("readings-dead", kindIs "readings-dead"),
-    ("readings-choice", kindIs "readings-choice")]
+    ("readings-choice", kindIs "readings-choice"),
+    ("readings-verdicts", kindIs "readings-verdicts")]
 
 def pair : Shape :=
   c
@@ -318,6 +319,28 @@ def choice_answer : Shape :=
         ("conflict_free", .type ["boolean"]),
         ("accepted", .type ["boolean"])]]
 
+def verdicts : Shape :=
+  c
+    "Readings.Run.runVerdicts (readings-defaults RD-3): on the enumerated route, the question's answer folded in Lean over the compatible choices taking assumed: the result in the form the report gives it, one entry per choice with its rows and what Lean made of each piece of evidence, the labels E3 cites, the dead readings and the untaken candidates (premises), and the English plan. Each value is Lean's; the client reads it as Readings.Run.verdictsValues builds it."
+    [
+      obj,
+      .required ["id", "status", "route", "question", "finding_sets", "restrictions", "result", "per_choice", "labels",
+        "dead_readings", "untaken", "dead", "english"],
+      closed [
+        ("id", ref "common.json#/$defs/id_ok"),
+        ("status", constS "ok"),
+        ("route", constS "enumerated"),
+        ("question", str),
+        ("finding_sets", c "the sets of the route's finding (E29)" []),
+        ("restrictions", c "restrictionsFor D A" []),
+        ("result", c "the question's result" []),
+        ("per_choice", c "one entry per compatible choice taking assumed" []),
+        ("labels", c "the labels E3 cites" []),
+        ("dead_readings", c "the dead readings, or null" []),
+        ("untaken", c "the candidates no compatible choice takes" []),
+        ("dead", c "what Lean made of each dead certificate" []),
+        ("english", c "Readings.englishPlan: the lines of the answer" [])]]
+
 def «row» : Shape :=
   .select [
     (ref "#/$defs/kind/readings-validate", .anyOf [
@@ -352,6 +375,10 @@ def «row» : Shape :=
       ref "common.json#/$defs/case_error",
       ref "common.json#/$defs/route_path_error",
       ref "#/$defs/choice_answer"]),
+    (ref "#/$defs/kind/readings-verdicts", .anyOf [
+      ref "common.json#/$defs/case_error",
+      ref "common.json#/$defs/route_path_error",
+      ref "#/$defs/verdicts"]),
     ((.bool true), .anyOf [
       ref "rights.json#/row",
       ref "soft-norms.json#/row",
@@ -378,6 +405,7 @@ def file : File where
     ("certificate", .schema certificate),
     ("model", .schema model),
     ("dead", .schema dead),
-    ("choice_answer", .schema choice_answer)]
+    ("choice_answer", .schema choice_answer),
+    ("verdicts", .schema verdicts)]
 
 end ResponseShape.Schemas.ReadingsRoute
