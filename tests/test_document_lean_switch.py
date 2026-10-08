@@ -82,25 +82,32 @@ def test_coverage_and_statuses_are_leans(tmp_path, no_python_loader, monkeypatch
     assert D.coverage(doc) == row["coverage"]
     assert [(u["id"], u["span"], u["status"]) for u in doc["units"]] == [
         (u["id"], u["span"], u["status"]) for u in row["units"]]
-    # The answer's coverage is what is shown, whatever Python would count.
+    # Lean owns the result, while the receiver checks its request-bound arithmetic.
     forged = deepcopy(row)
     forged["coverage"]["residual"]["assumptions"] = 99
     monkeypatch.setattr(relay, "answer", lambda mode, case: (forged, None))
-    assert D.coverage(D.load_document(path))["residual"]["assumptions"] == 99
+    with pytest.raises(CheckerUnavailable, match="not bound to the document sent"):
+        D.load_document(path)
 
 
 def test_identities_and_content_are_leans(tmp_path, no_python_loader, monkeypatch):
     path = write(tmp_path, dw.text_of(GENERATED["plain"]))
     row = D._lean_answer(path.read_bytes(), False)
     forged = deepcopy(row)
-    forged["document_id"], forged["source_id"] = "a" * 64, "b" * 64
+    for field in ("document_id", "source_id"):
+        mutant = deepcopy(row)
+        mutant[field] = "a" * 64
+        monkeypatch.setattr(relay, "answer", lambda mode, case, mutant=mutant: (mutant, None))
+        with pytest.raises(CheckerUnavailable, match="not bound to the document sent"):
+            D.load_document(path)
     forged["units"][0]["meaning_id"] = "c" * 64
     monkeypatch.setattr(relay, "answer", lambda mode, case: (forged, None))
-    doc = D.load_document(path)
-    assert (doc["document_id"], doc["source_id"], doc["units"][0]["meaning_id"]) == ("a" * 64, "b" * 64, "c" * 64)
-    assert doc["units"][0]["content"] == row["units"][0]["content"]
+    with pytest.raises(CheckerUnavailable, match="not bound to the document sent"):
+        D.load_document(path)
     # Python's own computation of the same identities agrees with Lean's on the genuine answer.
     monkeypatch.undo()
+    doc = D.load_document(path)
+    assert doc["units"][0]["content"] == row["units"][0]["content"]
     python = D._load_document(path.read_bytes(), path, None)
     assert (python["document_id"], python["source_id"]) == (row["document_id"], row["source_id"])
     assert [(u["content"], u["meaning_id"]) for u in python["units"]] == [
@@ -207,6 +214,18 @@ def _mutants(row):
     yield "content dropped", edit(lambda r: (r["units"][0].pop("content"), r["units"][0].pop("meaning_id")))
     yield "meaning id dropped", edit(lambda r: r["units"][0].pop("meaning_id"))
     yield "content added", edit(lambda r: r["units"][-1].update(content=["top"], meaning_id="d" * 64))
+    for field, replacement in (("span", [0, 1]), ("kind", "changed_kind"),
+                               ("meaning", {"contextual": "changed"}), ("support", "changed_support")):
+        yield field, edit(lambda r, field=field, replacement=replacement:
+                          r["units"][0].update({field: replacement}))
+    for field, replacement in (("source_bytes", 0), ("accounted_bytes", 0),
+                               ("coverage_percent", 0), ("bytes_by_kind", {}),
+                               ("bytes_by_status", {}), ("unformalised_reasons", {"fake": 1}),
+                               ("residual_total", 99)):
+        yield field, edit(lambda r, field=field, replacement=replacement:
+                          r["coverage"].update({field: replacement}))
+    yield "residual count", edit(lambda r: r["coverage"]["residual"].update(assumptions=99))
+    yield "boolean count", edit(lambda r: r["coverage"].update(accounted_bytes=True))
 
 
 def test_answers_not_bound_to_the_request_are_unavailable(tmp_path, no_python_loader, monkeypatch):
@@ -214,8 +233,27 @@ def test_answers_not_bound_to_the_request_are_unavailable(tmp_path, no_python_lo
     row = D._lean_answer(path.read_bytes(), True)
     for name, mutant in _mutants(row):
         monkeypatch.setattr(relay, "answer", lambda mode, case, mutant=mutant: (mutant, None))
-        with pytest.raises(CheckerUnavailable, match="not bound to the document sent"):
+        try:
             D.check_document(path)
+        except CheckerUnavailable as exc:
+            assert "not bound to the document sent" in str(exc), name
+        else:
+            pytest.fail(f"accepted mutated {name}")
+
+
+@pytest.mark.parametrize("name", ["alternatives-cells", "risk"])
+def test_alternatives_coverage_is_bound_to_units_and_counts(tmp_path, no_python_loader, monkeypatch, name):
+    path = write(tmp_path, dw.text_of(GENERATED[name]))
+    row = D._lean_answer(path.read_bytes(), False)
+    for change in (
+            lambda r: r["coverage"]["residual"].update(alternatives_declared=0),
+            lambda r: r["coverage"]["alternatives"]["alternatives_declared"][0].update(unit="unknown"),
+            lambda r: r["coverage"]["alternatives"]["alternatives_declared"][0].update(support="none")):
+        mutant = deepcopy(row)
+        change(mutant)
+        monkeypatch.setattr(relay, "answer", lambda mode, case, mutant=mutant: (mutant, None))
+        with pytest.raises(CheckerUnavailable, match="not bound to the document sent"):
+            D.load_document(path)
 
 
 def test_a_document_lean_accepted_that_python_cannot_build_is_unavailable(tmp_path, no_python_loader,

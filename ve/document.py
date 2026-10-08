@@ -416,15 +416,20 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
         declared = [(u, parent) for u, parent in _parts(meta["units"])]
     except Exception as exc:  # noqa: BLE001 - Lean accepted this front matter
         raise unavailable("is for a front matter Python cannot read") from exc
-    source = row["source"].encode("utf-8")
-    units = row["units"]
-    if (source != body or [u["id"] for u in units] != [u["id"] for u, _ in declared]
-            or [u.get("parent_id") for u in units] != [parent for _, parent in declared]
-            or any(("content" in u) != ("content" in d) or ("content" in u) != ("meaning_id" in u)
-                   for u, (d, _) in zip(units, declared))):
-        raise unavailable("is not bound to the document sent")
+    try:
+        _bind_document_answer(body, meta, declared, row)
+        source, units = row["source"].encode("utf-8"), row["units"]
+    except Exception as exc:  # noqa: BLE001 - an accepted but malformed service row is unavailable
+        raise unavailable("is not bound to the document sent") from exc
     try:
         env = Environment(meta["environment"])
+        if row["source_id"] != source_id(source, env) or row["document_id"] != _document_id(meta, source, {}):
+            raise unavailable("is not bound to the document sent")
+        for unit in units:
+            if "content" in unit and unit["meaning_id"] != digest(
+                    f"ve-meaning-{env.identity_version}\n",
+                    {"environment_id": env.environment_id, "ast": unit["content"]}):
+                raise unavailable("is not bound to the document sent")
         compiled = [{"id": u["id"], "span": u["span"], "kind": u["kind"], "meaning": u["meaning"],
                      "support": u["support"], "source": source[u["span"][0]:u["span"][1]].decode("utf-8"),
                      "content": u.get("content"), "meaning_id": u.get("meaning_id"), "status": u["status"],
@@ -442,6 +447,88 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
             "soft_document": None, "norm_defaults": None, "senses": None, "reports": None,
             "rights_document": None, "readings_s1": None, "readings_s2": None, "reading_plan": reading_plan,
             "lean": {"coverage": row["coverage"], "admitted": admitted}}
+
+
+def _bind_document_answer(body, meta, declared, row):
+    """Check the request-shaped fields and arithmetic of a successful Lean document row.
+
+    The response schema checks types. This binding additionally checks values the schema
+    cannot know: the authored unit fields, byte partition and every count derived from
+    them. Checked content, statuses and identities remain Lean's decisions.
+    """
+    def same(a, b):
+        return (json.dumps(a, sort_keys=True, ensure_ascii=False, allow_nan=False) ==
+                json.dumps(b, sort_keys=True, ensure_ascii=False, allow_nan=False))
+
+    def require(condition):
+        if not condition:
+            raise ValueError("Lean document row disagrees with its request")
+
+    require(type(row) is dict and type(row.get("source")) is str)
+    source = row["source"].encode("utf-8")
+    require(source == body)
+    units = row.get("units")
+    require(type(units) is list and len(units) == len(declared))
+    kinds, statuses, reasons = {}, {}, {}
+    for unit, (authored, parent) in zip(units, declared, strict=True):
+        require(type(unit) is dict and type(authored) is dict)
+        for field in ("id", "span", "kind", "meaning", "support"):
+            require(field in unit and field in authored and same(unit[field], authored[field]))
+        require(("parent_id" in unit) == (parent is not None))
+        if parent is not None:
+            require(unit["parent_id"] == parent)
+        require(("content" in unit) == ("content" in authored))
+        require(("content" in unit) == ("meaning_id" in unit))
+        span = unit["span"]
+        require(type(span) is list and len(span) == 2 and
+                all(type(n) is int for n in span) and 0 <= span[0] < span[1] <= len(source))
+        require(type(unit.get("status")) is str and unit["status"] in STATUSES)
+        size = span[1] - span[0]
+        kind = unit["kind"] if type(unit["kind"]) is str else unit["kind"][0]
+        kinds[kind] = kinds.get(kind, 0) + size
+        statuses[unit["status"]] = statuses.get(unit["status"], 0) + size
+        meaning = unit["meaning"]
+        if type(meaning) is dict and "unformalised" in meaning:
+            reason = meaning["unformalised"]
+            reasons[reason] = reasons.get(reason, 0) + 1
+
+    coverage = row.get("coverage")
+    require(type(coverage) is dict)
+    for key, expected in (("source_bytes", len(source)), ("accounted_bytes", len(source)),
+                          ("coverage_percent", 100), ("bytes_by_kind", kinds),
+                          ("bytes_by_status", statuses), ("unformalised_reasons", reasons)):
+        require(key in coverage and same(coverage[key], expected))
+    residual = coverage.get("residual")
+    require(type(residual) is dict and all(type(n) is int and n >= 0 for n in residual.values()))
+    graph = meta.get("graph")
+    nodes = graph.get("nodes") if type(graph) is dict else None
+    labels = [n["label"] for n in nodes if type(n) is dict and type(n.get("label")) is str] \
+        if type(nodes) is list else []
+    base = {"open_terms": len(meta.get("open_terms", [])),
+            "assumptions": sum(u["support"] == "assumption" for u in units),
+            "bridge_leaves": sum(label.startswith("bridge:accepts(") for label in labels),
+            "unresolved_reading_sets": sum(r["status"] == "open" for r in meta.get("reading_sets", []))}
+    require(all(key in residual and same(residual[key], value) for key, value in base.items()))
+    profiles = meta["environment"].get("profiles", [])
+    block = "alternatives@0" in profiles or "risk@0" in profiles
+    require(("alternatives" in coverage) == block)
+    if block:
+        cells = coverage["alternatives"]
+        require(type(cells) is dict)
+        by_id = {u["id"]: u for u in units}
+        for line in ("alternatives_declared", "counterfactual_leaves", "proximate_judgments"):
+            require(type(cells.get(line)) is list)
+            for cell in cells[line]:
+                require(type(cell) is dict and cell.get("unit") in by_id and
+                        cell.get("support") == by_id[cell["unit"]]["support"])
+        for line in ("assumed_harm_free", "dilemmas", "narrowings", "unmapped_obligations"):
+            require(type(cells.get(line)) is list)
+        for line in ("alternatives_declared", "assumed_harm_free", "counterfactual_leaves",
+                     "dilemmas", "narrowings", "proximate_judgments", "unmapped_obligations"):
+            require(type(residual.get(line)) is int and residual[line] == len(cells[line]))
+        require(type(residual.get("table_complete")) is int and
+                residual["table_complete"] == int(cells.get("table_complete") is not None))
+    require(type(coverage.get("residual_total")) is int and coverage["residual_total"] == sum(residual.values()))
 
 
 def _load_document(raw: bytes, path: str | Path, lean):
