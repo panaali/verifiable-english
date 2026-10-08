@@ -1,7 +1,7 @@
 """Batch 17: reported assist and Cedar decisions must cross the Lean boundary."""
 
 from ve.assist.session import AssistSession
-from ve.ast import Top
+from ve.ast import Bottom, Top
 from ve.backends.dispatch import authority_for
 from ve.adapters.cedar import translate
 from ve.environment import Environment, LANGUAGE, PROFILE, SPEC_REVISION
@@ -40,6 +40,22 @@ def test_assist_positive_entailment_requires_lean_replay(monkeypatch):
     assert session._entails((), Top()) is True
     monkeypatch.setattr(session, "_lean_replays", lambda *_: False)
     assert session._entails((), Top()) is False
+
+
+def test_assist_negative_decision_requires_lean_countermodel(monkeypatch):
+    session = _session()
+    seen = []
+    original = session._lean_refutes
+
+    def checked(*args):
+        seen.append(args)
+        return original(*args)
+
+    monkeypatch.setattr(session, "_lean_refutes", checked)
+    assert session._decide((), Bottom()) == "no"
+    assert len(seen) == 1
+    monkeypatch.setattr(session, "_lean_refutes", lambda *_: False)
+    assert session._decide((), Bottom()) == "unknown"
 
 
 def test_cedar_evaluates_each_request_under_lean(monkeypatch):
