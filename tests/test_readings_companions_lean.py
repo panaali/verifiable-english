@@ -386,6 +386,8 @@ def test_malformed_companions_are_refused_by_name(lean, value):
     """Checklist 5: a companion, its environment or its open terms replaced by another JSON value gives an error
     row, never a crash or an answer."""
     for path in (("companion",), ("companion", "environment"), ("companion", "open_terms")):
+        if path[-1] == "open_terms" and value == []:
+            continue  # no open terms: well formed
         rs = two_readings(lower(env1()), lower(env1()))
         for r in rs["readings"]:
             target = r
@@ -393,4 +395,6 @@ def test_malformed_companions_are_refused_by_name(lean, value):
                 target = target[key]
             target[path[-1]] = value
         row = one(lean, "readings-validate", env_main(), {"units": [{"id": "u_a"}], "reading_sets": [rs]})
+        # refused by the split itself, before the (unseparated) set's admission could be reached
         assert row["status"] == "error", (path, value, row)
+        assert row["error"] != "distinguishing model id does not match model", (path, value, row)

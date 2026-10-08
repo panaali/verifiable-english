@@ -267,9 +267,15 @@ def mergeTerms : List (String × Json) → List (String × Json) → Except Stri
   | acc, [] => pure acc
   | acc, src :: rest => do mergeTerms (← addTerms src.1 acc (arr src.2 "open_terms")) rest
 
+/-- Each companion's `open_terms` is a list (`openTermNames`' text): a malformed one is refused, never read as
+    none. -/
+def termsListed (sources : List (String × Json)) : Except String Unit :=
+  if sources.all (fun s => s.2.getObjValD "open_terms" matches .arr _) then pure () else throw "open_terms must be a list"
+
 /-- The merged open terms of a set's companions (1.9, E4), each validated against the merged environment. -/
 def mergeOpenTerms (sources : List (String × Json)) : Except String (List Json) := do
   let m ← mergeCompanions (sources.map (fun s => (s.1, s.2.getObjValD "environment")))
+  termsListed sources
   let ts := (← mergeTerms [] sources).map (·.2)
   -- The merged frame through the frozen decoders (5 row 12), then each term's conditions typed in it (E4).
   let re ← decodeEnvironment m
@@ -709,6 +715,7 @@ theorem same_name {l : List Json}
 theorem mergeOpenTerms_ok {sources : List (String × Json)} {ts : List Json} (h : mergeOpenTerms sources = .ok ts) :
     ∃ acc, mergeTerms [] sources = .ok acc ∧ ts = acc.map (·.2) := by
   unfold mergeOpenTerms at h
+  obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨acc, hacc, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
