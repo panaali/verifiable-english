@@ -27,7 +27,7 @@ proposed there.
 
 ## Gate 5.1
 
-1. **Suite.** <!-- suite -->
+1. **Suite.** `tools/gate.py` at `d1e2e234` in a clean worktree: passed, 12,451 passed, 7 allowed skips, 0 failed of 12,459 collected; Lean build and audit passed; Rust 37 passed (`evidence/suite.json`). Only this report and its evidence follow that commit.
 2. **Corpus A/B.** 0 unlisted differences over all nine corpora; the listed ones are the environment, formula
    and admission decoders' texts and codes, which Lean now supplies for the documents it owns (DF-3 and DF-9,
    batches 12b and 13b), and pilot harness artifacts. No acceptance changed.
