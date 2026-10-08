@@ -1977,8 +1977,7 @@
 'VE.Service.register_none' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.registerOne_digest' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.registerOne_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
-'VE.Service.Standalone.safeModelPath_valid' depends on axioms: [propext]
-'VE.Service.Standalone.checkedModelTables_error_path_valid' depends on axioms: [propext, Quot.sound]
+'VE.Service.Standalone.checkedModelTables_error_preserved' depends on axioms: [propext, Quot.sound]
 'VE.Risk.termSum_cons' depends on axioms: [propext]
 'VE.Risk.termSum_nil' does not depend on any axioms
 'VE.Risk.termSum_append' depends on axioms: [propext, Quot.sound]
@@ -4503,6 +4502,11 @@
 'ResponseShape.Encoders.Standalone.environment_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Standalone.environment_case_reported' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Standalone.environment_fault_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Standalone.environment_with_path_fits' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'ResponseShape.Encoders.Standalone.legacy_environment_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Standalone.other_environment_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Standalone.environment_reported' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Standalone.family_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Standalone.identity_fits' depends on axioms: [propext, Classical.choice, Quot.sound]

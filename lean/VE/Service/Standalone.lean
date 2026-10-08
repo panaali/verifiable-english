@@ -922,6 +922,13 @@ private def locatedEnvironmentFields (environment : Json) : Except ModelFault Un
     environmentFields entry (["description"] ++ optional) path
     if let .ok words := entry.getObjVal? "verbalisation" then
       environmentFields words ["singular", "plural"] s!"{path}/verbalisation"
+      for field in ["singular", "plural"] do
+        match VE.Bridge.displayString (words.getObjValD field) with
+        | .ok () => pure ()
+        | .error message => modelFault "" message
+    match VE.Bridge.description entry with
+    | .ok () => pure ()
+    | .error message => modelFault "" message
   for (name, entry) in predicateEntries do
     let path := s!"/vocabulary/predicates/{name}"
     let optional := ["defined", "functional", "total", "regulated", "argument_units",
@@ -929,22 +936,26 @@ private def locatedEnvironmentFields (environment : Json) : Except ModelFault Un
     let present := optional.filter (fun key => (entry.getObjVal? key).isOk)
     environmentFields entry (["arguments", "description"] ++ present) path
     let arguments := entry.getObjValD "arguments"
-    if let .arr cells := arguments then
-      let maximum := if nary then 6 else 2
-      unless cells.size ≥ 1 && cells.size ≤ maximum do
-        modelFault "" s!"Predicate arguments must be an array of one to {maximum} sort identifiers"
-      -- The family decoder owns the reserved built-in sort's signature
-      -- diagnostic ("invalid signature" in stage one). Ordinary unknown
-      -- names use the shared quoted-name validator.
-      if !((!flagged && cells.contains (.str "$string")) ||
-          (!order && cells.contains (.str "$int"))) then
-        match VE.Bridge.argumentSorts arguments (fun sort =>
-            sortNames.contains sort || (order && sort == "$int") ||
-            (flagged && sort == "$string")) with
-        | .ok _ => pure ()
-        | .error message => modelFault "" message
+    let maximum := if nary then 6 else 2
+    let .arr cells := arguments |
+      modelFault "" s!"Predicate arguments must be an array of one to {maximum} sort identifiers"
+    unless cells.size ≥ 1 && cells.size ≤ maximum do
+      modelFault "" s!"Predicate arguments must be an array of one to {maximum} sort identifiers"
+    -- The family decoder owns the reserved built-in sort's signature
+    -- diagnostic ("invalid signature" in stage one). Ordinary unknown
+    -- names use the shared quoted-name validator.
+    if !((!flagged && cells.contains (.str "$string")) ||
+        (!order && cells.contains (.str "$int"))) then
+      match VE.Bridge.argumentSorts arguments (fun sort =>
+          sortNames.contains sort || (order && sort == "$int") ||
+          (flagged && sort == "$string")) with
+      | .ok _ => pure ()
+      | .error message => modelFault "" message
     if let .ok defined := entry.getObjVal? "defined" then
       environmentFields defined ["arguments", "body"] s!"{path}/defined"
+    match VE.Bridge.description entry with
+    | .ok () => pure ()
+    | .error message => modelFault "" message
   for (name, entry) in constantEntries do
     let path := s!"/vocabulary/constants/{name}"
     let literal := entry.getObjValD "sort" == .str "$string"
@@ -1029,67 +1040,34 @@ private def locatedModelTables (environment model : Json) : Except ModelFault Un
       let .arr cells := row | modelFault rowPath "InvalidModel: relation tuple has wrong arity"
       unless cells.size == signature.length do
         modelFault rowPath "InvalidModel: relation tuple has wrong arity"
-      let mut decoded : List String := []
-      for ((sort, cell), cellIndex) in (signature.zip cells.toList).zipIdx do
+      -- Decode every cell before checking membership. The frozen decoder
+      -- reports a malformed later cell before a dangling earlier entity.
+      let decoded ← (signature.zip cells.toList).zipIdx.mapM fun ((sort, cell), cellIndex) =>
         let cellPath := s!"{rowPath}/{cellIndex}"
-        let word ← modelCell order sort cell cellPath
+        modelCell order sort cell cellPath
+      for ((sort, word), cellIndex) in (signature.zip decoded).zipIdx do
+        let cellPath := s!"{rowPath}/{cellIndex}"
         if !(order && sort == "$int") && !((VE.Bridge.lookup decodedDomains sort).getD []).contains word then
           modelFault cellPath "InvalidModel: relation tuple contains a dangling or wrong-sort entity"
-        decoded := word :: decoded
       decodedRows := decoded :: decodedRows
     unless VE.Route.Decode.distinct decodedRows do
       modelFault path "InvalidModel: duplicate relation tuple"
 
-/-- A pointer may name a missing final field, but every earlier component must
-exist. This is the condition on paths of decoder failures. -/
-private def pointerChild (value : Json) (part : String) : Option Json :=
-  match value with
-  | .obj _ => (value.getObjVal? part).toOption
-  | .arr cells => do cells[← part.toNat?]?
-  | _ => none
-
-private def pointerParentExists (value : Json) : List String → Bool
-  | [] | [_] => true
-  | part :: rest =>
-    match pointerChild value part with
-    | some child => pointerParentExists child rest
-    | none => false
-
-private def prefixValidPointer (model : Json) (path : String) : Bool :=
-  path.isEmpty || (path.startsWith "/" && pointerParentExists model ((path.drop 1).splitOn "/"))
-
-private def safeModelPath (model : Json) (path : String) : String :=
-  if prefixValidPointer model path then path else ""
-
-theorem safeModelPath_valid (model : Json) (path : String) :
-    prefixValidPointer model (safeModelPath model path) = true := by
-  unfold safeModelPath
-  split
-  · assumption
-  · rfl
-
-/-- Any error returned by the public table decoder has a prefix-valid JSON
-pointer. The empty pointer denotes the model root. -/
+/-- The public table decoder returns the location found by the validator.
+Neither its message nor its path is rewritten after the failure. -/
 def checkedModelTables (environment model : Json) : Except ModelFault Unit :=
-  match locatedModelTables environment model with
-  | .ok () => .ok ()
-  | .error fault => .error { fault with path := safeModelPath model fault.path }
+  locatedModelTables environment model
 
-theorem checkedModelTables_error_path_valid (environment model : Json)
-    (fault : ModelFault) (h : checkedModelTables environment model = .error fault) :
-    prefixValidPointer model fault.path = true := by
-  unfold checkedModelTables at h
-  split at h
-  · cases h
-  · cases h
-    exact safeModelPath_valid model _
+theorem checkedModelTables_error_preserved (environment model : Json)
+    (fault : ModelFault) (h : locatedModelTables environment model = .error fault) :
+    checkedModelTables environment model = .error fault := h
 
 /-- Checked examples of the pointer-carrying decoder, including faults in a
 table shape and a nested cell. The `ModelFault` type makes path mandatory. -/
 private def modelPathOf (result : Except ModelFault Unit) : String :=
   match result with | .ok _ => "" | .error fault => fault.path
 
-#guard modelPathOf (locatedModelTables
+#guard modelPathOf (checkedModelTables
   (Json.mkObj [("vocabulary", Json.mkObj [("sorts", Json.mkObj [("item", .null)]),
     ("predicates", Json.mkObj []), ("constants", Json.mkObj [])])])
   (Json.mkObj [("complete", .bool true), ("domains", Json.mkObj [("item", .str "i")]),
@@ -1105,6 +1083,14 @@ def reportedFault (j : Json) (fault : ModelFault) : Json :=
   Json.mkObj ([("id", j.getObjValD "id"), ("status", .str "error"),
     ("error", .str fault.message)] ++
     if fault.path.isEmpty then [] else [("path", .str fault.path)])
+
+/-- Keep the owning family's diagnostic text while carrying the location found
+by the shared vocabulary shape decoder. Only a reported rejection gets a path. -/
+def withVocabularyPath (j result : Json) (fault : ModelFault) : Json :=
+  match result.getObjVal? "error" with
+  | .ok (.str message) =>
+    if fault.path.isEmpty then result else reportedFault j ⟨message, fault.path⟩
+  | _ => result
 
 /-- Profile shape precedes vocabulary decoding. The base route owns its profile
 combination; statement and wrapper routes keep their owning decoder's fault
@@ -1125,6 +1111,30 @@ private def locationOwnedEnvironment (environment : Json) : Bool :=
   environment.getObjValD "language" == .str "ve.core@0.2" &&
     frozenFamilyProfiles environment
 
+/-- Check the frozen outer envelope with its owning decoder while ignoring
+vocabulary contents. This preserves outer-field, profile and revision order. -/
+private def legacyHeaderAccepted (environment : Json) : Bool :=
+  let emptyVocabulary := Json.mkObj [("sorts", Json.mkObj []),
+    ("predicates", Json.mkObj []), ("constants", Json.mkObj [])]
+  (decodeLegacy (environment.setObjVal! "vocabulary" emptyVocabulary)).isOk
+
+/-- A legacy vocabulary path is meaningful only after its outer envelope
+passes the frozen decoder. -/
+def reportedLegacyEnvironment (j environment : Json) : Json :=
+  let result := reported environmentCase j
+  if !legacyHeaderAccepted environment then result
+  else
+    match locatedEnvironmentFields environment with
+    | .error fault =>
+      if fault.message.startsWith "UnknownSymbol: Undeclared predicate argument sort:" then
+        reportedFault j fault
+      else withVocabularyPath j result fault
+    | .ok () => result
+
+def reportedOtherEnvironment (j environment : Json) : Json :=
+  if !isLegacy environment then reported environmentCase j
+  else reportedLegacyEnvironment j environment
+
 def reportedEnvironment (j : Json) : Json :=
   match j.getObjVal? "environment" with
   | .error _ => reported environmentCase j
@@ -1139,9 +1149,9 @@ def reportedEnvironment (j : Json) : Json :=
         | .error fault =>
           if fault.message.startsWith "UnknownSymbol: Undeclared predicate argument sort:" then
             reportedFault j fault
-          else reported environmentCase j
+          else withVocabularyPath j (reported environmentCase j) fault
         | .ok () => reported environmentCase j
-      else reported environmentCase j
+      else reportedOtherEnvironment j environment
     else
       match earlyProfileGate environment with
       | .error message => reportedFault j ⟨message, ""⟩
@@ -1151,31 +1161,36 @@ def reportedEnvironment (j : Json) : Json :=
         | .error fault => reportedFault j fault
 
 def reportedModel (j : Json) : Json :=
-  let located := do
-    let environment ← j.getObjVal? "environment"
-    let model ← j.getObjVal? "model"
-    if !isLegacy environment then
-      let _ ← validatedComposedEnvironment environment
-      pure ()
-    let view ← if isLegacy environment then pure environment else modelEnvironment environment
-    pure (environment, model, view)
-  match located with
-  | .ok (_, model, view) =>
-    match checkedModelTables view model with
-    | .ok () => reported modelCase j
-    | .error fault => reportedFault j fault
-  | .error _ =>
-    match j.getObjVal? "environment" with
-    | .error _ => reported modelCase j
-    | .ok environment =>
-      match earlyProfileGate environment with
-      | .error message => reportedFault j ⟨message, ""⟩
-      | .ok () =>
-        if !locationOwnedEnvironment environment then reported modelCase j
-        else
-          match locatedEnvironmentFields environment with
-          | .ok () => reported modelCase j
-          | .error fault => reportedFault j fault
+  let checkedEnvironment := reportedEnvironment j
+  if checkedEnvironment.getObjValD "status" == .str "error" then
+    reportedFault j ⟨(checkedEnvironment.getObjValD "error").getStr?.toOption.getD "",
+      (checkedEnvironment.getObjValD "path").getStr?.toOption.getD ""⟩
+  else
+    let located := do
+      let environment ← j.getObjVal? "environment"
+      let model ← j.getObjVal? "model"
+      if !isLegacy environment then
+        let _ ← validatedComposedEnvironment environment
+        pure ()
+      let view ← if isLegacy environment then pure environment else modelEnvironment environment
+      pure (environment, model, view)
+    match located with
+    | .ok (_, model, view) =>
+      match checkedModelTables view model with
+      | .ok () => reported modelCase j
+      | .error fault => reportedFault j fault
+    | .error _ =>
+      match j.getObjVal? "environment" with
+      | .error _ => reported modelCase j
+      | .ok environment =>
+        match earlyProfileGate environment with
+        | .error message => reportedFault j ⟨message, ""⟩
+        | .ok () =>
+          if !locationOwnedEnvironment environment then reported modelCase j
+          else
+            match locatedEnvironmentFields environment with
+            | .ok () => reported modelCase j
+            | .error fault => reportedFault j fault
 
 /-- A raw strict parse may succeed while the family's typing check rejects.
 In that case the existing diagnostic walker names the first typing fault. -/

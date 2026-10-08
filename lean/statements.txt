@@ -27546,17 +27546,12 @@ theorem VE.Service.Readings.resolve_choice
     VE.Service.Readings.resolve sets is = Option.some choice → VE.Service.Readings.Choice sets choice
   -- uses VE.Formula@VE.Syntax VE.Service.Readings.Choice@VE.Service.Readings VE.Service.Readings.resolve@VE.Service.Readings
   -- expr 2309747103
-theorem VE.Service.Standalone.checkedModelTables_error_path_valid
+theorem VE.Service.Standalone.checkedModelTables_error_preserved
   ∀ (environment model : Lean.Json) (fault : VE.Service.Standalone.ModelFault),
-    VE.Service.Standalone.checkedModelTables environment model = Except.error fault →
-      VE.Service.Standalone.prefixValidPointer✝ model fault.path = Bool.true
-  -- uses VE.Service.Standalone.ModelFault.path@VE.Service.Standalone VE.Service.Standalone.ModelFault@VE.Service.Standalone VE.Service.Standalone.checkedModelTables@VE.Service.Standalone VE.Service.Standalone.prefixValidPointer@VE.Service.Standalone
-  -- expr 1282374989
-theorem VE.Service.Standalone.safeModelPath_valid
-  ∀ (model : Lean.Json) (path : String),
-    VE.Service.Standalone.prefixValidPointer✝ model (VE.Service.Standalone.safeModelPath✝ model path) = Bool.true
-  -- uses VE.Service.Standalone.prefixValidPointer@VE.Service.Standalone VE.Service.Standalone.safeModelPath@VE.Service.Standalone
-  -- expr 4071553764
+    VE.Service.Standalone.locatedModelTables✝ environment model = Except.error fault →
+      VE.Service.Standalone.checkedModelTables environment model = Except.error fault
+  -- uses VE.Service.Standalone.ModelFault@VE.Service.Standalone VE.Service.Standalone.checkedModelTables@VE.Service.Standalone VE.Service.Standalone.locatedModelTables@VE.Service.Standalone
+  -- expr 171467256
 theorem VE.Service.boundResults_eq
   ∀ (r : VE.Service.Request) (cases : Array (Except String Lean.Json)) (digests : Array String) (i : Nat)
     (h : i < cases.size),
@@ -27625,14 +27620,14 @@ theorem VE.Service.registerOne_digest
             (ToString.toString "InvalidInput: environment handle " ++ ToString.toString digest ++
               ToString.toString " is not the SHA-256 of its text")
   -- uses VE.Service.Handles@VE.Service.Protocol VE.Service.caseDigest@VE.Service.Protocol VE.Service.decodeString@VE.Service.Protocol VE.Service.registerOne@VE.Service.Protocol
-  -- expr 965477195
+  -- expr 7764892
 theorem VE.Service.registerOne_ok
   ∀ (h : VE.Service.Handles) (key raw : String) (env : Lean.Json),
     VE.Service.decodeString "environment handle" key = Except.ok (VE.Service.caseDigest raw) →
       VE.JsonInput.parse raw.trim 254 = Except.ok env →
         VE.Service.registerOne h (key, raw) = Except.ok (h.insert (VE.Service.caseDigest raw) env raw.trim.utf8ByteSize)
   -- uses VE.JsonInput.parse@VE.Json VE.Service.Handles.insert@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.caseDigest@VE.Service.Protocol VE.Service.decodeString@VE.Service.Protocol VE.Service.registerOne@VE.Service.Protocol
-  -- expr 3632852210
+  -- expr 2418776241
 theorem VE.Service.register_none
   ∀ (h : VE.Service.Handles) (r : VE.Service.Request),
     r.environmentsText = Option.none → VE.Service.register h r = Except.ok h

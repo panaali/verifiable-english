@@ -7737,8 +7737,7 @@
     "VE.Service.Standalone.rawParseAst",
     "VE.Service.Standalone.reportedFault",
     "VE.Service.Standalone.reportedModel",
-    "VE.Service.Standalone.reportedParse",
-    "VE.Service.Standalone.safeModelPath"
+    "VE.Service.Standalone.reportedParse"
    ],
    "D[V]": [
     "VE.Service.Standalone.Legacy",
@@ -7751,23 +7750,24 @@
     "VE.Service.Standalone.encodeCore",
     "VE.Service.Standalone.encodeCoreKind",
     "VE.Service.Standalone.encodeKind",
+    "VE.Service.Standalone.legacyHeaderAccepted",
     "VE.Service.Standalone.legacyTyped",
     "VE.Service.Standalone.locatedModelTables",
     "VE.Service.Standalone.modelCell",
     "VE.Service.Standalone.modelPathOf",
     "VE.Service.Standalone.normalizedModel",
     "VE.Service.Standalone.parseCase",
-    "VE.Service.Standalone.pointerChild",
-    "VE.Service.Standalone.pointerParentExists",
-    "VE.Service.Standalone.prefixValidPointer",
     "VE.Service.Standalone.reportedEnvironment",
+    "VE.Service.Standalone.reportedLegacyEnvironment",
+    "VE.Service.Standalone.reportedOtherEnvironment",
     "VE.Service.Standalone.riskReduced",
     "VE.Service.Standalone.rowLE",
     "VE.Service.Standalone.stripPredicates",
     "VE.Service.Standalone.tableFields"
    ],
    "D[R]": [
-    "VE.Service.Standalone.ModelFault"
+    "VE.Service.Standalone.ModelFault",
+    "VE.Service.Standalone.withVocabularyPath"
    ],
    "D[I]": [
     "VE.Service.Standalone.legacyEnvironmentId"
