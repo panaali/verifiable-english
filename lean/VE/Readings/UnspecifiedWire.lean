@@ -27,6 +27,7 @@ open VE.Bridge (stringField)
 open VE.Norms (envAt size targets)
 open VE.SoftNorms (soften)
 open VE.Rights (RightsDoc correlate)
+open VE.NormDefaults (EntailsU)
 universe u
 
 /-! ## Where the completion applies (1.1) -/
@@ -39,7 +40,7 @@ def underCompletion (re : ReadingsEnvironment) (D : Doc) : Bool :=
   re.lower.contains normDefaultsProfile && re.chain == .norms && D.sets.any contentBearing
 
 /-- The frame's unspecified predicates, from the environment the frame was decoded from. -/
-def unspecOf (re : ReadingsEnvironment) (D : Doc) : List String :=
+def unspecOf (re : VE.Readings.Wire.ReadingsEnvironment) (D : Doc) : List String :=
   (D.frame.soft.T.regulated.map (·.name)).filter ((VE.NormDefaults.Wire.unspecifiedNames re.lowerJson).contains ·)
 
 /-! ## Admission (4.1) -/
@@ -100,7 +101,7 @@ def ndTextWith (re : ReadingsEnvironment) (N : NDoc) (side : String → Nat → 
 
 /-- 4.1 steps 2 and 3: reserved names, then norm-defaults' author checks and `WellFormedU` on the free document and
     on each reading's document with content, in admission order, a reading's text suffixed ` under <set>@<v>:<i>`. -/
-def ndText (re : ReadingsEnvironment) (N : NDoc) : Option String := ndTextWith re N (one N.D)
+def ndText (re : VE.Readings.Wire.ReadingsEnvironment) (N : NDoc) : Option String := ndTextWith re N (one N.D)
 
 theorem ndTextWith_eq {re : ReadingsEnvironment} {N : NDoc} {side : String → Nat → RightsDoc × List VE.Formula}
     (h : ∀ s i, side s i = one N.D s i) : ndTextWith re N side = ndText re N := by
@@ -111,7 +112,7 @@ theorem ndTextWith_eq {re : ReadingsEnvironment} {N : NDoc} {side : String → N
 /-- 4.1 step 5 for one choice, after S2a's `choiceChainText (fillDoc N) c`: norm-defaults' author checks on
     `choiceU N c` in `checkAuthorN`'s order, then `WellFormedU`, the text suffixed ` under <choice>` in
     `choiceText`'s form (SR1). -/
-def ndChoiceText (re : ReadingsEnvironment) (N : NDoc) (c : Choice) : Option String :=
+def ndChoiceText (re : VE.Readings.Wire.ReadingsEnvironment) (N : NDoc) (c : Choice) : Option String :=
   (ndDocText re (choiceU N c)).map (· ++ " under " ++ choiceText N.D c)
 
 /-- 4.1 step 5: when the compatible choices number at most 64, each in canonical order, S2a's chain check on the
@@ -154,7 +155,7 @@ theorem ndRest_of_ndText {re : ReadingsEnvironment} {N : NDoc} (h : ndText re N 
     cases hb : R.candidates[i]?.bind (·.content) <;> simp_all [pendingAt]
 
 structure AdmittedND where
-  b : Admitted2
+  b : VE.Readings.Wire.Admitted2
   N : NDoc
   hN : N.D = b.D
   wfU : WellFormedND N = true
@@ -494,7 +495,7 @@ theorem readings_wire_nd_choice_entails (j : Lean.Json) (x : ChoiceReplayU) (h :
             (VE.NormDefaults.Wire.premisesU (choiceU x.r.N x.c) ((choiceDoc x.r.N.D x.c).2 ++ Γ)) φ cert = true)
     (hcf : VE.NormDefaults.Wire.conflictFreeCheckU (choiceU x.r.N x.c) x.certs = true) :
   VE.NormDefaults.ConflictFreeU.{u} (choiceU x.r.N x.c) ∧
-    VE.NormDefaults.EntailsU.{u} (choiceU x.r.N x.c) ((choiceDoc x.r.N.D x.c).2 ++ Γ) φ :=
+    EntailsU.{u} (choiceU x.r.N x.c) ((choiceDoc x.r.N.D x.c).2 ++ Γ) φ :=
   ⟨(readings_wire_nd_choice_conflict j x h hcf).2, VE.NormDefaults.acceptanceU _ x.wfc _ φ cert hv⟩
 
 end VE.Readings.Wire

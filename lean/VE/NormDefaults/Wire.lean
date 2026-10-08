@@ -324,9 +324,9 @@ open VE.Norms
 universe u
 
 /-- Entailment on a filled document: the conclusion of `normDefaults_wire_acceptance`, named. -/
-def EntailsU (U : UDoc) (Γ : List VE.Formula) (φ : VE.Formula) : Prop :=
-  ∀ S : VE.Structure.{u}, BaseAdmissibleU U (restrictAll (fill U).T S) →
-    DocumentExpansion (fill U) (restrictAll (fill U).T S) S → Sat S Γ → φ.denote S []
+def EntailsU (U : VE.NormDefaults.UDoc) (Γ : List VE.Formula) (φ : VE.Formula) : Prop :=
+  ∀ S : VE.Structure.{u}, VE.NormDefaults.BaseAdmissibleU U (restrictAll (VE.NormDefaults.fill U).T S) →
+    DocumentExpansion (VE.NormDefaults.fill U) (restrictAll (VE.NormDefaults.fill U).T S) S → Sat S Γ → φ.denote S []
 
 /-- The certificate half on `fill U`, given only that `Fill_T` is typed at the base: the one proof both
     `acceptanceU` and `normDefaults_wire_acceptance` (whose unprofiled source has no `Fill_T`) use. -/
@@ -346,10 +346,11 @@ theorem acceptance_of_fillTyped (U : UDoc) (hfill : ∀ a ∈ fillPremises U, a.
   · exact hΓ a ha
 
 /-- `normDefaults_wire_acceptance`'s core on any well-formed UDoc (its proof moves here; its statement is kept). -/
-theorem acceptanceU (U : UDoc) (h : WellFormedU U = true) (Γ : List VE.Formula) (φ : VE.Formula)
-    (cert : VE.Tableau.Certificate)
-    (hv : VE.Tableau.checkCertificate (envAt (fill U) (size (fill U))) (Wire.premisesU U Γ) φ cert = true) :
-    EntailsU.{u} U Γ φ :=
+theorem acceptanceU (U : VE.NormDefaults.UDoc) (h : VE.NormDefaults.WellFormedU U = true) (Γ : List VE.Formula)
+    (φ : VE.Formula) (cert : VE.Tableau.Certificate)
+    (hv : VE.Tableau.checkCertificate (envAt (VE.NormDefaults.fill U) (size (VE.NormDefaults.fill U)))
+      (VE.NormDefaults.Wire.premisesU U Γ) φ cert = true) :
+  EntailsU.{u} U Γ φ :=
   acceptance_of_fillTyped U (Wire.fillPremises_wellFormed h) Γ φ cert hv
 
 end VE.NormDefaults
