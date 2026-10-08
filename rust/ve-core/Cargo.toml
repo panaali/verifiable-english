@@ -19,7 +19,6 @@ required-features = ["bench-internals"]
 [dependencies]
 ve-kernel.workspace = true
 ve-profile.workspace = true
-ve-surface.workspace = true
 
 [dev-dependencies]
 serde_json.workspace = true
