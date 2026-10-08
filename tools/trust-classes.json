@@ -10051,6 +10051,7 @@
     "VE.Readings.Wire.crossingText",
     "VE.Readings.Wire.mixedText",
     "VE.Readings.Wire.profileCheck",
+    "VE.Readings.Wire.reservedComponentText",
     "VE.Readings.Wire.shapeText",
     "VE.Readings.Wire.termsListed",
     "VE.Readings.Wire.unsupportedCompanion"

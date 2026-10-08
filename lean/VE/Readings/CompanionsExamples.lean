@@ -126,6 +126,13 @@ def idsAt (name k : String) : List String := (arr (partDoc name) k).map (fun x =
 #guard errorOf (companionSets (Json.mkObj [("reading_sets",
     Json.arr #[setJ "rs_a" "u_a" [companionReading "r0", plainReading "r1"]])])) ==
   "InvalidInput: reading set rs_a mixes readings with and without their own vocabulary"
+-- A companion set cannot claim the name of the main component; a plain set with that id stays in main.
+#guard errorOf (splitCase (envJ [] []) (Json.mkObj [("reading_sets",
+    Json.arr #[setJ "main" "u_a" [companionReading "r0"]])])) == reservedComponentText
+#guard (match splitCase (envJ [] []) (Json.mkObj [("reading_sets",
+    Json.arr #[setJ "main" "u_a" [plainReading "r0"]])]) with
+  | .ok [p] => p.1 == "main"
+  | _ => false)
 /-! Without a companion the document is one case, unchanged (conservativity, 4.6) -/
 def plainDoc : Json := Json.mkObj [("units", Json.arr #[Json.mkObj [("id", .str "u_m")]]),
   ("reading_sets", Json.arr #[setJ "rs_m" "u_m" [plainReading "m0", plainReading "m1"]])]

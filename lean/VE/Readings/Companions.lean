@@ -158,6 +158,10 @@ def firstKeys : List (String × Json) → List (String × Json)
 def mixedText (s : String) : String :=
   s!"InvalidInput: reading set {s} mixes readings with and without their own vocabulary"
 
+/-- `main` names the document component, so a companion set cannot use it as its component name. -/
+def reservedComponentText : String :=
+  "InvalidInput: reading set main conflicts with the reserved component name"
+
 /-- Along the set ids `ids`, those whose readings (over every version written) all carry a companion; the first set
     that mixes the two is refused (5 row 6). -/
 def companionIds (sets : List Json) : List String → Except String (List String)
@@ -165,6 +169,7 @@ def companionIds (sets : List Json) : List String → Except String (List String
   | s :: rest =>
     let readings := (sets.filter (setIdOf · == s)).flatMap (arr · "readings")
     if readings.any carries && !readings.all carries then throw (mixedText s)
+    else if readings.any carries && s == "main" then throw reservedComponentText
     else do
       let tail ← companionIds sets rest
       pure (if readings.any carries then s :: tail else tail)
@@ -810,12 +815,14 @@ theorem companionIds_sublist (sets : List Json) : ∀ (ids cs : List String), co
     simp only [companionIds] at h
     split at h
     · cases h
-    · obtain ⟨tail, ht, h⟩ := bind_ok h
-      cases h
-      have := companionIds_sublist sets rest tail ht
-      split
-      · exact this.cons₂ s
-      · exact this.cons s
+    · split at h
+      · cases h
+      · obtain ⟨tail, ht, h⟩ := bind_ok h
+        cases h
+        have := companionIds_sublist sets rest tail ht
+        split
+        · exact this.cons₂ s
+        · exact this.cons s
 
 theorem companionSets_nodup {document : Json} {cs : List String} (h : companionSets document = .ok cs) : cs.Nodup :=
   (firstStrs_nodup _).sublist (companionIds_sublist _ _ _ h)

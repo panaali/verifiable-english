@@ -147,7 +147,8 @@ gave Python, now Lean's.
 
 A candidate may carry `"companion": {"environment": E, "open_terms": T}` (D6; `open_terms` beside `environment`,
 review E4). A set is a **companion set** exactly when every one of its readings carries a companion; a set that mixes
-the two is refused. The **split** of a document (RD-4a) gives:
+the two is refused. A companion set cannot use `main` as its id, because `main` names the document component;
+a set without companions may still use that id. The **split** of a document (RD-4a) gives:
 
 - for each companion set, a component case: the environment is its companions' environments merged (the same
   `language`, `spec_revision` and `profiles`; `sorts`, `constants` and `predicates` united by name, a repeated name
@@ -376,6 +377,7 @@ Three guarantees, one per kind of change, then what none of them changes:
 | 4 | S1's chain texts on the filled tree, suffixed | e.g. `ResourceLimit: generated norm layer layer:norms:<p> under rs_1@1:0` | 4.1 step 4 |
 | 5 | per choice, S2a's chain text (`choiceChainText (fillDoc N) c`), then `checkAuthorN`'s texts in row 3's order and `InvalidInput: norm-defaults document is not well formed` (`ndChoiceText`), each suffixed ` under <choice>` in `choiceText`'s form (SR1) | a compatible choice's document, at most 64 choices, in canonical order; e.g. `ResourceLimit: rules under rs_1@1:0, rs_2@1:0` (F-ND10); `replayChoiceU` gives the same text for its own choice | 4.1 step 5 |
 | 6 | `InvalidInput: reading set <set> mixes readings with and without their own vocabulary` | a set mixes the two | split |
+| 6a | `InvalidInput: reading set main conflicts with the reserved component name` | a companion set has id `main` | split |
 | 7 | `InvalidInput: coupling <id> links <set> and <set'>, which do not share one vocabulary` | a coupling names a companion set with another set (E3, A3) | split |
 | 8 | `UnsupportedProfile: readings with their own vocabulary on the soft or rights chain are not implemented` | a companion's profiles contain `soft-norms@0` or `rights@0` | split, per set in source order |
 | 9 | `InvalidInput: the readings of <set> declare different <language \| spec_revision \| profiles>` | companions of one set differ in those | split |
