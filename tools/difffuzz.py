@@ -702,29 +702,29 @@ RECORD_FIELDS = {"contract": "string", "revision": "nat", "check": "string", "ph
                  "code": "string", "class": "string", "path": "string", "text": "string", "args": "object"}
 
 # Rust `ve conformance` rows by request kind: (the statuses of an answer, its fields, counted fields);
-# the encoders are `rust/ve-core/src/order.rs` and the core dispatch. An error row is `{"id", "status": "error",
-# "error": {"code", "message"}}`.
+# the encoders are `rust/ve-profile/src/order.rs` and the core dispatch (`rust/ve/src/main.rs` `case`). An
+# error row is `{"id", "status": "error", "error": {"code", "message"}}`. Rust reads no source text and has
+# no label or dependency-order route (batch 15b): a case of no kind it serves is `unknown`, whose only row
+# is an error.
 RUST_ROWS = {
-    "label": ({"ok"}, {"label": "string"}, {}),
-    "dependency-order": ({"ok"}, {"order": "array<string>"}, {}),
-    "evaluate": ({"ok"}, {"values": "array<bool>"}, {"values": "case.ast"}),
-    "parse": ({"ok"}, {"ast": "json", "canonical": "string", "meaning_id": "string"}, {}),
+    "check": ({"ok"}, {"well_typed": "bool"}, {}),
+    "evaluate-budgeted": ({"Satisfied", "Violated", "ResourceLimit"}, {"value": "json"}, {}),
     "countermodel": ({"ok", "Valid", "NotCountermodel"}, {"valid": "bool"}, {}),
     "search": ({"Found", "NotFound", "ResourceLimit"}, {"model": "json"}, {}),
+    "unknown": (set(), {}, {}),
 }
 
 
 def rust_operation(case):
-    """The operation `ve conformance` reads a case as, by its fields (`rust/ve-core/src/order.rs`
+    """The operation `ve conformance` reads a case as, by its fields (`rust/ve-profile/src/order.rs`
     `order_case` and the core dispatch): a named kind, else premises and a conclusion are a countermodel
-    check with a model and a search without, else a document is evaluated with a model and parsed
-    without."""
+    check with a model and a search without; any other case is unknown (refused)."""
     kind = case.get("kind")
-    if kind in ("label", "dependency-order", "countermodel"):
+    if kind in ("check", "evaluate-budgeted", "countermodel"):
         return kind
     if "premises" in case and "conclusion" in case:
         return "countermodel" if "model" in case else "search"
-    return "evaluate" if "model" in case else "parse"
+    return "unknown"
 
 
 def manifest_bindings(executable, mode, kinds):
@@ -1036,6 +1036,20 @@ def lean_row_check(seed, case):
     return bound_row_problem("ve_conformance", mode, kinds)
 
 
+def rust_document_value_agrees(left, right):
+    """Whether Rust's answer to an evaluation, the document's value (`evaluate-budgeted`), is the
+    conjunction of the other engine's statement values: then the two answers agree. Any other pair is
+    compared as it is (a differing value is a `value` finding)."""
+    for (engine, x), (other, y) in ((left, right), (right, left)):
+        if engine == "rust" and other != "rust" and x["outcome"] == y["outcome"] == "ok":
+            mine, theirs = x.get("value") or {}, y.get("value") or {}
+            values = theirs.get("values")
+            if type(mine.get("value")) is bool and type(values) is list and \
+                    all(type(value) is bool for value in values):
+                return mine["value"] == all(values)
+    return False
+
+
 class Requests(Surface):
     """Every route request of the fixtures (`difffuzz_corpus.requests`)."""
     name = "requests"
@@ -1059,9 +1073,11 @@ class Requests(Surface):
             rust = None
             if template is not None:
                 engines.append("rust")
-                # The fields Rust's case reads from the input, and the ones `rust_request` sets itself.
-                rust = {"fields": [k for k in template if k in root],
-                        "constants": {k: v for k, v in template.items() if k not in root},
+                # The fields Rust's case reads from the input, and the ones `rust_request` sets itself
+                # (among them a kind it renames: an evaluation is Rust's `evaluate-budgeted`).
+                fields = [k for k in template if k in root and template[k] == root[k]]
+                rust = {"fields": fields,
+                        "constants": {k: v for k, v in template.items() if k not in fields},
                         "operation": rust_operation(template)}
             stem = origin.split("/")[1].split(".json")[0] if origin.startswith("conformance/") else \
                 "usecase:" + origin.split("/")[1]
@@ -1118,11 +1134,16 @@ class Requests(Surface):
             if bad:
                 out.append(bad)
             elif row["status"] != "error" and operation != seed.meta["rust"]["operation"]:
-                # A field the mutant dropped makes Rust read another request (a document parsed, not
-                # evaluated): Rust accepted the input, and its answer has nothing to compare.
+                # A field the mutant dropped makes Rust read another request (a countermodel searched,
+                # not checked): Rust accepted the input, and its answer has nothing to compare.
                 out.append(ok(None))
             else:
-                out.append(self._verdict(seed, rust_verdict({"kind": kind}, row)))
+                verdict = rust_verdict({"kind": kind}, row)
+                if kind == "evaluate" and verdict["status"] != "error":
+                    # Rust's evaluation verdict is the document's value (`evaluate-budgeted`).
+                    out.append(ok({"value": verdict["value"]}))
+                else:
+                    out.append(self._verdict(seed, verdict))
         return out
 
     def value_compared(self, seed, engine):
@@ -1130,6 +1151,8 @@ class Requests(Surface):
         return not (engine == "rust" and seed.meta["kind"] == "certificate")
 
     def equivalent(self, seed, left, right):
+        if seed.meta["kind"] == "evaluate":
+            return rust_document_value_agrees(left, right)
         # A certificate the Lean route rejects is an invalid certificate (`three_way.lean_verdict`): any
         # rejection but an unsupported profile or a resource limit means `valid: false`. Rust's
         # certificate answer is a bounded search that never reads the certificate, so the Lean route's
@@ -1216,17 +1239,18 @@ class Route:
     own: OwnCodes | None = None
 
 
-def _rust_label(env):
-    return {"kind": "label", "label": "asserted", "environment": env}
+def _rust_envelope(env):
+    from conformance.three_way import rust_envelope
+    return rust_envelope(env)
 
 
 ROUTES = {
-    "envelope": Route("ve_service", None, _rust_label, identity=True),
+    "envelope": Route("ve_service", None, _rust_envelope, identity=True),
     "alternatives": Route("ve_alternatives_route", {"kind": "alt-elaborate", "norms": []},
                           no_rust="Rust reads the four core envelope fields only (no alternatives block)"),
     "risk": Route("ve_risk_route", {"kind": "risk-elaborate", "document": {"norms": []}},
                   no_rust="Rust reads the four core envelope fields only (no risk block)"),
-    "soft-norms": Route("ve_soft_norms_route", {"kind": "soft-elaborate", "norms": []}, _rust_label,
+    "soft-norms": Route("ve_soft_norms_route", {"kind": "soft-elaborate", "norms": []}, _rust_envelope,
                         own=OwnCodes("soft-norms@0", _soft_route_python)),
     "speech": Route("ve_speech_acts_route", {"kind": "speech-elaborate", "document": {"units": []}},
                     no_rust="Rust reads the four core envelope fields only (no speech-acts block)"),

@@ -1500,18 +1500,11 @@
           "lean/VE/Bridge.lean"
         ]
       },
-      "rust": {
-        "commands": [
-          "parse",
-          "format"
-        ],
-        "role": "parse diagnostics with codes and spans; canonical formatting"
-      },
+      "rust": null,
       "lean_call_sites": [],
       "tests": [
         "tests/test_parser_renderer.py::test_strict_syntax_rejects_variants",
-        "tests/test_lean_conformance.py::test_lean_source_resolution_and_canonical_binder_order",
-        "tests/test_rust_conformance.py::test_rust_shared_parser"
+        "tests/test_lean_conformance.py::test_lean_source_resolution_and_canonical_binder_order"
       ],
       "trusted": [
         "python:implementation",
@@ -1662,7 +1655,7 @@
         "commands": [
           "conformance"
         ],
-        "role": "environment decoding and environment_id in every Rust case"
+        "role": "environment decoding in every Rust case; environment_id in its countermodel check"
       },
       "lean_call_sites": [],
       "tests": [
@@ -1733,13 +1726,13 @@
         "commands": [
           "conformance"
         ],
-        "role": "model decoding and model_id in every Rust case"
+        "role": "model decoding in every Rust case with a model; model_id in its countermodel check"
       },
       "lean_call_sites": [],
       "tests": [
         "tests/test_evaluate_search.py::test_model_rejects_nonliteral_complete_duplicates_dangling_and_missing",
         "tests/test_lean_conformance.py::test_countermodel_rejects_inadmissible_model",
-        "tests/test_rust_conformance.py::test_rust_shared_identities"
+        "tests/test_rust_conformance.py::test_rust_shared_validation"
       ],
       "trusted": [
         "python:implementation",
@@ -1867,10 +1860,9 @@
       },
       "rust": {
         "commands": [
-          "evaluate",
           "conformance"
         ],
-        "role": "hot evaluation and, after stage 2e, budgeted traces"
+        "role": "hot evaluation and, after stage 2e, budgeted traces (the evaluate-budgeted case kind)"
       },
       "lean_call_sites": [],
       "tests": [
@@ -1999,7 +1991,6 @@
       },
       "rust": {
         "commands": [
-          "check-countermodel",
           "conformance"
         ],
         "role": "fast validation; Lean validates every Rust witness before it is reported"
@@ -2056,7 +2047,6 @@
       "lean": null,
       "rust": {
         "commands": [
-          "countermodel",
           "conformance"
         ],
         "role": "search, extended with every Python search option in stage 2e"
@@ -2308,7 +2298,7 @@
         "commands": [
           "conformance"
         ],
-        "role": "defined tables and the dependency-order route kind"
+        "role": "defined tables"
       },
       "lean_call_sites": [],
       "tests": [
@@ -2920,12 +2910,12 @@
         "commands": [
           "conformance"
         ],
-        "role": "environment_id, meaning_id and model_id in every Rust case"
+        "role": "environment_id, premise and conclusion meaning_ids and model_id in its countermodel check"
       },
       "lean_call_sites": [],
       "tests": [
         "tests/test_conformance.py::test_identity_preimages_have_exact_domain_and_shape",
-        "tests/test_rust_conformance.py::test_rust_shared_identities",
+        "tests/test_rust_conformance.py::test_rust_shared_countermodels",
         "tests/test_p0_three_way.py::test_report_identity_binds_environment_and_document"
       ],
       "trusted": [
