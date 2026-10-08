@@ -372,7 +372,7 @@ def test_the_route_goes_through_the_manifest_binding(joke, monkeypatch):
     monkeypatch.setattr("ve.backends.lean.require_lean_binding", spy)
     admit(joke, "Alice tells the riddle.")
     assert calls == [("senses.read", "ve_senses_route", "", set())]
-    assert assurance.operation("senses.read")["lean_call_sites"] == ["ve.backends.senses:read"]
+    assert assurance.operation("senses.read")["lean_call_sites"] == ["ve.backends.senses:_read"]
 
 
 def test_only_senses_check_reads_with_senses(joke, tmp_path):

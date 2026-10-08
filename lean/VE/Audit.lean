@@ -184,6 +184,7 @@ import VE.EnglishGrammar.Read
 import VE.EnglishGrammar.Extends
 import VE.EnglishGrammar.Run
 import VE.Senses.Read
+import VE.Senses.Document
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -4536,6 +4537,7 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Senses.stateFrom_init
 #print axioms VE.Senses.stateFrom_cons
 #print axioms VE.Senses.readBody_good
+#print axioms VE.Senses.readSents_ok
 #print axioms VE.Senses.readWithSenses_ok
 #print axioms VE.Senses.readBody_resolved
 #print axioms VE.Senses.filterMap_of_map_some
@@ -4544,3 +4546,14 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Senses.senses_candidate_sound
 #print axioms VE.Senses.candidates_complete
 #print axioms VE.Senses.mixed_exact
+#print axioms VE.Senses.readDocument_source
+#print axioms VE.Senses.readDocument_bad_default
+#print axioms VE.Senses.badDefault_none
+#print axioms VE.Senses.readDocument_both
+#print axioms VE.Senses.readDocument_defaults
+#print axioms VE.Senses.defaults_read_as_lines
+#print axioms VE.Senses.fenceSents_ok
+#print axioms VE.Senses.readDocument_ok
+#print axioms VE.Senses.documentInput_fences
+#print axioms VE.Senses.document_unit_sound
+#print axioms VE.Senses.document_line_sound

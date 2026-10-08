@@ -27198,6 +27198,12 @@ theorem VE.Route.verifyOrder_sound
             n ∈ ns → ∀ (m : String), m ∈ VE.Route.deps ns n → List.idxOf m order < List.idxOf n.name order
   -- uses VE.Route.DepNode.name@VE.Route.Route VE.Route.DepNode@VE.Route.Route VE.Route.deps@VE.Route.Route VE.Route.nodeNames@VE.Route.Route VE.Route.verifyOrder@VE.Route.Route
   -- expr 2970290661
+theorem VE.Senses.badDefault_none
+  ∀ (D : VE.Senses.Dictionary) (A : VE.Senses.Assignment),
+    VE.Senses.badDefault D A = Option.none ↔
+      ∀ (p : String × Nat), p ∈ A.defaults → ((D.sensesOf p.fst).any fun x => x.index == p.snd) = Bool.true
+  -- uses VE.Senses.Assignment.defaults@VE.Senses.Assignment VE.Senses.Assignment@VE.Senses.Assignment VE.Senses.Dictionary.sensesOf@VE.Senses.Dictionary VE.Senses.Dictionary@VE.Senses.Dictionary VE.Senses.Sense.index@VE.Senses.Dictionary VE.Senses.Sense@VE.Senses.Dictionary VE.Senses.badDefault@VE.Senses.Document
+  -- expr 2237962573
 theorem VE.Senses.candidatesOf_complete
   ∀ {D : VE.Senses.Dictionary} {A : VE.Senses.Assignment} {E : VE.EnglishGrammar.Env} {L : VE.EnglishGrammar.Lexicon}
     {used : List String} {b sentence : Nat} {st : VE.EnglishGrammar.DState} {w : Array VE.EnglishGrammar.Tok}
@@ -27263,6 +27269,76 @@ theorem VE.Senses.choiceCount_gt_iff
     VE.Senses.choiceCount D cap ws > cap ↔ (VE.Senses.choicesOf D ws).length > cap
   -- uses VE.Senses.Dictionary@VE.Senses.Dictionary VE.Senses.choiceCount@VE.Senses.Read VE.Senses.choicesOf@VE.Senses.Read
   -- expr 3543755589
+theorem VE.Senses.defaults_read_as_lines
+  ∀ (D : VE.Senses.Dictionary) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) (b : Nat)
+    (A : VE.Senses.Assignment) (t : VE.Senses.SenseText) (ts : List (Array VE.EnglishGrammar.Tok))
+    (ls sents : Array (Array VE.EnglishGrammar.Tok)) (s : String),
+    D.failures (List.map (fun x => x.name) E.sorts) = [] →
+      t.sents = Except.ok (Except.ok ts) →
+        VE.Senses.badDefault D A = Option.none →
+          A.defaults ≠ [] →
+            VE.Senses.writtenLine ts = Bool.false →
+              VE.EnglishGrammar.lex (VE.Senses.Assignment.lines D A) = Except.ok ls →
+                VE.EnglishGrammar.lex s = Except.ok sents →
+                  sents.toList = ls.toList ++ ts →
+                    VE.Senses.readDocument D E L b A t = Except.ok (VE.Senses.readWithSenses D E L b s)
+  -- uses VE.EnglishGrammar.Env.sorts@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Reject@VE.EnglishGrammar.Syntax VE.EnglishGrammar.SortDecl.name@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.SortDecl@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.EnglishGrammar.lex@VE.EnglishGrammar.Lexer VE.Senses.Assignment.defaults@VE.Senses.Assignment VE.Senses.Assignment.lines@VE.Senses.Assignment VE.Senses.Assignment@VE.Senses.Assignment VE.Senses.DictFailure@VE.Senses.Dictionary VE.Senses.Dictionary.failures@VE.Senses.Dictionary VE.Senses.Dictionary@VE.Senses.Dictionary VE.Senses.SenseText.sents@VE.Senses.Document VE.Senses.SenseText@VE.Senses.Document VE.Senses.SensesOutcome@VE.Senses.Read VE.Senses.badDefault@VE.Senses.Document VE.Senses.readDocument@VE.Senses.Document VE.Senses.readWithSenses@VE.Senses.Read VE.Senses.writtenLine@VE.Senses.Document
+  -- expr 3991950501
+theorem VE.Senses.documentInput_fences
+  ∀ {D : VE.Senses.Dictionary} {A : VE.Senses.Assignment} {fs : List String} {d : Nat}
+    {sents : List (Array VE.EnglishGrammar.Tok)},
+    VE.Senses.documentInput D A (VE.Senses.SenseText.fences fs) = Except.ok (Except.ok (d, sents)) →
+      ∃ ds ts, sents = ds ++ ts ∧ ds.length = d ∧ VE.Senses.fenceSents 0 fs = Except.ok (Except.ok ts)
+  -- uses VE.EnglishGrammar.Reject@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.Senses.Assignment@VE.Senses.Assignment VE.Senses.Dictionary@VE.Senses.Dictionary VE.Senses.SenseText.fences@VE.Senses.Document VE.Senses.SensesOutcome@VE.Senses.Read VE.Senses.documentInput@VE.Senses.Document VE.Senses.fenceSents@VE.Senses.Document
+  -- expr 1551882291
+theorem VE.Senses.document_line_sound
+  ∀ (D : VE.Senses.Dictionary) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) (b : Nat)
+    (A : VE.Senses.Assignment) (fs : List String) (units : List VE.Senses.SenseUnit) (sm : List VE.Senses.SenseOccurrence)
+    (mx : List (String × List String)) (un : List String) (P : VE.Senses.Projection) (j : Nat),
+    VE.Senses.readDocument D E L b A (VE.Senses.SenseText.fences fs) =
+        Except.ok (VE.Senses.SensesOutcome.ok units sm mx un P) →
+      (∃ d sents,
+          VE.Senses.documentInput D A (VE.Senses.SenseText.fences fs) = Except.ok (Except.ok (d, sents)) ∧
+            (VE.Senses.fenceUnits D b d sents fs.length)[j]? = Option.some Option.none) →
+        ∃ f w t,
+          fs[j]? = Option.some f ∧
+            VE.EnglishGrammar.lex f = Except.ok #[w] ∧
+              VE.Grammar.verdict (VE.Senses.preambleGrammar D) b w = Option.some (VE.Grammar.Verdict.one t)
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Reject@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.EnglishGrammar.instAcceptsTerminalTok@VE.EnglishGrammar.Token VE.EnglishGrammar.instDecidableEqTerminal@VE.EnglishGrammar.Token VE.EnglishGrammar.instDecidableEqTok@VE.EnglishGrammar.Token VE.EnglishGrammar.lex@VE.EnglishGrammar.Lexer VE.Grammar.Tree@VE.Grammar.Derives VE.Grammar.Verdict.one@VE.Grammar.Table VE.Grammar.Verdict@VE.Grammar.Table VE.Grammar.verdict@VE.Grammar.Table VE.Senses.Assignment@VE.Senses.Assignment VE.Senses.Dictionary@VE.Senses.Dictionary VE.Senses.Projection@VE.Senses.Project VE.Senses.SenseOccurrence@VE.Senses.Read VE.Senses.SenseText.fences@VE.Senses.Document VE.Senses.SenseUnit@VE.Senses.Read VE.Senses.SensesOutcome.ok@VE.Senses.Read VE.Senses.SensesOutcome@VE.Senses.Read VE.Senses.documentInput@VE.Senses.Document VE.Senses.fenceUnits@VE.Senses.Document VE.Senses.preambleGrammar@VE.Senses.Preamble VE.Senses.readDocument@VE.Senses.Document
+  -- expr 3318547412
+theorem VE.Senses.document_unit_sound
+  ∀ (D : VE.Senses.Dictionary) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) (b : Nat)
+    (A : VE.Senses.Assignment) (fs : List String) (units : List VE.Senses.SenseUnit) (sm : List VE.Senses.SenseOccurrence)
+    (mx : List (String × List String)) (un : List String) (P : VE.Senses.Projection) (j i : Nat),
+    VE.Senses.readDocument D E L b A (VE.Senses.SenseText.fences fs) =
+        Except.ok (VE.Senses.SensesOutcome.ok units sm mx un P) →
+      (∃ d sents,
+          VE.Senses.documentInput D A (VE.Senses.SenseText.fences fs) = Except.ok (Except.ok (d, sents)) ∧
+            (VE.Senses.fenceUnits D b d sents fs.length)[j]? = Option.some (Option.some i)) →
+        ∃ f w u,
+          fs[j]? = Option.some f ∧
+            VE.EnglishGrammar.lex f = Except.ok #[w] ∧
+              units[i]? = Option.some u ∧
+                (u.formula.isSome = Bool.true ∨ u.candidates ≠ []) ∧
+                  ∀ (F : VE.EnglishGrammar.EFormula) (m : Bool),
+                    u.formula = Option.some (F, m) →
+                      u.candidates = [] ∧
+                        (VE.EnglishGrammar.grammar P.env P.lexicon).wf = Bool.true ∧
+                          VE.Grammar.readSentence (VE.EnglishGrammar.grammar P.env P.lexicon)
+                              (VE.EnglishGrammar.meaning (VE.EnglishGrammar.grammar P.env P.lexicon)
+                                (VE.EnglishGrammar.acts P.env P.lexicon))
+                              (VE.Senses.stateBefore units i) b w =
+                            (VE.Grammar.Outcome.ok F m, u.after)
+  -- uses VE.EnglishGrammar.DState@VE.EnglishGrammar.Syntax VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Reject@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.EnglishGrammar.acts@VE.EnglishGrammar.Actions VE.EnglishGrammar.grammar@VE.EnglishGrammar.Rules VE.EnglishGrammar.instAcceptsTerminalTok@VE.EnglishGrammar.Token VE.EnglishGrammar.instDecidableEqTerminal@VE.EnglishGrammar.Token VE.EnglishGrammar.instDecidableEqTok@VE.EnglishGrammar.Token VE.EnglishGrammar.lex@VE.EnglishGrammar.Lexer VE.EnglishGrammar.meaning@VE.EnglishGrammar.Read VE.Grammar.Grammar.wf@VE.Grammar.Basic VE.Grammar.Outcome.ok@VE.Grammar.Reading VE.Grammar.Outcome@VE.Grammar.Reading VE.Grammar.readSentence@VE.Grammar.Reading VE.Senses.Assignment@VE.Senses.Assignment VE.Senses.Candidate@VE.Senses.Read VE.Senses.Dictionary@VE.Senses.Dictionary VE.Senses.Projection.env@VE.Senses.Project VE.Senses.Projection.lexicon@VE.Senses.Project VE.Senses.Projection@VE.Senses.Project VE.Senses.SenseOccurrence@VE.Senses.Read VE.Senses.SenseText.fences@VE.Senses.Document VE.Senses.SenseUnit.after@VE.Senses.Read VE.Senses.SenseUnit.candidates@VE.Senses.Read VE.Senses.SenseUnit.formula@VE.Senses.Read VE.Senses.SenseUnit@VE.Senses.Read VE.Senses.SensesOutcome.ok@VE.Senses.Read VE.Senses.SensesOutcome@VE.Senses.Read VE.Senses.documentInput@VE.Senses.Document VE.Senses.fenceUnits@VE.Senses.Document VE.Senses.readDocument@VE.Senses.Document VE.Senses.stateBefore@VE.Senses.Read
+  -- expr 2646940912
+theorem VE.Senses.fenceSents_ok
+  ∀ (fs : List String) (j : Nat) (ts : List (Array VE.EnglishGrammar.Tok)),
+    VE.Senses.fenceSents j fs = Except.ok (Except.ok ts) →
+      ts.length = fs.length ∧
+        ∀ (i : Nat) (f : String),
+          fs[i]? = Option.some f → ∃ w, VE.EnglishGrammar.lex f = Except.ok #[w] ∧ ts[i]? = Option.some w
+  -- uses VE.EnglishGrammar.Reject@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.EnglishGrammar.lex@VE.EnglishGrammar.Lexer VE.Senses.fenceSents@VE.Senses.Document
+  -- expr 2387913681
 theorem VE.Senses.filterMap_of_map_some
   ∀ {α β : Type} {f : α → Option β} {l : List α} {rs : List β},
     List.map f l = List.map Option.some rs → List.filterMap f l = rs
@@ -27380,6 +27456,59 @@ theorem VE.Senses.readBody_resolved
                   st (List.map (fun x => x.toList) ws) rs st2
   -- uses VE.EnglishGrammar.DState@VE.EnglishGrammar.Syntax VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Reject@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.EnglishGrammar.acts@VE.EnglishGrammar.Actions VE.EnglishGrammar.grammar@VE.EnglishGrammar.Rules VE.EnglishGrammar.instAcceptsTerminalTok@VE.EnglishGrammar.Token VE.EnglishGrammar.meaning@VE.EnglishGrammar.Read VE.Grammar.DocOneReading@VE.Grammar.Reading VE.Grammar.Grammar.wf@VE.Grammar.Basic VE.Senses.Assignment@VE.Senses.Assignment VE.Senses.Candidate@VE.Senses.Read VE.Senses.Dictionary@VE.Senses.Dictionary VE.Senses.Projection.env@VE.Senses.Project VE.Senses.Projection.lexicon@VE.Senses.Project VE.Senses.Projection@VE.Senses.Project VE.Senses.SenseOccurrence@VE.Senses.Read VE.Senses.SenseUnit.candidates@VE.Senses.Read VE.Senses.SenseUnit.formula@VE.Senses.Read VE.Senses.SenseUnit@VE.Senses.Read VE.Senses.Stop@VE.Senses.Read VE.Senses.readBody@VE.Senses.Read
   -- expr 2161273378
+theorem VE.Senses.readDocument_bad_default
+  ∀ (D : VE.Senses.Dictionary) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) (b : Nat)
+    (A : VE.Senses.Assignment) (t : VE.Senses.SenseText) (ts : List (Array VE.EnglishGrammar.Tok)) (w : String) (i : Nat),
+    D.failures (List.map (fun x => x.name) E.sorts) = [] →
+      t.sents = Except.ok (Except.ok ts) →
+        VE.Senses.badDefault D A = Option.some (w, i) →
+          VE.Senses.readDocument D E L b A t = Except.error (VE.Senses.defaultText w i) ∧
+            ((D.sensesOf w).all fun x => x.index != i) = Bool.true
+  -- uses VE.EnglishGrammar.Env.sorts@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Reject@VE.EnglishGrammar.Syntax VE.EnglishGrammar.SortDecl.name@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.SortDecl@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.Senses.Assignment@VE.Senses.Assignment VE.Senses.DictFailure@VE.Senses.Dictionary VE.Senses.Dictionary.failures@VE.Senses.Dictionary VE.Senses.Dictionary.sensesOf@VE.Senses.Dictionary VE.Senses.Dictionary@VE.Senses.Dictionary VE.Senses.Sense.index@VE.Senses.Dictionary VE.Senses.Sense@VE.Senses.Dictionary VE.Senses.SenseText.sents@VE.Senses.Document VE.Senses.SenseText@VE.Senses.Document VE.Senses.SensesOutcome@VE.Senses.Read VE.Senses.badDefault@VE.Senses.Document VE.Senses.defaultText@VE.Senses.Document VE.Senses.readDocument@VE.Senses.Document
+  -- expr 92032817
+theorem VE.Senses.readDocument_both
+  ∀ (D : VE.Senses.Dictionary) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) (b : Nat)
+    (A : VE.Senses.Assignment) (t : VE.Senses.SenseText) (w : Array VE.EnglishGrammar.Tok)
+    (ts : List (Array VE.EnglishGrammar.Tok)),
+    D.failures (List.map (fun x => x.name) E.sorts) = [] →
+      t.sents = Except.ok (Except.ok (w :: ts)) →
+        VE.Senses.badDefault D A = Option.none →
+          A.defaults ≠ [] →
+            VE.Senses.preambleShaped w.toList = Bool.true →
+              VE.Senses.readDocument D E L b A t = Except.error VE.Senses.bothText
+  -- uses VE.EnglishGrammar.Env.sorts@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Reject@VE.EnglishGrammar.Syntax VE.EnglishGrammar.SortDecl.name@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.SortDecl@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.Senses.Assignment.defaults@VE.Senses.Assignment VE.Senses.Assignment@VE.Senses.Assignment VE.Senses.DictFailure@VE.Senses.Dictionary VE.Senses.Dictionary.failures@VE.Senses.Dictionary VE.Senses.Dictionary@VE.Senses.Dictionary VE.Senses.SenseText.sents@VE.Senses.Document VE.Senses.SenseText@VE.Senses.Document VE.Senses.SensesOutcome@VE.Senses.Read VE.Senses.badDefault@VE.Senses.Document VE.Senses.bothText@VE.Senses.Document VE.Senses.preambleShaped@VE.Senses.Preamble VE.Senses.readDocument@VE.Senses.Document
+  -- expr 2834525584
+theorem VE.Senses.readDocument_defaults
+  ∀ (D : VE.Senses.Dictionary) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) (b : Nat)
+    (A : VE.Senses.Assignment) (t : VE.Senses.SenseText) (ts : List (Array VE.EnglishGrammar.Tok))
+    (ls : Array (Array VE.EnglishGrammar.Tok)),
+    D.failures (List.map (fun x => x.name) E.sorts) = [] →
+      t.sents = Except.ok (Except.ok ts) →
+        VE.Senses.badDefault D A = Option.none →
+          A.defaults ≠ [] →
+            VE.Senses.writtenLine ts = Bool.false →
+              VE.EnglishGrammar.lex (VE.Senses.Assignment.lines D A) = Except.ok ls →
+                VE.Senses.readDocument D E L b A t = Except.ok (VE.Senses.readSents D E L b (ls.toList ++ ts))
+  -- uses VE.EnglishGrammar.Env.sorts@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Reject@VE.EnglishGrammar.Syntax VE.EnglishGrammar.SortDecl.name@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.SortDecl@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.EnglishGrammar.lex@VE.EnglishGrammar.Lexer VE.Senses.Assignment.defaults@VE.Senses.Assignment VE.Senses.Assignment.lines@VE.Senses.Assignment VE.Senses.Assignment@VE.Senses.Assignment VE.Senses.DictFailure@VE.Senses.Dictionary VE.Senses.Dictionary.failures@VE.Senses.Dictionary VE.Senses.Dictionary@VE.Senses.Dictionary VE.Senses.SenseText.sents@VE.Senses.Document VE.Senses.SenseText@VE.Senses.Document VE.Senses.SensesOutcome@VE.Senses.Read VE.Senses.badDefault@VE.Senses.Document VE.Senses.readDocument@VE.Senses.Document VE.Senses.readSents@VE.Senses.Read VE.Senses.writtenLine@VE.Senses.Document
+  -- expr 2201448096
+theorem VE.Senses.readDocument_ok
+  ∀ {D : VE.Senses.Dictionary} {E : VE.EnglishGrammar.Env} {L : VE.EnglishGrammar.Lexicon} {b : Nat}
+    {A : VE.Senses.Assignment} {t : VE.Senses.SenseText} {units : List VE.Senses.SenseUnit}
+    {sm : List VE.Senses.SenseOccurrence} {mx : List (String × List String)} {un : List String}
+    {P : VE.Senses.Projection},
+    VE.Senses.readDocument D E L b A t = Except.ok (VE.Senses.SensesOutcome.ok units sm mx un P) →
+      D.failures (List.map (fun x => x.name) E.sorts) = [] ∧
+        ∃ d sents,
+          VE.Senses.documentInput D A t = Except.ok (Except.ok (d, sents)) ∧
+            VE.Senses.readSents D E L b sents = VE.Senses.SensesOutcome.ok units sm mx un P
+  -- uses VE.EnglishGrammar.Env.sorts@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.SortDecl.name@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.SortDecl@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.Senses.Assignment@VE.Senses.Assignment VE.Senses.DictFailure@VE.Senses.Dictionary VE.Senses.Dictionary.failures@VE.Senses.Dictionary VE.Senses.Dictionary@VE.Senses.Dictionary VE.Senses.Projection@VE.Senses.Project VE.Senses.SenseOccurrence@VE.Senses.Read VE.Senses.SenseText@VE.Senses.Document VE.Senses.SenseUnit@VE.Senses.Read VE.Senses.SensesOutcome.ok@VE.Senses.Read VE.Senses.SensesOutcome@VE.Senses.Read VE.Senses.documentInput@VE.Senses.Document VE.Senses.readDocument@VE.Senses.Document VE.Senses.readSents@VE.Senses.Read
+  -- expr 750175566
+theorem VE.Senses.readDocument_source
+  ∀ (D : VE.Senses.Dictionary) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String),
+    VE.Senses.readDocument D E L b { defaults := [] } (VE.Senses.SenseText.source s) =
+      Except.ok (VE.Senses.readWithSenses D E L b s)
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.Senses.Assignment.mk@VE.Senses.Assignment VE.Senses.Dictionary@VE.Senses.Dictionary VE.Senses.SenseText.source@VE.Senses.Document VE.Senses.SensesOutcome@VE.Senses.Read VE.Senses.readDocument@VE.Senses.Document VE.Senses.readWithSenses@VE.Senses.Read
+  -- expr 1233929801
 theorem VE.Senses.readLine_ok
   ∀ {D : VE.Senses.Dictionary} {b i : Nat} {w : List VE.EnglishGrammar.Tok} {s : VE.Senses.Sense},
     VE.Senses.readLine D b i w = Except.ok s →
@@ -27422,6 +27551,27 @@ theorem VE.Senses.readPreambleGo_lines
                     VE.Grammar.verdict (VE.Senses.preambleGrammar D) b w.toArray = Option.some (VE.Grammar.Verdict.one t)
   -- uses VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.EnglishGrammar.instAcceptsTerminalTok@VE.EnglishGrammar.Token VE.EnglishGrammar.instDecidableEqTerminal@VE.EnglishGrammar.Token VE.EnglishGrammar.instDecidableEqTok@VE.EnglishGrammar.Token VE.Grammar.Tree@VE.Grammar.Derives VE.Grammar.Verdict.one@VE.Grammar.Table VE.Grammar.Verdict@VE.Grammar.Table VE.Grammar.verdict@VE.Grammar.Table VE.Senses.Assignment@VE.Senses.Assignment VE.Senses.Dictionary@VE.Senses.Dictionary VE.Senses.SenseFault@VE.Senses.Preamble VE.Senses.preambleGrammar@VE.Senses.Preamble VE.Senses.readPreambleGo@VE.Senses.Preamble
   -- expr 937073676
+theorem VE.Senses.readSents_ok
+  ∀ {D : VE.Senses.Dictionary} {E : VE.EnglishGrammar.Env} {L : VE.EnglishGrammar.Lexicon} {b : Nat}
+    {sents : List (Array VE.EnglishGrammar.Tok)} {units : List VE.Senses.SenseUnit} {sm : List VE.Senses.SenseOccurrence}
+    {mx : List (String × List String)} {un : List String} {P : VE.Senses.Projection},
+    VE.Senses.readSents D E L b sents = VE.Senses.SensesOutcome.ok units sm mx un P →
+      ∃ A k,
+        VE.Senses.readPreamble D b (List.map (fun x => x.toList) sents) = Except.ok (A, k) ∧
+          List.drop k sents ≠ [] ∧
+            VE.Senses.project D A E L (VE.Senses.usedWords D (List.map (fun x => x.toList) (List.drop k sents))) =
+                Except.ok P ∧
+              VE.Senses.grammarFault P = Option.none ∧
+                VE.Senses.readBody D A E L (VE.Senses.usedWords D (List.map (fun x => x.toList) (List.drop k sents))) P b
+                      k 0 VE.EnglishGrammar.DState.init (List.drop k sents) =
+                    Except.ok (units, sm) ∧
+                  mx = VE.Senses.mixedOf P units ∧
+                    ((List.filterMap (fun x => x.formula) units).isEmpty ||
+                        VE.EnglishGrammar.typedDocument P.env
+                          (List.map (fun x => x.fst) (List.filterMap (fun x => x.formula) units))) =
+                      Bool.true
+  -- uses VE.EnglishGrammar.DState.init@VE.EnglishGrammar.Syntax VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.GrammarFault@VE.EnglishGrammar.Read VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.EnglishGrammar.typedDocument@VE.EnglishGrammar.Encode VE.Senses.Assignment@VE.Senses.Assignment VE.Senses.Dictionary@VE.Senses.Dictionary VE.Senses.Projection.env@VE.Senses.Project VE.Senses.Projection@VE.Senses.Project VE.Senses.SenseFault@VE.Senses.Preamble VE.Senses.SenseOccurrence@VE.Senses.Read VE.Senses.SenseUnit.formula@VE.Senses.Read VE.Senses.SenseUnit@VE.Senses.Read VE.Senses.SensesOutcome.ok@VE.Senses.Read VE.Senses.SensesOutcome@VE.Senses.Read VE.Senses.Stop@VE.Senses.Read VE.Senses.grammarFault@VE.Senses.Read VE.Senses.mixedOf@VE.Senses.Read VE.Senses.project@VE.Senses.Project VE.Senses.readBody@VE.Senses.Read VE.Senses.readPreamble@VE.Senses.Preamble VE.Senses.readSents@VE.Senses.Read VE.Senses.usedWords@VE.Senses.Project
+  -- expr 3416501530
 theorem VE.Senses.readUnit_good
   ∀ {D : VE.Senses.Dictionary} {A : VE.Senses.Assignment} {E : VE.EnglishGrammar.Env} {L : VE.EnglishGrammar.Lexicon}
     {used : List String} {P : VE.Senses.Projection} {b sentence : Nat} {st : VE.EnglishGrammar.DState}
