@@ -261,8 +261,8 @@ def _explanation(wire) -> Explanation:
 
 def _evaluate_lean(env: Any, case: dict) -> EvaluationResult:
     """One `evaluate-budgeted` case through `ve_metered`; Python only rebuilds its answer."""
-    from .backends.lean_runner import metered_evaluation, route_environment
-    row = metered_evaluation({**case, "environment": route_environment(env)})
+    from .backends.lean_runner import metered_environment, metered_evaluation
+    row = metered_evaluation({**case, "environment": metered_environment(env)})
     if row["status"] != "ok":
         # Python validated the document and the model first: a Lean rejection is a disagreement.
         raise CheckerUnavailable(f"CheckerUnavailable: Lean refused a checked evaluation: {row['error']}")

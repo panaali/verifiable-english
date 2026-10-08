@@ -231,8 +231,8 @@ def _nonvacuous(env: Any, formula: Any, model: FiniteModel, maximum: int, *,
     disjunction under a universal as a guard. An exhausted check is not a yes.
     """
     from .ast import _to_data
-    from .backends.lean_runner import metered_nonvacuity, route_environment
-    row = metered_nonvacuity({"id": "non-vacuity", "kind": "non-vacuity", "environment": route_environment(env),
+    from .backends.lean_runner import metered_environment, metered_nonvacuity
+    row = metered_nonvacuity({"id": "non-vacuity", "kind": "non-vacuity", "environment": metered_environment(env),
                               "model": model.to_dict(), "formula": _to_data(formula), "max_evaluations": maximum,
                               "semantic_nonvacuity": semantic})
     if row["status"] != "ok":
