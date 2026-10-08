@@ -19,6 +19,18 @@ def exactFields (j : Json) (expected : List String) : Except String Unit := do
   unless actual.length == expected.length && expected.all actual.contains do
     throw s!"fields do not match: expected {expected}, got {actual}"
 
+/-- The legacy and model diagnostics retain quoted field spellings, including
+the extra or missing field that caused the rejection. Profile routes with
+their own field-list wording continue to use `exactFields`. -/
+def exactFieldsQuoted (j : Json) (expected : List String) : Except String Unit := do
+  match exactFields j expected with
+  | .ok () => pure ()
+  | .error message =>
+    let .ok actual := (fields j).map (·.map Prod.fst) | throw message
+    let quoted := fun (names : List String) =>
+      "[" ++ String.intercalate ", " (names.map fun name => "'" ++ name ++ "'") ++ "]"
+    throw s!"fields do not match: expected {quoted expected}, got {quoted actual}"
+
 def stringField (j : Json) (name : String) : Except String String := do
   (← j.getObjVal? name).getStr?
 
@@ -115,13 +127,13 @@ def displayFields (j : Json) (required optional : List String) : Except String U
   exactFields j (required ++ optional.filter names.contains)
 
 def decodeEnvironment (j : Json) : Except String Vocabulary := do
-  exactFields j ["language", "profile", "spec_revision", "vocabulary"]
+  exactFieldsQuoted j ["language", "profile", "spec_revision", "vocabulary"]
   unless (← stringField j "language") == "ve.core@0" &&
       (← stringField j "profile") == "relational-fol@0" &&
       (← stringField j "spec_revision") == "ve-v0-draft-2026-09-20" do
     throw "unsupported environment version"
   let v ← j.getObjVal? "vocabulary"
-  exactFields v ["sorts", "predicates", "constants"]
+  exactFieldsQuoted v ["sorts", "predicates", "constants"]
   let sorts ← fields (← v.getObjVal? "sorts")
   let predicates ← fields (← v.getObjVal? "predicates")
   let constants ← fields (← v.getObjVal? "constants")
@@ -144,7 +156,8 @@ def decodeEnvironment (j : Json) : Except String Vocabulary := do
         displayString words
     let raw ← entry.getObjVal? "arguments"
     let cells ← raw.getArr?
-    unless cells.size == 1 || cells.size == 2 do throw s!"invalid signature: {p}"
+    unless cells.size == 1 || cells.size == 2 do
+      throw "Predicate arguments must be an array of one to 2 sort identifiers"
     let ss ← argumentSorts raw sortNames.contains
     pure (p, ss)
   let cs ← constants.mapM fun (c, entry) => do

@@ -79,6 +79,18 @@ theorem exactFields_keys {j : Json} {expected : List String} {u : Unit}
     omega
   · cases h
 
+/-- Quoted diagnostics use the same acceptance condition as `exactFields`. -/
+theorem exactFieldsQuoted_keys {j : Json} {expected : List String} {u : Unit}
+    (hn : expected.Nodup) (h : VE.Bridge.exactFieldsQuoted j expected = .ok u) :
+    ∃ fs, VE.Bridge.fields j = .ok fs ∧ ∀ k ∈ fs.map Prod.fst, k ∈ expected := by
+  cases hbase : VE.Bridge.exactFields j expected with
+  | ok _ => exact exactFields_keys hn hbase
+  | error _ =>
+    simp only [VE.Bridge.exactFieldsQuoted, hbase] at h
+    cases hfields : VE.Bridge.fields j with
+    | ok fs => simp [hfields, Except.map] at h
+    | error message => simp [hfields, Except.map] at h
+
 open Std.DTreeMap.Internal in
 theorem impl_get_mem {t : Impl String (fun _ => Json)} {k : String} {v : Json}
     (h : Impl.Const.get? t k = some v) : (k, v) ∈ Impl.Const.toList t := by
@@ -159,7 +171,7 @@ theorem v0_decode_profiles (env : Json) (v : VE.Bridge.Vocabulary)
     simp only [Bool.and_eq_true, beq_iff_eq] at hc
     obtain ⟨⟨rfl, rfl⟩, _⟩ := hc
     refine ⟨hl, hpr, fun p hp => ?_⟩
-    obtain ⟨fs, hfs, hk⟩ := exactFields_keys (by decide) hx
+    obtain ⟨fs, hfs, hk⟩ := exactFieldsQuoted_keys (by decide) hx
     obtain ⟨fs', hfs', hp'⟩ := getObjVal_mem hp
     rw [hfs] at hfs'
     cases hfs'

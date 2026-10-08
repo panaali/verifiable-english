@@ -383,7 +383,10 @@ def decodeLegacy (environment : Json) : Except String Legacy := do
     if environment.getObjValD "profiles" == toJson ["order@0", "relational-fol@0"] then
       match VE.Order.Wire.decodeEnvironment environment with
       | .ok v => pure (.order v)
-      | .error message => throw s!"UnsupportedProfile: {message}"
+      | .error message =>
+        if message == "unsupported order environment version/profiles" then
+          throw s!"UnsupportedProfile: {message}"
+        else throw message
     else if (VE.Route.Gate.profilesOf environment).toOption.getD [] |>.contains "order@0" then
       throw "UnsupportedProfile: unsupported order environment version/profiles"
     else pure (.closure (← VE.Closure.Bridge.decodeEnvironment environment))
@@ -849,7 +852,7 @@ private def modelFault (path message : String) : Except ModelFault α :=
 
 private def tableFields (value : Json) (expected : List String) (path : String) :
     Except ModelFault Unit := do
-  match VE.Bridge.exactFields value expected with
+  match VE.Bridge.exactFieldsQuoted value expected with
   | .ok () => pure ()
   | .error message => modelFault path s!"InvalidModel: {message}"
 
@@ -874,7 +877,7 @@ private def modelCell (order : Bool) (sort : String) (value : Json) (path : Stri
 
 private def environmentFields (value : Json) (expected : List String) (path : String) :
     Except ModelFault Unit := do
-  match VE.Bridge.exactFields value expected with
+  match VE.Bridge.exactFieldsQuoted value expected with
   | .ok () => pure ()
   | .error message => modelFault path message
 
@@ -1126,7 +1129,19 @@ def reportedEnvironment (j : Json) : Json :=
   match j.getObjVal? "environment" with
   | .error _ => reported environmentCase j
   | .ok environment =>
-    if !locationOwnedEnvironment environment then reported environmentCase j
+    if !locationOwnedEnvironment environment then
+      -- Composed families own their envelope and field precedence. For a
+      -- valid profile gate, the path-carrying vocabulary decoder supplies
+      -- the shared unknown-argument diagnostic before the family decoder.
+      if environment.getObjValD "language" == .str "ve.core@0.2" &&
+          (earlyProfileGate environment).isOk then
+        match locatedEnvironmentFields environment with
+        | .error fault =>
+          if fault.message.startsWith "UnknownSymbol: Undeclared predicate argument sort:" then
+            reportedFault j fault
+          else reported environmentCase j
+        | .ok () => reported environmentCase j
+      else reported environmentCase j
     else
       match earlyProfileGate environment with
       | .error message => reportedFault j ⟨message, ""⟩

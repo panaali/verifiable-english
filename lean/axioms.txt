@@ -231,6 +231,7 @@
 'VE.Order.tupleTyped_expand' depends on axioms: [propext]
 'VE.Order.ProfileGate.bind_ok' does not depend on any axioms
 'VE.Order.ProfileGate.exactFields_keys' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Order.ProfileGate.exactFieldsQuoted_keys' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Order.ProfileGate.getObjVal_mem' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Order.ProfileGate.impl_get_mem' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Order.ProfileGate.nodup_length_le' depends on axioms: [propext, Classical.choice, Quot.sound]

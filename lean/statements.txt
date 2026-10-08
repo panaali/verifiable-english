@@ -12670,6 +12670,13 @@ theorem VE.Order.ProfileGate.bind_ok
     x >>= f = Except.ok b → ∃ a, x = Except.ok a ∧ f a = Except.ok b
   -- uses
   -- expr 1148682251
+theorem VE.Order.ProfileGate.exactFieldsQuoted_keys
+  ∀ {j : Lean.Json} {expected : List String} {u : Unit},
+    expected.Nodup →
+      VE.Bridge.exactFieldsQuoted j expected = Except.ok u →
+        ∃ fs, VE.Bridge.fields j = Except.ok fs ∧ ∀ (k : String), k ∈ List.map Prod.fst fs → k ∈ expected
+  -- uses VE.Bridge.Fields@VE.Bridge VE.Bridge.exactFieldsQuoted@VE.Bridge VE.Bridge.fields@VE.Bridge
+  -- expr 19285864
 theorem VE.Order.ProfileGate.exactFields_keys
   ∀ {j : Lean.Json} {expected : List String} {u : Unit},
     expected.Nodup →

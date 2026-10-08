@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from copy import deepcopy
+import gzip
 import json
 
 import pytest
@@ -56,6 +57,26 @@ def test_model_decoder_locates_wrong_shapes_and_invalid_cells(table, key, value,
 
 
 @pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+def test_legacy_envelope_diagnostics_retain_quoted_extra_fields_and_arity():
+    from ve.errors import VEError
+    cases = {item["id"]: item for item in json.loads(
+        (SERVICE.parents[4] / "conformance/validation.json").read_text())}
+    with pytest.raises(VEError) as caught:
+        run("environment", [cases["validation_001"]])
+    assert caught.value.to_dict()["code"] == "InvalidInput"
+    assert "'extra'" in caught.value.message
+
+    with pytest.raises(VEError) as caught:
+        run("environment", [cases["validation_004"]])
+    assert "one to 2 sort identifiers" in caught.value.message
+
+    with pytest.raises(VEError) as caught:
+        run("model", [cases["validation_009"]])
+    assert caught.value.to_dict()["code"] == "InvalidModel"
+    assert "'extra'" in caught.value.message
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
 @pytest.mark.parametrize("extension", ("soft", "rights", "reports"))
 def test_environment_decoder_preserves_composed_vocabulary_blocks(extension):
     if extension == "soft":
@@ -80,7 +101,31 @@ def test_environment_decoder_quotes_the_unknown_argument_sort(profiles):
     raw["vocabulary"]["predicates"]["base"]["arguments"] = ["absent"]
     with pytest.raises(VEError) as caught:
         run("environment", [{"id": "quoted", "environment": raw}])
+    assert caught.value.to_dict()["code"] == "UnknownSymbol"
     assert "'absent'" in caught.value.message
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+def test_legacy_order_decoder_retains_unknown_sort_class():
+    from conformance.order import environment
+    from ve.errors import VEError
+    raw = environment().to_dict()
+    raw["vocabulary"]["predicates"]["p"]["arguments"] = ["absent"]
+    with pytest.raises(VEError) as caught:
+        run("environment", [{"id": "order-sort", "environment": raw}])
+    assert caught.value.to_dict()["code"] == "UnknownSymbol"
+    assert "'absent'" in caught.value.message
+
+
+@pytest.mark.parametrize("case_id", ("9faa52839dc3fd3a", "bf433d08b683723b"))
+def test_composed_route_keeps_constant_sort_precedence(case_id):
+    from ve.errors import VEError
+    corpus = SERVICE.parents[4] / "docs/lean-first/quantity-corpus.json.gz"
+    with gzip.open(corpus, "rt") as source:
+        case = next(item for item in json.load(source) if item["id"] == case_id)
+    with pytest.raises(VEError) as caught:
+        Environment(case["environment"])
+    assert caught.value.to_dict() == {"code": "InvalidInput", "message": "unknown constant sort: c1"}
 
 
 @pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
