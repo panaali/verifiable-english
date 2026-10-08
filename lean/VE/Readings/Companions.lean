@@ -17,7 +17,7 @@ coupling and narrowing lands in exactly one case (`split_keeps_links`).
 
 Declarations are compared by their JSON values (`jeq`, structural, `jeq_sound`), after each companion is brought to
 one normal form (`normJ`: every object rebuilt in key order), so two declarations agree exactly when their canonical
-bytes do. Lean's own `BEq Json` is `partial`, so nothing can be proved of it: in this section the `contains` of
+bytes do. Lean's own `BEq Json` is compiled code with no definition a proof can unfold: in this section the `contains` of
 `split_keeps_links` is read with `jeq`, a local instance. -/
 namespace VE.Readings.Wire
 open Lean
@@ -830,7 +830,7 @@ theorem splitCase_parts {environment document : Json} {parts : List (String × J
         cases h
         exact Or.inr ⟨cs, comps, hcs, hc, rfl⟩
 
-/-- In this section a JSON value is found in a list by `jeq`: Lean's own `BEq Json` is `partial`, so nothing can be
+/-- In this section a JSON value is found in a list by `jeq`: Lean's own `BEq Json` is compiled code with no definition a proof can unfold, so nothing can be
     proved of it. `split_keeps_links` reads `contains` with this instance. -/
 local instance : BEq Json := ⟨jeq⟩
 
