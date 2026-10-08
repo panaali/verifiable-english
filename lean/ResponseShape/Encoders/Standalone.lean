@@ -77,26 +77,26 @@ theorem environment_reported (j : Json) : Fits j Skeletons.environment (reported
   split
   · exact environment_case_reported j
   · split
-    · exact environment_fault_fits j _
     · split
+      · split
+        · split
+          · exact environment_fault_fits j _
+          · exact environment_case_reported j
+        · exact environment_case_reported j
       · exact environment_case_reported j
+    · split
       · exact environment_fault_fits j _
+      · split
+        · exact environment_case_reported j
+        · exact environment_fault_fits j _
 
 theorem model_reported (j : Json) : Fits j Skeletons.model (reportedModel j) := by
   unfold reportedModel
   dsimp only [Except.bind, Except.pure]
-  split
-  · rename_i located environment modelValue view heq
-    cases checkedModelTables view modelValue with
-    | ok _ => exact model_case_reported j
-    | error fault => exact model_fault_fits j fault
-  · split
-    · exact model_case_reported j
-    · split
-      · exact model_fault_fits j _
-      · split
-        · exact model_case_reported j
-        · exact model_fault_fits j _
+  repeat first
+    | exact model_case_reported j
+    | exact model_fault_fits j _
+    | split
 
 theorem check_reported (j : Json) : Fits j Skeletons.check (reported checkCase j) := by
   unfold reported; split

@@ -437,6 +437,7 @@ import VE.Senses.Read
 #print axioms VE.Order.tupleTyped_expand
 #print axioms VE.Order.ProfileGate.bind_ok
 #print axioms VE.Order.ProfileGate.exactFields_keys
+#print axioms VE.Order.ProfileGate.exactFieldsQuoted_keys
 #print axioms VE.Order.ProfileGate.getObjVal_mem
 #print axioms VE.Order.ProfileGate.impl_get_mem
 #print axioms VE.Order.ProfileGate.nodup_length_le

@@ -147,7 +147,8 @@ def decodeVocabulary (profiles : List String) (v : Json) : Except String RouteVo
       VE.Bridge.displayFields entry ["sort", "description"] ["verbalisation"]
       VE.Bridge.description entry
       if let .ok words := entry.getObjVal? "verbalisation" then VE.Bridge.displayString words
-    let s ← VE.Bridge.constantSort entry allowed
+    let s ← stringField entry "sort"
+    unless allowed s do throw s!"unknown constant sort: {c}"
     pure (c, s)
   let literals := (cs.filter (fun c => c.2 == Background.stringSort)).map Prod.fst
   if literals.length > 64 then throw "ResourceLimit: At most 64 declared $string literals"

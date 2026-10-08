@@ -57,7 +57,7 @@
     "ve/backends/validation.py:construct_after_lean": "Lean accepts the environment or model first; construction failures become CheckerUnavailable, never a Python semantic rejection or verdict."
   },
   "lean_decoders": {
-    "total_lines": 22529,
+    "total_lines": 22543,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -185,12 +185,12 @@
       },
       {
         "file": "lean/VE/Bridge.lean",
-        "lines": 322,
-        "sha256": "cdef96d3927ee11cae3a854fef38c4c80e5493b2a9fed8bf47c3488b1bff02dd",
+        "lines": 335,
+        "sha256": "4f7b5313509e488f647f3d8b0a7916ac28dbca6601547b44bf25eda9b833d079",
         "ranges": [
           [
             14,
-            288
+            301
           ]
         ],
         "declarations": [
@@ -370,7 +370,7 @@
           "admitNodes",
           "admitDocument"
         ],
-        "reason": "norm-defaults@0 W2 admission decoder over E‴; the full file is pinned conservatively"
+        "reason": "norm-defaults@0 W2 admission decoder over E\u2034; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/NormDefaults/Layered.lean",
@@ -804,12 +804,12 @@
       },
       {
         "file": "lean/VE/Route/Wire.lean",
-        "lines": 678,
-        "sha256": "19b51ff90bd138748a4cbd49321adbf169c3a3604946dce562191ced22366c8d",
+        "lines": 679,
+        "sha256": "d1878e889312a01dd321ffaca913108d44abd5f14c417ef9799cadffe6dabf70",
         "ranges": [
           [
             1,
-            678
+            679
           ]
         ],
         "declarations": [
