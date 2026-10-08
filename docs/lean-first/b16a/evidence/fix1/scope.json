@@ -1,8 +1,10 @@
 {
  "range": "192e496335c248d848fc1816f0b3b4fc6dd2fbcc..HEAD --no-merges",
- "captured_head": "137a4dfbb1c25ebb3da7b29ac88d9b759a2aeaa9",
+ "captured_head": "8efa27f1dea862a36c7ad8d8526f79c1213e09ea",
  "base": "192e496335c248d848fc1816f0b3b4fc6dd2fbcc",
  "commits": [
+  "8efa27f1dea862a36c7ad8d8526f79c1213e09ea",
+  "5f71984f4aef2717e36935be19226331e743e50d",
   "137a4dfbb1c25ebb3da7b29ac88d9b759a2aeaa9",
   "9cffc4e322afec4907316b0342659375e1a07f2b",
   "2fce5544ae67822370cdead3aaf1cd61e306fd84",
@@ -15,6 +17,19 @@
  ],
  "measured_code_head": "2fce5544ae67822370cdead3aaf1cd61e306fd84",
  "after_measurement": {
+  "8efa27f1dea862a36c7ad8d8526f79c1213e09ea": [
+   "tools/difffuzz.py"
+  ],
+  "5f71984f4aef2717e36935be19226331e743e50d": [
+   "docs/lean-first/b16a/REPORT.md",
+   "docs/lean-first/b16a/evidence/fix1/ab.json",
+   "docs/lean-first/b16a/evidence/fix1/deep-document.json",
+   "docs/lean-first/b16a/evidence/fix1/difffuzz-ci.json",
+   "docs/lean-first/b16a/evidence/fix1/mutants.json",
+   "docs/lean-first/b16a/evidence/fix1/scope.json",
+   "tests/test_b16a_evidence.py",
+   "tools/gate-collection.json"
+  ],
   "137a4dfbb1c25ebb3da7b29ac88d9b759a2aeaa9": [
    "conformance/document_wrapper.py"
   ],
@@ -34,6 +49,42 @@
    "added": 384,
    "deleted": 0,
    "generated": false
+  },
+  {
+   "path": "docs/lean-first/b16a/REPORT.md",
+   "added": 54,
+   "deleted": 5,
+   "generated": true
+  },
+  {
+   "path": "docs/lean-first/b16a/evidence/fix1/ab.json",
+   "added": 22,
+   "deleted": 0,
+   "generated": true
+  },
+  {
+   "path": "docs/lean-first/b16a/evidence/fix1/deep-document.json",
+   "added": 50,
+   "deleted": 0,
+   "generated": true
+  },
+  {
+   "path": "docs/lean-first/b16a/evidence/fix1/difffuzz-ci.json",
+   "added": 203,
+   "deleted": 0,
+   "generated": true
+  },
+  {
+   "path": "docs/lean-first/b16a/evidence/fix1/mutants.json",
+   "added": 78,
+   "deleted": 0,
+   "generated": true
+  },
+  {
+   "path": "docs/lean-first/b16a/evidence/fix1/scope.json",
+   "added": 179,
+   "deleted": 0,
+   "generated": true
   },
   {
    "path": "docs/spec/assurance-manifest.md",
@@ -114,6 +165,12 @@
    "generated": false
   },
   {
+   "path": "tests/test_b16a_evidence.py",
+   "added": 71,
+   "deleted": 0,
+   "generated": false
+  },
+  {
    "path": "tests/test_difffuzz.py",
    "added": 42,
    "deleted": 1,
@@ -133,7 +190,7 @@
   },
   {
    "path": "tools/gate-collection.json",
-   "added": 53,
+   "added": 56,
    "deleted": 1,
    "generated": true
   },
@@ -169,9 +226,9 @@
   }
  ],
  "totals": {
-  "added": 2048,
-  "deleted": 435,
-  "source_added": 1554,
+  "added": 2708,
+  "deleted": 440,
+  "source_added": 1625,
   "source_deleted": 255,
   "lean_added": 674,
   "python_deleted": 35
