@@ -47,12 +47,21 @@ NO_PREMISE = "A conclusion needs an earlier premise."
 TRANSPORT: Callable[[dict], dict] | None = None
 
 
+def _frame(env, case: dict) -> dict:
+    """The request's optional fields: the overlay, and `generated` for Python's generated soft frame (the soft
+    route's `E′`, `SoftEnvironment(..., generated=True)`), whose `soft__` decision predicates Lean's boundary
+    reads as the soft route does (E2.6)."""
+    if getattr(env, "_generated_source", False):
+        case["generated"] = True
+    return case
+
+
 def request(env, source: str, words, options: dict) -> dict:
     case = {"id": MODE, "environment": env.to_dict(), "lexicon": export(words), "source": source,
             "mode": "authoring", "cap": CAP}
     if options.get("vocabulary") is not None:
         case["overlay"] = options["vocabulary"]
-    return case
+    return _frame(env, case)
 
 
 def identities(env, source: str, words, lexicon: dict) -> dict:
@@ -354,6 +363,7 @@ def check(env, words, options: dict, formulas: list, marks: list[bool], candidat
             "formulas": formulas, "marks": marks, "candidates": candidates}
     if options.get("vocabulary") is not None:
         case["overlay"] = options["vocabulary"]
+    _frame(env, case)
     row = relay.decide_once("english.check", case)
     if type(row) is not dict or row.get("id") != case["id"] or row.get("status") != "ok" or row.keys() != {
             "id", "status", "result"} or type(row["result"]) is not dict:
