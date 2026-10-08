@@ -4050,6 +4050,13 @@
 'VE.Readings.supCertificateCheckExtra_nil' depends on axioms: [propext, Quot.sound]
 'VE.Readings.supModelCheckExtra_nil' depends on axioms: [propext, Quot.sound]
 'VE.Readings.baseAdmissibleR_nil' depends on axioms: [propext, Quot.sound]
+'VE.Readings.SupExtraExamples.k1_hyps' depends on axioms: [propext, Quot.sound]
+'VE.Readings.SupExtraExamples.k1_compatible' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Readings.SupExtraExamples.noAvoid_of_empty' does not depend on any axioms
+'VE.Readings.SupExtraExamples.transfers_x1' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Readings.SupExtraExamples.x1_conflict_free' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Readings.SupExtraExamples.bare_admissible' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Readings.SupExtraExamples.superpose_all_extra_refuted' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Grammar.yieldAll_nil' depends on axioms: [propext]
 'VE.Grammar.yieldAll_cons' depends on axioms: [propext]
 'VE.Grammar.yield_leaf' depends on axioms: [propext]
