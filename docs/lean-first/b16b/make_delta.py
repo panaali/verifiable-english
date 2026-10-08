@@ -54,7 +54,9 @@ def main(argv=None) -> int:
         if row["class"] == "wording":
             pairs.update((json.dumps(a), json.dumps(b)) for a, b in text_pairs(row["base"], row["head"]))
         else:
-            delta[row["class"]].append({**key, "owner": owner, "base": row["base"], "head": row["head"]})
+            disposition = {"disposition": "path pending lf-12"} if row["class"] == "verdict" else {}
+            delta[row["class"]].append({**key, "owner": owner, "base": row["base"], "head": row["head"],
+                                        **disposition})
     delta["wording"] = [{"base": json.loads(a), "head": json.loads(b)} for a, b in sorted(pairs)]
     (HERE / "delta.json").write_text(json.dumps(delta, indent=1, sort_keys=True, ensure_ascii=False) + "\n")
     counts = {klass: len(items) for klass, items in delta.items()}

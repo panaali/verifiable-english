@@ -45,6 +45,9 @@ def test_ab_has_no_unlisted_difference_and_lists_only_other_decoders_texts():
         assert "raised" in entry["base"] and "raised" in entry["head"]
     for entry in delta["verdict"]:
         assert entry["base"]["raised"]["code"] == entry["head"]["raised"]["code"]
+        assert entry["disposition"] == "path pending lf-12"
+        assert entry["base"]["raised"].get("path") and not entry["head"]["raised"].get("path")
+    assert len(delta["verdict"]) == 166
     assert {entry["corpus"] for entry in delta["unavailable"]} == {"pilots"}
 
 
