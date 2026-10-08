@@ -1,11 +1,12 @@
 """Three-way P0 conformance: Python, Rust and the Lean `route` subcommand give
 identical verdicts on every shipped case of the P0 families (PLAN-EXPAND2 3.10(2)).
 
-Rust scope (plan 3.7): envelopes, Background, model validity, evaluation and
-search, plus the label grammar and the dependency order. Rust has no certificate
-checker, so on a certificate or inconsistency case its verdict is that bounded
-search finds no model; admission is Python and Lean only. Rust checks supplied
-order countermodels but does not search for them.
+Rust scope (plan 3.7, batch 15b): envelopes, Background, model validity, evaluation
+and search. Rust has no certificate checker, so on a certificate or inconsistency case
+its verdict is that bounded search finds no model; its evaluation verdict is the
+document's value (the `evaluate-budgeted` kind). Admission, labels and dependency orders
+are Python and Lean only. Rust checks supplied order countermodels but does not search
+for them.
 """
 from __future__ import annotations
 
@@ -20,7 +21,7 @@ from pathlib import Path
 import pytest
 
 from conformance.p0 import FAMILIES, lean_case
-from conformance.three_way import lean_verdict, python_verdict, run, rust_request, rust_verdict
+from conformance.three_way import lean_verdict, python_verdict, run, rust_envelope, rust_request, rust_verdict
 from tools import rust_build
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -98,27 +99,20 @@ def test_rust_matches_expected(family, rust_executable):
             expected["premises"] = "no model found"  # Rust never certifies inconsistency
         if case["kind"] == "certificate":
             expected = {"status": "ok", "valid": True}  # no countermodel within the bound
+        if case["kind"] == "evaluate" and "values" in expected:
+            expected["value"] = all(expected.pop("values"))  # the document's value
         assert agrees(expected, verdict), (case["id"], expected, result)
 
 
-def test_rust_and_python_share_identities_and_models(rust_executable):
-    """Beyond verdicts: the same environment, meaning and model ids, and the
-    same model from bounded search."""
-    from ve import Environment, FiniteModel
-    from ve.ast import document_from_data
-    from ve.identity import meaning_id
-    cases = [c for c in active("elaborated-document") if c["kind"] in ("evaluate", "search")
+def test_rust_and_python_share_search_models(rust_executable):
+    """Beyond verdicts: the same model from bounded search. (Rust's identities are
+    compared in its countermodel check, tests/test_rust_conformance.py.)"""
+    cases = [c for c in active("elaborated-document") if c["kind"] == "search"
              and c["expected"]["status"] == "ok"]
+    assert cases
     results = run([str(rust_executable), "conformance"], [rust_request(c) for c in cases])
     for case, result in zip(cases, results, strict=True):
-        env = Environment(case["environment"])
-        if case["kind"] == "search":
-            assert result["model"] == python_verdict(case)["model"], case["id"]
-            continue
-        doc = document_from_data(env, case["ast"])
-        assert result["environment_id"] == env.environment_id, case["id"]
-        assert result["meaning_id"] == meaning_id(env, doc), case["id"]
-        assert result["model_id"] == FiniteModel.from_dict(env, case["model"]).model_id, case["id"]
+        assert result["model"] == python_verdict(case)["model"], case["id"]
 
 
 def test_lean_seed_cases_are_the_shared_families():
@@ -281,7 +275,10 @@ def test_hostile_wire_diagnostics_match_three_ways(lean_executable, rust_executa
          "ast": [["top"]]},
     ]
     lean = run([str(lean_executable), "route", "-"], cases)
-    rust = run([str(rust_executable), "conformance"], cases)
+    # Rust has no label route: it decodes a label case's envelope through a typing case.
+    rust = run([str(rust_executable), "conformance"],
+               [{"id": c["id"], **rust_envelope(c["environment"])} if c["kind"] == "label"
+                else rust_request(c) for c in cases])
     def reason(message):
         if "sorts" in message and "predicates" in message and "constants" in message and "field" in message:
             return "vocabulary fields"

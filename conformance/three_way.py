@@ -3,7 +3,11 @@
 Each adapter runs one P0 case (`conformance/p0.py`) on one implementation and
 reduces its answer to a verdict: Python in process (`python_verdict`), Rust
 through `ve conformance` (`rust_request`, `rust_verdict`) and Lean through
-`ve_conformance route` (`lean_verdict`). Errors are reduced by `error_verdict`
+`ve_conformance route` (`lean_verdict`). Rust reads no source text and has no
+label or dependency-order route (batch 15b), so labels and dependency orders are
+compared between Python and Lean only; Rust evaluates a document through the
+`evaluate-budgeted` kind `ve/evaluate.py` sends, whose verdict is the document's
+value (every statement's value is compared between Python and Lean). Errors are reduced by `error_verdict`
 to the P0 contract's codes (`KNOWN`), whose texts the contract fixes; every
 other rejection is `rejected`. The reduction is the three-way test's contract
 only: each error verdict also keeps the implementation's own diagnostic code
@@ -108,17 +112,20 @@ def python_verdict(case):
 
 # ---------------------------------------------------------------- Rust
 
+def rust_envelope(environment):
+    """A Rust case that decodes an environment and nothing else can fail: `true` typed over it."""
+    return {"kind": "check", "environment": environment, "ast": [["top"]]}
+
+
 def rust_request(case):
     """The Rust conformance input for a case, or None outside Rust scope."""
     kind, env = case["kind"], case["environment"]
     order = "order@0" in env.get("profiles", [])
     base = {"id": case["id"], "environment": env}
-    if kind in ("label", "dependency-order"):
-        return {**case}
-    if kind == "background":
+    if kind in ("label", "dependency-order", "background"):
         return None
     if kind == "evaluate":
-        return {**base, "model": case["model"], "ast": case["ast"]}
+        return {**base, "kind": "evaluate-budgeted", "model": case["model"], "ast": case["ast"]}
     if kind == "admission" or (order and kind != "countermodel"):
         return None
     if kind == "countermodel":
@@ -145,12 +152,10 @@ def rust_verdict(case, result):
         suffix = re.search(r"\((literals|definitions|flags|profile)\)$", error["message"])
         generator = generator or (suffix[1] if suffix else None)
         return error_verdict(error["code"], error["message"], generator)
-    if kind == "label":
-        return {"status": "ok", "label": result["label"]}
-    if kind == "dependency-order":
-        return {"status": "ok", "order": result["order"]}
     if kind == "evaluate":
-        return {"status": "ok", "values": result["values"]}
+        if result["status"] == "ResourceLimit":
+            return error_verdict("ResourceLimit", "ResourceLimit: evaluation budget exhausted")
+        return {"status": "ok", "value": result["value"]}
     if kind == "countermodel":
         return {"status": "ok", "refutes": result["valid"]}
     if kind == "search":
