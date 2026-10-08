@@ -2,6 +2,7 @@ import VE.Service.Standalone
 import VE.Discourse.Admission
 import VE.Alternatives.Run
 import VE.Risk.Run
+import VE.Attribution.Preflight
 
 /-! # The `document` service mode: the `ve-document@1` wrapper (docs/LEAN-FIRST-PLAN.md, row 16a)
 
@@ -112,22 +113,139 @@ structure Env where
 
 def Env.data (E : Env) : Bool := E.profiles.contains "data@0"
 
-/-- `base_environment`, the profile gate (before any decoding, so an unowned profile is never rejected by a
-decoder that does not read it), then the envelope decoder. -/
-def environmentOf (environment : Json) : Except String Env := do
-  match environment.getObjValD "profiles" with
-  | .arr ps => if ps.contains (.str VE.Discourse.discourseProfile) then
-      throw "UnsupportedProfile: ve.discourse@1 requires ve-document@2"
-  | _ => pure ()
-  if Standalone.isLegacy environment then
-    throw (unavailable "a document over a ve.core@0 or ve.core@0.1 environment needs its legacy route")
-  let listed := listedProfiles environment
-  if let some p := listed.find? (!ownedProfiles.contains ·) then
-    throw (unavailable s!"document checks under {p} need its Lean profile route")
-  let block := blockOf listed
-  let keys := ((fields environment).toOption.getD []).map Prod.fst
-  if let some k := keys.find? (!(envelopeKeys block).contains ·) then
-    throw (unavailable s!"the environment block {k} needs its Lean route's decoder")
+/-! ## Python's names for the decoders' rejections
+
+The verdict on an environment, a formula or a claim graph is always the mode's decoders'. Several of them read
+their input with Lean's generic accessors, whose texts (`object expected`, `String expected`, `array expected`,
+`invalid indexed formula`, `invalid signature: p`) name neither the field, nor the value, nor the fault, where
+`Environment` and `formula_from_data`, which answered before batch 16b, name all three (16b looprecheck1: DRI
+rule 2(a)–(c), no name, location or specificity lost). After a decoder rejects, these walks go through the input
+in Python's order and name the first fault they find with Python's text. A walk stops at the first step it does
+not model and the decoder's own text stands; it never accepts anything. -/
+
+/-- A step of a walk: `.error (some m)` is the first fault, as Python names it; `.error none` stops the walk. -/
+abbrev Walk := Except (Option String)
+
+def fault {α : Type} (m : String) : Walk α := .error (some m)
+def stop {α : Type} : Walk α := .error none
+
+def walked (w : Walk Unit) : Option String :=
+  match w with
+  | .error m => m
+  | .ok () => none
+
+/-- `require_fields` passes: an object with exactly these members. Its failure carries a `path` this mode's error
+row cannot hold yet (batch 12's located decoders), so the walk stops there. -/
+def exactly (j : Json) (names : List String) : Walk Unit := do
+  let .obj kvs := j | stop
+  let keys := kvs.toList.map Prod.fst
+  unless keys.length == names.eraseDups.length && names.all keys.contains do stop
+
+def pyR (s : String) : String := TypingDiagnostic.pyRepr s
+
+/-- `_description`. -/
+def describedBy (j : Json) : Walk Unit :=
+  match j with
+  | .str s => if s.isEmpty then fault "Descriptions must be nonempty Unicode strings" else pure ()
+  | _ => fault "Descriptions must be nonempty Unicode strings"
+
+/-- `_verbalisation`. -/
+def verbalisedBy (j : Json) : Walk Unit :=
+  match j with
+  | .str s =>
+    if s.isEmpty then fault "Verbalisations must be nonempty strings"
+    else if s.length > 256 then fault "ResourceLimit: Verbalisation exceeds 256 characters" else pure ()
+  | _ => fault "Verbalisations must be nonempty strings"
+
+/-- `formula_from_data`'s diagnostic for a formula a decoder rejected: Python's AST decoder
+(`Reports.Preflight.decoderFault`, the one Lean walk of `_Decoder`), then its type checker
+(`TypingDiagnostic.diagnose`). -/
+def formulaFault (profiles : List String) (vocabulary ast : Json) : Option String :=
+  (VE.Reports.Preflight.decoderFault ast).orElse fun _ => TypingDiagnostic.diagnose profiles vocabulary [ast]
+
+/-- `Environment` for the plain (no block) `ve.core@0.2` envelope of an owned profile, in its order: the envelope,
+the vocabulary's three tables, the declaration names, the sorts, predicates and constants, then the definition
+bodies (`compile_definitions`: arguments, then `_Decoder`). Tables are walked in Lean's key order, which is
+Python's for one fault. -/
+def vocabularyFault (environment : Json) : Option String := walked do
+  let profiles := listedProfiles environment
+  unless blockOf profiles == .none && !profiles.contains "nary@0" && !profiles.contains "order@0" do stop
+  -- The envelope: its fields, language, profile family and revision, as `Gate.decodeEnvelope` and Python agree.
+  exactly environment (envelopeKeys .none)
+  unless (VE.Route.Gate.decodeEnvelope environment).isOk do stop
+  let vocabulary := environment.getObjValD "vocabulary"
+  exactly vocabulary ["sorts", "predicates", "constants"]
+  let table := fun (kind : String) => match vocabulary.getObjValD kind with
+    | .obj kvs => (pure kvs.toList : Walk _)
+    | _ => fault s!"{kind} must be an object"
+  let sorts ← table "sorts"
+  let predicates ← table "predicates"
+  let constants ← table "constants"
+  if sorts.length > 32 || predicates.length > 256 then stop
+  let mut seen : List String := []
+  for (name, _) in sorts ++ predicates ++ constants do
+    if name.length > 64 then fault "ResourceLimit: Identifier exceeds 64 ASCII bytes"
+    unless VE.Surface.identifier name do fault s!"Invalid ASCII identifier: {pyR name}"
+    if seen.contains name then fault s!"DuplicateDeclaration: Symbol {pyR name} is declared in multiple categories"
+    if VE.Surface.reserved.contains name || VE.Surface.generatedName name then
+      fault s!"DuplicateDeclaration: Schema identifier {pyR name} is reserved"
+    seen := name :: seen
+  let sortNames := sorts.map Prod.fst
+  let present := fun (entry : Json) (key : String) => (entry.getObjVal? key).isOk
+  for (_, entry) in sorts do
+    exactly entry (["description"] ++ if present entry "verbalisation" then ["verbalisation"] else [])
+    if let .ok words := entry.getObjVal? "verbalisation" then
+      exactly words ["singular", "plural"]
+      verbalisedBy (words.getObjValD "singular")
+      verbalisedBy (words.getObjValD "plural")
+    describedBy (entry.getObjValD "description")
+  let data := profiles.contains "data@0"
+  let definitions := profiles.contains "definitions@0"
+  for (name, entry) in predicates do
+    if present entry "functional" || present entry "total" || present entry "regulated" ||
+        present entry "argument_units" then stop
+    let defined := definitions && present entry "defined"
+    exactly entry (["arguments", "description"] ++ (if defined then ["defined"] else []) ++
+      (["verbalisation", "negative_verbalisation"].filter (present entry)))
+    let arity := "Predicate arguments must be an array of one to 2 sort identifiers"
+    let arguments := match entry.getObjValD "arguments" with
+      | .arr xs => xs.toList
+      | _ => []
+    unless 1 ≤ arguments.length && arguments.length ≤ 2 do fault arity
+    for sort in arguments do
+      match sort with
+      | .str s => unless sortNames.contains s || (data && s == VE.Route.Background.stringSort) do
+          fault s!"UnknownSymbol: Undeclared predicate argument sort: {pyR s}"
+      | other => fault s!"UnknownSymbol: Undeclared predicate argument sort: {TypingDiagnostic.pyValue other}"
+    for key in ["verbalisation", "negative_verbalisation"] do
+      if let .ok words := entry.getObjVal? key then verbalisedBy words
+    if defined then
+      let payload := entry.getObjValD "defined"
+      exactly payload ["arguments", "body"]
+      unless payload.getObjValD "arguments" == .arr arguments.toArray do
+        fault s!"Definition {pyR name} arguments differ from its declaration"
+    describedBy (entry.getObjValD "description")
+  for (_, entry) in constants do
+    let literal := entry.getObjValD "sort" == .str VE.Route.Background.stringSort
+    exactly entry (["sort"] ++ (if !literal || present entry "description" then ["description"] else []) ++
+      (if present entry "verbalisation" then ["verbalisation"] else []))
+    match entry.getObjValD "sort" with
+    | .str s => unless sortNames.contains s || s == VE.Route.Background.stringSort do
+        fault s!"UnknownSymbol: Undeclared constant sort: {pyR s}"
+    | other => fault s!"UnknownSymbol: Undeclared constant sort: {TypingDiagnostic.pyValue other}"
+    if present entry "description" then describedBy (entry.getObjValD "description")
+    if let .ok words := entry.getObjVal? "verbalisation" then verbalisedBy words
+  if (constants.filter fun (_, e) => e.getObjValD "sort" == .str VE.Route.Background.stringSort).length > 64 then
+    stop
+  -- `_compile_python`'s structural loop: each body is decoded, in declaration order, before any is typed.
+  for (_, entry) in predicates do
+    if definitions then
+      if let .ok payload := entry.getObjVal? "defined" then
+        if let some m := VE.Reports.Preflight.decoderFault (payload.getObjValD "body") then fault m
+        -- Python then rejects reachability, and orders and types the bodies: the decoder's text stands.
+
+/-- The decoders of `environmentOf`, after its gates. -/
+def decodedEnvironment (environment : Json) (block : Block) : Except String Env := do
   -- A composed block's route decodes the environment first, as Python's `Environment` routes it.
   match block with
   | .alternatives => let _ ← VE.Alternatives.Wire.decodeAltSource environment (Json.arr #[]) .null .environment
@@ -149,13 +267,32 @@ def environmentOf (environment : Json) : Except String Env := do
   let profiles ← VE.Route.Gate.profilesOf environment
   pure ⟨environment, checked, rv, profiles, ← Standalone.environmentIdOf profiles environment, block⟩
 
+/-- `base_environment`, the profile gate (before any decoding, so an unowned profile is never rejected by a
+decoder that does not read it), then the envelope decoder. -/
+def environmentOf (environment : Json) : Except String Env := do
+  match environment.getObjValD "profiles" with
+  | .arr ps => if ps.contains (.str VE.Discourse.discourseProfile) then
+      throw "UnsupportedProfile: ve.discourse@1 requires ve-document@2"
+  | _ => pure ()
+  if Standalone.isLegacy environment then
+    throw (unavailable "a document over a ve.core@0 or ve.core@0.1 environment needs its legacy route")
+  let listed := listedProfiles environment
+  if let some p := listed.find? (!ownedProfiles.contains ·) then
+    throw (unavailable s!"document checks under {p} need its Lean profile route")
+  let block := blockOf listed
+  let keys := ((fields environment).toOption.getD []).map Prod.fst
+  if let some k := keys.find? (!(envelopeKeys block).contains ·) then
+    throw (unavailable s!"the environment block {k} needs its Lean route's decoder")
+  match decodedEnvironment environment block with
+  | .ok E => pure E
+  | .error m => throw (if m.startsWith "CheckerUnavailable" then m else (vocabularyFault environment).getD m)
+
 /-- `formula_from_data` over the document's environment: the `check` mode's typed decoder, its rejection named as
-Python names it. -/
+Python names it (`formulaFault`: its AST decoder, then its type checker). -/
 def formulaCheck (E : Env) (ast : Json) : Except String Unit :=
   match Standalone.decodeTyped E.checked ast true with
   | .ok () => .ok ()
-  | .error message =>
-    .error ((TypingDiagnostic.diagnose E.checked.envelope.profiles E.checked.envelope.vocabulary [ast]).getD message)
+  | .error message => .error ((formulaFault E.checked.envelope.profiles E.checked.envelope.vocabulary ast).getD message)
 
 /-- A checked formula and its `meaning_id`. -/
 def formulaOf (E : Env) (ast : Json) : Except String (VE.Formula × String) := do
@@ -379,6 +516,22 @@ def parsedLabels (graph : Json) : List VE.Route.Admission.Label :=
     | _ => none
   | _ => []
 
+/-- The texts the admission route's formula decoders reject a node's formula with (`Bridge.decodeTerm`,
+`decodeFormula`, `Route.Wire.decodeClosed` and Lean's accessors): they name no node, value or fault. -/
+def formulaDecoderTexts : List String :=
+  ["invalid indexed formula", "invalid indexed term", "ill-typed or unbound formula", "ill-typed or unbound conclusion",
+   "ill-typed or unbound premise", "array expected", "String expected", "Natural number expected"]
+
+/-- `_decode_node`'s formula, node by node in order, for a graph the admission route rejected with one of
+`formulaDecoderTexts`: the first node formula Python's decoder or type checker rejects. A generated
+(`background:`) node is typed by its generator's route, so the walk stops there. -/
+def graphFault (E : Env) (nodes : List Json) : Option String := walked do
+  for node in nodes do
+    unless node matches .obj _ do stop
+    if ((node.getObjValD "label").getStr?.toOption.getD "").startsWith "background:" then stop
+    if let some m := formulaFault E.checked.envelope.profiles E.checked.envelope.vocabulary (node.getObjValD "ast") then
+      fault m
+
 /-- `_report`'s claim-graph part for the owned profiles: the reading checks of the graph's labels, W2 admission
 (the route's `admission`), then `_check_narrowing_choices` over the admitted report's labels. -/
 def admitGraph (E : Env) (front graph : Json) (units : List SourceUnit) (all active : List (FrontSet × List Bool))
@@ -410,7 +563,10 @@ def admitGraph (E : Env) (front graph : Json) (units : List SourceUnit) (all act
     | .risk => VE.Risk.Run.runAdmission "admission" E.json document
   let answer ← match admitted with
     | .ok a => pure a
-    | .error e => if e.startsWith "UnsupportedProfile" then throw (unavailable ("claim graph: " ++ e)) else throw e
+    | .error e =>
+      if e.startsWith "UnsupportedProfile" then throw (unavailable ("claim graph: " ++ e))
+      else if E.block == .none && formulaDecoderTexts.contains e then throw ((graphFault E nodes).getD e)
+      else throw e
   let labels := (((answer.getObjValD "report").getObjValD "assumptions").getArr?.toOption.getD #[]).toList.filterMap
     fun a => (a.getObjValD "label").getStr?.toOption
   let parsed := labels.filterMap VE.Route.Admission.parseLabel

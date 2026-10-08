@@ -133,6 +133,122 @@ def test_lean_rejections_are_raised_verbatim(tmp_path, no_python_loader):
     assert getattr(caught.value, "backend_rejection", False) is True
 
 
+# {name: (seed, edit of the seed's front matter)}: one fault per branch of the mode's Python-order namers
+# (`Service.Document.vocabularyFault`, `formulaFault`, `graphFault`), each a class the 16b looprecheck1 found
+# relayed with a generic Lean text (`object expected`, `String expected`, `array expected`, `invalid indexed
+# formula`, `invalid signature: p`, a raw control character in a quoted name).
+def _vocabulary(front):
+    return front["environment"]["vocabulary"]
+
+
+def _rename(table, old, new):
+    table[new] = table.pop(old)
+
+
+NAMED = {
+    "constants not an object": ("plain", lambda f: _vocabulary(f).update(constants=7)),
+    "predicates not an object": ("plain", lambda f: _vocabulary(f).update(predicates=[])),
+    "sorts not an object": ("plain", lambda f: _vocabulary(f).update(sorts="person")),
+    "description not a string": ("plain", lambda f: _vocabulary(f)["sorts"]["person"].update(description=7)),
+    "description empty": ("plain", lambda f: _vocabulary(f)["predicates"]["senior"].update(description="")),
+    "constant description not a string": ("plain", lambda f: _vocabulary(f)["constants"]["bob"].update(
+        description=[])),
+    "verbalisation empty": ("plain", lambda f: _vocabulary(f)["predicates"]["senior"].update(verbalisation="")),
+    "arguments not an array": ("plain", lambda f: _vocabulary(f)["predicates"]["senior"].update(
+        arguments="person")),
+    "arguments empty": ("plain", lambda f: _vocabulary(f)["predicates"]["senior"].update(arguments=[])),
+    "arguments too many": ("plain", lambda f: _vocabulary(f)["predicates"]["senior"].update(
+        arguments=["person"] * 3)),
+    "argument sort a number": ("plain", lambda f: _vocabulary(f)["predicates"]["senior"].update(arguments=[7])),
+    "argument sort a list": ("plain", lambda f: _vocabulary(f)["predicates"]["senior"].update(arguments=[[]])),
+    "argument sort with a tab": ("plain", lambda f: _vocabulary(f)["predicates"]["senior"].update(
+        arguments=["p\terson"])),
+    "constant sort a boolean": ("plain", lambda f: _vocabulary(f)["constants"]["bob"].update(sort=True)),
+    "constant sort undeclared": ("plain", lambda f: _vocabulary(f)["constants"]["bob"].update(sort="PERSON")),
+    "identifier upper case": ("plain", lambda f: _rename(_vocabulary(f)["sorts"], "person", "PERSON")),
+    "identifier with a no-break space": ("plain", lambda f: _rename(_vocabulary(f)["constants"], "bob",
+                                                                    "b\u00a0ob")),
+    "identifier with a control character": ("plain", lambda f: _rename(_vocabulary(f)["predicates"], "senior",
+                                                                       "senior\x1c")),
+    "identifier reserved": ("plain", lambda f: _rename(_vocabulary(f)["constants"], "bob", "x1")),
+    "identifier declared twice": ("plain", lambda f: _vocabulary(f)["constants"].update(
+        senior={"sort": "person", "description": "Senior"})),
+    "definition arguments not an array": ("definitions", lambda f: _vocabulary(f)["predicates"]["staff"][
+        "defined"].update(arguments="person")),
+    "definition arguments differ": ("definitions", lambda f: _vocabulary(f)["predicates"]["staff"][
+        "defined"].update(arguments=["$string"])),
+    "definition body not a tagged array": ("definitions", lambda f: _vocabulary(f)["predicates"]["staff"][
+        "defined"].update(body=[])),
+    "definition body variable index": ("definitions", lambda f: _vocabulary(f)["predicates"]["staff"][
+        "defined"].update(body=["unary", "in_finance", ["var", "0"]])),
+    "definition body unknown tag": ("definitions", lambda f: _vocabulary(f)["predicates"]["staff"][
+        "defined"].update(body=["VAR", 0])),
+    "content unknown tag": ("plain", lambda f: f["units"][1]["content"].update(
+        ast=["unary", "senior", ["c  onst", "bob"]])),
+    "content not a tagged array": ("plain", lambda f: f["units"][1]["content"].update(ast=["unary", "senior", 7])),
+    "content predicate a number": ("plain", lambda f: f["units"][1]["content"].update(
+        ast=["unary", 7, ["const", "bob"]])),
+    "content constant with a carriage return": ("plain", lambda f: f["units"][1]["content"].update(
+        ast=["unary", "senior", ["const", "bob\r"]])),
+    "graph node unknown tag": ("graph-bridge", lambda f: f["graph"]["nodes"][0].update(
+        ast=["unary\x1c", "in_finance", ["const", "alice"]])),
+    "graph node predicate a number": ("graph-bridge", lambda f: f["graph"]["nodes"][0].update(
+        ast=["unary", 7, ["const", "alice"]])),
+    "graph node unknown constant": ("graph-bridge", lambda f: f["graph"]["nodes"][0].update(
+        ast=["unary", "in_finance", ["const", "x"]])),
+}
+
+
+def coded(call):
+    """The rejection of `call` as (code, message), the members `lean_first_diff` compares."""
+    try:
+        with model_search_scope():
+            call()
+    except (VEError, CheckerUnavailable) as exc:
+        return getattr(exc, "code", type(exc).__name__), getattr(exc, "message", str(exc))
+    return None
+
+
+def _unprefixed(error):
+    code, message = error
+    return message.removeprefix(f"{code}: ")
+
+
+@pytest.mark.parametrize("name", sorted(NAMED))
+def test_lean_names_a_rejection_as_python_did(tmp_path, name):
+    """DRI rule 2(a)-(c) (16b looprecheck1): Lean's rejection keeps every name, value and the specificity of
+    the diagnostic Python's own path gives the same document; here the texts agree but for the code prefix, which
+    the relay always writes."""
+    seed, edit = NAMED[name]
+    doc = deepcopy(GENERATED[seed])
+    edit(doc["front"])
+    path = write(tmp_path, dw.text_of(doc))
+    lean, python = coded(lambda: D.check_document(path)), coded(python_path(path))
+    assert lean is not None and python is not None, (lean, python)
+    assert lean[0] != "CheckerUnavailable" and lean[0] == python[0], (lean, python)
+    assert _unprefixed(lean) == _unprefixed(python), (lean, python)
+
+
+def test_lean_quotes_a_name_as_python_repr_does():
+    """`TypingDiagnostic.pyRepr` against Python's `repr` (16b looprecheck1: `'in_legal\\r'` was shown with a raw
+    carriage return): every Latin-1 character, the separator, format and private-use characters its table lists,
+    and printable characters above Latin-1, each inside a constant name the check mode does not know. An
+    unassigned code point (Python escapes it) is outside the table and not compared."""
+    from ve.backends.relay import decide
+    environment = GENERATED["plain"]["front"]["environment"]
+    chars = [*range(0x100), 0x600, 0x61c, 0x180e, 0x1680, *range(0x2000, 0x2010), *range(0x2028, 0x2030),
+             *range(0x205f, 0x2065), 0x3000, 0xe000, 0xf8ff, 0xfeff, 0xfff9, 0xf0000, 0x2019, 0x212a, 0x130, 0x1f600]
+    wrong = []
+    for c in chars:
+        name = f"b{chr(c)}ob"
+        with pytest.raises(VEError) as caught:
+            decide("check", [{"id": "name", "environment": environment,
+                              "ast": ["unary", "senior", ["const", name]]}])
+        if caught.value.message != f"UnknownSymbol: Unknown constant {name!r}":
+            wrong.append((hex(c), caught.value.message))
+    assert not wrong
+
+
 # ---------------------------------------------------------------- undecided answers take the retained path
 
 def _order_document():
