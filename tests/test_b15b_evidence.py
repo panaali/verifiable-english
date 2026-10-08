@@ -145,8 +145,22 @@ def test_saved_fuzz_comparison_does_not_grow_the_baseline():
     assert len(runs) == 15
     assert {row["run"] for row in runs} == {"--ci"} | {f"--deep 1 --seed 202609{day}" for day in range(23, 31)} | {
         f"--deep 1 --seed 202610{day:02d}" for day in range(1, 7)}
-    assert all(row["same_new"] and row["new"][1] <= row["new"][0] for row in runs)
-    assert "no head-only signature" in report()
+    # Rust no longer answers the parser, label and dependency-order surfaces: fewer findings, never more.
+    assert all(row["new"][1] <= row["new"][0] and row["baseline_seen"][1] <= row["baseline_seen"][0]
+               and row["not_reproduced"] == [0, 0] for row in runs)
+    head_only = saved("difffuzz-head-only.json")["runs"]
+    assert len(head_only) == len(runs)
+    renamed = [entry for run in head_only.values() for entry in run["head_only"]]
+    # Every head-only signature is a base finding of the same seed and mutation, with the same Python and
+    # Lean answers and Rust gone from its engines.
+    for entry in renamed:
+        assert entry["base"] is not None and entry["base"] != entry["head"]
+        assert {k: v for k, v in entry["base_answers"].items() if k != "rust"} == {
+            k: v for k, v in entry["answers"].items() if k != "rust"}
+        assert "rust" not in entry["engines"]
+    text = report()
+    assert f"{len(renamed)} head-only signature" in text
+    assert "no head-only signature that is a new disagreement" in text
 
 
 def test_saved_mutants_each_fail_their_named_tests():
