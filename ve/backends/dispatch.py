@@ -72,17 +72,16 @@ def overridden(op: str) -> bool:
 
 
 # Operations with a temporary Python-authority shadow policy.
-SHADOW_ONLY = frozenset()
+SHADOW_ONLY = frozenset({"english.admission"})
 
 
 def shadowed(op: str, payload: dict, python: Callable[[], T], candidate: Callable[[], T],
              shadow: Callable[[object, object], dict | None]) -> T:
-    """Python's result for a shadow-only operation; under the named override `op=shadow` the candidate is
-    also run and compared. A named override that selects another backend is refused: it would make the
-    candidate the authority."""
+    """Python's result for a shadow-only operation. By default the candidate is also run and
+    compared; `op=python` disables that comparison. Another backend cannot become authoritative."""
     if op not in SHADOW_ONLY:
         raise ValueError(f"{op} is not a shadow-only operation")
-    selected = _overrides().get(op, "python")
+    selected = _overrides().get(op, "shadow")
     if selected not in ("python", "shadow"):
         raise CheckerUnavailable(f"CheckerUnavailable: {op} accepts only the python or shadow authority; "
                                  f"{selected!r} would make the candidate reader the authority")
