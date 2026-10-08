@@ -12132,7 +12132,7 @@ module VE.Route.MeteredProofs 3e29a02f94999d43dfb7d5e2d28ac80a663eb689ede25dd896
 18:0-26:12 theorem VE.Route.MeteredProofs.order_sound@VE.Route.MeteredProofs
 28:0-38:55 theorem VE.Route.MeteredProofs.closure_sound@VE.Route.MeteredProofs
 40:0-50:55 theorem VE.Route.MeteredProofs.core_sound@VE.Route.MeteredProofs
-module VE.Route.MeteredRun bc80c9431e5a28dc0e908f8dfe0602387c04bc763631d066f098bfa53dc89e19
+module VE.Route.MeteredRun b4686540c27ace836b333bb4266a5d729c27eeeabe50129c5679b53ffbb1f47b
 21:0-22:48 def VE.Route.MeteredRun.tick@VE.Route.MeteredRun
 24:0-26:81 def VE.Route.MeteredRun.tickCache@VE.Route.MeteredRun
 28:0-33:35 def VE.Route.MeteredRun.nonVacuityResult@VE.Route.MeteredRun
@@ -12163,7 +12163,7 @@ module VE.Route.MeteredRun bc80c9431e5a28dc0e908f8dfe0602387c04bc763631d066f098b
 144:0-184:83 def VE.Route.MeteredRun.run@VE.Route.MeteredRun
 186:0-199:58 def VE.Route.MeteredRun.runCase@VE.Route.MeteredRun
 201:0-205:56 def VE.Route.MeteredRun.runCaseReported@VE.Route.MeteredRun
-207:0-224:12 def VE.Route.MeteredRun.main@VE.Route.MeteredRun
+207:0-225:79 def VE.Route.MeteredRun.main@VE.Route.MeteredRun
 module VE.Route.MeteredTrace e190d39219b87b78016412b1b07413ea4f56d4104747d09e08ace8b3daccd371
 10:0-12:94 def VE.Route.MeteredTrace.bindingsJson@VE.Route.MeteredTrace
 14:0-18:44 def VE.Route.MeteredTrace.node@VE.Route.MeteredTrace

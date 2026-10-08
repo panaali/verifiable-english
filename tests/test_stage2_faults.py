@@ -100,8 +100,9 @@ def inputs():
     }
 
 
-# Operations whose verdict path runs Rust under the Lean authority.
-RUST = ("evaluate", "countermodel_check", "countermodel_search", "distinguishing_model")
+# Operations whose verdict path runs Rust under the Lean authority (evaluation is Lean's metered
+# evaluator's since lean-first batch 15b).
+RUST = ("countermodel_check", "countermodel_search", "distinguishing_model")
 # Operations Lean alone answers under the Lean authority (search publishes
 # its witness through the Lean countermodel check).
 LEAN = (

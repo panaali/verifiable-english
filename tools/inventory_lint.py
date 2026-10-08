@@ -66,7 +66,6 @@ DIAGNOSTIC = ("wire contract hook (docs/spec/wire-contract-s5.md 2.5), diagnosti
 EXCEPTIONS: dict[tuple[str, str, str, str], str] = {
     ("ve.closure", "derive_induction", "ve.ast", "_Checker"): GENERATOR,
     ("ve.norms", "_find_conflict", "ve.ast", "_Checker"): GENERATOR,
-    ("ve.search", "_find_distinguishing_model_python", "ve.evaluate", "_evaluate_validated"): GENERATOR,
     ("ve.entailment", "_validate_inputs", "ve.ast", "_Checker"):
         "structural re-typing of generated premises (regenerated Background, whose generator is the "
         "checker's), as ast._typed does; case premises and conclusions go through check_document",
