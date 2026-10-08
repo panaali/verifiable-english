@@ -1,0 +1,90 @@
+{
+  "unit": "u0214.s02",
+  "returncode": 0,
+  "target_of_this_broad_pattern": [
+    "u0214.s01"
+  ],
+  "attempts_in_order": [
+    "1. Base translation minus its norm declaration and norm unit, plus the discourse block, with the clause u0248 still a fenced English block: (20260930T1800Z, ve-green-risk) the Lean route abstained (NotImplemented: fenced English or strict content). Not re-run at ve-green-risk-c5: docs/spec/discourse.md 11 still lists fenced content as a limitation.",
+    "2. Fence removed: (20260930T1800Z) the route abstained (a document without a claim graph); a discourse document must keep a claim graph. Same status at ve-green-risk-c5 (spec 11).",
+    "3. u0248 written as JSON content ({\"ast\": ...}) with its graph node, the name's U+2019 unit kept whole: (20260930T1800Z) InvalidInput: discourse wording of u0214.s02.p1. Superseded by the c5 spec amendment (a location binding needs no discourse wording), but the probe below still cuts the clause in two because a unit holding a location binding must have no meaning and the rest of the sentence is a substantive claim that must not be labelled content-free.",
+    "4. Naming clause cut before the name (two LABELLED fragments p1, p1b, which the translation would not otherwise do; the rest, \", and\" and \"it helps define what we mean by broad safety\", stay UNFORMALISED): (20260930T1800Z) MentionNotSlot: m-this-pattern. At ve-green-risk-c5 this attempt is ACCEPTED at document-check level: both mentions are location bindings (status navigation) to the unit u0214.s01 under the content name “Claude’s principal hierarchy”. This is the one change in the language that touches the constitution, and it labels two fragments of one clause; it formalises nothing.",
+    "5. The same discourse block and fragments added to the real translation (with its norms, soft norms and fence): returncode 1, see in_the_translation_itself."
+  ],
+  "coverage": {
+    "source_bytes": 184893,
+    "accounted_bytes": 184893,
+    "coverage_percent": 100,
+    "bytes_by_kind": {
+      "meta": 429,
+      "unformalised": 183808,
+      "attributed": 634,
+      "asserted": 22
+    },
+    "bytes_by_status": {
+      "LABELLED": 429,
+      "UNFORMALISED": 184442,
+      "CHECKED": 22
+    },
+    "unformalised_reasons": {
+      "other.discourse": 78,
+      "quantities": 119,
+      "norms": 677,
+      "causation": 80,
+      "time": 9,
+      "counting": 31,
+      "defaults": 54,
+      "modality_belief": 24,
+      "attribution": 13
+    },
+    "residual": {
+      "open_terms": 5,
+      "assumptions": 1,
+      "bridge_leaves": 0,
+      "unresolved_reading_sets": 0
+    },
+    "residual_total": 6
+  },
+  "premises": {
+    "status": "model",
+    "model_id": "92f58b70908745380de94e69a238442538e441250ca9e2271abd686ce4ea6a49"
+  },
+  "references": [
+    {
+      "form": "demonstrative",
+      "mention": "m-this-pattern",
+      "status": "navigation",
+      "target": {
+        "content_name": "Claude’s principal hierarchy",
+        "kind": "unit",
+        "units": [
+          "u0214.s01"
+        ]
+      },
+      "unit": "u0214.s02.p1"
+    },
+    {
+      "form": "pronoun",
+      "mention": "m-it",
+      "status": "navigation",
+      "target": {
+        "content_name": "Claude’s principal hierarchy",
+        "kind": "unit",
+        "units": [
+          "u0214.s01"
+        ]
+      },
+      "unit": "u0214.s02.p3"
+    }
+  ],
+  "in_the_translation_itself": {
+    "returncode": 1,
+    "message": "ve.errors.VEError: invalid JSON front matter",
+    "same_document_without_its_reading_sets": {
+      "returncode": 1,
+      "message": "ve.errors.UnsupportedProfile: UnsupportedProfile: Unsupported profile norm-defaults@0"
+    },
+    "previous_run_message": "ve.errors.VEError: UnrecordedSlot: u0123.s02.p1: [76303, 76305)",
+    "meaning": "The translation has norm and soft-norm units and one fenced clause. The discourse route is Lean's alone since lean-first b4 and its first rejection of this document is its front matter (what in the reading sets it cannot decode was not isolated: removing the reading sets changes the message); with them removed it names the profile (norm-defaults@0 is not supported beside ve.discourse@1), which is the limit the spec states (docs/spec/discourse.md 11: norm and soft-norm composition is not implemented). The earlier run's message named an unrecorded slot; the verdict is the same: the upgrade cannot enter the main document, u0214.s02 stays UNFORMALISED (other:discourse) there, and only the norms-free companion probe is admitted."
+  }
+}

@@ -1,0 +1,3 @@
+# Audit repair, run 20261007T1800Z
+
+The latest audit received (`AUDIT-20261006T1800Z-received.md`, of run 20261006T1800Z) accepted all 20 sampled units and marked none unfaithful or incomplete, so there is nothing to repair. No unit changed, so every earlier acceptance still describes the translation as it is; `metrics.json` therefore reports audit-verified covered bytes of 2,647 (1.4316%, all substantive covered bytes) plus 345 verified heading-marker bytes, against 2,996 claimed. The 4 claimed-only bytes are one heading marker not yet sampled by any audit. Earlier repairs (`AUDIT-REPAIR-20261005T1800Z.md`, `AUDIT-REPAIR.md` of the previous run, kept as `AUDIT-REPAIR-prev.md`) stand.
