@@ -1135,7 +1135,7 @@
       "lean/Main.lean": "lean:runner-glue: argument dispatch and result arrays of ve_conformance",
       "lean/VE/Route/Run.lean": "lean:runner-glue: route case dispatch and error rows (route_gate pins the envelope check)",
       "lean/VE/Route/Metered.lean": "lean:runner-glue: opt-in metered case budget fields and evaluation result rows; existing family decoders validate formulas and models",
-      "lean/VE/Route/MeteredRun.lean": "lean:runner-glue: opt-in ve_metered case dispatch and result rows using the existing Lean environment, model and formula decoders",
+      "lean/VE/Route/MeteredRun.lean": "lean:runner-glue: opt-in ve_metered case dispatch and result rows; the environment is validated by the service's Standalone.evaluable (frozen envelopes by their frozen decoders) and formulas and models by the existing family decoders",
       "lean/VE/Route/MeteredTrace.lean": "lean:runner-glue: explanation JSON display after the proved metered value; reads no untrusted input",
       "lean/VE/SoftNorms/Run.lean": "lean:runner-glue: ve_soft_norms_route case dispatch and response rows",
       "lean/VE/Rights/Run.lean": "lean:runner-glue: ve_rights_route case dispatch and response rows",

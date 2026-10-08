@@ -170,18 +170,13 @@ def coreEnv (environment : Json) (checked : Standalone.Validated) : Except Strin
   -- Base Background and the model decoder: literals over the core decoder, or,
   -- with definitions@0 or data@0 layer fields, the FOL projection's flags,
   -- definitions and literals, and each model's defined tables computed there
-  -- (as `Core.Layers.run` and the model mode do).
+  -- (`Core.Layers.completeModel`).
   let (base, model) ← match checked.layers with
     | none => pure (VE.Route.Background.background (VE.Core.Wire.literals v), coreModel v)
     | some layered => do
       let rv ← VE.Core.Layers.decodeLayers e.profiles layered
-      let names := (← VE.Core.Layers.folPredicates layered).map Prod.fst
       pure (VE.Route.Wire.fullBackground rv, fun (j : Json) => do
-        let M ← VE.Route.Wire.decodeDataModel rv (← VE.Core.Layers.folModel names j)
-        let tables := (VE.Definitions.names rv.definitions).map fun p =>
-          (p, VE.Core.Layers.tableJson (M.relations p))
-        let relations ← VE.Bridge.fields (← j.getObjVal? "relations")
-        coreModel v (j.setObjVal! "relations" (Json.mkObj (relations ++ tables))))
+        coreModel v (← VE.Core.Layers.completeModel rv layered j))
   let bg := base ++ profile
   let decodeF := fun (j : Json) => do
     VE.Route.AstLimit.check [j]
