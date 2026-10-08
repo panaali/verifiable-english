@@ -6,7 +6,7 @@
       "records": 39612
     },
     "head": {
-      "path": "/tmp/ve-lf12-head-conformance-v5.jsonl",
+      "path": "/tmp/ve-lf12-head-conformance-v6.jsonl",
       "sha256": "afbc67f55f5be855250352f914f261bfe655c42a969bff564e13c04d280cfdda",
       "records": 39612
     }
@@ -18,7 +18,7 @@
       "records": 18870
     },
     "head": {
-      "path": "/tmp/ve-lf12-head-probe-v5.jsonl",
+      "path": "/tmp/ve-lf12-head-probe-v6.jsonl",
       "sha256": "8ebe5137aec6bb0ca561bb3928cfcbb40b12aca48e70bab13e4ea9c36709442a",
       "records": 18870
     }
