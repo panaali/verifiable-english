@@ -1,0 +1,212 @@
+{
+ "document": "usecases/claude-constitution-pilot/run-20261008T1800Z/readings/nd-all.ve.md",
+ "group": "all",
+ "search_seconds": 174.5,
+ "sets": [
+  {
+   "set": "force-u0036-s05",
+   "unit": "u0036.s05",
+   "candidates": [
+    {
+     "id": "strict",
+     "content": "norm"
+    },
+    {
+     "id": "default",
+     "content": "norm"
+    }
+   ]
+  },
+  {
+   "set": "modal-u0062-s01",
+   "unit": "u0062.s01",
+   "candidates": [
+    {
+     "id": "permission",
+     "content": "norm"
+    },
+    {
+     "id": "ability",
+     "content": "assertion"
+    }
+   ]
+  },
+  {
+   "set": "modal-u0123-s01-p1",
+   "unit": "u0123.s01.p1",
+   "candidates": [
+    {
+     "id": "permission-narrow-limits",
+     "content": "norm"
+    },
+    {
+     "id": "permission-wide-limits",
+     "content": "norm"
+    },
+    {
+     "id": "permission-no-limits",
+     "content": "norm"
+    }
+   ]
+  },
+  {
+   "set": "modal-u0123-s02-p1",
+   "unit": "u0123.s02.p1",
+   "candidates": [
+    {
+     "id": "permission",
+     "content": "norm"
+    },
+    {
+     "id": "conditional-permission",
+     "content": "norm"
+    },
+    {
+     "id": "ability",
+     "content": "assertion"
+    }
+   ]
+  },
+  {
+   "set": "scope-modal-u0123-s03",
+   "unit": "u0123.s03",
+   "candidates": [
+    {
+     "id": "narrow-permission",
+     "content": "norm"
+    },
+    {
+     "id": "wide-permission",
+     "content": "norm"
+    },
+    {
+     "id": "narrow-ability",
+     "content": "assertion"
+    },
+    {
+     "id": "wide-ability",
+     "content": "assertion"
+    }
+   ]
+  },
+  {
+   "set": "force-u0125-s04-p2",
+   "unit": "u0125.s04.p2",
+   "candidates": [
+    {
+     "id": "strict",
+     "content": "norm"
+    },
+    {
+     "id": "default",
+     "content": "norm"
+    }
+   ]
+  },
+  {
+   "set": "force-u0156-s03",
+   "unit": "u0156.s03",
+   "candidates": [
+    {
+     "id": "strict",
+     "content": "norm"
+    },
+    {
+     "id": "default",
+     "content": "norm"
+    }
+   ]
+  },
+  {
+   "set": "force-u0263-s04-p2",
+   "unit": "u0263.s04.p2",
+   "candidates": [
+    {
+     "id": "strict",
+     "content": "norm"
+    },
+    {
+     "id": "default",
+     "content": "norm"
+    }
+   ]
+  }
+ ],
+ "pairs_without_situation": [],
+ "search_limits": [],
+ "load_seconds": 5.9,
+ "admitted": true,
+ "check_seconds": 25.1,
+ "premises": {
+  "status": "UNKNOWN",
+  "route": "enumerated",
+  "budget": {
+   "max_choices": 64
+  },
+  "units": [
+   "u0036.s05",
+   "u0062.s01",
+   "u0123.s01.p1",
+   "u0123.s02.p1",
+   "u0123.s03",
+   "u0125.s04.p2",
+   "u0156.s03",
+   "u0263.s04.p2"
+  ]
+ },
+ "bytes_by_status": {
+  "LABELLED": 349,
+  "UNFORMALISED": 181897,
+  "OPEN": 2625,
+  "CHECKED": 22
+ }
+}
+{
+ "checked_by": {
+  "lean": "readings@1 admission (4.1 to 4.4), every recorded separation (4.5) and the findings (4.6): ve_readings_route readings-validate; S2 route and restrictions: readings-elaborate",
+  "python": "W2 structure of the reading sets, couplings and narrowings (S1 limitation, DRI ruling 3: Lean does not decode them); S2 choices, units, names, slot and sizes compared with Lean",
+  "not_certified": "SeparatedByDecisionOnly: decision_only_sound is not proved (DRI ruling 2)"
+ },
+ "separations": {
+  "outcome": 6,
+  "selects": 7,
+  "holds": 4
+ },
+ "findings": {
+  "SeparatedByDecisionOnly": 0,
+  "SeparatedByActOnly": 0
+ },
+ "pending_candidates": 0,
+ "couplings": 0,
+ "route": "enumerated",
+ "choice_count": "over 64",
+ "choices_checked": "over 64",
+ "narrowings_stale": [],
+ "reading_premises": [],
+ "not_superposable": {
+  "cause": "the unspecified completion",
+  "text": "ReadingsNotSuperposable: force-u0036-s05, modal-u0062-s01, modal-u0123-s01-p1, modal-u0123-s02-p1, scope-modal-u0123-s03, force-u0125-s04-p2, force-u0156-s03, force-u0263-s04-p2"
+ },
+ "status": "UNKNOWN: more than 64 compatible readings",
+ "conflict": {
+  "status": "UNKNOWN",
+  "route": "enumerated",
+  "budget": {
+   "max_choices": 64
+  },
+  "units": [
+   "u0036.s05",
+   "u0062.s01",
+   "u0123.s01.p1",
+   "u0123.s02.p1",
+   "u0123.s03",
+   "u0125.s04.p2",
+   "u0156.s03",
+   "u0263.s04.p2"
+  ]
+ },
+ "dead_readings": null,
+ "english": [
+  "The readings of sentences 132, 227, 458, 460, 462, 471, 589 and 1000 were checked one way at a time, not together."
+ ]
+}

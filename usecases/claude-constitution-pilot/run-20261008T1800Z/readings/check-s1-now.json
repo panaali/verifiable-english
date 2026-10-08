@@ -1,0 +1,9 @@
+{
+  "status": "CheckerUnavailable",
+  "error": {
+    "code": "CheckerUnavailable",
+    "message": "The vocabulary selection was not accepted (invalidGrammar lexicon: V3 predicate system_prompt_compliance_required). No candidate was checked.",
+    "operation": "english.check",
+    "backend": "lean"
+  }
+}

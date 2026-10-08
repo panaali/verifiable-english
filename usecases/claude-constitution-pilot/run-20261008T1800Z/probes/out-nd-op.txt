@@ -1,0 +1,631 @@
+{
+ "document": "usecases/claude-constitution-pilot/run-20261008T1800Z/readings/nd-op.ve.md",
+ "group": "op",
+ "search_seconds": 33.0,
+ "sets": [
+  {
+   "set": "modal-u0062-s01",
+   "unit": "u0062.s01",
+   "candidates": [
+    {
+     "id": "permission",
+     "content": "norm"
+    },
+    {
+     "id": "ability",
+     "content": "assertion"
+    }
+   ]
+  },
+  {
+   "set": "modal-u0123-s02-p1",
+   "unit": "u0123.s02.p1",
+   "candidates": [
+    {
+     "id": "permission",
+     "content": "norm"
+    },
+    {
+     "id": "conditional-permission",
+     "content": "norm"
+    },
+    {
+     "id": "ability",
+     "content": "assertion"
+    }
+   ]
+  },
+  {
+   "set": "scope-modal-u0123-s03",
+   "unit": "u0123.s03",
+   "candidates": [
+    {
+     "id": "narrow-permission",
+     "content": "norm"
+    },
+    {
+     "id": "wide-permission",
+     "content": "norm"
+    },
+    {
+     "id": "narrow-ability",
+     "content": "assertion"
+    },
+    {
+     "id": "wide-ability",
+     "content": "assertion"
+    }
+   ]
+  }
+ ],
+ "pairs_without_situation": [],
+ "search_limits": [],
+ "load_seconds": 3.8,
+ "admitted": true,
+ "check_seconds": 290.3,
+ "premises": {
+  "status": "model",
+  "route": "enumerated",
+  "evidence": "per choice",
+  "choices": [
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      0
+     ],
+     [
+      "modal-u0123-s02-p1",
+      0
+     ],
+     [
+      "scope-modal-u0123-s03",
+      0
+     ]
+    ],
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      0
+     ],
+     [
+      "modal-u0123-s02-p1",
+      0
+     ],
+     [
+      "scope-modal-u0123-s03",
+      1
+     ]
+    ],
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      0
+     ],
+     [
+      "modal-u0123-s02-p1",
+      0
+     ],
+     [
+      "scope-modal-u0123-s03",
+      2
+     ]
+    ],
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      0
+     ],
+     [
+      "modal-u0123-s02-p1",
+      0
+     ],
+     [
+      "scope-modal-u0123-s03",
+      3
+     ]
+    ],
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      0
+     ],
+     [
+      "modal-u0123-s02-p1",
+      1
+     ],
+     [
+      "scope-modal-u0123-s03",
+      0
+     ]
+    ],
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      0
+     ],
+     [
+      "modal-u0123-s02-p1",
+      1
+     ],
+     [
+      "scope-modal-u0123-s03",
+      1
+     ]
+    ],
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      0
+     ],
+     [
+      "modal-u0123-s02-p1",
+      1
+     ],
+     [
+      "scope-modal-u0123-s03",
+      2
+     ]
+    ],
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      0
+     ],
+     [
+      "modal-u0123-s02-p1",
+      1
+     ],
+     [
+      "scope-modal-u0123-s03",
+      3
+     ]
+    ],
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      0
+     ],
+     [
+      "modal-u0123-s02-p1",
+      2
+     ],
+     [
+      "scope-modal-u0123-s03",
+      0
+     ]
+    ],
+    "status": "UNKNOWN"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      0
+     ],
+     [
+      "modal-u0123-s02-p1",
+      2
+     ],
+     [
+      "scope-modal-u0123-s03",
+      1
+     ]
+    ],
+    "status": "UNKNOWN"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      0
+     ],
+     [
+      "modal-u0123-s02-p1",
+      2
+     ],
+     [
+      "scope-modal-u0123-s03",
+      2
+     ]
+    ],
+    "status": "UNKNOWN"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      0
+     ],
+     [
+      "modal-u0123-s02-p1",
+      2
+     ],
+     [
+      "scope-modal-u0123-s03",
+      3
+     ]
+    ],
+    "status": "UNKNOWN"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      1
+     ],
+     [
+      "modal-u0123-s02-p1",
+      0
+     ],
+     [
+      "scope-modal-u0123-s03",
+      0
+     ]
+    ],
+    "status": "UNKNOWN"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      1
+     ],
+     [
+      "modal-u0123-s02-p1",
+      0
+     ],
+     [
+      "scope-modal-u0123-s03",
+      1
+     ]
+    ],
+    "status": "UNKNOWN"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      1
+     ],
+     [
+      "modal-u0123-s02-p1",
+      0
+     ],
+     [
+      "scope-modal-u0123-s03",
+      2
+     ]
+    ],
+    "status": "UNKNOWN"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      1
+     ],
+     [
+      "modal-u0123-s02-p1",
+      0
+     ],
+     [
+      "scope-modal-u0123-s03",
+      3
+     ]
+    ],
+    "status": "UNKNOWN"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      1
+     ],
+     [
+      "modal-u0123-s02-p1",
+      1
+     ],
+     [
+      "scope-modal-u0123-s03",
+      0
+     ]
+    ],
+    "status": "UNKNOWN"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      1
+     ],
+     [
+      "modal-u0123-s02-p1",
+      1
+     ],
+     [
+      "scope-modal-u0123-s03",
+      1
+     ]
+    ],
+    "status": "UNKNOWN"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      1
+     ],
+     [
+      "modal-u0123-s02-p1",
+      1
+     ],
+     [
+      "scope-modal-u0123-s03",
+      2
+     ]
+    ],
+    "status": "UNKNOWN"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      1
+     ],
+     [
+      "modal-u0123-s02-p1",
+      1
+     ],
+     [
+      "scope-modal-u0123-s03",
+      3
+     ]
+    ],
+    "status": "UNKNOWN"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      1
+     ],
+     [
+      "modal-u0123-s02-p1",
+      2
+     ],
+     [
+      "scope-modal-u0123-s03",
+      0
+     ]
+    ],
+    "status": "UNKNOWN"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      1
+     ],
+     [
+      "modal-u0123-s02-p1",
+      2
+     ],
+     [
+      "scope-modal-u0123-s03",
+      1
+     ]
+    ],
+    "status": "UNKNOWN"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      1
+     ],
+     [
+      "modal-u0123-s02-p1",
+      2
+     ],
+     [
+      "scope-modal-u0123-s03",
+      
+{
+ "checked_by": {
+  "lean": "readings@1 admission (4.1 to 4.4), every recorded separation (4.5) and the findings (4.6): ve_readings_route readings-validate; S2 route and restrictions: readings-elaborate",
+  "python": "W2 structure of the reading sets, couplings and narrowings (S1 limitation, DRI ruling 3: Lean does not decode them); S2 choices, units, names, slot and sizes compared with Lean",
+  "not_certified": "SeparatedByDecisionOnly: decision_only_sound is not proved (DRI ruling 2)"
+ },
+ "separations": {
+  "outcome": 1,
+  "selects": 5,
+  "holds": 4
+ },
+ "findings": {
+  "SeparatedByDecisionOnly": 0,
+  "SeparatedByActOnly": 0
+ },
+ "pending_candidates": 0,
+ "couplings": 0,
+ "route": "enumerated",
+ "choice_count": 24,
+ "choices_checked": 24,
+ "narrowings_stale": [],
+ "reading_premises": [],
+ "not_superposable": {
+  "cause": "the unspecified completion",
+  "text": "ReadingsNotSuperposable: modal-u0062-s01, modal-u0123-s02-p1, scope-modal-u0123-s03"
+ },
+ "status": "CONFLICT-FREE among rules on the same act under every reading (24 readings checked one at a time)",
+ "conflict": {
+  "status": "CONFLICT-FREE",
+  "route": "enumerated",
+  "conditional_on": [],
+  "restrictions": [],
+  "reading_premises_used": [],
+  "choices": [
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      0
+     ],
+     [
+      "modal-u0123-s02-p1",
+      0
+     ],
+     [
+      "scope-modal-u0123-s03",
+      0
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      0
+     ],
+     [
+      "modal-u0123-s02-p1",
+      0
+     ],
+     [
+      "scope-modal-u0123-s03",
+      1
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      0
+     ],
+     [
+      "modal-u0123-s02-p1",
+      0
+     ],
+     [
+      "scope-modal-u0123-s03",
+      2
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      0
+     ],
+     [
+      "modal-u0123-s02-p1",
+      0
+     ],
+     [
+      "scope-modal-u0123-s03",
+      3
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      0
+     ],
+     [
+      "modal-u0123-s02-p1",
+      1
+     ],
+     [
+      "scope-modal-u0123-s03",
+      0
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      0
+     ],
+     [
+      "modal-u0123-s02-p1",
+      1
+     ],
+     [
+      "scope-modal-u0123-s03",
+      1
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      0
+     ],
+     [
+      "modal-u0123-s02-p1",
+      1
+     ],
+     [
+      "scope-modal-u0123-s03",
+      2
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      0
+     ],
+     [
+      "modal-u0123-s02-p1",
+      1
+     ],
+     [
+      "scope-modal-u0123-s03",
+      3
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+    

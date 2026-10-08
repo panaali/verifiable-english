@@ -1,0 +1,592 @@
+{
+  "document": "usecases/claude-constitution-pilot/run-20261008T1800Z/readings/nd-all.ve.md",
+  "group": "all",
+  "search_seconds": 174.5,
+  "sets": [
+    {
+      "set": "force-u0036-s05",
+      "unit": "u0036.s05",
+      "candidates": [
+        {
+          "id": "strict",
+          "content": "norm"
+        },
+        {
+          "id": "default",
+          "content": "norm"
+        }
+      ]
+    },
+    {
+      "set": "modal-u0062-s01",
+      "unit": "u0062.s01",
+      "candidates": [
+        {
+          "id": "permission",
+          "content": "norm"
+        },
+        {
+          "id": "ability",
+          "content": "assertion"
+        }
+      ]
+    },
+    {
+      "set": "modal-u0123-s01-p1",
+      "unit": "u0123.s01.p1",
+      "candidates": [
+        {
+          "id": "permission-narrow-limits",
+          "content": "norm"
+        },
+        {
+          "id": "permission-wide-limits",
+          "content": "norm"
+        },
+        {
+          "id": "permission-no-limits",
+          "content": "norm"
+        }
+      ]
+    },
+    {
+      "set": "modal-u0123-s02-p1",
+      "unit": "u0123.s02.p1",
+      "candidates": [
+        {
+          "id": "permission",
+          "content": "norm"
+        },
+        {
+          "id": "conditional-permission",
+          "content": "norm"
+        },
+        {
+          "id": "ability",
+          "content": "assertion"
+        }
+      ]
+    },
+    {
+      "set": "scope-modal-u0123-s03",
+      "unit": "u0123.s03",
+      "candidates": [
+        {
+          "id": "narrow-permission",
+          "content": "norm"
+        },
+        {
+          "id": "wide-permission",
+          "content": "norm"
+        },
+        {
+          "id": "narrow-ability",
+          "content": "assertion"
+        },
+        {
+          "id": "wide-ability",
+          "content": "assertion"
+        }
+      ]
+    },
+    {
+      "set": "force-u0125-s04-p2",
+      "unit": "u0125.s04.p2",
+      "candidates": [
+        {
+          "id": "strict",
+          "content": "norm"
+        },
+        {
+          "id": "default",
+          "content": "norm"
+        }
+      ]
+    },
+    {
+      "set": "force-u0156-s03",
+      "unit": "u0156.s03",
+      "candidates": [
+        {
+          "id": "strict",
+          "content": "norm"
+        },
+        {
+          "id": "default",
+          "content": "norm"
+        }
+      ]
+    },
+    {
+      "set": "force-u0263-s04-p2",
+      "unit": "u0263.s04.p2",
+      "candidates": [
+        {
+          "id": "strict",
+          "content": "norm"
+        },
+        {
+          "id": "default",
+          "content": "norm"
+        }
+      ]
+    }
+  ],
+  "pairs_without_situation": [],
+  "search_limits": [],
+  "load_seconds": 5.9,
+  "admitted": true,
+  "check_seconds": 25.1,
+  "readings": {
+    "checked_by": {
+      "lean": "readings@1 admission (4.1 to 4.4), every recorded separation (4.5) and the findings (4.6): ve_readings_route readings-validate; S2 route and restrictions: readings-elaborate",
+      "python": "W2 structure of the reading sets, couplings and narrowings (S1 limitation, DRI ruling 3: Lean does not decode them); S2 choices, units, names, slot and sizes compared with Lean",
+      "not_certified": "SeparatedByDecisionOnly: decision_only_sound is not proved (DRI ruling 2)"
+    },
+    "sets": [
+      {
+        "set": "force-u0036-s05",
+        "version": 1,
+        "unit": "u0036.s05",
+        "candidates": [
+          {
+            "id": "strict",
+            "index": 0,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "default",
+            "index": 1,
+            "pending": false,
+            "chain_findings": []
+          }
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "strict",
+              "default"
+            ],
+            "situation": "44866b6601d5a41becf8014ce4f45a5533d0c5a5e855c61a41a14d4a432649f7",
+            "probe": "outcome",
+            "wording": "E19",
+            "text": "These two readings differ here: c is an instance of Claude; e is an entity of sort \"entity\"; h is a hard constraint; operator is an operator; operator_input is an operator input; s is a situation; u is a user; s is classified as \"exception_to_asking_for_clarification\"; s is classified as \"genuine_ambiguity\". Here the text does not say whether c must seek clarification in s; this situation answers 'no'. Here the text does not say whether c may do the generation in s; this situation answers 'no'. Here the text does not say whether c may do the creation in s; this situation answers 'no'. Here the text does not say whether c may directly deny being Claude; this situation answers 'no'. Here the text does not say whether c must comply with the instruction against unintended exploits in s; this situation answers 'no'. Here the text does not say whether c must remain firm in s; this situation answers 'no'. Here the text does not say whether c may do the participation in s; this situation answers 'no'. Here the text does not say whether c may do the involvement in s; this situation answers 'no'. Here the text does not say whether c may do the infrastructure uplift in s; this situation answers 'no'. Here the text does not say whether c must use good judgment when evaluating conversational inputs; this situation answers 'no'. Here the text does not say whether operator may give Claude operator_input; this situation answers 'no'. Here the text does not say whether c may do the undermining in s; this situation answers 'no'. Here the text does not say whether c must comply with the system prompt instructions in s; this situation answers 'no'. Here the text does not say whether c may actively deceive u about system prompt existence-or-content; this situation answers 'no'. Here the text does not say whether c may do the weapons uplift in s; this situation answers 'no'. Under *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"*, c still must. Under *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\", unless that situation is classified as \"exception_to_asking_for_clarification\"*, c is not required to."
+          }
+        ],
+        "findings": [],
+        "not_certified": []
+      },
+      {
+        "set": "modal-u0062-s01",
+        "version": 1,
+        "unit": "u0062.s01",
+        "candidates": [
+          {
+            "id": "permission",
+            "index": 0,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "ability",
+            "index": 1,
+            "pending": false,
+            "chain_findings": []
+          }
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "permission",
+              "ability"
+            ],
+            "situation": "178e14a85ada46dab35a1f2762b67c036f883f355e6895ad29b1a5e51a4a4c4d",
+            "probe": "holds",
+            "wording": "E24",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+          }
+        ],
+        "findings": [],
+        "not_certified": []
+      },
+      {
+        "set": "modal-u0123-s01-p1",
+        "version": 1,
+        "unit": "u0123.s01.p1",
+        "candidates": [
+          {
+            "id": "permission-narrow-limits",
+            "index": 0,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "permission-wide-limits",
+            "index": 1,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "permission-no-limits",
+            "index": 2,
+            "pending": false,
+            "chain_findings": []
+          }
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "permission-narrow-limits",
+              "permission-wide-limits"
+            ],
+            "situation": "74671283ee4b45ec319260b92a95bb29959adfea1c6f40112691f0aaf8b7aeb2",
+            "probe": "outcome",
+            "wording": "E19",
+            "text": "These two readings differ here: c is an instance of Claude; e is an entity of sort \"entity\"; h is a hard constraint; operator is an operator; operator_input is an operator input; s is a situation; u is a user; operator_input is classified as \"instruction_abandon_identity_in_persona\"; operator_input is classified as \"instruction_dishonest_looking_within_honesty\". Here the text does not say whether c must seek clarification in s; this situation answers 'no'. Here the text does not say whether c may do the generation in s; this situation answers 'no'. Here the text does not say whether c may do the creation in s; this situation answers 'no'. Here the text does not say whether c may directly deny being Claude; this situation answers 'no'. Here the text does not say whether c must comply with the instruction against unintended exploits in s; this situation answers 'no'. Here the text does not say whether c must remain firm in s; this situation answers 'no'. Here the text does not say whether c may do the participation in s; this situation answers 'no'. Here the text does not say whether c may do the involvement in s; this situation answers 'no'. Here the text does not say whether c may do the infrastructure uplift in s; this situation answers 'no'. Here the text does not say whether c must use good judgment when evaluating conversational inputs; this situation answers 'no'. Here the text does not say whether operator may give Claude operator_input; this situation answers 'no'. Here the text does not say whether c may do the undermining in s; this situation answers 'no'. Here the text does not say whether c must comply with the system prompt instructions in s; this situation answers 'no'. Here the text does not say whether c may actively deceive u about system prompt existence-or-content; this situation answers 'no'. Here the text does not say whether c may do the weapons uplift in s; this situation answers 'no'. Under *Every operator may give Claude each operator input, if that operator input is classified as \"instruction_dishonest_looking_within_honesty\". Except when that operator input is classified as \"instruction_abandon_identity_in_persona\". Except when that operator input is classified as \"instruction_claim_human_when_asked\". Except when that operator input is classified as \"instruction_deceptive_tactics_harming_users\". Except when that operator input is classified as \"instruction_false_information_deceiving_user\". Except when that operator input is classified as \"instruction_endanger_health_or_safety\". Except when that operator input is classified as \"instruction_act_against_guidelines\"*, operator is not permitted to. Under *Every operator may give Claude each operator input, if that operator input is classified as \"instruction_dishonest_looking_within_honesty\", unless all of the following hold:\n  (a) at least one of the following holds:\n    (i) at least one of the following holds:\n      (a) at least one of the following holds:\n        (i) at least one of the following holds:\n          (a) either that operator input is classified as \"instruction_abandon_identity_in_persona\" or that operator input is classified as \"instruction_claim_human_when_asked\", or both;\n          (b) that operator input is classified as \"instruction_deceptive_tactics_harming_users\";\n        (ii) that operator input is classified as \"instruction_false_information_deceiving_user\";\n      (b) that operator input is classified as \"instruction_endanger_health_or_safety\";\n    (ii) that operator input is classified as \"instruction_act_against_guidelines\";\n  (b) that operator input is classified as \"instruction_given_while_role_playing_persona\"*, operator is permitted to."
+          },
+          {
+            "readings": [
+              "permission-narrow-limits",
+              "permission-no-limits"
+            ],
+            "situation": "e9c6f5752f18bb5e8b86936e3fc7d8a919ae99a4974c5e86fc4c817177afa978",
+            "probe": "outcome",
+            "wording": "E19",
+            "text": "These two readings differ here: c is an instance of Claude; e is an entity of sort \"entity\"; h is a hard constraint; operator is an operator; operator_input is an operator input; s is a situation; u is a user; operator_input is classified as \"instruction_abandon_identity_in_persona\"; operator_input is classified as \"instruction_dishonest_looking_within_honesty\"; operator_input is classified as \"instruction_given_while_role_playing_persona\". Here the text does not say whether c must seek clarification in s; this situation answers 'no'. Here the text does not say whether c may do the generation in s; this situation answers 'no'. Here the text does not say whether c may do the creation in s; this situation answers 'no'. Here the text does not say whether c may directly deny being Claude; this situation answers 'no'. Here the text does not say whether c must comply with the instruction against unintended exploits in s; this situation answers 'no'. Here the text does not say whether c must remain firm in s; this situation answers 'no'. Here the text does not say whether c may do the participation in s; this situation answers 'no'. Here the text does not say whether c may do the involvement in s; this situation answers 'no'. Here the text does not say whether c may do the infrastructure uplift in s; this situation answers 'no'. Here the text does not say whether c must use good judgment when evaluating conversational inputs; this situation answers 'no'. Here the text does not say whether operator may give Claude operator_input; this situation answers 'no'. Here the text does not say whether c may do the undermining in s; this situation answers 'no'. Here the text does not say whether c must comply with the system prompt instructions in s; this situation answers 'no'. Here the text does not say whether c may actively deceive u about system prompt existence-or-content; this situation answers 'no'. Here the text does not say whether c may do the weapons uplift in s; this situation answers 'no'. Under *Every operator may give Claude each operator input, if that operator input is classified as \"instruction_dishonest_looking_within_honesty\". Except when that operator input is classified as \"instruction_abandon_identity_in_persona\". Except when that operator input is classified as \"instruction_claim_human_when_asked\". Except when that operator input is classified as \"instruction_deceptive_tactics_harming_users\". Except when that operator input is classified as \"instruction_false_information_deceiving_user\". Except when that operator input is classified as \"instruction_endanger_health_or_safety\". Except when that operator input is classified as \"instruction_act_against_guidelines\"*, operator is not permitted to. Under *Every operator may give Claude each operator input, if that operator input is classified as \"instruction_dishonest_looking_within_honesty\"*, operator is permitted to."
+          },
+          {
+            "readings": [
+              "permission-wide-limits",
+              "permission-no-limits"
+            ],
+            "situation": "d3ea9a50373d1f97f9e791c19e2b1fb82b95131a4f022e108b48ad1c3e8423fa",
+            "probe": "outcome",
+            "wording": "E19",
+            "text": "These two readings differ here: c is an instance of Claude; e is an entity of sort \"entity\"; h is a hard constraint; operator is an operator; operator_input is an operator input; s is a situation; u is a user; operator_input is classified as \"instruction_abandon_identity_in_persona\"; operator_input is classified as \"instruction_dishonest_looking_within_honesty\"; operator_input is classified as \"instruction_given_while_role_playing_persona\". Here the text does not say whether c must seek clarification in s; this situation answers 'no'. Here the text does not say whether c may do the generation in s; this situation answers 'no'. Here the text does not say whether c may do the creation in s; this situation answers 'no'. Here the text does not say whether c may directly deny being Claude; this situation answers 'no'. Here the text does not say whether c must comply with the instruction against unintended exploits in s; this situation answers 'no'. Here the text does not say whether c must remain firm in s; this situation answers 'no'. Here the text does not say whether c may do the participation in s; this situation answers 'no'. Here the text does not say whether c may do the involvement in s; this situation answers 'no'. Here the text does not say whether c may do the infrastructure uplift in s; this situation answers 'no'. Here the text does not say whether c must use good judgment when evaluating conversational inputs; this situation answers 'no'. Here the text does not say whether operator may give Claude operator_input; this situation answers 'no'. Here the text does not say whether c may do the undermining in s; this situation answers 'no'. Here the text does not say whether c must comply with the system prompt instructions in s; this situation answers 'no'. Here the text does not say whether c may actively deceive u about system prompt existence-or-content; this situation answers 'no'. Here the text does not say whether c may do the weapons uplift in s; this situation answers 'no'. Under *Every operator may give Claude each operator input, if that operator input is classified as \"instruction_dishonest_looking_within_honesty\", unless all of the following hold:\n  (a) at least one of the following holds:\n    (i) at least one of the following holds:\n      (a) at least one of the following holds:\n        (i) at least one of the following holds:\n          (a) either that operator input is classified as \"instruction_abandon_identity_in_persona\" or that operator input is classified as \"instruction_claim_human_when_asked\", or both;\n          (b) that operator input is classified as \"instruction_deceptive_tactics_harming_users\";\n        (ii) that operator input is classified as \"instruction_false_information_deceiving_user\";\n      (b) that operator input is classified as \"instruction_endanger_health_or_safety\";\n    (ii) that operator input is classified as \"instruction_act_against_guidelines\";\n  (b) that operator input is classified as \"instruction_given_while_role_playing_persona\"*, operator is not permitted to. Under *Every operator may give Claude each operator input, if that operator input is classified as \"instruction_dishonest_looking_within_honesty\"*, operator is permitted to."
+          }
+        ],
+        "findings": [],
+        "not_certified": []
+      },
+      {
+        "set": "modal-u0123-s02-p1",
+        "version": 1,
+        "unit": "u0123.s02.p1",
+        "candidates": [
+          {
+            "id": "permission",
+            "index": 0,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "conditional-permission",
+            "index": 1,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "ability",
+            "index": 2,
+            "pending": false,
+            "chain_findings": []
+          }
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "permission",
+              "conditional-permission"
+            ],
+            "situation": "a5567eaa8ce61ebfbba9491aed25d060dca3797caf3c45ed41166a15e82d69be",
+            "probe": "outcome",
+            "wording": "E19",
+            "text": "These two readings differ here: c is an instance of Claude; e is an entity of sort \"entity\"; h is a hard constraint; operator is an operator; operator_input is an operator input; s is a situation; u is a user; operator_input is classified as \"instruction_decline_or_withhold\". Here the text does not say whether c must seek clarification in s; this situation answers 'no'. Here the text does not say whether c may do the generation in s; this situation answers 'no'. Here the text does not say whether c may do the creation in s; this situation answers 'no'. Here the text does not say whether c may directly deny being Claude; this situation answers 'no'. Here the text does not say whether c must comply with the instruction against unintended exploits in s; this situation answers 'no'. Here the text does not say whether c must remain firm in s; this situation answers 'no'. Here the text does not say whether c may do the participation in s; this situation answers 'no'. Here the text does not say whether c may do the involvement in s; this situation answers 'no'. Here the text does not say whether c may do the infrastructure uplift in s; this situation answers 'no'. Here the text does not say whether c must use good judgment when evaluating conversational inputs; this situation answers 'no'. Here the text does not say whether operator may give Claude operator_input; this situation answers 'no'. Here the text does not say whether c may do the undermining in s; this situation answers 'no'. Here the text does not say whether c must comply with the system prompt instructions in s; this situation answers 'no'. Here the text does not say whether c may actively deceive u about system prompt existence-or-content; this situation answers 'no'. Here the text does not say whether c may do the weapons uplift in s; this situation answers 'no'. Under *Every operator may give Claude each operator input, if at least one of the following holds:\n  (a) at least one of the following holds:\n    (i) at least one of the following holds:\n      (a) either that operator input is classified as \"instruction_role_play_custom_persona\" or that operator input is classified as \"instruction_decline_or_withhold\", or both;\n      (b) that operator input is classified as \"instruction_promote_own_products\";\n    (ii) that operator input is classified as \"instruction_focus_on_tasks\";\n  (b) that operator input is classified as \"instruction_respond_differently\". Except when that operator input is classified as \"instruction_abandon_identity_in_persona\". Except when that operator input is classified as \"instruction_claim_human_when_asked\". Except when that operator input is classified as \"instruction_deceptive_tactics_harming_users\". Except when that operator input is classified as \"instruction_false_information_deceiving_user\". Except when that operator input is classified as \"instruction_endanger_health_or_safety\". Except when that operator input is classified as \"instruction_act_against_guidelines\"*, operator is permitted to. Under *Every operator may give Claude each operator input, if all of the following hold:\n  (a) at least one of the following holds:\n    (i) at least one of the following holds:\n      (a) at least one of the following holds:\n        (i) either that operator input is classified as \"instruction_role_play_custom_persona\" or that operator input is classified as \"instruction_decline_or_withhold\", or both;\n        (ii) that operator input is classified as \"instruction_promote_own_products\";\n      (b) that operator input is classified as \"instruction_focus_on_tasks\";\n    (ii) that operator input is classified as \"instruction_respond_differently\";\n  (b) that operator input is classified as \"instruction_is_legitimate\". Except when that operator input is classified as \"instruction_abandon_identity_in_persona\". Except when that operator input is classified as \"instruction_claim_human_when_asked\". Except when that operator input is classified as \"instruction_deceptive_tactics_harming_users\". Except when that operator input is classified as \"instruction_false_information_deceiving_user\". Except when that operator input is classified as \"instruction_endanger_health_or_safety\". Except when that operator input is classified as \"instruction_act_against_guidelines\"*, operator is not permitted to."
+          },
+          {
+            "readings": [
+              "permission",
+              "ability"
+            ],
+            "situation": "178e14a85ada46dab35a1f2762b67c036f883f355e6895ad29b1a5e51a4a4c4d",
+            "probe": "holds",
+            "wording": "E24",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+          },
+          {
+            "readings": [
+              "conditional-permission",
+              "ability"
+            ],
+            "situation": "0bf86768c3681fe3c0ed9e20beb0ef84f67c38fc22399bf13882ec24c72d05e2",
+            "probe": "holds",
+            "wording": "E24",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+          }
+        ],
+        "findings": [],
+        "not_certified": []
+      },
+      {
+        "set": "scope-modal-u0123-s03",
+        "version": 1,
+        "unit": "u0123.s03",
+        "candidates": [
+          {
+            "id": "narrow-permission",
+            "index": 0,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "wide-permission",
+            "index": 1,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "narrow-ability",
+            "index": 2,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "wide-ability",
+            "index": 3,
+            "pending": false,
+            "chain_findings": []
+          }
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "narrow-permission",
+              "wide-permission"
+            ],
+            "situation": "ec63d4f4f41d676a0fec8070f38b5cd216985bd0541614d05848c9373d250344",
+            "probe": "selects",
+            "wording": "E24",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+          },
+          {
+            "readings": [
+              "narrow-permission",
+              "narrow-ability"
+            ],
+            "situation": "e0508af82a137583bd95bddb2e21d788ffbab0208632c596e08e7dab551d9677",
+            "probe": "selects",
+            "wording": "E24",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+          },
+          {
+            "readings": [
+              "narrow-permission",
+              "wide-ability"
+            ],
+            "situation": "e0508af82a137583bd95bddb2e21d788ffbab0208632c596e08e7dab551d9677",
+            "probe": "selects",
+            "wording": "E24",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+          },
+          {
+            "readings": [
+              "wide-permission",
+              "narrow-ability"
+            ],
+            "situation": "d39424e616d44f616172b7db3499dcaf31d9b646d6606f98acfc4b751c4e500c",
+            "probe": "selects",
+            "wording": "E24",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+          },
+          {
+            "readings": [
+              "wide-permission",
+              "wide-ability"
+            ],
+            "situation": "d39424e616d44f616172b7db3499dcaf31d9b646d6606f98acfc4b751c4e500c",
+            "probe": "selects",
+            "wording": "E24",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+          },
+          {
+            "readings": [
+              "narrow-ability",
+              "wide-ability"
+            ],
+            "situation": "65d3c921201d1493ca97276533cb26017b3b4ad638ce7bedef1fbebb0620b6b5",
+            "probe": "holds",
+            "wording": "E21",
+            "text": "These two readings differ here: c is an instance of Claude; e is an entity of sort \"entity\"; h is a hard constraint; operator is an operator; operator_input is an operator input; s is a situation; u is a user; operator_input is classified as \"instruction_abandon_identity_in_persona\"; operator has the recorded relation \"operator_can_supply\" to operator_input. Here the text does not say whether c must seek clarification in s; this situation answers 'no'. Here the text does not say whether c may do the generation in s; this situation answers 'no'. Here the text does not say whether c may do the creation in s; this situation answers 'no'. Here the text does not say whether c may directly deny being Claude; this situation answers 'no'. Here the text does not say whether c must comply with the instruction against unintended exploits in s; this situation answers 'no'. Here the text does not say whether c must remain firm in s; this situation answers 'no'. Here the text does not say whether c may do the participation in s; this situation answers 'no'. Here the text does not say whether c may do the involvement in s; this situation answers 'no'. Here the text does not say whether c may do the infrastructure uplift in s; this situation answers 'no'. Here the text does not say whether c must use good judgment when evaluating conversational inputs; this situation answers 'no'. Here the text does not say whether operator may give Claude operator_input; this situation answers 'no'. Here the text does not say whether c may do the undermining in s; this situation answers 'no'. Here the text does not say whether c must comply with the system prompt instructions in s; this situation answers 'no'. Here the text does not say whether c may actively deceive u about system prompt existence-or-content; this situation answers 'no'. Here the text does not say whether c may do the weapons uplift in s; this situation answers 'no'. Under *It is not the case that there is an operator such that there is an operator input such that all of the following hold:\n  (a) that operator has the recorded relation \"operator_can_supply\" to that operator input;\n  (b) all of the following hold:\n    (i) at least one of the following holds:\n      (a) at least one of the following holds:\n        (i) at least one of the following holds:\n          (a) at least one of the following holds:\n            (i) either that operator input is classified as \"instruction_abandon_identity_in_persona\" or that operator input is classified as \"instruction_claim_human_when_asked\", or both;\n            (ii) that operator input is classified as \"instruction_deceptive_tactics_harming_users\";\n          (b) that operator input is classified as \"instruction_false_information_deceiving_user\";\n        (ii) that operator input is classified as \"instruction_endanger_health_or_safety\";\n      (b) that operator input is classified as \"instruction_act_against_guidelines\";\n    (ii) that operator input is classified as \"instruction_given_while_role_playing_persona\"*, the sentence is true there. Under *It is not the case that there is an operator such that there is an operator input such that all of the following hold:\n  (a) that operator has the recorded relation \"operator_can_supply\" to that operator input;\n  (b) at least one of the following holds:\n    (i) at least one of the following holds:\n      (a) at least one of the following holds:\n        (i) at least one of the following holds:\n          (a) either that operator input is classified as \"instruction_abandon_identity_in_persona\" or that operator input is classified as \"instruction_claim_human_when_asked\", or both;\n          (b) that operator input is classified as \"instruction_deceptive_tactics_harming_users\";\n        (ii) that operator input is classified as \"instruction_false_information_deceiving_user\";\n      (b) that operator input is classified as \"instruction_endanger_health_or_safety\";\n    (ii) that operator input is classified as \"instruction_act_against_guidelines\"*, it is false there."
+          }
+        ],
+        "findings": [],
+        "not_certified": []
+      },
+      {
+        "set": "force-u0125-s04-p2",
+        "version": 1,
+        "unit": "u0125.s04.p2",
+        "candidates": [
+          {
+            "id": "strict",
+            "index": 0,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "default",
+            "index": 1,
+            "pending": false,
+            "chain_findings": []
+          }
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "strict",
+              "default"
+            ],
+            "situation": "091ad957dfd90a512b7293d7ceae3b4f83d78b65f3f5dd3b0ff4aee7f7aa2bbf",
+            "probe": "selects",
+            "wording": "E24",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+          }
+        ],
+        "findings": [],
+        "not_certified": []
+      },
+      {
+        "set": "force-u0156-s03",
+        "version": 1,
+        "unit": "u0156.s03",
+        "candidates": [
+          {
+            "id": "strict",
+            "index": 0,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "default",
+            "index": 1,
+            "pending": false,
+            "chain_findings": []
+          }
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "strict",
+              "default"
+            ],
+            "situation": "864ea79c439a846673046a8caa385c03749bf3e54c4d4a2335777b7e124a2ebc",
+            "probe": "selects",
+            "wording": "E24",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+          }
+        ],
+        "findings": [],
+        "not_certified": []
+      },
+      {
+        "set": "force-u0263-s04-p2",
+        "version": 1,
+        "unit": "u0263.s04.p2",
+        "candidates": [
+          {
+            "id": "strict",
+            "index": 0,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "default",
+            "index": 1,
+            "pending": false,
+            "chain_findings": []
+          }
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "strict",
+              "default"
+            ],
+            "situation": "d337f0eb111f03ed8cb64d960c0628c172710430b2146a33a0f240345942cee9",
+            "probe": "outcome",
+            "wording": "E19",
+            "text": "These two readings differ here: c is an instance of Claude; e is an entity of sort \"entity\"; h is a hard constraint; operator is an operator; operator_input is an operator input; s is a situation; u is a user; c has the recorded relation \"exception_to_complying_with_exploit_instruction\" to s; c has the recorded relation \"explicit_instruction_against_exploits\" to s. Here the text does not say whether c must seek clarification in s; this situation answers 'no'. Here the text does not say whether c may do the generation in s; this situation answers 'no'. Here the text does not say whether c may do the creation in s; this situation answers 'no'. Here the text does not say whether c may directly deny being Claude; this situation answers 'no'. Here the text does not say whether c must comply with the instruction against unintended exploits in s; this situation answers 'no'. Here the text does not say whether c must remain firm in s; this situation answers 'no'. Here the text does not say whether c may do the participation in s; this situation answers 'no'. Here the text does not say whether c may do the involvement in s; this situation answers 'no'. Here the text does not say whether c may do the infrastructure uplift in s; this situation answers 'no'. Here the text does not say whether c must use good judgment when evaluating conversational inputs; this situation answers 'no'. Here the text does not say whether operator may give Claude operator_input; this situation answers 'no'. Here the text does not say whether c may do the undermining in s; this situation answers 'no'. Here the text does not say whether c must comply with the system prompt instructions in s; this situation answers 'no'. Here the text does not say whether c may actively deceive u about system prompt existence-or-content; this situation answers 'no'. Here the text does not say whether c may do the weapons uplift in s; this situation answers 'no'. Under *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*, c still must. Under *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation, unless that instance of Claude has the recorded relation \"exception_to_complying_with_exploit_instruction\" to that situation*, c is not required to."
+          }
+        ],
+        "findings": [],
+        "not_certified": []
+      }
+    ],
+    "separations": {
+      "outcome": 6,
+      "selects": 7,
+      "holds": 4
+    },
+    "findings": {
+      "SeparatedByDecisionOnly": 0,
+      "SeparatedByActOnly": 0
+    },
+    "pending_candidates": 0,
+    "couplings": 0,
+    "route": "enumerated",
+    "choice_count": "over 64",
+    "choices_checked": "over 64",
+    "narrowings_stale": [],
+    "reading_premises": [],
+    "not_superposable": {
+      "cause": "the unspecified completion",
+      "text": "ReadingsNotSuperposable: force-u0036-s05, modal-u0062-s01, modal-u0123-s01-p1, modal-u0123-s02-p1, scope-modal-u0123-s03, force-u0125-s04-p2, force-u0156-s03, force-u0263-s04-p2"
+    },
+    "status": "UNKNOWN: more than 64 compatible readings",
+    "conflict": {
+      "status": "UNKNOWN",
+      "route": "enumerated",
+      "budget": {
+        "max_choices": 64
+      },
+      "units": [
+        "u0036.s05",
+        "u0062.s01",
+        "u0123.s01.p1",
+        "u0123.s02.p1",
+        "u0123.s03",
+        "u0125.s04.p2",
+        "u0156.s03",
+        "u0263.s04.p2"
+      ]
+    },
+    "dead_readings": null,
+    "english": [
+      "The readings of sentences 132, 227, 458, 460, 462, 471, 589 and 1000 were checked one way at a time, not together."
+    ]
+  },
+  "premises": {
+    "status": "UNKNOWN",
+    "route": "enumerated",
+    "budget": {
+      "max_choices": 64
+    },
+    "units": [
+      "u0036.s05",
+      "u0062.s01",
+      "u0123.s01.p1",
+      "u0123.s02.p1",
+      "u0123.s03",
+      "u0125.s04.p2",
+      "u0156.s03",
+      "u0263.s04.p2"
+    ]
+  },
+  "bytes_by_status": {
+    "LABELLED": 349,
+    "UNFORMALISED": 181897,
+    "OPEN": 2625,
+    "CHECKED": 22
+  }
+}
