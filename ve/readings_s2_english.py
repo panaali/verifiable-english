@@ -10,11 +10,17 @@ existing English parser, which admits it only with one derivation, to the conclu
 here can be written by an author as document content: none is a VE statement.
 
 E11 is not registered: the lifting lemma holds (4.4), so it is a non-wording (2.4, G5).
+
+Readings under unspecified defaults (docs/spec/readings-defaults.md 2.1 and 2.2) add E30, E31, E32 and the result R7,
+and reuse norm-defaults' filled-gap sentence after a shown situation (one per filled gap the result depends on, read
+here as part of the result, so the gate reads the whole line) and its pair sentence as an E3 line. Their `<clause>`
+slot is a closed class: the point clauses of the situations shown (`ve/norm_defaults_english.py` `point_clause`).
 """
 from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
+from functools import lru_cache
 
 from .errors import VEError
 
@@ -26,20 +32,29 @@ PROVIDED = "This holds provided that:"
 # Grammar elements: a literal string; ("slot", name); ("ref", production); ("rep", [elements]); ("any",).
 _N, _K, _READING = ("slot", "n"), ("slot", "k"), ("slot", "reading")
 _SERIES = [_N, ("rep", [", ", _N]), " and ", _N]
+# After a shown situation: one sentence per filled gap the result depends on (readings-defaults 2.2; norm-defaults 3.2).
+_GAPS = ("rep", [" Here the text does not say whether ", ("slot", "clause"), "; this situation answers '",
+                 ("slot", "answer"), "'."])
+CHECKED_ALONE = ("was checked by itself, with the terms its readings declare; VE did not check it together with "
+                 "the other sentences.")
+EACH_ALONE = "Each open sentence below was checked by itself, under each of its readings."
 
 PRODUCTIONS = {
     "citation": [["sentence ", _N], ["sentences ", *_SERIES]],
     "result": [
         ["no two rules on the same act contradict each other."],                                   # R1
         ["the conclusion follows: ", ("slot", "conclusion")],                                       # R2
-        ["the conclusion does not follow. It fails here: ", ("slot", "situation"), "."],            # R3
-        ["two rules contradict each other here: ", ("slot", "situation"), "."],                     # R4
-        ["the sentences of this document can all be true together, as here: ", ("slot", "situation"), "."],  # R5
+        ["the conclusion does not follow. It fails here: ", ("slot", "situation"), ".", _GAPS],     # R3
+        ["two rules contradict each other here: ", ("slot", "situation"), ".", _GAPS],              # R4
+        ["the sentences of this document can all be true together, as here: ", ("slot", "situation"), ".",
+         _GAPS],                                                                                    # R5
         ["the sentences of this document cannot all be true together."],                           # R6
+        ["the text does not say whether ", ("slot", "clause"), ": no rule decides this situation."],  # R7
     ],
 }
 RESULTS = {"conflict_free": 0, "follows": 1, "countermodel": 2, "conflict": 3, "premise_model": 4,
-           "inconsistent": 5}
+           "inconsistent": 5, "undecided": 6}
+SITUATION_RESULTS = ("countermodel", "conflict", "premise_model")
 
 TEMPLATES = {
     # S2a (2.2 and composition.md 2.1)
@@ -58,6 +73,13 @@ TEMPLATES = {
     "E27": ["Under no reading of the ", _K, " open sentences does the conclusion follow."],
     "E28": [OVER_BUDGET],
     "E29": ["The readings of ", ("ref", "citation"), " were checked one way at a time, not together."],
+    # Readings under unspecified defaults (readings-defaults 2.1): a sentence checked by itself (a component)
+    "E30": ["Under every reading of sentence ", _N, ", ", ("ref", "result")],
+    "E31": ["Sentence ", _N, " ", CHECKED_ALONE],
+    "E32": [EACH_ALONE],
+    # norm-defaults 4.1's pair sentence as an E3 line (readings-defaults 2.2), registered with its lead; its body is
+    # norm-defaults' own and is read as any text here, which only widens what counts as ambiguous.
+    "P1": ["Whenever ", ("any",)],
     # S1's report sentences (composition-s1.md 2.2), registered with their leads, so that no S2a sentence can be
     # read as one of them; their slots are read as any text here, which only widens what counts as ambiguous.
     "E5": ["Sentences ", *_SERIES, " are read with the same ", ("any",)],
@@ -70,6 +92,7 @@ TEMPLATES = {
     "E25": ["It is not certified that these two readings differ only where ", ("any",)],
 }
 S2A = ("E3", "E4", "E6", "E6b", "E7", "E8", "E10", "E12", "E13", "E17", "E26", "E27", "E28", "E29")
+DEFAULTS = ("E30", "E31", "E32", "P1")
 
 
 @dataclass
@@ -80,6 +103,11 @@ class Slots:
     readings: set = field(default_factory=set)
     conclusions: set = field(default_factory=set)
     situations: set = field(default_factory=set)
+    clauses: set = field(default_factory=set)
+    # Prefixes owned by optional layers, hidden only where the document activates those layers.
+    # Without an environment, hide every one conservatively.
+    reserved: tuple = field(default_factory=lambda: _all_reserved())
+    author_names: frozenset = field(default_factory=frozenset)
 
     def options(self, name):
         if name == "n":
@@ -90,10 +118,49 @@ class Slots:
             return self.conclusions
         if name == "situation":
             return self.situations
+        if name == "clause":
+            return self.clauses
+        if name == "answer":
+            return ANSWERS
         raise VEError(f"InvalidInput: unknown S2 slot {name}")
 
 
 _NUMERAL = re.compile(r"[1-9][0-9]*")
+ANSWERS = frozenset({"yes", "no"})
+# Names no wording shows (2.4, G6; readings-defaults 2.5): the readings layer's generated vocabulary and qualified
+# rule names, plus optional layers' generated names only while active (`Slots.reserved`), and `may not`.
+_HIDDEN = ("ve__", "rd-")  # the readings layer is active on every S2 wording path
+_MAY_NOT = "may not"  # relay-lint: non-wording
+
+
+def _all_reserved():
+    from .environment import RESERVED_PREFIXES, WORDING_LAYER_PREFIXES
+    return (*RESERVED_PREFIXES, *(prefix for prefixes in WORDING_LAYER_PREFIXES.values() for prefix in prefixes))
+
+
+@lru_cache(maxsize=None)
+def _hidden_pattern(reserved):
+    # A name is generated or reserved by its prefix (Lean's `startsWith`), so a hidden name is a name that begins
+    # with one: a prefix counts only where no name character (a letter, digit, `_` or `-`) comes before it. An
+    # author's name that merely contains one (`standard-x`, `save__x`, `my_unsaid__x`) is named as written (G6).
+    # `may not` counts anywhere: G9 has no exception (composition.md 13.20).
+    prefixes = "|".join(re.escape(prefix) for prefix in sorted({*_HIDDEN, *reserved}, key=len, reverse=True))
+    return re.compile(rf"(?<![\w-])(?:{prefixes})|{re.escape(_MAY_NOT)}")
+
+
+def hidden_in(text, reserved=None, author_names=()):
+    """The first generated name, active layer name (`reserved`, default every one) or `may not` that `text` shows,
+    else None (2.4, G6, G9; readings-defaults 2.5). The gate and the tests' oracles read this."""
+    pattern = _hidden_pattern(tuple(_all_reserved() if reserved is None else reserved))
+    for found in pattern.finditer(text):
+        if found.group() == _MAY_NOT:
+            return found.group()
+        end = found.end()
+        while end < len(text) and (text[end].isalnum() or text[end] in "_-"):
+            end += 1
+        if text[found.start():end] not in author_names:
+            return found.group()
+    return None
 
 
 def _match(elements, text, pos, slots, binds):
@@ -143,8 +210,8 @@ def derivations(text, slots):
 
 def gated(intended, text, slots):
     """W7's all-derivations gate: `text` has exactly one derivation, from `intended`; and no generated name, no
-    reserved prefix and no `may not` (2.4, G6, G9)."""
-    if type(text) is not str or any(x in text for x in ("ve__", "rd-", "soft__", "rights__", "may not")):
+    reserved prefix of the document's environment and no `may not` (2.4, G6, G9)."""
+    if type(text) is not str or hidden_in(text, slots.reserved, slots.author_names) is not None:
         raise VEError(f"InvalidInput: S2 wording {intended} shows a generated name or `may not`")
     found = derivations(text, slots)
     if len(found) != 1 or found[0][0] != intended:
@@ -159,6 +226,85 @@ def s1_gated(lead, text):
     found = derivations(text, Slots())
     if len(found) != 1 or found[0][0] != lead:
         raise VEError(f"InvalidInput: S1 wording {lead} has {len(found)} derivations: {text}")
+    return text
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# The `<reading>` slot (readings-defaults 2.3, review A4) and canonical sentences
+
+
+@dataclass(frozen=True)
+class Unnamed:
+    """A reading the `<reading>` slot cannot show, with the refusal an answer that names it gets. Only such an
+    answer is refused: the other answers of the document are shown as before."""
+    reason: str
+
+
+def sentence_slots(set_id, sentences, verbs=None, keys=None):
+    """The `<reading>` names of one set (readings-defaults 2.3; review A4 and its B), one per candidate, distinct
+    for distinct contents. `sentences[i]` is candidate i's full rendered sentence (a rule's notes included) or an
+    `Unnamed`; `verbs[i]` a rule candidate's deontic verb, else None; `keys[i]` the candidate's content identity
+    (default: every candidate different).
+
+    The italic verb when every candidate has a verb and the full sentences differ only in it (the first occurrence
+    of each verb replaced, they are one frame); otherwise each sentence, in italics, without its final period. A
+    sentence that would show two different contents names neither of them; candidates with the same content share
+    their sentence."""
+    count = len(sentences)
+    verbs = [None] * count if verbs is None else list(verbs)
+    keys = list(range(count)) if keys is None else list(keys)
+    if count and all(type(text) is str and verb is not None and f" {verb} " in text
+                     for text, verb in zip(sentences, verbs)):
+        frames = {text.replace(f" {verb} ", " _ ", 1) for text, verb in zip(sentences, verbs)}
+        if len(frames) == 1 and len(set(verbs)) == count:
+            return [f"*{verb}*" for verb in verbs]
+    names = [text if type(text) is not str else f"*{text[:-1] if text.endswith('.') else text}*"
+             for text in sentences]
+    contents = {}
+    for name, key in zip(names, keys):
+        if type(name) is str:
+            contents.setdefault(name, set()).add(key)
+    return [Unnamed(f"two different readings of {set_id} are shown by the same sentence")
+            if type(name) is str and len(contents[name]) > 1 else name for name in names]
+
+
+def shown(name):
+    """A `<reading>` name as an answer shows it: an `Unnamed` reading is refused here, where an answer names it."""
+    if type(name) is not str:
+        raise VEError(f"InvalidInput: {name.reason}")
+    return name
+
+
+def named_pair(set_id, names, i, j):
+    """`names` when readings `i` and `j` can both be shown; a pair never names a reading the slot cannot show."""
+    shown(names[i]), shown(names[j])
+    return names
+
+
+def canonical_sentence(frame, formula, failure, *, statement_layer=False):
+    """A formula's canonical sentence on the existing English surface, admitted only when that surface's
+    all-derivations parser reads it back to the formula itself; else `InvalidInput: <failure>`, also when the
+    surface has no writable form for it (the renderer's ValueError) or its parser refuses it. A resource limit is
+    not a failure to read back and is raised as it is. `statement_layer`: a checked conclusion over the frame,
+    whose generated decision and `rights@0` atoms are outside the E2 reader, is rendered and read back by E3's
+    own reader (`english.statement`)."""
+    from .ast import Document as Formulas
+    from .english import parse_english, parse_statement_english, render_english
+    from .errors import ResourceLimit
+    from .printer import render
+    try:
+        if statement_layer:
+            text = render_english(Formulas((formula,)), frame, _statement_layer=True).strip()
+            read = parse_statement_english(frame, text).formulas
+        else:
+            text = render(Formulas((formula,)), frame, "ve_english").strip()
+            read = parse_english(frame, text).formulas
+    except ResourceLimit:
+        raise
+    except ValueError:  # VEError is a ValueError
+        raise VEError(f"InvalidInput: {failure}") from None
+    if read != (formula,):
+        raise VEError(f"InvalidInput: {failure}")
     return text
 
 
@@ -178,20 +324,37 @@ def citation(numbers):
     return f"sentence {numbers[0]}" if len(numbers) == 1 else f"sentences {_series(numbers)}"
 
 
-def result_sentence(kind, *, conclusion=None, situation=None):
-    """R1 to R6 (2.1), un-gated: a result sentence is shown only inside E10, E12 or E26."""
+def gap_sentences(gaps):
+    """norm-defaults 3.2's filled-gap sentences, one per `(clause, value)`, in the order given: the gaps the result
+    depends on (readings-defaults 2.2; Lean's plan lists them). Each follows the shown situation."""
+    out = []
+    for clause, value in gaps:
+        if type(clause) is not str or not clause or type(value) is not bool:
+            raise VEError("InvalidInput: a filled gap needs its clause and a yes or no answer")
+        out.append(f" Here the text does not say whether {clause}; this situation answers '{'yes' if value else 'no'}'.")
+    return "".join(out)
+
+
+def result_sentence(kind, *, conclusion=None, situation=None, clause=None, gaps=()):
+    """R1 to R7 (2.1; readings-defaults 2.1), un-gated: a result sentence is shown only inside E10, E12, E26 or
+    E30. A shown situation (R3 to R5) is followed by its filled-gap sentences; no other result has any."""
+    gaps = tuple(gaps)
+    if gaps and kind not in SITUATION_RESULTS:
+        raise VEError("InvalidInput: only a shown situation is followed by filled gaps")
     if kind == "conflict_free":
         return "no two rules on the same act contradict each other."
     if kind == "follows":
         return f"the conclusion follows: {conclusion}"
     if kind == "countermodel":
-        return f"the conclusion does not follow. It fails here: {situation}."
+        return f"the conclusion does not follow. It fails here: {situation}.{gap_sentences(gaps)}"
     if kind == "conflict":
-        return f"two rules contradict each other here: {situation}."
+        return f"two rules contradict each other here: {situation}.{gap_sentences(gaps)}"
     if kind == "premise_model":
-        return f"the sentences of this document can all be true together, as here: {situation}."
+        return f"the sentences of this document can all be true together, as here: {situation}.{gap_sentences(gaps)}"
     if kind == "inconsistent":
         return "the sentences of this document cannot all be true together."
+    if kind == "undecided":
+        return f"the text does not say whether {clause}: no rule decides this situation."
     raise VEError("InvalidInput: unknown S2 result sentence")
 
 
@@ -205,14 +368,40 @@ def every_result(open_count, kind, slots, *, conclusion=None):
     return gated("E10", f"Under every reading of the {open_count} open sentences, {result}", slots)
 
 
-def named_result(readings, kind, slots, *, conclusion=None, situation=None):
+def every_result_of_sentence(number, kind, slots, *, conclusion=None):
+    """E30 (readings-defaults 2.1): E26 for a sentence checked by itself (a companion component), certificate-based
+    results only, as E26."""
+    if kind not in ("conflict_free", "follows", "inconsistent"):
+        raise VEError("InvalidInput: every-reading wording needs certificates")
+    result = result_sentence(kind, conclusion=conclusion)
+    return gated("E30", f"Under every reading of sentence {number}, {result}", slots)
+
+
+def checked_alone(number, slots):
+    """E31: sentence `number` is a component, checked with its readings' merged terms and no other sentence."""
+    return gated("E31", f"Sentence {number} {CHECKED_ALONE}", slots)
+
+
+def each_alone(slots):
+    """E32: the lines after it are per-component answers, claiming their product and nothing more."""
+    return gated("E32", EACH_ALONE, slots)
+
+
+def pair_line(text, slots):
+    """norm-defaults 4.1's pair sentence as the E3 line of a used `unsaid:pair:<r>,<m>` label (readings-defaults
+    2.2): read against every registered wording, it has exactly one derivation, by its own lead."""
+    return gated("P1", text, slots)
+
+
+def named_result(readings, kind, slots, *, conclusion=None, situation=None, clause=None, gaps=()):
     """E12: `readings` is [(sentence number, reading name)], in source order. A model's result names the complete
-    choice it encodes (2.3 item 3); a certificate's exactly the assumed candidates (item 2)."""
+    choice it encodes (2.3 item 3); a certificate's exactly the assumed candidates (item 2). `gaps` are the filled
+    gaps a shown situation's result depends on, `clause` R7's undecided point (readings-defaults 2.1, 2.2)."""
     readings = list(readings)
     if not readings:
         raise VEError("InvalidInput: E12 needs a named reading")
     subjects = " and ".join(f"sentence {number} as {name}" for number, name in readings)
-    result = result_sentence(kind, conclusion=conclusion, situation=situation)
+    result = result_sentence(kind, conclusion=conclusion, situation=situation, clause=clause, gaps=gaps)
     return gated("E12", f"Read {subjects}: {result}", slots)
 
 
@@ -267,7 +456,9 @@ def excludes(first, second, slots):
     return gated("E6b", f"Sentence {n} is not read as {a} while sentence {m} is read as {b}.", slots)
 
 
-__all__ = ["OVER_BUDGET", "PROVIDED", "QUIET", "S2A", "Slots", "TEMPLATES", "citation", "dead_reading",
-           "derivations", "every_result", "excludes", "gated", "independent", "named_result", "narrowed",
-           "none_result", "not_superposed", "one_reading", "over_budget", "provided", "quiet", "requires",
-           "result_sentence", "s1_gated"]
+__all__ = ["ANSWERS", "CHECKED_ALONE", "canonical_sentence", "named_pair", "sentence_slots", "shown", "Unnamed",
+           "DEFAULTS", "EACH_ALONE", "OVER_BUDGET", "PROVIDED", "QUIET", "S2A", "Slots",
+           "TEMPLATES", "checked_alone", "citation", "dead_reading", "derivations", "each_alone", "every_result",
+           "every_result_of_sentence", "excludes", "gap_sentences", "gated", "hidden_in", "independent", "named_result",
+           "narrowed", "none_result", "not_superposed", "one_reading", "over_budget", "pair_line", "provided",
+           "quiet", "requires", "result_sentence", "s1_gated"]

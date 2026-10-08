@@ -15,7 +15,7 @@ import pytest
 
 from conformance import norm_defaults_layered as layered
 from tests.test_norm_defaults_three_way import lean_executable  # noqa: F401  (the route fixture)
-from ve import norm_defaults as nd
+from conformance import frozen_norm_defaults as nd
 from ve import norm_defaults_route as route
 from ve.errors import VEError
 

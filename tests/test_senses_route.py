@@ -386,7 +386,7 @@ def test_the_route_goes_through_the_manifest_binding(joke, monkeypatch):
     monkeypatch.setattr("ve.backends.lean.require_lean_binding", spy)
     admit(joke, "Alice tells the riddle.")
     assert calls == [("senses.read", "ve_senses_route", "", set())]
-    assert assurance.operation("senses.read")["lean_call_sites"] == ["ve.backends.senses:read"]
+    assert assurance.operation("senses.read")["lean_call_sites"] == ["ve.backends.senses:_read"]
 
 
 def test_only_senses_check_reads_with_senses(joke, tmp_path):
@@ -469,7 +469,7 @@ def test_genuine_response_field_mutations_are_rejected(name, place, pack, source
     and so is a duplicated candidate or a referent the projection does not declare."""
     genuine = read_in(S2_WORLD() if place == "s2" else WORLDS[place](), source, pack, budget=budget)
     def problem(mutant):
-        return route._response_problem(mutant, genuine["dictionary_id"], genuine["request_id"], source)
+        return route._response_problem(mutant, genuine["dictionary_id"], genuine["request_id"], source=source)
     assert problem(genuine) is None
     paths = list(_paths(genuine))
     assert len(paths) > 4, name

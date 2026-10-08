@@ -9,8 +9,8 @@ from pathlib import Path
 from conformance.soft_norms import multi_fault_cases
 from ve.errors import VEError
 from ve.softnorms import load_soft_document
-from ve.softnorms_contract import REGISTRY
-from ve.wire_contract.engine import CLEAN, Deferred, Fault, load, run
+from conformance.softnorms_contract import REGISTRY
+from conformance.wire_contract_engine import CLEAN, Deferred, Fault, load, run
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORT = ROOT / "conformance/wire-contract/soft-norms-python-delta.json"

@@ -221,6 +221,7 @@ module VE.NormDefaults.Check
 module VE.NormDefaults.Dag
 module VE.NormDefaults.Evidence
 module VE.NormDefaults.Examples
+module VE.NormDefaults.Explain
 module VE.NormDefaults.Fill
 module VE.NormDefaults.FillCheck
 module VE.NormDefaults.Layered
@@ -303,6 +304,8 @@ module VE.Readings.Strings
 module VE.Readings.SupAll
 module VE.Readings.SupConflict
 module VE.Readings.SupEnv
+module VE.Readings.SupExtra
+module VE.Readings.SupExtraExamples
 module VE.Readings.SupFree
 module VE.Readings.SupRun
 module VE.Readings.SupSlot
@@ -310,6 +313,8 @@ module VE.Readings.SupWire
 module VE.Readings.SupWireSound
 module VE.Readings.SupWitness
 module VE.Readings.Superpose
+module VE.Readings.Unspecified
+module VE.Readings.UnspecifiedExamples
 module VE.Readings.UpPremises
 module VE.Readings.UpSlot
 module VE.Readings.Wire
@@ -364,11 +369,14 @@ module VE.Semantics
 module VE.Senses.Assignment
 module VE.Senses.Decode
 module VE.Senses.Dictionary
+module VE.Senses.Document
+module VE.Senses.DocumentExamples
 module VE.Senses.Examples
 module VE.Senses.Fixtures
 module VE.Senses.Preamble
 module VE.Senses.Project
 module VE.Senses.Read
+module VE.Senses.Request
 module VE.Senses.Run
 module VE.Service.Diagnose
 module VE.Service.EnglishRun
@@ -698,6 +706,7 @@ VE.Order.TupleTyped@VE.Order.Semantics
 VE.Order.Valuation.Typed@VE.Order.Semantics
 VE.Readings.Achieves@VE.Readings.Separate
 VE.Readings.AchievesQuiet@VE.Readings.Separate
+VE.Readings.AchievesU@VE.Readings.Unspecified
 VE.Readings.AsciiL@VE.Readings.Strings
 VE.Readings.Attached.below@VE.Readings.Doc
 VE.Readings.Attached@VE.Readings.Doc
@@ -712,13 +721,21 @@ VE.Readings.Grows@VE.Readings.Shape
 VE.Readings.Hyps@VE.Readings.ChoiceFacts
 VE.Readings.IsBit@VE.Readings.BaseUp
 VE.Readings.KeepsFrame@VE.Readings.Separate
+VE.Readings.NamesFree@VE.Readings.Unspecified
 VE.Readings.NoSep@VE.Readings.Labels
 VE.Readings.Observes@VE.Readings.Separate
 VE.Readings.OnBit@VE.Readings.BaseUp
 VE.Readings.PathTo@VE.Readings.Doc
 VE.Readings.RightsNames@VE.Readings.Lines
 VE.Readings.Separated@VE.Readings.Separate
+VE.Readings.SeparatedU@VE.Readings.Unspecified
+VE.Readings.Shaped@VE.Readings.Unspecified
 VE.Readings.Sim@VE.Readings.Simulate
+VE.Readings.StrictDoc@VE.Readings.Unspecified
+VE.Readings.StrictNodes@VE.Readings.Unspecified
+VE.Readings.SupExtraExamples.SuperposeAllExtraApproved@VE.Readings.SupExtraExamples
+VE.Readings.SupExtraExamples.X1Checks@VE.Readings.SupExtraExamples
+VE.Readings.Transfers@VE.Readings.SupExtra
 VE.Readings.Twin@VE.Readings.Force
 VE.Readings.TwinDocs@VE.Readings.Force
 VE.Readings.bitOn@VE.Readings.Superpose

@@ -110,3 +110,74 @@ def test_the_english_lean_adapter_is_relayed_by_function(tmp_path, classes):
     assert len(found) == 1 and ":2:" in found[0]
     assert relay_lint.findings(module, classes, functions=("render_english",))
     assert "not found" in relay_lint.findings(module, classes, functions=("parse_english_argument",))[0]
+
+
+# The second rule (readings-defaults plan RD-2b, D12): no readings module builds a name of the unspecified completion.
+
+@pytest.mark.parametrize("line, found", [
+    ('name = "unsaid__" + predicate', True),
+    ('name = f"unsaid--{rule}"', True),
+    ('names = ("x", "a unsaid__p b")', True),
+    ('"""Docstrings count: unsaid__p."""', True),
+    ('hidden = ("unsaid__", "unsaid--")  # relay-lint: non-wording', False),
+    ('hidden = ("unsaid__",)  # relay-lint: non-wording, really', True),
+    ('label = "unsaid:pair:" + body', False),
+    ('name = "unsaid_" + "_p"', False),
+])
+def test_seeded_readings_modules(tmp_path, line, found):
+    module = tmp_path / "readings_x.py"
+    module.write_text(f"def f(predicate, rule, body):\n    {line}\n")
+    guards = []
+    assert bool(relay_lint.reserved_literals(module, guards)) is found
+    assert bool(guards) is (not found and "non-wording" in line)
+    assert relay_lint.main([str(module)]) == (1 if found else 0)
+
+
+def test_every_readings_module_is_read_by_the_reserved_rule():
+    """The rule reads the glob, not a hand-kept list: every `ve/readings*.py` file, and nothing fewer."""
+    modules = sorted(ROOT.glob(relay_lint.READINGS_GLOB))
+    assert {p.name for p in modules} >= {"readings.py", "readings_route.py", "readings_s1.py",
+                                          "readings_s2_english.py", "readings_s2_wording.py",
+                                          "readings_verdicts.py", "readings_sup.py", "readings_english.py"}
+    for path in modules:
+        assert relay_lint.reserved_literals(path) == [], path
+
+# The third rule (readings-defaults plan RD-8): the senses path never names Python's English reader.
+
+@pytest.mark.parametrize("line, found", [
+    ("from .english import parse_english", True),
+    ("from .english import parse_english as read", True),
+    ("from . import english\nx = english.parse_english", True),
+    ("x = parse_english(env, text)", True),
+    ("from .english import parse_english_argument", False),
+    ('x = "parse_english"', False),
+    ("x = read_fences(env, texts, packs)", False),
+])
+def test_seeded_senses_modules(tmp_path, line, found):
+    module = tmp_path / "senses_x.py"
+    module.write_text(f"{line}\n")
+    assert bool(relay_lint.english_reads(module)) is found
+    assert relay_lint.main([str(module)]) == (1 if found else 0)
+
+
+@pytest.mark.parametrize("body, found", [
+    ("if senses is not None:\n    return parse_english(env, text)\nreturn parse_english(env, text)\n", True),
+    ("if senses is not None and surface:\n    from .english import parse_english\n", True),
+    ("if senses is not None:\n    return senses.formulas[uid]\nreturn parse_english(env, text)\n", False),
+    ("if other:\n    return parse_english(env, text)\n", False),
+])
+def test_seeded_senses_branches(tmp_path, body, found):
+    module = tmp_path / "document_x.py"
+    module.write_text("def f(env, text, senses, surface, uid, other):\n" + "".join(
+        "    " + row + "\n" for row in body.splitlines()))
+    assert bool(relay_lint.english_reads(module, branches_only=True)) is found
+
+
+def test_the_senses_path_is_read_by_the_third_rule():
+    """Every module of the senses path exists and passes; the document loader has a senses branch to read."""
+    for name in relay_lint.PARSE_FREE:
+        assert (ROOT / name).is_file(), name
+        assert relay_lint.english_reads(ROOT / name) == [], name
+    loader = (ROOT / relay_lint.SENSES_LOADER).read_text()
+    assert "if senses is not None" in loader and "parse_english" in loader
+    assert relay_lint.english_reads(ROOT / relay_lint.SENSES_LOADER, branches_only=True) == []

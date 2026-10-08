@@ -7,6 +7,7 @@ premises from an untrusted document.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from copy import deepcopy
 from itertools import product
 import re
 
@@ -14,11 +15,22 @@ from .assurance import semantic_entry
 from .ast import (And, Binary, Bottom, Exists, Forall, Implies, Not, Or,
                   Top, Unary, Var, _Checker, _Decoder, _to_data)
 from .background import dependency_order
+from .environment import UNSAID_PREFIX
 from .errors import CheckerUnavailable, DuplicateDeclaration, ResourceLimit, VEError
 from .search import _used_predicates
 from .wire import digest, require_fields
 
 _NAME = re.compile(r"[a-z][a-z0-9-]*\Z", re.ASCII)
+
+
+def _norm_defaults_placeholder(data):
+    """The lower W1 environment with each unspecified completion set to deny."""
+    data = deepcopy(data)
+    data["profiles"] = [p for p in data["profiles"] if p != "norm-defaults@0"]
+    for decl in data["vocabulary"]["predicates"].values():
+        if decl.get("regulated", {}).get("default") == "unspecified":
+            decl["regulated"]["default"] = "deny"
+    return data
 
 
 def _all(items):
@@ -460,7 +472,7 @@ def _reject_filling(document, model):
     relations = model.get("relations") if type(model) is dict else None
     if type(relations) is dict:
         for name in sorted(relations):
-            if (type(name) is str and name.startswith("unsaid__")
+            if (type(name) is str and name.startswith(UNSAID_PREFIX)
                     and name not in document.env.predicates):
                 from .errors import InvalidModel
                 raise InvalidModel(f"{name} is a filling; supply it only with norm-defaults@0",

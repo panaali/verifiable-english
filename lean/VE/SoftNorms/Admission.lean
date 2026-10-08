@@ -25,7 +25,7 @@ def checkQuoted (src : SoftSource) (j : Json) : Except String Unit := do
   let N ← decodeSoftNorm src.se j
   let D : SoftDoc := ⟨src.D.E, src.D.lits, src.D.soft, ⟨src.D.T.regulated, [], [{ N with over := [] }]⟩⟩
   primeVocabulary src.se D
-  validateSoft D
+  validateSoftOnce D
 
 def LayerLeaf (src : SoftSource) (w : WireNode) : Prop :=
   (w.deduction.isNone && w.unit.isNone &&

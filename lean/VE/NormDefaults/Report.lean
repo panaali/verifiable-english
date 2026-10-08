@@ -110,6 +110,12 @@ def completionLabel : Completion → String
   | .allow => "allow"
   | .unspecified => "unspecified"
 
+/-- The value a completion gives where no author rule decides (`Explain.value3_gap`). -/
+def completedLabel : Completion → String
+  | .deny => "no"
+  | .allow => "yes"
+  | .unspecified => "unsaid"
+
 /-! ## The static cone (2.5) -/
 
 /-- The predicates named in the guards and carve-outs of the rules on `p`. -/
@@ -290,7 +296,7 @@ def LineU.toJson {U X cited translation} (l : LineU U X cited translation) : Jso
     ("reached", .str l.reached.label), ("lines", Lean.toJson l.lines),
     ("inherits_from", Lean.toJson (inheritsFrom U l.r.name))] ++
     (match l.witness with
-     | some w => [("witness", w.toJson)]
+     | some w => [("witness", w.toJson), ("value", .str (completedLabel (completionOf U l.r)))]
      | none => []))
 
 /-- The situation's own witness search, checked. -/

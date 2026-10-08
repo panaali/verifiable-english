@@ -125,17 +125,21 @@ FIELDS = {"one": ({"ast", "conclusions", "derivation", "obligations", "spans"}, 
           "invalidGrammar": ({"code", "text", "class"}, {"fault", "failure"})}
 
 
-def refusal_problem(response: dict, source: str, *, unlocated: frozenset[str] = frozenset()) -> str | None:
+def refusal_problem(response: dict, source: str | None, *,
+                    unlocated: frozenset[str] = frozenset()) -> str | None:
     """Why a refusal (any status but `one`) is not Lean's, or None: its exact fields (spec 4.4), a code of its
     status, the class Lean gives the code, whether it names a sentence (Lean's `unsentenced` codes never do,
     and the codes of `unlocated` may not), a span inside the source, the advice, the witnesses and the
     invalid-grammar fields. The senses relay checks the outcomes it shares with this; its reader names no
-    sentence for `IllTyped`."""
+    sentence for `IllTyped`, and a senses request of document fences has no source (None): its refusals
+    carry neither span nor advice."""
     status = response.get("status")
     if type(status) is not str or status not in FIELDS or status == "one":
         return f"unknown refusal status {status!r}"
     required, optional = FIELDS[status]
     required = required | {"status"}
+    if source is None:
+        required, optional = required - {"span"}, optional - {"advice"}
     missing, extra = required - response.keys(), response.keys() - required - optional
     if missing or extra:
         return f"a {status} response with fields missing {sorted(missing)}, unknown {sorted(extra)}"
