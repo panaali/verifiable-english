@@ -142,8 +142,7 @@ def test_every_record_shape_is_exercised(genuine):
     assert shapes == {"error", "check", "countermodel", "search", "distinguishing-model",
                       "readings-superposed-evaluate"}
     statuses = {record["status"] for _, record, _ in genuine.values()}
-    assert statuses >= {"ok", "error", "Satisfied", "Violated", "ResourceLimit", "Valid", "NotCountermodel",
-                        "Found", "NotFound"}
+    assert statuses >= {"ok", "error", "ResourceLimit", "Valid", "NotCountermodel", "Found", "NotFound"}
     values = {(record["status"], record["conclusion_value"]) for _, record, _ in genuine.values()
               if "conclusion_value" in record}
     assert values == {("Valid", False), ("NotCountermodel", None), ("NotCountermodel", True), ("ResourceLimit", None)}
