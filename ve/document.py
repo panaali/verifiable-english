@@ -809,8 +809,10 @@ def coverage(doc, scoped=None, rights_report=None):
     if environment is not None and environment.alternatives is not None:
         from .backends.relay import decide
         risk = environment.risk is not None
+        # A unit without content (or meaning id) is sent without the field: the wire has no null.
         case = {"id": "coverage", "kind": "risk-elaborate" if risk else "alt-elaborate",
-                "environment": environment.to_dict(), "coverage_units": units,
+                "environment": environment.to_dict(),
+                "coverage_units": [{key: value for key, value in u.items() if value is not None} for u in units],
                 "narrowings": meta.get("narrowings", [])}
         if risk:
             case["document"] = {"norms": [], "units": []}
