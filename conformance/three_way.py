@@ -141,6 +141,72 @@ def rust_request(case):
     return None
 
 
+def _rust_evaluation(case):
+    """A statement-values evaluation the Rust checker read before batch 15b: an environment, a model
+    and a document, no kind but `evaluate` and no premises (an order@0 one is still the order route's
+    own case)."""
+    if type(case) is not dict or case.get("kind", "evaluate") != "evaluate" or "premises" in case \
+            or "conclusion" in case or "model" not in case or "ast" not in case:
+        return False
+    profiles = case["environment"].get("profiles") if type(case.get("environment")) is dict else None
+    return not (type(profiles) is list and "order@0" in profiles)
+
+
+def rust_evaluations(conformance, cases):
+    """`ve conformance` on `cases` (`conformance(batch)` gives a batch's rows), each statement-values
+    evaluation answered through Rust's `evaluate-budgeted` kind, the kind `ve/evaluate.py` sends.
+
+    Rust has no statement-values case since batch 15b. The whole document goes first, so its
+    diagnostics come in Rust's order (environment, document, model); a satisfied document has every
+    statement true. Otherwise each statement is evaluated on its own under the full budget, as the
+    removed case did: a statement that exhausts it makes the case `ResourceLimit`. The row is
+    `{id, status: "ok", values, value}` or Rust's error row."""
+    def budgeted(case, ast):
+        plain = {k: v for k, v in case.items() if k not in ("max_evaluations", "trace", "max_trace_nodes")}
+        return {**plain, "kind": "evaluate-budgeted", "ast": ast}
+
+    first = [budgeted(c, c["ast"]) if _rust_evaluation(c) else c for c in cases]
+    rows = conformance(first)
+    pending = [(i, statement) for i, (case, row) in enumerate(zip(cases, rows, strict=True))
+               if _rust_evaluation(case) and row.get("status") in ("Violated", "ResourceLimit")
+               for statement in case["ast"]]
+    # The statements go in batches no bigger than the first one (the checker reads at most 16 MiB).
+    limit, batches, size = len(json.dumps(first)), [[]], 0
+    for i, statement in pending:
+        request = budgeted(cases[i], [statement])
+        if batches[-1] and size + len(json.dumps(request)) > limit:
+            batches.append([])
+            size = 0
+        batches[-1].append(((i, statement), request))
+        size += len(json.dumps(request))
+    parts = {}
+    for batch in batches:
+        if batch:
+            answers = conformance([request for _, request in batch])
+            for ((i, _), _), answer in zip(batch, answers, strict=True):
+                parts.setdefault(i, []).append(answer)
+    out = []
+    for i, (case, row) in enumerate(zip(cases, rows)):
+        if not _rust_evaluation(case) or row.get("status") == "error":
+            out.append(row)
+            continue
+        answers = parts.get(i, [{"status": "Satisfied", "value": True}] * len(case["ast"]))
+        failed = next((a for a in answers if a.get("status") not in ("Satisfied", "Violated")), None)
+        if failed is not None:
+            out.append(failed if failed.get("status") == "error" else
+                       {"id": row["id"], "status": "error",
+                        "error": {"code": "ResourceLimit", "message": "evaluation budget exhausted"}})
+            continue
+        values = [a["value"] for a in answers]
+        out.append({"id": row["id"], "status": "ok", "values": values, "value": all(values)})
+    return out
+
+
+def run_rust_evaluations(executable, cases):
+    """`rust_evaluations` through `ve conformance` itself (exit status 0 or 1)."""
+    return rust_evaluations(lambda batch: run([str(executable), "conformance"], batch), cases)
+
+
 def rust_verdict(case, result):
     kind = case["kind"]
     if result.get("status") == "error":
