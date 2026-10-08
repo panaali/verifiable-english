@@ -265,10 +265,7 @@ def test_fc6_a_main_rule_over_a_companion_readings_rule(lean):
             fields = {} if component is None else {"component": component}
             row = one(lean, kind, env_main(), document, **fields)
             assert row["error"] == "UnknownRule: rule must-help", (kind, component, row)
-
-
-def test_every_component_is_admitted_before_a_named_answer(lean):
-    """A later companion's admission error also prevents an answer from an earlier, valid component."""
+    # A later companion's admission error also prevents an answer from an earlier, valid component.
     document, _, _ = fc1()
     reading = document["reading_sets"][1]["readings"][0]
     reading["content"] = norm("must-warn", "warn_required", True, over=["ghost"])

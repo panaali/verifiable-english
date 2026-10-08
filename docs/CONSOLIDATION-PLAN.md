@@ -682,7 +682,7 @@ the current source classification alongside the previously measured steps.
 | 4 | 720 | 0 | 0 | 420 | 300 | 14 | 2 | 10.7 |
 | 5 | 0 | 480 | 0 | 0 | 480 | 14 | 1 | 34.3 |
 | 6 | 35 | 0 | 1765 | 0 | 35 | 3 | 1 | 11.7 |
-| 7 | 659 | 0 | 0 | 60 | 599 | 6 | 2 | 49.9 |
+| 7 | 665 | 0 | 0 | 60 | 605 | 6 | 2 | 50.4 |
 | 8a | 106 | 225 | 0 | 60 | 271 | 10 | 1.5 | 18.1 |
 | 8b | 0 | 3618 | 0 | 0 | 3618 | 30 | 3 | 40.2 |
 | 9 | 88 | 0 | 0 | 0 | 88 | 18 | 2 | 2.4 |
@@ -690,11 +690,11 @@ the current source classification alongside the previously measured steps.
 
 What the measurement changes:
 
-* **Re-ranking of steps 5 to 10 by measured score:** 7 (49.9), 5 (34.3), 8a (18.1), 6 (11.7),
+* **Re-ranking of steps 5 to 10 by measured score:** 7 (50.4), 5 (34.3), 8a (18.1), 6 (11.7),
   9 (2.4), 10. Step 8b's 3,618 is an upper bound (every untied line of the eight units' `Wire.lean`
   files, on the assumption that every decoder gets `exact`), not a forecast; it stays ranked by its
   pilot (Alternatives) as section 3 says. Against the estimates, 7 overtakes 5 (762 trusted
-  dispatch and `main` lines, not 340; 603 before the bench executable; 551 once batch 1 deleted the one-shot routes; 584 with english-lean S2's `ve_english_route`; 587 after batch 11a added the W2 `ve_speech_acts_route`; 613 with `ve_senses_route`; 627 after the reports batch with its fault-order preflight; 628 with the alternatives route's `alt-environment` case; 634 after batch 13a's one-shot projection; 637 with English Lean E2's modes; 638 with batch 10b's merge; 638 again at the merge of ve-integration into lean-first/b15a, with batch 15a's `ve_metered`; 645 at the merge of ve-integration into readings-defaults/rd2a, with RD-2a's dispatch under the unspecified completion and each readings case admitting its document once; 659 after RD-4a: `runCase` splits a readings case into its components and `runOne`, now named by the step, dispatches each) and 5 is smaller than estimated (476 measured against 1,500 to
+  dispatch and `main` lines, not 340; 603 before the bench executable; 551 once batch 1 deleted the one-shot routes; 584 with english-lean S2's `ve_english_route`; 587 after batch 11a added the W2 `ve_speech_acts_route`; 613 with `ve_senses_route`; 627 after the reports batch with its fault-order preflight; 628 with the alternatives route's `alt-environment` case; 634 after batch 13a's one-shot projection; 637 with English Lean E2's modes; 638 with batch 10b's merge; 638 again at the merge of ve-integration into lean-first/b15a, with batch 15a's `ve_metered`; 645 at the merge of ve-integration into readings-defaults/rd2a, with RD-2a's dispatch under the unspecified completion and each readings case admitting its document once; 659 after RD-4a: `runCase` splits a readings case into its components and `runOne`, now named by the step, dispatches each; 665 after the RD-4a admission fix, which admits every component before answering one) and 5 is smaller than estimated (476 measured against 1,500 to
   2,000; 480 once RD-2a moved `setPairs`' body into `setPairsWith`, which takes the completion's pair facts):
   most of the rows' targets are short runners, and `scopedVerdict` and `weighingWitness` are already C.
 * **Step 6** removes almost nothing trusted: the SHA-256 copy and the `maxNodes` sites are [I] and

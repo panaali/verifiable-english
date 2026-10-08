@@ -5504,7 +5504,12 @@
     "VE.Readings.Run.validateOne",
     "VE.Readings.Run.elaborateOne",
     "VE.Readings.Run.runOne",
-    "VE.Readings.Run.runComponents"
+    "VE.Readings.Run.runComponents",
+    "VE.Readings.Run.ComponentAdmission",
+    "VE.Readings.Run.admitComponent",
+    "VE.Readings.Run.admitComponents",
+    "VE.Readings.Run.runAdmitted",
+    "VE.Readings.Run.runAdmittedComponents"
    ],
    "G[I]": [
     "VE.Readings.Run.documentHash"
