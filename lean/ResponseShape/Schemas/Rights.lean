@@ -118,7 +118,7 @@ def findings : Shape :=
 
 def elaborate : Shape :=
   c
-    "Rights.Run.regenerated: E'' (primeJsonR), the generated predicates, the lines, the limitation premises, the bar nodes, the rights Background, the narrowings, the distinction rows and findings, then every SoftNorms.Wire.regenerated field over the correlated document but its environment_prime."
+    "Rights.Run.regenerated: E'' (primeJsonR), the generated predicates, the lines, the limitation premises, the bar nodes, the rights Background, the narrowings, the distinction rows and findings, then every SoftNorms.Wire.regeneratedCore field over the correlated document but its environment_prime."
     [
       obj,
       .required ["id", "status", "environment_prime", "generated", "wordings", "unit_open", "lines", "limitations", "bars", "rights_background", "narrowings", "distinction", "findings", "decisions", "derived", "order", "background", "premises", "colliding_pairs", "conflict_targets", "conditional_on", "fragment", "warnings"],

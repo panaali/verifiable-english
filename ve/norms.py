@@ -7,6 +7,7 @@ premises from an untrusted document.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from copy import deepcopy
 from itertools import product
 import re
 
@@ -20,6 +21,16 @@ from .search import _used_predicates
 from .wire import digest, require_fields
 
 _NAME = re.compile(r"[a-z][a-z0-9-]*\Z", re.ASCII)
+
+
+def _norm_defaults_placeholder(data):
+    """The lower W1 environment with each unspecified completion set to deny."""
+    data = deepcopy(data)
+    data["profiles"] = [p for p in data["profiles"] if p != "norm-defaults@0"]
+    for decl in data["vocabulary"]["predicates"].values():
+        if decl.get("regulated", {}).get("default") == "unspecified":
+            decl["regulated"]["default"] = "deny"
+    return data
 
 
 def _all(items):

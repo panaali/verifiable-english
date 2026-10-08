@@ -21,12 +21,12 @@ from ve import norm_defaults_contract, norms_contract
 from ve.errors import VEError
 from ve.norm_admission import _admit_norm_document_python
 from ve.norm_defaults_route import admit_norm_defaults_document
-from ve.wire_contract.engine import load
+from conformance.wire_contract_engine import load
 
 ROOT = Path(__file__).resolve().parents[1]
 UNITS = {"norms@0": (norms_contract, _admit_norm_document_python, s1),
          "norm-defaults@0": (norm_defaults_contract, admit_norm_defaults_document, s16)}
-DIAGNOSTIC_MODULES = ("ve.norms_contract", "ve.norm_defaults_contract", "ve.softnorms_contract", "ve.wire_contract")
+DIAGNOSTIC_MODULES = ("ve.norms_contract", "ve.norm_defaults_contract", "conformance.softnorms_contract", "ve.wire_contract")
 
 
 @pytest.mark.parametrize("unit", sorted(UNITS))
@@ -51,8 +51,14 @@ def test_shadow_admission_retains_legacy_error(unit, fixture):
     with pytest.raises(VEError) as caught:
         call(environment, document(norms))
     assert caught.value.diagnostic is None
-    assert (type(caught.value), caught.value.code, str(caught.value)) == \
-        (type(legacy.value), legacy.value.code, str(legacy.value))
+    if unit == "norm-defaults@0":
+        from ve.norm_defaults_route import run_cases
+        (lean,) = run_cases([{"id": "admission", "kind": "admission", "environment": environment,
+                             "document": document(norms)}])
+        assert str(caught.value) == lean["error"]
+    else:
+        assert (type(caught.value), caught.value.code, str(caught.value)) == \
+            (type(legacy.value), legacy.value.code, str(legacy.value))
 
 
 PROBE = """

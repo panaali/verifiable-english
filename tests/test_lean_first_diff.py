@@ -529,6 +529,22 @@ def test_every_differential_generator_is_a_corpus_or_names_its_reason():
     assert all(type(reason) is str and reason for reason in diff.GENERATORS_NOT_RECORDED.values())
 
 
+def test_norm_defaults_profile_corpus_is_complete_and_schema_bound(tmp_path):
+    out = tmp_path / "norm_defaults.json"
+    diff.norm_defaults_corpus(out)
+    rows = json.loads(out.read_text())
+    assert [row["case"] for row in rows] == diff.norm_defaults_cases()
+    assert len(rows) == 1010 and all("norm-defaults@0" in row["text"] for row in rows)
+    expected = diff.expected_cases(ROOT, ("norm_defaults",))
+    assert list(expected) == [("norm_defaults", "default")]
+    assert set(expected["norm_defaults", "default"]) == set(diff.norm_defaults_cases())
+    record = {"corpus": "norm_defaults", "authority": "default", "case": "s0",
+              "op": "document_check", "source_sha256": diff.digest(out),
+              "outcome": {"returned": {}}}
+    assert diff.record_problem(record) is None
+    assert diff.record_problem({**record, "authority": "python"}) is not None
+
+
 def test_the_rights_corpus_is_the_generator_and_its_head_profile_variant(tmp_path):
     out = tmp_path / "rights.json"
     diff.rights_corpus(out)

@@ -17,7 +17,7 @@ NAMES = {1: "kernel", 2: "profiles", 3: "surface", 4: "tools", 5: "apps-and-meas
 PYTHON = {
     1: "ast environment environment_wire errors identity limits model wire wire_contract assurance".split(),
     2: ("background closure definitions entailment evaluate norms order profiles "
-        "alternatives rights softnorms softnorms_contract norms_contract speech_acts units").split(),
+        "alternatives rights softnorms norms_contract speech_acts units").split(),
     3: ("english english_grammar english_phrases english_vocabulary fluent fol grammar natural "
         "norm_english parser printer surface lexicon report_english speech_english readings_english "
         "readings_s2_english senses").split(),
@@ -25,7 +25,7 @@ PYTHON = {
         "document equivalence norm_admission norm_defaults norm_defaults_contract norm_defaults_english norm_defaults_route norm_strict "
         "openterms propose readings search stream_audit vacuity assist discourse "
         "reports reports_route risk rights_route soft_route speech_document readings_route readings_s1 "
-        "readings_sup readings_verdicts readings_s2_wording").split(),
+        "readings_sup readings_verdicts readings_s2_wording senses_document").split(),
     5: ["argument_fixtures"],
 }
 PYTHON_MODULES = {f"ve.{name}": layer for layer, names in PYTHON.items() for name in names}

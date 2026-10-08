@@ -13078,8 +13078,8 @@
    "report_required": []
   },
   "lean": {
-   "agree": 81,
-   "cases": 81,
+   "agree": 426,
+   "cases": 426,
    "elaborate": "regenerated",
    "mismatches": []
   },
@@ -13148,7 +13148,7 @@
     "a35"
    ]
   },
-  "seconds": 112.6,
+  "seconds": 48.2,
   "undecided": {
    "permitted": [
     "a27",

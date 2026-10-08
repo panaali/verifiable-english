@@ -71,6 +71,8 @@ def soft_field : Shape :=
 def kind : Def :=
   .group none [
     ("admission", kindIs "admission"),
+    ("soft-rule", kindIs "soft-rule"),
+    ("soft-rules", kindIs "soft-rules"),
     ("soft-elaborate", kindIs "soft-elaborate"),
     ("soft-pairs", kindIs "soft-pairs"),
     ("soft-certificate", kindIs "soft-certificate"),
@@ -112,10 +114,37 @@ def error : Shape :=
           "SOFT_TIE_AGAINST_ORDER",
           "SOFT_UNKNOWN_PARTY",
           "SOFT_UNKNOWN_RANK",
-          "SOFT_UNSUPPORTED_PROFILE"])]]
+          "SOFT_UNSUPPORTED_PROFILE"]),
+        ("dual_guard_cycle", .const (.bool true))]]
 
 def coherence_labels : Shape :=
   n [arr, .items (n [str, .pattern (Re.prefixes ["soft:coherence:"])])]
+
+def witness_model : Shape :=
+  c "A Lean-checked finite model echoed with a witnessed soft finding." [
+    obj, .required ["complete", "domains", "constants", "relations"],
+    closed [
+      ("complete", .type ["boolean"]),
+      ("domains", n [obj, .object [] (some (ref "common.json#/$defs/strings"))]),
+      ("constants", n [obj, .object [] (some str)]),
+      ("relations", n [obj, .object [] (some (n [arr,
+        .items (ref "common.json#/$defs/strings")]))])]]
+
+def rule : Shape :=
+  c "SoftNorms.Run.runSoftKind: Lean accepted the standalone soft rule." [
+    obj, .required ["id", "status", "accepted"],
+    closed [("id", ref "common.json#/$defs/id_ok"),
+      ("status", constS "ok"), ("accepted", .const (.bool true))]]
+
+def rules : Shape :=
+  c "SoftNorms.Run.runSoftKind: each standalone rule is checked under one decoded source." [
+    obj, .required ["id", "status", "results"],
+    closed [("id", ref "common.json#/$defs/id_ok"),
+      ("status", constS "ok"),
+      ("results", n [arr, .items (.anyOf [
+        n [obj, .required ["status"], closed [("status", constS "ok")]],
+        n [obj, .required ["status", "error"], closed [
+          ("status", constS "error"), ("error", ref "common.json#/$defs/text")]]])])]]
 
 def admission : Shape :=
   c "SoftNorms.Run.encodeAdmitted: W2's admission answer and the open coherence premises the report assumes." [
@@ -164,34 +193,57 @@ def elaborated : Def :=
       arr,
       .items (n [
           obj,
-          .required ["pair", "act", "comparable", "label", "ast"],
+          .required ["pair", "act", "comparable", "label", "ast", "outweighs"],
           closed [
             ("pair", ref "common.json#/$defs/string_pair"),
             ("act", str),
             ("comparable", .type ["boolean"]),
             ("label", n [str, .pattern (Re.prefixes ["soft:coherence:"])]),
-            ("ast", ref "common.json#/$defs/generated_formula")]])])]
+            ("ast", ref "common.json#/$defs/generated_formula"),
+            ("outweighs", copied "SoftNorms.Tree.pairTriple and outweighsName; null unless holistic and comparable." <|
+              .anyOf [.const .null, n [str, .pattern (Re.prefixes ["soft__outweighs__"])]])]])])]
 
 def elaborate : Shape :=
   c
     "SoftNorms.Wire.regenerated: E' (primeJson), the decision predicates, each rule's derived carve-out (null for a strict rule without alterable), the layers, Background', the colliding pairs with their coherence premises, the conflict targets, the open coherence labels, the fragment flag and the warnings."
     [
       obj,
-      .required ["id", "status", "environment_prime", "decisions", "derived", "order", "background", "premises", "colliding_pairs", "conflict_targets", "conditional_on", "fragment", "warnings"],
+      .required ["id", "status", "environment_prime", "document_hash", "decisions", "ranks_above", "derived", "order", "background", "premises", "colliding_pairs", "rule_acts", "incompatible_pairs", "conflict_targets", "conditional_on", "soft_residual", "soft_status", "default_exceptions_by_decider", "fragment", "warnings"],
       closed [
         ("id", ref "common.json#/$defs/id_ok"),
         ("status", constS "ok"),
         ("environment_prime", ref "common.json#/$defs/environment"),
+        ("document_hash", ref "common.json#/$defs/hex64"),
         ("decisions", ref "#/$defs/elaborated/decisions"),
+        ("ranks_above", n [obj, .object [] (some (ref "common.json#/$defs/strings"))]),
         ("derived", ref "#/$defs/elaborated/derived"),
         ("order", ref "common.json#/$defs/strings"),
         ("background", ref "#/$defs/background"),
         ("premises", ref "common.json#/$defs/layer_premises"),
         ("colliding_pairs", ref "#/$defs/elaborated/colliding_pairs"),
+        ("rule_acts", copied "SoftNorms.Tree.act for each accepted rule." <|
+          n [obj, .object [] (some str)]),
+        ("incompatible_pairs", copied "SoftNorms.Tree.Incompatible over accepted rule pairs." <|
+          n [arr, .items (ref "common.json#/$defs/string_pair")]),
         ("conflict_targets", ref "common.json#/$defs/conflict_targets"),
         ("conditional_on", ref "#/$defs/coherence_labels"),
+        ("soft_residual", ref "#/$defs/soft_residual"),
+        ("soft_status", enumS ["CHECKED", "OPEN"]),
+        ("default_exceptions_by_decider", n [obj, .object [] (some (ref "common.json#/$defs/nat"))]),
         ("fragment", .type ["boolean"]),
-        ("warnings", ref "common.json#/$defs/nonempty_strings")]]
+        ("warnings", ref "common.json#/$defs/nonempty_strings"),
+        ("overlaps", copied "A Lean-checked witness echoes its model and tuple, and names the selected pair." <|
+          n [arr, .items (n [obj, .required ["pair", "tuple", "model", "line"], closed [
+            ("pair", ref "common.json#/$defs/string_pair"),
+            ("tuple", ref "common.json#/$defs/strings"),
+            ("model", ref "#/$defs/witness_model"),
+            ("line", n [str, .pattern (Re.prefixes ["Overlap("])])]])]),
+        ("override_cycles", copied "A Lean-checked witness echoes its model and tuple, and names the preference cycle." <|
+          n [arr, .items (n [obj, .required ["cycle", "tuple", "model", "line"], closed [
+            ("cycle", ref "common.json#/$defs/strings"),
+            ("tuple", ref "common.json#/$defs/strings"),
+            ("model", ref "#/$defs/witness_model"),
+            ("line", n [str, .pattern (Re.prefixes ["override_cycles:"])])]])])]]
 
 def pairs : Shape :=
   c
@@ -272,6 +324,8 @@ def «row» : Shape :=
       ref "#/$defs/error",
       .select [
         (ref "#/$defs/kind/admission", ref "#/$defs/admission"),
+        (ref "#/$defs/kind/soft-rule", ref "#/$defs/rule"),
+        (ref "#/$defs/kind/soft-rules", ref "#/$defs/rules"),
         (ref "#/$defs/kind/soft-elaborate", ref "#/$defs/elaborate"),
         (ref "#/$defs/kind/soft-pairs", ref "#/$defs/pairs"),
         (ref "#/$defs/kind/soft-certificate", ref "#/$defs/certificate"),
@@ -289,8 +343,18 @@ def file : File where
     ("kind", kind),
     ("error", .schema error),
     ("coherence_labels", .schema coherence_labels),
+    ("witness_model", .schema witness_model),
+    ("rule", .schema rule),
+    ("rules", .schema rules),
     ("admission", .schema admission),
     ("background", .schema background),
+    ("soft_residual", .schema (n [obj,
+      .required ["default_exceptions", "instruction_switches", "holistic_overrides", "weighing_points"],
+      closed [
+        ("default_exceptions", ref "common.json#/$defs/nat"),
+        ("instruction_switches", ref "common.json#/$defs/nat"),
+        ("holistic_overrides", ref "common.json#/$defs/nat"),
+        ("weighing_points", ref "common.json#/$defs/nat")]])),
     ("elaborated", elaborated),
     ("elaborate", .schema elaborate),
     ("pairs", .schema pairs),

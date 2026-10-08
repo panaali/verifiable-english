@@ -16,7 +16,7 @@ UNIT_FIXTURES = {"norms@0": "tests.test_norms_contract", "norm-defaults@0": "tes
 
 def unit_reports(unit):
     from importlib import import_module
-    from ve.wire_contract.engine import load
+    from conformance.wire_contract_engine import load
     contract = load(unit)
     fixtures = import_module(UNIT_FIXTURES[unit]).GOLDEN
     return {f"{unit}-golden.json": {"source": "docs/spec/wire-contract-s5.md 8.1 and 8.2", "contract": unit,
