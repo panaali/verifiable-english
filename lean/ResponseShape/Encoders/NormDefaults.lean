@@ -49,12 +49,14 @@ theorem line_fits {U X cited translation} (l : Wire.LineU U X cited translation)
   unfold Wire.LineU.toJson
   split <;> (try simp only [Wire.WitnessRow.toJson]) <;> fits
 
-theorem runLayered_fits (id kind : String) (j : Json)
+theorem layeredCase_fits (L : Wire.LayeredU) (id kind : String) (j : Json)
     (hi : VE.Bridge.stringField j "id" = .ok id)
     (hk : VE.Route.Run.caseKind j = .ok kind) (hp : usesNormDefaultsPath j = true) :
-    OkFits j Skeletons.normDefaults (Wire.runLayered id kind j) := by
-  unfold Wire.runLayered
+    OkP (fun o => ∀ a, o = some a → Fits j Skeletons.normDefaults a) (Wire.layeredCase L id kind j) := by
+  unfold Wire.layeredCase
   okfits
+  all_goals (try (intro a ha; cases ha))
+  all_goals (try (intro a ha; injection ha with ha; subst ha))
   all_goals read_kind
   all_goals (try simp only [VE.Route.Wire.ok, Wire.layeredElaborate, Wire.regeneratedU, VE.Norms.Wire.regenerated,
     Wire.ReportG.toJson, Wire.conflictFields, Wire.statusFields, Wire.underJson, Wire.atomsJson])
@@ -64,6 +66,20 @@ theorem runLayered_fits (id kind : String) (j : Json)
     have := firstFailureX_of_not_free _ _ (by
       first | exact ‹Wire.conflictFreeX _ _ = false› | exact Bool.eq_false_iff.mpr ‹¬Wire.conflictFreeX _ _ = true›)
     simp_all
+
+theorem runLayered_fits (id kind : String) (j : Json)
+    (hi : VE.Bridge.stringField j "id" = .ok id)
+    (hk : VE.Route.Run.caseKind j = .ok kind) (hp : usesNormDefaultsPath j = true) :
+    OkFits j Skeletons.normDefaults (Wire.runLayered id kind j) := by
+  unfold Wire.runLayered
+  intro v hv
+  obtain ⟨L, -, hv⟩ := VE.Order.ProfileGate.bind_ok hv
+  obtain ⟨o, ho, hv⟩ := VE.Order.ProfileGate.bind_ok hv
+  cases o with
+  | none => cases hv
+  | some a =>
+    cases hv
+    exact layeredCase_fits L id kind j hi hk hp _ ho _ rfl
 
 theorem runCase_fits (j : Json) (hp : usesNormDefaultsPath j = true) :
     OkFits j Skeletons.normDefaults (runCase j) := by

@@ -1,7 +1,8 @@
-import VE.Readings.Unspecified
+import VE.Readings.UnspecifiedWire
 import VE.Readings.Examples
 
-/-! The fixtures of RD-1 (docs/spec/readings-defaults.md 8.1), each a `#guard` on `fillDoc` and on separation under
+/-! The fixtures of RD-1 (docs/spec/readings-defaults.md 8.1) and RD-2a's admission limits (8.3: F-ND4, F-ND5,
+F-ND10), each a `#guard` on `fillDoc` and on separation under
 the completion; each iff claim has a fixture for each direction. F-ND11 is the counterexample that made
 `attached_fillDoc` take `singlyAttached` (the approved statement had `fillNamesFree` only). -/
 namespace VE.Readings.UnspecifiedExamples
@@ -139,5 +140,46 @@ def NK : NDoc := ⟨⟨.norms, frame1, itemsK, [], []⟩, ["help_required"]⟩
     (attached (fillDoc NK) u).all ((attached NK.D u).contains ·))
 -- and with one set per unit the lists agree (F-ND1 has no fixed unit; F-ND5's `u0` is attached to none)
 #guard (attached ND5.D "u0" == [], singlyAttached ND1.D) == (true, true)
+
+/-! ### RD-2a (8.3): admission's limits under the completion
+
+F-ND4 and F-ND10 are sized against `checkAuthorN`'s rule limit (rules plus unspecified predicates at most 256). The
+counts are those below (F-ND4, and that the documents within the limit pass, are checked through the service in
+`tests/test_readings_nd_lean.py`: `free` and `one` compute `attached` over 252 units, which the interpreter does
+not finish in an hour): F-ND4's free document has 252 + 4 = 256, its reading's 253 + 4 = 257; F-ND10's free
+document 251 + 4 = 255, each reading's 252 + 4 = 256, the one compatible choice's 253 + 4 = 257 (SR1). -/
+
+def regs4 : List Regulated :=
+  [oblig "p_required" ["agent", "user"] false (some "p_permitted") "{0} p {1}",
+   perm "p_permitted" ["agent", "user"] false "{0} p {1}",
+   oblig "q_required" ["agent", "user"] false (some "q_permitted") "{0} q {1}",
+   perm "q_permitted" ["agent", "user"] false "{0} q {1}"]
+def unspec4 : List String := ["p_required", "p_permitted", "q_required", "q_permitted"]
+/-- `n` fixed strict rules on `p_required`, each its own unit. -/
+def rulesOnP (n : Nat) : List Item :=
+  (List.range n).map (fun k => .fixed s!"f{k}" (.norm (strictNode s!"rule-{k}" "p_required" true)) [])
+def oneRuleSet (s u : String) : ReadingSet := ⟨s, u, 1, [cand "more" (strictNode s!"more-{s}" "p_required" true)]⟩
+/-- F-ND4: 252 fixed rules and one set with one more rule. -/
+def ND4 : NDoc := ⟨⟨.norms, frameOf regs4 [], rulesOnP 252 ++ [.set (oneRuleSet "rs_1" "u1")], [], []⟩, unspec4⟩
+/-- F-ND10: 251 fixed rules and two sets of one reading each, each one more rule. -/
+def ND10 : NDoc :=
+  ⟨⟨.norms, frameOf regs4 [], rulesOnP 251 ++ [.set (oneRuleSet "rs_1" "u1"), .set (oneRuleSet "rs_2" "u2")], [], []⟩,
+   unspec4⟩
+/-- `checkAuthorN`'s text on a document (no declared `unsaid__` name, no generated predicate), or `none`. -/
+def authorText (U : VE.NormDefaults.UDoc) : Option String :=
+  match VE.NormDefaults.Wire.checkAuthorN (Lean.Json.mkObj []) 0 U with
+  | .error e => some e
+  | .ok () => none
+
+-- F-ND10: the one compatible choice's document is beyond the limit (4.1 step 5), with 253 + 4 rules
+#guard choices ND10.D == [[("rs_1", 0), ("rs_2", 0)]]
+#guard (choiceU ND10 [("rs_1", 0), ("rs_2", 0)]).D.T.nodes.length == 253
+#guard authorText (choiceU ND10 [("rs_1", 0), ("rs_2", 0)]) == some "ResourceLimit: rules"
+-- the choice's text names it in `choiceText`'s form
+#guard VE.Readings.choiceText ND10.D [("rs_1", 0), ("rs_2", 0)] == "rs_1@1:0, rs_2@1:0"
+-- F-ND5: 4.1 step 2 names the reserved rule (no suffix); F-ND1 has none
+#guard (Wire.reservedUnsaid ND5, Wire.reservedUnsaid ND1) == (some "unsaid--help-required", none)
+-- F-ND1: admission's facts on the instance (`ndRest`, the part of `WellFormedND` after S1's)
+#guard Wire.ndRest ND1 && !Wire.ndRest ND5
 
 end VE.Readings.UnspecifiedExamples

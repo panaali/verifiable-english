@@ -1,0 +1,70 @@
+{
+ "commit": "6f3ec7243783200d7ba28b9102eddd52a854ba12",
+ "workers": 16,
+ "excluded": [
+  "tests/test_llm.py::test_live_smoke"
+ ],
+ "collection": 11913,
+ "runs": [
+  {
+   "run": "chunk 1 of 5",
+   "passed": 2034,
+   "skipped": 1,
+   "failed": 0,
+   "summary": "2034 passed, 1 skipped, 14 warnings in 365.52s (0:06:05)"
+  },
+  {
+   "run": "chunk 2 of 5",
+   "passed": 3977,
+   "skipped": 2,
+   "failed": 0,
+   "summary": "3977 passed, 2 skipped, 16 warnings in 402.95s (0:06:42)"
+  },
+  {
+   "run": "chunk 3 of 5",
+   "passed": 1886,
+   "skipped": 3,
+   "failed": 0,
+   "summary": "1886 passed, 3 skipped, 61 warnings in 268.35s (0:04:28)"
+  },
+  {
+   "run": "chunk 4 of 5",
+   "passed": 2374,
+   "skipped": 0,
+   "failed": 0,
+   "summary": "2374 passed in 422.27s (0:07:02)"
+  },
+  {
+   "run": "chunk 5 of 5",
+   "passed": 1598,
+   "skipped": 0,
+   "failed": 0,
+   "summary": "1598 passed in 1684.60s (0:28:04)"
+  },
+  {
+   "run": "the four tests over 10 minutes, alone",
+   "passed": 28,
+   "skipped": 0,
+   "failed": 0,
+   "summary": "28 passed, 4 warnings in 506.51s (0:08:26)"
+  },
+  {
+   "run": "the gate's nightly tests",
+   "passed": 9,
+   "skipped": 0,
+   "failed": 0,
+   "summary": "9 passed, 2 warnings in 412.17s (0:06:52)"
+  }
+ ],
+ "totals": {
+  "passed": 11906,
+  "skipped": 6,
+  "failed": 0
+ },
+ "lake_build": "Build completed successfully (791 jobs)",
+ "lean_audit": "PASS: 434 source files; 4682 named theorem declarations audited",
+ "rust": {
+  "passed": 37,
+  "failed": 0
+ }
+}
