@@ -47,6 +47,12 @@ def test_a_generated_soft_frame_is_read_with_its_decision_predicates():
     plain = english_lean.request(env_plain := SoftEnvironment(env(ranks(["a", "b"]))), text,
                                  EnglishVocabulary(env_plain), {})
     assert "generated" not in plain
+    # Under `readings@1` the readings decoder checks the soft frame too, and reads the generated frame alike.
+    layered = SoftNormDocument(SoftEnvironment(env(ranks(["a", "b"]), profiles=("norms@0", "readings@1",
+                                                                                 "soft-norms@0"))),
+                               [should("a", "x_required", True)]).extended_env
+    assert "readings@1" in layered.to_dict()["profiles"]
+    assert len(parse_english(layered, text).formulas) == 1
 
 
 def test_two_modal_predicates_may_share_their_modal_form():
