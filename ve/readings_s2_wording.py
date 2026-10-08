@@ -340,6 +340,10 @@ class S2Wording:
     # -- the report (2.3 items 1, 3 and 6)
 
     def report(self):
+        from .readings_verdicts import Enumerated
+        if isinstance(self.route, Enumerated):
+            # readings-defaults RD-3: Lean's plan for the conflict question, then for the premises.
+            return (self.plan(self.route.conflict_answer()) + self.plan(self.route.premises_answer()))
         E, route, lines = self.E, self.route, []
         k = len(self.sets)
         finding = route.row.get("finding")
@@ -383,6 +387,10 @@ class S2Wording:
     # -- a query (2.3 items 1, 2, 4, 5 and 7)
 
     def query(self, conclusion_ast, data):
+        from .readings_verdicts import Enumerated
+        if isinstance(self.route, Enumerated):
+            slot = self.conclusion(conclusion_ast)
+            return self.plan(self.route.query_answer(conclusion_ast, data.get("assumed")), slot)
         E, lines = self.E, []
         k = len(self.sets)
         verdict = data["verdict"]
@@ -420,6 +428,85 @@ class S2Wording:
             lines.append(self._countermodel(data["countermodel"]))
         return lines
 
+    # -- Lean's English plan (readings-defaults 2.4; the enumerated route from RD-3)
+
+    def plan(self, answer, slot=None):
+        """The sentences of Lean's plan of `answer` (`Readings.englishPlan`), each rendered as its frame says and
+        through its gate; which sentences an answer gets, the readings and the model each names, its filled gaps and
+        its labels are Lean's. A line Python cannot render as planned is `CheckerUnavailable`, never left out."""
+        from .errors import CheckerUnavailable
+        out = []
+        for line in answer["english"]:
+            try:
+                out.append(self._plan_line(line, answer, slot))
+            except (KeyError, TypeError, ValueError, IndexError) as exc:
+                raise CheckerUnavailable(f"ReadingsConformance: Lean's English plan has a line Python cannot render: "
+                                         f"{line}") from exc
+        return out
+
+    def _plan_line(self, line, answer, slot):
+        from .errors import CheckerUnavailable
+        from .readings_sup import slot_label
+        E = self.E
+        frame, label = line["frame"], line["label"]
+        kind = PLAN_RESULTS[line["result"]] if line["result"] is not None else None
+        readings = [(s, i) for s, i in line["readings"]]
+        if line["model"] is not None:
+            piece, _, k = line["model"].partition("@")
+            entry = answer["per_choice"][int(k)]
+            model, choice = entry["shown"][piece], [(s, i) for s, i in entry["choice"]]
+            if frame != "E12" or readings != choice:
+                raise CheckerUnavailable("ReadingsConformance: Lean's plan shows a model under another frame")
+            return E.named_result(self.readings(choice), kind, self.slots, situation=self.situation(model, choice),
+                                  gaps=self.plan_gaps(model, line["gaps"]))
+        if frame in ("E26", "E10"):
+            text = E.every_result(len(self.sets), kind, self.slots, conclusion=slot)
+            if not text.startswith("Under every reading of the open sentence" if frame == "E26" else
+                                   f"Under every reading of the {len(self.sets)} open sentences"):
+                raise CheckerUnavailable("ReadingsConformance: Lean's plan names the wrong every-reading frame")
+            return text
+        if frame == "E12":
+            return E.named_result(self.readings(readings), kind, self.slots, conclusion=slot)
+        if frame == "E29":
+            return E.not_superposed([self.set_number[s] for s, _ in readings], self.slots)
+        if frame == "E3":
+            return E.provided(self.slots)
+        if frame == "P1":
+            return E.pair_line(self.pair_premise(label), self.slots)
+        if frame == "E5":
+            from .readings_english import coupling_sentence
+            coupling = self._restriction(self.route.couplings, slot_label(label), label)
+            sets = {R.id: {"unit": R.unit} for R in self.sets}
+            return E.gated("E5", coupling_sentence(coupling, sets, self.doc["units"]), self.slots)
+        if frame == "E7":
+            narrowing = self._restriction(self.route.narrowings, slot_label(label), label)
+            [(s, i)] = readings
+            cited = [self.numbers[u] for u in narrowing["reason_spans"]]
+            return E.narrowed(self.set_number[s], self.name(s, i), cited, self.slots)
+        if frame == "E13":
+            [(s, _)] = readings
+            return E.independent(self.set_number[s], self.slots)
+        if frame == "E17":
+            [(s, i)] = readings
+            return E.dead_reading(self.set_number[s], self.name(s, i), self.slots)
+        if frame == "E27":
+            return E.none_result(len(self.sets), self.slots)
+        if frame == "E28":
+            return E.over_budget(self.slots)
+        if frame == "status" and type(label) is str:
+            return label
+        raise CheckerUnavailable(f"ReadingsConformance: Lean's English plan has an unknown frame {frame}")
+
+    def plan_gaps(self, model, gaps):
+        """The filled gaps Lean's plan lists after a shown situation (readings-defaults 2.2): each point's clause
+        (norm-defaults' `point_clause`) and the filling's answer, in Lean's order."""
+        from types import SimpleNamespace
+        from .norm_defaults_english import point_clause
+        situation = SimpleNamespace(constants=model.get("constants") or {})
+        found = [(point_clause(self.frame, situation, predicate, tuple(ids)), value) for predicate, ids, value in gaps]
+        self.slots.clauses.update(clause for clause, _ in found)
+        return found
+
     @staticmethod
     def _dependencies(data):
         """The slot labels a Lean-checked answer depends on (`reading_premises_used`, `Superposed._dependencies` on
@@ -446,6 +533,9 @@ class S2Wording:
 
 
 PAIR_LABEL = "unsaid:pair:"
+# The result ids of Lean's plan (`Readings.Line.result`) and the kinds `result_sentence` renders.
+PLAN_RESULTS = {"R1": "conflict_free", "R2": "follows", "R3": "countermodel", "R4": "conflict", "R5": "premise_model",
+                "R6": "inconsistent", "R7": "undecided"}
 
 
 def filled_gaps(frame, tables, model):

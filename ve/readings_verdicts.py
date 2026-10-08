@@ -86,9 +86,9 @@ class _Route:
         self.completion = filled is not None
         self.source = Document(S1Environment(self.environment, filled), self.document, filled)
         self.sets = self.source.sets
-        if self.completion:
-            # The compatible choices are Lean's (the route's row, bound to the request by the relay); none is
-            # enumerated or counted here.
+        if self.route == "enumerated":
+            # The compatible choices are Lean's (the route's row, bound to the request by the relay; on the lower
+            # route also checked against the retained search); none is enumerated or counted here.
             self.choices = None if self.row["choices"] == "over" else [
                 {s: i for s, i in choice} for choice in self.row["choices"]]
         else:
@@ -741,130 +741,172 @@ def _predicates(ast):
 
 
 # ---------------------------------------------------------------------------------------------------------------
-# The enumerated route (4.6)
+# The enumerated route (4.6; readings-defaults 3.5, RD-3)
 
 class Enumerated(_Route):
+    """The enumerated route: every verdict is Lean's (`readings-verdicts`, one request per question). Lean
+    enumerates the compatible choices taking `assumed`, checks every piece of evidence on the choice's document it
+    regenerates, folds the rows, computes the restrictions and the labels an answer uses, and plans its English.
+    Python only generates evidence (each choice's document below: conflict packages, witnesses, certificates and
+    models, its own untrusted prover and search) and relays Lean's answer; a piece Lean refuses that Python's own
+    check accepted is `CheckerUnavailable`, never a verdict."""
+
     def __init__(self, doc):
         super().__init__(doc)
         self._docs = {}
+        self._conflict = {}  # choice key → its conflict packages and witness (inner cases)
+        self._premise = {}   # choice key → its certificate of ⊥ or model
+        self._dead = None    # the dead readings' certificates, once Lean names the untaken candidates
+        self._answers = {}
 
     def _choice(self, choice):
-        key = tuple(choice[R.id] for R in self.sets)
+        key = self._key(choice)
         if key not in self._docs:
             self._docs[key] = (_FilledChoiceDocument if self.completion else _ChoiceDocument)(self, choice)
         return self._docs[key]
 
-    def over_budget(self):
-        return {"status": "UNKNOWN", "route": "enumerated", "budget": {"max_choices": 64},
-                "units": [R.unit for R in self.sets]}
+    def _key(self, choice):
+        return tuple(choice[R.id] for R in self.sets)
+
+    @staticmethod
+    def _of(choice_json):
+        return {s: i for s, i in choice_json}
+
+    def _verdicts(self, question, query=None, **fields):
+        """Lean's `readings-verdicts` answer, the evidence generated so far sent with it."""
+        from .readings_route import run_lean
+        evidence = []
+        for choice in self.choices or []:
+            key = self._key(choice)
+            pieces = {**self._conflict.get(key, {}), **self._premise.get(key, {}), **(query or {}).get(key, {})}
+            if pieces:
+                evidence.append({"choice": self.choice_json(choice), **pieces})
+        case = {"id": "readings-verdicts", "kind": "readings-verdicts", "environment": self.environment,
+                "document": self.document, "question": question, "evidence": evidence, **fields}
+        if self._dead is not None:
+            case["dead"] = self._dead
+        [row] = run_lean([case])
+        if row.get("status") != "ok":
+            error = row.get("error")
+            if isinstance(error, str) and error.startswith("ReadingsUnsatisfiable: "):
+                raise VEError(error)
+            raise CheckerUnavailable(f"ReadingsConformance: Lean refused the readings-verdicts case Python built: "
+                                     f"{error}")
+        _check_answer(row, question)
+        return row
+
+    def _conflict_answer(self):
+        """The conflict question: each choice's packages, then a witness for every choice Lean leaves without
+        CONFLICT-FREE (`readings-choice`'s order of 4.3)."""
+        if "conflict" not in self._answers:
+            for choice in self.choices or []:
+                case = self._choice(choice).conflict_case()
+                if case is not None:
+                    self._conflict.setdefault(self._key(choice), {})["conflict"] = case
+            row = self._verdicts("conflict")
+            found = False
+            for entry in row["per_choice"]:
+                if entry["conflict"] != "CONFLICT-FREE":
+                    choice = self._of(entry["choice"])
+                    witness = self._choice(choice).witness_case()
+                    if witness is not None:
+                        self._conflict.setdefault(self._key(choice), {})["witness"] = witness
+                        found = True
+            self._answers["conflict"] = self._verdicts("conflict") if found else row
+        return self._answers["conflict"]
 
     def conflict(self, A=()):
-        if self.choices is None:
-            return {**self.over_budget(), "status_text": "UNKNOWN: more than 64 compatible readings"}
-        rows = [(self.choice_json(c), self._choice(c).conflict()) for c in self.choices]
-        conflicts = [(c, r) for c, r in rows if r["verdict"] == "CONFLICT"]
-        if all(r["verdict"] == "CONFLICT-FREE" for _, r in rows):
-            restrictions = self.restrictions(A)
-            conditional = list(dict.fromkeys([label for _, r in rows for label in r.get("conditional_on", [])] +
-                                             restrictions))
-            # On the enumerated route each choice is its own document: what the answer depends on of the readings
-            # is the restrictions that selected the choices (`reading_premises_used`, as on the superposed route).
-            return {"status": "CONFLICT-FREE", "route": "enumerated", "conditional_on": conditional,
-                    "restrictions": restrictions, "reading_premises_used": restrictions,
-                    "status_text": f"CONFLICT-FREE among rules on the same act under every reading ({len(rows)} "
-                                   "readings checked one at a time)",
-                    "choices": [{"choice": c, "status": "CONFLICT-FREE"} for c, _ in rows]}
-        status = "CONFLICT" if conflicts else "UNKNOWN"
-        return {"status": status, "route": "enumerated",
-                "status_text": (f"CONFLICT under {self.choice_text(conflicts[0][0])}" if conflicts else
-                                "UNKNOWN: a reading's conflict status is not certified"),
-                "choices": [{"choice": c, "status": r["verdict"]} for c, r in rows],
-                "witnesses": [{"choice": c, "model": r["model"], "status_text": r["status_text"]}
-                              for c, r in conflicts]}
+        if A:
+            self._conflict_answer()
+            return self._verdicts("conflict", assumed=[list(x) for x in A])["result"]
+        return self._conflict_answer()["result"]
+
+    def _free(self):
+        return {self._key(self._of(e["choice"])): e["conflict"] == "CONFLICT-FREE"
+                for e in self._conflict_answer()["per_choice"]}
+
+    def _premises_answer(self):
+        """The premises question: per choice a certificate of ⊥ (only under a CONFLICT-FREE reading, S2a 14.8; the
+        quick proof first), else a model, as `premise_status` orders them; then, for the candidates Lean finds no
+        compatible choice takes, the dead readings' certificates."""
+        if "premises" not in self._answers:
+            free = self._free()
+            for choice in self.choices or []:
+                document, key = self._choice(choice), self._key(choice)
+                piece = None
+                if free.get(key):
+                    piece = document.certificate_case(None, max_steps=min(BUDGET["max_steps"], 128))
+                    piece = piece and {"unsat": piece}
+                if piece is None:
+                    found = document.model_case(None)
+                    piece = found and {"model": found}
+                if piece is None and free.get(key) and BUDGET["max_steps"] > 128:
+                    found = document.certificate_case(None)
+                    piece = found and {"unsat": found}
+                if piece is not None:
+                    self._premise[key] = piece
+            row = self._verdicts("premises")
+            if row["untaken"] and self._dead is None:
+                dead = _dead_certificates(self, [tuple(x) for x in row["untaken"]])
+                if dead is not None:
+                    self._dead = dead
+                    row = self._verdicts("premises")
+            self._answers["premises"] = row
+        return self._answers["premises"]
 
     def premises(self):
-        if self.choices is None:
-            return self.over_budget()
-        rows = [(self.choice_json(c), self._choice(c).premises()) for c in self.choices]
-        statuses = [r["status"] for _, r in rows]
-        overall = ("model" if "model" in statuses else
-                   "INCONSISTENT" if all(s == "INCONSISTENT" for s in statuses) else "UNKNOWN")
-        result = {"status": overall, "route": "enumerated", "evidence": "per choice",
-                  "choices": [{"choice": c, "status": r["status"]} for c, r in rows]}
-        if overall == "model":
-            result["choice"], result["model"] = next((c, r["model"]) for c, r in rows if r["status"] == "model")
-        dead = {(d["set"], d["index"]) for d in (self.dead_readings() or [])}
-        candidates = []
-        for s, i in self.candidates():
-            taking = [r["status"] for c, r in rows if [s, i] in c]
-            narrowing = self.dropped(s, i)
-            entry = {"set": s, "index": i}
-            if narrowing is not None:
-                entry.update(status="narrowed", narrowing=narrowing)
-            elif (s, i) in dead:
-                entry.update(status="dead")
-            elif not taking:
-                # `dead` only with its certificate (review B): an absence the prover could not certify is UNKNOWN.
-                entry.update(status="UNKNOWN", reason=self.untaken_text([(s, i)]))
-            else:
-                entry.update(status="model" if "model" in taking else
-                             "INCONSISTENT" if all(t == "INCONSISTENT" for t in taking) else "UNKNOWN")
-            candidates.append(entry)
-        result["candidates"] = candidates
-        return result
+        return self._premises_answer()["result"]
 
     def dead_readings(self):
-        """On the enumerated route a candidate no compatible choice takes is found by the enumeration itself; the
-        finding is still certified by `readings-dead` (1.9), on the soft and norms chains and the rights chain
-        alike, since `choiceCore D` is over the bits alone. None as on the superposed route (`_dead_readings`)."""
-        if "_dead" not in self.__dict__:
-            self._dead = _dead_readings(self, self.choices)
-        return self._dead
+        """Lean's dead readings (1.9): every candidate no compatible choice takes and no narrowing drops, each with
+        its certificate; None when one has none or the choices are too many (an incomplete list is never reported)."""
+        return self._premises_answer()["dead_readings"]
+
+    def entailment(self, conclusion_ast, premises=(), assumed=None):
+        """ALL, SOME, NONE or UNKNOWN across the compatible choices taking `assumed` (4.6), Lean's. A first request
+        names the choices and their conflict rows; a certificate or a countermodel is generated for each choice past
+        the gate (14.8), and the second request folds them."""
+        self._conflict_answer()
+        fields = {"premises": list(premises), "conclusion": conclusion_ast}
+        if assumed is not None:
+            fields["assumed"] = [list(x) for x in assumed]
+        row = self._verdicts("query", **fields)
+        result = row["result"]
+        if "conflict_status" not in result and "budget" not in result:
+            query = {}
+            for entry in row["per_choice"]:
+                choice = self._of(entry["choice"])
+                document = self._choice(choice)
+                found = document.certificate_case(conclusion_ast, premises)
+                if found is not None:
+                    query[self._key(choice)] = {"certificate": found}
+                    continue
+                found = document.model_case(conclusion_ast, premises)
+                if found is not None:
+                    query[self._key(choice)] = {"countermodel": found}
+            if query:
+                row = self._verdicts("query", query=query, **fields)
+        self._answers[("query", _request_key(conclusion_ast, premises, assumed))] = row
+        return row["result"]
+
+    def query_answer(self, conclusion_ast, assumed=None, premises=()):
+        """Lean's whole answer to the `entailment` request for this conclusion (its English plan included), asked
+        when this route has not asked it yet."""
+        key = ("query", _request_key(conclusion_ast, premises, assumed))
+        if key not in self._answers:
+            self.entailment(conclusion_ast, premises, assumed)
+        return self._answers[key]
+
+    def conflict_answer(self):
+        return self._conflict_answer()
+
+    def premises_answer(self):
+        return self._premises_answer()
 
     @property
     def base(self):
         """`_core_environment` reads the frame's identity fields from a base environment."""
         return self.source.senv.author_environment()
-
-    def entailment(self, conclusion_ast, premises=(), assumed=None):
-        """ALL, SOME, NONE or UNKNOWN combined over the compatible choices (4.6); with `assumed`, over the choices
-        that take the named candidates, and every result keeps `assumed` (review A of compose-s2 looprecheck1): ALL
-        under `A` is the claim of a certificate under `A` on the superposed route, never one over every reading."""
-        A = [tuple(x) for x in (assumed or ())]
-        named = {"assumed": [list(x) for x in A]} if assumed is not None else {}
-        if self.choices is None:
-            return {"verdict": "UNKNOWN", **self.over_budget(), **named}
-        chosen = [c for c in self.choices if all(c.get(s) == i for s, i in A)]
-        if not chosen:
-            # Review A1's class: every verdict under readings no compatible choice takes would be vacuous.
-            raise VEError(self.untaken_text(A))
-        # Review B of compose-s2 looprecheck2: an entailment is certified only under readings whose conflict status
-        # is CONFLICT-FREE (14.8), as on the superposed route; a choice where two rules collide proves everything.
-        statuses = [(self.choice_json(c), self._choice(c).conflict()["verdict"]) for c in chosen]
-        blocked = [(c, s) for c, s in statuses if s != "CONFLICT-FREE"]
-        if blocked:
-            status = "CONFLICT" if any(s == "CONFLICT" for _, s in blocked) else "UNKNOWN"
-            return {"verdict": "UNKNOWN", "route": "enumerated", "status": f"UNKNOWN (conflict status: {status})",
-                    "conflict_status": status, "choice": next(c for c, s in blocked if s == status), **named}
-        rows = [(self.choice_json(c), self._choice(c).entailment(conclusion_ast, premises)) for c in chosen]
-        proofs = [{"choice": c, **r} for c, r in rows if r["outcome"] == "proof"]
-        counters = [{"choice": c, **r} for c, r in rows if r["outcome"] == "countermodel"]
-        unknown = [c for c, r in rows if r["outcome"] == "unknown"]
-        # Review A of compose-s2 looprecheck2: ALL and NONE are claims over the compatible choices, so they keep the
-        # couplings and narrowings that excluded the others.
-        restrictions = self.restrictions(A)
-        if len(proofs) == len(rows):
-            conditional = list(dict.fromkeys([label for p in proofs for label in p["conditional_on"]] + restrictions))
-            return {"verdict": "ALL", "route": "enumerated", "evidence": "certificates", "proofs": proofs,
-                    "conditional_on": conditional, "restrictions": restrictions,
-                    "reading_premises_used": restrictions, **named}
-        if len(counters) == len(rows):
-            return {"verdict": "NONE", "route": "enumerated", "countermodels": counters,
-                    "restrictions": restrictions, **named}
-        if proofs and counters:
-            return {"verdict": "SOME", "route": "enumerated", "proof": proofs[0], "countermodel": counters[0],
-                    **named}
-        return {"verdict": "UNKNOWN", "route": "enumerated", "choice": unknown[0], **named}
 
     def report_fields(self):
         conflict = self.conflict(())
@@ -874,9 +916,63 @@ class Enumerated(_Route):
                 "dead_readings": None if dead is None else [d["finding"] for d in dead]}
 
 
+def _request_key(conclusion_ast, premises, assumed):
+    import json
+    return json.dumps([conclusion_ast, list(premises), None if assumed is None else [list(x) for x in assumed]],
+                      sort_keys=True)
+
+
+def _check_answer(row, question):
+    """The answer's shape as `Readings.Run.verdictsAnswer` builds it, and every piece of evidence Python sent
+    accepted: a refused piece (a witness, certificate or model Python's own check accepted, or a dead reading's
+    certificate) is `CheckerUnavailable`. A conflict package that does not certify CONFLICT-FREE is not refused: the
+    witness search follows (4.3)."""
+    try:
+        if row["route"] != "enumerated" or row["question"] != question or type(row["per_choice"]) is not list or \
+                type(row["english"]) is not list or type(row["result"]) is not dict:
+            raise ValueError
+        for entry in row["per_choice"]:
+            if type(entry.get("evidence")) is not dict or type(entry.get("errors")) is not dict:
+                raise ValueError
+    except (KeyError, TypeError, ValueError) as exc:
+        raise CheckerUnavailable("the Lean readings route returned an invalid answer") from exc
+    for entry in row["per_choice"]:
+        for piece, error in entry["errors"].items():
+            raise CheckerUnavailable(f"ReadingsConformance: Lean refused the {piece} Python built on a reading's "
+                                     f"document: {error}")
+        for piece, accepted in entry["evidence"].items():
+            if piece != "conflict" and accepted is not True:
+                raise CheckerUnavailable(f"ReadingsConformance: Lean does not confirm the {piece} Python's "
+                                         "generators found on a reading's document")
+    for dead in row.get("dead") or []:
+        if dead.get("accepted") is not True:
+            raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the dead reading Python's prover "
+                                     "certified")
+
+
+def _dead_certificates(route, untaken):
+    """Certificates of `¬χ` from `choiceCore D` for the candidates Lean names untaken (1.9; Python's prover,
+    untrusted), or None as soon as one is not found within the budget (Lean reports no incomplete list)."""
+    from .ast import Not, formula_from_data
+    from .entailment import prove_entailment
+    from .readings_sup import choice_atom, choice_core
+    env = Superposed._core_environment(route)
+    core = [formula_from_data(env, ast, _generated=True)
+            for _, ast in choice_core(route.sets, route.couplings, route.narrowings)]
+    out = []
+    for s, i in untaken:
+        atom = formula_from_data(env, choice_atom(route.sets, s, i), _generated=True)
+        proof = prove_entailment(env, core, Not(atom), max_steps=BUDGET["max_steps"])
+        if proof.status != "Found":
+            return None
+        out.append({"set": s, "index": i, "certificate": proof.certificate})
+    return out
+
+
 class _ChoiceDocument:
     """`choiceDoc D c` as an ordinary document of the lower route (4.6): its own rules and assertions under their
-    own names, checked by the lower route's logic; its conflict status through `readings-choice`."""
+    own names. Python's prover and model search generate evidence on it (untrusted); Lean checks each piece through
+    the lower route on the document it regenerates for the choice (`readings-verdicts`)."""
 
     def __init__(self, route, choice):
         from .readings_s1 import Content
@@ -929,32 +1025,18 @@ class _ChoiceDocument:
         from .ast import Bottom, formula_from_data
         return Bottom() if conclusion_ast is None else formula_from_data(self.env, conclusion_ast, _generated=True)
 
-    def certified(self, conclusion_ast, gamma=(), max_steps=None):
-        """A certificate of `conclusion_ast` (⊥ when None) from the choice's document and Γ: Python's prover finds
-        it (untrusted), and the lower route's own certificate kind accepts it on the document Lean regenerates for
-        the choice, its assertions included (`readings-choice`). The Lean answer, or None within the budget.
-
-        Only when the choice's conflict status is CONFLICT-FREE (14.8; review B of compose-s2 looprecheck2): where
-        two rules collide the layer premises prove every conclusion, so a certificate there proves nothing about the
-        reading. Lean accepts the certificate only together with the conflict packages it checks itself."""
-        from .ast import _to_data
+    def certificate_case(self, conclusion_ast, gamma=(), max_steps=None):
+        """A certificate of `conclusion_ast` (⊥ when None) from the choice's document and Γ, found by Python's prover
+        and checked by its own replay: the lower route's certificate kind Lean runs on the choice's regenerated
+        document with its assertions and conflict packages, or None within the budget."""
         from .entailment import check_entailment_certificate, prove_entailment
-        if self.conflict()["verdict"] != "CONFLICT-FREE":
-            return None
         steps = BUDGET["max_steps"] if max_steps is None else max_steps
         premises, phi = self._all(gamma), self._phi(conclusion_ast)
         proof = prove_entailment(self.env, premises, phi, max_steps=steps)
         if proof.status != "Found" or not check_entailment_certificate(self.env, premises, phi, proof.certificate,
                                                                        max_steps=steps).valid:
             return None
-        row = self._row({"kind": f"{self.chain}-certificate", "premises": list(gamma), "conclusion": _to_data(phi),
-                         "certificate": self._bound(proof.certificate, premises, phi),
-                         "conflict": self._conflict_packages})
-        answer = row["inner"]
-        if answer.get("valid") is not True or row.get("accepted") is not True:
-            raise CheckerUnavailable("ReadingsConformance: the lower route does not accept the certificate Python's "
-                                     "prover found on a reading's document")
-        return answer
+        return {"kind": f"{self.chain}-certificate", "certificate": self._bound(proof.certificate, premises, phi)}
 
     def _bound(self, certificate, premises, phi):
         """The certificate as the lower route binds it. The rights route binds `E″′` (the source environment's
@@ -978,10 +1060,10 @@ class _ChoiceDocument:
         return {**certificate, "environment_id": environment_id,
                 "premise_meaning_ids": [meaning(f) for f in listed], "conclusion_meaning_id": meaning(phi)}
 
-    def model(self, conclusion_ast, gamma=()):
-        """A model of the choice's document and Γ with `conclusion_ast` false (any model when None): Python's search
-        finds it (untrusted), and Lean's `choice-model` checks its base on the chain's document regenerated for the
-        choice, its assertions included. The complete model, or None within the budget."""
+    def model_case(self, conclusion_ast, gamma=()):
+        """A model of the choice's document and Γ with `conclusion_ast` false (any model when None), found by Python's
+        search and checked by its own evaluator: `choice-model` with the model's base (the chain decoder's form) and
+        the complete model shown, or None within the budget."""
         from .search import check_countermodel, find_countermodel
         # The Background's soft and limitation premises are searched as premises too, so that the search
         # interprets the predicates only they use (it fixes unused predicates empty).
@@ -992,12 +1074,7 @@ class _ChoiceDocument:
                                                              max_evaluations=BUDGET["max_evaluations"]).valid:
             return None
         data = found.model.to_dict()
-        answer = self._inner({"kind": "choice-model", "premises": list(gamma), "conclusion": conclusion_ast,
-                              "model": self._base_model(data)})
-        if answer.get("valid") is not True or answer.get("conclusion_value") is not False:
-            raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the model Python's search found on "
-                                     f"a reading's document ({answer.get('first_failing')})")
-        return data
+        return {"kind": "choice-model", "model": self._base_model(data), "shown": data}
 
     def _base_model(self, data):
         """The model's base, the chain decoder's form: the regulated (layer) tables are the outcome substitution's."""
@@ -1005,61 +1082,35 @@ class _ChoiceDocument:
         keep = document.base_environment().predicates
         return {**data, "relations": {name: rows for name, rows in data["relations"].items() if name in keep}}
 
-    def premises(self):
-        """`INCONSISTENT` (a certificate of ⊥), `model` (with the model, for the wording R5) or `UNKNOWN`, each
-        checked by Lean as `certified` and `model` say; the quick proof first, as `premise_status` orders them."""
-        if self.certified(None, max_steps=min(BUDGET["max_steps"], 128)) is not None:
-            return {"status": "INCONSISTENT"}
-        found = self.model(None)
-        if found is not None:
-            return {"status": "model", "model": found}
-        if BUDGET["max_steps"] > 128 and self.certified(None) is not None:
-            return {"status": "INCONSISTENT"}
-        return {"status": "UNKNOWN", "budget": dict(BUDGET)}
-
-    def conflict(self):
-        """The lower route's conflict check on the choice's document, with Python's packages, run by Lean's
-        `readings-choice` on the document Lean builds for the choice (computed once; `certified` sends the same
-        packages with every certificate)."""
-        if "_conflict" not in self.__dict__:
-            self._conflict = self._check_conflict()
-        return self._conflict
-
-    def _check_conflict(self):
+    def conflict_case(self):
+        """The lower route's conflict kind with Python's packages for the choice's document (a certificate of each
+        target's closed negation, bound to the choice's document hash)."""
         from .ast import Not, _to_data, formula_from_data
         from .entailment import prove_entailment
         from .norms import _bind, _prove_targets
         if self.chain == "norms":
             packages = _prove_targets(self.norms, self.norms.base_environment(), BUDGET["max_steps"])
-            inner = {"kind": "norms-conflict", "packages": packages if isinstance(packages, dict) else {}}
-        else:
-            base, premises = self._conflict_base()
-            packages = {}
-            document_hash = self.side.document_hash()
-            for target, sorts, formula in self.soft.elaborated.conflict_targets():
-                closed = formula_from_data(base, _to_data(_bind(Not(formula), sorts)), _generated=True)
-                proof = prove_entailment(base, premises, closed, max_steps=BUDGET["max_steps"])
-                if proof.status == "Found":
-                    packages[target] = {"environment_id": self.lower_env.environment_id,
-                                        "document_hash": document_hash, "target": target,
-                                        "certificate": proof.certificate}
-            inner = ({"kind": "soft-conflict", "packages": packages, "pairs": {}} if self.chain == "soft" else
-                     {"kind": "rights-conflict", "packages": packages})
-        self._conflict_packages = {key: value for key, value in inner.items() if key != "kind"}
-        answer = self._inner(inner)
-        if answer["verdict"] == "CONFLICT-FREE":
-            return {"verdict": "CONFLICT-FREE", "conditional_on": answer.get("conditional_on", []),
-                    "status_text": answer.get("status_text")}
+            return {"kind": "norms-conflict", "packages": packages if isinstance(packages, dict) else {}}
+        base, premises = self._conflict_base()
+        packages = {}
+        document_hash = self.side.document_hash()
+        for target, sorts, formula in self.soft.elaborated.conflict_targets():
+            closed = formula_from_data(base, _to_data(_bind(Not(formula), sorts)), _generated=True)
+            proof = prove_entailment(base, premises, closed, max_steps=BUDGET["max_steps"])
+            if proof.status == "Found":
+                packages[target] = {"environment_id": self.lower_env.environment_id,
+                                    "document_hash": document_hash, "target": target,
+                                    "certificate": proof.certificate}
+        return ({"kind": "soft-conflict", "packages": packages, "pairs": {}} if self.chain == "soft" else
+                {"kind": "rights-conflict", "packages": packages})
+
+    def witness_case(self):
+        """The lower route's conflict kind with a witness: a finite base model where a conflict target holds."""
         witness = self._witness()
-        if witness is not None:
-            answer = self._inner({**{k: v for k, v in inner.items() if k not in ("packages", "pairs")},
-                                  "witness": witness})
-            if answer["verdict"] != "CONFLICT":
-                raise CheckerUnavailable("ReadingsConformance: the lower route does not confirm the conflict "
-                                         "witness Python's search found on a reading's document")
-            return {"verdict": "CONFLICT", "target": witness["target"], "tuple": witness["tuple"],
-                    "model": witness["model"], "status_text": answer.get("status_text")}
-        return {"verdict": "UNKNOWN", "status_text": answer.get("status_text")}
+        if witness is None:
+            return None
+        kind = {"norms": "norms-conflict", "soft": "soft-conflict", "rights": "rights-conflict"}[self.chain]
+        return {"kind": kind, "witness": witness}
 
     def _conflict_base(self):
         """`E′_base` and `Background_base′` (with Lim_D on the rights chain) as the lower route binds a conflict
@@ -1079,17 +1130,6 @@ class _ChoiceDocument:
         if self.chain == "rights":
             formulas += [f for _, f in self.rights.limitation_premises]
         return base, [formula_from_data(base, _to_data(f), _generated=True) for f in formulas]
-
-    def _inner(self, inner):
-        return self._row(inner)["inner"]
-
-    def _row(self, inner):
-        row = self.route.lean("readings-choice", choice=self.route.choice_json(self.choice), inner=inner)
-        answer = row["inner"]
-        if answer.get("status") != "ok":
-            raise CheckerUnavailable(f"ReadingsConformance: the lower route refused a reading's document: "
-                                     f"{answer.get('error')}")
-        return row
 
     def _witness(self):
         """A finite base model where some conflict target holds, with its tuple (Python's search, untrusted)."""
@@ -1116,21 +1156,6 @@ class _ChoiceDocument:
             if values is not None:
                 return {"target": target, "model": model.to_dict(), "tuple": list(values)}
         return None
-
-    def entailment(self, conclusion_ast, gamma=()):
-        """A certificate or a countermodel of the choice's document, each replayed by Lean on the document it
-        regenerates for the choice (`certified`, `model`), or unknown within the budget; `conflict` with the status
-        when the choice's conflict status is not CONFLICT-FREE (14.8), since no entailment is certified there."""
-        status = self.conflict()["verdict"]
-        if status != "CONFLICT-FREE":
-            return {"outcome": "conflict", "conflict_status": status}
-        answer = self.certified(conclusion_ast, gamma)
-        if answer is not None:
-            return {"outcome": "proof", "conditional_on": answer.get("conditional_on", [])}
-        found = self.model(conclusion_ast, gamma)
-        if found is not None:
-            return {"outcome": "countermodel", "model": found}
-        return {"outcome": "unknown"}
 
 
 class _FilledView:
@@ -1208,10 +1233,8 @@ class _FilledChoiceDocument:
 
     # -- the conflict status (`norm-defaults-conflict`: packages, else a filled witness)
 
-    def conflict(self):
-        if "_conflict" not in self.__dict__:
-            self._conflict = self._check_conflict()
-        return self._conflict
+    def conflict_case(self):
+        return {"kind": "norm-defaults-conflict", "packages": self._packages()}
 
     def _packages(self):
         """A certificate of each target's closed negation from `Fill_T` over `E‴_base` (norm-defaults 3.1: on the norms
@@ -1241,22 +1264,15 @@ class _FilledChoiceDocument:
                                 "target": target, "certificate": certificate}
         return packages
 
-    def _check_conflict(self):
-        self._conflict_packages = {"packages": self._packages()}
-        answer = self._inner({"kind": "norm-defaults-conflict", **self._conflict_packages})
-        if answer["verdict"] == "CONFLICT-FREE":
-            return {"verdict": "CONFLICT-FREE", "conditional_on": [], "status_text": answer.get("status_text")}
+    def witness_case(self):
+        """A filled witness: the base model and its filling apart, the complete model shown."""
         witness = self._witness()
-        if witness is not None:
-            model, filling = self._split(witness["model"])
-            answer = self._inner({"kind": "norm-defaults-conflict", "witness": {
-                "target": witness["target"], "model": model, "filling": filling, "tuple": witness["tuple"]}})
-            if answer["verdict"] != "CONFLICT":
-                raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the conflict witness Python's "
-                                         "search found on a reading's filled document")
-            return {"verdict": "CONFLICT", "target": witness["target"], "tuple": witness["tuple"],
-                    "model": witness["model"], "status_text": answer.get("status_text")}
-        return {"verdict": "UNKNOWN", "status_text": answer.get("status_text")}
+        if witness is None:
+            return None
+        model, filling = self._split(witness["model"])
+        return {"kind": "norm-defaults-conflict", "witness": {"target": witness["target"], "model": model,
+                                                              "filling": filling, "tuple": witness["tuple"]},
+                "shown": witness["model"]}
 
     def _base_fill(self):
         """`Fill_T` over `E‴_base`: it reads base predicates and the filled tables only."""
@@ -1290,31 +1306,22 @@ class _FilledChoiceDocument:
 
     # -- certificates and models (`norm-defaults-certificate`, `choice-model`)
 
-    def certified(self, conclusion_ast, gamma=(), max_steps=None):
-        """A certificate of `conclusion_ast` (⊥ when None) from the choice's filled document and Γ, accepted by
-        `norm-defaults-certificate` with the choice's conflict packages; only when the choice is CONFLICT-FREE
-        (S2a 14.8). The Lean answer, or None within the budget."""
-        from .ast import _to_data
+    def certificate_case(self, conclusion_ast, gamma=(), max_steps=None):
+        """A certificate of `conclusion_ast` (⊥ when None) from the choice's filled document and Γ, bound to the source
+        environment as Lean binds a norm-defaults certificate; Lean accepts it only with the choice's conflict
+        packages (S2a 14.8). None within the budget."""
         from .norm_defaults_route import filled_certificate
-        if self.conflict()["verdict"] != "CONFLICT-FREE":
-            return None
         steps = BUDGET["max_steps"] if max_steps is None else max_steps
         own, phi = self._gamma(gamma), self._phi(conclusion_ast)
-        # The prover replays the trace it generated before it returns it (`prove_entailment`); the certificate is
-        # bound to the source environment, as Lean binds a norm-defaults certificate.
+        # The prover replays the trace it generated before it returns it (`prove_entailment`).
         certificate = filled_certificate(self.view, own, phi, max_steps=steps)
         if certificate is None:
             return None
-        row = self._row({"kind": "norm-defaults-certificate", "premises": list(gamma), "conclusion": _to_data(phi),
-                         "certificate": certificate, "conflict": self._conflict_packages})
-        if row["inner"].get("valid") is not True or row.get("accepted") is not True:
-            raise CheckerUnavailable("ReadingsConformance: Lean does not accept the certificate Python's prover found "
-                                     "on a reading's filled document")
-        return row["inner"]
+        return {"kind": "norm-defaults-certificate", "certificate": certificate}
 
-    def model(self, conclusion_ast, gamma=()):
-        """A model of the choice's filled document and Γ with `conclusion_ast` false (any model when None), checked
-        by `choice-model` as a base model with a separate filling. The model of E‴, or None within the budget."""
+    def model_case(self, conclusion_ast, gamma=()):
+        """A model of the choice's filled document and Γ with `conclusion_ast` false (any model when None): its base
+        and its filling apart (`choice-model`), the complete model shown. None within the budget."""
         from .search import check_countermodel, find_countermodel
         premises, phi = self.fill + self.layers + self._gamma(gamma), self._phi(conclusion_ast)
         found = find_countermodel(self.env, premises, phi, max_domain_size=BUDGET["max_domain_size"],
@@ -1324,15 +1331,7 @@ class _FilledChoiceDocument:
             return None
         data = found.model.to_dict()
         model, filling = self._split(data)
-        answer = self._inner({"kind": "choice-model", "premises": list(gamma), "conclusion": conclusion_ast,
-                              "model": model, "filling": filling})
-        if answer.get("valid") is not True or answer.get("conclusion_value") is not False:
-            raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the model Python's search found on "
-                                     f"a reading's filled document ({answer.get('first_failing')})")
-        return data
-
-    premises = _ChoiceDocument.premises
-    entailment = _ChoiceDocument.entailment
+        return {"kind": "choice-model", "model": model, "filling": filling, "shown": data}
 
 
 __all__ = ["BUDGET", "Enumerated", "PENDING", "Pending", "Superposed", "context"]

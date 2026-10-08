@@ -86,6 +86,16 @@
       {
         "then": {
           "anyOf": [
+            {"$ref": "common.json#/$defs/case_error"},
+            {"$ref": "common.json#/$defs/route_path_error"},
+            {"$ref": "#/$defs/verdicts"}
+          ]
+        },
+        "when": {"$ref": "#/$defs/kind/readings-verdicts"}
+      },
+      {
+        "then": {
+          "anyOf": [
             {"$ref": "rights.json#/row"},
             {"$ref": "soft-norms.json#/row"},
             {"$ref": "norm-defaults.json#/row"},
@@ -656,7 +666,8 @@
       "readings-elaborate": {"properties": {"kind": {"const": "readings-elaborate"}}, "required": ["kind"], "type": "object"},
       "readings-model": {"properties": {"kind": {"const": "readings-model"}}, "required": ["kind"], "type": "object"},
       "readings-separate": {"properties": {"kind": {"const": "readings-separate"}}, "required": ["kind"], "type": "object"},
-      "readings-validate": {"properties": {"kind": {"const": "readings-validate"}}, "required": ["kind"], "type": "object"}
+      "readings-validate": {"properties": {"kind": {"const": "readings-validate"}}, "required": ["kind"], "type": "object"},
+      "readings-verdicts": {"properties": {"kind": {"const": "readings-verdicts"}}, "required": ["kind"], "type": "object"}
     },
     "model": {
       "$comment": "Readings.Run.runModel: the model's check, the conclusion's value, the first failing premise and the choice it encodes.",
@@ -758,6 +769,41 @@
           "type": "object"
         }
       ]
+    },
+    "verdicts": {
+      "$comment": "Readings.Run.runVerdicts (readings-defaults RD-3): on the enumerated route, the question's answer folded in Lean over the compatible choices taking assumed: the result in the form the report gives it, one entry per choice with its rows and what Lean made of each piece of evidence, the labels E3 cites, the dead readings and the untaken candidates (premises), and the English plan. Each value is Lean's; the client reads it as Readings.Run.verdictsValues builds it.",
+      "additionalProperties": false,
+      "properties": {
+        "dead": {"$comment": "what Lean made of each dead certificate"},
+        "dead_readings": {"$comment": "the dead readings, or null"},
+        "english": {"$comment": "Readings.englishPlan: the lines of the answer"},
+        "finding_sets": {"$comment": "the sets of the route's finding (E29)"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "labels": {"$comment": "the labels E3 cites"},
+        "per_choice": {"$comment": "one entry per compatible choice taking assumed"},
+        "question": {"type": "string"},
+        "restrictions": {"$comment": "restrictionsFor D A"},
+        "result": {"$comment": "the question's result"},
+        "route": {"const": "enumerated"},
+        "status": {"const": "ok"},
+        "untaken": {"$comment": "the candidates no compatible choice takes"}
+      },
+      "required": [
+        "id",
+        "status",
+        "route",
+        "question",
+        "finding_sets",
+        "restrictions",
+        "result",
+        "per_choice",
+        "labels",
+        "dead_readings",
+        "untaken",
+        "dead",
+        "english"
+      ],
+      "type": "object"
     }
   }
 }
