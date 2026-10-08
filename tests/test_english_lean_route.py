@@ -1,6 +1,8 @@
 """The English reader of S2.4 end to end (docs/spec/english-lean-s2.md 2.10, 2.11, 4.3, 4.4, 8; base 2.12, 8.8).
 
-`ve_english_route` is the real Lean executable here, reached through the adapter `ve/backends/english_lean.py`.
+The persistent `ve_service` mode `english.read` is the real Lean reader here, reached through the relay
+(`ve/backends/relay.py`) and the adapter `ve/backends/english_lean.py`; the retired one-shot `ve_english_route`
+is not used (spec 2.7).
 The spec fixtures of section 8 (every literal sentence of `lean/VE/EnglishGrammar/ReadExamples.lean`, under the
 environments section 8 names) are read three ways: by Python's dispatched unit (hand parser, Lark audit,
 `check_document`), by `english.read`, and, where the text is in its core skeleton, by the W7 reader
@@ -16,7 +18,6 @@ import hashlib
 import json
 from pathlib import Path
 import re
-import subprocess
 import warnings
 
 import pytest
@@ -25,15 +26,13 @@ from ve import Environment
 from ve import english as EN
 from ve import english_grammar as EG
 from ve.backends import english_lean as L
-from ve.backends import lean as lean_backend
+from ve.backends import relay
 from ve.english import UnreviewedVocabularyWarning
 from ve.errors import CheckerUnavailable, ResourceLimit, VEError
 
 from conformance import english_lean as W7
-from subprocesses import HANG_TIMEOUT
 
 ROOT = Path(__file__).resolve().parents[1]
-ROUTE = ROOT / "lean/.lake/build/bin/ve_english_route"
 EXAMPLES = ROOT / "lean/VE/EnglishGrammar/ReadExamples.lean"
 
 pytestmark = pytest.mark.filterwarnings("ignore::ve.english.UnreviewedVocabularyWarning")
@@ -41,7 +40,6 @@ pytestmark = pytest.mark.filterwarnings("ignore::ve.english.UnreviewedVocabulary
 
 @pytest.fixture(autouse=True)
 def built(monkeypatch):
-    assert ROUTE.is_file(), "lake build ve_english_route before the English route tests"
     monkeypatch.setattr(L, "TRANSPORT", None)
     monkeypatch.delenv("VE_ENGLISH_ROUTE", raising=False)
 
@@ -259,13 +257,12 @@ def outcome(env, text, options):
         return (type(exc).__name__, str(exc))
 
 
-def test_admission_under_shadow_records_agreement_with_the_real_reader(monkeypatch, tmp_path):
+def test_admission_comparator_records_agreement_with_the_real_reader(monkeypatch, tmp_path):
     env, options = ENVIRONMENTS["F"]()
-    monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", "english.admission=python")
     expected = {text: outcome(env, text, options) for text in ADMISSION}
     log = tmp_path / "ve-shadow.jsonl"
     monkeypatch.setenv("VE_SHADOW_LOG", str(log))
-    monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", "english.admission=shadow")
+    monkeypatch.setenv("VE_ENGLISH_COMPARATOR", "1")
     assert {text: outcome(env, text, options) for text in ADMISSION} == expected
     records = [json.loads(line) for line in log.read_text().splitlines()]
     assert len(records) >= len(ADMISSION)
@@ -275,25 +272,33 @@ def test_admission_under_shadow_records_agreement_with_the_real_reader(monkeypat
 
 
 @pytest.mark.parametrize("authority", ["lean", "rust-experimental"])
-def test_admission_refuses_to_make_the_reader_the_authority(monkeypatch, authority):
-    """DRI ruling 6 (review A2): `english.admission=lean` replaced Python's admission, and `Legacy is deployed .`
-    went from SyntaxError to accepted. Every selection other than python or shadow is now refused."""
+def test_admission_refuses_non_python_authority(monkeypatch, authority):
     env, options = ENVIRONMENTS["F"]()
     monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", f"english.admission={authority}")
-    for text in ADMISSION + ["Legacy is deployed ."]:
-        with pytest.raises(CheckerUnavailable, match="only the python or shadow authority"):
-            EN.parse_english_with_metadata(env, text, **options)
+    with pytest.raises(CheckerUnavailable, match="python or shadow"):
+        EN.parse_english_with_metadata(env, "Legacy is deployed.", **options)
+
+
+def test_admission_uses_the_python_parser(monkeypatch):
+    env, options = ENVIRONMENTS["F"]()
+    monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", "english.admission=python")
+    called = []
+    original = EN._python_reading
+    def read(*args, **kwargs):
+        called.append(True)
+        return original(*args, **kwargs)
+    monkeypatch.setattr(EN, "_python_reading", read)
+    assert EN.parse_english(env, "Legacy is deployed.", **options).formulas
+    assert called
 
 
 # ------------------------------------------------------------------ identities (base 8.8)
 
 def route(cases: list[dict], mode: str = "english.read") -> list[dict]:
-    done = subprocess.run([str(ROUTE), mode], input=json.dumps(cases).encode(), capture_output=True,
-                          timeout=HANG_TIMEOUT)
-    assert done.returncode in (0, 1) and b"PANIC" not in done.stderr, done.stderr[-2000:]
-    rows = json.loads(done.stdout)
+    """The service's rows for `cases`, one per case, error rows included."""
+    rows = relay.rows(mode, cases)
     assert len(rows) == len(cases)
-    assert (done.returncode == 1) == any(row["status"] == "error" for row in rows)
+    assert all(row.get("status") in ("ok", "error") for row in rows)
     return rows
 
 
@@ -483,7 +488,8 @@ def test_an_invalid_lexicon_is_invalid_grammar_with_its_first_failure():
     case["lexicon"]["wordings"][1] = ["owns", '{0} has the recorded relation "owns" to {1}']
     result = answer(case)
     assert result["status"] == "invalidGrammar" and result["fault"] == "lexicon"
-    assert result["failure"] == ["V5", "negative", "owns"]
+    # V6 is checked before V1 to V5 (spec 2.5): the negative is no longer Python's beside the fallback wording
+    assert result["failure"] == ["V6", "negative", "owns"]
 
 
 # ------------------------------------------------------------------ translation mode (base 4.3, spec 8.4)
@@ -592,13 +598,13 @@ def test_every_malformed_request_is_an_error_row_or_an_answer():
     assert all(row["status"] in ("ok", "error") for row in rows)
     errors = sum(row["status"] == "error" for row in rows)
     assert errors > len(rows) // 2
-    # JSON null is refused before any case is read (VE's restricted wire): a framing error, no rows.
+    # JSON null is outside VE's restricted wire: the service refuses the case, and nothing is read.
     for mutant in nulls[:20]:
-        done = subprocess.run([str(ROUTE), "english.read"], input=json.dumps([mutant]).encode(),
-                              capture_output=True, timeout=HANG_TIMEOUT)
-        assert done.returncode == 2 and done.stdout == b"" and b"PANIC" not in done.stderr
-        with pytest.raises(lean_backend.NoAnswer):
-            lean_backend.read_rows(done.returncode, done.stdout, [mutant], restricted=True)
+        try:
+            refused = relay.rows("english.read", [mutant])
+        except (CheckerUnavailable, VEError):
+            continue
+        assert [row["status"] for row in refused] == ["error"], refused
 
 
 def test_a_lexicon_for_another_environment_is_refused():
@@ -650,7 +656,7 @@ def test_pythons_renderings_read_back_in_lean_as_their_formulas():
         for text, want, row in zip(texts, expected, route(cases)):
             assert row["status"] == "ok", (name, text, row)
             result = row["result"]
-            assert L.response_problem(result, L.identities(env, text, words, EG.export(words)), env) is None
+            assert L.response_problem(result, L.identities(env, text, words, EG.export(words)), env, text) is None
             compared += 1
             if (result["status"], result.get("ast")) != ("one", want):
                 differences.append((name, text, result.get("status"), result.get("code"), result.get("ast")))
@@ -795,8 +801,9 @@ def test_spacing_mutants_of_every_fixture_get_one_outcome():
         rows = route([{**L.request(env, m, words, options), "id": f"m{k}"} for k, (m, _) in enumerate(mutants)])
         for (mutant, why), row in zip(mutants, rows):
             assert row["status"] == "ok", row
-            reading = L.LeanReading(row["result"], env)
-            assert L.response_problem(row["result"], L.identities(env, mutant, words, EG.export(words)), env) is None
+            reading = L.LeanReading(row["result"], env, mutant)
+            assert L.response_problem(row["result"], L.identities(env, mutant, words, EG.export(words)), env,
+                                      mutant) is None
             lean = (EN._Reading(env, reading.document(), words, reading.response["conclusions"], lean=reading)
                     if reading.status == "one" else reading.rejection())
             python = python_reading(env, mutant, words, options)

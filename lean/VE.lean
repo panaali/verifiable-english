@@ -10,6 +10,7 @@ import VE.EnglishGrammar.LexiconFixtures
 import VE.EnglishGrammar.Fixed.Version
 import VE.EnglishGrammar.ReadExamples
 import VE.EnglishGrammar.ProfileExamples
+import VE.EnglishGrammar.E2Examples
 import VE.Senses.Examples
 import VE.Senses.DocumentExamples
 import VE.Compose.Slot

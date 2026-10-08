@@ -1,12 +1,12 @@
-import VE.Senses.Document
+import VE.Senses.Request
 import VE.Senses.Decode
 import VE.EnglishGrammar.Run
 
 /-! A one-shot admission boundary for the senses reader. The pack text reaches
 `decodePackText` unchanged; every reading and projection decision is made by
-`readDocument` (`readWithSenses` on a source with no defaults, `readDocument_source`). A
-request carries a `source`, or a document's English `fences` in unit order (RD-8), and
-optional front-matter `defaults`. This runner is deliberately separate from the frozen S2
+`readDocument` (`readWithSenses` on a source with no defaults, `readDocument_source`), after E2's check
+of the submitted lexicon (`documentRequest`). A request carries a `source`, or a document's English
+`fences` in unit order (RD-8), and optional front-matter `defaults`. This runner is deliberately separate from the frozen S2
 grammar implementation. -/
 
 namespace VE.Senses.Run
@@ -69,11 +69,14 @@ def faultFields : SenseFault → List (String × Json)
 open VE.EnglishGrammar.Run in
 /-- The fields of S2's outcomes as S2's authoring answer writes them (english-lean-s2.md 4.3): the code
 with S2's text, the sentence, the two witness trees of an ambiguity and the lexicon failure; the sentence
-index counts the preamble. `tests/test_senses_route.py` compares them with `ve_english_route`'s. -/
-def s2Fields (c : VE.EnglishGrammar.Run.Case) : SensesOutcome → Except String (List (String × Json))
-  | .lexical r => pure (status "rejected" ++ coded r.code (rejectText 0 r))
-  | .invalidGrammar g => pure (invalidFields c g)
-  | .illTyped => pure (status "rejected" ++ coded "IllTyped" illTypedText)
+index counts the preamble. `tests/test_senses_route.py` compares them with `ve_english_route`'s. With no
+`source` (`refusalSource`) a refusal has no span, and a rejection has `rejectText`'s words. -/
+def s2Fields (c : VE.EnglishGrammar.Run.Case) (source : Option String) :
+    SensesOutcome → Except String (List (String × Json))
+  | .lexical r => pure (status "rejected" ++ coded r.code (rejectText 0 r) ++
+      ((source.bind (lexicalSpan · r)).toList.map fun s => ("span", spanJson s)))
+  | .invalidGrammar g => pure (invalidFields "senses.read" c g)
+  | .illTyped => pure (status "rejected" ++ coded "IllTyped" (illTypedText none))
   | .stopped i o tags =>
     let pos := [("sentence", toJson i)]
     match o with
@@ -83,15 +86,17 @@ def s2Fields (c : VE.EnglishGrammar.Run.Case) : SensesOutcome → Except String 
     | .ambiguous t u => pure (status "many" ++ coded "Ambiguous"
         s!"Sentence {i + 1} can be read in more than one way. Two of the ways are shown." ++ pos ++
         [("witnesses", Json.arr #[treeJson tags t, treeJson tags u])])
-    | .rejected r => pure (status "rejected" ++ coded r.code (rejectText i r) ++ pos)
+    | .rejected r => pure (status "rejected" ++ coded r.code
+        ((source.map (rejectionText · i r)).getD (rejectText i r)) ++ pos)
     | .budget => pure (budgetFields i)
   | .ok .. | .fault _ => throw "not an outcome of S2"
 
 /-- The answer to a text of `count` sentences (`documentInput`'s); the units are its last sentences
 (`readBody_good`). A fence request's admitted answer also maps each fence to its unit (`fenceUnits`), and its
-open units carry `text`. -/
-def outcomeJson (c : VE.EnglishGrammar.Run.Case) (count : Nat) (fences : Option (List (Option Nat)))
-    (text : Nat → SenseUnit → String) (out : SensesOutcome) : Except String Json := do
+open units carry `text`. A refusal over a `source` has E2's span and advice (`refusalExtras`). -/
+def outcomeJson (c : VE.EnglishGrammar.Run.Case) (source : Option String) (count : Nat)
+    (fences : Option (List (Option Nat))) (text : Nat → SenseUnit → String) (out : SensesOutcome) :
+    Except String Json := do
   let (status, code) ← out.statusCode
   let common := [("status", .str status)] ++ (code.toList.map fun c => ("code", .str c))
   match out with
@@ -104,9 +109,40 @@ def outcomeJson (c : VE.EnglishGrammar.Run.Case) (count : Nat) (fences : Option 
       (fences.toList.map fun fs => ("fences", Json.arr (fs.map fenceJson).toArray))))
   | .fault f => pure (Json.mkObj (common ++ faultFields f))
   | _ =>
-    let fields ← s2Fields c out
+    let fields ← s2Fields c source out
     unless fields.take 2 == common do throw "S2's status and code differ from the reader's"
-    pure (Json.mkObj fields)
+    pure (Json.mkObj ((source.map (VE.EnglishGrammar.Run.refusalExtras c.E.profiles · fields)).getD fields))
+
+/-- A fence's sentence without the line break that closes a document fence. -/
+def fenceLine (f : String) : String := if f.endsWith "\n" then f.dropRight 1 else f
+
+/-- The text a refusal's span and advice are over, as `ve senses check` reads it: the source, or a fence
+request's fences joined by line breaks (`fenceLine`, RD-8). Front-matter defaults leave none: their lines are
+not the author's text. -/
+def refusalSource (A : Assignment) (t : SenseText) : Option String :=
+  if A.defaults.isEmpty then
+    some (match t with
+      | .source s => s
+      | .fences fs => "\n".intercalate (fs.map fenceLine))
+  else none
+
+/-- A rejection moved `bytes` and `sentences` on: its offset or sentence in a longer text. -/
+def shiftReject (bytes sentences : Nat) : Reject → Reject
+  | .badCharacter o => .badCharacter (bytes + o)
+  | .openQuote o => .openQuote (bytes + o)
+  | .badNumeral o => .badNumeral (bytes + o)
+  | .badSpacing o => .badSpacing (bytes + o)
+  | .emptySentence k => .emptySentence (sentences + k)
+  | r => r
+
+/-- A fence's lexical rejection `r` in `refusalSource`'s text: the first fence that does not lex has it, at
+its offset and sentence in that fence. -/
+def fenceReject (r : Reject) : Nat → Nat → List String → Reject
+  | _, _, [] => r
+  | bytes, j, f :: rest =>
+    match lex f with
+    | .error _ => shiftReject bytes j r
+    | .ok _ => fenceReject r (bytes + (fenceLine f).utf8ByteSize + 1) (j + 1) rest
 
 def decodeDictionary (j : Json) : Except String Dictionary := do
   let packs ← (← j.getObjVal? "packs").getArr?
@@ -164,7 +200,7 @@ def readCase (j : Json) : Except String Json := do
   let A ← if has j "defaults" then decodeDefaults (← j.getObjVal? "defaults") else pure ⟨[]⟩
   let budget ← VE.Senses.natOf (← j.getObjVal? "budget")
   let requestId ← VE.CertificateWire.digest "ve-senses-request-v1\n" j
-  let out ← readDocument D c.E c.L budget A text
+  let out ← documentRequest D c.E c.L budget A text
   let (count, d, fences) := match documentInput D A text, text with
     | .ok (.ok (d, sents)), .fences fs => (sents.length, d, some (fenceUnits D budget d sents fs.length))
     | .ok (.ok (d, sents)), .source _ => (sents.length, d, none)
@@ -177,7 +213,10 @@ def readCase (j : Json) : Except String Json := do
           ("unit", .str unit), ("text", .str message)]
         return VE.Route.Wire.ok id [("result", Json.mkObj
           [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)), ("reading", result)])]
-  let result ← outcomeJson c count fences unitText out
+  let out := match out, text with
+    | .lexical r, .fences fs => if A.defaults.isEmpty then .lexical (fenceReject r 0 0 fs) else out
+    | o, _ => o
+  let result ← outcomeJson c (refusalSource A text) count fences unitText out
   pure (VE.Route.Wire.ok id [("result", Json.mkObj
     [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)), ("reading", result)])])
 

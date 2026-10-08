@@ -1,0 +1,97 @@
+source commit: 0e75882ed30f7b6102cb557c1b05eba70ad9f8f0; lean/ and tests/ clean: True
+
+## existential-universal
+source mutation in lean/VE/Route/NonVacuity.lean: '(path ++ [0]) universal false hits state\n        hits := hs' -> '(path ++ [0]) true false hits state\n        hits := hs'
+build exit: 0; focused pytest exit: 1
+FAILED tests/test_metered_differential.py::test_conformance_corpora_with_their_frozen_envelopes_match_python[countermodels]
+FAILED tests/test_metered_differential.py::test_conformance_corpora_with_their_frozen_envelopes_match_python[evaluation]
+FAILED tests/test_metered_differential.py::test_existential_under_no_universal_has_no_clause_guard
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0+definitions@0-150102]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0+definitions@0-15]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0+nary@0+data@0-15]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0+nary@0+definitions@0-1501]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0+nary@0+definitions@0-15]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0+nary@0-150102]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0+nary@0-1501]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0+nary@0-15]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0-1501]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0-15]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[data@0-150102]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[data@0-1501]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[data@0-15]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[definitions@0-150102]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[definitions@0-15]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[fol-150102]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[fol-1501]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[fol-15]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[norms@0-150102]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[norms@0-1501]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[order@0-150102]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[order@0-1501]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[order@0-15]
+26 failed, 30 passed in 63.13s (0:01:03)
+
+## clause-nesting
+source mutation in lean/VE/Route/NonVacuity.lean: 'if semantic && universal && !inClause then' -> 'if semantic && universal then'
+build exit: 0; focused pytest exit: 1
+FAILED tests/test_metered_differential.py::test_conformance_corpora_with_their_frozen_envelopes_match_python[countermodels]
+FAILED tests/test_metered_differential.py::test_conformance_corpora_with_their_frozen_envelopes_match_python[evaluation]
+FAILED tests/test_metered_differential.py::test_nested_disjunction_is_one_clause
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0+definitions@0-150102]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0+definitions@0-1501]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0+nary@0+data@0-1501]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0+nary@0+data@0-15]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0+nary@0+definitions@0-150102]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0+nary@0+definitions@0-15]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0+nary@0-150102]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0+nary@0-15]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0-150102]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[data@0-150102]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[data@0-1501]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[data@0-15]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[definitions@0-150102]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[definitions@0-15]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[fol-150102]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[fol-1501]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[fol-15]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[norms@0-150102]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[norms@0-1501]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[norms@0-15]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[order@0-150102]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[order@0-1501]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[order@0-15]
+26 failed, 30 passed in 62.97s (0:01:02)
+
+## layered-defined-tables
+source mutation in lean/VE/Core/Layers.lean: '(Json.mkObj (relations ++ tables)))' -> '(Json.mkObj relations))'
+build exit: 0; focused pytest exit: 1
+FAILED tests/test_metered_differential.py::test_defined_tables_are_computed_on_every_family[profiles1]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0+nary@0+definitions@0-150102]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0+nary@0+definitions@0-1501]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0+nary@0+definitions@0-15]
+4 failed, 52 passed in 60.71s (0:01:00)
+
+## legacy-closure-family
+source mutation in lean/VE/Service/Standalone.lean: '  | .closure _ => .closure\n  | .order _ => .order' -> '  | .closure _ => .fol\n  | .order _ => .order'
+build exit: 0; focused pytest exit: 1
+FAILED tests/test_metered_differential.py::test_conformance_corpora_with_their_frozen_envelopes_match_python[closure]
+1 failed, 55 passed in 103.17s (0:01:43)
+
+## closure-document-count
+source mutation in lean/VE/Route/MeteredRun.lean: '(·.work) limit fs ⟨0, {}⟩ }\n\ndef core' -> '(·.work + 1) limit fs ⟨0, {}⟩ }\n\ndef core'
+build exit: 0; focused pytest exit: 1
+FAILED tests/test_metered_differential.py::test_conformance_corpora_with_their_frozen_envelopes_match_python[closure]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0+definitions@0-150102]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0+definitions@0-1501]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0+definitions@0-15]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0-150102]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0-1501]
+FAILED tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0-15]
+FAILED tests/test_metered_lean.py::test_budgeted_values_counts_and_traces_match_python[profiles1]
+FAILED tests/test_metered_lean.py::test_document_budget_is_shared_and_stops_at_first_violation[profiles1]
+FAILED tests/test_metered_lean.py::test_empty_quantifier_domains_match_python[profiles1]
+10 failed, 46 passed in 61.70s (0:01:01)
+
+## restored
+clean build exit: 0; focused pytest exit: 0
+56 passed in 72.16s (0:01:12)

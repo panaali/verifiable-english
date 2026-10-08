@@ -4,6 +4,7 @@ import VE.Json
 import VE.Core.Wire
 import VE.Core.Layers
 import VE.CertificateWire
+import VE.Route.Typed
 
 /-! The `route` subcommand of `ve_conformance` (PLAN-EXPAND2 3.4). Each case
 is `{"id", "environment", "kind"?, ...}` with a `ve.core@0.2` environment; the
@@ -58,11 +59,8 @@ def runAdmit (profiles : List String) (environment : Json) (rv : Wire.RouteVocab
     ("kinds", Json.arr res.kinds.toArray)])
 
 /-- The FOL/closure vocabulary; `defined` declarations need `definitions@0`. -/
-def decodeRouteVocabulary (e : Gate.Envelope) : Except String Wire.RouteVocabulary := do
-  let rv ← Wire.decodeVocabulary e.profiles e.vocabulary
-  unless rv.definitions.isEmpty || e.profiles.contains "definitions@0" do
-    throw "defined declarations require the definitions@0 profile"
-  pure rv
+def decodeRouteVocabulary (e : Gate.Envelope) : Except String Wire.RouteVocabulary :=
+  Typed.routeVocabulary e
 
 /-- Run a case whose envelope has been decoded and gated. -/
 def dispatch (id : String) (environment : Json) (e : Gate.Envelope) (j : Json) : Except String Json := do
@@ -71,8 +69,7 @@ def dispatch (id : String) (environment : Json) (e : Gate.Envelope) (j : Json) :
     return ← Wire.runDependencyOrder id j
   if kind == "label" then
     if e.family == .closureNary && VE.Core.Layers.usesLayers environment then
-      let _ ← VE.Core.Layers.decodeLayers e.profiles environment
-      let _ ← VE.Core.Bridge.decodeEnvironment (← VE.Core.Layers.coreEnvironment environment)
+      let _ ← VE.Core.Layers.decodeLayered e.profiles environment
       pure ()
     else if e.family == .closureNary then
       let _ ← VE.Core.Bridge.decodeEnvironment environment

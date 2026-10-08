@@ -25,7 +25,15 @@
   "S": 9289,
   "V": 31485
  },
- "signed": [],
+ "signed": [
+  {
+   "change": "English Lean E2: Lean decides English admission (Policy.lean, the port of Python's vocabulary policy and the overlay check; Run.lean's request guards, texts and code tables; Encode.lean's EFormula.decode, displayJson, Overlay.decode and intText; Advice.lean's table; Lexer.lean's gluedFlags, the integer marks' spacing the E2.5 reverse corpus found). One owner replaces Python's English admission, so the trusted Lean lines grow by the port; the test-only reference and fixtures are T.",
+   "signed": "DRI (orchestrator), manage-agents/english-lean-e2-dri-note.md ruling 9 (the trust-budget growth of this stage is signed), 2026-10-07",
+   "allow": {
+    "V": 952
+   }
+  }
+ ],
  "history": [
   {
    "change": "Review B3 (consolidate-b1): predicates (lean/predicates.txt) out of C, [R] and [I] into K or S unless tied; kernel data types K; kernel modules reviewed (Paths dedup/pivot/reachEval C, ClosedAt P; reach, embed, erase K in Closure and Core; Time QTerm/QEnv.erase K; Bridge helpers D[V]); Rights.PrefixAdmissibleR S. Reclassification only: no Lean change.",

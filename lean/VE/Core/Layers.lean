@@ -74,6 +74,28 @@ def folModel (names : List String) (model : Json) : Except String Json := do
 def tableJson (rows : List (List VE.Bridge.Entity)) : Json :=
   Json.arr (rows.map fun row => Json.arr (row.map fun e => Json.str e.2).toArray).toArray
 
+/-- A layered environment's two decodings: the FOL projection's layers, and
+the checked core environment without the layer fields. -/
+def decodeLayered (profiles : List String) (environment : Json) :
+    Except String (VE.Route.Wire.RouteVocabulary × Json) := do
+  let rv ← decodeLayers profiles environment
+  let core ← coreEnvironment environment
+  let _ ← VE.Core.Bridge.decodeEnvironment core
+  pure (rv, core)
+
+/-- The one owner of a layered environment's core model, called by the core
+route, the service's model and core-family modes and the metered route: the
+FOL projection of `model` is decoded with its flags checked and its defined
+tables computed (`decodeDataModel`), and those tables are added to `model`'s
+relations. -/
+def completeModel (rv : VE.Route.Wire.RouteVocabulary) (environment model : Json) :
+    Except String Json := do
+  let names := (← folPredicates environment).map Prod.fst
+  let M ← VE.Route.Wire.decodeDataModel rv (← folModel names model)
+  let tables := (VE.Definitions.names rv.definitions).map fun p => (p, tableJson (M.relations p))
+  let relations ← fields (← model.getObjVal? "relations")
+  pure (model.setObjVal! "relations" (Json.mkObj (relations ++ tables)))
+
 /-- The core route's certificate branch over a regenerated FOL `background`
 (embedded), bound to the submitted `environment`: every checked premise
 (Background first, then the case's premises) and the conclusion by meaning id.
@@ -107,9 +129,7 @@ def background (profiles : List String) (environment : Json) : Except String (Li
 
 def run (profiles : List String) (environment : Json) (id kind : String) (j : Json) :
     Except String Json := do
-  let rv ← decodeLayers profiles environment
-  let core ← coreEnvironment environment
-  let _ ← VE.Core.Bridge.decodeEnvironment core
+  let (rv, core) ← decodeLayered profiles environment
   if kind == "background" then
     return VE.Route.Wire.runBackground id (VE.Route.Wire.fullBackground rv)
   if kind == "certificate" then
@@ -118,12 +138,7 @@ def run (profiles : List String) (environment : Json) (id kind : String) (j : Js
   unless kind == "evaluate" || kind == "countermodel" do
     throw (VE.Route.Gate.unsupported
       s!"{kind} cases on the core family with definitions or data flags are deferred")
-  let model ← j.getObjVal? "model"
-  let names := (← folPredicates environment).map Prod.fst
-  let M ← VE.Route.Wire.decodeDataModel rv (← folModel names model)
-  let tables := (VE.Definitions.names rv.definitions).map fun p => (p, tableJson (M.relations p))
-  let relations ← fields (← model.getObjVal? "relations")
-  let complete := model.setObjVal! "relations" (Json.mkObj (relations ++ tables))
+  let complete ← completeModel rv environment (← j.getObjVal? "model")
   VE.Core.Wire.run profiles core id kind ((j.setObjVal! "environment" core).setObjVal! "model" complete)
 
 end VE.Core.Layers
