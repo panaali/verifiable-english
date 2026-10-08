@@ -1,0 +1,122 @@
+{
+  "note": "Each mutant applied alone (the two Lean mutants in one build, each test attributable to its own mutant), its test run, then the file restored with git checkout and the test rerun.",
+  "mutants": [
+    {
+      "mutant": "trace-replay-answers",
+      "file": "docs/lean-first/b10a/trace_fuzzer.py",
+      "test": "tests/test_lean_first_b10a_report.py::test_fuzzer_gate_detects_changed_baseline_replay_answer",
+      "mutated_exit": 1,
+      "mutated_summary": "1 failed in 0.19s",
+      "restored_exit": 0,
+      "restored_summary": "1 passed in 0.18s"
+    },
+    {
+      "mutant": "trace-replay-positional",
+      "file": "docs/lean-first/b10a/trace_fuzzer.py",
+      "test": "tests/test_lean_first_b10a_report.py::test_baseline_replay_trace_follows_baseline_order_across_interleaved_surfaces",
+      "mutated_exit": 1,
+      "mutated_summary": "1 failed in 0.31s",
+      "restored_exit": 0,
+      "restored_summary": "1 passed in 0.20s"
+    },
+    {
+      "mutant": "admission-relay",
+      "file": "ve/norm_defaults_route.py",
+      "test": "tests/test_norm_defaults.py::test_document_graph_admits_the_layer_of_fill_u",
+      "mutated_exit": 1,
+      "mutated_summary": "1 failed in 0.45s",
+      "restored_exit": 0,
+      "restored_summary": "1 passed in 0.38s"
+    },
+    {
+      "mutant": "report-relay",
+      "file": "ve/norm_defaults.py",
+      "test": "tests/test_norm_defaults_switch.py::test_document_reports_the_leans_grounding_and_gap",
+      "mutated_exit": 1,
+      "mutated_summary": "1 failed in 0.36s",
+      "restored_exit": 0,
+      "restored_summary": "1 passed in 0.33s"
+    },
+    {
+      "mutant": "gate-accepts-any-change",
+      "file": "docs/lean-first/b10b/fuzzer_gate.py",
+      "test": "tests/test_lean_first_b10b_report.py::test_any_other_difference_fails_the_gate",
+      "mutated_exit": 1,
+      "mutated_summary": "1 failed in 0.19s",
+      "restored_exit": 0,
+      "restored_summary": "7 passed in 0.18s"
+    },
+    {
+      "mutant": "situation-over-source-env",
+      "file": "ve/norm_defaults.py",
+      "test": "tests/test_norm_defaults.py::test_latent_conflict_finding_and_the_authoring_question",
+      "mutated_exit": 1,
+      "mutated_summary": "1 failed in 0.38s",
+      "restored_exit": 0,
+      "restored_summary": "1 passed in 0.33s"
+    },
+    {
+      "mutant": "lean-repeated-profile-check-removed",
+      "file": "lean/VE/NormDefaults/Wire.lean",
+      "test": "tests/test_norm_defaults_switch.py::test_lean_accepts_constant_wording_and_refuses_a_repeated_profile",
+      "mutated_exit": 1,
+      "mutated_summary": "1 failed (DID NOT RAISE UnsupportedProfile)",
+      "restored_exit": 0,
+      "restored_summary": "passed (restored build 7b57ac5d, the pinned hash)"
+    },
+    {
+      "mutant": "lean-constant-wording-on-every-route",
+      "file": "lean/VE/Route/Wire.lean",
+      "test": "tests/test_difffuzz.py::test_ci_run",
+      "mutated_exit": 1,
+      "mutated_summary": "1 failed: DF-19 envelope entry changed, five norms@0 wire entries fixed",
+      "restored_exit": 0,
+      "restored_summary": "passed (restored build 7b57ac5d, the pinned hash)"
+    },
+    {
+      "mutant": "renderer-recomputes-default-value",
+      "file": "ve/norm_defaults_english.py",
+      "test": "tests/test_norm_defaults_relay_english.py::test_rendered_text_follows_leans_fields_not_a_recomputation",
+      "mutated_exit": 1,
+      "mutated_summary": "2 failed, 14 passed in 0.51s (gap_sentence derives the value from the completion instead of Lean's `value`)",
+      "restored_exit": 0,
+      "restored_summary": "1 passed in 0.30s"
+    },
+    {
+      "mutant": "renderer-evaluates-default-value",
+      "file": "ve/norm_defaults_english.py",
+      "test": "tests/test_norm_defaults_relay_english.py::test_renderers_reach_no_evaluation_search_or_limit",
+      "mutated_exit": 1,
+      "mutated_summary": "1 failed: the call graph reaches the method `value` (document.value)",
+      "restored_exit": 0,
+      "restored_summary": "1 passed in 0.25s"
+    },
+    {
+      "mutant": "lean-under-value-negated",
+      "file": "lean/VE/NormDefaults/Explain.lean",
+      "test": "tests/test_norm_defaults_relay_english.py::test_latent_fixture_renders_in_under_two_seconds",
+      "mutated_exit": 1,
+      "mutated_summary": "5 failed, 11 passed in 0.71s (Lean's `under` value differs from the English the fixtures state)",
+      "restored_exit": 0,
+      "restored_summary": "16 passed in 0.69s (restored build 2c296233, the pinned hash)"
+    },
+    {
+      "mutant": "lean-completed-value-flipped",
+      "file": "lean/VE/NormDefaults/Report.lean",
+      "test": "lean/VE/NormDefaults/Explain.lean::VE.NormDefaults.Wire.value3_gap (lake build)",
+      "mutated_exit": 1,
+      "mutated_summary": "build failed: value3_gap has unsolved goals once `deny` is completed as yes",
+      "restored_exit": 0,
+      "restored_summary": "build completed (restored build 2c296233, the pinned hash)"
+    },
+    {
+      "mutant": "pre-fix-renderer-enumerates-fillings",
+      "file": "ve/norm_defaults_english.py",
+      "test": "tests/test_norm_defaults_relay_english.py::test_latent_fixture_renders_in_under_two_seconds",
+      "mutated_exit": 1,
+      "mutated_summary": "5 failed in 18.88s: f0756983's renderer is stopped by SIGXCPU at 13, 16, 18 and 40 acts, and tests/test_relay_english_scale.py fails",
+      "restored_exit": 0,
+      "restored_summary": "73 passed in 15.36s (with tests/test_hang_guards.py)"
+    }
+  ]
+}

@@ -378,23 +378,26 @@ def readProjected (D : Dictionary) (A : Assignment) (E : Env) (L : Lexicon) (use
         .ok units occ (mixedOf P units) ((A.defaults.map (·.1)).filter fun w => !used.contains w) P
       else .illTyped
 
+/-- Steps 3 to 10 of 2.6 on the sentences of a text, already lexed: the preamble, the projection and the
+body. A source and the English fences of a document (`VE.Senses.Document`) both reach the reader here. -/
+def readSents (D : Dictionary) (E : Env) (L : Lexicon) (b : Nat) (sents : List (Array Tok)) : SensesOutcome :=
+  match readPreamble D b (sents.map (·.toList)) with
+  | .error f => .fault f
+  | .ok (A, k) =>
+    if (sents.drop k).isEmpty then .lexical .emptyDocument
+    else if !L.valid E {} then .invalidGrammar .lexicon
+    else
+      match project D A E L (usedWords D ((sents.drop k).map (·.toList))) with
+      | .error f => .fault f
+      | .ok P => readProjected D A E L (usedWords D ((sents.drop k).map (·.toList))) P b k (sents.drop k)
+
 def readWithSenses (D : Dictionary) (E : Env) (L : Lexicon) (b : Nat) (s : String) : SensesOutcome :=
   match D.failures (E.sorts.map (·.name)) with
   | f :: _ => .fault (.invalidDictionary f)
   | [] =>
     match lex s with
     | .error r => .lexical r
-    | .ok sents =>
-      match readPreamble D b (sents.toList.map (·.toList)) with
-      | .error f => .fault f
-      | .ok (A, k) =>
-        if (sents.toList.drop k).isEmpty then .lexical .emptyDocument
-        else if !L.valid E {} then .invalidGrammar .lexicon
-        else
-          match project D A E L (usedWords D ((sents.toList.drop k).map (·.toList))) with
-          | .error f => .fault f
-          | .ok P => readProjected D A E L (usedWords D ((sents.toList.drop k).map (·.toList))) P b k
-              (sents.toList.drop k)
+    | .ok sents => readSents D E L b sents.toList
 
 end VE.Senses
 
@@ -793,6 +796,43 @@ theorem readBody_good {D : Dictionary} {A : Assignment} {E : Env} {L : Lexicon} 
           obtain ⟨w2, hw2, hg⟩ := hall j u hj
           exact ⟨w2, by simpa using hw2, by rw [stateFrom_cons hj]; exact hg⟩
 
+/-- The facts of accepted sentences: their preamble, the projection, S2's checks, the body. -/
+theorem readSents_ok {D : Dictionary} {E : Env} {L : Lexicon} {b : Nat} {sents : List (Array Tok)}
+    {units : List SenseUnit} {sm : List SenseOccurrence} {mx : List (String × List String)} {un : List String}
+    {P : Projection} (h : readSents D E L b sents = .ok units sm mx un P) :
+    ∃ A k, readPreamble D b (sents.map (·.toList)) = .ok (A, k) ∧
+      sents.drop k ≠ [] ∧
+      project D A E L (usedWords D ((sents.drop k).map (·.toList))) = .ok P ∧ grammarFault P = none ∧
+      readBody D A E L (usedWords D ((sents.drop k).map (·.toList))) P b k 0 DState.init (sents.drop k) =
+        .ok (units, sm) ∧ mx = mixedOf P units ∧
+      ((units.filterMap (·.formula)).isEmpty || typedDocument P.env ((units.filterMap (·.formula)).map (·.1))) = true := by
+  unfold readSents at h
+  split at h
+  · cases h
+  · rename_i A k hpre
+    split at h
+    · cases h
+    · rename_i hne
+      split at h
+      · cases h
+      · split at h
+        · cases h
+        · rename_i P0 hp
+          unfold readProjected at h
+          split at h
+          · cases h
+          · rename_i hg
+            split at h
+            · rename_i o _
+              cases o <;> simp [Stop.outcome] at h
+            · rename_i us0 occ0 hb
+              split at h
+              · rename_i ht
+                simp only [SensesOutcome.ok.injEq] at h
+                obtain ⟨rfl, rfl, rfl, -, rfl⟩ := h
+                exact ⟨A, k, hpre, by simpa using hne, hp, hg, hb, rfl, ht⟩
+              · cases h
+
 /-- The facts of an accepted text: its sentences, its preamble, the projection, S2's checks, the body. -/
 theorem readWithSenses_ok {D : Dictionary} {E : Env} {L : Lexicon} {b : Nat} {s : String} {units : List SenseUnit}
     {sm : List SenseOccurrence} {mx : List (String × List String)} {un : List String} {P : Projection}
@@ -809,31 +849,8 @@ theorem readWithSenses_ok {D : Dictionary} {E : Env} {L : Lexicon} {b : Nat} {s 
   · split at h
     · cases h
     · rename_i sents hl
-      split at h
-      · cases h
-      · rename_i A k hpre
-        split at h
-        · cases h
-        · rename_i hne
-          split at h
-          · cases h
-          · split at h
-            · cases h
-            · rename_i P0 hp
-              unfold readProjected at h
-              split at h
-              · cases h
-              · rename_i hg
-                split at h
-                · rename_i o _
-                  cases o <;> simp [Stop.outcome] at h
-                · rename_i us0 occ0 hb
-                  split at h
-                  · rename_i ht
-                    simp only [SensesOutcome.ok.injEq] at h
-                    obtain ⟨rfl, rfl, rfl, -, rfl⟩ := h
-                    exact ⟨sents, A, k, hl, hpre, by simpa using hne, hp, hg, hb, rfl, ht⟩
-                  · cases h
+      obtain ⟨A, k, hpre, hne, hp, hg, hb, hm, ht⟩ := readSents_ok h
+      exact ⟨sents, A, k, hl, hpre, hne, hp, hg, hb, hm, ht⟩
 
 theorem readBody_resolved {D : Dictionary} {A : Assignment} {E : Env} {L : Lexicon} {used : List String}
     {P : Projection} {b k : Nat} (hG : (grammar P.env P.lexicon).wf = true) :

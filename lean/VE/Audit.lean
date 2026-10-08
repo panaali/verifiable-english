@@ -129,6 +129,7 @@ import VE.NormDefaults.Report
 import VE.NormDefaults.Layered
 import VE.NormDefaults.Admission
 import VE.NormDefaults.Run
+import VE.NormDefaults.Explain
 import VE.Readings.Doc
 import VE.SoftNorms.Once
 import VE.Readings.Separate
@@ -169,6 +170,9 @@ import VE.Readings.SupAll
 import VE.Readings.SupWireSound
 import VE.Readings.ChoiceWF
 import VE.Readings.Force
+import VE.Readings.Unspecified
+import VE.Readings.SupExtra
+import VE.Readings.SupExtraExamples
 import VE.WireContract.Engine
 import VE.Grammar.Derives
 import VE.Grammar.Extension
@@ -183,6 +187,8 @@ import VE.EnglishGrammar.Extends
 import VE.EnglishGrammar.Run
 import VE.Senses.Read
 import VE.EnglishGrammar.SensesRequest
+import VE.Senses.Document
+import VE.Senses.Request
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -3225,6 +3231,11 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.NormDefaults.Admission.wire_report_consequence
 #print axioms VE.NormDefaults.Run.runAdmission_sound
 #print axioms VE.NormDefaults.Run.normDefaults_wire_admission
+#print axioms VE.NormDefaults.Wire.kept_sound
+#print axioms VE.NormDefaults.Wire.settled_every_filling
+#print axioms VE.NormDefaults.Wire.underOf_sufficient
+#print axioms VE.NormDefaults.Wire.selectedRules_sound
+#print axioms VE.NormDefaults.Wire.value3_gap
 #print axioms VE.Readings.mem_sets
 #print axioms VE.Readings.mem_fixedUnits
 #print axioms VE.Readings.mem_usesOfUnit
@@ -3409,6 +3420,8 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.SoftNorms.checkSoftOnce_eq
 #print axioms VE.SoftNorms.softSemanticCheckOnce_eq
 #print axioms VE.SoftNorms.validateSoftOnce_eq
+#print axioms VE.SoftNorms.cohPremiseIn_eq
+#print axioms VE.SoftNorms.Wire.softLabelledIn_eq
 #print axioms VE.Rights.validateRightsOnce_eq
 #print axioms VE.SoftNorms.WellFormedSoftOnce_eq
 #print axioms VE.SoftNorms.checkSoft_eq_once
@@ -3996,6 +4009,8 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.append_left_inj
 #print axioms VE.Readings.slot_wellLabelled
 #print axioms VE.Readings.routeOf_superposed
+#print axioms VE.Readings.generatedKeyJson_name
+#print axioms VE.Readings.generatedSuperposed_names
 #print axioms VE.Readings.canon_term
 #print axioms VE.Readings.term_defined
 #print axioms VE.Readings.substWith_canon
@@ -4168,6 +4183,119 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.Run.soft_choice_model_sound
 #print axioms VE.Readings.Run.rights_choice_model_sound
 #print axioms VE.Readings.Run.norms_choice_model_sound
+#print axioms VE.Readings.fillItem_set
+#print axioms VE.Readings.setsOf_map
+#print axioms VE.Readings.setsOf_fillUnits
+#print axioms VE.Readings.sets_fillDoc
+#print axioms VE.Readings.candidate_fillDoc
+#print axioms VE.Readings.inForce_fillDoc
+#print axioms VE.Readings.labelOf_fillCand
+#print axioms VE.Readings.compatible_fillDoc_eq
+#print axioms VE.Readings.compatible_fillDoc
+#print axioms VE.Readings.fillContent_nil
+#print axioms VE.Readings.fillDoc_conservative
+#print axioms VE.Readings.unsaid_ascii
+#print axioms VE.Readings.fillName_unsaid
+#print axioms VE.Readings.namesFree
+#print axioms VE.Readings.NamesFree.declared
+#print axioms VE.Readings.NamesFree.fixed_unit
+#print axioms VE.Readings.mem_fillUnits
+#print axioms VE.Readings.fixed_mem_fillDoc
+#print axioms VE.Readings.uses_fillUnit
+#print axioms VE.Readings.declared_fillContent
+#print axioms VE.Readings.uses_sub_fillContent
+#print axioms VE.Readings.uses_fillContent_new
+#print axioms VE.Readings.declaredBy_fillSet
+#print axioms VE.Readings.mem_sets_fillDoc
+#print axioms VE.Readings.attached_of_N
+#print axioms VE.Readings.attached_of_fill
+#print axioms VE.Readings.mem_attached_fillDoc
+#print axioms VE.Readings.all_congr_mem
+#print axioms VE.Readings.isEmpty_congr_mem
+#print axioms VE.Readings.attached_fillUnit
+#print axioms VE.Readings.fillSoftNode_name
+#print axioms VE.Readings.fillSoftNode_mode
+#print axioms VE.Readings.fillSoftNode_alterable
+#print axioms VE.Readings.asserted_fillContent
+#print axioms VE.Readings.place_fillX
+#print axioms VE.Readings.foldl_fillX
+#print axioms VE.Readings.foldl_fillUnits_gen
+#print axioms VE.Readings.frame_fillDoc
+#print axioms VE.Readings.build_fillDoc
+#print axioms VE.Readings.decisions_strict
+#print axioms VE.Readings.soften_strict
+#print axioms VE.Readings.strictNodes_fill
+#print axioms VE.Readings.noRights_fill
+#print axioms VE.Readings.fillSoftNode_toNode
+#print axioms VE.Readings.soften_fill
+#print axioms VE.Readings.fillFrameEnv_eq
+#print axioms VE.Readings.shaped
+#print axioms VE.Readings.place_strict
+#print axioms VE.Readings.build_strict
+#print axioms VE.Readings.soften_build_fillDoc
+#print axioms VE.Readings.candidates_fillSet
+#print axioms VE.Readings.fillDoc_one
+#print axioms VE.Readings.fillDoc_free
+#print axioms VE.Readings.fillDoc_choice
+#print axioms VE.Readings.setSize_fillDoc
+#print axioms VE.Readings.position_fillDoc
+#print axioms VE.Readings.interfaceOf_fillSet
+#print axioms VE.Readings.copies_fillDoc
+#print axioms VE.Readings.copyCites_fillDoc
+#print axioms VE.Readings.copyContent_fillDoc
+#print axioms VE.Readings.gateContent_fillDoc
+#print axioms VE.Readings.bitDecls_fillDoc
+#print axioms VE.Readings.choiceEnv_fillDoc
+#print axioms VE.Readings.copies_ne_nil
+#print axioms VE.Readings.copies_fillName
+#print axioms VE.Readings.copyContent_fill
+#print axioms VE.Readings.gateContent_fill
+#print axioms VE.Readings.supStep_set
+#print axioms VE.Readings.candStep_fill
+#print axioms VE.Readings.foldl_candStep_fill
+#print axioms VE.Readings.foldl_sup_fillX
+#print axioms VE.Readings.foldl_sup_fillUnits
+#print axioms VE.Readings.supFrame_fillDoc
+#print axioms VE.Readings.sup_fillDoc
+#print axioms VE.Readings.contentStrict_copy
+#print axioms VE.Readings.contentStrict_gate
+#print axioms VE.Readings.sup_strict
+#print axioms VE.Readings.unsaidName_head
+#print axioms VE.Readings.bitDecls_find_unsaid
+#print axioms VE.Readings.choiceEnv_fill
+#print axioms VE.Readings.fillDoc_sup
+#print axioms VE.Readings.attached_nodup
+#print axioms VE.Readings.eq_of_subsingleton
+#print axioms VE.Readings.attached_fillDoc
+#print axioms VE.Readings.fillHolds_sat
+#print axioms VE.Readings.separates_soundU
+#print axioms VE.Readings.separates_separatedU
+#print axioms VE.Readings.one_fillDoc
+#print axioms VE.Readings.one_strict
+#print axioms VE.Readings.strict_one_fillDoc
+#print axioms VE.Readings.genKeys_strict
+#print axioms VE.Readings.withTables_nil
+#print axioms VE.Readings.softPremises_strict
+#print axioms VE.Readings.observes_rel_congr
+#print axioms VE.Readings.observes_withTables_nil
+#print axioms VE.Readings.achievesU_iff
+-- readings-defaults RD-6a (docs/spec/readings-defaults.md 6.7): S2a with a carried base-premise family.
+#print axioms VE.Readings.sat_pull_up
+#print axioms VE.Readings.superpose_conflict_free_extra
+#print axioms VE.Readings.superpose_all_extra
+#print axioms VE.Readings.superpose_countermodel_extra
+#print axioms VE.Readings.transfers_nil
+#print axioms VE.Readings.supCertificateCheckExtra_nil
+#print axioms VE.Readings.supModelCheckExtra_nil
+#print axioms VE.Readings.baseAdmissibleR_nil
+-- RD-6a fixture X3 (DRI ruling 2026-10-07): the approved `superpose_all_extra` refuted at X1.
+#print axioms VE.Readings.SupExtraExamples.k1_hyps
+#print axioms VE.Readings.SupExtraExamples.k1_compatible
+#print axioms VE.Readings.SupExtraExamples.noAvoid_of_empty
+#print axioms VE.Readings.SupExtraExamples.transfers_x1
+#print axioms VE.Readings.SupExtraExamples.x1_conflict_free
+#print axioms VE.Readings.SupExtraExamples.bare_admissible
+#print axioms VE.Readings.SupExtraExamples.superpose_all_extra_refuted
 -- english-lean (docs/spec/english-lean.md 5.9): the grammar engine and the English instance.
 #print axioms VE.Grammar.yieldAll_nil
 #print axioms VE.Grammar.yieldAll_cons
@@ -4430,6 +4558,7 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Senses.stateFrom_init
 #print axioms VE.Senses.stateFrom_cons
 #print axioms VE.Senses.readBody_good
+#print axioms VE.Senses.readSents_ok
 #print axioms VE.Senses.readWithSenses_ok
 #print axioms VE.Senses.readBody_resolved
 #print axioms VE.Senses.filterMap_of_map_some
@@ -4480,3 +4609,16 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Service.runMode_englishRead
 #print axioms VE.Service.runMode_englishGrammar
 #print axioms VE.Service.runMode_englishCheck
+#print axioms VE.Senses.readDocument_source
+#print axioms VE.Senses.readDocument_bad_default
+#print axioms VE.Senses.badDefault_none
+#print axioms VE.Senses.readDocument_both
+#print axioms VE.Senses.readDocument_defaults
+#print axioms VE.Senses.defaults_read_as_lines
+#print axioms VE.Senses.fenceSents_ok
+#print axioms VE.Senses.readDocument_ok
+#print axioms VE.Senses.documentInput_fences
+#print axioms VE.Senses.document_unit_sound
+#print axioms VE.Senses.document_line_sound
+#print axioms VE.Senses.documentRequest_policy
+#print axioms VE.Senses.documentRequest_source

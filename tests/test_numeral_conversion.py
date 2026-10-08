@@ -152,9 +152,6 @@ REVIEWED = {
     ('ve/norms_contract.py', 'int(token)'): 'a path the contract engine built from list positions',
     ('ve/norms_contract.py', 'int(items[1][-1])'): 'a path the contract engine built from list positions',
     ('ve/norms_contract.py', 'int(items[0][-1])'): 'a path the contract engine built from list positions',
-    ('ve/softnorms_contract.py', 'int(token)'): 'a path the contract engine built from list positions',
-    ('ve/softnorms_contract.py', 'int(items[1][-1])'): 'a path the contract engine built from list positions',
-    ('ve/softnorms_contract.py', 'int(items[0][-1])'): 'a path the contract engine built from list positions',
     ('ve/speech_document.py', 'int(value)'): 'the JSON parse_int hook; its ValueError is caught as invalid front matter',
     ('ve/stream_audit.py', 'int(body[1:], 16)'): 'an escape of at most 8 hex digits; ValueError caught',
     ('ve/stream_audit.py', 'int(body, 8)'): 'an octal escape of at most 3 digits',
@@ -168,8 +165,6 @@ REVIEWED = {
     ('ve/units.py', "int(''.join(digits))"): 'after the 40-digit bound of the decimal',
     ('ve/units.py', "int(record['scale'])"): 'a scale decodeScale admitted (at most 40 characters)',
     ('ve/wire.py', 'int(text)'): 'after the 16-character bound',
-    ('ve/wire_contract/engine.py', 'int(head[1:] or 0)'): 'a level in a contract pattern',
-    ('ve/wire_contract/engine.py', 'int(token)'): 'a path the contract engine built from list positions',
 }
 
 

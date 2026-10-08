@@ -1,0 +1,156 @@
+[
+  {
+    "seed": "20260923",
+    "base_new": 43,
+    "head_new": 43,
+    "added": [],
+    "removed": [],
+    "same_corpus": true,
+    "same_mutants": true,
+    "base_passed": false,
+    "head_passed": false
+  },
+  {
+    "seed": "20260924",
+    "base_new": 55,
+    "head_new": 55,
+    "added": [],
+    "removed": [],
+    "same_corpus": true,
+    "same_mutants": true,
+    "base_passed": false,
+    "head_passed": false
+  },
+  {
+    "seed": "20260925",
+    "base_new": 45,
+    "head_new": 45,
+    "added": [],
+    "removed": [],
+    "same_corpus": true,
+    "same_mutants": true,
+    "base_passed": false,
+    "head_passed": false
+  },
+  {
+    "seed": "20260926",
+    "base_new": 55,
+    "head_new": 55,
+    "added": [],
+    "removed": [],
+    "same_corpus": true,
+    "same_mutants": true,
+    "base_passed": false,
+    "head_passed": false
+  },
+  {
+    "seed": "20260927",
+    "base_new": 52,
+    "head_new": 52,
+    "added": [],
+    "removed": [],
+    "same_corpus": true,
+    "same_mutants": true,
+    "base_passed": false,
+    "head_passed": false
+  },
+  {
+    "seed": "20260928",
+    "base_new": 49,
+    "head_new": 49,
+    "added": [],
+    "removed": [],
+    "same_corpus": true,
+    "same_mutants": true,
+    "base_passed": false,
+    "head_passed": false
+  },
+  {
+    "seed": "20260929",
+    "base_new": 61,
+    "head_new": 61,
+    "added": [],
+    "removed": [],
+    "same_corpus": true,
+    "same_mutants": true,
+    "base_passed": false,
+    "head_passed": false
+  },
+  {
+    "seed": "20260930",
+    "base_new": 52,
+    "head_new": 52,
+    "added": [],
+    "removed": [],
+    "same_corpus": true,
+    "same_mutants": true,
+    "base_passed": false,
+    "head_passed": false
+  },
+  {
+    "seed": "20261001",
+    "base_new": 56,
+    "head_new": 56,
+    "added": [],
+    "removed": [],
+    "same_corpus": true,
+    "same_mutants": true,
+    "base_passed": false,
+    "head_passed": false
+  },
+  {
+    "seed": "20261002",
+    "base_new": 47,
+    "head_new": 47,
+    "added": [],
+    "removed": [],
+    "same_corpus": true,
+    "same_mutants": true,
+    "base_passed": false,
+    "head_passed": false
+  },
+  {
+    "seed": "20261003",
+    "base_new": 56,
+    "head_new": 56,
+    "added": [],
+    "removed": [],
+    "same_corpus": true,
+    "same_mutants": true,
+    "base_passed": false,
+    "head_passed": false
+  },
+  {
+    "seed": "20261004",
+    "base_new": 11,
+    "head_new": 11,
+    "added": [],
+    "removed": [],
+    "same_corpus": true,
+    "same_mutants": true,
+    "base_passed": false,
+    "head_passed": false
+  },
+  {
+    "seed": "20261005",
+    "base_new": 53,
+    "head_new": 53,
+    "added": [],
+    "removed": [],
+    "same_corpus": true,
+    "same_mutants": true,
+    "base_passed": false,
+    "head_passed": false
+  },
+  {
+    "seed": "20261006",
+    "base_new": 49,
+    "head_new": 49,
+    "added": [],
+    "removed": [],
+    "same_corpus": true,
+    "same_mutants": true,
+    "base_passed": false,
+    "head_passed": false
+  }
+]

@@ -20,7 +20,8 @@ from ve.surface.softnorms import parse_header_options, render_header_options
 from ve.wire import digest
 from tests.test_english_unambiguity import _soft_env
 from tests.test_soft_norms_lean import env, norm, should, ranks, base_prime
-from ve.softnorms import load_soft_document, _fits, _size, _within_limits
+from ve.softnorms import load_soft_document
+from conformance.softnorms_legacy import _fits, _size, _within_limits
 from ve.ast import _Checker
 from conformance.soft_norms import (RUST_FIXTURES, rust_fixture_rows, loop_recheck_reproducers,
                                     soft2_reproducers, soft3_reproducers, soft3_accepted,
@@ -309,9 +310,6 @@ def test_generated_sizes_equal_the_checker_walk():
             counter = _Checker(soft.extended_env, generated=True)
             counter.formula(formula)
             assert counter.nodes == _size(formula)[0], (name, label)
-        for predicate in soft.elaborated.order:
-            assert soft.expansion_sizes[predicate] == _size(
-                soft.elaborated.outcome(predicate, base=True)), (name, predicate)
 
 
 # The near-limit sources and the rejected inputs are compared in parts (every n-th source)

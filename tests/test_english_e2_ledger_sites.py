@@ -28,10 +28,10 @@ KEPT = {
     ("ve/norm_english.py", "_parse_guard"): "kept for `norm_english.py`",
     ("ve/norm_english.py", "parse_english"): "kept for `norm_english.py`",
     ("ve/norm_defaults_english.py", "parse_legend_sentence"): "`norm_defaults_english.py`",
-    ("ve/readings_s2_wording.py", "S2Wording.conclusion"): "`ve/readings_s2_wording.py` `S2Wording.conclusion`",
+    ("ve/readings_s2_english.py", "canonical_sentence"): "`ve/readings_s2_english.py` `canonical_sentence`",
 }
 # The only callers that may ask `render_english` for the statement layer's own check.
-FLAGGED = {("ve/readings_s2_wording.py", "S2Wording.conclusion")}
+FLAGGED = {("ve/readings_s2_english.py", "canonical_sentence")}
 
 
 def call_sites(path: str, source: str) -> tuple[set, set]:

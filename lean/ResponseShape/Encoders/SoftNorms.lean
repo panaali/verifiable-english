@@ -36,13 +36,29 @@ theorem softLabelled_nonempty (D : SoftDoc) : ∀ x ∈ softLabelled D, x.1.isEm
     · cases h
   · simp +decide [cohLabel, isEmpty_append, toString]
 
-theorem elaborate_fits (id : String) (D : SoftDoc) (env : Json) :
-    Fits req (skel% "soft-norms.json#/$defs/elaborate") (VE.Route.Wire.ok id (regenerated D env)) := by
-  unfold VE.Route.Wire.ok regenerated bgEntry
-  fits
+/-- The same labels, with the coherence premises built from given layers. -/
+theorem softLabelledIn_nonempty (D : SoftDoc) (S : VE.Norms.Doc) (L : VE.Norms.Layers) :
+    ∀ x ∈ softLabelledIn D S L, x.1.isEmpty = false := by
+  intro x hx
+  simp only [softLabelledIn, List.mem_append, List.mem_map] at hx
+  rcases hx with hx | ⟨⟨M, N⟩, _, rfl⟩
+  · exact softLabelled_nonempty D x (by simp only [softLabelled, List.mem_append]; exact .inl hx)
+  · simp +decide [cohLabel, isEmpty_append, toString]
+
+set_option maxHeartbeats 1000000 in
+theorem elaborate_fits (id : String) (D : SoftDoc) (env : Json) (documentHash : String)
+    (overlaps cycles : Option (List Json)) :
+    Fits req (skel% "soft-norms.json#/$defs/elaborate")
+      (VE.Route.Wire.ok id (regenerated D env ++ [("document_hash", .str documentHash)] ++
+        overlaps.toList.map (fun value => ("overlaps", toJson value)) ++
+        cycles.toList.map (fun value => ("override_cycles", toJson value)))) := by
+  cases overlaps <;> cases cycles <;>
+    simp only [Option.toList, List.map_cons, List.map_nil, List.append_nil] <;>
+    unfold VE.Route.Wire.ok regenerated regeneratedCore bgEntry <;> fits
   all_goals first
     | exact Fits.softEnvironment D env (decision_entries_fit D) rfl
-    | (exfalso; rename_i x hx h; have := softLabelled_nonempty D x hx; simp_all)
+    | (unfold residualStatus; split <;> (apply Fits.strIn_lit; decide))
+    | (exfalso; rename_i x hx h; have := softLabelledIn_nonempty D _ _ x hx; simp_all)
 
 /-- A pair's status and detail: a detail exactly beside a weighing point or UNKNOWN. -/
 def Classified (r : PairStatus × String) : Prop :=
@@ -97,6 +113,7 @@ theorem firstFailure_of_not_free (j : Json) (res : SoftConflictReplay) (h : repl
   rw [List.find?_isSome]
   exact ⟨(t, c), hm, by cases c <;> simp_all⟩
 
+set_option maxHeartbeats 1000000 in
 theorem runSoftKind_fits (id kind : String) (j : Json) {w : Json} (hobj : j.getObjVal? "id" = .ok w)
     (hp : usesSoftPath j = true) (hK : KindRead "evaluate" j kind) :
     OkFits j Skeletons.softNorms (runSoftKind id kind j) := by
@@ -107,7 +124,7 @@ theorem runSoftKind_fits (id kind : String) (j : Json) {w : Json} (hobj : j.getO
   all_goals okfits
   all_goals kind_norm
   all_goals first
-    | fits_from elaborate_fits _ _ _
+    | fits_from elaborate_fits _ _ _ _ _ _
     | fits_from pairs_fits _ _ _ _ _ _ ‹_›
     | (try simp only [VE.Route.Wire.ok]); fits
   -- Not conflict-free with no failing target: impossible (`firstFailure_of_not_free`).
@@ -296,7 +313,7 @@ theorem runCaseReported_fits (j : Json) (hj : CaseWF j) :
   · split
     · exact runCase_fits j ‹_› _ ‹_›
     · fits
-      exact Fits.strIn (reportedCode_mem _ _)
+      all_goals exact Fits.strIn (reportedCode_mem _ _)
   · exact of_norms (Bool.eq_false_iff.mpr ‹_›) (Norms.runCaseReported_fits j hj)
 
 end ResponseShape.Encoders.SoftNorms
