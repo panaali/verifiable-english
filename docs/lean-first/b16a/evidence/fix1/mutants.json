@@ -1,0 +1,78 @@
+{
+ "commit": "2fce5544ae67822370cdead3aaf1cd61e306fd84",
+ "mutants": [
+  {
+   "mutant": "bridge_leaves_zero",
+   "file": "lean/VE/Service/Document.lean",
+   "test": "tests/test_lean_document_wrapper.py::test_residual_counts_are_nonzero_and_python_s",
+   "build_exit": 0,
+   "test_exit": 1,
+   "failure_excerpt": "FAILED tests/test_lean_document_wrapper.py::test_residual_counts_are_nonzero_and_python_s"
+  },
+  {
+   "mutant": "no_status_fold",
+   "file": "lean/VE/Service/Document.lean",
+   "test": "tests/test_lean_document_wrapper.py::test_reading_set_status_fold_follows_the_active_version",
+   "build_exit": 0,
+   "test_exit": 1,
+   "failure_excerpt": "FAILED tests/test_lean_document_wrapper.py::test_reading_set_status_fold_follows_the_active_version"
+  },
+  {
+   "mutant": "profile_gate_removed",
+   "file": "lean/VE/Service/Document.lean",
+   "test": "tests/test_lean_document_wrapper.py::test_profile_gate_runs_before_the_environment_decoder",
+   "build_exit": 0,
+   "test_exit": 1,
+   "failure_excerpt": "FAILED tests/test_lean_document_wrapper.py::test_profile_gate_runs_before_the_environment_decoder"
+  },
+  {
+   "mutant": "unbound_fence_accepted",
+   "file": "lean/VE/Service/Document.lean",
+   "test": "tests/test_lean_document_wrapper.py::test_review_b2_documents_python_rejects_are_rejected_with_its_text",
+   "build_exit": 0,
+   "test_exit": 1,
+   "failure_excerpt": "FAILED tests/test_lean_document_wrapper.py::test_review_b2_documents_python_rejects_are_rejected_with_its_text[unbound ve fence]"
+  },
+  {
+   "mutant": "python_json_called_invalid",
+   "file": "lean/VE/Service/Document.lean",
+   "test": "tests/test_lean_document_wrapper.py::test_json_python_reads_and_the_restricted_reader_does_not_fails_closed",
+   "build_exit": 0,
+   "test_exit": 1,
+   "failure_excerpt": "FAILED tests/test_lean_document_wrapper.py::test_json_python_reads_and_the_restricted_reader_does_not_fails_closed[\"x\": null]"
+  },
+  {
+   "mutant": "graph_not_admitted",
+   "file": "lean/VE/Service/Document.lean",
+   "test": "tests/test_lean_document_wrapper.py::test_a_graph_is_admitted_before_its_labels_are_counted",
+   "build_exit": 0,
+   "test_exit": 1,
+   "failure_excerpt": "FAILED tests/test_lean_document_wrapper.py::test_a_graph_is_admitted_before_its_labels_are_counted[7]"
+  },
+  {
+   "mutant": "block_line_dropped",
+   "file": "lean/VE/Service/Document.lean",
+   "test": "tests/test_lean_document_wrapper.py::test_composed_block_coverage_is_its_route_s_line",
+   "build_exit": 0,
+   "test_exit": 1,
+   "failure_excerpt": "FAILED tests/test_lean_document_wrapper.py::test_composed_block_coverage_is_its_route_s_line"
+  },
+  {
+   "mutant": "mixed_parts_batched",
+   "file": "lean/VE/Discourse/Loader.lean",
+   "test": "tests/test_lean_document_wrapper.py::test_mixed_parts_are_compiled_one_by_one",
+   "build_exit": 0,
+   "test_exit": 1,
+   "failure_excerpt": "FAILED tests/test_lean_document_wrapper.py::test_mixed_parts_are_compiled_one_by_one"
+  },
+  {
+   "mutant": "python_unhashable_status",
+   "file": "ve/document.py",
+   "test": "tests/test_lean_document_wrapper.py::test_malformed_units_are_diagnostics_in_both",
+   "build_exit": 0,
+   "test_exit": 1,
+   "failure_excerpt": "FAILED tests/test_lean_document_wrapper.py::test_malformed_units_are_diagnostics_in_both[unhashable unit status-units2]"
+  }
+ ],
+ "restored_build_exit": 0
+}

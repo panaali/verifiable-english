@@ -78,6 +78,7 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.Discourse.compileUnit_status
 #print axioms ResponseShape.Encoders.Discourse.compileUnits_status
 #print axioms ResponseShape.Encoders.Discourse.encodeAdmission_fits
+#print axioms ResponseShape.Encoders.Discourse.foldStatus_mem
 #print axioms ResponseShape.Encoders.Discourse.joint_fits
 #print axioms ResponseShape.Encoders.Discourse.loadFront_status
 #print axioms ResponseShape.Encoders.Discourse.loadedStatus_mem
@@ -116,6 +117,12 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.Envelope.one_field
 #print axioms ResponseShape.Encoders.Envelope.requestError_fits
 #print axioms ResponseShape.Encoders.Envelope.response_fits
+#print axioms ResponseShape.Encoders.Document.block_coverage_fits
+#print axioms ResponseShape.Encoders.Document.cells_fits
+#print axioms ResponseShape.Encoders.Document.coverage_fits
+#print axioms ResponseShape.Encoders.Document.document_fits
+#print axioms ResponseShape.Encoders.Document.runCaseReported_fits
+#print axioms ResponseShape.Encoders.Document.unit_fits
 #print axioms ResponseShape.Encoders.Family.answer_fits
 #print axioms ResponseShape.Encoders.Family.bundle_fits
 #print axioms ResponseShape.Encoders.Family.bundle_reported
@@ -128,6 +135,7 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.NormDefaults.admitDocument_kinds
 #print axioms ResponseShape.Encoders.NormDefaults.firstFailureX_of_not_free
 #print axioms ResponseShape.Encoders.NormDefaults.firstFailure_of_not_free
+#print axioms ResponseShape.Encoders.NormDefaults.layeredCase_fits
 #print axioms ResponseShape.Encoders.NormDefaults.line_fits
 #print axioms ResponseShape.Encoders.NormDefaults.of_norms
 #print axioms ResponseShape.Encoders.NormDefaults.runCaseReported_fits
@@ -186,6 +194,17 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.ReadingsRoute.toJson_strings
 #print axioms ResponseShape.Encoders.ReadingsRoute.toList_of_mapM
 #print axioms ResponseShape.Encoders.ReadingsRoute.validate_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.choiceND_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.deadAnswer_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.elaborateFields_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.elaborateND_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.fillPremises_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.filled_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.runS2ND_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.separateND_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.setPairsWith_entries
+#print axioms ResponseShape.Encoders.ReadingsRoute.validateND_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.validateWith_rows
 #print axioms ResponseShape.Encoders.Reports.admission_fits
 #print axioms ResponseShape.Encoders.Reports.certificate_fits
 #print axioms ResponseShape.Encoders.Reports.content_fits

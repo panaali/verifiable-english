@@ -106,6 +106,62 @@ def test_rd1_checker_fails_on_a_missing_declaration(tmp_path, capsys):
     assert "fillHolds: expected one Lean def, found 0" in capsys.readouterr().out
 
 
+# RD-2a: spec 6.3, its declarations placed in three files by 6.1.
+
+def test_rd2a_statements_match_the_approved_text(capsys):
+    checker = _checker()
+    assert checker.main_rd2a() == 0
+    out = capsys.readouterr().out
+    assert "checked 16 approved RD-2a declarations (5 theorems)" in out
+    assert checker.PENDING_RD2A == {} and "0 pending" in out
+
+
+def _rd2a_names():
+    return sorted(_checker().approved_rd2a())
+
+
+def _with_sources(checker, tmp_path, edit):
+    """The checker reading copies of RD-2a's sources, `edit` applied to their text."""
+    copies = []
+    for source in checker.SOURCES_RD2A:
+        path = tmp_path / source.name
+        path.write_text(edit(source.read_text()))
+        copies.append(path)
+    checker.SOURCES_RD2A = copies
+
+
+@pytest.mark.parametrize("kind, name", _rd2a_names(), ids=lambda v: str(v))
+def test_rd2a_checker_fails_on_every_changed_declaration(tmp_path, capsys, kind, name):
+    """Each declaration of the 6.3 block, changed in Lean (a body-less one in its signature), fails by name."""
+    import re
+    checker = _checker()
+
+    def edit(text):
+        if not re.search(rf"^{kind} {re.escape(name)}\b", text, re.M):
+            return text
+        if kind == "def" and ":=" not in checker.approved_rd2a()[(kind, name)][0]:
+            # a signature: the result type gains a conjunct before the body
+            start = re.search(rf"^{kind} {re.escape(name)}\b", text, re.M)
+            body = text.index(" :=", start.end())
+            return text[:body] + " × Unit" + text[body:]
+        return _mutate(text, kind, name, checker)
+    _with_sources(checker, tmp_path, edit)
+    assert checker.main_rd2a() == 1
+    assert f"{name}: {kind} differs" in capsys.readouterr().out
+
+
+def test_rd2a_checker_fails_on_a_dropped_hypothesis_and_a_missing_declaration(tmp_path, capsys):
+    checker = _checker()
+    _with_sources(checker, tmp_path, lambda t: t.replace(
+        "    (hcf : VE.NormDefaults.Wire.conflictFreeCheckU (choiceU x.r.N x.c) x.certs = true) :\n", " :\n", 1))
+    assert checker.main_rd2a() == 1
+    assert "readings_wire_nd_choice_entails: theorem differs" in capsys.readouterr().out
+    checker = _checker()
+    _with_sources(checker, tmp_path, lambda t: t.replace("def ndChoiceText ", "private def ndChoiceText ", 1))
+    assert checker.main_rd2a() == 1
+    assert "ndChoiceText: expected one Lean def, found 0" in capsys.readouterr().out
+
+
 # ---------------------------------------------------------------------------------------------------------------
 # RD-6a: lean/VE/Readings/SupExtra.lean against 6.7
 

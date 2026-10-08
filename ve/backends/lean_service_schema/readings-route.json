@@ -386,6 +386,35 @@
         }
       ]
     },
+    "fill_premises": {
+      "$comment": "Readings.Run.runValidateND (UnspecifiedWire.fillPremisesJson): under the unspecified completion, per reading with content its Fill_T, each premise labelled unsaid:pair:<r>,<m>.",
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "index": {"$ref": "common.json#/$defs/nat"},
+          "premises": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {"ast": {"$ref": "common.json#/$defs/generated_formula"}, "label": {"type": "string"}},
+              "required": ["label", "ast"],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "set": {"type": "string"}
+        },
+        "required": ["set", "index", "premises"],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "filled": {
+      "$comment": "Readings.Run.runValidateND (UnspecifiedWire.filledJson): under the unspecified completion, the filled frame's environment (unspecified read as deny, norm-defaults@0 removed, every unsaid__p added) and the filled units, the F_p units last.",
+      "additionalProperties": false,
+      "properties": {"environment": {"$comment": "the filled environment"}, "units": {"type": "array"}},
+      "required": ["environment", "units"],
+      "type": "object"
+    },
     "key": {
       "$comment": "Readings.Wire key JSON: one generated key.",
       "anyOf": [
@@ -489,12 +518,14 @@
       "type": "object"
     },
     "validate": {
-      "$comment": "Readings.Run.validateResult: no content-bearing set, or one entry per content-bearing open set.",
+      "$comment": "Readings.Run.validateResult: no content-bearing set, or one entry per content-bearing open set; under the unspecified completion (Readings.Run.runValidateND) also fill_premises and filled.",
       "anyOf": [
         {
           "additionalProperties": false,
           "properties": {
             "content_bearing": {"const": false},
+            "fill_premises": {"$ref": "#/$defs/fill_premises"},
+            "filled": {"$ref": "#/$defs/filled"},
             "id": {"$ref": "common.json#/$defs/id_ok"},
             "status": {"const": "ok"}
           },
@@ -505,6 +536,8 @@
           "additionalProperties": false,
           "properties": {
             "content_bearing": {"const": true},
+            "fill_premises": {"$ref": "#/$defs/fill_premises"},
+            "filled": {"$ref": "#/$defs/filled"},
             "id": {"$ref": "common.json#/$defs/id_ok"},
             "sets": {
               "items": {

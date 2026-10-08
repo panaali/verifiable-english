@@ -11,7 +11,7 @@ from itertools import product
 from .assurance import semantic_entry
 from .admission import _check_kind, token
 from .ast import formula_from_data
-from .errors import CheckerUnavailable, UnsupportedProfile, VEError
+from .errors import CheckerUnavailable, ResourceLimit, UnsupportedProfile, VEError
 from .identity import meaning_id
 from .readings_english import SOURCE_WORDS
 
@@ -242,7 +242,10 @@ def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None
                     or not token(admission["who"]) or type(admission["why"]) is not str
                     or not admission["why"] or type(admission["distinguishing_models"]) is not dict):
                 raise VEError("invalid reading admission")
-            if set(admission["distinguishing_models"]) != set(r["id"] for r in readings) - {reading["id"]}:
+            # A later reading not yet checked counts by its id when that is a string, else as "" (Lean's
+            # `compileReading` reads the ids the same way); it is rejected when the loop reaches it.
+            others = {r["id"] if type(r) is dict and type(r.get("id")) is str else "" for r in readings}
+            if set(admission["distinguishing_models"]) != others - {reading["id"]}:
                 raise VEError("each other reading needs a distinguishing model id")
             if not all(token(v) for v in admission["distinguishing_models"].values()):
                 raise VEError("invalid distinguishing model id")
@@ -274,7 +277,7 @@ def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None
             # Quantity readings are evaluated through their regenerated cores
             # on the erased target; tables are never read with tags dropped first.
             if not right_set and right_contents:
-                raise VEError("UnsupportedProfile: mixed rights distinguishing situations")
+                raise UnsupportedProfile("UnsupportedProfile: mixed rights distinguishing situations")
             if not right_set:
                 model_env, formula_of = _reading_evaluation(env)
             for name, data in models.items():
@@ -324,10 +327,10 @@ def validate_couplings(env, couplings, sets, unit_ids):
     if type(couplings) is not list:
         raise VEError("invalid couplings")
     if couplings and not {"rights@0", "readings@1"}.intersection(env.profiles):
-        raise VEError("UnsupportedProfile: rights@0 is required for couplings")
+        raise UnsupportedProfile("UnsupportedProfile: rights@0 is required for couplings")
     if len(couplings) > 8:
         # 11: at most eight couplings, as on the Lean rights route.
-        raise VEError("ResourceLimit: couplings")
+        raise ResourceLimit("ResourceLimit: couplings")
     active = {(s["id"], s["version"]): s for s in active_reading_sets(sets)}
     ids = set()
     for item in couplings:

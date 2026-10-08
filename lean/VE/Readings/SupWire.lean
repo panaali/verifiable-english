@@ -144,10 +144,8 @@ theorem wellFormedDoc_links (D : Doc) (cs : List Coupling) (ns : List Narrowing)
   simp only [WellFormedDoc, singlyAttached, sideWF, free, one, attached_links]
   rfl
 
-def admitS2 (environment document : Json) : Except String Admitted2 := do
-  let ids := unitIdsOf document
-  unless decide ids.Nodup do throw "duplicate or invalid unit id"
-  let a ← admitReadings environment document
+/-- S2a's admission past S1's: the couplings and narrowings of `document` on S1's admitted `a`. -/
+def admitS2Rest (a : Admitted) (document : Json) : Except String Admitted2 := do
   let sets ← match document.getObjValD "reading_sets" with
     | .arr ss => ss.toList.mapM decodeSet
     | .null => pure []
@@ -160,6 +158,20 @@ def admitS2 (environment document : Json) : Except String Admitted2 := do
   let ns ← decodeNarrowings document sets a.doc.units
   -- `WellFormedDoc` reads no coupling or narrowing: S1's check holds of the document that carries them.
   pure ⟨a, ⟨a.D.chain, a.D.frame, a.D.items, cs, ns⟩, (wellFormedDoc_links a.D cs ns).trans a.wf, rfl⟩
+
+/-- S2a's admission (4.1): unit ids distinct, then S1's admission, then the couplings and narrowings. -/
+def admitS2 (environment document : Json) : Except String Admitted2 := do
+  let ids := unitIdsOf document
+  unless decide ids.Nodup do throw "duplicate or invalid unit id"
+  admitS2Rest (← admitReadings environment document) document
+
+/-- S2a's admission of a case whose S1 admission `a` the caller already holds (readings-validate and
+    readings-separate under the completion): the same checks as `admitS2` after `admitReadings`, so a document is
+    admitted once per case. -/
+def admitS2Of (a : Admitted) (document : Json) : Except String Admitted2 := do
+  let ids := unitIdsOf document
+  unless decide ids.Nodup do throw "duplicate or invalid unit id"
+  admitS2Rest a document
 
 /-! ## A superposed document -/
 
@@ -345,8 +357,9 @@ def decodeConflictCerts (D : Doc) (j : Json) : List (Option VE.Tableau.Certifica
   (VE.Norms.targets (soften (correlate (sup D).1))).map (fun t =>
     (VE.CertificateWire.decodeCertificate (j.getObjValD t.1)).toOption)
 
-def replayCertificate (j : Lean.Json) : Except String CertificateReplay := do
-  let r ← replaySup j
+/-- `replayCertificate` on an admitted document. -/
+def replayCertificateOf (b : Admitted2) (j : Lean.Json) : Except String CertificateReplay := do
+  let r ← supReplayOf b
   let ⟨A, hA⟩ ← decodeAssumed r.D (j.getObjValD "assumed")
   let ⟨(Γ, φ), hΓ, hφ⟩ ← decodeShared r.D (j.getObjValD "premises") (j.getObjValD "conclusion")
   let cert ← VE.CertificateWire.decodeCertificate (← j.getObjVal? "certificate")
@@ -354,6 +367,9 @@ def replayCertificate (j : Lean.Json) : Except String CertificateReplay := do
   if ht : takenBy r.D A = true then
     pure ⟨r, A, hA, Γ, φ, hΓ, hφ, decodeConflictCerts r.D (j.getObjValD "conflict_certificates"), cert, ht⟩
   else throw (untakenText r.D A)
+
+def replayCertificate (j : Lean.Json) : Except String CertificateReplay := do
+  replayCertificateOf (← admitS2 (← j.getObjVal? "environment") (← j.getObjVal? "document")) j
 
 structure ModelReplay extends SupReplay where
   assumed : Choice
@@ -364,8 +380,8 @@ structure ModelReplay extends SupReplay where
   M : VE.FiniteModel VE.Bridge.Entity
   valid : M.Valid (envAt (soften (correlate (sup D).1)) 0)
 
-def replayModel (j : Lean.Json) : Except String ModelReplay := do
-  let b ← admitS2 (← j.getObjVal? "environment") (← j.getObjVal? "document")
+/-- `replayModel` on an admitted document. -/
+def replayModelOf (b : Admitted2) (j : Lean.Json) : Except String ModelReplay := do
   let _ ← supReplayOf b
   if hs : b.D.chain ≠ .rights ∧ superposable b.D = true ∧ (choices b.D).isEmpty = false ∧
       choicesSoftChecked b.D = true then
@@ -374,5 +390,8 @@ def replayModel (j : Lean.Json) : Except String ModelReplay := do
     let ⟨M, valid⟩ ← decodeSupModel b.a.re b.D ⟨b.wf, hs.1, hs.2.1⟩ (by rw [b.frame]; rfl) (← j.getObjVal? "model")
     pure ⟨⟨b.D, b.wf, hs.1, hs.2.1, hs.2.2.1, hs.2.2.2⟩, A, Γ, φ, hΓ, hφ, M, valid⟩
   else throw "InvalidInput: readings document is not superposable"
+
+def replayModel (j : Lean.Json) : Except String ModelReplay := do
+  replayModelOf (← admitS2 (← j.getObjVal? "environment") (← j.getObjVal? "document")) j
 
 end VE.Readings.Wire
