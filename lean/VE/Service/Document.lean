@@ -402,7 +402,10 @@ def admitGraph (E : Env) (front graph : Json) (units : List SourceUnit) (all act
   let document := Loader.admissionObject (units.map fun u => (u.id, u.span, u.kind, u.content)) active graph
     front openNames narrowings
   let admitted := match E.block with
-    | .none => VE.Route.Run.runAdmit E.profiles E.json E.rv "admission" (Json.mkObj [("document", document)])
+    -- The route's own admission case (its gates, such as the definitions deferral, then `runAdmit`), as
+    -- Python's `admit_document` asks it.
+    | .none => VE.Route.Run.dispatch "admission" E.json E.checked.envelope
+        (Json.mkObj [("kind", .str "admission"), ("document", document)])
     | .alternatives => VE.Alternatives.Run.runAdmission "admission" E.json document
     | .risk => VE.Risk.Run.runAdmission "admission" E.json document
   let answer ← match admitted with
