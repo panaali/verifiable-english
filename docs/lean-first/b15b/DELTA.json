@@ -3,6 +3,10 @@
     {
       "base": "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/lf15b/base-ab.pilots/pack.json'",
       "head": "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/lf15b/head-ab.pilots/pack.json'"
+    },
+    {
+      "base": "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/lf15b/base-ab.pilots/pack.json'",
+      "head": "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/lf15b/head2-ab.pilots/pack.json'"
     }
   ],
   "verdict": [
@@ -35957,6 +35961,82 @@
       "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/readings/s1.ve.md",
       "op": "document_check",
       "reason": "CheckerUnavailable at base and head alike (the constitution pilot's s1 readings document exceeds the readings route's budget; F5, batches 3b-3e); this batch does not touch the readings route"
+    }
+  ],
+  "availability": [
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261002T0600Z:usecases/bluedot-grant/document.ve.md",
+      "op": "document_check",
+      "base": {
+        "exit": 0,
+        "stderr": [],
+        "stdout": {
+          "coverage": {
+            "accounted_bytes": 7619,
+            "bytes_by_kind": {
+              "asserted": 1450,
+              "attributed": 5037,
+              "instruction": 67,
+              "meta": 401,
+              "question": 250,
+              "unformalised": 414
+            },
+            "bytes_by_status": {
+              "CHECKED": 3351,
+              "LABELLED": 1029,
+              "OPEN": 2114,
+              "UNFORMALISED": 1125
+            },
+            "coverage_percent": 100,
+            "residual": {
+              "assumptions": 19,
+              "bridge_leaves": 0,
+              "open_terms": 4,
+              "unresolved_reading_sets": 0
+            },
+            "residual_total": 23,
+            "source_bytes": 7619,
+            "unformalised_reasons": {
+              "causal_means": 2,
+              "causal_route_excludes_definitions": 4,
+              "motivation_link": 1,
+              "vague_comparison": 1,
+              "vague_evaluation": 1
+            }
+          },
+          "document_id": "28c78a0f182873ab1935696eabf05a215a020a7e76f861efadb105ee03794424",
+          "format": "ve-document@1",
+          "premises": {
+            "budget": {
+              "max_domain_size": 2,
+              "max_evaluations": 100000,
+              "max_models": 10000,
+              "max_proof_steps": 10000
+            },
+            "status": "UNKNOWN"
+          },
+          "reading_plan": {
+            "choices": [
+              {}
+            ],
+            "route": "single"
+          },
+          "source_id": "76990fb411811587f6682d987e6f693ee2d1281db2fab95d8aaeb417631429ae"
+        }
+      },
+      "head": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "CheckerUnavailable: Rust checker failed: Command '['/home/seyran/code/ve-lf-15b-head/rust/target/release/ve', 'jsonl', '-']' timed out after 4.998313070042059 seconds"
+          },
+          "status": "CheckerUnavailable"
+        }
+      }
     }
   ]
 }
