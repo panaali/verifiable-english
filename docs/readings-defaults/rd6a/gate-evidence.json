@@ -1,6 +1,6 @@
 {
  "schema": 2,
- "gated_commit": "03aeb667172a10ec17f68ad10178f2fe09397e41",
+ "gated_commit": "160860662f770307f5bdfa237ad217a7f9ebcc37",
  "base": "167eb8ff09ea693824cd0aedaf52588828f04afc",
  "clean_worktree": true,
  "commits": [
@@ -27,14 +27,30 @@
   {
    "sha": "03aeb667",
    "subject": "readings-defaults RD-6a: normalize latency corpus requests"
+  },
+  {
+   "sha": "abcd2814",
+   "subject": "readings-defaults RD-6a: X1 in Lean, the approved superpose_all_extra refuted"
+  },
+  {
+   "sha": "69bcbe99",
+   "subject": "readings-defaults RD-6a: amended declarations need their original refuted in Lean"
+  },
+  {
+   "sha": "14abe970",
+   "subject": "readings-defaults RD-6a: only a report-only commit may follow the gated one"
+  },
+  {
+   "sha": "16086066",
+   "subject": "readings-defaults RD-6a: report from the gate note's committed copy"
   }
  ],
  "lean": {
   "build_jobs": 788,
   "audit_files": 433,
-  "audit_theorems": 4680,
-  "statements": 4319,
-  "statements_added": 8,
+  "audit_theorems": 4687,
+  "statements": 4326,
+  "statements_added": 15,
   "statements_removed": 0,
   "lean_modules": 433
  },
@@ -42,11 +58,11 @@
   "rd1_exact": 31,
   "rd1_pending": 0,
   "rd6a_checked": 7,
-  "rd6a_exact": 6,
-  "rd6a_amended": [],
-  "rd6a_pending": [
+  "rd6a_exact": 7,
+  "rd6a_amended": [
    "superpose_all_extra"
   ],
+  "rd6a_pending": [],
   "rd6a_later": [
    "fill_transfers",
    "nd_superpose_all",
@@ -60,7 +76,7 @@
  "tests_added": [
   {
    "file": "tests/test_batch_evidence.py",
-   "added": 11
+   "added": 13
   },
   {
    "file": "tests/test_readings_defaults_rd6a.py",
@@ -68,11 +84,11 @@
   },
   {
    "file": "tests/test_readings_defaults_rd6a_report.py",
-   "added": 83
+   "added": 7
   },
   {
    "file": "tests/test_readings_defaults_statements.py",
-   "added": 11
+   "added": 22
   }
  ],
  "seeded_bugs": [
@@ -149,5 +165,5 @@
    "failed": "pytest: test_a_replaced_corpus_record_states_why"
   }
  ],
- "disk_free_gb": 66
+ "disk_free_gb": 57
 }

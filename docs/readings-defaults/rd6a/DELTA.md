@@ -8,7 +8,7 @@ at `167eb8ff`. Built by one Lean builder session on 2026-10-07 and fixed after r
 **Status.** `superpose_all_extra` takes the added hypothesis `hQw`, accepted by the DRI ruling of 2026-10-07 20:30Z
 on the condition that the approved form is refuted in Lean. That refutation is fixture X3 below
 (`superpose_all_extra_refuted`, audited), and the statement checker reports the theorem as amended, not pending.
-The gate below is the last full gate before the review fixes, on `03aeb667`. The report commit that follows the final code commit replaces it with that commit's gate. The gate result, the corpus A/B comparison and the latency measurement are the git note
+The gate below ran on `16086066`, the last commit with code. The report commit that follows it changes only this directory, which `tools/batch_evidence.py --report-commit <it> --report-dir docs/readings-defaults/rd6a` checks; its report test was run on it. The gate result, the corpus A/B comparison and the latency measurement are the git note
 `refs/notes/ve-rd6a-gate` on the gated commit and its committed copy [gate-note.json](gate-note.json), since a
 merge or push does not carry a local note; `tools/batch_evidence.py` accepted them for that commit.
 
@@ -26,6 +26,10 @@ commits are `git log main..<gated commit> --no-merges`.
 | `d0021754` | readings-defaults RD-6a: batch report (gate evidence, the pending superpose_all_extra change, seeded bugs, checklist) |
 | `ef3559e9` | readings-defaults RD-6a: bind batch evidence to final HEAD |
 | `03aeb667` | readings-defaults RD-6a: normalize latency corpus requests |
+| `abcd2814` | readings-defaults RD-6a: X1 in Lean, the approved superpose_all_extra refuted |
+| `69bcbe99` | readings-defaults RD-6a: amended declarations need their original refuted in Lean |
+| `14abe970` | readings-defaults RD-6a: only a report-only commit may follow the gated one |
+| `16086066` | readings-defaults RD-6a: report from the gate note's committed copy |
 
 - `lean/VE/Readings/SupExtra.lean` (new): `Transfers`, `supCertificateCheckExtra` and `supModelCheckExtra` word for
   word as 6.7 states them; the proofs of `superpose_conflict_free_extra`, `superpose_all_extra`,
@@ -57,10 +61,10 @@ Tests added (collected IDs in `tools/gate-collection.json` that `main` lacks):
 
 | File | IDs |
 |---|---|
-| `tests/test_batch_evidence.py` | 11 |
+| `tests/test_batch_evidence.py` | 13 |
 | `tests/test_readings_defaults_rd6a.py` | 2 |
-| `tests/test_readings_defaults_rd6a_report.py` | 83 |
-| `tests/test_readings_defaults_statements.py` | 11 |
+| `tests/test_readings_defaults_rd6a_report.py` | 7 |
+| `tests/test_readings_defaults_statements.py` | 22 |
 
 No frozen statement, wire function, Python module or answer changed. Python and Rust are untouched (the checker and
 the evidence tools decide nothing about meaning).
@@ -105,25 +109,25 @@ certificate check in 20 minutes. So `X1Checks` is the theorem's premise, and Lea
 (`#guard X1Checks`), as it runs every other fixture of the file; seeded bug M10 shows the guard fails on a wrong
 certificate.
 
-On the gated commit, `tools/check_readings_defaults_statements.py` reports: RD-1: 31 exact, 0 pending; RD-6a: 7 checked, 6 exact (0 amended by a DRI ruling), 1 pending: `superpose_all_extra`, 3 not built (`fill_transfers`, `nd_superpose_all`, `nd_superpose_conflict_free`).
+On the gated commit, `tools/check_readings_defaults_statements.py` reports: RD-1: 31 exact, 0 pending; RD-6a: 7 checked, 7 exact (1 amended by a DRI ruling: `superpose_all_extra`), 0 pending, 3 not built (`fill_transfers`, `nd_superpose_all`, `nd_superpose_conflict_free`).
 
 ## Gate
 
-Gated commit: `03aeb667172a10ec17f68ad10178f2fe09397e41`, run in this worktree with a clean status.
+Gated commit: `160860662f770307f5bdfa237ad217a7f9ebcc37`, run in this worktree with a clean status.
 
 | Check | Result |
 |---|---|
 | `lake build` (`PATH=~/.elan/bin:$PATH`) | `Build completed successfully (788 jobs)` |
-| `python3 lean/audit.py` | PASS: 433 source files, 4,680 theorems, only `propext`, `Classical.choice`, `Quot.sound` |
+| `python3 lean/audit.py` | PASS: 433 source files, 4,687 theorems, only `propext`, `Classical.choice`, `Quot.sound` |
 | `python3 VE/Route/frozen.py` | PASS |
-| `python3 tools/lean_statements.py --check` | PASS (4,319 statements; RD-6a adds 8, removes 0 and changes none) |
+| `python3 tools/lean_statements.py --check` | PASS (4,326 statements; RD-6a adds 15, removes 0 and changes none) |
 | `tools/check_lean_imports.py` | layer graph kept (433 modules) |
 | `tools/check_readings_defaults_statements.py` | PASS (above) |
 | `tools/trust_map.py --check` | fails, as on `main` before this batch (the S budget; RD-1's DELTA explains it); RD-6a's own growth is `SupExtra.lean` S +7 (`Transfers`), and nothing unclassified |
 
-The full gate (`--workers 16`): `tools/gate.py` passed on a clean worktree of the gated commit, stages `toolchains`, `lean_build`, `lean_audit`, `rust_build`, `cargo_test`, `pytest`. 11,911 Python tests passed, 7 skipped (each on the gate's allowed list), 1 deselected, 0 failed; 37 Rust tests passed.
+The full gate (`--workers 16`): `tools/gate.py` passed on a clean worktree of the gated commit, stages `toolchains`, `lean_build`, `lean_audit`, `rust_build`, `cargo_test`, `pytest`. 11,848 Python tests passed, 7 skipped (each on the gate's allowed list), 1 deselected, 0 failed; 37 Rust tests passed.
 
-Corpus A/B (`tools/lean_first_diff.py record` on both commits, then `compare`): 94,498 results identical, 0 different, 0 unlisted, base `167eb8ff`.
+Corpus A/B (`tools/lean_first_diff.py record` on both commits, then `compare`): 94,498 results identical, 0 different, 0 unlisted, base `167eb8ff`. The head was recorded anew; the base record is the one made for the 03aeb667 gate (the base commit and the corpus inputs are unchanged), bound by `record_sha256` in the note.
 
 | Corpus/authority | Records |
 |---|---|
@@ -146,9 +150,9 @@ CPU time; the budget is 20% over the base):
 
 | Case | Calls per side | Base CPU ms per call | Head CPU ms per call |
 |---|---|---|---|
-| `differential/c0` | 1000 | 2.937 | 2.934 |
-| `differential/c568` | 1000 | 3.110 | 2.971 |
-| `nulls/rights/vocabulary.predicates.arrest_permitted.instruction_of` | 1000 | 3.186 | 3.155 |
+| `differential/c0` | 1000 | 1.981 | 1.974 |
+| `differential/c568` | 1000 | 1.767 | 1.758 |
+| `nulls/rights/vocabulary.predicates.arrest_permitted.instruction_of` | 1000 | 2.268 | 2.240 |
 
 Not run: nothing else; `tools/gate.py` ran as one process.
 
@@ -198,4 +202,4 @@ empty evidence.
 | 19 use-case formalisation | not applicable |
 | 20 reports | done: every number checked against the note's committed copy and the evidence by a test; what was not run is stated |
 | 21 AGENT/HUMAN/EXTERNAL | done: everything AGENT; the external re-review was replaced by the DRI ruling. Pushing `refs/notes/ve-rd6a-gate` is the orchestrator's at merge (EXTERNAL to this worktree, which does not push); the committed copy carries the same content |
-| 22 hand-off | done: all committed; the gate ran on the gated commit with a clean status; disk checked (66 GB free before the gate) |
+| 22 hand-off | done: all committed; the gate ran on the gated commit with a clean status; disk checked (57 GB free before the gate) |

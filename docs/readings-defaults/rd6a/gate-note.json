@@ -1,81 +1,81 @@
 {
  "schema": 1,
- "finding": "RD-6a review B: full batch gate on final HEAD",
+ "finding": "rd-6a-looprecheck1 B2: full batch gate, corpus A/B and latency on the final code commit",
  "gate": {
-  "commit_sha": "03aeb667172a10ec17f68ad10178f2fe09397e41",
+  "commit_sha": "160860662f770307f5bdfa237ad217a7f9ebcc37",
   "counts": {
-   "collected": 11919,
+   "collected": 11856,
    "deselected": 1,
    "failed": 0,
-   "passed": 11911,
+   "passed": 11848,
    "rust_ignored": 0,
    "rust_passed": 37,
-   "selected": 11918,
+   "selected": 11855,
    "skipped": 7
   },
   "dirty": false,
   "environment": {
    "base": {
-    "CARGO_HOME": "/tmp/ve-gate-0agqmcaz/cargo-home",
+    "CARGO_HOME": "/tmp/ve-gate-j9ta9pgo/cargo-home",
     "GIT_CONFIG_NOSYSTEM": "1",
-    "HOME": "/tmp/ve-gate-0agqmcaz/home",
-    "LAKE_CACHE_DIR": "/tmp/ve-gate-0agqmcaz/lake-cache",
+    "HOME": "/tmp/ve-gate-j9ta9pgo/home",
+    "LAKE_CACHE_DIR": "/tmp/ve-gate-j9ta9pgo/lake-cache",
     "LANG": "C.UTF-8",
     "LC_ALL": "C.UTF-8",
-    "PATH": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin:/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin:/tmp/ve-gate-0agqmcaz/bin:/usr/bin:/bin",
+    "PATH": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin:/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin:/tmp/ve-gate-j9ta9pgo/bin:/usr/bin:/bin",
     "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
     "PYTHONNOUSERSITE": "1",
-    "PYTHONPYCACHEPREFIX": "/tmp/ve-gate-0agqmcaz/pycache",
-    "TMPDIR": "/tmp/ve-gate-0agqmcaz/tmp",
-    "UV_CACHE_DIR": "/tmp/ve-gate-0agqmcaz/uv-cache",
+    "PYTHONPYCACHEPREFIX": "/tmp/ve-gate-j9ta9pgo/pycache",
+    "TMPDIR": "/tmp/ve-gate-j9ta9pgo/tmp",
+    "UV_CACHE_DIR": "/tmp/ve-gate-j9ta9pgo/uv-cache",
     "UV_NO_CONFIG": "1",
-    "XDG_CACHE_HOME": "/tmp/ve-gate-0agqmcaz/home/.cache",
-    "XDG_CONFIG_HOME": "/tmp/ve-gate-0agqmcaz/home/.config",
-    "XDG_DATA_HOME": "/tmp/ve-gate-0agqmcaz/home/.local/share"
+    "XDG_CACHE_HOME": "/tmp/ve-gate-j9ta9pgo/home/.cache",
+    "XDG_CONFIG_HOME": "/tmp/ve-gate-j9ta9pgo/home/.config",
+    "XDG_DATA_HOME": "/tmp/ve-gate-j9ta9pgo/home/.local/share"
    },
    "cargo": {
-    "CARGO_ENCODED_RUSTFLAGS": "--remap-path-prefix=/home/seyran/code/ve-rd-6a=/ve\u001f--remap-path-prefix=/tmp/ve-gate-0agqmcaz/cargo-home=/cargo-home\u001f--remap-path-prefix=/home/seyran/code/ve-rd-6a/rust/target=/ve-target",
-    "CARGO_HOME": "/tmp/ve-gate-0agqmcaz/cargo-home",
+    "CARGO_ENCODED_RUSTFLAGS": "--remap-path-prefix=/home/seyran/code/ve-rd-6a=/ve\u001f--remap-path-prefix=/tmp/ve-gate-j9ta9pgo/cargo-home=/cargo-home\u001f--remap-path-prefix=/home/seyran/code/ve-rd-6a/rust/target=/ve-target",
+    "CARGO_HOME": "/tmp/ve-gate-j9ta9pgo/cargo-home",
     "CARGO_NET_OFFLINE": "true",
     "GIT_CONFIG_NOSYSTEM": "1",
-    "HOME": "/tmp/ve-gate-0agqmcaz/home",
-    "LAKE_CACHE_DIR": "/tmp/ve-gate-0agqmcaz/lake-cache",
+    "HOME": "/tmp/ve-gate-j9ta9pgo/home",
+    "LAKE_CACHE_DIR": "/tmp/ve-gate-j9ta9pgo/lake-cache",
     "LANG": "C.UTF-8",
     "LC_ALL": "C.UTF-8",
-    "PATH": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin:/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin:/tmp/ve-gate-0agqmcaz/bin:/usr/bin:/bin",
+    "PATH": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin:/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin:/tmp/ve-gate-j9ta9pgo/bin:/usr/bin:/bin",
     "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
     "PYTHONNOUSERSITE": "1",
-    "PYTHONPYCACHEPREFIX": "/tmp/ve-gate-0agqmcaz/pycache",
-    "TMPDIR": "/tmp/ve-gate-0agqmcaz/tmp",
-    "UV_CACHE_DIR": "/tmp/ve-gate-0agqmcaz/uv-cache",
+    "PYTHONPYCACHEPREFIX": "/tmp/ve-gate-j9ta9pgo/pycache",
+    "TMPDIR": "/tmp/ve-gate-j9ta9pgo/tmp",
+    "UV_CACHE_DIR": "/tmp/ve-gate-j9ta9pgo/uv-cache",
     "UV_NO_CONFIG": "1",
-    "XDG_CACHE_HOME": "/tmp/ve-gate-0agqmcaz/home/.cache",
-    "XDG_CONFIG_HOME": "/tmp/ve-gate-0agqmcaz/home/.config",
-    "XDG_DATA_HOME": "/tmp/ve-gate-0agqmcaz/home/.local/share"
+    "XDG_CACHE_HOME": "/tmp/ve-gate-j9ta9pgo/home/.cache",
+    "XDG_CONFIG_HOME": "/tmp/ve-gate-j9ta9pgo/home/.config",
+    "XDG_DATA_HOME": "/tmp/ve-gate-j9ta9pgo/home/.local/share"
    },
    "pytest": {
-    "CARGO_HOME": "/tmp/ve-gate-0agqmcaz/cargo-home",
+    "CARGO_HOME": "/tmp/ve-gate-j9ta9pgo/cargo-home",
     "GIT_CONFIG_NOSYSTEM": "1",
-    "HOME": "/tmp/ve-gate-0agqmcaz/home",
-    "LAKE_CACHE_DIR": "/tmp/ve-gate-0agqmcaz/lake-cache",
+    "HOME": "/tmp/ve-gate-j9ta9pgo/home",
+    "LAKE_CACHE_DIR": "/tmp/ve-gate-j9ta9pgo/lake-cache",
     "LANG": "C.UTF-8",
     "LC_ALL": "C.UTF-8",
-    "PATH": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin:/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin:/tmp/ve-gate-0agqmcaz/bin:/usr/bin:/bin",
+    "PATH": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin:/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin:/tmp/ve-gate-j9ta9pgo/bin:/usr/bin:/bin",
     "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
     "PYTHONNOUSERSITE": "1",
-    "PYTHONPYCACHEPREFIX": "/tmp/ve-gate-0agqmcaz/pycache",
-    "TMPDIR": "/tmp/ve-gate-0agqmcaz/tmp",
-    "UV_CACHE_DIR": "/tmp/ve-gate-0agqmcaz/uv-cache",
+    "PYTHONPYCACHEPREFIX": "/tmp/ve-gate-j9ta9pgo/pycache",
+    "TMPDIR": "/tmp/ve-gate-j9ta9pgo/tmp",
+    "UV_CACHE_DIR": "/tmp/ve-gate-j9ta9pgo/uv-cache",
     "UV_NO_CONFIG": "1",
-    "VE_GATE_PYTEST_PROGRESS": "/tmp/ve-gate-0agqmcaz/current-test.txt",
-    "VE_GATE_PYTEST_RESULT": "/tmp/ve-gate-0agqmcaz/pytest-collection.json",
+    "VE_GATE_PYTEST_PROGRESS": "/tmp/ve-gate-j9ta9pgo/current-test.txt",
+    "VE_GATE_PYTEST_RESULT": "/tmp/ve-gate-j9ta9pgo/pytest-collection.json",
     "VE_LEAN_PREBUILT": "1",
     "VE_NATIVE_PREBUILT": "1",
     "VE_RUST_BINARY": "/home/seyran/code/ve-rd-6a/rust/target/release/ve",
     "VE_RUST_PREBUILT": "1",
-    "XDG_CACHE_HOME": "/tmp/ve-gate-0agqmcaz/home/.cache",
-    "XDG_CONFIG_HOME": "/tmp/ve-gate-0agqmcaz/home/.config",
-    "XDG_DATA_HOME": "/tmp/ve-gate-0agqmcaz/home/.local/share"
+    "XDG_CACHE_HOME": "/tmp/ve-gate-j9ta9pgo/home/.cache",
+    "XDG_CONFIG_HOME": "/tmp/ve-gate-j9ta9pgo/home/.config",
+    "XDG_DATA_HOME": "/tmp/ve-gate-j9ta9pgo/home/.local/share"
    }
   },
   "failures": [],
@@ -142,7 +142,7 @@
     "lake": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lake",
     "lean": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean",
     "rustc": "/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin/rustc",
-    "uv": "/tmp/ve-gate-0agqmcaz/bin/uv"
+    "uv": "/tmp/ve-gate-j9ta9pgo/bin/uv"
    },
    "python": "Python 3.14.7",
    "rust_pin": "1.98.1",
@@ -172,7 +172,7 @@
   "unavailable_both": {},
   "unlisted": 0,
   "base_commit": "167eb8ff09ea693824cd0aedaf52588828f04afc",
-  "head_commit": "03aeb667172a10ec17f68ad10178f2fe09397e41",
+  "head_commit": "160860662f770307f5bdfa237ad217a7f9ebcc37",
   "record_sha256": {
    "base": "8422e42aed6fcb8c3ac245e7d5b15078bd964eb3f012a3dd2eb3496526f0c6d3",
    "head": "8422e42aed6fcb8c3ac245e7d5b15078bd964eb3f012a3dd2eb3496526f0c6d3"
@@ -189,27 +189,27 @@
   }
  },
  "latency": {
-  "head_commit": "03aeb667172a10ec17f68ad10178f2fe09397e41",
+  "head_commit": "160860662f770307f5bdfa237ad217a7f9ebcc37",
   "corpus_sha256": "4f18eaa29f54535e1a7603cc646369b993309c0a22b56ba7f4e713e84bab55ab",
   "method": "paired warm readings-route service calls; /proc service CPU time",
   "samples": {
    "differential/c0": {
     "case_sha256": "2eb32776fce454e936243dfb9f5c90808c7d651cf36b7bc473bde1979f6aa2c5",
     "calls_per_side": 1000,
-    "base_cpu_ms": 2.937104,
-    "head_cpu_ms": 2.934232
+    "base_cpu_ms": 1.980899,
+    "head_cpu_ms": 1.974408
    },
    "differential/c568": {
     "case_sha256": "7ce846a74a48e0090349368fa8d88220653dbba8d025bfa545be248043b43b3f",
     "calls_per_side": 1000,
-    "base_cpu_ms": 3.109798,
-    "head_cpu_ms": 2.970985
+    "base_cpu_ms": 1.766597,
+    "head_cpu_ms": 1.757622
    },
    "nulls/rights/vocabulary.predicates.arrest_permitted.instruction_of": {
     "case_sha256": "c9efb3a9454eab711ac70600dc0d8f74e3b0b44cbde4857ea32d375a9136fa59",
     "calls_per_side": 1000,
-    "base_cpu_ms": 3.185561,
-    "head_cpu_ms": 3.155164
+    "base_cpu_ms": 2.268469,
+    "head_cpu_ms": 2.239526
    }
   },
   "pass": true
@@ -5956,10 +5956,10 @@
   }
  },
  "statement_review": {
-  "status": "pending external Astra and Fable re-review",
+  "status": "amended by DRI ruling 2026-10-07, refuted original mechanised",
   "theorem": "superpose_all_extra",
-  "proposed_edit": "(hQw : VE.Compose.SlotWellFormed (correlate (sup D).1) Q)",
-  "counterexample": "lean/VE/Readings/SupExtraExamples.lean X1 and tests/test_readings_defaults_rd6a.py"
+  "edit": "(hQw : VE.Compose.SlotWellFormed (correlate (sup D).1) Q)",
+  "refutation": "VE.Readings.SupExtraExamples.superpose_all_extra_refuted (lean/VE/Readings/SupExtraExamples.lean, X3)"
  },
- "restated": "The note attached to 03aeb667 (refs/notes/ve-rd6a-gate), committed as a copy, with the pilot retry's reason and original outcome added and its git blob ID named source_git_blob (rd-6a-looprecheck1 follow-ups); statement_review is the state at 03aeb667."
+ "base_record_reused": "The base record /tmp/rd6a-base.jsonl of 167eb8ff from the 03aeb667 run, with its one retried pilot record (corpus_ab.retry); the base commit and corpus inputs are unchanged, and record_sha256.base binds it."
 }
