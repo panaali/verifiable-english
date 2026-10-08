@@ -23,6 +23,7 @@ import pytest
 from tests.subprocesses import HANG_TIMEOUT
 from tests.probe_matrix import raw_environment
 from ve import Environment, FiniteModel
+from ve.errors import VEError
 from ve.ast import (WIRE_TAGS, Add, And, Atom, Binary, Body, Bottom, Const, Eq, Exists,
                     Forall, Implies, Le, Lt, Named, Not, Num, Or, Reach, Scale, Top,
                     Unary, Var, formula_from_data, formula_to_data)
@@ -76,7 +77,7 @@ class Collector:
             env = Environment(raw)
             model = FiniteModel.from_dict(env, wire)
             formulas = tuple(formula_from_data(env, a) for a in data)
-        except Exception:  # noqa: BLE001 - any Python rejection is an expected Lean error
+        except VEError:  # a Python rejection is an expected Lean error; anything else fails
             self.add({"kind": "evaluate-budgeted", "environment": raw, "model": wire,
                       "ast": data, "max_evaluations": FULL}, "error")
             return
@@ -317,5 +318,40 @@ def test_defined_tables_are_computed_on_every_family(profiles):
                                                                 Unary("base", Var(0)))),
                                          Exists("item", Unary("derived", Var(0)))])
     assert "error" not in collector.expected
+    bad = collector.mismatches()
+    assert not bad, bad[:3]
+
+
+# --- error parity: the metered route validates as the service does ---------------------
+
+def _rejections():
+    """(name, raw environment, model) pairs that Python rejects."""
+    fol = raw_environment(())
+    model = {"complete": True, "domains": {"item": ["i"]}, "constants": {"x": "i"},
+             "relations": {"base": []}}
+    defined = raw_environment(("definitions@0",))
+    defined["profiles"] = ["relational-fol@0"]
+    reserved = raw_environment(())
+    reserved["vocabulary"]["sorts"]["no"] = {"description": "reserved"}
+    data = raw_environment(("data@0",))
+    legacy = json.loads((ROOT / "conformance/evaluation.json").read_text())[0]
+    literal = json.loads(json.dumps(legacy["environment"]))
+    literal["vocabulary"]["constants"]["quoted"] = {"sort": "$string"}
+    revision = {**legacy["environment"], "spec_revision": "ve-v0.2-expand2-2026-09-25"}
+    return (("defined-without-profile", defined, model),
+            ("reserved-name", reserved, model),
+            ("functional-violated", data, {**model, "relations": {"base": [], "edge": [["i", "i"], ["i", "j"]]},
+                                           "domains": {"item": ["i", "j"]}}),
+            ("unknown-entity", fol, {**model, "relations": {"base": [["z"]]}}),
+            ("legacy-literal", literal, legacy["model"]),
+            ("legacy-revision", revision, legacy["model"]))
+
+
+@needs_exe
+def test_rejected_environments_and_models_are_errors_as_in_python():
+    collector = Collector()
+    for _, raw, wire in _rejections():
+        collector.document(raw, wire, [["top"]], boundaries, lambda b: ((True, 10_000),))
+    assert collector.expected == ["error"] * len(_rejections())
     bad = collector.mismatches()
     assert not bad, bad[:3]

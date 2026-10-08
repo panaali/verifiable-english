@@ -6454,6 +6454,7 @@
   "tests/test_metered_differential.py::test_existential_under_no_universal_has_no_clause_guard",
   "tests/test_metered_differential.py::test_nested_disjunction_is_one_clause",
   "tests/test_metered_differential.py::test_random_generator_covers_every_wire_constructor",
+  "tests/test_metered_differential.py::test_rejected_environments_and_models_are_errors_as_in_python",
   "tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0+definitions@0-150102]",
   "tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0+definitions@0-1501]",
   "tests/test_metered_differential.py::test_seeded_random_differential_matches_python[closure@0+definitions@0-15]",
