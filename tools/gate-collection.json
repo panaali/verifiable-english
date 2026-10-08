@@ -1673,6 +1673,8 @@
   "tests/test_document_lean_switch.py::test_a_document_lean_accepted_that_python_cannot_build_is_unavailable",
   "tests/test_document_lean_switch.py::test_a_service_failure_is_never_answered_by_python",
   "tests/test_document_lean_switch.py::test_a_text_that_is_not_utf8_takes_the_retained_path",
+  "tests/test_document_lean_switch.py::test_alternatives_coverage_is_bound_to_units_and_counts[alternatives-cells]",
+  "tests/test_document_lean_switch.py::test_alternatives_coverage_is_bound_to_units_and_counts[risk]",
   "tests/test_document_lean_switch.py::test_answers_not_bound_to_the_request_are_unavailable",
   "tests/test_document_lean_switch.py::test_coverage_and_statuses_are_leans",
   "tests/test_document_lean_switch.py::test_definitions_graph_is_deferred_as_the_admission_route_defers_it",
