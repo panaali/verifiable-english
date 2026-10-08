@@ -221,6 +221,7 @@ def main (paths : List String) : IO UInt32 := do
       | .error message => Json.mkObj [("status", .str "error"),
           ("case_index", toJson index), ("error", .str message)]
     (← IO.getStdout).putStrLn (Json.arr results).compress
-    return 0
+    -- Exit 1 when some case is rejected, as every one-shot runner does (`ve.backends.lean.read_rows`).
+    return if results.any (·.getObjValD "status" == .str "error") then 1 else 0
 
 end VE.Route.MeteredRun

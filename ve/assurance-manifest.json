@@ -51,7 +51,6 @@
     "ve/backends/lean_service.py:LeanServicePool.run_bound.worker": "captures a worker error and re-raises it in request order after every worker joins; never converts it into a result",
     "ve/natural.py:render_natural_sentence": "display only: selects an English wording whose one-reading audit passes",
     "ve/printer.py:natural_document": "display only: retries with a different wording and re-raises when that fails too",
-    "ve/search.py:_models_with_terminal_error": "buffers a terminal model-stream error for every scoped reader, which re-raises the original error before reporting a verdict",
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome",
     "ve/backends/dispatch.py:_shadow": "shadow authority only (execute and shadowed): the Python result is returned (a Python exception is re-raised unchanged); a candidate backend exception, CheckerUnavailable included, is only recorded as a shadow difference and never becomes the returned verdict",
     "ve/norm_defaults.py:UnspecifiedDocument.__init__": "after Lean accepts a source, a Python container construction failure is reported as CheckerUnavailable",
@@ -1832,6 +1831,22 @@
             "dispatch": [
               "lean/VE/Order/Wire.lean"
             ]
+          },
+          {
+            "executable": "ve_metered",
+            "mode": "",
+            "kinds": [
+              "evaluate-budgeted"
+            ],
+            "response": {
+              "evaluation": "object"
+            },
+            "dispatch": [
+              "lean/VE/Route/MeteredRun.lean",
+              "lean/VE/Route/Metered.lean",
+              "lean/VE/Route/MeteredTrace.lean"
+            ],
+            "note": "lean-first 15b: the reported value, count, trace and ResourceLimit of an evaluation (ve.evaluate:_evaluate_lean checks the evaluation object's members)"
           }
         ],
         "planned_modes": [],
@@ -1854,7 +1869,11 @@
           "VE.Route.WireSound.runOrder_evaluate",
           "VE.Route.RunSound.route_fol_evaluate",
           "VE.Route.RunSound.route_closure_evaluate",
-          "VE.Route.RunSound.route_order_evaluate"
+          "VE.Route.RunSound.route_order_evaluate",
+          "VE.Route.MeteredProofs.fol_sound",
+          "VE.Route.MeteredProofs.closure_sound",
+          "VE.Route.MeteredProofs.core_sound",
+          "VE.Route.MeteredProofs.order_sound"
         ],
         "planned_theorems": [],
         "decoders": [
@@ -1865,14 +1884,10 @@
           "lean/VE/Core/Wire.lean"
         ]
       },
-      "rust": {
-        "commands": [
-          "evaluate",
-          "conformance"
-        ],
-        "role": "hot evaluation and, after stage 2e, budgeted traces"
-      },
-      "lean_call_sites": [],
+      "rust": null,
+      "lean_call_sites": [
+        "ve.evaluate:_evaluate_lean"
+      ],
       "tests": [
         "tests/test_lean_conformance.py::test_lean_agrees_on_every_shared_case",
         "tests/test_rust_conformance.py::test_rust_shared_evaluation",
@@ -2053,15 +2068,42 @@
           "CheckerUnavailable"
         ]
       },
-      "lean": null,
+      "lean": {
+        "bindings": [
+          {
+            "executable": "ve_metered",
+            "mode": "",
+            "kinds": [
+              "non-vacuity"
+            ],
+            "response": {
+              "suitable": "bool",
+              "evaluations": "nat",
+              "exhausted": "bool"
+            },
+            "uncounted": {
+              "evaluations": "the work Lean charged; ve.search:_nonvacuous checks it is within the case's max_evaluations"
+            },
+            "dispatch": [
+              "lean/VE/Route/MeteredRun.lean",
+              "lean/VE/Route/NonVacuity.lean"
+            ],
+            "note": "lean-first 15b: the non-vacuity of every reported search witness"
+          }
+        ],
+        "planned_modes": [],
+        "theorems": []
+      },
       "rust": {
         "commands": [
-          "countermodel",
+          "jsonl",
           "conformance"
         ],
-        "role": "search, extended with every Python search option in stage 2e"
+        "role": "the only search (lean-first 15b): proposes candidates and witnesses; its candidate evaluator is generator-internal and its witnesses are checked by Lean"
       },
-      "lean_call_sites": [],
+      "lean_call_sites": [
+        "ve.search:_nonvacuous"
+      ],
       "tests": [
         "tests/test_evaluate_search.py::test_search_finds_empty_domain_countermodel_and_checks_it",
         "tests/test_search_options.py::test_public_countermodel_check_always_revalidates_forged_model_identity",
@@ -2074,7 +2116,7 @@
       ],
       "notes": [
         "Search has no theorem; its soundness is countermodel.check's. Every candidate passes the `ve.search:check_countermodel` verdict entry before `Found` is reported (a distinguishing model is checked as a countermodel to the direction it refutes), so a migrated countermodel.check makes search CheckerUnavailable rather than bypassed.",
-        "The non-vacuity filter (`nonvacuous_for`, `semantic_nonvacuity`) is a search-side constraint with no checker counterpart; it is trusted as python:implementation."
+        "Lean-first batch 15b: Python has no search of its own. Rust's search proposes under every authority; Lean checks every reported witness (the countermodel.check entry under Lean's authority) and its non-vacuity (`ve_metered`, `VE.Route.NonVacuity`). Rust's candidate evaluator stays generator-internal (rule 3): the batch-15b measurement (docs/lean-first/b15b) found Lean evaluation of every candidate over the bluedot search deadline."
       ]
     },
     {

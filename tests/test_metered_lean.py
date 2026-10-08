@@ -23,8 +23,11 @@ FAMILIES = ((), ("closure@0",), ("closure@0", "nary@0"), ("order@0",))
 
 def run(cases):
     answer = subprocess.run([str(EXE)], input=json.dumps(cases), text=True,
-                            capture_output=True, check=True, timeout=HANG_TIMEOUT)
-    return json.loads(answer.stdout)
+                            capture_output=True, check=False, timeout=HANG_TIMEOUT)
+    rows = json.loads(answer.stdout)
+    # Exit 1 exactly when a case is rejected (batch 15b), as every one-shot runner.
+    assert answer.returncode == int(any(row.get("status") == "error" for row in rows)), answer
+    return rows
 
 
 def fixture(profiles):
@@ -125,7 +128,7 @@ def test_bad_budget_types_are_bounded_errors():
     for case in cases:
         completed = subprocess.run([str(EXE)], input=json.dumps([case]), text=True,
                                    capture_output=True, timeout=HANG_TIMEOUT)
-        if completed.returncode == 0:
+        if completed.returncode == 1:  # a rejected case (exit 1 since batch 15b)
             assert json.loads(completed.stdout)[0]["status"] == "error"
         else:
             assert completed.returncode == 2

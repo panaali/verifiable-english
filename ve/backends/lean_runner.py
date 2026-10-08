@@ -1,6 +1,12 @@
 """The cases public adapters send to the Lean service; `relay.decide` sends them."""
 from __future__ import annotations
 
+from pathlib import Path
+
+# Lean's metered evaluator and non-vacuity check (batch 15a), a one-shot runner: the owner of every
+# reported evaluation count, trace and `ResourceLimit`, and of the non-vacuity of a search witness.
+METERED_EXECUTABLE = Path(__file__).resolve().parents[2] / "lean/.lake/build/bin/ve_metered"
+
 
 def route_mode(env) -> str:
     """The service mode for a plain route case over a ve.core@0.2 `env`.
