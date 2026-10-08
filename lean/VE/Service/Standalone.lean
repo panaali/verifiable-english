@@ -378,13 +378,7 @@ def decodeLegacy (environment : Json) : Except String Legacy := do
   if language == "ve.core@0" then
     match VE.Bridge.decodeEnvironment environment with
     | .ok v => pure (.v0 v)
-    | .error message =>
-      if message.startsWith "invalid signature:" then
-        throw "UnknownSymbol: Undeclared predicate argument sort"
-      if message.startsWith "DuplicateDeclaration:" ||
-          message.startsWith "ResourceLimit: Identifier exceeds" then
-        throw s!"InvalidInput: {message}"
-      throw message
+    | .error message => throw message
   else if language == "ve.core@0.1" then
     if environment.getObjValD "profiles" == toJson ["order@0", "relational-fol@0"] then
       match VE.Order.Wire.decodeEnvironment environment with
@@ -409,7 +403,7 @@ def environmentCase (j : Json) : Except String Json := do
   let environment ← j.getObjVal? "environment"
   if isLegacy environment ||
       (environment.getObjValD "language" != .str "ve.core@0.2" &&
-        frozenFamilyProfiles environment) then
+        ((environment.getObjVal? "profile").isOk || frozenFamilyProfiles environment)) then
     let l ← decodeLegacy environment
     let envId ← legacyEnvironmentId l environment
     -- v0 names its one profile in `profile`; ve.core@0.1 lists `profiles`.
@@ -861,9 +855,9 @@ private def tableFields (value : Json) (expected : List String) (path : String) 
 
 private def modelAtom (value : Json) (path : String) : Except ModelFault String := do
   let .str word := value | modelFault path "InvalidModel: local ID must match [a-z][a-z0-9_]*"
-  if word.utf8ByteSize > 64 then modelFault path "ResourceLimit: local ID exceeds 64 ASCII bytes"
   unless VE.Surface.identifier word do
     modelFault path "InvalidModel: local ID must match [a-z][a-z0-9_]*"
+  if word.utf8ByteSize > 64 then modelFault path "ResourceLimit: local ID exceeds 64 ASCII bytes"
   pure word
 
 private def modelCell (order : Bool) (sort : String) (value : Json) (path : String) :
@@ -990,9 +984,11 @@ private def locatedModelTables (environment model : Json) : Except ModelFault Un
   tableFields values constantNames "/constants"
   let .ok relationFields := VE.Bridge.fields relations |
     modelFault "/relations" "InvalidModel: expected an object"
+  -- A supplied definition table is rejected by the definitions layer, whose
+  -- semantic diagnostic is rooted at the model rather than a JSON cell.
   if relationFields.any (fun (name, _) =>
       (predicates.any fun (p, entry) => p == name && (entry.getObjVal? "defined").isOk)) then
-    modelFault "/relations" "InvalidModel(definitions): supplied table for defined predicate"
+    return ()
   tableFields relations predicateNames "/relations"
   -- Static limits precede cell decoding in all families.
   for sort in sortNames do
