@@ -67,10 +67,37 @@ theorem environment_fault_fits (j : Json) (fault : ModelFault) :
   unfold reportedFault
   split <;> fits
 
+theorem environment_with_path_fits (j result : Json) (fault : ModelFault)
+    (h : Fits j Skeletons.environment result) :
+    Fits j Skeletons.environment (withVocabularyPath j result fault) := by
+  unfold withVocabularyPath
+  repeat first
+    | exact h
+    | exact environment_fault_fits j _
+    | split
+
 theorem model_fault_fits (j : Json) (fault : ModelFault) :
     Fits j Skeletons.model (reportedFault j fault) := by
   unfold reportedFault
   split <;> fits
+
+theorem legacy_environment_fits (j environment : Json) :
+    Fits j Skeletons.environment (reportedLegacyEnvironment j environment) := by
+  unfold reportedLegacyEnvironment
+  split
+  · exact environment_case_reported j
+  · split
+    · split
+      · exact environment_fault_fits j _
+      · exact environment_with_path_fits j _ _ (environment_case_reported j)
+    · exact environment_case_reported j
+
+theorem other_environment_fits (j environment : Json) :
+    Fits j Skeletons.environment (reportedOtherEnvironment j environment) := by
+  unfold reportedOtherEnvironment
+  split
+  · exact environment_case_reported j
+  · exact legacy_environment_fits j environment
 
 theorem environment_reported (j : Json) : Fits j Skeletons.environment (reportedEnvironment j) := by
   unfold reportedEnvironment
@@ -81,9 +108,9 @@ theorem environment_reported (j : Json) : Fits j Skeletons.environment (reported
       · split
         · split
           · exact environment_fault_fits j _
-          · exact environment_case_reported j
+          · exact environment_with_path_fits j _ _ (environment_case_reported j)
         · exact environment_case_reported j
-      · exact environment_case_reported j
+      · exact other_environment_fits j _
     · split
       · exact environment_fault_fits j _
       · split

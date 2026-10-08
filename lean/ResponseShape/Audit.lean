@@ -287,6 +287,9 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.Standalone.environment_fits
 #print axioms ResponseShape.Encoders.Standalone.environment_case_reported
 #print axioms ResponseShape.Encoders.Standalone.environment_fault_fits
+#print axioms ResponseShape.Encoders.Standalone.environment_with_path_fits
+#print axioms ResponseShape.Encoders.Standalone.legacy_environment_fits
+#print axioms ResponseShape.Encoders.Standalone.other_environment_fits
 #print axioms ResponseShape.Encoders.Standalone.environment_reported
 #print axioms ResponseShape.Encoders.Standalone.family_fits
 #print axioms ResponseShape.Encoders.Standalone.identity_fits
