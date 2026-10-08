@@ -209,6 +209,10 @@ def elaborateSuperposed : List (String × Shape) := [
           ("predicates", ref "common.json#/$defs/nat"),
           ("nodes", ref "common.json#/$defs/nat")]])]])]
 
+/-- `fill_premises` and `filled` (Readings.Run.runElaborateNDFilled), as validate answers them. -/
+def filledFields : List (String × Shape) :=
+  [("fill_premises", ref "#/$defs/fill_premises"), ("filled", ref "#/$defs/filled")]
+
 /-- An answer of exactly `fields` beside `id`, `status` and the route. -/
 def elaborateRoute (routes : List String) (fields : List (String × Shape)) : Shape :=
   n [
@@ -221,13 +225,18 @@ def elaborateRoute (routes : List String) (fields : List (String × Shape)) : Sh
 
 def elaborate : Shape :=
   c
-    "Readings.Run.runElaborate (Route.elaborateFields): the route of 1.1; past its first three rows the finding of 1.8, the stale narrowings, the compatible choices (or over the limit) and the number checked; on the superposed route also the choice vocabulary, the units of sup D, the labelled slot, the name map and the sizes. The units and the name map are compared whole with Python's regeneration (ve/readings_route.py elaborate)."
+    "Readings.Run.runElaborate (Route.elaborateFields): the route of 1.1; past its first three rows the finding of 1.8, the stale narrowings, the compatible choices (or over the limit) and the number checked; on the superposed route also the choice vocabulary, the units of sup D, the labelled slot, the name map and the sizes. The units and the name map are compared whole with Python's regeneration (ve/readings_route.py elaborate). Under the unspecified completion (Readings.Run.runElaborateNDFilled) the row also carries fill_premises and filled."
     [
       .anyOf [
         elaborateRoute ["w2", "pending", "abstention"] [("generated_predicates", generatedPredicates)],
         elaborateRoute ["enumerated"] (("generated_predicates", generatedPredicates) :: elaborateChoices),
         elaborateRoute ["superposed"] (("generated_predicates", generatedPredicates) ::
-          (elaborateChoices ++ elaborateSuperposed))]]
+          (elaborateChoices ++ elaborateSuperposed)),
+        -- Under the unspecified completion (Readings.Run.runElaborateNDFilled): each row with the filled document.
+        elaborateRoute ["w2", "pending", "abstention"] (("generated_predicates", generatedPredicates) :: filledFields),
+        elaborateRoute ["enumerated"] (("generated_predicates", generatedPredicates) :: (elaborateChoices ++ filledFields)),
+        elaborateRoute ["superposed"] (("generated_predicates", generatedPredicates) ::
+          (elaborateChoices ++ elaborateSuperposed ++ filledFields))]]
 
 def conflict : Shape :=
   c
