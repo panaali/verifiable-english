@@ -1,0 +1,138 @@
+[
+ {
+  "id": "M1",
+  "bug": "a name declared differently is merged (5 row 10)",
+  "file": "lean/VE/Readings/Companions.lean",
+  "sorried": [
+   "addDecl_spec"
+  ],
+  "failed": [
+   "tests/test_readings_companions_lean.py::test_fc2_a_name_declared_differently"
+  ],
+  "guard_errors_at_lines": [
+   30,
+   58
+  ],
+  "summary": "1 failed, 18 passed in 1.97s"
+ },
+ {
+  "id": "M2",
+  "bug": "a set mixing readings with and without a companion is not refused (5 row 6)",
+  "file": "lean/VE/Readings/Companions.lean",
+  "sorried": [],
+  "failed": [
+   "tests/test_readings_companions_lean.py::test_fc3_a_set_mixing_readings_with_and_without_their_own_vocabulary"
+  ],
+  "guard_errors_at_lines": [
+   126
+  ],
+  "summary": "1 failed, 18 passed in 4.90s"
+ },
+ {
+  "id": "M3",
+  "bug": "a coupling across components is kept (5 row 7)",
+  "file": "lean/VE/Readings/Companions.lean",
+  "sorried": [],
+  "failed": [
+   "tests/test_readings_companions_lean.py::test_fc9_a_coupling_across_components_is_refused_one_within_main_is_kept"
+  ],
+  "guard_errors_at_lines": [
+   120
+  ],
+  "summary": "1 failed, 18 passed in 3.34s"
+ },
+ {
+  "id": "M4",
+  "bug": "a recorded meaning id is not compared with companionMeaningId (5 row 13)",
+  "file": "lean/VE/Readings/Companions.lean",
+  "sorried": [],
+  "failed": [
+   "tests/test_readings_companions_lean.py::test_fc7_meaning_ids_of_the_udhr_companions"
+  ],
+  "guard_errors_at_lines": [],
+  "summary": "1 failed, 18 passed in 1.36s"
+ },
+ {
+  "id": "M5",
+  "bug": "a narrowing on a companion set does not travel with it (A3)",
+  "file": "lean/VE/Readings/Companions.lean",
+  "sorried": [
+   "componentDoc_arr",
+   "split_keeps_links"
+  ],
+  "failed": [
+   "tests/test_readings_companions_lean.py::test_fc11_a_narrowing_travels_with_its_companion_set"
+  ],
+  "guard_errors_at_lines": [
+   107
+  ],
+  "summary": "1 failed, 18 passed in 1.47s"
+ },
+ {
+  "id": "M6",
+  "bug": "a kind naming one component runs on main whatever it names",
+  "file": "lean/VE/Readings/Run.lean",
+  "sorried": [],
+  "failed": [
+   "tests/test_readings_companions_lean.py::test_kinds_naming_one_component",
+   "tests/test_readings_companions_lean.py::test_without_companions_the_answer_is_todays"
+  ],
+  "guard_errors_at_lines": [],
+  "summary": "2 failed, 17 passed in 1.01s"
+ },
+ {
+  "id": "M7",
+  "bug": "a companion on the soft or rights chain is admitted (5 row 8)",
+  "file": "lean/VE/Readings/Companions.lean",
+  "sorried": [],
+  "failed": [
+   "tests/test_readings_companions_lean.py::test_fc8_a_companion_on_the_soft_or_rights_chain"
+  ],
+  "guard_errors_at_lines": [],
+  "summary": "1 failed, 18 passed in 1.15s"
+ },
+ {
+  "id": "M8",
+  "bug": "companions are merged in the request's key order (no normal form)",
+  "file": "lean/VE/Readings/Companions.lean",
+  "sorried": [],
+  "failed": [
+   "tests/test_readings_companions_lean.py::test_fc5_identical_declarations_unite_whatever_their_key_order"
+  ],
+  "guard_errors_at_lines": [],
+  "summary": "1 failed, 18 passed in 0.90s"
+ },
+ {
+  "id": "M9",
+  "bug": "open terms are not typed in the merged frame (E4, 5 row 12)",
+  "file": "lean/VE/Readings/Companions.lean",
+  "sorried": [
+   "mergeOpenTerms_ok",
+   "mergeOpenTerms_identical"
+  ],
+  "failed": [
+   "tests/test_readings_companions_lean.py::test_fc10_open_terms_merge_by_name_and_are_typed_in_the_merged_frame"
+  ],
+  "guard_errors_at_lines": [
+   79
+  ],
+  "summary": "1 failed, 18 passed in 1.06s"
+ },
+ {
+  "id": "M10",
+  "bug": "validate and elaborate answer the main case only",
+  "file": "lean/VE/Readings/Run.lean",
+  "sorried": [],
+  "failed": [
+   "tests/test_readings_companions_lean.py::test_fc10_open_terms_merge_by_name_and_are_typed_in_the_merged_frame",
+   "tests/test_readings_companions_lean.py::test_fc11_a_narrowing_travels_with_its_companion_set",
+   "tests/test_readings_companions_lean.py::test_fc12_an_unseparated_set_stays_in_main_as_w2",
+   "tests/test_readings_companions_lean.py::test_fc1_three_components_each_answered_as_a_document_of_its_own",
+   "tests/test_readings_companions_lean.py::test_fc5_identical_declarations_unite_whatever_their_key_order",
+   "tests/test_readings_companions_lean.py::test_fc7_meaning_ids_of_the_udhr_companions",
+   "tests/test_readings_companions_lean.py::test_fc9_a_coupling_across_components_is_refused_one_within_main_is_kept"
+  ],
+  "guard_errors_at_lines": [],
+  "summary": "7 failed, 12 passed in 1.03s"
+ }
+]
