@@ -10,8 +10,16 @@ unlisted difference, a missing or repeated declaration, or a PENDING entry that 
 
 RD-6a is checked the same way against 6.7 in `SupExtra.lean`. 6.7 also states RD-6b's declarations (LATER_6A); each
 is compared once it is in the file and listed as not built before.
+
+A declaration that a DRI ruling amended (AMENDED_6A) passes as exact, and is reported as amended, only when all of
+these hold: the Lean text is the approved text with the ruled edit and nothing else; the refutations file states the
+approved statement, binder for binder, as a proposition (`def <P> : Prop := ∀ <binders>, <conclusion>`, built from
+the spec text here, so the refuted proposition cannot drift from the approved one); a theorem there concludes `¬ <P>`;
+and lean/VE/Audit.lean audits that theorem. Lean checks that the proposition gives the built theorem (an `example`
+in the refutations file applies it to the built binders).
 """
 
+from dataclasses import dataclass
 from pathlib import Path
 import re
 import sys
@@ -28,16 +36,33 @@ PENDING: dict[str, str] = {}
 SOURCE_6A = ROOT / "lean/VE/Readings/SupExtra.lean"
 # 6.7's declarations by kind, RD-6b's included.
 EXPECTED_6A = {"theorem": 7, "def": 3, "structure": 0}
-PENDING_6A: dict[str, str] = {
-    "superpose_all_extra": "added hypothesis (hQw : VE.Compose.SlotWellFormed (correlate (sup D).1) Q); the approved "
-                           "form is false (fixture X1 of lean/VE/Readings/SupExtraExamples.lean)",
-}
+PENDING_6A: dict[str, str] = {}
 # The one edit each RD-6a pending declaration makes to the approved text: (approved fragment, Lean fragment). Any other
 # difference fails, so a pending declaration cannot drift further unnoticed.
-EDITS_6A: dict[str, tuple[str, str]] = {
-    "superpose_all_extra": ("(hq : Transfers.{u} D Q Q') (hcf :",
-                            "(hq : Transfers.{u} D Q Q') (hQw : VE.Compose.SlotWellFormed (correlate (sup D).1) Q) (hcf :"),
+EDITS_6A: dict[str, tuple[str, str]] = {}
+
+
+@dataclass(frozen=True)
+class Amendment:
+    """A DRI ruling that accepts one edit to an approved declaration on condition that the approved form is refuted
+    in Lean: the ruling, the edit (approved fragment, Lean fragment), and the proposition stating the approved form
+    and the theorem refuting it, both in the refutations file."""
+    ruling: str
+    edit: tuple[str, str]
+    proposition: str
+    refutation: str
+
+
+AMENDED_6A: dict[str, Amendment] = {
+    "superpose_all_extra": Amendment(
+        "DRI ruling 2026-10-07",
+        ("(hq : Transfers.{u} D Q Q') (hcf :",
+         "(hq : Transfers.{u} D Q Q') (hQw : VE.Compose.SlotWellFormed (correlate (sup D).1) Q) (hcf :"),
+        "SuperposeAllExtraApproved", "superpose_all_extra_refuted"),
 }
+REFUTATIONS_6A = ROOT / "lean/VE/Readings/SupExtraExamples.lean"
+REFUTATIONS_NAMESPACE_6A = "VE.Readings.SupExtraExamples"
+AUDIT = ROOT / "lean/VE/Audit.lean"
 # 6.7's RD-6b declarations, built by RD-6b in the same file.
 LATER_6A = {"fill_transfers", "nd_superpose_conflict_free", "nd_superpose_all"}
 KINDS = ("theorem", "def", "structure")
@@ -79,17 +104,65 @@ def approved_6a() -> dict[tuple[str, str], list[str]]:
     return block("### 6.7 RD-6a", "## 7.")
 
 
+def signature(statement: str) -> tuple[str, str]:
+    """A normalized `theorem <name> <binders> : <conclusion>` as (binders, conclusion): the binders are the bracketed
+    groups after the name, read by bracket depth, so a `:` inside a binder does not end them."""
+    rest = statement.split(" ", 2)[2]
+    opens, closes = "({[⦃", ")}]⦄"
+    i = 0
+    while i < len(rest) and rest[i] in opens:
+        depth = 0
+        for j in range(i, len(rest)):
+            depth += (rest[j] in opens) - (rest[j] in closes)
+            if depth == 0:
+                break
+        else:
+            raise ValueError(f"unbalanced binder in: {statement}")
+        i = j + 1
+        while i < len(rest) and rest[i] == " ":
+            i += 1
+    if not rest[i:].startswith(": "):
+        raise ValueError(f"no conclusion after the binders of: {statement}")
+    return rest[:i].strip(), rest[i + 2:].strip()
+
+
+def refuted(name: str, approved_text: str, amendment: Amendment, refutations: Path, namespace: str,
+            audit: Path) -> list[str]:
+    """The errors of an amended declaration's refutation: the approved statement as a proposition, a theorem
+    concluding its negation, and that theorem's audit entry."""
+    decls = declarations(refutations.read_text(), statements_only=True)
+    binders, conclusion = signature(approved_text)
+    proposition = normal(f"def {amendment.proposition} : Prop := ∀ {binders}, {conclusion}")
+    errors = []
+    found = decls.get(("def", amendment.proposition), [])
+    if found != [proposition]:
+        errors.append(f"{name}: {amendment.proposition} is not the approved statement as one proposition\n"
+                      f"  approved: {proposition}\n  Lean:     {found}")
+    theorem = decls.get(("theorem", amendment.refutation), [])
+    if len(theorem) != 1 or not re.search(rf" : ¬ ?{re.escape(amendment.proposition)}(\.\{{\w+\}})?$", theorem[0]):
+        errors.append(f"{name}: no one theorem {amendment.refutation} concluding ¬ {amendment.proposition}")
+    entry = f"#print axioms {namespace}.{amendment.refutation}"
+    if entry not in audit.read_text().splitlines():
+        errors.append(f"{name}: {amendment.refutation} is not audited in {audit.name}")
+    return errors
+
+
 def compare(batch: str, spec: dict, source: Path, expected: dict, pending_ok: dict[str, str],
-            later: set[str], edits: dict[str, tuple[str, str]] | None = None) -> tuple[list[str], int]:
+            later: set[str], edits: dict[str, tuple[str, str]] | None = None,
+            amended: dict[str, Amendment] | None = None, refutations: Path | None = None,
+            namespace: str = "") -> tuple[list[str], int]:
     """Print the batch's report; return its errors and its number of exact declarations."""
     lean = declarations(source.read_text(), statements_only=True)
-    errors, pending, waiting = [], [], []
+    amended = amended or {}
+    errors, pending, waiting, amends = [], [], [], []
     counts = {kind: sum(1 for k, _ in spec if k == kind) for kind in KINDS}
     if counts != expected:
         errors.append(f"expected {expected} approved {batch} declarations, found {counts}")
     names = {name for _, name in spec}
-    for name in sorted((set(pending_ok) | later) - names):
-        errors.append(f"{name}: listed as pending or later but not an approved declaration")
+    for name in sorted((set(pending_ok) | later | set(amended)) - names):
+        errors.append(f"{name}: listed as pending, amended or later but not an approved declaration")
+    for name in sorted(set(pending_ok) & set(amended)):
+        errors.append(f"{name}: listed as both pending and amended")
     for (kind, name), texts in sorted(spec.items()):
         if len(texts) != 1:
             errors.append(f"{name}: the spec block states it {len(texts)} times")
@@ -101,7 +174,18 @@ def compare(batch: str, spec: dict, source: Path, expected: dict, pending_ok: di
         if len(found) != 1:
             errors.append(f"{name}: expected one Lean {kind}, found {len(found)}")
             continue
-        if found[0] == texts[0]:
+        if name in amended:
+            edited = texts[0].replace(amended[name].edit[0], amended[name].edit[1], 1)
+            if edited == texts[0] or found[0] != edited:
+                errors.append(f"{name}: is not the approved text with the edit of {amended[name].ruling}\n"
+                              f"  approved: {texts[0]}\n  Lean:     {found[0]}")
+                continue
+            failures = refuted(name, texts[0], amended[name], refutations, namespace, AUDIT)
+            errors += failures
+            if not failures:
+                amends.append(f"{name}: amended by {amended[name].ruling}, refuted original mechanised "
+                              f"({amended[name].refutation})")
+        elif found[0] == texts[0]:
             if name in pending_ok:
                 errors.append(f"{name}: listed as pending but matches the approved text")
         elif name in pending_ok and name in (edits or {}) and \
@@ -114,20 +198,21 @@ def compare(batch: str, spec: dict, source: Path, expected: dict, pending_ok: di
             errors.append(f"{name}: {kind} differs\n  approved: {texts[0]}\n  Lean:     {found[0]}")
     theorems = sum(1 for k, name in spec if k == "theorem" and name not in waiting)
     print(f"checked {len(spec) - len(waiting)} approved {batch} declarations ({theorems} theorems)")
-    for line in pending:
+    for line in amends + pending:
         print(line)
     if waiting:
         print(f"not built yet (a later batch): {', '.join(sorted(waiting))}")
     exact = len(spec) - len(pending) - len(waiting)
     if not errors:
-        print(f"{batch} PASS: {exact} exact after whitespace normalization; {len(pending)} pending the statement "
-              "re-review")
+        print(f"{batch} PASS: {exact} exact after whitespace normalization ({len(amends)} amended by a DRI ruling, "
+              f"its original refuted in Lean); {len(pending)} pending the statement re-review")
     return errors, exact
 
 
 def main() -> int:
     errors, _ = compare("RD-1", approved(), SOURCE, EXPECTED, PENDING, set())
-    errors_6a, _ = compare("RD-6a", approved_6a(), SOURCE_6A, EXPECTED_6A, PENDING_6A, LATER_6A, EDITS_6A)
+    errors_6a, _ = compare("RD-6a", approved_6a(), SOURCE_6A, EXPECTED_6A, PENDING_6A, LATER_6A, EDITS_6A,
+                           AMENDED_6A, REFUTATIONS_6A, REFUTATIONS_NAMESPACE_6A)
     errors += errors_6a
     if errors:
         print("\n".join(errors))
