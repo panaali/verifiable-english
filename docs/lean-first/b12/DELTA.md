@@ -68,7 +68,7 @@ measurement because it exercised a different, much smaller workload.
 | pilots | 393 | 393 | 0 | 0 | 0 | 0 |
 | **All** | **94,588** | **93,502** | **1,086** | **0** | **0** | **0** |
 
-Code lines (base to head): production Python +223/−790 (net -567); Lean +772/−88 (net +684).
+Code lines (base to head): production Python +223/−790 (net -567); Lean +834/−100 (net +734).
 Differential fuzz: 15 runs (CI and 14 date seeds); baseline 331 → 250; 0 head-only new signatures; 0 head entries not reproduced.
 First-pass date-seed review found 24 distinct head-only signatures.
 UDHR: base 54.679 s → head 54.651 s; 0.999× wall; 1.000× child CPU; output identical; budget pass.

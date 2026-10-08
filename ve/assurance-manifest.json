@@ -57,7 +57,7 @@
     "ve/backends/validation.py:construct_after_lean": "Lean accepts the environment or model first; construction failures become CheckerUnavailable, never a Python semantic rejection or verdict."
   },
   "lean_decoders": {
-    "total_lines": 22543,
+    "total_lines": 22548,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -339,12 +339,12 @@
       },
       {
         "file": "lean/VE/Json.lean",
-        "lines": 136,
-        "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
+        "lines": 141,
+        "sha256": "10dcb30ca301a966d8d306ad10d308b609574bac649bf175fab375a1a8a8376c",
         "ranges": [
           [
             1,
-            136
+            141
           ]
         ],
         "declarations": [
