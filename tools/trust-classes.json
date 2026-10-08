@@ -648,7 +648,8 @@
     "ResponseShape.Schemas.ReadingsRoute.separate",
     "ResponseShape.Schemas.ReadingsRoute.validate",
     "ResponseShape.Schemas.ReadingsRoute.fill_premises",
-    "ResponseShape.Schemas.ReadingsRoute.filled"
+    "ResponseShape.Schemas.ReadingsRoute.filled",
+    "ResponseShape.Schemas.ReadingsRoute.components"
    ]
   },
   "ResponseShape/Schemas/Reports.lean": {
@@ -5475,7 +5476,9 @@
     "VE.Readings.Run.pendingIn",
     "VE.Readings.Run.runLowerWith",
     "VE.Readings.Run.sideAt",
-    "VE.Readings.Run.sidesOf"
+    "VE.Readings.Run.sidesOf",
+    "VE.Readings.Run.componentOfCase",
+    "VE.Readings.Run.componentRow"
    ],
    "G[V]": [
     "VE.Readings.Run.PairFacts",
@@ -5497,10 +5500,17 @@
     "VE.Readings.Run.runSeparateND",
     "VE.Readings.Run.runValidateND",
     "VE.Readings.Run.setPairsWith",
-    "VE.Readings.Run.validateResultWith"
+    "VE.Readings.Run.validateResultWith",
+    "VE.Readings.Run.validateOne",
+    "VE.Readings.Run.elaborateOne",
+    "VE.Readings.Run.runOne",
+    "VE.Readings.Run.runComponents"
    ],
    "G[I]": [
     "VE.Readings.Run.documentHash"
+   ],
+   "D[R]": [
+    "VE.Readings.Run.unknownComponent"
    ]
   },
   "VE/Readings/RunExamples.lean": {
@@ -9981,6 +9991,100 @@
    "G[R]": [
     "VE.Service.ParseDiagnostic.scan",
     "VE.Service.ParseDiagnostic.span"
+   ]
+  },
+  "VE/Readings/Companions.lean": {
+   "C": [
+    "VE.Readings.Wire.addDecl",
+    "VE.Readings.Wire.addDecls",
+    "VE.Readings.Wire.addTerm",
+    "VE.Readings.Wire.addTerms",
+    "VE.Readings.Wire.companionIds",
+    "VE.Readings.Wire.companionSets",
+    "VE.Readings.Wire.componentOf",
+    "VE.Readings.Wire.componentsOf",
+    "VE.Readings.Wire.mergeCategory",
+    "VE.Readings.Wire.mergeCompanions",
+    "VE.Readings.Wire.mergeOpenTerms",
+    "VE.Readings.Wire.mergeTerms",
+    "VE.Readings.Wire.sameOn",
+    "VE.Readings.Wire.sameText",
+    "VE.Readings.Wire.splitCase"
+   ],
+   "D[V]": [
+    "VE.Readings.Wire.arr",
+    "VE.Readings.Wire.carries",
+    "VE.Readings.Wire.categories",
+    "VE.Readings.Wire.componentDoc",
+    "VE.Readings.Wire.entries",
+    "VE.Readings.Wire.firstKeys",
+    "VE.Readings.Wire.firstStrs",
+    "VE.Readings.Wire.jeq",
+    "VE.Readings.Wire.jeqImpl",
+    "VE.Readings.Wire.jeqList",
+    "VE.Readings.Wire.mainDoc",
+    "VE.Readings.Wire.mergedJson",
+    "VE.Readings.Wire.nameText",
+    "VE.Readings.Wire.narrowingsOn",
+    "VE.Readings.Wire.normImpl",
+    "VE.Readings.Wire.normJ",
+    "VE.Readings.Wire.normList",
+    "VE.Readings.Wire.objOf",
+    "VE.Readings.Wire.otherKeys",
+    "VE.Readings.Wire.overlay",
+    "VE.Readings.Wire.readingsOf",
+    "VE.Readings.Wire.setEntries",
+    "VE.Readings.Wire.setIdOf",
+    "VE.Readings.Wire.setOfSource",
+    "VE.Readings.Wire.softOrRights",
+    "VE.Readings.Wire.strOf",
+    "VE.Readings.Wire.withArrays",
+    "VE.Readings.Wire.withReadings",
+    "VE.Readings.Wire.withoutContent"
+   ],
+   "D[R]": [
+    "VE.Readings.Wire.crossingText",
+    "VE.Readings.Wire.mixedText",
+    "VE.Readings.Wire.profileCheck",
+    "VE.Readings.Wire.shapeText",
+    "VE.Readings.Wire.unsupportedCompanion"
+   ],
+   "D[I]": [
+    "VE.Readings.Wire.companionMeaningId",
+    "VE.Readings.Wire.meaningCheck"
+   ],
+   "P": [
+    "VE.Readings.Wire.Distinct",
+    "VE.Readings.Wire.TermsDistinct",
+    "VE.Readings.Wire.instBEqJson_vE"
+   ]
+  },
+  "VE/Readings/CompanionsExamples.lean": {
+   "T": [
+    "VE.Readings.CompanionsExamples.avoid",
+    "VE.Readings.CompanionsExamples.companionJ",
+    "VE.Readings.CompanionsExamples.companionReading",
+    "VE.Readings.CompanionsExamples.couplingJ",
+    "VE.Readings.CompanionsExamples.docJ",
+    "VE.Readings.CompanionsExamples.elsewhere",
+    "VE.Readings.CompanionsExamples.envJ",
+    "VE.Readings.CompanionsExamples.errorOf",
+    "VE.Readings.CompanionsExamples.fc5",
+    "VE.Readings.CompanionsExamples.idsAt",
+    "VE.Readings.CompanionsExamples.namesIn",
+    "VE.Readings.CompanionsExamples.narrowingJ",
+    "VE.Readings.CompanionsExamples.partDoc",
+    "VE.Readings.CompanionsExamples.parts",
+    "VE.Readings.CompanionsExamples.people",
+    "VE.Readings.CompanionsExamples.personAB",
+    "VE.Readings.CompanionsExamples.personBA",
+    "VE.Readings.CompanionsExamples.plainDoc",
+    "VE.Readings.CompanionsExamples.plainReading",
+    "VE.Readings.CompanionsExamples.predJ",
+    "VE.Readings.CompanionsExamples.setJ",
+    "VE.Readings.CompanionsExamples.someone",
+    "VE.Readings.CompanionsExamples.sortJ",
+    "VE.Readings.CompanionsExamples.term"
    ]
   }
  }

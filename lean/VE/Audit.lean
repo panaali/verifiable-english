@@ -175,6 +175,8 @@ import VE.Readings.Unspecified
 import VE.Readings.UnspecifiedWire
 import VE.Readings.SupExtra
 import VE.Readings.SupExtraExamples
+import VE.Readings.Companions
+import VE.Readings.CompanionsExamples
 import VE.WireContract.Engine
 import VE.Grammar.Derives
 import VE.Grammar.Extension
@@ -4308,6 +4310,52 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.Wire.separates_links
 #print axioms VE.Readings.Wire.separates_filled
 #print axioms VE.Readings.Wire.fillHoldsOf_eq
+-- readings-defaults RD-4a (docs/spec/readings-defaults.md 6.6, wire part): companions, merge and split.
+#print axioms VE.Readings.Wire.jeq_sound
+#print axioms VE.Readings.Wire.jeqList_sound
+#print axioms VE.Readings.Wire.jeqImpl_sound
+#print axioms VE.Readings.Wire.jeq_refl
+#print axioms VE.Readings.Wire.jeqList_refl
+#print axioms VE.Readings.Wire.jeqImpl_refl
+#print axioms VE.Readings.Wire.jeq_iff
+#print axioms VE.Readings.Wire.bind_ok
+#print axioms VE.Readings.Wire.getObjValD_ok
+#print axioms VE.Readings.Wire.entries_mem
+#print axioms VE.Readings.Wire.mkObj_get
+#print axioms VE.Readings.Wire.firstKeys_sub
+#print axioms VE.Readings.Wire.firstKeys_nodup
+#print axioms VE.Readings.Wire.addDecl_spec
+#print axioms VE.Readings.Wire.addDecl_mono
+#print axioms VE.Readings.Wire.addDecls_mono
+#print axioms VE.Readings.Wire.mergeCategory_mono
+#print axioms VE.Readings.Wire.addDecls_spec
+#print axioms VE.Readings.Wire.mergeCategory_spec
+#print axioms VE.Readings.Wire.overlay_get
+#print axioms VE.Readings.Wire.objOf_get
+#print axioms VE.Readings.Wire.mergeCompanions_ok
+#print axioms VE.Readings.Wire.mergedJson_category
+#print axioms VE.Readings.Wire.mergeCompanions_extends
+#print axioms VE.Readings.Wire.mergeCompanions_identical
+#print axioms VE.Readings.Wire.addTerm_spec
+#print axioms VE.Readings.Wire.addTerms_spec
+#print axioms VE.Readings.Wire.mergeTerms_spec
+#print axioms VE.Readings.Wire.same_name
+#print axioms VE.Readings.Wire.mergeOpenTerms_ok
+#print axioms VE.Readings.Wire.mergeOpenTerms_identical
+#print axioms VE.Readings.Wire.mkObj_absent
+#print axioms VE.Readings.Wire.arr_of_get
+#print axioms VE.Readings.Wire.withArrays_arr
+#print axioms VE.Readings.Wire.mainDoc_arr
+#print axioms VE.Readings.Wire.componentDoc_arr
+#print axioms VE.Readings.Wire.componentOf_doc
+#print axioms VE.Readings.Wire.componentsOf_docs
+#print axioms VE.Readings.Wire.firstStrs_nodup
+#print axioms VE.Readings.Wire.companionIds_sublist
+#print axioms VE.Readings.Wire.companionSets_nodup
+#print axioms VE.Readings.Wire.splitCase_parts
+#print axioms VE.Readings.Wire.jcontains_iff
+#print axioms VE.Readings.Wire.count_one
+#print axioms VE.Readings.Wire.split_keeps_links
 -- readings-defaults RD-6a (docs/spec/readings-defaults.md 6.7): S2a with a carried base-premise family.
 #print axioms VE.Readings.sat_pull_up
 #print axioms VE.Readings.superpose_conflict_free_extra
