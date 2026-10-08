@@ -37,12 +37,9 @@ sys.path.insert(0, str(ROOT))
 RELAYED = ("ve/backends/relay.py", "ve/readings_route.py", "ve/discourse.py",
            "ve/rights_route.py", "ve/reports.py", "ve/reports_route.py",
            "ve/backends/speech_source.py", "ve/speech_document.py", "ve/backends/english_lean.py")
-# Relayed functions of a module that also holds Python's own code (English E2, spec 2.9: the admission path of
-# `ve/english.py`; the producer, the renderer, the statement reader and the comparator in the same module write
-# their own diagnostics and are outside it).
-RELAYED_FUNCTIONS = {"ve/english.py": ("_lean_reading", "_nearest_help", "_parse_english_document_uncached",
-                                       "_parse_english_document", "parse_english_with_metadata", "parse_english",
-                                       "parse_english_argument")}
+# English admission is Python authoritative after the E2.5 readability result. Its Lean adapter still relays
+# Lean's response, so lint that path while the public Python reader retains its own diagnostics.
+RELAYED_FUNCTIONS = {"ve/english.py": ("_lean_reading", "_nearest_help")}
 # W2's English text-to-structure parser remains the experimental English E3
 # owner. SpeechDocument only supplies its structured fence to Lean for checking.
 OWNED_SURFACES = frozenset({"ve.speech_english"})

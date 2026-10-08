@@ -279,9 +279,9 @@ def test_broad_exception_handlers_are_reviewed():
     assert all(reason for reason in reviewed.values())
 
 
-def test_english_admission_is_lean_authoritative():
+def test_english_admission_is_python_authoritative():
     assert {op["authority"] for op in OPS} <= {"python", "migrated", "lean-only"}
-    assert assurance.enforced_operations() == frozenset({"english.admission"})
+    assert assurance.enforced_operations() == frozenset()
 
 
 # --- completeness: omissions that no decorator comparison can see ----------------
@@ -634,7 +634,7 @@ def test_guard_blocks_every_python_entry_once_migrated():
                     fn()
             assert caught.value.to_dict()["code"] == "CheckerUnavailable"
             assert caught.value.operation == op["id"]
-    assert assurance.enforced_operations() == frozenset({"english.admission"})
+    assert assurance.enforced_operations() == frozenset()
 
 
 def test_guard_allows_the_lean_engine():

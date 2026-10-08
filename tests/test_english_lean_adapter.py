@@ -1,4 +1,4 @@
-"""E2 English admission: Lean authority, comparator isolation, and response binding."""
+"""E2 English admission: Python authority, Lean shadow, and response binding."""
 from __future__ import annotations
 
 import copy
@@ -28,49 +28,50 @@ ENV = Environment({
 SOURCE = "Legacy is deployed."
 
 
-def test_default_admission_calls_lean_and_not_python(monkeypatch):
+def test_default_admission_calls_python_and_lean_shadow(monkeypatch):
     original = L.read
     calls = []
     def recorded(*args, **kwargs):
         calls.append((args, kwargs))
         return original(*args, **kwargs)
     monkeypatch.setattr(L, "read", recorded)
-    monkeypatch.setenv("VE_ENGLISH_COMPARATOR", "0")  # ev6: with the switch off, Python's reader never runs
-    monkeypatch.setattr(EN, "_python_reading", lambda *_args: pytest.fail("Python decided admission"))
+    python_calls = []
+    python_reading = EN._python_reading
+    monkeypatch.setattr(EN, "_python_reading", lambda *args: python_calls.append(True) or python_reading(*args))
     document = EN.parse_english(ENV, SOURCE)
     assert [EN.ast._to_data(f) for f in document.formulas] == [
         ["unary", "active", ["const", "legacy"]]]
-    assert len(calls) == 1
+    assert len(calls) == 1 and len(python_calls) == 1
 
 
-def test_comparator_failure_cannot_change_lean_verdict(monkeypatch, tmp_path):
+def test_lean_shadow_failure_cannot_change_python_verdict(monkeypatch, tmp_path):
     log = tmp_path / "shadow.jsonl"
     monkeypatch.setenv("VE_ENGLISH_COMPARATOR", "1")
     monkeypatch.setenv("VE_SHADOW_LOG", str(log))
-    monkeypatch.setattr(EN, "_python_reading", lambda *_args: (_ for _ in ()).throw(SyntaxError("planted")))
+    monkeypatch.setattr(EN, "_lean_reading", lambda *_args: (_ for _ in ()).throw(CheckerUnavailable("planted")))
     assert EN.parse_english(ENV, SOURCE)
     records = [json.loads(line) for line in log.read_text().splitlines()]
     assert len(records) == 1
-    assert records[0]["lean"]["status"] == "one"
-    assert records[0]["python"]["class"] == "SyntaxError"
+    assert records[0]["python"]["class"] == "accepted"
+    assert records[0]["lean"]["status"] == "unavailable"
 
 
-@pytest.mark.parametrize("override", ["python", "shadow", "rust-experimental"])
+@pytest.mark.parametrize("override", ["lean", "rust-experimental"])
 def test_other_authorities_cannot_decide_admission(monkeypatch, override):
     monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", f"english.admission={override}")
-    with pytest.raises(CheckerUnavailable, match="Lean-authoritative"):
+    with pytest.raises(CheckerUnavailable, match="python or shadow"):
         EN.parse_english(ENV, SOURCE)
 
 
-def test_missing_or_malformed_reader_is_checker_unavailable(monkeypatch):
+def test_missing_or_malformed_reader_does_not_change_python_verdict(monkeypatch):
     def unavailable(_case):
         raise CheckerUnavailable("unavailable")
     monkeypatch.setattr(L, "TRANSPORT", unavailable)
-    with pytest.raises(CheckerUnavailable, match="unavailable"):
-        EN.parse_english(ENV, SOURCE)
+    assert EN.parse_english(ENV, SOURCE).formulas
     monkeypatch.setattr(L, "TRANSPORT", lambda _case: {"status": "one"})
+    assert EN.parse_english(ENV, SOURCE).formulas
     with pytest.raises(CheckerUnavailable):
-        EN.parse_english(ENV, SOURCE)
+        EN._lean_reading(ENV, SOURCE, EN.EnglishVocabulary(ENV), {})
 
 
 def test_genuine_response_and_field_mutations_fail_closed():

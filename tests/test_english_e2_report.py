@@ -38,10 +38,8 @@ def test_e2_report_section_is_the_rendering_of_the_evidence():
     assert section == e2.render()
 
 
-def test_e2_evidence_keeps_lean_authority():
-    """The DRI's condition on review A2: every difference dispositioned, no port or overlay mismatch, no formula
-    changed by a lexicon mutant. GE2 item 9's budgets are the generated section's (met or missed, checked
-    against the evidence by the test above), not asserted here: the suite asserts on no measured time."""
+def test_e2_candidate_evidence_is_saved():
+    """The candidate comparison remains saved after the readability decision restores Python authority."""
     from conformance import english_lean_e2_report as e2
 
     evidence = json.loads(e2.EVIDENCE.read_text())

@@ -271,19 +271,25 @@ def test_admission_comparator_records_agreement_with_the_real_reader(monkeypatch
     assert any(r.get("conclusion_rejected") for r in records)
 
 
-@pytest.mark.parametrize("authority", ["python", "shadow", "rust-experimental"])
-def test_admission_refuses_non_lean_authority(monkeypatch, authority):
+@pytest.mark.parametrize("authority", ["lean", "rust-experimental"])
+def test_admission_refuses_non_python_authority(monkeypatch, authority):
     env, options = ENVIRONMENTS["F"]()
     monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", f"english.admission={authority}")
-    with pytest.raises(CheckerUnavailable, match="Lean-authoritative"):
+    with pytest.raises(CheckerUnavailable, match="python or shadow"):
         EN.parse_english_with_metadata(env, "Legacy is deployed.", **options)
 
 
-def test_admission_does_not_call_the_python_parser(monkeypatch):
+def test_admission_uses_the_python_parser(monkeypatch):
     env, options = ENVIRONMENTS["F"]()
-    monkeypatch.setenv("VE_ENGLISH_COMPARATOR", "0")  # ev6
-    monkeypatch.setattr(EN, "_python_reading", lambda *_args, **_kwargs: pytest.fail("Python parser called"))
+    monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", "english.admission=python")
+    called = []
+    original = EN._python_reading
+    def read(*args, **kwargs):
+        called.append(True)
+        return original(*args, **kwargs)
+    monkeypatch.setattr(EN, "_python_reading", read)
     assert EN.parse_english(env, "Legacy is deployed.", **options).formulas
+    assert called
 
 
 # ------------------------------------------------------------------ identities (base 8.8)

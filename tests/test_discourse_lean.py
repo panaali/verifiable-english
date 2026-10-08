@@ -1067,7 +1067,7 @@ def test_renewal_items_are_counterexamples_to_the_approved_statements(lean, tmp_
     # which the core parser does not read (it reads the presentation)
     alpha = document(["It is safe."], [("m1", "u1", "It", "pronoun", entity("api"))])
     assert unit_result(resolve(alpha), "u1") == unary("safe", "api")
-    with pytest.raises(VEError, match="it is not settled what"):
+    with pytest.raises(VEError, match="The referent of it is incomplete"):
         parse_english(base_env(env()), "It is safe.")
     # R6 citation/report_extends_joint: the joint set of an authored-only document is the one empty
     # choice, which extends no label; the label is admitted in @1 and (now) in @2

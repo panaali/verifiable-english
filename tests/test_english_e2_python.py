@@ -73,9 +73,8 @@ def test_deferred_overlay_refusals_still_require_suggested_consent():
         EnglishVocabulary(env, vocabulary=overlay, _defer_overlay_refusals=True)
 
 
-def test_argument_failure_text_preserves_prover_status(monkeypatch):
-    """The argument's premises and its refusal text are Lean's obligation (spec 2.8), with the prover's status
-    in the slot, verbatim."""
+def test_argument_failure_text_preserves_python_message(monkeypatch):
+    """Python authority keeps the base argument refusal and its unmarked premise set."""
     from types import SimpleNamespace
     from ve import english, entailment
     from ve.errors import SyntaxError as VESyntaxError
@@ -86,9 +85,8 @@ def test_argument_failure_text_preserves_prover_status(monkeypatch):
         calls.append(premises)
         return SimpleNamespace(status="Unknown")
     monkeypatch.setattr(entailment, "prove_entailment", unknown)
-    monkeypatch.setenv("VE_ENGLISH_COMPARATOR", "0")  # count the relay's own entailment calls only
+    monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", "english.admission=python")  # count the public proof call only
     with pytest.raises(VESyntaxError) as caught:
         english.parse_english_argument(env, "Legacy is deployed. Therefore legacy is reviewed.")
-    assert str(caught.value) == ("Sentence 2 is marked as a conclusion, and no checked derivation from the "
-                                 "earlier premises was found: Unknown")
+    assert str(caught.value) == 'The marked conclusion has no checked derivation from earlier premises.'
     assert len(calls) == 1 and len(calls[0]) == 1

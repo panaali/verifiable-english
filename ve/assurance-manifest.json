@@ -54,8 +54,7 @@
     "ve/search.py:_models_with_terminal_error": "buffers a terminal model-stream error for every scoped reader, which re-raises the original error before reporting a verdict",
     "ve/softnorms_contract.py:public_rejection": "diagnosis runs only after the legacy soft validator rejects; a diagnosis failure returns the same error, leaving its verdict, code and original text intact",
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome",
-    "ve/backends/dispatch.py:_shadow": "shadow authority only (execute and shadowed): the Python result is returned (a Python exception is re-raised unchanged); a candidate backend exception, CheckerUnavailable included, is only recorded as a shadow difference and never becomes the returned verdict",
-    "ve/english.py:_parse_english_document_uncached": "Comparator only: Python parser exceptions are recorded after Lean has decided; they never change the returned Lean result or error."
+    "ve/backends/dispatch.py:_shadow": "shadow authority only (execute and shadowed): the Python result is returned (a Python exception is re-raised unchanged); a candidate backend exception, CheckerUnavailable included, is only recorded as a shadow difference and never becomes the returned verdict"
   },
   "lean_decoders": {
     "total_lines": 23328,
@@ -3214,14 +3213,14 @@
     },
     {
       "id": "english.admission",
-      "summary": "English surface admission: Lean decides one reading per sentence and its obligations",
+      "summary": "English surface admission: Python decides; Lean compares in shadow",
       "class": "surface",
-      "authority": "migrated",
+      "authority": "python",
       "target": "lean",
       "assurance": {
         "current": "experimental",
         "at_switch": "experimental",
-        "reason": "Lean english.read decides admission; Python produces a checked lexicon and relays obligations to the entailment prover"
+        "reason": "Python admission is retained after the E2.5 readability message regression; Lean english.read runs in shadow"
       },
       "python": [
         "ve.english:parse_english_with_metadata",
@@ -3285,7 +3284,7 @@
           }
         ],
         "planned_modes": [],
-        "harness": "The persistent service runs the E2 English reader and candidate checker; the Python relay validates request identities and the full read response before returning a verdict.",
+        "harness": "The persistent service runs the E2 English reader in shadow; Python produces the public verdict.",
         "theorems": [
           "VE.EnglishGrammar.policy_iff_no_failure",
           "VE.EnglishGrammar.policy_selection",

@@ -1,8 +1,11 @@
 # English in Lean, E2: the report
 
 Plan [english-lean-E2-PLAN.md](english-lean-E2-PLAN.md) item E2.5; spec [english-lean-e2.md](english-lean-e2.md).
-This report holds the evidence that keeps English admission on Lean's authority (the DRI's ruling on review A2:
-keep the switch only with E2.5's evidence, otherwise return `english.admission` to `dispatch.SHADOW_ONLY`). Its
+This report holds the E2.5 evidence and the DRI's authority decision. The readability replay of the reviewed
+merge fails section 2.10: six of 36 writing messages lose base content, and five of 30 reading items become
+unavailable. English admission is back on Python authority with Lean in shadow. The full per-item records and
+side-by-side changed messages are in [evidence/readability-changes.md](../lean-first/e2/evidence/readability-changes.md).
+The earlier G3 measurements below remain candidate evidence; they do not authorize a flip. Its
 measured section is generated from [e2-evidence.json](../../conformance/english-lean/e2-evidence.json) by
 `python -m conformance.english_lean_e2_report --write`, and `tests/test_english_e2_report.py` checks that the
 committed section is that rendering. Every difference is mapped to a row of
@@ -49,9 +52,9 @@ changes are its section 13.
 | Item | Status |
 |---|---|
 | 1. Suite | the full suite at this head (the round's final run) |
-| 2. G3, reverse corpus, mutation replay, volume and coverage | met, except coverage: G3 agrees on all 145,550 texts with fourteen fresh seeds, the reverse corpus and the mutation replay show no difference; but 45 fixed rules (the conclusion markers, coordination, the natural forms, ordinals past the second, `it`) occur in no generated text, since the `english_surface` generators do not produce them. Open: a directed stream for those rules |
-| 3. Corpus A/B | open: not run in this round |
-| 4. Readability items | open: not run in this round |
+| 2. G3, reverse corpus, mutation replay, volume and coverage | 145,550 candidate comparisons agree. The directed stream now reaches all 45 previously unreached fixed rules in 31 compared texts, with zero Python/Lean differences ([rule-by-rule texts](../lean-first/e2/evidence/coverage-directed.md)). |
+| 3. Corpus A/B | **fails preservation** against base `9aaf918d`: 94,498 saved results on each side, 39,564 conformance agreements plus 54,178 other agreements; 48 + 319 wording changes, 192 order changes, 196 verdict changes and one availability change. The complete outcomes and classed rows are in [the A/B summary](../lean-first/e2/evidence/ab-summary.md). Verdict and availability rows remain unsigned. |
+| 4. Readability items | **failed**: 36 writing attempts, six changed messages; 30 reading items, five newly unavailable after replay compatibility adjustments. Python authority restored ([saved comparison](../lean-first/e2/evidence/readability-comparison.json)). |
 | 5. V6 and overlay parity | met (measured below) |
 | 6. Availability | G3 over every corpus environment agrees; the narrowings are DELTA A1 and A2 (signatures deferred) |
 | 7. Senses | the senses suite passes through the relay (`tests/test_senses_route.py`) |
