@@ -93,13 +93,9 @@ def decodeVocabulary (profiles : List String) (v : Json) : Except String RouteVo
   let sorts ← fields (← v.getObjVal? "sorts")
   let predicates ← fields (← v.getObjVal? "predicates")
   let constants ← fields (← v.getObjVal? "constants")
-  let names := (sorts ++ predicates ++ constants).map Prod.fst
-  unless names.eraseDups.length == names.length do throw "duplicate declaration"
-  for name in names do
-    unless identifier name && !reserved.contains name && !generatedName name do
-      throw s!"invalid or reserved declaration: {name}"
   if sorts.length > 32 || predicates.length > 256 then
     throw "ResourceLimit: vocabulary size"
+  VE.Bridge.checkVocabularyNames sorts predicates constants
   for (_, entry) in sorts do
     VE.Bridge.displayFields entry ["description"] ["verbalisation"]
     VE.Bridge.description entry
@@ -147,8 +143,7 @@ def decodeVocabulary (profiles : List String) (v : Json) : Except String RouteVo
       VE.Bridge.displayFields entry ["sort", "description"] ["verbalisation"]
       VE.Bridge.description entry
       if let .ok words := entry.getObjVal? "verbalisation" then VE.Bridge.displayString words
-    let s ← stringField entry "sort"
-    unless allowed s do throw s!"unknown constant sort: {c}"
+    let s ← VE.Bridge.constantSort entry allowed
     pure (c, s)
   let literals := (cs.filter (fun c => c.2 == Background.stringSort)).map Prod.fst
   if literals.length > 64 then throw "ResourceLimit: At most 64 declared $string literals"
@@ -212,7 +207,7 @@ def decodeOrderVocabulary (v : Json) : Except String RouteOrderVocabulary := do
   let declared := base.sorts ++ base.predicates.map Prod.fst ++ base.constants.map Prod.fst
   for name in literals do
     unless identifier name && !reserved.contains name && !generatedName name do
-      throw s!"invalid or reserved declaration: {name}"
+      throw s!"invalid or reserved declaration: '{name}'"
     if declared.contains name then throw "duplicate declaration"
   let vocabulary : VE.Order.Vocabulary := { base with
     constants := base.constants ++ literals.map (fun c => (c, .user Background.stringSort)) }

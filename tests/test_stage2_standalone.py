@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from copy import deepcopy
 import json
 
 import pytest
@@ -36,6 +37,255 @@ def test_model_rejection_retains_public_path(case_id, path):
     with pytest.raises(VEError) as caught:
         run("model", [case])
     assert caught.value.to_dict()["path"] == path
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+@pytest.mark.parametrize(("table", "key", "value", "path"), [
+    ("domains", "item", "i", "/domains/item"),
+    ("relations", "base", [["bad!"]], "/relations/base/0/0"),
+])
+def test_model_decoder_locates_wrong_shapes_and_invalid_cells(table, key, value, path):
+    from ve.errors import VEError
+    env = Environment(raw_environment(()))
+    model = model_wire(env)
+    model[table][key] = value
+    with pytest.raises(VEError) as caught:
+        run("model", [{"id": "located", "environment": env.to_dict(), "model": model}])
+    assert caught.value.to_dict()["code"] == "InvalidModel"
+    assert caught.value.to_dict()["path"] == path
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+@pytest.mark.parametrize("profiles", [(), ("closure@0",),
+                                      ("closure@0", "nary@0"), ("order@0",)])
+def test_environment_decoder_quotes_the_unknown_argument_sort(profiles):
+    from ve.errors import VEError
+    raw = raw_environment(profiles)
+    raw["vocabulary"]["predicates"]["base"]["arguments"] = ["absent"]
+    with pytest.raises(VEError) as caught:
+        run("environment", [{"id": "quoted", "environment": raw}])
+    assert "'absent'" in caught.value.message
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+@pytest.mark.parametrize("profiles", [(), ("closure@0",),
+                                      ("closure@0", "nary@0"), ("order@0",)])
+def test_environment_decoder_quotes_unknown_constant_sort_and_field(profiles):
+    from ve.errors import VEError
+    raw = raw_environment(profiles)
+    raw["vocabulary"]["constants"]["x"]["sort"] = "absent"
+    with pytest.raises(VEError) as caught:
+        run("environment", [{"id": "sort", "environment": raw}])
+    assert "'absent'" in caught.value.message
+    raw = raw_environment(profiles)
+    raw["vocabulary"]["sorts"]["item"]["extra"] = 7
+    with pytest.raises(VEError) as caught:
+        run("environment", [{"id": "field", "environment": raw}])
+    assert "'extra'" in caught.value.message
+    assert caught.value.to_dict()["path"] == "/vocabulary/sorts/item"
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+@pytest.mark.parametrize("profiles", [(), ("closure@0",),
+                                      ("closure@0", "nary@0"), ("order@0",)])
+@pytest.mark.parametrize(("name", "code", "fragment"), [
+    ("x0", "DuplicateDeclaration", "Schema identifier 'x0' is reserved"),
+    ("a" * 65, "ResourceLimit", "Identifier exceeds 64 ASCII bytes"),
+    ("BAD", "InvalidInput", "Invalid ASCII identifier: 'BAD'"),
+    ("é" * 40, "InvalidInput", "Invalid ASCII identifier"),
+    ("é" * 65, "ResourceLimit", "Identifier exceeds 64 ASCII bytes"),
+])
+def test_environment_declaration_name_codes(profiles, name, code, fragment):
+    from ve.errors import VEError
+    raw = raw_environment(profiles)
+    raw["vocabulary"]["sorts"][name] = raw["vocabulary"]["sorts"].pop("item")
+    with pytest.raises(VEError) as caught:
+        run("environment", [{"id": "name", "environment": raw}])
+    assert caught.value.to_dict()["code"] == code
+    assert fragment in caught.value.message
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+@pytest.mark.parametrize("profiles", [(), ("closure@0",),
+                                      ("closure@0", "nary@0"), ("order@0",)])
+def test_environment_cross_category_duplicate_keeps_name(profiles):
+    from ve.errors import VEError
+    raw = raw_environment(profiles)
+    raw["vocabulary"]["constants"]["item"] = {"sort": "item", "description": "duplicate"}
+    with pytest.raises(VEError) as caught:
+        run("environment", [{"id": "duplicate", "environment": raw}])
+    assert caught.value.to_dict()["code"] == "DuplicateDeclaration"
+    assert "'item'" in caught.value.message
+
+
+def _single_node_mutations(model):
+    """Every JSON node, including container nodes and map field sets."""
+    def walk(value, path=()):
+        yield path
+        if isinstance(value, dict):
+            for key, child in value.items():
+                yield from walk(child, (*path, key))
+        elif isinstance(value, list):
+            for index, child in enumerate(value):
+                yield from walk(child, (*path, index))
+
+    def replace(original, path, value):
+        result = deepcopy(original)
+        parent = result
+        for step in path[:-1]:
+            parent = parent[step]
+        if path:
+            parent[path[-1]] = value
+        else:
+            result = value
+        return result
+
+    seen = set()
+    for path in walk(model):
+        for value in (True, 7, "bad!", [], {}):
+            mutant = replace(model, path, value)
+            key = json.dumps(mutant, sort_keys=True)
+            if key not in seen:
+                seen.add(key)
+                yield mutant
+        node = model
+        for step in path:
+            node = node[step]
+        if isinstance(node, dict):
+            for key in node:
+                mutant = replace(model, path, {k: v for k, v in node.items() if k != key})
+                encoded = json.dumps(mutant, sort_keys=True)
+                if encoded not in seen:
+                    seen.add(encoded)
+                    yield mutant
+            mutant = replace(model, path, {**node, "extra": 7})
+            encoded = json.dumps(mutant, sort_keys=True)
+            if encoded not in seen:
+                seen.add(encoded)
+                yield mutant
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+def test_model_node_mutations_match_frozen_python_code_and_path(tmp_path, capfd):
+    """The frozen decoder is independent of the current Python Lean relay."""
+    from tools import lean_first_oracle
+    from ve.backends.lean_service import LeanService
+    from ve.backends.diagnostics import checker_error
+
+    cases = []
+    for profiles in ((), ("closure@0",), ("closure@0", "nary@0"), ("order@0",)):
+        raw = raw_environment(profiles)
+        model = model_wire(Environment(raw))
+        cases += [{"environment": raw, "model": mutant}
+                  for mutant in _single_node_mutations(model)]
+    payload = tmp_path / "models.json"
+    payload.write_text(json.dumps(cases))
+    script = tmp_path / "oracle.py"
+    script.write_text(
+        "import json\n"
+        "from ve.environment import Environment\n"
+        "from ve.model import FiniteModel\n"
+        "from ve.errors import VEError\n"
+        f"cases = json.load(open({str(payload)!r}))\n"
+        "answers = []\n"
+        "for case in cases:\n"
+        "    try:\n"
+        "        FiniteModel.from_dict(Environment(case['environment']), case['model'])\n"
+        "        answers.append({'code': 'ok'})\n"
+        "    except VEError as exc:\n"
+        "        d = exc.to_dict()\n"
+        "        answers.append({'code': d['code'], 'path': d.get('path')})\n"
+        "print(json.dumps(answers))\n"
+    )
+    assert lean_first_oracle.run(script, scratch=tmp_path) == 0
+    expected = json.loads(capfd.readouterr().out)
+    with LeanService() as service:
+        rows = service.run("model", [{"id": str(i), **case} for i, case in enumerate(cases)])
+    actual = []
+    for case, row in zip(cases, rows, strict=True):
+        if row["status"] == "ok":
+            actual.append({"code": "ok"})
+        else:
+            if path := row.get("path"):
+                node = case["model"]
+                parts = path.lstrip("/").split("/")
+                for part in parts[:-1]:
+                    node = node[int(part)] if isinstance(node, list) else node[part]
+                assert isinstance(node, (dict, list)), (path, case)
+            actual.append({"code": checker_error(row["error"]).code, "path": row.get("path")})
+    assert actual == expected
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+def test_environment_node_mutations_match_frozen_python_code_and_path(tmp_path, capfd):
+    from tools import lean_first_oracle
+    from ve.backends.lean_service import LeanService
+    from ve.backends.diagnostics import checker_error
+
+    cases = [mutant for profiles in ((), ("closure@0",),
+             ("closure@0", "nary@0"), ("order@0",))
+             for mutant in _single_node_mutations(raw_environment(profiles))]
+    payload = tmp_path / "environments.json"
+    payload.write_text(json.dumps(cases))
+    script = tmp_path / "oracle.py"
+    script.write_text(
+        "import json\n"
+        "from ve.environment import Environment\n"
+        "from ve.errors import VEError\n"
+        f"cases = json.load(open({str(payload)!r}))\n"
+        "answers = []\n"
+        "for case in cases:\n"
+        "    try:\n"
+        "        Environment(case)\n"
+        "        answers.append({'code': 'ok'})\n"
+        "    except VEError as exc:\n"
+        "        d = exc.to_dict()\n"
+        "        answers.append({'code': d['code'], 'path': d.get('path')})\n"
+        "print(json.dumps(answers))\n"
+    )
+    assert lean_first_oracle.run(script, scratch=tmp_path) == 0
+    expected = json.loads(capfd.readouterr().out)
+    with LeanService() as service:
+        rows = service.run("environment", [{"id": str(i), "environment": case}
+                                           for i, case in enumerate(cases)])
+    actual = []
+    for row in rows:
+        if row["status"] == "ok":
+            actual.append({"code": "ok"})
+        else:
+            actual.append({"code": checker_error(row["error"]).code, "path": row.get("path")})
+    assert actual == expected
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+@pytest.mark.parametrize("mutant", ["drop_path", "change_code"])
+def test_model_oracle_detects_seeded_decoder_faults(mutant, monkeypatch, tmp_path, capfd):
+    """Seed the two reported failure classes into genuine service responses."""
+    from ve.backends.lean_service import LeanService
+
+    original = LeanService.run
+    seeded = False
+
+    def altered(self, mode, cases, **kwargs):
+        nonlocal seeded
+        rows = original(self, mode, cases, **kwargs)
+        if mode == "model" and not seeded:
+            rows = deepcopy(rows)
+            for row in rows:
+                if row["status"] != "error" or "path" not in row:
+                    continue
+                if mutant == "drop_path":
+                    del row["path"]
+                else:
+                    row["error"] = row["error"].replace("InvalidModel:", "InvalidInput:", 1)
+                seeded = True
+                break
+        return rows
+
+    monkeypatch.setattr(LeanService, "run", altered)
+    with pytest.raises(AssertionError):
+        test_model_node_mutations_match_frozen_python_code_and_path(tmp_path, capfd)
+    assert seeded
 
 
 @pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")

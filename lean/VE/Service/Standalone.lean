@@ -227,7 +227,8 @@ def validated (environment : Json) (typing : Bool := false) : Except String Vali
   let e ← VE.Route.Gate.decodeEnvelope environment
   for kind in ["sorts", "predicates", "constants"] do
     for (name, _) in ← VE.Bridge.fields (← e.vocabulary.getObjVal? kind) do
-      if pythonReserved.contains name then throw s!"invalid or reserved declaration: {name}"
+      if pythonReserved.contains name then
+        throw s!"DuplicateDeclaration: Schema identifier '{name}' is reserved"
   let predicates ← VE.Bridge.fields (← e.vocabulary.getObjVal? "predicates")
   let mut v : Validated := { envelope := e, decodable := environment }
   if e.profiles.contains "norms@0" &&
@@ -368,12 +369,7 @@ def isLegacy (environment : Json) : Bool :=
 def decodeLegacy (environment : Json) : Except String Legacy := do
   let language ← VE.Bridge.stringField environment "language"
   if language == "ve.core@0" then
-    match VE.Bridge.decodeEnvironment environment with
-    | .ok v => pure (.v0 v)
-    | .error message =>
-      if message.startsWith "invalid signature:" then
-        throw "UnknownSymbol: Undeclared predicate argument sort"
-      throw message
+    pure (.v0 (← VE.Bridge.decodeEnvironment environment))
   else if language == "ve.core@0.1" then
     if environment.getObjValD "profiles" == toJson ["order@0", "relational-fol@0"] then
       match VE.Order.Wire.decodeEnvironment environment with
@@ -382,7 +378,9 @@ def decodeLegacy (environment : Json) : Except String Legacy := do
     else if (VE.Route.Gate.profilesOf environment).toOption.getD [] |>.contains "order@0" then
       throw "UnsupportedProfile: unsupported order environment version/profiles"
     else pure (.closure (← VE.Closure.Bridge.decodeEnvironment environment))
-  else throw "UnsupportedProfile: Unsupported language"
+  else do
+    VE.Bridge.exactFields environment ["language", "profile", "spec_revision", "vocabulary"]
+    throw "UnsupportedProfile: Unsupported language"
 
 def legacyEnvironmentId (l : Legacy) (environment : Json) : Except String String :=
   VE.CertificateWire.digest s!"ve-environment-{l.version}\n" environment
@@ -394,7 +392,7 @@ def legacyMeaningId (l : Legacy) (envId : String) (ast : Json) : Except String S
 def environmentCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let environment ← j.getObjVal? "environment"
-  if isLegacy environment then
+  if environment.getObjValD "language" != .str "ve.core@0.2" then
     let l ← decodeLegacy environment
     let envId ← legacyEnvironmentId l environment
     -- v0 names its one profile in `profile`; ve.core@0.1 lists `profiles`.
@@ -827,84 +825,299 @@ def parseCase (j : Json) : Except String Json := do
     | some text => [("canonical", .str text)]
     | none => []))
 
-/-! A model decoder reports its first fault as text. Recover the location from
-the same submitted tables, in decoder order, so the service preserves the
-public JSON pointer without putting presentation fields in the proof decoders. -/
-private def modelErrorPath (j : Json) (message : String) : Option String := do
-  let message := if message.startsWith "InvalidModel:" || message.startsWith "ResourceLimit:" then
-    message else s!"InvalidModel: {message}"
-  let model ← (j.getObjVal? "model").toOption
-  let environment ← (j.getObjVal? "environment").toOption
-  let vocabulary ← (environment.getObjVal? "vocabulary").toOption
-  let declarations ← (vocabulary.getObjVal? "predicates").toOption
-  let sorts ← (vocabulary.getObjVal? "sorts").toOption
-  let constants ← (vocabulary.getObjVal? "constants").toOption
+/-! Model diagnostics are emitted by a pointer-carrying decoder. The model
+tables are validated here in the frozen Python order; the family decoder still
+constructs and checks the typed model after these checks succeed. A fault is
+located when it is discovered, never reconstructed from its message. -/
+structure ModelFault where
+  message : String
+  path : String
+
+private def modelFault (path message : String) : Except ModelFault α :=
+  .error ⟨message, path⟩
+
+private def tableFields (value : Json) (expected : List String) (path : String) :
+    Except ModelFault Unit := do
+  match VE.Bridge.exactFields value expected with
+  | .ok () => pure ()
+  | .error message => modelFault path s!"InvalidModel: {message}"
+
+private def modelAtom (value : Json) (path : String) : Except ModelFault String := do
+  let .str word := value | modelFault path "InvalidModel: local ID must match [a-z][a-z0-9_]*"
+  unless VE.Surface.identifier word do
+    modelFault path "InvalidModel: local ID must match [a-z][a-z0-9_]*"
+  if word.utf8ByteSize > 64 then modelFault path "ResourceLimit: local ID exceeds 64 ASCII bytes"
+  pure word
+
+private def modelCell (order : Bool) (sort : String) (value : Json) (path : String) :
+    Except ModelFault String := do
+  if order && sort == "$int" then
+    let .str word := value |
+      modelFault path "InvalidModel: integer values must be canonical decimal strings"
+    match VE.Order.Wire.decodeInt word with
+    | .ok _ => pure word
+    | .error message =>
+      if message.startsWith "ResourceLimit:" then modelFault path message
+      else modelFault path "InvalidModel: integer values must be canonical decimal strings"
+  else modelAtom value path
+
+private def environmentFields (value : Json) (expected : List String) (path : String) :
+    Except ModelFault Unit := do
+  match VE.Bridge.exactFields value expected with
+  | .ok () => pure ()
+  | .error message => modelFault path message
+
+/-- Location-aware vocabulary shape decoding shared by the public environment
+and model endpoints. The family decoder performs all remaining semantic checks. -/
+private def locatedEnvironmentFields (environment : Json) : Except ModelFault Unit := do
+  let .ok vocabulary := environment.getObjVal? "vocabulary" |
+    modelFault "" "object expected"
+  unless vocabulary.getObj?.isOk do modelFault "" "object expected"
+  let profiles := (VE.Bridge.strings (environment.getObjValD "profiles")).toOption.getD []
+  let reports := profiles.contains "reports@0"
+  environmentFields vocabulary
+    (["sorts", "predicates", "constants"] ++ if reports then ["reports"] else []) "/vocabulary"
+  let sorts := vocabulary.getObjValD "sorts"
+  let predicates := vocabulary.getObjValD "predicates"
+  let constants := vocabulary.getObjValD "constants"
+  let .ok sortEntries := VE.Bridge.fields sorts | modelFault "" "sorts must be an object"
+  let .ok predicateEntries := VE.Bridge.fields predicates |
+    modelFault "" "predicates must be an object"
+  let .ok constantEntries := VE.Bridge.fields constants |
+    modelFault "" "constants must be an object"
+  if sortEntries.length > 32 || predicateEntries.length > 256 then
+    modelFault "" "ResourceLimit: Vocabulary exceeds sort or predicate limit"
+  match VE.Bridge.checkVocabularyNames sortEntries predicateEntries constantEntries with
+  | .ok () => pure ()
+  | .error message => modelFault "" message
+  let sortNames := sortEntries.map Prod.fst
+  let order := profiles.contains "order@0"
+  let flagged := profiles.contains "data@0"
+  let nary := profiles.contains "nary@0"
+  if reports then
+    environmentFields (vocabulary.getObjValD "reports") ["holders", "evidence"]
+      "/vocabulary/reports"
+  for (name, entry) in sortEntries do
+    let path := s!"/vocabulary/sorts/{name}"
+    let optional := if (entry.getObjVal? "verbalisation").isOk then ["verbalisation"] else []
+    environmentFields entry (["description"] ++ optional) path
+    if let .ok words := entry.getObjVal? "verbalisation" then
+      environmentFields words ["singular", "plural"] s!"{path}/verbalisation"
+  for (name, entry) in predicateEntries do
+    let path := s!"/vocabulary/predicates/{name}"
+    let optional := ["defined", "functional", "total", "regulated", "argument_units",
+      "instruction_of", "verbalisation", "negative_verbalisation"]
+    let present := optional.filter (fun key => (entry.getObjVal? key).isOk)
+    environmentFields entry (["arguments", "description"] ++ present) path
+    let arguments := entry.getObjValD "arguments"
+    if let .arr cells := arguments then
+      let maximum := if nary then 6 else 2
+      unless cells.size ≥ 1 && cells.size ≤ maximum do
+        modelFault "" s!"Predicate arguments must be an array of one to {maximum} sort identifiers"
+      match VE.Bridge.argumentSorts arguments (fun sort =>
+          sortNames.contains sort || (order && sort == "$int") ||
+          (flagged && sort == "$string")) with
+      | .ok _ => pure ()
+      | .error message => modelFault "" message
+    if let .ok defined := entry.getObjVal? "defined" then
+      environmentFields defined ["arguments", "body"] s!"{path}/defined"
+  for (name, entry) in constantEntries do
+    let path := s!"/vocabulary/constants/{name}"
+    let literal := entry.getObjValD "sort" == .str "$string"
+    let description := if !literal || (entry.getObjVal? "description").isOk then ["description"] else []
+    let optional := ["unit", "verbalisation"].filter (fun key => (entry.getObjVal? key).isOk)
+    environmentFields entry (["sort"] ++ description ++ optional) path
+    match VE.Bridge.constantSort entry (fun sort =>
+        sortNames.contains sort || (order && sort == "$int") || sort == "$string") with
+    | .ok _ => pure ()
+    | .error message => modelFault "" message
+
+private def locatedModelTables (environment model : Json) : Except ModelFault Unit := do
+  let .ok vocabulary := environment.getObjVal? "vocabulary" |
+    modelFault "/environment/vocabulary" "InvalidInput: missing vocabulary"
+  let .ok sorts := VE.Bridge.fields (vocabulary.getObjValD "sorts") |
+    modelFault "/environment/vocabulary/sorts" "InvalidInput: object expected"
+  let .ok predicates := VE.Bridge.fields (vocabulary.getObjValD "predicates") |
+    modelFault "/environment/vocabulary/predicates" "InvalidInput: object expected"
+  let .ok constants := VE.Bridge.fields (vocabulary.getObjValD "constants") |
+    modelFault "/environment/vocabulary/constants" "InvalidInput: object expected"
+  let sortNames := sorts.map Prod.fst
+  let predicateNames := (predicates.filter (fun (_, entry) =>
+    !(entry.getObjVal? "defined").isOk)).map Prod.fst
+  let constantNames := constants.map Prod.fst
+  tableFields model ["complete", "domains", "constants", "relations"] ""
+  unless model.getObjValD "complete" == .bool true do
+    modelFault "/complete" "InvalidModel: complete must be the Boolean true"
   let domains := model.getObjValD "domains"
   let values := model.getObjValD "constants"
   let relations := model.getObjValD "relations"
-  let sortNames := ((VE.Bridge.fields sorts).toOption.getD []).map Prod.fst
-  let predicateNames := ((VE.Bridge.fields declarations).toOption.getD []).map Prod.fst
-  let constantNames := ((VE.Bridge.fields constants).toOption.getD []).map Prod.fst
-  let sameFields := fun (value : Json) (names : List String) =>
-    match VE.Bridge.fields value with
-    | .ok fields => fields.length == names.length && names.all (fields.map Prod.fst).contains
-    | .error _ => false
-  if message == "InvalidModel: complete must be true" ||
-      message == "InvalidModel: Bool expected" then return "/complete"
-  if message.startsWith "InvalidModel: fields do not match:" then
-    if !sameFields domains sortNames then return "/domains"
-    if !sameFields values constantNames then return "/constants"
-    if !sameFields relations predicateNames then return "/relations"
-  let domainEntries := (VE.Bridge.fields domains).toOption.getD []
-  if message == "ResourceLimit: domain size" then
-    for (sort, entries) in domainEntries do
-      if (entries.getArr?.toOption.getD #[]).size > 1000 then return s!"/domains/{sort}"
-  if message == "InvalidModel: duplicate domain entity" then
-    for (sort, entries) in domainEntries do
-      let cells := (entries.getArr?.toOption.getD #[]).toList
-      if cells.eraseDups.length != cells.length then return s!"/domains/{sort}"
-  if message == "InvalidModel: invalid local identifier" ||
-      message == "ResourceLimit: local ID exceeds 64 ASCII bytes" then
-    for (sort, entries) in domainEntries do
-      for (cell, index) in (entries.getArr?.toOption.getD #[]).toList.zipIdx do
-        if let .str value := cell then
-          if !VE.Bridge.identifier value then return s!"/domains/{sort}/{index}"
-  if message == "InvalidModel: dangling constant" ||
-      message == "InvalidModel: dangling or wrong-sort value" then
-    for (name, entry) in (VE.Bridge.fields constants).toOption.getD [] do
-      let sort := entry.getObjValD "sort" |>.getStr?.toOption.getD ""
-      let value := values.getObjValD name
-      let members := (domains.getObjValD sort).getArr?.toOption.getD #[]
-      if !members.contains value then return s!"/constants/{name}"
-  let relationEntries := (VE.Bridge.fields relations).toOption.getD []
-  if message == "InvalidModel: duplicate relation tuple" then
-    for (name, entries) in relationEntries do
-      let rows := (entries.getArr?.toOption.getD #[]).toList
-      if rows.eraseDups.length != rows.length then return s!"/relations/{name}"
-  if message == "InvalidModel: wrong relation arity" ||
-      message == "InvalidModel: dangling or wrong-sort tuple" then
-    for (name, entries) in relationEntries do
-      let signature := (declarations.getObjValD name).getObjValD "arguments"
-      let names := (VE.Bridge.strings signature).toOption.getD []
-      for (row, rowIndex) in (entries.getArr?.toOption.getD #[]).toList.zipIdx do
-        let cells := (row.getArr?.toOption.getD #[]).toList
-        if message == "InvalidModel: wrong relation arity" && cells.length != names.length then
-          return s!"/relations/{name}/{rowIndex}"
-        if message == "InvalidModel: dangling or wrong-sort tuple" then
-          for ((sort, cell), cellIndex) in (names.zip cells).zipIdx do
-            let members := (domains.getObjValD sort).getArr?.toOption.getD #[]
-            if !members.contains cell then return s!"/relations/{name}/{rowIndex}/{cellIndex}"
-  if message == "ResourceLimit: tuple count" then return "/relations"
-  none
+  for (name, table) in [("domains", domains), ("constants", values), ("relations", relations)] do
+    unless table.getObj?.isOk do modelFault s!"/{name}" "InvalidModel: expected an object"
+  tableFields domains sortNames "/domains"
+  tableFields values constantNames "/constants"
+  let .ok relationFields := VE.Bridge.fields relations |
+    modelFault "/relations" "InvalidModel: expected an object"
+  if relationFields.any (fun (name, _) =>
+      (predicates.any fun (p, entry) => p == name && (entry.getObjVal? "defined").isOk)) then
+    modelFault "/relations" "InvalidModel(definitions): supplied table for defined predicate"
+  tableFields relations predicateNames "/relations"
+  -- Static limits precede cell decoding in all families.
+  for sort in sortNames do
+    if let .arr cells := domains.getObjValD sort then
+      if cells.size > 1000 then modelFault s!"/domains/{sort}" "ResourceLimit: domain exceeds entity limit"
+  let total := relationFields.foldl (fun count (_, rows) =>
+    match rows with | .arr cells => count + cells.size | _ => count) 0
+  if total > 100000 then modelFault "/relations" "ResourceLimit: model exceeds total relation tuple limit"
+  let mut decodedDomains : List (String × List String) := []
+  for sort in sortNames do
+    let .arr cells := domains.getObjValD sort |
+      modelFault s!"/domains/{sort}" "InvalidModel: domain must be an array"
+    let mut decoded : List String := []
+    for (cell, index) in cells.toList.zipIdx do
+      decoded := (← modelAtom cell s!"/domains/{sort}/{index}") :: decoded
+    unless VE.Route.Decode.distinct decoded do
+      modelFault s!"/domains/{sort}" "InvalidModel: duplicate domain entity"
+    decodedDomains := (sort, decoded) :: decodedDomains
+  let order := (environment.getObjValD "profiles" |>.getArr?.toOption.getD #[]).contains (.str "order@0")
+  for (name, entry) in constants do
+    let sort := (entry.getObjValD "sort").getStr?.toOption.getD ""
+    let path := s!"/constants/{name}"
+    let word ← modelCell order sort (values.getObjValD name) path
+    if !(order && sort == "$int") && !((VE.Bridge.lookup decodedDomains sort).getD []).contains word then
+      modelFault path "InvalidModel: constant denotes an entity outside its sort"
+  for (name, entry) in predicates do
+    if !predicateNames.contains name then continue
+    let path := s!"/relations/{name}"
+    let .arr rows := relations.getObjValD name |
+      modelFault path "InvalidModel: relation must be an array"
+    let signature := (VE.Bridge.strings (entry.getObjValD "arguments")).toOption.getD []
+    let mut decodedRows : List (List String) := []
+    for (row, index) in rows.toList.zipIdx do
+      let rowPath := s!"{path}/{index}"
+      let .arr cells := row | modelFault rowPath "InvalidModel: relation tuple has wrong arity"
+      unless cells.size == signature.length do
+        modelFault rowPath "InvalidModel: relation tuple has wrong arity"
+      let mut decoded : List String := []
+      for ((sort, cell), cellIndex) in (signature.zip cells.toList).zipIdx do
+        let cellPath := s!"{rowPath}/{cellIndex}"
+        let word ← modelCell order sort cell cellPath
+        if !(order && sort == "$int") && !((VE.Bridge.lookup decodedDomains sort).getD []).contains word then
+          modelFault cellPath "InvalidModel: relation tuple contains a dangling or wrong-sort entity"
+        decoded := word :: decoded
+      decodedRows := decoded :: decodedRows
+    unless VE.Route.Decode.distinct decodedRows do
+      modelFault path "InvalidModel: duplicate relation tuple"
+
+/-- A pointer may name a missing final field, but every earlier component must
+exist. This is the condition on paths of decoder failures. -/
+private def pointerChild (value : Json) (part : String) : Option Json :=
+  match value with
+  | .obj _ => (value.getObjVal? part).toOption
+  | .arr cells => do cells[← part.toNat?]?
+  | _ => none
+
+private def pointerParentExists (value : Json) : List String → Bool
+  | [] | [_] => true
+  | part :: rest =>
+    match pointerChild value part with
+    | some child => pointerParentExists child rest
+    | none => false
+
+private def prefixValidPointer (model : Json) (path : String) : Bool :=
+  path.isEmpty || (path.startsWith "/" && pointerParentExists model ((path.drop 1).splitOn "/"))
+
+private def safeModelPath (model : Json) (path : String) : String :=
+  if prefixValidPointer model path then path else ""
+
+private theorem safeModelPath_valid (model : Json) (path : String) :
+    prefixValidPointer model (safeModelPath model path) = true := by
+  unfold safeModelPath
+  split
+  · assumption
+  · rfl
+
+/-- Any error returned by the public table decoder has a prefix-valid JSON
+pointer. The empty pointer denotes the model root. -/
+private def checkedModelTables (environment model : Json) : Except ModelFault Unit :=
+  match locatedModelTables environment model with
+  | .ok () => .ok ()
+  | .error fault => .error { fault with path := safeModelPath model fault.path }
+
+private theorem checkedModelTables_error_path_valid (environment model : Json)
+    (fault : ModelFault) (h : checkedModelTables environment model = .error fault) :
+    prefixValidPointer model fault.path = true := by
+  unfold checkedModelTables at h
+  split at h
+  · cases h
+  · cases h
+    exact safeModelPath_valid model _
+
+/-- Checked examples of the pointer-carrying decoder, including faults in a
+table shape and a nested cell. The `ModelFault` type makes path mandatory. -/
+private def modelPathOf (result : Except ModelFault Unit) : String :=
+  match result with | .ok _ => "" | .error fault => fault.path
+
+#guard modelPathOf (locatedModelTables
+  (Json.mkObj [("vocabulary", Json.mkObj [("sorts", Json.mkObj [("item", .null)]),
+    ("predicates", Json.mkObj []), ("constants", Json.mkObj [])])])
+  (Json.mkObj [("complete", .bool true), ("domains", Json.mkObj [("item", .str "i")]),
+    ("constants", Json.mkObj []), ("relations", Json.mkObj [])])) == "/domains/item"
 
 def reported (run : Json → Except String Json) (j : Json) : Json :=
   match run j with
   | .ok result => result
-  | .error message => Json.mkObj ([("id", j.getObjValD "id"),
-      ("status", .str "error"), ("error", .str message)] ++
-      match modelErrorPath j message with
-      | some path => [("path", .str path)]
-      | none => [])
+  | .error message => Json.mkObj [("id", j.getObjValD "id"),
+      ("status", .str "error"), ("error", .str message)]
+
+def reportedFault (j : Json) (fault : ModelFault) : Json :=
+  Json.mkObj ([("id", j.getObjValD "id"), ("status", .str "error"),
+    ("error", .str fault.message)] ++
+    if fault.path.isEmpty then [] else [("path", .str fault.path)])
+
+/-- Profile shape precedes vocabulary decoding. Newer composed envelopes may
+carry additional top-level fields, so this preflight checks only the profile
+gate shared with the four base checker families. -/
+private def earlyProfileGate (environment : Json) : Except String Unit := do
+  if environment.getObjValD "language" == .str "ve.core@0.2" then
+    if (environment.getObjVal? "profiles").isOk then
+      let profiles ← VE.Route.Gate.profilesOf environment
+      VE.Compose.todayGate profiles
+
+def reportedEnvironment (j : Json) : Json :=
+  match j.getObjVal? "environment" with
+  | .error _ => reported environmentCase j
+  | .ok environment =>
+    match earlyProfileGate environment with
+    | .error message => reportedFault j ⟨message, ""⟩
+    | .ok () =>
+      match locatedEnvironmentFields environment with
+      | .ok () => reported environmentCase j
+      | .error fault => reportedFault j fault
+
+def reportedModel (j : Json) : Json :=
+  let located := do
+    let environment ← j.getObjVal? "environment"
+    let model ← j.getObjVal? "model"
+    if !isLegacy environment then
+      let _ ← validatedComposedEnvironment environment
+      pure ()
+    let view ← if isLegacy environment then pure environment else modelEnvironment environment
+    pure (environment, model, view)
+  match located with
+  | .ok (_, model, view) =>
+    match checkedModelTables view model with
+    | .ok () => reported modelCase j
+    | .error fault => reportedFault j fault
+  | .error _ =>
+    match j.getObjVal? "environment" with
+    | .error _ => reported modelCase j
+    | .ok environment =>
+      match earlyProfileGate environment with
+      | .error message => reportedFault j ⟨message, ""⟩
+      | .ok () =>
+        match locatedEnvironmentFields environment with
+        | .ok () => reported modelCase j
+        | .error fault => reportedFault j fault
 
 /-- A raw strict parse may succeed while the family's typing check rejects.
 In that case the existing diagnostic walker names the first typing fault. -/

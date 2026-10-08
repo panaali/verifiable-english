@@ -16,13 +16,9 @@ def decodeEnvironment (j : Json) : Except String Vocabulary := do
   let sorts ← fields (← v.getObjVal? "sorts")
   let predicates ← fields (← v.getObjVal? "predicates")
   let constants ← fields (← v.getObjVal? "constants")
-  let names := (sorts ++ predicates ++ constants).map Prod.fst
-  unless names.eraseDups.length == names.length do throw "duplicate declaration"
-  for name in names do
-    unless identifier name && !reserved.contains name && !generatedName name do
-      throw s!"invalid or reserved declaration: {name}"
   if sorts.length > 32 || predicates.length > 256 then
     throw "ResourceLimit: vocabulary size"
+  VE.Bridge.checkVocabularyNames sorts predicates constants
   for (_, entry) in sorts do
     displayFields entry ["description"] ["verbalisation"]
     description entry
@@ -36,22 +32,21 @@ def decodeEnvironment (j : Json) : Except String Vocabulary := do
     description entry
     for key in ["verbalisation", "negative_verbalisation"] do
       if let .ok words := entry.getObjVal? key then displayString words
-    let ss ← strings (← entry.getObjVal? "arguments")
-    unless ss.all sortNames.contains do
-      throw "UnknownSymbol: unknown predicate argument sort"
-    unless decide (1 ≤ ss.length) && decide (ss.length ≤ 6) do
+    let raw ← entry.getObjVal? "arguments"
+    let cells ← raw.getArr?
+    unless decide (1 ≤ cells.size) && decide (cells.size ≤ 6) do
       throw s!"invalid signature: {p}"
+    let ss ← VE.Bridge.argumentSorts raw sortNames.contains
     pure (p, ss)
   let cs ← constants.mapM fun (c, entry) => do
-    let literal := (← stringField entry "sort") == "$string"
+    let literal := entry.getObjValD "sort" == .str "$string"
     if literal then
       displayFields entry ["sort"] ["description"]
       if let .ok _ := entry.getObjVal? "description" then description entry
     else
       exactFields entry ["sort", "description"]
       description entry
-    let s ← stringField entry "sort"
-    unless sortNames.contains s || s == "$string" do throw s!"unknown constant sort: {c}"
+    let s ← VE.Bridge.constantSort entry (fun sort => sortNames.contains sort || sort == "$string")
     pure (c, s)
   if (cs.filter (fun c => c.2 == "$string")).length > 64 then
     throw "ResourceLimit: At most 64 declared $string literals"
