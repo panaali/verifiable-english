@@ -2,6 +2,7 @@ import VE.Readings.Wire
 import VE.Readings.Scan
 import VE.Readings.SupRun
 import VE.Readings.UnspecifiedWire
+import VE.Readings.Companions
 import VE.NormDefaults.Run
 import VE.Rights.Run
 
@@ -374,27 +375,73 @@ def runLowerWith (lower : List String) (j : Json) : Json :=
   | .ok .normDefaults => VE.NormDefaults.Run.runCaseReported j
   | _ => VE.Norms.Run.runCaseReported j
 
-/-- Every readings kind admits the case's document once: S1's `admitReadings`, continued by S2a's admission
-    (`admitS2Of`) and the completion's (`admitNDFull`) where the kind reads them. -/
-def runCase (j : Json) : Except String Json := do
-  let id ← stringField j "id"
-  let kind ← VE.Route.Run.caseKind j
-  if kind == "readings-validate" then
-    let a ← admitReadings (← j.getObjVal? "environment") (← j.getObjVal? "document")
-    if underCompletion a.re a.D then
-      return ← runValidateND id (← admitNDFull (← admitS2Of a (← j.getObjVal? "document")))
-    return VE.Route.Wire.ok id (← validateResult a)
+/-- `readings-validate` on one case of the split: S1's admission, continued by the completion's where it applies. -/
+def validateOne (id : String) (environment document : Json) : Except String Json := do
+  let a ← admitReadings environment document
+  if underCompletion a.re a.D then
+    return ← runValidateND id (← admitNDFull (← admitS2Of a document))
+  return VE.Route.Wire.ok id (← validateResult a)
+
+/-- `readings-elaborate` on one case of the split (`runS2ND`'s dispatch). -/
+def elaborateOne (j : Json) (id : String) (environment document : Json) : Except String Json := do
+  runS2ND runLowerWith id "readings-elaborate" (← admitS2 environment document) j
+
+/-- Every readings kind on one case of the split admits that case's document once: S1's `admitReadings`, continued
+    by S2a's admission (`admitS2Of`) and the completion's (`admitNDFull`) where the kind reads them. -/
+def runOne (j : Json) (id kind : String) (environment document : Json) : Except String Json := do
+  if kind == "readings-validate" then return ← validateOne id environment document
   if kind == "readings-separate" then
-    let a ← admitReadings (← j.getObjVal? "environment") (← j.getObjVal? "document")
+    let a ← admitReadings environment document
     if underCompletion a.re a.D then
-      return ← runSeparateND id (← admitNDFull (← admitS2Of a (← j.getObjVal? "document"))) j
+      return ← runSeparateND id (← admitNDFull (← admitS2Of a document)) j
     let s ← stringField j "set"
     let sid ← stringField j "situation"
     let f ← pairFactsIn a (sideIn a s) s sid (← stringField j "other")
     return VE.Route.Wire.ok id [("set", .str s), ("pair", pairJson f sid)]
   if s2Kinds.contains kind then
-    return ← runS2ND runLowerWith id kind (← admitS2 (← j.getObjVal? "environment") (← j.getObjVal? "document")) j
+    return ← runS2ND runLowerWith id kind (← admitS2 environment document) j
   throw s!"UnsupportedProfile: case kind {kind} is not available on the readings route"
+
+def unknownComponent (c : String) : String :=
+  s!"InvalidInput: component {c} is not main or a reading set with its own vocabulary"
+
+/-- The `component` a kind names (readings-defaults.md 3): `main` when absent. -/
+def componentOfCase (j : Json) : Except String (Option String) :=
+  match j.getObjVal? "component" with
+  | .ok (.str c) => pure (some c)
+  | .ok _ => throw (unknownComponent "")
+  | .error _ => pure none
+
+def componentRow (name : String) (answer : Json) : Json :=
+  Json.mkObj [("component", .str name), ("answer", answer)]
+
+/-- `readings-validate` or `readings-elaborate` per case of the split, `main` first (4.1 step 0): the first error
+    of any case is the answer. -/
+def runComponents (j : Json) (id kind : String) (parts : List (String × Json × Json)) : Except String Json := do
+  let rows ← parts.mapM (fun p => do
+    let a ← if kind == "readings-validate" then validateOne id p.2.1 p.2.2 else elaborateOne j id p.2.1 p.2.2
+    pure (componentRow p.1 a))
+  pure (VE.Route.Wire.ok id [("components", Json.arr rows.toArray)])
+
+/-- Every readings kind first splits the case (readings-defaults.md 3, `splitCase`). A document without companion
+    sets is one case, `main`, run as before. Otherwise `readings-validate` and `readings-elaborate` answer per
+    case unless the request names a `component`, and every other kind runs on the case it names (`main` when it
+    names none). -/
+def runCase (j : Json) : Except String Json := do
+  let id ← stringField j "id"
+  let kind ← VE.Route.Run.caseKind j
+  unless kind == "readings-validate" || kind == "readings-separate" || s2Kinds.contains kind do
+    throw s!"UnsupportedProfile: case kind {kind} is not available on the readings route"
+  let environment ← j.getObjVal? "environment"
+  let document ← j.getObjVal? "document"
+  let parts ← splitCase environment document
+  let named ← componentOfCase j
+  if named.isNone && parts.length > 1 && (kind == "readings-validate" || kind == "readings-elaborate") then
+    return ← runComponents j id kind parts
+  let c := named.getD "main"
+  match parts.find? (·.1 == c) with
+  | some p => runOne j id kind p.2.1 p.2.2
+  | none => throw (unknownComponent c)
 
 def runCaseReported (j : Json) : Json :=
   match VE.Route.Run.caseKind j with

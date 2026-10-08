@@ -8,7 +8,8 @@
           "anyOf": [
             {"$ref": "common.json#/$defs/case_error"},
             {"$ref": "common.json#/$defs/route_path_error"},
-            {"$ref": "#/$defs/validate"}
+            {"$ref": "#/$defs/validate"},
+            {"$ref": "#/$defs/validate_components"}
           ]
         },
         "when": {"$ref": "#/$defs/kind/readings-validate"}
@@ -28,7 +29,8 @@
           "anyOf": [
             {"$ref": "common.json#/$defs/case_error"},
             {"$ref": "common.json#/$defs/route_path_error"},
-            {"$ref": "#/$defs/elaborate"}
+            {"$ref": "#/$defs/elaborate"},
+            {"$ref": "#/$defs/elaborate_components"}
           ]
         },
         "when": {"$ref": "#/$defs/kind/readings-elaborate"}
@@ -386,6 +388,25 @@
         }
       ]
     },
+    "elaborate_components": {
+      "$comment": "Readings.Run.runComponents (Readings.Run.elaborateOne): per case of Readings.Wire.splitCase, main first, then each companion set in source order, with the case's answer.",
+      "additionalProperties": false,
+      "properties": {
+        "components": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {"answer": {"$ref": "#/$defs/elaborate"}, "component": {"type": "string"}},
+            "required": ["component", "answer"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "components"],
+      "type": "object"
+    },
     "fill_premises": {
       "$comment": "Readings.Run.runValidateND (UnspecifiedWire.fillPremisesJson): under the unspecified completion, per reading with content its Fill_T, each premise labelled unsaid:pair:<r>,<m>.",
       "items": {
@@ -575,6 +596,25 @@
           "type": "object"
         }
       ]
+    },
+    "validate_components": {
+      "$comment": "Readings.Run.runComponents (Readings.Run.validateOne): per case of Readings.Wire.splitCase, main first, then each companion set in source order, with the case's answer.",
+      "additionalProperties": false,
+      "properties": {
+        "components": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {"answer": {"$ref": "#/$defs/validate"}, "component": {"type": "string"}},
+            "required": ["component", "answer"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "components"],
+      "type": "object"
     }
   }
 }
