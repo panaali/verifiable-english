@@ -610,15 +610,14 @@ theorem decodeVocabulary_flag_not_defined (profiles : List String) (v : Json) (r
   obtain ⟨predicates, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨constants, _, h⟩ := bind_ok h
+  split at h
+  case isTrue => cases h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
   extract_lets names sortNames allowed flagged jpA jpB at h
   split at h
   case isFalse => cases h
   rename_i hnames
-  dsimp (config := { zeta := false }) only [jpB] at h
-  obtain ⟨_, _, h⟩ := bind_ok h
-  obtain ⟨_, _, h⟩ := bind_ok h
-  split at h
-  case isTrue => cases h
   obtain ⟨_, _, h⟩ := bind_ok h
   dsimp (config := { zeta := false }) only [jpA] at h
   obtain ⟨_, _, h⟩ := bind_ok h

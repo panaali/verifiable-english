@@ -96,6 +96,10 @@ def decodeVocabulary (profiles : List String) (v : Json) : Except String RouteVo
   if sorts.length > 32 || predicates.length > 256 then
     throw "ResourceLimit: vocabulary size"
   VE.Bridge.checkVocabularyNames sorts predicates constants
+  -- An explicit finite witness lets downstream proofs use the same distinct
+  -- declaration invariant without unfolding the diagnostic traversal.
+  let names := (sorts ++ predicates ++ constants).map Prod.fst
+  unless names.eraseDups.length == names.length do throw "duplicate declaration"
   for (_, entry) in sorts do
     VE.Bridge.displayFields entry ["description"] ["verbalisation"]
     VE.Bridge.description entry
