@@ -49,8 +49,6 @@ fn nonvacuity(env: &Environment, v: &Value) -> Result<(Option<Formula>, bool)> {
     }
     Ok((guard, semantic))
 }
-/// The route kinds that need only a gated envelope: the label grammar and the
-/// dependency-DAG order (same diagnostics as Python and the Lean `route`).
 /// The case's `soft_premises` (a validated soft document's Background slot),
 /// typed over the environment and attached to it.
 fn soft(env: Environment, v: &Value) -> Result<Environment> {
@@ -61,36 +59,6 @@ fn soft(env: Environment, v: &Value) -> Result<Environment> {
             Ok(env.with_soft_premises(premises))
         }
     }
-}
-fn route_case(v: &Value, kind: &str) -> Result<Value> {
-    Environment::from_value(field(v, "environment")?)?;
-    let id = v.get("id").cloned().unwrap_or(json!(""));
-    if kind == "label" {
-        let label = field(v, "label")?
-            .as_str()
-            .ok_or_else(|| Error::new("InvalidInput", "label must be a string"))?;
-        check_label(label)?;
-        return Ok(json!({"id":id,"status":"ok","label":label}));
-    }
-    let bad = || Error::new("InvalidInput", "dependency nodes are {name, mentions}");
-    let nodes = field(v, "nodes")?
-        .as_array()
-        .ok_or_else(bad)?
-        .iter()
-        .map(|node| {
-            let object = node.as_object().filter(|o| o.len() == 2).ok_or_else(bad)?;
-            let name = object.get("name").and_then(Value::as_str).ok_or_else(bad)?;
-            let mentions = object
-                .get("mentions")
-                .and_then(Value::as_array)
-                .ok_or_else(bad)?
-                .iter()
-                .map(|m| m.as_str().map(str::to_owned).ok_or_else(bad))
-                .collect::<Result<Vec<_>>>()?;
-            Ok((name.to_owned(), mentions))
-        })
-        .collect::<Result<Vec<_>>>()?;
-    Ok(json!({"id":id,"status":"ok","order":dependency_order(&nodes)?}))
 }
 fn case(v: &Value) -> Result<Value> {
     if v.get("kind") == Some(&json!("readings-superposed-evaluate")) {
@@ -116,9 +84,6 @@ fn case(v: &Value) -> Result<Value> {
         result["untrusted"] = json!(true);
         result["envelope"] = v["envelope"].clone();
         return Ok(result);
-    }
-    if let Some(kind @ ("label" | "dependency-order")) = v.get("kind").and_then(Value::as_str) {
-        return route_case(v, kind);
     }
     if v.get("family").is_some() {
         return Err(Error::new("UnsupportedProfile", "Rust checks no elaborated-document family but reports@0"));
@@ -219,50 +184,10 @@ fn case(v: &Value) -> Result<Value> {
         out["id"] = v.get("id").cloned().unwrap_or(json!(""));
         return Ok(out);
     }
-    let doc = if let Some(ast) = v.get("ast") {
-        Document::from_value(&env, ast)?
-    } else {
-        parse(
-            &env,
-            field(v, "source")?
-                .as_str()
-                .ok_or_else(|| Error::new("SyntaxError", "source must be text"))?
-                .as_bytes(),
-        )?
-    };
-    if let Some(source) = v.get("source") {
-        let parsed = parse(
-            &env,
-            source
-                .as_str()
-                .ok_or_else(|| Error::new("SyntaxError", "source must be text"))?
-                .as_bytes(),
-        )?;
-        if parsed != doc {
-            return Err(Error::new("TypeMismatch", "source/AST mismatch"));
-        }
-    }
-    let mut out = json!({"id":v.get("id").cloned().unwrap_or(json!("")),"status":"ok","canonical":print_document(&doc)?,"ast":doc.to_value(),"environment_id":env.environment_id(),"meaning_id":doc.meaning_id()?,"formula_meaning_ids":(0..doc.formulas().len()).map(|i| doc.formula_meaning_id(i)).collect::<Result<Vec<_>>>()?});
-    out["canonical_environment"] =
-        json!(String::from_utf8(canonical_json(&env.to_value())?).unwrap());
-    out["canonical_ast"] = json!(String::from_utf8(canonical_json(&doc.to_value())?).unwrap());
-    if let Some(model) = v.get("model") {
-        let model = FiniteModel::from_value(&env, model)?;
-        out["canonical_model"] =
-            json!(String::from_utf8(canonical_json(&model.to_value())?).unwrap());
-        let values = (0..doc.formulas().len())
-            .map(|i| {
-                evaluate_formula(&doc, i, &model, MAX_EVALUATIONS).and_then(|r| {
-                    r.value
-                        .ok_or_else(|| Error::new("ResourceLimit", "evaluation budget exhausted"))
-                })
-            })
-            .collect::<Result<Vec<_>>>()?;
-        out["value"] = json!(values.iter().all(|v| *v));
-        out["values"] = json!(values);
-        out["model_id"] = json!(model.model_id());
-    }
-    Ok(out)
+    // Rust reads no source text and prints no canonical text or document identities: Python
+    // parses and prints, and Lean checks (docs/LEAN-FIRST-PLAN.md, batch 15b). Any other case
+    // shape is refused.
+    Err(Error::new("InvalidInput", "unknown case: Rust checks search cases only"))
 }
 
 /// Untrusted S2a shadow of the formulas regenerated by Python and checked by
@@ -324,6 +249,56 @@ mod readings_s2_tests {
         let mut unmarked = input;
         unmarked["untrusted"] = json!(false);
         assert!(case(&unmarked).is_err());
+    }
+}
+
+#[cfg(test)]
+mod search_only_tests {
+    use super::*;
+
+    fn environment() -> Value {
+        json!({"language":"ve.core@0.2", "profiles":["relational-fol@0"],
+               "spec_revision":"ve-v0.2-expand2-2026-09-25",
+               "vocabulary":{"sorts":{"item":{"description":"item"}},
+                             "predicates":{"marked":{"arguments":["item"],"description":"marked"}},
+                             "constants":{}}})
+    }
+
+    #[test]
+    fn source_label_order_and_identity_cases_are_refused() {
+        // Rust reads no source text, checks no label or dependency order and prints no
+        // canonical text: each such case is an unknown case, never an answer.
+        for input in [
+            json!({"id":"s", "environment":environment(), "source":"true.\n"}),
+            json!({"id":"a", "environment":environment(), "ast":[["top"]]}),
+            json!({"id":"m", "environment":environment(), "ast":[["top"]],
+                   "model":{"complete":true,"domains":{"item":[]},"constants":{},
+                            "relations":{"marked":[]}}}),
+            json!({"id":"l", "kind":"label", "environment":environment(), "label":"asserted"}),
+            json!({"id":"d", "kind":"dependency-order", "environment":environment(),
+                   "nodes":[{"name":"a","mentions":[]}]}),
+        ] {
+            let error = case(&input).unwrap_err();
+            assert_eq!(error.code, "InvalidInput", "{input}");
+            assert!(error.message.starts_with("unknown case"), "{input}");
+        }
+    }
+
+    #[test]
+    fn countermodel_search_and_check_are_kept() {
+        let marked = json!(["exists","item",["unary","marked",["var",0]]]);
+        let search = json!({"id":"q", "environment":environment(), "premises":[],
+                            "conclusion":marked, "max_domain_size":1});
+        let found = case(&search).unwrap();
+        assert_eq!(found["status"], "Found");
+        assert_eq!(found["id"], "q");
+        let mut check = search.clone();
+        check["model"] = found["model"].clone();
+        let checked = case(&check).unwrap();
+        assert_eq!(checked["valid"], true);
+        let mut valid = search;
+        valid["premises"] = json!([marked]);
+        assert_eq!(case(&valid).unwrap()["status"], "NotFound");
     }
 }
 
@@ -408,13 +383,6 @@ fn case_record(v: &Value) -> Value {
         }
     }
 }
-fn option(args: &[String], name: &str) -> Result<String> {
-    args.iter()
-        .position(|x| x == name)
-        .and_then(|i| args.get(i + 1))
-        .cloned()
-        .ok_or_else(|| Error::new("InvalidInput", format!("missing {name}")))
-}
 fn run(args: &[String]) -> Result<i32> {
     let Some(command) = args.first().map(String::as_str) else {
         help();
@@ -493,63 +461,6 @@ fn run(args: &[String]) -> Result<i32> {
                 .map_err(|e| Error::new("InvalidInput", e.to_string()))?;
             Ok(i32::from(failed))
         }
-        "countermodel" | "check-countermodel" => {
-            let env = loads_json(&read(&option(args, "--env")?)?)?;
-            let environment = Environment::from_value(&env)?;
-            let premises_bytes = read(&option(args, "--premises")?)?;
-            let premises = parse(&environment, &premises_bytes)?.to_value();
-            let conclusion = parse(&environment, &read(&option(args, "--conclusion")?)?)?;
-            if conclusion.formulas().len() != 1 {
-                return Err(Error::new(
-                    "SyntaxError",
-                    "conclusion must have exactly one statement",
-                ));
-            }
-            let mut input = json!({"environment":env,"premises":premises,"conclusion":conclusion.formulas()[0].to_value()});
-            if command == "check-countermodel" {
-                input["model"] = loads_json(&read(&option(args, "--model")?)?)?;
-            }
-            for name in ["max-domain-size", "max-models", "max-evaluations"] {
-                let flag = format!("--{name}");
-                if args.contains(&flag) {
-                    input[name.replace('-', "_")] = json!(
-                        option(args, &flag)?
-                            .parse::<u64>()
-                            .map_err(|_| Error::new("InvalidInput", "invalid search bound"))?
-                    );
-                }
-            }
-            let out = case(&input)?;
-            println!("{out}");
-            Ok(match out["status"].as_str() {
-                Some("Found" | "Valid") => 0,
-                Some("ResourceLimit") => 2,
-                _ => 1,
-            })
-        }
-        "parse" | "format" | "evaluate" => {
-            let env = Environment::from_json(&read(&option(args, "--env")?)?)?;
-            let doc = parse(&env, &read(&option(args, "--source")?)?)?;
-            if command == "format" {
-                print!("{}", print_document(&doc)?);
-                return Ok(0);
-            }
-            if command == "parse" {
-                println!(
-                    "{}",
-                    json!({"ast":doc.to_value(),"canonical":print_document(&doc)?,"environment_id":env.environment_id(),"meaning_id":doc.meaning_id()?,"assurance":"experimental","intent":"unconfirmed","proof":"not_checked"})
-                );
-                return Ok(0);
-            }
-            let model = FiniteModel::from_json(&env, &read(&option(args, "--model")?)?)?;
-            let result = evaluate(&doc, &model, MAX_EVALUATIONS)?;
-            println!("{}", serde_json::to_string(&result).unwrap());
-            Ok(match result.value {
-                Some(true) => 0,
-                Some(false) => 1,
-                None => 2,
-            })
-        }
         "canonical-json" => {
             let v = loads_json(&read(args.get(1).map_or("-", String::as_str))?)?;
             io::stdout()
@@ -562,7 +473,7 @@ fn run(args: &[String]) -> Result<i32> {
 }
 fn help() {
     println!(
-        "VE v0 experimental Rust core\nve parse|format --env ENV.json --source SOURCE.ve\nve evaluate --env ENV.json --source SOURCE.ve --model MODEL.json\nve conformance [CASES.json|-]\nve jsonl [CASES.jsonl|-]\nve canonical-json [INPUT.json|-]\nve countermodel --env ENV.json --premises PREMISES.ve --conclusion CONCLUSION.ve [--max-domain-size N] [--max-models N] [--max-evaluations N]\nve check-countermodel --env ENV.json --premises PREMISES.ve --conclusion CONCLUSION.ve --model MODEL.json"
+        "VE v0 experimental Rust core: untrusted search and evaluation over wire ASTs\nve conformance [CASES.json|-]\nve jsonl [CASES.jsonl|-]\nve canonical-json [INPUT.json|-]"
     );
 }
 fn main() {

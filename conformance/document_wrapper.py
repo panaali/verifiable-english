@@ -67,15 +67,13 @@ def python_answer(text: str) -> dict:
     a crash."""
     from ve.document import _report, coverage, load_document
     from ve.errors import VEError
-    from ve.search import model_search_scope
     with tempfile.TemporaryDirectory() as directory:
         path = Path(directory) / "document.ve.md"
         path.write_bytes(text.encode("utf-8"))
         try:
-            with model_search_scope():
-                doc = load_document(path)
-                result = (_report(doc) if "graph" in doc["meta"] else
-                          {"coverage": coverage(doc), "document_id": doc["document_id"], "source_id": doc["source_id"]})
+            doc = load_document(path)
+            result = (_report(doc) if "graph" in doc["meta"] else
+                      {"coverage": coverage(doc), "document_id": doc["document_id"], "source_id": doc["source_id"]})
         except VEError as exc:
             answer = {"outcome": "error", "code": exc.code, "text": exc.message}
             owner = owner_of(exc, text)

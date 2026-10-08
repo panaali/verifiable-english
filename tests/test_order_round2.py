@@ -1,4 +1,7 @@
-"""The order surface and finite evaluation agree in Python, Rust and Lean."""
+"""The order surface and finite evaluation agree in Python, Rust and Lean.
+
+Rust reads no source text (batch 15b): its order route takes Python's AST, so the surface
+itself (parsing, source limits, strict rejections) is compared between Python and Lean."""
 import copy
 import json
 from subprocesses import HANG_TIMEOUT
@@ -34,22 +37,19 @@ def test_order_surface_and_evaluation_three_way(rust_executable, lean_executable
         env = Environment(case["environment"])
         document = document_from_data(env, case["ast"])
         source = print_document(env, document)
-        cases.append({**case, "source": source})
+        cases.append(case)
         surface.append({"id": case["id"], "kind": "surface", "environment": case["environment"],
                         "source": source})
     rust = invoke(rust_executable, "conformance", cases)
-    rust_source = invoke(rust_executable, "conformance", [
-        {key: value for key, value in case.items() if key != "ast"} for case in cases])
     lean_values = invoke(lean_executable, "order", [c for c, _ in generated])
     lean_surface = invoke(lean_executable, "order", surface)
-    for (case, expected), r, rs, lv, ls in zip(generated, rust, rust_source, lean_values, lean_surface, strict=True):
+    for (case, expected), r, lv, ls in zip(generated, rust, lean_values, lean_surface, strict=True):
         env = Environment(case["environment"])
         doc = document_from_data(env, case["ast"])
         model = FiniteModel.from_dict(env, case["model"])
         assert r["status"] == lv["status"] == ls["status"] == "ok", case["id"]
         assert r["values"] == lv["values"] == expected, case["id"]
         assert ls["ast"] == r["ast"] == case["ast"], case["id"]
-        assert rs == r, case["id"]
         assert r["canonical"] == print_document(env, doc)
         assert r["environment_id"] == env.environment_id
         assert r["meaning_id"] == meaning_id(env, doc)
@@ -80,6 +80,11 @@ def test_order_new_routes_reject_malformed_input(rust_executable, lean_executabl
     assert invoke(rust_executable, "conformance", [proof])[0]["status"] == "error"
 
 
+def without_source(case):
+    """The case Rust is sent: Python's AST, never the source text."""
+    return {key: value for key, value in case.items() if key != "source"}
+
+
 def _surface_case(env, source, index):
     return {"id": str(index), "kind": "surface", "environment": env, "source": source}
 
@@ -96,7 +101,7 @@ def test_order_large_integers_and_coefficient_families_three_way(rust_executable
         assert print_document(env, doc) == source
         rust_cases.append({"id": str(index), "environment": base["environment"],
                            "source": source, "ast": document_to_data(env, doc)})
-    rust = invoke(rust_executable, "conformance", rust_cases)
+    rust = invoke(rust_executable, "conformance", [without_source(case) for case in rust_cases])
     lean = invoke(lean_executable, "order", [
         _surface_case(base["environment"], source, i) for i, source in enumerate(sources)])
     for case, r, l in zip(rust_cases, rust, lean, strict=True):
@@ -106,7 +111,7 @@ def test_order_large_integers_and_coefficient_families_three_way(rust_executable
     model = FiniteModel.from_dict(env, base["model"])
     evaluations = [{**case, "kind": "evaluate", "model": base["model"]}
                    for case in rust_cases]
-    rust_values = invoke(rust_executable, "conformance", evaluations)
+    rust_values = invoke(rust_executable, "conformance", [without_source(case) for case in evaluations])
     lean_values = invoke(lean_executable, "order", evaluations)
     for case, r, l in zip(evaluations, rust_values, lean_values, strict=True):
         doc = document_from_data(env, case["ast"])
@@ -115,7 +120,7 @@ def test_order_large_integers_and_coefficient_families_three_way(rust_executable
         assert r["values"] == l["values"] == expected
 
 
-def test_order_source_limit_boundaries_three_way(rust_executable, lean_executable):
+def test_order_source_limit_boundaries_two_way(lean_executable):
     base, _ = evaluation_cases(1)[0]
     env = Environment(base["environment"])
     term64 = "@n"
@@ -139,26 +144,22 @@ def test_order_source_limit_boundaries_three_way(rust_executable, lean_executabl
         (f"-{'9' * 4301} < 0.\n", False),
         (f"[{'9' * 4301} * @n] < 0.\n", False),
     ]
-    rust_cases = [{"id": str(i), "environment": base["environment"], "source": source}
-                  for i, (source, _) in enumerate(sources)]
-    rust = invoke(rust_executable, "conformance", rust_cases)
     lean = invoke(lean_executable, "order", [
         _surface_case(base["environment"], source, i)
         for i, (source, _) in enumerate(sources)])
-    for (source, accepted), r, l in zip(sources, rust, lean, strict=True):
+    for (source, accepted), l in zip(sources, lean, strict=True):
         if accepted:
             doc = parse(env, source)
-            assert r["status"] == l["status"] == "ok", source
-            assert r["ast"] == l["ast"] == document_to_data(env, doc)
+            assert l["status"] == "ok", source
+            assert l["ast"] == document_to_data(env, doc)
         else:
             with pytest.raises(ResourceLimit):
                 parse(env, source)
-            assert r["status"] == l["status"] == "error", source
-            assert r["error"]["code"] == "ResourceLimit", source
+            assert l["status"] == "error", source
             assert "ResourceLimit" in l["error"], source
 
 
-def test_order_strict_source_rejections_three_way(rust_executable, lean_executable):
+def test_order_strict_source_rejections_two_way(rust_executable, lean_executable):
     base, _ = evaluation_cases(1)[0]
     env = Environment(base["environment"])
     sources = (
@@ -169,13 +170,12 @@ def test_order_strict_source_rejections_three_way(rust_executable, lean_executab
     for source in sources:
         with pytest.raises(VEError):
             parse(env, source)
-    rust = invoke(rust_executable, "conformance", [
-        {"id": str(i), "environment": base["environment"], "source": source}
-        for i, source in enumerate(sources)])
     lean = invoke(lean_executable, "order", [
         _surface_case(base["environment"], source, i) for i, source in enumerate(sources)])
-    assert all(r["status"] == "error" for r in rust)
     assert all(r["status"] == "error" for r in lean)
-    mismatch = copy.deepcopy(base)
-    mismatch["source"] = "true.\n"
-    assert invoke(rust_executable, "conformance", [mismatch])[0]["status"] == "error"
+    # Rust's order route reads no source text: a case carrying one is refused, with or without its AST.
+    source_only = {"id": "s", "environment": base["environment"], "source": "true.\n"}
+    for case in (source_only, {**base, "source": print_document(env, document_from_data(env, base["ast"]))}):
+        row = invoke(rust_executable, "conformance", [case])[0]
+        assert row["status"] == "error", row
+        assert row["error"] == {"code": "InvalidInput", "message": "Rust reads no source text; send the AST"}
