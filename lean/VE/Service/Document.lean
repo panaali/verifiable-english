@@ -17,11 +17,12 @@ composed from that block's own route, as Python composes it: the block route dec
 claim graph and owns the coverage line (`alternatives` and its residual counts, `Alternatives.Wire.coverage`).
 
 What the mode cannot decide yet is `CheckerUnavailable`, never a verdict (`unavailable`): a `ve-document@2`
-document (the discourse route's), front matter outside the restricted JSON reader (`null`, a negative,
-fractional or out-of-range number, a duplicate key, `NaN`), an environment outside the plain `ve.core@0.2`
-envelope or with a profile outside `ownedProfiles` (each such profile's loader adds checks and coverage lines its
-own Lean route owns), regulated or norm content, fenced English or strict content, a distinguishing model the
-Lean model decoder refuses, and a claim graph the Lean admission route defers. -/
+document (the discourse route's), a document with `senses` (the senses route's), front matter outside the
+restricted JSON reader (`null`, a negative, fractional or out-of-range number, a duplicate key, `NaN`), an
+environment outside the plain `ve.core@0.2` envelope or with a profile outside `ownedProfiles` (each such profile's
+loader adds checks and coverage lines its own Lean route owns), regulated or norm content, fenced English or strict
+content, a distinguishing model the Lean model decoder refuses, and a claim graph the Lean admission route defers.
+`ve/document.py` keeps its own path for exactly these answers (batch 16b, `docs/lean-first/b16b/DELTA.md`). -/
 namespace VE.Service.Document
 open Lean
 open VE.Discourse
@@ -81,6 +82,9 @@ def split (t : String) : Except String Loader.Split := do
   let fm ← frontJson front
   if fm.getObjValD "format" == .str "ve-document@2" then
     throw (unavailable "a ve-document@2 document is admitted by the discourse route")
+  -- RD-8: `senses` is a key `_split` allows; the senses route reads those documents' English fences.
+  if (fm.getObjVal? "senses").isOk then
+    throw (unavailable "a document with senses is read by the Lean senses route")
   let _ ← Loader.checkMetadata Loader.documentMetadata fm
   let listed := listedProfiles (fm.getObjValD "environment")
   if (fm.getObjVal? "couplings").isOk && !(listed.contains "rights@0" || listed.contains "readings@1") then
@@ -170,6 +174,7 @@ structure SourceUnit where
   status : String
   parent : Option String
   content : Option VE.Formula := none
+  meaningId : Option String := none
   explicit : Option String := none
 
 def kindName (kind : Json) : String :=
@@ -238,7 +243,8 @@ def sourceUnit (E : Env) (source : String) (fences : List (String × String)) (o
     | .ok _ => throw "invalid unit status"
     | .error _ => pure none
   pure { id, span := (a, b), kind, meaning, support, parent, explicit,
-         content := compiled.map Prod.fst, status := Loader.w2Status compiled.isSome meaningStatus }
+         content := compiled.map Prod.fst, meaningId := compiled.map Prod.snd,
+         status := Loader.w2Status compiled.isSome meaningStatus }
 
 /-- `_parts` interleaved with the unit loop, as Python's generator runs: a `MIXED` part is checked against its
 parent's cursor, then compiled, before the next part is read; the parent's end is checked after its last part. -/
@@ -301,11 +307,15 @@ def residual (front : Json) (units : List SourceUnit) : List (String × Nat) :=
    ("bridge_leaves", ((graphLabels front).filter (·.startsWith "bridge:accepts(")).length),
    ("unresolved_reading_sets", ((count "reading_sets").filter (·.getObjValD "status" == .str "open")).length)]
 
+/-- A unit of the answer. A unit with content carries its checked formula and `meaning_id`, so a caller builds its
+document from them and never recomputes an identity (docs/LEAN-FIRST-PLAN.md rules 2 and 5, batch 16b). -/
 def unitJson (u : SourceUnit) : Json :=
   Json.mkObj ([("id", .str u.id), ("span", toJson [u.span.1, u.span.2]),
     ("kind", u.kind), ("meaning", u.meaning), ("support", .str u.support),
     ("status", .str u.status)] ++
-    (u.parent.toList.map fun p => ("parent_id", .str p)))
+    (u.parent.toList.map fun p => ("parent_id", .str p)) ++
+    (u.content.toList.map fun f => ("content", VE.Route.Wire.encodeFormula f)) ++
+    (u.meaningId.toList.map fun m => ("meaning_id", .str m)))
 
 /-- A composed block's coverage line, as its route computes it (`Alternatives.Wire.coverage` over the block's
 source and the document's units and narrowings). -/
@@ -428,7 +438,9 @@ structure Checked where
   front : Json
   block : Option BlockCoverage
 
-def check (text : String) : Except String Checked := do
+/-- `admit := false` is `load_document` alone: everything but `_report`'s claim-graph part (its reading checks, W2
+admission and the narrowing choices), which `check_document` adds (batch 16b). -/
+def check (text : String) (admit : Bool := true) : Except String Checked := do
   let doc ← split text
   let front := doc.front
   if doc.source.isEmpty then throw "document source is empty"
@@ -462,7 +474,7 @@ def check (text : String) : Except String Checked := do
   -- `_report`: the coverage (a block route's line may reject), then the claim graph.
   let block ← blockCoverage E front units
   if let .ok graph := front.getObjVal? "graph" then
-    admitGraph E front graph units all active openNames narrowings
+    if admit then admitGraph E front graph units all active openNames narrowings
   pure ⟨← Loader.documentId (Loader.payload doc (Json.mkObj [])), Loader.sourceId E.profiles doc.source,
     doc.source, units, front, block⟩
 
@@ -471,10 +483,15 @@ def encode (id : String) (c : Checked) : Json :=
     ("source", .str c.source), ("units", toJson (c.units.map unitJson)),
     ("coverage", coverageJson c.front c.units c.source.utf8ByteSize c.block)]
 
+/-- A case `{"id", "document"}`, with `"admit": false` for `load_document` alone. -/
 def documentCase (j : Json) : Except String Json := do
   let id ← stringField j "id"
   let text ← stringField j "document"
-  pure (encode id (← check text))
+  let admit ← match j.getObjVal? "admit" with
+    | .ok (.bool b) => pure b
+    | .ok _ => throw "InvalidInput: admit must be a boolean"
+    | .error _ => pure true
+  pure (encode id (← check text admit))
 
 def runCaseReported (j : Json) : Json := Standalone.reported documentCase j
 
