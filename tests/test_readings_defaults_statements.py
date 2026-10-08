@@ -328,3 +328,60 @@ def test_rd6a_checker_compares_an_rd6b_declaration_once_built(tmp_path, capsys):
     checker, code = _run_6a(tmp_path, changed)
     assert code == 1
     assert "fill_transfers: theorem differs" in capsys.readouterr().out
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# RD-3: lean/VE/Readings/Verdicts.lean and VerdictsWire.lean against 6.4 and 6.5
+
+def test_rd3_statements_match_the_approved_text(capsys):
+    checker = _checker()
+    assert checker.main_rd3() == 0
+    out = capsys.readouterr().out
+    assert "checked 30 approved RD-3 declarations (11 theorems)" in out
+    assert checker.PENDING_RD3 == {} and "RD-3 PASS: 30 exact" in out
+
+
+def _rd3_names():
+    return sorted(_checker().approved_rd3())
+
+
+def _with_rd3_sources(checker, tmp_path, edit):
+    copies = []
+    for source in checker.SOURCES_RD3:
+        path = tmp_path / source.name
+        path.write_text(edit(source.read_text()))
+        copies.append(path)
+    checker.SOURCES_RD3 = copies
+
+
+@pytest.mark.parametrize("kind, name", _rd3_names(), ids=lambda v: str(v))
+def test_rd3_checker_fails_on_every_changed_declaration(tmp_path, capsys, kind, name):
+    """Each declaration of the 6.4 and 6.5 blocks, changed in Lean (a body-less one in its signature), fails by
+    name."""
+    import re
+    checker = _checker()
+
+    def edit(text):
+        if not re.search(rf"^{kind} {re.escape(name)}\b", text, re.M):
+            return text
+        approved = checker.approved_rd3()[(kind, name)][0]
+        if kind == "def" and ":=" not in approved and "| ." not in approved:  # `Holds` is defined by cases
+            start = re.search(rf"^{kind} {re.escape(name)}\b", text, re.M)
+            body = text.index(" :=", start.end())
+            return text[:body] + " × Unit" + text[body:]
+        return _mutate(text, kind, name, checker)
+    _with_rd3_sources(checker, tmp_path, edit)
+    assert checker.main_rd3() == 1
+    assert f"{name}: {kind} differs" in capsys.readouterr().out
+
+
+def test_rd3_checker_fails_on_a_dropped_hypothesis_and_a_missing_declaration(tmp_path, capsys):
+    checker = _checker()
+    _with_rd3_sources(checker, tmp_path, lambda t: t.replace(
+        "(hA : ∃ c, Compatible D c ∧ ∀ x ∈ A, x ∈ c)\n    (l : String) :", "\n    (l : String) :", 1))
+    assert checker.main_rd3() == 1
+    assert "restrictionsFor_spec: theorem differs" in capsys.readouterr().out
+    checker = _checker()
+    _with_rd3_sources(checker, tmp_path, lambda t: t.replace("def foldPremises ", "private def foldPremises ", 1))
+    assert checker.main_rd3() == 1
+    assert "foldPremises: expected one Lean def, found 0" in capsys.readouterr().out
