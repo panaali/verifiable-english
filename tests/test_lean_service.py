@@ -1131,6 +1131,15 @@ _SCHEMA_SEEDS = {
     "discourse": ({"id": "c", "kind": "discourse-validity"}, {"id": "c", "status": "ok", "validity": {}}),
     "readings-route": ({"id": "c", "kind": "readings-validate"},
                        {"id": "c", "status": "ok", "content_bearing": False}),
+    "document": ({"id": "c", "document": "---\n{}\n---\nA"},
+                 {"id": "c", "status": "ok", "document_id": "a" * 64,
+                  "source_id": "b" * 64, "source": "A",
+                  "units": [{"id": "u", "span": [0, 1], "kind": "exposition",
+                             "meaning": "specified", "support": "none", "status": "LABELLED"}],
+                  "coverage": {"source_bytes": 1, "accounted_bytes": 1,
+                               "coverage_percent": 100, "bytes_by_kind": {"exposition": 1},
+                               "bytes_by_status": {"LABELLED": 1},
+                               "unformalised_reasons": {}, "residual": {}, "residual_total": 0}}),
 }
 
 

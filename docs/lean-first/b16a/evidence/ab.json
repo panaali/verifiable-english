@@ -1,0 +1,20 @@
+{
+ "differences": [],
+ "records": {
+  "conformance/lean": 19806,
+  "conformance/python": 19806,
+  "discourse/default": 6350,
+  "pilots/default": 303,
+  "probe/lean": 9435,
+  "probe/python": 9435,
+  "quantity/lean": 12863,
+  "quantity/python": 12863,
+  "readings/default": 1137,
+  "rights/default": 2500
+ },
+ "totals": {
+  "same": 94498
+ },
+ "unavailable_both": {},
+ "unlisted": 0
+}

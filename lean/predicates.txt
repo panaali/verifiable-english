@@ -13,6 +13,7 @@ module ResponseShape.Encoders.Alternatives
 module ResponseShape.Encoders.Common
 module ResponseShape.Encoders.Conformance
 module ResponseShape.Encoders.Discourse
+module ResponseShape.Encoders.Document
 module ResponseShape.Encoders.English
 module ResponseShape.Encoders.EnglishLean
 module ResponseShape.Encoders.Envelope
@@ -39,6 +40,7 @@ module ResponseShape.Schemas.CheckCertificate
 module ResponseShape.Schemas.Common
 module ResponseShape.Schemas.Diagnose
 module ResponseShape.Schemas.Discourse
+module ResponseShape.Schemas.Document
 module ResponseShape.Schemas.English
 module ResponseShape.Schemas.EnglishLean
 module ResponseShape.Schemas.Envelope
@@ -386,6 +388,7 @@ module VE.Senses.Read
 module VE.Senses.Request
 module VE.Senses.Run
 module VE.Service.Diagnose
+module VE.Service.Document
 module VE.Service.EnglishRun
 module VE.Service.Family
 module VE.Service.FamilyBundle
