@@ -3,27 +3,27 @@
  "totals": {
   "K": 978,
   "S": 9334,
-  "D": 12025,
-  "G": 21817,
+  "D": 12424,
+  "G": 21687,
   "C": 7765,
-  "P": 64230,
-  "T": 11809,
-  "o": 10761,
-  "D[V]": 10981,
-  "D[R]": 563,
+  "P": 64235,
+  "T": 11810,
+  "o": 10788,
+  "D[V]": 11369,
+  "D[R]": 574,
   "D[I]": 481,
-  "G[V]": 20763,
+  "G[V]": 20633,
   "G[R]": 834,
   "G[I]": 220,
   "tied": 28,
   "unclassified": 0,
-  "trusted": 42047,
-  "lines": 138719
+  "trusted": 42305,
+  "lines": 139021
  },
  "budget": {
   "K": 978,
   "S": 9334,
-  "V": 31735
+  "V": 31993
  },
  "signed": [],
  "history": [
@@ -165,6 +165,19 @@
     "K": 978,
     "S": 9334,
     "V": 31735
+   }
+  },
+  {
+   "change": "lean-first 16a review fix: the Lean document mode owns reading sets and their status fold, narrowings, fences, graph admission and the profile and JSON gates of load_document (Python's duplicate is deleted by 16b)",
+   "rebaselined_from": {
+    "K": 978,
+    "S": 9334,
+    "V": 31735
+   },
+   "to": {
+    "K": 978,
+    "S": 9334,
+    "V": 31993
    }
   }
  ],
@@ -3441,7 +3454,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 365,
+   "T": 366,
    "o": 7,
    "D[V]": 0,
    "D[R]": 0,
@@ -3452,7 +3465,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 372
+   "lines": 373
   },
   "ResponseShape/CaseDeciders.lean": {
    "K": 0,
@@ -3540,7 +3553,7 @@
    "D": 0,
    "G": 0,
    "C": 0,
-   "P": 231,
+   "P": 236,
    "T": 0,
    "o": 18,
    "D[V]": 0,
@@ -3552,7 +3565,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 249
+   "lines": 254
   },
   "ResponseShape/Encoders/Document.lean": {
    "K": 0,
@@ -6417,22 +6430,22 @@
   "VE/Discourse/Loader.lean": {
    "K": 0,
    "S": 0,
-   "D": 540,
-   "G": 22,
+   "D": 639,
+   "G": 8,
    "C": 0,
    "P": 10,
    "T": 0,
    "o": 31,
-   "D[V]": 516,
-   "D[R]": 2,
+   "D[V]": 606,
+   "D[R]": 11,
    "D[I]": 22,
-   "G[V]": 22,
+   "G[V]": 8,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 538,
-   "lines": 603
+   "trusted": 614,
+   "lines": 688
   },
   "VE/Discourse/Manifest.lean": {
    "K": 0,
@@ -10657,22 +10670,22 @@
   "VE/Service/Document.lean": {
    "K": 0,
    "S": 0,
-   "D": 0,
-   "G": 171,
+   "D": 300,
+   "G": 55,
    "C": 0,
    "P": 0,
    "T": 0,
-   "o": 12,
-   "D[V]": 0,
-   "D[R]": 0,
+   "o": 39,
+   "D[V]": 298,
+   "D[R]": 2,
    "D[I]": 0,
-   "G[V]": 171,
+   "G[V]": 55,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 171,
-   "lines": 183
+   "trusted": 353,
+   "lines": 394
   },
   "VE/Service/EnglishRun.lean": {
    "K": 0,

@@ -3,12 +3,12 @@ import ResponseShape.Encoders.Common
 namespace ResponseShape.Encoders.Document
 open Lean ResponseShape ResponseShape.Skeletons
 
-theorem unit_fits (j : Json) (u : VE.Service.Document.Unit) :
+theorem unit_fits (j : Json) (u : VE.Service.Document.SourceUnit) :
     Fits j (skel% "document.json#/$defs/unit") (VE.Service.Document.unitJson u) := by
   cases h : u.parent <;> simp [VE.Service.Document.unitJson, h] <;> fits
 
 theorem document_fits (j : Json) : OkFits j Skeletons.document (VE.Service.Document.documentCase j) := by
-  unfold VE.Service.Document.documentCase
+  unfold VE.Service.Document.documentCase VE.Service.Document.encode VE.Service.Document.coverageJson
   okfits
   all_goals (try simp only [VE.Route.Wire.ok])
   all_goals (try fits)
