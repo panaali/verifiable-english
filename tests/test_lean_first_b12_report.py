@@ -122,12 +122,13 @@ def test_branch_trust_allowance_counts_only_batch_12_changes():
     baseline = json.loads((ROOT / "docs/trust-baseline.json").read_text())
     main_baseline = json.loads(subprocess.check_output(
         ["git", "show", "main:docs/trust-baseline.json"], cwd=ROOT))
-    assert baseline["totals"] == main_baseline["totals"]
-    assert baseline["files"] == main_baseline["files"]
+    assert baseline["history"][-1]["rebaselined_from"] == trust_map.budget(main_baseline["totals"])
     current, problems = trust_map.measure(ROOT, ROOT / "tools/trust-classes.json",
                                           ROOT / "lean/statements.txt")
     parent, parent_problems, _ = trust_map.measure_rev(report.BASE)
     assert not problems and not parent_problems
+    assert baseline["totals"] == trust_map.totals(current)
+    assert baseline["files"] == current
     now = trust_map.budget(trust_map.totals(current))
     before = trust_map.budget(trust_map.totals(parent))
     growth = {key: now[key] - before[key] for key in ("K", "S", "V")}

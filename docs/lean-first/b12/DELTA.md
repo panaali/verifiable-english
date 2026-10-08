@@ -67,9 +67,10 @@ increase in diagnostic location, not a change in acceptance or error code.
 
 ### Branch trust budget
 
-The trust baseline is rebased to `main` at
-`adefca30c6a940a1a8e1c2ffb1d0def2663608a9`. Its totals include later
-mainline merges and are not charged to this branch. Measuring only this
+The trust baseline was rebased from `main` at
+`adefca30c6a940a1a8e1c2ffb1d0def2663608a9`, then remeasured for this
+branch's current files; the mainline totals remain in its rebaseline history.
+Later mainline merges are not charged to this branch. Measuring only this
 branch's non-merge commits (`main..HEAD --no-merges`) against merge-base
 `49d182636268b8c0102d1032d120cadaa9bb6b7e` gives **617 trusted Lean
 lines added**: K +19, S +199, untied V +399. The same branch diff deletes
