@@ -227,19 +227,24 @@ def test_shadow_evaluation_has_no_divergence(monkeypatch, fixture, tmp_path):
     assert not log.exists()
 
 
-def test_missing_rust_binary_fails_closed_and_shadow_records_it(monkeypatch, fixture, tmp_path):
+def test_missing_rust_binary_fails_closed_and_lean_evaluation_does_not_need_it(monkeypatch, fixture, tmp_path):
     env, model = fixture
     monkeypatch.setenv("VE_RUST_JSONL", str(tmp_path / "missing-ve"))
     monkeypatch.setenv("VE_AUTHORITY", "lean")
-    # Evaluation no longer runs Rust (lean-first batch 15b); the countermodel check still does.
+    # Neither evaluation nor the countermodel check runs Rust under the Lean authority (lean-first
+    # batch 15b, review B3): both report Lean's metered evaluator.
     assert evaluate(env, Top(), model, trace=True).value is True
+    assert check_countermodel(env, (), Bottom(), model).valid is True
+    with pytest.raises(CheckerUnavailable):
+        find_countermodel(env, (), Bottom(), max_domain_size=1)
+    monkeypatch.setenv("VE_AUTHORITY", "rust-experimental")
     with pytest.raises(CheckerUnavailable):
         check_countermodel(env, (), Bottom(), model)
     log = tmp_path / "shadow.jsonl"
     monkeypatch.setenv("VE_SHADOW_LOG", str(log))
     monkeypatch.setenv("VE_AUTHORITY", "shadow")
     assert check_countermodel(env, (), Bottom(), model).valid is True
-    assert json.loads(log.read_text())["lean"]["code"] == "CheckerUnavailable"
+    assert not log.exists()
 
 
 @pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
