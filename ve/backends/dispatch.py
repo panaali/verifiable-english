@@ -188,13 +188,15 @@ SINGLE_OWNER = {"countermodel_search": "rust", "distinguishing_model": "rust"}
 
 def owned(op: str, run: Callable[[], T]) -> T:
     """Run a single-owner operation (SINGLE_OWNER) under whatever authority is selected; observers
-    still see the selection, which the operation's constituents (its witness checks) follow."""
+    still see the selection, which the operation's constituents (its witness checks) follow.
+    Shadow has no authoritative backend, so its single implementation uses Python checks."""
     if op not in SINGLE_OWNER:
         raise ValueError(f"{op} is not a single-owner operation")
     authority = authority_for(op)
     for observe in observers:
         observe(op, authority)
-    return run()
+    with pinned("python" if authority == "shadow" else authority):
+        return run()
 
 
 def execute(op: str, payload: dict, python: Callable[[], T], *,

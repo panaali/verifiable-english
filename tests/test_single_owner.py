@@ -40,6 +40,24 @@ def test_single_owner_operations_write_no_shadow_record(op, monkeypatch, tmp_pat
     assert seen == [(op, "shadow")] and not log.exists()
 
 
+@pytest.mark.parametrize("op", sorted(dispatch.SINGLE_OWNER))
+@pytest.mark.parametrize("selected", ["python", "lean", "rust-experimental", "shadow"])
+def test_single_owner_pins_constituents_and_restores_selection(op, selected, monkeypatch):
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", f"{op}={selected},countermodel_check=rust-experimental")
+    expected = "python" if selected == "shadow" else selected
+
+    def run():
+        assert dispatch.authority_for("countermodel_check") == expected
+        return 7
+
+    assert dispatch.owned(op, run) == 7
+    assert dispatch.authority_for("countermodel_check") == "rust-experimental"
+    with pytest.raises(RuntimeError, match="owner failed"):
+        dispatch.owned(op, lambda: (_ for _ in ()).throw(RuntimeError("owner failed")))
+    assert dispatch.authority_for("countermodel_check") == "rust-experimental"
+
+
 def _reached(case):
     """The single-owner operations `python_verdict` dispatches for `case`."""
     seen = []

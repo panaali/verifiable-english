@@ -71,3 +71,32 @@ def test_lean_authority_search_checks_its_witness_with_lean(monkeypatch, rust_se
     assert found.status == "Found" and check_countermodel(env, (), document.formulas[1], found.model).valid
     different = find_distinguishing_model(env, document.formulas[0], document.formulas[1], max_domain_size=2)
     assert different.status == "Found"
+
+
+@pytest.mark.parametrize("global_authority", ["python", "lean"])
+@pytest.mark.parametrize("search", ["countermodel_search", "distinguishing_model"])
+def test_lean_selected_search_pins_its_witness_check(search, global_authority, monkeypatch,
+                                                     rust_searches_only):
+    """A check override must not let a Lean-selected Rust search publish a Python-checked witness."""
+    from ve.backends import dispatch
+    from ve import search as search_module
+    case = next(case for case in CLOSURE if case["id"] == "closure_cycle")
+    env = Environment(case["environment"])
+    first, second = document_from_data(env, case["ast"]).formulas[:2]
+    monkeypatch.setenv("VE_AUTHORITY", global_authority)
+    monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", f"{search}=lean,countermodel_check=python")
+    seen = []
+    monkeypatch.setattr(dispatch, "observers", [lambda op, authority: seen.append((op, authority))])
+
+    def python_check_used(*args, **kwargs):
+        pytest.fail("a Lean-selected search used Python to check its witness")
+
+    monkeypatch.setattr(search_module, "_evaluate_validated", python_check_used)
+    if search == "countermodel_search":
+        result = find_countermodel(env, (), second, max_domain_size=2)
+    else:
+        result = find_distinguishing_model(env, first, second, max_domain_size=2)
+    assert result.status == "Found"
+    assert (search, "lean") in seen
+    assert ("countermodel_check", "lean") in seen
+    assert ("countermodel_check", "python") not in seen
