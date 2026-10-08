@@ -483,6 +483,7 @@ def configured_wait(default: float) -> float:
 def check_wire_contract(index: Index) -> list[str]:
     """Run the wire generator on staged sources and generated output."""
     watched = ("ve/wire_contract/", "conformance/softnorms_contract.py",
+               "conformance/softnorms_legacy.py",
                "conformance/wire_contract_engine.py", "ve/softnorms.py",
                "ve/norms_contract.py", "ve/norms.py", "ve/norm_defaults_contract.py", "ve/norm_defaults.py",
                "ve/wire.py", "tools/wire_contract.py", "tools/wire_contract_lean.py",
@@ -495,6 +496,7 @@ def check_wire_contract(index: Index) -> list[str]:
                                  "lean/VE/WireContract/")) or WIRE_UNIT_PATHS.match(path) or path in {
                  "conformance/frozen_norm_defaults.py",
                  "conformance/__init__.py", "conformance/softnorms_contract.py",
+                 "conformance/softnorms_legacy.py",
                  "conformance/wire_contract_engine.py",
                  "lean/audit.py", "tools/wire_contract.py", "tools/wire_contract_lean.py",
                  "lean/VE/Route/frozen-sources.sha256",
