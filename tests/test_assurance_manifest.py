@@ -904,12 +904,13 @@ def _bundle():
 def test_bundle_separates_rejection_from_unavailability(tmp_path, monkeypatch):
     from ve.bundle import check_bundle
     hang = _fake_lean(tmp_path, FAULTS["hang"], name="hang")
+    configured_wait = HANG_TIMEOUT + 123.5
     with monkeypatch.context() as setting:
-        setting.setenv("VE_LEAN_TIMEOUT", "1234.5")
+        setting.setenv("VE_LEAN_TIMEOUT", str(configured_wait))
         waits = expired_waits(setting, lean_backend)
-        with pytest.raises(CheckerUnavailable, match="no answer within 1234.5 s"):
+        with pytest.raises(CheckerUnavailable, match=rf"no answer within {configured_wait} s"):
             check_bundle(_bundle(), lean_executable=hang)
-    assert waits == [1234.5]
+    assert waits == [configured_wait]
     assert check_bundle(_bundle())["lean_outcome"] == "not_requested"
     with pytest.raises(CheckerUnavailable):
         check_bundle(_bundle(), lean_executable=tmp_path / "absent")
@@ -1054,7 +1055,8 @@ def test_malformed_argument_answers_are_unavailable(tmp_path, fault):
 def test_argument_separates_lean_rejection_from_unavailability(tmp_path, monkeypatch):
     from ve import check_argument, outstanding_obligations
     from ve.argument_fixtures import merged_vocabulary_example
-    monkeypatch.setenv("VE_LEAN_TIMEOUT", "1234.5")
+    configured_wait = HANG_TIMEOUT + 123.5
+    monkeypatch.setenv("VE_LEAN_TIMEOUT", str(configured_wait))
     waits = expired_waits(monkeypatch, lean_backend, expire=lambda argv: Path(argv[0]).name == "hang")
     graph = merged_vocabulary_example()
     outcomes = {}
@@ -1069,7 +1071,7 @@ def test_argument_separates_lean_rejection_from_unavailability(tmp_path, monkeyp
     assert outcomes["rejecting"] == ("rejected", "Lean-checked: no", "rejected")
     for name in ("absent", "crash", "hang"):
         assert outcomes[name] == ("unavailable", "Lean-checked: unavailable", "unavailable"), name
-    assert waits and set(waits) == {1234.5}
+    assert waits and set(waits) == {configured_wait}
     assert check_argument(graph).lean_outcome == "not_requested"
 
 
