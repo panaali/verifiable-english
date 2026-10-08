@@ -23,8 +23,14 @@ from contextlib import contextmanager
 from .ast import decimal_value
 from .backends.relay import rows
 from .errors import CheckerUnavailable, VEError
-from .readings_s1 import KEY_FIELDS, KEY_OPTIONAL, Decoded, Document, content_bearing, decode_key, wire
+from .readings_s1 import KEY_FIELDS, KEY_OPTIONAL, Decoded, Document, content_bearing, decode_filled, decode_key, \
+    wire
 from .readings_s2_english import s1_gated as _s1_gated
+
+# readings-defaults.md 1.1 (Lean's `routeOf` and `completionFinding`): under `norm-defaults@0` the norms chain takes the
+# enumerated route with this cause; the soft and rights chains keep the abstention.
+COMPLETION_CAUSE = "the unspecified completion"
+NORM_DEFAULTS = "norm-defaults@0"
 
 def document_wire(units, reading_sets, *, couplings=(), narrowings=()):
     """The document as the readings route reads it: every unit with its kind (1.2), content when it has one."""
@@ -53,8 +59,10 @@ def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), 
 
     environment = wire(environment)
     document = wire(document_wire(units, reading_sets, couplings=couplings, narrowings=narrowings))
-    [row] = run_lean([{"id": "readings-s2", "kind": "readings-elaborate",
-                       "environment": environment, "document": document}], executable=executable)
+    case = {"id": "readings-s2", "kind": "readings-elaborate", "environment": environment, "document": document}
+    [row] = run_lean([case], executable=executable)
+    if NORM_DEFAULTS in environment.get("profiles", ()):
+        return _completion_elaborate(row, case)
     try:
         senv = S1Environment(environment)
         source = Document(senv, document)
@@ -69,8 +77,6 @@ def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), 
         expected_route = "w2"
     elif any(a.content is None for reading_set in sets for a in reading_set.candidates):
         expected_route = "pending"
-    elif "norm-defaults@0" in senv.profiles:
-        expected_route = "abstention"
     elif senv.chain == "rights":
         expected_route = "enumerated"
     else:
@@ -138,6 +144,49 @@ def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), 
             if row.get("sizes") != python_sizes:
                 raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on S2 sizes")
     return {key: value for key, value in row.items() if key not in ("id", "status")}
+
+
+def _completion_elaborate(row, case):
+    """`readings-elaborate` under `norm-defaults@0` (readings-defaults 1.1, 3; plan RD-2b), relayed: Lean's text
+    verbatim, else its row bound to the request. Lean owns the route, the choices and their count; nothing of them is
+    regenerated here. On the norms chain a content-bearing document takes the pending route when a candidate has no
+    content, else the enumerated one with the completion as the cause, and the row carries the filled document."""
+    if row["status"] == "error":
+        raise VEError(row["error"])
+    try:
+        sets = Document(None, case["document"]).sets
+        bearing = any(content_bearing(R) for R in sets)
+        pending = any(a.content is None for R in sets for a in R.candidates)
+        if not bearing:
+            _need(row["route"] == "w2" and not {"fill_premises", "filled"} & set(row))
+        else:
+            _need(row["route"] == ("pending" if pending else "enumerated"))
+            _bind_completion(row, case)
+            if not pending:
+                _bind_completion_choices(row, sets)
+    except (_Invalid, TypeError, KeyError, ValueError, AttributeError, IndexError, RecursionError) as exc:
+        raise CheckerUnavailable("the Lean readings route returned an invalid answer") from exc
+    return {key: value for key, value in row.items() if key not in ("id", "status")}
+
+
+def _bind_completion_choices(row, sets):
+    """The enumerated row's finding and choices, bound to the request: every open set named in source order, each
+    choice a reading with content of every open set, no choice twice, the count Lean's list's own."""
+    _need(row["finding"] == {"text": "ReadingsNotSuperposable: " + ", ".join(R.id for R in sets),
+                             "cause": COMPLETION_CAUSE})
+    _need(type(row["narrowings_stale"]) is list)
+    if row["choices"] == "over":
+        _need(row["choice_count"] == row["choices_checked"] and type(row["choice_count"]) is str)
+        return
+    _need(type(row["choices"]) is list and row["choice_count"] == len(row["choices"]) == row["choices_checked"])
+    seen = set()
+    for choice in row["choices"]:
+        _need(type(choice) is list and [entry[0] for entry in choice] == [R.id for R in sets])
+        for (_, index), R in zip(choice, sets):
+            _need(_nat(index) and index < len(R.candidates) and R.candidates[index].content is not None)
+        key = tuple(index for _, index in choice)
+        _need(key not in seen)
+        seen.add(key)
 
 
 def run_lean(cases, *, executable=None, timeout=None):
@@ -239,9 +288,20 @@ _PAIR_FACTS = _obj({"situation": _digest, "witness": _str, "separated": _lit(Tru
                    {"other_value": lambda v: v is None or type(v) is bool})
 _SET = _obj({"set": _str, "version": _nat, "candidates": _arr(_CANDIDATE, nonempty=True),
              "pairs": _arr(_obj({"reading": _str, "other": _str, "pair": _PAIR_FACTS})), "findings": _arr(_name)})
-ROW = _either(_obj({"id": _str, "status": _lit("ok"), "content_bearing": _lit(False)}),
+# Under the unspecified completion (readings-defaults.md 3) Lean adds, per reading, its `Fill_T` and, once, the filled
+# frame and units. Their shape is checked here and their binding to the request by `_bind_completion`; the search and
+# the English read them (`readings_s1.Decoded`).
+FILL_PREMISES = _arr(_obj({"set": _str, "index": _nat,
+                           "premises": _arr(_obj({"label": _str, "ast": lambda v: v is not None}))}))
+FILLED = _obj({"environment": lambda v: type(v) is dict,
+               "units": _arr(_obj({"unit": _name, "content": lambda v: type(v) is dict},
+                                  {"set": _str, "version": _nat, "index": _nat}))})
+_COMPLETION = {"fill_premises": FILL_PREMISES, "filled": FILLED}
+# A `Fill_T` premise's label (norm-defaults 2.4): `unsaid:pair:<obligation>,<permission>`.
+FILL_LABEL = "unsaid:pair:"
+ROW = _either(_obj({"id": _str, "status": _lit("ok"), "content_bearing": _lit(False)}, _COMPLETION),
               _obj({"id": _str, "status": _lit("ok"), "content_bearing": _lit(True),
-                    "sets": _arr(_SET, nonempty=True)}))
+                    "sets": _arr(_SET, nonempty=True)}, _COMPLETION))
 
 # `setFindings`: `<code>: <set>: <i>, <j>`, with ` (not certified)` on SeparatedByDecisionOnly; per unordered pair
 # (i < j) in order, the decision-only finding (either twin first) before the act-only one (i first).
@@ -315,6 +375,62 @@ def _bind_set(entry, R):
     _need(order == sorted(set(order)))
 
 
+def _bind_completion(row, case):
+    """`fill_premises` and `filled` (readings-defaults 3), bound to the request: present exactly under
+    `norm-defaults@0` beside a content-bearing set; one `Fill_T` per reading with content, in admission order, each
+    label naming a declared obligation and its permission; the filled environment decodes, keeps the request's sorts,
+    constants and predicates (each with its arguments) and adds only base predicates; the filled units are the
+    request's fixed units, then its readings with content, in source order, each content of the author's kind, then
+    Lean's generated units, each a rule on a regulated predicate of the request, named by its unit, whose guard reads
+    one added table. What is left is Lean's alone: the filled contents and the formulas."""
+    from .environment import Environment
+    document = Document(None, case["document"])
+    sets = document.sets
+    completion = (NORM_DEFAULTS in case["environment"].get("profiles", ())
+                  and any(content_bearing(R) for R in sets))
+    _need(("fill_premises" in row) is completion and ("filled" in row) is completion)
+    if not completion:
+        return
+    _need(FILL_PREMISES(row["fill_premises"]) and FILLED(row["filled"]))
+    request = Environment(case["environment"])
+    pairs = {(name, decl.regulated.permission) for name, decl in request.predicates.items()
+             if decl.regulated is not None and decl.regulated.role == "obligation"}
+    readings = [(R.id, i) for R in sets for i, a in enumerate(R.candidates) if a.content is not None]
+    _need([(e["set"], e["index"]) for e in row["fill_premises"]] == readings)
+    for e in row["fill_premises"]:
+        for premise in e["premises"]:
+            label = premise["label"]
+            _need(label.startswith(FILL_LABEL) and tuple(label[len(FILL_LABEL):].split(",")) in pairs)
+    filled = Environment(row["filled"]["environment"])
+    _need(set(filled.sorts) == set(request.sorts) and set(filled.constants) == set(request.constants))
+    added = set(filled.predicates) - set(request.predicates)
+    _need(all(filled.predicates[p].arguments == decl.arguments for p, decl in request.predicates.items())
+          and all(filled.predicates[p].regulated is None for p in added))
+    expected = []
+    for item in document.items:
+        if item[0] == "fixed":
+            expected.append(({"unit": item[1]}, item[2].kind))
+        elif item[0] == "set":
+            R = item[2]
+            expected += [({"unit": R.unit, "set": R.id, "version": R.version, "index": i}, a.content.kind)
+                         for i, a in enumerate(R.candidates) if a.content is not None]
+    units = row["filled"]["units"]
+    _need(len(units) >= len(expected))
+    for unit, (where, kind) in zip(units, expected):
+        content = decode_filled(wire(unit["content"]))
+        _need({k: v for k, v in unit.items() if k != "content"} == where and getattr(content, "kind", None) == kind)
+    generated = units[len(expected):]
+    names = [unit["unit"] for unit in generated]
+    _need(len(set(names)) == len(names) and not set(names) & set(document.unit_ids))
+    for unit in generated:
+        content = decode_filled(wire(unit["content"]))
+        _need(set(unit) == {"unit", "content"} and getattr(content, "kind", None) == "norm")
+        rule = content.body
+        guard = rule["guard"]
+        _need(rule["name"] == unit["unit"] and request.predicates[rule["predicate"]].regulated is not None
+              and guard[0] in ("unary", "binary") and guard[1] in added)
+
+
 def _check(row, case):
     """Raise `CheckerUnavailable` unless `row` is a well-formed `ok` answer bound to the request. Every failure of
     the check itself (a type the schema missed, a missing request field) is contained here: the answer is then
@@ -322,6 +438,7 @@ def _check(row, case):
     try:
         _need(ROW(row) and row["id"] == case["id"])
         _bind(row, case["document"])
+        _bind_completion(row, case)
     except (_Invalid, TypeError, KeyError, ValueError, AttributeError, IndexError, RecursionError) as exc:
         raise CheckerUnavailable("the Lean readings route returned an invalid answer") from exc
 
@@ -422,7 +539,9 @@ class Wording:
         with _built():
             self.environment = doc["environment"].to_dict()
             self.document = document_wire(doc["units"], doc["meta"].get("reading_sets", []))
-            self.admission = Decoded(self.environment, self.document)
+            # Under the completion the documents are Lean's filled ones (readings-defaults 3, `validate`'s row).
+            row = doc.get("readings_s1") or {}
+            self.admission = Decoded(self.environment, self.document, row.get("filled"), row.get("fill_premises"))
             self.words = EnglishVocabulary(self.admission.senv.frame)
             self.numbers = {unit["id"]: n for n, unit in enumerate(doc["units"], 1)}
         self._names = {}
@@ -456,11 +575,11 @@ class Wording:
             # All candidates share the lower soft frame. Check their quoted rules in one Lean
             # request, then use the checked containers for both the sentence and its identity.
             rules = None
-            if R.candidates and all(a.content is not None and a.content.kind == "norm"
+            if R.candidates and all(a.authored is not None and a.authored.kind == "norm"
                                     for a in R.candidates):
                 from .softnorms import batch_rule, check_rule_batch
                 env = self.admission.side(set_id, 0).soft.env
-                contents = [{"norm": a.content.body} for a in R.candidates]
+                contents = [{"norm": a.authored.body} for a in R.candidates]
                 outcomes = check_rule_batch(env, contents)
                 rules = [batch_rule(env, content, outcome)
                          for content, outcome in zip(contents, outcomes, strict=True)]
@@ -469,10 +588,10 @@ class Wording:
                 shown = [self.candidate_sentence(set_id, i) for i in range(len(R.candidates))]
             finally:
                 del self._batched_rules
-            keys = [i if a.content is None else
-                    rule_key(self.admission.side(set_id, i).soft.env, a.content.body,
-                             rule=None if rules is None else rules[i]) if a.content.kind == "norm" else
-                    canonical_json(a.content.raw) for i, a in enumerate(R.candidates)]
+            keys = [i if a.authored is None else
+                    rule_key(self.admission.side(set_id, i).soft.env, a.authored.body,
+                             rule=None if rules is None else rules[i]) if a.authored.kind == "norm" else
+                    canonical_json(a.authored.raw) for i, a in enumerate(R.candidates)]
             self._names[set_id] = sentence_slots(set_id, [text for text, _ in shown], [verb for _, verb in shown],
                                                  keys)
         return self._names[set_id]
@@ -485,7 +604,8 @@ class Wording:
         canonical VE English sentence, read back to the same formula, and a right, its incident lines or a
         limitation by the rights renderer. A candidate that cannot be shown gets an `Unnamed` with the reason."""
         from .readings_s2_english import Unnamed
-        content = self.admission.doc.set_by_id(set_id).candidates[i].content
+        # The reading as the author wrote it: under the completion its document is Lean's filled one.
+        content = self.admission.doc.set_by_id(set_id).candidates[i].authored
         if content is None:
             return Unnamed(f"an answer names a reading of {set_id} without content"), None
         side = self.admission.side(set_id, i)
@@ -516,7 +636,8 @@ class Wording:
         return subject(row)
 
     def situation_text(self, set_id, witness, entry):
-        """`<situation>`: elements by sort then name, true base tuples, then each decision supposed."""
+        """`<situation>`: elements by sort then name, true base tuples, then each decision supposed. Under the
+        completion a filled table is no fact of the situation: it is shown by `gap_text`."""
         from .ast import formula_from_data  # noqa: F401  (vocabulary is the frame's)
         base = entry["base"]
         facts = []
@@ -525,12 +646,22 @@ class Wording:
             for name in sorted(base["domains"][sort]):
                 facts.append(f"{name} is {_article(noun)} {noun}")
         for predicate in sorted(base["relations"]):
+            if predicate in self.admission.doc.filled_tables:
+                continue
             for row in sorted(base["relations"][predicate]):
                 facts.append(self.words.predicates[predicate].format(*row))
         for table, own in [(t, False) for t in entry["fixed"]] + [(t, True) for t in entry["decisions"]]:
             for row in table["tuples"]:
                 facts.append("suppose " + self.decision(set_id, witness, table["key"], row, own))
         return "; ".join(facts) if facts else "nothing exists"
+
+    def gap_text(self, base):
+        """norm-defaults 3.2's filled-gap sentences after a shown situation (readings-defaults 2.2), each led by a
+        space: under the completion, every point of every filled table over the situation's elements, with the
+        situation's answer (Lean's plan selects the ones a result depends on from RD-3 on)."""
+        from .readings_s2_english import gap_sentences
+        from .readings_s2_wording import filled_gaps
+        return gap_sentences(filled_gaps(self.admission.senv.frame, self.admission.doc.filled_tables, base))
 
     def decision(self, set_id, witness, key_json_value, row, own):
         """`<decision>` of 2.1."""
@@ -614,12 +745,14 @@ class Wording:
                 return "E14", _s1_gated("E14", " ".join(lines))
             text = E.outcome_pair_sentence(self.situation_text(set_id, i, situation), names[i], names[j], role,
                                            row[0], value, other_admissible=facts["other_admissible"],
-                                           other_value=facts.get("other_value"))
+                                           other_value=facts.get("other_value"),
+                                           gaps=self.gap_text(situation["base"]))
             return "E19", _s1_gated("E19", text)
         if probe == "holds" and all(R.candidates[k].content.kind == "assertion" for k in (i, j)):
             true, false = (names[i], names[j]) if value else (names[j], names[i])
             return "E21", _s1_gated("E19", E.assertion_pair_sentence(self.situation_text(set_id, i, situation),
-                                                                     true, false))
+                                                                     true, false,
+                                                                     gaps=self.gap_text(situation["base"])))
         return "E24", _s1_gated("E24", E.E24)
 
     def twins(self, set_id, i, j):
@@ -638,7 +771,7 @@ class Wording:
         from .norm_english import render_rule_sentence
         from .softnorms import decode_rule
         side = self.admission.side(set_id, k)
-        content = self.admission.doc.set_by_id(set_id).candidates[k].content
+        content = self.admission.doc.set_by_id(set_id).candidates[k].authored
         body = content.body if content.kind == "norm" else next(
             line["norm"] for line in content.lines() if type(line.get("norm")) is dict)
         return render_rule_sentence(decode_rule(side.soft.env, {"norm": body}), side.soft.env)

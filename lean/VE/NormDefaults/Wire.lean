@@ -322,6 +322,49 @@ structure EntailmentReplayU where
 def premisesU (U : UDoc) (Γ : List VE.Formula) : List VE.Formula :=
   background (fill U) ++ fillPremises U ++ elaborate (fill U).T ++ Γ
 
+end VE.NormDefaults.Wire
+
+namespace VE.NormDefaults
+open VE.Norms
+universe u
+
+/-- Entailment on a filled document: the conclusion of `normDefaults_wire_acceptance`, named. -/
+def EntailsU (U : VE.NormDefaults.UDoc) (Γ : List VE.Formula) (φ : VE.Formula) : Prop :=
+  ∀ S : VE.Structure.{u}, VE.NormDefaults.BaseAdmissibleU U (restrictAll (VE.NormDefaults.fill U).T S) →
+    DocumentExpansion (VE.NormDefaults.fill U) (restrictAll (VE.NormDefaults.fill U).T S) S → Sat S Γ → φ.denote S []
+
+/-- The certificate half on `fill U`, given only that `Fill_T` is typed at the base: the one proof both
+    `acceptanceU` and `normDefaults_wire_acceptance` (whose unprofiled source has no `Fill_T`) use. -/
+theorem acceptance_of_fillTyped (U : UDoc) (hfill : ∀ a ∈ fillPremises U, a.WellFormed (envAt (fill U) 0) [])
+    (Γ : List VE.Formula) (φ : VE.Formula) (cert : VE.Tableau.Certificate)
+    (hv : VE.Tableau.checkCertificate (envAt (fill U) (size (fill U))) (Wire.premisesU U Γ) φ cert = true) :
+    EntailsU.{u} U Γ φ := by
+  intro S hBU hE hΓ
+  apply VE.Tableau.checkCertificate_sound.{u} _ _ _ cert hv S hE.2.1
+  intro a ha
+  simp only [Wire.premisesU, List.mem_append] at ha
+  rcases ha with ((ha | ha) | ha) | ha
+  · exact hE.2.2 a (List.mem_append_left _ ha)
+  · -- `Fill_T` is a base background: true at the base, hence in the expansion
+    exact (restrictAll_denote a [] (hfill a ha) S []).mp (hBU.2 a ha)
+  · exact hE.2.2 a (List.mem_append_right _ ha)
+  · exact hΓ a ha
+
+/-- `normDefaults_wire_acceptance`'s core on any well-formed UDoc (its proof moves here; its statement is kept). -/
+theorem acceptanceU (U : VE.NormDefaults.UDoc) (h : VE.NormDefaults.WellFormedU U = true) (Γ : List VE.Formula)
+    (φ : VE.Formula) (cert : VE.Tableau.Certificate)
+    (hv : VE.Tableau.checkCertificate (envAt (VE.NormDefaults.fill U) (size (VE.NormDefaults.fill U)))
+      (VE.NormDefaults.Wire.premisesU U Γ) φ cert = true) :
+  EntailsU.{u} U Γ φ :=
+  acceptance_of_fillTyped U (Wire.fillPremises_wellFormed h) Γ φ cert hv
+
+end VE.NormDefaults
+
+namespace VE.NormDefaults.Wire
+open Lean
+open VE.Norms
+universe u
+
 def EntailmentReplayU.valid (r : EntailmentReplayU) : Bool :=
   VE.Tableau.checkCertificate (envAt (fill r.s.U) (size (fill r.s.U))) (premisesU r.s.U r.premises) r.conclusion r.cert
 
@@ -367,22 +410,14 @@ theorem normDefaults_wire_acceptance (j : Json) (r : EntailmentReplayU) (h : rep
       simp only [Json.getObjValD, henv]
       rfl
     rw [he]; exact hd
-  refine ⟨hdec, fun S hBU hE hΓ => ?_⟩
-  have hv' := valid_of_wellFormed _ r.s.wfFill
-  apply VE.Tableau.checkCertificate_sound.{u} _ _ _ r.cert hv S hE.2.1
-  intro a ha
-  simp only [premisesU, List.mem_append] at ha
-  rcases ha with ((ha | ha) | ha) | ha
-  · exact hE.2.2 a (List.mem_append_left _ ha)
-  · -- `Fill_T` is a base background: true at the base, hence in the expansion
+  -- `Fill_T` is typed at the base: by `WellFormedU` under the profile, vacuously without it.
+  have hfill : ∀ a ∈ fillPremises r.s.U, a.WellFormed (envAt (fill r.s.U) 0) [] := by
     cases hp : r.s.profiled with
-    | true =>
-      have hw := fillPremises_wellFormed (r.s.wfU hp) a ha
-      exact (restrictAll_denote a [] hw S []).mp (hBU.2 a ha)
+    | true => exact fillPremises_wellFormed (r.s.wfU hp)
     | false =>
-      rw [fillPremises_nil _ (r.s.plain hp)] at ha
+      rw [fillPremises_nil _ (r.s.plain hp)]
+      intro a ha
       cases ha
-  · exact hE.2.2 a (List.mem_append_right _ ha)
-  · exact hΓ a ha
+  exact ⟨hdec, acceptance_of_fillTyped.{u} r.s.U hfill r.premises r.conclusion r.cert hv⟩
 
 end VE.NormDefaults.Wire

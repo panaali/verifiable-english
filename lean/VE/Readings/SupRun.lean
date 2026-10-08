@@ -50,8 +50,7 @@ def firstFailing {α : Type} [DecidableEq α] (D : Doc) (A : Choice) (M : VE.Fin
 
 /-! ## `readings-elaborate` -/
 
-def runElaborate (id : String) (j : Json) : Except String Json := do
-  let b ← admitS2 (← j.getObjVal? "environment") (← j.getObjVal? "document")
+def runElaborate (id : String) (b : Admitted2) : Except String Json := do
   let nd := b.a.re.lower.contains "norm-defaults@0"
   -- 4.1 steps 3 and 5: no verdict over no reading, and no reading whose document the chain refuses.
   if let some e := routeRefusal nd b.D then throw e
@@ -59,8 +58,7 @@ def runElaborate (id : String) (j : Json) : Except String Json := do
 
 /-! ## `readings-conflict` -/
 
-def runConflict (id : String) (j : Json) : Except String Json := do
-  let b ← admitS2 (← j.getObjVal? "environment") (← j.getObjVal? "document")
+def runConflict (id : String) (b : Admitted2) (j : Json) : Except String Json := do
   let r ← supReplayOf b
   let D := r.D
   let ⟨A, _⟩ ← decodeAssumed D (j.getObjValD "assumed")
@@ -89,16 +87,16 @@ def runConflict (id : String) (j : Json) : Except String Json := do
 
 /-! ## `readings-certificate` and `readings-model` -/
 
-def runCertificate (id : String) (j : Json) : Except String Json := do
-  let r ← replayCertificate j
+def runCertificate (id : String) (b : Admitted2) (j : Json) : Except String Json := do
+  let r ← replayCertificateOf b j
   let X := correlate (sup r.D).1
   let free := VE.Compose.slotConflictFreeCheck X (slotUnder r.D r.assumed) r.conflictCerts
   let valid := supCertificateCheck r.D r.assumed r.Γ r.φ r.cert
   pure (okWith id [("accepted", .bool (free && valid)), ("conflict_free", .bool free), ("valid", .bool valid),
     ("assumed", choiceJson r.assumed), ("reading_premises", toJson (slotLabels r.D))])
 
-def runModel (id : String) (j : Json) : Except String Json := do
-  let r ← replayModel j
+def runModel (id : String) (b : Admitted2) (j : Json) : Except String Json := do
+  let r ← replayModelOf b j
   unless r.assumed.all (fun x => (candidate r.D x.1 x.2).isSome) && takenBy r.D r.assumed do
     throw (if r.assumed.all (fun x => (candidate r.D x.1 x.2).isSome) then untakenText r.D r.assumed
            else "InvalidInput: assumed reading is no candidate")
@@ -111,9 +109,9 @@ def runModel (id : String) (j : Json) : Except String Json := do
 
 /-! ## `readings-dead` -/
 
-def runDead (id : String) (j : Json) : Except String Json := do
-  let b ← admitS2 (← j.getObjVal? "environment") (← j.getObjVal? "document")
-  let D := b.D
+/-- The `readings-dead` answer on an admitted document: it reads the couplings, narrowings and candidates only
+    (`choiceCore`), so it is the same under the unspecified completion (`compatible_fillDoc`). -/
+def deadAnswer (id : String) (D : Doc) (j : Json) : Except String Json := do
   let cert ← VE.CertificateWire.decodeCertificate (← j.getObjVal? "certificate")
   match j.getObjValD "index" with
   | .null =>
@@ -130,6 +128,9 @@ def runDead (id : String) (j : Json) : Except String Json := do
     let ok := supReady D && deadCheck D s i cert
     pure (okWith id [("accepted", .bool ok),
       ("finding", if ok && !dropped then .str s!"DeadReading: {s}:{i}" else .null)])
+
+def runDead (id : String) (b : Admitted2) (j : Json) : Except String Json :=
+  deadAnswer id b.D j
 
 /-! ## `readings-choice` -/
 
@@ -323,8 +324,7 @@ def conflictFreeAnswer (answer : Json) : Bool :=
   answer.getObjValD "status" == .str "ok" && answer.getObjValD "verdict" == .str "CONFLICT-FREE"
 
 /-- `lower` runs a case of the lower route named by `dispatch` (`Run.lean` supplies the runners). -/
-def runChoice (lower : List String → Json → Json) (id : String) (j : Json) : Except String Json := do
-  let b ← admitS2 (← j.getObjVal? "environment") (← j.getObjVal? "document")
+def runChoice (lower : List String → Json → Json) (id : String) (b : Admitted2) (j : Json) : Except String Json := do
   let c ← decodeChoice (j.getObjValD "choice")
   unless compatible b.D c do throw "InvalidInput: the choice is not a compatible complete choice"
   let units := choiceJsons b.a.doc.itemsJ c
@@ -365,13 +365,15 @@ def s2Kinds : List String :=
   ["readings-elaborate", "readings-conflict", "readings-certificate", "readings-model", "readings-dead",
    "readings-choice"]
 
-def runS2 (lower : List String → Json → Json) (id kind : String) (j : Json) : Except String Json := do
-  if kind == "readings-elaborate" then return ← runElaborate id j
-  if kind == "readings-conflict" then return ← runConflict id j
-  if kind == "readings-certificate" then return ← runCertificate id j
-  if kind == "readings-model" then return ← runModel id j
-  if kind == "readings-dead" then return ← runDead id j
-  if kind == "readings-choice" then return ← runChoice lower id j
+/-- An S2a kind on the case's document, admitted once (`admitS2`) by the caller. -/
+def runS2 (lower : List String → Json → Json) (id kind : String) (b : Admitted2) (j : Json) :
+    Except String Json := do
+  if kind == "readings-elaborate" then return ← runElaborate id b
+  if kind == "readings-conflict" then return ← runConflict id b j
+  if kind == "readings-certificate" then return ← runCertificate id b j
+  if kind == "readings-model" then return ← runModel id b j
+  if kind == "readings-dead" then return ← runDead id b j
+  if kind == "readings-choice" then return ← runChoice lower id b j
   throw s!"UnsupportedProfile: case kind {kind} is not available on the readings route"
 
 end VE.Readings.Run

@@ -1,0 +1,50 @@
+[
+ {
+  "commit": "2fce5544ae67822370cdead3aaf1cd61e306fd84",
+  "seed": 3,
+  "scale": 10,
+  "surface": "document",
+  "mutants": {
+   "zero-fault": 15,
+   "one-fault": 20000,
+   "two-fault": 5000
+  },
+  "answers": {
+   "lean:error": 24041,
+   "lean:ok": 974,
+   "python:error": 23864,
+   "python:ok": 1151,
+   "rust:n/a": 25015
+  },
+  "new": [],
+  "passed": true,
+  "cpu_seconds": {
+   "python": 369.3,
+   "children": 147.6
+  }
+ },
+ {
+  "commit": "2fce5544ae67822370cdead3aaf1cd61e306fd84",
+  "seed": 11,
+  "scale": 10,
+  "surface": "document",
+  "mutants": {
+   "zero-fault": 15,
+   "one-fault": 20000,
+   "two-fault": 5000
+  },
+  "answers": {
+   "lean:error": 24047,
+   "lean:ok": 968,
+   "python:error": 23876,
+   "python:ok": 1139,
+   "rust:n/a": 25015
+  },
+  "new": [],
+  "passed": true,
+  "cpu_seconds": {
+   "python": 272.7,
+   "children": 112.2
+  }
+ }
+]

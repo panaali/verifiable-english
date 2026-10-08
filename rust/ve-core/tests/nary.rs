@@ -1,5 +1,5 @@
 use serde_json::json;
-use ve_core::{Document, Environment, parse, print_document};
+use ve_core::{Document, Environment};
 
 fn environment(arity: usize) -> Environment {
     Environment::from_value(&json!({
@@ -15,14 +15,11 @@ fn environment(arity: usize) -> Environment {
 }
 
 #[test]
-fn nary_wire_and_strict_round_trip() {
+fn nary_wire_round_trip() {
     for arity in 3..=6 {
         let env = environment(arity);
         let atom = json!(["atom", "p", vec![json!(["const", "a"]); arity]]);
         let doc = Document::from_value(&env, &json!([atom])).unwrap();
-        let printed = print_document(&doc).unwrap();
-        assert_eq!(printed, format!("p({}).\n", vec!["@a"; arity].join(", ")));
-        assert_eq!(parse(&env, printed.as_bytes()).unwrap(), doc);
         assert_eq!(doc.to_value(), json!([atom]));
     }
 }

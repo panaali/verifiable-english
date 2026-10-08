@@ -115,7 +115,7 @@ def lean_layer(module: str) -> int | None:
         return 5  # aggregation and audit targets
     if module in {"VE.EnglishGrammar.ProfileExamples", "VE.EnglishGrammar.E2Examples"}:
         return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run
-    if lean_entry(module) or module.endswith(".Run") or module.startswith("VE.Service."):
+    if lean_entry(module) or module.endswith(".Run") or module == "VE.Route.MeteredRun" or module.startswith("VE.Service."):
         return 4
     if module == "ResponseShape" or module.startswith("ResponseShape."):
         return 4  # the service's response shapes: ve_response_decode and the client's schema source
@@ -165,7 +165,7 @@ def source_layer(path: str) -> int | None:
         if p.suffix == ".rs":
             # The ve-core facade's tests exercise the whole API, so a change there selects as kernel.
             crate = parts[1] if len(parts) > 1 else ""
-            return {"ve-kernel": 1, "ve-core": 1, "ve-profile": 2, "ve-surface": 3}.get(crate, 4)
+            return {"ve-kernel": 1, "ve-core": 1, "ve-profile": 2}.get(crate, 4)
         if p.suffix in {".py", ".json"} and p.name not in {"Cargo.lock"}:
             return 5  # benchmarks and generated measurement reports
         return 1 if p.name in {"Cargo.toml", "Cargo.lock"} else None

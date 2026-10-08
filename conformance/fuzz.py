@@ -1,7 +1,8 @@
 """Seeded Python/Rust differential fuzzing with JSONL replay and greedy reduction.
 
 Run: python conformance/fuzz.py --rust rust/target/release/ve --count 5000
-The generated inputs and a failure, if any, stay under rust/target/.
+The generated inputs and a failure, if any, stay under rust/target/. Rust reads no source
+text: each one-statement case goes to its `evaluate-budgeted` kind, as `ve/evaluate.py` sends it.
 """
 from __future__ import annotations
 import argparse
@@ -17,7 +18,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from ve import Environment, FiniteModel, evaluate, print_document
+from ve import Environment, FiniteModel, evaluate
 from ve.ast import (And, Binary, Bottom, Const, Document, Eq, Exists, Forall,
                     Implies, Not, Or, Top, Unary, Var, document_from_data, document_to_data)
 from ve.errors import VEError
@@ -69,22 +70,22 @@ def generate(count=5000, seed=20260922):
         doc = Document((f,))
         value = evaluate(env, f, model, max_trace_nodes=1_000_000).value
         assert value is not None
-        yield {'id': f'fuzz_{seed}_{i}', 'environment': env.to_dict(), 'model': model.to_dict(),
-               'ast': document_to_data(env, doc), 'source': print_document(env, doc), 'expected': [value]}
+        yield {'id': f'fuzz_{seed}_{i}', 'kind': 'evaluate-budgeted', 'environment': env.to_dict(),
+               'model': model.to_dict(), 'ast': document_to_data(env, doc), 'expected': [value]}
 
 
 def refresh(case):
     env = Environment.from_dict(case['environment'])
     model = FiniteModel.from_dict(env, case['model'])
     doc = document_from_data(env, case['ast'])
-    case['source'] = print_document(env, doc)
     case['expected'] = [evaluate(env, f, model, max_trace_nodes=1_000_000).value for f in doc.formulas]
     return case
 
 
 def mismatch(case, out):
-    return (out.get('status') != 'ok' or out.get('values') != case['expected'] or
-            out.get('canonical') != case['source'] or out.get('ast') != case['ast'])
+    """Rust's document value on the model differs from Python's (one statement per case)."""
+    return (out.get('status') not in ('Satisfied', 'Violated') or out.get('id') != case['id']
+            or out.get('value') != all(case['expected']))
 
 
 def reduce_failure(case, executable):

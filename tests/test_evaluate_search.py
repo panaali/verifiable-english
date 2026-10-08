@@ -7,8 +7,7 @@ from ve.environment import Environment
 from ve.errors import InvalidModel, ResourceLimit, VEError
 from ve.evaluate import evaluate
 from ve.model import FiniteModel
-from ve.search import (_nonvacuous, _subsets, check_countermodel, find_countermodel,
-                       find_distinguishing_model)
+from ve.search import check_countermodel, find_countermodel, find_distinguishing_model
 
 
 @pytest.fixture
@@ -170,18 +169,31 @@ def test_nonvacuity_traversal_itself_is_budgeted(env):
     assert result.status == "ResourceLimit" and result.evaluations == 5
 
 
+def lean_nonvacuity(env, formula, finite, maximum):
+    """Lean's non-vacuity answer (the owner since lean-first batch 15b): suitable, work, exhausted."""
+    from tests.subprocesses import HANG_TIMEOUT
+    from ve.ast import formula_to_data
+    from ve.backends import lean as lean_backend
+    from ve.backends.lean_runner import METERED_EXECUTABLE, route_environment
+    [row] = lean_backend.run("countermodel.search", METERED_EXECUTABLE, [{
+        "id": "nv", "kind": "non-vacuity", "environment": route_environment(env), "model": finite.to_dict(),
+        "formula": formula_to_data(env, formula), "max_evaluations": maximum}],
+        runner="ve_metered", timeout=HANG_TIMEOUT)
+    return row["suitable"], row["evaluations"], row["exhausted"]
+
+
 def test_nonvacuity_inspects_short_circuited_branches(env):
     formula = Or(Top(), Implies(Unary("marked", Const("origin")), Top()))
     finite = model(env, marked=())
-    suitable, _, exhausted = _nonvacuous(env, formula, finite, 100)
+    suitable, _, exhausted = lean_nonvacuity(env, formula, finite, 100)
     assert not suitable and not exhausted
 
 
 def test_nonvacuity_treats_shared_dag_nodes_as_separate_occurrences(env):
     shared = Implies(Unary("marked", Const("origin")), Top())
     finite = model(env, marked=("a",))
-    once = _nonvacuous(env, shared, finite, 100)
-    twice = _nonvacuous(env, Or(shared, shared), finite, 100)
+    once = lean_nonvacuity(env, shared, finite, 100)
+    twice = lean_nonvacuity(env, Or(shared, shared), finite, 100)
     assert once[0] and twice[0]
     assert twice[1] > 2 * once[1]
 
@@ -216,13 +228,6 @@ def test_find_distinguishing_model_finds_either_direction(env):
     left = evaluate(env, Unary("marked", Const("origin")), result.model, trace=False).value
     right = evaluate(env, Not(Unary("marked", Const("origin"))), result.model, trace=False).value
     assert left != right
-
-
-def test_relation_subset_enumerator_is_exhaustive():
-    subsets = list(_subsets({"item": ["a", "b"]}, ("item",)))
-    assert len(subsets) == 4
-    assert {tuple(tuple(row) for row in subset) for subset in subsets} == {
-        (), (("a",),), (("b",),), (("a",), ("b",))}
 
 
 def test_search_allows_aliasing_constants_and_distinguishes_not_found(env):

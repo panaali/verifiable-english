@@ -20,12 +20,11 @@ only.
 
 import json
 import os
-import subprocess
 from copy import deepcopy
 from pathlib import Path
 
 from conformance.rights_three_way import fixtures
-from subprocesses import HANG_TIMEOUT
+from conformance.three_way import run_rust_evaluations
 from tests.test_rights import rights_document_file
 from ve.ast import Binary, Bottom, Implies, Not, Top, Var, formula_from_data, formula_to_data
 from ve.backends import lean_runner, relay
@@ -110,10 +109,7 @@ def test_gamma_slot_models_python_rust_and_lean_agree():
                   for formula in (formula_from_data(base, ast) for ast in formulas)]
         case = {"id": name, "kind": "evaluate", "environment": base_data,
                 "ast": formulas, "model": model_data}
-        run = subprocess.run([str(rust_binary), "conformance"], input=json.dumps(case),
-                             text=True, capture_output=True, timeout=HANG_TIMEOUT)
-        assert run.returncode == 0, run.stdout + run.stderr
-        rust = json.loads(run.stdout)[0]
+        [rust] = run_rust_evaluations(rust_binary, [case])
         assert rust["status"] == "ok", rust
         mode, lean_case = lean_runner.evaluation_case(base, name, formulas, model_data)
         [lean_row] = relay.decide(mode, [lean_case])

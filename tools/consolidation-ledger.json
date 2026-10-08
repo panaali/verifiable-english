@@ -36,7 +36,7 @@
     {"module": "VE/Definitions/Bundle.lean", "names": "\\.runBundle$"}, {"module": "VE/Norms/Plain.lean", "names": "\\.run$"},
     {"module": "VE/Risk/Run.lean", "names": "\\.(runConflict|runFollowable|runCertificate)$"},
     {"module": "VE/SoftNorms/Run.lean", "names": "\\.(sufficientCoherence|classify|weighingWitness)$"},
-    {"module": "VE/Readings/Run.lean", "names": "\\.(setPairs|setFindings)$"},
+    {"module": "VE/Readings/Run.lean", "names": "\\.(setPairs|setPairsWith|setFindings)$"},
     {"module": "VE/Readings/Separate.lean", "names": "\\.actOnly$"},
     {"module": "VE/Rights/Run.lean", "names": "\\.(licence|projections|projectionsResult)$"},
     {"module": "VE/Attribution/Run.lean", "names": "\\.scopedVerdict$"},

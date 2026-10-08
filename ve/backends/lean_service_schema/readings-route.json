@@ -209,7 +209,7 @@
       "type": "object"
     },
     "elaborate": {
-      "$comment": "Readings.Run.runElaborate (Route.elaborateFields): the route of 1.1; past its first three rows the finding of 1.8, the stale narrowings, the compatible choices (or over the limit) and the number checked; on the superposed route also the choice vocabulary, the units of sup D, the labelled slot, the name map and the sizes. The units and the name map are compared whole with Python's regeneration (ve/readings_route.py elaborate).",
+      "$comment": "Readings.Run.runElaborate (Route.elaborateFields): the route of 1.1; past its first three rows the finding of 1.8, the stale narrowings, the compatible choices (or over the limit) and the number checked; on the superposed route also the choice vocabulary, the units of sup D, the labelled slot, the name map and the sizes. The units and the name map are compared whole with Python's regeneration (ve/readings_route.py elaborate). Under the unspecified completion (Readings.Run.runElaborateNDFilled) the row also carries fill_premises and filled.",
       "anyOf": [
         {
           "additionalProperties": false,
@@ -383,8 +383,220 @@
             "sizes"
           ],
           "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "fill_premises": {"$ref": "#/$defs/fill_premises"},
+            "filled": {"$ref": "#/$defs/filled"},
+            "generated_predicates": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "key": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/key"}]},
+                  "layer": {"enum": ["readings", "soft", "rights"]},
+                  "name": {"type": "string"}
+                },
+                "required": ["name", "layer", "key"],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "id": {"$ref": "common.json#/$defs/id_ok"},
+            "route": {"enum": ["w2", "pending", "abstention"]},
+            "status": {"const": "ok"}
+          },
+          "required": ["id", "status", "route", "generated_predicates", "fill_premises", "filled"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "choice_count": {"anyOf": [{"$ref": "common.json#/$defs/nat"}, {"pattern": "over 64", "type": "string"}]},
+            "choices": {"anyOf": [{"items": {"$ref": "#/$defs/choice"}, "type": "array"}, {"const": "over"}]},
+            "choices_checked": {"anyOf": [{"$ref": "common.json#/$defs/nat"}, {"pattern": "over .*", "type": "string"}]},
+            "fill_premises": {"$ref": "#/$defs/fill_premises"},
+            "filled": {"$ref": "#/$defs/filled"},
+            "finding": {
+              "anyOf": [
+                {"type": "null"},
+                {
+                  "additionalProperties": false,
+                  "properties": {"cause": {"type": "string"}, "text": {"$ref": "common.json#/$defs/text"}},
+                  "required": ["text", "cause"],
+                  "type": "object"
+                }
+              ]
+            },
+            "generated_predicates": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "key": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/key"}]},
+                  "layer": {"enum": ["readings", "soft", "rights"]},
+                  "name": {"type": "string"}
+                },
+                "required": ["name", "layer", "key"],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "id": {"$ref": "common.json#/$defs/id_ok"},
+            "narrowings_stale": {"$ref": "common.json#/$defs/strings"},
+            "route": {"enum": ["enumerated"]},
+            "status": {"const": "ok"}
+          },
+          "required": [
+            "id",
+            "status",
+            "route",
+            "generated_predicates",
+            "finding",
+            "narrowings_stale",
+            "choice_count",
+            "choices",
+            "choices_checked",
+            "fill_premises",
+            "filled"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "choice_count": {"anyOf": [{"$ref": "common.json#/$defs/nat"}, {"pattern": "over 64", "type": "string"}]},
+            "choices": {"anyOf": [{"items": {"$ref": "#/$defs/choice"}, "type": "array"}, {"const": "over"}]},
+            "choices_checked": {"anyOf": [{"$ref": "common.json#/$defs/nat"}, {"pattern": "over .*", "type": "string"}]},
+            "fill_premises": {"$ref": "#/$defs/fill_premises"},
+            "filled": {"$ref": "#/$defs/filled"},
+            "finding": {
+              "anyOf": [
+                {"type": "null"},
+                {
+                  "additionalProperties": false,
+                  "properties": {"cause": {"type": "string"}, "text": {"$ref": "common.json#/$defs/text"}},
+                  "required": ["text", "cause"],
+                  "type": "object"
+                }
+              ]
+            },
+            "generated_predicates": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "key": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/key"}]},
+                  "layer": {"enum": ["readings", "soft", "rights"]},
+                  "name": {"type": "string"}
+                },
+                "required": ["name", "layer", "key"],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "id": {"$ref": "common.json#/$defs/id_ok"},
+            "names": {"type": "array"},
+            "narrowings_stale": {"$ref": "common.json#/$defs/strings"},
+            "route": {"enum": ["superposed"]},
+            "sizes": {
+              "additionalProperties": false,
+              "properties": {
+                "limits": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "nodes": {"$ref": "common.json#/$defs/nat"},
+                    "predicates": {"$ref": "common.json#/$defs/nat"},
+                    "sorts": {"$ref": "common.json#/$defs/nat"}
+                  },
+                  "required": ["sorts", "predicates", "nodes"],
+                  "type": "object"
+                },
+                "nodes": {"$ref": "common.json#/$defs/nat"},
+                "predicates": {"$ref": "common.json#/$defs/nat"},
+                "sorts": {"$ref": "common.json#/$defs/nat"}
+              },
+              "required": ["sorts", "predicates", "nodes", "limits"],
+              "type": "object"
+            },
+            "slot": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {"ast": {"$ref": "common.json#/$defs/generated_formula"}, "label": {"type": "string"}},
+                "required": ["label", "ast"],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "status": {"const": "ok"},
+            "units": {"type": "array"},
+            "vocabulary": {
+              "additionalProperties": false,
+              "properties": {
+                "constants": {"additionalProperties": {"type": "string"}, "type": "object"},
+                "predicates": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {"arguments": {"$ref": "common.json#/$defs/strings"}, "name": {"type": "string"}},
+                    "required": ["name", "arguments"],
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "sorts": {"$ref": "common.json#/$defs/strings"}
+              },
+              "required": ["sorts", "constants", "predicates"],
+              "type": "object"
+            }
+          },
+          "required": [
+            "id",
+            "status",
+            "route",
+            "generated_predicates",
+            "finding",
+            "narrowings_stale",
+            "choice_count",
+            "choices",
+            "choices_checked",
+            "vocabulary",
+            "units",
+            "slot",
+            "names",
+            "sizes",
+            "fill_premises",
+            "filled"
+          ],
+          "type": "object"
         }
       ]
+    },
+    "fill_premises": {
+      "$comment": "Readings.Run.runValidateND (UnspecifiedWire.fillPremisesJson): under the unspecified completion, per reading with content its Fill_T, each premise labelled unsaid:pair:<r>,<m>.",
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "index": {"$ref": "common.json#/$defs/nat"},
+          "premises": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {"ast": {"$ref": "common.json#/$defs/generated_formula"}, "label": {"type": "string"}},
+              "required": ["label", "ast"],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "set": {"type": "string"}
+        },
+        "required": ["set", "index", "premises"],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "filled": {
+      "$comment": "Readings.Run.runValidateND (UnspecifiedWire.filledJson): under the unspecified completion, the filled frame's environment (unspecified read as deny, norm-defaults@0 removed, every unsaid__p added) and the filled units, the F_p units last.",
+      "additionalProperties": false,
+      "properties": {"environment": {"$comment": "the filled environment"}, "units": {"type": "array"}},
+      "required": ["environment", "units"],
+      "type": "object"
     },
     "key": {
       "$comment": "Readings.Wire key JSON: one generated key.",
@@ -489,12 +701,14 @@
       "type": "object"
     },
     "validate": {
-      "$comment": "Readings.Run.validateResult: no content-bearing set, or one entry per content-bearing open set.",
+      "$comment": "Readings.Run.validateResult: no content-bearing set, or one entry per content-bearing open set; under the unspecified completion (Readings.Run.runValidateND) also fill_premises and filled.",
       "anyOf": [
         {
           "additionalProperties": false,
           "properties": {
             "content_bearing": {"const": false},
+            "fill_premises": {"$ref": "#/$defs/fill_premises"},
+            "filled": {"$ref": "#/$defs/filled"},
             "id": {"$ref": "common.json#/$defs/id_ok"},
             "status": {"const": "ok"}
           },
@@ -505,6 +719,8 @@
           "additionalProperties": false,
           "properties": {
             "content_bearing": {"const": true},
+            "fill_premises": {"$ref": "#/$defs/fill_premises"},
+            "filled": {"$ref": "#/$defs/filled"},
             "id": {"$ref": "common.json#/$defs/id_ok"},
             "sets": {
               "items": {
