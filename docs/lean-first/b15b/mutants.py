@@ -22,9 +22,9 @@ LAKE = str(Path.home() / ".elan/bin/lake")
 # (name, file, original text, seeded text, focused tests)
 SEEDS = (
     ("python-search-branch", "ve/search.py",
-     '    return execute("countermodel_search", case, rust, lean=rust, rust=rust)',
-     '    return execute("countermodel_search", case, lambda: CountermodelResult('
-     '"NotFound", None, 0, 0, max_domain_size, max_models), lean=rust, rust=rust)',
+     '    return owned("countermodel_search", rust)',
+     '    return owned("countermodel_search", lambda: CountermodelResult('
+     '"NotFound", None, 0, 0, max_domain_size, max_models))',
      ["tests/test_assurance_manifest.py::test_search_reports_found_only_through_the_countermodel_check"]),
     ("lean-nonvacuity-ignores-semantic", "ve/search.py",
      '"semantic_nonvacuity": semantic})',
@@ -34,10 +34,33 @@ SEEDS = (
      "    return EvaluationResult(status, value, None if explanation is None else _explanation(explanation), work)",
      "    return EvaluationResult(status, value, None if explanation is None else _explanation(explanation), work + 1)",
      ["tests/test_stage2_evaluation.py"]),
-    ("rust-keeps-verbalisation", "ve/backends/rust_jsonl.py",
-     '    if any("verbalisation" in entry for table in ("sorts", "predicates", "constants")',
-     '    if False and any("verbalisation" in entry for table in ("sorts", "predicates", "constants")',
-     ["tests/test_norm_defaults.py::test_document_ungrounded_and_grounded_defaults"]),
+    # Review A1/B1: Rust's search and Lean's metered cases read the model environment.
+    ("model-environment-keeps-display", "ve/profiles.py",
+     '                  "constants": ("verbalisation",)}',
+     '                  "constants": ()}',
+     ["tests/test_model_environment.py"]),
+    ("model-environment-keeps-unspecified", "ve/profiles.py",
+     '    "norm-defaults@0": ModelReduction(unspecified="deny"),',
+     '    "norm-defaults@0": ModelReduction(),',
+     ["tests/test_model_environment.py"]),
+    ("metered-reads-the-route-environment", "ve/backends/lean_runner.py",
+     "    return model_environment(env.to_dict())\n",
+     "    return route_environment(env)\n",
+     ["tests/test_model_environment.py"]),
+    # Review B3: under the Lean authority the countermodel check reports Lean's values and counts.
+    ("lean-countermodel-check-reports-rust", "ve/search.py",
+     "        result = checked(lambda formula, budget: _evaluate_lean(env, {",
+     "        result = rust() if True else checked(lambda formula, budget: _evaluate_lean(env, {",
+     ["tests/test_lean_authority_values.py"]),
+    # Review B2: no differential compares Rust's search with itself.
+    ("execute-shadows-one-implementation", "ve/backends/dispatch.py",
+     "    if op in SINGLE_OWNER or python is lean or python is rust:",
+     "    if False:",
+     ["tests/test_single_owner.py"]),
+    ("difffuzz-compares-search-with-itself", "tools/difffuzz.py",
+     '        return not (engine == "python" and python_owner(seed.meta["kind"]) in seed.engines)',
+     "        return True",
+     ["tests/test_single_owner.py"]),
     ("metered-exit-status", "lean/VE/Route/MeteredRun.lean",
      '    return if results.any (·.getObjValD "status" == .str "error") then 1 else 0',
      "    return 0",
@@ -46,6 +69,15 @@ SEEDS = (
      '               "passes": not any(failing.values())}',
      '               "passes": not any(ids for p, ids in failing.items() if p != "deadline")}',
      ["tests/test_b15b_evidence.py::test_rule3_rows_are_recomputed_from_the_saved_records"]),
+    # Review B4: the certificate rows cover the whole cohorts and measure order.
+    ("rule3-certificate-sample", "docs/lean-first/b15b/rule3.py",
+     '        mine = [r for r in records if r["operation"] == operation and "passes" in r]',
+     '        mine = [r for r in records if r["operation"] == operation and "passes" in r][:40]',
+     ["tests/test_b15b_evidence.py::test_rule3_rows_are_recomputed_from_the_saved_records"]),
+    ("rule3-certificate-order-constant", "docs/lean-first/b15b/rule3.py",
+     '            "passes": {"order": _prover(head_prover) == _prover(prover),',
+     '            "passes": {"order": True,',
+     ["tests/test_b15b_evidence.py::test_rule3_certificate_order_is_measured_not_assumed"]),
 )
 
 
@@ -67,7 +99,7 @@ def build(path: str) -> int:
 
 def main() -> None:
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
-    dirty = subprocess.check_output(["git", "status", "--porcelain", "--", "ve", "lean", "tests", "docs"],
+    dirty = subprocess.check_output(["git", "status", "--porcelain", "--", "ve", "lean", "tests", "docs", "tools"],
                                     cwd=ROOT, text=True).strip()
     out = [f"source commit: {head}; clean: {not dirty}"]
     for name, path, original, seeded, tests in SEEDS:

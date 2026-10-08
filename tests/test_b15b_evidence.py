@@ -202,3 +202,28 @@ def test_saved_mutants_each_fail_their_named_tests():
         assert f"`{name}`" in report(), name
     restored = mutants.split("## restored\n", 1)[1]
     assert "clean build exit: 0; focused pytest exit: 0" in restored and "FAILED" not in restored
+
+
+def test_rule3_certificate_order_is_measured_not_assumed(monkeypatch):
+    """A Lean self-replay that rejects the prover's certificate changes the prover's answer: order and the
+    first witness fail (review B4: order was set to pass)."""
+    import ve.entailment as entailment
+    from ve import Environment
+    from ve.ast import Const, Unary
+    rule3 = _rule3()
+    env = Environment({"language": "ve.core@0.2", "profiles": ["relational-fol@0"],
+                       "spec_revision": "ve-v0.2-expand2-2026-09-25",
+                       "vocabulary": {"sorts": {"item": {"description": "item"}},
+                                      "predicates": {"p": {"arguments": ["item"], "description": "{0} is p"}},
+                                      "constants": {"a": {"sort": "item", "description": "a"}}}})
+    arguments = {"env": env, "premises": [Unary("p", Const("a"))], "conclusion": Unary("p", Const("a")),
+                 "max_steps": 100}
+    prover = entailment.prove_entailment(**arguments)
+    assert prover.status == "Found"
+    record = rule3.certificate_record("tableau prover replay", "identity", arguments, prover)
+    assert record["passes"]["order"] and record["passes"]["first_witness"]
+    rejected = entailment.EntailmentCertificateCheck(False, "InvalidCertificate", 0, "sabotaged")
+    monkeypatch.setattr(entailment, "_check_certificate_lean", lambda *args: rejected)
+    record = rule3.certificate_record("tableau prover replay", "identity", arguments, prover)
+    assert record["head"]["prover"]["status"] == "NotFound"
+    assert not record["passes"]["order"] and not record["passes"]["first_witness"]
