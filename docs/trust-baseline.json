@@ -3,27 +3,27 @@
  "totals": {
   "K": 978,
   "S": 9434,
-  "D": 12743,
-  "G": 23996,
+  "D": 12753,
+  "G": 24005,
   "C": 7994,
-  "P": 65900,
+  "P": 65901,
   "T": 13083,
-  "o": 11311,
-  "D[V]": 11633,
+  "o": 11312,
+  "D[V]": 11643,
   "D[R]": 629,
   "D[I]": 481,
-  "G[V]": 22676,
+  "G[V]": 22685,
   "G[R]": 1096,
   "G[I]": 224,
   "tied": 171,
   "unclassified": 0,
-  "trusted": 44569,
-  "lines": 145439
+  "trusted": 44588,
+  "lines": 145460
  },
  "budget": {
   "K": 978,
   "S": 9434,
-  "V": 34157
+  "V": 34176
  },
  "signed": [],
  "history": [
@@ -216,6 +216,19 @@
     "K": 978,
     "S": 9434,
     "V": 34157
+   }
+  },
+  {
+   "change": "lean-first batch 16b: the document mode returns unit content and meaning ids, a load-only flag, the senses guard and the route's own admission case (VE/Service/Document.lean +19 trusted lines)",
+   "rebaselined_from": {
+    "K": 978,
+    "S": 9434,
+    "V": 34157
+   },
+   "to": {
+    "K": 978,
+    "S": 9434,
+    "V": 34176
    }
   }
  ],
@@ -3631,7 +3644,7 @@
    "D": 0,
    "G": 0,
    "C": 0,
-   "P": 58,
+   "P": 59,
    "T": 0,
    "o": 6,
    "D[V]": 0,
@@ -3643,7 +3656,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 64
+   "lines": 65
   },
   "ResponseShape/Encoders/English.lean": {
    "K": 0,
@@ -11128,22 +11141,22 @@
   "VE/Service/Document.lean": {
    "K": 0,
    "S": 0,
-   "D": 376,
-   "G": 62,
+   "D": 386,
+   "G": 71,
    "C": 0,
    "P": 0,
    "T": 0,
-   "o": 43,
-   "D[V]": 371,
+   "o": 44,
+   "D[V]": 381,
    "D[R]": 5,
    "D[I]": 0,
-   "G[V]": 62,
+   "G[V]": 71,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 433,
-   "lines": 481
+   "trusted": 452,
+   "lines": 501
   },
   "VE/Service/EnglishRun.lean": {
    "K": 0,
