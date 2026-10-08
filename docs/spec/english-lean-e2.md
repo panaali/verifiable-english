@@ -576,8 +576,7 @@ service mode against S2's route fixtures first.
   classes of S2 4.5 under S3 2.11's correspondence. The record is never returned, and its failure never raises.
   Without the switch, no admission entry point calls Python's parser (ev6).
 - **What Python keeps.** File I/O and UTF-8 decoding; spans for display, from Lean's offsets; the producer of the
-  lexicon (D16); the renderer as a producer of candidates; the nearest-wording suggestion as editor help over Lean's
-  tokens; `display_environment`'s checks of the overlay, with the `accept_suggested_vocabulary` consent gate and the
+  lexicon (D16); the renderer as a producer of candidates (E2.6: the nearest-wording help is Lean's, 4.5); `display_environment`'s checks of the overlay, with the `accept_suggested_vocabulary` consent gate and the
   validation of the display environment; and,
   until E3, the statement layers that construct `EnglishParser` themselves.
 
@@ -760,6 +759,25 @@ Every response keeps S2 4.3's fields and the six identities, with these addition
 `english.check` returns `{"index": i}` or `{}` with five identities when the grammar guard passes, and the
 `invalidGrammar` response otherwise. `english.grammar` adds `codes` (pairs of code and class) and `advice` (the rows of
 4.3, with the profile and patterns).
+
+### 4.5 What a sentence without a reading needs (E2.6)
+
+`NoDerivation`'s text is `Sentence i has no reading with the current vocabulary.` followed by Lean's diagnosis,
+and its `span` is the diagnosis's (`VE/EnglishGrammar/Diagnose.lean`; `english.read` in both modes and `senses.read`
+over a source give the same). `VE.Grammar.viable` runs a recogniser of the grammar (Earley's) over the sentence's
+tokens and returns the farthest position *k* such that the tokens before *k* begin some sentence of the grammar,
+with that position's items; it is run only after `verdict` found no derivation and is bounded by `workBudget`
+(beyond it, no diagnosis: the text alone). At *k*, in order:
+
+| Case | Text | Span |
+|---|---|---|
+| a lexical rule of a predicate ends at *k*, and token *k* is a word that is no boundary word and no clause head | `Phrase 'P' extends existing wording 'p': 'w'; declare distinct wording by hand.` (the hand parser's prefix collision) | from the end of the token before the wording to the end of *P* |
+| a lexical rule reads a terminal next | `Unknown English phrase 'P'. Nearest declared wordings: 'a'; 'b'; 'c'.`, *P* from where that wording started to the hand parser's phrase end (a boundary word or a comma, after an optional `is not a`), at least token *k*; the three wordings ranked as the hand parser's `nearest` ranks them | from the end of the token before *P* to the end of *P* |
+| otherwise | `Expected R1, R2 or R3 here. Use the English paraphrase as a writing example.`, each *R* the terminals a rule reads next up to its next nonterminal (a space after it when the rule goes on), `'.'` when a sentence may end at *k* | from the end of token *k* − 1 to the end of token *k*, or the character after the sentence's last token |
+
+Lean's advice (4.3) follows, as before. The relay adds nothing: the nearest-wording help of 2.8 is Lean's, and
+`ve/english_phrases.unknown_phrase` is deleted. Each case says what the hand parser said where it said it; the
+frozen readability attempts and the `ve propose` fixtures are the tests (`tests/test_english_e26_diagnosis.py`).
 
 ## 5. Lean: definitions and the exact statements
 
@@ -2254,3 +2272,27 @@ the section it amends; no statement of 5.5 changed.
   renderings; they now go through `english.check`, which the first item makes pass on the hidden `nary@0` case.
   `tests/test_english_e2_ledger_sites.py` lists every caller of Python's reader from the source (`ast`) and requires
   each to be a row of `LEDGER.md`.
+
+## 15. Changes made by E2.6: Lean is the English authority (2026-10-08)
+
+The lead's directive: each piece of logic has one owner, and Lean owns acceptance. `english.admission` is
+Lean-authoritative (`authority: migrated`, no `SHADOW_ONLY` entry); the gaps the E2.5 evidence and the corpus A/B under
+Lean authority found are closed in Lean. The report is `docs/lean-first/e2/E2.6.md`.
+
+- **4.5, the diagnosis.** New: Lean says what a sentence without a reading needs, and where. The relay's
+  nearest-wording help and `unknown_phrase` are deleted.
+- **2.2, the lexer.** The ASCII apostrophe is a chunk character, as `’` and every non-ASCII character already are, so
+  a declared wording such as `a system prompt's existence-or-content` lexes and passes V3 (the hand parser matched it
+  literally). An apostrophe in a word no wording declares gives no reading, with 4.5's diagnosis, where it was
+  `BadCharacter`.
+- **2.9 (S3 D2), V4.** Two modal predicates may share their modal form, the one honest wording of each (D17), which
+  Python's producer selects for both. A sentence that uses it has two derivations and is `Ambiguous`, as the hand
+  parser refuses it (`more than one meaning`). Every other V4 collision stands (`LexiconFixtures`).
+- **2.2, the request.** `english.read` and `english.check` take an optional `generated: true` for Python's generated
+  soft frame (`SoftEnvironment(prime, generated=True)`); the boundary then checks the frame without its `soft__`
+  predicates on every route, as `check_soft_source(generated=True)` does. Any other value of the field is refused.
+- **Outside English, for the readability items.** The soft route decodes a constant's `verbalisation` (DF-19), and the
+  norm-defaults route admits `data@0` flags, refusing a supplied model that violates one (DF-17).
+
+`actions_version` rises to 28.
+
