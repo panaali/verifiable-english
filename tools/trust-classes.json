@@ -648,7 +648,8 @@
     "ResponseShape.Schemas.ReadingsRoute.separate",
     "ResponseShape.Schemas.ReadingsRoute.validate",
     "ResponseShape.Schemas.ReadingsRoute.fill_premises",
-    "ResponseShape.Schemas.ReadingsRoute.filled"
+    "ResponseShape.Schemas.ReadingsRoute.filled",
+    "ResponseShape.Schemas.ReadingsRoute.filledFields"
    ]
   },
   "ResponseShape/Schemas/Reports.lean": {
@@ -9698,6 +9699,8 @@
     "VE.Readings.Run.ndInner",
     "VE.Readings.Run.runChoiceND",
     "VE.Readings.Run.runElaborateND",
+    "VE.Readings.Run.runElaborateNDFilled",
+    "VE.Readings.Run.runElaborateNDWith",
     "VE.Readings.Wire.normDefaultsProfile",
     "VE.Readings.Wire.underCompletion"
    ]

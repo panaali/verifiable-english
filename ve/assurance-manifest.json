@@ -65,7 +65,7 @@
     "ve/softnorms.py:load_soft_document": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors."
   },
   "lean_decoders": {
-    "total_lines": 24226,
+    "total_lines": 24238,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -911,12 +911,12 @@
       },
       {
         "file": "lean/VE/Readings/UnspecifiedWire.lean",
-        "lines": 592,
-        "sha256": "79a08f4103811b96c85bff25fcd95351ecfd289d7dac060887684e94c79607a2",
+        "lines": 604,
+        "sha256": "907566fe5481583492b61c255261bca8b23ca0baac394a26129ba439eade7d9a",
         "ranges": [
           [
             1,
-            592
+            604
           ]
         ],
         "declarations": [
@@ -935,7 +935,7 @@
           "ndInner",
           "runChoiceND"
         ],
-        "reason": "readings-defaults RD-2a: admission, separation and each choice under the unspecified completion; the inner case of readings-choice (its kind, conflict packages, premises, certificate, model and filling) read through the pinned NormDefaults and SupWire decoders and by `conflictPackages` and `ndCertificate`; the full file is pinned conservatively"
+        "reason": "readings-defaults RD-2a: admission, separation and each choice under the unspecified completion; the inner case of readings-choice (its kind, conflict packages, premises, certificate, model and filling) read through the pinned NormDefaults and SupWire decoders and by `conflictPackages` and `ndCertificate`; readings-defaults RD-2b: `readings-elaborate` also answers the filled document (`runElaborateNDFilled`, no new decoding); the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Alternatives/Wire.lean",
