@@ -116,3 +116,33 @@ def test_saved_full_gate_counts_and_clean_head():
     report = (HERE / "REPORT.md").read_text()
     assert f"{counts['passed']} passed" in report
     assert f"{counts['skipped']} skipped" in report
+
+
+def test_saved_review_mutants_each_fail_their_named_regression():
+    """The review's seeded mutants (B2) and the fixes' own, from the saved record."""
+    mutants = (EVIDENCE / "review-mutants.txt").read_text()
+    commit = re.match(r"source commit: ([0-9a-f]{40}); lean/ and tests/ clean: True\n", mutants)
+    assert commit is not None
+    named = {"existential-universal": "test_existential_under_no_universal_has_no_clause_guard",
+             "clause-nesting": "test_nested_disjunction_is_one_clause",
+             "layered-defined-tables": "test_defined_tables_are_computed_on_every_family",
+             "legacy-closure-family": "test_conformance_corpora_with_their_frozen_envelopes_match_python",
+             "closure-document-count": "test_conformance_corpora_with_their_frozen_envelopes_match_python"}
+    for section, test in named.items():
+        part = mutants.split("## " + section + "\n", 1)[1].split("\n## ", 1)[0]
+        assert "build exit: 0; focused pytest exit: 1" in part, section
+        assert f"FAILED tests/test_metered_differential.py::{test}" in part, section
+    restored = mutants.split("## restored\n", 1)[1]
+    assert "clean build exit: 0; focused pytest exit: 0" in restored and "FAILED" not in restored
+    passed = re.search(r"(\d+) passed", restored).group(1)
+    report = (HERE / "REPORT.md").read_text()
+    assert commit.group(1)[:8] in report and f"{passed} focused tests" in report
+    diff = (EVIDENCE / "review-output-diff.txt").read_text()
+    counts = re.search(r"(\d+) invocations, (\d+) run on both builds, (\d+) skipped .*; "
+                       r"0 differences, 0 timed out", diff)
+    assert counts is not None and int(counts.group(2)) + int(counts.group(3)) == int(counts.group(1))
+    assert f"{counts.group(2)} invocations" in report
+    corpora = {name: len(json.loads((Path(__file__).resolve().parents[1] / "conformance"
+                                     / f"{name}.json").read_text()))
+               for name in ("evaluation", "countermodels", "closure")}
+    assert " + ".join(str(n) for n in corpora.values()) + " documents" in report

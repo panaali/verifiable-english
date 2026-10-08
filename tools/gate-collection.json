@@ -680,6 +680,7 @@
   "tests/test_b15a_evidence.py::test_saved_corpus_rows_and_pilot_count_match_raw_recordings",
   "tests/test_b15a_evidence.py::test_saved_full_gate_counts_and_clean_head",
   "tests/test_b15a_evidence.py::test_saved_fuzz_baseline_and_mutant_failures",
+  "tests/test_b15a_evidence.py::test_saved_review_mutants_each_fail_their_named_regression",
   "tests/test_background.py::test_all_public_model_sites_reject_alias_and_search_valid_models",
   "tests/test_background.py::test_checker_build_covers_all_python_modules",
   "tests/test_background.py::test_claim_labels_bind_new_graphs_without_moving_default_wire",
