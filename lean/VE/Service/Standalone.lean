@@ -1029,7 +1029,7 @@ private def prefixValidPointer (model : Json) (path : String) : Bool :=
 private def safeModelPath (model : Json) (path : String) : String :=
   if prefixValidPointer model path then path else ""
 
-private theorem safeModelPath_valid (model : Json) (path : String) :
+theorem safeModelPath_valid (model : Json) (path : String) :
     prefixValidPointer model (safeModelPath model path) = true := by
   unfold safeModelPath
   split
@@ -1038,12 +1038,12 @@ private theorem safeModelPath_valid (model : Json) (path : String) :
 
 /-- Any error returned by the public table decoder has a prefix-valid JSON
 pointer. The empty pointer denotes the model root. -/
-private def checkedModelTables (environment model : Json) : Except ModelFault Unit :=
+def checkedModelTables (environment model : Json) : Except ModelFault Unit :=
   match locatedModelTables environment model with
   | .ok () => .ok ()
   | .error fault => .error { fault with path := safeModelPath model fault.path }
 
-private theorem checkedModelTables_error_path_valid (environment model : Json)
+theorem checkedModelTables_error_path_valid (environment model : Json)
     (fault : ModelFault) (h : checkedModelTables environment model = .error fault) :
     prefixValidPointer model fault.path = true := by
   unfold checkedModelTables at h

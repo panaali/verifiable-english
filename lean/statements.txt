@@ -27539,6 +27539,17 @@ theorem VE.Service.Readings.resolve_choice
     VE.Service.Readings.resolve sets is = Option.some choice → VE.Service.Readings.Choice sets choice
   -- uses VE.Formula@VE.Syntax VE.Service.Readings.Choice@VE.Service.Readings VE.Service.Readings.resolve@VE.Service.Readings
   -- expr 2309747103
+theorem VE.Service.Standalone.checkedModelTables_error_path_valid
+  ∀ (environment model : Lean.Json) (fault : VE.Service.Standalone.ModelFault),
+    VE.Service.Standalone.checkedModelTables environment model = Except.error fault →
+      VE.Service.Standalone.prefixValidPointer✝ model fault.path = Bool.true
+  -- uses VE.Service.Standalone.ModelFault.path@VE.Service.Standalone VE.Service.Standalone.ModelFault@VE.Service.Standalone VE.Service.Standalone.checkedModelTables@VE.Service.Standalone VE.Service.Standalone.prefixValidPointer@VE.Service.Standalone
+  -- expr 1282374989
+theorem VE.Service.Standalone.safeModelPath_valid
+  ∀ (model : Lean.Json) (path : String),
+    VE.Service.Standalone.prefixValidPointer✝ model (VE.Service.Standalone.safeModelPath✝ model path) = Bool.true
+  -- uses VE.Service.Standalone.prefixValidPointer@VE.Service.Standalone VE.Service.Standalone.safeModelPath@VE.Service.Standalone
+  -- expr 4071553764
 theorem VE.Service.boundResults_eq
   ∀ (r : VE.Service.Request) (cases : Array (Except String Lean.Json)) (digests : Array String) (i : Nat)
     (h : i < cases.size),
@@ -27681,11 +27692,9 @@ theorem VE.Service.runMode_english
   -- uses VE.English.ServiceRun.run@VE.Service.EnglishRun VE.Service.Mode.english@VE.Service.Protocol VE.Service.englishReported.match_1@VE.Service.Protocol VE.Service.englishReported.match_3@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
   -- expr 1255633073
 theorem VE.Service.runMode_environment
-  ∀ (j : Lean.Json),
-    VE.Service.runMode VE.Service.Mode.environment j =
-      VE.Service.Standalone.reported VE.Service.Standalone.environmentCase j
-  -- uses VE.Service.Mode.environment@VE.Service.Protocol VE.Service.Standalone.environmentCase@VE.Service.Standalone VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
-  -- expr 2290445701
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.environment j = VE.Service.Standalone.reportedEnvironment j
+  -- uses VE.Service.Mode.environment@VE.Service.Protocol VE.Service.Standalone.reportedEnvironment@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- expr 1515001414
 theorem VE.Service.runMode_evaluate
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.evaluate j = VE.Order.runEvaluationCaseReported j
   -- uses VE.Order.runEvaluationCaseReported@VE.Order.ProfileGate VE.Service.Mode.evaluate@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
@@ -27705,10 +27714,9 @@ theorem VE.Service.runMode_identity
   -- uses VE.Service.Mode.identity@VE.Service.Protocol VE.Service.Standalone.identityCase@VE.Service.Standalone VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 3910335735
 theorem VE.Service.runMode_model
-  ∀ (j : Lean.Json),
-    VE.Service.runMode VE.Service.Mode.model j = VE.Service.Standalone.reported VE.Service.Standalone.modelCase j
-  -- uses VE.Service.Mode.model@VE.Service.Protocol VE.Service.Standalone.modelCase@VE.Service.Standalone VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
-  -- expr 90044289
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.model j = VE.Service.Standalone.reportedModel j
+  -- uses VE.Service.Mode.model@VE.Service.Protocol VE.Service.Standalone.reportedModel@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- expr 3851992144
 theorem VE.Service.runMode_normDefaults
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.normDefaults j = VE.NormDefaults.Run.runCaseReported j
   -- uses VE.NormDefaults.Run.runCaseReported@VE.NormDefaults.Run VE.Service.Mode.normDefaults@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
