@@ -150,7 +150,8 @@ def check_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, model
         bound_env, bound_model = env, model
         if case["environment"] != env.to_dict():
             from .environment import Environment
-            bound_env = Environment(case["environment"])
+            from .backends.rust_jsonl import rust_environment
+            bound_env = Environment(rust_environment(env))
             bound_model = FiniteModel.from_dict(bound_env, model.to_dict())
         if (row["environment_id"] != bound_env.environment_id or row["model_id"] != bound_model.model_id
                 or tuple(row["premise_meaning_ids"]) != tuple(meaning_id(bound_env, f) for f in premises)
@@ -210,14 +211,13 @@ def _witness_checked(env: Any, premises: tuple[Any, ...], conclusion: Any, model
     """Search is untrusted generation: a candidate is reported as `Found` only
     once the countermodel.check verdict entry accepts it, so the witness carries
     that operation's authority (and a migrated check refuses rather than being
-    bypassed). The entry is asked under Lean's authority whatever the run's
-    authority: Lean checks every reported witness (lean-first batch 15b). The
-    check re-evaluates what the search already evaluated, within the caller's
-    budget; its work is not charged to the public search counters.
+    bypassed). The check re-evaluates what the search already evaluated, within
+    the caller's budget; its work is not charged to the public search counters.
+    Under the default authority the entry is still Python's: Lean's route
+    refuses environments Python accepts (English `verbalisation` fields), which
+    batch 12b's environment mode closes.
     """
-    from .backends.dispatch import pinned
-    with pinned("lean"):
-        return check_countermodel(env, premises, conclusion, model, max_evaluations=max_evaluations).valid
+    return check_countermodel(env, premises, conclusion, model, max_evaluations=max_evaluations).valid
 
 
 def _nonvacuous(env: Any, formula: Any, model: FiniteModel, maximum: int, *,
