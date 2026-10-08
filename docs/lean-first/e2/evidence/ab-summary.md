@@ -1,6 +1,6 @@
 # E2.5 corpus A/B
 
-Base: `9aaf918d538a35e63d64a7c5abc86bbcfbb87472`, the parent of the first E2 implementation commit. Head: the Python-authoritative shadow result prepared from reviewed merge `9cc8418d`; its source was committed after this replay. Both sides ran `tools/lean_first_diff.py record` over the same frozen inputs, followed by `compare`. The recorder checks corpus digests and complete case sets. The two raw JSONL recordings for each run are saved here as deterministic gzip files; decompress them before invoking `compare` again.
+Base: `9aaf918d538a35e63d64a7c5abc86bbcfbb87472`, the parent of the first E2 implementation commit. Head: the Python-authoritative shadow implementation committed at `5221c1c0`, prepared from reviewed merge `9cc8418d`; the later test-only fix commit `2aad9b8f` changes no public corpus outcome. Both sides ran `tools/lean_first_diff.py record` over the same frozen inputs, followed by `compare`. The recorder checks corpus digests and complete case sets. The two raw JSONL recordings for each run are saved here as deterministic gzip files; decompress them before invoking `compare` again.
 
 | Corpus and authority | Records per side | Same | Wording | Order | Verdict | Availability |
 |---|---:|---:|---:|---:|---:|---:|
