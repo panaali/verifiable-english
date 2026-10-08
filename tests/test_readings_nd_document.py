@@ -160,8 +160,11 @@ def test_fnd2_check_conflict_under_one_reading_only(tmp_path):
     english = shown(report["readings"]["english"])
     [line] = [line for line in english if "contradict each other here" in line]
     assert line.startswith(f"Read sentence 2 as {MUST_X}: two rules contradict each other here: ")
-    # the witness's filling is shown: the permission to try is filled 'yes', which triggers the duty
-    assert line.endswith("may be tried; this situation answers 'yes'.") and len(GAP.findall(line)) == 3
+    # Lean's plan shows the filled gaps the conflict's value reads with nothing filled (readings-defaults 2.2, RD-3):
+    # the permission to try, filled 'yes', which triggers the duty, and the duty's own gap; not the third table
+    assert line.endswith("Here the text does not say whether e0 may be tried; this situation answers 'yes'. "
+                         "Here the text does not say whether e0 must be done; this situation answers 'no'.")
+    assert len(GAP.findall(line)) == 2
 
 
 def test_fnd2_query_is_gated_by_the_conflict(tmp_path, capsys):
