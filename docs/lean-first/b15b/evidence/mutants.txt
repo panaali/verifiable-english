@@ -1,48 +1,48 @@
-source commit: 760572b937e065758944a4aef01c81e7244cbc21; clean: True
+source commit: 373a7dd5581234baa62775a42dfdc27aebc98941; clean: True
 ## python-search-branch
 ve/search.py: return execute("countermodel_search", case, lambda: CountermodelResult("NotFound", None, 0, 0, max_domain_size, max_models), lean=rust, rust=rust)
 build exit: 0; focused pytest exit: 1
 FAILED tests/test_assurance_manifest.py::test_search_reports_found_only_through_the_countermodel_check
 ## lean-nonvacuity-ignores-semantic
-ve/search.py: "semantic_nonvacuity": False}
+ve/search.py: "semantic_nonvacuity": False})
 build exit: 0; focused pytest exit: 1
 FAILED tests/test_search_options.py::test_semantic_clause_guard_is_joint_per_occurrence_and_checks_hidden_branches
 ## lean-evaluation-count
 ve/evaluate.py: return EvaluationResult(status, value, None if explanation is None else _explanation(explanation), work + 1)
 build exit: 0; focused pytest exit: 1
-FAILED tests/test_stage2_evaluation.py::test_traced_order_evaluation_matches_python[formula2-3-3]
 FAILED tests/test_stage2_evaluation.py::test_budgeted_evaluation_matches_python[formula0-1]
+FAILED tests/test_stage2_evaluation.py::test_traced_order_evaluation_matches_python[formula2-3-3]
 FAILED tests/test_stage2_evaluation.py::test_budgeted_evaluation_matches_python[formula1-1]
-FAILED tests/test_stage2_evaluation.py::test_traced_order_evaluation_matches_python[formula3-2-2]
 FAILED tests/test_stage2_evaluation.py::test_budgeted_order_evaluation_matches_python
 FAILED tests/test_stage2_evaluation.py::test_budgeted_evaluation_matches_python[formula2-2]
-FAILED tests/test_stage2_evaluation.py::test_traced_order_evaluation_matches_python[formula4-2-2]
+FAILED tests/test_stage2_evaluation.py::test_traced_order_evaluation_matches_python[formula3-2-2]
 FAILED tests/test_stage2_evaluation.py::test_budgeted_evaluation_matches_python[formula3-0]
 FAILED tests/test_stage2_evaluation.py::test_traced_order_evaluation_matches_python[formula0-1-1]
+FAILED tests/test_stage2_evaluation.py::test_traced_order_evaluation_matches_python[formula4-2-2]
 FAILED tests/test_stage2_evaluation.py::test_shadow_evaluation_has_no_divergence
-FAILED tests/test_stage2_evaluation.py::test_traced_order_evaluation_matches_python[formula5-3-3]
-FAILED tests/test_stage2_evaluation.py::test_traced_order_evaluation_matches_python[formula6-3-1]
-FAILED tests/test_stage2_evaluation.py::test_traced_evaluation_matches_python[formula0-1-1]
 FAILED tests/test_stage2_evaluation.py::test_traced_order_evaluation_matches_python[formula1-0-1]
+FAILED tests/test_stage2_evaluation.py::test_traced_order_evaluation_matches_python[formula5-3-3]
+FAILED tests/test_stage2_evaluation.py::test_traced_evaluation_matches_python[formula0-1-1]
 FAILED tests/test_stage2_evaluation.py::test_traced_evaluation_matches_python[formula1-1-10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000]
 FAILED tests/test_stage2_evaluation.py::test_traced_evaluation_matches_python[formula7-2-2]
 FAILED tests/test_stage2_evaluation.py::test_traced_evaluation_matches_python[formula12-3-3]
+FAILED tests/test_stage2_evaluation.py::test_traced_order_evaluation_matches_python[formula6-3-1]
 FAILED tests/test_stage2_evaluation.py::test_traced_evaluation_matches_python[formula2-0-10]
 FAILED tests/test_stage2_evaluation.py::test_traced_evaluation_matches_python[formula8-1-1]
 FAILED tests/test_stage2_evaluation.py::test_traced_evaluation_matches_python[formula13-4-1]
 FAILED tests/test_stage2_evaluation.py::test_traced_evaluation_matches_python[formula3-3-3]
 FAILED tests/test_stage2_evaluation.py::test_traced_evaluation_matches_python[formula9-1-1]
 FAILED tests/test_stage2_evaluation.py::test_traced_profile_cases_match_python[profiles0-formula0]
-FAILED tests/test_stage2_evaluation.py::test_traced_evaluation_matches_python[formula10-1-1]
 FAILED tests/test_stage2_evaluation.py::test_traced_evaluation_matches_python[formula4-2-2]
+FAILED tests/test_stage2_evaluation.py::test_traced_evaluation_matches_python[formula10-1-1]
 FAILED tests/test_stage2_evaluation.py::test_traced_profile_cases_match_python[profiles1-formula1]
-FAILED tests/test_stage2_evaluation.py::test_traced_evaluation_matches_python[formula11-3-3]
 FAILED tests/test_stage2_evaluation.py::test_traced_evaluation_matches_python[formula5-2-2]
-FAILED tests/test_stage2_evaluation.py::test_traced_evaluation_matches_python[formula6-2-2]
+FAILED tests/test_stage2_evaluation.py::test_traced_evaluation_matches_python[formula11-3-3]
 FAILED tests/test_stage2_evaluation.py::test_core_family_layers_match_python[layers0]
-FAILED tests/test_stage2_evaluation.py::test_core_family_layers_match_python[layers2]
+FAILED tests/test_stage2_evaluation.py::test_traced_evaluation_matches_python[formula6-2-2]
 FAILED tests/test_stage2_evaluation.py::test_core_family_layers_match_python[layers1]
-32 failed, 52 passed in 4.97s
+FAILED tests/test_stage2_evaluation.py::test_core_family_layers_match_python[layers2]
+32 failed, 52 passed in 5.34s
 ## rust-keeps-verbalisation
 ve/backends/rust_jsonl.py: if False and any("verbalisation" in entry for table in ("sorts", "predicates", "constants")
 build exit: 0; focused pytest exit: 1
@@ -58,4 +58,4 @@ build exit: 0; focused pytest exit: 1
 FAILED tests/test_b15b_evidence.py::test_rule3_rows_are_recomputed_from_the_saved_records
 ## restored
 clean build exit: 0; focused pytest exit: 0
-89 passed in 6.43s
+89 passed in 4.65s
