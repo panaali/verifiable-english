@@ -1,0 +1,71 @@
+# Lean-first batch 16b: report
+
+Branch `lean-first/b16b`, base `8350e55f`. DELTA.md has the generated numbers, the deviation, the retained-path
+table and the items needing the DRI; LEDGER.md has the decision map. Every number here comes from `evidence/`
+and is checked by `tests/test_b16b_evidence.py`.
+
+## What changed
+
+- **Switch.** `load_document`, `check_document`, `coverage` and `render_document` ask Lean's `document` mode first
+  for every `ve-document@1` text (`ve/document.py` `_lean_answer`, `_lean_document`; `ve/backends/relay.py`
+  `answer`). Lean's rejection is final and verbatim; its acceptance is bound to the request (source, unit ids,
+  order, parents, content presence) and the document is built from it, with Lean's statuses, coverage, checked
+  content, meaning ids and document and source ids. Python's loader runs only for the mode's `CheckerUnavailable`
+  and `ResourceLimit` rows and for texts that are not UTF-8; a failure of the service is raised.
+- **Lean.** Unit `content` and `meaning_id` in the row, an `"admit": false` case for `load_document`, and two 16a
+  bugs the switch exposed (a `senses` document was rejected; a definitions graph skipped the route's deferral).
+- **Gate tooling.** A `document` corpus for `tools/lean_first_diff.py` (every document seed and 1,800 frozen
+  fuzzer mutants), since none of the existing corpora had documents the mode owns.
+
+## Lines
+
+See the generated block of DELTA.md: Python under `ve/` has 10 lines deleted (replaced lines, no deleted
+decision site), Lean 39 lines added. **The planned ~900-line deletion is not done** (DELTA.md, *Deviation*): Lean
+decides 2 of the 393 pilot documents, so Python's wrapper is still reached by almost every real document, through
+profiles 16a's mode refuses. A batch 16c that composes those routes, starting with `null` in the front matter, is
+proposed there.
+
+## Gate 5.1
+
+1. **Suite.** <!-- suite -->
+2. **Corpus A/B.** 0 unlisted differences over all nine corpora; the listed ones are the environment, formula
+   and admission decoders' texts and codes, which Lean now supplies for the documents it owns (DF-3 and DF-9,
+   batches 12b and 13b), and pilot harness artifacts. No acceptance changed.
+3. **Ledger.** LEDGER.md.
+4. **Latency.** Within budget; the new Lean CPU over the 20% rule needs the DRI's signature.
+
+The fuzzer's baseline does not grow (CI 0 new; 14 date seeds, 0 head-only signatures).
+
+## Seeded faults
+
+Nine faults, one per claimed behaviour, applied one at a time by `mutants.py`, each failing its named test, then
+restored (the two Lean faults rebuilt and pinned for the run, the original build's hash checked afterwards):
+`evidence/mutants.json`.
+
+| Fault | Behaviour | Test that failed |
+|---|---|---|
+| `rejection_falls_back` | Lean's rejection is final | `test_lean_rejections_are_raised_verbatim` |
+| `service_failure_falls_back` | a service failure is never answered by Python | `test_a_service_failure_is_never_answered_by_python` |
+| `unbound_answer` | the answer is bound to the request | `test_answers_not_bound_to_the_request_are_unavailable` |
+| `python_coverage` | coverage is Lean's | `test_coverage_and_statuses_are_leans` |
+| `python_document_id` | identities are Lean's | `test_identities_and_content_are_leans` |
+| `load_admits` | `load_document` does not admit the graph | `test_load_does_not_admit_the_graph_and_check_does` |
+| `admission_disagreement_kept` | an admission route rejecting what Lean admitted is unavailable | `test_the_admission_route_rejecting_what_lean_admitted_is_unavailable` |
+| `lean_senses_guard_removed` | a senses document takes the retained path (Lean) | `test_undecided_answers_take_the_retained_path[a document with senses …]` |
+| `lean_admission_bypasses_route` | the graph is admitted through the route's own case (Lean) | `test_definitions_graph_is_deferred_as_the_admission_route_defers_it` |
+
+The evidence test was also checked to fail on planted evidence faults (an unlisted A/B difference, an uncaught
+mutant, a changed prose number), each restored.
+
+## Acceptance items
+
+- **AGENT, done:** the switch, the Lean changes, the binding checks, the corpus A/B with its signed list, the fuzz
+  runs, the latency record, the seeded faults, the full suite in a clean worktree.
+- **AGENT, not done:** the planned deletion (blocked, DELTA.md); `tools/relay_lint.py` does not cover
+  `ve/document.py`, whose retained path still raises Python's diagnostics.
+- **HUMAN (DRI):** the signatures listed in DELTA.md (wording and order block, 166 verdict-class diagnostic
+  records, 4 unavailable pilot records, new Lean CPU, the deviation and batch 16c).
+- **EXTERNAL:** none.
+
+Not run: the UDHR readings budget row (no readings change) and the agent-policy and eligibility harnesses (they
+check no `ve-document@1` file through `check_document`).
