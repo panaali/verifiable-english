@@ -28,7 +28,7 @@ import pytest
 from tests import lean_routes
 from ve.environment import Environment
 from ve.errors import VEError
-from ve.norm_defaults import UnspecifiedDocument
+from conformance.frozen_norm_defaults import UnspecifiedDocument
 from ve.norms import NormDocument
 
 ROOT = Path(__file__).resolve().parents[1]

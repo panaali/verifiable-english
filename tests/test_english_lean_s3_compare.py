@@ -27,8 +27,8 @@ def _none_route(_executable, mode, requests):
         words = EnglishVocabulary(env)
         identities = adapter.identities(env, request["source"], words, request["lexicon"])
         answers.append({"id": request["id"], "status": "ok", "result": {
-            "status": "none", "code": "NoDerivation", "text": "No reading.",
-            "sentence": 0, "identities": identities}})
+            "status": "none", "code": "NoDerivation", "class": "SyntaxError", "text": "No reading.",
+            "sentence": 0, "span": [0, len(request["source"])], "identities": identities}})
     return answers
 
 

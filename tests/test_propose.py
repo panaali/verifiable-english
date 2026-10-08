@@ -24,11 +24,13 @@ def proposal():
     return propose(ENV, SENTENCE, OVERLAY, acknowledge=['us_citizen'])
 
 
-def test_closed_diagnostic_names_phrase_span_and_nearest_wording():
+def test_closed_diagnostic_names_phrase_and_nearest_wording():
+    """Python authority retains the named unknown phrase and nearest declared wording."""
     with pytest.raises(VEError) as caught:
         parse_english_with_metadata(ENV, SENTENCE, vocabulary=OVERLAY)
     error = caught.value
-    assert 'is a UK citizen' in str(error) and 'is a US citizen' in str(error)
+    assert str(error).startswith("Unknown English phrase 'is a UK citizen'.")
+    assert "Unknown English phrase 'is a UK citizen'" in str(error) and "'is a US citizen'" in str(error)
     assert SENTENCE[error.span.start:error.span.end] == 'is a UK citizen'
     assert error.span.line == 1 and error.span.column == error.span.start + 1
 
@@ -358,10 +360,11 @@ def test_declared_negative_heads_cannot_override_closed_lint(ordinary, prefix):
 
 
 def test_prefix_collision_names_existing_wording():
-    for parse_text in (lambda text: propose(ENV, text, OVERLAY),
-                       lambda text: parse_english_with_metadata(ENV, text, vocabulary=OVERLAY)):
-        with pytest.raises(VEError, match="extends existing wording.*us_citizen.*is a US citizen"):
-            parse_text('Every person is a US citizen of record.')
+    text = 'Every person is a US citizen of record.'
+    with pytest.raises(VEError, match="extends existing wording.*us_citizen.*is a US citizen"):
+        propose(ENV, text, OVERLAY)
+    with pytest.raises(VEError, match="extends existing wording.*us_citizen.*is a US citizen"):
+        parse_english_with_metadata(ENV, text, vocabulary=OVERLAY)
 
 
 def test_cli_adopt_to_keeps_all_gates(tmp_path, capsys):

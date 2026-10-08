@@ -94,7 +94,11 @@ def elaborateRequired : List String :=
 def elaborate : Shape :=
   c
     "NormDefaults.Wire.regeneratedU: Norms.Wire.regenerated of fill U, then Fill_T, the unspecified predicates, their unsaid predicates, the default-reached targets and the fragment flag of fill U."
-    [obj, .required elaborateRequired, closed elaborateFields]
+    [obj, .required (elaborateRequired ++ ["filled_environment_id", "fill_hash", "fill_labels",
+      "environment_id", "document_hash"]),
+      closed (elaborateFields ++ [("filled_environment_id", str), ("fill_hash", str),
+        ("fill_labels", ref "common.json#/$defs/strings"), ("environment_id", str),
+        ("document_hash", str)])]
 
 def base_environment : Shape :=
   copied "the route's base environment regenerated from the request's environment (its soft or rights block removed), compared whole with Python's by the caller" <| c
@@ -131,7 +135,7 @@ def layered_elaborate : Shape :=
 
 def report_line : Shape :=
   c
-    "NormDefaults.Wire.LineU.toJson: one regulated predicate's lines (spec 3.2); `witness` (NormDefaults.Wire.WitnessRow.toJson: the tuple's entity ids and every unsaid table of the checked filled situation) exactly on a reachable line."
+    "NormDefaults.Wire.LineU.toJson: one regulated predicate's lines (spec 3.2); `witness` (NormDefaults.Wire.WitnessRow.toJson: the tuple's entity ids and every unsaid table of the checked filled situation) and `value` (NormDefaults.Wire.completedLabel: the completion's value where no author rule decides) exactly on a reachable line."
     [
       obj,
       .required ["predicate", "completion", "reached", "lines", "inherits_from"],
@@ -141,12 +145,14 @@ def report_line : Shape :=
         ("reached", enumS ["none", "reachable", "unknown"]),
         ("lines", ref "common.json#/$defs/strings"),
         ("inherits_from", ref "common.json#/$defs/strings"),
+        ("value", enumS ["yes", "no", "unsaid"]),
         ("witness", n [
           obj,
           .required ["tuple", "filling"],
           closed [
             ("tuple", ref "common.json#/$defs/strings"),
-            ("filling", n [obj, .object [] (some (n [arr, .items (ref "common.json#/$defs/strings")]))])]])]]
+            ("filling", n [obj, .object [] (some (n [arr, .items (ref "common.json#/$defs/strings")]))])]])],
+      .ite (.required ["witness"]) (.required ["value"]) (.not (.required ["value"]))]
 
 def report_row : Shape :=
   c "NormDefaults.Wire.ReportG.toJson (norm-defaults-report): the lines of every regulated predicate, the residual and the findings." [
@@ -162,15 +168,42 @@ def report_row : Shape :=
         closed [("gaps", ref "common.json#/$defs/strings"), ("ungrounded_defaults", ref "common.json#/$defs/nat")]]),
       ("findings", ref "common.json#/$defs/strings")]]
 
+/-- An unsaid atom: its regulated predicate and the tuple's entity ids. -/
+def atom : Shape :=
+  n [obj, .required ["predicate", "tuple"],
+    closed [("predicate", str), ("tuple", ref "common.json#/$defs/strings")]]
+
 def status : Shape :=
-  c "NormDefaults.Run.runOtherCase norm-defaults-status: the requested predicate's point status." [
+  c "NormDefaults.Run.runOtherCase and Wire.runLayered norm-defaults-status: the requested predicate's point status, then NormDefaults.Wire.statusFields: the tuple's entity ids, the deciding author rules and the atoms where two UNDECIDED fillings differ." [
     obj,
-    .required ["id", "status", "point_status", "predicate"],
+    .required ["id", "status", "point_status", "predicate", "tuple", "rules", "differs"],
     closed [
       ("id", ref "common.json#/$defs/id_ok"),
       ("status", constS "ok"),
       ("point_status", enumS ["SETTLED yes", "SETTLED no", "UNDECIDED", "UNKNOWN"]),
-      ("predicate", n [str, .equals "/predicate"])]]
+      ("predicate", n [str, .equals "/predicate"]),
+      ("tuple", ref "common.json#/$defs/strings"),
+      ("rules", ref "common.json#/$defs/strings"),
+      ("differs", n [arr, .items (ref "#/$defs/atom")])]]
+
+def witness_conflict : Shape :=
+  c "A conflict witness replay (NormDefaults.Wire.replayWitnessU and Wire.witnessConflictX): the requested target; exactly a CONFLICT also carries NormDefaults.Wire.conflictFields: the tuple's entity ids, the kind, the deciding assignment and the deciding author rules." [
+    obj,
+    .required ["id", "status", "verdict", "target", "targets"],
+    closed [
+      ("id", ref "common.json#/$defs/id_ok"),
+      ("status", constS "ok"),
+      ("verdict", enumS ["CONFLICT", "UNKNOWN"]),
+      ("target", n [str, .equals "/witness/target"]),
+      ("targets", ref "common.json#/$defs/strings"),
+      ("tuple", ref "common.json#/$defs/strings"),
+      ("kind", enumS ["settled", "latent"]),
+      ("under", n [arr, .items (n [obj, .required ["predicate", "tuple", "value"],
+        closed [("predicate", str), ("tuple", ref "common.json#/$defs/strings"), ("value", .type ["boolean"])]])]),
+      ("rules", ref "common.json#/$defs/strings")],
+    .ite (props [("verdict", constS "CONFLICT")]) (.required ["tuple", "kind", "under", "rules"])
+      (.allOf [.not (.required ["tuple"]), .not (.required ["kind"]), .not (.required ["under"]),
+        .not (.required ["rules"])])]
 
 def gaps_model : Shape :=
   c "norm-defaults-gaps with a model: whether the default is reached in it." [
@@ -210,7 +243,7 @@ def «row» : Shape :=
       .select [
         (ref "#/$defs/kind/admission", ref "common.json#/$defs/admission"),
         (ref "#/$defs/kind/norm-defaults-elaborate", .anyOf [ref "#/$defs/elaborate", ref "#/$defs/layered_elaborate"]),
-        (.allOf [ref "#/$defs/kind/norm-defaults-conflict", .required ["witness"]], ref "common.json#/$defs/witness_conflict"),
+        (.allOf [ref "#/$defs/kind/norm-defaults-conflict", .required ["witness"]], ref "#/$defs/witness_conflict"),
         (ref "#/$defs/kind/norm-defaults-conflict", ref "common.json#/$defs/packages_conflict"),
         (ref "#/$defs/kind/norm-defaults-status", ref "#/$defs/status"),
         (.allOf [ref "#/$defs/kind/norm-defaults-gaps", .required ["model"]], ref "#/$defs/gaps_model"),
@@ -229,7 +262,9 @@ def file : File where
     ("elaborate", .schema elaborate),
     ("base_environment", .schema base_environment),
     ("layered_elaborate", .schema layered_elaborate),
+    ("atom", .schema atom),
     ("status", .schema status),
+    ("witness_conflict", .schema witness_conflict),
     ("gaps_model", .schema gaps_model),
     ("gaps", .schema gaps),
     ("certificate", .schema certificate),

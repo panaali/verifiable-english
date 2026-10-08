@@ -20,7 +20,8 @@ reference `conformance/english_lean_lexer.py`:
 The `glued` flags (DRI ruling on O1, 2026-10-04). A punctuation token records whether a character that
 is not whitespace comes right before it (`gluedBefore`) and right after it (`gluedAfter`) in the
 source, the terminator included. So `deployed, it` and `deployed , it` lex differently, as do
-`non-compliant` and `non - compliant`, and the rules decide which spacing they accept.
+`non-compliant` and `non - compliant`, and the rules decide which spacing they accept. The integer marks
+are read as the hand parser reads them (`gluedFlags`).
 
 The spacing table (DRI ruling 1, finding F1 of `docs/spec/english-lean-s2-integrate.md`). Every other
 spacing is the lexer's, as Python's patterns fix it, so whitespace is never ignored where Python
@@ -143,6 +144,27 @@ def solid : Option Char → Bool
   | some c => !isSpace c
   | none => false
 
+/-- Whether a character belongs to a token of a word kind: a chunk or a quoted identifier. -/
+def wordChar : Option Char → Bool
+  | some c => chunkChar c || c == '"'
+  | none => false
+
+/-- Whether a character opens an integer term: `[` or a sign `-`. -/
+def opensTerm : Option Char → Bool
+  | some c => c == '[' || c == '-'
+  | none => false
+
+/-- The `glued` flags of the mark `m` between the characters `prev` and `next`. The integer marks are read
+as the hand parser reads them (spec english-lean-e2.md 13, amending S3 2.2): `[` and a sign `-` count as
+free before when the character before opens a term too (`[-3`, `--3`, `-[`, `[[`), and `]` counts as glued
+after only to a word character (`]]`, `].`, `],` are free, `]and` is glued). So `costs-3`, `least[` and
+`]- 1` are glued where no integer rule reads a glued mark; a hyphen between two words (`non-compliant`) is
+glued on both sides, as before. -/
+def gluedFlags (m : String) (prev next : Option Char) : Bool × Bool :=
+  if m == "[" || m == "-" then (solid prev && !opensTerm prev, solid next)
+  else if m == "]" then (solid prev, wordChar next)
+  else (solid prev, solid next)
+
 /-- Starts an item of kind `k` at the byte offset `pos`, after the character `prev`: the spacing table
 decides whether the whitespace before it, if any, may be there. -/
 def begin (st : Scan) (prev : Option Char) (k : Item) (pos : Nat) : Except Reject Scan :=
@@ -167,7 +189,8 @@ def normalStep (st : Scan) (prev : Option Char) (c : Char) (cs : List Char) (pos
     | none =>
       if punctChars.contains c then
         (begin st prev .punct pos).map fun st =>
-          { st with cur := st.cur.push (.punct (String.singleton c) (solid prev) (solid cs.head?), pos, pos + 1) }
+          let g := gluedFlags (String.singleton c) prev cs.head?
+          { st with cur := st.cur.push (.punct (String.singleton c) g.1 g.2, pos, pos + 1) }
       else .error (.badCharacter pos)
 
 /-- Ends a chunk at the byte offset `pos`. -/

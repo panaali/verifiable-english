@@ -16,7 +16,7 @@ from tests import lean_routes
 from conformance import norm_defaults_differential as differential
 from conformance.norm_defaults_three_way import (admission_document, certificate_case, conflict_case,
                                                  fixtures, run)
-from ve import norm_defaults as nd
+from conformance import frozen_norm_defaults as nd
 from ve import norm_defaults_route as route
 from ve.admission import admit_document
 from ve.environment import Environment

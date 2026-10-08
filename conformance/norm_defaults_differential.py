@@ -31,8 +31,9 @@ sys.path.insert(0, str(ROOT))
 from ve.ast import And, Const, Exists, Forall, Not, Or, Top, Unary, Var  # noqa: E402
 from ve.environment import Environment  # noqa: E402
 from ve.norms import Norm  # noqa: E402
-from ve import norm_defaults as nd  # noqa: E402
+from conformance import frozen_norm_defaults as nd  # noqa: E402
 from ve import norm_defaults_route as route  # noqa: E402
+from conformance import frozen_norm_defaults_route as frozen_route  # noqa: E402
 from conformance.norm_defaults import _environment, _regulated  # noqa: E402
 
 # Each tree draws an order of the regulated predicates; a guard may mention only
@@ -179,7 +180,7 @@ def run(*, trees=1000, situations=1000, seed=0):
             continue
         if kind == "elaborate":
             try:
-                route.check_regenerated(answer, row)
+                frozen_route.check_regenerated(answer, row)
             except Exception as error:  # noqa: BLE001 - reported as a mismatch row
                 mismatches.append((case_["id"], kind, str(error)))
             continue
