@@ -679,6 +679,7 @@
   "tests/test_b16a_evidence.py::test_fix_report_ab_and_fuzz_numbers_are_saved",
   "tests/test_b16a_evidence.py::test_fix_report_line_counts_are_the_saved_net_diff",
   "tests/test_b16a_evidence.py::test_fix_report_mutants_are_saved_failures",
+  "tests/test_b16a_evidence.py::test_fix_report_suite_numbers_are_the_saved_run",
   "tests/test_b16a_evidence.py::test_report_ab_numbers_use_saved_public_outcomes",
   "tests/test_b16a_evidence.py::test_report_difffuzz_numbers_use_saved_baselines",
   "tests/test_b16a_evidence.py::test_report_gate_numbers_use_saved_clean_run",
