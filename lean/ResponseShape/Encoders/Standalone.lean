@@ -77,8 +77,10 @@ theorem environment_reported (j : Json) : Fits j Skeletons.environment (reported
   split
   · exact environment_case_reported j
   · split
-    · exact environment_case_reported j
     · exact environment_fault_fits j _
+    · split
+      · exact environment_case_reported j
+      · exact environment_fault_fits j _
 
 theorem model_reported (j : Json) : Fits j Skeletons.model (reportedModel j) := by
   unfold reportedModel
@@ -90,8 +92,10 @@ theorem model_reported (j : Json) : Fits j Skeletons.model (reportedModel j) := 
   · split
     · exact model_case_reported j
     · split
-      · exact model_case_reported j
       · exact model_fault_fits j _
+      · split
+        · exact model_case_reported j
+        · exact model_fault_fits j _
 
 theorem check_reported (j : Json) : Fits j Skeletons.check (reported checkCase j) := by
   unfold reported; split
