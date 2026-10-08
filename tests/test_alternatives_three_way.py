@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from copy import deepcopy
-import json
 import os
 from pathlib import Path
 import shutil
@@ -13,6 +12,7 @@ import pytest
 from tests import lean_routes
 
 from conformance.alternatives import base_environment, cases, environment as fixture_environment, rules
+from conformance.three_way import run_rust_evaluations
 from subprocesses import HANG_TIMEOUT
 from tools import rust_build
 from ve.alternatives import run_case
@@ -76,13 +76,11 @@ def test_spec_scenario_followability_three_way(case, rust_binary):
     python_values = [evaluate(env, formula_from_data(env, formula), model, trace=False).value
                      for formula in formulas]
 
-    rust = subprocess.run([str(rust_binary), "conformance"],
-                          input=json.dumps([{"id": case["id"], "kind": "evaluate",
+    rust = run_rust_evaluations(rust_binary, [{"id": case["id"], "kind": "evaluate",
                                              "environment": base, "ast": formulas,
-                                             "model": model_data}]),
-                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
-    assert rust.returncode == 0, rust.stdout + rust.stderr
-    rust_values = json.loads(rust.stdout)[0]["values"]
+                                             "model": model_data}])
+    assert [row["status"] for row in rust] == ["ok"] * len(rust), rust
+    rust_values = rust[0]["values"]
     expected = [bool(report["clear"]), *(bool(report[name]) for name in names)]
     assert python_values == rust_values == expected, case["id"]
 
@@ -103,13 +101,11 @@ def test_mapped_violation_requires_a_taken_action_and_failed_fulfilment(rust_bin
         model_data = case["scenario"]["model"]
         model = FiniteModel.from_dict(env, model_data)
         assert evaluate(env, formula_from_data(env, failed_fulfilment), model, trace=False).value == expected
-        rust = subprocess.run([str(rust_binary), "conformance"],
-                              input=json.dumps([{"id": "mapped", "kind": "evaluate",
+        rust = run_rust_evaluations(rust_binary, [{"id": "mapped", "kind": "evaluate",
                                                  "environment": base, "ast": [failed_fulfilment],
-                                                 "model": model_data}]),
-                              capture_output=True, text=True, timeout=HANG_TIMEOUT)
-        assert rust.returncode == 0, rust.stdout + rust.stderr
-        assert json.loads(rust.stdout)[0]["values"] == [expected]
+                                                 "model": model_data}])
+        assert [row["status"] for row in rust] == ["ok"] * len(rust), rust
+        assert rust[0]["values"] == [expected]
 
 
 def test_scenario_document_binding_changes_with_rules_and_units():
@@ -288,12 +284,10 @@ def test_spec_s2_conflict_three_way(rust_binary):
     env = Environment(base)
     model = FiniteModel.from_dict(env, model_data)
     assert evaluate(env, formula_from_data(env, formula), model, trace=False).value
-    rust = subprocess.run([str(rust_binary), "conformance"],
-                          input=json.dumps([{"id": "s2", "kind": "evaluate", "environment": base,
-                                             "ast": [formula], "model": model_data}]),
-                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
-    assert rust.returncode == 0, rust.stdout + rust.stderr
-    assert json.loads(rust.stdout)[0]["values"] == [True]
+    rust = run_rust_evaluations(rust_binary, [{"id": "s2", "kind": "evaluate", "environment": base,
+                                             "ast": [formula], "model": model_data}])
+    assert [row["status"] for row in rust] == ["ok"] * len(rust), rust
+    assert rust[0]["values"] == [True]
 
 
 @pytest.mark.parametrize("with_rule_five", [False, True], ids=["A-minus", "A-minus-5"])
@@ -317,12 +311,10 @@ def test_spec_bprime_unrelated_permission_conflict_three_way(with_rule_five, rus
     env = Environment(base)
     model = FiniteModel.from_dict(env, model_data)
     assert evaluate(env, formula_from_data(env, formula), model, trace=False).value
-    rust = subprocess.run([str(rust_binary), "conformance"],
-                          input=json.dumps([{"id": case["id"], "kind": "evaluate", "environment": base,
-                                             "ast": [formula], "model": model_data}]),
-                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
-    assert rust.returncode == 0, rust.stdout + rust.stderr
-    assert json.loads(rust.stdout)[0]["values"] == [True]
+    rust = run_rust_evaluations(rust_binary, [{"id": case["id"], "kind": "evaluate", "environment": base,
+                                             "ast": [formula], "model": model_data}])
+    assert [row["status"] for row in rust] == ["ok"] * len(rust), rust
+    assert rust[0]["values"] == [True]
 
 
 def test_spec_p_outcome_completion_and_document_binding_three_way(rust_binary):
@@ -359,12 +351,10 @@ def test_spec_p_outcome_completion_and_document_binding_three_way(rust_binary):
     model = FiniteModel.from_dict(env, model_data)
     python_values = [evaluate(env, formula_from_data(env, formula), model, trace=False).value
                      for formula in formulas]
-    rust = subprocess.run([str(rust_binary), "conformance"],
-                          input=json.dumps([{"id": "p2", "kind": "evaluate", "environment": base,
-                                             "ast": formulas, "model": model_data}]),
-                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
-    assert rust.returncode == 0, rust.stdout + rust.stderr
-    assert python_values == json.loads(rust.stdout)[0]["values"] == [True, True, True]
+    rust = run_rust_evaluations(rust_binary, [{"id": "p2", "kind": "evaluate", "environment": base,
+                                             "ast": formulas, "model": model_data}])
+    assert [row["status"] for row in rust] == ["ok"] * len(rust), rust
+    assert python_values == rust[0]["values"] == [True, True, True]
 
     changed = deepcopy(source)
     changed["id"] = "p6"
@@ -392,12 +382,10 @@ def test_spec_h3_proximate_claim_requires_leading_to_harm(rust_binary):
     env = Environment(base)
     model = FiniteModel.from_dict(env, model_data)
     assert not evaluate(env, formula_from_data(env, proximate), model, trace=False).value
-    rust = subprocess.run([str(rust_binary), "conformance"],
-                          input=json.dumps([{"id": "h3", "kind": "evaluate", "environment": base,
-                                             "ast": [proximate], "model": model_data}]),
-                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
-    assert rust.returncode == 0, rust.stdout + rust.stderr
-    assert json.loads(rust.stdout)[0]["values"] == [False]
+    rust = run_rust_evaluations(rust_binary, [{"id": "h3", "kind": "evaluate", "environment": base,
+                                             "ast": [proximate], "model": model_data}])
+    assert [row["status"] for row in rust] == ["ok"] * len(rust), rust
+    assert rust[0]["values"] == [False]
 
 
 def _source_and_conflict_packages(case):
