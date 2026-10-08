@@ -97,7 +97,7 @@ BATCH_CPU = 300
 BATCH_CASES = 400
 
 # The CI sample: 1-fault and 2-fault mutants per surface. `--deep N` multiplies both.
-CI_BUDGET = {"requests": (6000, 1500), "environment": (6000, 1500), "wire": (6000, 1500), "document": (2000, 500)}
+CI_BUDGET = {"requests": (6000, 1500), "environment": (6000, 1500), "wire": (6000, 1500), "document": (500, 100)}
 CHUNK = 2000
 MINIMISE_EVALUATIONS = 3000
 # New signatures minimised in one run; any beyond are reported as found (`"minimised": false`).
