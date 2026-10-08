@@ -160,3 +160,171 @@ def test_rd2a_checker_fails_on_a_dropped_hypothesis_and_a_missing_declaration(tm
     _with_sources(checker, tmp_path, lambda t: t.replace("def ndChoiceText ", "private def ndChoiceText ", 1))
     assert checker.main_rd2a() == 1
     assert "ndChoiceText: expected one Lean def, found 0" in capsys.readouterr().out
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# RD-6a: lean/VE/Readings/SupExtra.lean against 6.7
+
+RD6B = ["fill_transfers", "nd_superpose_all", "nd_superpose_conflict_free"]
+
+
+def _approved_6a_names():
+    return sorted(key for key in _checker().approved_6a() if key[1] not in RD6B)
+
+
+def _run_6a(tmp_path, source, checker=None):
+    checker = checker or _checker()
+    path = tmp_path / "SupExtra.lean"
+    path.write_text(source)
+    checker.SOURCE_6A = path
+    return checker, checker.main()
+
+
+def test_rd6a_statements_match_the_approved_text(capsys):
+    checker = _checker()
+    assert checker.main() == 0
+    out = capsys.readouterr().out
+    assert "checked 7 approved RD-6a declarations (4 theorems)" in out
+    assert f"not built yet (a later batch): {', '.join(RD6B)}" in out
+    assert ("RD-6a PASS: 7 exact after whitespace normalization (1 amended by a DRI ruling, its original refuted in "
+            "Lean); 0 pending the statement re-review") in out
+    assert ("superpose_all_extra: amended by DRI ruling 2026-10-07, refuted original mechanised "
+            "(superpose_all_extra_refuted)") in out
+    # Finding B1 of rd-6a-looprecheck1: the DRI ruling replaced the re-review, so nothing is pending.
+    assert checker.PENDING_6A == checker.EDITS_6A == {}
+    assert set(checker.AMENDED_6A) == {"superpose_all_extra"}
+    assert checker.LATER_6A == set(RD6B)
+
+
+@pytest.mark.parametrize("kind, name", _approved_6a_names(), ids=lambda v: str(v))
+def test_rd6a_checker_fails_on_every_changed_declaration(tmp_path, capsys, kind, name):
+    """Each RD-6a declaration of 6.7, changed in Lean, fails by name, the pending one included (its pending edit
+    is exact)."""
+    checker = _checker()
+    checker, code = _run_6a(tmp_path, _mutate(checker.SOURCE_6A.read_text(), kind, name, checker), checker)
+    assert code == 1
+    out = capsys.readouterr().out
+    expected = "is not the approved text with the edit of DRI ruling 2026-10-07" if name in checker.AMENDED_6A \
+        else f"{kind} differs"
+    assert f"{name}: {expected}" in out
+
+
+def test_rd6a_checker_fails_on_the_approved_all_statement(tmp_path, capsys):
+    """The approved `superpose_all_extra` (without `hQw`, false: fixture X1) fails: the amendment requires `hQw`."""
+    checker = _checker()
+    source = checker.SOURCE_6A.read_text()
+    restored = source.replace("(hQw : VE.Compose.SlotWellFormed (correlate (sup D).1) Q)\n    ", "", 1)
+    assert restored != source
+    checker, code = _run_6a(tmp_path, restored, checker)
+    assert code == 1
+    assert ("superpose_all_extra: is not the approved text with the edit of DRI ruling 2026-10-07"
+            in capsys.readouterr().out)
+
+
+# Finding B1 of rd-6a-looprecheck1: an amended declaration passes only with its original refuted in Lean.
+
+def _run_refutations(tmp_path, source, checker=None, audit=None):
+    checker = checker or _checker()
+    path = tmp_path / "SupExtraExamples.lean"
+    path.write_text(source)
+    checker.REFUTATIONS_6A = path
+    if audit is not None:
+        audit_path = tmp_path / "Audit.lean"
+        audit_path.write_text(audit)
+        checker.AUDIT = audit_path
+    return checker, checker.main()
+
+
+PROPOSITION_MUTANTS = {
+    "a binder dropped": ("(hcf : ConflictFreeP.{u} (correlate (sup D).1) (slotUnder D A ++ Q))\n    ", ""),
+    "the built hypothesis added": ("(hq : Transfers.{u} D Q Q')\n",
+                                   "(hq : Transfers.{u} D Q Q') (hQw : VE.Compose.SlotWellFormed (correlate (sup D).1) Q)\n"),
+    "a binder weakened": ("(hc : Compatible D c)", "(hc : True)"),
+    "the conclusion changed": ("  φ.denote (expand (choiceDoc D c).1 B) []\n\n/-- The approved proposition",
+                               "  ¬ φ.denote (expand (choiceDoc D c).1 B) []\n\n/-- The approved proposition"),
+    "renamed": ("def SuperposeAllExtraApproved : Prop", "def SuperposeAllExtraApproved' : Prop"),
+}
+
+
+@pytest.mark.parametrize("mutant", sorted(PROPOSITION_MUTANTS))
+def test_rd6a_amendment_fails_when_the_refuted_proposition_is_not_the_approved_statement(tmp_path, capsys, mutant):
+    checker = _checker()
+    source = checker.REFUTATIONS_6A.read_text()
+    old, new = PROPOSITION_MUTANTS[mutant]
+    assert source.count(old) == 1
+    checker, code = _run_refutations(tmp_path, source.replace(old, new), checker)
+    assert code == 1
+    assert ("superpose_all_extra: SuperposeAllExtraApproved is not the approved statement as one proposition"
+            in capsys.readouterr().out)
+
+
+@pytest.mark.parametrize("old, new", [
+    ("theorem superpose_all_extra_refuted ", "theorem superpose_all_extra_refuted' "),
+    ("¬ SuperposeAllExtraApproved.{0} := by", "¬ False := by"),
+    ("¬ SuperposeAllExtraApproved.{0} := by", "SuperposeAllExtraApproved.{0} → True := by"),
+], ids=["missing", "other conclusion", "not a negation"])
+def test_rd6a_amendment_fails_without_the_refutation(tmp_path, capsys, old, new):
+    checker = _checker()
+    source = checker.REFUTATIONS_6A.read_text()
+    assert source.count(old) == 1
+    checker, code = _run_refutations(tmp_path, source.replace(old, new), checker)
+    assert code == 1
+    assert ("superpose_all_extra: no one theorem superpose_all_extra_refuted concluding ¬ SuperposeAllExtraApproved"
+            in capsys.readouterr().out)
+
+
+def test_rd6a_amendment_fails_when_the_refutation_is_not_audited(tmp_path, capsys):
+    checker = _checker()
+    entry = "#print axioms VE.Readings.SupExtraExamples.superpose_all_extra_refuted\n"
+    audit = checker.AUDIT.read_text()
+    assert audit.count(entry) == 1
+    checker, code = _run_refutations(tmp_path, checker.REFUTATIONS_6A.read_text(), checker,
+                                     audit.replace(entry, "-- " + entry))
+    assert code == 1
+    assert "superpose_all_extra: superpose_all_extra_refuted is not audited in Audit.lean" in capsys.readouterr().out
+
+
+def test_rd6a_a_declaration_cannot_be_both_pending_and_amended(capsys):
+    checker = _checker()
+    checker.PENDING_6A = {"superpose_all_extra": "seeded"}
+    assert checker.main() == 1
+    assert "superpose_all_extra: listed as both pending and amended" in capsys.readouterr().out
+
+
+def test_signature_reads_binders_by_bracket_depth():
+    """A `:` or a nested bracket inside a binder does not end the binders."""
+    checker = _checker()
+    text = "theorem t (a : Nat) {b : List (Nat × Nat)} [inst : DecidableEq α] (h : ∀ x ∈ b, (x.1 : Nat) = 0) : a = a"
+    assert checker.signature(text) == (
+        "(a : Nat) {b : List (Nat × Nat)} [inst : DecidableEq α] (h : ∀ x ∈ b, (x.1 : Nat) = 0)", "a = a")
+    with pytest.raises(ValueError):
+        checker.signature("theorem t (a : Nat a = a")
+    with pytest.raises(ValueError):
+        checker.signature("theorem t (a : Nat) a = a")
+
+
+def test_rd6a_checker_fails_on_a_missing_declaration(tmp_path, capsys):
+    checker = _checker()
+    source = checker.SOURCE_6A.read_text().replace("theorem transfers_nil ", "theorem transfers_nil' ", 1)
+    checker, code = _run_6a(tmp_path, source, checker)
+    assert code == 1
+    assert "transfers_nil: expected one Lean theorem, found 0" in capsys.readouterr().out
+
+
+def test_rd6a_checker_compares_an_rd6b_declaration_once_built(tmp_path, capsys):
+    """A later (RD-6b) declaration in the file is compared: the approved text passes, a changed one fails."""
+    checker = _checker()
+    spec_text = checker.SPEC.read_text().split("### 6.7 RD-6a", 1)[1].split("```lean", 1)[1].split("```", 1)[0]
+    start = spec_text.index("theorem fill_transfers")
+    stop = spec_text.index("theorem nd_superpose_conflict_free")
+    statement = spec_text[start:stop].rstrip() + " := by\n  sorry\n"
+    source = checker.SOURCE_6A.read_text().replace("end Extra", statement + "\nend Extra", 1)
+    checker, code = _run_6a(tmp_path, source, checker)
+    assert code == 0
+    out = capsys.readouterr().out
+    assert "checked 8 approved RD-6a declarations (5 theorems)" in out
+    assert "not built yet (a later batch): nd_superpose_all, nd_superpose_conflict_free" in out
+    changed = source.replace("(hs : superposable (fillDoc N) = true) (hsu", "(hsu", 1)
+    checker, code = _run_6a(tmp_path, changed)
+    assert code == 1
+    assert "fill_transfers: theorem differs" in capsys.readouterr().out

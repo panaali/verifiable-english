@@ -467,3 +467,48 @@ check runs once), `frameOf_filled` (the filled environment's frame is `fillDoc`'
 `separates_links` (S1 reads no coupling or narrowing), `choiceU_E` (a choice's filled document reads the frame's
 environment, so a base model of it is valid), `fillHoldsOf_eq` (the witness's `Fill_T`, read from the table, is
 `fillHolds`).
+
+# S2a with a carried base-premise family in Lean (readings-defaults, batch RD-6a)
+
+Specification: [docs/spec/readings-defaults.md](../docs/spec/readings-defaults.md) section 6.7 and plan
+[readings-defaults-PLAN.md](../docs/spec/readings-defaults-PLAN.md) RD-6a. Off the UDHR path: it is what RD-6b
+needs to run the superposed route under the completion (more than 64 choices in one frame). `lean/audit.py` passes
+with no `sorry` and only `propext`, `Classical.choice` and `Quot.sound`. Nothing calls these files yet, so no answer
+changes and every S2a fixture answers as before; the S2a theorems are not restated.
+`tools/check_readings_defaults_statements.py` compares each statement with the approved text.
+
+## Files
+
+| File | Contents |
+|---|---|
+| `SupExtra.lean` | `Transfers`, `supCertificateCheckExtra`, `supModelCheckExtra`; the RD-6a statements of 6.7; `sat_pull_up`; the checks at `Q = []` (`supCertificateCheckExtra_nil`, `supModelCheckExtra_nil`, `baseAdmissibleR_nil`) and three `example`s deriving S2a's `superpose_conflict_free`, `superpose_all` and `superpose_countermodel` from the `_extra` forms at `transfers_nil` |
+| `SupExtraExamples.lean` | the fixtures as `#guard` on S2a's K1: X1 (rows X1.1 to X1.6, the counterexample below) and X2 (the `_extra` checks at `Q = []` are S2a's) |
+
+## The statements of 6.7 (RD-6a)
+
+`Q` is a list of base premises added to the slot of `sup D`, and `Q' c` the list added to the limitation premises of
+choice `c`'s document. `Transfers D Q Q'` says that each `Q' c` is over the complete vocabulary of `c`'s own
+document (so it names no choice symbol), and that a slot-admissible base of `sup D` encoding `c` satisfies `Q`
+exactly when the pulled base satisfies `Q' c`.
+
+* `superpose_conflict_free_extra` (under `Transfers`): `sup D` is conflict-free under the slot, the atoms of `A` and
+  `Q` exactly when every compatible choice taking `A`'s candidates is conflict-free under its limitation premises and
+  `Q' c`. Downward, a base pulls back (`base_down`) and `Transfers` carries `Q` to `Q' c`. Upward, a base of the
+  choice's document is lifted (`upB`); the pulled lift reads `Q' c` as the base does (`sat_pull_up`, from `pull_up`),
+  so `Transfers` gives `Q` on the lift.
+* `superpose_all_extra` (under `Transfers` and `hQw`, below): a certificate on `sup D` with `Q` in its slot proves the
+  conclusion in every situation of every compatible reading taking `A`'s candidates whose base satisfies `Q' c`.
+* `superpose_countermodel_extra` (under `Transfers`): a finite model passing the model check with `Q` is a situation
+  of the reading its atoms encode, whose pulled base satisfies `Q' c`, and with the conclusion false there.
+* `transfers_nil`: `Q = []` and `Q' = fun _ => []` transfer, so the S2a statements are the instances.
+
+**One statement changed, pending the statement re-review.** `superpose_all_extra` also takes
+`hQw : SlotWellFormed (correlate (sup D).1) Q`: `Q` is over `sup D`'s base vocabulary, as every slot premise is
+(`slot_route_acceptance`). Without it the approved statement is false (X1). On K1,
+`Q = [∀agent ∀user. ¬avoid_required]` names a regulated predicate, which is a layer symbol and so outside the base
+vocabulary: an admissible base gives it no tuple, so `Q` holds of every admissible base (of `sup K1` and, pulled, of
+each reading's document), `Transfers` holds with `Q' c = Q`, and the slot stays CONFLICT-FREE. A one-step
+certificate proves the conclusion `Q` itself, since the certificate reads `Q` on the intended structure, where
+`avoid_required` is the expansion's. On a base with one agent and one user, both readings require
+`avoid_required`, so the conclusion is false on their expansions. The other two `_extra` statements and
+`Transfers` are as approved.
