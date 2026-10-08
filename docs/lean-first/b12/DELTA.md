@@ -50,6 +50,35 @@ vocabulary decoder. Vocabulary shape, limits, and declaration names are
 checked before sort references, in sort, predicate, then constant order.
 Model fields, completeness, table shapes, limits, domains, constants, and
 relations are checked in that order, with pointers carried at each failure.
+`ModelFault.path` is a sequence of object-key or array-index segments. Lean
+renders it as a JSON pointer and checks whether it resolves in the submitted
+environment or model before reporting it. The corpus mutation test checks
+resolution for both the raw Lean response and the public Python route.
+
+### Signed diagnostic location difference
+
+DRI signature: **SIGNED**, 2026-10-08, `lf-12-fix4-directive.md` item 3.
+For a 41-digit `order@0` integer value, frozen Python reports
+`ResourceLimit` without a path. Lean and the public route report the same code
+with `/constants/n` for a constant and `/relations/marked/0/0` for a relation
+cell. `test_order_numeral_resource_limit_has_decided_location` pins both
+locations; each pointer resolves to the rejected value. This is an approved
+increase in diagnostic location, not a change in acceptance or error code.
+
+### Branch trust budget
+
+The trust baseline is rebased to `main` at
+`adefca30c6a940a1a8e1c2ffb1d0def2663608a9`. Its totals include later
+mainline merges and are not charged to this branch. Measuring only this
+branch's non-merge commits (`main..HEAD --no-merges`) against merge-base
+`49d182636268b8c0102d1032d120cadaa9bb6b7e` gives **617 trusted Lean
+lines added**: K +19, S +199, untied V +399. The same branch diff deletes
+**790 production Python lines** (223 added). The growth is concentrated in
+the located environment/model decoders and supporting vocabulary checks that
+replace Python validation and scanning. DRI signature: **SIGNED**, 2026-10-08,
+`lf-12-fix4-directive.md` item 4; the exact allowances are recorded in
+`docs/trust-baseline.json`. `tools/trust_map.py --since` and `--check` pass,
+with zero unclassified Lean lines.
 
 Latency uses the historical readings-bearing UDHR translation at
 `pilot/udhr-20261003T0600Z:usecases/udhr-pilot/run-20261003T0600Z/translation.ve.md`
@@ -68,7 +97,7 @@ measurement because it exercised a different, much smaller workload.
 | pilots | 393 | 393 | 0 | 0 | 0 | 0 |
 | **All** | **94,588** | **93,502** | **1,086** | **0** | **0** | **0** |
 
-Code lines (base to head): production Python +223/−790 (net -567); Lean +834/−100 (net +734).
+Code lines (base to head): production Python +223/−790 (net -567); Lean +900/−101 (net +799).
 Differential fuzz: 15 runs (CI and 14 date seeds); baseline 331 → 250; 0 head-only new signatures; 0 head entries not reproduced.
 First-pass date-seed review found 24 distinct head-only signatures.
 UDHR: base 54.679 s → head 54.651 s; 0.999× wall; 1.000× child CPU; output identical; budget pass.
