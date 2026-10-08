@@ -50,24 +50,24 @@ theorem parse_fits (j : Json) : OkFits req Skeletons.parse (parseCase j) := by
   all_goals (try simp only [VE.Route.Wire.ok])
   all_goals fits
 
-private theorem environment_case_reported (j : Json) :
+theorem environment_case_reported (j : Json) :
     Fits j Skeletons.environment (reported environmentCase j) := by
   unfold reported; split
   · exact environment_fits j _ ‹_›
   · fits
 
-private theorem model_case_reported (j : Json) :
+theorem model_case_reported (j : Json) :
     Fits j Skeletons.model (reported modelCase j) := by
   unfold reported; split
   · exact model_fits j _ ‹_›
   · fits
 
-private theorem environment_fault_fits (j : Json) (fault : ModelFault) :
+theorem environment_fault_fits (j : Json) (fault : ModelFault) :
     Fits j Skeletons.environment (reportedFault j fault) := by
   unfold reportedFault
   split <;> fits
 
-private theorem model_fault_fits (j : Json) (fault : ModelFault) :
+theorem model_fault_fits (j : Json) (fault : ModelFault) :
     Fits j Skeletons.model (reportedFault j fault) := by
   unfold reportedFault
   split <;> fits
@@ -84,11 +84,12 @@ theorem environment_reported (j : Json) : Fits j Skeletons.environment (reported
 
 theorem model_reported (j : Json) : Fits j Skeletons.model (reportedModel j) := by
   unfold reportedModel
-  dsimp only
+  dsimp only [Except.bind, Except.pure]
   split
-  · split
-    · exact model_case_reported j
-    · exact model_fault_fits j _
+  · rename_i located environment modelValue view heq
+    cases checkedModelTables view modelValue with
+    | ok _ => exact model_case_reported j
+    | error fault => exact model_fault_fits j fault
   · split
     · exact model_case_reported j
     · split

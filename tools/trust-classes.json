@@ -104,74 +104,6 @@
     "main"
    ]
   },
-  "ResponseShape.lean": {
-   "G[V]": [
-    "ResponseShape.Counters",
-    "ResponseShape.Ctx",
-    "ResponseShape.Def",
-    "ResponseShape.File",
-    "ResponseShape.File.qualified",
-    "ResponseShape.File.render",
-    "ResponseShape.Re",
-    "ResponseShape.Re.classChar",
-    "ResponseShape.Re.deriv",
-    "ResponseShape.Re.escape",
-    "ResponseShape.Re.matches",
-    "ResponseShape.Re.mkAlt",
-    "ResponseShape.Re.mkSeq",
-    "ResponseShape.Re.nullable",
-    "ResponseShape.Re.oneOf",
-    "ResponseShape.Re.optional",
-    "ResponseShape.Re.prefixes",
-    "ResponseShape.Re.render",
-    "ResponseShape.Re.special",
-    "ResponseShape.Result",
-    "ResponseShape.Shape",
-    "ResponseShape.arr",
-    "ResponseShape.brokenOn",
-    "ResponseShape.bump",
-    "ResponseShape.c",
-    "ResponseShape.check",
-    "ResponseShape.closed",
-    "ResponseShape.constS",
-    "ResponseShape.copied",
-    "ResponseShape.decide",
-    "ResponseShape.decidedBy",
-    "ResponseShape.depth",
-    "ResponseShape.disagreeing",
-    "ResponseShape.encodedEnvironment",
-    "ResponseShape.enumS",
-    "ResponseShape.fail",
-    "ResponseShape.isItems",
-    "ResponseShape.kind",
-    "ResponseShape.kindIs",
-    "ResponseShape.lookup",
-    "ResponseShape.members",
-    "ResponseShape.n",
-    "ResponseShape.numEq",
-    "ResponseShape.numLe",
-    "ResponseShape.obj",
-    "ResponseShape.passed",
-    "ResponseShape.pointerString",
-    "ResponseShape.props",
-    "ResponseShape.qualify",
-    "ResponseShape.ref",
-    "ResponseShape.render",
-    "ResponseShape.resolve",
-    "ResponseShape.resolveAt",
-    "ResponseShape.same",
-    "ResponseShape.sameJson",
-    "ResponseShape.short",
-    "ResponseShape.str",
-    "ResponseShape.strs",
-    "ResponseShape.tok",
-    "ResponseShape.tokens",
-    "ResponseShape.within"
-   ],
-   "G[R]": [
-    "ResponseShape.Fault"
-   ]
-  },
   "ResponseShape/CaseDeciders.lean": {
    "G[V]": [
     "ResponseShape.CaseDecider",
@@ -183,13 +115,13 @@
    ]
   },
   "ResponseShape/Encoders/Common.lean": {
-   "G[V]": [
-    "ResponseShape.findOkHyp",
-    "ResponseShape.tacticRead_kind"
-   ],
    "P": [
     "ResponseShape.Encoders.Common.KindsRendered",
     "ResponseShape.Encoders.Common.kindSkel"
+   ],
+   "G[V]": [
+    "ResponseShape.findOkHyp",
+    "ResponseShape.tacticRead_kind"
    ]
   },
   "ResponseShape/Encoders/Discourse.lean": {
@@ -222,12 +154,12 @@
    ]
   },
   "ResponseShape/Encoders/Route.lean": {
+   "P": [
+    "ResponseShape.Encoders.Route.tacticGenerators_ok"
+   ],
    "G[V]": [
     "ResponseShape.Encoders.Route.routeOk",
     "ResponseShape.Encoders.Route.tacticKind_route"
-   ],
-   "P": [
-    "ResponseShape.Encoders.Route.tacticGenerators_ok"
    ]
   },
   "ResponseShape/Encoders/SoftNorms.lean": {
@@ -241,6 +173,9 @@
    ]
   },
   "ResponseShape/EnumSites.lean": {
+   "P": [
+    "ResponseShape.Skel.admits"
+   ],
    "T": [
     "ResponseShape.EnumSites.Domain",
     "ResponseShape.EnumSites.Probe",
@@ -261,9 +196,6 @@
     "ResponseShape.EnumSites.sites",
     "ResponseShape.EnumSites.sitesOf",
     "ResponseShape.EnumSites.stringFree"
-   ],
-   "P": [
-    "ResponseShape.Skel.admits"
    ]
   },
   "ResponseShape/FitsTactic.lean": {
@@ -325,13 +257,6 @@
     "ResponseShape.tacticOkfits",
     "ResponseShape.tacticRevert_lit_tests",
     "ResponseShape.tacticScalar_alt"
-   ]
-  },
-  "ResponseShape/Schemas.lean": {
-   "G[V]": [
-    "ResponseShape.Schemas.files",
-    "ResponseShape.Schemas.rendered",
-    "ResponseShape.Schemas.row"
    ]
   },
   "ResponseShape/Schemas/Alternatives.lean": {
@@ -762,6 +687,13 @@
     "ResponseShape.Schemas.SpeechActs.speech_path"
    ]
   },
+  "ResponseShape/Schemas.lean": {
+   "G[V]": [
+    "ResponseShape.Schemas.files",
+    "ResponseShape.Schemas.rendered",
+    "ResponseShape.Schemas.row"
+   ]
+  },
   "ResponseShape/Skeleton.lean": {
    "S": [
     "ResponseShape.CaseWF",
@@ -769,6 +701,9 @@
     "ResponseShape.KindRead",
     "ResponseShape.OkFits",
     "ResponseShape.OkP"
+   ],
+   "P": [
+    "ResponseShape.ErrP"
    ],
    "G[V]": [
     "ResponseShape.CaseCond",
@@ -799,9 +734,6 @@
     "ResponseShape.objectFree",
     "ResponseShape.skeleton",
     "ResponseShape.skeletonOf"
-   ],
-   "P": [
-    "ResponseShape.ErrP"
    ]
   },
   "ResponseShape/Skeletons.lean": {
@@ -840,6 +772,74 @@
    ],
    "G[I]": [
     "ResponseShape.Skeletons.identity"
+   ]
+  },
+  "ResponseShape.lean": {
+   "G[V]": [
+    "ResponseShape.Counters",
+    "ResponseShape.Ctx",
+    "ResponseShape.Def",
+    "ResponseShape.File",
+    "ResponseShape.File.qualified",
+    "ResponseShape.File.render",
+    "ResponseShape.Re",
+    "ResponseShape.Re.classChar",
+    "ResponseShape.Re.deriv",
+    "ResponseShape.Re.escape",
+    "ResponseShape.Re.matches",
+    "ResponseShape.Re.mkAlt",
+    "ResponseShape.Re.mkSeq",
+    "ResponseShape.Re.nullable",
+    "ResponseShape.Re.oneOf",
+    "ResponseShape.Re.optional",
+    "ResponseShape.Re.prefixes",
+    "ResponseShape.Re.render",
+    "ResponseShape.Re.special",
+    "ResponseShape.Result",
+    "ResponseShape.Shape",
+    "ResponseShape.arr",
+    "ResponseShape.brokenOn",
+    "ResponseShape.bump",
+    "ResponseShape.c",
+    "ResponseShape.check",
+    "ResponseShape.closed",
+    "ResponseShape.constS",
+    "ResponseShape.copied",
+    "ResponseShape.decide",
+    "ResponseShape.decidedBy",
+    "ResponseShape.depth",
+    "ResponseShape.disagreeing",
+    "ResponseShape.encodedEnvironment",
+    "ResponseShape.enumS",
+    "ResponseShape.fail",
+    "ResponseShape.isItems",
+    "ResponseShape.kind",
+    "ResponseShape.kindIs",
+    "ResponseShape.lookup",
+    "ResponseShape.members",
+    "ResponseShape.n",
+    "ResponseShape.numEq",
+    "ResponseShape.numLe",
+    "ResponseShape.obj",
+    "ResponseShape.passed",
+    "ResponseShape.pointerString",
+    "ResponseShape.props",
+    "ResponseShape.qualify",
+    "ResponseShape.ref",
+    "ResponseShape.render",
+    "ResponseShape.resolve",
+    "ResponseShape.resolveAt",
+    "ResponseShape.same",
+    "ResponseShape.sameJson",
+    "ResponseShape.short",
+    "ResponseShape.str",
+    "ResponseShape.strs",
+    "ResponseShape.tok",
+    "ResponseShape.tokens",
+    "ResponseShape.within"
+   ],
+   "G[R]": [
+    "ResponseShape.Fault"
    ]
   },
   "SensesMain.lean": {
@@ -1546,12 +1546,15 @@
   },
   "VE/Bridge.lean": {
    "K": [
-    "VE.Bridge.JsonEntails"
+    "VE.Bridge.JsonEntails",
+    "VE.Bridge.checkConstantSort",
+    "VE.Bridge.checkVocabularyNames"
    ],
    "C": [
     "VE.Bridge.CountermodelQuery",
     "VE.Bridge.CountermodelQuery.refutes",
     "VE.Bridge.ModelData.valid",
+    "VE.Bridge.constantSort",
     "VE.Bridge.identifier"
    ],
    "D[V]": [
@@ -1560,6 +1563,7 @@
     "VE.Bridge.ModelData.toModel",
     "VE.Bridge.Vocabulary",
     "VE.Bridge.Vocabulary.environment",
+    "VE.Bridge.checkArgumentSorts",
     "VE.Bridge.decodeCountermodel",
     "VE.Bridge.decodeDocument",
     "VE.Bridge.decodeEnvironment",
@@ -1585,6 +1589,7 @@
    ],
    "G[V]": [
     "VE.Bridge.ModelData",
+    "VE.Bridge.argumentSorts",
     "VE.Bridge.displayFields",
     "VE.Bridge.reserved",
     "VE.Bridge.runCase",
@@ -7090,13 +7095,6 @@
    ]
   },
   "VE/Senses/Decode.lean": {
-   "D[I]": [
-    "VE.Senses.Dictionary.toJson",
-    "VE.Senses.Pack.toJson",
-    "VE.Senses.PackSort.toJson",
-    "VE.Senses.Sense.toJson",
-    "VE.Senses.dictionaryId"
-   ],
    "D[V]": [
     "VE.Senses.checkFields",
     "VE.Senses.decodePack",
@@ -7105,6 +7103,13 @@
     "VE.Senses.decodeSense",
     "VE.Senses.natOf",
     "VE.Senses.packFormat"
+   ],
+   "D[I]": [
+    "VE.Senses.Dictionary.toJson",
+    "VE.Senses.Pack.toJson",
+    "VE.Senses.PackSort.toJson",
+    "VE.Senses.Sense.toJson",
+    "VE.Senses.dictionaryId"
    ]
   },
   "VE/Senses/Dictionary.lean": {
@@ -7276,9 +7281,6 @@
    ]
   },
   "VE/Senses/Preamble.lean": {
-   "G[R]": [
-    "VE.Senses.zeroFault"
-   ],
    "S": [
     "VE.Senses.Divergence",
     "VE.Senses.SenseFault",
@@ -7290,18 +7292,12 @@
     "VE.Senses.readLine",
     "VE.Senses.readPreamble",
     "VE.Senses.readPreambleGo"
+   ],
+   "G[R]": [
+    "VE.Senses.zeroFault"
    ]
   },
   "VE/Senses/Project.lean": {
-   "D[V]": [
-    "VE.Senses.addVocabulary",
-    "VE.Senses.projectedJson",
-    "VE.Senses.setField"
-   ],
-   "G[R]": [
-    "VE.Senses.clashes",
-    "VE.Senses.pairFault"
-   ],
    "S": [
     "VE.Senses.Projection",
     "VE.Senses.Projection.wordOf",
@@ -7328,26 +7324,18 @@
     "VE.Senses.unglossed",
     "VE.Senses.unglossedFrom",
     "VE.Senses.usedWords"
+   ],
+   "D[V]": [
+    "VE.Senses.addVocabulary",
+    "VE.Senses.projectedJson",
+    "VE.Senses.setField"
+   ],
+   "G[R]": [
+    "VE.Senses.clashes",
+    "VE.Senses.pairFault"
    ]
   },
   "VE/Senses/Read.lean": {
-   "G[R]": [
-    "VE.Senses.SenseFault.code",
-    "VE.Senses.SensesOutcome.statusCode",
-    "VE.Senses.divergence",
-    "VE.Senses.glossLength",
-    "VE.Senses.headSpan",
-    "VE.Senses.occurrenceAt",
-    "VE.Senses.occurrencesIn",
-    "VE.Senses.occurrencesKids",
-    "VE.Senses.senseMapOf",
-    "VE.Senses.tagsOf"
-   ],
-   "P": [
-    "VE.Senses.CandidateGood",
-    "VE.Senses.UnitGood",
-    "VE.Senses.stateFrom"
-   ],
    "S": [
     "VE.Senses.Candidate",
     "VE.Senses.EFormula.predNames",
@@ -7380,6 +7368,23 @@
     "VE.Senses.tryChoice",
     "VE.Senses.unresolvedIn",
     "VE.Senses.unswitchedIn"
+   ],
+   "P": [
+    "VE.Senses.CandidateGood",
+    "VE.Senses.UnitGood",
+    "VE.Senses.stateFrom"
+   ],
+   "G[R]": [
+    "VE.Senses.SenseFault.code",
+    "VE.Senses.SensesOutcome.statusCode",
+    "VE.Senses.divergence",
+    "VE.Senses.glossLength",
+    "VE.Senses.headSpan",
+    "VE.Senses.occurrenceAt",
+    "VE.Senses.occurrencesIn",
+    "VE.Senses.occurrencesKids",
+    "VE.Senses.senseMapOf",
+    "VE.Senses.tagsOf"
    ]
   },
   "VE/Senses/Run.lean": {
@@ -7718,10 +7723,19 @@
   },
   "VE/Service/Standalone.lean": {
    "S": [
+    "VE.Service.Standalone.checkedModelTables",
+    "VE.Service.Standalone.earlyProfileGate",
+    "VE.Service.Standalone.environmentFields",
     "VE.Service.Standalone.isLegacy",
     "VE.Service.Standalone.legacyMeaningId",
+    "VE.Service.Standalone.locatedEnvironmentFields",
+    "VE.Service.Standalone.modelAtom",
+    "VE.Service.Standalone.modelFault",
     "VE.Service.Standalone.rawParseAst",
-    "VE.Service.Standalone.reportedParse"
+    "VE.Service.Standalone.reportedFault",
+    "VE.Service.Standalone.reportedModel",
+    "VE.Service.Standalone.reportedParse",
+    "VE.Service.Standalone.safeModelPath"
    ],
    "D[V]": [
     "VE.Service.Standalone.Legacy",
@@ -7735,11 +7749,22 @@
     "VE.Service.Standalone.encodeCoreKind",
     "VE.Service.Standalone.encodeKind",
     "VE.Service.Standalone.legacyTyped",
+    "VE.Service.Standalone.locatedModelTables",
+    "VE.Service.Standalone.modelCell",
+    "VE.Service.Standalone.modelPathOf",
     "VE.Service.Standalone.normalizedModel",
     "VE.Service.Standalone.parseCase",
+    "VE.Service.Standalone.pointerChild",
+    "VE.Service.Standalone.pointerParentExists",
+    "VE.Service.Standalone.prefixValidPointer",
+    "VE.Service.Standalone.reportedEnvironment",
     "VE.Service.Standalone.riskReduced",
     "VE.Service.Standalone.rowLE",
-    "VE.Service.Standalone.stripPredicates"
+    "VE.Service.Standalone.stripPredicates",
+    "VE.Service.Standalone.tableFields"
+   ],
+   "D[R]": [
+    "VE.Service.Standalone.ModelFault"
    ],
    "D[I]": [
     "VE.Service.Standalone.legacyEnvironmentId"
@@ -7775,7 +7800,6 @@
    "G[R]": [
     "VE.Service.Standalone.maxSourceBytes",
     "VE.Service.Standalone.modelError",
-    "VE.Service.Standalone.modelErrorPath",
     "VE.Service.Standalone.parseRejection"
    ],
    "G[I]": [
