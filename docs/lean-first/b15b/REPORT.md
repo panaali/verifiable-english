@@ -13,8 +13,14 @@ counts and exhaustion. Base: Rust's search with its own evaluator (`eval.rs`, th
 provers' self-replay in Python. Head: the same Rust candidate stream (`rule3_enumerate`, and for order@0 a new
 measurement-only stream `rule3_order_enumerate` behind `bench-internals`) charged and decided by Lean, and the
 same certificates replayed by Lean's certificate route. Every head count is Lean's own answer to the exact
-budget left at that candidate. Record: [`rule3.json`](evidence/rule3.json) (load 20.85, 256 candidates per
-`ve_metered` call); the table is regenerated from it by `tests/test_b15b_evidence.py`.
+budget left at that candidate. The certificate rows cover the three cohorts whole: every prover query each
+cohort generator (`conformance/certificates.py`, `closure_certificates.py`, `order.py`) asks, 811, 35 and
+690 queries, of which 732, 33 and 546 yield a certificate. Their order is measured too: the prover must emit
+the same status, certificate and step count when its self-replay is Lean's route instead of Python's
+(review B4; the first measurement took the first 40 queries of each cohort and set order to pass). Record:
+[`rule3.json`](evidence/rule3.json) (searches at load 20.85, 256 candidates per `ve_metered` call;
+certificates re-measured at load 13.88 with `--certificates-into`); the table is regenerated from it by
+`tests/test_b15b_evidence.py`.
 
 | Operation | Queries | Order | First witness | Charging | Counts | Exhaustion | Deadline (s) | Base wall, total / slowest query (s) | Head wall, total / slowest query (s) |
 |---|---:|---|---|---|---|---|---:|---:|---:|
@@ -23,9 +29,9 @@ budget left at that candidate. Record: [`rule3.json`](evidence/rule3.json) (load
 | distinguishing-model search | 28 | pass | pass | pass | pass | pass | 5: pass | 0.040 / 0.002 | 2.200 / 0.149 |
 | bluedot countermodel search | 1 | pass | pass | pass | pass | pass | 5: FAIL (1) | 4.700 / 4.700 | 164.368 / 164.368 |
 | order countermodel search | 40 | pass | pass | pass | pass | pass | 5: pass | 0.609 / 0.064 | 38.630 / 3.236 |
-| tableau prover replay | 99 | pass | pass | pass | pass | pass | 5.00764: pass | 0.052 / 0.001 | 0.240 / 0.052 |
-| closure prover replay | 5 | pass | pass | pass | pass | pass | 5.01107: pass | 0.002 / 0.000 | 0.008 / 0.002 |
-| order prover replay | 53 | pass | pass | pass | pass | pass | 5.00967: pass | 0.054 / 0.006 | 0.139 / 0.008 |
+| tableau prover replay | 732 | pass | pass | pass | pass | pass | 5.00764: pass | 0.502 / 0.002 | 1.398 / 0.003 |
+| closure prover replay | 33 | pass | pass | pass | pass | pass | 5.01107: pass | 0.027 / 0.001 | 0.070 / 0.003 |
+| order prover replay | 546 | pass | pass | pass | pass | pass | 5.00967: pass | 0.521 / 0.003 | 1.185 / 0.005 |
 
 **Which rows fail, and by how much.** One row fails, on one property: the bluedot document's search query
 (19 premises, `definitions@0`; 10,000 candidates, `ResourceLimit` at the model bound) takes 164.4 s against its 5 s deadline
