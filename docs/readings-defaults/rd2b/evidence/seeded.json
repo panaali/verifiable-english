@@ -4,24 +4,20 @@
   "bug": "the relay no longer binds the readings Fill_T lists to the request",
   "file": "ve/readings_route.py",
   "failed": [
-   "tests/test_readings_nd_document.py::test_a_mutated_completion_answer_is_unavailable[readings-elaborate-a",
-   "tests/test_readings_nd_document.py::test_a_mutated_completion_answer_is_unavailable[readings-elaborate-another",
-   "tests/test_readings_nd_document.py::test_a_mutated_completion_answer_is_unavailable[readings-elaborate-fill_premises",
-   "tests/test_readings_nd_document.py::test_a_mutated_completion_answer_is_unavailable[readings-validate-a",
-   "tests/test_readings_nd_document.py::test_a_mutated_completion_answer_is_unavailable[readings-validate-another",
-   "tests/test_readings_nd_document.py::test_a_mutated_completion_answer_is_unavailable[readings-validate-fill_premises"
+   "tests/test_readings_nd_document.py::test_a_mutated_completion_answer_is_unavailable"
   ],
-  "summary": "6 failed, 55 passed in 2.24s"
+  "summary": "6 failed, 55 passed in 2.24s",
+  "failed_count": 6
  },
  {
   "id": "S2",
   "bug": "the completion's elaborate row relayed without binding its finding and choices",
   "file": "ve/readings_route.py",
   "failed": [
-   "tests/test_readings_nd_document.py::test_a_mutated_elaborate_row_is_unavailable[a",
-   "tests/test_readings_nd_document.py::test_a_mutated_elaborate_row_is_unavailable[the"
+   "tests/test_readings_nd_document.py::test_a_mutated_elaborate_row_is_unavailable"
   ],
-  "summary": "7 failed, 54 passed in 1.99s"
+  "summary": "7 failed, 54 passed in 1.99s",
+  "failed_count": 7
  },
  {
   "id": "S3",
@@ -41,7 +37,8 @@
    "tests/test_readings_s2_document.py::test_ruling4_lean_frame_reads_unspecified_as_deny",
    "tests/test_readings_s2_document.py::test_ruling4_rule_candidate_beside_norm_defaults_is_under_the_completion"
   ],
-  "summary": "12 failed, 144 passed in 27.36s"
+  "summary": "12 failed, 144 passed in 27.36s",
+  "failed_count": 12
  },
  {
   "id": "S4",
@@ -50,7 +47,8 @@
   "failed": [
    "tests/test_readings_nd_document.py::test_generator_finds_separations_from_leans_filled_document"
   ],
-  "summary": "1 failed, 60 passed in 2.04s"
+  "summary": "1 failed, 60 passed in 2.04s",
+  "failed_count": 1
  },
  {
   "id": "S5",
@@ -62,7 +60,8 @@
    "tests/test_readings_nd_document.py::test_fnd1_readings_conclusion_some",
    "tests/test_readings_nd_document.py::test_fnd2_check_conflict_under_one_reading_only"
   ],
-  "summary": "4 failed, 57 passed in 1.91s"
+  "summary": "4 failed, 57 passed in 1.91s",
+  "failed_count": 4
  },
  {
   "id": "S6",
@@ -72,7 +71,8 @@
    "tests/test_readings_nd_document.py::test_fnd1_render_shows_the_situation_with_its_filled_gaps",
    "tests/test_readings_nd_document.py::test_fnd2_render"
   ],
-  "summary": "2 failed, 59 passed in 2.07s"
+  "summary": "2 failed, 59 passed in 2.07s",
+  "failed_count": 2
  },
  {
   "id": "S7",
@@ -83,7 +83,8 @@
    "tests/test_readings_nd_document.py::test_fnd1_readings_conclusion_some",
    "tests/test_readings_nd_document.py::test_fnd2_check_conflict_under_one_reading_only"
   ],
-  "summary": "3 failed, 58 passed in 2.10s"
+  "summary": "3 failed, 58 passed in 2.10s",
+  "failed_count": 3
  },
  {
   "id": "S8",
@@ -97,7 +98,8 @@
    "tests/test_readings_nd_document.py::test_fnd2_render"
   ],
   "summary": "5 failed, 56 passed in 2.11s",
-  "note": "first seeded at candidate_sentence's content, where it survived (61 passed): for rule readings the batched rules, read from the authored content, decide the sentence; reseeded on the batch"
+  "note": "first seeded at candidate_sentence's content, where it survived (61 passed): for rule readings the batched rules, read from the authored content, decide the sentence; reseeded on the batch",
+  "failed_count": 5
  },
  {
   "id": "S9",
@@ -106,7 +108,8 @@
   "failed": [
    "tests/test_readings_nd_document.py::test_fnd1_render_shows_the_situation_with_its_filled_gaps"
   ],
-  "summary": "1 failed, 60 passed in 2.06s"
+  "summary": "1 failed, 60 passed in 2.06s",
+  "failed_count": 1
  },
  {
   "id": "S10",
@@ -118,7 +121,8 @@
    "tests/test_readings_nd_document.py::test_fnd2_check_conflict_under_one_reading_only",
    "tests/test_readings_nd_document.py::test_fnd2_query_is_gated_by_the_conflict"
   ],
-  "summary": "4 failed, 57 passed in 1.97s"
+  "summary": "4 failed, 57 passed in 1.97s",
+  "failed_count": 4
  },
  {
   "id": "S11",
@@ -127,7 +131,8 @@
   "failed": [
    "tests/test_readings_nd_document.py::test_fnd2_check_conflict_under_one_reading_only"
   ],
-  "summary": "1 failed, 60 passed in 2.01s"
+  "summary": "1 failed, 60 passed in 2.01s",
+  "failed_count": 1
  },
  {
   "id": "S12",
