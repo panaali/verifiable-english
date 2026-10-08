@@ -771,22 +771,39 @@
       ]
     },
     "verdicts": {
-      "$comment": "Readings.Run.runVerdicts (readings-defaults RD-3): on the enumerated route, the question's answer folded in Lean over the compatible choices taking assumed: the result in the form the report gives it, one entry per choice with its rows and what Lean made of each piece of evidence, the labels E3 cites, the dead readings and the untaken candidates (premises), and the English plan. Each value is Lean's; the client reads it as Readings.Run.verdictsValues builds it.",
+      "$comment": "Readings.Run.runVerdicts (readings-defaults RD-3): on the enumerated route, the question's answer folded in Lean over the compatible choices taking assumed: the result in the form the report gives it, one entry per choice with its rows and what Lean made of each piece of evidence, the labels E3 cites, the dead readings, the untaken candidates and the dead evidence (premises), and the English plan.",
       "additionalProperties": false,
       "properties": {
-        "dead": {"$comment": "what Lean made of each dead certificate"},
-        "dead_readings": {"$comment": "the dead readings, or null"},
-        "english": {"$comment": "Readings.englishPlan: the lines of the answer"},
-        "finding_sets": {"$comment": "the sets of the route's finding (E29)"},
+        "dead": {"items": {"$ref": "#/$defs/verdicts_dead"}, "type": "array"},
+        "dead_readings": {
+          "anyOf": [
+            {"type": "null"},
+            {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "finding": {"pattern": "DeadReading: .*", "type": "string"},
+                  "index": {"$ref": "common.json#/$defs/nat"},
+                  "set": {"type": "string"}
+                },
+                "required": ["set", "index", "finding"],
+                "type": "object"
+              },
+              "type": "array"
+            }
+          ]
+        },
+        "english": {"items": {"$ref": "#/$defs/verdicts_line"}, "type": "array"},
+        "finding_sets": {"$ref": "common.json#/$defs/strings"},
         "id": {"$ref": "common.json#/$defs/id_ok"},
-        "labels": {"$comment": "the labels E3 cites"},
-        "per_choice": {"$comment": "one entry per compatible choice taking assumed"},
+        "labels": {"$ref": "common.json#/$defs/strings"},
+        "per_choice": {"items": {"$ref": "#/$defs/verdicts_row"}, "type": "array"},
         "question": {"type": "string"},
-        "restrictions": {"$comment": "restrictionsFor D A"},
-        "result": {"$comment": "the question's result"},
+        "restrictions": {"$ref": "common.json#/$defs/strings"},
+        "result": {"$ref": "#/$defs/verdicts_result"},
         "route": {"const": "enumerated"},
         "status": {"const": "ok"},
-        "untaken": {"$comment": "the candidates no compatible choice takes"}
+        "untaken": {"$ref": "#/$defs/choice"}
       },
       "required": [
         "id",
@@ -803,6 +820,76 @@
         "dead",
         "english"
       ],
+      "type": "object"
+    },
+    "verdicts_dead": {
+      "$comment": "Readings.Run.deadOf: what Lean made of one dead reading's certificate.",
+      "additionalProperties": false,
+      "properties": {"accepted": {"type": "boolean"}, "index": {"$ref": "common.json#/$defs/nat"}, "set": {"type": "string"}},
+      "required": ["accepted"],
+      "type": "object"
+    },
+    "verdicts_line": {
+      "$comment": "Readings.Line.json: one line of the English plan (readings-defaults 2.4).",
+      "additionalProperties": false,
+      "properties": {
+        "frame": {"type": "string"},
+        "gaps": {"type": "array"},
+        "label": {"type": ["string", "null"]},
+        "model": {"type": ["string", "null"]},
+        "readings": {"$ref": "#/$defs/choice"},
+        "result": {"type": ["string", "null"]}
+      },
+      "required": ["frame", "result", "readings", "model", "gaps", "label"],
+      "type": "object"
+    },
+    "verdicts_result": {
+      "$comment": "Readings.Run.resultOf: the question's result in the form the report gives it (conflictResult, premisesResult, entailmentResult, or W2's budget shape); the caller relays it.",
+      "additionalProperties": false,
+      "properties": {
+        "assumed": {"$comment": "relayed as Lean gives it"},
+        "budget": {"$comment": "relayed as Lean gives it"},
+        "candidates": {"$comment": "relayed as Lean gives it"},
+        "choice": {"$comment": "relayed as Lean gives it"},
+        "choices": {"$comment": "relayed as Lean gives it"},
+        "conditional_on": {"$comment": "relayed as Lean gives it"},
+        "conflict_status": {"$comment": "relayed as Lean gives it"},
+        "countermodel": {"$comment": "relayed as Lean gives it"},
+        "countermodels": {"$comment": "relayed as Lean gives it"},
+        "evidence": {"$comment": "relayed as Lean gives it"},
+        "model": {"$comment": "relayed as Lean gives it"},
+        "proof": {"$comment": "relayed as Lean gives it"},
+        "proofs": {"$comment": "relayed as Lean gives it"},
+        "reading_premises_used": {"$comment": "relayed as Lean gives it"},
+        "restrictions": {"$comment": "relayed as Lean gives it"},
+        "route": {"const": "enumerated"},
+        "status": {"$comment": "relayed as Lean gives it"},
+        "status_text": {"$comment": "relayed as Lean gives it"},
+        "units": {"$comment": "relayed as Lean gives it"},
+        "verdict": {"$comment": "relayed as Lean gives it"},
+        "witnesses": {"$comment": "relayed as Lean gives it"}
+      },
+      "required": ["route"],
+      "type": "object"
+    },
+    "verdicts_row": {
+      "$comment": "Readings.Run.perChoiceJson: one compatible choice taking assumed, its rows and what Lean made of each piece of its evidence (maps keyed by the piece: accepted, its refusal, its shown model, its filled gaps).",
+      "additionalProperties": false,
+      "properties": {
+        "choice": {"$ref": "#/$defs/choice"},
+        "conflict": {"type": "string"},
+        "errors": {"additionalProperties": {"type": "string"}, "type": "object"},
+        "evidence": {"additionalProperties": {"type": "boolean"}, "type": "object"},
+        "gaps": {"additionalProperties": {"type": "array"}, "type": "object"},
+        "premises": {"type": "string"},
+        "query": {"type": "string"},
+        "shown": {
+          "additionalProperties": {"$comment": "a shown model, the generator's complete model"},
+          "type": "object"
+        },
+        "status_text": {"type": ["string", "null"]}
+      },
+      "required": ["choice", "conflict", "evidence", "errors", "shown", "gaps", "status_text"],
       "type": "object"
     }
   }

@@ -42,7 +42,9 @@ MAPS = {"worst_cases", "bound", "meaning_ids", "presuppositions", "validity", "s
         "units", "mentions", "default_exceptions_by_decider", "rule_acts"}
 # Top-level fields whose domain is a union across JSON types (field: the types beside the genuine one).
 UNIONS = {"joint": {"string", "integer"}, "admitted": {"boolean", "string"}, "finding": {"object", "null"},
-          "first_failing": {"string", "null"}}
+          "first_failing": {"string", "null"},
+          # readings-verdicts: the dead readings are a list, or null when one has no certificate (RD-3)
+          "dead_readings": {"array", "null"}}
 # Top-level fields whose value the schema leaves to another mode: `readings-choice`'s `inner` is the lower
 # route's own row for the inner case, whose kind is not the request's, so no row shape selects it
 # (readings-route.json `choice_answer`); the caller reads it as that route's answer. It is still required.

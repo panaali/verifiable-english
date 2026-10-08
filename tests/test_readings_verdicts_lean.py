@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import copy
 import json
-import time
 
 import pytest
 
@@ -230,15 +229,13 @@ def test_thirty_narrowed_sets_restrictions_without_the_product():
         units += document["units"]
         narrowings.append({"id": f"n{k}", "set": f"rs_{k}", "version": 1, "keeps": ["every"], "by": "reviewer",
                            "reason_spans": [f"u{k}"]})
-    started = time.monotonic()
     [row] = run(LEAN, [case("readings-verdicts", raw, {"units": units, "reading_sets": sets,
                                                        "narrowings": narrowings}, question="conflict", evidence=[])])
-    elapsed = time.monotonic() - started
     assert row["status"] == "ok", row
     assert row["restrictions"] == [f"narrowing:n{k}" for k in range(1, 31)]
     assert [e["choice"] for e in row["per_choice"]] == [[[f"rs_{k}", 0] for k in range(1, 31)]]
-    # the lean-first section 4 budget for one route request (120 s per document load); recorded in the DELTA
-    assert elapsed < 120, elapsed
+    # its latency is measured by docs/readings-defaults/rd3/latency.py and recorded in the DELTA (no test asserts
+    # on time: tests/test_hang_guards.py)
 
 
 # ---------------------------------------------------------------------------------------------------------------
