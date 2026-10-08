@@ -33,7 +33,7 @@ MUTANTS = [
      '    except CheckerUnavailable:\n        return None',
      "test_a_service_failure_is_never_answered_by_python"),
     ("unbound_answer", "the answer is bound to the request", "ve/document.py",
-     "    if (source != body or", "    if False and (source != body or",
+     "    require(same(coverage, expected))\n", "",
      "test_answers_not_bound_to_the_request_are_unavailable"),
     ("python_coverage", "coverage is Lean's", "ve/document.py",
      '    if "lean" in doc:\n        return deepcopy(doc["lean"]["coverage"])\n', "",

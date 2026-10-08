@@ -449,6 +449,11 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
             "lean": {"coverage": row["coverage"], "admitted": admitted}}
 
 
+# The list lines of a composed block's coverage (`Alternatives.Wire.coverage`), each counted in the residual.
+_BLOCK_LINES = ("alternatives_declared", "assumed_harm_free", "counterfactual_leaves", "dilemmas", "narrowings",
+                "proximate_judgments", "unmapped_obligations")
+
+
 def _bind_document_answer(body, meta, declared, row):
     """Check the request-shaped fields and arithmetic of a successful Lean document row.
 
@@ -464,7 +469,8 @@ def _bind_document_answer(body, meta, declared, row):
         if not condition:
             raise ValueError("Lean document row disagrees with its request")
 
-    require(type(row) is dict and type(row.get("source")) is str)
+    require(type(row) is dict and type(row.get("source")) is str and
+            set(row) == {"id", "status", "document_id", "source_id", "source", "units", "coverage"})
     source = row["source"].encode("utf-8")
     require(source == body)
     units = row.get("units")
@@ -472,6 +478,9 @@ def _bind_document_answer(body, meta, declared, row):
     kinds, statuses, reasons = {}, {}, {}
     for unit, (authored, parent) in zip(units, declared, strict=True):
         require(type(unit) is dict and type(authored) is dict)
+        require(set(unit) == {"id", "span", "kind", "meaning", "support", "status"} |
+                ({"content", "meaning_id"} if "content" in authored else set()) |
+                ({"parent_id"} if parent is not None else set()))
         for field in ("id", "span", "kind", "meaning", "support"):
             require(field in unit and field in authored and same(unit[field], authored[field]))
         require(("parent_id" in unit) == (parent is not None))
@@ -492,43 +501,39 @@ def _bind_document_answer(body, meta, declared, row):
             reason = meaning["unformalised"]
             reasons[reason] = reasons.get(reason, 0) + 1
 
+    # Every member of the coverage but a block's cells is a function of the request and the unit rows: it is
+    # recomputed here and compared whole, so a missing, extra or changed key anywhere in it (a forged residual
+    # line included) is unbound. Only the cells are Lean's, and they are bound to the units and the counts.
     coverage = row.get("coverage")
     require(type(coverage) is dict)
-    for key, expected in (("source_bytes", len(source)), ("accounted_bytes", len(source)),
-                          ("coverage_percent", 100), ("bytes_by_kind", kinds),
-                          ("bytes_by_status", statuses), ("unformalised_reasons", reasons)):
-        require(key in coverage and same(coverage[key], expected))
-    residual = coverage.get("residual")
-    require(type(residual) is dict and all(type(n) is int and n >= 0 for n in residual.values()))
     graph = meta.get("graph")
     nodes = graph.get("nodes") if type(graph) is dict else None
     labels = [n["label"] for n in nodes if type(n) is dict and type(n.get("label")) is str] \
         if type(nodes) is list else []
-    base = {"open_terms": len(meta.get("open_terms", [])),
-            "assumptions": sum(u["support"] == "assumption" for u in units),
-            "bridge_leaves": sum(label.startswith("bridge:accepts(") for label in labels),
-            "unresolved_reading_sets": sum(r["status"] == "open" for r in meta.get("reading_sets", []))}
-    require(all(key in residual and same(residual[key], value) for key, value in base.items()))
+    residual = {"open_terms": len(meta.get("open_terms", [])),
+                "assumptions": sum(u["support"] == "assumption" for u in units),
+                "bridge_leaves": sum(label.startswith("bridge:accepts(") for label in labels),
+                "unresolved_reading_sets": sum(r["status"] == "open" for r in meta.get("reading_sets", []))}
     profiles = meta["environment"].get("profiles", [])
-    block = "alternatives@0" in profiles or "risk@0" in profiles
-    require(("alternatives" in coverage) == block)
-    if block:
-        cells = coverage["alternatives"]
-        require(type(cells) is dict)
+    expected = {}
+    if "alternatives@0" in profiles or "risk@0" in profiles:
+        cells = coverage.get("alternatives")
+        require(type(cells) is dict and set(cells) == set(_BLOCK_LINES) | {"table_complete"})
         by_id = {u["id"]: u for u in units}
+        for line in _BLOCK_LINES:
+            require(type(cells[line]) is list)
         for line in ("alternatives_declared", "counterfactual_leaves", "proximate_judgments"):
-            require(type(cells.get(line)) is list)
             for cell in cells[line]:
                 require(type(cell) is dict and cell.get("unit") in by_id and
                         cell.get("support") == by_id[cell["unit"]]["support"])
-        for line in ("assumed_harm_free", "dilemmas", "narrowings", "unmapped_obligations"):
-            require(type(cells.get(line)) is list)
-        for line in ("alternatives_declared", "assumed_harm_free", "counterfactual_leaves",
-                     "dilemmas", "narrowings", "proximate_judgments", "unmapped_obligations"):
-            require(type(residual.get(line)) is int and residual[line] == len(cells[line]))
-        require(type(residual.get("table_complete")) is int and
-                residual["table_complete"] == int(cells.get("table_complete") is not None))
-    require(type(coverage.get("residual_total")) is int and coverage["residual_total"] == sum(residual.values()))
+        require(same(cells["narrowings"], meta.get("narrowings", [])))
+        residual.update({line: len(cells[line]) for line in _BLOCK_LINES})
+        residual["table_complete"] = int(cells["table_complete"] is not None)
+        expected["alternatives"] = cells
+    expected.update({"source_bytes": len(source), "accounted_bytes": len(source), "coverage_percent": 100,
+                     "bytes_by_kind": kinds, "bytes_by_status": statuses, "unformalised_reasons": reasons,
+                     "residual": residual, "residual_total": sum(residual.values())})
+    require(same(coverage, expected))
 
 
 def _load_document(raw: bytes, path: str | Path, lean):

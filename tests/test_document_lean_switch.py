@@ -226,6 +226,9 @@ def _mutants(row):
                           r["coverage"].update({field: replacement}))
     yield "residual count", edit(lambda r: r["coverage"]["residual"].update(assumptions=99))
     yield "boolean count", edit(lambda r: r["coverage"].update(accounted_bytes=True))
+    # looprecheck1: an extra residual line with the total raised to match was accepted.
+    yield "forged residual line", edit(lambda r: (r["coverage"]["residual"].update(forged_line=7),
+                                                  r["coverage"].update(residual_total=r["coverage"]["residual_total"] + 7)))
 
 
 def test_answers_not_bound_to_the_request_are_unavailable(tmp_path, no_python_loader, monkeypatch):
@@ -241,11 +244,81 @@ def test_answers_not_bound_to_the_request_are_unavailable(tmp_path, no_python_lo
             pytest.fail(f"accepted mutated {name}")
 
 
+RETYPES = (7, True, None, [], {}, "x")
+
+
+def _structural_mutants(node, at=()):
+    """Every one-fault structural mutant of a genuine answer (build checklist line 4): each member dropped, an
+    extra member added to each object, each element of a list dropped or duplicated, and each value replaced by
+    one of another JSON type (a boolean for a count included). Yields (path, mutate) with `mutate(copy)`."""
+    def at_path(root, path):
+        for key in path:
+            root = root[key]
+        return root
+    if type(node) is dict:
+        yield at + ("+forged",), lambda r: at_path(r, at).update(forged_line=7)
+        for key in node:
+            yield at + (key, "-"), lambda r, key=key: at_path(r, at).pop(key)
+    if type(node) is list:
+        for i in range(len(node)):
+            yield at + (i, "-"), lambda r, i=i: at_path(r, at).pop(i)
+            yield at + (i, "x2"), lambda r, i=i: at_path(r, at).insert(i, deepcopy(at_path(r, at)[i]))
+    children = node.items() if type(node) is dict else enumerate(node) if type(node) is list else ()
+    for key, child in children:
+        for value in RETYPES:
+            if type(value) is not type(child):
+                yield at + (key, f"={value!r}"), lambda r, key=key, value=value: \
+                    at_path(r, at).__setitem__(key, deepcopy(value))
+        yield from _structural_mutants(child, at + (key,))
+
+
+@pytest.mark.parametrize("name", ["plain", "mixed", "graph-bridge", "alternatives-cells", "risk"])
+def test_every_structural_mutant_of_an_answer_is_refused(tmp_path, no_python_loader, monkeypatch, name):
+    """The response schema and the binding together refuse every structural mutant of a genuine row: none may
+    reach a document. The schema is the service's own row check (`service_schema.ROWS`), as `run_bound` applies
+    it; a row it refuses never reaches the binding."""
+    from ve.backends.service_schema import ROWS, Context, Invalid
+    path = write(tmp_path, dw.text_of(GENERATED[name]))
+    case = {"id": "document", "document": path.read_text(), "admit": True}
+    row = D._lean_answer(path.read_bytes(), True)
+    def rebalanced(mutant):
+        """The mutant with its residual total made consistent again: the second fault of a forged count."""
+        coverage = mutant.get("coverage") if type(mutant) is dict else None
+        residual = coverage.get("residual") if type(coverage) is dict else None
+        if type(residual) is dict and all(type(n) is int for n in residual.values()):
+            mutant = deepcopy(mutant)
+            mutant["coverage"]["residual_total"] = sum(residual.values())
+        return mutant
+
+    accepted, count = [], 0
+    for where, mutate in _structural_mutants(row):
+        once = deepcopy(row)
+        mutate(once)
+        for mutant in (once, rebalanced(once)):
+            if json.dumps(mutant, sort_keys=True) == json.dumps(row, sort_keys=True):
+                continue  # rebalancing restored the genuine row (compared as JSON: True is not 1)
+            count += 1
+            try:
+                ROWS["document"][0](mutant, Context(case), {})
+            except Invalid:
+                continue
+            monkeypatch.setattr(relay, "answer", lambda mode, case, mutant=mutant: (mutant, None))
+            try:
+                D.check_document(path)
+            except CheckerUnavailable as exc:
+                assert "the Lean document answer" in str(exc), where
+            else:
+                accepted.append(where)
+    assert count > 200 and not accepted, accepted
+
+
 @pytest.mark.parametrize("name", ["alternatives-cells", "risk"])
 def test_alternatives_coverage_is_bound_to_units_and_counts(tmp_path, no_python_loader, monkeypatch, name):
     path = write(tmp_path, dw.text_of(GENERATED[name]))
     row = D._lean_answer(path.read_bytes(), False)
     for change in (
+            lambda r: r["coverage"]["residual"].update(forged_line=7),
+            lambda r: r["coverage"]["alternatives"].update(narrowings=[{"forged": 1}]),
             lambda r: r["coverage"]["residual"].update(alternatives_declared=0),
             lambda r: r["coverage"]["alternatives"]["alternatives_declared"][0].update(unit="unknown"),
             lambda r: r["coverage"]["alternatives"]["alternatives_declared"][0].update(support="none")):
