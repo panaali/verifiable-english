@@ -34,7 +34,8 @@
   },
   "reviewed_broad_handlers": {
     "ve/environment.py:Environment.__init__": "W6 environments: Lean's check mode accepts first (its rejection is raised before the handler); a Python failure constructing an environment Lean accepted becomes CheckerUnavailable, never a verdict (LEAN-FIRST-PLAN.md rule 2)",
-    "ve/document.py:load_document": "CheckerUnavailable is re-raised first; a @2 document Lean rejected raises Lean's diagnostic before Python loads it, and a Python failure on one Lean admitted becomes CheckerUnavailable (unavailable_report), never a Python verdict",
+    "ve/document.py:_load": "CheckerUnavailable is re-raised first; a @2 document Lean rejected raises Lean's diagnostic before Python loads it, and a Python failure on one Lean admitted becomes CheckerUnavailable (unavailable_report), never a Python verdict",
+    "ve/document.py:_lean_document": "Builds the document Lean's document mode accepted: CheckerUnavailable is re-raised, any other failure reading the accepted front matter or building the containers becomes CheckerUnavailable, never a verdict",
     "ve/document.py:_check_document": "CheckerUnavailable is re-raised first; a Python failure reporting a @2 document Lean admitted becomes CheckerUnavailable (unavailable_report), never a verdict",
     "ve/reports.py:ReportsDocument.__init__": "a Lean accepted reports environment that Python cannot construct becomes CheckerUnavailable; no report status or verdict is returned",
     "ve/rights.py:RightsDocument.__init__": "Lean accepts the rights source before Python constructs display and search containers; any container construction failure is CheckerUnavailable, never a Python rights verdict",
@@ -65,7 +66,7 @@
     "ve/norm_defaults.py:UnspecifiedDocument.__init__": "after Lean accepts a source, a Python container construction failure is reported as CheckerUnavailable"
   },
   "lean_decoders": {
-    "total_lines": 24707,
+    "total_lines": 24727,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -934,12 +935,12 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 481,
-        "sha256": "6f81c137c4b66f9f090b63c4a96632bb7cf5d1ab5d94a709f8d1daf629e33d17",
+        "lines": 501,
+        "sha256": "af01e7f4a0b2a23df35cfd6f6c7759b53b253eca35e16f420217aff5b5959638",
         "ranges": [
           [
             1,
-            481
+            501
           ]
         ],
         "declarations": [
