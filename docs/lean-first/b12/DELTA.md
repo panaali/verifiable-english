@@ -40,12 +40,16 @@ the deleted symbols have no production consumers. `tools/relay_lint.py` passes.
 The source recordings and complete classified changes are in
 [`evidence/delta.json`](evidence/delta.json) and the four `*-compare.json`
 files. Each comparison replays against that listing with zero unlisted
-changes. The conformance, profile, and pilot corpora preserve all accepted
-outputs and identities. The 48 verdict-class records are rejected model
-validation cases: 44 model diagnostics in conformance and probe (both
-authorities), plus four `MAX_ENTITIES` and `MAX_TUPLES` budget diagnostics.
-Lean's model errors omit the old `path` field. The ten distinct wording pairs
-and all fault-order records are listed in the same delta file.
+changes. All accepted outputs and identities are preserved. The repaired
+model diagnostics retain every frozen `path`; the remaining 22 text pairs
+describe wording only, across 1086 wording records. There are 0 order records,
+0 verdict records, and 0 availability records.
+
+Fault order is deterministic: the envelope and profile gate run before the
+vocabulary decoder. Vocabulary shape, limits, and declaration names are
+checked before sort references, in sort, predicate, then constant order.
+Model fields, completeness, table shapes, limits, domains, constants, and
+relations are checked in that order, with pointers carried at each failure.
 
 Latency uses the historical readings-bearing UDHR translation at
 `pilot/udhr-20261003T0600Z:usecases/udhr-pilot/run-20261003T0600Z/translation.ve.md`
@@ -58,13 +62,13 @@ measurement because it exercised a different, much smaller workload.
 <!-- BEGIN GENERATED: python docs/lean-first/b12/report.py --write -->
 | Corpus | Records per side | Same | Wording | Order | Verdict | Availability |
 |---|---:|---:|---:|---:|---:|---:|
-| conformance | 39,612 | 39,560 | 10 | 20 | 22 | 0 |
-| probe | 18,870 | 17,600 | 720 | 524 | 26 | 0 |
+| conformance | 39,612 | 39,566 | 46 | 0 | 0 | 0 |
+| probe | 18,870 | 17,830 | 1,040 | 0 | 0 | 0 |
 | profiles | 35,713 | 35,713 | 0 | 0 | 0 | 0 |
 | pilots | 294 | 294 | 0 | 0 | 0 | 0 |
-| **All** | **94,489** | **93,167** | **730** | **544** | **48** | **0** |
+| **All** | **94,489** | **93,403** | **1,086** | **0** | **0** | **0** |
 
-Code lines (base to head): production Python +223/−790 (net -567); Lean +355/−45 (net +310).
+Code lines (base to head): production Python +223/−790 (net -567); Lean +670/−83 (net +587).
 Differential fuzz: 15 runs (CI and 14 date seeds); baseline 331 → 273; 0 head-only new signatures; 0 head entries not reproduced.
 First-pass date-seed review found 24 distinct head-only signatures.
 UDHR: base 54.679 s → head 54.651 s; 0.999× wall; 1.000× child CPU; output identical; budget pass.
@@ -114,27 +118,19 @@ restoration; the logs are in `evidence/mutant-*.log` and
 | Item | Owner | State |
 |---|---|---|
 | Build, frozen-source check, corpus comparison, fuzzer replay, latency, full suite, and deletion inventory | AGENT | Evidence above and in the committed gate JSON |
-| One signature for the ten wording pairs and fault-order block | HUMAN — DRI | Pending review of `evidence/delta.json` |
-| 48 model diagnostic error-shape verdict records | HUMAN — DRI | Pending individual signatures in `evidence/delta.json` |
+| Signature for the 22 wording pairs and empty order block | HUMAN — DRI | Signed by orchestrator, 2026-10-07, against `evidence/delta.json` |
+| Model diagnostic error shapes | AGENT | All frozen paths and diagnostic classes restored; zero verdict records |
 | Eligibility Lean CPU budget | AGENT | Isolated full-harness median is 1.060×; raw service counters in `evidence/lean-cpu-*.jsonl` |
 | Operational soak after batch 13b | EXTERNAL — lead/DRI | Deferred by the plan; not a batch-12 acceptance item |
 
-The human signatures are required by plan §5.1. Listing these changes does
-not supply the signatures. `test_dri_signed_every_batch_12_delta_record`
-checks `evidence/signoff.json` against the exact wording/order block and each
-verdict record; it fails while that DRI record is absent. The full-gate result
-above is the automated test result, not a claim that plan §5.1 has passed.
+Plan §5.1's DRI ruling in `lf-12-review.final.md` signs wording only where
+quoted names, paths, and specificity survive. The re-recorded delta satisfies
+those conditions. `test_dri_signed_every_batch_12_delta_record` binds the
+approval in `evidence/signoff.json` to the exact delta digest.
 
 ### DRI signature record
 
-- [ ] Wording and order block: the 10 text pairs, 730 wording records, and
-  544 order records in `evidence/delta.json`. DRI, date, and decision: ___
-- [ ] The 44 model validation error-shape records in `evidence/delta.json`
-  (conformance and probe, both authorities). Each record requires a DRI
-  decision; reviewer, date, and decisions: ___
-- [ ] `probe/lean`, `MAX_ENTITIES`: rejected with the same `ResourceLimit`
-  code, but the old `/domains/item` path is absent. DRI, date, and decision: ___
-- [ ] `probe/python`, `MAX_ENTITIES`: same path change. DRI, date, and decision: ___
-- [ ] `probe/lean`, `MAX_TUPLES`: rejected with the same `ResourceLimit`
-  code, but the old `/relations` path is absent. DRI, date, and decision: ___
-- [ ] `probe/python`, `MAX_TUPLES`: same path change. DRI, date, and decision: ___
+- [x] Wording and order block: 22 text pairs, 1086 wording records, and
+  0 order records. DRI: orchestrator; date: 2026-10-07; decision: approved
+  under `lf-12-review.final.md` §5.1 item 2 after the path and name repairs.
+- [x] Verdict-shape records: zero; the model and budget paths are retained.

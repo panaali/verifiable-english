@@ -1,0 +1,11 @@
+{
+  "format": "lean-first-b12-signoff@1",
+  "wording_order": {
+    "sha256": "a7c63e8291fdc0fb17d94cc4f4c7575033861cfdcee0b291aa4538a1ba015e98",
+    "signed_by": "DRI",
+    "date": "2026-10-07",
+    "decision": "approved",
+    "source": "Orchestrator DRI ruling, 2026-10-07 22:30Z, lf-12-review.final.md §5.1 item 2; every quoted name and base path retained, specificity reviewed against the re-recorded delta"
+  },
+  "verdicts": []
+}

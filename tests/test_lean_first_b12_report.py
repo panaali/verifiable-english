@@ -4,6 +4,7 @@ from __future__ import annotations
 import importlib.util
 import json
 from pathlib import Path
+import re
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -18,8 +19,14 @@ spec.loader.exec_module(signoff)
 
 def test_dri_signoff_requires_exactly_the_listed_changes():
     delta = report.load("delta.json")
+    # Exercise record-level signatures even when the production delta has no
+    # verdict changes after paths and diagnostic classes are restored.
+    delta["verdict"].append({"corpus": "synthetic", "authority": "lean",
+                             "case": "signature-test", "op": "model",
+                             "base": {"raised": {"code": "InvalidModel", "message": "old"}},
+                             "head": {"raised": {"code": "InvalidInput", "message": "new"}}})
     block, records = signoff.required(delta)
-    assert block is not None and len(records) == 48
+    assert block is not None and len(records) == len(delta["verdict"]) + len(delta["availability"])
     signature = lambda identifier: {"sha256": identifier, "signed_by": "DRI",
                                     "date": "2026-10-07", "decision": "approved",
                                     "source": "explicit DRI decision"}
@@ -47,19 +54,20 @@ def test_dri_signed_every_batch_12_delta_record():
     assert signoff.check() == []
 
 
-def test_quoted_sort_name_loss_remains_in_delta_until_signed():
-    """The recorded wording change cannot silently disappear from DRI review."""
+def test_delta_retains_frozen_paths_and_quoted_names():
+    """The DRI signed wording only where the old diagnostic's information survives."""
     delta = report.load("delta.json")
-    pairs = {(row["base"], row["head"]) for row in delta["wording"]}
-    for sort in ("absent", "unknown"):
-        assert (f"UnknownSymbol: Undeclared predicate argument sort: '{sort}'",
-                "UnknownSymbol: Undeclared predicate argument sort") in pairs
-    original, _ = signoff.required(delta)
-    changed = json.loads(json.dumps(delta))
-    changed["wording"] = [row for row in changed["wording"] if not (
-        row["base"].endswith("sort: 'absent'") and
-        row["head"] == "UnknownSymbol: Undeclared predicate argument sort")]
-    assert signoff.required(changed)[0] != original
+    quoted = lambda text: re.findall(r"'[^']+'", text)
+    for row in delta["wording"]:
+        for name in quoted(row["base"]):
+            assert name in row["head"], row
+    for row in [*delta["verdict"], *delta["order"]]:
+        base = row["base"].get("raised", {})
+        head = row["head"].get("raised", {})
+        if "path" in base:
+            assert head.get("path") == base["path"], row
+        for name in quoted(base.get("message", "")):
+            assert name in head.get("message", ""), row
 
 
 def test_delta_numbers_are_regenerated_from_evidence():

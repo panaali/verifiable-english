@@ -1,25 +1,25 @@
 {
   "conformance": {
     "base": {
-      "path": "/tmp/ve-b12-ab-base-conformance.jsonl",
+      "path": "/tmp/ve-lf12-base-conformance-v3.jsonl",
       "sha256": "86b59967ac446e3f183b5c243d26cfc3bb04af95bc08024923845b06ceaa9b3d",
       "records": 39612
     },
     "head": {
-      "path": "/tmp/ve-b12-ab-head-conformance-v4.jsonl",
-      "sha256": "34a9a4c961053d14f89e06ccfdfb02c05e128f7434fd94dc837b832f557d834b",
+      "path": "/tmp/ve-lf12-head-conformance-v5.jsonl",
+      "sha256": "afbc67f55f5be855250352f914f261bfe655c42a969bff564e13c04d280cfdda",
       "records": 39612
     }
   },
   "probe": {
     "base": {
-      "path": "/tmp/ve-b12-ab-base-probe-v2.jsonl",
+      "path": "/tmp/ve-lf12-base-probe-v3.jsonl",
       "sha256": "0b537f2fa13026fe77f462cce19e7a8289350140435893bffd5b1a8f8eb0d1b6",
       "records": 18870
     },
     "head": {
-      "path": "/tmp/ve-b12-ab-head-probe-v5.jsonl",
-      "sha256": "a82cdff49002d4e23d50a22ff6b46cded342145915ffbaeb158decdf0400cab1",
+      "path": "/tmp/ve-lf12-head-probe-v5.jsonl",
+      "sha256": "8ebe5137aec6bb0ca561bb3928cfcbb40b12aca48e70bab13e4ea9c36709442a",
       "records": 18870
     }
   },

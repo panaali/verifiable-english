@@ -9,12 +9,12 @@
     }
    },
    "case": "validation/validation_000",
-   "class": "order",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
-     "code": "InvalidInput",
-     "message": "fields do not match: expected [language, profiles, spec_revision, vocabulary], got [language, profile, spec_revision, vocabulary]"
+     "code": "UnsupportedProfile",
+     "message": "UnsupportedProfile: Unsupported language"
     }
    },
    "listed": true,
@@ -34,7 +34,7 @@
    "head": {
     "raised": {
      "code": "InvalidInput",
-     "message": "fields do not match: expected [language, profile, spec_revision, vocabulary], got [extra, language, profile, spec_revision, vocabulary]"
+     "message": "fields do not match: expected ['language', 'profile', 'spec_revision', 'vocabulary'], got ['extra', 'language', 'profile', 'spec_revision', 'vocabulary']"
     }
    },
    "listed": true,
@@ -64,57 +64,17 @@
    "authority": "lean",
    "base": {
     "raised": {
-     "code": "UnknownSymbol",
-     "message": "UnknownSymbol: Undeclared predicate argument sort: 'unknown'"
-    }
-   },
-   "case": "validation/validation_003",
-   "class": "wording",
-   "corpus": "conformance",
-   "head": {
-    "raised": {
-     "code": "UnknownSymbol",
-     "message": "UnknownSymbol: Undeclared predicate argument sort"
-    }
-   },
-   "listed": true,
-   "op": "environment"
-  },
-  {
-   "authority": "lean",
-   "base": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "Predicate arguments must be an array of one to 2 sort identifiers"
-    }
-   },
-   "case": "validation/validation_004",
-   "class": "order",
-   "corpus": "conformance",
-   "head": {
-    "raised": {
-     "code": "UnknownSymbol",
-     "message": "UnknownSymbol: Undeclared predicate argument sort"
-    }
-   },
-   "listed": true,
-   "op": "environment"
-  },
-  {
-   "authority": "lean",
-   "base": {
-    "raised": {
      "code": "DuplicateDeclaration",
      "message": "Schema identifier 'x0' is reserved"
     }
    },
    "case": "validation/validation_005",
-   "class": "order",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
-     "code": "InvalidInput",
-     "message": "invalid or reserved declaration: x0"
+     "code": "DuplicateDeclaration",
+     "message": "DuplicateDeclaration: Schema identifier 'x0' is reserved"
     }
    },
    "listed": true,
@@ -129,12 +89,12 @@
     }
    },
    "case": "validation/validation_006",
-   "class": "order",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
-     "code": "InvalidInput",
-     "message": "duplicate declaration"
+     "code": "DuplicateDeclaration",
+     "message": "DuplicateDeclaration: Symbol 'owns' is declared in multiple categories"
     }
    },
    "listed": true,
@@ -150,12 +110,13 @@
     }
    },
    "case": "validation/validation_007",
-   "class": "verdict",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
      "code": "InvalidModel",
-     "message": "InvalidModel: complete must be true"
+     "message": "InvalidModel: complete must be the Boolean true",
+     "path": "/complete"
     }
    },
    "listed": true,
@@ -171,12 +132,13 @@
     }
    },
    "case": "validation/validation_008",
-   "class": "verdict",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
      "code": "InvalidModel",
-     "message": "InvalidModel: Bool expected"
+     "message": "InvalidModel: complete must be the Boolean true",
+     "path": "/complete"
     }
    },
    "listed": true,
@@ -196,7 +158,7 @@
    "head": {
     "raised": {
      "code": "InvalidModel",
-     "message": "InvalidModel: fields do not match: expected [complete, domains, constants, relations], got [complete, constants, domains, extra, relations]"
+     "message": "InvalidModel: fields do not match: expected ['complete', 'domains', 'constants', 'relations'], got ['complete', 'constants', 'domains', 'extra', 'relations']"
     }
    },
    "listed": true,
@@ -212,12 +174,13 @@
     }
    },
    "case": "validation/validation_010",
-   "class": "verdict",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
      "code": "InvalidModel",
-     "message": "InvalidModel: fields do not match: expected [deployed, owns, reviewed], got [deployed, reviewed]"
+     "message": "InvalidModel: fields do not match: expected ['deployed', 'owns', 'reviewed'], got ['deployed', 'reviewed']",
+     "path": "/relations"
     }
    },
    "listed": true,
@@ -233,12 +196,13 @@
     }
    },
    "case": "validation/validation_011",
-   "class": "verdict",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
      "code": "InvalidModel",
-     "message": "InvalidModel: fields do not match: expected [person, service], got [service]"
+     "message": "InvalidModel: fields do not match: expected ['person', 'service'], got ['service']",
+     "path": "/domains"
     }
    },
    "listed": true,
@@ -254,12 +218,13 @@
     }
    },
    "case": "validation/validation_012",
-   "class": "verdict",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
      "code": "InvalidModel",
-     "message": "InvalidModel: duplicate domain entity"
+     "message": "InvalidModel: duplicate domain entity",
+     "path": "/domains/person"
     }
    },
    "listed": true,
@@ -275,12 +240,13 @@
     }
    },
    "case": "validation/validation_013",
-   "class": "verdict",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
      "code": "InvalidModel",
-     "message": "InvalidModel: invalid local identifier"
+     "message": "InvalidModel: local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
     }
    },
    "listed": true,
@@ -296,12 +262,13 @@
     }
    },
    "case": "validation/validation_014",
-   "class": "verdict",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
      "code": "InvalidModel",
-     "message": "InvalidModel: duplicate relation tuple"
+     "message": "InvalidModel: duplicate relation tuple",
+     "path": "/relations/owns"
     }
    },
    "listed": true,
@@ -317,12 +284,13 @@
     }
    },
    "case": "validation/validation_015",
-   "class": "verdict",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
      "code": "InvalidModel",
-     "message": "InvalidModel: dangling or wrong-sort tuple"
+     "message": "InvalidModel: relation tuple contains a dangling or wrong-sort entity",
+     "path": "/relations/owns/0/0"
     }
    },
    "listed": true,
@@ -338,12 +306,13 @@
     }
    },
    "case": "validation/validation_016",
-   "class": "verdict",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
      "code": "InvalidModel",
-     "message": "InvalidModel: dangling or wrong-sort tuple"
+     "message": "InvalidModel: relation tuple contains a dangling or wrong-sort entity",
+     "path": "/relations/owns/0/0"
     }
    },
    "listed": true,
@@ -359,12 +328,13 @@
     }
    },
    "case": "validation/validation_017",
-   "class": "verdict",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
      "code": "InvalidModel",
-     "message": "InvalidModel: wrong relation arity"
+     "message": "InvalidModel: relation tuple has wrong arity",
+     "path": "/relations/owns/0"
     }
    },
    "listed": true,
@@ -379,12 +349,12 @@
     }
    },
    "case": "validation/validation_027",
-   "class": "order",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
-     "code": "InvalidInput",
-     "message": "invalid or reserved declaration: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Identifier exceeds 64 ASCII bytes"
     }
    },
    "listed": true,
@@ -400,12 +370,13 @@
     }
    },
    "case": "validation/validation_028",
-   "class": "verdict",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
      "code": "ResourceLimit",
-     "message": "ResourceLimit: local ID exceeds 64 ASCII bytes"
+     "message": "ResourceLimit: local ID exceeds 64 ASCII bytes",
+     "path": "/domains/person/1"
     }
    },
    "listed": true,
@@ -420,12 +391,12 @@
     }
    },
    "case": "validation/validation_029",
-   "class": "order",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
-     "code": "InvalidInput",
-     "message": "invalid or reserved declaration: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Identifier exceeds 64 ASCII bytes"
     }
    },
    "listed": true,
@@ -441,36 +412,17 @@
     }
    },
    "case": "validation/validation_030",
-   "class": "order",
-   "corpus": "conformance",
-   "head": {
-    "raised": {
-     "code": "ResourceLimit",
-     "message": "ResourceLimit: local ID exceeds 64 ASCII bytes"
-    }
-   },
-   "listed": true,
-   "op": "model"
-  },
-  {
-   "authority": "lean",
-   "base": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "Invalid ASCII identifier: 'éééééééééééééééééééééééééééééééééééééééé'"
-    }
-   },
-   "case": "validation/validation_031",
    "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
-     "code": "InvalidInput",
-     "message": "invalid or reserved declaration: éééééééééééééééééééééééééééééééééééééééé"
+     "code": "InvalidModel",
+     "message": "InvalidModel: local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
     }
    },
    "listed": true,
-   "op": "environment"
+   "op": "model"
   },
   {
    "authority": "lean",
@@ -482,12 +434,13 @@
     }
    },
    "case": "validation/validation_032",
-   "class": "order",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
-     "code": "ResourceLimit",
-     "message": "ResourceLimit: local ID exceeds 64 ASCII bytes"
+     "code": "InvalidModel",
+     "message": "InvalidModel: local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
     }
    },
    "listed": true,
@@ -502,12 +455,12 @@
     }
    },
    "case": "validation/validation_033",
-   "class": "order",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
-     "code": "InvalidInput",
-     "message": "invalid or reserved declaration: ééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé"
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Identifier exceeds 64 ASCII bytes"
     }
    },
    "listed": true,
@@ -523,12 +476,13 @@
     }
    },
    "case": "validation/validation_034",
-   "class": "order",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
-     "code": "ResourceLimit",
-     "message": "ResourceLimit: local ID exceeds 64 ASCII bytes"
+     "code": "InvalidModel",
+     "message": "InvalidModel: local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
     }
    },
    "listed": true,
@@ -543,12 +497,12 @@
     }
    },
    "case": "validation/validation_000",
-   "class": "order",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
-     "code": "InvalidInput",
-     "message": "fields do not match: expected [language, profiles, spec_revision, vocabulary], got [language, profile, spec_revision, vocabulary]"
+     "code": "UnsupportedProfile",
+     "message": "UnsupportedProfile: Unsupported language"
     }
    },
    "listed": true,
@@ -568,7 +522,7 @@
    "head": {
     "raised": {
      "code": "InvalidInput",
-     "message": "fields do not match: expected [language, profile, spec_revision, vocabulary], got [extra, language, profile, spec_revision, vocabulary]"
+     "message": "fields do not match: expected ['language', 'profile', 'spec_revision', 'vocabulary'], got ['extra', 'language', 'profile', 'spec_revision', 'vocabulary']"
     }
    },
    "listed": true,
@@ -598,57 +552,17 @@
    "authority": "python",
    "base": {
     "raised": {
-     "code": "UnknownSymbol",
-     "message": "UnknownSymbol: Undeclared predicate argument sort: 'unknown'"
-    }
-   },
-   "case": "validation/validation_003",
-   "class": "wording",
-   "corpus": "conformance",
-   "head": {
-    "raised": {
-     "code": "UnknownSymbol",
-     "message": "UnknownSymbol: Undeclared predicate argument sort"
-    }
-   },
-   "listed": true,
-   "op": "environment"
-  },
-  {
-   "authority": "python",
-   "base": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "Predicate arguments must be an array of one to 2 sort identifiers"
-    }
-   },
-   "case": "validation/validation_004",
-   "class": "order",
-   "corpus": "conformance",
-   "head": {
-    "raised": {
-     "code": "UnknownSymbol",
-     "message": "UnknownSymbol: Undeclared predicate argument sort"
-    }
-   },
-   "listed": true,
-   "op": "environment"
-  },
-  {
-   "authority": "python",
-   "base": {
-    "raised": {
      "code": "DuplicateDeclaration",
      "message": "Schema identifier 'x0' is reserved"
     }
    },
    "case": "validation/validation_005",
-   "class": "order",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
-     "code": "InvalidInput",
-     "message": "invalid or reserved declaration: x0"
+     "code": "DuplicateDeclaration",
+     "message": "DuplicateDeclaration: Schema identifier 'x0' is reserved"
     }
    },
    "listed": true,
@@ -663,12 +577,12 @@
     }
    },
    "case": "validation/validation_006",
-   "class": "order",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
-     "code": "InvalidInput",
-     "message": "duplicate declaration"
+     "code": "DuplicateDeclaration",
+     "message": "DuplicateDeclaration: Symbol 'owns' is declared in multiple categories"
     }
    },
    "listed": true,
@@ -684,12 +598,13 @@
     }
    },
    "case": "validation/validation_007",
-   "class": "verdict",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
      "code": "InvalidModel",
-     "message": "InvalidModel: complete must be true"
+     "message": "InvalidModel: complete must be the Boolean true",
+     "path": "/complete"
     }
    },
    "listed": true,
@@ -705,12 +620,13 @@
     }
    },
    "case": "validation/validation_008",
-   "class": "verdict",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
      "code": "InvalidModel",
-     "message": "InvalidModel: Bool expected"
+     "message": "InvalidModel: complete must be the Boolean true",
+     "path": "/complete"
     }
    },
    "listed": true,
@@ -730,7 +646,7 @@
    "head": {
     "raised": {
      "code": "InvalidModel",
-     "message": "InvalidModel: fields do not match: expected [complete, domains, constants, relations], got [complete, constants, domains, extra, relations]"
+     "message": "InvalidModel: fields do not match: expected ['complete', 'domains', 'constants', 'relations'], got ['complete', 'constants', 'domains', 'extra', 'relations']"
     }
    },
    "listed": true,
@@ -746,12 +662,13 @@
     }
    },
    "case": "validation/validation_010",
-   "class": "verdict",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
      "code": "InvalidModel",
-     "message": "InvalidModel: fields do not match: expected [deployed, owns, reviewed], got [deployed, reviewed]"
+     "message": "InvalidModel: fields do not match: expected ['deployed', 'owns', 'reviewed'], got ['deployed', 'reviewed']",
+     "path": "/relations"
     }
    },
    "listed": true,
@@ -767,12 +684,13 @@
     }
    },
    "case": "validation/validation_011",
-   "class": "verdict",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
      "code": "InvalidModel",
-     "message": "InvalidModel: fields do not match: expected [person, service], got [service]"
+     "message": "InvalidModel: fields do not match: expected ['person', 'service'], got ['service']",
+     "path": "/domains"
     }
    },
    "listed": true,
@@ -788,12 +706,13 @@
     }
    },
    "case": "validation/validation_012",
-   "class": "verdict",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
      "code": "InvalidModel",
-     "message": "InvalidModel: duplicate domain entity"
+     "message": "InvalidModel: duplicate domain entity",
+     "path": "/domains/person"
     }
    },
    "listed": true,
@@ -809,12 +728,13 @@
     }
    },
    "case": "validation/validation_013",
-   "class": "verdict",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
      "code": "InvalidModel",
-     "message": "InvalidModel: invalid local identifier"
+     "message": "InvalidModel: local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
     }
    },
    "listed": true,
@@ -830,12 +750,13 @@
     }
    },
    "case": "validation/validation_014",
-   "class": "verdict",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
      "code": "InvalidModel",
-     "message": "InvalidModel: duplicate relation tuple"
+     "message": "InvalidModel: duplicate relation tuple",
+     "path": "/relations/owns"
     }
    },
    "listed": true,
@@ -851,12 +772,13 @@
     }
    },
    "case": "validation/validation_015",
-   "class": "verdict",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
      "code": "InvalidModel",
-     "message": "InvalidModel: dangling or wrong-sort tuple"
+     "message": "InvalidModel: relation tuple contains a dangling or wrong-sort entity",
+     "path": "/relations/owns/0/0"
     }
    },
    "listed": true,
@@ -872,12 +794,13 @@
     }
    },
    "case": "validation/validation_016",
-   "class": "verdict",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
      "code": "InvalidModel",
-     "message": "InvalidModel: dangling or wrong-sort tuple"
+     "message": "InvalidModel: relation tuple contains a dangling or wrong-sort entity",
+     "path": "/relations/owns/0/0"
     }
    },
    "listed": true,
@@ -893,12 +816,13 @@
     }
    },
    "case": "validation/validation_017",
-   "class": "verdict",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
      "code": "InvalidModel",
-     "message": "InvalidModel: wrong relation arity"
+     "message": "InvalidModel: relation tuple has wrong arity",
+     "path": "/relations/owns/0"
     }
    },
    "listed": true,
@@ -913,12 +837,12 @@
     }
    },
    "case": "validation/validation_027",
-   "class": "order",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
-     "code": "InvalidInput",
-     "message": "invalid or reserved declaration: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Identifier exceeds 64 ASCII bytes"
     }
    },
    "listed": true,
@@ -934,12 +858,13 @@
     }
    },
    "case": "validation/validation_028",
-   "class": "verdict",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
      "code": "ResourceLimit",
-     "message": "ResourceLimit: local ID exceeds 64 ASCII bytes"
+     "message": "ResourceLimit: local ID exceeds 64 ASCII bytes",
+     "path": "/domains/person/1"
     }
    },
    "listed": true,
@@ -954,12 +879,12 @@
     }
    },
    "case": "validation/validation_029",
-   "class": "order",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
-     "code": "InvalidInput",
-     "message": "invalid or reserved declaration: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Identifier exceeds 64 ASCII bytes"
     }
    },
    "listed": true,
@@ -975,36 +900,17 @@
     }
    },
    "case": "validation/validation_030",
-   "class": "order",
-   "corpus": "conformance",
-   "head": {
-    "raised": {
-     "code": "ResourceLimit",
-     "message": "ResourceLimit: local ID exceeds 64 ASCII bytes"
-    }
-   },
-   "listed": true,
-   "op": "model"
-  },
-  {
-   "authority": "python",
-   "base": {
-    "raised": {
-     "code": "InvalidInput",
-     "message": "Invalid ASCII identifier: 'éééééééééééééééééééééééééééééééééééééééé'"
-    }
-   },
-   "case": "validation/validation_031",
    "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
-     "code": "InvalidInput",
-     "message": "invalid or reserved declaration: éééééééééééééééééééééééééééééééééééééééé"
+     "code": "InvalidModel",
+     "message": "InvalidModel: local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
     }
    },
    "listed": true,
-   "op": "environment"
+   "op": "model"
   },
   {
    "authority": "python",
@@ -1016,12 +922,13 @@
     }
    },
    "case": "validation/validation_032",
-   "class": "order",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
-     "code": "ResourceLimit",
-     "message": "ResourceLimit: local ID exceeds 64 ASCII bytes"
+     "code": "InvalidModel",
+     "message": "InvalidModel: local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
     }
    },
    "listed": true,
@@ -1036,12 +943,12 @@
     }
    },
    "case": "validation/validation_033",
-   "class": "order",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
-     "code": "InvalidInput",
-     "message": "invalid or reserved declaration: ééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé"
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Identifier exceeds 64 ASCII bytes"
     }
    },
    "listed": true,
@@ -1057,12 +964,13 @@
     }
    },
    "case": "validation/validation_034",
-   "class": "order",
+   "class": "wording",
    "corpus": "conformance",
    "head": {
     "raised": {
-     "code": "ResourceLimit",
-     "message": "ResourceLimit: local ID exceeds 64 ASCII bytes"
+     "code": "InvalidModel",
+     "message": "InvalidModel: local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
     }
    },
    "listed": true,
@@ -1074,10 +982,8 @@
   "conformance/python": 19806
  },
  "totals": {
-  "order": 20,
-  "same": 39560,
-  "verdict": 22,
-  "wording": 10
+  "same": 39566,
+  "wording": 46
  },
  "unavailable_both": {},
  "unlisted": 0
