@@ -1,0 +1,79 @@
+{
+  "batch": "RD-8",
+  "branch": "readings-defaults/rd8",
+  "base": "167eb8ff",
+  "commits": [
+    {"hash": "c3d86995", "subject": "lean: senses requests read a document's fences and front-matter defaults (RD-8)"},
+    {"hash": "fd807ff9", "subject": "manifest: pin the RD-8 senses runner and list its theorems"},
+    {"hash": "b87766c5", "subject": "document: senses documents read their English fences through Lean (RD-8)"},
+    {"hash": "787781a9", "subject": "tests: RD-8 budget, deadline and identity checks for fence requests"},
+    {"hash": "d7f8055b", "subject": "docs: RD-8 report, saved evidence and the test that checks one against the other"}
+  ],
+  "theorems": [
+    "VE.Senses.readSents_ok",
+    "VE.Senses.readDocument_source",
+    "VE.Senses.readDocument_bad_default",
+    "VE.Senses.badDefault_none",
+    "VE.Senses.readDocument_both",
+    "VE.Senses.readDocument_defaults",
+    "VE.Senses.defaults_read_as_lines",
+    "VE.Senses.fenceSents_ok",
+    "VE.Senses.readDocument_ok",
+    "VE.Senses.documentInput_fences",
+    "VE.Senses.document_unit_sound",
+    "VE.Senses.document_line_sound"
+  ],
+  "tests_added": {"tests/test_senses_document.py": 67, "tests/test_relay_lint.py": 12},
+  "mutants": [
+    {"id": "M1", "behaviour": "defaults lines go before the text", "file": "lean/VE/Senses/Document.lean",
+     "caught_by": "lake build: readDocument_defaults and document_unit_sound no longer prove"},
+    {"id": "M2", "behaviour": "defaults together with a written line are refused", "file": "lean/VE/Senses/Document.lean",
+     "caught_by": "lake build: readDocument_both no longer proves"},
+    {"id": "M3", "behaviour": "each fence is one sentence", "file": "lean/VE/Senses/Document.lean",
+     "caught_by": "lake build: fenceSents_ok no longer proves"},
+    {"id": "M4", "behaviour": "the Unresolved text is Lean's (one candidate)", "file": "lean/VE/Senses/Document.lean",
+     "caught_by": "lake build: three #guard fixtures of VE.Senses.DocumentExamples fail"},
+    {"id": "M5", "behaviour": "a senses document's fences bypass parse_english", "file": "ve/document.py",
+     "caught_by": "pytest: 5 tests of tests/test_senses_document.py fail (with -x), among them test_s9_formula_and_meaning_id_are_leans"},
+    {"id": "M6", "behaviour": "the relay checks Lean's fence map", "file": "ve/backends/senses.py",
+     "caught_by": "pytest: 6 cases of test_genuine_fence_answer_mutations_are_rejected fail"},
+    {"id": "M7", "behaviour": "an open fence is refused unless its unit has a reading set", "file": "ve/senses_document.py",
+     "caught_by": "pytest: test_open_fence_refused_with_leans_unresolved_text[s16] and test_one_fence_gets_the_answer_senses_check_gives fail"},
+    {"id": "M8", "behaviour": "the relay lint forbids parse_english on the senses path", "file": "tools/relay_lint.py",
+     "caught_by": "pytest: 4 cases of test_seeded_senses_modules fail (with -x)"}
+  ],
+  "gate": {
+    "head": "787781a9",
+    "lake_build_jobs": 789,
+    "audit_files": 433,
+    "audit_theorems": 4684,
+    "statements": 4323,
+    "lean_modules": 433,
+    "gate_collection_ids": 11891,
+    "pytest_chunks": [
+      {"passed": 2022, "skipped": 1},
+      {"passed": 3929, "skipped": 2},
+      {"passed": 1877, "skipped": 4},
+      {"passed": 2440, "skipped": 0},
+      {"passed": 1578, "skipped": 0}
+    ],
+    "failed": 0,
+    "slow_tests_passed": 28,
+    "tools_tests_passed": 51
+  },
+  "review_fix_commits": [
+    {"hash": "f687b55c", "subject": "senses: let Lean decide open fence admission and bind fence sentences"},
+    {"hash": "6656559f", "subject": "docs: RD-8 review fixes and final gate evidence"},
+    {"hash": "493cb831", "subject": "build: refresh RD-8 generated tables and test inventory"},
+    {"hash": "837e2807", "subject": "docs: RD-8 review fixes and final gate evidence"},
+    {"hash": "b0739788", "subject": "senses: a malformed reading-set unit or fence id is refused, never a TypeError"},
+    {"hash": "60914d2c", "subject": "senses: open-fence text counts the author's fences and fence-id refusals name their fault"},
+    {"hash": "4fe6ceb5", "subject": "tests: the RD-8 report commit is looked up in HEAD's history only"}
+  ],
+  "final_gate": {
+    "target": "self",
+    "checks": ["lake build", "python3 lean/audit.py", "full pytest"],
+    "results": {"lake build": "PASS", "python3 lean/audit.py": "PASS", "full pytest": "PASS"}
+  },
+  "trust_budget": {"base": {"S": 9334, "V": 31353}, "head": {"S": 9416, "V": 31373}}
+}

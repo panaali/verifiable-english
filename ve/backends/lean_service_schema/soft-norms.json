@@ -11,6 +11,8 @@
             {
               "x-select": [
                 {"then": {"$ref": "#/$defs/admission"}, "when": {"$ref": "#/$defs/kind/admission"}},
+                {"then": {"$ref": "#/$defs/rule"}, "when": {"$ref": "#/$defs/kind/soft-rule"}},
+                {"then": {"$ref": "#/$defs/rules"}, "when": {"$ref": "#/$defs/kind/soft-rules"}},
                 {"then": {"$ref": "#/$defs/elaborate"}, "when": {"$ref": "#/$defs/kind/soft-elaborate"}},
                 {"then": {"$ref": "#/$defs/pairs"}, "when": {"$ref": "#/$defs/kind/soft-pairs"}},
                 {"then": {"$ref": "#/$defs/certificate"}, "when": {"$ref": "#/$defs/kind/soft-certificate"}},
@@ -85,12 +87,47 @@
         "conditional_on": {"$ref": "#/$defs/coherence_labels"},
         "conflict_targets": {"$ref": "common.json#/$defs/conflict_targets"},
         "decisions": {"$ref": "#/$defs/elaborated/decisions"},
+        "default_exceptions_by_decider": {"additionalProperties": {"$ref": "common.json#/$defs/nat"}, "type": "object"},
         "derived": {"$ref": "#/$defs/elaborated/derived"},
+        "document_hash": {"$ref": "common.json#/$defs/hex64"},
         "environment_prime": {"$ref": "common.json#/$defs/environment"},
         "fragment": {"type": "boolean"},
         "id": {"$ref": "common.json#/$defs/id_ok"},
+        "incompatible_pairs": {"items": {"$ref": "common.json#/$defs/string_pair"}, "type": "array"},
         "order": {"$ref": "common.json#/$defs/strings"},
+        "overlaps": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "line": {"pattern": "Overlap\\(.*", "type": "string"},
+              "model": {"$ref": "#/$defs/witness_model"},
+              "pair": {"$ref": "common.json#/$defs/string_pair"},
+              "tuple": {"$ref": "common.json#/$defs/strings"}
+            },
+            "required": ["pair", "tuple", "model", "line"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "override_cycles": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "cycle": {"$ref": "common.json#/$defs/strings"},
+              "line": {"pattern": "override_cycles:.*", "type": "string"},
+              "model": {"$ref": "#/$defs/witness_model"},
+              "tuple": {"$ref": "common.json#/$defs/strings"}
+            },
+            "required": ["cycle", "tuple", "model", "line"],
+            "type": "object"
+          },
+          "type": "array"
+        },
         "premises": {"$ref": "common.json#/$defs/layer_premises"},
+        "ranks_above": {"additionalProperties": {"$ref": "common.json#/$defs/strings"}, "type": "object"},
+        "rule_acts": {"additionalProperties": {"type": "string"}, "type": "object"},
+        "soft_residual": {"$ref": "#/$defs/soft_residual"},
+        "soft_status": {"enum": ["CHECKED", "OPEN"]},
         "status": {"const": "ok"},
         "warnings": {"$ref": "common.json#/$defs/nonempty_strings"}
       },
@@ -98,14 +135,21 @@
         "id",
         "status",
         "environment_prime",
+        "document_hash",
         "decisions",
+        "ranks_above",
         "derived",
         "order",
         "background",
         "premises",
         "colliding_pairs",
+        "rule_acts",
+        "incompatible_pairs",
         "conflict_targets",
         "conditional_on",
+        "soft_residual",
+        "soft_status",
+        "default_exceptions_by_decider",
         "fragment",
         "warnings"
       ],
@@ -121,9 +165,10 @@
             "ast": {"$ref": "common.json#/$defs/generated_formula"},
             "comparable": {"type": "boolean"},
             "label": {"pattern": "soft:coherence:.*", "type": "string"},
+            "outweighs": {"anyOf": [{"const": null}, {"pattern": "soft__outweighs__.*", "type": "string"}]},
             "pair": {"$ref": "common.json#/$defs/string_pair"}
           },
-          "required": ["pair", "act", "comparable", "label", "ast"],
+          "required": ["pair", "act", "comparable", "label", "ast", "outweighs"],
           "type": "object"
         },
         "type": "array"
@@ -187,6 +232,7 @@
             "SOFT_UNSUPPORTED_PROFILE"
           ]
         },
+        "dual_guard_cycle": {"const": true},
         "error": {"$ref": "common.json#/$defs/text"},
         "id": {"x-echo": "/id"},
         "status": {"const": "error"}
@@ -199,7 +245,9 @@
       "soft-certificate": {"properties": {"kind": {"const": "soft-certificate"}}, "required": ["kind"], "type": "object"},
       "soft-conflict": {"properties": {"kind": {"const": "soft-conflict"}}, "required": ["kind"], "type": "object"},
       "soft-elaborate": {"properties": {"kind": {"const": "soft-elaborate"}}, "required": ["kind"], "type": "object"},
-      "soft-pairs": {"properties": {"kind": {"const": "soft-pairs"}}, "required": ["kind"], "type": "object"}
+      "soft-pairs": {"properties": {"kind": {"const": "soft-pairs"}}, "required": ["kind"], "type": "object"},
+      "soft-rule": {"properties": {"kind": {"const": "soft-rule"}}, "required": ["kind"], "type": "object"},
+      "soft-rules": {"properties": {"kind": {"const": "soft-rules"}}, "required": ["kind"], "type": "object"}
     },
     "packages": {
       "$comment": "SoftNorms.Run.runSoftKind soft-conflict over certificate packages: detail exactly beside UNKNOWN (firstFailure).",
@@ -248,6 +296,42 @@
         "weighing_points": {"$ref": "#/$defs/coherence_labels"}
       },
       "required": ["id", "status", "pairs", "discharged", "weighing_points"],
+      "type": "object"
+    },
+    "rule": {
+      "$comment": "SoftNorms.Run.runSoftKind: Lean accepted the standalone soft rule.",
+      "additionalProperties": false,
+      "properties": {"accepted": {"const": true}, "id": {"$ref": "common.json#/$defs/id_ok"}, "status": {"const": "ok"}},
+      "required": ["id", "status", "accepted"],
+      "type": "object"
+    },
+    "rules": {
+      "$comment": "SoftNorms.Run.runSoftKind: each standalone rule is checked under one decoded source.",
+      "additionalProperties": false,
+      "properties": {
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "results": {
+          "items": {
+            "anyOf": [
+              {
+                "additionalProperties": false,
+                "properties": {"status": {"const": "ok"}},
+                "required": ["status"],
+                "type": "object"
+              },
+              {
+                "additionalProperties": false,
+                "properties": {"error": {"$ref": "common.json#/$defs/text"}, "status": {"const": "error"}},
+                "required": ["status", "error"],
+                "type": "object"
+              }
+            ]
+          },
+          "type": "array"
+        },
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "results"],
       "type": "object"
     },
     "soft_field": {
@@ -337,6 +421,17 @@
       ],
       "type": "object"
     },
+    "soft_residual": {
+      "additionalProperties": false,
+      "properties": {
+        "default_exceptions": {"$ref": "common.json#/$defs/nat"},
+        "holistic_overrides": {"$ref": "common.json#/$defs/nat"},
+        "instruction_switches": {"$ref": "common.json#/$defs/nat"},
+        "weighing_points": {"$ref": "common.json#/$defs/nat"}
+      },
+      "required": ["default_exceptions", "instruction_switches", "holistic_overrides", "weighing_points"],
+      "type": "object"
+    },
     "witness": {
       "$comment": "SoftNorms.Run.runSoftKind soft-conflict with a witness: the requested target, and its kind beside a CONFLICT.",
       "additionalProperties": false,
@@ -353,6 +448,21 @@
       },
       "required": ["id", "status", "verdict", "target", "targets", "status_text"],
       "then": {"required": ["witness_kind"]},
+      "type": "object"
+    },
+    "witness_model": {
+      "$comment": "A Lean-checked finite model echoed with a witnessed soft finding.",
+      "additionalProperties": false,
+      "properties": {
+        "complete": {"type": "boolean"},
+        "constants": {"additionalProperties": {"type": "string"}, "type": "object"},
+        "domains": {"additionalProperties": {"$ref": "common.json#/$defs/strings"}, "type": "object"},
+        "relations": {
+          "additionalProperties": {"items": {"$ref": "common.json#/$defs/strings"}, "type": "array"},
+          "type": "object"
+        }
+      },
+      "required": ["complete", "domains", "constants", "relations"],
       "type": "object"
     }
   }

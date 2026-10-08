@@ -120,6 +120,7 @@ def fixtures():
 def test_python_lean_spec_fixture(name, raw, rules, decisions, required, permitted):
     soft = SoftNormDocument(SoftEnvironment(raw), rules)
     lean = _run({"id": name, "kind": "soft-elaborate", "environment": raw, "norms": rules})
+    assert soft.document_hash == lean["document_hash"]
     assert soft.extended_env.to_dict() == lean["environment_prime"]
     py_layers = [(label, formula_to_data(soft.extended_env, formula, _generated=True))
                  for label, formula in soft.elaborated.premises()]

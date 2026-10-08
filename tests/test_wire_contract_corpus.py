@@ -9,7 +9,7 @@ import pytest
 
 from ve.errors import VEError
 from ve.wire import loads_json
-from ve.wire_contract.engine import CLEAN, Deferred, Fault, Registry, load, matches, overlay, run
+from conformance.wire_contract_engine import CLEAN, Deferred, Fault, Registry, load, matches, overlay, run
 from tools.wire_contract import english_table, process, wording
 
 

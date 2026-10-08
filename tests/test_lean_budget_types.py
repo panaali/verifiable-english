@@ -42,5 +42,3 @@ def test_restricted_json_rejects_non_wire_budget_values(service_executable, inva
     with pytest.raises(VEError) as raised:
         rows("check-certificate", [case], executable=service_executable)
     assert raised.value.code == "InvalidInput"
-
-

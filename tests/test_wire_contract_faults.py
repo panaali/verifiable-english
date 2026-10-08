@@ -19,8 +19,8 @@ from conformance.wire_contract_gate import (_applied, all_checks, feasibility, g
 from conformance.wire_contract_faults import (UNREACHED, catalogue, expected_first, expected_record,
                                               footprint, legacy_codes, overlaps, position, rendered, route)
 from ve.errors import UnsupportedProfile, VEError
-from ve.softnorms_contract import REGISTRY
-from ve.wire_contract.engine import CLEAN, Fault, load, run
+from conformance.softnorms_contract import REGISTRY
+from conformance.wire_contract_engine import CLEAN, Fault, load, run
 from tests.test_wire_contract_soft_lean import built  # noqa: F401  (fixture: the Lean binaries)
 
 CONTRACT = load("soft-norms@0")
@@ -308,7 +308,7 @@ def test_record_members_have_the_schema_types_on_every_tier():
 def test_soft_semantic_names_no_member_for_an_unknown_softened_failure(monkeypatch):
     """Rule 13 (revision 3): a rejection of `T′` that is neither a cycle nor a resource limit names no member,
     as rule 3a for the base, so it would show as a residual rather than as a member no input reaches."""
-    from ve import softnorms_contract
+    from conformance import softnorms_contract
     from ve.errors import VEError
     assert all(m["id"] != "6.10c" for phase in CONTRACT["phases"] for entry in phase["checks"]
                if entry.get("kind") == "classifier" for m in entry["emits"])
@@ -387,7 +387,7 @@ def test_gate_judges_the_deferred_share_from_the_deferred_counts():
 def test_report_counts_deferrals_apart_from_residuals_and_refuses_a_row_without_outcome(monkeypatch):
     """A deferred outcome counts under its language's deferred share and never as residual (2.8), and a
     `ve_diagnose` row with no outcome (an adapter or reader error) is a mismatch, not a clean outcome."""
-    from ve.wire_contract.engine import Deferred
+    from conformance.wire_contract_engine import Deferred
     raw, norms = _applied([FAULTS["language"]])["environment"], _applied([FAULTS["language"]])["norms"]
     monkeypatch.setattr(wire_contract_gate, "gate_cases",
                         lambda contract: [("R", "R:deferred", raw, norms, None, (), True)])

@@ -57,7 +57,7 @@ theorem runLayered_fits (id kind : String) (j : Json)
   okfits
   all_goals read_kind
   all_goals (try simp only [VE.Route.Wire.ok, Wire.layeredElaborate, Wire.regeneratedU, VE.Norms.Wire.regenerated,
-    Wire.ReportG.toJson])
+    Wire.ReportG.toJson, Wire.conflictFields, Wire.statusFields, Wire.underJson, Wire.atomsJson])
   all_goals fits using line_fits
   all_goals try
     exfalso
@@ -77,7 +77,7 @@ theorem runCase_fits (j : Json) (hp : usesNormDefaultsPath j = true) :
   all_goals read_kind
   all_goals (try contra)
   all_goals (try simp only [VE.Route.Wire.ok, encodeAdmitted, Wire.regeneratedU, VE.Norms.Wire.regenerated,
-    Wire.ReportG.toJson])
+    Wire.ReportG.toJson, Wire.conflictFields, Wire.statusFields, Wire.underJson, Wire.atomsJson])
   all_goals fits using line_fits
   all_goals try exact Common.claimJson_fits _
   all_goals try exact Common.kind_fits (admitDocument_kinds _ _ _ ‹Admission.admitDocument _ _ = .ok _›) ‹_›

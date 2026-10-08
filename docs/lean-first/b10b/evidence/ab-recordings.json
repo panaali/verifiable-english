@@ -1,0 +1,20 @@
+{
+  "base_commit": "7345e3ed",
+  "head_commit": "3bd70e2a",
+  "also_recorded_at": ["ee8a38c6", "864f8a7e"],
+  "command": "tools/lean_first_diff.py record --root ROOT --out FILE --corpus ... --workers 4, then compare BASE HEAD --corpus ... --json ab-NAME-compare.json",
+  "recordings_sha256": {
+    "core": {"corpora": ["probe", "conformance"],
+             "base": "efffb2021fd0e5ed3cd762199b08d865109ba6903e5c4382f52853bc864d5e79",
+             "head": "efffb2021fd0e5ed3cd762199b08d865109ba6903e5c4382f52853bc864d5e79"},
+    "norm": {"corpora": ["norm_defaults"],
+             "base": "7e2fb501184ce9e2f8af0ba4db92eecbdd2333a7d6d028bcd3850b1c5921d20d",
+             "head": "7e2fb501184ce9e2f8af0ba4db92eecbdd2333a7d6d028bcd3850b1c5921d20d"},
+    "profiles": {"corpora": ["readings", "discourse", "rights", "quantity"],
+                 "base": "b6b4b80813eada78eed4e579cd240915e8640f84049ae1903901c5887d8c2899",
+                 "head": "b6b4b80813eada78eed4e579cd240915e8640f84049ae1903901c5887d8c2899"},
+    "pilots": {"corpora": ["pilots"],
+               "base": "d59e7274d0185662c0e49cc07e0a5dad8af4ae1ae7d57457c6b924c2b03f5efe",
+               "head": "d59e7274d0185662c0e49cc07e0a5dad8af4ae1ae7d57457c6b924c2b03f5efe"}
+  }
+}

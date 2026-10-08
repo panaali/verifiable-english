@@ -5,14 +5,14 @@ names. The diagnostic engine observes a source only after the legacy validator r
 acceptance or identity.
 """
 
-from ve import norm_defaults as nd
+from conformance import frozen_norm_defaults as nd
 from ve.ast import _Checker
 from ve.environment import Environment
 from ve.errors import ResourceLimit
 from ve.limits import MAX_PREDICATES
 from ve.norms import NormDocument
 from ve.norms_contract import CLASSIFIERS, HOOKS, heights, source
-from ve.wire_contract.engine import Registry
+from ve.wire_contract.registry import Registry
 
 
 def legacy_validation(environment, norms):

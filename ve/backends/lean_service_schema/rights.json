@@ -117,7 +117,7 @@
       "type": "array"
     },
     "elaborate": {
-      "$comment": "Rights.Run.regenerated: E'' (primeJsonR), the generated predicates, the lines, the limitation premises, the bar nodes, the rights Background, the narrowings, the distinction rows and findings, then every SoftNorms.Wire.regenerated field over the correlated document but its environment_prime.",
+      "$comment": "Rights.Run.regenerated: E'' (primeJsonR), the generated predicates, the lines, the limitation premises, the bar nodes, the rights Background, the narrowings, the distinction rows and findings, then every SoftNorms.Wire.regeneratedCore field over the correlated document but its environment_prime.",
       "additionalProperties": false,
       "properties": {
         "background": {"$ref": "soft-norms.json#/$defs/background"},

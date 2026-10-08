@@ -11,7 +11,7 @@ from ve.errors import CheckerUnavailable, VEError
 from ve.wire import canonical_json, loads_json
 
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[1] / "ve/wire_contract"
 ABSENT = object()
 _PATTERN = re.compile(r"^(?:@(?:[0-9]+)?(?=/|$))?(?:/[^/]*)*$")
 _TOKEN = re.compile(r"(?:0|[1-9][0-9]*)\Z")
@@ -36,22 +36,7 @@ class Deferred:
 CLEAN = Clean()
 
 
-@dataclass
-class Registry:
-    hooks: dict[str, Callable]
-    classifiers: dict[str, Callable]
-    views: dict[str, Callable]
-    adapters: dict[str, Callable]
-
-    def __init__(self):
-        self.hooks, self.classifiers, self.views, self.adapters = {}, {}, {}, {}
-
-    def register(self, *, hooks=None, classifiers=None, views=None, adapters=None):
-        for attr, entries in (("hooks", hooks), ("classifiers", classifiers),
-                              ("views", views), ("adapters", adapters)):
-            if entries:
-                getattr(self, attr).update(entries)
-        return self
+from ve.wire_contract.registry import Registry
 
 
 def load(unit: str, *, directory: Path = ROOT) -> dict:
