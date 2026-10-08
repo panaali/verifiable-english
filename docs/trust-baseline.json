@@ -3,27 +3,27 @@
  "totals": {
   "K": 978,
   "S": 9334,
-  "D": 12424,
-  "G": 21687,
+  "D": 12500,
+  "G": 21723,
   "C": 7765,
-  "P": 64235,
-  "T": 11810,
-  "o": 10788,
-  "D[V]": 11369,
-  "D[R]": 574,
+  "P": 64269,
+  "T": 11813,
+  "o": 10795,
+  "D[V]": 11442,
+  "D[R]": 577,
   "D[I]": 481,
-  "G[V]": 20633,
+  "G[V]": 20669,
   "G[R]": 834,
   "G[I]": 220,
   "tied": 28,
   "unclassified": 0,
-  "trusted": 42305,
-  "lines": 139021
+  "trusted": 42414,
+  "lines": 139177
  },
  "budget": {
   "K": 978,
   "S": 9334,
-  "V": 31993
+  "V": 32102
  },
  "signed": [],
  "history": [
@@ -178,6 +178,19 @@
     "K": 978,
     "S": 9334,
     "V": 31993
+   }
+  },
+  {
+   "change": "lean-first 16a review B1: the document mode composes the alternatives and risk routes' environment, admission and coverage line (Python's coverage relays the same call; deleted by 16b)",
+   "rebaselined_from": {
+    "K": 978,
+    "S": 9334,
+    "V": 31993
+   },
+   "to": {
+    "K": 978,
+    "S": 9334,
+    "V": 32102
    }
   }
  ],
@@ -3454,7 +3467,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 366,
+   "T": 369,
    "o": 7,
    "D[V]": 0,
    "D[R]": 0,
@@ -3465,7 +3478,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 373
+   "lines": 376
   },
   "ResponseShape/CaseDeciders.lean": {
    "K": 0,
@@ -3573,7 +3586,7 @@
    "D": 0,
    "G": 0,
    "C": 0,
-   "P": 24,
+   "P": 58,
    "T": 0,
    "o": 6,
    "D[V]": 0,
@@ -3585,7 +3598,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 30
+   "lines": 64
   },
   "ResponseShape/Encoders/English.lean": {
    "K": 0,
@@ -4091,21 +4104,21 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 39,
+   "G": 68,
    "C": 0,
    "P": 0,
    "T": 0,
-   "o": 8,
+   "o": 11,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 39,
+   "G[V]": 68,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 39,
-   "lines": 47
+   "trusted": 68,
+   "lines": 79
   },
   "ResponseShape/Schemas/English.lean": {
    "K": 0,
@@ -10670,22 +10683,22 @@
   "VE/Service/Document.lean": {
    "K": 0,
    "S": 0,
-   "D": 300,
-   "G": 55,
+   "D": 376,
+   "G": 62,
    "C": 0,
    "P": 0,
    "T": 0,
-   "o": 39,
-   "D[V]": 298,
-   "D[R]": 2,
+   "o": 43,
+   "D[V]": 371,
+   "D[R]": 5,
    "D[I]": 0,
-   "G[V]": 55,
+   "G[V]": 62,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 353,
-   "lines": 394
+   "trusted": 433,
+   "lines": 481
   },
   "VE/Service/EnglishRun.lean": {
    "K": 0,
