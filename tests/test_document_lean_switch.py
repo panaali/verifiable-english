@@ -11,6 +11,8 @@ the claim graph while `check_document` does; and an admission route that rejects
 from __future__ import annotations
 
 from copy import deepcopy
+from functools import lru_cache
+import gzip
 import json
 from pathlib import Path
 import re
@@ -214,6 +216,56 @@ def _unprefixed(error):
     return message.removeprefix(f"{code}: ")
 
 
+@lru_cache(maxsize=1)
+def _saved_document_cases():
+    """Rebuild only the signed corpus entries; their seed and mutations are frozen in the gzip file."""
+    from tools.difffuzz import apply_all
+    corpus = json.loads(gzip.decompress((ROOT / "docs/lean-first/document-corpus.json.gz").read_bytes()))
+    return {entry["id"]: dw.text_of(apply_all(corpus["seeds"][entry["seed"]], entry["mutations"]))
+            for entry in corpus["entries"]}
+
+
+def _delta_cases(klass):
+    delta = json.loads((ROOT / "docs/lean-first/b16b/delta.json").read_text())
+    return sorted({row["case"] for row in delta[klass]})
+
+
+@pytest.mark.parametrize("case", _delta_cases("order"))
+def test_signed_order_diagnostics_keep_python_names_and_specificity(tmp_path, case):
+    """The historical order block is fixed at the current Lean head, including the unknown AST tag case."""
+    path = write(tmp_path, _saved_document_cases()[case])
+    lean, python = coded(lambda: D.check_document(path)), coded(python_path(path))
+    assert lean is not None and python is not None
+    assert lean[0] == python[0] and _unprefixed(lean) == _unprefixed(python), (case, lean, python)
+
+
+@pytest.mark.parametrize("language", ["ve.core@٠.٢", "ve.core@0.2’", "v  e.core@0.2", "ve.core@0.3"])
+@pytest.mark.parametrize("removed", [(), ("profiles",), ("spec_revision", "vocabulary")])
+def test_unknown_language_uses_the_frozen_envelope_field_set(tmp_path, language, removed):
+    doc = deepcopy(GENERATED["plain"])
+    environment = doc["front"]["environment"]
+    environment["language"] = language
+    for key in removed:
+        del environment[key]
+    path = write(tmp_path, dw.text_of(doc))
+    lean, python = coded(lambda: D.check_document(path)), coded(python_path(path))
+    assert lean == python, (language, removed, lean, python)
+
+
+@pytest.mark.xfail(strict=True, reason="path pending lf-12: located Lean decoders will restore these paths")
+@pytest.mark.parametrize("case", _delta_cases("verdict"))
+def test_pending_lf12_document_paths(tmp_path, case):
+    """Each signed path gap becomes an XPASS failure as soon as lf-12 fixes that case."""
+    path = write(tmp_path, _saved_document_cases()[case])
+    with pytest.raises(VEError) as lean:
+        D.check_document(path)
+    with pytest.raises(VEError) as python:
+        python_path(path)()
+    assert python.value.path, case
+    assert lean.value.code == python.value.code
+    assert lean.value.path == python.value.path
+
+
 @pytest.mark.parametrize("name", sorted(NAMED))
 def test_lean_names_a_rejection_as_python_did(tmp_path, name):
     """DRI rule 2(a)-(c) (16b looprecheck1): Lean's rejection keeps every name, value and the specificity of
@@ -358,6 +410,21 @@ def test_answers_not_bound_to_the_request_are_unavailable(tmp_path, no_python_lo
             assert "not bound to the document sent" in str(exc), name
         else:
             pytest.fail(f"accepted mutated {name}")
+
+
+@pytest.mark.parametrize("name", ["plain", "alternatives-cells"])
+@pytest.mark.parametrize("entry", ["check", "load"])
+def test_forged_residual_line_with_balanced_total_is_unavailable(
+        tmp_path, no_python_loader, monkeypatch, name, entry):
+    path = write(tmp_path, dw.text_of(GENERATED[name]))
+    row = D._lean_answer(path.read_bytes(), entry == "check")
+    forged = deepcopy(row)
+    forged["coverage"]["residual"]["forged_line"] = 7
+    forged["coverage"]["residual_total"] += 7
+    monkeypatch.setattr(relay, "answer", lambda mode, case: (forged, None))
+    call = D.check_document if entry == "check" else D.load_document
+    with pytest.raises(CheckerUnavailable, match="not bound to the document sent"):
+        call(path)
 
 
 RETYPES = (7, True, None, [], {}, "x")

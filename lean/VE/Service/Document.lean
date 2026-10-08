@@ -143,6 +143,21 @@ def exactly (j : Json) (names : List String) : Walk Unit := do
 
 def pyR (s : String) : String := TypingDiagnostic.pyRepr s
 
+/-- The frozen v0 envelope is chosen for an unrecognised string language on a plain document (Python
+`Environment._decode`). Report its field-set fault before considering the modern route's language gate.
+The expected names come from the route envelope table, with its one v0 spelling change. -/
+def legacyEnvelopeFault (environment : Json) : Option String :=
+  let expected := (envelopeKeys .none).map fun k => if k == "profiles" then "profile" else k
+  match environment with
+  | .obj kvs =>
+    let keys := kvs.toList.map Prod.fst
+    let missing := (expected.filter (!keys.contains ·)).mergeSort (fun a b => decide (a ≤ b))
+    let unknown := (keys.filter (!expected.contains ·)).mergeSort (fun a b => decide (a ≤ b))
+    if missing.isEmpty && unknown.isEmpty then none else
+      let renderList := fun (xs : List String) => "[" ++ ", ".intercalate (xs.map pyR) ++ "]"
+      some s!"Incorrect fields (missing={renderList missing}, unknown={renderList unknown})"
+  | _ => some "Expected a JSON object"
+
 /-- `_description`. -/
 def describedBy (j : Json) : Walk Unit :=
   match j with
@@ -280,6 +295,13 @@ def environmentOf (environment : Json) : Except String Env := do
   if let some p := listed.find? (!ownedProfiles.contains ·) then
     throw (unavailable s!"document checks under {p} need its Lean profile route")
   let block := blockOf listed
+  if (environment.getObjVal? "unit_schema").isOk || (environment.getObjVal? "units").isOk then
+    throw (unavailable "the environment's unit declarations need their Lean route's decoder")
+  if block == .none then
+    if let .str language := environment.getObjValD "language" then
+      if language != VE.Route.Gate.language then
+        if let some message := legacyEnvelopeFault environment then throw message
+        throw "UnsupportedProfile: Unsupported language, semantic profile, or specification revision"
   let keys := ((fields environment).toOption.getD []).map Prod.fst
   if let some k := keys.find? (!(envelopeKeys block).contains ·) then
     throw (unavailable s!"the environment block {k} needs its Lean route's decoder")
