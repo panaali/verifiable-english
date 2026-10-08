@@ -164,13 +164,19 @@ def verdict(python, lean) -> str:
 
 
 def owned(document) -> bool:
-    """Whether a document's environment is one the Lean mode owns: the plain envelope (the four fields) whose
-    profiles are all `VE.Service.Document.ownedProfiles`. The fuzzer counts findings by it."""
+    """Whether a document's environment is one the Lean mode owns: the envelope's four fields and the blocks of
+    the routes it composes (`VE.Service.Document.envelopeKeys`), with profiles all `ownedProfiles`. The fuzzer
+    counts findings by it."""
     environment = document.get("front", {}).get("environment") if type(document.get("front")) is dict else None
-    if type(environment) is not dict or set(environment) - {"language", "profiles", "spec_revision", "vocabulary"}:
+    if type(environment) is not dict:
         return False
     profiles = environment.get("profiles")
-    return type(profiles) is list and set(profiles) <= OWNED
+    if type(profiles) is not list or not set(profiles) <= OWNED:
+        return False
+    blocks = {"risk@0": {"alternatives", "risk"}, "alternatives@0": {"alternatives"}}
+    allowed = {"language", "profiles", "spec_revision", "vocabulary"}
+    allowed |= next((keys for profile, keys in blocks.items() if profile in profiles), set())
+    return not set(environment) - allowed
 
 
 def fuzzed(document) -> bool:
