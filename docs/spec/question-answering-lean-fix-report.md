@@ -5,7 +5,7 @@ Status: Q1.1 in progress. This report records the local state after the first re
 ## Changes checked
 
 - The question shape, gap generation, candidate construction, classification, rephrasing, closest diagnosis, and corrected span mapper are implemented under `lean/VE/Question/`.
-- Three of the fifteen approved Q1 theorems are proved: `got_none`, `question_reading_unique`, and `asked_reads_back`. Their signatures match section 5.1. The supporting list-order, meaning-fold and read-back lemmas are also proved.
+- Four of the fifteen approved Q1 theorems are proved: `got_none`, `question_reading_unique`, `asked_reads_back`, and `readQuestion_ambiguous`. Their signatures match section 5.1. Supporting lemmas establish list order, meaning-fold soundness, read-back, and the two distinct derivations of an ambiguous candidate.
 - Executable Lean guards cover F1 precedence, F2 gap order and bytes, the group fixture's exact G1 reading, G5 rephrasings, G9 closest candidate, the work budget at zero, the crossing interval G25, and Unicode interval G26.
 - The frozen Norms, SoftNorms, and Route source files were not edited.
 
@@ -19,9 +19,9 @@ Each mutation was applied to the new Lean source, `lake build VE.Question.Exampl
 
 ## Checks and limits
 
-`lake build` passed after the restored code. `python3 lean/audit.py --write` audited 463 source files and 4,812 theorems, with only the standard axiom allowlist. The required no-write audit and full gate are run separately from this report.
+`lake build` passed after the fourth theorem. `python3 lean/audit.py --write` audited 463 source files and 4,821 theorems, with only the standard axiom allowlist. The required no-write audit and full gate are run separately from this report.
 
-The remaining twelve section 5.1 theorem proofs, the complete fixture set, the question lock list, the targeted joint span review, and the Q1.2 service integration are not complete. No model calls were made. No Q2 code was changed.
+The remaining eleven section 5.1 theorem proofs, the complete fixture set, the question lock list, the targeted joint span review, and the Q1.2 service integration are not complete. No model calls were made. No Q2 code was changed.
 
 ## Build checklist (current Q1.1 scope)
 
@@ -35,7 +35,7 @@ The remaining twelve section 5.1 theorem proofs, the complete fixture set, the q
 | 6. Three-valued verdicts and budget zero | Done | `Outcome` distinguishes no reading, refusal, and budget; the zero-budget group guard checks budget. |
 | 7. Whole-operation deadlines | Not done | The approved reader applies E2's work budget per candidate; no whole-question deadline test exists. |
 | 8. Exhaustive kind and owner folds | Not applicable | Q1.1 introduces neither kind nor owner folds. |
-| 9. English render/read-back | Not done | The exact `rephrasings_read` and `asked_reads_back` theorems remain. |
+| 9. English render/read-back | Not done | `asked_reads_back` is proved; `rephrasings_read` remains. |
 | 10. One admit entry point | Not applicable | Q1.1 adds a pure Lean reader, no admission entry point. |
 | 11. Compiler or library parsing | Done | Candidate gaps use `lexSpans`; candidates use E2's `read`, with no language regex. |
 | 12. Stateful ledger | Not applicable | Q1.1 has no ledger or state machine. |
@@ -43,7 +43,7 @@ The remaining twelve section 5.1 theorem proofs, the complete fixture set, the q
 | 14. Hermetic execution | Done for Q1.1 | The new guards are pure Lean computations; no sleeps, caches, or external writes. |
 | 15. Schema identity | Not applicable | Q1.1 has no wire schema or certificates. |
 | 16. Complete lists and locks | Not done | The requested `ve/question/LOCK.json` is outstanding. |
-| 17. Approved-statement diff | Not done | Three statements are proved; the question-specific statement-diff script and twelve proofs are outstanding. |
+| 17. Approved-statement diff | Not done | `tools/question_statements.py` confirms the four proved statements match section 5.1 and reports eleven missing proofs. |
 | 18. Stub and boundary fixtures | Not done | The spec records stub evaluation, and the new guards cover selected boundaries only. |
 | 19. Use-case formalisation | Not applicable | Q1.1 has no formalised document or rule answer key. |
 | 20. Regenerated numeric report | Not applicable | This pass makes no coverage or performance claims. |
