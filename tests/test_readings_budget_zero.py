@@ -41,8 +41,20 @@ NOT_BUDGETED = {
     "frame": "the request's document decoded for that check, no search",
 }
 X_REQUIRED = ["forall", "act", ["unary", "x_required", ["var", 0]]]  # F-ND2's query (the gated one)
-FIXTURES = {"F-ND1": (fnd1, QUERY), "F-ND2": (fnd2, X_REQUIRED), "M9": (_m9, None), "M8": (_m8, None),
+FIXTURES = {"F-ND1": (fnd1, QUERY), "F-ND1 enumerated oracle": (fnd1, QUERY),
+            "F-ND2": (fnd2, X_REQUIRED), "M9": (_m9, None), "M8": (_m8, None),
             "M6": (_m6, None)}
+
+
+def fixture_route(name, tmp_path):
+    """Keep RD-3's filled choice checker covered after RD-6b makes F-ND1's public route superposed."""
+    make, _ = FIXTURES[name]
+    doc = load_document(make(tmp_path))
+    if name == "F-ND1 enumerated oracle":
+        row = doc["readings_s2"]
+        row["route"] = "enumerated"
+        row["finding"] = {"text": "ReadingsNotSuperposable: rs_1", "cause": "the unspecified completion"}
+    return context(doc)
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -114,7 +126,7 @@ def sweep_superposed(route, conclusion):
 @pytest.mark.parametrize("name", list(FIXTURES))
 def test_budget_zero_every_verdict_op_is_unknown(name, tmp_path, zero):
     make, conclusion = FIXTURES[name]
-    route = context(load_document(make(tmp_path)))
+    route = fixture_route(name, tmp_path)
     if isinstance(route, Enumerated):
         kind = _FilledChoiceDocument if route.completion else _ChoiceDocument
         assert all(type(route._choice(c)) is kind for c in route.choices)
@@ -133,7 +145,7 @@ def test_budget_zero_after_the_conflict_status_is_certified(name, tmp_path, monk
     routes keep it), then the prover and the model search get none. Under a CONFLICT-FREE reading the entailment and
     premise searches reach their own fallbacks, which must be UNKNOWN too."""
     make, conclusion = FIXTURES[name]
-    route = context(load_document(make(tmp_path)))
+    route = fixture_route(name, tmp_path)
     if isinstance(route, Enumerated):
         documents = [route._choice(c) for c in route.choices]
         free = [e["conflict"] == "CONFLICT-FREE" for e in route.conflict_answer()["per_choice"]]
@@ -164,7 +176,7 @@ def test_budget_zero_fixtures_cover_every_choice_document_kind(tmp_path):
     kinds = set()
     for name, (make, _) in FIXTURES.items():
         (tmp_path / name).mkdir()
-        route = context(load_document(make(tmp_path / name)))
+        route = fixture_route(name, tmp_path / name)
         kinds.add(type(route) if not isinstance(route, Enumerated) else
                   _FilledChoiceDocument if route.completion else _ChoiceDocument)
     assert kinds == {Superposed, _ChoiceDocument, _FilledChoiceDocument}
@@ -179,14 +191,13 @@ def test_budget_zero_check_says_unknown_for_every_choice(make, tmp_path, zero):
     report = check_document(make(tmp_path))
     readings = report["readings"]
     assert readings["conflict"]["status"] == "UNKNOWN"
-    assert readings["status"] == "UNKNOWN: a reading's conflict status is not certified"
-    assert {c["status"] for c in readings["conflict"]["choices"]} == {"UNKNOWN"}
+    assert readings["status"].startswith("UNKNOWN: tableau budget or open branch:")
+    assert readings["conflict"].get("choices") is None
     assert report["premises"]["status"] == "UNKNOWN"
-    assert {c["status"] for c in report["premises"]["choices"]} == {"UNKNOWN"}
+    assert report["premises"].get("choices") is None
     assert {c["status"] for c in report["premises"]["candidates"]} == {"UNKNOWN"}
     # Only the route line: no conflict-free sentence, no conflict witness.
-    sentence = 1 if make is fnd1 else 2
-    assert readings["english"] == [f"The readings of sentence {sentence} were checked one way at a time, not together."]
+    assert readings["english"] == []
 
 
 @pytest.mark.parametrize("name", ["F-ND1", "F-ND2"])
