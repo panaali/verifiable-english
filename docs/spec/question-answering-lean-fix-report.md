@@ -5,7 +5,7 @@ Status: Q1.1 in progress. This report records the local state after the first re
 ## Changes checked
 
 - The question shape, gap generation, candidate construction, classification, rephrasing, closest diagnosis, and corrected span mapper are implemented under `lean/VE/Question/`.
-- Two of the fifteen approved Q1 theorems are proved: `got_none` and `question_reading_unique`. Their signatures match section 5.1. A list-order helper is also proved.
+- Three of the fifteen approved Q1 theorems are proved: `got_none`, `question_reading_unique`, and `asked_reads_back`. Their signatures match section 5.1. The supporting list-order, meaning-fold and read-back lemmas are also proved.
 - Executable Lean guards cover F1 precedence, F2 gap order and bytes, the group fixture's exact G1 reading, G5 rephrasings, G9 closest candidate, the work budget at zero, the crossing interval G25, and Unicode interval G26.
 - The frozen Norms, SoftNorms, and Route source files were not edited.
 
@@ -21,7 +21,7 @@ Each mutation was applied to the new Lean source, `lake build VE.Question.Exampl
 
 `lake build` passed after the restored code. `python3 lean/audit.py --write` audited 463 source files and 4,812 theorems, with only the standard axiom allowlist. The required no-write audit and full gate are run separately from this report.
 
-The remaining thirteen section 5.1 theorem proofs, the complete fixture set, the question lock list, the targeted joint span review, and the Q1.2 service integration are not complete. No model calls were made. No Q2 code was changed.
+The remaining twelve section 5.1 theorem proofs, the complete fixture set, the question lock list, the targeted joint span review, and the Q1.2 service integration are not complete. No model calls were made. No Q2 code was changed.
 
 ## Build checklist (current Q1.1 scope)
 
@@ -43,7 +43,7 @@ The remaining thirteen section 5.1 theorem proofs, the complete fixture set, the
 | 14. Hermetic execution | Done for Q1.1 | The new guards are pure Lean computations; no sleeps, caches, or external writes. |
 | 15. Schema identity | Not applicable | Q1.1 has no wire schema or certificates. |
 | 16. Complete lists and locks | Not done | The requested `ve/question/LOCK.json` is outstanding. |
-| 17. Approved-statement diff | Not done | Two statements are proved; the statement-diff script and thirteen proofs are outstanding. |
+| 17. Approved-statement diff | Not done | Three statements are proved; the question-specific statement-diff script and twelve proofs are outstanding. |
 | 18. Stub and boundary fixtures | Not done | The spec records stub evaluation, and the new guards cover selected boundaries only. |
 | 19. Use-case formalisation | Not applicable | Q1.1 has no formalised document or rule answer key. |
 | 20. Regenerated numeric report | Not applicable | This pass makes no coverage or performance claims. |
@@ -54,4 +54,4 @@ The remaining thirteen section 5.1 theorem proofs, the complete fixture set, the
 
 The first clean-HEAD run stopped at Rust build because the offline cache lacked `serde`. `cargo fetch --locked` filled the ignored, pinned crate cache without changing tracked files. The rerun completed every gate stage: Lean build, Lean audit, Rust build, 36 Rust tests, Python collection and Python suite. The gate **failed** with 13,071 Python passes, 17 failures, 9 skips and one live-test deselection out of 13,098 collected tests.
 
-The failures cluster around two repository inventories that this pass did not update: the compiled statement, predicate and declaration dumps, and `lean/VE/Route/frozen-sources.sha256`, which must list every new `VE` module and the changed audit manifest. The statement dumps have since been regenerated for a follow-up commit. The Route inventory remains unchanged pending clarification of the explicit instruction to leave frozen Route untouched. `tools/trust_map.py --check` also reports 388 new unclassified trusted lines, including the new Question modules and existing baseline drift; no DRI budget signature was invented. Two skip-policy failures concern Rust-scope exclusions in the existing P0 suite.
+The failures cluster around two repository inventories that this pass did not update: the compiled statement, predicate and declaration dumps, and `lean/VE/Route/frozen-sources.sha256`, which must list every new `VE` module and the changed audit manifest. The statement dumps have since been regenerated; a subsequent proof pass added `asked_reads_back` and refreshed them again. The Route inventory remains unchanged pending clarification of the explicit instruction to leave frozen Route untouched. `tools/trust_map.py --check` also reports 388 new unclassified trusted lines, including the new Question modules and existing baseline drift; no DRI budget signature was invented. Two skip-policy failures concern Rust-scope exclusions in the existing P0 suite.
