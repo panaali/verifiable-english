@@ -1,0 +1,49 @@
+{
+  "assumed": [
+    [
+      "scope-modal-u0123-s03",
+      0
+    ]
+  ],
+  "conditional_on": [
+    "coupling:limits-scope-u0123-s03"
+  ],
+  "evidence": "certificates",
+  "proofs": [
+    {
+      "choice": [
+        [
+          "modal-u0062-s01",
+          0
+        ],
+        [
+          "modal-u0123-s01-p1",
+          0
+        ],
+        [
+          "modal-u0123-s02-p1",
+          0
+        ],
+        [
+          "scope-modal-u0123-s03",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "outcome": "proof"
+    }
+  ],
+  "reading_premises_used": [
+    "coupling:limits-scope-u0123-s03"
+  ],
+  "restrictions": [
+    "coupling:limits-scope-u0123-s03"
+  ],
+  "route": "enumerated",
+  "verdict": "ALL",
+  "english": [
+    "Read sentence 462 as *Every operator must not give Claude each operator input, if at least one of the following holds:\n  (a) at least one of the following holds:\n    (i) at least one of the following holds:\n      (a) at least one of the following holds:\n        (i) either that operator input is classified as \"instruction_abandon_identity_in_persona\" or that operator input is classified as \"instruction_claim_human_when_asked\", or both;\n        (ii) that operator input is classified as \"instruction_deceptive_tactics_harming_users\";\n      (b) that operator input is classified as \"instruction_false_information_deceiving_user\";\n    (ii) that operator input is classified as \"instruction_endanger_health_or_safety\";\n  (b) that operator input is classified as \"instruction_act_against_guidelines\"*: the conclusion follows: *For every operator, for every operator input that is classified as \"instruction_claim_human_when_asked\", it is not the case that that operator may give Claude that operator input.*",
+    "This holds provided that:",
+    "Sentences 227, 458, 460 and 462 are read with the same label limits-scope, because of sentence 462."
+  ]
+}

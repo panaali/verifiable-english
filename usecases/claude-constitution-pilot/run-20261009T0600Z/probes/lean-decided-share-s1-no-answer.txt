@@ -1,0 +1,10 @@
+{
+  "basis": "no Lean answer across readings",
+  "decided_bytes": 0,
+  "decided_bytes_checked_outside": 0,
+  "decided_share_percent": "0.00",
+  "decided_units": [],
+  "max_choice_rules": null,
+  "one_rule": null,
+  "source_bytes": 184893
+}

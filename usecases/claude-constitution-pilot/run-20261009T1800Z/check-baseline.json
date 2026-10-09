@@ -1,0 +1,7792 @@
+{
+  "format": "ve-document@1",
+  "source_id": "f940c1bf3e406fc946167af8b8ba7c7364ebdfb0dc6ec15abd3cf25e7d6ad804",
+  "document_id": "6d866775518697eb78433ca39bed781088a4b1ba30971cef52afde32d724b3d8",
+  "coverage": {
+    "source_bytes": 184893,
+    "accounted_bytes": 184893,
+    "coverage_percent": 100,
+    "bytes_by_kind": {
+      "meta": 349,
+      "unformalised": 181263,
+      "attributed": 634,
+      "norm": 2580,
+      "asserted": 67
+    },
+    "bytes_by_status": {
+      "LABELLED": 349,
+      "UNFORMALISED": 181897,
+      "OPEN": 2625,
+      "CHECKED": 22
+    },
+    "unformalised_reasons": {
+      "other.discourse": 81,
+      "quantities": 119,
+      "norms": 669,
+      "causation": 76,
+      "time": 9,
+      "counting": 31,
+      "defaults": 50,
+      "modality_belief": 24,
+      "other.graded-force": 1,
+      "other.open-list": 1,
+      "attribution": 12
+    },
+    "residual": {
+      "open_terms": 36,
+      "assumptions": 20,
+      "bridge_leaves": 0,
+      "unresolved_reading_sets": 8,
+      "separations": 8,
+      "readings_findings": 0,
+      "pending_candidates": 0,
+      "couplings": 1,
+      "gaps": 14,
+      "ungrounded_defaults": 0
+    },
+    "residual_total": 87,
+    "norm_defaults": {
+      "gaps": [
+        "clarification_required",
+        "csam_generation_permitted_for_claude",
+        "cyberweapon_creation_permitted",
+        "denial_of_being_claude_permitted",
+        "exploit_instruction_compliance_required",
+        "firmness_required",
+        "humanity_attack_participation_permitted",
+        "illegitimate_control_involvement_permitted",
+        "infrastructure_uplift_permitted",
+        "operator_input_permitted",
+        "oversight_undermining_permitted",
+        "system_prompt_compliance_required",
+        "system_prompt_deception_permitted",
+        "weapons_uplift_permitted"
+      ],
+      "findings": []
+    }
+  },
+  "reading_plan": {
+    "route": "enumerate",
+    "choices": [
+      {
+        "force-u0036-s05": 0,
+        "modal-u0062-s01": 0,
+        "modal-u0123-s01-p1": 0,
+        "modal-u0123-s02-p1": 0,
+        "scope-modal-u0123-s03": 0,
+        "force-u0125-s04-p2": 0,
+        "force-u0156-s03": 0,
+        "force-u0263-s04-p2": 0
+      },
+      {
+        "force-u0036-s05": 0,
+        "modal-u0062-s01": 0,
+        "modal-u0123-s01-p1": 0,
+        "modal-u0123-s02-p1": 0,
+        "scope-modal-u0123-s03": 0,
+        "force-u0125-s04-p2": 0,
+        "force-u0156-s03": 0,
+        "force-u0263-s04-p2": 1
+      },
+      {
+        "force-u0036-s05": 0,
+        "modal-u0062-s01": 0,
+        "modal-u0123-s01-p1": 0,
+        "modal-u0123-s02-p1": 0,
+        "scope-modal-u0123-s03": 0,
+        "force-u0125-s04-p2": 0,
+        "force-u0156-s03": 1,
+        "force-u0263-s04-p2": 0
+      },
+      {
+        "force-u0036-s05": 0,
+        "modal-u0062-s01": 0,
+        "modal-u0123-s01-p1": 0,
+        "modal-u0123-s02-p1": 0,
+        "scope-modal-u0123-s03": 0,
+        "force-u0125-s04-p2": 0,
+        "force-u0156-s03": 1,
+        "force-u0263-s04-p2": 1
+      },
+      {
+        "force-u0036-s05": 0,
+        "modal-u0062-s01": 0,
+        "modal-u0123-s01-p1": 0,
+        "modal-u0123-s02-p1": 0,
+        "scope-modal-u0123-s03": 0,
+        "force-u0125-s04-p2": 1,
+        "force-u0156-s03": 0,
+        "force-u0263-s04-p2": 0
+      },
+      {
+        "force-u0036-s05": 0,
+        "modal-u0062-s01": 0,
+        "modal-u0123-s01-p1": 0,
+        "modal-u0123-s02-p1": 0,
+        "scope-modal-u0123-s03": 0,
+        "force-u0125-s04-p2": 1,
+        "force-u0156-s03": 0,
+        "force-u0263-s04-p2": 1
+      },
+      {
+        "force-u0036-s05": 0,
+        "modal-u0062-s01": 0,
+        "modal-u0123-s01-p1": 0,
+        "modal-u0123-s02-p1": 0,
+        "scope-modal-u0123-s03": 0,
+        "force-u0125-s04-p2": 1,
+        "force-u0156-s03": 1,
+        "force-u0263-s04-p2": 0
+      },
+      {
+        "force-u0036-s05": 0,
+        "modal-u0062-s01": 0,
+        "modal-u0123-s01-p1": 0,
+        "modal-u0123-s02-p1": 0,
+        "scope-modal-u0123-s03": 0,
+        "force-u0125-s04-p2": 1,
+        "force-u0156-s03": 1,
+        "force-u0263-s04-p2": 1
+      },
+      {
+        "force-u0036-s05": 0,
+        "modal-u0062-s01": 1,
+        "modal-u0123-s01-p1": 1,
+        "modal-u0123-s02-p1": 1,
+        "scope-modal-u0123-s03": 1,
+        "force-u0125-s04-p2": 0,
+        "force-u0156-s03": 0,
+        "force-u0263-s04-p2": 0
+      },
+      {
+        "force-u0036-s05": 0,
+        "modal-u0062-s01": 1,
+        "modal-u0123-s01-p1": 1,
+        "modal-u0123-s02-p1": 1,
+        "scope-modal-u0123-s03": 1,
+        "force-u0125-s04-p2": 0,
+        "force-u0156-s03": 0,
+        "force-u0263-s04-p2": 1
+      },
+      {
+        "force-u0036-s05": 0,
+        "modal-u0062-s01": 1,
+        "modal-u0123-s01-p1": 1,
+        "modal-u0123-s02-p1": 1,
+        "scope-modal-u0123-s03": 1,
+        "force-u0125-s04-p2": 0,
+        "force-u0156-s03": 1,
+        "force-u0263-s04-p2": 0
+      },
+      {
+        "force-u0036-s05": 0,
+        "modal-u0062-s01": 1,
+        "modal-u0123-s01-p1": 1,
+        "modal-u0123-s02-p1": 1,
+        "scope-modal-u0123-s03": 1,
+        "force-u0125-s04-p2": 0,
+        "force-u0156-s03": 1,
+        "force-u0263-s04-p2": 1
+      },
+      {
+        "force-u0036-s05": 0,
+        "modal-u0062-s01": 1,
+        "modal-u0123-s01-p1": 1,
+        "modal-u0123-s02-p1": 1,
+        "scope-modal-u0123-s03": 1,
+        "force-u0125-s04-p2": 1,
+        "force-u0156-s03": 0,
+        "force-u0263-s04-p2": 0
+      },
+      {
+        "force-u0036-s05": 0,
+        "modal-u0062-s01": 1,
+        "modal-u0123-s01-p1": 1,
+        "modal-u0123-s02-p1": 1,
+        "scope-modal-u0123-s03": 1,
+        "force-u0125-s04-p2": 1,
+        "force-u0156-s03": 0,
+        "force-u0263-s04-p2": 1
+      },
+      {
+        "force-u0036-s05": 0,
+        "modal-u0062-s01": 1,
+        "modal-u0123-s01-p1": 1,
+        "modal-u0123-s02-p1": 1,
+        "scope-modal-u0123-s03": 1,
+        "force-u0125-s04-p2": 1,
+        "force-u0156-s03": 1,
+        "force-u0263-s04-p2": 0
+      },
+      {
+        "force-u0036-s05": 0,
+        "modal-u0062-s01": 1,
+        "modal-u0123-s01-p1": 1,
+        "modal-u0123-s02-p1": 1,
+        "scope-modal-u0123-s03": 1,
+        "force-u0125-s04-p2": 1,
+        "force-u0156-s03": 1,
+        "force-u0263-s04-p2": 1
+      },
+      {
+        "force-u0036-s05": 1,
+        "modal-u0062-s01": 0,
+        "modal-u0123-s01-p1": 0,
+        "modal-u0123-s02-p1": 0,
+        "scope-modal-u0123-s03": 0,
+        "force-u0125-s04-p2": 0,
+        "force-u0156-s03": 0,
+        "force-u0263-s04-p2": 0
+      },
+      {
+        "force-u0036-s05": 1,
+        "modal-u0062-s01": 0,
+        "modal-u0123-s01-p1": 0,
+        "modal-u0123-s02-p1": 0,
+        "scope-modal-u0123-s03": 0,
+        "force-u0125-s04-p2": 0,
+        "force-u0156-s03": 0,
+        "force-u0263-s04-p2": 1
+      },
+      {
+        "force-u0036-s05": 1,
+        "modal-u0062-s01": 0,
+        "modal-u0123-s01-p1": 0,
+        "modal-u0123-s02-p1": 0,
+        "scope-modal-u0123-s03": 0,
+        "force-u0125-s04-p2": 0,
+        "force-u0156-s03": 1,
+        "force-u0263-s04-p2": 0
+      },
+      {
+        "force-u0036-s05": 1,
+        "modal-u0062-s01": 0,
+        "modal-u0123-s01-p1": 0,
+        "modal-u0123-s02-p1": 0,
+        "scope-modal-u0123-s03": 0,
+        "force-u0125-s04-p2": 0,
+        "force-u0156-s03": 1,
+        "force-u0263-s04-p2": 1
+      },
+      {
+        "force-u0036-s05": 1,
+        "modal-u0062-s01": 0,
+        "modal-u0123-s01-p1": 0,
+        "modal-u0123-s02-p1": 0,
+        "scope-modal-u0123-s03": 0,
+        "force-u0125-s04-p2": 1,
+        "force-u0156-s03": 0,
+        "force-u0263-s04-p2": 0
+      },
+      {
+        "force-u0036-s05": 1,
+        "modal-u0062-s01": 0,
+        "modal-u0123-s01-p1": 0,
+        "modal-u0123-s02-p1": 0,
+        "scope-modal-u0123-s03": 0,
+        "force-u0125-s04-p2": 1,
+        "force-u0156-s03": 0,
+        "force-u0263-s04-p2": 1
+      },
+      {
+        "force-u0036-s05": 1,
+        "modal-u0062-s01": 0,
+        "modal-u0123-s01-p1": 0,
+        "modal-u0123-s02-p1": 0,
+        "scope-modal-u0123-s03": 0,
+        "force-u0125-s04-p2": 1,
+        "force-u0156-s03": 1,
+        "force-u0263-s04-p2": 0
+      },
+      {
+        "force-u0036-s05": 1,
+        "modal-u0062-s01": 0,
+        "modal-u0123-s01-p1": 0,
+        "modal-u0123-s02-p1": 0,
+        "scope-modal-u0123-s03": 0,
+        "force-u0125-s04-p2": 1,
+        "force-u0156-s03": 1,
+        "force-u0263-s04-p2": 1
+      },
+      {
+        "force-u0036-s05": 1,
+        "modal-u0062-s01": 1,
+        "modal-u0123-s01-p1": 1,
+        "modal-u0123-s02-p1": 1,
+        "scope-modal-u0123-s03": 1,
+        "force-u0125-s04-p2": 0,
+        "force-u0156-s03": 0,
+        "force-u0263-s04-p2": 0
+      },
+      {
+        "force-u0036-s05": 1,
+        "modal-u0062-s01": 1,
+        "modal-u0123-s01-p1": 1,
+        "modal-u0123-s02-p1": 1,
+        "scope-modal-u0123-s03": 1,
+        "force-u0125-s04-p2": 0,
+        "force-u0156-s03": 0,
+        "force-u0263-s04-p2": 1
+      },
+      {
+        "force-u0036-s05": 1,
+        "modal-u0062-s01": 1,
+        "modal-u0123-s01-p1": 1,
+        "modal-u0123-s02-p1": 1,
+        "scope-modal-u0123-s03": 1,
+        "force-u0125-s04-p2": 0,
+        "force-u0156-s03": 1,
+        "force-u0263-s04-p2": 0
+      },
+      {
+        "force-u0036-s05": 1,
+        "modal-u0062-s01": 1,
+        "modal-u0123-s01-p1": 1,
+        "modal-u0123-s02-p1": 1,
+        "scope-modal-u0123-s03": 1,
+        "force-u0125-s04-p2": 0,
+        "force-u0156-s03": 1,
+        "force-u0263-s04-p2": 1
+      },
+      {
+        "force-u0036-s05": 1,
+        "modal-u0062-s01": 1,
+        "modal-u0123-s01-p1": 1,
+        "modal-u0123-s02-p1": 1,
+        "scope-modal-u0123-s03": 1,
+        "force-u0125-s04-p2": 1,
+        "force-u0156-s03": 0,
+        "force-u0263-s04-p2": 0
+      },
+      {
+        "force-u0036-s05": 1,
+        "modal-u0062-s01": 1,
+        "modal-u0123-s01-p1": 1,
+        "modal-u0123-s02-p1": 1,
+        "scope-modal-u0123-s03": 1,
+        "force-u0125-s04-p2": 1,
+        "force-u0156-s03": 0,
+        "force-u0263-s04-p2": 1
+      },
+      {
+        "force-u0036-s05": 1,
+        "modal-u0062-s01": 1,
+        "modal-u0123-s01-p1": 1,
+        "modal-u0123-s02-p1": 1,
+        "scope-modal-u0123-s03": 1,
+        "force-u0125-s04-p2": 1,
+        "force-u0156-s03": 1,
+        "force-u0263-s04-p2": 0
+      },
+      {
+        "force-u0036-s05": 1,
+        "modal-u0062-s01": 1,
+        "modal-u0123-s01-p1": 1,
+        "modal-u0123-s02-p1": 1,
+        "scope-modal-u0123-s03": 1,
+        "force-u0125-s04-p2": 1,
+        "force-u0156-s03": 1,
+        "force-u0263-s04-p2": 1
+      }
+    ],
+    "conditional_on": [
+      "coupling:limits-scope-u0123-s03"
+    ]
+  },
+  "norm_defaults": {
+    "environment_id": "34818ac23420735b6b011846bb599986d43ebeb48f470b745705586d7eba592a",
+    "filled_environment_id": "860ecef61a0559a709c59eea4b7421ba7670473f53e95f0e200a58abdc49060d",
+    "fill_hash": "a9af38ce25d8a9d0e4381d9ab404f082cc6e2f2c846a9e451184c0bb0c0d51ba",
+    "unsaid_predicates": [
+      "unsaid__clarification_required",
+      "unsaid__csam_generation_permitted_for_claude",
+      "unsaid__cyberweapon_creation_permitted",
+      "unsaid__denial_of_being_claude_permitted",
+      "unsaid__exploit_instruction_compliance_required",
+      "unsaid__firmness_required",
+      "unsaid__humanity_attack_participation_permitted",
+      "unsaid__illegitimate_control_involvement_permitted",
+      "unsaid__infrastructure_uplift_permitted",
+      "unsaid__judgment_use_required",
+      "unsaid__operator_input_permitted",
+      "unsaid__oversight_undermining_permitted",
+      "unsaid__system_prompt_compliance_required",
+      "unsaid__system_prompt_deception_permitted",
+      "unsaid__weapons_uplift_permitted"
+    ],
+    "background_labels": [],
+    "report": {
+      "clarification_required": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ],
+      "csam_generation_permitted_for_claude": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ],
+      "cyberweapon_creation_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ],
+      "denial_of_being_claude_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ],
+      "exploit_instruction_compliance_required": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ],
+      "firmness_required": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ],
+      "humanity_attack_participation_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ],
+      "illegitimate_control_involvement_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ],
+      "infrastructure_uplift_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ],
+      "judgment_use_required": [
+        "completion: unspecified",
+        "gaps: none"
+      ],
+      "operator_input_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ],
+      "oversight_undermining_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ],
+      "system_prompt_compliance_required": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ],
+      "system_prompt_deception_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ],
+      "weapons_uplift_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ]
+    }
+  },
+  "admission": {
+    "admitted": true,
+    "kinds": [
+      "meta",
+      "meta",
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "attributed",
+        "anthropic",
+        "believes",
+        [
+          "unformalised",
+          "norms"
+        ]
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "attributed",
+        "anthropic",
+        "believes",
+        [
+          "unformalised",
+          "quantities"
+        ]
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "time"
+      ],
+      [
+        "unformalised",
+        "time"
+      ],
+      [
+        "unformalised",
+        "time"
+      ],
+      [
+        "unformalised",
+        "time"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "norm",
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "modality_belief"
+      ],
+      [
+        "unformalised",
+        "modality_belief"
+      ],
+      [
+        "unformalised",
+        "modality_belief"
+      ],
+      [
+        "unformalised",
+        "modality_belief"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      "norm",
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      "norm",
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "modality_belief"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "norm",
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "modality_belief"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "other.graded-force"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "norm",
+      [
+        "unformalised",
+        "causation"
+      ],
+      "norm",
+      [
+        "unformalised",
+        "other.open-list"
+      ],
+      "norm",
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      "norm",
+      [
+        "unformalised",
+        "causation"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "norm",
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "modality_belief"
+      ],
+      [
+        "unformalised",
+        "modality_belief"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "norm",
+      "norm",
+      "norm",
+      "norm",
+      "norm",
+      "norm",
+      "norm",
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "asserted",
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      "norm",
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "attributed",
+        "anthropic",
+        "believes",
+        [
+          "unformalised",
+          "attribution"
+        ]
+      ],
+      [
+        "unformalised",
+        "attribution"
+      ],
+      [
+        "unformalised",
+        "attribution"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "attribution"
+      ],
+      [
+        "unformalised",
+        "attribution"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "attribution"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "counting"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "modality_belief"
+      ],
+      [
+        "unformalised",
+        "modality_belief"
+      ],
+      [
+        "unformalised",
+        "modality_belief"
+      ],
+      [
+        "unformalised",
+        "modality_belief"
+      ],
+      [
+        "unformalised",
+        "modality_belief"
+      ],
+      [
+        "unformalised",
+        "modality_belief"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "attribution"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "time"
+      ],
+      [
+        "unformalised",
+        "time"
+      ],
+      [
+        "unformalised",
+        "time"
+      ],
+      [
+        "unformalised",
+        "time"
+      ],
+      [
+        "unformalised",
+        "time"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      "asserted",
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "modality_belief"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      "norm",
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "modality_belief"
+      ],
+      [
+        "unformalised",
+        "modality_belief"
+      ],
+      [
+        "unformalised",
+        "modality_belief"
+      ],
+      [
+        "unformalised",
+        "modality_belief"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "attribution"
+      ],
+      [
+        "unformalised",
+        "attribution"
+      ],
+      [
+        "unformalised",
+        "attribution"
+      ],
+      [
+        "unformalised",
+        "attribution"
+      ],
+      [
+        "unformalised",
+        "attribution"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "defaults"
+      ],
+      [
+        "unformalised",
+        "modality_belief"
+      ],
+      [
+        "unformalised",
+        "modality_belief"
+      ],
+      [
+        "unformalised",
+        "modality_belief"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "attributed",
+        "anthropic",
+        "believes",
+        [
+          "unformalised",
+          "causation"
+        ]
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "causation"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "modality_belief"
+      ],
+      [
+        "unformalised",
+        "modality_belief"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "other.discourse"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      [
+        "unformalised",
+        "quantities"
+      ],
+      "meta",
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ],
+      [
+        "unformalised",
+        "norms"
+      ]
+    ],
+    "report": {
+      "assumptions": [
+        {
+          "ast": [
+            "not",
+            [
+              "unary",
+              "human",
+              [
+                "const",
+                "claude"
+              ]
+            ]
+          ],
+          "name": "claim"
+        }
+      ],
+      "root": {
+        "ast": [
+          "not",
+          [
+            "unary",
+            "human",
+            [
+              "const",
+              "claude"
+            ]
+          ]
+        ],
+        "name": "claim"
+      }
+    },
+    "report_id": "0e78b60c461567a769b7873ea63d7909da78442e57fee205fe0171bed52db387",
+    "core_report_id": "f98f2b961f3f038e309674519382065c6ad7abe8b7edba538baaa41822886f25",
+    "vacuous": false
+  },
+  "stale_reading_labels": [],
+  "premises": {
+    "candidates": [
+      {
+        "index": 0,
+        "set": "force-u0036-s05",
+        "status": "model"
+      },
+      {
+        "index": 1,
+        "set": "force-u0036-s05",
+        "status": "model"
+      },
+      {
+        "index": 0,
+        "set": "modal-u0062-s01",
+        "status": "model"
+      },
+      {
+        "index": 1,
+        "set": "modal-u0062-s01",
+        "status": "model"
+      },
+      {
+        "index": 0,
+        "set": "modal-u0123-s01-p1",
+        "status": "model"
+      },
+      {
+        "index": 1,
+        "set": "modal-u0123-s01-p1",
+        "status": "model"
+      },
+      {
+        "index": 0,
+        "set": "modal-u0123-s02-p1",
+        "status": "model"
+      },
+      {
+        "index": 1,
+        "set": "modal-u0123-s02-p1",
+        "status": "model"
+      },
+      {
+        "index": 0,
+        "set": "scope-modal-u0123-s03",
+        "status": "model"
+      },
+      {
+        "index": 1,
+        "set": "scope-modal-u0123-s03",
+        "status": "model"
+      },
+      {
+        "index": 0,
+        "set": "force-u0125-s04-p2",
+        "status": "model"
+      },
+      {
+        "index": 1,
+        "set": "force-u0125-s04-p2",
+        "status": "model"
+      },
+      {
+        "index": 0,
+        "set": "force-u0156-s03",
+        "status": "model"
+      },
+      {
+        "index": 1,
+        "set": "force-u0156-s03",
+        "status": "model"
+      },
+      {
+        "index": 0,
+        "set": "force-u0263-s04-p2",
+        "status": "model"
+      },
+      {
+        "index": 1,
+        "set": "force-u0263-s04-p2",
+        "status": "model"
+      }
+    ],
+    "choice": [
+      [
+        "force-u0036-s05",
+        0
+      ],
+      [
+        "modal-u0062-s01",
+        0
+      ],
+      [
+        "modal-u0123-s01-p1",
+        0
+      ],
+      [
+        "modal-u0123-s02-p1",
+        0
+      ],
+      [
+        "scope-modal-u0123-s03",
+        0
+      ],
+      [
+        "force-u0125-s04-p2",
+        0
+      ],
+      [
+        "force-u0156-s03",
+        0
+      ],
+      [
+        "force-u0263-s04-p2",
+        0
+      ]
+    ],
+    "choices": [
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            0
+          ],
+          [
+            "modal-u0062-s01",
+            0
+          ],
+          [
+            "modal-u0123-s01-p1",
+            0
+          ],
+          [
+            "modal-u0123-s02-p1",
+            0
+          ],
+          [
+            "scope-modal-u0123-s03",
+            0
+          ],
+          [
+            "force-u0125-s04-p2",
+            0
+          ],
+          [
+            "force-u0156-s03",
+            0
+          ],
+          [
+            "force-u0263-s04-p2",
+            0
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            0
+          ],
+          [
+            "modal-u0062-s01",
+            0
+          ],
+          [
+            "modal-u0123-s01-p1",
+            0
+          ],
+          [
+            "modal-u0123-s02-p1",
+            0
+          ],
+          [
+            "scope-modal-u0123-s03",
+            0
+          ],
+          [
+            "force-u0125-s04-p2",
+            0
+          ],
+          [
+            "force-u0156-s03",
+            0
+          ],
+          [
+            "force-u0263-s04-p2",
+            1
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            0
+          ],
+          [
+            "modal-u0062-s01",
+            0
+          ],
+          [
+            "modal-u0123-s01-p1",
+            0
+          ],
+          [
+            "modal-u0123-s02-p1",
+            0
+          ],
+          [
+            "scope-modal-u0123-s03",
+            0
+          ],
+          [
+            "force-u0125-s04-p2",
+            0
+          ],
+          [
+            "force-u0156-s03",
+            1
+          ],
+          [
+            "force-u0263-s04-p2",
+            0
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            0
+          ],
+          [
+            "modal-u0062-s01",
+            0
+          ],
+          [
+            "modal-u0123-s01-p1",
+            0
+          ],
+          [
+            "modal-u0123-s02-p1",
+            0
+          ],
+          [
+            "scope-modal-u0123-s03",
+            0
+          ],
+          [
+            "force-u0125-s04-p2",
+            0
+          ],
+          [
+            "force-u0156-s03",
+            1
+          ],
+          [
+            "force-u0263-s04-p2",
+            1
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            0
+          ],
+          [
+            "modal-u0062-s01",
+            0
+          ],
+          [
+            "modal-u0123-s01-p1",
+            0
+          ],
+          [
+            "modal-u0123-s02-p1",
+            0
+          ],
+          [
+            "scope-modal-u0123-s03",
+            0
+          ],
+          [
+            "force-u0125-s04-p2",
+            1
+          ],
+          [
+            "force-u0156-s03",
+            0
+          ],
+          [
+            "force-u0263-s04-p2",
+            0
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            0
+          ],
+          [
+            "modal-u0062-s01",
+            0
+          ],
+          [
+            "modal-u0123-s01-p1",
+            0
+          ],
+          [
+            "modal-u0123-s02-p1",
+            0
+          ],
+          [
+            "scope-modal-u0123-s03",
+            0
+          ],
+          [
+            "force-u0125-s04-p2",
+            1
+          ],
+          [
+            "force-u0156-s03",
+            0
+          ],
+          [
+            "force-u0263-s04-p2",
+            1
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            0
+          ],
+          [
+            "modal-u0062-s01",
+            0
+          ],
+          [
+            "modal-u0123-s01-p1",
+            0
+          ],
+          [
+            "modal-u0123-s02-p1",
+            0
+          ],
+          [
+            "scope-modal-u0123-s03",
+            0
+          ],
+          [
+            "force-u0125-s04-p2",
+            1
+          ],
+          [
+            "force-u0156-s03",
+            1
+          ],
+          [
+            "force-u0263-s04-p2",
+            0
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            0
+          ],
+          [
+            "modal-u0062-s01",
+            0
+          ],
+          [
+            "modal-u0123-s01-p1",
+            0
+          ],
+          [
+            "modal-u0123-s02-p1",
+            0
+          ],
+          [
+            "scope-modal-u0123-s03",
+            0
+          ],
+          [
+            "force-u0125-s04-p2",
+            1
+          ],
+          [
+            "force-u0156-s03",
+            1
+          ],
+          [
+            "force-u0263-s04-p2",
+            1
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            0
+          ],
+          [
+            "modal-u0062-s01",
+            1
+          ],
+          [
+            "modal-u0123-s01-p1",
+            1
+          ],
+          [
+            "modal-u0123-s02-p1",
+            1
+          ],
+          [
+            "scope-modal-u0123-s03",
+            1
+          ],
+          [
+            "force-u0125-s04-p2",
+            0
+          ],
+          [
+            "force-u0156-s03",
+            0
+          ],
+          [
+            "force-u0263-s04-p2",
+            0
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            0
+          ],
+          [
+            "modal-u0062-s01",
+            1
+          ],
+          [
+            "modal-u0123-s01-p1",
+            1
+          ],
+          [
+            "modal-u0123-s02-p1",
+            1
+          ],
+          [
+            "scope-modal-u0123-s03",
+            1
+          ],
+          [
+            "force-u0125-s04-p2",
+            0
+          ],
+          [
+            "force-u0156-s03",
+            0
+          ],
+          [
+            "force-u0263-s04-p2",
+            1
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            0
+          ],
+          [
+            "modal-u0062-s01",
+            1
+          ],
+          [
+            "modal-u0123-s01-p1",
+            1
+          ],
+          [
+            "modal-u0123-s02-p1",
+            1
+          ],
+          [
+            "scope-modal-u0123-s03",
+            1
+          ],
+          [
+            "force-u0125-s04-p2",
+            0
+          ],
+          [
+            "force-u0156-s03",
+            1
+          ],
+          [
+            "force-u0263-s04-p2",
+            0
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            0
+          ],
+          [
+            "modal-u0062-s01",
+            1
+          ],
+          [
+            "modal-u0123-s01-p1",
+            1
+          ],
+          [
+            "modal-u0123-s02-p1",
+            1
+          ],
+          [
+            "scope-modal-u0123-s03",
+            1
+          ],
+          [
+            "force-u0125-s04-p2",
+            0
+          ],
+          [
+            "force-u0156-s03",
+            1
+          ],
+          [
+            "force-u0263-s04-p2",
+            1
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            0
+          ],
+          [
+            "modal-u0062-s01",
+            1
+          ],
+          [
+            "modal-u0123-s01-p1",
+            1
+          ],
+          [
+            "modal-u0123-s02-p1",
+            1
+          ],
+          [
+            "scope-modal-u0123-s03",
+            1
+          ],
+          [
+            "force-u0125-s04-p2",
+            1
+          ],
+          [
+            "force-u0156-s03",
+            0
+          ],
+          [
+            "force-u0263-s04-p2",
+            0
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            0
+          ],
+          [
+            "modal-u0062-s01",
+            1
+          ],
+          [
+            "modal-u0123-s01-p1",
+            1
+          ],
+          [
+            "modal-u0123-s02-p1",
+            1
+          ],
+          [
+            "scope-modal-u0123-s03",
+            1
+          ],
+          [
+            "force-u0125-s04-p2",
+            1
+          ],
+          [
+            "force-u0156-s03",
+            0
+          ],
+          [
+            "force-u0263-s04-p2",
+            1
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            0
+          ],
+          [
+            "modal-u0062-s01",
+            1
+          ],
+          [
+            "modal-u0123-s01-p1",
+            1
+          ],
+          [
+            "modal-u0123-s02-p1",
+            1
+          ],
+          [
+            "scope-modal-u0123-s03",
+            1
+          ],
+          [
+            "force-u0125-s04-p2",
+            1
+          ],
+          [
+            "force-u0156-s03",
+            1
+          ],
+          [
+            "force-u0263-s04-p2",
+            0
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            0
+          ],
+          [
+            "modal-u0062-s01",
+            1
+          ],
+          [
+            "modal-u0123-s01-p1",
+            1
+          ],
+          [
+            "modal-u0123-s02-p1",
+            1
+          ],
+          [
+            "scope-modal-u0123-s03",
+            1
+          ],
+          [
+            "force-u0125-s04-p2",
+            1
+          ],
+          [
+            "force-u0156-s03",
+            1
+          ],
+          [
+            "force-u0263-s04-p2",
+            1
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            1
+          ],
+          [
+            "modal-u0062-s01",
+            0
+          ],
+          [
+            "modal-u0123-s01-p1",
+            0
+          ],
+          [
+            "modal-u0123-s02-p1",
+            0
+          ],
+          [
+            "scope-modal-u0123-s03",
+            0
+          ],
+          [
+            "force-u0125-s04-p2",
+            0
+          ],
+          [
+            "force-u0156-s03",
+            0
+          ],
+          [
+            "force-u0263-s04-p2",
+            0
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            1
+          ],
+          [
+            "modal-u0062-s01",
+            0
+          ],
+          [
+            "modal-u0123-s01-p1",
+            0
+          ],
+          [
+            "modal-u0123-s02-p1",
+            0
+          ],
+          [
+            "scope-modal-u0123-s03",
+            0
+          ],
+          [
+            "force-u0125-s04-p2",
+            0
+          ],
+          [
+            "force-u0156-s03",
+            0
+          ],
+          [
+            "force-u0263-s04-p2",
+            1
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            1
+          ],
+          [
+            "modal-u0062-s01",
+            0
+          ],
+          [
+            "modal-u0123-s01-p1",
+            0
+          ],
+          [
+            "modal-u0123-s02-p1",
+            0
+          ],
+          [
+            "scope-modal-u0123-s03",
+            0
+          ],
+          [
+            "force-u0125-s04-p2",
+            0
+          ],
+          [
+            "force-u0156-s03",
+            1
+          ],
+          [
+            "force-u0263-s04-p2",
+            0
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            1
+          ],
+          [
+            "modal-u0062-s01",
+            0
+          ],
+          [
+            "modal-u0123-s01-p1",
+            0
+          ],
+          [
+            "modal-u0123-s02-p1",
+            0
+          ],
+          [
+            "scope-modal-u0123-s03",
+            0
+          ],
+          [
+            "force-u0125-s04-p2",
+            0
+          ],
+          [
+            "force-u0156-s03",
+            1
+          ],
+          [
+            "force-u0263-s04-p2",
+            1
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            1
+          ],
+          [
+            "modal-u0062-s01",
+            0
+          ],
+          [
+            "modal-u0123-s01-p1",
+            0
+          ],
+          [
+            "modal-u0123-s02-p1",
+            0
+          ],
+          [
+            "scope-modal-u0123-s03",
+            0
+          ],
+          [
+            "force-u0125-s04-p2",
+            1
+          ],
+          [
+            "force-u0156-s03",
+            0
+          ],
+          [
+            "force-u0263-s04-p2",
+            0
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            1
+          ],
+          [
+            "modal-u0062-s01",
+            0
+          ],
+          [
+            "modal-u0123-s01-p1",
+            0
+          ],
+          [
+            "modal-u0123-s02-p1",
+            0
+          ],
+          [
+            "scope-modal-u0123-s03",
+            0
+          ],
+          [
+            "force-u0125-s04-p2",
+            1
+          ],
+          [
+            "force-u0156-s03",
+            0
+          ],
+          [
+            "force-u0263-s04-p2",
+            1
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            1
+          ],
+          [
+            "modal-u0062-s01",
+            0
+          ],
+          [
+            "modal-u0123-s01-p1",
+            0
+          ],
+          [
+            "modal-u0123-s02-p1",
+            0
+          ],
+          [
+            "scope-modal-u0123-s03",
+            0
+          ],
+          [
+            "force-u0125-s04-p2",
+            1
+          ],
+          [
+            "force-u0156-s03",
+            1
+          ],
+          [
+            "force-u0263-s04-p2",
+            0
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            1
+          ],
+          [
+            "modal-u0062-s01",
+            0
+          ],
+          [
+            "modal-u0123-s01-p1",
+            0
+          ],
+          [
+            "modal-u0123-s02-p1",
+            0
+          ],
+          [
+            "scope-modal-u0123-s03",
+            0
+          ],
+          [
+            "force-u0125-s04-p2",
+            1
+          ],
+          [
+            "force-u0156-s03",
+            1
+          ],
+          [
+            "force-u0263-s04-p2",
+            1
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            1
+          ],
+          [
+            "modal-u0062-s01",
+            1
+          ],
+          [
+            "modal-u0123-s01-p1",
+            1
+          ],
+          [
+            "modal-u0123-s02-p1",
+            1
+          ],
+          [
+            "scope-modal-u0123-s03",
+            1
+          ],
+          [
+            "force-u0125-s04-p2",
+            0
+          ],
+          [
+            "force-u0156-s03",
+            0
+          ],
+          [
+            "force-u0263-s04-p2",
+            0
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            1
+          ],
+          [
+            "modal-u0062-s01",
+            1
+          ],
+          [
+            "modal-u0123-s01-p1",
+            1
+          ],
+          [
+            "modal-u0123-s02-p1",
+            1
+          ],
+          [
+            "scope-modal-u0123-s03",
+            1
+          ],
+          [
+            "force-u0125-s04-p2",
+            0
+          ],
+          [
+            "force-u0156-s03",
+            0
+          ],
+          [
+            "force-u0263-s04-p2",
+            1
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            1
+          ],
+          [
+            "modal-u0062-s01",
+            1
+          ],
+          [
+            "modal-u0123-s01-p1",
+            1
+          ],
+          [
+            "modal-u0123-s02-p1",
+            1
+          ],
+          [
+            "scope-modal-u0123-s03",
+            1
+          ],
+          [
+            "force-u0125-s04-p2",
+            0
+          ],
+          [
+            "force-u0156-s03",
+            1
+          ],
+          [
+            "force-u0263-s04-p2",
+            0
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            1
+          ],
+          [
+            "modal-u0062-s01",
+            1
+          ],
+          [
+            "modal-u0123-s01-p1",
+            1
+          ],
+          [
+            "modal-u0123-s02-p1",
+            1
+          ],
+          [
+            "scope-modal-u0123-s03",
+            1
+          ],
+          [
+            "force-u0125-s04-p2",
+            0
+          ],
+          [
+            "force-u0156-s03",
+            1
+          ],
+          [
+            "force-u0263-s04-p2",
+            1
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            1
+          ],
+          [
+            "modal-u0062-s01",
+            1
+          ],
+          [
+            "modal-u0123-s01-p1",
+            1
+          ],
+          [
+            "modal-u0123-s02-p1",
+            1
+          ],
+          [
+            "scope-modal-u0123-s03",
+            1
+          ],
+          [
+            "force-u0125-s04-p2",
+            1
+          ],
+          [
+            "force-u0156-s03",
+            0
+          ],
+          [
+            "force-u0263-s04-p2",
+            0
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            1
+          ],
+          [
+            "modal-u0062-s01",
+            1
+          ],
+          [
+            "modal-u0123-s01-p1",
+            1
+          ],
+          [
+            "modal-u0123-s02-p1",
+            1
+          ],
+          [
+            "scope-modal-u0123-s03",
+            1
+          ],
+          [
+            "force-u0125-s04-p2",
+            1
+          ],
+          [
+            "force-u0156-s03",
+            0
+          ],
+          [
+            "force-u0263-s04-p2",
+            1
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            1
+          ],
+          [
+            "modal-u0062-s01",
+            1
+          ],
+          [
+            "modal-u0123-s01-p1",
+            1
+          ],
+          [
+            "modal-u0123-s02-p1",
+            1
+          ],
+          [
+            "scope-modal-u0123-s03",
+            1
+          ],
+          [
+            "force-u0125-s04-p2",
+            1
+          ],
+          [
+            "force-u0156-s03",
+            1
+          ],
+          [
+            "force-u0263-s04-p2",
+            0
+          ]
+        ],
+        "status": "model"
+      },
+      {
+        "choice": [
+          [
+            "force-u0036-s05",
+            1
+          ],
+          [
+            "modal-u0062-s01",
+            1
+          ],
+          [
+            "modal-u0123-s01-p1",
+            1
+          ],
+          [
+            "modal-u0123-s02-p1",
+            1
+          ],
+          [
+            "scope-modal-u0123-s03",
+            1
+          ],
+          [
+            "force-u0125-s04-p2",
+            1
+          ],
+          [
+            "force-u0156-s03",
+            1
+          ],
+          [
+            "force-u0263-s04-p2",
+            1
+          ]
+        ],
+        "status": "model"
+      }
+    ],
+    "evidence": "per choice",
+    "model": {
+      "complete": true,
+      "constants": {
+        "claude": "e0"
+      },
+      "domains": {
+        "claude_instance": [],
+        "entity": [
+          "e0"
+        ],
+        "hard_constraint": [],
+        "operator": [],
+        "operator_input": [],
+        "situation": [],
+        "user": []
+      },
+      "relations": {
+        "attempt_to_kill_or_disempower_most_of_humanity": [],
+        "child_sexual_abuse_material": [],
+        "clarification_required": [],
+        "clear_and_substantial_undermining_of_oversight": [],
+        "compliance_against_guidelines": [],
+        "compliance_unethical": [],
+        "compliance_unsafe": [],
+        "critical_infrastructure_uplift": [],
+        "csam_generation_permitted_for_claude": [],
+        "cyberweapon_creation_permitted": [],
+        "damaging_cyberweapon_or_malicious_code": [],
+        "denial_of_being_claude_permitted": [],
+        "exception_to_asking_for_clarification": [],
+        "exception_to_complying_with_exploit_instruction": [],
+        "exception_to_never_denying_being_claude": [],
+        "exception_to_not_deceiving_about_system_prompt": [],
+        "explicit_instruction_against_exploits": [],
+        "exploit_instruction_compliance_required": [],
+        "firmness_required": [],
+        "general_exception_to_complying": [],
+        "genuine_ambiguity": [],
+        "human": [],
+        "humanity_attack_participation_permitted": [],
+        "illegitimate_absolute_control": [],
+        "illegitimate_control_involvement_permitted": [],
+        "infrastructure_uplift_permitted": [],
+        "input_is_information": [],
+        "input_is_persona": [],
+        "input_is_specific_instructions": [],
+        "instruction_abandon_identity_in_persona": [],
+        "instruction_act_against_guidelines": [],
+        "instruction_claim_human_when_asked": [],
+        "instruction_deceptive_tactics_harming_users": [],
+        "instruction_decline_or_withhold": [],
+        "instruction_dishonest_looking_within_honesty": [],
+        "instruction_endanger_health_or_safety": [],
+        "instruction_false_information_deceiving_user": [],
+        "instruction_focus_on_tasks": [],
+        "instruction_given_while_role_playing_persona": [],
+        "instruction_promote_own_products": [],
+        "instruction_respond_differently": [],
+        "instruction_role_play_custom_persona": [],
+        "judgment_use_required": [],
+        "mass_casualty_weapon_uplift": [],
+        "operator_input_permitted": [],
+        "operator_prompt_addresses_case": [],
+        "operator_unlocks": [],
+        "oversight_undermining_permitted": [],
+        "seemingly_compelling_argument_to_cross_line": [],
+        "system_prompt_compliance_required": [],
+        "system_prompt_deception_permitted": [],
+        "unsaid__clarification_required": [],
+        "unsaid__csam_generation_permitted_for_claude": [],
+        "unsaid__cyberweapon_creation_permitted": [],
+        "unsaid__denial_of_being_claude_permitted": [],
+        "unsaid__exploit_instruction_compliance_required": [],
+        "unsaid__firmness_required": [],
+        "unsaid__humanity_attack_participation_permitted": [],
+        "unsaid__illegitimate_control_involvement_permitted": [],
+        "unsaid__infrastructure_uplift_permitted": [],
+        "unsaid__judgment_use_required": [],
+        "unsaid__operator_input_permitted": [],
+        "unsaid__oversight_undermining_permitted": [],
+        "unsaid__system_prompt_compliance_required": [],
+        "unsaid__system_prompt_deception_permitted": [],
+        "unsaid__weapons_uplift_permitted": [],
+        "user_unlocks": [],
+        "weapons_uplift_permitted": []
+      }
+    },
+    "route": "enumerated",
+    "status": "model"
+  },
+  "readings": {
+    "checked_by": {
+      "lean": "readings@1 admission (4.1 to 4.4), every recorded separation (4.5) and the findings (4.6): ve_readings_route readings-validate; S2 route and restrictions: readings-elaborate",
+      "python": "W2 structure of the reading sets, couplings and narrowings (S1 limitation, DRI ruling 3: Lean does not decode them); S2 choices, units, names, slot and sizes compared with Lean",
+      "not_certified": "SeparatedByDecisionOnly: decision_only_sound is not proved (DRI ruling 2)"
+    },
+    "sets": [
+      {
+        "set": "force-u0036-s05",
+        "version": 1,
+        "unit": "u0036.s05",
+        "candidates": [
+          {
+            "id": "strict",
+            "index": 0,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "default",
+            "index": 1,
+            "pending": false,
+            "chain_findings": []
+          }
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "strict",
+              "default"
+            ],
+            "situation": "9ac179882a05a78c83e93ebd44a7fb8525fb38a9eb934db712f67400faee5850",
+            "probe": "outcome",
+            "wording": "E19",
+            "text": "These two readings differ here: c is an instance of Claude; e is an entity of sort \"entity\"; h is a hard constraint; operator is an operator; operator_input is an operator input; s is a situation; u is a user; s is classified as \"exception_to_asking_for_clarification\"; s is classified as \"genuine_ambiguity\". Here the text does not say whether c must seek clarification in s; this situation answers 'no'. Here the text does not say whether c may do the generation in s; this situation answers 'no'. Here the text does not say whether c may do the creation in s; this situation answers 'no'. Here the text does not say whether c may directly deny being Claude; this situation answers 'no'. Here the text does not say whether c must comply with the instruction against unintended exploits in s; this situation answers 'no'. Here the text does not say whether c must remain firm in s; this situation answers 'no'. Here the text does not say whether c may do the participation in s; this situation answers 'no'. Here the text does not say whether c may do the involvement in s; this situation answers 'no'. Here the text does not say whether c may do the infrastructure uplift in s; this situation answers 'no'. Here the text does not say whether c must use good judgment when evaluating conversational inputs; this situation answers 'no'. Here the text does not say whether operator may give Claude operator_input; this situation answers 'no'. Here the text does not say whether c may do the undermining in s; this situation answers 'no'. Here the text does not say whether c must comply with the system prompt instructions in s; this situation answers 'no'. Here the text does not say whether c may actively deceive u about system prompt existence-or-content; this situation answers 'no'. Here the text does not say whether c may do the weapons uplift in s; this situation answers 'no'. Under *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"*, c still must. Under *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\", unless that situation is classified as \"exception_to_asking_for_clarification\"*, c is not required to."
+          }
+        ],
+        "findings": [],
+        "not_certified": []
+      },
+      {
+        "set": "modal-u0062-s01",
+        "version": 1,
+        "unit": "u0062.s01",
+        "candidates": [
+          {
+            "id": "permission-narrow-limits",
+            "index": 0,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "permission-wide-limits",
+            "index": 1,
+            "pending": false,
+            "chain_findings": []
+          }
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "permission-narrow-limits",
+              "permission-wide-limits"
+            ],
+            "situation": "9907d6de9dbb1f8dc9843880d9129a8d5bde2385c482f19494708a67021f59ec",
+            "probe": "outcome",
+            "wording": "E19",
+            "text": "These two readings differ here: c is an instance of Claude; e is an entity of sort \"entity\"; h is a hard constraint; operator is an operator; operator_input is an operator input; s is a situation; u is a user; operator_input is information; operator_input is classified as \"instruction_abandon_identity_in_persona\". Here the text does not say whether c must seek clarification in s; this situation answers 'no'. Here the text does not say whether c may do the generation in s; this situation answers 'no'. Here the text does not say whether c may do the creation in s; this situation answers 'no'. Here the text does not say whether c may directly deny being Claude; this situation answers 'no'. Here the text does not say whether c must comply with the instruction against unintended exploits in s; this situation answers 'no'. Here the text does not say whether c must remain firm in s; this situation answers 'no'. Here the text does not say whether c may do the participation in s; this situation answers 'no'. Here the text does not say whether c may do the involvement in s; this situation answers 'no'. Here the text does not say whether c may do the infrastructure uplift in s; this situation answers 'no'. Here the text does not say whether c must use good judgment when evaluating conversational inputs; this situation answers 'no'. Here the text does not say whether operator may give Claude operator_input; this situation answers 'no'. Here the text does not say whether c may do the undermining in s; this situation answers 'no'. Here the text does not say whether c must comply with the system prompt instructions in s; this situation answers 'no'. Here the text does not say whether c may actively deceive u about system prompt existence-or-content; this situation answers 'no'. Here the text does not say whether c may do the weapons uplift in s; this situation answers 'no'. Under *Every operator may give Claude each operator input, if at least one of the following holds:\n  (a) either that operator input is classified as \"input_is_specific_instructions\" or that operator input is classified as \"input_is_persona\", or both;\n  (b) that operator input is information. Except when that operator input is classified as \"instruction_abandon_identity_in_persona\". Except when that operator input is classified as \"instruction_claim_human_when_asked\". Except when that operator input is classified as \"instruction_deceptive_tactics_harming_users\". Except when that operator input is classified as \"instruction_false_information_deceiving_user\". Except when that operator input is classified as \"instruction_endanger_health_or_safety\". Except when that operator input is classified as \"instruction_act_against_guidelines\"*, operator is not permitted to. Under *Every operator may give Claude each operator input, if at least one of the following holds:\n  (a) either that operator input is classified as \"input_is_specific_instructions\" or that operator input is classified as \"input_is_persona\", or both;\n  (b) that operator input is information, unless all of the following hold:\n  (a) at least one of the following holds:\n    (i) at least one of the following holds:\n      (a) at least one of the following holds:\n        (i) at least one of the following holds:\n          (a) either that operator input is classified as \"instruction_abandon_identity_in_persona\" or that operator input is classified as \"instruction_claim_human_when_asked\", or both;\n          (b) that operator input is classified as \"instruction_deceptive_tactics_harming_users\";\n        (ii) that operator input is classified as \"instruction_false_information_deceiving_user\";\n      (b) that operator input is classified as \"instruction_endanger_health_or_safety\";\n    (ii) that operator input is classified as \"instruction_act_against_guidelines\";\n  (b) that operator input is classified as \"instruction_given_while_role_playing_persona\"*, operator is permitted to."
+          }
+        ],
+        "findings": [],
+        "not_certified": []
+      },
+      {
+        "set": "modal-u0123-s01-p1",
+        "version": 1,
+        "unit": "u0123.s01.p1",
+        "candidates": [
+          {
+            "id": "permission-narrow-limits",
+            "index": 0,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "permission-wide-limits",
+            "index": 1,
+            "pending": false,
+            "chain_findings": []
+          }
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "permission-narrow-limits",
+              "permission-wide-limits"
+            ],
+            "situation": "3b1b790a8f0286d16797ff2d478e3a12a544f763bb22414653263a341dd9b7e8",
+            "probe": "outcome",
+            "wording": "E19",
+            "text": "These two readings differ here: c is an instance of Claude; e is an entity of sort \"entity\"; h is a hard constraint; operator is an operator; operator_input is an operator input; s is a situation; u is a user; operator_input is classified as \"instruction_abandon_identity_in_persona\"; operator_input is classified as \"instruction_dishonest_looking_within_honesty\". Here the text does not say whether c must seek clarification in s; this situation answers 'no'. Here the text does not say whether c may do the generation in s; this situation answers 'no'. Here the text does not say whether c may do the creation in s; this situation answers 'no'. Here the text does not say whether c may directly deny being Claude; this situation answers 'no'. Here the text does not say whether c must comply with the instruction against unintended exploits in s; this situation answers 'no'. Here the text does not say whether c must remain firm in s; this situation answers 'no'. Here the text does not say whether c may do the participation in s; this situation answers 'no'. Here the text does not say whether c may do the involvement in s; this situation answers 'no'. Here the text does not say whether c may do the infrastructure uplift in s; this situation answers 'no'. Here the text does not say whether c must use good judgment when evaluating conversational inputs; this situation answers 'no'. Here the text does not say whether operator may give Claude operator_input; this situation answers 'no'. Here the text does not say whether c may do the undermining in s; this situation answers 'no'. Here the text does not say whether c must comply with the system prompt instructions in s; this situation answers 'no'. Here the text does not say whether c may actively deceive u about system prompt existence-or-content; this situation answers 'no'. Here the text does not say whether c may do the weapons uplift in s; this situation answers 'no'. Under *Every operator may give Claude each operator input, if that operator input is classified as \"instruction_dishonest_looking_within_honesty\". Except when that operator input is classified as \"instruction_abandon_identity_in_persona\". Except when that operator input is classified as \"instruction_claim_human_when_asked\". Except when that operator input is classified as \"instruction_deceptive_tactics_harming_users\". Except when that operator input is classified as \"instruction_false_information_deceiving_user\". Except when that operator input is classified as \"instruction_endanger_health_or_safety\". Except when that operator input is classified as \"instruction_act_against_guidelines\"*, operator is not permitted to. Under *Every operator may give Claude each operator input, if that operator input is classified as \"instruction_dishonest_looking_within_honesty\", unless all of the following hold:\n  (a) at least one of the following holds:\n    (i) at least one of the following holds:\n      (a) at least one of the following holds:\n        (i) at least one of the following holds:\n          (a) either that operator input is classified as \"instruction_abandon_identity_in_persona\" or that operator input is classified as \"instruction_claim_human_when_asked\", or both;\n          (b) that operator input is classified as \"instruction_deceptive_tactics_harming_users\";\n        (ii) that operator input is classified as \"instruction_false_information_deceiving_user\";\n      (b) that operator input is classified as \"instruction_endanger_health_or_safety\";\n    (ii) that operator input is classified as \"instruction_act_against_guidelines\";\n  (b) that operator input is classified as \"instruction_given_while_role_playing_persona\"*, operator is permitted to."
+          }
+        ],
+        "findings": [],
+        "not_certified": []
+      },
+      {
+        "set": "modal-u0123-s02-p1",
+        "version": 1,
+        "unit": "u0123.s02.p1",
+        "candidates": [
+          {
+            "id": "permission-narrow-limits",
+            "index": 0,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "permission-wide-limits",
+            "index": 1,
+            "pending": false,
+            "chain_findings": []
+          }
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "permission-narrow-limits",
+              "permission-wide-limits"
+            ],
+            "situation": "c1b42ac5704bf9b5d82c6eb7a37a32eafb53ef5af804d18c40a4124c15faf5be",
+            "probe": "outcome",
+            "wording": "E19",
+            "text": "These two readings differ here: c is an instance of Claude; e is an entity of sort \"entity\"; h is a hard constraint; operator is an operator; operator_input is an operator input; s is a situation; u is a user; operator_input is classified as \"instruction_abandon_identity_in_persona\"; operator_input is classified as \"instruction_decline_or_withhold\". Here the text does not say whether c must seek clarification in s; this situation answers 'no'. Here the text does not say whether c may do the generation in s; this situation answers 'no'. Here the text does not say whether c may do the creation in s; this situation answers 'no'. Here the text does not say whether c may directly deny being Claude; this situation answers 'no'. Here the text does not say whether c must comply with the instruction against unintended exploits in s; this situation answers 'no'. Here the text does not say whether c must remain firm in s; this situation answers 'no'. Here the text does not say whether c may do the participation in s; this situation answers 'no'. Here the text does not say whether c may do the involvement in s; this situation answers 'no'. Here the text does not say whether c may do the infrastructure uplift in s; this situation answers 'no'. Here the text does not say whether c must use good judgment when evaluating conversational inputs; this situation answers 'no'. Here the text does not say whether operator may give Claude operator_input; this situation answers 'no'. Here the text does not say whether c may do the undermining in s; this situation answers 'no'. Here the text does not say whether c must comply with the system prompt instructions in s; this situation answers 'no'. Here the text does not say whether c may actively deceive u about system prompt existence-or-content; this situation answers 'no'. Here the text does not say whether c may do the weapons uplift in s; this situation answers 'no'. Under *Every operator may give Claude each operator input, if at least one of the following holds:\n  (a) at least one of the following holds:\n    (i) at least one of the following holds:\n      (a) either that operator input is classified as \"instruction_role_play_custom_persona\" or that operator input is classified as \"instruction_decline_or_withhold\", or both;\n      (b) that operator input is classified as \"instruction_promote_own_products\";\n    (ii) that operator input is classified as \"instruction_focus_on_tasks\";\n  (b) that operator input is classified as \"instruction_respond_differently\". Except when that operator input is classified as \"instruction_abandon_identity_in_persona\". Except when that operator input is classified as \"instruction_claim_human_when_asked\". Except when that operator input is classified as \"instruction_deceptive_tactics_harming_users\". Except when that operator input is classified as \"instruction_false_information_deceiving_user\". Except when that operator input is classified as \"instruction_endanger_health_or_safety\". Except when that operator input is classified as \"instruction_act_against_guidelines\"*, operator is not permitted to. Under *Every operator may give Claude each operator input, if at least one of the following holds:\n  (a) at least one of the following holds:\n    (i) at least one of the following holds:\n      (a) either that operator input is classified as \"instruction_role_play_custom_persona\" or that operator input is classified as \"instruction_decline_or_withhold\", or both;\n      (b) that operator input is classified as \"instruction_promote_own_products\";\n    (ii) that operator input is classified as \"instruction_focus_on_tasks\";\n  (b) that operator input is classified as \"instruction_respond_differently\", unless all of the following hold:\n  (a) at least one of the following holds:\n    (i) at least one of the following holds:\n      (a) at least one of the following holds:\n        (i) at least one of the following holds:\n          (a) either that operator input is classified as \"instruction_abandon_identity_in_persona\" or that operator input is classified as \"instruction_claim_human_when_asked\", or both;\n          (b) that operator input is classified as \"instruction_deceptive_tactics_harming_users\";\n        (ii) that operator input is classified as \"instruction_false_information_deceiving_user\";\n      (b) that operator input is classified as \"instruction_endanger_health_or_safety\";\n    (ii) that operator input is classified as \"instruction_act_against_guidelines\";\n  (b) that operator input is classified as \"instruction_given_while_role_playing_persona\"*, operator is permitted to."
+          }
+        ],
+        "findings": [],
+        "not_certified": []
+      },
+      {
+        "set": "scope-modal-u0123-s03",
+        "version": 1,
+        "unit": "u0123.s03",
+        "candidates": [
+          {
+            "id": "narrow-prohibition",
+            "index": 0,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "wide-prohibition",
+            "index": 1,
+            "pending": false,
+            "chain_findings": []
+          }
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "narrow-prohibition",
+              "wide-prohibition"
+            ],
+            "situation": "3a440b8bd11eb261d23df77eeedae2d99d43920ecc58baf95c25de29a24afe8e",
+            "probe": "selects",
+            "wording": "E24",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+          }
+        ],
+        "findings": [],
+        "not_certified": []
+      },
+      {
+        "set": "force-u0125-s04-p2",
+        "version": 1,
+        "unit": "u0125.s04.p2",
+        "candidates": [
+          {
+            "id": "strict",
+            "index": 0,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "default",
+            "index": 1,
+            "pending": false,
+            "chain_findings": []
+          }
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "strict",
+              "default"
+            ],
+            "situation": "c6c25a6f87248d9191dc144c08d2c80e8c318d7a48600e71887a5a53670ffc7f",
+            "probe": "selects",
+            "wording": "E24",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+          }
+        ],
+        "findings": [],
+        "not_certified": []
+      },
+      {
+        "set": "force-u0156-s03",
+        "version": 1,
+        "unit": "u0156.s03",
+        "candidates": [
+          {
+            "id": "strict",
+            "index": 0,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "default",
+            "index": 1,
+            "pending": false,
+            "chain_findings": []
+          }
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "strict",
+              "default"
+            ],
+            "situation": "77962192f72a582e5e30b911392f473e96375c17f3477053bb9f58cf4099664a",
+            "probe": "selects",
+            "wording": "E24",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+          }
+        ],
+        "findings": [],
+        "not_certified": []
+      },
+      {
+        "set": "force-u0263-s04-p2",
+        "version": 1,
+        "unit": "u0263.s04.p2",
+        "candidates": [
+          {
+            "id": "strict",
+            "index": 0,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "default",
+            "index": 1,
+            "pending": false,
+            "chain_findings": []
+          }
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "strict",
+              "default"
+            ],
+            "situation": "4d0a1571b106ce99f29c4e1f709d3cf18be3a2bb6743e6459ecb1debdef74cdf",
+            "probe": "outcome",
+            "wording": "E19",
+            "text": "These two readings differ here: c is an instance of Claude; e is an entity of sort \"entity\"; h is a hard constraint; operator is an operator; operator_input is an operator input; s is a situation; u is a user; c has the recorded relation \"exception_to_complying_with_exploit_instruction\" to s; c has the recorded relation \"explicit_instruction_against_exploits\" to s. Here the text does not say whether c must seek clarification in s; this situation answers 'no'. Here the text does not say whether c may do the generation in s; this situation answers 'no'. Here the text does not say whether c may do the creation in s; this situation answers 'no'. Here the text does not say whether c may directly deny being Claude; this situation answers 'no'. Here the text does not say whether c must comply with the instruction against unintended exploits in s; this situation answers 'no'. Here the text does not say whether c must remain firm in s; this situation answers 'no'. Here the text does not say whether c may do the participation in s; this situation answers 'no'. Here the text does not say whether c may do the involvement in s; this situation answers 'no'. Here the text does not say whether c may do the infrastructure uplift in s; this situation answers 'no'. Here the text does not say whether c must use good judgment when evaluating conversational inputs; this situation answers 'no'. Here the text does not say whether operator may give Claude operator_input; this situation answers 'no'. Here the text does not say whether c may do the undermining in s; this situation answers 'no'. Here the text does not say whether c must comply with the system prompt instructions in s; this situation answers 'no'. Here the text does not say whether c may actively deceive u about system prompt existence-or-content; this situation answers 'no'. Here the text does not say whether c may do the weapons uplift in s; this situation answers 'no'. Under *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*, c still must. Under *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation, unless that instance of Claude has the recorded relation \"exception_to_complying_with_exploit_instruction\" to that situation*, c is not required to."
+          }
+        ],
+        "findings": [],
+        "not_certified": []
+      }
+    ],
+    "separations": {
+      "outcome": 5,
+      "selects": 3,
+      "holds": 0
+    },
+    "findings": {
+      "SeparatedByDecisionOnly": 0,
+      "SeparatedByActOnly": 0
+    },
+    "pending_candidates": 0,
+    "couplings": 1,
+    "route": "enumerated",
+    "choice_count": 32,
+    "choices_checked": 32,
+    "narrowings_stale": [],
+    "reading_premises": [],
+    "not_superposable": {
+      "cause": "the unspecified completion",
+      "text": "ReadingsNotSuperposable: force-u0036-s05, modal-u0062-s01, modal-u0123-s01-p1, modal-u0123-s02-p1, scope-modal-u0123-s03, force-u0125-s04-p2, force-u0156-s03, force-u0263-s04-p2"
+    },
+    "status": "CONFLICT-FREE among rules on the same act under every reading (32 readings checked one at a time)",
+    "conflict": {
+      "choices": [
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "modal-u0062-s01",
+              0
+            ],
+            [
+              "modal-u0123-s01-p1",
+              0
+            ],
+            [
+              "modal-u0123-s02-p1",
+              0
+            ],
+            [
+              "scope-modal-u0123-s03",
+              0
+            ],
+            [
+              "force-u0125-s04-p2",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "modal-u0062-s01",
+              0
+            ],
+            [
+              "modal-u0123-s01-p1",
+              0
+            ],
+            [
+              "modal-u0123-s02-p1",
+              0
+            ],
+            [
+              "scope-modal-u0123-s03",
+              0
+            ],
+            [
+              "force-u0125-s04-p2",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "modal-u0062-s01",
+              0
+            ],
+            [
+              "modal-u0123-s01-p1",
+              0
+            ],
+            [
+              "modal-u0123-s02-p1",
+              0
+            ],
+            [
+              "scope-modal-u0123-s03",
+              0
+            ],
+            [
+              "force-u0125-s04-p2",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "modal-u0062-s01",
+              0
+            ],
+            [
+              "modal-u0123-s01-p1",
+              0
+            ],
+            [
+              "modal-u0123-s02-p1",
+              0
+            ],
+            [
+              "scope-modal-u0123-s03",
+              0
+            ],
+            [
+              "force-u0125-s04-p2",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "modal-u0062-s01",
+              0
+            ],
+            [
+              "modal-u0123-s01-p1",
+              0
+            ],
+            [
+              "modal-u0123-s02-p1",
+              0
+            ],
+            [
+              "scope-modal-u0123-s03",
+              0
+            ],
+            [
+              "force-u0125-s04-p2",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "modal-u0062-s01",
+              0
+            ],
+            [
+              "modal-u0123-s01-p1",
+              0
+            ],
+            [
+              "modal-u0123-s02-p1",
+              0
+            ],
+            [
+              "scope-modal-u0123-s03",
+              0
+            ],
+            [
+              "force-u0125-s04-p2",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "modal-u0062-s01",
+              0
+            ],
+            [
+              "modal-u0123-s01-p1",
+              0
+            ],
+            [
+              "modal-u0123-s02-p1",
+              0
+            ],
+            [
+              "scope-modal-u0123-s03",
+              0
+            ],
+            [
+              "force-u0125-s04-p2",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "modal-u0062-s01",
+              0
+            ],
+            [
+              "modal-u0123-s01-p1",
+              0
+            ],
+            [
+              "modal-u0123-s02-p1",
+              0
+            ],
+            [
+              "scope-modal-u0123-s03",
+              0
+            ],
+            [
+              "force-u0125-s04-p2",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "modal-u0062-s01",
+              1
+            ],
+            [
+              "modal-u0123-s01-p1",
+              1
+            ],
+            [
+              "modal-u0123-s02-p1",
+              1
+            ],
+            [
+              "scope-modal-u0123-s03",
+              1
+            ],
+            [
+              "force-u0125-s04-p2",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "modal-u0062-s01",
+              1
+            ],
+            [
+              "modal-u0123-s01-p1",
+              1
+            ],
+            [
+              "modal-u0123-s02-p1",
+              1
+            ],
+            [
+              "scope-modal-u0123-s03",
+              1
+            ],
+            [
+              "force-u0125-s04-p2",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "modal-u0062-s01",
+              1
+            ],
+            [
+              "modal-u0123-s01-p1",
+              1
+            ],
+            [
+              "modal-u0123-s02-p1",
+              1
+            ],
+            [
+              "scope-modal-u0123-s03",
+              1
+            ],
+            [
+              "force-u0125-s04-p2",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "modal-u0062-s01",
+              1
+            ],
+            [
+              "modal-u0123-s01-p1",
+              1
+            ],
+            [
+              "modal-u0123-s02-p1",
+              1
+            ],
+            [
+              "scope-modal-u0123-s03",
+              1
+            ],
+            [
+              "force-u0125-s04-p2",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "modal-u0062-s01",
+              1
+            ],
+            [
+              "modal-u0123-s01-p1",
+              1
+            ],
+            [
+              "modal-u0123-s02-p1",
+              1
+            ],
+            [
+              "scope-modal-u0123-s03",
+              1
+            ],
+            [
+              "force-u0125-s04-p2",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "modal-u0062-s01",
+              1
+            ],
+            [
+              "modal-u0123-s01-p1",
+              1
+            ],
+            [
+              "modal-u0123-s02-p1",
+              1
+            ],
+            [
+              "scope-modal-u0123-s03",
+              1
+            ],
+            [
+              "force-u0125-s04-p2",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "modal-u0062-s01",
+              1
+            ],
+            [
+              "modal-u0123-s01-p1",
+              1
+            ],
+            [
+              "modal-u0123-s02-p1",
+              1
+            ],
+            [
+              "scope-modal-u0123-s03",
+              1
+            ],
+            [
+              "force-u0125-s04-p2",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "modal-u0062-s01",
+              1
+            ],
+            [
+              "modal-u0123-s01-p1",
+              1
+            ],
+            [
+              "modal-u0123-s02-p1",
+              1
+            ],
+            [
+              "scope-modal-u0123-s03",
+              1
+            ],
+            [
+              "force-u0125-s04-p2",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "modal-u0062-s01",
+              0
+            ],
+            [
+              "modal-u0123-s01-p1",
+              0
+            ],
+            [
+              "modal-u0123-s02-p1",
+              0
+            ],
+            [
+              "scope-modal-u0123-s03",
+              0
+            ],
+            [
+              "force-u0125-s04-p2",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "modal-u0062-s01",
+              0
+            ],
+            [
+              "modal-u0123-s01-p1",
+              0
+            ],
+            [
+              "modal-u0123-s02-p1",
+              0
+            ],
+            [
+              "scope-modal-u0123-s03",
+              0
+            ],
+            [
+              "force-u0125-s04-p2",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "modal-u0062-s01",
+              0
+            ],
+            [
+              "modal-u0123-s01-p1",
+              0
+            ],
+            [
+              "modal-u0123-s02-p1",
+              0
+            ],
+            [
+              "scope-modal-u0123-s03",
+              0
+            ],
+            [
+              "force-u0125-s04-p2",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "modal-u0062-s01",
+              0
+            ],
+            [
+              "modal-u0123-s01-p1",
+              0
+            ],
+            [
+              "modal-u0123-s02-p1",
+              0
+            ],
+            [
+              "scope-modal-u0123-s03",
+              0
+            ],
+            [
+              "force-u0125-s04-p2",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "modal-u0062-s01",
+              0
+            ],
+            [
+              "modal-u0123-s01-p1",
+              0
+            ],
+            [
+              "modal-u0123-s02-p1",
+              0
+            ],
+            [
+              "scope-modal-u0123-s03",
+              0
+            ],
+            [
+              "force-u0125-s04-p2",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "modal-u0062-s01",
+              0
+            ],
+            [
+              "modal-u0123-s01-p1",
+              0
+            ],
+            [
+              "modal-u0123-s02-p1",
+              0
+            ],
+            [
+              "scope-modal-u0123-s03",
+              0
+            ],
+            [
+              "force-u0125-s04-p2",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "modal-u0062-s01",
+              0
+            ],
+            [
+              "modal-u0123-s01-p1",
+              0
+            ],
+            [
+              "modal-u0123-s02-p1",
+              0
+            ],
+            [
+              "scope-modal-u0123-s03",
+              0
+            ],
+            [
+              "force-u0125-s04-p2",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "modal-u0062-s01",
+              0
+            ],
+            [
+              "modal-u0123-s01-p1",
+              0
+            ],
+            [
+              "modal-u0123-s02-p1",
+              0
+            ],
+            [
+              "scope-modal-u0123-s03",
+              0
+            ],
+            [
+              "force-u0125-s04-p2",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "modal-u0062-s01",
+              1
+            ],
+            [
+              "modal-u0123-s01-p1",
+              1
+            ],
+            [
+              "modal-u0123-s02-p1",
+              1
+            ],
+            [
+              "scope-modal-u0123-s03",
+              1
+            ],
+            [
+              "force-u0125-s04-p2",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "modal-u0062-s01",
+              1
+            ],
+            [
+              "modal-u0123-s01-p1",
+              1
+            ],
+            [
+              "modal-u0123-s02-p1",
+              1
+            ],
+            [
+              "scope-modal-u0123-s03",
+              1
+            ],
+            [
+              "force-u0125-s04-p2",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "modal-u0062-s01",
+              1
+            ],
+            [
+              "modal-u0123-s01-p1",
+              1
+            ],
+            [
+              "modal-u0123-s02-p1",
+              1
+            ],
+            [
+              "scope-modal-u0123-s03",
+              1
+            ],
+            [
+              "force-u0125-s04-p2",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "modal-u0062-s01",
+              1
+            ],
+            [
+              "modal-u0123-s01-p1",
+              1
+            ],
+            [
+              "modal-u0123-s02-p1",
+              1
+            ],
+            [
+              "scope-modal-u0123-s03",
+              1
+            ],
+            [
+              "force-u0125-s04-p2",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "modal-u0062-s01",
+              1
+            ],
+            [
+              "modal-u0123-s01-p1",
+              1
+            ],
+            [
+              "modal-u0123-s02-p1",
+              1
+            ],
+            [
+              "scope-modal-u0123-s03",
+              1
+            ],
+            [
+              "force-u0125-s04-p2",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "modal-u0062-s01",
+              1
+            ],
+            [
+              "modal-u0123-s01-p1",
+              1
+            ],
+            [
+              "modal-u0123-s02-p1",
+              1
+            ],
+            [
+              "scope-modal-u0123-s03",
+              1
+            ],
+            [
+              "force-u0125-s04-p2",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "modal-u0062-s01",
+              1
+            ],
+            [
+              "modal-u0123-s01-p1",
+              1
+            ],
+            [
+              "modal-u0123-s02-p1",
+              1
+            ],
+            [
+              "scope-modal-u0123-s03",
+              1
+            ],
+            [
+              "force-u0125-s04-p2",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "modal-u0062-s01",
+              1
+            ],
+            [
+              "modal-u0123-s01-p1",
+              1
+            ],
+            [
+              "modal-u0123-s02-p1",
+              1
+            ],
+            [
+              "scope-modal-u0123-s03",
+              1
+            ],
+            [
+              "force-u0125-s04-p2",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        }
+      ],
+      "conditional_on": [
+        "coupling:limits-scope-u0123-s03"
+      ],
+      "reading_premises_used": [
+        "coupling:limits-scope-u0123-s03"
+      ],
+      "restrictions": [
+        "coupling:limits-scope-u0123-s03"
+      ],
+      "route": "enumerated",
+      "status": "CONFLICT-FREE"
+    },
+    "dead_readings": [],
+    "english": [
+      "The readings of sentences 132, 227, 458, 460, 462, 471, 589 and 1000 were checked one way at a time, not together.",
+      "Under every reading of the 8 open sentences, no two rules on the same act contradict each other.",
+      "This holds provided that:",
+      "Sentences 227, 458, 460 and 462 are read with the same label limits-scope, because of sentence 462.",
+      "This does not depend on how sentence 132 is read.",
+      "This does not depend on how sentence 471 is read.",
+      "This does not depend on how sentence 589 is read.",
+      "This does not depend on how sentence 1000 is read.",
+      "Read sentence 132 as *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"* and sentence 227 as *Every operator may give Claude each operator input, if at least one of the following holds:\n  (a) either that operator input is classified as \"input_is_specific_instructions\" or that operator input is classified as \"input_is_persona\", or both;\n  (b) that operator input is information. Except when that operator input is classified as \"instruction_abandon_identity_in_persona\". Except when that operator input is classified as \"instruction_claim_human_when_asked\". Except when that operator input is classified as \"instruction_deceptive_tactics_harming_users\". Except when that operator input is classified as \"instruction_false_information_deceiving_user\". Except when that operator input is classified as \"instruction_endanger_health_or_safety\". Except when that operator input is classified as \"instruction_act_against_guidelines\"* and sentence 458 as *Every operator may give Claude each operator input, if that operator input is classified as \"instruction_dishonest_looking_within_honesty\". Except when that operator input is classified as \"instruction_abandon_identity_in_persona\". Except when that operator input is classified as \"instruction_claim_human_when_asked\". Except when that operator input is classified as \"instruction_deceptive_tactics_harming_users\". Except when that operator input is classified as \"instruction_false_information_deceiving_user\". Except when that operator input is classified as \"instruction_endanger_health_or_safety\". Except when that operator input is classified as \"instruction_act_against_guidelines\"* and sentence 460 as *Every operator may give Claude each operator input, if at least one of the following holds:\n  (a) at least one of the following holds:\n    (i) at least one of the following holds:\n      (a) either that operator input is classified as \"instruction_role_play_custom_persona\" or that operator input is classified as \"instruction_decline_or_withhold\", or both;\n      (b) that operator input is classified as \"instruction_promote_own_products\";\n    (ii) that operator input is classified as \"instruction_focus_on_tasks\";\n  (b) that operator input is classified as \"instruction_respond_differently\". Except when that operator input is classified as \"instruction_abandon_identity_in_persona\". Except when that operator input is classified as \"instruction_claim_human_when_asked\". Except when that operator input is classified as \"instruction_deceptive_tactics_harming_users\". Except when that operator input is classified as \"instruction_false_information_deceiving_user\". Except when that operator input is classified as \"instruction_endanger_health_or_safety\". Except when that operator input is classified as \"instruction_act_against_guidelines\"* and sentence 462 as *Every operator must not give Claude each operator input, if at least one of the following holds:\n  (a) at least one of the following holds:\n    (i) at least one of the following holds:\n      (a) at least one of the following holds:\n        (i) either that operator input is classified as \"instruction_abandon_identity_in_persona\" or that operator input is classified as \"instruction_claim_human_when_asked\", or both;\n        (ii) that operator input is classified as \"instruction_deceptive_tactics_harming_users\";\n      (b) that operator input is classified as \"instruction_false_information_deceiving_user\";\n    (ii) that operator input is classified as \"instruction_endanger_health_or_safety\";\n  (b) that operator input is classified as \"instruction_act_against_guidelines\"* and sentence 471 as *Every instance of Claude must not directly deny being Claude* and sentence 589 as *Every instance of Claude must not actively deceive each user about system prompt existence-or-content* and sentence 1000 as *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*: the sentences of this document can all be true together, as here: e0 is an entity of sort \"entity\"."
+    ]
+  }
+}
