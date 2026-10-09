@@ -2,6 +2,7 @@ import VE.Readings.Wire
 import VE.Readings.Scan
 import VE.Readings.SupRun
 import VE.Readings.UnspecifiedWire
+import VE.Readings.VerdictsWire
 import VE.Readings.Companions
 import VE.NormDefaults.Run
 import VE.Rights.Run
@@ -343,6 +344,7 @@ def runSeparateND (id : String) (f : AdmittedNDFull) (j : Json) : Except String 
     (it reads no rule), and the superposed kinds refused until RD-6. A document of such an environment without a
     content-bearing set, or of any other environment, is today's (S1 4.9). `b` is the case's one admission. -/
 def runS2ND (lower : List String → Json → Json) (id kind : String) (b : Admitted2) (j : Json) : Except String Json := do
+  if kind == "readings-verdicts" then return ← runVerdicts lower id b j
   if !underCompletion b.a.re b.D then return ← runS2 lower id kind b j
   let f ← admitNDFull b
   if kind == "readings-elaborate" then return ← runElaborateNDFilled id f
@@ -449,6 +451,13 @@ def runAdmitted (j : Json) (id kind : String) (ready : ComponentAdmission) : Exc
       let sid ← stringField j "situation"
       let f ← pairFactsIn a (sideIn a s) s sid (← stringField j "other")
       return VE.Route.Wire.ok id [("set", .str s), ("pair", pairJson f sid)]
+  -- `runVerdicts` reads the component's S2a admission and continues it under the completion itself (`runS2ND`'s
+  -- order: before the completion's kinds), so the completion's admission of an `nd` component runs once more there.
+  if kind == "readings-verdicts" then
+    match ready with
+    | .s2 b => return ← runVerdicts runLowerWith id b j
+    | .nd f => return ← runVerdicts runLowerWith id f.r.b j
+    | .s1 _ => throw s!"UnsupportedProfile: case kind {kind} is not available on the readings route"
   match ready with
   | .s2 b => runS2 runLowerWith id kind b j
   | .nd f =>
