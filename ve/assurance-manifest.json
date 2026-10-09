@@ -66,7 +66,7 @@
     "ve/english.py:_parse_english_document_uncached": "Comparator only: Python parser exceptions are recorded after Lean has decided; they never change the returned Lean result or error."
   },
   "lean_decoders": {
-    "total_lines": 25902,
+    "total_lines": 25950,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -214,16 +214,16 @@
       },
       {
         "file": "lean/VE/CertificateWire.lean",
-        "lines": 294,
-        "sha256": "8541e1523844a57d3c08e561f8eb85b576524a6ec7108860b7c82206e69e53eb",
+        "lines": 312,
+        "sha256": "bf814b58737fdab33616a65a899a130e1b3a08b0564d7921fd295a4ac7b1c3c0",
         "ranges": [
           [
             46,
-            203
+            221
           ],
           [
-            218,
-            227
+            236,
+            245
           ]
         ],
         "declarations": [
@@ -380,7 +380,7 @@
           "admitNodes",
           "admitDocument"
         ],
-        "reason": "norm-defaults@0 W2 admission decoder over E‴; the full file is pinned conservatively"
+        "reason": "norm-defaults@0 W2 admission decoder over E\u2034; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/NormDefaults/Layered.lean",
@@ -936,12 +936,12 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 679,
-        "sha256": "af7eb753ee6619e2567051fbcfc19491f2e4167b10866865bd7abe9cb12d250e",
+        "lines": 709,
+        "sha256": "068be0a6501dc4ef472e82e237ab7eef6564a611576c2b7f2bbc6cdbe9fa9b0f",
         "ranges": [
           [
             1,
-            679
+            709
           ]
         ],
         "declarations": [

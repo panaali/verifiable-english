@@ -65,7 +65,28 @@ non-standard constants. An over-approximation: it only turns a rejection into `C
 def pythonMayRead (front : String) : Bool :=
   (Json.parse front).isOk || ["NaN", "Infinity"].any fun t => (front.splitOn t).length > 1
 
+/-- Cap nesting before `Lean.Json.parse`, whose recursive parser can overflow the process
+stack on an untrusted document string. Quotes and escapes do not change nesting. -/
+def frontDepth (front : String) : Except String Unit := do
+  let mut depth : Nat := 0
+  let mut quoted := false
+  let mut escaped := false
+  for c in front.toList do
+    if quoted then
+      if escaped then escaped := false
+      else if c == '\\' then escaped := true
+      else if c == '"' then quoted := false
+    else if c == '"' then quoted := true
+    else if c == '[' || c == '{' then
+      depth := depth + 1
+      if depth > 256 then throw "ResourceLimit: JSON depth exceeds 256"
+    else if c == ']' || c == '}' then
+      depth := depth - 1
+
 def frontJson (front : String) : Except String Json :=
+  match frontDepth front with
+  | .error e => .error e
+  | .ok () =>
   match Json.parse front with
   | .ok j => .ok j
   | .error e =>
