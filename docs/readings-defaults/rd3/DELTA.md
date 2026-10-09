@@ -71,6 +71,11 @@ The Lean mutants changed each approved definition in turn; its dependent proof o
 
 The saved-evidence report tests were also seeded with wrong build, theorem, fixture, A/B and commit values and verified to fail; the mutation log is in `evidence/report-mutants.json`.
 
+## Review fixes (rd-3-review.final)
+
+- **B1, the result was untyped.** `readings-route.json`'s `verdicts_result` had a field list but no types, so `verdict: true` and a conflict result holding only its route were accepted, and the second crashed the report. The class: a relayed result whose form the client never closes. Fix: the schema is now generated from one Lean table per question, `verdicts_conflict`, `verdicts_premises` and `verdicts_query`. Each is a closed object for every form its encoder builds (`conflictResult`, `premisesResult`, `entailmentResult` and W2's budget shape, with and without `assumed`). Every field is typed and every status word comes from a closed list. The answer's `question` selects its result's form. `result_conflict_fits`, `result_premises_fits` and `result_query_fits` prove the encoder fits; the fold range lemmas close the status enumerations. Regression tests: `test_review_b1_findings_cases` covers the review's two cases. `test_the_result_of_every_form_is_typed_and_closed` drops each member of each genuine result form at every depth and replaces each value with one of another type or another value of its type.
+- **B2, Lean's rows were not bound to the request.** The class: an answer whose rows, ids and per-row pieces the client checked only partly against what it asked. Fix: `_check_answer` now takes the request itself. With 64 or fewer compatible choices, every question's rows must be exactly the choices taking `assumed`, in order, and at least one; `exact=False` and the budget bypass are gone. Past 64, the answer must be W2's budget shape, with rows only for evidence the request sent. Every choice the result names must be a row's: a proof's row must be proved, a countermodel's refuted. The checker recomputes the result from the rows (the three folds and their gate), and each per-choice list, candidate status, label list and shown model must match its rows and the request's pieces. Every sent piece must have Lean's answer, Lean must not answer a piece it was not sent, and the dead notes must be the request's. Regression tests: the B2 rows of `test_a_mutated_verdicts_answer_is_unavailable`, `test_every_question_binds_its_rows_exactly`, `test_beyond_64_choices_rows_are_only_the_requests_evidence` and `test_review_b2_rd3_dead_evidence_lean_does_not_confirm_is_unavailable`. The review's three surviving mutants now fail the suite: exact binding weakened to a subset, the `errors` loop dropped, and the dead `accepted` check dropped. So does a mutant of each new check: budget `assumed`, fold, shown-model binding and sent-piece presence.
+
 ## Acceptance and limits
 
 - **AGENT:** The RD-3 Lean statements, generated response contract, service fixtures, frozen inventories, A/B on available records, public S2a examples and paired route latency are checked by the evidence above.
@@ -86,7 +91,7 @@ The saved-evidence report tests were also seeded with wrong build, theorem, fixt
 | 1 | Generated response shape and Lean diagnostics; Python validates and relays. |
 | 2 | No Rust readings fold exists to compare; Rust remains an untrusted accelerator. |
 | 3 | No normalization change; the existing English gate covers rendered lines. |
-| 4 | Typed Lean output is checked; field deletion, duplication, retyping and bool-for-int mutations fail. |
+| 4 | Typed Lean output is checked, the result in one closed form per question (review B1); field deletion, duplication, retyping and bool-for-int mutations fail at every depth of the result. |
 | 5 | Malformed request and evidence nodes produce errors or UNKNOWN, never a positive verdict. |
 | 6 | Budget-zero public operations remain UNKNOWN; the entailment gate is proved and exercised. |
 | 7 | Existing per-case deadline and generator budgets apply; no new public deadline. |
@@ -97,7 +102,7 @@ The saved-evidence report tests were also seeded with wrong build, theorem, fixt
 | 12 | No new state machine or ledger. |
 | 13 | Code and proof mutants are recorded above; saved-evidence report mutants are recorded separately. |
 | 14 | Pilot recorder shadow now stays in writable scratch; tests use temporary paths. |
-| 15 | Lean replays evidence on each regenerated choice document; the client binds choice rows to the request. |
+| 15 | Lean replays evidence on each regenerated choice document. The client binds every row, every choice the result names, each shown model, each piece and each dead note to the request, and checks the result against the fold of the rows (review B2). |
 | 16 | Audit, frozen, schema, declarations, trust and gate lists were regenerated and checked. |
 | 17 | Exact RD-3 statement diff passed; no theorem amendment is pending. |
 | 18 | Lean guards pin fold boundaries, restrictions in both directions and needed labels. |
