@@ -5,8 +5,8 @@ Status: Q1.1 in progress. This report records the local state after the first re
 ## Changes checked
 
 - The question shape, gap generation, candidate construction, classification, rephrasing, closest diagnosis, and corrected span mapper are implemented under `lean/VE/Question/`.
-- Four of the fifteen approved Q1 theorems are proved: `got_none`, `question_reading_unique`, `asked_reads_back`, and `readQuestion_ambiguous`. Their signatures match section 5.1. Supporting lemmas establish list order, meaning-fold soundness, read-back, and the two distinct derivations of an ambiguous candidate.
-- Executable Lean guards cover F1 precedence, F2 gap order and bytes, the group fixture's exact G1 reading, G5 rephrasings, G9 closest candidate, the work budget at zero, the crossing interval G25, and Unicode interval G26.
+- Seven of the fifteen approved Q1 theorems are proved: `got_none`, `question_reading_unique`, `asked_reads_back`, `readQuestion_ambiguous`, `readQuestion_meanings`, `readQuestion_indefinite`, and `readQuestion_none`. Their signatures match section 5.1. Supporting lemmas establish list order, meaning-fold soundness and uniqueness, read-back, the two distinct derivations of an ambiguous candidate, the absence of readings in `.none`, and closest-candidate provenance.
+- Executable Lean guards cover F1 precedence, F2 gap order and bytes, the group fixture's exact G1 reading, G5 rephrasings, G9 closest candidate, the work budget at zero, the crossing interval G25, and Unicode interval G26. Both span guards also check the emitted code point bounds.
 - The frozen Norms, SoftNorms, and Route source files were not edited.
 
 ## Mutation checks
@@ -19,9 +19,11 @@ Each mutation was applied to the new Lean source, `lake build VE.Question.Exampl
 
 ## Checks and limits
 
-`lake build` passed after the fourth theorem. `python3 lean/audit.py --write` audited 463 source files and 4,821 theorems, with only the standard axiom allowlist. The required no-write audit and full gate are run separately from this report.
+`lake build` passed after the seventh theorem. `python3 lean/audit.py --write` and the no-write `python3 lean/audit.py` both passed on 463 source files and 4,838 theorems, with only the standard axiom allowlist. The full gate is run separately from this report.
 
-The remaining eleven section 5.1 theorem proofs, the complete fixture set, the question lock list, the targeted joint span review, and the Q1.2 service integration are not complete. No model calls were made. No Q2 code was changed.
+The remaining eight section 5.1 theorem proofs, the complete fixture set, the targeted joint span review, and the Q1.2 service integration are not complete. No model calls were made. No Q2 code was changed.
+
+`tools/trust_map.py --check` on this source reports 342 unclassified lines and 397 trusted-line growth against the baseline, including the new Question modules and existing drift in other modules. A DRI-signed allowance is not present.
 
 ## Build checklist (current Q1.1 scope)
 
@@ -42,16 +44,28 @@ The remaining eleven section 5.1 theorem proofs, the complete fixture set, the q
 | 13. Seeded checker mutations | Done | The three mutations above each failed a guard and were removed. |
 | 14. Hermetic execution | Done for Q1.1 | The new guards are pure Lean computations; no sleeps, caches, or external writes. |
 | 15. Schema identity | Not applicable | Q1.1 has no wire schema or certificates. |
-| 16. Complete lists and locks | Not done | The requested `ve/question/LOCK.json` is outstanding. |
-| 17. Approved-statement diff | Not done | `tools/question_statements.py` confirms the four proved statements match section 5.1 and reports eleven missing proofs. |
+| 16. Complete lists and locks | Done for Q1.1 | `ve/question/LOCK.json` hashes every Question Lean file; `tools/question_lock.py` verifies the complete list and version. |
+| 17. Approved-statement diff | Not done | `tools/question_statements.py` confirms the seven proved statements match section 5.1 and reports eight missing proofs. |
 | 18. Stub and boundary fixtures | Not done | The spec records stub evaluation, and the new guards cover selected boundaries only. |
 | 19. Use-case formalisation | Not applicable | Q1.1 has no formalised document or rule answer key. |
 | 20. Regenerated numeric report | Not applicable | This pass makes no coverage or performance claims. |
-| 21. Acceptance owners | Not done | AGENT/HUMAN/EXTERNAL tags and deferred owner record are outstanding. |
+| 21. Acceptance owners | Done | The table below records AGENT, HUMAN, and EXTERNAL acceptance work and the deferred gate. |
 | 22. Clean HEAD gate and fix report | Not done | This non-empty report exists; the full gate on clean HEAD remains. |
+
+## Acceptance owners
+
+| Owner | Work | State |
+|---|---|---|
+| AGENT | Q1.1 Lean definitions, exact proofs, guards, lock, build and audit | In progress; eight proofs and full fixture coverage remain. |
+| HUMAN | Targeted joint review of the corrected span map, byte and code point bounds, and G9/A9/U1 plus crossing and Unicode guards | Deferred until the AGENT span proofs and fixtures are complete. |
+| EXTERNAL | RD-3 merge and review of the corrected Q2 statements and fixtures | Deferred; Q2 work has not started. |
 
 ## Full gate result on `17547abe`
 
 The first clean-HEAD run stopped at Rust build because the offline cache lacked `serde`. `cargo fetch --locked` filled the ignored, pinned crate cache without changing tracked files. The rerun completed every gate stage: Lean build, Lean audit, Rust build, 36 Rust tests, Python collection and Python suite. The gate **failed** with 13,071 Python passes, 17 failures, 9 skips and one live-test deselection out of 13,098 collected tests.
 
 The failures cluster around two repository inventories that this pass did not update: the compiled statement, predicate and declaration dumps, and `lean/VE/Route/frozen-sources.sha256`, which must list every new `VE` module and the changed audit manifest. The statement dumps have since been regenerated; a subsequent proof pass added `asked_reads_back` and refreshed them again. The Route inventory remains unchanged pending clarification of the explicit instruction to leave frozen Route untouched. `tools/trust_map.py --check` also reports 388 new unclassified trusted lines, including the new Question modules and existing baseline drift; no DRI budget signature was invented. Two skip-policy failures concern Rust-scope exclusions in the existing P0 suite.
+
+## Full gate result on `5f2eb90e`
+
+The clean-HEAD gate passed Lean build and audit, Rust build, and 36 Rust tests. Python collected 13,098 tests, selected 13,097, and recorded 13,075 passes, 13 failures, and 9 skips. The gate failed on the unclassified trust table (339 lines), the unchanged Route hash inventory, and precommit checks that depend on that inventory. Two existing Rust-scope skips are disallowed by gate policy. The source has since gained three more approved theorems; its audit and inventories are being refreshed before a new clean-HEAD run.
