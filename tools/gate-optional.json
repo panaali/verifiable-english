@@ -17,8 +17,7 @@
     {"nodeid": "tests/test_t1c.py::*", "reason": "run `python -m ve_experiments.t1c.run prepare` first"},
     {"nodeid": "tests/test_p0_three_way.py::test_rust_matches_expected[admission]", "reason": "admission is outside Rust scope"},
     {"nodeid": "tests/test_p0_three_way.py::test_rust_matches_expected[dependency-order]", "reason": "dependency-order is outside Rust scope"},
-    {"nodeid": "tests/test_p0_three_way.py::test_rust_matches_expected[labels]", "reason": "labels is outside Rust scope"},
-    {"nodeid": "tests/test_b17_evidence.py::test_b17_report_gate_from_saved_clean_run", "reason": "first full gate writes the saved run"}
+    {"nodeid": "tests/test_p0_three_way.py::test_rust_matches_expected[labels]", "reason": "labels is outside Rust scope"}
   ],
   "deselected_tests": [
     {"nodeid": "tests/test_llm.py::test_live_*", "reason": "Calls real model CLIs; excluded by the non-live gate."}
