@@ -1,6 +1,7 @@
 # Lean-first batch 16c: document mode progress, incomplete
 
-Base `67ae1e5a` (`main` at start). The code commit is `d094b056` on `lean-first/b16c`.
+The branch forked from `67ae1e5a` (`main` at start). The saved scope captures the later
+`main..f0c44d43 --no-merges` range after `main` advanced to `abc30811`.
 This is an incremental implementation of the JSON boundary and response binding. The batch's
 profile composition, 99% pilot target, corpus targets, Python deletion, and nine-corpus A/B
 gate are **not complete**. No claim of batch 16c acceptance is made.
@@ -9,16 +10,17 @@ gate are **not complete**. No claim of batch 16c acceptance is made.
 
 `report.py` renders this block only from the captured files in `evidence/`.
 `tests/test_b16c_evidence.py` regenerates it and checks the per-case ledger. The scope is
-`main..HEAD --no-merges` as captured at the code commit, so later syncs and merges do not
+`main..HEAD --no-merges` as captured at the final code commit, so later syncs and merges do not
 change the historical report.
 
 <!-- BEGIN GENERATED B16C METRICS -->
-- Saved scope: `67ae1e5a..d094b056 --no-merges`, 1 commit(s): `d094b056`.
+- Saved scope: `abc30811..f0c44d43 --no-merges`, 5 commit(s): `f0c44d43`, `1fde205e`, `c686d65f`, `8ff3ef5d`, `d094b056`.
 - pilots: Lean decides 4/412; 408 listed residues.
 - rights: Lean decides 0/1250; 1250 listed residues.
 - norm_defaults: Lean decides 0/1010; 1010 listed residues.
 - document: Lean decides 843/1816; 973 listed residues.
 - Per-case residue rows: 3641. Seeded faults caught: 3/3.
+- Clean gate at `f0c44d43`: passed; 13362 passed, 92 skipped, 0 failed; 36 Rust tests passed.
 <!-- END GENERATED B16C METRICS -->
 
 The 412 pilot inputs include eight `ve-document@2` documents, which go to the discourse
@@ -57,8 +59,15 @@ This does **not** satisfy the requested fully typed schema yet.
   in `evidence/mutants.json` each made its named test fail, then were removed: treating
   null content as present; accepting a forged alternate checked formula; accepting an
   untyped formula in the response schema.
-- The full gate, clean-worktree gate, nine-corpus A/B, differential fuzz across all
-  parsers, and latency measurement were **not run** for this incremental commit.
+- The full gate passed on clean code commit `f0c44d43` (`evidence/gate.json`):
+  13,362 passed, 92 allowed skips, zero failures, and 36 Rust tests passed. The
+  Lean full build and audit passed. `python3 tools/trust_map.py --check` passed
+  with zero trusted-line growth. The initial clean gate found a deep JSON parser
+  crash and stale inventories; the second had zero test failures but two unlisted
+  Rust-scope skips. Both were fixed before the passing run.
+- Nine-corpus A/B, differential fuzz across all parsers, and latency measurement
+  were **not run** for this incomplete migration. The earlier document-focused
+  suite and the saved per-case share are the only corpus measurements here.
 - Lean still needs composition of the norm-defaults, rights, readings@1 (including
   defaults in parts), soft-norms, senses, norms, surface, model and remaining family
   routes. The Python document loader, coverage and report wrapper remain necessary for
