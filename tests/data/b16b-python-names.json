@@ -1,0 +1,251 @@
+{
+ "comment": "Python's own document path (`_load_document`, then `_report`) on the 16b named-fault and unknown-language documents of tests/test_document_lean_switch.py, recorded at ve-integration 67ae1e5a, before lean-first batch 12 replaced that path's environment validation with its located Lean decoders. Each entry is [code, message]; Lean's document mode gave the same at that commit.",
+ "named": {
+  "argument sort a list": [
+   "UnknownSymbol",
+   "UnknownSymbol: Undeclared predicate argument sort: []"
+  ],
+  "argument sort a number": [
+   "UnknownSymbol",
+   "UnknownSymbol: Undeclared predicate argument sort: 7"
+  ],
+  "argument sort with a tab": [
+   "UnknownSymbol",
+   "UnknownSymbol: Undeclared predicate argument sort: 'p\\terson'"
+  ],
+  "arguments empty": [
+   "InvalidInput",
+   "Predicate arguments must be an array of one to 2 sort identifiers"
+  ],
+  "arguments not an array": [
+   "InvalidInput",
+   "Predicate arguments must be an array of one to 2 sort identifiers"
+  ],
+  "arguments too many": [
+   "InvalidInput",
+   "Predicate arguments must be an array of one to 2 sort identifiers"
+  ],
+  "constant description not a string": [
+   "InvalidInput",
+   "Descriptions must be nonempty Unicode strings"
+  ],
+  "constant sort a boolean": [
+   "UnknownSymbol",
+   "UnknownSymbol: Undeclared constant sort: True"
+  ],
+  "constant sort undeclared": [
+   "UnknownSymbol",
+   "UnknownSymbol: Undeclared constant sort: 'PERSON'"
+  ],
+  "constants not an object": [
+   "InvalidInput",
+   "constants must be an object"
+  ],
+  "content constant with a carriage return": [
+   "UnknownSymbol",
+   "UnknownSymbol: Unknown constant 'bob\\r'"
+  ],
+  "content not a tagged array": [
+   "SyntaxError",
+   "AST nodes must be nonempty tagged JSON arrays"
+  ],
+  "content predicate a number": [
+   "UnknownSymbol",
+   "UnknownSymbol: Unknown predicate 7"
+  ],
+  "content unknown tag": [
+   "SyntaxError",
+   "Unknown AST tag or incorrect arity: 'c  onst'"
+  ],
+  "definition arguments differ": [
+   "InvalidInput",
+   "Definition 'staff' arguments differ from its declaration"
+  ],
+  "definition arguments not an array": [
+   "InvalidInput",
+   "Definition 'staff' arguments differ from its declaration"
+  ],
+  "definition body not a tagged array": [
+   "SyntaxError",
+   "AST nodes must be nonempty tagged JSON arrays"
+  ],
+  "definition body unknown tag": [
+   "SyntaxError",
+   "Unknown AST tag or incorrect arity: 'VAR'"
+  ],
+  "definition body variable index": [
+   "UnboundVariable",
+   "UnboundVariable: Invalid variable index"
+  ],
+  "description empty": [
+   "InvalidInput",
+   "Descriptions must be nonempty Unicode strings"
+  ],
+  "description not a string": [
+   "InvalidInput",
+   "Descriptions must be nonempty Unicode strings"
+  ],
+  "graph node predicate a number": [
+   "UnknownSymbol",
+   "UnknownSymbol: Unknown predicate 7"
+  ],
+  "graph node unknown constant": [
+   "UnknownSymbol",
+   "UnknownSymbol: Unknown constant 'x'"
+  ],
+  "graph node unknown tag": [
+   "SyntaxError",
+   "Unknown AST tag or incorrect arity: 'unary\\x1c'"
+  ],
+  "identifier declared twice": [
+   "DuplicateDeclaration",
+   "Symbol 'senior' is declared in multiple categories"
+  ],
+  "identifier reserved": [
+   "DuplicateDeclaration",
+   "Schema identifier 'x1' is reserved"
+  ],
+  "identifier upper case": [
+   "InvalidInput",
+   "Invalid ASCII identifier: 'PERSON'"
+  ],
+  "identifier with a control character": [
+   "InvalidInput",
+   "Invalid ASCII identifier: 'senior\\x1c'"
+  ],
+  "identifier with a no-break space": [
+   "InvalidInput",
+   "Invalid ASCII identifier: 'b\\xa0ob'"
+  ],
+  "predicates not an object": [
+   "InvalidInput",
+   "predicates must be an object"
+  ],
+  "sorts not an object": [
+   "InvalidInput",
+   "sorts must be an object"
+  ],
+  "verbalisation empty": [
+   "InvalidInput",
+   "Verbalisations must be nonempty strings"
+  ]
+ },
+ "unknown_language": [
+  {
+   "language": "ve.core@٠.٢",
+   "removed": [],
+   "raised": [
+    "InvalidInput",
+    "Incorrect fields (missing=['profile'], unknown=['profiles'])"
+   ]
+  },
+  {
+   "language": "ve.core@٠.٢",
+   "removed": [
+    "profiles"
+   ],
+   "raised": [
+    "InvalidInput",
+    "Incorrect fields (missing=['profile'], unknown=[])"
+   ]
+  },
+  {
+   "language": "ve.core@٠.٢",
+   "removed": [
+    "spec_revision",
+    "vocabulary"
+   ],
+   "raised": [
+    "InvalidInput",
+    "Incorrect fields (missing=['profile', 'spec_revision', 'vocabulary'], unknown=['profiles'])"
+   ]
+  },
+  {
+   "language": "ve.core@0.2’",
+   "removed": [],
+   "raised": [
+    "InvalidInput",
+    "Incorrect fields (missing=['profile'], unknown=['profiles'])"
+   ]
+  },
+  {
+   "language": "ve.core@0.2’",
+   "removed": [
+    "profiles"
+   ],
+   "raised": [
+    "InvalidInput",
+    "Incorrect fields (missing=['profile'], unknown=[])"
+   ]
+  },
+  {
+   "language": "ve.core@0.2’",
+   "removed": [
+    "spec_revision",
+    "vocabulary"
+   ],
+   "raised": [
+    "InvalidInput",
+    "Incorrect fields (missing=['profile', 'spec_revision', 'vocabulary'], unknown=['profiles'])"
+   ]
+  },
+  {
+   "language": "v  e.core@0.2",
+   "removed": [],
+   "raised": [
+    "InvalidInput",
+    "Incorrect fields (missing=['profile'], unknown=['profiles'])"
+   ]
+  },
+  {
+   "language": "v  e.core@0.2",
+   "removed": [
+    "profiles"
+   ],
+   "raised": [
+    "InvalidInput",
+    "Incorrect fields (missing=['profile'], unknown=[])"
+   ]
+  },
+  {
+   "language": "v  e.core@0.2",
+   "removed": [
+    "spec_revision",
+    "vocabulary"
+   ],
+   "raised": [
+    "InvalidInput",
+    "Incorrect fields (missing=['profile', 'spec_revision', 'vocabulary'], unknown=['profiles'])"
+   ]
+  },
+  {
+   "language": "ve.core@0.3",
+   "removed": [],
+   "raised": [
+    "InvalidInput",
+    "Incorrect fields (missing=['profile'], unknown=['profiles'])"
+   ]
+  },
+  {
+   "language": "ve.core@0.3",
+   "removed": [
+    "profiles"
+   ],
+   "raised": [
+    "InvalidInput",
+    "Incorrect fields (missing=['profile'], unknown=[])"
+   ]
+  },
+  {
+   "language": "ve.core@0.3",
+   "removed": [
+    "spec_revision",
+    "vocabulary"
+   ],
+   "raised": [
+    "InvalidInput",
+    "Incorrect fields (missing=['profile', 'spec_revision', 'vocabulary'], unknown=['profiles'])"
+   ]
+  }
+ ]
+}

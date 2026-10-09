@@ -1,0 +1,156 @@
+{
+ "base": "8350e55f8e8ead02063ee17d05bf729c7e9e81b9",
+ "base_run": {
+  "documents": {
+   "alternatives-cells": {
+    "child_cpu_per_call": 0.0018,
+    "python_cpu_median": 0.00800590549999991,
+    "wall_max": 0.05910231597954407,
+    "wall_median": 0.034813508013030514
+   },
+   "alternatives-graph": {
+    "child_cpu_per_call": 0.0027999999999999995,
+    "python_cpu_median": 0.009319089999999974,
+    "wall_max": 0.0937022430007346,
+    "wall_median": 0.02926083849160932
+   },
+   "definitions": {
+    "child_cpu_per_call": 0.0,
+    "python_cpu_median": 0.009886397000000047,
+    "wall_max": 0.05850267497589812,
+    "wall_median": 0.031578292982885614
+   },
+   "graph-bridge": {
+    "child_cpu_per_call": 0.0,
+    "python_cpu_median": 0.0039045349999999868,
+    "wall_max": 0.011505378992296755,
+    "wall_median": 0.006980959005886689
+   },
+   "graph-readings": {
+    "child_cpu_per_call": 0.0,
+    "python_cpu_median": 0.00650085350000007,
+    "wall_max": 0.04504465701756999,
+    "wall_median": 0.012519443989731371
+   },
+   "mixed": {
+    "child_cpu_per_call": 0.0,
+    "python_cpu_median": 0.002831239000000041,
+    "wall_max": 0.0038631890201941133,
+    "wall_median": 0.0028284594882279634
+   },
+   "open-terms": {
+    "child_cpu_per_call": 0.0,
+    "python_cpu_median": 0.0022321885000000097,
+    "wall_max": 0.0028313390212133527,
+    "wall_median": 0.002229715493740514
+   },
+   "p0-envelope": {
+    "child_cpu_per_call": 0.0,
+    "python_cpu_median": 0.002101572500000204,
+    "wall_max": 0.0041663299780339,
+    "wall_median": 0.002099004981573671
+   },
+   "plain": {
+    "child_cpu_per_call": 0.0,
+    "python_cpu_median": 0.0029786885000000207,
+    "wall_max": 0.02273912902455777,
+    "wall_median": 0.0029756999865639955
+   },
+   "reading-sets": {
+    "child_cpu_per_call": 0.0,
+    "python_cpu_median": 0.010186142499999995,
+    "wall_max": 0.05848065600730479,
+    "wall_median": 0.04075878200819716
+   },
+   "risk": {
+    "child_cpu_per_call": 0.0036,
+    "python_cpu_median": 0.007958635500000089,
+    "wall_max": 0.04011315602110699,
+    "wall_median": 0.011650284490315244
+   }
+  },
+  "load": [
+   53.99755859375,
+   51.49072265625,
+   49.68115234375
+  ],
+  "repeat": 50
+ },
+ "head": "6e9b141082a72757730deef694b66d6b9321bcbd",
+ "head_run": {
+  "documents": {
+   "alternatives-cells": {
+    "child_cpu_per_call": 0.004000000000000001,
+    "python_cpu_median": 0.005284671500000115,
+    "wall_max": 0.04213162703672424,
+    "wall_median": 0.016172509029274806
+   },
+   "alternatives-graph": {
+    "child_cpu_per_call": 0.006200000000000001,
+    "python_cpu_median": 0.008222950999999812,
+    "wall_max": 0.06368263502372429,
+    "wall_median": 0.04448477702680975
+   },
+   "definitions": {
+    "child_cpu_per_call": 0.0014000000000000013,
+    "python_cpu_median": 0.011046562999999843,
+    "wall_max": 0.07318794401362538,
+    "wall_median": 0.040478957002051175
+   },
+   "graph-bridge": {
+    "child_cpu_per_call": 0.0017999999999999993,
+    "python_cpu_median": 0.004751850999999974,
+    "wall_max": 0.02015621797181666,
+    "wall_median": 0.006622149987379089
+   },
+   "graph-readings": {
+    "child_cpu_per_call": 0.0030000000000000005,
+    "python_cpu_median": 0.00570054199999992,
+    "wall_max": 0.03661679703509435,
+    "wall_median": 0.012451913498807698
+   },
+   "mixed": {
+    "child_cpu_per_call": 0.0015999999999999999,
+    "python_cpu_median": 0.004150294999999998,
+    "wall_max": 0.013360888988245279,
+    "wall_median": 0.00922949900268577
+   },
+   "open-terms": {
+    "child_cpu_per_call": 0.0014000000000000006,
+    "python_cpu_median": 0.003435984000000003,
+    "wall_max": 0.025336799037177116,
+    "wall_median": 0.008078819490037858
+   },
+   "p0-envelope": {
+    "child_cpu_per_call": 0.0007999999999999985,
+    "python_cpu_median": 0.0037210640000000517,
+    "wall_max": 0.027408238034695387,
+    "wall_median": 0.013059293996775523
+   },
+   "plain": {
+    "child_cpu_per_call": 0.0016,
+    "python_cpu_median": 0.003932835500000009,
+    "wall_max": 0.016459588950965554,
+    "wall_median": 0.008346059505129233
+   },
+   "reading-sets": {
+    "child_cpu_per_call": 0.0038,
+    "python_cpu_median": 0.006312783000000044,
+    "wall_max": 0.03308332699816674,
+    "wall_median": 0.019490168488118798
+   },
+   "risk": {
+    "child_cpu_per_call": 0.007800000000000002,
+    "python_cpu_median": 0.007795025499999886,
+    "wall_max": 0.073861665034201,
+    "wall_median": 0.04749324600561522
+   }
+  },
+  "load": [
+   52.6630859375,
+   51.33251953125,
+   49.6591796875
+  ],
+  "repeat": 50
+ }
+}

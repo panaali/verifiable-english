@@ -4,9 +4,16 @@ Front matter is JSON between two ``---`` lines. The source is every body byte
 outside ``ve`` fences; unit spans are offsets into that exact byte sequence.
 ``ve <unit-id>`` fences supply an optional English or strict formula for a
 unit. The JSON front matter may instead bind a formula AST or a W1 norm.
+
+A ``ve-document@1`` document is checked by Lean's ``document`` mode (lean-first batch 16b): its checks, unit
+statuses, identities and coverage are Lean's, and this module builds the document from that answer and displays
+it. Python's own loader below (``_load_document``) runs only for a ``ve-document@2`` document after Lean's discourse
+admission, and for a document the mode answers ``CheckerUnavailable`` or ``ResourceLimit`` for: the profiles,
+contents and routes listed in docs/lean-first/b16b/DELTA.md, each retained until its batch composes it in the mode.
 """
 from __future__ import annotations
 
+from copy import deepcopy
 import json
 import hashlib
 import re
@@ -347,14 +354,25 @@ def base_environment(meta):
 
 
 def load_document(path: str | Path):
-    """Load and check a document. A `ve-document@2` document's admission is Lean's
-    (`ve_discourse_route` on the same bytes, docs/spec/discourse.md 3.4): a document Lean rejects
-    raises Lean's diagnostic before any Python check runs, and a document Lean admits that Python
-    cannot load is `CheckerUnavailable`, never a Python-only verdict."""
-    raw = Path(path).read_bytes()
+    """Load and check a document. A `ve-document@1` document is Lean's (`document` mode, batch 16b): Lean decides
+    every check, the unit statuses, the identities and the coverage, and Python builds the document from that
+    answer (`_lean_document`); only a document the mode answers `CheckerUnavailable` or `ResourceLimit` for (a
+    profile, content or route it cannot decide yet, docs/lean-first/b16b/DELTA.md) takes Python's own path. A
+    `ve-document@2` document's admission is Lean's (`ve_discourse_route` on the same bytes,
+    docs/spec/discourse.md 3.4): a document Lean rejects raises Lean's diagnostic before any Python check runs,
+    and a document Lean admits that Python cannot load is `CheckerUnavailable`, never a Python-only verdict."""
+    return _load(Path(path), admit=False)
+
+
+def _load(path: Path, *, admit: bool):
+    """`load_document`; `admit`: also `_report`'s claim-graph checks, which `check_document` asks Lean for."""
+    raw = path.read_bytes()
     from .discourse import is_discourse_text, lean_admission, rejection, unavailable_report
     if not is_discourse_text(raw):
-        return _load_document(raw, path, None)
+        row = _lean_answer(raw, admit)
+        if row is None:
+            return _load_document(raw, path, None)
+        return _lean_document(raw, path, row, admitted=admit)
     lean = lean_admission(raw, Path(path).parent)
     if lean["status"] == "error":
         raise rejection(lean)
@@ -366,7 +384,162 @@ def load_document(path: str | Path):
         raise unavailable_report(exc) from exc
 
 
+def _lean_answer(raw: bytes, admit: bool):
+    """Lean's `document` row for a `ve-document@1` text, or None when Python's own path decides it: the mode
+    answered `CheckerUnavailable` or `ResourceLimit` (it cannot decide, and says so), or the text is not UTF-8,
+    which the mode cannot be sent. Any other rejection is Lean's diagnostic, raised verbatim; a failure of the
+    service itself is raised, never answered by Python."""
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        return None
+    from .backends.relay import answer
+    row, error = answer("document", {"id": "document", "document": text, "admit": admit})
+    if isinstance(error, (CheckerUnavailable, ResourceLimit)):
+        return None
+    if error is not None:
+        raise error
+    return row
+
+
+def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
+    """The document Lean's `document` mode accepted, built from its answer (docs/LEAN-FIRST-PLAN.md rule 2: Lean
+    validates, Python constructs). The row is bound to the request first: its source is the text's body and its
+    units are the front matter's, in order, with content exactly where the front matter has some. A row that
+    is not, or a document that cannot be built from it, is `CheckerUnavailable`, never a verdict."""
+    from .norms import NormDocument
+
+    def unavailable(what):
+        return CheckerUnavailable(f"CheckerUnavailable: the Lean document answer {what}")
+    try:
+        meta = json.loads(raw[4:raw.find(b"\n---\n", 4)].decode("utf-8"))
+        body = raw[raw.find(b"\n---\n", 4) + 5:]
+        declared = [(u, parent) for u, parent in _parts(meta["units"])]
+    except Exception as exc:  # noqa: BLE001 - Lean accepted this front matter
+        raise unavailable("is for a front matter Python cannot read") from exc
+    try:
+        _bind_document_answer(body, meta, declared, row)
+        source, units = row["source"].encode("utf-8"), row["units"]
+    except Exception as exc:  # noqa: BLE001 - an accepted but malformed service row is unavailable
+        raise unavailable("is not bound to the document sent") from exc
+    try:
+        env = Environment(meta["environment"])
+        if row["source_id"] != source_id(source, env) or row["document_id"] != _document_id(meta, source, {}):
+            raise unavailable("is not bound to the document sent")
+        for unit in units:
+            if "content" in unit and unit["meaning_id"] != digest(
+                    f"ve-meaning-{env.identity_version}\n",
+                    {"environment_id": env.environment_id, "ast": unit["content"]}):
+                raise unavailable("is not bound to the document sent")
+        compiled = [{"id": u["id"], "span": u["span"], "kind": u["kind"], "meaning": u["meaning"],
+                     "support": u["support"], "source": source[u["span"][0]:u["span"][1]].decode("utf-8"),
+                     "content": u.get("content"), "meaning_id": u.get("meaning_id"), "status": u["status"],
+                     **({"parent_id": u["parent_id"]} if "parent_id" in u else {})} for u in units]
+        active = active_reading_sets(meta.get("reading_sets", []))
+        norms = (NormDocument(env, []) if any(d.regulated is not None for d in env.predicates.values())
+                 else None)
+        reading_plan = plan_choices([r for r in active if r["status"] == "open"], couplings=[])
+    except CheckerUnavailable:
+        raise
+    except Exception as exc:  # noqa: BLE001 - a document Lean accepted that Python cannot build is a bug
+        raise unavailable(f"could not be built: {type(exc).__name__}: {exc}"[:300]) from exc
+    return {"meta": meta, "environment": env, "source": source, "source_id": row["source_id"],
+            "document_id": row["document_id"], "directory": path.parent, "units": compiled, "norms": norms,
+            "soft_document": None, "norm_defaults": None, "senses": None, "reports": None,
+            "rights_document": None, "readings_s1": None, "readings_s2": None, "reading_plan": reading_plan,
+            "lean": {"coverage": row["coverage"], "admitted": admitted}}
+
+
+# The list lines of a composed block's coverage (`Alternatives.Wire.coverage`), each counted in the residual.
+_BLOCK_LINES = ("alternatives_declared", "assumed_harm_free", "counterfactual_leaves", "dilemmas", "narrowings",
+                "proximate_judgments", "unmapped_obligations")
+
+
+def _bind_document_answer(body, meta, declared, row):
+    """Check the request-shaped fields and arithmetic of a successful Lean document row.
+
+    The response schema checks types. This binding additionally checks values the schema
+    cannot know: the authored unit fields, byte partition and every count derived from
+    them. Checked content, statuses and identities remain Lean's decisions.
+    """
+    def same(a, b):
+        return (json.dumps(a, sort_keys=True, ensure_ascii=False, allow_nan=False) ==
+                json.dumps(b, sort_keys=True, ensure_ascii=False, allow_nan=False))
+
+    def require(condition):
+        if not condition:
+            raise ValueError("Lean document row disagrees with its request")
+
+    require(type(row) is dict and type(row.get("source")) is str and
+            set(row) == {"id", "status", "document_id", "source_id", "source", "units", "coverage"})
+    source = row["source"].encode("utf-8")
+    require(source == body)
+    units = row.get("units")
+    require(type(units) is list and len(units) == len(declared))
+    kinds, statuses, reasons = {}, {}, {}
+    for unit, (authored, parent) in zip(units, declared, strict=True):
+        require(type(unit) is dict and type(authored) is dict)
+        require(set(unit) == {"id", "span", "kind", "meaning", "support", "status"} |
+                ({"content", "meaning_id"} if "content" in authored else set()) |
+                ({"parent_id"} if parent is not None else set()))
+        for field in ("id", "span", "kind", "meaning", "support"):
+            require(field in unit and field in authored and same(unit[field], authored[field]))
+        require(("parent_id" in unit) == (parent is not None))
+        if parent is not None:
+            require(unit["parent_id"] == parent)
+        require(("content" in unit) == ("content" in authored))
+        require(("content" in unit) == ("meaning_id" in unit))
+        span = unit["span"]
+        require(type(span) is list and len(span) == 2 and
+                all(type(n) is int for n in span) and 0 <= span[0] < span[1] <= len(source))
+        require(type(unit.get("status")) is str and unit["status"] in STATUSES)
+        size = span[1] - span[0]
+        kind = unit["kind"] if type(unit["kind"]) is str else unit["kind"][0]
+        kinds[kind] = kinds.get(kind, 0) + size
+        statuses[unit["status"]] = statuses.get(unit["status"], 0) + size
+        meaning = unit["meaning"]
+        if type(meaning) is dict and "unformalised" in meaning:
+            reason = meaning["unformalised"]
+            reasons[reason] = reasons.get(reason, 0) + 1
+
+    # Every member of the coverage but a block's cells is a function of the request and the unit rows: it is
+    # recomputed here and compared whole, so a missing, extra or changed key anywhere in it (a forged residual
+    # line included) is unbound. Only the cells are Lean's, and they are bound to the units and the counts.
+    coverage = row.get("coverage")
+    require(type(coverage) is dict)
+    graph = meta.get("graph")
+    nodes = graph.get("nodes") if type(graph) is dict else None
+    labels = [n["label"] for n in nodes if type(n) is dict and type(n.get("label")) is str] \
+        if type(nodes) is list else []
+    residual = {"open_terms": len(meta.get("open_terms", [])),
+                "assumptions": sum(u["support"] == "assumption" for u in units),
+                "bridge_leaves": sum(label.startswith("bridge:accepts(") for label in labels),
+                "unresolved_reading_sets": sum(r["status"] == "open" for r in meta.get("reading_sets", []))}
+    profiles = meta["environment"].get("profiles", [])
+    expected = {}
+    if "alternatives@0" in profiles or "risk@0" in profiles:
+        cells = coverage.get("alternatives")
+        require(type(cells) is dict and set(cells) == set(_BLOCK_LINES) | {"table_complete"})
+        by_id = {u["id"]: u for u in units}
+        for line in _BLOCK_LINES:
+            require(type(cells[line]) is list)
+        for line in ("alternatives_declared", "counterfactual_leaves", "proximate_judgments"):
+            for cell in cells[line]:
+                require(type(cell) is dict and cell.get("unit") in by_id and
+                        cell.get("support") == by_id[cell["unit"]]["support"])
+        require(same(cells["narrowings"], meta.get("narrowings", [])))
+        residual.update({line: len(cells[line]) for line in _BLOCK_LINES})
+        residual["table_complete"] = int(cells["table_complete"] is not None)
+        expected["alternatives"] = cells
+    expected.update({"source_bytes": len(source), "accounted_bytes": len(source), "coverage_percent": 100,
+                     "bytes_by_kind": kinds, "bytes_by_status": statuses, "unformalised_reasons": reasons,
+                     "residual": residual, "residual_total": sum(residual.values())})
+    require(same(coverage, expected))
+
+
 def _load_document(raw: bytes, path: str | Path, lean):
+    """Python's own path: a `ve-document@2` document after Lean's discourse admission (`lean`), and a
+    `ve-document@1` document Lean's `document` mode cannot decide yet (`_lean_answer`)."""
     meta, source, fences = _split(raw)
     if not source:
         raise VEError("document source is empty")
@@ -795,7 +968,10 @@ def coverage_defaults(doc):
 def coverage(doc, scoped=None, rights_report=None):
     """`scoped`: the reports layer's checked scoped verdicts (`check_document`);
     without them a scoped check is reported as not replayed. `rights_report`: the
-    replayed rights report when the caller already has it."""
+    replayed rights report when the caller already has it. A document Lean's `document` mode accepted has
+    Lean's coverage (batch 16b)."""
+    if "lean" in doc:
+        return deepcopy(doc["lean"]["coverage"])
     units = doc["units"]
     source = doc["source"]
     kinds = {}
@@ -1020,7 +1196,7 @@ def check_document(path):
 
 
 def _check_document(path):
-    doc = load_document(path)
+    doc = _load(Path(path), admit=True)
     if "discourse" not in doc:
         return _report(doc)
     try:
@@ -1121,7 +1297,10 @@ def _report(doc):
     if "graph" in doc["meta"] and joint_pending:
         result["admission"] = {"status": "UNKNOWN",
                                "reason": "discourse citation and report extension pending"}
-    if "graph" in doc["meta"] and not joint_pending:
+    # A document Lean's `document` mode admitted (`check_document`) had its claim graph's reading checks, W2
+    # admission and narrowing choices decided there; Python asks the admission route for the report only.
+    lean_admitted = doc.get("lean", {}).get("admitted", False)
+    if "graph" in doc["meta"] and not joint_pending and not lean_admitted:
         nodes = _graph_nodes(doc["meta"]["graph"])
         if (_unresolved_norm_reading(active) and
                 any(type(node) is dict and type(node.get("label")) is str
@@ -1139,6 +1318,8 @@ def _report(doc):
                 if any(c["kind"] != "asserted" or c["content"] is None
                        for c in reading_set["readings"]):
                     raise VEError("non-assertion reading admission needs an elaborator")
+    if "graph" in doc["meta"] and not joint_pending:
+        from .admission import parse_label
         # A unit with an active reading set contributes premises only through
         # readings labels, including when its old content has the same formula.
         active_units = {r["unit"] for r in active}
@@ -1174,13 +1355,22 @@ def _report(doc):
             # W1's admission on `fill U`, from the source environment (Lean
             # `VE.NormDefaults.Admission`); the report is over E‴ (`env`).
             result["admission"] = admit_document(lower_env, admission)
+        elif lean_admitted:
+            try:
+                result["admission"] = admit_document(env, admission)
+            except (CheckerUnavailable, ResourceLimit):
+                raise
+            except VEError as exc:
+                raise CheckerUnavailable("CheckerUnavailable: the admission route rejects a claim graph Lean's "
+                                         f"document mode admitted: {exc.message}") from exc
         else:
             result["admission"] = admit_document(env, admission)
         latest = {}
         for rs in doc["meta"].get("reading_sets", []):
             latest[rs["id"]] = max(latest.get(rs["id"], 0), rs["version"])
         labels = [a.get("label") for a in result["admission"]["report"]["assumptions"]]
-        _check_narrowing_choices(doc["meta"], labels)
+        if not lean_admitted:
+            _check_narrowing_choices(doc["meta"], labels)
         result["stale_reading_labels"] = [label for a in result["admission"]["report"]["assumptions"]
                                           if (label := a.get("label")) is not None
                                           and (parsed := parse_label(label)) is not None
