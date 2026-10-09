@@ -65,6 +65,9 @@ import VE.Readings.RunExamples
 import VE.Readings.Unspecified
 import VE.Readings.UnspecifiedWire
 import VE.Readings.UnspecifiedExamples
+import VE.Readings.Verdicts
+import VE.Readings.VerdictsWire
+import VE.Readings.VerdictsExamples
 import VE.Readings.SupExtra
 import VE.Readings.SupExtraExamples
 import VE.Readings.Companions

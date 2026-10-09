@@ -468,6 +468,94 @@ check runs once), `frameOf_filled` (the filled environment's frame is `fillDoc`'
 environment, so a base model of it is valid), `fillHoldsOf_eq` (the witness's `Fill_T`, read from the table, is
 `fillHolds`).
 
+# Verdicts across readings in Lean, enumerated route (readings-defaults, batch RD-3)
+
+The fold, the conditions and the English plan of the enumerated route (docs/spec/readings-defaults.md 1.6 to 1.8,
+2.4, 4.4, 6.4 and 6.5), and the kind `readings-verdicts` that computes them from evidence Lean checks on each
+choice's regenerated document. Python generates the evidence and renders the plan; it folds nothing.
+
+## Files
+
+* `lean/VE/Readings/Verdicts.lean`: `ChoiceResult`, the folds (`foldConflict`, `foldEntailment` with the gate of
+  14.8, `foldPremises`), `reasonOf`, what each result claims of its choice (`Holds`, with `CounterU` and
+  `ConsistentU`), `Covers` and `RowsHold`, the fold theorems, `restrictionsFor` (computed locally, never over the
+  complete choices) with `restrictionsFor_spec`, and `usedLabels` with `usedLabels_sound`.
+* `lean/VE/Readings/VerdictsExamples.lean`: spec 8.2's fixtures as `#guard`s, `restrictionsFor` against an
+  existential side computed by brute force over the complete choices.
+* `lean/VE/Readings/VerdictsWire.lean`: the rows under the completion with their `Holds` proofs, the replay, the
+  lower route's rows, the English plan (`englishPlan`) and the runner (`runVerdicts`).
+
+## The statements of 6.4 and 6.5 (RD-3)
+
+In plain words, each with the hypotheses it states:
+
+* `fold_all_sound` (rows exactly the compatible choices taking `A`, each row's result holding of its choice): when
+  the entailment fold is ALL, every compatible choice taking `A` is CONFLICT-FREE and its filled document entails
+  the conclusion from its assertions and the premises.
+* `fold_none_sound` (the same): when it is NONE, every such choice is CONFLICT-FREE and has a filled situation where
+  the premises hold and the conclusion fails (`CounterU`).
+* `fold_some_sound` (the same): when it is SOME, every such choice is CONFLICT-FREE, one of them entails the
+  conclusion and one has a countermodel.
+* `fold_conflict_free_sound`, `fold_conflict_sound` (the conflict rows covered and holding): CONFLICT-FREE means every
+  compatible choice taking `A` is CONFLICT-FREE; CONFLICT means one of them is not.
+* `fold_premises_model_sound`, `fold_premises_inconsistent_sound` (the premise rows covered and holding): `model`
+  gives a compatible choice whose filled document has a situation where its assertions hold; INCONSISTENT means
+  every such choice is CONFLICT-FREE and its assertions entail `⊥`.
+* `restrictionsFor_spec` (distinct set ids, every coupling in `supReady`'s shape, and some compatible choice taking
+  `A`): a label is listed exactly when its coupling or narrowing excludes some complete choice taking `A`. Without the
+  last hypothesis it is false (fixture 3.11), which is why the untaken check comes first.
+* `usedLabels_sound`: the labels kept still make every check pass with the dropped labels' formulas read as `⊤`.
+* `plan_no_every_for_models`, `plan_model_names_every_set`: a line of the plan that shows a model is never E10, E26
+  or E30, and names a reading of every open set of the case's document. Both hold by construction: a shown model is
+  a `PlanItem.shown`, which is always E12 over the complete choice.
+
+## The wire (`readings-verdicts`)
+
+* `expansion_of_modelCheck` (`WellFormedU U`, a valid base model, a filling, typed formulas, a passing
+  `modelCheckU` and `localFree`): a checked finite model whose filled form makes no conflict target true is the base of
+  a filled expansion where the premises hold and the conclusion has the value the check reports. It is what turns a
+  checked countermodel into `CounterU` and a checked model into `ConsistentU`.
+* `ndConflictRow_holds`, `ndQueryRow_holds`, `ndPremiseRow_holds`: each row Lean computes under the completion holds
+  of its choice: CONFLICT-FREE from accepted packages (`conflictFreeCheckU_sound`), CONFLICT from a checked witness,
+  `proved` and INCONSISTENT from a certificate with the packages (`acceptanceU`), `refuted` and `model` from
+  `expansion_of_modelCheck`.
+* `nd_rowsHold`, `nd_premiseRowsHold` (a replayed case): its rows are exactly the compatible choices taking `A`
+  (`choices_spec`, under `supReady` and at most 64 choices, which the replay establishes) and each holds: the
+  hypotheses of every fold theorem.
+* `readings_wire_verdicts_all`, `_none`, `_some`, `_conflict_free`, `_conflict`, `_model`, `_inconsistent` (a
+  successful replay and the fold's value on its rows, which is the answer's verdict): the matching fold theorem's
+  conclusion holds of the case's decoded document.
+* `lower_verdicts_rows`, `lower_verdicts_all`, `_none`, `_some` (without the completion): the rows are the compatible
+  choices taking `A` that the search lists, and each verdict reads its rows as the fold says; each row is the lower
+  route's own answer on the choice's regenerated document, whose theorems say what it means.
+
+## The conditions of an answer (DRI ruling of rd-3 round 3)
+
+An answer's conditions are one value, `conditionsOf` (every label a row's accepted evidence uses, then the
+restrictions). It is the result's `conditional_on`, under the completion the answer's `labels`, and the source of the
+plan's condition lines. The client checks only the answer's schema and its binding to the request; these theorems
+make the conditions Lean's:
+
+* `verdicts_conditions_conflict_free`, `verdicts_conditions_all` (the rows fold to CONFLICT-FREE, or to ALL): the
+  answer's `conditional_on` is `conditionsOf` of those rows (for an ALL, each proof's own labels per choice, each
+  among the answer's); its `labels` are the same list under the completion (the restrictions on the lower route,
+  where a choice's own coherence labels are not worded); and its plan cites each label.
+* `verdicts_conditions_some` (SOME, its first proved row `i`): the proof is `proofJson i`; under the completion the
+  `labels` are that row's labels, and the plan cites them after the R2 line.
+* `verdicts_conditions_none` (NONE): the restrictions are the result's, the `labels`, and cited by the plan.
+* `mem_conditionsOf`: a label is a condition exactly when a row's accepted evidence uses it or it is a restriction.
+  Nothing is dropped and nothing is added.
+* `verdictsPlan_cites`, `plan_cites_conditions`: where the plan states conditions, every label gets a line citing it.
+  `plan_conditions_only` says no line cites a label outside them (a `status` line relays a witness's own text).
+  `conditionItems_ne_nil` says a label with no wording gets an `unworded` line, which no renderer words, so the answer
+  is unavailable rather than shown without its condition.
+* `jstrings_toJson`, `verdictsPlan_eq`: the approved `englishPlan D route q a` reads the answer's `labels`, which is
+  exactly the `labelsOf` value the plan is planned from.
+
+The helpers: the fold lemmas (`foldEntailment_all`, ...), `covers_row`, `covers_mem`, the `setAt` lemmas behind
+`restrictionsFor_spec` (`complete_setAt`, `taking_setAt`, `index_setAt_self`, `index_setAt_ne`), `zip_tail_ne`,
+`couplingExcludes_iff`, `narrowingExcludes_iff`, `conflictFree_of_localFree`, `notFreeU_of_notFreeX`,
+`ndFree_sound`, `ndCertOk_sound`, `ndModelOk_sound`, `ndInfos_rows`, `map_row_choice`.
 ## Readings with their own vocabulary: the statements of 6.6's wire part (RD-4a)
 
 `lean/VE/Readings/Companions.lean`, its `#guard` fixtures in `CompanionsExamples.lean`. A candidate may carry
