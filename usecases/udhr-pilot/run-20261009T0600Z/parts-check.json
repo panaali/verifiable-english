@@ -1,0 +1,674 @@
+{
+ "translation-part01.ve.md": {
+  "seconds": 262.3,
+  "coverage": {
+   "source_bytes": 4724,
+   "accounted_bytes": 4724,
+   "coverage_percent": 100,
+   "bytes_by_kind": {
+    "meta": 265,
+    "unformalised": 2083,
+    "attributed": 801,
+    "norm": 1090,
+    "asserted": 485
+   },
+   "bytes_by_status": {
+    "LABELLED": 265,
+    "UNFORMALISED": 3135,
+    "OPEN": 1275,
+    "CHECKED": 49
+   },
+   "unformalised_reasons": {
+    "causation": 2,
+    "attribution": 4,
+    "modality_belief": 2,
+    "other_evaluative_open_claim": 1,
+    "norms": 5,
+    "time": 3,
+    "other_metaphorical_endowment": 1,
+    "defaults": 1,
+    "other_act_phrase_grammar": 2
+   },
+   "residual": {
+    "open_terms": 51,
+    "assumptions": 0,
+    "bridge_leaves": 0,
+    "unresolved_reading_sets": 5,
+    "separations": 5,
+    "readings_findings": 1,
+    "pending_candidates": 0,
+    "couplings": 0,
+    "gaps": 13,
+    "ungrounded_defaults": 0
+   },
+   "residual_total": 75,
+   "norm_defaults": {
+    "gaps": [
+     "arrest_detention_or_exile_permitted",
+     "attack_upon_honour_or_reputation_permitted",
+     "compel_association_membership_permitted",
+     "distinction_by_country_status_permitted",
+     "holding_in_slavery_or_servitude_permitted",
+     "interference_with_private_domains_permitted",
+     "liberty_spared_required",
+     "life_spared_required",
+     "prohibition_of_slavery_and_slave_trade_required",
+     "recognition_as_person_required",
+     "security_spared_required",
+     "slavery_or_slave_trade_practice_permitted",
+     "subjection_to_ill_treatment_permitted"
+    ],
+    "findings": []
+   }
+  },
+  "premises": {
+   "status": "model",
+   "route": "enumerated",
+   "evidence": "per choice",
+   "choice": [
+    [
+     "rs_u022a",
+     0
+    ],
+    [
+     "rs_u022b",
+     0
+    ],
+    [
+     "rs_u022c",
+     0
+    ],
+    [
+     "rs_u025",
+     0
+    ],
+    [
+     "rs_u029",
+     0
+    ]
+   ]
+  },
+  "readings_status": "CONFLICT-FREE among rules on the same act under every reading (32 readings checked one at a time)",
+  "conflict": "CONFLICT-FREE",
+  "unit_status": {
+   "u001": "LABELLED",
+   "u002": "LABELLED",
+   "u003": "UNFORMALISED",
+   "u004": "UNFORMALISED",
+   "u005": "UNFORMALISED",
+   "u006": "UNFORMALISED",
+   "u007": "UNFORMALISED",
+   "u008a": "UNFORMALISED",
+   "u008b": "UNFORMALISED",
+   "u009": "UNFORMALISED",
+   "u010": "UNFORMALISED",
+   "u011": "LABELLED",
+   "u012": "LABELLED",
+   "u013a": "UNFORMALISED",
+   "u013ba": "UNFORMALISED",
+   "u013bb": "UNFORMALISED",
+   "u014": "LABELLED",
+   "u015": "UNFORMALISED",
+   "u016": "UNFORMALISED",
+   "u017": "UNFORMALISED",
+   "u018": "LABELLED",
+   "u019": "UNFORMALISED",
+   "u020": "OPEN",
+   "u021": "LABELLED",
+   "u022a": "OPEN",
+   "u022b": "OPEN",
+   "u022c": "OPEN",
+   "u023": "LABELLED",
+   "u024": "OPEN",
+   "u025": "OPEN",
+   "u026": "LABELLED",
+   "u027": "OPEN",
+   "u028": "LABELLED",
+   "u029": "OPEN",
+   "u030": "LABELLED",
+   "u031": "UNFORMALISED",
+   "u032": "OPEN",
+   "u033a": "OPEN",
+   "u033b": "OPEN",
+   "u034": "LABELLED",
+   "u035": "OPEN",
+   "u036": "LABELLED",
+   "u037": "OPEN",
+   "u038": "LABELLED",
+   "u039": "UNFORMALISED",
+   "u040": "LABELLED",
+   "u041": "UNFORMALISED",
+   "u042": "UNFORMALISED",
+   "u043": "UNFORMALISED",
+   "u044": "LABELLED",
+   "u045a": "OPEN",
+   "u045b": "CHECKED",
+   "u046": "OPEN"
+  },
+  "document_id": "42db7cb8f07f01b88e1da9679f71b727a684cb48f06f06b92c029d4eb5547799",
+  "source_id": "21e79137e9b2a73deed618c2ea187ddf0370fe9daa0ba8199f6f575d59677017"
+ },
+ "translation-part02.ve.md": {
+  "seconds": 52.0,
+  "coverage": {
+   "source_bytes": 500,
+   "accounted_bytes": 500,
+   "coverage_percent": 100,
+   "bytes_by_kind": {
+    "meta": 30,
+    "norm": 470
+   },
+   "bytes_by_status": {
+    "LABELLED": 30,
+    "OPEN": 470
+   },
+   "unformalised_reasons": {},
+   "residual": {
+    "open_terms": 51,
+    "assumptions": 0,
+    "bridge_leaves": 0,
+    "unresolved_reading_sets": 4,
+    "separations": 10,
+    "readings_findings": 3,
+    "pending_candidates": 0,
+    "couplings": 0,
+    "gaps": 8,
+    "ungrounded_defaults": 0
+   },
+   "residual_total": 76,
+   "norm_defaults": {
+    "gaps": [
+     "asylum_free_required",
+     "compel_association_membership_permitted",
+     "invoke_asylum_right_in_case_permitted",
+     "leave_and_return_required",
+     "movement_spared_required",
+     "person_may_leave_and_return",
+     "person_may_movement_and_residence",
+     "seek_asylum_from_persecution_permitted"
+    ],
+    "findings": []
+   }
+  },
+  "premises": {
+   "status": "model",
+   "route": "enumerated",
+   "evidence": "per choice",
+   "choice": [
+    [
+     "rs_u048",
+     0
+    ],
+    [
+     "rs_u049",
+     0
+    ],
+    [
+     "rs_u051",
+     0
+    ],
+    [
+     "rs_u052",
+     0
+    ]
+   ]
+  },
+  "readings_status": "CONFLICT-FREE among rules on the same act under every reading (54 readings checked one at a time)",
+  "conflict": "CONFLICT-FREE",
+  "unit_status": {
+   "u047": "LABELLED",
+   "u048": "OPEN",
+   "u049": "OPEN",
+   "u050": "LABELLED",
+   "u051": "OPEN",
+   "u052": "OPEN"
+  },
+  "document_id": "75916e7c4078b9ec2798c215d64bbc7c408e1ca55bb8a5f993fe1072ccd17c1b",
+  "source_id": "30c80fa7f6ebc344cdf743f30e66566b11d8b5ddbf71f3d8440ae27dc441ba6d"
+ },
+ "translation-part03.ve.md": {
+  "seconds": 135.0,
+  "coverage": {
+   "source_bytes": 1349,
+   "accounted_bytes": 1349,
+   "coverage_percent": 100,
+   "bytes_by_kind": {
+    "meta": 75,
+    "asserted": 45,
+    "norm": 770,
+    "unformalised": 459
+   },
+   "bytes_by_status": {
+    "LABELLED": 75,
+    "CHECKED": 45,
+    "OPEN": 541,
+    "UNFORMALISED": 688
+   },
+   "unformalised_reasons": {
+    "norms": 2,
+    "other_evaluative_open_claim": 1,
+    "other_right_lines_across_open_sets": 4
+   },
+   "residual": {
+    "open_terms": 51,
+    "assumptions": 0,
+    "bridge_leaves": 0,
+    "unresolved_reading_sets": 4,
+    "separations": 10,
+    "readings_findings": 3,
+    "pending_candidates": 0,
+    "couplings": 0,
+    "gaps": 11,
+    "ungrounded_defaults": 0
+   },
+   "residual_total": 79,
+   "norm_defaults": {
+    "gaps": [
+     "compel_association_membership_permitted",
+     "deprivation_of_property_permitted",
+     "entry_into_marriage_permitted",
+     "loss_of_nationality_permitted",
+     "opinion_spared_required",
+     "person_may_opinion_and_expression",
+     "person_may_property",
+     "person_may_thought_conscience_religion",
+     "property_free_required",
+     "protect_required",
+     "thought_spared_required"
+    ],
+    "findings": []
+   }
+  },
+  "premises": {
+   "status": "model",
+   "route": "enumerated",
+   "evidence": "per choice",
+   "choice": [
+    [
+     "rs_u055",
+     0
+    ],
+    [
+     "rs_u063",
+     0
+    ],
+    [
+     "rs_u066",
+     0
+    ],
+    [
+     "rs_u070",
+     0
+    ]
+   ]
+  },
+  "readings_status": "CONFLICT-FREE among rules on the same act under every reading (54 readings checked one at a time)",
+  "conflict": "CONFLICT-FREE",
+  "unit_status": {
+   "u053": "LABELLED",
+   "u054": "CHECKED",
+   "u055": "OPEN",
+   "u056": "LABELLED",
+   "u057": "UNFORMALISED",
+   "u058": "UNFORMALISED",
+   "u059": "OPEN",
+   "u060": "UNFORMALISED",
+   "u061": "OPEN",
+   "u062": "LABELLED",
+   "u063": "OPEN",
+   "u064": "OPEN",
+   "u065": "LABELLED",
+   "u066": "OPEN",
+   "u067": "UNFORMALISED",
+   "u068": "UNFORMALISED",
+   "u069": "LABELLED",
+   "u070": "OPEN",
+   "u071a": "UNFORMALISED",
+   "u071b": "UNFORMALISED"
+  },
+  "document_id": "d1e7de967981fe21c5cc7cce5ba84df609398364a0570d2defaaeff402847334",
+  "source_id": "86165c31299ad4343efa2742d98927b514db17893b5aee9a3e22f5a1bda965f8"
+ },
+ "translation-part04.ve.md": {
+  "seconds": 2.0,
+  "coverage": {
+   "source_bytes": 985,
+   "accounted_bytes": 985,
+   "coverage_percent": 100,
+   "bytes_by_kind": {
+    "meta": 45,
+    "norm": 210,
+    "unformalised": 664,
+    "asserted": 66
+   },
+   "bytes_by_status": {
+    "LABELLED": 45,
+    "OPEN": 219,
+    "CHECKED": 57,
+    "UNFORMALISED": 664
+   },
+   "unformalised_reasons": {
+    "other_act_phrase_grammar": 3,
+    "other_grounding_of_authority": 1,
+    "time": 1
+   },
+   "residual": {
+    "open_terms": 51,
+    "assumptions": 0,
+    "bridge_leaves": 0,
+    "unresolved_reading_sets": 2,
+    "separations": 3,
+    "readings_findings": 1,
+    "pending_candidates": 0,
+    "couplings": 0,
+    "gaps": 2,
+    "ungrounded_defaults": 0
+   },
+   "residual_total": 59,
+   "norm_defaults": {
+    "gaps": [
+     "assembly_spared_required",
+     "person_may_assembly_and_association"
+    ],
+    "findings": []
+   }
+  },
+  "premises": {
+   "status": "model",
+   "route": "enumerated",
+   "evidence": "per choice",
+   "choice": [
+    [
+     "rs_u073",
+     0
+    ],
+    [
+     "rs_u077",
+     0
+    ]
+   ]
+  },
+  "readings_status": "CONFLICT-FREE among rules on the same act under every reading (6 readings checked one at a time)",
+  "conflict": "CONFLICT-FREE",
+  "unit_status": {
+   "u072": "LABELLED",
+   "u073": "OPEN",
+   "u074": "CHECKED",
+   "u075": "LABELLED",
+   "u076": "UNFORMALISED",
+   "u077": "OPEN",
+   "u078": "UNFORMALISED",
+   "u079a": "UNFORMALISED",
+   "u079b": "UNFORMALISED",
+   "u080": "LABELLED",
+   "u081": "OPEN",
+   "u082": "UNFORMALISED"
+  },
+  "document_id": "c4b5e18d8d6a2e267e317774da3ec3a3d235e3c7e4b266eec55f863896c3a203",
+  "source_id": "73494bdb6d8b5aeff2533879638902ba0a681f66a1f9aea6863c422046540eee"
+ },
+ "translation-part05.ve.md": {
+  "seconds": 258.2,
+  "coverage": {
+   "source_bytes": 2019,
+   "accounted_bytes": 2019,
+   "coverage_percent": 100,
+   "bytes_by_kind": {
+    "meta": 60,
+    "norm": 552,
+    "asserted": 85,
+    "unformalised": 1322
+   },
+   "bytes_by_status": {
+    "LABELLED": 60,
+    "OPEN": 515,
+    "CHECKED": 122,
+    "UNFORMALISED": 1322
+   },
+   "unformalised_reasons": {
+    "other_act_phrase_grammar": 4,
+    "time": 1,
+    "other_comparison": 2,
+    "quantities": 1,
+    "causation": 2,
+    "other_priority_of_rights": 1
+   },
+   "residual": {
+    "open_terms": 51,
+    "assumptions": 0,
+    "bridge_leaves": 0,
+    "unresolved_reading_sets": 4,
+    "separations": 10,
+    "readings_findings": 3,
+    "pending_candidates": 0,
+    "couplings": 0,
+    "gaps": 10,
+    "ungrounded_defaults": 0
+   },
+   "residual_total": 78,
+   "norm_defaults": {
+    "gaps": [
+     "compel_association_membership_permitted",
+     "education_generally_available_required",
+     "education_spared_required",
+     "elementary_education_compulsory_required",
+     "employment_choice_spared_required",
+     "person_may_choose_employment",
+     "person_may_form_and_join_trade_unions",
+     "person_may_work",
+     "unions_free_required",
+     "work_spared_required"
+    ],
+    "findings": []
+   }
+  },
+  "premises": {
+   "status": "model",
+   "route": "enumerated",
+   "evidence": "per choice",
+   "choice": [
+    [
+     "rs_u084a",
+     0
+    ],
+    [
+     "rs_u084b",
+     0
+    ],
+    [
+     "rs_u087",
+     0
+    ],
+    [
+     "rs_u096",
+     0
+    ]
+   ]
+  },
+  "readings_status": "CONFLICT-FREE among rules on the same act under every reading (54 readings checked one at a time)",
+  "conflict": "CONFLICT-FREE",
+  "unit_status": {
+   "u083": "LABELLED",
+   "u084a": "OPEN",
+   "u084b": "OPEN",
+   "u084c": "OPEN",
+   "u084d": "CHECKED",
+   "u085": "UNFORMALISED",
+   "u086": "UNFORMALISED",
+   "u087": "OPEN",
+   "u088": "LABELLED",
+   "u089": "UNFORMALISED",
+   "u090": "LABELLED",
+   "u091": "UNFORMALISED",
+   "u092": "UNFORMALISED",
+   "u093": "UNFORMALISED",
+   "u094": "UNFORMALISED",
+   "u095": "LABELLED",
+   "u096": "OPEN",
+   "u097": "UNFORMALISED",
+   "u098": "OPEN",
+   "u099a": "OPEN",
+   "u099b": "OPEN",
+   "u100a": "OPEN",
+   "u100b": "CHECKED",
+   "u101": "UNFORMALISED",
+   "u102": "UNFORMALISED",
+   "u103": "UNFORMALISED"
+  },
+  "document_id": "92e23b4795e87649586449dcc4092e279ec7cda98e359cf0a2cb6b13a9593ce4",
+  "source_id": "448d9ffc61cfd63e2bda89eb09c88466bfd7f8f11c7c6f081627a5af4e04adf8"
+ },
+ "translation-part06.ve.md": {
+  "seconds": 20.1,
+  "coverage": {
+   "source_bytes": 508,
+   "accounted_bytes": 508,
+   "coverage_percent": 100,
+   "bytes_by_kind": {
+    "meta": 30,
+    "norm": 163,
+    "unformalised": 315
+   },
+   "bytes_by_status": {
+    "LABELLED": 30,
+    "OPEN": 163,
+    "UNFORMALISED": 315
+   },
+   "unformalised_reasons": {
+    "other_act_phrase_grammar": 2
+   },
+   "residual": {
+    "open_terms": 51,
+    "assumptions": 0,
+    "bridge_leaves": 0,
+    "unresolved_reading_sets": 3,
+    "separations": 9,
+    "readings_findings": 3,
+    "pending_candidates": 0,
+    "couplings": 0,
+    "gaps": 7,
+    "ungrounded_defaults": 0
+   },
+   "residual_total": 73,
+   "norm_defaults": {
+    "gaps": [
+     "arts_free_required",
+     "compel_association_membership_permitted",
+     "culture_free_required",
+     "person_may_enjoy_the_arts",
+     "person_may_share_in_scientific_advancement",
+     "person_may_take_part_in_cultural_life",
+     "science_free_required"
+    ],
+    "findings": []
+   }
+  },
+  "premises": {
+   "status": "model",
+   "route": "enumerated",
+   "evidence": "per choice",
+   "choice": [
+    [
+     "rs_u105a",
+     0
+    ],
+    [
+     "rs_u105b",
+     0
+    ],
+    [
+     "rs_u105c",
+     0
+    ]
+   ]
+  },
+  "readings_status": "CONFLICT-FREE among rules on the same act under every reading (27 readings checked one at a time)",
+  "conflict": "CONFLICT-FREE",
+  "unit_status": {
+   "u104": "LABELLED",
+   "u105a": "OPEN",
+   "u105b": "OPEN",
+   "u105c": "OPEN",
+   "u106": "UNFORMALISED",
+   "u107": "LABELLED",
+   "u108": "UNFORMALISED"
+  },
+  "document_id": "2ba3d547fd225ba05ad0d474b6c4c2522cba63b04012bd8e3d686e456bbb7dc6",
+  "source_id": "1fe7607a31aa4d78d0173a2a7207b2b089bcc40109038127f3d0c9604af254eb"
+ },
+ "translation-part07.ve.md": {
+  "seconds": 9.0,
+  "coverage": {
+   "source_bytes": 831,
+   "accounted_bytes": 831,
+   "coverage_percent": 100,
+   "bytes_by_kind": {
+    "meta": 30,
+    "asserted": 118,
+    "norm": 683
+   },
+   "bytes_by_status": {
+    "LABELLED": 30,
+    "OPEN": 801
+   },
+   "unformalised_reasons": {},
+   "residual": {
+    "open_terms": 51,
+    "assumptions": 0,
+    "bridge_leaves": 0,
+    "unresolved_reading_sets": 4,
+    "separations": 3,
+    "readings_findings": 0,
+    "pending_candidates": 0,
+    "couplings": 0,
+    "gaps": 4,
+    "ungrounded_defaults": 0
+   },
+   "residual_total": 62,
+   "norm_defaults": {
+    "gaps": [
+     "compel_association_membership_permitted",
+     "exercise_permitted",
+     "interpretation_permitted",
+     "limitation_permitted"
+    ],
+    "findings": []
+   }
+  },
+  "premises": {
+   "status": "model",
+   "route": "enumerated",
+   "evidence": "per choice",
+   "choice": [
+    [
+     "rs_u110",
+     0
+    ],
+    [
+     "rs_u111",
+     0
+    ],
+    [
+     "rs_u112",
+     0
+    ],
+    [
+     "rs_u114",
+     0
+    ]
+   ]
+  },
+  "readings_status": "CONFLICT-FREE among rules on the same act under every reading (16 readings checked one at a time)",
+  "conflict": "CONFLICT-FREE",
+  "unit_status": {
+   "u109": "LABELLED",
+   "u110": "OPEN",
+   "u111": "OPEN",
+   "u112": "OPEN",
+   "u113": "LABELLED",
+   "u114": "OPEN"
+  },
+  "document_id": "0cdbfaa99215cbf79ce84bd1b7822d1f5799d6e107f3c93105619a2adb1b9434",
+  "source_id": "23a7e8be6bdd4edd293b35a257e2c174cba328db23e01ca6c62809246ec98b31"
+ }
+}

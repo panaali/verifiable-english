@@ -1,0 +1,1094 @@
+{
+ "u020.prohibited": {
+  "coverage_bytes": {
+   "OPEN": 267
+  },
+  "path": "readings/u020.prohibited.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u022a.claim_negative": {
+  "coverage_bytes": {
+   "CHECKED": 30
+  },
+  "path": "readings/u022a.claim_negative.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u022a.entitlement": {
+  "coverage_bytes": {
+   "CHECKED": 30
+  },
+  "path": "readings/u022a.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u022b.claim_negative": {
+  "coverage_bytes": {
+   "CHECKED": 9
+  },
+  "path": "readings/u022b.claim_negative.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u022b.entitlement": {
+  "coverage_bytes": {
+   "CHECKED": 9
+  },
+  "path": "readings/u022b.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u022c.claim_negative": {
+  "coverage_bytes": {
+   "CHECKED": 26
+  },
+  "path": "readings/u022c.claim_negative.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u022c.entitlement": {
+  "coverage_bytes": {
+   "CHECKED": 26
+  },
+  "path": "readings/u022c.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u024.prohibited": {
+  "coverage_bytes": {
+   "OPEN": 46
+  },
+  "path": "readings/u024.prohibited.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u025.practice_prohibited": {
+  "coverage_bytes": {
+   "OPEN": 69
+  },
+  "path": "readings/u025.practice_prohibited.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u025.required_prohibited": {
+  "coverage_bytes": {
+   "OPEN": 69
+  },
+  "path": "readings/u025.required_prohibited.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u027.prohibited": {
+  "coverage_bytes": {
+   "OPEN": 97
+  },
+  "path": "readings/u027.prohibited.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u029.claim": {
+  "coverage_bytes": {
+   "CHECKED": 78
+  },
+  "path": "readings/u029.claim.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u029.entitlement": {
+  "coverage_bytes": {
+   "CHECKED": 78
+  },
+  "path": "readings/u029.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u032.entitlement": {
+  "coverage_bytes": {
+   "OPEN": 77
+  },
+  "path": "readings/u032.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u033a.entitlement": {
+  "coverage_bytes": {
+   "OPEN": 96
+  },
+  "path": "readings/u033a.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u033b.entitlement": {
+  "coverage_bytes": {
+   "OPEN": 53
+  },
+  "path": "readings/u033b.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u035.entitlement": {
+  "coverage_bytes": {
+   "OPEN": 168
+  },
+  "path": "readings/u035.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u037.prohibited": {
+  "coverage_bytes": {
+   "OPEN": 68
+  },
+  "path": "readings/u037.prohibited.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u045a.prohibited": {
+  "coverage_bytes": {
+   "OPEN": 100
+  },
+  "path": "readings/u045a.prohibited.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u045b.prohibited": {
+  "coverage_bytes": {
+   "CHECKED": 49
+  },
+  "path": "readings/u045b.prohibited.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u046.entitlement_arbitrary": {
+  "coverage_bytes": {
+   "OPEN": 91
+  },
+  "path": "readings/u046.entitlement_arbitrary.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u048.claim_negative": {
+  "coverage_bytes": {
+   "CHECKED": 98
+  },
+  "path": "readings/u048.claim_negative.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u048.entitlement": {
+  "coverage_bytes": {
+   "CHECKED": 98
+  },
+  "path": "readings/u048.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u048.liberty": {
+  "coverage_bytes": {
+   "CHECKED": 98
+  },
+  "path": "readings/u048.liberty.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u049.claim": {
+  "coverage_bytes": {
+   "CHECKED": 98
+  },
+  "path": "readings/u049.claim.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u049.entitlement": {
+  "coverage_bytes": {
+   "CHECKED": 98
+  },
+  "path": "readings/u049.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u049.liberty": {
+  "coverage_bytes": {
+   "CHECKED": 98
+  },
+  "path": "readings/u049.liberty.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u051.claim_avoid": {
+  "coverage_bytes": {
+   "OPEN": 92
+  },
+  "path": "readings/u051.claim_avoid.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u051.entitlement": {
+  "coverage_bytes": {
+   "OPEN": 92
+  },
+  "path": "readings/u051.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u051.liberty": {
+  "coverage_bytes": {
+   "OPEN": 92
+  },
+  "path": "readings/u051.liberty.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u052.invocation_barred": {
+  "coverage_bytes": {
+   "OPEN": 182
+  },
+  "path": "readings/u052.invocation_barred.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u054.entitlement": {
+  "coverage_bytes": {
+   "CHECKED": 45
+  },
+  "path": "readings/u054.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u055.both_acts": {
+  "coverage_bytes": {
+   "OPEN": 108
+  },
+  "path": "readings/u055.both_acts.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u055.deprivation_only": {
+  "coverage_bytes": {
+   "OPEN": 108
+  },
+  "path": "readings/u055.deprivation_only.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u059.prohibited": {
+  "coverage_bytes": {
+   "OPEN": 97
+  },
+  "path": "readings/u059.prohibited.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u061.claim": {
+  "coverage_bytes": {
+   "OPEN": 58
+  },
+  "path": "readings/u061.claim.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u063.claim_negative": {
+  "coverage_bytes": {
+   "CHECKED": 88
+  },
+  "path": "readings/u063.claim_negative.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u063.entitlement": {
+  "coverage_bytes": {
+   "CHECKED": 88
+  },
+  "path": "readings/u063.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u063.liberty": {
+  "coverage_bytes": {
+   "CHECKED": 88
+  },
+  "path": "readings/u063.liberty.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u064.prohibited": {
+  "coverage_bytes": {
+   "OPEN": 58
+  },
+  "path": "readings/u064.prohibited.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u066.claim_negative": {
+  "coverage_bytes": {
+   "CHECKED": 71
+  },
+  "path": "readings/u066.claim_negative.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u066.entitlement": {
+  "coverage_bytes": {
+   "CHECKED": 71
+  },
+  "path": "readings/u066.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u066.liberty": {
+  "coverage_bytes": {
+   "CHECKED": 71
+  },
+  "path": "readings/u066.liberty.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u070.claim_negative": {
+  "coverage_bytes": {
+   "CHECKED": 61
+  },
+  "path": "readings/u070.claim_negative.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u070.entitlement": {
+  "coverage_bytes": {
+   "CHECKED": 61
+  },
+  "path": "readings/u070.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u070.liberty": {
+  "coverage_bytes": {
+   "CHECKED": 61
+  },
+  "path": "readings/u070.liberty.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u073.claim_negative": {
+  "coverage_bytes": {
+   "CHECKED": 76
+  },
+  "path": "readings/u073.claim_negative.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u073.entitlement": {
+  "coverage_bytes": {
+   "CHECKED": 76
+  },
+  "path": "readings/u073.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u073.liberty": {
+  "coverage_bytes": {
+   "CHECKED": 76
+  },
+  "path": "readings/u073.liberty.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u074.prohibition": {
+  "coverage_bytes": {
+   "CHECKED": 57
+  },
+  "path": "readings/u074.prohibition.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u077.entitlement_nationality": {
+  "coverage_bytes": {
+   "CHECKED": 77
+  },
+  "path": "readings/u077.entitlement_nationality.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u077.entitlement_residence": {
+  "coverage_bytes": {
+   "CHECKED": 77
+  },
+  "path": "readings/u077.entitlement_residence.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u081.entitlement": {
+  "coverage_bytes": {
+   "OPEN": 66
+  },
+  "path": "readings/u081.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u084a.claim_negative": {
+  "coverage_bytes": {
+   "CHECKED": 33
+  },
+  "path": "readings/u084a.claim_negative.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u084a.entitlement": {
+  "coverage_bytes": {
+   "CHECKED": 33
+  },
+  "path": "readings/u084a.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u084a.liberty": {
+  "coverage_bytes": {
+   "CHECKED": 33
+  },
+  "path": "readings/u084a.liberty.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u084b.claim_negative": {
+  "coverage_bytes": {
+   "CHECKED": 30
+  },
+  "path": "readings/u084b.claim_negative.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u084b.entitlement": {
+  "coverage_bytes": {
+   "CHECKED": 30
+  },
+  "path": "readings/u084b.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u084b.liberty": {
+  "coverage_bytes": {
+   "CHECKED": 30
+  },
+  "path": "readings/u084b.liberty.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u084c.entitlement": {
+  "coverage_bytes": {
+   "OPEN": 43
+  },
+  "path": "readings/u084c.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u084d.entitlement": {
+  "coverage_bytes": {
+   "CHECKED": 42
+  },
+  "path": "readings/u084d.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u087.claim_negative": {
+  "coverage_bytes": {
+   "CHECKED": 97
+  },
+  "path": "readings/u087.claim_negative.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u087.entitlement": {
+  "coverage_bytes": {
+   "CHECKED": 97
+  },
+  "path": "readings/u087.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u087.liberty": {
+  "coverage_bytes": {
+   "CHECKED": 97
+  },
+  "path": "readings/u087.liberty.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u096.claim_negative": {
+  "coverage_bytes": {
+   "CHECKED": 40
+  },
+  "path": "readings/u096.claim_negative.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u096.entitlement": {
+  "coverage_bytes": {
+   "CHECKED": 40
+  },
+  "path": "readings/u096.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u098.unassigned": {
+  "coverage_bytes": {
+   "OPEN": 42
+  },
+  "path": "readings/u098.unassigned.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u099a.unassigned": {
+  "coverage_bytes": {
+   "OPEN": 70
+  },
+  "path": "readings/u099a.unassigned.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u099b.unassigned": {
+  "coverage_bytes": {
+   "OPEN": 81
+  },
+  "path": "readings/u099b.unassigned.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u100a.unassigned": {
+  "coverage_bytes": {
+   "OPEN": 79
+  },
+  "path": "readings/u100a.unassigned.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u100b.unassigned": {
+  "coverage_bytes": {
+   "CHECKED": 80
+  },
+  "path": "readings/u100b.unassigned.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u105a.claim_negative": {
+  "coverage_bytes": {
+   "CHECKED": 85
+  },
+  "path": "readings/u105a.claim_negative.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u105a.entitlement": {
+  "coverage_bytes": {
+   "CHECKED": 85
+  },
+  "path": "readings/u105a.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u105a.liberty": {
+  "coverage_bytes": {
+   "CHECKED": 85
+  },
+  "path": "readings/u105a.liberty.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u105b.claim_negative": {
+  "coverage_bytes": {
+   "CHECKED": 19
+  },
+  "path": "readings/u105b.claim_negative.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u105b.entitlement": {
+  "coverage_bytes": {
+   "CHECKED": 19
+  },
+  "path": "readings/u105b.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u105b.liberty": {
+  "coverage_bytes": {
+   "CHECKED": 19
+  },
+  "path": "readings/u105b.liberty.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u105c.claim_negative": {
+  "coverage_bytes": {
+   "CHECKED": 59
+  },
+  "path": "readings/u105c.claim_negative.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u105c.entitlement": {
+  "coverage_bytes": {
+   "CHECKED": 59
+  },
+  "path": "readings/u105c.entitlement.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u105c.liberty": {
+  "coverage_bytes": {
+   "CHECKED": 59
+  },
+  "path": "readings/u105c.liberty.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u111.both_aims": {
+  "coverage_bytes": {
+   "OPEN": 337
+  },
+  "path": "readings/u111.both_aims.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u111.listed_aims": {
+  "coverage_bytes": {
+   "OPEN": 337
+  },
+  "path": "readings/u111.listed_aims.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u112.exercise_prohibited": {
+  "coverage_bytes": {
+   "OPEN": 121
+  },
+  "path": "readings/u112.exercise_prohibited.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u114.interpretive_ban": {
+  "coverage_bytes": {
+   "OPEN": 225
+  },
+  "path": "readings/u114.interpretive_ban.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ }
+}

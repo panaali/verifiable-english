@@ -1,0 +1,21 @@
+part01 bytes 0 4724 regulated: 13 sorts: 14
+part01 elaborate: ok enumerated None 0.7 s
+missing: [] limits: []
+part02 bytes 4724 5224 regulated: 8 sorts: 6
+part02 elaborate: ok enumerated None 0.1 s
+missing: [] limits: []
+part03 bytes 5224 6573 regulated: 11 sorts: 10
+part03 elaborate: ok enumerated None 0.4 s
+missing: [] limits: []
+part04 bytes 6573 7558 regulated: 3 sorts: 6
+part04 elaborate: ok enumerated None 0.0 s
+missing: [] limits: []
+part05 bytes 7558 9577 regulated: 13 sorts: 8
+part05 elaborate: ok enumerated None 0.6 s
+missing: [] limits: []
+part06 bytes 9577 10085 regulated: 7 sorts: 6
+part06 elaborate: ok enumerated None 0.1 s
+missing: [] limits: []
+part07 bytes 10085 10916 regulated: 4 sorts: 8
+part07 elaborate: ok enumerated None 0.0 s
+missing: [] limits: []
