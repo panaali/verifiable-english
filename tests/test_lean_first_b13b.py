@@ -242,7 +242,7 @@ def test_report_numbers_are_regenerated_from_saved_evidence():
     assert scope["commits"] and all(len(c["sha"]) == 40 for c in scope["commits"])
     ab = report.load("corpus-ab.json")
     assert ab["unlisted"] == 0 and not ab["totals"].get("verdict") and not ab["totals"].get("availability")
-    assert sum(ab["totals"].values()) == sum(ab["records"].values()) // 2 > 90_000
+    assert sum(ab["totals"].values()) == sum(ab["records"].values()) > 90_000  # records per side
 
 
 def test_the_delta_lists_exactly_the_recorded_differences():

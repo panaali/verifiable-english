@@ -61,7 +61,7 @@ Full gate: not yet recorded (`evidence/gate.json` is archived by the commit afte
 | Latency | AGENT | `evidence/latency.json`. UDHR and eligibility are inside the budgets. **Agent-policy is 1.25× wall and 1.23× child CPU**: inside the 1.25× wall row, outside the 20% CPU allowance, so listed for a DRI signature. |
 | Wording block, 4 order records | HUMAN | DRI, signature of DELTA.md's wording block and of each order record (DRI answer 3 makes Lean's texts canonical; the exact pairs are not yet signed). |
 | Retained scope gaps 5–7 | HUMAN | DRI, acceptance of DELTA.md items 5–7 (inputs Lean does not cover yet), each with its follow-up. |
-| Trust budget | HUMAN | DRI, allowance for `tools/trust_map.py --check`: trusted +8 in `VE/Service/Standalone.lean`. |
+| Trust budget | HUMAN | DRI, signature for trusted +8 in `VE/Service/Standalone.lean`, recorded unsigned (with its reason) in `docs/trust-baseline.json`'s history. |
 | Agent-policy CPU | HUMAN | DRI, signature for the 1.23× child CPU of `check.py base`. |
 | Operational soak | EXTERNAL | Owner: DRI, the three-day soak after 13b (DRI answer 1). Not started by this batch. |
 

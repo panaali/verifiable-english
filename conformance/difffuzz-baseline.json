@@ -32677,6 +32677,7 @@
    "mutation": [
     [
      "re-found",
+     [],
      "lean-first batch 13b: the admission.json/14 input is fixed (Python's column is Lean's answer); the CI sample's admission.json/9 mutant keeps the reviewed signature"
     ]
    ],
