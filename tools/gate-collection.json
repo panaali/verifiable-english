@@ -8131,6 +8131,7 @@
   "tests/test_readings_defaults_rd2b_report.py::test_the_reported_head_is_the_last_commit_listed",
   "tests/test_readings_defaults_rd3_report.py::test_report_check_rejects_changed_saved_numbers_and_commits",
   "tests/test_readings_defaults_rd3_report.py::test_report_numbers_and_commit_list_match_saved_evidence",
+  "tests/test_readings_defaults_rd3_report.py::test_round3_full_suite_record_matches_the_report",
   "tests/test_readings_defaults_rd3_report.py::test_round3_mutants_were_rejected_and_reported",
   "tests/test_readings_defaults_rd3_report.py::test_saved_ab_evidence_is_complete_and_accounted",
   "tests/test_readings_defaults_rd3_report.py::test_saved_commit_list_is_complete_for_the_gated_code",
