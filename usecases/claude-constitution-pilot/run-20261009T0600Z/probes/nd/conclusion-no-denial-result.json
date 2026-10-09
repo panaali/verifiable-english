@@ -1,0 +1,23 @@
+{
+  "verdict": "UNKNOWN",
+  "route": "enumerated",
+  "choice": [
+    [
+      "force-u0036-s05",
+      0
+    ],
+    [
+      "force-u0125-s04-p2",
+      1
+    ],
+    [
+      "force-u0156-s03",
+      0
+    ],
+    [
+      "force-u0263-s04-p2",
+      0
+    ]
+  ],
+  "english": []
+}
