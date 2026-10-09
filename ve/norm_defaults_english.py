@@ -7,12 +7,19 @@ of all three completions for every predicate at once, so a legend sentence can
 be read back as exactly one predicate and completion. The paraphrases of 4.2
 render statuses, witnesses and carve-outs; the synthetic rule `F_p` is never
 shown as a rule, and a filling is rendered as "this situation answers".
+
+Lean owns every answer these sentences state. A status, a reached default and a
+CONFLICT witness are rendered only from the fields of Lean's row (the deciding
+`rules`, the `differs` atoms, the completed `value`, the conflict `kind` and its
+deciding assignment `under`); nothing here evaluates a formula, enumerates fillings
+or applies a work limit (`tests/test_norm_defaults_relay_english.py` scans the call
+graph of every public function).
 """
 from __future__ import annotations
 
 import json
 
-from .errors import SyntaxError, VEError
+from .errors import CheckerUnavailable, SyntaxError, VEError
 from .norm_english import (UNSPECIFIED_KEYWORD, _bindings, _words, default_sentence, pair_sentence,
                            unspecified_clause)
 from .surface.unambiguity import require_unique_derivation
@@ -145,44 +152,48 @@ def _rule_numbers(document):
     return {rule.name: i for i, rule in enumerate(document.author.rules, 1)}
 
 
-def _selected_author_rules(document, situation, filling, predicate, values):
-    from .evaluate import _Evaluator
-    from .norm_defaults import _bindings as bindings
-    sorts = document.env.predicates[predicate].arguments
-    selected = document.filled.selection(predicate)[2]
-    model = document.with_filling(situation, filling, checked=False)
-    evaluator = _Evaluator(document._raw_base(), model, 1_000_000, trace=False)
-    return tuple(rule for rule in document.author.rules if rule.predicate == predicate and
-                 evaluator.formula(document.filled._expand(selected[rule.name], predicate),
-                                   bindings(sorts, values))[0])
+def _author_rules(document, names):
+    """The author rules Lean named, in Lean's order; an unknown name is Lean's fault."""
+    rules = {rule.name: rule for rule in document.author.rules}
+    if type(names) is not list or any(type(name) is not str or name not in rules for name in names):
+        raise CheckerUnavailable("CheckerUnavailable: Lean named a rule the document does not have")
+    return [rules[name] for name in names]
 
 
-def status_sentence(document, situation, status):
-    """4.2's status paraphrases: by rule, by default, by the pair premise,
-    silent, or inherited. Only author rules are named."""
+def _row_tuple(row):
+    values = row.get("tuple")
+    if type(values) is not list or any(type(v) is not str for v in values):
+        raise CheckerUnavailable("CheckerUnavailable: Lean's row has no tuple")
+    return tuple(values)
+
+
+def status_sentence(document, situation, row):
+    """4.2's status paraphrases of Lean's `norm-defaults-status` row: by rule, by
+    default, by the pair premise, silent, or inherited. Only author rules are named,
+    and only the rules Lean found deciding (`rules`)."""
     env = document.env
-    predicate, values = status.predicate, status.values
+    predicate, values = row["predicate"], _row_tuple(row)
     numbers = _rule_numbers(document)
-    if status.status == "SETTLED":
-        filling = document.canonical_filling(situation)
-        rules = _selected_author_rules(document, situation, filling, predicate, values)
-        clause = point_clause(env, situation, predicate, values,
-                              None if status.value else _negative_modal(env, predicate))
-        if rules:
-            cited = ", ".join(f"rule {numbers[r.name]}" for r in rules)
+    rules = _author_rules(document, row.get("rules", []))
+    state = row["point_status"]
+    if state.startswith("SETTLED "):
+        value = state == "SETTLED yes"
+        own = [r for r in rules if r.predicate == predicate]
+        clause = point_clause(env, situation, predicate, values, None if value else _negative_modal(env, predicate))
+        if own:
+            cited = ", ".join(f"rule {numbers[r.name]}" for r in own)
             return f"The text says {clause} ({cited})."
-        pair = _pair_reason(document, situation, predicate, values, status.value)
+        pair = _pair_reason(document, situation, predicate, values, value, rules)
         if pair is not None:
             return pair
         return f"The text says {clause} (by default)."
-    if status.status == "UNDECIDED":
+    if state == "UNDECIDED":
         clause = point_clause(env, situation, predicate, values)
-        if predicate in document.unspec and not any(
-                _selected_author_rules(document, situation, f, predicate, values) for f in status.fillings):
+        if predicate in document.unspec and not rules:
             return f"The text does not say whether {clause}: no rule decides this situation."
-        return f"The text does not say whether {clause}: {_inherited_reason(document, situation, status)}."
+        return f"The text does not say whether {clause}: {_inherited_reason(document, situation, row)}."
     return (f"The checker could not settle whether {point_clause(env, situation, predicate, values)} "
-            f"within {status.evidence}.")
+            "with the evidence it was given.")
 
 
 def _negative_modal(env, predicate):
@@ -190,14 +201,13 @@ def _negative_modal(env, predicate):
     return "must not" if reg.role == "permission" else "need not"
 
 
-def _pair_reason(document, situation, predicate, values, value):
+def _pair_reason(document, situation, predicate, values, value, rules):
     """A point settled by the profile premise: a required act is permitted, and
-    an act not permitted is not required."""
+    an act not permitted is not required. `rules` are the rules Lean found deciding."""
     env = document.env
     if predicate not in document.unspec:
         return None
     numbers = _rule_numbers(document)
-    filling = document.canonical_filling(situation)
     for required, permission, _ in document.pairs():
         if (predicate, value) == (permission, True):
             other, verb, default = required, "requires", "it is required by default"
@@ -207,9 +217,8 @@ def _pair_reason(document, situation, predicate, values, value):
             head = point_clause(env, situation, required, values, "need not")
         else:
             continue
-        rules = [r for r in _selected_author_rules(document, situation, filling, other, values)
-                 if r.sign == (verb == "requires")]
-        reason = f"rule {numbers[rules[0].name]} {verb} it" if rules else default
+        deciding = [r for r in rules if r.predicate == other and r.sign == (verb == "requires")]
+        reason = f"rule {numbers[deciding[0].name]} {verb} it" if deciding else default
         return f"{_capital(head)}: {reason}, and {PAIR_PREMISE}."
     return None
 
@@ -218,20 +227,16 @@ def _capital(text):
     return text[0].upper() + text[1:]
 
 
-def _inherited_reason(document, situation, status):
-    """Name the rules whose decision waits on an undecided lower point."""
+def _inherited_reason(document, situation, row):
+    """Name the rules whose decision waits on an undecided lower point (Lean's `differs`)."""
     from .ast import Unary, Binary
     env = document.env
     numbers = _rule_numbers(document)
-    first, second = status.fillings
-    lower = []
-    for name in sorted(set(first) | set(second)):
-        for row in sorted(first.get(name, frozenset()) ^ second.get(name, frozenset())):
-            lower.append((name[len("unsaid__"):], row))
     parts = []
-    for q, row in lower:
-        clause = point_clause(env, situation, q, row)
-        rules = [r for r in document.author.rules if r.predicate == status.predicate
+    for atom in row.get("differs", []):
+        q, atom_values = atom["predicate"], _row_tuple(atom)
+        clause = point_clause(env, situation, q, atom_values)
+        rules = [r for r in document.author.rules if r.predicate == row["predicate"]
                  and q in _atoms(r.guard) | set().union(*(_atoms(u) for u in r.unless))]
         if rules:
             only_if = isinstance(rules[0].guard, (Unary, Binary)) and rules[0].guard.predicate == q
@@ -244,23 +249,32 @@ def _inherited_reason(document, situation, status):
 
 
 def _atoms(formula):
+    """The predicates a rule's guard names (its text, not its value)."""
     from .search import _used_predicates
     return set(_used_predicates(formula))
 
 
-def latent_conflict_sentence(document, situation, report):
-    """4.2's latent conflict: which rules contradict, under which answer."""
-    env = document.env
-    if report.kind != "latent":
+def _latent(row):
+    """Lean's CONFLICT row with a latent witness: its tuple, rules and deciding assignment."""
+    if not isinstance(row, dict) or row.get("verdict") != "CONFLICT":
+        raise VEError("InvalidInput: not a conflict")
+    if row.get("kind") != "latent":
         raise VEError("InvalidInput: not a latent conflict")
+    under = row.get("under")
+    if type(under) is not list or not under:
+        raise CheckerUnavailable("CheckerUnavailable: Lean gave no deciding assignment for this conflict")
+    return _row_tuple(row), [(atom["predicate"], _row_tuple(atom), atom["value"]) for atom in under]
+
+
+def latent_conflict_sentence(document, situation, row):
+    """4.2's latent conflict of Lean's CONFLICT row: which rules contradict, under which answer."""
+    env = document.env
+    _, under = _latent(row)
     numbers = _rule_numbers(document)
-    filling = {name: frozenset(tuple(row) for row in rows) for name, rows in report.filling.items()}
-    predicates = (report.target.split("->") if "->" in report.target else [report.target])
-    selected = [r for p in predicates
-                for r in _selected_author_rules(document, situation, filling, p, report.tuple)]
-    conditions = [point_clause(env, situation, q, row, None if value else _negative_modal(env, q))
-                  for q, row, value in report.under]
-    silent = [point_clause(env, situation, q, row) for q, row, _ in report.under]
+    selected = _author_rules(document, row.get("rules"))
+    conditions = [point_clause(env, situation, q, values, None if value else _negative_modal(env, q))
+                  for q, values, value in under]
+    silent = [point_clause(env, situation, q, values) for q, values, _ in under]
     fix = ("make one rule an exception to the other" if len({r.predicate for r in selected}) == 1
            else "add a condition to one of the rules")
     named = " and ".join(str(n) for n in sorted({numbers[r.name] for r in selected}))
@@ -270,15 +284,20 @@ def latent_conflict_sentence(document, situation, report):
 
 
 def gap_sentence(document, situation, line):
-    """A `gaps: reachable` or `default reached` witness line, in English."""
+    """A `gaps: reachable` or `default reached` line of Lean's report, in English."""
     env = document.env
-    values, filling = line.witness
-    clause = point_clause(env, situation, line.predicate, values)
-    if line.completion == "unspecified":
+    if not isinstance(line, dict) or line.get("reached") != "reachable" or "witness" not in line:
+        raise VEError("InvalidInput: a reachable gap witness is required")
+    values = _row_tuple(line["witness"])
+    predicate, completion = line["predicate"], line["completion"]
+    clause = point_clause(env, situation, predicate, values)
+    if completion == "unspecified":
         return f"The text does not say whether {clause}: no rule decides this situation."
-    value = document.value(situation, filling, line.predicate, values)
-    decided = point_clause(env, situation, line.predicate, values,
-                           None if value else _negative_modal(env, line.predicate))
+    value = line.get("value")
+    if value not in ("yes", "no"):
+        raise CheckerUnavailable("CheckerUnavailable: Lean's reached default has no completed value")
+    decided = point_clause(env, situation, predicate, values,
+                           None if value == "yes" else _negative_modal(env, predicate))
     return f"No rule decides whether {clause}; the default decides that {decided}."
 
 
@@ -353,25 +372,20 @@ def silence_sentence(document, predicate):
             + _guard_text(condition, env, words, scope))
 
 
-def latent_conflict_finding(document, situation, report):
-    """Spec 8's report finding for a latent CONFLICT: `LatentConflict: <rules> under <p>(<situation>)`."""
-    if report.kind != "latent":
-        raise VEError("InvalidInput: not a latent conflict")
-    filling = {name: frozenset(tuple(row) for row in rows) for name, rows in report.filling.items()}
-    predicates = report.target.split("->") if "->" in report.target else [report.target]
-    rules = sorted({r.name for p in predicates
-                    for r in _selected_author_rules(document, situation, filling, p, report.tuple)})
-    under = ", ".join(f"{q}({', '.join(row)}) = {'yes' if value else 'no'}" for q, row, value in report.under)
-    return f"LatentConflict: {', '.join(rules)} under {under}"
+def latent_conflict_finding(document, situation, row):
+    """Spec 8's report finding for Lean's latent CONFLICT row: `LatentConflict: <rules> under <p>(<situation>)`."""
+    _, under = _latent(row)
+    rules = sorted({r.name for r in _author_rules(document, row.get("rules"))})
+    shown = ", ".join(f"{q}({', '.join(values)}) = {'yes' if value else 'no'}" for q, values, value in under)
+    return f"LatentConflict: {', '.join(rules)} under {shown}"
 
 
-def completion_question(document, predicate, *, max_domain_size=2):
+def completion_question(document, predicate, found):
     """Spec 5's authoring question: the three legend sentences, unranked and with
-    none preselected, beside a checked situation that no rule on `predicate` decides."""
-    from .norm_defaults import search_reached
+    none preselected, beside a checked situation that no rule on `predicate` decides.
+    `found` is the situation Lean replayed (`norm_defaults.search_reached`), or None."""
     env = document.env
     options = [default_sentence(env, predicate, completion) for completion in COMPLETIONS]
-    found = search_reached(document, predicate, max_domain_size=max_domain_size)
     situation = None
     if found is not None:
         model, values, _ = found

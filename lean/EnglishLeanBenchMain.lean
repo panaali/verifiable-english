@@ -1,12 +1,14 @@
 import Lean.Data.Json
 import VE.Grammar.Table
 import VE.EnglishGrammar.Lexer
+import VE.EnglishGrammar.Run
 
 /-! G1a measurement of the grammar engine (docs/spec/english-lean-PLAN.md section 5, S1a).
 
     lake build ve_english_lean_bench
     .lake/build/bin/ve_english_lean_bench <input.json> [repetitions]
     .lake/build/bin/ve_english_lean_bench --lex <sources.json>
+    .lake/build/bin/ve_english_lean_bench --policy <case.json> [repetitions]
 
 The input lists grammars over the English tokens and terminals with sentences to read; it is written
 by `bench/english_lean_g1a.py`. For each sentence the tool runs `parse` with cap 2 and a budget that
@@ -14,6 +16,8 @@ cannot be exhausted, and prints one JSON line: the number of tokens, the verdict
 step counter of spec 2.6 and the least CPU time of the repetitions in microseconds.
 With `--lex` it reads a JSON list of sources and prints, per source, the tokens of `lexSpans` with
 their byte spans, or the rejection: the instrument of the lexer differential against the Python reference.
+With `--policy` it decodes an `english.grammar` case (`Run.decodeCase`) and prints the least CPU time of V6
+(`Lexicon.policyOk`), of V1 to V5 (`Lexicon.valid`) and of preparing `grammar E L` (E2 plan, GE2 item 9).
 Measurement only: no admission path reads it.
 -/
 
@@ -159,11 +163,39 @@ def lexMain (path : String) : IO UInt32 := do
     IO.println line.compress
   return 0
 
+/-- The least CPU time of `f ()` over `reps` runs, forced through `IO.lazyPure` and a use of the result. -/
+def leastNanos {α : Type} (reps : Nat) (f : Unit → α) (use : α → Nat) : IO Nat := do
+  let mut best := 0
+  for k in [0:reps] do
+    let t0 ← cpuNanos
+    let a ← IO.lazyPure f
+    let n := use a
+    let t1 ← cpuNanos
+    let ns := if n == 0 then t1 - t0 + 1 else t1 - t0
+    if k == 0 || ns < best then best := ns
+  return best
+
+def policyMain (path : String) (reps : Nat) : IO UInt32 := do
+  let .ok case := Json.parse (← IO.FS.readFile path) | IO.eprintln "input is not JSON"; return 2
+  match Run.decodeCase case with
+  | .error e => IO.eprintln e; return 2
+  | .ok c =>
+    let policy ← leastNanos reps (fun _ => c.L.policyOk c.E {}) (fun b => if b then 1 else 2)
+    let valid ← leastNanos reps (fun _ => c.L.valid c.E {}) (fun b => if b then 1 else 2)
+    let prepare ← leastNanos reps (fun _ => (VE.EnglishGrammar.grammar c.E c.L).prepare)
+      (fun P => P.terms.size + P.positions + 1)
+    IO.println (Json.mkObj [("predicates", toJson c.E.predicates.length), ("policy_ok", toJson (c.L.policyOk c.E {})),
+      ("policy_micros", toJson (policy / 1000)), ("valid_micros", toJson (valid / 1000)),
+      ("prepare_micros", toJson (prepare / 1000))]).compress
+    return 0
+
 end EnglishLeanBench
 
 open EnglishLeanBench in
 def main (args : List String) : IO UInt32 := do
   if let ["--lex", path] := args then return ← lexMain path
+  if let "--policy" :: path :: rest := args then
+    return ← policyMain path ((rest.head?.bind String.toNat?).getD 5)
   let some path := args.head? | IO.eprintln "usage: ve_english_lean_bench <input.json> [repetitions]"; return 2
   let reps := (args.drop 1).head?.bind String.toNat? |>.getD 3
   let text ← IO.FS.readFile path

@@ -12,7 +12,9 @@ plan F5b; batch 3b review B1, B2).
   is reached otherwise only by `choiceDoc`, a compatible choice's whole document (composition-s2 4.1), which is
   not a candidate's. `free D` is built in admission and, for the certificate and model kinds, once more by
   `sharedEnv` (the shared vocabulary those kinds decode formulas over): one document per request, a gap recorded in
-  docs/lean-first/b3b/DELTA.md (merge of ve-integration).
+  docs/lean-first/b3b/DELTA.md (merge of ve-integration); under the unspecified completion once more by `freeU`
+  (norm-defaults' author checks, readings-defaults.md 4.1 step 3; docs/readings-defaults/rd2a/DELTA.md). The filled
+  document's admission builds its own table through the same staged admission (`admitDecoded`).
 * Admission stops at the first diagnostic (`firstSome` is `findSome?`): a document whose first set's candidate is
   ill-formed is refused without validating the 119 candidates after it (4.0 s of CPU before, 0.26 s after).
 * No pending candidate's document is built (batch 3b looprecheck B): admission builds the candidates with content
@@ -127,13 +129,50 @@ def test_the_route_builds_a_candidates_document_only_in_the_request_table(walks)
     assert built == [], [(name, sorted(callers(edges, name))) for name in built]
     # `build` itself only for S2a's choice documents, never inlined into another caller.
     assert {caller for caller in callers(edges, BUILD) if not named_under(caller, BUILD)} == {CHOICE}
-    # The table is built by admission alone, once per admitted document, and read through `oneOf`.
-    assert callers(edges, TABLE[0]) == {"VE.Readings.Wire.admitReadings"}
+    # The table is built by admission alone, once per admitted document, and read through `oneOf`: `admitDecoded`
+    # is S1's admission after decoding, which `admitReadings` runs on the decoded document and, under the unspecified
+    # completion, `admitNDFull` on the filled document (readings-defaults.md 4.1 step 4), each with its own table.
+    assert callers(edges, TABLE[0]) == {"VE.Readings.Wire.admitDecoded"}
+    assert {caller for caller in callers(edges, "VE.Readings.Wire.admitDecoded")
+            if not named_under(caller, "VE.Readings.Wire.admitDecoded")} == \
+        {"VE.Readings.Wire.admitReadings", "VE.Readings.Wire.admitNDFull"}
     assert "VE.Readings.Wire.onesOf" not in edges  # the table as specified
     assert "VE.Readings.Wire.oneOf" in edges
     assert {caller for caller in callers(edges, TABLE[1]) if not named_under(caller, TABLE[1])} == \
         {"VE.Readings.Wire.Admitted.side"}
-    assert callers(edges, FREE) == {"VE.Readings.Wire.frontText", SHARED}
+    # `free D` once more under the unspecified completion: norm-defaults' author checks read it as a UDoc
+    # (`freeU`, readings-defaults.md 4.1 step 3), one document per request, a gap recorded in
+    # docs/readings-defaults/rd2a/DELTA.md beside `sharedEnv`'s.
+    assert callers(edges, FREE) == {"VE.Readings.Wire.frontText", SHARED, "VE.Readings.freeU"}
+
+
+ADMIT = ("VE.Readings.Wire.admitReadings", "VE.Readings.Wire.admitS2")
+# Admission from the case's JSON for the replay theorems' entry points; the route admits once and passes the result.
+JSON_ADMISSIONS = ("VE.Readings.Wire.admitNDFullJ", "VE.Readings.Wire.admitND", "VE.Readings.Wire.replaySup",
+                   "VE.Readings.Wire.replayCertificate", "VE.Readings.Wire.replayModel")
+
+
+def test_the_route_admits_the_case_document_once(walks):
+    """Review B2 (and C2): under the completion `readings-validate` and `readings-separate` ran `admitReadings`, then
+    `admitNDFullJ`, whose `admitS2` admitted the author's document again, and `runS2ND` admitted it again through
+    `runS2` for a document with no content-bearing set. Now each case is admitted once (S1's `admitReadings`,
+    continued by `admitS2Of` and `admitNDFull`, or `admitS2` for the S2a kinds). With companion components,
+    `admitComponent` admits each part once before `runAdmitted` answers any of them; the answer path does not
+    admit again. No JSON admission is reachable."""
+    edges = walks[ENTRY]
+    # Calls of the admissions themselves (their compiled helpers, such as the unit-id check `admitS2Of` shares,
+    # admit nothing).
+    calling = {admit: {caller for caller, callees in edges.items() if admit in callees} for admit in ADMIT}
+    in_run_case = {n for n in edges if any(named_under(n, f"VE.Readings.Run.{f}")
+                                           for f in ("runOne", "validateOne", "elaborateOne", "admitComponent"))}
+    assert not any(named_under(n, "VE.Readings.Run.runCase") for n in set().union(*calling.values()))
+    assert calling[ADMIT[1]] and calling[ADMIT[1]] <= in_run_case, sorted(calling[ADMIT[1]])
+    assert calling[ADMIT[0]] and calling[ADMIT[0]] <= in_run_case | {ADMIT[1]}, sorted(calling[ADMIT[0]])
+    assert not {n for n, callees in edges.items() if named_under(n, "VE.Readings.Run.runAdmitted")
+                and set(callees) & set(ADMIT)}
+    assert [n for n in edges if any(named_under(n, f) for f in JSON_ADMISSIONS)] == []
+    # `admitS2Of` continues an admission: it never admits S1 again.
+    assert not ({c for n, cs in edges.items() if named_under(n, "VE.Readings.Wire.admitS2Of") for c in cs} & set(ADMIT))
 
 
 @pytest.mark.parametrize("specified", SPECIFIED)

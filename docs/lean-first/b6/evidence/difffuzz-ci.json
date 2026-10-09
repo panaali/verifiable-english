@@ -1,0 +1,35 @@
+{
+  "seed": 20261004,
+  "base_new": 11,
+  "head_new": 11,
+  "same_signature_ids": true,
+  "added": [],
+  "removed": [],
+  "same_corpus": true,
+  "same_mutants": true,
+  "baseline_entries": 384,
+  "baseline_unreviewed": [],
+  "baseline_not_reproduced": [],
+  "signatures": [
+    "138f8420645d5a7a",
+    "490a41808d93a5a4",
+    "54fcf6b1c09b89f3",
+    "5ab0e609397d3f2f",
+    "6cb30db5763b2058",
+    "71000ad1c1905d72",
+    "8841282e3cb46aa2",
+    "db0c3c4f36d02f4d",
+    "e2f227c11fef418c",
+    "e5cf7c07fd37c408",
+    "e5e660cd2ad18ba9"
+  ],
+  "baseline_entries_after_review": 395,
+  "reviewed_follow_ups": {
+    "DF-19": 1,
+    "DF-3": 7,
+    "DF-4": 1,
+    "DF-9": 2
+  },
+  "reviewed_with_reason": 11,
+  "head_new_after_review": 0
+}

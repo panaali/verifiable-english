@@ -26,32 +26,27 @@ python3 tools/rust_build.py            # release build; --check fails if unpinne
 python3 tools/rust_build.py test -j 2 --locked --all-features --manifest-path rust/Cargo.toml -- --test-threads=1
 cargo fmt --manifest-path rust/Cargo.toml --all --check
 python3 tools/rust_build.py clippy -j 2 --manifest-path rust/Cargo.toml --workspace --all-targets --all-features -- -D warnings
-
-rust/target/release/ve parse --env examples/environment.json --source examples/requirements.ve
-rust/target/release/ve format --env examples/environment.json --source examples/requirements.ve
-rust/target/release/ve evaluate --env examples/environment.json --source examples/requirements.ve --model examples/model.json
-rust/target/release/ve countermodel --env examples/environment.json --premises examples/premise.ve --conclusion examples/conclusion.ve --max-domain-size 2
 ```
 
-`check-countermodel` takes the same inference source arguments plus `--model`.
-A conclusion must contain exactly one statement. An empty premises file is
-rejected with `SyntaxError`, matching Python. Empty premise arrays remain valid
-in the programmatic inference envelope. File argument `-` reads
-stdin. `--help` lists the commands. These are small explicit commands, not a
-replacement for every Python CLI option or acceptance-record field.
+Rust reads no VE source text (lean-first batch 15b): the `ve-surface` crate, the
+route checks (labels, reading bindings, dependency orders) and the `parse`,
+`format`, `evaluate`, `countermodel` and `check-countermodel` commands are gone.
+Python parses and prints; Lean checks. The CLI has three commands, `conformance`,
+`jsonl` and `canonical-json`, over wire ASTs. File argument `-` reads stdin.
+`--help` lists the commands.
 
 `conformance FILE.json` reads a case or array, producing one result per case.
 `jsonl FILE.jsonl` streams the same envelope one case per line, with a 16 MiB
 per-line cap (including a terminating LF). An oversized record emits one
 `ResourceLimit` record, drains through its newline using bounded storage, and
-continues with subsequent lines. Envelopes contain `environment`, `ast` and/or `source`, optional
-`model` and `id`. Submitted source and AST must agree. An inference envelope
-instead has an ordered `premises` AST array and single `conclusion` AST; `model`
-selects witness checking, otherwise optional `max_domain_size`, `max_models` and
-`max_evaluations` bound search. Test metadata is ignored, including expectations.
-`canonical-json FILE.json` emits the exact restricted canonical bytes without an
-extra newline. Batch per-formula evaluation uses a fresh evaluation budget for
-each formula; the normal `evaluate` command budgets the entire document.
+continues with subsequent lines. A case names its kind (`check`, `evaluate-budgeted`,
+`distinguishing-model`, `readings-superposed-evaluate`) or is an inference envelope:
+an ordered `premises` AST array and single `conclusion` AST; `model` selects witness
+checking, otherwise optional `max_domain_size`, `max_models` and `max_evaluations`
+bound search. An order@0 environment goes to the order route. Any other case is
+refused (`InvalidInput: unknown case`). Test metadata is ignored, including
+expectations. `canonical-json FILE.json` emits the exact restricted canonical bytes
+without an extra newline. `evaluate-budgeted` budgets the entire document.
 
 For ordinary commands, exit 0 means successful output, satisfaction, a found
 witness or valid countermodel; 1 means violation, bounded absence or invalid

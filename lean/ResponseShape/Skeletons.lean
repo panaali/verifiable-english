@@ -32,6 +32,9 @@ abbrev order : Skel := skel% "order.json#/row"
 abbrev route : Skel := skel% "route.json#/row"
 abbrev norms : Skel := skel% "norms.json#/row"
 abbrev english : Skel := skel% "english.json#/row"
+abbrev englishRead : Skel := skel% "english.read.json#/row"
+abbrev englishGrammar : Skel := skel% "english.grammar.json#/row"
+abbrev englishCheck : Skel := skel% "english.check.json#/row"
 abbrev environment : Skel := skel% "environment.json#/row"
 abbrev model : Skel := skel% "model.json#/row"
 abbrev check : Skel := skel% "check.json#/row"
@@ -53,6 +56,7 @@ abbrev normDefaults : Skel := skel% "norm-defaults.json#/row"
 abbrev discourse : Skel := skel% "discourse.json#/row"
 abbrev readingsRoute : Skel := skel% "readings-route.json#/row"
 abbrev diagnose : Skel := skel% "diagnose.json#/row"
+abbrev document : Skel := skel% "document.json#/row"
 
 def row : VE.Service.Mode → Skel
   | .evaluate => evaluate
@@ -61,6 +65,9 @@ def row : VE.Service.Mode → Skel
   | .route => route
   | .norms => norms
   | .english => english
+  | .englishRead => englishRead
+  | .englishGrammar => englishGrammar
+  | .englishCheck => englishCheck
   | .environment => environment
   | .model => model
   | .check => check
@@ -82,6 +89,7 @@ def row : VE.Service.Mode → Skel
   | .discourse => discourse
   | .readingsRoute => readingsRoute
   | .diagnose => diagnose
+  | .document => document
 
 #guard VE.Service.modes.all fun m =>
   (skeleton Schemas.files s!"{m.name}.json#/row").toOption == some (row m, [])

@@ -11,7 +11,7 @@ from itertools import product
 from .assurance import semantic_entry
 from .admission import _check_kind, token
 from .ast import formula_from_data
-from .errors import CheckerUnavailable, UnsupportedProfile, VEError
+from .errors import CheckerUnavailable, ResourceLimit, UnsupportedProfile, VEError
 from .identity import meaning_id
 from .readings_english import SOURCE_WORDS
 
@@ -32,7 +32,7 @@ def s1_content_kind(content):
     return None
 
 
-def s1_content_meaning_id(env, set_id, reading):
+def s1_content_meaning_id(env, set_id, reading, *, rule_result=None):
     """Give a content-bearing candidate the identity of the same fixed unit.
 
     This checks the content's profile and kind. Whole-document elaboration and
@@ -54,7 +54,7 @@ def s1_content_meaning_id(env, set_id, reading):
             f"UnsupportedProfile: reading {set_id}:{name} of kind {content_kind} requires {needs}")
     from .document import _content
     canonical, mid = _content(env, {"kind": content_kind, "content": content}, {},
-                              rights="rights@0" in env.profiles)
+                              rights="rights@0" in env.profiles, rule_result=rule_result)
     if mid is None:
         from .norms import NormDocument, norm_meaning_id
         mid = norm_meaning_id(env, NormDocument._decode(canonical))
@@ -122,10 +122,45 @@ def _right_situation(env, content, wire, unit_ids=()):
     return model.model_id, (tuple(outcomes), tuple(sorted(selected)))
 
 
+def _s1_bearing(env, readings):
+    return "readings@1" in env.profiles and any(
+        type(r) is dict and s1_content_kind(r.get("content")) in S1_CONTENT_KINDS for r in readings)
+
+
+def _warm_alone_rights(env, values, unit_ids):
+    """The line rules of every right candidate `validate_reading_sets` checks alone, asked of Lean in one
+    request per source rather than one per candidate (`RightsDocument.warm_rules`, which raises no diagnostic)."""
+    from .rights import RightsDocument
+    try:
+        documents = [[{"source_units": sorted(unit_ids)}, reading["content"]]
+                     for item in values if type(item) is dict and type(item.get("readings")) is list
+                     for reading in item["readings"] if type(reading) is dict
+                     and type(reading.get("content")) is dict and set(reading["content"]) == {"right"}
+                     and not (_s1_bearing(env, item["readings"])
+                              and s1_content_kind(reading["content"]) in S1_CONTENT_KINDS)]
+    except Exception:  # noqa: BLE001  (the checks below raise it in order)
+        return
+    if documents:
+        RightsDocument.warm_rules(env, documents)
+
+
 def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None,
                           lean_replay=False):
     if type(values) is not list:
         raise VEError("reading_sets must be a list")
+    if "rights@0" in env.profiles:
+        _warm_alone_rights(env, values, unit_ids)
+    rule_results = {}
+    if "soft-norms@0" in env.profiles and "readings@1" in env.profiles:
+        from .softnorms import check_rule_batch
+        candidates = [(reading, {"norm": reading["content"]["norm"]})
+                      for item in values if type(item) is dict and type(item.get("readings")) is list
+                      for reading in item["readings"] if type(reading) is dict
+                      and type(reading.get("content")) is dict and "norm" in reading["content"]]
+        if candidates:
+            outcomes = check_rule_batch(env, (content for _, content in candidates))
+            rule_results = {id(reading): outcome for (reading, _), outcome
+                            in zip(candidates, outcomes, strict=True)}
     seen = set()
     owners = {}
     units = {}
@@ -155,9 +190,7 @@ def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None
         readings = item["readings"]
         if type(readings) is not list or not 1 <= len(readings) <= 64:
             raise VEError("reading sets hold 1 to 64 readings")
-        s1_bearing = "readings@1" in env.profiles and any(
-            type(r) is dict and s1_content_kind(r.get("content")) in S1_CONTENT_KINDS
-            for r in readings)
+        s1_bearing = _s1_bearing(env, readings)
         if item["status"] == "authored" and (len(readings) != 1 or not token(item.get("signature"))):
             raise VEError("authored reading needs one signed choice")
         if item["status"] == "open" and "signature" in item:
@@ -180,7 +213,8 @@ def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None
                 raise VEError("duplicate or invalid reading id")
             ids.add(reading["id"])
             if "readings@1" in env.profiles and s1_content_kind(reading["content"]) == "bar":
-                s1_content_meaning_id(env, item["id"], reading)
+                s1_content_meaning_id(env, item["id"], reading,
+                                      rule_result=rule_results.get(id(reading)))
             if not (s1_bearing and s1_content_kind(reading["content"]) in S1_CONTENT_KINDS
                     or rights_enabled and reading["kind"] in
                     ("right", "right_lines", "limitation", "bar")):
@@ -190,7 +224,8 @@ def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None
             if reading["content"] is not None:
                 content = reading["content"]
                 if s1_bearing and s1_content_kind(content) in S1_CONTENT_KINDS:
-                    content_id = s1_content_meaning_id(env, item["id"], reading)
+                    content_id = s1_content_meaning_id(env, item["id"], reading,
+                                                       rule_result=rule_results.get(id(reading)))
                 elif rights_enabled and type(content) is dict and set(content) == {"right"}:
                     from .rights import RightsDocument
                     RightsDocument(env, [{"source_units": sorted(unit_ids)}, content])
@@ -207,7 +242,10 @@ def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None
                     or not token(admission["who"]) or type(admission["why"]) is not str
                     or not admission["why"] or type(admission["distinguishing_models"]) is not dict):
                 raise VEError("invalid reading admission")
-            if set(admission["distinguishing_models"]) != set(r["id"] for r in readings) - {reading["id"]}:
+            # A later reading not yet checked counts by its id when that is a string, else as "" (Lean's
+            # `compileReading` reads the ids the same way); it is rejected when the loop reaches it.
+            others = {r["id"] if type(r) is dict and type(r.get("id")) is str else "" for r in readings}
+            if set(admission["distinguishing_models"]) != others - {reading["id"]}:
                 raise VEError("each other reading needs a distinguishing model id")
             if not all(token(v) for v in admission["distinguishing_models"].values()):
                 raise VEError("invalid distinguishing model id")
@@ -239,7 +277,7 @@ def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None
             # Quantity readings are evaluated through their regenerated cores
             # on the erased target; tables are never read with tags dropped first.
             if not right_set and right_contents:
-                raise VEError("UnsupportedProfile: mixed rights distinguishing situations")
+                raise UnsupportedProfile("UnsupportedProfile: mixed rights distinguishing situations")
             if not right_set:
                 model_env, formula_of = _reading_evaluation(env)
             for name, data in models.items():
@@ -289,10 +327,10 @@ def validate_couplings(env, couplings, sets, unit_ids):
     if type(couplings) is not list:
         raise VEError("invalid couplings")
     if couplings and not {"rights@0", "readings@1"}.intersection(env.profiles):
-        raise VEError("UnsupportedProfile: rights@0 is required for couplings")
+        raise UnsupportedProfile("UnsupportedProfile: rights@0 is required for couplings")
     if len(couplings) > 8:
         # 11: at most eight couplings, as on the Lean rights route.
-        raise VEError("ResourceLimit: couplings")
+        raise ResourceLimit("ResourceLimit: couplings")
     active = {(s["id"], s["version"]): s for s in active_reading_sets(sets)}
     ids = set()
     for item in couplings:

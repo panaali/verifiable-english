@@ -9,6 +9,7 @@ inputs. The Python soft profile (item 2) is not needed: environments are raw JSO
 """
 from __future__ import annotations
 
+from copy import deepcopy
 import json
 from pathlib import Path
 
@@ -124,6 +125,28 @@ def test_alpha_holistic_override_one_winner(lean):
     assert values(row, "x_required", []) == [True]
     assert [(p["pair"], p["comparable"]) for p in row["colliding_pairs"]] == [(["h", "l"], True)]
     assert row["conditional_on"] == []
+    assert row["soft_residual"] == {
+        "default_exceptions": 2, "instruction_switches": 0,
+        "holistic_overrides": 1, "weighing_points": 0,
+    }
+    assert row["default_exceptions_by_decider"] == {"assistant": 2}
+    assert row["soft_status"] == "OPEN"
+    assert row["ranks_above"] == {"a": [], "b": ["a"]}
+
+
+def test_soft_elaborate_unresolved_pair_and_hard_status(lean):
+    open_row = elaborate(lean, env(), [should("a", "x_required", True),
+                                        should("b", "x_required", False)])
+    assert open_row["conditional_on"] == ["soft:coherence:a,b"]
+    assert open_row["soft_residual"]["weighing_points"] == 1
+    assert open_row["soft_status"] == "OPEN"
+
+    hard_row = elaborate(lean, env(), [norm("h", "x_required", True)])
+    assert hard_row["soft_residual"] == {
+        "default_exceptions": 0, "instruction_switches": 0,
+        "holistic_overrides": 0, "weighing_points": 0,
+    }
+    assert hard_row["soft_status"] == "CHECKED"
 
 
 def test_epsilon_alternating_cycle_d_alone_effective(lean):
@@ -361,7 +384,83 @@ def test_theta_dual_guard_cycle_on_t_prime(lean):
     # self-edge is on the defaulted predicate, and the strict rule's predicate depends on it
     assert rows[0]["error"] == "DependencyCycle: x_permitted, x_required"
     assert rows[1]["error"] == "DependencyCycle: x_permitted, x_required"
+    assert rows[0]["dual_guard_cycle"] is True and rows[1]["dual_guard_cycle"] is True
     assert rows[2]["status"] == "ok" and rows[3]["status"] == "ok"
+
+
+def test_witnessed_overlap_and_override_cycle_lines(lean):
+    same = [should("a", "x_required", True), should("b", "x_required", True)]
+    witness = {"pair": ["a", "b"], "model": model({"soft__excepted__a": [],
+                                                        "soft__excepted__b": []}), "tuple": ["a"]}
+    base = {"id": "overlap", "kind": "soft-elaborate", "environment": env(), "norms": same}
+    [row] = run(lean, [{**base, "overlap_witnesses": [witness]}])
+    assert row["overlaps"][0]["line"] == "Overlap(a, b)"
+    assert row["overlaps"][0]["tuple"] == ["a"]
+    [refused] = run(lean, [{**base, "overlap_witnesses": [{**witness, "model": model({
+        "soft__excepted__a": [["a"]], "soft__excepted__b": []})}]}])
+    assert refused["status"] == "error" and "does not select both" in refused["error"]
+
+    rules = [should("ra", "x_required", True, rank="a"),
+             should("rb", "x_required", False, rank="b"),
+             should("rc", "x_required", True, rank="c"),
+             should("rd", "x_required", False, rank="d")]
+    environment_json = env(ranks(["a", "b", "c", "d"], "holistic"))
+    prepared = elaborate(lean, environment_json, rules)
+    positive = {"soft__outweighs__b__a__x_permitted",
+                "soft__outweighs__c__b__x_permitted",
+                "soft__outweighs__d__c__x_permitted"}
+    relations = {item["name"]: ([['a']] if item["name"] in positive else [])
+                 for item in prepared["decisions"]}
+    cycle = {"cycle": ["rb", "ra", "rd", "rc"], "tuple": ["a"], "model": model(relations)}
+    case = {"id": "cycle", "kind": "soft-elaborate", "environment": environment_json,
+            "norms": rules, "override_cycle_witnesses": [cycle]}
+    [row] = run(lean, [case])
+    assert row["override_cycles"][0]["cycle"] == ["rb", "ra", "rd", "rc"]
+    assert row["override_cycles"][0]["line"] == "override_cycles: rb > ra > rd > rc > rb"
+    bad = {**cycle, "model": model({**relations, "soft__outweighs__d__c__x_permitted": []})}
+    [refused] = run(lean, [{**case, "override_cycle_witnesses": [bad]}])
+    assert refused["status"] == "error" and "missing preference edge" in refused["error"]
+
+
+def test_readings_identity_environment_is_bound(lean):
+    lower = env()
+    original = deepcopy(lower)
+    original["profiles"] = sorted([*original["profiles"], "readings@1"])
+    case = {"id": "identity", "kind": "soft-elaborate", "environment": lower,
+            "norms": [should("default", "x_required", True)]}
+    [plain, bound] = run(lean, [case, {**case, "id": "bound", "identity_environment": original}])
+    assert plain["status"] == bound["status"] == "ok"
+    assert plain["document_hash"] != bound["document_hash"]
+    assert "readings@1" not in plain["environment_prime"]["profiles"]
+    assert "readings@1" in bound["environment_prime"]["profiles"]
+    tampered = deepcopy(original)
+    tampered["vocabulary"]["sorts"]["assistant"]["description"] = "altered"
+    [refused] = run(lean, [{**case, "identity_environment": tampered}])
+    assert refused["status"] == "error" and "identity environment differs" in refused["error"]
+
+
+def test_soft_relay_cached_answers_are_independent(lean):
+    from ve.backends.soft_relay import run as relay
+
+    case = {"id": "cache-isolation", "kind": "soft-elaborate", "environment": env(), "norms": []}
+    first = relay(case)
+    first["environment_prime"]["profiles"].append("bogus@0")
+    second = relay(case)
+    assert "bogus@0" not in second["environment_prime"]["profiles"]
+
+
+def test_soft_rules_batch_preserves_each_lean_rule_result(lean):
+    environment_json = env()
+    good = should("good", "x_required", True)
+    bad = should("bad", "missing", True)
+    [batch, individual] = run(lean, [
+        {"id": "batch", "kind": "soft-rules", "environment": environment_json,
+         "norms": [good, bad]},
+        {"id": "individual", "kind": "soft-rule", "environment": environment_json,
+         "norm": bad}])
+    assert batch["status"] == "ok"
+    assert batch["results"] == [{"status": "ok"},
+                                {"status": "error", "error": individual["error"]}]
 
 
 def test_admission_with_soft_units_and_regenerated_leaves(lean):
@@ -387,3 +486,15 @@ def test_admission_with_soft_units_and_regenerated_leaves(lean):
     assert [a["label"] for a in rows[0]["report"]["assumptions"]] == ["soft:coherence:a,b"]
     assert rows[1]["status"] == "ok" and rows[1]["conditional_on"] == []
     assert rows[2]["status"] == "error" and rows[3]["status"] == "error"
+
+
+def test_constant_wording_is_display_metadata_on_the_soft_route(lean):
+    """A constant's `verbalisation` is display metadata that Python's `Environment` admits (DF-19); the soft
+    route reads it as such, so the frozen readability items R29 and R30 get Lean answers (English E2.6)."""
+    environment_json = env(ranks(["a", "b"]))
+    environment_json["vocabulary"]["constants"] = {
+        "alice": {"sort": "user", "description": "a user", "verbalisation": "Alice"}}
+    from ve.softnorms import SoftEnvironment
+    SoftEnvironment(environment_json)
+    row = elaborate(lean, environment_json, [should("a", "x_required", True)])
+    assert row["environment_prime"]["vocabulary"]["constants"]["alice"]["verbalisation"] == "Alice"

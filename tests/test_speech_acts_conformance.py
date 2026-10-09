@@ -14,6 +14,7 @@ import sys
 
 import pytest
 
+from conformance.three_way import run_rust_evaluations
 from subprocesses import HANG_TIMEOUT
 from tools import rust_build
 from ve.ast import _to_data
@@ -57,10 +58,8 @@ def fol_environment(env):
 def rust_values(rust, env, formulas, complete_model):
     case = {"id": "speech-section-9", "environment": fol_environment(env),
             "ast": formulas, "model": complete_model}
-    completed = subprocess.run([str(rust), "conformance", "-"], input=json.dumps([case]),
-                               capture_output=True, text=True, timeout=HANG_TIMEOUT)
-    assert completed.returncode == 0, completed.stdout + completed.stderr
-    [result] = json.loads(completed.stdout)
+    # Rust's statement values come from its evaluate-budgeted kind (`three_way.rust_evaluations`).
+    [result] = run_rust_evaluations(rust, [case])
     assert result["status"] == "ok", result
     return result["values"]
 

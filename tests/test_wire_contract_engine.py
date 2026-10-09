@@ -1,7 +1,7 @@
 """Independent cases for the format-1 diagnostic interpreter."""
 
 from ve.errors import CheckerUnavailable, VEError
-from ve.wire_contract.engine import CLEAN, Deferred, Fault, Registry, overlay, run
+from conformance.wire_contract_engine import CLEAN, Deferred, Fault, Registry, overlay, run
 
 
 def _table(phases, *, name="demo@0", codes=None):
@@ -152,7 +152,7 @@ def test_template_braces_and_control_characters_in_values():
 
 def test_template_pieces_refuse_unbalanced_braces():
     import pytest
-    from ve.wire_contract.engine import pieces
+    from conformance.wire_contract_engine import pieces
     assert pieces("a {{b}} {c:json}") == [("lit", "a {b} "), ("arg", "c", "json")]
     for bad in ("a { b", "a } b", "{x"):
         with pytest.raises(ValueError):

@@ -18,10 +18,10 @@ import pytest
 
 from ve.document import _environment, check_document
 from ve.errors import VEError
+from ve.readings_s2_english import hidden_in
 
 ROOT = Path(__file__).resolve().parents[1]
 PILOT = ROOT / "tests/data/readings_s2/constitution-nd-readings.ve.md"
-ABSTENTION = "UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented"
 
 
 def _split(path):
@@ -64,10 +64,12 @@ def test_ruling4_pilot_document_answers_as_without_readings(tmp_path):
     assert with_readings["admission"]["report"] == without["admission"]["report"]
 
 
-def test_ruling4_rule_candidate_beside_norm_defaults_is_the_named_abstention(tmp_path):
-    """The pilot's probe (b): a strict rule as one candidate's content. Lean and Python now both reach S1's
-    abstention (before: Lean `invalid regulated role or default`, Python `unspecified completion requires
-    norm-defaults@0`, so `CheckerUnavailable`)."""
+def test_ruling4_rule_candidate_beside_norm_defaults_is_under_the_completion(tmp_path):
+    """The pilot's probe (b): a strict rule as one candidate's content. Before readings-defaults RD-2a Lean and Python
+    both reached S1's abstention; on the norms chain the document is now under the unspecified completion, which
+    Lean admits (readings-defaults.md 4.6, an `availability` change). The other candidate is pending, so the set
+    stays unresolved and no verdict is claimed. Off the norms chain the abstention stays (K18,
+    `test_readings_nd_lean.py::test_fnd6_soft_chain_keeps_the_abstention`)."""
     meta, rest = _split(PILOT)
     reading_set = meta["reading_sets"][0]
     reading_set.pop("models", None)
@@ -80,23 +82,75 @@ def test_ruling4_rule_candidate_beside_norm_defaults_is_the_named_abstention(tmp
     strict["meaning_id"] = s1_content_meaning_id(env, reading_set["id"], strict)
     for r in reading_set["readings"]:
         r["admission"]["distinguishing_models"] = {o: "pending" for o in r["admission"]["distinguishing_models"]}
-    with pytest.raises(VEError) as caught:
-        check_document(_write(tmp_path, "rule.ve.md", meta, rest))
-    assert caught.value.message == ABSTENTION
+    result = check_document(_write(tmp_path, "rule.ve.md", meta, rest))
+    residual = result["coverage"]["residual"]
+    assert (residual["unresolved_reading_sets"], residual["pending_candidates"]) == (1, 1)
 
 
-def test_ruling4_lean_frame_reads_unspecified_as_deny(lean_route):
-    """Lean's decoder and Python's S1 environment agree on a `norm-defaults@0` frame: `unspecified` is the
-    placeholder `deny` there (E‴), so readings-validate answers instead of failing to decode."""
+def _completion_document(tmp_path):
+    """F-ND1 (readings-defaults.md 8.3) as a document: one open set on `u1` whose two readings both carry a rule, on the
+    norms chain under `norm-defaults@0`, with the pair's distinguishing situation recorded."""
+    from tests.test_document import unit, write_doc
+    from tests.test_readings_nd_lean import doc1, env1
+    from ve.readings import s1_content_meaning_id
+    raw = env1()
+    document, _ = doc1(raw)
+    env = _environment(raw)
+    for reading_set in document["reading_sets"]:
+        for r in reading_set["readings"]:
+            r["meaning_id"] = s1_content_meaning_id(env, reading_set["id"], r)
+    text = b"Every agent must help each user.\n"
+    units = [unit("u1", 0, len(text), "norm", "specified")]
+    return raw, document, write_doc(tmp_path, text, units, environment_json=raw,
+                                    reading_sets=document["reading_sets"])
+
+
+def test_rd2b_completion_document_is_checked_not_refused(tmp_path):
+    """Review B3 of RD-2a, then RD-2b: a document under the unspecified completion (every candidate with content, the
+    norms chain, `norm-defaults@0`) is admitted by Lean on the enumerated route with the completion as the cause, and
+    `ve document` relays its checks: no conformance alarm (B3), and no named refusal any more (RD-2a's, until RD-2b)."""
+    _, _, path = _completion_document(tmp_path)
+    report = check_document(path)
+    assert (report["readings"]["route"], report["readings"]["not_superposable"]) == (
+        "enumerated", {"text": "ReadingsNotSuperposable: rs_1", "cause": "the unspecified completion"})
+    assert report["readings"]["conflict"]["status"] == "CONFLICT-FREE"
+
+
+def test_rd2a_review_b3_route_table_is_lean_s(tmp_path, lean_route):
+    """Review B3's class: under `norm-defaults@0` the relay takes Lean's route of 1.1 (`routeOf`) and regenerates
+    none of it: the completion's route and cause are Lean's, relayed with the filled document (RD-2b)."""
+    from ve.readings_route import COMPLETION_CAUSE, elaborate, run_lean
+    from ve.readings_s1 import wire
+    raw, document, _ = _completion_document(tmp_path)
+    units = [{"id": "u1", "kind": "norm"}]
+    [row] = run_lean([{"id": "r", "kind": "readings-elaborate", "environment": wire(raw),
+                       "document": wire({"units": units, "reading_sets": document["reading_sets"]})}])
+    assert (row["route"], row["finding"]["cause"]) == ("enumerated", COMPLETION_CAUSE)
+    relayed = elaborate(raw, units, document["reading_sets"])
+    assert relayed == {key: value for key, value in row.items() if key not in ("id", "status")}
+
+
+def test_ruling4_lean_frame_reads_unspecified_as_deny(tmp_path, lean_route):
+    """Lean's decoder reads a `norm-defaults@0` frame with `unspecified` as the placeholder `deny` (E‴), so
+    readings-validate answers instead of failing to decode. Python's S1 frame under the profile is Lean's filled one
+    (readings-defaults RD-2b: `_placeholder_frame` is deleted): built from `filled` it reads `deny`, and without
+    `filled` there is no frame."""
+    from ve.errors import CheckerUnavailable
     from ve.readings_route import document_wire, run_lean
     from ve.readings_s1 import S1Environment
     meta, _ = _split(PILOT)
-    senv = S1Environment(meta["environment"])
-    assert senv.frame.predicates["clarification_required"].regulated.default == "deny"
     units = [{"id": u["id"], "kind": u["kind"], "content": None} for u in meta["units"]]
     [row] = run_lean([{"id": "v", "kind": "readings-validate", "environment": meta["environment"],
                        "document": document_wire(units, meta["reading_sets"])}], executable=lean_route)
     assert row["status"] == "ok" and row["content_bearing"] is False, row
+    raw, document, _ = _completion_document(tmp_path)
+    [row] = run_lean([{"id": "v", "kind": "readings-validate", "environment": raw,
+                       "document": document_wire([{"id": "u1", "kind": "norm"}], document["reading_sets"])}],
+                     executable=lean_route)
+    senv = S1Environment(raw, row["filled"])
+    assert senv.frame.predicates["help_required"].regulated.default == "deny"
+    with pytest.raises(CheckerUnavailable, match="^ReadingsConstruction: under norm-defaults@0 the frame is"):
+        S1Environment(raw)
 
 
 @pytest.fixture
@@ -381,7 +435,7 @@ def _one_derivation(lines, wording):
         if line.startswith("CONFLICT"):
             continue  # the lower route's classification line, not an S2a wording (2.1 R4)
         assert len(derivations(line, wording.slots)) == 1, line
-        assert not any(x in line for x in ("ve__", "rd-", "soft__", "rights__", "may not")), line  # G6, G9
+        assert hidden_in(line, wording.slots.reserved) is None, line  # G6, G9
 
 
 HELP_ALL = "*For every agent, for every user, that agent must help that user.*"
@@ -618,11 +672,11 @@ def test_review_a_named_readings_keep_their_restriction_in_english(tmp_path, cap
     under_d = _cli(path, phi, "rs2:1")
     assert under_d["verdict"] == "ALL" and under_d["assumed"] == [["rs2", 1]]
     warn = "*For every agent, for every user, that agent must warn that user.*"
-    assert under_d["english"] == [f"Read sentence 3 as reading 2: the conclusion follows: {warn}"]
+    assert under_d["english"] == [f"Read sentence 3 as {M9_RS2_1}: the conclusion follows: {warn}"]
     under_c = _cli(path, phi, "rs2:0")
     assert under_c["verdict"] == "NONE" and under_c["assumed"] == [["rs2", 0]]
     assert len(under_c["english"]) == 2 and not any(line.startswith("Under ") for line in under_c["english"])
-    assert all(line.startswith("Read sentence 2 as ") and " and sentence 3 as reading 1: the conclusion does not follow."
+    assert all(line.startswith("Read sentence 2 as ") and f" and sentence 3 as {M9_RS2_0}: the conclusion does not follow."
                in line for line in under_c["english"])
     _, route, wording = _wording(path)
     for data in (under_d, under_c):
@@ -640,7 +694,7 @@ def test_review_a_class_every_reading_wordings_need_no_assumption(tmp_path):
     data = route.entailment(phi, assumed=[("rs1", 0), ("rs2", 1)])
     assert data["verdict"] == "ALL" and data["assumed"] == [["rs1", 0], ["rs2", 1]]
     assert wording.query(phi, data) == [
-        "Read sentence 2 as reading 1 and sentence 3 as reading 2: the conclusion follows: *For every agent, for every user that "
+        f"Read sentence 2 as {M9_RS1_0} and sentence 3 as {M9_RS2_1}: the conclusion follows: *For every agent, for every user that "
         "that agent has the recorded relation \"asks\" to, that agent must warn that user.*"]
     with pytest.raises(VEError) as caught:
         route.entailment(phi, assumed=[("rs1", 7)])
@@ -911,6 +965,21 @@ def _m9_narrowed(tmp_path):
 
 
 WARN_ALL = "*For every agent, for every user, that agent must warn that user.*"
+# The `<reading>` slot (readings-defaults 2.3, review A4): each candidate's own sentence in italics, without its final
+# period, for sets whose candidates differ beyond the deontic verb; "reading <i>" is never shown.
+M9_RS1_0 = "*Every agent must avoid deceiving each user, if that agent must help that user*"
+M9_RS2_0 = "*Every agent must warn each user, if that agent must avoid deceiving that user*"
+M9_RS2_1 = "*Every agent must warn each user*"
+_RIGHT_1 = ("Right 1. Every person has the right described by its incident lines; the right requires or permits nothing "
+            "by itself.")
+M12_STRICT = (f"*{_RIGHT_1} Claim of right 1. Every state must not arrest each person, if that state has the recorded "
+              "relation \"arbitrary_arrest\" to that person*")
+M12_DEFAULT = (f"*{_RIGHT_1} Claim of right 1. Every state should not arrest each person, if that state has the "
+               "recorded relation \"arbitrary_arrest\" to that person. This is a default line; the source names no "
+               "exception decider*")
+POWER_DEFAULT = (f"*{_RIGHT_1} Power of right 1. Every person may marry. Every state should recognise each person. "
+                 "This is a default line; the source names no exception decider. Recognition required; later effects "
+                 "not modelled*")
 
 
 def test_review_a2_enumerated_narrowing_kept_in_english(tmp_path):
@@ -921,12 +990,12 @@ def test_review_a2_enumerated_narrowing_kept_in_english(tmp_path):
     assert data["verdict"] == "ALL" and data["route"] == "enumerated"
     assert data["restrictions"] == ["narrowing:n1"] and data["conditional_on"] == ["narrowing:n1"]
     assert lines == [f"Under every reading of the 2 open sentences, the conclusion follows: {WARN_ALL}",
-                     "This holds provided that:", "Sentence 3 is not read as reading 1, because of sentence 1."]
+                     "This holds provided that:", f"Sentence 3 is not read as {M9_RS2_0}, because of sentence 1."]
     _one_derivation(lines, wording)
     report, wording = _report(path)
     assert report[1:5] == ["Under every reading of the 2 open sentences, no two rules on the same act contradict "
                            "each other.", "This holds provided that:",
-                           "Sentence 3 is not read as reading 1, because of sentence 1.",
+                           f"Sentence 3 is not read as {M9_RS2_0}, because of sentence 1.",
                            "This does not depend on how sentence 2 is read."]
     assert check_document(path)["readings"]["conflict"]["conditional_on"] == ["narrowing:n1"]
     _one_derivation(report, wording)
@@ -943,12 +1012,12 @@ def test_review_a2_class_every_combined_verdict_keeps_its_restrictions(tmp_path)
     under = route.entailment(every("warn_required"), assumed=[("rs1", 0)])
     assert under["verdict"] == "ALL" and under["restrictions"] == ["narrowing:n1"]
     assert wording.query(every("warn_required"), under)[1:] == [
-        "This holds provided that:", "Sentence 3 is not read as reading 1, because of sentence 1."]
+        "This holds provided that:", f"Sentence 3 is not read as {M9_RS2_0}, because of sentence 1."]
     nobody = ["forall", "agent", ["forall", "user", ["not", ASKS]]]
     none = route.entailment(nobody)
     assert none["verdict"] == "NONE" and none["restrictions"] == ["narrowing:n1"]
     assert wording.query(nobody, none)[-2:] == ["This holds provided that:",
-                                                 "Sentence 3 is not read as reading 1, because of sentence 1."]
+                                                 f"Sentence 3 is not read as {M9_RS2_0}, because of sentence 1."]
     with pytest.raises(VEError, match="needs its restrictions"):
         wording.query(nobody, {k: v for k, v in none.items() if k != "restrictions"})
     # The superposed route's combination over its choices (M6 with a narrowing: every choice is listed).
@@ -976,7 +1045,7 @@ def test_review_a3_rights_countermodel_names_its_exception(tmp_path):
     assert data["verdict"] == "SOME"
     model = data["countermodel"]["model"]
     assert model["relations"]["soft__excepted__no_arbitrary_arrest"], model
-    assert lines[1].startswith("Read sentence 1 as reading 2: the conclusion does not follow. It fails here: ")
+    assert lines[1].startswith(f"Read sentence 1 as {M12_DEFAULT}: the conclusion does not follow. It fails here: ")
     assert lines[1].endswith("; suppose the decider decides the exception applies to e0 and e0."), lines[1]
     _one_derivation(lines, wording)
 
@@ -992,11 +1061,15 @@ def test_review_a3_class_every_generated_decision_is_worded(tmp_path):
     assert data["verdict"] == "NONE"
     strict = next(c for c in data["countermodels"] if c["choice"] == [["rs9", 0]])
     assert strict["model"]["relations"]["rights__lim__1"] and strict["model"]["relations"]["rights__cond__1"]
-    line = next(line for line in lines if line.startswith("Read sentence 1 as reading 1: "))
+    carved = f"{M12_STRICT[:-1]}, unless limitation 1 holds where that state arrests that person*"
+    line = next(line for line in lines if line.startswith(f"Read sentence 1 as {carved}: "))
     assert "suppose the decider decides that the limitation is determined by law where e0 arrests e0" in line
     assert "suppose the decider decides that limitation 1 holds where e0 arrests e0" in line
     _one_derivation(lines, wording)
     unknown = {**strict["model"], "relations": {**strict["model"]["relations"], "rights__lim__9": [["e0", "e0"]]}}
+    # Only a declaration reported by Lean as generated must have decision wording.
+    wording.generated["rights__lim__9"] = {"name": "rights__lim__9", "layer": "rights",
+                                            "key": {"lim": "missing", "act": "arrest_permitted"}}
     with pytest.raises(VEError, match="decision table rights__lim__9 has no wording"):
         wording.situation(unknown, strict["choice"])
 
@@ -1351,7 +1424,7 @@ def test_fix4_a2_power_right_countermodel_names_its_recognition_rule(tmp_path):
     data, lines, wording = _query(path, conclusion)
     assert data["verdict"] == "SOME", data
     assert data["countermodel"]["model"]["relations"]["soft__excepted__recognise_marriage"]
-    assert lines[1].startswith("Read sentence 1 as reading 2: the conclusion does not follow. It fails here: ")
+    assert lines[1].startswith(f"Read sentence 1 as {POWER_DEFAULT}: the conclusion does not follow. It fails here: ")
     assert lines[1].endswith("; suppose the decider decides the exception applies to e0 and e0."), lines[1]
     _one_derivation(lines, wording)
 

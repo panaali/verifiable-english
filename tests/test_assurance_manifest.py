@@ -119,7 +119,8 @@ def test_python_entries_resolve_to_guarded_callables():
     for entry, op_id in _manifest_entries():
         fn = _resolve(entry)
         assert getattr(fn, "__ve_operation__", None) == op_id, entry
-        assert fn.__ve_engine__ == "python"
+        expected_engine = "lean" if next(op for op in OPS if op["id"] == op_id)["authority"] == "migrated" else "python"
+        assert fn.__ve_engine__ == expected_engine
     for op_id, rows in assurance.ENTRIES.items():
         assert {(name, op_id) for name, _ in rows} <= _manifest_entries()
 
@@ -278,10 +279,9 @@ def test_broad_exception_handlers_are_reviewed():
     assert all(reason for reason in reviewed.values())
 
 
-def test_nothing_is_migrated_yet():
-    """P0-3 adds the hooks only; switching authority is stage 4's decision."""
-    assert {op["authority"] for op in OPS} <= {"python", "lean-only"}
-    assert assurance.enforced_operations() == frozenset()
+def test_english_admission_is_lean_authoritative():
+    assert {op["authority"] for op in OPS} <= {"python", "migrated", "lean-only"}
+    assert assurance.enforced_operations() == frozenset({"english.admission"})
 
 
 # --- completeness: omissions that no decorator comparison can see ----------------
@@ -366,7 +366,8 @@ def test_lean_only_operations_have_no_python_verdict_path():
 
 # --- executable bindings: Lean and Rust ---------------------------------------
 
-AUDITED = set(re.findall(r"^'([^']+)' depends on axioms", (ROOT / "lean/axioms.txt").read_text(), re.M))
+AUDITED = set(re.findall(r"^'([^']+)' (?:depends on axioms|does not depend on any axioms)",
+                         (ROOT / "lean/axioms.txt").read_text(), re.M))
 
 
 def test_lean_theorems_are_audited_and_planned_ones_absent():
@@ -624,13 +625,16 @@ def test_guard_blocks_every_python_entry_once_migrated():
     for op in OPS:
         for entry in op["python"]:
             fn = _resolve(entry)
+            if fn.__ve_engine__ == "lean":
+                assurance.require_authority(op["id"], "lean")
+                continue
             with assurance.simulate_migration(op["id"]):
                 assert op["id"] in assurance.enforced_operations()
                 with pytest.raises(AuthorityViolation) as caught:
                     fn()
             assert caught.value.to_dict()["code"] == "CheckerUnavailable"
             assert caught.value.operation == op["id"]
-    assert assurance.enforced_operations() == frozenset()
+    assert assurance.enforced_operations() == frozenset({"english.admission"})
 
 
 def test_guard_allows_the_lean_engine():
@@ -703,25 +707,19 @@ def test_search_reports_found_only_through_the_countermodel_check(p0, monkeypatc
         calls.append((tuple(premises), conclusion))
         return replace(real(env, premises, conclusion, model, **kwargs), valid=False, status="NotCountermodel")
     monkeypatch.setattr(search, "check_countermodel", refuse)
-    if os.environ.get("VE_AUTHORITY", "python") != "python":
-        # A backend search returns one witness; a refused witness is a
-        # disagreement between generator and check, never NotFound.
+    # Rust's search returns one witness under every authority (lean-first batch 15b: Python has no
+    # search of its own); a refused witness is a disagreement between generator and check, never NotFound.
+    for authority in ("python", "lean"):
+        monkeypatch.setenv("VE_AUTHORITY", authority)
         with pytest.raises(CheckerUnavailable):
             search.find_countermodel(p0, (), senior)
         assert set(calls) == {((), senior)}
         calls.clear()
         with pytest.raises(CheckerUnavailable):
             search.find_distinguishing_model(p0, senior, Not(senior))
+        # Each direction of a distinguishing model is checked as a countermodel to it.
         assert set(calls) == {((senior,), Not(senior)), ((Not(senior),), senior)}
         calls.clear()
-    # Python's generator keeps searching past a refused candidate.
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    assert search.find_countermodel(p0, (), senior).status == "NotFound"
-    assert set(calls) == {((), senior)}
-    calls.clear()
-    assert search.find_distinguishing_model(p0, senior, Not(senior)).status == "NotFound"
-    # Each direction of a distinguishing model is checked as a countermodel to it.
-    assert set(calls) == {((senior,), Not(senior)), ((Not(senior),), senior)}
 
 
 def test_argument_record_reports_unavailability_not_incompleteness():
@@ -900,12 +898,16 @@ def _bundle():
 def test_bundle_separates_rejection_from_unavailability(tmp_path, monkeypatch):
     from ve.bundle import check_bundle
     hang = _fake_lean(tmp_path, FAULTS["hang"], name="hang")
+    configured_wait = HANG_TIMEOUT + 123.5
+    # The bundle's English uses the Lean service and its searches use the Rust and Lean checkers;
+    # start them before lowering the timeout, which applies to the fake runner's hang.
+    assert check_bundle(_bundle())["lean_outcome"] == "not_requested"
     with monkeypatch.context() as setting:
-        setting.setenv("VE_LEAN_TIMEOUT", "1234.5")
+        setting.setenv("VE_LEAN_TIMEOUT", str(configured_wait))
         waits = expired_waits(setting, lean_backend)
-        with pytest.raises(CheckerUnavailable, match="no answer within 1234.5 s"):
+        with pytest.raises(CheckerUnavailable, match=rf"no answer within {configured_wait} s"):
             check_bundle(_bundle(), lean_executable=hang)
-    assert waits == [1234.5]
+    assert waits == [configured_wait]
     assert check_bundle(_bundle())["lean_outcome"] == "not_requested"
     with pytest.raises(CheckerUnavailable):
         check_bundle(_bundle(), lean_executable=tmp_path / "absent")
@@ -1050,9 +1052,13 @@ def test_malformed_argument_answers_are_unavailable(tmp_path, fault):
 def test_argument_separates_lean_rejection_from_unavailability(tmp_path, monkeypatch):
     from ve import check_argument, outstanding_obligations
     from ve.argument_fixtures import merged_vocabulary_example
-    monkeypatch.setenv("VE_LEAN_TIMEOUT", "1234.5")
-    waits = expired_waits(monkeypatch, lean_backend, expire=lambda argv: Path(argv[0]).name == "hang")
     graph = merged_vocabulary_example()
+    # The argument's searches start the real Rust and Lean checkers (lean-first batch 15b); start them
+    # before the timeout is lowered, as the hang is the fake runner's.
+    assert check_argument(graph).lean_outcome == "not_requested"
+    configured_wait = HANG_TIMEOUT + 123.5
+    monkeypatch.setenv("VE_LEAN_TIMEOUT", str(configured_wait))
+    waits = expired_waits(monkeypatch, lean_backend, expire=lambda argv: Path(argv[0]).name == "hang")
     outcomes = {}
     for name, body in (("absent", None), ("crash", FAULTS["crash"]), ("hang", FAULTS["hang"]),
                        ("rejecting", "print(json.dumps([{'id': c['id'], 'status': 'ok', 'valid': False} "
@@ -1065,7 +1071,7 @@ def test_argument_separates_lean_rejection_from_unavailability(tmp_path, monkeyp
     assert outcomes["rejecting"] == ("rejected", "Lean-checked: no", "rejected")
     for name in ("absent", "crash", "hang"):
         assert outcomes[name] == ("unavailable", "Lean-checked: unavailable", "unavailable"), name
-    assert waits and set(waits) == {1234.5}
+    assert waits and set(waits) == {configured_wait}
     assert check_argument(graph).lean_outcome == "not_requested"
 
 

@@ -33,6 +33,7 @@ class S2Wording:
 
     def __init__(self, doc, route):
         from . import readings_s2_english as E
+        from .environment import wording_reserved_prefixes
         self.E = E
         self.doc, self.route = doc, route
         self.s1 = Wording(doc)
@@ -41,10 +42,18 @@ class S2Wording:
         self.set_number = {R.id: self.numbers[R.unit] for R in self.sets}
         self.names = {R.id: self.s1.reading_names(R.id) for R in self.sets}
         self.slots = E.Slots(numbers={str(n) for n in self.numbers.values()},
-                             readings={name for names in self.names.values() for name in names})
+                             readings={name for names in self.names.values() for name in names if type(name) is str},
+                             reserved=wording_reserved_prefixes(doc["environment"].profiles),
+                             author_names=frozenset(self.s1.admission.senv.author_environment().predicates))
         senv = self.s1.admission.senv
         self.frame = senv.frame
-        self.author = set(senv.author_environment().predicates)
+        # Under the completion the filled tables (Lean's, `filled_tables`) are base predicates of the filled frame
+        # but no author fact: a shown situation is followed by their points instead (`gaps`).
+        self.tables = route.source.filled_tables
+        self.author = set(senv.author_environment().predicates) - set(self.tables)
+        # Lean's elaboration names each generated declaration and its producing
+        # layer. A spelling is never evidence that a model table is a decision.
+        self.generated = _active_generated(route.row["generated_predicates"], doc["environment"].profiles)
         self.decisions = self._decision_names()
 
     # -- slots
@@ -52,18 +61,19 @@ class S2Wording:
     def readings(self, choice):
         """[(sentence number, reading name)] for a choice or assumed list, in source order."""
         chosen = {s: i for s, i in choice}
-        return [(self.set_number[R.id], self.names[R.id][chosen[R.id]]) for R in self.sets if R.id in chosen]
+        return [(self.set_number[R.id], self.name(R.id, chosen[R.id])) for R in self.sets if R.id in chosen]
+
+    def name(self, set_id, i):
+        """The `<reading>` name of candidate `i` of `set_id`; a reading the slot cannot show is refused here."""
+        return self.E.shown(self.names[set_id][i])
 
     def conclusion(self, ast):
         """`<conclusion>`: the conclusion's canonical sentence on the existing English surface, in italics; it is
         read back by that surface's all-derivations parser to the conclusion itself before it is shown."""
-        from .ast import Document as Formulas, formula_from_data
-        from .english import parse_english
-        from .printer import render
-        formula = formula_from_data(self.frame, ast)
-        text = render(Formulas((formula,)), self.frame, "ve_english").strip()
-        if parse_english(self.frame, text).formulas != (formula,):
-            raise VEError("InvalidInput: the conclusion's sentence does not read back to the conclusion")
+        from .ast import formula_from_data
+        text = self.E.canonical_sentence(self.frame, formula_from_data(self.frame, ast),
+                                         "the conclusion's sentence does not read back to the conclusion",
+                                         statement_layer=True)
         slot = f"*{text}*"
         self.slots.conclusions.add(slot)
         return slot
@@ -112,17 +122,26 @@ class S2Wording:
         chosen = {(s, i) for s, i in choice}
         own = self._choice_decisions(choice)
         for predicate in sorted(relations):
+            if predicate in self.author or predicate not in self.generated:
+                continue
             for row in sorted(relations[predicate]):
                 phrase = (self._decision(predicate, row, chosen) if own is None else
                           self._choice_decision(own, predicate, row, chosen))
                 if phrase is not None:
                     facts.append("suppose " + phrase)
-                elif predicate not in self.author and predicate.startswith(_DECISION_PREFIXES):
+                elif self.generated[predicate]["layer"] in ("soft", "rights"):
                     # Review A of compose-s2 looprecheck2: a decision the situation needs is never left out.
                     raise VEError(f"InvalidInput: a situation's decision table {predicate} has no wording")
         text = "; ".join(facts) if facts else "nothing exists"
         self.slots.situations.add(text)
         return text
+
+    def gaps(self, data):
+        """The filled gaps shown after a situation of `data` under the completion (readings-defaults 2.2): every point
+        of every filled table, with the model's answer; none outside the completion."""
+        found = filled_gaps(self.frame, self.tables, data)
+        self.slots.clauses.update(clause for clause, _ in found)
+        return found
 
     def _choice_decisions(self, choice):
         """On the enumerated route a model is one of the choice's own document, so its decision tables are the ones
@@ -187,8 +206,9 @@ class S2Wording:
     def _decision(self, predicate, row, chosen):
         subject = _series(list(row))
         soft = getattr(self.frame, "soft", None) or {}
-        if predicate.startswith("soft__outweighs__"):
-            _, _, low, high, _ = predicate.split("__", 4)
+        key = self.generated[predicate]["key"]
+        if key is not None and "outweighs" in key:
+            low, high = key["lower"], key["higher"]
             outranking = soft.get("outranking", {})
             return f"{self.s1.decider(outranking.get('decided_by'))} decides that {low} outweighs {high} for {subject}"
         entry = self.decisions.get(predicate)
@@ -236,6 +256,9 @@ class S2Wording:
         E, lines = self.E, []
         quiet = False
         for label in used:
+            if label.startswith(PAIR_LABEL):
+                lines.append(E.pair_line(self.pair_premise(label), self.slots))
+                continue
             decoded = slot_label(label)
             if decoded.kind == "one":
                 R = self._set(decoded.set, decoded.version, label)
@@ -253,12 +276,26 @@ class S2Wording:
                 cited = [self.numbers[u] for u in narrowing["reason_spans"]]
                 for i, a in enumerate(R.candidates):
                     if a.id not in narrowing["keeps"]:
-                        lines.append(E.narrowed(self.set_number[R.id], self.names[R.id][i], cited, self.slots))
+                        lines.append(E.narrowed(self.set_number[R.id], self.name(R.id, i), cited, self.slots))
             else:
                 raise VEError(f"InvalidInput: unknown slot label kind {decoded.kind}")
         if quiet:
             lines.append(E.quiet(self.slots))
         return ([E.provided(self.slots)] + lines) if lines else []
+
+    def pair_premise(self, label):
+        """norm-defaults 4.1's pair sentence for a used `Fill_T` label `unsaid:pair:<r>,<m>` (readings-defaults 2.2):
+        `r` must be a regulated obligation of the frame whose declared permission is `m`; any other label is refused,
+        never worded."""
+        from .norm_english import pair_sentence
+        body = label[len(PAIR_LABEL):]
+        required, _, permission = body.partition(",")
+        decl = self.frame.predicates.get(required) if required else None
+        regulated = getattr(decl, "regulated", None)
+        if (regulated is None or regulated.role != "obligation" or not permission
+                or regulated.permission != permission):
+            raise VEError(f"InvalidInput: slot label {label} names no declared pair")
+        return pair_sentence(self.frame, required)
 
     def _set(self, set_id, version, label):
         R = next((R for R in self.sets if (R.id, R.version) == (set_id, version)), None)
@@ -284,6 +321,8 @@ class S2Wording:
         from .readings_sup import slot_label
         restricted = set()
         for label in used:
+            if label.startswith(PAIR_LABEL):
+                continue  # a pair premise of the completion mentions no open set
             decoded = slot_label(label)
             if decoded.kind == "coupling":
                 coupling = self._restriction(self.route.couplings, decoded, label)
@@ -315,18 +354,21 @@ class S2Wording:
             lines += self.independent(self._mentions(used))
         elif conflict["status"] == "CONFLICT" and "model" in conflict:
             lines.append(E.named_result(self.readings(conflict["choice"]), "conflict", self.slots,
-                                        situation=self.situation(conflict["model"], conflict["choice"])))
+                                        situation=self.situation(conflict["model"], conflict["choice"]),
+                                        gaps=self.gaps(conflict["model"])))
             lines.append(self.classification(conflict))
         elif conflict["status"] == "CONFLICT":
             for witness in conflict.get("witnesses", []):
                 lines.append(E.named_result(self.readings(witness["choice"]), "conflict", self.slots,
-                                            situation=self.situation(witness["model"], witness["choice"])))
+                                            situation=self.situation(witness["model"], witness["choice"]),
+                                            gaps=self.gaps(witness["model"])))
                 if witness.get("status_text"):
                     lines.append(witness["status_text"])
         premises = route.premises()
         if premises["status"] == "model" and "model" in premises:
             lines.append(E.named_result(self.readings(premises["choice"]), "premise_model", self.slots,
-                                        situation=self.situation(premises["model"], premises["choice"])))
+                                        situation=self.situation(premises["model"], premises["choice"]),
+                                        gaps=self.gaps(premises["model"])))
         elif premises["status"] == "INCONSISTENT" and premises.get("evidence") == "certificate":
             # A certificate with A = [] (2.3 item 1): E3 and E13 from what it and its conflict certificates rely on.
             lines.append(E.every_result(k, "inconsistent", self.slots))
@@ -334,7 +376,7 @@ class S2Wording:
             lines += self.provided(used)
             lines += self.independent(self._mentions(used))
         for dead in route.dead_readings() or []:
-            lines.append(E.dead_reading(self.set_number[dead["set"]], self.names[dead["set"]][dead["index"]],
+            lines.append(E.dead_reading(self.set_number[dead["set"]], self.name(dead["set"], dead["index"]),
                                         self.slots))
         return lines
 
@@ -400,10 +442,39 @@ class S2Wording:
         if model is None:
             raise VEError("InvalidInput: a countermodel's wording needs its checked model")
         return self.E.named_result(self.readings(counter["choice"]), "countermodel", self.slots,
-                                   situation=self.situation(model, counter["choice"]))
+                                   situation=self.situation(model, counter["choice"]), gaps=self.gaps(model))
 
 
-_DECISION_PREFIXES = ("soft__excepted__", "soft__off__", "soft__outweighs__", "rights__")
+PAIR_LABEL = "unsaid:pair:"
+
+
+def filled_gaps(frame, tables, model):
+    """[(clause, answer)] for every point of every filled table (`tables`: table → its predicate, from Lean's filled
+    document) over the elements of `model`, a situation's or model's JSON: the point's clause (norm-defaults'
+    `point_clause`) and whether the model's table holds there. In table order, then tuple order."""
+    from itertools import product
+    from types import SimpleNamespace
+    from .norm_defaults_english import point_clause
+    situation = SimpleNamespace(constants=model.get("constants") or {})
+    relations = model.get("relations") or {}
+    out = []
+    for table in sorted(tables):
+        predicate = tables[table]
+        rows = {tuple(row) for row in relations.get(table, ())}
+        domains = [sorted(model["domains"].get(sort, ())) for sort in frame.predicates[predicate].arguments]
+        for values in product(*domains):
+            out.append((point_clause(frame, situation, predicate, values), values in rows))
+    return out
+
+
+def _active_generated(entries, profiles):
+    """Read Lean's declaration provenance only for layers this document activates."""
+    active = {"readings"}
+    if "soft-norms@0" in profiles:
+        active.add("soft")
+    if "rights@0" in profiles:
+        active.add("rights")
+    return {entry["name"]: entry for entry in entries if entry["layer"] in active}
 
 
 def _series(values):
@@ -426,4 +497,4 @@ def _predicates(ast):
     return out
 
 
-__all__ = ["S2Wording", "query_english", "report_english"]
+__all__ = ["S2Wording", "filled_gaps", "query_english", "report_english"]

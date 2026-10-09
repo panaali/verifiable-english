@@ -27,11 +27,13 @@ def Route.text : Route → String
   | .superposed => "superposed"
   | .enumerated => "enumerated"
 
-/-- 1.1, in its row order: the first row that applies. -/
+/-- 1.1, in its row order: the first row that applies. Under `norm-defaults@0` the norms chain takes the enumerated
+    route (the unspecified completion, readings-defaults.md 1.1, until RD-6); the soft and rights chains keep the
+    abstention. -/
 def routeOf (normDefaults : Bool) (D : Doc) : Route :=
   if !(D.sets.any Wire.contentBearing) then .w2
   else if D.sets.any (fun R => R.candidates.any (·.content.isNone)) then .pending
-  else if normDefaults then .abstention
+  else if normDefaults then (if D.chain == .norms then .enumerated else .abstention)
   else if D.chain != .rights && superposable D then .superposed
   else .enumerated
 
@@ -43,7 +45,7 @@ theorem routeOf_superposed {nd : Bool} {D : Doc} (h : routeOf nd D = .superposed
   · split at h
     · cases h
     · split at h
-      · cases h
+      · split at h <;> cases h
       · split at h
         · rename_i hs
           simp only [Bool.and_eq_true, bne_iff_ne, ne_eq] at hs
@@ -103,6 +105,10 @@ def notSuperposable (D : Doc) : Option (String × String) :=
       | none => none
 
 def notSuperposableText (sets : String) : String := s!"ReadingsNotSuperposable: {sets}"
+
+/-- The finding of 1.1 under the unspecified completion (readings-defaults.md 1.1): every open set, and the cause. -/
+def completionFinding (D : Doc) : String × String :=
+  (", ".intercalate (D.sets.map (·.id)), "the unspecified completion")
 
 /-- The narrowings not in force: recorded on a version that is not the active one (1.2, 6). -/
 def staleNarrowings (D : Doc) : List String :=
@@ -240,12 +246,45 @@ def sizesJson (D : Doc) (basePredicates : Nat) : Json :=
       (decisions X).length)), ("nodes", toJson nodes),
     ("limits", Json.mkObj [("sorts", toJson 32), ("predicates", toJson 256), ("nodes", toJson 10000)])]
 
+/-- Declaration provenance for wording. The key comes from the same `genKeys` that
+    builds the model vocabulary; its constructor, never its spelling, owns the layer. -/
+def generatedKeyJson (g : GenKey × String × List String) : Json :=
+  let layer := match g.1 with
+    | .excepted .. | .off .. | .outweighs .. => "soft"
+    | .lim .. | .cond .. | .aimed .. => "rights"
+  Json.mkObj [("name", .str g.2.1), ("layer", .str layer), ("key", Wire.keyJson g.1)]
+
+/-- The JSON encoder names exactly the generated declaration it describes. -/
+theorem generatedKeyJson_name (g : GenKey × String × List String) :
+    (generatedKeyJson g).getObjValD "name" = .str g.2.1 := by
+  cases g with
+  | mk k rest => cases k <;> rfl
+
+/-- The declarations fed to the superposed encoder are precisely the soft and
+    rights declarations of the elaborated vocabulary, by `genKeys_names`. -/
+theorem generatedSuperposed_names (D : Doc) :
+    ((genKeys (sup D).1).map (fun g => (g.2.1, g.2.2))) =
+      VE.SoftNorms.decisions (correlate (sup D).1) ++ VE.Rights.genDecls (sup D).1 :=
+  genKeys_names _
+
+def generatedPredicatesJson (route : Route) (D : Doc) : Json :=
+  let bits := (bitDecls D).map (fun d =>
+    Json.mkObj [("name", .str d.1), ("layer", .str "readings"), ("key", .null)])
+  let keys := match route with
+    | .superposed => genKeys (sup D).1
+    | .enumerated => ((choices D).flatMap (fun c => genKeys (choiceDoc D c).1)).eraseDupsBy
+        (fun a b => a.2.1 == b.2.1)
+    | _ => []
+  let active := if D.chain == .norms then [] else keys.map generatedKeyJson
+  Json.arr (bits ++ active).toArray
+
 /-- The `readings-elaborate` answer (3): the route; on the soft and norms chains past the first three rows the
     finding of 1.8; on the superposed route the choice vocabulary, the units of `sup D`, the labelled slot, the
     name map, the compatible choices and the sizes; on the enumerated route the compatible choices. -/
 def elaborateFields (normDefaults : Bool) (basePredicates : Nat) (D : Doc) : List (String × Json) :=
   let route := routeOf normDefaults D
-  let head : List (String × Json) := [("route", .str route.text)]
+  let head : List (String × Json) := [("route", .str route.text),
+    ("generated_predicates", generatedPredicatesJson route D)]
   match route with
   | .w2 | .pending | .abstention => head
   | .superposed =>
@@ -254,7 +293,7 @@ def elaborateFields (normDefaults : Bool) (basePredicates : Nat) (D : Doc) : Lis
       ("names", nameMapJson D)] ++ choicesJson D ++ [("choices_checked", checkedJson route D),
       ("sizes", sizesJson D basePredicates)]
   | .enumerated =>
-    head ++ [("finding", match notSuperposable D with
+    head ++ [("finding", match (if normDefaults then some (completionFinding D) else notSuperposable D) with
         | some (sets, cause) => Json.mkObj [("text", .str (notSuperposableText sets)), ("cause", .str cause)]
         | none => .null),
       ("narrowings_stale", toJson (staleNarrowings D))] ++ choicesJson D ++

@@ -359,21 +359,30 @@ def test_unbound_fence_rejected(tmp_path):
                                              ("strict", "true.")])
 def test_document_fence_parses_one_checked_sentence(tmp_path, monkeypatch, surface, formula):
     from ve.surface import unambiguity
+    from ve.backends import english_lean
     source = b"The claim.\n"
     path = write_doc(tmp_path, source + b"```ve a\n" + formula.encode() + b"\n```\n",
                      [{**unit("a", 0, len(source), content={"fence": "a"}),
                        "surface": surface}])
     calls = []
     original = unambiguity.require_unique_derivation
+    lean_calls = []
+    original_read = english_lean.read
 
     def checked(*args, **kwargs):
         calls.append(True)
         return original(*args, **kwargs)
 
     monkeypatch.setattr(unambiguity, "require_unique_derivation", checked)
+    monkeypatch.setenv("VE_ENGLISH_COMPARATOR", "0")  # ev6: Python's reader runs only as the comparator
+    def lean_read(*args, **kwargs):
+        lean_calls.append(True)
+        return original_read(*args, **kwargs)
+    monkeypatch.setattr(english_lean, "read", lean_read)
     doc = load_document(path)
     assert doc["units"][0]["content"] == ["top"]
-    assert calls == ([True] if surface == "english" else [])
+    assert calls == []
+    assert lean_calls == ([True] if surface == "english" else [])
     assert check_document(path)["premises"]["status"] == "model"
 
 

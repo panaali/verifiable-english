@@ -11,7 +11,7 @@ from ve.environment import Environment
 from ve.errors import UnsupportedProfile, VEError
 from ve.limits import MAX_DEPTH, MAX_INDEX, MAX_NODES
 from ve.norms import NormDocument, _used_predicates, dependency_order
-from ve.wire_contract.engine import Registry
+from ve.wire_contract.registry import Registry
 
 
 # The profiles of the unit's domain (2.2): checker profiles are refused by both routes before the validator

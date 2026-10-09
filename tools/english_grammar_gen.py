@@ -62,15 +62,20 @@ TABLES_TARGET = "lean/VE/EnglishGrammar/Fixed/Tables.lean"
 # The Lean files that hold a trusted definition of base 2.13 (base 2.12): the tokens and their matching, the
 # lexer, the derivation checker, well-formedness, the reading relations, lexicon validity, the surface syntax
 # and its rejection codes, and S2's catalogue and action data, `lexRules`, action library, AST encoding and
-# typed check, `meaning` and the readers (spec 5.1), and the service's decoder of the lexicon it reads (2.10).
+# typed check, `meaning` and the readers (spec 5.1), the service's decoder of the lexicon it reads (2.10), and the
+# diagnosis of a sentence without a reading with its viable-prefix recogniser (E2 spec 4.5).
 TRUSTED = (
     "lean/VE/Grammar/Basic.lean",
     "lean/VE/Grammar/Derives.lean",
     "lean/VE/Grammar/Meaning.lean",
     "lean/VE/Grammar/Reading.lean",
+    "lean/VE/Grammar/Expect.lean",
     "lean/VE/EnglishGrammar/Token.lean",
     "lean/VE/EnglishGrammar/Lexer.lean",
     "lean/VE/EnglishGrammar/Lexicon.lean",
+    "lean/VE/EnglishGrammar/Policy.lean",
+    "lean/VE/EnglishGrammar/Advice.lean",
+    "lean/VE/EnglishGrammar/Diagnose.lean",
     "lean/VE/EnglishGrammar/Syntax.lean",
     "lean/VE/EnglishGrammar/Catalogue.lean",
     "lean/VE/EnglishGrammar/Rules.lean",
@@ -78,6 +83,7 @@ TRUSTED = (
     "lean/VE/EnglishGrammar/Encode.lean",
     "lean/VE/EnglishGrammar/Read.lean",
     "lean/VE/EnglishGrammar/Run.lean",
+    "lean/VE/EnglishGrammar/SensesRequest.lean",
     "lean/VE/EnglishGrammar/Fixed/Order.lean",
     "lean/VE/EnglishGrammar/Fixed/Alternatives.lean",
 )
@@ -93,6 +99,8 @@ UNTRUSTED = {
     "lean/VE/EnglishGrammar/LexiconFixtures.lean": "generated fixtures",
     "lean/VE/EnglishGrammar/ReadExamples.lean": "fixtures",
     "lean/VE/EnglishGrammar/ProfileExamples.lean": "profile fixtures",
+    "lean/VE/EnglishGrammar/E2Examples.lean": "E2 acceptance fixtures",
+    "lean/VE/EnglishGrammar/PolicyReference.lean": "spec 5.2's policy text, the reference E2Examples compares with",
     "lean/VE/EnglishGrammar/Extends.lean": "`Extends` and the theorem `grammar_extension`: proved",
     VERSION_TARGET: "generated from this lock file; it holds the version itself",
 }

@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import json
 import os
+from pathlib import Path
 import subprocess
 import sys
 
@@ -182,6 +183,23 @@ def _wrap_popen() -> None:
     subprocess.Popen.__init__ = init
 
 
+def _wrap_path_glob() -> None:
+    # On Python 3.12, pathlib can return an empty glob for a missing directory
+    # without calling os.scandir. The audit hook then sees no listing, even
+    # though adding that directory can change the test's result.
+    for method in ("glob", "rglob"):
+        original = getattr(Path, method)
+
+        def listed(self, *args, _original=original, **kwargs):
+            if not self.is_dir():
+                relative = _relative(self)
+                if relative is not None and _origin() != INFRASTRUCTURE:
+                    _emit(["d", relative])
+            return _original(self, *args, **kwargs)
+
+        setattr(Path, method, listed)
+
+
 def _after_fork() -> None:
     _open_output()
     sys.monitoring.restart_events()
@@ -201,4 +219,5 @@ def start() -> None:
     monitoring.set_events(tool, monitoring.events.PY_START)
     sys.addaudithook(_audit)
     _wrap_popen()
+    _wrap_path_glob()
     os.register_at_fork(after_in_child=_after_fork)

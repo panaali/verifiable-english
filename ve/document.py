@@ -17,7 +17,7 @@ from .admission import _check_kind, admit_document, token
 from .ast import Document, decimal_value, formula_from_data, formula_to_data
 from .backends.lean_service import CheckerUnavailable
 from .environment import Environment, listed_profiles
-from .errors import ResourceLimit, VEError
+from .errors import ResourceLimit, UnsupportedProfile, VEError
 from .identity import meaning_id, source_id
 from .openterms import validate_open_terms
 from .readings import (active_reading_sets, check_readings, plan_choices, s1_content_kind,
@@ -87,16 +87,16 @@ def _split(raw: bytes):
         raise VEError("unsupported document format")
     allowed = {"format", "environment", "units", "open_terms", "reading_sets",
                "narrowings", "couplings", "weights", "graph", "lemmas",
-               "contexts", "assessments", "bridges", "scoped", "completions"}
+               "contexts", "assessments", "bridges", "scoped", "completions", "senses"}
     if meta["format"] == "ve-document@2":
         allowed.add("discourse")
     if set(meta) - allowed:
         raise VEError("unknown document metadata")
     if "couplings" in meta and not {"rights@0", "readings@1"}.intersection(
             listed_profiles(meta.get("environment"))):
-        raise VEError("UnsupportedProfile: rights@0 is required for couplings")
+        raise UnsupportedProfile("UnsupportedProfile: rights@0 is required for couplings")
     if "completions" in meta and "norm-defaults@0" not in listed_profiles(meta.get("environment")):
-        raise VEError("UnsupportedProfile: norm-defaults@0 is required for completions")
+        raise UnsupportedProfile("UnsupportedProfile: norm-defaults@0 is required for completions")
     return meta, *_body(body)
 
 
@@ -143,7 +143,7 @@ def _quantity_content(env, unit, content, fences):
     return canonical, quantity_meaning_id(env, canonical)
 
 
-def _content(env, unit, fences, *, formula_env=None, rights=False):
+def _content(env, unit, fences, *, formula_env=None, rights=False, senses=None, rule_result=None):
     formula_env = env if formula_env is None else formula_env
     content = unit.get("content")
     if content is None:
@@ -153,7 +153,7 @@ def _content(env, unit, fences, *, formula_env=None, rights=False):
         # 3.2: a norm unit outside rights may carry `narrows:<line>` citations,
         # which the rights document validates; the meaning binds them too.
         canonical, _ = _content(env, {**unit, "content": {"norm": content["norm"]}}, fences,
-                                formula_env=formula_env)
+                                formula_env=formula_env, senses=senses, rule_result=rule_result)
         from .readings import rights_meaning_id
         canonical = {**canonical, "cites": content["cites"]}
         return canonical, rights_meaning_id(env, canonical)
@@ -162,24 +162,26 @@ def _content(env, unit, fences, *, formula_env=None, rights=False):
     if env.unit_schema is not None and "norm" not in content:
         return _quantity_content(env, unit, content, fences)
     if "quantity" in content:
-        raise VEError("UnsupportedProfile: quantity content requires ve-units@1")
+        raise UnsupportedProfile("UnsupportedProfile: quantity content requires ve-units@1")
     if "reports@0" in env.profiles and set(content) & {"report", "assessment", "negated"}:
         return content, None  # The reports decoder binds its identity after all declarations.
     if "norm" in content:
         if "soft-norms@0" in env.profiles:
-            from .softnorms import decode_rule, soft_digest
-            canonical = decode_rule(env, content).to_dict()
+            from .softnorms import batch_rule, decode_rule, soft_digest
+            rule = (batch_rule(env, content, rule_result) if rule_result is not None
+                    else decode_rule(env, content))
+            canonical = rule.to_dict()
             mid = soft_digest(f"ve-meaning-{env.identity_version}\n",
                               {"environment_id": env.environment_id, "ast": canonical})
             return canonical, mid
         from .norms import NormDocument
         if "norms@0" not in env.profiles:
-            raise VEError("UnsupportedProfile: norms@0 is required")
+            raise UnsupportedProfile("UnsupportedProfile: norms@0 is required")
         rule = NormDocument._decode(content)
         return rule.to_dict(), None
     if next(iter(content)) in {"right", "right_lines", "limitation", "bar"}:
         if "rights@0" not in env.profiles:
-            raise VEError("UnsupportedProfile: rights@0 is required")
+            raise UnsupportedProfile("UnsupportedProfile: rights@0 is required")
         from .readings import rights_meaning_id
         return content, rights_meaning_id(env, content)
     if "ast" in content:
@@ -190,6 +192,13 @@ def _content(env, unit, fences, *, formula_env=None, rights=False):
     if unit["id"] not in fences:
         raise VEError("missing VE fence")
     text = fences[unit["id"]]
+    if senses is not None and unit.get("surface") == "english":
+        # RD-8: Lean read the fence (`ve.senses_document`); a preamble line or an open unit has no formula.
+        data = senses.formulas.get(unit["id"])
+        if data is None:
+            return None, None
+        formula = formula_from_data(formula_env, data)
+        return formula_to_data(formula_env, formula), meaning_id(formula_env, formula)
     if unit.get("surface") == "english":
         from .english import parse_english
         document = parse_english(formula_env, text)
@@ -241,7 +250,7 @@ def _parts(units):
             raise VEError("MIXED unit needs partitioned parts")
         cursor = span[0]
         for part in parts:
-            if (type(part) is not dict or part.get("status") not in STATUSES or
+            if (type(part) is not dict or type(part.get("status")) is not str or part["status"] not in STATUSES or
                     type(part.get("span")) is not list or len(part["span"]) != 2 or
                     part["span"][0] != cursor):
                 raise VEError("MIXED parts must partition their parent span")
@@ -281,11 +290,12 @@ def _s1_attached(environment_data, meta):
                 type(r) is dict and s1_content_kind(r.get("content")) in {"norm", "right", "right_lines", "limitation"}
                 for r in s["readings"]) for s in sets):
         return frozenset()
-    from .readings_s1 import Document as S1Document, S1Environment
+    from .readings_s1 import Document as S1Document
     try:
         units = [{"id": u["id"], "kind": u.get("kind"), "content": u.get("content")}
                  for u, _ in _parts(meta.get("units", []))]
-        attached = S1Document(S1Environment(environment_data), {"units": units, "reading_sets": sets}).attached()
+        # Attachment reads names only (1.3), never the frame, which under norm-defaults@0 is Lean's.
+        attached = S1Document(None, {"units": units, "reading_sets": sets}).attached()
     except (VEError, KeyError, TypeError, ValueError, AttributeError, IndexError):
         return frozenset()
     return frozenset(u for u, owners in attached.items() if owners)
@@ -323,14 +333,14 @@ def base_environment(meta):
     data = meta["environment"]
     if meta["format"] == "ve-document@1":
         if type(data) is dict and type(data.get("profiles")) is list and PROFILE in data["profiles"]:
-            raise VEError("UnsupportedProfile: ve.discourse@1 requires ve-document@2")
+            raise UnsupportedProfile("UnsupportedProfile: ve.discourse@1 requires ve-document@2")
         return data
     if (type(data) is not dict or type(data.get("profiles")) is not list
             or any(type(p) is not str for p in data["profiles"])):
         raise VEError("invalid environment profiles")
     profiles = data["profiles"]
     if profiles != sorted(set(profiles)) or PROFILE not in profiles or "relational-fol@0" not in profiles:
-        raise VEError("UnsupportedProfile: ve.discourse@1 requires a sorted profile list with relational-fol@0")
+        raise UnsupportedProfile("UnsupportedProfile: ve.discourse@1 requires a sorted profile list with relational-fol@0")
     if "discourse" not in meta:
         raise VEError("InvalidInput: missing discourse block")
     return {**data, "profiles": [p for p in profiles if p != PROFILE]}
@@ -369,16 +379,17 @@ def _load_document(raw: bytes, path: str | Path, lean):
     soft_enabled = "soft-norms@0" in profiles
     defaults_enabled = "norm-defaults@0" in profiles
     if defaults_enabled and soft_enabled:
-        # The soft and rights document routes are checked by Lean, which has no
-        # norm-defaults branch yet; ve.norm_defaults builds their fill in Python.
-        raise VEError("UnsupportedProfile: norm-defaults@0 documents on the soft and rights "
+        # The soft and rights document routes are checked by Lean, whose
+        # norm-defaults route has no admission kind for them yet.
+        raise UnsupportedProfile("UnsupportedProfile: norm-defaults@0 documents on the soft and rights "
                       "routes await the Lean route")
     attached = _s1_attached(environment_data, meta)
     if soft_enabled and not rights_enabled:
         from .softnorms import check_soft_source
         if type(meta.get("units")) is list:
             # The environment and the norm units are one soft source (8).
-            check_soft_source(environment_data, _soft_contents(meta["units"], attached))
+            check_soft_source(environment_data, _soft_contents(meta["units"], attached),
+                              layers=frozenset({"readings@1"} if "readings@1" in profiles else ()))
     env = _environment(environment_data)
     if "reports@0" not in env.profiles and set(meta) & {"contexts", "assessments", "bridges", "scoped"}:
         raise VEError("unknown document metadata")
@@ -406,10 +417,40 @@ def _load_document(raw: bytes, path: str | Path, lean):
         soft_document = SoftNormDocument(env, _soft_contents(units, attached))
         formula_env = soft_document.extended_env
         open_names = set(open_names) | soft_document.extended_env.decision_names
+    senses = None
+    if "senses" in meta:
+        # RD-8: Lean reads the English fences; their units' environment is Lean's projected one.
+        from .senses_document import read_senses
+        if (meta["format"] != "ve-document@1" or env.unit_schema is not None
+                or set(env.profiles) & {"soft-norms@0", "rights@0", "reports@0", "norm-defaults@0", "readings@1"}):
+            raise UnsupportedProfile("UnsupportedProfile: senses are read in ve-document@1 documents without the soft-norms@0, "
+                          "rights@0, reports@0, norm-defaults@0, readings@1 and quantity routes")
+        # Only a string id names a fence; any other id is refused by the unit checks below.
+        english = [(u["id"], fences[u["id"]]) for u, _ in _parts(units)
+                   if type(u) is dict and u.get("surface") == "english" and type(u.get("content")) is dict
+                   and type(u.get("id")) is str and u["content"].get("fence") == u["id"] and u["id"] in fences]
+        senses = read_senses(env, meta["senses"], english, Path(path).parent, meta.get("reading_sets", []))
+        formula_env = senses.environment
+    rule_results = {}
+    if soft_enabled:
+        from .softnorms import check_rule_batch
+        authored = []
+        try:
+            for raw, _ in _parts(units):
+                content = raw.get("content")
+                if type(content) is dict and "norm" in content:
+                    authored.append((raw, {"norm": content["norm"]}))
+        except VEError:
+            # The ordinary unit loop below reports this structural fault in
+            # source order, after any earlier per-rule Lean outcome.
+            pass
+        if authored:
+            outcomes = check_rule_batch(formula_env, (content for _, content in authored))
+            rule_results = {id(raw): outcome for (raw, _), outcome in zip(authored, outcomes, strict=True)}
     compiled = []
     unit_ids = set()
     cursor = 0
-    parents = [u["id"] for u in units if type(u) is dict and u.get("status") == "MIXED"]
+    parents = [u.get("id") for u in units if type(u) is dict and u.get("status") == "MIXED"]
     if not all(token(uid) for uid in parents):
         raise VEError("invalid MIXED unit id")
     if len(set(parents)) != len(parents):
@@ -443,7 +484,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
         content_env = (env if rights_enabled and kind in ("right", "right_lines", "limitation", "bar")
                        else formula_env)
         content, mid = (_content(content_env, unit, fences, formula_env=formula_env,
-                                 rights=rights_enabled)
+                                 rights=rights_enabled, senses=senses, rule_result=rule_results.get(id(unit)))
                         if unit.get("content") is not None else (None, None))
         is_norm = type(content) is dict and "norm" in content
         if is_norm:
@@ -463,7 +504,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
         if "meaning_id" in unit and mid is not None and unit["meaning_id"] != mid:
             raise VEError("unit meaning id does not match content")
         explicit_status = unit.get("status")
-        if explicit_status is not None and explicit_status not in STATUSES:
+        if explicit_status is not None and (type(explicit_status) is not str or explicit_status not in STATUSES):
             raise VEError("invalid unit status")
         inferred_status = ("CHECKED" if content is not None and status == "specified" else
                            "OPEN" if status == "open" else
@@ -557,7 +598,15 @@ def _load_document(raw: bytes, path: str | Path, lean):
     if defaults_enabled:
         # norm-defaults 2.3: the layers are those of `fill U`, over E‴ with Fill_T.
         from .norm_defaults import UnspecifiedDocument, validate_completions
-        norm_defaults = UnspecifiedDocument(env, selected_norms)
+        defaults_env = env
+        if "readings@1" in env.profiles:
+            # The free norms are the lower route's document, read with `readings@1` stripped as Lean's readings
+            # route hands every other kind down (`Readings.Run.runLower`): the W2 route of a non-content-bearing
+            # set, and the norm-defaults document beside content-bearing sets (the readings route admits those).
+            lowered = env.to_dict()
+            lowered["profiles"] = [p for p in lowered["profiles"] if p != "readings@1"]
+            defaults_env = _environment(lowered)
+        norm_defaults = UnspecifiedDocument(defaults_env, selected_norms)
         validate_completions(norm_defaults, meta.get("completions", {}), unit_ids)
         norms = None
     if "lemmas" in meta and type(meta["lemmas"]) is not list:
@@ -581,7 +630,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
     doc = {"meta": meta, "environment": env, "source": source, "source_id": sid,
            "document_id": document_id, "directory": Path(path).parent,
            "units": compiled, "norms": norms, "soft_document": soft_document,
-           "norm_defaults": norm_defaults,
+           "norm_defaults": norm_defaults, "senses": senses,
            "reports": reports, "rights_document": rights_document,
            "readings_s1": readings_s1,
            "readings_s2": readings_s2,
@@ -623,6 +672,8 @@ def _checking_environment(doc):
         return doc["soft_document"].extended_env
     if doc.get("norm_defaults") is not None:
         return doc["norm_defaults"].filled.env
+    if doc.get("senses") is not None:
+        return doc["senses"].environment
     return doc["environment"]
 
 
@@ -736,7 +787,8 @@ def coverage_defaults(doc):
         from .norm_defaults import report
         doc["_norm_defaults_report"] = report(
             doc["norm_defaults"], prove=True, search_domain_size=2, translation=True,
-            completions=doc["meta"].get("completions", {}))
+            completions=doc["meta"].get("completions", {}),
+            unit_ids={u["id"] for u in doc["units"]})
     return doc["_norm_defaults_report"]
 
 
@@ -790,8 +842,10 @@ def coverage(doc, scoped=None, rights_report=None):
     if environment is not None and environment.alternatives is not None:
         from .backends.relay import decide
         risk = environment.risk is not None
+        # A unit without content (or meaning id) is sent without the field: the wire has no null.
         case = {"id": "coverage", "kind": "risk-elaborate" if risk else "alt-elaborate",
-                "environment": environment.to_dict(), "coverage_units": units,
+                "environment": environment.to_dict(),
+                "coverage_units": [{key: value for key, value in u.items() if value is not None} for u in units],
                 "narrowings": meta.get("narrowings", [])}
         if risk:
             case["document"] = {"norms": [], "units": []}
@@ -802,22 +856,11 @@ def coverage(doc, scoped=None, rights_report=None):
         residual.update(row["coverage"]["residual"])
     soft = doc.get("soft_document")
     if soft is not None:
-        decisions = soft.extended_env.decision_names
-        open_pairs = [
-            f"soft:coherence:{left.core.name},{right.core.name}"
-            for left, right in soft.collisions
-            if (left.rank is None or right.rank is None or
-                (left.rank not in soft.env.ranks_above[right.rank] and
-                 right.rank not in soft.env.ranks_above[left.rank]))]
-        residual["default_exceptions"] = sum(r.mode == "default" for r in soft.rules)
-        residual["instruction_switches"] = sum(len(r.alterable) for r in soft.rules)
-        residual["holistic_overrides"] = sum(name.startswith("soft__outweighs__") for name in decisions)
-        residual["weighing_points"] = len(open_pairs)
-        by_decider = {}
-        for rule in soft.rules:
-            if rule.mode == "default":
-                who = (rule.exception or {}).get("decided_by") or soft.env.soft.get("exception_decider") or "unstated"
-                by_decider[who] = by_decider.get(who, 0) + 1
+        from .soft_route import elaborate_soft_document
+        soft_row = elaborate_soft_document(_lower_soft_document(doc) if "environment" in doc else soft)
+        residual.update(soft_row["soft_residual"])
+        by_decider = soft_row["default_exceptions_by_decider"]
+        open_pairs = soft_row["conditional_on"]
     rights = doc.get("rights_document")
     if rights is not None:
         residual["limitation_terms"] = len(rights.limitation_names) + len(rights.condition_names)
@@ -853,13 +896,11 @@ def coverage(doc, scoped=None, rights_report=None):
     defaults_lines = None
     if doc.get("norm_defaults") is not None:
         # norm-defaults 3.2: a gap is no open term and changes no unit status.
-        from .norm_defaults import gaps_residual
         defaults_lines = coverage_defaults(doc)
-        gaps = gaps_residual(defaults_lines)
+        gaps = defaults_lines["residual"]
         residual["gaps"] = len(gaps["gaps"])
         residual["ungrounded_defaults"] = gaps["ungrounded_defaults"]
-    soft_open = ("default_exceptions", "instruction_switches", "holistic_overrides", "weighing_points",
-                 "limitation_terms", "bar_terms")
+    rights_open = ("limitation_terms", "bar_terms")
     return {"source_bytes": len(source), "accounted_bytes": sum(kinds.values()),
             "coverage_percent": 100, "bytes_by_kind": kinds, "bytes_by_status": statuses,
             "unformalised_reasons": reasons,
@@ -867,14 +908,16 @@ def coverage(doc, scoped=None, rights_report=None):
             **({"residual_lines": lines} if lines else {}),
             **({"alternatives": alternatives} if alternatives is not None else {}),
             **({"norm_defaults": {
-                "gaps": gaps_residual(defaults_lines)["gaps"],
-                "findings": [line.grounding for line in defaults_lines
-                             if line.grounding.startswith("UngroundedDefault")]}}
+                "gaps": gaps["gaps"],
+                "findings": defaults_lines["findings"]}}
                if defaults_lines is not None else {}),
-            **({"soft_status": "OPEN" if any(residual.get(key) for key in soft_open) else "CHECKED",
+            **({"soft_status": "OPEN" if soft_row["soft_status"] == "OPEN" or
+                any(residual.get(key) for key in rights_open) else "CHECKED",
                 "default_exceptions_by_decider": by_decider,
-                "soft_residual_labels": [*sorted(soft.extended_env.decision_names), *open_pairs],
-                "soft_background_labels": [label for label, _ in soft.exception_premises]}
+                "soft_residual_labels": [*sorted(item["name"] for item in soft_row["decisions"]), *open_pairs],
+                "soft_background_labels": [item["label"] for item in soft_row["background"]
+                                           if item["generator"] == "soft" and
+                                           item["label"].startswith("soft:exception:")]}
                if soft is not None else {}),
             **({"rights_residual_labels": [
                 *[f"limitation {name} on {act}: {generated}; decider " +
@@ -973,9 +1016,7 @@ def _check_quantity_document(doc, active):
 
 @semantic_entry("document.check")
 def check_document(path):
-    from .search import model_search_scope
-    with model_search_scope():
-        return _check_document(path)
+    return _check_document(path)
 
 
 def _check_document(path):
@@ -1076,19 +1117,20 @@ def _report(doc):
             "fill_hash": defaults.fill_hash,
             "unsaid_predicates": [f"unsaid__{p}" for p in defaults.unspec],
             "background_labels": [label for label, _ in defaults.fill_premises],
-            "report": {line.predicate: list(line.lines()) for line in lines}}
+            "report": {line["predicate"]: line["lines"] for line in lines["report"]}}
     if "graph" in doc["meta"] and joint_pending:
         result["admission"] = {"status": "UNKNOWN",
                                "reason": "discourse citation and report extension pending"}
     if "graph" in doc["meta"] and not joint_pending:
+        nodes = _graph_nodes(doc["meta"]["graph"])
         if (_unresolved_norm_reading(active) and
                 any(type(node) is dict and type(node.get("label")) is str
                     and node["label"].startswith("layer:norms:")
-                    for node in doc["meta"]["graph"].get("nodes", []))):
+                    for node in nodes)):
             raise VEError("non-assertion norm reading admission needs an elaborator")
         from .admission import parse_label
         active_keys = {(r["id"], r["version"]): r for r in active}
-        for node in doc["meta"]["graph"].get("nodes", []):
+        for node in nodes:
             label = parse_label(node.get("label")) if type(node) is dict else None
             if label is not None and label.kind == "readings":
                 reading_set = active_keys.get(label.args[:2])
@@ -1131,7 +1173,7 @@ def _report(doc):
         elif defaults is not None:
             # W1's admission on `fill U`, from the source environment (Lean
             # `VE.NormDefaults.Admission`); the report is over E‴ (`env`).
-            result["admission"] = admit_document(doc["environment"], admission)
+            result["admission"] = admit_document(lower_env, admission)
         else:
             result["admission"] = admit_document(env, admission)
         latest = {}
@@ -1194,6 +1236,13 @@ def _report(doc):
     return result
 
 
+def _graph_nodes(graph):
+    """The nodes of a claim graph as the pre-admission checks read them: none for a graph or node list of the
+    wrong JSON type, which W2 admission then rejects with its own diagnostic."""
+    nodes = graph.get("nodes", []) if type(graph) is dict else []
+    return nodes if type(nodes) is list else []
+
+
 def render_document(path):
     doc = load_document(path)
     lines = []
@@ -1209,7 +1258,21 @@ def render_document(path):
             except VEError:
                 return "The checked quantity statement " + json.dumps(ast["formula"]) + "."
         formula = formula_from_data(render_env, ast)
-        return render(Document((formula,)), render_env, "ve_english").strip()
+        try:
+            return render(Document((formula,)), render_env, "ve_english").strip()
+        except VEError:
+            # Decision predicates are generated by the soft-norms document layer;
+            # the English request carries only the submitted vocabulary. Display
+            # their checked strict form until the statement layer has a Lean
+            # rendering for these generated symbols.
+            from .search import _used_predicates
+            if not any(name.startswith("soft__") for name in _used_predicates(formula)):
+                raise
+            from .parser import parse
+            strict = render(Document((formula,)), render_env, "ve_strict")
+            if parse(render_env, strict) != Document((formula,)):
+                raise VEError("The generated decision has no checked display form")
+            return strict.strip()
 
     descriptions = {
         "asserted": "a direct assertion", "norm": "a rule", "definition": "a definition",
@@ -1292,17 +1355,29 @@ def render_document(path):
             return claim
         return f"{claim} The source presents this as {kind_description(kind)}."
 
-    def candidate_rights(content):
+    def candidate_units(content):
         # A right candidate is checked alone over the document's source units
         # (validate_reading_sets), not in the base document: its line objects
         # and right name live only in that correlated document.
         if doc["rights_document"] is None or _rights_block(content) != "right":
             return None
+        return [{"source_units": sorted(u["id"] for u in doc["units"])}, content]
+
+    def candidate_rights(content):
+        # Its wording reads the rules alone, so the soft document is deferred (`SoftNormDocument`).
+        units = candidate_units(content)
+        if units is None:
+            return None
         from .rights import RightsDocument
-        return RightsDocument(doc["environment"], [
-            {"source_units": sorted(u["id"] for u in doc["units"])}, content])
+        return RightsDocument(doc["environment"], units, deferred=True)
 
     active_by_unit = {r["unit"]: r for r in active_reading_sets(doc["meta"].get("reading_sets", []))}
+    # Every right candidate's line rules in one Lean request per source, not one per candidate.
+    shown = [candidate_units(candidate["content"]) for u in doc["units"]
+             for candidate in active_by_unit.get(u["id"], {}).get("readings", ())]
+    if any(units is not None for units in shown):
+        from .rights import RightsDocument
+        RightsDocument.warm_rules(doc["environment"], [units for units in shown if units is not None])
     s1_wording = None
     if _content_bearing(doc):
         from .readings_route import Wording

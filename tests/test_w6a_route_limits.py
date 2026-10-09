@@ -18,6 +18,7 @@ import pytest
 
 from tests import lean_routes
 
+from conformance.three_way import rust_evaluations
 from conformance.p0 import envelope
 from subprocesses import run_cpu_bounded
 from ve import Environment, FiniteModel, evaluate
@@ -57,7 +58,9 @@ def lean(cases):
 
 
 def rust(cases):
-    return run([str(RUST), "conformance"], cases)
+    """Rust's rows; its statement values come from its evaluate-budgeted kind
+    (`conformance.three_way.rust_evaluations`)."""
+    return rust_evaluations(lambda batch: run([str(RUST), "conformance"], batch), cases)
 
 
 def lean_limit(got, text=""):

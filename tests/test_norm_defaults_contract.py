@@ -14,7 +14,7 @@ from ve.errors import UnsupportedProfile, VEError
 from ve.norm_defaults_contract import REGISTRY, legacy_validation, norm_defaults_source
 from ve.norms_contract import OUTSIDE
 from ve.wire import loads_json
-from ve.wire_contract.engine import CLEAN, Fault, load, run
+from conformance.wire_contract_engine import CLEAN, Fault, load, run
 
 ROOT = Path(__file__).resolve().parents[1]
 DIRECTORY = ROOT / "ve/wire_contract"

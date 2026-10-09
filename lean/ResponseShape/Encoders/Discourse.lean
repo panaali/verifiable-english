@@ -116,6 +116,13 @@ theorem compileUnits_status (rv : VE.Route.Wire.RouteVocabulary) (ps : List Stri
       · simp only [List.mem_cons, List.not_mem_nil, or_false] at hz; subst hz; exact this
     · exact compileUnits_status rv ps envId source openNames parents us _ rest hrest x hx
 
+theorem foldStatus_mem (active : List (FrontSet × List Bool)) (u : String) {own : String}
+    (h : own ∈ statusWords) : Loader.foldStatus active u own ∈ statusWords := by
+  unfold Loader.foldStatus
+  split
+  · exact w2SetStatus_mem _ _
+  · exact h
+
 theorem loadFront_status (rv : VE.Route.Wire.RouteVocabulary) (ps : List String) (envId : String) (front : Json)
     (source : String) (fences : List (String × String)) :
     OkP (fun F : Loader.Front => ∀ p ∈ F.status, p.2 ∈ statusWords)
@@ -127,9 +134,7 @@ theorem loadFront_status (rv : VE.Route.Wire.RouteVocabulary) (ps : List String)
     simp only [List.mem_map] at hp
     obtain ⟨x, hx, rfl⟩ := hp
     dsimp only
-    split
-    · exact w2SetStatus_mem _ _
-    · exact compileUnits_status _ _ _ _ _ _ _ _ _ ‹Loader.compileUnits _ _ _ _ _ _ _ _ = .ok _› x hx
+    exact foldStatus_mem _ _ (compileUnits_status _ _ _ _ _ _ _ _ _ ‹Loader.compileUnits _ _ _ _ _ _ _ _ = .ok _› x hx)
 
 theorem prepare_status (ps : List String) (env : Json) (rv : VE.Route.Wire.RouteVocabulary) (j : Json) :
     OkP (fun P : Prepared => StatusesOk P.doc) (prepare ps env rv j) := by

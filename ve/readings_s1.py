@@ -21,7 +21,7 @@ from __future__ import annotations
 import json
 from itertools import product
 
-from .errors import VEError
+from .errors import CheckerUnavailable, VEError
 from .wire import digest
 
 READINGS = "readings@1"
@@ -51,24 +51,20 @@ def _sorted_items(value):
 # ---------------------------------------------------------------------------------------------------------------
 # The environment (1.1)
 
-def _placeholder_frame(data):
-    """`unspecified` completions read as `deny` (Lean `Wire.placeholderFrame`); every other field unchanged."""
-    predicates = (data.get("vocabulary") or {}).get("predicates")
-    if type(predicates) is not dict:
-        return data
-    renamed = {name: ({**decl, "regulated": {**decl["regulated"], "default": "deny"}}
-                      if type(decl) is dict and type(decl.get("regulated")) is dict
-                      and decl["regulated"].get("default") == "unspecified" else decl)
-               for name, decl in predicates.items()}
-    return {**data, "vocabulary": {**data["vocabulary"], "predicates": renamed}}
+NORM_DEFAULTS = "norm-defaults@0"
 
 
 class S1Environment:
     """The environment with `readings@1`, its chain, and the lower and frame environments. The environment is read
     as Lean receives it (`wire`), as the document is: an explicit null is an absent field at every depth, so
-    `vocabulary.soft: null` or a predicate's `regulated: null` is decoded as Lean decodes it."""
+    `vocabulary.soft: null` or a predicate's `regulated: null` is decoded as Lean decodes it.
 
-    def __init__(self, data):
+    Under `norm-defaults@0` (readings-defaults 3, plan RD-2b) the frame is Lean's: `filled`, the filled document a
+    readings route answers (`readings-validate`, `readings-elaborate`), whose environment is the lower environment
+    with each `unspecified` completion read as `deny`, the profile removed and every unspecified predicate's table
+    added (norm-defaults 2.3's E‴). Python builds no part of it (D12); without `filled` there is no frame."""
+
+    def __init__(self, data, filled=None):
         from .document import _environment
         data = wire(data)
         self.data = data
@@ -78,13 +74,14 @@ class S1Environment:
         self.lower_data = {**data, "profiles": self.lower_profiles}
         self.chain = ("rights" if "rights@0" in self.profiles else
                       "soft" if "soft-norms@0" in self.profiles else "norms")
-        frame = [p for p in self.lower_profiles if p != "norm-defaults@0"]
-        self.frame_data = {**data, "profiles": frame}
-        if "norm-defaults@0" in self.lower_profiles:
-            # DRI ruling 4 (2026-10-03): the frame reads each `unspecified` completion as the placeholder `deny`
-            # (norm-defaults 2.3's E‴), as Lean's `placeholderFrame` does, so that the frame decodes without the
-            # profile and content beside it reaches the abstention of 1.1 instead of a decoder text.
-            self.frame_data = _placeholder_frame(self.frame_data)
+        self.completion = NORM_DEFAULTS in self.lower_profiles
+        if self.completion:
+            if filled is None:
+                raise CheckerUnavailable("ReadingsConstruction: under norm-defaults@0 the frame is the filled "
+                                         "document Lean's readings route answers, and none was given")
+            self.frame_data = wire(filled["environment"])
+        else:
+            self.frame_data = {**data, "profiles": self.lower_profiles}
         self.frame = _environment(self.frame_data)
         self.regulated = {name: decl for name, decl in self.frame.predicates.items() if decl.regulated is not None}
 
@@ -97,7 +94,9 @@ class S1Environment:
         data["profiles"] = sorted({*data["profiles"], "soft-norms@0"})
         data["vocabulary"]["soft"] = {"parties": [], "ranks": [], "outranks": [], "ties": [],
                                       "outranking": {"mode": "strict"}}
-        return SoftEnvironment(data)
+        # This is an internal soft view of a norms-only source. The source has no soft
+        # layer, so an author's ordinary soft__ predicate remains legal here.
+        return SoftEnvironment(data, generated=True)
 
     def author_environment(self):
         """The author's base vocabulary: the frame without regulated predicates (4.5 step 1)."""
@@ -195,13 +194,17 @@ def node_value(raw, fan_pred=None):
     """A norm object as `ruleFields` decodes it (a `SoftNode`); raises when it does not decode. A fan-out line's
     absent predicate is its first mapped predicate (`decodeLineNorm`). The exception decider decides only whether
     the object decodes, never its value, so a stand-in is passed."""
-    from .softnorms import _rule_fields
+    from .softnorms import _hydrate_rule
     if type(raw) is dict and fan_pred is not None and "predicate" not in raw:
         raw = {**raw, "predicate": fan_pred}
-    f = _rule_fields({"norm": wire(raw)}, "unstated")
+    f = _hydrate_rule({"norm": wire(raw)})
     exception = None
     if f.mode == "default":
-        exception = (f.exception.get("decided_by"), f.conditions["sufficient"], f.conditions["necessary"],
+        from .ast import _Decoder
+        decoder = _Decoder()
+        exception = (f.exception.get("decided_by"),
+                     tuple(decoder.decode(x) for x in f.exception["sufficient"]),
+                     tuple(decoder.decode(x) for x in f.exception["necessary"]),
                      tuple(f.exception["factors"]))
     return (f.core, f.mode, f.rank, f.alterable, exception, f.hard)
 
@@ -264,10 +267,9 @@ def lean_defaults(unit):
 
 def _right_header(body):
     """A right's name, holder and guard as `decodeRight` decodes them: an absent guard is `top`."""
-    from .ast import Top
-    from .softnorms import _fol
+    from .ast import Top, _Decoder
     guard = wire(body).get("guard")
-    return (body.get("name"), body.get("holder"), Top() if guard is None else _fol(guard))
+    return (body.get("name"), body.get("holder"), Top() if guard is None else _Decoder().decode(guard))
 
 
 def decode_content(j):
@@ -290,6 +292,15 @@ def decode_content(j):
     return None
 
 
+def decode_filled(j):
+    """A content of Lean's filled document (`contentJson`): an assertion is `{"assertion": <ast>}`, a rule its
+    `norm` object with every field written out; anything else is no content of the norms chain (None)."""
+    if type(j) is dict and set(j) == {"assertion"}:
+        return Content("assertion", j["assertion"], j["assertion"])
+    decoded = decode_content(j)
+    return decoded if isinstance(decoded, Content) and decoded.kind == "norm" else None
+
+
 def in_force(kind, content):
     """`Wire.inForce`: a unit's content is in force only under its kind (1.2)."""
     if content.kind == "assertion":
@@ -300,8 +311,12 @@ def in_force(kind, content):
 
 
 class Candidate:
-    def __init__(self, cid, content, labels):
+    """A reading: `content` is the one its document is built from (Lean's filled content under the completion), and
+    `authored` the content as the author wrote it, which the `<reading>` slot shows."""
+
+    def __init__(self, cid, content, labels, authored=None):
         self.id, self.content, self.labels = cid, content, labels
+        self.authored = content if authored is None else authored
 
 
 class ReadingSet:
@@ -317,10 +332,15 @@ class Document:
     The document is read as Lean receives it (`wire`): an explicit null is an absent field at every depth, so a
     right's line with `cites: null` or a norm with `mode: null` is built with its defaults, as Lean decodes it.
     Nothing is checked: a candidate whose content is no content of its kind is Lean's rejection, and is built here
-    as written."""
+    as written.
 
-    def __init__(self, senv, document):
+    With `filled` (Lean's filled document under the completion, readings-defaults 3) every content is Lean's filled
+    one, matched by unit and by set and index, and Lean's generated units (each `F_p`, after every item) are fixed
+    items; `filled_tables` maps each table such a unit reads to its predicate. Python builds no `fill` (D12)."""
+
+    def __init__(self, senv, document, filled=None):
         self.senv = senv
+        self.filled_tables = {}
         document = wire(document)
         units = document["units"]
         sets = document.get("reading_sets") or []
@@ -344,6 +364,38 @@ class Document:
                 self.items.append(("fixed", uid, decoded))
             elif type(decoded) is tuple and type(kind) is str and kind in RIGHTS_KINDS:
                 self.items.append(("bar", uid, content["bar"]))
+        if filled is not None:
+            self._fill(filled["units"])
+
+    def _fill(self, units):
+        """Lean's filled contents in place of the author's, and Lean's generated units after every item. A filled
+        unit that names no unit, set or reading of the document is one of Lean's generated units."""
+        fixed, read, generated = {}, {}, []
+        ids = set(self.unit_ids)
+        for unit in units:
+            content = decode_filled(wire(unit["content"]))
+            if "set" in unit:
+                read[(unit["set"], unit["index"])] = content
+            elif unit["unit"] in ids:
+                fixed[unit["unit"]] = content
+            else:
+                generated.append((unit["unit"], content))
+        items = []
+        for item in self.items:
+            if item[0] == "fixed":
+                items.append(("fixed", item[1], fixed[item[1]]))
+            elif item[0] == "set":
+                R = item[2]
+                R.candidates = [Candidate(a.id, read[(R.id, i)], a.labels, a.content) if a.content is not None
+                                else a for i, a in enumerate(R.candidates)]
+                items.append(item)
+            else:
+                items.append(item)
+        for uid, content in generated:
+            items.append(("fixed", uid, content))
+            guard = content.body["guard"]
+            self.filled_tables[guard[1]] = content.body["predicate"]
+        self.items = items
 
     @staticmethod
     def _candidate(reading):
@@ -414,7 +466,8 @@ class Document:
 
 class Side:
     """A candidate's chain document assembled from contents in source order (`place`) and elaborated by Python's
-    chain classes, unchecked: Lean checks it (`sideWF`)."""
+    chain classes, unchecked: Lean checks it (`sideWF`). Its soft document is deferred (`SoftNormDocument`): Lean
+    is asked for this side alone only when a reader needs a field Lean supplies."""
 
     def __init__(self, senv, contents, unit_ids):
         self.senv, self.contents, self.unit_ids = senv, contents, unit_ids
@@ -422,21 +475,26 @@ class Side:
         self.rights = None
         self.soft = None
 
-    def _elaborate(self):
+    def rights_units(self):
+        """The units of the side's rights document (the rights chain)."""
+        units = [{"source_units": list(self.unit_ids)}]
+        for c in self.contents:
+            if not isinstance(c, Content):
+                units.append(lean_defaults({"bar": c[1]}))
+            elif c.kind != "assertion":
+                units.append(lean_defaults(c.raw))
+        return units
+
+    def _elaborate(self, deferred=True):
         chain = self.senv.chain
         if chain == "rights":
             from .rights import RightsDocument
-            units = [{"source_units": list(self.unit_ids)}]
-            for c in self.contents:
-                if not isinstance(c, Content):
-                    units.append(lean_defaults({"bar": c[1]}))
-                elif c.kind != "assertion":
-                    units.append(lean_defaults(c.raw))
-            self.rights = RightsDocument(self.senv.frame, units)
+            self.rights = RightsDocument(self.senv.frame, self.rights_units(), deferred=deferred)
             self.soft = self.rights.soft_document
         else:
             from .softnorms import SoftNormDocument
-            self.soft = SoftNormDocument(self.senv.soft_frame(), [c.raw for c in self.contents if c.kind == "norm"])
+            self.soft = SoftNormDocument(self.senv.soft_frame(), [c.raw for c in self.contents if c.kind == "norm"],
+                                         deferred=deferred)
 
     # -- S2's regeneration of a choice document's chain refusal (composition-s2.md 4.1 step 5, `route_refusal`)
     #
@@ -494,8 +552,8 @@ class Side:
                     if c.kind == "norm"):
                 raise VEError("InvalidInput: invalid norm fields")
             from .softnorms import check_soft_source
-            check_soft_source(self.senv.soft_frame().to_dict(), norms)
-        self._elaborate()
+            check_soft_source(self.senv.soft_frame().to_dict(), norms, generated=(chain == "norms"))
+        self._elaborate(deferred=False)
         from .ast import formula_from_data
         env = self.soft.extended_env
         try:
@@ -558,12 +616,11 @@ class Side:
         if env.soft["outranking"]["mode"] == "holistic":
             seen = []
             for left, right in sd.collisions:
-                pair = sd._rank_pair(left, right)
-                if pair is None:
+                generated = sd.override_for_pair.get(frozenset((left.core.name, right.core.name)))
+                if generated is None:
                     continue
-                generated = sd._outweighs_name(*pair, sd._act(left), env.predicates[left.core.predicate].arguments)
-                act = generated[len(f"soft__outweighs__{pair[0]}__{pair[1]}__"):]
-                key = ("outweighs", act, pair[0], pair[1])
+                _, _, low, high, act = generated.split("__", 4)
+                key = ("outweighs", act, low, high)
                 if key not in seen:
                     seen.append(key)
                     keys.append((key, generated, list(env.predicates[left.core.predicate].arguments)))
@@ -735,17 +792,45 @@ def content_bearing(R):
 
 class Decoded:
     """The environment and the document, with the attachment of 1.3 and each candidate's side built on demand.
-    Nothing is checked (Lean's `admitReadings` is the check)."""
+    Nothing is checked (Lean's `admitReadings` is the check).
 
-    def __init__(self, environment, document):
-        self.senv = S1Environment(environment)
-        self.doc = Document(self.senv, document)
+    Under the completion `filled` and `fill_premises` are Lean's (a readings route's answer, readings-defaults 3):
+    the sides are the readings' filled documents, and each reading's `Fill_T` is Lean's list of formulas."""
+
+    def __init__(self, environment, document, filled=None, fill_premises=None):
+        self.senv = S1Environment(environment, filled)
+        self.doc = Document(self.senv, document, filled)
         self.attached = self.doc.attached()
         self.sides = {}
+        self.fill_premises = {(e["set"], e["index"]): [p["ast"] for p in e["premises"]]
+                              for e in (fill_premises or ())}
+        self._fill_formulas = {}
+        self._rules_warm = self.senv.chain != "rights"
+
+    def _warm_rules(self):
+        """Every candidate side's line rules in one Lean request per source, not one per side
+        (`RightsDocument.warm_rules`). A side that cannot be assembled is built, and raises, when it is read."""
+        from .rights import RightsDocument
+        documents = []
+        for R in self.doc.sets:
+            for k in range(len(R.candidates)):
+                try:
+                    documents.append(self._plain_side(R.id, k).rights_units())
+                except CheckerUnavailable:
+                    raise
+                except Exception:  # noqa: BLE001
+                    continue
+        RightsDocument.warm_rules(self.senv.frame, documents)
+
+    def _plain_side(self, s, i):
+        return Side(self.senv, self.doc.one(self.attached, s, i), self.doc.unit_ids)
 
     def side(self, s, i):
         if (s, i) not in self.sides:
-            side = Side(self.senv, self.doc.one(self.attached, s, i), self.doc.unit_ids)
+            if not self._rules_warm:
+                self._rules_warm = True
+                self._warm_rules()
+            side = self._plain_side(s, i)
             side._elaborate()
             self.sides[(s, i)] = side
         return self.sides[(s, i)]
@@ -792,6 +877,21 @@ class Decoded:
     def side_value(self, s, i, model, tables, probe):
         side = self.side(s, i)
         return side.observe(side.model(model, tables), probe)
+
+    def fill_holds(self, s, i, model, tables):
+        """The reading's `Fill_T` (Lean's formulas, readings-defaults 4.2) on the base: what the witness's filling
+        must satisfy. With no `Fill_T` listed (outside the completion) it holds."""
+        from .ast import formula_from_data
+        from .evaluate import _Evaluator
+        asts = self.fill_premises.get((s, i), ())
+        if not asts:
+            return True
+        side = self.side(s, i)
+        env = side.soft.elaborated.base_environment()
+        if (s, i) not in self._fill_formulas:
+            self._fill_formulas[(s, i)] = [formula_from_data(env, ast, _generated=True) for ast in asts]
+        evaluator = _Evaluator(env, side.model(model, tables), 10_000_000, trace=False)
+        return all(evaluator.formula(f, ())[0] for f in self._fill_formulas[(s, i)])
 
 
 def _twin_nodes(strict, default):
@@ -927,12 +1027,16 @@ def _probes(decoded, s, i, j, base):
     return outcomes + (["holds"] if assertions else []) + selects + ([] if assertions else ["holds"])
 
 
-def search(environment, document, set_id, *, max_size=2, hints=(), decoded=None):
+def search(environment, document, set_id, *, max_size=2, hints=(), decoded=None, filled=None):
     """For each ordered pair of candidates of the set, neither pending, a situation entry Python finds that
     separates them, or None. The witness is either reading of the pair; tables of shared keys stay empty.
-    `hints` are bases tried first (a pilot's recorded situation, re-expressed)."""
+    `hints` are bases tried first (a pilot's recorded situation, re-expressed). Under the completion `filled` is a
+    readings route's answer with Lean's `filled` and `fill_premises` (`readings-elaborate` gives them before any
+    situation is recorded): the bases range over the filled frame's author vocabulary, its tables included, and
+    a witness's base must satisfy its `Fill_T` (4.2)."""
     from .model import FiniteModel
-    decoded = decoded or Decoded(environment, document)
+    decoded = decoded or Decoded(environment, document, *(() if filled is None else
+                                                          (filled["filled"], filled["fill_premises"])))
     R = decoded.doc.set_by_id(set_id)
     found = {}
     author = decoded.senv.author_environment()
@@ -996,7 +1100,7 @@ def _search_pair(decoded, s, x, y, bases):
                 continue
             for decisions in decoded.assignments(s, i, model):
                 decisions = [(k, rows) for k, rows in decisions]
-                if not decoded.side_valid(s, i, model, decisions):
+                if not decoded.side_valid(s, i, model, decisions) or not decoded.fill_holds(s, i, model, decisions):
                     continue
                 for probe in _probes(decoded, s, i, j, model):
                     value = decoded.side_value(s, i, model, decisions, probe)

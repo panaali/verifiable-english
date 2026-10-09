@@ -177,6 +177,42 @@ def pytest_configure(config):
     for variable in CHECKER_TIMEOUTS:
         os.environ[variable] = str(HANG_TIMEOUT)
     sys.addaudithook(refuse_child_without_checker_settings)
+    english_comparator(config)
+
+
+def english_comparator(config):
+    """The suite runs English admission with the comparator on (docs/spec/english-lean-e2.md 2.8, D15): every
+    Lean-decided admission also runs Python's reader and writes one comparison record, which never changes the
+    result. `VE_ENGLISH_COMPARATOR=0` turns it off for a run; a test of the switch sets it itself. The records
+    go to one directory per run (each xdist worker its own file), and the session's end writes their summary
+    (`english_comparator_summary`) beside them and prints it."""
+    if os.environ.get("VE_ENGLISH_COMPARATOR") is None:
+        os.environ["VE_ENGLISH_COMPARATOR"] = "1"
+    if os.environ["VE_ENGLISH_COMPARATOR"] != "1":
+        return
+    directory = os.environ.get("VE_ENGLISH_COMPARATOR_DIR")
+    if directory is None:
+        import tempfile
+        directory = tempfile.mkdtemp(prefix="ve-english-comparator-")
+        os.environ["VE_ENGLISH_COMPARATOR_DIR"] = directory
+    name = getattr(config, "workerinput", {}).get("workerid", "controller")
+    os.environ.setdefault("VE_SHADOW_LOG", str(Path(directory) / f"{name}.jsonl"))
+
+
+def english_comparator_summary(directory: Path) -> dict:
+    """The comparison records of a run, counted: the English admissions compared, those excluded (Python's
+    wall-clock limit), and the difference classes of the rest (S2 4.5 under S3 2.11's correspondence)."""
+    from collections import Counter
+    records = []
+    for path in sorted(directory.glob("*.jsonl")):
+        for line in path.read_text().splitlines():
+            record = json.loads(line)
+            if record.get("op") in (None, "english.admission") and "classes" in record:
+                records.append(record)
+    compared = [record for record in records if "excluded" not in record and "planted" not in record]
+    classes = Counter(",".join(record["classes"]) or "agree" for record in compared)
+    return {"records": len(records), "excluded": sum("excluded" in record for record in records),
+            "planted": sum("planted" in record for record in records), "classes": dict(sorted(classes.items()))}
 
 
 def _setting(variable, default):
@@ -291,6 +327,11 @@ def pytest_sessionfinish(session, exitstatus):
     lock = getattr(session.config, "_ve_native_lock", None)
     if lock is not None:
         lock.close()
+    directory = os.environ.get("VE_ENGLISH_COMPARATOR_DIR")
+    if directory and not hasattr(session.config, "workerinput") and Path(directory).is_dir():
+        summary = english_comparator_summary(Path(directory))
+        (Path(directory) / "summary.json").write_text(json.dumps(summary, indent=1) + "\n")
+        print(f"\nve: English comparator: {json.dumps(summary)} ({directory})", file=sys.stderr)
 
 
 @pytest.fixture(autouse=True)

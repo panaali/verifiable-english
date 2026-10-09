@@ -45,8 +45,8 @@ from tools import nested_pytest
 from ve.backends.diagnostics import checker_error
 from ve.errors import VEError
 from ve.softnorms import load_soft_document
-from ve.softnorms_contract import REGISTRY, public_rejection
-from ve.wire_contract.engine import Deferred, Fault, load, overlay, run
+from conformance.softnorms_contract import REGISTRY, public_rejection
+from conformance.wire_contract_engine import Deferred, Fault, load, overlay, run
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORT = ROOT / "conformance/wire-contract/soft-norms@0-gate.json"
@@ -304,7 +304,7 @@ def test_and_fixture_sources(recorded=True):
     from tests.test_wire_contract_precondition import probe_sources
     from tests.test_wire_contract_soft_lean import fixture_sources, s3_pre_sources
     from tests.test_wire_contract_three_way import admission_sources
-    from ve.softnorms_contract import soft_source
+    from conformance.softnorms_contract import soft_source
     by_name = {fault.name: fault for fault in catalogue()}
     pair = _applied([by_name[name] for name in SHARED_CODE_PAIR])
     sources = [("base", *multi_fault_base()), ("shared-code-pair", pair["environment"], pair["norms"])]

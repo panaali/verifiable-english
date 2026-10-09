@@ -283,7 +283,7 @@ def _parse_consequence(text, env, words):
     return matches[0]
 
 
-@semantic_entry("english.admission")
+@semantic_entry("english.statement")
 def parse_english(env, source, manifest=None, *, existing_names=(), _w1=False):
     if not _w1 and _soft_surface.SOFT_PROFILE in env.profiles:
         return _parse_soft_english(env, source, manifest, existing_names=existing_names)
@@ -600,7 +600,7 @@ def _parse_soft_english(env, source, manifest, *, existing_names):
     try:
         document = SoftNormDocument(soft_env, [rule.to_dict() for rule in rules])
     except VEError as exc:
-        if str(exc).startswith("DependencyCycle:"):
+        if getattr(exc, "dual_guard_cycle", False):
             raise VEError(f"{exc}; DualGuardCycle: a soft decision introduces a guard dependency") from exc
         raise
     if manifest is not None and manifest.get("document_hash") != document.document_hash:

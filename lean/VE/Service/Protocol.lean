@@ -5,6 +5,7 @@ import VE.Order.Surface
 import VE.Route.Run
 import VE.Norms.Run
 import VE.Service.EnglishRun
+import VE.EnglishGrammar.Run
 import VE.Service.Standalone
 import VE.Service.Graph
 import VE.Service.Readings
@@ -23,6 +24,7 @@ import VE.NormDefaults.Run
 import VE.Discourse.Run
 import VE.Readings.Run
 import VE.Service.Diagnose
+import VE.Service.Document
 import Std.Data.HashMap
 
 /-! # `ve_service` protocol (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stage 1)
@@ -65,10 +67,11 @@ def maxLineBytes : Nat := 16777216
 def maxCases : Nat := 4096
 
 inductive Mode where
-  | evaluate | checkCertificate | order | route | norms | english | environment | model | check | identity
+  | evaluate | checkCertificate | order | route | norms | english | englishRead | englishGrammar | englishCheck
+  | environment | model | check | identity
   | parse | graph | readings | bundle | familyNorms
   | softNorms | rights | speechActs | reports | alternatives | risk | riskEval | quantity | normDefaults
-  | discourse | readingsRoute | diagnose
+  | discourse | readingsRoute | diagnose | document
   deriving DecidableEq, Repr
 
 def Mode.name : Mode → String
@@ -78,6 +81,9 @@ def Mode.name : Mode → String
   | .route => "route"
   | .norms => "norms"
   | .english => "english"
+  | .englishRead => "english.read"
+  | .englishGrammar => "english.grammar"
+  | .englishCheck => "english.check"
   | .environment => "environment"
   | .model => "model"
   | .check => "check"
@@ -99,11 +105,13 @@ def Mode.name : Mode → String
   | .discourse => "discourse"
   | .readingsRoute => "readings-route"
   | .diagnose => "diagnose"
+  | .document => "document"
 
 def modes : List Mode := [.evaluate, .checkCertificate, .order, .route, .norms, .english,
+  .englishRead, .englishGrammar, .englishCheck,
   .environment, .model, .check, .identity, .parse, .graph, .readings, .bundle, .familyNorms,
   .softNorms, .rights, .speechActs, .reports, .alternatives, .risk, .riskEval, .quantity, .normDefaults,
-  .discourse, .readingsRoute, .diagnose]
+  .discourse, .readingsRoute, .diagnose, .document]
 
 def Mode.ofName? (name : String) : Option Mode := modes.find? (·.name == name)
 
@@ -128,6 +136,9 @@ def runMode : Mode → Json → Json
   | .route, j => VE.Route.Run.runCaseReported j
   | .norms, j => VE.Norms.Run.runCaseReported j
   | .english, j => englishReported j
+  | .englishRead, j => VE.EnglishGrammar.Run.readCaseReported j
+  | .englishGrammar, j => VE.EnglishGrammar.Run.grammarCaseReported j
+  | .englishCheck, j => VE.EnglishGrammar.Run.checkCaseReported j
   | .environment, j => Standalone.reportedEnvironment j
   | .model, j => Standalone.reportedModel j
   | .check, j => Standalone.reported Standalone.checkCase j
@@ -149,6 +160,7 @@ def runMode : Mode → Json → Json
   | .discourse, j => VE.Discourse.Run.runCaseReported j
   | .readingsRoute, j => VE.Readings.Run.runCaseReported j
   | .diagnose, j => Diagnose.diagnoseCase j
+  | .document, j => Document.runCaseReported j
 
 /-- A case the batch decoder rejected on its own (JSON depth): the one-shot record. -/
 def caseError (m : Mode) (index : Nat) (message : String) : Json :=
@@ -667,6 +679,12 @@ theorem runMode_english (j : Json) :
         (match j with | .str text => text | _ => j.compress) with
       | .ok result => result
       | .error message => Json.mkObj [("status", .str "error"), ("error", .str message)] := rfl
+theorem runMode_englishRead (j : Json) :
+    runMode .englishRead j = VE.EnglishGrammar.Run.readCaseReported j := rfl
+theorem runMode_englishGrammar (j : Json) :
+    runMode .englishGrammar j = VE.EnglishGrammar.Run.grammarCaseReported j := rfl
+theorem runMode_englishCheck (j : Json) :
+    runMode .englishCheck j = VE.EnglishGrammar.Run.checkCaseReported j := rfl
 theorem runMode_environment (j : Json) :
     runMode .environment j = Standalone.reportedEnvironment j := rfl
 theorem runMode_model (j : Json) :
