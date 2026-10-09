@@ -31,13 +31,14 @@ def query_english(doc, conclusion, data):
 class S2Wording:
     """2.1's slots on one document: sentence numbers, reading names, conclusions and pulled situations."""
 
-    def __init__(self, doc, route):
+    def __init__(self, doc, route, numbers=None):
         from . import readings_s2_english as E
         from .environment import wording_reserved_prefixes
         self.E = E
         self.doc, self.route = doc, route
-        self.s1 = Wording(doc)
-        self.numbers = {unit["id"]: n for n, unit in enumerate(doc["units"], 1)}
+        # One case of a split document is numbered as the whole document (readings-defaults RD-4b).
+        self.s1 = Wording(doc, numbers=numbers)
+        self.numbers = numbers or {unit["id"]: n for n, unit in enumerate(doc["units"], 1)}
         self.sets = route.sets
         self.set_number = {R.id: self.numbers[R.unit] for R in self.sets}
         self.names = {R.id: self.s1.reading_names(R.id) for R in self.sets}
@@ -466,6 +467,15 @@ class S2Wording:
                                    f"Under every reading of the {len(self.sets)} open sentences"):
                 raise CheckerUnavailable("ReadingsConformance: Lean's plan names the wrong every-reading frame")
             return text
+        if frame == "E30":
+            # readings-defaults 2.4 item 1: E26 for a sentence checked by itself.
+            [(s, _)] = readings
+            return E.every_result_of_sentence(self.set_number[s], kind, self.slots, conclusion=slot)
+        if frame == "E31":
+            [(s, _)] = readings
+            return E.checked_alone(self.set_number[s], self.slots)
+        if frame == "E32":
+            return E.each_alone(self.slots)
         if frame == "E12":
             return E.named_result(self.readings(readings), kind, self.slots, conclusion=slot)
         if frame == "E29":
