@@ -41,7 +41,7 @@ owner; [DELTA.md](DELTA.md) classifies every changed answer and lists what is re
 | rights | 2,500 | 2,500 | 0 | 0 | 0 | 0 |
 | **All** | **100,290** | **100,211** | **75** | **4** | **0** | **0** |
 
-Unlisted differences: 0. Branch commits (`main..HEAD --no-merges`, saved): 10, merge base `abc30811`, last source commit `85b02e40`.
+Unlisted differences: 0. Branch commits (`main..HEAD --no-merges`, saved): 12, merge base `abc30811`, last source commit `a24eff09`.
 Code lines, production Python: +324/−833 (net -509).
 Code lines, Lean: +10/−2 (net +8).
 Differential fuzz: 15 paired runs (CI and 14 date seeds); reviewed baseline 254 → 250; head-only new signatures 0; head entries not reproduced 0; all runs ok: True.
