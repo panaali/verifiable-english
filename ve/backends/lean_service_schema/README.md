@@ -44,13 +44,13 @@ To change a shape, edit the Lean module, `lake build ve_response_decode`, then
   its `$comment` (formulas, terms, kinds, labels, ...).
 
 **What the schemas check** (threat model, `docs/spec/lean-service.md`): binding to the
-request and well-formedness, nothing else. The binding is the nonce, the mode, each
+request and well-formedness. The binding is the nonce, the mode, each
 result's position and case digest (a request error: every case digest), and the identity
-fields a runner echoes from its case.
+fields a runner echoes from its case, graph claims, and certificate counts.
 The well-formedness is the Lean decoders' domains. A rule belongs here only if its
 expected value can be read directly off the request. Values the runners compute belong
 to the service, which the tests check on its outputs (`ve_response_decode`'s
-`invariants`). Examples are counts regenerated from the environment, graph unfoldings,
+`invariants`). Examples are graph unfoldings,
 dependency orders, target lists and their sorts, and the relations between result fields.
 
 **Every answer is closed** (lf-1 review B). A mode's `ok` rows list each field its Lean
@@ -92,6 +92,9 @@ element of an array (every element must resolve).
 | `x-length: p` | an array as long as the context array at `p` |
 | `x-count: p` | the integer length of the context array at `p` |
 | `x-references: {array: a, field: f, in: p}` | every object in the response array at `a` has a string field `f` equal to one member of the context array at `p` |
+| `x-claim-nodes: [p, ...]` | every claim at each response pointer (one claim or an array) matches a request graph node by name, AST and presence and value of the optional label |
+| `x-max-steps: {default, cap}` | a certificate step count is at most the request's `max_steps`, or the generated default, capped at the generated maximum |
+| `x-background-count: "route" | "norms"` | a certificate background count equals the regenerated flags, definitions and string literal pairs from the request vocabulary, plus norm pairs on a norms certificate |
 | `x-index: true` | the position of the result in the response |
 | `x-digest: true` | the digest of the result's case (`digests[i]` of the request) |
 | `x-zip: {of: p, items: s}` | an array with element `i` valid under `s` with context element `i` of the context array at `p` |

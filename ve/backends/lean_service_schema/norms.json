@@ -55,11 +55,11 @@
     "norms-certificate": {
       "additionalProperties": false,
       "properties": {
-        "background": {"$ref": "common.json#/$defs/nat"},
+        "background": {"$ref": "common.json#/$defs/nat", "x-background-count": "norms"},
         "id": {"type": "string", "x-equals": "/id"},
         "layers": {"$ref": "common.json#/$defs/nat"},
         "status": {"const": "ok"},
-        "steps": {"$ref": "common.json#/$defs/nat"},
+        "steps": {"$ref": "common.json#/$defs/nat", "x-max-steps": {"cap": 1000000, "default": 10000}},
         "valid": {"type": "boolean"}
       },
       "required": ["id", "status", "valid", "background", "layers", "steps"],
