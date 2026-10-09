@@ -1,0 +1,6 @@
+{
+  "command": "PATH=/home/seyran/.elan/bin:$PATH python3 tools/lean_statements.py --check",
+  "exit_code": 0,
+  "output_sha256": "1d702b481f348958eb86f2c2818fef80e66d487baf279b3c11c6c7ded574d7bb",
+  "output": "added: 0\nremoved: 0\nchanged: 0\nPASS: 4422 statements, the predicate list and the declaration list unchanged\n"
+}
