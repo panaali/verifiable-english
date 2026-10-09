@@ -403,8 +403,13 @@ def backgroundCount (case : Json) (norms : Bool) : Option Nat := do
   let literals := (members constants).filter fun (_, c) => c.getObjValD "sort" == .str "$string"
   let isOrder := (env.getObjValD "profiles").getArr?.toOption.any fun ps =>
     ps.contains (.str "order@0")
+  let extra ← if norms && case.getObjValD "kind" == .str "certificate" then
+    match case.getObjVal? "soft_premises" with
+    | .error _ => some 0
+    | .ok ps => ps.getArr?.toOption.map (·.size)
+    else some 0
   pure ((if isOrder then 0 else flags + definitions.size) +
-    literals.size * (literals.size - 1) / 2 + (if norms then pairs.size else 0))
+    literals.size * (literals.size - 1) / 2 + (if norms then pairs.size else 0) + extra)
 
 def tokens (pointer : String) : List String :=
   if pointer.isEmpty then [] else
