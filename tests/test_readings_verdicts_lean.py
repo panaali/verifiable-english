@@ -727,3 +727,77 @@ def test_answers_are_json_round_trip_stable(tmp_path):
     _, route = loaded(tmp_path)
     answer = route.conflict_answer()
     assert json.loads(json.dumps(answer)) == answer
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# DRI wording sign-off (rd-3 round 3, item 4): every changed English row keeps the base's names, conditions and
+# specificity (the lf-12 ruling, items 2(a)-(c)); a row that loses one is fixed in Lean, never signed.
+
+WORDING = ROOT / "docs/readings-defaults/rd3/evidence/wording-round3.json"
+GAP = "Here the text does not say whether "
+CONDITION_LEADS = ("This holds provided that:", "Whenever ", "Sentence ", "Sentences ", "This does not depend on ")
+
+
+def _split(line):
+    """A line's result and its gap sentences (spec 2.2: one per filled gap the result depends on)."""
+    head, *gaps = line.split(f" {GAP}")
+    return head, [GAP + g for g in gaps]
+
+
+def _names(lines):
+    """The names a line shows: quoted readings and conclusions, sentence numbers, elements."""
+    import re
+    text = "\n".join(lines)
+    return set(re.findall(r"\*[^*]+\*", text)) | set(re.findall(r"\b(?:sentences? \d+|e\d+)\b", text))
+
+
+def _keeps_the_base(base, head):
+    """lf-12 rule 2: (a) every name the base shows is shown; (b) every condition line of the base is kept, and the head
+    adds only condition lines; (c) every result is as specific as the base's, its gap sentences among the base's (spec
+    2.2 keeps exactly those the result depends on)."""
+    problems = []
+    if not _names(base) <= _names(head):
+        problems.append(f"names lost: {sorted(_names(base) - _names(head))}")
+    results = [_split(line) for line in head]
+    for line in base:
+        result, gaps = _split(line)
+        if line.startswith(CONDITION_LEADS):
+            if line not in head:
+                problems.append(f"condition lost: {line}")
+            continue
+        match = [g for r, g in results if r == result]
+        if not match:
+            problems.append(f"result lost: {result}")
+        elif not set(match[0]) <= set(gaps):
+            problems.append(f"gap not in the base: {sorted(set(match[0]) - set(gaps))}")
+    base_results = {_split(line)[0] for line in base}
+    for line in head:
+        if not line.startswith(CONDITION_LEADS) and _split(line)[0] not in base_results:
+            problems.append(f"result added: {line}")
+    return problems
+
+
+def test_dri_wording_rows_keep_the_base(tmp_path, capsys):
+    """Every row of the saved wording delta keeps the base's names, conditions and specificity, and the saved head
+    lines are this tree's (recomputed here), so the sign-off ("DRI = orchestrator, 2026-10-09", docs/readings-defaults/
+    rd3/DELTA.md) covers the English the branch shows."""
+    from tests.test_readings_nd_document import fnd1 as nd1, fnd2 as nd2
+    from ve.document import check_document, main
+    saved = json.loads(WORDING.read_text())
+    assert saved["base"] == "a3476e66" and len(saved["rows"]) == 6
+    for row in saved["rows"]:
+        assert _keeps_the_base(row["base"], row["head"]) == [], row["case"]
+    (tmp_path / "a").mkdir()
+    (tmp_path / "b").mkdir()
+    path1, path2 = nd1(tmp_path / "a"), nd2(tmp_path / "b")
+    query, implies = tmp_path / "query.json", tmp_path / "implies.json"
+    query.write_text(json.dumps(QUERY))
+    implies.write_text(json.dumps(IMPLIES))
+
+    def readings(*args):
+        assert main(["readings", str(path1), *args]) == 0
+        return json.loads(capsys.readouterr().out)["english"]
+    live = [readings("--conclusion", str(query)), readings("--conclusion", str(query), "--under", "rs_1:0"),
+            readings("--conclusion", str(query), "--under", "rs_1:1"), readings("--conclusion", str(implies)),
+            check_document(path1)["readings"]["english"], check_document(path2)["readings"]["english"]]
+    assert [row["head"] for row in saved["rows"]] == live

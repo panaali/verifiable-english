@@ -529,6 +529,29 @@ In plain words, each with the hypotheses it states:
   choices taking `A` that the search lists, and each verdict reads its rows as the fold says; each row is the lower
   route's own answer on the choice's regenerated document, whose theorems say what it means.
 
+## The conditions of an answer (DRI ruling of rd-3 round 3)
+
+An answer's conditions are one value, `conditionsOf` (every label a row's accepted evidence uses, then the
+restrictions). It is the result's `conditional_on`, under the completion the answer's `labels`, and the source of the
+plan's condition lines. The client checks only the answer's schema and its binding to the request; these theorems
+make the conditions Lean's:
+
+* `verdicts_conditions_conflict_free`, `verdicts_conditions_all` (the rows fold to CONFLICT-FREE, or to ALL): the
+  answer's `conditional_on` is `conditionsOf` of those rows (for an ALL, each proof's own labels per choice, each
+  among the answer's); its `labels` are the same list under the completion (the restrictions on the lower route,
+  where a choice's own coherence labels are not worded); and its plan cites each label.
+* `verdicts_conditions_some` (SOME, its first proved row `i`): the proof is `proofJson i`; under the completion the
+  `labels` are that row's labels, and the plan cites them after the R2 line.
+* `verdicts_conditions_none` (NONE): the restrictions are the result's, the `labels`, and cited by the plan.
+* `mem_conditionsOf`: a label is a condition exactly when a row's accepted evidence uses it or it is a restriction.
+  Nothing is dropped and nothing is added.
+* `verdictsPlan_cites`, `plan_cites_conditions`: where the plan states conditions, every label gets a line citing it.
+  `plan_conditions_only` says no line cites a label outside them (a `status` line relays a witness's own text).
+  `conditionItems_ne_nil` says a label with no wording gets an `unworded` line, which no renderer words, so the answer
+  is unavailable rather than shown without its condition.
+* `jstrings_toJson`, `verdictsPlan_eq`: the approved `englishPlan D route q a` reads the answer's `labels`, which is
+  exactly the `labelsOf` value the plan is planned from.
+
 The helpers: the fold lemmas (`foldEntailment_all`, ...), `covers_row`, `covers_mem`, the `setAt` lemmas behind
 `restrictionsFor_spec` (`complete_setAt`, `taking_setAt`, `index_setAt_self`, `index_setAt_ne`), `zip_tail_ne`,
 `couplingExcludes_iff`, `narrowingExcludes_iff`, `conflictFree_of_localFree`, `notFreeU_of_notFreeX`,
