@@ -9,13 +9,17 @@ def diagnosisOf (E : Env) (L : Lexicon) (c : Candidate) : Option Diagnosis :=
   | .ok ss => (ss[0]?).bind (diagnose E L c.sentence)
   | .error _ => none
 
+def closestStep (E : Env) (L : Lexicon) (best : Option (Candidate × Nat)) (c : Candidate) :
+    Option (Candidate × Nat) :=
+  match diagnosisOf E L c, best with
+    | some d, some (_, k) => if d.span.1 > k then some (c, d.span.1) else best
+    | some d, none => some (c, d.span.1)
+    | none, _ => best
+
 /-- The candidate whose diagnosis span starts furthest right, in its own bytes; ties go to the leftmost. Candidates
     without a diagnosis (the budget did not allow finding it) are skipped. -/
 def closest (E : Env) (L : Lexicon) (cs : List Candidate) : Option Candidate :=
-  (cs.foldl (fun (best : Option (Candidate × Nat)) c => match diagnosisOf E L c, best with
-    | some d, some (_, k) => if d.span.1 > k then some (c, d.span.1) else best
-    | some d, none => some (c, d.span.1)
-    | none, _ => best) none).map (·.1)
+  (cs.foldl (closestStep E L) none).map (·.1)
 
 /-- A candidate's byte offset on the question. F1: moved right by the frame. F2: before the gap, moved right by the
     auxiliary and its space; the put-back word maps to the question's first word, its following space to the

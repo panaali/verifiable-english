@@ -107,11 +107,16 @@ def Got.isMany : Got → Bool | .many => true | _ => false
 def Got.isRefused : Got → Bool | .refused _ => true | _ => false
 def Got.meaning? : Got → Option EFormula | .one φ => some φ | _ => Option.none
 
+/-- Add a candidate only when its meaning is new. -/
+def addMeaning (acc : List (Candidate × EFormula)) (x : Candidate × Got) :
+    List (Candidate × EFormula) :=
+  match x.2.meaning? with
+  | some φ => if acc.any (·.2 == φ) then acc else acc ++ [(x.1, φ)]
+  | none => acc
+
 /-- The first candidate of each distinct meaning, in candidate order. -/
 def firstMeanings (gs : List (Candidate × Got)) : List (Candidate × EFormula) :=
-  gs.foldl (fun acc (c, g) => match g.meaning? with
-    | some φ => if acc.any (·.2 == φ) then acc else acc ++ [(c, φ)]
-    | Option.none => acc) []
+  gs.foldl addMeaning []
 
 /-- F1's question for a candidate: `Is it the case that <sentence without its ".">?`. -/
 def caseThatQuestion (c : Candidate) : String := caseFrame ++ c.sentence.dropRight 1 ++ "?"
