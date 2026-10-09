@@ -461,6 +461,11 @@ def PlanItem.line (D : Doc) : PlanItem → Line
   | .text f r rs l => ⟨f, r, rs, none, [], l⟩
   | .shown r c m g => ⟨"E12", some r, D.sets.map (fun R => (R.id, (c.index R.id).getD 0)), some m, g, none⟩
 
+/-- A string member's text, the empty string for anything else: the plan compares texts, never `Json` values
+    (`Json`'s `==` cannot be unfolded in a proof, so a plan that compared them could not be reasoned about). -/
+def strOf (j : Json) : String := match j with | .str s => s | _ => ""
+def isNull (j : Json) : Bool := match j with | .null => true | _ => false
+
 def jstrings (j : Json) : List String := (VE.Bridge.strings j).toOption.getD []
 def jchoice (j : Json) : Choice := (Wire.decodeChoice j).toOption.getD []
 def jgaps (j : Json) : List (String × List String × Bool) :=
@@ -477,19 +482,35 @@ def mentioned (D : Doc) (labels : List String) : List String :=
     (D.couplings.filter (fun K => "coupling:" ++ K.id == l)).flatMap (fun K => K.sets.map (·.1)) ++
     (D.narrowings.filter (fun N => "narrowing:" ++ N.id == l)).filterMap (fun N => (inForce D N).map (·.id)))
 
-/-- E3 and its lines (2.3 item 1): a `Fill_T` label's pair sentence, a coupling's E5, one E7 per candidate a
-    narrowing drops; nothing when no label has a line. -/
+/-- The label a line cites (E3's lines, and a `status` line's relayed text). -/
+def PlanItem.label? : PlanItem → Option String
+  | .text _ _ _ l => l
+  | .shown .. => none
+
+@[simp] theorem PlanItem.label_text (f : String) (r : Option String) (rs : List (String × Nat)) (l : Option String) :
+    (PlanItem.text f r rs l).label? = l := rfl
+@[simp] theorem PlanItem.label_shown (r : String) (c : Choice) (m : String) (g : List (String × List String × Bool)) :
+    (PlanItem.shown r c m g).label? = none := rfl
+
+/-- One condition's lines (2.3 item 1): a `Fill_T` label's pair sentence, a coupling's E5, one E7 per candidate a
+    narrowing in force drops. A label with none of these is never left out of the plan: it gets an `unworded` line,
+    which no renderer words, so the answer is unavailable rather than shown without its condition. -/
+def conditionLines (D : Doc) (l : String) : List PlanItem :=
+  if l.startsWith "unsaid:pair:" then [PlanItem.text "P1" none [] (some l)]
+  else if D.couplings.any (fun K => "coupling:" ++ K.id == l) then [.text "E5" none [] (some l)]
+  else match D.narrowings.find? (fun N => "narrowing:" ++ N.id == l) with
+    | some N => match inForce D N with
+      | some R => (List.range R.candidates.length).filterMap (fun i => R.candidates[i]?.bind (fun a =>
+          if N.keeps.contains a.id then none else some (.text "E7" none [(R.id, i)] (some l))))
+      | none => []
+    | none => []
+
+def conditionItems (D : Doc) (l : String) : List PlanItem :=
+  if (conditionLines D l).isEmpty then [.text "unworded" none [] (some l)] else conditionLines D l
+
+/-- E3 and its lines: every condition's lines, in the order of the labels; nothing when there is no condition. -/
 def providedItems (D : Doc) (labels : List String) : List PlanItem :=
-  let lines := labels.flatMap (fun l =>
-    if l.startsWith "unsaid:pair:" then [PlanItem.text "P1" none [] (some l)]
-    else if D.couplings.any (fun K => "coupling:" ++ K.id == l) then [.text "E5" none [] (some l)]
-    else match D.narrowings.find? (fun N => "narrowing:" ++ N.id == l) with
-      | some N => match inForce D N with
-        | some R => (List.range R.candidates.length).filterMap (fun i => R.candidates[i]?.bind (fun a =>
-            if N.keeps.contains a.id then none else some (.text "E7" none [(R.id, i)] (some l))))
-        | none => []
-      | none => [])
-  if lines.isEmpty then [] else .text "E3" none [] none :: lines
+  if labels.isEmpty then [] else .text "E3" none [] none :: labels.flatMap (conditionItems D)
 
 /-- E13 for every open sentence no used label mentions. -/
 def independentItems (D : Doc) (labels : List String) : List PlanItem :=
@@ -509,25 +530,27 @@ def perChoice (answer : Json) : List (Nat × Json) :=
 
 /-- The first entry whose `key` is `value`, as a shown result of its `piece`. -/
 def firstShown (answer : Json) (key value piece result : String) : List PlanItem :=
-  match (perChoice answer).find? (fun (_, e) => e.getObjValD key == .str value) with
+  match (perChoice answer).find? (fun (_, e) => strOf (e.getObjValD key) == value) with
   | some (k, e) => [.shown result (jchoice (e.getObjValD "choice")) s!"{piece}@{k}"
       (jgaps ((e.getObjValD "gaps").getObjValD piece))]
   | none => []
 
-def planItems (D : Doc) (route : Route) (question : String) (answer : Json) : List PlanItem :=
+/-- The plan of `answer`. Its condition lines (E3 and the lines under it) are planned from `labels`, the very value
+    the answer's `labels` and `conditional_on` encode (`Run.labelsOf`, `Run.conditionsOf`), never re-read from the
+    JSON; `plan_cites_conditions` and `plan_conditions_only` say each label gets its lines and no line cites another. -/
+def planItems (D : Doc) (route : Route) (question : String) (labels : List String) (answer : Json) : List PlanItem :=
   if route != .enumerated then [] else
   let res := answer.getObjValD "result"
-  let labels := jstrings (answer.getObjValD "labels")
   let every := if D.sets.length == 1 then "E26" else "E10"
   if question == "conflict" then
     let finding := jstrings (answer.getObjValD "finding_sets")
     let head := if finding.isEmpty then [] else [PlanItem.text "E29" none (finding.map (·, 0)) none]
-    let status := res.getObjValD "status"
-    if status == .str "CONFLICT-FREE" then
+    let status := strOf (res.getObjValD "status")
+    if status == "CONFLICT-FREE" then
       head ++ [.text every (some "R1") [] none] ++ providedItems D labels ++ independentItems D labels
-    else if status == .str "CONFLICT" then
+    else if status == "CONFLICT" then
       head ++ (perChoice answer).flatMap (fun (k, e) =>
-        if e.getObjValD "conflict" == .str "CONFLICT" then
+        if strOf (e.getObjValD "conflict") == "CONFLICT" then
           [PlanItem.shown "R4" (jchoice (e.getObjValD "choice")) s!"witness@{k}"
             (jgaps ((e.getObjValD "gaps").getObjValD "witness"))] ++
           match e.getObjValD "status_text" with
@@ -536,7 +559,7 @@ def planItems (D : Doc) (route : Route) (question : String) (answer : Json) : Li
         else [])
     else head
   else if question == "premises" then
-    (if res.getObjValD "status" == .str "model" then firstShown answer "premises" "model" "model" "R5" else []) ++
+    (if strOf (res.getObjValD "status") == "model" then firstShown answer "premises" "model" "model" "R5" else []) ++
     (match answer.getObjValD "dead_readings" with
      | .arr xs => xs.toList.filterMap (fun d => match d.getObjValD "set", (d.getObjValD "index").getNat? with
          | .str s, .ok i => some (PlanItem.text "E17" none [(s, i)] none)
@@ -544,28 +567,174 @@ def planItems (D : Doc) (route : Route) (question : String) (answer : Json) : Li
      | _ => [])
   else
     let A := jchoice (res.getObjValD "assumed")
-    let verdict := res.getObjValD "verdict"
-    if verdict == .str "ALL" then
+    let verdict := strOf (res.getObjValD "verdict")
+    if verdict == "ALL" then
       (if A.isEmpty then [PlanItem.text every (some "R2") [] none]
        else [.text "E12" (some "R2") (assumedReadings D A) none]) ++ providedItems D labels
-    else if verdict == .str "SOME" then
+    else if verdict == "SOME" then
       [PlanItem.text "E12" (some "R2") (fullReadings D (jchoice ((res.getObjValD "proof").getObjValD "choice"))) none] ++
-        firstShown answer "query" "refuted" "countermodel" "R3"
-    else if verdict == .str "NONE" then
+        providedItems D labels ++ firstShown answer "query" "refuted" "countermodel" "R3"
+    else if verdict == "NONE" then
       (if D.sets.length ≥ 2 && A.isEmpty then [PlanItem.text "E27" none [] none] else []) ++
       (perChoice answer).flatMap (fun (k, e) =>
-        if e.getObjValD "query" == .str "refuted" then
+        if strOf (e.getObjValD "query") == "refuted" then
           [PlanItem.shown "R3" (jchoice (e.getObjValD "choice")) s!"countermodel@{k}"
             (jgaps ((e.getObjValD "gaps").getObjValD "countermodel"))]
         else []) ++
-      providedItems D (jstrings (res.getObjValD "restrictions"))
-    else if !(res.getObjValD "countermodel" == .null) && A.isEmpty then
+      providedItems D labels
+    else if !isNull (res.getObjValD "countermodel") && A.isEmpty then
       PlanItem.text "E28" none [] none :: firstShown answer "query" "refuted" "countermodel" "R3"
     else []
 
-/-- The plan of the case's decoded document `D` (2.4; review E5). -/
+/-- The plan of the case's decoded document `D` (2.4; review E5), its conditions planned from the answer's
+    `labels` (`jstrings_toJson`: exactly the list the answer encodes there). -/
 def englishPlan (D : Doc) (route : Route) (question : String) (answer : Lean.Json) : List Line :=
-  (planItems D route question answer).map (PlanItem.line D)
+  (planItems D route question (jstrings (answer.getObjValD "labels")) answer).map (PlanItem.line D)
+
+theorem jstrings_toJson (l : List String) : jstrings (toJson l) = l := by
+  have h : ∀ l : List String, (l.map (fun x => (toJson x : Json))).mapM Json.getStr? = .ok l := by
+    intro l
+    induction l with
+    | nil => rfl
+    | cons x xs ih =>
+      simp only [List.map_cons, List.mapM_cons, ih]
+      rfl
+  have e : (toJson l : Json) = Json.arr (l.map (fun x => (toJson x : Json))).toArray := by
+    simp only [toJson, List.toJson, Array.toJson, List.map_toArray]
+  have hs : VE.Bridge.strings (Json.arr (l.map (fun x => (toJson x : Json))).toArray) = .ok l := by
+    have hd : VE.Bridge.strings (Json.arr (l.map (fun x => (toJson x : Json))).toArray) =
+        (l.map (fun x => (toJson x : Json))).toArray.toList.mapM Json.getStr? := rfl
+    rw [hd, List.toList_toArray, h]
+  simp only [jstrings, e, hs]
+  rfl
+
+/-! ### The condition lines (2.3 item 1): every label gets its lines, and no line cites another label -/
+
+theorem conditionLines_label (D : Doc) (l : String) : ∀ it ∈ conditionLines D l, it.label? = some l := by
+  intro it hit
+  unfold conditionLines at hit
+  split at hit
+  · simp only [List.mem_singleton] at hit; subst hit; rfl
+  · split at hit
+    · simp only [List.mem_singleton] at hit; subst hit; rfl
+    · split at hit
+      · split at hit
+        · obtain ⟨i, _, hi⟩ := List.mem_filterMap.mp hit
+          obtain ⟨a, _, ha⟩ := Option.bind_eq_some_iff.mp hi
+          split at ha
+          · cases ha
+          · cases ha; rfl
+        · cases hit
+      · cases hit
+
+theorem conditionItems_label (D : Doc) (l : String) : ∀ it ∈ conditionItems D l, it.label? = some l := by
+  intro it hit
+  unfold conditionItems at hit
+  split at hit
+  · simp only [List.mem_singleton] at hit; subst hit; rfl
+  · exact conditionLines_label D l it hit
+
+theorem conditionItems_ne_nil (D : Doc) (l : String) : conditionItems D l ≠ [] := by
+  unfold conditionItems
+  split
+  · simp
+  · rename_i h
+    intro he
+    rw [he] at h
+    exact h rfl
+
+theorem providedItems_label (D : Doc) (labels : List String) :
+    ∀ it ∈ providedItems D labels, it.label? = none ∨ ∃ l ∈ labels, it.label? = some l := by
+  intro it hit
+  unfold providedItems at hit
+  split at hit
+  · cases hit
+  · rcases List.mem_cons.mp hit with rfl | hit
+    · exact Or.inl rfl
+    · obtain ⟨l, hl, hit⟩ := List.mem_flatMap.mp hit
+      exact Or.inr ⟨l, hl, conditionItems_label D l it hit⟩
+
+theorem providedItems_cites (D : Doc) (labels : List String) :
+    ∀ l ∈ labels, ∃ it ∈ providedItems D labels, it.label? = some l := by
+  intro l hl
+  obtain ⟨it, hit⟩ := List.exists_mem_of_ne_nil _ (conditionItems_ne_nil D l)
+  refine ⟨it, ?_, conditionItems_label D l it hit⟩
+  unfold providedItems
+  split
+  · rename_i h
+    simp only [List.isEmpty_iff] at h
+    subst h
+    cases hl
+  · exact List.mem_cons_of_mem _ (List.mem_flatMap.mpr ⟨l, hl, hit⟩)
+
+/-- Where the plan states conditions (a CONFLICT-FREE conflict answer, an ALL, a SOME, a NONE), every label in `labels`
+    is cited by a line of the plan. -/
+theorem plan_cites_conditions (D : Doc) (q : String) (labels : List String) (answer : Lean.Json)
+    (h : (q = "conflict" ∧ strOf ((answer.getObjValD "result").getObjValD "status") = "CONFLICT-FREE") ∨
+      (q = "query" ∧ (strOf ((answer.getObjValD "result").getObjValD "verdict") = "ALL" ∨
+        strOf ((answer.getObjValD "result").getObjValD "verdict") = "SOME" ∨
+        strOf ((answer.getObjValD "result").getObjValD "verdict") = "NONE"))) :
+    ∀ l ∈ labels, ∃ it ∈ planItems D .enumerated q labels answer, it.label? = some l := by
+  intro l hl
+  obtain ⟨it, hit, he⟩ := providedItems_cites D labels l hl
+  refine ⟨it, ?_, he⟩
+  rcases h with ⟨rfl, hs⟩ | ⟨rfl, hs | hs | hs⟩
+  all_goals
+    simp (config := {decide := true}) only [planItems, hs, Bool.false_eq_true, ↓reduceIte]
+    first
+      | simp (config := {decide := true}) [hit]
+      | (split <;> simp (config := {decide := true}) [hit])
+
+theorem firstShown_label (a : Lean.Json) (k v p r : String) : ∀ x ∈ firstShown a k v p r, x.label? = none := by
+  intro x hx
+  unfold firstShown at hx
+  split at hx
+  · simp only [List.mem_singleton] at hx; subst hx; rfl
+  · cases hx
+
+theorem independentItems_label (D : Doc) (ls : List String) : ∀ x ∈ independentItems D ls, x.label? = none := by
+  intro x hx
+  obtain ⟨R, _, rfl⟩ := List.mem_map.mp hx
+  rfl
+
+theorem providedItems_only (D : Doc) (ls : List String) : ∀ x ∈ providedItems D ls, ∀ l, x.label? = some l → l ∈ ls := by
+  intro x hx l hl
+  rcases providedItems_label D ls x hx with h | ⟨l', hl', h⟩
+  · rw [h] at hl; cases hl
+  · rw [h] at hl; cases hl; exact hl'
+
+/-- No line of a plan cites a label outside `labels`, other than a `status` line relaying a witness's own text. -/
+theorem plan_conditions_only (D : Doc) (q : String) (labels : List String) (answer : Lean.Json) :
+    ∀ it ∈ planItems D .enumerated q labels answer, ∀ l, it.label? = some l →
+      l ∈ labels ∨ it = .text "status" none [] (some l) := by
+  have hf := firstShown_label
+  have hi := independentItems_label D
+  have hp := providedItems_only D
+  intro it hit l hl
+  unfold planItems at hit
+  simp (config := {decide := true}) only [Bool.false_eq_true, ↓reduceIte] at hit
+  repeat' split at hit
+  all_goals (revert hl; revert hit; revert it)
+  all_goals simp only [List.mem_append, List.mem_cons, List.mem_singleton, List.mem_flatMap, List.mem_filterMap,
+    List.not_mem_nil, or_false, false_or, or_imp, forall_and, forall_exists_index, and_imp, forall_eq,
+    PlanItem.label_text, PlanItem.label_shown, reduceCtorEq, false_implies, implies_true, and_true, true_and]
+  all_goals (repeat' apply And.intro)
+  all_goals first
+    | (intro it h hl; exact Or.inl (hp _ _ h l hl))
+    | (intro it h hl; rw [hi _ _ h] at hl; cases hl)
+    | (intro it h hl; rw [hf _ _ _ _ _ _ h] at hl; cases hl)
+    | (intro it x _ h hl
+       repeat' split at h
+       all_goals simp only [List.mem_append, List.mem_singleton, List.mem_cons, List.not_mem_nil, or_false,
+         Option.some.injEq, reduceCtorEq] at h
+       all_goals (try rcases h with h | h)
+       all_goals (try subst h)
+       all_goals (try simp only [PlanItem.label_text, PlanItem.label_shown, reduceCtorEq, Option.some.injEq] at hl)
+       all_goals (try subst hl)
+       all_goals first
+         | exact Or.inr rfl
+         | exact h.elim
+         | done)
 
 /-- composition-s2 2.4's non-wordings hold of every plan. -/
 theorem plan_no_every_for_models (D : Doc) (route : Route) (q : String) (a : Lean.Json) :
@@ -864,6 +1033,13 @@ def word : ChoiceResult → String
 /-- The first occurrence of each label, in order. -/
 def dedupStrings (l : List String) : List String := l.foldl (fun acc x => if acc.contains x then acc else acc ++ [x]) []
 
+/-- The conditions a verdict rests on (2.3 item 1): every label a row's accepted evidence uses (`on k`: the conflict
+    packages' for a CONFLICT-FREE answer, the certificates' for an ALL, whose labels include their conflict
+    packages'), then the restrictions, each once. One value: the result's `conditional_on`, the answer's `labels`
+    under the completion and the plan's condition lines are all this list (`verdicts_conditions_*`). -/
+def conditionsOf (k : String) (D : Doc) (A : Choice) (infos : List RowInfo) : List String :=
+  dedupStrings (infos.flatMap (·.on k) ++ restrictionsFor D A)
+
 /-- W2's budget shape past 64 compatible choices, after its status. -/
 def overBudgetRest (D : Doc) : List (String × Json) :=
   [("route", .str "enumerated"), ("budget", Json.mkObj [("max_choices", toJson maxChoices)]),
@@ -880,7 +1056,7 @@ def conflictResult (D : Doc) (A : Choice) (infos : List RowInfo) : Json :=
   let rest := restrictionsFor D A
   match foldConflict (infos.map (fun i => (i.choice, i.conflict))) with
   | .free => Json.mkObj [("status", .str "CONFLICT-FREE"), ("route", .str "enumerated"),
-      ("conditional_on", toJson (dedupStrings (infos.flatMap (·.on "conflict") ++ rest))),
+      ("conditional_on", toJson (conditionsOf "conflict" D A infos)),
       ("restrictions", toJson rest), ("reading_premises_used", toJson rest),
       ("status_text", .str s!"CONFLICT-FREE among rules on the same act under every reading ({infos.length} readings checked one at a time)"),
       ("choices", statusesJson infos (·.conflict))]
@@ -968,7 +1144,7 @@ def entailmentResult (D : Doc) (A : Choice) (assumed : Option Choice) (infos : L
   | none => match foldEntailment cs rs with
     | .all => Json.mkObj ([("verdict", .str "ALL"), route, ("evidence", .str "certificates"),
         ("proofs", Json.arr (infos.map proofJson).toArray),
-        ("conditional_on", toJson (dedupStrings (infos.flatMap (·.on "certificate") ++ rest))),
+        ("conditional_on", toJson (conditionsOf "certificate" D A infos)),
         ("restrictions", toJson rest), ("reading_premises_used", toJson rest)] ++ named)
     | .none => Json.mkObj ([("verdict", .str "NONE"), route, ("countermodels", Json.arr (infos.map counterJson).toArray),
         ("restrictions", toJson rest)] ++ named)
@@ -1015,9 +1191,12 @@ def resultOf (question : String) (D : Doc) (A : Choice) (assumed : Option Choice
     | "premises" => premisesResult D infos (deadOf D infos dead).1
     | _ => entailmentResult D A assumed infos
 
-/-- The labels E3 cites (2.3 item 1): under the completion the labels the answer uses (`conditional_on`: the
-    `Fill_T` labels its certificates use, then the restrictions), on the lower route the restrictions; only for a
-    CONFLICT-FREE conflict answer and an ALL (NONE cites its restrictions from the result). -/
+/-- The labels E3 cites (2.3 item 1), the one value the plan's condition lines are planned from: for a
+    CONFLICT-FREE conflict answer and an ALL, under the completion the answer's `conditional_on` itself
+    (`conditionsOf`: the `Fill_T` labels its certificates use, then the restrictions), on the lower route the
+    restrictions (a lower answer's own labels, its coherence premises, are not worded); for a SOME under the
+    completion the labels its proof uses (the proved choice is named in full, so no restriction applies), on the
+    lower route none; for a NONE the restrictions. -/
 def labelsOf (question : String) (nd : Bool) (D : Doc) (A : Choice) (infos : Option (List RowInfo)) : List String :=
   match infos with
   | none => []
@@ -1026,10 +1205,13 @@ def labelsOf (question : String) (nd : Bool) (D : Doc) (A : Choice) (infos : Opt
     let rs := infos.map (fun i => (i.choice, i.query))
     let rest := restrictionsFor D A
     if question == "conflict" then
-      if foldConflict cs == .free then (if nd then dedupStrings (infos.flatMap (·.on "conflict") ++ rest) else rest)
+      if foldConflict cs == .free then (if nd then conditionsOf "conflict" D A infos else rest)
       else []
     else if question == "query" && reasonOf cs rs == none && foldEntailment cs rs == .all then
-      (if nd then dedupStrings (infos.flatMap (·.on "certificate") ++ rest) else rest)
+      (if nd then conditionsOf "certificate" D A infos else rest)
+    else if question == "query" && reasonOf cs rs == none && foldEntailment cs rs == .some then
+      (if nd then ((infos.find? (·.query == .proved)).map (·.on "certificate")).getD [] else [])
+    else if question == "query" && reasonOf cs rs == none && foldEntailment cs rs == .none then rest
     else []
 
 def deadReadingsJson (d : Option (List (String × Nat))) : Json :=
@@ -1040,30 +1222,42 @@ def deadReadingsJson (d : Option (List (String × Nat))) : Json :=
 
 def untakenJson (l : List (String × Nat)) : Json := Json.arr (l.map (fun (s, i) => Json.arr #[.str s, toJson i])).toArray
 
-/-- The answer: the question's result, its rows, the labels E3 cites, the dead readings, the untaken candidates and
-    the dead evidence (the premises question's), then the English plan Lean makes of them (`englishPlan`). -/
-def verdictsAnswer (id question : String) (nd : Bool) (D : Doc) (A : Choice) (assumed : Option Choice)
-    (infos : Option (List RowInfo)) (over : List RowInfo) (dead : List Json) : Json :=
-  let rows := (infos.getD over).map (perChoiceJson question)
+/-- The answer's members before its English plan. -/
+def answerFields (question : String) (nd : Bool) (D : Doc) (A : Choice) (assumed : Option Choice)
+    (infos : Option (List RowInfo)) (over : List RowInfo) (dead : List Json) : List (String × Json) :=
   let premises := question == "premises" && infos.isSome
   let d := deadOf D (infos.getD []) dead
-  let fs : List (String × Json) := [("route", .str "enumerated"), ("question", .str question),
+  [("route", .str "enumerated"), ("question", .str question),
     ("finding_sets", toJson (findingSets nd D)),
     ("restrictions", toJson (match infos with | some _ => restrictionsFor D A | none => [])),
-    ("result", resultOf question D A assumed infos over dead), ("per_choice", Json.arr rows.toArray),
+    ("result", resultOf question D A assumed infos over dead),
+    ("per_choice", Json.arr ((infos.getD over).map (perChoiceJson question)).toArray),
     ("labels", toJson (labelsOf question nd D A infos)),
     ("dead_readings", if premises then deadReadingsJson d.1 else .null),
     ("untaken", untakenJson (if premises then untakenOf D (infos.getD []) else [])),
     ("dead", Json.arr (if premises then d.2 else []).toArray)]
-  okWith id [("route", .str "enumerated"), ("question", .str question),
-    ("finding_sets", toJson (findingSets nd D)),
-    ("restrictions", toJson (match infos with | some _ => restrictionsFor D A | none => [])),
-    ("result", resultOf question D A assumed infos over dead), ("per_choice", Json.arr rows.toArray),
-    ("labels", toJson (labelsOf question nd D A infos)),
-    ("dead_readings", if premises then deadReadingsJson d.1 else .null),
-    ("untaken", untakenJson (if premises then untakenOf D (infos.getD []) else [])),
-    ("dead", Json.arr (if premises then d.2 else []).toArray),
-    ("english", Json.arr ((englishPlan D .enumerated question (Json.mkObj fs)).map Line.json).toArray)]
+
+/-- The English plan of the answer (`englishPlan` of its members): its condition lines planned from `labelsOf`,
+    the value the answer's `labels` encodes (`verdictsPlan_eq`). -/
+def verdictsPlan (question : String) (nd : Bool) (D : Doc) (A : Choice) (assumed : Option Choice)
+    (infos : Option (List RowInfo)) (over : List RowInfo) (dead : List Json) : List Line :=
+  englishPlan D .enumerated question (Json.mkObj (answerFields question nd D A assumed infos over dead))
+
+theorem verdictsPlan_eq (question : String) (nd : Bool) (D : Doc) (A : Choice) (assumed : Option Choice)
+    (infos : Option (List RowInfo)) (over : List RowInfo) (dead : List Json) :
+    verdictsPlan question nd D A assumed infos over dead =
+      (planItems D .enumerated question (labelsOf question nd D A infos)
+        (Json.mkObj (answerFields question nd D A assumed infos over dead))).map (PlanItem.line D) := by
+  have h : (Json.mkObj (answerFields question nd D A assumed infos over dead)).getObjValD "labels" =
+      toJson (labelsOf question nd D A infos) := rfl
+  simp only [verdictsPlan, englishPlan, h, jstrings_toJson]
+
+/-- The answer: the question's result, its rows, the labels E3 cites, the dead readings, the untaken candidates and
+    the dead evidence (the premises question's), then the English plan Lean makes of them (`verdictsPlan`). -/
+def verdictsAnswer (id question : String) (nd : Bool) (D : Doc) (A : Choice) (assumed : Option Choice)
+    (infos : Option (List RowInfo)) (over : List RowInfo) (dead : List Json) : Json :=
+  okWith id (answerFields question nd D A assumed infos over dead ++
+    [("english", Json.arr ((verdictsPlan question nd D A assumed infos over dead).map Line.json).toArray)])
 
 theorem map_row_choice (l : List Choice) (row : Choice → RowInfo) (h : ∀ c, (row c).choice = c) :
     (l.map row).map (·.choice) = l := by
@@ -1125,5 +1319,247 @@ def runVerdicts (lower : List String → Json → Json) (id : String) (b : Admit
     let c := jchoice (e.getObjValD "choice")
     if compatible D c && takes c then some (lowerInfo lower id b c e premisesJ conclusionJ) else none)
   return verdictsAnswer id question false D A named none over dead
+
+/-! ### The conditions of an answer (6.4; DRI ruling of rd-3 round 3)
+
+An answer's `conditional_on` labels are exactly the conditions its verdict rests on: they are `conditionsOf`, computed
+from the same rows the fold theorems read (`readings_wire_verdicts_*`, `lower_verdicts_*`), every label a row's
+accepted evidence uses and every restriction, nothing dropped and nothing added (`mem_conditionsOf`). The answer's
+`labels` are the same value under the completion (on the lower route the restrictions), and the English plan plans
+its condition lines from that value, a line citing each label (`verdictsPlan_cites`) and no line citing another
+(`plan_conditions_only`). So an answer whose `conditional_on`, `labels` or plan lacks a condition its rows use cannot
+come from `runVerdicts`. -/
+
+theorem mem_dedupStrings (l : List String) (x : String) : x ∈ dedupStrings l ↔ x ∈ l := by
+  unfold dedupStrings
+  suffices h : ∀ acc : List String,
+      x ∈ l.foldl (fun acc x => if acc.contains x then acc else acc ++ [x]) acc ↔ x ∈ acc ∨ x ∈ l by
+    simpa using h []
+  induction l with
+  | nil => intro acc; simp
+  | cons y ys ih =>
+    intro acc
+    simp only [List.foldl_cons, List.mem_cons]
+    rw [ih]
+    split
+    · rename_i hy
+      have hy : y ∈ acc := by simpa using hy
+      constructor
+      · rintro (h | h)
+        · exact Or.inl h
+        · exact Or.inr (Or.inr h)
+      · rintro (h | rfl | h)
+        · exact Or.inl h
+        · exact Or.inl hy
+        · exact Or.inr h
+    · simp only [List.mem_append, List.mem_singleton]
+      constructor
+      · rintro ((h | rfl) | h)
+        · exact Or.inl h
+        · exact Or.inr (Or.inl rfl)
+        · exact Or.inr (Or.inr h)
+      · rintro (h | rfl | h)
+        · exact Or.inl (Or.inl h)
+        · exact Or.inl (Or.inr rfl)
+        · exact Or.inr h
+
+/-- Nothing dropped, nothing added: a label is a condition exactly when a row's accepted evidence uses it or it is a
+    restriction. -/
+theorem mem_conditionsOf (k : String) (D : Doc) (A : Choice) (infos : List RowInfo) (l : String) :
+    l ∈ conditionsOf k D A infos ↔ (∃ i ∈ infos, l ∈ i.on k) ∨ l ∈ restrictionsFor D A := by
+  simp only [conditionsOf, mem_dedupStrings, List.mem_append, List.mem_flatMap]
+
+theorem verdictsAnswer_result (id question : String) (nd : Bool) (D : Doc) (A : Choice) (assumed : Option Choice)
+    (infos : Option (List RowInfo)) (over : List RowInfo) (dead : List Json) :
+    (verdictsAnswer id question nd D A assumed infos over dead).getObjValD "result" =
+      resultOf question D A assumed infos over dead := rfl
+
+theorem verdictsAnswer_labels (id question : String) (nd : Bool) (D : Doc) (A : Choice) (assumed : Option Choice)
+    (infos : Option (List RowInfo)) (over : List RowInfo) (dead : List Json) :
+    (verdictsAnswer id question nd D A assumed infos over dead).getObjValD "labels" =
+      toJson (labelsOf question nd D A infos) := rfl
+
+theorem verdictsAnswer_english (id question : String) (nd : Bool) (D : Doc) (A : Choice) (assumed : Option Choice)
+    (infos : Option (List RowInfo)) (over : List RowInfo) (dead : List Json) :
+    (verdictsAnswer id question nd D A assumed infos over dead).getObjValD "english" =
+      Json.arr ((verdictsPlan question nd D A assumed infos over dead).map Line.json).toArray := rfl
+
+theorem planItem_line_label (D : Doc) (it : PlanItem) : (it.line D).label = it.label? := by
+  cases it <;> rfl
+
+/-- The answer's plan cites every label of `labelsOf` where it states conditions. -/
+theorem verdictsPlan_cites (question : String) (nd : Bool) (D : Doc) (A : Choice) (assumed : Option Choice)
+    (infos : Option (List RowInfo)) (over : List RowInfo) (dead : List Json)
+    (h : (question = "conflict" ∧ strOf ((resultOf question D A assumed infos over dead).getObjValD "status") =
+        "CONFLICT-FREE") ∨
+      (question = "query" ∧ (strOf ((resultOf question D A assumed infos over dead).getObjValD "verdict") = "ALL" ∨
+        strOf ((resultOf question D A assumed infos over dead).getObjValD "verdict") = "SOME" ∨
+        strOf ((resultOf question D A assumed infos over dead).getObjValD "verdict") = "NONE"))) :
+    ∀ l ∈ labelsOf question nd D A infos,
+      ∃ line ∈ verdictsPlan question nd D A assumed infos over dead, line.label = some l := by
+  intro l hl
+  obtain ⟨it, hit, he⟩ := plan_cites_conditions D question (labelsOf question nd D A infos)
+    (Json.mkObj (answerFields question nd D A assumed infos over dead)) h l hl
+  rw [verdictsPlan_eq]
+  exact ⟨it.line D, List.mem_map_of_mem hit, by rw [planItem_line_label, he]⟩
+
+theorem reasonOf_none_of_fold {cs rs : List (Choice × ChoiceResult)} (h : foldEntailment cs rs ≠ .unknown) :
+    reasonOf cs rs = none := by
+  have hf : foldConflict cs = .free := by
+    by_cases hc : foldConflict cs = .free
+    · exact hc
+    · exfalso
+      apply h
+      unfold foldEntailment
+      simp [hc]
+  unfold reasonOf
+  split
+  · simp [h]
+  · rename_i hs
+    exact absurd hf hs
+
+theorem proofJson_conditional_on (i : RowInfo) :
+    (proofJson i).getObjValD "conditional_on" = toJson (i.on "certificate") := rfl
+
+/-- A CONFLICT-FREE answer (its rows `infos` fold to CONFLICT-FREE): its `conditional_on` is `conditionsOf` of those
+    rows, its `labels` are the same list under the completion (the restrictions on the lower route), and its plan
+    cites each of them. -/
+theorem verdicts_conditions_conflict_free (id : String) (nd : Bool) (D : Doc) (A : Choice)
+    (assumed : Option Choice) (infos : List RowInfo) (dead : List Json)
+    (hv : foldConflict (infos.map (fun i => (i.choice, i.conflict))) = .free) :
+    ((verdictsAnswer id "conflict" nd D A assumed (some infos) [] dead).getObjValD "result").getObjValD
+        "conditional_on" = toJson (conditionsOf "conflict" D A infos) ∧
+    (verdictsAnswer id "conflict" nd D A assumed (some infos) [] dead).getObjValD "labels" =
+        toJson (if nd then conditionsOf "conflict" D A infos else restrictionsFor D A) ∧
+    (∀ l, l ∈ conditionsOf "conflict" D A infos ↔ (∃ i ∈ infos, l ∈ i.on "conflict") ∨ l ∈ restrictionsFor D A) ∧
+    ∀ l ∈ (if nd then conditionsOf "conflict" D A infos else restrictionsFor D A),
+      ∃ line ∈ verdictsPlan "conflict" nd D A assumed (some infos) [] dead, line.label = some l := by
+  have hr : resultOf "conflict" D A assumed (some infos) [] dead = conflictResult D A infos := rfl
+  have hl : labelsOf "conflict" nd D A (some infos) =
+      (if nd then conditionsOf "conflict" D A infos else restrictionsFor D A) := by
+    cases nd <;> simp (config := {decide := true}) [labelsOf, hv]
+  refine ⟨?_, ?_, mem_conditionsOf "conflict" D A infos, ?_⟩
+  · rw [verdictsAnswer_result, hr]
+    unfold conflictResult
+    simp only [hv]
+    rfl
+  · rw [verdictsAnswer_labels, hl]
+  · rw [← hl]
+    apply verdictsPlan_cites
+    left
+    refine ⟨rfl, ?_⟩
+    rw [hr]
+    unfold conflictResult
+    simp only [hv]
+    rfl
+
+/-- An ALL: its `conditional_on` is `conditionsOf` of the rows, each proof's (per choice) is that row's own labels,
+    each of them among the answer's; its `labels` are the same list under the completion (the restrictions on the
+    lower route), and its plan cites each of them. -/
+theorem verdicts_conditions_all (id : String) (nd : Bool) (D : Doc) (A : Choice)
+    (assumed : Option Choice) (infos : List RowInfo) (dead : List Json)
+    (hv : foldEntailment (infos.map (fun i => (i.choice, i.conflict))) (infos.map (fun i => (i.choice, i.query))) =
+      .all) :
+    ((verdictsAnswer id "query" nd D A assumed (some infos) [] dead).getObjValD "result").getObjValD
+        "conditional_on" = toJson (conditionsOf "certificate" D A infos) ∧
+    ((verdictsAnswer id "query" nd D A assumed (some infos) [] dead).getObjValD "result").getObjValD
+        "proofs" = Json.arr (infos.map proofJson).toArray ∧
+    (∀ i ∈ infos, ∀ l ∈ i.on "certificate", l ∈ conditionsOf "certificate" D A infos) ∧
+    (verdictsAnswer id "query" nd D A assumed (some infos) [] dead).getObjValD "labels" =
+        toJson (if nd then conditionsOf "certificate" D A infos else restrictionsFor D A) ∧
+    (∀ l, l ∈ conditionsOf "certificate" D A infos ↔
+      (∃ i ∈ infos, l ∈ i.on "certificate") ∨ l ∈ restrictionsFor D A) ∧
+    ∀ l ∈ (if nd then conditionsOf "certificate" D A infos else restrictionsFor D A),
+      ∃ line ∈ verdictsPlan "query" nd D A assumed (some infos) [] dead, line.label = some l := by
+  have hn := reasonOf_none_of_fold (by rw [hv]; decide)
+  have hr : resultOf "query" D A assumed (some infos) [] dead = entailmentResult D A assumed infos := rfl
+  have he : entailmentResult D A assumed infos = Json.mkObj ([("verdict", .str "ALL"), ("route", .str "enumerated"),
+      ("evidence", .str "certificates"), ("proofs", Json.arr (infos.map proofJson).toArray),
+      ("conditional_on", toJson (conditionsOf "certificate" D A infos)),
+      ("restrictions", toJson (restrictionsFor D A)), ("reading_premises_used", toJson (restrictionsFor D A))] ++
+      assumedFields assumed) := by
+    unfold entailmentResult
+    simp only [hn, hv]
+  have hl : labelsOf "query" nd D A (some infos) =
+      (if nd then conditionsOf "certificate" D A infos else restrictionsFor D A) := by
+    cases nd <;> simp (config := {decide := true}) [labelsOf, hv, hn]
+  refine ⟨?_, ?_, fun i hi l hli => (mem_conditionsOf _ _ _ _ _).mpr (Or.inl ⟨i, hi, hli⟩), ?_,
+    mem_conditionsOf "certificate" D A infos, ?_⟩
+  · rw [verdictsAnswer_result, hr, he]
+    cases assumed <;> rfl
+  · rw [verdictsAnswer_result, hr, he]
+    cases assumed <;> rfl
+  · rw [verdictsAnswer_labels, hl]
+  · rw [← hl]
+    apply verdictsPlan_cites
+    right
+    refine ⟨rfl, Or.inl ?_⟩
+    rw [hr, he]
+    cases assumed <;> rfl
+
+/-- A SOME: its proof is the first proved row's (per choice, `proofJson`: that row's own labels); its `labels` are
+    those labels under the completion (none on the lower route), and its plan cites each of them. -/
+theorem verdicts_conditions_some (id : String) (nd : Bool) (D : Doc) (A : Choice)
+    (assumed : Option Choice) (infos : List RowInfo) (dead : List Json) (i : RowInfo)
+    (hv : foldEntailment (infos.map (fun i => (i.choice, i.conflict))) (infos.map (fun i => (i.choice, i.query))) =
+      .some)
+    (hi : infos.find? (·.query == .proved) = some i) :
+    ((verdictsAnswer id "query" nd D A assumed (some infos) [] dead).getObjValD "result").getObjValD "proof" =
+        proofJson i ∧
+    (verdictsAnswer id "query" nd D A assumed (some infos) [] dead).getObjValD "labels" =
+        toJson (if nd then i.on "certificate" else []) ∧
+    ∀ l ∈ (if nd then i.on "certificate" else []),
+      ∃ line ∈ verdictsPlan "query" nd D A assumed (some infos) [] dead, line.label = some l := by
+  have hn := reasonOf_none_of_fold (by rw [hv]; decide)
+  have hr : resultOf "query" D A assumed (some infos) [] dead = entailmentResult D A assumed infos := rfl
+  have he : entailmentResult D A assumed infos = Json.mkObj ([("verdict", .str "SOME"), ("route", .str "enumerated"),
+      ("proof", proofJson i),
+      ("countermodel", ((infos.find? (·.query == .refuted)).map counterJson).getD .null)] ++
+      assumedFields assumed) := by
+    unfold entailmentResult
+    simp only [hn, hv, hi, Option.map_some, Option.getD_some]
+  have hl : labelsOf "query" nd D A (some infos) = (if nd then i.on "certificate" else []) := by
+    cases nd <;> simp (config := {decide := true}) [labelsOf, hv, hn, hi]
+  refine ⟨?_, ?_, ?_⟩
+  · rw [verdictsAnswer_result, hr, he]
+    cases assumed <;> rfl
+  · rw [verdictsAnswer_labels, hl]
+  · rw [← hl]
+    apply verdictsPlan_cites
+    right
+    refine ⟨rfl, Or.inr (Or.inl ?_)⟩
+    rw [hr, he]
+    cases assumed <;> rfl
+
+/-- A NONE: its conditions are the restrictions, which its `labels` are and its plan cites. -/
+theorem verdicts_conditions_none (id : String) (nd : Bool) (D : Doc) (A : Choice)
+    (assumed : Option Choice) (infos : List RowInfo) (dead : List Json)
+    (hv : foldEntailment (infos.map (fun i => (i.choice, i.conflict))) (infos.map (fun i => (i.choice, i.query))) =
+      .none) :
+    ((verdictsAnswer id "query" nd D A assumed (some infos) [] dead).getObjValD "result").getObjValD
+        "restrictions" = toJson (restrictionsFor D A) ∧
+    (verdictsAnswer id "query" nd D A assumed (some infos) [] dead).getObjValD "labels" =
+        toJson (restrictionsFor D A) ∧
+    ∀ l ∈ restrictionsFor D A,
+      ∃ line ∈ verdictsPlan "query" nd D A assumed (some infos) [] dead, line.label = some l := by
+  have hn := reasonOf_none_of_fold (by rw [hv]; decide)
+  have hr : resultOf "query" D A assumed (some infos) [] dead = entailmentResult D A assumed infos := rfl
+  have he : entailmentResult D A assumed infos = Json.mkObj ([("verdict", .str "NONE"), ("route", .str "enumerated"),
+      ("countermodels", Json.arr (infos.map counterJson).toArray),
+      ("restrictions", toJson (restrictionsFor D A))] ++ assumedFields assumed) := by
+    unfold entailmentResult
+    simp only [hn, hv]
+  have hl : labelsOf "query" nd D A (some infos) = restrictionsFor D A := by
+    cases nd <;> simp (config := {decide := true}) [labelsOf, hv, hn]
+  refine ⟨?_, ?_, ?_⟩
+  · rw [verdictsAnswer_result, hr, he]
+    cases assumed <;> rfl
+  · rw [verdictsAnswer_labels, hl]
+  · rw [← hl]
+    apply verdictsPlan_cites
+    right
+    refine ⟨rfl, Or.inr (Or.inr ?_)⟩
+    rw [hr, he]
+    cases assumed <;> rfl
 
 end VE.Readings.Run

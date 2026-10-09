@@ -3,27 +3,27 @@
  "totals": {
   "K": 978,
   "S": 9475,
-  "D": 12949,
-  "G": 24673,
+  "D": 12954,
+  "G": 24703,
   "C": 8185,
-  "P": 66882,
-  "T": 13245,
-  "o": 11442,
-  "D[V]": 11830,
+  "P": 67271,
+  "T": 13275,
+  "o": 11454,
+  "D[V]": 11835,
   "D[R]": 638,
   "D[I]": 481,
-  "G[V]": 23353,
+  "G[V]": 23383,
   "G[R]": 1096,
   "G[I]": 224,
-  "tied": 171,
+  "tied": 178,
   "unclassified": 0,
-  "trusted": 45484,
-  "lines": 147829
+  "trusted": 45512,
+  "lines": 148295
  },
  "budget": {
   "K": 978,
   "S": 9475,
-  "V": 35031
+  "V": 35059
  },
  "signed": [],
  "history": [
@@ -255,6 +255,19 @@
     "K": 978,
     "S": 9475,
     "V": 35031
+   }
+  },
+  {
+   "change": "RD-3 round 3 (DRI ruling): one conditions value (conditionsOf, tied) feeds conditional_on, labels and the plan; the plan compares texts (strOf) and plans every condition's lines (conditionItems)",
+   "rebaselined_from": {
+    "K": 978,
+    "S": 9475,
+    "V": 35031
+   },
+   "to": {
+    "K": 978,
+    "S": 9475,
+    "V": 35059
    }
   }
  ],
@@ -3551,7 +3564,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 400,
+   "T": 403,
    "o": 7,
    "D[V]": 0,
    "D[R]": 0,
@@ -3562,7 +3575,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 407
+   "lines": 410
   },
   "ResponseShape/CaseDeciders.lean": {
    "K": 0,
@@ -5351,7 +5364,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 4532,
+   "T": 4559,
    "o": 195,
    "D[V]": 0,
    "D[R]": 0,
@@ -5362,7 +5375,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 4727
+   "lines": 4754
   },
   "VE/Bridge.lean": {
    "K": 3,
@@ -9867,22 +9880,22 @@
   "VE/Readings/VerdictsWire.lean": {
    "K": 0,
    "S": 0,
-   "D": 206,
-   "G": 442,
+   "D": 211,
+   "G": 472,
    "C": 130,
-   "P": 290,
+   "P": 679,
    "T": 0,
-   "o": 61,
-   "D[V]": 197,
+   "o": 73,
+   "D[V]": 202,
    "D[R]": 9,
    "D[I]": 0,
-   "G[V]": 442,
+   "G[V]": 472,
    "G[R]": 0,
    "G[I]": 0,
-   "tied": 0,
+   "tied": 7,
    "unclassified": 0,
-   "trusted": 639,
-   "lines": 1129
+   "trusted": 667,
+   "lines": 1565
   },
   "VE/Readings/Wire.lean": {
    "K": 0,

@@ -352,7 +352,7 @@ theorem verdictsAnswer_fits (id question : String) (nd : Bool) (D : Doc) (A : Ch
   simp only [verdictsQuestions, List.contains_cons, List.contains_nil, Bool.or_false, Bool.or_eq_true, beq_iff_eq] at hq
   rcases hq with rfl | rfl | rfl
   all_goals
-    unfold verdictsAnswer deadReadingsJson untakenJson
+    unfold verdictsAnswer answerFields deadReadingsJson untakenJson
     simp only [okWith, VE.Route.Wire.ok]
     fits
   all_goals first
