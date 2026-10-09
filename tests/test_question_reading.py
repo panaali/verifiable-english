@@ -313,8 +313,11 @@ def test_every_mutation_of_a_genuine_answer_is_refused(fixture, monkeypatch):
     lambda r: r.update(rephrasings=["Every member is eligible."]),
     lambda r: r.update(advice={"id": "x"}),
     lambda r: r.update(text=r["text"] + " "),
+    lambda r: r.update(span=[False, r["span"][1]]),
+    lambda r: r.update(span=[0, True]),
+    lambda r: r.update(span=[0.0, r["span"][1]]),
 ], ids=["status", "code", "span-out", "span-reversed", "rephrasing-twice", "rephrasing-not-question",
-        "advice", "text-not-checked"])
+        "advice", "text-not-checked", "span-bool-start", "span-bool-stop", "span-float"])
 def test_answer_mutations_inside_their_kinds(change, monkeypatch):
     """Mutations that keep each field's JSON kind: only those the contract can see are refused; a changed text is
     Lean's to write (it is relayed, never re-derived), so it passes and is printed as Lean wrote it."""
@@ -443,18 +446,23 @@ def test_text_variants_get_well_formed_answers(name):
     """The question's text is normalised by one function, E2's lexer, on every path: each variant gets a
     well-formed answer (the relay checks it), and no variant reads as a sentence with other words."""
     question = VARIANTS[name]
-    env, words = F.environment("G"), None
+    env = F.environment("G")
     words = EnglishVocabulary(env, _defer_overlay_refusals=True)
-    try:
-        answer = english_lean.read_question(env, question, words, {})
-    except CheckerUnavailable:
-        raise
-    except VEError as exc:
-        answer = exc.lean_question
-        assert answer["status"] != "one"
-        return
-    assert sorted(answer["sentence"].replace(".", "").lower().split()) == \
-        sorted(question.rstrip("?").lower().split())
+    raw = (ROOT / F.DOCUMENTS["G"]).read_bytes()
+    answers = []
+    for call in (lambda: english_lean.read_question(env, question, words, {}), lambda: ask.read(raw, question)):
+        try:
+            answers.append(call())
+        except CheckerUnavailable:
+            raise
+        except VEError as exc:
+            answers.append(exc.lean_question)
+    # The relay and the one entry point give the same answer.
+    assert answers[0] == answers[1]
+    answer = answers[0]
+    if answer["status"] == "one":
+        assert sorted(answer["sentence"].replace(".", "").lower().split()) == \
+            sorted(question.rstrip("?").lower().split())
 
 
 # ------------------------------------------------------------------ the whole operation's deadline
