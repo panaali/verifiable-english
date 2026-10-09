@@ -1,0 +1,44 @@
+{
+ "base": "8350e55f8e8ead02063ee17d05bf729c7e9e81b9",
+ "base_sha256": "cb75f28bc29da62e59344fc2e0f243b1ccbced381c505772a1adf854ad9aa36c",
+ "head": "9a9a02ce46dd0bd122e13d7901241f346e98b97a",
+ "head_sha256": "4f14ada9c6a25d88584a8417aa54565685cc5c7ef32ba18d20768ec21d6258ea",
+ "listed": {
+  "availability": 0,
+  "order": 266,
+  "unavailable": 4,
+  "verdict": 166,
+  "wording": 36
+ },
+ "listed_records_by_owner": {
+  "admission": 10,
+  "environment": 260,
+  "formula": 162
+ },
+ "method": "tools/lean_first_diff.py record (every corpus, base worktree and head) then compare --delta docs/lean-first/b16b/delta.json",
+ "records": {
+  "conformance/lean": 19806,
+  "conformance/python": 19806,
+  "discourse/default": 6350,
+  "document/default": 3632,
+  "norm_defaults/default": 2020,
+  "pilots/default": 393,
+  "probe/lean": 9435,
+  "probe/python": 9435,
+  "quantity/lean": 12863,
+  "quantity/python": 12863,
+  "readings/default": 1137,
+  "rights/default": 2500
+ },
+ "totals": {
+  "order": 266,
+  "same": 99700,
+  "unavailable": 4,
+  "verdict": 166,
+  "wording": 104
+ },
+ "unavailable_both": {
+  "pilots/default": 4
+ },
+ "unlisted": 0
+}

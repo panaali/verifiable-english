@@ -30,10 +30,44 @@ def decodeSignature (profiles : List String) (vocabulary : Json) : Except String
     pure (c, ← VE.Bridge.stringField entry "sort")
   pure ⟨sorts, predicates, constants, profiles⟩
 
-/-- Python `repr` of an identifier-like string. -/
+/-- Characters Python's `str.isprintable` refuses, which `repr` escapes: exact for Latin-1, and above it the
+separator, format and private-use ranges a diagnostic can meet. An unassigned code point outside these ranges
+(Python escapes it too) is shown as itself. -/
+def nonPrintable (n : Nat) : Bool :=
+  n < 0x20 || (0x7f ≤ n && n ≤ 0xa0) || n == 0xad || (0x600 ≤ n && n ≤ 0x605) || n == 0x61c ||
+  n == 0x6dd || n == 0x70f || n == 0x180e || n == 0x1680 || (0x2000 ≤ n && n ≤ 0x200f) ||
+  (0x2028 ≤ n && n ≤ 0x202f) || (0x205f ≤ n && n ≤ 0x206f) || n == 0x3000 || (0xd800 ≤ n && n ≤ 0xf8ff) ||
+  n == 0xfeff || (0xfff9 ≤ n && n ≤ 0xfffb) || n ≥ 0xf0000
+
+def hexDigits (width n : Nat) : String :=
+  let digits := Nat.toDigits 16 n
+  String.mk (List.replicate (width - digits.length) '0' ++ digits)
+
+/-- Python `repr` of a string: single quotes unless it has a single quote and no double quote; the backslash,
+that quote, tab, newline and carriage return escaped by name, and every other non-printable character as
+`\xNN`, `\uNNNN` or `\UNNNNNNNN` (looprecheck1 of batch 16b: a name with a control character, a tab or a
+no-break space was shown raw where Python shows its escape). -/
 def pyRepr (s : String) : String :=
-  if s.contains '\'' && !s.contains '"' then "\"" ++ s ++ "\""
-  else "'" ++ (s.replace "\\" "\\\\").replace "'" "\\'" ++ "'"
+  let q := if s.contains '\'' && !s.contains '"' then '"' else '\''
+  let esc := fun (c : Char) =>
+    let n := c.toNat
+    if c == '\\' then "\\\\" else if c == q then "\\" ++ c.toString
+    else if c == '\t' then "\\t" else if c == '\n' then "\\n" else if c == '\r' then "\\r"
+    else if !nonPrintable n then c.toString
+    else if n ≤ 0xff then "\\x" ++ hexDigits 2 n
+    else if n ≤ 0xffff then "\\u" ++ hexDigits 4 n
+    else "\\U" ++ hexDigits 8 n
+  q.toString ++ String.join (s.toList.map esc) ++ q.toString
+
+#guard pyRepr "in_legal\r" == "'in_legal\\r'"
+#guard pyRepr "i\tn" == "'i\\tn'"
+#guard pyRepr "adopted\x1c" == "'adopted\\x1c'"
+#guard pyRepr "g\u00a0uarantee" == "'g\\xa0uarantee'"
+#guard pyRepr "a\u2028b" == "'a\\u2028b'"
+#guard pyRepr "bob\u2019" == "'bob\u2019'"
+#guard pyRepr "it's" == "\"it's\""
+#guard pyRepr "a'b\"c" == "'a\\'b\"c'"
+#guard pyRepr "a\\b" == "'a\\\\b'"
 
 /-- Python `repr` of a tuple of strings: `('a',)`, `('a', 'b')`. -/
 def pyTuple : List String → String
@@ -59,12 +93,22 @@ def tick : Check Unit := do
   set (n + 1)
 
 /-- Python `repr` of a JSON value the Python decoder accepts as a name. -/
-def pyValue : Json → String
-  | .str s => pyRepr s
-  | .bool true => "True"
-  | .bool false => "False"
-  | .null => "None"
-  | j => j.compress
+def pyJson : Nat → Json → String
+  | 0, _ => "..."
+  | _ + 1, .str s => pyRepr s
+  | _ + 1, .bool true => "True"
+  | _ + 1, .bool false => "False"
+  | _ + 1, .null => "None"
+  | _ + 1, .num n => toString n
+  | n + 1, .arr a => "[" ++ ", ".intercalate (a.toList.map (pyJson n)) ++ "]"
+  | n + 1, .obj o => "{" ++ ", ".intercalate (o.toList.map fun (k, v) => pyRepr k ++ ": " ++ pyJson n v) ++ "}"
+
+/-- Python `repr` of any decoded JSON value (a list or an object as Python shows it, not as JSON). -/
+def pyValue (j : Json) : String := pyJson 64 j
+
+#guard pyValue (Json.arr #[]) == "[]"
+#guard pyValue (Json.mkObj []) == "{}"
+#guard pyValue (Json.arr #[.str "a", .bool true, .null, toJson (7 : Nat)]) == "['a', True, None, 7]"
 
 def term (sig : Signature) (ctx : List String) (depth : Nat) : Nat → Json → Check String
   | 0, _ => fail "TypeMismatch" "Expected a variable or constant term"

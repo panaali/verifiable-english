@@ -1,0 +1,65 @@
+{
+ "document": {
+  "documents": 1816,
+  "lean": 773,
+  "other": {
+   "retained: a distinguishing model the Lean model decoder refuses": 22,
+   "retained: document checks under NORMS@0 need its Lean profile route": 1,
+   "retained: document checks under RISK@0 need its Lean profile route": 1,
+   "retained: document checks under definitions@0\u001c need its Lean profile route": 1,
+   "retained: document checks under norms@0\r need its Lean profile route": 1,
+   "retained: document checks under order@0 need its Lean profile route": 1,
+   "retained: document checks under relational-fol@0\u2019 need its Lean profile route": 1,
+   "retained: document checks under relat\u0130onal-fol@0 need its Lean profile route": 1,
+   "retained: document checks under r\u00a0elational-fol@0 need its Lean profile route": 1,
+   "retained: fenced English or strict content needs the Lean surface parser": 9,
+   "retained: front matter outside the restricted JSON reader": 982,
+   "retained: the environment block PROFILES needs its Lean route's decoder": 2,
+   "retained: the environment block alternatives\u001c needs its Lean route's decoder": 1,
+   "retained: the environment block alternatives needs its Lean route's decoder": 3,
+   "retained: the environment block l\tanguage needs its Lean route's decoder": 2,
+   "retained: the environment block language\r needs its Lean route's decoder": 1,
+   "retained: the environment block language\u2019 needs its Lean route's decoder": 1,
+   "retained: the environment block p  rofiles needs its Lean route's decoder": 1,
+   "retained: the environment block profiles\r needs its Lean route's decoder": 1,
+   "retained: the environment block profiles\u2019 needs its Lean route's decoder": 1,
+   "retained: the environment block prof\u0130les needs its Lean route's decoder": 1,
+   "retained: the environment block s\tpec_revision needs its Lean route's decoder": 2,
+   "retained: the environment block spec_revision\r needs its Lean route's decoder": 1,
+   "retained: the environment block spec_revision\u2019 needs its Lean route's decoder": 1,
+   "retained: the environment block v\tocabulary needs its Lean route's decoder": 1,
+   "retained: the environment block vocabulary\u2019 needs its Lean route's decoder": 1,
+   "retained: the environment block v\u00a0ocabulary needs its Lean route's decoder": 2
+  }
+ },
+ "norm_defaults": {
+  "documents": 1010,
+  "lean": 0,
+  "other": {
+   "retained: document checks under norm-defaults@0 need its Lean profile route": 1010
+  }
+ },
+ "pilots": {
+  "documents": 393,
+  "lean": 2,
+  "other": {
+   "discourse route (ve-document@2)": 8,
+   "retained: a document with senses is read by the Lean senses route": 7,
+   "retained: document checks under norm-defaults@0 need its Lean profile route": 315,
+   "retained: document checks under order@0 need its Lean profile route": 1,
+   "retained: document checks under soft-norms@0 need its Lean profile route": 18,
+   "retained: fenced English or strict content needs the Lean surface parser": 3,
+   "retained: front matter outside the restricted JSON reader": 32,
+   "retained: norm content needs the Lean norms route": 7
+  }
+ },
+ "rights": {
+  "documents": 1250,
+  "lean": 0,
+  "other": {
+   "retained: document checks under readings@1 need its Lean profile route": 82,
+   "retained: document checks under rights@0 need its Lean profile route": 386,
+   "retained: front matter outside the restricted JSON reader": 782
+  }
+ }
+}

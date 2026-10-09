@@ -3,27 +3,27 @@
  "totals": {
   "K": 978,
   "S": 9434,
-  "D": 12743,
-  "G": 23996,
-  "C": 7994,
-  "P": 65900,
-  "T": 13083,
-  "o": 11311,
-  "D[V]": 11633,
-  "D[R]": 629,
-  "D[I]": 481,
-  "G[V]": 22676,
-  "G[R]": 1096,
+  "D": 13129,
+  "G": 24456,
+  "C": 8130,
+  "P": 66647,
+  "T": 13278,
+  "o": 11451,
+  "D[V]": 11812,
+  "D[R]": 818,
+  "D[I]": 499,
+  "G[V]": 22831,
+  "G[R]": 1401,
   "G[I]": 224,
   "tied": 171,
   "unclassified": 0,
-  "trusted": 44569,
-  "lines": 145439
+  "trusted": 44903,
+  "lines": 147503
  },
  "budget": {
   "K": 978,
   "S": 9434,
-  "V": 34157
+  "V": 34491
  },
  "signed": [],
  "history": [
@@ -216,6 +216,45 @@
     "K": 978,
     "S": 9434,
     "V": 34157
+   }
+  },
+  {
+   "change": "Merge ve-integration document, English and norm-defaults changes with RD-4a companion readings and filled completion",
+   "rebaselined_from": {
+    "K": 978,
+    "S": 9434,
+    "V": 34157
+   },
+   "to": {
+    "K": 978,
+    "S": 9434,
+    "V": 34475
+   }
+  },
+  {
+   "change": "lean-first batch 16b: the document mode returns unit content and meaning ids, a load-only flag, the senses guard and the route's own admission case (VE/Service/Document.lean +19 trusted lines)",
+   "rebaselined_from": {
+    "K": 978,
+    "S": 9434,
+    "V": 34157
+   },
+   "to": {
+    "K": 978,
+    "S": 9434,
+    "V": 34176
+   }
+  },
+  {
+   "change": "Merge ve-integration (lf-15b, RD-2b, RD-4a, E2 flip) into lean-first/b16b: the 16b document mode's trusted lines (VE/Service/Document.lean +34, VE/Service/TypingDiagnostic.lean -18) over the merged base",
+   "rebaselined_from": {
+    "K": 978,
+    "S": 9434,
+    "V": 34475
+   },
+   "to": {
+    "K": 978,
+    "S": 9434,
+    "V": 34491
    }
   }
  ],
@@ -3512,7 +3551,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 386,
+   "T": 398,
    "o": 7,
    "D[V]": 0,
    "D[R]": 0,
@@ -3523,7 +3562,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 393
+   "lines": 405
   },
   "ResponseShape/CaseDeciders.lean": {
    "K": 0,
@@ -3631,7 +3670,7 @@
    "D": 0,
    "G": 0,
    "C": 0,
-   "P": 58,
+   "P": 59,
    "T": 0,
    "o": 6,
    "D[V]": 0,
@@ -3643,7 +3682,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 64
+   "lines": 65
   },
   "ResponseShape/Encoders/English.lean": {
    "K": 0,
@@ -3791,7 +3830,7 @@
    "D": 0,
    "G": 13,
    "C": 0,
-   "P": 555,
+   "P": 747,
    "T": 0,
    "o": 29,
    "D[V]": 0,
@@ -3803,7 +3842,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 29,
-   "lines": 613
+   "lines": 805
   },
   "ResponseShape/Encoders/Reports.lean": {
    "K": 0,
@@ -4489,7 +4528,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 365,
+   "G": 394,
    "C": 0,
    "P": 0,
    "T": 0,
@@ -4497,13 +4536,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 365,
+   "G[V]": 394,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 365,
-   "lines": 374
+   "trusted": 394,
+   "lines": 403
   },
   "ResponseShape/Schemas/Reports.lean": {
    "K": 0,
@@ -5312,8 +5351,8 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 4466,
-   "o": 194,
+   "T": 4512,
+   "o": 196,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
@@ -5323,7 +5362,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 4660
+   "lines": 4708
   },
   "VE/Bridge.lean": {
    "K": 3,
@@ -6945,6 +6984,26 @@
    "trusted": 108,
    "lines": 130
   },
+  "VE/EnglishGrammar/Diagnose.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 179,
+   "C": 0,
+   "P": 0,
+   "T": 0,
+   "o": 22,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 0,
+   "G[R]": 179,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 0,
+   "lines": 201
+  },
   "VE/EnglishGrammar/E2Examples.lean": {
    "K": 0,
    "S": 0,
@@ -7189,7 +7248,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 234,
+   "G": 235,
    "C": 0,
    "P": 0,
    "T": 0,
@@ -7197,19 +7256,19 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 225,
+   "G[V]": 226,
    "G[R]": 4,
    "G[I]": 5,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 225,
-   "lines": 272
+   "trusted": 226,
+   "lines": 273
   },
   "VE/EnglishGrammar/Lexicon.lean": {
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 466,
+   "G": 470,
    "C": 0,
    "P": 0,
    "T": 0,
@@ -7217,13 +7276,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 463,
+   "G[V]": 467,
    "G[R]": 0,
    "G[I]": 3,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 463,
-   "lines": 515
+   "trusted": 467,
+   "lines": 519
   },
   "VE/EnglishGrammar/LexiconFixtures.lean": {
    "K": 0,
@@ -7369,21 +7428,21 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 625,
+   "G": 660,
    "C": 0,
    "P": 17,
    "T": 0,
-   "o": 57,
+   "o": 58,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 438,
-   "G[R]": 170,
+   "G[V]": 461,
+   "G[R]": 182,
    "G[I]": 17,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 438,
-   "lines": 699
+   "trusted": 461,
+   "lines": 735
   },
   "VE/EnglishGrammar/SensesRequest.lean": {
    "K": 0,
@@ -7544,6 +7603,26 @@
    "unclassified": 0,
    "trusted": 52,
    "lines": 168
+  },
+  "VE/Grammar/Expect.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 66,
+   "C": 0,
+   "P": 0,
+   "T": 0,
+   "o": 21,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 0,
+   "G[R]": 66,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 0,
+   "lines": 87
   },
   "VE/Grammar/Extension.lean": {
    "K": 0,
@@ -7950,10 +8029,10 @@
    "S": 0,
    "D": 44,
    "G": 0,
-   "C": 189,
+   "C": 206,
    "P": 124,
    "T": 0,
-   "o": 34,
+   "o": 37,
    "D[V]": 44,
    "D[R]": 0,
    "D[I]": 0,
@@ -7963,18 +8042,18 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 44,
-   "lines": 391
+   "lines": 411
   },
   "VE/NormDefaults/Report.lean": {
    "K": 0,
    "S": 30,
-   "D": 105,
+   "D": 103,
    "G": 46,
    "C": 209,
    "P": 69,
    "T": 0,
-   "o": 61,
-   "D[V]": 105,
+   "o": 62,
+   "D[V]": 103,
    "D[R]": 0,
    "D[I]": 0,
    "G[V]": 46,
@@ -7982,8 +8061,8 @@
    "G[I]": 0,
    "tied": 15,
    "unclassified": 0,
-   "trusted": 166,
-   "lines": 520
+   "trusted": 164,
+   "lines": 519
   },
   "VE/NormDefaults/Routes.lean": {
    "K": 0,
@@ -8088,13 +8167,13 @@
   "VE/NormDefaults/Wire.lean": {
    "K": 0,
    "S": 5,
-   "D": 116,
+   "D": 118,
    "G": 15,
    "C": 57,
    "P": 182,
    "T": 0,
    "o": 46,
-   "D[V]": 108,
+   "D[V]": 110,
    "D[R]": 0,
    "D[I]": 8,
    "G[V]": 15,
@@ -8102,8 +8181,8 @@
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 128,
-   "lines": 421
+   "trusted": 130,
+   "lines": 423
   },
   "VE/Norms/Admission.lean": {
    "K": 0,
@@ -9085,6 +9164,46 @@
    "trusted": 0,
    "lines": 78
   },
+  "VE/Readings/Companions.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 195,
+   "G": 0,
+   "C": 119,
+   "P": 554,
+   "T": 2,
+   "o": 53,
+   "D[V]": 143,
+   "D[R]": 34,
+   "D[I]": 18,
+   "G[V]": 0,
+   "G[R]": 0,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 143,
+   "lines": 923
+  },
+  "VE/Readings/CompanionsExamples.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 0,
+   "C": 0,
+   "P": 0,
+   "T": 121,
+   "o": 22,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 0,
+   "G[R]": 0,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 0,
+   "lines": 143
+  },
   "VE/Readings/Doc.lean": {
    "K": 0,
    "S": 142,
@@ -9268,22 +9387,22 @@
   "VE/Readings/Run.lean": {
    "K": 0,
    "S": 0,
-   "D": 80,
-   "G": 217,
+   "D": 93,
+   "G": 307,
    "C": 0,
    "P": 67,
    "T": 0,
-   "o": 45,
-   "D[V]": 80,
-   "D[R]": 0,
+   "o": 46,
+   "D[V]": 90,
+   "D[R]": 3,
    "D[I]": 0,
-   "G[V]": 209,
+   "G[V]": 299,
    "G[R]": 0,
    "G[I]": 8,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 289,
-   "lines": 409
+   "trusted": 389,
+   "lines": 513
   },
   "VE/Readings/RunExamples.lean": {
    "K": 0,
@@ -9729,7 +9848,7 @@
    "K": 0,
    "S": 0,
    "D": 94,
-   "G": 78,
+   "G": 90,
    "C": 176,
    "P": 188,
    "T": 0,
@@ -9737,13 +9856,13 @@
    "D[V]": 46,
    "D[R]": 48,
    "D[I]": 0,
-   "G[V]": 78,
+   "G[V]": 90,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 124,
-   "lines": 592
+   "trusted": 136,
+   "lines": 604
   },
   "VE/Readings/UpPremises.lean": {
    "K": 0,
@@ -10629,7 +10748,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 205,
+   "G": 206,
    "C": 0,
    "P": 0,
    "T": 0,
@@ -10637,13 +10756,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 205,
+   "G[V]": 206,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 205,
-   "lines": 226
+   "trusted": 206,
+   "lines": 227
   },
   "VE/Route/MeteredTrace.lean": {
    "K": 0,
@@ -11089,7 +11208,7 @@
    "K": 0,
    "S": 0,
    "D": 13,
-   "G": 220,
+   "G": 224,
    "C": 0,
    "P": 0,
    "T": 0,
@@ -11097,13 +11216,13 @@
    "D[V]": 13,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 189,
+   "G[V]": 193,
    "G[R]": 31,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 202,
-   "lines": 248
+   "trusted": 206,
+   "lines": 252
   },
   "VE/Service/Diagnose.lean": {
    "K": 0,
@@ -11128,22 +11247,22 @@
   "VE/Service/Document.lean": {
    "K": 0,
    "S": 0,
-   "D": 376,
-   "G": 62,
+   "D": 553,
+   "G": 71,
    "C": 0,
    "P": 0,
    "T": 0,
-   "o": 43,
-   "D[V]": 371,
-   "D[R]": 5,
+   "o": 55,
+   "D[V]": 396,
+   "D[R]": 157,
    "D[I]": 0,
-   "G[V]": 62,
+   "G[V]": 71,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 433,
-   "lines": 481
+   "trusted": 467,
+   "lines": 679
   },
   "VE/Service/EnglishRun.lean": {
    "K": 0,
@@ -11369,21 +11488,21 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 190,
+   "G": 220,
    "C": 0,
    "P": 0,
-   "T": 0,
+   "T": 14,
    "o": 18,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 171,
-   "G[R]": 19,
+   "G[V]": 153,
+   "G[R]": 67,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 171,
-   "lines": 208
+   "trusted": 153,
+   "lines": 252
   },
   "VE/SoftNorms/Admission.lean": {
    "K": 0,
@@ -11448,13 +11567,13 @@
   "VE/SoftNorms/Phases.lean": {
    "K": 0,
    "S": 0,
-   "D": 311,
+   "D": 312,
    "G": 24,
    "C": 0,
    "P": 0,
    "T": 0,
    "o": 34,
-   "D[V]": 303,
+   "D[V]": 304,
    "D[R]": 8,
    "D[I]": 0,
    "G[V]": 24,
@@ -11462,8 +11581,8 @@
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 327,
-   "lines": 369
+   "trusted": 328,
+   "lines": 370
   },
   "VE/SoftNorms/RankProof.lean": {
    "K": 0,
@@ -12473,7 +12592,7 @@
    "C": 0,
    "P": 0,
    "T": 0,
-   "o": 109,
+   "o": 111,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
@@ -12483,7 +12602,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 109
+   "lines": 111
   }
  }
 }

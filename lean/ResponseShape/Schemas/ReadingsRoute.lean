@@ -318,12 +318,29 @@ def choice_answer : Shape :=
         ("conflict_free", .type ["boolean"]),
         ("accepted", .type ["boolean"])]]
 
+/-- `readings-validate` or `readings-elaborate` on a document with companion sets: each case of the split, `main`
+    first, with that case's answer (readings-defaults.md 3; plan RD-4a). -/
+def components (answer runner : String) : Shape :=
+  c s!"Readings.Run.runComponents ({runner}): per case of Readings.Wire.splitCase, main first, then each companion set in source order, with the case's answer." [
+    obj,
+    .required ["id", "status", "components"],
+    closed [
+      ("id", ref "common.json#/$defs/id_ok"),
+      ("status", constS "ok"),
+      ("components", n [
+        arr,
+        .items (n [
+          obj,
+          .required ["component", "answer"],
+          closed [("component", str), ("answer", ref answer)]])])]]
+
 def «row» : Shape :=
   .select [
     (ref "#/$defs/kind/readings-validate", .anyOf [
       ref "common.json#/$defs/case_error",
       ref "common.json#/$defs/route_path_error",
-      ref "#/$defs/validate"]),
+      ref "#/$defs/validate",
+      ref "#/$defs/validate_components"]),
     (ref "#/$defs/kind/readings-separate", .anyOf [
       ref "common.json#/$defs/case_error",
       ref "common.json#/$defs/route_path_error",
@@ -331,7 +348,8 @@ def «row» : Shape :=
     (ref "#/$defs/kind/readings-elaborate", .anyOf [
       ref "common.json#/$defs/case_error",
       ref "common.json#/$defs/route_path_error",
-      ref "#/$defs/elaborate"]),
+      ref "#/$defs/elaborate",
+      ref "#/$defs/elaborate_components"]),
     (ref "#/$defs/kind/readings-conflict", .anyOf [
       ref "common.json#/$defs/case_error",
       ref "common.json#/$defs/route_path_error",
@@ -374,6 +392,8 @@ def file : File where
     ("separate", .schema separate),
     ("choice", .schema choice),
     ("elaborate", .schema elaborate),
+    ("validate_components", .schema (components "#/$defs/validate" "Readings.Run.validateOne")),
+    ("elaborate_components", .schema (components "#/$defs/elaborate" "Readings.Run.elaborateOne")),
     ("conflict", .schema conflict),
     ("certificate", .schema certificate),
     ("model", .schema model),
