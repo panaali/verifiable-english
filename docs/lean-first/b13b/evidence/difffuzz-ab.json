@@ -131,45 +131,21 @@
      "entries": 250,
      "seen_in_sample": 222,
      "unreviewed": 0,
-     "not_reproduced": 1
+     "not_reproduced": 0
     }
    ],
-   "head_not_reproduced": [
-    {
-     "id": "requests-b3e5f5fa0d27de1b",
-     "status": "fixed",
-     "now": {
-      "classes": [],
-      "answers": {
-       "python": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "InvalidInput: ill-typed or unbound conclusion"
-       },
-       "lean": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "rejected: ill-typed or unbound conclusion"
-       },
-       "rust": {
-        "outcome": "n/a"
-       }
-      },
-      "signature": null
-     }
-    }
-   ],
+   "head_not_reproduced": [],
    "cpu_seconds": [
     {
      "python": 147.0,
      "children": 42.8
     },
     {
-     "python": 117.9,
-     "children": 39.0
+     "python": 169.8,
+     "children": 53.2
     }
    ],
-   "ok": false
+   "ok": true
   },
   {
    "run": "--deep 1 --seed 20260926",
@@ -292,45 +268,21 @@
      "entries": 250,
      "seen_in_sample": 197,
      "unreviewed": 0,
-     "not_reproduced": 1
+     "not_reproduced": 0
     }
    ],
-   "head_not_reproduced": [
-    {
-     "id": "requests-b3e5f5fa0d27de1b",
-     "status": "fixed",
-     "now": {
-      "classes": [],
-      "answers": {
-       "python": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "InvalidInput: ill-typed or unbound conclusion"
-       },
-       "lean": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "rejected: ill-typed or unbound conclusion"
-       },
-       "rust": {
-        "outcome": "n/a"
-       }
-      },
-      "signature": null
-     }
-    }
-   ],
+   "head_not_reproduced": [],
    "cpu_seconds": [
     {
      "python": 145.0,
      "children": 43.7
     },
     {
-     "python": 117.3,
-     "children": 41.4
+     "python": 173.4,
+     "children": 53.5
     }
    ],
-   "ok": false
+   "ok": true
   },
   {
    "run": "--deep 1 --seed 20260927",
@@ -459,45 +411,21 @@
      "entries": 250,
      "seen_in_sample": 203,
      "unreviewed": 0,
-     "not_reproduced": 1
+     "not_reproduced": 0
     }
    ],
-   "head_not_reproduced": [
-    {
-     "id": "requests-b3e5f5fa0d27de1b",
-     "status": "fixed",
-     "now": {
-      "classes": [],
-      "answers": {
-       "python": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "InvalidInput: ill-typed or unbound conclusion"
-       },
-       "lean": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "rejected: ill-typed or unbound conclusion"
-       },
-       "rust": {
-        "outcome": "n/a"
-       }
-      },
-      "signature": null
-     }
-    }
-   ],
+   "head_not_reproduced": [],
    "cpu_seconds": [
     {
      "python": 184.1,
      "children": 52.0
     },
     {
-     "python": 118.0,
-     "children": 43.2
+     "python": 173.9,
+     "children": 55.6
     }
    ],
-   "ok": false
+   "ok": true
   },
   {
    "run": "--deep 1 --seed 20260928",
@@ -626,45 +554,21 @@
      "entries": 250,
      "seen_in_sample": 192,
      "unreviewed": 0,
-     "not_reproduced": 1
+     "not_reproduced": 0
     }
    ],
-   "head_not_reproduced": [
-    {
-     "id": "requests-b3e5f5fa0d27de1b",
-     "status": "fixed",
-     "now": {
-      "classes": [],
-      "answers": {
-       "python": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "InvalidInput: ill-typed or unbound conclusion"
-       },
-       "lean": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "rejected: ill-typed or unbound conclusion"
-       },
-       "rust": {
-        "outcome": "n/a"
-       }
-      },
-      "signature": null
-     }
-    }
-   ],
+   "head_not_reproduced": [],
    "cpu_seconds": [
     {
      "python": 188.9,
      "children": 53.5
     },
     {
-     "python": 119.1,
-     "children": 45.0
+     "python": 174.5,
+     "children": 56.4
     }
    ],
-   "ok": false
+   "ok": true
   },
   {
    "run": "--deep 1 --seed 20260929",
@@ -793,45 +697,21 @@
      "entries": 250,
      "seen_in_sample": 196,
      "unreviewed": 0,
-     "not_reproduced": 1
+     "not_reproduced": 0
     }
    ],
-   "head_not_reproduced": [
-    {
-     "id": "requests-b3e5f5fa0d27de1b",
-     "status": "fixed",
-     "now": {
-      "classes": [],
-      "answers": {
-       "python": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "InvalidInput: ill-typed or unbound conclusion"
-       },
-       "lean": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "rejected: ill-typed or unbound conclusion"
-       },
-       "rust": {
-        "outcome": "n/a"
-       }
-      },
-      "signature": null
-     }
-    }
-   ],
+   "head_not_reproduced": [],
    "cpu_seconds": [
     {
      "python": 166.8,
      "children": 43.6
     },
     {
-     "python": 121.6,
-     "children": 42.8
+     "python": 189.1,
+     "children": 58.6
     }
    ],
-   "ok": false
+   "ok": true
   },
   {
    "run": "--deep 1 --seed 20260930",
@@ -958,45 +838,21 @@
      "entries": 250,
      "seen_in_sample": 202,
      "unreviewed": 0,
-     "not_reproduced": 1
+     "not_reproduced": 0
     }
    ],
-   "head_not_reproduced": [
-    {
-     "id": "requests-b3e5f5fa0d27de1b",
-     "status": "fixed",
-     "now": {
-      "classes": [],
-      "answers": {
-       "python": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "InvalidInput: ill-typed or unbound conclusion"
-       },
-       "lean": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "rejected: ill-typed or unbound conclusion"
-       },
-       "rust": {
-        "outcome": "n/a"
-       }
-      },
-      "signature": null
-     }
-    }
-   ],
+   "head_not_reproduced": [],
    "cpu_seconds": [
     {
      "python": 161.1,
      "children": 43.0
     },
     {
-     "python": 120.6,
-     "children": 42.1
+     "python": 189.7,
+     "children": 58.1
     }
    ],
-   "ok": false
+   "ok": true
   },
   {
    "run": "--deep 1 --seed 20261001",
@@ -1127,45 +983,21 @@
      "entries": 250,
      "seen_in_sample": 197,
      "unreviewed": 0,
-     "not_reproduced": 1
+     "not_reproduced": 0
     }
    ],
-   "head_not_reproduced": [
-    {
-     "id": "requests-b3e5f5fa0d27de1b",
-     "status": "fixed",
-     "now": {
-      "classes": [],
-      "answers": {
-       "python": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "InvalidInput: ill-typed or unbound conclusion"
-       },
-       "lean": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "rejected: ill-typed or unbound conclusion"
-       },
-       "rust": {
-        "outcome": "n/a"
-       }
-      },
-      "signature": null
-     }
-    }
-   ],
+   "head_not_reproduced": [],
    "cpu_seconds": [
     {
      "python": 166.9,
      "children": 43.0
     },
     {
-     "python": 122.5,
-     "children": 42.0
+     "python": 191.9,
+     "children": 59.9
     }
    ],
-   "ok": false
+   "ok": true
   },
   {
    "run": "--deep 1 --seed 20261002",
@@ -1298,45 +1130,21 @@
      "entries": 250,
      "seen_in_sample": 203,
      "unreviewed": 0,
-     "not_reproduced": 1
+     "not_reproduced": 0
     }
    ],
-   "head_not_reproduced": [
-    {
-     "id": "requests-b3e5f5fa0d27de1b",
-     "status": "fixed",
-     "now": {
-      "classes": [],
-      "answers": {
-       "python": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "InvalidInput: ill-typed or unbound conclusion"
-       },
-       "lean": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "rejected: ill-typed or unbound conclusion"
-       },
-       "rust": {
-        "outcome": "n/a"
-       }
-      },
-      "signature": null
-     }
-    }
-   ],
+   "head_not_reproduced": [],
    "cpu_seconds": [
     {
      "python": 150.3,
      "children": 60.3
     },
     {
-     "python": 123.1,
-     "children": 41.9
+     "python": 191.0,
+     "children": 58.2
     }
    ],
-   "ok": false
+   "ok": true
   },
   {
    "run": "--deep 1 --seed 20261003",
@@ -1467,45 +1275,21 @@
      "entries": 250,
      "seen_in_sample": 198,
      "unreviewed": 0,
-     "not_reproduced": 1
+     "not_reproduced": 0
     }
    ],
-   "head_not_reproduced": [
-    {
-     "id": "requests-b3e5f5fa0d27de1b",
-     "status": "fixed",
-     "now": {
-      "classes": [],
-      "answers": {
-       "python": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "InvalidInput: ill-typed or unbound conclusion"
-       },
-       "lean": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "rejected: ill-typed or unbound conclusion"
-       },
-       "rust": {
-        "outcome": "n/a"
-       }
-      },
-      "signature": null
-     }
-    }
-   ],
+   "head_not_reproduced": [],
    "cpu_seconds": [
     {
      "python": 129.8,
      "children": 39.1
     },
     {
-     "python": 130.5,
-     "children": 44.4
+     "python": 173.5,
+     "children": 59.5
     }
    ],
-   "ok": false
+   "ok": true
   },
   {
    "run": "--deep 1 --seed 20261004",
@@ -1636,45 +1420,21 @@
      "entries": 250,
      "seen_in_sample": 222,
      "unreviewed": 0,
-     "not_reproduced": 1
+     "not_reproduced": 0
     }
    ],
-   "head_not_reproduced": [
-    {
-     "id": "requests-b3e5f5fa0d27de1b",
-     "status": "fixed",
-     "now": {
-      "classes": [],
-      "answers": {
-       "python": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "InvalidInput: ill-typed or unbound conclusion"
-       },
-       "lean": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "rejected: ill-typed or unbound conclusion"
-       },
-       "rust": {
-        "outcome": "n/a"
-       }
-      },
-      "signature": null
-     }
-    }
-   ],
+   "head_not_reproduced": [],
    "cpu_seconds": [
     {
      "python": 131.4,
      "children": 36.6
     },
     {
-     "python": 127.4,
-     "children": 41.3
+     "python": 168.0,
+     "children": 54.9
     }
    ],
-   "ok": false
+   "ok": true
   },
   {
    "run": "--deep 1 --seed 20261005",
@@ -1799,45 +1559,21 @@
      "entries": 250,
      "seen_in_sample": 192,
      "unreviewed": 0,
-     "not_reproduced": 1
+     "not_reproduced": 0
     }
    ],
-   "head_not_reproduced": [
-    {
-     "id": "requests-b3e5f5fa0d27de1b",
-     "status": "fixed",
-     "now": {
-      "classes": [],
-      "answers": {
-       "python": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "InvalidInput: ill-typed or unbound conclusion"
-       },
-       "lean": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "rejected: ill-typed or unbound conclusion"
-       },
-       "rust": {
-        "outcome": "n/a"
-       }
-      },
-      "signature": null
-     }
-    }
-   ],
+   "head_not_reproduced": [],
    "cpu_seconds": [
     {
      "python": 146.9,
      "children": 44.6
     },
     {
-     "python": 128.6,
-     "children": 44.1
+     "python": 176.1,
+     "children": 55.0
     }
    ],
-   "ok": false
+   "ok": true
   },
   {
    "run": "--deep 1 --seed 20261006",
@@ -1968,45 +1704,21 @@
      "entries": 250,
      "seen_in_sample": 197,
      "unreviewed": 0,
-     "not_reproduced": 1
+     "not_reproduced": 0
     }
    ],
-   "head_not_reproduced": [
-    {
-     "id": "requests-b3e5f5fa0d27de1b",
-     "status": "fixed",
-     "now": {
-      "classes": [],
-      "answers": {
-       "python": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "InvalidInput: ill-typed or unbound conclusion"
-       },
-       "lean": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "rejected: ill-typed or unbound conclusion"
-       },
-       "rust": {
-        "outcome": "n/a"
-       }
-      },
-      "signature": null
-     }
-    }
-   ],
+   "head_not_reproduced": [],
    "cpu_seconds": [
     {
      "python": 144.5,
      "children": 43.3
     },
     {
-     "python": 129.2,
-     "children": 45.5
+     "python": 169.8,
+     "children": 54.9
     }
    ],
-   "ok": false
+   "ok": true
   },
   {
    "run": "--deep 1 --seed 20261007",
@@ -2131,45 +1843,21 @@
      "entries": 250,
      "seen_in_sample": 195,
      "unreviewed": 0,
-     "not_reproduced": 1
+     "not_reproduced": 0
     }
    ],
-   "head_not_reproduced": [
-    {
-     "id": "requests-b3e5f5fa0d27de1b",
-     "status": "fixed",
-     "now": {
-      "classes": [],
-      "answers": {
-       "python": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "InvalidInput: ill-typed or unbound conclusion"
-       },
-       "lean": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "rejected: ill-typed or unbound conclusion"
-       },
-       "rust": {
-        "outcome": "n/a"
-       }
-      },
-      "signature": null
-     }
-    }
-   ],
+   "head_not_reproduced": [],
    "cpu_seconds": [
     {
      "python": 181.9,
      "children": 47.7
     },
     {
-     "python": 128.6,
-     "children": 43.5
+     "python": 131.6,
+     "children": 45.8
     }
    ],
-   "ok": false
+   "ok": true
   },
   {
    "run": "--deep 1 --seed 20261008",
@@ -2300,45 +1988,21 @@
      "entries": 250,
      "seen_in_sample": 197,
      "unreviewed": 0,
-     "not_reproduced": 1
+     "not_reproduced": 0
     }
    ],
-   "head_not_reproduced": [
-    {
-     "id": "requests-b3e5f5fa0d27de1b",
-     "status": "fixed",
-     "now": {
-      "classes": [],
-      "answers": {
-       "python": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "InvalidInput: ill-typed or unbound conclusion"
-       },
-       "lean": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "rejected: ill-typed or unbound conclusion"
-       },
-       "rust": {
-        "outcome": "n/a"
-       }
-      },
-      "signature": null
-     }
-    }
-   ],
+   "head_not_reproduced": [],
    "cpu_seconds": [
     {
      "python": 194.8,
      "children": 59.4
     },
     {
-     "python": 132.1,
-     "children": 46.0
+     "python": 132.5,
+     "children": 49.6
     }
    ],
-   "ok": false
+   "ok": true
   },
   {
    "run": "--deep 1 --seed 20261009",
@@ -2467,46 +2131,22 @@
      "entries": 250,
      "seen_in_sample": 195,
      "unreviewed": 0,
-     "not_reproduced": 1
+     "not_reproduced": 0
     }
    ],
-   "head_not_reproduced": [
-    {
-     "id": "requests-b3e5f5fa0d27de1b",
-     "status": "fixed",
-     "now": {
-      "classes": [],
-      "answers": {
-       "python": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "InvalidInput: ill-typed or unbound conclusion"
-       },
-       "lean": {
-        "outcome": "error",
-        "code": "InvalidInput",
-        "text": "rejected: ill-typed or unbound conclusion"
-       },
-       "rust": {
-        "outcome": "n/a"
-       }
-      },
-      "signature": null
-     }
-    }
-   ],
+   "head_not_reproduced": [],
    "cpu_seconds": [
     {
      "python": 175.3,
      "children": 47.5
     },
     {
-     "python": 132.2,
-     "children": 43.3
+     "python": 133.3,
+     "children": 46.3
     }
    ],
-   "ok": false
+   "ok": true
   }
  ],
- "ok": false
+ "ok": true
 }

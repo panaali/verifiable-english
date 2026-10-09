@@ -28,6 +28,28 @@ owner; [DELTA.md](DELTA.md) classifies every changed answer and lists what is re
 ## Gate evidence
 
 <!-- BEGIN GENERATED: python docs/lean-first/b13b/report.py --write -->
+| Corpus | Records per side | Same | Wording | Order | Verdict | Availability |
+|---|---:|---:|---:|---:|---:|---:|
+| conformance | 39,612 | 39,564 | 48 | 0 | 0 | 0 |
+| discourse | 6,350 | 6,350 | 0 | 0 | 0 | 0 |
+| document | 3,632 | 3,609 | 19 | 4 | 0 | 0 |
+| norm_defaults | 2,020 | 2,020 | 0 | 0 | 0 | 0 |
+| pilots | 443 | 436 | 7 | 0 | 0 | 0 |
+| probe | 18,870 | 18,869 | 1 | 0 | 0 | 0 |
+| quantity | 25,726 | 25,726 | 0 | 0 | 0 | 0 |
+| readings | 1,137 | 1,137 | 0 | 0 | 0 | 0 |
+| rights | 2,500 | 2,500 | 0 | 0 | 0 | 0 |
+| **All** | **100,290** | **100,211** | **75** | **4** | **0** | **0** |
+
+Unlisted differences: 0. Branch commits (`main..HEAD --no-merges`, saved): 10, merge base `abc30811`, last source commit `85b02e40`.
+Code lines, production Python: +324/−833 (net -509).
+Code lines, Lean: +10/−2 (net +8).
+Differential fuzz: 15 paired runs (CI and 14 date seeds); reviewed baseline 254 → 250; head-only new signatures 0; head entries not reproduced 0; all runs ok: True.
+Seeded faults: 7 of 7 caught and restored; service build restored: True.
+Latency, udhr: base 63.3 s → head 68.2 s wall (1.078×), child CPU 1.078×; same output: True; within budget: True.
+Latency, eligibility: base 260.8 s → head 281.5 s wall (1.080×), child CPU 1.072×; same output: True; within budget: True.
+Latency, agent-policy: base 64.0 s → head 79.7 s wall (1.246×), child CPU 1.225×; same output: True; within budget: True.
+Full gate: not yet recorded (`evidence/gate.json` is archived by the commit after the gate run).
 <!-- END GENERATED -->
 
 | Item | Tag | Status and evidence |
