@@ -25,13 +25,14 @@ def proposal():
 
 
 def test_closed_diagnostic_names_phrase_and_nearest_wording():
-    """Python authority retains the named unknown phrase and nearest declared wording."""
+    """Lean decides (no reading) and diagnoses (E2 spec 4.5): its text names the unknown phrase, from where the
+    wording starts, and the nearest declared wordings, and its span is that phrase's (review B2; E2.6)."""
     with pytest.raises(VEError) as caught:
         parse_english_with_metadata(ENV, SENTENCE, vocabulary=OVERLAY)
     error = caught.value
-    assert str(error).startswith("Unknown English phrase 'is a UK citizen'.")
-    assert "Unknown English phrase 'is a UK citizen'" in str(error) and "'is a US citizen'" in str(error)
-    assert SENTENCE[error.span.start:error.span.end] == 'is a UK citizen'
+    assert str(error) == ("Sentence 1 has no reading with the current vocabulary. Unknown English phrase "
+                          "'is a UK citizen'. Nearest declared wordings: 'is a US citizen'; 'child'; 'person'.")
+    assert SENTENCE[error.span.start:error.span.end] == ' is a UK citizen'
     assert error.span.line == 1 and error.span.column == error.span.start + 1
 
 
@@ -363,7 +364,8 @@ def test_prefix_collision_names_existing_wording():
     text = 'Every person is a US citizen of record.'
     with pytest.raises(VEError, match="extends existing wording.*us_citizen.*is a US citizen"):
         propose(ENV, text, OVERLAY)
-    with pytest.raises(VEError, match="extends existing wording.*us_citizen.*is a US citizen"):
+    with pytest.raises(VEError, match="no reading with the current vocabulary. Phrase 'is a US citizen of record' "
+                                      r"extends existing wording 'us_citizen': '\{0\} is a US citizen'"):
         parse_english_with_metadata(ENV, text, vocabulary=OVERLAY)
 
 

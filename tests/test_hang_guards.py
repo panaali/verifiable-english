@@ -72,10 +72,6 @@ INJECTED = {
         "expired_waits; asserts the setting is the wait",
     "tests/test_hang_guards.py::test_a_wire_check_that_outlasts_its_wait_blocks_the_commit":
         "expired_waits; asserts the setting is the wait",
-    "tests/test_assurance_manifest.py::test_bundle_separates_rejection_from_unavailability":
-        "expired_waits; asserts the setting is the wait",
-    "tests/test_assurance_manifest.py::test_argument_separates_lean_rejection_from_unavailability":
-        "expired_waits; asserts the setting is the wait",
     # Injected clocks for operation budgets.
     "tests/test_assist_deadline.py::*": "autouse controlled_operation_clock: time.monotonic advances only by _busy",
     "tests/test_assist_recovery_replay.py::test_recorded_deadline_cannot_swallow_enclosing_replay_deadline":

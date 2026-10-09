@@ -1,0 +1,31 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________________ test_soft_route_alone_refuses_rights_profile _________________
+
+    def test_soft_route_alone_refuses_rights_profile():
+        """S3-pre (wire-contract.md 9): the rights route strips `rights@0` before the soft table, as the Lean
+        rights route does, so a soft source that lists it is refused by the soft route alone at 3.2, with the
+        Lean soft route's text, while the rights route still admits it."""
+        from ve.softnorms import check_soft_source, load_soft_document
+        from ve.soft_route import admit_soft_document
+        raw = rights_env()
+        RightsEnvironment(deepcopy(raw))
+        stripped = deepcopy(raw)
+        del stripped["vocabulary"]["rights"]
+        for attempt in (lambda: check_soft_source(deepcopy(stripped)),
+                        lambda: load_soft_document(deepcopy(stripped), []),
+                        lambda: SoftEnvironment(deepcopy(stripped)),
+                        lambda: admit_soft_document(deepcopy(stripped), {"units": []})):
+            with pytest.raises(VEError) as caught:
+                attempt()
+>           assert (caught.value.code, str(caught.value)) == (
+                "SOFT_UNSUPPORTED_PROFILE", "UnsupportedProfile: Unsupported profile rights@0")
+E           AssertionError: assert ('SOFT_INVALI...rights block') == ('SOFT_UNSUPP...ile rights@0')
+E             
+E             At index 0 diff: 'SOFT_INVALID_INPUT' != 'SOFT_UNSUPPORTED_PROFILE'
+E             Use -v to get more diff
+
+tests/test_rights.py:161: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_rights.py::test_soft_route_alone_refuses_rights_profile - A...
+1 failed in 0.70s

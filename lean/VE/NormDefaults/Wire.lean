@@ -61,6 +61,23 @@ def placeholderJson (environment : Json) : Except String Json := do
   pure ((environment.setObjVal! "vocabulary" (vocab.setObjVal! "predicates" (Json.mkObj preds'))).setObjVal!
     "profiles" (toJson (profiles.filter (· != profile))))
 
+/-- Validate the authored environment without charging document-level fill
+limits. Those limits belong to `decodeSourceU` when a norm document is read. -/
+def decodeEnvironmentU (environment : Json) : Except String VE.Norms.Wire.NormsEnvironment := do
+  let profiled := hasProfile environment
+  let frame ← if profiled then do
+    for n in declaredNames environment do
+      if n.startsWith "unsaid__" then throw s!"InvalidInput: reserved name {n}"
+    placeholderJson environment
+  else do
+    unless (unspecifiedNames environment).isEmpty do
+      throw "UnsupportedProfile: unspecified completion requires norm-defaults@0"
+    pure environment
+  let ne ← VE.Norms.Wire.decodeNormsEnvironment frame
+  unless ne.rv.definitions.isEmpty || ne.profiles.contains "definitions@0" do
+    throw "Definitions require definitions@0"
+  pure ne
+
 /-- A decoded source under the profile (or without it): the author document, its
 unspecified predicates and the facts the replay uses. -/
 structure SourceU where
@@ -95,7 +112,9 @@ def checkAuthor (environment : Json) (U : UDoc) : Except String Unit := checkAut
 def decodeSourceU (environment norms : Json) : Except String SourceU :=
   if hasProfile environment then do
     let env' ← placeholderJson environment
-    let src ← VE.Norms.Wire.decodeSource env' norms false true
+    -- `data@0` flags are admitted as Python's base did; every model a case supplies must satisfy them
+    -- (`InvalidModel(flags)`, `Replay`, `Report`), and no check reads a flag premise, so each is conservative.
+    let src ← VE.Norms.Wire.decodeSource env' norms true true
     let names := unspecifiedNames environment
     let U : UDoc := ⟨src.D, (src.D.T.regulated.map Regulated.name).filter (names.contains ·)⟩
     checkAuthor environment U

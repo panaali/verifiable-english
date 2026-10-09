@@ -100,8 +100,11 @@ def inputs():
     }
 
 
-# Operations whose verdict path runs Rust under the Lean authority.
-RUST = ("evaluate", "countermodel_check", "countermodel_search", "distinguishing_model")
+# Operations whose verdict path runs Rust under the Lean authority: search only (lean-first batch 15b;
+# evaluation and the countermodel check report Lean's metered evaluator).
+RUST = ("countermodel_search", "distinguishing_model")
+# Operations that report evaluation values and counts: Lean's alone under the Lean authority.
+LEAN_EVALUATION = ("evaluate", "countermodel_check")
 # Operations Lean alone answers under the Lean authority (search publishes
 # its witness through the Lean countermodel check).
 LEAN = (
@@ -189,6 +192,15 @@ def test_rust_faults_fail_closed_in_every_adapter(monkeypatch, tmp_path, calls, 
     assert not isinstance(caught.value, VEError)
 
 
+@pytest.mark.parametrize("fault", ["missing", "unlisted", "crash", "hang"])
+@pytest.mark.parametrize("op", LEAN_EVALUATION)
+def test_rust_faults_leave_lean_evaluation_answering(monkeypatch, tmp_path, calls, op, fault):
+    """Rust's evaluator is not on these paths (review B3): a broken Rust changes nothing."""
+    expected = calls[op]()
+    rust_fault(monkeypatch, tmp_path, fault)
+    assert calls[op]() == expected
+
+
 @pytest.mark.parametrize("op", LEAN)
 def test_the_python_path_never_answers_for_a_failed_backend(monkeypatch, tmp_path, calls, op):
     """The retained Python implementations are not consulted after a failure:
@@ -202,4 +214,7 @@ def test_the_python_path_never_answers_for_a_failed_backend(monkeypatch, tmp_pat
             calls[op]()
     finally:
         pool.close()
-    assert seen and all(authority == "lean" for _, authority in seen)
+    # These paths now reach Lean's environment/model preflight before dispatch
+    # can emit an operation observer event.
+    assert (seen or op in ("bundle", "environment_validation", "model_validation"))
+    assert all(authority == "lean" for _, authority in seen)

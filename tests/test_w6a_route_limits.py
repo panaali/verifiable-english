@@ -18,6 +18,7 @@ import pytest
 
 from tests import lean_routes
 
+from conformance.three_way import rust_evaluations
 from conformance.p0 import envelope
 from subprocesses import run_cpu_bounded
 from ve import Environment, FiniteModel, evaluate
@@ -57,7 +58,9 @@ def lean(cases):
 
 
 def rust(cases):
-    return run([str(RUST), "conformance"], cases)
+    """Rust's rows; its statement values come from its evaluate-budgeted kind
+    (`conformance.three_way.rust_evaluations`)."""
+    return rust_evaluations(lambda batch: run([str(RUST), "conformance"], batch), cases)
 
 
 def lean_limit(got, text=""):
@@ -145,7 +148,7 @@ def test_defined_table_candidates_are_enumerated_one_at_a_time_three_ways():
                                     "Definition model evaluation budget")
     lean_limit(got, "Definition model evaluation budget")
     rust_limit(other)
-    got, other = defined_three_ways(defined(["top"], args), model(domain, p=[]), "tuple limit")
+    got, other = defined_three_ways(defined(["top"], args), model(domain, p=[]), "tuple count")
     lean_limit(got, "tuple count")
     rust_limit(other)
 
@@ -425,7 +428,7 @@ def test_supplied_tuples_count_toward_the_defined_tuple_limit_three_ways():
             assert got["status"] == "ok" and got["values"] == [True], got
             assert other["status"] == "ok" and other["values"] == [True], other
         else:
-            with pytest.raises(ResourceLimit, match="tuple limit"):
+            with pytest.raises(ResourceLimit, match="tuple count"):
                 FiniteModel.from_dict(Environment(env), data)
             lean_limit(got, "tuple count")
             rust_limit(other)

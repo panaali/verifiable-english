@@ -556,6 +556,39 @@ The helpers: the fold lemmas (`foldEntailment_all`, ...), `covers_row`, `covers_
 `restrictionsFor_spec` (`complete_setAt`, `taking_setAt`, `index_setAt_self`, `index_setAt_ne`), `zip_tail_ne`,
 `couplingExcludes_iff`, `narrowingExcludes_iff`, `conflictFree_of_localFree`, `notFreeU_of_notFreeX`,
 `ndFree_sound`, `ndCertOk_sound`, `ndModelOk_sound`, `ndInfos_rows`, `map_row_choice`.
+## Readings with their own vocabulary: the statements of 6.6's wire part (RD-4a)
+
+`lean/VE/Readings/Companions.lean`, its `#guard` fixtures in `CompanionsExamples.lean`. A candidate may carry
+`companion: {environment, open_terms}`; a set whose readings all carry one is a companion set (`companionSets`), a set
+that mixes the two is refused. Every readings kind first splits the case (`splitCase`, `Run.runCase`): `main`, the
+document without its companion sets (their units stay, without content), then one case per companion set in source
+order, over the companions' environments merged (`mergeCompanions`) with the set's unit, the set, the narrowings on
+it and the companions' open terms merged (`mergeOpenTerms`). The split's checks run in 5's order, rows 6 to 13: a
+mixed set, a coupling across components, a companion on the soft or rights chain, different language, revision or
+profiles, a name declared differently, an open term declared differently, the frozen decoders on the merged frame,
+then each reading's recorded `meaning_id` against `companionMeaningId` (W1's identity over the companion's own
+environment). `readings-validate` and `readings-elaborate` answer per case (`components`); the other kinds run on the
+case `component` names. A document without `companion` is one case, run as before.
+
+Declarations are compared as JSON values by `jeq` (structural; `jeq_sound`, `jeq_refl`) after each companion is
+brought to one normal form (`normJ`), so the request's key order decides nothing.
+
+In plain words, each with the hypotheses it states:
+
+* `mergeCompanions_extends` (a merge that succeeds): every sort, constant or predicate any source declares is in the
+  merged environment with that same declaration.
+* `mergeCompanions_identical` (the same): two sources declaring one name declare it identically.
+* `mergeOpenTerms_identical` (a merge of open terms that succeeds): every source's open term is in the result, and
+  two terms of the result with one name are one term.
+* `split_keeps_links` (a split that succeeds): every reading set, coupling and narrowing of the document is in exactly
+  one case. Its `contains` reads JSON equality as `jeq`, a local instance of the file's section: Lean's own
+  `BEq Json` is compiled code a proof cannot unfold.
+
+The helpers: `mergeCategory_spec` (each category's merge keeps names distinct and covers every source's entries),
+`mergeTerms_spec` (the same for open terms), `count_one` (an item lands in `main` when its set is not a companion set,
+else in its set's case alone), `splitCase_parts`, `componentsOf_docs` and `companionSets_nodup` (the cases are
+`main` and one per companion set, without repeats), `mkObj_get`, `overlay_get` and `entries_mem` (lookups in the
+objects the split builds).
 
 # S2a with a carried base-premise family in Lean (readings-defaults, batch RD-6a)
 

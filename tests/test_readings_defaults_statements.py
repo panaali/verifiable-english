@@ -385,3 +385,53 @@ def test_rd3_checker_fails_on_a_dropped_hypothesis_and_a_missing_declaration(tmp
     _with_rd3_sources(checker, tmp_path, lambda t: t.replace("def foldPremises ", "private def foldPremises ", 1))
     assert checker.main_rd3() == 1
     assert "foldPremises: expected one Lean def, found 0" in capsys.readouterr().out
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# RD-4a: lean/VE/Readings/Companions.lean against 6.6's `section Companions`
+
+def test_rd4a_statements_match_the_approved_text(capsys):
+    checker = _checker()
+    assert checker.main_rd4a() == 0
+    out = capsys.readouterr().out
+    assert "checked 10 approved RD-4a declarations (4 theorems)" in out
+    assert checker.PENDING_RD4A == {} and "0 pending" in out
+
+
+def _rd4a_names():
+    return sorted(_checker().approved_rd4a())
+
+
+def _rd4a_with(checker, tmp_path, edit):
+    path = tmp_path / "Companions.lean"
+    path.write_text(edit(checker.SOURCE_RD4A.read_text()))
+    checker.SOURCE_RD4A = path
+
+
+@pytest.mark.parametrize("kind, name", _rd4a_names(), ids=lambda v: str(v))
+def test_rd4a_checker_fails_on_every_changed_declaration(tmp_path, capsys, kind, name):
+    """Each declaration of 6.6's wire part, changed in Lean (a body-less one in its signature), fails by name."""
+    import re
+    checker = _checker()
+
+    def edit(text):
+        if kind == "def" and ":=" not in checker.approved_rd4a()[(kind, name)][0]:
+            start = re.search(rf"^{kind} {re.escape(name)}\b", text, re.M)
+            body = text.index(" :=", start.end())
+            return text[:body] + " × Unit" + text[body:]
+        return _mutate(text, kind, name, checker)
+    _rd4a_with(checker, tmp_path, edit)
+    assert checker.main_rd4a() == 1
+    assert f"{name}: {kind} differs" in capsys.readouterr().out
+
+
+def test_rd4a_checker_fails_on_a_dropped_hypothesis_and_a_missing_declaration(tmp_path, capsys):
+    checker = _checker()
+    _rd4a_with(checker, tmp_path, lambda t: t.replace(
+        "∀ k ∈ [\"reading_sets\", \"couplings\", \"narrowings\"]", "∀ k ∈ [\"reading_sets\", \"couplings\"]", 1))
+    assert checker.main_rd4a() == 1
+    assert "split_keeps_links: theorem differs" in capsys.readouterr().out
+    checker = _checker()
+    _rd4a_with(checker, tmp_path, lambda t: t.replace("def companionMeaningId ", "private def companionMeaningId ", 1))
+    assert checker.main_rd4a() == 1
+    assert "companionMeaningId: expected one Lean def, found 0" in capsys.readouterr().out

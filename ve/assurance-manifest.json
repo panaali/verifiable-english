@@ -33,11 +33,6 @@
     "python:argument-diagnostics": "CheckerConflict, ContradictoryPremises, Incomplete, ResourceLimit and InvalidInput statuses; display that asserts no consequence"
   },
   "reviewed_broad_handlers": {
-    "ve/environment.py:Environment.__init__": "W6 environments: Lean's check mode accepts first (its rejection is raised before the handler); a Python failure constructing an environment Lean accepted becomes CheckerUnavailable, never a verdict (LEAN-FIRST-PLAN.md rule 2)",
-    "ve/document.py:load_document": "CheckerUnavailable is re-raised first; a @2 document Lean rejected raises Lean's diagnostic before Python loads it, and a Python failure on one Lean admitted becomes CheckerUnavailable (unavailable_report), never a Python verdict",
-    "ve/document.py:_check_document": "CheckerUnavailable is re-raised first; a Python failure reporting a @2 document Lean admitted becomes CheckerUnavailable (unavailable_report), never a verdict",
-    "ve/reports.py:ReportsDocument.__init__": "a Lean accepted reports environment that Python cannot construct becomes CheckerUnavailable; no report status or verdict is returned",
-    "ve/rights.py:RightsDocument.__init__": "Lean accepts the rights source before Python constructs display and search containers; any container construction failure is CheckerUnavailable, never a Python rights verdict",
     "ve/__main__.py:_main": "display only: an English rendering of an already computed record is omitted (`display_omitted`); the verdict fields are untouched",
     "ve/assist/api.py:call_tool": "CheckerUnavailable is caught first and keeps its code; other RuntimeErrors are logged as a rejected BackendError call, never a verdict",
     "ve/assist/cli.py:main": "CheckerUnavailable, raised or returned in an action or tool result (exit_code), exits 5 and the action is not saved; other failures print an error and exit 2",
@@ -48,24 +43,30 @@
     "ve/assist/recovery.py:RecoveryService.request_proposer": "the language-model backend boundary; a failed proposal is an outcome of kind `failed`",
     "ve/assist/session.py:AssistSession.apply": "CheckerUnavailable is caught with VEError and keeps its code; other RuntimeErrors are logged as BackendError",
     "ve/assist/session.py:AssistSession.paraphrase_formula": "display only: falls back to the canonical rendering",
-    "ve/backends/lean_service.py:LeanServicePool.run_bound.worker": "captures a worker error and re-raises it in request order after every worker joins; never converts it into a result",
-    "ve/natural.py:render_natural_sentence": "display only: selects an English wording whose one-reading audit passes",
-    "ve/printer.py:natural_document": "display only: retries with a different wording and re-raises when that fails too",
-    "ve/search.py:_models_with_terminal_error": "buffers a terminal model-stream error for every scoped reader, which re-raises the original error before reporting a verdict",
-    "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome",
     "ve/backends/dispatch.py:_shadow": "shadow authority only (execute and shadowed): the Python result is returned (a Python exception is re-raised unchanged); a candidate backend exception, CheckerUnavailable included, is only recorded as a shadow difference and never becomes the returned verdict",
+    "ve/backends/lean_service.py:LeanServicePool.run_bound.worker": "captures a worker error and re-raises it in request order after every worker joins; never converts it into a result",
+    "ve/backends/validation.py:construct_after_lean": "Lean accepts the environment or model first; construction failures become CheckerUnavailable, never a Python semantic rejection or verdict.",
+    "ve/document.py:_load": "CheckerUnavailable is re-raised first; a @2 document Lean rejected raises Lean's diagnostic before Python loads it, and a Python failure on one Lean admitted becomes CheckerUnavailable (unavailable_report), never a Python verdict",
+    "ve/document.py:_lean_document": "Builds the document Lean's document mode accepted: CheckerUnavailable is re-raised, any other failure reading the accepted front matter or building the containers becomes CheckerUnavailable, never a verdict",
+    "ve/document.py:_check_document": "CheckerUnavailable is re-raised first; a Python failure reporting a @2 document Lean admitted becomes CheckerUnavailable (unavailable_report), never a verdict",
+    "ve/english.py:_parse_english_document_uncached": "Comparator only: Python parser exceptions are recorded after Lean has decided; they never change the returned Lean result or error.",
+    "ve/natural.py:render_natural_sentence": "display only: selects an English wording whose one-reading audit passes",
     "ve/norm_defaults.py:UnspecifiedDocument.__init__": "after Lean accepts a source, a Python container construction failure is reported as CheckerUnavailable",
+    "ve/printer.py:natural_document": "display only: retries with a different wording and re-raises when that fails too",
     "ve/readings.py:_warm_alone_rights": "Wraps the assembly of the warm-up's unit lists only (no Lean call); malformed reading sets skip the warm-up and the checks that follow raise in order; never a result.",
     "ve/readings_s1.py:Decoded._warm_rules": "CheckerUnavailable is re-raised first; a side that cannot be assembled is left out of the warm-up and raises when it is read; never a result.",
+    "ve/reports.py:ReportsDocument.__init__": "a Lean accepted reports environment that Python cannot construct becomes CheckerUnavailable; no report status or verdict is returned",
+    "ve/rights.py:RightsDocument.__init__": "Lean accepts the rights source before Python constructs display and search containers; any container construction failure is CheckerUnavailable, never a Python rights verdict",
     "ve/softnorms.py:SoftEnvironment.__init__": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors.",
     "ve/softnorms.py:SoftNormDocument.__init__": "A deferred document whose rules Python cannot hold asks Lean at once (`_elaborate`), so Lean's diagnostic, or CheckerUnavailable, is raised as eager construction raises it; nothing is built from the failure.",
     "ve/softnorms.py:SoftNormDocument._elaborate": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors.",
     "ve/softnorms.py:batch_rule": "After Lean accepts the batched quoted rule, Python AST construction failures are operational CheckerUnavailable errors.",
     "ve/softnorms.py:decode_rule": "After Lean accepts the quoted rule, Python AST construction failures are operational CheckerUnavailable errors.",
-    "ve/softnorms.py:load_soft_document": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors."
+    "ve/softnorms.py:load_soft_document": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors.",
+    "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 26284,
+    "total_lines": 27572,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -193,12 +194,12 @@
       },
       {
         "file": "lean/VE/Bridge.lean",
-        "lines": 282,
-        "sha256": "2d4e432b9698b07722d2a5f494cdf3797f14ab5036068fd31faaca8fb5a95d64",
+        "lines": 335,
+        "sha256": "4f7b5313509e488f647f3d8b0a7916ac28dbca6601547b44bf25eda9b833d079",
         "ranges": [
           [
             14,
-            248
+            301
           ]
         ],
         "declarations": [
@@ -257,12 +258,12 @@
       },
       {
         "file": "lean/VE/Core/Bridge.lean",
-        "lines": 159,
-        "sha256": "6cd616c3c6634d99306573aee3d40a2f3851c17d4c65e9b8103b3c8895eb625b",
+        "lines": 155,
+        "sha256": "058d08ef96b968f344cbbe40dac8e0de5b2d43bf1dd5fe7ad479064b9601df1d",
         "ranges": [
           [
             10,
-            126
+            121
           ]
         ],
         "declarations": [
@@ -324,12 +325,12 @@
       },
       {
         "file": "lean/VE/EnglishGrammar/Run.lean",
-        "lines": 699,
-        "sha256": "db3251d94cbe18d76f5e46fce13b52f5393bc6e7eff09754443d199f8ef7a4ba",
+        "lines": 735,
+        "sha256": "f9355148f683d663abd23260fab6d3d318f9e575e7bdebaf910bb40f95b86245",
         "ranges": [
           [
             1,
-            699
+            735
           ]
         ],
         "declarations": [
@@ -348,12 +349,12 @@
       },
       {
         "file": "lean/VE/Json.lean",
-        "lines": 136,
-        "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
+        "lines": 141,
+        "sha256": "10dcb30ca301a966d8d306ad10d308b609574bac649bf175fab375a1a8a8376c",
         "ranges": [
           [
             1,
-            136
+            141
           ]
         ],
         "declarations": [
@@ -409,15 +410,16 @@
       },
       {
         "file": "lean/VE/NormDefaults/Replay.lean",
-        "lines": 391,
-        "sha256": "4242c79ff826cc94cee7f211f1a3f7d86e44537bb84702a3d7d570d4f70caad3",
+        "lines": 411,
+        "sha256": "8a6191d5e0bc289dc3b81d95d0789eec96f3653b557369446b2caf9ac13fe8d5",
         "ranges": [
           [
             1,
-            391
+            411
           ]
         ],
         "declarations": [
+          "admitModel",
           "witnessFromU",
           "replayWitnessU",
           "decodeFilling",
@@ -429,12 +431,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Report.lean",
-        "lines": 520,
-        "sha256": "26bc86313053198f55adf395f674fa07a64b0bd33cdf32d1437557bebdf4dad5",
+        "lines": 519,
+        "sha256": "b4e17dd5611c5551f075ec04b9ca68d16ccd9bbc0de681e9697b7edbd22ba646",
         "ranges": [
           [
             1,
-            520
+            519
           ]
         ],
         "declarations": [
@@ -450,12 +452,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Wire.lean",
-        "lines": 421,
-        "sha256": "5ba66fb1559cbf5c95b101ae95f25bf58a671d300393f8438ca207b3abdc14e7",
+        "lines": 440,
+        "sha256": "3d555723f812f18139f8f7f4fb9e5a02c4780f89ddf4d17d6df652fea05e8d68",
         "ranges": [
           [
             1,
-            421
+            440
           ]
         ],
         "declarations": [
@@ -529,7 +531,7 @@
       {
         "file": "lean/VE/Norms/Wire.lean",
         "lines": 333,
-        "sha256": "d85fe5c7b9c67aba3d6191137d48c520e2c95cbefa562e7b3f3756cc723869fe",
+        "sha256": "12156c5ab7ccc4c40051b398b8b32f1c47c779457d83b004e7981039c9a27715",
         "ranges": [
           [
             25,
@@ -546,16 +548,16 @@
       },
       {
         "file": "lean/VE/Order/Wire.lean",
-        "lines": 295,
-        "sha256": "2c8fe48a3007436efd33f4a47bc65cfd3c22973a6bc15f9214514442ed82515e",
+        "lines": 301,
+        "sha256": "0f2b4ab4442d177f19badc26111ab774978114abfed664658913a6c4f1d3f9e6",
         "ranges": [
           [
             25,
-            233
+            238
           ],
           [
-            247,
-            253
+            253,
+            258
           ]
         ],
         "declarations": [
@@ -624,44 +626,7 @@
           "ndInner",
           "runChoiceND"
         ],
-        "reason": "readings-defaults RD-2a: admission, separation and each choice under the unspecified completion; the inner case of readings-choice (its kind, conflict packages, premises, certificate, model and filling) read through the pinned NormDefaults and SupWire decoders and by `conflictPackages` and `ndCertificate`; readings-defaults RD-2b: `readings-elaborate` also answers the filled document (`runElaborateNDFilled`, no new decoding); the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Readings/VerdictsWire.lean",
-        "lines": 1565,
-        "sha256": "15ebc9d3e1a85ee192f5aeb670b4ed60292f120cb3242de7cf5b7361b03eddb4",
-        "ranges": [
-          [
-            1,
-            1565
-          ]
-        ],
-        "declarations": [
-          "membersOf",
-          "without",
-          "shownOk",
-          "shownOf",
-          "pieceOf",
-          "ndBoundCert",
-          "ndFilled",
-          "ndEvidenceOf",
-          "strOf",
-          "isNull",
-          "jstrings",
-          "jchoice",
-          "jgaps",
-          "perChoice",
-          "planItems",
-          "lowerRun",
-          "lowerInfo",
-          "entryFor",
-          "evidenceList",
-          "queryFormulas",
-          "replayND",
-          "replayVerdictsND",
-          "runVerdicts"
-        ],
-        "reason": "readings-defaults RD-3 readings-verdicts decoder: the question, assumed, the query's premises and conclusion, and each choice's evidence (conflict packages bound to the choice's E''' base and document hash, filled witnesses, certificates bound as the norm-defaults route binds them, base models with a separate filling, each shown model bound to the checked one) are decoded on the choice's document Lean regenerates; under the completion every row is a Lean check with its Holds proof (nd_rowsHold), on the lower route each piece is readings-choice's own inner case; the English plan reads only Lean's own answer; the full file is pinned conservatively"
+        "reason": "readings-defaults RD-2a: admission, separation and each choice under the unspecified completion; the inner case of readings-choice (its kind, conflict packages, premises, certificate, model and filling) read through the pinned NormDefaults and SupWire decoders and by `conflictPackages` and `ndCertificate`; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Readings/Wire.lean",
@@ -902,12 +867,12 @@
       },
       {
         "file": "lean/VE/Route/Wire.lean",
-        "lines": 671,
-        "sha256": "1f79af9816d5ee96c8eeca40c81a25977acd7b5caeeda72eaf014ee6ccfb0acc",
+        "lines": 688,
+        "sha256": "8b9555d065eb5844ee6af42eb9991d4455fb9672f0e139d6634c9962ece653ec",
         "ranges": [
           [
             1,
-            671
+            688
           ]
         ],
         "declarations": [
@@ -948,12 +913,12 @@
       },
       {
         "file": "lean/VE/Senses/Run.lean",
-        "lines": 248,
-        "sha256": "1755c5e6766a2bb5b704d45fd2f2bc41f7723acebc05536183845d18c5a4c658",
+        "lines": 252,
+        "sha256": "3f2d07fc6aed58af7591dbf3861fc28411dae0843b620f3565d8b57a925175ad",
         "ranges": [
           [
             1,
-            248
+            252
           ]
         ],
         "declarations": [
@@ -971,12 +936,12 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 481,
-        "sha256": "6f81c137c4b66f9f090b63c4a96632bb7cf5d1ab5d94a709f8d1daf629e33d17",
+        "lines": 679,
+        "sha256": "af7eb753ee6619e2567051fbcfc19491f2e4167b10866865bd7abe9cb12d250e",
         "ranges": [
           [
             1,
-            481
+            679
           ]
         ],
         "declarations": [
@@ -1110,12 +1075,12 @@
       },
       {
         "file": "lean/VE/SoftNorms/Phases.lean",
-        "lines": 369,
-        "sha256": "4d71a7a96261f51f3129c25a4ef3a0d45e405aff8df03521825eda52fe2c20ce",
+        "lines": 370,
+        "sha256": "4b807f2925e06279acf4d0d393b1f672e9b16b3994b8bb18aaf4e60e3b230e34",
         "ranges": [
           [
             1,
-            369
+            370
           ]
         ],
         "declarations": [
@@ -1190,12 +1155,12 @@
       },
       {
         "file": "lean/VE/SpeechActs/Wire.lean",
-        "lines": 993,
-        "sha256": "fbe08d985f7fc507397eb1e74d7c9cc6ee8504dfc2e43f7cd77d78bf53f3e618",
+        "lines": 1007,
+        "sha256": "c5d1a01b214c4242d91358210c6770edf62ee4f890d47922266f2f0b55616f95",
         "ranges": [
           [
             1,
-            993
+            1007
           ]
         ],
         "declarations": [
@@ -1238,6 +1203,73 @@
           "runCase"
         ],
         "reason": "W6 unit declarations, quantity syntax and runner; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Readings/Companions.lean",
+        "lines": 923,
+        "sha256": "dc0e7274664915cab3c524fcd827e0b4e46b182aa0a00b31f545b9727df84bb0",
+        "ranges": [
+          [
+            1,
+            923
+          ]
+        ],
+        "declarations": [
+          "companionSets",
+          "companionIds",
+          "reservedComponentText",
+          "carries",
+          "readingsOf",
+          "mergeCompanions",
+          "mergeCategory",
+          "mergeOpenTerms",
+          "mergeTerms",
+          "companionMeaningId",
+          "meaningCheck",
+          "profileCheck",
+          "componentOf",
+          "crossingText",
+          "shapeText",
+          "splitCase"
+        ],
+        "reason": "readings-defaults RD-4a: a candidate's `companion` (its environment and open terms) read, merged per companion set and validated through the pinned Readings.Wire and Route decoders (`decodeEnvironment`, `openTermNames`), each recorded `meaning_id` checked against W1's identity over the companion's own environment, and the document split into its cases; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Readings/VerdictsWire.lean",
+        "lines": 1565,
+        "sha256": "15ebc9d3e1a85ee192f5aeb670b4ed60292f120cb3242de7cf5b7361b03eddb4",
+        "ranges": [
+          [
+            1,
+            1565
+          ]
+        ],
+        "declarations": [
+          "membersOf",
+          "without",
+          "shownOk",
+          "shownOf",
+          "pieceOf",
+          "ndBoundCert",
+          "ndFilled",
+          "ndEvidenceOf",
+          "strOf",
+          "isNull",
+          "jstrings",
+          "jchoice",
+          "jgaps",
+          "perChoice",
+          "planItems",
+          "lowerRun",
+          "lowerInfo",
+          "entryFor",
+          "evidenceList",
+          "queryFormulas",
+          "replayND",
+          "replayVerdictsND",
+          "runVerdicts"
+        ],
+        "reason": "readings-defaults RD-3 readings-verdicts decoder: the question, assumed, the query's premises and conclusion, and each choice's evidence (conflict packages bound to the choice's E''' base and document hash, filled witnesses, certificates bound as the norm-defaults route binds them, base models with a separate filling, each shown model bound to the checked one) are decoded on the choice's document Lean regenerates; under the completion every row is a Lean check with its Holds proof (nd_rowsHold), on the lower route each piece is readings-choice's own inner case; the English plan reads only Lean's own answer; the full file is pinned conservatively"
       }
     ],
     "other_json": {
@@ -1256,7 +1288,7 @@
       "lean/VE/Route/MeteredTrace.lean": "lean:runner-glue: explanation JSON display after the proved metered value; reads no untrusted input",
       "lean/VE/SoftNorms/Run.lean": "lean:runner-glue: ve_soft_norms_route case dispatch and response rows",
       "lean/VE/Rights/Run.lean": "lean:runner-glue: ve_rights_route case dispatch and response rows",
-      "lean/VE/Readings/Run.lean": "lean:runner-glue: ve_readings_route case dispatch and response rows; readings-validate and readings-separate rows regenerated from the pinned Wire decoder; the S2a kinds dispatched to SupRun; readings-verdicts dispatched to VerdictsWire (runVerdicts) before the completion's kinds",
+      "lean/VE/Readings/Run.lean": "lean:runner-glue: ve_readings_route case dispatch and response rows; readings-validate and readings-separate rows regenerated from the pinned Wire decoder; the S2a kinds dispatched to SupRun; readings-verdicts dispatched to VerdictsWire (runVerdicts) before the completion's kinds, on the case or companion component the request names",
       "lean/VE/Readings/SupRun.lean": "lean:runner-glue: ve_readings_route S2a case kinds; case fields are read through the pinned SupWire and Wire decoders, and the response rows are built from Lean checks (supCertificateCheck, supModelCheck, slotConflictFreeCheck, deadCheck, unsatCheck); readings-choice runs the lower route on the regenerated choice document with its regenerated assertions, accepts a chain certificate only when the lower conflict kind finds the case's conflict packages CONFLICT-FREE on the same document, and choice-model reads its model through the chain decoders (decodeModel, decodeModelR, decodeModelData); the kind list names readings-verdicts, which Run.lean dispatches",
       "lean/VE/Readings/Route.lean": "lean:runner-glue: the readings@1 route of 1.1 and the regenerated S2a elaboration rows (elaborateFields); builds JSON, reads none",
       "lean/VE/Norms/Run.lean": "lean:runner-glue: ve_norms_route case dispatch and error rows",
@@ -1319,6 +1351,7 @@
       "lean/VE/EnglishGrammar/E2Examples.lean": "fixtures only: E2 port, overlay check, guards, texts and advice #guard checks (spec section 8); no runner path",
       "lean/VE/Service/ParseDiagnostic.lean": "diagnostic only after a rejected checked parse: builds the first source fault and span; cannot accept",
       "lean/VE/Readings/UnspecifiedExamples.lean": "fixtures: an empty environment JSON for `checkAuthorN` in `#guard` (readings-defaults 8.3); on no runner path",
+      "lean/VE/Readings/CompanionsExamples.lean": "readings-defaults RD-4a: #guard fixtures that build JSON documents and environments for the merge and the split; no decoder",
       "lean/ResponseShape/Encoders/Document.lean": "Document response-shape encoder proves the JSON wrapper shape; the document admission decoder is pinned in lean/VE/Service/Document.lean."
     }
   },
@@ -1595,18 +1628,11 @@
           "lean/VE/Bridge.lean"
         ]
       },
-      "rust": {
-        "commands": [
-          "parse",
-          "format"
-        ],
-        "role": "parse diagnostics with codes and spans; canonical formatting"
-      },
+      "rust": null,
       "lean_call_sites": [],
       "tests": [
         "tests/test_parser_renderer.py::test_strict_syntax_rejects_variants",
-        "tests/test_lean_conformance.py::test_lean_source_resolution_and_canonical_binder_order",
-        "tests/test_rust_conformance.py::test_rust_shared_parser"
+        "tests/test_lean_conformance.py::test_lean_source_resolution_and_canonical_binder_order"
       ],
       "trusted": [
         "python:implementation",
@@ -1757,7 +1783,7 @@
         "commands": [
           "conformance"
         ],
-        "role": "environment decoding and environment_id in every Rust case"
+        "role": "environment decoding in every Rust case; environment_id in its countermodel check"
       },
       "lean_call_sites": [],
       "tests": [
@@ -1828,13 +1854,12 @@
         "commands": [
           "conformance"
         ],
-        "role": "model decoding and model_id in every Rust case"
+        "role": "model decoding in every Rust case with a model; model_id in its countermodel check"
       },
       "lean_call_sites": [],
       "tests": [
         "tests/test_evaluate_search.py::test_model_rejects_nonliteral_complete_duplicates_dangling_and_missing",
-        "tests/test_lean_conformance.py::test_countermodel_rejects_inadmissible_model",
-        "tests/test_rust_conformance.py::test_rust_shared_identities"
+        "tests/test_lean_conformance.py::test_countermodel_rejects_inadmissible_model"
       ],
       "trusted": [
         "python:implementation",
@@ -1927,6 +1952,22 @@
             "dispatch": [
               "lean/VE/Order/Wire.lean"
             ]
+          },
+          {
+            "executable": "ve_metered",
+            "mode": "",
+            "kinds": [
+              "evaluate-budgeted"
+            ],
+            "response": {
+              "evaluation": "object"
+            },
+            "dispatch": [
+              "lean/VE/Route/MeteredRun.lean",
+              "lean/VE/Route/Metered.lean",
+              "lean/VE/Route/MeteredTrace.lean"
+            ],
+            "note": "lean-first 15b: the reported value, count, trace and ResourceLimit of an evaluation (ve.evaluate:_evaluate_lean checks the evaluation object's members)"
           }
         ],
         "planned_modes": [],
@@ -1949,7 +1990,11 @@
           "VE.Route.WireSound.runOrder_evaluate",
           "VE.Route.RunSound.route_fol_evaluate",
           "VE.Route.RunSound.route_closure_evaluate",
-          "VE.Route.RunSound.route_order_evaluate"
+          "VE.Route.RunSound.route_order_evaluate",
+          "VE.Route.MeteredProofs.fol_sound",
+          "VE.Route.MeteredProofs.closure_sound",
+          "VE.Route.MeteredProofs.core_sound",
+          "VE.Route.MeteredProofs.order_sound"
         ],
         "planned_theorems": [],
         "decoders": [
@@ -1962,12 +2007,13 @@
       },
       "rust": {
         "commands": [
-          "evaluate",
           "conformance"
         ],
-        "role": "hot evaluation and, after stage 2e, budgeted traces"
+        "role": "the conformance tooling's evaluation leg only (the evaluate-budgeted case kind); since lean-first 15b no public evaluation reads it"
       },
-      "lean_call_sites": [],
+      "lean_call_sites": [
+        "ve.backends.lean_runner:metered_evaluation"
+      ],
       "tests": [
         "tests/test_lean_conformance.py::test_lean_agrees_on_every_shared_case",
         "tests/test_rust_conformance.py::test_rust_shared_evaluation",
@@ -2094,7 +2140,6 @@
       },
       "rust": {
         "commands": [
-          "check-countermodel",
           "conformance"
         ],
         "role": "fast validation; Lean validates every Rust witness before it is reported"
@@ -2148,15 +2193,42 @@
           "CheckerUnavailable"
         ]
       },
-      "lean": null,
+      "lean": {
+        "bindings": [
+          {
+            "executable": "ve_metered",
+            "mode": "",
+            "kinds": [
+              "non-vacuity"
+            ],
+            "response": {
+              "suitable": "bool",
+              "evaluations": "nat",
+              "exhausted": "bool"
+            },
+            "uncounted": {
+              "evaluations": "the work Lean charged; ve.search:_nonvacuous checks it is within the case's max_evaluations"
+            },
+            "dispatch": [
+              "lean/VE/Route/MeteredRun.lean",
+              "lean/VE/Route/NonVacuity.lean"
+            ],
+            "note": "lean-first 15b: the non-vacuity of every reported search witness"
+          }
+        ],
+        "planned_modes": [],
+        "theorems": []
+      },
       "rust": {
         "commands": [
-          "countermodel",
+          "jsonl",
           "conformance"
         ],
-        "role": "search, extended with every Python search option in stage 2e"
+        "role": "the only search (lean-first 15b): proposes candidates and witnesses; its candidate evaluator is generator-internal and its witnesses are checked by Lean"
       },
-      "lean_call_sites": [],
+      "lean_call_sites": [
+        "ve.backends.lean_runner:metered_nonvacuity"
+      ],
       "tests": [
         "tests/test_evaluate_search.py::test_search_finds_empty_domain_countermodel_and_checks_it",
         "tests/test_search_options.py::test_public_countermodel_check_always_revalidates_forged_model_identity",
@@ -2169,7 +2241,7 @@
       ],
       "notes": [
         "Search has no theorem; its soundness is countermodel.check's. Every candidate passes the `ve.search:check_countermodel` verdict entry before `Found` is reported (a distinguishing model is checked as a countermodel to the direction it refutes), so a migrated countermodel.check makes search CheckerUnavailable rather than bypassed.",
-        "The non-vacuity filter (`nonvacuous_for`, `semantic_nonvacuity`) is a search-side constraint with no checker counterpart; it is trusted as python:implementation."
+        "Lean-first batch 15b: Python has no search of its own. Rust's search proposes under every authority; Lean checks every reported witness (the countermodel.check entry under Lean's authority) and its non-vacuity (`ve_metered`, `VE.Route.NonVacuity`). Rust's candidate evaluator stays generator-internal (rule 3): the batch-15b measurement (docs/lean-first/b15b) found Lean evaluation of every candidate over the bluedot search deadline."
       ]
     },
     {
@@ -2403,7 +2475,7 @@
         "commands": [
           "conformance"
         ],
-        "role": "defined tables and the dependency-order route kind"
+        "role": "defined tables"
       },
       "lean_call_sites": [],
       "tests": [
@@ -3015,12 +3087,11 @@
         "commands": [
           "conformance"
         ],
-        "role": "environment_id, meaning_id and model_id in every Rust case"
+        "role": "environment_id, premise and conclusion meaning_ids and model_id in its countermodel check"
       },
       "lean_call_sites": [],
       "tests": [
         "tests/test_conformance.py::test_identity_preimages_have_exact_domain_and_shape",
-        "tests/test_rust_conformance.py::test_rust_shared_identities",
         "tests/test_p0_three_way.py::test_report_identity_binds_environment_and_document"
       ],
       "trusted": [
@@ -3323,14 +3394,14 @@
     },
     {
       "id": "english.admission",
-      "summary": "English surface admission: Python decides; Lean compares in shadow",
+      "summary": "English surface admission: Lean decides one reading per sentence and its obligations",
       "class": "surface",
-      "authority": "python",
+      "authority": "migrated",
       "target": "lean",
       "assurance": {
         "current": "experimental",
         "at_switch": "experimental",
-        "reason": "Python admission is retained after the E2.5 readability message regression; Lean english.read runs in shadow"
+        "reason": "Lean english.read decides admission; Python produces a checked lexicon and relays obligations to the entailment prover"
       },
       "python": [
         "ve.english:parse_english_with_metadata",
@@ -3394,7 +3465,7 @@
           }
         ],
         "planned_modes": [],
-        "harness": "The persistent service runs the E2 English reader in shadow; Python produces the public verdict.",
+        "harness": "The persistent service runs the E2 English reader and candidate checker; the Python relay validates request identities and the full read response before returning a verdict.",
         "theorems": [
           "VE.EnglishGrammar.policy_iff_no_failure",
           "VE.EnglishGrammar.policy_selection",

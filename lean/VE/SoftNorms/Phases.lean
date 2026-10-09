@@ -149,7 +149,8 @@ def declarations (environment : Json) (profiles : List String) :
   let stripped := (environment.setObjVal! "profiles" (toJson base)).setObjVal! "vocabulary"
     (Json.mkObj [("sorts", vocab.getObjValD "sorts"), ("constants", vocab.getObjValD "constants"),
       ("predicates", Json.mkObj (preds.map (fun (p, e) => (p, stripEntry e))))])
-  let ne ← inherited (Norms.Wire.decodeNormsEnvironment stripped)
+  -- A constant's `verbalisation` is display metadata that Python's `Environment` admits (DF-19).
+  let ne ← inherited (Norms.Wire.decodeNormsEnvironment stripped (displayConstants := true))
   let some block := (vocab.getObjVal? "soft").toOption | pure (ne, noBlock io)
   unless (VE.Bridge.displayFields block ["outranking"]
       ["parties", "ranks", "outranks", "ties", "exception_decider"]).isOk do

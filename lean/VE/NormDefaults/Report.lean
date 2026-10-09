@@ -1,4 +1,5 @@
 import VE.NormDefaults.Replay
+import VE.Route.Flags
 
 /-! The `norm-defaults-report` case (docs/spec/norm-defaults.md 3.2 and 5): the lines of
 every regulated predicate, decided here from checked evidence.
@@ -459,14 +460,12 @@ def situationFrom (s : SourceU) (m : Json) : Except String (SituationG s.U) := d
       if n.startsWith "unsaid__" then
         throw s!"InvalidModel(norm-defaults): {n} is a filling; supply it as a filling, not a table"
   let v := VE.Norms.Replay.baseModelVocabulary s.src.ne s.src.D
-  let data ← VE.Bridge.decodeModelData v m
-  if hv : data.valid v = true then
-    if hb : backgroundValid s.U.D data.toModel = true then
-      pure ⟨data.toModel, by
-        rw [s.doc]
-        exact VE.Norms.Replay.baseModel_valid s.src.ne s.src.D s.src.env _ (VE.Bridge.modelData_valid data v hv), hb⟩
-    else throw (VE.Route.Wire.invalidModel "literals")
-  else throw "model is not semantically admissible"
+  let a ← admitModel s v (← VE.Bridge.decodeModelData v m)
+  if hb : backgroundValid s.U.D a.data.toModel = true then
+    pure ⟨a.data.toModel, by
+      rw [s.doc]
+      exact VE.Norms.Replay.baseModel_valid s.src.ne s.src.D s.src.env _ (VE.Bridge.modelData_valid a.data v a.valid), hb⟩
+  else throw (VE.Route.Wire.invalidModel "literals")
 
 /-- A supplied filled model of `E‴_base` for `r` (the `witnesses` entry named `r`), replayed. -/
 def suppliedWitness (s : SourceU) (witnesses : Json) (r : Regulated) :

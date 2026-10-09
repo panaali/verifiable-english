@@ -14,7 +14,7 @@ from ve.ast import (And, Atom, Binary, Body, Bottom, Const, Document, Eq, Exists
                     Forall, Implies, Le, Lt, Named, Not, Num, Or, Reach, Top,
                     Unary, Var, formula_to_data)
 from ve.evaluate import evaluate
-from ve.search import _nonvacuous
+from tests import nonvacuity_oracle
 
 
 EXE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_metered"
@@ -23,8 +23,11 @@ FAMILIES = ((), ("closure@0",), ("closure@0", "nary@0"), ("order@0",))
 
 def run(cases):
     answer = subprocess.run([str(EXE)], input=json.dumps(cases), text=True,
-                            capture_output=True, check=True, timeout=HANG_TIMEOUT)
-    return json.loads(answer.stdout)
+                            capture_output=True, check=False, timeout=HANG_TIMEOUT)
+    rows = json.loads(answer.stdout)
+    # Exit 1 exactly when a case is rejected (batch 15b), as every one-shot runner.
+    assert answer.returncode == int(any(row.get("status") == "error" for row in rows)), answer
+    return rows
 
 
 def fixture(profiles):
@@ -104,14 +107,16 @@ def test_nonvacuity_charge_exhaustion_and_semantic_guards_match_python(profiles)
     for formula in candidates:
         for semantic in (False, True):
             for budget in (0, 1, 3, 20):
+                item = formula_to_data(env, formula)
                 cases.append({"id": str(len(cases)), "kind": "non-vacuity",
                               "environment": raw, "model": model.to_dict(),
-                              "formula": formula_to_data(env, formula),
+                              "formula": item,
                               "max_evaluations": budget, "semantic_nonvacuity": semantic})
-                expected.append(_nonvacuous(env, formula, model, budget, semantic=semantic))
+                expected.append(nonvacuity_oracle.answer(raw, model.to_dict(), item, budget, semantic,
+                                                         env=env, formula=formula, model=model))
     for row, answer in zip(run(cases), expected, strict=True):
         assert row["status"] == "ok", row
-        assert (row["suitable"], row["evaluations"], row["exhausted"]) == answer
+        assert [row["suitable"], row["evaluations"], row["exhausted"]] == answer
 
 
 @pytest.mark.skipif(not EXE.exists(), reason="ve_metered has not been built")
@@ -123,7 +128,7 @@ def test_bad_budget_types_are_bounded_errors():
     for case in cases:
         completed = subprocess.run([str(EXE)], input=json.dumps([case]), text=True,
                                    capture_output=True, timeout=HANG_TIMEOUT)
-        if completed.returncode == 0:
+        if completed.returncode == 1:  # a rejected case (exit 1 since batch 15b)
             assert json.loads(completed.stdout)[0]["status"] == "error"
         else:
             assert completed.returncode == 2

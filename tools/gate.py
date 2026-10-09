@@ -60,7 +60,7 @@ ALLOWED_ENVIRONMENT = (
 STAGE_ENVIRONMENT = {
     "cargo": ("CARGO_NET_OFFLINE", "CARGO_ENCODED_RUSTFLAGS"),
     "pytest": ("VE_GATE_PYTEST_RESULT", "VE_GATE_PYTEST_PROGRESS", "VE_NATIVE_PREBUILT", "VE_LEAN_PREBUILT",
-               "VE_RUST_PREBUILT", "VE_RUST_BINARY", "VE_SHADOW_LOG"),
+               "VE_RUST_PREBUILT", "VE_RUST_BINARY"),
 }
 # The gate's pytest invocation, shared by its collection run, its suite run and the
 # baseline writer (tools/gate_collection.py, also `--write-collection`), so the baseline
@@ -497,7 +497,7 @@ def main() -> int:
                 env, VE_GATE_PYTEST_RESULT=str(collection_file),
                 VE_GATE_PYTEST_PROGRESS=str(scratch / "current-test.txt"),
                 VE_NATIVE_PREBUILT="1", VE_LEAN_PREBUILT="1", VE_RUST_PREBUILT="1",
-                VE_RUST_BINARY=str(rust_binary), VE_SHADOW_LOG=str(scratch / "english-shadow.jsonl")))
+                VE_RUST_BINARY=str(rust_binary)))
             # The collection, serially (xdist workers report no deselection), then the
             # suite on `--workers` xdist workers; a worker must collect that selection.
             collection = collect(pytest_env, collection_file, python=python)

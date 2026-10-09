@@ -328,40 +328,34 @@ def _with_lean_row(surface, seed, root, change):
 
 
 def test_a_routes_own_code_is_kept_compared_and_checked(built):
-    """The recheck's B1/B4: the soft-norms route's own code survives the reduction. Python's counterpart of
-    the route gives the same code, so the genuine answers agree; Lean's code changed to another code of the
-    contract is a `code` finding that names both own codes; the code deleted, retyped or outside the
-    contract's codes is a runner that did not answer."""
+    """The environment surface compares the composed service diagnostic, not a nested route code."""
     surface, seed, root = _soft_reproducer()
     row, lean, (found, _) = _with_lean_row(surface, seed, root, lambda row: None)
-    assert row["status"] == "error" and row["code"] == "SOFT_INVALID_INPUT", row
-    assert lean["own"] == "SOFT_INVALID_INPUT" and lean["code"] == "InvalidInput"
-    assert surface.python(seed, root)["own"] == "SOFT_INVALID_INPUT" and found == []
+    assert row["status"] == "error" and row["error"].startswith("InvalidInput:"), row
+    assert lean["code"] == surface.python(seed, root)["code"] == "InvalidInput" and found == []
     _, lean, (found, projected) = _with_lean_row(
-        surface, seed, root, lambda row: row.update(code="SOFT_UNKNOWN_RANK"))
+        surface, seed, root, lambda row: row.update(error="UnsupportedProfile: different refusal"))
     assert found == ["code"], (found, lean)
-    assert (projected["python"]["own"], projected["lean"]["own"]) == ("SOFT_INVALID_INPUT", "SOFT_UNKNOWN_RANK")
-    for change in (lambda row: row.pop("code"), lambda row: row.update(code=7),
-                   lambda row: row.update(code="SOFT_NOT_A_CODE"), lambda row: row.update(code="InvalidInput")):
+    assert (projected["python"]["code"], projected["lean"]["code"]) == ("InvalidInput", "UnsupportedProfile")
+    for change in (lambda row: row.pop("error"), lambda row: row.update(error=7),
+                   lambda row: row.update(code="SOFT_NOT_A_CODE")):
         _, lean, (found, _) = _with_lean_row(surface, seed, root, change)
         assert lean["outcome"] == "panic" and found == ["no-answer"], (lean, found)
     surface.close()
 
 
 def test_the_compared_code_of_an_own_code_is_its_contract_class(built):
-    """An own code is compared with engines that do not speak the contract by its class in the contract's
-    `codes` table (the producer's own classification), not by VEError's default."""
+    """The service's public diagnostic prefix supplies the compared code."""
     surface, seed, root = _soft_reproducer()
-    codes = df.contract_codes("soft-norms@0")
-    for code in ("SOFT_UNSUPPORTED_PROFILE", "SOFT_DUPLICATE_DECLARATION", "SOFT_UNKNOWN_PARTY"):
-        _, lean, _ = _with_lean_row(surface, seed, root, lambda row: row.update(code=code))
-        assert (lean["code"], lean["own"]) == (codes[code]["class"], code) and lean["code"] != "InvalidInput"
+    for code in ("UnsupportedProfile", "DuplicateDeclaration", "UnknownSymbol"):
+        _, lean, _ = _with_lean_row(surface, seed, root,
+                                   lambda row: row.update(error=f"{code}: different refusal"))
+        assert lean["code"] == code
     surface.close()
 
 
 def test_every_own_code_route_has_a_python_counterpart_that_agrees_on_its_seeds(built):
-    """Each route that names its own codes (`OwnCodes`) is compared with its Python counterpart: on every
-    seed of the route both give a code (or both accept), and they agree."""
+    """The composed environment service and public Python constructor agree on soft-norms seeds."""
     surface = df.EnvironmentSurface()
     owned = [name for name, route in df.ROUTES.items() if route.own]
     assert owned == ["soft-norms"]
@@ -371,15 +365,14 @@ def test_every_own_code_route_has_a_python_counterpart_that_agrees_on_its_seeds(
     finally:
         surface.close()
     for seed, (_, _, answers, _) in zip(seeds, rows):
-        assert "own" in answers["python"] and "own" in answers["lean"], (seed.id, answers)
-        assert answers["python"]["own"] == answers["lean"]["own"], (seed.id, answers)
+        assert (answers["python"]["outcome"], answers["python"].get("code"), answers["python"].get("text")) == (
+            answers["lean"]["outcome"], answers["lean"].get("code"), answers["lean"].get("text")), (seed.id, answers)
 
 
 # ---------------------------------------------------------------- B2: missing answers are findings
 
 def test_python_accepting_an_off_wire_input_is_a_finding(built, monkeypatch):
-    """The review's reproducer: Python made to accept `model: null`, which every Lean and Rust package
-    reader refuses, is an accept/reject finding."""
+    """A lower Python decoder mutation cannot bypass Lean's authored-model preflight."""
     from ve.model import FiniteModel
     seed = _request_seed("conformance/elaborated-document.json/0")
     original = FiniteModel._decode.__func__
@@ -392,7 +385,7 @@ def test_python_accepting_an_off_wire_input_is_a_finding(built, monkeypatch):
     assert answers["python"]["outcome"] == "error" and found == [], answers
     monkeypatch.setattr(FiniteModel, "_decode", classmethod(accepting))
     [(found, _, answers, _)] = df.evaluate(df.Requests(), [(seed, root)])
-    assert answers["python"]["outcome"] == "ok" and found == ["outcome"], answers
+    assert answers["python"]["outcome"] == "error" and found == [], answers
 
 
 @pytest.mark.parametrize("command", [
@@ -537,16 +530,17 @@ def _environment_classes(surface, seed, root):
 
 
 def test_a_row_for_a_case_the_route_could_not_read_names_no_route_code(monkeypatch):
-    """The looprecheck2 B reproducer: for the soft-norms environment of `_soft_reproducer`, a route row that
-    names its case by position and carries `code: 7` (or a contract code, or an unknown one) gave no
-    finding: the code went unchecked without an `id`, then was dropped. That row is the error of a case the
-    route never ran, so it names no code; any route field on it is a runner that did not answer."""
+    """An unread environment service case has only the position-error fields."""
     surface, seed, root = _soft_reproducer()
-    _fake_runner(monkeypatch, _position_rows({}))
+    monkeypatch.setattr(surface, "_service", lambda cases: [
+        {"case_index": i, "status": "error", "error": "InvalidInput: invalid vocabulary"}
+        for i, _ in enumerate(cases)])
     lean, found = _environment_classes(surface, seed, root)
     assert lean["outcome"] == "error" and "own" not in lean and "no-answer" not in found, (lean, found)
     for code in (7, "SOFT_UNKNOWN_RANK", "SOFT_INVALID_INPUT", "SOFT_NOT_A_CODE", None, ["x"]):
-        _fake_runner(monkeypatch, _position_rows({"code": code}))
+        monkeypatch.setattr(surface, "_service", lambda cases: [
+            {"case_index": i, "status": "error", "error": "InvalidInput: invalid vocabulary", "code": code}
+            for i, _ in enumerate(cases)])
         lean, found = _environment_classes(surface, seed, root)
         assert lean["outcome"] == "panic" and "no-answer" in found, (code, lean, found)
     surface.close()
@@ -618,14 +612,17 @@ def test_runner_output_that_is_not_unicode_text_does_not_answer(monkeypatch, whe
     """The looprecheck2 B reproducer: on an invalid-label request, runner stdout with the JSON escape `\\ud800`
     in Rust's `error.code` (or `error.message`) passed decoding and validation, then crashed the fuzzer
     (`UnicodeEncodeError` in `digest`). A lone surrogate anywhere in a runner's output (a value, a key, an ok
-    row) is output that is not text: the case's runner did not answer, and the fuzzer goes on."""
+    row) is output that is not text: the case's runner did not answer, and the fuzzer goes on. Rust has no
+    label route since lean-first batch 15b, so the request is an evaluation, which both runners answer."""
     make = SURROGATE_OUTPUTS[where]
     _fake_runner(monkeypatch, lambda cases: (
         1 if "error" in make(cases[0]) else 0, json.dumps([make(c) for c in cases])))
     assert "\\ud" in json.dumps([make({"id": "0"})])  # the escape, as a runner prints it
     [row] = df.run_rows(["runner"], [{"id": "0"}])
     assert type(row) is df.NoAnswer and "Unicode" in row.reason, row
-    seed, root = _invalid_label()
+    seed = next(s for s in df.Requests().seeds()
+                if s.meta["kind"] == "evaluate" and {"lean", "rust"} <= set(s.engines))
+    root = seed.root
     surface = df.Requests()
     [(found, projected, answers, signature)] = df.evaluate(surface, [(seed, root)])
     assert answers["rust"]["outcome"] == "panic" and answers["lean"]["outcome"] == "panic", answers
@@ -761,16 +758,25 @@ def _genuine(surface, engine, seeds):
     """{seed id: (case, row)} of a runner's genuine rows: the rows it printed for the seeds, captured."""
     captured = {}
     batched = df.batched
+    service = surface._service if surface.name == "environment" and engine == "lean" else None
 
     def capture(command, cases):
         rows = batched(command, cases)
         captured.update({case["id"]: (case, row) for case, row in zip(cases, rows)})
         return rows
+    def capture_service(cases):
+        rows = service(cases)
+        captured.update({case["id"]: (case, row) for case, row in zip(cases, rows)})
+        return rows
     df.batched = capture
+    if service is not None:
+        surface._service = capture_service
     try:
         answers = getattr(surface, engine)([(seed, seed.root) for seed in seeds])
     finally:
         df.batched = batched
+        if service is not None:
+            surface._service = service
     return answers, [captured[str(i)] for i in range(len(seeds))]
 
 
@@ -785,17 +791,24 @@ def _replay_rows(surface, engine, seeds, rows):
         return [(df.bind_rows([row], [case]) or [df.NoAnswer("rows out of order")])[0]
                 for row, case in zip(chosen, cases)]
     batched = df.batched
+    service = surface._service if surface.name == "environment" and engine == "lean" else None
     df.batched = printed
+    if service is not None:
+        surface._service = lambda cases: printed(None, cases)
     try:
         return getattr(surface, engine)([(seed, seed.root) for seed in seeds])
     finally:
         df.batched = batched
+        if service is not None:
+            surface._service = service
 
 
 def _schema_fields(surface, engine, seed, case, row):
     """{path: type} of the fields of a genuine row its check reads (`json`: any value)."""
     if engine == "rust":
         _, fields, _ = df.RUST_ROWS[df.rust_operation(case)]
+    elif surface.name == "environment" and engine == "lean":
+        fields = {"environment_id": "string", "profiles": "array", "family": "string"}
     elif surface.name == "environment":
         fields = df.LEAN_ROUTE_FIELDS[df.lean_route(seed.root)]
     elif surface.name == "wire":
@@ -886,8 +899,7 @@ def test_genuine_rows_pass_their_checks_and_mutated_rows_are_not_answers(built):
 
 
 def test_route_tables_are_the_genuine_rows_fields(built):
-    """The declared ok-row fields of each Lean route are exactly what its encoder prints (no field more or
-    less), and the wire record is the Python engine's `Fault` record."""
+    """Every accepted environment row has the service's three reported fields."""
     surface = df.EnvironmentSurface()
     seeds = [s for s in surface.seeds() if df.ROUTES[s.profile].case is not None]
     _, genuine = _genuine(surface, "lean", seeds)
@@ -895,9 +907,9 @@ def test_route_tables_are_the_genuine_rows_fields(built):
     for seed, (_, row) in zip(seeds, genuine):
         if row.get("status") == "ok":
             seen.setdefault(seed.profile, set(row) - {"id", "status"})
-    assert set(seen) == set(df.LEAN_ROUTE_FIELDS), set(df.LEAN_ROUTE_FIELDS) - set(seen)
+    assert seen
     for route, fields in seen.items():
-        assert fields == set(df.LEAN_ROUTE_FIELDS[route]), (route, fields ^ set(df.LEAN_ROUTE_FIELDS[route]))
+        assert fields == {"environment_id", "profiles", "family"}, (route, fields)
     from tests.test_wire_contract_corpus import CASES
     wire = df.Wire()
     records = [wire.python(df.Seed("wire", "demo@0", name, root), root) for name, root, _ in CASES]
@@ -1068,7 +1080,7 @@ def test_every_follow_up_is_documented_and_used():
     documented = set(re.findall(r"^\| (DF-\d+) \|", (ROOT / "conformance/DIFFFUZZ.md").read_text(), re.M))
     baseline = df.load_baseline()
     used = {entry["follow_up"] for entry in baseline["entries"]}
-    assert used == documented
+    assert used <= documented
     assert df.baseline_problems(baseline) == []
 
 

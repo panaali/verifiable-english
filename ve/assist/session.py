@@ -340,31 +340,65 @@ class AssistSession:
         # Canonical premise order (sorted, deduplicated): a verdict is a function of the premise SET,
         # never of node insertion order or parent order.
         premises = self._canonical_premises(premises)
-        if type(conclusion) is ast.Top:
-            return "yes"
         try:
-            status = prove_entailment(self.env, premises, conclusion,
-                                      max_steps=self.options["max_proof_steps"]).status
+            proof = prove_entailment(self.env, premises, conclusion,
+                                     max_steps=self.options["max_proof_steps"])
         except (ValueError, VEError):
-            status = "ResourceLimit"
-        if status == "Found":
+            proof = None
+        if proof is not None and self._lean_replays(proof, premises, conclusion):
             return "yes"
-        if status == "NotFound" and not self.env.closure:
-            return "no"
         budget = self._budget()
         try:
             found, model = ground_countermodel(self.env, premises, conclusion)
             if found == "Unsupported":
+                # A saturated open non-closure tableau already established a
+                # negative search result without spending the model-search
+                # budget. Materialise a witness for Lean even when that budget
+                # is zero; only Lean's countermodel answer may become "no".
+                witness_budget = (1_000_000 if proof is not None and proof.status == "NotFound"
+                                  and not self.env.closure else budget["max_evaluations"])
                 model = find_countermodel(self.env, premises, conclusion,
                                           max_domain_size=budget["max_domain_size"],
                                           max_models=budget["max_models"],
-                                          max_evaluations=budget["max_evaluations"]).model
-            if model is not None and check_countermodel(self.env, premises, conclusion, model,
-                                                        max_evaluations=budget["max_evaluations"]).valid:
-                return "no"
+                                          max_evaluations=witness_budget).model
+            if model is not None:
+                saturated = proof is not None and proof.status == "NotFound" and not self.env.closure
+                if saturated:
+                    if self._lean_refutes(premises, conclusion, model):
+                        return "no"
+                else:
+                    from ..backends.dispatch import pinned
+                    with pinned("lean"):
+                        checked = check_countermodel(
+                            self.env, premises, conclusion, model,
+                            max_evaluations=budget["max_evaluations"])
+                    if checked.valid:
+                        return "no"
         except (ValueError, VEError):
             pass
         return "unknown"
+
+    def _lean_refutes(self, premises, conclusion, model):
+        """Lean checks a proposed witness; search budgets never decide its truth."""
+        from ..ast import _to_data
+        from ..backends.lean_runner import cached_route_environment, lean_mode
+        from ..backends.relay import decide
+        case = {"id": "assist-countermodel", "kind": "countermodel",
+                "environment": cached_route_environment(self.env),
+                "premises": [_to_data(p) for p in premises], "conclusion": _to_data(conclusion),
+                "model": model.to_dict()}
+        return decide(lean_mode(self.env), [case])[0]["refutes"]
+
+    def _lean_replays(self, proof, premises, conclusion):
+        """A search result is evidence only after the Lean certificate checker accepts it."""
+        if proof.status != "Found" or proof.certificate is None:
+            return False
+        from ..entailment import _check_certificate_lean
+        try:
+            return _check_certificate_lean(self.env, premises, conclusion, proof.certificate,
+                                           self.options["max_proof_steps"]).valid
+        except (ValueError, VEError):
+            return False
 
     def _validity(self, formula):
         """``valid`` / ``invalid`` / ``unknown`` from no premises, conjunct by conjunct (fails closed)."""
@@ -912,8 +946,10 @@ class AssistSession:
         comparisons; never interpret False as "not entailed" in a check success depends on: use
         ``_decide``, which reports an exhausted search as ``unknown``."""
         try:
-            return prove_entailment(self.env, self._canonical_premises(premises), conclusion,
-                                    max_steps=self.options["max_proof_steps"]).status == "Found"
+            premises = self._canonical_premises(premises)
+            proof = prove_entailment(self.env, premises, conclusion,
+                                     max_steps=self.options["max_proof_steps"])
+            return self._lean_replays(proof, premises, conclusion)
         except (ValueError, VEError):
             return False
 
