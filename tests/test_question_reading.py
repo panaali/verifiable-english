@@ -240,9 +240,26 @@ def test_the_cli_json_is_leans_result_with_the_honesty_fields(fixture):
 
 
 def test_the_cli_does_not_answer_without_reading():
-    """The answer itself is plan Q2: `ve ask` without `--reading` is CheckerUnavailable, never a verdict."""
+    """The answer itself is plan Q2: `ve ask` without `--reading` reads the question, prints Lean's A0 line and then
+    Lean's own text that VE does not answer yet (the contract's `unanswered`, exported by the mode), and exits 5:
+    never a verdict, never a silent exit (DRI ruling of 2026-10-09)."""
+    unanswered = english_lean.QUESTION_TEXTS["unanswered"]
+    assert unanswered == live_texts()["unanswered"]
     done = cli(ROOT / F.DOCUMENTS["G"], "Is every member eligible?")
-    assert done.returncode == 5 and done.stdout == "" and "--reading" in done.stderr
+    assert done.returncode == 5, done
+    assert done.stdout.splitlines() == ["You asked whether every member is eligible.", unanswered], done
+    as_json = json.loads(cli(ROOT / F.DOCUMENTS["G"], "Is every member eligible?", "--json").stdout)
+    assert as_json["error"] == {"class": "CheckerUnavailable", "message": unanswered}
+    assert as_json["result"]["status"] == "one" and as_json["answer"] == "not_built"
+    # A question that is not read is refused as with --reading: Lean's refusal, its exit code.
+    refused = cli(ROOT / F.DOCUMENTS["G"], "Who is eligible?")
+    assert refused.returncode == 2 and unanswered not in refused.stdout
+
+
+def live_texts() -> dict:
+    row = relay.decide_once(MODE, {"id": MODE, "export": "codes"})
+    assert row.get("status") == "ok", row
+    return dict(row["result"]["texts"])
 
 
 def test_a_gated_environment_never_returns_a_reading():

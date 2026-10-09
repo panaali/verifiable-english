@@ -5,10 +5,12 @@ vocabulary: the environment its front matter declares, as the document loader bu
 English reader's producer. `read` is the one entry point; the CLI calls it. This module relays: it prints Lean's
 `text` (the A0 line, or the refusal with its advice) and Lean's rephrasings, and writes no English of its own.
 
-The answer to the question (`ve ask` without `--reading`, plan Q2) is not built: it exits 5.
+The answer to the question (`ve ask` without `--reading`, plan Q2) is not built. Without `--reading` the question is
+read the same way; a question with one reading prints Lean's A0 line and then Lean's text that VE does not answer
+questions yet (the contract's `unanswered` text, `VE.Question.Run.texts`), and exits 5.
 
-Exit codes: 0 the question has one reading; 2 it is not read (Lean's code, class and text); 4 `ResourceLimit`;
-5 `CheckerUnavailable`.
+Exit codes: 0 the question has one reading (`--reading`); 2 it is not read (Lean's code, class and text);
+4 `ResourceLimit`; 5 `CheckerUnavailable`, and a question read without `--reading`, which VE does not answer yet.
 """
 from __future__ import annotations
 
@@ -54,7 +56,8 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(
         prog="python -m ve ask",
         description="Read a yes-or-no question as one of the document's sentences. Only --reading is built: "
-                    "the answer itself is not (exit 5).")
+                    "without it the question is read and VE says, in Lean's words, that it does not answer yet "
+                    "(exit 5).")
     parser.add_argument("document", help="ve-document file")
     parser.add_argument("question", help="the question, ending with its only question mark")
     parser.add_argument("--reading", action="store_true", help="print the sentence the question is read as")
@@ -73,10 +76,6 @@ def main(argv=None) -> int:
         else:
             print(error["message"], file=sys.stderr)
 
-    if not options.reading:
-        emit(None, {"class": "CheckerUnavailable", "message": "CheckerUnavailable: VE does not answer questions "
-                    "yet (plan Q2); ask with --reading for the sentence the question is read as"})
-        return EXIT_UNAVAILABLE
     try:
         path = Path(options.document)
         with path.open("rb") as stream:
@@ -93,5 +92,13 @@ def main(argv=None) -> int:
     except (VEError, OSError, UnicodeError) as exc:
         emit(_answer(exc), {"class": type(exc).__name__, "message": str(exc)})
         return EXIT_NOT_READ
+    if not options.reading:
+        from .backends.english_lean import QUESTION_TEXTS
+        unanswered = QUESTION_TEXTS["unanswered"]
+        if options.json:
+            emit(answer, {"class": "CheckerUnavailable", "message": unanswered})
+        else:
+            print("\n".join([*_lines(answer), unanswered]))
+        return EXIT_UNAVAILABLE
     emit(answer)
     return EXIT_READ
