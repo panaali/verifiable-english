@@ -4686,7 +4686,17 @@
 'ResponseShape.Encoders.ReadingsRoute.elaborateFields_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.ReadingsRoute.elaborateND_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.ReadingsRoute.elaborateNDFilled_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ResponseShape.Encoders.ReadingsRoute.result_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.result_conflict_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.result_premises_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.result_query_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.conflictWord_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.premisesWord_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.candidateWord_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.modelWord_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.reasonWord_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.foldConflict_range' does not depend on any axioms
+'ResponseShape.Encoders.ReadingsRoute.foldPremises_range' does not depend on any axioms
+'ResponseShape.Encoders.ReadingsRoute.reasonOf_status' depends on axioms: [propext, Quot.sound]
 'ResponseShape.Encoders.ReadingsRoute.line_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.ReadingsRoute.perChoiceJson_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.ReadingsRoute.deadNote_fits' depends on axioms: [propext, Classical.choice, Quot.sound]

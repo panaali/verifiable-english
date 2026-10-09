@@ -207,6 +207,9 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.ReadingsRoute.candidateWord_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.modelWord_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.reasonWord_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.foldConflict_range
+#print axioms ResponseShape.Encoders.ReadingsRoute.foldPremises_range
+#print axioms ResponseShape.Encoders.ReadingsRoute.reasonOf_status
 #print axioms ResponseShape.Encoders.ReadingsRoute.line_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.perChoiceJson_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.deadNote_fits
