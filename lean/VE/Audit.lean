@@ -4937,3 +4937,14 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Question.Str.prev_end
 #print axioms VE.Question.Str.dropRight_one
 #print axioms VE.Question.Str.endsWith_q
+#print axioms VE.Question.offeredFold_mem
+#print axioms VE.Question.offered_mem
+#print axioms VE.Question.classify_not_indefinite
+#print axioms VE.Question.readQuestion_indefinite_classify
+#print axioms VE.Question.ask_one
+#print axioms VE.Question.ask_moved
+#print axioms VE.Question.ask_rephrasings
+#print axioms VE.Question.askable_iff
+#print axioms VE.Question.frames_leads
+#print axioms VE.Question.askedGate_sound
+#print axioms VE.Question.Run.oneFields_gated

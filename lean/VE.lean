@@ -115,5 +115,7 @@ import VE.Rights.Run
 import VE.Question.Properties
 import VE.Question.Examples
 import VE.Question.Run
+import VE.Question.Moved
+import VE.Question.Frames
 import VE.Question.Fixtures
 import VE.Question.Spans

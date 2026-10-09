@@ -4,26 +4,26 @@
   "K": 997,
   "S": 9704,
   "D": 13759,
-  "G": 25915,
+  "G": 26105,
   "C": 8329,
-  "P": 70125,
-  "T": 13946,
-  "o": 11840,
+  "P": 70299,
+  "T": 14007,
+  "o": 11895,
   "D[V]": 12236,
   "D[R]": 996,
   "D[I]": 527,
-  "G[V]": 24081,
-  "G[R]": 1593,
+  "G[V]": 24181,
+  "G[R]": 1683,
   "G[I]": 241,
   "tied": 178,
   "unclassified": 0,
-  "trusted": 46859,
-  "lines": 154615
+  "trusted": 46959,
+  "lines": 155095
  },
  "budget": {
   "K": 997,
   "S": 9704,
-  "V": 36158
+  "V": 36258
  },
  "signed": [],
  "history": [
@@ -425,6 +425,19 @@
     "K": 997,
     "S": 9704,
     "V": 36158
+   }
+  },
+  {
+   "change": "question answering Q1, DRI ruling of 2026-10-09 on the Q1 reviews (B): VE.Question.Moved (ask: a reading whose fronted word is put back inside a who/that/which clause of its one derivation is refused, rephrasings filtered to questions shown as one reading; G[V]) and the mode's oneFields/askedFields glue (VE/Question/Run.lean); the answer frames and their all-derivations gate (VE.Question.Frames) are G[R], texts G[R]",
+   "rebaselined_from": {
+    "K": 997,
+    "S": 9704,
+    "V": 36158
+   },
+   "to": {
+    "K": 997,
+    "S": 9704,
+    "V": 36258
    }
   }
  ],
@@ -5561,7 +5574,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 4740,
+   "T": 4751,
    "o": 199,
    "D[V]": 0,
    "D[R]": 0,
@@ -5572,7 +5585,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 4939
+   "lines": 4950
   },
   "VE/Bridge.lean": {
    "K": 22,
@@ -9201,7 +9214,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 90,
+   "T": 128,
    "o": 9,
    "D[V]": 0,
    "D[R]": 0,
@@ -9212,7 +9225,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 99
+   "lines": 137
   },
   "VE/Question/Fixtures.lean": {
    "K": 0,
@@ -9221,7 +9234,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 194,
+   "T": 206,
    "o": 12,
    "D[V]": 0,
    "D[R]": 0,
@@ -9232,7 +9245,27 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 206
+   "lines": 218
+  },
+  "VE/Question/Frames.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 58,
+   "C": 0,
+   "P": 30,
+   "T": 0,
+   "o": 17,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 0,
+   "G[R]": 58,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 0,
+   "lines": 105
   },
   "VE/Question/Help.lean": {
    "K": 0,
@@ -9253,6 +9286,26 @@
    "unclassified": 0,
    "trusted": 0,
    "lines": 68
+  },
+  "VE/Question/Moved.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 98,
+   "C": 0,
+   "P": 131,
+   "T": 0,
+   "o": 29,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 80,
+   "G[R]": 18,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 80,
+   "lines": 258
   },
   "VE/Question/Properties.lean": {
    "K": 0,
@@ -9298,21 +9351,21 @@
    "K": 0,
    "S": 0,
    "D": 21,
-   "G": 127,
+   "G": 152,
    "C": 0,
-   "P": 3,
+   "P": 16,
    "T": 0,
-   "o": 23,
+   "o": 30,
    "D[V]": 21,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 31,
-   "G[R]": 87,
+   "G[V]": 51,
+   "G[R]": 92,
    "G[I]": 9,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 52,
-   "lines": 174
+   "trusted": 72,
+   "lines": 219
   },
   "VE/Question/Spans.lean": {
    "K": 0,
@@ -9358,7 +9411,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 38,
+   "G": 47,
    "C": 0,
    "P": 0,
    "T": 0,
@@ -9367,12 +9420,12 @@
    "D[R]": 0,
    "D[I]": 0,
    "G[V]": 2,
-   "G[R]": 33,
+   "G[R]": 42,
    "G[I]": 3,
    "tied": 0,
    "unclassified": 0,
    "trusted": 2,
-   "lines": 48
+   "lines": 57
   },
   "VE/Readings/Asserted.lean": {
    "K": 0,
@@ -13062,7 +13115,7 @@
    "C": 0,
    "P": 0,
    "T": 0,
-   "o": 119,
+   "o": 121,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
@@ -13072,7 +13125,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 119
+   "lines": 121
   }
  }
 }

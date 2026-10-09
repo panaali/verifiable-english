@@ -11,6 +11,12 @@
 > The accepted Q1 reading work may begin; the corrected span definition and guards need a targeted joint check
 > before Q1.1 completes or Q1.2 starts. Q2 awaits merged RD-3 and review of these corrected statements and fixtures.
 >
+> **Status note (2026-10-09, Q1 integrated):** Q1 is built and its fifteen statements of 5.1 are proved as written
+> (`docs/spec/question-answering-integrate-fix-report.md`). The DRI ruling of 2026-10-09 on the Q1 reviews added, without
+> changing 5.1: the moved-word refusal of F2 (3.1, 4.1 row 11a, `VE.Question.Moved`, fixtures G11, G27 to G29), the
+> answer frames' all-derivations gate before the A0 line is shown (3.3, `VE.Question.Frames`), and Lean's
+> `unanswered` text for `ve ask` without `--reading`. The paragraph below describes the draft as reviewed.
+>
 > **Nothing is proved and nothing is built.** The original stub runs described below predate the Q0 corrections;
 > the corrected span mapper was separately elaborated and its affected fixtures recomputed. What was run for this
 > draft (section 11):
@@ -389,8 +395,13 @@ entry or identity of E2.6 changes (plan D2). Its one reading is a theorem, not a
 | F1 | `Is it the case that <sentence without its ".">?` | exactly `<sentence>.`'s reading (`caseThat_reads`) |
 | F2 | `Is <rest>?`, `Must <rest>?`, `May <rest>?` | the one meaning of the sentences formed by putting `is`, `must` or `may` back at a gap of `<rest>` |
 
-F2 can read odd English: in G11 the auxiliary moves out of a relative clause (plan 4.9). The A0 line shows the
-sentence actually checked, and Q1.3 counts how often this happens.
+F2 can read odd English: in G11 the auxiliary moves out of a relative clause (plan 4.9). `readQuestion` still reads
+it, and its statements are about that reading; what the mode shows is `ask`'s outcome (DRI ruling 2026-10-09,
+`VE.Question.Moved`): a reading whose put-back word is inside a clause of its one derivation (a constituent right
+after a `who`, `that` or `which` of its parent's rule) is refused as `moved`, with the questions VE reads in its
+place, and every F2 rephrasing VE offers is one it shows as one reading (`ask_moved`, `ask_rephrasings`,
+`askable_iff`; `ask_one` ties a shown reading to `readQuestion`'s). The A0 line shows the sentence actually checked,
+and Q1.3 counts how often the other odd readings happen.
 
 ### 3.2 Rephrasings VE offers
 
@@ -405,7 +416,10 @@ sentence actually checked, and Q1.3 counts how often this happens.
 The frames are plan 4.6's, with draft 2's edits (R8, R9). Each is a sentence VE says, never one an author writes.
 Each has one derivation because it begins with a fixed lead that no other registered production begins with and
 its slots are closed classes, and each passes W7's all-derivations gate before it is shown, with its rows
-registered in Q2.3 (plan 4.6, question 9).
+registered in Q2.3 (plan 4.6, question 9). Q1 shows A0 only: `VE.Question.Frames` registers every frame of this
+table, and the A0 line is shown only when it has exactly one derivation over all of them, A0's, and its slot with
+its final period reads back with exactly the question's formula (`askedGate`, `askedGate_sound`,
+`oneFields_gated`; the leads are pairwise not prefixes of each other, `frames_leads`).
 
 | # | Wording | The one reading |
 |---|---|---|
@@ -462,11 +476,12 @@ table in `VE.Question.Run`; the others are E2's, with E2's class. A span is in c
 | 9 | a candidate reaches the work budget | `budget` | `Budget`; `ResourceLimit` | `VE stopped reading this question at its work limit.` | the question |
 | 10 | a candidate has two derivations | `many` | `Ambiguous`; `AmbiguousDerivation` | `The sentence "<candidate>" can be read in more than one way. Two of the ways are shown.`, with E2's two witness trees | the question |
 | 11 | one meaning | `one` | — | — (the answer begins with A0) | — |
+| 11a | one meaning, F2, and the put-back word is inside a clause of the candidate's one derivation (`ask`, 3.1) | `moved` | `QuestionWordMoved`; `SyntaxError` | `VE could read this question only by putting "<aux>" back inside a part of the sentence that begins with "who", "that" or "which". English does not move a word out of such a part.`, then ` Ask this instead:` (or ` Ask one of these instead:`) and the questions VE reads in its place, if any | the question |
 | 12 | two or more meanings | `many` | `AmbiguousQuestion`; `AmbiguousDerivation` | `This question can be read in more than one way. Ask one of these instead:`, then the rephrasings | the question |
 | 13 | a refusal: a conclusion mark (`read` gives `.ok [(φ, true)]`) | `rejected` | `QuestionWithMarker`; `SyntaxError` | `A question cannot contain "therefore", "so", "hence" or "it follows that".` | the question |
 | 13 | a refusal: ill-typed | `rejected` | `IllTyped`; `TypeMismatch` | `The question was read, and its formula does not pass the type check.` | the question |
 | 13 | a refusal: a rejected derivation `r` | `rejected` | `r`'s code and class | E2's `rejectionText` for sentence 0, with `Sentence 1 ` written `The question ` | the question |
-| 14 | no candidate reads, the body begins with `a` or `an`, and a rephrasing reads | `indefinite` | `IndefiniteQuestion`; `SyntaxError` | `VE cannot tell whether "<a or an>" here means every or some. Ask one of these instead:`, then the rephrasings | the question |
+| 14 | no candidate reads, the body begins with `a` or `an`, and a rephrasing reads and is not moved (11a) | `indefinite` | `IndefiniteQuestion`; `SyntaxError` | `VE cannot tell whether "<a or an>" here means every or some. Ask one of these instead:`, then the rephrasings | the question |
 | 15 | no candidate has a derivation | `none` | `NoDerivation`; `SyntaxError` | `The question has no reading with the current vocabulary.` When the closest candidate's diagnosis is found: ` Closest sentence tried: "<candidate>". <E2.6's diagnosis text>` | the diagnosis span, mapped (2.5); advice `Write "every" or "some" in place of "<a or an>".` when the body begins with `a` or `an`, else E2's advice row for the candidate's tokens, if any |
 
 The refusal of row 13 is the first refused candidate's. Row 13 applies only when no candidate has a meaning: a
@@ -1186,7 +1201,7 @@ spellings `ann`, `bo`; `policyOk` is true and `grammarFault` is `none`. The sent
 | G8 | `Who is eligible?` | — | **none**, `QuestionForm`: `VE answers yes-or-no questions. It does not answer who, what or which questions yet.`; span (0, 16) | — |
 | G9 | `Must Ann be eligible?` | `Ann must be eligible.` none; `Ann be must eligible.` none | **none**, `NoDerivation`: `The question has no reading with the current vocabulary. Closest sentence tried: "Ann must be eligible.". Unknown English phrase 'must be eligible'. Nearest declared wordings: 'is eligible'; 'member'; 'is verified'.`; span (0, 20); no advice | — |
 | G10 | `Is Ann eligible?` | `Ann is eligible.` one | **one**; `pred eligible [const ann]` | **Yes.** C1 for 1 and 2. |
-| G11 | `Is every member who registered is eligible?` | five candidates; only `every member who is registered is eligible.` reads; the gaps before `is` and before `eligible` both give `every member who registered is is eligible.` (F4) | **one**, odd English accepted (plan 4.9); `all member (implies (pred registered [var 0]) (pred eligible [var 0]))` | **Yes.** C1 for sentence 2 only. |
+| G11 | `Is every member who registered is eligible?` | five candidates; only `every member who is registered is eligible.` reads; the gaps before `is` and before `eligible` both give `every member who registered is is eligible.` (F4) | **moved**, `QuestionWordMoved` (DRI ruling 2026-10-09): `readQuestion` reads `all member (implies (pred registered [var 0]) (pred eligible [var 0]))`, but the put-back `is` is inside the clause after `who`; rephrasings `Is every member who is registered eligible?`. Control: `Is every member who is registered eligible?` on `G` is **one** | No answer: Q1 refuses the question. |
 | G12 | `Is every member eligible and?` | `every is member eligible and.`, `every member is eligible and.`, `every member eligible is and.`, all none | **none**: `… Closest sentence tried: "every member is eligible and.". Expected '.' here. Use the English paraphrase as a writing example.`; span (24, 28) | — |
 
 ### 7.3 Every other Q1 outcome (computed)
@@ -1207,6 +1222,9 @@ spellings `ann`, `bo`; `policyOk` is true and `grammarFault` is `none`. The sent
 | G24 | speech acts' `auxs = ["is"]` (Q1.4) on G: `Is Ann eligible?`; `Must Ann be eligible?`; `Is it the case that Ann is eligible?` | **one** (`Ann is eligible.`); **none**, `QuestionForm`: `VE answers questions that begin with "Is", or with "Is it the case that" followed by a sentence.`; **one**. Q1.4 maps the second to speech acts' `ModalQuestion` refusal, with Lean's text. |
 | G25 | `Is every and?` (G): closest `every is and.`, diagnosis span (5, 8) in candidate bytes | **none**, `NoDerivation`; interval images [8, 9) and [0, 2) enclose to question span **(0, 9)**. This crosses the movement boundary; the old endpoint rule returned (8, 2). |
 | G26 | `Is "é" and?` (G): first candidate `"é" is and.`, diagnosis span (0, 4) in candidate bytes | The interval maps to question bytes (3, 7), then to code points **(3, 6)**. This pins the byte-to-code-point conversion with a non-ASCII character. |
+| G27 | `Is a member who registered is eligible?` (G) | **none**, `NoDerivation`, with the indefinite advice: the every question `Is every member who registered is eligible?` reads only with a moved word (11a), so it is not offered, and the some question does not read. Before the ruling it was offered, and refused when asked. |
+| G28 | `Is every member that registered is eligible?` (G) | **moved**, `QuestionWordMoved`: the clause begins with `that`; rephrasings `Is every member that is registered eligible?` |
+| G29 | `Is there a member who is eligible?` (G) | **one**, asked `there is a member who is eligible.`: the put-back `is` is the existential's own word, outside the clause after `who`; `ex member (pred eligible [var 0])` |
 
 ### 7.4 A: the agent policy (R6)
 

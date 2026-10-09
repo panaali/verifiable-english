@@ -1,4 +1,6 @@
 import VE.Question.Texts
+import VE.Question.Moved
+import VE.Question.Frames
 import VE.EnglishGrammar.Run
 
 /-! The `english.question` service mode (docs/spec/question-answering.md 4.1 and 8; plan 4.8, Q1.2).
@@ -12,8 +14,13 @@ The result is `readQuestion`'s outcome under `auxiliaries` and E2's `workBudget`
 that outcome. Every span is in code points of the question. A case that cannot be read is an `error` row.
 `one` also carries `text`, the A0 line of 3.3, so the CLI prints only Lean's words.
 
+What the mode shows is `ask`'s outcome (`VE.Question.Moved`): a reading whose fronted word was put back inside a
+clause is the `moved` row, with the questions VE reads in its place; the A0 line passes the answer frames'
+all-derivations gate and reads back before it is shown (`VE.Question.Frames`, `oneFields`).
+
 A case `{"id", "export": "codes"}` answers the question contract: the version, the codes with their classes,
-the codes of every status and the fields of every status, so the relay holds no table of its own
+the codes of every status, the fields of every status and the texts its clients show as they are (`texts`), so the
+relay holds no table of its own
 (`tools/question_codes.py` writes it to `ve/question/codes.json`).
 -/
 
@@ -33,6 +40,7 @@ def statusCodes : List (String × List String) :=
    ("budget", ["QuestionTooLong", "Budget"]),
    ("many", ["Ambiguous", "AmbiguousQuestion"]),
    ("indefinite", ["IndefiniteQuestion"]),
+   ("moved", ["QuestionWordMoved"]),
    ("rejected", rejectCodes ++ ["QuestionWithMarker", "IllTyped"]),
    ("invalidGrammar", ["InvalidGrammar", "InvalidOverlay"])]
 
@@ -41,6 +49,7 @@ def statusFields : List (String × List String × List String) :=
   [("one", ["text", "form", "sentence", "ast", "spans"], []),
    ("many", ["code", "class", "text", "span"], ["rephrasings", "witnesses"]),
    ("indefinite", ["code", "class", "text", "span", "rephrasings"], []),
+   ("moved", ["code", "class", "text", "span"], ["rephrasings"]),
    ("none", ["code", "class", "text", "span"], ["advice"]),
    ("rejected", ["code", "class", "text", "span"], []),
    ("notQuestion", ["code", "class", "text", "span"], []),
@@ -117,12 +126,20 @@ def noneFields (profiles : List String) (q : String) (E : Env) (L : Lexicon) (cl
     | none => status "none" ++ coded "NoDerivation" noDerivationText ++ whole q
   main ++ noneAdvice profiles q cl
 
+/-- Row 1: one reading. Its A0 line is shown only when it passes the answer frames' all-derivations gate and its
+    asked sentence reads back with exactly `φ` (`askedGate`; spec 3.3); otherwise the case is an error row. -/
+def oneFields (q : String) (E : Env) (L : Lexicon) (c : Candidate) (φ : EFormula) :
+    Except String (List (String × Json)) :=
+  let line := askedText c
+  if askedGate E {} L workBudget φ line then
+    pure (status "one" ++ [("text", .str line), ("form", .str (formName c.form)), ("sentence", .str c.sentence),
+      ("ast", φ.encode), ("spans", Json.arr #[spanJson (0, q.length)])])
+  else throw "InvalidInput: the asked line does not pass the answer frames' gate"
+
 /-- The fields of 4.1's row for an outcome. -/
 def outcomeFields (profiles : List String) (q : String) (E : Env) (L : Lexicon) :
     Outcome → Except String (List (String × Json))
-  | .one c φ => pure (status "one" ++ [("text", .str (askedText c)), ("form", .str (formName c.form)),
-      ("sentence", .str c.sentence),
-      ("ast", φ.encode), ("spans", Json.arr #[spanJson (0, q.length)])])
+  | .one c φ => oneFields q E L c φ
   | .meanings _ rs => pure (status "many" ++ coded "AmbiguousQuestion" ambiguousQuestionText ++ whole q ++
       [("rephrasings", toJson rs)])
   | .ambiguous c => ambiguousFields q E L c
@@ -139,10 +156,25 @@ def outcomeFields (profiles : List String) (q : String) (E : Env) (L : Lexicon) 
   | .limit => pure (status "budget" ++ coded "QuestionTooLong" questionTooLongText ++ whole q)
   | .budget _ => pure (status "budget" ++ coded "Budget" workBudgetText ++ whole q)
 
+/-- The fields of what the mode shows (`ask`): 4.1's row of `readQuestion`'s outcome, or the moved-out refusal with
+    the questions VE reads in its place. -/
+def askedFields (profiles : List String) (q : String) (E : Env) (L : Lexicon) :
+    Asked → Except String (List (String × Json))
+  | .read o => outcomeFields profiles q E L o
+  | .moved c rs =>
+    let aux := match c.form with
+      | .fronted a _ => a
+      | .caseThat => ""
+    pure (status "moved" ++ coded "QuestionWordMoved" (movedText aux rs.length) ++ whole q ++
+      (if rs.isEmpty then [] else [("rephrasings", toJson rs)]))
+
+/-- The texts the mode's clients show as they are: `unanswered`, `ve ask` without `--reading`. -/
+def texts : List (String × String) := [("unanswered", unansweredText)]
+
 /-- The question contract's own table (`{"id", "export": "codes"}`). -/
 def codesCase (id : String) : Json :=
   VE.Route.Wire.ok id [("result", Json.mkObj [("codes", toJson codeClasses), ("statuses", toJson statusCodes),
-    ("fields", toJson statusFields),
+    ("fields", toJson statusFields), ("texts", toJson texts),
     ("question_version", .str questionVersion)])]
 
 def questionCase (j : Json) : Except String Json := do
@@ -163,8 +195,21 @@ def questionCase (j : Json) : Except String Json := do
     [("question_version", .str questionVersion)])
   let fields ← match c.overlayFailure with
     | some f => pure (invalidOverlayFields "english.question" f)
-    | none => outcomeFields c.E.profiles q c.E c.L (readQuestion auxiliaries c.E {} c.L workBudget q)
+    | none => askedFields c.E.profiles q c.E c.L (ask auxiliaries c.E {} c.L workBudget q)
   pure (VE.Route.Wire.ok id [("result", Json.mkObj (fields ++ [("identities", identities)]))])
+
+/-- A one row's A0 line passed the gate: it has one derivation, A0's, whose sentence reads back with exactly `φ`. -/
+theorem oneFields_gated (q : String) (E : Env) (L : Lexicon) (c : Candidate) (φ : EFormula)
+    (fs : List (String × Json)) (h : oneFields q E L c φ = .ok fs) :
+    ∃ t, fs.lookup "text" = some (.str t) ∧ askedGate E {} L workBudget φ t = true := by
+  unfold oneFields at h
+  dsimp only at h
+  by_cases hg : askedGate E {} L workBudget φ (askedText c) = true
+  · rw [if_pos hg] at h
+    cases h
+    exact ⟨askedText c, by simp [status, List.lookup], hg⟩
+  · rw [if_neg hg] at h
+    cases h
 
 def caseReported (j : Json) : Json :=
   match questionCase j with

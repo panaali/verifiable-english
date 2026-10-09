@@ -4,7 +4,8 @@
     python tools/question_codes.py --check
 
 The table is the `english.question` export (`{"id", "export": "codes"}`): `VE.Question.Run.codeClasses`, its
-`statusCodes`, `statusFields` and `questionVersion`, read from the built `ve_service`. The question relay
+`statusCodes`, `statusFields`, `texts` (the lines its clients show as they are) and `questionVersion`, read from the
+built `ve_service`. The question relay
 (`ve/backends/english_lean.py`, `read_question`) reads the file and holds no table of its own; `--check` fails
 when the file differs from the service (docs/spec/question-answering.md 4.1, 8).
 """
@@ -29,7 +30,7 @@ def from_lean() -> dict:
         raise SystemExit(f"english.question did not export its contract: {row!r}")
     result = row["result"]
     return {"format": FORMAT, "question_version": result["question_version"], "codes": result["codes"],
-            "statuses": result["statuses"], "fields": result["fields"]}
+            "statuses": result["statuses"], "fields": result["fields"], "texts": result["texts"]}
 
 
 def render(table: dict) -> str:
@@ -38,7 +39,7 @@ def render(table: dict) -> str:
     return (f'{{\n "format": {json.dumps(table["format"])},\n'
             f' "question_version": {json.dumps(table["question_version"])},\n'
             f' "codes": [\n{rows("codes")}\n ],\n "statuses": [\n{rows("statuses")}\n ],\n'
-            f' "fields": [\n{rows("fields")}\n ]\n}}\n')
+            f' "fields": [\n{rows("fields")}\n ],\n "texts": [\n{rows("texts")}\n ]\n}}\n')
 
 
 def main(argv=None) -> int:
