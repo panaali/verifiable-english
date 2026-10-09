@@ -16,8 +16,8 @@ only: nothing imports it and no theorem depends on it.
   token form) and the runners' dispatch tests (`usesSoftPath`, `Norms.Run.usesNormsPath`,
   ...) deciding beside their schemas, which must agree (`ResponseShape`, `lean` nodes).
 * `invariants` is `decode` and the content the runners guarantee, which the client does
-  not check (docs/spec/lean-service.md, threat model): counts regenerated from the
-  environment, graph unfoldings, dependency orders, distinct layers and conflict targets
+  not check (docs/spec/lean-service.md, threat model): graph unfoldings, dependency
+  orders, distinct layers and conflict targets
   with their declared argument sorts, verdict details, English check consistency. The
   tests require every genuine service response to satisfy it.
 * `schemas` renders the schema files (`tools/response_schemas.py` writes and checks them).

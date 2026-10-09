@@ -1,13 +1,13 @@
 """Service responses: the client's schemas, the Lean decoders and the Lean invariants.
 
 Threat model (docs/spec/lean-service.md): the service is the semantic authority; the
-client checks binding (nonce, mode, each result's position and case digest, the identity
-fields the runners echo from the case) and well-formedness, and nothing else.
+client checks binding (nonce, mode, each result's position and case digest, graph claims,
+certificate counts) and well-formedness.
 
 * Every genuine response of the service over a corpus with every mode and result kind
   (`tests/lean_service_corpus.py`) is accepted by the schemas and by `ve_response_decode`
   (`lean/ResponseDecode.lean`), and satisfies its Lean invariants: the content the runners
-  guarantee and the client does not check (regenerated counts, distinct layers and
+  guarantee and the client does not check (distinct layers and
   conflict targets with their declared sorts, graph unfoldings, dependency orders, ...).
 * Differential fuzz: mutations of those genuine responses (dropped, altered, retyped,
   enum-swapped, truncated and extra fields, at every depth, bindings included) are
@@ -139,8 +139,9 @@ def assert_agreement(decoder, items, lean=None):
     """items: [(mode, request, [response, ...])]; the verdicts must agree on every response."""
     lean = lean_verdicts(decoder, items) if lean is None else lean
     ours = [schema_verdict(mode, request, r) for mode, request, responses in items for r in responses]
-    flat = [(mode, r) for mode, _, responses in items for r in responses]
-    disagreements = [(mode, json.dumps(r)[:600], a, b) for (mode, r), a, b in zip(flat, ours, lean)
+    flat = [(mode, request, r) for mode, request, responses in items for r in responses]
+    disagreements = [(mode, json.dumps(request["cases"][0])[:900], json.dumps(r)[:600], a, b)
+                     for (mode, request, r), a, b in zip(flat, ours, lean)
                      if a.startswith("accept") != b.startswith("accept")]
     assert not disagreements, f"{len(disagreements)} of {len(flat)} disagree; first: {disagreements[:5]}"
     return ours
@@ -758,6 +759,66 @@ def _genuine_row(genuine, mode, kind, predicate=lambda case, row: True):
 
 
 @pytest.mark.parametrize("mode", ["route", "norms"])
+@pytest.mark.parametrize("location", ["root", "assumptions"])
+def test_admission_claims_must_be_request_nodes(tmp_path, genuine, mode, location):
+    """A forged claim with a freshly computed report id cannot be a Lean admission answer."""
+    from ve.admission import bound_admission
+    from ve.environment import Environment
+    from ve.wire import digest
+
+    case, row = _genuine_row(genuine, mode, "admission",
+                             lambda c, r: bool(r["report"]["assumptions"]))
+    bad = deepcopy(row)
+    claim = bad["report"]["root"] if location == "root" else bad["report"]["assumptions"][0]
+    if location == "root":
+        claim["ast"] = ["bottom"] if claim["ast"] != ["bottom"] else ["top"]
+    else:
+        claim["name"] = "fabricated_assumption"
+    env = Environment(case["environment"])
+    bad["report_id"] = digest(f"ve-report-{env.identity_version}\n", {
+        "environment_id": env.environment_id, "document": case["document"], "report": bad["report"]})
+    with pytest.raises(CheckerUnavailable, match="not bound"):
+        bound_admission(env, case["document"], bad)
+    _scripted_rejected(tmp_path, mode, case, row, bad)
+
+
+@pytest.mark.parametrize("mode,kind", [("route", "certificate"), ("norms", "certificate"),
+                                       ("norms", "norms-certificate"), ("order", "certificate"),
+                                       ("check-certificate", None)])
+def test_certificate_steps_respect_request_limit(tmp_path, genuine, mode, kind):
+    case, row = _genuine_row(genuine, mode, kind,
+                             lambda c, r: r.get("status") == "ok")
+    bad = {**row, "steps": 999_999}
+    case["max_steps"] = max(1, row["steps"])
+    _scripted_rejected(tmp_path, mode, case, row, bad)
+
+
+def test_requested_one_step_rejects_fabricated_999999_steps(genuine, executables):
+    for request, response, index in _linked(genuine, "route", "certificate"):
+        if result(response, index).get("status") == "ok":
+            req, res = deepcopy(request), deepcopy(response)
+            req["cases"][index]["max_steps"] = 1
+            res["results"][index]["result"]["steps"] = 999_999
+            req, res = rebind(req, res)
+            assert assert_agreement(executables[1], [("route", req, [res])]) == [
+                schema_verdict("route", req, res)]
+            assert schema_verdict("route", req, res).startswith("reject")
+            return
+    raise AssertionError("no genuine route certificate")
+
+
+@pytest.mark.parametrize("mode,kind", [("route", "certificate"), ("norms", "certificate"),
+                                       ("norms", "norms-certificate")])
+@pytest.mark.parametrize("delta", [-1, 1])
+def test_certificate_background_respects_request_structure(tmp_path, genuine, mode, kind, delta):
+    case, row = _genuine_row(genuine, mode, kind, lambda c, r: r.get("status") == "ok")
+    if row["background"] == 0 and delta < 0:
+        pytest.skip("no smaller natural count")
+    bad = {**row, "background": row["background"] + delta}
+    _scripted_rejected(tmp_path, mode, case, row, bad)
+
+
+@pytest.mark.parametrize("mode", ["route", "norms"])
 @pytest.mark.parametrize("kind", [["hedged", "not-a-modality", "asserted"],
                                   ["attributed", "bob", "shouts", "asserted"],
                                   ["causal", "since", "asserted", "asserted"],
@@ -900,10 +961,7 @@ CONTENT = {
        for how in ("emptied", "drop-last")},
     **{f"{mode}-{kind}-{field}-{name}": (mode, kind, case_id, _row_change(change))
        for mode, kind, field, case_id in [
-           ("route", "certificate", "background", "data-definition-certificate"),
-           ("norms", "certificate", "background", "defs-certificate-uses-definitions"),
-           ("norms", "norms-certificate", "layers", "certificate"),
-           ("norms", "norms-certificate", "background", "certificate")]
+           ("norms", "norms-certificate", "layers", "certificate")]
        for name, change in [("plus-one", lambda r, f=field: {**r, f: r[f] + 1}),
                             ("minus-one", lambda r, f=field: {**r, f: max(r[f] - 1, 0) if r[f] else 1})]},
     "c2-targets-emptied": ("norms", "norms-conflict", "c2", _row_change(lambda r: {**r, "targets": []})),

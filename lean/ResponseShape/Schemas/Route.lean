@@ -52,8 +52,8 @@ def certificate : Shape :=
       ("id", n [str, .equals "/id"]),
       ("status", constS "ok"),
       ("valid", .type ["boolean"]),
-      ("background", ref "common.json#/$defs/nat"),
-      ("steps", ref "common.json#/$defs/nat")]]
+      ("background", n [ref "common.json#/$defs/nat", .backgroundCount false]),
+      ("steps", n [ref "common.json#/$defs/nat", .maxSteps])]]
 
 def «dependency-order» : Shape :=
   c
