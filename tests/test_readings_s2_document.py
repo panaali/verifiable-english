@@ -940,7 +940,7 @@ def test_review_b2_conflicting_reading_certifies_no_entailment(tmp_path):
     phi = every("avoid_required")
     piece = own.certificate_case(phi)
     assert piece is not None  # Python's prover finds one where the rules collide; Lean does not accept it
-    with pytest.raises(CheckerUnavailable, match="does not confirm the certificate"):
+    with pytest.raises(CheckerUnavailable, match="invalid answer|does not confirm the certificate"):
         route._verdicts("query", query={route._key(route.choices[0]): {"certificate": piece}}, premises=[],
                         conclusion=phi)
     assert [c["status"] for c in route.premises()["choices"]] != ["INCONSISTENT", "INCONSISTENT"]
@@ -974,9 +974,10 @@ def test_review_b2_lean_accepts_a_reading_certificate_only_conflict_free(tmp_pat
 
 
 def test_review_b2_python_never_bypasses_lean_conflict_check(tmp_path, monkeypatch):
-    """Python has no conflict status of its own (RD-3): an answer whose gate a relay tampering hides makes Python send
-    the conflicting choice's certificate, which Lean, checking the packages itself, does not accept:
-    `CheckerUnavailable`, never a verdict."""
+    """Python has no conflict status of its own (RD-3): an answer whose gate a relay tampering hides is
+    `CheckerUnavailable`, never a verdict: since review B1 of rd-3 the gate's result without its `conflict_status` is
+    of no form the schema allows; were it accepted, Python would send the conflicting choice's certificate, which Lean,
+    checking the packages itself, does not accept."""
     from ve import readings_route
     from ve.errors import CheckerUnavailable
     path = _m8(tmp_path)
@@ -991,7 +992,7 @@ def test_review_b2_python_never_bypasses_lean_conflict_check(tmp_path, monkeypat
         return rows
 
     monkeypatch.setattr(readings_route, "run_lean", hiding)
-    with pytest.raises(CheckerUnavailable, match="does not confirm the certificate"):
+    with pytest.raises(CheckerUnavailable, match="invalid answer|does not confirm the certificate"):
         route.entailment(every("avoid_required", negated=True))
 
 
