@@ -1,0 +1,160 @@
+[
+  {
+    "case": "decide/top/adequate",
+    "outcome": {
+      "returned": "yes"
+    },
+    "path": "assist"
+  },
+  {
+    "case": "entails/top/adequate",
+    "outcome": {
+      "returned": true
+    },
+    "path": "assist"
+  },
+  {
+    "case": "decide/top/proof_zero",
+    "outcome": {
+      "returned": "yes"
+    },
+    "path": "assist"
+  },
+  {
+    "case": "entails/top/proof_zero",
+    "outcome": {
+      "returned": false
+    },
+    "path": "assist"
+  },
+  {
+    "case": "decide/top/models_zero",
+    "outcome": {
+      "returned": "yes"
+    },
+    "path": "assist"
+  },
+  {
+    "case": "entails/top/models_zero",
+    "outcome": {
+      "returned": true
+    },
+    "path": "assist"
+  },
+  {
+    "case": "decide/bottom/adequate",
+    "outcome": {
+      "returned": "no"
+    },
+    "path": "assist"
+  },
+  {
+    "case": "entails/bottom/adequate",
+    "outcome": {
+      "returned": false
+    },
+    "path": "assist"
+  },
+  {
+    "case": "decide/bottom/proof_zero",
+    "outcome": {
+      "returned": "no"
+    },
+    "path": "assist"
+  },
+  {
+    "case": "entails/bottom/proof_zero",
+    "outcome": {
+      "returned": false
+    },
+    "path": "assist"
+  },
+  {
+    "case": "decide/bottom/models_zero",
+    "outcome": {
+      "returned": "no"
+    },
+    "path": "assist"
+  },
+  {
+    "case": "entails/bottom/models_zero",
+    "outcome": {
+      "returned": false
+    },
+    "path": "assist"
+  },
+  {
+    "case": "decide/forall/adequate",
+    "outcome": {
+      "returned": "no"
+    },
+    "path": "assist"
+  },
+  {
+    "case": "entails/forall/adequate",
+    "outcome": {
+      "returned": false
+    },
+    "path": "assist"
+  },
+  {
+    "case": "decide/forall/proof_zero",
+    "outcome": {
+      "returned": "no"
+    },
+    "path": "assist"
+  },
+  {
+    "case": "entails/forall/proof_zero",
+    "outcome": {
+      "returned": false
+    },
+    "path": "assist"
+  },
+  {
+    "case": "decide/forall/models_zero",
+    "outcome": {
+      "returned": "no"
+    },
+    "path": "assist"
+  },
+  {
+    "case": "entails/forall/models_zero",
+    "outcome": {
+      "returned": false
+    },
+    "path": "assist"
+  },
+  {
+    "case": "permit",
+    "outcome": {
+      "returned": [
+        {
+          "decision": "allow",
+          "errors": []
+        },
+        {
+          "decision": "deny",
+          "errors": []
+        }
+      ]
+    },
+    "path": "cedar"
+  },
+  {
+    "case": "forbid",
+    "outcome": {
+      "returned": [
+        {
+          "decision": "deny",
+          "errors": []
+        },
+        {
+          "decision": "deny",
+          "errors": []
+        }
+      ]
+    },
+    "path": "cedar"
+  }
+]
