@@ -11,9 +11,30 @@ open Lean ResponseShape
 def unit : Shape :=
   n [obj, .required ["id", "span", "kind", "meaning", "support", "status"],
     closed [
-      ("id", str), ("span", n [arr, .items (ref "common.json#/$defs/nat")]),
-      ("kind", .bool true), ("meaning", .bool true), ("support", str),
-      ("status", str), ("parent_id", str), ("content", .bool true), ("meaning_id", str)]]
+      ("id", ref "common.json#/$defs/token"), ("span", n [arr, .prefixItems [ref "common.json#/$defs/nat", ref "common.json#/$defs/nat"], .minItems 2, .maxItems 2]),
+      ("kind", ref "common.json#/$defs/kind"), ("meaning", ref "#/$defs/meaning"),
+      ("support", c "Discourse.Loader.supports." [enumS VE.Discourse.Loader.supports]),
+      ("status", c "Discourse.Loader.statuses: the unit's W2 status." [enumS VE.Discourse.Loader.statuses]),
+      ("parent_id", ref "common.json#/$defs/token"), ("content", ref "common.json#/$defs/generated_formula"), ("meaning_id", ref "common.json#/$defs/hex64")]]
+
+/-- `Service.Document.Meaning.json`: a meaning `Loader.meaningStatus` accepts. -/
+def meaning : Shape :=
+  c "Discourse.Loader.meaningStatus: specified, or one contextual, open or unformalised member." [
+    .anyOf [
+      constS "specified",
+      n [obj, .required ["contextual"], closed [("contextual", n [str, .minLength 1])]],
+      n [obj, .required ["open"], closed [("open", n [arr, .minItems 1, .items str])]],
+      n [obj, .required ["unformalised"], closed [("unformalised", ref "common.json#/$defs/token")]]]]
+
+/-- A narrowing of the front matter, which the block route's coverage relays as the document's own
+(`Discourse.Loader.narrowingIds` checked it). -/
+def narrowing : Shape :=
+  c "Discourse.Loader.narrowingIds: a front-matter narrowing, relayed whole." [
+    obj, .required ["id", "set", "version", "keeps", "by", "reason_spans"],
+    closed [
+      ("id", ref "common.json#/$defs/token"), ("set", ref "common.json#/$defs/token"),
+      ("version", n [.type ["integer"], .minimum 1]), ("keeps", n [arr, .minItems 1, .items str]),
+      ("by", ref "common.json#/$defs/token"), ("reason_spans", n [arr, .minItems 1, .items str])]]
 
 def cells : Shape :=
   c "Alternatives.Wire.coverage's cells, as the document mode relays them." [
@@ -30,7 +51,8 @@ def cells : Shape :=
       ("proximate_judgments", n [arr, .items Alternatives.proximateCell]),
       ("unmapped_obligations", ref "common.json#/$defs/strings"),
       ("dilemmas", n [arr, .maxItems 0]),
-      ("narrowings", arr)]]
+      ("narrowings", copied "the document's front-matter narrowings, copied from the request's document (Loader.optionalList); the client binds them to it" <|
+        n [arr, .items (ref "#/$defs/narrowing")])]]
 
 /-- The block route's whole coverage line, of which the row relays the cells (`Fits.getObjVal`). -/
 def blockCoverage : Shape :=
@@ -73,7 +95,7 @@ def file : File where
   name := "document.json"
   comment := some "Mode document: W2 wrapper byte partition, inferred unit statuses and base coverage."
   top := [("row", «row»)]
-  defs := [("unit", .schema unit), ("coverage", .schema coverage), ("cells", .schema cells),
+  defs := [("unit", .schema unit), ("meaning", .schema meaning), ("narrowing", .schema narrowing), ("coverage", .schema coverage), ("cells", .schema cells),
     ("block_coverage", .schema blockCoverage)]
 
 end ResponseShape.Schemas.Document

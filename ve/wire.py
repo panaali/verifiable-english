@@ -10,9 +10,14 @@ from .errors import DuplicateDeclaration, ResourceLimit, SyntaxError, VEError
 from .limits import MAX_INDEX, MAX_PACKAGE_BYTES, MAX_JSON_DEPTH
 
 
+# The diagnostic of a lone surrogate at every JSON boundary (docs/spec/v0-language.md); the Lean document mode
+# writes the same text (`VE.Service.Document.loneSurrogate`).
+LONE_SURROGATE = "JSON strings must not contain lone UTF-16 surrogates"
+
+
 def _string(value: str) -> None:
     if any(0xD800 <= ord(c) <= 0xDFFF for c in value):
-        raise VEError("JSON strings must not contain lone UTF-16 surrogates")
+        raise VEError(LONE_SURROGATE)
 
 
 def validate_json(value, depth: int = 0) -> None:

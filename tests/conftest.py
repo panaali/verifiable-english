@@ -18,6 +18,13 @@ from tools import rust_build
 from ve.surface import unambiguity
 
 ROOT = Path(__file__).resolve().parents[1]
+# A virtualenv copied from another checkout keeps that checkout's interpreter in its entry-point
+# shebangs (`.venv/bin/pytest`), and with it that checkout's editable install: `ve` would then be
+# the other checkout's, and so would the Lean service and Rust binaries it starts.
+_VE_CHECKOUT = Path(unambiguity.__file__).resolve().parents[2]
+if _VE_CHECKOUT != ROOT:
+    raise pytest.UsageError(f"ve is imported from {_VE_CHECKOUT}, not from this checkout {ROOT}; "
+                            "recreate .venv (rm -rf .venv && uv sync --locked --group dev)")
 
 
 def native_lock_path(root=ROOT):
