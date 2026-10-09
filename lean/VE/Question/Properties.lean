@@ -2,6 +2,7 @@ import VE.Question.Read
 
 namespace VE.Question
 open VE.EnglishGrammar
+open VE.EnglishGrammar
 open VE.Grammar (Derives)
 
 
@@ -116,5 +117,126 @@ theorem question_reading_unique :
   have hs := english_reading_unique E O L c.sentence [(φ, false)] [(φ', false)] hr hr'
   cases hs
   exact ⟨rfl, rfl⟩
+
+end VE.Question
+
+namespace VE.Question
+open VE.EnglishGrammar
+
+private def addMeaning (acc : List (Candidate × EFormula)) (x : Candidate × Got) :
+    List (Candidate × EFormula) :=
+  match x.2.meaning? with
+  | some φ => if acc.any (·.2 == φ) then acc else acc ++ [(x.1, φ)]
+  | none => acc
+
+theorem fold_meanings_sound (gs : List (Candidate × Got))
+    (acc : List (Candidate × EFormula)) (x : Candidate × EFormula)
+    (h : x ∈ gs.foldl addMeaning acc) :
+    x ∈ acc ∨ ∃ y ∈ gs, y.1 = x.1 ∧ y.2 = .one x.2 := by
+  induction gs generalizing acc with
+  | nil => exact Or.inl h
+  | cons y ys ih =>
+    have h' := ih (addMeaning acc y) (by simpa using h)
+    rcases h' with hacc | ⟨z, hz, hp⟩
+    · unfold addMeaning at hacc
+      cases hg : y.2.meaning? with
+      | none => exact Or.inl (by simpa [hg] using hacc)
+      | some φ =>
+        by_cases hex : acc.any (·.2 == φ) = true
+        · exact Or.inl (by simpa [hg, hex] using hacc)
+        · have ha : x ∈ acc ∨ x = (y.1, φ) := by
+            simpa [hg, hex] using hacc
+          rcases ha with ha | ha
+          · exact Or.inl ha
+          · right
+            refine ⟨y, by simp, ?_⟩
+            cases y with
+            | mk c g =>
+              cases g <;> simp [Got.meaning?] at hg
+              rename_i ψ
+              cases hg
+              simp [ha]
+    · exact Or.inr ⟨z, by simp [hz], hp⟩
+
+theorem firstMeanings_sound (gs : List (Candidate × Got)) (x : Candidate × EFormula)
+    (h : x ∈ firstMeanings gs) :
+    ∃ y ∈ gs, y.1 = x.1 ∧ y.2 = .one x.2 := by
+  unfold firstMeanings at h
+  have hs := fold_meanings_sound gs [] x h
+  simpa using hs
+
+end VE.Question
+
+namespace VE.Question
+open VE.EnglishGrammar
+
+theorem got_one_read (E : Env) (O : Overlay) (L : Lexicon) (b : Nat)
+    (c : Candidate) (φ : EFormula) (h : got E O L b c = .one φ) :
+    read E O L b c.sentence = .ok [(φ, false)] := by
+  unfold got at h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  all_goals assumption
+
+end VE.Question
+
+namespace VE.Question
+open VE.EnglishGrammar
+
+theorem classify_one_read (auxs : List String) (E : Env) (O : Overlay) (L : Lexicon)
+    (b : Nat) (q : String) (c : Candidate) (φ : EFormula)
+    (h : classify auxs E O L b q = .one c φ) :
+    c ∈ candidates auxs q ∧ read E O L b c.sentence = .ok [(φ, false)] := by
+  unfold classify at h
+  dsimp only at h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  all_goals try (split at h <;> cases h)
+  all_goals
+    have hm : (c, φ) ∈ firstMeanings
+        (List.map (fun d => (d, got E O L b d)) (candidates auxs q)) := by
+      have hf : firstMeanings
+          (List.map (fun d => (d, got E O L b d)) (candidates auxs q)) = [(c, φ)] := by
+        assumption
+      simp [hf]
+    obtain ⟨y, hy, hcy, hgy⟩ := firstMeanings_sound _ _ hm
+    rcases List.mem_map.mp hy with ⟨d, hd, hdy⟩
+    subst y
+    simp at hcy
+    subst d
+    exact ⟨hd, got_one_read E O L b c φ (by simpa using hgy)⟩
+
+end VE.Question
+
+namespace VE.Question
+open VE.EnglishGrammar
+
+theorem readQuestion_one_read (auxs : List String) (E : Env) (O : Overlay) (L : Lexicon)
+    (b : Nat) (q : String) (c : Candidate) (φ : EFormula)
+    (h : readQuestion auxs E O L b q = .one c φ) :
+    c ∈ candidates auxs q ∧ read E O L b c.sentence = .ok [(φ, false)] := by
+  unfold readQuestion at h
+  dsimp only at h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  all_goals exact classify_one_read auxs E O L b q c φ (by assumption)
+
+theorem asked_reads_back :
+  ∀ (auxs : List String) (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (q : String) (c : Candidate) (φ : EFormula),
+    readQuestion auxs E O L b q = .one c φ → checkRendering E O L b [(φ, false)] c.sentence = true := by
+  intro auxs E O L b q c φ h
+  exact (checked_rendering_exact E O L b [(φ, false)] c.sentence).mpr
+    (readQuestion_one_read auxs E O L b q c φ h).2
 
 end VE.Question

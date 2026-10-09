@@ -4662,3 +4662,9 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Question.got_none
 #print axioms VE.Question.first_pred_unique
 #print axioms VE.Question.question_reading_unique
+#print axioms VE.Question.fold_meanings_sound
+#print axioms VE.Question.firstMeanings_sound
+#print axioms VE.Question.got_one_read
+#print axioms VE.Question.classify_one_read
+#print axioms VE.Question.readQuestion_one_read
+#print axioms VE.Question.asked_reads_back
