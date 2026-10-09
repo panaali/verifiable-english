@@ -61,12 +61,13 @@ def test_a_lean_owned_operation_is_lean_s_under_every_selection(op, selected, mo
     monkeypatch.setattr(dispatch, "observers", [lambda name, authority: seen.append((name, authority))])
 
     def run():
-        # A constituent keeps its own selection: batch 15 owns the countermodel check's switch.
-        assert dispatch.authority_for("countermodel_check") == "python"
+        # Its constituents run on Lean: a composing rule reads Lean-checked parts only.
+        assert dispatch.authority_for("countermodel_check") == "lean"
         return 7
 
     assert dispatch.owned(op, run) == 7
     assert seen == [(op, "lean")]
+    assert dispatch.authority_for("countermodel_check") == "python"
     with pytest.raises(ValueError, match="one implementation"):
         dispatch.execute(op, {}, lambda: 1, lean=lambda: 2)
 

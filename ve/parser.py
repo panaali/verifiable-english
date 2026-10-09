@@ -391,11 +391,14 @@ def _parse_lean(env: Any, source: str | bytes, python) -> ParseResult:
     if "definitions@0" in env.profiles:
         # The definitions@0 surface sugar (`no`, `every ... that is`, `iff`,
         # `define`) is in no Lean surface parser: a source the Python reader
-        # accepts through it keeps Python's reading (a recorded scope gap).
+        # accepts through it, or rejects inside one of its productions, keeps
+        # Python's reading (the stage-2c gap retained until batch 14a).
         # Every other source over the environment is Lean's to accept.
         try:
             result, sugar = _parse_python_marked(env, source)
-        except VEError:
+        except VEError as exc:
+            if getattr(exc, "definitions_sugar", False):
+                raise  # the retained reader rejected inside a sugar production: its diagnostic stands
             sugar = False
         if sugar:
             return result
@@ -448,13 +451,18 @@ def _parse_python_marked(env: Any, source: str | bytes) -> tuple[ParseResult, bo
         if len(encoded) > MAX_SOURCE_BYTES:
             raise ResourceLimit(f"source exceeds {MAX_SOURCE_BYTES} bytes")
     parser = _Parser(env, source)
-    document = parser.document()
+    try:
+        document = parser.document()
+    except VEError as exc:
+        exc.definitions_sugar = parser.sugar  # a rejection inside a sugar production
+        raise
     # Checking is intentionally after name resolution: malformed raw AST never escapes.
     try:
         ast.check_document(env, document)
     except VEError as exc:
         if exc.span is None:
             exc.span = Span(0, len(source), 1, 1)
+        exc.definitions_sugar = parser.sugar
         raise
     return (ParseResult(document, SourceMetadata(source, tuple(parser.spans), tuple(parser.names))),
             parser.sugar)

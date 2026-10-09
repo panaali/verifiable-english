@@ -236,7 +236,8 @@ def _label_text(monkeypatch):
         if admission.parse_label(s) is None:
             raise admission.AdmissionError(f"AdmissionError: label {s} is invalid")
         return s
-    monkeypatch.setattr(admission, "_validate_label_python", changed)
+    # Lean decides labels since lean-first batch 13b: the change is planted in the Python path's relay.
+    monkeypatch.setattr(admission, "validate_label", changed)
 
 
 def _label_code(monkeypatch):
@@ -248,7 +249,7 @@ def _label_code(monkeypatch):
         if admission.parse_label(s) is None:
             raise UnsupportedProfile(f"UnsupportedProfile: invalid label {s}")
         return s
-    monkeypatch.setattr(admission, "_validate_label_python", changed)
+    monkeypatch.setattr(admission, "validate_label", changed)
 
 
 def _labels_only(monkeypatch):
