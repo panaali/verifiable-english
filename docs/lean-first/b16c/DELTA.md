@@ -50,9 +50,12 @@ structural pass (`strayNull`) decide what the mode may read:
   `status` and a `MIXED` part's `content`. Any other `null` is `CheckerUnavailable`;
 - an unpaired surrogate escape gets the JSON boundary's `InvalidInput` diagnostic in both
   loaders: `JSON strings must not contain lone UTF-16 surrogates` (`ve.wire.LONE_SURROGATE`,
-  docs/spec/v0-language.md). Python's loader used to crash on one outside the environment
-  (`UnicodeEncodeError` in the document identity). In the environment it already got this
-  text from the relay's wire check, which `tests/test_relay_wire_check.py` pins.
+  docs/spec/v0-language.md). Both give it right after `_split`'s metadata and body checks
+  (`_no_lone_surrogate`, the end of Lean's `split`). Python's loader used to crash on one
+  outside the environment (`UnicodeEncodeError` in the document identity). In the
+  environment it already got this text from the relay's wire check, which
+  `tests/test_relay_wire_check.py` pins. A `ve-document@2` front matter is unchanged: the
+  discourse route still refuses it as `invalid JSON front matter`.
 
 `tests/test_lean_document_wrapper.py::test_null_and_number_forms_agree_with_python_or_fail_closed`
 sets every front-matter member of every seed to `null` and writes every natural in six

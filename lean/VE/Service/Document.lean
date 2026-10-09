@@ -87,7 +87,7 @@ inductive Foreign
   differently. Python decides it (`CheckerUnavailable`). -/
   | number
   /-- An unpaired surrogate escape: a Python string no UTF-8 text holds. Both loaders refuse it with the JSON
-  boundary's diagnostic (`loneSurrogate`; `front_matter`). -/
+  boundary's diagnostic after the metadata and body checks (`loneSurrogate` in `split`; `_no_lone_surrogate`). -/
   | surrogate
   /-- The lexer's fuel ran out (fail closed). -/
   | exhausted
@@ -96,41 +96,47 @@ inductive Foreign
 /-- The JSON boundary's diagnostic of a lone surrogate (docs/spec/v0-language.md; `ve.wire.LONE_SURROGATE`). -/
 def loneSurrogate : String := "JSON strings must not contain lone UTF-16 surrogates"
 
-/-- The first `Foreign` lexeme of a JSON text. Read only after `Lean.Json.parse` accepted the text, so its strings
-and numbers are well formed; `quoted` is whether the lexer is inside a string. -/
-def foreignLexeme : Nat → Bool → List Char → Option Foreign
+/-- The first lexeme of a JSON text whose kind is `.surrogate` (with `surrogates`) or `.number` (without), or
+`.exhausted`. Read only after `Lean.Json.parse` accepted the text, so its strings and numbers are well formed;
+`quoted` is whether the lexer is inside a string. -/
+def foreignLexeme (surrogates : Bool) : Nat → Bool → List Char → Option Foreign
   | _, _, [] => none
   | 0, _, _ :: _ => some .exhausted
-  | fuel + 1, true, '"' :: cs => foreignLexeme fuel false cs
+  | fuel + 1, true, '"' :: cs => foreignLexeme surrogates fuel false cs
   | fuel + 1, true, '\\' :: 'u' :: a :: b :: c :: d :: cs =>
+    let lone := if surrogates then some .surrogate else foreignLexeme surrogates fuel true cs
     match hex4 a b c d with
     | some v =>
-      if 0xDC00 ≤ v && v < 0xE000 then some .surrogate
+      if 0xDC00 ≤ v && v < 0xE000 then lone
       else if 0xD800 ≤ v && v < 0xDC00 then
         match cs with
         | '\\' :: 'u' :: e :: f :: g :: h :: rest =>
           match hex4 e f g h with
-          | some w => if 0xDC00 ≤ w && w < 0xE000 then foreignLexeme fuel true rest else some .surrogate
-          | none => some .surrogate
-        | _ => some .surrogate
-      else foreignLexeme fuel true cs
-    | none => foreignLexeme fuel true cs
-  | fuel + 1, true, '\\' :: _ :: cs => foreignLexeme fuel true cs
-  | fuel + 1, true, _ :: cs => foreignLexeme fuel true cs
-  | fuel + 1, false, '"' :: cs => foreignLexeme fuel true cs
+          | some w => if 0xDC00 ≤ w && w < 0xE000 then foreignLexeme surrogates fuel true rest else lone
+          | none => lone
+        | _ => lone
+      else foreignLexeme surrogates fuel true cs
+    | none => foreignLexeme surrogates fuel true cs
+  | fuel + 1, true, '\\' :: _ :: cs => foreignLexeme surrogates fuel true cs
+  | fuel + 1, true, _ :: cs => foreignLexeme surrogates fuel true cs
+  | fuel + 1, false, '"' :: cs => foreignLexeme surrogates fuel true cs
   | fuel + 1, false, c :: cs =>
     if c == '-' || c.isDigit then
       let token := (c :: cs).takeWhile numberChar
-      if token.all Char.isDigit && (String.mk token).toNat! ≤ maxNumber then
-        foreignLexeme fuel false (cs.drop (token.length - 1))
+      if surrogates || token.all Char.isDigit && (String.mk token).toNat! ≤ maxNumber then
+        foreignLexeme surrogates fuel false (cs.drop (token.length - 1))
       else some .number
-    else foreignLexeme fuel false cs
+    else foreignLexeme surrogates fuel false cs
 
 #guard [("[0, 2]", none), ("[0, 2e0]", some Foreign.number), ("[2.0]", some .number), ("[-0]", some .number),
   ("[9007199254740991]", none), ("[9007199254740992]", some .number), ("[\"2.0 -1 1e3\"]", none),
   ("[\"\\ud83d\\ude00\"]", none), ("[\"\\ud800\"]", some .surrogate), ("[\"\\udc00x\"]", some .surrogate),
   ("[\"\\ud800\\u0041\"]", some .surrogate), ("[\"\\\\ud800\"]", none)].all fun (t, r) =>
-    foreignLexeme (t.length + 1) false t.toList == r
+    foreignLexeme (r == some .surrogate) (t.length + 1) false t.toList == r &&
+      foreignLexeme (r != some .surrogate) (t.length + 1) false t.toList == none
+
+#guard foreignLexeme true 100 false "[\"\\ud800\", 2e0]".toList == some .surrogate &&
+  foreignLexeme false 100 false "[\"\\ud800\", 2e0]".toList == some .number
 
 /-- The members whose `null` the mode reads as Python's loader reads it, as absent (`unit.get(...)`): a unit's or
 a `MIXED` part's `content` and a unit's `status`. -/
@@ -193,11 +199,10 @@ def frontJson (front : String) : Except String Json := do
   let _ ← frontDepth front
   match Json.parse front with
   | .ok j =>
-    match foreignLexeme (front.length + 1) false front.toList with
-    | some .surrogate => throw loneSurrogate
+    match foreignLexeme false (front.length + 1) false front.toList with
     | some .number => throw (unavailable
         "front matter outside the document mode's JSON reader: a number other than a natural at most 2^53-1")
-    | some .exhausted => throw (unavailable "front matter outside the document mode's JSON reader: lexer fuel")
+    | some _ => throw (unavailable "front matter outside the document mode's JSON reader: lexer fuel")
     | none => pure ()
     if let some key := strayNull j then
       throw (unavailable ("front matter outside the document mode's JSON reader: null in " ++ key))
@@ -207,6 +212,14 @@ def frontJson (front : String) : Except String Json := do
     if text == "invalid JSON front matter" && pythonMayRead front then
       .error (unavailable "front matter outside the restricted JSON reader (Python-only JSON values)")
     else .error text
+
+/-- `_no_lone_surrogate`, which Python's loader runs right after `_split`: a lone surrogate escape anywhere in the
+front matter is the JSON boundary's diagnostic. -/
+def noLoneSurrogate (front : String) : Except String Unit :=
+  match foreignLexeme true (front.length + 1) false front.toList with
+  | some .surrogate => throw loneSurrogate
+  | some _ => throw (unavailable "front matter outside the document mode's JSON reader: lexer fuel")
+  | none => pure ()
 
 /-- `_split` with `is_discourse_text` first: the metadata keys, the couplings and completions gates, then the
 body. -/
@@ -225,6 +238,7 @@ def split (t : String) : Except String Loader.Split := do
   if (fm.getObjVal? "completions").isOk && !listed.contains "norm-defaults@0" then
     throw "UnsupportedProfile: norm-defaults@0 is required for completions"
   let (source, fences) ← Loader.bodyOf (Loader.linesOf body) (python := true)
+  noLoneSurrogate front
   pure ⟨fm, source, fences⟩
 
 /-! ## The environment -/

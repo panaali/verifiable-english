@@ -7923,6 +7923,7 @@
         "VE.Service.Document.legacyEnvelopeFault",
         "VE.Service.Document.loneSurrogate",
         "VE.Service.Document.maxNumber",
+        "VE.Service.Document.noLoneSurrogate",
         "VE.Service.Document.nullableUnitKeys",
         "VE.Service.Document.numberChar",
         "VE.Service.Document.partHasStrayNull",

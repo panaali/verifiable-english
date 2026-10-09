@@ -269,17 +269,32 @@ def test_json_python_reads_as_other_values_fails_closed(service, extra):
     assert dw.python_answer(text).get("text") != "invalid JSON front matter"
 
 
-@pytest.mark.parametrize("extra", ['"x": "\\ud800"', '"x": "a\\udc00"', '"x": "\\ud800\\u0041"',
-                                   '"\\udc00": 1'], ids=["high", "low", "high-then-other", "key"])
-def test_json_unpaired_surrogate_is_the_boundary_diagnostic_in_both(service, extra):
+SURROGATES = {"high": ('"meaning": "specified"', '"meaning": {"contextual": "\\ud800"}'),
+              "low": ('"meaning": "specified"', '"meaning": {"contextual": "a\\udc00"}'),
+              "high-then-other": ('"meaning": "specified"', '"meaning": {"contextual": "\\ud800\\u0041"}'),
+              "key": ('"support": "none"', '"support": "none", "\\udc00": 1'),
+              "lemmas": ('"units":', '"lemmas": ["\\ud800"], "units":')}
+
+
+@pytest.mark.parametrize("name", SURROGATES)
+def test_json_unpaired_surrogate_is_the_boundary_diagnostic_in_both(service, name):
     """An unpaired surrogate escape reads, in Python, as a string no UTF-8 text holds: Python's loader crashed
     encoding the document identity (UnicodeEncodeError). Both loaders refuse it with the JSON boundary's
-    diagnostic (docs/spec/v0-language.md), the text the relay's wire check gives one in the environment."""
+    diagnostic (docs/spec/v0-language.md), the text the relay's wire check gives one in the environment,
+    after `_split`'s checks."""
     from ve.wire import LONE_SURROGATE
-    text = document("AB", [unit("a", [0, 2])]).replace('"units":', extra + ', "units":', 1)
+    text = document("AB", [unit("a", [0, 2])]).replace(*SURROGATES[name])
+    assert text != document("AB", [unit("a", [0, 2])])
     python, answer = both(service, text)
     assert python == {"outcome": "error", "code": "InvalidInput", "text": LONE_SURROGATE}, python
     assert dw.verdict(python, answer) == "agree", (python, answer)
+
+
+def test_json_unpaired_surrogate_follows_the_metadata_checks(service):
+    """`_split`'s faults come first, in both: an unknown key holding a lone surrogate is unknown metadata."""
+    text = document("AB", [unit("a", [0, 2])]).replace('"units":', '"x": "\\ud800", "units":', 1)
+    python, answer = both(service, text)
+    assert python["text"] == answer["text"] == "unknown document metadata", (python, answer)
 
 
 @pytest.mark.parametrize("extra", ['"weights": [], "weights": []', '"x": "\\ud83d\\ude00"'])
