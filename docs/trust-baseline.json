@@ -4,26 +4,26 @@
   "K": 997,
   "S": 9633,
   "D": 13363,
-  "G": 24691,
+  "G": 24751,
   "C": 8138,
   "P": 66737,
   "T": 13318,
-  "o": 11468,
+  "o": 11469,
   "D[V]": 12002,
   "D[R]": 862,
   "D[I]": 499,
-  "G[V]": 23056,
+  "G[V]": 23116,
   "G[R]": 1406,
   "G[I]": 229,
   "tied": 171,
   "unclassified": 0,
-  "trusted": 45536,
-  "lines": 148345
+  "trusted": 45596,
+  "lines": 148406
  },
  "budget": {
   "K": 997,
   "S": 9633,
-  "V": 34906
+  "V": 34966
  },
  "signed": [],
  "history": [
@@ -334,6 +334,19 @@
     "K": 997,
     "S": 9633,
     "V": 34906
+   }
+  },
+  {
+   "change": "Bind response claims and certificate counts to request contracts",
+   "rebaselined_from": {
+    "K": 997,
+    "S": 9633,
+    "V": 34906
+   },
+   "to": {
+    "K": 997,
+    "S": 9633,
+    "V": 34966
    }
   }
  ],
@@ -4227,7 +4240,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 455,
+   "G": 457,
    "C": 0,
    "P": 0,
    "T": 0,
@@ -4235,13 +4248,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 411,
+   "G[V]": 413,
    "G[R]": 24,
    "G[I]": 20,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 411,
-   "lines": 465
+   "trusted": 413,
+   "lines": 467
   },
   "ResponseShape/Schemas/Diagnose.lean": {
    "K": 0,
@@ -4567,7 +4580,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 270,
+   "G": 271,
    "C": 0,
    "P": 0,
    "T": 0,
@@ -4575,13 +4588,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 257,
+   "G[V]": 258,
    "G[R]": 13,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 257,
-   "lines": 277
+   "trusted": 258,
+   "lines": 278
   },
   "ResponseShape/Schemas/Readings.lean": {
    "K": 0,
@@ -4787,7 +4800,7 @@
    "K": 0,
    "S": 53,
    "D": 0,
-   "G": 454,
+   "G": 455,
    "C": 0,
    "P": 677,
    "T": 0,
@@ -4795,13 +4808,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 454,
+   "G[V]": 455,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 507,
-   "lines": 1275
+   "trusted": 508,
+   "lines": 1276
   },
   "ResponseShape/Skeletons.lean": {
    "K": 0,
@@ -4827,21 +4840,21 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 622,
+   "G": 678,
    "C": 0,
    "P": 0,
    "T": 13,
-   "o": 43,
+   "o": 44,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 616,
+   "G[V]": 672,
    "G[R]": 6,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 616,
-   "lines": 678
+   "trusted": 672,
+   "lines": 735
   },
   "SensesMain.lean": {
    "K": 0,
