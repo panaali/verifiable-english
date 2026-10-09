@@ -195,7 +195,7 @@ def _bind_completion_choices(row, sets):
 def _bind_choice_list(choices, count, sets):
     """A list of compatible choices bound to the request: each a reading with content of every open set in source
     order, none twice, `count` the list's own length."""
-    _need(type(choices) is list and _nat(count) and count == len(choices))
+    _need(type(choices) is list and _nat(count) and count == len(choices) and count > 0)
     seen = set()
     for choice in choices:
         _need(type(choice) is list and all(type(e) is list and len(e) == 2 for e in choice)
@@ -208,13 +208,13 @@ def _bind_choice_list(choices, count, sets):
 
 
 def _bind_completion_superposed(row, case, sets):
-    """The superposed row under the completion (plan RD-6b; Lean's `elaborateFieldsND`), typed by `SUPERPOSED` and
+    """The superposed row under the completion (plan RD-6b; Lean's `elaborateFieldsND`), typed by the generated schema and
     bound to what the request fixes: the open sets in order with their versions and candidates, the unit ids, the
     restriction ids, the declared pairs a `Fill_T` label names, and the choices. What is left is Lean's alone: the
     formulas, the positions, the qualified names and the sizes."""
     from .environment import Environment
     from .readings_sup import FILL, slot_label
-    _need(SUPERPOSED(row))
+    _need(row["finding"] is None)
     document = Document(None, case["document"])
     by_id = {R.id: R for R in sets}
     raw = case["document"]
@@ -271,8 +271,12 @@ def _bind_completion_superposed(row, case, sets):
             authored_names = {rule["name"] for rule in authored.content.rules()} if authored.content is not None else set()
             _need(all(pair[0] in authored_names for pair in candidate["names"]))
     if row["choices"] == "over":
-        _need(row["choice_count"] == "over 64" and (row["choices_checked"] == "over 1024"
-                                                   or _nat(row["choices_checked"]) and row["choices_checked"] > 64))
+        upper = 1
+        for reading_set in sets:
+            upper *= len(reading_set.candidates)
+        _need(upper > 64 and row["choice_count"] == "over 64"
+              and (row["choices_checked"] == "over 1024" and upper > 1024
+                   or _nat(row["choices_checked"]) and 64 < row["choices_checked"] <= upper))
     else:
         _need(row["choice_count"] == row["choices_checked"])
         _bind_choice_list(row["choices"], row["choice_count"], sets)
@@ -388,30 +392,6 @@ FILLED = _obj({"environment": lambda v: type(v) is dict,
 _COMPLETION = {"fill_premises": FILL_PREMISES, "filled": FILLED}
 # A `Fill_T` premise's label (norm-defaults 2.4): `unsaid:pair:<obligation>,<permission>`.
 FILL_LABEL = "unsaid:pair:"
-# The superposed row under the completion (plan RD-6b; Lean's `elaborateFieldsND`): readings-route.json's `elaborate`
-# superposed alternative with `fill_premises` and `filled`, checked whole before `_bind_completion_superposed` binds it.
-_SUP_UNIT = _either(_obj({"unit": _name, "content": lambda v: type(v) is dict}),
-                    _obj({"unit": _name, "set": _str, "version": _nat, "index": _nat, "position": _nat,
-                          "content": lambda v: type(v) is dict}))
-SUPERPOSED = _obj({
-    "id": _str, "status": _lit("ok"), "route": _lit("superposed"),
-    "generated_predicates": _arr(_obj({"name": _name, "layer": _lit("readings"), "key": _lit(None)})),
-    "finding": _lit(None), "narrowings_stale": _arr(_name),
-    "vocabulary": _obj({"sorts": _lit(["ve__reading"]), "constants": _lit({"ve__here": "ve__reading"}),
-                        "predicates": _arr(_obj({"name": _name, "arguments": _lit(["ve__reading"])}),
-                                           nonempty=True)}),
-    "units": _arr(_SUP_UNIT, nonempty=True),
-    "slot": _arr(_obj({"label": _name, "ast": lambda v: v is not None})),
-    "fill": _arr(_obj({"label": _name, "ast": lambda v: v is not None})),
-    "names": _arr(_obj({"set": _str, "version": _nat, "candidates": _arr(_obj({
-        "index": _nat, "id": _str, "position": _nat,
-        "names": _arr(lambda v: type(v) is list and len(v) == 2 and all(_name(x) for x in v))}), nonempty=True)}),
-        nonempty=True),
-    "choice_count": _either(_nat, _lit("over 64")), "choices": _either(_lit("over"), lambda v: type(v) is list),
-    "choices_checked": _either(_nat, _lit("over 1024")),
-    "sizes": _obj({"sorts": _nat, "predicates": _nat, "nodes": _nat,
-                   "limits": _lit({"sorts": 32, "predicates": 256, "nodes": 10000})}),
-    **_COMPLETION})
 ROW = _either(_obj({"id": _str, "status": _lit("ok"), "content_bearing": _lit(False)}, _COMPLETION),
               _obj({"id": _str, "status": _lit("ok"), "content_bearing": _lit(True),
                     "sets": _arr(_SET, nonempty=True)}, _COMPLETION))
@@ -517,6 +497,10 @@ def _bind_completion(row, case):
     filled = Environment(row["filled"]["environment"])
     _need(set(filled.sorts) == set(request.sorts) and set(filled.constants) == set(request.constants))
     added = set(filled.predicates) - set(request.predicates)
+    from .norm_defaults import unsaid_name
+    expected_added = {unsaid_name(p) for p, decl in request.predicates.items()
+                      if decl.regulated is not None and decl.regulated.default == "unspecified"}
+    _need(added == expected_added)
     _need(all(filled.predicates[p].arguments == decl.arguments for p, decl in request.predicates.items())
           and all(filled.predicates[p].regulated is None for p in added))
     expected = []
