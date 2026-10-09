@@ -1,8 +1,9 @@
 import ResponseShape
 
-/-! The `english.question` row (docs/spec/question-answering.md 4.1 and 8). The result is an object with a
-status of 4.1 and the question's identities; the fields of each status are the relay's to check against the
-contract the mode exports (`{"id", "export": "codes"}`), which is also a result. -/
+/-! The `english.question` row (docs/spec/question-answering.md 4.1 and 8). As for E2's English modes, the
+result is not described here: the relay checks every field of it against the contract the mode exports
+(`{"id", "export": "codes"}`: codes, classes, status codes and the fields of each status), which is the
+producer's own table, and against the request's identities. -/
 namespace ResponseShape.Schemas.Question
 open Lean ResponseShape
 
@@ -12,7 +13,7 @@ def «row» : Shape :=
     n [obj, .required ["id", "status", "error"],
       closed [("id", .bool true), ("status", constS "error"), ("error", str)]],
     n [obj, .required ["id", "status", "result"],
-      closed [("id", .bool true), ("status", constS "ok"), ("result", obj)]]]
+      closed [("id", .bool true), ("status", constS "ok"), ("result", .bool true)]]]
 
 def file : File where
   name := "english.question.json"
