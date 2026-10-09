@@ -8601,6 +8601,7 @@
   "tests/test_propose.py::test_review_ambiguities_are_rejected[Every person who owns stock votes.-No new object constants or binary predicates.]",
   "tests/test_propose.py::test_review_ambiguities_are_rejected[Some people own cars.-No some form, sorts, plurals, or constants inferred.]",
   "tests/test_propose.py::test_scope_conflicts_and_no_sort_inference",
+  "tests/test_question_fixture_sources.py::test_agent_policy_builder_reproduces_the_reviewed_documents",
   "tests/test_question_fixture_sources.py::test_agent_policy_documents_are_admitted_with_their_record_formulas",
   "tests/test_question_fixture_sources.py::test_agent_policy_documents_bind_the_selected_source_and_rule_strength",
   "tests/test_question_fixture_sources.py::test_group_fences_have_the_three_reviewed_lean_readings",
