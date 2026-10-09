@@ -96,4 +96,42 @@ def isIndefinite (o : Outcome) : Bool := match o with | .indefinite .. => true |
       fs.lookup "span" == some (Lean.Json.arr #[Lean.toJson (0 : Nat), Lean.toJson (25 : Nat)])
   | .error _ => false
 
+-- The A0 gate (spec 3.3; `VE.Question.Frames`): the line passes only as A0, with its sentence's own formula.
+#guard let φ := EFormula.all "member" (.pred "eligible" [.var 0])
+  askedGate groupEnv {} groupLex 2100000 φ "You asked whether every member is eligible." &&
+  !askedGate groupEnv {} groupLex 2100000 φ "You asked whether every member is verified." &&
+  !askedGate groupEnv {} groupLex 2100000 φ "You asked whether every member is happy." &&
+  !askedGate groupEnv {} groupLex 2100000 φ "You asked whether every member is eligible" &&
+  !askedGate groupEnv {} groupLex 2100000 φ "Yes." &&
+  !askedGate groupEnv {} groupLex 2100000 φ "Sentence 1 says: \"You asked whether every member is eligible.\""
+#guard frameReadings "Yes." = [("A1", [])]
+#guard frameReadings "You asked whether Ann is eligible." = [("A0", ["Ann is eligible"])]
+#guard (frameReadings "If sentence 1 means \"a\", yes.").length == 1
+#guard frameReadings "You asked about Ann." = []
+
+-- The moved-word rule (`VE.Question.Moved`): the clause after `who` in G11's one candidate is tokens [3, 5).
+#guard match oneTree groupEnv groupLex 2100000 "every member who is registered is eligible." with
+  | some (toks, t) => clauses (toks.map (·.1)) 0 t == [(3, 5)] &&
+      inClause (toks.map (·.1)) t 3 && !inClause (toks.map (·.1)) t 5
+  | none => false
+#guard movedOut groupEnv groupLex 2100000 ⟨.fronted "is" 17, "every member who is registered is eligible."⟩
+#guard !movedOut groupEnv groupLex 2100000 ⟨.fronted "is" 31, "every member who is registered is eligible."⟩
+#guard !movedOut groupEnv groupLex 2100000 ⟨.caseThat, "every member who is registered is eligible."⟩
+-- A put-back word that is not a token start, or a sentence with no single tree, counts as moved.
+#guard movedOut groupEnv groupLex 2100000 ⟨.fronted "is" 18, "every member who is registered is eligible."⟩
+#guard movedOut groupEnv groupLex 2100000 ⟨.fronted "is" 6, "every is member eligible."⟩
+#guard match ask auxiliaries groupEnv {} groupLex 2100000 "Is every member who registered is eligible?" with
+  | .moved c rs => c.sentence == "every member who is registered is eligible." &&
+      rs == ["Is every member who is registered eligible?"]
+  | _ => false
+#guard askable auxiliaries groupEnv {} groupLex 2100000 "Is every member who is registered eligible?"
+#guard !askable auxiliaries groupEnv {} groupLex 2100000 "Is every member who registered is eligible?"
+-- Before the ruling, readQuestion offered the moved question as the indefinite rephrasing (G27).
+#guard match readQuestion auxiliaries groupEnv {} groupLex 2100000 "Is a member who registered is eligible?" with
+  | .indefinite _ rs => rs == ["Is every member who registered is eligible?"]
+  | _ => false
+#guard match ask auxiliaries groupEnv {} groupLex 2100000 "Is a member who registered is eligible?" with
+  | .read (.none _) => true
+  | _ => false
+
 end VE.Question

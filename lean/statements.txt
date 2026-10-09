@@ -13590,6 +13590,15 @@ theorem VE.Order.validModel_iff
     VE.Order.validModel? v d = Bool.true ↔ d.toModel.Valid v.environment
   -- uses VE.Order.FiniteModel.Valid@VE.Order.Finite VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Vocabulary.environment@VE.Order.ModelCheck VE.Order.Vocabulary@VE.Order.ModelCheck VE.Order.validModel?@VE.Order.ModelCheck
   -- expr 661174793
+theorem VE.Question.Run.oneFields_gated
+  ∀ (q : String) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) (c : VE.Question.Candidate)
+    (φ : VE.EnglishGrammar.EFormula) (fs : List (String × Lean.Json)),
+    VE.Question.Run.oneFields q E L c φ = Except.ok fs →
+      ∃ t,
+        List.lookup "text" fs = Option.some (Lean.Json.str t) ∧
+          VE.Question.askedGate E { } L VE.EnglishGrammar.workBudget φ t = Bool.true
+  -- uses VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay.mk@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.workBudget@VE.EnglishGrammar.Lexicon VE.Question.Candidate@VE.Question.Basic VE.Question.Run.oneFields@VE.Question.Run VE.Question.askedGate@VE.Question.Frames
+  -- expr 2606749243
 theorem VE.Question.Run.statusCodes_classed
   ∀ (s : String × List String),
     s ∈ VE.Question.Run.statusCodes →
@@ -13780,6 +13789,44 @@ theorem VE.Question.addMeaning_one_nonempty
     (φ : VE.EnglishGrammar.EFormula), y.snd = VE.Question.Got.one φ → VE.Question.addMeaning acc y ≠ []
   -- uses VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.Question.Candidate@VE.Question.Basic VE.Question.Got.one@VE.Question.Basic VE.Question.Got@VE.Question.Basic VE.Question.addMeaning@VE.Question.Basic
   -- expr 4163559980
+theorem VE.Question.ask_moved
+  ∀ (auxs : List String) (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon)
+    (b : Nat) (q : String) (c : VE.Question.Candidate) (rs : List String),
+    VE.Question.ask auxs E O L b q = VE.Question.Asked.moved c rs →
+      (∃ φ, VE.Question.readQuestion auxs E O L b q = VE.Question.Outcome.one c φ) ∧
+        VE.Question.movedOut E L b c = Bool.true ∧ ∀ (r : String), r ∈ rs → VE.Question.askable auxs E O L b r = Bool.true
+  -- uses VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.Question.Asked.moved@VE.Question.Moved VE.Question.Asked@VE.Question.Moved VE.Question.Candidate@VE.Question.Basic VE.Question.Outcome.one@VE.Question.Read VE.Question.Outcome@VE.Question.Read VE.Question.ask@VE.Question.Moved VE.Question.askable@VE.Question.Moved VE.Question.movedOut@VE.Question.Moved VE.Question.readQuestion@VE.Question.Read
+  -- expr 1517124774
+theorem VE.Question.ask_one
+  ∀ (auxs : List String) (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon)
+    (b : Nat) (q : String) (c : VE.Question.Candidate) (φ : VE.EnglishGrammar.EFormula),
+    VE.Question.ask auxs E O L b q = VE.Question.Asked.read (VE.Question.Outcome.one c φ) →
+      VE.Question.readQuestion auxs E O L b q = VE.Question.Outcome.one c φ ∧ VE.Question.movedOut E L b c = Bool.false
+  -- uses VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.Question.Asked.read@VE.Question.Moved VE.Question.Asked@VE.Question.Moved VE.Question.Candidate@VE.Question.Basic VE.Question.Outcome.one@VE.Question.Read VE.Question.Outcome@VE.Question.Read VE.Question.ask@VE.Question.Moved VE.Question.movedOut@VE.Question.Moved VE.Question.readQuestion@VE.Question.Read
+  -- expr 1713421625
+theorem VE.Question.ask_rephrasings
+  ∀ (auxs : List String) (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon)
+    (b : Nat) (q art : String) (rs : List String),
+    VE.Question.ask auxs E O L b q = VE.Question.Asked.read (VE.Question.Outcome.indefinite art rs) →
+      ∀ (r : String), r ∈ rs → VE.Question.askable auxs E O L b r = Bool.true
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.Question.Asked.read@VE.Question.Moved VE.Question.Asked@VE.Question.Moved VE.Question.Outcome.indefinite@VE.Question.Read VE.Question.ask@VE.Question.Moved VE.Question.askable@VE.Question.Moved
+  -- expr 373597303
+theorem VE.Question.askable_iff
+  ∀ (auxs : List String) (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon)
+    (b : Nat) (q : String),
+    VE.Question.askable auxs E O L b q = Bool.true ↔
+      ∃ c φ, VE.Question.ask auxs E O L b q = VE.Question.Asked.read (VE.Question.Outcome.one c φ)
+  -- uses VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.Question.Asked.read@VE.Question.Moved VE.Question.Asked@VE.Question.Moved VE.Question.Candidate@VE.Question.Basic VE.Question.Outcome.one@VE.Question.Read VE.Question.ask@VE.Question.Moved VE.Question.askable@VE.Question.Moved
+  -- expr 247173815
+theorem VE.Question.askedGate_sound
+  ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon) (b : Nat)
+    (φ : VE.EnglishGrammar.EFormula) (line : String),
+    VE.Question.askedGate E O L b φ line = Bool.true →
+      ∃ s,
+        VE.Question.frameReadings line = [("A0", [s])] ∧
+          VE.EnglishGrammar.EnglishOneReading E O L (s ++ ".") [(φ, Bool.false)]
+  -- uses VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.EnglishOneReading@VE.EnglishGrammar.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.Question.askedGate@VE.Question.Frames VE.Question.frameReadings@VE.Question.Frames
+  -- expr 3349107543
 theorem VE.Question.asked_reads_back
   ∀ (auxs : List String) (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon)
     (b : Nat) (q : String) (c : VE.Question.Candidate) (φ : VE.EnglishGrammar.EFormula),
@@ -13883,6 +13930,12 @@ theorem VE.Question.classify_none_got
       ∀ (d : VE.Question.Candidate), d ∈ VE.Question.candidates auxs q → VE.Question.got E O L b d = VE.Question.Got.none
   -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.Question.Candidate@VE.Question.Basic VE.Question.Got.none@VE.Question.Basic VE.Question.Got@VE.Question.Basic VE.Question.Outcome.none@VE.Question.Read VE.Question.Outcome@VE.Question.Read VE.Question.candidates@VE.Question.Basic VE.Question.classify@VE.Question.Read VE.Question.got@VE.Question.Basic
   -- expr 2606662125
+theorem VE.Question.classify_not_indefinite
+  ∀ (auxs : List String) (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon)
+    (b : Nat) (q art : String) (rs : List String),
+    VE.Question.classify auxs E O L b q ≠ VE.Question.Outcome.indefinite art rs
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.Question.Outcome.indefinite@VE.Question.Read VE.Question.Outcome@VE.Question.Read VE.Question.classify@VE.Question.Read
+  -- expr 1237314828
 theorem VE.Question.classify_one_read
   ∀ (auxs : List String) (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon)
     (b : Nat) (q : String) (c : VE.Question.Candidate) (φ : VE.EnglishGrammar.EFormula),
@@ -14069,6 +14122,12 @@ theorem VE.Question.fold_meanings_sound
       x ∈ acc ∨ ∃ y, y ∈ gs ∧ y.fst = x.fst ∧ y.snd = VE.Question.Got.one x.snd
   -- uses VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.Question.Candidate@VE.Question.Basic VE.Question.Got.one@VE.Question.Basic VE.Question.Got@VE.Question.Basic VE.Question.addMeaning@VE.Question.Basic
   -- expr 3428490286
+theorem VE.Question.frames_leads
+  List.Pairwise
+    (fun a b => a ≠ "" ∧ b ≠ "" ∧ ¬a.toList.isPrefixOf b.toList = Bool.true ∧ ¬b.toList.isPrefixOf a.toList = Bool.true)
+    (List.map (fun x => VE.Question.lead x.snd) VE.Question.answerFrames)
+  -- uses VE.Question.Piece@VE.Question.Frames VE.Question.answerFrames@VE.Question.Frames VE.Question.lead@VE.Question.Frames
+  -- expr 1851467044
 theorem VE.Question.fronted_text
   ∀ (auxs : List String) (q a : String) (g : Nat) (s : String),
     { form := VE.Question.Form.fronted a g, sentence := s } ∈ VE.Question.candidates auxs q →
@@ -14272,6 +14331,20 @@ theorem VE.Question.no_q_of_count
   ∀ {l : List Char}, (List.filter (fun x => x == '?') l).length = 0 → ¬'?' ∈ l
   -- uses
   -- expr 135663172
+theorem VE.Question.offeredFold_mem
+  ∀ (auxs : List String) (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon)
+    (b : Nat) (qs : List String) (acc : List (String × VE.EnglishGrammar.EFormula))
+    (x : String × VE.EnglishGrammar.EFormula),
+    x ∈
+        List.foldl
+          (fun acc r =>
+            match VE.Question.classify auxs E O L b r with
+            | VE.Question.Outcome.one c φ => if (acc.any fun x => x.snd == φ) = Bool.true then acc else acc ++ [(r, φ)]
+            | x => acc)
+          acc qs →
+      x ∈ acc ∨ x.fst ∈ qs
+  -- uses VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.instDecidableEqEFormula@VE.EnglishGrammar.Syntax VE.Question.Candidate@VE.Question.Basic VE.Question.Outcome@VE.Question.Read VE.Question.askable.match_1@VE.Question.Moved VE.Question.classify@VE.Question.Read
+  -- expr 3386430271
 theorem VE.Question.offered_fold
   ∀ (auxs : List String) (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon)
     (b : Nat) (qs : List String) (acc : List (String × VE.EnglishGrammar.EFormula)),
@@ -14290,6 +14363,11 @@ theorem VE.Question.offered_fold
           (List.map (fun x => x.snd) r).Nodup
   -- uses VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.instDecidableEqEFormula@VE.EnglishGrammar.Syntax VE.Question.Candidate@VE.Question.Basic VE.Question.Outcome.one@VE.Question.Read VE.Question.Outcome@VE.Question.Read VE.Question.classify@VE.Question.Read VE.Question.offered_fold.match_1@VE.Question.Properties
   -- expr 3152992865
+theorem VE.Question.offered_mem
+  ∀ (auxs : List String) (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon)
+    (b : Nat) (qs : List String) (r : String), r ∈ VE.Question.offered auxs E O L b qs → r ∈ qs
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.Question.offered@VE.Question.Read
+  -- expr 3464907999
 theorem VE.Question.offered_spec
   ∀ (auxs : List String) (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon)
     (b : Nat) (qs : List String),
@@ -14358,6 +14436,13 @@ theorem VE.Question.readQuestion_indefinite
       ∀ (d : VE.Question.Candidate), d ∈ VE.Question.candidates auxs q → VE.Question.NoDerivation E L d.sentence
   -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.Question.Candidate.sentence@VE.Question.Basic VE.Question.Candidate@VE.Question.Basic VE.Question.NoDerivation@VE.Question.Properties VE.Question.Outcome.indefinite@VE.Question.Read VE.Question.Outcome@VE.Question.Read VE.Question.candidates@VE.Question.Basic VE.Question.readQuestion@VE.Question.Read
   -- expr 3859804623
+theorem VE.Question.readQuestion_indefinite_classify
+  ∀ (auxs : List String) (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon)
+    (b : Nat) (q art : String) (rs : List String),
+    VE.Question.readQuestion auxs E O L b q = VE.Question.Outcome.indefinite art rs →
+      ∃ cl, VE.Question.classify auxs E O L b q = VE.Question.Outcome.none cl
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.Question.Candidate@VE.Question.Basic VE.Question.Outcome.indefinite@VE.Question.Read VE.Question.Outcome.none@VE.Question.Read VE.Question.Outcome@VE.Question.Read VE.Question.classify@VE.Question.Read VE.Question.readQuestion@VE.Question.Read
+  -- expr 2601997257
 theorem VE.Question.readQuestion_indefinite_offered
   ∀ (auxs : List String) (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon)
     (b : Nat) (q art : String) (rs : List String),

@@ -83,10 +83,12 @@ def render_formula(data) -> str:
     return formula(data)
 
 
-SPEC_ROW = {"G22c": "G22", "A6r": "A6", "A6c": "A6", "A6d": "A6"}
+SPEC_ROW = {"G22c": "G22", "G11c": "G11", "A6r": "A6", "A6c": "A6", "A6d": "A6"}
+# A control question: a fixture its row names after `Control:`.
+CONTROLS = {"G22c", "G11c"}
 
 
-STATUS_WORDS = ("one", "many", "indefinite", "none", "rejected", "notQuestion", "budget", "invalidGrammar")
+STATUS_WORDS = tuple(english_lean.QUESTION_FIELDS)
 
 
 @pytest.mark.parametrize("fixture,frame,question,answer", F.FIXTURES, ids=IDS)
@@ -96,8 +98,8 @@ def test_the_fixture_table_is_the_specs(fixture, frame, question, answer):
     (between `…`) of each text or rephrasing it quotes."""
     rows = _spec_rows()
     line, row = rows["A1"] if fixture == "A1d" else rows[SPEC_ROW.get(fixture, fixture)]
-    if fixture == "G22c":
-        assert f"Control: `{question}` on `FD` is **one**" in row and answer["status"] == "one"
+    if fixture in CONTROLS:
+        assert f"Control: `{question}` on `{frame}` is **{answer['status']}**" in row, fixture
         return
     row = row.split("Control:")[0]
     assert f"`{question}`" in line or fixture in ("G20", "G25", "G26", "A1d"), fixture

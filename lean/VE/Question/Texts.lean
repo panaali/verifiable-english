@@ -13,7 +13,8 @@ def question_version : Nat := 1
 def newCodeClasses : List (String × String) :=
   [("NotOneQuestion", "SyntaxError"), ("QuestionForm", "SyntaxError"),
    ("QuestionTooLong", "ResourceLimit"), ("AmbiguousQuestion", "AmbiguousDerivation"),
-   ("QuestionWithMarker", "SyntaxError"), ("IndefiniteQuestion", "SyntaxError")]
+   ("QuestionWithMarker", "SyntaxError"), ("IndefiniteQuestion", "SyntaxError"),
+   ("QuestionWordMoved", "SyntaxError")]
 
 def notOneQuestionText : String := "Write one question that ends with a question mark."
 def whQuestionText : String :=
@@ -44,5 +45,13 @@ def markerText : String :=
 def askedText (c : Candidate) : String := "You asked whether " ++ c.sentence.dropRight 1 ++ "."
 def illTypedQuestionText : String :=
   "The question was read, and its formula does not pass the type check."
+/-- The moved-out refusal (`VE.Question.Moved`): the word, and whether questions are offered in its place. -/
+def movedText (aux : String) (offers : Nat) : String :=
+  "VE could read this question only by putting \"" ++ aux ++ "\" back inside a part of the sentence that begins " ++
+  "with \"who\", \"that\" or \"which\". English does not move a word out of such a part." ++
+  (if offers == 0 then "" else if offers == 1 then " Ask this instead:" else " Ask one of these instead:")
+/-- What `ve ask` says while VE answers no question (plan Q2, not built). -/
+def unansweredText : String :=
+  "VE does not answer questions yet. It shows only the sentence it reads the question as."
 
 end VE.Question

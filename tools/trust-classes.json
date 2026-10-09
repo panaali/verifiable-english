@@ -5451,6 +5451,19 @@
         "VE.Question.Fixtures.frameU"
       ]
     },
+    "VE/Question/Frames.lean": {
+      "G[R]": [
+        "VE.Question.Piece",
+        "VE.Question.answerFrames",
+        "VE.Question.pieceReadings",
+        "VE.Question.frameReadings",
+        "VE.Question.gated",
+        "VE.Question.askedGate"
+      ],
+      "P": [
+        "VE.Question.lead"
+      ]
+    },
     "VE/Question/Help.lean": {
       "G[R]": [
         "VE.Question.diagnosisOf",
@@ -5460,6 +5473,27 @@
         "VE.Question.mappedPiece",
         "VE.Question.mapSpan",
         "VE.Question.shiftReject"
+      ]
+    },
+    "VE/Question/Moved.lean": {
+      "G[V]": [
+        "VE.Question.clauseWords",
+        "VE.Question.isClauseWord",
+        "VE.Question.width",
+        "VE.Question.widths",
+        "VE.Question.clauses",
+        "VE.Question.kidClauses",
+        "VE.Question.tokenAt",
+        "VE.Question.inClause",
+        "VE.Question.oneTree",
+        "VE.Question.movedOut",
+        "VE.Question.askable",
+        "VE.Question.Asked",
+        "VE.Question.ask"
+      ],
+      "G[R]": [
+        "VE.Question.frontedFrom",
+        "VE.Question.movedRephrasings"
       ]
     },
     "VE/Question/Properties.lean": {
@@ -5502,12 +5536,15 @@
         "VE.Question.Run.refusedFields",
         "VE.Question.Run.ambiguousFields",
         "VE.Question.Run.noneAdvice",
-        "VE.Question.Run.noneFields"
+        "VE.Question.Run.noneFields",
+        "VE.Question.Run.texts"
       ],
       "G[V]": [
         "VE.Question.Run.formName",
         "VE.Question.Run.outcomeFields",
-        "VE.Question.Run.caseReported"
+        "VE.Question.Run.caseReported",
+        "VE.Question.Run.oneFields",
+        "VE.Question.Run.askedFields"
       ]
     },
     "VE/Question/Spans.lean": {
@@ -5538,7 +5575,9 @@
         "VE.Question.closestText",
         "VE.Question.badQuestionSpacingText",
         "VE.Question.markerText",
-        "VE.Question.illTypedQuestionText"
+        "VE.Question.illTypedQuestionText",
+        "VE.Question.movedText",
+        "VE.Question.unansweredText"
       ],
       "G[V]": [
         "VE.Question.askedText"

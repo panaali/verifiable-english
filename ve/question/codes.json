@@ -8,6 +8,7 @@
   ["AmbiguousQuestion", "AmbiguousDerivation"],
   ["QuestionWithMarker", "SyntaxError"],
   ["IndefiniteQuestion", "SyntaxError"],
+  ["QuestionWordMoved", "SyntaxError"],
   ["SourceTooLong", "ResourceLimit"],
   ["TextTooLong", "ResourceLimit"],
   ["BadCharacter", "SyntaxError"],
@@ -47,6 +48,7 @@
   ["budget", ["QuestionTooLong", "Budget"]],
   ["many", ["Ambiguous", "AmbiguousQuestion"]],
   ["indefinite", ["IndefiniteQuestion"]],
+  ["moved", ["QuestionWordMoved"]],
   ["rejected", ["SourceTooLong", "TextTooLong", "BadCharacter", "OpenQuote", "BadNumeral", "EmptyDocument", "EmptySentence", "Unterminated", "BadSpacing", "UnboundReference", "ShadowedName", "SortMismatch", "MarkerDepth", "NestingLimit", "NumeralBound", "CoefficientNotNumeral", "PronounUnresolved", "BlockedWording", "CoordinationRepeated", "CoordinationForm", "NaturalScoped", "RelativeForm", "Internal", "QuestionWithMarker", "IllTyped"]],
   ["invalidGrammar", ["InvalidGrammar", "InvalidOverlay"]]
  ],
@@ -54,10 +56,14 @@
   ["one", [["text", "form", "sentence", "ast", "spans"], []]],
   ["many", [["code", "class", "text", "span"], ["rephrasings", "witnesses"]]],
   ["indefinite", [["code", "class", "text", "span", "rephrasings"], []]],
+  ["moved", [["code", "class", "text", "span"], ["rephrasings"]]],
   ["none", [["code", "class", "text", "span"], ["advice"]]],
   ["rejected", [["code", "class", "text", "span"], []]],
   ["notQuestion", [["code", "class", "text", "span"], []]],
   ["budget", [["code", "class", "text", "span"], []]],
   ["invalidGrammar", [["code", "class", "text"], ["fault", "failure"]]]
+ ],
+ "texts": [
+  ["unanswered", "VE does not answer questions yet. It shows only the sentence it reads the question as."]
  ]
 }

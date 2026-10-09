@@ -283,7 +283,9 @@ module VE.ParserContracts
 module VE.Question.Basic
 module VE.Question.Examples
 module VE.Question.Fixtures
+module VE.Question.Frames
 module VE.Question.Help
+module VE.Question.Moved
 module VE.Question.Properties
 module VE.Question.Read
 module VE.Question.Run

@@ -362,20 +362,22 @@ def read(env, source: str, words, options: dict) -> LeanReading:
     return LeanReading(response, env, source)
 
 
-def _question_contract() -> tuple[str, dict[str, str], dict[str, tuple[str, ...]], dict[str, tuple[set, set]]]:
+def _question_contract() -> tuple[str, dict[str, str], dict[str, tuple[str, ...]], dict[str, tuple[set, set]],
+                                  dict[str, str]]:
     """Lean's question contract (`VE.Question.Run`'s export, written to `ve/question/codes.json` by
-    `tools/question_codes.py`): the version, the class of every code, the codes of every status and the fields
-    of every status. The relay holds no table of its own."""
+    `tools/question_codes.py`): the version, the class of every code, the codes of every status, the fields
+    of every status and the texts its clients show as they are. The relay holds no table of its own."""
     import json
     data = json.loads((ROOT / "ve/question/codes.json").read_text())
     if data.get("format") != "ve.question-codes@1":
         raise ValueError("ve/question/codes.json: format is not ve.question-codes@1")
     return (data["question_version"], {code: cls for code, cls in data["codes"]},
             {status: tuple(found) for status, found in data["statuses"]},
-            {status: (set(required), set(optional)) for status, (required, optional) in data["fields"]})
+            {status: (set(required), set(optional)) for status, (required, optional) in data["fields"]},
+            {name: text for name, text in data["texts"]})
 
 
-QUESTION_VERSION, QUESTION_CLASSES, QUESTION_STATUS_CODES, QUESTION_FIELDS = _question_contract()
+QUESTION_VERSION, QUESTION_CLASSES, QUESTION_STATUS_CODES, QUESTION_FIELDS, QUESTION_TEXTS = _question_contract()
 QUESTION_FORMS = ("caseThat", "fronted")
 
 
