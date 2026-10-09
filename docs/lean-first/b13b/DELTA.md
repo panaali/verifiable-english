@@ -68,8 +68,9 @@ DRI (HUMAN):
 (`riskReduced`) aside, as `modelEnvironment` already did, so typing has no Python fallback for those profiles; the
 soft-norms branch now filters the current profile list. No theorem statement changed (`tools/lean_statements.py`:
 0 added, 0 removed, 0 changed). `tools/trust_map.py --check` reports **trusted +8** lines in
-`VE/Service/Standalone.lean` (untied [V]); the allowance needs the DRI's signature (HUMAN, not recorded in
-`docs/trust-baseline.json` by this batch).
+`VE/Service/Standalone.lean` (untied [V]). As batch 16b did, `tools/trust_map.py --write --reason` records the
+growth in `docs/trust-baseline.json`'s history with that reason, which says the allowance awaits the DRI's
+signature; no `signed` entry is written (HUMAN, owner: DRI).
 
 ## Behaviour notes for reviewers
 
