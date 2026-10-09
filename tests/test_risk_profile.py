@@ -247,7 +247,8 @@ def test_policy_english_uses_risk_readings():
     ):
         with pytest.raises(VEError) as caught:
             parse_english_with_metadata(env, sentence)
-        assert rewrite in str(caught.value)
+        advice = caught.value.lean_reading.response.get("advice")
+        assert rewrite in (advice["text"] if advice else str(caught.value))
 
 
 def test_risk_word_in_norm_guard_has_one_reading():

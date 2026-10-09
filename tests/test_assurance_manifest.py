@@ -279,9 +279,9 @@ def test_broad_exception_handlers_are_reviewed():
     assert all(reason for reason in reviewed.values())
 
 
-def test_english_admission_is_python_authoritative():
+def test_english_admission_is_lean_authoritative():
     assert {op["authority"] for op in OPS} <= {"python", "migrated", "lean-only"}
-    assert assurance.enforced_operations() == frozenset()
+    assert assurance.enforced_operations() == frozenset({"english.admission"})
 
 
 # --- completeness: omissions that no decorator comparison can see ----------------
@@ -634,7 +634,7 @@ def test_guard_blocks_every_python_entry_once_migrated():
                     fn()
             assert caught.value.to_dict()["code"] == "CheckerUnavailable"
             assert caught.value.operation == op["id"]
-    assert assurance.enforced_operations() == frozenset()
+    assert assurance.enforced_operations() == frozenset({"english.admission"})
 
 
 def test_guard_allows_the_lean_engine():
@@ -898,15 +898,16 @@ def _bundle():
 def test_bundle_separates_rejection_from_unavailability(tmp_path, monkeypatch):
     from ve.bundle import check_bundle
     hang = _fake_lean(tmp_path, FAULTS["hang"], name="hang")
-    # The bundle's searches start the real Rust and Lean checkers (lean-first batch 15b: Python has no
-    # search of its own); start them before the timeout is lowered, as the hang is the fake runner's.
+    configured_wait = HANG_TIMEOUT + 123.5
+    # The bundle's English uses the Lean service and its searches use the Rust and Lean checkers;
+    # start them before lowering the timeout, which applies to the fake runner's hang.
     assert check_bundle(_bundle())["lean_outcome"] == "not_requested"
     with monkeypatch.context() as setting:
-        setting.setenv("VE_LEAN_TIMEOUT", "1234.5")
+        setting.setenv("VE_LEAN_TIMEOUT", str(configured_wait))
         waits = expired_waits(setting, lean_backend)
-        with pytest.raises(CheckerUnavailable, match="no answer within 1234.5 s"):
+        with pytest.raises(CheckerUnavailable, match=rf"no answer within {configured_wait} s"):
             check_bundle(_bundle(), lean_executable=hang)
-    assert waits == [1234.5]
+    assert waits == [configured_wait]
     assert check_bundle(_bundle())["lean_outcome"] == "not_requested"
     with pytest.raises(CheckerUnavailable):
         check_bundle(_bundle(), lean_executable=tmp_path / "absent")
@@ -1055,7 +1056,8 @@ def test_argument_separates_lean_rejection_from_unavailability(tmp_path, monkeyp
     # The argument's searches start the real Rust and Lean checkers (lean-first batch 15b); start them
     # before the timeout is lowered, as the hang is the fake runner's.
     assert check_argument(graph).lean_outcome == "not_requested"
-    monkeypatch.setenv("VE_LEAN_TIMEOUT", "1234.5")
+    configured_wait = HANG_TIMEOUT + 123.5
+    monkeypatch.setenv("VE_LEAN_TIMEOUT", str(configured_wait))
     waits = expired_waits(monkeypatch, lean_backend, expire=lambda argv: Path(argv[0]).name == "hang")
     outcomes = {}
     for name, body in (("absent", None), ("crash", FAULTS["crash"]), ("hang", FAULTS["hang"]),
@@ -1069,7 +1071,7 @@ def test_argument_separates_lean_rejection_from_unavailability(tmp_path, monkeyp
     assert outcomes["rejecting"] == ("rejected", "Lean-checked: no", "rejected")
     for name in ("absent", "crash", "hang"):
         assert outcomes[name] == ("unavailable", "Lean-checked: unavailable", "unavailable"), name
-    assert waits and set(waits) == {1234.5}
+    assert waits and set(waits) == {configured_wait}
     assert check_argument(graph).lean_outcome == "not_requested"
 
 
