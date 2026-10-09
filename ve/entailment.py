@@ -681,17 +681,18 @@ def check_entailment_certificate(env: Any, premises: Sequence[Any], conclusion: 
     generator (rule 3: generator-internal, never reported) and stay Python's.
     """
     from .backends.dispatch import owned
-    if not _background or _generated_premises is not None or not _lean_replay_scope(env):
+    if not _background or _generated_premises is not None or not lean_check_scope(env):
         return _check_certificate_python(env, premises, conclusion, certificate, max_steps=max_steps,
                                          _background=_background, _generated_premises=_generated_premises)
     return owned("certificate_replay",
                  lambda: _check_certificate_lean(env, premises, conclusion, certificate, max_steps))
 
 
-def _lean_replay_scope(env) -> bool:
-    """Whether a Lean certificate mode replays over `env` bound to the whole environment. No mode decodes a
-    `norm-defaults@0` or `readings@1` environment's projection while binding the submitted one, so those
-    keep the retained Python replay (a recorded scope gap, docs/lean-first/b13b/DELTA.md)."""
+def lean_check_scope(env) -> bool:
+    """Whether Lean's certificate replay and countermodel check answer over `env` bound to the whole
+    environment. No mode decodes a `norm-defaults@0` or `readings@1` environment's projection while binding
+    the submitted one, so those keep the retained Python replay, and premise status and compare there keep
+    their retained composition (a recorded scope gap, docs/lean-first/b13b/DELTA.md)."""
     return not {"norm-defaults@0", "readings@1"} & set(getattr(env, "profiles", ()) or ())
 
 

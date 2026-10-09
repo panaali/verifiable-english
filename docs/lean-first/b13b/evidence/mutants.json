@@ -1,0 +1,230 @@
+{
+ "head": "2416688a29d95d1bf15e8e0b616c56d22c6d4b45",
+ "mutants": [
+  {
+   "mutant": "python_selection_wins",
+   "behaviour": "a Lean-owned operation is Lean's under every selection",
+   "file": "ve/backends/dispatch.py",
+   "tests": [
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection",
+    "tests/test_lean_first_b13b.py::test_the_switched_relay_asks_lean_under_every_selection"
+   ],
+   "mutated_exit": 1,
+   "failed": [
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[python-admission]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[python-background]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[python-bundle]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[python-certificate_replay]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[python-compare]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[python-definitions_elaboration]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[python-dependency_order]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[python-graph]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[python-label]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[python-norms_admission]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[python-norms_certificate]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[python-norms_conflict]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[python-norms_elaborate]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[python-parse]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[python-premise_status]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[python-readings]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[python-typing]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[rust-experimental-admission]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[rust-experimental-background]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[rust-experimental-bundle]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[rust-experimental-certificate_replay]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[rust-experimental-compare]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[rust-experimental-definitions_elaboration]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[rust-experimental-dependency_order]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[rust-experimental-graph]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[rust-experimental-label]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[rust-experimental-norms_admission]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[rust-experimental-norms_certificate]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[rust-experimental-norms_conflict]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[rust-experimental-norms_elaborate]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[rust-experimental-parse]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[rust-experimental-premise_status]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[rust-experimental-readings]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[rust-experimental-typing]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[shadow-admission]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[shadow-background]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[shadow-bundle]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[shadow-certificate_replay]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[shadow-compare]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[shadow-definitions_elaboration]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[shadow-dependency_order]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[shadow-graph]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[shadow-label]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[shadow-norms_admission]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[shadow-norms_certificate]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[shadow-norms_conflict]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[shadow-norms_elaborate]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[shadow-parse]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[shadow-premise_status]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[shadow-readings]",
+    "tests/test_single_owner.py::test_a_lean_owned_operation_is_lean_s_under_every_selection[shadow-typing]",
+    "tests/test_lean_first_b13b.py::test_the_switched_relay_asks_lean_under_every_selection[python-admission]",
+    "tests/test_lean_first_b13b.py::test_the_switched_relay_asks_lean_under_every_selection[python-background]",
+    "tests/test_lean_first_b13b.py::test_the_switched_relay_asks_lean_under_every_selection[python-definitions]",
+    "tests/test_lean_first_b13b.py::test_the_switched_relay_asks_lean_under_every_selection[python-dependency_order]",
+    "tests/test_lean_first_b13b.py::test_the_switched_relay_asks_lean_under_every_selection[python-label]",
+    "tests/test_lean_first_b13b.py::test_the_switched_relay_asks_lean_under_every_selection[python-norms_admission]",
+    "tests/test_lean_first_b13b.py::test_the_switched_relay_asks_lean_under_every_selection[shadow-admission]",
+    "tests/test_lean_first_b13b.py::test_the_switched_relay_asks_lean_under_every_selection[shadow-background]",
+    "tests/test_lean_first_b13b.py::test_the_switched_relay_asks_lean_under_every_selection[shadow-definitions]",
+    "tests/test_lean_first_b13b.py::test_the_switched_relay_asks_lean_under_every_selection[shadow-dependency_order]",
+    "tests/test_lean_first_b13b.py::test_the_switched_relay_asks_lean_under_every_selection[shadow-label]",
+    "tests/test_lean_first_b13b.py::test_the_switched_relay_asks_lean_under_every_selection[shadow-norms_admission]",
+    "tests/test_lean_first_b13b.py::test_the_switched_relay_asks_lean_under_every_selection[rust-experimental-admission]",
+    "tests/test_lean_first_b13b.py::test_the_switched_relay_asks_lean_under_every_selection[rust-experimental-background]",
+    "tests/test_lean_first_b13b.py::test_the_switched_relay_asks_lean_under_every_selection[rust-experimental-definitions]",
+    "tests/test_lean_first_b13b.py::test_the_switched_relay_asks_lean_under_every_selection[rust-experimental-dependency_order]",
+    "tests/test_lean_first_b13b.py::test_the_switched_relay_asks_lean_under_every_selection[rust-experimental-label]",
+    "tests/test_lean_first_b13b.py::test_the_switched_relay_asks_lean_under_every_selection[rust-experimental-norms_admission]"
+   ],
+   "restored_exit": 0,
+   "caught": true
+  },
+  {
+   "mutant": "admission_report_unbound",
+   "behaviour": "a Lean admission row is bound to the request (report identity)",
+   "file": "ve/admission.py",
+   "tests": [
+    "tests/test_lean_first_b13b.py::test_every_structural_mutant_of_a_relayed_row_is_refused"
+   ],
+   "mutated_exit": 1,
+   "failed": [
+    "tests/test_lean_first_b13b.py::test_every_structural_mutant_of_a_relayed_row_is_refused[admission]",
+    "tests/test_lean_first_b13b.py::test_every_structural_mutant_of_a_relayed_row_is_refused[norms_admission]"
+   ],
+   "restored_exit": 0,
+   "caught": true
+  },
+  {
+   "mutant": "definitions_row_unpaired",
+   "behaviour": "a Lean definitions row whose premises and generators do not pair is refused",
+   "file": "ve/definitions.py",
+   "tests": [
+    "tests/test_stage2_validation.py::test_definitions_are_leans_answer_and_python_does_not_arbitrate"
+   ],
+   "mutated_exit": 1,
+   "failed": [
+    "tests/test_stage2_validation.py::test_definitions_are_leans_answer_and_python_does_not_arbitrate"
+   ],
+   "restored_exit": 0,
+   "caught": true
+  },
+  {
+   "mutant": "fill_premises_dropped",
+   "behaviour": "norm-defaults fill premises reach Lean's replay",
+   "file": "ve/entailment.py",
+   "tests": [
+    "tests/test_norm_defaults.py::test_u5a_unspecified_obligation_beside_deny_permission_is_conflict_free"
+   ],
+   "mutated_exit": 1,
+   "failed": [
+    "tests/test_norm_defaults.py::test_u5a_unspecified_obligation_beside_deny_permission_is_conflict_free"
+   ],
+   "restored_exit": 0,
+   "caught": true
+  },
+  {
+   "mutant": "background_route_view",
+   "behaviour": "Lean answers Background over the model projection",
+   "file": "ve/background.py",
+   "tests": [
+    "tests/test_model_environment.py"
+   ],
+   "mutated_exit": 1,
+   "failed": [
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:alternatives@0,norms@0,relational-fol@0#1]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:alternatives@0,norms@0,relational-fol@0#1+display]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:alternatives@0,norms@0,relational-fol@0#2]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:alternatives@0,norms@0,relational-fol@0#2+display]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:alternatives@0,norms@0,relational-fol@0#3]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:alternatives@0,norms@0,relational-fol@0#3+display]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:alternatives@0,norms@0,relational-fol@0#4]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:alternatives@0,norms@0,relational-fol@0#4+display]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:norm-defaults@0,norms@0,relational-fol@0#1]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:norm-defaults@0,norms@0,relational-fol@0#1+display]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:norm-defaults@0,norms@0,relational-fol@0#2]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:norm-defaults@0,norms@0,relational-fol@0#2+display]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:norm-defaults@0,norms@0,relational-fol@0#3]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:norm-defaults@0,norms@0,relational-fol@0#3+display]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:norm-defaults@0,norms@0,relational-fol@0#4]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:norm-defaults@0,norms@0,relational-fol@0#4+display]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:order@0,relational-fol@0,time@0#1]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:order@0,relational-fol@0,time@0#1+display]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:order@0,relational-fol@0,time@0#2]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:order@0,relational-fol@0,time@0#3]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:order@0,relational-fol@0,time@0#3+display]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:documents@1,order@0,relational-fol@0,time@0#1]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:documents@1,order@0,relational-fol@0,time@0#2]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:order@0,relational-fol@0,time@0#4]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:norms@0,readings@1,relational-fol@0,soft-norms@0#1]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:norms@0,readings@1,relational-fol@0,soft-norms@0#1+display]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:norms@0,readings@1,relational-fol@0,soft-norms@0#2]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:norms@0,readings@1,relational-fol@0,soft-norms@0#2+display]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:alternatives@0,norms@0,relational-fol@0,risk@0#1]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:alternatives@0,norms@0,relational-fol@0,risk@0#1+display]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:alternatives@0,norms@0,relational-fol@0,risk@0#2]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:alternatives@0,norms@0,relational-fol@0,risk@0#2+display]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:alternatives@0,norms@0,relational-fol@0,risk@0#3]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:alternatives@0,norms@0,relational-fol@0,risk@0#3+display]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:alternatives@0,norms@0,relational-fol@0,risk@0#4]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:alternatives@0,norms@0,relational-fol@0,risk@0#4+display]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:norm-defaults@0,norms@0,relational-fol@0,rights@0,soft-norms@0#1]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:norm-defaults@0,norms@0,relational-fol@0,rights@0,soft-norms@0#1+display]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:norm-defaults@0,norms@0,relational-fol@0,soft-norms@0#1]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:norm-defaults@0,norms@0,relational-fol@0,soft-norms@0#1+display]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:norm-defaults@0,norms@0,relational-fol@0,soft-norms@0#2]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:norm-defaults@0,norms@0,relational-fol@0,soft-norms@0#2+display]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:alternatives@0,data@0,norms@0,relational-fol@0#1]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:data@0,norm-defaults@0,norms@0,relational-fol@0#1]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:data@0,norm-defaults@0,norms@0,relational-fol@0#1+display]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:data@0,norm-defaults@0,norms@0,relational-fol@0#2]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:data@0,norm-defaults@0,norms@0,relational-fol@0#2+display]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:data@0,norm-defaults@0,norms@0,relational-fol@0#3]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:data@0,norm-defaults@0,norms@0,relational-fol@0#3+display]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:documents@1,order@0,relational-fol@0,time@0#4]",
+    "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:documents@1,order@0,relational-fol@0,time@0#4+display]",
+    "tests/test_model_environment.py::test_search_status_and_comparison_answer_as_the_base_did[ve.core@0.2:data@0,norm-defaults@0,norms@0,relational-fol@0]",
+    "tests/test_model_environment.py::test_search_status_and_comparison_answer_as_the_base_did[ve.core@0.2:norm-defaults@0,norms@0,relational-fol@0]",
+    "tests/test_model_environment.py::test_search_status_and_comparison_answer_as_the_base_did[ve.core@0.2:norm-defaults@0,norms@0,relational-fol@0,rights@0,soft-norms@0]",
+    "tests/test_model_environment.py::test_search_status_and_comparison_answer_as_the_base_did[ve.core@0.2:norm-defaults@0,norms@0,relational-fol@0,soft-norms@0]",
+    "tests/test_model_environment.py::test_search_status_and_comparison_answer_as_the_base_did[ve.core@0.2:norms@0,readings@1,relational-fol@0,soft-norms@0]"
+   ],
+   "restored_exit": 1,
+   "caught": false
+  },
+  {
+   "mutant": "sugar_rejection_to_lean",
+   "behaviour": "a rejection inside a definitions@0 sugar production stays the retained reader's",
+   "file": "ve/parser.py",
+   "tests": [
+    "tests/test_definitions.py::test_definition_statement_sugar_is_input_only"
+   ],
+   "mutated_exit": 1,
+   "failed": [
+    "tests/test_definitions.py::test_definition_statement_sugar_is_input_only"
+   ],
+   "restored_exit": 0,
+   "caught": true
+  },
+  {
+   "mutant": "lean_typing_refuses_readings",
+   "behaviour": "Lean types formulas over readings@1 environments (Lean)",
+   "file": "lean/VE/Service/Standalone.lean",
+   "tests": [
+    "tests/test_readings_s2_document.py::test_m5_narrowing_premise_and_no_dead_reading"
+   ],
+   "mutated_exit": 1,
+   "failed": [
+    "tests/test_readings_s2_document.py::test_m5_narrowing_premise_and_no_dead_reading"
+   ],
+   "restored_exit": 0,
+   "caught": true
+  }
+ ],
+ "service_build_restored": true,
+ "service_build": "877679e8b8e52a28d3e3d088bf15ea3024af0c6c4f9c14e02d8ab222a3d9ed48"
+}

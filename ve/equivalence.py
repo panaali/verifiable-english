@@ -184,7 +184,10 @@ def compare(env, a: Formula, b: Formula, budgets: Budgets | dict | None = None) 
     """
     budgets = _budgets(budgets)
     from .backends.dispatch import owned
-    # Lean checks every constituent under every authority (lean-first batch 13b).
+    # Lean checks every constituent under every authority (lean-first batch 13b), where it can.
+    from .entailment import lean_check_scope
+    if not lean_check_scope(env):
+        return _compare(env, a, b, budgets)
     return owned("compare", lambda: _compare(env, a, b, budgets))
 
 
