@@ -2195,6 +2195,8 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Service.runMode_discourse
 #print axioms VE.Service.runMode_readingsRoute
 #print axioms VE.Service.runMode_diagnose
+#print axioms VE.Service.runMode_englishQuestion
+#print axioms VE.Question.Run.statusCodes_classed
 #print axioms VE.Service.Diagnose.diagnoseCase_registered
 #print axioms VE.Service.caseResult_ok
 #print axioms VE.Service.runRequest_ok
