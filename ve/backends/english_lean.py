@@ -45,6 +45,9 @@ WALL_CLOCK = "English Earley time budget exhausted"
 NO_PREMISE = "A conclusion needs an earlier premise."
 
 TRANSPORT: Callable[[dict], dict] | None = None
+QUESTION_MODE = "english.question"
+# A test seam only. The normal path uses the service's generated response schema.
+QUESTION_TRANSPORT: Callable[[dict], dict] | None = None
 
 
 def _frame(env, case: dict) -> dict:
@@ -355,6 +358,61 @@ def read(env, source: str, words, options: dict) -> LeanReading:
     if problem:
         raise CheckerUnavailable(f"CheckerUnavailable: the Lean English reader's answer is malformed: {problem}")
     return LeanReading(response, env, source)
+
+
+def read_question(env, question: str, words, options: dict) -> dict:
+    """Relay one polar question to Lean, preserving its diagnosis and asked formula.
+
+    `english.question` extends the `english.read` case, so the request uses the same
+    environment, overlay, selected lexicon and cap. The source is the question for
+    the six E2 identities and the question is also named explicitly for Lean's
+    question decoder. The service validates the producer's response schema before
+    returning it. This boundary checks the request identities again because the
+    injected test transport does not pass through the service.
+    """
+    if type(question) is not str:
+        raise TypeError("question must be str")
+    case = request(env, question, words, options)
+    case["id"] = QUESTION_MODE
+    case["question"] = question
+    if QUESTION_TRANSPORT is None:
+        row = relay.decide_once(QUESTION_MODE, case)
+        if row.get("status") != "ok" or row.keys() != {"id", "status", "result"}:
+            raise CheckerUnavailable("CheckerUnavailable: the Lean question reader did not read the case")
+        response = row["result"]
+    else:
+        response = QUESTION_TRANSPORT(case)
+    expected = identities(env, question, words, case["lexicon"])
+    if type(response) is not dict or type(response.get("identities")) is not dict:
+        raise CheckerUnavailable("CheckerUnavailable: malformed Lean question answer")
+    found = response["identities"]
+    if found.keys() != expected.keys() | {"question_version"} or any(
+            type(found.get(key)) is not str or found.get(key) != value
+            for key, value in expected.items()) or not _text(found.get("question_version")):
+        raise CheckerUnavailable("CheckerUnavailable: Lean question identities do not bind the request")
+    if response.get("status") == "one":
+        try:
+            ast.formula_from_data(env, response["ast"])
+        except (KeyError, TypeError, ValueError, VEError, RecursionError) as exc:
+            raise CheckerUnavailable("CheckerUnavailable: Lean question formula is malformed") from exc
+    else:
+        if not all(_text(response.get(key)) for key in ("code", "class", "text")) or \
+                response["class"] not in ERROR_CLASSES:
+            raise CheckerUnavailable("CheckerUnavailable: Lean question refusal is malformed")
+        if "span" in response and not _span(response["span"], question):
+            raise CheckerUnavailable("CheckerUnavailable: Lean question span is malformed")
+        cls = ERROR_CLASSES[response["class"]]
+        if issubclass(cls, CheckerUnavailable):
+            error = cls(response["text"], operation="question.read", backend="lean")
+        else:
+            span = response.get("span")
+            where = None if span is None else Span(span[0], span[1],
+                                                   question.count("\n", 0, span[0]) + 1,
+                                                   span[0] - question.rfind("\n", 0, span[0]))
+            error = cls(response["text"], span=where)
+        error.lean_question = response
+        raise error
+    return response
 
 
 def check(env, words, options: dict, formulas: list, marks: list[bool], candidates: list[str]) -> int | None:
