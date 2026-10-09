@@ -947,16 +947,30 @@ def admitGraph (E : Env) (front graph : Json) (units : List SourceUnit) (all act
 /-- The readings route admits and validates the candidate documents. This projection carries only the W2 wrapper's
 set ids, active statuses and asserted candidate formulas. A norm or pending candidate contributes no W2 formula. -/
 def readingsSets (E : Env) (front : Json) (units : List SourceUnit) : Except String (List (FrontSet × List Bool)) := do
+  let rawSets ← match Loader.optionalList front "reading_sets" with
+    | .arr xs => pure xs.toList
+    | _ => throw "reading_sets must be a list"
+  let w2Sets := rawSets.filter fun set =>
+    match set.getObjValD "readings" with
+    | .arr rs => rs.all fun r => r.getObjValD "content" == .null ||
+        (r.getObjValD "content").getObjValD "norm" == .null &&
+        (r.getObjValD "content").getObjValD "right" == .null &&
+        (r.getObjValD "content").getObjValD "right_lines" == .null &&
+        (r.getObjValD "content").getObjValD "limitation" == .null
+    | _ => false
+  let w2 ← Loader.compileSets E.rv E.profiles E.envId (units.map (·.id))
+    (Json.arr w2Sets.toArray) (python := true) (formula := formulaCheck E)
+    (modelRefused := some (unavailable "a distinguishing model the Lean model decoder refuses"))
   let unitJson := units.map fun u => Json.mkObj ([("id", .str u.id), ("kind", u.kind)] ++
     u.content.toList.map fun c => ("content", c.json))
   let document := Json.mkObj [("units", Json.arr unitJson.toArray),
     ("reading_sets", Loader.optionalList front "reading_sets")]
   let _ ← VE.Readings.Run.runCase (Json.mkObj [("id", .str "readings"),
     ("kind", .str "readings-validate"), ("environment", E.json), ("document", document)])
-  let sets ← match Loader.optionalList front "reading_sets" with
-    | .arr xs => xs.toList.mapM VE.Readings.Wire.decodeSet
-    | _ => throw "reading_sets must be a list"
-  sets.mapM fun set => do
+  rawSets.mapM fun setJson => do
+    let set ← VE.Readings.Wire.decodeSet setJson
+    if let some found := w2.find? fun (r, _) => r.id == set.id && r.version == set.version then
+      return found
     let readings ← set.readings.mapM fun r => do
       let f ← if r.kind == some "asserted" && r.content != .null then
         VE.Route.Wire.decodeClosed E.rv.environment r.content E.data

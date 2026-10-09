@@ -473,7 +473,8 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
             readings_s2 = elaborate_s2(env.to_dict(), compiled, reading_sets,
                                        couplings=meta.get("couplings", []),
                                        narrowings=meta.get("narrowings", []))
-        reading_plan = plan_choices([r for r in active if r["status"] == "open"], couplings=[])
+        reading_plan = plan_choices([r for r in active if r["status"] == "open"],
+                                    couplings=meta.get("couplings", []))
     except CheckerUnavailable:
         raise
     except Exception as exc:  # noqa: BLE001 - a document Lean accepted that Python cannot build is a bug
