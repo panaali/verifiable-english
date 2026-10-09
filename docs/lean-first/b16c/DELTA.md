@@ -19,7 +19,7 @@ change the historical report.
 - rights: Lean decides 0/1250; 1250 listed residues.
 - norm_defaults: Lean decides 0/1010; 1010 listed residues.
 - document: Lean decides 843/1816; 973 listed residues.
-- Per-case residue rows: 3641. Seeded faults caught: 3/3.
+- Per-case residue rows: 3641. Seeded faults caught: 10/10.
 - Clean gate at `f0c44d43`: passed; 13362 passed, 92 skipped, 0 failed; 36 Rust tests passed.
 <!-- END GENERATED B16C METRICS -->
 
@@ -34,31 +34,57 @@ malformed-profile and environment-key groups individually.
 
 ## Boundary and binding change
 
-The document mode's case array and front matter now use Lean's `Json.parse`, which accepts
-JSON `null` and standard JSON number forms. The frozen `VE.JsonInput` parser and hash-frozen
-`Main.lean` are untouched. This is the smaller trusted change: one mode-specific entry
-point and a document-specific identity serializer. Certificate canonicalisation keeps its
-null-refusing behavior. `content: null` is absent content in the unit row, as in the
-Python loader. The document identity still includes the authored null. Values Lean cannot
-serialize into Python's document identity are `CheckerUnavailable`, never a verdict.
+The document mode's case array and front matter use Lean's `Json.parse`. The frozen
+`VE.JsonInput` parser and hash-frozen `Main.lean` are untouched. Certificate
+canonicalisation keeps its null-refusing behavior; the document identity serializer
+includes authored nulls, as Python's does.
 
-The generated document response schema now types checked formula content, exact two-number
-spans, and the existing identity and count fields. The receiver binds every accepted
-unit's authored fields, checked AST, identities, parents, coverage tables and residual
-counts to the request, and checks status values against the allowed set. A forged alternate formula with its matching meaning ID
-is rejected by `test_identities_and_content_are_leans`. `kind` and `meaning` remain
-untyped in the response schema itself; their request equality is checked by the receiver.
-This does **not** satisfy the requested fully typed schema yet.
+`Json.parse` reads some texts as values other than Python's `json.loads` reads (16c
+review B2), so after it accepts a front matter one lexical pass (`foreignLexeme`) and one
+structural pass (`strayNull`) decide what the mode may read:
+
+- a number other than a natural at most 2^53-1 (`2e0`, `2.0`, `-0`, `20e-1`, a larger
+  integer) is `CheckerUnavailable`: Python reads a float or a negative integer where Lean
+  reads a natural or another number;
+- `null` is read only where Python's loader reads it as absent: a unit's `content` and
+  `status` and a `MIXED` part's `content`. Any other `null` is `CheckerUnavailable`;
+- an unpaired surrogate escape is `invalid JSON front matter` in both loaders. Python's
+  loader used to crash on it (`UnicodeEncodeError` in the document identity); it now
+  refuses it, as the discourse route's restricted reader always has.
+
+`tests/test_lean_document_wrapper.py::test_null_and_number_forms_agree_with_python_or_fail_closed`
+sets every front-matter member of every seed to `null` and writes every natural in six
+number forms, through the first, second and last element of each list. Every mutant is
+Python's answer or `CheckerUnavailable`. On the earlier 16c code, the review's exhaustive
+probes of the same kind found 107 accepted-to-rejected flips on `null` and 355 changed
+outcomes on number forms. The same probes now give 2,639 and 2,650 mutants, all agreeing or
+failing closed. The constitution seed is now refused for its `null` reading content, as on
+`main`.
+
+The response schema is fully typed (16c review B1, B3). Each answer unit is a `RowUnit`
+whose kind, meaning, support and status are decoded values (`Route.Admission.Kind`,
+`Meaning`, `Support`, `UnitStatus`), rendered by `unitJson`. The schema names their domains:
+`common.json#/$defs/kind`, the four meaning forms, and `Loader.supports` and
+`Loader.statuses` as enums generated from the Lean lists. `ResponseShape.Encoders.Document.unit_fits`
+and `meaning_fits` prove that every rendered row fits. The relayed narrowings are typed as
+the front-matter narrowing objects that `Loader.narrowingIds` checked; they were typed as
+token strings, so every `alternatives@0` or `risk@0` document with a narrowing was
+`CheckerUnavailable`. The generated `alternatives-narrowed` seed now carries a nonempty
+narrowing through every seed-based test. The receiver still binds each unit's authored
+fields, checked AST, identities, parents, coverage tables and residual counts to the request.
 
 ## Verification and outstanding work
 
 - `lake build ve_service`, `lake build ve_response_decode`, schema generation/check, and
   `lean/audit.py` passed. The audit found 4,865 named theorem declarations with only the
   approved axiom allowlist. No theorem statement changed.
-- Document-focused tests: 332 passed, 83 existing strict xfails. The three seeded bugs
-  in `evidence/mutants.json` each made its named test fail, then were removed: treating
-  null content as present; accepting a forged alternate checked formula; accepting an
-  untyped formula in the response schema.
+- `evidence/mutants.json` (`seed_faults.py`): ten seeded faults each made its named test fail
+  and were then removed. They are: treating null content as present; accepting a forged
+  alternate checked formula; an untyped formula, narrowing or meaning in the response
+  schema; Python reading an unpaired surrogate; and, in Lean, deciding every `null`,
+  deciding every number form, refusing a `null` status, and reading an unpaired surrogate.
+  The Lean faults are built into a temporarily pinned `ve_service`. A fault inside
+  `foreignLexeme` itself fails the build at its `#guard`s.
 - The full gate passed on clean code commit `f0c44d43` (`evidence/gate.json`):
   13,362 passed, 92 allowed skips, zero failures, and 36 Rust tests passed. The
   Lean full build and audit passed. `python3 tools/trust_map.py --check` passed
