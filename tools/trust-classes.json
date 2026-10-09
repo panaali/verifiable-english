@@ -753,6 +753,7 @@
         "ResponseShape.Schemas.Route.background",
         "ResponseShape.Schemas.Route.bundle",
         "ResponseShape.Schemas.Route.certificate",
+        "ResponseShape.Schemas.Route.certificateFor",
         "ResponseShape.Schemas.Route.countermodel",
         "ResponseShape.Schemas.Route.evaluate",
         "ResponseShape.Schemas.Route.file",
