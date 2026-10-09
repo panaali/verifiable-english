@@ -18,8 +18,8 @@ composed from that block's own route, as Python composes it: the block route dec
 claim graph and owns the coverage line (`alternatives` and its residual counts, `Alternatives.Wire.coverage`).
 
 What the mode cannot decide yet is `CheckerUnavailable`, never a verdict (`unavailable`): a `ve-document@2`
-document (the discourse route's), a document with `senses` (the senses route's), front matter outside the
-restricted JSON reader (`null`, a negative, fractional or out-of-range number, a duplicate key, `NaN`), an
+document (the discourse route's), a document with `senses` (the senses route's), front matter outside Lean's
+JSON reader (`NaN`, `Infinity`), an
 environment outside the plain `ve.core@0.2` envelope or with a profile outside `ownedProfiles` (each such profile's
 loader adds checks and coverage lines its own Lean route owns), regulated or norm content, fenced English or strict
 content, a distinguishing model the Lean model decoder refuses, and a claim graph the Lean admission route defers.
@@ -60,20 +60,18 @@ def listedProfiles (environment : Json) : List String :=
 
 /-! ## The front matter -/
 
-/-- Whether Python's JSON reader may read a front matter the restricted reader refuses: Lean's own JSON
-parser reads it (`null`, numbers outside the natural numbers, duplicate keys, a lone surrogate), or it names
-one of Python's non-standard constants. An over-approximation: it only turns a rejection into
-`CheckerUnavailable`. -/
+/-- Whether Python's JSON reader may read a front matter Lean.Json.parse refuses, in particular Python's
+non-standard constants. An over-approximation: it only turns a rejection into `CheckerUnavailable`. -/
 def pythonMayRead (front : String) : Bool :=
   (Json.parse front).isOk || ["NaN", "Infinity"].any fun t => (front.splitOn t).length > 1
 
 def frontJson (front : String) : Except String Json :=
-  match VE.JsonInput.parse front with
+  match Json.parse front with
   | .ok j => .ok j
   | .error e =>
     let text := Loader.frontJsonError e
     if text == "invalid JSON front matter" && pythonMayRead front then
-      .error (unavailable "front matter outside the restricted JSON reader (null, a negative, fractional or large number, a duplicate key)")
+      .error (unavailable "front matter outside the restricted JSON reader (Python-only JSON values)")
     else .error text
 
 /-- `_split` with `is_discourse_text` first: the metadata keys, the couplings and completions gates, then the
@@ -99,6 +97,16 @@ def split (t : String) : Except String Loader.Split := do
 
 /-- The block routes' document with no norms and no units, as Python's `coverage` sends it. -/
 def emptySource : Json := Json.mkObj [("norms", Json.arr #[]), ("units", Json.arr #[])]
+
+/-- The @1 document identity includes authored nulls, while certificate identities do not. -/
+def documentId (doc : Loader.Split) : Except String String := do
+  let format ← stringField doc.front "format"
+  let payload := Json.mkObj [("metadata", Loader.identityMetadata doc.front),
+    ("source", .str doc.source), ("fences", Json.mkObj (doc.fences.map fun (u, t) => (u, Json.str t)))]
+  match VE.CertificateWire.documentDigest (format ++ "\n") payload with
+  | .ok digest => pure digest
+  | .error e => throw (if e.startsWith "ResourceLimit" then e else
+      unavailable "document identity contains a JSON number outside the document mode")
 
 /-- The checked environment of a document and what its checks read: the environment as written (its profiles
 and identity bind every meaning id), its typing envelope (a composed block's profile and fields replaced by the
@@ -388,6 +396,7 @@ def sourceUnit (E : Env) (source : String) (fences : List (String × String)) (o
   let support := (u.getObjValD "support").getStr?.toOption.getD ""
   unless Loader.supports.contains support do throw "invalid support"
   let compiled ← match u.getObjVal? "content" with
+    | .ok .null => pure none
     | .ok content => some <$> contentOf E fences u id content
     | .error _ => pure none
   if let .arr xs := kind then
@@ -656,7 +665,7 @@ def check (text : String) (withGraph : Bool := true) : Except String Checked := 
   let block ← blockCoverage E front units
   if let .ok graph := front.getObjVal? "graph" then
     if withGraph then admitGraph E front graph units all active openNames narrowings
-  pure ⟨← Loader.documentId (Loader.payload doc (Json.mkObj [])), Loader.sourceId E.profiles doc.source,
+  pure ⟨← documentId doc, Loader.sourceId E.profiles doc.source,
     doc.source, units, front, block⟩
 
 def encode (id : String) (c : Checked) : Json :=

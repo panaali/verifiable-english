@@ -90,6 +90,17 @@ def test_coverage_and_statuses_are_leans(tmp_path, no_python_loader, monkeypatch
         D.load_document(path)
 
 
+def test_null_content_is_absent_on_the_lean_path(tmp_path, monkeypatch):
+    doc = deepcopy(GENERATED["plain"])
+    doc["front"]["units"][2]["content"] = None
+    path = write(tmp_path, dw.text_of(doc))
+    expected = outcome(python_path(path))
+    row = D._lean_answer(path.read_bytes(), True)
+    assert row is not None and "content" not in row["units"][2]
+    monkeypatch.setattr(D, "_load_document", lambda *a, **k: (_ for _ in ()).throw(AssertionError("retained path")))
+    assert outcome(lambda: D.check_document(path)) == expected
+
+
 def test_identities_and_content_are_leans(tmp_path, no_python_loader, monkeypatch):
     path = write(tmp_path, dw.text_of(GENERATED["plain"]))
     row = D._lean_answer(path.read_bytes(), False)
@@ -102,6 +113,14 @@ def test_identities_and_content_are_leans(tmp_path, no_python_loader, monkeypatc
             D.load_document(path)
     forged["units"][0]["meaning_id"] = "c" * 64
     monkeypatch.setattr(relay, "answer", lambda mode, case: (forged, None))
+    with pytest.raises(CheckerUnavailable, match="not bound to the document sent"):
+        D.load_document(path)
+    alternate = deepcopy(row)
+    env = D.Environment(GENERATED["plain"]["front"]["environment"])
+    alternate["units"][0]["content"] = ["top"]
+    alternate["units"][0]["meaning_id"] = D.digest(
+        f"ve-meaning-{env.identity_version}\n", {"environment_id": env.environment_id, "ast": ["top"]})
+    monkeypatch.setattr(relay, "answer", lambda mode, case: (alternate, None))
     with pytest.raises(CheckerUnavailable, match="not bound to the document sent"):
         D.load_document(path)
     # Python's own computation of the same identities agrees with Lean's on the genuine answer.
@@ -313,7 +332,8 @@ RETAINED = {
     "front matter outside the restricted JSON reader": (
         "front matter outside the restricted JSON reader", lambda: dw.text_of(
             {**GENERATED["plain"], "front": {**GENERATED["plain"]["front"],
-                                             "weights": [{"set": "s", "by": "a", "values": {"x": 1.5}}]}})),
+                                             "weights": [{"set": "s", "by": "a", "values": {"x": 1.5}}]}})
+            .replace('"x": 1.5', '"x": NaN')),
     "a document with senses is read by the Lean senses route": (
         "a document with senses is read by the Lean senses route", lambda: dw.text_of(
             {**GENERATED["plain"], "front": {**GENERATED["plain"]["front"], "senses": {}}})),
@@ -425,6 +445,16 @@ def test_forged_residual_line_with_balanced_total_is_unavailable(
 
 
 RETYPES = (7, True, None, [], {}, "x")
+
+
+def test_document_schema_types_checked_content(tmp_path):
+    from ve.backends.service_schema import ROWS, Context, Invalid
+    path = write(tmp_path, dw.text_of(GENERATED["plain"]))
+    row = D._lean_answer(path.read_bytes(), True)
+    forged = deepcopy(row)
+    forged["units"][0]["content"] = 7
+    with pytest.raises(Invalid):
+        ROWS["document"][0](forged, Context({"id": "document", "document": path.read_text(), "admit": True}), {})
 
 
 def _structural_mutants(node, at=()):

@@ -102,7 +102,7 @@ DECIDED = {"usecases/bluedot-grant/document.ve.md", "usecases/bluedot-grant/caus
            "alternatives-cells", "alternatives-graph", "risk"}
 # The seeds it must refuse, each with the reason it names.
 FAIL_CLOSED = {"usecases/news-article/news-w6a.ve.md": "order@0",
-               "tests/data/readings_s2/constitution-nd-readings.ve.md": "restricted JSON reader",
+               "tests/data/readings_s2/constitution-nd-readings.ve.md": "norm-defaults@0",
                "fence": "surface parser"}
 
 
@@ -249,19 +249,19 @@ def test_profile_gate_runs_before_the_environment_decoder(service):
 
 @pytest.mark.parametrize("extra", ['"x": null', '"x": -1', '"x": 1.5', '"x": 1e3', '"x": NaN', '"x": Infinity',
                                    '"x": "\\ud800"', '"x": 99999999999999999999', '"weights": [], "weights": []'])
-def test_json_python_reads_and_the_restricted_reader_does_not_fails_closed(service, extra):
-    """Python's JSON reader reads every one of these front matters (`null`, numbers outside the natural
-    numbers, Python's constants, a lone surrogate, a duplicate key); the restricted reader does not, so the mode
-    answers `CheckerUnavailable`, never `invalid JSON front matter` (B3's constitution document holds
-    `null`)."""
+def test_json_python_reads_and_the_document_reader_agrees(service, extra):
+    """The document reader accepts standard JSON values; Python-only constants remain undecided."""
     front = ('{"format": "ve-document@1", "environment": ' + json.dumps(environment()) +
              ', "units": [{"id": "a", "span": [0, 2], "kind": "exposition", "meaning": "specified", '
              '"support": "none"}], ' + extra + '}')
     text = "---\n" + front + "\n---\nAB"
     json.loads(front)
     answer = lean(service, text)
-    assert answer["code"] == "CheckerUnavailable" and "restricted JSON reader" in answer["text"], answer
-    assert dw.python_answer(text).get("text") != "invalid JSON front matter"
+    python = dw.python_answer(text)
+    if extra in ('"x": NaN', '"x": Infinity'):
+        assert answer["code"] == "CheckerUnavailable", answer
+    else:
+        assert dw.verdict(python, answer) == "agree", (extra, python, answer)
 
 
 @pytest.mark.parametrize("front", ["{", '{"a": 01}', "{} x", "[1,]"])
@@ -271,12 +271,12 @@ def test_json_neither_reader_reads_is_invalid_in_both(service, front):
     assert python["text"] == answer["text"] == "invalid JSON front matter", (python, answer)
 
 
-def test_json_nested_past_the_restricted_depth_is_a_resource_limit(service):
+def test_json_nested_front_matter_matches_python(service):
     deep = "[" * 300 + "]" * 300
     text = document("AB", [unit("a", [0, 2])]).replace('"units":', '"weights": [{"set": 1, "by": 2, "values": '
                                                          + deep + '}], "units":', 1)
-    answer = lean(service, text)
-    assert answer["code"] == "ResourceLimit", answer
+    python, answer = both(service, text)
+    assert dw.verdict(python, answer) == "agree", (python, answer)
 
 
 # ---------------------------------------------------------------- C1: Python's fault order

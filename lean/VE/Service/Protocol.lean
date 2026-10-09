@@ -505,15 +505,15 @@ def parseEnglishCases (text : String) : Except String (Array (Except String Json
   unless raw.size == cases.size do throw "English batch split mismatch"
   pure (raw.map fun source => .ok (.str source))
 
-/-- The `risk-eval` batch, read with Lean.Json.parse as its former one-shot runner `ve_risk_eval`
-read it (its cases carry JSON values the restricted decoder refuses, such as null). -/
+/-- The `risk-eval` and `document` batches, read with Lean.Json.parse. Their cases may
+carry JSON null, which the restricted decoder rejects. -/
 def parseLeanCases (text : String) : Except String (Array (Except String Json)) := do
   let cases ← (← Json.parse text).getArr?
   pure (cases.map .ok)
 
 def decodeCases (r : Request) : Except String (Array (Except String Json)) :=
   if r.mode == .english then parseEnglishCases r.cases
-  else if r.mode == .riskEval then parseLeanCases r.cases
+  else if r.mode == .riskEval || r.mode == .document then parseLeanCases r.cases
   else VE.JsonInput.parseCases r.cases
 
 /-! ## Environment handles (docs/LEAN-FIRST-PLAN.md, F2, batch 2)
