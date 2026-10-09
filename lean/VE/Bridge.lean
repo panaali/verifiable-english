@@ -19,11 +19,52 @@ def exactFields (j : Json) (expected : List String) : Except String Unit := do
   unless actual.length == expected.length && expected.all actual.contains do
     throw s!"fields do not match: expected {expected}, got {actual}"
 
+/-- The legacy and model diagnostics retain quoted field spellings, including
+the extra or missing field that caused the rejection. Profile routes with
+their own field-list wording continue to use `exactFields`. -/
+def exactFieldsQuoted (j : Json) (expected : List String) : Except String Unit := do
+  match exactFields j expected with
+  | .ok () => pure ()
+  | .error message =>
+    let .ok actual := (fields j).map (·.map Prod.fst) | throw message
+    let quoted := fun (names : List String) =>
+      "[" ++ String.intercalate ", " (names.map fun name => "'" ++ name ++ "'") ++ "]"
+    throw s!"fields do not match: expected {quoted expected}, got {quoted actual}"
+
 def stringField (j : Json) (name : String) : Except String String := do
   (← j.getObjVal? name).getStr?
 
 def strings (j : Json) : Except String (List String) := do
   (← j.getArr?).toList.mapM Json.getStr?
+
+/-- Retain the offending sort spelling in the public diagnostic across every
+family vocabulary decoder. -/
+def checkArgumentSorts (arguments : List String) (allowed : String → Bool) : Except String Unit := do
+  if let some unknown := arguments.find? (fun sort => !allowed sort) then
+    throw s!"UnknownSymbol: Undeclared predicate argument sort: '{unknown}'"
+
+/-- Reject a wrong-typed sort cell with the same code as an unknown sort.
+The array's own shape remains the caller's arity/type check. -/
+def argumentSorts (raw : Json) (allowed : String → Bool) : Except String (List String) := do
+  let cells ← raw.getArr?
+  cells.toList.mapM fun cell => do
+    match cell with
+    | .str sort => do
+      checkArgumentSorts [sort] allowed
+      pure sort
+    | _ => throw s!"UnknownSymbol: Undeclared predicate argument sort: {cell.compress}"
+
+def checkConstantSort (sort : String) (allowed : String → Bool) : Except String Unit := do
+  unless allowed sort do
+    throw s!"UnknownSymbol: Undeclared constant sort: '{sort}'"
+
+def constantSort (entry : Json) (allowed : String → Bool) : Except String String := do
+  let raw ← entry.getObjVal? "sort"
+  match raw with
+  | .str sort => do
+    checkConstantSort sort allowed
+    pure sort
+  | _ => throw s!"UnknownSymbol: Undeclared constant sort: {raw.compress}"
 
 /-- Runtime identifiers additionally obey the 64-byte wire budget. -/
 def identifier (s : String) : Bool :=
@@ -38,6 +79,21 @@ def sourceIdentifierBudget (text : String) : Bool :=
 
 abbrev reserved := Surface.reserved
 abbrev generatedName := Surface.generatedName
+
+/-- The frozen schema counts identifier characters before ASCII validation
+and checks each category in declaration order. -/
+def checkVocabularyNames (sorts predicates constants : Fields) : Except String Unit := do
+  let mut seen : List String := []
+  for (name, _) in sorts ++ predicates ++ constants do
+    if name.length > 64 then
+      throw "ResourceLimit: Identifier exceeds 64 ASCII bytes"
+    unless Surface.identifier name do
+      throw s!"Invalid ASCII identifier: '{name}'"
+    if seen.contains name then
+      throw s!"DuplicateDeclaration: Symbol '{name}' is declared in multiple categories"
+    if reserved.contains name || generatedName name then
+      throw s!"DuplicateDeclaration: Schema identifier '{name}' is reserved"
+    seen := name :: seen
 
 def lookup {α : Type} (xs : List (String × α)) (k : String) : Option α :=
   (xs.find? (fun x => x.1 == k)).map Prod.snd
@@ -71,23 +127,19 @@ def displayFields (j : Json) (required optional : List String) : Except String U
   exactFields j (required ++ optional.filter names.contains)
 
 def decodeEnvironment (j : Json) : Except String Vocabulary := do
-  exactFields j ["language", "profile", "spec_revision", "vocabulary"]
+  exactFieldsQuoted j ["language", "profile", "spec_revision", "vocabulary"]
   unless (← stringField j "language") == "ve.core@0" &&
       (← stringField j "profile") == "relational-fol@0" &&
       (← stringField j "spec_revision") == "ve-v0-draft-2026-09-20" do
     throw "unsupported environment version"
   let v ← j.getObjVal? "vocabulary"
-  exactFields v ["sorts", "predicates", "constants"]
+  exactFieldsQuoted v ["sorts", "predicates", "constants"]
   let sorts ← fields (← v.getObjVal? "sorts")
   let predicates ← fields (← v.getObjVal? "predicates")
   let constants ← fields (← v.getObjVal? "constants")
-  let names := (sorts ++ predicates ++ constants).map Prod.fst
-  unless names.eraseDups.length == names.length do throw "duplicate declaration"
-  for name in names do
-    unless identifier name && !reserved.contains name && !generatedName name do
-      throw s!"invalid or reserved declaration: {name}"
   if sorts.length > 32 || predicates.length > 256 then
     throw "ResourceLimit: vocabulary size"
+  checkVocabularyNames sorts predicates constants
   for (_, entry) in sorts do
     displayFields entry ["description"] ["verbalisation"]
     description entry
@@ -102,15 +154,16 @@ def decodeEnvironment (j : Json) : Except String Vocabulary := do
     for key in ["verbalisation", "negative_verbalisation"] do
       if let .ok words := entry.getObjVal? key then
         displayString words
-    let ss ← strings (← entry.getObjVal? "arguments")
-    unless (ss.length == 1 || ss.length == 2) && ss.all sortNames.contains do
-      throw s!"invalid signature: {p}"
+    let raw ← entry.getObjVal? "arguments"
+    let cells ← raw.getArr?
+    unless cells.size == 1 || cells.size == 2 do
+      throw "Predicate arguments must be an array of one to 2 sort identifiers"
+    let ss ← argumentSorts raw sortNames.contains
     pure (p, ss)
   let cs ← constants.mapM fun (c, entry) => do
     exactFields entry ["sort", "description"]
     description entry
-    let s ← stringField entry "sort"
-    unless sortNames.contains s do throw s!"unknown constant sort: {c}"
+    let s ← constantSort entry sortNames.contains
     pure (c, s)
   let result : Vocabulary := ⟨sortNames, ps, cs⟩
   unless result.namesValid do throw "invalid declaration names"

@@ -1,0 +1,23 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______________ test_probe_record_excludes_nested_instrumentation _______________
+
+    def test_probe_record_excludes_nested_instrumentation():
+        result = {"at": {"cell": "S", "status": "accepted", "output": "id", "routed": ["model_validation"]},
+                  "over": {"cell": "R", "status": "ResourceLimit", "backend_rejection": True,
+                           "output": {"code": "ResourceLimit", "message": "too large"}}}
+>       assert diff.probe_public(result) == {
+            "at": {"cell": "S", "status": "accepted", "output": "id"},
+            "over": {"cell": "R", "status": "ResourceLimit",
+                     "output": {"code": "ResourceLimit", "message": "too large"}}}
+E       AssertionError: assert {'at': {'cell...'too large'}}} == {'at': {'cell...'too large'}}}
+E
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'at': {'cell': 'S', 'status': 'accepted', 'output': 'id', 'routed': ['model_validation']}} != {'at': {'cell': 'S', 'status': 'accepted', 'output': 'id'}}
+E         Use -v to get more diff
+
+tests/test_lean_first_diff.py:351: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_lean_first_diff.py::test_probe_record_excludes_nested_instrumentation
+1 failed in 0.32s

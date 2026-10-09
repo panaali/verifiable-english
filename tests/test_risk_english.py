@@ -325,8 +325,9 @@ def test_class_names_take_the_reserved_word_check():
     env = Environment(raw)
     assert EnglishVocabulary(env).constants["every"] == '"every"'
     # A recorded narrowing (docs/lean-first/e2/DELTA.md, `availability`): the generated class constant `every`
-    # is a reserved name in Lean's typing view, so the environment is refused at the boundary.
-    with pytest.raises(VEError, match="invalid or reserved declaration: every"):
+    # is a reserved name in Lean's typing view, so the environment is refused at the boundary with the frozen
+    # schema's text (batch 12's shared `VE.Bridge.checkVocabularyNames`).
+    with pytest.raises(VEError, match="Schema identifier 'every' is reserved"):
         render_english(b("risk__class", "delay", "every"), env)
 
 

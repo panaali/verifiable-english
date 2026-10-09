@@ -75,7 +75,6 @@ AUTHORITY = {
     "norm_admission": {"admit_norm_document"},
     "admission": {"_check_graph", "admit_document"},
     "bundle": {"check_bundle"},
-    "profiles": {"checker_family"},
     "parser": {"parse_with_metadata", "parse", "canonicalize", "is_canonical"},
     "argument": {"_check_edge", "_lean_deductions", "check_argument"},
 }
@@ -101,7 +100,7 @@ SURFACE = {
     "argument": {"Claim", "Evidence", "Deduction", "ArgumentGraph", "ArgumentResult", "deduction_identity", "outstanding_obligations", "predicate_use_panel"},
     "norms": {"NormDocument.__init__", "NormDocument._decode", "NormDocument.meaning_id", "NormDocument.base_environment"},
     "printer": {"render", "render_cell", "render_vocabulary", "NaturalView", "natural_document", "natural_formula", "lint_vocabulary", "VocabularyLint", "measure_view_lengths", "measure_jsonl_lengths"},
-    "profiles": {"ProfileRecord", "require_checker"},
+    "profiles": {"ProfileRecord"},
 }
 
 

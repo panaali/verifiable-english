@@ -1,0 +1,74 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+________________ test_phi_null_recognition_is_the_absent_field _________________
+
+    def test_phi_null_recognition_is_the_absent_field():
+        # fixture phi: an alters entry with recognition null could not be built at all, since
+        # canonical JSON has no null; it is the absent field, as on the Lean wire
+        raw = rights_env()
+        raw["vocabulary"]["predicates"]["deprive_permitted"] = permission(
+            "allow", act="{0} deprive {1} of nationality", args=("state", "person"))
+        raw["vocabulary"]["predicates"]["has_nationality"] = {"arguments": ["person"], "description": "n"}
+        raw["vocabulary"]["rights"]["alters"] = {"deprive_permitted": {
+            "holder_slot": 1, "status": "has_nationality", "recognition": None}}
+        absent = json.loads(json.dumps(raw))
+        del absent["vocabulary"]["rights"]["alters"]["deprive_permitted"]["recognition"]
+>       assert RightsEnvironment(raw).environment_id == RightsEnvironment(absent).environment_id
+               ^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_rights.py:198: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+ve/rights.py:86: in __init__
+    validate_authored_source(raw)
+ve/environment.py:35: in validate_authored_source
+    decide("environment", [{"id": "environment", "environment": data}])
+ve/backends/relay.py:131: in decide
+    entries = _pool_for(executable).run_bound(mode, wire_checked(cases), timeout=timeout)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ve/backends/lean_service.py:912: in run_bound
+    return self._on_idle(lambda service: service.run_bound(mode, cases, timeout=timeout))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ve/backends/lean_service.py:902: in _on_idle
+    return call(service)
+           ^^^^^^^^^^^^^
+ve/backends/lean_service.py:912: in <lambda>
+    return self._on_idle(lambda service: service.run_bound(mode, cases, timeout=timeout))
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ve/backends/lean_service.py:819: in run_bound
+    entries.extend(self._run_chunk(mode, chunk, timeout))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ve/backends/lean_service.py:782: in _run_chunk
+    entries.extend(self._run_chunk(mode, inline, timeout))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <ve.backends.lean_service.LeanService object at 0x7a17497bafd0>
+mode = 'environment'
+chunk = ['{"id":"environment","environment":{"language":"ve.core@0.2","profiles":["norms@0","relational-fol@0","rights@0","sof...e"],"protected":[],"alters":{"deprive_permitted":{"holder_slot":1,"status":"has_nationality","recognition":null}}}}}}']
+timeout = None
+
+    def _run_chunk(self, mode: str, chunk: list, timeout: float | None) -> list:
+        """The bound entries for one request's cases (texts or `_Sent` cases). Cases that name
+        handles are sent so first; if the service answers that request with a request error,
+        the cases are sent again with their environments, in requests of their own size."""
+        if chunk and isinstance(chunk[0], _Sent):
+            if any(item.digest for item in chunk):
+                response = self._handle_request(mode, chunk, timeout)
+                if response is not None:
+                    return response["results"]
+                with self._lock:
+                    self.stats["handle_resends"] += 1
+            entries: list = []
+            for inline in self._chunks([item.inline() for item in chunk]):
+                entries.extend(self._run_chunk(mode, inline, timeout))
+            return entries
+        response = self._request(mode, chunk, timeout)
+        if response.get("status") == "error":
+            from .relay import rejection  # relay.py builds on this client
+>           raise rejection(response["code"], response["error"])
+E           ve.errors.VEError: offset 1159: expected restricted JSON value
+
+ve/backends/lean_service.py:787: VEError
+=========================== short test summary info ============================
+FAILED tests/test_rights.py::test_phi_null_recognition_is_the_absent_field - ...
+1 failed in 0.60s

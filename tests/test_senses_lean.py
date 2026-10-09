@@ -148,13 +148,20 @@ def test_schema_names_are_python_reserved(lean_values):
 
 
 def test_limits_are_python_limits(lean_values):
-    from ve.environment import _verbalisation
+    from ve import Environment
     from ve.errors import ResourceLimit
     from ve.limits import MAX_IDENTIFIER_BYTES, MAX_PREDICATES, MAX_SORTS
+    from ve.profiles import LANGUAGE, SPEC_REVISION
     max_sorts, max_predicates, max_name, max_form, cap = lean_values[2]
     assert (max_sorts, max_predicates, max_name) == (MAX_SORTS, MAX_PREDICATES, MAX_IDENTIFIER_BYTES)
-    _verbalisation('a' * max_form)
+    source = {"language": LANGUAGE, "profiles": ["relational-fol@0"],
+              "spec_revision": SPEC_REVISION,
+              "vocabulary": {"sorts": {"person": {"description": "person",
+                            "verbalisation": {"singular": 'a' * max_form, "plural": "people"}}},
+                             "predicates": {}, "constants": {}}}
+    Environment(source)
+    source["vocabulary"]["sorts"]["person"]["verbalisation"]["singular"] += 'a'
     with pytest.raises(ResourceLimit):
-        _verbalisation('a' * (max_form + 1))
+        Environment(source)
     from ve.backends.senses import CANDIDATE_CAP
     assert cap == CANDIDATE_CAP == 8  # spec 2.6, candidateCap; the response check's bound

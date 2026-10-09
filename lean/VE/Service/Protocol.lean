@@ -139,8 +139,8 @@ def runMode : Mode → Json → Json
   | .englishRead, j => VE.EnglishGrammar.Run.readCaseReported j
   | .englishGrammar, j => VE.EnglishGrammar.Run.grammarCaseReported j
   | .englishCheck, j => VE.EnglishGrammar.Run.checkCaseReported j
-  | .environment, j => Standalone.reported Standalone.environmentCase j
-  | .model, j => Standalone.reported Standalone.modelCase j
+  | .environment, j => Standalone.reportedEnvironment j
+  | .model, j => Standalone.reportedModel j
   | .check, j => Standalone.reported Standalone.checkCase j
   | .identity, j => Standalone.reported Standalone.identityCase j
   | .parse, j => Standalone.reportedParse j
@@ -514,7 +514,7 @@ def parseLeanCases (text : String) : Except String (Array (Except String Json)) 
 def decodeCases (r : Request) : Except String (Array (Except String Json)) :=
   if r.mode == .english then parseEnglishCases r.cases
   else if r.mode == .riskEval then parseLeanCases r.cases
-  else VE.JsonInput.parseCases r.cases
+  else VE.JsonInput.parseCases r.cases (r.mode == .model)
 
 /-! ## Environment handles (docs/LEAN-FIRST-PLAN.md, F2, batch 2)
 
@@ -551,11 +551,12 @@ def Handles.insert (h : Handles) (digest : String) (env : Json) (size : Nat) : H
 /-- The table after registering one member of `environments`: its key must be the SHA-256 of
 its value's text, and the value is parsed by the restricted decoder one level shallower than a
 case (an environment sits inside its case), so it is read exactly as it would be inside a case. -/
-def registerOne (h : Handles) (member : String × String) : Except String Handles := do
+def registerOne (h : Handles) (member : String × String) (allowNull : Bool := false) :
+    Except String Handles := do
   let digest ← decodeString "environment handle" member.1
   unless caseDigest member.2 == digest do
     throw s!"InvalidInput: environment handle {digest} is not the SHA-256 of its text"
-  let env ← VE.JsonInput.parse member.2.trim 254
+  let env ← VE.JsonInput.parse member.2.trim 254 allowNull
   pure (h.insert digest env member.2.trim.utf8ByteSize)
 
 /-- The table after the request's `environments` member, registered in order. -/
@@ -566,7 +567,7 @@ def register (h : Handles) (r : Request) : Except String Handles := do
     let members ← match objectMembers text with
       | .ok members => pure members
       | .error _ => throw "InvalidInput: request field environments must be an object"
-    members.foldlM registerOne h
+    members.foldlM (fun h member => registerOne h member (r.mode == .model)) h
 
 /-- A case with its handle replaced by the registered environment. -/
 def Handles.expand (h : Handles) (j : Json) : Except String Json :=
@@ -685,9 +686,9 @@ theorem runMode_englishGrammar (j : Json) :
 theorem runMode_englishCheck (j : Json) :
     runMode .englishCheck j = VE.EnglishGrammar.Run.checkCaseReported j := rfl
 theorem runMode_environment (j : Json) :
-    runMode .environment j = Standalone.reported Standalone.environmentCase j := rfl
+    runMode .environment j = Standalone.reportedEnvironment j := rfl
 theorem runMode_model (j : Json) :
-    runMode .model j = Standalone.reported Standalone.modelCase j := rfl
+    runMode .model j = Standalone.reportedModel j := rfl
 theorem runMode_check (j : Json) :
     runMode .check j = Standalone.reported Standalone.checkCase j := rfl
 theorem runMode_identity (j : Json) :

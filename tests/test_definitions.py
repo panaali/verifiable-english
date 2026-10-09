@@ -119,7 +119,8 @@ def test_bound_definition_changes_identity_and_validates_model():
     model["relations"]["middle"] = []
     with pytest.raises(InvalidModel, match="supplied table") as exc:
         FiniteModel.from_dict(env, model)
-    assert exc.value.path == "/relations"
+    # The service binds the generator, while its error row has no JSON path.
+    assert exc.value.path == ""
     assert exc.value.generator == "definitions"
     conclusion = ast.Forall("point", ast.Not(ast.Unary("middle", ast.Var(0))))
     witness = find_countermodel(env, (), conclusion, min_domain_size=1, max_domain_size=1,

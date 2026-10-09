@@ -1,0 +1,45 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________________ test_u1_claude_settled_no_and_sol_undecided __________________
+
+    def test_u1_claude_settled_no_and_sol_undecided():
+>       doc = nd.UnspecifiedDocument(csam("unspecified"), [CSAM_RULE])
+                                     ^^^^^^^^^^^^^^^^^^^
+
+tests/test_norm_defaults.py:70: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_norm_defaults.py:61: in csam
+    return Environment(raw)
+           ^^^^^^^^^^^^^^^^
+ve/assurance.py:89: in guarded
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+ve/environment.py:160: in __init__
+    validated_environment(self, data, python)
+ve/backends/validation.py:133: in validated_environment
+    return construct_after_lean(decode, cache,
+ve/backends/validation.py:108: in construct_after_lean
+    row = ask()
+          ^^^^^
+ve/backends/validation.py:134: in <lambda>
+    lambda: decide("environment", [{"id": "environment", "environment": data}])[0],
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+mode = 'environment'
+cases = [{'id': 'environment', 'environment': {'language': 've.core@0.2', 'profiles': ['norm-defaults@0', 'norms@0', 'relation...ion': 'Claude', 'verbalisation': 'Claude'}, 'sol': {'sort': 'agent', 'description': 'Sol', 'verbalisation': 'Sol'}}}}}]
+timeout = None, executable = None
+
+    def decide(mode: str, cases: list[dict], *, timeout: float | None = None,
+               executable: str | os.PathLike | None = None) -> list[dict]:
+        """Lean's rows for `cases`, in order; the first rejection row raises its diagnostic."""
+        entries = _pool_for(executable).run_bound(mode, wire_checked(cases), timeout=timeout)
+        for entry in entries:
+            if entry["result"].get("status") == "error":
+>               raise _raised(entry)
+E               ve.errors.VEError: InvalidInput: invalid regulated role or default for csam_generation_permitted
+
+ve/backends/relay.py:134: VEError
+=========================== short test summary info ============================
+FAILED tests/test_norm_defaults.py::test_u1_claude_settled_no_and_sol_undecided
+1 failed in 0.69s
