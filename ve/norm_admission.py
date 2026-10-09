@@ -27,7 +27,6 @@ def admit_norm_document(environment, document):
     (lean-first batch 13b)."""
     from .backends.dispatch import owned
     from .backends.relay import decide
-    from .errors import CheckerUnavailable
     env = environment if type(environment) is Environment else Environment(environment)
     if env.alternatives is not None:
         from .admission import admit_document
@@ -35,9 +34,7 @@ def admit_norm_document(environment, document):
     case = {"id": "admission", "kind": "admission", "environment": env.to_dict(), "document": document}
 
     def lean():
-        row = decide("norms", [case])[0]
-        if set(row) != {"id", "status", "admitted", "report", "report_id", "kinds"} or row["admitted"] is not True:
-            raise CheckerUnavailable("CheckerUnavailable: malformed Lean norms admission result")
-        return {key: row[key] for key in ("admitted", "report", "report_id", "kinds")}
+        from .admission import bound_admission
+        return bound_admission(env, document, decide("norms", [case])[0])
 
     return owned("norms_admission", lean)
