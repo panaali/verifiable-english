@@ -22,6 +22,7 @@ import pytest
 
 from subprocesses import HANG_TIMEOUT
 from tests.lean_build import LEAN, ROOT, lean_build
+from ve.backends.service_schema import _KEYWORDS as KEYWORDS
 
 SCHEMAS = ROOT / "ve/backends/lean_service_schema"
 
@@ -37,13 +38,6 @@ COPIED = {
     ("discourse.json", "/$defs/reference/properties/form/enum"),
     ("soft-norms.json", "/$defs/elaborated/colliding_pairs/items/properties/outweighs/anyOf/0/const"),
 }
-
-KEYWORDS = {"$ref", "$comment", "type", "enum", "const", "pattern", "minLength", "maxLength", "minimum",
-            "required", "properties", "additionalProperties", "prefixItems", "items", "minItems", "maxItems",
-            "contains", "anyOf", "allOf", "not", "if", "then", "else", "x-tagged", "x-fuel", "x-echo",
-            "x-equals", "x-length", "x-count", "x-references", "x-index", "x-digest", "x-zip",
-            "x-zip-or-empty", "x-case", "x-select", "x-count-where", "x-count-presence", "x-rows", "x-row"}
-
 
 @pytest.fixture(scope="module")
 def lake():
