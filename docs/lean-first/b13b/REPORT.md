@@ -49,7 +49,7 @@ Seeded faults: 7 of 7 caught and restored; service build restored: True.
 Latency, udhr: base 63.3 s → head 68.2 s wall (1.078×), child CPU 1.078×; same output: True; within budget: True.
 Latency, eligibility: base 260.8 s → head 281.5 s wall (1.080×), child CPU 1.072×; same output: True; within budget: True.
 Latency, agent-policy: base 64.0 s → head 79.7 s wall (1.246×), child CPU 1.225×; same output: True; within budget: True.
-Full gate: not yet recorded (`evidence/gate.json` is archived by the commit after the gate run).
+Full gate at `98967067` (clean worktree: True): passed; 13,602 passed, 92 skipped, 0 failed, 0 failure records.
 <!-- END GENERATED -->
 
 | Item | Tag | Status and evidence |
