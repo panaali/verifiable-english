@@ -38,8 +38,8 @@ CASES = [
      SWITCH + 'test_document_schema_types_every_unit_field[units/0/meaning="unspecified"]'),
     # 16c review B2.
     ("Python reads an unpaired surrogate", "ve/document.py",
-     '        json.dumps(meta, ensure_ascii=False).encode("utf-8")\n',
-     '        pass\n',
+     '    _no_lone_surrogate(meta)\n',
+     '',
      WRAPPER + "test_json_unpaired_surrogate_is_the_boundary_diagnostic_in_both[high]"),
     ("Lean decides every null", "lean/VE/Service/Document.lean",
      'if let some key := strayNull j then',
@@ -47,7 +47,7 @@ CASES = [
      WRAPPER + "test_null_and_number_forms_agree_with_python_or_fail_closed[reading-sets]"),
     # The lexer itself is pinned by `#guard`s in the module (a fault there fails the build); these skip it.
     ("Lean decides every number form", "lean/VE/Service/Document.lean",
-     'match foreignLexeme (front.length + 1) false front.toList with',
+     'match foreignLexeme false (front.length + 1) false front.toList with',
      'match (none : Option Foreign) with',
      WRAPPER + "test_null_and_number_forms_agree_with_python_or_fail_closed[plain]"),
     ("Lean refuses a null status", "lean/VE/Service/Document.lean",
