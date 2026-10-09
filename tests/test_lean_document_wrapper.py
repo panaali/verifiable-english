@@ -99,10 +99,10 @@ def test_gap_and_wrong_status_are_rejected(service):
 # The seeds Lean must decide (no fail-closed answer): its owned profiles, every branch of the wrapper.
 DECIDED = {"usecases/bluedot-grant/document.ve.md", "usecases/bluedot-grant/causal.ve.md", "plain", "mixed",
            "open-terms", "reading-sets", "graph-bridge", "graph-readings", "definitions", "p0-envelope",
-           "alternatives-cells", "alternatives-graph", "risk"}
+           "alternatives-cells", "alternatives-narrowed", "alternatives-graph", "risk"}
 # The seeds it must refuse, each with the reason it names.
 FAIL_CLOSED = {"usecases/news-article/news-w6a.ve.md": "order@0",
-               "tests/data/readings_s2/constitution-nd-readings.ve.md": "norm-defaults@0",
+               "tests/data/readings_s2/constitution-nd-readings.ve.md": "JSON reader: null in reading_sets",
                "fence": "surface parser"}
 
 
@@ -148,6 +148,11 @@ def test_composed_block_coverage_is_its_route_s_line(seed_answers):
     risk = seed_answers["risk"][2]["value"]["coverage"]
     assert risk["residual"]["alternatives_declared"] == 1 and risk["residual"]["counterfactual_leaves"] == 1
     assert "alternatives" not in seed_answers["plain"][2]["value"]["coverage"]
+    # 16c review B1: a nonempty narrowing is relayed whole, as the front matter writes it, and counted.
+    narrowed = seed_answers["alternatives-narrowed"]
+    cells = narrowed[2]["value"]["coverage"]
+    assert cells["alternatives"]["narrowings"] == narrowed[0]["front"]["narrowings"]
+    assert cells["residual"]["narrowings"] == 1
 
 
 def test_reading_set_status_fold_follows_the_active_version(seed_answers):
@@ -248,20 +253,38 @@ def test_profile_gate_runs_before_the_environment_decoder(service):
 
 
 @pytest.mark.parametrize("extra", ['"x": null', '"x": -1', '"x": 1.5', '"x": 1e3', '"x": NaN', '"x": Infinity',
-                                   '"x": "\\ud800"', '"x": 99999999999999999999', '"weights": [], "weights": []'])
-def test_json_python_reads_and_the_document_reader_agrees(service, extra):
-    """The document reader accepts standard JSON values; Python-only constants remain undecided."""
+                                   '"x": 99999999999999999999', '"x": -0', '"x": 2e0'])
+def test_json_python_reads_as_other_values_fails_closed(service, extra):
+    """Python's JSON reader reads every one of these front matters as values Lean's reader reads differently or
+    not at all (`null` outside the members the mode reads as absent, a number other than a natural at most
+    2^53-1, Python's constants), so the mode answers `CheckerUnavailable`, never a verdict of its own (16c review
+    B2: `2e0` is Lean's natural 2 and Python's float)."""
     front = ('{"format": "ve-document@1", "environment": ' + json.dumps(environment()) +
              ', "units": [{"id": "a", "span": [0, 2], "kind": "exposition", "meaning": "specified", '
              '"support": "none"}], ' + extra + '}')
     text = "---\n" + front + "\n---\nAB"
     json.loads(front)
     answer = lean(service, text)
-    python = dw.python_answer(text)
-    if extra in ('"x": NaN', '"x": Infinity'):
-        assert answer["code"] == "CheckerUnavailable", answer
-    else:
-        assert dw.verdict(python, answer) == "agree", (extra, python, answer)
+    assert answer["code"] == "CheckerUnavailable" and "JSON reader" in answer["text"], answer
+    assert dw.python_answer(text).get("text") != "invalid JSON front matter"
+
+
+@pytest.mark.parametrize("extra", ['"x": "\\ud800"', '"x": "a\\udc00"', '"x": "\\ud800\\u0041"',
+                                   '"\\udc00": 1'], ids=["high", "low", "high-then-other", "key"])
+def test_json_unpaired_surrogate_is_invalid_in_both(service, extra):
+    """An unpaired surrogate escape reads, in Python, as a string no UTF-8 text holds: Python's loader crashed
+    encoding the document identity (UnicodeEncodeError). Both readers refuse it as invalid JSON, as the
+    discourse route's restricted reader does."""
+    text = document("AB", [unit("a", [0, 2])]).replace('"units":', extra + ', "units":', 1)
+    python, answer = both(service, text)
+    assert python["text"] == answer["text"] == "invalid JSON front matter", (python, answer)
+
+
+@pytest.mark.parametrize("extra", ['"weights": [], "weights": []', '"x": "\\ud83d\\ude00"'])
+def test_json_standard_forms_both_read_agree(service, extra):
+    text = document("AB", [unit("a", [0, 2])]).replace('"units":', extra + ', "units":', 1)
+    python, answer = both(service, text)
+    assert dw.verdict(python, answer) == "agree", (python, answer)
 
 
 @pytest.mark.parametrize("front", ["{", '{"a": 01}', "{} x", "[1,]"])
@@ -277,6 +300,82 @@ def test_json_nested_front_matter_matches_python(service):
                                                          + deep + '}], "units":', 1)
     python, answer = both(service, text)
     assert answer["text"] == "ResourceLimit: JSON depth exceeds 256", answer
+    # Python reads the nesting and decides the document (the caller's retained path), without a crash: removable
+    # weights are outside the document's identity and checks.
+    assert python["outcome"] == "ok", python
+    assert dw.verdict(python, answer) == "fail-closed"
+
+
+# ---------------------------------------------------------------- 16c B2: null and number forms, every seed
+
+def _members(node, at=()):
+    """Every member path of a JSON value, with its value, through a list's first, second and last elements (its
+    other elements are read by the same code as these)."""
+    items = (node.items() if type(node) is dict else
+             [(i, node[i]) for i in sorted({0, 1, len(node) - 1}) if 0 <= i < len(node)] if type(node) is list
+             else ())
+    for key, value in items:
+        yield at + (key,), value
+        yield from _members(value, at + (key,))
+
+
+def _put(doc, path, value):
+    doc = deepcopy(doc)
+    node = doc
+    for key in path[:-1]:
+        node = node[key]
+    node[path[-1]] = value
+    return doc
+
+
+_FORM = "__number_form__"
+# The text forms of a natural `n` Python reads as another value than Lean's `Json.parse` (a float, a negative
+# integer, a boolean), and `n` itself.
+NUMBER_FORMS = ("{n}.0", "{n}e0", "{n}0e-1", "-{n}", "true", "{n}")
+
+
+def _null_and_number_mutants(doc):
+    """`doc` with each front-matter member (outside the environment, which the gate refuses whole) set to `null`,
+    and each natural written in each of `NUMBER_FORMS`, as document texts."""
+    texts = []
+    for path, value in _members(doc["front"]):
+        if "environment" in path:
+            continue
+        texts.append(dw.text_of(_put(doc, ("front",) + path, None)))
+        if type(value) is int:
+            marked = dw.text_of(_put(doc, ("front",) + path, _FORM))
+            texts += [marked.replace(json.dumps(_FORM), form.format(n=value), 1) for form in NUMBER_FORMS]
+    return texts
+
+
+@pytest.mark.parametrize("name", sorted(DECIDED | set(FAIL_CLOSED)))
+def test_null_and_number_forms_agree_with_python_or_fail_closed(service, name):
+    """16c review B2's class: Lean's JSON reader decided `null` and number forms differently from Python (107
+    accepted-to-rejected flips on `null`; `2e0` read as the natural 2 where Python reads a float). Every
+    one-member `null` and every number form of every seed is Python's answer or `CheckerUnavailable`, never
+    another verdict; and the seed's own members the mode reads as absent (`content`, `status`) are decided."""
+    doc = dict(dw.seeds())[name]
+    texts = _null_and_number_mutants(doc)
+    assert texts
+    answers = dw.lean_answers(service, texts)
+    differ = [(text, python, answer) for text, answer in zip(texts, answers)
+              if dw.verdict(python := dw.python_answer(text), answer) not in ("agree", "fail-closed")]
+    assert not differ, differ[:3]
+
+
+def test_null_the_mode_reads_as_absent_is_decided(service):
+    """The members the mode reads as absent, as Python's loader does (`unit.get(...)`), are decided, not
+    deferred: a unit's `content` and `status` and a `MIXED` part's `content`."""
+    parts = [unit("a", [0, 1], content=None, status="LABELLED"), unit("b", [1, 3], content=None, status="LABELLED")]
+    for text in (document("AB", [unit("a", [0, 2], content=None, status=None)]),
+                 document("A B", [{"id": "p", "span": [0, 3], "status": "MIXED", "parts": parts}])):
+        python, answer = both(service, text)
+        assert python["outcome"] == "ok" and dw.verdict(python, answer) == "agree", (python, answer)
+    for text in (document("AB", [unit("a", [0, 2], meaning_id=None)]),
+                 document("AB", [unit("a", [0, 2])], graph=None),
+                 document("A B", [{"id": "p", "span": [0, 3], "status": "MIXED", "parts": [
+                     unit("a", [0, 1], status=None), unit("b", [1, 3], status="LABELLED")]}])):
+        assert lean(service, text)["code"] == "CheckerUnavailable", text
 
 
 # ---------------------------------------------------------------- C1: Python's fault order
