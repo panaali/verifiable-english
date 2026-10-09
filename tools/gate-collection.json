@@ -7137,6 +7137,7 @@
   "tests/test_lean_service_schema.py::test_kind_domain_agrees_with_decode_kind",
   "tests/test_lean_service_schema.py::test_label_domain_agrees_with_parse_label",
   "tests/test_lean_service_schema.py::test_mutated_genuine_responses_agree_with_lean_decoders",
+  "tests/test_lean_service_schema.py::test_norms_plain_certificate_counts_profile_pairs_and_soft_premises",
   "tests/test_lean_service_schema.py::test_order_surface_of_zero_less_than_one_is_nonempty",
   "tests/test_lean_service_schema.py::test_python_reference_decoders_agree_with_schema_domains",
   "tests/test_lean_service_schema.py::test_request_errors_without_their_binding_are_rejected",

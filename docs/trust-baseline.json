@@ -4,26 +4,26 @@
   "K": 997,
   "S": 9633,
   "D": 13363,
-  "G": 24751,
+  "G": 24758,
   "C": 8138,
   "P": 66737,
   "T": 13318,
-  "o": 11469,
+  "o": 11470,
   "D[V]": 12002,
   "D[R]": 862,
   "D[I]": 499,
-  "G[V]": 23116,
+  "G[V]": 23123,
   "G[R]": 1406,
   "G[I]": 229,
   "tied": 171,
   "unclassified": 0,
-  "trusted": 45596,
-  "lines": 148406
+  "trusted": 45603,
+  "lines": 148414
  },
  "budget": {
   "K": 997,
   "S": 9633,
-  "V": 34966
+  "V": 34973
  },
  "signed": [],
  "history": [
@@ -347,6 +347,19 @@
     "K": 997,
     "S": 9633,
     "V": 34966
+   }
+  },
+  {
+   "change": "Count norm profile and supplied premises in bound certificate responses",
+   "rebaselined_from": {
+    "K": 997,
+    "S": 9633,
+    "V": 34966
+   },
+   "to": {
+    "K": 997,
+    "S": 9633,
+    "V": 34973
    }
   }
  ],
@@ -4524,7 +4537,7 @@
    "C": 0,
    "P": 0,
    "T": 0,
-   "o": 9,
+   "o": 10,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
@@ -4534,7 +4547,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 151,
-   "lines": 160
+   "lines": 161
   },
   "ResponseShape/Schemas/Order.lean": {
    "K": 0,
@@ -4720,7 +4733,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 131,
+   "G": 133,
    "C": 0,
    "P": 0,
    "T": 0,
@@ -4728,13 +4741,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 117,
+   "G[V]": 119,
    "G[R]": 14,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 117,
-   "lines": 138
+   "trusted": 119,
+   "lines": 140
   },
   "ResponseShape/Schemas/SoftNorms.lean": {
    "K": 0,
@@ -4840,7 +4853,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 678,
+   "G": 683,
    "C": 0,
    "P": 0,
    "T": 13,
@@ -4848,13 +4861,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 672,
+   "G[V]": 677,
    "G[R]": 6,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 672,
-   "lines": 735
+   "trusted": 677,
+   "lines": 740
   },
   "SensesMain.lean": {
    "K": 0,
