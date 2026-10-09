@@ -31,7 +31,7 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 FAIL_CLOSED = ("CheckerUnavailable", "ResourceLimit")
 # `VE.Service.Document.ownedProfiles` (checked against the Lean mode by `tests/test_lean_document_wrapper.py`).
-OWNED = frozenset({"alternatives@0", "data@0", "definitions@0", "documents@1", "norms@0", "relational-fol@0", "risk@0",
+OWNED = frozenset({"alternatives@0", "data@0", "definitions@0", "documents@1", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0", "risk@0",
                    "time@0"})
 
 

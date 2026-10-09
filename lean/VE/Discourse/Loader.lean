@@ -443,10 +443,13 @@ def compileReading (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String)
   let _ ← VE.Route.Admission.decodeKind 16 kind
   let mid ← field python "invalid reading meaning id" (stringField r "meaning_id")
   unless token mid do throw "invalid reading meaning id"
-  formula (← r.getObjVal? "content")
-  let f ← VE.Route.Wire.decodeClosed rv.environment (← r.getObjVal? "content") (profiles.contains "data@0")
-  unless (← VE.Route.Wire.meaningId profiles envId (VE.Route.Wire.encodeFormula f)) == mid do
-    throw "reading meaning id does not match content"
+  let content ← r.getObjVal? "content"
+  let f ← if content == .null then pure VE.Formula.top else do
+    formula content
+    let f ← VE.Route.Wire.decodeClosed rv.environment content (profiles.contains "data@0")
+    unless (← VE.Route.Wire.meaningId profiles envId (VE.Route.Wire.encodeFormula f)) == mid do
+      throw "reading meaning id does not match content"
+    pure f
   let admission ← r.getObjVal? "admission"
   let akeys ← match admission with
     | .obj kvs => pure (kvs.toList.map Prod.fst)
@@ -467,7 +470,7 @@ def compileReading (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String)
     let mid ← field python "invalid distinguishing model id" m.getStr?
     unless token mid do throw "invalid distinguishing model id"
     pure (o, mid)
-  pure (id, kind == .str "asserted", f, pairs)
+  pure (id, kind == .str "asserted" && content != .null, f, pairs)
 
 /-- `validate_reading_sets` and `active_reading_sets`: the active sets (the latest version per
 unit) with their status and readings; `python` as for `field`. -/
@@ -535,11 +538,14 @@ def compileSets (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (e
         all.mapM fun (name, mid, M) => do
           unless mid == name do throw "distinguishing model id does not match model"
           pure (name, M)
-    for (_, _, f, ps) in compiled do
+    for (rid, _, f, ps) in compiled do
       for (other, mid) in ps do
+        let pending := fun rid => readings.any fun r =>
+          r.getObjValD "id" == .str rid && r.getObjValD "content" == .null
         match compiled.find? (·.1 == other), decoded.find? (·.1 == mid) with
         | some (_, _, g, _), some (_, M) =>
-          if f.eval M [] == g.eval M [] then throw "distinguishing model does not separate readings"
+          if !pending other && !pending rid &&
+              f.eval M [] == g.eval M [] then throw "distinguishing model does not separate readings"
         | _, _ => throw "each other reading needs a distinguishing model id"
     match item.getObjVal? "rejected_history" with
     | .ok (.arr _) | .error _ => pure ()

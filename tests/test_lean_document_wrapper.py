@@ -102,7 +102,7 @@ DECIDED = {"usecases/bluedot-grant/document.ve.md", "usecases/bluedot-grant/caus
            "alternatives-cells", "alternatives-narrowed", "alternatives-graph", "risk"}
 # The seeds it must refuse, each with the reason it names.
 FAIL_CLOSED = {"usecases/news-article/news-w6a.ve.md": "order@0",
-               "tests/data/readings_s2/constitution-nd-readings.ve.md": "JSON reader: null in reading_sets",
+               "tests/data/readings_s2/constitution-nd-readings.ve.md": "fenced English or strict content",
                "fence": "surface parser"}
 
 
