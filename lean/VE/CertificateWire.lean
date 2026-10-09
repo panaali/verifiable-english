@@ -135,6 +135,24 @@ def canonical : Nat → Json → Except String String
 def digest (domain : String) (j : Json) : Except String String := do
   pure (sha256 (domain ++ (← canonical 257 j)).toUTF8)
 
+/-- Document front matter permits JSON null. Keep certificate canonicalisation unchanged;
+this is the same Python-compatible encoding with one additional JSON constructor. -/
+def documentCanonical : Nat → Json → Except String String
+  | 0, _ => throw "ResourceLimit: canonical JSON depth"
+  | fuel+1, j => match j with
+    | .null => pure "null"
+    | .arr xs => do
+      let parts ← xs.toList.mapM (documentCanonical fuel)
+      pure ("[" ++ String.intercalate "," parts ++ "]")
+    | .obj obj => do
+      let pairs := obj.toList.mergeSort (fun a b => compare (utf16 a.1) (utf16 b.1) != .gt)
+      let parts ← pairs.mapM fun (k,v) => do pure (quoted k ++ ":" ++ (← documentCanonical fuel v))
+      pure ("{" ++ String.intercalate "," parts ++ "}")
+    | _ => canonical (fuel+1) j
+
+def documentDigest (domain : String) (j : Json) : Except String String := do
+  pure (sha256 (domain ++ (← documentCanonical 257 j)).toUTF8)
+
 /-- The certificate envelope has one diagnostic and one field order across
 the FOL, closure, core and order wire decoders. -/
 def certificateFields (j : Json) : Except String Unit :=

@@ -66,7 +66,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 27572,
+    "total_lines": 27833,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -214,16 +214,16 @@
       },
       {
         "file": "lean/VE/CertificateWire.lean",
-        "lines": 294,
-        "sha256": "8541e1523844a57d3c08e561f8eb85b576524a6ec7108860b7c82206e69e53eb",
+        "lines": 312,
+        "sha256": "bf814b58737fdab33616a65a899a130e1b3a08b0564d7921fd295a4ac7b1c3c0",
         "ranges": [
           [
             46,
-            203
+            221
           ],
           [
-            218,
-            227
+            236,
+            245
           ]
         ],
         "declarations": [
@@ -571,6 +571,36 @@
         ]
       },
       {
+        "file": "lean/VE/Readings/Companions.lean",
+        "lines": 923,
+        "sha256": "dc0e7274664915cab3c524fcd827e0b4e46b182aa0a00b31f545b9727df84bb0",
+        "ranges": [
+          [
+            1,
+            923
+          ]
+        ],
+        "declarations": [
+          "companionSets",
+          "companionIds",
+          "reservedComponentText",
+          "carries",
+          "readingsOf",
+          "mergeCompanions",
+          "mergeCategory",
+          "mergeOpenTerms",
+          "mergeTerms",
+          "companionMeaningId",
+          "meaningCheck",
+          "profileCheck",
+          "componentOf",
+          "crossingText",
+          "shapeText",
+          "splitCase"
+        ],
+        "reason": "readings-defaults RD-4a: a candidate's `companion` (its environment and open terms) read, merged per companion set and validated through the pinned Readings.Wire and Route decoders (`decodeEnvironment`, `openTermNames`), each recorded `meaning_id` checked against W1's identity over the companion's own environment, and the document split into its cases; the full file is pinned conservatively"
+      },
+      {
         "file": "lean/VE/Readings/SupWire.lean",
         "lines": 397,
         "sha256": "5d8393aeea86b02e48b61c398e2dfd9a5408a5df64112fb470fb043aee3d6366",
@@ -627,6 +657,43 @@
           "runChoiceND"
         ],
         "reason": "readings-defaults RD-2a: admission, separation and each choice under the unspecified completion; the inner case of readings-choice (its kind, conflict packages, premises, certificate, model and filling) read through the pinned NormDefaults and SupWire decoders and by `conflictPackages` and `ndCertificate`; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Readings/VerdictsWire.lean",
+        "lines": 1565,
+        "sha256": "15ebc9d3e1a85ee192f5aeb670b4ed60292f120cb3242de7cf5b7361b03eddb4",
+        "ranges": [
+          [
+            1,
+            1565
+          ]
+        ],
+        "declarations": [
+          "membersOf",
+          "without",
+          "shownOk",
+          "shownOf",
+          "pieceOf",
+          "ndBoundCert",
+          "ndFilled",
+          "ndEvidenceOf",
+          "strOf",
+          "isNull",
+          "jstrings",
+          "jchoice",
+          "jgaps",
+          "perChoice",
+          "planItems",
+          "lowerRun",
+          "lowerInfo",
+          "entryFor",
+          "evidenceList",
+          "queryFormulas",
+          "replayND",
+          "replayVerdictsND",
+          "runVerdicts"
+        ],
+        "reason": "readings-defaults RD-3 readings-verdicts decoder: the question, assumed, the query's premises and conclusion, and each choice's evidence (conflict packages bound to the choice's E''' base and document hash, filled witnesses, certificates bound as the norm-defaults route binds them, base models with a separate filling, each shown model bound to the checked one) are decoded on the choice's document Lean regenerates; under the completion every row is a Lean check with its Holds proof (nd_rowsHold), on the lower route each piece is readings-choice's own inner case; the English plan reads only Lean's own answer; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Readings/Wire.lean",
@@ -936,26 +1003,31 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 679,
-        "sha256": "af7eb753ee6619e2567051fbcfc19491f2e4167b10866865bd7abe9cb12d250e",
+        "lines": 922,
+        "sha256": "deb607d0faad89d8c0b4711013634981f2c511861de25d59c2e348dcd8de46b9",
         "ranges": [
           [
             1,
-            679
+            922
           ]
         ],
         "declarations": [
+          "foreignLexeme",
+          "strayNull",
+          "frontJson",
+          "noLoneSurrogate",
           "split",
           "environmentOf",
           "contentOf",
           "sourceUnit",
           "unitsOf",
+          "rowOf",
           "blockCoverage",
           "admitGraph",
           "check",
           "documentCase"
         ],
-        "reason": "W2 document service wrapper: front matter and its gates, unit partition and contents, reading sets and their status fold, narrowings, graph admission, statuses and coverage; full file pinned conservatively"
+        "reason": "W2 document service wrapper: front matter (its JSON forms Python reads as other values deferred) and its gates, unit partition and contents, reading sets and their status fold, narrowings, graph admission, statuses and coverage; full file pinned conservatively"
       },
       {
         "file": "lean/VE/Service/Family.lean",
@@ -1203,73 +1275,6 @@
           "runCase"
         ],
         "reason": "W6 unit declarations, quantity syntax and runner; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Readings/Companions.lean",
-        "lines": 923,
-        "sha256": "dc0e7274664915cab3c524fcd827e0b4e46b182aa0a00b31f545b9727df84bb0",
-        "ranges": [
-          [
-            1,
-            923
-          ]
-        ],
-        "declarations": [
-          "companionSets",
-          "companionIds",
-          "reservedComponentText",
-          "carries",
-          "readingsOf",
-          "mergeCompanions",
-          "mergeCategory",
-          "mergeOpenTerms",
-          "mergeTerms",
-          "companionMeaningId",
-          "meaningCheck",
-          "profileCheck",
-          "componentOf",
-          "crossingText",
-          "shapeText",
-          "splitCase"
-        ],
-        "reason": "readings-defaults RD-4a: a candidate's `companion` (its environment and open terms) read, merged per companion set and validated through the pinned Readings.Wire and Route decoders (`decodeEnvironment`, `openTermNames`), each recorded `meaning_id` checked against W1's identity over the companion's own environment, and the document split into its cases; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Readings/VerdictsWire.lean",
-        "lines": 1565,
-        "sha256": "15ebc9d3e1a85ee192f5aeb670b4ed60292f120cb3242de7cf5b7361b03eddb4",
-        "ranges": [
-          [
-            1,
-            1565
-          ]
-        ],
-        "declarations": [
-          "membersOf",
-          "without",
-          "shownOk",
-          "shownOf",
-          "pieceOf",
-          "ndBoundCert",
-          "ndFilled",
-          "ndEvidenceOf",
-          "strOf",
-          "isNull",
-          "jstrings",
-          "jchoice",
-          "jgaps",
-          "perChoice",
-          "planItems",
-          "lowerRun",
-          "lowerInfo",
-          "entryFor",
-          "evidenceList",
-          "queryFormulas",
-          "replayND",
-          "replayVerdictsND",
-          "runVerdicts"
-        ],
-        "reason": "readings-defaults RD-3 readings-verdicts decoder: the question, assumed, the query's premises and conclusion, and each choice's evidence (conflict packages bound to the choice's E''' base and document hash, filled witnesses, certificates bound as the norm-defaults route binds them, base models with a separate filling, each shown model bound to the checked one) are decoded on the choice's document Lean regenerates; under the completion every row is a Lean check with its Holds proof (nd_rowsHold), on the lower route each piece is readings-choice's own inner case; the English plan reads only Lean's own answer; the full file is pinned conservatively"
       }
     ],
     "other_json": {
@@ -1288,8 +1293,8 @@
       "lean/VE/Route/MeteredTrace.lean": "lean:runner-glue: explanation JSON display after the proved metered value; reads no untrusted input",
       "lean/VE/SoftNorms/Run.lean": "lean:runner-glue: ve_soft_norms_route case dispatch and response rows",
       "lean/VE/Rights/Run.lean": "lean:runner-glue: ve_rights_route case dispatch and response rows",
-      "lean/VE/Readings/Run.lean": "lean:runner-glue: ve_readings_route case dispatch and response rows; readings-validate and readings-separate rows regenerated from the pinned Wire decoder; the S2a kinds dispatched to SupRun; readings-verdicts dispatched to VerdictsWire (runVerdicts) before the completion's kinds, on the case or companion component the request names",
-      "lean/VE/Readings/SupRun.lean": "lean:runner-glue: ve_readings_route S2a case kinds; case fields are read through the pinned SupWire and Wire decoders, and the response rows are built from Lean checks (supCertificateCheck, supModelCheck, slotConflictFreeCheck, deadCheck, unsatCheck); readings-choice runs the lower route on the regenerated choice document with its regenerated assertions, accepts a chain certificate only when the lower conflict kind finds the case's conflict packages CONFLICT-FREE on the same document, and choice-model reads its model through the chain decoders (decodeModel, decodeModelR, decodeModelData); the kind list names readings-verdicts, which Run.lean dispatches",
+      "lean/VE/Readings/Run.lean": "lean:runner-glue: ve_readings_route case dispatch and response rows; readings-validate and readings-separate rows regenerated from the pinned Wire decoder; the S2a kinds dispatched to SupRun",
+      "lean/VE/Readings/SupRun.lean": "lean:runner-glue: ve_readings_route S2a case kinds; case fields are read through the pinned SupWire and Wire decoders, and the response rows are built from Lean checks (supCertificateCheck, supModelCheck, slotConflictFreeCheck, deadCheck, unsatCheck); readings-choice runs the lower route on the regenerated choice document with its regenerated assertions, accepts a chain certificate only when the lower conflict kind finds the case's conflict packages CONFLICT-FREE on the same document, and choice-model reads its model through the chain decoders (decodeModel, decodeModelR, decodeModelData)",
       "lean/VE/Readings/Route.lean": "lean:runner-glue: the readings@1 route of 1.1 and the regenerated S2a elaboration rows (elaborateFields); builds JSON, reads none",
       "lean/VE/Norms/Run.lean": "lean:runner-glue: ve_norms_route case dispatch and error rows",
       "lean/VE/NormDefaults/Run.lean": "lean:runner-glue: ve_norm_defaults_route case dispatch and response rows",
