@@ -49,3 +49,9 @@ The remaining thirteen section 5.1 theorem proofs, the complete fixture set, the
 | 20. Regenerated numeric report | Not applicable | This pass makes no coverage or performance claims. |
 | 21. Acceptance owners | Not done | AGENT/HUMAN/EXTERNAL tags and deferred owner record are outstanding. |
 | 22. Clean HEAD gate and fix report | Not done | This non-empty report exists; the full gate on clean HEAD remains. |
+
+## Full gate result on `17547abe`
+
+The first clean-HEAD run stopped at Rust build because the offline cache lacked `serde`. `cargo fetch --locked` filled the ignored, pinned crate cache without changing tracked files. The rerun completed every gate stage: Lean build, Lean audit, Rust build, 36 Rust tests, Python collection and Python suite. The gate **failed** with 13,071 Python passes, 17 failures, 9 skips and one live-test deselection out of 13,098 collected tests.
+
+The failures cluster around two repository inventories that this pass did not update: the compiled statement, predicate and declaration dumps, and `lean/VE/Route/frozen-sources.sha256`, which must list every new `VE` module and the changed audit manifest. The statement dumps have since been regenerated for a follow-up commit. The Route inventory remains unchanged pending clarification of the explicit instruction to leave frozen Route untouched. `tools/trust_map.py --check` also reports 388 new unclassified trusted lines, including the new Question modules and existing baseline drift; no DRI budget signature was invented. Two skip-policy failures concern Rust-scope exclusions in the existing P0 suite.
