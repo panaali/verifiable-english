@@ -71,8 +71,10 @@ def decodeEnvironment (j : Json) : Except String Vocabulary := do
     let ss ← VE.Bridge.argumentSorts raw (fun s => sortNames.contains s || s == "$int")
     pure (p, ← ss.mapM (decodeSortName sortNames))
   let cs ← constants.mapM fun (c, entry) => do
-    exactFields entry ["sort", "description"]
+    VE.Bridge.displayFields entry ["sort", "description"] ["verbalisation"]
     VE.Bridge.description entry
+    if let .ok words := entry.getObjVal? "verbalisation" then
+      VE.Bridge.displayString words
     let sort ← VE.Bridge.constantSort entry (fun s => sortNames.contains s || s == "$int")
     pure (c, ← decodeSortName sortNames sort)
   pure ⟨sortNames, ps, cs⟩

@@ -5,8 +5,10 @@ import ResponseShape.Schemas.Bundle
 import ResponseShape.Schemas.Check
 import ResponseShape.Schemas.CheckCertificate
 import ResponseShape.Schemas.Diagnose
+import ResponseShape.Schemas.Document
 import ResponseShape.Schemas.Discourse
 import ResponseShape.Schemas.English
+import ResponseShape.Schemas.EnglishLean
 import ResponseShape.Schemas.Environment
 import ResponseShape.Schemas.Evaluate
 import ResponseShape.Schemas.FamilyNorms
@@ -42,8 +44,12 @@ def files : List File := [
   Check.file,
   CheckCertificate.file,
   Diagnose.file,
+  Document.file,
   Discourse.file,
   English.file,
+  EnglishLean.readFile,
+  EnglishLean.grammarFile,
+  EnglishLean.checkFile,
   Environment.file,
   Evaluate.file,
   FamilyNorms.file,

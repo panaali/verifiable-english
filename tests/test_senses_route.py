@@ -107,8 +107,10 @@ def test_spec_reading_fixtures(joke, fixture, source, status, code):
     assert (reading["status"], reading.get("code")) == (status, code), fixture
     if fixture == "s1":
         # `stopped 1 noDerivation`: the sentence index counts the preamble line (spec 4.1, reviews B1/B2)
-        assert reading == {"status": "none", "code": "NoDerivation", "sentence": 1,
+        span = reading.pop("span")
+        assert reading == {"status": "none", "code": "NoDerivation", "class": "SyntaxError", "sentence": 1,
                            "text": "Sentence 2 has no reading with the current vocabulary."}
+        assert source[span[0]:span[1]] == source.split("\n")[1]  # the sentence's span, as english.read gives
     if fixture == "s4":
         assert reading["details"] == {"line": 0, "word": "funny", "gloss": "purple"}
     if fixture == "s21":
@@ -178,8 +180,20 @@ REFUSALS = [
 @pytest.mark.parametrize("fixture, place, pack, source, budget, expected", REFUSALS, ids=[r[0] for r in REFUSALS])
 def test_every_refusal_carries_its_arguments(fixture, place, pack, source, budget, expected):
     """Reviews (Astra B1, Fable B2): a refusal names its sentence and its fault's arguments."""
+    from ve.backends.english_lean import CODE_CLASSES
     result = read_in(WORLDS[place](), source, pack, budget=route.WORK_BUDGET if budget is None else budget)
-    assert result["reading"] == expected, fixture
+    reading = dict(result["reading"])
+    if expected["code"] in CODE_CLASSES:
+        # S2's outcomes carry Lean's class and span, as english.read's do: the named sentence's span, or the
+        # whole source for a refusal that names no sentence (review B3)
+        expected = {**expected, "class": CODE_CLASSES[expected["code"]]}
+        span = reading.pop("span")
+        if "sentence" in expected:
+            lines = source.split("\n")
+            assert source[span[0]:span[1]].strip() in lines, (fixture, span)
+        else:
+            assert span == [0, len(source)], (fixture, span)
+    assert reading == expected, fixture
 
 
 def test_every_sense_fault_code_has_a_refusal_fixture():
@@ -213,16 +227,16 @@ def S2_WORLD():
     "Legacy is deployed. Beta is reviewed. Legacy is gamma.", "Legacy, legacy and beta are deployed.",
 ])
 def test_s2_outcomes_match_the_english_route(source):
-    """With no dictionary word in the text, S2's outcome reaches the senses answer with exactly the fields,
-    texts, sentence and witness trees of S2's own authoring answer (ve_english_route): Run.lean's copy of
-    S2's two inline texts cannot drift."""
-    from ve.backends.english_lean import EXECUTABLE as ENGLISH, request
-    from ve.backends.lean import run_english_cases
+    """With no dictionary word in the text, S2's outcome reaches the senses answer with exactly the fields of
+    `english.read`'s answer: status, code, Lean's text and class, sentence, span, advice and witness trees
+    (`Run.refusalExtras` builds both), so the two modes cannot drift."""
+    from ve.backends import relay
+    from ve.backends.english_lean import request
     from ve.english import EnglishVocabulary
     env, overlay = S2_WORLD()
     reading = read_in((env, overlay), source, MINI)["reading"]
     case = request(env, source, EnglishVocabulary(env, vocabulary=overlay), {"vocabulary": overlay})
-    [row] = run_english_cases(ENGLISH, "english.read", [case], timeout=HANG_TIMEOUT)
+    row = relay.decide_once("english.read", case)
     english = {k: v for k, v in row["result"].items() if k != "identities"}
     assert english["status"] != "one", english
     assert reading == english
@@ -372,7 +386,7 @@ def test_the_route_goes_through_the_manifest_binding(joke, monkeypatch):
     monkeypatch.setattr("ve.backends.lean.require_lean_binding", spy)
     admit(joke, "Alice tells the riddle.")
     assert calls == [("senses.read", "ve_senses_route", "", set())]
-    assert assurance.operation("senses.read")["lean_call_sites"] == ["ve.backends.senses:read"]
+    assert assurance.operation("senses.read")["lean_call_sites"] == ["ve.backends.senses:_read"]
 
 
 def test_only_senses_check_reads_with_senses(joke, tmp_path):
@@ -455,7 +469,7 @@ def test_genuine_response_field_mutations_are_rejected(name, place, pack, source
     and so is a duplicated candidate or a referent the projection does not declare."""
     genuine = read_in(S2_WORLD() if place == "s2" else WORLDS[place](), source, pack, budget=budget)
     def problem(mutant):
-        return route._response_problem(mutant, genuine["dictionary_id"], genuine["request_id"])
+        return route._response_problem(mutant, genuine["dictionary_id"], genuine["request_id"], source=source)
     assert problem(genuine) is None
     paths = list(_paths(genuine))
     assert len(paths) > 4, name
@@ -526,9 +540,9 @@ def _status_of(code):
         return "open"
     if code == "PreambleBudget":
         return "budget"
-    if code in route.FAULT_DETAILS or code == "InvalidDictionary" or code in english_lean.CLASSES:
+    if code in route.FAULT_DETAILS or code == "InvalidDictionary":
         return "rejected"
-    return {v: k for k, v in english_lean.STATUS_CODES.items()}.get(code)
+    return next((status for status, found in english_lean.STATUS_CODES.items() if code in found), None)
 
 
 @pytest.mark.parametrize("name, place, pack, source, budget", GENUINE, ids=[g[0] for g in GENUINE])
@@ -537,7 +551,7 @@ def test_impossible_status_code_pairs_are_rejected(name, place, pack, source, bu
     from ve.backends import english_lean
     genuine = read_in(S2_WORLD() if place == "s2" else WORLDS[place](), source, pack, budget=budget)
     codes = [None, "Unresolved", "InvalidDictionary", "DefinitelyNotARealCode", *route.FAULT_DETAILS,
-             *english_lean.CLASSES, *english_lean.STATUS_CODES.values()]
+             *english_lean.CODE_CLASSES]
     for status in sorted(route.STATUSES):
         for code in codes:
             if _status_of(code) == status:

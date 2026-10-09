@@ -1,0 +1,236 @@
+{
+ "range": "192e496335c248d848fc1816f0b3b4fc6dd2fbcc..HEAD --no-merges",
+ "captured_head": "8efa27f1dea862a36c7ad8d8526f79c1213e09ea",
+ "base": "192e496335c248d848fc1816f0b3b4fc6dd2fbcc",
+ "commits": [
+  "8efa27f1dea862a36c7ad8d8526f79c1213e09ea",
+  "5f71984f4aef2717e36935be19226331e743e50d",
+  "137a4dfbb1c25ebb3da7b29ac88d9b759a2aeaa9",
+  "9cffc4e322afec4907316b0342659375e1a07f2b",
+  "2fce5544ae67822370cdead3aaf1cd61e306fd84",
+  "44b1a7dced894d2c405d5197c271a647b55dd488",
+  "04ea4dc3b1e1b792dc73a2b11b3b168d031c43a8",
+  "5afeee499b9f14f63cc0a3f6a10ba0a40eee02fd",
+  "b82aaac789246efb1abe09c3363695fd83035517",
+  "b005dc8a848f5469e37092eb8112ea1efcc12133",
+  "489080ebb815da3da3e77ec6dbfd43386bd42809"
+ ],
+ "measured_code_head": "2fce5544ae67822370cdead3aaf1cd61e306fd84",
+ "after_measurement": {
+  "8efa27f1dea862a36c7ad8d8526f79c1213e09ea": [
+   "tools/difffuzz.py"
+  ],
+  "5f71984f4aef2717e36935be19226331e743e50d": [
+   "docs/lean-first/b16a/REPORT.md",
+   "docs/lean-first/b16a/evidence/fix1/ab.json",
+   "docs/lean-first/b16a/evidence/fix1/deep-document.json",
+   "docs/lean-first/b16a/evidence/fix1/difffuzz-ci.json",
+   "docs/lean-first/b16a/evidence/fix1/mutants.json",
+   "docs/lean-first/b16a/evidence/fix1/scope.json",
+   "tests/test_b16a_evidence.py",
+   "tools/gate-collection.json"
+  ],
+  "137a4dfbb1c25ebb3da7b29ac88d9b759a2aeaa9": [
+   "conformance/document_wrapper.py"
+  ],
+  "9cffc4e322afec4907316b0342659375e1a07f2b": [
+   "tools/trust-classes.json"
+  ]
+ },
+ "net_files": [
+  {
+   "path": "conformance/DIFFFUZZ.md",
+   "added": 1,
+   "deleted": 0,
+   "generated": false
+  },
+  {
+   "path": "conformance/document_wrapper.py",
+   "added": 384,
+   "deleted": 0,
+   "generated": false
+  },
+  {
+   "path": "docs/lean-first/b16a/REPORT.md",
+   "added": 54,
+   "deleted": 5,
+   "generated": true
+  },
+  {
+   "path": "docs/lean-first/b16a/evidence/fix1/ab.json",
+   "added": 22,
+   "deleted": 0,
+   "generated": true
+  },
+  {
+   "path": "docs/lean-first/b16a/evidence/fix1/deep-document.json",
+   "added": 50,
+   "deleted": 0,
+   "generated": true
+  },
+  {
+   "path": "docs/lean-first/b16a/evidence/fix1/difffuzz-ci.json",
+   "added": 203,
+   "deleted": 0,
+   "generated": true
+  },
+  {
+   "path": "docs/lean-first/b16a/evidence/fix1/mutants.json",
+   "added": 78,
+   "deleted": 0,
+   "generated": true
+  },
+  {
+   "path": "docs/lean-first/b16a/evidence/fix1/scope.json",
+   "added": 179,
+   "deleted": 0,
+   "generated": true
+  },
+  {
+   "path": "docs/spec/assurance-manifest.md",
+   "added": 2,
+   "deleted": 2,
+   "generated": true
+  },
+  {
+   "path": "docs/trust-baseline.json",
+   "added": 63,
+   "deleted": 37,
+   "generated": true
+  },
+  {
+   "path": "lean/ResponseShape/Audit.lean",
+   "added": 5,
+   "deleted": 1,
+   "generated": true
+  },
+  {
+   "path": "lean/ResponseShape/Encoders/Discourse.lean",
+   "added": 8,
+   "deleted": 3,
+   "generated": false
+  },
+  {
+   "path": "lean/ResponseShape/Encoders/Document.lean",
+   "added": 37,
+   "deleted": 3,
+   "generated": false
+  },
+  {
+   "path": "lean/ResponseShape/Schemas/Document.lean",
+   "added": 47,
+   "deleted": 15,
+   "generated": false
+  },
+  {
+   "path": "lean/VE/Discourse/Loader.lean",
+   "added": 170,
+   "deleted": 85,
+   "generated": false
+  },
+  {
+   "path": "lean/VE/Route/frozen-sources.sha256",
+   "added": 2,
+   "deleted": 2,
+   "generated": true
+  },
+  {
+   "path": "lean/VE/Service/Document.lean",
+   "added": 412,
+   "deleted": 114,
+   "generated": false
+  },
+  {
+   "path": "lean/axioms.txt",
+   "added": 5,
+   "deleted": 1,
+   "generated": true
+  },
+  {
+   "path": "lean/checkers.lock",
+   "added": 2,
+   "deleted": 1,
+   "generated": true
+  },
+  {
+   "path": "lean/declarations.txt",
+   "added": 165,
+   "deleted": 98,
+   "generated": true
+  },
+  {
+   "path": "tests/lean_service_corpus.py",
+   "added": 12,
+   "deleted": 1,
+   "generated": false
+  },
+  {
+   "path": "tests/test_b16a_evidence.py",
+   "added": 71,
+   "deleted": 0,
+   "generated": false
+  },
+  {
+   "path": "tests/test_difffuzz.py",
+   "added": 42,
+   "deleted": 1,
+   "generated": false
+  },
+  {
+   "path": "tests/test_lean_document_wrapper.py",
+   "added": 327,
+   "deleted": 11,
+   "generated": false
+  },
+  {
+   "path": "tools/difffuzz.py",
+   "added": 81,
+   "deleted": 2,
+   "generated": false
+  },
+  {
+   "path": "tools/gate-collection.json",
+   "added": 56,
+   "deleted": 1,
+   "generated": true
+  },
+  {
+   "path": "tools/trust-classes.json",
+   "added": 56,
+   "deleted": 8,
+   "generated": true
+  },
+  {
+   "path": "ve/assurance-manifest.json",
+   "added": 12,
+   "deleted": 5,
+   "generated": true
+  },
+  {
+   "path": "ve/backends/lean_service_schema/document.json",
+   "added": 129,
+   "deleted": 24,
+   "generated": true
+  },
+  {
+   "path": "ve/document.py",
+   "added": 25,
+   "deleted": 15,
+   "generated": false
+  },
+  {
+   "path": "ve/readings.py",
+   "added": 8,
+   "deleted": 5,
+   "generated": false
+  }
+ ],
+ "totals": {
+  "added": 2708,
+  "deleted": 440,
+  "source_added": 1625,
+  "source_deleted": 255,
+  "lean_added": 674,
+  "python_deleted": 35
+ }
+}

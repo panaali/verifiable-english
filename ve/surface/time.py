@@ -221,7 +221,9 @@ def parse_w6_sentence(env, source, surface="english"):
     if len(readings) > 1:
         raise AmbiguousDerivation(f"W6 sentence has {len(readings)} derivations across the English grammar")
     if not readings:
-        specific = [e for e in rejected if not str(e).startswith(("No W6 quantity reading", "Unknown English"))]
+        specific = [e for e in rejected
+                    if not str(e).startswith(("No W6 quantity reading", "Unknown English"))
+                    and getattr(getattr(e, "lean_reading", None), "status", None) != "none"]
         raise specific[0] if len(specific) == 1 else SyntaxError("No W6 reading in any grammar")
     return next(iter(readings.values()))
 

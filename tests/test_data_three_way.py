@@ -6,6 +6,7 @@ from subprocesses import HANG_TIMEOUT
 import subprocess
 from pathlib import Path
 
+from conformance.three_way import run_rust_evaluations
 from ve.ast import And, Binary, Const, Not, formula_to_data
 from ve.background import background
 from ve.entailment import prove_entailment
@@ -72,10 +73,7 @@ def test_1000_generated_flag_and_literal_sets():
                                                    results[::2], results[1::2], strict=True):
         assert (got["status"], got.get("generator")) == want, (case["id"], want, got)
         assert {key: shown[key] for key in generated} == generated, (case["id"], shown)
-    completed = subprocess.run([str(RUST), "conformance"],
-        input=json.dumps(cases[::2]), text=True, capture_output=True, timeout=HANG_TIMEOUT)
-    assert completed.returncode in (0, 1), completed.stderr
-    rust_results = json.loads(completed.stdout)
+    rust_results = run_rust_evaluations(RUST, cases[::2])
     assert len(rust_results) == 1000
     for case, want, got in zip(cases[::2], expected, rust_results, strict=True):
         assert got["status"] == want[0], (case["id"], want, got)

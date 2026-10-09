@@ -13,6 +13,7 @@ from ve.readings_english import (E22, E23, E24, act_only_sentence,
                                  assertion_pair_sentence, coupling_sentence,
                                  decision_only_sentence, force_twin_sentence,
                                  outcome_pair_sentence)
+from ve.readings_s2_english import hidden_in
 
 
 def _formula_sets(env):
@@ -107,7 +108,7 @@ def test_s1_report_sentences_keep_their_checked_claims_narrow():
         "These two readings differ here: a asks u. Under reading 2, the sentence is true there. "
         "Under reading 1, it is false there.")
     for sentence in (twin, E22, E23, E24):
-        assert all(prefix not in sentence for prefix in ("ve__", "rd-", "soft__", "rights__", "may not"))
+        assert hidden_in(sentence) is None, sentence
     with pytest.raises(VEError, match="E14 needs a source word"):
         force_twin_sentence("may not", "strict", "default", "unstated", ("a",),
                             "obligation", True, False)

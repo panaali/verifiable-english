@@ -30,7 +30,7 @@ from subprocesses import HANG_TIMEOUT
 from tests.test_soft_norms_conformance import fixtures
 from tools import nested_pytest
 from tests.test_wire_contract_soft_lean import fixture_sources
-from ve.wire_contract.engine import load
+from conformance.wire_contract_engine import load
 
 ROOT = Path(__file__).resolve().parents[1]
 GOLDEN = ROOT / "conformance/wire-contract/soft-norms@0-golden.json"

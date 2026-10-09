@@ -288,9 +288,9 @@ def decodeRightsSource (environment document : Json) : Except String RightsSourc
   let D : RightsDoc :=
     ⟨⟨re.se.ne.rv.environment, re.se.ne.rv.literals, re.se.soft, ⟨re.se.ne.regulated, [], us.outside⟩⟩,
      re.block, us.rs, us.limits, us.bars, us.cites, some us.order, us.sourceUnits.getD []⟩
-  match hv : validateRights D with
+  match hv : validateRightsOnce D with
   | .error e => throw e
-  | .ok () => pure ⟨re, D, by unfold WellFormedRights; rw [hv], rfl, rfl, rfl⟩
+  | .ok () => pure ⟨re, D, by unfold WellFormedRights; rw [← validateRightsOnce_eq, hv], rfl, rfl, rfl⟩
 
 /-! ## Identity (3.5) -/
 

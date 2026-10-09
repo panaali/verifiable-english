@@ -5,7 +5,7 @@ This harness runs Python at the dispatched boundary (the reading the unit `engli
 `ve.english._python_reading`, with Python's own lexicon) and compares its outcome with the spec's under the
 class map of spec 2.8 and base 4.1: `one` or `ok` is an accepted document with the same formulas and marks,
 `zero` (and `none` under `stopped`) is `SyntaxError`, `many` is `AmbiguousDerivation`, a lexical refusal
-is `SyntaxError`, and a rejection is the class of its code (`CLASSES` of the adapter). A difference is a
+is `SyntaxError`, and a rejection is the class of its code (Lean's `codeClasses`). A difference is a
 finding, not a failed fixture. The one agreed difference is or38's (spec 2.11, Q11): Python reports
 `ResourceLimit` where Lean has no reading.
 
@@ -25,14 +25,15 @@ from pathlib import Path
 import warnings
 
 from conformance import english_lean_s3_fixtures as X
-from ve.backends.english_lean import CLASSES as LEAN_CLASSES
+from ve.backends.english_lean import CODE_CLASSES, COMPARATOR_CLASSES
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORT = ROOT / "conformance/english-lean/s3-python-report.json"
 
-# Spec 2.8 and base 4.1: read the adapter's checked code-to-class contract.
-REJECTION_CLASS = {code[0].lower() + code[1:]: classes[0]
-                   for code, classes in LEAN_CLASSES.items()}
+# Spec 2.8 and base 4.1: Lean's class of each code (the generated contract), read through the comparator's
+# tolerance for `IllTyped` and `RelativeForm`, whose first class is the one Python raised.
+REJECTION_CLASS = {code[0].lower() + code[1:]: COMPARATOR_CLASSES.get(code, (cls,))[0]
+                   for code, cls in CODE_CLASSES.items()}
 STATUS_CLASS = {"zero": "SyntaxError", "none": "SyntaxError", "many": "AmbiguousDerivation",
                 "lexical": "SyntaxError"}
 # The agreed differences of spec 2.11 (Q11): Lean `none`, Python `ResourceLimit`.

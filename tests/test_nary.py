@@ -151,7 +151,7 @@ def test_fret_user_sort_time_and_arity_six():
             "predicates": {"value": {
                 "arguments": ["signal", "time", "reading"],
                 "description": "Signal value at a time",
-                "verbalisation": "the value of {0} at {1} is {2}"}},
+                "verbalisation": "{0} records {1} as {2}"}},
             "constants": {"speed": {"sort": "signal", "description": "speed"},
                           "instant": {"sort": "time", "description": "instant"},
                           "high": {"sort": "reading", "description": "high"}},
@@ -160,9 +160,22 @@ def test_fret_user_sort_time_and_arity_six():
     value = Atom("value", (Const("speed"), Const("instant"), Const("high")))
     assert parse(fret, print_document(fret, Document((value,)))) == Document((value,))
     rendered = render_english(Document((value,)), fret)
-    assert rendered == "The value of speed at instant is high.\n"
+    assert rendered == "Speed records instant as high.\n"
     assert parse_english(fret, rendered) == Document((value,))
     assert not lint_vocabulary(fret)
+
+    # The wording this test used before E2 (commit 3388825a changed it): a wording with text before `{0}` fails
+    # Lean's V3 (subject first, S3 D8), so Python's lint refuses it and selects the mechanical form, which Lean
+    # reads; the old sentence has no reading (DELTA A5), and the environment stays available.
+    value_of = fret.to_dict()
+    value_of["vocabulary"]["predicates"]["value"]["verbalisation"] = "the value of {0} at {1} is {2}"
+    value_of = Environment(value_of)
+    assert "TEMPLATE_SHAPE" in {issue.code for issue in lint_vocabulary(value_of)}
+    rendered = render_english(Document((value,)), value_of)
+    assert not rendered.lower().startswith("the value of")
+    assert parse_english(value_of, rendered) == Document((value,))
+    with pytest.raises(VEError, match="no reading"):
+        parse_english(value_of, "The value of speed at instant is high.\n")
 
     ambiguous = fret.to_dict()
     ambiguous["vocabulary"]["predicates"]["value"]["verbalisation"] = "{0} red {1} blue {2}"

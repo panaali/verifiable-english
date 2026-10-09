@@ -90,7 +90,8 @@ def test_delta_numbers_are_regenerated_from_evidence():
     assert fuzz["ok"]
     first = report.load("difffuzz-first-pass.json")
     reviewed = {entry["signature"] for row in first["runs"] for entry in row["head_only_new"]}
-    baseline = json.loads((ROOT / "conformance/difffuzz-baseline.json").read_text())
+    baseline = json.loads(subprocess.check_output(
+        ["git", "show", f"{report.B12_HEAD}:conformance/difffuzz-baseline.json"], cwd=ROOT))
     assert reviewed
     base = json.loads(subprocess.check_output(
         ["git", "show", f"{report.BASE}:conformance/difffuzz-baseline.json"], cwd=ROOT))
@@ -119,17 +120,21 @@ def test_delta_numbers_are_regenerated_from_evidence():
 def test_branch_trust_allowance_counts_only_batch_12_changes():
     from tools import trust_map
 
-    baseline = json.loads((ROOT / "docs/trust-baseline.json").read_text())
+    # Batch 12 is a historical signed measurement. The merge has a new tree
+    # and a separate current baseline; it must not rewrite the reviewed delta.
+    baseline = json.loads(subprocess.check_output(
+        ["git", "show", f"{report.B12_HEAD}:docs/trust-baseline.json"], cwd=ROOT))
+    merged = json.loads((ROOT / "docs/trust-baseline.json").read_text())
     main_baseline = json.loads(subprocess.check_output(
-        ["git", "show", "main:docs/trust-baseline.json"], cwd=ROOT))
+        ["git", "show", "adefca30:docs/trust-baseline.json"], cwd=ROOT))
     assert baseline["history"][-1]["rebaselined_from"] == trust_map.budget(main_baseline["totals"])
     current, problems = trust_map.measure(ROOT, ROOT / "tools/trust-classes.json",
                                           ROOT / "lean/statements.txt")
     parent, parent_problems, _ = trust_map.measure_rev(report.BASE)
     assert not problems and not parent_problems
-    assert baseline["totals"] == trust_map.totals(current)
-    assert baseline["files"] == current
-    now = trust_map.budget(trust_map.totals(current))
+    assert merged["totals"] == trust_map.totals(current)
+    assert merged["files"] == current
+    now = trust_map.budget(baseline["totals"])
     before = trust_map.budget(trust_map.totals(parent))
     growth = {key: now[key] - before[key] for key in ("K", "S", "V")}
     assert baseline["signed"][-1]["allow"] == growth

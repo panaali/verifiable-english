@@ -80,10 +80,20 @@ class _Route:
         units = [{"id": u["id"], "kind": u["kind"], "content": u["content"]} for u in doc["units"]]
         self.document = wire(document_wire(units, meta.get("reading_sets", []), couplings=self.couplings,
                                            narrowings=self.narrowings))
-        self.source = Document(S1Environment(self.environment), self.document)
+        # Under the unspecified completion (readings-defaults 3) the route's row carries Lean's filled document, and
+        # each choice is checked on Lean's `choiceU N c` (`_FilledChoiceDocument`).
+        filled = self.row.get("filled")
+        self.completion = filled is not None
+        self.source = Document(S1Environment(self.environment, filled), self.document, filled)
         self.sets = self.source.sets
-        found, over = choices(self.sets, self.couplings, self.narrowings, limit=MAX_CHOICES)
-        self.choices = None if over else found
+        if self.completion:
+            # The compatible choices are Lean's (the route's row, bound to the request by the relay); none is
+            # enumerated or counted here.
+            self.choices = None if self.row["choices"] == "over" else [
+                {s: i for s, i in choice} for choice in self.row["choices"]]
+        else:
+            found, over = choices(self.sets, self.couplings, self.narrowings, limit=MAX_CHOICES)
+            self.choices = None if over else found
         self.numbers = {unit["id"]: n for n, unit in enumerate(doc["units"], 1)}
 
     def lean(self, kind, **fields):
@@ -741,7 +751,7 @@ class Enumerated(_Route):
     def _choice(self, choice):
         key = tuple(choice[R.id] for R in self.sets)
         if key not in self._docs:
-            self._docs[key] = _ChoiceDocument(self, choice)
+            self._docs[key] = (_FilledChoiceDocument if self.completion else _ChoiceDocument)(self, choice)
         return self._docs[key]
 
     def over_budget(self):
@@ -882,7 +892,7 @@ class _ChoiceDocument:
         from .readings_s1 import Side
         self.side = Side(senv, contents, route.source.unit_ids)
         if self.chain != "norms":
-            self.side._elaborate()
+            self.side._elaborate(deferred=False)
         # The layer premises in the lower route's certificate order: its Background (the soft premises, and `Lim_D`
         # on the rights chain, are the environment's, which the prover prepends) ++ these ++ assertions ++ Γ.
         if self.chain == "soft":
@@ -1121,6 +1131,208 @@ class _ChoiceDocument:
         if found is not None:
             return {"outcome": "countermodel", "model": found}
         return {"outcome": "unknown"}
+
+
+class _FilledView:
+    """What `norm_defaults_route.filled_certificate` reads of a document, from Lean's rows: the source environment,
+    `Fill_T` and the filled layers over E‴."""
+
+    def __init__(self, env, filled_env, fill, layers):
+        from types import SimpleNamespace
+        self.env = env
+        self.fill_premises = [(None, f) for f in fill]
+        self.filled = SimpleNamespace(env=filled_env, premises=lambda: [(None, f) for f in layers])
+
+
+class _FilledChoiceDocument:
+    """A choice's document under the unspecified completion (readings-defaults 3.4): `choiceU N c` as Lean
+    regenerates it. Lean's `norm-defaults-elaborate` row for the choice (a `readings-choice` inner kind) gives
+    `E‴_base`, the base Background, `Fill_T`, the filled layers and the conflict targets; Python's prover and model
+    search run on those formulas only (untrusted generators, D12: Python builds no `fill`), and every certificate,
+    witness and model goes back to `readings-choice` with norm-defaults' inner kinds, which checks it on the choice's
+    document. A refusal of evidence Python's own check accepted is `CheckerUnavailable`, never a verdict."""
+
+    chain = "norms"
+
+    def __init__(self, route, choice):
+        from .ast import _Decoder, formula_from_data
+        from .environment import Environment
+        self.route, self.choice = route, choice
+        self.side = None  # a choice's decision tables: none on the norms chain (`S2Wording._choice_decisions`)
+        senv = route.source.senv
+        row = self._inner({"kind": "norm-defaults-elaborate"})
+        self.elaboration = row
+        self.base = Environment(row["base_environment"])
+        # E‴: the filled frame, the same for every choice (the frame's unspecified predicates), Lean's.
+        self.env = Environment(route.row["filled"]["environment"])
+        self.source_env = Environment(senv.lower_data)
+        self.tables = [item["name"] for item in row["unsaid"]]
+        self.fill = [formula_from_data(self.env, item["ast"], _generated=True) for item in row["fill"]]
+        self.layers = [formula_from_data(self.env, item["ast"], _generated=True) for item in row["premises"]]
+        # A target is open over its sorts (Lean's `conflict_targets`); it is typed once closed (`_bind`).
+        self.targets = [(t["target"], tuple(t["sorts"]), _Decoder().decode(t["ast"]))
+                        for t in row["conflict_targets"]]
+        self.assertions = [c.body for c in self._contents() if c.kind == "assertion"]
+        self.view = _FilledView(self.source_env, self.env, self.fill, self.layers)
+
+    def _contents(self):
+        from .readings_sup import choice_contents
+        return choice_contents(self.route.source, self.choice)
+
+    def _row(self, inner):
+        row = self.route.lean("readings-choice", choice=self.route.choice_json(self.choice), inner=inner)
+        answer = row["inner"]
+        if answer.get("status") != "ok":
+            raise CheckerUnavailable(f"ReadingsConformance: Lean refused a case Python built on a reading's filled "
+                                     f"document: {answer.get('error')}")
+        return row
+
+    def _inner(self, inner):
+        return self._row(inner)["inner"]
+
+    def _gamma(self, gamma=()):
+        from .ast import formula_from_data
+        return [formula_from_data(self.env, ast, _generated=True) for ast in self.assertions + list(gamma)]
+
+    def _phi(self, conclusion_ast):
+        from .ast import Bottom, formula_from_data
+        return Bottom() if conclusion_ast is None else formula_from_data(self.env, conclusion_ast, _generated=True)
+
+    def _split(self, data):
+        """A model of E‴ as `choice-model` and a witness read it: the base over `E‴_base` without the filled tables,
+        and the filling (the tables) beside it; the regulated tables are the outcome substitution's."""
+        base = set(self.base.predicates) - set(self.tables)
+        relations = data.get("relations", {})
+        model = {**data, "relations": {name: rows for name, rows in relations.items() if name in base}}
+        return model, {name: relations.get(name, []) for name in self.tables}
+
+    # -- the conflict status (`norm-defaults-conflict`: packages, else a filled witness)
+
+    def conflict(self):
+        if "_conflict" not in self.__dict__:
+            self._conflict = self._check_conflict()
+        return self._conflict
+
+    def _packages(self):
+        """A certificate of each target's closed negation from `Fill_T` over `E‴_base` (norm-defaults 3.1: on the norms
+        chain the base Background is `Fill_T`, Lean's `baseBackgroundU`), bound as Lean binds a package
+        (`decodePackageX`): to the choice's environment id and document hash (the row's), and its certificate to
+        `E‴_base` and the ASTs of `Fill_T`."""
+        from .ast import Not, formula_to_data
+        from .entailment import prove_entailment
+        from .norms import _bind
+        from .wire import digest
+        row = self.elaboration
+
+        def meaning(ast):
+            return digest(f"ve-meaning-{self.base.identity_version}\n",
+                          {"environment_id": self.base.environment_id, "ast": ast})
+        fill = self._base_fill()
+        packages = {}
+        for target, sorts, formula in self.targets:
+            conclusion = _bind(Not(formula), sorts)
+            proof = prove_entailment(self.base, fill, conclusion, max_steps=BUDGET["max_steps"], _background=False)
+            if proof.status != "Found":
+                continue
+            certificate = {**proof.certificate, "environment_id": self.base.environment_id,
+                           "premise_meaning_ids": [meaning(item["ast"]) for item in row["fill"]],
+                           "conclusion_meaning_id": meaning(formula_to_data(self.base, conclusion, _generated=True))}
+            packages[target] = {"environment_id": row["environment_id"], "document_hash": row["document_hash"],
+                                "target": target, "certificate": certificate}
+        return packages
+
+    def _check_conflict(self):
+        self._conflict_packages = {"packages": self._packages()}
+        answer = self._inner({"kind": "norm-defaults-conflict", **self._conflict_packages})
+        if answer["verdict"] == "CONFLICT-FREE":
+            return {"verdict": "CONFLICT-FREE", "conditional_on": [], "status_text": answer.get("status_text")}
+        witness = self._witness()
+        if witness is not None:
+            model, filling = self._split(witness["model"])
+            answer = self._inner({"kind": "norm-defaults-conflict", "witness": {
+                "target": witness["target"], "model": model, "filling": filling, "tuple": witness["tuple"]}})
+            if answer["verdict"] != "CONFLICT":
+                raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the conflict witness Python's "
+                                         "search found on a reading's filled document")
+            return {"verdict": "CONFLICT", "target": witness["target"], "tuple": witness["tuple"],
+                    "model": witness["model"], "status_text": answer.get("status_text")}
+        return {"verdict": "UNKNOWN", "status_text": answer.get("status_text")}
+
+    def _base_fill(self):
+        """`Fill_T` over `E‴_base`: it reads base predicates and the filled tables only."""
+        from .ast import formula_from_data
+        return [formula_from_data(self.base, item["ast"], _generated=True) for item in self.elaboration["fill"]]
+
+    def _witness(self):
+        """A base model and filling where `Fill_T` holds and some conflict target holds, with its tuple."""
+        from .evaluate import _Evaluator, _Exhausted
+        from .ast import Not
+        from .norms import _bind
+        from .search import find_countermodel
+        fill = self._base_fill()
+        for target, sorts, formula in self.targets:
+            found = find_countermodel(self.base, fill, _bind(Not(formula), sorts),
+                                      max_domain_size=BUDGET["max_domain_size"], max_models=BUDGET["max_models"],
+                                      max_evaluations=BUDGET["max_evaluations"])
+            if found.status != "Found":
+                continue
+            model = found.model
+            evaluator = _Evaluator(self.base, model, BUDGET["max_evaluations"], trace=False)
+            try:
+                values = next((values for values in product(*(model.domains[s] for s in sorts))
+                               if evaluator.formula(formula, tuple(zip(reversed(sorts), reversed(values))))[0]),
+                              None)
+            except _Exhausted:
+                values = None
+            if values is not None:
+                return {"target": target, "model": model.to_dict(), "tuple": list(values)}
+        return None
+
+    # -- certificates and models (`norm-defaults-certificate`, `choice-model`)
+
+    def certified(self, conclusion_ast, gamma=(), max_steps=None):
+        """A certificate of `conclusion_ast` (⊥ when None) from the choice's filled document and Γ, accepted by
+        `norm-defaults-certificate` with the choice's conflict packages; only when the choice is CONFLICT-FREE
+        (S2a 14.8). The Lean answer, or None within the budget."""
+        from .ast import _to_data
+        from .norm_defaults_route import filled_certificate
+        if self.conflict()["verdict"] != "CONFLICT-FREE":
+            return None
+        steps = BUDGET["max_steps"] if max_steps is None else max_steps
+        own, phi = self._gamma(gamma), self._phi(conclusion_ast)
+        # The prover replays the trace it generated before it returns it (`prove_entailment`); the certificate is
+        # bound to the source environment, as Lean binds a norm-defaults certificate.
+        certificate = filled_certificate(self.view, own, phi, max_steps=steps)
+        if certificate is None:
+            return None
+        row = self._row({"kind": "norm-defaults-certificate", "premises": list(gamma), "conclusion": _to_data(phi),
+                         "certificate": certificate, "conflict": self._conflict_packages})
+        if row["inner"].get("valid") is not True or row.get("accepted") is not True:
+            raise CheckerUnavailable("ReadingsConformance: Lean does not accept the certificate Python's prover found "
+                                     "on a reading's filled document")
+        return row["inner"]
+
+    def model(self, conclusion_ast, gamma=()):
+        """A model of the choice's filled document and Γ with `conclusion_ast` false (any model when None), checked
+        by `choice-model` as a base model with a separate filling. The model of E‴, or None within the budget."""
+        from .search import check_countermodel, find_countermodel
+        premises, phi = self.fill + self.layers + self._gamma(gamma), self._phi(conclusion_ast)
+        found = find_countermodel(self.env, premises, phi, max_domain_size=BUDGET["max_domain_size"],
+                                  max_models=BUDGET["max_models"], max_evaluations=BUDGET["max_evaluations"])
+        if found.status != "Found" or not check_countermodel(self.env, premises, phi, found.model,
+                                                             max_evaluations=BUDGET["max_evaluations"]).valid:
+            return None
+        data = found.model.to_dict()
+        model, filling = self._split(data)
+        answer = self._inner({"kind": "choice-model", "premises": list(gamma), "conclusion": conclusion_ast,
+                              "model": model, "filling": filling})
+        if answer.get("valid") is not True or answer.get("conclusion_value") is not False:
+            raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the model Python's search found on "
+                                     f"a reading's filled document ({answer.get('first_failing')})")
+        return data
+
+    premises = _ChoiceDocument.premises
+    entailment = _ChoiceDocument.entailment
 
 
 __all__ = ["BUDGET", "Enumerated", "PENDING", "Pending", "Superposed", "context"]

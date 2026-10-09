@@ -22,6 +22,7 @@ from tests import lean_routes
 from subprocesses import HANG_TIMEOUT
 from tests.test_units_lean_w6a import LEAN, ROOT, lean, quantity
 from tests.test_w6a_review_regressions import raw_environment
+from conformance.three_way import rust_evaluations
 from ve import ast
 from ve.environment import Environment
 from ve.errors import ResourceLimit
@@ -144,7 +145,8 @@ def test_defined_table_budget_is_order_independent_three_ways():
         [got] = run([str(CONFORMANCE), "route", "-"], [{**case, "kind": "evaluate"}])
         assert got["status"] == "error" and "Definition model evaluation budget" in got["error"], \
             (domain, got)
-        [other] = run([os.environ.get("VE_RUST_BINARY", str(ROOT / "rust" / "target" / "release" / "ve")), "conformance"], [case])
+        rust = os.environ.get("VE_RUST_BINARY", str(ROOT / "rust" / "target" / "release" / "ve"))
+        [other] = rust_evaluations(lambda batch: run([rust, "conformance"], batch), [case])
         assert other["status"] == "error" and other["error"]["code"] == "ResourceLimit", other
 
 

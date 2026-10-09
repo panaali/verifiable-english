@@ -19,6 +19,9 @@ how their answers compare:
 * `wire`: the wire-contract units (`demo@0`, `defer@0`, `forms@0`, `soft-norms@0`, `norms@0`,
   `norm-defaults@0`), by the Python engine and `ve_diagnose`; the whole diagnostic record is compared, except
   the text and args of an inherited check (the contract's `inherited` flag).
+* `document`: every `ve-document@1` seed of `conformance/document_wrapper.py`, Python's `load_document` and
+  `check_document` wrapper against the service's `document` mode on the document text; texts and values are
+  compared, a fail-closed answer agrees with any (`DocumentSurface`).
 
 Each seed is run as it is, and its 1-fault and 2-fault mutants (`one_faults`): every JSON node replaced by
 7, true, null, [], {} and "x"; an object member removed; keys and lists reversed; a list's first entry
@@ -94,7 +97,7 @@ BATCH_CPU = 300
 BATCH_CASES = 400
 
 # The CI sample: 1-fault and 2-fault mutants per surface. `--deep N` multiplies both.
-CI_BUDGET = {"requests": (6000, 1500), "environment": (6000, 1500), "wire": (6000, 1500)}
+CI_BUDGET = {"requests": (6000, 1500), "environment": (6000, 1500), "wire": (6000, 1500), "document": (500, 100)}
 CHUNK = 2000
 MINIMISE_EVALUATIONS = 3000
 # New signatures minimised in one run; any beyond are reported as found (`"minimised": false`).
@@ -277,7 +280,7 @@ def limit_patterns():
     conformance unit (its limits from `conformance/wire-contract/contracts/limits.json`). A pattern is
     a tuple of JSON pointer tokens, `*` for any key or index; `unit` is None for the production table,
     which applies wherever its pattern matches."""
-    from ve.wire_contract.engine import load
+    from conformance.wire_contract_engine import load
     from tests.test_wire_contract_corpus import CONTRACTS, LIMITS
     production = json.loads((ROOT / "ve/wire_contract/limits.json").read_text())
     tables = [(None, load("soft-norms@0"), production)] + [
@@ -676,8 +679,13 @@ LEAN_ROUTE_FIELDS = {
              "risk_premises": "array<json>", "unranked_severities": "array<json>"},
     "soft-norms": {**_ELABORATED, "colliding_pairs": "array<json>", "conditional_on": "array<json>",
                    "decisions": "array<json>", "derived": "array<json>", "environment_prime": "object",
+                   "document_hash": "string", "ranks_above": "object", "rule_acts": "object",
+                   "incompatible_pairs": "array<json>", "soft_residual": "object",
+                   "soft_status": "string", "default_exceptions_by_decider": "object",
                    "warnings": "array<json>"},
-    "norm-defaults": {**_ELABORATED, "fill": "array<json>", "fragment_fill": "bool", "reached": "array<json>",
+    "norm-defaults": {**_ELABORATED, "document_hash": "string", "environment_id": "string",
+                      "fill": "array<json>", "fill_hash": "string", "fill_labels": "array<json>",
+                      "filled_environment_id": "string", "fragment_fill": "bool", "reached": "array<json>",
                       "unsaid": "array<json>", "unspecified": "array<json>"},
     "speech": {"commands": "array<json>", "dormant": "array<json>", "environment_id": "string",
                "legend": "array<json>", "policy": "object", "premises": "array<json>", "queries": "array<json>",
@@ -697,29 +705,29 @@ RECORD_FIELDS = {"contract": "string", "revision": "nat", "check": "string", "ph
                  "code": "string", "class": "string", "path": "string", "text": "string", "args": "object"}
 
 # Rust `ve conformance` rows by request kind: (the statuses of an answer, its fields, counted fields);
-# the encoders are `rust/ve-core/src/order.rs` and the core dispatch. An error row is `{"id", "status": "error",
-# "error": {"code", "message"}}`.
+# the encoders are `rust/ve-profile/src/order.rs` and the core dispatch (`rust/ve/src/main.rs` `case`). An
+# error row is `{"id", "status": "error", "error": {"code", "message"}}`. Rust reads no source text and has
+# no label or dependency-order route (batch 15b): a case of no kind it serves is `unknown`, whose only row
+# is an error.
 RUST_ROWS = {
-    "label": ({"ok"}, {"label": "string"}, {}),
-    "dependency-order": ({"ok"}, {"order": "array<string>"}, {}),
-    "evaluate": ({"ok"}, {"values": "array<bool>"}, {"values": "case.ast"}),
-    "parse": ({"ok"}, {"ast": "json", "canonical": "string", "meaning_id": "string"}, {}),
+    "check": ({"ok"}, {"well_typed": "bool"}, {}),
+    "evaluate-budgeted": ({"Satisfied", "Violated", "ResourceLimit"}, {"value": "json"}, {}),
     "countermodel": ({"ok", "Valid", "NotCountermodel"}, {"valid": "bool"}, {}),
     "search": ({"Found", "NotFound", "ResourceLimit"}, {"model": "json"}, {}),
+    "unknown": (set(), {}, {}),
 }
 
 
 def rust_operation(case):
-    """The operation `ve conformance` reads a case as, by its fields (`rust/ve-core/src/order.rs`
+    """The operation `ve conformance` reads a case as, by its fields (`rust/ve-profile/src/order.rs`
     `order_case` and the core dispatch): a named kind, else premises and a conclusion are a countermodel
-    check with a model and a search without, else a document is evaluated with a model and parsed
-    without."""
+    check with a model and a search without; any other case is unknown (refused)."""
     kind = case.get("kind")
-    if kind in ("label", "dependency-order", "countermodel"):
+    if kind in ("check", "evaluate-budgeted", "countermodel"):
         return kind
     if "premises" in case and "conclusion" in case:
         return "countermodel" if "model" in case else "search"
-    return "evaluate" if "model" in case else "parse"
+    return "unknown"
 
 
 def manifest_bindings(executable, mode, kinds):
@@ -1031,6 +1039,20 @@ def lean_row_check(seed, case):
     return bound_row_problem("ve_conformance", mode, kinds)
 
 
+def rust_document_value_agrees(left, right):
+    """Whether Rust's answer to an evaluation, the document's value (`evaluate-budgeted`), is the
+    conjunction of the other engine's statement values: then the two answers agree. Any other pair is
+    compared as it is (a differing value is a `value` finding)."""
+    for (engine, x), (other, y) in ((left, right), (right, left)):
+        if engine == "rust" and other != "rust" and x["outcome"] == y["outcome"] == "ok":
+            mine, theirs = x.get("value") or {}, y.get("value") or {}
+            values = theirs.get("values")
+            if type(mine.get("value")) is bool and type(values) is list and \
+                    all(type(value) is bool for value in values):
+                return mine["value"] == all(values)
+    return False
+
+
 class Requests(Surface):
     """Every route request of the fixtures (`difffuzz_corpus.requests`)."""
     name = "requests"
@@ -1054,9 +1076,11 @@ class Requests(Surface):
             rust = None
             if template is not None:
                 engines.append("rust")
-                # The fields Rust's case reads from the input, and the ones `rust_request` sets itself.
-                rust = {"fields": [k for k in template if k in root],
-                        "constants": {k: v for k, v in template.items() if k not in root},
+                # The fields Rust's case reads from the input, and the ones `rust_request` sets itself
+                # (among them a kind it renames: an evaluation is Rust's `evaluate-budgeted`).
+                fields = [k for k in template if k in root and template[k] == root[k]]
+                rust = {"fields": fields,
+                        "constants": {k: v for k, v in template.items() if k not in fields},
                         "operation": rust_operation(template)}
             stem = origin.split("/")[1].split(".json")[0] if origin.startswith("conformance/") else \
                 "usecase:" + origin.split("/")[1]
@@ -1113,18 +1137,31 @@ class Requests(Surface):
             if bad:
                 out.append(bad)
             elif row["status"] != "error" and operation != seed.meta["rust"]["operation"]:
-                # A field the mutant dropped makes Rust read another request (a document parsed, not
-                # evaluated): Rust accepted the input, and its answer has nothing to compare.
+                # A field the mutant dropped makes Rust read another request (a countermodel searched,
+                # not checked): Rust accepted the input, and its answer has nothing to compare.
                 out.append(ok(None))
             else:
-                out.append(self._verdict(seed, rust_verdict({"kind": kind}, row)))
+                verdict = rust_verdict({"kind": kind}, row)
+                if kind == "evaluate" and verdict["status"] != "error":
+                    # Rust's evaluation verdict is the document's value (`evaluate-budgeted`).
+                    out.append(ok({"value": verdict["value"]}))
+                else:
+                    out.append(self._verdict(seed, verdict))
         return out
 
     def value_compared(self, seed, engine):
+        from conformance.three_way import python_owner
         # Rust's certificate verdict is a bounded search, not a replay (three-way test, plan 3.7).
-        return not (engine == "rust" and seed.meta["kind"] == "certificate")
+        if engine == "rust" and seed.meta["kind"] == "certificate":
+            return False
+        # Python's answer to a single-owner kind is that engine's own (a search is Rust's): its value
+        # against that engine compares nothing (review B2). Outcomes and codes still differ where
+        # Python's validation does.
+        return not (engine == "python" and python_owner(seed.meta["kind"]) in seed.engines)
 
     def equivalent(self, seed, left, right):
+        if seed.meta["kind"] == "evaluate":
+            return rust_document_value_agrees(left, right)
         # A certificate the Lean route rejects is an invalid certificate (`three_way.lean_verdict`): any
         # rejection but an unsupported profile or a resource limit means `valid: false`. Rust's
         # certificate answer is a bounded search that never reads the certificate, so the Lean route's
@@ -1185,7 +1222,7 @@ _CONTRACT_CODES = {}
 def contract_codes(contract):
     """{code: {class, summary}} of a production wire contract (`ve/wire_contract/<contract>.json`)."""
     if contract not in _CONTRACT_CODES:
-        from ve.wire_contract.engine import load
+        from conformance.wire_contract_engine import load
         _CONTRACT_CODES[contract] = load(contract)["codes"]
     return _CONTRACT_CODES[contract]
 
@@ -1211,17 +1248,18 @@ class Route:
     own: OwnCodes | None = None
 
 
-def _rust_label(env):
-    return {"kind": "label", "label": "asserted", "environment": env}
+def _rust_envelope(env):
+    from conformance.three_way import rust_envelope
+    return rust_envelope(env)
 
 
 ROUTES = {
-    "envelope": Route("ve_service", None, _rust_label, identity=True),
+    "envelope": Route("ve_service", None, _rust_envelope, identity=True),
     "alternatives": Route("ve_alternatives_route", {"kind": "alt-elaborate", "norms": []},
                           no_rust="Rust reads the four core envelope fields only (no alternatives block)"),
     "risk": Route("ve_risk_route", {"kind": "risk-elaborate", "document": {"norms": []}},
                   no_rust="Rust reads the four core envelope fields only (no risk block)"),
-    "soft-norms": Route("ve_soft_norms_route", {"kind": "soft-elaborate", "norms": []}, _rust_label,
+    "soft-norms": Route("ve_soft_norms_route", {"kind": "soft-elaborate", "norms": []}, _rust_envelope,
                         own=OwnCodes("soft-norms@0", _soft_route_python)),
     "speech": Route("ve_speech_acts_route", {"kind": "speech-elaborate", "document": {"units": []}},
                     no_rust="Rust reads the four core envelope fields only (no speech-acts block)"),
@@ -1397,9 +1435,9 @@ class Wire(Surface):
         return self._engines[unit]
 
     def _load_engine(self, unit):
-        from ve.wire_contract.engine import load
+        from conformance.wire_contract_engine import load
         if unit == "soft-norms@0":
-            from ve.softnorms_contract import REGISTRY
+            from conformance.softnorms_contract import REGISTRY
             return load("soft-norms@0"), {"registry": REGISTRY}
         if unit in corpus.WIRE_UNITS:
             from conformance.wire_contract_faults import unit_module
@@ -1409,7 +1447,7 @@ class Wire(Surface):
                                  "names": NAMES}
 
     def python(self, seed, root):
-        from ve.wire_contract.engine import CLEAN, Deferred, run
+        from conformance.wire_contract_engine import CLEAN, Deferred, run
         contract, options = self._engine(seed.profile)
 
         def diagnose():
@@ -1461,7 +1499,7 @@ class Wire(Surface):
     def _inherited(self, unit):
         if unit in self._inherited_cache:
             return self._inherited_cache[unit]
-        from ve.wire_contract.engine import load
+        from conformance.wire_contract_engine import load
         try:
             contract, options = self._engine(unit)
         except KeyError:
@@ -1513,7 +1551,83 @@ def _diagnose_kind(unit):
     return "corpus"
 
 
-SURFACES = {"requests": Requests, "environment": EnvironmentSurface, "wire": Wire}
+# Documents ------------------------------------------------------------------------
+
+class DocumentSurface(Surface):
+    """Every `ve-document@1` seed of `conformance/document_wrapper.py` (the repository's documents and the
+    generated ones), as `{"front", "body"}`: Python's `load_document` and `check_document` wrapper against the
+    Lean service's `document` mode. What is sent is the document text, always a string on the wire: a front
+    matter the restricted JSON reader does not read (`null`, a float) is the mode's own `CheckerUnavailable`.
+    The mode's texts are Python's, so every text is compared; Lean's `CheckerUnavailable` or `ResourceLimit`
+    (and Python's) agrees with any answer, and so does a rejection of an environment Python's `Environment`
+    rejects by itself (`document_wrapper.verdict`). Rust has no document reader."""
+    name = "document"
+    harness = frozenset({"difffuzz.py", "document_wrapper.py"})
+    # Token limits (64 bytes) on the names a document declares, and the 64 readings of a reading set.
+    LIMITS = ((("front", "units", "*", "id"), "max_bytes", 64), (("front", "open_terms", "*", "name"), "max_bytes", 64),
+              (("front", "reading_sets", "*", "id"), "max_bytes", 64),
+              (("front", "reading_sets", "*", "readings"), "max_items", 64),
+              (("front", "reading_sets", "*", "readings", "*", "id"), "max_bytes", 64))
+
+    def __init__(self):
+        self._service = None
+
+    def close(self):
+        if self._service is not None:
+            self._service.close()
+            self._service = None
+
+    def seeds(self):
+        from conformance import document_wrapper as dw
+        return [Seed("document", "document@1" if dw.owned(doc) else "document@1:unowned", name, doc,
+                     ("python", "lean")) for name, doc in dw.seeds() if dw.fuzzed(doc)]
+
+    def limits(self, seed):
+        return list(self.LIMITS)
+
+    def path(self, engine, seed, root):
+        return engine in ("python", "lean")
+
+    def answers(self, items):
+        """Python and Lean on every input (no off-wire refusal: the input is the document's text)."""
+        out = [{"rust": NOT_APPLICABLE} for _ in items]
+        for index, (seed, root) in enumerate(items):
+            out[index]["python"] = held("python", self.python(seed, root))
+        for index, answer in enumerate(self.lean(items)):
+            out[index]["lean"] = held("lean", answer)
+        return out
+
+    def python(self, seed, root):
+        from conformance import document_wrapper as dw
+        return call_python(lambda: dw.python_answer(dw.text_of(root)), self.harness)
+
+    def lean(self, items):
+        from conformance import document_wrapper as dw
+        texts = [dw.text_of(root) for _, root in items]
+        try:
+            if self._service is None:
+                from ve.backends.lean_service import LeanService
+                self._service = LeanService(timeout=HANG_TIMEOUT)
+            return dw.lean_answers(self._service, texts)
+        except Exception as exc:  # noqa: BLE001 - CheckerUnavailable (a malformed row) or a crash: split
+            self.close()
+            if len(items) == 1:
+                return [{"outcome": "panic", "text": f"{type(exc).__name__}: {exc}"[:300]}]
+            middle = len(items) // 2
+            return self.lean(items[:middle]) + self.lean(items[middle:])
+
+    def text_fixed(self, seed, left, right):
+        return True
+
+    def equivalent(self, seed, left, right):
+        from conformance import document_wrapper as dw
+        answers = dict([left, right])
+        if "python" not in answers or "lean" not in answers:
+            return False
+        return dw.verdict(answers["python"], answers["lean"]) in ("fail-closed", *dw.OWNED_ELSEWHERE)
+
+
+SURFACES = {"requests": Requests, "environment": EnvironmentSurface, "wire": Wire, "document": DocumentSurface}
 
 
 # ---------------------------------------------------------------- comparison

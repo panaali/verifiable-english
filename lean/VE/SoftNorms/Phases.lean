@@ -139,10 +139,18 @@ def declarations (environment : Json) (profiles : List String) :
   unless base.contains "definitions@0" do
     if let some (p, _) := preds.find? (fun (_, e) => (e.getObjVal? "defined").isOk) then
       fail "SOFT_INVALID_INPUT" s!"InvalidInput: {p} declares defined without definitions@0"
+  if preds.any (fun (_, e) =>
+      ((e.getObjValD "regulated").getObjValD "default") == .str "unspecified") then
+    if profiles.contains "norm-defaults@0" then
+      fail "SOFT_INVALID_INPUT"
+        "UnsupportedProfile: norm-defaults@0 documents are checked through fill (ve.norm_defaults)"
+    else
+      fail "SOFT_INVALID_INPUT" "UnsupportedProfile: unspecified completion requires norm-defaults@0"
   let stripped := (environment.setObjVal! "profiles" (toJson base)).setObjVal! "vocabulary"
     (Json.mkObj [("sorts", vocab.getObjValD "sorts"), ("constants", vocab.getObjValD "constants"),
       ("predicates", Json.mkObj (preds.map (fun (p, e) => (p, stripEntry e))))])
-  let ne ← inherited (Norms.Wire.decodeNormsEnvironment stripped)
+  -- A constant's `verbalisation` is display metadata that Python's `Environment` admits (DF-19).
+  let ne ← inherited (Norms.Wire.decodeNormsEnvironment stripped (displayConstants := true))
   let some block := (vocab.getObjVal? "soft").toOption | pure (ne, noBlock io)
   unless (VE.Bridge.displayFields block ["outranking"]
       ["parties", "ranks", "outranks", "ties", "exception_decider"]).isOk do

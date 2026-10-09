@@ -1,0 +1,169 @@
+{
+ "schema": 2,
+ "gated_commit": "160860662f770307f5bdfa237ad217a7f9ebcc37",
+ "base": "167eb8ff09ea693824cd0aedaf52588828f04afc",
+ "clean_worktree": true,
+ "commits": [
+  {
+   "sha": "53bb8fbd",
+   "subject": "readings-defaults RD-6a: S2a with a carried base-premise family"
+  },
+  {
+   "sha": "053e8f50",
+   "subject": "readings-defaults RD-6a: check the statements against the approved 6.7 text"
+  },
+  {
+   "sha": "bc413880",
+   "subject": "readings-defaults RD-6a: READINGS.md lists the 6.7 theorems in plain words"
+  },
+  {
+   "sha": "d0021754",
+   "subject": "readings-defaults RD-6a: batch report (gate evidence, the pending superpose_all_extra change, seeded bugs, checklist)"
+  },
+  {
+   "sha": "ef3559e9",
+   "subject": "readings-defaults RD-6a: bind batch evidence to final HEAD"
+  },
+  {
+   "sha": "03aeb667",
+   "subject": "readings-defaults RD-6a: normalize latency corpus requests"
+  },
+  {
+   "sha": "abcd2814",
+   "subject": "readings-defaults RD-6a: X1 in Lean, the approved superpose_all_extra refuted"
+  },
+  {
+   "sha": "69bcbe99",
+   "subject": "readings-defaults RD-6a: amended declarations need their original refuted in Lean"
+  },
+  {
+   "sha": "14abe970",
+   "subject": "readings-defaults RD-6a: only a report-only commit may follow the gated one"
+  },
+  {
+   "sha": "16086066",
+   "subject": "readings-defaults RD-6a: report from the gate note's committed copy"
+  }
+ ],
+ "lean": {
+  "build_jobs": 788,
+  "audit_files": 433,
+  "audit_theorems": 4687,
+  "statements": 4326,
+  "statements_added": 15,
+  "statements_removed": 0,
+  "lean_modules": 433
+ },
+ "statement_checker": {
+  "rd1_exact": 31,
+  "rd1_pending": 0,
+  "rd6a_checked": 7,
+  "rd6a_exact": 7,
+  "rd6a_amended": [
+   "superpose_all_extra"
+  ],
+  "rd6a_pending": [],
+  "rd6a_later": [
+   "fill_transfers",
+   "nd_superpose_all",
+   "nd_superpose_conflict_free"
+  ]
+ },
+ "trust_map": {
+  "check": "fails on main before this batch (S budget)",
+  "rd6a_S": 7
+ },
+ "tests_added": [
+  {
+   "file": "tests/test_batch_evidence.py",
+   "added": 13
+  },
+  {
+   "file": "tests/test_readings_defaults_rd6a.py",
+   "added": 2
+  },
+  {
+   "file": "tests/test_readings_defaults_rd6a_report.py",
+   "added": 7
+  },
+  {
+   "file": "tests/test_readings_defaults_statements.py",
+   "added": 22
+  }
+ ],
+ "seeded_bugs": [
+  {
+   "id": "M1",
+   "file": "lean/VE/Readings/SupExtra.lean",
+   "bug": "Transfers carries Q one way only (→ for ↔)",
+   "failed": "lake build: 5 errors, in superpose_conflict_free_extra (both directions), superpose_all_extra, superpose_countermodel_extra and transfers_nil"
+  },
+  {
+   "id": "M2",
+   "file": "lean/VE/Readings/SupExtra.lean",
+   "bug": "supCertificateCheckExtra drops Q from the slot",
+   "failed": "lake build: superpose_all_extra (the certificate no longer covers Q)"
+  },
+  {
+   "id": "M3",
+   "file": "lean/VE/Readings/SupExtra.lean",
+   "bug": "supModelCheckExtra reads Q through the outcome substitution with the assertions, not on the base",
+   "failed": "lake build: superpose_countermodel_extra (Q no longer holds of the base)"
+  },
+  {
+   "id": "M4",
+   "file": "tools/check_readings_defaults_statements.py",
+   "bug": "an amended declaration is not compared with the edit its ruling accepts",
+   "failed": "pytest: test_rd6a_checker_fails_on_every_changed_declaration[theorem-superpose_all_extra], test_rd6a_checker_fails_on_the_approved_all_statement"
+  },
+  {
+   "id": "M5",
+   "file": "tools/check_readings_defaults_statements.py",
+   "bug": "an RD-6b declaration is skipped even when it is in the file",
+   "failed": "pytest: test_rd6a_checker_compares_an_rd6b_declaration_once_built"
+  },
+  {
+   "id": "M6",
+   "file": "tests/test_readings_defaults_rd6a_report.py",
+   "bug": "the report check finds no mismatch, whatever the evidence",
+   "failed": "pytest: 4 of the 7 report tests (every changed evidence leaf, every changed note value, a changed corpus count or latency, the empty report)"
+  },
+  {
+   "id": "M7",
+   "file": "tools/check_readings_defaults_statements.py",
+   "bug": "an amended declaration passes without its refutation being checked",
+   "failed": "pytest: 9 tests of test_readings_defaults_statements.py (every refuted-proposition mutant, the missing and wrong refutations, the unaudited refutation)"
+  },
+  {
+   "id": "M8",
+   "file": "lean/VE/Readings/SupExtraExamples.lean",
+   "bug": "SuperposeAllExtraApproved drops the hypothesis hcf",
+   "failed": "lake build: the example tying it to superpose_all_extra and superpose_all_extra_refuted; the statement checker"
+  },
+  {
+   "id": "M9",
+   "file": "tools/batch_evidence.py",
+   "bug": "a commit after the gate may change any path",
+   "failed": "pytest: test_a_report_commit_may_change_only_the_report_directory, test_report_commit_check_reads_git"
+  },
+  {
+   "id": "M10",
+   "file": "lean/VE/Readings/SupExtraExamples.lean",
+   "bug": "the conflict certificate is a bare close",
+   "failed": "lake build: #guard X1Checks"
+  },
+  {
+   "id": "M11",
+   "file": "lean/VE/Readings/SupExtraExamples.lean",
+   "bug": "Q is over the base predicate asks, not the layer symbol avoid_required",
+   "failed": "lake build: the X1 guards, noAvoid_of_empty and the failing conclusion of superpose_all_extra_refuted"
+  },
+  {
+   "id": "M12",
+   "file": "docs/readings-defaults/rd6a/gate-note.json",
+   "bug": "the pilot retry's reason is empty",
+   "failed": "pytest: test_a_replaced_corpus_record_states_why"
+  }
+ ],
+ "disk_free_gb": 57
+}

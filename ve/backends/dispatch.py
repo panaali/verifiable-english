@@ -71,10 +71,8 @@ def overridden(op: str) -> bool:
     return op in _overrides()
 
 
-# Operations whose other backend may only shadow Python: no selection (VE_AUTHORITY, a named override, a pin)
-# makes it the authority. english.admission keeps the English reader outside admission until its authority
-# moves (english-lean S2, DRI ruling 6; ve/assurance-manifest.json lists english.read as planned only).
-SHADOW_ONLY = frozenset({"english.admission"})
+# Operations with a temporary Python-authority shadow policy.
+SHADOW_ONLY = frozenset()
 
 
 def shadowed(op: str, payload: dict, python: Callable[[], T], candidate: Callable[[], T],
@@ -182,6 +180,26 @@ def _append(record: dict) -> None:
             stream.write(line)
 
 
+# Operations with ONE implementation under every authority, and the engine it runs (lean-first batch 15b:
+# Rust keeps search; Python has none). There is nothing to shadow, and differential harnesses must not
+# compare a "Python" answer of these operations with that engine's own (`conformance.three_way`,
+# `tools/difffuzz.py`): they compare it with recorded answers or with another engine's check instead.
+SINGLE_OWNER = {"countermodel_search": "rust", "distinguishing_model": "rust"}
+
+
+def owned(op: str, run: Callable[[], T]) -> T:
+    """Run a single-owner operation (SINGLE_OWNER) under whatever authority is selected; observers
+    still see the selection, which the operation's constituents (its witness checks) follow.
+    Shadow has no authoritative backend, so its single implementation uses Python checks."""
+    if op not in SINGLE_OWNER:
+        raise ValueError(f"{op} is not a single-owner operation")
+    authority = authority_for(op)
+    for observe in observers:
+        observe(op, authority)
+    with pinned("python" if authority == "shadow" else authority):
+        return run()
+
+
 def execute(op: str, payload: dict, python: Callable[[], T], *,
             lean: Callable[[], T] | None = None,
             rust: Callable[[], T] | None = None,
@@ -196,6 +214,9 @@ def execute(op: str, payload: dict, python: Callable[[], T], *,
     """
     if op in SHADOW_ONLY:
         raise ValueError(f"{op} is shadow-only: dispatch it through `shadowed`")
+    if op in SINGLE_OWNER or python is lean or python is rust:
+        # A shadow (or a differential test) of one implementation against itself compares nothing.
+        raise ValueError(f"{op} has one implementation: dispatch it through `owned`")
     authority = authority_for(op)
     for observe in observers:
         observe(op, authority)

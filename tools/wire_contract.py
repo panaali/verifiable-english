@@ -8,6 +8,7 @@ import argparse
 import hashlib
 import importlib
 import json
+import os
 from pathlib import Path
 import re
 import sys
@@ -16,7 +17,7 @@ from tools.wire_contract_lean import module as lean_module, name_class as lean_n
 
 from lean.audit import FORBIDDEN
 from ve.wire import canonical_json, loads_json
-from ve.wire_contract.engine import CLEAN, Registry, pieces as split_template, run
+from conformance.wire_contract_engine import CLEAN, Registry, pieces as split_template, run
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "ve/wire_contract"
@@ -54,7 +55,7 @@ def _hash(value):
 # registry and the legacy validation that must accept each of its examples, `(module, function)`. Every
 # other path of a unit is named from the unit (`unit_paths`).
 UNITS = {
-    "soft-norms@0": ("ve.softnorms_contract", ("ve.softnorms", "load_soft_document")),
+    "soft-norms@0": ("conformance.softnorms_contract", ("ve.softnorms", "load_soft_document")),
     "norms@0": ("ve.norms_contract", ("ve.norms_contract", "legacy_validation")),
     "norm-defaults@0": ("ve.norm_defaults_contract", ("ve.norm_defaults_contract", "legacy_validation")),
 }
@@ -614,11 +615,17 @@ def _check_unit(unit, contracts, directory, limits, names, write, findings, issu
     for example in (() if generated_only else examples):
         try:
             root = loads_json(example.read_bytes())
-            if legacy is not None:
+            # The staged pre-commit snapshot has sources only. The validators
+            # and engine can reach the Lean service, whose executable is not
+            # part of the index. Parse examples here; the built-tree check
+            # below and the targeted tests verify their admission and verdicts.
+            staged = os.environ.get("VE_WIRE_CONTRACT_STAGED") == "1"
+            if legacy is not None and not staged:
                 legacy(root["environment"], root["norms"])
-            if run(contracts[unit], root, registry=registry, contracts=contracts,
-                   limits=limits, names=names) is not CLEAN:
-                issue(example, "WC10", "engine does not report clean")
+            if not staged:
+                if run(contracts[unit], root, registry=registry, contracts=contracts,
+                       limits=limits, names=names) is not CLEAN:
+                    issue(example, "WC10", "engine does not report clean")
         except Exception as exc:
             issue(example, "WC10", f"example is not accepted: {exc}")
     generated = english_table(contracts[unit], limits=limits)

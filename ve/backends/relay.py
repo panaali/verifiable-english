@@ -113,6 +113,8 @@ def _raised(entry: dict) -> BaseException:
             error.path = row["path"]
         if type(row.get("code")) is str:
             error.code = row["code"]
+        if row.get("dual_guard_cycle") is True:
+            error.dual_guard_cycle = True
         # Provenance only: the Gate 2 parity tool counts a rejection cell as
         # backend-decided when the error the operation raised carries this mark.
         error.backend_rejection = True

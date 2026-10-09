@@ -41,11 +41,12 @@ def decodeEnvironment (j : Json) : Except String Vocabulary := do
   let cs ← constants.mapM fun (c, entry) => do
     let literal := entry.getObjValD "sort" == .str "$string"
     if literal then
-      displayFields entry ["sort"] ["description"]
+      displayFields entry ["sort"] ["description", "verbalisation"]
       if let .ok _ := entry.getObjVal? "description" then description entry
     else
-      exactFields entry ["sort", "description"]
+      displayFields entry ["sort", "description"] ["verbalisation"]
       description entry
+    if let .ok words := entry.getObjVal? "verbalisation" then displayString words
     let s ← VE.Bridge.constantSort entry (fun sort => sortNames.contains sort || sort == "$string")
     pure (c, s)
   if (cs.filter (fun c => c.2 == "$string")).length > 64 then

@@ -20,9 +20,10 @@ import reprlib
 
 DIRECTORY = Path(__file__).resolve().parent / "lean_service_schema"
 MODES = ("evaluate", "check-certificate", "order", "route", "norms", "english",
+         "english.read", "english.grammar", "english.check",
          "environment", "model", "check", "identity", "parse", "graph", "readings", "bundle", "family-norms",
          "soft-norms", "rights", "speech-acts", "reports", "alternatives", "risk", "risk-eval", "quantity",
-         "norm-defaults", "discourse", "readings-route", "diagnose")
+         "norm-defaults", "discourse", "readings-route", "diagnose", "document")
 
 
 class Invalid(Exception):

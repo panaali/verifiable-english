@@ -49,6 +49,9 @@
           {"contains": {"const": "route"}},
           {"contains": {"const": "norms"}},
           {"contains": {"const": "english"}},
+          {"contains": {"const": "english.read"}},
+          {"contains": {"const": "english.grammar"}},
+          {"contains": {"const": "english.check"}},
           {"contains": {"const": "environment"}},
           {"contains": {"const": "model"}},
           {"contains": {"const": "check"}},
@@ -69,7 +72,8 @@
           {"contains": {"const": "norm-defaults"}},
           {"contains": {"const": "discourse"}},
           {"contains": {"const": "readings-route"}},
-          {"contains": {"const": "diagnose"}}
+          {"contains": {"const": "diagnose"}},
+          {"contains": {"const": "document"}}
         ]
       },
       "protocol": {"const": 2},

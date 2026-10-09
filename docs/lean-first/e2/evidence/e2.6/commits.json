@@ -1,0 +1,50 @@
+{
+ "format": "ve-e2.6-commits@1",
+ "range": "main..HEAD --no-merges; the branch starts at main 6fd95b01",
+ "commits": [
+  {
+   "commit": "43145aba",
+   "subject": "Soft-norms route reads a constant's verbalisation as display metadata (DF-19)"
+  },
+  {
+   "commit": "0c1bd83e",
+   "subject": "Lean diagnoses a sentence without a reading and decides English admission"
+  },
+  {
+   "commit": "484728bb",
+   "subject": "Norm-defaults route admits data@0 flags; a supplied model must satisfy them (DF-17)"
+  },
+  {
+   "commit": "e093d05f",
+   "subject": "E2.6 readability replay: no regression against E2.5's saved base"
+  },
+  {
+   "commit": "de009969",
+   "subject": "Lean reads three environments Python's reader admitted: an apostrophe, a generated soft frame, modal homonyms"
+  },
+  {
+   "commit": "ac2da023",
+   "subject": "A generated soft frame is read as a generated frame by every route of the boundary"
+  },
+  {
+   "commit": "dfacc51b",
+   "subject": "E2.6 corpus A/B: no unexplained verdict and no availability row"
+  },
+  {
+   "commit": "658c0a75",
+   "subject": "E2.6 report, spec 4.5 and 15, DELTA and LEDGER: Lean is the English authority"
+  },
+  {
+   "commit": "c247ea21",
+   "subject": "Gate collection: the restored Lean-authority test names and the E2.6 tests"
+  },
+  {
+   "commit": "139c6ad0",
+   "subject": "Gate fixes: the statement dump, trust classes, recorded test inputs and lake lookup"
+  },
+  {
+   "commit": "a8d6eec0",
+   "subject": "Fuzzer baseline: the findings E2.6's recorded test inputs bring into the CI sample"
+  }
+ ]
+}

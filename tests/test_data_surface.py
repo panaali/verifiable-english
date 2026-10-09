@@ -35,7 +35,7 @@ def test_writable_attribute_description_and_non_total_refusal():
     text = render_english(atom, env) + "."
     assert text == "The department of alice is finance."
     assert parse_english(env, text).formulas == (atom,)
-    with pytest.raises(Exception, match="functional and total"):
+    with pytest.raises(Exception, match="no reading with the current vocabulary"):
         parse_english(environment(total=False), text)
 
 

@@ -1,4 +1,5 @@
 import VE.NormDefaults.Replay
+import VE.Route.Flags
 
 /-! The `norm-defaults-report` case (docs/spec/norm-defaults.md 3.2 and 5): the lines of
 every regulated predicate, decided here from checked evidence.
@@ -110,6 +111,12 @@ def completionLabel : Completion → String
   | .allow => "allow"
   | .unspecified => "unspecified"
 
+/-- The value a completion gives where no author rule decides (`Explain.value3_gap`). -/
+def completedLabel : Completion → String
+  | .deny => "no"
+  | .allow => "yes"
+  | .unspecified => "unsaid"
+
 /-! ## The static cone (2.5) -/
 
 /-- The predicates named in the guards and carve-outs of the rules on `p`. -/
@@ -214,6 +221,45 @@ theorem admissibleX_of_fill (U : UDoc) (h : WellFormedU U = true) (X : List VE.F
   ⟨admissible_of_fillValid U h M valid hb F hF, fun φ hφ =>
     (eval_withFill U M F φ []).mp (List.all_eq_true.mp hX φ hφ)⟩
 
+end VE.NormDefaults.Wire
+
+namespace VE.NormDefaults
+open VE.Norms
+universe u
+
+/-- A finite base model with a separate filling: the base background, `Fill_T`, and each premise read through the
+    outcome substitution of `fill U`; the second component is the conclusion's value. -/
+def modelCheckU {α : Type u} [DecidableEq α] (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel α)
+    (F : VE.NormDefaults.FiniteFill U α) (Γ : List VE.Formula) (φ : VE.Formula) : Bool × Bool :=
+  (VE.Norms.backgroundValid U.D M && VE.NormDefaults.fillValid U M F &&
+     Γ.all (fun a => (VE.Norms.subst (VE.NormDefaults.fill U).T (size (VE.NormDefaults.fill U)) a).eval (M.withFill F) []),
+   (VE.Norms.subst (VE.NormDefaults.fill U).T (size (VE.NormDefaults.fill U)) φ).eval (M.withFill F) [])
+
+/-- A passing model check is an admissible filled situation where every premise holds, and the conclusion's value
+    is the one the check reports (the core `choice-model` replays under the completion). -/
+theorem modelCheckU_sound {α : Type u} [DecidableEq α] (U : VE.NormDefaults.UDoc)
+    (h : VE.NormDefaults.WellFormedU U = true) (M : VE.FiniteModel α) (valid : M.Valid (envAt U.D 0))
+    (F : VE.NormDefaults.FiniteFill U α) (Γ : List VE.Formula) (φ : VE.Formula)
+    (hm : (modelCheckU U M F Γ φ).1 = true) :
+  VE.NormDefaults.BaseAdmissibleU U (VE.NormDefaults.withFill U M.asStructure (VE.NormDefaults.finFill M F)) ∧
+  (∀ a ∈ Γ, (VE.Norms.subst (VE.NormDefaults.fill U).T (size (VE.NormDefaults.fill U)) a).denote
+      (VE.NormDefaults.withFill U M.asStructure (VE.NormDefaults.finFill M F)) []) ∧
+  ((VE.Norms.subst (VE.NormDefaults.fill U).T (size (VE.NormDefaults.fill U)) φ).denote
+      (VE.NormDefaults.withFill U M.asStructure (VE.NormDefaults.finFill M F)) [] ↔
+    (modelCheckU U M F Γ φ).2 = true) := by
+  simp only [modelCheckU, Bool.and_eq_true, List.all_eq_true] at hm
+  obtain ⟨⟨hb, hF⟩, hΓ⟩ := hm
+  exact ⟨admissible_of_fillValid U h M valid hb F hF,
+    fun a ha => (eval_withFill U M F _ []).mp (hΓ a ha), (eval_withFill U M F _ []).symm⟩
+
+end VE.NormDefaults
+
+namespace VE.NormDefaults.Wire
+open Lean
+open VE.Norms VE.Route
+open VE.Bridge (Entity fields strings)
+universe u
+
 /-- A checked filled situation reaches `r`. -/
 theorem reachedSome_of_fill (U : UDoc) (h : WellFormedU U = true) (X : List VE.Formula)
     (M : VE.FiniteModel Entity) (valid : M.Valid (envAt U.D 0)) (hb : backgroundValid U.D M = true)
@@ -290,7 +336,7 @@ def LineU.toJson {U X cited translation} (l : LineU U X cited translation) : Jso
     ("reached", .str l.reached.label), ("lines", Lean.toJson l.lines),
     ("inherits_from", Lean.toJson (inheritsFrom U l.r.name))] ++
     (match l.witness with
-     | some w => [("witness", w.toJson)]
+     | some w => [("witness", w.toJson), ("value", .str (completedLabel (completionOf U l.r)))]
      | none => []))
 
 /-- The situation's own witness search, checked. -/
@@ -414,14 +460,12 @@ def situationFrom (s : SourceU) (m : Json) : Except String (SituationG s.U) := d
       if n.startsWith "unsaid__" then
         throw s!"InvalidModel(norm-defaults): {n} is a filling; supply it as a filling, not a table"
   let v := VE.Norms.Replay.baseModelVocabulary s.src.ne s.src.D
-  let data ← VE.Bridge.decodeModelData v m
-  if hv : data.valid v = true then
-    if hb : backgroundValid s.U.D data.toModel = true then
-      pure ⟨data.toModel, by
-        rw [s.doc]
-        exact VE.Norms.Replay.baseModel_valid s.src.ne s.src.D s.src.env _ (VE.Bridge.modelData_valid data v hv), hb⟩
-    else throw (VE.Route.Wire.invalidModel "literals")
-  else throw "model is not semantically admissible"
+  let a ← admitModel s v (← VE.Bridge.decodeModelData v m)
+  if hb : backgroundValid s.U.D a.data.toModel = true then
+    pure ⟨a.data.toModel, by
+      rw [s.doc]
+      exact VE.Norms.Replay.baseModel_valid s.src.ne s.src.D s.src.env _ (VE.Bridge.modelData_valid a.data v a.valid), hb⟩
+  else throw (VE.Route.Wire.invalidModel "literals")
 
 /-- A supplied filled model of `E‴_base` for `r` (the `witnesses` entry named `r`), replayed. -/
 def suppliedWitness (s : SourceU) (witnesses : Json) (r : Regulated) :

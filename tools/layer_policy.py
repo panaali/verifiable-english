@@ -17,7 +17,7 @@ NAMES = {1: "kernel", 2: "profiles", 3: "surface", 4: "tools", 5: "apps-and-meas
 PYTHON = {
     1: "ast environment environment_wire errors identity limits model wire wire_contract assurance".split(),
     2: ("background closure definitions entailment evaluate norms order profiles "
-        "alternatives rights softnorms softnorms_contract norms_contract speech_acts units").split(),
+        "alternatives rights softnorms norms_contract speech_acts units").split(),
     3: ("english english_grammar english_phrases english_vocabulary fluent fol grammar natural "
         "norm_english parser printer surface lexicon report_english speech_english readings_english "
         "readings_s2_english senses").split(),
@@ -25,7 +25,7 @@ PYTHON = {
         "document equivalence norm_admission norm_defaults norm_defaults_contract norm_defaults_english norm_defaults_route norm_strict "
         "openterms propose readings search stream_audit vacuity assist discourse "
         "reports reports_route risk rights_route soft_route speech_document readings_route readings_s1 "
-        "readings_sup readings_verdicts readings_s2_wording").split(),
+        "readings_sup readings_verdicts readings_s2_wording senses_document").split(),
     5: ["argument_fixtures"],
 }
 PYTHON_MODULES = {f"ve.{name}": layer for layer, names in PYTHON.items() for name in names}
@@ -113,9 +113,9 @@ def lean_entry(module: str) -> bool:
 def lean_layer(module: str) -> int | None:
     if module in {"VE", "VE.Audit", "Iceberg", "VE.Checks", "VE.Route.Checks"}:
         return 5  # aggregation and audit targets
-    if module == "VE.EnglishGrammar.ProfileExamples":
+    if module in {"VE.EnglishGrammar.ProfileExamples", "VE.EnglishGrammar.E2Examples"}:
         return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run
-    if lean_entry(module) or module.endswith(".Run") or module.startswith("VE.Service."):
+    if lean_entry(module) or module.endswith(".Run") or module == "VE.Route.MeteredRun" or module.startswith("VE.Service."):
         return 4
     if module == "ResponseShape" or module.startswith("ResponseShape."):
         return 4  # the service's response shapes: ve_response_decode and the client's schema source
@@ -165,7 +165,7 @@ def source_layer(path: str) -> int | None:
         if p.suffix == ".rs":
             # The ve-core facade's tests exercise the whole API, so a change there selects as kernel.
             crate = parts[1] if len(parts) > 1 else ""
-            return {"ve-kernel": 1, "ve-core": 1, "ve-profile": 2, "ve-surface": 3}.get(crate, 4)
+            return {"ve-kernel": 1, "ve-core": 1, "ve-profile": 2}.get(crate, 4)
         if p.suffix in {".py", ".json"} and p.name not in {"Cargo.lock"}:
             return 5  # benchmarks and generated measurement reports
         return 1 if p.name in {"Cargo.toml", "Cargo.lock"} else None

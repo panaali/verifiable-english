@@ -1,0 +1,294 @@
+{
+ "base": "51853586",
+ "commits_before_report": [
+  "7d37c8bf",
+  "d570642a",
+  "6c6f4cc0",
+  "22e9037d",
+  "6aa8a006",
+  "28673096",
+  "817dfd16",
+  "593e0227",
+  "f99c84e4",
+  "18319355"
+ ],
+ "lean": {
+  "build_jobs": 840,
+  "audit_source_files": 454,
+  "audit_theorems": 4852,
+  "audit_theorems_base": 4801,
+  "statements": 4467,
+  "statements_base": 4422,
+  "statements_changed": 0,
+  "statements_removed": 0
+ },
+ "statement_check": {
+  "rd1": {
+   "exact": 31,
+   "pending": 0,
+   "declarations": 31
+  },
+  "rd2a": {
+   "exact": 16,
+   "pending": 0,
+   "declarations": 16
+  },
+  "rd4a": {
+   "exact": 10,
+   "pending": 0,
+   "declarations": 10,
+   "theorems": 4
+  },
+  "rd6a": {
+   "exact": 7,
+   "pending": 0,
+   "amended": 1
+  }
+ },
+ "service_fixtures": {
+  "file": "tests/test_readings_companions_lean.py",
+  "collected": 19,
+  "functions": 15,
+  "serial_seconds": 0.62
+ },
+ "suite": {
+  "workers": 16,
+  "chunks": [
+   {
+    "chunk": 0,
+    "head": "18319355",
+    "files": 1,
+    "passed": 2675,
+    "skipped": 0,
+    "failed": 0,
+    "errors": 0,
+    "seconds": 24.93
+   },
+   {
+    "chunk": 1,
+    "head": "18319355",
+    "files": 44,
+    "passed": 1388,
+    "skipped": 0,
+    "failed": 0,
+    "errors": 0,
+    "seconds": 298.27
+   },
+   {
+    "chunk": 2,
+    "head": "18319355",
+    "files": 44,
+    "passed": 1387,
+    "skipped": 0,
+    "failed": 0,
+    "errors": 0,
+    "seconds": 1292.86
+   },
+   {
+    "chunk": 3,
+    "head": "f99c84e4",
+    "files": 44,
+    "passed": 1386,
+    "skipped": 2,
+    "failed": 0,
+    "errors": 0,
+    "seconds": 904.61
+   },
+   {
+    "chunk": 4,
+    "head": "f99c84e4",
+    "files": 45,
+    "passed": 1387,
+    "skipped": 1,
+    "failed": 0,
+    "errors": 0,
+    "seconds": 487.42
+   },
+   {
+    "chunk": 5,
+    "head": "18319355",
+    "files": 45,
+    "passed": 1386,
+    "skipped": 2,
+    "failed": 0,
+    "errors": 0,
+    "seconds": 557.29
+   },
+   {
+    "chunk": 6,
+    "head": "18319355",
+    "files": 45,
+    "passed": 1388,
+    "skipped": 0,
+    "failed": 0,
+    "errors": 0,
+    "seconds": 684.99
+   },
+   {
+    "chunk": 7,
+    "head": "18319355",
+    "files": 45,
+    "passed": 1387,
+    "skipped": 1,
+    "failed": 0,
+    "errors": 0,
+    "seconds": 110.97
+   }
+  ],
+  "collected": 12391,
+  "note": "chunks 3 and 4 ran at f99c84e4, whose tree differs from 18319355 only in tests/test_readings_lean_sharing.py (chunk 5)"
+ },
+ "ab": {
+  "files": [
+   "ab-readings-pilots.json",
+   "ab-rights-norm-defaults-discourse.json",
+   "ab-python-authority.json"
+  ],
+  "records": 54504,
+  "same": 54500,
+  "unavailable_both": 4,
+  "unlisted": 4,
+  "different": 0,
+  "record_sha256_equal": {
+   "readings+pilots": "e3db7e50ce4c105f",
+   "rights+norm_defaults+discourse": "96002f0a35eeeb18",
+   "probe+conformance+quantity (python)": "ea090c2796e311dc"
+  },
+  "not_recorded": [
+   "probe/lean",
+   "conformance/lean",
+   "quantity/lean"
+  ]
+ },
+ "seeded_bugs": [
+  {
+   "id": "M1",
+   "file": "lean/VE/Readings/Companions.lean",
+   "failed": [
+    "tests/test_readings_companions_lean.py::test_fc2_a_name_declared_differently"
+   ],
+   "guard_errors_at_lines": [
+    30,
+    58
+   ],
+   "sorried": [
+    "addDecl_spec"
+   ]
+  },
+  {
+   "id": "M2",
+   "file": "lean/VE/Readings/Companions.lean",
+   "failed": [
+    "tests/test_readings_companions_lean.py::test_fc3_a_set_mixing_readings_with_and_without_their_own_vocabulary"
+   ],
+   "guard_errors_at_lines": [
+    126
+   ],
+   "sorried": []
+  },
+  {
+   "id": "M3",
+   "file": "lean/VE/Readings/Companions.lean",
+   "failed": [
+    "tests/test_readings_companions_lean.py::test_fc9_a_coupling_across_components_is_refused_one_within_main_is_kept"
+   ],
+   "guard_errors_at_lines": [
+    120
+   ],
+   "sorried": []
+  },
+  {
+   "id": "M4",
+   "file": "lean/VE/Readings/Companions.lean",
+   "failed": [
+    "tests/test_readings_companions_lean.py::test_fc7_meaning_ids_of_the_udhr_companions"
+   ],
+   "guard_errors_at_lines": [],
+   "sorried": []
+  },
+  {
+   "id": "M5",
+   "file": "lean/VE/Readings/Companions.lean",
+   "failed": [
+    "tests/test_readings_companions_lean.py::test_fc11_a_narrowing_travels_with_its_companion_set"
+   ],
+   "guard_errors_at_lines": [
+    107
+   ],
+   "sorried": [
+    "componentDoc_arr",
+    "split_keeps_links"
+   ]
+  },
+  {
+   "id": "M6",
+   "file": "lean/VE/Readings/Run.lean",
+   "failed": [
+    "tests/test_readings_companions_lean.py::test_kinds_naming_one_component",
+    "tests/test_readings_companions_lean.py::test_without_companions_the_answer_is_todays"
+   ],
+   "guard_errors_at_lines": [],
+   "sorried": []
+  },
+  {
+   "id": "M7",
+   "file": "lean/VE/Readings/Companions.lean",
+   "failed": [
+    "tests/test_readings_companions_lean.py::test_fc8_a_companion_on_the_soft_or_rights_chain"
+   ],
+   "guard_errors_at_lines": [],
+   "sorried": []
+  },
+  {
+   "id": "M8",
+   "file": "lean/VE/Readings/Companions.lean",
+   "failed": [
+    "tests/test_readings_companions_lean.py::test_fc5_identical_declarations_unite_whatever_their_key_order"
+   ],
+   "guard_errors_at_lines": [],
+   "sorried": []
+  },
+  {
+   "id": "M9",
+   "file": "lean/VE/Readings/Companions.lean",
+   "failed": [
+    "tests/test_readings_companions_lean.py::test_fc10_open_terms_merge_by_name_and_are_typed_in_the_merged_frame"
+   ],
+   "guard_errors_at_lines": [
+    79
+   ],
+   "sorried": [
+    "mergeOpenTerms_ok",
+    "mergeOpenTerms_identical"
+   ]
+  },
+  {
+   "id": "M10",
+   "file": "lean/VE/Readings/Run.lean",
+   "failed": [
+    "tests/test_readings_companions_lean.py::test_fc10_open_terms_merge_by_name_and_are_typed_in_the_merged_frame",
+    "tests/test_readings_companions_lean.py::test_fc11_a_narrowing_travels_with_its_companion_set",
+    "tests/test_readings_companions_lean.py::test_fc12_an_unseparated_set_stays_in_main_as_w2",
+    "tests/test_readings_companions_lean.py::test_fc1_three_components_each_answered_as_a_document_of_its_own",
+    "tests/test_readings_companions_lean.py::test_fc5_identical_declarations_unite_whatever_their_key_order",
+    "tests/test_readings_companions_lean.py::test_fc7_meaning_ids_of_the_udhr_companions",
+    "tests/test_readings_companions_lean.py::test_fc9_a_coupling_across_components_is_refused_one_within_main_is_kept"
+   ],
+   "guard_errors_at_lines": [],
+   "sorried": []
+  },
+  {
+   "id": "M11",
+   "file": "lean/VE/Readings/Run.lean",
+   "failed": [
+    "tests/test_readings_lean_sharing.py::test_the_route_admits_the_case_document_once"
+   ],
+   "guard_errors_at_lines": [],
+   "sorried": []
+  }
+ ],
+ "trust_map": {
+  "unclassified": 0
+ },
+ "disk_free_gb": 83
+}

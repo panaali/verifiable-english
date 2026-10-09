@@ -144,7 +144,7 @@ class RightsDocument:
     rendering and proof-search callers; they do not decide rights acceptance.
     """
 
-    def __init__(self, env: RightsEnvironment, units, *, open_predicates=()):
+    def __init__(self, env: RightsEnvironment, units, *, open_predicates=(), deferred=False):
         from .rights_route import run_rights_case
         from .errors import CheckerUnavailable
         from .ast import formula_from_data, _Decoder
@@ -228,20 +228,29 @@ class RightsDocument:
                      for r, ref in zip(row["lines"], refs)]
             rules.extend({"norm": u["norm"]} for u in self.outside)
             rules.extend(rule_from_node(n, {}) for n in row["bars"])
-            self.soft_document = SoftNormDocument(self.environment, rules)
+            # The rights row has already checked the complete source. Candidate
+            # readers that only need its rules can defer the separate soft row.
+            self.soft_document = SoftNormDocument(self.environment, rules, deferred=deferred)
             for instance, rule in zip(self.instances, self.soft_document.rules):
                 instance["rule"] = rule
             self.limitation_premises = tuple((item["label"],
-                formula_from_data(self.soft_document.extended_env, item["ast"], _generated=True))
+                formula_from_data(self.environment, item["ast"], _generated=True))
                 for item in row["limitations"])
-            object.__setattr__(self.soft_document.extended_env, "rights_premises",
-                               self.limitation_premises)
             self.wordings = row["wordings"]
             object.__setattr__(self.environment, "rights_wordings", self.wordings)
-            object.__setattr__(self.soft_document.extended_env, "rights_wordings", self.wordings)
+            self.soft_document.extend(rights_premises=self.limitation_premises,
+                                      rights_wordings=self.wordings)
         except Exception as exc:
             raise CheckerUnavailable("CheckerUnavailable: Lean accepted a rights source that "
                                      "the Python container could not build") from exc
+
+    @classmethod
+    def warm_rules(cls, env, documents):
+        """Compatibility entry for candidate readers.
+
+        The rights route now validates each complete source before constructing
+        its Python view, so there are no separate line-rule requests to warm.
+        """
 
 def correlate(environment, units):
     """Return the validated holder-side document and its soft elaboration."""
