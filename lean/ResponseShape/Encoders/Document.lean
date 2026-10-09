@@ -5,7 +5,8 @@ open Lean ResponseShape ResponseShape.Skeletons
 
 theorem unit_fits (j : Json) (u : VE.Service.Document.SourceUnit) :
     Fits j (skel% "document.json#/$defs/unit") (VE.Service.Document.unitJson u) := by
-  cases h : u.parent <;> simp [VE.Service.Document.unitJson, h] <;> fits
+  cases h : u.parent <;> cases hc : u.content <;> cases hm : u.meaningId <;>
+    simp [VE.Service.Document.unitJson, h, hc, hm] <;> fits
 
 /-- The alternatives route's coverage line fits the document schema's `block_coverage` (its cells as relayed,
 with the document's own narrowings). -/

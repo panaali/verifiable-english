@@ -3,27 +3,27 @@
  "totals": {
   "K": 978,
   "S": 9434,
-  "D": 12952,
-  "G": 24417,
+  "D": 13129,
+  "G": 24456,
   "C": 8130,
-  "P": 66646,
-  "T": 13264,
-  "o": 11439,
-  "D[V]": 11787,
-  "D[R]": 666,
+  "P": 66647,
+  "T": 13278,
+  "o": 11451,
+  "D[V]": 11812,
+  "D[R]": 818,
   "D[I]": 499,
-  "G[V]": 22840,
-  "G[R]": 1353,
+  "G[V]": 22831,
+  "G[R]": 1401,
   "G[I]": 224,
   "tied": 171,
   "unclassified": 0,
-  "trusted": 44887,
-  "lines": 147260
+  "trusted": 44903,
+  "lines": 147503
  },
  "budget": {
   "K": 978,
   "S": 9434,
-  "V": 34475
+  "V": 34491
  },
  "signed": [],
  "history": [
@@ -229,6 +229,32 @@
     "K": 978,
     "S": 9434,
     "V": 34475
+   }
+  },
+  {
+   "change": "lean-first batch 16b: the document mode returns unit content and meaning ids, a load-only flag, the senses guard and the route's own admission case (VE/Service/Document.lean +19 trusted lines)",
+   "rebaselined_from": {
+    "K": 978,
+    "S": 9434,
+    "V": 34157
+   },
+   "to": {
+    "K": 978,
+    "S": 9434,
+    "V": 34176
+   }
+  },
+  {
+   "change": "Merge ve-integration (lf-15b, RD-2b, RD-4a, E2 flip) into lean-first/b16b: the 16b document mode's trusted lines (VE/Service/Document.lean +34, VE/Service/TypingDiagnostic.lean -18) over the merged base",
+   "rebaselined_from": {
+    "K": 978,
+    "S": 9434,
+    "V": 34475
+   },
+   "to": {
+    "K": 978,
+    "S": 9434,
+    "V": 34491
    }
   }
  ],
@@ -3644,7 +3670,7 @@
    "D": 0,
    "G": 0,
    "C": 0,
-   "P": 58,
+   "P": 59,
    "T": 0,
    "o": 6,
    "D[V]": 0,
@@ -3656,7 +3682,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 64
+   "lines": 65
   },
   "ResponseShape/Encoders/English.lean": {
    "K": 0,
@@ -11221,22 +11247,22 @@
   "VE/Service/Document.lean": {
    "K": 0,
    "S": 0,
-   "D": 376,
-   "G": 62,
+   "D": 553,
+   "G": 71,
    "C": 0,
    "P": 0,
    "T": 0,
-   "o": 43,
-   "D[V]": 371,
-   "D[R]": 5,
+   "o": 55,
+   "D[V]": 396,
+   "D[R]": 157,
    "D[I]": 0,
-   "G[V]": 62,
+   "G[V]": 71,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 433,
-   "lines": 481
+   "trusted": 467,
+   "lines": 679
   },
   "VE/Service/EnglishRun.lean": {
    "K": 0,
@@ -11462,21 +11488,21 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 190,
+   "G": 220,
    "C": 0,
    "P": 0,
-   "T": 0,
+   "T": 14,
    "o": 18,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 171,
-   "G[R]": 19,
+   "G[V]": 153,
+   "G[R]": 67,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 171,
-   "lines": 208
+   "trusted": 153,
+   "lines": 252
   },
   "VE/SoftNorms/Admission.lean": {
    "K": 0,
