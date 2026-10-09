@@ -158,25 +158,6 @@ theorem choice_fits (lower : List String → Json → Json) (id : String) (b : W
 
 /-! Under the unspecified completion (readings-defaults.md 3; `UnspecifiedWire.lean`, `runS2ND`). -/
 
-theorem elaborateFieldsND_fits (id : String) (re : Wire.ReadingsEnvironment) (n : Nat) (N : NDoc) :
-    Fits req (skel% "readings-route.json#/$defs/elaborate") (okWith id (Wire.elaborateFieldsND re n N)) := by
-  simp only [Wire.elaborateFieldsND]
-  split
-  · simp only [okWith, VE.Route.Wire.ok, choicesJson]
-    split <;> simp only [List.cons_append, List.nil_append, vocabularyJson, Wire.ndSlotJson, sizesJson]
-    all_goals fits
-  · simp only [okWith, VE.Route.Wire.ok, choicesJson]
-    split <;> simp only [List.cons_append, List.nil_append]
-    all_goals fits
-  · exact elaborateFields_fits _ _ _ _
-
-theorem elaborateND_fits (id : String) (r : Wire.AdmittedND) :
-    OkFits req (skel% "readings-route.json#/$defs/elaborate") (runElaborateND id r) := by
-  unfold runElaborateND runElaborateNDWith
-  okfits
-  simp only [List.append_nil]
-  exact elaborateFieldsND_fits _ _ _ _
-
 theorem choiceND_fits (id : String) (r : Wire.AdmittedND) (j : Json) :
     OkFits req (skel% "readings-route.json#/$defs/choice_answer") (runChoiceND id r j) := by
   unfold runChoiceND
@@ -209,18 +190,16 @@ theorem elaborateNDFilled_fits (id : String) (f : Wire.AdmittedNDFull) :
     simp only [okWith, VE.Route.Wire.ok, Wire.elaborateFieldsND]
     split
     · simp only [choicesJson]
-      split <;> simp only [List.cons_append, List.nil_append, vocabularyJson, Wire.ndSlotJson, sizesJson]
+      split <;> simp only [List.cons_append, List.nil_append, vocabularyJson, slotJson, Wire.ndFillJson, sizesJson]
       all_goals fits
       all_goals exact filled_fits _ _ hf
     · simp only [choicesJson]
       split <;> simp only [List.cons_append, List.nil_append]
       all_goals fits
       all_goals exact filled_fits _ _ hf
-    · simp only [elaborateFields]
-      split <;> (try simp only [choicesJson]) <;> (try split) <;>
-        simp only [List.cons_append, List.nil_append, vocabularyJson, slotJson, sizesJson]
-      all_goals fits
-      all_goals exact filled_fits _ _ hf
+    all_goals (simp only [List.cons_append, List.nil_append, Route.text]
+               fits
+               all_goals exact filled_fits _ _ hf)
 
 theorem validateND_fits (id : String) (f : Wire.AdmittedNDFull) :
     OkFits req (skel% "readings-route.json#/$defs/validate") (runValidateND id f) := by
@@ -463,7 +442,6 @@ theorem elaborateOne_fits (j : Json) (id : String) (environment document : Json)
     | (intro v hv; fits_from elaborate_fits _ _ v hv)
     | (intro v hv; fits_from elaborateNDFilled_fits _ _ v hv)
     | exact elaborate_fits _ _
-    | exact elaborateND_fits _ _
 
 /-- One case of the split (`runOne`): the runners of `runCase` before the split, on the case's environment and
     document. -/

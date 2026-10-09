@@ -150,43 +150,132 @@ def _completion_elaborate(row, case):
     """`readings-elaborate` under `norm-defaults@0` (readings-defaults 1.1, 3; plan RD-2b), relayed: Lean's text
     verbatim, else its row bound to the request. Lean owns the route, the choices and their count; nothing of them is
     regenerated here. On the norms chain a content-bearing document takes the pending route when a candidate has no
-    content, else the enumerated one with the completion as the cause, and the row carries the filled document."""
+    content, else the superposed one when Lean finds the filled document superposable (plan RD-6b) and the enumerated
+    one with Lean's cause otherwise, and the row carries the filled document."""
     if row["status"] == "error":
         raise VEError(row["error"])
     try:
+        from .backends.service_schema import Invalid, check_row
+        check_row("readings-route", row, case, 0)
+        _need(row["id"] == case["id"])
         sets = Document(None, case["document"]).sets
         bearing = any(content_bearing(R) for R in sets)
         pending = any(a.content is None for R in sets for a in R.candidates)
         if not bearing:
             _need(row["route"] == "w2" and not {"fill_premises", "filled"} & set(row))
         else:
-            _need(row["route"] == ("pending" if pending else "enumerated"))
+            _need(row["route"] in (("pending",) if pending else ("enumerated", "superposed")))
             _bind_completion(row, case)
-            if not pending:
+            if row["route"] == "superposed":
+                _bind_completion_superposed(row, case, sets)
+            elif not pending:
                 _bind_completion_choices(row, sets)
-    except (_Invalid, TypeError, KeyError, ValueError, AttributeError, IndexError, RecursionError) as exc:
+    except (_Invalid, Invalid, VEError, TypeError, KeyError, ValueError, AttributeError, IndexError,
+            RecursionError) as exc:
         raise CheckerUnavailable("the Lean readings route returned an invalid answer") from exc
     return {key: value for key, value in row.items() if key not in ("id", "status")}
 
 
 def _bind_completion_choices(row, sets):
-    """The enumerated row's finding and choices, bound to the request: every open set named in source order, each
-    choice a reading with content of every open set, no choice twice, the count Lean's list's own."""
-    _need(row["finding"] == {"text": "ReadingsNotSuperposable: " + ", ".join(R.id for R in sets),
-                             "cause": COMPLETION_CAUSE})
-    _need(type(row["narrowings_stale"]) is list)
+    """The enumerated row's finding and choices, bound to the request: every open set named in source order with
+    Lean's cause (the completion's, or after RD-6b what keeps the filled document from superposing), each choice a
+    reading with content of every open set, no choice twice, the count Lean's list's own."""
+    finding = row["finding"]
+    _need(type(finding) is dict and set(finding) == {"text", "cause"}
+          and finding["text"] == "ReadingsNotSuperposable: " + ", ".join(R.id for R in sets)
+          and _name(finding["cause"]))
+    _need(_arr(_name)(row["narrowings_stale"]))
     if row["choices"] == "over":
-        _need(row["choice_count"] == row["choices_checked"] and type(row["choice_count"]) is str)
+        _need(row["choice_count"] == row["choices_checked"] == "over 64")
         return
-    _need(type(row["choices"]) is list and row["choice_count"] == len(row["choices"]) == row["choices_checked"])
+    _need(row["choice_count"] == row["choices_checked"])
+    _bind_choice_list(row["choices"], row["choice_count"], sets)
+
+
+def _bind_choice_list(choices, count, sets):
+    """A list of compatible choices bound to the request: each a reading with content of every open set in source
+    order, none twice, `count` the list's own length."""
+    _need(type(choices) is list and _nat(count) and count == len(choices))
     seen = set()
-    for choice in row["choices"]:
-        _need(type(choice) is list and [entry[0] for entry in choice] == [R.id for R in sets])
+    for choice in choices:
+        _need(type(choice) is list and all(type(e) is list and len(e) == 2 for e in choice)
+              and [entry[0] for entry in choice] == [R.id for R in sets])
         for (_, index), R in zip(choice, sets):
             _need(_nat(index) and index < len(R.candidates) and R.candidates[index].content is not None)
         key = tuple(index for _, index in choice)
         _need(key not in seen)
         seen.add(key)
+
+
+def _bind_completion_superposed(row, case, sets):
+    """The superposed row under the completion (plan RD-6b; Lean's `elaborateFieldsND`), typed by `SUPERPOSED` and
+    bound to what the request fixes: the open sets in order with their versions and candidates, the unit ids, the
+    restriction ids, the declared pairs a `Fill_T` label names, and the choices. What is left is Lean's alone: the
+    formulas, the positions, the qualified names and the sizes."""
+    from .environment import Environment
+    from .readings_sup import FILL, slot_label
+    _need(SUPERPOSED(row))
+    document = Document(None, case["document"])
+    by_id = {R.id: R for R in sets}
+    raw = case["document"]
+    narrowing_ids = [n["id"] for n in raw.get("narrowings", [])]
+    coupling_ids = [k["id"] for k in raw.get("couplings", [])]
+    stale = row["narrowings_stale"]
+    _need(len(set(stale)) == len(stale) and set(stale) <= set(narrowing_ids))
+    bits = [p["name"] for p in row["vocabulary"]["predicates"]]
+    _need(len(set(bits)) == len(bits) and [g["name"] for g in row["generated_predicates"]] == bits)
+    expected_units = [{k: value for k, value in unit.items() if k != "content"}
+                      for unit in row["filled"]["units"]]
+    positions = {(R.id, i): sum(len(previous.candidates) for previous in sets[:m]) + i + 1
+                 for m, R in enumerate(sets) for i in range(len(R.candidates))}
+    for unit in expected_units:
+        if "set" in unit:
+            unit["position"] = positions[(unit["set"], unit["index"])]
+    _need([{k: value for k, value in unit.items() if k != "content"} for unit in row["units"]]
+          == expected_units)
+    readings = set()
+    for unit in row["units"]:
+        _typed_filled_content(unit["content"])
+        if "set" not in unit:
+            continue
+        R = by_id.get(unit["set"])
+        _need(R is not None and (unit["unit"], unit["version"]) == (R.unit, R.version)
+              and unit["index"] < len(R.candidates) and R.candidates[unit["index"]].content is not None)
+        key = (unit["set"], unit["index"])
+        _need(key not in readings)
+        readings.add(key)
+    _need(readings == set(positions))
+    request = Environment(case["environment"])
+    pairs = {(name, decl.regulated.permission) for name, decl in request.predicates.items()
+             if decl.regulated is not None and decl.regulated.role == "obligation"}
+    labels = [entry["label"] for entry in row["slot"] + row["fill"]]
+    _need(len(set(labels)) == len(labels))
+    for entry in row["fill"]:
+        decoded = slot_label(entry["label"])
+        _need(decoded.kind == FILL and tuple(decoded.key.split(",")) in pairs)
+    for entry in row["slot"]:
+        decoded = slot_label(entry["label"])
+        if decoded.kind in ("coupling", "narrowing"):
+            _need(decoded.key in (coupling_ids if decoded.kind == "coupling" else narrowing_ids))
+        elif decoded.kind in ("one", "own"):
+            R = by_id.get(decoded.set)
+            _need(R is not None and R.version == decoded.version
+                  and (decoded.kind == "one" or decoded.index < len(R.candidates)))
+        else:
+            _need(False)
+    _need([(e["set"], e["version"]) for e in row["names"]] == [(R.id, R.version) for R in sets])
+    for entry, R in zip(row["names"], sets):
+        _need([(c["index"], c["id"]) for c in entry["candidates"]] == [(i, a.id) for i, a in enumerate(R.candidates)])
+        _need([c["position"] for c in entry["candidates"]] == [positions[(R.id, i)] for i in range(len(R.candidates))])
+        for candidate, authored in zip(entry["candidates"], R.candidates):
+            authored_names = {rule["name"] for rule in authored.content.rules()} if authored.content is not None else set()
+            _need(all(pair[0] in authored_names for pair in candidate["names"]))
+    if row["choices"] == "over":
+        _need(row["choice_count"] == "over 64" and (row["choices_checked"] == "over 1024"
+                                                   or _nat(row["choices_checked"]) and row["choices_checked"] > 64))
+    else:
+        _need(row["choice_count"] == row["choices_checked"])
+        _bind_choice_list(row["choices"], row["choice_count"], sets)
 
 
 def run_lean(cases, *, executable=None, timeout=None):
@@ -299,6 +388,30 @@ FILLED = _obj({"environment": lambda v: type(v) is dict,
 _COMPLETION = {"fill_premises": FILL_PREMISES, "filled": FILLED}
 # A `Fill_T` premise's label (norm-defaults 2.4): `unsaid:pair:<obligation>,<permission>`.
 FILL_LABEL = "unsaid:pair:"
+# The superposed row under the completion (plan RD-6b; Lean's `elaborateFieldsND`): readings-route.json's `elaborate`
+# superposed alternative with `fill_premises` and `filled`, checked whole before `_bind_completion_superposed` binds it.
+_SUP_UNIT = _either(_obj({"unit": _name, "content": lambda v: type(v) is dict}),
+                    _obj({"unit": _name, "set": _str, "version": _nat, "index": _nat, "position": _nat,
+                          "content": lambda v: type(v) is dict}))
+SUPERPOSED = _obj({
+    "id": _str, "status": _lit("ok"), "route": _lit("superposed"),
+    "generated_predicates": _arr(_obj({"name": _name, "layer": _lit("readings"), "key": _lit(None)})),
+    "finding": _lit(None), "narrowings_stale": _arr(_name),
+    "vocabulary": _obj({"sorts": _lit(["ve__reading"]), "constants": _lit({"ve__here": "ve__reading"}),
+                        "predicates": _arr(_obj({"name": _name, "arguments": _lit(["ve__reading"])}),
+                                           nonempty=True)}),
+    "units": _arr(_SUP_UNIT, nonempty=True),
+    "slot": _arr(_obj({"label": _name, "ast": lambda v: v is not None})),
+    "fill": _arr(_obj({"label": _name, "ast": lambda v: v is not None})),
+    "names": _arr(_obj({"set": _str, "version": _nat, "candidates": _arr(_obj({
+        "index": _nat, "id": _str, "position": _nat,
+        "names": _arr(lambda v: type(v) is list and len(v) == 2 and all(_name(x) for x in v))}), nonempty=True)}),
+        nonempty=True),
+    "choice_count": _either(_nat, _lit("over 64")), "choices": _either(_lit("over"), lambda v: type(v) is list),
+    "choices_checked": _either(_nat, _lit("over 1024")),
+    "sizes": _obj({"sorts": _nat, "predicates": _nat, "nodes": _nat,
+                   "limits": _lit({"sorts": 32, "predicates": 256, "nodes": 10000})}),
+    **_COMPLETION})
 ROW = _either(_obj({"id": _str, "status": _lit("ok"), "content_bearing": _lit(False)}, _COMPLETION),
               _obj({"id": _str, "status": _lit("ok"), "content_bearing": _lit(True),
                     "sets": _arr(_SET, nonempty=True)}, _COMPLETION))
@@ -417,18 +530,54 @@ def _bind_completion(row, case):
     units = row["filled"]["units"]
     _need(len(units) >= len(expected))
     for unit, (where, kind) in zip(units, expected):
-        content = decode_filled(wire(unit["content"]))
+        content = _typed_filled_content(unit["content"])
         _need({k: v for k, v in unit.items() if k != "content"} == where and getattr(content, "kind", None) == kind)
     generated = units[len(expected):]
     names = [unit["unit"] for unit in generated]
     _need(len(set(names)) == len(names) and not set(names) & set(document.unit_ids))
     for unit in generated:
-        content = decode_filled(wire(unit["content"]))
+        content = _typed_filled_content(unit["content"])
         _need(set(unit) == {"unit", "content"} and getattr(content, "kind", None) == "norm")
         rule = content.body
         guard = rule["guard"]
         _need(rule["name"] == unit["unit"] and request.predicates[rule["predicate"]].regulated is not None
               and guard[0] in ("unary", "binary") and guard[1] in added)
+
+
+def _typed_filled_content(raw):
+    """Decode the complete producer content before Python displays or uses it. The rule and formula grammars are
+    the existing decoders; a malformed decoded value remains an unavailable answer, never a verdict."""
+    from .readings_s1 import node_value
+    from .ast import _Decoder
+    _need(type(raw) is dict and len(raw) == 1)
+    if "norm" in raw:
+        norm = raw["norm"]
+        _need(type(norm) is dict and set(norm) == {"name", "predicate", "sign", "mode", "guard", "unless",
+                                                "over", "rank", "alterable", "exception", "hard"})
+        _need(_name(norm["name"]) and _name(norm["predicate"]) and _bool(norm["sign"])
+              and norm["mode"] in ("strict", "default") and (norm["rank"] is None or _name(norm["rank"]))
+              and _arr(_name)(norm["over"]) and _arr(_name)(norm["alterable"]) and _bool(norm["hard"]))
+        exception = norm["exception"]
+        if exception is not None:
+            _need(type(exception) is dict and set(exception) == {"decided_by", "sufficient", "necessary", "factors"}
+                  and (exception["decided_by"] is None or _name(exception["decided_by"]))
+                  and _arr(lambda v: type(v) is list)(exception["sufficient"])
+                  and _arr(lambda v: type(v) is list)(exception["necessary"])
+                  and _arr(_name)(exception["factors"]))
+            for formula in exception["sufficient"] + exception["necessary"]:
+                _Decoder().decode(formula)
+        _Decoder().decode(norm["guard"])
+        _need(_arr(lambda v: type(v) is list)(norm["unless"]))
+        for formula in norm["unless"]:
+            _Decoder().decode(formula)
+        node_value(norm)
+    elif "assertion" in raw:
+        _Decoder().decode(raw["assertion"])
+    else:
+        _need(False)
+    content = decode_filled(wire(raw))
+    _need(content is not None)
+    return content
 
 
 def _check(row, case):
@@ -517,7 +666,7 @@ def _report(doc, row):
     if s2["route"] in ("superposed", "enumerated"):
         result.update(choice_count=s2["choice_count"], choices_checked=s2["choices_checked"],
                       narrowings_stale=s2["narrowings_stale"],
-                      reading_premises=[entry["label"] for entry in s2.get("slot", [])],
+                      reading_premises=[entry["label"] for entry in s2.get("slot", []) + s2.get("fill", [])],
                       not_superposable=s2["finding"])
         if "sizes" in s2:
             result["sizes"] = s2["sizes"]

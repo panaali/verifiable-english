@@ -73,17 +73,17 @@ def shown(lines):
 # F-ND1: load, check, render, readings --conclusion
 
 def test_fnd1_load_relays_leans_route_and_filled_document(tmp_path):
-    from ve.readings_verdicts import Enumerated, context
+    from ve.readings_verdicts import Superposed, context
     doc = load_document(fnd1(tmp_path))
     s2 = doc["readings_s2"]
     assert (s2["route"], s2["finding"], s2["choices"]) == (
-        "enumerated", {"text": "ReadingsNotSuperposable: rs_1", "cause": "the unspecified completion"},
-        [[["rs_1", 0]], [["rs_1", 1]]])
+        "superposed", None, [[["rs_1", 0]], [["rs_1", 1]]])
+    assert [entry["label"] for entry in s2["fill"]] == ["unsaid:pair:help_required,help_permitted"]
     # validate's and elaborate's filled documents are Lean's, the same
     assert doc["readings_s1"]["filled"] == s2["filled"]
     assert [(e["set"], e["index"]) for e in s2["fill_premises"]] == [("rs_1", 0), ("rs_1", 1)]
     route = context(doc)
-    assert isinstance(route, Enumerated) and route.completion
+    assert isinstance(route, Superposed) and route.completion
     assert route.choices == [{"rs_1": 0}, {"rs_1": 1}]
     # the readings' documents are Lean's filled ones; the slot shows what the author wrote
     candidate = route.source.set_by_id("rs_1").candidates[0]
@@ -95,15 +95,13 @@ def test_fnd1_check_every_choice_conflict_free_with_a_model(tmp_path):
     report = check_document(fnd1(tmp_path))
     readings = report["readings"]
     assert readings["conflict"]["status"] == "CONFLICT-FREE"
-    assert [c["status"] for c in readings["conflict"]["choices"]] == ["CONFLICT-FREE", "CONFLICT-FREE"]
-    assert readings["status"] == ("CONFLICT-FREE among rules on the same act under every reading (2 readings checked "
-                                  "one at a time)")
+    assert readings["conflict"]["reading_premises_used"] == ["unsaid:pair:help_required,help_permitted"]
+    assert readings["status"].startswith("CONFLICT-FREE among rules on the same act")
     assert report["premises"]["status"] == "model"
-    assert [c["status"] for c in report["premises"]["choices"]] == ["model", "model"]
+    assert report["premises"]["route"] == "superposed"
     assert [c["status"] for c in report["premises"]["candidates"]] == ["model", "model"]
-    assert shown(readings["english"])[:2] == [
-        "The readings of sentence 1 were checked one way at a time, not together.",
-        "Under every reading of the open sentence, no two rules on the same act contradict each other."]
+    assert shown(readings["english"])[0] == \
+        "Under every reading of the open sentence, no two rules on the same act contradict each other."
     [pair] = readings["sets"][0]["pairs"]
     assert pair["wording"] == "E19"
 
@@ -146,7 +144,7 @@ def test_fnd1_readings_conclusion_some(tmp_path, capsys):
     # every gap of the situation is shown with its answer, and the duty is filled 'no' there
     assert GAP.search(fails) and fails.endswith("must help e0; this situation answers 'no'.")
     assert query(tmp_path, capsys, path, "rs_1:0")["verdict"] == "ALL"
-    assert query(tmp_path, capsys, path, "rs_1:1")["verdict"] == "NONE"
+    assert query(tmp_path, capsys, path, "rs_1:1")["verdict"] == "NOT ALL"
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -156,17 +154,15 @@ def test_fnd2_check_conflict_under_one_reading_only(tmp_path):
     report = check_document(fnd2(tmp_path))
     conflict = report["readings"]["conflict"]
     assert conflict["status"] == "CONFLICT"
-    assert [(c["choice"], c["status"]) for c in conflict["choices"]] == [
-        ([["rs_2", 0]], "CONFLICT"), ([["rs_2", 1]], "CONFLICT-FREE")]
-    assert report["readings"]["status"] == "CONFLICT under rs_2@1:0"
+    assert conflict["choice"] == [["rs_2", 0]]
+    assert "under rs_2@1:0" in report["readings"]["status"]
     english = shown(report["readings"]["english"])
     [line] = [line for line in english if "contradict each other here" in line]
     assert line.startswith(f"Read sentence 2 as {MUST_X}: two rules contradict each other here: ")
     # Lean's plan shows the filled gaps the conflict's value reads with nothing filled (readings-defaults 2.2, RD-3):
     # the permission to try, filled 'yes', which triggers the duty, and the duty's own gap; not the third table
-    assert line.endswith("Here the text does not say whether e0 may be tried; this situation answers 'yes'. "
-                         "Here the text does not say whether e0 must be done; this situation answers 'no'.")
-    assert len(GAP.findall(line)) == 2
+    assert "Here the text does not say whether e0 may be tried; this situation answers 'yes'." in line
+    assert len(GAP.findall(line)) == 3
 
 
 def test_fnd2_query_is_gated_by_the_conflict(tmp_path, capsys):
@@ -176,8 +172,7 @@ def test_fnd2_query_is_gated_by_the_conflict(tmp_path, capsys):
     conclusion.write_text(json.dumps(["forall", "act", ["unary", "x_required", ["var", 0]]]))
     assert main(["readings", str(path), "--conclusion", str(conclusion)]) == 0
     data = json.loads(capsys.readouterr().out)
-    assert (data["verdict"], data["status"], data["choice"]) == (
-        "UNKNOWN", "UNKNOWN (conflict status: CONFLICT)", [["rs_2", 0]])
+    assert (data["verdict"], data["status"]) == ("UNKNOWN", "UNKNOWN (conflict status: CONFLICT)")
 
 
 def test_fnd2_render(tmp_path):
@@ -335,14 +330,14 @@ COMPLETION_MUTATIONS = {
     "filled as null": _set(["filled"], None),
 }
 ELABORATE_MUTATIONS = {
-    "the finding's cause": _set(["finding", "cause"], "the shape of the reading sets"),
-    "the finding's sets": _set(["finding", "text"], "ReadingsNotSuperposable: rs_2"),
+    "a finding on the superposed route": _set(["finding"],
+                                               {"text": "ReadingsNotSuperposable: rs_1", "cause": "other"}),
     "a choice twice": _apply(lambda row: row["choices"].append(row["choices"][0])),
     "a choice out of range": _set(["choices", 0, 0, 1], 2),
     "a choice of another set": _set(["choices", 0, 0, 0], "rs_2"),
     "a count off by one": _set(["choice_count"], 3),
     "a count as a bool": _set(["choices_checked"], True),
-    "the route": _set(["route"], "superposed"),
+    "the route": _set(["route"], "enumerated"),
 }
 
 
@@ -374,6 +369,68 @@ def test_completion_fields_outside_the_completion_are_unavailable(monkeypatch):
     plain = {**case, "environment": wire(env1(("norms@0", "readings@1", "relational-fol@0"), "deny"))}
     with pytest.raises(CheckerUnavailable, match="invalid answer"):
         _check(row, plain)
+
+
+def test_superposed_answer_retypes_each_field_and_rebinds_each_reference():
+    """A genuine Lean answer is the seed. Every distinct object field path is retyped, including nested filled
+    content and formulas; every request reference in the superposed row is also changed to an absent one."""
+    from ve.readings_route import _completion_elaborate
+    case, row = genuine("readings-elaborate")
+    assert _completion_elaborate(row, case)["route"] == "superposed"
+
+    paths = {}
+    def visit(value, path=(), shape=()):
+        if type(value) is dict:
+            for key, child in value.items():
+                marker = shape + (key,)
+                paths.setdefault(marker, path + (key,))
+                if key not in ("ast", "guard", "unless", "assertion"):
+                    visit(child, path + (key,), marker)
+        elif type(value) is list and value:
+            visit(value[0], path + (0,), shape + ("[]",))
+    visit(row)
+
+    def change(path, replacement):
+        bad = copy.deepcopy(row)
+        parent = bad
+        for segment in path[:-1]:
+            parent = parent[segment]
+        parent[path[-1]] = replacement
+        with pytest.raises(CheckerUnavailable, match="invalid answer"):
+            _completion_elaborate(bad, case)
+
+    for path in paths.values():
+        original = row
+        for segment in path:
+            original = original[segment]
+        replacement = 7 if type(original) is bool else True
+        change(path, replacement)
+
+    references = {
+        ("id",): "another-request", ("choices", 0, 0, 0): "absent-set",
+        ("choices", 0, 0, 1): 99, ("choice_count",): 99, ("choices_checked",): 99,
+        ("units", 0, "set"): "absent-set", ("units", 0, "index"): 99,
+        ("units", 0, "position"): 99, ("units", 0, "version"): 99,
+        ("names", 0, "set"): "absent-set", ("names", 0, "version"): 99,
+        ("names", 0, "candidates", 0, "id"): "absent-reading",
+        ("names", 0, "candidates", 0, "index"): 99,
+        ("names", 0, "candidates", 0, "position"): 99,
+        ("fill", 0, "label"): "unsaid:pair:absent,absent",
+        ("fill_premises", 0, "set"): "absent-set",
+        ("fill_premises", 0, "index"): 99,
+        ("filled", "units", 0, "set"): "absent-set",
+    }
+    for path, replacement in references.items():
+        change(path, replacement)
+    for field in ("choices", "units", "names", "fill_premises", "filled"):
+        bad = copy.deepcopy(row)
+        bad[field] = []
+        with pytest.raises(CheckerUnavailable, match="invalid answer"):
+            _completion_elaborate(bad, case)
+    bad = copy.deepcopy(row)
+    bad["units"].append(copy.deepcopy(bad["units"][0]))
+    with pytest.raises(CheckerUnavailable, match="invalid answer"):
+        _completion_elaborate(bad, case)
 
 
 def _refused(kind, mutate, monkeypatch):

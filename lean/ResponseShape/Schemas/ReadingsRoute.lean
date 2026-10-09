@@ -174,6 +174,15 @@ def generatedPredicates : Shape :=
         ("layer", enumS ["readings", "soft", "rights"]),
         ("key", .anyOf [.type ["null"], ref "#/$defs/key"])]])]
 
+/-- Labelled premises: the slot, and under the completion `Fill_T` (`fill`). -/
+def labelledFormulas : Shape :=
+  n [
+    arr,
+    .items (n [
+        obj,
+        .required ["label", "ast"],
+        closed [("label", str), ("ast", ref "common.json#/$defs/generated_formula")]])]
+
 def elaborateSuperposed : List (String × Shape) := [
   ("vocabulary", n [
     obj,
@@ -188,12 +197,7 @@ def elaborateSuperposed : List (String × Shape) := [
             .required ["name", "arguments"],
             closed [("name", str), ("arguments", ref "common.json#/$defs/strings")]])])]]),
   ("units", arr),
-  ("slot", n [
-    arr,
-    .items (n [
-        obj,
-        .required ["label", "ast"],
-        closed [("label", str), ("ast", ref "common.json#/$defs/generated_formula")]])]),
+  ("slot", labelledFormulas),
   ("names", arr),
   ("sizes", n [
     obj,
@@ -209,6 +213,10 @@ def elaborateSuperposed : List (String × Shape) := [
           ("sorts", ref "common.json#/$defs/nat"),
           ("predicates", ref "common.json#/$defs/nat"),
           ("nodes", ref "common.json#/$defs/nat")]])]])]
+
+/-- On the superposed route under the completion (plan RD-6b): `Fill_T` of the superposed filled document, which
+    the superposed kinds append to the slot after the assumed atoms (`Wire.elaborateFieldsND`). -/
+def fillField : List (String × Shape) := [("fill", labelledFormulas)]
 
 /-- `fill_premises` and `filled` (Readings.Run.runElaborateNDFilled), as validate answers them. -/
 def filledFields : List (String × Shape) :=
@@ -226,7 +234,7 @@ def elaborateRoute (routes : List String) (fields : List (String × Shape)) : Sh
 
 def elaborate : Shape :=
   c
-    "Readings.Run.runElaborate (Route.elaborateFields): the route of 1.1; past its first three rows the finding of 1.8, the stale narrowings, the compatible choices (or over the limit) and the number checked; on the superposed route also the choice vocabulary, the units of sup D, the labelled slot, the name map and the sizes. The units and the name map are compared whole with Python's regeneration (ve/readings_route.py elaborate). Under the unspecified completion (Readings.Run.runElaborateNDFilled) the row also carries fill_premises and filled."
+    "Readings.Run.runElaborate (Route.elaborateFields): the route of 1.1; past its first three rows the finding of 1.8, the stale narrowings, the compatible choices (or over the limit) and the number checked; on the superposed route also the choice vocabulary, the units of sup D, the labelled slot, the name map and the sizes. The units and the name map are compared whole with Python's regeneration (ve/readings_route.py elaborate). Under the unspecified completion (Readings.Run.runElaborateNDFilled) the row also carries fill_premises and filled, and on the superposed route fill, the Fill_T the superposed kinds append to the slot (Wire.elaborateFieldsND)."
     [
       .anyOf [
         elaborateRoute ["w2", "pending", "abstention"] [("generated_predicates", generatedPredicates)],
@@ -237,7 +245,7 @@ def elaborate : Shape :=
         elaborateRoute ["w2", "pending", "abstention"] (("generated_predicates", generatedPredicates) :: filledFields),
         elaborateRoute ["enumerated"] (("generated_predicates", generatedPredicates) :: (elaborateChoices ++ filledFields)),
         elaborateRoute ["superposed"] (("generated_predicates", generatedPredicates) ::
-          (elaborateChoices ++ elaborateSuperposed ++ filledFields))]]
+          (elaborateChoices ++ elaborateSuperposed ++ fillField ++ filledFields))]]
 
 def conflict : Shape :=
   c
