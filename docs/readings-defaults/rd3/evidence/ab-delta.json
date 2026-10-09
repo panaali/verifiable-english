@@ -1,0 +1,41 @@
+{
+  "wording": [
+    {
+      "base": "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd3-ab-base2.pilots/pack.json'",
+      "head": "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd3-ab-head2.pilots/pack.json'"
+    }
+  ],
+  "unavailable": [
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261003T0600Z:usecases/claude-constitution-pilot/run-20261003T0600Z/readings/s1.ve.md",
+      "op": "document_check",
+      "reason": "CheckerUnavailable from the English reader's lexicon on both sides (invalidGrammar lexicon: V3 predicate system_prompt_compliance_required); no evidence either way, as in RD-2b"
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261004T0600Z:usecases/claude-constitution-pilot/run-20261004T0600Z/readings/s1.ve.md",
+      "op": "document_check",
+      "reason": "CheckerUnavailable from the English reader's lexicon on both sides (invalidGrammar lexicon: V3 predicate system_prompt_compliance_required); no evidence either way, as in RD-2b"
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261004T1800Z:usecases/claude-constitution-pilot/run-20261004T1800Z/readings/s1.ve.md",
+      "op": "document_check",
+      "reason": "CheckerUnavailable from the English reader's lexicon on both sides (invalidGrammar lexicon: V3 predicate system_prompt_compliance_required); no evidence either way, as in RD-2b"
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/readings/s1.ve.md",
+      "op": "document_check",
+      "reason": "CheckerUnavailable from the English reader's lexicon on both sides (invalidGrammar lexicon: V3 predicate system_prompt_compliance_required); no evidence either way, as in RD-2b"
+    }
+  ],
+  "order": [],
+  "verdict": [],
+  "availability": []
+}
