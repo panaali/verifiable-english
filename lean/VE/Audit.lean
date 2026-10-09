@@ -448,6 +448,7 @@ import VE.Senses.Request
 #print axioms VE.Order.tupleTyped_expand
 #print axioms VE.Order.ProfileGate.bind_ok
 #print axioms VE.Order.ProfileGate.exactFields_keys
+#print axioms VE.Order.ProfileGate.exactFieldsQuoted_keys
 #print axioms VE.Order.ProfileGate.getObjVal_mem
 #print axioms VE.Order.ProfileGate.impl_get_mem
 #print axioms VE.Order.ProfileGate.nodup_length_le
@@ -603,6 +604,7 @@ import VE.Senses.Request
 #print axioms VE.Route.Run.route_gate_rejects
 #print axioms VE.Route.Run.route_rejects_before_checking
 #print axioms VE.Route.Wire.backgroundViolation_none
+#print axioms VE.Route.Wire.decodeVocabulary_valid
 #print axioms VE.Route.Wire.decodeModel_valid
 #print axioms VE.Route.Wire.decodeDataModel_valid
 #print axioms VE.Route.Wire.decodeDataModel_combined
@@ -2209,6 +2211,7 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Service.register_none
 #print axioms VE.Service.registerOne_digest
 #print axioms VE.Service.registerOne_ok
+#print axioms VE.Service.Standalone.checkedModelTables_error_preserved
 #print axioms VE.Risk.termSum_cons
 #print axioms VE.Risk.termSum_nil
 #print axioms VE.Risk.termSum_append

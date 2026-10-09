@@ -55,7 +55,9 @@ def recorded_inputs(tmp_path_factory):
     """Every unit's recorded test inputs, from one run of the union of their recorded test files
     (each unit records only its own files' inputs, as `record_test_inputs` does for one unit)."""
     output = tmp_path_factory.mktemp("recorded") / "inputs.json"
-    result = record_all_test_inputs(output, (PILOT, *UNITS))
+    # This fixture runs inside the full gate's xdist suite. Bound its nested
+    # worker count so it cannot multiply the outer pool on a busy host.
+    result = record_all_test_inputs(output, (PILOT, *UNITS), workers=4)
     # A skipped or failed test may have submitted fewer inputs than it does when it runs.
     assert result.returncode == 0 and " skipped" not in result.stdout, result.stdout[-4000:] + result.stderr[-4000:]
     return json.loads(output.read_text())

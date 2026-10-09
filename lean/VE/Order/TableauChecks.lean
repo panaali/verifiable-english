@@ -92,6 +92,24 @@ open Lean in
 open Lean in
 #guard !(Wire.decodeEnvironment (withSort (Json.mkObj [("description", .str "I"),
   ("colour", .str "red")]))).toBool
+-- A frozen constant carries no display words; the route order family admits them.
+open Lean in
+def withConstant (entry : Json) : Json := Json.mkObj [
+  ("language", .str "ve.core@0.1"),
+  ("profiles", toJson ["order@0", "relational-fol@0"]),
+  ("spec_revision", .str "ve-v0.1-order-2026-09-22"),
+  ("vocabulary", Json.mkObj [("sorts", Json.mkObj [("item", Json.mkObj [("description", .str "I")])]),
+    ("predicates", Json.mkObj []), ("constants", Json.mkObj [("a", entry)])])]
+
+open Lean in
+def displayedConstant : Json :=
+  Json.mkObj [("sort", .str "item"), ("description", .str "A"), ("verbalisation", .str "a")]
+
+open Lean in
+#guard (Wire.decodeEnvironment (withConstant (Json.mkObj [("sort", .str "item"),
+  ("description", .str "A")]))).toBool
+#guard !(Wire.decodeEnvironment (withConstant displayedConstant)).toBool
+#guard (Wire.decodeEnvironment (withConstant displayedConstant) (displayConstants := true)).toBool
 
 -- Term depth is budgeted separately from formula depth: height 64 decodes, 65 does not.
 open Lean in

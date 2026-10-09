@@ -143,9 +143,14 @@
     },
     "environment_predicate": {"properties": {"arguments": {"$ref": "#/$defs/strings"}}, "required": ["arguments"], "type": "object"},
     "error": {
-      "$comment": "A case the runner rejected: the request's id (null if absent) and the message.",
+      "$comment": "A case the runner rejected: the request's id (null if absent), message, and optional model JSON pointer.",
       "additionalProperties": false,
-      "properties": {"error": {"$ref": "#/$defs/text"}, "id": {"x-echo": "/id"}, "status": {"const": "error"}},
+      "properties": {
+        "error": {"$ref": "#/$defs/text"},
+        "id": {"x-echo": "/id"},
+        "path": {"type": "string"},
+        "status": {"const": "error"}
+      },
       "required": ["id", "status", "error"],
       "type": "object"
     },

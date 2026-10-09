@@ -33,12 +33,6 @@
     "python:argument-diagnostics": "CheckerConflict, ContradictoryPremises, Incomplete, ResourceLimit and InvalidInput statuses; display that asserts no consequence"
   },
   "reviewed_broad_handlers": {
-    "ve/environment.py:Environment.__init__": "W6 environments: Lean's check mode accepts first (its rejection is raised before the handler); a Python failure constructing an environment Lean accepted becomes CheckerUnavailable, never a verdict (LEAN-FIRST-PLAN.md rule 2)",
-    "ve/document.py:_load": "CheckerUnavailable is re-raised first; a @2 document Lean rejected raises Lean's diagnostic before Python loads it, and a Python failure on one Lean admitted becomes CheckerUnavailable (unavailable_report), never a Python verdict",
-    "ve/document.py:_lean_document": "Builds the document Lean's document mode accepted: CheckerUnavailable is re-raised, any other failure reading the accepted front matter or building the containers becomes CheckerUnavailable, never a verdict",
-    "ve/document.py:_check_document": "CheckerUnavailable is re-raised first; a Python failure reporting a @2 document Lean admitted becomes CheckerUnavailable (unavailable_report), never a verdict",
-    "ve/reports.py:ReportsDocument.__init__": "a Lean accepted reports environment that Python cannot construct becomes CheckerUnavailable; no report status or verdict is returned",
-    "ve/rights.py:RightsDocument.__init__": "Lean accepts the rights source before Python constructs display and search containers; any container construction failure is CheckerUnavailable, never a Python rights verdict",
     "ve/__main__.py:_main": "display only: an English rendering of an already computed record is omitted (`display_omitted`); the verdict fields are untouched",
     "ve/assist/api.py:call_tool": "CheckerUnavailable is caught first and keeps its code; other RuntimeErrors are logged as a rejected BackendError call, never a verdict",
     "ve/assist/cli.py:main": "CheckerUnavailable, raised or returned in an action or tool result (exit_code), exits 5 and the action is not saved; other failures print an error and exit 2",
@@ -49,24 +43,30 @@
     "ve/assist/recovery.py:RecoveryService.request_proposer": "the language-model backend boundary; a failed proposal is an outcome of kind `failed`",
     "ve/assist/session.py:AssistSession.apply": "CheckerUnavailable is caught with VEError and keeps its code; other RuntimeErrors are logged as BackendError",
     "ve/assist/session.py:AssistSession.paraphrase_formula": "display only: falls back to the canonical rendering",
-    "ve/backends/lean_service.py:LeanServicePool.run_bound.worker": "captures a worker error and re-raises it in request order after every worker joins; never converts it into a result",
-    "ve/natural.py:render_natural_sentence": "display only: selects an English wording whose one-reading audit passes",
-    "ve/printer.py:natural_document": "display only: retries with a different wording and re-raises when that fails too",
-    "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome",
     "ve/backends/dispatch.py:_shadow": "shadow authority only (execute and shadowed): the Python result is returned (a Python exception is re-raised unchanged); a candidate backend exception, CheckerUnavailable included, is only recorded as a shadow difference and never becomes the returned verdict",
+    "ve/backends/lean_service.py:LeanServicePool.run_bound.worker": "captures a worker error and re-raises it in request order after every worker joins; never converts it into a result",
+    "ve/backends/validation.py:construct_after_lean": "Lean accepts the environment or model first; construction failures become CheckerUnavailable, never a Python semantic rejection or verdict.",
+    "ve/document.py:_load": "CheckerUnavailable is re-raised first; a @2 document Lean rejected raises Lean's diagnostic before Python loads it, and a Python failure on one Lean admitted becomes CheckerUnavailable (unavailable_report), never a Python verdict",
+    "ve/document.py:_lean_document": "Builds the document Lean's document mode accepted: CheckerUnavailable is re-raised, any other failure reading the accepted front matter or building the containers becomes CheckerUnavailable, never a verdict",
+    "ve/document.py:_check_document": "CheckerUnavailable is re-raised first; a Python failure reporting a @2 document Lean admitted becomes CheckerUnavailable (unavailable_report), never a verdict",
+    "ve/english.py:_parse_english_document_uncached": "Comparator only: Python parser exceptions are recorded after Lean has decided; they never change the returned Lean result or error.",
+    "ve/natural.py:render_natural_sentence": "display only: selects an English wording whose one-reading audit passes",
     "ve/norm_defaults.py:UnspecifiedDocument.__init__": "after Lean accepts a source, a Python container construction failure is reported as CheckerUnavailable",
+    "ve/printer.py:natural_document": "display only: retries with a different wording and re-raises when that fails too",
     "ve/readings.py:_warm_alone_rights": "Wraps the assembly of the warm-up's unit lists only (no Lean call); malformed reading sets skip the warm-up and the checks that follow raise in order; never a result.",
     "ve/readings_s1.py:Decoded._warm_rules": "CheckerUnavailable is re-raised first; a side that cannot be assembled is left out of the warm-up and raises when it is read; never a result.",
+    "ve/reports.py:ReportsDocument.__init__": "a Lean accepted reports environment that Python cannot construct becomes CheckerUnavailable; no report status or verdict is returned",
+    "ve/rights.py:RightsDocument.__init__": "Lean accepts the rights source before Python constructs display and search containers; any container construction failure is CheckerUnavailable, never a Python rights verdict",
     "ve/softnorms.py:SoftEnvironment.__init__": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors.",
     "ve/softnorms.py:SoftNormDocument.__init__": "A deferred document whose rules Python cannot hold asks Lean at once (`_elaborate`), so Lean's diagnostic, or CheckerUnavailable, is raised as eager construction raises it; nothing is built from the failure.",
     "ve/softnorms.py:SoftNormDocument._elaborate": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors.",
     "ve/softnorms.py:batch_rule": "After Lean accepts the batched quoted rule, Python AST construction failures are operational CheckerUnavailable errors.",
     "ve/softnorms.py:decode_rule": "After Lean accepts the quoted rule, Python AST construction failures are operational CheckerUnavailable errors.",
     "ve/softnorms.py:load_soft_document": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors.",
-    "ve/english.py:_parse_english_document_uncached": "Comparator only: Python parser exceptions are recorded after Lean has decided; they never change the returned Lean result or error."
+    "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 25902,
+    "total_lines": 26007,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -194,12 +194,12 @@
       },
       {
         "file": "lean/VE/Bridge.lean",
-        "lines": 282,
-        "sha256": "2d4e432b9698b07722d2a5f494cdf3797f14ab5036068fd31faaca8fb5a95d64",
+        "lines": 335,
+        "sha256": "4f7b5313509e488f647f3d8b0a7916ac28dbca6601547b44bf25eda9b833d079",
         "ranges": [
           [
             14,
-            248
+            301
           ]
         ],
         "declarations": [
@@ -258,12 +258,12 @@
       },
       {
         "file": "lean/VE/Core/Bridge.lean",
-        "lines": 159,
-        "sha256": "6cd616c3c6634d99306573aee3d40a2f3851c17d4c65e9b8103b3c8895eb625b",
+        "lines": 155,
+        "sha256": "058d08ef96b968f344cbbe40dac8e0de5b2d43bf1dd5fe7ad479064b9601df1d",
         "ranges": [
           [
             10,
-            126
+            121
           ]
         ],
         "declarations": [
@@ -349,12 +349,12 @@
       },
       {
         "file": "lean/VE/Json.lean",
-        "lines": 136,
-        "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
+        "lines": 141,
+        "sha256": "10dcb30ca301a966d8d306ad10d308b609574bac649bf175fab375a1a8a8376c",
         "ranges": [
           [
             1,
-            136
+            141
           ]
         ],
         "declarations": [
@@ -452,12 +452,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Wire.lean",
-        "lines": 423,
-        "sha256": "c6fc1964e6247758a4c76c2ab2fce7500f2e3485365a7d08b23adf6e63774486",
+        "lines": 440,
+        "sha256": "3d555723f812f18139f8f7f4fb9e5a02c4780f89ddf4d17d6df652fea05e8d68",
         "ranges": [
           [
             1,
-            423
+            440
           ]
         ],
         "declarations": [
@@ -531,7 +531,7 @@
       {
         "file": "lean/VE/Norms/Wire.lean",
         "lines": 333,
-        "sha256": "d85fe5c7b9c67aba3d6191137d48c520e2c95cbefa562e7b3f3756cc723869fe",
+        "sha256": "12156c5ab7ccc4c40051b398b8b32f1c47c779457d83b004e7981039c9a27715",
         "ranges": [
           [
             25,
@@ -548,16 +548,16 @@
       },
       {
         "file": "lean/VE/Order/Wire.lean",
-        "lines": 295,
-        "sha256": "2c8fe48a3007436efd33f4a47bc65cfd3c22973a6bc15f9214514442ed82515e",
+        "lines": 301,
+        "sha256": "0f2b4ab4442d177f19badc26111ab774978114abfed664658913a6c4f1d3f9e6",
         "ranges": [
           [
             25,
-            233
+            238
           ],
           [
-            247,
-            253
+            253,
+            258
           ]
         ],
         "declarations": [
@@ -867,12 +867,12 @@
       },
       {
         "file": "lean/VE/Route/Wire.lean",
-        "lines": 671,
-        "sha256": "1f79af9816d5ee96c8eeca40c81a25977acd7b5caeeda72eaf014ee6ccfb0acc",
+        "lines": 688,
+        "sha256": "8b9555d065eb5844ee6af42eb9991d4455fb9672f0e139d6634c9962ece653ec",
         "ranges": [
           [
             1,
-            671
+            688
           ]
         ],
         "declarations": [
@@ -1155,12 +1155,12 @@
       },
       {
         "file": "lean/VE/SpeechActs/Wire.lean",
-        "lines": 993,
-        "sha256": "fbe08d985f7fc507397eb1e74d7c9cc6ee8504dfc2e43f7cd77d78bf53f3e618",
+        "lines": 1007,
+        "sha256": "c5d1a01b214c4242d91358210c6770edf62ee4f890d47922266f2f0b55616f95",
         "ranges": [
           [
             1,
-            993
+            1007
           ]
         ],
         "declarations": [
@@ -1822,8 +1822,7 @@
       "lean_call_sites": [],
       "tests": [
         "tests/test_evaluate_search.py::test_model_rejects_nonliteral_complete_duplicates_dangling_and_missing",
-        "tests/test_lean_conformance.py::test_countermodel_rejects_inadmissible_model",
-        "tests/test_rust_conformance.py::test_rust_shared_validation"
+        "tests/test_lean_conformance.py::test_countermodel_rejects_inadmissible_model"
       ],
       "trusted": [
         "python:implementation",
@@ -3056,7 +3055,6 @@
       "lean_call_sites": [],
       "tests": [
         "tests/test_conformance.py::test_identity_preimages_have_exact_domain_and_shape",
-        "tests/test_rust_conformance.py::test_rust_shared_countermodels",
         "tests/test_p0_three_way.py::test_report_identity_binds_environment_and_document"
       ],
       "trusted": [

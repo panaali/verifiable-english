@@ -36,16 +36,12 @@ ignore_imports =
     ve.entailment -> ve.backends.dispatch
     ve.entailment -> ve.backends.lean_runner
     ve.entailment -> ve.backends.relay
-    ve.environment -> ve.backends.dispatch
     ve.environment -> ve.backends.relay
     ve.environment -> ve.backends.validation
     ve.environment -> ve.definitions
     ve.environment -> ve.profiles
-    ve.environment -> ve.speech_acts
-    ve.environment -> ve.units
     ve.evaluate -> ve.backends.dispatch
     ve.evaluate -> ve.backends.lean_runner
-    ve.model -> ve.backends.dispatch
     ve.model -> ve.backends.validation
     ve.model -> ve.background
     ve.model -> ve.definitions

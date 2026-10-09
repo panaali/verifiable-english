@@ -148,7 +148,7 @@ def test_defined_table_candidates_are_enumerated_one_at_a_time_three_ways():
                                     "Definition model evaluation budget")
     lean_limit(got, "Definition model evaluation budget")
     rust_limit(other)
-    got, other = defined_three_ways(defined(["top"], args), model(domain, p=[]), "tuple limit")
+    got, other = defined_three_ways(defined(["top"], args), model(domain, p=[]), "tuple count")
     lean_limit(got, "tuple count")
     rust_limit(other)
 
@@ -428,7 +428,7 @@ def test_supplied_tuples_count_toward_the_defined_tuple_limit_three_ways():
             assert got["status"] == "ok" and got["values"] == [True], got
             assert other["status"] == "ok" and other["values"] == [True], other
         else:
-            with pytest.raises(ResourceLimit, match="tuple limit"):
+            with pytest.raises(ResourceLimit, match="tuple count"):
                 FiniteModel.from_dict(Environment(env), data)
             lean_limit(got, "tuple count")
             rust_limit(other)

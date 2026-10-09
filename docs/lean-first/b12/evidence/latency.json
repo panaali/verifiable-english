@@ -1,0 +1,111 @@
+{
+ "udhr": {
+  "runs": {
+   "base": [
+    {
+     "wall_s": 54.67922962200828,
+     "cpu_s": 54.677693000000005,
+     "exit": 0,
+     "stdout_sha256": "27942342f8ee01dff2c8b21c585427dc3b593c40dbacf7962ad9fc4a8c1fb8ef",
+     "stdout_bytes": 270065,
+     "stderr": ""
+    },
+    {
+     "wall_s": 53.235458739975,
+     "cpu_s": 53.23985699999998,
+     "exit": 0,
+     "stdout_sha256": "27942342f8ee01dff2c8b21c585427dc3b593c40dbacf7962ad9fc4a8c1fb8ef",
+     "stdout_bytes": 270065,
+     "stderr": ""
+    },
+    {
+     "wall_s": 55.18014028802281,
+     "cpu_s": 55.184215000000016,
+     "exit": 0,
+     "stdout_sha256": "27942342f8ee01dff2c8b21c585427dc3b593c40dbacf7962ad9fc4a8c1fb8ef",
+     "stdout_bytes": 270065,
+     "stderr": ""
+    }
+   ],
+   "head": [
+    {
+     "wall_s": 59.2537956580054,
+     "cpu_s": 59.242219000000006,
+     "exit": 0,
+     "stdout_sha256": "27942342f8ee01dff2c8b21c585427dc3b593c40dbacf7962ad9fc4a8c1fb8ef",
+     "stdout_bytes": 270065,
+     "stderr": ""
+    },
+    {
+     "wall_s": 54.65071867196821,
+     "cpu_s": 54.65287500000001,
+     "exit": 0,
+     "stdout_sha256": "27942342f8ee01dff2c8b21c585427dc3b593c40dbacf7962ad9fc4a8c1fb8ef",
+     "stdout_bytes": 270065,
+     "stderr": ""
+    },
+    {
+     "wall_s": 53.77867268398404,
+     "cpu_s": 53.782506999999974,
+     "exit": 0,
+     "stdout_sha256": "27942342f8ee01dff2c8b21c585427dc3b593c40dbacf7962ad9fc4a8c1fb8ef",
+     "stdout_bytes": 270065,
+     "stderr": ""
+    }
+   ]
+  },
+  "median": {
+   "base": {
+    "wall_s": 54.67922962200828,
+    "cpu_s": 54.677693000000005
+   },
+   "head": {
+    "wall_s": 54.65071867196821,
+    "cpu_s": 54.65287500000001
+   }
+  },
+  "wall_ratio": 0.9994785780590333,
+  "child_cpu_ratio": 0.9995461037465498,
+  "document_sha256": "868f47c6baca8f4db51ff55ae3632c6354c07926b81369ea178ae92a21f21e77",
+  "same_output": true,
+  "within_budget": true
+ },
+ "eligibility": {
+  "runs": {
+   "base": [
+    {
+     "wall_s": 342.4956871099421,
+     "cpu_s": 168.68972800000003,
+     "exit": 0,
+     "stdout_sha256": "a66dd5128f617e05c337878a1619514dbed7bb0516fbf91f98a65a0f374ba7a5",
+     "stdout_bytes": 686,
+     "stderr": ""
+    }
+   ],
+   "head": [
+    {
+     "wall_s": 355.0238183810143,
+     "cpu_s": 213.060175,
+     "exit": 0,
+     "stdout_sha256": "a66dd5128f617e05c337878a1619514dbed7bb0516fbf91f98a65a0f374ba7a5",
+     "stdout_bytes": 686,
+     "stderr": ""
+    }
+   ]
+  },
+  "median": {
+   "base": {
+    "wall_s": 342.4956871099421,
+    "cpu_s": 168.68972800000003
+   },
+   "head": {
+    "wall_s": 355.0238183810143,
+    "cpu_s": 213.060175
+   }
+  },
+  "wall_ratio": 1.0365789460789636,
+  "child_cpu_ratio": 1.2630299279396546,
+  "same_output": true,
+  "within_budget": true
+ }
+}
