@@ -219,6 +219,11 @@ def _rebinds(row):
             for k, _ in enumerate(choice_row["choice"]):
                 yield ("components", i, "answer", "per_choice", j, "choice", k, 0), "zz"
                 yield ("components", i, "answer", "per_choice", j, "choice", k, 1), 99
+            for piece, gaps in choice_row["gaps"].items():
+                for k, gap in enumerate(gaps):
+                    yield ("components", i, "answer", "per_choice", j, "gaps", piece, k, 0), "zz"
+                    for m, _ in enumerate(gap[1]):
+                        yield ("components", i, "answer", "per_choice", j, "gaps", piece, k, 1, m), "zz"
         yield ("components", i, "answer", "id"), "zz"
         yield ("components", i, "answer", "question"), "query" if entry["answer"]["question"] != "query" else "premises"
     for j, _ in enumerate(row["decided_units"]):

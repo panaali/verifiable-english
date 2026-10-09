@@ -76,3 +76,28 @@ def test_rd4b_report_acceptance_labels_and_limits():
     assert "Not run" in report
     for test in checks["acceptance_tests"]:
         assert test in report
+
+
+def test_rd4b_ab_is_checked_from_saved_recordings_and_comparisons():
+    report, scope, _, _, _ = saved()
+    ab = json.loads((HERE / "evidence/ab.json").read_text())
+    raw = json.loads((HERE / "evidence/ab-raw-compare.json").read_text())
+    normalized = json.loads((HERE / "evidence/ab-normalized-compare.json").read_text())
+    assert ab["base_commit"] == scope["base"] and ab["head_commit"] == scope["head"]
+    assert ab["recordings"]["rows"] == sum(normalized["records"].values()) == 60062
+    assert raw["totals"] == ab["raw"]["totals"] == {"same": 60055, "wording": 7}
+    assert normalized["totals"] == ab["normalized"]["totals"] == {"same": 60062}
+    assert normalized["unlisted"] == ab["normalized"]["unlisted"] == 0
+    assert len(raw["differences"]) == len(ab["raw"]["differences"]) == 7
+    before = ab["normalization"]["base_from"]
+    after = ab["normalization"]["head_from"]
+    for row in ab["raw"]["differences"]:
+        assert row["class"] == "wording" and "/probes/senses-documents/" in row["case"]
+        assert len(row["base_stderr"]) == len(row["head_stderr"]) == 1
+        assert before in row["base_stderr"][0] and after in row["head_stderr"][0]
+        assert row["base_stderr"][0].replace(before, "<scratch>/pack.json") == (
+            row["head_stderr"][0].replace(after, "<scratch>/pack.json"))
+    digests = ab["recordings"]["sha256"]
+    assert all(len(value) == 64 for value in digests.values())
+    assert digests["base_normalized"] == digests["head_normalized"]
+    assert "60,055 same" in report and "60,062 same, 0 unlisted" in report
