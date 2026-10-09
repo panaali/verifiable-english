@@ -1,6 +1,14 @@
 {
  "commits": [
   {
+   "sha": "a24eff0994fe5cb11686206d0f509f1877d4513f",
+   "subject": "lf-13b: record the trust growth with its reason; fix the evidence test"
+  },
+  {
+   "sha": "df962e7745df3e3cdec0a1bcc4a7c720b5ef3aae",
+   "subject": "report: 13b gate evidence (A/B, fuzz pairs, seeded faults, latency, scope)"
+  },
+  {
    "sha": "85b02e40a7d50ece438a932aee8c58fa97c73e78",
    "subject": "lf-13b: saved-evidence tests and the batch report"
   },
@@ -43,7 +51,7 @@
  ],
  "files": {
   "conformance/difffuzz-baseline.json": [
-   642,
+   643,
    1174
   ],
   "conformance/three_way.py": [
@@ -55,16 +63,16 @@
    0
   ],
   "docs/lean-first/b13b/DELTA.md": [
-   96,
-   0
+   99,
+   2
   ],
   "docs/lean-first/b13b/LEDGER.md": [
    34,
    0
   ],
   "docs/lean-first/b13b/REPORT.md": [
-   74,
-   0
+   97,
+   1
   ],
   "docs/lean-first/b13b/difffuzz_ab.py": [
    94,
@@ -75,15 +83,19 @@
    0
   ],
   "docs/lean-first/b13b/evidence/difffuzz-ab.json": [
-   2512,
-   0
+   2588,
+   436
   ],
   "docs/lean-first/b13b/evidence/latency.json": [
    181,
    0
   ],
   "docs/lean-first/b13b/evidence/mutants.json": [
-   230,
+   233,
+   3
+  ],
+  "docs/lean-first/b13b/evidence/scope.json": [
+   260,
    0
   ],
   "docs/lean-first/b13b/latency.py": [
@@ -105,6 +117,10 @@
   "docs/spec/semantics-inventory.md": [
    493,
    497
+  ],
+  "docs/trust-baseline.json": [
+   22,
+   9
   ],
   "lean/VE/Route/frozen-sources.sha256": [
    1,
@@ -135,8 +151,8 @@
    2
   ],
   "tests/test_lean_first_b13b.py": [
-   282,
-   0
+   283,
+   1
   ],
   "tests/test_model_environment.py": [
    2,
@@ -255,6 +271,6 @@
    7
   ]
  },
- "head": "85b02e40a7d50ece438a932aee8c58fa97c73e78",
+ "head": "a24eff0994fe5cb11686206d0f509f1877d4513f",
  "merge_base": "abc30811855ea9dcb57003c1d961dda94093d5cc"
 }
