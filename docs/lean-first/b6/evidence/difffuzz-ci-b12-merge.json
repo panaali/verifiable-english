@@ -1,0 +1,58 @@
+{
+  "commit": "b05b8a1b",
+  "after": "difffuzz-ci-merged.json",
+  "note": "The 8 batch-six CI signatures that still reproduced after the merge of main (difffuzz-ci-merged.json), after the merge of ve-integration into lean-first/b12 (b05b8a1b): `difffuzz.py --ci` (seed 20261004) on the rebuilt merge, and each of the 8 entries of ve-integration's baseline (af4432de) replayed with `replay`. The saved batch-six records are difffuzz-ci.json and difffuzz-ci-merged.json.",
+  "seed": 20261004,
+  "passed": true,
+  "new": 0,
+  "baseline_entries": 254,
+  "baseline_not_reproduced": [],
+  "baseline_unreviewed": [],
+  "reproduces": [
+    "5ab0e609397d3f2f"
+  ],
+  "resolved": {
+    "138f8420645d5a7a": {
+      "follow_up": "DF-3",
+      "profile": "speech",
+      "status": "fixed",
+      "why": "Lean-first batch 12 routes environment admission through Lean (5df63abd, 29718d01, f88b9aff): Python's `Environment` relays Lean's environment decision, so both name the same first fault (the Boolean `arguments`, `array expected`) and the two answers agree."
+    },
+    "490a41808d93a5a4": {
+      "follow_up": "DF-3",
+      "profile": "speech",
+      "status": "fixed",
+      "why": "Lean-first batch 12 routes environment admission through Lean (5df63abd, 29718d01, f88b9aff): Python's `Environment` relays Lean's environment decision, so both name the same first fault (the Boolean argument sort, `String expected`) and the two answers agree."
+    },
+    "54fcf6b1c09b89f3": {
+      "follow_up": "DF-19",
+      "profile": "norm-defaults@0",
+      "status": "fixed",
+      "why": "Lean-first batch 12 admits a route constant's `verbalisation`, as Python does for route envelopes (f88b9aff), so Lean's norm-defaults decoder no longer refuses it first and both report the numeric rule name (`NORMS_INVALID_NAME`)."
+    },
+    "6cb30db5763b2058": {
+      "follow_up": "DF-3",
+      "profile": "norm-defaults",
+      "status": "fixed",
+      "why": "Lean-first batch 12 routes environment admission through Lean (5df63abd, 29718d01, f88b9aff): Python's `Environment` relays Lean's environment decision, so both name the same first fault (the number where a predicate object belongs, `object expected`) and the two answers agree."
+    },
+    "8841282e3cb46aa2": {
+      "follow_up": "DF-9",
+      "profile": "soft-norms",
+      "status": "fixed",
+      "why": "Lean-first batch 12 routes environment admission through Lean (5df63abd, 29718d01, f88b9aff): Python's `Environment` relays Lean's environment decision, so both name the same first fault (the array where a predicate object belongs, `InvalidInput`, as Rust does) and the two answers agree."
+    },
+    "db0c3c4f36d02f4d": {
+      "follow_up": "DF-3",
+      "profile": "speech",
+      "status": "fixed",
+      "why": "Lean-first batch 12 routes environment admission through Lean (5df63abd, 29718d01, f88b9aff): Python's `Environment` relays Lean's environment decision, so both name the same first fault (the number where a predicate object belongs, `object expected`) and the two answers agree."
+    },
+    "e2f227c11fef418c": {
+      "follow_up": "DF-3",
+      "profile": "speech",
+      "status": "fixed",
+      "why": "Lean-first batch 12 routes environment admission through Lean (5df63abd, 29718d01, f88b9aff): Python's `Environment` relays Lean's environment decision, so both name the same first fault (the string where a predicate object belongs, `object expected`) and the two answers agree."
+    }
+  }
+}

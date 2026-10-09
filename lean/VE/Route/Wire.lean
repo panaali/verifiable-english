@@ -217,6 +217,7 @@ def decodeOrderVocabulary (v : Json) : Except String RouteOrderVocabulary := do
     ("spec_revision", .str VE.Order.Wire.orderRevision),
     ("vocabulary", Json.mkObj [("sorts", v.getObjValD "sorts"),
       ("predicates", v.getObjValD "predicates"), ("constants", Json.mkObj others)])])
+    (displayConstants := true)
   let declared := base.sorts ++ base.predicates.map Prod.fst ++ base.constants.map Prod.fst
   for name in literals do
     unless identifier name && !reserved.contains name && !generatedName name do

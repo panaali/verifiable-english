@@ -33,7 +33,10 @@ def decodeSortName (sorts : List String) (s : String) : Except String SortName :
   else if sorts.contains s then pure (.user s)
   else throw s!"unknown sort: {s}"
 
-def decodeEnvironment (j : Json) : Except String Vocabulary := do
+/-- The frozen `ve.core@0.1` order envelope. Its constants carry no display
+words; `displayConstants` admits a `verbalisation` for the route order family
+(`Route.Wire.decodeOrderVocabulary`), as `Route.Wire.decodeVocabulary` does. -/
+def decodeEnvironment (j : Json) (displayConstants : Bool := false) : Except String Vocabulary := do
   exactFields j ["language", "profiles", "spec_revision", "vocabulary"]
   unless (← stringField j "language") == orderLanguage &&
       (← strings (← j.getObjVal? "profiles")) == orderProfiles &&
@@ -71,10 +74,12 @@ def decodeEnvironment (j : Json) : Except String Vocabulary := do
     let ss ← VE.Bridge.argumentSorts raw (fun s => sortNames.contains s || s == "$int")
     pure (p, ← ss.mapM (decodeSortName sortNames))
   let cs ← constants.mapM fun (c, entry) => do
-    VE.Bridge.displayFields entry ["sort", "description"] ["verbalisation"]
+    VE.Bridge.displayFields entry ["sort", "description"]
+      (if displayConstants then ["verbalisation"] else [])
     VE.Bridge.description entry
-    if let .ok words := entry.getObjVal? "verbalisation" then
-      VE.Bridge.displayString words
+    if displayConstants then
+      if let .ok words := entry.getObjVal? "verbalisation" then
+        VE.Bridge.displayString words
     let sort ← VE.Bridge.constantSort entry (fun s => sortNames.contains s || s == "$int")
     pure (c, ← decodeSortName sortNames sort)
   pure ⟨sortNames, ps, cs⟩
