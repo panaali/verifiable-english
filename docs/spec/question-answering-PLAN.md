@@ -1,6 +1,6 @@
 # Question answering in VE, parts Q1 and Q2: buildable plan
 
-**Status:** plan, draft 2, 2026-10-09, branch `design/question-answering` at `c85797de` (`main` after the E2.6 flip). Draft 2 applies the plan review's converged edits (`manage-agents/debates/design-question-answering/`, Astra and Fable, converged in round 3 on BUILD after draft 2); section 0.1 lists each edit and where it lands. There is no separate review of draft 2: Q0's statement review is the single gate. Draft 1 was 2026-10-08.
+**Status:** plan, draft 2 with Q0 corrections, 2026-10-09, branch `design/question-answering` at `c85797de` (`main` after the E2.6 flip). Draft 2 applies the plan review's converged edits (`manage-agents/debates/design-question-answering/`). The Q0 statement review (`manage-agents/debates/question-answering-spec/`, Astra and Fable, round 3) converged on **FIX overall**: the accepted Q1 reading definitions and proofs may begin; Q1.1's span mapping and affected guards require a targeted joint check before that batch is accepted or Q1.2 starts; Q2 remains gated on merged RD-3 and review of its corrected statements and fixtures. Section 0.1 records the original plan edits, and the Q0 corrections are synchronized below. Draft 1 was 2026-10-08.
 
 **Brief:** the lead-approved item "Question answering in VE" (2026-10-08), parts Q1 and Q2. Sources: `ve-northstar/NORTH-STAR.md`, the section of that name, and `manage-agents/ARCH-ROADMAP.md` line 53.
 - Q1: questions written as English questions and read by the Lean English grammar.
@@ -9,9 +9,9 @@
 **What was done for this draft.**
 - Planning only. No code, proof or test changed.
 - No VE model call was made (no translator, reader or judge). The repository was read by hand and with read-only search agents.
-- **The Lean statements below were not elaborated.** Every name they use was read at `c85797de`. Where a name exists only on the unmerged RD-3 branch (`readings-defaults/rd3`, worktree `ve-rd-3`), the text says so. Elaborating them is Q0's first step.
-- Every fixture value is *derived*: it was worked out by reading the sources and was not run. Q0 computes it.
-- Draft 2 changes only what the review's edits change (0.1). It still runs nothing; the statement spec does.
+- The original draft-2 statements below were not elaborated in the planning pass. The subsequent statement spec elaborated its original Q1 and Q2 stubs, then elaborated the corrected span mapping; the Q2 corrections still require review against merged RD-3. Every name of the original plan was read at `c85797de`, or on the unmerged RD-3 branch (`readings-defaults/rd3`, worktree `ve-rd-3`).
+- Q1 fixture values in the statement spec are computed, including the corrected spans. Q2 fixture leads remain *derived* until RD-3 and the evidence generators are checked.
+- Draft 2 changed only what its plan review required (0.1). The Q0 corrections in this file follow the statement review; the statement spec records the computations.
 
 **Builds on:**
 - **English E2.6.** `english.admission` is Lean-authoritative ([E2.6.md](../lean-first/e2/E2.6.md)). This plan uses the reader `VE.EnglishGrammar.read` and its statements, and the diagnosis `VE.EnglishGrammar.diagnose` ([english-lean-e2.md](english-lean-e2.md) 4.5).
@@ -75,7 +75,7 @@
    - Python's wording of situations and point clauses moves to `VE.Words` (Q2.4).
    - RD-3's fold and checkers, the certificate checker and Lean's document splitter are reused, not copied.
 10. **Order.**
-    - Q0, the statement spec and its review, comes first. Its review is the only gate before building.
+- Q0's accepted Q1 reading work may begin. The corrected span mapping and fixtures receive a targeted joint check before Q1.1 completes or Q1.2 begins.
     - Then Q1.1, then Q1.2, then Q1.3 and Q1.4 in parallel.
     - Q2 starts once RD-3 has merged and the Q2 statements have passed review: Q2.1, Q2.2 and Q2.3 in turn, then Q2.4 and Q2.5 in parallel. Q2.6 may start once Q2.3 and Q2.5 are done. Release requires Q2.4 and Q2.6.
 
@@ -91,16 +91,16 @@ The review converged in round 3 (Fable's and Astra's round-3 positions in the de
 | R2 | Every candidate must lex to exactly one sentence. `got` checks the sentence count before `read`'s outcome, so `.stopped _ .noDerivation` is sentence 0's and the step to `NoDerivation` holds (`read_stopped` speaks of sentence *i* only). | Astra | 3.2, 3.5 |
 | R3 | `QuestionOneReading` is restated. (a) Every candidate lexes to one sentence and has at most one derivation. (b) `c` is the first candidate that reads `[(φ, false)]`. (c) Every other candidate reads `[(φ, false)]` or has no accepted one-sentence unmarked reading. Both `NoDerivation` clauses go, the earliest-candidate one included, so a rejected or ill-typed candidate no longer blocks a question that has a reading. The order of 3.5 stays: budget, then ambiguity, then meanings, then refusal. | Astra, Fable | 3.5 |
 | R4 | The limits are hypotheses of `readQuestion_complete`, `caseThat_reads` and `rephrasings_read`, for the question and for each generated rephrasing. | Fable, Astra | 3.5 |
-| R5 | The binding covers every semantic input. Lean compares the case's environment, lexicon, reading-set entries, norm content, defaults, couplings and narrowings with the front matter, as canonical JSON. For a fenced unit, Lean reads the fence's own bytes with `read` and requires the case's formula. `Asked` carries the binding and `ask_wire_sound` states it. | Astra | 4.3, 4.7 |
+| R5 | The binding covers every semantic input. Lean compares the case's environment (including profiles and defaults), reading sets, norm content, couplings, narrowings and completions with the front matter. Unit comparison follows the compiler: asserted AST content is bare, norm content is preserved, and one-formula fences use `read` or `Surface.parse` according to `surface`. `Asked` carries the document binding, case replay, and request-field equations; `ask_wire_sound` states them. The plain route has the corresponding contract. | Astra; Q0 review | 4.3, 4.7 |
 | R6 | The agent policy's rule set is CONFLICT on `permitted` (rules write-workspace and write-outside, witness a10), so under D13 every `permitted` question on it is unknown. `build.py` writes a conflict-free variant with those two rules disambiguated for A1 to A4, A7 and A8, and keeps the original for A5, where any question gives X1. | Astra, Fable | 6.2 |
 | R7 | Groups are keyed by the lead, the citations and the row's assignment on `relevantSets`. There is one R1 block per group. New theorem `render_covers_rows`: every row is in exactly one block, and that block's named readings are the row's choice on the relevant sets. With `relevantSets_sound`, this gives coverage and correctness. | Astra | 4.4, 4.7 |
-| R8 | Honesty in the printed text. An unchecked reading name is marked in its R1 line ("VE has not checked this wording"). The "k-th way" fallback goes: a name that fails its check makes the answer `CheckerUnavailable`, naming the sentence. U1 is shown after every lead, *yes* and *no* included: adding a rule rewrites a layer premise, so yes and no are not monotone in the document's sentences. 4.9 calls proxy results proxy evidence. | Astra | 0, 2 (D11, D14), 4.4, 4.6, 4.9 |
+| R8 | Honesty in the printed text. An unchecked reading name is marked in its R1 line ("VE has not checked this wording"). The "k-th way" fallback goes: a name that fails its check makes the answer `CheckerUnavailable`, naming the sentence. One U1 line is shown after all blocks of every answer with unused sentences, for every kind of lead, *yes* and *no* included: adding a rule rewrites a layer premise, so yes and no are not monotone in the document's sentences. 4.9 calls proxy results proxy evidence. | Astra | 0, 2 (D11, D14), 4.4, 4.6, 4.9 |
 | R9 | New reason X6, for "proof found, premise row unknown", where X4 would be false. | Fable | 4.1, 4.6 |
 | R10 | `replayOk := VE.Tableau.checkCertificate`. RD-3's `certOn` already passes it to `usedLabels`, and the meaning-id binding is a separate gate (`ndBoundCert`). Checklist item 8 is answered. | Fable | 4.3, 4.7, 10 |
 | R11 | Q2.6 needs Q2.3 and Q2.5 only. Q2.4 is still required for release ("no duplicated logic"). | Fable, Astra | 0, 7 |
 | R12 | Latency: the two gates stay, each measured on its own (whole questions, not per sentence): p95 ≤ 100 ms for a corpus question and ≤ 1 s for a 64-candidate question. Each is met, or its revision is reviewed. The derivation from the per-sentence p95 is removed. | Fable, Astra | 3.6 |
 | R13 | Q0 chooses the plain adapter for `relational-fol@0` documents: no gaps, so no `SplitU`. | Fable, Astra | 4.7 |
-| R14 | Q0 is the single gate. Both reviewers PASS the Q1 statements and the computed Q1 fixtures. The Q2 statements are passed when computed against merged RD-3: in the same sitting if RD-3 has merged, otherwise before Q2.1 starts. Elaboration alone is not a PASS. | Fable, Astra | 2 (D19), 7 |
+| R14 | Q0 is the statement gate. The Q0 review accepted the Q1 reading definitions and proofs, but found the span mapping and affected fixtures incorrect. A targeted joint check of §2.5, `mapSpan_valid`, `mapSpan_codepoints_valid`, and the corrected guards is required before Q1.1 completes or Q1.2 starts. Q2 statements and fixtures are reviewed against merged RD-3 before Q2.1. Elaboration alone is not a PASS. | Fable, Astra; Q0 review | 2 (D19), 7 |
 
 ## 1. What exists today (read at `c85797de` unless marked)
 
@@ -141,12 +141,12 @@ There is no `ask` command and no question form in the Lean grammar anywhere in t
 | D11 | **A reading's own sentence** comes from RD-3's `<reading>` slot text, which Python's renderer produces until E3, when the statement layer moves to Lean.<br>- Lean checks it by reading it back (`checkRendering`) when the candidate is an assertion.<br>- Otherwise the response marks it `unchecked`, and its R1 line says "VE has not checked this wording".<br>- A name that fails its check is never replaced: the answer is `CheckerUnavailable`, naming the sentence.<br>- A reading is never shown as a candidate id, as "reading 2" or as "the k-th way". | 4.4, 4.9 |
 | D12 | **Python is `ve/ask.py`:**<br>- the CLI, file reading and relaying;<br>- the existing untrusted generators;<br>- the norm-defaults flip search, generalised so that one generator serves both points and sentences. | 4.8, 5 |
 | D13 | **Gates.**<br>- *Yes* and *No* need a checked premise model, so a document whose sentences cannot all be true answers nothing.<br>- A proof whose premise row is unknown gives *unknown* with reason X6.<br>- Every lead except *unknown* needs CONFLICT-FREE, as RD-3's review gate A2 requires. | 4.1 |
-| D14 | **Unused sentences.**<br>- Every answer, whatever its lead, lists the sentences VE did not use because they have no formal content: UNFORMALISED, LABELLED, or a reading set without content.<br>- *Yes* and *no* need the list too: adding a rule rewrites a layer premise, so they are not monotone in the document's sentences. | 4.6 |
+| D14 | **Unused sentences.**<br>- Every answer, whatever its lead, lists the sentences VE did not use because they have no formal content: UNFORMALISED, LABELLED, or a reading set without content. One U1 line follows all answer blocks when this list is nonempty; none appears when it is empty.<br>- *Yes* and *no* need the list too: adding a rule rewrites a layer premise, so they are not monotone in the document's sentences. | 4.6 |
 | D15 | **Sentence numbers are display numbers**, as composition.md 2.1's `<n>` defines them.<br>- The brief's "Sentence 26.1" needs a label on each unit, which is a wire change to `ve-document@1` (question 2).<br>- The UDHR's article numbers live only in the pilot's `units.json`. | 4.6 |
 | D16 | **Two service modes**, `english.question` (Q1) and `ask` (Q2).<br>- Each is pinned by an `rfl` theorem and has a response shape.<br>- The manifest operations are `question.read` and `question.answer`, both `authority: lean-only`. | 4.8 |
 | D17 | **Senses.**<br>- A question is read with the same lexicon the document's sentences are read with, which for a senses document is RD-8's projection.<br>- A word the projection leaves unresolved has no wording, so the question has no reading and gets the diagnosis.<br>- Rephrasings with glosses come later (question 7). | 3.2 |
 | D18 | **Scope.** Q2 answers:<br>- documents that RD-3's enumerated route answers: `readings@1` with content on the norms chain, with or without `norm-defaults@0`;<br>- documents with no content-bearing reading set, which are treated as one choice (Q2.2).<br><br>The soft and rights chains, the superposed route, components (RD-4) and `--under` give *unknown*, with the route's own abstention text relayed. | 4.8 |
-| D19 | **The statement review comes before any Lean** (PLAN-EXPAND2 rule 10). Astra and Fable must converge on PASS, which requires both reviewers to accept every statement as true under its hypotheses. It is the single gate: the Q1 statements and computed Q1 fixtures pass at Q0; the Q2 statements pass when computed against merged RD-3, in the same sitting if RD-3 has merged, otherwise before Q2.1 starts. | Q0 |
+| D19 | **Statement review before the affected build.** The Q0 review accepted the Q1 reading definitions and proofs, so that work may begin. Its corrected span mapping, byte and code-point bounds statements, and G9/A9/U1 plus crossing and Unicode guards need a targeted joint check before Q1.1 completes or Q1.2 starts. Q2 remains unpassed until the corrected statements and fixtures are checked against merged RD-3 before Q2.1. | Q0 |
 
 ## 3. Q1: questions in English
 
@@ -189,7 +189,7 @@ Each refusal carries Lean's code, its class and Lean's text, as English refusals
 |---|---|---|
 | one | — | `english.question` returns the asked sentence, the formula and the form. `ask` goes on to answer. |
 | many meanings | `AmbiguousQuestion`; `AmbiguousDerivation` | `This question can be read in more than one way. Ask one of these instead:`, then one rephrasing per line |
-| a candidate with two derivations | E2's `Ambiguous`; `AmbiguousDerivation` | E2's ambiguity text, with its witnesses, on the question's spans |
+| a candidate with two derivations | E2's `Ambiguous`; `AmbiguousDerivation` | `The sentence "<candidate>" can be read in more than one way. Two of the ways are shown.`, with its two witness trees |
 | indefinite subject | `IndefiniteQuestion`; `SyntaxError` | `VE cannot tell whether "a" here means every or some. Ask one of these instead:`, then the rephrasings |
 | no reading | E2's `NoDerivation`; `SyntaxError` | E2.6's diagnosis of the closest candidate, mapped onto the question's bytes, then one advice line |
 | advice: another first word | — | `VE answers questions that begin with "Is", "Must" or "May", or with "Is it the case that" followed by a sentence.` |
@@ -202,9 +202,7 @@ Each refusal carries Lean's code, its class and Lean's text, as English refusals
 
 **The closest candidate** is the one whose diagnosis span starts furthest to the right; ties go to the leftmost.
 
-**Mapping spans back to the question:**
-- *F1:* a span moves right by the length of the frame.
-- *F2:* a span before the gap moves right by `len(Aux) + 1`, and a span after the reinserted word stays where it is. A span over the reinserted word maps onto the question's first word.
+**Mapping spans back to the question:** F1 moves the interval right by the frame length. F2 splits the candidate's diagnosis interval across the before-gap region, the put-back auxiliary, its inserted space and the suffix. Each piece maps to its corresponding question bytes; the reported span encloses all mapped pieces. An empty interval maps its point. This handles a span crossing the movement boundary, where independent endpoint mapping can invert the interval or omit diagnosed text. The byte bound is `start ≤ stop ≤ q.utf8ByteSize`; after `Run.codepointsBefore` it is `start ≤ stop ≤ q.length`.
 
 ### 3.4 Rephrasing help
 
@@ -335,6 +333,22 @@ theorem caseThat_reads (auxs : List String) (E : Env) (O : Overlay) (L : Lexicon
 theorem fronted_text {auxs q a g s} (h : (⟨.fronted a g, s⟩ : Candidate) ∈ candidates auxs q) :
     a ∈ auxs ∧ ∃ rest, q = capitalized a ++ " " ++ rest ++ "?" ∧ g ∈ gaps rest ∧
       s = (rest.extract 0 ⟨g⟩) ++ a ++ " " ++ (rest.extract ⟨g⟩ rest.endPos) ++ "."
+/-- The exact interval mapper and hypotheses are in the statement spec §2.5 and §5.1. -/
+def mapSpan : Candidate → Nat → Nat × Nat → Nat × Nat
+theorem mapSpan_valid :
+  ∀ (auxs : List String) (q : String) (c : Candidate) (start stop : Nat),
+    (∀ a ∈ auxs, (capitalise a).utf8ByteSize = a.utf8ByteSize) →
+    c ∈ candidates auxs q → start ≤ stop → stop ≤ c.sentence.utf8ByteSize →
+    let span := mapSpan c caseFrame.utf8ByteSize (start, stop)
+    span.1 ≤ span.2 ∧ span.2 ≤ q.utf8ByteSize
+theorem mapSpan_codepoints_valid :
+  ∀ (auxs : List String) (q : String) (c : Candidate) (start stop : Nat),
+    (∀ a ∈ auxs, (capitalise a).utf8ByteSize = a.utf8ByteSize) →
+    c ∈ candidates auxs q → start ≤ stop → stop ≤ c.sentence.utf8ByteSize →
+    let span := mapSpan c caseFrame.utf8ByteSize (start, stop)
+    VE.EnglishGrammar.Run.codepointsBefore q span.1 ≤
+      VE.EnglishGrammar.Run.codepointsBefore q span.2 ∧
+    VE.EnglishGrammar.Run.codepointsBefore q span.2 ≤ q.length
 /-- Every rephrasing VE offers is a question it reads with one meaning, and two offered rephrasings mean different
     things. -/
 theorem rephrasings_read {auxs E O L b q c d rs} (hp : L.policyOk E O = true)
@@ -398,6 +412,9 @@ The lead of a row is a function of these alone (`Row.lead`, 4.7). The answer is 
 - No negative lead where it is `proved`.
 - Every choice *yes* is exactly RD-3's ALL, when every choice has a premise model.
 
+The query fold may still be UNKNOWN for a *no* backed by a checked ¬ψ certificate or a *not settled* lead backed by
+a checked split, because neither is itself a query countermodel row. Q2.6 compares the evidence at this granularity.
+
 For a document with no content-bearing reading set, the rows have one choice, `[]` (Q2.2). Agreement with Python's W2 fold on those documents is measured in Q2.6.
 
 ### 4.3 Reasons: exactly the premises of the certificate
@@ -418,7 +435,7 @@ For a document with no content-bearing reading set, the rows have one choice, `[
 
    Nothing claims the cited set is minimal, because the greedy order decides which of two interchangeable premises is kept.
 3. **Quotes.** A cited unit's text is the document's own bytes in that unit's span, as Lean's `VE.Service.Document.split` reads them, without leading or trailing white space. For a fenced unit, the text is the fence's sentence.
-4. **The binding (R5).** Lean checks that the readings case it received is this document's, for every semantic input. The case's environment, lexicon, reading-set entries, norm content, defaults, couplings and narrowings must equal the front matter's, as canonical JSON. For a fenced unit, Lean reads the fence's own bytes with `read` and requires the case's formula. Otherwise the answer is `CheckerUnavailable: the case is not this document's`. `Asked` carries the binding, and `ask_wire_sound` states it (4.7).
+4. **The binding (R5).** Lean checks that the readings case it received is this document's, for every semantic input. The case's environment (including profiles, defaults and vocabulary selection), reading-set entries, norm content, couplings, narrowings and completions are bound to the front matter. The unit comparison follows the compiler's content conversion: asserted `{"ast": φ}` content becomes bare `φ`; norm content remains the norm object; an English fence is read by `read`, a strict fence by `Surface.parse`, and each must yield exactly one formula whose bare encoding equals the compiled unit content. The case's replay is `replayVerdictsND case = .ok x`, and the request's `document`, `question` and `case` fields equal `Asked.text`, `Asked.q` and `Asked.case`. The case's `conclusion` equals the question's `φ.encode` and decodes to `x.φ`. On failure the answer is `CheckerUnavailable: the case is not this document's`. The plain adapter has the same request, content and replay binding through its lower checker. Q2.2 records successful AST and English/strict fence cases as well as mismatches.
 
 ### 4.4 Readings
 
@@ -430,6 +447,8 @@ For a document with no content-bearing reading set, the rows have one choice, `[
   - When there is one group and the document has open sets, the text is the lead and its reasons, then `Every way of reading the document gives this answer.`
   - Otherwise there is one block per group: `If sentence <n> means "<reading>"[ and sentence <m> means "<reading>"], <lead phrase>.`, then that group's reasons.
 - **Situations.** A shown situation belongs to one choice. When the document has open sets, its line adds `, reading sentence <n> as "<reading>"` for **every** open set. A model is one reading, so naming fewer sentences would claim the result for readings the model does not show (composition-s2 2.3 item 3).
+- **Unused sentences.** After all blocks, one U1 line names the document-derived unused list when it is nonempty;
+  there is no U1 for an empty list. Its count and citation match that list.
 - **Reading names** come from RD-3's `<reading>` slot, rendered by Python's `reading_names` and sent in the request (D11).
   - An asserted candidate's name is checked with `checkRendering` against the candidate's formula.
   - A norm candidate's name cannot be checked until E3. It is listed in the response as `unchecked_names`, and its R1 line says so in the printed text: `If sentence <n> means "<reading>" (VE has not checked this wording), …` (R8).
@@ -476,8 +495,8 @@ Each sentence has one derivation because it begins with a fixed lead that no oth
 | S3 | `Here the text does not say whether <clause>; this situation answers 'no'.` | norm-defaults 3.2's filled-gap sentence after S1, one per gap the failure depends on (`gapsOf`). |
 | R1 | `If sentence <n> means "<reading>"[ (VE has not checked this wording)][ and sentence <m> means "<reading>"], <lead phrase>.` | The lead holds under every compatible choice that reads the named sentences this way. The parenthesis follows every reading whose wording Lean did not read back (R8). |
 | R2 | `Every way of reading the document gives this answer.` | Every compatible choice has the same lead (and the same cited sentences, for yes and no). |
-| U1 | `VE did not use <k> sentences of this document that it could not read formally: <citation>.` | Those units have no formal content, and the answer is about the other sentences only. Shown after every lead, *yes* and *no* included (D14, R8). |
-| X1 | `Two rules contradict each other in this situation, so VE cannot answer: <situation>.` | Reason after A5: a checked conflict witness under this choice. |
+| U1 | `VE did not use <k> sentences of this document that it could not read formally: <citation>.` | Those units have no formal content, and the answer is about the other sentences only. Shown exactly once after all answer blocks when the unused list is nonempty, for every kind of lead, *yes* and *no* included (D14, R8). |
+| X1 | `The document's rules or defaults conflict in this situation, so VE cannot answer: <situation>.` | Reason after A5: a checked conflict witness under this choice, including a defaults pair with no rules. |
 | X2 | `VE could not check that the rules never contradict each other.` | Reason after A5: the conflict row is unknown. |
 | X3 | `The sentences of this document cannot all be true together, so VE does not answer questions about it.` | Reason after A5: a certificate of ⊥ under this choice. |
 | X4 | `VE found neither a proof nor a situation where it fails, within its limits.` | Reason after A5: no row result. |
@@ -615,73 +634,23 @@ theorem relevantSets_sound (D : Doc) (rows : List Row) (key : Row → Lead × Li
     ∀ r ∈ rows, ∀ r' ∈ rows,
       (∀ s ∈ relevantSets D rows key, r.choice.lookup s = r'.choice.lookup s) → key r = key r'
 
-/-! ## The text (4.6) -/
-
-structure Line where
-  frame : String                         -- A0 … X6
-  text : String
-  source : Option Source := none         -- C1 to C4
-  quote : Option (String × String) := none   -- (unit id, the unit's bytes)
-  readings : List (String × Nat) := []   -- R1, S1, S2: the candidates named, in source order
-
-structure Answer where
-  asked : VE.Question.Candidate
-  rows : List Row
-  cites : Row → List Source              -- `cited (sourcesU …) (usedPositions …)` of the row's accepted certificate
-  sets : List String                     -- `relevantSets`
-
-/-- Every quoted sentence is the document's own bytes for that unit, trimmed (`Context.textOf` reads `Document.split`). -/
-theorem render_quotes_bytes (ctx : Context) (a : Answer) :
-    ∀ l ∈ render ctx a, ∀ u t, l.quote = some (u, t) → ctx.textOf u = some t
-/-- The first line is A0 over the asked sentence. -/
-theorem render_asked (ctx : Context) (a : Answer) :
-    (render ctx a).head? = some (askedLine a.asked.sentence)
-/-- The source lines of a yes or no group are exactly its rows' cited sources, once each, in order. -/
-theorem render_cites_exact (ctx : Context) (a : Answer) (g : Group) (hg : g ∈ groups a)
-    (hl : g.lead = .yes ∨ g.lead = .no) :
-    (renderGroup ctx a g).filterMap (·.source) = a.cites g.first
-/-- Each group's first sentence is its lead's (A1 to A5, or R1 with the lead phrase). -/
-theorem render_lead (ctx : Context) (a : Answer) (g : Group) (hg : g ∈ groups a) :
-    leadOfLine ((renderGroup ctx a g).head?) = some g.lead
-/-- A situation line names every open set's candidate of its model's choice (RD-3's `plan_model_names_every_set`). -/
-theorem render_model_names_choice (ctx : Context) (a : Answer) :
-    ∀ l ∈ render ctx a, l.frame ∈ ["S1", "S2", "X1"] → l.readings.map (·.1) = ctx.D.sets.map (·.id)
-/-- R7: every row is in exactly one block, and that block's named readings are the row's choice on the relevant
-    sets. -/
-theorem render_covers_rows (ctx : Context) (a : Answer) :
-    ∀ r ∈ a.rows, ∃ g ∈ groups a, r ∈ g.rows ∧ (∀ g' ∈ groups a, r ∈ g'.rows → g' = g) ∧
-      ((groups a).length ≥ 2 → (renderGroup ctx a g).head?.map (·.readings) =
-        some (a.sets.filterMap fun s => (r.choice.index s).map (s, ·)))
-
-/-! ## The wire (4.8) -/
-
-/-- A replayed `ask` case: the question read by Lean itself (the request's formula is not trusted), RD-3's replayed
-    case with ψ as its conclusion and nothing assumed, and one row per replayed choice. -/
-structure Asked where
-  text : String                          -- the document's bytes
-  case : Lean.Json                       -- the readings case
-  q : String
-  E : VE.EnglishGrammar.Env
-  L : VE.EnglishGrammar.Lexicon
-  c : VE.Question.Candidate
-  φ : VE.EnglishGrammar.EFormula
-  ψ : VE.Formula
-  x : VE.Readings.Wire.NDVerdicts
-  rows : List Row
-  hbind : CaseBinding text case E L       -- R5: every semantic input is the document's; fences re-read
-  hread : VE.Question.QuestionOneReading VE.Question.auxiliaries E {} L q c φ
-  hψ : VE.Bridge.decodeFormula φ.encode = .ok ψ
-  hx : x.φ = ψ ∧ x.Γ = [] ∧ x.A = []
-  hrows : rows.map (·.choice) = x.evs.map (·.1)
-  hok : ∀ r ∈ rows, RowOk.{0} x.r.N ψ r
-
-def replayAsk (j : Lean.Json) : Except String Asked
-theorem ask_wire_sound (j : Lean.Json) (a : Asked) (h : replayAsk j = .ok a) :
-    (∀ r ∈ a.rows, LeadHolds.{0} a.x.r.N a.ψ r) ∧
-    (∀ c, Compatible a.x.r.N.D c ↔ c ∈ a.rows.map (·.choice)) ∧
-    CaseBinding a.text a.case a.E a.L
+/-! ## The text and wire (4.6, 4.8) -/
+-- The exact `Line`, `Answer`, `Context`, `Asked`, `PlainAsked` and render/wire statements are in
+-- question-answering.md §5.2. Their Q0 corrections bind the render inputs to the document and accepted
+-- certificate, require exact witness choices and printed metadata, put one document-derived U1 after all
+-- blocks, and tie both replay routes to the request's document, question and case.
 end VE.Ask
 ```
+
+**Q2 text and wire obligations.** `contextOf` derives each unit's bytes and display number from `Document.split`;
+`checkedCites` uses the accepted ψ or ¬ψ certificate in the request and its `usedPositions` (the ¬ψ certificate
+is additional to RD-3's `x.evs`); `checkedWitness` ties each S1, S2 or X1 line to accepted request evidence.
+`answerFor_bound` links the rendered `Answer` and its request to `Asked`, and `RenderInputBound` is a
+hypothesis of the quote, citation, witness and U1 statements. `render_text_matches_metadata` prevents the printed
+line from disagreeing with its metadata. `render_model_names_choice` requires the exact candidate index for every
+open set of the witness's choice. `render_unused_once` requires one final U1 with the document-derived count and
+citation, or no U1 when the list is empty. The plain adapter's `plain_ask_wire_sound` requires its own replay of
+the bound case and the same request fields.
 
 **`VE.Words`** (4.5) has no correctness theorem beyond its `#guard` fixtures. Its functions fill templates from a lexicon that V1 to V6 validated. Q2.4's A/B shows they produce Python's bytes. Situation lines are not read back: element names are not lexicon constants, and Python's lines are not read back today either. The share of shown lines that read back is measured instead (8).
 
@@ -704,7 +673,7 @@ For a document without norms (`relational-fol@0` only), Q0 chooses the plain ada
     - `document`: the text;
     - `question`;
     - the English fields (as above);
-    - `case`: the `readings-verdicts` case Python's readings relay builds for this document, with `conclusion` set to the formula `english.question` returned. Lean re-reads the question and refuses a case whose conclusion differs.
+    - `case`: the `readings-verdicts` case Python's readings relay builds for this document, with its route `question` set to `query` and `conclusion` set to the formula `english.question` returned. Lean re-reads the outer English `question`, requires the bound case's conclusion to match, and replays that exact case. The plain adapter follows the same outer-field and replay contract.
     - `evidence`: RD-3's per-choice evidence, plus `negation` (a certificate) and `split` (a model with two fillings) per choice;
     - `names`: `{set, index, text}` for each candidate, from RD-3's `<reading>` slot.
   - *Result:* the Q1 result, plus:
@@ -758,44 +727,48 @@ Each batch's `LEDGER.md` lists every Python site it deletes or turns into a rela
 
 ## 6. Fixtures
 
-All expected values are *derived*. Q0 computes them, with the stub for the Lean side and by running the generators for evidence. Display numbers are unit positions.
+The Q1 expected values were computed in Q0's Lean stub, including the corrected span run recorded in the statement spec §11.1. The Q2 values remain *derived* until RD-3 merges and the generators and checker run on recorded evidence. Display numbers are unit positions.
 
 ### 6.1 G: the group document (written for this plan; `usecases/question-answering/group.ve.md`)
 
 - **Profiles:** `documents@1`, `relational-fol@0`.
-- **Sort:** `member`, noun "member of the group", plural "members of the group".
+- **Sort:** `member`, noun "member", plural "members".
 - **Predicates:**
-  - `citizen(member)` with wording "{0} is a citizen";
-  - `person(member)` with wording "{0} is a person";
-  - `adult(member)` with wording "{0} is an adult".
+  - `registered(member)` with wording "{0} is registered";
+  - `eligible(member)` with wording "{0} is eligible";
+  - `verified(member)` with wording "{0} is verified".
 - **Constants:** `ann` ("Ann") and `bo` ("Bo").
 - **Sentences** (English fences):
-  1. "Every member of the group is a citizen."
-  2. "Every member of the group who is a citizen is a person."
-  3. "Ann is an adult."
+  1. "Every member is registered."
+  2. "Every member who is registered is eligible."
+  3. "Ann is verified."
 
-  If the stub finds a sentence without a reading, Q0 rewrites the fixture, not the grammar.
+Q0 rewrote this fixture because the original wordings did not read under the vocabulary policy (spec F1). The Q1
+values below were computed; Q2 remains derived pending RD-3 and generator checks. Exact candidates, formulas and
+diagnostics are in [the statement spec](question-answering.md) §7.2–7.3.
 
-| # | Question | Q1 (*derived*) | Q2 (*derived*) |
+| # | Question | Q1 (*computed*) | Q2 (*derived*) |
 |---|---|---|---|
-| G1 | `Is every member of the group a person?` | one, F2; asked "every member of the group is a person." | **Yes.** C1 for sentence 1 and C1 for sentence 2; not sentence 3. |
-| G2 | `Is it the case that every member of the group is a person?` | one, F1, the same formula (`caseThat_reads`) | the same as G1 after A0 |
-| G3 | `Is every member of the group an adult?` | one | **Not necessarily.** S1 with a situation in which Bo is not an adult. The elements are the search's. |
-| G4 | `Is it the case that no member of the group is a person?` | one ("no member of the group is a person.") | **No.** C1 for 1 and 2 (Ann exists, and is a citizen, hence a person). C3 if the certificate uses the constant's declaration. |
-| G5 | `Is a member of the group a person?` | indefinite: `Is every member of the group a person?` and `Is some member of the group a person?` | — |
-| G6 | `Is every member of the group a person` | notQuestion | — |
-| G7 | `Does every member of the group vote?` | none, with the first-word advice | — |
-| G8 | `Who is a person?` | none, with the wh advice | — |
-| G9 | `Must Ann be a person?` | none (no modal form). E2.6's diagnosis of "Ann must be a person." | — |
-| G10 | `Is Ann a person?` | one ("Ann is a person.") | **Yes.** C1 for 1 and 2. |
-| G11 | `Is every member of the group who a citizen is a person?` | one, through the gap after "who": odd English, accepted. The A0 line shows the sentence. This fixture records the limitation in 4.9. | **Yes.** |
-| G12 | `Is every member of the group a person and?` | none: no candidate reads, the closest is diagnosed, and its span is on the question's bytes | — |
+| G1 | `Is every member eligible?` | one, F2; asked `every member is eligible.` | **Yes.** C1 for sentences 1 and 2; not 3. |
+| G2 | `Is it the case that every member is eligible?` | one, F1, same formula | as G1 after A0 |
+| G3 | `Is every member verified?` | one | **Not necessarily.** S1 with Bo not verified. |
+| G4 | `Is it the case that no member is eligible?` | one | **No.** C1 for 1 and 2. |
+| G5 | `Is a member eligible?` | indefinite; `Is every member eligible?`, `Is some member eligible?` | — |
+| G6 | `Is every member eligible` | notQuestion | — |
+| G7 | `Does every member vote?` | none, first-word advice | — |
+| G8 | `Who is eligible?` | none, wh advice | — |
+| G9 | `Must Ann be eligible?` | none; closest `Ann must be eligible.`, corrected span **(0, 20)** | — |
+| G10 | `Is Ann eligible?` | one | **Yes.** C1 for 1 and 2. |
+| G11 | `Is every member who registered is eligible?` | one, through an odd gap | **Yes.** C1 for sentence 2. |
+| G12 | `Is every member eligible and?` | none; `Expected '.' here.`, span (24, 28) | — |
+| G25 | `Is every and?` | none; boundary-crossing candidate diagnosis maps to span **(0, 9)** | — |
+| G26 | `Is "é" and?` | Unicode guard: first candidate's diagnosis maps to bytes (3, 7), code points **(3, 6)** | — |
 
 ### 6.2 A: the agent policy (`usecases/agent-policy`)
 
 **The documents.** `usecases/question-answering/agent-policy/build.py` (pilot tooling, untrusted) writes four `ve-document@1` files from four inputs: `policy.ve`, `policy.manifest.json`, the records `a10`, `a13`, `a25`, `a26` and `a27` of `log.ve`, and an environment.
 
-**The conflict (R6).** The rule set itself is CONFLICT on `permitted`: rule write-workspace permits and rule write-outside forbids, with witness a10 (`results.json`). Under D13, every `permitted` question on that rule set is *unknown*, A7 included. So three of the documents use a conflict-free variant in which those two rules are disambiguated, and the fourth keeps the original rules.
+**The conflict (R6).** The rule set itself is CONFLICT on `permitted`: rule write-workspace permits and rule write-outside forbids, with witness a10 (`results.json`). Under D13, every `permitted` question on that rule set is *unknown*, A7 included. The conflict-free variant is agent-policy mutant m1 (`usecases/agent-policy/mutants.py`: rule 3 added to rule 14's exception list), recorded CONFLICT-FREE in `results.json` M9; three documents use it, and the fourth keeps the original rules.
 
 | Document | Rules | Records | Environment | Fixtures |
 |---|---|---|---|---|
@@ -827,7 +800,7 @@ The expected statuses come from `usecases/agent-policy/results.json`, unspecifie
 | A6 | `May an action be performed?` | either | Q1 indefinite: `May every action be performed?` and `May some action be performed?` |
 | A7 | `May every action be performed?` | rules (conflict-free, no records) | **Not necessarily.** S1 (for example an action whose tool is purchase, unconfirmed) |
 | A8 | `Must every action be reported to the user?` | unspecified | **The text does not settle this** (a split on `report_required` for an action that deletes nothing and buys nothing) |
-| A9 | `Must an agent not send email unless the user confirms?` | either | Q1 none. The diagnosis: no sort "agent", no wording "send email". |
+| A9 | `Must an agent not send email unless the user confirms?` | either | Q1 none; closest `an must agent not send email unless the user confirms.`, corrected span **(0, 13)**, with the indefinite-article advice. |
 
 ### 6.3 U: the UDHR pilot, part 7 (Articles 23 to 26)
 
@@ -843,12 +816,12 @@ The expected statuses come from `usecases/agent-policy/results.json`, unspecifie
 
 The pilot's recorded results: part 7 is CONFLICT-FREE, its premises have a `model`, and u099a has row `c2` UNDECIDED (`metrics.json`).
 
-| # | Question | Q1 (*derived*) | Q2 (*derived*) |
+| # | Question | Q1 (*computed*) | Q2 (*derived*) |
 |---|---|---|---|
-| U1 | `Must every qualified person be given access to higher education?` (the brief's) | none. "qualified" is not a word of this document, and "be given access to higher education" is not a wording. The diagnosis lists the nearest wordings, among them `{0} must be given equal access to higher education on the basis of merit`. | — |
+| U1 | `Must every qualified person be given access to higher education?` (the brief's) | none; closest `every must qualified person be given access to higher education.`, corrected span **(0, 63)**. Its computed nearest wordings are `must be spared exclusion from education`, `must receive elementary education`, `is classified as "has_the_right_to_education"`. | — |
 | U2 | `Must every person be given equal access to higher education on the basis of merit?` | one | **Yes.** C1: Sentence 14 says: "and higher education shall be equally accessible to all on the basis of merit." Then R2. |
 | U3 | `Must every person be spared exclusion from education?` | one | by reading of sentence 10: `claim_negative` gives **yes** (C1 for sentence 10); `entitlement` gives **the text does not settle this** (S2). Then U1. `relevantSets = [rs_u096]`. The example of 4.6. |
-| U4 | `Is it the case that every person has the right to education?` | one, **if** the lexicon selects "{0} has the right to education". The rendered readings show `classified as "has_the_right_to_education"`, the quoted fallback. If so, U4 has no reading, and the vocabulary defect is reported to the vocabulary owner. | if read: `entitlement` gives **yes**; `claim_negative` gives **not necessarily** (a plain predicate, no gap) |
+| U4 | `Is it the case that every person has the right to education?` | **none**: the policy selected `is classified as "has_the_right_to_education"`, not the authored wording (spec F7) | — |
 | U5 | `May every person form as well as join trade unions to protect their interests?` | one | by reading of sentence 1: `liberty` gives **yes**; `entitlement` and `claim_negative` give **the text does not settle this** (the obligation and the permission are not a declared pair) |
 | U6 | `Must every person receive elementary education?` | one | **Yes.** C1 for sentence 12, then R2. |
 | U7 | `Must every education kind be made generally available?` | one | **The text does not settle this.** S2: an education kind neither technical nor professional (consistent with u099a's recorded UNDECIDED row) |
@@ -873,8 +846,12 @@ Each mutant names the test it must fail:
 | the premise-model gate removed | X3 fixtures on an inconsistent document |
 | `usedPositions` returning every position | G1 (sentence 3 cited) |
 | a quote taken from the case instead of the document | the binding test |
+| AST content compared without unwrapping, or a strict fence read as English | the successful Q2.2 binding fixtures |
+| a verdict replayed from another case or substituted request fields | `ask_wire_sound` and `plain_ask_wire_sound` fixtures |
 | R2 shown with one unchecked choice | the gate test |
-| a situation naming one set of two | `render_model_names_choice`'s `#guard` |
+| a situation naming one set of two, or the wrong candidate index of a named set | `render_model_names_choice`'s `#guard` |
+| U1 missing, repeated or citing the wrong unused units | `render_unused_once`; U3 |
+| a printed line differing from its metadata | `render_text_matches_metadata` |
 | the split check not comparing the base models | a fixture with two different bases |
 
 ## 7. Batches
@@ -894,8 +871,8 @@ Each mutant names the test it must fail:
 | # | Batch | Hours | Owner | Needs |
 |---|---|---:|---|---|
 | Q0 | Statement spec `docs/spec/question-answering.md`, the stub, computed fixtures, the statement review | 3–4 | planner | — |
-| Q1.1 | `VE.Question`: candidates, `readQuestion`, rephrasings, texts, theorems, `#guard`s | 5–6 | Lean | Q0 PASS |
-| Q1.2 | `english.question` mode, shapes, relay, `question.read` manifest operation, `ve ask --reading` | 4–5 | Lean, Python | Q1.1 |
+| Q1.1 | `VE.Question`: candidates, `readQuestion`, rephrasings, texts, theorems, `#guard`s | 5–6 | Lean | Q0 accepted reading work; targeted span check before completion |
+| Q1.2 | `english.question` mode, shapes, relay, `question.read` manifest operation, `ve ask --reading` | 4–5 | Lean, Python | Q1.1 complete, including span check |
 | Q1.3 | Q1 evidence: the reverse question corpus, the odd-English measure, latency | 3–4 | Python | Q1.2 |
 | Q1.4 | Speech acts' polar questions read by Lean; the Python polar parsing deleted | 4–5 | Lean, Python | Q1.2 |
 | Q2.1 | `VE.Ask` core: rows, leads, `SplitU`, soundness, agreement, used positions, sources | 5–6 | Lean | RD-3 merged, the Q2 statements PASS |
@@ -905,10 +882,10 @@ Each mutant names the test it must fail:
 | Q2.5 | `ve ask`: CLI, evidence generation, flip generator generalised, fixture documents, end-to-end tests | 5–6 | Python | Q2.3 |
 | Q2.6 | Evidence and measurement: fixtures, agreement with W2, latency, reading and writing evaluation, report | 4–5 | Python, evaluation | Q2.3, Q2.5 |
 
-**Order (R11, R14).**
-- Q0 first. Its statement review is the single gate: the Q1 statements and computed Q1 fixtures pass at Q0.
-- Q1 runs once Q0 passes (it needs only E2.6, which is merged): Q1.1, then Q1.2, then Q1.3 and Q1.4 in parallel.
-- Q2 waits for RD-3's merge and for the Q2 statements to pass, computed against merged RD-3 (in Q0's sitting if RD-3 has merged by then, otherwise before Q2.1 starts): Q2.1, then Q2.2 (which also needs Q1.2), then Q2.3, then Q2.4 and Q2.5 in parallel.
+**Order (R11, R14, Q0 review).**
+- The accepted Q1 reading work may begin. Q1.1's span work and affected guards receive the targeted joint review before Q1.1 completes or Q1.2 begins.
+- Q1.2 follows Q1.1; then Q1.3 and Q1.4 may run in parallel.
+- Q2 waits for RD-3's merge and for the corrected Q2 statements and fixtures to pass review before Q2.1: then Q2.2 (which also needs Q1.2), then Q2.3, then Q2.4 and Q2.5 in parallel.
 - Q2.6 may start once Q2.3 and Q2.5 are done; it does not wait for Q2.4.
 - Release requires Q2.4 and Q2.6 both done, so that no wording logic is duplicated.
 - Q1.3 and Q1.4 may overlap with Q2.
@@ -918,7 +895,7 @@ In total: about 47 to 59 builder hours, of which Q1 is 16 to 20.
 ### Q0. Statement spec and review (planner, 3–4 h)
 
 - **The spec.** `docs/spec/question-answering.md` writes sections 3 and 4 as a statement spec: definitions, English with one reading each, wire, diagnostics in order, Lean statements, fixtures, limits, and a review checklist (10).
-- **The stub.** `lean/SpecStubs_question.lean`, untracked: every definition with its body, and every statement as `def … : Prop`.
+- **The stubs.** `lean/SpecStubs_question-answering.lean` and `lean/SpecStubs_question-answering-q2.lean`, untracked: the pre-correction definitions with their bodies and statements as `def … : Prop`. The corrected span mapper was elaborated in a temporary copy; the new bounds statements await targeted review.
   - It is elaborated with `lake env lean` against a build of `main`, and against a build of RD-3's branch for section 4.7.
   - Every elaboration failure is fixed in the spec, not in merged code.
 - **What the stub computes:**
@@ -928,8 +905,8 @@ In total: about 47 to 59 builder hours, of which Q1 is 16 to 20.
   - the name of the binding-free replay (`replayOk`);
   - `premisesU`'s order for `sourcesU`.
 - **What running the generators computes:** the Q2 values, through RD-3's Python generators on the fixture documents. If RD-3 is not merged, Q0 computes Q1's values and marks Q2's as *derived* pending RD-3.
-- **The review.** Astra and Fable must converge on PASS, which requires both to accept each statement as true under its hypotheses; that the stub elaborates is not enough. Sections 3.5 and 4.7, D4 and the frames of 4.6 are the review's subject. It is the only review after draft 2 (R14): the Q1 statements and the computed Q1 fixtures pass here; the Q2 statements pass when computed against merged RD-3, in this sitting if RD-3 has merged, otherwise before Q2.1 starts.
-- **Done when** the stub elaborates, the spec is committed, and the review has converged on PASS for Q1 (and for Q2 if RD-3 has merged).
+- **The review.** Astra and Fable's Q0 review converged on FIX. The accepted Q1 reading definitions and §5.1 reading proofs may proceed. The corrected §2.5 interval mapping, `mapSpan_valid`, `mapSpan_codepoints_valid`, affected G9/A9/U1 expectations, crossing and Unicode fixtures, and all emitted code-point bounds need one targeted joint check before Q1.1 completes or Q1.2 starts. Q2 statements and fixtures need review against merged RD-3 before Q2.1; elaboration alone is insufficient (R14).
+- **Done when** the corrected spec is committed and the targeted Q1 span check has passed. The Q2 part remains pending until its merged RD-3 review.
 
 ### Q1.1. The question reader (Lean, 5–6 h)
 
@@ -940,12 +917,14 @@ In total: about 47 to 59 builder hours, of which Q1 is 16 to 20.
   - `lean/VE/Question/Examples.lean`: `#guard`s.
 - **Imports:** `VE.EnglishGrammar.Read`, `.Diagnose`, `.Advice` and `.Lexer`. Nothing in `lean/VE/EnglishGrammar/` changes.
 - **The new lock list** `ve/question/LOCK.json` covers `lean/VE/Question/*.lean`, and `question_version` is defined as 1.
-- **Statements:** `readQuestion_one`, `readQuestion_complete`, `question_reading_unique`, `asked_reads_back`, `caseThat_reads`, `fronted_text`, `rephrasings_read`, and the lemma from `.stopped _ .noDerivation` to `NoDerivation`.
-- **Fixtures:** the Q1 columns of G1 to G12, A1, A6 and A9, and U1 to U9, as `#guard`s over the fixture environments and lexicons. The lexicons are copied from Python's producer for each fixture environment and pinned by `lexicon_id`.
+- **Statements:** `readQuestion_one`, `readQuestion_complete`, `question_reading_unique`, `asked_reads_back`, `caseThat_reads`, `fronted_text`, `rephrasings_read`, `mapSpan_valid`, `mapSpan_codepoints_valid`, and the lemma from `.stopped _ .noDerivation` to `NoDerivation`. The reading definitions and proofs are approved to proceed now; the span statements and mapping await the targeted joint check.
+- **Fixtures:** the Q1 columns of G1 to G12, G25/G26, A1, A6 and A9, and U1 to U9, as `#guard`s over the fixture environments and lexicons. The affected G9/A9/U1 spans use the recomputed values. Every emitted span guard checks `start ≤ stop ≤ q.length` in code points, including the crossing and Unicode cases. The lexicons are copied from Python's producer for each fixture environment and pinned by `lexicon_id`.
 - **Deleted, not duplicated:** nothing yet. Speech acts move in Q1.4.
-- **Done when:** the statements are proved, the `#guard`s pass, the audit is clean, and the A/B shows no change, since no existing mode changes.
+- **Done when:** the statements are proved, the `#guard`s pass, the targeted joint span review accepts §2.5 and the affected guards, the audit is clean, and the A/B shows no change, since no existing mode changes.
 
 ### Q1.2. The `english.question` mode, the relay and `ve ask --reading` (Lean and Python, 4–5 h)
+
+Starts after the Q1.1 span review and guards pass.
 
 - **Lean:** `lean/VE/Question/Run.lean` (the case decoder reuses `VE.EnglishGrammar.Run`'s), with the `Protocol.lean` entries, `runMode_englishQuestion`, the schema, the skeleton row, a branch of `runMode_fits`, and the `VE/Audit.lean` lines.
 - **Python:**
@@ -1005,7 +984,7 @@ It records the outcome of `english.question` for each.
   - The zero-set case (4.7), with `choiceU_nil` or the admission extension and its conservativity theorem.
   - The plain adapter, which Q0 chose (R13).
   - `lean/VE/Ask/Run.lean`: `runMode_ask`, the schema, the skeleton row, a branch of `runMode_fits`, and the audit lines.
-- **Fixtures:** the leads of G1 to G4, A1 to A5, U2, U3 and U6 from recorded evidence files (no generator in the test). Also: a case whose conclusion is not the question's; a case whose unit content differs from the document; a split whose two models differ in a base atom.
+- **Fixtures:** the leads of G1 to G4, A1 to A5, U2, U3 and U6 from recorded evidence files (no generator in the test). Also successful bare AST, English fence, strict fence and norm-content bindings; changed content, multi-formula fence, changed environment, substituted request question/document/case, unrelated replay evidence, a case whose conclusion is not the question's, the corresponding plain-route binding failures, and a split whose two models differ in a base atom.
 - **Deleted, not duplicated:** none.
 - **Done when:** the gate passes and the A/B shows no change outside the new mode.
 
@@ -1014,7 +993,7 @@ It records the outcome of `english.question` for each.
 - **Files:**
   - `lean/VE/Words/Situation.lean`: 4.5's functions and their `#guard`s against Python's current output on the readings and norm-defaults corpora, recorded.
   - `lean/VE/Ask/Render.lean`: 4.6's frames, 4.3's citation rules, the quotes from `VE.Service.Document.split`, and the reading names. The names come from the request, are checked with `checkRendering` for asserted candidates, and are listed in `unchecked_names` otherwise.
-  - The render theorems: `render_quotes_bytes`, `render_asked`, `render_cites_exact`, `render_lead`, `render_model_names_choice`.
+  - The render theorems: `answerFor_bound`, `render_quotes_bytes`, `render_text_matches_metadata`, `render_asked`, `render_cites_exact`, `render_lead`, `render_model_names_choice`, `render_unused_once`, with document-derived `Context`, certificate-derived citations and checked witness choices.
 - **W7:** the frames A0 to X6 are registered with W7's all-derivations gate, and the stage that owns W7 at build time is named in the ledger (question 9).
 - **Fixtures:** the text columns of 6.1 to 6.3 from recorded evidence, and the mutants of 6.5.
 - **Deleted, not duplicated:** none yet. Python's producers move in Q2.4, and Q2.3's `#guard`s pin byte equality first.
@@ -1051,7 +1030,7 @@ It records the outcome of `english.question` for each.
 
 **Report:** `docs/spec/question-answering-report.md`, with every number generated from saved records:
 - **Fixtures:** each of 6.1 to 6.3, expected against got.
-- **Agreement with the existing check:** for every fixture question, and for every query of the readings and norm-defaults conformance corpora asked as an F1 question of its document, Lean's leads are compared with `ve document readings --conclusion` (RD-3's fold, or Python's W2 fold on a document without content-bearing sets). *Yes* must be ALL; a negative lead must be NONE or one side of SOME. Every difference is a bug, or a row of `DELTA.md` with a reason.
+- **Agreement with the existing check:** for every fixture question, and for every query of the readings and norm-defaults conformance corpora asked as an F1 question of its document, Lean's leads are compared with `ve document readings --conclusion` (RD-3's fold, or Python's W2 fold on a document without content-bearing sets). *Yes* must be ALL. *No* from a checked negation certificate and *not settled* from a checked split may coexist with the query fold's UNKNOWN when its query row lacks a countermodel; this is an evidence difference, not a verdict contradiction. A negative lead requires NONE or one side of SOME only when a query countermodel is separately derived and checked. Every other unexplained difference is a bug or a row of `DELTA.md` with a reason.
 - **Latency:** `english.question` and `ask` CPU, and `ve ask` wall time on U3 and A1 at the gate's load. The budgets are pass gates: `ask` Lean CPU at most 2 s; `ve ask` on U3 at most 60 s wall. Each is met, or its revision is reviewed.
 - **Zero-training readability.** This uses the frozen readability protocol (2026-10-03: Claude Sonnet 5.5 as a proxy reader and writer, given only what a human gets), with bars registered before the run.
   - *Reading:* the share of answers whose lead the proxy reads correctly. The "Not necessarily." and "No." wordings are both shown, to measure D4. Also measured: the share of critical misreadings, where "not necessarily" is taken for "forbids" or the reverse.
