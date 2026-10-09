@@ -191,6 +191,7 @@ import VE.Senses.Read
 import VE.EnglishGrammar.SensesRequest
 import VE.Senses.Document
 import VE.Senses.Request
+import VE.Question.Properties
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -4658,3 +4659,6 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Senses.document_line_sound
 #print axioms VE.Senses.documentRequest_policy
 #print axioms VE.Senses.documentRequest_source
+#print axioms VE.Question.got_none
+#print axioms VE.Question.first_pred_unique
+#print axioms VE.Question.question_reading_unique

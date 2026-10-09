@@ -52,6 +52,9 @@ def isIndefinite (o : Outcome) : Bool := match o with | .indefinite .. => true |
   | _ => false
 #guard isOne (readQuestion auxiliaries groupEnv {} groupLex 2100000
   "Is it the case that every member is eligible?")
+#guard match readQuestion auxiliaries groupEnv {} groupLex 0 "Is every member eligible?" with
+  | .budget c => c == ⟨.fronted "is" 6, "every is member eligible."⟩
+  | _ => false
 #guard match readQuestion auxiliaries groupEnv {} groupLex 2100000 "Is a member eligible?" with
   | .indefinite art rs => art == "a" &&
       rs == ["Is every member eligible?", "Is some member eligible?"]
