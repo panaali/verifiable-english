@@ -18,8 +18,8 @@ The line counts are cumulative per-commit numstat, including the tests and colle
 
 ## Gate evidence
 
-- Full gate: PENDING
-- Rust: PENDING
+- Full gate: 13056 passed, 10 skipped, 0 failed, at clean commit `7476a44462cbd031b8f01fb69ec73f62cffd5fcd` (`evidence/gate.json`).
+- Rust: 36 passed, 0 ignored.
 - A/B: 96623 identical outcomes, 4 unavailable on both sides, across 96627 cases. Pilots: 412 documents. The four unavailable cases returned the same Lean lexicon diagnostic at base and head; there are zero divergent public outcomes. A transient Rust timeout in one head pilot was rerun twice at the same source and matched the base (saved raw records, comparison and rerun in `evidence/`; details in [DELTA.md](DELTA.md)).
 - Difffuzz CI: 339 baseline entries, 0 new signatures, all baseline entries reproduced. The default sample covered requests, environments, wire and documents.
 - Date seeds: 14 paired, 0 head-only signatures; 492 inherited signatures across the paired runs.
@@ -36,4 +36,6 @@ Seeded mutants: 4 failed as expected; each was removed and its named regression 
 - `assist_no_without_lean_witness`: `_decide` returned no without a Lean checked witness; `test_assist_negative_decision_requires_lean_countermodel` failed.
 - `cedar_python_verdict`: Cedar pinned the Python evaluator; `test_cedar_evaluates_each_request_under_lean` failed.
 
-**AGENT completed:** caller rewire, focused ownership tests, saved source scope, A/B corpus, CI difffuzz, date-seed pairs, seeded failures. **AGENT in progress:** final clean full gate. **HUMAN:** no public delta requiring DRI signature. **EXTERNAL:** none.
+The saved gate used one allowed skip for its own evidence test because the JSON was written only when that gate finished. The final HEAD includes and runs that test. The live model smoke test is the gate's single deselection, as requested by the no-model-calls constraint.
+
+**AGENT completed:** caller rewire, focused ownership tests, saved source scope, A/B corpus, CI difffuzz, date-seed pairs, seeded failures, clean full gate. **HUMAN:** no public delta requiring DRI signature. **EXTERNAL:** none.

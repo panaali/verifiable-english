@@ -6,7 +6,6 @@ import hashlib
 from itertools import zip_longest
 from pathlib import Path
 import re
-import pytest
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -47,17 +46,17 @@ def test_b17_report_change_metrics_from_saved_scope():
 
 
 def test_b17_report_gate_from_saved_clean_run():
-    if not (EVIDENCE / "gate.json").exists():
-        pytest.skip("first full gate writes the saved run")
     scope, report = scope_report()
     gate = saved("gate.json")
     counts = gate["counts"]
-    assert gate["commit_sha"] == scope["captured_head"]
+    assert gate["commit_sha"] == scope["gate_head"]
     assert gate["status"] == "passed" and gate["dirty"] is False
     assert counts["selected"] == counts["passed"] + counts["skipped"] + counts["failed"]
     assert counts["failed"] == 0 and gate["failures"] == []
+    assert counts["rust_ignored"] == 0
     assert f"Full gate: {counts['passed']} passed, {counts['skipped']} skipped, 0 failed" in report
-    assert f"Rust: {counts['rust_passed']} passed" in report
+    assert f"Rust: {counts['rust_passed']} passed, 0 ignored" in report
+    assert gate["commit_sha"] in report
 
 
 def test_b17_report_ab_from_saved_comparison():
