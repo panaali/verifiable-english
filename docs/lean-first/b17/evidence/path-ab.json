@@ -1,0 +1,34 @@
+{
+  "base_sha256": "feea1d0c82707aa89a9bb5ce7ca8b2c3d805ea550be386fe0fb20361cbb227dd",
+  "differences": [
+    {
+      "base": {
+        "returned": "no"
+      },
+      "case": "decide/forall/models_zero",
+      "head": {
+        "returned": "unknown"
+      },
+      "listed": true,
+      "path": "assist"
+    },
+    {
+      "base": {
+        "returned": "yes"
+      },
+      "case": "decide/top/proof_zero",
+      "head": {
+        "returned": "unknown"
+      },
+      "listed": true,
+      "path": "assist"
+    }
+  ],
+  "head_sha256": "2135ec57c7f1b621b71f4652269eac0fd7c00049919aa3f991b745581381fdd6",
+  "records": {
+    "assist": 18,
+    "cedar": 2
+  },
+  "same": 18,
+  "unlisted": 0
+}

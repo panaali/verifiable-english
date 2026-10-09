@@ -6,6 +6,9 @@ import hashlib
 from itertools import zip_longest
 from pathlib import Path
 import re
+import pytest
+
+from tools import b17_ab
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -54,9 +57,44 @@ def test_b17_report_gate_from_saved_clean_run():
     assert counts["selected"] == counts["passed"] + counts["skipped"] + counts["failed"]
     assert counts["failed"] == 0 and gate["failures"] == []
     assert counts["rust_ignored"] == 0
-    assert f"Full gate: {counts['passed']} passed, {counts['skipped']} skipped, 0 failed" in report
+    assert f"Earlier full gate: {counts['passed']} passed, {counts['skipped']} skipped, 0 failed" in report
     assert f"Rust: {counts['rust_passed']} passed, 0 ignored" in report
     assert gate["commit_sha"] in report
+
+
+def test_b17_path_ab_covers_both_changed_paths_and_signed_budget_deltas(tmp_path):
+    base = EVIDENCE / "base-paths.json"
+    head = EVIDENCE / "head-paths.json"
+    delta = EVIDENCE.parent / "DELTA.json"
+    output = tmp_path / "comparison.json"
+    assert b17_ab.compare(base, head, delta, output) == 0
+    comparison = json.loads(output.read_text())
+    assert comparison == saved("path-ab.json")
+    assert comparison["records"] == {"assist": 18, "cedar": 2}
+    assert comparison["same"] == 18 and comparison["unlisted"] == 0
+    assert {(row["path"], row["case"]) for row in comparison["differences"]} == {
+        ("assist", "decide/top/proof_zero"), ("assist", "decide/forall/models_zero")}
+    head_rows = b17_ab.load(head)
+    assert head_rows["assist", "decide/top/adequate"] == {"returned": "yes"}
+    assert head_rows["assist", "decide/forall/adequate"] == {"returned": "no"}
+    assert [row["decision"] for row in head_rows["cedar", "permit"]["returned"]] == ["allow", "deny"]
+    assert all("returned" in outcome for outcome in head_rows.values())
+    assert all("returned" in outcome for outcome in b17_ab.load(base).values())
+    assert "18 assist and 2 Cedar cases" in REPORT.read_text()
+
+    # A missing changed path or a vacuous signed list cannot be accepted.
+    rows = json.loads(head.read_text())
+    (tmp_path / "missing.json").write_text(json.dumps([r for r in rows if r["path"] != "cedar"]))
+    with pytest.raises(ValueError, match="incomplete case matrix"):
+        b17_ab.compare(base, tmp_path / "missing.json", delta, output)
+    (tmp_path / "unsigned.json").write_text(json.dumps({"verdict": []}))
+    assert b17_ab.compare(base, head, tmp_path / "unsigned.json", output) == 1
+
+
+def test_b17_saved_head_paths_match_current_code(tmp_path):
+    live = tmp_path / "head.json"
+    b17_ab.child(ROOT, live)
+    assert b17_ab.load(live) == b17_ab.load(EVIDENCE / "head-paths.json")
 
 
 def test_b17_report_ab_from_saved_comparison():

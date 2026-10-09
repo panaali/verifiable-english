@@ -18,9 +18,9 @@ The line counts are cumulative per-commit numstat, including the tests and colle
 
 ## Gate evidence
 
-- Full gate: 13056 passed, 10 skipped, 0 failed, at clean commit `7476a44462cbd031b8f01fb69ec73f62cffd5fcd` (`evidence/gate.json`).
+- Earlier full gate: 13056 passed, 10 skipped, 0 failed, at clean commit `7476a44462cbd031b8f01fb69ec73f62cffd5fcd` (`evidence/gate.json`). This predates the evidence test change in `2766b7d5` and is retained as historical evidence. The final-HEAD gate is recorded separately as a local Git note under `refs/notes/b17-final-gate` on the exact tested commit; `git notes --ref=b17-final-gate show HEAD` retrieves it without making a new untested commit.
 - Rust: 36 passed, 0 ignored.
-- A/B: 96623 identical outcomes, 4 unavailable on both sides, across 96627 cases. Pilots: 412 documents. The four unavailable cases returned the same Lean lexicon diagnostic at base and head; there are zero divergent public outcomes. A transient Rust timeout in one head pilot was rerun twice at the same source and matched the base (saved raw records, comparison and rerun in `evidence/`; details in [DELTA.md](DELTA.md)).
+- A/B: 96623 identical outcomes, 4 unavailable on both sides, across 96627 cases. Pilots: 412 documents. The four unavailable cases returned the same Lean lexicon diagnostic at base and head. The supplemental path comparison covers 18 assist and 2 Cedar cases: 18 match, and the two approved conservative assist changes are signed in [DELTA.md](DELTA.md). A transient Rust timeout in one head pilot was rerun twice at the same source and matched the base (saved raw records, comparison and rerun in `evidence/`).
 - Difffuzz CI: 339 baseline entries, 0 new signatures, all baseline entries reproduced. The default sample covered requests, environments, wire and documents.
 - Date seeds: 14 paired, 0 head-only signatures; 492 inherited signatures across the paired runs.
 - `lake build --quiet` and the pinned Rust build passed. The Lean audit is included in the full gate. The separate `tools/lean_statements.py --check` passed: 4422 statements, 0 added, removed or changed (`evidence/statement-check.json`).
@@ -38,4 +38,4 @@ Seeded mutants: 4 failed as expected; each was removed and its named regression 
 
 The saved gate used one allowed skip for its own evidence test because the JSON was written only when that gate finished. The final HEAD includes and runs that test. The live model smoke test is the gate's single deselection, as requested by the no-model-calls constraint.
 
-**AGENT completed:** caller rewire, focused ownership tests, saved source scope, A/B corpus, CI difffuzz, date-seed pairs, seeded failures, clean full gate. **HUMAN:** no public delta requiring DRI signature. **EXTERNAL:** none.
+**AGENT completed:** caller rewire, focused ownership tests, saved source scope, A/B corpus including assist and Cedar, CI difffuzz, date-seed pairs, seeded failures. **HUMAN:** DRI signed the two zero-budget conservative deltas on 2026-10-09. **EXTERNAL:** none.
