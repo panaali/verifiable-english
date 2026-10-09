@@ -282,6 +282,7 @@ module VE.Order.WireGate
 module VE.ParserContracts
 module VE.Question.Basic
 module VE.Question.Examples
+module VE.Question.Fixtures
 module VE.Question.Help
 module VE.Question.Properties
 module VE.Question.Read
