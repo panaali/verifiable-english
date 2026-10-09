@@ -1,0 +1,86 @@
+{
+ "comment": "RD-3 wording delta on spec 8.2's F-ND1 and F-ND2 (`ve readings --conclusion` and `ve check`): base is main at a3476e66 (the A/B base checkout), head is this branch after the DRI ruling of round 3. Each row is checked against lf-12 rule 2(a)-(c) by tests/test_readings_verdicts_lean.py::test_dri_wording_rows_keep_the_base; the head lines are recomputed there.",
+ "base": "a3476e66",
+ "rows": [
+  {
+   "case": "F-ND1 query SOME",
+   "verdict": "SOME",
+   "base": [
+    "Read sentence 1 as *Every agent must help each user*: the conclusion follows: *For every agent, for every user, that agent must help that user.*",
+    "Read sentence 1 as *Every agent must help each user, if that user has the recorded relation \"asks\" to that agent*: the conclusion does not follow. It fails here: e0 is an agent; e0 is a user. Here the text does not say whether e0 may help e0; this situation answers 'no'. Here the text does not say whether e0 must help e0; this situation answers 'no'."
+   ],
+   "head": [
+    "Read sentence 1 as *Every agent must help each user*: the conclusion follows: *For every agent, for every user, that agent must help that user.*",
+    "This holds provided that:",
+    "Whenever an agent must help an user, it may help that user.",
+    "Read sentence 1 as *Every agent must help each user, if that user has the recorded relation \"asks\" to that agent*: the conclusion does not follow. It fails here: e0 is an agent; e0 is a user. Here the text does not say whether e0 must help e0; this situation answers 'no'."
+   ]
+  },
+  {
+   "case": "F-ND1 query under rs_1:0 (ALL)",
+   "verdict": "ALL",
+   "base": [
+    "Read sentence 1 as *Every agent must help each user*: the conclusion follows: *For every agent, for every user, that agent must help that user.*"
+   ],
+   "head": [
+    "Read sentence 1 as *Every agent must help each user*: the conclusion follows: *For every agent, for every user, that agent must help that user.*",
+    "This holds provided that:",
+    "Whenever an agent must help an user, it may help that user."
+   ]
+  },
+  {
+   "case": "F-ND1 query under rs_1:1 (NONE)",
+   "verdict": "NONE",
+   "base": [
+    "Read sentence 1 as *Every agent must help each user, if that user has the recorded relation \"asks\" to that agent*: the conclusion does not follow. It fails here: e0 is an agent; e0 is a user. Here the text does not say whether e0 may help e0; this situation answers 'no'. Here the text does not say whether e0 must help e0; this situation answers 'no'."
+   ],
+   "head": [
+    "Read sentence 1 as *Every agent must help each user, if that user has the recorded relation \"asks\" to that agent*: the conclusion does not follow. It fails here: e0 is an agent; e0 is a user. Here the text does not say whether e0 must help e0; this situation answers 'no'."
+   ]
+  },
+  {
+   "case": "F-ND1 implication (ALL)",
+   "verdict": "ALL",
+   "base": [
+    "Under every reading of the open sentence, the conclusion follows: *For every agent, for every user that that agent must help, that agent may help that user.*"
+   ],
+   "head": [
+    "Under every reading of the open sentence, the conclusion follows: *For every agent, for every user that that agent must help, that agent may help that user.*",
+    "This holds provided that:",
+    "Whenever an agent must help an user, it may help that user."
+   ]
+  },
+  {
+   "case": "F-ND1 report",
+   "verdict": "CONFLICT-FREE",
+   "base": [
+    "The readings of sentence 1 were checked one way at a time, not together.",
+    "Under every reading of the open sentence, no two rules on the same act contradict each other.",
+    "This does not depend on how sentence 1 is read.",
+    "Read sentence 1 as *Every agent must help each user*: the sentences of this document can all be true together, as here: nothing exists."
+   ],
+   "head": [
+    "The readings of sentence 1 were checked one way at a time, not together.",
+    "Under every reading of the open sentence, no two rules on the same act contradict each other.",
+    "This holds provided that:",
+    "Whenever an agent must help an user, it may help that user.",
+    "This does not depend on how sentence 1 is read.",
+    "Read sentence 1 as *Every agent must help each user*: the sentences of this document can all be true together, as here: nothing exists."
+   ]
+  },
+  {
+   "case": "F-ND2 report",
+   "verdict": "CONFLICT",
+   "base": [
+    "The readings of sentence 2 were checked one way at a time, not together.",
+    "Read sentence 2 as *Every act must be done, if that act may be tried*: two rules contradict each other here: e0 is an act. Here the text does not say whether e0 may be done; this situation answers 'no'. Here the text does not say whether e0 must be done; this situation answers 'no'. Here the text does not say whether e0 may be tried; this situation answers 'yes'.",
+    "Read sentence 2 as *Every act must be done, if that act may be tried*: the sentences of this document can all be true together, as here: nothing exists."
+   ],
+   "head": [
+    "The readings of sentence 2 were checked one way at a time, not together.",
+    "Read sentence 2 as *Every act must be done, if that act may be tried*: two rules contradict each other here: e0 is an act. Here the text does not say whether e0 may be tried; this situation answers 'yes'. Here the text does not say whether e0 must be done; this situation answers 'no'.",
+    "Read sentence 2 as *Every act must be done, if that act may be tried*: the sentences of this document can all be true together, as here: nothing exists."
+   ]
+  }
+ ]
+}

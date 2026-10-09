@@ -344,6 +344,16 @@ def _pilot_record(tmp_path):
             "op": "document_check", "source_sha256": blob, "outcome": diff.pilot_check(ROOT, document, env)}
 
 
+def test_probe_record_excludes_nested_instrumentation():
+    result = {"at": {"cell": "S", "status": "accepted", "output": "id", "routed": ["model_validation"]},
+              "over": {"cell": "R", "status": "ResourceLimit", "backend_rejection": True,
+                       "output": {"code": "ResourceLimit", "message": "too large"}}}
+    assert diff.probe_public(result) == {
+        "at": {"cell": "S", "status": "accepted", "output": "id"},
+        "over": {"cell": "R", "status": "ResourceLimit",
+                 "output": {"code": "ResourceLimit", "message": "too large"}}}
+
+
 def _genuine(records, tmp_path):
     """One genuine record of each shape: every conformance operation's returned and raised outcome
     (with and without span or path), every probe operation's cell kinds and sections, a pilot."""
@@ -648,3 +658,12 @@ def test_stage2_parity_classifies_a_retyped_output_as_a_change():
     assert stage2_parity._classify(row, dict(row)) .startswith("same")
     for new in (1, 1.0):
         assert stage2_parity._classify(row, {**row, "output": {"values": [new]}}) == "different"
+
+
+def test_pilot_recording_keeps_the_english_shadow_in_its_writable_scratch(tmp_path, monkeypatch):
+    """The base worktree may be read-only; recording must not write its diagnostic shadow there."""
+    monkeypatch.setenv("VE_SHADOW_LOG", "/readonly/base/ve-shadow.jsonl")
+    monkeypatch.setattr(diff, "pilot_documents", lambda _root: [("pilot", "a" * 40, b"document")])
+    monkeypatch.setattr(diff, "pilot_check", lambda _root, _path, env: {"shadow": env["VE_SHADOW_LOG"]})
+    [row] = diff.pilot_records(Path("/readonly/base"), tmp_path, workers=1)
+    assert row["outcome"]["shadow"] == str(tmp_path / "english-shadow.jsonl")

@@ -725,44 +725,70 @@ def _inner_kinds(seen):
             if case["kind"] == "readings-choice"]
 
 
+def _evidence(seen, question=None):
+    """(choice, piece, inner kind, Lean's acceptance) of every piece sent to `readings-verdicts` (readings-defaults
+    RD-3: the enumerated route's evidence is checked there, on each choice's regenerated document)."""
+    out = []
+    for case, row in seen:
+        if case["kind"] != "readings-verdicts" or (question and case["question"] != question):
+            continue
+        accepted = {tuple(map(tuple, e["choice"])): e["evidence"] for e in row["per_choice"]}
+        for entry in case["evidence"]:
+            choice = tuple(map(tuple, entry["choice"]))
+            for piece, inner in entry.items():
+                if piece != "choice":
+                    out.append((choice, piece, inner["kind"], accepted.get(choice, {}).get(piece)))
+    return out
+
+
 def test_review_b_enumerated_evidence_is_replayed_by_lean(tmp_path, monkeypatch):
-    """The finding's case: M9's ALL is combined only from certificates Lean's soft route accepted on each choice's
-    regenerated document, and SOME's countermodel from a model Lean's `choice-model` checked there."""
+    """The finding's case: M9's ALL is folded by Lean only from certificates its soft route accepted on each choice's
+    regenerated document, and SOME's countermodel from a model Lean's `choice-model` checked there (RD-3: one
+    `readings-verdicts` request, Python's evidence in it)."""
     path = _m9(tmp_path)
     route = verdicts(path)
     seen = _lean_spy(monkeypatch)
     assert route.entailment(every("warn_required", guard=ASKS))["verdict"] == "ALL"
     choices = [tuple((R.id, c[R.id]) for R in route.sets) for c in route.choices]
-    # Each choice's conflict status first (14.8), then its certificate, accepted with the same packages.
-    assert _inner_kinds(seen) == [(c, k) for k in ("soft-conflict", "soft-certificate") for c in choices]
-    certificates = [row for case, row in seen if case["inner"]["kind"] == "soft-certificate"]
-    assert all(row["inner"]["valid"] is True and row["accepted"] is True and row["conflict_free"] is True
-               for row in certificates)
+    # Each choice's conflict packages first (14.8), then its certificate, accepted with the same packages.
+    sent = _evidence(seen, "query")
+    assert {(c, p, k) for c, p, k, _ in sent} == {(c, p, k) for c in choices for p, k in
+                                                  (("conflict", "soft-conflict"), ("certificate", "soft-certificate"))}
+    assert all(ok is True for _, p, _, ok in sent if p == "certificate")
+    [row] = [row for case, row in seen if case["kind"] == "readings-verdicts" and any(
+        "certificate" in e for e in case["evidence"])]
+    assert [e["query"] for e in row["per_choice"]] == ["proved"] * len(choices)
+    assert not _inner_kinds(seen)
     seen.clear()
     some = route.entailment(every("warn_required"))
     assert some["verdict"] == "SOME"
-    models = [row["inner"] for case, row in seen if case["inner"]["kind"] == "choice-model"]
-    assert models and all(m["valid"] is True and m["conclusion_value"] is False for m in models)
-    assert tuple(map(tuple, some["countermodel"]["choice"])) in {c for c, k in _inner_kinds(seen)
-                                                                 if k == "choice-model"}
+    models = [(c, ok) for c, p, k, ok in _evidence(seen, "query") if k == "choice-model"]
+    assert models and all(ok is True for _, ok in models)
+    assert tuple(map(tuple, some["countermodel"]["choice"])) in {c for c, _ in models}
 
 
 @pytest.mark.parametrize("kind", ["soft-certificate", "choice-model"])
 def test_review_b_lean_refusal_of_enumerated_evidence_is_unavailable(tmp_path, monkeypatch, kind):
+    """A piece of evidence Lean refuses (a certificate whose trace is cut, a model whose shown form is not the checked
+    one) is `CheckerUnavailable`, never a verdict."""
     from ve import readings_route
     from ve.errors import CheckerUnavailable
     path = _m9(tmp_path)
     route = verdicts(path)
     real = readings_route.run_lean
 
-    def refusing(cases, **kwargs):
-        rows = real(cases, **kwargs)
-        for case, row in zip(cases, rows):
-            if case["kind"] == "readings-choice" and case["inner"]["kind"] == kind:
-                row["inner"].update(valid=False)
-        return rows
+    def tampering(cases, **kwargs):
+        for case in cases:
+            for entry in case.get("evidence", []) if case["kind"] == "readings-verdicts" else []:
+                for piece in entry.values():
+                    if type(piece) is dict and piece.get("kind") == kind:
+                        if kind == "choice-model":
+                            piece["model"] = {**piece["model"], "domains": {**piece["model"]["domains"], "agent": []}}
+                        else:
+                            piece["certificate"] = {**piece["certificate"], "trace": {"rule": "close", "at": 0}}
+        return real(cases, **kwargs)
 
-    monkeypatch.setattr(readings_route, "run_lean", refusing)
+    monkeypatch.setattr(readings_route, "run_lean", tampering)
     with pytest.raises(CheckerUnavailable, match="ReadingsConformance"):
         route.entailment(every("warn_required", guard=ASKS) if kind == "soft-certificate" else every("warn_required"))
 
@@ -787,8 +813,12 @@ def test_review_b_lean_supplies_the_choice_documents_assertions(tmp_path):
     choice = route.choices[0]
     own = route._choice(choice)
     phi = every("warn_required")
-    proof = own.certified(phi)
-    assert proof is not None and proof["valid"] is True
+    route.conflict()
+    proof = own.certificate_case(phi)
+    assert proof is not None
+    row = route._verdicts("query", query={route._key(choice): {"certificate": proof}}, premises=[], conclusion=phi)
+    [entry] = [e for e in row["per_choice"] if e["choice"] == route.choice_json(choice)]
+    assert entry["evidence"]["certificate"] is True and entry["query"] == "proved"
     model = {"complete": True, "domains": {"agent": ["a"], "user": ["u"]}, "constants": {},
              "relations": {name: [] for name in own.soft.elaborated.base_environment().predicates}}
     row = route.lean("readings-choice", choice=route.choice_json(choice),
@@ -812,7 +842,7 @@ def test_review_b_rights_and_norms_chains_replay_models_and_certificates(tmp_pat
     route = verdicts(path)
     premises = route.premises()
     assert premises["status"] == "model" and premises["model"]["domains"]
-    assert {k for _, k in _inner_kinds(seen)} >= {"choice-model"}
+    assert {k for _, _, k, _ in _evidence(seen, "premises")} >= {"choice-model"}
     arrested = ["forall", "state", ["forall", "person", ["implies", ["binary", "arbitrary_arrest", ["var", 1],
                                                                       ["var", 0]],
                                                          ["not", ["binary", "arrest_permitted", ["var", 1],
@@ -822,11 +852,9 @@ def test_review_b_rights_and_norms_chains_replay_models_and_certificates(tmp_pat
     # Under *must* the claim refuses every arbitrary arrest; under *should* an exception may apply.
     assert data["verdict"] == "SOME" and data["proof"]["choice"] == [["rs9", 0]], data
     # (Each choice's conflict status was computed, once, by the premise status above.)
-    assert {k for _, k in _inner_kinds(seen)} == {"rights-certificate", "choice-model"}
-    assert all(row["inner"].get("valid") is True for case, row in seen
-               if case["kind"] == "readings-choice" and case["inner"]["kind"] != "rights-conflict")
-    assert all(row["accepted"] is True for case, row in seen
-               if case.get("inner", {}).get("kind") == "rights-certificate")
+    query = [(p, k, ok) for _, p, k, ok in _evidence(seen, "query") if p in ("certificate", "countermodel")]
+    assert {k for _, k, _ in query} == {"rights-certificate", "choice-model"}
+    assert all(ok is True for _, _, ok in query)
     # The norms chain: M9 without soft-norms@0 is not superposable either (its precedence cycle).
     norms_raw = _k9()
     norms_raw["profiles"] = ["norms@0", "readings@1", "relational-fol@0"]
@@ -836,9 +864,8 @@ def test_review_b_rights_and_norms_chains_replay_models_and_certificates(tmp_pat
     assert route.entailment(every("warn_required", guard=ASKS))["verdict"] == "ALL"
     assert route.entailment(every("warn_required"))["verdict"] == "SOME"
     assert route.premises()["status"] == "model"
-    assert {k for _, k in _inner_kinds(seen)} == {"norms-conflict", "norms-certificate", "choice-model"}
-    assert all(row["accepted"] is True for case, row in seen
-               if case.get("inner", {}).get("kind") == "norms-certificate")
+    assert {k for _, _, k, _ in _evidence(seen)} == {"norms-conflict", "norms-certificate", "choice-model"}
+    assert all(ok is True for _, p, k, ok in _evidence(seen) if k == "norms-certificate")
 
 
 def test_review_b_dead_readings_null_when_certification_cannot_finish(tmp_path, monkeypatch):
@@ -878,6 +905,142 @@ def test_review_b_enumerated_dead_readings_null_when_certification_cannot_finish
     assert statuses[("rs9", 1)] == "UNKNOWN" and statuses[("rs8", 1)] == "narrowed"
 
 
+def test_review_b2_rd3_dead_evidence_lean_does_not_confirm_is_unavailable(tmp_path):
+    """Review B2 of rd-3: Lean's note on each dead reading's certificate is the request's, and a refused one is
+    `CheckerUnavailable`, never a dead reading; so are dead notes for certificates the request did not send."""
+    from ve.errors import CheckerUnavailable
+    claims = {k: [("strict", _claim("strict", f"r{k}", f"no-arrest-{k}"), "right", {"force": "strict"}),
+                  ("default", _claim("default", f"r{k}", f"no-arrest-{k}"), "right", {"force": "default"})]
+              for k in (8, 9)}
+    coupling = {"id": "c1", "axis": "force", "sets": [{"set": "rs8", "version": 1}, {"set": "rs9", "version": 1}],
+                "by": "reviewer", "reason_spans": ["u8"]}
+    narrowing = {"id": "n1", "set": "rs8", "version": 1, "keeps": ["strict"], "by": "reviewer",
+                 "reason_spans": ["u8"]}
+    route = verdicts(s2_document(tmp_path, [("set", "rs8", "u8", claims[8]), ("set", "rs9", "u9", claims[9])],
+                                 raw=env_rights(), couplings=[coupling], narrowings=[narrowing]))
+    answer = route.premises_answer()
+    request = route.requests[id(answer)]
+    assert answer["dead"] == [{"set": "rs9", "index": 1, "accepted": True}]
+    route.check_answer(answer, request)
+    for mutate in (lambda a: a["dead"][0].update(accepted=False), lambda a: a.update(dead=[]),
+                   lambda a: a["dead"].append({"set": "rs9", "index": 0, "accepted": True}),
+                   lambda a: a["untaken"].append(["rs8", 0]), lambda a: a.update(dead_readings=[
+                       {"set": "rs8", "index": 0, "finding": "DeadReading: rs8:0"}])):
+        mutated = copy.deepcopy(answer)
+        mutate(mutated)
+        with pytest.raises(CheckerUnavailable):
+            route.check_answer(mutated, request)
+
+
+def _rs89(tmp_path):
+    """rs8 narrowed to `strict` and coupled with rs9 on `force`: rs9:1 is taken by no compatible choice (dead)."""
+    claims = {k: [("strict", _claim("strict", f"r{k}", f"no-arrest-{k}"), "right", {"force": "strict"}),
+                  ("default", _claim("default", f"r{k}", f"no-arrest-{k}"), "right", {"force": "default"})]
+              for k in (8, 9)}
+    coupling = {"id": "c1", "axis": "force", "sets": [{"set": "rs8", "version": 1}, {"set": "rs9", "version": 1}],
+                "by": "reviewer", "reason_spans": ["u8"]}
+    narrowing = {"id": "n1", "set": "rs8", "version": 1, "keeps": ["strict"], "by": "reviewer",
+                 "reason_spans": ["u8"]}
+    return s2_document(tmp_path, [("set", "rs8", "u8", claims[8]), ("set", "rs9", "u9", claims[9])],
+                       raw=env_rights(), couplings=[coupling], narrowings=[narrowing])
+
+
+def _e17(set_id, index):
+    return {"frame": "E17", "result": None, "readings": [[set_id, index]], "model": None, "gaps": [], "label": None}
+
+
+def test_review_b_rd3_looprecheck1_dead_readings_are_regenerated(tmp_path, monkeypatch):
+    """Review B of rd-3 looprecheck1 (dead readings), as the DRI ruling of round 3 divides it: a dead reading the
+    answer names is an untaken candidate whose certificate the request sent and Lean accepted, its finding names its
+    own set and index, an E17 line names one of the answer's dead readings, and every narrowing named is the
+    document's (binding: unavailable otherwise). Which candidates are untaken or dead, a candidate's status and which
+    E17 lines the plan has are Lean's (`untakenOf`, `deadOf`, `premisesResult`, `planItems`): those mutants are
+    relayed, and pinned here."""
+    from ve import readings_verdicts
+    from ve.errors import CheckerUnavailable
+    path = _rs89(tmp_path)
+    route = verdicts(path)
+    answer = route.premises_answer()
+    request = route.requests[id(answer)]
+    route.check_answer(answer, request)
+    assert answer["dead_readings"] == [{"set": "rs9", "index": 1, "finding": "DeadReading: rs9:1"}]
+    assert _e17("rs9", 1) in answer["english"]
+
+    def statuses(a, changes):
+        for c in a["result"]["candidates"]:
+            key = (c["set"], c["index"])
+            if key in changes:
+                c.clear()
+                c.update(changes[key])
+
+    def outcome(mutate):
+        mutated = copy.deepcopy(answer)
+        mutate(mutated)
+        assert mutated != answer
+        try:
+            route.check_answer(mutated, request)
+        except CheckerUnavailable:
+            return "unavailable"
+        return "Lean's"
+    bound = {
+        # the finding of another candidate on rs9:1's entry
+        "another finding": lambda a: a["dead_readings"][0].update(finding="DeadReading: rs8:0"),
+        # a candidate narrowed by a narrowing the document does not have
+        "a made-up narrowing": lambda a: statuses(a, {("rs8", 1): {"set": "rs8", "index": 1, "status": "narrowed",
+                                                                   "narrowing": "n9"}}),
+        # an E17 line for a candidate that is not a dead reading of the answer
+        "an E17 line of no dead reading": lambda a: a["english"].append(_e17("rs8", 0)),
+        # a taken candidate listed untaken, and a dead reading no row leaves untaken
+        "a taken candidate untaken": lambda a: a["untaken"].append(["rs8", 0]),
+        "a dead reading that is taken": lambda a: a.update(dead_readings=[
+            {"set": "rs8", "index": 0, "finding": "DeadReading: rs8:0"}]),
+        # the dead reading's candidate dropped from the untaken ones
+        "an untaken candidate dropped": lambda a: a.update(untaken=[])}
+    lean_s = {
+        # a dead reading dropped, with its line and status (under-reporting): `deadOf`, `planItems`
+        "a dead reading dropped": lambda a: (a.update(dead_readings=[]), a["english"].remove(_e17("rs9", 1)),
+                                             statuses(a, {("rs9", 1): {"set": "rs9", "index": 1, "status": "UNKNOWN",
+                                                                       "reason": "ReadingsUnsatisfiable: no compatible "
+                                                                                 "reading takes rs9@1:1"}})),
+        # a narrowed candidate reported dead: `premisesResult`
+        "a narrowed candidate dead": lambda a: statuses(a, {("rs8", 1): {"set": "rs8", "index": 1, "status": "dead"}}),
+        # the line of the dead reading dropped: `planItems`
+        "its E17 line dropped": lambda a: a["english"].remove(_e17("rs9", 1))}
+    assert {name: outcome(m) for name, m in bound.items()} == dict.fromkeys(bound, "unavailable")
+    assert {name: outcome(m) for name, m in lean_s.items()} == dict.fromkeys(lean_s, "Lean's")
+    # With no proof budget no certificate is sent: a claimed dead reading and its E17 line are refused.
+    monkeypatch.setitem(readings_verdicts.BUDGET, "max_steps", 0)
+    route = verdicts(path)
+    answer = route.premises_answer()
+    request = route.requests[id(answer)]
+    assert "dead" not in request and answer["dead_readings"] is None and answer["untaken"] == [["rs9", 1]]
+    route.check_answer(answer, request)
+    for mutate in (
+            lambda a: (a.update(dead_readings=[{"set": "rs9", "index": 1, "finding": "DeadReading: rs9:1"}]),
+                       a["english"].append(_e17("rs9", 1)),
+                       statuses(a, {("rs9", 1): {"set": "rs9", "index": 1, "status": "dead"}})),
+            lambda a: a["english"].append(_e17("rs9", 1))):
+        assert outcome(mutate) == "unavailable"
+    # The uncertified candidate left out of the untaken ones, an empty list of dead readings: Lean's (`untakenOf`).
+    assert outcome(lambda a: a.update(untaken=[], dead_readings=[])) == "Lean's"
+
+
+def test_follow_up_rd3_looprecheck1_the_premises_choice_is_the_first_model(tmp_path):
+    """The premises result names the first row whose word is `model`, and that row's shown model."""
+    from ve.errors import CheckerUnavailable
+    route = verdicts(_rs89(tmp_path))
+    answer = route.premises_answer()
+    request = route.requests[id(answer)]
+    rows = [e["choice"] for e in answer["per_choice"] if e["premises"] == "model"]
+    assert answer["result"]["status"] == "model" and answer["result"]["choice"] == rows[0]
+    others = [e["choice"] for e in answer["per_choice"] if e["choice"] != rows[0]]
+    for choice in others + [[["rs8", 0], ["rs9", 9]]]:
+        mutated = copy.deepcopy(answer)
+        mutated["result"]["choice"] = choice
+        with pytest.raises(CheckerUnavailable):
+            route.check_answer(mutated, request)
+
+
 # ---------------------------------------------------------------------------------------------------------------
 # compose-s2 looprecheck2: review B (no entailment is certified under a reading whose rules collide), review A
 # (enumerated combinations keep the couplings and narrowings that selected their choices) and review A (a situation
@@ -906,10 +1069,16 @@ def test_review_b2_conflicting_reading_certifies_no_entailment(tmp_path):
         assert route.entailment(phi, assumed=[("rs1", 0)]) == {**blocked, "assumed": [["rs1", 0]]}
         assert route.entailment(phi, assumed=[("rs1", 1)])["verdict"] == ("ALL" if negated else "NONE")
     # The class: no certificate of a conflicting choice's document is promoted, `⊥` (premise status) included.
+    conflict = route.conflict_answer()
+    assert [e["conflict"] for e in conflict["per_choice"]] == ["CONFLICT", "CONFLICT-FREE"]
     own = route._choice(route.choices[0])
-    assert own.conflict()["verdict"] == "CONFLICT"
-    assert own.certified(every("avoid_required")) is None and own.certified(None) is None
-    assert own.entailment(every("avoid_required")) == {"outcome": "conflict", "conflict_status": "CONFLICT"}
+    from ve.errors import CheckerUnavailable
+    phi = every("avoid_required")
+    piece = own.certificate_case(phi)
+    assert piece is not None  # Python's prover finds one where the rules collide; Lean does not accept it
+    with pytest.raises(CheckerUnavailable, match="does not confirm the certificate"):
+        route._verdicts("query", query={route._key(route.choices[0]): {"certificate": piece}}, premises=[],
+                        conclusion=phi)
     assert [c["status"] for c in route.premises()["choices"]] != ["INCONSISTENT", "INCONSISTENT"]
     _, _, wording = _wording(path)
     assert wording.query(every("avoid_required"), route.entailment(every("avoid_required"))) == []
@@ -923,37 +1092,43 @@ def test_review_b2_lean_accepts_a_reading_certificate_only_conflict_free(tmp_pat
     route = verdicts(path)
     free, conflicting = route._choice(route.choices[1]), route._choice(route.choices[0])
     phi = every("avoid_required", negated=True)
-    assert free.certified(phi)["valid"] is True
+    assert free.certificate_case(phi) is not None
     # The certificate Python's prover finds on the conflicting choice is valid, and still not accepted.
     from ve.entailment import prove_entailment
-    conflicting.conflict()
+    packages = {k: v for k, v in conflicting.conflict_case().items() if k != "kind"}
     premises, formula = conflicting._all(), conflicting._phi(phi)
     proof = prove_entailment(conflicting.env, premises, formula)
     assert proof.status == "Found"
     case = {"kind": "soft-certificate", "premises": [], "conclusion": _to_data(formula),
             "certificate": proof.certificate}
-    row = conflicting._row({**case, "conflict": conflicting._conflict_packages})
+    choice = route.choice_json(route.choices[0])
+    row = route.lean("readings-choice", choice=choice, inner={**case, "conflict": packages})
     assert row["inner"]["valid"] is True and row["conflict_free"] is False and row["accepted"] is False, row
     from ve.errors import CheckerUnavailable
     with pytest.raises(CheckerUnavailable, match="a reading's certificate needs the choice's conflict packages"):
-        conflicting._row(case)
+        route.lean("readings-choice", choice=choice, inner=case)
 
 
 def test_review_b2_python_never_bypasses_lean_conflict_check(tmp_path, monkeypatch):
-    """A Python conflict status that claims CONFLICT-FREE on the conflicting choice cannot promote its certificate:
-    Lean checks the packages itself and does not accept it, which is `CheckerUnavailable`, never a verdict."""
+    """Python has no conflict status of its own (RD-3): an answer whose gate a relay tampering hides is
+    `CheckerUnavailable`, never a verdict: since review B1 of rd-3 the gate's result without its `conflict_status` is
+    of no form the schema allows; were it accepted, Python would send the conflicting choice's certificate, which Lean,
+    checking the packages itself, does not accept."""
+    from ve import readings_route
     from ve.errors import CheckerUnavailable
-    from ve.readings_verdicts import _ChoiceDocument
     path = _m8(tmp_path)
     route = verdicts(path)
-    real = _ChoiceDocument.conflict
+    real = readings_route.run_lean
 
-    def lying(self):
-        answer = real(self)
-        return {**answer, "verdict": "CONFLICT-FREE"}
+    def hiding(cases, **kwargs):
+        rows = real(cases, **kwargs)
+        for case, row in zip(cases, rows):
+            if case["kind"] == "readings-verdicts" and case["question"] == "query":
+                row["result"].pop("conflict_status", None)
+        return rows
 
-    monkeypatch.setattr(_ChoiceDocument, "conflict", lying)
-    with pytest.raises(CheckerUnavailable, match="does not accept the certificate"):
+    monkeypatch.setattr(readings_route, "run_lean", hiding)
+    with pytest.raises(CheckerUnavailable, match="invalid answer|does not confirm the certificate"):
         route.entailment(every("avoid_required", negated=True))
 
 
@@ -1007,8 +1182,9 @@ def test_review_a2_class_every_combined_verdict_keeps_its_restrictions(tmp_path)
     refused by the English rather than worded as unrestricted."""
     path = _m9_narrowed(tmp_path)
     doc, route, wording = _wording(path)
-    # Under a named reading of the narrowed set the narrowing excludes nothing more; under the other set's it does.
-    assert route.restrictions([("rs2", 1)]) == [] and route.restrictions([("rs1", 0)]) == ["narrowing:n1"]
+    # Under a named reading of the narrowed set the narrowing excludes nothing more; under the other set's it does
+    # (Lean's `restrictionsFor`, RD-3).
+    assert route.entailment(every("warn_required"), assumed=[("rs2", 1)])["restrictions"] == []
     under = route.entailment(every("warn_required"), assumed=[("rs1", 0)])
     assert under["verdict"] == "ALL" and under["restrictions"] == ["narrowing:n1"]
     assert wording.query(every("warn_required"), under)[1:] == [
@@ -1018,8 +1194,9 @@ def test_review_a2_class_every_combined_verdict_keeps_its_restrictions(tmp_path)
     assert none["verdict"] == "NONE" and none["restrictions"] == ["narrowing:n1"]
     assert wording.query(nobody, none)[-2:] == ["This holds provided that:",
                                                  f"Sentence 3 is not read as {M9_RS2_0}, because of sentence 1."]
-    with pytest.raises(VEError, match="needs its restrictions"):
-        wording.query(nobody, {k: v for k, v in none.items() if k != "restrictions"})
+    # The lines are Lean's plan of its own answer (RD-3): the restrictions the result carries are the labels it
+    # plans its condition lines from (rd-3 round 3: `labelsOf`, `verdicts_conditions_none`).
+    assert route.query_answer(nobody)["labels"] == ["narrowing:n1"] and route.query_answer(nobody)["result"] == none
     # The superposed route's combination over its choices (M6 with a narrowing: every choice is listed).
     narrowing = {"id": "n1", "set": "rs1", "version": 1, "keeps": ["strict"], "by": "reviewer",
                  "reason_spans": ["u2"]}

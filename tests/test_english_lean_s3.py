@@ -631,7 +631,7 @@ def test_ev10_the_modal_form_reads_the_normalised_act():
 
 @pytest.mark.parametrize("case, name, edit, cls", [
     ("alternatives@0 without a block", "FA", lambda r: r.pop("alternatives"), "VEError"),
-    ("a block without the profile", "FA", lambda r: r["profiles"].remove("alternatives@0"), "VEError"),
+    ("a block without the profile", "FA", lambda r: r["profiles"].remove("alternatives@0"), "UnsupportedProfile"),
     ("risk@0 without alternatives@0", "FR",
      lambda r: (r["profiles"].remove("alternatives@0"), r.pop("alternatives")), "UnsupportedProfile"),
     ("a block with an unknown field", "FA", lambda r: r["alternatives"].update(colour="red"), "VEError"),

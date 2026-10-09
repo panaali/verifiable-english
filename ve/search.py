@@ -16,6 +16,7 @@ from .model import FiniteModel
 from .identity import meaning_id
 from .limits import MAX_ENTITIES, MAX_EVALUATIONS, MAX_NODES
 from .errors import CheckerUnavailable, ResourceLimit, VEError
+from .profiles import require_checker
 
 
 def _node_count(root: Any) -> int:
@@ -289,10 +290,8 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
     from .ast import _to_data
     from .backends.dispatch import owned
     from .backends.rust_jsonl import run as rust_run, cached_rust_environment, soft_case
-    from .profiles import require_checker
 
     premises = _premises(premises)
-    require_checker(env)
     _validate_options(min_domain_size, max_domain_size, max_models, max_evaluations,
                       nonempty_domains, nonvacuous_for, semantic_nonvacuity)
     _check_aggregate_ast(premises, conclusion)
@@ -372,7 +371,6 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
     from .ast import _to_data
     from .backends.dispatch import owned
     from .backends.rust_jsonl import run as rust_run, cached_rust_environment, soft_case
-    from .profiles import require_checker
 
     require_checker(env)
     _validate_options(min_domain_size, max_domain_size, max_models, max_evaluations,

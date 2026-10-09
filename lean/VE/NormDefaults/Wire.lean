@@ -61,6 +61,23 @@ def placeholderJson (environment : Json) : Except String Json := do
   pure ((environment.setObjVal! "vocabulary" (vocab.setObjVal! "predicates" (Json.mkObj preds'))).setObjVal!
     "profiles" (toJson (profiles.filter (· != profile))))
 
+/-- Validate the authored environment without charging document-level fill
+limits. Those limits belong to `decodeSourceU` when a norm document is read. -/
+def decodeEnvironmentU (environment : Json) : Except String VE.Norms.Wire.NormsEnvironment := do
+  let profiled := hasProfile environment
+  let frame ← if profiled then do
+    for n in declaredNames environment do
+      if n.startsWith "unsaid__" then throw s!"InvalidInput: reserved name {n}"
+    placeholderJson environment
+  else do
+    unless (unspecifiedNames environment).isEmpty do
+      throw "UnsupportedProfile: unspecified completion requires norm-defaults@0"
+    pure environment
+  let ne ← VE.Norms.Wire.decodeNormsEnvironment frame
+  unless ne.rv.definitions.isEmpty || ne.profiles.contains "definitions@0" do
+    throw "Definitions require definitions@0"
+  pure ne
+
 /-- A decoded source under the profile (or without it): the author document, its
 unspecified predicates and the facts the replay uses. -/
 structure SourceU where

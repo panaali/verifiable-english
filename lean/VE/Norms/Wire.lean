@@ -24,7 +24,7 @@ open VE.Bridge (exactFields fields stringField strings)
 /-- Python `ve/environment.py` `RESERVED`, the words an act phrase may not use. -/
 def actReserved : List String :=
   ["true", "false", "is", "equals", "not", "and", "or", "if", "then", "for", "every", "there",
-   "exists", "believes", "must", "eventually"]
+   "exists", "believes", "must", "eventually", "no"]
 
 /-- `{d}` slot occurrences in order, and the text with every slot replaced by
 `slot` (Python `re.findall`/`re.sub` on `\{([0-9]+)\}`); fuel is the length. -/
@@ -122,7 +122,7 @@ structure NormsEnvironment where
 /-- Separate `regulated` from each predicate entry, decode the rest with the
 frozen P0 decoder, then decode and retain every `regulated` extension. -/
 def decodeNormsEnvironment (environment : Json)
-    (displayConstants : Bool := false) : Except String NormsEnvironment := do
+    (displayConstants : Bool := true) : Except String NormsEnvironment := do
   let e ← VE.Route.Gate.decodeEnvelope environment
   unless e.profiles.contains "norms@0" do throw "UnsupportedProfile: norms@0 is required"
   unless e.family == .fol do
@@ -290,7 +290,7 @@ premises as a separate hypothesis. Every other norms case keeps the gate, since
 its regenerated Background and conflict checks are stated over literals and
 profile premises only (`backgroundBase`). -/
 def decodeSource (environment norms : Json) (flags : Bool := false)
-    (displayConstants : Bool := false) : Except String Source := do
+    (displayConstants : Bool := true) : Except String Source := do
   let ne ← decodeNormsEnvironment environment displayConstants
   unless ne.rv.definitions.isEmpty || ne.profiles.contains "definitions@0" do
     throw "defined declarations require the definitions@0 profile"

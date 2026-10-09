@@ -155,6 +155,18 @@ def checkPhrases (ne : VE.Norms.Wire.NormsEnvironment) (sc : Scope) : Except Str
     if v.constants.any (·.1 == p) || v.sorts.contains p || VE.Norms.Wire.actReserved.contains p.toLower then
       throw invalidBlock
 
+/-- Environment construction needs the scope references checked before any
+document is supplied. The document checker applies the same constraints to
+bindings added by that document. -/
+def checkEnvironmentScope (ne : VE.Norms.Wire.NormsEnvironment) (sc : Scope) : Except String Unit := do
+  unless VE.Route.Admission.token sc.task do throw invalidBlock
+  if let some (s, a) := sc.addressee then
+    unless ne.rv.environment.sorts.contains s do throw s!"UnknownSymbol: sort {s}"
+    unless ne.rv.environment.constants a == some s do throw s!"UnknownSymbol: {a}"
+  if sc.definites.length > 64 then throw "ResourceLimit: definites"
+  for (_, a) in sc.definites do
+    unless (ne.rv.environment.constants a).isSome do throw s!"UnknownSymbol: {a}"
+
 /-- The six ASCII whitespace characters of Python's `string.whitespace`, the only whitespace a wording has (3.2). -/
 def asciiSpace (c : Char) : Bool :=
   c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\x0b' || c == '\x0c'
@@ -207,6 +219,7 @@ def decodeSpeechEnvironmentFull (environment : Json) : Except String SpeechEnvir
   let stripped ← stripSpeech environment
   let ne ← VE.Norms.Wire.decodeNormsEnvironment stripped
   checkPhrases ne sc
+  checkEnvironmentScope ne sc
   checkTemplates preds ne.regulated
   pure ⟨ne, sc, profiles, environment, canonical⟩
 
@@ -260,6 +273,7 @@ theorem scope_in_identity (j : Json) (E : VE.Environment) (sc : Scope) (rs : Lis
     obtain ⟨blk, hblk, hf⟩ := VE.Order.ProfileGate.bind_ok hf
     obtain ⟨sc', hsc', hf⟩ := VE.Order.ProfileGate.bind_ok hf
     obtain ⟨b, hb, hf⟩ := VE.Order.ProfileGate.bind_ok hf
+    obtain ⟨_, _, hf⟩ := VE.Order.ProfileGate.bind_ok hf
     obtain ⟨_, _, hf⟩ := VE.Order.ProfileGate.bind_ok hf
     obtain ⟨_, _, hf⟩ := VE.Order.ProfileGate.bind_ok hf
     obtain ⟨_, _, hf⟩ := VE.Order.ProfileGate.bind_ok hf

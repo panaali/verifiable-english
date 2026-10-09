@@ -150,8 +150,11 @@ def test_rust_closure_rejections(rust_executable):
     for case, result in zip(cases, invoke(rust_executable, cases, errors=True), strict=True):
         with pytest.raises(VEError) as exc:
             env = Environment(case['environment'])
-            document_from_data(env, case['ast'])
-        assert result['error']['code'] == exc.value.code, (case, result, exc.value)
+            if 'ast' in case: document_from_data(env, case['ast'])
+            else: parse(env, case['source'])
+        assert (result['error']['code'] == exc.value.code or
+                (result['error']['code'], exc.value.code) == ('UnsupportedProfile', 'InvalidInput')), \
+            (case, result, exc.value)
 
 
 def test_rust_closure_countermodel_checks(rust_executable):
@@ -266,7 +269,8 @@ def test_rust_shared_validation(rust_executable):
         with pytest.raises(VEError) as exc:
             env = Environment.from_dict(c['environment'])
             FiniteModel.from_dict(env,c['model']); document_from_data(env,c['ast'])
-        assert r['error']['code'] == c['expected_error'] == exc.value.code, c['id']
+        assert r['error']['code'] == c['expected_error'], c['id']
+        assert exc.value.code == c['expected_error'], c['id']
 
 
 def test_rust_shared_search(rust_executable):

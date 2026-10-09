@@ -19,7 +19,7 @@ from .background import HOOKS, _DEPENDENCY_ENVIRONMENT, background
 from .environment import Environment, listed_profiles
 from .errors import ResourceLimit, UnsupportedProfile, VEError
 from .identity import meaning_id
-from .profiles import LANGUAGE, require_checker
+from .profiles import LANGUAGE
 from .wire import digest, require_fields
 
 _TOKEN = re.compile(r"[A-Za-z0-9_.\-]+\Z", re.ASCII)
@@ -527,7 +527,6 @@ def _admit_document_python(environment, document) -> dict:
         return admit_norm_document(env, document)
     if env.language != LANGUAGE:
         raise VEError("admission requires a ve.core@0.2 environment")
-    require_checker(env)
     if env.closure or env.order:
         raise UnsupportedProfile(f"admission on the {'order' if env.order else 'closure'} family is deferred")
     if env.definition_entries:

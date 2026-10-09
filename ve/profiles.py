@@ -1,4 +1,4 @@
-"""Ordered statement-layer profiles and checker-family dispatch for core@0.2."""
+"""Profile metadata for display and generator registration."""
 from dataclasses import dataclass
 
 from .errors import UnsupportedProfile
