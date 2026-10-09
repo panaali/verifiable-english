@@ -492,7 +492,9 @@ def check_wire_contract(index: Index) -> list[str]:
         return []
     names = [path for path in index.listing()
              if path.startswith(("ve/", "conformance/wire-contract/contracts/",
-                                 "lean/VE/WireContract/")) or WIRE_UNIT_PATHS.match(path) or path in {
+                                 "lean/VE/WireContract/"))
+             or (path.startswith("conformance/") and path.endswith(".py"))
+             or WIRE_UNIT_PATHS.match(path) or path in {
                  "conformance/frozen_norm_defaults.py",
                  "conformance/__init__.py", "conformance/softnorms_contract.py",
                  "conformance/wire_contract_engine.py",
