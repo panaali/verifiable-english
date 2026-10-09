@@ -1,0 +1,23 @@
+[
+  {
+    "bug": "null treated as present",
+    "file": "ve/document.py",
+    "test": "tests/test_document_lean_switch.py::test_null_content_is_absent_on_the_lean_path",
+    "exit_code": 1,
+    "failure_excerpt": "ome(python_path(path))\n        row = D._lean_answer(path.read_bytes(), True)\n        assert row is not None and \"content\" not in row[\"units\"][2]\n        monkeypatch.setattr(D, \"_load_document\", lambda *a, **k: (_ for _ in ()).throw(AssertionError(\"retained path\")))\n>       assert outcome(lambda: D.check_document(path)) == expected\nE       AssertionError: assert {'raised': ['...cument sent']} == {'returned': ...}, ...}, ...}}\nE         \nE         Left contains 1 more item:\nE         {'raised': ['CheckerUnavailable',\nE                     'CheckerUnavailable: the Lean document answer is not bound to the '\nE                     'document sent']}\nE         Right contains 1 more item:\nE         {'returned': {'coverage': {'accounted_bytes': 23,...\nE         \nE         ...Full output truncated (20 lines hidden), use '-vv' to show\n\ntests/test_document_lean_switch.py:101: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_document_lean_switch.py::test_null_content_is_absent_on_the_lean_path\n1 failed in 0.54s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-3bc5agj0)\n"
+  },
+  {
+    "bug": "forged checked formula accepted",
+    "file": "ve/document.py",
+    "test": "tests/test_document_lean_switch.py::test_identities_and_content_are_leans",
+    "exit_code": 1,
+    "failure_excerpt": "ing_id\"] = \"c\" * 64\n        monkeypatch.setattr(relay, \"answer\", lambda mode, case: (forged, None))\n        with pytest.raises(CheckerUnavailable, match=\"not bound to the document sent\"):\n            D.load_document(path)\n        alternate = deepcopy(row)\n        env = D.Environment(GENERATED[\"plain\"][\"front\"][\"environment\"])\n        alternate[\"units\"][0][\"content\"] = [\"top\"]\n        alternate[\"units\"][0][\"meaning_id\"] = D.digest(\n            f\"ve-meaning-{env.identity_version}\\n\", {\"environment_id\": env.environment_id, \"ast\": [\"top\"]})\n        monkeypatch.setattr(relay, \"answer\", lambda mode, case: (alternate, None))\n>       with pytest.raises(CheckerUnavailable, match=\"not bound to the document sent\"):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE CheckerUnavailable\n\ntests/test_document_lean_switch.py:124: Failed\n=========================== short test summary info ============================\nFAILED tests/test_document_lean_switch.py::test_identities_and_content_are_leans\n1 failed in 0.51s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-gpswrija)\n"
+  },
+  {
+    "bug": "untyped checked formula",
+    "file": "ve/backends/lean_service_schema/document.json",
+    "test": "tests/test_document_lean_switch.py::test_document_schema_types_checked_content",
+    "exit_code": 1,
+    "failure_excerpt": "F                                                                        [100%]\n=================================== FAILURES ===================================\n__________________ test_document_schema_types_checked_content __________________\n\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-9134/test_document_schema_types_che0')\n\n    def test_document_schema_types_checked_content(tmp_path):\n        from ve.backends.service_schema import ROWS, Context, Invalid\n        path = write(tmp_path, dw.text_of(GENERATED[\"plain\"]))\n        row = D._lean_answer(path.read_bytes(), True)\n        forged = deepcopy(row)\n        forged[\"units\"][0][\"content\"] = 7\n>       with pytest.raises(Invalid):\n             ^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE Invalid\n\ntests/test_document_lean_switch.py:456: Failed\n=========================== short test summary info ============================\nFAILED tests/test_document_lean_switch.py::test_document_schema_types_checked_content\n1 failed in 0.32s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-2x6rtbq9)\n"
+  }
+]

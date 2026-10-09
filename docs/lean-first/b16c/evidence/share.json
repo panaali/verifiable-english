@@ -1,0 +1,71 @@
+{
+  "document": {
+    "documents": 1816,
+    "input_sha256": "59f52e620c196924aa2e1d2a82389e5c52d1071b5114fb641d79af6b0f559112",
+    "lean": 843,
+    "other": {
+      "retained: a distinguishing model the Lean model decoder refuses": 26,
+      "retained: document checks under NORMS@0 need its Lean profile route": 1,
+      "retained: document checks under RISK@0 need its Lean profile route": 1,
+      "retained: document checks under definitions@0\u001c need its Lean profile route": 1,
+      "retained: document checks under norm-defaults@0 need its Lean profile route": 904,
+      "retained: document checks under norm-defaults@0\u2019 need its Lean profile route": 1,
+      "retained: document checks under norms@0\r need its Lean profile route": 1,
+      "retained: document checks under order@0 need its Lean profile route": 1,
+      "retained: document checks under relational-fol@0\u2019 need its Lean profile route": 1,
+      "retained: document checks under relat\u0130onal-fol@0 need its Lean profile route": 1,
+      "retained: document checks under r\u00a0elational-fol@0 need its Lean profile route": 1,
+      "retained: fenced English or strict content needs the Lean surface parser": 9,
+      "retained: the environment block PROFILES needs its Lean route's decoder": 2,
+      "retained: the environment block alternatives\u001c needs its Lean route's decoder": 1,
+      "retained: the environment block alternatives needs its Lean route's decoder": 3,
+      "retained: the environment block l\tanguage needs its Lean route's decoder": 2,
+      "retained: the environment block language\r needs its Lean route's decoder": 1,
+      "retained: the environment block language\u2019 needs its Lean route's decoder": 1,
+      "retained: the environment block p\trofiles needs its Lean route's decoder": 1,
+      "retained: the environment block p  rofiles needs its Lean route's decoder": 2,
+      "retained: the environment block profiles\r needs its Lean route's decoder": 2,
+      "retained: the environment block profiles\u2019 needs its Lean route's decoder": 1,
+      "retained: the environment block prof\u0130les needs its Lean route's decoder": 1,
+      "retained: the environment block s\tpec_revision needs its Lean route's decoder": 2,
+      "retained: the environment block spec_revision\r needs its Lean route's decoder": 1,
+      "retained: the environment block spec_revision\u2019 needs its Lean route's decoder": 1,
+      "retained: the environment block v\tocabulary needs its Lean route's decoder": 1,
+      "retained: the environment block vocabulary\u2019 needs its Lean route's decoder": 1,
+      "retained: the environment block v\u00a0ocabulary needs its Lean route's decoder": 2
+    }
+  },
+  "norm_defaults": {
+    "documents": 1010,
+    "input_sha256": "ae85e833a5f6bbfd36d0b173f30063e53c37d902d4d638163e26c264333638b4",
+    "lean": 0,
+    "other": {
+      "retained: document checks under norm-defaults@0 need its Lean profile route": 1010
+    }
+  },
+  "pilots": {
+    "documents": 412,
+    "input_sha256": "60662ddf9e78f8538ad40a08fdae3c1e9c46d6e52d0e211c7ff6e88daf3e14df",
+    "lean": 4,
+    "other": {
+      "discourse route (ve-document@2)": 8,
+      "retained: a document with senses is read by the Lean senses route": 7,
+      "retained: document checks under norm-defaults@0 need its Lean profile route": 339,
+      "retained: document checks under order@0 need its Lean profile route": 1,
+      "retained: document checks under readings@1 need its Lean profile route": 5,
+      "retained: document checks under rights@0 need its Lean profile route": 5,
+      "retained: document checks under soft-norms@0 need its Lean profile route": 22,
+      "retained: fenced English or strict content needs the Lean surface parser": 3,
+      "retained: norm content needs the Lean norms route": 18
+    }
+  },
+  "rights": {
+    "documents": 1250,
+    "input_sha256": "f3985592b898a20fabe0a04d02525f53688453fc0857c47ec4f1d214dc34fdee",
+    "lean": 0,
+    "other": {
+      "retained: document checks under readings@1 need its Lean profile route": 250,
+      "retained: document checks under rights@0 need its Lean profile route": 1000
+    }
+  }
+}
