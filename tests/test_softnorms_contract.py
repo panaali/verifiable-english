@@ -257,7 +257,7 @@ CONTRACT_MODULES = {"softnorms_contract.py", "norms_contract.py", "norm_defaults
 DIAGNOSTIC_MODULES = ("conformance.softnorms_contract", "ve.norms_contract", "ve.norm_defaults_contract", "ve.wire_contract")
 # The call site of each unit after the pilot (2.8). It is added by the unit's switch commit (7.2): while the
 # unit's contract is in shadow, its route imports no diagnostic module.
-UNIT_CALL_SITES = {"norms@0": ("norm_admission.py", "norms_contract", "_admit_norm_document_python"),
+UNIT_CALL_SITES = {"norms@0": ("norm_admission.py", "norms_contract", "admit_norm_document"),
                    "norm-defaults@0": ("norm_defaults_route.py", "norm_defaults_contract",
                                        "admit_norm_defaults_document")}
 
@@ -332,14 +332,15 @@ def test_diagnostic_modules_stay_off_verdict_import_paths():
         _diagnostic_import_boundary({defaults: defaults.read_text() +
                                      "\nfrom .norms_contract import legacy_validation\n"})
     # Fable review B: the handler of a unit in shadow is the switch commit's (7.2), not the shadow commit's.
+    # Since lean-first batch 13b the call relays the Lean norms route; a handler planted there is still refused.
     norms = root / "norm_admission.py"
-    statement = "    norms = NormDocument(env, active)\n"
+    statement = '        row = decide("norms", [case])[0]\n'
     assert load("norms@0")["status"] == "shadow" and norms.read_text().count(statement) == 1
     with pytest.raises(AssertionError):
         _diagnostic_import_boundary({norms: norms.read_text().replace(statement, (
-            "    try:\n        norms = NormDocument(env, active)\n    except VEError as error:\n"
-            "        from .norms_contract import public_rejection\n"
-            "        raise public_rejection(env.to_dict(), active, error)\n"))})
+            '        try:\n            row = decide("norms", [case])[0]\n        except VEError as error:\n'
+            "            from .norms_contract import public_rejection\n"
+            "            raise public_rejection(env.to_dict(), [], error)\n"))})
 
 
 def test_seeded_soft_sources_keep_verdict_and_code_agreement():

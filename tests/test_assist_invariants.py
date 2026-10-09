@@ -188,7 +188,13 @@ def endpoint(tmp_path, monkeypatch):
     monkeypatch.setattr(cc, "check_context_date", lambda controls: None)
     monkeypatch.setattr(cc.time, "sleep", lambda seconds: None)
 
+    real_run = subprocess.run
+
     def run(*a, **k):
+        command = a[0] if a else k.get("args")
+        if not (type(command) in (list, tuple) and command and str(command[0]) == str(fake)):
+            # Only the CLI is faked: the checkers' own processes (Lean's one-shot evaluator) run.
+            return real_run(*a, **k)
         outcome = state["queue"].pop(0)
         if state["queue"] and state["queue"][0] == "break":  # the CLI disappears after this attempt
             state["queue"].pop(0)

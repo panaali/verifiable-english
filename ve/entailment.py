@@ -681,11 +681,18 @@ def check_entailment_certificate(env: Any, premises: Sequence[Any], conclusion: 
     generator (rule 3: generator-internal, never reported) and stay Python's.
     """
     from .backends.dispatch import owned
-    if not _background or _generated_premises is not None:
+    if not _background or _generated_premises is not None or not _lean_replay_scope(env):
         return _check_certificate_python(env, premises, conclusion, certificate, max_steps=max_steps,
                                          _background=_background, _generated_premises=_generated_premises)
     return owned("certificate_replay",
                  lambda: _check_certificate_lean(env, premises, conclusion, certificate, max_steps))
+
+
+def _lean_replay_scope(env) -> bool:
+    """Whether a Lean certificate mode replays over `env` bound to the whole environment. No mode decodes a
+    `norm-defaults@0` or `readings@1` environment's projection while binding the submitted one, so those
+    keep the retained Python replay (a recorded scope gap, docs/lean-first/b13b/DELTA.md)."""
+    return not {"norm-defaults@0", "readings@1"} & set(getattr(env, "profiles", ()) or ())
 
 
 def _check_certificate_lean(env, premises, conclusion, certificate, max_steps) -> EntailmentCertificateCheck:
@@ -714,18 +721,17 @@ def _check_certificate_lean(env, premises, conclusion, certificate, max_steps) -
         # Background slots.
         from .profiles import STATEMENT_LAYERS
         # Background order (`background.background`): the environment's
-        # generators, then soft, then rights, then fill. Only the norms
-        # route's Plain glue reads the slots, and it answers only layered or
-        # regulated environments; without soft or rights premises the fill
-        # premises lead the case's premises instead, which binds and replays
-        # the same ordered list.
-        soft = (*getattr(env, "soft_premises", ()), *getattr(env, "rights_premises", ()))
-        fill = tuple(f for _, f in getattr(env, "fill_premises", ()))
-        layered = bool(STATEMENT_LAYERS & set(env.profiles) or soft)
-        mode = "norms" if layered else route_mode(env)
-        slots = [_to_data(f) for _, f in soft] + ([_to_data(f) for f in fill] if layered else [])
-        case = {**case, "kind": "certificate", **({"soft_premises": slots} if slots else {}),
-                **({} if layered else {"premises": [_to_data(f) for f in fill] + case["premises"]})}
+        # generators, then soft, then rights, then fill. These trusted slots
+        # are read only by the norms route's Plain glue, which answers layered
+        # environments; over any other environment they lead the case's
+        # premises instead, which binds and replays the same ordered list.
+        slots = [_to_data(f) for _, f in (*getattr(env, "soft_premises", ()),
+                                          *getattr(env, "rights_premises", ()),
+                                          *getattr(env, "fill_premises", ()))]
+        if STATEMENT_LAYERS & set(env.profiles):
+            mode, case = "norms", {**case, "kind": "certificate", **({"soft_premises": slots} if slots else {})}
+        else:
+            mode, case = route_mode(env), {**case, "kind": "certificate", "premises": slots + case["premises"]}
     elif env.order:
         mode, case = "order", {**case, "kind": "certificate"}
     else:
