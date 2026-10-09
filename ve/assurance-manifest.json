@@ -3703,11 +3703,11 @@
           "VE.Question.readQuestion_indefinite",
           "VE.Question.readQuestion_none",
           "VE.Question.Run.statusCodes_classed",
-          "VE.Service.runMode_englishQuestion"
+          "VE.Service.runMode_englishQuestion",
+          "VE.Question.readQuestion_one",
+          "VE.Question.readQuestion_complete"
         ],
         "planned_theorems": [
-          "VE.Question.readQuestion_one",
-          "VE.Question.readQuestion_complete",
           "VE.Question.caseThat_reads",
           "VE.Question.caseThat_candidates",
           "VE.Question.fronted_text",

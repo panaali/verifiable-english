@@ -606,3 +606,503 @@ theorem readQuestion_none :
     all_goals exact closest_mem E L (candidates auxs q) d hd
 
 end VE.Question
+
+namespace VE.Question
+open VE.EnglishGrammar
+open VE.Grammar (Derives)
+
+/-- The checks of `read`, as `grammarFault`'s `none` gives them. -/
+theorem grammarFault_none_checks {E : Env} {O : Overlay} {L : Lexicon} (h : grammarFault E O L = none) :
+    L.policyOk E O = true ∧ L.valid E O = true ∧ GrammarChecks E L := by
+  unfold grammarFault at h
+  by_cases hp : L.policyOk E O = true
+  · by_cases hv : L.valid E O = true
+    · by_cases h2 : ((grammar E L).wf && terminatorFree (grammar E L)) = true
+      · by_cases h3 : ((grammar E L).typed sig (ty E L) (acts E L) &&
+            decide (ty E L (grammar E L).start = .sentence)) = true
+        · simp only [Bool.and_eq_true, decide_eq_true_eq] at h2 h3
+          exact ⟨hp, hv, h2.1, h2.2, h3.1, h3.2⟩
+        · simp [hp, hv, h2, h3] at h
+      · simp [hp, hv, h2] at h
+    · simp [hp, hv] at h
+  · simp [hp] at h
+
+theorem grammarFault_eq_none {E : Env} {O : Overlay} {L : Lexicon} (hp : L.policyOk E O = true)
+    (hv : L.valid E O = true) (hg : GrammarChecks E L) : grammarFault E O L = none := by
+  obtain ⟨h1, h2, h3, h4⟩ := hg
+  unfold grammarFault
+  simp [hp, hv, h1, h2, h3, h4]
+
+/-- `read` of one lexed sentence, after its checks. -/
+theorem read_single {E : Env} {O : Overlay} {L : Lexicon} {b : Nat} {s : String} {w : Array Tok}
+    (hv : L.valid E O = true) (hg : GrammarChecks E L) (hl : lex s = .ok #[w]) :
+    read E O L b s = match VE.Grammar.readSentence (grammar E L) (meaning (grammar E L) (acts E L))
+        DState.init b w with
+      | (.ok A m, _) => if typedDocument E [A] then .ok [(A, m)] else .illTyped
+      | (o, _) => .stopped 0 o := by
+  obtain ⟨h2, h3, h4, h5⟩ := hg
+  rw [read_eq hv h2 h3 h4 h5, hl]
+  cases hr : VE.Grammar.readSentence (grammar E L) (meaning (grammar E L) (acts E L)) DState.init b w with
+  | mk o st1 =>
+    cases o <;> simp [VE.Grammar.readDocument, hr]
+
+theorem got_lex {E : Env} {O : Overlay} {L : Lexicon} {b : Nat} {c : Candidate}
+    (h : (got E O L b c).isNotOne = false) : ∃ w, lex c.sentence = .ok #[w] := by
+  unfold got at h
+  split at h
+  · simp [Got.isNotOne] at h
+  · rename_i ws hl
+    by_cases hs : ws.size = 1
+    · obtain ⟨w, rfl⟩ := Array.size_eq_one_iff.mp hs
+      exact ⟨w, hl⟩
+    · simp [hs, Got.isNotOne] at h
+
+/-- `got` of one lexed sentence, after `read`'s checks. -/
+theorem got_single {E : Env} {O : Overlay} {L : Lexicon} {b : Nat} {c : Candidate} {w : Array Tok}
+    (hv : L.valid E O = true) (hg : GrammarChecks E L) (hl : lex c.sentence = .ok #[w]) :
+    got E O L b c = match VE.Grammar.readSentence (grammar E L) (meaning (grammar E L) (acts E L))
+        DState.init b w with
+      | (.ok A m, _) => if typedDocument E [A] then (if m then .refused (.ok [(A, true)]) else .one A)
+          else .refused .illTyped
+      | (.noDerivation, _) => .none
+      | (.ambiguous _ _, _) => .many
+      | (.budget, _) => .budget
+      | (.rejected r, _) => .refused (.stopped 0 (.rejected r)) := by
+  unfold got
+  rw [hl]
+  simp only [List.size_toArray, List.length_singleton, bne_self_eq_false, Bool.false_eq_true, if_false]
+  rw [read_single hv hg hl]
+  cases hr : VE.Grammar.readSentence (grammar E L) (meaning (grammar E L) (acts E L)) DState.init b w with
+  | mk o st1 =>
+    cases o with
+    | ok A m =>
+      by_cases ht : typedDocument E [A] = true
+      · cases m <;> simp [ht]
+      · simp [ht]
+    | _ => simp
+
+theorem got_atMostOne {E : Env} {O : Overlay} {L : Lexicon} {b : Nat} {c : Candidate}
+    (hv : L.valid E O = true) (hg : GrammarChecks E L) (hn : (got E O L b c).isNotOne = false)
+    (hb : (got E O L b c).isBudget = false) (hm : (got E O L b c).isMany = false) :
+    AtMostOneDerivation E L c.sentence := by
+  obtain ⟨w, hl⟩ := got_lex hn
+  refine ⟨w, hl, ?_⟩
+  rw [got_single hv hg hl] at hb hm
+  have hwf := hg.1
+  cases hr : VE.Grammar.readSentence (grammar E L) (meaning (grammar E L) (acts E L)) DState.init b w with
+  | mk o st1 =>
+    rw [hr] at hb hm
+    cases o with
+    | ok A m =>
+      obtain ⟨t, _, hu, _⟩ := VE.Grammar.read_sound hwf hr
+      intro t1 t2 h1 h2
+      exact (hu t1 h1).trans (hu t2 h2).symm
+    | noDerivation =>
+      obtain ⟨_, hn⟩ := VE.Grammar.read_none hwf hr
+      intro t1 _ h1
+      exact absurd h1 (hn t1)
+    | ambiguous t u => simp [Got.isMany] at hm
+    | rejected r =>
+      obtain ⟨_, t, _, hu, _⟩ := VE.Grammar.read_rejected hwf hr
+      intro t1 t2 h1 h2
+      exact (hu t1 h1).trans (hu t2 h2).symm
+    | budget => simp [Got.isBudget] at hb
+
+theorem got_of_reading {E : Env} {O : Overlay} {L : Lexicon} {b : Nat} {c : Candidate} {ψ : EFormula}
+    (hv : L.valid E O = true) (hg : GrammarChecks E L) (hn : (got E O L b c).isNotOne = false)
+    (hb : (got E O L b c).isBudget = false) (hr : EnglishOneReading E O L c.sentence [(ψ, false)]) :
+    got E O L b c = .one ψ := by
+  obtain ⟨w, hl⟩ := got_lex hn
+  obtain ⟨_, sents, st2, hl2, hd, ht⟩ := hr
+  rw [hl] at hl2
+  cases hl2
+  obtain ⟨st1, hone, _⟩ := hd
+  rw [got_single hv hg hl] at hb ⊢
+  rcases VE.Grammar.read_complete (b := b) hg.1 hone with hs | hs
+  · rw [hs]
+    simp only [List.map_cons, List.map_nil] at ht
+    simp [ht]
+  · rw [hs] at hb
+    simp [Got.isBudget] at hb
+
+theorem got_one_reading {E : Env} {O : Overlay} {L : Lexicon} {b : Nat} {c : Candidate} {ψ : EFormula}
+    (h : got E O L b c = .one ψ) : EnglishOneReading E O L c.sentence [(ψ, false)] :=
+  read_ok E O L b c.sentence _ (got_one_read E O L b c ψ h)
+
+
+theorem fold_meanings_cons (gs : List (Candidate × Got)) (a : Candidate × EFormula)
+    (as : List (Candidate × EFormula)) : ∃ rest, gs.foldl addMeaning (a :: as) = a :: rest := by
+  induction gs generalizing as with
+  | nil => exact ⟨as, rfl⟩
+  | cons y ys ih =>
+    simp only [List.foldl_cons]
+    have : ∃ as', addMeaning (a :: as) y = a :: as' := by
+      unfold addMeaning
+      split
+      · split
+        · exact ⟨as, rfl⟩
+        · exact ⟨as ++ _, rfl⟩
+      · exact ⟨as, rfl⟩
+    obtain ⟨as', h⟩ := this
+    rw [h]
+    exact ih as'
+
+theorem firstMeanings_takeWhile (gs : List (Candidate × Got)) (c : Candidate) (φ : EFormula)
+    (rest : List (Candidate × EFormula)) (h : firstMeanings gs = (c, φ) :: rest) :
+    ∀ y ∈ gs.takeWhile (fun y => y.1 != c), y.2.meaning? = none := by
+  induction gs with
+  | nil => simp
+  | cons y ys ih =>
+    unfold firstMeanings at h
+    simp only [List.foldl_cons] at h
+    cases hm : y.2.meaning? with
+    | none =>
+      have h' : firstMeanings ys = (c, φ) :: rest := by
+        unfold firstMeanings
+        have : addMeaning [] y = [] := by simp [addMeaning, hm]
+        rw [this] at h
+        exact h
+      intro z hz
+      by_cases hy : (y.1 != c) = true
+      · simp only [List.takeWhile_cons, hy, if_true] at hz
+        rcases List.mem_cons.mp hz with rfl | hz
+        · exact hm
+        · exact ih h' z hz
+      · simp only [List.takeWhile_cons, hy, Bool.false_eq_true, if_false] at hz
+        cases hz
+    | some ψ =>
+      have : addMeaning [] y = [(y.1, ψ)] := by simp [addMeaning, hm]
+      rw [this] at h
+      obtain ⟨rest', h2⟩ := fold_meanings_cons ys (y.1, ψ) []
+      rw [h2] at h
+      simp only [List.cons.injEq, Prod.mk.injEq] at h
+      intro z hz
+      have hy : (y.1 != c) = false := by simp [h.1.1]
+      rw [List.takeWhile_cons_of_neg (by simp [hy])] at hz
+      cases hz
+
+theorem fold_meanings_complete (gs : List (Candidate × Got)) (acc : List (Candidate × EFormula))
+    (y : Candidate × Got) (ψ : EFormula) (hy : y ∈ gs) (hm : y.2.meaning? = some ψ) :
+    ∃ x ∈ gs.foldl addMeaning acc, x.2 = ψ := by
+  have keep : ∀ (zs : List (Candidate × Got)) (acc : List (Candidate × EFormula)) (x : Candidate × EFormula),
+      x ∈ acc → x ∈ zs.foldl addMeaning acc := by
+    intro zs
+    induction zs with
+    | nil => intro acc x hx; exact hx
+    | cons z zs ih =>
+      intro acc x hx
+      apply ih
+      unfold addMeaning
+      split
+      · split
+        · exact hx
+        · exact List.mem_append_left _ hx
+      · exact hx
+  induction gs generalizing acc with
+  | nil => cases hy
+  | cons z zs ih =>
+    rcases List.mem_cons.mp hy with rfl | hy
+    · simp only [List.foldl_cons]
+      unfold addMeaning
+      rw [hm]
+      by_cases ha : acc.any (·.2 == ψ) = true
+      · simp only [ha, if_true]
+        obtain ⟨x, hx, hxe⟩ := List.any_eq_true.mp ha
+        exact ⟨x, keep zs acc x hx, by simpa using hxe⟩
+      · simp only [ha, Bool.false_eq_true, if_false]
+        exact ⟨(y.1, ψ), keep zs _ _ (List.mem_append_right _ (by simp)), rfl⟩
+    · exact ih (addMeaning acc z) hy
+
+theorem fold_meanings_fixed (gs : List (Candidate × Got)) (c : Candidate) (φ : EFormula)
+    (h : ∀ y ∈ gs, ∀ ψ, y.2.meaning? = some ψ → ψ = φ) :
+    gs.foldl addMeaning [(c, φ)] = [(c, φ)] := by
+  induction gs with
+  | nil => rfl
+  | cons y ys ih =>
+    simp only [List.foldl_cons]
+    have : addMeaning [(c, φ)] y = [(c, φ)] := by
+      unfold addMeaning
+      cases hm : y.2.meaning? with
+      | none => rfl
+      | some ψ =>
+        have := h y (by simp) ψ hm
+        subst this
+        simp
+    rw [this]
+    exact ih (fun z hz => h z (by simp [hz]))
+
+theorem firstMeanings_eq_single (gs : List (Candidate × Got)) (c : Candidate) (φ : EFormula)
+    (hc : ∀ y ∈ gs, y.1 = c → y.2 = .one φ)
+    (hall : ∀ y ∈ gs, ∀ ψ, y.2.meaning? = some ψ → ψ = φ)
+    (hpre : ∀ y ∈ gs.takeWhile (fun y => y.1 != c), y.2.meaning? = none)
+    (hmem : ∃ y ∈ gs, y.1 = c) :
+    firstMeanings gs = [(c, φ)] := by
+  unfold firstMeanings
+  induction gs with
+  | nil => obtain ⟨_, hy, _⟩ := hmem; cases hy
+  | cons y ys ih =>
+    simp only [List.foldl_cons]
+    by_cases hy : y.1 = c
+    · have hone := hc y (by simp) hy
+      have : addMeaning [] y = [(c, φ)] := by simp [addMeaning, hone, Got.meaning?, hy]
+      rw [this]
+      exact fold_meanings_fixed ys c φ (fun z hz => hall z (by simp [hz]))
+    · have hne : (y.1 != c) = true := by simpa using hy
+      have hnone : y.2.meaning? = none := hpre y (by simp only [List.takeWhile_cons, hne, if_true]; simp)
+      have : addMeaning [] y = [] := by simp [addMeaning, hnone]
+      rw [this]
+      apply ih
+      · exact fun z hz => hc z (by simp [hz])
+      · exact fun z hz => hall z (by simp [hz])
+      · intro z hz
+        apply hpre
+        simp only [List.takeWhile_cons, hne, if_true]
+        exact List.mem_cons_of_mem _ hz
+      · obtain ⟨z, hz, hzc⟩ := hmem
+        rcases List.mem_cons.mp hz with rfl | hz
+        · exact absurd hzc hy
+        · exact ⟨z, hz, hzc⟩
+
+theorem mem_takeWhile_map (cs : List Candidate) (f : Candidate → Got) (c d : Candidate)
+    (hd : d ∈ cs.takeWhile (fun d => d != c)) :
+    (d, f d) ∈ (cs.map fun x => (x, f x)).takeWhile (fun y => y.1 != c) := by
+  induction cs with
+  | nil => cases hd
+  | cons x xs ih =>
+    simp only [List.map_cons, List.takeWhile_cons] at hd ⊢
+    by_cases hx : (x != c) = true
+    · simp only [hx, if_true] at hd ⊢
+      rcases List.mem_cons.mp hd with rfl | hd
+      · simp
+      · exact List.mem_cons_of_mem _ (ih hd)
+    · simp only [hx, Bool.false_eq_true, if_false] at hd
+      cases hd
+
+theorem mem_takeWhile_map_inv (cs : List Candidate) (f : Candidate → Got) (c : Candidate)
+    (y : Candidate × Got) (hy : y ∈ (cs.map fun x => (x, f x)).takeWhile (fun y => y.1 != c)) :
+    y.1 ∈ cs.takeWhile (fun d => d != c) ∧ y.2 = f y.1 := by
+  induction cs with
+  | nil => simp at hy
+  | cons x xs ih =>
+    simp only [List.map_cons, List.takeWhile_cons] at hy ⊢
+    by_cases hx : (x != c) = true
+    · simp only [hx, if_true] at hy ⊢
+      rcases List.mem_cons.mp hy with rfl | hy
+      · simp
+      · obtain ⟨h1, h2⟩ := ih hy
+        exact ⟨List.mem_cons_of_mem _ h1, h2⟩
+    · simp only [hx, Bool.false_eq_true, if_false] at hy
+      cases hy
+
+theorem classify_one_spec (auxs : List String) (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (q : String)
+    (c : Candidate) (φ : EFormula) (h : classify auxs E O L b q = .one c φ) :
+    grammarFault E O L = none ∧
+    (∀ d ∈ candidates auxs q, (got E O L b d).isNotOne = false ∧ (got E O L b d).isBudget = false ∧
+      (got E O L b d).isMany = false) ∧
+    firstMeanings ((candidates auxs q).map fun d => (d, got E O L b d)) = [(c, φ)] := by
+  unfold classify at h
+  dsimp only at h
+  split at h <;> try cases h
+  rename_i hg
+  repeat (split at h <;> try cases h)
+  all_goals try (split at h <;> cases h)
+  all_goals
+    let gs := (candidates auxs q).map fun d => (d, got E O L b d)
+    have hn : gs.any (fun x => x.snd.isNotOne) = false := by simp only [Bool.not_eq_true] at *; assumption
+    have hb : ((candidates auxs q).map fun d => (d, got E O L b d)).find? (fun x => x.snd.isBudget) = none := by assumption
+    have hm : ((candidates auxs q).map fun d => (d, got E O L b d)).find? (fun x => x.snd.isMany) = none := by assumption
+    refine ⟨hg, ?_, by assumption⟩
+    intro d hd
+    have hmem : (d, got E O L b d) ∈ gs := List.mem_map_of_mem hd
+    exact ⟨by simpa using (List.any_eq_false.mp hn) _ hmem, by simpa using (List.find?_eq_none.mp hb) _ hmem,
+      by simpa using (List.find?_eq_none.mp hm) _ hmem⟩
+
+theorem readQuestion_classify_one (auxs : List String) (E : Env) (O : Overlay) (L : Lexicon) (b : Nat)
+    (q : String) (c : Candidate) (φ : EFormula) (h : readQuestion auxs E O L b q = .one c φ) :
+    classify auxs E O L b q = .one c φ := by
+  unfold readQuestion at h
+  dsimp only at h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  all_goals assumption
+
+theorem readQuestion_one :
+  ∀ (auxs : List String) (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (q : String) (c : Candidate) (φ : EFormula),
+    readQuestion auxs E O L b q = .one c φ → L.policyOk E O = true ∧ QuestionOneReading auxs E O L q c φ := by
+  intro auxs E O L b q c φ h
+  obtain ⟨hg, hflags, hf⟩ := classify_one_spec auxs E O L b q c φ (readQuestion_classify_one auxs E O L b q c φ h)
+  obtain ⟨hp, hv, hchk⟩ := grammarFault_none_checks hg
+  have hcmem : c ∈ candidates auxs q ∧ got E O L b c = .one φ := by
+    obtain ⟨y, hy, hyc, hyg⟩ := firstMeanings_sound _ (c, φ) (by rw [hf]; simp)
+    obtain ⟨d, hd, rfl⟩ := List.mem_map.mp hy
+    simp only at hyc hyg
+    subst hyc
+    exact ⟨hd, hyg⟩
+  have hsame : ∀ d ∈ candidates auxs q, ∀ ψ, got E O L b d = .one ψ → ψ = φ := by
+    intro d hd ψ hψ
+    obtain ⟨x, hx, hxψ⟩ := fold_meanings_complete _ [] (d, got E O L b d) ψ
+      (List.mem_map_of_mem (f := fun d => (d, got E O L b d)) hd)
+      (by simp [hψ, Got.meaning?])
+    change x ∈ firstMeanings _ at hx
+    rw [hf] at hx
+    simp at hx
+    subst hx
+    exact hxψ.symm
+  have hread : ∀ d ∈ candidates auxs q, ∀ ψ, EnglishOneReading E O L d.sentence [(ψ, false)] →
+      got E O L b d = .one ψ := fun d hd ψ hr =>
+    got_of_reading hv hchk (hflags d hd).1 (hflags d hd).2.1 hr
+  refine ⟨hp, hcmem.1, fun d hd => got_atMostOne hv hchk (hflags d hd).1 (hflags d hd).2.1 (hflags d hd).2.2,
+    got_one_reading hcmem.2, ?_, ?_⟩
+  · intro d hd ⟨ψ, hr⟩
+    have hdm : d ∈ candidates auxs q := (List.takeWhile_sublist _).subset hd
+    have hone := hread d hdm ψ hr
+    have hnone := firstMeanings_takeWhile _ c φ [] hf (d, got E O L b d)
+      (mem_takeWhile_map _ (got E O L b) c d hd)
+    simp [hone, Got.meaning?] at hnone
+  · intro d hd
+    by_cases hr : HasReading E O L d.sentence
+    · obtain ⟨ψ, hψ⟩ := hr
+      have hone := hread d hd ψ hψ
+      have := hsame d hd ψ hone
+      subst this
+      exact Or.inl hψ
+    · exact Or.inr hr
+
+theorem got_flags_of_lex {E : Env} {O : Overlay} {L : Lexicon} {b : Nat} {d : Candidate} {w : Array Tok}
+    (hv : L.valid E O = true) (hg : GrammarChecks E L) (hl : lex d.sentence = .ok #[w])
+    (hamo : AtMostOneDerivation E L d.sentence) (hb : ∀ i, read E O L b d.sentence ≠ .stopped i .budget) :
+    (got E O L b d).isNotOne = false ∧ (got E O L b d).isBudget = false ∧ (got E O L b d).isMany = false := by
+  have hs := got_single (b := b) hv hg hl
+  have hr := read_single (b := b) hv hg hl
+  obtain ⟨w', hl', huniq⟩ := hamo
+  rw [hl] at hl'
+  cases hl'
+  cases hrs : VE.Grammar.readSentence (grammar E L) (meaning (grammar E L) (acts E L)) DState.init b w with
+  | mk o st1 =>
+    rw [hrs] at hs hr
+    cases o with
+    | ok A m =>
+      rw [hs]
+      by_cases ht : typedDocument E [A] = true
+      · cases m <;> simp [ht, Got.isNotOne, Got.isBudget, Got.isMany]
+      · simp [ht, Got.isNotOne, Got.isBudget, Got.isMany]
+    | noDerivation => rw [hs]; simp [Got.isNotOne, Got.isBudget, Got.isMany]
+    | ambiguous t u =>
+      obtain ⟨_, h1, h2, hne⟩ := VE.Grammar.read_ambiguous hrs
+      exact absurd (huniq t u h1 h2) hne
+    | rejected r => rw [hs]; simp [Got.isNotOne, Got.isBudget, Got.isMany]
+    | budget => exact absurd hr (hb 0)
+
+theorem candidates_body (auxs : List String) (q : String) (c : Candidate) (hc : c ∈ candidates auxs q) :
+    ∃ t toks, (shape auxs q).body = some t ∧ bodySentence t = some toks := by
+  unfold candidates at hc
+  split at hc
+  · rename_i t hsh
+    split at hc
+    · rename_i hb
+      obtain ⟨toks, htoks⟩ := Option.isSome_iff_exists.mp hb
+      exact ⟨t, toks, by simp [hsh, Shape.body], htoks⟩
+    · cases hc
+  · rename_i a r hsh
+    cases hbs : bodySentence r with
+    | none =>
+      have : gaps r = [] := by simp [gaps, hbs]
+      simp [this] at hc
+    | some toks => exact ⟨r, toks, by simp [hsh, Shape.body], hbs⟩
+  · cases hc
+
+theorem readQuestion_complete :
+  ∀ (auxs : List String) (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (q : String) (c : Candidate) (φ : EFormula),
+    L.policyOk E O = true → GrammarChecks E L → withinLimits auxs q = true →
+    (∀ d ∈ candidates auxs q, ∀ i, read E O L b d.sentence ≠ .stopped i .budget) →
+    QuestionOneReading auxs E O L q c φ → readQuestion auxs E O L b q = .one c φ := by
+  intro auxs E O L b q c φ hp hchk hlim hbud ⟨hc, hamo, hcr, hpre, hpost⟩
+  have hv : L.valid E O = true := hcr.1
+  have hflags : ∀ d ∈ candidates auxs q, (got E O L b d).isNotOne = false ∧ (got E O L b d).isBudget = false ∧
+      (got E O L b d).isMany = false := by
+    intro d hd
+    obtain ⟨w, hl, _⟩ := hamo d hd
+    exact got_flags_of_lex hv hchk hl (hamo d hd) (hbud d hd)
+  have hgc : got E O L b c = .one φ := got_of_reading hv hchk (hflags c hc).1 (hflags c hc).2.1 hcr
+  have hfm : firstMeanings ((candidates auxs q).map fun d => (d, got E O L b d)) = [(c, φ)] := by
+    apply firstMeanings_eq_single
+    · intro y hy hyc
+      obtain ⟨d, _, rfl⟩ := List.mem_map.mp hy
+      simp only at hyc ⊢
+      subst hyc
+      exact hgc
+    · intro y hy ψ hψ
+      obtain ⟨d, hd, rfl⟩ := List.mem_map.mp hy
+      have hone : got E O L b d = .one ψ := by
+        cases hg : got E O L b d <;> simp [hg, Got.meaning?] at hψ
+        subst hψ; rfl
+      have hr := got_one_reading hone
+      rcases hpost d hd with h | h
+      · have := english_reading_unique E O L d.sentence _ _ h hr
+        simp at this
+        exact this
+      · exact absurd ⟨ψ, hr⟩ h
+    · intro y hy
+      obtain ⟨hy1, hy2⟩ := mem_takeWhile_map_inv _ (got E O L b) c y hy
+      cases hm : y.2.meaning? with
+      | none => rfl
+      | some ψ =>
+        have hone : got E O L b y.1 = .one ψ := by
+          rw [← hy2]
+          cases hg : y.2 <;> simp [hg, Got.meaning?] at hm
+          subst hm; rfl
+        exact absurd ⟨ψ, got_one_reading hone⟩ (hpre y.1 hy1)
+    · exact ⟨(c, got E O L b c), List.mem_map_of_mem (f := fun d => (d, got E O L b d)) hc, rfl⟩
+  have hgf := grammarFault_eq_none hp hv hchk
+  obtain ⟨t, toks, hbody, hbs⟩ := candidates_body auxs q c hc
+  have hlex : lexSpans (t ++ ".") = .ok #[toks] := by
+    unfold bodySentence at hbs
+    split at hbs
+    · rename_i ss hss
+      by_cases h1 : ss.size = 1
+      · simp only [h1, beq_self_eq_true, if_true] at hbs
+        obtain ⟨x, rfl⟩ := Array.size_eq_one_iff.mp h1
+        simp at hbs
+        subst hbs
+        exact hss
+      · simp [h1] at hbs
+    · cases hbs
+  simp only [withinLimits, hbody, hbs, Bool.and_eq_true, decide_eq_true_eq] at hlim
+  obtain ⟨⟨hqs, hts⟩, hcs⟩ := hlim
+  have hn : ((candidates auxs q).map fun d => (d, got E O L b d)).any (fun x => x.snd.isNotOne) = false :=
+    List.any_eq_false.mpr fun y hy => by
+      obtain ⟨d, hd, rfl⟩ := List.mem_map.mp hy
+      simp [(hflags d hd).1]
+  have hb : ((candidates auxs q).map fun d => (d, got E O L b d)).find? (fun x => x.snd.isBudget) = none :=
+    List.find?_eq_none.mpr fun y hy => by
+      obtain ⟨d, hd, rfl⟩ := List.mem_map.mp hy
+      simp [(hflags d hd).2.1]
+  have hm : ((candidates auxs q).map fun d => (d, got E O L b d)).find? (fun x => x.snd.isMany) = none :=
+    List.find?_eq_none.mpr fun y hy => by
+      obtain ⟨d, hd, rfl⟩ := List.mem_map.mp hy
+      simp [(hflags d hd).2.2]
+  have hcl : classify auxs E O L b q = .one c φ := by
+    unfold classify
+    rw [hgf]
+    dsimp only
+    cases hsh : shape auxs q with
+    | notQuestion => simp [hsh, Shape.body] at hbody
+    | other w => simp [hsh, Shape.body] at hbody
+    | caseThat t' =>
+      simp only [hsh, Shape.body, Option.some.injEq] at hbody
+      subst hbody
+      simp only [Shape.body, Option.getD_some, hlex]
+      rw [if_neg (by omega), if_neg (by simp), if_neg (by simp; omega), if_neg (by omega), if_neg (by simp [hn]),
+        hb]
+      simp only [hm, hfm]
+    | fronted a r =>
+      simp only [hsh, Shape.body, Option.some.injEq] at hbody
+      subst hbody
+      simp only [Shape.body, Option.getD_some, hlex]
+      rw [if_neg (by omega), if_neg (by simp), if_neg (by simp; omega), if_neg (by omega), if_neg (by simp [hn]),
+        hb]
+      simp only [hm, hfm]
+  simp [readQuestion, hcl]
+
+end VE.Question
