@@ -126,13 +126,47 @@ def fill_premises : Shape :=
             .required ["label", "ast"],
             closed [("label", str), ("ast", ref "common.json#/$defs/generated_formula")]])])]])]
 
+def softException : Shape := n [obj, .required ["decided_by", "sufficient", "necessary", "factors"],
+  closed [("decided_by", .type ["string", "null"]),
+    ("sufficient", ref "common.json#/$defs/generated_formulas"),
+    ("necessary", ref "common.json#/$defs/generated_formulas"),
+    ("factors", ref "common.json#/$defs/strings")]]
+
+def softNode : Shape := n [obj,
+  .required ["name", "predicate", "sign", "mode", "guard", "unless", "over", "rank", "alterable", "exception", "hard"],
+  closed [("name", str), ("predicate", str), ("sign", .type ["boolean"]),
+    ("mode", enumS ["strict", "default"]), ("guard", ref "common.json#/$defs/generated_formula"),
+    ("unless", ref "common.json#/$defs/generated_formulas"), ("over", ref "common.json#/$defs/strings"),
+    ("rank", .type ["string", "null"]), ("alterable", ref "common.json#/$defs/strings"),
+    ("exception", .anyOf [.type ["null"], softException]), ("hard", .type ["boolean"])]]
+
+def content : Shape := .anyOf [
+  n [obj, .required ["assertion"], closed [("assertion", ref "common.json#/$defs/generated_formula")]],
+  n [obj, .required ["norm"], closed [("norm", softNode)]],
+  n [obj, .required ["kind"], closed [("kind", enumS ["right", "right_lines", "limitation", "bar"])]]]
+
+def unit : Shape := n [obj, .required ["unit", "content"],
+  closed [("unit", str), ("set", str), ("version", ref "common.json#/$defs/nat"),
+    ("index", ref "common.json#/$defs/nat"), ("position", ref "common.json#/$defs/nat"),
+    ("content", content)]]
+
+def units : Shape := n [arr, .items unit]
+
+def names : Shape := n [arr, .items (n [obj, .required ["set", "version", "candidates"],
+  closed [("set", str), ("version", ref "common.json#/$defs/nat"),
+    ("candidates", n [arr, .items (n [obj, .required ["index", "id", "position", "names"],
+      closed [("index", ref "common.json#/$defs/nat"), ("id", str),
+        ("position", ref "common.json#/$defs/nat"),
+        ("names", n [arr, .items (ref "common.json#/$defs/string_pair")])]])])]])]
+
+
 def filled : Shape :=
   c "Readings.Run.runValidateND (UnspecifiedWire.filledJson): under the unspecified completion, the filled frame's environment (unspecified read as deny, norm-defaults@0 removed, every unsaid__p added) and the filled units, the F_p units last." [
     obj,
     .required ["environment", "units"],
     closed [
       ("environment", c "the filled environment" []),
-      ("units", arr)]]
+      ("units", units)]]
 
 def separate : Shape :=
   c "Readings.Run.runCase readings-separate: the requested set and situation's pair facts." [
@@ -196,9 +230,9 @@ def elaborateSuperposed : List (String × Shape) := [
             obj,
             .required ["name", "arguments"],
             closed [("name", str), ("arguments", ref "common.json#/$defs/strings")]])])]]),
-  ("units", arr),
+  ("units", units),
   ("slot", labelledFormulas),
-  ("names", arr),
+  ("names", names),
   ("sizes", n [
     obj,
     .required ["sorts", "predicates", "nodes", "limits"],
@@ -600,6 +634,12 @@ def file : File where
     ("candidate", .schema candidate),
     ("validate", .schema validate),
     ("fill_premises", .schema fill_premises),
+    ("soft_exception", .schema softException),
+    ("soft_node", .schema softNode),
+    ("content", .schema content),
+    ("unit", .schema unit),
+    ("units", .schema units),
+    ("names", .schema names),
     ("filled", .schema filled),
     ("separate", .schema separate),
     ("choice", .schema choice),
