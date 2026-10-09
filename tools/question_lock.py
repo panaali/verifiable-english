@@ -4,24 +4,26 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
-import re
 
 
 ROOT = Path(__file__).resolve().parents[1]
 QUESTION = ROOT / "lean/VE/Question"
 LOCK = ROOT / "ve/question/LOCK.json"
+CODES = ROOT / "ve/question/codes.json"
 
 
 def expected() -> dict:
-    text = (QUESTION / "Texts.lean").read_text()
-    match = re.search(r"^def question_version : Nat := (\d+)$", text, re.M)
-    if not match:
-        raise SystemExit("question_version is missing from Texts.lean")
+    # The version as Lean's service exports it (`ve/question/codes.json`, tools/question_codes.py), not read from
+    # the Lean source text.
+    version = json.loads(CODES.read_text())["question_version"]
+    prefix, _, number = version.partition("@")
+    if prefix != "question" or not number.isdigit():
+        raise SystemExit(f"{CODES.relative_to(ROOT)}: question_version {version!r} is not question@N")
     files = {
         str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
         for path in sorted(QUESTION.glob("*.lean"))
     }
-    return {"format": "ve.question-lock@1", "question_version": int(match.group(1)), "files": files}
+    return {"format": "ve.question-lock@1", "question_version": int(number), "files": files}
 
 
 def main() -> None:

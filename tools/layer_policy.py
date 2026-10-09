@@ -113,8 +113,9 @@ def lean_entry(module: str) -> bool:
 def lean_layer(module: str) -> int | None:
     if module in {"VE", "VE.Audit", "Iceberg", "VE.Checks", "VE.Route.Checks"}:
         return 5  # aggregation and audit targets
-    if module in {"VE.EnglishGrammar.ProfileExamples", "VE.EnglishGrammar.E2Examples"}:
-        return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run
+    if module in {"VE.EnglishGrammar.ProfileExamples", "VE.EnglishGrammar.E2Examples",
+                  "VE.Question.Examples", "VE.Question.Fixtures"}:
+        return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run or Question.Run
     if lean_entry(module) or module.endswith(".Run") or module == "VE.Route.MeteredRun" or module.startswith("VE.Service."):
         return 4
     if module == "ResponseShape" or module.startswith("ResponseShape."):
@@ -123,7 +124,7 @@ def lean_layer(module: str) -> int | None:
         return 4  # states theorems on Norms.Run.runCase (docs/CONSOLIDATION-PLAN.md step 1a)
     if module in {"VE.Route.RunSound", "VE.Norms.RunSound"}:
         return 4  # states theorems on Route.Run.runCase and Norms.Run.runCase (step 2a)
-    if module.startswith(("VE.English.", "VE.Grammar.", "VE.EnglishGrammar.", "VE.Senses.")) or module in {
+    if module.startswith(("VE.English.", "VE.Grammar.", "VE.EnglishGrammar.", "VE.Senses.", "VE.Question.")) or module in {
         "VE.Surface", "VE.SurfaceProofs", "VE.ParserContracts", "VE.LexicalProofs",
         "VE.Order.Surface", "VE.Core.Surface", "VE.Closure.Surface",
     }:

@@ -1,4 +1,5 @@
 import VE.Question.Texts
+import VE.Question.Run
 import VE.EnglishGrammar.ReadExamples
 import VE.EnglishGrammar.Run
 
@@ -75,5 +76,24 @@ def isIndefinite (o : Outcome) : Bool := match o with | .indefinite .. => true |
   | _ => false
 #guard isNone (readQuestion auxiliaries groupEnv {} groupLex 2100000
   "Is it the case that every member is happy?")
+
+-- G24: speech acts' auxiliaries (`["is"]`, Q1.4) on G.
+#guard match readQuestion ["is"] groupEnv {} groupLex 2100000 "Is Ann eligible?" with
+  | .one c φ => c == ⟨.fronted "is" 4, "Ann is eligible."⟩ && φ == .pred "eligible" [.const "ann"]
+  | _ => false
+#guard match readQuestion ["is"] groupEnv {} groupLex 2100000 "Must Ann be eligible?" with
+  | .form wh => !wh
+  | _ => false
+#guard formText ["is"] ==
+  "VE answers questions that begin with \"Is\", or with \"Is it the case that\" followed by a sentence."
+#guard isOne (readQuestion ["is"] groupEnv {} groupLex 2100000 "Is it the case that Ann is eligible?")
+
+-- G21: the work budget 0 stops at the first candidate (`Budget`), which the mode reports as row 9.
+#guard match Run.outcomeFields [] "Is every member eligible?" groupEnv groupLex
+    (readQuestion auxiliaries groupEnv {} groupLex 0 "Is every member eligible?") with
+  | .ok fs => fs.lookup "code" == some (.str "Budget") && fs.lookup "status" == some (.str "budget") &&
+      fs.lookup "text" == some (.str "VE stopped reading this question at its work limit.") &&
+      fs.lookup "span" == some (Lean.Json.arr #[Lean.toJson (0 : Nat), Lean.toJson (25 : Nat)])
+  | .error _ => false
 
 end VE.Question

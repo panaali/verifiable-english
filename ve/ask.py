@@ -18,7 +18,7 @@ from pathlib import Path
 import sys
 
 from .errors import CheckerUnavailable, ResourceLimit, VEError
-from .limits import MAX_SOURCE_BYTES
+from .document import MAX_DOCUMENT_BYTES
 
 OPERATION = "question.read"
 EXIT_READ, EXIT_NOT_READ, EXIT_LIMIT, EXIT_UNAVAILABLE = 0, 2, 4, 5
@@ -80,9 +80,9 @@ def main(argv=None) -> int:
     try:
         path = Path(options.document)
         with path.open("rb") as stream:
-            raw = stream.read(MAX_SOURCE_BYTES + 1)
-        if len(raw) > MAX_SOURCE_BYTES:
-            raise ResourceLimit(f"ResourceLimit: {options.document!r} exceeds {MAX_SOURCE_BYTES} bytes")  # relay-lint: file I/O
+            raw = stream.read(MAX_DOCUMENT_BYTES + 1)
+        if len(raw) > MAX_DOCUMENT_BYTES:
+            raise ResourceLimit(f"ResourceLimit: {options.document!r} exceeds {MAX_DOCUMENT_BYTES} bytes")  # relay-lint: file I/O
         answer = read(raw, options.question)
     except CheckerUnavailable as exc:
         emit(_answer(exc), {"class": "CheckerUnavailable", "message": str(exc)})
