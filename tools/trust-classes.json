@@ -7853,6 +7853,7 @@
     "VE.Service.Document.check",
     "VE.Service.Document.contentOf",
     "VE.Service.Document.coverageUnits",
+    "VE.Service.Document.decodedEnvironment",
     "VE.Service.Document.envelopeKeys",
     "VE.Service.Document.environmentOf",
     "VE.Service.Document.formulaCheck",
@@ -7869,8 +7870,21 @@
     "VE.Service.Document.unitsOf"
    ],
    "D[R]": [
+    "VE.Service.Document.Walk",
+    "VE.Service.Document.describedBy",
     "VE.Service.Document.emptySource",
-    "VE.Service.Document.unavailable"
+    "VE.Service.Document.exactly",
+    "VE.Service.Document.fault",
+    "VE.Service.Document.formulaDecoderTexts",
+    "VE.Service.Document.formulaFault",
+    "VE.Service.Document.graphFault",
+    "VE.Service.Document.legacyEnvelopeFault",
+    "VE.Service.Document.pyR",
+    "VE.Service.Document.stop",
+    "VE.Service.Document.unavailable",
+    "VE.Service.Document.verbalisedBy",
+    "VE.Service.Document.vocabularyFault",
+    "VE.Service.Document.walked"
    ],
    "G[V]": [
     "VE.Service.Document.Checked",
@@ -8264,16 +8278,19 @@
     "VE.Service.TypingDiagnostic.fail",
     "VE.Service.TypingDiagnostic.formula",
     "VE.Service.TypingDiagnostic.intSort",
-    "VE.Service.TypingDiagnostic.pyRepr",
-    "VE.Service.TypingDiagnostic.pyTuple",
-    "VE.Service.TypingDiagnostic.pyValue",
     "VE.Service.TypingDiagnostic.term",
     "VE.Service.TypingDiagnostic.tick"
    ],
    "G[R]": [
     "VE.Service.TypingDiagnostic.diagnose",
+    "VE.Service.TypingDiagnostic.hexDigits",
     "VE.Service.TypingDiagnostic.maxDepth",
-    "VE.Service.TypingDiagnostic.maxNodes"
+    "VE.Service.TypingDiagnostic.maxNodes",
+    "VE.Service.TypingDiagnostic.nonPrintable",
+    "VE.Service.TypingDiagnostic.pyJson",
+    "VE.Service.TypingDiagnostic.pyRepr",
+    "VE.Service.TypingDiagnostic.pyTuple",
+    "VE.Service.TypingDiagnostic.pyValue"
    ]
   },
   "VE/SoftNorms/Admission.lean": {
