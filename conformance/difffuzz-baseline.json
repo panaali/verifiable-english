@@ -32663,7 +32663,7 @@
    "id": "requests-b3e5f5fa0d27de1b",
    "surface": "requests",
    "profile": "admission:admission",
-   "seed": "conformance/admission.json/14",
+   "seed": "conformance/admission.json/9",
    "engines": [
     "python",
     "lean"
@@ -32676,52 +32676,27 @@
    },
    "mutation": [
     [
-     "unicode",
-     [
-      "document",
-      "reading_sets",
-      0,
-      "readings",
-      0,
-      1
-     ],
-     "nbsp"
+     "re-found",
+     "lean-first batch 13b: the admission.json/14 input is fixed (Python's column is Lean's answer); the CI sample's admission.json/9 mutant keeps the reviewed signature"
     ]
    ],
    "input": {
-    "id": "conformance/admission.json/14",
+    "id": "conformance/admission.json/9",
     "kind": "admission",
     "environment": {
      "language": "ve.core@0.2",
-     "profiles": [
-      "relational-fol@0"
-     ],
-     "spec_revision": "ve-v0.2-expand2-2026-09-25",
      "vocabulary": {
       "sorts": {},
-      "predicates": {},
+      "predicates": {
+       "in_legal": {
+        "arguments": [
+         "p"
+        ],
+        "description": "w"
+       }
+      },
       "constants": {}
      }
-    },
-    "document": {
-     "units": [],
-     "graph": {},
-     "reading_sets": [
-      {
-       "id": "s",
-       "version": 1,
-       "readings": [
-        [
-         "unary",
-         "i",
-         [
-          "const",
-          "a"
-         ]
-        ]
-       ]
-      }
-     ]
     }
    },
    "classes": [
@@ -32731,12 +32706,12 @@
     "python": {
      "outcome": "error",
      "code": "UnknownSymbol",
-     "text": "UnknownSymbol: Unknown predicate 'i'"
+     "text": "UnknownSymbol: Undeclared predicate argument sort: 'p'"
     },
     "lean": {
      "outcome": "error",
      "code": "InvalidInput",
-     "text": "rejected: ill-typed or unbound conclusion"
+     "text": "rejected: fields do not match: expected [language, profiles, spec_revision, vocabulary], got [language, vocabulary]"
     },
     "rust": {
      "outcome": "n/a"

@@ -2,10 +2,10 @@
 
     python docs/lean-first/b13b/latency.py BASE_ROOT DOCUMENT OUT_JSON
 
-Three UDHR runs alternate base and head. The eligibility harness (`--no-write`) and the agent-policy
-harness (`check.py base`, the part whose typing, Background and admission calls 13b moves to Lean) run once
-per side, alternating, as in batch 9's same-host measurement. Section 4's budget: each at most 1.25x the
-base wall, the UDHR document at most 120 s. The document is a historical UDHR
+Three UDHR runs and three agent-policy runs (`check.py base`, the part whose typing, Background and
+admission calls 13b moves to Lean; its own timings are normalised before the outputs are compared) alternate
+base and head; the eligibility harness (`--no-write`) runs once per side, as in batch 9's same-host
+measurement. Section 4's budget: each at most 1.25x the base wall, the UDHR document at most 120 s. The document is a historical UDHR
 pilot blob extracted to a temporary file before this script is called. A prior
 eligibility measurement can be carried forward when correcting the UDHR blob.
 """
@@ -15,6 +15,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import resource
 import statistics
@@ -37,9 +38,11 @@ def check(root: Path, operation: str, document: Path) -> dict:
     wall = time.perf_counter() - start
     after = resource.getrusage(resource.RUSAGE_CHILDREN)
     cpu = after.ru_utime + after.ru_stime - before.ru_utime - before.ru_stime
+    # The agent-policy report ends with its own timings; every decimal in it is one (normalised before hashing).
+    stdout = re.sub(rb"[0-9]+\.[0-9]+", b"<s>", done.stdout) if operation == "agent-policy" else done.stdout
     return {"wall_s": wall, "cpu_s": cpu, "exit": done.returncode,
-            "stdout_sha256": hashlib.sha256(done.stdout).hexdigest(),
-            "stdout_bytes": len(done.stdout), "stderr": done.stderr.decode("utf-8", "replace")[-500:]}
+            "stdout_sha256": hashlib.sha256(stdout).hexdigest(),
+            "stdout_bytes": len(stdout), "stderr": done.stderr.decode("utf-8", "replace")[-500:]}
 
 
 def main() -> int:
@@ -48,18 +51,25 @@ def main() -> int:
     parser.add_argument("document", type=Path)
     parser.add_argument("out", type=Path)
     parser.add_argument("--reuse-eligibility", type=Path)
+    parser.add_argument("--reuse", type=Path, help="keep these operations' rows from a previous run's JSON")
+    parser.add_argument("--keep", nargs="*", default=(), help="the operations kept from --reuse")
     args = parser.parse_args()
     roots = {"base": args.base.resolve(), "head": HEAD}
     if roots["base"] == HEAD or not args.document.is_file():
         parser.error("a distinct base checkout and an existing UDHR document are required")
     rows = (json.loads(args.reuse_eligibility.read_text()) if args.reuse_eligibility else {})
+    if args.reuse:
+        previous = json.loads(args.reuse.read_text())
+        rows.update({operation: previous[operation] for operation in args.keep})
     for operation in ("udhr", "eligibility", "agent-policy"):
+        if operation in args.keep:
+            continue
         if operation == "eligibility" and args.reuse_eligibility:
             if not rows[operation]["same_output"] or not rows[operation]["within_budget"]:
                 parser.error("reused eligibility measurement did not pass")
             continue
         runs = {"base": [], "head": []}
-        for _ in range(3 if operation == "udhr" else 1):
+        for _ in range(1 if operation == "eligibility" else 3):
             for side, root in roots.items():
                 runs[side].append(check(root, operation, args.document.resolve()))
         output = {(row["exit"], row["stdout_sha256"], row["stdout_bytes"])
