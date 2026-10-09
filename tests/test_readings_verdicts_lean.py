@@ -19,7 +19,7 @@ from tests.test_readings_nd_lean import case, doc1, env1, run
 from ve.document import load_document
 from ve.errors import CheckerUnavailable, VEError
 from ve.readings_s2_wording import query_english, report_english
-from ve.readings_verdicts import _check_answer, context
+from ve.readings_verdicts import context
 
 LEAN = "ve_readings_route"
 IMPLIES = ["forall", "agent", ["forall", "user", ["implies", ["binary", "help_required", ["var", 1], ["var", 0]],
@@ -136,12 +136,14 @@ def test_a_certificate_of_choice_0_supplied_as_choice_1s_is_never_all(tmp_path):
     cert = route._choice(route.choices[0]).certificate_case(QUERY)
     for key in pieces:
         pieces[key]["certificate"] = cert
-    answer = ask(route, "query", evidence_of(route, pieces), premises=[], conclusion=QUERY)
+    request = case("readings-verdicts", route.environment, route.document, question="query",
+                   evidence=evidence_of(route, pieces), premises=[], conclusion=QUERY)
+    [answer] = run(LEAN, [request])
     assert answer["result"]["verdict"] != "ALL"
     entry = answer["per_choice"][1]
     assert entry["query"] == "UNKNOWN" and (entry["errors"].get("certificate") or entry["evidence"]["certificate"] is False)
     with pytest.raises(CheckerUnavailable, match="ReadingsConformance"):
-        _check_answer(answer, "query")
+        route.check_answer(answer, request)
 
 
 def test_untaken_readings_are_refused_before_any_condition(tmp_path):
@@ -239,11 +241,116 @@ def test_thirty_narrowed_sets_restrictions_without_the_product():
 
 
 # ---------------------------------------------------------------------------------------------------------------
-# Lean's answer is untrusted output (build checklist 4): every field dropped, emptied or retyped is unavailable
+# Lean's answer is untrusted output (build checklist 4; review B1 and B2 of rd-3): every field of the answer and of
+# its result dropped, emptied or retyped is unavailable, and every row and every choice it names is bound to the
+# request
 
-def _genuine_answer(tmp_path):
-    _, route = loaded(tmp_path)
-    return route, route.query_answer(QUERY)
+def _checked(route, answer):
+    """The request `answer` answers, after checking the genuine answer against it."""
+    request = route.requests[id(answer)]
+    route.check_answer(answer, request)
+    return request
+
+
+def _genuine_answers(tmp_path):
+    """Genuine answers of every result form the fixtures reach: {name: (route, answer)}."""
+    for sub in ("fnd1", "fnd2"):
+        (tmp_path / sub).mkdir()
+    _, route = loaded(tmp_path / "fnd1")
+    _, route2 = loaded(tmp_path / "fnd2", fnd2)
+    route.entailment(IMPLIES)
+    route.entailment(QUERY, assumed=[("rs_1", 1)])
+    route.premises()
+    route2.conflict()
+    return {"conflict CONFLICT-FREE": (route, route.conflict_answer()),
+            "conflict CONFLICT": (route2, route2.conflict_answer()),
+            "premises": (route, route.premises_answer()),
+            "query SOME": (route, route.query_answer(QUERY)),
+            "query ALL": (route, route.query_answer(IMPLIES)),
+            "query NONE under a reading": (route, route.query_answer(QUERY, [("rs_1", 1)]))}
+
+
+def _paths(value, path=()):
+    """Every member path of a JSON value, each with its value."""
+    yield path, value
+    if type(value) is dict:
+        for key, item in value.items():
+            yield from _paths(item, (*path, key))
+    elif type(value) is list:
+        for index, item in enumerate(value):
+            yield from _paths(item, (*path, index))
+
+
+def _at(value, path):
+    for step in path:
+        value = value[step]
+    return value
+
+
+RETYPED = (7, True, None, [], {}, "", "UNKNOWN")
+
+
+def _relayed(path):
+    """A certificate's own labels (`proofJson`'s `conditional_on`): Lean's checked label use, which nothing in the
+    request or the rows determines; only its type is checked here (a retyped value is still unavailable)."""
+    return "conditional_on" in path and path[:1] in (("proof",), ("proofs",))
+
+
+def _result_mutants(answer):
+    """1-fault mutations of the result: each member dropped, and each value outside a shown model replaced by one
+    of another type or another value of its type."""
+    for path, value in _paths(answer["result"]):
+        if "model" in path or not path:
+            continue
+        parent, last = path[:-1], path[-1]
+        if type(last) is str:
+            yield f"drop {path}", lambda a, p=parent, k=last: _at(a["result"], p).pop(k)
+        for other in RETYPED:
+            if _relayed(path) and type(other) in (list, str):
+                continue
+            if type(other) is not type(value) or other != value:
+                yield f"{path} = {other!r}", lambda a, p=parent, k=last, v=other: _at(a["result"], p).__setitem__(k, v)
+
+
+def test_the_result_of_every_form_is_typed_and_closed(tmp_path):
+    """Review B1: each result member dropped or retyped, at every depth, is unavailable (a shown model is bound to
+    the request's piece instead, below)."""
+    survivors = []
+    for name, (route, answer) in _genuine_answers(tmp_path).items():
+        request = _checked(route, answer)
+        for label, mutate in _result_mutants(answer):
+            mutated = copy.deepcopy(answer)
+            mutate(mutated)
+            if json.dumps(mutated) == json.dumps(answer):
+                continue
+            try:
+                route.check_answer(mutated, request)
+            except CheckerUnavailable:
+                continue
+            survivors.append(f"{name}: {label}")
+    assert survivors == [], "\n".join(survivors)
+
+
+def test_review_b1_findings_cases(tmp_path):
+    """The finding's cases: a retyped verdict, and a conflict result of the route alone (which crashed the report)."""
+    answers = _genuine_answers(tmp_path)
+    route, answer = answers["query SOME"]
+    request = _checked(route, answer)
+    mutated = copy.deepcopy(answer)
+    mutated["result"]["verdict"] = True
+    with pytest.raises(CheckerUnavailable):
+        route.check_answer(mutated, request)
+    route, answer = answers["conflict CONFLICT-FREE"]
+    request = _checked(route, answer)
+    mutated = copy.deepcopy(answer)
+    mutated["result"] = {"route": "enumerated"}
+    with pytest.raises(CheckerUnavailable):
+        route.check_answer(mutated, request)
+    # another question's form of result
+    mutated = copy.deepcopy(answer)
+    mutated["result"] = copy.deepcopy(answers["premises"][1]["result"])
+    with pytest.raises(CheckerUnavailable):
+        route.check_answer(mutated, request)
 
 
 MUTATIONS = {
@@ -261,37 +368,108 @@ MUTATIONS = {
     "restrictions null": lambda a: a.update(restrictions=None),
     "labels with a bool": lambda a: a.update(labels=[True]),
     "dead_readings an object": lambda a: a.update(dead_readings={}),
+    # review B2 of rd-3: rows and the choices the result names are the request's
+    "no rows": lambda a: a.update(per_choice=[]),
+    "a row dropped": lambda a: a["per_choice"].pop(),
+    "rows reordered": lambda a: a["per_choice"].reverse(),
+    "a row for a choice that does not exist": lambda a: a["per_choice"][0].update(choice=[["rs_1", 9]]),
+    "the proof names a choice no row has": lambda a: a["result"]["proof"].update(choice=[["rs_1", 9]]),
+    "proof and countermodel swapped": lambda a: a["result"].update(proof={**a["result"]["proof"],
+                                                                         "choice": C1}),
+    "a verdict that is not the rows' fold": lambda a: a["per_choice"][1].update(query="proved"),
+    "the budget shape on 2 choices": lambda a: a.update(result={
+        "verdict": "UNKNOWN", "status": "UNKNOWN", "route": "enumerated", "budget": {"max_choices": 64},
+        "units": ["u1"]}),
+    "a result assuming readings the request did not": lambda a: a["result"].update(assumed=C0),
+    "a row's question word dropped": lambda a: a["per_choice"][0].pop("query"),
+    "a row with another question's word": lambda a: a["per_choice"][0].update(premises="model"),
+    "a refused piece": lambda a: a["per_choice"][0]["errors"].update(certificate="InvalidInput: refused"),
+    "a sent piece left unanswered": lambda a: a["per_choice"][0]["evidence"].pop("certificate"),
+    "an answer for a piece not sent": lambda a: a["per_choice"][0]["evidence"].update(unsat=True),
+    "a shown model not the request's": lambda a: a["per_choice"][1]["shown"].update(countermodel={}),
+    "a row's and the result's shown model both not the request's": lambda a: (
+        a["per_choice"][1]["shown"].update(countermodel={}), a["result"]["countermodel"].update(model={})),
+    "the result's countermodel not its row's": lambda a: a["result"]["countermodel"].update(model={}),
+    "an untaken reading on a query": lambda a: a.update(untaken=[["rs_1", 0]]),
+    "a dead note on a query": lambda a: a.update(dead=[{"accepted": True}]),
 }
 
 
 @pytest.mark.parametrize("mutation", list(MUTATIONS))
 def test_a_mutated_verdicts_answer_is_unavailable(tmp_path, mutation):
-    route, answer = _genuine_answer(tmp_path)
-    _check_answer(answer, "query", [route.choice_json(c) for c in route.choices], exact=False)
+    _, route = loaded(tmp_path)
+    answer = route.query_answer(QUERY)
+    request = _checked(route, answer)
     mutated = copy.deepcopy(answer)
     MUTATIONS[mutation](mutated)
+    assert json.dumps(mutated) != json.dumps(answer)
     with pytest.raises(CheckerUnavailable):
-        _check_answer(mutated, "query", [route.choice_json(c) for c in route.choices], exact=False)
+        route.check_answer(mutated, request)
 
 
-def test_a_row_for_a_choice_lean_did_not_list_is_unavailable(tmp_path):
-    route, answer = _genuine_answer(tmp_path)
+def test_every_question_binds_its_rows_exactly(tmp_path):
+    """Review B2's class: a query (with or without readings named) is bound as exactly as the other questions; a
+    conflict answer under a reading lists only the choices taking it."""
+    answers = _genuine_answers(tmp_path)
+    for name, (route, answer) in answers.items():
+        request = _checked(route, answer)
+        for mutate in (lambda a: a["per_choice"].pop(), lambda a: a["per_choice"].append(
+                {**copy.deepcopy(a["per_choice"][0]), "choice": [["rs_1", 9]]})):
+            mutated = copy.deepcopy(answer)
+            mutate(mutated)
+            with pytest.raises(CheckerUnavailable):
+                route.check_answer(mutated, request)
+    # ALL under a gate a row does not pass: the verdict is not the fold of the rows
+    route, answer = answers["query ALL"]
+    request = _checked(route, answer)
     mutated = copy.deepcopy(answer)
-    mutated["per_choice"][0]["choice"] = [["rs_1", 7]]
+    mutated["per_choice"][0]["conflict"] = "UNKNOWN"
     with pytest.raises(CheckerUnavailable):
-        _check_answer(mutated, "query", [route.choice_json(c) for c in route.choices], exact=False)
-    conflict = copy.deepcopy(route.conflict_answer())
-    conflict["per_choice"] = conflict["per_choice"][:1]
+        route.check_answer(mutated, request)
+    route, answer = answers["query NONE under a reading"]
+    assert [e["choice"] for e in answer["per_choice"]] == [C1]
+    request = _checked(route, answer)
+    mutated = copy.deepcopy(answer)
+    mutated["per_choice"].insert(0, {**copy.deepcopy(answer["per_choice"][0]), "choice": C0})
     with pytest.raises(CheckerUnavailable):
-        _check_answer(conflict, "conflict", [route.choice_json(c) for c in route.choices])
+        route.check_answer(mutated, request)
+
+
+def test_beyond_64_choices_rows_are_only_the_requests_evidence():
+    """Past 64 choices (no list to bind to) only W2's budget shape, with rows for evidence the request sent."""
+    from ve.readings_verdicts import _check_answer
+    raw, document = fnd3()
+    model = {"complete": True, "domains": {"agent": ["a"], "user": ["u"]}, "constants": {}, "relations": {"asks": []}}
+    choice = [[f"rs_{k}", 1] for k in range(1, 8)]
+    request = case("readings-verdicts", raw, document, question="query", premises=[], conclusion=QUERY,
+                   evidence=[{"choice": choice, "countermodel": {"kind": "choice-model", "model": model,
+                                                                 "filling": {}}}])
+    [row] = run(LEAN, [request])
+    _check_answer(row, request)
+    for mutate in (lambda a: a["per_choice"][0].update(choice=[[f"rs_{k}", 0] for k in range(1, 8)]),
+                   lambda a: a["per_choice"].append(copy.deepcopy(a["per_choice"][0])),
+                   lambda a: a["result"].pop("budget")):
+        mutated = copy.deepcopy(row)
+        mutate(mutated)
+        with pytest.raises(CheckerUnavailable):
+            _check_answer(mutated, request)
+    with pytest.raises(CheckerUnavailable):
+        _check_answer(row, {**request, "evidence": []})
+    # a row for a choice that does not take the request's reading
+    mutated = copy.deepcopy(row)
+    mutated["result"]["assumed"] = [["rs_1", 0]]
+    with pytest.raises(CheckerUnavailable):
+        _check_answer(mutated, {**request, "assumed": [["rs_1", 0]]})
 
 
 def test_a_choice_result_outside_the_proved_schema_is_unavailable(tmp_path):
-    route, answer = _genuine_answer(tmp_path)
+    _, route = loaded(tmp_path)
+    answer = route.query_answer(QUERY)
+    request = _checked(route, answer)
     mutated = copy.deepcopy(answer)
     mutated["per_choice"][0]["conflict"] = "NOT-A-RESULT"
     with pytest.raises(CheckerUnavailable):
-        _check_answer(mutated, "query", [route.choice_json(c) for c in route.choices], exact=False)
+        route.check_answer(mutated, request)
 
 
 def test_a_plan_line_python_cannot_render_is_unavailable(tmp_path, monkeypatch):

@@ -905,6 +905,33 @@ def test_review_b_enumerated_dead_readings_null_when_certification_cannot_finish
     assert statuses[("rs9", 1)] == "UNKNOWN" and statuses[("rs8", 1)] == "narrowed"
 
 
+def test_review_b2_rd3_dead_evidence_lean_does_not_confirm_is_unavailable(tmp_path):
+    """Review B2 of rd-3: Lean's note on each dead reading's certificate is the request's, and a refused one is
+    `CheckerUnavailable`, never a dead reading; so are dead notes for certificates the request did not send."""
+    from ve.errors import CheckerUnavailable
+    claims = {k: [("strict", _claim("strict", f"r{k}", f"no-arrest-{k}"), "right", {"force": "strict"}),
+                  ("default", _claim("default", f"r{k}", f"no-arrest-{k}"), "right", {"force": "default"})]
+              for k in (8, 9)}
+    coupling = {"id": "c1", "axis": "force", "sets": [{"set": "rs8", "version": 1}, {"set": "rs9", "version": 1}],
+                "by": "reviewer", "reason_spans": ["u8"]}
+    narrowing = {"id": "n1", "set": "rs8", "version": 1, "keeps": ["strict"], "by": "reviewer",
+                 "reason_spans": ["u8"]}
+    route = verdicts(s2_document(tmp_path, [("set", "rs8", "u8", claims[8]), ("set", "rs9", "u9", claims[9])],
+                                 raw=env_rights(), couplings=[coupling], narrowings=[narrowing]))
+    answer = route.premises_answer()
+    request = route.requests[id(answer)]
+    assert answer["dead"] == [{"set": "rs9", "index": 1, "accepted": True}]
+    route.check_answer(answer, request)
+    for mutate in (lambda a: a["dead"][0].update(accepted=False), lambda a: a.update(dead=[]),
+                   lambda a: a["dead"].append({"set": "rs9", "index": 0, "accepted": True}),
+                   lambda a: a["untaken"].append(["rs8", 0]), lambda a: a.update(dead_readings=[
+                       {"set": "rs8", "index": 0, "finding": "DeadReading: rs8:0"}])):
+        mutated = copy.deepcopy(answer)
+        mutate(mutated)
+        with pytest.raises(CheckerUnavailable):
+            route.check_answer(mutated, request)
+
+
 # ---------------------------------------------------------------------------------------------------------------
 # compose-s2 looprecheck2: review B (no entailment is certified under a reading whose rules collide), review A
 # (enumerated combinations keep the couplings and narrowings that selected their choices) and review A (a situation
@@ -940,7 +967,7 @@ def test_review_b2_conflicting_reading_certifies_no_entailment(tmp_path):
     phi = every("avoid_required")
     piece = own.certificate_case(phi)
     assert piece is not None  # Python's prover finds one where the rules collide; Lean does not accept it
-    with pytest.raises(CheckerUnavailable, match="invalid answer|does not confirm the certificate"):
+    with pytest.raises(CheckerUnavailable, match="does not confirm the certificate"):
         route._verdicts("query", query={route._key(route.choices[0]): {"certificate": piece}}, premises=[],
                         conclusion=phi)
     assert [c["status"] for c in route.premises()["choices"]] != ["INCONSISTENT", "INCONSISTENT"]

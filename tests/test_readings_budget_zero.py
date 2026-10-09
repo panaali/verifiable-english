@@ -37,6 +37,7 @@ NOT_BUDGETED = {
     "restrictions": "the couplings and narrowings in force, read from the document",
     "taken": "whether a compatible choice takes the candidates: the enumeration itself",
     "over_budget": "the constant answer past 64 choices", "base": "the base environment",
+    "check_answer": "Lean's answer checked against its request, no search",
 }
 X_REQUIRED = ["forall", "act", ["unary", "x_required", ["var", 0]]]  # F-ND2's query (the gated one)
 FIXTURES = {"F-ND1": (fnd1, QUERY), "F-ND2": (fnd2, X_REQUIRED), "M9": (_m9, None), "M8": (_m8, None),
