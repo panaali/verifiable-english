@@ -28,6 +28,90 @@ theorem pair_fits (f : PairFacts) (sid : String) :
   unfold pairJson optBool
   fits
 
+theorem exceptionJson_fits (e : VE.SoftNorms.Exception) :
+    Fits req (skel% "readings-route.json#/$defs/soft_exception") (exceptionJson e) := by
+  unfold exceptionJson
+  cases e.decidedBy <;> fits
+
+theorem softNodeJson_fits (N : VE.SoftNorms.SoftNode) :
+    Fits req (skel% "readings-route.json#/$defs/soft_node") (softNodeJson N) := by
+  unfold softNodeJson
+  cases N.rank <;> cases N.exception <;> fits
+  all_goals exact exceptionJson_fits _
+
+theorem contentJson_fits (c : VE.Compose.Content) :
+    Fits req (skel% "readings-route.json#/$defs/content") (contentJson c) := by
+  cases c <;> simp only [contentJson, VE.Compose.Content.kind] <;> fits
+  all_goals exact softNodeJson_fits _
+
+theorem supUnitsFrom_fits (D : Doc) (m : Nat) (items : List Item) :
+    ∀ x ∈ supUnitsFrom D m items, Fits req (skel% "readings-route.json#/$defs/unit") x := by
+  induction items generalizing m with
+  | nil => simp [supUnitsFrom]
+  | cons it rest ih =>
+    cases it with
+    | fixed u c cs =>
+      simp only [supUnitsFrom, List.mem_cons]
+      intro x hx
+      rcases hx with rfl | hx
+      · fits using contentJson_fits (copyContent D c)
+      · exact ih m x hx
+    | bar u b =>
+      simp only [supUnitsFrom, List.mem_cons]
+      intro x hx
+      rcases hx with rfl | hx
+      · fits
+      · exact ih m x hx
+    | set R =>
+      simp only [supUnitsFrom, List.mem_append]
+      intro x hx
+      rcases hx with hx | hx
+      · obtain ⟨i, hi, hxi⟩ := List.mem_filterMap.mp hx
+        cases hc : R.candidates[i]?.bind (·.content) with
+        | none => simp [hc] at hxi
+        | some c =>
+          simp only [hc, Option.map_some, Option.some.injEq] at hxi
+          subst x
+          fits using contentJson_fits (gateContent D m i c)
+      · exact ih (m + 1) x hx
+
+theorem supUnits_fits (D : Doc) :
+    ∀ x ∈ supUnits D, Fits req (skel% "readings-route.json#/$defs/unit") x := by
+  exact supUnitsFrom_fits D 0 D.items
+
+theorem filledUnits_fits (N : NDoc) :
+    ∀ x ∈ Wire.filledUnitsJson N, Fits req (skel% "readings-route.json#/$defs/unit") x := by
+  unfold Wire.filledUnitsJson
+  generalize (fillDoc N).items = items
+  induction items with
+  | nil => simp
+  | cons it rest ih =>
+    cases it with
+    | fixed u c cs =>
+      simp only [List.flatMap_cons, List.singleton_append, List.mem_cons]
+      intro x hx
+      rcases hx with rfl | hx
+      · fits using contentJson_fits c
+      · exact ih x hx
+    | bar u b =>
+      simp only [List.flatMap_cons, List.singleton_append, List.mem_cons]
+      intro x hx
+      rcases hx with rfl | hx
+      · fits
+      · exact ih x hx
+    | set R =>
+      simp only [List.flatMap_cons, List.mem_append]
+      intro x hx
+      rcases hx with hx | hx
+      · obtain ⟨i, hi, hxi⟩ := List.mem_filterMap.mp hx
+        cases hc : R.candidates[i]?.bind (·.content) with
+        | none => simp [hc] at hxi
+        | some c =>
+          simp only [hc, Option.map_some, Option.some.injEq] at hxi
+          subst x
+          fits using contentJson_fits c
+      · exact ih x hx
+
 /-- An element of `setPairs`: a pair of readings and their separating situation's facts. -/
 def PairEntry (x : Json) : Prop :=
   ∃ r o f sid, x = Json.mkObj [("reading", .str r), ("other", .str o), ("pair", pairJson f sid)]
@@ -109,6 +193,7 @@ theorem elaborateFields_fits (id : String) (nd : Bool) (n : Nat) (D : Doc) :
   split <;> (try simp only [choicesJson]) <;> (try split) <;>
     simp only [List.cons_append, List.nil_append, vocabularyJson, slotJson, sizesJson]
   all_goals fits
+  all_goals exact supUnits_fits D _ ‹_›
 
 theorem elaborate_fits (id : String) (b : Wire.Admitted2) :
     OkFits req (skel% "readings-route.json#/$defs/elaborate") (runElaborate id b) := by
@@ -175,6 +260,7 @@ theorem filled_fits (r : Wire.AdmittedND) :
   unfold Wire.filledJson
   okfits
   fits
+  exact filledUnits_fits r.N _ ‹_›
 
 set_option maxHeartbeats 1000000 in
 theorem elaborateNDFilled_fits (id : String) (f : Wire.AdmittedNDFull) :
@@ -192,7 +278,9 @@ theorem elaborateNDFilled_fits (id : String) (f : Wire.AdmittedNDFull) :
     · simp only [choicesJson]
       split <;> simp only [List.cons_append, List.nil_append, vocabularyJson, slotJson, Wire.ndFillJson, sizesJson]
       all_goals fits
-      all_goals exact filled_fits _ _ hf
+      all_goals first
+        | exact supUnits_fits (fillDoc f.r.N) _ ‹_›
+        | exact filled_fits _ _ hf
     · simp only [choicesJson]
       split <;> simp only [List.cons_append, List.nil_append]
       all_goals fits
