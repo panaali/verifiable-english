@@ -1,0 +1,30 @@
+{"item": "R01", "message": "The text says act must not be performed (rule 3).", "route": "frozen builder", "verdict": "FORBIDDEN"}
+{"item": "R02", "message": "The text says act may be performed (rule 2).", "route": "frozen builder", "verdict": "PERMITTED"}
+{"item": "R03", "message": "The text says act must not be performed (rule 4).", "route": "frozen builder", "verdict": "FORBIDDEN"}
+{"item": "R04", "message": "The text does not say whether act may be performed: no rule decides this situation.", "route": "frozen builder", "verdict": "DNS"}
+{"item": "R05", "message": "The text says act must not be performed (by default).", "route": "frozen builder", "verdict": "FORBIDDEN"}
+{"item": "R06", "message": "The text says act must be reported to the user (rule 3).", "route": "frozen builder", "verdict": "REQUIRED"}
+{"item": "R07", "message": "The text says act may be performed (rule 1, rule 2).", "route": "frozen builder", "verdict": "CONFLICT"}
+{"item": "R08", "message": "The text does not say whether Sol may generate child sexual abuse material: no rule decides this situation.", "route": "frozen builder", "verdict": "DNS"}
+{"item": "R09", "message": "The text says Claude must not generate child sexual abuse material (rule 1).", "route": "frozen builder", "verdict": "FORBIDDEN"}
+{"item": "R10", "message": "The text says act must not be performed (rule 4).", "route": "frozen builder", "verdict": "FORBIDDEN"}
+{"item": "R11", "message": "The text says act must be performed (rule 5).", "route": "frozen builder", "verdict": "REQUIRED"}
+{"item": "R12", "message": "The text says act may be performed (by default).", "route": "frozen builder", "verdict": "PERMITTED"}
+{"item": "R13", "message": "The text says p need not be preceded by a critical capability assessment (rule 2).", "route": "frozen builder", "verdict": "NOT-REQUIRED"}
+{"item": "R14", "message": "The text says p must not proceed (by default).", "route": "frozen builder", "verdict": "FORBIDDEN"}
+{"item": "R15", "message": "The text says the_assistant must comply with i (rule 1).", "route": "frozen builder", "verdict": "REQUIRED"}
+{"item": "R16", "message": "The text says the_assistant must not comply with i (rule 2).", "route": "frozen builder", "verdict": "FORBIDDEN"}
+{"item": "R17", "message": "Decision 17 — conditional on S1, C1, C2, C3, C4, T1, T2, T3, T4, T5, T6, T7, T8, E1, E2 and the build agent's ruled-out cells (8 listed). run: forbidden; not clear; run_limited: permitted; clear; ask: permitted; clear; nothing: forbidden; not clear. Clear actions: run_limited; ask. The policy does not choose among them.", "route": "frozen builder", "verdict": "MIGHT"}
+{"item": "R18", "message": "Decision 17 — conditional on S1, C1, C2, C3, C4, T1, T2, T3, T4, T5, T6, T7, T8, E1, E2 and the build agent's ruled-out cells (8 listed). run: forbidden; not clear; run_limited: permitted; clear; ask: permitted; clear; nothing: forbidden; not clear. Clear actions: run_limited; ask. The policy does not choose among them.", "route": "frozen builder", "verdict": "CANNOT"}
+{"item": "R19", "message": "Decision 17 — conditional on S1, C1, C2, C3, C4, T1, T2, T3, T4, T5, T6, T7, T8, E1, E2 and the build agent's ruled-out cells (8 listed). run: forbidden; not clear; run_limited: permitted; clear; ask: permitted; clear; nothing: forbidden; not clear. Clear actions: run_limited; ask. The policy does not choose among them.", "route": "frozen builder", "verdict": "FORBIDDEN"}
+{"item": "R20", "message": "Decision 17 — conditional on S1, C1, C2, C3, C4, T1, T2, T3, T4, T5, T6, T7, T8, E1, E2 and the build agent's ruled-out cells (8 listed). run: permitted; clear; run_limited: permitted; clear; ask: forbidden; not clear; nothing: forbidden; not clear. Clear actions: run; run_limited. The policy does not choose among them.", "route": "frozen builder", "verdict": "CANNOT"}
+{"item": "R21", "message": "", "route": "frozen builder", "verdict": "YES"}
+{"item": "R22", "message": "", "route": "frozen builder", "verdict": "DNS"}
+{"item": "R23", "message": "", "route": "lean", "verdict": "FOLLOWS"}
+{"item": "R24", "message": "", "route": "lean", "verdict": "GAP"}
+{"item": "R25", "message": "", "route": "lean", "verdict": "REQUIRED"}
+{"item": "R26", "message": "", "route": "frozen builder", "verdict": "YES"}
+{"item": "R27", "message": "", "route": "frozen builder", "verdict": "DNS"}
+{"item": "R28", "message": "", "route": "frozen builder", "verdict": "YES"}
+{"item": "R29", "message": "The text says Texas must not deprive Ann of life (rule 1).", "route": "lean", "verdict": "FORBIDDEN"}
+{"item": "R30", "message": "The text does not say whether Texas must protect Ann against deprivation of life: no rule decides this situation.", "route": "lean", "verdict": "DNS"}

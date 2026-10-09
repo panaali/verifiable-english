@@ -209,6 +209,10 @@ def elaborateSuperposed : List (String × Shape) := [
           ("predicates", ref "common.json#/$defs/nat"),
           ("nodes", ref "common.json#/$defs/nat")]])]])]
 
+/-- `fill_premises` and `filled` (Readings.Run.runElaborateNDFilled), as validate answers them. -/
+def filledFields : List (String × Shape) :=
+  [("fill_premises", ref "#/$defs/fill_premises"), ("filled", ref "#/$defs/filled")]
+
 /-- An answer of exactly `fields` beside `id`, `status` and the route. -/
 def elaborateRoute (routes : List String) (fields : List (String × Shape)) : Shape :=
   n [
@@ -221,13 +225,18 @@ def elaborateRoute (routes : List String) (fields : List (String × Shape)) : Sh
 
 def elaborate : Shape :=
   c
-    "Readings.Run.runElaborate (Route.elaborateFields): the route of 1.1; past its first three rows the finding of 1.8, the stale narrowings, the compatible choices (or over the limit) and the number checked; on the superposed route also the choice vocabulary, the units of sup D, the labelled slot, the name map and the sizes. The units and the name map are compared whole with Python's regeneration (ve/readings_route.py elaborate)."
+    "Readings.Run.runElaborate (Route.elaborateFields): the route of 1.1; past its first three rows the finding of 1.8, the stale narrowings, the compatible choices (or over the limit) and the number checked; on the superposed route also the choice vocabulary, the units of sup D, the labelled slot, the name map and the sizes. The units and the name map are compared whole with Python's regeneration (ve/readings_route.py elaborate). Under the unspecified completion (Readings.Run.runElaborateNDFilled) the row also carries fill_premises and filled."
     [
       .anyOf [
         elaborateRoute ["w2", "pending", "abstention"] [("generated_predicates", generatedPredicates)],
         elaborateRoute ["enumerated"] (("generated_predicates", generatedPredicates) :: elaborateChoices),
         elaborateRoute ["superposed"] (("generated_predicates", generatedPredicates) ::
-          (elaborateChoices ++ elaborateSuperposed))]]
+          (elaborateChoices ++ elaborateSuperposed)),
+        -- Under the unspecified completion (Readings.Run.runElaborateNDFilled): each row with the filled document.
+        elaborateRoute ["w2", "pending", "abstention"] (("generated_predicates", generatedPredicates) :: filledFields),
+        elaborateRoute ["enumerated"] (("generated_predicates", generatedPredicates) :: (elaborateChoices ++ filledFields)),
+        elaborateRoute ["superposed"] (("generated_predicates", generatedPredicates) ::
+          (elaborateChoices ++ elaborateSuperposed ++ filledFields))]]
 
 def conflict : Shape :=
   c
@@ -309,12 +318,29 @@ def choice_answer : Shape :=
         ("conflict_free", .type ["boolean"]),
         ("accepted", .type ["boolean"])]]
 
+/-- `readings-validate` or `readings-elaborate` on a document with companion sets: each case of the split, `main`
+    first, with that case's answer (readings-defaults.md 3; plan RD-4a). -/
+def components (answer runner : String) : Shape :=
+  c s!"Readings.Run.runComponents ({runner}): per case of Readings.Wire.splitCase, main first, then each companion set in source order, with the case's answer." [
+    obj,
+    .required ["id", "status", "components"],
+    closed [
+      ("id", ref "common.json#/$defs/id_ok"),
+      ("status", constS "ok"),
+      ("components", n [
+        arr,
+        .items (n [
+          obj,
+          .required ["component", "answer"],
+          closed [("component", str), ("answer", ref answer)]])])]]
+
 def «row» : Shape :=
   .select [
     (ref "#/$defs/kind/readings-validate", .anyOf [
       ref "common.json#/$defs/case_error",
       ref "common.json#/$defs/route_path_error",
-      ref "#/$defs/validate"]),
+      ref "#/$defs/validate",
+      ref "#/$defs/validate_components"]),
     (ref "#/$defs/kind/readings-separate", .anyOf [
       ref "common.json#/$defs/case_error",
       ref "common.json#/$defs/route_path_error",
@@ -322,7 +348,8 @@ def «row» : Shape :=
     (ref "#/$defs/kind/readings-elaborate", .anyOf [
       ref "common.json#/$defs/case_error",
       ref "common.json#/$defs/route_path_error",
-      ref "#/$defs/elaborate"]),
+      ref "#/$defs/elaborate",
+      ref "#/$defs/elaborate_components"]),
     (ref "#/$defs/kind/readings-conflict", .anyOf [
       ref "common.json#/$defs/case_error",
       ref "common.json#/$defs/route_path_error",
@@ -365,6 +392,8 @@ def file : File where
     ("separate", .schema separate),
     ("choice", .schema choice),
     ("elaborate", .schema elaborate),
+    ("validate_components", .schema (components "#/$defs/validate" "Readings.Run.validateOne")),
+    ("elaborate_components", .schema (components "#/$defs/elaborate" "Readings.Run.elaborateOne")),
     ("conflict", .schema conflict),
     ("certificate", .schema certificate),
     ("model", .schema model),

@@ -24,7 +24,6 @@ from ve import document as D
 from ve.backends import relay
 from ve.backends.lean_service import CheckerUnavailable
 from ve.errors import VEError
-from ve.search import model_search_scope
 
 ROOT = Path(__file__).resolve().parents[1]
 DELTA = ROOT / "docs/lean-first/b16b/DELTA.md"
@@ -42,8 +41,7 @@ def write(tmp_path, text, name="document.ve.md"):
 
 def outcome(call):
     try:
-        with model_search_scope():
-            return {"returned": json.loads(json.dumps(call(), default=str))}
+        return {"returned": json.loads(json.dumps(call(), default=str))}
     except (VEError, CheckerUnavailable) as exc:
         return {"raised": [type(exc).__name__, getattr(exc, "message", str(exc))]}
 
@@ -204,8 +202,7 @@ NAMED = {
 def coded(call):
     """The rejection of `call` as (code, message), the members `lean_first_diff` compares."""
     try:
-        with model_search_scope():
-            call()
+        call()
     except (VEError, CheckerUnavailable) as exc:
         return getattr(exc, "code", type(exc).__name__), getattr(exc, "message", str(exc))
     return None

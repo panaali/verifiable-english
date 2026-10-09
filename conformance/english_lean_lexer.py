@@ -85,7 +85,7 @@ def collapsed_length(source: str) -> int:
 
 
 def _chunk_char(c: str) -> bool:
-    return (c.isascii() and (c.isalnum() or c == '_')) or (not c.isascii() and c not in WHITESPACE)
+    return (c.isascii() and (c.isalnum() or c in "_'")) or (not c.isascii() and c not in WHITESPACE)
 
 
 def _word_char(c: str) -> bool:

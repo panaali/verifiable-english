@@ -297,11 +297,12 @@ def _s1_attached(environment_data, meta):
                 type(r) is dict and s1_content_kind(r.get("content")) in {"norm", "right", "right_lines", "limitation"}
                 for r in s["readings"]) for s in sets):
         return frozenset()
-    from .readings_s1 import Document as S1Document, S1Environment
+    from .readings_s1 import Document as S1Document
     try:
         units = [{"id": u["id"], "kind": u.get("kind"), "content": u.get("content")}
                  for u, _ in _parts(meta.get("units", []))]
-        attached = S1Document(S1Environment(environment_data), {"units": units, "reading_sets": sets}).attached()
+        # Attachment reads names only (1.3), never the frame, which under norm-defaults@0 is Lean's.
+        attached = S1Document(None, {"units": units, "reading_sets": sets}).attached()
     except (VEError, KeyError, TypeError, ValueError, AttributeError, IndexError):
         return frozenset()
     return frozenset(u for u, owners in attached.items() if owners)
@@ -1191,9 +1192,7 @@ def _check_quantity_document(doc, active):
 
 @semantic_entry("document.check")
 def check_document(path):
-    from .search import model_search_scope
-    with model_search_scope():
-        return _check_document(path)
+    return _check_document(path)
 
 
 def _check_document(path):

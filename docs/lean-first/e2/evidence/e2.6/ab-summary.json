@@ -1,0 +1,789 @@
+{
+ "for_dri": {
+  "O-quantity-countermodel: SyntaxError Non-canonical integer literal \u2018\u2026\u2019 -> InvalidInput invalid integer": [
+   {
+    "authority": "lean",
+    "case": "0aa431b6bd3bb5a2",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "countermodel"
+   },
+   {
+    "authority": "lean",
+    "case": "0fed7d8f41974db2",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "countermodel"
+   },
+   {
+    "authority": "lean",
+    "case": "1282d41a0c91942d",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "countermodel"
+   },
+   {
+    "authority": "lean",
+    "case": "1b20466a7c2a2305",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "111111111111111111111111111111111111111\u0661"
+    ],
+    "op": "countermodel"
+   },
+   {
+    "authority": "lean",
+    "case": "8f723e3772e21902",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "countermodel"
+   },
+   {
+    "authority": "lean",
+    "case": "9de0c0b5a27145f8",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "countermodel"
+   },
+   {
+    "authority": "lean",
+    "case": "9fa855d5a29adfe6",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "countermodel"
+   },
+   {
+    "authority": "lean",
+    "case": "a72a0dc3aafeb499",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "countermodel"
+   },
+   {
+    "authority": "lean",
+    "case": "dcca02c9ebea3937",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "111111111111111111111111111111111111111\u0661"
+    ],
+    "op": "countermodel"
+   },
+   {
+    "authority": "lean",
+    "case": "e9dd241333c582f5",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "countermodel"
+   },
+   {
+    "authority": "python",
+    "case": "0aa431b6bd3bb5a2",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "countermodel"
+   },
+   {
+    "authority": "python",
+    "case": "0fed7d8f41974db2",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "countermodel"
+   },
+   {
+    "authority": "python",
+    "case": "1282d41a0c91942d",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "countermodel"
+   },
+   {
+    "authority": "python",
+    "case": "1b20466a7c2a2305",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "111111111111111111111111111111111111111\u0661"
+    ],
+    "op": "countermodel"
+   },
+   {
+    "authority": "python",
+    "case": "8f723e3772e21902",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "countermodel"
+   },
+   {
+    "authority": "python",
+    "case": "9de0c0b5a27145f8",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "countermodel"
+   },
+   {
+    "authority": "python",
+    "case": "9fa855d5a29adfe6",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "countermodel"
+   },
+   {
+    "authority": "python",
+    "case": "a72a0dc3aafeb499",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "countermodel"
+   },
+   {
+    "authority": "python",
+    "case": "dcca02c9ebea3937",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "111111111111111111111111111111111111111\u0661"
+    ],
+    "op": "countermodel"
+   },
+   {
+    "authority": "python",
+    "case": "e9dd241333c582f5",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "countermodel"
+   }
+  ],
+  "O-quantity-elaborate: SyntaxError Non-canonical integer literal \u2018\u2026\u2019 -> InvalidInput invalid integer": [
+   {
+    "authority": "lean",
+    "case": "04a7091e4b368db4",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "elaborate"
+   },
+   {
+    "authority": "lean",
+    "case": "1c7f8e8e92aa6225",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "elaborate"
+   },
+   {
+    "authority": "lean",
+    "case": "3dfb622a8d6acf48",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "elaborate"
+   },
+   {
+    "authority": "lean",
+    "case": "4728037f7bed6ce3",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "elaborate"
+   },
+   {
+    "authority": "lean",
+    "case": "7607858c743a06c3",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "elaborate"
+   },
+   {
+    "authority": "lean",
+    "case": "b068ccebc3fe7c85",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "111111111111111111111111111111111111111\u0661"
+    ],
+    "op": "elaborate"
+   },
+   {
+    "authority": "lean",
+    "case": "c178ad8b998e13a6",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "111111111111111111111111111111111111111\u0661"
+    ],
+    "op": "elaborate"
+   },
+   {
+    "authority": "lean",
+    "case": "dc9c376638bdc903",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "elaborate"
+   },
+   {
+    "authority": "lean",
+    "case": "e728a679cfabb8f1",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "elaborate"
+   },
+   {
+    "authority": "lean",
+    "case": "e927a883af7dcdc1",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "elaborate"
+   },
+   {
+    "authority": "python",
+    "case": "04a7091e4b368db4",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "elaborate"
+   },
+   {
+    "authority": "python",
+    "case": "1c7f8e8e92aa6225",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "elaborate"
+   },
+   {
+    "authority": "python",
+    "case": "3dfb622a8d6acf48",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "elaborate"
+   },
+   {
+    "authority": "python",
+    "case": "4728037f7bed6ce3",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "elaborate"
+   },
+   {
+    "authority": "python",
+    "case": "7607858c743a06c3",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "elaborate"
+   },
+   {
+    "authority": "python",
+    "case": "b068ccebc3fe7c85",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "111111111111111111111111111111111111111\u0661"
+    ],
+    "op": "elaborate"
+   },
+   {
+    "authority": "python",
+    "case": "c178ad8b998e13a6",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "111111111111111111111111111111111111111\u0661"
+    ],
+    "op": "elaborate"
+   },
+   {
+    "authority": "python",
+    "case": "dc9c376638bdc903",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "elaborate"
+   },
+   {
+    "authority": "python",
+    "case": "e728a679cfabb8f1",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "elaborate"
+   },
+   {
+    "authority": "python",
+    "case": "e927a883af7dcdc1",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661\u0661"
+    ],
+    "op": "elaborate"
+   }
+  ],
+  "O-quantity-environment: UnknownSymbol UnknownSymbol: Undeclared constant sort: \u2018\u2026\u2019 -> InvalidInput unknown constant sort: cN": [
+   {
+    "authority": "lean",
+    "case": "9faa52839dc3fd3a",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "$int"
+    ],
+    "op": "environment"
+   },
+   {
+    "authority": "lean",
+    "case": "bf433d08b683723b",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "widget"
+    ],
+    "op": "environment"
+   },
+   {
+    "authority": "python",
+    "case": "9faa52839dc3fd3a",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "$int"
+    ],
+    "op": "environment"
+   },
+   {
+    "authority": "python",
+    "case": "bf433d08b683723b",
+    "locations_lost": [],
+    "messages_lost": [],
+    "names_lost": [
+     "widget"
+    ],
+    "op": "environment"
+   }
+  ],
+  "W-quantity-countermodel: ResourceLimit Integer literal exceeds N characters -> ResourceLimit ResourceLimit: numeral length": [
+   {
+    "authority": "lean",
+    "case": "190b64f35b08c03a",
+    "locations_lost": [],
+    "messages_lost": [
+     "Integer literal exceeds 40 characters"
+    ],
+    "names_lost": [],
+    "op": "countermodel"
+   },
+   {
+    "authority": "lean",
+    "case": "28f10d3a6a003a7f",
+    "locations_lost": [],
+    "messages_lost": [
+     "Integer literal exceeds 40 characters"
+    ],
+    "names_lost": [],
+    "op": "countermodel"
+   },
+   {
+    "authority": "lean",
+    "case": "cadeff1c14499da6",
+    "locations_lost": [],
+    "messages_lost": [
+     "Integer literal exceeds 40 characters"
+    ],
+    "names_lost": [],
+    "op": "countermodel"
+   },
+   {
+    "authority": "lean",
+    "case": "dec345d688a7d96d",
+    "locations_lost": [],
+    "messages_lost": [
+     "Integer literal exceeds 40 characters"
+    ],
+    "names_lost": [],
+    "op": "countermodel"
+   },
+   {
+    "authority": "python",
+    "case": "190b64f35b08c03a",
+    "locations_lost": [],
+    "messages_lost": [
+     "Integer literal exceeds 40 characters"
+    ],
+    "names_lost": [],
+    "op": "countermodel"
+   },
+   {
+    "authority": "python",
+    "case": "28f10d3a6a003a7f",
+    "locations_lost": [],
+    "messages_lost": [
+     "Integer literal exceeds 40 characters"
+    ],
+    "names_lost": [],
+    "op": "countermodel"
+   },
+   {
+    "authority": "python",
+    "case": "cadeff1c14499da6",
+    "locations_lost": [],
+    "messages_lost": [
+     "Integer literal exceeds 40 characters"
+    ],
+    "names_lost": [],
+    "op": "countermodel"
+   },
+   {
+    "authority": "python",
+    "case": "dec345d688a7d96d",
+    "locations_lost": [],
+    "messages_lost": [
+     "Integer literal exceeds 40 characters"
+    ],
+    "names_lost": [],
+    "op": "countermodel"
+   }
+  ],
+  "W-quantity-elaborate: ResourceLimit Integer literal exceeds N characters -> ResourceLimit ResourceLimit: numeral length": [
+   {
+    "authority": "lean",
+    "case": "24cb5bf7435b2978",
+    "locations_lost": [],
+    "messages_lost": [
+     "Integer literal exceeds 40 characters"
+    ],
+    "names_lost": [],
+    "op": "elaborate"
+   },
+   {
+    "authority": "lean",
+    "case": "653315c0f47fd7eb",
+    "locations_lost": [],
+    "messages_lost": [
+     "Integer literal exceeds 40 characters"
+    ],
+    "names_lost": [],
+    "op": "elaborate"
+   },
+   {
+    "authority": "lean",
+    "case": "78672231e29616bd",
+    "locations_lost": [],
+    "messages_lost": [
+     "Integer literal exceeds 40 characters"
+    ],
+    "names_lost": [],
+    "op": "elaborate"
+   },
+   {
+    "authority": "lean",
+    "case": "d449cd3976721cbd",
+    "locations_lost": [],
+    "messages_lost": [
+     "Integer literal exceeds 40 characters"
+    ],
+    "names_lost": [],
+    "op": "elaborate"
+   },
+   {
+    "authority": "python",
+    "case": "24cb5bf7435b2978",
+    "locations_lost": [],
+    "messages_lost": [
+     "Integer literal exceeds 40 characters"
+    ],
+    "names_lost": [],
+    "op": "elaborate"
+   },
+   {
+    "authority": "python",
+    "case": "653315c0f47fd7eb",
+    "locations_lost": [],
+    "messages_lost": [
+     "Integer literal exceeds 40 characters"
+    ],
+    "names_lost": [],
+    "op": "elaborate"
+   },
+   {
+    "authority": "python",
+    "case": "78672231e29616bd",
+    "locations_lost": [],
+    "messages_lost": [
+     "Integer literal exceeds 40 characters"
+    ],
+    "names_lost": [],
+    "op": "elaborate"
+   },
+   {
+    "authority": "python",
+    "case": "d449cd3976721cbd",
+    "locations_lost": [],
+    "messages_lost": [
+     "Integer literal exceeds 40 characters"
+    ],
+    "names_lost": [],
+    "op": "elaborate"
+   }
+  ],
+  "W-quantity-elaborate: ResourceLimit Quantity AST exceeds node or depth limit -> ResourceLimit ResourceLimit: JSON depth exceeds N": [
+   {
+    "authority": "lean",
+    "case": "5fa2adbdfd671f24",
+    "locations_lost": [],
+    "messages_lost": [
+     "Quantity AST exceeds node or depth limit"
+    ],
+    "names_lost": [],
+    "op": "elaborate"
+   },
+   {
+    "authority": "python",
+    "case": "5fa2adbdfd671f24",
+    "locations_lost": [],
+    "messages_lost": [
+     "Quantity AST exceeds node or depth limit"
+    ],
+    "names_lost": [],
+    "op": "elaborate"
+   }
+  ],
+  "W-quantity-environment: InvalidInput Verbalisations must be nonempty strings -> InvalidInput String expected": [
+   {
+    "authority": "lean",
+    "case": "ae21bbd45e413797",
+    "locations_lost": [],
+    "messages_lost": [
+     "Verbalisations must be nonempty strings"
+    ],
+    "names_lost": [],
+    "op": "environment"
+   },
+   {
+    "authority": "python",
+    "case": "ae21bbd45e413797",
+    "locations_lost": [],
+    "messages_lost": [
+     "Verbalisations must be nonempty strings"
+    ],
+    "names_lost": [],
+    "op": "environment"
+   }
+  ],
+  "W-quantity-environment: InvalidInput Verbalisations must be nonempty strings -> InvalidInput Verbalisation must be nonempty": [
+   {
+    "authority": "lean",
+    "case": "ed8ef46c0eb0e366",
+    "locations_lost": [],
+    "messages_lost": [
+     "Verbalisations must be nonempty strings"
+    ],
+    "names_lost": [],
+    "op": "environment"
+   },
+   {
+    "authority": "python",
+    "case": "ed8ef46c0eb0e366",
+    "locations_lost": [],
+    "messages_lost": [
+     "Verbalisations must be nonempty strings"
+    ],
+    "names_lost": [],
+    "op": "environment"
+   }
+  ]
+ },
+ "summary": {
+  "availability": 0,
+  "base": "9aaf918d",
+  "base_head": {
+   "order": 192,
+   "same": 93279,
+   "verdict": 430,
+   "wording": 597
+  },
+  "e26": {
+   "availability_gained": 4,
+   "availability_lost": 0,
+   "dri_rows_changed_by_e26": 0,
+   "rules": {
+    "V-english-source-limit-span": 230,
+    "W-kept": 230
+   },
+   "wording_not_kept": 0
+  },
+  "format": "ve-e2.6-ab@1",
+  "main": "6fd95b01",
+  "main_head": {
+   "availability": 4,
+   "same": 94124,
+   "verdict": 230,
+   "wording": 230
+  },
+  "main_head_classes": {
+   "availability/pilots": 4,
+   "verdict/probe": 230,
+   "wording/probe": 230
+  },
+  "records_per_side": 94498,
+  "residue": {
+   "V-quantity-model-path": 2
+  },
+  "text_rows_for_dri": {
+   "O-quantity-countermodel: SyntaxError Non-canonical integer literal \u2018\u2026\u2019 -> InvalidInput invalid integer": 20,
+   "O-quantity-elaborate: SyntaxError Non-canonical integer literal \u2018\u2026\u2019 -> InvalidInput invalid integer": 20,
+   "O-quantity-environment: UnknownSymbol UnknownSymbol: Undeclared constant sort: \u2018\u2026\u2019 -> InvalidInput unknown constant sort: cN": 4,
+   "W-quantity-countermodel: ResourceLimit Integer literal exceeds N characters -> ResourceLimit ResourceLimit: numeral length": 8,
+   "W-quantity-elaborate: ResourceLimit Integer literal exceeds N characters -> ResourceLimit ResourceLimit: numeral length": 8,
+   "W-quantity-elaborate: ResourceLimit Quantity AST exceeds node or depth limit -> ResourceLimit ResourceLimit: JSON depth exceeds N": 2,
+   "W-quantity-environment: InvalidInput Verbalisations must be nonempty strings -> InvalidInput String expected": 2,
+   "W-quantity-environment: InvalidInput Verbalisations must be nonempty strings -> InvalidInput Verbalisation must be nonempty": 2
+  },
+  "text_rows_for_dri_total": 66,
+  "text_rows_kept": {
+   "O-rights-document_check: InvalidInput UnknownSymbol: unit uN -> UnknownSymbol UnknownSymbol: unit uN": 74,
+   "O-rights-document_render: InvalidInput UnknownSymbol: unit uN -> UnknownSymbol UnknownSymbol: unit uN": 74,
+   "W-conformance-canonicalize: ResourceLimit binder name exceeds N ASCII bytes -> ResourceLimit ResourceLimit: binder name exceeds N ASCII bytes": 1,
+   "W-conformance-canonicalize: ResourceLimit document exceeds N AST nodes -> ResourceLimit ResourceLimit: document exceeds N AST nodes": 1,
+   "W-conformance-canonicalize: ResourceLimit formula exceeds nesting limit N -> ResourceLimit ResourceLimit: formula exceeds nesting limit N": 1,
+   "W-conformance-canonicalize: ShadowedVariable binder \u2018\u2026\u2019 shadows an active binder -> ShadowedVariable ShadowedVariable: binder \u2018\u2026\u2019 shadows an active binder": 1,
+   "W-conformance-canonicalize: SyntaxError VE semantic syntax must be ASCII -> SyntaxError SyntaxError: VE semantic syntax must be ASCII": 1,
+   "W-conformance-canonicalize: SyntaxError document must contain at least one statement -> SyntaxError SyntaxError: document must contain at least one statement": 1,
+   "W-conformance-canonicalize: SyntaxError expected term -> SyntaxError SyntaxError: expected term": 4,
+   "W-conformance-canonicalize: SyntaxError expected \u2018\u2026\u2019 -> SyntaxError SyntaxError: expected \u2018\u2026\u2019": 9,
+   "W-conformance-canonicalize: SyntaxError expected \u2018\u2026\u2019 or \u2018\u2026\u2019 -> SyntaxError SyntaxError: expected \u2018\u2026\u2019 or \u2018\u2026\u2019": 1,
+   "W-conformance-canonicalize: SyntaxError invalid binder name \u2018\u2026\u2019 -> SyntaxError SyntaxError: invalid binder name \u2018\u2026\u2019": 3,
+   "W-conformance-canonicalize: SyntaxError reserved word \u2018\u2026\u2019 cannot be a term -> SyntaxError SyntaxError: reserved word \u2018\u2026\u2019 cannot be a term": 1,
+   "W-conformance-parse: ResourceLimit binder name exceeds N ASCII bytes -> ResourceLimit ResourceLimit: binder name exceeds N ASCII bytes": 1,
+   "W-conformance-parse: ResourceLimit document exceeds N AST nodes -> ResourceLimit ResourceLimit: document exceeds N AST nodes": 1,
+   "W-conformance-parse: ResourceLimit formula exceeds nesting limit N -> ResourceLimit ResourceLimit: formula exceeds nesting limit N": 1,
+   "W-conformance-parse: ShadowedVariable binder \u2018\u2026\u2019 shadows an active binder -> ShadowedVariable ShadowedVariable: binder \u2018\u2026\u2019 shadows an active binder": 1,
+   "W-conformance-parse: SyntaxError VE semantic syntax must be ASCII -> SyntaxError SyntaxError: VE semantic syntax must be ASCII": 1,
+   "W-conformance-parse: SyntaxError document must contain at least one statement -> SyntaxError SyntaxError: document must contain at least one statement": 1,
+   "W-conformance-parse: SyntaxError expected term -> SyntaxError SyntaxError: expected term": 4,
+   "W-conformance-parse: SyntaxError expected \u2018\u2026\u2019 -> SyntaxError SyntaxError: expected \u2018\u2026\u2019": 9,
+   "W-conformance-parse: SyntaxError expected \u2018\u2026\u2019 or \u2018\u2026\u2019 -> SyntaxError SyntaxError: expected \u2018\u2026\u2019 or \u2018\u2026\u2019": 1,
+   "W-conformance-parse: SyntaxError invalid binder name \u2018\u2026\u2019 -> SyntaxError SyntaxError: invalid binder name \u2018\u2026\u2019": 3,
+   "W-conformance-parse: SyntaxError reserved word \u2018\u2026\u2019 cannot be a term -> SyntaxError SyntaxError: reserved word \u2018\u2026\u2019 cannot be a term": 1,
+   "W-probe-budget_boundaries: None source exceeds N bytes -> None ResourceLimit: source exceeds N bytes": 1,
+   "W-probe-parse_accept: None Unknown English phrase \u2018\u2026\u2019. Nearest declared wordings: \u2018\u2026\u2019; \u2018\u2026\u2019; \u2018\u2026\u2019. -> None Sentence N has no reading with the current vocabulary. Unknown English phrase \u2018\u2026\u2019. Nearest declared wordings: \u2018\u2026\u2019; \u2018\u2026\u2019; \u2018\u2026\u2019.": 230,
+   "W-quantity-admission: InvalidInput Incorrect fields (missing=[\u2018\u2026\u2019], unknown=[]) -> InvalidInput fields do not match: expected [name, conclusion, leaves, certificate], got [conclusion, leaves, name]": 2,
+   "W-quantity-admission: InvalidInput Invalid quantity certificate -> InvalidInput Invalid quantity certificate: fields do not match: expected [format, environment_id, premise_meaning_ids, conclusion_meaning_id, core], got [checker_version, co": 2,
+   "W-quantity-certificate: ResourceLimit premises and conclusion exceed aggregate N-node limit -> ResourceLimit ResourceLimit: premises and conclusion exceed aggregate N-node limit": 4,
+   "W-quantity-countermodel: ResourceLimit Quantity AST exceeds node or depth limit -> ResourceLimit ResourceLimit: Quantity AST exceeds node or depth limit": 4,
+   "W-quantity-countermodel: ResourceLimit formula-node evaluation budget MAX_EVALUATIONS=N exhausted -> ResourceLimit ResourceLimit: formula-node evaluation budget MAX_EVALUATIONS=N exhausted": 12,
+   "W-quantity-countermodel: ResourceLimit premises and conclusion exceed aggregate N-node limit -> ResourceLimit ResourceLimit: premises and conclusion exceed aggregate N-node limit": 12,
+   "W-quantity-elaborate: ResourceLimit Decimal literal exceeds N digits -> ResourceLimit ResourceLimit: Decimal literal exceeds N digits": 12,
+   "W-quantity-elaborate: ResourceLimit Quantity AST exceeds node or depth limit -> ResourceLimit ResourceLimit: Quantity AST exceeds node or depth limit": 18,
+   "W-quantity-environment: ResourceLimit At most N unit tags -> ResourceLimit ResourceLimit: At most N unit tags": 2,
+   "W-quantity-environment: ResourceLimit Verbalisation exceeds N characters -> ResourceLimit ResourceLimit: Verbalisation exceeds N characters": 2,
+   "W-quantity-environment: ResourceLimit numeral length -> ResourceLimit ResourceLimit: numeral length": 2,
+   "W-rights-document_check: DuplicateDeclaration bar -> DuplicateDeclaration DuplicateDeclaration: bar": 59,
+   "W-rights-document_check: ResourceLimit carve-outs of rule claim-N -> ResourceLimit ResourceLimit: carve-outs of rule claim-N": 22,
+   "W-rights-document_check: ResourceLimit carve-outs of rule immunity-N -> ResourceLimit ResourceLimit: carve-outs of rule immunity-N": 8,
+   "W-rights-document_check: ResourceLimit carve-outs of rule liberty-N -> ResourceLimit ResourceLimit: carve-outs of rule liberty-N": 15,
+   "W-rights-document_check: ResourceLimit carve-outs of rule may-N -> ResourceLimit ResourceLimit: carve-outs of rule may-N": 6,
+   "W-rights-document_check: ResourceLimit carve-outs of rule rights-fan-N -> ResourceLimit ResourceLimit: carve-outs of rule rights-fan-N": 2,
+   "W-rights-document_render: DuplicateDeclaration bar -> DuplicateDeclaration DuplicateDeclaration: bar": 59,
+   "W-rights-document_render: ResourceLimit carve-outs of rule claim-N -> ResourceLimit ResourceLimit: carve-outs of rule claim-N": 22,
+   "W-rights-document_render: ResourceLimit carve-outs of rule immunity-N -> ResourceLimit ResourceLimit: carve-outs of rule immunity-N": 8,
+   "W-rights-document_render: ResourceLimit carve-outs of rule liberty-N -> ResourceLimit ResourceLimit: carve-outs of rule liberty-N": 15,
+   "W-rights-document_render: ResourceLimit carve-outs of rule may-N -> ResourceLimit ResourceLimit: carve-outs of rule may-N": 6,
+   "W-rights-document_render: ResourceLimit carve-outs of rule rights-fan-N -> ResourceLimit ResourceLimit: carve-outs of rule rights-fan-N": 2
+  },
+  "text_rows_kept_total": 723,
+  "unexplained": 0,
+  "verdict_rules": {
+   "V-english-source-limit-span": 230,
+   "V-pilot-readings-slot": 4,
+   "V-quantity-certificate-exhausted": 4,
+   "V-quantity-model-path": 2,
+   "V-rights-readings-head": 190
+  },
+  "wording_order_rows": 789
+ }
+}

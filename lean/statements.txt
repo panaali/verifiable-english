@@ -14223,6 +14223,50 @@ theorem VE.Readings.Wire.Admitted.side_eq
   ∀ (a : VE.Readings.Wire.Admitted) (s : String) (i : Nat), a.side s i = VE.Readings.one a.D s i
   -- uses VE.Formula@VE.Syntax VE.Readings.Wire.Admitted.D@VE.Readings.Wire VE.Readings.Wire.Admitted.side@VE.Readings.Wire VE.Readings.Wire.Admitted@VE.Readings.Wire VE.Readings.one@VE.Readings.Doc VE.Rights.RightsDoc@VE.Rights.Tree
   -- expr 1465611242
+theorem VE.Readings.Wire.addDecl_mono
+  ∀ {acc acc' : List (String × String × Lean.Json)} {src : String} {e : String × Lean.Json},
+    VE.Readings.Wire.addDecl acc src e = Except.ok acc' → ∀ (x : String × String × Lean.Json), x ∈ acc → x ∈ acc'
+  -- uses VE.Readings.Wire.addDecl@VE.Readings.Companions
+  -- expr 1141634769
+theorem VE.Readings.Wire.addDecl_spec
+  ∀ {acc acc' : List (String × String × Lean.Json)} {src : String} {e : String × Lean.Json},
+    VE.Readings.Wire.addDecl acc src e = Except.ok acc' →
+      VE.Readings.Wire.Distinct acc →
+        VE.Readings.Wire.Distinct acc' ∧
+          (∀ (x : String × String × Lean.Json), x ∈ acc → x ∈ acc') ∧ ∃ s, (e.fst, s, e.snd) ∈ acc'
+  -- uses VE.Readings.Wire.Distinct@VE.Readings.Companions VE.Readings.Wire.addDecl@VE.Readings.Companions
+  -- expr 2850122013
+theorem VE.Readings.Wire.addDecls_mono
+  ∀ (src : String) (acc acc' : List (String × String × Lean.Json)) (es : List (String × Lean.Json)),
+    VE.Readings.Wire.addDecls src acc es = Except.ok acc' → ∀ (x : String × String × Lean.Json), x ∈ acc → x ∈ acc'
+  -- uses VE.Readings.Wire.addDecls@VE.Readings.Companions
+  -- expr 3374222372
+theorem VE.Readings.Wire.addDecls_spec
+  ∀ (src : String) (acc acc' : List (String × String × Lean.Json)) (es : List (String × Lean.Json)),
+    VE.Readings.Wire.addDecls src acc es = Except.ok acc' →
+      VE.Readings.Wire.Distinct acc →
+        VE.Readings.Wire.Distinct acc' ∧
+          (∀ (x : String × String × Lean.Json), x ∈ acc → x ∈ acc') ∧
+            ∀ (e : String × Lean.Json), e ∈ es → ∃ s, (e.fst, s, e.snd) ∈ acc'
+  -- uses VE.Readings.Wire.Distinct@VE.Readings.Companions VE.Readings.Wire.addDecls@VE.Readings.Companions
+  -- expr 908650077
+theorem VE.Readings.Wire.addTerm_spec
+  ∀ {acc acc' : List (String × Lean.Json)} {src : String} {t : Lean.Json},
+    VE.Readings.Wire.addTerm acc src t = Except.ok acc' →
+      VE.Readings.Wire.TermsDistinct acc →
+        VE.Readings.Wire.TermsDistinct acc' ∧
+          (∀ (x : String × Lean.Json), x ∈ acc → x ∈ acc') ∧ t ∈ List.map (fun x => x.snd) acc'
+  -- uses VE.Readings.Wire.TermsDistinct@VE.Readings.Companions VE.Readings.Wire.addTerm@VE.Readings.Companions
+  -- expr 989192090
+theorem VE.Readings.Wire.addTerms_spec
+  ∀ (src : String) (acc acc' : List (String × Lean.Json)) (ts : List Lean.Json),
+    VE.Readings.Wire.addTerms src acc ts = Except.ok acc' →
+      VE.Readings.Wire.TermsDistinct acc →
+        VE.Readings.Wire.TermsDistinct acc' ∧
+          (∀ (x : String × Lean.Json), x ∈ acc → x ∈ acc') ∧
+            ∀ (t : Lean.Json), t ∈ ts → t ∈ List.map (fun x => x.snd) acc'
+  -- uses VE.Readings.Wire.TermsDistinct@VE.Readings.Companions VE.Readings.Wire.addTerms@VE.Readings.Companions
+  -- expr 2769499733
 theorem VE.Readings.Wire.admissionText_of_stage
   ∀ {re : VE.Readings.Wire.ReadingsEnvironment} {D : VE.Readings.Doc}
     {t : List ((String × Nat) × VE.Rights.RightsDoc × List VE.Formula)},
@@ -14240,6 +14284,11 @@ theorem VE.Readings.Wire.admitReadings_eq
     VE.Readings.Wire.admitReadings environment document = VE.Readings.Wire.admitReadingsSpec environment document
   -- uses VE.Readings.Wire.Admitted@VE.Readings.Wire VE.Readings.Wire.admitReadings@VE.Readings.Wire VE.Readings.Wire.admitReadingsSpec@VE.Readings.Wire
   -- expr 1881383589
+theorem VE.Readings.Wire.arr_of_get
+  ∀ {j : Lean.Json} {k : String} {l : List Lean.Json},
+    j.getObjVal? k = Except.ok (Lean.Json.arr l.toArray) → VE.Readings.Wire.arr j k = l
+  -- uses VE.Readings.Wire.arr@VE.Readings.Companions
+  -- expr 1793123958
 theorem VE.Readings.Wire.attachedIter_links
   ∀ (D : VE.Readings.Doc) (cs : List VE.Readings.Coupling) (ns : List VE.Readings.Narrowing) (n : Nat)
     (tbl : List (String × List String)),
@@ -14266,6 +14315,11 @@ theorem VE.Readings.Wire.author_valid
         data.valid (VE.Readings.Wire.authorVocabulary re) = Bool.true → data.toModel.Valid (VE.Readings.authorEnv D)
   -- uses VE.Bridge.Entity@VE.Bridge VE.Bridge.ModelData.toModel@VE.Bridge VE.Bridge.ModelData.valid@VE.Bridge VE.Bridge.ModelData@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Readings.Wire.authorVocabulary@VE.Readings.Wire VE.Readings.Wire.frameOf@VE.Readings.Wire VE.Readings.authorEnv@VE.Readings.Separate VE.Rights.RightsDoc@VE.Rights.Tree
   -- expr 2468320515
+theorem VE.Readings.Wire.bind_ok
+  ∀ {ε α β : Type} {x : Except ε α} {f : α → Except ε β} {b : β},
+    x >>= f = Except.ok b → ∃ a, x = Except.ok a ∧ f a = Except.ok b
+  -- uses
+  -- expr 1148682251
 theorem VE.Readings.Wire.candidateStage_eq
   ∀ (D : VE.Readings.Doc),
     VE.Readings.Wire.candidateStage D =
@@ -14300,6 +14354,53 @@ theorem VE.Readings.Wire.choiceU_E
     (VE.Readings.choiceU r.N c).D.E = r.b.a.re.se.ne.rv.environment
   -- uses VE.Environment@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.Norms.Doc.E@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Readings.Choice@VE.Readings.Choice VE.Readings.Wire.Admitted.re@VE.Readings.Wire VE.Readings.Wire.Admitted2.a@VE.Readings.SupWire VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.AdmittedND.b@VE.Readings.UnspecifiedWire VE.Readings.Wire.AdmittedND@VE.Readings.UnspecifiedWire VE.Readings.Wire.ReadingsEnvironment.se@VE.Readings.Wire VE.Readings.choiceU@VE.Readings.Unspecified VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.SoftNorms.Wire.SoftEnvironment.ne@VE.SoftNorms.Wire
   -- expr 1035165244
+theorem VE.Readings.Wire.companionIds_sublist
+  ∀ (sets : List Lean.Json) (ids cs : List String), VE.Readings.Wire.companionIds sets ids = Except.ok cs → cs.Sublist ids
+  -- uses VE.Readings.Wire.companionIds@VE.Readings.Companions
+  -- expr 773912974
+theorem VE.Readings.Wire.companionSets_nodup
+  ∀ {document : Lean.Json} {cs : List String}, VE.Readings.Wire.companionSets document = Except.ok cs → cs.Nodup
+  -- uses VE.Readings.Wire.companionSets@VE.Readings.Companions
+  -- expr 4260557137
+theorem VE.Readings.Wire.componentDoc_arr
+  ∀ (document : Lean.Json) (s : String) (ts : List Lean.Json),
+    VE.Readings.Wire.arr (VE.Readings.Wire.componentDoc document s ts) "couplings" = [] ∧
+      VE.Readings.Wire.arr (VE.Readings.Wire.componentDoc document s ts) "narrowings" =
+          VE.Readings.Wire.narrowingsOn document s ∧
+        VE.Readings.Wire.arr (VE.Readings.Wire.componentDoc document s ts) "reading_sets" =
+          VE.Readings.Wire.setEntries document s
+  -- uses VE.Readings.Wire.arr@VE.Readings.Companions VE.Readings.Wire.componentDoc@VE.Readings.Companions VE.Readings.Wire.narrowingsOn@VE.Readings.Companions VE.Readings.Wire.setEntries@VE.Readings.Companions
+  -- expr 3184036449
+theorem VE.Readings.Wire.componentOf_doc
+  ∀ {document : Lean.Json} {s : String} {p : String × Lean.Json × Lean.Json},
+    VE.Readings.Wire.componentOf document s = Except.ok p →
+      p.fst = s ∧ ∃ ts, p.snd.snd = VE.Readings.Wire.componentDoc document s ts
+  -- uses VE.Readings.Wire.componentDoc@VE.Readings.Companions VE.Readings.Wire.componentOf@VE.Readings.Companions
+  -- expr 4038600010
+theorem VE.Readings.Wire.componentsOf_docs
+  ∀ (document : Lean.Json) (cs : List String) (comps : List (String × Lean.Json × Lean.Json)),
+    VE.Readings.Wire.componentsOf document cs = Except.ok comps →
+      List.map (fun x => x.fst) comps = cs ∧
+        ∀ (p : String × Lean.Json × Lean.Json),
+          p ∈ comps → ∃ ts, p.snd.snd = VE.Readings.Wire.componentDoc document p.fst ts
+  -- uses VE.Readings.Wire.componentDoc@VE.Readings.Companions VE.Readings.Wire.componentsOf@VE.Readings.Companions
+  -- expr 3216614069
+theorem VE.Readings.Wire.count_one
+  ∀ (l : List Lean.Json) (f : Lean.Json → String) (cs : List String),
+    cs.Nodup →
+      ∀ (k : String) (main : String × Lean.Json × Lean.Json) (comps : List (String × Lean.Json × Lean.Json)),
+        VE.Readings.Wire.arr main.snd.snd k = List.filter (fun y => !cs.contains (f y)) l →
+          (∀ (p : String × Lean.Json × Lean.Json),
+              p ∈ comps → VE.Readings.Wire.arr p.snd.snd k = List.filter (fun y => f y == p.fst) l) →
+            List.map (fun x => x.fst) comps = cs →
+              ∀ (x : Lean.Json),
+                x ∈ l → (List.filter (fun p => (VE.Readings.Wire.arr p.snd.snd k).contains x) (main :: comps)).length = 1
+  -- uses VE.Readings.Wire.arr@VE.Readings.Companions VE.Readings.Wire.instBEqJson_vE@VE.Readings.Companions
+  -- expr 835069816
+theorem VE.Readings.Wire.entries_mem
+  ∀ {j d : Lean.Json} {n : String}, j.getObjVal? n = Except.ok d → (n, d) ∈ VE.Readings.Wire.entries j
+  -- uses VE.Readings.Wire.entries@VE.Readings.Companions
+  -- expr 2852445746
 theorem VE.Readings.Wire.fillHoldsOf_eq
   ∀ (f : VE.Readings.Wire.AdmittedNDFull) {α : Type u} [inst : DecidableEq α] (s : String) (i : Nat)
     (M : VE.FiniteModel α),
@@ -14310,6 +14411,14 @@ theorem VE.Readings.Wire.fillNamesFree_of_reservedUnsaid
   ∀ (N : VE.Readings.NDoc), VE.Readings.Wire.reservedUnsaid N = Option.none → VE.Readings.fillNamesFree N = Bool.true
   -- uses VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.reservedUnsaid@VE.Readings.UnspecifiedWire VE.Readings.fillNamesFree@VE.Readings.Unspecified
   -- expr 1156672678
+theorem VE.Readings.Wire.firstKeys_nodup
+  ∀ (l : List (String × Lean.Json)), (List.map (fun x => x.fst) (VE.Readings.Wire.firstKeys l)).Nodup
+  -- uses VE.Readings.Wire.firstKeys@VE.Readings.Companions
+  -- expr 2799373186
+theorem VE.Readings.Wire.firstKeys_sub
+  ∀ (l : List (String × Lean.Json)) (x : String × Lean.Json), x ∈ VE.Readings.Wire.firstKeys l → x ∈ l
+  -- uses VE.Readings.Wire.firstKeys@VE.Readings.Companions
+  -- expr 2440783979
 theorem VE.Readings.Wire.firstSome_activeOf
   ∀ (D : VE.Readings.Doc),
     (VE.Readings.Wire.firstSome (VE.Readings.Wire.activeOf D) fun c =>
@@ -14329,6 +14438,10 @@ theorem VE.Readings.Wire.firstSome_filter
       ∀ (l : List α), VE.Readings.Wire.firstSome (List.filter p l) f = VE.Readings.Wire.firstSome l f
   -- uses VE.Readings.Wire.firstSome@VE.Readings.Wire
   -- expr 336670370
+theorem VE.Readings.Wire.firstStrs_nodup
+  ∀ (l : List String), (VE.Readings.Wire.firstStrs l).Nodup
+  -- uses VE.Readings.Wire.firstStrs@VE.Readings.Companions
+  -- expr 2680449470
 theorem VE.Readings.Wire.frameOf_filled
   ∀ (re : VE.Readings.Wire.ReadingsEnvironment) (N : VE.Readings.NDoc) (units : List String),
     N.D.frame = VE.Readings.Wire.frameOf re units →
@@ -14338,6 +14451,42 @@ theorem VE.Readings.Wire.frameOf_filled
         VE.Readings.Wire.frameOf (VE.Readings.Wire.filledEnvironment re N) units = (VE.Readings.fillDoc N).frame
   -- uses VE.Bridge.Vocabulary.predicates@VE.Bridge VE.Bridge.lookup@VE.Bridge VE.NormDefaults.unsaidName@VE.NormDefaults.Tree VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc.unspec@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.ReadingsEnvironment.se@VE.Readings.Wire VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Readings.Wire.filledEnvironment@VE.Readings.UnspecifiedWire VE.Readings.Wire.frameOf@VE.Readings.Wire VE.Readings.fillDoc@VE.Readings.Unspecified VE.Rights.RightsDoc@VE.Rights.Tree VE.Route.Wire.RouteVocabulary.vocabulary@VE.Route.Wire VE.SoftNorms.Wire.SoftEnvironment.ne@VE.SoftNorms.Wire
   -- expr 1139648744
+theorem VE.Readings.Wire.getObjValD_ok
+  ∀ {j v : Lean.Json} {k : String}, j.getObjVal? k = Except.ok v → j.getObjValD k = v
+  -- uses
+  -- expr 2586305039
+theorem VE.Readings.Wire.jcontains_iff
+  ∀ (l : List Lean.Json) (x : Lean.Json), l.contains x = Bool.true ↔ x ∈ l
+  -- uses VE.Readings.Wire.instBEqJson_vE@VE.Readings.Companions
+  -- expr 3953850071
+theorem VE.Readings.Wire.jeqImpl_refl
+  ∀ (a : Std.DTreeMap.Internal.Impl String fun x => Lean.Json), VE.Readings.Wire.jeqImpl a a = Bool.true
+  -- uses VE.Readings.Wire.jeqImpl@VE.Readings.Companions
+  -- expr 102532811
+theorem VE.Readings.Wire.jeqImpl_sound
+  ∀ (a b : Std.DTreeMap.Internal.Impl String fun x => Lean.Json), VE.Readings.Wire.jeqImpl a b = Bool.true → a = b
+  -- uses VE.Readings.Wire.jeqImpl@VE.Readings.Companions
+  -- expr 2740745058
+theorem VE.Readings.Wire.jeqList_refl
+  ∀ (a : List Lean.Json), VE.Readings.Wire.jeqList a a = Bool.true
+  -- uses VE.Readings.Wire.jeqList@VE.Readings.Companions
+  -- expr 1727633847
+theorem VE.Readings.Wire.jeqList_sound
+  ∀ (a b : List Lean.Json), VE.Readings.Wire.jeqList a b = Bool.true → a = b
+  -- uses VE.Readings.Wire.jeqList@VE.Readings.Companions
+  -- expr 1074200701
+theorem VE.Readings.Wire.jeq_iff
+  ∀ (a b : Lean.Json), VE.Readings.Wire.jeq a b = Bool.true ↔ a = b
+  -- uses VE.Readings.Wire.jeq@VE.Readings.Companions
+  -- expr 2623585112
+theorem VE.Readings.Wire.jeq_refl
+  ∀ (a : Lean.Json), VE.Readings.Wire.jeq a a = Bool.true
+  -- uses VE.Readings.Wire.jeq@VE.Readings.Companions
+  -- expr 3163219813
+theorem VE.Readings.Wire.jeq_sound
+  ∀ (a b : Lean.Json), VE.Readings.Wire.jeq a b = Bool.true → a = b
+  -- uses VE.Readings.Wire.jeq@VE.Readings.Companions
+  -- expr 2453678424
 theorem VE.Readings.Wire.layerNames_sub
   ∀ {T : VE.Norms.Tree} {x : String},
     x ∈ VE.Norms.layerNames T → x ∈ List.map (fun x => x.name) T.regulated ++ List.map (fun x => x.name) T.definitions
@@ -14363,6 +14512,112 @@ theorem VE.Readings.Wire.lookup_mem
     List.lookup a l = Option.some b → (a, b) ∈ l
   -- uses
   -- expr 3122011733
+theorem VE.Readings.Wire.mainDoc_arr
+  ∀ (document : Lean.Json) (cs : List String),
+    VE.Readings.Wire.arr (VE.Readings.Wire.mainDoc document cs) "couplings" = VE.Readings.Wire.arr document "couplings" ∧
+      VE.Readings.Wire.arr (VE.Readings.Wire.mainDoc document cs) "narrowings" =
+          List.filter (fun n => !cs.contains (VE.Readings.Wire.strOf (n.getObjValD "set")))
+            (VE.Readings.Wire.arr document "narrowings") ∧
+        VE.Readings.Wire.arr (VE.Readings.Wire.mainDoc document cs) "reading_sets" =
+          List.filter (fun s => !cs.contains (VE.Readings.Wire.setIdOf s)) (VE.Readings.Wire.arr document "reading_sets")
+  -- uses VE.Readings.Wire.arr@VE.Readings.Companions VE.Readings.Wire.mainDoc@VE.Readings.Companions VE.Readings.Wire.setIdOf@VE.Readings.Companions VE.Readings.Wire.strOf@VE.Readings.Companions
+  -- expr 1461868337
+theorem VE.Readings.Wire.mergeCategory_mono
+  ∀ (k : String) (acc acc' : List (String × String × Lean.Json)) (sources : List (String × Lean.Json)),
+    VE.Readings.Wire.mergeCategory k acc sources = Except.ok acc' →
+      ∀ (x : String × String × Lean.Json), x ∈ acc → x ∈ acc'
+  -- uses VE.Readings.Wire.mergeCategory@VE.Readings.Companions
+  -- expr 1266386483
+theorem VE.Readings.Wire.mergeCategory_spec
+  ∀ (k : String) (acc acc' : List (String × String × Lean.Json)) (sources : List (String × Lean.Json)),
+    VE.Readings.Wire.mergeCategory k acc sources = Except.ok acc' →
+      VE.Readings.Wire.Distinct acc →
+        VE.Readings.Wire.Distinct acc' ∧
+          ∀ (src : String × Lean.Json),
+            src ∈ sources →
+              ∀ (e : String × Lean.Json),
+                e ∈ VE.Readings.Wire.entries ((src.snd.getObjValD "vocabulary").getObjValD k) →
+                  ∃ s, (e.fst, s, e.snd) ∈ acc'
+  -- uses VE.Readings.Wire.Distinct@VE.Readings.Companions VE.Readings.Wire.entries@VE.Readings.Companions VE.Readings.Wire.mergeCategory@VE.Readings.Companions
+  -- expr 3802519859
+theorem VE.Readings.Wire.mergeCompanions_extends
+  ∀ (sources : List (String × Lean.Json)) (m : Lean.Json),
+    VE.Readings.Wire.mergeCompanions sources = Except.ok m →
+      ∀ (src : String × Lean.Json),
+        src ∈ sources →
+          ∀ (k : String),
+            k ∈ ["sorts", "constants", "predicates"] →
+              ∀ (n : String) (d : Lean.Json),
+                ((src.snd.getObjValD "vocabulary").getObjValD k).getObjVal? n = Except.ok d →
+                  ((m.getObjValD "vocabulary").getObjValD k).getObjVal? n = Except.ok d
+  -- uses VE.Readings.Wire.mergeCompanions@VE.Readings.Companions
+  -- expr 1843100652
+theorem VE.Readings.Wire.mergeCompanions_identical
+  ∀ (sources : List (String × Lean.Json)) (m : Lean.Json),
+    VE.Readings.Wire.mergeCompanions sources = Except.ok m →
+      ∀ (src : String × Lean.Json),
+        src ∈ sources →
+          ∀ (src' : String × Lean.Json),
+            src' ∈ sources →
+              ∀ (k : String),
+                k ∈ ["sorts", "constants", "predicates"] →
+                  ∀ (n : String) (d d' : Lean.Json),
+                    ((src.snd.getObjValD "vocabulary").getObjValD k).getObjVal? n = Except.ok d →
+                      ((src'.snd.getObjValD "vocabulary").getObjValD k).getObjVal? n = Except.ok d' → d = d'
+  -- uses VE.Readings.Wire.mergeCompanions@VE.Readings.Companions
+  -- expr 4059760011
+theorem VE.Readings.Wire.mergeCompanions_ok
+  ∀ {sources : List (String × Lean.Json)} {m : Lean.Json},
+    VE.Readings.Wire.mergeCompanions sources = Except.ok m →
+      ∃ first sorts constants predicates,
+        VE.Readings.Wire.mergeCategory "sorts" [] sources = Except.ok sorts ∧
+          VE.Readings.Wire.mergeCategory "constants" [] sources = Except.ok constants ∧
+            VE.Readings.Wire.mergeCategory "predicates" [] sources = Except.ok predicates ∧
+              m = VE.Readings.Wire.mergedJson first sorts constants predicates
+  -- uses VE.Readings.Wire.mergeCategory@VE.Readings.Companions VE.Readings.Wire.mergeCompanions@VE.Readings.Companions VE.Readings.Wire.mergedJson@VE.Readings.Companions
+  -- expr 2157257449
+theorem VE.Readings.Wire.mergeOpenTerms_identical
+  ∀ (sources : List (String × Lean.Json)) (ts : List Lean.Json),
+    VE.Readings.Wire.mergeOpenTerms sources = Except.ok ts →
+      (∀ (src : String × Lean.Json),
+          src ∈ sources → ∀ (t : Lean.Json), t ∈ VE.Readings.Wire.arr src.snd "open_terms" → t ∈ ts) ∧
+        ∀ (t : Lean.Json), t ∈ ts → ∀ (t' : Lean.Json), t' ∈ ts → t.getObjValD "name" = t'.getObjValD "name" → t = t'
+  -- uses VE.Readings.Wire.arr@VE.Readings.Companions VE.Readings.Wire.mergeOpenTerms@VE.Readings.Companions
+  -- expr 2608716166
+theorem VE.Readings.Wire.mergeOpenTerms_ok
+  ∀ {sources : List (String × Lean.Json)} {ts : List Lean.Json},
+    VE.Readings.Wire.mergeOpenTerms sources = Except.ok ts →
+      ∃ acc, VE.Readings.Wire.mergeTerms [] sources = Except.ok acc ∧ ts = List.map (fun x => x.snd) acc
+  -- uses VE.Readings.Wire.mergeOpenTerms@VE.Readings.Companions VE.Readings.Wire.mergeTerms@VE.Readings.Companions
+  -- expr 661893648
+theorem VE.Readings.Wire.mergeTerms_spec
+  ∀ (acc acc' sources : List (String × Lean.Json)),
+    VE.Readings.Wire.mergeTerms acc sources = Except.ok acc' →
+      VE.Readings.Wire.TermsDistinct acc →
+        VE.Readings.Wire.TermsDistinct acc' ∧
+          (∀ (x : String × Lean.Json), x ∈ acc → x ∈ acc') ∧
+            ∀ (src : String × Lean.Json),
+              src ∈ sources →
+                ∀ (t : Lean.Json), t ∈ VE.Readings.Wire.arr src.snd "open_terms" → t ∈ List.map (fun x => x.snd) acc'
+  -- uses VE.Readings.Wire.TermsDistinct@VE.Readings.Companions VE.Readings.Wire.arr@VE.Readings.Companions VE.Readings.Wire.mergeTerms@VE.Readings.Companions
+  -- expr 3345556258
+theorem VE.Readings.Wire.mergedJson_category
+  ∀ (e : Lean.Json) (s c p : List (String × String × Lean.Json)) (k : String),
+    k ∈ ["sorts", "constants", "predicates"] →
+      ((VE.Readings.Wire.mergedJson e s c p).getObjValD "vocabulary").getObjValD k =
+        VE.Readings.Wire.objOf (if k = "sorts" then s else if k = "constants" then c else p)
+  -- uses VE.Readings.Wire.mergedJson@VE.Readings.Companions VE.Readings.Wire.objOf@VE.Readings.Companions
+  -- expr 3729297784
+theorem VE.Readings.Wire.mkObj_absent
+  ∀ {l : List (String × Lean.Json)} {k : String},
+    (List.map (fun x => x.fst) l).contains k = Bool.false → (Lean.Json.mkObj l).getObjValD k = Lean.Json.null
+  -- uses
+  -- expr 8640921
+theorem VE.Readings.Wire.mkObj_get
+  ∀ {l : List (String × Lean.Json)} {k : String} {v : Lean.Json},
+    (List.map (fun x => x.fst) l).Nodup → (k, v) ∈ l → (Lean.Json.mkObj l).getObjVal? k = Except.ok v
+  -- uses
+  -- expr 872787718
 theorem VE.Readings.Wire.ndRest_of_ndText
   ∀ {re : VE.Readings.Wire.ReadingsEnvironment} {N : VE.Readings.NDoc},
     VE.Readings.Wire.ndText re N = Option.none →
@@ -14376,6 +14631,11 @@ theorem VE.Readings.Wire.ndTextWith_eq
       VE.Readings.Wire.ndTextWith re N side = VE.Readings.Wire.ndText re N
   -- uses VE.Formula@VE.Syntax VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Readings.Wire.ndText@VE.Readings.UnspecifiedWire VE.Readings.Wire.ndTextWith@VE.Readings.UnspecifiedWire VE.Readings.one@VE.Readings.Doc VE.Rights.RightsDoc@VE.Rights.Tree
   -- expr 3752454394
+theorem VE.Readings.Wire.objOf_get
+  ∀ {acc : List (String × String × Lean.Json)} {n src : String} {d : Lean.Json},
+    (n, src, d) ∈ acc → VE.Readings.Wire.Distinct acc → (VE.Readings.Wire.objOf acc).getObjVal? n = Except.ok d
+  -- uses VE.Readings.Wire.Distinct@VE.Readings.Companions VE.Readings.Wire.objOf@VE.Readings.Companions
+  -- expr 3825865755
 theorem VE.Readings.Wire.oneOf_eq
   ∀ (D : VE.Readings.Doc) (s : String) (i : Nat),
     VE.Readings.Wire.oneOf D (VE.Readings.Wire.onesOf D) s i = VE.Readings.one D s i
@@ -14412,6 +14672,11 @@ theorem VE.Readings.Wire.option_or_none
   ∀ {α : Type} {a b : Option α}, a.or b = Option.none → a = Option.none ∧ b = Option.none
   -- uses
   -- expr 511594929
+theorem VE.Readings.Wire.overlay_get
+  ∀ {base : Lean.Json} {ks : List (String × Lean.Json)} {k : String} {v : Lean.Json},
+    (List.map (fun x => x.fst) ks).Nodup → (k, v) ∈ ks → (VE.Readings.Wire.overlay base ks).getObjVal? k = Except.ok v
+  -- uses VE.Readings.Wire.overlay@VE.Readings.Companions
+  -- expr 3608556248
 theorem VE.Readings.Wire.owned_links
   ∀ (D : VE.Readings.Doc) (cs : List VE.Readings.Coupling) (ns : List VE.Readings.Narrowing) (s : String) (i : Nat),
     VE.Readings.owned { chain := D.chain, frame := D.frame, items := D.items, couplings := cs, narrowings := ns } s i =
@@ -14520,6 +14785,12 @@ theorem VE.Readings.Wire.replayPair_D
     {sj : VE.Readings.Wire.SituationJ}, VE.Readings.Wire.replayPair a s sid other = Except.ok (x, sj) → x.D = a.D
   -- uses VE.Readings.Doc@VE.Readings.Doc VE.Readings.Wire.Admitted.D@VE.Readings.Wire VE.Readings.Wire.Admitted@VE.Readings.Wire VE.Readings.Wire.SeparateReplay.D@VE.Readings.Wire VE.Readings.Wire.SeparateReplay@VE.Readings.Wire VE.Readings.Wire.SituationJ@VE.Readings.Wire VE.Readings.Wire.replayPair@VE.Readings.Wire
   -- expr 3380054106
+theorem VE.Readings.Wire.same_name
+  ∀ {l : List Lean.Json},
+    List.Pairwise (fun a b => VE.Readings.Wire.jeq (a.getObjValD "name") (b.getObjValD "name") = Bool.false) l →
+      ∀ (t : Lean.Json), t ∈ l → ∀ (t' : Lean.Json), t' ∈ l → t.getObjValD "name" = t'.getObjValD "name" → t = t'
+  -- uses VE.Readings.Wire.jeq@VE.Readings.Companions
+  -- expr 4220798877
 theorem VE.Readings.Wire.separates_filled
   ∀ {r : VE.Readings.Wire.AdmittedND} (fa : VE.Readings.Wire.FilledAdmitted r) {α : Type u} [inst : DecidableEq α]
     (s : String) (i j : Nat) (σ : VE.Readings.Situation α),
@@ -14539,6 +14810,26 @@ theorem VE.Readings.Wire.sideWF_of_chainText
     VE.Readings.Wire.chainText D.chain X = Option.none → VE.Readings.sideWF D X = Bool.true
   -- uses VE.Formula@VE.Syntax VE.Readings.Doc.chain@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Wire.chainText@VE.Readings.Wire VE.Readings.sideWF@VE.Readings.Doc VE.Rights.RightsDoc@VE.Rights.Tree
   -- expr 2570059509
+theorem VE.Readings.Wire.splitCase_parts
+  ∀ {environment document : Lean.Json} {parts : List (String × Lean.Json × Lean.Json)},
+    VE.Readings.Wire.splitCase environment document = Except.ok parts →
+      parts = [("main", environment, document)] ∨
+        ∃ cs comps,
+          VE.Readings.Wire.companionSets document = Except.ok cs ∧
+            VE.Readings.Wire.componentsOf document cs = Except.ok comps ∧
+              parts = ("main", environment, VE.Readings.Wire.mainDoc document cs) :: comps
+  -- uses VE.Readings.Wire.companionSets@VE.Readings.Companions VE.Readings.Wire.componentsOf@VE.Readings.Companions VE.Readings.Wire.mainDoc@VE.Readings.Companions VE.Readings.Wire.splitCase@VE.Readings.Companions
+  -- expr 157080671
+theorem VE.Readings.Wire.split_keeps_links
+  ∀ (environment document : Lean.Json) (parts : List (String × Lean.Json × Lean.Json)),
+    VE.Readings.Wire.splitCase environment document = Except.ok parts →
+      ∀ (k : String),
+        k ∈ ["reading_sets", "couplings", "narrowings"] →
+          ∀ (x : Lean.Json),
+            x ∈ VE.Readings.Wire.arr document k →
+              (List.filter (fun p => (VE.Readings.Wire.arr p.snd.snd k).contains x) parts).length = 1
+  -- uses VE.Readings.Wire.arr@VE.Readings.Companions VE.Readings.Wire.instBEqJson_vE@VE.Readings.Companions VE.Readings.Wire.splitCase@VE.Readings.Companions
+  -- expr 1281587769
 theorem VE.Readings.Wire.stageOf_eq
   ∀ {α γ β ε : Type} (build : α → γ) (f : α → γ → Option ε) (g : α → γ → β) (l : List α),
     VE.Readings.Wire.stageOf build f g l =
@@ -14583,6 +14874,12 @@ theorem VE.Readings.Wire.wellFormedU_of_ndDocText
     VE.Readings.Wire.ndDocText re U = Option.none → VE.NormDefaults.WellFormedU U = Bool.true
   -- uses VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Readings.Wire.ndDocText@VE.Readings.UnspecifiedWire
   -- expr 1434982047
+theorem VE.Readings.Wire.withArrays_arr
+  ∀ {base : Lean.Json} {repl : List (String × List Lean.Json)} {k : String} {l : List Lean.Json},
+    (List.map (fun x => x.fst) repl).Nodup →
+      (k, l) ∈ repl → VE.Readings.Wire.arr (VE.Readings.Wire.withArrays base repl) k = l
+  -- uses VE.Readings.Wire.arr@VE.Readings.Companions VE.Readings.Wire.withArrays@VE.Readings.Companions
+  -- expr 1308873461
 theorem VE.Readings.achievesU_iff
   ∀ (N : VE.Readings.NDoc),
     VE.Readings.normsShaped N.D = Bool.true →
