@@ -652,7 +652,7 @@ def test_stage2_parity_classifies_a_retyped_output_as_a_change():
 
 def test_pilot_recording_keeps_the_english_shadow_in_its_writable_scratch(tmp_path, monkeypatch):
     """The base worktree may be read-only; recording must not write its diagnostic shadow there."""
-    monkeypatch.delenv("VE_SHADOW_LOG", raising=False)
+    monkeypatch.setenv("VE_SHADOW_LOG", "/readonly/base/ve-shadow.jsonl")
     monkeypatch.setattr(diff, "pilot_documents", lambda _root: [("pilot", "a" * 40, b"document")])
     monkeypatch.setattr(diff, "pilot_check", lambda _root, _path, env: {"shadow": env["VE_SHADOW_LOG"]})
     [row] = diff.pilot_records(Path("/readonly/base"), tmp_path, workers=1)

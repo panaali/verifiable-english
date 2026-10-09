@@ -301,7 +301,7 @@ def pilot_records(root: Path, scratch: Path, workers: int):
     env = {**os.environ, "PYTHONPATH": str(root)}
     # A recorded checkout may be read-only. The English shadow is diagnostic
     # output, so keep it beside the recording instead of writing in that tree.
-    env.setdefault("VE_SHADOW_LOG", str(scratch / "english-shadow.jsonl"))
+    env["VE_SHADOW_LOG"] = str(scratch / "english-shadow.jsonl")
     env.pop("VE_AUTHORITY", None)
 
     def check(item):
