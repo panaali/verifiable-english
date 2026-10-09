@@ -19,6 +19,9 @@ def saved():
     evidence = json.loads((HERE / "evidence/summary.json").read_text())
     comparison_bytes = (HERE / "evidence/ab-compare.json").read_bytes()
     assert hashlib.sha256(comparison_bytes).hexdigest() == evidence["ab_sha256"]
+    for side in ("base", "head"):
+        record = (HERE / f"evidence/ab-{side}.jsonl.gz").read_bytes()
+        assert hashlib.sha256(record).hexdigest() == evidence["ab_record_sha256"][side]
     comparison = json.loads(comparison_bytes)
     mutants = json.loads((HERE / "evidence/code-mutants.json").read_text())
     return evidence, comparison, mutants
@@ -34,6 +37,7 @@ def expected_lines(evidence, comparison, mutants):
         f"{lean['rd3_declarations']} exact RD-3 declarations",
         f"{evidence['fixtures']['passed']} passed",
         f"{sum(comparison['records'].values())} records; {comparison['totals']['same']} identical; "
+        f"{comparison['totals']['wording']} scratch-path wording differences; "
         f"{comparison['unlisted']} unlisted; {sum(comparison['unavailable_both'].values())} unavailable on both sides",
     ]
     lines.extend(f"| `{c['sha']}` | {c['subject']} |" for c in evidence["commits_before_report"])
@@ -64,9 +68,16 @@ def test_saved_ab_evidence_is_complete_and_accounted():
     _, comparison, _ = saved()
     assert comparison["records"]["readings/default"] == 1137
     assert comparison["records"]["pilots/default"] > 0
-    assert comparison["unlisted"] == sum(comparison["unavailable_both"].values())
-    assert comparison["totals"]["same"] + comparison["unlisted"] == sum(comparison["records"].values())
+    assert comparison["unlisted"] == 0
+    assert (comparison["totals"]["same"] + comparison["totals"]["wording"]
+            + sum(comparison["unavailable_both"].values()) == sum(comparison["records"].values()))
     assert not any(d["class"] in ("verdict", "order", "availability") for d in comparison["differences"])
+    for difference in comparison["differences"]:
+        if difference["class"] == "wording":
+            assert difference["base"]["exit"] == difference["head"]["exit"] == 1
+            assert difference["base"]["stdout"] == difference["head"]["stdout"] == ""
+            assert all("Cannot read sense pack" in value["stderr"][0]
+                       for value in (difference["base"], difference["head"]))
 
 
 def test_saved_mutants_failed_real_tests_and_were_removed():
