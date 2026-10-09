@@ -87,3 +87,9 @@ def test_agent_policy_documents_are_admitted_with_their_record_formulas():
         document = load_document(FIXTURES / "agent-policy" / f"{name}.ve.md")
         assert all(unit["content"] is not None for unit in document["units"])
         assert not document["meta"].get("reading_sets")
+
+
+def test_agent_policy_builder_reproduces_the_reviewed_documents():
+    builder = runpy.run_path(str(FIXTURES / "agent-policy" / "build.py"))["build"]
+    for name in ("a-unspecified", "a-deny", "a-rules", "a-conflict"):
+        assert builder(name) == (FIXTURES / "agent-policy" / f"{name}.ve.md").read_text()
