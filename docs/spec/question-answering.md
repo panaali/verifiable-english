@@ -146,10 +146,11 @@ def bodySentence (t : String) : Option (Array Spanned) :=
   | .error _ => none
 
 /-- F2's gaps: the byte offsets in `rest` of every token after the first that is not punctuation. The added `.` is not
-    a token, so no gap is at the end. -/
+    a token, so no gap is at the end. An offset past `rest` is dropped (Q1.1 body change, below). -/
 def gaps (rest : String) : List Nat :=
   match bodySentence rest with
-  | some toks => (toks.toList.drop 1).filterMap fun (t, a, _) => if isPunct t then none else some a
+  | some toks => (toks.toList.drop 1).filterMap fun (t, a, _) =>
+      if isPunct t || decide (rest.utf8ByteSize < a) then none else some a
   | none => []
 
 def insertAt (rest a : String) (g : Nat) : String :=
@@ -161,6 +162,10 @@ def candidates (auxs : List String) (q : String) : List Candidate :=
   | .fronted a r => (gaps r).map fun g => ⟨.fronted a g, insertAt r a g⟩
   | _ => []
 ```
+
+Q1.1 body change (allowed by section 2's rule, to prove `mapSpan_valid`): `gaps` drops an offset past `rest`. The
+lexer gives none, but no lemma about `lexSpans` says so, and the bound `g ≤ rest.utf8ByteSize` is what the span
+statements need. No fixture changes (the Q1 `#guard`s and the service fixtures are unchanged).
 
 No other byte changes: the user's words keep their case, and a sentence-initial lower-case keyword such as `every`
 is accepted by the existing `kw` terminal (`Token.lean:74`).

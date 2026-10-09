@@ -10,7 +10,7 @@ import re
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = ROOT / "docs/spec/question-answering.md"
-SOURCE = ROOT / "lean/VE/Question/Properties.lean"
+SOURCES = sorted((ROOT / "lean/VE/Question").glob("*.lean"))
 
 
 def statements(text: str, source: bool) -> dict[str, str]:
@@ -36,7 +36,7 @@ def statements(text: str, source: bool) -> dict[str, str]:
 def main() -> None:
     spec = SPEC.read_text().split("### 5.1 Q1", 1)[1].split("### 5.2 Q2", 1)[0]
     approved = statements(spec, source=False)
-    actual = {name: stmt for name, stmt in statements(SOURCE.read_text(), source=True).items()
+    actual = {name: stmt for source in SOURCES for name, stmt in statements(source.read_text(), source=True).items()
               if name in approved}
     different = [name for name in actual if approved.get(name) != actual[name]]
     missing = [name for name in approved if name not in actual]

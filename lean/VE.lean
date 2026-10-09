@@ -113,3 +113,4 @@ import VE.Question.Properties
 import VE.Question.Examples
 import VE.Question.Run
 import VE.Question.Fixtures
+import VE.Question.Spans

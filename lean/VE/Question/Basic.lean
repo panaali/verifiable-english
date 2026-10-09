@@ -65,10 +65,12 @@ def bodySentence (t : String) : Option (Array Spanned) :=
   | .error _ => none
 
 /-- F2's gaps: the byte offsets in `rest` of every token after the first that is not punctuation. The added `.` is not
-    a token, so no gap is at the end. -/
+    a token, so no gap is at the end. An offset past `rest` is dropped: the lexer gives none, but no statement says
+    so, and `mapSpan_valid` needs the bound (spec 2.2; a body change made to prove a reviewed statement). -/
 def gaps (rest : String) : List Nat :=
   match bodySentence rest with
-  | some toks => (toks.toList.drop 1).filterMap fun (t, a, _) => if isPunct t then none else some a
+  | some toks => (toks.toList.drop 1).filterMap fun (t, a, _) =>
+      if isPunct t || decide (rest.utf8ByteSize < a) then none else some a
   | none => []
 
 def insertAt (rest a : String) (g : Nat) : String :=

@@ -3652,7 +3652,7 @@
       "assurance": {
         "current": "experimental",
         "at_switch": "experimental",
-        "reason": "Lean decides every outcome (VE.Question.readQuestion over E2's unchanged read; the statements of spec 5.1 proved as listed); the case decoder is E2's and the response encoder is trusted; no answer to the question is given (Q2)"
+        "reason": "Lean decides every outcome (VE.Question.readQuestion over E2's unchanged read; all fifteen statements of spec 5.1 proved); the case decoder is E2's and the response encoder is trusted; no answer to the question is given (Q2)"
       },
       "python": [],
       "outcomes": {
@@ -3705,9 +3705,7 @@
           "VE.Question.Run.statusCodes_classed",
           "VE.Service.runMode_englishQuestion",
           "VE.Question.readQuestion_one",
-          "VE.Question.readQuestion_complete"
-        ],
-        "planned_theorems": [
+          "VE.Question.readQuestion_complete",
           "VE.Question.caseThat_reads",
           "VE.Question.caseThat_candidates",
           "VE.Question.fronted_text",
@@ -3715,6 +3713,7 @@
           "VE.Question.mapSpan_codepoints_valid",
           "VE.Question.rephrasings_read"
         ],
+        "planned_theorems": [],
         "decoders": []
       },
       "rust": null,
