@@ -1,0 +1,57 @@
+{
+  "base": "67ae1e5a11e7ff6414d413875ab6c72bb78bbe69",
+  "head": "d094b05650592ef5ba73bf242126d3c40b3a6029",
+  "commits": [
+    {
+      "hash": "d094b05650592ef5ba73bf242126d3c40b3a6029",
+      "subject": "feat: admit JSON null in Lean document mode and bind typed content"
+    }
+  ],
+  "changes": [
+    {
+      "added": "9",
+      "deleted": "4",
+      "path": "lean/ResponseShape/Schemas/Document.lean"
+    },
+    {
+      "added": "18",
+      "deleted": "0",
+      "path": "lean/VE/CertificateWire.lean"
+    },
+    {
+      "added": "18",
+      "deleted": "9",
+      "path": "lean/VE/Service/Document.lean"
+    },
+    {
+      "added": "3",
+      "deleted": "3",
+      "path": "lean/VE/Service/Protocol.lean"
+    },
+    {
+      "added": "2",
+      "deleted": "1",
+      "path": "lean/checkers.lock"
+    },
+    {
+      "added": "31",
+      "deleted": "1",
+      "path": "tests/test_document_lean_switch.py"
+    },
+    {
+      "added": "11",
+      "deleted": "11",
+      "path": "tests/test_lean_document_wrapper.py"
+    },
+    {
+      "added": "11",
+      "deleted": "6",
+      "path": "ve/backends/lean_service_schema/document.json"
+    },
+    {
+      "added": "5",
+      "deleted": "2",
+      "path": "ve/document.py"
+    }
+  ]
+}
