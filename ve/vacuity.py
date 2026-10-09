@@ -24,7 +24,8 @@ def premise_status(env, premises, *, max_proof_steps=10_000, max_domain_size=2,
     def run():
         return _premise_status(env, premises, **budgets)
 
-    return owned("premise_status", run)
+    from .entailment import lean_check_scope
+    return owned("premise_status", run) if lean_check_scope(env) else run()
 
 
 def search_premise_status_witness(env, premises):
