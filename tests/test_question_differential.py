@@ -1,0 +1,281 @@
+"""Q1 three ways (review C of Astra, a B item of the DRI ruling of 2026-10-09): Lean's question reader against an
+independent Python reader, and each reading's meaning evaluated by Python, Lean and Rust.
+
+Lean is the only question reader VE runs, so the earlier conformance (spec rows, Lean `#guard`s, the live mode) ran
+one reader three times. Here:
+
+* **Two readers.** `tests/question_reference.py` reads questions from the spec's definitions over Python's own
+  English reader (the Lark all-derivations parse and the hand parser), sharing no code with `VE.Question`. Every
+  fixture question and its seeded 1-fault and 2-fault mutants (`one_faults`: a word deleted, doubled or swapped with
+  the next, a determiner or the auxiliary replaced, an inner auxiliary fronted, F1 and F2 converted into each other,
+  a clause word inserted, the question mark dropped, doubled, spaced or preceded by a bad character, a wh-word or a
+  conclusion marker) is read by both, and the status, the code the outcome fixes, the asked form, sentence and
+  formula, and the rephrasings must agree. An outcome the reference cannot decide as Lean does is excluded with its
+  reason (a candidate's work budget, a lexical refusal other than spacing or a bad character); the exclusions are
+  counted and bounded.
+* **Three evaluators.** Every formula Lean reads a question as is checked by Rust's kernel (`check`) and evaluated on
+  seeded models of its vocabulary by Python's evaluator, by Lean's metered evaluator (`ve_metered`, called directly:
+  the public `ve.evaluate` keeps Python's authority) and by Rust (`evaluate-budgeted`); the three values must agree.
+
+The comparison can fail: a reference reader without the moved-word rule, or with the outcome order changed, gives
+disagreements on the fixtures (`test_the_comparison_can_fail`).
+"""
+from __future__ import annotations
+
+import json
+import os
+import random
+
+import pytest
+
+import question_fixtures as F
+import question_reference as R
+from ve.backends import relay
+from ve.english import EnglishVocabulary
+
+pytestmark = pytest.mark.filterwarnings("ignore::ve.english.UnreviewedVocabularyWarning")
+
+MODE = "english.question"
+SEED = 20261009
+# F-LFv3's vocabulary is refused before any question is read (G23); every other frame is compared.
+FRAMES = [frame for frame in dict.fromkeys(row[1] for row in F.FIXTURES) if frame != "F-LFv3"]
+DETERMINERS = ("every", "some", "no", "a", "an")
+# The CI sample: every 1-fault mutant on the frames whose questions are short (G, FD), a seeded sample on A and U,
+# whose questions have many candidates; Ar, Ac and Ad have A's vocabulary (spec 7.4), so only their fixtures run.
+# `VE_QUESTION_DIFF_DEEP=1` runs every mutant of every frame (about 2,100 inputs, a few minutes).
+DEEP = os.environ.get("VE_QUESTION_DIFF_DEEP") == "1"
+ONE_FAULTS = {"G": None, "FD": None, "A": 12, "U": 12, "Ar": 0, "Ac": 0, "Ad": 0}
+TWO_FAULTS = {"G": 3, "FD": 3, "A": 1, "U": 1, "Ar": 0, "Ac": 0, "Ad": 0}
+MAX_EXCLUDED = 0.05     # the share of inputs the reference may exclude
+MODELS = 6              # seeded models per reading
+
+
+def one_faults(question: str) -> list[str]:
+    """The 1-fault mutants of a question (the module docstring lists the kinds)."""
+    out = []
+    core = question[:-1] if question.endswith("?") else question
+    words = core.split(" ")
+    join = lambda ws: " ".join(ws) + "?"
+    for i in range(1, len(words)):
+        out.append(join(words[:i] + words[i + 1:]))
+        out.append(join(words[:i + 1] + words[i:]))
+        if i + 1 < len(words):
+            out.append(join(words[:i] + [words[i + 1], words[i]] + words[i + 2:]))
+        for clause in R.CLAUSE_WORDS[:2]:
+            out.append(join(words[:i] + [clause] + words[i:]))
+    for i, word in enumerate(words):
+        if word.lower() in DETERMINERS:
+            for other in DETERMINERS:
+                if other != word.lower():
+                    out.append(join(words[:i] + [R.capitalise(other) if i == 0 else other] + words[i + 1:]))
+    if words[0].lower() in R.AUXILIARIES:
+        for aux in R.AUXILIARIES:
+            if aux != words[0].lower():
+                out.append(join([R.capitalise(aux)] + words[1:]))
+    sh = R.shape(question)
+    if sh[0] == "caseThat":
+        body = sh[1].split(" ")
+        out.extend(join([R.capitalise(w)] + body[:i] + body[i + 1:]) for i, w in enumerate(body) if w in R.AUXILIARIES)
+    for c in R.candidates(question):
+        if c.form == "fronted":
+            out.append(f"{R.CASE_FRAME}{c.sentence[:-1]}?")
+            # the auxiliary fronted again from every other place of the sentence it is put back into
+            ws = c.sentence[:-1].split(" ")
+            out.extend(join([R.capitalise(w)] + ws[:i] + ws[i + 1:]) for i, w in enumerate(ws) if w == c.aux and i)
+    out += [core, core + "??", core + " ?", core + "!?", core + ".", core[:1].lower() + core[1:] + "?",
+            join(["Who"] + words[1:]), join(words[:1] + ["therefore"] + words[1:])]
+    return [q for q in dict.fromkeys(out) if q != question and q.strip()]
+
+
+def corpus() -> list[tuple[str, str, str]]:
+    """(frame, kind, question): every fixture question, its 1-fault mutants and seeded 2-fault mutants."""
+    rng = random.Random(SEED)
+    rows = []
+    for fixture, frame, question, _ in F.FIXTURES:
+        if frame not in FRAMES or len(question) > 200:
+            continue
+        rows.append((frame, "zero-fault", question))
+        ones = one_faults(question)
+        cap = None if DEEP else ONE_FAULTS.get(frame)
+        rows += [(frame, "one-fault", q) for q in (ones if cap is None else rng.sample(ones, min(cap, len(ones))))]
+        for q in rng.sample(ones, min(3 if DEEP else TWO_FAULTS.get(frame, 1), len(ones))):
+            twos = one_faults(q)
+            if twos:
+                rows.append((frame, "two-fault", rng.choice(twos)))
+    return list(dict.fromkeys(rows))
+
+
+@pytest.fixture(scope="module")
+def readers():
+    out = {}
+    for frame in FRAMES:
+        env = F.environment(frame)
+        out[frame] = R.Reader(env, EnglishVocabulary(env, _defer_overlay_refusals=True))
+    return out
+
+
+def lean_results(rows) -> list[dict]:
+    cases = []
+    for frame, _, question in rows:
+        case = F.request(frame, question)
+        cases.append(case)
+    answered = relay.rows(MODE, cases)
+    assert len(answered) == len(cases)
+    out = []
+    for row in answered:
+        assert row.get("status") == "ok", row
+        out.append(row["result"])
+    return out
+
+
+def compare(rows, readers, reference=None):
+    """(agreements, disagreements, exclusions) of Lean and the reference reader over `rows`."""
+    results = lean_results(rows)
+    agree, differ, excluded = [], [], []
+    for (frame, kind, question), result in zip(rows, results, strict=True):
+        ours = (readers[frame] if reference is None else reference(frame)).ask(question)
+        if ours["status"] == "excluded":
+            excluded.append((frame, question, ours["reason"], result["status"]))
+            continue
+        theirs = R.lean_view(result)
+        (agree if ours == theirs else differ).append((frame, kind, question, theirs, ours, result))
+    return agree, differ, excluded
+
+
+@pytest.fixture(scope="module")
+def compared(readers):
+    rows = corpus()
+    return rows, compare(rows, readers)
+
+
+def test_lean_and_the_reference_reader_agree(compared):
+    rows, (agree, differ, excluded) = compared
+    shown = [{"frame": f, "kind": k, "question": q, "lean": t, "python": o} for f, k, q, t, o, _ in differ[:8]]
+    assert not differ, json.dumps(shown, indent=1, ensure_ascii=False)
+    assert len(excluded) <= MAX_EXCLUDED * len(rows), excluded[:10]
+    # Not vacuous: every kind of mutant ran on every frame, and the comparison saw every outcome the mode has.
+    for frame in FRAMES:
+        kinds = ("zero-fault", "one-fault", "two-fault") if DEEP or ONE_FAULTS.get(frame) != 0 else ("zero-fault",)
+        for kind in kinds:
+            assert any(r[0] == frame and r[1] == kind for r in rows), (frame, kind)
+    statuses = {t["status"] for _, _, _, t, _, _ in agree}
+    assert statuses >= {"one", "moved", "none", "rejected", "notQuestion", "indefinite", "many"}, statuses
+    assert sum(1 for *_, t, _, _ in agree if t["status"] == "moved") >= 3
+
+
+def test_the_comparison_can_fail(readers, monkeypatch):
+    """Seeded faults in the reference reader each give a disagreement: the moved-word rule dropped, the rephrasing
+    filter dropped, `that` left out of the clause words, the indefinite rephrasings dropped, and the lexical
+    refusals checked out of position order. (Spec 7.8's order fault, a refused candidate put before one that reads,
+    has no input here: 195,759 random questions over G's vocabulary gave no question with both, and no vocabulary
+    the lexicon policy admits was found to give one; the proof of `readQuestion_complete` catches it, seeded bug 3
+    of the integration report.)"""
+    rows = [(frame, "zero-fault", question) for _, frame, question, _ in F.FIXTURES if frame in FRAMES]
+    rows.append(("G", "one-fault", "Is every member eligible! ?"))
+    original_read, original_fault = R.Reader.read_question, R.lexical_fault
+
+    def no_indefinite(self, question):
+        o = R.Reader.classify(self, question)
+        return o
+
+    def spacing_first(outside):
+        return "BadSpacing" if outside != outside.rstrip() else original_fault(outside)
+    faults = {
+        "no moved-word rule": (R.Reader, "moved_out", lambda self, c: False),
+        "no rephrasing filter": (R.Reader, "askable", lambda self, q: True),
+        "no indefinite rephrasings": (R.Reader, "read_question", no_indefinite),
+        "that is not a clause word": (R, "CLAUSE_WORDS", ("who", "which")),
+        "spacing before bad characters": (R, "lexical_fault", spacing_first),
+    }
+    for name, (owner, attribute, replacement) in faults.items():
+        with monkeypatch.context() as m:
+            m.setattr(owner, attribute, replacement)
+            fresh = {frame: R.Reader(r.env, r.words) for frame, r in readers.items()}
+            _, differ, _ = compare(rows, fresh, reference=lambda frame: fresh[frame])
+            assert differ, name
+    assert R.Reader.read_question is original_read
+
+
+# ------------------------------------------------------------------ the meaning, three ways
+
+def _models(env, rng, count):
+    """Seeded models of `env`'s vocabulary: each sort its constants and two more elements (a value sort such as
+    `$string` its constants only), each predicate a random table, a functional and total one a random function."""
+    from ve import FiniteModel
+    data = env.to_dict()["vocabulary"]
+    values = {e["sort"] for e in data["constants"].values() if e["sort"].startswith("$")} | {
+        s for e in data["predicates"].values() for s in e["arguments"] if s.startswith("$")}
+    out = []
+    for _ in range(count):
+        domains = {sort: [*(c for c, e in data["constants"].items() if e["sort"] == sort),
+                          *(() if sort in values else (f"{sort}_x", f"{sort}_y"))]
+                   for sort in [*data["sorts"], *sorted(values)]}
+        relations = {}
+        for name, entry in data["predicates"].items():
+            *keys, last = entry["arguments"]
+            tuples = [[]]
+            for sort in keys:
+                tuples = [t + [e] for t in tuples for e in domains.get(sort, [])]
+            if entry.get("functional") and entry.get("total"):
+                relations[name] = [t + [rng.choice(domains[last])] for t in tuples if domains.get(last)]
+            else:
+                relations[name] = [t + [e] for t in tuples for e in domains.get(last, []) if rng.random() < 0.5]
+        wire = {"complete": True, "domains": domains, "constants": {c: c for c in data["constants"]},
+                "relations": relations}
+        out.append((wire, FiniteModel.from_dict(env, wire)))
+    return out
+
+
+def test_python_lean_and_rust_evaluate_each_reading_alike(compared, readers):
+    from ve.ast import formula_from_data
+    from ve.backends import rust_jsonl
+    from ve.evaluate import _evaluate_lean, _evaluate_validated
+    from ve.limits import MAX_EVALUATIONS
+    _, (agree, _, _) = compared
+    readings = {}
+    for frame, _, _, theirs, _, result in agree:
+        if theirs["status"] == "one":
+            readings.setdefault((frame, json.dumps(result["ast"])), result["ast"])
+    rng = random.Random(SEED)
+    evaluated = {frame: 0 for frame in FRAMES}
+    for (frame, _), ast in sorted(readings.items()):
+        env = readers[frame].env
+        formula = formula_from_data(env, ast)
+        rust_env = rust_jsonl.rust_environment(env)
+        assert rust_jsonl.run({"id": "q", "kind": "check", "environment": rust_env, "ast": ast})["well_typed"] is True
+        for wire, model in _models(env, rng, MODELS):
+            python = _evaluate_validated((formula,), model, max_evaluations=MAX_EVALUATIONS).value
+            lean = _evaluate_lean(env, {"id": "q", "kind": "evaluate-budgeted", "model": model.to_dict(), "ast": [ast],
+                                        "max_evaluations": MAX_EVALUATIONS, "max_trace_nodes": 0,
+                                        "trace": False}).value
+            rust = rust_jsonl.run({"id": "q", "kind": "evaluate-budgeted", "environment": rust_env,
+                                   "model": wire, "ast": [ast]})
+            assert python == lean == rust["value"], (frame, ast, wire, python, lean, rust)
+            evaluated[frame] += 1
+    assert all(n >= MODELS for n in evaluated.values()) and sum(evaluated.values()) >= 100, evaluated
+
+
+def test_the_models_tell_readings_apart(readers):
+    """The value comparison can fail: on the seeded models, G1's and G3's readings (every member is eligible, every
+    member is verified) differ somewhere for each of the three evaluators."""
+    from ve.ast import formula_from_data
+    from ve.backends import rust_jsonl
+    from ve.evaluate import _evaluate_lean, _evaluate_validated
+    from ve.limits import MAX_EVALUATIONS
+    env = readers["G"].env
+    asts = [row[3]["ast"] for row in F.FIXTURES if row[0] in ("G1", "G3")]
+    rust_env = rust_jsonl.rust_environment(env)
+    differs = {"python": False, "lean": False, "rust": False}
+    for wire, model in _models(env, random.Random(SEED), MODELS):
+        values = {"python": [], "lean": [], "rust": []}
+        for ast in asts:
+            values["python"].append(_evaluate_validated((formula_from_data(env, ast),), model,
+                                                        max_evaluations=MAX_EVALUATIONS).value)
+            values["lean"].append(_evaluate_lean(env, {"id": "q", "kind": "evaluate-budgeted", "model": model.to_dict(),
+                                                       "ast": [ast], "max_evaluations": MAX_EVALUATIONS,
+                                                       "max_trace_nodes": 0, "trace": False}).value)
+            values["rust"].append(rust_jsonl.run({"id": "q", "kind": "evaluate-budgeted", "environment": rust_env,
+                                                  "model": wire, "ast": [ast]})["value"])
+        for name, (a, b) in values.items():
+            differs[name] |= a != b
+    assert all(differs.values()), differs

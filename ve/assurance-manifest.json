@@ -3777,7 +3777,11 @@
         "tests/test_question_lean_relay.py::test_question_response_must_bind_the_request",
         "tests/test_question_lean_relay.py::test_question_refusal_text_is_preserved",
         "tests/test_question_reading.py::test_a_gated_environment_never_returns_a_reading",
-        "tests/test_question_reading.py::test_the_cli_does_not_answer_without_reading"
+        "tests/test_question_reading.py::test_the_cli_does_not_answer_without_reading",
+        "tests/test_question_differential.py::test_lean_and_the_reference_reader_agree",
+        "tests/test_question_differential.py::test_the_comparison_can_fail",
+        "tests/test_question_differential.py::test_python_lean_and_rust_evaluate_each_reading_alike",
+        "tests/test_question_differential.py::test_the_models_tell_readings_apart"
       ],
       "trusted": [
         "lean:kernel",
@@ -3788,7 +3792,7 @@
       ],
       "notes": [
         "The relay ve.backends.english_lean:read_question asks the service through ve.backends.relay (not ve.backends.lean.run, so it has no lean_call_sites entry); it validates the answer's fields per status against Lean's exported contract (ve/question/codes.json, tools/question_codes.py) and the request identities, and raises the class Lean names with Lean's text.",
-        "Rust has no question reader: conformance is the spec's fixtures against Lean's #guards and against the live mode, not Python/Lean/Rust.",
+        "Two readers and three evaluators (tests/test_question_differential.py): Lean's reader against an independent Python reader written from the spec over Python's own English reader (tests/question_reference.py; test code, not a product path) on every fixture and its seeded 1- and 2-fault mutants; every formula Lean reads is checked by Rust's kernel and evaluated alike by Python's evaluator, Lean's metered evaluator and Rust on seeded models. Rust has no question reader.",
         "The budget class is the status `budget`, with the code QuestionTooLong (a size limit) or Budget (a candidate's work limit)."
       ]
     },
