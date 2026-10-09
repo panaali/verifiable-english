@@ -51,7 +51,8 @@ def lines(scope: dict, prefixes: tuple[str, ...], suffix: str) -> tuple[int, int
 
 def generated() -> str:
     scope, ab, fuzz = load("scope.json"), load("corpus-ab.json"), load("difffuzz-ab.json")
-    mutants, latency, gate = load("mutants.json"), load("latency.json"), load("gate.json")
+    mutants, latency = load("mutants.json"), load("latency.json")
+    gate = load("gate.json") if (EVIDENCE / "gate.json").exists() else None
     totals = ab["totals"]
     corpora: dict[str, dict] = {}
     for key, count in ab["records"].items():
@@ -91,6 +92,9 @@ def generated() -> str:
                    f"{row['median']['head']['wall_s']:.1f} s wall ({row['wall_ratio']:.3f}×), child CPU "
                    f"{row['child_cpu_ratio']:.3f}×; same output: {row['same_output']}; within budget: "
                    f"{row['within_budget']}.")
+    if gate is None:
+        out.append("Full gate: not yet recorded (`evidence/gate.json` is archived by the commit after the gate run).")
+        return "\n".join(out)
     counts = gate["counts"]
     out.append(f"Full gate at `{gate['commit_sha'][:8]}` (clean worktree: {not gate['dirty']}): {gate['status']}; "
                f"{counts['passed']:,} passed, {counts['skipped']} skipped, {counts['failed']} failed, "
@@ -115,9 +119,10 @@ def problems() -> list[str]:
     mutants = load("mutants.json")
     if len(mutants["mutants"]) < 3 or not all(r["caught"] for r in mutants["mutants"]):
         found.append("a seeded fault was not caught")
-    gate = load("gate.json")
-    if gate["status"] != "passed" or gate["dirty"] or gate["failures"]:
-        found.append("the saved full gate did not pass on a clean worktree")
+    if (EVIDENCE / "gate.json").exists():
+        gate = load("gate.json")
+        if gate["status"] != "passed" or gate["dirty"] or gate["failures"]:
+            found.append("the saved full gate did not pass on a clean worktree")
     return found
 
 
