@@ -265,7 +265,8 @@ def live_texts() -> dict:
 def test_a_gated_environment_never_returns_a_reading():
     """Review B1 (Fable): under an environment the core checker refuses as a whole (`ve-units@1`), every relay path
     that hands back a Lean reading raises the gate's refusal; `read_question` returned the unchecked formula. Each
-    path is listed here, so a new one must be added (english.read's reading, the question reader, `ve.ask.read`)."""
+    path is listed here, so a new one must be added: english.read's reading, and the question reader, which
+    `ve.ask.read` and the CLI call."""
     from conformance import english_lean_s3_fixtures as X
     from ve import Environment
     from ve.errors import UnsupportedProfile
