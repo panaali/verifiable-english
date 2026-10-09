@@ -18,4 +18,4 @@
 | 17 | spec | `tools/lean_statements.py`: no statement added, removed or changed. |
 | 20 | reports from evidence | `report.py` regenerates DELTA.md's block; `tests/test_b16b_evidence.py` checks it and the prose numbers. |
 | 21 | AGENT/HUMAN/EXTERNAL | REPORT.md, *Acceptance items*. |
-| 22 | hand-off | Full gate at `d1e2e234` in a clean worktree (`evidence/suite.json`); everything committed. |
+| 22 | hand-off | Full gate at `9003f240` in a clean worktree (`evidence/suite.json`); everything committed. |

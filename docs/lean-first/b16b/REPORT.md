@@ -19,15 +19,15 @@ and is checked by `tests/test_b16b_evidence.py`.
 
 ## Lines
 
-See the generated block of DELTA.md: Python under `ve/` has 10 lines deleted (replaced lines, no deleted
-decision site), Lean 39 lines added. **The planned ~900-line deletion is not done** (DELTA.md, *Deviation*): Lean
+See the generated block of DELTA.md: Python under `ve/` has 43 lines deleted and Lean 292 lines added across the
+captured commits. **The planned ~900-line deletion is not done** (DELTA.md, *Deviation*): Lean
 decides 2 of the 393 pilot documents, so Python's wrapper is still reached by almost every real document, through
 profiles 16a's mode refuses. A batch 16c that composes those routes, starting with `null` in the front matter, is
 proposed there.
 
 ## Gate 5.1
 
-1. **Suite.** `tools/gate.py` at `d1e2e234` in a clean worktree: passed, 12,451 passed, 7 allowed skips, 0 failed of 12,459 collected; Lean build and audit passed; Rust 37 passed (`evidence/suite.json`). Only this report and its evidence follow that commit.
+1. **Suite.** `tools/gate.py` at `9003f240` in a clean worktree: passed, 12,647 passed, 90 allowed skips, 0 failed of 12,738 collected; Lean build and audit passed; Rust 37 passed (`evidence/suite.json`). Only this report and its evidence follow that commit.
 2. **Corpus A/B.** 0 unlisted differences over all nine corpora; the listed ones are the environment, formula
    and admission decoders' texts and codes, which Lean now supplies for the documents it owns (DF-3 and DF-9,
    batches 12b and 13b), and pilot harness artifacts. No acceptance changed.
