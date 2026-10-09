@@ -12,7 +12,7 @@
       },
       {
         "additionalProperties": false,
-        "properties": {"id": true, "result": {"type": "object"}, "status": {"const": "ok"}},
+        "properties": {"id": true, "result": true, "status": {"const": "ok"}},
         "required": ["id", "status", "result"],
         "type": "object"
       }
