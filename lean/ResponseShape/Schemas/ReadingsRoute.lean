@@ -346,15 +346,18 @@ def verdicts_result : Shape :=
       ("budget", c "relayed as Lean gives it" []),
       ("units", c "relayed as Lean gives it" [])]]
 
+def verdicts_word : Shape :=
+  enumS ["CONFLICT-FREE", "CONFLICT", "UNKNOWN", "proved", "refuted", "model", "INCONSISTENT"]
+
 def verdicts_row : Shape :=
   c "Readings.Run.perChoiceJson: one compatible choice taking assumed, its rows and what Lean made of each piece of its evidence (maps keyed by the piece: accepted, its refusal, its shown model, its filled gaps)." [
     obj,
     .required ["choice", "conflict", "evidence", "errors", "shown", "gaps", "status_text"],
     closed [
       ("choice", ref "#/$defs/choice"),
-      ("conflict", str),
-      ("query", str),
-      ("premises", str),
+      ("conflict", verdicts_word),
+      ("query", verdicts_word),
+      ("premises", verdicts_word),
       ("evidence", n [obj, .object [] (some (.type ["boolean"]))]),
       ("errors", n [obj, .object [] (some str)]),
       ("shown", n [obj, .object [] (some (c "a shown model, the generator's complete model" []))]),

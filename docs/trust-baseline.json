@@ -4,7 +4,7 @@
   "K": 978,
   "S": 9475,
   "D": 12949,
-  "G": 24558,
+  "G": 24561,
   "C": 8185,
   "P": 66796,
   "T": 13238,
@@ -12,18 +12,18 @@
   "D[V]": 11830,
   "D[R]": 638,
   "D[I]": 481,
-  "G[V]": 23238,
+  "G[V]": 23241,
   "G[R]": 1096,
   "G[I]": 224,
   "tied": 171,
   "unclassified": 0,
-  "trusted": 45369,
-  "lines": 147616
+  "trusted": 45372,
+  "lines": 147619
  },
  "budget": {
   "K": 978,
   "S": 9475,
-  "V": 34916
+  "V": 34919
  },
  "signed": [],
  "history": [
@@ -229,6 +229,19 @@
     "K": 978,
     "S": 9475,
     "V": 34916
+   }
+  },
+  {
+   "change": "RD-3 closes the generated readings verdict status field and proves the encoder fits the one schema table",
+   "rebaselined_from": {
+    "K": 978,
+    "S": 9475,
+    "V": 34916
+   },
+   "to": {
+    "K": 978,
+    "S": 9475,
+    "V": 34919
    }
   }
  ],
@@ -4502,7 +4515,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 472,
+   "G": 475,
    "C": 0,
    "P": 0,
    "T": 0,
@@ -4510,13 +4523,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 472,
+   "G[V]": 475,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 472,
-   "lines": 481
+   "trusted": 475,
+   "lines": 484
   },
   "ResponseShape/Schemas/Reports.lean": {
    "K": 0,

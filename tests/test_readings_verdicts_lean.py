@@ -286,6 +286,14 @@ def test_a_row_for_a_choice_lean_did_not_list_is_unavailable(tmp_path):
         _check_answer(conflict, "conflict", [route.choice_json(c) for c in route.choices])
 
 
+def test_a_choice_result_outside_the_proved_schema_is_unavailable(tmp_path):
+    route, answer = _genuine_answer(tmp_path)
+    mutated = copy.deepcopy(answer)
+    mutated["per_choice"][0]["conflict"] = "NOT-A-RESULT"
+    with pytest.raises(CheckerUnavailable):
+        _check_answer(mutated, "query", [route.choice_json(c) for c in route.choices], exact=False)
+
+
 def test_a_plan_line_python_cannot_render_is_unavailable(tmp_path, monkeypatch):
     doc, route = loaded(tmp_path)
     answer = copy.deepcopy(route.query_answer(QUERY))

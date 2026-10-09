@@ -8802,6 +8802,7 @@
   "tests/test_readings_s2_python.py::test_uniform_precedence_catches_m8_leak_and_shape_rejects_m17",
   "tests/test_readings_s2_python.py::test_unsatisfiable_and_65_choice_boundary",
   "tests/test_readings_verdicts_lean.py::test_a_certificate_of_choice_0_supplied_as_choice_1s_is_never_all",
+  "tests/test_readings_verdicts_lean.py::test_a_choice_result_outside_the_proved_schema_is_unavailable",
   "tests/test_readings_verdicts_lean.py::test_a_mutated_verdicts_answer_is_unavailable[a line without its frame]",
   "tests/test_readings_verdicts_lean.py::test_a_mutated_verdicts_answer_is_unavailable[a line's model retyped]",
   "tests/test_readings_verdicts_lean.py::test_a_mutated_verdicts_answer_is_unavailable[a row named twice]",

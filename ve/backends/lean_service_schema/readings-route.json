@@ -877,12 +877,12 @@
       "additionalProperties": false,
       "properties": {
         "choice": {"$ref": "#/$defs/choice"},
-        "conflict": {"type": "string"},
+        "conflict": {"enum": ["CONFLICT-FREE", "CONFLICT", "UNKNOWN", "proved", "refuted", "model", "INCONSISTENT"]},
         "errors": {"additionalProperties": {"type": "string"}, "type": "object"},
         "evidence": {"additionalProperties": {"type": "boolean"}, "type": "object"},
         "gaps": {"additionalProperties": {"type": "array"}, "type": "object"},
-        "premises": {"type": "string"},
-        "query": {"type": "string"},
+        "premises": {"enum": ["CONFLICT-FREE", "CONFLICT", "UNKNOWN", "proved", "refuted", "model", "INCONSISTENT"]},
+        "query": {"enum": ["CONFLICT-FREE", "CONFLICT", "UNKNOWN", "proved", "refuted", "model", "INCONSISTENT"]},
         "shown": {
           "additionalProperties": {"$comment": "a shown model, the generator's complete model"},
           "type": "object"
