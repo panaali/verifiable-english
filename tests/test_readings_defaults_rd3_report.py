@@ -159,3 +159,17 @@ def test_round3_mutants_were_rejected_and_reported():
                 assert re.search(rf"^def {re.escape(name.split('[', 1)[0])}\(", (ROOT / path).read_text(), re.M)
             assert f"| {mutant['id']} | `{mutant['file']}` | {mutant['behavior']} | {len(mutant['failed'])} failed |" \
                 in report
+
+
+def test_round3_full_suite_record_matches_the_report():
+    """The saved suite record covers every collected test but the live smoke test, none failed, and the report states
+    its numbers."""
+    record = json.loads((HERE / "evidence/suite-round3.json").read_text())
+    totals = record["totals"]
+    assert totals["passed"] + totals["skipped"] + len(record["not_run_of_collection"]) == record["collected"]
+    assert set(totals) <= {"passed", "skipped"} and record["not_run_of_collection"] == ["tests/test_llm.py::test_live_smoke"]
+    assert totals["passed"] + totals["skipped"] == sum(sum(c["outcomes"].values()) for c in record["chunks"])
+    assert all(load < 32 for load in record["load_at_start"])
+    assert (f"{totals['passed']} passed, {totals['skipped']} skipped, 0 failed, of the gate's {record['collected']} collected "
+            f"tests") in (HERE / "DELTA.md").read_text()
+    assert f"final code head `{record['commit']}`" in (HERE / "DELTA.md").read_text()

@@ -108,6 +108,8 @@ The DRI ruled that `check_answer` checks only the schema and the binding to the 
 | P2 | `ve/readings_verdicts.py` | the client stops resolving labels against the request | 5 failed |
 | P3 | `ve/readings_verdicts.py` | a row's word stops naming the piece it rests on | 3 failed |
 
+- **Full suite on the final code head `04de5459`** (`evidence/suite-round3.json`): 12631 passed, 6 skipped, 0 failed, of the gate's 12638 collected tests (the live model smoke test deselected, as the gate does). It ran as the gate's pytest run (`-m "not live"`, its plugins and prebuilt checkers, the project venv on `PATH`), in five foreground chunks with `-n 16` on the clean committed worktree, each started below load 32. `tools/gate.py` itself was stopped at the 2-hour limit for background commands during its pytest stage, with no failure logged. `lake build` (847 jobs) and `lean/audit.py` (4918 theorems) passed on the same Lean sources. `cargo test` was not rerun, because no Rust file changed. The first chunk run found two pins left stale by this round, the assurance manifest's `VerdictsWire.lean` entry and the frozen source inventory; both were re-pinned (`9bbf166c`, `04de5459`) before the run recorded here.
+
 ## Acceptance and limits
 
 - **AGENT:** The RD-3 Lean statements, generated response contract, service fixtures, frozen inventories, A/B on available records, public S2a examples and paired route latency are checked by the evidence above.
