@@ -4561,6 +4561,51 @@
 'VE.Senses.document_line_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Senses.documentRequest_policy' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Senses.documentRequest_source' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Readings.Run.ProductReplay.K_all' depends on axioms: [propext, Quot.sound]
+'VE.Readings.Run.ProductReplay.at' depends on axioms: [propext, Quot.sound]
+'VE.Readings.Run.ProductReplay.k_at' depends on axioms: [propext, Quot.sound]
+'VE.Readings.Run.ProductReplay.rows_at' depends on axioms: [propext, Quot.sound]
+'VE.Readings.Run.ProductReplay.rows_length' depends on axioms: [propext, Quot.sound]
+'VE.Readings.Run.ProductReplay.sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Readings.Run.ProductReplay.soundBut' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Readings.Run.part_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Readings.Run.productReplay_rows' depends on axioms: [propext, Quot.sound]
+'VE.Readings.Run.readings_wire_product_all' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Readings.Run.readings_wire_product_conflict' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Readings.Run.readings_wire_product_conflict_free' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Readings.Run.readings_wire_product_model' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Readings.Run.readings_wire_product_none' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Readings.Run.readings_wire_product_some' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Readings.all_at' depends on axioms: [propext]
+'VE.Readings.conflictFreeK_of' depends on axioms: [propext, Quot.sound]
+'VE.Readings.exists_pointwise' depends on axioms: [propext]
+'VE.Readings.exists_product' depends on axioms: [propext]
+'VE.Readings.fixedDecided_iff' depends on axioms: [propext]
+'VE.Readings.foldK_all' depends on axioms: [propext, Quot.sound]
+'VE.Readings.foldK_all_under' depends on axioms: [propext, Quot.sound]
+'VE.Readings.foldK_conflict' depends on axioms: [propext, Quot.sound]
+'VE.Readings.foldK_conflict_free' depends on axioms: [propext, Quot.sound]
+'VE.Readings.foldK_consistent' depends on axioms: [propext, Quot.sound]
+'VE.Readings.foldK_none' depends on axioms: [propext, Quot.sound]
+'VE.Readings.foldK_none_under' depends on axioms: [propext, Quot.sound]
+'VE.Readings.foldK_some' depends on axioms: [propext, Quot.sound]
+'VE.Readings.foldK_some_under' depends on axioms: [propext, Quot.sound]
+'VE.Readings.free_of_rows' depends on axioms: [propext, Quot.sound]
+'VE.Readings.model_of_every' depends on axioms: [propext, Quot.sound]
+'VE.Readings.model_of_some' depends on axioms: [propext, Quot.sound]
+'VE.Readings.othersFree_spec' depends on axioms: [propext, Quot.sound]
+'VE.Readings.othersSettled_every' depends on axioms: [propext, Quot.sound]
+'VE.Readings.othersSettled_some' depends on axioms: [propext, Quot.sound]
+'VE.Readings.productConflict_conflict' does not depend on any axioms
+'VE.Readings.productConflict_free' does not depend on any axioms
+'VE.Readings.productPremises_model' does not depend on any axioms
+'VE.Readings.productQuery_all' depends on axioms: [propext]
+'VE.Readings.productQuery_none' depends on axioms: [propext]
+'VE.Readings.productQuery_some' depends on axioms: [propext]
+'VE.Readings.rowsSoundBut_of' depends on axioms: [propext, Quot.sound]
+'VE.Readings.rows_at' depends on axioms: [propext]
+'VE.Readings.setDecided_iff' depends on axioms: [propext, Quot.sound]
+'VE.Readings.takesAt_nil' does not depend on any axioms
 'ResponseShape.CaseCond.all_false_head' depends on axioms: [propext]
 'ResponseShape.CaseCond.all_false_tail' depends on axioms: [propext]
 'ResponseShape.CaseCond.all_true' depends on axioms: [propext]
@@ -4996,3 +5041,29 @@
 'ResponseShape.not_not_true' depends on axioms: [propext]
 'ResponseShape.setObjVal_mkObj' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.toOption_ok' does not depend on any axioms
+'ResponseShape.Encoders.ReadingsRoute.anyWord_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.componentJson_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.entryJson_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.othersReasonWord_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.othersReason_status' depends on axioms: [propext, Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.partRun_answer_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.productAnswer_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.productConflictWord_fits' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.productConflict_range' does not depend on any axioms
+'ResponseShape.Encoders.ReadingsRoute.productPremisesWord_fits' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.productResult_conflict_fits' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.productResult_premises_fits' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.productResult_query_fits' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.routeText_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.runProduct_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.ReadingsRoute.statusRows_fits' depends on axioms: [propext, Classical.choice, Quot.sound]

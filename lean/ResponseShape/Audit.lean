@@ -426,3 +426,21 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.not_not_true
 #print axioms ResponseShape.setObjVal_mkObj
 #print axioms ResponseShape.toOption_ok
+
+-- readings-defaults RD-4b: the component product and its proved response.
+#print axioms ResponseShape.Encoders.ReadingsRoute.anyWord_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.componentJson_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.entryJson_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.othersReasonWord_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.othersReason_status
+#print axioms ResponseShape.Encoders.ReadingsRoute.partRun_answer_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.productAnswer_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.productConflictWord_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.productConflict_range
+#print axioms ResponseShape.Encoders.ReadingsRoute.productPremisesWord_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.productResult_conflict_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.productResult_premises_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.productResult_query_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.routeText_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.runProduct_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.statusRows_fits
