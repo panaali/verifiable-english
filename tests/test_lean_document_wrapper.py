@@ -276,7 +276,7 @@ def test_json_nested_front_matter_matches_python(service):
     text = document("AB", [unit("a", [0, 2])]).replace('"units":', '"weights": [{"set": 1, "by": 2, "values": '
                                                          + deep + '}], "units":', 1)
     python, answer = both(service, text)
-    assert dw.verdict(python, answer) == "agree", (python, answer)
+    assert answer["text"] == "ResourceLimit: JSON depth exceeds 256", answer
 
 
 # ---------------------------------------------------------------- C1: Python's fault order

@@ -577,10 +577,10 @@
         "ResponseShape.Schemas.Norms.kind",
         "ResponseShape.Schemas.Norms.norms_path",
         "ResponseShape.Schemas.Norms.row",
-        "ResponseShape.Schemas.Norms.«norms-certificate»",
-        "ResponseShape.Schemas.Norms.«norms-conflict»",
-        "ResponseShape.Schemas.Norms.«norms-elaborate»",
-        "ResponseShape.Schemas.Norms.«norms-witness»"
+        "ResponseShape.Schemas.Norms.\u00abnorms-certificate\u00bb",
+        "ResponseShape.Schemas.Norms.\u00abnorms-conflict\u00bb",
+        "ResponseShape.Schemas.Norms.\u00abnorms-elaborate\u00bb",
+        "ResponseShape.Schemas.Norms.\u00abnorms-witness\u00bb"
       ]
     },
     "ResponseShape/Schemas/Order.lean": {
@@ -750,7 +750,7 @@
         "ResponseShape.Schemas.Route.label",
         "ResponseShape.Schemas.Route.ok",
         "ResponseShape.Schemas.Route.row",
-        "ResponseShape.Schemas.Route.«dependency-order»"
+        "ResponseShape.Schemas.Route.\u00abdependency-order\u00bb"
       ],
       "G[R]": [
         "ResponseShape.Schemas.Route.error"
@@ -1649,6 +1649,8 @@
       "D[I]": [
         "VE.CertificateWire.canonical",
         "VE.CertificateWire.digest",
+        "VE.CertificateWire.documentCanonical",
+        "VE.CertificateWire.documentDigest",
         "VE.CertificateWire.sha256"
       ],
       "G[V]": [
@@ -2623,7 +2625,7 @@
       "D[V]": [
         "VE.Discourse.Loader.Front",
         "VE.Discourse.Loader.Split",
-        "VE.Discourse.Loader.Unit₀",
+        "VE.Discourse.Loader.Unit\u2080",
         "VE.Discourse.Loader.activeOf",
         "VE.Discourse.Loader.allowedMetadata",
         "VE.Discourse.Loader.bodyOf",
@@ -5369,7 +5371,7 @@
         "VE.Readings.Examples.docK",
         "VE.Readings.Examples.exc",
         "VE.Readings.Examples.exceptX",
-        "VE.Readings.Examples.ex₂",
+        "VE.Readings.Examples.ex\u2082",
         "VE.Readings.Examples.fanCited",
         "VE.Readings.Examples.fanDefault",
         "VE.Readings.Examples.formulaSet",
@@ -5399,7 +5401,7 @@
         "VE.Readings.Examples.ow",
         "VE.Readings.Examples.phiEx",
         "VE.Readings.Examples.q0",
-        "VE.Readings.Examples.quiet₂",
+        "VE.Readings.Examples.quiet\u2082",
         "VE.Readings.Examples.regsK",
         "VE.Readings.Examples.rs1",
         "VE.Readings.Examples.rs15",
@@ -5415,8 +5417,8 @@
         "VE.Readings.Examples.unlabelled",
         "VE.Readings.Examples.users13",
         "VE.Readings.Examples.waiveX",
-        "VE.Readings.Examples.σ19",
-        "VE.Readings.Examples.σ21c"
+        "VE.Readings.Examples.\u03c319",
+        "VE.Readings.Examples.\u03c321c"
       ]
     },
     "VE/Readings/Force.lean": {
@@ -5575,15 +5577,15 @@
         "VE.Readings.RunExamples.tickValue",
         "VE.Readings.RunExamples.users12",
         "VE.Readings.RunExamples.users4",
-        "VE.Readings.RunExamples.σHelp",
-        "VE.Readings.RunExamples.σHelp12",
-        "VE.Readings.RunExamples.σK1",
-        "VE.Readings.RunExamples.σWrong",
-        "VE.Readings.RunExamples.σWrong12"
+        "VE.Readings.RunExamples.\u03c3Help",
+        "VE.Readings.RunExamples.\u03c3Help12",
+        "VE.Readings.RunExamples.\u03c3K1",
+        "VE.Readings.RunExamples.\u03c3Wrong",
+        "VE.Readings.RunExamples.\u03c3Wrong12"
       ],
       "G[I]": [
         "VE.Readings.RunExamples.tickValid",
-        "VE.Readings.RunExamples.σAvoid"
+        "VE.Readings.RunExamples.\u03c3Avoid"
       ]
     },
     "VE/Readings/Scan.lean": {
@@ -7909,6 +7911,7 @@
         "VE.Service.Document.fault",
         "VE.Service.Document.formulaDecoderTexts",
         "VE.Service.Document.formulaFault",
+        "VE.Service.Document.frontDepth",
         "VE.Service.Document.graphFault",
         "VE.Service.Document.legacyEnvelopeFault",
         "VE.Service.Document.pyR",
@@ -7930,6 +7933,9 @@
         "VE.Service.Document.reasons",
         "VE.Service.Document.runCaseReported",
         "VE.Service.Document.unitJson"
+      ],
+      "D[I]": [
+        "VE.Service.Document.documentId"
       ]
     },
     "VE/Service/EnglishRun.lean": {
