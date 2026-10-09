@@ -425,12 +425,12 @@ theorem runOne_fits (j : Json) (id kind : String) (environment document : Json) 
     | (simp only [VE.Route.Wire.ok]; fits using pair_fits)
 
 theorem componentRows (j : Json) (id kind : String) (parts : List (String × Json × Json)) :
-    OkP (fun rows => ∀ r ∈ rows, ∃ (name : String) (e d a : Json), r = componentRowOf kind name e d a ∧
+    OkP (fun rows => ∀ r ∈ rows, ∃ (name : String) (e d d' a : Json), r = componentRowOf kind name e d d' a ∧
       (kind = "readings-validate" → Fits j (skel% "readings-route.json#/$defs/validate") a) ∧
       (kind ≠ "readings-validate" → Fits j (skel% "readings-route.json#/$defs/elaborate") a))
       (parts.mapM (fun p => do
         let a ← if kind == "readings-validate" then validateOne id p.2.1 p.2.2 else elaborateOne j id p.2.1 p.2.2
-        pure (componentRowOf kind p.1 p.2.1 p.2.2 a))) := by
+        pure (componentRowOf kind p.1 p.2.1 p.2.2 p.2.2 a))) := by
   apply OkP.mapM
   intro p _
   by_cases hk : kind = "readings-validate"
@@ -438,12 +438,12 @@ theorem componentRows (j : Json) (id kind : String) (parts : List (String × Jso
     simp only [beq_self_eq_true, reduceIte]
     apply OkP.bind
     intro a ha
-    exact OkP.pure ⟨_, _, _, _, rfl, fun _ => validateOne_fits _ _ _ a ha, fun h => absurd rfl h⟩
+    exact OkP.pure ⟨_, _, _, _, _, rfl, fun _ => validateOne_fits _ _ _ a ha, fun h => absurd rfl h⟩
   · have : (kind == "readings-validate") = false := by simpa using hk
     simp only [this, Bool.false_eq_true, reduceIte]
     apply OkP.bind
     intro a ha
-    exact OkP.pure ⟨_, _, _, _, rfl, fun h => absurd h hk, fun _ => elaborateOne_fits _ _ _ _ a ha⟩
+    exact OkP.pure ⟨_, _, _, _, _, rfl, fun h => absurd h hk, fun _ => elaborateOne_fits _ _ _ _ a ha⟩
 
 /-- Per case of the split (`runComponents`), for `readings-validate` and `readings-elaborate`. -/
 theorem runComponents_fits (j : Json) (id kind : String) (parts : List (String × Json × Json))
@@ -458,14 +458,14 @@ theorem runComponents_fits (j : Json) (id kind : String) (parts : List (String �
   · rcases hv with rfl | rfl
     · simp only [VE.Route.Wire.ok]
       fits
-      obtain ⟨name, e, d, a, rfl, h1, _⟩ := hr _ ‹_›
+      obtain ⟨name, e, d, d', a, rfl, h1, _⟩ := hr _ ‹_›
       unfold componentRowOf componentRow
       simp only [String.reduceBEq, Bool.false_eq_true, if_false]
       fits
       exact h1 rfl
     · simp only [VE.Route.Wire.ok]
       fits
-      obtain ⟨name, e, d, a, rfl, _, h2⟩ := hr _ ‹_›
+      obtain ⟨name, e, d, d', a, rfl, _, h2⟩ := hr _ ‹_›
       unfold componentRowOf
       simp only [beq_self_eq_true, if_true]
       fits
@@ -518,28 +518,30 @@ theorem runAdmitted_elaborate_fits (j : Json) (id : String) (ready : ComponentAd
   | s2 b => simpa [runAdmitted, runS2] using elaborate_fits (req := j) id b
   | nd f => simpa [runAdmitted] using elaborateNDFilled_fits (req := j) id f
 
-theorem admittedComponentRows (j : Json) (id kind : String) (parts : List (String × Json × Json × ComponentAdmission))
+theorem admittedComponentRows (j : Json) (id kind : String)
+    (parts : List (String × Json × Json × Json × ComponentAdmission))
     (hv : kind = "readings-validate" ∨ kind = "readings-elaborate") :
-    OkP (fun rows => ∀ r ∈ rows, ∃ (name : String) (e d a : Json), r = componentRowOf kind name e d a ∧
+    OkP (fun rows => ∀ r ∈ rows, ∃ (name : String) (e d d' a : Json), r = componentRowOf kind name e d d' a ∧
       (kind = "readings-validate" → Fits j (skel% "readings-route.json#/$defs/validate") a) ∧
       (kind ≠ "readings-validate" → Fits j (skel% "readings-route.json#/$defs/elaborate") a))
-      (parts.mapM (fun p => do pure (componentRowOf kind p.1 p.2.1 p.2.2.1 (← runAdmitted j id kind p.2.2.2)))) := by
+      (parts.mapM (fun p =>
+        do pure (componentRowOf kind p.1 p.2.1 p.2.2.1 p.2.2.2.1 (← runAdmitted j id kind p.2.2.2.2)))) := by
   apply OkP.mapM
   intro p _
   by_cases hk : kind = "readings-validate"
   · subst hk
     apply OkP.bind
     intro a ha
-    exact OkP.pure ⟨_, _, _, _, rfl, fun _ => runAdmitted_validate_fits _ _ _ a ha, fun h => absurd rfl h⟩
+    exact OkP.pure ⟨_, _, _, _, _, rfl, fun _ => runAdmitted_validate_fits _ _ _ a ha, fun h => absurd rfl h⟩
   · apply OkP.bind
     intro a ha
-    exact OkP.pure ⟨_, _, _, _, rfl, fun h => absurd h hk, fun _ =>
+    exact OkP.pure ⟨_, _, _, _, _, rfl, fun h => absurd h hk, fun _ =>
       by have he : kind = "readings-elaborate" := hv.resolve_left hk
          subst he
          exact runAdmitted_elaborate_fits _ _ _ a ha⟩
 
 theorem runAdmittedComponents_fits (j : Json) (id kind : String)
-    (parts : List (String × Json × Json × ComponentAdmission)) (hK : KindRead "evaluate" j kind)
+    (parts : List (String × Json × Json × Json × ComponentAdmission)) (hK : KindRead "evaluate" j kind)
     (hv : kind = "readings-validate" ∨ kind = "readings-elaborate") :
     OkFits j Skeletons.readingsRoute (runAdmittedComponents j id kind parts) := by
   unfold runAdmittedComponents
@@ -551,14 +553,14 @@ theorem runAdmittedComponents_fits (j : Json) (id kind : String)
   · rcases hv with rfl | rfl
     · simp only [VE.Route.Wire.ok]
       fits
-      obtain ⟨name, e, d, a, rfl, h1, _⟩ := hr _ ‹_›
+      obtain ⟨name, e, d, d', a, rfl, h1, _⟩ := hr _ ‹_›
       unfold componentRowOf componentRow
       simp only [String.reduceBEq, Bool.false_eq_true, if_false]
       fits
       exact h1 rfl
     · simp only [VE.Route.Wire.ok]
       fits
-      obtain ⟨name, e, d, a, rfl, _, h2⟩ := hr _ ‹_›
+      obtain ⟨name, e, d, d', a, rfl, _, h2⟩ := hr _ ‹_›
       unfold componentRowOf
       simp only [beq_self_eq_true, if_true]
       fits

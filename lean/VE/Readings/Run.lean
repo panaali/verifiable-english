@@ -479,24 +479,26 @@ def admitChecked (kind : String) (environment document : Json) :
       return (fixedPart document, .nd (← admitNDFull (← admitS2 environment (fixedPart document))))
   return (document, ← admitComponent kind environment document)
 
-/-- Each case of the split admitted in source order: its name, environment, the document its kind reads and its
-    admission. -/
+/-- Each case of the split admitted in source order: its name, environment, document, the document its kind reads
+    (its checked part) and its admission. -/
 def admitComponents (kind : String) (parts : List (String × Json × Json)) :
-    Except String (List (String × Json × Json × ComponentAdmission)) :=
+    Except String (List (String × Json × Json × Json × ComponentAdmission)) :=
   parts.mapM (fun p => do
     let (d, a) ← if p.1 == "main" then admitChecked kind p.2.1 p.2.2 else pure (p.2.2, ← admitComponent kind p.2.1 p.2.2)
-    pure (p.1, p.2.1, d, a))
+    pure (p.1, p.2.1, p.2.2, d, a))
 
-/-- A case's row: its name and answer; for `readings-elaborate` also the case's environment and the document its
-    answer reads (readings-defaults RD-4b: a generator reads each case's own frame from Lean). -/
-def componentRowOf (kind name : String) (environment document answer : Json) : Json :=
+/-- A case's row: its name and answer; for `readings-elaborate` also the case's environment, its document and the
+    document its answer reads (readings-defaults RD-4b: a generator reads each case's own frame from Lean). -/
+def componentRowOf (kind name : String) (environment document checked answer : Json) : Json :=
   if kind == "readings-elaborate" then
-    Json.mkObj [("component", .str name), ("environment", environment), ("document", document), ("answer", answer)]
+    Json.mkObj [("component", .str name), ("environment", environment), ("document", document), ("checked", checked),
+      ("answer", answer)]
   else componentRow name answer
 
-def runAdmittedComponents (j : Json) (id kind : String) (parts : List (String × Json × Json × ComponentAdmission)) :
-    Except String Json := do
-  let rows ← parts.mapM (fun p => do pure (componentRowOf kind p.1 p.2.1 p.2.2.1 (← runAdmitted j id kind p.2.2.2)))
+def runAdmittedComponents (j : Json) (id kind : String)
+    (parts : List (String × Json × Json × Json × ComponentAdmission)) : Except String Json := do
+  let rows ← parts.mapM (fun p =>
+    do pure (componentRowOf kind p.1 p.2.1 p.2.2.1 p.2.2.2.1 (← runAdmitted j id kind p.2.2.2.2)))
   pure (VE.Route.Wire.ok id [("components", Json.arr rows.toArray)])
 
 /-- `readings-validate` or `readings-elaborate` per case of the split, `main` first (4.1 step 0): the first error
@@ -504,7 +506,7 @@ def runAdmittedComponents (j : Json) (id kind : String) (parts : List (String ×
 def runComponents (j : Json) (id kind : String) (parts : List (String × Json × Json)) : Except String Json := do
   let rows ← parts.mapM (fun p => do
     let a ← if kind == "readings-validate" then validateOne id p.2.1 p.2.2 else elaborateOne j id p.2.1 p.2.2
-    pure (componentRowOf kind p.1 p.2.1 p.2.2 a))
+    pure (componentRowOf kind p.1 p.2.1 p.2.2 p.2.2 a))
   pure (VE.Route.Wire.ok id [("components", Json.arr rows.toArray)])
 
 /-- Every readings kind first splits the case (readings-defaults.md 3, `splitCase`). A document without companion
@@ -527,7 +529,7 @@ def runCase (j : Json) : Except String Json := do
       return ← runAdmittedComponents j id kind ready
     let c := named.getD "main"
     match ready.find? (·.1 == c) with
-    | some p => return ← runAdmitted j id kind p.2.2.2
+    | some p => return ← runAdmitted j id kind p.2.2.2.2
     | none => throw (unknownComponent c)
   let c := named.getD "main"
   match parts.find? (·.1 == c) with
