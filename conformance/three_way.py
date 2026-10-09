@@ -3,7 +3,11 @@
 Each adapter runs one P0 case (`conformance/p0.py`) on one implementation and
 reduces its answer to a verdict: Python in process (`python_verdict`), Rust
 through `ve conformance` (`rust_request`, `rust_verdict`) and Lean through
-`ve_conformance route` (`lean_verdict`). Errors are reduced by `error_verdict`
+`ve_conformance route` (`lean_verdict`). Rust reads no source text and has no
+label or dependency-order route (batch 15b), so labels and dependency orders are
+compared between Python and Lean only; Rust evaluates a document through the
+`evaluate-budgeted` kind `ve/evaluate.py` sends, whose verdict is the document's
+value (every statement's value is compared between Python and Lean). Errors are reduced by `error_verdict`
 to the P0 contract's codes (`KNOWN`), whose texts the contract fixes; every
 other rejection is `rejected`. The reduction is the three-way test's contract
 only: each error verdict also keeps the implementation's own diagnostic code
@@ -49,6 +53,23 @@ def error_verdict(code, message, generator=None):
 
 
 # ---------------------------------------------------------------- Python
+
+# The dispatched operation behind each request kind that has one owner (`dispatch.SINGLE_OWNER`).
+KIND_OPERATIONS = {"search": "countermodel_search"}
+# Kinds whose Python answer reaches a single-owner operation inside a composition Python owns, so the
+# answer is Python's: the reason (tests/test_single_owner.py requires every kind reaching one to be listed
+# here or in KIND_OPERATIONS).
+KIND_COMPOSED = {"vacuity": "premise_status: a replayed contradiction first, a checked model next, else "
+                            "UNKNOWN; the search only proposes the model"}
+
+
+def python_owner(kind):
+    """The engine whose answer `python_verdict` gives for `kind`, when Python has no implementation of
+    its own (a bounded search is Rust's since lean-first batch 15b), else None. A differential compares
+    such an answer's value with recorded answers or another engine's check, never with that engine."""
+    from ve.backends.dispatch import SINGLE_OWNER
+    return SINGLE_OWNER.get(KIND_OPERATIONS.get(kind))
+
 
 def python_verdict(case):
     from ve import Environment, FiniteModel, evaluate
@@ -108,17 +129,20 @@ def python_verdict(case):
 
 # ---------------------------------------------------------------- Rust
 
+def rust_envelope(environment):
+    """A Rust case that decodes an environment and nothing else can fail: `true` typed over it."""
+    return {"kind": "check", "environment": environment, "ast": [["top"]]}
+
+
 def rust_request(case):
     """The Rust conformance input for a case, or None outside Rust scope."""
     kind, env = case["kind"], case["environment"]
     order = "order@0" in env.get("profiles", [])
     base = {"id": case["id"], "environment": env}
-    if kind in ("label", "dependency-order"):
-        return {**case}
-    if kind == "background":
+    if kind in ("label", "dependency-order", "background"):
         return None
     if kind == "evaluate":
-        return {**base, "model": case["model"], "ast": case["ast"]}
+        return {**base, "kind": "evaluate-budgeted", "model": case["model"], "ast": case["ast"]}
     if kind == "admission" or (order and kind != "countermodel"):
         return None
     if kind == "countermodel":
@@ -134,6 +158,72 @@ def rust_request(case):
     return None
 
 
+def _rust_evaluation(case):
+    """A statement-values evaluation the Rust checker read before batch 15b: an environment, a model
+    and a document, no kind but `evaluate` and no premises (an order@0 one is still the order route's
+    own case)."""
+    if type(case) is not dict or case.get("kind", "evaluate") != "evaluate" or "premises" in case \
+            or "conclusion" in case or "model" not in case or "ast" not in case:
+        return False
+    profiles = case["environment"].get("profiles") if type(case.get("environment")) is dict else None
+    return not (type(profiles) is list and "order@0" in profiles)
+
+
+def rust_evaluations(conformance, cases):
+    """`ve conformance` on `cases` (`conformance(batch)` gives a batch's rows), each statement-values
+    evaluation answered through Rust's `evaluate-budgeted` kind, the kind `ve/evaluate.py` sends.
+
+    Rust has no statement-values case since batch 15b. The whole document goes first, so its
+    diagnostics come in Rust's order (environment, document, model); a satisfied document has every
+    statement true. Otherwise each statement is evaluated on its own under the full budget, as the
+    removed case did: a statement that exhausts it makes the case `ResourceLimit`. The row is
+    `{id, status: "ok", values, value}` or Rust's error row."""
+    def budgeted(case, ast):
+        plain = {k: v for k, v in case.items() if k not in ("max_evaluations", "trace", "max_trace_nodes")}
+        return {**plain, "kind": "evaluate-budgeted", "ast": ast}
+
+    first = [budgeted(c, c["ast"]) if _rust_evaluation(c) else c for c in cases]
+    rows = conformance(first)
+    pending = [(i, statement) for i, (case, row) in enumerate(zip(cases, rows, strict=True))
+               if _rust_evaluation(case) and row.get("status") in ("Violated", "ResourceLimit")
+               for statement in case["ast"]]
+    # The statements go in batches no bigger than the first one (the checker reads at most 16 MiB).
+    limit, batches, size = len(json.dumps(first)), [[]], 0
+    for i, statement in pending:
+        request = budgeted(cases[i], [statement])
+        if batches[-1] and size + len(json.dumps(request)) > limit:
+            batches.append([])
+            size = 0
+        batches[-1].append(((i, statement), request))
+        size += len(json.dumps(request))
+    parts = {}
+    for batch in batches:
+        if batch:
+            answers = conformance([request for _, request in batch])
+            for ((i, _), _), answer in zip(batch, answers, strict=True):
+                parts.setdefault(i, []).append(answer)
+    out = []
+    for i, (case, row) in enumerate(zip(cases, rows)):
+        if not _rust_evaluation(case) or row.get("status") == "error":
+            out.append(row)
+            continue
+        answers = parts.get(i, [{"status": "Satisfied", "value": True}] * len(case["ast"]))
+        failed = next((a for a in answers if a.get("status") not in ("Satisfied", "Violated")), None)
+        if failed is not None:
+            out.append(failed if failed.get("status") == "error" else
+                       {"id": row["id"], "status": "error",
+                        "error": {"code": "ResourceLimit", "message": "evaluation budget exhausted"}})
+            continue
+        values = [a["value"] for a in answers]
+        out.append({"id": row["id"], "status": "ok", "values": values, "value": all(values)})
+    return out
+
+
+def run_rust_evaluations(executable, cases):
+    """`rust_evaluations` through `ve conformance` itself (exit status 0 or 1)."""
+    return rust_evaluations(lambda batch: run([str(executable), "conformance"], batch), cases)
+
+
 def rust_verdict(case, result):
     kind = case["kind"]
     if result.get("status") == "error":
@@ -145,12 +235,10 @@ def rust_verdict(case, result):
         suffix = re.search(r"\((literals|definitions|flags|profile)\)$", error["message"])
         generator = generator or (suffix[1] if suffix else None)
         return error_verdict(error["code"], error["message"], generator)
-    if kind == "label":
-        return {"status": "ok", "label": result["label"]}
-    if kind == "dependency-order":
-        return {"status": "ok", "order": result["order"]}
     if kind == "evaluate":
-        return {"status": "ok", "values": result["values"]}
+        if result["status"] == "ResourceLimit":
+            return error_verdict("ResourceLimit", "ResourceLimit: evaluation budget exhausted")
+        return {"status": "ok", "value": result["value"]}
     if kind == "countermodel":
         return {"status": "ok", "refutes": result["valid"]}
     if kind == "search":

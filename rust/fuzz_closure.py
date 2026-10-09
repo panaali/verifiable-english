@@ -3,6 +3,8 @@
 Every pair contains Reach. Cases mix random typed bodies with directed graph
 motifs and forced captures/nesting. JSONL replay and greedy failure reduction
 stay under rust/target; no expected values are consumed by the Rust evaluator.
+Rust reads no source text and prints no identities: each case goes to its
+`evaluate-budgeted` kind, as `ve/evaluate.py` sends it.
 """
 from __future__ import annotations
 
@@ -19,11 +21,10 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from conformance.fuzz import mismatch, reduce_failure
-from ve import Environment, FiniteModel, evaluate, print_document
+from ve import Environment, FiniteModel, evaluate
 from ve.ast import (And, Binary, Body, Bottom, Const, Document, Eq, Exists,
                     Forall, Implies, Named, Not, Or, Reach, Top, Unary, Var,
                     document_to_data)
-from ve.identity import meaning_id
 
 
 def generate(count=3000, seed=20260924):
@@ -111,10 +112,8 @@ def generate(count=3000, seed=20260924):
         doc = Document((f,))
         value = evaluate(env, f, model, trace=False).value
         assert type(value) is bool, (i, 'Python exhausted')
-        yield {'id': f'closure_fuzz_{seed}_{i}', 'environment': env.to_dict(), 'model': model.to_dict(),
-               'ast': document_to_data(env, doc), 'source': print_document(env, doc), 'expected': [value],
-               'expected_identity': {'environment_id': env.environment_id, 'model_id': model.model_id,
-                   'meaning_id': meaning_id(env, doc), 'formula_meaning_ids': [meaning_id(env, f)]}}
+        yield {'id': f'closure_fuzz_{seed}_{i}', 'kind': 'evaluate-budgeted', 'environment': env.to_dict(),
+               'model': model.to_dict(), 'ast': document_to_data(env, doc), 'expected': [value]}
 
 
 def features(case):
@@ -149,11 +148,10 @@ def run(executable, count, seed, output, summary_path=None):
             failure = output.with_name('closure-fuzz-minimal.json')
             failure.write_text(json.dumps(reduce_failure(case, executable), indent=2) + '\n')
             raise AssertionError(f'Disagreement: {case["id"]}; reduced replay: {failure}')
-        assert {k: result[k] for k in case['expected_identity']} == case['expected_identity'], case['id']
     assert process.returncode == 0, process.stderr
     fs = [features(c) for c in cases]
     assert all(f['reach'] for f in fs)
-    summary = {'seed': seed, 'cases': count, 'agreements': count, 'identity_agreements': count,
+    summary = {'seed': seed, 'cases': count, 'agreements': count,
         'true': sum(c['expected'][0] for c in cases), 'false': sum(not c['expected'][0] for c in cases),
         'empty_domain_cases': sum(any(not d for d in c['model']['domains'].values()) for c in cases),
         'body_cases': sum(bool(f['body']) for f in fs), 'nested_cases': sum(f['nested'] for f in fs),

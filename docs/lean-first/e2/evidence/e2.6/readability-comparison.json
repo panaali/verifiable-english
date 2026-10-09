@@ -1,0 +1,20 @@
+{
+  "base_commit": "9aaf918d538a35e63d64a7c5abc86bbcfbb87472",
+  "format": "ve-e2.6-readability-comparison@1",
+  "lean_reading_items": [
+    "R23",
+    "R24",
+    "R25",
+    "R29",
+    "R30"
+  ],
+  "reading_differences": [],
+  "reading_items": 30,
+  "reading_unavailable": [],
+  "regression": false,
+  "writing_attempts": 36,
+  "writing_message_changes": 6,
+  "writing_outcome_changes": 0,
+  "writing_preserved_changes": 6,
+  "writing_regressions": []
+}

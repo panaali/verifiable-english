@@ -65,8 +65,9 @@ def act_only_sentence(first_act, second_act):
 
 
 def outcome_pair_sentence(situation, witness, other, role, subject_name, value,
-                          *, other_admissible, other_value=None):
-    """E19. `other_value` is present only after a single checked evaluation."""
+                          *, other_admissible, other_value=None, gaps=""):
+    """E19. `other_value` is present only after a single checked evaluation. `gaps` are the shown situation's
+    filled-gap sentences under the unspecified completion (readings-defaults 2.2), each after the situation."""
     first = f"Under {witness}, {outcome_sentence(role, value, subject_name)}."
     if not other_admissible:
         second = f"Under {other}, this situation is ruled out, whatever is decided."
@@ -74,12 +75,12 @@ def outcome_pair_sentence(situation, witness, other, role, subject_name, value,
         second = f"Under {other}, {outcome_sentence(role, other_value, subject_name)}."
     else:
         second = f"Under {other} that is not so, whatever is decided."
-    return f"These two readings differ here: {situation}. {first} {second}"
+    return f"These two readings differ here: {situation}.{gaps} {first} {second}"
 
 
-def assertion_pair_sentence(situation, true_reading, false_reading):
+def assertion_pair_sentence(situation, true_reading, false_reading, *, gaps=""):
     """E21 is only for two assertion candidates with checked opposite values."""
-    return (f"These two readings differ here: {situation}. Under {true_reading}, "
+    return (f"These two readings differ here: {situation}.{gaps} Under {true_reading}, "
             f"the sentence is true there. Under {false_reading}, it is false there.")
 
 

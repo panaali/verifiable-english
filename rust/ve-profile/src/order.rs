@@ -543,232 +543,6 @@ fn print_formula(f: &Value, names: &[String], counter: &mut usize) -> String {
     }
 }
 
-struct Parser<'a> {
-    source: &'a str,
-    pos: usize,
-    names: Vec<String>,
-    env: &'a Environment,
-}
-impl Parser<'_> {
-    fn at(&self, s: &str) -> bool {
-        self.source[self.pos..].starts_with(s)
-    }
-    fn eat(&mut self, s: &str) -> bool {
-        if self.at(s) {
-            self.pos += s.len();
-            true
-        } else {
-            false
-        }
-    }
-    fn expect(&mut self, s: &str) -> Result<()> {
-        if self.eat(s) {
-            Ok(())
-        } else {
-            error("SyntaxError", format!("expected {s:?}"))
-        }
-    }
-    fn ident(&mut self) -> Result<String> {
-        let start = self.pos;
-        let bytes = self.source.as_bytes();
-        if !bytes.get(start).is_some_and(u8::is_ascii_lowercase) {
-            return error("SyntaxError", "identifier expected");
-        }
-        self.pos += 1;
-        while bytes
-            .get(self.pos)
-            .is_some_and(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || *b == b'_')
-        {
-            self.pos += 1;
-        }
-        if self.pos - start > 64 {
-            return error("ResourceLimit", "identifier length");
-        }
-        Ok(self.source[start..self.pos].into())
-    }
-    fn numeral(&mut self) -> Result<String> {
-        let start = self.pos;
-        self.eat("-");
-        while self
-            .source
-            .as_bytes()
-            .get(self.pos)
-            .is_some_and(u8::is_ascii_digit)
-        {
-            self.pos += 1;
-        }
-        let text = &self.source[start..self.pos];
-        decimal(&json!(text))?;
-        Ok(text.into())
-    }
-    fn term(&mut self, fuel: usize) -> Result<Value> {
-        if fuel == 0 {
-            return error("ResourceLimit", "term depth");
-        }
-        let first = self.source.as_bytes().get(self.pos).copied();
-        if first.is_some_and(|b| b.is_ascii_digit())
-            || (first == Some(b'-')
-                && self
-                    .source
-                    .as_bytes()
-                    .get(self.pos + 1)
-                    .is_some_and(u8::is_ascii_digit))
-        {
-            return Ok(json!(["num", self.numeral()?]));
-        }
-        if self.eat("-") {
-            return Ok(json!(["scale", "-1", self.term(fuel - 1)?]));
-        }
-        if self.eat("[") {
-            let left = self.term(fuel - 1)?;
-            if self.eat(" * ") {
-                if tag(&left)?.0 != "num" {
-                    return error("SyntaxError", "integer coefficient required");
-                }
-                let right = self.term(fuel - 1)?;
-                self.expect("]")?;
-                return Ok(json!(["scale", left[1], right]));
-            }
-            if self.eat(" + ") {
-                let right = self.term(fuel - 1)?;
-                self.expect("]")?;
-                return Ok(json!(["add", left, right]));
-            }
-            self.expect(" - ")?;
-            let right = self.term(fuel - 1)?;
-            self.expect("]")?;
-            return Ok(json!(["add", left, ["scale", "-1", right]]));
-        }
-        if self.eat("@") {
-            return Ok(json!(["const", self.ident()?]));
-        }
-        let name = self.ident()?;
-        let i = self
-            .names
-            .iter()
-            .rev()
-            .position(|x| x == &name)
-            .ok_or_else(|| Error::new("UnboundVariable", "unbound variable"))?;
-        Ok(json!(["var", i]))
-    }
-    fn keyword(&self, word: &str) -> bool {
-        self.at(word)
-            && !self
-                .source
-                .as_bytes()
-                .get(self.pos + word.len())
-                .is_some_and(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || *b == b'_')
-    }
-    fn formula(&mut self, depth: usize) -> Result<Value> {
-        if depth > 64 {
-            return error("ResourceLimit", "formula depth");
-        }
-        if self.keyword("true") {
-            self.pos += 4;
-            return Ok(json!(["top"]));
-        }
-        if self.keyword("false") {
-            self.pos += 5;
-            return Ok(json!(["bottom"]));
-        }
-        if self.eat("not (") {
-            let body = self.formula(depth + 1)?;
-            self.expect(")")?;
-            return Ok(json!(["not", body]));
-        }
-        if self.eat("if (") {
-            let left = self.formula(depth + 1)?;
-            self.expect("), then (")?;
-            let right = self.formula(depth + 1)?;
-            self.expect(")")?;
-            return Ok(json!(["implies", left, right]));
-        }
-        if self.at("for every ") || self.at("there exists ") {
-            let universal = self.eat("for every ");
-            if !universal {
-                self.expect("there exists ")?;
-            }
-            let sort = self.ident()?;
-            if !self.env.sorts().contains(&sort) {
-                return error("UnknownSymbol", "unknown binder sort");
-            }
-            self.expect(" ")?;
-            let name = self.ident()?;
-            if ve_kernel::internal::RESERVED.contains(&name.as_str())
-                || self.env.schema_name(&name)
-                || self.names.contains(&name)
-            {
-                return error("SyntaxError", "invalid binder name");
-            }
-            self.expect(", (")?;
-            self.names.push(name);
-            let body = self.formula(depth + 1)?;
-            self.names.pop();
-            self.expect(")")?;
-            return Ok(json!([
-                if universal { "forall" } else { "exists" },
-                sort,
-                body
-            ]));
-        }
-        if self.eat("(") {
-            let left = self.formula(depth + 1)?;
-            let op = if self.eat(") and (") {
-                "and"
-            } else {
-                self.expect(") or (")?;
-                "or"
-            };
-            let right = self.formula(depth + 1)?;
-            self.expect(")")?;
-            return Ok(json!([op, left, right]));
-        }
-        let left = self.term(64)?;
-        if self.eat(" equals ") {
-            return Ok(json!(["eq", left, self.term(64)?]));
-        }
-        if self.eat(" <= ") {
-            return Ok(json!(["le", left, self.term(64)?]));
-        }
-        if self.eat(" < ") {
-            return Ok(json!(["lt", left, self.term(64)?]));
-        }
-        if self.eat(" is ") {
-            return Ok(json!(["unary", self.ident()?, left]));
-        }
-        self.expect(" ")?;
-        let predicate = self.ident()?;
-        self.expect(" ")?;
-        Ok(json!(["binary", predicate, left, self.term(64)?]))
-    }
-    fn document(&mut self) -> Result<Value> {
-        let mut formulas = Vec::new();
-        while self.pos < self.source.len() {
-            formulas.push(self.formula(1)?);
-            self.expect(".\n")?;
-        }
-        if formulas.is_empty() {
-            return error("SyntaxError", "empty document");
-        }
-        Ok(Value::Array(formulas))
-    }
-}
-fn parse_source(env: &Environment, source: &str) -> Result<Value> {
-    if source.len() > ve_kernel::MAX_SOURCE_BYTES {
-        return error("ResourceLimit", "source limit");
-    }
-    if !source.is_ascii() {
-        return error("SyntaxError", "ASCII order source required");
-    }
-    Parser {
-        env,
-        source,
-        pos: 0,
-        names: Vec::new(),
-    }
-    .document()
-}
-
 /// Rust's order route accepts checked ASTs and supplied finite models. It does
 /// not consume proofs; sound certification is provided by Lean's order route.
 pub fn order_case(v: &Value) -> Result<Value> {
@@ -925,23 +699,11 @@ pub fn order_case(v: &Value) -> Result<Value> {
             "Rust order route supports evaluation and supplied countermodel checking only",
         );
     }
-    let parsed = v
-        .get("source")
-        .map(|source| {
-            source
-                .as_str()
-                .ok_or_else(|| Error::new("SyntaxError", "source must be text"))
-                .and_then(|source| parse_source(&env, source))
-        })
-        .transpose()?;
-    let ast = match (v.get("ast"), parsed.as_ref()) {
-        (Some(ast), Some(parsed)) if ast != parsed => {
-            return error("TypeMismatch", "source/AST mismatch");
-        }
-        (Some(ast), _) => ast,
-        (None, Some(parsed)) => parsed,
-        (None, None) => return error("InvalidInput", "source or AST required"),
-    };
+    // Rust reads no source text (docs/LEAN-FIRST-PLAN.md, batch 15b): Python parses.
+    if v.get("source").is_some() {
+        return error("InvalidInput", "Rust reads no source text; send the AST");
+    }
+    let ast = v.get("ast").ok_or_else(|| Error::new("InvalidInput", "AST required"))?;
     let formulas = array(ast)?;
     if formulas.is_empty() {
         return error("SyntaxError", "empty document");
@@ -1435,4 +1197,26 @@ fn order_countermodel_check(env: &Environment, v: &Value) -> Result<Value> {
         "environment_id":env.environment_id(),"model_id":model_id(env, &model)?,"status":status,
         "premise_meaning_ids":premises.iter().map(meaning).collect::<Result<Vec<_>>>()?,
         "conclusion_meaning_id":meaning(conclusion)?}))
+}
+
+/// Measurement only (lean-first batch 15b): the candidates `order_search` examines, in its
+/// order, without evaluating them. The formulas, guard and used relations are `order_search`'s.
+#[cfg(feature = "bench-internals")]
+#[doc(hidden)]
+pub fn order_candidates(v: &Value, visit: &mut dyn FnMut(Value) -> Result<bool>) -> Result<()> {
+    let env = Environment::from_value(v.get("environment")
+        .ok_or_else(|| Error::new("InvalidInput", "environment missing"))?)?;
+    let premises = array(v.get("premises").ok_or_else(|| Error::new("InvalidInput", "premises missing"))?)?;
+    let mut formulas: Vec<&Value> = premises.iter().chain(v.get("conclusion")).collect();
+    formulas.extend(v.get("nonvacuous_for"));
+    let maximum = usize::try_from(number(v, "max_domain_size", 2)?)
+        .map_err(|_| Error::new("ResourceLimit", "domain bound overflow"))?;
+    let minimum = usize::try_from(number(v, "min_domain_size", 0)?)
+        .map_err(|_| Error::new("ResourceLimit", "minimum domain bound overflow"))?
+        .max(usize::from(v.get("nonempty_domains") == Some(&json!(true))));
+    let mut used = BTreeSet::new();
+    for f in &formulas {
+        used_predicates(f, &mut used);
+    }
+    order_models(&env, &formulas, minimum, maximum, &used, &mut |model| visit(model.canonical))
 }

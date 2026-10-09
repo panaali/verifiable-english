@@ -179,6 +179,7 @@ module VE.English.Statements
 module VE.EnglishGrammar.Actions
 module VE.EnglishGrammar.Advice
 module VE.EnglishGrammar.Catalogue
+module VE.EnglishGrammar.Diagnose
 module VE.EnglishGrammar.E2Examples
 module VE.EnglishGrammar.Encode
 module VE.EnglishGrammar.EngineExamples
@@ -209,6 +210,7 @@ module VE.EvaluationCounts
 module VE.Finite
 module VE.Grammar.Basic
 module VE.Grammar.Derives
+module VE.Grammar.Expect
 module VE.Grammar.Extension
 module VE.Grammar.Meaning
 module VE.Grammar.Reading
@@ -286,6 +288,8 @@ module VE.Readings.ChoiceFacts
 module VE.Readings.ChoiceTyped
 module VE.Readings.ChoiceValid
 module VE.Readings.ChoiceWF
+module VE.Readings.Companions
+module VE.Readings.CompanionsExamples
 module VE.Readings.Doc
 module VE.Readings.Examples
 module VE.Readings.Faithful
@@ -750,6 +754,8 @@ VE.Readings.SupExtraExamples.X1Checks@VE.Readings.SupExtraExamples
 VE.Readings.Transfers@VE.Readings.SupExtra
 VE.Readings.Twin@VE.Readings.Force
 VE.Readings.TwinDocs@VE.Readings.Force
+VE.Readings.Wire.Distinct@VE.Readings.Companions
+VE.Readings.Wire.TermsDistinct@VE.Readings.Companions
 VE.Readings.bitOn@VE.Readings.Superpose
 VE.Readings.tablesOf@VE.Readings.Separate
 VE.Readings.tablesRel@VE.Readings.Force

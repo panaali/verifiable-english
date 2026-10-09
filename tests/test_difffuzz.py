@@ -618,14 +618,17 @@ def test_runner_output_that_is_not_unicode_text_does_not_answer(monkeypatch, whe
     """The looprecheck2 B reproducer: on an invalid-label request, runner stdout with the JSON escape `\\ud800`
     in Rust's `error.code` (or `error.message`) passed decoding and validation, then crashed the fuzzer
     (`UnicodeEncodeError` in `digest`). A lone surrogate anywhere in a runner's output (a value, a key, an ok
-    row) is output that is not text: the case's runner did not answer, and the fuzzer goes on."""
+    row) is output that is not text: the case's runner did not answer, and the fuzzer goes on. Rust has no
+    label route since lean-first batch 15b, so the request is an evaluation, which both runners answer."""
     make = SURROGATE_OUTPUTS[where]
     _fake_runner(monkeypatch, lambda cases: (
         1 if "error" in make(cases[0]) else 0, json.dumps([make(c) for c in cases])))
     assert "\\ud" in json.dumps([make({"id": "0"})])  # the escape, as a runner prints it
     [row] = df.run_rows(["runner"], [{"id": "0"}])
     assert type(row) is df.NoAnswer and "Unicode" in row.reason, row
-    seed, root = _invalid_label()
+    seed = next(s for s in df.Requests().seeds()
+                if s.meta["kind"] == "evaluate" and {"lean", "rust"} <= set(s.engines))
+    root = seed.root
     surface = df.Requests()
     [(found, projected, answers, signature)] = df.evaluate(surface, [(seed, root)])
     assert answers["rust"]["outcome"] == "panic" and answers["lean"]["outcome"] == "panic", answers

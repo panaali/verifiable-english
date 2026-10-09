@@ -160,8 +160,9 @@ theorem choice_fits (lower : List String → Json → Json) (id : String) (b : W
 
 theorem elaborateND_fits (id : String) (r : Wire.AdmittedND) :
     OkFits req (skel% "readings-route.json#/$defs/elaborate") (runElaborateND id r) := by
-  unfold runElaborateND
+  unfold runElaborateND runElaborateNDWith
   okfits
+  simp only [List.append_nil]
   exact elaborateFields_fits _ _ _ _
 
 theorem choiceND_fits (id : String) (r : Wire.AdmittedND) (j : Json) :
@@ -181,6 +182,22 @@ theorem filled_fits (r : Wire.AdmittedND) :
   unfold Wire.filledJson
   okfits
   fits
+
+theorem elaborateNDFilled_fits (id : String) (f : Wire.AdmittedNDFull) :
+    OkFits req (skel% "readings-route.json#/$defs/elaborate") (runElaborateNDFilled id f) := by
+  unfold runElaborateNDFilled runElaborateNDWith
+  okfits
+  rename_i extra hextra
+  cases hf : Wire.filledJson f.r with
+  | error e => simp only [hf, bind, Except.bind] at hextra; cases hextra
+  | ok fl =>
+    simp only [hf, bind, Except.bind, pure, Except.pure, Except.ok.injEq] at hextra
+    subst hextra
+    simp only [okWith, VE.Route.Wire.ok, elaborateFields]
+    split <;> (try simp only [choicesJson]) <;> (try split) <;>
+      simp only [List.cons_append, List.nil_append, vocabularyJson, slotJson, sizesJson]
+    all_goals fits
+    all_goals exact filled_fits _ _ hf
 
 theorem validateND_fits (id : String) (f : Wire.AdmittedNDFull) :
     OkFits req (skel% "readings-route.json#/$defs/validate") (runValidateND id f) := by
@@ -235,21 +252,196 @@ theorem runS2ND_fits (lower : List String → Json → Json) (id kind : String) 
     | skip
   all_goals (try kind_norm)
   all_goals first
-    | (intro v hv; fits_from elaborateND_fits _ _ v hv)
+    | (intro v hv; fits_from elaborateNDFilled_fits _ _ v hv)
     | (intro v hv; fits_from choiceND_fits _ _ _ v hv)
     | (intro v hv; fits_from deadAnswer_fits _ _ _ v hv)
+
+theorem validateOne_fits (id : String) (environment document : Json) :
+    OkFits req (skel% "readings-route.json#/$defs/validate") (validateOne id environment document) := by
+  unfold validateOne
+  okfits
+  all_goals first
+    | fits_from validate_fits _ _ _ ‹_›
+    | (intro v hv; fits_from validateND_fits _ _ v hv)
+
+theorem elaborateOne_fits (j : Json) (id : String) (environment document : Json) :
+    OkFits req (skel% "readings-route.json#/$defs/elaborate") (elaborateOne j id environment document) := by
+  unfold elaborateOne runS2ND runS2
+  okfits
+  all_goals (try simp only [String.reduceEq, Bool.false_eq_true, String.reduceBEq] at *)
+  all_goals okfits
+  all_goals first
+    | (intro v hv; fits_from elaborate_fits _ _ v hv)
+    | (intro v hv; fits_from elaborateNDFilled_fits _ _ v hv)
+    | exact elaborate_fits _ _
+    | exact elaborateND_fits _ _
+
+/-- One case of the split (`runOne`): the runners of `runCase` before the split, on the case's environment and
+    document. -/
+theorem runOne_fits (j : Json) (id kind : String) (environment document : Json) (hK : KindRead "evaluate" j kind) :
+    OkFits j Skeletons.readingsRoute (runOne j id kind environment document) := by
+  have hK0 := hK
+  unfold runOne
+  rcases hK with hK | ⟨hK, hd⟩
+  all_goals (try subst hd)
+  all_goals okfits
+  all_goals (try kind_norm)
+  all_goals first
+    | exact runS2ND_fits _ _ _ _ _ hK0
+    | (intro v hv; fits_from validateOne_fits _ _ _ v hv)
+    | (intro v hv; fits_from separateND_fits _ _ _ v hv)
+    | (simp only [VE.Route.Wire.ok]; fits using pair_fits)
+
+theorem componentRows (j : Json) (id kind : String) (parts : List (String × Json × Json)) :
+    OkP (fun rows => ∀ r ∈ rows, ∃ (name : String) (a : Json), r = componentRow name a ∧
+      (kind = "readings-validate" → Fits j (skel% "readings-route.json#/$defs/validate") a) ∧
+      (kind ≠ "readings-validate" → Fits j (skel% "readings-route.json#/$defs/elaborate") a))
+      (parts.mapM (fun p => do
+        let a ← if kind == "readings-validate" then validateOne id p.2.1 p.2.2 else elaborateOne j id p.2.1 p.2.2
+        pure (componentRow p.1 a))) := by
+  apply OkP.mapM
+  intro p _
+  by_cases hk : kind = "readings-validate"
+  · subst hk
+    simp only [beq_self_eq_true, reduceIte]
+    apply OkP.bind
+    intro a ha
+    exact OkP.pure ⟨_, _, rfl, fun _ => validateOne_fits _ _ _ a ha, fun h => absurd rfl h⟩
+  · have : (kind == "readings-validate") = false := by simpa using hk
+    simp only [this, Bool.false_eq_true, reduceIte]
+    apply OkP.bind
+    intro a ha
+    exact OkP.pure ⟨_, _, rfl, fun h => absurd h hk, fun _ => elaborateOne_fits _ _ _ _ a ha⟩
+
+/-- Per case of the split (`runComponents`), for `readings-validate` and `readings-elaborate`. -/
+theorem runComponents_fits (j : Json) (id kind : String) (parts : List (String × Json × Json))
+    (hK : KindRead "evaluate" j kind) (hv : kind = "readings-validate" ∨ kind = "readings-elaborate") :
+    OkFits j Skeletons.readingsRoute (runComponents j id kind parts) := by
+  unfold runComponents
+  apply OkP.bind
+  intro rows hrows
+  apply OkP.pure
+  have hr := componentRows j id kind parts rows hrows
+  rcases hK with hK | ⟨hK, hd⟩
+  · rcases hv with rfl | rfl
+    · simp only [VE.Route.Wire.ok]
+      fits
+      obtain ⟨name, a, rfl, h1, _⟩ := hr _ ‹_›
+      unfold componentRow
+      fits
+      exact h1 rfl
+    · simp only [VE.Route.Wire.ok]
+      fits
+      obtain ⟨name, a, rfl, _, h2⟩ := hr _ ‹_›
+      unfold componentRow
+      fits
+      exact h2 (by decide)
+  · subst hd
+    simp at hv
+
+theorem or_beq {k a b : String} (h : (k == a || k == b) = true) : k = a ∨ k = b := by simpa using h
+
+theorem runAdmitted_fits (j : Json) (id kind : String) (ready : ComponentAdmission)
+    (hK : KindRead "evaluate" j kind) : OkFits j Skeletons.readingsRoute (runAdmitted j id kind ready) := by
+  have hK0 := hK
+  unfold runAdmitted
+  rcases hK with hK | ⟨hK, hd⟩
+  all_goals (try subst hd)
+  all_goals (cases ready)
+  all_goals okfits
+  all_goals (try kind_norm)
+  all_goals first
+    | exact runS2_fits _ _ _ _ _ hK0
+    | fits_from validate_fits _ _ _ ‹_›
+    | (intro v hv; fits_from validateND_fits _ _ v hv)
+    | (intro v hv; fits_from separateND_fits _ _ _ v hv)
+    | (intro v hv; fits_from elaborateNDFilled_fits _ _ v hv)
+    | (intro v hv; fits_from choiceND_fits _ _ _ v hv)
+    | (intro v hv; fits_from deadAnswer_fits _ _ _ v hv)
+    | (simp only [VE.Route.Wire.ok]; fits using pair_fits)
+
+theorem runAdmitted_validate_fits (j : Json) (id : String) (ready : ComponentAdmission) :
+    OkFits j (skel% "readings-route.json#/$defs/validate")
+      (runAdmitted j id "readings-validate" ready) := by
+  cases ready with
+  | s1 a =>
+    simp only [runAdmitted, beq_self_eq_true, reduceIte]
+    okfits
+    exact validate_fits _ _ _ ‹_›
+  | s2 b =>
+    simp only [runAdmitted, beq_self_eq_true, reduceIte]
+    okfits
+    exact validate_fits _ _ _ ‹_›
+  | nd f =>
+    simpa [runAdmitted] using validateND_fits (req := j) id f
+
+theorem runAdmitted_elaborate_fits (j : Json) (id : String) (ready : ComponentAdmission) :
+    OkFits j (skel% "readings-route.json#/$defs/elaborate")
+      (runAdmitted j id "readings-elaborate" ready) := by
+  cases ready with
+  | s1 _ => simp [runAdmitted, OkFits, OkP]
+  | s2 b => simpa [runAdmitted, runS2] using elaborate_fits (req := j) id b
+  | nd f => simpa [runAdmitted] using elaborateNDFilled_fits (req := j) id f
+
+theorem admittedComponentRows (j : Json) (id kind : String) (parts : List (String × ComponentAdmission))
+    (hv : kind = "readings-validate" ∨ kind = "readings-elaborate") :
+    OkP (fun rows => ∀ r ∈ rows, ∃ (name : String) (a : Json), r = componentRow name a ∧
+      (kind = "readings-validate" → Fits j (skel% "readings-route.json#/$defs/validate") a) ∧
+      (kind ≠ "readings-validate" → Fits j (skel% "readings-route.json#/$defs/elaborate") a))
+      (parts.mapM (fun p => do pure (componentRow p.1 (← runAdmitted j id kind p.2)))) := by
+  apply OkP.mapM
+  intro p _
+  by_cases hk : kind = "readings-validate"
+  · subst hk
+    apply OkP.bind
+    intro a ha
+    exact OkP.pure ⟨_, _, rfl, fun _ => runAdmitted_validate_fits _ _ _ a ha, fun h => absurd rfl h⟩
+  · apply OkP.bind
+    intro a ha
+    exact OkP.pure ⟨_, _, rfl, fun h => absurd h hk, fun _ =>
+      by have he : kind = "readings-elaborate" := hv.resolve_left hk
+         subst he
+         exact runAdmitted_elaborate_fits _ _ _ a ha⟩
+
+theorem runAdmittedComponents_fits (j : Json) (id kind : String)
+    (parts : List (String × ComponentAdmission)) (hK : KindRead "evaluate" j kind)
+    (hv : kind = "readings-validate" ∨ kind = "readings-elaborate") :
+    OkFits j Skeletons.readingsRoute (runAdmittedComponents j id kind parts) := by
+  unfold runAdmittedComponents
+  apply OkP.bind
+  intro rows hrows
+  apply OkP.pure
+  have hr := admittedComponentRows j id kind parts hv rows hrows
+  rcases hK with hK | ⟨hK, hd⟩
+  · rcases hv with rfl | rfl
+    · simp only [VE.Route.Wire.ok]
+      fits
+      obtain ⟨name, a, rfl, h1, _⟩ := hr _ ‹_›
+      unfold componentRow
+      fits
+      exact h1 rfl
+    · simp only [VE.Route.Wire.ok]
+      fits
+      obtain ⟨name, a, rfl, _, h2⟩ := hr _ ‹_›
+      unfold componentRow
+      fits
+      exact h2 (by decide)
+  · subst hd
+    simp at hv
 
 theorem runCase_fits (j : Json) : OkFits j Skeletons.readingsRoute (runCase j) := by
   unfold runCase
   okfits
   all_goals read_kind
   all_goals first
-    | fits_from validate_fits _ _ _ ‹_›
-    | exact runS2ND_fits _ _ _ _ _ (KindRead.of_str ‹_›)
-    | exact runS2ND_fits _ _ _ _ _ (Or.inr ⟨‹_›, rfl⟩)
-    | (intro v hv; fits_from validateND_fits _ _ v hv)
-    | (intro v hv; fits_from separateND_fits _ _ _ v hv)
-    | (simp only [VE.Route.Wire.ok]; fits using pair_fits)
+    | exact runAdmitted_fits _ _ _ _ (KindRead.of_str ‹_›)
+    | exact runAdmitted_fits _ _ _ _ (Or.inr ⟨‹_›, rfl⟩)
+    | exact runAdmittedComponents_fits _ _ _ _ (KindRead.of_str ‹_›) (or_beq ‹_›)
+    | exact runAdmittedComponents_fits _ _ _ _ (Or.inr ⟨‹_›, rfl⟩) (or_beq ‹_›)
+    | exact runOne_fits _ _ _ _ _ (KindRead.of_str ‹_›)
+    | exact runOne_fits _ _ _ _ _ (Or.inr ⟨‹_›, rfl⟩)
+    | exact runComponents_fits _ _ _ _ (KindRead.of_str ‹_›) (or_beq ‹_›)
+    | exact runComponents_fits _ _ _ _ (Or.inr ⟨‹_›, rfl⟩) (or_beq ‹_›)
 
 /-! ## The lower routes
 

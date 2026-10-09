@@ -1,4 +1,5 @@
 import VE.NormDefaults.Wire
+import VE.Route.Flags
 
 /-! Witness, status and gap replays under `norm-defaults@0` (docs/spec/norm-defaults.md
 2.5, 3.1, 3.2 and 8): the evidence Python proposes, checked from raw JSON.
@@ -81,11 +82,31 @@ theorem baseModelU_valid (s : SourceU) (hs : s.profiled = true) (M : VE.FiniteMo
     obtain ⟨rfl, rfl⟩ := he
     exact envAt_fill_unsaid hu 0 hq
 
+/-! ## Admitting a supplied model -/
+
+/-- A supplied model of `v` that is semantically admissible and satisfies every `data@0`
+flag of the source. Every replay that reads a model goes through `admitModel`, and each
+replayed structure keeps the `flags` proof, so dropping the check does not compile. -/
+structure AdmittedModel (s : SourceU) (v : VE.Bridge.Vocabulary) where
+  data : VE.Bridge.ModelData
+  valid : data.valid v = true
+  flags : VE.Route.Flags.fastFlags data.toModel s.src.ne.rv.flags = true
+
+/-- The shared admission of a decoded model: `model is not semantically admissible`, then
+`InvalidModel(flags)` (Python `validate_background`: flags before definitions and literals). -/
+def admitModel (s : SourceU) (v : VE.Bridge.Vocabulary) (data : VE.Bridge.ModelData) :
+    Except String (AdmittedModel s v) :=
+  if hv : data.valid v = true then
+    if hf : VE.Route.Flags.fastFlags data.toModel s.src.ne.rv.flags = true then pure ⟨data, hv, hf⟩
+    else throw (VE.Route.Wire.invalidModel "flags")
+  else throw "model is not semantically admissible"
+
 /-! ## CONFLICT witnesses -/
 
 structure WitnessDataU (s : SourceU) where
   M : VE.FiniteModel VE.Bridge.Entity
   valid : M.Valid (envAt (fill s.U) 0)
+  flags : VE.Route.Flags.fastFlags M s.src.ne.rv.flags = true
   background : backgroundValid (fill s.U) M = true
   filled : (fillPremises s.U).all (fun φ => φ.eval M []) = true
   target : String × List String × VE.Formula
@@ -101,24 +122,23 @@ def witnessFromU (s : SourceU) (w : Json) : Except String (WitnessDataU s) := do
   if hs : s.profiled = true then
     let v := baseModelVocabularyU s
     let data ← VE.Bridge.decodeModelData v (← w.getObjVal? "model")
-    let M := data.toModel
     let name ← VE.Bridge.stringField w "target"
     let ids ← VE.Bridge.strings (← w.getObjVal? "tuple")
-    if hv : data.valid v = true then
-      if hb : backgroundValid (fill s.U) M = true then
-        if hf : (fillPremises s.U).all (fun φ => φ.eval M []) = true then
-          match hfind : (targets (fill s.U)).find? (·.1 == name) with
-          | none => throw s!"InvalidInput: unknown conflict target {name}"
-          | some t =>
-            let tuple := t.2.1.zip ids
-            if ht : ids.length == t.2.1.length && VE.Bridge.tupleCheck M t.2.1 tuple then
-              pure ⟨M, baseModelU_valid s hs M (VE.Bridge.modelData_valid data v hv), hb, hf, t,
-                List.mem_of_find?_eq_some hfind, tuple,
-                (VE.Bridge.tupleCheck_iff M _ _).mp (by simp only [Bool.and_eq_true] at ht; exact ht.2)⟩
-            else throw "InvalidInput: witness tuple has the wrong length or sort"
-        else throw (VE.Route.Wire.invalidModel "unsaid")
-      else throw (VE.Route.Wire.invalidModel "literals")
-    else throw "model is not semantically admissible"
+    let a ← admitModel s v data
+    let M := a.data.toModel
+    if hb : backgroundValid (fill s.U) M = true then
+      if hf : (fillPremises s.U).all (fun φ => φ.eval M []) = true then
+        match hfind : (targets (fill s.U)).find? (·.1 == name) with
+        | none => throw s!"InvalidInput: unknown conflict target {name}"
+        | some t =>
+          let tuple := t.2.1.zip ids
+          if ht : ids.length == t.2.1.length && VE.Bridge.tupleCheck M t.2.1 tuple then
+            pure ⟨M, baseModelU_valid s hs M (VE.Bridge.modelData_valid a.data v a.valid), a.flags, hb, hf, t,
+              List.mem_of_find?_eq_some hfind, tuple,
+              (VE.Bridge.tupleCheck_iff M _ _).mp (by simp only [Bool.and_eq_true] at ht; exact ht.2)⟩
+          else throw "InvalidInput: witness tuple has the wrong length or sort"
+      else throw (VE.Route.Wire.invalidModel "unsaid")
+    else throw (VE.Route.Wire.invalidModel "literals")
   else throw "UnsupportedProfile: filled witnesses require norm-defaults@0"
 
 def replayWitnessU (j : Json) : Except String ((s : SourceU) × WitnessDataU s) := do
@@ -207,6 +227,7 @@ structure StatusData (j : Json) where
   profiled : s.profiled = true
   M : VE.FiniteModel VE.Bridge.Entity
   valid : M.Valid (envAt s.U.D 0)
+  flags : VE.Route.Flags.fastFlags M s.src.ne.rv.flags = true
   background : backgroundValid s.U.D M = true
   r : Regulated
   mem : r ∈ s.U.D.T.regulated
@@ -225,56 +246,55 @@ def replayStatus (j : Json) : Except String (StatusData j) :=
     let hw := s.wfU hs
     let v := VE.Norms.Replay.baseModelVocabulary s.src.ne s.src.D
     let data ← VE.Bridge.decodeModelData v (← j.getObjVal? "model")
-    let M := data.toModel
     let name ← VE.Bridge.stringField j "predicate"
     let ids ← VE.Bridge.strings (← j.getObjVal? "tuple")
     let method ← VE.Bridge.stringField j "method"
-    if hv : data.valid v = true then
-      if hb : backgroundValid s.U.D M = true then
-        match hfind : s.U.D.T.regulated.find? (·.name == name) with
-        | none => throw s!"InvalidInput: unknown regulated predicate {name}"
-        | some r =>
-          let tuple := r.sorts.zip ids
-          if ht : ids.length == r.sorts.length && VE.Bridge.tupleCheck M r.sorts tuple then
-            have hvalid : M.Valid (envAt s.U.D 0) := by
-              rw [s.doc]
-              exact VE.Norms.Replay.baseModel_valid s.src.ne s.src.D s.src.env M (VE.Bridge.modelData_valid data v hv)
-            have hmem : r ∈ s.U.D.T.regulated := List.mem_of_find?_eq_some hfind
-            have htyped : VE.TupleTyped M.asStructure r.sorts tuple :=
-              (VE.Bridge.tupleCheck_iff M _ _).mp (by simp only [Bool.and_eq_true] at ht; exact ht.2)
-            let unknown : StatusData j := ⟨s, hs0, hs, M, hvalid, hb, r, hmem, tuple, htyped, .unknown,
-              (fun _ hb'' => by cases hb''), (fun hu => by cases hu)⟩
-            if method == "table3" then
-              match h3 : table3 s.U M r.name tuple with
-              | some b => pure ⟨s, hs0, hs, M, hvalid, hb, r, hmem, tuple, htyped, .settled b,
-                  (fun b' hb'' => by
-                    cases hb''
-                    exact settled_of_table3 s.U hw M hvalid hb r hmem tuple htyped b h3),
-                  (fun hu => by cases hu)⟩
-              | none => pure unknown
-            else if method == "enumerate" then
-              match he : enumerateSettled s.U M r.name tuple with
-              | some b => pure ⟨s, hs0, hs, M, hvalid, hb, r, hmem, tuple, htyped, .settled b,
-                  (fun b' hb'' => by
-                    cases hb''
-                    exact settled_of_enumeration s.U hw M hvalid hb r hmem tuple htyped b he),
-                  (fun hu => by cases hu)⟩
-              | none => pure unknown
-            else if method == "undecided" then
-              let F₁ ← decodeFilling s.U M (j.getObjValD "yes")
-              let F₂ ← decodeFilling s.U M (j.getObjValD "no")
-              if hc : fillValid s.U M F₁ = true ∧ fillValid s.U M F₂ = true ∧
-                  (outcomeBase (fill s.U) r.name).eval (M.withFill F₁) (tupleVal tuple) = true ∧
-                  (outcomeBase (fill s.U) r.name).eval (M.withFill F₂) (tupleVal tuple) = false then
-                pure ⟨s, hs0, hs, M, hvalid, hb, r, hmem, tuple, htyped, .undecided,
-                  (fun _ hb'' => by cases hb''),
-                  (fun _ => undecided_witness_sound s.U hw M hvalid hb F₁ F₂ hc.1 hc.2.1 r hmem tuple htyped
-                    hc.2.2.1 hc.2.2.2)⟩
-              else pure unknown
-            else throw s!"InvalidInput: unknown status method {method}"
-          else throw "InvalidInput: status tuple has the wrong length or sort"
-      else throw (VE.Route.Wire.invalidModel "literals")
-    else throw "model is not semantically admissible"
+    let a ← admitModel s v data
+    let M := a.data.toModel
+    if hb : backgroundValid s.U.D M = true then
+      match hfind : s.U.D.T.regulated.find? (·.name == name) with
+      | none => throw s!"InvalidInput: unknown regulated predicate {name}"
+      | some r =>
+        let tuple := r.sorts.zip ids
+        if ht : ids.length == r.sorts.length && VE.Bridge.tupleCheck M r.sorts tuple then
+          have hvalid : M.Valid (envAt s.U.D 0) := by
+            rw [s.doc]
+            exact VE.Norms.Replay.baseModel_valid s.src.ne s.src.D s.src.env M (VE.Bridge.modelData_valid a.data v a.valid)
+          have hmem : r ∈ s.U.D.T.regulated := List.mem_of_find?_eq_some hfind
+          have htyped : VE.TupleTyped M.asStructure r.sorts tuple :=
+            (VE.Bridge.tupleCheck_iff M _ _).mp (by simp only [Bool.and_eq_true] at ht; exact ht.2)
+          let unknown : StatusData j := ⟨s, hs0, hs, M, hvalid, a.flags, hb, r, hmem, tuple, htyped, .unknown,
+            (fun _ hb'' => by cases hb''), (fun hu => by cases hu)⟩
+          if method == "table3" then
+            match h3 : table3 s.U M r.name tuple with
+            | some b => pure ⟨s, hs0, hs, M, hvalid, a.flags, hb, r, hmem, tuple, htyped, .settled b,
+                (fun b' hb'' => by
+                  cases hb''
+                  exact settled_of_table3 s.U hw M hvalid hb r hmem tuple htyped b h3),
+                (fun hu => by cases hu)⟩
+            | none => pure unknown
+          else if method == "enumerate" then
+            match he : enumerateSettled s.U M r.name tuple with
+            | some b => pure ⟨s, hs0, hs, M, hvalid, a.flags, hb, r, hmem, tuple, htyped, .settled b,
+                (fun b' hb'' => by
+                  cases hb''
+                  exact settled_of_enumeration s.U hw M hvalid hb r hmem tuple htyped b he),
+                (fun hu => by cases hu)⟩
+            | none => pure unknown
+          else if method == "undecided" then
+            let F₁ ← decodeFilling s.U M (j.getObjValD "yes")
+            let F₂ ← decodeFilling s.U M (j.getObjValD "no")
+            if hc : fillValid s.U M F₁ = true ∧ fillValid s.U M F₂ = true ∧
+                (outcomeBase (fill s.U) r.name).eval (M.withFill F₁) (tupleVal tuple) = true ∧
+                (outcomeBase (fill s.U) r.name).eval (M.withFill F₂) (tupleVal tuple) = false then
+              pure ⟨s, hs0, hs, M, hvalid, a.flags, hb, r, hmem, tuple, htyped, .undecided,
+                (fun _ hb'' => by cases hb''),
+                (fun _ => undecided_witness_sound s.U hw M hvalid hb F₁ F₂ hc.1 hc.2.1 r hmem tuple htyped
+                  hc.2.2.1 hc.2.2.2)⟩
+            else pure unknown
+          else throw s!"InvalidInput: unknown status method {method}"
+        else throw "InvalidInput: status tuple has the wrong length or sort"
+    else throw (VE.Route.Wire.invalidModel "literals")
   else throw "UnsupportedProfile: statuses require norm-defaults@0"
 
 /-- `normDefaults_wire_status_sound`: a replayed SETTLED status is `SettledAs` and a
@@ -332,6 +352,7 @@ def replayGaps (j : Json) : Except String GapsReplay := do
 structure ReachedData (s : SourceU) where
   M : VE.FiniteModel VE.Bridge.Entity
   valid : M.Valid (envAt (fill s.U) 0)
+  flags : VE.Route.Flags.fastFlags M s.src.ne.rv.flags = true
   background : backgroundValid (fill s.U) M = true
   filled : (fillPremises s.U).all (fun φ => φ.eval M []) = true
   r : Regulated
@@ -349,24 +370,23 @@ def reachedFromU (s : SourceU) (name : Except String String) (w : Json) : Except
   if hs : s.profiled = true then
     let v := baseModelVocabularyU s
     let data ← VE.Bridge.decodeModelData v (← w.getObjVal? "model")
-    let M := data.toModel
     let name ← name
     let ids ← VE.Bridge.strings (← w.getObjVal? "tuple")
-    if hv : data.valid v = true then
-      if hb : backgroundValid (fill s.U) M = true then
-        if hf : (fillPremises s.U).all (fun φ => φ.eval M []) = true then
-          match hfind : s.U.D.T.regulated.find? (·.name == name) with
-          | none => throw s!"InvalidInput: unknown regulated predicate {name}"
-          | some r =>
-            let tuple := r.sorts.zip ids
-            if ht : ids.length == r.sorts.length && VE.Bridge.tupleCheck M r.sorts tuple then
-              pure ⟨M, baseModelU_valid s hs M (VE.Bridge.modelData_valid data v hv), hb, hf, r,
-                List.mem_of_find?_eq_some hfind, tuple,
-                (VE.Bridge.tupleCheck_iff M _ _).mp (by simp only [Bool.and_eq_true] at ht; exact ht.2)⟩
-            else throw "InvalidInput: tuple has the wrong length or sort"
-        else throw (VE.Route.Wire.invalidModel "unsaid")
-      else throw (VE.Route.Wire.invalidModel "literals")
-    else throw "model is not semantically admissible"
+    let a ← admitModel s v data
+    let M := a.data.toModel
+    if hb : backgroundValid (fill s.U) M = true then
+      if hf : (fillPremises s.U).all (fun φ => φ.eval M []) = true then
+        match hfind : s.U.D.T.regulated.find? (·.name == name) with
+        | none => throw s!"InvalidInput: unknown regulated predicate {name}"
+        | some r =>
+          let tuple := r.sorts.zip ids
+          if ht : ids.length == r.sorts.length && VE.Bridge.tupleCheck M r.sorts tuple then
+            pure ⟨M, baseModelU_valid s hs M (VE.Bridge.modelData_valid a.data v a.valid), a.flags, hb, hf, r,
+              List.mem_of_find?_eq_some hfind, tuple,
+              (VE.Bridge.tupleCheck_iff M _ _).mp (by simp only [Bool.and_eq_true] at ht; exact ht.2)⟩
+          else throw "InvalidInput: tuple has the wrong length or sort"
+      else throw (VE.Route.Wire.invalidModel "unsaid")
+    else throw (VE.Route.Wire.invalidModel "literals")
   else throw "UnsupportedProfile: filled models require norm-defaults@0"
 
 /-- Decode a filled model of `E‴_base` (checked against `Background_base` and `Fill_T`),

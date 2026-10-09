@@ -1,0 +1,172 @@
+[
+ {
+  "id": "S1",
+  "bug": "the relay no longer binds the readings Fill_T lists to the request",
+  "file": "ve/readings_route.py",
+  "failed": [
+   "tests/test_readings_nd_document.py::test_a_mutated_completion_answer_is_unavailable"
+  ],
+  "summary": "6 failed, 55 passed in 2.24s",
+  "failed_count": 6
+ },
+ {
+  "id": "S2",
+  "bug": "the completion's elaborate row relayed without binding its finding and choices",
+  "file": "ve/readings_route.py",
+  "failed": [
+   "tests/test_readings_nd_document.py::test_a_mutated_elaborate_row_is_unavailable"
+  ],
+  "summary": "7 failed, 54 passed in 1.99s",
+  "failed_count": 7
+ },
+ {
+  "id": "S3",
+  "bug": "the S1 frame under the profile built by Python from the request instead of Lean's filled environment",
+  "file": "ve/readings_s1.py",
+  "failed": [
+   "tests/test_readings_nd_document.py::test_fnd1_check_every_choice_conflict_free_with_a_model",
+   "tests/test_readings_nd_document.py::test_fnd1_load_relays_leans_route_and_filled_document",
+   "tests/test_readings_nd_document.py::test_fnd1_readings_conclusion_some",
+   "tests/test_readings_nd_document.py::test_fnd1_render_shows_the_situation_with_its_filled_gaps",
+   "tests/test_readings_nd_document.py::test_fnd2_check_conflict_under_one_reading_only",
+   "tests/test_readings_nd_document.py::test_fnd2_query_is_gated_by_the_conflict",
+   "tests/test_readings_nd_document.py::test_fnd2_render",
+   "tests/test_readings_nd_document.py::test_generator_finds_separations_from_leans_filled_document",
+   "tests/test_readings_nd_document.py::test_generator_witness_filter_reads_leans_fill_premises",
+   "tests/test_readings_s2_document.py::test_rd2b_completion_document_is_checked_not_refused",
+   "tests/test_readings_s2_document.py::test_ruling4_lean_frame_reads_unspecified_as_deny",
+   "tests/test_readings_s2_document.py::test_ruling4_rule_candidate_beside_norm_defaults_is_under_the_completion"
+  ],
+  "summary": "12 failed, 144 passed in 27.36s",
+  "failed_count": 12
+ },
+ {
+  "id": "S4",
+  "bug": "the search's witness filter without Lean's Fill_T",
+  "file": "ve/readings_s1.py",
+  "failed": [
+   "tests/test_readings_nd_document.py::test_generator_finds_separations_from_leans_filled_document"
+  ],
+  "summary": "1 failed, 60 passed in 2.04s",
+  "failed_count": 1
+ },
+ {
+  "id": "S5",
+  "bug": "the verdicts take only the first of Lean's compatible choices",
+  "file": "ve/readings_verdicts.py",
+  "failed": [
+   "tests/test_readings_nd_document.py::test_fnd1_check_every_choice_conflict_free_with_a_model",
+   "tests/test_readings_nd_document.py::test_fnd1_load_relays_leans_route_and_filled_document",
+   "tests/test_readings_nd_document.py::test_fnd1_readings_conclusion_some",
+   "tests/test_readings_nd_document.py::test_fnd2_check_conflict_under_one_reading_only"
+  ],
+  "summary": "4 failed, 57 passed in 1.91s",
+  "failed_count": 4
+ },
+ {
+  "id": "S6",
+  "bug": "a shown situation's filled gaps dropped from the S1 pair sentence",
+  "file": "ve/readings_route.py",
+  "failed": [
+   "tests/test_readings_nd_document.py::test_fnd1_render_shows_the_situation_with_its_filled_gaps",
+   "tests/test_readings_nd_document.py::test_fnd2_render"
+  ],
+  "summary": "2 failed, 59 passed in 2.07s",
+  "failed_count": 2
+ },
+ {
+  "id": "S7",
+  "bug": "conflict packages bound to the profile Background instead of Fill_T",
+  "file": "ve/readings_verdicts.py",
+  "failed": [
+   "tests/test_readings_nd_document.py::test_fnd1_check_every_choice_conflict_free_with_a_model",
+   "tests/test_readings_nd_document.py::test_fnd1_readings_conclusion_some",
+   "tests/test_readings_nd_document.py::test_fnd2_check_conflict_under_one_reading_only"
+  ],
+  "summary": "3 failed, 58 passed in 2.10s",
+  "failed_count": 3
+ },
+ {
+  "id": "S8",
+  "bug": "the <reading> slot names Lean's filled content instead of the authored one",
+  "file": "ve/readings_route.py",
+  "failed": [
+   "tests/test_readings_nd_document.py::test_fnd1_check_every_choice_conflict_free_with_a_model",
+   "tests/test_readings_nd_document.py::test_fnd1_readings_conclusion_some",
+   "tests/test_readings_nd_document.py::test_fnd1_render_shows_the_situation_with_its_filled_gaps",
+   "tests/test_readings_nd_document.py::test_fnd2_check_conflict_under_one_reading_only",
+   "tests/test_readings_nd_document.py::test_fnd2_render"
+  ],
+  "summary": "5 failed, 56 passed in 2.11s",
+  "note": "first seeded at candidate_sentence's content, where it survived (61 passed): for rule readings the batched rules, read from the authored content, decide the sentence; reseeded on the batch",
+  "failed_count": 5
+ },
+ {
+  "id": "S9",
+  "bug": "a filled table shown as a fact of the situation",
+  "file": "ve/readings_route.py",
+  "failed": [
+   "tests/test_readings_nd_document.py::test_fnd1_render_shows_the_situation_with_its_filled_gaps"
+  ],
+  "summary": "1 failed, 60 passed in 2.06s",
+  "failed_count": 1
+ },
+ {
+  "id": "S10",
+  "bug": "a choice's model sent with its filled tables in the base",
+  "file": "ve/readings_verdicts.py",
+  "failed": [
+   "tests/test_readings_nd_document.py::test_fnd1_check_every_choice_conflict_free_with_a_model",
+   "tests/test_readings_nd_document.py::test_fnd1_readings_conclusion_some",
+   "tests/test_readings_nd_document.py::test_fnd2_check_conflict_under_one_reading_only",
+   "tests/test_readings_nd_document.py::test_fnd2_query_is_gated_by_the_conflict"
+  ],
+  "summary": "4 failed, 57 passed in 1.97s",
+  "failed_count": 4
+ },
+ {
+  "id": "S11",
+  "bug": "the S2 situation shows filled tables as author facts",
+  "file": "ve/readings_s2_wording.py",
+  "failed": [
+   "tests/test_readings_nd_document.py::test_fnd2_check_conflict_under_one_reading_only"
+  ],
+  "summary": "1 failed, 60 passed in 2.01s",
+  "failed_count": 1
+ },
+ {
+  "id": "S12",
+  "bug": "readings-elaborate's completion row carries an empty fill_premises (Lean, runElaborateNDFilled; the schema-valid form: dropping `filled` is refused by elaborateNDFilled_fits at build time)",
+  "file": "lean/VE/Readings/UnspecifiedWire.lean",
+  "failed_count": 18,
+  "failed": [
+   "tests/test_readings_nd_document.py::test_genuine_completion_answers_are_relayed",
+   "tests/test_readings_nd_document.py::test_generator_finds_separations_from_leans_filled_document",
+   "tests/test_readings_s2_document.py::test_rd2a_review_b3_route_table_is_lean_s"
+  ],
+  "summary": "18 failed, 138 passed",
+  "binary": "6838c76d",
+  "restored_binary": "0cc52a47"
+ },
+ {
+  "id": "S13",
+  "bug": "a filled choice's conflict check falls back to CONFLICT-FREE when no package or witness is found (review B1)",
+  "file": "ve/readings_verdicts.py",
+  "failed": [
+   "tests/test_readings_budget_zero.py::test_budget_zero_check_says_unknown_for_every_choice",
+   "tests/test_readings_budget_zero.py::test_budget_zero_every_verdict_op_is_unknown"
+  ],
+  "summary": "4 failed, 76 passed in 7.87s",
+  "failed_count": 4
+ },
+ {
+  "id": "S14",
+  "bug": "a lower-route choice's conflict check falls back to CONFLICT-FREE when no package or witness is found (B1's class)",
+  "file": "ve/readings_verdicts.py",
+  "failed": [
+   "tests/test_readings_budget_zero.py::test_budget_zero_every_verdict_op_is_unknown"
+  ],
+  "summary": "2 failed, 78 passed in 7.81s",
+  "failed_count": 2
+ }
+]

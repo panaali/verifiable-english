@@ -4174,6 +4174,96 @@
   []
  ],
  [
+  "tests/test_soft_norms_lean.py::test_constant_wording_is_display_metadata_on_the_soft_route",
+  {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "norms@0",
+    "relational-fol@0",
+    "soft-norms@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "constants": {
+     "alice": {
+      "description": "a user",
+      "sort": "user",
+      "verbalisation": "Alice"
+     }
+    },
+    "predicates": {
+     "x_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do x",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "x_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do x",
+       "default": "deny",
+       "permission": "x_permitted",
+       "role": "obligation"
+      }
+     }
+    },
+    "soft": {
+     "outranking": {
+      "mode": "strict"
+     },
+     "outranks": [
+      [
+       "a",
+       "b"
+      ]
+     ],
+     "ranks": [
+      "a",
+      "b"
+     ]
+    },
+    "sorts": {
+     "assistant": {
+      "description": "assistant"
+     },
+     "user": {
+      "description": "user"
+     }
+    }
+   }
+  },
+  [
+   {
+    "norm": {
+     "exception": {
+      "decided_by": "assistant",
+      "factors": [],
+      "necessary": [],
+      "sufficient": []
+     },
+     "guard": [
+      "top"
+     ],
+     "mode": "default",
+     "name": "a",
+     "over": [],
+     "predicate": "x_required",
+     "sign": true,
+     "unless": []
+    }
+   }
+  ]
+ ],
+ [
   "tests/test_soft_norms_lean.py::test_eta_default_rule_with_unless_and_exception",
   {
    "language": "ve.core@0.2",

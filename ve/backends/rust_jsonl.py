@@ -255,19 +255,13 @@ def soft_case(env) -> dict:
 
 
 def rust_environment(env) -> dict:
-    """The environment of a Rust evaluation or search case: without the
-    `speech-acts@0` scope and the `rights@0` block, which declare no vocabulary
-    and constrain no model (their Lean routes check them). Rust answers carry
-    no environment identity; witnesses are validated over `env` itself."""
-    data = env.to_dict()
-    if "speech-acts@0" in env.profiles:
-        data = {**{key: value for key, value in data.items() if key != "speech_acts"},
-                "profiles": [p for p in data["profiles"] if p != "speech-acts@0"]}
-    if "rights@0" in env.profiles:
-        data = {**data, "vocabulary": {key: value for key, value in data["vocabulary"].items()
-                                       if key != "rights"},
-                "profiles": [p for p in data["profiles"] if p != "rights@0"]}
-    return data
+    """The environment of a Rust evaluation or search case: the model
+    environment (`profiles.model_environment`), without display text and
+    without what each statement-layer profile adds that no model reads (their
+    Lean routes and the English layer check those). Rust answers carry no
+    environment identity; witnesses are validated over `env` itself."""
+    from ..profiles import model_environment
+    return model_environment(env.to_dict())
 
 
 def cached_rust_environment(env) -> dict:

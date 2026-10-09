@@ -155,16 +155,21 @@ JSON_ADMISSIONS = ("VE.Readings.Wire.admitNDFullJ", "VE.Readings.Wire.admitND", 
 def test_the_route_admits_the_case_document_once(walks):
     """Review B2 (and C2): under the completion `readings-validate` and `readings-separate` ran `admitReadings`, then
     `admitNDFullJ`, whose `admitS2` admitted the author's document again, and `runS2ND` admitted it again through
-    `runS2` for a document with no content-bearing set. Now `runCase` admits each case once (S1's `admitReadings`,
-    continued by `admitS2Of` and `admitNDFull`, or `admitS2` for the S2a kinds) and every runner takes the admitted
-    document: no other function of the route calls an admission, and no JSON admission is reachable."""
+    `runS2` for a document with no content-bearing set. Now each case is admitted once (S1's `admitReadings`,
+    continued by `admitS2Of` and `admitNDFull`, or `admitS2` for the S2a kinds). With companion components,
+    `admitComponent` admits each part once before `runAdmitted` answers any of them; the answer path does not
+    admit again. No JSON admission is reachable."""
     edges = walks[ENTRY]
     # Calls of the admissions themselves (their compiled helpers, such as the unit-id check `admitS2Of` shares,
     # admit nothing).
     calling = {admit: {caller for caller, callees in edges.items() if admit in callees} for admit in ADMIT}
-    in_run_case = {n for n in edges if named_under(n, "VE.Readings.Run.runCase")}
+    in_run_case = {n for n in edges if any(named_under(n, f"VE.Readings.Run.{f}")
+                                           for f in ("runOne", "validateOne", "elaborateOne", "admitComponent"))}
+    assert not any(named_under(n, "VE.Readings.Run.runCase") for n in set().union(*calling.values()))
     assert calling[ADMIT[1]] and calling[ADMIT[1]] <= in_run_case, sorted(calling[ADMIT[1]])
     assert calling[ADMIT[0]] and calling[ADMIT[0]] <= in_run_case | {ADMIT[1]}, sorted(calling[ADMIT[0]])
+    assert not {n for n, callees in edges.items() if named_under(n, "VE.Readings.Run.runAdmitted")
+                and set(callees) & set(ADMIT)}
     assert [n for n in edges if any(named_under(n, f) for f in JSON_ADMISSIONS)] == []
     # `admitS2Of` continues an admission: it never admits S1 again.
     assert not ({c for n, cs in edges.items() if named_under(n, "VE.Readings.Wire.admitS2Of") for c in cs} & set(ADMIT))

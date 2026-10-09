@@ -198,6 +198,7 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.ReadingsRoute.deadAnswer_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.elaborateFields_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.elaborateND_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.elaborateNDFilled_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.fillPremises_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.filled_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.runS2ND_fits
@@ -205,6 +206,17 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.ReadingsRoute.setPairsWith_entries
 #print axioms ResponseShape.Encoders.ReadingsRoute.validateND_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.validateWith_rows
+#print axioms ResponseShape.Encoders.ReadingsRoute.validateOne_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.elaborateOne_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.runOne_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.componentRows
+#print axioms ResponseShape.Encoders.ReadingsRoute.runComponents_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.or_beq
+#print axioms ResponseShape.Encoders.ReadingsRoute.runAdmitted_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.runAdmitted_validate_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.runAdmitted_elaborate_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.admittedComponentRows
+#print axioms ResponseShape.Encoders.ReadingsRoute.runAdmittedComponents_fits
 #print axioms ResponseShape.Encoders.Reports.admission_fits
 #print axioms ResponseShape.Encoders.Reports.certificate_fits
 #print axioms ResponseShape.Encoders.Reports.content_fits
