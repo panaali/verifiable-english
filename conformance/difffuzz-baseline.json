@@ -2186,125 +2186,6 @@
    "minimised": false
   },
   {
-   "id": "environment-996535acb2977f50",
-   "surface": "environment",
-   "profile": "envelope",
-   "seed": "conformance/elaborated-document.json/10/environment",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {},
-   "mutation": [],
-   "input": {
-    "language": "ve.core@0.2",
-    "profiles": [
-     "relational-fol@0"
-    ],
-    "spec_revision": "ve-v0.2-expand2-2026-09-25",
-    "vocabulary": {
-     "sorts": {},
-     "predicates": {
-      "dept": {
-       "arguments": [
-        "$string"
-       ],
-       "description": "d"
-      }
-     },
-     "constants": {}
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "invalid signature: dept"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "invalid signature: dept"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "unknown predicate argument sort"
-    }
-   },
-   "signature": "996535acb2977f50",
-   "follow_up": "DF-9"
-  },
-  {
-   "id": "environment-166b6a5d0308d1be",
-   "surface": "environment",
-   "profile": "soft-norms",
-   "seed": "usecases/safety-framework/environment.d1.json",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {},
-   "mutation": [
-    [
-     "unicode",
-     [
-      "vocabulary",
-      "constants",
-      "cbrn_uplift_tcl",
-      "sort"
-     ],
-     "upper"
-    ]
-   ],
-   "input": {
-    "language": "ve.core@0.2",
-    "profiles": [
-     "norms@0",
-     "relational-fol@0",
-     "soft-norms@0"
-    ],
-    "spec_revision": "ve-v0.2-expand2-2026-09-25",
-    "vocabulary": {
-     "sorts": {},
-     "predicates": {},
-     "constants": {
-      "cyber": {
-       "sort": "d",
-       "description": "C"
-      }
-     }
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "unknown constant sort: cyber"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "unknown constant sort: cyber"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "unknown constant sort"
-    }
-   },
-   "signature": "166b6a5d0308d1be",
-   "follow_up": "DF-9"
-  },
-  {
    "id": "requests-0118b2cc107d0c39",
    "surface": "requests",
    "profile": "dependency-order:dependency-order",
@@ -32779,6 +32660,92 @@
    "follow_up": "DF-9"
   },
   {
+   "id": "requests-b3e5f5fa0d27de1b",
+   "surface": "requests",
+   "profile": "admission:admission",
+   "seed": "conformance/admission.json/14",
+   "engines": [
+    "python",
+    "lean"
+   ],
+   "meta": {
+    "kind": "admission",
+    "family": "core",
+    "lean": "route",
+    "rust": null
+   },
+   "mutation": [
+    [
+     "unicode",
+     [
+      "document",
+      "reading_sets",
+      0,
+      "readings",
+      0,
+      1
+     ],
+     "nbsp"
+    ]
+   ],
+   "input": {
+    "id": "conformance/admission.json/14",
+    "kind": "admission",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {},
+      "predicates": {},
+      "constants": {}
+     }
+    },
+    "document": {
+     "units": [],
+     "graph": {},
+     "reading_sets": [
+      {
+       "id": "s",
+       "version": 1,
+       "readings": [
+        [
+         "unary",
+         "i",
+         [
+          "const",
+          "a"
+         ]
+        ]
+       ]
+      }
+     ]
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "UnknownSymbol: Unknown predicate 'i'"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: ill-typed or unbound conclusion"
+    },
+    "rust": {
+     "outcome": "n/a"
+    }
+   },
+   "signature": "b3e5f5fa0d27de1b",
+   "follow_up": "DF-9"
+  },
+  {
    "id": "requests-b58a668305ab808b",
    "surface": "requests",
    "profile": "invalid-background-model:evaluate",
@@ -47364,6 +47331,208 @@
    "minimised": false
   },
   {
+   "id": "wire-93ad2ea4d583e105",
+   "surface": "wire",
+   "profile": "soft-norms@0",
+   "seed": "soft-norms@0/tests/test_soft_norms_conformance.py::test_inherited_null_decider_is_admitted_by_python_route",
+   "engines": [
+    "python",
+    "lean"
+   ],
+   "meta": {},
+   "mutation": [],
+   "input": {
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "norms@0",
+      "relational-fol@0",
+      "soft-norms@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "constants": {},
+      "predicates": {
+       "x_permitted": {
+        "arguments": [
+         "assistant"
+        ],
+        "description": "p",
+        "regulated": {
+         "act": "{0} do x",
+         "default": "allow",
+         "role": "permission"
+        }
+       },
+       "x_required": {
+        "arguments": [
+         "assistant"
+        ],
+        "description": "o",
+        "regulated": {
+         "act": "{0} do x",
+         "default": "deny",
+         "permission": "x_permitted",
+         "role": "obligation"
+        }
+       }
+      },
+      "soft": {
+       "exception_decider": "a",
+       "outranking": {
+        "mode": "strict"
+       }
+      },
+      "sorts": {
+       "assistant": {
+        "description": "a"
+       }
+      }
+     }
+    },
+    "norms": [
+     {
+      "norm": {
+       "exception": {
+        "decided_by": null,
+        "factors": [],
+        "necessary": [],
+        "sufficient": []
+       },
+       "guard": [
+        "top"
+       ],
+       "mode": "default",
+       "name": "a",
+       "over": [],
+       "predicate": "x_required",
+       "sign": true,
+       "unless": []
+      }
+     }
+    ]
+   },
+   "classes": [
+    "outcome"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "ok",
+     "value": null
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "framing",
+     "text": "Unsupported JSON value; null and floating-point numbers are not in v0"
+    },
+    "rust": {
+     "outcome": "n/a"
+    }
+   },
+   "signature": "93ad2ea4d583e105",
+   "follow_up": "DF-14"
+  },
+  {
+   "id": "wire-e67971f93c26326a",
+   "surface": "wire",
+   "profile": "demo@0",
+   "seed": "demo@0/E13",
+   "engines": [
+    "python",
+    "lean"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "type",
+     [
+      "doc",
+      "part",
+      "ys"
+     ],
+     "null"
+    ]
+   ],
+   "input": {
+    "doc": {
+     "items": [],
+     "mode": "closed",
+     "refs": [],
+     "part": {
+      "ys": null
+     }
+    }
+   },
+   "classes": [
+    "outcome"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "ok",
+     "value": null
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "framing",
+     "text": "Unsupported JSON value; null and floating-point numbers are not in v0"
+    },
+    "rust": {
+     "outcome": "n/a"
+    }
+   },
+   "signature": "e67971f93c26326a",
+   "follow_up": "DF-14"
+  },
+  {
+   "id": "wire-fcbf283fe5b17271",
+   "surface": "wire",
+   "profile": "forms@0",
+   "seed": "forms@0/F3b absent holds, check holds",
+   "engines": [
+    "python",
+    "lean"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "type",
+     [
+      "doc",
+      "plain",
+      "part"
+     ],
+     "null"
+    ]
+   ],
+   "input": {
+    "doc": {
+     "plain": {
+      "part": null
+     },
+     "z": 0
+    }
+   },
+   "classes": [
+    "outcome"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "ok",
+     "value": null
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "framing",
+     "text": "Unsupported JSON value; null and floating-point numbers are not in v0"
+    },
+    "rust": {
+     "outcome": "n/a"
+    }
+   },
+   "signature": "fcbf283fe5b17271",
+   "follow_up": "DF-14"
+  },
+  {
    "id": "requests-bb16d27f009ba404",
    "surface": "requests",
    "profile": "validation:evaluate",
@@ -50127,206 +50296,123 @@
    "follow_up": "DF-6"
   },
   {
-   "id": "wire-93ad2ea4d583e105",
-   "surface": "wire",
-   "profile": "soft-norms@0",
-   "seed": "soft-norms@0/tests/test_soft_norms_conformance.py::test_inherited_null_decider_is_admitted_by_python_route",
+   "id": "environment-996535acb2977f50",
+   "surface": "environment",
+   "profile": "envelope",
+   "seed": "conformance/elaborated-document.json/10/environment",
    "engines": [
     "python",
-    "lean"
+    "lean",
+    "rust"
    ],
    "meta": {},
    "mutation": [],
    "input": {
-    "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "norms@0",
-      "relational-fol@0",
-      "soft-norms@0"
-     ],
-     "spec_revision": "ve-v0.2-expand2-2026-09-25",
-     "vocabulary": {
-      "constants": {},
-      "predicates": {
-       "x_permitted": {
-        "arguments": [
-         "assistant"
-        ],
-        "description": "p",
-        "regulated": {
-         "act": "{0} do x",
-         "default": "allow",
-         "role": "permission"
-        }
-       },
-       "x_required": {
-        "arguments": [
-         "assistant"
-        ],
-        "description": "o",
-        "regulated": {
-         "act": "{0} do x",
-         "default": "deny",
-         "permission": "x_permitted",
-         "role": "obligation"
-        }
-       }
-      },
-      "soft": {
-       "exception_decider": "a",
-       "outranking": {
-        "mode": "strict"
-       }
-      },
-      "sorts": {
-       "assistant": {
-        "description": "a"
-       }
-      }
-     }
-    },
-    "norms": [
-     {
-      "norm": {
-       "exception": {
-        "decided_by": null,
-        "factors": [],
-        "necessary": [],
-        "sufficient": []
-       },
-       "guard": [
-        "top"
+    "language": "ve.core@0.2",
+    "profiles": [
+     "relational-fol@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "sorts": {},
+     "predicates": {
+      "dept": {
+       "arguments": [
+        "$string"
        ],
-       "mode": "default",
-       "name": "a",
-       "over": [],
-       "predicate": "x_required",
-       "sign": true,
-       "unless": []
+       "description": "d"
+      }
+     },
+     "constants": {}
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "invalid signature: dept"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "invalid signature: dept"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "unknown predicate argument sort"
+    }
+   },
+   "signature": "996535acb2977f50",
+   "follow_up": "DF-9"
+  },
+  {
+   "id": "environment-166b6a5d0308d1be",
+   "surface": "environment",
+   "profile": "soft-norms",
+   "seed": "usecases/safety-framework/environment.d1.json",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "unicode",
+     [
+      "vocabulary",
+      "constants",
+      "cbrn_uplift_tcl",
+      "sort"
+     ],
+     "upper"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "norms@0",
+     "relational-fol@0",
+     "soft-norms@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "sorts": {},
+     "predicates": {},
+     "constants": {
+      "cyber": {
+       "sort": "d",
+       "description": "C"
       }
      }
-    ]
-   },
-   "classes": [
-    "outcome"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "ok",
-     "value": null
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "framing",
-     "text": "Unsupported JSON value; null and floating-point numbers are not in v0"
-    },
-    "rust": {
-     "outcome": "n/a"
-    }
-   },
-   "signature": "93ad2ea4d583e105",
-   "follow_up": "DF-14"
-  },
-  {
-   "id": "wire-e67971f93c26326a",
-   "surface": "wire",
-   "profile": "demo@0",
-   "seed": "demo@0/E13",
-   "engines": [
-    "python",
-    "lean"
-   ],
-   "meta": {},
-   "mutation": [
-    [
-     "type",
-     [
-      "doc",
-      "part",
-      "ys"
-     ],
-     "null"
-    ]
-   ],
-   "input": {
-    "doc": {
-     "items": [],
-     "mode": "closed",
-     "refs": [],
-     "part": {
-      "ys": null
-     }
     }
    },
    "classes": [
-    "outcome"
+    "code"
    ],
    "answers": {
     "python": {
-     "outcome": "ok",
-     "value": null
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "unknown constant sort: cyber"
     },
     "lean": {
      "outcome": "error",
-     "code": "framing",
-     "text": "Unsupported JSON value; null and floating-point numbers are not in v0"
+     "code": "InvalidInput",
+     "text": "unknown constant sort: cyber"
     },
     "rust": {
-     "outcome": "n/a"
-    }
-   },
-   "signature": "e67971f93c26326a",
-   "follow_up": "DF-14"
-  },
-  {
-   "id": "wire-fcbf283fe5b17271",
-   "surface": "wire",
-   "profile": "forms@0",
-   "seed": "forms@0/F3b absent holds, check holds",
-   "engines": [
-    "python",
-    "lean"
-   ],
-   "meta": {},
-   "mutation": [
-    [
-     "type",
-     [
-      "doc",
-      "plain",
-      "part"
-     ],
-     "null"
-    ]
-   ],
-   "input": {
-    "doc": {
-     "plain": {
-      "part": null
-     },
-     "z": 0
-    }
-   },
-   "classes": [
-    "outcome"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "ok",
-     "value": null
-    },
-    "lean": {
      "outcome": "error",
-     "code": "framing",
-     "text": "Unsupported JSON value; null and floating-point numbers are not in v0"
-    },
-    "rust": {
-     "outcome": "n/a"
+     "code": "UnknownSymbol",
+     "text": "unknown constant sort"
     }
    },
-   "signature": "fcbf283fe5b17271",
-   "follow_up": "DF-14"
+   "signature": "166b6a5d0308d1be",
+   "follow_up": "DF-9"
   }
  ]
 }
