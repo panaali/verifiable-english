@@ -83,10 +83,8 @@ def frontDepth (front : String) : Except String Unit := do
     else if c == ']' || c == '}' then
       depth := depth - 1
 
-def frontJson (front : String) : Except String Json :=
-  match frontDepth front with
-  | .error e => .error e
-  | .ok () =>
+def frontJson (front : String) : Except String Json := do
+  let _ ← frontDepth front
   match Json.parse front with
   | .ok j => .ok j
   | .error e =>
