@@ -14,19 +14,17 @@ def premise_status(env, premises, *, max_proof_steps=10_000, max_domain_size=2,
 
     A relabelling of one checked result: `INCONSISTENT` is one replayed
     certificate of ⊥, `model` one checked model of the premises. The prover and
-    the model search are untrusted generators. Under a backend authority the
-    replay and the model check run on that backend (`dispatch.composed`).
+    the model search are untrusted generators; the replay and the model check
+    run on Lean under every authority (lean-first batch 13b).
     """
-    from .backends.dispatch import composed, execute
+    from .backends.dispatch import owned
     budgets = {"max_proof_steps": max_proof_steps, "max_domain_size": max_domain_size,
                "max_models": max_models, "max_evaluations": max_evaluations}
 
     def run():
         return _premise_status(env, premises, **budgets)
 
-    payload = {"environment_id": getattr(env, "environment_id", None), **budgets}
-    return execute("premise_status", payload, run, lean=composed("lean", run),
-                   rust=composed("rust-experimental", run))
+    return owned("premise_status", run)
 
 
 def search_premise_status_witness(env, premises):

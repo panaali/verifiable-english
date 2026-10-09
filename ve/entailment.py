@@ -673,24 +673,19 @@ def check_entailment_certificate(env: Any, premises: Sequence[Any], conclusion: 
                                  certificate: Any, *, max_steps: int = 10_000,
                                  _background: bool = True,
                                  _generated_premises: Sequence[bool] | None = None) -> EntailmentCertificateCheck:
-    """Replay a certificate under the selected authority.
+    """Replay a certificate: Lean owns binding, replay and charging under every
+    authority (lean-first batch 13b).
 
     The prover's self-replay of a generated trace (`_background=False`) and
     replays with labelled generated premises belong to the retained proof
-    generator and stay Python's.
+    generator (rule 3: generator-internal, never reported) and stay Python's.
     """
-    from .backends.dispatch import authority_for, execute
-    args = (env, premises, conclusion, certificate)
-    options = {"max_steps": max_steps, "_background": _background,
-               "_generated_premises": _generated_premises}
-    if (authority_for("certificate_replay") == "python" or not _background
-            or _generated_premises is not None):
-        return _check_certificate_python(*args, **options)
-    payload = {"environment_id": getattr(env, "environment_id", None),
-               "certificate": certificate if type(certificate) is dict else None}
-    return execute("certificate_replay", payload,
-                   lambda: _check_certificate_python(*args, **options),
-                   lean=lambda: _check_certificate_lean(env, premises, conclusion, certificate, max_steps))
+    from .backends.dispatch import owned
+    if not _background or _generated_premises is not None:
+        return _check_certificate_python(env, premises, conclusion, certificate, max_steps=max_steps,
+                                         _background=_background, _generated_premises=_generated_premises)
+    return owned("certificate_replay",
+                 lambda: _check_certificate_lean(env, premises, conclusion, certificate, max_steps))
 
 
 def _check_certificate_lean(env, premises, conclusion, certificate, max_steps) -> EntailmentCertificateCheck:
