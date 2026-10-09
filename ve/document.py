@@ -81,6 +81,9 @@ def front_matter(raw: bytes):
         raise VEError("unclosed JSON front matter")
     try:
         meta = json.loads(raw[4:boundary].decode("utf-8"))
+        # An unpaired surrogate escape reads as a string no UTF-8 text holds (the document identity encodes
+        # the metadata); Lean's JSON readers refuse it, and so does this one.
+        json.dumps(meta, ensure_ascii=False).encode("utf-8")
     except (ValueError, UnicodeError) as exc:
         raise VEError("invalid JSON front matter") from exc
     except RecursionError:

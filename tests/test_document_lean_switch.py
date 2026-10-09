@@ -30,7 +30,7 @@ DELTA = ROOT / "docs/lean-first/b16b/DELTA.md"
 GENERATED = dict(dw._generated())
 # The generated seeds the Lean mode owns (everything but the fenced one), each with a nonzero residual somewhere.
 OWNED = ["plain", "mixed", "open-terms", "reading-sets", "graph-bridge", "graph-readings", "definitions",
-         "p0-envelope", "alternatives-cells", "alternatives-graph", "risk"]
+         "p0-envelope", "alternatives-cells", "alternatives-narrowed", "alternatives-graph", "risk"]
 
 
 def write(tmp_path, text, name="document.ve.md"):
@@ -447,14 +447,43 @@ def test_forged_residual_line_with_balanced_total_is_unavailable(
 RETYPES = (7, True, None, [], {}, "x")
 
 
-def test_document_schema_types_checked_content(tmp_path):
+# A value of each typed unit field and narrowing member outside its domain (16c review B3: `kind` and `meaning`
+# were untyped and `status` and `support` any string; B1: a narrowing was typed as a token string).
+UNTYPED = [("units", 0, "content", 7), ("units", 0, "status", "MIXED"), ("units", 0, "status", "checked"),
+           ("units", 0, "support", "rumour"), ("units", 0, "kind", "assertion"), ("units", 0, "kind", ["hedged"]),
+           ("units", 0, "meaning", "unspecified"), ("units", 0, "meaning", {"open": []}),
+           ("units", 0, "meaning", {"contextual": ""}), ("units", 0, "meaning", {"unformalised": "a b"}),
+           ("units", 0, "meaning", {"specified": True}), ("units", 0, "span", [0, 1, 2]),
+           ("coverage", "alternatives", "narrowings", ["n"]),
+           ("coverage", "alternatives", "narrowings", 0, "version", 0),
+           ("coverage", "alternatives", "narrowings", 0, "version", True),
+           ("coverage", "alternatives", "narrowings", 0, "keeps", []),
+           ("coverage", "alternatives", "narrowings", 0, "extra", 1)]
+
+
+@pytest.mark.parametrize("forge", UNTYPED, ids=lambda f: "/".join(map(str, f[:-1])) + "=" + json.dumps(f[-1]))
+def test_document_schema_types_every_unit_field(tmp_path, forge):
     from ve.backends.service_schema import ROWS, Context, Invalid
-    path = write(tmp_path, dw.text_of(GENERATED["plain"]))
+    path = write(tmp_path, dw.text_of(GENERATED["alternatives-narrowed"]))
+    case = Context({"id": "document", "document": path.read_text(), "admit": True})
     row = D._lean_answer(path.read_bytes(), True)
+    ROWS["document"][0](row, case, {})
     forged = deepcopy(row)
-    forged["units"][0]["content"] = 7
+    node = forged
+    for key in forge[:-2]:
+        node = node[key]
+    node[forge[-2]] = forge[-1]
     with pytest.raises(Invalid):
-        ROWS["document"][0](forged, Context({"id": "document", "document": path.read_text(), "admit": True}), {})
+        ROWS["document"][0](forged, case, {})
+
+
+def test_a_narrowed_document_is_decided_by_lean(tmp_path, no_python_loader):
+    """16c review B1: the alternatives route relays the front matter's narrowing objects, which the response
+    schema refused, so `load_document` and `check_document` were `CheckerUnavailable`."""
+    path = write(tmp_path, dw.text_of(GENERATED["alternatives-narrowed"]))
+    assert D.load_document(path)["lean"]["coverage"]["alternatives"]["narrowings"] == \
+        GENERATED["alternatives-narrowed"]["front"]["narrowings"]
+    assert D.check_document(path)
 
 
 def _structural_mutants(node, at=()):
@@ -482,7 +511,8 @@ def _structural_mutants(node, at=()):
         yield from _structural_mutants(child, at + (key,))
 
 
-@pytest.mark.parametrize("name", ["plain", "mixed", "graph-bridge", "alternatives-cells", "risk"])
+@pytest.mark.parametrize("name", ["plain", "mixed", "graph-bridge", "alternatives-cells", "alternatives-narrowed",
+                                  "risk"])
 def test_every_structural_mutant_of_an_answer_is_refused(tmp_path, no_python_loader, monkeypatch, name):
     """The response schema and the binding together refuse every structural mutant of a genuine row: none may
     reach a document. The schema is the service's own row check (`service_schema.ROWS`), as `run_bound` applies
