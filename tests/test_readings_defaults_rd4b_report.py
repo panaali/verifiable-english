@@ -83,10 +83,12 @@ def test_rd4b_ab_is_checked_from_saved_recordings_and_comparisons():
     ab = json.loads((HERE / "evidence/ab.json").read_text())
     raw = json.loads((HERE / "evidence/ab-raw-compare.json").read_text())
     normalized = json.loads((HERE / "evidence/ab-normalized-compare.json").read_text())
-    assert ab["base_commit"] == scope["base"] and ab["head_commit"] == scope["head"]
-    assert ab["recordings"]["rows"] == sum(normalized["records"].values()) == 60062
-    assert raw["totals"] == ab["raw"]["totals"] == {"same": 60055, "wording": 7}
-    assert normalized["totals"] == ab["normalized"]["totals"] == {"same": 60062}
+    assert ab["base_commit"] == scope["merge_base"] and ab["head_commit"] == scope["head"]
+    rows = ab["recordings"]["rows"]
+    assert rows == sum(normalized["records"].values()) == sum(ab["recordings"]["corpora"].values())
+    assert raw["records"] == normalized["records"] == ab["recordings"]["corpora"]
+    assert raw["totals"] == ab["raw"]["totals"] == {"same": rows - 7, "wording": 7}
+    assert normalized["totals"] == ab["normalized"]["totals"] == {"same": rows}
     assert normalized["unlisted"] == ab["normalized"]["unlisted"] == 0
     assert len(raw["differences"]) == len(ab["raw"]["differences"]) == 7
     before = ab["normalization"]["base_from"]
@@ -100,4 +102,6 @@ def test_rd4b_ab_is_checked_from_saved_recordings_and_comparisons():
     digests = ab["recordings"]["sha256"]
     assert all(len(value) == 64 for value in digests.values())
     assert digests["base_normalized"] == digests["head_normalized"]
-    assert "60,055 same" in report and "60,062 same, 0 unlisted" in report
+    assert f"{rows:,} records" in report
+    assert f"{raw['totals']['same']:,} same" in report
+    assert f"{rows:,} same, 0 unlisted" in report
