@@ -9902,19 +9902,29 @@
     "VE.Readings.Wire.shownOf",
     "VE.Readings.Wire.shownOk",
     "VE.Readings.Wire.without",
+    "VE.Readings.isNull",
     "VE.Readings.jchoice",
     "VE.Readings.jgaps",
-    "VE.Readings.jstrings"
+    "VE.Readings.jstrings",
+    "VE.Readings.strOf"
    ],
    "G[V]": [
     "VE.Readings.Line",
     "VE.Readings.PlanItem",
+    "VE.Readings.PlanItem.label?",
     "VE.Readings.PlanItem.line",
     "VE.Readings.Run.RowInfo",
     "VE.Readings.Run.RowInfo.note",
     "VE.Readings.Run.RowInfo.on",
     "VE.Readings.Run.RowInfo.shown",
+    "VE.Readings.Run.answerFields",
     "VE.Readings.Run.candidatesOf",
+    {
+     "name": "VE.Readings.Run.conditionsOf",
+     "tied": [
+      "VE.Readings.Run.mem_conditionsOf"
+     ]
+    },
     "VE.Readings.Run.conflictResult",
     "VE.Readings.Run.deadOf",
     "VE.Readings.Run.dedupStrings",
@@ -9932,11 +9942,14 @@
     "VE.Readings.Run.runVerdicts",
     "VE.Readings.Run.untakenOf",
     "VE.Readings.Run.verdictsAnswer",
+    "VE.Readings.Run.verdictsPlan",
     "VE.Readings.Run.word",
     "VE.Readings.Wire.PieceNote",
     "VE.Readings.Wire.acceptedNote",
     "VE.Readings.Wire.gapsOf",
     "VE.Readings.assumedReadings",
+    "VE.Readings.conditionItems",
+    "VE.Readings.conditionLines",
     "VE.Readings.englishPlan",
     "VE.Readings.firstShown",
     "VE.Readings.fullReadings",
