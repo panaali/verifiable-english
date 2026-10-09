@@ -3,27 +3,27 @@
  "totals": {
   "K": 978,
   "S": 9434,
-  "D": 13129,
-  "G": 24456,
+  "D": 13281,
+  "G": 24553,
   "C": 8130,
-  "P": 66647,
-  "T": 13278,
-  "o": 11451,
-  "D[V]": 11812,
-  "D[R]": 818,
-  "D[I]": 499,
-  "G[V]": 22831,
+  "P": 66652,
+  "T": 13289,
+  "o": 11456,
+  "D[V]": 11822,
+  "D[R]": 932,
+  "D[I]": 527,
+  "G[V]": 22928,
   "G[R]": 1401,
   "G[I]": 224,
   "tied": 171,
   "unclassified": 0,
-  "trusted": 44903,
-  "lines": 147503
+  "trusted": 45010,
+  "lines": 147773
  },
  "budget": {
   "K": 978,
   "S": 9434,
-  "V": 34491
+  "V": 34598
  },
  "signed": [],
  "history": [
@@ -255,6 +255,19 @@
     "K": 978,
     "S": 9434,
     "V": 34491
+   }
+  },
+  {
+   "change": "lean-first batch 16c review fixes: the document mode types every unit field of its answer from decoded values (RowUnit, Support, UnitStatus, Meaning; VE/Service/Document.lean) and its response schema types kind, meaning, status, support and the relayed narrowings (ResponseShape/Schemas/Document.lean +22); the JSON-form gate that defers Python-only number and null forms is classed D[R] (VE/Service/Document.lean +85 trusted lines in all)",
+   "rebaselined_from": {
+    "K": 978,
+    "S": 9434,
+    "V": 34491
+   },
+   "to": {
+    "K": 978,
+    "S": 9434,
+    "V": 34598
    }
   }
  ],
@@ -3551,7 +3564,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 398,
+   "T": 399,
    "o": 7,
    "D[V]": 0,
    "D[R]": 0,
@@ -3562,7 +3575,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 405
+   "lines": 406
   },
   "ResponseShape/CaseDeciders.lean": {
    "K": 0,
@@ -3670,7 +3683,7 @@
    "D": 0,
    "G": 0,
    "C": 0,
-   "P": 59,
+   "P": 64,
    "T": 0,
    "o": 6,
    "D[V]": 0,
@@ -3682,7 +3695,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 65
+   "lines": 70
   },
   "ResponseShape/Encoders/English.lean": {
    "K": 0,
@@ -4208,7 +4221,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 68,
+   "G": 90,
    "C": 0,
    "P": 0,
    "T": 0,
@@ -4216,13 +4229,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 68,
+   "G[V]": 90,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 68,
-   "lines": 79
+   "trusted": 90,
+   "lines": 101
   },
   "ResponseShape/Schemas/English.lean": {
    "K": 0,
@@ -5387,7 +5400,7 @@
   "VE/CertificateWire.lean": {
    "K": 0,
    "S": 0,
-   "D": 166,
+   "D": 184,
    "G": 85,
    "C": 11,
    "P": 10,
@@ -5395,14 +5408,14 @@
    "o": 17,
    "D[V]": 135,
    "D[R]": 0,
-   "D[I]": 31,
+   "D[I]": 49,
    "G[V]": 71,
    "G[R]": 14,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
    "trusted": 206,
-   "lines": 294
+   "lines": 312
   },
   "VE/Checks.lean": {
    "K": 0,
@@ -11247,22 +11260,22 @@
   "VE/Service/Document.lean": {
    "K": 0,
    "S": 0,
-   "D": 553,
-   "G": 71,
+   "D": 687,
+   "G": 146,
    "C": 0,
    "P": 0,
-   "T": 0,
-   "o": 55,
-   "D[V]": 396,
-   "D[R]": 157,
-   "D[I]": 0,
-   "G[V]": 71,
+   "T": 10,
+   "o": 60,
+   "D[V]": 406,
+   "D[R]": 271,
+   "D[I]": 10,
+   "G[V]": 146,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 467,
-   "lines": 679
+   "trusted": 552,
+   "lines": 903
   },
   "VE/Service/EnglishRun.lean": {
    "K": 0,
