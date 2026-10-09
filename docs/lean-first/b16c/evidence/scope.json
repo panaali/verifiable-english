@@ -1,7 +1,23 @@
 {
-  "base": "67ae1e5a11e7ff6414d413875ab6c72bb78bbe69",
-  "head": "d094b05650592ef5ba73bf242126d3c40b3a6029",
+  "base": "abc30811855ea9dcb57003c1d961dda94093d5cc",
+  "head": "f0c44d4342f0dcf1faf38195e767922c42fb6ec7",
   "commits": [
+    {
+      "hash": "f0c44d4342f0dcf1faf38195e767922c42fb6ec7",
+      "subject": "refactor: keep document boundary within trust budget"
+    },
+    {
+      "hash": "1fde205e55ccfa3dc444306e6b52bf13c749f796",
+      "subject": "fix: allow documented Rust scope skips in gate policy"
+    },
+    {
+      "hash": "c686d65f7758537484ae2325188238e2116658e0",
+      "subject": "fix: bound document JSON depth and refresh trusted inventories"
+    },
+    {
+      "hash": "8ff3ef5d731fb240622906b55cf6a4869375ed71",
+      "subject": "docs: save 16c residue and seeded fault evidence"
+    },
     {
       "hash": "d094b05650592ef5ba73bf242126d3c40b3a6029",
       "subject": "feat: admit JSON null in Lean document mode and bind typed content"
@@ -9,48 +25,138 @@
   ],
   "changes": [
     {
-      "added": "9",
-      "deleted": "4",
+      "added": 70,
+      "deleted": 0,
+      "path": "docs/lean-first/b16c/DELTA.md"
+    },
+    {
+      "added": 10,
+      "deleted": 0,
+      "path": "docs/lean-first/b16c/REPORT.md"
+    },
+    {
+      "added": 23,
+      "deleted": 0,
+      "path": "docs/lean-first/b16c/evidence/mutants.json"
+    },
+    {
+      "added": 0,
+      "deleted": 0,
+      "path": "docs/lean-first/b16c/evidence/residues.json.gz"
+    },
+    {
+      "added": 57,
+      "deleted": 0,
+      "path": "docs/lean-first/b16c/evidence/scope.json"
+    },
+    {
+      "added": 71,
+      "deleted": 0,
+      "path": "docs/lean-first/b16c/evidence/share.json"
+    },
+    {
+      "added": 29,
+      "deleted": 0,
+      "path": "docs/lean-first/b16c/report.py"
+    },
+    {
+      "added": 51,
+      "deleted": 0,
+      "path": "docs/lean-first/b16c/seed_faults.py"
+    },
+    {
+      "added": 5,
+      "deleted": 5,
+      "path": "docs/spec/assurance-manifest.md"
+    },
+    {
+      "added": 12,
+      "deleted": 12,
       "path": "lean/ResponseShape/Schemas/Document.lean"
     },
     {
-      "added": "18",
-      "deleted": "0",
+      "added": 18,
+      "deleted": 0,
       "path": "lean/VE/CertificateWire.lean"
     },
     {
-      "added": "18",
-      "deleted": "9",
+      "added": 4,
+      "deleted": 4,
+      "path": "lean/VE/Route/frozen-sources.sha256"
+    },
+    {
+      "added": 41,
+      "deleted": 13,
       "path": "lean/VE/Service/Document.lean"
     },
     {
-      "added": "3",
-      "deleted": "3",
+      "added": 3,
+      "deleted": 3,
       "path": "lean/VE/Service/Protocol.lean"
     },
     {
-      "added": "2",
-      "deleted": "1",
+      "added": 9,
+      "deleted": 8,
       "path": "lean/checkers.lock"
     },
     {
-      "added": "31",
-      "deleted": "1",
+      "added": 193,
+      "deleted": 189,
+      "path": "lean/declarations.txt"
+    },
+    {
+      "added": 47,
+      "deleted": 0,
+      "path": "tests/test_b16c_evidence.py"
+    },
+    {
+      "added": 31,
+      "deleted": 1,
       "path": "tests/test_document_lean_switch.py"
     },
     {
-      "added": "11",
-      "deleted": "11",
+      "added": 4,
+      "deleted": 0,
+      "path": "tests/test_gate.py"
+    },
+    {
+      "added": 12,
+      "deleted": 12,
       "path": "tests/test_lean_document_wrapper.py"
     },
     {
-      "added": "11",
-      "deleted": "6",
+      "added": 1,
+      "deleted": 0,
+      "path": "tests/test_nested_pytest.py"
+    },
+    {
+      "added": 15,
+      "deleted": 10,
+      "path": "tools/gate-collection.json"
+    },
+    {
+      "added": 3,
+      "deleted": 1,
+      "path": "tools/gate-optional.json"
+    },
+    {
+      "added": 22,
+      "deleted": 16,
+      "path": "tools/trust-classes.json"
+    },
+    {
+      "added": 14,
+      "deleted": 14,
+      "path": "ve/assurance-manifest.json"
+    },
+    {
+      "added": 11,
+      "deleted": 6,
       "path": "ve/backends/lean_service_schema/document.json"
     },
     {
-      "added": "5",
-      "deleted": "2",
+      "added": 5,
+      "deleted": 2,
       "path": "ve/document.py"
     }
   ]
