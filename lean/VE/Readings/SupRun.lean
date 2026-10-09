@@ -363,7 +363,7 @@ def runChoice (lower : List String → Json → Json) (id : String) (b : Admitte
 
 def s2Kinds : List String :=
   ["readings-elaborate", "readings-conflict", "readings-certificate", "readings-model", "readings-dead",
-   "readings-choice"]
+   "readings-choice", "readings-verdicts"]
 
 /-- An S2a kind on the case's document, admitted once (`admitS2`) by the caller. -/
 def runS2 (lower : List String → Json → Json) (id kind : String) (b : Admitted2) (j : Json) :

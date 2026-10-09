@@ -1,0 +1,111 @@
+[
+ {
+  "id": "L4",
+  "file": "lean/VE/Readings/VerdictsWire.lean",
+  "behavior": "the encoder drops a CONFLICT-FREE condition",
+  "exit_code": 1,
+  "errors": 1,
+  "first_error": "VE/Readings/VerdictsWire.lean:1445:4: error: Tactic `rfl` failed: The left-hand side",
+  "theorem": "verdicts_conditions_conflict_free"
+ },
+ {
+  "id": "L5",
+  "file": "lean/VE/Readings/VerdictsWire.lean",
+  "behavior": "the encoder drops an ALL condition",
+  "exit_code": 1,
+  "errors": 1,
+  "first_error": "VE/Readings/VerdictsWire.lean:1480:32: error: unsolved goals",
+  "theorem": "verdicts_conditions_all"
+ },
+ {
+  "id": "L6",
+  "file": "lean/VE/Readings/VerdictsWire.lean",
+  "behavior": "conditionsOf drops a row's label",
+  "exit_code": 1,
+  "errors": 1,
+  "first_error": "VE/Readings/VerdictsWire.lean:1369:90: error: unsolved goals",
+  "theorem": "mem_conditionsOf"
+ },
+ {
+  "id": "L7",
+  "file": "lean/VE/Readings/VerdictsWire.lean",
+  "behavior": "labels drop the conditions under the completion",
+  "exit_code": 1,
+  "errors": 1,
+  "first_error": "VE/Readings/VerdictsWire.lean:1439:81: error: unsolved goals",
+  "theorem": "verdicts_conditions_conflict_free"
+ },
+ {
+  "id": "L8",
+  "file": "lean/VE/Readings/VerdictsWire.lean",
+  "behavior": "the plan drops a pair label's line",
+  "exit_code": 1,
+  "errors": 2,
+  "first_error": "VE/Readings/VerdictsWire.lean:633:2: error: Tactic `split` failed: Could not split an `if` or `match` expression in the type",
+  "theorem": "conditionItems_label"
+ },
+ {
+  "id": "L9",
+  "file": "lean/VE/Readings/VerdictsWire.lean",
+  "behavior": "a SOME's plan omits its conditions",
+  "exit_code": 1,
+  "errors": 1,
+  "first_error": "VE/Readings/VerdictsWire.lean:677:88: error: unsolved goals",
+  "theorem": "plan_cites_conditions"
+ },
+ {
+  "id": "P1",
+  "file": "ve/readings_s2_wording.py",
+  "behavior": "Python drops the condition clause (the E3 and P1 lines)",
+  "exit_code": 1,
+  "failed": [
+   "tests/test_readings_nd_document.py::test_fnd1_readings_conclusion_some",
+   "tests/test_readings_s2_document.py::test_fix4_a1_english_conditions_are_the_certificate_dependencies[m9-rs1:a]",
+   "tests/test_readings_s2_document.py::test_fix4_a1_english_conditions_are_the_certificate_dependencies[m9-rs1:b]",
+   "tests/test_readings_s2_document.py::test_fix4_a1_english_conditions_are_the_certificate_dependencies[m9-rs2:c]",
+   "tests/test_readings_s2_document.py::test_fix4_a1_english_conditions_are_the_certificate_dependencies[m9-rs2:d]",
+   "tests/test_readings_s2_document.py::test_looprecheck1_a_restriction_ids_that_are_label_words[m9-rs1:a-one]",
+   "tests/test_readings_s2_document.py::test_looprecheck1_a_restriction_ids_that_are_label_words[m9-rs1:a-quiet]",
+   "tests/test_readings_s2_document.py::test_looprecheck1_a_restriction_ids_that_are_label_words[m9-rs1:b-one]",
+   "tests/test_readings_s2_document.py::test_looprecheck1_a_restriction_ids_that_are_label_words[m9-rs1:b-quiet]",
+   "tests/test_readings_s2_document.py::test_looprecheck1_a_restriction_ids_that_are_label_words[m9-rs2:c-one]",
+   "tests/test_readings_s2_document.py::test_looprecheck1_a_restriction_ids_that_are_label_words[m9-rs2:c-quiet]",
+   "tests/test_readings_s2_document.py::test_looprecheck1_a_restriction_ids_that_are_label_words[m9-rs2:d-one]",
+   "tests/test_readings_s2_document.py::test_looprecheck1_a_restriction_ids_that_are_label_words[m9-rs2:d-quiet]",
+   "tests/test_readings_s2_document.py::test_review_a2_class_every_combined_verdict_keeps_its_restrictions",
+   "tests/test_readings_s2_document.py::test_review_a2_enumerated_narrowing_kept_in_english",
+   "tests/test_readings_verdicts_lean.py::test_dri_wording_rows_keep_the_base",
+   "tests/test_readings_verdicts_lean.py::test_fnd1_conflict_free_under_every_reading_conditional_on_the_pair_premise",
+   "tests/test_readings_verdicts_lean.py::test_fnd1_query_some_each_reading_named_by_its_own_sentence",
+   "tests/test_readings_verdicts_lean.py::test_python_relays_every_planned_line",
+   "tests/test_readings_verdicts_lean.py::test_review_b_looprecheck2_conditions_are_lean_s"
+  ],
+  "summary": "20 failed, 221 passed in 59.31s"
+ },
+ {
+  "id": "P2",
+  "file": "ve/readings_verdicts.py",
+  "behavior": "the client stops resolving labels against the request",
+  "exit_code": 1,
+  "failed": [
+   "tests/test_readings_verdicts_lean.py::test_a_mutated_verdicts_answer_is_unavailable[a",
+   "tests/test_readings_verdicts_lean.py::test_a_mutated_verdicts_answer_is_unavailable[a",
+   "tests/test_readings_verdicts_lean.py::test_a_mutated_verdicts_answer_is_unavailable[a",
+   "tests/test_readings_verdicts_lean.py::test_a_mutated_verdicts_answer_is_unavailable[a",
+   "tests/test_readings_verdicts_lean.py::test_the_result_of_every_form_is_typed_and_bound"
+  ],
+  "summary": "5 failed, 236 passed in 71.31s (0:01:11)"
+ },
+ {
+  "id": "P3",
+  "file": "ve/readings_verdicts.py",
+  "behavior": "a row's word stops naming the piece it rests on",
+  "exit_code": 1,
+  "failed": [
+   "tests/test_readings_verdicts_lean.py::test_a_mutated_verdicts_answer_is_unavailable[a",
+   "tests/test_readings_verdicts_lean.py::test_every_row_word_names_a_piece_lean_accepted",
+   "tests/test_readings_verdicts_lean.py::test_review_b_looprecheck1_rows_tied_to_the_evidence_sent"
+  ],
+  "summary": "3 failed, 238 passed in 67.39s (0:01:07)"
+ }
+]

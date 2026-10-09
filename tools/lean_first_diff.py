@@ -316,6 +316,9 @@ def pilot_records(root: Path, scratch: Path, workers: int):
     documents = pilot_documents(ROOT)
     scratch.mkdir(parents=True, exist_ok=True)
     env = {**os.environ, "PYTHONPATH": str(root)}
+    # A recorded checkout may be read-only. The English shadow is diagnostic
+    # output, so keep it beside the recording instead of writing in that tree.
+    env["VE_SHADOW_LOG"] = str(scratch / "english-shadow.jsonl")
     env.pop("VE_AUTHORITY", None)
 
     def check(item):
