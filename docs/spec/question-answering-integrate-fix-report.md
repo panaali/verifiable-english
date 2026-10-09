@@ -84,4 +84,25 @@ The generated guards were also checked once by hand: changing G1's expected text
 
 ## Gate
 
-Recorded after the final run on clean HEAD (next commit).
+`python3 tools/gate.py --workers 12` on clean HEAD `d54ebec1` (the code of this commit; only this section
+differs): Lean build, Lean audit (standard axioms only), Rust build, 36 Rust tests and the Python collection pass;
+the suite collected 13,810 tests, selected 13,809, and recorded **13,716 passed, 92 skipped, 1 failed**
+(`gate-result.json`, status `failed`). Free disk after the run: 96 GB.
+
+The one failure is `tests/test_difffuzz.py::test_ci_run`'s CPU budget: `{'python': 320.5, 'children': 100.0}`,
+420.5 s against 300 s, with the machine at load average 35 to 39 from other sessions. It is load-dependent, not
+caused by this branch:
+- Run alone at HEAD (load average about 20), `difffuzz.fuzz()` used 264.5 s (`python` 227.2, `children` 37.3)
+  with no new finding, and the pytest test passed alone (293 s wall) after the schema fix.
+- The three gate runs gave 331.5 s, 348.2 s and 420.5 s; the children's share (96 to 102 s in the gate against
+  37 s alone) tracks the load. One run's report also listed a `python-crash` on the
+  `constitution-nd-readings` document seed, which `difffuzz` assigns to any non-`VEError` from `ve/`, including a
+  `CheckerUnavailable` when a Lean call misses its wall-clock cap; it did not reproduce in the full or the
+  document-only rerun alone (0 new findings).
+- No changed file is on the fuzzed surfaces (requests, environment, wire, document).
+
+Earlier gate runs on this branch found and fixed: the open `english.question` result object
+(`test_route_row_schemas.py`), the trust baseline's totals after a comment line, and three unpinned test ids.
+
+`ve-integration` moved on after this branch was cut (RD-3 merged, `0d93e591`); this branch is not re-synced,
+and Q2's work can now start from there.
