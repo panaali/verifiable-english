@@ -50,7 +50,7 @@ The remaining eight section 5.1 theorem proofs, the complete fixture set, the ta
 | 19. Use-case formalisation | Not applicable | Q1.1 has no formalised document or rule answer key. |
 | 20. Regenerated numeric report | Not applicable | This pass makes no coverage or performance claims. |
 | 21. Acceptance owners | Done | The table below records AGENT, HUMAN, and EXTERNAL acceptance work and the deferred gate. |
-| 22. Clean HEAD gate and fix report | Not done | This non-empty report exists; the full gate on clean HEAD remains. |
+| 22. Clean HEAD gate and fix report | Not done | The non-empty report exists and the clean-HEAD full gate ran, but it failed as recorded below. |
 
 ## Acceptance owners
 
@@ -68,4 +68,8 @@ The failures cluster around two repository inventories that this pass did not up
 
 ## Full gate result on `5f2eb90e`
 
-The clean-HEAD gate passed Lean build and audit, Rust build, and 36 Rust tests. Python collected 13,098 tests, selected 13,097, and recorded 13,075 passes, 13 failures, and 9 skips. The gate failed on the unclassified trust table (339 lines), the unchanged Route hash inventory, and precommit checks that depend on that inventory. Two existing Rust-scope skips are disallowed by gate policy. The source has since gained three more approved theorems; its audit and inventories are being refreshed before a new clean-HEAD run.
+The clean-HEAD gate passed Lean build and audit, Rust build, and 36 Rust tests. Python collected 13,098 tests, selected 13,097, and recorded 13,075 passes, 13 failures, and 9 skips. The gate failed on the unclassified trust table (339 lines), the unchanged Route hash inventory, and precommit checks that depend on that inventory. Two existing Rust-scope skips are disallowed by gate policy. Three additional approved theorems were subsequently proved and audited.
+
+## Full gate result on `c7e93c98`
+
+The clean-HEAD gate passed Lean build and audit, Rust build, and 36 Rust tests. Python collected 13,098 tests, selected 13,097, and recorded 13,075 passes, 13 failures, and 9 skips. The gate failed: the trust-table test found 342 unclassified lines; `VE/Route/frozen.py` reported the changed `VE/Audit.lean` and six unlisted Question modules; eleven precommit tests failed downstream of that inventory; and gate skip policy rejected two existing Rust-scope skips (`dependency-order` and `labels`). The Route hash inventory was left untouched under the frozen Route instruction. The result is recorded in `gate-result.json` (ignored by Git).
