@@ -2400,7 +2400,7 @@ module VE.Attribution.Wire 4eadc30b6ea7aa48059794724edc301213b9fca4ef7e8c3bd2100
 492:0-497:65 def VE.Reports.Wire.generated@VE.Attribution.Wire
 499:0-506:75 def VE.Reports.Wire.environmentReportsJson@VE.Attribution.Wire
 508:0-512:101 def VE.Reports.Wire.reportsModelVocabulary@VE.Attribution.Wire
-module VE.Audit 9c92ce149210c5434c1a18b8296714a22fd250e6deca6dd16761e4c1b08985fa
+module VE.Audit ecd06384f5769bf78001ba9bb9e0fbaabd86660f0d1bfd78327b14a19f38486e
 module VE.Bridge 2d4e432b9698b07722d2a5f494cdf3797f14ab5036068fd31faaca8fb5a95d64
 8:0-8:32 def VE.Bridge.Entity@VE.Bridge
 9:0-9:37 def VE.Bridge.Fields@VE.Bridge
@@ -8226,7 +8226,7 @@ module VE.Question.Help 081bdf39f13b02887b3e4a28d166e23a3fede84756363297955ccc93
 32:0-37:63 def VE.Question.mappedPiece@VE.Question.Help
 39:0-54:73 def VE.Question.mapSpan@VE.Question.Help
 56:0-62:10 def VE.Question.shiftReject@VE.Question.Help
-module VE.Question.Properties 78a2ea546938ff5934ccaee0b80ed91b01a2361298fb3f3302be664de8211e48
+module VE.Question.Properties 05040b63d9576c63a8161cdb386791fbc609c18936deb9e696f171aed0ca7543
 9:0-11:90 def VE.Question.NoDerivation@VE.Question.Properties
 13:0-16:69 def VE.Question.AtMostOneDerivation@VE.Question.Properties
 18:0-20:45 def VE.Question.HasReading@VE.Question.Properties
@@ -8242,6 +8242,9 @@ module VE.Question.Properties 78a2ea546938ff5934ccaee0b80ed91b01a2361298fb3f3302
 187:0-217:61 theorem VE.Question.classify_one_read@VE.Question.Properties
 224:0-233:70 theorem VE.Question.readQuestion_one_read@VE.Question.Properties
 235:0-240:50 theorem VE.Question.asked_reads_back@VE.Question.Properties
+248:0-281:26 theorem VE.Question.got_many_derivations@VE.Question.Properties
+288:0-322:22 theorem VE.Question.classify_ambiguous_candidate@VE.Question.Properties
+330:0-344:47 theorem VE.Question.readQuestion_ambiguous@VE.Question.Properties
 module VE.Question.Read accf4caf42aa9fef55e3f10401487519df8568413d2b36a1e5083033a5bebe66
 6:0-17:26 inductive VE.Question.Outcome@VE.Question.Read
 19:0-27:53 def VE.Question.withinLimits@VE.Question.Read

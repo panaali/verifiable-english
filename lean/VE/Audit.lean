@@ -4668,3 +4668,6 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Question.classify_one_read
 #print axioms VE.Question.readQuestion_one_read
 #print axioms VE.Question.asked_reads_back
+#print axioms VE.Question.got_many_derivations
+#print axioms VE.Question.classify_ambiguous_candidate
+#print axioms VE.Question.readQuestion_ambiguous

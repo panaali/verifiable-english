@@ -201,7 +201,7 @@ theorem classify_one_read (auxs : List String) (E : Env) (O : Overlay) (L : Lexi
   split at h <;> try cases h
   split at h <;> try cases h
   split at h <;> try cases h
-  all_goals try (split at h <;> cases h)
+  all_goals try (split at h <;> try cases h)
   all_goals
     have hm : (c, φ) ∈ firstMeanings
         (List.map (fun d => (d, got E O L b d)) (candidates auxs q)) := by
@@ -238,5 +238,109 @@ theorem asked_reads_back :
   intro auxs E O L b q c φ h
   exact (checked_rendering_exact E O L b [(φ, false)] c.sentence).mpr
     (readQuestion_one_read auxs E O L b q c φ h).2
+
+end VE.Question
+
+namespace VE.Question
+open VE.EnglishGrammar
+open VE.Grammar (Derives)
+
+theorem got_many_derivations (E : Env) (O : Overlay) (L : Lexicon) (b : Nat)
+    (c : Candidate) (h : got E O L b c = .many) :
+    ∃ w t u, lex c.sentence = .ok #[w] ∧ t ≠ u ∧
+      Derives (grammar E L) (.n (grammar E L).start) w.toList t ∧
+      Derives (grammar E L) (.n (grammar E L).start) w.toList u := by
+  unfold got at h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  all_goals rename_i ws hlex hsize i t u hread
+  all_goals
+    obtain ⟨w0, harr⟩ := Array.size_eq_one_iff.mp (by simpa using hlex)
+    rw [harr] at ws
+    obtain ⟨_, hwf, _, _, _, sents, rs, st1, w, hl, hdoc, hw, ho, _⟩ :=
+      read_stopped E O L b c.sentence i (.ambiguous t u) hread
+    rw [ws] at hl
+    cases hl
+    cases i with
+    | zero =>
+      simp at hw
+      subst w
+      have hst : st1 = DState.init := by
+        cases rs with
+        | nil => simpa [VE.Grammar.DocOneReading] using hdoc
+        | cons x xs => simp [VE.Grammar.DocOneReading] at hdoc
+      subst st1
+      cases hr : VE.Grammar.readSentence (grammar E L)
+          (meaning (grammar E L) (acts E L)) DState.init b w0 with
+      | mk out st2 =>
+        simp only [hr] at ho
+        subst out
+        obtain ⟨_, ht, hu, hne⟩ := VE.Grammar.read_ambiguous hr
+        exact ⟨w0, t, u, ws, hne, ht, hu⟩
+    | succ i => simp at hw
+
+end VE.Question
+
+namespace VE.Question
+open VE.EnglishGrammar
+
+theorem classify_ambiguous_candidate (auxs : List String) (E : Env) (O : Overlay)
+    (L : Lexicon) (b : Nat) (q : String) (c : Candidate)
+    (h : classify auxs E O L b q = .ambiguous c) :
+    c ∈ candidates auxs q ∧ got E O L b c = .many := by
+  unfold classify at h
+  dsimp only at h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  split at h <;> try cases h
+  all_goals try (split at h <;> try cases h)
+  all_goals try (split at h <;> try cases h)
+  all_goals try (split at h <;> try cases h)
+  all_goals
+    have hf : ∃ g, (List.map (fun d => (d, got E O L b d))
+        (candidates auxs q)).find? (fun x => x.2.isMany) = some (c, g) := by
+      exact ⟨_, by assumption⟩
+    obtain ⟨g, hfind⟩ := hf
+    have hmany : g.isMany = true := by
+      have hp := List.find?_some hfind
+      simpa using hp
+    have hmem := List.mem_of_find?_eq_some hfind
+    rcases List.mem_map.mp hmem with ⟨d, hd, hdc⟩
+    cases g <;> simp [Got.isMany] at hmany
+    case many =>
+      have hcd : d = c := congrArg Prod.fst hdc
+      have hgot : got E O L b d = .many := congrArg Prod.snd hdc
+      subst d
+      exact ⟨hd, hgot⟩
+
+end VE.Question
+
+namespace VE.Question
+open VE.EnglishGrammar
+open VE.Grammar (Derives)
+
+theorem readQuestion_ambiguous :
+  ∀ (auxs : List String) (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (q : String) (c : Candidate),
+    readQuestion auxs E O L b q = .ambiguous c → c ∈ candidates auxs q ∧
+    ∃ w t u, lex c.sentence = .ok #[w] ∧ t ≠ u ∧ Derives (grammar E L) (.n (grammar E L).start) w.toList t ∧
+      Derives (grammar E L) (.n (grammar E L).start) w.toList u := by
+  intro auxs E O L b q c h
+  have hc : classify auxs E O L b q = .ambiguous c := by
+    unfold readQuestion at h
+    dsimp only at h
+    split at h <;> try cases h
+    split at h <;> try cases h
+    split at h <;> try cases h
+    all_goals assumption
+  obtain ⟨hm, hg⟩ := classify_ambiguous_candidate auxs E O L b q c hc
+  exact ⟨hm, got_many_derivations E O L b c hg⟩
 
 end VE.Question
