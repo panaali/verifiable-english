@@ -1226,7 +1226,19 @@
                 "properties": {
                   "choice": {"$ref": "#/$defs/choice"},
                   "model": {
-                    "$comment": "a shown model, the generator's complete model (Lean checks it extends the checked one)"
+                    "$comment": "a shown model, the generator's complete model (Lean checks it extends the checked one)",
+                    "additionalProperties": false,
+                    "properties": {
+                      "complete": {"type": "boolean"},
+                      "constants": {"additionalProperties": {"type": "string"}, "type": "object"},
+                      "domains": {"additionalProperties": {"$ref": "common.json#/$defs/strings"}, "type": "object"},
+                      "relations": {
+                        "additionalProperties": {"items": {"$ref": "common.json#/$defs/strings"}, "type": "array"},
+                        "type": "object"
+                      }
+                    },
+                    "required": ["complete", "domains", "constants", "relations"],
+                    "type": "object"
                   },
                   "status_text": {"type": ["string", "null"]}
                 },
@@ -1264,7 +1276,21 @@
       "additionalProperties": false,
       "properties": {
         "choice": {"$ref": "#/$defs/choice"},
-        "model": {"$comment": "a shown model, the generator's complete model (Lean checks it extends the checked one)"},
+        "model": {
+          "$comment": "a shown model, the generator's complete model (Lean checks it extends the checked one)",
+          "additionalProperties": false,
+          "properties": {
+            "complete": {"type": "boolean"},
+            "constants": {"additionalProperties": {"type": "string"}, "type": "object"},
+            "domains": {"additionalProperties": {"$ref": "common.json#/$defs/strings"}, "type": "object"},
+            "relations": {
+              "additionalProperties": {"items": {"$ref": "common.json#/$defs/strings"}, "type": "array"},
+              "type": "object"
+            }
+          },
+          "required": ["complete", "domains", "constants", "relations"],
+          "type": "object"
+        },
         "outcome": {"const": "countermodel"}
       },
       "required": ["choice", "outcome", "model"],
@@ -1282,7 +1308,16 @@
       "additionalProperties": false,
       "properties": {
         "frame": {"type": "string"},
-        "gaps": {"type": "array"},
+        "gaps": {
+          "items": {
+            "$comment": "a filled unsaid atom: predicate, tuple and value",
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [{"type": "string"}, {"$ref": "common.json#/$defs/strings"}, {"type": "boolean"}],
+            "type": "array"
+          },
+          "type": "array"
+        },
         "label": {"type": ["string", "null"]},
         "model": {"type": ["string", "null"]},
         "readings": {"$ref": "#/$defs/choice"},
@@ -1341,7 +1376,19 @@
             "choices": {"$ref": "#/$defs/verdicts_statuses"},
             "evidence": {"const": "per choice"},
             "model": {
-              "$comment": "a shown model, the generator's complete model (Lean checks it extends the checked one)"
+              "$comment": "a shown model, the generator's complete model (Lean checks it extends the checked one)",
+              "additionalProperties": false,
+              "properties": {
+                "complete": {"type": "boolean"},
+                "constants": {"additionalProperties": {"type": "string"}, "type": "object"},
+                "domains": {"additionalProperties": {"$ref": "common.json#/$defs/strings"}, "type": "object"},
+                "relations": {
+                  "additionalProperties": {"items": {"$ref": "common.json#/$defs/strings"}, "type": "array"},
+                  "type": "object"
+                }
+              },
+              "required": ["complete", "domains", "constants", "relations"],
+              "type": "object"
             },
             "route": {"const": "enumerated"},
             "status": {"const": "model"}
@@ -1668,11 +1715,37 @@
         "conflict": {"$ref": "#/$defs/verdicts_word"},
         "errors": {"additionalProperties": {"type": "string"}, "type": "object"},
         "evidence": {"additionalProperties": {"type": "boolean"}, "type": "object"},
-        "gaps": {"additionalProperties": {"type": "array"}, "type": "object"},
+        "gaps": {
+          "additionalProperties": {
+            "items": {
+              "$comment": "a filled unsaid atom: predicate, tuple and value",
+              "maxItems": 3,
+              "minItems": 3,
+              "prefixItems": [{"type": "string"}, {"$ref": "common.json#/$defs/strings"}, {"type": "boolean"}],
+              "type": "array"
+            },
+            "type": "array"
+          },
+          "type": "object"
+        },
         "premises": {"$ref": "#/$defs/verdicts_word"},
         "query": {"$ref": "#/$defs/verdicts_word"},
         "shown": {
-          "additionalProperties": {"$comment": "a shown model, the generator's complete model (Lean checks it extends the checked one)"},
+          "additionalProperties": {
+            "$comment": "a shown model, the generator's complete model (Lean checks it extends the checked one)",
+            "additionalProperties": false,
+            "properties": {
+              "complete": {"type": "boolean"},
+              "constants": {"additionalProperties": {"type": "string"}, "type": "object"},
+              "domains": {"additionalProperties": {"$ref": "common.json#/$defs/strings"}, "type": "object"},
+              "relations": {
+                "additionalProperties": {"items": {"$ref": "common.json#/$defs/strings"}, "type": "array"},
+                "type": "object"
+              }
+            },
+            "required": ["complete", "domains", "constants", "relations"],
+            "type": "object"
+          },
           "type": "object"
         },
         "status_text": {"type": ["string", "null"]}

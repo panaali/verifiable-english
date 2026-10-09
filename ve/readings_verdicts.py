@@ -22,7 +22,11 @@ _NOT_SUPERPOSABLE = "ReadingsNotSuperposable: "
 
 
 def context(doc):
-    """The verdict context of a loaded document with a content-bearing set, by its route; None on W2's route."""
+    """The verdict context of a loaded document with a content-bearing set, by its route; None on W2's route. A
+    document whose readings carry their own vocabulary is the product of its cases (readings-defaults RD-4b)."""
+    if doc.get("readings_components") is not None:
+        from .readings_components import context as components_context
+        return components_context(doc)
     if "_readings_s2_context" not in doc:
         row = doc.get("readings_s2")
         route = row["route"] if row is not None else None

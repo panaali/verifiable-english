@@ -338,7 +338,19 @@ def overBudget : List (String × Shape) := [
   ("budget", n [obj, .required ["max_choices"], closed [("max_choices", ref "common.json#/$defs/nat")]]),
   ("units", ref "common.json#/$defs/strings")]
 
-def shownModel : Shape := c "a shown model, the generator's complete model (Lean checks it extends the checked one)" []
+def shownModel : Shape := copied "the shown model is echoed from checked evidence; the relay binds it to that request" <|
+  c "a shown model, the generator's complete model (Lean checks it extends the checked one)" [
+    obj, .required ["complete", "domains", "constants", "relations"],
+    closed [
+      ("complete", .type ["boolean"]),
+      ("domains", n [obj, .object [] (some (ref "common.json#/$defs/strings"))]),
+      ("constants", n [obj, .object [] (some str)]),
+      ("relations", n [obj, .object [] (some (n [arr, .items (ref "common.json#/$defs/strings")]))])]]
+
+def verdictsGap : Shape :=
+  c "a filled unsaid atom: predicate, tuple and value" [
+    arr, .minItems 3, .maxItems 3,
+    .prefixItems [str, ref "common.json#/$defs/strings", .type ["boolean"]]]
 
 def verdicts_statuses : Shape :=
   c "Readings.Run.statusesJson: each compatible choice and its row." [
@@ -463,7 +475,7 @@ def verdicts_row : Shape :=
       ("evidence", n [obj, .object [] (some (.type ["boolean"]))]),
       ("errors", n [obj, .object [] (some str)]),
       ("shown", n [obj, .object [] (some shownModel)]),
-      ("gaps", n [obj, .object [] (some arr)]),
+      ("gaps", n [obj, .object [] (some (n [arr, .items verdictsGap]))]),
       ("status_text", .type ["string", "null"])]]
 
 def verdicts_line : Shape :=
@@ -475,7 +487,7 @@ def verdicts_line : Shape :=
       ("result", .type ["string", "null"]),
       ("readings", ref "#/$defs/choice"),
       ("model", .type ["string", "null"]),
-      ("gaps", arr),
+      ("gaps", n [arr, .items verdictsGap]),
       ("label", .type ["string", "null"])]]
 
 def verdicts_dead : Shape :=
