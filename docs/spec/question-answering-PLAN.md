@@ -448,7 +448,8 @@ For a document with no content-bearing reading set, the rows have one choice, `[
   - Otherwise there is one block per group: `If sentence <n> means "<reading>"[ and sentence <m> means "<reading>"], <lead phrase>.`, then that group's reasons.
 - **Situations.** A shown situation belongs to one choice. When the document has open sets, its line adds `, reading sentence <n> as "<reading>"` for **every** open set. A model is one reading, so naming fewer sentences would claim the result for readings the model does not show (composition-s2 2.3 item 3).
 - **Unused sentences.** After all blocks, one U1 line names the document-derived unused list when it is nonempty;
-  there is no U1 for an empty list. Its count and citation match that list.
+  there is no U1 for an empty list. Every unused unit must have a document-derived display number; the citation
+  uses the complete list of those numbers in document order, and the count equals the number of unused units.
 - **Reading names** come from RD-3's `<reading>` slot, rendered by Python's `reading_names` and sent in the request (D11).
   - An asserted candidate's name is checked with `checkRendering` against the candidate's formula.
   - A norm candidate's name cannot be checked until E3. It is listed in the response as `unchecked_names`, and its R1 line says so in the printed text: `If sentence <n> means "<reading>" (VE has not checked this wording), …` (R8).
@@ -649,8 +650,9 @@ is additional to RD-3's `x.evs`); `checkedWitness` ties each S1, S2 or X1 line t
 hypothesis of the quote, citation, witness and U1 statements. `render_text_matches_metadata` prevents the printed
 line from disagreeing with its metadata. `render_model_names_choice` requires the exact candidate index for every
 open set of the witness's choice. `render_unused_once` requires one final U1 with the document-derived count and
-citation, or no U1 when the list is empty. The plain adapter's `plain_ask_wire_sound` requires its own replay of
-the bound case and the same request fields.
+citation, or no U1 when the list is empty. `RenderInputBound` requires the display-number lookup to succeed for
+every unused unit, and `render_unused_once` cites the resulting complete list. The plain adapter's
+`plain_ask_wire_sound` requires its own replay of the bound case and the same request fields.
 
 **`VE.Words`** (4.5) has no correctness theorem beyond its `#guard` fixtures. Its functions fill templates from a lexicon that V1 to V6 validated. Q2.4's A/B shows they produce Python's bytes. Situation lines are not read back: element names are not lexicon constants, and Python's lines are not read back today either. The share of shown lines that read back is measured instead (8).
 
@@ -851,6 +853,7 @@ Each mutant names the test it must fail:
 | R2 shown with one unchecked choice | the gate test |
 | a situation naming one set of two, or the wrong candidate index of a named set | `render_model_names_choice`'s `#guard` |
 | U1 missing, repeated or citing the wrong unused units | `render_unused_once`; U3 |
+| an unused unit lacking a display number | `RenderInputBound` negative `#guard` |
 | a printed line differing from its metadata | `render_text_matches_metadata` |
 | the split check not comparing the base models | a fixture with two different bases |
 

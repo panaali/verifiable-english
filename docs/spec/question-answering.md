@@ -882,14 +882,15 @@ def citationText : List Nat → String                        -- Q2.3: document 
 
 /-- Only replayed evidence and the document's own split may supply render inputs. `contextOf` extracts each
     `textOf` value from `split.source` at the front-matter unit span (or from its named fence), trimmed as the
-    document loader trims it; `displayOf` is that unit's display position. -/
+    document loader trims it; `displayOf` is that unit's display position. Every unused unit must have one. -/
 def RenderInputBound (ctx : Context) (a : Answer) : Prop :=
   contextOf a.text = .ok ctx ∧
   a.request.getObjValD "case" = a.case ∧
   VE.Readings.Run.replayVerdictsND a.case = .ok a.x ∧
   a.rows.map (·.choice) = a.x.evs.map (·.1) ∧
   (∀ r ∈ a.rows, a.cites r = checkedCites a.request a.x r) ∧
-  a.unused = documentUnused a.text
+  a.unused = documentUnused a.text ∧
+  ∃ displays, a.unused.mapM ctx.displayOf = some displays
 
 def render : Context → Answer → List Line                 -- Q2.3
 def renderGroup : Context → Answer → Group → List Line    -- Q2.3
@@ -920,12 +921,13 @@ theorem render_model_names_choice : ∀ (ctx : Context) (a : Answer), RenderInpu
 /-- D14, R8: one U1 after all answer blocks, with the document-derived count and citation; none for an empty list. -/
 theorem render_unused_once : ∀ (ctx : Context) (a : Answer), RenderInputBound ctx a →
   (a.unused = [] → ∀ l ∈ render ctx a, l.frame ≠ "U1") ∧
-  (a.unused ≠ [] → ∃ pre u, render ctx a = pre ++ [u] ∧
+  (a.unused ≠ [] → ∃ pre u displays, render ctx a = pre ++ [u] ∧
     (∀ l ∈ pre, l.frame ≠ "U1") ∧ u.frame = "U1" ∧
     u.text = lineText ctx a u ∧ u.quote = none ∧ u.source = none ∧
     u.readings = [] ∧ u.witness = none ∧
+    a.unused.mapM ctx.displayOf = some displays ∧
     u.text = s!"VE did not use {a.unused.length} sentences of this document that it could not read formally: " ++
-      citationText (a.unused.filterMap ctx.displayOf) ++ ".")
+      citationText displays ++ ".")
 
 /-! ## The binding and the wire (plan 4.3, 4.8; R5) -/
 
@@ -1406,7 +1408,8 @@ the unused variable `e` in `splitOk_sound`, which the proof needs for `WellForme
 the text and wire section with the Q0-corrected definitions, used `opaque` for the Q2.2/Q2.3 functions, and
 elaborated the theorem types as axioms against the same RD-3 branch. It had no errors and the same unused-variable
 warning. This established type consistency only; neither the corrected statements nor binding fixtures have been
-reviewed against merged RD-3.
+reviewed against merged RD-3. A further temporary copy at `/tmp/qa-q2-p3.lean` elaborated the unused-unit
+display-number correction above against the same branch, with no errors and the same linter warning.
 
 ### 11.3 Run 1: the plan's G document
 
