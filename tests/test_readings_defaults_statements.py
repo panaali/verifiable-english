@@ -168,6 +168,25 @@ def test_rd2a_checker_fails_on_a_dropped_hypothesis_and_a_missing_declaration(tm
 RD6B = ["fill_transfers", "nd_superpose_all", "nd_superpose_conflict_free"]
 
 
+def test_rd6b_three_approved_theorems_are_exact(capsys):
+    checker = _checker()
+    assert checker.main_rd6b() == 0
+    assert "RD-6b PASS: 3 exact" in capsys.readouterr().out
+
+
+@pytest.mark.parametrize("name", RD6B)
+def test_rd6b_checker_rejects_each_changed_statement(tmp_path, capsys, name):
+    checker = _checker()
+    source = checker.SOURCE_6A.read_text()
+    changed = _mutate(source, "theorem", name, checker)
+    assert changed != source
+    path = tmp_path / "SupExtra.lean"
+    path.write_text(changed)
+    checker.SOURCE_6A = path
+    assert checker.main_rd6b() == 1
+    assert f"{name}: theorem differs" in capsys.readouterr().out
+
+
 def _approved_6a_names():
     return sorted(_checker().approved_6a())
 

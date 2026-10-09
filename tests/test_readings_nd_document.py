@@ -63,6 +63,35 @@ def fnd2(tmp_path):
                                                     "u2": "Every act must be done if it may be tried.\n"})
 
 
+def test_fnd3_128_choices_gets_a_decided_public_conflict(tmp_path):
+    """RD-6b's E10 boundary: the superposed certificate decides all 128 choices."""
+    raw = env1()
+    sets, units, texts = [], [], {}
+    for k in range(7):
+        name = f"u{k + 1}"
+        document, _ = doc1(raw, set_id=f"rs_{k + 1}", unit=name, rule=f"must-help-{k + 1}")
+        sets.extend(document["reading_sets"])
+        units.extend(document["units"])
+        texts[name] = f"Every agent must help each user, sentence {k + 1}.\n"
+    path = as_document(tmp_path, raw, {"units": units, "reading_sets": sets}, texts)
+    report = check_document(path)["readings"]
+    assert (report["route"], report["choice_count"], report["choices_checked"]) == \
+        ("superposed", "over 64", 128)
+    assert report["conflict"]["status"] == "CONFLICT-FREE"
+    assert report["english"][0] == \
+        "Under every reading of the 7 open sentences, no two rules on the same act contradict each other."
+    from tests.test_readings_nd_lean import LEAN, case, one
+    from ve.readings_route import _completion_elaborate
+    wire_document = {"units": units, "reading_sets": sets}
+    answer = one(LEAN, "readings-elaborate", raw, wire_document)
+    request = case("readings-elaborate", raw, wire_document)
+    assert _completion_elaborate(answer, request)["choices_checked"] == 128
+    forged = copy.deepcopy(answer)
+    forged["choices_checked"] = 129
+    with pytest.raises(CheckerUnavailable, match="invalid answer"):
+        _completion_elaborate(forged, request)
+
+
 def shown(lines):
     """No English line names a filled table or a generated rule (spec 2.5)."""
     assert lines and not [line for line in lines if any(prefix in line for prefix in RESERVED)], lines
@@ -422,11 +451,19 @@ def test_superposed_answer_retypes_each_field_and_rebinds_each_reference():
     }
     for path, replacement in references.items():
         change(path, replacement)
+    bad = copy.deepcopy(row)
+    bad["filled"]["environment"]["vocabulary"]["predicates"]["invented"] = {"arguments": ["agent", "user"]}
+    with pytest.raises(CheckerUnavailable, match="invalid answer"):
+        _completion_elaborate(bad, case)
     for field in ("choices", "units", "names", "fill_premises", "filled"):
         bad = copy.deepcopy(row)
         bad[field] = []
         with pytest.raises(CheckerUnavailable, match="invalid answer"):
             _completion_elaborate(bad, case)
+    bad = copy.deepcopy(row)
+    bad.update(choices=[], choice_count=0, choices_checked=0)
+    with pytest.raises(CheckerUnavailable, match="invalid answer"):
+        _completion_elaborate(bad, case)
     bad = copy.deepcopy(row)
     bad["units"].append(copy.deepcopy(bad["units"][0]))
     with pytest.raises(CheckerUnavailable, match="invalid answer"):
