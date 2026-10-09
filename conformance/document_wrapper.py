@@ -61,17 +61,18 @@ def projection_of(units, coverage, document_id, source_id):
 
 
 def python_answer(text: str) -> dict:
-    """Python's answer: `load_document`, then `check_document`'s wrapper: `_report`, which admits the claim graph
-    and reports the coverage, for a document with a graph; `coverage` alone for one without (`_report` adds only
-    the premise status there, which the wrapper does not compute). A VEError is an answer; any other exception is
-    a crash."""
-    from ve.document import _report, coverage, load_document
+    """Python's answer: its own path (`_load_document`, which `load_document` keeps for the documents the Lean mode
+    cannot decide yet, batch 16b), then `check_document`'s wrapper: `_report`, which admits the claim graph and
+    reports the coverage, for a document with a graph; `coverage` alone for one without (`_report` adds only the
+    premise status there, which the wrapper does not compute). A VEError is an answer; any other exception is a
+    crash."""
+    from ve.document import _load_document, _report, coverage
     from ve.errors import VEError
     with tempfile.TemporaryDirectory() as directory:
         path = Path(directory) / "document.ve.md"
         path.write_bytes(text.encode("utf-8"))
         try:
-            doc = load_document(path)
+            doc = _load_document(path.read_bytes(), path, None)
             result = (_report(doc) if "graph" in doc["meta"] else
                       {"coverage": coverage(doc), "document_id": doc["document_id"], "source_id": doc["source_id"]})
         except VEError as exc:

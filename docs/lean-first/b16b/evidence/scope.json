@@ -1,0 +1,535 @@
+{
+ "range": "main..HEAD --no-merges",
+ "captured_head": "9003f24040dff38b36a13b7e0d2a2c1942585b75",
+ "base": "8350e55f8e8ead02063ee17d05bf729c7e9e81b9",
+ "commits": [
+  "9003f24040dff38b36a13b7e0d2a2c1942585b75",
+  "b695412cfc91c4d4125fba6b66752c2aa581675a",
+  "4bee922da29cf2e89accbf2b50e136154b1f8058",
+  "7bfb022f5c3bec172564f5810b3a8e0dcc35cd7f",
+  "1648a5f42fa1d819c40a604aef61ea289043737c",
+  "456980ebd30f298c3d99bd758b4afea2d40edcf4",
+  "89d649a69c908109a8e71dab6f23b0a7c70e46ec",
+  "d47e65557e9d6041f41fada67abf360c7be2c52c",
+  "70bc1f9047e79db3651feaa248d9acfcf0a18c5c",
+  "1e1acf486a66ab97c7e01162446a5f4d1ba2d027",
+  "18b62bfad3b0e1c46a6bf2b3dcc4628c4c4a9988",
+  "51a5c9abd4da3e5129efa932559774143d0579e4",
+  "d1e2e2348f4522c7ac3de5f69d132eae2bf450b1",
+  "7e405d8901df5b0c79b072e125bdc8de388c3220",
+  "64a774d4be2b933eacfb21dfd2413beee56c8190",
+  "df63629a1e264b804b9f5fdf86b2de7c05daa8ba",
+  "84064f2cb5ee771e6b95612595267982a1f26f24",
+  "496a16daf75003303e13e210805406f9779a3cab",
+  "b4860efd78494ee5fcb54e719e8eaf925c872faf",
+  "68c0b54d8c1a1d6d85787554fc7fe57b69dd0ee6",
+  "6e9b141082a72757730deef694b66d6b9321bcbd",
+  "9a9a02ce46dd0bd122e13d7901241f346e98b97a",
+  "ee583b99f99eef2924aeb82a33dd7797a44235c3",
+  "bbc3ebeb75807f1cb112770e5785c0185b06a593",
+  "23641d2c868444ff7352a80213e3bfddf728dc18",
+  "cd6b84c0e9c612b7ac0e964a32a573a2ad8d7b49",
+  "3dcec54f641ffea5caae7ef952ab9dbeb0b137ab",
+  "61ee007e355544b8eabca7db634dfda0d8a05ebb"
+ ],
+ "numstat": [
+  {
+   "commit": "9003f24040dff38b36a13b7e0d2a2c1942585b75",
+   "path": "tools/hooks/precommit.py",
+   "added": 3,
+   "deleted": 1
+  },
+  {
+   "commit": "b695412cfc91c4d4125fba6b66752c2aa581675a",
+   "path": "tests/test_b16b_evidence.py",
+   "added": 4,
+   "deleted": 1
+  },
+  {
+   "commit": "b695412cfc91c4d4125fba6b66752c2aa581675a",
+   "path": "tools/gate-optional.json",
+   "added": 1,
+   "deleted": 0
+  },
+  {
+   "commit": "4bee922da29cf2e89accbf2b50e136154b1f8058",
+   "path": "docs/spec/assurance-manifest.md",
+   "added": 2,
+   "deleted": 2
+  },
+  {
+   "commit": "4bee922da29cf2e89accbf2b50e136154b1f8058",
+   "path": "lean/VE/Route/frozen-sources.sha256",
+   "added": 2,
+   "deleted": 2
+  },
+  {
+   "commit": "4bee922da29cf2e89accbf2b50e136154b1f8058",
+   "path": "lean/VE/Service/Document.lean",
+   "added": 2,
+   "deleted": 2
+  },
+  {
+   "commit": "4bee922da29cf2e89accbf2b50e136154b1f8058",
+   "path": "lean/checkers.lock",
+   "added": 2,
+   "deleted": 1
+  },
+  {
+   "commit": "4bee922da29cf2e89accbf2b50e136154b1f8058",
+   "path": "lean/declarations.txt",
+   "added": 99,
+   "deleted": 82
+  },
+  {
+   "commit": "4bee922da29cf2e89accbf2b50e136154b1f8058",
+   "path": "tools/trust-classes.json",
+   "added": 22,
+   "deleted": 5
+  },
+  {
+   "commit": "4bee922da29cf2e89accbf2b50e136154b1f8058",
+   "path": "ve/assurance-manifest.json",
+   "added": 4,
+   "deleted": 4
+  },
+  {
+   "commit": "7bfb022f5c3bec172564f5810b3a8e0dcc35cd7f",
+   "path": "docs/lean-first/b16b/DELTA.md",
+   "added": 9,
+   "deleted": 8
+  },
+  {
+   "commit": "7bfb022f5c3bec172564f5810b3a8e0dcc35cd7f",
+   "path": "docs/lean-first/b16b/REPORT.md",
+   "added": 13,
+   "deleted": 5
+  },
+  {
+   "commit": "1648a5f42fa1d819c40a604aef61ea289043737c",
+   "path": "docs/lean-first/b16b/delta.json",
+   "added": 166,
+   "deleted": 0
+  },
+  {
+   "commit": "1648a5f42fa1d819c40a604aef61ea289043737c",
+   "path": "docs/lean-first/b16b/make_delta.py",
+   "added": 3,
+   "deleted": 1
+  },
+  {
+   "commit": "1648a5f42fa1d819c40a604aef61ea289043737c",
+   "path": "tests/test_b16b_evidence.py",
+   "added": 3,
+   "deleted": 0
+  },
+  {
+   "commit": "456980ebd30f298c3d99bd758b4afea2d40edcf4",
+   "path": "lean/VE/Service/Document.lean",
+   "added": 22,
+   "deleted": 0
+  },
+  {
+   "commit": "456980ebd30f298c3d99bd758b4afea2d40edcf4",
+   "path": "lean/checkers.lock",
+   "added": 2,
+   "deleted": 1
+  },
+  {
+   "commit": "456980ebd30f298c3d99bd758b4afea2d40edcf4",
+   "path": "tests/test_document_lean_switch.py",
+   "added": 67,
+   "deleted": 0
+  },
+  {
+   "commit": "456980ebd30f298c3d99bd758b4afea2d40edcf4",
+   "path": "tools/gate-collection.json",
+   "added": 276,
+   "deleted": 0
+  },
+  {
+   "commit": "89d649a69c908109a8e71dab6f23b0a7c70e46ec",
+   "path": "lean/VE/Service/Document.lean",
+   "added": 176,
+   "deleted": 20
+  },
+  {
+   "commit": "89d649a69c908109a8e71dab6f23b0a7c70e46ec",
+   "path": "lean/VE/Service/TypingDiagnostic.lean",
+   "added": 53,
+   "deleted": 9
+  },
+  {
+   "commit": "89d649a69c908109a8e71dab6f23b0a7c70e46ec",
+   "path": "lean/checkers.lock",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "89d649a69c908109a8e71dab6f23b0a7c70e46ec",
+   "path": "tests/test_document_lean_switch.py",
+   "added": 116,
+   "deleted": 0
+  },
+  {
+   "commit": "d47e65557e9d6041f41fada67abf360c7be2c52c",
+   "path": "docs/lean-first/b16b/mutants.py",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "d47e65557e9d6041f41fada67abf360c7be2c52c",
+   "path": "tests/test_b16b_evidence.py",
+   "added": 9,
+   "deleted": 0
+  },
+  {
+   "commit": "d47e65557e9d6041f41fada67abf360c7be2c52c",
+   "path": "tests/test_document_lean_switch.py",
+   "added": 73,
+   "deleted": 0
+  },
+  {
+   "commit": "d47e65557e9d6041f41fada67abf360c7be2c52c",
+   "path": "ve/document.py",
+   "added": 31,
+   "deleted": 26
+  },
+  {
+   "commit": "70bc1f9047e79db3651feaa248d9acfcf0a18c5c",
+   "path": "docs/lean-first/b16b/CHECKLIST.md",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "70bc1f9047e79db3651feaa248d9acfcf0a18c5c",
+   "path": "docs/lean-first/b16b/REPORT.md",
+   "added": 9,
+   "deleted": 0
+  },
+  {
+   "commit": "1e1acf486a66ab97c7e01162446a5f4d1ba2d027",
+   "path": "tests/test_document_lean_switch.py",
+   "added": 45,
+   "deleted": 7
+  },
+  {
+   "commit": "1e1acf486a66ab97c7e01162446a5f4d1ba2d027",
+   "path": "tools/gate-collection.json",
+   "added": 2,
+   "deleted": 0
+  },
+  {
+   "commit": "1e1acf486a66ab97c7e01162446a5f4d1ba2d027",
+   "path": "ve/document.py",
+   "added": 94,
+   "deleted": 7
+  },
+  {
+   "commit": "18b62bfad3b0e1c46a6bf2b3dcc4628c4c4a9988",
+   "path": "docs/lean-first/b16b/CHECKLIST.md",
+   "added": 21,
+   "deleted": 0
+  },
+  {
+   "commit": "51a5c9abd4da3e5129efa932559774143d0579e4",
+   "path": "docs/lean-first/b16b/DELTA.md",
+   "added": 2,
+   "deleted": 2
+  },
+  {
+   "commit": "51a5c9abd4da3e5129efa932559774143d0579e4",
+   "path": "docs/lean-first/b16b/REPORT.md",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "51a5c9abd4da3e5129efa932559774143d0579e4",
+   "path": "docs/lean-first/b16b/evidence/scope.json",
+   "added": 41,
+   "deleted": 1
+  },
+  {
+   "commit": "51a5c9abd4da3e5129efa932559774143d0579e4",
+   "path": "docs/lean-first/b16b/evidence/suite.json",
+   "added": 35,
+   "deleted": 0
+  },
+  {
+   "commit": "51a5c9abd4da3e5129efa932559774143d0579e4",
+   "path": "tests/test_b16b_evidence.py",
+   "added": 11,
+   "deleted": 0
+  },
+  {
+   "commit": "51a5c9abd4da3e5129efa932559774143d0579e4",
+   "path": "tools/gate-collection.json",
+   "added": 1,
+   "deleted": 0
+  },
+  {
+   "commit": "d1e2e2348f4522c7ac3de5f69d132eae2bf450b1",
+   "path": "docs/lean-first/b16b/REPORT.md",
+   "added": 71,
+   "deleted": 0
+  },
+  {
+   "commit": "7e405d8901df5b0c79b072e125bdc8de388c3220",
+   "path": "docs/lean-first/b16b/mutants.py",
+   "added": 6,
+   "deleted": 2
+  },
+  {
+   "commit": "64a774d4be2b933eacfb21dfd2413beee56c8190",
+   "path": "tools/gate-collection.json",
+   "added": 34,
+   "deleted": 0
+  },
+  {
+   "commit": "df63629a1e264b804b9f5fdf86b2de7c05daa8ba",
+   "path": "docs/lean-first/b16b/DELTA.md",
+   "added": 9,
+   "deleted": 0
+  },
+  {
+   "commit": "df63629a1e264b804b9f5fdf86b2de7c05daa8ba",
+   "path": "docs/lean-first/b16b/evidence/scope.json",
+   "added": 249,
+   "deleted": 0
+  },
+  {
+   "commit": "df63629a1e264b804b9f5fdf86b2de7c05daa8ba",
+   "path": "tests/test_b16b_evidence.py",
+   "added": 1,
+   "deleted": 2
+  },
+  {
+   "commit": "84064f2cb5ee771e6b95612595267982a1f26f24",
+   "path": "docs/lean-first/b16b/report.py",
+   "added": 3,
+   "deleted": 1
+  },
+  {
+   "commit": "496a16daf75003303e13e210805406f9779a3cab",
+   "path": "docs/lean-first/b16b/DELTA.md",
+   "added": 93,
+   "deleted": 8
+  },
+  {
+   "commit": "496a16daf75003303e13e210805406f9779a3cab",
+   "path": "docs/lean-first/b16b/LEDGER.md",
+   "added": 21,
+   "deleted": 0
+  },
+  {
+   "commit": "496a16daf75003303e13e210805406f9779a3cab",
+   "path": "docs/lean-first/b16b/report.py",
+   "added": 117,
+   "deleted": 0
+  },
+  {
+   "commit": "496a16daf75003303e13e210805406f9779a3cab",
+   "path": "tests/test_b16b_evidence.py",
+   "added": 84,
+   "deleted": 0
+  },
+  {
+   "commit": "b4860efd78494ee5fcb54e719e8eaf925c872faf",
+   "path": "docs/lean-first/b16b/evidence/mutants.json",
+   "added": 105,
+   "deleted": 0
+  },
+  {
+   "commit": "b4860efd78494ee5fcb54e719e8eaf925c872faf",
+   "path": "docs/lean-first/b16b/mutants.py",
+   "added": 102,
+   "deleted": 0
+  },
+  {
+   "commit": "68c0b54d8c1a1d6d85787554fc7fe57b69dd0ee6",
+   "path": "docs/lean-first/b16b/evidence/latency.json",
+   "added": 156,
+   "deleted": 0
+  },
+  {
+   "commit": "68c0b54d8c1a1d6d85787554fc7fe57b69dd0ee6",
+   "path": "docs/lean-first/b16b/latency.py",
+   "added": 68,
+   "deleted": 0
+  },
+  {
+   "commit": "6e9b141082a72757730deef694b66d6b9321bcbd",
+   "path": "docs/lean-first/b16b/delta.json",
+   "added": 8557,
+   "deleted": 0
+  },
+  {
+   "commit": "6e9b141082a72757730deef694b66d6b9321bcbd",
+   "path": "docs/lean-first/b16b/evidence/ab.json",
+   "added": 44,
+   "deleted": 0
+  },
+  {
+   "commit": "6e9b141082a72757730deef694b66d6b9321bcbd",
+   "path": "docs/lean-first/b16b/evidence/difffuzz.json",
+   "added": 313,
+   "deleted": 0
+  },
+  {
+   "commit": "6e9b141082a72757730deef694b66d6b9321bcbd",
+   "path": "docs/lean-first/b16b/evidence/share.json",
+   "added": 65,
+   "deleted": 0
+  },
+  {
+   "commit": "6e9b141082a72757730deef694b66d6b9321bcbd",
+   "path": "docs/lean-first/b16b/fuzz_seeds.py",
+   "added": 57,
+   "deleted": 0
+  },
+  {
+   "commit": "6e9b141082a72757730deef694b66d6b9321bcbd",
+   "path": "docs/lean-first/b16b/make_delta.py",
+   "added": 69,
+   "deleted": 0
+  },
+  {
+   "commit": "6e9b141082a72757730deef694b66d6b9321bcbd",
+   "path": "docs/lean-first/b16b/share.py",
+   "added": 55,
+   "deleted": 0
+  },
+  {
+   "commit": "9a9a02ce46dd0bd122e13d7901241f346e98b97a",
+   "path": "docs/lean-first/b16b/DELTA.md",
+   "added": 28,
+   "deleted": 0
+  },
+  {
+   "commit": "9a9a02ce46dd0bd122e13d7901241f346e98b97a",
+   "path": "tests/test_document_lean_switch.py",
+   "added": 280,
+   "deleted": 0
+  },
+  {
+   "commit": "ee583b99f99eef2924aeb82a33dd7797a44235c3",
+   "path": "docs/spec/assurance-manifest.md",
+   "added": 2,
+   "deleted": 2
+  },
+  {
+   "commit": "ee583b99f99eef2924aeb82a33dd7797a44235c3",
+   "path": "ve/assurance-manifest.json",
+   "added": 6,
+   "deleted": 5
+  },
+  {
+   "commit": "bbc3ebeb75807f1cb112770e5785c0185b06a593",
+   "path": "docs/trust-baseline.json",
+   "added": 31,
+   "deleted": 18
+  },
+  {
+   "commit": "bbc3ebeb75807f1cb112770e5785c0185b06a593",
+   "path": "lean/VE/Route/frozen-sources.sha256",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "bbc3ebeb75807f1cb112770e5785c0185b06a593",
+   "path": "lean/VE/Service/Document.lean",
+   "added": 5,
+   "deleted": 5
+  },
+  {
+   "commit": "bbc3ebeb75807f1cb112770e5785c0185b06a593",
+   "path": "lean/declarations.txt",
+   "added": 77,
+   "deleted": 76
+  },
+  {
+   "commit": "23641d2c868444ff7352a80213e3bfddf728dc18",
+   "path": "conformance/document_wrapper.py",
+   "added": 7,
+   "deleted": 6
+  },
+  {
+   "commit": "23641d2c868444ff7352a80213e3bfddf728dc18",
+   "path": "ve/backends/relay.py",
+   "added": 8,
+   "deleted": 0
+  },
+  {
+   "commit": "23641d2c868444ff7352a80213e3bfddf728dc18",
+   "path": "ve/document.py",
+   "added": 108,
+   "deleted": 10
+  },
+  {
+   "commit": "cd6b84c0e9c612b7ac0e964a32a573a2ad8d7b49",
+   "path": "lean/VE/Service/Document.lean",
+   "added": 4,
+   "deleted": 1
+  },
+  {
+   "commit": "cd6b84c0e9c612b7ac0e964a32a573a2ad8d7b49",
+   "path": "lean/checkers.lock",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "3dcec54f641ffea5caae7ef952ab9dbeb0b137ab",
+   "path": "lean/ResponseShape/Encoders/Document.lean",
+   "added": 2,
+   "deleted": 1
+  },
+  {
+   "commit": "3dcec54f641ffea5caae7ef952ab9dbeb0b137ab",
+   "path": "lean/ResponseShape/Schemas/Document.lean",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "3dcec54f641ffea5caae7ef952ab9dbeb0b137ab",
+   "path": "lean/VE/Service/Document.lean",
+   "added": 27,
+   "deleted": 10
+  },
+  {
+   "commit": "3dcec54f641ffea5caae7ef952ab9dbeb0b137ab",
+   "path": "lean/checkers.lock",
+   "added": 2,
+   "deleted": 1
+  },
+  {
+   "commit": "3dcec54f641ffea5caae7ef952ab9dbeb0b137ab",
+   "path": "ve/backends/lean_service_schema/document.json",
+   "added": 2,
+   "deleted": 0
+  },
+  {
+   "commit": "61ee007e355544b8eabca7db634dfda0d8a05ebb",
+   "path": "docs/lean-first/b16b/capture_documents.py",
+   "added": 60,
+   "deleted": 0
+  },
+  {
+   "commit": "61ee007e355544b8eabca7db634dfda0d8a05ebb",
+   "path": "docs/lean-first/document-corpus.json.gz",
+   "added": 0,
+   "deleted": 0
+  },
+  {
+   "commit": "61ee007e355544b8eabca7db634dfda0d8a05ebb",
+   "path": "tools/lean_first_diff.py",
+   "added": 32,
+   "deleted": 7
+  },
+  {
+   "commit": "61ee007e355544b8eabca7db634dfda0d8a05ebb",
+   "path": "tools/lean_first_schema/record.json",
+   "added": 2,
+   "deleted": 1
+  }
+ ]
+}
