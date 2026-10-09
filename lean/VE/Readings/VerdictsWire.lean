@@ -1166,10 +1166,11 @@ def perChoiceJson (question : String) (i : RowInfo) : Json :=
      ("gaps", notesJson i.notes (fun n => if n.gaps.isEmpty then none else some (gapsJson n.gaps))),
      ("status_text", match (i.note "witness").bind (·.statusText) with | some t => .str t | none => .null)])
 
-/-- The sets the route's finding names (1.8; under the completion every open set), for E29. -/
+/-- The sets the route's finding names (1.8; under the completion every open set), for E29; none for a document
+    without an open set (a component's checked fixed units, RD-4b). -/
 def findingSets (nd : Bool) (D : Doc) : List String :=
   match (if nd then some (completionFinding D) else notSuperposable D) with
-  | some (sets, _) => sets.splitOn ", "
+  | some (sets, _) => (sets.splitOn ", ").filter (· != "")
   | none => []
 
 /-- The question's result (none beyond 64 choices: W2's budget shape, and for a query the first checked
