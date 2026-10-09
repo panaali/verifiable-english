@@ -271,13 +271,15 @@ def test_json_python_reads_as_other_values_fails_closed(service, extra):
 
 @pytest.mark.parametrize("extra", ['"x": "\\ud800"', '"x": "a\\udc00"', '"x": "\\ud800\\u0041"',
                                    '"\\udc00": 1'], ids=["high", "low", "high-then-other", "key"])
-def test_json_unpaired_surrogate_is_invalid_in_both(service, extra):
+def test_json_unpaired_surrogate_is_the_boundary_diagnostic_in_both(service, extra):
     """An unpaired surrogate escape reads, in Python, as a string no UTF-8 text holds: Python's loader crashed
-    encoding the document identity (UnicodeEncodeError). Both readers refuse it as invalid JSON, as the
-    discourse route's restricted reader does."""
+    encoding the document identity (UnicodeEncodeError). Both loaders refuse it with the JSON boundary's
+    diagnostic (docs/spec/v0-language.md), the text the relay's wire check gives one in the environment."""
+    from ve.wire import LONE_SURROGATE
     text = document("AB", [unit("a", [0, 2])]).replace('"units":', extra + ', "units":', 1)
     python, answer = both(service, text)
-    assert python["text"] == answer["text"] == "invalid JSON front matter", (python, answer)
+    assert python == {"outcome": "error", "code": "InvalidInput", "text": LONE_SURROGATE}, python
+    assert dw.verdict(python, answer) == "agree", (python, answer)
 
 
 @pytest.mark.parametrize("extra", ['"weights": [], "weights": []', '"x": "\\ud83d\\ude00"'])

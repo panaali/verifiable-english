@@ -48,9 +48,11 @@ structural pass (`strayNull`) decide what the mode may read:
   reads a natural or another number;
 - `null` is read only where Python's loader reads it as absent: a unit's `content` and
   `status` and a `MIXED` part's `content`. Any other `null` is `CheckerUnavailable`;
-- an unpaired surrogate escape is `invalid JSON front matter` in both loaders. Python's
-  loader used to crash on it (`UnicodeEncodeError` in the document identity); it now
-  refuses it, as the discourse route's restricted reader always has.
+- an unpaired surrogate escape gets the JSON boundary's `InvalidInput` diagnostic in both
+  loaders: `JSON strings must not contain lone UTF-16 surrogates` (`ve.wire.LONE_SURROGATE`,
+  docs/spec/v0-language.md). Python's loader used to crash on one outside the environment
+  (`UnicodeEncodeError` in the document identity). In the environment it already got this
+  text from the relay's wire check, which `tests/test_relay_wire_check.py` pins.
 
 `tests/test_lean_document_wrapper.py::test_null_and_number_forms_agree_with_python_or_fail_closed`
 sets every front-matter member of every seed to `null` and writes every natural in six

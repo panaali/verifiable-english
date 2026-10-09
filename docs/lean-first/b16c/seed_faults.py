@@ -39,8 +39,8 @@ CASES = [
     # 16c review B2.
     ("Python reads an unpaired surrogate", "ve/document.py",
      '        json.dumps(meta, ensure_ascii=False).encode("utf-8")\n',
-     '',
-     WRAPPER + "test_json_unpaired_surrogate_is_invalid_in_both[high]"),
+     '        pass\n',
+     WRAPPER + "test_json_unpaired_surrogate_is_the_boundary_diagnostic_in_both[high]"),
     ("Lean decides every null", "lean/VE/Service/Document.lean",
      'if let some key := strayNull j then',
      'if let some key := (none : Option String) then',
@@ -55,9 +55,9 @@ CASES = [
      '    | .ok _ => throw "invalid unit status"',
      WRAPPER + "test_null_the_mode_reads_as_absent_is_decided"),
     ("Lean reads an unpaired surrogate", "lean/VE/Service/Document.lean",
-     '| some .surrogate => throw "invalid JSON front matter"',
+     '| some .surrogate => throw loneSurrogate',
      '| some .surrogate => throw (unavailable "an unpaired surrogate")',
-     WRAPPER + "test_json_unpaired_surrogate_is_invalid_in_both[high]"),
+     WRAPPER + "test_json_unpaired_surrogate_is_the_boundary_diagnostic_in_both[high]"),
 ]
 LOCK = ROOT / "lean/checkers.lock"
 SERVICE = ROOT / "lean/.lake/build/bin/ve_service"

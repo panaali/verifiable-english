@@ -29,7 +29,7 @@ from .identity import meaning_id, source_id
 from .openterms import validate_open_terms
 from .readings import (active_reading_sets, check_readings, plan_choices, s1_content_kind,
                        validate_couplings, validate_narrowings, validate_reading_sets)
-from .wire import digest
+from .wire import LONE_SURROGATE, digest
 from .vacuity import premise_status
 
 MAX_DOCUMENT_BYTES = 4_000_000
@@ -81,13 +81,16 @@ def front_matter(raw: bytes):
         raise VEError("unclosed JSON front matter")
     try:
         meta = json.loads(raw[4:boundary].decode("utf-8"))
-        # An unpaired surrogate escape reads as a string no UTF-8 text holds (the document identity encodes
-        # the metadata); Lean's JSON readers refuse it, and so does this one.
-        json.dumps(meta, ensure_ascii=False).encode("utf-8")
     except (ValueError, UnicodeError) as exc:
         raise VEError("invalid JSON front matter") from exc
     except RecursionError:
         raise ResourceLimit("ResourceLimit: JSON front matter nesting exceeds the parser's depth") from None
+    try:
+        # An unpaired surrogate escape reads as a string no UTF-8 text holds (the document identity encodes the
+        # metadata): the JSON boundary's diagnostic, as the Lean document mode answers.
+        json.dumps(meta, ensure_ascii=False).encode("utf-8")
+    except UnicodeEncodeError as exc:
+        raise VEError(LONE_SURROGATE) from exc
     return meta, raw[boundary + 5:]
 
 
