@@ -11,6 +11,7 @@ Nothing here is computed for W2's, the pending or the abstaining route (1.1).
 """
 from __future__ import annotations
 
+import json
 from itertools import product
 
 from .errors import CheckerUnavailable, VEError
@@ -758,6 +759,7 @@ class Enumerated(_Route):
         self._premise = {}   # choice key → its certificate of ⊥ or model
         self._dead = None    # the dead readings' certificates, once Lean names the untaken candidates
         self._answers = {}
+        self.requests = {}   # id of an answer → the request it answers
 
     def _choice(self, choice):
         key = self._key(choice)
@@ -773,7 +775,8 @@ class Enumerated(_Route):
         return {s: i for s, i in choice_json}
 
     def _verdicts(self, question, query=None, **fields):
-        """Lean's `readings-verdicts` answer, the evidence generated so far sent with it."""
+        """Lean's `readings-verdicts` answer, the evidence generated so far sent with it, checked against the request
+        (`_check_answer`); the request is kept beside it (`requests`, by the answer's identity)."""
         from .readings_route import run_lean
         evidence = []
         for choice in self.choices or []:
@@ -792,9 +795,14 @@ class Enumerated(_Route):
                 raise VEError(error)
             raise CheckerUnavailable(f"ReadingsConformance: Lean refused the readings-verdicts case Python built: "
                                      f"{error}")
-        _check_answer(row, question, None if self.choices is None else [self.choice_json(c) for c in self.choices],
-                      exact=question != "query" and "assumed" not in fields)
+        self.check_answer(row, case)
+        self.requests[id(row)] = case
         return row
+
+    def check_answer(self, row, case):
+        """`_check_answer` with this route's compatible choices and candidates."""
+        _check_answer(row, case, None if self.choices is None else [self.choice_json(c) for c in self.choices],
+                      [list(x) for x in self.candidates()], self.completion)
 
     def _conflict_answer(self):
         """The conflict question: each choice's packages, then a witness for every choice Lean leaves without
@@ -918,46 +926,207 @@ class Enumerated(_Route):
 
 
 def _request_key(conclusion_ast, premises, assumed):
-    import json
     return json.dumps([conclusion_ast, list(premises), None if assumed is None else [list(x) for x in assumed]],
                       sort_keys=True)
 
 
-def _check_answer(row, question, choices=None, exact=True):
-    """The answer's shape as `Readings.Run.verdictsAnswer` builds it (every field, its type, booleans as booleans),
-    its rows bound to the request (each a compatible choice of Lean's elaborate row, none twice, all of them when
-    nothing is assumed), and every piece of evidence Python sent accepted: a refused piece (a witness, certificate or
+def _fold_conflict(words):
+    """`Readings.foldConflict` on a choice's rows (1.6)."""
+    if "CONFLICT" in words:
+        return "CONFLICT"
+    return "CONFLICT-FREE" if words and all(w == "CONFLICT-FREE" for w in words) else "UNKNOWN"
+
+
+def _fold_premises(words):
+    """`Readings.foldPremises` (1.9)."""
+    if "model" in words:
+        return "model"
+    return "INCONSISTENT" if words and all(w == "INCONSISTENT" for w in words) else "UNKNOWN"
+
+
+def _fold_entailment(conflicts, queries):
+    """`Readings.foldEntailment` with its gate (14.8)."""
+    if _fold_conflict(conflicts) != "CONFLICT-FREE" or not queries:
+        return "UNKNOWN"
+    if all(w == "proved" for w in queries):
+        return "ALL"
+    if all(w == "refuted" for w in queries):
+        return "NONE"
+    return "SOME" if "proved" in queries and "refuted" in queries else "UNKNOWN"
+
+
+def _naming_choices(value):
+    """Every object at any depth of the value that names a choice (has a `choice` member)."""
+    stack, found = [value], []
+    while stack:
+        node = stack.pop()
+        if type(node) is dict:
+            if "choice" in node:
+                found.append(node)
+            stack.extend(node.values())
+        elif type(node) is list:
+            stack.extend(node)
+    return found
+
+
+def _shown_of(piece, name):
+    """`Readings.Run.shownOf`: the model Lean shows of a piece Python sent, its `shown` member else its checked
+    model."""
+    if type(piece) is not dict:
+        raise ValueError
+    if "shown" in piece:
+        return piece["shown"]
+    holder = piece.get("witness") if name == "witness" else piece
+    return holder.get("model") if type(holder) is dict else None
+
+
+def _check_answer(row, case, choices=None, candidates=None, completion=None):
+    """Lean's answer to the `readings-verdicts` request `case`, as untrusted output (build checklist 4).
+
+    Its shape is `Readings.Run.verdictsAnswer`'s (the generated, proved response schema: every field, its type, the
+    result's form for the question, the status words). Its rows are bound to the request: with the compatible
+    choices `choices` (Lean's elaborate row) exactly the ones taking `assumed`, in order, at least one; past 64 (no
+    `choices`) W2's budget shape and only choices the request's evidence names. Every choice the result names is a
+    row's (a proof's row proved, a countermodel's refuted, a shown model the one the request's piece shows), the
+    result is the fold of the rows' words, its per-choice lists, statuses and labels are the rows' and the answer's
+    (under the unspecified completion `completion`, E3's labels are the ones the answer uses), the premises'
+    candidates are `candidates` with the fold of the rows taking each, and the untaken and dead readings are the
+    request's. Every piece of evidence sent is accepted: a refused or unanswered piece (a witness, certificate or
     model Python's own check accepted, or a dead reading's certificate) is `CheckerUnavailable`. A conflict package
     that does not certify CONFLICT-FREE is not refused: the witness search follows (4.3)."""
     def need(condition):
         if not condition:
             raise ValueError
+    question = case["question"]
+    assumed = case.get("assumed")
+    sent = {json.dumps(e["choice"]): e for e in case.get("evidence", [])}
+    sent_dead = case.get("dead", [])
     try:
         from .backends.service_schema import Invalid, check_row
         # The producer's generated, proved response shape owns every field,
-        # status spelling and JSON type. This check is also used for a raw row
-        # supplied to the formatter, outside the service transport.
+        # status spelling and JSON type.
         check_row("readings-route", row, {"id": row.get("id"), "kind": "readings-verdicts"}, 0)
         need(row["question"] == question)
-        seen = []
-        for entry in row["per_choice"]:
-            need(entry["choice"] not in seen)
-            seen.append(entry["choice"])
-        if choices is not None and "budget" not in row["result"]:
-            need(all(c in choices for c in seen))
-            need(not exact or seen == choices)
+        result, rows = row["result"], row["per_choice"]
+        seen = [entry["choice"] for entry in rows]
+        need(len({json.dumps(c) for c in seen}) == len(seen))
+
+        def takes(choice):
+            return all(x in choice for x in assumed or [])
+        if choices is None:
+            # Beyond 64: W2's budget shape, rows only for evidence the request sent (in its order).
+            need("budget" in result)
+            order = [json.loads(k) for k in sent]
+            need(all(takes(c) for c in seen))
+            need([order.index(c) for c in seen] == sorted(order.index(c) for c in seen))  # ValueError if not sent
+        else:
+            need("budget" not in result)
+            expected = [c for c in choices if takes(c)]
+            need(expected and seen == expected)
+        # Only the query's result names the request's readings (conflict and premises results have no member).
+        need(question != "query" or result.get("assumed") == assumed)
+        by_choice = {json.dumps(entry["choice"]): entry for entry in rows}
+        for named in _naming_choices(result):
+            need(named["choice"] in seen)
+            row_of = by_choice[json.dumps(named["choice"])]
+            # A proof or a countermodel is its row's result.
+            need(named.get("outcome") is None or
+                 row_of.get("query") == {"proof": "proved", "countermodel": "refuted"}[named["outcome"]])
+            if "model" in named:
+                # A shown model in the result is its row's (a witness, a countermodel or a model).
+                piece = ("countermodel" if named.get("outcome") == "countermodel" else
+                         "model" if question == "premises" else "witness")
+                need(named["model"] == row_of["shown"].get(piece))
+        for entry in rows:
+            # A row's shown model is the one the request's piece shows.
+            for piece, shown in entry["shown"].items():
+                need(shown == _shown_of(sent.get(json.dumps(entry["choice"]), {}).get(piece), piece))
+        # Each row carries exactly its question's word.
+        need(all(set(entry) & {"query", "premises"} == {question} - {"conflict"} for entry in rows))
+        rest = row["restrictions"]
+        # E3's labels (`labelsOf`): the ones a CONFLICT-FREE or ALL answer uses, else none.
+        uses = result.get("status") == "CONFLICT-FREE" or result.get("verdict") == "ALL"
+        if completion is not None:
+            need(row["labels"] == ([] if not uses else result["conditional_on"] if completion else rest))
+        for key in ("restrictions", "reading_premises_used"):
+            need(result.get(key, rest) == rest)
+        if "budget" in result:
+            need(rest == [])
+        else:
+            conflicts = [entry["conflict"] for entry in rows]
+            if question == "conflict":
+                need(result["status"] == _fold_conflict(conflicts))
+                need(result["choices"] == [{"choice": e["choice"], "status": e["conflict"]} for e in rows])
+                if "conditional_on" in result:
+                    need(all(x in result["conditional_on"] for x in rest))
+                if "witnesses" in result:
+                    need([w["choice"] for w in result["witnesses"]] ==
+                         [e["choice"] for e in rows if e["conflict"] == "CONFLICT"])
+                    need(all(w["status_text"] == by_choice[json.dumps(w["choice"])]["status_text"]
+                             for w in result["witnesses"]))
+            elif question == "premises":
+                need(result["status"] == _fold_premises([e["premises"] for e in rows]))
+                need(result["choices"] == [{"choice": e["choice"], "status": e["premises"]} for e in rows])
+                need([[c["set"], c["index"]] for c in result["candidates"]] == (candidates or []))
+                dead_named = [[d["set"], d["index"]] for d in row["dead_readings"] or []]
+                for c in result["candidates"]:
+                    taking = [e["premises"] for e in rows if [c["set"], c["index"]] in e["choice"]]
+                    if c["status"] == "dead":
+                        need([c["set"], c["index"]] in dead_named and not taking)
+                    elif c["status"] != "narrowed":
+                        need(c["status"] == ("UNKNOWN" if not taking else _fold_premises(taking)))
+                        need(("reason" in c) == (not taking))
+            else:
+                if result["verdict"] == "SOME":
+                    need(type(result["proof"]) is dict and type(result["countermodel"]) is dict)
+                if result["verdict"] == "ALL":
+                    used = []
+                    for x in [label for p in result["proofs"] for label in p["conditional_on"]] + rest:
+                        if x not in used:
+                            used.append(x)
+                    need(result["conditional_on"] == used)
+                need(result["verdict"] == _fold_entailment(conflicts, [e["query"] for e in rows]))
+                listed = result.get("proofs", result.get("countermodels"))
+                if listed is not None:
+                    need([p["choice"] for p in listed] == seen)
+                if "conflict_status" in result:
+                    # the gate (14.8): the first row its conflict status rests on
+                    status = result["conflict_status"]
+                    need(result["choice"] == next((e["choice"] for e in rows if (
+                        e["conflict"] == "CONFLICT" if status == "CONFLICT" else e["conflict"] != "CONFLICT-FREE")),
+                        None))
+                elif "choice" in result:
+                    # the first row without a result
+                    need(result["choice"] == next((e["choice"] for e in rows
+                                                   if e["query"] not in ("proved", "refuted")), None))
+        premises = question == "premises" and "budget" not in result
+        if premises:
+            taken = {(s, i) for c in seen for s, i in c}
+            need(all(x in (candidates or []) and tuple(x) not in taken for x in row["untaken"]))
+            need(row["dead_readings"] is None or
+                 all([d["set"], d["index"]] in row["untaken"] for d in row["dead_readings"]))
+            need([[d.get("set"), d.get("index")] for d in row["dead"]] ==
+                 [[d.get("set"), d.get("index")] for d in sent_dead])
+        else:
+            need(row["untaken"] == [] and row["dead_readings"] is None and row["dead"] == [])
     except (Invalid, AttributeError, KeyError, TypeError, ValueError) as exc:
         raise CheckerUnavailable("the Lean readings route returned an invalid answer") from exc
-    for entry in row["per_choice"]:
+    for entry in rows:
+        pieces = {k for k in sent.get(json.dumps(entry["choice"]), {}) if k != "choice"}
+        if not set(entry["evidence"]) | set(entry["errors"]) <= pieces:
+            raise CheckerUnavailable("the Lean readings route returned an invalid answer")
         for piece, error in entry["errors"].items():
             raise CheckerUnavailable(f"ReadingsConformance: Lean refused the {piece} Python built on a reading's "
                                      f"document: {error}")
-        for piece, accepted in entry["evidence"].items():
-            if piece != "conflict" and accepted is not True:
+        for piece in sorted(pieces - {"conflict"}):
+            # The lower route checks no witness of a choice its packages certify CONFLICT-FREE.
+            if piece == "witness" and entry["conflict"] == "CONFLICT-FREE" and piece not in entry["evidence"]:
+                continue
+            if entry["evidence"].get(piece) is not True:
                 raise CheckerUnavailable(f"ReadingsConformance: Lean does not confirm the {piece} Python's "
                                          "generators found on a reading's document")
     for dead in row["dead"]:
-        if type(dead) is not dict or dead.get("accepted") is not True:
+        if dead.get("accepted") is not True:
             raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the dead reading Python's prover "
                                      "certified")
 
