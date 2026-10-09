@@ -1,0 +1,161 @@
+{
+ "differences": [
+  {
+   "authority": "default",
+   "base": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "backend": "lean",
+      "code": "CheckerUnavailable",
+      "message": "The vocabulary selection was not accepted (invalidGrammar lexicon: V3 predicate system_prompt_compliance_required). No candidate was checked.",
+      "operation": "english.check"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "case": "pilot/cc-20261003T0600Z:usecases/claude-constitution-pilot/run-20261003T0600Z/readings/s1.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "backend": "lean",
+      "code": "CheckerUnavailable",
+      "message": "The vocabulary selection was not accepted (invalidGrammar lexicon: V3 predicate system_prompt_compliance_required). No candidate was checked.",
+      "operation": "english.check"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "backend": "lean",
+      "code": "CheckerUnavailable",
+      "message": "The vocabulary selection was not accepted (invalidGrammar lexicon: V3 predicate system_prompt_compliance_required). No candidate was checked.",
+      "operation": "english.check"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "case": "pilot/cc-20261004T0600Z:usecases/claude-constitution-pilot/run-20261004T0600Z/readings/s1.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "backend": "lean",
+      "code": "CheckerUnavailable",
+      "message": "The vocabulary selection was not accepted (invalidGrammar lexicon: V3 predicate system_prompt_compliance_required). No candidate was checked.",
+      "operation": "english.check"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "backend": "lean",
+      "code": "CheckerUnavailable",
+      "message": "The vocabulary selection was not accepted (invalidGrammar lexicon: V3 predicate system_prompt_compliance_required). No candidate was checked.",
+      "operation": "english.check"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "case": "pilot/cc-20261004T1800Z:usecases/claude-constitution-pilot/run-20261004T1800Z/readings/s1.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "backend": "lean",
+      "code": "CheckerUnavailable",
+      "message": "The vocabulary selection was not accepted (invalidGrammar lexicon: V3 predicate system_prompt_compliance_required). No candidate was checked.",
+      "operation": "english.check"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "backend": "lean",
+      "code": "CheckerUnavailable",
+      "message": "The vocabulary selection was not accepted (invalidGrammar lexicon: V3 predicate system_prompt_compliance_required). No candidate was checked.",
+      "operation": "english.check"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/readings/s1.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "backend": "lean",
+      "code": "CheckerUnavailable",
+      "message": "The vocabulary selection was not accepted (invalidGrammar lexicon: V3 predicate system_prompt_compliance_required). No candidate was checked.",
+      "operation": "english.check"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  }
+ ],
+ "records": {
+  "conformance/lean": 19806,
+  "conformance/python": 19806,
+  "discourse/default": 6350,
+  "norm_defaults/default": 2020,
+  "pilots/default": 412,
+  "probe/lean": 9435,
+  "probe/python": 9435,
+  "quantity/lean": 12863,
+  "quantity/python": 12863,
+  "readings/default": 1137,
+  "rights/default": 2500
+ },
+ "totals": {
+  "same": 96623,
+  "unavailable": 4
+ },
+ "unavailable_both": {
+  "pilots/default": 4
+ },
+ "unlisted": 0
+}

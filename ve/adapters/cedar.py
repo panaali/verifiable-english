@@ -14,10 +14,10 @@ import importlib.util
 from pathlib import Path
 import re
 
-from ..ast import And, Binary, Bottom, Const, Eq, Not, Or, Reach, Named, Top, Unary, Var
+from ..ast import And, Binary, Bottom, Const, Eq, Forall, Not, Or, Reach, Named, Top, Unary, Var
 from ..environment import Environment
 from ..errors import ResourceLimit, VEError
-from ..evaluate import _Evaluator
+from ..evaluate import evaluate
 from ..model import FiniteModel
 from ..norms import Norm, NormDocument
 
@@ -266,14 +266,29 @@ class CedarTranslation:
         if active_exclusions:
             return tuple({"decision": None, "errors": (), "excluded": active_exclusions}
                          for _ in self.request_ids)
-        evaluator = _Evaluator(self.environment, self.model, 1_000_000, trace=False)
         outcome = self.document.outcome("permitted")
         reports = []
         for request_id in self.request_ids:
-            binding = (("request", request_id),)
-            permitted = evaluator.formula(outcome, binding)[0]
-            errors = tuple(name for name, defined in self.policy_defined
-                           if not evaluator.formula(defined, binding)[0])
+            # The Cedar translation is an untrusted producer of queries. Restrict the
+            # request sort to one request so its open W1 formulas can be closed for
+            # Lean's evaluator without adding a new identity-bearing constant.
+            wire = self.model.to_dict()
+            wire["domains"]["request"] = [request_id]
+            for name, rows in wire["relations"].items():
+                if name in ("principal", "action", "resource", "permitted"):
+                    wire["relations"][name] = [row for row in rows if row[0] == request_id]
+            def truth(formula):
+                from ..backends.dispatch import pinned
+                model = FiniteModel.from_dict(self.environment, wire)
+                with pinned("lean"):
+                    answer = evaluate(self.environment, Forall("request", formula), model, trace=False)
+                if answer.status == "ResourceLimit" or answer.value is None:
+                    from ..errors import CheckerUnavailable
+                    raise CheckerUnavailable("CheckerUnavailable: Cedar evaluation did not finish")
+                return answer.value
+
+            permitted = truth(outcome)
+            errors = tuple(name for name, defined in self.policy_defined if not truth(defined))
             reports.append({"decision": "allow" if permitted else "deny", "errors": errors})
         return tuple(reports)
 
