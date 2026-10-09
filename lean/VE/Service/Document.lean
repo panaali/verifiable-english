@@ -86,12 +86,15 @@ inductive Foreign
   integer, where Lean reads naturals or other numbers, so a span, a version or an index would be decided
   differently. Python decides it (`CheckerUnavailable`). -/
   | number
-  /-- An unpaired surrogate escape: a Python string no UTF-8 text holds. Both loaders refuse it as invalid
-  JSON (`front_matter`, and `VE.JsonInput` on the discourse route). -/
+  /-- An unpaired surrogate escape: a Python string no UTF-8 text holds. Both loaders refuse it with the JSON
+  boundary's diagnostic (`loneSurrogate`; `front_matter`). -/
   | surrogate
   /-- The lexer's fuel ran out (fail closed). -/
   | exhausted
   deriving DecidableEq
+
+/-- The JSON boundary's diagnostic of a lone surrogate (docs/spec/v0-language.md; `ve.wire.LONE_SURROGATE`). -/
+def loneSurrogate : String := "JSON strings must not contain lone UTF-16 surrogates"
 
 /-- The first `Foreign` lexeme of a JSON text. Read only after `Lean.Json.parse` accepted the text, so its strings
 and numbers are well formed; `quoted` is whether the lexer is inside a string. -/
@@ -191,7 +194,7 @@ def frontJson (front : String) : Except String Json := do
   match Json.parse front with
   | .ok j =>
     match foreignLexeme (front.length + 1) false front.toList with
-    | some .surrogate => throw "invalid JSON front matter"
+    | some .surrogate => throw loneSurrogate
     | some .number => throw (unavailable
         "front matter outside the document mode's JSON reader: a number other than a natural at most 2^53-1")
     | some .exhausted => throw (unavailable "front matter outside the document mode's JSON reader: lexer fuel")

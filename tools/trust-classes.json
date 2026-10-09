@@ -7921,6 +7921,7 @@
         "VE.Service.Document.hex4",
         "VE.Service.Document.hexDigit",
         "VE.Service.Document.legacyEnvelopeFault",
+        "VE.Service.Document.loneSurrogate",
         "VE.Service.Document.maxNumber",
         "VE.Service.Document.nullableUnitKeys",
         "VE.Service.Document.numberChar",
