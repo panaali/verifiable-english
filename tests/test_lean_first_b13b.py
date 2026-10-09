@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 import json
+import re
 
 import pytest
 
@@ -216,3 +217,66 @@ def test_the_switched_relay_asks_lean_under_every_selection(monkeypatch, name, s
     _, _, (mode, _, _) = _genuine(monkeypatch, name)
     assert mode == RELAYS[name][1]
     assert seen and all(authority == "lean" for op, authority in seen if op in dispatch.LEAN_OWNED)
+
+
+# ---------------------------------------------------------------- saved evidence (build checklist line 20)
+
+def _report():
+    import importlib.util
+    from pathlib import Path
+    path = Path(__file__).resolve().parents[1] / "docs/lean-first/b13b/report.py"
+    spec = importlib.util.spec_from_file_location("b13b_report", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_report_numbers_are_regenerated_from_saved_evidence():
+    """Every number of REPORT.md's generated block comes from the saved evidence of `docs/lean-first/b13b/evidence`
+    (the A/B, the fuzz pairs, the seeded faults, the latency pairs, the gate when recorded, and the branch's own
+    commits as `main..HEAD --no-merges` saved at its last source commit); no live git is read, so the check holds
+    after a sync with main and after the merge."""
+    report = _report()
+    assert report.problems() == []
+    scope = report.load("scope.json")
+    assert scope["commits"] and all(len(c["sha"]) == 40 for c in scope["commits"])
+    ab = report.load("corpus-ab.json")
+    assert ab["unlisted"] == 0 and not ab["totals"].get("verdict") and not ab["totals"].get("availability")
+    assert sum(ab["totals"].values()) == sum(ab["records"].values()) // 2 > 90_000
+
+
+def test_the_delta_lists_exactly_the_recorded_differences():
+    """DELTA.json is the comparison's own list: each order record is a recorded difference with both outcomes,
+    and each wording pair occurs in a recorded wording difference."""
+    import json
+    from pathlib import Path
+    from tools.lean_first_diff import text_pairs
+    here = Path(__file__).resolve().parents[1] / "docs/lean-first/b13b"
+    delta = json.loads((here / "DELTA.json").read_text())
+    differences = _report().load("corpus-ab.json")["differences"]
+    order = [{k: d[k] for k in ("corpus", "authority", "case", "op", "base", "head")}
+             for d in differences if d["class"] == "order"]
+    assert sorted(map(json.dumps, order)) == sorted(map(json.dumps, delta["order"]))
+    used = {(a, b) for d in differences if d["class"] == "wording" for a, b in text_pairs(d["base"], d["head"])}
+    assert {(p["base"], p["head"]) for p in delta["wording"]} == used
+
+
+def test_no_consumer_of_a_deleted_decision_site():
+    """The deletion ledger: no module of `ve/`, `tools/`, `conformance/` or the tests names a deleted body."""
+    from pathlib import Path
+    import ve.admission as admission, ve.background as background, ve.norm_admission as norm_admission
+    from ve.backends import validation
+    deleted = {admission: ("_admit_document_python", "_validate_label_python", "_check_graph", "_decode_doc",
+                           "_node_admitted"),
+               norm_admission: ("_admit_norm_document_python",),
+               background: ("_background_python", "_dependency_order_python", "_flag_premises",
+                            "_profile_premises"),
+               validation: ("decided",)}
+    for module, names in deleted.items():
+        assert not [name for name in names if hasattr(module, name)], module.__name__
+    root = Path(__file__).resolve().parents[1]
+    names = [n for group in deleted.values() for n in group if n.startswith("_")]
+    for folder in ("ve", "tools", "conformance"):
+        for path in (root / folder).rglob("*.py"):
+            used = set(re.findall(r"[A-Za-z_][A-Za-z0-9_]*", path.read_text()))
+            assert not used & set(names), path
