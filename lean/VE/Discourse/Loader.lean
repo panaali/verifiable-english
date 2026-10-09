@@ -436,7 +436,12 @@ def compileReading (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String)
     | .obj kvs => pure (kvs.toList.map Prod.fst)
     | _ => throw "invalid reading"
   let schema := ["id", "kind", "meaning_id", "content", "admission"]
-  unless keys.length == schema.length && schema.all keys.contains do throw "invalid reading"
+  let optional := if profiles.contains "readings@1" then ["labels"] else []
+  unless schema.all keys.contains && keys.all (schema ++ optional).contains do throw "invalid reading"
+  if let .ok labels := r.getObjVal? "labels" then
+    let entries ← (fields labels).mapError fun _ => "invalid rights candidate labels"
+    unless entries.all (fun (axis, value) => token axis &&
+        (value.getStr?.toOption.any token)) do throw "invalid rights candidate labels"
   let id ← field python "duplicate or invalid reading id" (stringField r "id")
   if python then unless token id && !seen.contains id do throw "duplicate or invalid reading id"
   let kind ← r.getObjVal? "kind"

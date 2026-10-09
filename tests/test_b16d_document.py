@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+import json
 from pathlib import Path
 
 import pytest
@@ -9,7 +10,7 @@ import pytest
 from ve import document as D
 from ve.backends import relay
 from ve.backends.service_schema import Context, Invalid, ROWS
-from ve.errors import CheckerUnavailable
+from ve.errors import CheckerUnavailable, InvalidModel
 
 SEED = Path(__file__).parent / "data/readings_s2/constitution-nd-readings.ve.md"
 
@@ -26,6 +27,43 @@ def test_norm_defaults_coverage_uses_lean_report():
     raw = SEED.read_bytes()
     expected = D._report(D._load_document(raw, SEED, None))["coverage"]
     assert D.check_document(SEED)["coverage"] == expected
+
+
+def test_pending_reading_metadata_is_checked_by_lean(tmp_path):
+    raw = SEED.read_bytes()
+    meta, rest = raw.split(b"\n---\n", 1)
+    front = json.loads(meta[4:])
+    models = front["reading_sets"][0]["models"]
+    models[next(iter(models))]["relations"]["human"] = 7
+    path = tmp_path / "invalid-pending.ve.md"
+    path.write_bytes(b"---\n" + json.dumps(front, ensure_ascii=False).encode() + b"\n---\n" + rest)
+    assert D._lean_answer(path.read_bytes(), True) is None
+    with pytest.raises(InvalidModel, match="relation must be an array"):
+        D.check_document(path)
+
+
+def test_coupled_pilot_reading_plan_matches_prior_path(tmp_path):
+    from tools.lean_first_diff import pilot_documents
+
+    suffix = "run-20261009T1800Z/readings/nd-op.ve.md"
+    raw = next(raw for name, _, raw in pilot_documents(Path.cwd()) if name.endswith(suffix))
+    path = tmp_path / "nd-op.ve.md"
+    path.write_bytes(raw)
+    expected = D._report(D._load_document(raw, path, None))["reading_plan"]
+    assert D.check_document(path)["reading_plan"] == expected
+
+
+def test_labeled_pending_pilot_is_lean_decided(tmp_path, monkeypatch):
+    from tools.lean_first_diff import pilot_documents
+
+    suffix = "run-20261009T0600Z/translation-without-content.ve.md"
+    raw = next(raw for name, _, raw in pilot_documents(Path.cwd()) if name.endswith(suffix))
+    path = tmp_path / "without-content.ve.md"
+    path.write_bytes(raw)
+    expected = D._report(D._load_document(raw, path, None))
+    assert D._lean_answer(raw, True) is not None
+    monkeypatch.setattr(D, "_load_document", lambda *_: pytest.fail("retained loader ran"))
+    assert D.check_document(path) == expected
 
 
 def test_norm_content_is_bound_to_the_authored_node(monkeypatch):
