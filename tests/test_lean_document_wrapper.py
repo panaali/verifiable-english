@@ -290,6 +290,16 @@ def test_json_unpaired_surrogate_is_the_boundary_diagnostic_in_both(service, nam
     assert dw.verdict(python, answer) == "agree", (python, answer)
 
 
+def test_json_escapes_are_read_in_linear_time(service):
+    """The lexer that finds lone surrogates ran its continuation at every `\\u` escape (a strict `let`), so a
+    front matter with 200 escaped characters used the service's whole CPU deadline (`CheckerUnavailable`;
+    tests/test_reports_fault_order.py found it). Thousands of escapes are decided, as Python decides them."""
+    text = document("AB", [unit("a", [0, 2], meaning={"contextual": "\u00e9" * 5000})])
+    assert text.count("\\u00e9") == 5000
+    python, answer = both(service, text)
+    assert python["outcome"] == "ok" and dw.verdict(python, answer) == "agree", (python, answer)
+
+
 def test_json_unpaired_surrogate_follows_the_metadata_checks(service):
     """`_split`'s faults come first, in both: an unknown key holding a lone surrogate is unknown metadata."""
     text = document("AB", [unit("a", [0, 2])]).replace('"units":', '"x": "\\ud800", "units":', 1)

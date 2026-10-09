@@ -6524,6 +6524,7 @@
   "tests/test_lean_document_wrapper.py::test_fences_are_read_left_to_right_with_python_s_texts[AB\\n```ve u\\nunclosed\\n-unclosed VE fence]",
   "tests/test_lean_document_wrapper.py::test_fences_are_read_left_to_right_with_python_s_texts[AB\\n```ve u\\nx\\n```\\n```ve u\\ny\\n```\\n-invalid or duplicate VE fence]",
   "tests/test_lean_document_wrapper.py::test_gap_and_wrong_status_are_rejected",
+  "tests/test_lean_document_wrapper.py::test_json_escapes_are_read_in_linear_time",
   "tests/test_lean_document_wrapper.py::test_json_neither_reader_reads_is_invalid_in_both[[1,]]",
   "tests/test_lean_document_wrapper.py::test_json_neither_reader_reads_is_invalid_in_both[{\"a\": 01}]",
   "tests/test_lean_document_wrapper.py::test_json_neither_reader_reads_is_invalid_in_both[{]",

@@ -104,17 +104,15 @@ def foreignLexeme (surrogates : Bool) : Nat → Bool → List Char → Option Fo
   | 0, _, _ :: _ => some .exhausted
   | fuel + 1, true, '"' :: cs => foreignLexeme surrogates fuel false cs
   | fuel + 1, true, '\\' :: 'u' :: a :: b :: c :: d :: cs =>
-    let lone := if surrogates then some .surrogate else foreignLexeme surrogates fuel true cs
+    -- Whether this escape is a lone surrogate; the lexer then goes on once, past it (a strict `let` of the
+    -- continuation would run it at every escape, exponentially).
+    let paired := match cs with
+      | '\\' :: 'u' :: e :: f :: g :: h :: _ => (hex4 e f g h).any fun w => 0xDC00 ≤ w && w < 0xE000
+      | _ => false
     match hex4 a b c d with
     | some v =>
-      if 0xDC00 ≤ v && v < 0xE000 then lone
-      else if 0xD800 ≤ v && v < 0xDC00 then
-        match cs with
-        | '\\' :: 'u' :: e :: f :: g :: h :: rest =>
-          match hex4 e f g h with
-          | some w => if 0xDC00 ≤ w && w < 0xE000 then foreignLexeme surrogates fuel true rest else lone
-          | none => lone
-        | _ => lone
+      if 0xD800 ≤ v && v < 0xDC00 && paired then foreignLexeme surrogates fuel true (cs.drop 6)
+      else if 0xD800 ≤ v && v < 0xE000 && surrogates then some .surrogate
       else foreignLexeme surrogates fuel true cs
     | none => foreignLexeme surrogates fuel true cs
   | fuel + 1, true, '\\' :: _ :: cs => foreignLexeme surrogates fuel true cs
@@ -134,6 +132,10 @@ def foreignLexeme (surrogates : Bool) : Nat → Bool → List Char → Option Fo
   ("[\"\\ud800\\u0041\"]", some .surrogate), ("[\"\\\\ud800\"]", none)].all fun (t, r) =>
     foreignLexeme (r == some .surrogate) (t.length + 1) false t.toList == r &&
       foreignLexeme (r != some .surrogate) (t.length + 1) false t.toList == none
+
+-- Linear in the escapes: 4,000 of them (a strict continuation took longer than the service deadline at 200).
+#guard let t := "[\"" ++ String.join (List.replicate 4000 "\\u00e9") ++ "\", 1]"
+  foreignLexeme true (t.length + 1) false t.toList == none && foreignLexeme false (t.length + 1) false t.toList == none
 
 #guard foreignLexeme true 100 false "[\"\\ud800\", 2e0]".toList == some .surrogate &&
   foreignLexeme false 100 false "[\"\\ud800\", 2e0]".toList == some .number
