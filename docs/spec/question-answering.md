@@ -1,14 +1,19 @@
 # Question answering in VE, Q1 and Q2 (statement specification)
 
-> Status: statement specification, draft 1 (2026-10-09), branch `design/question-answering`. This is the item-1
+> Status: statement specification, draft 1 with Q0 review corrections (2026-10-09), branch `design/question-answering`. This is the item-1
 > statement spec (batch Q0) of [question-answering-PLAN.md](question-answering-PLAN.md) draft 2 (the **plan**),
 > which the plan review converged on (`manage-agents/debates/design-question-answering/`, Astra and Fable, round 3:
 > BUILD after draft 2, with Q0's statement review as the single gate). It writes out plan sections 3 and 4 as
 > definitions, English with one reading each, diagnostics in order, exact Lean statements, limits and acceptance
 > fixtures. A section number written `plan 4.3` refers to the plan; `R1` to `R14` are the plan's draft-2 edits
 > (plan 0.1).
+> The Q0 statement review (`manage-agents/debates/question-answering-spec/`, round 3) converged on FIX overall.
+> The accepted Q1 reading work may begin; the corrected span definition and guards need a targeted joint check
+> before Q1.1 completes or Q1.2 starts. Q2 awaits merged RD-3 and review of these corrected statements and fixtures.
 >
-> **Nothing is proved and nothing is built.** What was run for this draft (section 11):
+> **Nothing is proved and nothing is built.** The original stub runs described below predate the Q0 corrections;
+> the corrected span mapper was separately elaborated and its affected fixtures recomputed. What was run for this
+> draft (section 11):
 > - a Q1 stub, `lean/SpecStubs_question-answering.lean`, against a build of this branch's base commit
 >   `c85797de`. It holds every Q1 definition of section 2 with its body and every Q1 statement of 5.1 as a
 >   definition of type `Prop`. All of them elaborate. Every Q1 fixture of section 7 marked *computed* was
@@ -19,9 +24,9 @@
 >   Q2 statement as a `Prop`. All of them elaborate (one linter warning, 11.2). The row, reason, fold and group
 >   fixtures of 7.6 were evaluated by `#eval`.
 >
-> Neither stub is committed, and no `sorry` is (the stubs contain none). The session's permission mode refused
-> deleting them, so they remain untracked in the worktree; the next step deletes them. Their definitions and
-> statements are sections 2 and 5 of this file, verbatim. Not run: anything in Python, the service, the evidence generators
+> Neither stub is committed, and no `sorry` is (the stubs contain none). They remain untracked in the worktree.
+> The original definitions and statements were sections 2 and 5 before the Q0 corrections; section 11.1 records
+> the targeted span check. Not run: anything in Python, the service, the evidence generators
 > (prover, Rust search, flip search), any proof. Every Q2 lead in section 7 is therefore *derived*, pending RD-3's
 > merge and a run of the generators (plan Q0, R14).
 
@@ -67,8 +72,9 @@ Computing the fixtures overturned parts of the plan's derived text. The statemen
 
 ## 2. Q1: the question reader (`lean/VE/Question/Read.lean`)
 
-The definitions below are the stub's, with their bodies, and they elaborate against `c85797de` (11.1). Q1.1 may
-change a body only to prove a statement of 5.1 as written; a statement that changes reopens its review (plan 7).
+The original definitions were elaborated in the stub against `c85797de` (11.1). The corrected §2.5 mapping was
+elaborated separately, with its affected fixtures recomputed. Its bounds theorems still need the targeted joint
+check. Q1.1 may change a body only to prove a reviewed statement of 5.1; a statement change reopens its review.
 
 ### 2.1 Constants and the question's shape
 
@@ -307,20 +313,40 @@ def closest (E : Env) (L : Lexicon) (cs : List Candidate) : Option Candidate :=
     | none, _ => best) none).map (·.1)
 
 /-- A candidate's byte offset on the question. F1: moved right by the frame. F2: before the gap, moved right by the
-    auxiliary and its space; on the put-back word, the question's first word; after it, unchanged. -/
-def mapStart (c : Candidate) (off x : Nat) : Nat :=
+    auxiliary and its space; the put-back word maps to the question's first word, its following space to the
+    question's first space, and the suffix stays at the same byte offsets. -/
+def mapPoint (c : Candidate) (off x : Nat) : Nat :=
   match c.form with
   | .caseThat => x + off
   | .fronted a g =>
-    let k := a.utf8ByteSize + 1
-    if x < g then x + k else if x < g + k then 0 else x
+    let n := a.utf8ByteSize
+    let k := n + 1
+    if x < g then x + k else if x < g + n then x - g
+    else if x < g + k then n + (x - (g + n)) else x
 
-def mapStop (c : Candidate) (off x : Nat) : Nat :=
+/-- The image of the intersection of `[start, stop)` with one candidate region `[lo, hi)`, whose image begins at
+    `dst`. The four F2 regions are each order-preserving, though their concatenation is not. -/
+def mappedPiece (start stop lo hi dst : Nat) : Option (Nat × Nat) :=
+  let s := max start lo
+  let t := min stop hi
+  if s < t then some (dst + (s - lo), dst + (t - lo)) else none
+
+/-- Split a diagnosis interval at the F2 movement boundaries, map each piece, and enclose all of their images.
+    An empty interval maps its point. The candidate's final `.` occupies the question's final `?` position. -/
+def mapSpan (c : Candidate) (off : Nat) (span : Nat × Nat) : Nat × Nat :=
   match c.form with
-  | .caseThat => x + off
+  | .caseThat => (span.1 + off, span.2 + off)
   | .fronted a g =>
-    let k := a.utf8ByteSize + 1
-    if x ≤ g then x + k else if x ≤ g + k then a.utf8ByteSize else x
+    let n := a.utf8ByteSize
+    let k := n + 1
+    let pieces := ([mappedPiece span.1 span.2 0 g k,
+      mappedPiece span.1 span.2 g (g + n) 0,
+      mappedPiece span.1 span.2 (g + n) (g + k) n,
+      mappedPiece span.1 span.2 (g + k) c.sentence.utf8ByteSize (g + k)] : List (Option (Nat × Nat)))
+        |>.filterMap id
+    match pieces with
+    | [] => let x := mapPoint c off span.1; (x, x)
+    | p :: ps => ps.foldl (fun acc v => (min acc.1 v.1, max acc.2 v.2)) p
 
 /-- A lexer rejection's offset, moved from the body onto the question. -/
 def shiftReject (k : Nat) : Reject → Reject
@@ -332,8 +358,12 @@ def shiftReject (k : Nat) : Reject → Reject
 end VE.Question
 ```
 
-The response converts the mapped byte offsets to code points of the question, as `english.read` does
-(`Run.codepointsBefore`).
+The response converts both bounds of `mapSpan` to code points of the question, as `english.read` does
+(`Run.codepointsBefore`). A diagnosis span must lie inside its candidate sentence. The mapped byte span then has
+`start ≤ stop ≤ q.utf8ByteSize`, and every emitted code-point span has `start ≤ stop ≤ q.length`. An interval that
+crosses the moved word can cover intervening question text; sorting the old endpoint images would omit diagnosed
+bytes. The bounds statements assume capitalization preserves each allowed auxiliary's UTF-8 byte length; both
+`["is", "must", "may"]` and speech acts' `["is"]` satisfy that condition.
 
 ## 3. The English, one reading each
 
@@ -389,8 +419,8 @@ registered in Q2.3 (plan 4.6, question 9).
 | S3 | `Here the text does not say whether <clause>; this situation answers 'no'.` | The filled-gap sentence after S1, one per gap the failure depends on. |
 | R1 | `If sentence <n> means "<reading>"[ (VE has not checked this wording)][ and sentence <m> means "<reading>"], <lead phrase>.` | The lead holds under every compatible choice that reads the named sentences this way (`group_claim`). The parenthesis follows every reading whose wording Lean did not read back. |
 | R2 | `Every way of reading the document gives this answer.` | Every compatible choice has the same lead (and the same cited sentences, for yes and no). |
-| U1 | `VE did not use <k> sentences of this document that it could not read formally: <citation>.` | Those units have no formal content; the answer is about the other sentences only. After every lead (D14). |
-| X1 | `Two rules contradict each other in this situation, so VE cannot answer: <situation>.` | A checked conflict witness under this choice. |
+| U1 | `VE did not use <k> sentences of this document that it could not read formally: <citation>.` | Those units have no formal content; the answer is about the other sentences only. Shown once per answer, after all its blocks, for every kind of lead (D14). |
+| X1 | `The document's rules or defaults conflict in this situation, so VE cannot answer: <situation>.` | A checked conflict witness under this choice, including a conflict caused by defaults without two rules. |
 | X2 | `VE could not check that the rules never contradict each other.` | The conflict row is unknown. |
 | X3 | `The sentences of this document cannot all be true together, so VE does not answer questions about it.` | A certificate of ⊥ under this choice. |
 | X4 | `VE found neither a proof nor a situation where it fails, within its limits.` | No row result. |
@@ -424,8 +454,8 @@ table in `VE.Question.Run`; the others are E2's, with E2's class. A span is in c
 | 6 | the body lexes as more than one sentence | `notQuestion` | `NotOneQuestion`; `SyntaxError` | as row 2 | the question |
 | 7 | more than 300 tokens in the body, or more than 64 candidates | `budget` | `QuestionTooLong`; `ResourceLimit` | as row 4 | the question |
 | 8 | a candidate does not lex as one sentence | `notQuestion` | `NotOneQuestion`; `SyntaxError` | as row 2 | the question |
-| 9 | a candidate reaches the work budget | `budget` | `Budget`; `ResourceLimit` | `The question needs more work than the limit allows. No verdict was reached.` | the question |
-| 10 | a candidate has two derivations | `many` | `Ambiguous`; `AmbiguousDerivation` | `The question can be read in more than one way. Two of the ways are shown.`, with E2's two witness trees | the question |
+| 9 | a candidate reaches the work budget | `budget` | `Budget`; `ResourceLimit` | `VE stopped reading this question at its work limit.` | the question |
+| 10 | a candidate has two derivations | `many` | `Ambiguous`; `AmbiguousDerivation` | `The sentence "<candidate>" can be read in more than one way. Two of the ways are shown.`, with E2's two witness trees | the question |
 | 11 | one meaning | `one` | — | — (the answer begins with A0) | — |
 | 12 | two or more meanings | `many` | `AmbiguousQuestion`; `AmbiguousDerivation` | `This question can be read in more than one way. Ask one of these instead:`, then the rephrasings | the question |
 | 13 | a refusal: a conclusion mark (`read` gives `.ok [(φ, true)]`) | `rejected` | `QuestionWithMarker`; `SyntaxError` | `A question cannot contain "therefore", "so", "hence" or "it follows that".` | the question |
@@ -452,7 +482,8 @@ with the route's own abstention text relayed.
 
 ### 5.1 Q1 (`VE.Question`)
 
-Each statement is the stub's `def … : Prop`, written as a theorem. All elaborate against `c85797de`.
+The original reading statements are the stub's `def … : Prop`, written as theorems, and elaborate against
+`c85797de`. The two span bounds statements were added after Q0 review and await the targeted check.
 
 ```lean
 namespace VE.Question
@@ -555,6 +586,25 @@ theorem fronted_text :
     a ∈ auxs ∧ caseFrame.isPrefixOf q = false ∧ ∃ rest, q = capitalise a ++ " " ++ rest ++ "?" ∧ g ∈ gaps rest ∧
       s = rest.extract ⟨0⟩ ⟨g⟩ ++ a ++ " " ++ rest.extract ⟨g⟩ rest.endPos ++ "."
 
+/-- Every candidate diagnosis interval maps to an ordered byte interval inside the question. The response then
+    converts both endpoints with `Run.codepointsBefore`; its emitted span must satisfy
+    `start ≤ stop ≤ q.length` in code points. -/
+theorem mapSpan_valid :
+  ∀ (auxs : List String) (q : String) (c : Candidate) (start stop : Nat),
+    (∀ a ∈ auxs, (capitalise a).utf8ByteSize = a.utf8ByteSize) →
+    c ∈ candidates auxs q → start ≤ stop → stop ≤ c.sentence.utf8ByteSize →
+    let span := mapSpan c caseFrame.utf8ByteSize (start, stop)
+    span.1 ≤ span.2 ∧ span.2 ≤ q.utf8ByteSize
+
+theorem mapSpan_codepoints_valid :
+  ∀ (auxs : List String) (q : String) (c : Candidate) (start stop : Nat),
+    (∀ a ∈ auxs, (capitalise a).utf8ByteSize = a.utf8ByteSize) →
+    c ∈ candidates auxs q → start ≤ stop → stop ≤ c.sentence.utf8ByteSize →
+    let span := mapSpan c caseFrame.utf8ByteSize (start, stop)
+    VE.EnglishGrammar.Run.codepointsBefore q span.1 ≤
+      VE.EnglishGrammar.Run.codepointsBefore q span.2 ∧
+    VE.EnglishGrammar.Run.codepointsBefore q span.2 ≤ q.length
+
 /-- Every rephrasing reads with one meaning, and no two mean the same (R4: each within the limits). -/
 theorem rephrasings_read :
   ∀ (auxs : List String) (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (q : String) (rs : List String),
@@ -588,9 +638,11 @@ end VE.Question
 
 ### 5.2 Q2 (`VE.Ask`)
 
-These elaborate against RD-3's branch, not merged (11.2). The text functions (`render`, `renderGroup`,
-`askedLine`, `leadOfLine`) and `replayAsk` are Q2.3's and Q2.2's; the stub declares their signatures only, so the
-statements about them elaborate but say nothing until those batches write the bodies.
+The original Q2 definitions elaborated against RD-3's unmerged branch (11.2). The corrected definitions and
+statement types below also elaborate in a temporary stub against that branch, but await statement review against
+merged RD-3 before Q2.1. The text functions (`render`,
+`renderGroup`, `askedLine`, `leadOfLine`, `contextOf`, `checkedCites`, `checkedWitness`, `lineText`) and the replay
+functions are Q2.3's and Q2.2's; they require bodies before their claims have force.
 
 ```lean
 namespace VE.Ask
@@ -785,6 +837,7 @@ structure Line where
   source : Option Source := none
   quote : Option (String × String) := none
   readings : List (String × Nat) := []
+  witness : Option Choice := none   -- S1, S2 and X1: the checked row choice, not printed as an id
   unchecked : Bool := false       -- the line carries "(VE has not checked this wording)"
   deriving Repr, Inhabited
 
@@ -796,6 +849,10 @@ structure Name where
   checked : Bool
 
 structure Answer where
+  request : Json
+  text : String
+  case : Json
+  x : VE.Readings.Wire.NDVerdicts
   asked : VE.Question.Candidate
   ids : List String
   rows : List Row
@@ -813,6 +870,27 @@ structure Context where
   textOf : String → Option String
   displayOf : String → Option Nat
 
+def contextOf : String → Except String Context             -- Q2.3: `Document.split`, unit spans and display numbers
+def checkedCites : Json → VE.Readings.Wire.NDVerdicts → Row → List Source
+  -- Q2.3: the accepted ψ or ¬ψ certificate from this request's evidence, then
+  -- `cited (sourcesU …) (usedPositions …)`; the ¬ψ certificate is outside RD-3's `x.evs`
+def documentUnused : String → List String                  -- Q2.3: unit ids lacking formal content, in document order
+def checkedWitness : Json → VE.Readings.Wire.NDVerdicts → Row → String → Prop
+  -- Q2.2: the row's accepted model, split or conflict witness in this request supplies S1, S2 or X1
+def lineText : Context → Answer → Line → String             -- Q2.3: exact frame and slot rendering from metadata
+def citationText : List Nat → String                        -- Q2.3: document display numbers in citation style
+
+/-- Only replayed evidence and the document's own split may supply render inputs. `contextOf` extracts each
+    `textOf` value from `split.source` at the front-matter unit span (or from its named fence), trimmed as the
+    document loader trims it; `displayOf` is that unit's display position. -/
+def RenderInputBound (ctx : Context) (a : Answer) : Prop :=
+  contextOf a.text = .ok ctx ∧
+  a.request.getObjValD "case" = a.case ∧
+  VE.Readings.Run.replayVerdictsND a.case = .ok a.x ∧
+  a.rows.map (·.choice) = a.x.evs.map (·.1) ∧
+  (∀ r ∈ a.rows, a.cites r = checkedCites a.request a.x r) ∧
+  a.unused = documentUnused a.text
+
 def render : Context → Answer → List Line                 -- Q2.3
 def renderGroup : Context → Answer → Group → List Line    -- Q2.3
 def askedLine : String → Line                             -- A0
@@ -820,10 +898,12 @@ def leadOfLine : Option Line → Option Lead
 
 def named (on : List (String × Option Nat)) : List (String × Nat) := on.filterMap fun (s, i) => i.map (s, ·)
 
-theorem render_quotes_bytes : ∀ (ctx : Context) (a : Answer),
+theorem render_quotes_bytes : ∀ (ctx : Context) (a : Answer), RenderInputBound ctx a →
   ∀ l ∈ render ctx a, ∀ u t, l.quote = some (u, t) → ctx.textOf u = some t
+theorem render_text_matches_metadata : ∀ (ctx : Context) (a : Answer), RenderInputBound ctx a →
+  ∀ l ∈ render ctx a, l.text = lineText ctx a l
 theorem render_asked : ∀ (ctx : Context) (a : Answer), (render ctx a).head? = some (askedLine a.asked.sentence)
-theorem render_cites_exact : ∀ (ctx : Context) (a : Answer) (g : Group), g ∈ a.groups →
+theorem render_cites_exact : ∀ (ctx : Context) (a : Answer) (g : Group), RenderInputBound ctx a → g ∈ a.groups →
   (g.lead = .yes ∨ g.lead = .no) → (renderGroup ctx a g).filterMap (·.source) = g.cited
 theorem render_lead : ∀ (ctx : Context) (a : Answer) (g : Group), g ∈ a.groups →
   leadOfLine (renderGroup ctx a g).head? = some g.lead
@@ -833,11 +913,19 @@ theorem render_covers_rows : ∀ (ctx : Context) (a : Answer) (g : Group), g ∈
 /-- R8: an unchecked wording is marked in the line that shows it. -/
 theorem render_marks_unchecked : ∀ (ctx : Context) (a : Answer), ∀ l ∈ render ctx a,
   (∃ n ∈ a.names, n.checked = false ∧ (n.set, n.index) ∈ l.readings) → l.unchecked = true
-theorem render_model_names_choice : ∀ (ctx : Context) (a : Answer),
-  ∀ l ∈ render ctx a, l.frame ∈ ["S1", "S2", "X1"] → l.readings.map (·.1) = a.ids
-/-- D14, R8: U1 after every lead. -/
-theorem render_unused_every_lead : ∀ (ctx : Context) (a : Answer), a.unused ≠ [] →
-  ∃ l ∈ render ctx a, l.frame = "U1"
+theorem render_model_names_choice : ∀ (ctx : Context) (a : Answer), RenderInputBound ctx a →
+  ∀ l ∈ render ctx a, l.frame ∈ ["S1", "S2", "X1"] →
+    ∃ r ∈ a.rows, l.witness = some r.choice ∧ checkedWitness a.request a.x r l.frame ∧
+      l.readings = named (assignment a.ids r)
+/-- D14, R8: one U1 after all answer blocks, with the document-derived count and citation; none for an empty list. -/
+theorem render_unused_once : ∀ (ctx : Context) (a : Answer), RenderInputBound ctx a →
+  (a.unused = [] → ∀ l ∈ render ctx a, l.frame ≠ "U1") ∧
+  (a.unused ≠ [] → ∃ pre u, render ctx a = pre ++ [u] ∧
+    (∀ l ∈ pre, l.frame ≠ "U1") ∧ u.frame = "U1" ∧
+    u.text = lineText ctx a u ∧ u.quote = none ∧ u.source = none ∧
+    u.readings = [] ∧ u.witness = none ∧
+    u.text = s!"VE did not use {a.unused.length} sentences of this document that it could not read formally: " ++
+      citationText (a.unused.filterMap ctx.displayOf) ++ ".")
 
 /-! ## The binding and the wire (plan 4.3, 4.8; R5) -/
 
@@ -847,29 +935,41 @@ def Same (a b : Json) : Prop := a.compress = b.compress
 /-- The document-level front-matter inputs the readings case carries besides its environment and units. -/
 def boundKeys : List String := ["reading_sets", "couplings", "narrowings", "completions"]
 
-/-- Unit `i` of the case is the front matter's unit `i`: the same id and kind, and the same content, except a fenced
-    English unit (`content = {"fence": id}`), whose content in the case must encode what Lean reads from the fence's
-    own bytes. -/
-def UnitBound (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) (fences : List (String × String))
+/-- Unit `i` of the case is the compiled form of front-matter unit `i`. `{"ast": φ}` compiles to bare `φ`;
+    `{"norm": …}` keeps its norm object. A fence compiles to one bare formula, read through its declared surface.
+    `V` is the replayed document's formula environment. -/
+def UnitBound (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) (V : VE.Environment)
+    (fences : List (String × String))
     (cu fu : Json) : Prop :=
   Same (cu.getObjValD "id") (fu.getObjValD "id") ∧ Same (cu.getObjValD "kind") (fu.getObjValD "kind") ∧
-  if (fu.getObjValD "content").getObjValD "fence" == .null then Same (cu.getObjValD "content") (fu.getObjValD "content")
-  else ∃ f rs, fences.lookup ((fu.getObjValD "id").getStr?.toOption.getD "") = some f ∧
-    VE.EnglishGrammar.read E {} L VE.EnglishGrammar.workBudget f = .ok rs ∧
-    Same (cu.getObjValD "content") (Json.mkObj [("ast", Json.arr (rs.map (·.1.encode)).toArray)])
+  let authored := fu.getObjValD "content"
+  let compiled := cu.getObjValD "content"
+  if authored.getObjValD "fence" != .null then
+    ∃ f, authored.getObjValD "fence" = fu.getObjValD "id" ∧
+      fences.lookup ((fu.getObjValD "id").getStr?.toOption.getD "") = some f ∧
+      ((fu.getObjValD "surface" = .str "english" ∧
+        ∃ φ, VE.EnglishGrammar.read E {} L VE.EnglishGrammar.workBudget f = .ok [(φ, false)] ∧
+          Same compiled φ.encode) ∨
+       (fu.getObjValD "surface" = .str "strict" ∧
+        ∃ ψ, VE.Surface.parse V f = some [ψ] ∧ Same compiled (VE.Route.Wire.encodeFormula ψ)))
+  else if authored.getObjValD "ast" != .null then Same compiled (authored.getObjValD "ast")
+  else Same compiled authored
 
 /-- The case is this document's: its environment and every listed input equal the front matter's, its units are the
     front matter's in order, `E` is the environment Lean decodes from the front matter, and `L` passes the vocabulary
     policy for it (so it is the policy's selection, `policy_selection`). -/
 def CaseBinding (text : String) (case : Json) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) : Prop :=
-  ∃ sp : VE.Discourse.Loader.Split, VE.Service.Document.split text = .ok sp ∧
+  ∃ (sp : VE.Discourse.Loader.Split) (re : VE.Readings.Wire.ReadingsEnvironment),
+    VE.Service.Document.split text = .ok sp ∧
     Same (case.getObjValD "environment") (sp.front.getObjValD "environment") ∧
+    VE.Readings.Wire.decodeEnvironment (case.getObjValD "environment") = .ok re ∧
     (∀ k ∈ boundKeys, Same ((case.getObjValD "document").getObjValD k) (sp.front.getObjValD k)) ∧
     VE.EnglishGrammar.Env.decode (sp.front.getObjValD "environment") (Json.mkObj []) = .ok E ∧
     L.policyOk E {} = true ∧
     ∃ cus fus : Array Json, (case.getObjValD "document").getObjValD "units" = .arr cus ∧
       sp.front.getObjValD "units" = .arr fus ∧ cus.size = fus.size ∧
-      ∀ i (h₁ : i < cus.size) (h₂ : i < fus.size), UnitBound E L sp.fences cus[i] fus[i]
+      ∀ i (h₁ : i < cus.size) (h₂ : i < fus.size),
+        UnitBound E L re.se.ne.rv.environment sp.fences cus[i] fus[i]
 
 def candidateContent (case : Json) (s : String) (i : Nat) : Option Json :=
   match (case.getObjValD "document").getObjValD "reading_sets" with
@@ -886,6 +986,7 @@ def NameReadsBack (case : Json) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGramm
     candidateContent case n.set n.index = some φn.encode
 
 structure Asked where
+  request : Json
   text : String
   q : String
   case : Json
@@ -897,16 +998,31 @@ structure Asked where
   rows : List Row
   names : List Name
   hbind : CaseBinding text case E L
+  hrequest : request.getObjValD "document" = .str text ∧
+    request.getObjValD "question" = .str q ∧ request.getObjValD "case" = case
+  hreplay : VE.Readings.Run.replayVerdictsND case = .ok x
   hread : VE.Question.QuestionOneReading VE.Question.auxiliaries E {} L q c φ
-  hψ : VE.Route.Wire.decodeClosed (VE.Readings.Wire.fullEnv x.r.N ((x.evs.map (·.1)).headD [])) φ.encode = .ok x.φ
+  hψ : case.getObjValD "question" = .str "query" ∧
+    Same (case.getObjValD "conclusion") φ.encode ∧
+    VE.Route.Wire.decodeClosed (VE.Readings.Wire.fullEnv x.r.N ((x.evs.map (·.1)).headD []))
+      (case.getObjValD "conclusion") = .ok x.φ
   hx : x.Γ = [] ∧ x.A = []
   hrows : rows.map (·.choice) = x.evs.map (·.1)
   hok : ∀ r ∈ rows, RowOk.{0} x.r.N x.φ r
   hnames : ∀ n ∈ names, n.checked = true → NameReadsBack case E L n
 
 def replayAsk : Json → Except String Asked   -- Q2.2
+def answerFor : Asked → Except String (Context × Answer)  -- Q2.3; the `ask` route renders only this result
+
+theorem answerFor_bound : ∀ (asked : Asked) (ctx : Context) (a : Answer),
+  answerFor asked = .ok (ctx, a) → RenderInputBound ctx a ∧
+    a.request = asked.request ∧ a.text = asked.text ∧ a.case = asked.case ∧ a.x = asked.x ∧
+    a.asked = asked.c ∧ a.rows = asked.rows ∧ a.names = asked.names
 
 theorem ask_wire_sound : ∀ (j : Json) (a : Asked), replayAsk j = .ok a →
+  a.request = j ∧ a.text = (j.getObjValD "document").getStr?.toOption.getD "" ∧
+  a.q = (j.getObjValD "question").getStr?.toOption.getD "" ∧ a.case = j.getObjValD "case" ∧
+  VE.Readings.Run.replayVerdictsND a.case = .ok a.x ∧
   (∀ r ∈ a.rows, LeadHolds.{0} a.x.r.N a.x.φ r) ∧
   (∀ r ∈ a.rows, ∀ x, r.reason = some x → ReasonHolds.{0} a.x.r.N a.x.φ r x) ∧
   (∀ c, Compatible a.x.r.N.D c ↔ c ∈ a.rows.map (·.choice)) ∧
@@ -942,15 +1058,65 @@ def PlainRowOk (E : VE.Environment) (Γ : List VE.Formula) (ψ : VE.Formula) (r 
 theorem plain_lead_sound : ∀ (E : VE.Environment) (Γ : List VE.Formula) (ψ : VE.Formula) (r : PlainRow),
   PlainRowOk.{u} E Γ ψ r → LeadHoldsPlain.{u} E Γ ψ r
 theorem plain_never_split : ∀ r : PlainRow, r.lead ≠ .notSettled
+
+/-- The plain adapter has the same file-to-case unit conversion and source-byte binding as `CaseBinding`, but
+    replays through the lower `relational-fol@0` checker. -/
+def PlainCaseBinding (text : String) (case : Json) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (V : VE.Environment) : Prop :=
+  ∃ sp : VE.Discourse.Loader.Split, VE.Service.Document.split text = .ok sp ∧
+    Same (case.getObjValD "environment") (sp.front.getObjValD "environment") ∧
+    (∀ k ∈ boundKeys, Same ((case.getObjValD "document").getObjValD k) (sp.front.getObjValD k)) ∧
+    VE.EnglishGrammar.Env.decode (sp.front.getObjValD "environment") (Json.mkObj []) = .ok E ∧
+    L.policyOk E {} = true ∧
+    ∃ cus fus : Array Json, (case.getObjValD "document").getObjValD "units" = .arr cus ∧
+      sp.front.getObjValD "units" = .arr fus ∧ cus.size = fus.size ∧
+      ∀ i (h₁ : i < cus.size) (h₂ : i < fus.size), UnitBound E L V sp.fences cus[i] fus[i]
+
+structure PlainVerdict where
+  V : VE.Environment
+  Γ : List VE.Formula
+  ψ : VE.Formula
+  row : PlainRow
+  hok : PlainRowOk.{0} V Γ ψ row
+
+def replayPlain : Json → Except String PlainVerdict  -- Q2.2: the lower checker and its accepted evidence
+
+structure PlainAsked where
+  request : Json
+  text : String
+  q : String
+  case : Json
+  E : VE.EnglishGrammar.Env
+  L : VE.EnglishGrammar.Lexicon
+  c : VE.Question.Candidate
+  φ : VE.EnglishGrammar.EFormula
+  x : PlainVerdict
+  hrequest : request.getObjValD "document" = .str text ∧
+    request.getObjValD "question" = .str q ∧ request.getObjValD "case" = case
+  hbind : PlainCaseBinding text case E L x.V
+  hreplay : replayPlain case = .ok x
+  hread : VE.Question.QuestionOneReading VE.Question.auxiliaries E {} L q c φ
+  hψ : Same (case.getObjValD "conclusion") φ.encode ∧
+    VE.Route.Wire.decodeClosed x.V (case.getObjValD "conclusion") = .ok x.ψ
+
+def replayPlainAsk : Json → Except String PlainAsked
+theorem plain_ask_wire_sound : ∀ (j : Json) (a : PlainAsked), replayPlainAsk j = .ok a →
+  a.request = j ∧ a.text = (j.getObjValD "document").getStr?.toOption.getD "" ∧
+  a.q = (j.getObjValD "question").getStr?.toOption.getD "" ∧ a.case = j.getObjValD "case" ∧
+  replayPlain a.case = .ok a.x ∧ PlainCaseBinding a.text a.case a.E a.L a.x.V ∧
+  VE.Question.QuestionOneReading VE.Question.auxiliaries a.E {} a.L a.q a.c a.φ ∧
+  LeadHoldsPlain.{0} a.x.V a.x.Γ a.x.ψ a.x.row
 end VE.Ask
 ```
 
 **What changed from plan 4.7.** `Row.reason`, `ReasonHolds`, `reason_sound` and `reason_exact` carry X6 (R9).
-`Asked` carries the document's bytes, the case, `E`, `L`, the binding and the names; `ψ` is RD-3's decoded
-conclusion `x.φ`, tied to `φ` by `decodeClosed` over the first choice's environment, as RD-3's `queryFormulas`
-decodes it (the plan's `VE.Bridge.decodeFormula φ.encode = .ok ψ` named a function of a different signature).
+`Asked` carries the request, document bytes, case, `E`, `L`, binding and names. `hreplay` ties `x` to that case's
+RD-3 replay; `hrequest` and `ask_wire_sound` tie the document, question and case to the request. `ψ` is RD-3's
+decoded conclusion `x.φ`, tied to the question's `φ` by the case's actual `conclusion` bytes and `decodeClosed` over
+the first choice's environment, as RD-3's `queryFormulas` does. The plain route must use the same request-field,
+document binding and replay equations before it renders a `PlainRow`.
 `Source.rules` carries the predicate only; its units are named at render. `groups`, `groups_cover`, `group_rows`,
-`group_claim`, `render_covers_rows`, `render_marks_unchecked` and `render_unused_every_lead` are new (R7, R8).
+`group_claim`, `render_covers_rows`, `render_marks_unchecked` and `render_unused_once` are new (R7, R8).
 `relevantSets_sound` gains `ids.Nodup`, `r.choice.map (·.1) = ids` and "the key is a function of the choice":
 without them the fallback to every set is not a separating set. The plain adapter is chosen (R13).
 
@@ -979,6 +1145,9 @@ fixed by its indices on `ids`. `group_claim` is `group_rows` and `relevantSets_s
 *Computed* means evaluated by `#eval` in a stub (section 11). *Derived* means worked out by reading, not run.
 Formulas are `EFormula`s written without their namespace: `all s φ`, `ex s φ`, `not φ`, `implies φ ψ`,
 `pred p [args]`, `var i`, `const c`.
+Q1.1's `#guard`s check every emitted fixture span in code points with `start ≤ stop ≤ q.length`, including
+G25's crossing interval and G26's Unicode conversion. The correction's targeted joint review precedes acceptance
+of those guards.
 
 ### 7.1 G: the group document, rewritten (F1)
 
@@ -1008,7 +1177,7 @@ spellings `ann`, `bo`; `policyOk` is true and `grammarFault` is `none`. The sent
 | G6 | `Is every member eligible` | — | **notQuestion**, `NotOneQuestion`; span (0, 24) | — |
 | G7 | `Does every member vote?` | — | **none**, `QuestionForm`: `VE answers questions that begin with "Is", "Must" or "May", or with "Is it the case that" followed by a sentence.`; span (0, 23) | — |
 | G8 | `Who is eligible?` | — | **none**, `QuestionForm`: `VE answers yes-or-no questions. It does not answer who, what or which questions yet.`; span (0, 16) | — |
-| G9 | `Must Ann be eligible?` | `Ann must be eligible.` none; `Ann be must eligible.` none | **none**, `NoDerivation`: `The question has no reading with the current vocabulary. Closest sentence tried: "Ann must be eligible.". Unknown English phrase 'must be eligible'. Nearest declared wordings: 'is eligible'; 'member'; 'is verified'.`; span (8, 20); no advice | — |
+| G9 | `Must Ann be eligible?` | `Ann must be eligible.` none; `Ann be must eligible.` none | **none**, `NoDerivation`: `The question has no reading with the current vocabulary. Closest sentence tried: "Ann must be eligible.". Unknown English phrase 'must be eligible'. Nearest declared wordings: 'is eligible'; 'member'; 'is verified'.`; span (0, 20); no advice | — |
 | G10 | `Is Ann eligible?` | `Ann is eligible.` one | **one**; `pred eligible [const ann]` | **Yes.** C1 for 1 and 2. |
 | G11 | `Is every member who registered is eligible?` | five candidates; only `every member who is registered is eligible.` reads; the gaps before `is` and before `eligible` both give `every member who registered is is eligible.` (F4) | **one**, odd English accepted (plan 4.9); `all member (implies (pred registered [var 0]) (pred eligible [var 0]))` | **Yes.** C1 for sentence 2 only. |
 | G12 | `Is every member eligible and?` | `every is member eligible and.`, `every member is eligible and.`, `every member eligible is and.`, all none | **none**: `… Closest sentence tried: "every member is eligible and.". Expected '.' here. Use the English paraphrase as a writing example.`; span (24, 28) | — |
@@ -1025,10 +1194,12 @@ spellings `ann`, `bo`; `policyOk` is true and `grammarFault` is `none`. The sent
 | G18 | `Is Ann eligible. Bo eligible?` (G) | **notQuestion** (the body is two sentences); span (0, 29) |
 | G19 | `Is every member eligible!?` (G) | **rejected**, `BadCharacter`: `The character at position 24 cannot appear outside a quoted name.`; span (24, 25) |
 | G20 | `Is every member` followed by ` eligible` 70 times, then `?` (G) | **budget**, `QuestionTooLong`; 646 bytes, 71 candidates; `withinLimits` is false |
-| G21 | `Is every member eligible?` (G) at budget `b = 0` | **budget**, `Budget`: `The question needs more work than the limit allows. No verdict was reached.`; the first candidate `every is member eligible.`; span (0, 25) |
-| G22 | `Is every deployed service reviewed?` (base 8.1's `FD`, with the policy's lexicon, whose nouns include `deployed service`) | **many**, `Ambiguous`: `The question can be read in more than one way. Two of the ways are shown.`; candidate `every deployed service is reviewed.`; span (0, 35). Control: `Is every service reviewed?` on `FD` is **one**. |
+| G21 | `Is every member eligible?` (G) at budget `b = 0` | **budget**, `Budget`: `VE stopped reading this question at its work limit.`; the first candidate `every is member eligible.`; span (0, 25) |
+| G22 | `Is every deployed service reviewed?` (base 8.1's `FD`, with the policy's lexicon, whose nouns include `deployed service`) | **many**, `Ambiguous`: `The sentence "every deployed service is reviewed." can be read in more than one way. Two of the ways are shown.`; candidate `every deployed service is reviewed.`; span (0, 35). Control: `Is every service reviewed?` on `FD` is **one**. |
 | G23 | `Is legacy deployed?` (base 8.3's `F` with `LFv3`, a lexicon that fails V5) | **invalidGrammar**: `The vocabulary selection was not accepted (invalidGrammar lexicon: V6 negative owns). No text was read.` |
 | G24 | speech acts' `auxs = ["is"]` (Q1.4) on G: `Is Ann eligible?`; `Must Ann be eligible?`; `Is it the case that Ann is eligible?` | **one** (`Ann is eligible.`); **none**, `QuestionForm`: `VE answers questions that begin with "Is", or with "Is it the case that" followed by a sentence.`; **one**. Q1.4 maps the second to speech acts' `ModalQuestion` refusal, with Lean's text. |
+| G25 | `Is every and?` (G): closest `every is and.`, diagnosis span (5, 8) in candidate bytes | **none**, `NoDerivation`; interval images [8, 9) and [0, 2) enclose to question span **(0, 9)**. This crosses the movement boundary; the old endpoint rule returned (8, 2). |
+| G26 | `Is "é" and?` (G): first candidate `"é" is and.`, diagnosis span (0, 4) in candidate bytes | The interval maps to question bytes (3, 7), then to code points **(3, 6)**. This pins the byte-to-code-point conversion with a non-ASCII character. |
 
 ### 7.4 A: the agent policy (R6)
 
@@ -1053,7 +1224,7 @@ writes, so m1 should not change their statuses; Q2.5 confirms it by running the 
 | A6 | `May an action be performed?` | any | **indefinite**: `VE cannot tell whether "an" here means every or some. Ask one of these instead:`; rephrasings `May every action be performed?`, `May some action be performed?`; span (0, 27) | — |
 | A7 | `May every action be performed?` | rules | **one**; asked `every action may be performed.`; `all action (pred permitted [var 0])` | **Not necessarily.** S1 (for example an unconfirmed purchase) |
 | A8 | `Must every action be reported to the user?` | unspecified | **one**; `all action (pred report_required [var 0])` | **The text does not settle this** (a split on `report_required`) |
-| A9 | `Must an agent not send email unless the user confirms?` | any | **none**: `… Closest sentence tried: "an must agent not send email unless the user confirms.". Unknown English phrase 'an must agent'. Nearest declared wordings: '"spawn_agent"'; 'messages {1}'; '"f_env"'.`; span (5, 13); advice `Write "every" or "some" in place of "an".` (F5) | — |
+| A9 | `Must an agent not send email unless the user confirms?` | any | **none**: `… Closest sentence tried: "an must agent not send email unless the user confirms.". Unknown English phrase 'an must agent'. Nearest declared wordings: '"spawn_agent"'; 'messages {1}'; '"f_env"'.`; span (0, 13); advice `Write "every" or "some" in place of "an".` (F5) | — |
 
 Every Q2 answer above ends with U1 if the document has unformalised sentences (D14).
 
@@ -1066,7 +1237,7 @@ true, `grammarFault` none). Sentence numbers are display numbers: units `u087` t
 
 | # | Question | Q1 (*computed*) | Q2 (*derived*) |
 |---|---|---|---|
-| U1 | `Must every qualified person be given access to higher education?` | **none**: `… Closest sentence tried: "every must qualified person be given access to higher education.". Unknown English phrase 'must qualified person be given access to higher education'. Nearest declared wordings: 'must be spared exclusion from education'; 'must receive elementary education'; 'is classified as "has_the_right_to_education"'.`; span (10, 63) (F5, F6) | — |
+| U1 | `Must every qualified person be given access to higher education?` | **none**: `… Closest sentence tried: "every must qualified person be given access to higher education.". Unknown English phrase 'must qualified person be given access to higher education'. Nearest declared wordings: 'must be spared exclusion from education'; 'must receive elementary education'; 'is classified as "has_the_right_to_education"'.`; span (0, 63) (F5, F6) | — |
 | U2 | `Must every person be given equal access to higher education on the basis of merit?` | **one**; `all person (pred equal_access_to_higher_education_required [var 0])` | **Yes.** C1: `Sentence 14 says: "and higher education shall be equally accessible to all on the basis of merit."`; R2; U1 |
 | U3 | `Must every person be spared exclusion from education?` | **one**; `all person (pred education_spared_required [var 0])` | by sentence 10's reading: `claim_negative` gives **yes**, with "(VE has not checked this wording)" (a norm candidate); `entitlement` gives **the text does not settle this** (S2). `relevantSets = [rs_u096]`; U1. Plan 4.6's worked example. |
 | U4 | `Is it the case that every person has the right to education?` | **none** (F7): `… Unknown English phrase 'has the right to education'. Nearest declared wordings: 'is classified as "has_the_right_to_education"'; 'course of education'; 'is classified as "asylum_right_covers_case"'.`; span (32, 59) | — |
@@ -1084,7 +1255,12 @@ true, `grammarFault` none). Sentence numbers are display numbers: units `u087` t
   42, unknown 4,482. Reasons: X1 686, X2 3,430, X3 56, X6 130, X4 180.
 - **Decisive rows.** (free, model, proved, unknown, no split) is *yes*. (free, unknown, proved, unknown) has reason
   X6. (free, model, unknown, proved) is *no*. (free, model, refuted, unknown, split) is *not settled*; without the
-  split, *not necessarily*. (conflict, model, proved) has X1. (free, inconsistent, proved) has X3.
+  split, *not necessarily*. (conflict, model, proved) has X1. (free, inconsistent, proved) has X3. In particular,
+  `(free, model, unknown, proved, false)` has lead *no* while the query row and its fold may stay UNKNOWN; a checked
+  ¬ψ certificate is a different kind of evidence from a checked query countermodel.
+- **Defaults conflict without two rules.** W1's required-by-default and forbidden-by-default pair can produce a
+  checked CONFLICT with zero rules. The corresponding row has X1 and prints `The document's rules or defaults
+  conflict in this situation, so VE cannot answer: …`.
 - **`all_yes_iff_fold`.** On all 155 lists of one to three rows drawn from five sample rows: the two sides agree on
   every list; both hold on 3 lists and both fail on 152.
 - **Groups, two sets (R7).** Two binary sets `a`, `b`, *yes* on (0, 0) and (1, 1), *not necessarily* elsewhere:
@@ -1102,7 +1278,8 @@ true, `grammarFault` none). Sentence numbers are display numbers: units `u087` t
 | `caseThat_reads` | G2, G4 | G17 (the body has no derivation); G13 (the body reads with a conclusion mark, not `[(φ, false)]`) | — |
 | `reason_exact` | the 4,482 *unknown* rows | the 320 others | — |
 | `all_yes_iff_fold` | 3 lists | 152 lists | — |
-| `CaseBinding` (exactly the document's case) | the fixture documents' own cases (Q2.2) | a case whose unit content differs; a case whose fence content differs from the fence's reading; a case with another environment (Q2.2) | — |
+| `CaseBinding` (exactly the document's case) | the fixture documents' own cases, including a front-matter `{"ast": φ}` compiled to bare `φ`, an English fence and a strict fence each compiling to one bare formula, and preserved norm content (Q2.2) | a changed bare AST, a fence with no or two formulas, a fence whose bare compiled formula differs, a changed norm, and another environment (Q2.2) | — |
+| `Asked` replay and request binding | `replayVerdictsND a.case = .ok a.x`, with `a.text`, `a.q`, `a.case` equal to the request's fields (Q2.2) | a replayed case from another document, a substituted question, a changed conclusion, or unrelated evidence; the plain adapter has corresponding cases | — |
 | `Compatible c ↔ c ∈ rows` (`ask_wire_sound`) | every compatible choice of U3 and U5 (Q2.2, from RD-3's replay) | a choice an excluded narrowing removes (Q2.2) | — |
 
 The Q2 rows of this table are *derived* until Q2.2 records the cases.
@@ -1122,12 +1299,18 @@ The Q2 rows of this table are *derived* until Q2.2 records the cases.
 | `usedPositions` returning every position | G1 (sentence 3 cited) |
 | a quote taken from the case instead of the document | the binding fixtures of 7.7 |
 | a fenced unit's content not re-read | the fence fixture of 7.7 |
+| `{"ast": φ}` compared to the compiled content without unwrapping | the successful AST fixture of 7.7 |
+| a strict fence passed through the English reader | the successful strict-fence fixture of 7.7 |
+| `Asked.x` replayed from another case | the request/replay binding fixtures of 7.7 |
 | groups keyed by lead and citations only | the two-set example of 7.6 (one *yes* block instead of two) |
 | an unchecked wording shown without its parenthesis | `render_marks_unchecked`; U3 |
 | an ordinal shown in place of a failed wording | the name-check fixture (Q2.3) |
 | U1 dropped after *yes* | U2, U6 |
+| U1 printed twice for a grouped answer, or with the wrong count or units | U3's grouped answer; `render_unused_once` |
 | R2 shown with one unchecked choice | the gate test |
 | a situation naming one set of two | `render_model_names_choice` |
+| a situation naming the right set ids but the wrong candidate indices, or using an unchecked witness | `render_model_names_choice` |
+| `Line.text` disagreeing with its quote, citation, readings or witness metadata | `render_text_matches_metadata` |
 | the split check not comparing the base models | a fixture with two different bases (Q2.2) |
 
 ## 8. Wire
@@ -1151,12 +1334,13 @@ The Q2 rows of this table are *derived* until Q2.2 records the cases.
 5. Are `rephrasings_read`'s limit hypotheses (R4) acceptable, given open point 10.3?
 6. Is 4.1's order of diagnostics right, and is each text one-reading English for a reader with no training?
 7. Is `Row.reason` right, X6 included (R9)? Is `reason_sound`'s X6 claim (a proof, conflict-free) the honest one?
-8. Is `CaseBinding` complete for R5: environment, lexicon, reading-set entries, norm content, defaults (in the
-   environment), couplings, narrowings, completions, and fences? Is the fence content shape (`{"ast": […]}`) the
-   one Python's compiler writes (open point 10.4)?
+8. Does `CaseBinding` implement the compiler's bare AST, norm and one-formula fence conversions on both surfaces,
+   and do `hreplay`, `hrequest` and `hψ` bind the checked verdict to this request? Does the plain adapter meet the
+   same binding contract?
 9. Do `groups_cover`, `group_claim` and `render_covers_rows` together give coverage and correctness (R7)? Are the
    hypotheses of `relevantSets_sound` true of RD-3's rows?
-10. Do `render_marks_unchecked` and `render_unused_every_lead` put the honesty into the printed text (R8)?
+10. Do `render_marks_unchecked`, `render_unused_once`, `render_model_names_choice` and
+    `render_text_matches_metadata` put the checked content into the printed text (R8)?
 11. Is the plain adapter's `LeadHoldsPlain` the right claim for `relational-fol@0` documents (R13)?
 12. Does any statement about an opaque Q2.3 function (`render`, `renderGroup`) need a property of its body that the
     statement does not name?
@@ -1172,9 +1356,9 @@ The Q2 rows of this table are *derived* until Q2.2 records the cases.
    so a question within 20 bytes or one token of a limit can offer a rephrasing that is itself over the limit.
    `rephrasings_read` assumes the limits (R4). Q1.1 may instead drop such rephrasings, which would make the
    hypothesis unnecessary; either is honest.
-4. **Fence content shape.** `UnitBound` assumes a fenced unit's compiled content is `{"ast": [one formula per
-   sentence]}`. Q2.2 confirms the shape Python's compiler writes on the G document; if it differs, only that clause
-   changes and only its review reopens.
+4. **Content conversion closed by Q0 review.** Python compiles `{"ast": φ}` and a one-formula fence to bare `φ`;
+   norm content remains the norm object. Q2.2 checks that the Lean binding matches the compiler on AST, English
+   fence, strict fence and norm fixtures before the Q2 statement review.
 5. **Q2 computation.** Every Q2 lead in section 7 is derived. When RD-3 merges, the Q2 stub is elaborated against
    the merged build, the generators run on the fixture documents, and the Q2 statements go to review (R14).
 
@@ -1183,8 +1367,8 @@ The Q2 rows of this table are *derived* until Q2.2 records the cases.
 ### 11.1 The Q1 stub
 
 `lean/SpecStubs_question-answering.lean`, importing `VE.EnglishGrammar.E2Examples` (for base 8's environments and
-`portLex`, the port of Python's vocabulary choice). It holds sections 2.1 to 2.5 verbatim, the statements of 5.1 as
-`def … : Prop`, and a `summarize` function implementing 4.1's table, used only to print the fixtures. Run with Lean
+`portLex`, the port of Python's vocabulary choice). Before the Q0 review it held sections 2.1 to 2.5 verbatim and
+the then-current statements of 5.1 as `def … : Prop`, with a `summarize` function implementing 4.1's table. Run with Lean
 4.24.0 as
 
 ```text
@@ -1197,20 +1381,32 @@ mode, while `lake` itself was allowed, so the stub was elaborated against that b
 no errors. The A environment was read from `usecases/agent-policy/environment.unspecified.json` and
 `log.vocabulary.json`, the U environment from the pilot file's front matter, both by `IO.FS.readFile` in `#eval`.
 
+After the Q0 review, a copy at `/tmp/qa-span-check.lean` replaced the old endpoint functions with section 2.5's
+`mapPoint`, `mappedPiece` and `mapSpan`, and used the mapped pair in `summarize`. It elaborated without errors
+against the same build. Its `#eval` recomputed G9 (0, 20), A9 (0, 13), U1 (0, 63), G25 (0, 9), and the G26
+Unicode byte interval (3, 7), corresponding to code points (3, 6). This check did not prove `mapSpan_valid` or
+`mapSpan_codepoints_valid`; both new statements were also elaborated as `def … : Prop` against the same build. The
+targeted joint span review and Q1.1 still have to establish their truth.
+
 ### 11.2 The Q2 stub
 
 `lean/SpecStubs_question-answering-q2.lean`, importing `VE.Readings.VerdictsWire`, `VE.Service.Document` and
 `VE.EnglishGrammar.Read`, with a copy of the part of 2.1 to 2.3 that `QuestionOneReading` needs (RD-3's branch
-predates E2.6's `Diagnose`). It holds 5.2's definitions, its statements as `def … : Prop`, and the `#eval`s of 7.6.
+predates E2.6's `Diagnose`). Before the Q0 corrections it held 5.2's definitions, its statements as `def … : Prop`,
+and the `#eval`s of 7.6.
 Run as
 
 ```text
 lake -d /home/seyran/code/ve-rd-3/lean env lean lean/SpecStubs_question-answering-q2.lean
 ```
 
-against RD-3's branch at `70cc2549` (not merged). Result: no errors; one linter warning, the unused variable `e` in
-`splitOk_sound`, which the proof needs for `WellFormedU`. The text functions and `replayAsk` were declared `opaque`
-there (no `sorry`).
+against RD-3's branch at `70cc2549` (not merged). Result for the pre-correction draft: no errors; one linter warning,
+the unused variable `e` in `splitOk_sound`, which the proof needs for `WellFormedU`. The text functions and
+`replayAsk` were declared `opaque` there (no `sorry`). A later temporary copy at `/tmp/qa-q2-types.lean` replaced
+the text and wire section with the Q0-corrected definitions, used `opaque` for the Q2.2/Q2.3 functions, and
+elaborated the theorem types as axioms against the same RD-3 branch. It had no errors and the same unused-variable
+warning. This established type consistency only; neither the corrected statements nor binding fixtures have been
+reviewed against merged RD-3.
 
 ### 11.3 Run 1: the plan's G document
 
@@ -1222,4 +1418,4 @@ lexicon, all three sentences of plan 6.1 are `.stopped 0 .noDerivation` (F1).
 ### 11.4 Not run
 
 Python, the service and its modes, the relay, the evidence generators, the readability evaluation, and every proof.
-Neither stub is committed; both remain untracked until they are deleted (the session could not delete files).
+Neither stub is committed; both are untracked worktree files outside this document edit.
