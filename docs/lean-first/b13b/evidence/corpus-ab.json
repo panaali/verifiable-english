@@ -1,0 +1,2431 @@
+{
+ "differences": [
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "document must contain at least one statement",
+     "span": {
+      "column": 1,
+      "end": 0,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "parser/parser_edge_006",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: document must contain at least one statement",
+     "span": {
+      "column": 1,
+      "end": 0,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "document must contain at least one statement",
+     "span": {
+      "column": 1,
+      "end": 0,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "parser/parser_edge_006",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: document must contain at least one statement",
+     "span": {
+      "column": 1,
+      "end": 0,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "case": "parser/parser_edge_007",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "case": "parser/parser_edge_007",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "case": "parser/parser_edge_008",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "case": "parser/parser_edge_008",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 7,
+      "line": 2,
+      "start": 6
+     }
+    }
+   },
+   "case": "parser/parser_edge_009",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 7,
+      "line": 2,
+      "start": 6
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 7,
+      "line": 2,
+      "start": 6
+     }
+    }
+   },
+   "case": "parser/parser_edge_009",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 7,
+      "line": 2,
+      "start": 6
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "parser/parser_edge_010",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "parser/parser_edge_010",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "case": "parser/parser_edge_011",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "case": "parser/parser_edge_011",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected ') and (' or ') or ('",
+     "span": {
+      "column": 6,
+      "end": 6,
+      "line": 1,
+      "start": 5
+     }
+    }
+   },
+   "case": "parser/parser_edge_012",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected ') and (' or ') or ('",
+     "span": {
+      "column": 6,
+      "end": 6,
+      "line": 1,
+      "start": 5
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected ') and (' or ') or ('",
+     "span": {
+      "column": 6,
+      "end": 6,
+      "line": 1,
+      "start": 5
+     }
+    }
+   },
+   "case": "parser/parser_edge_012",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected ') and (' or ') or ('",
+     "span": {
+      "column": 6,
+      "end": 6,
+      "line": 1,
+      "start": 5
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "case": "parser/parser_edge_013",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "case": "parser/parser_edge_013",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "parser/parser_edge_014",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "parser/parser_edge_014",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 7,
+      "line": 2,
+      "start": 6
+     }
+    }
+   },
+   "case": "parser/parser_edge_015",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 7,
+      "line": 2,
+      "start": 6
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 7,
+      "line": 2,
+      "start": 6
+     }
+    }
+   },
+   "case": "parser/parser_edge_015",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 7,
+      "line": 2,
+      "start": 6
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "case": "parser/parser_edge_016",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "case": "parser/parser_edge_016",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 5,
+      "end": 5,
+      "line": 1,
+      "start": 4
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 6,
+      "end": 12,
+      "line": 2,
+      "start": 11
+     }
+    }
+   },
+   "case": "parser/parser_edge_017",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 6,
+      "end": 12,
+      "line": 2,
+      "start": 11
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 6,
+      "end": 12,
+      "line": 2,
+      "start": 11
+     }
+    }
+   },
+   "case": "parser/parser_edge_017",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 6,
+      "end": 12,
+      "line": 2,
+      "start": 11
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "VE semantic syntax must be ASCII",
+     "span": {
+      "column": 6,
+      "end": 6,
+      "line": 1,
+      "start": 5
+     }
+    }
+   },
+   "case": "parser/parser_edge_018",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: VE semantic syntax must be ASCII",
+     "span": {
+      "column": 6,
+      "end": 6,
+      "line": 1,
+      "start": 5
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "VE semantic syntax must be ASCII",
+     "span": {
+      "column": 6,
+      "end": 6,
+      "line": 1,
+      "start": 5
+     }
+    }
+   },
+   "case": "parser/parser_edge_018",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: VE semantic syntax must be ASCII",
+     "span": {
+      "column": 6,
+      "end": 6,
+      "line": 1,
+      "start": 5
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ShadowedVariable",
+     "message": "binder 's' shadows an active binder",
+     "span": {
+      "column": 41,
+      "end": 41,
+      "line": 1,
+      "start": 40
+     }
+    }
+   },
+   "case": "parser/parser_edge_019",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "ShadowedVariable",
+     "message": "ShadowedVariable: binder 's' shadows an active binder",
+     "span": {
+      "column": 41,
+      "end": 41,
+      "line": 1,
+      "start": 40
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ShadowedVariable",
+     "message": "binder 's' shadows an active binder",
+     "span": {
+      "column": 41,
+      "end": 41,
+      "line": 1,
+      "start": 40
+     }
+    }
+   },
+   "case": "parser/parser_edge_019",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "ShadowedVariable",
+     "message": "ShadowedVariable: binder 's' shadows an active binder",
+     "span": {
+      "column": 41,
+      "end": 41,
+      "line": 1,
+      "start": 40
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "invalid binder name 'person'",
+     "span": {
+      "column": 19,
+      "end": 24,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "case": "parser/parser_edge_020",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: invalid binder name 'person'",
+     "span": {
+      "column": 19,
+      "end": 24,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "invalid binder name 'person'",
+     "span": {
+      "column": 19,
+      "end": 24,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "case": "parser/parser_edge_020",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: invalid binder name 'person'",
+     "span": {
+      "column": 19,
+      "end": 24,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "invalid binder name 'not'",
+     "span": {
+      "column": 19,
+      "end": 21,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "case": "parser/parser_edge_021",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: invalid binder name 'not'",
+     "span": {
+      "column": 19,
+      "end": 21,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "invalid binder name 'not'",
+     "span": {
+      "column": 19,
+      "end": 21,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "case": "parser/parser_edge_021",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: invalid binder name 'not'",
+     "span": {
+      "column": 19,
+      "end": 21,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "invalid binder name 'deployed'",
+     "span": {
+      "column": 19,
+      "end": 26,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "case": "parser/parser_edge_022",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: invalid binder name 'deployed'",
+     "span": {
+      "column": 19,
+      "end": 26,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "invalid binder name 'deployed'",
+     "span": {
+      "column": 19,
+      "end": 26,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "case": "parser/parser_edge_022",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: invalid binder name 'deployed'",
+     "span": {
+      "column": 19,
+      "end": 26,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected ')'",
+     "span": {
+      "column": 10,
+      "end": 10,
+      "line": 1,
+      "start": 9
+     }
+    }
+   },
+   "case": "parser/parser_edge_032",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected ')'",
+     "span": {
+      "column": 10,
+      "end": 10,
+      "line": 1,
+      "start": 9
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected ')'",
+     "span": {
+      "column": 10,
+      "end": 10,
+      "line": 1,
+      "start": 9
+     }
+    }
+   },
+   "case": "parser/parser_edge_032",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected ')'",
+     "span": {
+      "column": 10,
+      "end": 10,
+      "line": 1,
+      "start": 9
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '), then ('",
+     "span": {
+      "column": 9,
+      "end": 9,
+      "line": 1,
+      "start": 8
+     }
+    }
+   },
+   "case": "parser/parser_edge_033",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '), then ('",
+     "span": {
+      "column": 9,
+      "end": 9,
+      "line": 1,
+      "start": 8
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '), then ('",
+     "span": {
+      "column": 9,
+      "end": 9,
+      "line": 1,
+      "start": 8
+     }
+    }
+   },
+   "case": "parser/parser_edge_033",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '), then ('",
+     "span": {
+      "column": 9,
+      "end": 9,
+      "line": 1,
+      "start": 8
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 40,
+      "end": 40,
+      "line": 1,
+      "start": 39
+     }
+    }
+   },
+   "case": "parser/parser_edge_034",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 40,
+      "end": 40,
+      "line": 1,
+      "start": 39
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected '.\\n'",
+     "span": {
+      "column": 40,
+      "end": 40,
+      "line": 1,
+      "start": 39
+     }
+    }
+   },
+   "case": "parser/parser_edge_034",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected '.\\n'",
+     "span": {
+      "column": 40,
+      "end": 40,
+      "line": 1,
+      "start": 39
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "reserved word 'must' cannot be a term",
+     "span": {
+      "column": 1,
+      "end": 4,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "parser/parser_edge_037",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: reserved word 'must' cannot be a term",
+     "span": {
+      "column": 1,
+      "end": 4,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "reserved word 'must' cannot be a term",
+     "span": {
+      "column": 1,
+      "end": 4,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "parser/parser_edge_037",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: reserved word 'must' cannot be a term",
+     "span": {
+      "column": 1,
+      "end": 4,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "formula exceeds nesting limit 64",
+     "span": {
+      "column": 321,
+      "end": 321,
+      "line": 1,
+      "start": 320
+     }
+    }
+   },
+   "case": "parser/parser_edge_038",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: formula exceeds nesting limit 64",
+     "span": {
+      "column": 321,
+      "end": 321,
+      "line": 1,
+      "start": 320
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "formula exceeds nesting limit 64",
+     "span": {
+      "column": 321,
+      "end": 321,
+      "line": 1,
+      "start": 320
+     }
+    }
+   },
+   "case": "parser/parser_edge_038",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: formula exceeds nesting limit 64",
+     "span": {
+      "column": 321,
+      "end": 321,
+      "line": 1,
+      "start": 320
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "binder name exceeds 64 ASCII bytes",
+     "span": {
+      "column": 19,
+      "end": 83,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "case": "parser/parser_edge_039",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: binder name exceeds 64 ASCII bytes",
+     "span": {
+      "column": 19,
+      "end": 83,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "binder name exceeds 64 ASCII bytes",
+     "span": {
+      "column": 19,
+      "end": 83,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "case": "parser/parser_edge_039",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: binder name exceeds 64 ASCII bytes",
+     "span": {
+      "column": 19,
+      "end": 83,
+      "line": 1,
+      "start": 18
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "document exceeds 10000 AST nodes",
+     "span": {
+      "column": 1,
+      "end": 60004,
+      "line": 10001,
+      "start": 60000
+     }
+    }
+   },
+   "case": "parser/parser_edge_040",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: document exceeds 10000 AST nodes",
+     "span": {
+      "column": 1,
+      "end": 60004,
+      "line": 10001,
+      "start": 60000
+     }
+    }
+   },
+   "listed": true,
+   "op": "canonicalize"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "document exceeds 10000 AST nodes",
+     "span": {
+      "column": 1,
+      "end": 60004,
+      "line": 10001,
+      "start": 60000
+     }
+    }
+   },
+   "case": "parser/parser_edge_040",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: document exceeds 10000 AST nodes",
+     "span": {
+      "column": 1,
+      "end": 60004,
+      "line": 10001,
+      "start": 60000
+     }
+    }
+   },
+   "listed": true,
+   "op": "parse"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "mutant/1146",
+   "class": "wording",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "mutant/1146",
+   "class": "wording",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "document_render"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "mutant/1314",
+   "class": "wording",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "mutant/1314",
+   "class": "wording",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "document_render"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Expected a JSON object"
+    }
+   },
+   "case": "mutant/1384",
+   "class": "wording",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "offset 875: expected restricted JSON value"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "mutant/222",
+   "class": "wording",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "mutant/222",
+   "class": "wording",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "document_render"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "mutant/250",
+   "class": "wording",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "mutant/250",
+   "class": "wording",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "document_render"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "mutant/278",
+   "class": "wording",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "mutant/278",
+   "class": "wording",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "document_render"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "mutant/334",
+   "class": "wording",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "mutant/334",
+   "class": "wording",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "document_render"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "mutant/474",
+   "class": "wording",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "mutant/474",
+   "class": "wording",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "document_render"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Unknown constant None"
+    }
+   },
+   "case": "mutant/634",
+   "class": "order",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Unsupported JSON value; null and floating-point numbers are not in v0"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Unknown constant None"
+    }
+   },
+   "case": "mutant/634",
+   "class": "order",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Unsupported JSON value; null and floating-point numbers are not in v0"
+    }
+   },
+   "listed": true,
+   "op": "document_render"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "mutant/82",
+   "class": "wording",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "mutant/82",
+   "class": "wording",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "document_render"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Unknown predicate None"
+    }
+   },
+   "case": "mutant/940",
+   "class": "order",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Unsupported JSON value; null and floating-point numbers are not in v0"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "UnknownSymbol",
+     "message": "UnknownSymbol: Unknown predicate None"
+    }
+   },
+   "case": "mutant/940",
+   "class": "order",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Unsupported JSON value; null and floating-point numbers are not in v0"
+    }
+   },
+   "listed": true,
+   "op": "document_render"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "seed/fence",
+   "class": "wording",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "case": "seed/fence",
+   "class": "wording",
+   "corpus": "document",
+   "head": {
+    "raised": {
+     "code": "SyntaxError",
+     "message": "SyntaxError: expected term",
+     "span": {
+      "column": 1,
+      "end": 1,
+      "line": 1,
+      "start": 0
+     }
+    }
+   },
+   "listed": true,
+   "op": "document_render"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b13b-ab/base.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/a_front_matter_default.ve.md",
+   "class": "wording",
+   "corpus": "pilots",
+   "head": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b13b-ab/head.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b13b-ab/base.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/b_no_choice_made.ve.md",
+   "class": "wording",
+   "corpus": "pilots",
+   "head": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b13b-ab/head.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b13b-ab/base.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/c_written_definition_line.ve.md",
+   "class": "wording",
+   "corpus": "pilots",
+   "head": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b13b-ab/head.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b13b-ab/base.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/d_parenthetical_switch.ve.md",
+   "class": "wording",
+   "corpus": "pilots",
+   "head": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b13b-ab/head.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b13b-ab/base.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/e_the_rejected_sense_negated.ve.md",
+   "class": "wording",
+   "corpus": "pilots",
+   "head": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b13b-ab/head.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b13b-ab/base.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/f_two_words_one_default.ve.md",
+   "class": "wording",
+   "corpus": "pilots",
+   "head": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b13b-ab/head.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b13b-ab/base.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/g_bad_default.ve.md",
+   "class": "wording",
+   "corpus": "pilots",
+   "head": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b13b-ab/head.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "at": {
+     "cell": "S",
+     "output": 10000,
+     "status": "accepted"
+    },
+    "cap": 65536,
+    "over": {
+     "cell": "R",
+     "output": {
+      "code": "ResourceLimit",
+      "message": "source exceeds 65536 bytes"
+     },
+     "status": "ResourceLimit"
+    }
+   },
+   "case": "budget_boundaries/MAX_SOURCE_BYTES",
+   "class": "wording",
+   "corpus": "probe",
+   "head": {
+    "at": {
+     "cell": "S",
+     "output": 10000,
+     "status": "accepted"
+    },
+    "cap": 65536,
+    "over": {
+     "cell": "R",
+     "output": {
+      "code": "ResourceLimit",
+      "message": "ResourceLimit: source exceeds 65536 bytes"
+     },
+     "status": "ResourceLimit"
+    }
+   },
+   "listed": true,
+   "op": "budget_boundaries"
+  }
+ ],
+ "records": {
+  "conformance/lean": 19806,
+  "conformance/python": 19806,
+  "discourse/default": 6350,
+  "document/default": 3632,
+  "norm_defaults/default": 2020,
+  "pilots/default": 443,
+  "probe/lean": 9435,
+  "probe/python": 9435,
+  "quantity/lean": 12863,
+  "quantity/python": 12863,
+  "readings/default": 1137,
+  "rights/default": 2500
+ },
+ "totals": {
+  "order": 4,
+  "same": 100211,
+  "wording": 75
+ },
+ "unavailable_both": {},
+ "unlisted": 0
+}
