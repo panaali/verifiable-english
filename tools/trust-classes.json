@@ -656,6 +656,7 @@
         "ResponseShape.Schemas.ReadingsRoute.elaborateRoute",
         "ResponseShape.Schemas.ReadingsRoute.elaborateSuperposed",
         "ResponseShape.Schemas.ReadingsRoute.file",
+        "ResponseShape.Schemas.ReadingsRoute.fillField",
         "ResponseShape.Schemas.ReadingsRoute.fill_premises",
         "ResponseShape.Schemas.ReadingsRoute.filled",
         "ResponseShape.Schemas.ReadingsRoute.filledFields",
@@ -663,29 +664,30 @@
         "ResponseShape.Schemas.ReadingsRoute.key",
         "ResponseShape.Schemas.ReadingsRoute.keys",
         "ResponseShape.Schemas.ReadingsRoute.kind",
+        "ResponseShape.Schemas.ReadingsRoute.labelledFormulas",
         "ResponseShape.Schemas.ReadingsRoute.model",
         "ResponseShape.Schemas.ReadingsRoute.over",
+        "ResponseShape.Schemas.ReadingsRoute.overBudget",
         "ResponseShape.Schemas.ReadingsRoute.pair",
+        "ResponseShape.Schemas.ReadingsRoute.premisesCandidate",
+        "ResponseShape.Schemas.ReadingsRoute.queryForms",
+        "ResponseShape.Schemas.ReadingsRoute.resultForm",
         "ResponseShape.Schemas.ReadingsRoute.row",
         "ResponseShape.Schemas.ReadingsRoute.separate",
+        "ResponseShape.Schemas.ReadingsRoute.shownModel",
         "ResponseShape.Schemas.ReadingsRoute.validate",
         "ResponseShape.Schemas.ReadingsRoute.verdicts",
-        "ResponseShape.Schemas.ReadingsRoute.resultForm",
-        "ResponseShape.Schemas.ReadingsRoute.overBudget",
-        "ResponseShape.Schemas.ReadingsRoute.shownModel",
-        "ResponseShape.Schemas.ReadingsRoute.verdicts_statuses",
+        "ResponseShape.Schemas.ReadingsRoute.verdictsFor",
         "ResponseShape.Schemas.ReadingsRoute.verdicts_conflict",
-        "ResponseShape.Schemas.ReadingsRoute.premisesCandidate",
+        "ResponseShape.Schemas.ReadingsRoute.verdicts_counter",
+        "ResponseShape.Schemas.ReadingsRoute.verdicts_dead",
+        "ResponseShape.Schemas.ReadingsRoute.verdicts_line",
         "ResponseShape.Schemas.ReadingsRoute.verdicts_premises",
         "ResponseShape.Schemas.ReadingsRoute.verdicts_proof",
-        "ResponseShape.Schemas.ReadingsRoute.verdicts_counter",
-        "ResponseShape.Schemas.ReadingsRoute.queryForms",
         "ResponseShape.Schemas.ReadingsRoute.verdicts_query",
-        "ResponseShape.Schemas.ReadingsRoute.verdictsFor",
-        "ResponseShape.Schemas.ReadingsRoute.verdicts_word",
         "ResponseShape.Schemas.ReadingsRoute.verdicts_row",
-        "ResponseShape.Schemas.ReadingsRoute.verdicts_line",
-        "ResponseShape.Schemas.ReadingsRoute.verdicts_dead"
+        "ResponseShape.Schemas.ReadingsRoute.verdicts_statuses",
+        "ResponseShape.Schemas.ReadingsRoute.verdicts_word"
       ]
     },
     "ResponseShape/Schemas/Reports.lean": {
@@ -6092,6 +6094,37 @@
         "VE.Readings.SupExtraExamples.noAvoid"
       ]
     },
+    "VE/Readings/SupFill.lean": {
+      "S": [
+        "VE.Readings.AuthorLite",
+        "VE.Readings.DecidesByD",
+        "VE.Readings.DecidesBySoftD"
+      ]
+    },
+    "VE/Readings/SupFillWire.lean": {
+      "C": [
+        "VE.Readings.Run.firstFailingND",
+        "VE.Readings.Run.runCertificateND",
+        "VE.Readings.Run.runConflictND",
+        "VE.Readings.Run.runModelND",
+        "VE.Readings.Run.runNDKind",
+        "VE.Readings.Wire.CertificateReplayND",
+        "VE.Readings.Wire.ModelReplayND",
+        "VE.Readings.Wire.SupReplayND",
+        "VE.Readings.Wire.replayCertificateND",
+        "VE.Readings.Wire.replayCertificateNDJ",
+        "VE.Readings.Wire.replayModelND",
+        "VE.Readings.Wire.replayModelNDJ",
+        "VE.Readings.Wire.supReplayND"
+      ],
+      "D[V]": [
+        "VE.Readings.Run.ndSlotLabels",
+        "VE.Readings.Wire.decodeAssumedND"
+      ],
+      "G[R]": [
+        "VE.Readings.Wire.ndRefusal"
+      ]
+    },
     "VE/Readings/SupRun.lean": {
       "G[V]": [
         "VE.Readings.Run.NormsChoiceModel",
@@ -6258,16 +6291,20 @@
         "VE.Readings.Wire.fillHoldsOf",
         "VE.Readings.Wire.filledEnvironment",
         "VE.Readings.Wire.filledRV",
+        "VE.Readings.Wire.ndChecked",
+        "VE.Readings.Wire.ndQ",
         "VE.Readings.Wire.ndRest",
+        "VE.Readings.Wire.ndSlotLabelled",
+        "VE.Readings.Wire.ndSuperposable",
         "VE.Readings.Wire.replayChoiceAt",
         "VE.Readings.Wire.replayChoiceU",
         "VE.Readings.Wire.replayPairU",
         "VE.Readings.Wire.replaySeparateU",
+        "VE.Readings.Wire.routeND",
         "VE.Readings.Wire.unsaidDecls"
       ],
       "D[R]": [
         "VE.Readings.Wire.choiceStepText",
-        "VE.Readings.Wire.completionRefusal",
         "VE.Readings.Wire.ndChoiceText",
         "VE.Readings.Wire.ndDocText",
         "VE.Readings.Wire.ndText",
@@ -6282,6 +6319,7 @@
         "VE.Readings.Wire.fillPremisesJson",
         "VE.Readings.Wire.filledJson",
         "VE.Readings.Wire.filledUnitsJson",
+        "VE.Readings.Wire.ndFillJson",
         "VE.Readings.Wire.unspecOf"
       ],
       "G[V]": [
@@ -6289,11 +6327,17 @@
         "VE.Readings.Run.ndChoiceModel",
         "VE.Readings.Run.ndInner",
         "VE.Readings.Run.runChoiceND",
-        "VE.Readings.Run.runElaborateND",
-        "VE.Readings.Wire.normDefaultsProfile",
-        "VE.Readings.Wire.underCompletion",
         "VE.Readings.Run.runElaborateNDFilled",
-        "VE.Readings.Run.runElaborateNDWith"
+        "VE.Readings.Run.runElaborateNDWith",
+        "VE.Readings.Wire.elaborateFieldsND",
+        "VE.Readings.Wire.normDefaultsProfile",
+        "VE.Readings.Wire.underCompletion"
+      ],
+      "G[R]": [
+        "VE.Readings.Wire.ndChoiceCheckText",
+        "VE.Readings.Wire.ndNotSuperposable",
+        "VE.Readings.Wire.ndSuperposedCheckText",
+        "VE.Readings.Wire.routeRefusalND"
       ]
     },
     "VE/Readings/UpSlot.lean": {

@@ -221,7 +221,7 @@
       "type": "object"
     },
     "elaborate": {
-      "$comment": "Readings.Run.runElaborate (Route.elaborateFields): the route of 1.1; past its first three rows the finding of 1.8, the stale narrowings, the compatible choices (or over the limit) and the number checked; on the superposed route also the choice vocabulary, the units of sup D, the labelled slot, the name map and the sizes. The units and the name map are compared whole with Python's regeneration (ve/readings_route.py elaborate). Under the unspecified completion (Readings.Run.runElaborateNDFilled) the row also carries fill_premises and filled.",
+      "$comment": "Readings.Run.runElaborate (Route.elaborateFields): the route of 1.1; past its first three rows the finding of 1.8, the stale narrowings, the compatible choices (or over the limit) and the number checked; on the superposed route also the choice vocabulary, the units of sup D, the labelled slot, the name map and the sizes. The units and the name map are compared whole with Python's regeneration (ve/readings_route.py elaborate). Under the unspecified completion (Readings.Run.runElaborateNDFilled) the row also carries fill_premises and filled, and on the superposed route fill, the Fill_T the superposed kinds append to the slot (Wire.elaborateFieldsND).",
       "anyOf": [
         {
           "additionalProperties": false,
@@ -479,6 +479,15 @@
             "choice_count": {"anyOf": [{"$ref": "common.json#/$defs/nat"}, {"pattern": "over 64", "type": "string"}]},
             "choices": {"anyOf": [{"items": {"$ref": "#/$defs/choice"}, "type": "array"}, {"const": "over"}]},
             "choices_checked": {"anyOf": [{"$ref": "common.json#/$defs/nat"}, {"pattern": "over .*", "type": "string"}]},
+            "fill": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {"ast": {"$ref": "common.json#/$defs/generated_formula"}, "label": {"type": "string"}},
+                "required": ["label", "ast"],
+                "type": "object"
+              },
+              "type": "array"
+            },
             "fill_premises": {"$ref": "#/$defs/fill_premises"},
             "filled": {"$ref": "#/$defs/filled"},
             "finding": {
@@ -574,6 +583,7 @@
             "slot",
             "names",
             "sizes",
+            "fill",
             "fill_premises",
             "filled"
           ],
