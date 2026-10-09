@@ -103,6 +103,12 @@ DECIDED = {"usecases/bluedot-grant/document.ve.md", "usecases/bluedot-grant/caus
 # The seeds it must refuse, each with the reason it names.
 FAIL_CLOSED = {"usecases/news-article/news-w6a.ve.md": "order@0",
                "tests/data/readings_s2/constitution-nd-readings.ve.md": "restricted JSON reader",
+               "usecases/question-answering/group.ve.md": "surface parser",
+               "usecases/question-answering/udhr-part07.ve.md": "norm-defaults@0",
+               "usecases/question-answering/agent-policy/a-unspecified.ve.md": "norm-defaults@0",
+               "usecases/question-answering/agent-policy/a-rules.ve.md": "norm-defaults@0",
+               "usecases/question-answering/agent-policy/a-conflict.ve.md": "norm-defaults@0",
+               "usecases/question-answering/agent-policy/a-deny.ve.md": "Lean norms route",
                "fence": "surface parser"}
 
 
