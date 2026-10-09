@@ -220,7 +220,6 @@ def _uses_norms(env, document) -> bool:
 def _admit_lean(environment, document) -> dict:
     """The Lean route that admits `document`, chosen by the envelope (routing, not a verdict)."""
     from .backends.relay import decide
-    from .backends.lean_service import CheckerUnavailable
     from .softnorms import SoftEnvironment
     if isinstance(environment, SoftEnvironment) or (type(environment) is dict and
             "soft-norms@0" in listed_profiles(environment)):
@@ -235,9 +234,30 @@ def _admit_lean(environment, document) -> dict:
     if env.language != LANGUAGE:
         raise VEError("admission requires a ve.core@0.2 environment")
     case = {"id": "admission", "kind": "admission", "environment": env.to_dict(), "document": document}
-    row = decide("norms" if _uses_norms(env, document) else "route", [case])[0]
+    return bound_admission(env, document, decide("norms" if _uses_norms(env, document) else "route", [case])[0])
+
+
+def bound_admission(env, document, row) -> dict:
+    """Lean's admission row, bound to the request: the units' kinds rendered back are the request's, the
+    report's root is the request graph's root, and `report_id` is the identity of exactly this report over the
+    environment and the document sent (the wire digest, rule 5), so no field of the report can change unseen.
+    Anything else is CheckerUnavailable: Lean's answer is relayed, never repaired."""
+    from .backends.lean_service import CheckerUnavailable
+    from .wire import digest
     if set(row) != {"id", "status", "admitted", "report", "report_id", "kinds"} or row["admitted"] is not True:
         raise CheckerUnavailable("CheckerUnavailable: malformed Lean admission result")
+    units = document.get("units") if type(document) is dict else None
+    graph = document.get("graph") if type(document) is dict else None
+    report = row["report"]
+    try:
+        expected = digest(f"ve-report-{env.identity_version}\n",
+                          {"environment_id": env.environment_id, "document": document, "report": report})
+    except (VEError, TypeError, ValueError):
+        expected = None
+    if (type(units) is not list or row["kinds"] != [u.get("kind") if type(u) is dict else None for u in units]
+            or type(graph) is not dict or type(report) is not dict or type(report.get("root")) is not dict
+            or report["root"].get("name") != graph.get("root") or row["report_id"] != expected):
+        raise CheckerUnavailable("CheckerUnavailable: the Lean admission answer is not bound to the request")
     return {key: row[key] for key in ("admitted", "report", "report_id", "kinds")}
 
 
