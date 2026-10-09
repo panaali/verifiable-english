@@ -441,8 +441,14 @@ class Compiler:
             literals = sum(isinstance(c, dict) and c.get("sort") == "$string" for c in constants.values())
             profiles = env.get("profiles")
             order = isinstance(profiles, list) and "order@0" in profiles
+            extra = 0
+            if route == "norms" and ctx.value.get("kind") == "certificate":
+                extra = ctx.value.get("soft_premises", [])
+                if not isinstance(extra, list):
+                    _fail("background differs from the request vocabulary")
+                extra = len(extra)
             expected = (0 if order else flags + definitions) + literals * (literals - 1) // 2 + (
-                pairs if route == "norms" else 0)
+                pairs if route == "norms" else 0) + extra
             if _kind(value) != "integer" or value != expected:
                 _fail("background differs from the request vocabulary")
         return check

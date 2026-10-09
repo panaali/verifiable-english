@@ -36,7 +36,7 @@ from tests.lean_build import lean_build
 from tests.lean_service_corpus import ERROR_REQUESTS, corpus
 from tests.test_lean_service import fake
 from ve.backends.lean_service import CheckerUnavailable, LeanService, case_digest, case_texts, request_context
-from ve.backends.service_schema import DIRECTORY, MODES, Compiler, Context, Invalid, check_response
+from ve.backends.service_schema import DIRECTORY, MODES, Compiler, Context, Invalid, check_response, check_row
 
 ROOT = Path(__file__).resolve().parents[1]
 COMMON = json.loads((DIRECTORY / "common.json").read_text())["$defs"]
@@ -816,6 +816,31 @@ def test_certificate_background_respects_request_structure(tmp_path, genuine, mo
         pytest.skip("no smaller natural count")
     bad = {**row, "background": row["background"] + delta}
     _scripted_rejected(tmp_path, mode, case, row, bad)
+
+
+def test_norms_plain_certificate_counts_profile_pairs_and_soft_premises(executables):
+    case = {"id": "certificate", "kind": "certificate", "max_steps": 1,
+            "environment": {"profiles": ["norms@0", "relational-fol@0", "speech-acts@0"],
+                            "vocabulary": {"predicates": {
+                                "required": {"regulated": {"role": "obligation", "permission": "permitted"}},
+                                "permitted": {}}, "constants": {}}},
+            "soft_premises": [["top"], ["top"]]}
+    row = {"id": "certificate", "status": "ok", "valid": True, "background": 3, "steps": 0}
+    check_row("norms", row, case, 0)
+    digest = case_digest(_text(case))
+    request = {"id": "counts", "mode": "norms", "cases": [case], "digests": [digest],
+               "bytes": len(_text([case]).encode())}
+    def response(result):
+        return {"id": "counts", "status": "ok", "mode": "norms", "counts": {
+            "cases": 1, "bytes": request["bytes"], "errors": 0},
+            "results": [{"index": 0, "digest": digest, "result": result}]}
+    responses = [response(row)]
+    for count in (1, 2, 4):
+        with pytest.raises(Invalid, match="background differs"):
+            check_row("norms", {**row, "background": count}, case, 0)
+        responses.append(response({**row, "background": count}))
+    assert assert_agreement(executables[1], [("norms", request, responses)]) == [
+        "accept", *[schema_verdict("norms", request, item) for item in responses[1:]]]
 
 
 @pytest.mark.parametrize("mode", ["route", "norms"])
