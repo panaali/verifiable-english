@@ -334,13 +334,14 @@ def test_diagnostic_modules_stay_off_verdict_import_paths():
     # Fable review B: the handler of a unit in shadow is the switch commit's (7.2), not the shadow commit's.
     # Since lean-first batch 13b the call relays the Lean norms route; a handler planted there is still refused.
     norms = root / "norm_admission.py"
-    statement = '        row = decide("norms", [case])[0]\n'
+    statement = '        return bound_admission(env, document, decide("norms", [case])[0])\n'
     assert load("norms@0")["status"] == "shadow" and norms.read_text().count(statement) == 1
     with pytest.raises(AssertionError):
         _diagnostic_import_boundary({norms: norms.read_text().replace(statement, (
             '        try:\n            row = decide("norms", [case])[0]\n        except VEError as error:\n'
             "            from .norms_contract import public_rejection\n"
-            "            raise public_rejection(env.to_dict(), [], error)\n"))})
+            "            raise public_rejection(env.to_dict(), [], error)\n"
+            "        return bound_admission(env, document, row)\n"))})
 
 
 def test_seeded_soft_sources_keep_verdict_and_code_agreement():
