@@ -435,10 +435,121 @@ def test_every_question_binds_its_rows_exactly(tmp_path):
         route.check_answer(mutated, request)
 
 
+# Review B of rd-3 looprecheck1: a row's word is the one Lean's acceptance of the pieces the request sent gives
+# (`ROW_WORDS`), and every other member is regenerated from the rows. The forger below is the strongest one: it
+# changes rows and then makes every other member of the answer consistent with them, as Lean would compute it.
+
+WORDS = ("CONFLICT-FREE", "CONFLICT", "proved", "refuted", "model", "INCONSISTENT", "UNKNOWN")
+
+
+def _forge(route, answer, request, mutate):
+    """`answer` with its rows mutated and every other member regenerated from them, trusting each row's word."""
+    from ve.readings_verdicts import _expected_answer, _row_info
+    forged = copy.deepcopy(answer)
+    mutate(forged)
+    frame, question = route.frame(request), request["question"]
+    infos = [_row_info(k, e, {name: e[name] for name in {"conflict", question}})
+             for k, e in enumerate(forged["per_choice"])]
+    rest = frame.restrictions(request.get("assumed") or [])
+    result = forged["result"]
+    proofs = result.get("proofs") or []
+    # the relayed labels a forged ALL or CONFLICT-FREE needs
+    result.update(conditional_on=result.get("conditional_on", rest),
+                  proofs=(proofs + [{"conditional_on": []}] * len(infos))[:len(infos)],
+                  proof=result.get("proof") or {"conditional_on": []})
+    return _expected_answer(forged, request, frame, infos)
+
+
+def test_the_forger_regenerates_every_genuine_answer(tmp_path):
+    for name, (route, answer) in _genuine_answers(tmp_path).items():
+        request = _checked(route, answer)
+        assert _forge(route, answer, request, lambda a: None) == answer, name
+
+
+def test_every_row_word_lean_did_not_give_is_unavailable(tmp_path):
+    """Each row's conflict word and question word set to every other word, the answer made consistent with it."""
+    survivors = []
+    for name, (route, answer) in _genuine_answers(tmp_path).items():
+        request = _checked(route, answer)
+        for k, entry in enumerate(answer["per_choice"]):
+            for field in {"conflict", request["question"]}:
+                for word in WORDS:
+                    if word == entry[field]:
+                        continue
+                    forged = _forge(route, answer, request, lambda a: a["per_choice"][k].update({field: word}))
+                    try:
+                        route.check_answer(forged, request)
+                    except CheckerUnavailable:
+                        continue
+                    survivors.append(f"{name}: row {k} {field} = {word}")
+    assert survivors == [], "\n".join(survivors)
+
+
+def test_review_b_looprecheck1_rows_tied_to_the_evidence_sent(tmp_path):
+    """The finding's probes on F-ND1 and F-ND2, each made consistent in every other member."""
+    answers = _genuine_answers(tmp_path)
+    # Query: rs_1:1 proved while its only piece is an accepted countermodel turns SOME into ALL.
+    route, answer = answers["query SOME"]
+    request = _checked(route, answer)
+    noted = answer["per_choice"][1]["evidence"]
+    assert noted["countermodel"] is True and "certificate" not in noted
+    forged = _forge(route, answer, request, lambda a: a["per_choice"][1].update(query="proved"))
+    assert forged["result"]["verdict"] == "ALL"
+    with pytest.raises(CheckerUnavailable):
+        route.check_answer(forged, request)
+    # Premises: every row INCONSISTENT while Lean accepted a model for each.
+    route, answer = answers["premises"]
+    request = _checked(route, answer)
+    assert {e["premises"] for e in answer["per_choice"]} == {"model"}
+    forged = _forge(route, answer, request, lambda a: [e.update(premises="INCONSISTENT") for e in a["per_choice"]])
+    assert forged["result"]["status"] == "INCONSISTENT"
+    with pytest.raises(CheckerUnavailable):
+        route.check_answer(forged, request)
+    # Conflict: CONFLICT-FREE rows while the packages' note is false, or missing.
+    route, answer = answers["conflict CONFLICT"]
+    request = _checked(route, answer)
+    assert [e["conflict"] for e in answer["per_choice"]] == ["CONFLICT", "CONFLICT-FREE"]
+
+    def witnessed(change):
+        return lambda a: change(a["per_choice"][0])
+    for mutate in (witnessed(lambda e: e.update(conflict="CONFLICT-FREE")),
+                   witnessed(lambda e: (e.update(conflict="CONFLICT-FREE"), e["evidence"].pop("conflict"))),
+                   # both notes true: no choice is conflict-free and in conflict
+                   witnessed(lambda e: (e.update(conflict="CONFLICT-FREE"), e["evidence"].update(conflict=True))),
+                   # the witness's note dropped under the completion
+                   witnessed(lambda e: (e.update(conflict="CONFLICT-FREE"), e["evidence"].update(conflict=True),
+                                        e["evidence"].pop("witness"), e["shown"].pop("witness"),
+                                        e["gaps"].pop("witness", None)))):
+        forged = _forge(route, answer, request, mutate)
+        assert forged["result"]["status"] == "CONFLICT-FREE"
+        with pytest.raises(CheckerUnavailable):
+            route.check_answer(forged, request)
+
+
+def test_a_reading_s_conflict_notes_are_the_same_in_every_answer(tmp_path, monkeypatch):
+    """The same conflict packages get the same note in every request of the route: a later answer that notes them
+    otherwise (here, an otherwise consistent query answer whose conflict notes are dropped) is unavailable."""
+    from ve import readings_verdicts
+    _, route = loaded(tmp_path)
+    route.conflict_answer()
+    real = readings_verdicts.Enumerated.check_answer
+
+    def downgraded(self, row, case):
+        real(self, row, case)
+        for entry in row["per_choice"]:
+            entry["evidence"]["conflict"] = False
+    monkeypatch.setattr(readings_verdicts.Enumerated, "check_answer", downgraded)
+    with pytest.raises(CheckerUnavailable, match="differently from one request to the next"):
+        route.entailment(QUERY)
+
+
 def test_beyond_64_choices_rows_are_only_the_requests_evidence():
     """Past 64 choices (no list to bind to) only W2's budget shape, with rows for evidence the request sent."""
-    from ve.readings_verdicts import _check_answer
+    from ve.readings_verdicts import _check_answer as check, _Frame
     raw, document = fnd3()
+
+    def _check_answer(answer, request):
+        check(answer, request, _Frame(request, None, True, [f"rs_{k}" for k in range(1, 8)]))
     model = {"complete": True, "domains": {"agent": ["a"], "user": ["u"]}, "constants": {}, "relations": {"asks": []}}
     choice = [[f"rs_{k}", 1] for k in range(1, 8)]
     request = case("readings-verdicts", raw, document, question="query", premises=[], conclusion=QUERY,
