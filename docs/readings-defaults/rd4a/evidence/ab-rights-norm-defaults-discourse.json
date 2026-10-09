@@ -1,0 +1,13 @@
+{
+ "differences": [],
+ "records": {
+  "discourse/default": 6350,
+  "norm_defaults/default": 2020,
+  "rights/default": 2500
+ },
+ "totals": {
+  "same": 10870
+ },
+ "unavailable_both": {},
+ "unlisted": 0
+}

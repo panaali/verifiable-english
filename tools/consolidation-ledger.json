@@ -57,7 +57,7 @@
     {"module": "VE/WireContract/**"}]},
   {"step": "7", "title": "Route and service skeleton", "days": 6, "risk": 2, "adds_est": 60,
    "removed": [
-    {"module": "VE/*/Run.lean", "names": "\\.Run\\.(runCase|runCaseReported|main|dispatch)$"},
+    {"module": "VE/*/Run.lean", "names": "\\.Run\\.(runCase|runOne|runCaseReported|main|dispatch)$"},
     {"module": "*Main.lean"}]},
   {"step": "8a", "title": "Formula codec", "days": 10, "risk": 1.5, "adds_est": 60,
    "tied": [

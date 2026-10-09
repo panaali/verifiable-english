@@ -65,7 +65,7 @@
     "ve/english.py:_parse_english_document_uncached": "Comparator only: Python parser exceptions are recorded after Lean has decided; they never change the returned Lean result or error."
   },
   "lean_decoders": {
-    "total_lines": 24781,
+    "total_lines": 25704,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -625,7 +625,7 @@
           "ndInner",
           "runChoiceND"
         ],
-        "reason": "readings-defaults RD-2a: admission, separation and each choice under the unspecified completion; the inner case of readings-choice (its kind, conflict packages, premises, certificate, model and filling) read through the pinned NormDefaults and SupWire decoders and by `conflictPackages` and `ndCertificate`; readings-defaults RD-2b: `readings-elaborate` also answers the filled document (`runElaborateNDFilled`, no new decoding); the full file is pinned conservatively"
+        "reason": "readings-defaults RD-2a: admission, separation and each choice under the unspecified completion; the inner case of readings-choice (its kind, conflict packages, premises, certificate, model and filling) read through the pinned NormDefaults and SupWire decoders and by `conflictPackages` and `ndCertificate`; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Readings/Wire.lean",
@@ -1202,6 +1202,36 @@
           "runCase"
         ],
         "reason": "W6 unit declarations, quantity syntax and runner; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Readings/Companions.lean",
+        "lines": 923,
+        "sha256": "dc0e7274664915cab3c524fcd827e0b4e46b182aa0a00b31f545b9727df84bb0",
+        "ranges": [
+          [
+            1,
+            923
+          ]
+        ],
+        "declarations": [
+          "companionSets",
+          "companionIds",
+          "reservedComponentText",
+          "carries",
+          "readingsOf",
+          "mergeCompanions",
+          "mergeCategory",
+          "mergeOpenTerms",
+          "mergeTerms",
+          "companionMeaningId",
+          "meaningCheck",
+          "profileCheck",
+          "componentOf",
+          "crossingText",
+          "shapeText",
+          "splitCase"
+        ],
+        "reason": "readings-defaults RD-4a: a candidate's `companion` (its environment and open terms) read, merged per companion set and validated through the pinned Readings.Wire and Route decoders (`decodeEnvironment`, `openTermNames`), each recorded `meaning_id` checked against W1's identity over the companion's own environment, and the document split into its cases; the full file is pinned conservatively"
       }
     ],
     "other_json": {
@@ -1283,6 +1313,7 @@
       "lean/VE/EnglishGrammar/E2Examples.lean": "fixtures only: E2 port, overlay check, guards, texts and advice #guard checks (spec section 8); no runner path",
       "lean/VE/Service/ParseDiagnostic.lean": "diagnostic only after a rejected checked parse: builds the first source fault and span; cannot accept",
       "lean/VE/Readings/UnspecifiedExamples.lean": "fixtures: an empty environment JSON for `checkAuthorN` in `#guard` (readings-defaults 8.3); on no runner path",
+      "lean/VE/Readings/CompanionsExamples.lean": "readings-defaults RD-4a: #guard fixtures that build JSON documents and environments for the merge and the split; no decoder",
       "lean/ResponseShape/Encoders/Document.lean": "Document response-shape encoder proves the JSON wrapper shape; the document admission decoder is pinned in lean/VE/Service/Document.lean."
     }
   },

@@ -67,6 +67,8 @@ import VE.Readings.UnspecifiedWire
 import VE.Readings.UnspecifiedExamples
 import VE.Readings.SupExtra
 import VE.Readings.SupExtraExamples
+import VE.Readings.Companions
+import VE.Readings.CompanionsExamples
 import VE.Checks
 import VE.Closure.Checks
 import VE.Order.Checks
