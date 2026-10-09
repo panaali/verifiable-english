@@ -193,6 +193,7 @@ import VE.Senses.Read
 import VE.EnglishGrammar.SensesRequest
 import VE.Senses.Document
 import VE.Senses.Request
+import VE.Question.Properties
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -4709,3 +4710,32 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Senses.document_line_sound
 #print axioms VE.Senses.documentRequest_policy
 #print axioms VE.Senses.documentRequest_source
+#print axioms VE.Question.got_none
+#print axioms VE.Question.first_pred_unique
+#print axioms VE.Question.question_reading_unique
+#print axioms VE.Question.fold_meanings_sound
+#print axioms VE.Question.firstMeanings_sound
+#print axioms VE.Question.got_one_read
+#print axioms VE.Question.classify_one_read
+#print axioms VE.Question.readQuestion_one_read
+#print axioms VE.Question.asked_reads_back
+#print axioms VE.Question.got_many_derivations
+#print axioms VE.Question.classify_ambiguous_candidate
+#print axioms VE.Question.readQuestion_ambiguous
+#print axioms VE.Question.addMeaning_nodup
+#print axioms VE.Question.fold_meanings_nodup
+#print axioms VE.Question.firstMeanings_nodup
+#print axioms VE.Question.classify_meanings_sound
+#print axioms VE.Question.readQuestion_meanings
+#print axioms VE.Question.addMeaning_nonempty
+#print axioms VE.Question.foldMeaning_nonempty
+#print axioms VE.Question.addMeaning_one_nonempty
+#print axioms VE.Question.foldMeaning_one_nonempty
+#print axioms VE.Question.firstMeanings_empty_no_one
+#print axioms VE.Question.no_flags_only_none
+#print axioms VE.Question.classify_none_got
+#print axioms VE.Question.readQuestion_indefinite
+#print axioms VE.Question.closestStep_mem
+#print axioms VE.Question.closestFold_mem
+#print axioms VE.Question.closest_mem
+#print axioms VE.Question.readQuestion_none
