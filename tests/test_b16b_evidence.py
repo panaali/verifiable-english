@@ -72,7 +72,10 @@ def test_every_seeded_fault_was_caught_and_restored():
 def test_every_seeded_fault_still_applies_to_the_tree():
     """A seeded fault whose text is gone from its file cannot run (looprecheck1: `unbound_answer` named a line
     the binding fix had replaced); each must match its file exactly once, as `mutants.py` requires."""
-    import mutants
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("b16b_mutants", HERE / "mutants.py")
+    mutants = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mutants)
     for name, _, file, old, _, test in mutants.MUTANTS:
         assert (ROOT / file).read_text().count(old) == 1, name
         assert f"def {test}(" in (ROOT / mutants.TESTS).read_text(), name
