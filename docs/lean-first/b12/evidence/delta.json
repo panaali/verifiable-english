@@ -1,0 +1,96 @@
+{
+ "format": "lean-first-delta@1",
+ "wording": [
+  {
+   "base": "Descriptions must be nonempty Unicode strings",
+   "head": "empty description"
+  },
+  {
+   "base": "Identifier exceeds 64 ASCII bytes",
+   "head": "ResourceLimit: Identifier exceeds 64 ASCII bytes"
+  },
+  {
+   "base": "Incorrect fields (missing=[], unknown=['extra'])",
+   "head": "fields do not match: expected ['language', 'profile', 'spec_revision', 'vocabulary'], got ['extra', 'language', 'profile', 'spec_revision', 'vocabulary']"
+  },
+  {
+   "base": "Schema identifier 'x0' is reserved",
+   "head": "DuplicateDeclaration: Schema identifier 'x0' is reserved"
+  },
+  {
+   "base": "Symbol 'owns' is declared in multiple categories",
+   "head": "DuplicateDeclaration: Symbol 'owns' is declared in multiple categories"
+  },
+  {
+   "base": "UnsupportedProfile: Unsupported language, semantic profile, or specification revision",
+   "head": "UnsupportedProfile: Unsupported language"
+  },
+  {
+   "base": "Vocabulary exceeds sort or predicate limit",
+   "head": "ResourceLimit: Vocabulary exceeds sort or predicate limit"
+  },
+  {
+   "base": "complete must be the Boolean true",
+   "head": "InvalidModel: complete must be the Boolean true"
+  },
+  {
+   "base": "constant denotes an entity outside its sort",
+   "head": "InvalidModel: constant denotes an entity outside its sort"
+  },
+  {
+   "base": "domain exceeds entity limit",
+   "head": "ResourceLimit: domain exceeds entity limit"
+  },
+  {
+   "base": "domains must contain exactly the declared sorts",
+   "head": "InvalidModel: fields do not match: expected ['person', 'service'], got ['service']"
+  },
+  {
+   "base": "duplicate domain entity",
+   "head": "InvalidModel: duplicate domain entity"
+  },
+  {
+   "base": "duplicate relation tuple",
+   "head": "InvalidModel: duplicate relation tuple"
+  },
+  {
+   "base": "fields do not match (missing=['complete', 'constants', 'domains', 'relations'], unknown=[])",
+   "head": "InvalidModel: fields do not match: expected ['complete', 'domains', 'constants', 'relations'], got []"
+  },
+  {
+   "base": "fields do not match (missing=[], unknown=['extra'])",
+   "head": "InvalidModel: fields do not match: expected ['complete', 'domains', 'constants', 'relations'], got ['complete', 'constants', 'domains', 'extra', 'relations']"
+  },
+  {
+   "base": "local ID exceeds 64 ASCII bytes",
+   "head": "ResourceLimit: local ID exceeds 64 ASCII bytes"
+  },
+  {
+   "base": "local ID must match [a-z][a-z0-9_]*",
+   "head": "InvalidModel: local ID must match [a-z][a-z0-9_]*"
+  },
+  {
+   "base": "model exceeds total relation tuple limit",
+   "head": "ResourceLimit: model exceeds total relation tuple limit"
+  },
+  {
+   "base": "model identity does not match its contents",
+   "head": "InvalidModel: model identity does not match its contents"
+  },
+  {
+   "base": "relation tuple contains a dangling or wrong-sort entity",
+   "head": "InvalidModel: relation tuple contains a dangling or wrong-sort entity"
+  },
+  {
+   "base": "relation tuple has wrong arity",
+   "head": "InvalidModel: relation tuple has wrong arity"
+  },
+  {
+   "base": "relations must contain exactly the base predicates; defined tables are computed",
+   "head": "InvalidModel: fields do not match: expected ['deployed', 'owns', 'reviewed'], got ['deployed', 'reviewed']"
+  }
+ ],
+ "order": [],
+ "verdict": [],
+ "availability": []
+}

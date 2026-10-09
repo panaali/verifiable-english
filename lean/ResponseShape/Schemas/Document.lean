@@ -13,7 +13,7 @@ def unit : Shape :=
     closed [
       ("id", str), ("span", n [arr, .items (ref "common.json#/$defs/nat")]),
       ("kind", .bool true), ("meaning", .bool true), ("support", str),
-      ("status", str), ("parent_id", str)]]
+      ("status", str), ("parent_id", str), ("content", .bool true), ("meaning_id", str)]]
 
 def cells : Shape :=
   c "Alternatives.Wire.coverage's cells, as the document mode relays them." [

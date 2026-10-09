@@ -70,6 +70,8 @@ import VE.Readings.VerdictsWire
 import VE.Readings.VerdictsExamples
 import VE.Readings.SupExtra
 import VE.Readings.SupExtraExamples
+import VE.Readings.Companions
+import VE.Readings.CompanionsExamples
 import VE.Checks
 import VE.Closure.Checks
 import VE.Order.Checks

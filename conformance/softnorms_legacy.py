@@ -584,8 +584,9 @@ class SoftEnvironment(Environment):
         object.__setattr__(self, 'ranks_above', {
             name: set(above) for name, above in row['ranks_above'].items()})
         object.__setattr__(self, 'soft_premises', ())
-        # Every declaration passed 2.3 under the same profiles; this cannot fail.
-        super().__init__(raw)
+        # The soft route has already accepted this projection. Generated soft words
+        # are deliberately excluded from the standalone environment validator.
+        super().__init__(raw, _validated_projection=True)
 
     def to_dict(self):
         data = super().to_dict()

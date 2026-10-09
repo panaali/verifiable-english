@@ -801,3 +801,28 @@ def test_dri_wording_rows_keep_the_base(tmp_path, capsys):
             readings("--conclusion", str(query), "--under", "rs_1:1"), readings("--conclusion", str(implies)),
             check_document(path1)["readings"]["english"], check_document(path2)["readings"]["english"]]
     assert [row["head"] for row in saved["rows"]] == live
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# With RD-4a's companion components (readings-defaults.md 3): `readings-verdicts` is one of the other kinds, run on
+# the case `component` names (`main` when absent).
+
+def test_readings_verdicts_runs_on_the_component_it_names():
+    """On a named companion component the answer is Lean's answer on that component written as a document of its
+    own; without `component` it is the answer on `main`."""
+    from tests.test_readings_companions_lean import MAIN_UNIT, alone, env_main, fc1, merged, set_a, set_b
+
+    def verdicts(raw, document, **fields):
+        [row] = run(LEAN, [case("readings-verdicts", raw, document, evidence=[], **fields)])
+        return row
+
+    document, _, _ = fc1()
+    for (rs, _, companion), unit in ((set_a(), {"id": "u_a"}), (set_b(), {"id": "u_b"})):
+        for question in ("conflict", "premises"):
+            row = verdicts(env_main(), document, component=rs["id"], question=question)
+            assert row == verdicts(merged(companion), alone(rs, [unit]), question=question), (rs["id"], question, row)
+    row = verdicts(env_main(), document, component="rs_a", question="conflict")
+    assert row["status"] == "ok" and row["route"] == "enumerated", row
+    assert {e["choice"][0][0] for e in row["per_choice"]} == {"rs_a"}
+    main = {"units": [MAIN_UNIT, {"id": "u_a"}, {"id": "u_b"}], "reading_sets": []}
+    assert verdicts(env_main(), document, question="conflict") == verdicts(env_main(), main, question="conflict")

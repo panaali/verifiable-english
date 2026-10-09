@@ -2,7 +2,8 @@ import Lean.Data.Json
 import Std.Internal.Parsec
 
 /-! Restricted JSON input boundary. Unlike Lean.Json.parse, this rejects duplicate
-keys, unpaired surrogate escapes, null, fractions and exponents. This decoder is
+keys, unpaired surrogate escapes, fractions and exponents. Null is enabled only
+for the standalone model decoder, which locates malformed cells. This decoder is
 executable and tested, but has no refinement theorem against the wire spec. -/
 namespace VE.JsonInput
 open Lean Std.Internal.Parsec Std.Internal.Parsec.String
@@ -52,19 +53,19 @@ private def values (p : Parser α) (closing : Char) : Parser (Array α) := do
   skipChar closing; ws
   pure (#[first] ++ rest)
 
-private def value : Nat → Parser Json
+private def value (allowNull : Bool) : Nat → Parser Json
   | 0 => fail "ResourceLimit: JSON depth exceeds 256"
   | fuel + 1 => do
     let c ← peek!
     if c == '[' then
       skip; ws
-      return .arr (← values (value fuel) ']')
+      return .arr (← values (value allowNull fuel) ']')
     else if c == '{' then
       skip; ws
       let pairs ← values (do
         let key ← quoted
         ws; skipChar ':'; ws
-        let val ← value fuel
+        let val ← value allowNull fuel
         pure (key, val)) '}'
       let keys := pairs.toList.map Prod.fst
       if keys.eraseDups.length != keys.length then fail "duplicate object key"
@@ -79,6 +80,9 @@ private def value : Nat → Parser Json
     else if c == 'f' then
       skipString "false"; ws
       return .bool false
+    else if c == 'n' && allowNull then
+      skipString "null"; ws
+      return .null
     else if c ≥ '0' && c ≤ '9' then
       let n ← Json.Parser.nat
       if n > 9007199254740991 then fail "integer out of range"
@@ -86,9 +90,9 @@ private def value : Nat → Parser Json
       return toJson n
     else fail "expected restricted JSON value"
 
-def parse (text : String) (depth : Nat := 256) : Except String Json := do
+def parse (text : String) (depth : Nat := 256) (allowNull : Bool := false) : Except String Json := do
   if text.utf8ByteSize > 16777216 then throw "ResourceLimit: package exceeds 16 MiB"
-  Parser.run (do ws; let j ← value depth; eof; pure j) text
+  Parser.run (do ws; let j ← value allowNull depth; eof; pure j) text
 
 /-- Split only the outer batch array, without recursively decoding its cases.
 Each slice still goes through the restricted parser. This lets a depth error
@@ -122,11 +126,12 @@ def caseTexts (text : String) : Except String (Array String) := do
   if quoted || depth != 0 then throw "unterminated batch case"
   return cases.push (String.mk chars.toList)
 
-def parseCases (text : String) : Except String (Array (Except String Json)) := do
+def parseCases (text : String) (allowNull : Bool := false) :
+    Except String (Array (Except String Json)) := do
   if text.utf8ByteSize > 16777216 then throw "ResourceLimit: package exceeds 16 MiB"
   let depth := if text.trim.startsWith "[" then 255 else 256
   (← caseTexts text).mapM fun raw => do
-    match parse raw depth with
+    match parse raw depth allowNull with
     | .ok j => pure (.ok j)
     | .error message =>
       if (message.splitOn "ResourceLimit: JSON depth").length > 1 then

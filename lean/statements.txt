@@ -8230,7 +8230,7 @@ theorem VE.NormDefaults.Wire.decodeSourceU_plain
       VE.NormDefaults.Wire.hasProfile environment = Bool.false →
         VE.Norms.Wire.decodeSource environment norms = Except.ok s.src ∧ s.U = { D := s.src.D, unspec := [] }
   -- uses VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.SourceU.U@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU.src@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.decodeSourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.hasProfile@VE.NormDefaults.Wire VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire
-  -- expr 944801133
+  -- expr 3671346700
 theorem VE.NormDefaults.Wire.decode_conservative
   ∀ (environment norms : Lean.Json),
     VE.NormDefaults.Wire.hasProfile environment = Bool.false →
@@ -8239,7 +8239,7 @@ theorem VE.NormDefaults.Wire.decode_conservative
             Except.map (fun s => (s, { D := s.D, unspec := [] })) (VE.Norms.Wire.decodeSource environment norms) ∧
           VE.NormDefaults.Wire.canonicalEnvironmentJsonU environment = VE.Norms.Wire.canonicalEnvironmentJson environment
   -- uses VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.SourceU.U@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU.src@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.canonicalEnvironmentJsonU@VE.NormDefaults.Wire VE.NormDefaults.Wire.decodeSourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.hasProfile@VE.NormDefaults.Wire VE.NormDefaults.Wire.unspecifiedNames@VE.NormDefaults.Wire VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.canonicalEnvironmentJson@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire
-  -- expr 211054475
+  -- expr 4166078235
 theorem VE.NormDefaults.Wire.fillPremises_wellFormed
   ∀ {U : VE.NormDefaults.UDoc},
     VE.NormDefaults.WellFormedU U = Bool.true →
@@ -10699,7 +10699,7 @@ theorem VE.Norms.Flagged.norms_flagged_acceptance
                     ∀ (B : VE.Structure),
                       VE.Norms.BaseAdmissible r.src.D B → VE.Norms.Sat B r.premises → VE.Formula.denote B [] r.conclusion)
   -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Flagged.replayEntailment@VE.Norms.Flagged VE.Norms.Flagged.valid@VE.Norms.Flagged VE.Norms.Replay.EntailmentReplay.conclusion@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.premises@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.src@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay@VE.Norms.Replay VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Norms.backgroundBase@VE.Norms.Prefix VE.Norms.definitionsHold@VE.Norms.Layer VE.Norms.envAt@VE.Norms.Tree VE.Norms.holdsCatala@VE.Norms.Elaborate VE.Norms.profileHold@VE.Norms.Layer VE.Norms.size@VE.Norms.Tree VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
-  -- expr 939488592
+  -- expr 3387109814
 theorem VE.Norms.Flagged.norms_flagged_conflict_sound
   ∀ (j : Lean.Json) (r : VE.Norms.Flagged.ConflictReplay),
     VE.Norms.Flagged.replayConflict j = Except.ok r →
@@ -10712,7 +10712,7 @@ theorem VE.Norms.Flagged.norms_flagged_conflict_sound
                 S.Admissible (VE.Norms.Flagged.baseEnv r.src.D) →
                   VE.Norms.Sat S (VE.Norms.Flagged.baseBackground r.src) → VE.Norms.Flagged.BaseConflictFree r.src S)
   -- uses VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Flagged.BaseConflictFree@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay.conflictFree@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay.plain@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay.src@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay@VE.Norms.Flagged VE.Norms.Flagged.baseBackground@VE.Norms.Flagged VE.Norms.Flagged.baseEnv@VE.Norms.Flagged VE.Norms.Flagged.replayConflict@VE.Norms.Flagged VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Structure.Admissible@VE.Semantics VE.Structure@VE.Semantics
-  -- expr 3771390035
+  -- expr 1687717021
 theorem VE.Norms.Flagged.norms_flagged_witness_sound
   ∀ (j : Lean.Json) (src : VE.Norms.Wire.Source) (w : VE.Norms.Flagged.Witness src),
     VE.Norms.Flagged.replayWitness j = Except.ok ⟨src, w⟩ →
@@ -10725,19 +10725,19 @@ theorem VE.Norms.Flagged.norms_flagged_witness_sound
                     VE.Norms.BaseAdmissible src.D B →
                       VE.Norms.Sat B (VE.Norms.Flagged.flagPremises src) → VE.Norms.ConflictFree src.D B
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Flagged.Witness.toWitnessData@VE.Norms.Flagged VE.Norms.Flagged.Witness@VE.Norms.Flagged VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Flagged.replayWitness@VE.Norms.Flagged VE.Norms.Replay.WitnessData.M@VE.Norms.Replay VE.Norms.Replay.WitnessData.conflict@VE.Norms.Replay VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Structure@VE.Semantics
-  -- expr 3120720372
+  -- expr 3544677167
 theorem VE.Norms.Flagged.replayConflict_source
   ∀ (j : Lean.Json) (r : VE.Norms.Flagged.ConflictReplay),
     VE.Norms.Flagged.replayConflict j = Except.ok r →
       VE.Norms.Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") Bool.true = Except.ok r.src
   -- uses VE.Norms.Flagged.ConflictReplay.src@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay@VE.Norms.Flagged VE.Norms.Flagged.replayConflict@VE.Norms.Flagged VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire
-  -- expr 735911209
+  -- expr 1166983646
 theorem VE.Norms.Flagged.replayEntailment_source
   ∀ (j : Lean.Json) (r : VE.Norms.Replay.EntailmentReplay),
     VE.Norms.Flagged.replayEntailment j = Except.ok r →
       VE.Norms.Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") Bool.true = Except.ok r.src
   -- uses VE.Norms.Flagged.replayEntailment@VE.Norms.Flagged VE.Norms.Replay.EntailmentReplay.src@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay@VE.Norms.Replay VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire
-  -- expr 1722857595
+  -- expr 2494793925
 theorem VE.Norms.FlaggedSpec.baseEnv_hidden
   ∀ (D : VE.Norms.Doc) (n : String),
     n ∈ VE.Norms.FlaggedSpec.regNames D → (VE.Norms.Flagged.baseEnv D).predicates n = Option.none
@@ -10812,13 +10812,13 @@ theorem VE.Norms.FlaggedSpec.decodeSource_flag_not_defined
       ∀ (f : VE.Data.Background.Flag),
         f ∈ src.ne.rv.flags → ∀ (d : VE.Norms.Definition), d ∈ src.D.T.definitions → f.name ≠ d.name
   -- uses VE.Data.Background.Flag.name@VE.Data.Background VE.Data.Background.Flag@VE.Data.Background VE.Norms.Definition.name@VE.Norms.Tree VE.Norms.Definition@VE.Norms.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Tree.definitions@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source.ne@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.flags@VE.Route.Wire
-  -- expr 332523094
+  -- expr 479232919
 theorem VE.Norms.FlaggedSpec.decodeVocabulary_flag_not_defined
   ∀ (profiles : List String) (v : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary),
     VE.Route.Wire.decodeVocabulary profiles v = Except.ok rv →
       ∀ (f : VE.Data.Background.Flag), f ∈ rv.flags → ∀ (d : VE.Definitions.Def), d ∈ rv.definitions → f.name ≠ d.name
   -- uses VE.Data.Background.Flag.name@VE.Data.Background VE.Data.Background.Flag@VE.Data.Background VE.Definitions.Def.name@VE.Definitions.Layer VE.Definitions.Def@VE.Definitions.Layer VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary.flags@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.decodeVocabulary@VE.Route.Wire
-  -- expr 1480496401
+  -- expr 3581999422
 theorem VE.Norms.FlaggedSpec.definition_body_wellFormed
   ∀ {E : VE.Environment} (d : VE.Norms.Definition),
     VE.Formula.WellFormed E [] d.premise → VE.Formula.WellFormed E d.args.reverse d.body
@@ -10941,7 +10941,7 @@ theorem VE.Norms.FlaggedSpec.normsEnvironment_flag_not_defined
       ∀ (f : VE.Data.Background.Flag),
         f ∈ ne.rv.flags → ∀ (d : VE.Definitions.Def), d ∈ ne.rv.definitions → f.name ≠ d.name
   -- uses VE.Data.Background.Flag.name@VE.Data.Background VE.Data.Background.Flag@VE.Data.Background VE.Definitions.Def.name@VE.Definitions.Layer VE.Definitions.Def@VE.Definitions.Layer VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironment@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary.flags@VE.Route.Wire
-  -- expr 2043582660
+  -- expr 2046754165
 theorem VE.Norms.FlaggedSpec.norms_flagged_conflict_free
   ∀ (j : Lean.Json) (r : VE.Norms.Flagged.ConflictReplay),
     VE.Norms.Flagged.replayConflict j = Except.ok r →
@@ -10951,7 +10951,7 @@ theorem VE.Norms.FlaggedSpec.norms_flagged_conflict_free
             VE.Norms.BaseAdmissible r.src.D B →
               VE.Norms.Sat B (VE.Norms.Flagged.flagPremises r.src) → VE.Norms.ConflictFree r.src.D B
   -- uses VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Flagged.ConflictReplay.conflictFree@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay.src@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay@VE.Norms.Flagged VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Flagged.replayConflict@VE.Norms.Flagged VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Structure@VE.Semantics
-  -- expr 1072783205
+  -- expr 1642018791
 theorem VE.Norms.FlaggedSpec.norms_wire_conflict_exclusive
   ∀ (j₁ j₂ a₁ a₂ : Lean.Json),
     VE.Norms.Run.runCase j₁ = Except.ok a₁ →
@@ -10975,7 +10975,7 @@ theorem VE.Norms.FlaggedSpec.norms_wire_conflict_free
                 VE.Norms.BaseAdmissible src.D B →
                   VE.Norms.Sat B (VE.Norms.Flagged.flagPremises src) → VE.Norms.ConflictFree src.D B
   -- uses VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Run.runCase@VE.Norms.Run VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Route.Run.caseKind@VE.Route.Run VE.Structure@VE.Semantics
-  -- expr 1393834369
+  -- expr 554148461
 theorem VE.Norms.FlaggedSpec.norms_wire_conflict_refuted
   ∀ (j answer : Lean.Json),
     VE.Norms.Run.runCase j = Except.ok answer →
@@ -10987,7 +10987,7 @@ theorem VE.Norms.FlaggedSpec.norms_wire_conflict_refuted
                   VE.Norms.BaseAdmissible src.D B →
                     VE.Norms.Sat B (VE.Norms.Flagged.flagPremises src) → VE.Norms.ConflictFree src.D B
   -- uses VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Run.runCase@VE.Norms.Run VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Route.Run.caseKind@VE.Route.Run VE.Structure@VE.Semantics
-  -- expr 1673647704
+  -- expr 3193561374
 theorem VE.Norms.FlaggedSpec.outcomePy_iff
   ∀ {D : VE.Norms.Doc},
     VE.Norms.Valid D →
@@ -11224,7 +11224,7 @@ theorem VE.Norms.Replay.norms_wire_acceptance
                   ∀ (B : VE.Structure),
                     VE.Norms.BaseAdmissible r.src.D B → VE.Norms.Sat B r.premises → VE.Formula.denote B [] r.conclusion)
   -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Replay.EntailmentReplay.conclusion@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.premises@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.src@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.valid@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay@VE.Norms.Replay VE.Norms.Replay.replayEntailment@VE.Norms.Replay VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Norms.backgroundBase@VE.Norms.Prefix VE.Norms.definitionsHold@VE.Norms.Layer VE.Norms.envAt@VE.Norms.Tree VE.Norms.holdsCatala@VE.Norms.Elaborate VE.Norms.profileHold@VE.Norms.Layer VE.Norms.size@VE.Norms.Tree VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
-  -- expr 753735342
+  -- expr 2955192885
 theorem VE.Norms.Replay.norms_wire_conflict_free_expands
   ∀ (j : Lean.Json) (res : VE.Norms.Replay.ConflictReplay),
     VE.Norms.Replay.replayConflict j = Except.ok res →
@@ -11240,7 +11240,7 @@ theorem VE.Norms.Replay.norms_wire_conflict_sound
         VE.Norms.Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") = Except.ok res.src ∧
           ∀ (B : VE.Structure), VE.Norms.BaseAdmissible res.src.D B → VE.Norms.ConflictFree res.src.D B
   -- uses VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Replay.ConflictReplay.conflictFree@VE.Norms.Replay VE.Norms.Replay.ConflictReplay.src@VE.Norms.Replay VE.Norms.Replay.ConflictReplay@VE.Norms.Replay VE.Norms.Replay.replayConflict@VE.Norms.Replay VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Structure@VE.Semantics
-  -- expr 3680640773
+  -- expr 146171995
 theorem VE.Norms.Replay.norms_wire_conflict_witness_sound
   ∀ (j : Lean.Json) (src : VE.Norms.Wire.Source) (w : VE.Norms.Replay.WitnessData src),
     VE.Norms.Replay.replayWitness j = Except.ok ⟨src, w⟩ →
@@ -11250,7 +11250,7 @@ theorem VE.Norms.Replay.norms_wire_conflict_witness_sound
             ¬VE.Route.Unique (VE.Norms.DocumentExpansion src.D w.M.asStructure) ∧
               ¬∀ (B : VE.Structure), VE.Norms.BaseAdmissible src.D B → VE.Norms.ConflictFree src.D B
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.DocumentExpansion@VE.Norms.Conflict VE.Norms.Replay.WitnessData.M@VE.Norms.Replay VE.Norms.Replay.WitnessData.conflict@VE.Norms.Replay VE.Norms.Replay.WitnessData@VE.Norms.Replay VE.Norms.Replay.replayWitness@VE.Norms.Replay VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Route.Unique@VE.Route.Layer VE.Structure@VE.Semantics
-  -- expr 1261579604
+  -- expr 4078021833
 theorem VE.Norms.Replay.target_refutes
   ∀ (D : VE.Norms.Doc),
     VE.Norms.WellFormed D = Bool.true →
@@ -11306,7 +11306,7 @@ theorem VE.Norms.RunSound.norms_wire_certificate_acceptance
                             VE.Norms.BaseAdmissible r.src.D B →
                               VE.Norms.Sat B r.premises → VE.Formula.denote B [] r.conclusion)
   -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Flagged.replayEntailment@VE.Norms.Flagged VE.Norms.Replay.EntailmentReplay.conclusion@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.premises@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.src@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay@VE.Norms.Replay VE.Norms.Run.runCase@VE.Norms.Run VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Norms.backgroundBase@VE.Norms.Prefix VE.Norms.definitionsHold@VE.Norms.Layer VE.Norms.envAt@VE.Norms.Tree VE.Norms.holdsCatala@VE.Norms.Elaborate VE.Norms.profileHold@VE.Norms.Layer VE.Norms.size@VE.Norms.Tree VE.Route.Run.caseKind@VE.Route.Run VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
-  -- expr 3492020895
+  -- expr 4238124787
 theorem VE.Norms.RunSound.runCase_certificate
   ∀ (j answer : Lean.Json),
     VE.Norms.Run.runCase j = Except.ok answer →
@@ -12994,6 +12994,13 @@ theorem VE.Order.ProfileGate.bind_ok
     x >>= f = Except.ok b → ∃ a, x = Except.ok a ∧ f a = Except.ok b
   -- uses
   -- expr 1148682251
+theorem VE.Order.ProfileGate.exactFieldsQuoted_keys
+  ∀ {j : Lean.Json} {expected : List String} {u : Unit},
+    expected.Nodup →
+      VE.Bridge.exactFieldsQuoted j expected = Except.ok u →
+        ∃ fs, VE.Bridge.fields j = Except.ok fs ∧ ∀ (k : String), k ∈ List.map Prod.fst fs → k ∈ expected
+  -- uses VE.Bridge.Fields@VE.Bridge VE.Bridge.exactFieldsQuoted@VE.Bridge VE.Bridge.fields@VE.Bridge
+  -- expr 19285864
 theorem VE.Order.ProfileGate.exactFields_keys
   ∀ {j : Lean.Json} {expected : List String} {u : Unit},
     expected.Nodup →
@@ -13459,7 +13466,7 @@ theorem VE.Order.order_decode_profiles
   ∀ (env : Lean.Json) (v : VE.Order.Vocabulary),
     VE.Order.Wire.decodeEnvironment env = Except.ok v → VE.Order.OrderProfilesAccepted env
   -- uses VE.Order.OrderProfilesAccepted@VE.Order.WireGate VE.Order.Vocabulary@VE.Order.ModelCheck VE.Order.Wire.decodeEnvironment@VE.Order.Wire
-  -- expr 885476164
+  -- expr 2137864238
 theorem VE.Order.order_not_accepted
   ∀ (env : Lean.Json) (ps : List String),
     env.getObjVal? "profiles" >>= VE.Bridge.strings = Except.ok ps → "order@0" ∈ ps → ¬VE.Order.ProfilesAccepted env
@@ -14532,6 +14539,50 @@ theorem VE.Readings.Wire.NDVerdicts.covers
     List.map (fun x => x.fst) rs = List.map (fun x_1 => x_1.fst) x.evs → VE.Readings.Covers x.r.N x.A rs
   -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.ChoiceResult@VE.Readings.Verdicts VE.Readings.Covers@VE.Readings.Verdicts VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.NDEvidence@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.A@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.evs@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.r@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts@VE.Readings.VerdictsWire
   -- expr 1603407474
+theorem VE.Readings.Wire.addDecl_mono
+  ∀ {acc acc' : List (String × String × Lean.Json)} {src : String} {e : String × Lean.Json},
+    VE.Readings.Wire.addDecl acc src e = Except.ok acc' → ∀ (x : String × String × Lean.Json), x ∈ acc → x ∈ acc'
+  -- uses VE.Readings.Wire.addDecl@VE.Readings.Companions
+  -- expr 1141634769
+theorem VE.Readings.Wire.addDecl_spec
+  ∀ {acc acc' : List (String × String × Lean.Json)} {src : String} {e : String × Lean.Json},
+    VE.Readings.Wire.addDecl acc src e = Except.ok acc' →
+      VE.Readings.Wire.Distinct acc →
+        VE.Readings.Wire.Distinct acc' ∧
+          (∀ (x : String × String × Lean.Json), x ∈ acc → x ∈ acc') ∧ ∃ s, (e.fst, s, e.snd) ∈ acc'
+  -- uses VE.Readings.Wire.Distinct@VE.Readings.Companions VE.Readings.Wire.addDecl@VE.Readings.Companions
+  -- expr 2850122013
+theorem VE.Readings.Wire.addDecls_mono
+  ∀ (src : String) (acc acc' : List (String × String × Lean.Json)) (es : List (String × Lean.Json)),
+    VE.Readings.Wire.addDecls src acc es = Except.ok acc' → ∀ (x : String × String × Lean.Json), x ∈ acc → x ∈ acc'
+  -- uses VE.Readings.Wire.addDecls@VE.Readings.Companions
+  -- expr 3374222372
+theorem VE.Readings.Wire.addDecls_spec
+  ∀ (src : String) (acc acc' : List (String × String × Lean.Json)) (es : List (String × Lean.Json)),
+    VE.Readings.Wire.addDecls src acc es = Except.ok acc' →
+      VE.Readings.Wire.Distinct acc →
+        VE.Readings.Wire.Distinct acc' ∧
+          (∀ (x : String × String × Lean.Json), x ∈ acc → x ∈ acc') ∧
+            ∀ (e : String × Lean.Json), e ∈ es → ∃ s, (e.fst, s, e.snd) ∈ acc'
+  -- uses VE.Readings.Wire.Distinct@VE.Readings.Companions VE.Readings.Wire.addDecls@VE.Readings.Companions
+  -- expr 908650077
+theorem VE.Readings.Wire.addTerm_spec
+  ∀ {acc acc' : List (String × Lean.Json)} {src : String} {t : Lean.Json},
+    VE.Readings.Wire.addTerm acc src t = Except.ok acc' →
+      VE.Readings.Wire.TermsDistinct acc →
+        VE.Readings.Wire.TermsDistinct acc' ∧
+          (∀ (x : String × Lean.Json), x ∈ acc → x ∈ acc') ∧ t ∈ List.map (fun x => x.snd) acc'
+  -- uses VE.Readings.Wire.TermsDistinct@VE.Readings.Companions VE.Readings.Wire.addTerm@VE.Readings.Companions
+  -- expr 989192090
+theorem VE.Readings.Wire.addTerms_spec
+  ∀ (src : String) (acc acc' : List (String × Lean.Json)) (ts : List Lean.Json),
+    VE.Readings.Wire.addTerms src acc ts = Except.ok acc' →
+      VE.Readings.Wire.TermsDistinct acc →
+        VE.Readings.Wire.TermsDistinct acc' ∧
+          (∀ (x : String × Lean.Json), x ∈ acc → x ∈ acc') ∧
+            ∀ (t : Lean.Json), t ∈ ts → t ∈ List.map (fun x => x.snd) acc'
+  -- uses VE.Readings.Wire.TermsDistinct@VE.Readings.Companions VE.Readings.Wire.addTerms@VE.Readings.Companions
+  -- expr 2769499733
 theorem VE.Readings.Wire.admissionText_of_stage
   ∀ {re : VE.Readings.Wire.ReadingsEnvironment} {D : VE.Readings.Doc}
     {t : List ((String × Nat) × VE.Rights.RightsDoc × List VE.Formula)},
@@ -14549,6 +14600,11 @@ theorem VE.Readings.Wire.admitReadings_eq
     VE.Readings.Wire.admitReadings environment document = VE.Readings.Wire.admitReadingsSpec environment document
   -- uses VE.Readings.Wire.Admitted@VE.Readings.Wire VE.Readings.Wire.admitReadings@VE.Readings.Wire VE.Readings.Wire.admitReadingsSpec@VE.Readings.Wire
   -- expr 1881383589
+theorem VE.Readings.Wire.arr_of_get
+  ∀ {j : Lean.Json} {k : String} {l : List Lean.Json},
+    j.getObjVal? k = Except.ok (Lean.Json.arr l.toArray) → VE.Readings.Wire.arr j k = l
+  -- uses VE.Readings.Wire.arr@VE.Readings.Companions
+  -- expr 1793123958
 theorem VE.Readings.Wire.attachedIter_links
   ∀ (D : VE.Readings.Doc) (cs : List VE.Readings.Coupling) (ns : List VE.Readings.Narrowing) (n : Nat)
     (tbl : List (String × List String)),
@@ -14575,6 +14631,11 @@ theorem VE.Readings.Wire.author_valid
         data.valid (VE.Readings.Wire.authorVocabulary re) = Bool.true → data.toModel.Valid (VE.Readings.authorEnv D)
   -- uses VE.Bridge.Entity@VE.Bridge VE.Bridge.ModelData.toModel@VE.Bridge VE.Bridge.ModelData.valid@VE.Bridge VE.Bridge.ModelData@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Readings.Wire.authorVocabulary@VE.Readings.Wire VE.Readings.Wire.frameOf@VE.Readings.Wire VE.Readings.authorEnv@VE.Readings.Separate VE.Rights.RightsDoc@VE.Rights.Tree
   -- expr 2468320515
+theorem VE.Readings.Wire.bind_ok
+  ∀ {ε α β : Type} {x : Except ε α} {f : α → Except ε β} {b : β},
+    x >>= f = Except.ok b → ∃ a, x = Except.ok a ∧ f a = Except.ok b
+  -- uses
+  -- expr 1148682251
 theorem VE.Readings.Wire.candidateStage_eq
   ∀ (D : VE.Readings.Doc),
     VE.Readings.Wire.candidateStage D =
@@ -14609,6 +14670,37 @@ theorem VE.Readings.Wire.choiceU_E
     (VE.Readings.choiceU r.N c).D.E = r.b.a.re.se.ne.rv.environment
   -- uses VE.Environment@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.Norms.Doc.E@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Readings.Choice@VE.Readings.Choice VE.Readings.Wire.Admitted.re@VE.Readings.Wire VE.Readings.Wire.Admitted2.a@VE.Readings.SupWire VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.AdmittedND.b@VE.Readings.UnspecifiedWire VE.Readings.Wire.AdmittedND@VE.Readings.UnspecifiedWire VE.Readings.Wire.ReadingsEnvironment.se@VE.Readings.Wire VE.Readings.choiceU@VE.Readings.Unspecified VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.SoftNorms.Wire.SoftEnvironment.ne@VE.SoftNorms.Wire
   -- expr 1035165244
+theorem VE.Readings.Wire.companionIds_sublist
+  ∀ (sets : List Lean.Json) (ids cs : List String), VE.Readings.Wire.companionIds sets ids = Except.ok cs → cs.Sublist ids
+  -- uses VE.Readings.Wire.companionIds@VE.Readings.Companions
+  -- expr 773912974
+theorem VE.Readings.Wire.companionSets_nodup
+  ∀ {document : Lean.Json} {cs : List String}, VE.Readings.Wire.companionSets document = Except.ok cs → cs.Nodup
+  -- uses VE.Readings.Wire.companionSets@VE.Readings.Companions
+  -- expr 4260557137
+theorem VE.Readings.Wire.componentDoc_arr
+  ∀ (document : Lean.Json) (s : String) (ts : List Lean.Json),
+    VE.Readings.Wire.arr (VE.Readings.Wire.componentDoc document s ts) "couplings" = [] ∧
+      VE.Readings.Wire.arr (VE.Readings.Wire.componentDoc document s ts) "narrowings" =
+          VE.Readings.Wire.narrowingsOn document s ∧
+        VE.Readings.Wire.arr (VE.Readings.Wire.componentDoc document s ts) "reading_sets" =
+          VE.Readings.Wire.setEntries document s
+  -- uses VE.Readings.Wire.arr@VE.Readings.Companions VE.Readings.Wire.componentDoc@VE.Readings.Companions VE.Readings.Wire.narrowingsOn@VE.Readings.Companions VE.Readings.Wire.setEntries@VE.Readings.Companions
+  -- expr 3184036449
+theorem VE.Readings.Wire.componentOf_doc
+  ∀ {document : Lean.Json} {s : String} {p : String × Lean.Json × Lean.Json},
+    VE.Readings.Wire.componentOf document s = Except.ok p →
+      p.fst = s ∧ ∃ ts, p.snd.snd = VE.Readings.Wire.componentDoc document s ts
+  -- uses VE.Readings.Wire.componentDoc@VE.Readings.Companions VE.Readings.Wire.componentOf@VE.Readings.Companions
+  -- expr 4038600010
+theorem VE.Readings.Wire.componentsOf_docs
+  ∀ (document : Lean.Json) (cs : List String) (comps : List (String × Lean.Json × Lean.Json)),
+    VE.Readings.Wire.componentsOf document cs = Except.ok comps →
+      List.map (fun x => x.fst) comps = cs ∧
+        ∀ (p : String × Lean.Json × Lean.Json),
+          p ∈ comps → ∃ ts, p.snd.snd = VE.Readings.Wire.componentDoc document p.fst ts
+  -- uses VE.Readings.Wire.componentDoc@VE.Readings.Companions VE.Readings.Wire.componentsOf@VE.Readings.Companions
+  -- expr 3216614069
 theorem VE.Readings.Wire.conflictFree_of_localFree
   ∀ (U : VE.NormDefaults.UDoc),
     VE.NormDefaults.WellFormedU U = Bool.true →
@@ -14618,6 +14710,22 @@ theorem VE.Readings.Wire.conflictFree_of_localFree
             (VE.NormDefaults.withFill U M.asStructure (VE.NormDefaults.finFill M F))
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.finFill@VE.NormDefaults.Evidence VE.NormDefaults.withFill@VE.NormDefaults.Premises VE.Norms.ConflictFree@VE.Norms.Conflict VE.Readings.Wire.localFree@VE.Readings.VerdictsWire
   -- expr 2947739534
+theorem VE.Readings.Wire.count_one
+  ∀ (l : List Lean.Json) (f : Lean.Json → String) (cs : List String),
+    cs.Nodup →
+      ∀ (k : String) (main : String × Lean.Json × Lean.Json) (comps : List (String × Lean.Json × Lean.Json)),
+        VE.Readings.Wire.arr main.snd.snd k = List.filter (fun y => !cs.contains (f y)) l →
+          (∀ (p : String × Lean.Json × Lean.Json),
+              p ∈ comps → VE.Readings.Wire.arr p.snd.snd k = List.filter (fun y => f y == p.fst) l) →
+            List.map (fun x => x.fst) comps = cs →
+              ∀ (x : Lean.Json),
+                x ∈ l → (List.filter (fun p => (VE.Readings.Wire.arr p.snd.snd k).contains x) (main :: comps)).length = 1
+  -- uses VE.Readings.Wire.arr@VE.Readings.Companions VE.Readings.Wire.instBEqJson_vE@VE.Readings.Companions
+  -- expr 835069816
+theorem VE.Readings.Wire.entries_mem
+  ∀ {j d : Lean.Json} {n : String}, j.getObjVal? n = Except.ok d → (n, d) ∈ VE.Readings.Wire.entries j
+  -- uses VE.Readings.Wire.entries@VE.Readings.Companions
+  -- expr 2852445746
 theorem VE.Readings.Wire.expansion_of_modelCheck
   ∀ (U : VE.NormDefaults.UDoc),
     VE.NormDefaults.WellFormedU U = Bool.true →
@@ -14650,6 +14758,14 @@ theorem VE.Readings.Wire.fillNamesFree_of_reservedUnsaid
   ∀ (N : VE.Readings.NDoc), VE.Readings.Wire.reservedUnsaid N = Option.none → VE.Readings.fillNamesFree N = Bool.true
   -- uses VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.reservedUnsaid@VE.Readings.UnspecifiedWire VE.Readings.fillNamesFree@VE.Readings.Unspecified
   -- expr 1156672678
+theorem VE.Readings.Wire.firstKeys_nodup
+  ∀ (l : List (String × Lean.Json)), (List.map (fun x => x.fst) (VE.Readings.Wire.firstKeys l)).Nodup
+  -- uses VE.Readings.Wire.firstKeys@VE.Readings.Companions
+  -- expr 2799373186
+theorem VE.Readings.Wire.firstKeys_sub
+  ∀ (l : List (String × Lean.Json)) (x : String × Lean.Json), x ∈ VE.Readings.Wire.firstKeys l → x ∈ l
+  -- uses VE.Readings.Wire.firstKeys@VE.Readings.Companions
+  -- expr 2440783979
 theorem VE.Readings.Wire.firstSome_activeOf
   ∀ (D : VE.Readings.Doc),
     (VE.Readings.Wire.firstSome (VE.Readings.Wire.activeOf D) fun c =>
@@ -14669,6 +14785,10 @@ theorem VE.Readings.Wire.firstSome_filter
       ∀ (l : List α), VE.Readings.Wire.firstSome (List.filter p l) f = VE.Readings.Wire.firstSome l f
   -- uses VE.Readings.Wire.firstSome@VE.Readings.Wire
   -- expr 336670370
+theorem VE.Readings.Wire.firstStrs_nodup
+  ∀ (l : List String), (VE.Readings.Wire.firstStrs l).Nodup
+  -- uses VE.Readings.Wire.firstStrs@VE.Readings.Companions
+  -- expr 2680449470
 theorem VE.Readings.Wire.frameOf_filled
   ∀ (re : VE.Readings.Wire.ReadingsEnvironment) (N : VE.Readings.NDoc) (units : List String),
     N.D.frame = VE.Readings.Wire.frameOf re units →
@@ -14678,6 +14798,42 @@ theorem VE.Readings.Wire.frameOf_filled
         VE.Readings.Wire.frameOf (VE.Readings.Wire.filledEnvironment re N) units = (VE.Readings.fillDoc N).frame
   -- uses VE.Bridge.Vocabulary.predicates@VE.Bridge VE.Bridge.lookup@VE.Bridge VE.NormDefaults.unsaidName@VE.NormDefaults.Tree VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc.unspec@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.ReadingsEnvironment.se@VE.Readings.Wire VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Readings.Wire.filledEnvironment@VE.Readings.UnspecifiedWire VE.Readings.Wire.frameOf@VE.Readings.Wire VE.Readings.fillDoc@VE.Readings.Unspecified VE.Rights.RightsDoc@VE.Rights.Tree VE.Route.Wire.RouteVocabulary.vocabulary@VE.Route.Wire VE.SoftNorms.Wire.SoftEnvironment.ne@VE.SoftNorms.Wire
   -- expr 1139648744
+theorem VE.Readings.Wire.getObjValD_ok
+  ∀ {j v : Lean.Json} {k : String}, j.getObjVal? k = Except.ok v → j.getObjValD k = v
+  -- uses
+  -- expr 2586305039
+theorem VE.Readings.Wire.jcontains_iff
+  ∀ (l : List Lean.Json) (x : Lean.Json), l.contains x = Bool.true ↔ x ∈ l
+  -- uses VE.Readings.Wire.instBEqJson_vE@VE.Readings.Companions
+  -- expr 3953850071
+theorem VE.Readings.Wire.jeqImpl_refl
+  ∀ (a : Std.DTreeMap.Internal.Impl String fun x => Lean.Json), VE.Readings.Wire.jeqImpl a a = Bool.true
+  -- uses VE.Readings.Wire.jeqImpl@VE.Readings.Companions
+  -- expr 102532811
+theorem VE.Readings.Wire.jeqImpl_sound
+  ∀ (a b : Std.DTreeMap.Internal.Impl String fun x => Lean.Json), VE.Readings.Wire.jeqImpl a b = Bool.true → a = b
+  -- uses VE.Readings.Wire.jeqImpl@VE.Readings.Companions
+  -- expr 2740745058
+theorem VE.Readings.Wire.jeqList_refl
+  ∀ (a : List Lean.Json), VE.Readings.Wire.jeqList a a = Bool.true
+  -- uses VE.Readings.Wire.jeqList@VE.Readings.Companions
+  -- expr 1727633847
+theorem VE.Readings.Wire.jeqList_sound
+  ∀ (a b : List Lean.Json), VE.Readings.Wire.jeqList a b = Bool.true → a = b
+  -- uses VE.Readings.Wire.jeqList@VE.Readings.Companions
+  -- expr 1074200701
+theorem VE.Readings.Wire.jeq_iff
+  ∀ (a b : Lean.Json), VE.Readings.Wire.jeq a b = Bool.true ↔ a = b
+  -- uses VE.Readings.Wire.jeq@VE.Readings.Companions
+  -- expr 2623585112
+theorem VE.Readings.Wire.jeq_refl
+  ∀ (a : Lean.Json), VE.Readings.Wire.jeq a a = Bool.true
+  -- uses VE.Readings.Wire.jeq@VE.Readings.Companions
+  -- expr 3163219813
+theorem VE.Readings.Wire.jeq_sound
+  ∀ (a b : Lean.Json), VE.Readings.Wire.jeq a b = Bool.true → a = b
+  -- uses VE.Readings.Wire.jeq@VE.Readings.Companions
+  -- expr 2453678424
 theorem VE.Readings.Wire.layerNames_sub
   ∀ {T : VE.Norms.Tree} {x : String},
     x ∈ VE.Norms.layerNames T → x ∈ List.map (fun x => x.name) T.regulated ++ List.map (fun x => x.name) T.definitions
@@ -14703,6 +14859,16 @@ theorem VE.Readings.Wire.lookup_mem
     List.lookup a l = Option.some b → (a, b) ∈ l
   -- uses
   -- expr 3122011733
+theorem VE.Readings.Wire.mainDoc_arr
+  ∀ (document : Lean.Json) (cs : List String),
+    VE.Readings.Wire.arr (VE.Readings.Wire.mainDoc document cs) "couplings" = VE.Readings.Wire.arr document "couplings" ∧
+      VE.Readings.Wire.arr (VE.Readings.Wire.mainDoc document cs) "narrowings" =
+          List.filter (fun n => !cs.contains (VE.Readings.Wire.strOf (n.getObjValD "set")))
+            (VE.Readings.Wire.arr document "narrowings") ∧
+        VE.Readings.Wire.arr (VE.Readings.Wire.mainDoc document cs) "reading_sets" =
+          List.filter (fun s => !cs.contains (VE.Readings.Wire.setIdOf s)) (VE.Readings.Wire.arr document "reading_sets")
+  -- uses VE.Readings.Wire.arr@VE.Readings.Companions VE.Readings.Wire.mainDoc@VE.Readings.Companions VE.Readings.Wire.setIdOf@VE.Readings.Companions VE.Readings.Wire.strOf@VE.Readings.Companions
+  -- expr 1461868337
 theorem VE.Readings.Wire.mem_chosenOf
   ∀ (D : VE.Readings.Doc),
     VE.Readings.supReady D = Bool.true →
@@ -14718,6 +14884,102 @@ theorem VE.Readings.Wire.mem_rows
     y ∈ List.map (fun e => (e.fst, f e.fst e.snd)) evs → ∃ e, e ∈ evs ∧ y = (e.fst, f e.fst e.snd)
   -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.ChoiceResult@VE.Readings.Verdicts VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.NDEvidence@VE.Readings.VerdictsWire
   -- expr 2759084588
+theorem VE.Readings.Wire.mergeCategory_mono
+  ∀ (k : String) (acc acc' : List (String × String × Lean.Json)) (sources : List (String × Lean.Json)),
+    VE.Readings.Wire.mergeCategory k acc sources = Except.ok acc' →
+      ∀ (x : String × String × Lean.Json), x ∈ acc → x ∈ acc'
+  -- uses VE.Readings.Wire.mergeCategory@VE.Readings.Companions
+  -- expr 1266386483
+theorem VE.Readings.Wire.mergeCategory_spec
+  ∀ (k : String) (acc acc' : List (String × String × Lean.Json)) (sources : List (String × Lean.Json)),
+    VE.Readings.Wire.mergeCategory k acc sources = Except.ok acc' →
+      VE.Readings.Wire.Distinct acc →
+        VE.Readings.Wire.Distinct acc' ∧
+          ∀ (src : String × Lean.Json),
+            src ∈ sources →
+              ∀ (e : String × Lean.Json),
+                e ∈ VE.Readings.Wire.entries ((src.snd.getObjValD "vocabulary").getObjValD k) →
+                  ∃ s, (e.fst, s, e.snd) ∈ acc'
+  -- uses VE.Readings.Wire.Distinct@VE.Readings.Companions VE.Readings.Wire.entries@VE.Readings.Companions VE.Readings.Wire.mergeCategory@VE.Readings.Companions
+  -- expr 3802519859
+theorem VE.Readings.Wire.mergeCompanions_extends
+  ∀ (sources : List (String × Lean.Json)) (m : Lean.Json),
+    VE.Readings.Wire.mergeCompanions sources = Except.ok m →
+      ∀ (src : String × Lean.Json),
+        src ∈ sources →
+          ∀ (k : String),
+            k ∈ ["sorts", "constants", "predicates"] →
+              ∀ (n : String) (d : Lean.Json),
+                ((src.snd.getObjValD "vocabulary").getObjValD k).getObjVal? n = Except.ok d →
+                  ((m.getObjValD "vocabulary").getObjValD k).getObjVal? n = Except.ok d
+  -- uses VE.Readings.Wire.mergeCompanions@VE.Readings.Companions
+  -- expr 1843100652
+theorem VE.Readings.Wire.mergeCompanions_identical
+  ∀ (sources : List (String × Lean.Json)) (m : Lean.Json),
+    VE.Readings.Wire.mergeCompanions sources = Except.ok m →
+      ∀ (src : String × Lean.Json),
+        src ∈ sources →
+          ∀ (src' : String × Lean.Json),
+            src' ∈ sources →
+              ∀ (k : String),
+                k ∈ ["sorts", "constants", "predicates"] →
+                  ∀ (n : String) (d d' : Lean.Json),
+                    ((src.snd.getObjValD "vocabulary").getObjValD k).getObjVal? n = Except.ok d →
+                      ((src'.snd.getObjValD "vocabulary").getObjValD k).getObjVal? n = Except.ok d' → d = d'
+  -- uses VE.Readings.Wire.mergeCompanions@VE.Readings.Companions
+  -- expr 4059760011
+theorem VE.Readings.Wire.mergeCompanions_ok
+  ∀ {sources : List (String × Lean.Json)} {m : Lean.Json},
+    VE.Readings.Wire.mergeCompanions sources = Except.ok m →
+      ∃ first sorts constants predicates,
+        VE.Readings.Wire.mergeCategory "sorts" [] sources = Except.ok sorts ∧
+          VE.Readings.Wire.mergeCategory "constants" [] sources = Except.ok constants ∧
+            VE.Readings.Wire.mergeCategory "predicates" [] sources = Except.ok predicates ∧
+              m = VE.Readings.Wire.mergedJson first sorts constants predicates
+  -- uses VE.Readings.Wire.mergeCategory@VE.Readings.Companions VE.Readings.Wire.mergeCompanions@VE.Readings.Companions VE.Readings.Wire.mergedJson@VE.Readings.Companions
+  -- expr 2157257449
+theorem VE.Readings.Wire.mergeOpenTerms_identical
+  ∀ (sources : List (String × Lean.Json)) (ts : List Lean.Json),
+    VE.Readings.Wire.mergeOpenTerms sources = Except.ok ts →
+      (∀ (src : String × Lean.Json),
+          src ∈ sources → ∀ (t : Lean.Json), t ∈ VE.Readings.Wire.arr src.snd "open_terms" → t ∈ ts) ∧
+        ∀ (t : Lean.Json), t ∈ ts → ∀ (t' : Lean.Json), t' ∈ ts → t.getObjValD "name" = t'.getObjValD "name" → t = t'
+  -- uses VE.Readings.Wire.arr@VE.Readings.Companions VE.Readings.Wire.mergeOpenTerms@VE.Readings.Companions
+  -- expr 2608716166
+theorem VE.Readings.Wire.mergeOpenTerms_ok
+  ∀ {sources : List (String × Lean.Json)} {ts : List Lean.Json},
+    VE.Readings.Wire.mergeOpenTerms sources = Except.ok ts →
+      ∃ acc, VE.Readings.Wire.mergeTerms [] sources = Except.ok acc ∧ ts = List.map (fun x => x.snd) acc
+  -- uses VE.Readings.Wire.mergeOpenTerms@VE.Readings.Companions VE.Readings.Wire.mergeTerms@VE.Readings.Companions
+  -- expr 661893648
+theorem VE.Readings.Wire.mergeTerms_spec
+  ∀ (acc acc' sources : List (String × Lean.Json)),
+    VE.Readings.Wire.mergeTerms acc sources = Except.ok acc' →
+      VE.Readings.Wire.TermsDistinct acc →
+        VE.Readings.Wire.TermsDistinct acc' ∧
+          (∀ (x : String × Lean.Json), x ∈ acc → x ∈ acc') ∧
+            ∀ (src : String × Lean.Json),
+              src ∈ sources →
+                ∀ (t : Lean.Json), t ∈ VE.Readings.Wire.arr src.snd "open_terms" → t ∈ List.map (fun x => x.snd) acc'
+  -- uses VE.Readings.Wire.TermsDistinct@VE.Readings.Companions VE.Readings.Wire.arr@VE.Readings.Companions VE.Readings.Wire.mergeTerms@VE.Readings.Companions
+  -- expr 3345556258
+theorem VE.Readings.Wire.mergedJson_category
+  ∀ (e : Lean.Json) (s c p : List (String × String × Lean.Json)) (k : String),
+    k ∈ ["sorts", "constants", "predicates"] →
+      ((VE.Readings.Wire.mergedJson e s c p).getObjValD "vocabulary").getObjValD k =
+        VE.Readings.Wire.objOf (if k = "sorts" then s else if k = "constants" then c else p)
+  -- uses VE.Readings.Wire.mergedJson@VE.Readings.Companions VE.Readings.Wire.objOf@VE.Readings.Companions
+  -- expr 3729297784
+theorem VE.Readings.Wire.mkObj_absent
+  ∀ {l : List (String × Lean.Json)} {k : String},
+    (List.map (fun x => x.fst) l).contains k = Bool.false → (Lean.Json.mkObj l).getObjValD k = Lean.Json.null
+  -- uses
+  -- expr 8640921
+theorem VE.Readings.Wire.mkObj_get
+  ∀ {l : List (String × Lean.Json)} {k : String} {v : Lean.Json},
+    (List.map (fun x => x.fst) l).Nodup → (k, v) ∈ l → (Lean.Json.mkObj l).getObjVal? k = Except.ok v
+  -- uses
+  -- expr 872787718
 theorem VE.Readings.Wire.ndCertOk_sound
   ∀ {N : VE.Readings.NDoc} {c : VE.Readings.Choice} (e : VE.Readings.Wire.NDEvidence N c) (Γ : List VE.Formula)
     (φ : VE.Formula) (k : VE.Tableau.Certificate),
@@ -14786,6 +15048,11 @@ theorem VE.Readings.Wire.notFreeU_of_notFreeX
     L.U = U → ¬VE.NormDefaults.Wire.ConflictFreeX L.U L.X → ¬VE.NormDefaults.ConflictFreeU U
   -- uses VE.NormDefaults.ConflictFreeU@VE.NormDefaults.Premises VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered
   -- expr 223251869
+theorem VE.Readings.Wire.objOf_get
+  ∀ {acc : List (String × String × Lean.Json)} {n src : String} {d : Lean.Json},
+    (n, src, d) ∈ acc → VE.Readings.Wire.Distinct acc → (VE.Readings.Wire.objOf acc).getObjVal? n = Except.ok d
+  -- uses VE.Readings.Wire.Distinct@VE.Readings.Companions VE.Readings.Wire.objOf@VE.Readings.Companions
+  -- expr 3825865755
 theorem VE.Readings.Wire.oneOf_eq
   ∀ (D : VE.Readings.Doc) (s : String) (i : Nat),
     VE.Readings.Wire.oneOf D (VE.Readings.Wire.onesOf D) s i = VE.Readings.one D s i
@@ -14822,6 +15089,11 @@ theorem VE.Readings.Wire.option_or_none
   ∀ {α : Type} {a b : Option α}, a.or b = Option.none → a = Option.none ∧ b = Option.none
   -- uses
   -- expr 511594929
+theorem VE.Readings.Wire.overlay_get
+  ∀ {base : Lean.Json} {ks : List (String × Lean.Json)} {k : String} {v : Lean.Json},
+    (List.map (fun x => x.fst) ks).Nodup → (k, v) ∈ ks → (VE.Readings.Wire.overlay base ks).getObjVal? k = Except.ok v
+  -- uses VE.Readings.Wire.overlay@VE.Readings.Companions
+  -- expr 3608556248
 theorem VE.Readings.Wire.owned_links
   ∀ (D : VE.Readings.Doc) (cs : List VE.Readings.Coupling) (ns : List VE.Readings.Narrowing) (s : String) (i : Nat),
     VE.Readings.owned { chain := D.chain, frame := D.frame, items := D.items, couplings := cs, narrowings := ns } s i =
@@ -14930,6 +15202,12 @@ theorem VE.Readings.Wire.replayPair_D
     {sj : VE.Readings.Wire.SituationJ}, VE.Readings.Wire.replayPair a s sid other = Except.ok (x, sj) → x.D = a.D
   -- uses VE.Readings.Doc@VE.Readings.Doc VE.Readings.Wire.Admitted.D@VE.Readings.Wire VE.Readings.Wire.Admitted@VE.Readings.Wire VE.Readings.Wire.SeparateReplay.D@VE.Readings.Wire VE.Readings.Wire.SeparateReplay@VE.Readings.Wire VE.Readings.Wire.SituationJ@VE.Readings.Wire VE.Readings.Wire.replayPair@VE.Readings.Wire
   -- expr 3380054106
+theorem VE.Readings.Wire.same_name
+  ∀ {l : List Lean.Json},
+    List.Pairwise (fun a b => VE.Readings.Wire.jeq (a.getObjValD "name") (b.getObjValD "name") = Bool.false) l →
+      ∀ (t : Lean.Json), t ∈ l → ∀ (t' : Lean.Json), t' ∈ l → t.getObjValD "name" = t'.getObjValD "name" → t = t'
+  -- uses VE.Readings.Wire.jeq@VE.Readings.Companions
+  -- expr 4220798877
 theorem VE.Readings.Wire.separates_filled
   ∀ {r : VE.Readings.Wire.AdmittedND} (fa : VE.Readings.Wire.FilledAdmitted r) {α : Type u} [inst : DecidableEq α]
     (s : String) (i j : Nat) (σ : VE.Readings.Situation α),
@@ -14949,6 +15227,26 @@ theorem VE.Readings.Wire.sideWF_of_chainText
     VE.Readings.Wire.chainText D.chain X = Option.none → VE.Readings.sideWF D X = Bool.true
   -- uses VE.Formula@VE.Syntax VE.Readings.Doc.chain@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Wire.chainText@VE.Readings.Wire VE.Readings.sideWF@VE.Readings.Doc VE.Rights.RightsDoc@VE.Rights.Tree
   -- expr 2570059509
+theorem VE.Readings.Wire.splitCase_parts
+  ∀ {environment document : Lean.Json} {parts : List (String × Lean.Json × Lean.Json)},
+    VE.Readings.Wire.splitCase environment document = Except.ok parts →
+      parts = [("main", environment, document)] ∨
+        ∃ cs comps,
+          VE.Readings.Wire.companionSets document = Except.ok cs ∧
+            VE.Readings.Wire.componentsOf document cs = Except.ok comps ∧
+              parts = ("main", environment, VE.Readings.Wire.mainDoc document cs) :: comps
+  -- uses VE.Readings.Wire.companionSets@VE.Readings.Companions VE.Readings.Wire.componentsOf@VE.Readings.Companions VE.Readings.Wire.mainDoc@VE.Readings.Companions VE.Readings.Wire.splitCase@VE.Readings.Companions
+  -- expr 157080671
+theorem VE.Readings.Wire.split_keeps_links
+  ∀ (environment document : Lean.Json) (parts : List (String × Lean.Json × Lean.Json)),
+    VE.Readings.Wire.splitCase environment document = Except.ok parts →
+      ∀ (k : String),
+        k ∈ ["reading_sets", "couplings", "narrowings"] →
+          ∀ (x : Lean.Json),
+            x ∈ VE.Readings.Wire.arr document k →
+              (List.filter (fun p => (VE.Readings.Wire.arr p.snd.snd k).contains x) parts).length = 1
+  -- uses VE.Readings.Wire.arr@VE.Readings.Companions VE.Readings.Wire.instBEqJson_vE@VE.Readings.Companions VE.Readings.Wire.splitCase@VE.Readings.Companions
+  -- expr 1281587769
 theorem VE.Readings.Wire.stageOf_eq
   ∀ {α γ β ε : Type} (build : α → γ) (f : α → γ → Option ε) (g : α → γ → β) (l : List α),
     VE.Readings.Wire.stageOf build f g l =
@@ -14993,6 +15291,12 @@ theorem VE.Readings.Wire.wellFormedU_of_ndDocText
     VE.Readings.Wire.ndDocText re U = Option.none → VE.NormDefaults.WellFormedU U = Bool.true
   -- uses VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Readings.Wire.ndDocText@VE.Readings.UnspecifiedWire
   -- expr 1434982047
+theorem VE.Readings.Wire.withArrays_arr
+  ∀ {base : Lean.Json} {repl : List (String × List Lean.Json)} {k : String} {l : List Lean.Json},
+    (List.map (fun x => x.fst) repl).Nodup →
+      (k, l) ∈ repl → VE.Readings.Wire.arr (VE.Readings.Wire.withArrays base repl) k = l
+  -- uses VE.Readings.Wire.arr@VE.Readings.Companions VE.Readings.Wire.withArrays@VE.Readings.Companions
+  -- expr 1308873461
 theorem VE.Readings.achievesU_iff
   ∀ (N : VE.Readings.NDoc),
     VE.Readings.normsShaped N.D = Bool.true →
@@ -28062,6 +28366,13 @@ theorem VE.Route.Wire.decodeOrderModel_valid
       VE.Route.Background.orderLiteralsValid d.toModel rv.literals = Bool.true
   -- uses VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Wire.Entity@VE.Order.Wire VE.Route.Background.orderLiteralsValid@VE.Route.Background VE.Route.Wire.RouteOrderVocabulary.literals@VE.Route.Wire VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.decodeOrderModel@VE.Route.Wire
   -- expr 63781846
+theorem VE.Route.Wire.decodeVocabulary_valid
+  ∀ (profiles : List String) (j : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary),
+    VE.Route.Wire.decodeVocabulary profiles j = Except.ok rv →
+      rv.sourceVocabulary.namesValid = Bool.true ∧
+        rv.literals.Nodup ∧ VE.Definitions.Chain rv.vocabulary.environment rv.definitions
+  -- uses VE.Bridge.Vocabulary.environment@VE.Bridge VE.Bridge.Vocabulary.namesValid@VE.Bridge VE.Definitions.Chain@VE.Definitions.Layer VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary.literals@VE.Route.Wire VE.Route.Wire.RouteVocabulary.sourceVocabulary@VE.Route.Wire VE.Route.Wire.RouteVocabulary.vocabulary@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.decodeVocabulary@VE.Route.Wire
+  -- expr 2664869199
 theorem VE.Route.Wire.definitionsCheck_ok
   ∀ (mem : String → List VE.Bridge.Entity → Bool) (M : VE.FiniteModel VE.Bridge.Entity),
     (∀ (p : String) (row : List VE.Bridge.Entity), mem p row = Bool.true ↔ row ∈ M.relations p) →
@@ -29790,6 +30101,12 @@ theorem VE.Service.Readings.resolve_choice
     VE.Service.Readings.resolve sets is = Option.some choice → VE.Service.Readings.Choice sets choice
   -- uses VE.Formula@VE.Syntax VE.Service.Readings.Choice@VE.Service.Readings VE.Service.Readings.resolve@VE.Service.Readings
   -- expr 2309747103
+theorem VE.Service.Standalone.checkedModelTables_error_preserved
+  ∀ (environment model : Lean.Json) (fault : VE.Service.Standalone.ModelFault),
+    VE.Service.Standalone.locatedModelTables✝ environment model = Except.error fault →
+      VE.Service.Standalone.checkedModelTables environment model = Except.error fault
+  -- uses VE.Service.Standalone.ModelFault@VE.Service.Standalone VE.Service.Standalone.checkedModelTables@VE.Service.Standalone VE.Service.Standalone.locatedModelTables@VE.Service.Standalone
+  -- expr 171467256
 theorem VE.Service.boundResults_eq
   ∀ (r : VE.Service.Request) (cases : Array (Except String Lean.Json)) (digests : Array String) (i : Nat)
     (h : i < cases.size),
@@ -29858,14 +30175,14 @@ theorem VE.Service.registerOne_digest
             (ToString.toString "InvalidInput: environment handle " ++ ToString.toString digest ++
               ToString.toString " is not the SHA-256 of its text")
   -- uses VE.Service.Handles@VE.Service.Protocol VE.Service.caseDigest@VE.Service.Protocol VE.Service.decodeString@VE.Service.Protocol VE.Service.registerOne@VE.Service.Protocol
-  -- expr 965477195
+  -- expr 7764892
 theorem VE.Service.registerOne_ok
   ∀ (h : VE.Service.Handles) (key raw : String) (env : Lean.Json),
     VE.Service.decodeString "environment handle" key = Except.ok (VE.Service.caseDigest raw) →
       VE.JsonInput.parse raw.trim 254 = Except.ok env →
         VE.Service.registerOne h (key, raw) = Except.ok (h.insert (VE.Service.caseDigest raw) env raw.trim.utf8ByteSize)
   -- uses VE.JsonInput.parse@VE.Json VE.Service.Handles.insert@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.caseDigest@VE.Service.Protocol VE.Service.decodeString@VE.Service.Protocol VE.Service.registerOne@VE.Service.Protocol
-  -- expr 3632852210
+  -- expr 2418776241
 theorem VE.Service.register_none
   ∀ (h : VE.Service.Handles) (r : VE.Service.Request),
     r.environmentsText = Option.none → VE.Service.register h r = Except.ok h
@@ -29944,11 +30261,9 @@ theorem VE.Service.runMode_englishRead
   -- uses VE.EnglishGrammar.Run.readCaseReported@VE.EnglishGrammar.Run VE.Service.Mode.englishRead@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
   -- expr 3070480935
 theorem VE.Service.runMode_environment
-  ∀ (j : Lean.Json),
-    VE.Service.runMode VE.Service.Mode.environment j =
-      VE.Service.Standalone.reported VE.Service.Standalone.environmentCase j
-  -- uses VE.Service.Mode.environment@VE.Service.Protocol VE.Service.Standalone.environmentCase@VE.Service.Standalone VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
-  -- expr 2290445701
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.environment j = VE.Service.Standalone.reportedEnvironment j
+  -- uses VE.Service.Mode.environment@VE.Service.Protocol VE.Service.Standalone.reportedEnvironment@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- expr 1515001414
 theorem VE.Service.runMode_evaluate
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.evaluate j = VE.Order.runEvaluationCaseReported j
   -- uses VE.Order.runEvaluationCaseReported@VE.Order.ProfileGate VE.Service.Mode.evaluate@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
@@ -29968,10 +30283,9 @@ theorem VE.Service.runMode_identity
   -- uses VE.Service.Mode.identity@VE.Service.Protocol VE.Service.Standalone.identityCase@VE.Service.Standalone VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 3910335735
 theorem VE.Service.runMode_model
-  ∀ (j : Lean.Json),
-    VE.Service.runMode VE.Service.Mode.model j = VE.Service.Standalone.reported VE.Service.Standalone.modelCase j
-  -- uses VE.Service.Mode.model@VE.Service.Protocol VE.Service.Standalone.modelCase@VE.Service.Standalone VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
-  -- expr 90044289
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.model j = VE.Service.Standalone.reportedModel j
+  -- uses VE.Service.Mode.model@VE.Service.Protocol VE.Service.Standalone.reportedModel@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- expr 3851992144
 theorem VE.Service.runMode_normDefaults
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.normDefaults j = VE.NormDefaults.Run.runCaseReported j
   -- uses VE.NormDefaults.Run.runCaseReported@VE.NormDefaults.Run VE.Service.Mode.normDefaults@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol

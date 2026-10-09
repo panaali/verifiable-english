@@ -23,7 +23,8 @@ from subprocesses import HANG_TIMEOUT
 from ve.ast import formula_from_data
 from ve.entailment import prove_entailment
 from ve.environment import Environment
-from ve.profiles import UnsupportedProfile, checker_family
+from ve.errors import UnsupportedProfile
+from tests.profile_gate_oracle import checker_family
 from ve.wire import digest
 from tests.test_norms import environment, obligation, permission
 

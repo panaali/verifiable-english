@@ -89,13 +89,13 @@ def _norms_environment(act):
 
 
 @needs_service
-def test_k1_lean_accepts_the_act_phrase_word_no(monkeypatch):
+def test_k1_lean_rejects_the_act_phrase_word_no(monkeypatch):
     monkeypatch.setenv("VE_AUTHORITY", "python")
     raw = _norms_environment("{0} be no longer done")
     assert _python(lambda: Environment(deepcopy(raw))) == ("InvalidInput", "InvalidInput: invalid act phrase for permitted")
     assert _python(lambda: Environment(_norms_environment("{0} be longer done"))) == ("ok", "")
-    [row] = relay.decide("norms", [{"id": "k1", "kind": "background", "environment": raw}])
-    assert row["status"] == "ok"
+    with pytest.raises(VEError, match="invalid act phrase for permitted"):
+        relay.decide("norms", [{"id": "k1", "kind": "background", "environment": raw}])
 
 
 def test_k2_duplicate_protected_entries_are_rejected_by_both(monkeypatch):

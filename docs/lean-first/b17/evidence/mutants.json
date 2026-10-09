@@ -1,0 +1,68 @@
+{
+  "mutants": [
+    {
+      "name": "assist_found_without_replay",
+      "file": "ve/assist/session.py",
+      "test": "test_assist_decide_replays_found_in_lean",
+      "source_sha256": "7ca2a691bf0c723a6e33ea171e507274beda830a0b6663eee0270e654511f78e",
+      "mutant": {
+        "exit_code": 1,
+        "failed_test": true,
+        "output_tail": "F\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-iq_se_hf)\n\n=================================== FAILURES ===================================\n___________________ test_assist_decide_replays_found_in_lean ___________________\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x713ff62c1940>\n\n    def test_assist_decide_replays_found_in_lean(monkeypatch):\n        session = _session()\n        seen = []\n        original = session._lean_replays\n    \n        def checked(*args):\n            seen.append(args)\n            return original(*args)\n    \n        monkeypatch.setattr(session, \"_lean_replays\", checked)\n        assert session._decide((), Top()) == \"yes\"\n>       assert len(seen) == 1\nE       assert 0 == 1\nE        +  where 0 = len([])\n\ntests/test_b17_owner.py:33: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_b17_owner.py::test_assist_decide_replays_found_in_lean - as...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 0.27s\n"
+      },
+      "restored": {
+        "exit_code": 0,
+        "failed_test": false,
+        "output_tail": ".                                                                        [100%]\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-t01sk51k)\n\n1 passed in 0.27s\n"
+      }
+    },
+    {
+      "name": "entails_found_without_replay",
+      "file": "ve/assist/session.py",
+      "test": "test_assist_positive_entailment_requires_lean_replay",
+      "source_sha256": "7ca2a691bf0c723a6e33ea171e507274beda830a0b6663eee0270e654511f78e",
+      "mutant": {
+        "exit_code": 1,
+        "failed_test": true,
+        "output_tail": "F\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-usfqt8np)\n\n=================================== FAILURES ===================================\n_____________ test_assist_positive_entailment_requires_lean_replay _____________\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f30839a9940>\n\n    def test_assist_positive_entailment_requires_lean_replay(monkeypatch):\n        session = _session()\n        assert session._entails((), Top()) is True\n        monkeypatch.setattr(session, \"_lean_replays\", lambda *_: False)\n>       assert session._entails((), Top()) is False\nE       assert True is False\nE        +  where True = _entails((), Top())\nE        +    where _entails = <ve.assist.session.AssistSession object at 0x7f3083c730e0>._entails\nE        +    and   Top() = Top()\n\ntests/test_b17_owner.py:42: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_b17_owner.py::test_assist_positive_entailment_requires_lean_replay\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 0.24s\n"
+      },
+      "restored": {
+        "exit_code": 0,
+        "failed_test": false,
+        "output_tail": ".                                                                        [100%]\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ot7tw0zz)\n\n1 passed in 0.28s\n"
+      }
+    },
+    {
+      "name": "assist_no_without_lean_witness",
+      "file": "ve/assist/session.py",
+      "test": "test_assist_negative_decision_requires_lean_countermodel",
+      "source_sha256": "7ca2a691bf0c723a6e33ea171e507274beda830a0b6663eee0270e654511f78e",
+      "mutant": {
+        "exit_code": 1,
+        "failed_test": true,
+        "output_tail": "F\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-3jne2i1v)\n\n=================================== FAILURES ===================================\n___________ test_assist_negative_decision_requires_lean_countermodel ___________\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x71f1806ad940>\n\n    def test_assist_negative_decision_requires_lean_countermodel(monkeypatch):\n        session = _session()\n        seen = []\n        original = session._lean_refutes\n    \n        def checked(*args):\n            seen.append(args)\n            return original(*args)\n    \n        monkeypatch.setattr(session, \"_lean_refutes\", checked)\n        assert session._decide((), Bottom()) == \"no\"\n>       assert len(seen) == 1\nE       assert 0 == 1\nE        +  where 0 = len([])\n\ntests/test_b17_owner.py:56: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_b17_owner.py::test_assist_negative_decision_requires_lean_countermodel\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 0.24s\n"
+      },
+      "restored": {
+        "exit_code": 0,
+        "failed_test": false,
+        "output_tail": ".                                                                        [100%]\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-6i3md2up)\n\n1 passed in 0.27s\n"
+      }
+    },
+    {
+      "name": "cedar_python_verdict",
+      "file": "ve/adapters/cedar.py",
+      "test": "test_cedar_evaluates_each_request_under_lean",
+      "source_sha256": "872c5a9b4ad9093db23f6bbf5842b5b0f96b528a02570d23e4e7aa5d64a70e80",
+      "mutant": {
+        "exit_code": 1,
+        "failed_test": true,
+        "output_tail": "F\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-pzukwly6)\n\n=================================== FAILURES ===================================\n_________________ test_cedar_evaluates_each_request_under_lean _________________\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x70060e0955b0>\n\n    def test_cedar_evaluates_each_request_under_lean(monkeypatch):\n        from ve.adapters import cedar\n        requests = [\n            {\"principal\": 'User::\"alice\"', \"action\": 'Action::\"read\"', \"resource\": 'Doc::\"one\"'},\n            {\"principal\": 'User::\"bob\"', \"action\": 'Action::\"read\"', \"resource\": 'Doc::\"one\"'},\n        ]\n        source = 'permit(principal, action, resource) when { principal == User::\"alice\" };'\n        translated = translate(source, [], [], requests)\n        calls = []\n        real = cedar.evaluate\n    \n        def evaluated(env, formula, model, **kwargs):\n            calls.append((authority_for(\"evaluate\"), tuple(model.domains[\"request\"])))\n            return real(env, formula, model, **kwargs)\n    \n        monkeypatch.setattr(cedar, \"evaluate\", evaluated)\n        assert [r[\"decision\"] for r in translated.decisions()] == [\"allow\", \"deny\"]\n>       assert calls == [(\"lean\", (\"request0\",)), (\"lean\", (\"request0\",)),\n                         (\"lean\", (\"request1\",)), (\"lean\", (\"request1\",))]\nE       AssertionError: assert [('python', (...'request1',))] == [('lean', ('r...'request1',))]\nE         \nE         At index 0 diff: ('python', ('request0',)) != ('lean', ('request0',))\nE         Use -v to get more diff\n\ntests/test_b17_owner.py:78: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_b17_owner.py::test_cedar_evaluates_each_request_under_lean\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 0.23s\n"
+      },
+      "restored": {
+        "exit_code": 0,
+        "failed_test": false,
+        "output_tail": ".                                                                        [100%]\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-qyh2r8fk)\n\n1 passed in 0.47s\n"
+      }
+    }
+  ]
+}

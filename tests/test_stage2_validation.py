@@ -40,16 +40,19 @@ def inputs():
                 yield raw, bad
 
 
-def test_environments_and_models_match_python_on_every_profile_combination(monkeypatch):
-    seen = []
-    monkeypatch.setattr(dispatch, "observers", [lambda op, authority: seen.append((op, authority))])
+def test_environments_and_models_match_frozen_python_on_every_profile_combination(
+        monkeypatch, tmp_path, capfd):
+    """The pre-deletion Python oracle runs in a separate, pinned checkout.
+
+    Switching VE_AUTHORITY in this checkout does not switch these constructors:
+    both settings call Lean. Keep the comparison independent of the relay.
+    """
+    from tools import lean_first_oracle
+
+    cases = []
     for raw, bad in inputs():
-        for data in (raw, bad):
-            monkeypatch.setenv("VE_AUTHORITY", "python")
-            expected = outcome(lambda: Environment(data))
-            monkeypatch.setenv("VE_AUTHORITY", "lean")
-            assert outcome(lambda: Environment(data)) == expected, data["profiles"]
-        monkeypatch.setenv("VE_AUTHORITY", "python")
+        cases.append({"environment": raw, "models": []})
+        cases.append({"environment": bad, "models": []})
         try:
             env = Environment(raw)
         except VEError:
@@ -57,12 +60,65 @@ def test_environments_and_models_match_python_on_every_profile_combination(monke
         good = pm.model_wire(env)
         wrong = json.loads(json.dumps(good))
         wrong["constants"]["x"] = "absent"
-        for wire in (good, wrong):
-            monkeypatch.setenv("VE_AUTHORITY", "python")
-            expected = outcome(lambda: FiniteModel.from_dict(env, wire))
-            monkeypatch.setenv("VE_AUTHORITY", "lean")
-            assert outcome(lambda: FiniteModel.from_dict(env, wire)) == expected, raw["profiles"]
-    assert ("environment_validation", "lean") in seen and ("model_validation", "lean") in seen
+        cases[-2]["models"] = [good, wrong]
+
+    payload = tmp_path / "cases.json"
+    payload.write_text(json.dumps(cases))
+    script = tmp_path / "oracle.py"
+    script.write_text(
+        "import json, sys\n"
+        "from ve.environment import Environment\n"
+        "from ve.model import FiniteModel\n"
+        "from ve.errors import VEError\n"
+        "rows = []\n"
+        "for case in json.load(open(sys.argv[1])):\n"
+        "    try:\n"
+        "        env = Environment(case['environment'])\n"
+        "    except VEError:\n"
+        "        rows.append(['rejected', []])\n"
+        "        continue\n"
+        "    models = []\n"
+        "    for wire in case['models']:\n"
+        "        try:\n"
+        "            models.append(['accepted', FiniteModel.from_dict(env, wire).model_id])\n"
+        "        except VEError:\n"
+        "            models.append(['rejected'])\n"
+        "    rows.append(['accepted', env.environment_id, models])\n"
+        "print(json.dumps(rows))\n"
+    )
+    # oracle.run executes the script with the frozen package on PYTHONPATH.
+    # Supply the payload path through argv in a tiny wrapper so the oracle's
+    # runner need not acquire another interface for this test.
+    wrapper = tmp_path / "run_oracle.py"
+    wrapper.write_text("import runpy, sys\n"
+                       f"sys.argv = [{str(script)!r}, {str(payload)!r}]\n"
+                       f"runpy.run_path({str(script)!r}, run_name='__main__')\n")
+    assert lean_first_oracle.run(wrapper, scratch=tmp_path) == 0
+    expected = json.loads(capfd.readouterr().out)
+
+    seen = []
+    original = relay.decide
+    def traced(mode, requests, **kw):
+        seen.append(mode)
+        return original(mode, requests, **kw)
+    monkeypatch.setattr(relay, "decide", traced)
+    monkeypatch.setattr(validation, "_ACCEPTED", {})
+    actual = []
+    for case in cases:
+        try:
+            env = Environment(case["environment"])
+        except VEError:
+            actual.append(["rejected", []])
+            continue
+        models = []
+        for wire in case["models"]:
+            try:
+                models.append(["accepted", FiniteModel.from_dict(env, wire).model_id])
+            except VEError:
+                models.append(["rejected"])
+        actual.append(["accepted", env.environment_id, models])
+    assert actual == expected
+    assert "environment" in seen and "model" in seen
 
 
 def test_lean_checks_the_norms_profile_of_a_model(monkeypatch):
@@ -101,32 +157,83 @@ def test_a_lean_only_rejection_carries_leans_diagnostic(monkeypatch):
         Environment(pm.raw_environment(()))
 
 
-def test_python_names_a_rejection_both_checkers_make(monkeypatch):
+def test_speech_scope_references_are_checked_before_construction():
+    from tests.test_environment_field_types import _speech
+    raw = _speech()
+    raw["speech_acts"]["addressee"]["sort"] = "absent"
+    with pytest.raises(VEError, match="^UnknownSymbol: sort absent$"):
+        Environment(raw)
+
+
+def test_reviewed_environment_findings_have_one_python_lean_diagnostic():
+    """Replay every reviewed environment mutation, including stale minimized ones."""
+    from tools.difffuzz import EnvironmentSurface, evaluate, seed_of
+
+    entries = [entry for entry in json.loads(
+        (ROOT / "conformance/difffuzz-baseline.json").read_text())["entries"]
+        if entry["surface"] == "environment"]
+    surface = EnvironmentSurface()
+    try:
+        for entry, (_, _, answers, _) in zip(
+                entries, evaluate(surface, [(seed_of(entry), entry["input"]) for entry in entries]),
+                strict=True):
+            python, lean = answers["python"], answers["lean"]
+            fields = ("outcome", "code", "text")
+            assert tuple(python.get(field) for field in fields) == tuple(lean.get(field) for field in fields), entry["id"]
+    finally:
+        surface.close()
+
+
+def test_soft_metadata_survives_the_lean_environment_identity():
+    from tools.difffuzz_corpus import environments
+    raw = next(data for origin, data in environments()
+               if origin == "conformance/soft_norms_rust.json/9/source/environment")
+    env = Environment(raw)
+    assert env.to_dict() == raw
+    assert relay.decide("environment", [{"id": "e", "environment": raw}])[0]["environment_id"] == env.environment_id
+
+
+def test_model_identity_is_bound_from_leans_answer(monkeypatch):
+    env = Environment(pm.raw_environment(()))
+    fake_lean(monkeypatch, lambda mode, case: {"id": "model", "status": "ok",
+                                               "valid": True, "model_id": "f" * 64})
+    assert FiniteModel.from_dict(env, pm.model_wire(env)).model_id == "f" * 64
+
+
+def test_lean_names_a_rejection_both_checkers_make(monkeypatch):
     from ve.backends.diagnostics import checker_error
     raw = pm.raw_environment(())
     raw["vocabulary"]["predicates"]["base"]["arguments"] = ["absent"]
     fake_lean(monkeypatch, lambda mode, case: (_ for _ in ()).throw(checker_error("different words")))
-    with pytest.raises(VEError, match="Undeclared predicate argument sort"):
+    with pytest.raises(VEError, match="different words"):
         Environment(raw)
 
 
-def test_lean_acceptance_of_a_python_rejection_is_unavailable(monkeypatch):
+def test_lean_acceptance_with_wrong_identity_is_unavailable(monkeypatch):
     raw = pm.raw_environment(())
     raw["vocabulary"]["predicates"]["base"]["arguments"] = ["absent"]
     fake_lean(monkeypatch, lambda mode, case: {"id": "environment", "status": "ok",
                                                "environment_id": "0" * 64})
-    with pytest.raises(CheckerUnavailable, match="Python decoder rejects"):
+    with pytest.raises(CheckerUnavailable, match="identities differ"):
+        Environment(raw)
+
+
+def test_lean_acceptance_of_an_unconstructible_source_is_unavailable(monkeypatch):
+    raw = pm.raw_environment(())
+    del raw["vocabulary"]["sorts"]
+    fake_lean(monkeypatch, lambda mode, case: {"id": "environment", "status": "ok",
+                                               "environment_id": "0" * 64})
+    with pytest.raises(CheckerUnavailable, match="Python could not construct a Lean-accepted environment"):
         Environment(raw)
 
 
 def test_identity_mismatch_is_unavailable_and_acceptance_is_cached(monkeypatch):
     raw = pm.raw_environment(())
+    identity = Environment(raw).environment_id
     calls = fake_lean(monkeypatch, lambda mode, case: {"id": "environment", "status": "ok",
                                                        "environment_id": "0" * 64})
     with pytest.raises(CheckerUnavailable, match="identities differ"):
         Environment(raw)
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    identity = Environment(raw).environment_id
     calls = fake_lean(monkeypatch, lambda mode, case: {"id": "environment", "status": "ok",
                                                        "environment_id": identity})
     Environment(raw)
@@ -134,15 +241,19 @@ def test_identity_mismatch_is_unavailable_and_acceptance_is_cached(monkeypatch):
     assert calls == ["environment"]
 
 
-def test_statement_layers_and_rust_keep_the_python_decoder(monkeypatch):
-    calls = fake_lean(monkeypatch, lambda mode, case: pytest.fail("Lean was asked"))
+def test_all_authorities_use_lean_for_environment_and_model(monkeypatch):
     raw = pm.raw_environment(())
-    reports = {**raw, "profiles": ["relational-fol@0", "reports@0"]}
-    assert not validation.environment_in_scope(reports)
+    original = relay.decide
+    calls = []
+    def traced(mode, cases, **kw):
+        calls.append(mode)
+        return original(mode, cases, **kw)
+    monkeypatch.setattr(relay, "decide", traced)
+    monkeypatch.setattr(validation, "_ACCEPTED", {})
     monkeypatch.setenv("VE_AUTHORITY", "rust-experimental")
     env = Environment(raw)
     FiniteModel.from_dict(env, pm.model_wire(env))
-    assert calls == []
+    assert "environment" in calls and "model" in calls
 
 
 def test_lean_rejects_a_model_whose_claimed_identity_is_stale(monkeypatch):
@@ -200,7 +311,11 @@ def chained(family=()):
 def test_definitions_elaborate_in_lean_in_python_order(monkeypatch, family):
     from ve.definitions import compile_definitions
     seen = []
-    monkeypatch.setattr(dispatch, "observers", [lambda op, authority: seen.append((op, authority))])
+    original = relay.decide
+    def traced(mode, cases, **kw):
+        seen.append(mode)
+        return original(mode, cases, **kw)
+    monkeypatch.setattr(relay, "decide", traced)
     records = {}
     for authority in ("python", "lean"):
         monkeypatch.setenv("VE_AUTHORITY", authority)
@@ -209,7 +324,7 @@ def test_definitions_elaborate_in_lean_in_python_order(monkeypatch, family):
                               for d in compile_definitions(env, env.definition_entries, version="v")]
     assert records["lean"] == records["python"]
     assert [name for name, _, _ in records["lean"]] == ["derived", "top_derived"]
-    assert ("definitions_elaboration", "lean") in seen
+    assert "route" in seen
 
 
 def test_a_definition_cycle_both_checkers_reject_is_named_by_python(monkeypatch):
@@ -252,12 +367,16 @@ def test_frozen_envelopes_and_their_models_are_validated_in_lean(monkeypatch, ki
     expected = [outcome(lambda: Environment(x)) for x in (data, bad)] + \
         [outcome(lambda: FiniteModel.from_dict(env, w)) for w in (wire, wrong)]
     seen = []
-    monkeypatch.setattr(dispatch, "observers", [lambda op, authority: seen.append((op, authority))])
+    original = relay.decide
+    def traced(mode, cases, **kw):
+        seen.append(mode)
+        return original(mode, cases, **kw)
+    monkeypatch.setattr(relay, "decide", traced)
     monkeypatch.setattr(validation, "_ACCEPTED", {})
     monkeypatch.setenv("VE_AUTHORITY", "lean")
     assert [outcome(lambda: Environment(x)) for x in (data, bad)] + \
         [outcome(lambda: FiniteModel.from_dict(env, w)) for w in (wire, wrong)] == expected
-    assert ("environment_validation", "lean") in seen and ("model_validation", "lean") in seen
+    assert "environment" in seen and "model" in seen
     model = FiniteModel.from_dict(env, wire)
     with pytest.raises(InvalidModel, match="does not match its contents") as raised:
         evaluate(env, Unary("base", Const("x")), replace(model, model_id="0" * 64))

@@ -48,6 +48,10 @@ Corpora (``--corpus``, default all):
 * ``norm_defaults``: 1,000 generated profile documents and ten malformed variants from
   `conformance/norm_defaults_differential.py`, each through `check_document` and
   `render_document` at both revisions.
+* ``document``: every `ve-document@1` seed of `conformance/document_wrapper.py` and the differential fuzzer's
+  document mutants, frozen in `docs/lean-first/document-corpus.json.gz` at batch 16b's base
+  (`docs/lean-first/b16b/capture_documents.py`), each through `check_document` and `render_document`. The texts
+  are written once, by this checkout, into a file both sides read.
 
 A record is ``{"corpus", "authority", "case", "op", "source_sha256", "outcome"}``; the outcome is
 ``{"returned": <public record>}`` or ``{"raised": <error record>}``, as mig3's recorder writes
@@ -113,14 +117,16 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 CORPORA = ("probe", "conformance", "pilots", "readings", "discourse", "rights", "quantity",
-           "norm_defaults")
+           "norm_defaults", "document")
 DISCOURSE = Path("docs/lean-first/discourse-corpus.json.gz")
+DOCUMENTS = Path("docs/lean-first/document-corpus.json.gz")
 DOCUMENT_OPS = ("document_check", "document_render")
 QUANTITY = Path("docs/lean-first/quantity-corpus.json.gz")
 QUANTITY_OPS = ("environment", "elaborate", "meaning_id", "countermodel", "certificate", "prove", "admission")
 AUTHORITIES = ("python", "lean")
 CONFORMANCE = ("evaluation", "parser", "identity", "validation", "closure", "countermodels")
 DROPPED = frozenset({"checker_build", "record_id"})
+PROBE_METADATA = frozenset({"routed", "backend_rejection"})
 CLASSES = ("availability", "verdict", "order", "wording")
 TEXTS = ("message", "detail", "stderr")
 # A report's statement of who checked what is descriptive text: a change to it is wording.
@@ -201,12 +207,23 @@ def probe_rows(data: dict, source: str):
     `PROBE_BASELINE`), read from the file of digest `source`."""
     for row in data["cells"]:
         yield {"case": probe_case(row), "op": row["operation"], "source_sha256": source,
-               "outcome": {"cell": row["cell"], "status": row["status"], "output": public(row["output"])}}
+               "outcome": {"cell": row["cell"], "status": row["status"],
+                           "output": probe_public(row["output"])}}
     for section in PROBE_SECTIONS:
         for name, row in data[section].items():
             yield {"case": f"{section}/{name}", "op": section, "source_sha256": source,
-                   "outcome": public({k: v for k, v in row.items() if k != "routed"})
-                   if isinstance(row, dict) else public(row)}
+                   "outcome": probe_public(row)}
+
+
+def probe_public(value):
+    """The probe matrix's route observer and backend marker are test instrumentation,
+    not fields returned by the public operation. Keep nested budget results public."""
+    value = public(value)
+    if isinstance(value, dict):
+        return {k: probe_public(v) for k, v in value.items() if k not in PROBE_METADATA}
+    if isinstance(value, list):
+        return [probe_public(v) for v in value]
+    return value
 
 
 def identified(value, identity: str) -> dict:
@@ -449,6 +466,21 @@ def norm_defaults_records(path: Path, scratch: Path, workers: int):
             yield from rows
 
 
+def document_corpus(out: Path) -> None:
+    """Write the document corpus's texts (`capture_documents.texts`), read by both recorded sides."""
+    sys.path.insert(0, str(ROOT / "docs/lean-first/b16b"))
+    from capture_documents import texts
+    rows = [{"case": row["id"], "text": row["text"]} for row in texts(json.loads(gzip.decompress(
+        (ROOT / DOCUMENTS).read_bytes())))]
+    assert [row["case"] for row in rows] == document_cases(ROOT)
+    out.write_text(json.dumps(rows, ensure_ascii=False))
+
+
+def document_cases(root: Path) -> list[str]:
+    """The case names of the document corpus of the checkout `root`, without writing its texts."""
+    return [entry["id"] for entry in json.loads(gzip.decompress((root / DOCUMENTS).read_bytes()))["entries"]]
+
+
 def _discourse_case(item):
     """`check_document` and `render_document` of one corpus document (in a pool worker)."""
     scratch, entry = item
@@ -574,9 +606,9 @@ def child(args) -> int:
                                              Path(args.out).with_suffix(".rights"), args.workers):
                     write({"corpus": corpus, **record})
                 continue
-            if corpus == "norm_defaults":
-                for record in norm_defaults_records(Path(args.out).with_suffix(".norm_defaults.json"),
-                                                    Path(args.out).with_suffix(".norm_defaults"), args.workers):
+            if corpus in ("norm_defaults", "document"):
+                for record in norm_defaults_records(Path(args.out).with_suffix(f".{corpus}.json"),
+                                                    Path(args.out).with_suffix(f".{corpus}"), args.workers):
                     write({"corpus": corpus, **record})
                 continue
             if corpus == "discourse":
@@ -598,7 +630,7 @@ def child(args) -> int:
 
 def record(args) -> int:
     root = Path(args.root).resolve()
-    for name in ("readings", "rights", "norm_defaults"):
+    for name in ("readings", "rights", "norm_defaults", "document"):
         if name not in args.corpus:
             continue
         corpus = Path(args.out).resolve().with_suffix(f".{name}.json")
@@ -621,7 +653,7 @@ class Unusable(Exception):
 
 
 def authorities_of(corpus: str, authorities=AUTHORITIES) -> tuple[str, ...]:
-    return (("default",) if corpus in ("pilots", "readings", "discourse", "rights", "norm_defaults")
+    return (("default",) if corpus in ("pilots", "readings", "discourse", "rights", "norm_defaults", "document")
             else tuple(authorities))
 
 
@@ -656,6 +688,8 @@ def expected_cases(root: Path, corpora=CORPORA, authorities=AUTHORITIES) -> dict
             cases[corpus] = {name: (lambda held: set(DOCUMENT_OPS)) for name in rights_cases()}
         elif corpus == "norm_defaults":
             cases[corpus] = {name: (lambda held: set(DOCUMENT_OPS)) for name in norm_defaults_cases()}
+        elif corpus == "document":
+            cases[corpus] = {name: (lambda held: set(DOCUMENT_OPS)) for name in document_cases(root)}
         elif corpus == "quantity":
             cases[corpus] = {entry["id"]: only(entry["op"]) for entry in quantity_corpus(root)}
         else:
@@ -941,7 +975,7 @@ def main(argv=None) -> int:
         p.add_argument("--corpus", nargs="+", default=list(CORPORA), choices=CORPORA)
         p.add_argument("--authority", nargs="+", default=list(AUTHORITIES), choices=AUTHORITIES)
         p.add_argument("--workers", type=int, default=4)
-    for name in ("_readings_corpus", "_rights_corpus", "_norm_defaults_corpus"):
+    for name in ("_readings_corpus", "_rights_corpus", "_norm_defaults_corpus", "_document_corpus"):
         p = sub.add_parser(name)
         p.add_argument("--out", required=True)
     p = sub.add_parser("compare")
@@ -964,6 +998,9 @@ def main(argv=None) -> int:
         return 0
     if args.command == "_norm_defaults_corpus":
         norm_defaults_corpus(Path(args.out))
+        return 0
+    if args.command == "_document_corpus":
+        document_corpus(Path(args.out))
         return 0
     delta = json.loads(args.delta.read_text()) if args.delta else None
     try:

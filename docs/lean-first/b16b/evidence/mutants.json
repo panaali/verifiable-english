@@ -1,0 +1,105 @@
+{
+ "mutants": [
+  {
+   "mutant": "rejection_falls_back",
+   "behaviour": "Lean's rejection is final",
+   "file": "ve/document.py",
+   "test": "test_lean_rejections_are_raised_verbatim",
+   "exit": 1,
+   "failed": [
+    "tests/test_document_lean_switch.py::test_lean_rejections_are_raised_verbatim"
+   ],
+   "caught": true
+  },
+  {
+   "mutant": "service_failure_falls_back",
+   "behaviour": "a service failure is never answered by Python",
+   "file": "ve/document.py",
+   "test": "test_a_service_failure_is_never_answered_by_python",
+   "exit": 1,
+   "failed": [
+    "tests/test_document_lean_switch.py::test_a_service_failure_is_never_answered_by_python"
+   ],
+   "caught": true
+  },
+  {
+   "mutant": "unbound_answer",
+   "behaviour": "the answer is bound to the request",
+   "file": "ve/document.py",
+   "test": "test_answers_not_bound_to_the_request_are_unavailable",
+   "exit": 1,
+   "failed": [
+    "tests/test_document_lean_switch.py::test_answers_not_bound_to_the_request_are_unavailable"
+   ],
+   "caught": true
+  },
+  {
+   "mutant": "python_coverage",
+   "behaviour": "coverage is Lean's",
+   "file": "ve/document.py",
+   "test": "test_coverage_and_statuses_are_leans",
+   "exit": 1,
+   "failed": [
+    "tests/test_document_lean_switch.py::test_coverage_and_statuses_are_leans"
+   ],
+   "caught": true
+  },
+  {
+   "mutant": "python_document_id",
+   "behaviour": "identities are Lean's",
+   "file": "ve/document.py",
+   "test": "test_identities_and_content_are_leans",
+   "exit": 1,
+   "failed": [
+    "tests/test_document_lean_switch.py::test_identities_and_content_are_leans"
+   ],
+   "caught": true
+  },
+  {
+   "mutant": "load_admits",
+   "behaviour": "load_document does not admit the graph",
+   "file": "ve/document.py",
+   "test": "test_load_does_not_admit_the_graph_and_check_does",
+   "exit": 1,
+   "failed": [
+    "tests/test_document_lean_switch.py::test_load_does_not_admit_the_graph_and_check_does"
+   ],
+   "caught": true
+  },
+  {
+   "mutant": "admission_disagreement_kept",
+   "behaviour": "a route rejecting what Lean admitted is unavailable",
+   "file": "ve/document.py",
+   "test": "test_the_admission_route_rejecting_what_lean_admitted_is_unavailable",
+   "exit": 1,
+   "failed": [
+    "tests/test_document_lean_switch.py::test_the_admission_route_rejecting_what_lean_admitted_is_unavailable"
+   ],
+   "caught": true
+  },
+  {
+   "mutant": "lean_senses_guard_removed",
+   "behaviour": "a senses document takes the retained path (Lean)",
+   "file": "lean/VE/Service/Document.lean",
+   "test": "test_undecided_answers_take_the_retained_path",
+   "exit": 1,
+   "failed": [
+    "tests/test_document_lean_switch.py::test_undecided_answers_take_the_retained_path[a"
+   ],
+   "caught": true
+  },
+  {
+   "mutant": "lean_admission_bypasses_route",
+   "behaviour": "the graph is admitted through the route's own case (Lean)",
+   "file": "lean/VE/Service/Document.lean",
+   "test": "test_definitions_graph_is_deferred_as_the_admission_route_defers_it",
+   "exit": 1,
+   "failed": [
+    "tests/test_document_lean_switch.py::test_definitions_graph_is_deferred_as_the_admission_route_defers_it"
+   ],
+   "caught": true
+  }
+ ],
+ "service_build_restored": true,
+ "service_build": "f4ba35a2d76adaf836bdea5d82e976482258f12cfb62d66483501adfa5da495b"
+}

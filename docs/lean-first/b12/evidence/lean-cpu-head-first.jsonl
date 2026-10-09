@@ -1,0 +1,14 @@
+{"owner": 9, "pid": 17, "cpu_s": 11.89, "modes": {"environment": 2, "check": 3273}, "stats": {"starts": 1, "restarts": 0, "recycles": 0, "requests": 3275, "retries": 0, "registered": 3, "handle_resends": 0}}
+{"owner": 14, "pid": 24, "cpu_s": 12.97, "modes": {"environment": 2, "check": 3384}, "stats": {"starts": 1, "restarts": 0, "recycles": 0, "requests": 3386, "retries": 0, "registered": 3, "handle_resends": 0}}
+{"owner": 13, "pid": 20, "cpu_s": 13.4, "modes": {"environment": 2, "check": 3528}, "stats": {"starts": 1, "restarts": 0, "recycles": 0, "requests": 3530, "retries": 0, "registered": 3, "handle_resends": 0}}
+{"owner": 12, "pid": 19, "cpu_s": 13.23, "modes": {"environment": 2, "check": 3507}, "stats": {"starts": 1, "restarts": 0, "recycles": 0, "requests": 3509, "retries": 0, "registered": 3, "handle_resends": 0}}
+{"owner": 16, "pid": 25, "cpu_s": 13.01, "modes": {"environment": 2, "check": 3429}, "stats": {"starts": 1, "restarts": 0, "recycles": 0, "requests": 3431, "retries": 0, "registered": 3, "handle_resends": 0}}
+{"owner": 15, "pid": 23, "cpu_s": 13.03, "modes": {"environment": 2, "check": 3450}, "stats": {"starts": 1, "restarts": 0, "recycles": 0, "requests": 3452, "retries": 0, "registered": 3, "handle_resends": 0}}
+{"owner": 36, "pid": 43, "cpu_s": 17.36, "modes": {"environment": 2, "check": 4438}, "stats": {"starts": 1, "restarts": 0, "recycles": 0, "requests": 4440, "retries": 0, "registered": 3, "handle_resends": 0}}
+{"owner": 39, "pid": 49, "cpu_s": 18.42, "modes": {"environment": 2, "check": 4604}, "stats": {"starts": 1, "restarts": 0, "recycles": 0, "requests": 4606, "retries": 0, "registered": 3, "handle_resends": 0}}
+{"owner": 38, "pid": 47, "cpu_s": 17.82, "modes": {"environment": 2, "check": 4392}, "stats": {"starts": 1, "restarts": 0, "recycles": 0, "requests": 4394, "retries": 0, "registered": 3, "handle_resends": 0}}
+{"owner": 40, "pid": 51, "cpu_s": 18.0, "modes": {"environment": 2, "check": 4372}, "stats": {"starts": 1, "restarts": 0, "recycles": 0, "requests": 4374, "retries": 0, "registered": 3, "handle_resends": 0}}
+{"owner": 33, "pid": 41, "cpu_s": 21.22, "modes": {"environment": 2, "check": 5376}, "stats": {"starts": 1, "restarts": 0, "recycles": 0, "requests": 5378, "retries": 0, "registered": 3, "handle_resends": 0}}
+{"owner": 37, "pid": 45, "cpu_s": 21.04, "modes": {"environment": 2, "check": 5174}, "stats": {"starts": 1, "restarts": 0, "recycles": 0, "requests": 5176, "retries": 0, "registered": 3, "handle_resends": 0}}
+{"owner": 4, "pid": 31, "cpu_s": 27.8, "modes": {"quantity": 19, "check": 11}, "stats": {"starts": 1, "restarts": 0, "recycles": 0, "requests": 30, "retries": 0, "registered": 2, "handle_resends": 0}}
+{"owner": 4, "pid": 5, "cpu_s": 46.44, "modes": {"environment": 2, "check": 3877, "quantity": 21}, "stats": {"starts": 1, "restarts": 0, "recycles": 0, "requests": 3900, "retries": 0, "registered": 3, "handle_resends": 0}}

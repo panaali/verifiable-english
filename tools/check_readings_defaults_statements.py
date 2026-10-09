@@ -1,5 +1,5 @@
-"""Compare the RD-1, RD-2a and RD-6a declarations with the approved text of docs/spec/readings-defaults.md 6.2, 6.3 and
-6.7.
+"""Compare the RD-1, RD-2a, RD-4a and RD-6a declarations with the approved text of docs/spec/readings-defaults.md 6.2,
+6.3, 6.6 (its wire part) and 6.7.
 
 Every declaration of the spec's 6.2 block is compared, not only the theorems (review B2): the structure, every
 definition with its body (`AchievesU`, `fillDoc`, `fillNamesFree`, `normsShaped`, `WellFormedND`, ...), and every
@@ -12,6 +12,9 @@ unlisted difference, a missing or repeated declaration, or a PENDING entry that 
 RD-2a's block (6.3) states some wire functions without a body (`ndText`, `admitND`, the replays: specified by their
 docstrings and sections 3 to 5 of the spec); such a definition is compared up to its Lean body's `:=`. Its
 declarations are found in the three files 6.1 places them in.
+
+RD-4a is checked the same way against the `section Companions` of 6.6 (the wire part 6.1 places in
+`Companions.lean`; the rest of 6.6 is RD-4b's).
 
 RD-6a is checked the same way against 6.7 in `SupExtra.lean`. 6.7 also states RD-6b's declarations (LATER_6A); each
 is compared once it is in the file and listed as not built before.
@@ -50,6 +53,11 @@ SECTIONS_RD3 = (("### 6.4 RD-3", "### 6.5"), ("### 6.5 RD-3", "### 6.6"))
 SOURCES_RD3 = [ROOT / "lean/VE/Readings/Verdicts.lean", ROOT / "lean/VE/Readings/VerdictsWire.lean"]
 EXPECTED_RD3 = {"theorem": 11, "def": 18, "structure": 1}
 PENDING_RD3: dict[str, str] = {}
+# RD-4a: spec 6.6's `section Companions`, placed by 6.1 in `Companions.lean`.
+SECTION_RD4A = ("### 6.6 RD-4a and RD-4b", "### 6.7")
+SOURCE_RD4A = ROOT / "lean/VE/Readings/Companions.lean"
+EXPECTED_RD4A = {"theorem": 4, "def": 6, "structure": 0}
+PENDING_RD4A: dict[str, str] = {}
 SOURCE_6A = ROOT / "lean/VE/Readings/SupExtra.lean"
 # 6.7's declarations by kind, RD-6b's included.
 EXPECTED_6A = {"theorem": 7, "def": 3, "structure": 0}
@@ -119,6 +127,13 @@ def approved() -> dict[tuple[str, str], list[str]]:
 
 def approved_rd2a() -> dict[tuple[str, str], list[str]]:
     return block(*SECTION_RD2A)
+
+
+def approved_rd4a() -> dict[tuple[str, str], list[str]]:
+    """The declarations between `section Companions` and `end Companions` of 6.6's block."""
+    section = SPEC.read_text().split(SECTION_RD4A[0], 1)[1].split(SECTION_RD4A[1], 1)[0]
+    code = section.split("```lean", 1)[1].split("```", 1)[0]
+    return declarations(code.split("section Companions", 1)[1].split("end Companions", 1)[0], statements_only=True)
 
 
 def lean_of(sources) -> dict[tuple[str, str], list[str]]:
@@ -278,5 +293,13 @@ def main_rd3() -> int:
     return 0
 
 
+def main_rd4a() -> int:
+    errors, _ = compare("RD-4a", approved_rd4a(), SOURCE_RD4A, EXPECTED_RD4A, PENDING_RD4A, set())
+    if errors:
+        print("\n".join(errors))
+        return 1
+    return 0
+
+
 if __name__ == "__main__":
-    sys.exit(max(main(), main_rd2a(), main_rd3()))
+    sys.exit(max(main(), main_rd2a(), main_rd3(), main_rd4a()))

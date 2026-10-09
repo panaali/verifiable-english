@@ -57,14 +57,6 @@ fn shared_evaluation_corpus() {
         let env = Environment::from_value(&case["environment"]).unwrap();
         let doc = Document::from_value(&env, &case["ast"]).unwrap();
         let model = FiniteModel::from_value(&env, &case["model"]).unwrap();
-        let canonical = print_document(&doc).unwrap();
-        assert_eq!(
-            canonical,
-            case["source"].as_str().unwrap(),
-            "{}",
-            case["id"]
-        );
-        assert_eq!(parse(&env, canonical.as_bytes()).unwrap(), doc);
         for (i, expected) in case["expected"].as_array().unwrap().iter().enumerate() {
             let result = evaluate_formula(&doc, i, &model, MAX_EVALUATIONS).unwrap();
             assert_eq!(json!(result.value), *expected, "{} formula {i}", case["id"]);
@@ -147,28 +139,7 @@ fn restricted_json_and_canonical_order() {
 }
 
 #[test]
-fn shared_parser_and_identity_fixtures() {
-    let parser = loads_json(include_bytes!("../../../conformance/parser.json")).unwrap();
-    for case in parser.as_array().unwrap() {
-        let env = Environment::from_value(&case["environment"]).unwrap();
-        let result = parse(&env, case["source"].as_str().unwrap().as_bytes());
-        let expected = &case["expected_parser"];
-        if let Some(code) = expected.get("error_code") {
-            assert_eq!(
-                result.unwrap_err().code,
-                code.as_str().unwrap(),
-                "{}",
-                case["id"]
-            );
-        } else {
-            let doc = result.unwrap();
-            assert_eq!(
-                print_document(&doc).unwrap(),
-                expected["canonical"].as_str().unwrap()
-            );
-            assert_eq!(doc.to_value(), expected["ast"]);
-        }
-    }
+fn shared_identity_fixtures() {
     let identities = loads_json(include_bytes!("../../../conformance/identity.json")).unwrap();
     for case in identities.as_array().unwrap() {
         let env = Environment::from_value(&case["environment"]).unwrap();
@@ -204,10 +175,11 @@ fn shared_parser_and_identity_fixtures() {
 }
 
 #[test]
-fn canonical_output_budget_is_separate_from_ast_budget() {
+fn ast_budget_counts_nodes_not_canonical_text() {
+    // 3000 implications are 9000 AST nodes, inside the AST budget although their canonical
+    // text exceeds the source budget (Python prints; Rust reads no source text).
     let cases = loads_json(include_bytes!("../../../conformance/evaluation.json")).unwrap();
     let env = Environment::from_value(&cases[0]["environment"]).unwrap();
     let f = Formula::Implies(Box::new(Formula::Top), Box::new(Formula::Top));
-    let doc = Document::check(&env, vec![f; 3000]).unwrap();
-    assert_eq!(print_document(&doc).unwrap_err().code, "ResourceLimit");
+    assert!(Document::check(&env, vec![f; 3000]).is_ok());
 }

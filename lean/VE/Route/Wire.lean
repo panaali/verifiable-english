@@ -29,6 +29,8 @@ open VE.Time (maxEvaluations)
 identity-bound definitions (W3), elaborated in dependency order and checked. -/
 structure RouteVocabulary where
   vocabulary : VE.Bridge.Vocabulary
+  sourceVocabulary : VE.Bridge.Vocabulary
+  validNames : sourceVocabulary.namesValid = true
   literals : List String
   nodup : literals.Nodup
   flags : List VE.Data.Background.Flag := []
@@ -78,27 +80,37 @@ def decodeDefined (p : String) (ss : List String) (payload : Json) :
 /-- A declared `$string` literal: the sort is required and the description is
 optional (and nonempty when present). -/
 def literalEntry (entry : Json) : Except String Unit := do
-  VE.Bridge.displayFields entry ["sort"] ["description"]
+  VE.Bridge.displayFields entry ["sort"] ["description", "verbalisation"]
   if let .ok _ := entry.getObjVal? "description" then VE.Bridge.description entry
+  if let .ok words := entry.getObjVal? "verbalisation" then VE.Bridge.displayString words
 
 def isLiteralEntry (entry : Json) : Bool :=
   entry.getObjValD "sort" == .str Background.stringSort
 
+/-- Validate display fields on a declared nonliteral constant. -/
+def constantDisplay (entry : Json) (displayConstants : Bool) : Except String Unit := do
+  VE.Bridge.displayFields entry ["sort", "description"]
+    (if displayConstants then ["verbalisation"] else [])
+  VE.Bridge.description entry
+  if displayConstants then
+    if let .ok words := entry.getObjVal? "verbalisation" then
+      VE.Bridge.displayString words
+
 /-- The v0 vocabulary rules plus `$string` as the sort of declared literal
 constants. -/
 def decodeVocabulary (profiles : List String) (v : Json)
-    (displayConstants : Bool := false) : Except String RouteVocabulary := do
+    (displayConstants : Bool := true) : Except String RouteVocabulary := do
   exactFields v ["sorts", "predicates", "constants"]
   let sorts ← fields (← v.getObjVal? "sorts")
   let predicates ← fields (← v.getObjVal? "predicates")
   let constants ← fields (← v.getObjVal? "constants")
-  let names := (sorts ++ predicates ++ constants).map Prod.fst
-  unless names.eraseDups.length == names.length do throw "duplicate declaration"
-  for name in names do
-    unless identifier name && !reserved.contains name && !generatedName name do
-      throw s!"invalid or reserved declaration: {name}"
   if sorts.length > 32 || predicates.length > 256 then
     throw "ResourceLimit: vocabulary size"
+  VE.Bridge.checkVocabularyNames sorts predicates constants
+  -- An explicit finite witness lets downstream proofs use the same distinct
+  -- declaration invariant without unfolding the diagnostic traversal.
+  let names := (sorts ++ predicates ++ constants).map Prod.fst
+  unless names.eraseDups.length == names.length do throw "duplicate declaration"
   for (_, entry) in sorts do
     VE.Bridge.displayFields entry ["description"] ["verbalisation"]
     VE.Bridge.description entry
@@ -142,31 +154,35 @@ def decodeVocabulary (profiles : List String) (v : Json)
     if let .ok payload := entry.getObjVal? "defined" then exactFields payload ["arguments", "body"]
   let cs ← constants.mapM fun (c, entry) => do
     if isLiteralEntry entry then literalEntry entry
-    else
-      VE.Bridge.displayFields entry ["sort", "description"]
-        (if displayConstants then ["verbalisation"] else [])
-      VE.Bridge.description entry
-      if displayConstants then
-        if let .ok words := entry.getObjVal? "verbalisation" then
-          VE.Bridge.displayString words
+    else constantDisplay entry displayConstants
     let s ← stringField entry "sort"
     unless allowed s do throw s!"unknown constant sort: {c}"
     pure (c, s)
   let literals := (cs.filter (fun c => c.2 == Background.stringSort)).map Prod.fst
   if literals.length > 64 then throw "ResourceLimit: At most 64 declared $string literals"
   let result : VE.Bridge.Vocabulary := ⟨sortNames, ps, cs⟩
-  unless result.namesValid do throw "invalid declaration names"
-  -- Bodies are decoded last, each within its own AST limits, as Python's
-  -- `compile_definitions` runs after the rest of the environment is checked.
-  let entries ← predicates.filterMapM fun (p, entry) => do
-    match entry.getObjVal? "defined" with
-    | .ok payload => some <$> decodeDefined p ((← strings (← entry.getObjVal? "arguments"))) payload
-    | .error _ => pure none
-  if h : literals.Nodup then
-    match hd : VE.Definitions.elaborate result.environment entries with
-    | .ok ds => pure ⟨result, literals, h, flags, ds, VE.Definitions.elaborate_chain _ _ ds hd⟩
-    | .error e => throw e
-  else throw "duplicate declaration"
+  if hnames : result.namesValid then
+    -- Bodies are decoded last, each within its own AST limits, as Python's
+    -- `compile_definitions` runs after the rest of the environment is checked.
+    let entries ← predicates.filterMapM fun (p, entry) => do
+      match entry.getObjVal? "defined" with
+      | .ok payload => some <$> decodeDefined p ((← strings (← entry.getObjVal? "arguments"))) payload
+      | .error _ => pure none
+    if h : literals.Nodup then
+      match hd : VE.Definitions.elaborate result.environment entries with
+      | .ok ds => pure ⟨result, result, hnames, literals, h, flags, ds, VE.Definitions.elaborate_chain _ _ ds hd⟩
+      | .error e => throw e
+    else throw "duplicate declaration"
+  else throw "invalid declaration names"
+
+/-- Decoder validity, analogous to `decodeModel_valid`: a successful route
+vocabulary has valid declaration names, distinct literals and a checked
+definition chain. These are stored in the result, not inferred by Python. -/
+theorem decodeVocabulary_valid (profiles : List String) (j : Json)
+    (rv : RouteVocabulary) (_h : decodeVocabulary profiles j = .ok rv) :
+    rv.sourceVocabulary.namesValid = true ∧ rv.literals.Nodup ∧
+      VE.Definitions.Chain rv.vocabulary.environment rv.definitions := by
+  exact ⟨rv.validNames, rv.nodup, rv.chain⟩
 
 /-- A decoded order vocabulary and its declared `$string` literals. -/
 structure RouteOrderVocabulary where
@@ -201,10 +217,11 @@ def decodeOrderVocabulary (v : Json) : Except String RouteOrderVocabulary := do
     ("spec_revision", .str VE.Order.Wire.orderRevision),
     ("vocabulary", Json.mkObj [("sorts", v.getObjValD "sorts"),
       ("predicates", v.getObjValD "predicates"), ("constants", Json.mkObj others)])])
+    (displayConstants := true)
   let declared := base.sorts ++ base.predicates.map Prod.fst ++ base.constants.map Prod.fst
   for name in literals do
     unless identifier name && !reserved.contains name && !generatedName name do
-      throw s!"invalid or reserved declaration: {name}"
+      throw s!"invalid or reserved declaration: '{name}'"
     if declared.contains name then throw "duplicate declaration"
   let vocabulary : VE.Order.Vocabulary := { base with
     constants := base.constants ++ literals.map (fun c => (c, .user Background.stringSort)) }

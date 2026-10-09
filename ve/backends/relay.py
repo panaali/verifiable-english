@@ -109,6 +109,8 @@ def _raised(entry: dict) -> BaseException:
     if isinstance(error, VEError):
         if type(row.get("span")) is dict:
             error.span = Span(**row["span"])
+        if type(row.get("path")) is str:
+            error.path = row["path"]
         if type(row.get("code")) is str:
             error.code = row["code"]
         if row.get("dual_guard_cycle") is True:
@@ -135,6 +137,14 @@ def decide(mode: str, cases: list[dict], *, timeout: float | None = None,
         if entry["result"].get("status") == "error":
             raise _raised(entry)
     return [entry["result"] for entry in entries]
+
+
+def answer(mode: str, case: dict) -> tuple[dict, BaseException | None]:
+    """Lean's row for one case and, for a rejection row, the error `decide` would raise for it, returned rather
+    than raised: for a caller that keeps its own path for the rows Lean marks as undecided (`CheckerUnavailable`,
+    `ResourceLimit`). A failure of the service itself is raised, as by `decide`."""
+    [entry] = _pool_for(None).run_bound(mode, wire_checked([case]))
+    return entry["result"], (_raised(entry) if entry["result"].get("status") == "error" else None)
 
 
 def decide_once(mode: str, case: dict) -> dict:

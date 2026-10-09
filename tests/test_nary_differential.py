@@ -11,6 +11,7 @@ from pathlib import Path
 
 import pytest
 
+from conformance.three_way import rust_evaluations
 from tests.lean_build import lean_build
 from tools import rust_build
 from ve.ast import And, Atom, Body, Const, Eq, Forall, Implies, Reach, Var, formula_to_data
@@ -44,10 +45,18 @@ def environment(arity=6, *, literals=False):
 
 
 def invoke(binary, command, cases, *, errors=False):
+    """`errors`: whether some row is an error (exit status 1), or None for either."""
     result = subprocess.run([str(binary), command], input=json.dumps(cases), text=True,
                             capture_output=True, timeout=HANG_TIMEOUT)
-    assert result.returncode == int(errors), result.stdout + result.stderr
+    assert result.returncode in ((0, 1) if errors is None else (int(errors),)), result.stdout + result.stderr
     return json.loads(result.stdout)
+
+
+def rust_invoke(binary, cases, *, errors=False):
+    """Rust's statement values (`conformance.three_way.rust_evaluations`: its evaluate-budgeted kind)."""
+    rows = rust_evaluations(lambda batch: invoke(binary, "conformance", batch, errors=None), cases)
+    assert any(row["status"] == "error" for row in rows) is errors, rows
+    return rows
 
 
 def test_nary_route_regenerates_literal_background(lean_binary):
@@ -138,7 +147,7 @@ def test_statement_profile_preserves_core_family(lean_binary, rust_binary):
     evaluation = {"id": "documents-evaluation", "kind": "evaluate", "environment": raw,
                   "ast": [formula_to_data(combined, atom)], "model": model}
     assert invoke(lean_binary, "route", [evaluation])[0]["values"] == [True]
-    assert invoke(rust_binary, "conformance", [evaluation])[0]["values"] == [True]
+    assert rust_invoke(rust_binary, [evaluation])[0]["values"] == [True]
 
 
 def test_stage0_core_nary_probe_checks_positions_and_replay(lean_binary, rust_binary):
@@ -154,7 +163,7 @@ def test_stage0_core_nary_probe_checks_positions_and_replay(lean_binary, rust_bi
             "ast": [formula_to_data(env, formula) for formula in (atom, reversed_atom)],
             "model": model_wire}
     assert invoke(lean_binary, "route", [case])[0]["values"] == [True, False]
-    assert invoke(rust_binary, "conformance", [case])[0]["values"] == [True, False]
+    assert rust_invoke(rust_binary, [case])[0]["values"] == [True, False]
 
     premises = (Forall("item", Atom("triple", (Var(0), Const("y"), Const("x")))),)
     proof = prove_entailment(env, premises, atom)
@@ -228,7 +237,7 @@ def test_5000_finite_table_pairs_agree_with_rust(rust_binary):
     observed = []
     for start in range(0, len(cases), 250):
         observed += [result.get("values", [None])[0]
-                     for result in invoke(rust_binary, "conformance", cases[start:start + 250])]
+                     for result in rust_invoke(rust_binary, cases[start:start + 250])]
     assert observed == expected
 
 
@@ -246,7 +255,7 @@ def test_mixed_nary_background_validation_agrees(lean_binary, rust_binary):
         cases.append({"id": str(alias), "kind": "evaluate", "environment": env.to_dict(),
                       "ast": [formula_to_data(env, atom)], "model": wire})
     lean = invoke(lean_binary, "route", cases, errors=True)
-    rust = invoke(rust_binary, "conformance", cases, errors=True)
+    rust = rust_invoke(rust_binary, cases, errors=True)
     assert lean[0]["values"] == rust[0]["values"] == [True]
     assert lean[1]["generator"] == "literals"
     assert rust[1]["error"]["code"] == "InvalidModel"
@@ -276,7 +285,7 @@ def test_hostile_nary_wire_diagnostics_agree(lean_binary, rust_binary):
     cases.append({"id": "repeated", "kind": "evaluate", "environment": env.to_dict(),
                   "ast": [repeated], "model": model})
     lean = invoke(lean_binary, "route", cases, errors=True)
-    rust = invoke(rust_binary, "conformance", cases, errors=True)
+    rust = rust_invoke(rust_binary, cases, errors=True)
     for index, (_, diagnostic) in enumerate(wires):
         assert rust[index]["error"]["code"] == diagnostic
         if diagnostic == "SyntaxError":
@@ -293,7 +302,7 @@ def test_hostile_nary_wire_diagnostics_agree(lean_binary, rust_binary):
     bad_environment = [{"id": "unknown-third-sort", "kind": "evaluate",
                         "environment": wrong_sort, "ast": [repeated], "model": model}]
     lean_error = invoke(lean_binary, "route", bad_environment, errors=True)[0]["error"]
-    rust_error = invoke(rust_binary, "conformance", bad_environment, errors=True)[0]["error"]
+    rust_error = rust_invoke(rust_binary, bad_environment, errors=True)[0]["error"]
     assert lean_error.startswith("UnknownSymbol:")
     assert rust_error["code"] == "UnknownSymbol"
 

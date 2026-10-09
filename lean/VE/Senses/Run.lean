@@ -70,7 +70,9 @@ open VE.EnglishGrammar.Run in
 /-- The fields of S2's outcomes as S2's authoring answer writes them (english-lean-s2.md 4.3): the code
 with S2's text, the sentence, the two witness trees of an ambiguity and the lexicon failure; the sentence
 index counts the preamble. `tests/test_senses_route.py` compares them with `ve_english_route`'s. With no
-`source` (`refusalSource`) a refusal has no span, and a rejection has `rejectText`'s words. -/
+`source` (`refusalSource`) a refusal has no span, and a rejection has `rejectText`'s words. A sentence without a
+reading over a source has `english.read`'s diagnosis over the request's own environment and lexicon
+(`noReadingFields`, E2 spec 4.5). -/
 def s2Fields (c : VE.EnglishGrammar.Run.Case) (source : Option String) :
     SensesOutcome → Except String (List (String × Json))
   | .lexical r => pure (status "rejected" ++ coded r.code (rejectText 0 r) ++
@@ -81,8 +83,10 @@ def s2Fields (c : VE.EnglishGrammar.Run.Case) (source : Option String) :
     let pos := [("sentence", toJson i)]
     match o with
     | .ok _ _ => throw "a stopped reading cannot be ok"
-    | .noDerivation => pure (status "none" ++ coded "NoDerivation"
-        s!"Sentence {i + 1} has no reading with the current vocabulary." ++ pos)
+    | .noDerivation => pure ((match source with
+        | some text => noReadingFields c text i
+        | none => status "none" ++ coded "NoDerivation"
+            s!"Sentence {i + 1} has no reading with the current vocabulary.") ++ pos)
     | .ambiguous t u => pure (status "many" ++ coded "Ambiguous"
         s!"Sentence {i + 1} can be read in more than one way. Two of the ways are shown." ++ pos ++
         [("witnesses", Json.arr #[treeJson tags t, treeJson tags u])])

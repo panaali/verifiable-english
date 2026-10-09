@@ -8,6 +8,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
 EVIDENCE = HERE / "evidence"
+# Post-merge fuzzer records after difffuzz-ci-merged.json, in merge order.
+LATER_MERGES = ("difffuzz-ci-b12-merge.json",)
 _spec = importlib.util.spec_from_file_location("lean_first_b6_latency", HERE / "report.py")
 latency = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(latency)
@@ -59,11 +61,20 @@ def main():
     # signature that still reproduces, each resolved one's covering entry if it has one, and no fixed one.
     merged = read("difffuzz-ci-merged.json")
     assert merged["passed"] and merged["new"] == 0 and merged["baseline_not_reproduced"] == []
-    resolved = merged["resolved"]
+    resolved = dict(merged["resolved"])
     assert sorted(merged["reproduces"] + list(resolved)) == sorted(ci["signatures"])
+    # Each later merge's record partitions the signatures that still reproduced before it the same way.
+    reproduces = merged["reproduces"]
+    for name in LATER_MERGES:
+        later = read(name)
+        assert later["after"] == "difffuzz-ci-merged.json" and later["seed"] == merged["seed"], name
+        assert later["passed"] and later["new"] == 0 and later["baseline_not_reproduced"] == [], name
+        assert sorted(later["reproduces"] + list(later["resolved"])) == sorted(reproduces), name
+        reproduces = later["reproduces"]
+        resolved.update(later["resolved"])
     baseline = {e["signature"]: e for e in
                 json.loads((ROOT / "conformance/difffuzz-baseline.json").read_text())["entries"]}
-    for signature in merged["reproduces"]:
+    for signature in reproduces:
         entry = baseline[signature]
         assert entry.get("reason") and entry["follow_up"].startswith("DF-"), signature
     for signature, why in resolved.items():

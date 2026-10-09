@@ -1,4 +1,5 @@
-"""The E2.5 authority decision follows saved records, not a moving checkout."""
+"""The E2.5 records, saved: the readability failure that kept Python authority then (E2.6 replays it in
+`test_english_e26_evidence.py`), the directed coverage and the corpus A/B, never a moving checkout."""
 import json
 from pathlib import Path
 
@@ -10,7 +11,7 @@ def saved(name):
     return json.loads((EVIDENCE / name).read_text())
 
 
-def test_readability_records_require_python_authority():
+def test_e25_readability_records_failed_at_the_reviewed_merge():
     comparison = saved('readability-comparison.json')
     assert comparison['reading_items'] == 30
     assert comparison['writing_attempts'] == 36
@@ -19,8 +20,6 @@ def test_readability_records_require_python_authority():
     assert comparison['reading_newly_unavailable'] == ['R23', 'R24', 'R25', 'R29', 'R30']
     assert comparison['reading_unavailable_both'] == []
     assert comparison['shadow_writing_differences'] == 0
-    manifest = json.loads((ROOT / 've/assurance-manifest.json').read_text())
-    assert next(op for op in manifest['operations'] if op['id'] == 'english.admission')['authority'] == 'python'
 
 
 def test_directed_coverage_records_reach_all_45_rules():

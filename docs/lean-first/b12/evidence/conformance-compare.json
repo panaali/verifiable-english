@@ -1,0 +1,990 @@
+{
+ "differences": [
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "UnsupportedProfile",
+     "message": "UnsupportedProfile: Unsupported language, semantic profile, or specification revision"
+    }
+   },
+   "case": "validation/validation_000",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "UnsupportedProfile",
+     "message": "UnsupportedProfile: Unsupported language"
+    }
+   },
+   "listed": true,
+   "op": "environment"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=[], unknown=['extra'])"
+    }
+   },
+   "case": "validation/validation_001",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected ['language', 'profile', 'spec_revision', 'vocabulary'], got ['extra', 'language', 'profile', 'spec_revision', 'vocabulary']"
+    }
+   },
+   "listed": true,
+   "op": "environment"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Descriptions must be nonempty Unicode strings"
+    }
+   },
+   "case": "validation/validation_002",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "empty description"
+    }
+   },
+   "listed": true,
+   "op": "environment"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "DuplicateDeclaration",
+     "message": "Schema identifier 'x0' is reserved"
+    }
+   },
+   "case": "validation/validation_005",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "DuplicateDeclaration",
+     "message": "DuplicateDeclaration: Schema identifier 'x0' is reserved"
+    }
+   },
+   "listed": true,
+   "op": "environment"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "DuplicateDeclaration",
+     "message": "Symbol 'owns' is declared in multiple categories"
+    }
+   },
+   "case": "validation/validation_006",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "DuplicateDeclaration",
+     "message": "DuplicateDeclaration: Symbol 'owns' is declared in multiple categories"
+    }
+   },
+   "listed": true,
+   "op": "environment"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "complete must be the Boolean true",
+     "path": "/complete"
+    }
+   },
+   "case": "validation/validation_007",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: complete must be the Boolean true",
+     "path": "/complete"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "complete must be the Boolean true",
+     "path": "/complete"
+    }
+   },
+   "case": "validation/validation_008",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: complete must be the Boolean true",
+     "path": "/complete"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "fields do not match (missing=[], unknown=['extra'])"
+    }
+   },
+   "case": "validation/validation_009",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: fields do not match: expected ['complete', 'domains', 'constants', 'relations'], got ['complete', 'constants', 'domains', 'extra', 'relations']"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "relations must contain exactly the base predicates; defined tables are computed",
+     "path": "/relations"
+    }
+   },
+   "case": "validation/validation_010",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: fields do not match: expected ['deployed', 'owns', 'reviewed'], got ['deployed', 'reviewed']",
+     "path": "/relations"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "domains must contain exactly the declared sorts",
+     "path": "/domains"
+    }
+   },
+   "case": "validation/validation_011",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: fields do not match: expected ['person', 'service'], got ['service']",
+     "path": "/domains"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "duplicate domain entity",
+     "path": "/domains/person"
+    }
+   },
+   "case": "validation/validation_012",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: duplicate domain entity",
+     "path": "/domains/person"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
+    }
+   },
+   "case": "validation/validation_013",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "duplicate relation tuple",
+     "path": "/relations/owns"
+    }
+   },
+   "case": "validation/validation_014",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: duplicate relation tuple",
+     "path": "/relations/owns"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "relation tuple contains a dangling or wrong-sort entity",
+     "path": "/relations/owns/0/0"
+    }
+   },
+   "case": "validation/validation_015",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: relation tuple contains a dangling or wrong-sort entity",
+     "path": "/relations/owns/0/0"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "relation tuple contains a dangling or wrong-sort entity",
+     "path": "/relations/owns/0/0"
+    }
+   },
+   "case": "validation/validation_016",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: relation tuple contains a dangling or wrong-sort entity",
+     "path": "/relations/owns/0/0"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "relation tuple has wrong arity",
+     "path": "/relations/owns/0"
+    }
+   },
+   "case": "validation/validation_017",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: relation tuple has wrong arity",
+     "path": "/relations/owns/0"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Identifier exceeds 64 ASCII bytes"
+    }
+   },
+   "case": "validation/validation_027",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Identifier exceeds 64 ASCII bytes"
+    }
+   },
+   "listed": true,
+   "op": "environment"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "local ID exceeds 64 ASCII bytes",
+     "path": "/domains/person/1"
+    }
+   },
+   "case": "validation/validation_028",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: local ID exceeds 64 ASCII bytes",
+     "path": "/domains/person/1"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Identifier exceeds 64 ASCII bytes"
+    }
+   },
+   "case": "validation/validation_029",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Identifier exceeds 64 ASCII bytes"
+    }
+   },
+   "listed": true,
+   "op": "environment"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
+    }
+   },
+   "case": "validation/validation_030",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
+    }
+   },
+   "case": "validation/validation_032",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Identifier exceeds 64 ASCII bytes"
+    }
+   },
+   "case": "validation/validation_033",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Identifier exceeds 64 ASCII bytes"
+    }
+   },
+   "listed": true,
+   "op": "environment"
+  },
+  {
+   "authority": "lean",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
+    }
+   },
+   "case": "validation/validation_034",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "UnsupportedProfile",
+     "message": "UnsupportedProfile: Unsupported language, semantic profile, or specification revision"
+    }
+   },
+   "case": "validation/validation_000",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "UnsupportedProfile",
+     "message": "UnsupportedProfile: Unsupported language"
+    }
+   },
+   "listed": true,
+   "op": "environment"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Incorrect fields (missing=[], unknown=['extra'])"
+    }
+   },
+   "case": "validation/validation_001",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected ['language', 'profile', 'spec_revision', 'vocabulary'], got ['extra', 'language', 'profile', 'spec_revision', 'vocabulary']"
+    }
+   },
+   "listed": true,
+   "op": "environment"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "Descriptions must be nonempty Unicode strings"
+    }
+   },
+   "case": "validation/validation_002",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "empty description"
+    }
+   },
+   "listed": true,
+   "op": "environment"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "DuplicateDeclaration",
+     "message": "Schema identifier 'x0' is reserved"
+    }
+   },
+   "case": "validation/validation_005",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "DuplicateDeclaration",
+     "message": "DuplicateDeclaration: Schema identifier 'x0' is reserved"
+    }
+   },
+   "listed": true,
+   "op": "environment"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "DuplicateDeclaration",
+     "message": "Symbol 'owns' is declared in multiple categories"
+    }
+   },
+   "case": "validation/validation_006",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "DuplicateDeclaration",
+     "message": "DuplicateDeclaration: Symbol 'owns' is declared in multiple categories"
+    }
+   },
+   "listed": true,
+   "op": "environment"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "complete must be the Boolean true",
+     "path": "/complete"
+    }
+   },
+   "case": "validation/validation_007",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: complete must be the Boolean true",
+     "path": "/complete"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "complete must be the Boolean true",
+     "path": "/complete"
+    }
+   },
+   "case": "validation/validation_008",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: complete must be the Boolean true",
+     "path": "/complete"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "fields do not match (missing=[], unknown=['extra'])"
+    }
+   },
+   "case": "validation/validation_009",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: fields do not match: expected ['complete', 'domains', 'constants', 'relations'], got ['complete', 'constants', 'domains', 'extra', 'relations']"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "relations must contain exactly the base predicates; defined tables are computed",
+     "path": "/relations"
+    }
+   },
+   "case": "validation/validation_010",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: fields do not match: expected ['deployed', 'owns', 'reviewed'], got ['deployed', 'reviewed']",
+     "path": "/relations"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "domains must contain exactly the declared sorts",
+     "path": "/domains"
+    }
+   },
+   "case": "validation/validation_011",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: fields do not match: expected ['person', 'service'], got ['service']",
+     "path": "/domains"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "duplicate domain entity",
+     "path": "/domains/person"
+    }
+   },
+   "case": "validation/validation_012",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: duplicate domain entity",
+     "path": "/domains/person"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
+    }
+   },
+   "case": "validation/validation_013",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "duplicate relation tuple",
+     "path": "/relations/owns"
+    }
+   },
+   "case": "validation/validation_014",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: duplicate relation tuple",
+     "path": "/relations/owns"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "relation tuple contains a dangling or wrong-sort entity",
+     "path": "/relations/owns/0/0"
+    }
+   },
+   "case": "validation/validation_015",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: relation tuple contains a dangling or wrong-sort entity",
+     "path": "/relations/owns/0/0"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "relation tuple contains a dangling or wrong-sort entity",
+     "path": "/relations/owns/0/0"
+    }
+   },
+   "case": "validation/validation_016",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: relation tuple contains a dangling or wrong-sort entity",
+     "path": "/relations/owns/0/0"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "relation tuple has wrong arity",
+     "path": "/relations/owns/0"
+    }
+   },
+   "case": "validation/validation_017",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: relation tuple has wrong arity",
+     "path": "/relations/owns/0"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Identifier exceeds 64 ASCII bytes"
+    }
+   },
+   "case": "validation/validation_027",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Identifier exceeds 64 ASCII bytes"
+    }
+   },
+   "listed": true,
+   "op": "environment"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "local ID exceeds 64 ASCII bytes",
+     "path": "/domains/person/1"
+    }
+   },
+   "case": "validation/validation_028",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: local ID exceeds 64 ASCII bytes",
+     "path": "/domains/person/1"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Identifier exceeds 64 ASCII bytes"
+    }
+   },
+   "case": "validation/validation_029",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Identifier exceeds 64 ASCII bytes"
+    }
+   },
+   "listed": true,
+   "op": "environment"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
+    }
+   },
+   "case": "validation/validation_030",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
+    }
+   },
+   "case": "validation/validation_032",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "Identifier exceeds 64 ASCII bytes"
+    }
+   },
+   "case": "validation/validation_033",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "ResourceLimit",
+     "message": "ResourceLimit: Identifier exceeds 64 ASCII bytes"
+    }
+   },
+   "listed": true,
+   "op": "environment"
+  },
+  {
+   "authority": "python",
+   "base": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
+    }
+   },
+   "case": "validation/validation_034",
+   "class": "wording",
+   "corpus": "conformance",
+   "head": {
+    "raised": {
+     "code": "InvalidModel",
+     "message": "InvalidModel: local ID must match [a-z][a-z0-9_]*",
+     "path": "/domains/person/1"
+    }
+   },
+   "listed": true,
+   "op": "model"
+  }
+ ],
+ "records": {
+  "conformance/lean": 19806,
+  "conformance/python": 19806
+ },
+ "totals": {
+  "same": 39566,
+  "wording": 46
+ },
+ "unavailable_both": {},
+ "unlisted": 0
+}

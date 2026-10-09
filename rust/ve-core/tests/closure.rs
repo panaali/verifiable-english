@@ -23,6 +23,11 @@ fn model(env: &Environment, rows: Vec<Vec<String>>, end: &str) -> FiniteModel {
     .unwrap()
 }
 
+/// A document from its wire AST (Rust reads no source text).
+fn doc(env: &Environment, ast: serde_json::Value) -> Document {
+    Document::from_value(env, &ast).unwrap()
+}
+
 #[test]
 fn all_closure_conformance_formulas() {
     let cases = loads_json(include_bytes!("../../../conformance/closure.json")).unwrap();
@@ -31,11 +36,6 @@ fn all_closure_conformance_formulas() {
         let env = Environment::from_value(&case["environment"]).unwrap();
         let doc = Document::from_value(&env, &case["ast"]).unwrap();
         let model = FiniteModel::from_value(&env, &case["model"]).unwrap();
-        assert_eq!(print_document(&doc).unwrap(), case["source"]);
-        assert_eq!(
-            parse(&env, case["source"].as_str().unwrap().as_bytes()).unwrap(),
-            doc
-        );
         for (i, expected) in case["expected"].as_array().unwrap().iter().enumerate() {
             assert_eq!(
                 json!(
@@ -63,7 +63,10 @@ fn all_three_vertex_graphs_agree_with_independent_path_search() {
             formulas.push((source, destination));
         }
     }
-    let doc = parse(&env, b"tc[edge](@start, @end).\nrtc[edge](@start, @end).\ntc[node a, b | (a edge b)](@start, @end).\n").unwrap();
+    // tc[edge](@start, @end). rtc[edge](@start, @end). tc[node a, b | (a edge b)](@start, @end).
+    let doc = doc(&env, json!([["reach","plus",["named","edge"],["const","start"],["const","end"]],
+        ["reach","star",["named","edge"],["const","start"],["const","end"]],
+        ["reach","plus",["body","node",["binary","edge",["var",1],["var",0]]],["const","start"],["const","end"]]]));
     let names = ["a", "b", "c"];
     for mask in 0..512 {
         let mut rows = Vec::new();
@@ -103,11 +106,10 @@ fn all_three_vertex_graphs_agree_with_independent_path_search() {
 #[test]
 fn captured_parameters_and_models_cannot_share_stale_closures() {
     let env = environment();
-    let doc = parse(
-        &env,
-        b"for every node z, (tc[node a, b | ((a edge b) and (not (b equals z)))](@start, @end)).\n",
-    )
-    .unwrap();
+    // for every node z, (tc[node a, b | ((a edge b) and (not (b equals z)))](@start, @end)).
+    let blocked = doc(&env, json!([["forall","node",["reach","plus",["body","node",
+        ["and",["binary","edge",["var",1],["var",0]],["not",["eq",["var",0],["var",2]]]]],
+        ["const","start"],["const","end"]]]]));
     let m = model(
         &env,
         vec![vec!["a".into(), "b".into()], vec!["b".into(), "c".into()]],
@@ -115,10 +117,10 @@ fn captured_parameters_and_models_cannot_share_stale_closures() {
     );
     // z=a admits the path; z=b blocks it. A cache missing z returns true.
     assert_eq!(
-        evaluate(&doc, &m, MAX_EVALUATIONS).unwrap().value,
+        evaluate(&blocked, &m, MAX_EVALUATIONS).unwrap().value,
         Some(false)
     );
-    let doc = parse(&env, b"tc[edge](@start, @end).\n").unwrap();
+    let doc = doc(&env, json!([["reach","plus",["named","edge"],["const","start"],["const","end"]]]));
     assert_eq!(
         evaluate(&doc, &m, MAX_EVALUATIONS).unwrap().value,
         Some(true)
@@ -142,12 +144,18 @@ fn warshall_and_nested_body_work_exhausts_without_a_boolean() {
         vec![vec!["a".into(), "b".into()], vec!["b".into(), "c".into()]],
         "c",
     );
-    for source in [
-        "tc[edge](@start, @end).\n",
-        "tc[node a, b | (a edge b)](@start, @end).\n",
-        "tc[node a, b | (rtc[node c, d | (c edge d)](a, b))](@start, @end).\n",
+    for ast in [
+        // tc[edge](@start, @end).
+        json!(["reach","plus",["named","edge"],["const","start"],["const","end"]]),
+        // tc[node a, b | (a edge b)](@start, @end).
+        json!(["reach","plus",["body","node",["binary","edge",["var",1],["var",0]]],
+               ["const","start"],["const","end"]]),
+        // tc[node a, b | (rtc[node c, d | (c edge d)](a, b))](@start, @end).
+        json!(["reach","plus",["body","node",["reach","star",["body","node",
+               ["binary","edge",["var",1],["var",0]]],["var",1],["var",0]]],
+               ["const","start"],["const","end"]]),
     ] {
-        let doc = parse(&env, source.as_bytes()).unwrap();
+        let doc = doc(&env, json!([ast]));
         let full = evaluate(&doc, &m, MAX_EVALUATIONS).unwrap();
         assert_eq!(full.value, Some(true));
         for budget in 0..full.evaluations {

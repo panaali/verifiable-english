@@ -6,6 +6,7 @@ import VE.Json
 import VE.NormDefaults.Wire
 import VE.SoftNorms.Wire
 import VE.EnglishGrammar.Advice
+import VE.EnglishGrammar.Diagnose
 import VE.SpeechActs.Wire
 import VE.Attribution.Wire
 import VE.Readings.Wire
@@ -225,11 +226,34 @@ def blockRouteView (environment : Json) : Json := Id.run do
   return environment.setObjVal! "vocabulary"
     ((vocabulary.setObjVal! "predicates" predicates).setObjVal! "constants" constants)
 
+/-- The optional fields of an English request: the overlay, and `generated` (E2.6). -/
+def optionalFields (j : Json) : List String :=
+  ["overlay", "generated"].filter fun k => (j.getObjVal? k).toOption.isSome
+
+/-- Whether the request reads Python's generated soft frame (`SoftEnvironment(prime, generated=True)`: the soft
+route's `E′` with its `soft__` decision predicates). Present only as `true`. -/
+def generatedFrame (j : Json) : Except String Bool :=
+  match j.getObjVal? "generated" with
+  | .error _ => pure false
+  | .ok (.bool true) => pure true
+  | .ok _ => throw "InvalidInput: generated is true when present"
+
+/-- A generated soft frame as the soft route reads it (`check_soft_source(..., generated=True)`): without the
+`soft__` predicates the route generated, which a submitted environment may not declare. -/
+def generatedView (environment : Json) : Json :=
+  let vocabulary := environment.getObjValD "vocabulary"
+  let predicates := match VE.Bridge.fields (vocabulary.getObjValD "predicates") with
+    | .ok ps => Json.mkObj (ps.filter fun (p, _) => !p.startsWith "soft__")
+    | .error _ => vocabulary.getObjValD "predicates"
+  environment.setObjVal! "vocabulary" (vocabulary.setObjVal! "predicates" predicates)
+
 /-- Part 1 of the boundary (S3 spec 2.3): check the profile blocks and W6 declarations by the route
 decoders on the submitted environment (without the statement layers), using an empty document. The
 alternatives environment scope validates other profiles' declarations with their owner while preserving
 fixed role predicates. -/
-def validateDeclarations (environment : Json) : Except String Unit := do
+def validateDeclarations (environment : Json) (generated : Bool := false) : Except String Unit := do
+  -- A generated soft frame is checked by every route as the soft route checks it: without its `soft__` predicates.
+  let environment := if generated then generatedView environment else environment
   let ps := (VE.Route.Gate.profilesOf environment).toOption.getD []
   if ps.contains "risk@0" || (environment.getObjVal? "risk").isOk then
     let _ ← VE.Risk.Wire.decodeRiskSource (layerView environment) (Json.mkObj [("norms", Json.arr #[])])
@@ -257,9 +281,9 @@ def validateDeclarations (environment : Json) : Except String Unit := do
 
 /-- The environment identity, as the typing service computes it; for an environment with a profile block, after
 the three parts of the boundary (S3 spec 2.3). -/
-def environmentId (environment : Json) : Except String String := do
+def environmentId (environment : Json) (generated : Bool := false) : Except String String := do
   if declaresBlock environment then
-    validateDeclarations environment
+    validateDeclarations environment generated
     let _ ← VE.Service.Standalone.validated (← typingView environment)
     VE.Service.Standalone.environmentIdOf (← VE.Route.Gate.profilesOf environment) environment
   else
@@ -290,9 +314,10 @@ def decodeCase (j : Json) : Except String Case := do
     | .ok (.obj o) => pure (Json.obj o)
     | .ok _ => throw "InvalidInput: the overlay is not an object"
     | .error _ => pure (Json.mkObj [])
-  let envId ← environmentId environment
+  let generated ← generatedFrame j
+  let envId ← environmentId environment generated
   let lexicon ← j.getObjVal? "lexicon"
-  let lexiconEnvId ← environmentId (displayJson environment overlay)
+  let lexiconEnvId ← environmentId (displayJson environment overlay) generated
   let L ← decodeLexicon lexiconEnvId lexicon
   let E ← Env.decode environment overlay
   let O ← Overlay.decode overlay
@@ -371,6 +396,18 @@ def invalidOverlayFields (mode : String) (f : Failure) : List (String × Json) :
 def budgetFields (i : Nat) : List (String × Json) :=
   status "budget" ++ coded "Budget" s!"Sentence {i + 1} needs more work than the limit allows. No verdict was reached." ++
     [("sentence", toJson i)]
+
+/-- `NoDerivation` for sentence `i`: Lean's text, then what the sentence needs where it stops and the span of
+that place (`diagnose`, spec 4.5); the text alone when the budget does not allow finding it. -/
+def noReadingFields (c : Case) (source : String) (i : Nat) : List (String × Json) :=
+  let text := s!"Sentence {i + 1} has no reading with the current vocabulary."
+  let found := match lexSpans source with
+    | .ok sents => (sents[i]?).bind (diagnose c.E c.L source)
+    | .error _ => none
+  match found with
+  | some d => status "none" ++ coded "NoDerivation" (text ++ " " ++ d.text) ++
+      [("span", spanJson (codepointsBefore source d.span.1, codepointsBefore source d.span.2))]
+  | none => status "none" ++ coded "NoDerivation" text
 
 /-- The code points of the offending character of a lexical rejection that names one (spec 4.4). -/
 def lexicalSpan (source : String) : Reject → Option (Nat × Nat)
@@ -458,8 +495,7 @@ def authoring (c : Case) (source : String) : Except String (List (String × Json
     let pos := [("sentence", toJson i)]
     match o with
     | .ok _ _ => throw "a stopped reading cannot be ok"
-    | .noDerivation => pure (status "none" ++ coded "NoDerivation"
-        s!"Sentence {i + 1} has no reading with the current vocabulary." ++ pos)
+    | .noDerivation => pure (noReadingFields c source i ++ pos)
     | .ambiguous t u => pure (status "many" ++ coded "Ambiguous"
         s!"Sentence {i + 1} can be read in more than one way. Two of the ways are shown." ++ pos ++
         [("witnesses", Json.arr #[treeJson tags t, treeJson tags u])])
@@ -482,7 +518,7 @@ def translation (c : Case) (cap : Nat) (source : String) : List (String × Json)
       status "many" ++ coded "Ambiguous" "Sentence 1 can be read in more than one way." ++ found
     else if !complete then budgetFields 0 ++ found
     else if rs.isEmpty then
-      status "none" ++ coded "NoDerivation" "Sentence 1 has no reading with the current vocabulary." ++ found
+      noReadingFields c source 0 ++ found
     else status "one" ++ found
   | .invalidGrammar g => invalidFields "english.read" c g
   | .lexical r => status "rejected" ++ coded r.code (rejectText 0 r) ++
@@ -513,7 +549,7 @@ def refusalExtras (profiles : List String) (source : String) (fields : List (Str
 
 def readCase (j : Json) : Except String Json := do
   VE.Bridge.exactFields j ((["id", "environment", "lexicon", "source", "mode", "cap"] ++
-    if (j.getObjVal? "overlay").toOption.isSome then ["overlay"] else []))
+    optionalFields j))
   let id ← VE.Bridge.stringField j "id"
   let c ← decodeCase j
   let source ← VE.Bridge.stringField j "source"
@@ -582,7 +618,7 @@ def policyJson (E : Env) : Json :=
 
 def grammarCase (j : Json) : Except String Json := do
   VE.Bridge.exactFields j ((["id", "environment", "lexicon"] ++
-    if (j.getObjVal? "overlay").toOption.isSome then ["overlay"] else []))
+    optionalFields j))
   let id ← VE.Bridge.stringField j "id"
   let c ← decodeCase j
   if let some f := c.overlayFailure then
@@ -618,7 +654,7 @@ def grammarCase (j : Json) : Except String Json := do
 
 def checkCase (j : Json) : Except String Json := do
   VE.Bridge.exactFields j ((["id", "environment", "lexicon", "formulas", "marks", "candidates"] ++
-    if (j.getObjVal? "overlay").toOption.isSome then ["overlay"] else []))
+    optionalFields j))
   let id ← VE.Bridge.stringField j "id"
   let c ← decodeCase j
   let result (fields : List (String × Json)) :=

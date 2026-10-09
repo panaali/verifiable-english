@@ -1,0 +1,21 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_____________ test_a_lean_only_rejection_carries_leans_diagnostic ______________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7c84fbf7a3f0>
+
+    def test_a_lean_only_rejection_carries_leans_diagnostic(monkeypatch):
+        from ve.backends.diagnostics import checker_error
+
+        def reject(mode, case):
+            raise checker_error("UnknownSymbol: lean refuses this vocabulary")
+
+        fake_lean(monkeypatch, reject)
+>       with pytest.raises(VEError, match="^UnknownSymbol: lean refuses this vocabulary$"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE VEError
+
+tests/test_stage2_validation.py:105: Failed
+=========================== short test summary info ============================
+FAILED tests/test_stage2_validation.py::test_a_lean_only_rejection_carries_leans_diagnostic
+1 failed in 0.79s
