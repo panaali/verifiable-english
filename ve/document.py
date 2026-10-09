@@ -394,7 +394,18 @@ def _lean_answer(raw: bytes, admit: bool):
     except UnicodeDecodeError:
         return None
     from .backends.relay import answer
-    row, error = answer("document", {"id": "document", "document": text, "admit": admit})
+    case = {"id": "document", "document": text, "admit": admit}
+    if b"```ve " in raw:
+        try:
+            meta, _, fences = _split(raw)
+            if any(u.get("surface") == "english" and u.get("id") in fences
+                   for u, _ in _parts(meta["units"])):
+                from .english import EnglishVocabulary
+                from .english_grammar import export
+                case["lexicon"] = export(EnglishVocabulary(Environment(meta["environment"])))
+        except (KeyError, TypeError, VEError):
+            pass  # Lean checks the document before a fence needs the proposal.
+    row, error = answer("document", case)
     if isinstance(error, (CheckerUnavailable, ResourceLimit)):
         return None
     if error is not None:
@@ -413,7 +424,7 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
         return CheckerUnavailable(f"CheckerUnavailable: the Lean document answer {what}")
     try:
         meta = json.loads(raw[4:raw.find(b"\n---\n", 4)].decode("utf-8"))
-        body = raw[raw.find(b"\n---\n", 4) + 5:]
+        _, body, fences = _split(raw)
         declared = [(u, parent) for u, parent in _parts(meta["units"])]
     except Exception as exc:  # noqa: BLE001 - Lean accepted this front matter
         raise unavailable("is for a front matter Python cannot read") from exc
@@ -424,7 +435,7 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
         raise unavailable("is not bound to the document sent") from exc
     try:
         env = Environment(meta["environment"])
-        if row["source_id"] != source_id(source, env) or row["document_id"] != _document_id(meta, source, {}):
+        if row["source_id"] != source_id(source, env) or row["document_id"] != _document_id(meta, source, fences):
             raise unavailable("is not bound to the document sent")
         for unit in units:
             if "content" in unit and unit["meaning_id"] != digest(
@@ -436,8 +447,32 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
                      "content": u.get("content"), "meaning_id": u.get("meaning_id"), "status": u["status"],
                      **({"parent_id": u["parent_id"]} if "parent_id" in u else {})} for u in units]
         active = active_reading_sets(meta.get("reading_sets", []))
-        norms = (NormDocument(env, []) if any(d.regulated is not None for d in env.predicates.values())
-                 else None)
+        if "norm-defaults@0" in env.profiles:
+            from .norm_defaults import UnspecifiedDocument
+            defaults_env = env
+            if "readings@1" in env.profiles:
+                lowered = env.to_dict()
+                lowered["profiles"] = [p for p in lowered["profiles"] if p != "readings@1"]
+                defaults_env = Environment(lowered)
+            norm_defaults = UnspecifiedDocument(defaults_env, [u["content"] for u in compiled
+                                                                if u["kind"] == "norm" and u["content"] is not None])
+            norms = None
+        else:
+            norm_defaults = None
+            norms = (NormDocument(env, []) if any(d.regulated is not None for d in env.predicates.values())
+                     else None)
+        reading_sets = meta.get("reading_sets", [])
+        s1_content = "readings@1" in env.profiles and any(
+            type(s) is dict and any(type(r) is dict and s1_content_kind(r.get("content")) in
+                                    {"norm", "right", "right_lines", "limitation"}
+                                    for r in s.get("readings", [])) for s in reading_sets)
+        readings_s1 = readings_s2 = None
+        if s1_content:
+            from .readings_route import validate as validate_s1, elaborate as elaborate_s2
+            readings_s1 = validate_s1(env.to_dict(), compiled, reading_sets)
+            readings_s2 = elaborate_s2(env.to_dict(), compiled, reading_sets,
+                                       couplings=meta.get("couplings", []),
+                                       narrowings=meta.get("narrowings", []))
         reading_plan = plan_choices([r for r in active if r["status"] == "open"], couplings=[])
     except CheckerUnavailable:
         raise
@@ -445,8 +480,9 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
         raise unavailable(f"could not be built: {type(exc).__name__}: {exc}"[:300]) from exc
     return {"meta": meta, "environment": env, "source": source, "source_id": row["source_id"],
             "document_id": row["document_id"], "directory": path.parent, "units": compiled, "norms": norms,
-            "soft_document": None, "norm_defaults": None, "senses": None, "reports": None,
-            "rights_document": None, "readings_s1": None, "readings_s2": None, "reading_plan": reading_plan,
+            "soft_document": None, "norm_defaults": norm_defaults, "senses": None, "reports": None,
+            "rights_document": None, "readings_s1": readings_s1, "readings_s2": readings_s2,
+            "reading_plan": reading_plan,
             "lean": {"coverage": row["coverage"], "admitted": admitted}}
 
 
@@ -492,6 +528,8 @@ def _bind_document_answer(body, meta, declared, row):
         require(("content" in unit) == ("meaning_id" in unit))
         if has_content and type(authored["content"]) is dict and "ast" in authored["content"]:
             require(same(unit["content"], authored["content"]["ast"]))
+        if has_content and type(authored["content"]) is dict and "norm" in authored["content"]:
+            require(same(unit["content"], authored["content"]))
         span = unit["span"]
         require(type(span) is list and len(span) == 2 and
                 all(type(n) is int for n in span) and 0 <= span[0] < span[1] <= len(source))
@@ -985,7 +1023,22 @@ def coverage(doc, scoped=None, rights_report=None):
     replayed rights report when the caller already has it. A document Lean's `document` mode accepted has
     Lean's coverage (batch 16b)."""
     if "lean" in doc:
-        return deepcopy(doc["lean"]["coverage"])
+        answer = deepcopy(doc["lean"]["coverage"])
+        if _content_bearing(doc):
+            from .readings_route import report as readings_report
+            readings = readings_report(doc)
+            answer["residual"].update({"separations": sum(readings["separations"].values()),
+                                       "readings_findings": sum(readings["findings"].values()),
+                                       "pending_candidates": readings["pending_candidates"],
+                                       "couplings": readings["couplings"]})
+        if doc.get("norm_defaults") is not None:
+            lines = coverage_defaults(doc)
+            gaps = lines["residual"]
+            answer["residual"]["gaps"] = len(gaps["gaps"])
+            answer["residual"]["ungrounded_defaults"] = gaps["ungrounded_defaults"]
+            answer["residual_total"] = sum(answer["residual"].values())
+            answer["norm_defaults"] = {"gaps": gaps["gaps"], "findings": lines["findings"]}
+        return answer
     units = doc["units"]
     source = doc["source"]
     kinds = {}
