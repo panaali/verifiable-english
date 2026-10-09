@@ -923,10 +923,6 @@ def _request_key(conclusion_ast, premises, assumed):
                       sort_keys=True)
 
 
-_ROWS = {"CONFLICT-FREE", "CONFLICT", "UNKNOWN", "proved", "refuted", "model", "INCONSISTENT"}
-_LINE = {"frame": str, "readings": list, "gaps": list}
-
-
 def _check_answer(row, question, choices=None, exact=True):
     """The answer's shape as `Readings.Run.verdictsAnswer` builds it (every field, its type, booleans as booleans),
     its rows bound to the request (each a compatible choice of Lean's elaborate row, none twice, all of them when
@@ -937,28 +933,20 @@ def _check_answer(row, question, choices=None, exact=True):
         if not condition:
             raise ValueError
     try:
-        need(row["route"] == "enumerated" and row["question"] == question)
-        need(type(row["result"]) is dict and type(row["per_choice"]) is list and type(row["english"]) is list)
-        for key in ("finding_sets", "restrictions", "labels", "untaken", "dead"):
-            need(type(row[key]) is list and all(type(x) is not bool for x in row[key]))
-        need(row["dead_readings"] is None or type(row["dead_readings"]) is list)
+        from .backends.service_schema import Invalid, check_row
+        # The producer's generated, proved response shape owns every field,
+        # status spelling and JSON type. This check is also used for a raw row
+        # supplied to the formatter, outside the service transport.
+        check_row("readings-route", row, {"id": row.get("id"), "kind": "readings-verdicts"}, 0)
+        need(row["question"] == question)
         seen = []
         for entry in row["per_choice"]:
-            need(type(entry["choice"]) is list and entry["conflict"] in _ROWS and entry["choice"] not in seen)
+            need(entry["choice"] not in seen)
             seen.append(entry["choice"])
-            need(type(entry["evidence"]) is dict and all(type(v) is bool for v in entry["evidence"].values()))
-            need(type(entry["errors"]) is dict and all(type(v) is str for v in entry["errors"].values()))
-            need(type(entry["shown"]) is dict and type(entry["gaps"]) is dict)
-            for key in ("query", "premises"):
-                need(key not in entry or entry[key] in _ROWS)
         if choices is not None and "budget" not in row["result"]:
             need(all(c in choices for c in seen))
             need(not exact or seen == choices)
-        for line in row["english"]:
-            need(type(line) is dict and all(type(line[k]) is t for k, t in _LINE.items()))
-            for key in ("result", "model", "label"):
-                need(line[key] is None or type(line[key]) is str)
-    except (KeyError, TypeError, ValueError) as exc:
+    except (Invalid, AttributeError, KeyError, TypeError, ValueError) as exc:
         raise CheckerUnavailable("the Lean readings route returned an invalid answer") from exc
     for entry in row["per_choice"]:
         for piece, error in entry["errors"].items():
