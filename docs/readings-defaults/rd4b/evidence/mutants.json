@@ -1,0 +1,59 @@
+{
+  "mutants": [
+    {
+      "name": "companion-route",
+      "file": "ve/readings_components.py",
+      "old": "return type(reading_sets) is list and any(",
+      "new": "return False and type(reading_sets) is list and any(",
+      "test": "tests/test_readings_components_document.py::test_fc1_check_three_components_conflict_free_with_a_model",
+      "exit_code": 1,
+      "failed_id_present": true,
+      "source_sha256_after_restore": "48af2b4e88d67875d5b8701beff8031865705a6ad715f0ecd5e78707a9af9af5",
+      "failure_tail": "========================= FAILURES ===================================\n__________ test_fc1_check_three_components_conflict_free_with_a_model __________\nve/readings_route.py:446: in _check\n    _need(ROW(row) and row[\"id\"] == case[\"id\"])\nve/readings_route.py:239: in _need\n    raise _Invalid\nE   ve.readings_route._Invalid\n\nThe above exception was the direct cause of the following exception:\ntests/test_readings_components_document.py:104: in test_fc1_check_three_components_conflict_free_with_a_model\n    report = check_document(fc1(tmp_path))\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/assurance.py:89: in guarded\n    return fn(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^\nve/document.py:1210: in check_document\n    return _check_document(path)\n           ^^^^^^^^^^^^^^^^^^^^^\nve/document.py:1214: in _check_document\n    doc = _load(Path(path), admit=True)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/document.py:374: in _load\n    return _load_document(raw, path, None)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/document.py:741: in _load_document\n    readings_s1 = validate_s1(env.to_dict(), compiled, reading_sets)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/readings_route.py:464: in validate\n    _check(row, case)\nve/readings_route.py:450: in _check\n    raise CheckerUnavailable(\"the Lean readings route returned an invalid answer\") from exc\nE   ve.errors.CheckerUnavailable: the Lean readings route returned an invalid answer\n=========================== short test summary info ============================\nFAILED tests/test_readings_components_document.py::test_fc1_check_three_components_conflict_free_with_a_model\n1 failed in 0.58s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-himdknd0)\n"
+    },
+    {
+      "name": "product-verdict",
+      "file": "ve/readings_components.py",
+      "old": "return {**row[\"result\"], \"sentence\": row[\"sentence\"],",
+      "new": "return {**row[\"result\"], \"verdict\": \"ALL\", \"sentence\": row[\"sentence\"],",
+      "test": "tests/test_readings_components_document.py::test_fc17_all_is_gated_on_every_other_component",
+      "exit_code": 1,
+      "failed_id_present": true,
+      "source_sha256_after_restore": "48af2b4e88d67875d5b8701beff8031865705a6ad715f0ecd5e78707a9af9af5",
+      "failure_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_______________ test_fc17_all_is_gated_on_every_other_component ________________\ntests/test_readings_components_document.py:275: in test_fc17_all_is_gated_on_every_other_component\n    assert (data[\"verdict\"], data[\"status\"], data[\"conflict_status\"]) == (\nE   AssertionError: assert ('ALL', 'UNKN...', 'CONFLICT') == ('UNKNOWN', '...', 'CONFLICT')\nE     \nE     At index 0 diff: 'ALL' != 'UNKNOWN'\nE     Use -v to get more diff\n=========================== short test summary info ============================\nFAILED tests/test_readings_components_document.py::test_fc17_all_is_gated_on_every_other_component\n1 failed in 1.09s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-e3g6pmz5)\n"
+    },
+    {
+      "name": "response-unit-binding",
+      "file": "ve/readings_components.py",
+      "old": "_need(entry[\"units\"] == checked_units)",
+      "new": "_need(set(entry[\"units\"]) <= set(checked_units))",
+      "test": "tests/test_readings_components_lean.py::test_every_emptied_or_duplicated_row_list_is_refused",
+      "exit_code": 1,
+      "failed_id_present": true,
+      "source_sha256_after_restore": "48af2b4e88d67875d5b8701beff8031865705a6ad715f0ecd5e78707a9af9af5",
+      "failure_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_____________ test_every_emptied_or_duplicated_row_list_is_refused _____________\ntests/test_readings_components_lean.py:208: in test_every_emptied_or_duplicated_row_list_is_refused\n    assert survived == [], survived\nE   AssertionError: [('conflict', 'empty', ('components', 0, 'units')), ('conflict', 'drop first', ('components', 0, 'units')), ('conflict..., 'units')), ('conflict', 'empty', ('components', 2, 'units')), ('conflict', 'drop first', ('components', 2, 'units'))]\nE   assert [('conflict',... 2, 'units'))] == []\nE     \nE     Left contains 6 more items, first extra item: ('conflict', 'empty', ('components', 0, 'units'))\nE     Use -v to get more diff\n=========================== short test summary info ============================\nFAILED tests/test_readings_components_lean.py::test_every_emptied_or_duplicated_row_list_is_refused\n1 failed in 2.67s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-qg4q8mo2)\n"
+    },
+    {
+      "name": "english-conclusion-slot",
+      "file": "ve/readings_components.py",
+      "old": "wordings[row[\"component\"]].slots.conclusions.add(slot)",
+      "new": "pass  # seeded fault: the canonical conclusion is not passed to W7",
+      "test": "tests/test_readings_components_document.py::test_a_query_typed_in_one_component_is_all_with_e30",
+      "exit_code": 1,
+      "failed_id_present": true,
+      "source_sha256_after_restore": "48af2b4e88d67875d5b8701beff8031865705a6ad715f0ecd5e78707a9af9af5",
+      "failure_tail": "ons: Under every reading of sentence 2, the conclusion follows: *For every agent, for every user that that agent must help, that agent may help that user.*\n\nThe above exception was the direct cause of the following exception:\ntests/test_readings_components_document.py:155: in test_a_query_typed_in_one_component_is_all_with_e30\n    data = query(capsys, fc1(tmp_path), HELP_PERMITTED)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntests/test_readings_components_document.py:90: in query\n    assert main([\"readings\", str(path), \"--conclusion\", str(conclusion_path), *args]) == 0\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/document.py:1689: in main\n    data = components_query(doc, conclusion, assumed=assumed, sentence=args.sentence)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/readings_components.py:613: in query\n    \"decided_units\": row[\"decided_units\"], \"english\": english(doc, route, row, slot)}\n                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/readings_components.py:554: in english\n    raise CheckerUnavailable(f\"ReadingsConformance: Lean's English plan has a line Python cannot render: \"\nE   ve.errors.CheckerUnavailable: ReadingsConformance: Lean's English plan has a line Python cannot render: {'component': 'rs_a', 'line': {'frame': 'E30', 'gaps': [], 'label': None, 'model': None, 'readings': [['rs_a', 0]], 'result': 'R2'}}\n=========================== short test summary info ============================\nFAILED tests/test_readings_components_document.py::test_a_query_typed_in_one_component_is_all_with_e30\n1 failed in 1.01s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-wzend3rt)\n"
+    },
+    {
+      "name": "split-citation-content",
+      "file": "ve/readings_components.py",
+      "old": "shown[\"content\"] = None",
+      "new": "shown[\"content\"] = by_id[unit[\"id\"]][\"content\"]",
+      "test": "tests/test_readings_components_document.py::test_fc11_a_narrowing_is_listed_under_its_component_only",
+      "exit_code": 1,
+      "failed_id_present": true,
+      "source_sha256_after_restore": "48af2b4e88d67875d5b8701beff8031865705a6ad715f0ecd5e78707a9af9af5",
+      "failure_tail": "^^^^^^^^^^^^^^^^^^\nve/assurance.py:89: in guarded\n    return fn(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^\nve/document.py:1210: in check_document\n    return _check_document(path)\n           ^^^^^^^^^^^^^^^^^^^^^\nve/document.py:1216: in _check_document\n    return _report(doc)\n           ^^^^^^^^^^^^\nve/document.py:1276: in _report\n    \"coverage\": coverage(doc, rights_report=rights_report),\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/document.py:1082: in coverage\n    readings = readings_report(doc)\n               ^^^^^^^^^^^^^^^^^^^^\nve/readings_route.py:489: in report\n    return components_report(doc)\n           ^^^^^^^^^^^^^^^^^^^^^^\nve/readings_components.py:577: in report\n    sections = (s1_sections(subdoc(doc, loaded), loaded[\"validate\"], numbers)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/readings_route.py:501: in s1_sections\n    english = Wording(doc, numbers=numbers)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/readings_route.py:557: in __init__\n    with _built():\n         ^^^^^^^^\n../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/contextlib.py:162: in __exit__\n    self.gen.throw(value)\nve/readings_route.py:216: in _built\n    raise CheckerUnavailable(\"ReadingsConstruction: Python could not build the English of the document \"\nE   ve.errors.CheckerUnavailable: ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError\n=========================== short test summary info ============================\nFAILED tests/test_readings_components_document.py::test_fc11_a_narrowing_is_listed_under_its_component_only\n1 failed in 0.97s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-a_b73j03)\n"
+    }
+  ]
+}
