@@ -11,14 +11,9 @@ open Lean ResponseShape
 def unit : Shape :=
   n [obj, .required ["id", "span", "kind", "meaning", "support", "status"],
     closed [
-      ("id", ref "common.json#/$defs/token"),
-      ("span", n [arr, .prefixItems [ref "common.json#/$defs/nat", ref "common.json#/$defs/nat"],
-        .minItems 2, .maxItems 2]),
-      ("kind", .bool true), ("meaning", .bool true),
-      ("support", str), ("status", str),
-      ("parent_id", ref "common.json#/$defs/token"),
-      ("content", ref "common.json#/$defs/generated_formula"),
-      ("meaning_id", ref "common.json#/$defs/hex64")]]
+      ("id", ref "common.json#/$defs/token"), ("span", n [arr, .prefixItems [ref "common.json#/$defs/nat", ref "common.json#/$defs/nat"], .minItems 2, .maxItems 2]),
+      ("kind", .bool true), ("meaning", .bool true), ("support", str), ("status", str),
+      ("parent_id", ref "common.json#/$defs/token"), ("content", ref "common.json#/$defs/generated_formula"), ("meaning_id", ref "common.json#/$defs/hex64")]]
 
 def cells : Shape :=
   c "Alternatives.Wire.coverage's cells, as the document mode relays them." [
