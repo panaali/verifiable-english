@@ -8,9 +8,11 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
-import sys
+
+from tools import nested_pytest
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -44,8 +46,9 @@ def run(out: Path) -> None:
             raise RuntimeError(f"{name}: expected exactly one mutation site")
         path.write_text(text.replace(old, new, 1))
         try:
-            cmd = [sys.executable, "-m", "pytest", "-q", test, "--tb=short"]
-            proc = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, check=False)
+            cmd = nested_pytest.command(["-q", test, "--tb=short"])
+            proc = subprocess.run(cmd, cwd=ROOT, env=nested_pytest.environment(os.environ),
+                                  capture_output=True, text=True, check=False)
         finally:
             path.write_bytes(source)
         if hashlib.sha256(path.read_bytes()).hexdigest() != before:

@@ -809,7 +809,7 @@ def test_dri_wording_rows_keep_the_base(tmp_path, capsys):
 
 def test_readings_verdicts_runs_on_the_component_it_names():
     """On a named companion component the answer is Lean's answer on that component written as a document of its
-    own; without `component` it is the answer on `main`."""
+    own; without `component` it contains the product and its main case."""
     from tests.test_readings_companions_lean import MAIN_UNIT, alone, env_main, fc1, merged, set_a, set_b
 
     def verdicts(raw, document, **fields):
@@ -824,5 +824,7 @@ def test_readings_verdicts_runs_on_the_component_it_names():
     row = verdicts(env_main(), document, component="rs_a", question="conflict")
     assert row["status"] == "ok" and row["route"] == "enumerated", row
     assert {e["choice"][0][0] for e in row["per_choice"]} == {"rs_a"}
-    main = {"units": [MAIN_UNIT, {"id": "u_a"}, {"id": "u_b"}], "reading_sets": []}
-    assert verdicts(env_main(), document, question="conflict") == verdicts(env_main(), main, question="conflict")
+    product = verdicts(env_main(), document, question="conflict")
+    assert product["status"] == "ok" and product["route"] == "components"
+    assert [entry["component"] for entry in product["components"]] == ["main", "rs_a", "rs_b"]
+    assert product["components"][0]["answer"]["question"] == "conflict"
