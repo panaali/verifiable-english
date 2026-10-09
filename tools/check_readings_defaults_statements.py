@@ -89,7 +89,7 @@ REFUTATIONS_6A = ROOT / "lean/VE/Readings/SupExtraExamples.lean"
 REFUTATIONS_NAMESPACE_6A = "VE.Readings.SupExtraExamples"
 AUDIT = ROOT / "lean/VE/Audit.lean"
 # 6.7's RD-6b declarations, built by RD-6b in the same file.
-LATER_6A = {"fill_transfers", "nd_superpose_conflict_free", "nd_superpose_all"}
+LATER_6A = set()
 KINDS = ("theorem", "def", "structure")
 # A Lean name runs to the first space or bracket, so `x'` or `A.x` is not read as `x` or `A`.
 START = re.compile(rf"^({'|'.join(KINDS)}) ([\w'!?.]+)", re.M)

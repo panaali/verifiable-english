@@ -169,7 +169,7 @@ RD6B = ["fill_transfers", "nd_superpose_all", "nd_superpose_conflict_free"]
 
 
 def _approved_6a_names():
-    return sorted(key for key in _checker().approved_6a() if key[1] not in RD6B)
+    return sorted(_checker().approved_6a())
 
 
 def _run_6a(tmp_path, source, checker=None):
@@ -184,16 +184,16 @@ def test_rd6a_statements_match_the_approved_text(capsys):
     checker = _checker()
     assert checker.main() == 0
     out = capsys.readouterr().out
-    assert "checked 7 approved RD-6a declarations (4 theorems)" in out
-    assert f"not built yet (a later batch): {', '.join(RD6B)}" in out
-    assert ("RD-6a PASS: 7 exact after whitespace normalization (1 amended by a DRI ruling, its original refuted in "
+    assert "checked 10 approved RD-6a declarations (7 theorems)" in out
+    assert "not built yet" not in out
+    assert ("RD-6a PASS: 10 exact after whitespace normalization (1 amended by a DRI ruling, its original refuted in "
             "Lean); 0 pending the statement re-review") in out
     assert ("superpose_all_extra: amended by DRI ruling 2026-10-07, refuted original mechanised "
             "(superpose_all_extra_refuted)") in out
     # Finding B1 of rd-6a-looprecheck1: the DRI ruling replaced the re-review, so nothing is pending.
     assert checker.PENDING_6A == checker.EDITS_6A == {}
     assert set(checker.AMENDED_6A) == {"superpose_all_extra"}
-    assert checker.LATER_6A == set(RD6B)
+    assert checker.LATER_6A == set()
 
 
 @pytest.mark.parametrize("kind, name", _approved_6a_names(), ids=lambda v: str(v))
@@ -312,18 +312,9 @@ def test_rd6a_checker_fails_on_a_missing_declaration(tmp_path, capsys):
 
 
 def test_rd6a_checker_compares_an_rd6b_declaration_once_built(tmp_path, capsys):
-    """A later (RD-6b) declaration in the file is compared: the approved text passes, a changed one fails."""
+    """Every RD-6b declaration is required and checked against the approved statement."""
     checker = _checker()
-    spec_text = checker.SPEC.read_text().split("### 6.7 RD-6a", 1)[1].split("```lean", 1)[1].split("```", 1)[0]
-    start = spec_text.index("theorem fill_transfers")
-    stop = spec_text.index("theorem nd_superpose_conflict_free")
-    statement = spec_text[start:stop].rstrip() + " := by\n  sorry\n"
-    source = checker.SOURCE_6A.read_text().replace("end Extra", statement + "\nend Extra", 1)
-    checker, code = _run_6a(tmp_path, source, checker)
-    assert code == 0
-    out = capsys.readouterr().out
-    assert "checked 8 approved RD-6a declarations (5 theorems)" in out
-    assert "not built yet (a later batch): nd_superpose_all, nd_superpose_conflict_free" in out
+    source = checker.SOURCE_6A.read_text()
     changed = source.replace("(hs : superposable (fillDoc N) = true) (hsu", "(hsu", 1)
     checker, code = _run_6a(tmp_path, changed)
     assert code == 1

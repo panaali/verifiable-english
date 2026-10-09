@@ -414,6 +414,7 @@ class S2Wording:
         elif verdict == "SOME":
             lines.append(E.named_result(self.readings(data["proof"]["choice"]), "follows", self.slots,
                                         conclusion=slot))
+            lines += self.provided(self._dependencies(data["proof"]))
             lines.append(self._countermodel(data["countermodel"]))
         elif verdict == "NOT ALL":
             lines.append(self._countermodel(data["countermodel"]))
@@ -503,7 +504,8 @@ class S2Wording:
         (norm-defaults' `point_clause`) and the filling's answer, in Lean's order."""
         from types import SimpleNamespace
         from .norm_defaults_english import point_clause
-        situation = SimpleNamespace(constants=model.get("constants") or {})
+        situation = SimpleNamespace(constants={name: value for name, value in (model.get("constants") or {}).items()
+                                               if name in self.frame.constants})
         found = [(point_clause(self.frame, situation, predicate, tuple(ids)), value) for predicate, ids, value in gaps]
         self.slots.clauses.update(clause for clause, _ in found)
         return found
@@ -546,7 +548,8 @@ def filled_gaps(frame, tables, model):
     from itertools import product
     from types import SimpleNamespace
     from .norm_defaults_english import point_clause
-    situation = SimpleNamespace(constants=model.get("constants") or {})
+    situation = SimpleNamespace(constants={name: value for name, value in (model.get("constants") or {}).items()
+                                           if name in frame.constants})
     relations = model.get("relations") or {}
     out = []
     for table in sorted(tables):

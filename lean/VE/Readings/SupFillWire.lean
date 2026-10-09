@@ -216,10 +216,10 @@ open VE.Norms (targets)
 open VE.SoftNorms (soften)
 open VE.Rights (correlate)
 
-/-- The first slot premise (the slot with `Fill_T`), or assumed atom, a model falsifies. -/
+/-- The first premise of `slotUnder D A ++ Fill_T`, in that order, a model falsifies, by its label. -/
 def firstFailingND {α : Type} [DecidableEq α] (N : NDoc) (A : Choice) (M : VE.FiniteModel α) : Option String :=
-  ((ndSlotLabelled N ++ A.map (fun x => (s!"readings:{x.1}:{x.2}", choiceAtom (fillDoc N) x.1 x.2))).find?
-    (fun x => !x.2.eval M [])).map (·.1)
+  ((slotLabelled (fillDoc N) ++ A.map (fun x => (s!"readings:{x.1}:{x.2}", choiceAtom (fillDoc N) x.1 x.2)) ++
+    VE.NormDefaults.Admission.fillLabelled (supU N)).find? (fun x => !x.2.eval M [])).map (·.1)
 
 def ndSlotLabels (N : NDoc) : List String := (ndSlotLabelled N).map (·.1)
 
