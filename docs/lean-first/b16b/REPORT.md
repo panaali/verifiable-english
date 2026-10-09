@@ -30,7 +30,8 @@ proposed there.
 1. **Suite.** `tools/gate.py` at `9003f240` in a clean worktree: passed, 12,647 passed, 90 allowed skips, 0 failed of 12,738 collected; Lean build and audit passed; Rust 37 passed (`evidence/suite.json`). Only this report and its evidence follow that commit.
 2. **Corpus A/B.** 0 unlisted differences over all nine corpora; the listed ones are the environment, formula
    and admission decoders' texts and codes, which Lean now supplies for the documents it owns (DF-3 and DF-9,
-   batches 12b and 13b), and pilot harness artifacts. No acceptance changed.
+   batches 12b and 13b), and pilot harness artifacts. This is the signed capture at `9a9a02ce`; the later
+   diagnostic corrections are covered by the saved-case regressions in the final gate. No acceptance changed.
 3. **Ledger.** LEDGER.md.
 4. **Latency.** Within the absolute budgets; the DRI signed the new Lean CPU over the 20% rule on 2026-10-08.
 
