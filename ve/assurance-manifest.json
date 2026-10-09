@@ -66,7 +66,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 27572,
+    "total_lines": 27970,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -380,7 +380,7 @@
           "admitNodes",
           "admitDocument"
         ],
-        "reason": "norm-defaults@0 W2 admission decoder over E‴; the full file is pinned conservatively"
+        "reason": "norm-defaults@0 W2 admission decoder over E\u2034; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/NormDefaults/Layered.lean",
@@ -571,6 +571,63 @@
         ]
       },
       {
+        "file": "lean/VE/Readings/Companions.lean",
+        "lines": 923,
+        "sha256": "dc0e7274664915cab3c524fcd827e0b4e46b182aa0a00b31f545b9727df84bb0",
+        "ranges": [
+          [
+            1,
+            923
+          ]
+        ],
+        "declarations": [
+          "companionSets",
+          "companionIds",
+          "reservedComponentText",
+          "carries",
+          "readingsOf",
+          "mergeCompanions",
+          "mergeCategory",
+          "mergeOpenTerms",
+          "mergeTerms",
+          "companionMeaningId",
+          "meaningCheck",
+          "profileCheck",
+          "componentOf",
+          "crossingText",
+          "shapeText",
+          "splitCase"
+        ],
+        "reason": "readings-defaults RD-4a: a candidate's `companion` (its environment and open terms) read, merged per companion set and validated through the pinned Readings.Wire and Route decoders (`decodeEnvironment`, `openTermNames`), each recorded `meaning_id` checked against W1's identity over the companion's own environment, and the document split into its cases; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Readings/SupFillWire.lean",
+        "lines": 291,
+        "sha256": "e76ef56f6eaac0cb2ee1398470c2e22d59d7510734e0497e8f58a4205c63800f",
+        "ranges": [
+          [
+            1,
+            291
+          ]
+        ],
+        "declarations": [
+          "SupReplayND",
+          "supReplayND",
+          "decodeAssumedND",
+          "CertificateReplayND",
+          "replayCertificateND",
+          "replayCertificateNDJ",
+          "ModelReplayND",
+          "replayModelND",
+          "replayModelNDJ",
+          "runConflictND",
+          "runCertificateND",
+          "runModelND",
+          "runNDKind"
+        ],
+        "reason": "RD-6b: the superposed completion replay, certificate, model and conflict wire are pinned in full; the proof checks use the admitted filled document and Fill_T."
+      },
+      {
         "file": "lean/VE/Readings/SupWire.lean",
         "lines": 397,
         "sha256": "5d8393aeea86b02e48b61c398e2dfd9a5408a5df64112fb470fb043aee3d6366",
@@ -602,12 +659,12 @@
       },
       {
         "file": "lean/VE/Readings/UnspecifiedWire.lean",
-        "lines": 604,
-        "sha256": "907566fe5481583492b61c255261bca8b23ca0baac394a26129ba439eade7d9a",
+        "lines": 711,
+        "sha256": "9299515ccf21dff1d8307878af94b9099708258f54e3271bfdd913eef7eb986f",
         "ranges": [
           [
             1,
-            604
+            711
           ]
         ],
         "declarations": [
@@ -627,6 +684,43 @@
           "runChoiceND"
         ],
         "reason": "readings-defaults RD-2a: admission, separation and each choice under the unspecified completion; the inner case of readings-choice (its kind, conflict packages, premises, certificate, model and filling) read through the pinned NormDefaults and SupWire decoders and by `conflictPackages` and `ndCertificate`; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Readings/VerdictsWire.lean",
+        "lines": 1565,
+        "sha256": "15ebc9d3e1a85ee192f5aeb670b4ed60292f120cb3242de7cf5b7361b03eddb4",
+        "ranges": [
+          [
+            1,
+            1565
+          ]
+        ],
+        "declarations": [
+          "membersOf",
+          "without",
+          "shownOk",
+          "shownOf",
+          "pieceOf",
+          "ndBoundCert",
+          "ndFilled",
+          "ndEvidenceOf",
+          "strOf",
+          "isNull",
+          "jstrings",
+          "jchoice",
+          "jgaps",
+          "perChoice",
+          "planItems",
+          "lowerRun",
+          "lowerInfo",
+          "entryFor",
+          "evidenceList",
+          "queryFormulas",
+          "replayND",
+          "replayVerdictsND",
+          "runVerdicts"
+        ],
+        "reason": "readings-defaults RD-3 readings-verdicts decoder: the question, assumed, the query's premises and conclusion, and each choice's evidence (conflict packages bound to the choice's E''' base and document hash, filled witnesses, certificates bound as the norm-defaults route binds them, base models with a separate filling, each shown model bound to the checked one) are decoded on the choice's document Lean regenerates; under the completion every row is a Lean check with its Holds proof (nd_rowsHold), on the lower route each piece is readings-choice's own inner case; the English plan reads only Lean's own answer; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Readings/Wire.lean",
@@ -1203,73 +1297,6 @@
           "runCase"
         ],
         "reason": "W6 unit declarations, quantity syntax and runner; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Readings/Companions.lean",
-        "lines": 923,
-        "sha256": "dc0e7274664915cab3c524fcd827e0b4e46b182aa0a00b31f545b9727df84bb0",
-        "ranges": [
-          [
-            1,
-            923
-          ]
-        ],
-        "declarations": [
-          "companionSets",
-          "companionIds",
-          "reservedComponentText",
-          "carries",
-          "readingsOf",
-          "mergeCompanions",
-          "mergeCategory",
-          "mergeOpenTerms",
-          "mergeTerms",
-          "companionMeaningId",
-          "meaningCheck",
-          "profileCheck",
-          "componentOf",
-          "crossingText",
-          "shapeText",
-          "splitCase"
-        ],
-        "reason": "readings-defaults RD-4a: a candidate's `companion` (its environment and open terms) read, merged per companion set and validated through the pinned Readings.Wire and Route decoders (`decodeEnvironment`, `openTermNames`), each recorded `meaning_id` checked against W1's identity over the companion's own environment, and the document split into its cases; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Readings/VerdictsWire.lean",
-        "lines": 1565,
-        "sha256": "15ebc9d3e1a85ee192f5aeb670b4ed60292f120cb3242de7cf5b7361b03eddb4",
-        "ranges": [
-          [
-            1,
-            1565
-          ]
-        ],
-        "declarations": [
-          "membersOf",
-          "without",
-          "shownOk",
-          "shownOf",
-          "pieceOf",
-          "ndBoundCert",
-          "ndFilled",
-          "ndEvidenceOf",
-          "strOf",
-          "isNull",
-          "jstrings",
-          "jchoice",
-          "jgaps",
-          "perChoice",
-          "planItems",
-          "lowerRun",
-          "lowerInfo",
-          "entryFor",
-          "evidenceList",
-          "queryFormulas",
-          "replayND",
-          "replayVerdictsND",
-          "runVerdicts"
-        ],
-        "reason": "readings-defaults RD-3 readings-verdicts decoder: the question, assumed, the query's premises and conclusion, and each choice's evidence (conflict packages bound to the choice's E''' base and document hash, filled witnesses, certificates bound as the norm-defaults route binds them, base models with a separate filling, each shown model bound to the checked one) are decoded on the choice's document Lean regenerates; under the completion every row is a Lean check with its Holds proof (nd_rowsHold), on the lower route each piece is readings-choice's own inner case; the English plan reads only Lean's own answer; the full file is pinned conservatively"
       }
     ],
     "other_json": {

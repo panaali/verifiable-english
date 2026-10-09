@@ -173,6 +173,7 @@ import VE.Readings.ChoiceWF
 import VE.Readings.Force
 import VE.Readings.Unspecified
 import VE.Readings.UnspecifiedWire
+import VE.Readings.SupFillWire
 import VE.Readings.VerdictsWire
 import VE.Readings.SupExtra
 import VE.Readings.SupExtraExamples
@@ -4803,3 +4804,51 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Senses.document_line_sound
 #print axioms VE.Senses.documentRequest_policy
 #print axioms VE.Senses.documentRequest_source
+
+#print axioms VE.Readings.Wire.SupReplayND.hyps
+#print axioms VE.Readings.Wire.backgroundValidP_append
+#print axioms VE.Readings.Wire.candidate_of_fill
+#print axioms VE.Readings.Wire.choicesSoftChecked_of_nd
+#print axioms VE.Readings.Wire.filled_frame_E
+#print axioms VE.Readings.Wire.ndChecked_spec
+#print axioms VE.Readings.Wire.readings_wire_nd_all_sound
+#print axioms VE.Readings.Wire.readings_wire_nd_choices
+#print axioms VE.Readings.Wire.readings_wire_nd_conflict_sound
+#print axioms VE.Readings.Wire.readings_wire_nd_model_sound
+#print axioms VE.Readings.Wire.readings_wire_nd_witness_sound
+#print axioms VE.Readings.acyclic_author
+#print axioms VE.Readings.authorLite_choiceU
+#print axioms VE.Readings.authorLite_of_uvalid
+#print axioms VE.Readings.baseAdmissibleP_choiceU
+#print axioms VE.Readings.chain_of_shaped
+#print axioms VE.Readings.children_fill_lite
+#print axioms VE.Readings.choiceU_nodes
+#print axioms VE.Readings.decidesBy_pull_canon
+#print axioms VE.Readings.decidesBy_soften
+#print axioms VE.Readings.decides_author_fill
+#print axioms VE.Readings.decides_author_pull
+#print axioms VE.Readings.decides_fill_pull
+#print axioms VE.Readings.documentExpansion_canon
+#print axioms VE.Readings.fillDoc_chain
+#print axioms VE.Readings.fillPremises_pull
+#print axioms VE.Readings.fillPremises_wf_v
+#print axioms VE.Readings.fill_choiceU
+#print axioms VE.Readings.fill_supU
+#print axioms VE.Readings.fill_transfers
+#print axioms VE.Readings.fmap_keeps_author
+#print axioms VE.Readings.gapF_fill_v
+#print axioms VE.Readings.hyps_fill
+#print axioms VE.Readings.nd_superpose_all
+#print axioms VE.Readings.nd_superpose_conflict_free
+#print axioms VE.Readings.notFill_of_startsWith
+#print axioms VE.Readings.outcomeBase_fill_v
+#print axioms VE.Readings.qualify_notFill
+#print axioms VE.Readings.rulesTyped_author
+#print axioms VE.Readings.selects_fill_fuel_lite
+#print axioms VE.Readings.sim_decidesBy
+#print axioms VE.Readings.strict_choiceDoc
+#print axioms VE.Readings.strict_choice_fillDoc
+#print axioms VE.Readings.valid_fill_choiceU
+#print axioms VE.Readings.wellFormedND_parts
+#print axioms VE.Readings.yields_fill_fuel_lite
+#print axioms VE.Readings.yields_fill_lite
