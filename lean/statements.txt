@@ -13590,6 +13590,12 @@ theorem VE.Order.validModel_iff
     VE.Order.validModel? v d = Bool.true ↔ d.toModel.Valid v.environment
   -- uses VE.Order.FiniteModel.Valid@VE.Order.Finite VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Vocabulary.environment@VE.Order.ModelCheck VE.Order.Vocabulary@VE.Order.ModelCheck VE.Order.validModel?@VE.Order.ModelCheck
   -- expr 661174793
+theorem VE.Question.Run.statusCodes_classed
+  ∀ (s : String × List String),
+    s ∈ VE.Question.Run.statusCodes →
+      ∀ (c : String), c ∈ s.snd → (List.lookup c VE.Question.Run.codeClasses).isSome = Bool.true
+  -- uses VE.Question.Run.codeClasses@VE.Question.Run VE.Question.Run.statusCodes@VE.Question.Run
+  -- expr 1257031776
 theorem VE.Question.addMeaning_nodup
   ∀ (acc : List (VE.Question.Candidate × VE.EnglishGrammar.EFormula)) (y : VE.Question.Candidate × VE.Question.Got),
     (List.map Prod.snd acc).Nodup → (List.map Prod.snd (VE.Question.addMeaning acc y)).Nodup
@@ -29716,6 +29722,10 @@ theorem VE.Service.runMode_englishGrammar
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.englishGrammar j = VE.EnglishGrammar.Run.grammarCaseReported j
   -- uses VE.EnglishGrammar.Run.grammarCaseReported@VE.EnglishGrammar.Run VE.Service.Mode.englishGrammar@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
   -- expr 2149289540
+theorem VE.Service.runMode_englishQuestion
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.englishQuestion j = VE.Question.Run.caseReported j
+  -- uses VE.Question.Run.caseReported@VE.Question.Run VE.Service.Mode.englishQuestion@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- expr 3438168545
 theorem VE.Service.runMode_englishRead
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.englishRead j = VE.EnglishGrammar.Run.readCaseReported j
   -- uses VE.EnglishGrammar.Run.readCaseReported@VE.EnglishGrammar.Run VE.Service.Mode.englishRead@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol

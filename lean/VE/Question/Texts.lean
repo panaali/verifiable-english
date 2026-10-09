@@ -40,6 +40,8 @@ def badQuestionSpacingText (position : Nat) : String :=
   s!"The spacing at position {position} is not allowed: write no space before the question mark."
 def markerText : String :=
   "A question cannot contain \"therefore\", \"so\", \"hence\" or \"it follows that\"."
+/-- A0 (3.3): the sentence the answer is about, without its final period. -/
+def askedText (c : Candidate) : String := "You asked whether " ++ c.sentence.dropRight 1 ++ "."
 def illTypedQuestionText : String :=
   "The question was read, and its formula does not pass the type check."
 
