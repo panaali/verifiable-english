@@ -1,5 +1,6 @@
 import VE.Question.Texts
 import VE.EnglishGrammar.ReadExamples
+import VE.EnglishGrammar.Run
 
 namespace VE.Question
 open VE.EnglishGrammar
@@ -21,6 +22,16 @@ open VE.EnglishGrammar
   some ("a", "Is every member eligible?", "Is some member eligible?")
 #guard mapSpan ⟨.fronted "is" 6, "every is and."⟩ caseFrame.utf8ByteSize (5, 8) = (0, 9)
 #guard mapSpan ⟨.fronted "is" 5, "\"é\" is and."⟩ caseFrame.utf8ByteSize (0, 4) = (3, 7)
+#guard let q := "Is every and?"
+  let p := mapSpan ⟨.fronted "is" 6, "every is and."⟩ caseFrame.utf8ByteSize (5, 8)
+  decide (VE.EnglishGrammar.Run.codepointsBefore q p.1 ≤
+    VE.EnglishGrammar.Run.codepointsBefore q p.2 ∧
+    VE.EnglishGrammar.Run.codepointsBefore q p.2 ≤ q.length)
+#guard let q := "Is \"é\" and?"
+  let p := mapSpan ⟨.fronted "is" 5, "\"é\" is and."⟩ caseFrame.utf8ByteSize (0, 4)
+  decide (VE.EnglishGrammar.Run.codepointsBefore q p.1 = 3 ∧
+    VE.EnglishGrammar.Run.codepointsBefore q p.2 = 6 ∧
+    VE.EnglishGrammar.Run.codepointsBefore q p.2 ≤ q.length)
 #guard ("Is every member eligible?".utf8ByteSize ≤ maxQuestionBytes)
 
 /-- The Q1 group fixture's vocabulary, built by the same fixture decoder used by the English reader. -/
