@@ -1,7 +1,7 @@
 """Batch 17: reported assist and Cedar decisions must cross the Lean boundary."""
 
 from ve.assist.session import AssistSession
-from ve.ast import Bottom, Top
+from ve.ast import Bottom, Forall, Top, Unary, Var
 from ve.backends.dispatch import authority_for
 from ve.adapters.cedar import translate
 from ve.environment import Environment, LANGUAGE, PROFILE, SPEC_REVISION
@@ -56,6 +56,27 @@ def test_assist_negative_decision_requires_lean_countermodel(monkeypatch):
     assert len(seen) == 1
     monkeypatch.setattr(session, "_lean_refutes", lambda *_: False)
     assert session._decide((), Bottom()) == "unknown"
+
+
+def test_assist_zero_proof_budget_cannot_confirm_yes():
+    session = _session()
+    session.options["max_proof_steps"] = 0
+    assert session._decide((), Top()) == "unknown"
+    session.options["max_proof_steps"] = 10_000
+    assert session._decide((), Top()) == "yes"
+
+
+def test_assist_zero_model_budget_cannot_confirm_saturated_no():
+    env = {**ENV, "vocabulary": {"sorts": {"s": {"description": "A member"}},
+                                   "predicates": {"p": {"arguments": ["s"], "description": "Property p"}},
+                                   "constants": {}}}
+    session = _session()
+    session.env = Environment(env)
+    formula = Forall("s", Unary("p", Var(0)))
+    session.options["max_models"] = 0
+    assert session._decide((), formula) == "unknown"
+    session.options["max_models"] = 10
+    assert session._decide((), formula) == "no"
 
 
 def test_cedar_evaluates_each_request_under_lean(monkeypatch):
