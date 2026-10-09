@@ -8,7 +8,7 @@
   "C": 8138,
   "P": 68765,
   "T": 13736,
-  "o": 11691,
+  "o": 11692,
   "D[V]": 12024,
   "D[R]": 862,
   "D[I]": 499,
@@ -18,7 +18,7 @@
   "tied": 171,
   "unclassified": 0,
   "trusted": 45824,
-  "lines": 151501
+  "lines": 151502
  },
  "budget": {
   "K": 997,
@@ -4611,7 +4611,7 @@
    "C": 0,
    "P": 0,
    "T": 0,
-   "o": 9,
+   "o": 10,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
@@ -4621,7 +4621,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 14,
-   "lines": 23
+   "lines": 24
   },
   "ResponseShape/Schemas/Readings.lean": {
    "K": 0,
