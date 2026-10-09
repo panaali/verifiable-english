@@ -66,7 +66,7 @@
     "ve/norm_defaults.py:UnspecifiedDocument.__init__": "after Lean accepts a source, a Python container construction failure is reported as CheckerUnavailable"
   },
   "lean_decoders": {
-    "total_lines": 24727,
+    "total_lines": 24905,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -935,12 +935,12 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 501,
-        "sha256": "af01e7f4a0b2a23df35cfd6f6c7759b53b253eca35e16f420217aff5b5959638",
+        "lines": 679,
+        "sha256": "af7eb753ee6619e2567051fbcfc19491f2e4167b10866865bd7abe9cb12d250e",
         "ranges": [
           [
             1,
-            501
+            679
           ]
         ],
         "declarations": [

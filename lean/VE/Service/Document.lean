@@ -295,8 +295,8 @@ def environmentOf (environment : Json) : Except String Env := do
   if let some p := listed.find? (!ownedProfiles.contains ·) then
     throw (unavailable s!"document checks under {p} need its Lean profile route")
   let block := blockOf listed
-  if (environment.getObjVal? "unit_schema").isOk || (environment.getObjVal? "units").isOk then
-    throw (unavailable "the environment's unit declarations need their Lean route's decoder")
+  if let some key := ["unit_schema", "units"].find? (fun k => (environment.getObjVal? k).isOk) then
+    throw (unavailable s!"the environment block {key} needs its Lean route's decoder")
   if block == .none then
     if let .str language := environment.getObjValD "language" then
       if language != VE.Route.Gate.language then
