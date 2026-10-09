@@ -119,6 +119,12 @@ def _valid_rights(env, model):
             raise InvalidModel(f"rights premise {label} is false", generator="rights")
 
 
+def _fill_premises(env):
+    # Installed only from Lean's norm-defaults `fill` answer (Fill_T, norm-defaults 2.4), never
+    # accepted from authored wire fields.
+    return tuple(formula for _, formula in getattr(env, "fill_premises", ()))
+
+
 def _valid_fill(env, model):
     if not getattr(env, "fill_premises", ()):
         return
@@ -177,12 +183,13 @@ def background(env) -> tuple[Premise, ...]:
         base = tuple(Premise(formula_from_data(env, wire, _generated=True), generator)
                      for wire, generator in zip(row["premises"], row["generators"], strict=True))
         # Trusted composition: soft premises belong to a validated soft
-        # document, and rights premises to a correlated rights document, not to
-        # the environment JSON. Lean regenerates them in the soft and rights
-        # routes, and soft_route.check_regenerated and
-        # The rights route supplies them as part of its Lean elaboration.
+        # document, rights premises to a correlated rights document and fill
+        # premises to a norm-defaults completion, not to the environment JSON.
+        # Lean regenerates them in the soft, rights and norm-defaults routes,
+        # whose answers install them.
         return (base + tuple(Premise(formula, "soft") for formula in _soft_premises(env))
-                + tuple(Premise(formula, "rights") for formula in _rights_premises(env)))
+                + tuple(Premise(formula, "rights") for formula in _rights_premises(env))
+                + tuple(Premise(formula, "norm-defaults") for formula in _fill_premises(env)))
 
     return owned("background", lean)
 
