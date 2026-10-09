@@ -971,58 +971,22 @@ def _request_key(conclusion_ast, premises, assumed):
                       sort_keys=True)
 
 
-def _fold_conflict(words):
-    """`Readings.foldConflict` on a choice's rows (1.6)."""
-    if "CONFLICT" in words:
-        return "CONFLICT"
-    return "CONFLICT-FREE" if words and all(w == "CONFLICT-FREE" for w in words) else "UNKNOWN"
-
-
-def _fold_premises(words):
-    """`Readings.foldPremises` (1.9)."""
-    if "model" in words:
-        return "model"
-    return "INCONSISTENT" if words and all(w == "INCONSISTENT" for w in words) else "UNKNOWN"
-
-
-def _fold_entailment(conflicts, queries):
-    """`Readings.foldEntailment` with its gate (14.8)."""
-    if _fold_conflict(conflicts) != "CONFLICT-FREE" or not queries:
-        return "UNKNOWN"
-    if all(w == "proved" for w in queries):
-        return "ALL"
-    if all(w == "refuted" for w in queries):
-        return "NONE"
-    return "SOME" if "proved" in queries and "refuted" in queries else "UNKNOWN"
-
-
-# Lean's row words from its notes on the evidence (`Readings.Run.lowerInfo`; under the completion `ndConflictRow`,
-# `ndQueryRow`, `ndPremiseRow`): per question, the pieces in the order Lean reads them, each with the word its
-# acceptance gives; a row with no accepted piece is UNKNOWN. A row's word is never taken from the answer: it is
-# checked against this table, so a word is tied to the evidence the request sent (review B of rd-3 looprecheck1).
-ROW_WORDS = {"conflict": (("conflict", "CONFLICT-FREE"), ("witness", "CONFLICT")),
-             "query": (("certificate", "proved"), ("countermodel", "refuted")),
-             "premises": (("unsat", "INCONSISTENT"), ("model", "model"))}
-
-
-def _row_word(evidence, question):
-    return next((word for piece, word in ROW_WORDS[question] if evidence.get(piece) is True), "UNKNOWN")
-
-
-def _dedup(labels):
-    """Lean's `dedupStrings`: the first occurrence of each label, in order."""
-    out = []
-    for label in labels:
-        if label not in out:
-            out.append(label)
-    return out
+# The piece each row word rests on (Lean's `lowerInfo`; under the completion `ndConflictRow`, `ndQueryRow`,
+# `ndPremiseRow`), per row field. A word other than UNKNOWN names that piece: the request must have sent it for the
+# row's choice and the row must note it accepted (the evidence a row names exists in the request). Which word the
+# pieces give, and every verdict, condition and line folded from the rows, is Lean's (`readings_wire_verdicts_*`,
+# `verdicts_conditions_*`, DRI ruling of rd-3 round 3); the client never re-derives them.
+ROW_PIECES = {"conflict": {"CONFLICT-FREE": "conflict", "CONFLICT": "witness"},
+              "query": {"proved": "certificate", "refuted": "countermodel"},
+              "premises": {"INCONSISTENT": "unsat", "model": "model"}}
+PAIR_LABEL = "unsaid:pair:"
 
 
 class _Frame:
-    """What Lean's answer to a `readings-verdicts` request is regenerated from (`_expected_answer`): the request's
-    document as Lean decodes it (its open sets at their active versions, in unit order; its couplings and
-    narrowings), the compatible choices `choices` (Lean's elaborate row, bound to the request; None past 64), whether
-    the unspecified completion applies, and the sets the route's finding names (E29)."""
+    """What a `readings-verdicts` answer is bound to: the request's document as Lean decodes it (its open sets at their
+    active versions, in unit order; its couplings and narrowings), the request's environment, the compatible choices
+    `choices` (Lean's elaborate row, bound to the request; None past 64), whether the unspecified completion applies,
+    and the sets the route's finding names (E29)."""
 
     def __init__(self, case, choices, completion, finding_sets):
         from types import SimpleNamespace
@@ -1037,27 +1001,25 @@ class _Frame:
                     SimpleNamespace(id=a["id"], labels=a.get("labels") or {}) for a in R["readings"]]))
         self.couplings = list(document.get("couplings") or [])
         self.narrowings = list(document.get("narrowings") or [])
+        self.predicates = set((((case.get("environment") or {}).get("vocabulary") or {}).get("predicates") or {}))
         self.choices, self.completion, self.finding_sets = choices, completion, list(finding_sets)
         self.candidates = [[R.id, i] for R in self.sets for i in range(len(R.candidates))]
 
-    def dropped(self, s, i):
-        return _dropped(self.sets, self.narrowings, s, i)
+    def label(self, label):
+        """A condition label the request names: a coupling or narrowing of its document, or the pair label of two
+        predicates of its environment (`unsaid:pair:<required>,<permission>`)."""
+        _need(type(label) is str)
+        if label.startswith("coupling:"):
+            _need(any(K["id"] == label[len("coupling:"):] for K in self.couplings))
+        elif label.startswith("narrowing:"):
+            _need(any(N["id"] == label[len("narrowing:"):] for N in self.narrowings))
+        else:
+            required, comma, permission = label.removeprefix(PAIR_LABEL).partition(",")
+            _need(label.startswith(PAIR_LABEL) and comma and {required, permission} <= self.predicates)
 
-    def restrictions(self, A):
-        return _restrictions(self.sets, self.couplings, self.narrowings, A)
-
-    def in_force(self, narrowing):
-        """Lean's `inForce`: the open set a narrowing is in force on."""
-        from .readings_sup import in_force
-        return next((R for R in self.sets if in_force(R, narrowing)), None)
-
-    def choice_text(self, choice):
-        """Lean's `choiceText`."""
-        versions = {R.id: R.version for R in self.sets}
-        return ", ".join(f"{s}@{versions[s]}:{i}" if s in versions else f"{s}:{i}" for s, i in choice)
-
-    def untaken_text(self, choice):
-        return "ReadingsUnsatisfiable: no compatible reading takes " + self.choice_text(choice)
+    def reading(self, reading):
+        """A candidate the request's document has: `[set, index]`."""
+        _need(type(reading) is list and len(reading) == 2 and reading in self.candidates)
 
 
 def _shown_of(piece, name):
@@ -1082,11 +1044,11 @@ def _labels(value):
 
 
 def _check_rows(row, case, frame):
-    """The rows, bound to the request, as Lean's `RowInfo`s: with the compatible choices exactly the ones taking
-    `assumed`, in order, at least one; past 64 only choices the request's evidence names, in its order. Each row
-    notes only pieces the request sent for its choice (every conflict package sent is noted), its refusals, shown
-    models and gaps are of noted pieces, a shown model is the one the request's piece shows, and its words are the
-    ones Lean's acceptance of those pieces gives (`ROW_WORDS`)."""
+    """The rows, bound to the request: the compatible choices exactly the ones taking `assumed`, in order, at least
+    one; past 64 only choices the request's evidence names, in its order. Each row notes only pieces the request sent
+    for its choice (every conflict package sent is noted); its refusals, shown models and gaps are of noted pieces;
+    a shown model is the one the request's piece shows; its word fields are the question's; and a word other than
+    UNKNOWN names a piece the row notes accepted (`ROW_PIECES`). Returns the rows by choice."""
     question, assumed = case["question"], case.get("assumed")
     sent = {json.dumps(e["choice"]): e for e in case.get("evidence", [])}
     rows = row["per_choice"]
@@ -1102,311 +1064,172 @@ def _check_rows(row, case, frame):
     else:
         expected = [c for c in frame.choices if takes(c)]
         _need(expected and seen == expected)
-    infos = []
-    for k, entry in enumerate(rows):
+    for entry in rows:
         piece_of = sent.get(json.dumps(entry["choice"]), {})
         pieces = {name for name in piece_of if name != "choice"}
         noted = entry["evidence"]
         _need(set(noted) <= pieces and ("conflict" not in pieces or "conflict" in noted))
-        # No choice is both CONFLICT-FREE and in conflict; under the completion a witness sent is always checked.
-        _need(not (noted.get("conflict") is True and noted.get("witness") is True))
-        _need(not frame.completion or "witness" not in pieces or "witness" in noted)
         _need(set(entry["errors"]) <= set(noted) and all(noted[name] is False for name in entry["errors"]))
         _need(set(entry["shown"]) <= set(noted) and set(entry["gaps"]) <= set(noted))
-        # A witness's status text is the lower route's own (none under the completion).
-        _need(entry["status_text"] is None or (not frame.completion and "witness" in noted))
+        # A witness's status text is the lower route's own, relayed with the witness.
+        _need(entry["status_text"] is None or "witness" in noted)
         for name, shown in entry["shown"].items():
             _need(shown == _shown_of(piece_of.get(name), name))
         _need(set(entry) & {"query", "premises"} == {question} - {"conflict"})
-        info = _row_info(k, entry, {name: _row_word(noted, name) for name in {"conflict", question}})
-        _need(all(entry[name] == info[name] for name in {"conflict", question}))
-        infos.append(info)
-    return infos
+        for field in {"conflict", question}:
+            word = entry[field]
+            _need(word == "UNKNOWN" or (word in ROW_PIECES[field] and noted.get(ROW_PIECES[field][word]) is True))
+    return {json.dumps(entry["choice"]): entry for entry in rows}
 
 
-def _row_info(k, entry, words):
-    """Lean's `RowInfo` of the row `entry` (the `k`th) with its `words` (the conflict word and the question's)."""
-    return {"k": k, "choice": entry["choice"], "shown": entry["shown"], "gaps": entry["gaps"],
-            "status_text": entry["status_text"], **words}
+def _walk(value):
+    """Every object inside a JSON value, the value's own first."""
+    if type(value) is dict:
+        yield value
+        for item in value.values():
+            yield from _walk(item)
+    elif type(value) is list:
+        for item in value:
+            yield from _walk(item)
 
 
-def _counter_json(info):
-    return {"choice": info["choice"], "outcome": "countermodel", "model": info["shown"].get("countermodel")}
+# The piece whose shown model a result member shows, by the member that holds it.
+SHOWN_IN = {"witnesses": "witness", "countermodels": "countermodel", "countermodel": "countermodel"}
 
 
-def _proof_json(info, relayed):
-    """`proofJson`: the labels a row's certificate uses are Lean's checked label use (`usedLabels`), which nothing in
-    the request or the rows determines; they are relayed, typed."""
-    _need(type(relayed) is dict)
-    return {"choice": info["choice"], "outcome": "proof", "conditional_on": _labels(relayed.get("conditional_on"))}
+def _check_result(row, case, frame, rows):
+    """The result, bound to the request and the rows: it is the over-budget form exactly when the request has more
+    than 64 compatible choices, it assumes exactly the readings the request named, every choice it names is a row's,
+    a list restating the rows (`choices`, `proofs`, `countermodels`) restates every row once, in order, each status
+    the row's word, and `witnesses` the rows in conflict; a SOME names its proof and its countermodel; every model it shows is that row's shown model (the request's piece's), a witness's status text
+    is its row's, its candidates are the document's, every narrowing, unit and label it names is the request's, and
+    its restrictions are the answer's."""
+    result, question = row["result"], case["question"]
+    _need(("budget" in result) == (frame.choices is None))
+    _need(result.get("assumed") == (case.get("assumed") if question == "query" else None))
+    for obj in _walk(result):
+        if "choice" in obj:
+            _need(json.dumps(obj["choice"]) in rows)
+    for member in ("choices", "proofs", "countermodels"):
+        if member in result:
+            _need([json.dumps(item["choice"]) for item in result[member]] == list(rows))
+    for item in result.get("choices", []):
+        _need(item["status"] == rows[json.dumps(item["choice"])]["conflict" if question == "conflict" else question])
+    if "witnesses" in result:
+        _need([json.dumps(w["choice"]) for w in result["witnesses"]] ==
+              [key for key, entry in rows.items() if entry["conflict"] == "CONFLICT"])
+    if result.get("verdict") == "SOME":
+        _need(type(result["proof"]) is dict and type(result["countermodel"]) is dict)
+    for member, piece in SHOWN_IN.items():
+        items = result.get(member)
+        for item in items if type(items) is list else [items] if type(items) is dict else []:
+            entry = rows[json.dumps(item["choice"])]
+            if "model" in item:
+                _need(item["model"] == entry["shown"].get(piece))
+            if member == "witnesses":
+                _need(item["status_text"] == entry["status_text"])
+    if question == "premises" and "model" in result:
+        _need(result["model"] == rows[json.dumps(result["choice"])]["shown"].get("model"))
+    if "candidates" in result:
+        _need([[c["set"], c["index"]] for c in result["candidates"]] == frame.candidates)
+    for candidate in result.get("candidates", []):
+        if "narrowing" in candidate:
+            _need(any(N["id"] == candidate["narrowing"] for N in frame.narrowings))
+    for unit in result.get("units", []):
+        _need(any(R.unit == unit for R in frame.sets))
+    for name in ("restrictions", "reading_premises_used"):
+        if name in result:
+            _need(result[name] == row["restrictions"])
+    for obj in _walk(result):
+        for label in obj.get("conditional_on", []):
+            # Under the completion every condition is a pair label or a restriction of the request; on the lower route
+            # a choice's own answer may add its route's labels (coherence, alternatives, risk), which only it reads.
+            if frame.completion:
+                frame.label(label)
+            else:
+                _need(type(label) is str and label)
 
 
-def _relayed_with(labels, rest):
-    """`labels` is `dedupStrings (P ++ rest)` for some labels `P` (Lean's `conditional_on` of a CONFLICT-FREE answer:
-    the labels its packages use, which the answer does not show, then the restrictions)."""
-    _labels(labels)
-    _need(_dedup(labels) == labels and
-          any(labels[k:] == [r for r in rest if r not in labels[:k]] for k in range(len(labels) + 1)))
-    return labels
-
-
-def _over_result(frame, question, infos, named):
-    """`resultOf` past 64 compatible choices: W2's budget shape; for a query the first checked countermodel among
-    the evidence."""
-    from .readings_sup import MAX_CHOICES
-    rest = {"route": "enumerated", "budget": {"max_choices": MAX_CHOICES}, "units": [R.unit for R in frame.sets]}
-    if question == "conflict":
-        return {"status": "UNKNOWN", **rest, "status_text": f"UNKNOWN: more than {MAX_CHOICES} compatible readings"}
-    if question == "premises":
-        return {"status": "UNKNOWN", **rest}
-    counter = next((i for i in infos if i["query"] == "refuted"), None)
-    if counter is None:
-        return {"verdict": "UNKNOWN", "status": "UNKNOWN", **rest, **named}
-    return {"verdict": "UNKNOWN", "status": f"UNKNOWN (not ALL: countermodel under {frame.choice_text(counter['choice'])})",
-            **rest, "countermodel": _counter_json(counter), **named}
-
-
-def _conflict_result(frame, A, infos, answered):
-    """`conflictResult`."""
-    rest = frame.restrictions(A)
-    status = _fold_conflict([i["conflict"] for i in infos])
-    choices = [{"choice": i["choice"], "status": i["conflict"]} for i in infos]
-    if status == "CONFLICT-FREE":
-        return {"status": status, "route": "enumerated",
-                "conditional_on": _relayed_with(answered.get("conditional_on"), rest),
-                "restrictions": rest, "reading_premises_used": rest,
-                "status_text": f"CONFLICT-FREE among rules on the same act under every reading ({len(infos)} readings "
-                               f"checked one at a time)", "choices": choices}
-    witnesses = [i for i in infos if i["conflict"] == "CONFLICT"]
-    return {"status": status, "route": "enumerated",
-            "status_text": f"CONFLICT under {frame.choice_text(witnesses[0]['choice'])}" if witnesses else
-                           "UNKNOWN: a reading's conflict status is not certified",
-            "choices": choices,
-            "witnesses": [{"choice": i["choice"], "model": i["shown"].get("witness"), "status_text": i["status_text"]}
-                          for i in witnesses]}
-
-
-def _premises_result(frame, infos, dead_readings):
-    """`premisesResult`: the fold, the first model's choice, and every candidate's status (narrowed by the first
-    narrowing in force that drops it, dead with its certificate, else the fold of the rows taking it)."""
-    status = _fold_premises([i["premises"] for i in infos])
-    out = {"status": status, "route": "enumerated", "evidence": "per choice",
-           "choices": [{"choice": i["choice"], "status": i["premises"]} for i in infos]}
-    if status == "model":
-        first = next(i for i in infos if i["premises"] == "model")
-        out.update(choice=first["choice"], model=first["shown"].get("model"))
-    dead = [[d["set"], d["index"]] for d in dead_readings or []]
-    candidates = []
-    for s, i in frame.candidates:
-        entry = {"set": s, "index": i}
-        narrowing = frame.dropped(s, i)
-        taking = [x["premises"] for x in infos if [s, i] in x["choice"]]
-        if narrowing is not None:
-            entry.update(status="narrowed", narrowing=narrowing)
-        elif [s, i] in dead:
-            entry.update(status="dead")
-        elif not taking:
-            entry.update(status="UNKNOWN", reason=frame.untaken_text([[s, i]]))
-        else:
-            entry.update(status=_fold_premises(taking))
-        candidates.append(entry)
-    out["candidates"] = candidates
-    return out
-
-
-def _entailment_result(frame, A, named, infos, answered):
-    """`entailmentResult`: the gate of 14.8, then `foldEntailment`, naming what an UNKNOWN rests on (`reasonOf`)."""
-    conflicts, queries = [i["conflict"] for i in infos], [i["query"] for i in infos]
-    rest = frame.restrictions(A)
-    base = {"route": "enumerated", **named}
-    status = _fold_conflict(conflicts)
-    if status != "CONFLICT-FREE":
-        first = next((i for i in infos if (i["conflict"] == "CONFLICT" if status == "CONFLICT" else
-                                           i["conflict"] != "CONFLICT-FREE")), None)
-        if first is not None:
-            return {"verdict": "UNKNOWN", **base, "status": f"UNKNOWN (conflict status: {status})",
-                    "conflict_status": status, "choice": first["choice"]}
-    verdict = _fold_entailment(conflicts, queries)
-    if verdict == "ALL":
-        listed = answered.get("proofs")
-        _need(type(listed) is list and len(listed) == len(infos))
-        proofs = [_proof_json(i, p) for i, p in zip(infos, listed)]
-        return {"verdict": "ALL", **base, "evidence": "certificates", "proofs": proofs,
-                "conditional_on": _dedup([x for p in proofs for x in p["conditional_on"]] + rest),
-                "restrictions": rest, "reading_premises_used": rest}
-    if verdict == "NONE":
-        return {"verdict": "NONE", **base, "countermodels": [_counter_json(i) for i in infos], "restrictions": rest}
-    if verdict == "SOME":
-        return {"verdict": "SOME", **base,
-                "proof": _proof_json(next(i for i in infos if i["query"] == "proved"), answered.get("proof")),
-                "countermodel": _counter_json(next(i for i in infos if i["query"] == "refuted"))}
-    first = next((i for i in infos if i["query"] not in ("proved", "refuted")), None) if status == "CONFLICT-FREE" \
-        else None
-    return {"verdict": "UNKNOWN", **base, **({"choice": first["choice"]} if first is not None else {})}
-
-
-def _dead_of(frame, infos, sent_dead, notes):
-    """`deadOf` and `untakenOf`: the candidates no row takes and no narrowing drops; Lean's note on each dead
-    certificate the request sent (its acceptance relayed, and false for a candidate that is not untaken); and the
-    dead readings, every untaken candidate with a certificate Lean accepts, else None (an incomplete list is never
-    reported)."""
-    untaken = [[s, i] for s, i in frame.candidates
-               if not any([s, i] in info["choice"] for info in infos) and frame.dropped(s, i) is None]
-    _need(type(notes) is list and len(notes) == len(sent_dead))
-    expected, accepted = [], {}
-    for d, note in zip(sent_dead, notes):
+def _check_dead(row, case, frame):
+    """The premises question's dead evidence, bound to the request: one note per dead certificate sent, naming its
+    candidate; each untaken candidate a candidate of the document no row takes; a dead reading untaken, with a
+    certificate the request sent and Lean noted accepted, and the finding that names it (`dead_finding`). Every
+    other question has none."""
+    sent = case.get("dead", [])
+    if case["question"] != "premises" or frame.choices is None:
+        _need(row["dead"] == [] and row["untaken"] == [] and row["dead_readings"] is None)
+        return
+    _need(len(row["dead"]) == len(sent))
+    for d, note in zip(sent, row["dead"]):
         s, i = d.get("set"), d.get("index")
         if type(s) is not str or type(i) is not int or i < 0:
-            expected.append({"accepted": False})
-            continue
-        _need(type(note) is dict and type(note.get("accepted")) is bool)
-        # Lean accepts a candidate's certificates together (`deadOf`'s `ok`), and only an untaken candidate's.
-        _need(accepted.setdefault((s, i), note["accepted"]) is note["accepted"])
-        _need(note["accepted"] is False or [s, i] in untaken)
-        expected.append({"set": s, "index": i, "accepted": note["accepted"]})
-    dead = ([{"set": s, "index": i, "finding": dead_finding(s, i)} for s, i in untaken]
-            if all(accepted.get((s, i)) is True for s, i in untaken) else None)
-    return untaken, dead, expected
+            _need(note == {"accepted": False})
+        else:
+            _need((note.get("set"), note.get("index")) == (s, i))
+    for reading in row["untaken"]:
+        frame.reading(reading)
+        # An untaken candidate is one no row takes.
+        _need(not any(reading in entry["choice"] for entry in row["per_choice"]))
+    accepted = {(n["set"], n["index"]) for n in row["dead"] if n.get("accepted") is True}
+    for d in row["dead_readings"] or []:
+        frame.reading([d["set"], d["index"]])
+        _need([d["set"], d["index"]] in row["untaken"] and (d["set"], d["index"]) in accepted)
+        _need(d["finding"] == dead_finding(d["set"], d["index"]))
 
 
-def _jgaps(value):
-    """Lean's `jgaps`: the well-formed gap triples of a value, in order."""
-    if type(value) is not list:
-        return []
-    return [[g[0], g[1] if type(g[1]) is list and all(type(x) is str for x in g[1]) else [], g[2]] for g in value
-            if type(g) is list and len(g) == 3 and type(g[0]) is str and type(g[2]) is bool]
-
-
-def _plan(frame, question, answer):
-    """`Readings.planItems` of an answer (2.3, 2.4): the lines Lean's English plan of it has, each as `Line.json`
-    encodes it. The plan is regenerated from the checked answer, never relayed."""
-    res, labels = answer["result"], answer["labels"]
-    rows = list(enumerate(answer["per_choice"]))
-    every = "E26" if len(frame.sets) == 1 else "E10"
-
-    def text(f, result=None, readings=(), label=None):
-        return {"frame": f, "result": result, "readings": [[s, i] for s, i in readings], "model": None, "gaps": [],
-                "label": label}
-
-    def full(choice):
-        index = {}
-        for s, i in choice:
-            index.setdefault(s, i)
-        return [(R.id, index.get(R.id, 0)) for R in frame.sets]
-
-    def shown(result, choice, model, gaps):
-        return {**text("E12", result, full(choice)), "model": model, "gaps": _jgaps(gaps)}
-
-    def first_shown(key, value, piece, result):
-        return next(([shown(result, e["choice"], f"{piece}@{k}", e["gaps"].get(piece))]
-                     for k, e in rows if e.get(key) == value), [])
-
-    def provided(used):
-        lines = []
-        for label in used:
-            narrowing = next((N for N in frame.narrowings if "narrowing:" + N["id"] == label), None)
-            if label.startswith("unsaid:pair:"):
-                lines.append(text("P1", label=label))
-            elif any("coupling:" + K["id"] == label for K in frame.couplings):
-                lines.append(text("E5", label=label))
-            elif narrowing is not None and frame.in_force(narrowing) is not None:
-                R = frame.in_force(narrowing)
-                lines += [text("E7", readings=[(R.id, i)], label=label) for i, a in enumerate(R.candidates)
-                          if a.id not in narrowing["keeps"]]
-        return [text("E3")] + lines if lines else []
-
-    def independent(used):
-        mentioned = set()
-        for label in used:
-            mentioned |= {ref["set"] for K in frame.couplings if "coupling:" + K["id"] == label for ref in K["sets"]}
-            mentioned |= {frame.in_force(N).id for N in frame.narrowings
-                          if "narrowing:" + N["id"] == label and frame.in_force(N) is not None}
-        return [text("E13", readings=[(R.id, 0)]) for R in frame.sets if R.id not in mentioned]
-
-    if question == "conflict":
-        head = [text("E29", readings=[(s, 0) for s in answer["finding_sets"]])] if answer["finding_sets"] else []
-        if res.get("status") == "CONFLICT-FREE":
-            return head + [text(every, "R1")] + provided(labels) + independent(labels)
-        if res.get("status") == "CONFLICT":
-            for k, e in rows:
-                if e["conflict"] == "CONFLICT":
-                    head.append(shown("R4", e["choice"], f"witness@{k}", e["gaps"].get("witness")))
-                    if type(e["status_text"]) is str and e["status_text"]:
-                        head.append(text("status", label=e["status_text"]))
-        return head
-    if question == "premises":
-        return ((first_shown("premises", "model", "model", "R5") if res.get("status") == "model" else []) +
-                [text("E17", readings=[(d["set"], d["index"])]) for d in answer["dead_readings"] or []])
-    A = res.get("assumed") or []
-    verdict = res.get("verdict")
-    if verdict == "ALL":
-        named = {s: i for s, i in A}
-        return ([text(every, "R2")] if not A else
-                [text("E12", "R2", [(R.id, named[R.id]) for R in frame.sets if R.id in named])]) + provided(labels)
-    if verdict == "SOME":
-        return [text("E12", "R2", full(res["proof"]["choice"]))] + first_shown("query", "refuted", "countermodel", "R3")
-    if verdict == "NONE":
-        return (([text("E27")] if len(frame.sets) >= 2 and not A else []) +
-                [shown("R3", e["choice"], f"countermodel@{k}", e["gaps"].get("countermodel"))
-                 for k, e in rows if e.get("query") == "refuted"] + provided(res.get("restrictions") or []))
-    if res.get("countermodel") is not None and not A:
-        return [text("E28")] + first_shown("query", "refuted", "countermodel", "R3")
-    return []
-
-
-def _expected_answer(row, case, frame, infos):
-    """`verdictsAnswer` regenerated from the request `case`, the frame and the rows `infos` (`_check_rows`); the
-    members Lean computes from evidence the answer does not show are read from `row`, typed (`_check_answer`)."""
-    question, assumed = case["question"], case.get("assumed")
-    A = assumed or []
-    named = {"assumed": assumed} if assumed is not None else {}
-    answered = row["result"]
-    over = frame.choices is None
-    rest = [] if over else frame.restrictions(A)
-    untaken, dead_readings, dead = [], None, []
-    if over:
-        result = _over_result(frame, question, infos, named)
-    elif question == "conflict":
-        result = _conflict_result(frame, A, infos, answered)
-    elif question == "premises":
-        untaken, dead_readings, dead = _dead_of(frame, infos, case.get("dead", []), row["dead"])
-        result = _premises_result(frame, infos, dead_readings)
-    else:
-        result = _entailment_result(frame, A, named, infos, answered)
-    # `labelsOf`: a CONFLICT-FREE conflict answer's and an ALL's (under the completion the labels it uses).
-    uses = not over and (result.get("status") == "CONFLICT-FREE" if question == "conflict" else
-                         result.get("verdict") == "ALL" if question == "query" else False)
-    expected = {"id": row["id"], "status": "ok", "route": "enumerated", "question": question,
-                "finding_sets": frame.finding_sets, "restrictions": rest, "result": result,
-                "per_choice": row["per_choice"],
-                "labels": (result["conditional_on"] if frame.completion else rest) if uses else [],
-                "dead_readings": dead_readings, "untaken": untaken, "dead": dead}
-    expected["english"] = _plan(frame, question, expected)
-    return expected
+def _check_english(row, frame, rows):
+    """The plan's lines name only what the request and the answer have: each reading a candidate, each shown model a
+    row's shown piece (`<piece>@<k>`, the `k`th row), each label a condition label of the request (a `status` line: a
+    row's status text), an E17 line one of the answer's dead readings. Which lines the plan has, and the conditions it
+    states, are Lean's (`verdictsPlan_cites`, `plan_conditions_only`)."""
+    from .ast import decimal_value
+    ordered = list(rows.values())
+    dead = [[d["set"], d["index"]] for d in row["dead_readings"] or []]
+    for line in row["english"]:
+        for reading in line["readings"]:
+            frame.reading(reading)
+        if line["frame"] == "E17":
+            _need(line["readings"] and all(reading in dead for reading in line["readings"]))
+        if line["model"] is not None:
+            piece, at, k = line["model"].partition("@")
+            _need(at and k.isdigit() and decimal_value(k) < len(ordered) and piece in ordered[decimal_value(k)]["shown"])
+        if line["label"] is not None:
+            if line["frame"] == "status":
+                _need(any(entry["status_text"] == line["label"] for entry in ordered))
+            else:
+                frame.label(line["label"])
 
 
 def _check_answer(row, case, frame):
-    """Lean's answer to the `readings-verdicts` request `case`, as untrusted output (build checklist 4).
+    """Lean's answer to the `readings-verdicts` request `case`, as untrusted output: its schema and its binding to the
+    request, nothing else (DRI ruling of rd-3 round 3; build checklist 4).
 
     Its shape is `Readings.Run.verdictsAnswer`'s (the generated, proved response schema: every field, its type, the
-    result's form for the question, the status words). Its rows are bound to the request and their words to Lean's
-    acceptance of the pieces sent (`_check_rows`). Every other member is regenerated here from the request, the
-    frame `frame` and the rows, as Lean computes it (`verdictsAnswer`: the result, the restrictions, the labels E3
-    cites, the untaken candidates, the dead readings and the English plan), and the answer must be exactly that;
-    only what Lean computes from evidence the answer does not show is relayed, typed (the labels a certificate or a
-    conflict package uses, a witness's lower status text, the filled gaps, a dead certificate's acceptance). Every
-    piece of evidence sent is accepted: a refused or unanswered piece (a witness, certificate or model Python's own
-    check accepted, or a dead reading's certificate) is `CheckerUnavailable`. A conflict package that does not certify
-    CONFLICT-FREE is not refused: the witness search follows (4.3)."""
+    result's form for the question, the status words). It answers this request (its id and question), for the route's
+    finding, and names only what the request has: its rows are exactly the request's compatible choices (no empty,
+    missing or extra row), each piece a row notes or shows was sent for that row's choice, a row's word names a piece
+    it notes accepted, and every choice, reading, sentence, model, label and dead reading in the result, the
+    conditions and the plan is the request's (`_check_rows`, `_check_result`, `_check_dead`, `_check_english`). What
+    the answer concludes from the rows (the verdict, its conditions, which lines the plan says) is Lean's, by theorem
+    (`readings_wire_verdicts_*`, `verdicts_conditions_*`, `verdictsPlan_cites`); the client never re-derives it, and
+    relays Lean's English unchanged. Every piece of evidence sent is accepted: a refused or unanswered piece (a
+    witness, certificate or model Python's own check accepted, or a dead reading's certificate) is
+    `CheckerUnavailable`. A conflict package that does not certify CONFLICT-FREE is not refused: the witness search
+    follows (4.3)."""
     sent = {json.dumps(e["choice"]): e for e in case.get("evidence", [])}
     try:
         from .backends.service_schema import Invalid, check_row
         # The producer's generated, proved response shape owns every field,
         # status spelling and JSON type.
         check_row("readings-route", row, {"id": row.get("id"), "kind": "readings-verdicts"}, 0)
-        expected = _expected_answer(row, case, frame, _check_rows(row, case, frame))
-        # JSON equality: a bool is never an integer, nor 1.0 an index.
-        _need(json.dumps(row, sort_keys=True) == json.dumps(expected, sort_keys=True))
+        _need(row["id"] == case["id"] and row["question"] == case["question"])
+        _need(row["finding_sets"] == frame.finding_sets)
+        rows = _check_rows(row, case, frame)
+        for label in row["restrictions"] + row["labels"]:
+            frame.label(label)
+        _check_result(row, case, frame, rows)
+        _check_dead(row, case, frame)
+        _check_english(row, frame, rows)
     except (Invalid, AttributeError, KeyError, TypeError, ValueError, IndexError, StopIteration) as exc:
         raise CheckerUnavailable("the Lean readings route returned an invalid answer") from exc
     for entry in row["per_choice"]:
