@@ -136,3 +136,26 @@ def test_report_check_rejects_changed_saved_numbers_and_commits():
     altered = copy.deepcopy(mutants)
     altered[0]["exit_code"] += 1
     assert mismatches(report, evidence, comparison, altered)
+
+
+def test_round3_mutants_were_rejected_and_reported():
+    """Round 3 (DRI directive rd-3-fix3): each Lean mutant broke a proof, named in the report; each Python mutant
+    failed tests that exist; the report's table rows are the saved ones."""
+    mutants = json.loads((HERE / "evidence/round3-mutants.json").read_text())
+    report = (HERE / "DELTA.md").read_text()
+    statements = (ROOT / "lean/statements.txt").read_text()
+    assert {m["id"] for m in mutants} == {"L4", "L5", "L6", "L7", "L8", "L9", "P1", "P2", "P3"}
+    for mutant in mutants:
+        assert mutant["exit_code"] != 0 and (ROOT / mutant["file"]).exists()
+        if mutant["id"].startswith("L"):
+            assert mutant["errors"] > 0 and mutant["first_error"].startswith("VE/Readings/VerdictsWire.lean:")
+            assert re.search(rf"^theorem VE\.Readings(?:\.Run)?\.{re.escape(mutant['theorem'])}$", statements, re.M)
+            assert (f"| {mutant['id']} | `{mutant['file']}` | {mutant['behavior']} | `{mutant['theorem']}` | "
+                    f"{mutant['errors']} errors |") in report
+        else:
+            assert mutant["failed"]
+            for test in mutant["failed"]:
+                path, name = test.split("::", 1)
+                assert re.search(rf"^def {re.escape(name.split('[', 1)[0])}\(", (ROOT / path).read_text(), re.M)
+            assert f"| {mutant['id']} | `{mutant['file']}` | {mutant['behavior']} | {len(mutant['failed'])} failed |" \
+                in report
