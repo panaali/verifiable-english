@@ -287,6 +287,8 @@ module VE.Question.Help
 module VE.Question.Properties
 module VE.Question.Read
 module VE.Question.Run
+module VE.Question.Spans
+module VE.Question.Strings
 module VE.Question.Texts
 module VE.Readings.Asserted
 module VE.Readings.Assertions

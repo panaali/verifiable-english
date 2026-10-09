@@ -1,4 +1,5 @@
 import VE.Question.Read
+import VE.Question.Strings
 
 namespace VE.Question
 open VE.EnglishGrammar
@@ -1104,5 +1105,607 @@ theorem readQuestion_complete :
         hb]
       simp only [hm, hfm]
   simp [readQuestion, hcl]
+
+end VE.Question
+
+namespace VE.Question
+open VE.EnglishGrammar
+open VE.Question.Str
+
+theorem questionMarks_data (q : String) : questionMarks q = (q.data.filter (· == '?')).length := rfl
+
+theorem caseFrame_no_q : '?' ∉ caseFrame.data := by decide
+theorem caseFrame_length : caseFrame.length = 20 := by decide
+theorem caseFrame_size : caseFrame.utf8ByteSize = 20 := by decide
+theorem caseFrame_last : caseFrame.data.getLast? = some ' ' := by decide
+
+theorem count_q_zero {l : List Char} (h : '?' ∉ l) : (l.filter (· == '?')).length = 0 := by
+  rw [List.length_eq_zero_iff, List.filter_eq_nil_iff]
+  intro c hc heq
+  simp only [beq_iff_eq] at heq
+  subst heq
+  exact h hc
+
+theorem no_q_of_count {l : List Char} (h : (l.filter (· == '?')).length = 0) : '?' ∉ l := by
+  intro hm
+  rw [List.length_eq_zero_iff, List.filter_eq_nil_iff] at h
+  exact h '?' hm (by simp)
+
+theorem capitalise_data_length (a : String) : (capitalise a).data.length = a.data.length := by
+  unfold capitalise
+  split
+  · rfl
+  · rename_i c cs h
+    show (c.toUpper :: cs).length = _
+    have : a.data = c :: cs := h
+    rw [this]; rfl
+
+theorem shape_caseThat (auxs : List String) (t : String) (ht : '?' ∉ t.data) :
+    shape auxs (caseFrame ++ t ++ "?") = .caseThat t := by
+  have hd : (caseFrame ++ t ++ "?").data = caseFrame.data ++ t.data ++ ['?'] := by
+    simp [String.data_append]
+  have he : (caseFrame ++ t ++ "?").endsWith "?" = true := by
+    rw [endsWith_q, hd]; simp
+  have hm : questionMarks (caseFrame ++ t ++ "?") = 1 := by
+    rw [questionMarks_data, hd, List.filter_append, List.filter_append, List.length_append, List.length_append,
+      count_q_zero caseFrame_no_q, count_q_zero ht]
+    rfl
+  have hs : (caseFrame ++ t ++ "?").dropRight 1 = caseFrame ++ t := by
+    rw [dropRight_one, hd]
+    apply String.ext
+    simp [String.data_append]
+  have hp : caseFrame.isPrefixOf (caseFrame ++ t) = true := by
+    rw [isPrefixOf_iff, String.data_append]; exact List.prefix_append _ _
+  have hdrop : (caseFrame ++ t).drop caseFrame.length = t := by
+    rw [drop_data, String.data_append]
+    apply String.ext
+    simp [String.length]
+  unfold shape
+  simp only [he, hm, Bool.not_true, bne_self_eq_false, Bool.or_false, Bool.false_eq_true, if_false, hs, hp,
+    if_true, hdrop]
+
+theorem caseThat_candidates :
+  ∀ (auxs : List String) (t : String), '?' ∉ t.toList →
+    ∀ c ∈ candidates auxs (caseFrame ++ t ++ "?"), c = ⟨.caseThat, t ++ "."⟩ := by
+  intro auxs t ht c hc
+  unfold candidates at hc
+  rw [shape_caseThat auxs t ht] at hc
+  simp only at hc
+  split at hc
+  · simpa using hc
+  · cases hc
+
+/-- What a question of either shape is, read back from its shape. -/
+theorem shape_ends (auxs : List String) (q : String) (h : shape auxs q ≠ .notQuestion) :
+    q.data = (q.dropRight 1).data ++ ['?'] ∧ '?' ∉ (q.dropRight 1).data := by
+  unfold shape at h
+  by_cases hq : (!q.endsWith "?" || questionMarks q != 1) = true
+  · simp only [hq, if_true] at h; exact absurd rfl h
+  · simp only [Bool.or_eq_true, Bool.not_eq_true', bne_iff_ne, ne_eq, not_or, Decidable.not_not,
+      Bool.not_eq_false] at hq
+    obtain ⟨he, hm⟩ := hq
+    rw [endsWith_q] at he
+    have hsplit : q.data = q.data.dropLast ++ ['?'] := by
+      rcases List.eq_nil_or_concat q.data with h0 | ⟨A, c, h0⟩
+      · rw [h0] at he; cases he
+      · rw [List.concat_eq_append] at h0
+        rw [h0, List.getLast?_append, List.getLast?_singleton] at he
+        simp at he
+        subst he
+        rw [h0]; simp
+    rw [dropRight_one]
+    refine ⟨hsplit, ?_⟩
+    have hc : (q.data.filter (· == '?')).length = (q.data.dropLast.filter (· == '?')).length + 1 := by
+      have := congrArg (fun l => (l.filter (· == '?')).length) hsplit
+      simp only [List.filter_append, List.length_append] at this
+      exact this
+    rw [questionMarks_data] at hm
+    show '?' ∉ q.data.dropLast
+    exact no_q_of_count (by omega)
+
+theorem shape_caseThat_inv (auxs : List String) (q t : String) (h : shape auxs q = .caseThat t) :
+    q = caseFrame ++ t ++ "?" ∧ '?' ∉ t.data := by
+  have hn : shape auxs q ≠ .notQuestion := by rw [h]; simp
+  obtain ⟨hq, hnq⟩ := shape_ends auxs q hn
+  unfold shape at h
+  simp only at h
+  split at h
+  · cases h
+  · split at h
+    · rename_i hp
+      simp only [Shape.caseThat.injEq] at h
+      subst h
+      rw [isPrefixOf_iff] at hp
+      have hs := List.prefix_iff_eq_append.mp hp
+      have ht : (q.dropRight 1).drop caseFrame.length = ⟨(q.dropRight 1).data.drop caseFrame.data.length⟩ :=
+        drop_data _ _
+      rw [ht]
+      constructor
+      · apply String.ext
+        rw [hq]
+        simp only [String.data_append]
+        rw [← hs]
+        simp
+      · intro hm
+        apply hnq
+        rw [← hs]
+        exact List.mem_append_right _ hm
+    · split at h <;> cases h
+
+theorem shape_fronted_inv (auxs : List String) (q a r : String) (h : shape auxs q = .fronted a r) :
+    a ∈ auxs ∧ caseFrame.isPrefixOf (q.dropRight 1) = false ∧ q = capitalise a ++ " " ++ r ++ "?" ∧
+      '?' ∉ r.data ∧ '?' ∉ (capitalise a).data := by
+  have hn : shape auxs q ≠ .notQuestion := by rw [h]; simp
+  obtain ⟨hq, hnq⟩ := shape_ends auxs q hn
+  unfold shape at h
+  simp only at h
+  split at h
+  · cases h
+  · split at h
+    · cases h
+    · rename_i hcf
+      split at h
+      · rename_i a' hf
+        simp only [Shape.fronted.injEq] at h
+        obtain ⟨rfl, rfl⟩ := h
+        have ha := List.mem_of_find?_eq_some hf
+        have hp := List.find?_some hf
+        simp only at hp
+        rw [isPrefixOf_iff] at hp
+        have hs := List.prefix_iff_eq_append.mp hp
+        have hlen : (capitalise a' ++ " ").data.length = a'.length + 1 := by
+          simp [String.data_append, capitalise_data_length, String.length]
+        refine ⟨ha, by simpa using hcf, ?_, ?_, ?_⟩
+        · apply String.ext
+          rw [hq, drop_data]
+          simp only [String.data_append]
+          conv => lhs; rw [← hs]
+          rw [hlen]
+          simp [String.data_append, String.length]
+        · intro hm
+          apply hnq
+          rw [drop_data] at hm
+          exact List.mem_of_mem_drop hm
+        · intro hm
+          apply hnq
+          rw [← hs]
+          apply List.mem_append_left
+          simp [String.data_append, hm]
+      · cases h
+
+end VE.Question
+
+namespace VE.Question
+open VE.EnglishGrammar
+open VE.Question.Str
+
+theorem gaps_le (rest : String) (g : Nat) (h : g ∈ gaps rest) : g ≤ rest.utf8ByteSize := by
+  unfold gaps at h
+  split at h
+  · rw [List.mem_filterMap] at h
+    obtain ⟨⟨t, a, e⟩, _, hx⟩ := h
+    simp only at hx
+    split at hx
+    · cases hx
+    · rename_i hn
+      simp only [Option.some.injEq] at hx
+      subst hx
+      simp only [Bool.or_eq_true, decide_eq_true_eq, not_or] at hn
+      omega
+  · cases h
+
+theorem caseFrame_not_prefix (q : String) (h : caseFrame.isPrefixOf (q.dropRight 1) = false)
+    (hq : q.data = (q.dropRight 1).data ++ ['?']) : caseFrame.isPrefixOf q = false := by
+  cases hp : caseFrame.isPrefixOf q with
+  | false => rfl
+  | true =>
+    rw [isPrefixOf_iff, hq, List.prefix_concat_iff] at hp
+    rcases hp with he | hp
+    · have := caseFrame_last
+      rw [he] at this
+      simp at this
+    · rw [← isPrefixOf_iff] at hp
+      rw [hp] at h
+      cases h
+
+theorem fronted_text :
+  ∀ (auxs : List String) (q a : String) (g : Nat) (s : String),
+    (⟨.fronted a g, s⟩ : Candidate) ∈ candidates auxs q →
+    a ∈ auxs ∧ caseFrame.isPrefixOf q = false ∧ ∃ rest, q = capitalise a ++ " " ++ rest ++ "?" ∧ g ∈ gaps rest ∧
+      s = rest.extract ⟨0⟩ ⟨g⟩ ++ a ++ " " ++ rest.extract ⟨g⟩ rest.endPos ++ "." := by
+  intro auxs q a g s h
+  unfold candidates at h
+  split at h
+  · split at h
+    · simp at h
+    · cases h
+  · rename_i a' r hsh
+    obtain ⟨g', hg', heq⟩ := List.mem_map.mp h
+    simp only [Candidate.mk.injEq, Form.fronted.injEq] at heq
+    obtain ⟨⟨rfl, rfl⟩, rfl⟩ := heq
+    obtain ⟨ha, hcf, hq, _, _⟩ := shape_fronted_inv auxs q a' r hsh
+    have hn : shape auxs q ≠ .notQuestion := by rw [hsh]; simp
+    exact ⟨ha, caseFrame_not_prefix q hcf (shape_ends auxs q hn).1, r, hq, hg', rfl⟩
+  · cases h
+
+end VE.Question
+
+namespace VE.Question
+open VE.EnglishGrammar
+open VE.Question.Str
+
+theorem mappedPiece_spec {start stop lo hi dst u v : Nat} (h : mappedPiece start stop lo hi dst = some (u, v)) :
+    u < v ∧ lo < min stop hi ∧ v = dst + (min stop hi - lo) := by
+  unfold mappedPiece at h
+  simp only at h
+  split at h
+  · rename_i hlt
+    simp only [Option.some.injEq, Prod.mk.injEq] at h
+    obtain ⟨rfl, rfl⟩ := h
+    refine ⟨?_, ?_, rfl⟩ <;> omega
+  · cases h
+
+theorem enclose_spec (B : Nat) (ps : List (Nat × Nat)) :
+    ∀ p : Nat × Nat, p.1 ≤ p.2 → p.2 ≤ B → (∀ v ∈ ps, v.1 ≤ v.2 ∧ v.2 ≤ B) →
+    (ps.foldl (fun acc v => (min acc.1 v.1, max acc.2 v.2)) p).1 ≤
+      (ps.foldl (fun acc v => (min acc.1 v.1, max acc.2 v.2)) p).2 ∧
+    (ps.foldl (fun acc v => (min acc.1 v.1, max acc.2 v.2)) p).2 ≤ B := by
+  induction ps with
+  | nil => intro p h1 h2 _; exact ⟨h1, h2⟩
+  | cons v vs ih =>
+    intro p h1 h2 hv
+    have ⟨hv1, hv2⟩ := hv v (by simp)
+    simp only [List.foldl_cons]
+    apply ih
+    · simp only; omega
+    · simp only; omega
+    · intro w hw; exact hv w (by simp [hw])
+
+theorem utf8ByteSize_dot : ".".utf8ByteSize = 1 := by decide
+theorem utf8ByteSize_q : "?".utf8ByteSize = 1 := by decide
+theorem utf8ByteSize_space : " ".utf8ByteSize = 1 := by decide
+
+theorem insertAt_size (rest a : String) (g : Nat) :
+    (insertAt rest a g).utf8ByteSize = rest.utf8ByteSize + a.utf8ByteSize + 2 := by
+  unfold insertAt
+  have := extract_size rest g
+  simp only [utf8ByteSize_append, utf8ByteSize_dot, utf8ByteSize_space] at *
+  rw [show (⟨0⟩ : String.Pos) = 0 from rfl]
+  omega
+
+theorem mapSpan_valid :
+  ∀ (auxs : List String) (q : String) (c : Candidate) (start stop : Nat),
+    (∀ a ∈ auxs, (capitalise a).utf8ByteSize = a.utf8ByteSize) →
+    c ∈ candidates auxs q → start ≤ stop → stop ≤ c.sentence.utf8ByteSize →
+    let span := mapSpan c caseFrame.utf8ByteSize (start, stop)
+    span.1 ≤ span.2 ∧ span.2 ≤ q.utf8ByteSize := by
+  intro auxs q c start stop hcap hc hss hstop
+  unfold candidates at hc
+  split at hc
+  · rename_i t hsh
+    split at hc
+    · simp only [List.mem_singleton] at hc
+      subst hc
+      obtain ⟨hq, _⟩ := shape_caseThat_inv auxs q t hsh
+      simp only [utf8ByteSize_append, utf8ByteSize_dot] at hstop
+      simp only [mapSpan]
+      rw [hq]
+      simp only [utf8ByteSize_append, utf8ByteSize_q, caseFrame_size]
+      omega
+    · cases hc
+  · rename_i a r hsh
+    obtain ⟨g, hg, rfl⟩ := List.mem_map.mp hc
+    obtain ⟨ha, _, hq, _, _⟩ := shape_fronted_inv auxs q a r hsh
+    have hgle := gaps_le r g hg
+    have hn := hcap a ha
+    have hqs : q.utf8ByteSize = a.utf8ByteSize + r.utf8ByteSize + 2 := by
+      rw [hq]; simp only [utf8ByteSize_append, utf8ByteSize_q, utf8ByteSize_space, hn]; omega
+    have hsz := insertAt_size r a g
+    simp only at hstop
+    rw [hsz] at hstop
+    simp only [mapSpan]
+    split
+    · rename_i hnil
+      simp only [mapPoint]
+      split <;> (try split) <;> (try split) <;> omega
+    · rename_i p ps hpp
+      have hall : ∀ v ∈ p :: ps, v.1 ≤ v.2 ∧ v.2 ≤ q.utf8ByteSize := by
+        intro v hv
+        rw [← hpp, List.mem_filterMap] at hv
+        obtain ⟨o, ho, hov⟩ := hv
+        simp only [id_eq] at hov
+        subst hov
+        simp only [List.mem_cons, List.mem_nil_iff, or_false] at ho
+        rcases ho with ho | ho | ho | ho <;> obtain ⟨h1, h2, h3⟩ := mappedPiece_spec ho.symm <;>
+          (constructor <;> omega)
+      exact enclose_spec _ ps p (hall p (by simp)).1 (hall p (by simp)).2 (fun v hv => hall v (by simp [hv]))
+  · cases hc
+
+end VE.Question
+
+namespace VE.Question
+open VE.EnglishGrammar
+open VE.Question.Str
+
+theorem readQuestion_of_classify_one (auxs : List String) (E : Env) (O : Overlay) (L : Lexicon) (b : Nat)
+    (q : String) (c : Candidate) (φ : EFormula) (h : classify auxs E O L b q = .one c φ) :
+    readQuestion auxs E O L b q = .one c φ := by
+  unfold readQuestion
+  rw [h]
+
+theorem classify_fault (auxs : List String) (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (q : String)
+    (h : ∀ o, classify auxs E O L b q ≠ .text o) : grammarFault E O L = none := by
+  cases hg : grammarFault E O L with
+  | none => rfl
+  | some g =>
+    exfalso
+    apply h (.invalidGrammar g)
+    unfold classify
+    rw [hg]
+
+theorem lex_one_of_reading {E : Env} {O : Overlay} {L : Lexicon} {s : String} {φ : EFormula}
+    (h : EnglishOneReading E O L s [(φ, false)]) :
+    ∃ w, lex s = .ok #[w] ∧ AtMostOneDerivation E L s := by
+  obtain ⟨_, sents, st2, hl, hd, _⟩ := h
+  cases hs : sents.toList with
+  | nil => rw [hs] at hd; simp [VE.Grammar.DocOneReading] at hd
+  | cons w ws =>
+    rw [hs] at hd
+    cases ws with
+    | cons w' ws' =>
+      simp only [List.map_cons, VE.Grammar.DocOneReading] at hd
+      obtain ⟨_, _, hd2⟩ := hd
+      simp at hd2
+    | nil =>
+      have hsents : sents = #[w] := by
+        apply Array.ext'
+        simpa using hs
+      subst hsents
+      simp only [List.map_cons, List.map_nil, VE.Grammar.DocOneReading] at hd
+      obtain ⟨st1, ⟨t, ht, hu, _⟩, _⟩ := hd
+      exact ⟨w, hl, w, hl, fun t1 t2 h1 h2 => (hu t1 h1).trans (hu t2 h2).symm⟩
+
+theorem bodySentence_of_lex (t : String) (w : Array Tok) (h : lex (t ++ ".") = .ok #[w]) :
+    (bodySentence t).isSome = true := by
+  unfold lex at h
+  unfold bodySentence
+  cases hl : lexSpans (t ++ ".") with
+  | error r => rw [hl] at h; cases h
+  | ok ss =>
+    rw [hl] at h
+    simp only [Except.map, Except.ok.injEq] at h
+    have hsz : ss.size = 1 := by
+      have := congrArg Array.size h
+      simpa using this
+    simp only [hsz, beq_self_eq_true, if_true]
+    obtain ⟨x, rfl⟩ := Array.size_eq_one_iff.mp hsz
+    rfl
+
+theorem caseThat_reads :
+  ∀ (auxs : List String) (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (t : String) (φ : EFormula),
+    L.policyOk E O = true → '?' ∉ t.toList → withinLimits auxs (caseFrame ++ t ++ "?") = true →
+    (readQuestion auxs E O L b (caseFrame ++ t ++ "?") = .one ⟨.caseThat, t ++ "."⟩ φ ↔
+      read E O L b (t ++ ".") = .ok [(φ, false)]) := by
+  intro auxs E O L b t φ hp ht hlim
+  constructor
+  · intro h
+    exact (readQuestion_one_read auxs E O L b _ _ φ h).2
+  · intro hr
+    have hcr := read_ok E O L b _ _ hr
+    obtain ⟨_, h2, h3, h4, h5⟩ := read_checks hr (fun _ e => by cases e)
+    obtain ⟨w, hl, hamo⟩ := lex_one_of_reading hcr
+    have hcands : candidates auxs (caseFrame ++ t ++ "?") = [⟨.caseThat, t ++ "."⟩] := by
+      unfold candidates
+      rw [shape_caseThat auxs t ht]
+      simp only [bodySentence_of_lex t w hl, if_true]
+    apply readQuestion_complete auxs E O L b _ _ φ hp ⟨h2, h3, h4, h5⟩ hlim
+    · intro d hd i
+      rw [hcands] at hd
+      simp only [List.mem_singleton] at hd
+      subst hd
+      rw [hr]
+      simp
+    · refine ⟨by rw [hcands]; simp, ?_, hcr, ?_, ?_⟩
+      · intro d hd; rw [hcands] at hd; simp only [List.mem_singleton] at hd; subst hd; exact hamo
+      · intro d hd; rw [hcands] at hd; simp at hd
+      · intro d hd; rw [hcands] at hd; simp only [List.mem_singleton] at hd; subst hd; exact Or.inl hcr
+
+theorem go₂_sublist (l : List Char) (i e : String.Pos) : List.Sublist (String.extract.go₂ l i e) l := by
+  induction l generalizing i with
+  | nil => exact List.Sublist.slnil
+  | cons c l ih =>
+    simp only [String.extract.go₂]
+    split
+    · exact List.nil_sublist _
+    · exact (ih _).cons₂ c
+
+theorem go₁_sublist (l : List Char) (i b e : String.Pos) : List.Sublist (String.extract.go₁ l i b e) l := by
+  induction l generalizing i with
+  | nil => exact List.Sublist.slnil
+  | cons c l ih =>
+    simp only [String.extract.go₁]
+    split
+    · exact go₂_sublist _ _ _
+    · exact (ih _).cons c
+
+theorem extract_sublist (s : String) (b e : String.Pos) : List.Sublist (s.extract b e).data s.data := by
+  obtain ⟨d⟩ := s
+  simp only [String.extract]
+  split
+  · exact List.nil_sublist _
+  · exact go₁_sublist _ _ _ _
+
+theorem no_q_of_capitalise (a : String) (h : '?' ∉ (capitalise a).data) : '?' ∉ a.data := by
+  unfold capitalise at h
+  split at h
+  · exact h
+  · rename_i c cs hc
+    have : a.data = c :: cs := hc
+    rw [this]
+    intro hm
+    simp only [List.mem_cons] at hm
+    rcases hm with hm | hm
+    · apply h; show '?' ∈ c.toUpper :: cs
+      rw [← hm]; simp
+    · exact h (by show '?' ∈ c.toUpper :: cs; simp [hm])
+
+/-- A candidate sentence is a text without `?`, then `.`. -/
+theorem candidate_sentence (auxs : List String) (q : String) (c : Candidate) (hc : c ∈ candidates auxs q) :
+    ∃ u : String, c.sentence = u ++ "." ∧ '?' ∉ u.data := by
+  unfold candidates at hc
+  split at hc
+  · rename_i t hsh
+    split at hc
+    · simp only [List.mem_singleton] at hc
+      subst hc
+      exact ⟨t, rfl, (shape_caseThat_inv auxs q t hsh).2⟩
+    · cases hc
+  · rename_i a r hsh
+    obtain ⟨g, _, rfl⟩ := List.mem_map.mp hc
+    obtain ⟨_, _, _, hr, hca⟩ := shape_fronted_inv auxs q a r hsh
+    refine ⟨r.extract ⟨0⟩ ⟨g⟩ ++ a ++ " " ++ r.extract ⟨g⟩ r.endPos, rfl, ?_⟩
+    simp only [String.data_append, List.mem_append, not_or]
+    refine ⟨⟨⟨fun hm => hr ((extract_sublist r _ _).subset hm), no_q_of_capitalise a hca⟩, by decide⟩,
+      fun hm => hr ((extract_sublist r _ _).subset hm)⟩
+  · cases hc
+
+theorem dropRight_dot (u : String) : (u ++ ".").dropRight 1 = u := by
+  rw [dropRight_one]
+  apply String.ext
+  simp [String.data_append]
+
+end VE.Question
+
+namespace VE.Question
+open VE.EnglishGrammar
+open VE.Question.Str
+
+/-- `offered`'s fold: every kept question reads `one` with the kept meaning, and the meanings are distinct. -/
+theorem offered_fold (auxs : List String) (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (qs : List String) :
+    ∀ acc : List (String × EFormula),
+      (∀ y ∈ acc, ∃ c, classify auxs E O L b y.1 = .one c y.2) → (acc.map (·.2)).Nodup →
+      let r := qs.foldl (fun (acc : List (String × EFormula)) r => match classify auxs E O L b r with
+        | .one _ φ => if acc.any (·.2 == φ) then acc else acc ++ [(r, φ)]
+        | _ => acc) acc
+      (∀ y ∈ r, ∃ c, classify auxs E O L b y.1 = .one c y.2) ∧ (r.map (·.2)).Nodup := by
+  induction qs with
+  | nil => intro acc h1 h2; exact ⟨h1, h2⟩
+  | cons x xs ih =>
+    intro acc h1 h2
+    simp only [List.foldl_cons]
+    apply ih
+    · intro y hy
+      split at hy
+      · rename_i c φ hcl
+        split at hy
+        · exact h1 y hy
+        · rcases List.mem_append.mp hy with hy | hy
+          · exact h1 y hy
+          · simp only [List.mem_singleton] at hy
+            subst hy
+            exact ⟨c, hcl⟩
+      · exact h1 y hy
+    · split
+      · rename_i c φ hcl
+        split
+        · exact h2
+        · rename_i hany
+          rw [List.map_append, List.nodup_append]
+          refine ⟨h2, by simp, ?_⟩
+          intro a ha b hb
+          simp only [List.map_cons, List.map_nil, List.mem_singleton] at hb
+          subst hb
+          intro heq
+          subst heq
+          apply hany
+          obtain ⟨z, hz, rfl⟩ := List.mem_map.mp ha
+          exact List.any_eq_true.mpr ⟨z, hz, by simp⟩
+      · exact h2
+
+theorem offered_spec (auxs : List String) (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (qs : List String) :
+    (∀ r ∈ offered auxs E O L b qs, ∃ c φ, readQuestion auxs E O L b r = .one c φ) ∧
+    (offered auxs E O L b qs).Pairwise (fun r r' => ∀ c₁ φ₁ c₂ φ₂, readQuestion auxs E O L b r = .one c₁ φ₁ →
+      readQuestion auxs E O L b r' = .one c₂ φ₂ → φ₁ ≠ φ₂) := by
+  obtain ⟨h1, h2⟩ := offered_fold auxs E O L b qs [] (by simp) (by simp)
+  unfold offered
+  constructor
+  · intro r hr
+    obtain ⟨y, hy, rfl⟩ := List.mem_map.mp hr
+    obtain ⟨c, hc⟩ := h1 y hy
+    exact ⟨c, y.2, readQuestion_of_classify_one auxs E O L b _ c y.2 hc⟩
+  · rw [List.pairwise_map]
+    have hp := List.pairwise_map.mp h2
+    refine hp.imp_of_mem ?_
+    intro y y' hy hy' hne c₁ φ₁ c₂ φ₂ hr hr'
+    obtain ⟨c, hc⟩ := h1 y hy
+    obtain ⟨c', hc'⟩ := h1 y' hy'
+    rw [readQuestion_of_classify_one auxs E O L b _ c y.2 hc] at hr
+    rw [readQuestion_of_classify_one auxs E O L b _ c' y'.2 hc'] at hr'
+    simp only [Outcome.one.injEq] at hr hr'
+    rw [← hr.2, ← hr'.2]
+    exact hne
+
+theorem readQuestion_meanings_classify (auxs : List String) (E : Env) (O : Overlay) (L : Lexicon) (b : Nat)
+    (q : String) (fs : List (Candidate × EFormula)) (rs : List String)
+    (h : readQuestion auxs E O L b q = .meanings fs rs) : classify auxs E O L b q = .meanings fs rs := by
+  unfold readQuestion at h
+  dsimp only at h
+  repeat (split at h <;> try cases h)
+  all_goals assumption
+
+theorem readQuestion_indefinite_offered (auxs : List String) (E : Env) (O : Overlay) (L : Lexicon) (b : Nat)
+    (q art : String) (rs : List String) (h : readQuestion auxs E O L b q = .indefinite art rs) :
+    ∃ qs, rs = offered auxs E O L b qs := by
+  unfold readQuestion at h
+  dsimp only at h
+  split at h
+  · split at h
+    · split at h
+      · cases h
+      · simp only [Outcome.indefinite.injEq] at h
+        exact ⟨_, h.2.symm⟩
+    · cases h
+  · exfalso
+    unfold classify at h
+    dsimp only at h
+    repeat (split at h <;> try cases h)
+
+theorem rephrasings_read :
+  ∀ (auxs : List String) (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (q : String) (rs : List String),
+    ((∃ fs, readQuestion auxs E O L b q = .meanings fs rs) ∨ (∃ art, readQuestion auxs E O L b q = .indefinite art rs)) →
+    (∀ r ∈ rs, withinLimits auxs r = true) →
+    (∀ r ∈ rs, ∃ c φ, readQuestion auxs E O L b r = .one c φ) ∧
+    rs.Pairwise (fun r r' => ∀ c₁ φ₁ c₂ φ₂, readQuestion auxs E O L b r = .one c₁ φ₁ →
+      readQuestion auxs E O L b r' = .one c₂ φ₂ → φ₁ ≠ φ₂) := by
+  intro auxs E O L b q rs h hlim
+  rcases h with ⟨fs, h⟩ | ⟨art, h⟩
+  · obtain ⟨_, hnd, hfs, hrs⟩ := readQuestion_meanings auxs E O L b q fs rs h
+    have hcl := readQuestion_meanings_classify auxs E O L b q fs rs h
+    have hp := (grammarFault_none_checks (classify_fault auxs E O L b q (by rw [hcl]; intro o; simp))).1
+    have hread : ∀ x ∈ fs, readQuestion auxs E O L b (caseThatQuestion x.1) = .one ⟨.caseThat, x.1.sentence⟩ x.2 := by
+      intro x hx
+      obtain ⟨hmem, hrx⟩ := hfs x hx
+      obtain ⟨u, hu, hq⟩ := candidate_sentence auxs q x.1 hmem
+      have hcq : caseThatQuestion x.1 = caseFrame ++ u ++ "?" := by
+        unfold caseThatQuestion; rw [hu, dropRight_dot]
+      rw [hcq, hu]
+      apply (caseThat_reads auxs E O L b u x.2 hp hq ?_).mpr
+      · rw [← hu]; exact hrx
+      · rw [← hcq]; apply hlim; rw [hrs]; exact List.mem_map_of_mem hx
+    subst hrs
+    constructor
+    · intro r hr
+      obtain ⟨x, hx, rfl⟩ := List.mem_map.mp hr
+      exact ⟨_, _, hread x hx⟩
+    · rw [List.pairwise_map]
+      refine (List.pairwise_map.mp hnd).imp_of_mem ?_
+      intro x x' hx hx' hne c₁ φ₁ c₂ φ₂ h1 h2
+      rw [hread x hx] at h1
+      rw [hread x' hx'] at h2
+      simp only [Outcome.one.injEq] at h1 h2
+      rw [← h1.2, ← h2.2]
+      exact hne
+  · obtain ⟨qs, rfl⟩ := readQuestion_indefinite_offered auxs E O L b q art rs h
+    exact offered_spec auxs E O L b qs
 
 end VE.Question

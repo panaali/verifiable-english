@@ -2,13 +2,15 @@
   "format": "ve.question-lock@1",
   "question_version": 1,
   "files": {
-    "lean/VE/Question/Basic.lean": "1cbed7d662a2299c31155d788e55b4c04e720f771dbe6a839df42c28e837fe09",
+    "lean/VE/Question/Basic.lean": "96d4a7e85beb2beb6f220b11d7706b8178cc24d92d8999df2ef9c7eafa7a7b09",
     "lean/VE/Question/Examples.lean": "72eeae20afd8da4fb43aa561355e2f3cf397f457892f0f3808f1a8d050caae83",
     "lean/VE/Question/Fixtures.lean": "6e814554d9ae3a111aa8c3e2a369041b27189a58dda0f9648895f9b0ee70c105",
     "lean/VE/Question/Help.lean": "4ad773b3453e32cd2e1467090c54df60a17d9dc6055fe7369d0df139bc8737a2",
-    "lean/VE/Question/Properties.lean": "578e2575686d2edde9ec647be683537a84fc475b9515ec31be5c87fa775f50a1",
+    "lean/VE/Question/Properties.lean": "6e66e4ab6474d59f5ef8b172c1d2d790854fa401412e96bf88ec1735b083aac8",
     "lean/VE/Question/Read.lean": "accf4caf42aa9fef55e3f10401487519df8568413d2b36a1e5083033a5bebe66",
     "lean/VE/Question/Run.lean": "66d8a51002eeab64e502afe3eafe1435ed8529a4e09b6b341db6adfecd79219e",
+    "lean/VE/Question/Spans.lean": "cbbb8527cd9940cb99e643737c6c1373eef2f08669f3ce3fb2c0ddaa9d717136",
+    "lean/VE/Question/Strings.lean": "9b940bd6904e59d4f79561ac1bd706ca41a8bb971cbfda98d66870d5f586c2d4",
     "lean/VE/Question/Texts.lean": "1b4a72d2dfeef53fec962a6b0729c648b9001a689e636aac30add70759701748"
   }
 }

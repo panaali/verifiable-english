@@ -158,6 +158,19 @@ def test_the_contract_files_are_the_services():
         assert done.returncode == 0, (tool, done.stdout, done.stderr)
 
 
+def test_every_approved_statement_is_proved_as_written():
+    """Spec 5.1's fifteen Q1 statements are Lean theorems whose text is the approved text
+    (tools/question_statements.py); `lean/audit.py` checks that they use the standard axioms only."""
+    done = subprocess.run([sys.executable, str(ROOT / "tools/question_statements.py")], cwd=ROOT,
+                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
+    assert done.returncode == 0, done.stdout
+    assert "15 of 15 implemented; 0 missing" in done.stdout
+    audited = (ROOT / "lean/VE/Audit.lean").read_text()
+    for name in re.findall(r"^theorem (\w+)", SPEC.read_text().split("### 5.1 Q1", 1)[1].split("### 5.2", 1)[0],
+                           re.M):
+        assert f"#print axioms VE.Question.{name}\n" in audited, name
+
+
 # ------------------------------------------------------------------ the table against the service
 
 @pytest.mark.parametrize("fixture,frame,question,answer", F.FIXTURES, ids=IDS)
