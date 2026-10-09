@@ -219,14 +219,9 @@ def response_problem(response, expected: dict, env, source: str) -> str | None:
     formulas, conclusions = body["ast"], body["conclusions"]
     if type(formulas) is not list or not formulas:
         return "ast is not a non-empty list of formulas"
-    try:
-        ast.core_gate(env)
-    except VEError:
-        # The core checker refuses every formula under this environment, so its decoding cannot judge Lean's
-        # answer; the reading's own decoding raises the gate's refusal, as Python's reader does (E2.5).
-        gated = True
-    else:
-        gated = False
+    # The core checker refuses every formula under a gated environment, so its decoding cannot judge Lean's
+    # answer; the reading's own decoding raises the gate's refusal, as Python's reader does (E2.5).
+    gated = _gate(env) is not None
     for formula in [] if gated else formulas:
         try:
             ast.formula_from_data(env, formula)
@@ -259,6 +254,17 @@ def response_problem(response, expected: dict, env, source: str) -> str | None:
     return None
 
 
+def _gate(env) -> VEError | None:
+    """The core checker's refusal of `env` as a whole (`ast.core_gate`), or None. Every relay path that hands a
+    Lean reading back (english.read's `LeanReading.document`, `read_question`) raises it in place of the reading;
+    `response_problem` and `question_problem` only skip decoding the formulas it refuses."""
+    try:
+        ast.core_gate(env)
+    except VEError as exc:
+        return exc
+    return None
+
+
 def _transport(case: dict) -> dict:
     if TRANSPORT is not None:
         return TRANSPORT(case)
@@ -279,11 +285,7 @@ class LeanReading:
     def gate(self) -> VEError | None:
         """The core checker's refusal of the environment (`ast.core_gate`), which decoding a reading's formulas
         raises whatever they are; None when there is none."""
-        try:
-            ast.core_gate(self.env)
-        except VEError as exc:
-            return exc
-        return None
+        return _gate(self.env)
 
     def classes(self) -> tuple[str, ...]:
         """The Python classes the comparator accepts for this outcome: Lean's class, with the tolerance the
@@ -412,10 +414,8 @@ def question_problem(response, expected: dict, env, question: str) -> str | None
             return "the asked line is not a non-empty string"
         if body["spans"] != [[0, len(question)]]:
             return "the asked sentence's span is not the question's"
-        try:
-            ast.core_gate(env)
-        except VEError:
-            return None  # the core checker refuses every formula here; the reading's decoding raises it
+        if _gate(env) is not None:
+            return None  # every formula is refused here: `read_question` raises the gate's refusal (`_gate`)
         try:
             ast.formula_from_data(env, body["ast"])
         except (VEError, TypeError, ValueError, KeyError, RecursionError) as exc:
@@ -482,6 +482,11 @@ def read_question(env, question: str, words, options: dict) -> dict:
     if problem:
         raise CheckerUnavailable(f"CheckerUnavailable: the Lean question reader's answer is malformed: {problem}")
     if response["status"] == "one":
+        refusal = _gate(env)
+        if refusal is not None:
+            # The core checker refuses every formula under this environment (ve-units@1): the reading is not
+            # returned or shown, as `LeanReading.document` raises the same refusal on the english.read path.
+            raise refusal
         return response
     cls = ERROR_CLASSES[response["class"]]
     text = response["text"] if "advice" not in response else f'{response["text"]} {response["advice"]["text"]}'

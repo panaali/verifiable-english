@@ -243,6 +243,27 @@ def test_the_cli_does_not_answer_without_reading():
     assert done.returncode == 5 and done.stdout == "" and "--reading" in done.stderr
 
 
+def test_a_gated_environment_never_returns_a_reading():
+    """Review B1 (Fable): under an environment the core checker refuses as a whole (`ve-units@1`), every relay path
+    that hands back a Lean reading raises the gate's refusal; `read_question` returned the unchecked formula. Each
+    path is listed here, so a new one must be added (english.read's reading, the question reader, `ve.ask.read`)."""
+    from conformance import english_lean_s3_fixtures as X
+    from ve import Environment
+    from ve.errors import UnsupportedProfile
+    env = Environment(X.FR_UNITS())
+    assert env.unit_schema is not None
+    words = EnglishVocabulary(env, _defer_overlay_refusals=True)
+    with pytest.raises(UnsupportedProfile) as raised:
+        english_lean.read_question(env, 'Is wait classified as "safe"?', words, {})
+    assert not hasattr(raised.value, "lean_question")
+    with pytest.raises(UnsupportedProfile):
+        english_lean.read(env, 'Wait is classified as "safe".', words, {}).document()
+    # Lean read the question: only the gate stands between it and the caller.
+    case = english_lean.request(env, 'Is wait classified as "safe"?', words, {})
+    case.update(id=MODE, question='Is wait classified as "safe"?')
+    assert relay.decide_once(MODE, case)["result"]["status"] == "one"
+
+
 def test_the_cli_refuses_a_document_it_cannot_load(tmp_path):
     missing = cli(tmp_path / "missing.ve.md", "Is every member eligible?", "--reading")
     assert missing.returncode == 2 and missing.stdout == ""
