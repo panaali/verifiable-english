@@ -83,7 +83,7 @@
           "type": "array"
         },
         "dilemmas": {"maxItems": 0, "type": "array"},
-        "narrowings": {"type": "array"},
+        "narrowings": {"items": {"$ref": "common.json#/$defs/token"}, "type": "array"},
         "proximate_judgments": {
           "items": {
             "$comment": "Alternatives.Wire.coverage: an asserted proximate(action, harm) leaf.",
@@ -153,13 +153,18 @@
     "unit": {
       "additionalProperties": false,
       "properties": {
-        "content": true,
-        "id": {"type": "string"},
+        "content": {"$ref": "common.json#/$defs/generated_formula"},
+        "id": {"$ref": "common.json#/$defs/token"},
         "kind": true,
         "meaning": true,
-        "meaning_id": {"type": "string"},
-        "parent_id": {"type": "string"},
-        "span": {"items": {"$ref": "common.json#/$defs/nat"}, "type": "array"},
+        "meaning_id": {"$ref": "common.json#/$defs/hex64"},
+        "parent_id": {"$ref": "common.json#/$defs/token"},
+        "span": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [{"$ref": "common.json#/$defs/nat"}, {"$ref": "common.json#/$defs/nat"}],
+          "type": "array"
+        },
         "status": {"type": "string"},
         "support": {"type": "string"}
       },

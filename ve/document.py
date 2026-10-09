@@ -479,16 +479,19 @@ def _bind_document_answer(body, meta, declared, row):
     kinds, statuses, reasons = {}, {}, {}
     for unit, (authored, parent) in zip(units, declared, strict=True):
         require(type(unit) is dict and type(authored) is dict)
+        has_content = authored.get("content") is not None
         require(set(unit) == {"id", "span", "kind", "meaning", "support", "status"} |
-                ({"content", "meaning_id"} if "content" in authored else set()) |
+                ({"content", "meaning_id"} if has_content else set()) |
                 ({"parent_id"} if parent is not None else set()))
         for field in ("id", "span", "kind", "meaning", "support"):
             require(field in unit and field in authored and same(unit[field], authored[field]))
         require(("parent_id" in unit) == (parent is not None))
         if parent is not None:
             require(unit["parent_id"] == parent)
-        require(("content" in unit) == ("content" in authored))
+        require(("content" in unit) == has_content)
         require(("content" in unit) == ("meaning_id" in unit))
+        if has_content and type(authored["content"]) is dict and "ast" in authored["content"]:
+            require(same(unit["content"], authored["content"]["ast"]))
         span = unit["span"]
         require(type(span) is list and len(span) == 2 and
                 all(type(n) is int for n in span) and 0 <= span[0] < span[1] <= len(source))
