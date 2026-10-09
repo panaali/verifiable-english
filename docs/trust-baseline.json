@@ -4,26 +4,26 @@
   "K": 978,
   "S": 9475,
   "D": 12949,
-  "G": 24561,
+  "G": 24673,
   "C": 8185,
-  "P": 66796,
-  "T": 13238,
-  "o": 11437,
+  "P": 66882,
+  "T": 13245,
+  "o": 11442,
   "D[V]": 11830,
   "D[R]": 638,
   "D[I]": 481,
-  "G[V]": 23241,
+  "G[V]": 23353,
   "G[R]": 1096,
   "G[I]": 224,
   "tied": 171,
   "unclassified": 0,
-  "trusted": 45372,
-  "lines": 147619
+  "trusted": 45484,
+  "lines": 147829
  },
  "budget": {
   "K": 978,
   "S": 9475,
-  "V": 34919
+  "V": 35031
  },
  "signed": [],
  "history": [
@@ -242,6 +242,19 @@
     "K": 978,
     "S": 9475,
     "V": 34919
+   }
+  },
+  {
+   "change": "RD-3 review B1: the readings-verdicts result is one closed, typed form per question (schema glue), each proved to fit its encoder",
+   "rebaselined_from": {
+    "K": 978,
+    "S": 9475,
+    "V": 34919
+   },
+   "to": {
+    "K": 978,
+    "S": 9475,
+    "V": 35031
    }
   }
  ],
@@ -3538,7 +3551,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 393,
+   "T": 400,
    "o": 7,
    "D[V]": 0,
    "D[R]": 0,
@@ -3549,7 +3562,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 400
+   "lines": 407
   },
   "ResponseShape/CaseDeciders.lean": {
    "K": 0,
@@ -3817,9 +3830,9 @@
    "D": 0,
    "G": 13,
    "C": 0,
-   "P": 616,
+   "P": 702,
    "T": 0,
-   "o": 29,
+   "o": 31,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
@@ -3829,7 +3842,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 29,
-   "lines": 674
+   "lines": 762
   },
   "ResponseShape/Encoders/Reports.lean": {
    "K": 0,
@@ -4515,21 +4528,21 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 475,
+   "G": 587,
    "C": 0,
    "P": 0,
    "T": 0,
-   "o": 9,
+   "o": 12,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 475,
+   "G[V]": 587,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 475,
-   "lines": 484
+   "trusted": 587,
+   "lines": 599
   },
   "ResponseShape/Schemas/Reports.lean": {
    "K": 0,
