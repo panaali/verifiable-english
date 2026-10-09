@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import copy
 import json
+from pathlib import Path
 
 import pytest
 
@@ -22,6 +23,7 @@ from ve.readings_s2_wording import query_english, report_english
 from ve.readings_verdicts import context
 
 LEAN = "ve_readings_route"
+ROOT = Path(__file__).resolve().parents[1]
 IMPLIES = ["forall", "agent", ["forall", "user", ["implies", ["binary", "help_required", ["var", 1], ["var", 0]],
                                                   ["binary", "help_permitted", ["var", 1], ["var", 0]]]]]
 PAIR = "unsaid:pair:help_required,help_permitted"
@@ -82,14 +84,18 @@ def test_fnd1_query_some_each_reading_named_by_its_own_sentence(tmp_path):
     data = route.entailment(QUERY)
     assert data["verdict"] == "SOME" and data["proof"]["choice"] == C0 and data["countermodel"]["choice"] == C1
     answer = route.query_answer(QUERY)
-    assert frames(answer) == [("E12", "R2"), ("E12", "R3")]
+    # rd-3 round 3: the proof under the first reading rests on the pair condition (its conflict packages use it), so
+    # the plan states it after that result (verdicts_conditions_some), before the countermodel of the second.
+    assert data["proof"]["conditional_on"] == [PAIR] and answer["labels"] == [PAIR]
+    assert frames(answer) == [("E12", "R2"), ("E3", None), ("P1", None), ("E12", "R3")]
     [shown] = [line for line in answer["english"] if line["model"] is not None]
     # one filled gap the result depends on: the duty's own gap under reading `asks`, answered 'no' (spec 2.2)
     assert shown["gaps"] == [["help_required", ["e0", "e0"], False]] and shown["readings"] == [["rs_1", 1]]
     lines = query_english(doc, QUERY, data)
     assert lines[0].startswith(f"Read sentence 1 as {EVERY_SENTENCE}: the conclusion follows")
-    assert lines[1].startswith(f"Read sentence 1 as {ASKS_SENTENCE}: the conclusion does not follow")
-    assert lines[1].endswith("Here the text does not say whether e0 must help e0; this situation answers 'no'.")
+    assert lines[1:3] == ["This holds provided that:", "Whenever an agent must help an user, it may help that user."]
+    assert lines[3].startswith(f"Read sentence 1 as {ASKS_SENTENCE}: the conclusion does not follow")
+    assert lines[3].endswith("Here the text does not say whether e0 must help e0; this situation answers 'no'.")
     assert not any("reading 2" in line or "reading 1" in line for line in lines)
 
 
@@ -241,9 +247,10 @@ def test_thirty_narrowed_sets_restrictions_without_the_product():
 
 
 # ---------------------------------------------------------------------------------------------------------------
-# Lean's answer is untrusted output (build checklist 4; review B1 and B2 of rd-3): every field of the answer and of
-# its result dropped, emptied or retyped is unavailable, and every row and every choice it names is bound to the
-# request
+# Lean's answer is untrusted output, checked for its schema and its binding to the request only (DRI ruling of rd-3
+# round 3; build checklist 4; review B1 and B2 of rd-3): every field dropped or retyped is unavailable, and every row,
+# choice, reading, model, label and dead reading it names is the request's. What the answer concludes from its rows
+# (the verdict, its conditions, which lines the plan says) is Lean's, by theorem; the client never re-derives it.
 
 def _checked(route, answer):
     """The request `answer` answers, after checking the genuine answer against it."""
@@ -290,12 +297,6 @@ def _at(value, path):
 RETYPED = (7, True, None, [], {}, "", "UNKNOWN")
 
 
-def _relayed(path):
-    """A certificate's own labels (`proofJson`'s `conditional_on`): Lean's checked label use, which nothing in the
-    request or the rows determines; only its type is checked here (a retyped value is still unavailable)."""
-    return "conditional_on" in path and path[:1] in (("proof",), ("proofs",))
-
-
 def _result_mutants(answer):
     """1-fault mutations of the result: each member dropped, and each value outside a shown model replaced by one
     of another type or another value of its type."""
@@ -306,16 +307,36 @@ def _result_mutants(answer):
         if type(last) is str:
             yield f"drop {path}", lambda a, p=parent, k=last: _at(a["result"], p).pop(k)
         for other in RETYPED:
-            if _relayed(path) and type(other) in (list, str):
-                continue
             if type(other) is not type(value) or other != value:
                 yield f"{path} = {other!r}", lambda a, p=parent, k=last, v=other: _at(a["result"], p).__setitem__(k, v)
 
 
-def test_the_result_of_every_form_is_typed_and_closed(tmp_path):
-    """Review B1: each result member dropped or retyped, at every depth, is unavailable (a shown model is bound to
-    the request's piece instead, below)."""
-    survivors = []
+# The result mutants the client relays: each changes only what Lean concludes from rows the request binds, which
+# the DRI ruling of rd-3 round 3 leaves to Lean, by the named theorem or encoder. Pinned, so a new relayed mutant
+# fails until it is owned here.
+LEAN_OWNED_RESULTS = {
+    # verdicts_conditions_conflict_free: conditional_on is conditionsOf of the rows, nothing dropped (round 3 B)
+    "conflict CONFLICT-FREE: ('conditional_on',) = []": "Readings.Run.verdicts_conditions_conflict_free",
+    # verdicts_conditions_all: likewise for an ALL
+    "query ALL: ('conditional_on',) = []": "Readings.Run.verdicts_conditions_all",
+    # per choice: a proof's conditional_on is its row's own labels (proofJson; verdicts_conditions_all, _some)
+    "query ALL: ('proofs', 0, 'conditional_on') = []": "Readings.Run.verdicts_conditions_all",
+    "query ALL: ('proofs', 1, 'conditional_on') = []": "Readings.Run.verdicts_conditions_all",
+    "query SOME: ('proof', 'conditional_on') = []": "Readings.Run.verdicts_conditions_some",
+    # the fold of the rows (readings_wire_verdicts_conflict, lower_verdicts_*)
+    "conflict CONFLICT: ('status',) = 'UNKNOWN'": "Readings.Run.readings_wire_verdicts_conflict",
+    # a candidate's status, the fold of the rows taking it (premisesResult)
+    "premises: ('candidates', 0, 'status') = 'UNKNOWN'": "Readings.Run.premisesResult",
+    "premises: ('candidates', 1, 'status') = 'UNKNOWN'": "Readings.Run.premisesResult",
+}
+
+
+def test_the_result_of_every_form_is_typed_and_bound(tmp_path):
+    """Review B1 and the DRI ruling: each result member dropped or retyped, at every depth, is unavailable, and so is
+    every value the request or the rows bind (a shown model is bound to the request's piece instead, below); the
+    mutants that change only what Lean concludes are exactly `LEAN_OWNED_RESULTS`, each owned by a Lean theorem or
+    encoder."""
+    relayed = set()
     for name, (route, answer) in _genuine_answers(tmp_path).items():
         request = _checked(route, answer)
         for label, mutate in _result_mutants(answer):
@@ -327,8 +348,11 @@ def test_the_result_of_every_form_is_typed_and_closed(tmp_path):
                 route.check_answer(mutated, request)
             except CheckerUnavailable:
                 continue
-            survivors.append(f"{name}: {label}")
-    assert survivors == [], "\n".join(survivors)
+            relayed.add(f"{name}: {label}")
+    assert relayed == set(LEAN_OWNED_RESULTS), "\n".join(sorted(relayed ^ set(LEAN_OWNED_RESULTS)))
+    statements = (ROOT / "lean/statements.txt").read_text()
+    for owner in set(LEAN_OWNED_RESULTS.values()):
+        assert f"theorem VE.{owner}\n" in statements or owner == "Readings.Run.premisesResult", owner
 
 
 def test_review_b1_findings_cases(tmp_path):
@@ -356,6 +380,7 @@ def test_review_b1_findings_cases(tmp_path):
 MUTATIONS = {
     "drop route": lambda a: a.pop("route"),
     "another question": lambda a: a.update(question="conflict"),
+    "another id": lambda a: a.update(id="readings-verdicts-2"),
     "result a list": lambda a: a.update(result=[]),
     "per_choice dropped": lambda a: a.pop("per_choice"),
     "a row named twice": lambda a: a["per_choice"].append(copy.deepcopy(a["per_choice"][0])),
@@ -364,7 +389,7 @@ MUTATIONS = {
     "an error not a string": lambda a: a["per_choice"][0]["errors"].update(conflict=7),
     "english a string": lambda a: a.update(english="E12"),
     "a line without its frame": lambda a: a["english"][0].pop("frame"),
-    "a line's model retyped": lambda a: a["english"][1].update(model=True),
+    "a line's model retyped": lambda a: a["english"][-1].update(model=True),
     "restrictions null": lambda a: a.update(restrictions=None),
     "labels with a bool": lambda a: a.update(labels=[True]),
     "dead_readings an object": lambda a: a.update(dead_readings={}),
@@ -374,9 +399,7 @@ MUTATIONS = {
     "rows reordered": lambda a: a["per_choice"].reverse(),
     "a row for a choice that does not exist": lambda a: a["per_choice"][0].update(choice=[["rs_1", 9]]),
     "the proof names a choice no row has": lambda a: a["result"]["proof"].update(choice=[["rs_1", 9]]),
-    "proof and countermodel swapped": lambda a: a["result"].update(proof={**a["result"]["proof"],
-                                                                         "choice": C1}),
-    "a verdict that is not the rows' fold": lambda a: a["per_choice"][1].update(query="proved"),
+    "a row's word naming a piece it does not note": lambda a: a["per_choice"][1].update(query="proved"),
     "the budget shape on 2 choices": lambda a: a.update(result={
         "verdict": "UNKNOWN", "status": "UNKNOWN", "route": "enumerated", "budget": {"max_choices": 64},
         "units": ["u1"]}),
@@ -392,6 +415,18 @@ MUTATIONS = {
     "the result's countermodel not its row's": lambda a: a["result"]["countermodel"].update(model={}),
     "an untaken reading on a query": lambda a: a.update(untaken=[["rs_1", 0]]),
     "a dead note on a query": lambda a: a.update(dead=[{"accepted": True}]),
+    # the DRI ruling of rd-3 round 3: every label and reading the answer and its plan name is the request's
+    "a label naming no coupling": lambda a: a.update(labels=["coupling:c9"]),
+    "a pair label of no predicate": lambda a: a["result"]["proof"].update(conditional_on=["unsaid:pair:x,y"]),
+    "a condition that names nothing": lambda a: a["result"]["proof"].update(conditional_on=[""]),
+    "a plan line citing a label the request lacks": lambda a: a["english"][1].update(label="narrowing:n9"),
+    "a plan line naming a reading the document lacks": lambda a: a["english"][0].update(readings=[["rs_1", 5]]),
+    "a plan line showing a piece no row shows": lambda a: a["english"][-1].update(model="certificate@1"),
+    "a plan line showing a row that does not exist": lambda a: a["english"][-1].update(model="countermodel@9"),
+    "a status line no row relays": lambda a: a["english"].append(
+        {"frame": "status", "result": None, "readings": [], "model": None, "gaps": [], "label": "CONFLICT: made up"}),
+    "an E17 line for no dead reading": lambda a: a["english"].append(
+        {"frame": "E17", "result": None, "readings": [["rs_1", 1]], "model": None, "gaps": [], "label": None}),
 }
 
 
@@ -419,13 +454,6 @@ def test_every_question_binds_its_rows_exactly(tmp_path):
             mutate(mutated)
             with pytest.raises(CheckerUnavailable):
                 route.check_answer(mutated, request)
-    # ALL under a gate a row does not pass: the verdict is not the fold of the rows
-    route, answer = answers["query ALL"]
-    request = _checked(route, answer)
-    mutated = copy.deepcopy(answer)
-    mutated["per_choice"][0]["conflict"] = "UNKNOWN"
-    with pytest.raises(CheckerUnavailable):
-        route.check_answer(mutated, request)
     route, answer = answers["query NONE under a reading"]
     assert [e["choice"] for e in answer["per_choice"]] == [C1]
     request = _checked(route, answer)
@@ -435,40 +463,18 @@ def test_every_question_binds_its_rows_exactly(tmp_path):
         route.check_answer(mutated, request)
 
 
-# Review B of rd-3 looprecheck1: a row's word is the one Lean's acceptance of the pieces the request sent gives
-# (`ROW_WORDS`), and every other member is regenerated from the rows. The forger below is the strongest one: it
-# changes rows and then makes every other member of the answer consistent with them, as Lean would compute it.
+# Review B of rd-3 looprecheck1, as the DRI ruling of round 3 divides it: a row's word names the piece it rests on
+# (`ROW_PIECES`), which the request must have sent and the row must note accepted (binding); which word the accepted
+# pieces give, and the verdict folded from the words, is Lean's (`nd_rowsHold`, `readings_wire_verdicts_*`).
 
 WORDS = ("CONFLICT-FREE", "CONFLICT", "proved", "refuted", "model", "INCONSISTENT", "UNKNOWN")
 
 
-def _forge(route, answer, request, mutate):
-    """`answer` with its rows mutated and every other member regenerated from them, trusting each row's word."""
-    from ve.readings_verdicts import _expected_answer, _row_info
-    forged = copy.deepcopy(answer)
-    mutate(forged)
-    frame, question = route.frame(request), request["question"]
-    infos = [_row_info(k, e, {name: e[name] for name in {"conflict", question}})
-             for k, e in enumerate(forged["per_choice"])]
-    rest = frame.restrictions(request.get("assumed") or [])
-    result = forged["result"]
-    proofs = result.get("proofs") or []
-    # the relayed labels a forged ALL or CONFLICT-FREE needs
-    result.update(conditional_on=result.get("conditional_on", rest),
-                  proofs=(proofs + [{"conditional_on": []}] * len(infos))[:len(infos)],
-                  proof=result.get("proof") or {"conditional_on": []})
-    return _expected_answer(forged, request, frame, infos)
-
-
-def test_the_forger_regenerates_every_genuine_answer(tmp_path):
-    for name, (route, answer) in _genuine_answers(tmp_path).items():
-        request = _checked(route, answer)
-        assert _forge(route, answer, request, lambda a: None) == answer, name
-
-
-def test_every_row_word_lean_did_not_give_is_unavailable(tmp_path):
-    """Each row's conflict word and question word set to every other word, the answer made consistent with it."""
-    survivors = []
+def test_every_row_word_names_a_piece_lean_accepted(tmp_path):
+    """Each row's conflict word and question word set to every other word: a word that names no piece the row notes
+    accepted is unavailable; the genuine fixtures note no second accepted piece, so every such mutant is caught."""
+    from ve.readings_verdicts import ROW_PIECES
+    survivors, backed = [], 0
     for name, (route, answer) in _genuine_answers(tmp_path).items():
         request = _checked(route, answer)
         for k, entry in enumerate(answer["per_choice"]):
@@ -476,54 +482,53 @@ def test_every_row_word_lean_did_not_give_is_unavailable(tmp_path):
                 for word in WORDS:
                     if word == entry[field]:
                         continue
-                    forged = _forge(route, answer, request, lambda a: a["per_choice"][k].update({field: word}))
+                    piece = ROW_PIECES[field].get(word)
+                    if word != "UNKNOWN" and piece is not None and entry["evidence"].get(piece) is True:
+                        backed += 1
+                        continue
+                    if word == "UNKNOWN":
+                        continue  # UNKNOWN names no piece: whether a row is UNKNOWN is Lean's
+                    mutated = copy.deepcopy(answer)
+                    mutated["per_choice"][k][field] = word
                     try:
-                        route.check_answer(forged, request)
+                        route.check_answer(mutated, request)
                     except CheckerUnavailable:
                         continue
                     survivors.append(f"{name}: row {k} {field} = {word}")
-    assert survivors == [], "\n".join(survivors)
+    assert survivors == [] and backed == 0, "\n".join(survivors)
 
 
 def test_review_b_looprecheck1_rows_tied_to_the_evidence_sent(tmp_path):
-    """The finding's probes on F-ND1 and F-ND2, each made consistent in every other member."""
+    """The finding's probes on F-ND1 and F-ND2: each row word naming evidence the row does not note accepted."""
     answers = _genuine_answers(tmp_path)
     # Query: rs_1:1 proved while its only piece is an accepted countermodel turns SOME into ALL.
     route, answer = answers["query SOME"]
     request = _checked(route, answer)
     noted = answer["per_choice"][1]["evidence"]
     assert noted["countermodel"] is True and "certificate" not in noted
-    forged = _forge(route, answer, request, lambda a: a["per_choice"][1].update(query="proved"))
-    assert forged["result"]["verdict"] == "ALL"
+    mutated = copy.deepcopy(answer)
+    mutated["per_choice"][1]["query"] = "proved"
     with pytest.raises(CheckerUnavailable):
-        route.check_answer(forged, request)
+        route.check_answer(mutated, request)
     # Premises: every row INCONSISTENT while Lean accepted a model for each.
     route, answer = answers["premises"]
     request = _checked(route, answer)
     assert {e["premises"] for e in answer["per_choice"]} == {"model"}
-    forged = _forge(route, answer, request, lambda a: [e.update(premises="INCONSISTENT") for e in a["per_choice"]])
-    assert forged["result"]["status"] == "INCONSISTENT"
+    mutated = copy.deepcopy(answer)
+    for e in mutated["per_choice"]:
+        e["premises"] = "INCONSISTENT"
     with pytest.raises(CheckerUnavailable):
-        route.check_answer(forged, request)
+        route.check_answer(mutated, request)
     # Conflict: CONFLICT-FREE rows while the packages' note is false, or missing.
     route, answer = answers["conflict CONFLICT"]
     request = _checked(route, answer)
     assert [e["conflict"] for e in answer["per_choice"]] == ["CONFLICT", "CONFLICT-FREE"]
-
-    def witnessed(change):
-        return lambda a: change(a["per_choice"][0])
-    for mutate in (witnessed(lambda e: e.update(conflict="CONFLICT-FREE")),
-                   witnessed(lambda e: (e.update(conflict="CONFLICT-FREE"), e["evidence"].pop("conflict"))),
-                   # both notes true: no choice is conflict-free and in conflict
-                   witnessed(lambda e: (e.update(conflict="CONFLICT-FREE"), e["evidence"].update(conflict=True))),
-                   # the witness's note dropped under the completion
-                   witnessed(lambda e: (e.update(conflict="CONFLICT-FREE"), e["evidence"].update(conflict=True),
-                                        e["evidence"].pop("witness"), e["shown"].pop("witness"),
-                                        e["gaps"].pop("witness", None)))):
-        forged = _forge(route, answer, request, mutate)
-        assert forged["result"]["status"] == "CONFLICT-FREE"
+    for mutate in (lambda e: e.update(conflict="CONFLICT-FREE"),
+                   lambda e: (e.update(conflict="CONFLICT-FREE"), e["evidence"].pop("conflict"))):
+        mutated = copy.deepcopy(answer)
+        mutate(mutated["per_choice"][0])
         with pytest.raises(CheckerUnavailable):
-            route.check_answer(forged, request)
+            route.check_answer(mutated, request)
 
 
 def test_a_reading_s_conflict_notes_are_the_same_in_every_answer(tmp_path, monkeypatch):
@@ -559,7 +564,8 @@ def test_beyond_64_choices_rows_are_only_the_requests_evidence():
     _check_answer(row, request)
     for mutate in (lambda a: a["per_choice"][0].update(choice=[[f"rs_{k}", 0] for k in range(1, 8)]),
                    lambda a: a["per_choice"].append(copy.deepcopy(a["per_choice"][0])),
-                   lambda a: a["result"].pop("budget")):
+                   lambda a: a["result"].pop("budget"),
+                   lambda a: a["result"].update(units=["u9"])):
         mutated = copy.deepcopy(row)
         mutate(mutated)
         with pytest.raises(CheckerUnavailable):
@@ -584,16 +590,103 @@ def test_a_choice_result_outside_the_proved_schema_is_unavailable(tmp_path):
 
 
 def test_a_plan_line_python_cannot_render_is_unavailable(tmp_path, monkeypatch):
+    """A line Python cannot word as planned is unavailable, never left out: an unknown frame, Lean's `unworded`
+    line (a condition with no wording, `conditionItems`), a shown model under readings other than its choice's, and
+    a model of no row."""
     doc, route = loaded(tmp_path)
     answer = copy.deepcopy(route.query_answer(QUERY))
+    [k] = [k for k, line in enumerate(answer["english"]) if line["model"] is not None]
     for mutate in (lambda a: a["english"][0].update(frame="E99"),
-                   lambda a: a["english"][1].update(readings=[["rs_1", 0]]),
-                   lambda a: a["english"][1].update(model="countermodel@9")):
+                   lambda a: a["english"].insert(1, {"frame": "unworded", "result": None, "readings": [],
+                                                     "model": None, "gaps": [], "label": PAIR}),
+                   lambda a: a["english"][k].update(readings=[["rs_1", 0]]),
+                   lambda a: a["english"][k].update(model="countermodel@9")):
         mutated = copy.deepcopy(answer)
         mutate(mutated)
         monkeypatch.setattr(route, "query_answer", lambda *args, **kwargs: mutated)
         with pytest.raises(CheckerUnavailable):
             query_english(doc, QUERY, route.entailment(QUERY))
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# rd-3 looprecheck2 B (conditional overclaim) and the DRI ruling of round 3: an answer's conditions are Lean's
+
+def _without_pair(answer):
+    """The reviewer's probe: `answer` with the pair condition removed from every `conditional_on` and from `labels`,
+    and its plan made as Lean plans an answer with no condition (E3 and its lines dropped; a CONFLICT-FREE answer's
+    E13 for every sentence, which no remaining label mentions)."""
+    forged = copy.deepcopy(answer)
+    for obj in [forged["result"], *forged["result"].get("proofs", []), forged["result"].get("proof") or {}]:
+        if "conditional_on" in obj:
+            obj["conditional_on"] = [x for x in obj["conditional_on"] if x != PAIR]
+    forged["labels"] = [x for x in forged["labels"] if x != PAIR]
+    forged["english"] = [line for line in forged["english"] if line["frame"] not in ("E3", "P1")]
+    return forged
+
+
+def test_review_b_looprecheck2_conditions_are_lean_s(tmp_path):
+    """The finding: on F-ND1 the pair condition removed from a genuine CONFLICT-FREE answer and an ALL query, the
+    dependent members regenerated. Lean cannot give that answer: its `conditional_on` is `conditionsOf` of the rows
+    (`verdicts_conditions_conflict_free`, `verdicts_conditions_all`, audited), and asked the same request Lean gives
+    the condition, in `conditional_on`, `labels` and a P1 line citing it. The client checks schema and binding only
+    (the probe names nothing the request lacks) and relays Lean's English unchanged: every planned line is one
+    sentence, in order, so the condition Lean plans is shown and none is added or dropped."""
+    doc, route = loaded(tmp_path)
+    audit = (ROOT / "lean/VE/Audit.lean").read_text()
+    statements = (ROOT / "lean/statements.txt").read_text()
+    for theorem in ("verdicts_conditions_conflict_free", "verdicts_conditions_all", "verdicts_conditions_some",
+                    "verdicts_conditions_none", "mem_conditionsOf", "verdictsPlan_cites"):
+        assert f"#print axioms VE.Readings.Run.{theorem}\n" in audit
+        assert f"theorem VE.Readings.Run.{theorem}\n" in statements
+    for answer, every, lines in ((route.conflict_answer(), "E26", report_english),
+                                 (route.query_answer(IMPLIES), "E26", None)):
+        request = _checked(route, answer)
+        result = answer["result"]
+        assert result["conditional_on"] == [PAIR] and answer["labels"] == [PAIR]
+        assert [line["label"] for line in answer["english"] if line["frame"] == "P1"] == [PAIR]
+        forged = _without_pair(answer)
+        assert forged != answer and forged["result"]["conditional_on"] == []
+        # Lean, asked the very request again, gives the condition: the forgery is not Lean's answer to it.
+        [again] = run(LEAN, [request])
+        assert again == answer and again != forged
+        # The client binds, it does not re-derive: the probe names nothing the request lacks.
+        route.check_answer(forged, request)
+    wording_lines = report_english(doc, route)
+    assert "This holds provided that:" in wording_lines
+    assert "Whenever an agent must help an user, it may help that user." in wording_lines
+    data = route.entailment(IMPLIES)
+    rendered = query_english(doc, IMPLIES, data)
+    assert len(rendered) == len(route.query_answer(IMPLIES)["english"])
+    assert rendered[1:3] == ["This holds provided that:", "Whenever an agent must help an user, it may help that user."]
+
+
+def test_python_relays_every_planned_line(tmp_path):
+    """Python never builds or omits a condition: for every genuine answer of F-ND1 and F-ND2, Lean's plan cites
+    every label of `labels` (and has E3 exactly when there is one), and Python words it as one sentence per line, in
+    order, E3 as E3 and each P1 line as its pair sentence. The seeded bug of round 3 (Python skipping the E3 or P1
+    lines) fails here."""
+    from ve.readings_s2_wording import S2Wording
+    pair = "Whenever an agent must help an user, it may help that user."
+    for sub, make in (("fnd1", fnd1), ("fnd2", fnd2)):
+        (tmp_path / sub).mkdir()
+        doc, route = loaded(tmp_path / sub, make)
+        answers = [(route.conflict_answer(), None, None), (route.premises_answer(), None, None)]
+        if make is fnd1:
+            answers += [(route.query_answer(QUERY), QUERY, None), (route.query_answer(IMPLIES), IMPLIES, None),
+                        (route.query_answer(QUERY, C1), QUERY, C1)]
+        for answer, conclusion, assumed in answers:
+            frames_ = [line["frame"] for line in answer["english"]]
+            assert all(any(line["label"] == label for line in answer["english"]) for label in answer["labels"])
+            assert ("E3" in frames_) == bool(answer["labels"])
+            wording = S2Wording(doc, route)
+            sentences = (wording.plan(answer) if conclusion is None else
+                         wording.query(conclusion, {"assumed": assumed}))
+            assert len(sentences) == len(answer["english"])
+            for line, sentence in zip(answer["english"], sentences):
+                if line["frame"] == "E3":
+                    assert sentence == "This holds provided that:"
+                if line["frame"] == "P1":
+                    assert sentence == pair
 
 
 # ---------------------------------------------------------------------------------------------------------------

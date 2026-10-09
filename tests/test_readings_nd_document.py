@@ -137,9 +137,11 @@ def test_fnd1_readings_conclusion_some(tmp_path, capsys):
     data = query(tmp_path, capsys, path)
     assert data["verdict"] == "SOME"
     assert (data["proof"]["choice"], data["countermodel"]["choice"]) == ([["rs_1", 0]], [["rs_1", 1]])
-    follows, fails = shown(data["english"])
+    # rd-3 round 3: the proof rests on the pair condition (its conflict packages use it), stated after the result.
+    follows, provided, pair, fails = shown(data["english"])
     assert follows == (f"Read sentence 1 as {EVERY}: the conclusion follows: *For every agent, for every user, that "
                        "agent must help that user.*")
+    assert (provided, pair) == ("This holds provided that:", "Whenever an agent must help an user, it may help that user.")
     assert fails.startswith(f"Read sentence 1 as {ASKS}: the conclusion does not follow. It fails here: ")
     # every gap of the situation is shown with its answer, and the duty is filled 'no' there
     assert GAP.search(fails) and fails.endswith("must help e0; this situation answers 'no'.")

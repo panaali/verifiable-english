@@ -950,9 +950,12 @@ def _e17(set_id, index):
 
 
 def test_review_b_rd3_looprecheck1_dead_readings_are_regenerated(tmp_path, monkeypatch):
-    """Review B of rd-3 looprecheck1 (dead readings): a dead reading is one Lean accepted the request's certificate
-    for, its finding names its own set and index, and the E17 line, the candidates' statuses, the untaken list and
-    the narrowings named are all regenerated from the request, never relayed."""
+    """Review B of rd-3 looprecheck1 (dead readings), as the DRI ruling of round 3 divides it: a dead reading the
+    answer names is an untaken candidate whose certificate the request sent and Lean accepted, its finding names its
+    own set and index, an E17 line names one of the answer's dead readings, and every narrowing named is the
+    document's (binding: unavailable otherwise). Which candidates are untaken or dead, a candidate's status and which
+    E17 lines the plan has are Lean's (`untakenOf`, `deadOf`, `premisesResult`, `planItems`): those mutants are
+    relayed, and pinned here."""
     from ve import readings_verdicts
     from ve.errors import CheckerUnavailable
     path = _rs89(tmp_path)
@@ -969,29 +972,43 @@ def test_review_b_rd3_looprecheck1_dead_readings_are_regenerated(tmp_path, monke
             if key in changes:
                 c.clear()
                 c.update(changes[key])
-    for mutate in (
-            # the finding of another candidate on rs9:1's entry, and its line
-            lambda a: a["dead_readings"][0].update(finding="DeadReading: rs8:0"),
-            # a dead reading dropped, with its line and status (under-reporting)
-            lambda a: (a.update(dead_readings=[]), a["english"].remove(_e17("rs9", 1)),
-                       statuses(a, {("rs9", 1): {"set": "rs9", "index": 1, "status": "UNKNOWN",
-                                                   "reason": "ReadingsUnsatisfiable: no compatible reading takes "
-                                                             "rs9@1:1"}})),
-            # an untaken candidate dropped
-            lambda a: a.update(untaken=[]),
-            # a candidate narrowed by a narrowing the document does not have
-            lambda a: statuses(a, {("rs8", 1): {"set": "rs8", "index": 1, "status": "narrowed", "narrowing": "n9"}}),
-            # a narrowed candidate reported dead
-            lambda a: statuses(a, {("rs8", 1): {"set": "rs8", "index": 1, "status": "dead"}}),
-            # an E17 line for a candidate that is not dead, and the line of the dead one dropped
-            lambda a: a["english"].append(_e17("rs8", 0)),
-            lambda a: a["english"].remove(_e17("rs9", 1))):
+
+    def outcome(mutate):
         mutated = copy.deepcopy(answer)
         mutate(mutated)
         assert mutated != answer
-        with pytest.raises(CheckerUnavailable):
+        try:
             route.check_answer(mutated, request)
-    # With no proof budget no certificate is sent: a claimed dead reading, its status and its E17 line are refused.
+        except CheckerUnavailable:
+            return "unavailable"
+        return "Lean's"
+    bound = {
+        # the finding of another candidate on rs9:1's entry
+        "another finding": lambda a: a["dead_readings"][0].update(finding="DeadReading: rs8:0"),
+        # a candidate narrowed by a narrowing the document does not have
+        "a made-up narrowing": lambda a: statuses(a, {("rs8", 1): {"set": "rs8", "index": 1, "status": "narrowed",
+                                                                   "narrowing": "n9"}}),
+        # an E17 line for a candidate that is not a dead reading of the answer
+        "an E17 line of no dead reading": lambda a: a["english"].append(_e17("rs8", 0)),
+        # a taken candidate listed untaken, and a dead reading no row leaves untaken
+        "a taken candidate untaken": lambda a: a["untaken"].append(["rs8", 0]),
+        "a dead reading that is taken": lambda a: a.update(dead_readings=[
+            {"set": "rs8", "index": 0, "finding": "DeadReading: rs8:0"}]),
+        # the dead reading's candidate dropped from the untaken ones
+        "an untaken candidate dropped": lambda a: a.update(untaken=[])}
+    lean_s = {
+        # a dead reading dropped, with its line and status (under-reporting): `deadOf`, `planItems`
+        "a dead reading dropped": lambda a: (a.update(dead_readings=[]), a["english"].remove(_e17("rs9", 1)),
+                                             statuses(a, {("rs9", 1): {"set": "rs9", "index": 1, "status": "UNKNOWN",
+                                                                       "reason": "ReadingsUnsatisfiable: no compatible "
+                                                                                 "reading takes rs9@1:1"}})),
+        # a narrowed candidate reported dead: `premisesResult`
+        "a narrowed candidate dead": lambda a: statuses(a, {("rs8", 1): {"set": "rs8", "index": 1, "status": "dead"}}),
+        # the line of the dead reading dropped: `planItems`
+        "its E17 line dropped": lambda a: a["english"].remove(_e17("rs9", 1))}
+    assert {name: outcome(m) for name, m in bound.items()} == dict.fromkeys(bound, "unavailable")
+    assert {name: outcome(m) for name, m in lean_s.items()} == dict.fromkeys(lean_s, "Lean's")
+    # With no proof budget no certificate is sent: a claimed dead reading and its E17 line are refused.
     monkeypatch.setitem(readings_verdicts.BUDGET, "max_steps", 0)
     route = verdicts(path)
     answer = route.premises_answer()
@@ -1002,13 +1019,10 @@ def test_review_b_rd3_looprecheck1_dead_readings_are_regenerated(tmp_path, monke
             lambda a: (a.update(dead_readings=[{"set": "rs9", "index": 1, "finding": "DeadReading: rs9:1"}]),
                        a["english"].append(_e17("rs9", 1)),
                        statuses(a, {("rs9", 1): {"set": "rs9", "index": 1, "status": "dead"}})),
-            lambda a: a["english"].append(_e17("rs9", 1)),
-            # the uncertified candidate left out of the untaken ones: an empty, complete list of dead readings
-            lambda a: a.update(untaken=[], dead_readings=[])):
-        mutated = copy.deepcopy(answer)
-        mutate(mutated)
-        with pytest.raises(CheckerUnavailable):
-            route.check_answer(mutated, request)
+            lambda a: a["english"].append(_e17("rs9", 1))):
+        assert outcome(mutate) == "unavailable"
+    # The uncertified candidate left out of the untaken ones, an empty list of dead readings: Lean's (`untakenOf`).
+    assert outcome(lambda a: a.update(untaken=[], dead_readings=[])) == "Lean's"
 
 
 def test_follow_up_rd3_looprecheck1_the_premises_choice_is_the_first_model(tmp_path):
@@ -1180,8 +1194,9 @@ def test_review_a2_class_every_combined_verdict_keeps_its_restrictions(tmp_path)
     assert none["verdict"] == "NONE" and none["restrictions"] == ["narrowing:n1"]
     assert wording.query(nobody, none)[-2:] == ["This holds provided that:",
                                                  f"Sentence 3 is not read as {M9_RS2_0}, because of sentence 1."]
-    # The lines are Lean's plan of its own answer (RD-3): the restrictions the result carries are the ones worded.
-    assert route.query_answer(nobody)["labels"] == [] and route.query_answer(nobody)["result"] == none
+    # The lines are Lean's plan of its own answer (RD-3): the restrictions the result carries are the labels it
+    # plans its condition lines from (rd-3 round 3: `labelsOf`, `verdicts_conditions_none`).
+    assert route.query_answer(nobody)["labels"] == ["narrowing:n1"] and route.query_answer(nobody)["result"] == none
     # The superposed route's combination over its choices (M6 with a narrowing: every choice is listed).
     narrowing = {"id": "n1", "set": "rs1", "version": 1, "keeps": ["strict"], "by": "reviewer",
                  "reason_spans": ["u2"]}
