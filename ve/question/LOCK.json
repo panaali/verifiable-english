@@ -7,6 +7,7 @@
     "lean/VE/Question/Help.lean": "4ad773b3453e32cd2e1467090c54df60a17d9dc6055fe7369d0df139bc8737a2",
     "lean/VE/Question/Properties.lean": "c0190dba0d8e24c9bcf93a50e7d427301e291bdec261fd84a7e184d95d8a6a98",
     "lean/VE/Question/Read.lean": "accf4caf42aa9fef55e3f10401487519df8568413d2b36a1e5083033a5bebe66",
-    "lean/VE/Question/Texts.lean": "9402ed912b05012c4730b0483d9c37c7a908886f43f194d54d5276fd6955d894"
+    "lean/VE/Question/Run.lean": "66d8a51002eeab64e502afe3eafe1435ed8529a4e09b6b341db6adfecd79219e",
+    "lean/VE/Question/Texts.lean": "1b4a72d2dfeef53fec962a6b0729c648b9001a689e636aac30add70759701748"
   }
 }

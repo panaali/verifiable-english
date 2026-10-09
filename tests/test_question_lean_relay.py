@@ -27,10 +27,11 @@ QUESTION = "Is Ann eligible?"
 
 def _answer(case):
     words = EnglishVocabulary(ENV, _defer_overlay_refusals=True)
-    return {"status": "one", "form": "fronted", "sentence": "Ann is eligible.",
-            "ast": ["unary", "eligible", ["const", "ann"]], "spans": [],
+    return {"status": "one", "text": "You asked whether Ann is eligible.", "form": "fronted",
+            "sentence": "Ann is eligible.", "ast": ["unary", "eligible", ["const", "ann"]],
+            "spans": [[0, len(QUESTION)]],
             "identities": {**english_lean.identities(ENV, QUESTION, words, case["lexicon"]),
-                           "question_version": "question@1"}}
+                           "question_version": english_lean.QUESTION_VERSION}}
 
 
 def test_question_request_reuses_the_selected_english_case(monkeypatch):
@@ -71,7 +72,7 @@ def test_question_refusal_text_is_preserved(monkeypatch):
         answer = _answer(case)
         return {"status": "none", "code": "NoDerivation", "class": "SyntaxError",
                 "text": "The question has no reading with the current vocabulary.",
-                "identities": answer["identities"]}
+                "span": [0, len(QUESTION)], "identities": answer["identities"]}
 
     monkeypatch.setattr(english_lean, "QUESTION_TRANSPORT", transport)
     with pytest.raises(SyntaxError) as caught:

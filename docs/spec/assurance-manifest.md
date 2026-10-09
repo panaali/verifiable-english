@@ -149,6 +149,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Definitions/Bundle.lean` | 471 | 471 | 1–471 | `fc86d51a7f84…` |
 | `lean/VE/EnglishGrammar/Encode.lean` | 755 | 755 | 1–755 | `f884e8d56dc6…` |
 | `lean/VE/EnglishGrammar/Run.lean` | 735 | 735 | 1–735 | `f9355148f683…` |
+| `lean/VE/Question/Run.lean` | 174 | 174 | 1–174 | `66d8a51002ee…` |
 | `lean/VE/Json.lean` | 141 | 141 | 1–141 | `10dcb30ca301…` |
 | `lean/VE/NormDefaults/Admission.lean` | 350 | 350 | 1–350 | `b60054268019…` |
 | `lean/VE/NormDefaults/Layered.lean` | 445 | 445 | 1–445 | `7e9484be44f9…` |
@@ -192,7 +193,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Time/Document.lean` | 613 | 613 | 1–613 | `4407e998d007…` |
 | `lean/VE/Time/Wire.lean` | 843 | 843 | 1–843 | `43eff830ca8c…` |
 | `lean/VE/Readings/Companions.lean` | 923 | 923 | 1–923 | `dc0e72746649…` |
-| **total** | | **26,007** | | |
+| **total** | | **26,181** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
@@ -289,6 +290,7 @@ the manifest `notes`, not changed:
 | `english.admission` | surface | migrated → lean | experimental / experimental | `ve.english:parse_english_with_metadata`<br>`ve.english:parse_english`<br>`ve.english:parse_english_argument` | `ve_service english.read`<br>`ve_service english.grammar`<br>`ve_service english.check` | `VE.EnglishGrammar.policy_iff_no_failure`<br>`VE.EnglishGrammar.policy_selection`<br>`VE.EnglishGrammar.admitRequest_ok`<br>`VE.EnglishGrammar.admitRequest_exact`<br>`VE.EnglishGrammar.admitRequest_policy`<br>`VE.EnglishGrammar.translateRequest_policy`<br>`VE.EnglishGrammar.grammarFault_none`<br>`VE.EnglishGrammar.overlayCheck_constants`<br>`VE.EnglishGrammar.checkRequest_some`<br>`VE.EnglishGrammar.sensesRequest_policy`<br>`VE.EnglishGrammar.Run.codeClasses_total`<br>`VE.EnglishGrammar.decode_encode` | none | `lean:kernel`<br>`lean:compiler`<br>`lean:runner-glue`<br>`python:implementation`<br>`python:display`<br>`python:backend-adapter` |
 | `english.statement` | surface | python → lean | experimental / experimental | `ve.norm_english:parse_english`<br>`ve.english:parse_statement_english`<br>`ve.surface.unambiguity:require_unique_derivation` | none | none | none | `python:implementation`<br>`python:surface` |
 | `senses.read` | surface | lean-only → lean | experimental / experimental | none | `ve_senses_route (default)` | `VE.Senses.senses_resolved_one_reading`<br>`VE.Senses.senses_unit_sound`<br>`VE.Senses.senses_candidate_sound`<br>`VE.Senses.candidates_complete`<br>`VE.Senses.mixed_exact`<br>`VE.Senses.readDocument_source`<br>`VE.Senses.readDocument_both`<br>`VE.Senses.defaults_read_as_lines`<br>`VE.Senses.document_unit_sound`<br>`VE.Senses.document_line_sound`<br>`VE.Senses.documentRequest_policy`<br>`VE.Senses.documentRequest_source` | none | `lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue`<br>`python:wire`<br>`python:backend-adapter` |
+| `question.read` | surface | lean-only → lean | experimental / experimental | none | `ve_service english.question` | `VE.Question.got_none`<br>`VE.Question.question_reading_unique`<br>`VE.Question.asked_reads_back`<br>`VE.Question.readQuestion_ambiguous`<br>`VE.Question.readQuestion_meanings`<br>`VE.Question.readQuestion_indefinite`<br>`VE.Question.readQuestion_none`<br>`VE.Question.Run.statusCodes_classed`<br>`VE.Service.runMode_englishQuestion`<br>`VE.Question.readQuestion_one (planned)`<br>`VE.Question.readQuestion_complete (planned)`<br>`VE.Question.caseThat_reads (planned)`<br>`VE.Question.caseThat_candidates (planned)`<br>`VE.Question.fronted_text (planned)`<br>`VE.Question.mapSpan_valid (planned)`<br>`VE.Question.mapSpan_codepoints_valid (planned)`<br>`VE.Question.rephrasings_read (planned)` | none | `lean:kernel`<br>`lean:compiler`<br>`lean:runner-glue`<br>`python:wire`<br>`python:backend-adapter` |
 | `premise-status` | combination | python → lean | experimental / experimental | `ve.vacuity:premise_status` | none | none | none | `python:implementation` |
 | `compare` | combination | python → python | experimental / experimental | `ve.equivalence:compare` | none | none | none | `python:implementation`<br>`python:equivalence.compare` |
 | `reference.validate` | combination | python → python | experimental / experimental | `ve.equivalence:validate_reference` | none | none | none | `python:implementation`<br>`python:reference-rule` |
