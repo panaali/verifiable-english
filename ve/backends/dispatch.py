@@ -199,12 +199,15 @@ def owned(op: str, run: Callable[[], T]) -> T:
     """Run a single-owner operation (SINGLE_OWNER). A Rust-owned search runs under whatever authority is
     selected; observers see the selection, which its constituents (its witness checks) follow, and shadow,
     which has no authoritative backend, uses Python checks. A Lean-owned operation is Lean's under every
-    selection: observers see `lean` and its constituents run on Lean."""
+    selection: observers see `lean`, and its constituents keep their own selection (a Lean-owned
+    constituent is Lean's anyway; the operations batch 15 switches are not moved by this one)."""
     if op not in SINGLE_OWNER:
         raise ValueError(f"{op} is not a single-owner operation")
     authority = authority_for(op)  # an invalid selection is refused for every operation
     if SINGLE_OWNER[op] == "lean":
-        authority = "lean"
+        for observe in observers:
+            observe(op, "lean")
+        return run()
     for observe in observers:
         observe(op, authority)
     with pinned("python" if authority == "shadow" else authority):
