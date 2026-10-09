@@ -5312,11 +5312,13 @@
         "VE.Order.TableauChecks.c",
         "VE.Order.TableauChecks.cert",
         "VE.Order.TableauChecks.d",
+        "VE.Order.TableauChecks.displayedConstant",
         "VE.Order.TableauChecks.env",
         "VE.Order.TableauChecks.envelope",
         "VE.Order.TableauChecks.nestedAdd",
         "VE.Order.TableauChecks.notLe",
         "VE.Order.TableauChecks.one",
+        "VE.Order.TableauChecks.withConstant",
         "VE.Order.TableauChecks.withSort"
       ]
     },

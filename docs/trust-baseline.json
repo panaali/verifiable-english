@@ -3,13 +3,13 @@
  "totals": {
   "K": 997,
   "S": 9633,
-  "D": 13180,
+  "D": 13186,
   "G": 24644,
   "C": 8138,
   "P": 66736,
-  "T": 13286,
+  "T": 13304,
   "o": 11456,
-  "D[V]": 11971,
+  "D[V]": 11977,
   "D[R]": 710,
   "D[I]": 499,
   "G[V]": 23057,
@@ -17,13 +17,13 @@
   "G[I]": 229,
   "tied": 171,
   "unclassified": 0,
-  "trusted": 45506,
-  "lines": 148070
+  "trusted": 45512,
+  "lines": 148094
  },
  "budget": {
   "K": 997,
   "S": 9633,
-  "V": 34876
+  "V": 34882
  },
  "signed": [],
  "history": [
@@ -269,6 +269,19 @@
     "K": 997,
     "S": 9633,
     "V": 34876
+   }
+  },
+  {
+   "change": "lean-first/b12 post-merge fix: the frozen ve.core@0.1 order decoder rejects constant verbalisations again; Order.Wire.decodeEnvironment takes displayConstants (default false), set only by Route.Wire.decodeOrderVocabulary (+6 D lines)",
+   "rebaselined_from": {
+    "K": 997,
+    "S": 9633,
+    "V": 34876
+   },
+   "to": {
+    "K": 997,
+    "S": 9633,
+    "V": 34882
    }
   }
  ],
@@ -8885,7 +8898,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 105,
+   "T": 123,
    "o": 9,
    "D[V]": 0,
    "D[R]": 0,
@@ -8896,7 +8909,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 114
+   "lines": 132
   },
   "VE/Order/Typing.lean": {
    "K": 0,
@@ -8921,13 +8934,13 @@
   "VE/Order/Wire.lean": {
    "K": 0,
    "S": 0,
-   "D": 202,
+   "D": 207,
    "G": 58,
    "C": 8,
    "P": 5,
    "T": 0,
    "o": 23,
-   "D[V]": 193,
+   "D[V]": 198,
    "D[R]": 2,
    "D[I]": 7,
    "G[V]": 58,
@@ -8935,8 +8948,8 @@
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 251,
-   "lines": 296
+   "trusted": 256,
+   "lines": 301
   },
   "VE/Order/WireGate.lean": {
    "K": 0,
@@ -10941,13 +10954,13 @@
   "VE/Route/Wire.lean": {
    "K": 0,
    "S": 7,
-   "D": 307,
+   "D": 308,
    "G": 159,
    "C": 39,
    "P": 139,
    "T": 0,
    "o": 36,
-   "D[V]": 287,
+   "D[V]": 288,
    "D[R]": 9,
    "D[I]": 11,
    "G[V]": 151,
@@ -10955,8 +10968,8 @@
    "G[I]": 0,
    "tied": 114,
    "unclassified": 0,
-   "trusted": 331,
-   "lines": 687
+   "trusted": 332,
+   "lines": 688
   },
   "VE/Route/WireSound.lean": {
    "K": 0,

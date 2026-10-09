@@ -13466,7 +13466,7 @@ theorem VE.Order.order_decode_profiles
   ∀ (env : Lean.Json) (v : VE.Order.Vocabulary),
     VE.Order.Wire.decodeEnvironment env = Except.ok v → VE.Order.OrderProfilesAccepted env
   -- uses VE.Order.OrderProfilesAccepted@VE.Order.WireGate VE.Order.Vocabulary@VE.Order.ModelCheck VE.Order.Wire.decodeEnvironment@VE.Order.Wire
-  -- expr 885476164
+  -- expr 2137864238
 theorem VE.Order.order_not_accepted
   ∀ (env : Lean.Json) (ps : List String),
     env.getObjVal? "profiles" >>= VE.Bridge.strings = Except.ok ps → "order@0" ∈ ps → ¬VE.Order.ProfilesAccepted env
