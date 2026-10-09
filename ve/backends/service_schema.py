@@ -396,6 +396,57 @@ class Compiler:
                 _fail(f"{rule['array']} contains an unbound {rule['field']} outside the request's {rule['in']}")
         return check
 
+    def _x_claim_nodes(self, pointers, schema, base):
+        def check(value, ctx, fuel):
+            for pointer in pointers:
+                claims = _resolve(value, pointer)
+                nodes = _resolve(ctx.value, "/document/graph/nodes")
+                is_array = isinstance(claims, list)
+                if isinstance(claims, dict):
+                    claims = [claims]
+                if not isinstance(claims, list) or not isinstance(nodes, list) or not (is_array or claims):
+                    _fail(f"{pointer} contains a claim outside the request graph")
+                fields = ("name", "ast", "label")
+                def projection(claim):
+                    return tuple(claim.get(key, _MISSING) for key in fields)
+                if any(not isinstance(claim, dict) or not any(
+                        isinstance(node, dict) and all(same_json(a, b) for a, b in
+                            zip(projection(claim), projection(node))) for node in nodes)
+                        for claim in claims):
+                    _fail(f"{pointer} contains a claim outside the request graph")
+        return check
+
+    def _x_max_steps(self, limits, schema, base):
+        def check(value, ctx, fuel):
+            requested = _resolve(ctx.value, "/max_steps")
+            limit = limits["default"] if requested is _MISSING else min(requested, limits["cap"]) if (
+                _kind(requested) == "integer" and requested >= 0) else None
+            if _kind(value) != "integer" or limit is None or value > limit:
+                _fail("steps exceed the request's max_steps")
+        return check
+
+    def _x_background_count(self, route, schema, base):
+        def check(value, ctx, fuel):
+            env = _resolve(ctx.value, "/environment")
+            predicates = _resolve(ctx.value, "/environment/vocabulary/predicates")
+            constants = _resolve(ctx.value, "/environment/vocabulary/constants")
+            if not isinstance(predicates, dict) or not isinstance(constants, dict) or not isinstance(env, dict):
+                _fail("background differs from the request vocabulary")
+            flags = sum(isinstance(p, dict) and p.get("functional") is True for p in predicates.values()) + sum(
+                isinstance(p, dict) and p.get("total") is True for p in predicates.values())
+            definitions = sum(isinstance(p, dict) and "defined" in p for p in predicates.values())
+            pairs = sum(isinstance(p, dict) and isinstance(p.get("regulated"), dict) and
+                        p["regulated"].get("role") == "obligation" and
+                        isinstance(p["regulated"].get("permission"), str) for p in predicates.values())
+            literals = sum(isinstance(c, dict) and c.get("sort") == "$string" for c in constants.values())
+            profiles = env.get("profiles")
+            order = isinstance(profiles, list) and "order@0" in profiles
+            expected = (0 if order else flags + definitions) + literals * (literals - 1) // 2 + (
+                pairs if route == "norms" else 0)
+            if _kind(value) != "integer" or value != expected:
+                _fail("background differs from the request vocabulary")
+        return check
+
     def _x_index(self, flag, schema, base):
         def check(value, ctx, fuel):
             if _kind(value) != "integer" or value != ctx.index:
@@ -494,7 +545,8 @@ class Compiler:
 _ORDER = ("$ref", "type", "enum", "const", "pattern", "minLength", "maxLength", "minimum", "required",
           "properties", "additionalProperties", "prefixItems", "items", "minItems", "maxItems",
           "contains", "anyOf", "allOf", "not", "if", "x-tagged", "x-echo", "x-equals", "x-length",
-          "x-count", "x-references", "x-index", "x-digest", "x-zip", "x-zip-or-empty", "x-case",
+          "x-count", "x-references", "x-claim-nodes", "x-max-steps", "x-background-count",
+          "x-index", "x-digest", "x-zip", "x-zip-or-empty", "x-case",
           "x-select", "x-count-where", "x-count-presence", "x-rows",
           "x-row")
 _KEYWORDS = frozenset(_ORDER) | {"then", "else", "$defs", "$comment", "$id", "x-fuel"}

@@ -1201,7 +1201,8 @@ def skeletonOf (files : List File) : Nat → Shape → StateT Extract (Except St
         unless slots.all (objectFree files depth []) do
           throw s!"a tagged slot of {tag} holds an object; skeletons do not describe it"
       pure .any
-    | .fuel _ _ | .echo _ | .equals _ | .length _ | .count _ | .references _ _ _ | .index | .digest | .pattern _
+    | .fuel _ _ | .echo _ | .equals _ | .length _ | .count _ | .references _ _ _
+    | .claimNodes _ | .maxSteps | .backgroundCount _ | .index | .digest | .pattern _
     | .minLength _ | .maxLength _ | .minimum _ | .minItems _ | .maxItems _ | .contains _ | .countWhere _ _ _ | .presenceCount _ _
     | .onCase _ | .row => pure .any
     | .zip _ x => do pure (.arr [] (← go x))
