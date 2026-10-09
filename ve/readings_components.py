@@ -443,6 +443,7 @@ class Components:
         for line in row["english"]:
             cls._check_line_fields(line)
         sent = {json.dumps(e["choice"]): e for e in case.get("evidence", [])}
+        predicates = case["environment"]["vocabulary"]["predicates"]
         for entry in row["per_choice"]:
             piece = sent.get(json.dumps(entry["choice"]), {})
             for shown in entry["shown"].values():
@@ -452,6 +453,16 @@ class Components:
                     expected = _shown_of(piece.get(name), name)
                     if type(expected) is dict:
                         _need(entry["shown"].get(name) == expected)
+            for name, gaps in entry["gaps"].items():
+                shown = entry["shown"].get(name)
+                _need(type(shown) is dict)
+                entities = {entity for domain in shown["domains"].values() for entity in domain}
+                seen = set()
+                for predicate, args, _ in gaps:
+                    _need(predicate in predicates and all(entity in entities for entity in args))
+                    key = (predicate, tuple(args))
+                    _need(key not in seen)
+                    seen.add(key)
             if entry["status_text"] is not None:
                 witness = piece.get("witness")
                 _need(type(witness) is dict and entry["status_text"] == witness.get("status_text"))
