@@ -710,14 +710,22 @@ def _check_certificate_lean(env, premises, conclusion, certificate, max_steps) -
             "certificate": certificate, "max_steps": max_steps}
     if env.language == "ve.core@0.2":
         # The norms route's Plain glue also answers environments with statement
-        # layers; soft and rights premises are validated Background slots.
+        # layers; soft, rights and norm-defaults fill premises are validated
+        # Background slots.
         from .profiles import STATEMENT_LAYERS
-        layered = STATEMENT_LAYERS & set(env.profiles)
-        mode = "norms" if layered else route_mode(env)
-        # Background order: the environment's generators, then soft, then rights.
+        # Background order (`background.background`): the environment's
+        # generators, then soft, then rights, then fill. Only the norms
+        # route's Plain glue reads the slots, and it answers only layered or
+        # regulated environments; without soft or rights premises the fill
+        # premises lead the case's premises instead, which binds and replays
+        # the same ordered list.
         soft = (*getattr(env, "soft_premises", ()), *getattr(env, "rights_premises", ()))
-        case = {**case, "kind": "certificate",
-                **({"soft_premises": [_to_data(f) for _, f in soft]} if soft else {})}
+        fill = tuple(f for _, f in getattr(env, "fill_premises", ()))
+        layered = bool(STATEMENT_LAYERS & set(env.profiles) or soft)
+        mode = "norms" if layered else route_mode(env)
+        slots = [_to_data(f) for _, f in soft] + ([_to_data(f) for f in fill] if layered else [])
+        case = {**case, "kind": "certificate", **({"soft_premises": slots} if slots else {}),
+                **({} if layered else {"premises": [_to_data(f) for f in fill] + case["premises"]})}
     elif env.order:
         mode, case = "order", {**case, "kind": "certificate"}
     else:
