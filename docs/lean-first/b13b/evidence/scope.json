@@ -1,0 +1,260 @@
+{
+ "commits": [
+  {
+   "sha": "85b02e40a7d50ece438a932aee8c58fa97c73e78",
+   "subject": "lf-13b: saved-evidence tests and the batch report"
+  },
+  {
+   "sha": "6183513c60117ca42277c982316917c08e409329",
+   "subject": "lf-13b: reviewed baseline entry keeps its reproducing input; gate evidence scripts"
+  },
+  {
+   "sha": "e81e413dd3f9c8bcb4e1e37b2c60192d384e48a8",
+   "subject": "lf-13b: keep the reproducing baseline entry; regenerate the Lean declarations"
+  },
+  {
+   "sha": "91212d094ed8fad005972ec299c95bd468d492d7",
+   "subject": "lf-13b: premise status and compare are Lean-checked where Lean checks their parts"
+  },
+  {
+   "sha": "2416688a29d95d1bf15e8e0b616c56d22c6d4b45",
+   "subject": "lf-13b: bind Lean admission rows to the request; fuzz every switched relay"
+  },
+  {
+   "sha": "8ad24d5021426e6c16fffeafd442f4a7cf2e2539",
+   "subject": "lf-13b: refresh the gate collection baseline"
+  },
+  {
+   "sha": "cafaea28f4bffd8dfc663e479f5769231fa8e1ed",
+   "subject": "lf-13b: tools and tests follow the Lean owner"
+  },
+  {
+   "sha": "896fc935f78391a884801683c2ba3f42ed1cb415",
+   "subject": "lf-13b: Lean answers Background for every profile; constituents keep their selection"
+  },
+  {
+   "sha": "075f2d9683311a8914885f172a6227c06bf0ce2e",
+   "subject": "lf-13b: Lean types readings, norm-defaults and risk environments; fill premises reach Lean"
+  },
+  {
+   "sha": "cfdf6e24ab7cf53613559f3ae4e2eb56ecaa96bd",
+   "subject": "lf-13b: core operations are Lean-owned under every authority"
+  }
+ ],
+ "files": {
+  "conformance/difffuzz-baseline.json": [
+   642,
+   1174
+  ],
+  "conformance/three_way.py": [
+   9,
+   2
+  ],
+  "docs/lean-first/b13b/DELTA.json": [
+   150,
+   0
+  ],
+  "docs/lean-first/b13b/DELTA.md": [
+   96,
+   0
+  ],
+  "docs/lean-first/b13b/LEDGER.md": [
+   34,
+   0
+  ],
+  "docs/lean-first/b13b/REPORT.md": [
+   74,
+   0
+  ],
+  "docs/lean-first/b13b/difffuzz_ab.py": [
+   94,
+   0
+  ],
+  "docs/lean-first/b13b/evidence/corpus-ab.json": [
+   2431,
+   0
+  ],
+  "docs/lean-first/b13b/evidence/difffuzz-ab.json": [
+   2512,
+   0
+  ],
+  "docs/lean-first/b13b/evidence/latency.json": [
+   181,
+   0
+  ],
+  "docs/lean-first/b13b/evidence/mutants.json": [
+   230,
+   0
+  ],
+  "docs/lean-first/b13b/latency.py": [
+   104,
+   7
+  ],
+  "docs/lean-first/b13b/make_delta.py": [
+   38,
+   0
+  ],
+  "docs/lean-first/b13b/mutants.py": [
+   108,
+   0
+  ],
+  "docs/lean-first/b13b/report.py": [
+   147,
+   4
+  ],
+  "docs/spec/semantics-inventory.md": [
+   493,
+   497
+  ],
+  "lean/VE/Route/frozen-sources.sha256": [
+   1,
+   1
+  ],
+  "lean/VE/Service/Standalone.lean": [
+   10,
+   2
+  ],
+  "lean/checkers.lock": [
+   2,
+   1
+  ],
+  "lean/declarations.txt": [
+   88,
+   88
+  ],
+  "tests/test_assist_invariants.py": [
+   6,
+   0
+  ],
+  "tests/test_bundle.py": [
+   7,
+   3
+  ],
+  "tests/test_difffuzz.py": [
+   3,
+   2
+  ],
+  "tests/test_lean_first_b13b.py": [
+   282,
+   0
+  ],
+  "tests/test_model_environment.py": [
+   2,
+   2
+  ],
+  "tests/test_norms_contract.py": [
+   6,
+   3
+  ],
+  "tests/test_replay_conservativity.py": [
+   3,
+   4
+  ],
+  "tests/test_rust_jsonl_schema.py": [
+   8,
+   10
+  ],
+  "tests/test_single_owner.py": [
+   39,
+   7
+  ],
+  "tests/test_softnorms_contract.py": [
+   9,
+   7
+  ],
+  "tests/test_stage2_dispatch.py": [
+   2,
+   1
+  ],
+  "tests/test_stage2_validation.py": [
+   11,
+   5
+  ],
+  "tests/test_wire_contract_s5_admission.py": [
+   9,
+   7
+  ],
+  "tools/gate-collection.json": [
+   132,
+   1
+  ],
+  "tools/inventory_lint.py": [
+   4,
+   3
+  ],
+  "tools/relay_lint.py": [
+   3,
+   2
+  ],
+  "tools/semantic_inventory.py": [
+   1,
+   1
+  ],
+  "ve/admission.py": [
+   72,
+   372
+  ],
+  "ve/argument.py": [
+   12,
+   10
+  ],
+  "ve/ast.py": [
+   11,
+   45
+  ],
+  "ve/backends/dispatch.py": [
+   24,
+   12
+  ],
+  "ve/backends/lean_runner.py": [
+   17,
+   0
+  ],
+  "ve/backends/validation.py": [
+   0,
+   27
+  ],
+  "ve/background.py": [
+   36,
+   94
+  ],
+  "ve/bundle.py": [
+   13,
+   16
+  ],
+  "ve/definitions.py": [
+   19,
+   32
+  ],
+  "ve/entailment.py": [
+   48,
+   38
+  ],
+  "ve/equivalence.py": [
+   7,
+   9
+  ],
+  "ve/norm_admission.py": [
+   11,
+   120
+  ],
+  "ve/norms.py": [
+   12,
+   20
+  ],
+  "ve/parser.py": [
+   22,
+   12
+  ],
+  "ve/readings.py": [
+   14,
+   19
+  ],
+  "ve/vacuity.py": [
+   6,
+   7
+  ]
+ },
+ "head": "85b02e40a7d50ece438a932aee8c58fa97c73e78",
+ "merge_base": "abc30811855ea9dcb57003c1d961dda94093d5cc"
+}

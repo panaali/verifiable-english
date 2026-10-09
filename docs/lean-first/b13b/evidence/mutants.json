@@ -1,5 +1,5 @@
 {
- "head": "2416688a29d95d1bf15e8e0b616c56d22c6d4b45",
+ "head": "85b02e40a7d50ece438a932aee8c58fa97c73e78",
  "mutants": [
   {
    "mutant": "python_selection_wins",
@@ -193,8 +193,8 @@
     "tests/test_model_environment.py::test_search_status_and_comparison_answer_as_the_base_did[ve.core@0.2:norm-defaults@0,norms@0,relational-fol@0,soft-norms@0]",
     "tests/test_model_environment.py::test_search_status_and_comparison_answer_as_the_base_did[ve.core@0.2:norms@0,readings@1,relational-fol@0,soft-norms@0]"
    ],
-   "restored_exit": 1,
-   "caught": false
+   "restored_exit": 0,
+   "caught": true
   },
   {
    "mutant": "sugar_rejection_to_lean",
