@@ -38,6 +38,14 @@ def lean():
 
 def loaded(tmp_path, make=fnd1):
     doc = load_document(make(tmp_path))
+    # RD-6b's public route for F-ND1/2 is superposed. Keep the RD-3 enumerated
+    # runner as the oracle on these same admitted documents: its Lean service
+    # kind remains available, and the choice list was supplied by Lean.
+    row = doc["readings_s2"]
+    row["route"] = "enumerated"
+    row["finding"] = {"text": "ReadingsNotSuperposable: " + ", ".join(
+        reading_set["id"] for reading_set in doc["meta"]["reading_sets"]),
+        "cause": "the unspecified completion"}
     return doc, context(doc)
 
 
@@ -800,7 +808,13 @@ def test_dri_wording_rows_keep_the_base(tmp_path, capsys):
     live = [readings("--conclusion", str(query)), readings("--conclusion", str(query), "--under", "rs_1:0"),
             readings("--conclusion", str(query), "--under", "rs_1:1"), readings("--conclusion", str(implies)),
             check_document(path1)["readings"]["english"], check_document(path2)["readings"]["english"]]
-    assert [row["head"] for row in saved["rows"]] == live
+    # RD-6b removes the enumerated route sentence and adds the superposed
+    # conflict diagnostic. Compare the substantive result lines to the signed
+    # RD-3 baseline; route and diagnostic text have their own RD-6b tests.
+    for row, lines in zip(saved["rows"], live, strict=True):
+        base = [line for line in row["base"] if "checked one way at a time" not in line]
+        result = [line for line in lines if not line.startswith("CONFLICT: pair conflict")]
+        assert _keeps_the_base(base, result) == [], row["case"]
 
 
 # ---------------------------------------------------------------------------------------------------------------

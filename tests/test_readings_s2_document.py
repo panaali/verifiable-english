@@ -106,26 +106,23 @@ def _completion_document(tmp_path):
 
 
 def test_rd2b_completion_document_is_checked_not_refused(tmp_path):
-    """Review B3 of RD-2a, then RD-2b: a document under the unspecified completion (every candidate with content, the
-    norms chain, `norm-defaults@0`) is admitted by Lean on the enumerated route with the completion as the cause, and
-    `ve document` relays its checks: no conformance alarm (B3), and no named refusal any more (RD-2a's, until RD-2b)."""
+    """A document under the completion is admitted and RD-6b superposes its filled norms chain."""
     _, _, path = _completion_document(tmp_path)
     report = check_document(path)
-    assert (report["readings"]["route"], report["readings"]["not_superposable"]) == (
-        "enumerated", {"text": "ReadingsNotSuperposable: rs_1", "cause": "the unspecified completion"})
+    assert (report["readings"]["route"], report["readings"]["not_superposable"]) == ("superposed", None)
     assert report["readings"]["conflict"]["status"] == "CONFLICT-FREE"
 
 
 def test_rd2a_review_b3_route_table_is_lean_s(tmp_path, lean_route):
     """Review B3's class: under `norm-defaults@0` the relay takes Lean's route of 1.1 (`routeOf`) and regenerates
     none of it: the completion's route and cause are Lean's, relayed with the filled document (RD-2b)."""
-    from ve.readings_route import COMPLETION_CAUSE, elaborate, run_lean
+    from ve.readings_route import elaborate, run_lean
     from ve.readings_s1 import wire
     raw, document, _ = _completion_document(tmp_path)
     units = [{"id": "u1", "kind": "norm"}]
     [row] = run_lean([{"id": "r", "kind": "readings-elaborate", "environment": wire(raw),
                        "document": wire({"units": units, "reading_sets": document["reading_sets"]})}])
-    assert (row["route"], row["finding"]["cause"]) == ("enumerated", COMPLETION_CAUSE)
+    assert (row["route"], row["finding"]) == ("superposed", None)
     relayed = elaborate(raw, units, document["reading_sets"])
     assert relayed == {key: value for key, value in row.items() if key not in ("id", "status")}
 
@@ -1528,7 +1525,7 @@ def test_looprecheck1_a_slot_labels_round_trip_by_kind():
     for word in _KIND_WORDS + ["n1", "a.b-c_9", "0"]:
         made += [SlotLabel("one", word, 1), SlotLabel("own", word, 12, 0), SlotLabel("own", word, 1, 7),
                  SlotLabel("shared", key=f"outweighs:{word}:lo:hi"), SlotLabel("coupling", key=word),
-                 SlotLabel("narrowing", key=word)]
+                 SlotLabel("narrowing", key=word), SlotLabel("fill", key=f"{word},permission")]
     assert {label.kind for label in made} == set(SLOT_LABEL_KINDS)
     rendered = [label.render() for label in made]
     for label, text in zip(made, rendered):
