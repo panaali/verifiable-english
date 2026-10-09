@@ -367,21 +367,23 @@ def _lean_parse_scope(env: Any) -> bool:
 
 @semantic_entry("parse")
 def parse_with_metadata(env: Any, source: str | bytes) -> ParseResult:
-    """Parse and type a source under the selected authority.
+    """Parse and type a source.
 
-    Under a backend authority Lean's surface parser for the envelope's family
-    decides acceptance; the Python parser reads the document and its source
-    metadata, names a rejection both make, and its document must be Lean's
-    (the same AST and, where Lean prints, the same canonical text).
+    Lean's surface parser for the envelope's family decides acceptance under
+    every authority (lean-first batch 13b); the Python parser constructs the
+    document and its source metadata only after Lean accepts, and its document
+    must be Lean's (the same AST and, where Lean prints, the same canonical
+    text). Environments outside Lean's `parse` scope (statement layers and W6
+    units) keep the retained Python reader, a recorded scope gap.
     """
-    from .backends.dispatch import authority_for, execute
+    from .backends.dispatch import owned
 
     def python():
         return _parse_python(env, source)
 
-    if authority_for("parse") in ("python", "rust-experimental") or not _lean_parse_scope(env):
+    if not _lean_parse_scope(env):
         return python()
-    return execute("parse", {"kind": "parse"}, python, lean=lambda: _parse_lean(env, source, python))
+    return owned("parse", lambda: _parse_lean(env, source, python))
 
 
 def _parse_lean(env: Any, source: str | bytes, python) -> ParseResult:
