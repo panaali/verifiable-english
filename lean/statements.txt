@@ -13583,6 +13583,28 @@ theorem VE.Order.validModel_iff
     VE.Order.validModel? v d = Bool.true ↔ d.toModel.Valid v.environment
   -- uses VE.Order.FiniteModel.Valid@VE.Order.Finite VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Vocabulary.environment@VE.Order.ModelCheck VE.Order.Vocabulary@VE.Order.ModelCheck VE.Order.validModel?@VE.Order.ModelCheck
   -- expr 661174793
+theorem VE.Question.first_pred_unique
+  ∀ {α : Type} [inst : DecidableEq α] (xs : List α) (P : α → Prop) (c d : α),
+    c ∈ xs →
+      d ∈ xs →
+        P c →
+          P d →
+            (∀ (x : α), x ∈ List.takeWhile (fun x => x != c) xs → ¬P x) →
+              (∀ (x : α), x ∈ List.takeWhile (fun x => x != d) xs → ¬P x) → c = d
+  -- uses
+  -- expr 2641818688
+theorem VE.Question.got_none
+  ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon) (b : Nat)
+    (c : VE.Question.Candidate),
+    VE.Question.got E O L b c = VE.Question.Got.none → VE.Question.NoDerivation E L c.sentence
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.Question.Candidate.sentence@VE.Question.Basic VE.Question.Candidate@VE.Question.Basic VE.Question.Got.none@VE.Question.Basic VE.Question.Got@VE.Question.Basic VE.Question.NoDerivation@VE.Question.Properties VE.Question.got@VE.Question.Basic
+  -- expr 3560693812
+theorem VE.Question.question_reading_unique
+  ∀ (auxs : List String) (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon)
+    (q : String) (c c' : VE.Question.Candidate) (φ φ' : VE.EnglishGrammar.EFormula),
+    VE.Question.QuestionOneReading auxs E O L q c φ → VE.Question.QuestionOneReading auxs E O L q c' φ' → c = c' ∧ φ = φ'
+  -- uses VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.Question.Candidate@VE.Question.Basic VE.Question.QuestionOneReading@VE.Question.Properties
+  -- expr 3375015850
 theorem VE.Readings.Examples.k2b_achieves_neither
   ∀ (i : Nat) (F : VE.Readings.Tables String) (q : VE.Readings.Probe String) (v : Bool),
     ¬VE.Readings.Achieves VE.Readings.Examples.K2 "rs1" i VE.Readings.Examples.m0b.asStructure F q v
