@@ -160,6 +160,20 @@ def test_the_contract_files_are_the_services():
         assert done.returncode == 0, (tool, done.stdout, done.stderr)
 
 
+def test_a_changed_predicate_body_is_noticed():
+    """Review C1 (Fable): the tool compares 5.1's predicates whole, so a body change under an unchanged name and
+    signature (`HasReading` with `true` for its formula's mark) differs from the approved text."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("question_statements", ROOT / "tools/question_statements.py")
+    tool = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(tool)
+    source = (ROOT / "lean/VE/Question/Properties.lean").read_text()
+    approved = tool.definitions(SPEC.read_text().split("### 5.1 Q1", 1)[1].split("### 5.2 Q2", 1)[0])
+    assert tool.definitions(source)["HasReading"] == approved["HasReading"]
+    changed = source.replace("∃ φ, EnglishOneReading E O L s [(φ, false)]", "∃ φ, EnglishOneReading E O L s [(φ, true)]")
+    assert changed != source and tool.definitions(changed)["HasReading"] != approved["HasReading"]
+
+
 def test_every_approved_statement_is_proved_as_written():
     """Spec 5.1's fifteen Q1 statements are Lean theorems whose text is the approved text
     (tools/question_statements.py); `lean/audit.py` checks that they use the standard axioms only."""
@@ -167,6 +181,7 @@ def test_every_approved_statement_is_proved_as_written():
                           capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert done.returncode == 0, done.stdout
     assert "15 of 15 implemented; 0 missing" in done.stdout
+    assert "Q1 predicates: 5 of 5 equal to the approved text" in done.stdout
     audited = (ROOT / "lean/VE/Audit.lean").read_text()
     for name in re.findall(r"^theorem (\w+)", SPEC.read_text().split("### 5.1 Q1", 1)[1].split("### 5.2", 1)[0],
                            re.M):
