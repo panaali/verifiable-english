@@ -111,6 +111,22 @@ def test_genuine_route_answers_are_accepted_by_schema_and_lean(genuine, executab
     assert set(invariants) == {"accept"}, [v for v in invariants if v != "accept"][:5]
 
 
+@pytest.mark.parametrize("mode", ["alternatives", "risk", "soft-norms", "rights", "reports"])
+def test_admission_reports_reject_undeclared_claim_names(genuine, executables, mode):
+    """Every report sharing the graph report schema binds its assumptions to declared nodes."""
+    for actual, request, response, case, row in answers(genuine):
+        if actual != mode or case.get("kind") != "admission" or not row.get("report", {}).get("assumptions"):
+            continue
+        bad = deepcopy(row)
+        bad["report"]["assumptions"][0]["name"] = "fabricated_assumption"
+        altered = _bound(response, bad)
+        with pytest.raises(Invalid):
+            check_response(mode, altered, request)
+        assert lean_verdicts(executables[1], [(mode, request, [altered])])[0].startswith("reject")
+        return
+    raise AssertionError(f"no {mode} admission with assumptions in the route corpus")
+
+
 def _bound(response, row):
     return {**response, "results": [{**response["results"][0], "result": row}]}
 

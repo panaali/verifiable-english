@@ -238,17 +238,28 @@ def _admit_lean(environment, document) -> dict:
 
 
 def bound_admission(env, document, row) -> dict:
-    """Lean's admission row, bound to the request: the units' kinds rendered back are the request's, the
-    report's root is the request graph's root, and `report_id` is the identity of exactly this report over the
-    environment and the document sent (the wire digest, rule 5), so no field of the report can change unseen.
+    """Lean's admission row, bound to the request: the units' kinds rendered back are the request's,
+    each reported claim is a graph node with the same name, AST and label, the report's root is
+    the graph's root, and `report_id` is the identity of exactly this report over the environment
+    and document sent (the wire digest, rule 5), so no field of the report can change unseen.
     Anything else is CheckerUnavailable: Lean's answer is relayed, never repaired."""
     from .backends.lean_service import CheckerUnavailable
+    from .backends.service_schema import same_json
     from .wire import digest
     if set(row) != {"id", "status", "admitted", "report", "report_id", "kinds"} or row["admitted"] is not True:
         raise CheckerUnavailable("CheckerUnavailable: malformed Lean admission result")
     units = document.get("units") if type(document) is dict else None
     graph = document.get("graph") if type(document) is dict else None
     report = row["report"]
+    nodes = graph.get("nodes") if type(graph) is dict else None
+    def request_claim(claim):
+        if type(claim) is not dict or type(nodes) is not list:
+            return False
+        fields = ("name", "ast", "label")
+        return any(type(node) is dict and all(
+            (key in claim) == (key in node) and
+            (key not in claim or same_json(claim[key], node[key])) for key in fields)
+            for node in nodes)
     try:
         expected = digest(f"ve-report-{env.identity_version}\n",
                           {"environment_id": env.environment_id, "document": document, "report": report})
@@ -256,7 +267,11 @@ def bound_admission(env, document, row) -> dict:
         expected = None
     if (type(units) is not list or row["kinds"] != [u.get("kind") if type(u) is dict else None for u in units]
             or type(graph) is not dict or type(report) is not dict or type(report.get("root")) is not dict
-            or report["root"].get("name") != graph.get("root") or row["report_id"] != expected):
+            or report["root"].get("name") != graph.get("root")
+            or not request_claim(report["root"])
+            or type(report.get("assumptions")) is not list
+            or not all(request_claim(claim) for claim in report["assumptions"])
+            or row["report_id"] != expected):
         raise CheckerUnavailable("CheckerUnavailable: the Lean admission answer is not bound to the request")
     return {key: row[key] for key in ("admitted", "report", "report_id", "kinds")}
 
