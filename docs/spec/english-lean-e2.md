@@ -2295,4 +2295,3 @@ Lean authority found are closed in Lean. The report is `docs/lean-first/e2/E2.6.
   norm-defaults route admits `data@0` flags, refusing a supplied model that violates one (DF-17).
 
 `actions_version` rises to 28.
-
