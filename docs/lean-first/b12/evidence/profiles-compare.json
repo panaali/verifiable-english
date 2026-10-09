@@ -1,0 +1,15 @@
+{
+ "differences": [],
+ "records": {
+  "discourse/default": 6350,
+  "quantity/lean": 12863,
+  "quantity/python": 12863,
+  "readings/default": 1137,
+  "rights/default": 2500
+ },
+ "totals": {
+  "same": 35713
+ },
+ "unavailable_both": {},
+ "unlisted": 0
+}

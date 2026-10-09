@@ -236,10 +236,11 @@ def case_error_valid : Shape :=
       ("valid", .const (.bool false))]]
 
 def error : Shape :=
-  c "A case the runner rejected: the request's id (null if absent) and the message." [
+  c "A case the runner rejected: the request's id (null if absent), message, and optional model JSON pointer." [
     obj,
     .required ["id", "status", "error"],
-    closed [("id", .echo "/id"), ("status", constS "error"), ("error", ref "#/$defs/text")]]
+    closed [("id", .echo "/id"), ("status", constS "error"),
+      ("error", ref "#/$defs/text"), ("path", str)]]
 
 def error_valid : Shape :=
   c "The same with valid: false (CertificateWire and Order.Surface runCaseReported)." [

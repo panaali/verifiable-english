@@ -5,6 +5,7 @@ from copy import deepcopy
 import re
 
 from .errors import DuplicateDeclaration, UnknownSymbol, UnsupportedProfile, VEError
+from .environment import validate_authored_source
 from .softnorms import SoftEnvironment, SoftNormDocument
 
 _RULE = re.compile(r"[a-z][a-z0-9-]*\Z", re.ASCII)
@@ -79,6 +80,11 @@ class RightsEnvironment(SoftEnvironment):
                 # 3.1's null recognition is the absent key: canonical JSON has no null,
                 # and the Lean wire sends the field absent.
                 del entry["recognition"]
+        # The authored rights wire treats null recognition as an absent field.
+        # Validate the canonical source that the rights route and identity use.
+        vocabulary["rights"] = rights
+        validate_authored_source(raw)
+        del vocabulary["rights"]
         _decode_block(rights)
         predicates = vocabulary.get("predicates")
         for predicate in (predicates if type(predicates) is dict else ()):

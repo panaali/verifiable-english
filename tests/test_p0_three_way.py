@@ -290,11 +290,13 @@ def test_hostile_wire_diagnostics_match_three_ways(lean_executable, rust_executa
                [{"id": c["id"], **rust_envelope(c["environment"])} if c["kind"] == "label"
                 else rust_request(c) for c in cases])
     def reason(message):
-        if "sorts" in message and "predicates" in message and "constants" in message and "field" in message:
+        if (("sorts" in message and "predicates" in message and "constants" in message and "field" in message)
+                or "property not found: sorts" in message):
             return "vocabulary fields"
         if "profile" in message.lower() and ("string" in message or "array" in message):
             return "profile type"
-        if "language" in message or "profiles or specification revision" in message:
+        if ("language" in message or "profiles or specification revision" in message
+                or "unsupported closure environment version/profiles" in message):
             return "legacy envelope"
         if ("domains" in message or "declared sorts, constants and predicates" in message or
                 ("fields do not match" in message and "$string" in message)):

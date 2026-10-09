@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "base": "a3476e66",
+  "code_head": "a33a8e07078c07c43c2c2723578a431abb90c13a",
+  "commits_before_report": [
+    {
+      "sha": "0b928e78",
+      "subject": "readings-defaults RD-3: the fold, conditions, English plan and readings-verdicts in Lean"
+    },
+    {
+      "sha": "a8fc0d25",
+      "subject": "readings-defaults RD-3: the enumerated route asks Lean for every verdict; Python generates evidence and renders the plan"
+    },
+    {
+      "sha": "29c21f38",
+      "subject": "readings-defaults RD-3: spec 8.2's service fixtures for readings-verdicts; Lean's answer checked as untrusted output"
+    },
+    {
+      "sha": "ee11e1fc",
+      "subject": "readings-defaults RD-3: inventories (audit, statements, declarations, axioms, trust classes, assurance pin), the statement check of spec 6.4 and 6.5, READINGS.md"
+    },
+    {
+      "sha": "e141ec0a",
+      "subject": "readings-defaults RD-3: the plan renderer reads Lean's model index with decimal_value (numeral policy)"
+    },
+    {
+      "sha": "55eb5913",
+      "subject": "readings-defaults RD-3: readings-verdicts' answer is closed and typed in the client schema, proved to fit; its cases join the route corpus"
+    },
+    {
+      "sha": "be5cf0f3",
+      "subject": "readings-defaults RD-3: refresh trust baseline after audited fold"
+    },
+    {
+      "sha": "ff4c7b75",
+      "subject": "readings-defaults RD-3: keep pilot recorder shadow outside read-only base"
+    },
+    {
+      "sha": "af7c0b6b",
+      "subject": "readings-defaults RD-3: isolate recorder shadow from ambient path"
+    },
+    {
+      "sha": "f90ef497",
+      "subject": "readings-defaults RD-3: pin saved-evidence report checks in the gate"
+    },
+    {
+      "sha": "d0d89234",
+      "subject": "readings-defaults RD-3: account for saved pilot availability and scratch paths"
+    },
+    {
+      "sha": "a33a8e07",
+      "subject": "readings-defaults RD-3: use proved response schema for verdict statuses"
+    }
+  ],
+  "lean": {
+    "build_jobs": 847,
+    "audit_sources": 458,
+    "audit_theorems": 4881,
+    "statements": 4488,
+    "rd3_declarations": 30
+  },
+  "fixtures": {
+    "passed": 234
+  },
+  "ab_sha256": "266b3ab32940d8b6ae857ef02c724098209b1b1a204b93aa73260b5e10ca1abb",
+  "ab_record_sha256": {
+    "base": "c963656212182ebc57dd96b1a4b3dbd98155c0381ff74bbf9b49e8029a5a4c11",
+    "head": "771832318761073cfedd02b07641bd333865ab7131cc5340712331468c9710de"
+  }
+}

@@ -33,7 +33,10 @@ def decodeSortName (sorts : List String) (s : String) : Except String SortName :
   else if sorts.contains s then pure (.user s)
   else throw s!"unknown sort: {s}"
 
-def decodeEnvironment (j : Json) : Except String Vocabulary := do
+/-- The frozen `ve.core@0.1` order envelope. Its constants carry no display
+words; `displayConstants` admits a `verbalisation` for the route order family
+(`Route.Wire.decodeOrderVocabulary`), as `Route.Wire.decodeVocabulary` does. -/
+def decodeEnvironment (j : Json) (displayConstants : Bool := false) : Except String Vocabulary := do
   exactFields j ["language", "profiles", "spec_revision", "vocabulary"]
   unless (← stringField j "language") == orderLanguage &&
       (← strings (← j.getObjVal? "profiles")) == orderProfiles &&
@@ -44,13 +47,9 @@ def decodeEnvironment (j : Json) : Except String Vocabulary := do
   let sorts ← fields (← v.getObjVal? "sorts")
   let predicates ← fields (← v.getObjVal? "predicates")
   let constants ← fields (← v.getObjVal? "constants")
-  let names := (sorts ++ predicates ++ constants).map Prod.fst
-  unless names.eraseDups.length == names.length do throw "duplicate declaration"
-  for name in names do
-    unless identifier name && !reserved.contains name && !generatedName name do
-      throw s!"invalid or reserved declaration: {name}"
   if sorts.length > 32 || predicates.length > 256 then
     throw "ResourceLimit: vocabulary size"
+  VE.Bridge.checkVocabularyNames sorts predicates constants
   -- Declaration objects, descriptions, display metadata and permitted fields
   -- are validated exactly as the v0 and closure@0 adapters (and Python) do;
   -- only the `$int` sort is additionally admitted in signatures.
@@ -69,13 +68,20 @@ def decodeEnvironment (j : Json) : Except String Vocabulary := do
     for key in ["verbalisation", "negative_verbalisation"] do
       if let .ok words := entry.getObjVal? key then
         VE.Bridge.displayString words
-    let ss ← strings (← entry.getObjVal? "arguments")
-    unless ss.length == 1 || ss.length == 2 do throw s!"invalid signature: {p}"
+    let raw ← entry.getObjVal? "arguments"
+    let cells ← raw.getArr?
+    unless cells.size == 1 || cells.size == 2 do throw s!"invalid signature: {p}"
+    let ss ← VE.Bridge.argumentSorts raw (fun s => sortNames.contains s || s == "$int")
     pure (p, ← ss.mapM (decodeSortName sortNames))
   let cs ← constants.mapM fun (c, entry) => do
-    exactFields entry ["sort", "description"]
+    VE.Bridge.displayFields entry ["sort", "description"]
+      (if displayConstants then ["verbalisation"] else [])
     VE.Bridge.description entry
-    pure (c, ← decodeSortName sortNames (← stringField entry "sort"))
+    if displayConstants then
+      if let .ok words := entry.getObjVal? "verbalisation" then
+        VE.Bridge.displayString words
+    let sort ← VE.Bridge.constantSort entry (fun s => sortNames.contains s || s == "$int")
+    pure (c, ← decodeSortName sortNames sort)
   pure ⟨sortNames, ps, cs⟩
 
 def decodeTerm : Nat → Json → Except String Term

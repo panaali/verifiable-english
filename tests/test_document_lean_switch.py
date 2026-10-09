@@ -246,12 +246,25 @@ def _delta_cases(klass):
     return sorted({row["case"] for row in delta[klass]})
 
 
+# Python's own texts for the faults below, recorded before lean-first batch 12 moved `_load_document`'s environment
+# validation to its located Lean decoders, whose texts for these faults are batch 12's signed wording.
+PYTHON_NAMES = json.loads((ROOT / "tests/data/b16b-python-names.json").read_text())
+
+
+@lru_cache(maxsize=1)
+def _order_base():
+    """Each signed order case's base (Python) rejection, as delta.json saved it."""
+    delta = json.loads((ROOT / "docs/lean-first/b16b/delta.json").read_text())
+    return {row["case"]: (row["base"]["raised"]["code"], row["base"]["raised"]["message"]) for row in delta["order"]}
+
+
 @pytest.mark.parametrize("case", _delta_cases("order"))
 def test_signed_order_diagnostics_keep_python_names_and_specificity(tmp_path, case):
-    """The historical order block is fixed at the current Lean head, including the unknown AST tag case."""
+    """The historical order block is fixed at the current Lean head, including the unknown AST tag case: Lean
+    gives the base's (Python's) saved rejection."""
     path = write(tmp_path, _saved_document_cases()[case])
-    lean, python = coded(lambda: D.check_document(path)), coded(python_path(path))
-    assert lean is not None and python is not None
+    lean, python = coded(lambda: D.check_document(path)), _order_base()[case]
+    assert lean is not None
     assert lean[0] == python[0] and _unprefixed(lean) == _unprefixed(python), (case, lean, python)
 
 
@@ -264,7 +277,9 @@ def test_unknown_language_uses_the_frozen_envelope_field_set(tmp_path, language,
     for key in removed:
         del environment[key]
     path = write(tmp_path, dw.text_of(doc))
-    lean, python = coded(lambda: D.check_document(path)), coded(python_path(path))
+    python, = [tuple(row["raised"]) for row in PYTHON_NAMES["unknown_language"]
+               if row["language"] == language and row["removed"] == list(removed)]
+    lean = coded(lambda: D.check_document(path))
     assert lean == python, (language, removed, lean, python)
 
 
@@ -285,14 +300,14 @@ def test_pending_lf12_document_paths(tmp_path, case):
 @pytest.mark.parametrize("name", sorted(NAMED))
 def test_lean_names_a_rejection_as_python_did(tmp_path, name):
     """DRI rule 2(a)-(c) (16b looprecheck1): Lean's rejection keeps every name, value and the specificity of
-    the diagnostic Python's own path gives the same document; here the texts agree but for the code prefix, which
-    the relay always writes."""
+    the diagnostic Python's own path gave the same document (PYTHON_NAMES); here the texts agree but for the code
+    prefix, which the relay always writes."""
     seed, edit = NAMED[name]
     doc = deepcopy(GENERATED[seed])
     edit(doc["front"])
     path = write(tmp_path, dw.text_of(doc))
-    lean, python = coded(lambda: D.check_document(path)), coded(python_path(path))
-    assert lean is not None and python is not None, (lean, python)
+    lean, python = coded(lambda: D.check_document(path)), tuple(PYTHON_NAMES["named"][name])
+    assert lean is not None, (lean, python)
     assert lean[0] != "CheckerUnavailable" and lean[0] == python[0], (lean, python)
     assert _unprefixed(lean) == _unprefixed(python), (lean, python)
 

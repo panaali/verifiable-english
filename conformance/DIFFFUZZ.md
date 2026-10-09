@@ -17,6 +17,13 @@ python3 tools/difffuzz.py --ci --report out.json   # the full report: corpus, mu
 The run needs the Lean executables (`lake build`) and the Rust release binary (`tools/rust_build.py`, or
 `VE_RUST_PREBUILT=1` with `VE_RUST_BINARY`). `--minimise-limit N` minimises up to N new signatures (default 40).
 
+The batch 12 integration merge replayed both parents' baselines and the CI sample.
+The merged baseline has 254 reproducing entries: 147 old entries were fixed,
+26 changed entries collapsed onto an existing signature, 7 changed entries
+retained their reviewed follow ups, and 19 minimized sample findings were
+reviewed under `DF-6` (7 language/envelope version cases) or `DF-9` (12 nested
+decoder code cases). The remaining findings are tracked below.
+
 ## Corpus
 
 `tools/difffuzz_corpus.py` reads every JSON file under `conformance/` and `usecases/`. Each file is read by a
@@ -138,7 +145,7 @@ entry may sit under a neighbouring id.
 | DF-3 | Nested vocabulary fields of the wrong JSON type: Python's text is not Lean's decoder type diagnostic (`String expected`, `array expected`, `object expected`), on the envelope and on every route that decodes an environment. The env-profiles directive fixed top-level fields only. | `wire-contract-PLAN.md` 7, S4 base row (`vocabulary@0.2`); env-profiles3-looprecheck1 notes the nested combinations |
 | DF-4 | A non-string profile: Rust's text is `expected a string`. The P0 contract fixes `profiles must be a sorted unique array`, which Python and Lean give. A `profile` or `profiles` of the wrong JSON type (or a non-string member): Python and Lean say `InvalidInput: String expected` or `array expected`, Rust says `UnsupportedProfile` (on the quantity route, `quantity route requires ve-units@1`). | `wire-contract-PLAN.md` 7, S4 base row (`envelope@0.2`, Rust engine) |
 | DF-5 | A non-string or unknown `spec_revision`: Python and Lean say `InvalidInput: String expected` (since `fix/env-field-types`), Rust says `UnsupportedProfile: Unsupported specification revision …`. | `wire-contract-PLAN.md` 7, S4 base row for Rust |
-| DF-6 | Language and envelope versions. For an unknown `language` string, Python and Rust read the frozen v0 envelope (`Incorrect fields (missing profile)`) and Lean says `Unsupported language`; Lean's v0 runner says `InvalidInput: unsupported environment version` where Python and Rust say `UnsupportedProfile`. When fields are missing, Python reports the field set where Lean reports the profiles or the language. | `wire-contract-PLAN.md` 7, S4 base row (`envelope@0.2`) |
+| DF-6 | Language and envelope versions. For an unknown `language` string, Python and Rust read the frozen v0 envelope (`Incorrect fields (missing profile)`) and Lean says `Unsupported language`; Lean's direct v0 and closure runners say `InvalidInput: unsupported environment version` or `unsupported closure environment version/profiles` where Python and Rust say `UnsupportedProfile`. The shared Lean service decoder classifies these as `UnsupportedProfile`; the direct runner keeps its frozen error text. When fields are missing, Python reports the field set where Lean reports the profiles or the language. | `wire-contract-PLAN.md` 7, S4 base row (`envelope@0.2`) |
 | DF-7 | Models: Lean's route and v0 runner report a model's shape errors as `InvalidInput` (`fields do not match`, `invalid integer`, `String expected`) and read the formulas before the model, as Rust does; Python reports `InvalidModel` first. | `wire-contract-PLAN.md` 7, S4 base row (`model@0.2`) |
 | DF-8 | Dependency orders and cycles: Rust's code is `DependencyCycle` where Python and Lean's text classify as `InvalidInput`; Lean's dependency-order route does not decode the vocabulary (it accepts a misspelt field). | new: the P0 dependency-order route (PLAN-EXPAND2 3.4) |
 | DF-9 | Nested decoder codes and order. Python and Rust report `UnknownSymbol`, `SyntaxError`, `UnboundVariable`, `TypeMismatch`, `DuplicateDeclaration` or `ResourceLimit` where Lean's route and v0 runner report `InvalidInput` (sort references, AST bodies, variable indices, reserved names, identifier lengths); some checks run in another order. | `wire-contract-PLAN.md` 7, S4 base row (`vocabulary@0.2`, `formula@0.2`) |
@@ -151,8 +158,8 @@ entry may sit under a neighbouring id.
 
 DF-12 closed in lean-first batch 5: the risk route now rejects the NBSP act phrase with the W6 canonical-round-trip diagnostic. Its baseline signature no longer reproduces.
 | DF-18 | Python's `Environment` rejects the `soft` vocabulary block of the soft-norms sources of `conformance/soft_norms_rust.json` (`unknown=['soft']`), which Rust accepts and Lean's soft-norms route accepts or rejects by a soft check of its own (Python's soft counterpart gives the same code). | `wire-contract-PLAN.md` 7, S3 row (`soft-norms@0` environment) |
-| DF-19 | A constant with a `verbalisation` member (the `norms@0` and `norm-defaults@0` test inputs): Python's `Environment` and the units' Python engines accept it; Lean's envelope, norm-defaults and `ve_diagnose` decoders say `fields do not match: expected [sort, description]` and Rust `expected exactly fields ["sort", "description"]`, before any check the mutant targets. Since lean-first batch 10b the norm-defaults decoder accepts it (its `environment` entry is retired); the `norms@0` entries and the `norm-defaults@0` wire-contract entries remain. | new: the constant declaration decoders of Lean and Rust (or Python's refusal) |
-| DF-20 | Malformed nested vocabulary fields, norm blocks, and oversized norm lists produce different rejection codes or diagnostic records across Python, Lean, and Rust. The remaining merge signatures are malformed-input rejection differences; each baseline entry pins its exact input and three answers. | new: align nested field validation and resource-limit diagnostics across the envelope and profile routes |
+| DF-19 | A constant with a `verbalisation` member is accepted by Python and the merged Lean environment and norms decoders. Rust's older envelope decoder requires exactly `sort` and `description`; the norm-defaults wire route can report a different first fault. | Rust's constant declaration decoder and the norm-defaults wire phase order |
+| DF-20 | Malformed nested vocabulary fields, norm blocks, and oversized norm lists can produce different rejection codes or diagnostic order across Python, Lean, and Rust. Without `norm-defaults@0`, Python and Lean report the missing profile for an `unspecified` regulated default before an unrelated malformed predicate argument sort; Rust reports the sort first. Each baseline entry pins its exact input and answers. | Align nested validation, resource-limit diagnostics, and Rust's norm-defaults profile-gate order |
 
 Fixed and retired (no entry reproduces since the merge of `ve-integration` with `fix/env-field-types`): DF-1, Python's
 `TypeError` for a numeric or Boolean `profiles`; DF-2, Python's `TypeError` for an array or object where a
@@ -177,6 +184,7 @@ and refuses a supplied model that violates one (`InvalidModel(flags)`); its one 
 | Review of the baseline's grouping into DF-3 to DF-19 | HUMAN | deferred to the branch review (owner: reviewer) |
 | The nightly script calls `--deep 20` | EXTERNAL | deferred: the nightly script is outside the repository (owner: orchestrator); the instruction is in `docs/ARCHITECTURE-LAYERS.md` |
 | Merge `fix/env-field-types`, then run `--update-baseline` to drop DF-1 and the Python-against-Lean part of DF-5 | AGENT | done: merged with `ve-integration`; DF-1 and DF-2 retired, the new signatures filed under DF-3 to DF-6, DF-9, DF-13 and DF-19 (two `--update-baseline` passes: a changed entry is dropped on the first and found again on the second) |
+| Refresh after batch 12 decoder location repairs | AGENT | done: removed repaired signatures in two `--update-baseline` passes; retained four sampled constant-sort discrepancies under DF-9 (requests), DF-6 (core envelope), and DF-13 (soft-norms route). These are Rust/Python or v0 route code differences; the reviewed environment Python/Lean diagnostics agree. |
 
 ## Not covered
 
