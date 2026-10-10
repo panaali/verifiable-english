@@ -1,22 +1,737 @@
 {
  "version": 1,
- "$comment": "Accepted mutants of tools/relay_mutation_gate.py that are by design or recorded follow-ups. `route`, `mutation` and each `path` are fnmatch patterns (`*` spans path separators); an entry that matches no finding fails the gate. Follow-ups are listed in docs/merge-tooling.md.",
+ "$comment": "Accepted mutants of tools/relay_mutation_gate.py that are by design or recorded follow-ups. Each entry names one route (no pattern) and lists its paths; `mutation` and each `path` are fnmatch patterns (`*` spans path separators), and a path of wildcards only is refused. The most specific entry matching a finding lists it (a literal path first). An entry that matches no finding fails the gate. Follow-ups are listed in docs/merge-tooling.md.",
  "entries": [
   {
-   "route": "*",
-   "mutation": "empty",
-   "path": "*",
+   "route": "call:ve.backends.speech_source:decide_source",
+   "mutation": "duplicate",
+   "path": [
+    "*/legend",
+    "*/policy/background",
+    "*/policy/conflict_targets",
+    "*/policy/order",
+    "*/policy/premises",
+    "*/premises",
+    "*/status_text"
+   ],
    "kind": "by-design",
    "id": "B0",
-   "reason": "Content Lean computes (a list, text or map whose length and text the runners decide: orders, premises, reports, rendered lines, optional ids written empty): the client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model); an emptied or repeated element is a well-formed answer. Request-bound lists (x-rows, x-length, x-zip, x-count) and request names are refused and are not covered here."
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
   },
   {
-   "route": "*",
-   "mutation": "duplicate",
-   "path": "*",
+   "route": "call:ve.backends.speech_source:decide_source",
+   "mutation": "empty",
+   "path": [
+    "*/legend",
+    "*/policy/background",
+    "*/policy/conflict_targets",
+    "*/policy/order",
+    "*/policy/premises",
+    "*/premises",
+    "*/questions",
+    "*/status_text"
+   ],
    "kind": "by-design",
    "id": "B0",
-   "reason": "Content Lean computes (a list, text or map whose length and text the runners decide: orders, premises, reports, rendered lines, optional ids written empty): the client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model); an emptied or repeated element is a well-formed answer. Request-bound lists (x-rows, x-length, x-zip, x-count) and request names are refused and are not covered here."
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:alternatives",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/alternatives",
+    "results/*/result/background",
+    "results/*/result/base_premises",
+    "results/*/result/choosers",
+    "results/*/result/choosers/*/allows",
+    "results/*/result/choosers/*/alternatives",
+    "results/*/result/choosers/*/avoidable",
+    "results/*/result/choosers/*/clear",
+    "results/*/result/choosers/*/inaction",
+    "results/*/result/choosers/*/permitted",
+    "results/*/result/choosers/*/prevents",
+    "results/*/result/conditional_on",
+    "results/*/result/conflict_targets",
+    "results/*/result/legend",
+    "results/*/result/order",
+    "results/*/result/premises",
+    "results/*/result/report/assumptions",
+    "results/*/result/targets"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:alternatives",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/alternatives",
+    "results/*/result/background",
+    "results/*/result/base_premises",
+    "results/*/result/choosers",
+    "results/*/result/choosers/*/allows",
+    "results/*/result/choosers/*/alternatives",
+    "results/*/result/choosers/*/avoidable",
+    "results/*/result/choosers/*/clear",
+    "results/*/result/choosers/*/inaction",
+    "results/*/result/choosers/*/permitted",
+    "results/*/result/choosers/*/prevents",
+    "results/*/result/conditional_on",
+    "results/*/result/conflict_targets",
+    "results/*/result/legend",
+    "results/*/result/order",
+    "results/*/result/premises",
+    "results/*/result/report/assumptions",
+    "results/*/result/targets"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:check",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/core"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:check",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/core"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:diagnose",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/diagnostic/args"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:discourse",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/kinds",
+    "results/*/result/mentions/m1/accessible",
+    "results/*/result/report/assumptions",
+    "results/*/result/self_truth"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:discourse",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/kinds",
+    "results/*/result/mentions",
+    "results/*/result/mentions/m1/accessible",
+    "results/*/result/report/assumptions",
+    "results/*/result/self_truth",
+    "results/*/result/statuses"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:document",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/coverage/bytes_by_kind",
+    "results/*/result/coverage/bytes_by_status",
+    "results/*/result/coverage/residual"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:english",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/results/*/rendered"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:english",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/results/*/rendered"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:family-norms",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/background",
+    "results/*/result/conflict_targets",
+    "results/*/result/order",
+    "results/*/result/premises",
+    "results/*/result/targets"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:family-norms",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/background",
+    "results/*/result/conflict_targets",
+    "results/*/result/order",
+    "results/*/result/premises",
+    "results/*/result/targets"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:graph",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/assumptions",
+    "results/*/result/report/assumptions",
+    "results/*/result/supporting_edges"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:graph",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/assumptions",
+    "results/*/result/report/assumptions",
+    "results/*/result/supporting_edges"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:norm-defaults",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/background",
+    "results/*/result/conflict_targets",
+    "results/*/result/fill",
+    "results/*/result/order",
+    "results/*/result/premises",
+    "results/*/result/reached",
+    "results/*/result/report",
+    "results/*/result/report/*/lines",
+    "results/*/result/report/assumptions",
+    "results/*/result/residual/gaps",
+    "results/*/result/rights",
+    "results/*/result/rules",
+    "results/*/result/targets",
+    "results/*/result/under",
+    "results/*/result/unsaid",
+    "results/*/result/unspecified"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:norm-defaults",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/background",
+    "results/*/result/base_environment/vocabulary/predicates",
+    "results/*/result/conflict_targets",
+    "results/*/result/fill",
+    "results/*/result/order",
+    "results/*/result/premises",
+    "results/*/result/reached",
+    "results/*/result/report",
+    "results/*/result/report/*/lines",
+    "results/*/result/report/*/witness/filling",
+    "results/*/result/report/assumptions",
+    "results/*/result/residual/gaps",
+    "results/*/result/rights",
+    "results/*/result/rules",
+    "results/*/result/targets",
+    "results/*/result/under",
+    "results/*/result/unsaid",
+    "results/*/result/unspecified"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:norms",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/background",
+    "results/*/result/conflict_targets",
+    "results/*/result/generators",
+    "results/*/result/order",
+    "results/*/result/premises",
+    "results/*/result/report/assumptions",
+    "results/*/result/targets"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:norms",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/background",
+    "results/*/result/conflict_targets",
+    "results/*/result/generators",
+    "results/*/result/order",
+    "results/*/result/premises",
+    "results/*/result/report/assumptions",
+    "results/*/result/targets"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:order",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/ast"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:order",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/ast"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:parse",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/ast",
+    "results/*/result/ast/*"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:quantity",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/report/assumptions"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:quantity",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/report/assumptions"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:readings-route",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/conflict_targets",
+    "results/*/result/decisions",
+    "results/*/result/derived",
+    "results/*/result/english",
+    "results/*/result/fill_premises",
+    "results/*/result/fill_premises/*/premises",
+    "results/*/result/finding_sets",
+    "results/*/result/generated_predicates",
+    "results/*/result/labels",
+    "results/*/result/names",
+    "results/*/result/names/*/candidates",
+    "results/*/result/names/*/candidates/*/names",
+    "results/*/result/order",
+    "results/*/result/premises",
+    "results/*/result/reading_premises",
+    "results/*/result/result/candidates",
+    "results/*/result/result/conditional_on",
+    "results/*/result/sets",
+    "results/*/result/sets/*/candidates",
+    "results/*/result/sets/*/pairs",
+    "results/*/result/slot",
+    "results/*/result/targets",
+    "results/*/result/units/*/content/norm/guard",
+    "results/*/result/vocabulary/predicates"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:readings-route",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/conflict_targets",
+    "results/*/result/decisions",
+    "results/*/result/default_exceptions_by_decider",
+    "results/*/result/derived",
+    "results/*/result/english",
+    "results/*/result/environment_prime/vocabulary/predicates",
+    "results/*/result/fill_premises",
+    "results/*/result/fill_premises/*/premises",
+    "results/*/result/finding_sets",
+    "results/*/result/generated_predicates",
+    "results/*/result/labels",
+    "results/*/result/names",
+    "results/*/result/names/*",
+    "results/*/result/names/*/candidates",
+    "results/*/result/names/*/candidates/*",
+    "results/*/result/names/*/candidates/*/names",
+    "results/*/result/order",
+    "results/*/result/per_choice/*/evidence",
+    "results/*/result/premises",
+    "results/*/result/reading_premises",
+    "results/*/result/result/candidates",
+    "results/*/result/result/conditional_on",
+    "results/*/result/rule_acts",
+    "results/*/result/sets",
+    "results/*/result/sets/*/candidates",
+    "results/*/result/sets/*/pairs",
+    "results/*/result/slot",
+    "results/*/result/targets",
+    "results/*/result/units/*/content",
+    "results/*/result/units/*/content/norm",
+    "results/*/result/units/*/content/norm/exception",
+    "results/*/result/units/*/content/norm/guard",
+    "results/*/result/vocabulary/constants",
+    "results/*/result/vocabulary/predicates"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:reports",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/environment_reports/vocabulary/reports/holders",
+    "results/*/result/kinds",
+    "results/*/result/report/assumptions",
+    "results/*/result/scoped",
+    "results/*/result/source_model",
+    "results/*/result/source_model/*/holds_of",
+    "results/*/result/status_text",
+    "results/*/result/units/*/nested",
+    "results/*/result/warnings"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:reports",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/environment_reports/vocabulary/constants",
+    "results/*/result/environment_reports/vocabulary/predicates",
+    "results/*/result/environment_reports/vocabulary/reports",
+    "results/*/result/environment_reports/vocabulary/reports/holders",
+    "results/*/result/kinds",
+    "results/*/result/report/assumptions",
+    "results/*/result/residual_lines/unreviewed_acts",
+    "results/*/result/scoped",
+    "results/*/result/source_model",
+    "results/*/result/source_model/*/holds_of",
+    "results/*/result/status_text",
+    "results/*/result/units/*/nested",
+    "results/*/result/warnings"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:rights",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/background",
+    "results/*/result/bars",
+    "results/*/result/conditional_on",
+    "results/*/result/conflict_targets",
+    "results/*/result/derived",
+    "results/*/result/distinction",
+    "results/*/result/duties_of",
+    "results/*/result/lines",
+    "results/*/result/narrowings",
+    "results/*/result/order",
+    "results/*/result/premises",
+    "results/*/result/report/assumptions",
+    "results/*/result/rights_of",
+    "results/*/result/targets"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:rights",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/background",
+    "results/*/result/bars",
+    "results/*/result/conditional_on",
+    "results/*/result/conflict_targets",
+    "results/*/result/derived",
+    "results/*/result/distinction",
+    "results/*/result/duties_of",
+    "results/*/result/environment_prime/vocabulary/predicates",
+    "results/*/result/lines",
+    "results/*/result/narrowings",
+    "results/*/result/order",
+    "results/*/result/premises",
+    "results/*/result/report/assumptions",
+    "results/*/result/rights_of",
+    "results/*/result/rule_acts",
+    "results/*/result/targets"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:risk",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/alternatives",
+    "results/*/result/background",
+    "results/*/result/clear",
+    "results/*/result/conditional_on",
+    "results/*/result/conflict_targets",
+    "results/*/result/e_risk/classes",
+    "results/*/result/e_risk/predicates/risk__class",
+    "results/*/result/e_risk/predicates/risk__might_lead_to",
+    "results/*/result/e_risk/predicates/risk__more_severe",
+    "results/*/result/legend",
+    "results/*/result/lines/default_decided",
+    "results/*/result/lines/unexamined_possible",
+    "results/*/result/margins",
+    "results/*/result/order",
+    "results/*/result/premises",
+    "results/*/result/q3",
+    "results/*/result/record_invalid",
+    "results/*/result/report/assumptions",
+    "results/*/result/risk_premises",
+    "results/*/result/statuses",
+    "results/*/result/tables/might",
+    "results/*/result/tables/might/*/witness",
+    "results/*/result/targets",
+    "results/*/result/worst_cases/act",
+    "results/*/result/worst_cases/nothing"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:risk",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/alternatives",
+    "results/*/result/background",
+    "results/*/result/clear",
+    "results/*/result/conditional_on",
+    "results/*/result/conflict_targets",
+    "results/*/result/e_risk/classes",
+    "results/*/result/e_risk/predicates",
+    "results/*/result/e_risk/predicates/risk__class",
+    "results/*/result/e_risk/predicates/risk__might_lead_to",
+    "results/*/result/e_risk/predicates/risk__more_severe",
+    "results/*/result/legend",
+    "results/*/result/lines/default_decided",
+    "results/*/result/lines/unexamined_possible",
+    "results/*/result/margins",
+    "results/*/result/not_concluded",
+    "results/*/result/order",
+    "results/*/result/premises",
+    "results/*/result/q3",
+    "results/*/result/record_invalid",
+    "results/*/result/report/assumptions",
+    "results/*/result/risk_premises",
+    "results/*/result/statuses",
+    "results/*/result/tables/might",
+    "results/*/result/tables/might/*/witness",
+    "results/*/result/targets",
+    "results/*/result/worst_cases",
+    "results/*/result/worst_cases/act",
+    "results/*/result/worst_cases/nothing"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:risk-eval",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/results/*/witness"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:route",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/order",
+    "results/*/result/report/assumptions"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:route",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/order",
+    "results/*/result/report/assumptions"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:soft-norms",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/background",
+    "results/*/result/conditional_on",
+    "results/*/result/conflict_targets",
+    "results/*/result/discharged",
+    "results/*/result/order",
+    "results/*/result/pairs",
+    "results/*/result/premises",
+    "results/*/result/report/assumptions",
+    "results/*/result/results",
+    "results/*/result/targets",
+    "results/*/result/weighing_points"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:soft-norms",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/background",
+    "results/*/result/conditional_on",
+    "results/*/result/conflict_targets",
+    "results/*/result/discharged",
+    "results/*/result/environment_prime/vocabulary/predicates",
+    "results/*/result/order",
+    "results/*/result/pairs",
+    "results/*/result/premises",
+    "results/*/result/report/assumptions",
+    "results/*/result/results",
+    "results/*/result/targets",
+    "results/*/result/weighing_points"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:speech-acts",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/background",
+    "results/*/result/conflict_targets",
+    "results/*/result/legend",
+    "results/*/result/order",
+    "results/*/result/policy/background",
+    "results/*/result/policy/conflict_targets",
+    "results/*/result/policy/order",
+    "results/*/result/policy/premises",
+    "results/*/result/premises",
+    "results/*/result/targets"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:speech-acts",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/background",
+    "results/*/result/conflict_targets",
+    "results/*/result/legend",
+    "results/*/result/order",
+    "results/*/result/policy/background",
+    "results/*/result/policy/conflict_targets",
+    "results/*/result/policy/order",
+    "results/*/result/policy/premises",
+    "results/*/result/premises",
+    "results/*/result/targets"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "ve_senses_route::senses.read",
+   "mutation": "duplicate",
+   "path": [
+    "*/result/reading/sense_map"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "ve_senses_route::senses.read",
+   "mutation": "empty",
+   "path": [
+    "*/result/reading/sense_map",
+    "*/result/reading/units/*/referents"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
   },
   {
    "route": "service:readings-route",
@@ -288,7 +1003,27 @@
    "reason": "bundle.check `lemmas`: the caller compares Lean's meaning ids with Python's (ve/bundle.py check_bundle) before any use."
   },
   {
-   "route": "service:english.*",
+   "route": "service:english.check",
+   "mutation": "*",
+   "path": [
+    "results/*/result/*"
+   ],
+   "kind": "follow-up",
+   "id": "F1",
+   "reason": "English service modes: the schema types the row's `id` and `result` as `true` (any JSON), so every malformed English answer reaches the caller. Write the English result shapes in lean/ResponseShape/Schemas (english.read, english.grammar, english.check)."
+  },
+  {
+   "route": "service:english.grammar",
+   "mutation": "*",
+   "path": [
+    "results/*/result/*"
+   ],
+   "kind": "follow-up",
+   "id": "F1",
+   "reason": "English service modes: the schema types the row's `id` and `result` as `true` (any JSON), so every malformed English answer reaches the caller. Write the English result shapes in lean/ResponseShape/Schemas (english.read, english.grammar, english.check)."
+  },
+  {
+   "route": "service:english.read",
    "mutation": "*",
    "path": [
     "results/*/result/*"
@@ -1074,6 +1809,567 @@
    "kind": "follow-up",
    "id": "F9",
    "reason": "senses.read: the projected environment's vocabulary is only checked to be a valid Environment, not bound to the request's (ve/backends/senses.py _response_problem)."
+  },
+  {
+   "route": "call:ve.backends.speech_source:decide_source",
+   "mutation": "duplicate",
+   "path": [
+    "*/policy/conflict_targets/*/sorts"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "call:ve.backends.speech_source:decide_source",
+   "mutation": "empty",
+   "path": [
+    "*/policy/conflict_targets/*/sorts"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:alternatives",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/conflict_targets/*/sorts",
+    "results/*/result/tuple"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:alternatives",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/conflict_targets/*/sorts",
+    "results/*/result/tuple"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:discourse",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/choices",
+    "results/*/result/choices/*",
+    "results/*/result/joint_choices"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:discourse",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/choices/*",
+    "results/*/result/units"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:document",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/units"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:document",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/units"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:family-norms",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/conflict_targets/*/sorts"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:family-norms",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/conflict_targets/*/sorts"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:norm-defaults",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/base_environment/profiles",
+    "results/*/result/conflict_targets/*/sorts",
+    "results/*/result/reached/*/sorts",
+    "results/*/result/report/*/witness/tuple",
+    "results/*/result/tuple",
+    "results/*/result/under/*/tuple",
+    "results/*/result/unsaid/*/sorts"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:norm-defaults",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/base_environment/profiles",
+    "results/*/result/conflict_targets/*/sorts",
+    "results/*/result/reached/*/sorts",
+    "results/*/result/report/*/witness/tuple",
+    "results/*/result/tuple",
+    "results/*/result/under/*/tuple",
+    "results/*/result/unsaid/*/sorts"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:norms",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/conflict_targets/*/sorts"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:norms",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/conflict_targets/*/sorts"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:readings-route",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/choice",
+    "results/*/result/choices",
+    "results/*/result/choices/*",
+    "results/*/result/conflict_targets/*/sorts",
+    "results/*/result/decisions/*/arguments",
+    "results/*/result/english/*/readings",
+    "results/*/result/environment_prime/profiles",
+    "results/*/result/per_choice",
+    "results/*/result/per_choice/*/choice",
+    "results/*/result/result/choices",
+    "results/*/result/result/choices/*/choice",
+    "results/*/result/units",
+    "results/*/result/vocabulary/predicates/*/arguments",
+    "results/*/result/vocabulary/sorts"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:readings-route",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/choice",
+    "results/*/result/choices",
+    "results/*/result/choices/*",
+    "results/*/result/conflict_targets/*/sorts",
+    "results/*/result/decisions/*/arguments",
+    "results/*/result/english/*/readings",
+    "results/*/result/environment_prime/profiles",
+    "results/*/result/per_choice",
+    "results/*/result/per_choice/*/choice",
+    "results/*/result/result/choices",
+    "results/*/result/result/choices/*/choice",
+    "results/*/result/units",
+    "results/*/result/units/*",
+    "results/*/result/vocabulary/predicates/*/arguments",
+    "results/*/result/vocabulary/sorts"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:reports",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/environment_reports/profiles"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:reports",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/environment_reports/profiles",
+    "results/*/result/environment_reports/vocabulary/sorts"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:rights",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/conflict_targets/*/sorts",
+    "results/*/result/duties_of/*/tuple",
+    "results/*/result/environment_prime/profiles",
+    "results/*/result/rights_of/*/tuple"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:rights",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/conflict_targets/*/sorts",
+    "results/*/result/duties_of/*/tuple",
+    "results/*/result/environment_prime/profiles",
+    "results/*/result/rights_of/*/tuple"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:risk",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/conflict_targets/*/sorts"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:risk",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/conflict_targets/*/sorts"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:soft-norms",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/conflict_targets/*/sorts",
+    "results/*/result/environment_prime/profiles"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:soft-norms",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/conflict_targets/*/sorts",
+    "results/*/result/environment_prime/profiles"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:speech-acts",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/conflict_targets/*/sorts",
+    "results/*/result/policy/conflict_targets/*/sorts"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:speech-acts",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/conflict_targets/*/sorts",
+    "results/*/result/policy/conflict_targets/*/sorts"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "call:ve.backends.speech_source:decide_source",
+   "mutation": "empty",
+   "path": [
+    "*/questions/*/meaning_id",
+    "*/status_text/*"
+   ],
+   "kind": "follow-up",
+   "id": "F11",
+   "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:alternatives",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/conditional_on/*",
+    "results/*/result/model_id"
+   ],
+   "kind": "follow-up",
+   "id": "F11",
+   "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:diagnose",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/diagnostic/args/name",
+    "results/*/result/diagnostic/path",
+    "results/*/result/diagnostic/text"
+   ],
+   "kind": "follow-up",
+   "id": "F11",
+   "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:discourse",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/choices/*/*/*",
+    "results/*/result/definitions_version",
+    "results/*/result/document_id",
+    "results/*/result/environment_id",
+    "results/*/result/inner_report_id",
+    "results/*/result/joint/*/*/*/*",
+    "results/*/result/mentions/m1/accessible/*/name",
+    "results/*/result/mentions/m1/recorded/name",
+    "results/*/result/report/assumptions/*/label",
+    "results/*/result/report/assumptions/*/name",
+    "results/*/result/report/root/ast/*/*",
+    "results/*/result/report/root/label",
+    "results/*/result/report/root/name",
+    "results/*/result/report_id",
+    "results/*/result/self_truth/*",
+    "results/*/result/source_id",
+    "results/*/result/units/u1/formula/*/*"
+   ],
+   "kind": "follow-up",
+   "id": "F11",
+   "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:document",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/source",
+    "results/*/result/units/*/content/*/*"
+   ],
+   "kind": "follow-up",
+   "id": "F11",
+   "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:environment",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/path"
+   ],
+   "kind": "follow-up",
+   "id": "F11",
+   "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:family-norms",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/conflict_targets/*/target",
+    "results/*/result/detail",
+    "results/*/result/targets/*"
+   ],
+   "kind": "follow-up",
+   "id": "F11",
+   "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:model",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/path"
+   ],
+   "kind": "follow-up",
+   "id": "F11",
+   "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:norm-defaults",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/document_hash",
+    "results/*/result/environment_id",
+    "results/*/result/fill_hash",
+    "results/*/result/filled_environment_id",
+    "results/*/result/report/*/lines/*",
+    "results/*/result/targets/*"
+   ],
+   "kind": "follow-up",
+   "id": "F11",
+   "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:norms",
+   "mutation": "empty",
+   "path": [
+    "results/*/generator",
+    "results/*/result/detail",
+    "results/*/result/targets/*"
+   ],
+   "kind": "follow-up",
+   "id": "F11",
+   "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:parse",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/ast/*/*"
+   ],
+   "kind": "follow-up",
+   "id": "F11",
+   "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:readings-route",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/english/*/frame",
+    "results/*/result/fill_premises/*/premises/*/label",
+    "results/*/result/finding/cause",
+    "results/*/result/first_failing",
+    "results/*/result/generated_predicates/*/key/excepted",
+    "results/*/result/generated_predicates/*/name",
+    "results/*/result/labels/*",
+    "results/*/result/reading_premises/*",
+    "results/*/result/result/conditional_on/*",
+    "results/*/result/slot/*/label",
+    "results/*/result/units/*/content/norm/name",
+    "results/*/result/vocabulary/constants/ve__here",
+    "results/*/result/vocabulary/predicates/*/arguments/*",
+    "results/*/result/vocabulary/predicates/*/name",
+    "results/*/result/vocabulary/sorts/*"
+   ],
+   "kind": "follow-up",
+   "id": "F11",
+   "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:reports",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/envelope/document_id",
+    "results/*/result/envelope/environment_id",
+    "results/*/result/environment_reports_id",
+    "results/*/result/meaning_id",
+    "results/*/result/scoped/*/environment_id",
+    "results/*/result/source_model/*/key/complement_id",
+    "results/*/result/status_text/*",
+    "results/*/result/units/*/nested/*/path"
+   ],
+   "kind": "follow-up",
+   "id": "F11",
+   "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:rights",
+   "mutation": "empty",
+   "path": [
+    "results/*/generator",
+    "results/*/result/targets/*"
+   ],
+   "kind": "follow-up",
+   "id": "F11",
+   "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:risk",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/alternative",
+    "results/*/result/clear/*",
+    "results/*/result/conditional_on/*",
+    "results/*/result/decision_record_id",
+    "results/*/result/lines/assumed_ruled_out/decider",
+    "results/*/result/lines/default_decided/*",
+    "results/*/result/lines/unexamined_possible/*",
+    "results/*/result/margins/*/alternative",
+    "results/*/result/margins/*/estimate",
+    "results/*/result/not_concluded/*",
+    "results/*/result/q3/*",
+    "results/*/result/record_invalid/*/estimate",
+    "results/*/result/record_invalid/*/value",
+    "results/*/result/statuses/*/alternative",
+    "results/*/result/tables/might/*/alternative",
+    "results/*/result/tables/might/*/harm",
+    "results/*/result/worst_cases/act/*/class",
+    "results/*/result/worst_cases/act/*/harm",
+    "results/*/result/worst_cases/nothing/*/class",
+    "results/*/result/worst_cases/nothing/*/harm"
+   ],
+   "kind": "follow-up",
+   "id": "F11",
+   "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:soft-norms",
+   "mutation": "empty",
+   "path": [
+    "results/*/generator",
+    "results/*/result/conflict_targets/*/target",
+    "results/*/result/targets/*"
+   ],
+   "kind": "follow-up",
+   "id": "F11",
+   "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:speech-acts",
+   "mutation": "empty",
+   "path": [
+    "results/*/generator",
+    "results/*/result/conflict_targets/*/target",
+    "results/*/result/environment_id",
+    "results/*/result/targets/*"
+   ],
+   "kind": "follow-up",
+   "id": "F11",
+   "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
   }
  ]
 }

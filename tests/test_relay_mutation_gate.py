@@ -12,11 +12,18 @@
   on an accepted mutant the allow-list does not list, on an allow-list entry that matches nothing, and on a
   route whose fixtures are gone.
 * The speech-source reader refuses a unit whose class or status is a list or an object (it raised TypeError).
+* The answer itself is mutated: a one-shot answer's row array is emptied, duplicated and retyped, so a reader
+  that drops its one-row-per-case check fails the gate (review B2).
+* The allow-list names one route per entry and lists its paths (no wildcard route or path), the most specific
+  entry takes a finding, and no by-design entry lists an id, digest or choice: a client that drops a check of
+  the length of a request-bound list fails the gate (review B1).
 """
 from __future__ import annotations
 
+import inspect
 import json
 from pathlib import Path
+import re
 import sys
 
 import pytest
@@ -59,7 +66,7 @@ def test_every_field_gets_every_mutation_class():
 def test_fields_near_the_top_are_also_replaced_by_a_deep_array():
     found = G.mutants({"a": {"b": {"c": 1}}}, set(), {}, deep_depth=2)
     deep = {m.pattern() for m, _ in found if m.value == "deep"}
-    assert deep == {"a", "a/b"}
+    assert deep == {".", "a", "a/b"}
     mutant, value = next((m, v) for m, v in found if m.value == "deep" and m.pattern() == "a/b")
     text = G._text(mutant, value)
     assert text.startswith('{"a":{"b":' + "[" * G.DEEP_LEVELS) and text.count("]") == G.DEEP_LEVELS
@@ -67,9 +74,72 @@ def test_fields_near_the_top_are_also_replaced_by_a_deep_array():
 
 def test_a_duplicated_key_is_written_twice_in_the_line():
     found = [(m, value) for m, value in G.mutants({"a": {"x": 1, "y": 2}}, set(), {})
-             if m.kind == "duplicate" and m.duplicate_key]
+             if m.kind == "duplicate" and m.duplicate_key and m.path]
     [(mutant, value)] = found
     assert G._text(mutant, value) == '{"a":{"x":1,"x":1,"y":2}}'
+
+
+def test_the_answer_itself_is_emptied_duplicated_and_retyped():
+    """Review B2: the root was skipped, so a one-shot answer never lost or gained a row."""
+    rows = [{"status": "ok", "id": "c"}]
+    found = {(m.kind, m.pattern(), m.value): value for m, value in G.mutants(rows, {"c"}, {}, deep_depth=1)}
+    assert found[("empty", ".", None)] == []
+    assert found[("duplicate", ".", None)] == rows + rows
+    for kind in ("null", "boolean", "integer", "string", "object"):
+        assert found[("retype", ".", kind)] == G.RETYPES[kind]
+    assert found[("retype", ".", "deep")] is G.DEEP
+    assert not any(kind == "drop" and pattern == "." for kind, pattern, _ in found)
+    [(mutant, answer)] = [(m, v) for m, v in G.mutants({"a": 1}, set(), {}) if m.kind == "duplicate"]
+    assert G._text(mutant, answer) == '{"a":1,"a":1}'
+
+
+# The allow-list
+
+
+def test_the_committed_allow_list_names_one_route_per_entry_and_lists_its_paths():
+    assert G.allow_problems(json.loads(G.ALLOW.read_text())["entries"]) == []
+
+
+def test_a_wildcard_route_or_path_is_refused():
+    """Review B1: B0 (route `*`, path `*`) allowed every emptied or repeated field of every route."""
+    entry = {"route": "*", "mutation": "empty", "path": "*", "kind": "by-design", "id": "B0", "reason": "r"}
+    problems = G.allow_problems([entry])
+    assert any("names no single route" in problem for problem in problems)
+    assert any("no list of paths" in problem for problem in problems)
+    for path in ("*", "*/*", "*/*/?"):
+        problems = G.allow_problems([{**entry, "route": "service:check", "path": [path]}])
+        assert problems == [f"allow-list entry 0 (B0) lists the wildcard path {path!r}: list the fields"]
+    assert G.allow_problems([{**entry, "route": "service:english.*", "path": ["results/*/result/x"]}])
+    assert G.allow_problems([{k: v for k, v in entry.items() if k != "reason"}])
+
+
+def test_the_most_specific_entry_takes_a_finding():
+    """Review B1: the first entry in file order took a finding a narrower entry listed (B0 took F1's counts)."""
+    def entry(id_, mutation, path):
+        return {"route": "service:m", "mutation": mutation, "path": [path], "kind": "follow-up", "id": id_,
+                "reason": "r"}
+    broad, narrow = entry("F", "*", "results/*/result/*"), entry("N", "*", "results/*/result/x*")
+    for order in ([broad, narrow], [narrow, broad]):
+        assert G._allowed(order, "service:m", "empty", "results/*/result/xy")["id"] == "N"
+        assert G._allowed(order, "service:m", "empty", "results/*/result/y")["id"] == "F"
+    literal, any_mutation = entry("L", "*", "results/*/result/xy"), entry("M", "empty", "results/*/result/x*")
+    assert G._allowed([narrow, any_mutation, literal], "service:m", "empty", "results/*/result/xy")["id"] == "L"
+    assert G._allowed([narrow, any_mutation], "service:m", "empty", "results/*/result/xy")["id"] == "M"
+    assert G._allowed([narrow], "service:other", "empty", "results/*/result/xy") is None
+
+
+ID_LIKE = re.compile(r"(^id|_id|_hash|^digest|^choices?|^per_choice|^tuple|^arguments)$")
+
+
+def test_no_by_design_entry_lists_an_id_digest_or_request_bound_list():
+    """Review B1: B0 waived emptied `environment_id`, `document_id` and readings-route `choice`; those are
+    follow-ups (F10, F11), not content Lean computes."""
+    for entry in json.loads(G.ALLOW.read_text())["entries"]:
+        if entry["kind"] != "by-design" or entry["mutation"] not in ("empty", "duplicate"):
+            continue
+        for path in entry["path"]:
+            leaf = [step for step in path.split("/") if step != "*"][-1]
+            assert not ID_LIKE.search(leaf), (entry["id"], entry["route"], path)
 
 
 # Routes
@@ -193,3 +263,48 @@ def test_the_recorder_writes_every_relayed_case(built, tmp_path):
         [row[0], row[1], json.dumps(json.loads(row[2]), separators=(",", ":"))] for row in rows if row[0] == "service"]
     assert any(row[:3] == ["one-shot", "ve_metered", ""] and json.loads(row[3]) == one_shot for row in rows)
 
+
+
+# The reviewer's probes: the client with one check removed in memory must fail the gate.
+
+
+@pytest.fixture
+def without_length_check(monkeypatch):
+    """The service client with its per-request length check (`x-length`) switched off."""
+    from ve.backends import service_schema as S
+    monkeypatch.setattr(S.Compiler, "_x_length", lambda self, pointer, schema, base: None)
+    compiler = S.Compiler()
+    monkeypatch.setattr(S, "ROWS", {mode: compiler.ref(f"{mode}.json", "#/row") for mode in MODES})
+    monkeypatch.setattr(S, "RESPONSE", compiler.ref("envelope.json", "#/response"))
+
+
+def test_a_client_without_its_length_check_fails_the_gate(built, without_length_check):
+    """Review B1: with B0 the gate still passed; without it, evaluate `values` and rights `unit_open` fail."""
+    report = G.run_gate({"service:evaluate", "service:rights"})
+    failures = "\n".join(report["failures"])
+    assert re.search(r"^accepted service:evaluate \w+ results/\*/result/values", failures, re.M), failures
+    assert re.search(r"^accepted service:rights \w+ results/\*/result/[\w/*]*unit_open", failures, re.M), failures
+
+
+FAST_ONE_SHOT = ("ve_metered::evaluate", "ve_metered::countermodel.search", "ve_conformance:route:graph.compose",
+                 "ve_conformance:check-certificate:graph.compose", "ve_conformance:route:bundle.check")
+
+
+@pytest.fixture
+def without_row_count_check(monkeypatch):
+    """`read_rows` with its one-row-per-case check removed (the reviewer's in-memory mutant)."""
+    source = inspect.getsource(G.lean_backend.read_rows)
+    check = " or len(rows) != len(cases)"
+    assert source.count(check) == 1
+    namespace = dict(vars(G.lean_backend))
+    exec(compile(source.replace(check, ""), G.lean_backend.__file__, "exec"), namespace)
+    monkeypatch.setattr(G.lean_backend, "read_rows", namespace["read_rows"])
+
+
+def test_a_reader_without_its_row_count_check_fails_the_gate(built, without_row_count_check):
+    """Review B2: the one-shot routes never saw an empty or extra row, so this mutant passed."""
+    lean_build("ve_conformance")
+    report = G.run_gate(set(FAST_ONE_SHOT))
+    for route in FAST_ONE_SHOT:
+        assert any(f["route"] == route and f["path"] == "." and f["mutation"] in ("empty", "duplicate")
+                   for f in report["findings"]), (route, report["failures"])
