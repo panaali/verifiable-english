@@ -55,7 +55,8 @@ Plan: `manage-agents/reviews/test-speed-research-2026-10.md`, section B5. Base: 
 ## Gate runs
 
 1. **0e055d45: failed** ([gate-1-failed.json](evidence/gate-1-failed.json)). 14,081 tests passed, 92 were skipped and 15 failed, all 15 in this batch's `tests/test_test_order.py`, all with `AttributeError`. `tests/` and `tools/` are both on the suite's import path, so in xdist workers that had already loaded `tests/test_order.py` (the order-domain tests), `import test_order` got that file instead of `tools/test_order.py`. `select_tests` would have hit the same clash in such a process. Fix (aceab472): the module is now `tools/run_order.py` and its tests are `tests/test_run_order.py`. `test_the_tools_modules_are_not_shadowed_by_test_modules` imports `tests/test_order.py` first and checks that `run_order` and `quarantine` still resolve to `tools/`. The fix also found that `last_failed` bound its root when it was defined, so a scratch root could read the worktree's own gate record; it now reads `ROOT` when called. The seeded bugs were rerun on the renamed files, and all 10 were caught.
-2. The final gate on the fixed HEAD: see `evidence/gate.json`.
+2. **fd68fa27 (tree dd9fcd47): failed on one test outside this batch** ([gate-2-failed.json](evidence/gate-2-failed.json)). 14,096 tests passed, 92 were skipped and 1 failed, with Rust tests 36 passed and the gate's own Lean audit stage passed. The failure was `tests/test_lean_conformance.py::test_lean_transitive_axiom_allowlist`: the `lean/audit.py` process it starts hit the 1,800 s hang guard while the machine load was about 70 to 80 on 32 CPUs. This batch changes no Lean and no audit code, and the quarantine had nothing to retry (`retried` is empty).
+3. **fd68fa27: `--rerun-failed`, rerun-passed** ([gate-3-rerun-passed.json](evidence/gate-3-rerun-passed.json)). On the same tree, all 87 tests of `tests/test_lean_conformance.py` passed, the failed test among them. Following the rule against rerunning the full gate on an unchanged commit, I did not run a fourth full gate. So there is no `passed` full-gate record for this HEAD; the DRI decides whether gate 2 plus this rerun is enough, or whether a full gate is run again at merge.
 
 The demo logs were recorded before the rename, so they name `tests/test_test_order.py`.
 
@@ -71,7 +72,8 @@ See [DELTA.md](DELTA.md). No VE verdict, diagnostic, wire field, theorem or acce
 
 | Item | Owner | State |
 |---|---|---|
-| Order, `--maxfail`, gate never stops early, quarantine file and gate retry, seeded bugs, replay, full gate on the final HEAD | AGENT | done; the gate record is `evidence/gate.json` |
+| Order, `--maxfail`, gate never stops early, quarantine file and gate retry, seeded bugs, replay | AGENT | done |
+| Full gate on the final code | AGENT, then DRI | gate 2 failed only on a Lean audit hang-guard timeout under load, outside this batch; its rerun passed ("Gate runs"). No `passed` full-gate record exists; the DRI decides |
 | Point the nightly at the quarantine: run the nightly with `tools/gate.py --no-quarantine`, or keep `verify.sh` and stop its serial retry from passing a quarantined test | EXTERNAL: orchestrator (`manage-agents/verify.sh`, `nightly-verify.sh`) | deferred. Today's nightly runs plain pytest, which ignores the quarantine, but its serial retry turns a load failure into `PASS (RETRIED)` |
 | Review of the gate retry (DELTA row D3) | HUMAN: DRI | deferred to review |
 | Renew or drop the `test_ci_run` entry by 2026-10-17 | orchestrator (owner in the file) | open |
