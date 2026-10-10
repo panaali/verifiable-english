@@ -15,8 +15,8 @@ A *route* is one way `ve` reads a Lean answer:
 Fixtures are the committed genuine requests in `tests/data/relay-gate-cases.jsonl` (`--record` writes it
 from the requests a test run relays, `tests/route_case_recorder.py`, and the service corpus
 `tests/lean_service_corpus.py`, keeping the smallest few cases of each answer shape). The gate asks the built Lean executables for their answers to those requests, so the
-answers are always the current build's. Each field of each answer (every key to `DEPTH` levels; lists
-through their first and last element) is mutated:
+answers are always the current build's. The answer itself and each field of it (every key to `DEPTH` levels;
+lists through their first and last element) are mutated, so a one-shot answer's row array loses and gains rows:
 
 * `drop`: the field removed;
 * `empty`: a non-empty string, array or object made empty;
@@ -35,9 +35,10 @@ response type `json`.
 
 The gate fails (exit 1) on: a route without an `ok` fixture; a genuine answer its reader refuses; an
 accepted, misread or untyped mutant that `tools/relay-gate-allow.json` does not list; a crash; an
-allow-list entry that matches nothing (each entry names a route, a mutation and a path pattern, `*` for
-any list position, with its reason and whether it is by design or a follow-up). `--json` writes the
-counts and findings (the saved evidence of `docs/merge-tooling.md`).
+allow-list entry that matches nothing, or that lists no single route or a path of wildcards only
+(`allow_problems`: each entry names one route, a mutation and its path patterns, `*` for any list position,
+with its reason and whether it is by design or a follow-up; the most specific entry takes a finding).
+`--json` writes the counts and findings (the saved evidence of `docs/merge-tooling.md`).
 """
 from __future__ import annotations
 
@@ -107,6 +108,8 @@ def _nodes(value, path=()):
 
 
 def _replace(root, path, new):
+    if not path:
+        return new if new is DEEP else deepcopy(new)
     copy = deepcopy(root)
     node = copy
     for step in path[:-1]:
@@ -178,10 +181,9 @@ def mutants(answer, named: set[str], rebind_ints: dict[tuple, int],
     (positions, counts) to a value the request does not give them; fields at most `deep_depth` levels down are
     also replaced by a DEEP_LEVELS-deep array."""
     out = []
+    # The answer itself is a node too: a one-shot answer's row array is emptied, duplicated and retyped.
     for path, value in _nodes(answer):
-        if not path:
-            continue
-        if isinstance(path[-1], str):
+        if path and isinstance(path[-1], str):
             out.append((Mutant("drop", path), _replace(answer, path, DROP)))
         if value not in ("", [], {}) and isinstance(value, (str, list, dict)):
             # An emptied name the request gives is a rebind: "" names nothing the request holds.
@@ -543,18 +545,55 @@ def _patterns(entry) -> list[str]:
     return entry["path"] if isinstance(entry["path"], list) else [entry["path"]]
 
 
+ENTRY_FIELDS = {"route", "mutation", "path", "kind", "id", "reason"}
+MUTATIONS = {"drop", "empty", "duplicate", "retype", "rebind", "untyped"}
+
+
+def allow_problems(entries) -> list[str]:
+    """Why the allow-list is malformed. Every entry names one route and lists its own paths: a route pattern, or
+    a path made of wildcards only (`*`, or `*/*`), would list every field of every route and hide any regression
+    of a check that refused them."""
+    problems = []
+    for number, entry in enumerate(entries):
+        where = f"allow-list entry {number} ({entry.get('id', '?')})"
+        if set(entry) != ENTRY_FIELDS:
+            problems.append(f"{where} has fields {sorted(entry)}, not {sorted(ENTRY_FIELDS)}")
+            continue
+        if entry["kind"] not in ("by-design", "follow-up"):
+            problems.append(f"{where} has kind {entry['kind']!r}")
+        if type(entry["route"]) is not str or any(char in entry["route"] for char in "*?["):
+            problems.append(f"{where} names no single route: {entry['route']!r}")
+        if entry["mutation"] != "*" and entry["mutation"] not in MUTATIONS:
+            problems.append(f"{where} has mutation {entry['mutation']!r}")
+        paths = entry["path"]
+        if type(paths) is not list or not paths or any(type(path) is not str for path in paths):
+            problems.append(f"{where} has no list of paths")
+            continue
+        for path in paths:
+            if not path.replace("*", "").replace("/", "").replace("?", ""):
+                problems.append(f"{where} lists the wildcard path {path!r}: list the fields")
+    return problems
+
+
+def _specificity(entry, listed, pattern) -> tuple:
+    """How closely an allow-list path matches a finding: a literal path first, then a literal mutation, then the
+    pattern with the most literal text."""
+    return (listed == pattern, entry["mutation"] != "*", len(listed.replace("*", "")))
+
+
 def _allowed(entries, route, mutation, pattern):
-    """The allow-list entry that lists this accepted mutant, marking the path pattern it matched as used."""
-    candidates = [entry for entry in entries
-                  if fnmatchcase(route, entry["route"]) and fnmatchcase(mutation, entry["mutation"])]
-    # A listed path is first read literally (its `*` the list position of a finding's path), then as a pattern.
-    for literal in (True, False):
-        for entry in candidates:
-            for listed in _patterns(entry):
-                if listed == pattern if literal else fnmatchcase(pattern, listed):
-                    entry.setdefault("_used", set()).add(listed)
-                    return entry
-    return None
+    """The allow-list entry that lists this accepted mutant, marking the path pattern it matched as used. The most
+    specific match wins (`_specificity`; file order among equals), so a broad entry never takes a finding a
+    narrower one lists."""
+    # A listed path is read literally (its `*` the list position of a finding's path) or as a pattern.
+    matches = [(entry, listed) for entry in entries
+               if fnmatchcase(route, entry["route"]) and fnmatchcase(mutation, entry["mutation"])
+               for listed in _patterns(entry) if listed == pattern or fnmatchcase(pattern, listed)]
+    if not matches:
+        return None
+    entry, listed = max(matches, key=lambda match: _specificity(*match, pattern))
+    entry.setdefault("_used", set()).add(listed)
+    return entry
 
 
 def _service_rebind_ints(answer) -> dict[tuple, int]:
@@ -577,7 +616,8 @@ def run_gate(routes_wanted=None, cases_path: Path = CASES, allow_path: Path = AL
     failure. `routes_wanted` limits it to those routes (allow-list entries of other routes are not checked)."""
     cases = load_cases(cases_path)
     entries = json.loads(allow_path.read_text())["entries"]
-    report = {"routes": {}, "findings": [], "failures": []}
+    report = {"routes": {}, "findings": [], "failures": allow_problems(entries)}
+    entries = [entry for entry in entries if set(entry) == ENTRY_FIELDS]
     fixtures: dict[str, list] = defaultdict(list)
     for row in cases:
         if row[0] == "service":
