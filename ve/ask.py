@@ -30,7 +30,7 @@ import json
 from pathlib import Path
 import sys
 
-from .errors import CheckerUnavailable, ResourceLimit, UnsupportedProfile, VEError
+from .errors import CheckerUnavailable, ResourceLimit, VEError
 from .document import MAX_DOCUMENT_BYTES
 
 OPERATION = "question.read"
@@ -118,7 +118,7 @@ class _Readings:
         self.doc = doc
         self.context = context(doc)
         if not isinstance(self.context, Enumerated) or self.context.choices is None:
-            raise UnsupportedProfile("UnsupportedProfile: ask answers a readings document on the enumerated route "
+            raise CheckerUnavailable("CheckerUnavailable: ask answers a readings document on the enumerated route "
                                      "with at most 64 compatible readings")
 
     def case(self, ast, extra=None, generate=True):

@@ -10,8 +10,8 @@ front-matter input are the front matter's, compared as canonical JSON text (`Sam
 Lean decodes from the front matter and `L` passes the vocabulary policy for it; its units are the front matter's in
 order, each compiled as the compiler compiles it (`UnitBound`): `{"ast": φ}` to bare `φ`, norm content kept, an
 English fence read by `read` and a strict fence by `Surface.parse`, each to exactly one formula. `checkUnit` and
-`checkCase` decide them (`checkUnit_sound`, `checkCase_sound`). Lean's `Json` has no decidable equality (its `==`
-is a `partial` function, and an object's tree shape is not observable), so the checks compare `compress`d text, the
+`checkCase` decide them (`checkUnit_sound`; `checkCase` returns the proof). Lean's `Json` has no decidable equality (its `==`
+is not a total function Lean can reason about, and an object's tree shape is not observable), so the checks compare `compress`d text, the
 relation `Same` names, and derive a `Json` equation only between two strings. -/
 
 namespace VE.Ask
@@ -68,7 +68,7 @@ def strOf? : Json → Option String
   | .str s => some s
   | _ => none
 
-theorem eq_of_strOf? {j : Json} {s : String} (h : strOf? j = some s) : j = .str s := by
+theorem eq_of_strOf {j : Json} {s : String} (h : strOf? j = some s) : j = .str s := by
   cases j <;> simp_all [strOf?]
 
 /-- A fence's one formula through its declared surface, as `UnitBound` compiles it. -/
@@ -111,14 +111,14 @@ theorem fenceOk_sound {E : VE.EnglishGrammar.Env} {L : VE.EnglishGrammar.Lexicon
   split at h
   · rename_i hs
     left
-    refine ⟨eq_of_strOf? hs, ?_⟩
+    refine ⟨eq_of_strOf hs, ?_⟩
     split at h
     · rename_i φ hr
       exact ⟨φ, hr, by simpa using h⟩
     · cases h
   · rename_i hs
     right
-    refine ⟨eq_of_strOf? hs, ?_⟩
+    refine ⟨eq_of_strOf hs, ?_⟩
     split at h
     · rename_i ψ hp
       exact ⟨ψ, hp, by simpa using h⟩
@@ -143,8 +143,8 @@ theorem checkUnit_sound {E : VE.EnglishGrammar.Env} {L : VE.EnglishGrammar.Lexic
       subst hab
       split at h
       · rename_i f hl
-        refine ⟨f, (eq_of_strOf? ha).trans (eq_of_strOf? hb).symm, ?_, fenceOk_sound h⟩
-        rw [eq_of_strOf? hb]
+        refine ⟨f, (eq_of_strOf ha).trans (eq_of_strOf hb).symm, ?_, fenceOk_sound h⟩
+        rw [eq_of_strOf hb]
         simpa using hl
       · cases h
     · cases h
