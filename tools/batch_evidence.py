@@ -38,7 +38,8 @@ SHA = re.compile(r"[0-9a-f]{40}")
 
 
 def problems(head: str, gate: dict, comparison: dict, latency: dict) -> list[str]:
-    return gate_problems(head, gate) + ab.problems(comparison, head, REQUIRED_CORPORA) + evidence_latency.problems(latency, head)
+    return (gate_problems(head, gate) + ab.problems(comparison, head, REQUIRED_CORPORA)
+            + evidence_latency.problems(latency, head))
 
 
 def gate_problems(head: str, gate: dict) -> list[str]:

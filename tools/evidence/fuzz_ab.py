@@ -202,8 +202,8 @@ def main(argv=None) -> int:
     with tempfile.TemporaryDirectory(prefix="ve-evidence-fuzz-ab-") as scratch:
         jobs = [(side, root, run) for run in runs for side, root in (("base", base_root), ("head", head_root))]
         with ThreadPoolExecutor(args.jobs) as pool:
-            reports = list(pool.map(lambda job: fuzz(job[1], job[2], Path(scratch) / f"{job[0]}-{'-'.join(job[2])}.json"),
-                                    jobs))
+            reports = list(pool.map(
+                lambda job: fuzz(job[1], job[2], Path(scratch) / f"{job[0]}-{'-'.join(job[2])}.json"), jobs))
     rows = []
     for index, run in enumerate(runs):
         result = compare(reports[2 * index], reports[2 * index + 1], baseline, rules)
