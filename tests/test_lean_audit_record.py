@@ -122,7 +122,8 @@ def test_manifest_generation_uses_compiled_ranges_and_declaring_modules(tmp_path
         '1:0-1:20 theorem VE.Scratch.new_result@VE.Scratch\n'
         'generated theorem VE.Scratch.unranged@VE.Scratch\n'
         'module ResponseShape.Scratch ' + '1' * 64 + '\n'
-        '2:0-2:30 theorem ResponseShape.Scratch.result@ResponseShape.Scratch\n')
+        '2:0-2:30 theorem ResponseShape.Scratch.result@ResponseShape.Scratch\n'
+        '3:0-3:20 theorem Utility.result@ResponseShape.Scratch\n')
     _, names = audit.declarations(tmp_path)
     manifests = audit.generated_manifests(names)
     assert 'import VE.Scratch\n' in manifests['VE/Audit.lean']
@@ -130,6 +131,8 @@ def test_manifest_generation_uses_compiled_ranges_and_declaring_modules(tmp_path
     assert 'unranged' not in manifests['VE/Audit.lean']
     assert 'import ResponseShape.Scratch\n' in manifests['ResponseShape/Audit.lean']
     assert '#print axioms ResponseShape.Scratch.result\n' in manifests['ResponseShape/Audit.lean']
+    assert '#print axioms Utility.result\n' in manifests['ResponseShape/Audit.lean']
+    assert 'Utility.result' not in manifests['VE/Audit.lean']
 
 
 def test_audit_rejects_stale_module_hash(tmp_path):
