@@ -7,11 +7,18 @@ eligible?` asks about `every member who is registered is eligible.`, but `Is eve
 eligible?` (G11) puts the word back after `who`, and no English reader hears that question. `readQuestion` reads
 both (spec 3.1, plan 4.9), and its fifteen statements are about that reading; `ask` is the outcome the mode shows.
 
-A *clause* of a derivation is a constituent that a `who`, `that` or `which` of its parent's rule begins: the
+The same holds of a sentence inside a sentence (looprecheck of the ruling, B): `Is if ann verified, then bo is
+eligible?` puts the word back inside the `if` part, and English asks `Is it the case that if ann is verified, then
+bo is eligible?`.
+
+A *clause* of a derivation is a constituent that a `who`, `that` or `which` of its parent's rule begins (the
 constituent right after that word, or, when the word is followed by words of the rule itself, the rest of the
-rule. An F2 candidate is *moved out* when its put-back word is inside a clause of its one derivation; one with no
-single derivation, or whose put-back word is not one of its tokens, counts as moved out, so nothing unchecked is
-shown. Such a question is refused, with the questions VE does read in its place (`movedRephrasings`). Every
+rule), or a *part*: a `formula` or `atom` constituent of a rule that reads a word of its own. The parts are the
+sides of `if … , then …`, `both … and …` and `either … or …, or both`, the sentence after `for every … ,`,
+`such that` or `it is not the case that`, a listed clause and reach's condition; a rule that reads only
+nonterminals (`sentence`, a `formula` alternative) passes its sentence through. An F2 candidate is *moved out*
+when its put-back word is inside a clause of its one derivation; one with no single derivation, or whose put-back
+word is not one of its tokens, counts as moved out, so nothing unchecked is shown. Such a question is refused, with the questions VE does read in its place (`movedRephrasings`). Every
 rephrasing `ask` offers is itself shown as one reading (`askable_iff`, `ask_rephrasings`).
 -/
 
@@ -36,21 +43,36 @@ def widths : List (Tree Tok) → Nat
   | t :: ts => width t + widths ts
 end
 
+/-- The nonterminal `formula` (spec english-lean-s2 2.4); a part is a `formula` or an `atom`. -/
+def ntFormula : Nat := 2
+
+/-- Whether rule `r` of `G` reads a word of its own. -/
+def readsWord (G : Grammar Terminal) (r : Nat) : Bool :=
+  (G.rules[r]?).any fun R => R.rhs.any fun | .t _ => true | .n _ => false
+
+/-- Whether a tree is a `formula` or `atom` constituent of `G`. -/
+def isSentencePart (G : Grammar Terminal) : Tree Tok → Bool
+  | .node r _ => (G.rules[r]?).any fun R => R.lhs == ntFormula || R.lhs == ntAtom
+  | .leaf _ => false
+
 mutual
 /-- The token spans `[a, b)` of the clauses of a tree whose first token is token `start` of `w`. -/
-def clauses (w : Array Tok) (start : Nat) : Tree Tok → List (Nat × Nat)
+def clauses (G : Grammar Terminal) (w : Array Tok) (start : Nat) : Tree Tok → List (Nat × Nat)
   | .leaf _ => []
-  | .node _ kids => kidClauses w start (start + widths kids) start kids
+  | .node r kids => kidClauses G w (readsWord G r) start (start + widths kids) start kids
 
 /-- The clauses of the children of a node that reads tokens `[first, stop)`, from the child at token `pos`. A child
-    right after a clause word of the node is a clause; a word there continues the clause to the node's end. -/
-def kidClauses (w : Array Tok) (first stop pos : Nat) : List (Tree Tok) → List (Nat × Nat)
+    right after a clause word of the node is a clause; a word there continues the clause to the node's end. When
+    the node's rule reads a word of its own (`own`), a `formula` or `atom` child is a clause (a part). -/
+def kidClauses (G : Grammar Terminal) (w : Array Tok) (own : Bool) (first stop pos : Nat) :
+    List (Tree Tok) → List (Nat × Nat)
   | [] => []
   | t :: ts =>
     let next := pos + width t
     let opened := decide (first < pos) && ((w[pos - 1]?).map isClauseWord).getD false
-    let here := if opened then [match t with | .leaf _ => (pos, stop) | .node .. => (pos, next)] else []
-    here ++ clauses w pos t ++ kidClauses w first stop next ts
+    let here := if opened then [match t with | .leaf _ => (pos, stop) | .node .. => (pos, next)]
+      else if own && isSentencePart G t then [(pos, next)] else []
+    here ++ clauses G w pos t ++ kidClauses G w own first stop next ts
 end
 
 /-- The index of the token of a sentence that starts at byte `g`. -/
@@ -58,8 +80,8 @@ def tokenAt (toks : Array Spanned) (g : Nat) : Option Nat :=
   (List.range toks.size).find? fun i => (toks[i]?.map (·.2.1)) == some g
 
 /-- Whether token `k` of `w` is inside a clause of `t`. -/
-def inClause (w : Array Tok) (t : Tree Tok) (k : Nat) : Bool :=
-  (clauses w 0 t).any fun (a, b) => decide (a ≤ k ∧ k < b)
+def inClause (G : Grammar Terminal) (w : Array Tok) (t : Tree Tok) (k : Nat) : Bool :=
+  (clauses G w 0 t).any fun (a, b) => decide (a ≤ k ∧ k < b)
 
 /-- The one derivation of a one-sentence text with its tokens, or none. -/
 def oneTree (E : Env) (L : Lexicon) (b : Nat) (s : String) : Option (Array Spanned × Tree Tok) :=
@@ -78,7 +100,7 @@ def movedOut (E : Env) (L : Lexicon) (b : Nat) (c : Candidate) : Bool :=
   | .fronted _ g =>
     match oneTree E L b c.sentence with
     | some (toks, t) => match tokenAt toks g with
-      | some k => inClause (toks.map (·.1)) t k
+      | some k => inClause (grammar E L) (toks.map (·.1)) t k
       | none => true
     | none => true
 
@@ -101,7 +123,7 @@ def movedRephrasings (auxs : List String) (E : Env) (O : Overlay) (L : Lexicon) 
     | .fronted a g, some (toks, t) =>
       let w := toks.map (·.1)
       (List.range toks.size).filterMap fun j =>
-        if (toks[j]?.map (·.2.1)) != some g && w[j]? == some (.word a false) && !inClause w t j && j != 0
+        if (toks[j]?.map (·.2.1)) != some g && w[j]? == some (.word a false) && !inClause (grammar E L) w t j && j != 0
         then frontedFrom a c.sentence toks j else none
     | _, _ => []
   offered auxs E O L b ((fronted ++ [caseThatQuestion c]).filter (askable auxs E O L b))

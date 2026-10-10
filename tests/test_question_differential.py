@@ -19,12 +19,20 @@ one reader three times. Here:
 
 The comparison can fail: a reference reader without the moved-word rule, or with the outcome order changed, gives
 disagreements on the fixtures (`test_the_comparison_can_fail`).
+
+* **Every part.** A word put back inside a part (a `formula` or `atom` read by a rule with words of its own) is a
+  moved word (looprecheck of the ruling, B). `test_every_part_of_every_rule_is_a_clause` writes one sentence for
+  every such rule of the grammar sources (`ve/english_grammar/*.json`, so a new rule is covered when it is added),
+  fronts each `is` of it, and requires `moved` for a word of a part or a guard and `one` for the rule's own word,
+  from Lean and from the reference alike.
 """
 from __future__ import annotations
 
 import json
 import os
+from pathlib import Path
 import random
+import re
 
 import pytest
 
@@ -165,8 +173,8 @@ def test_lean_and_the_reference_reader_agree(compared):
 
 def test_the_comparison_can_fail(readers, monkeypatch):
     """Seeded faults in the reference reader each give a disagreement: the moved-word rule dropped, the rephrasing
-    filter dropped, `that` left out of the clause words, the indefinite rephrasings dropped, and the lexical
-    refusals checked out of position order. (Spec 7.8's order fault, a refused candidate put before one that reads,
+    filter dropped, `that` left out of the clause words, parts not counted as clauses, the indefinite rephrasings
+    dropped, and the lexical refusals checked out of position order. (Spec 7.8's order fault, a refused candidate put before one that reads,
     has no input here: 195,759 random questions over G's vocabulary gave no question with both, and no vocabulary
     the lexicon policy admits was found to give one; the proof of `readQuestion_complete` catches it, seeded bug 3
     of the integration report.)"""
@@ -185,6 +193,7 @@ def test_the_comparison_can_fail(readers, monkeypatch):
         "no rephrasing filter": (R.Reader, "askable", lambda self, q: True),
         "no indefinite rephrasings": (R.Reader, "read_question", no_indefinite),
         "that is not a clause word": (R, "CLAUSE_WORDS", ("who", "which")),
+        "no parts": (R.Reader, "sentence_kinds", lambda self: set()),
         "spacing before bad characters": (R, "lexical_fault", spacing_first),
     }
     for name, (owner, attribute, replacement) in faults.items():
@@ -194,6 +203,97 @@ def test_the_comparison_can_fail(readers, monkeypatch):
             _, differ, _ = compare(rows, fresh, reference=lambda frame: fresh[frame])
             assert differ, name
     assert R.Reader.read_question is original_read
+
+
+# ------------------------------------------------------------------ every part of every rule
+
+GRAMMARS = Path(__file__).resolve().parents[1] / "ve/english_grammar"
+PARTS = ("formula", "atom")
+# What each other nonterminal of a part-bearing rule is written as, on G's vocabulary.
+FILLS = {"declaration": "member", "relative_pronoun": "who", "guard": "is registered", "article": "a",
+         "term": "ann", "count": "one", "list_marker": ("(a)", "(b)")}
+SENTENCES = ("ann is eligible", "bo is verified")
+# Part-bearing rules whose sentence G's vocabulary does not read (F1's question is not `one`), with the reason.
+UNREAD = {"reach.body": "reach needs a relation of two members; G has none",
+          "reach.body.listed": "reach needs a relation of two members; G has none"}
+
+
+def part_rules() -> list[dict]:
+    """Every rule of the grammar sources that reads a part: a `formula` or `atom` beside a word of its own."""
+    out = []
+    for path in sorted(GRAMMARS.glob("*@*.json")):
+        for row in json.loads(path.read_text()):
+            rhs = row["rhs"]
+            if row.get("status") == "proposed" or not any(isinstance(x, dict) and x.get("n") in PARTS for x in rhs):
+                continue
+            if any(isinstance(x, str) or "p" in x for x in rhs):
+                out.append(row)
+    return out
+
+
+def write_rule(row) -> tuple[str, list[tuple[int, bool]]]:
+    """The rule written out: its words, each nonterminal filled; and for each `is` its character offset and whether
+    it is inside a nonterminal (a part or a guard) rather than one of the rule's own words."""
+    pieces, parts, markers = [], iter(SENTENCES * 4), iter(FILLS["list_marker"])
+    for x in row["rhs"]:
+        if isinstance(x, str):
+            pieces.append((x, False, False))
+        elif "p" in x:
+            pieces.append((x["p"], x.get("before", False), False))
+        elif x["n"] in PARTS:
+            pieces.append((next(parts), False, True))
+        elif x["n"] == "list_marker":
+            pieces.append((next(markers), False, False))
+        else:
+            pieces.append((FILLS[x["n"]], False, True))  # a nonterminal this test cannot write fails here
+    text, offsets = "", []
+    for piece, attached, inner in pieces:
+        if text and not attached:
+            text += " "
+        start = len(text)
+        text += piece
+        for m in re.finditer(r"\bis\b", piece):
+            offsets.append((start + m.start(), inner))
+    return text, offsets
+
+
+def test_every_part_of_every_rule_is_a_clause(readers):
+    rules = part_rules()
+    assert {r["tag"] for r in rules} >= {"compact.if", "compact.and", "compact.or", "universal.global", "negation",
+                                         "existential.global", "listing.all.words"}
+    cases = []
+    for row in rules:
+        sentence, offsets = write_rule(row)
+        case_that = f"{R.CASE_FRAME}{sentence}?"
+        cases.append((row["tag"], "F1", case_that, None))
+        for at, inner in offsets:
+            cases.append((row["tag"], "inner" if inner else "own",
+                          f"Is {sentence[:at]}{sentence[at + 3:]}?", case_that))
+    results = lean_results([("G", "part", q) for _, _, q, _ in cases])
+    read = {tag for (tag, kind, _, _), result in zip(cases, results) if kind == "F1" and result["status"] == "one"}
+    assert {r["tag"] for r in rules} - read == set(UNREAD), sorted({r["tag"] for r in rules} - read)
+    # A rule with an `is` of its own offers that word fronted, which means what F1's question means.
+    own = {}
+    for tag, kind, question, _ in cases:
+        if kind == "own":
+            own.setdefault(tag, []).append(question)
+    moved = set()
+    for (tag, kind, question, case_that), result in zip(cases, results, strict=True):
+        theirs = R.lean_view(result)
+        assert readers["G"].ask(question) == theirs, (tag, question, theirs)
+        if tag in UNREAD or kind == "F1":
+            continue
+        if kind == "inner":
+            # Refused, with the questions VE reads in its place: the main sentence's word fronted where it has
+            # one, else F1's question (each meaning is offered once).
+            rephrasings = theirs.get("rephrasings", ())
+            assert theirs["status"] == "moved" and rephrasings, (tag, question, theirs)
+            assert all(readers["G"].askable(r) for r in rephrasings), (tag, question, theirs)
+            assert rephrasings == own.get(tag, [case_that]), (tag, question, theirs)
+            moved.add(tag)
+        else:
+            assert theirs["status"] == "one", (tag, question, theirs)
+    assert moved == read, sorted(read - moved)
 
 
 # ------------------------------------------------------------------ the meaning, three ways

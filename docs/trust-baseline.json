@@ -4,26 +4,26 @@
   "K": 997,
   "S": 9704,
   "D": 13759,
-  "G": 26105,
+  "G": 26121,
   "C": 8329,
   "P": 70299,
-  "T": 14007,
-  "o": 11895,
+  "T": 14050,
+  "o": 11902,
   "D[V]": 12236,
   "D[R]": 996,
   "D[I]": 527,
-  "G[V]": 24181,
-  "G[R]": 1683,
+  "G[V]": 24196,
+  "G[R]": 1684,
   "G[I]": 241,
   "tied": 178,
   "unclassified": 0,
-  "trusted": 46959,
-  "lines": 155095
+  "trusted": 46974,
+  "lines": 155161
  },
  "budget": {
   "K": 997,
   "S": 9704,
-  "V": 36258
+  "V": 36273
  },
  "signed": [],
  "history": [
@@ -438,6 +438,19 @@
     "K": 997,
     "S": 9704,
     "V": 36258
+   }
+  },
+  {
+   "change": "question answering Q1, looprecheck of the DRI ruling (B): VE.Question.Moved counts a part (a formula or atom read by a rule with words of its own: if, both, either, for every, such that, it is not the case that, listings, reach) as a clause, so a word put back inside one is moved (ntFormula, readsWord, isSentencePart; V +15, all in VE/Question/Moved.lean)",
+   "rebaselined_from": {
+    "K": 997,
+    "S": 9704,
+    "V": 36258
+   },
+   "to": {
+    "K": 997,
+    "S": 9704,
+    "V": 36273
    }
   }
  ],
@@ -9214,7 +9227,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 128,
+   "T": 153,
    "o": 9,
    "D[V]": 0,
    "D[R]": 0,
@@ -9225,7 +9238,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 137
+   "lines": 162
   },
   "VE/Question/Fixtures.lean": {
    "K": 0,
@@ -9234,7 +9247,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 206,
+   "T": 224,
    "o": 12,
    "D[V]": 0,
    "D[R]": 0,
@@ -9245,7 +9258,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 218
+   "lines": 236
   },
   "VE/Question/Frames.lean": {
    "K": 0,
@@ -9291,21 +9304,21 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 98,
+   "G": 113,
    "C": 0,
    "P": 131,
    "T": 0,
-   "o": 29,
+   "o": 36,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 80,
+   "G[V]": 95,
    "G[R]": 18,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 80,
-   "lines": 258
+   "trusted": 95,
+   "lines": 280
   },
   "VE/Question/Properties.lean": {
    "K": 0,
@@ -9411,7 +9424,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 47,
+   "G": 48,
    "C": 0,
    "P": 0,
    "T": 0,
@@ -9420,12 +9433,12 @@
    "D[R]": 0,
    "D[I]": 0,
    "G[V]": 2,
-   "G[R]": 42,
+   "G[R]": 43,
    "G[I]": 3,
    "tied": 0,
    "unclassified": 0,
    "trusted": 2,
-   "lines": 57
+   "lines": 58
   },
   "VE/Readings/Asserted.lean": {
    "K": 0,

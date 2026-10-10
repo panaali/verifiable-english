@@ -111,8 +111,9 @@ def isIndefinite (o : Outcome) : Bool := match o with | .indefinite .. => true |
 
 -- The moved-word rule (`VE.Question.Moved`): the clause after `who` in G11's one candidate is tokens [3, 5).
 #guard match oneTree groupEnv groupLex 2100000 "every member who is registered is eligible." with
-  | some (toks, t) => clauses (toks.map (·.1)) 0 t == [(3, 5)] &&
-      inClause (toks.map (·.1)) t 3 && !inClause (toks.map (·.1)) t 5
+  | some (toks, t) => clauses (grammar groupEnv groupLex) (toks.map (·.1)) 0 t == [(3, 5)] &&
+      inClause (grammar groupEnv groupLex) (toks.map (·.1)) t 3 &&
+      !inClause (grammar groupEnv groupLex) (toks.map (·.1)) t 5
   | none => false
 #guard movedOut groupEnv groupLex 2100000 ⟨.fronted "is" 17, "every member who is registered is eligible."⟩
 #guard !movedOut groupEnv groupLex 2100000 ⟨.fronted "is" 31, "every member who is registered is eligible."⟩
@@ -133,5 +134,29 @@ def isIndefinite (o : Outcome) : Bool := match o with | .indefinite .. => true |
 #guard match ask auxiliaries groupEnv {} groupLex 2100000 "Is a member who registered is eligible?" with
   | .read (.none _) => true
   | _ => false
+
+-- A part is a clause too (looprecheck of the ruling, B): the sides of `if`, `both` and `either`, and the sentence
+-- after `for every … ,` or `it is not the case that`. `ntFormula` is the nonterminal `formula`.
+#guard ntNames[ntFormula]? == some "formula" && ntNames[ntAtom]? == some "atom"
+#guard match oneTree groupEnv groupLex 2100000 "if ann is verified, then bo is eligible." with
+  | some (toks, t) => clauses (grammar groupEnv groupLex) (toks.map (·.1)) 0 t == [(1, 4), (6, 9)]
+  | none => false
+#guard match oneTree groupEnv groupLex 2100000 "it is not the case that ann is eligible." with
+  | some (toks, t) => clauses (grammar groupEnv groupLex) (toks.map (·.1)) 0 t == [(6, 9)]
+  | none => false
+-- The moved questions of the looprecheck: each is refused, and F1's question is offered in its place.
+#guard [("Is if ann verified, then bo is eligible?", "if ann is verified, then bo is eligible"),
+    ("Is if every member verified, then every member is eligible?",
+      "if every member is verified, then every member is eligible"),
+    ("Is both ann eligible and bo is verified?", "both ann is eligible and bo is verified"),
+    ("Is either ann eligible or bo is verified, or both?", "either ann is eligible or bo is verified, or both"),
+    ("Is for every member, ann eligible?", "for every member, ann is eligible")].all fun (q, s) =>
+  match ask auxiliaries groupEnv {} groupLex 2100000 q with
+  | .moved c rs => c.sentence == s ++ "." && rs == ["Is it the case that " ++ s ++ "?"]
+  | _ => false
+-- The word of the main sentence still moves: the negation's and the existential's own `is`.
+#guard askable auxiliaries groupEnv {} groupLex 2100000 "Is it not the case that ann is eligible?"
+#guard askable auxiliaries groupEnv {} groupLex 2100000 "Is there a member such that ann is eligible?"
+#guard askable auxiliaries groupEnv {} groupLex 2100000 "Is it the case that if ann is verified, then bo is eligible?"
 
 end VE.Question

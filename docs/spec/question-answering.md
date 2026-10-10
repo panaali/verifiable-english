@@ -397,11 +397,16 @@ entry or identity of E2.6 changes (plan D2). Its one reading is a theorem, not a
 
 F2 can read odd English: in G11 the auxiliary moves out of a relative clause (plan 4.9). `readQuestion` still reads
 it, and its statements are about that reading; what the mode shows is `ask`'s outcome (DRI ruling 2026-10-09,
-`VE.Question.Moved`): a reading whose put-back word is inside a clause of its one derivation (a constituent right
-after a `who`, `that` or `which` of its parent's rule) is refused as `moved`, with the questions VE reads in its
-place, and every F2 rephrasing VE offers is one it shows as one reading (`ask_moved`, `ask_rephrasings`,
-`askable_iff`; `ask_one` ties a shown reading to `readQuestion`'s). The A0 line shows the sentence actually checked,
-and Q1.3 counts how often the other odd readings happen.
+`VE.Question.Moved`): a reading whose put-back word is inside a clause of its one derivation is refused as
+`moved`, with the questions VE reads in its place, and every F2 rephrasing VE offers is one it shows as one reading
+(`ask_moved`, `ask_rephrasings`, `askable_iff`; `ask_one` ties a shown reading to `readQuestion`'s). A clause is a
+constituent right after a `who`, `that` or `which` of its parent's rule, or a *part*: a `formula` or `atom`
+constituent of a rule that reads a word of its own, so the sides of `if … , then …`, `both … and …` and `either …
+or …, or both`, the sentence after `for every … ,`, `such that` or `it is not the case that`, a listed clause and
+reach's condition (looprecheck of the ruling, B: G30 to G34). English fronts only the main sentence's word, so
+`Is if ann verified, then bo is eligible?` is refused, and F1's `Is it the case that if ann is verified, then bo is
+eligible?` is offered. The A0 line shows the sentence actually checked, and Q1.3 counts how often the other odd
+readings happen.
 
 ### 3.2 Rephrasings VE offers
 
@@ -476,7 +481,7 @@ table in `VE.Question.Run`; the others are E2's, with E2's class. A span is in c
 | 9 | a candidate reaches the work budget | `budget` | `Budget`; `ResourceLimit` | `VE stopped reading this question at its work limit.` | the question |
 | 10 | a candidate has two derivations | `many` | `Ambiguous`; `AmbiguousDerivation` | `The sentence "<candidate>" can be read in more than one way. Two of the ways are shown.`, with E2's two witness trees | the question |
 | 11 | one meaning | `one` | — | — (the answer begins with A0) | — |
-| 11a | one meaning, F2, and the put-back word is inside a clause of the candidate's one derivation (`ask`, 3.1) | `moved` | `QuestionWordMoved`; `SyntaxError` | `VE could read this question only by putting "<aux>" back inside a part of the sentence that begins with "who", "that" or "which". English does not move a word out of such a part.`, then ` Ask this instead:` (or ` Ask one of these instead:`) and the questions VE reads in its place, if any | the question |
+| 11a | one meaning, F2, and the put-back word is inside a clause of the candidate's one derivation (`ask`, 3.1) | `moved` | `QuestionWordMoved`; `SyntaxError` | `VE could read this question only by putting "<aux>" back inside a smaller part of the sentence, such as a part that begins with "who", "that", "which", "if", "both" or "either". English moves a word to the front only from the main sentence.`, then ` Ask this instead:` (or ` Ask one of these instead:`) and the questions VE reads in its place, if any | the question |
 | 12 | two or more meanings | `many` | `AmbiguousQuestion`; `AmbiguousDerivation` | `This question can be read in more than one way. Ask one of these instead:`, then the rephrasings | the question |
 | 13 | a refusal: a conclusion mark (`read` gives `.ok [(φ, true)]`) | `rejected` | `QuestionWithMarker`; `SyntaxError` | `A question cannot contain "therefore", "so", "hence" or "it follows that".` | the question |
 | 13 | a refusal: ill-typed | `rejected` | `IllTyped`; `TypeMismatch` | `The question was read, and its formula does not pass the type check.` | the question |
@@ -1225,6 +1230,11 @@ spellings `ann`, `bo`; `policyOk` is true and `grammarFault` is `none`. The sent
 | G27 | `Is a member who registered is eligible?` (G) | **none**, `NoDerivation`, with the indefinite advice: the every question `Is every member who registered is eligible?` reads only with a moved word (11a), so it is not offered, and the some question does not read. Before the ruling it was offered, and refused when asked. |
 | G28 | `Is every member that registered is eligible?` (G) | **moved**, `QuestionWordMoved`: the clause begins with `that`; rephrasings `Is every member that is registered eligible?` |
 | G29 | `Is there a member who is eligible?` (G) | **one**, asked `there is a member who is eligible.`: the put-back `is` is the existential's own word, outside the clause after `who`; `ex member (pred eligible [var 0])` |
+| G30 | `Is if ann verified, then bo is eligible?` (G) | **moved**, `QuestionWordMoved` (a part, 3.1): the put-back `is` is inside the `if` part; rephrasings `Is it the case that if ann is verified, then bo is eligible?`. Control: `Is it the case that if ann is verified, then bo is eligible?` on `G` is **one** |
+| G31 | `Is if every member verified, then every member is eligible?` (G) | **moved**, `QuestionWordMoved` (a part, 3.1): the put-back `is` is inside the `if` part; rephrasings `Is it the case that if every member is verified, then every member is eligible?`. |
+| G32 | `Is both ann eligible and bo is verified?` (G) | **moved**, `QuestionWordMoved` (a part, 3.1): the put-back `is` is inside the first side of `both … and`; rephrasings `Is it the case that both ann is eligible and bo is verified?`. |
+| G33 | `Is either ann eligible or bo is verified, or both?` (G) | **moved**, `QuestionWordMoved` (a part, 3.1): the put-back `is` is inside the first side of `either … or`; rephrasings `Is it the case that either ann is eligible or bo is verified, or both?`. |
+| G34 | `Is for every member, ann eligible?` (G) | **moved**, `QuestionWordMoved` (a part, 3.1): the put-back `is` is inside the sentence after `for every member,`; rephrasings `Is it the case that for every member, ann is eligible?`. |
 
 ### 7.4 A: the agent policy (R6)
 
