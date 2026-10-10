@@ -157,3 +157,19 @@ The open design point for the fuzzer's owner: its CPU budget is fixed while its 
 the suite collected 14,020 tests, selected 14,019, and recorded 13,927 passed, 92 skipped (9 skipped, 83 strict
 xfails), 0 failed, `test_difffuzz.py::test_ci_run` included (`gate-result.json`, status `passed`). Free disk after
 the run: 67 GB.
+
+## Looprecheck 1 fixes (2026-10-10): the moved word inside a part
+
+| Finding | Class | Fix | Regression tests |
+|---|---|---|---|
+| B: a word put back inside an `if`, `both`, `either` or `for every …,` part is read as one (`Is if ann verified, then bo is eligible?` and four more) | A clause counted only after `who`, `that` or `which`; every other sentence inside a sentence was missed | `VE.Question.Moved`: a clause is also a *part*, a `formula` or `atom` constituent of a rule that reads a word of its own, decided from the grammar's rule table (`readsWord`, `isSentencePart`), so a new rule with a part is covered without a list. The refusal names the parts; the main sentence's word is offered where the rule has one, else F1's question. The reference reader counts parts the same way, its sentence kinds read from Lark's parsed rules | `test_every_part_of_every_rule_is_a_clause` (one sentence per part-bearing rule of `ve/english_grammar/*.json`, every `is` fronted, Lean and the reference compared; reach is named as unread on G); the seeded fault "no parts" in `test_the_comparison_can_fail`; fixtures G30 to G34 and the G30c control (spec rows, table, generated Lean guards, service, `ve ask`); Lean guards for the part spans |
+
+`ask_one`, `ask_moved`, `ask_rephrasings` and `askable_iff` are unchanged and still proved; no theorem statement
+changed. The frozen inventory changed only for four `VE/Question` files. Not done here: the follow-ups (a
+moved-word candidate in an ambiguous question still counts as one of its meanings, `Moved.lean`'s `ask`; Fable C2,
+C5 and C6; mid-sentence capitalised names, E2's).
+
+`python3 tools/gate.py --workers 12` on clean HEAD `e9b36af0` (the code of this fix; only this section differs):
+**passed**. Lean build, Lean audit (standard axioms only), Rust build, 36 Rust tests and the Python collection pass;
+the suite collected 14,045 tests, selected 14,044, and recorded 13,952 passed, 92 skipped, 0 failed
+(`gate-result.json`, status `passed`). Free disk before the run: 69 GB.
