@@ -107,6 +107,9 @@ structure View where
   points : String → Choice → List String
   /-- The units whose rules on an act a choice's document holds, in source order. -/
   ruleUnits : Choice → String → List String
+  /-- The filled gaps a choice's checked countermodel's failure depends on (RD-3's `gapsOf`): predicate, tuple,
+      the filling's value. -/
+  gaps : Choice → List (String × List String × Bool) := fun _ => []
 
 def View.key (v : View) (r : Row) : Lead × List Source :=
   (r.lead, if r.lead == .yes || r.lead == .no then v.cites r else [])

@@ -77,7 +77,7 @@ def answerForPlain (s : PlainAsked) : Except String (Context × PlainParts × Vi
     if (v.unused.mapM ctx.displayOf).isSome then
       if plainCertReplays p s.case s.x.row then
         if linesGated (renderV ctx v) then .ok (ctx, p, v)
-        else .error "CheckerUnavailable: a line of the answer does not pass the all-derivations gate"
+        else .error s!"CheckerUnavailable: the answer's {firstUngated (renderV ctx v)} line does not pass the all-derivations gate"
       else .error "CheckerUnavailable: the decided answer's certificate does not replay"
     else .error "CheckerUnavailable: an unused sentence has no display number"
   | .error e, _ => .error e

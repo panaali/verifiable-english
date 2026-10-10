@@ -5,7 +5,7 @@
     "lean/VE/Question/Basic.lean": "96d4a7e85beb2beb6f220b11d7706b8178cc24d92d8999df2ef9c7eafa7a7b09",
     "lean/VE/Question/Examples.lean": "0be6449e085615b4f02d927298640272da90253b514157673857dd2c611e3c76",
     "lean/VE/Question/Fixtures.lean": "e8892bda6db4969c6bc25d6409a9c50e983fabdbd5354c08cc39f21b3e5f5055",
-    "lean/VE/Question/Frames.lean": "255005c6d9c8a4581485731a15063b70d06c0ed705161d6610408be85115ad73",
+    "lean/VE/Question/Frames.lean": "df38485aae6907e602e44d91a0a34c09d427716fb52926b678ef67b2f4d7640b",
     "lean/VE/Question/Help.lean": "4ad773b3453e32cd2e1467090c54df60a17d9dc6055fe7369d0df139bc8737a2",
     "lean/VE/Question/Moved.lean": "15990d3f827ba18a6b440a567d17a46269c2914a6b4ebab27d784d2cd4e782d8",
     "lean/VE/Question/Properties.lean": "6e66e4ab6474d59f5ef8b172c1d2d790854fa401412e96bf88ec1735b083aac8",
