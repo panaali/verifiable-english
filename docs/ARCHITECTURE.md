@@ -103,8 +103,9 @@ innermost Python layer; the DRI adopted the five-layer map of review T5, checked
   ([README](../ve/backends/lean_service_schema/README.md)). Every mode's encoder is proved to fit its shape
   (`runMode_fits`, `lean/ResponseShape/Encoders.lean`).
 - **Binding.** [ADR 0001](adr/0001-response-binding.md) (DRI decision D1): binding is a closed list of relations to
-  the request; derived values are Lean's, covered by a Lean theorem or a `ResponseDecode` invariant, and never
-  recomputed in Python. Binding a field is still opt-in, keyword by keyword; the review counted about 307 bare
+  the request, and a field that names a request item is bound only by `references` or `equals` (a format check
+  is not a binding); derived values are Lean's, covered by a Lean theorem or a `ResponseDecode` invariant, and
+  never recomputed in Python. Binding a field is still opt-in, keyword by keyword; the review counted about 307 bare
   `str` leaves against 120 binding keywords by text search, and AR-11 replaces that count with an exact census
   in Lean.
 - **Rust.** A pool of JSON-lines `ve` processes (`ve/backends/rust_jsonl.py`, schema
