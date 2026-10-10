@@ -170,6 +170,16 @@
     "tests/test_relay_mutation_gate.py::test_the_recorder_writes_every_relayed_case"
    ],
    "claim": "the recorder writes every relayed case (VE_RELAY_CASES)"
+  },
+  {
+   "id": "M18",
+   "file": "docs/merge-tooling.md",
+   "find": "| mutants | 93939 |",
+   "replace": "| mutants | 93938 |",
+   "tests": [
+    "tests/test_merge_tooling_evidence.py::test_gate_numbers_come_from_the_saved_report"
+   ],
+   "claim": "the document's numbers are the saved evidence's"
   }
  ]
 }

@@ -99,6 +99,14 @@ def test_gitattributes_is_generated_from_the_registry():
         assert done.stdout.strip() == f"{name}: merge: {R.DRIVER}"
 
 
+def test_the_listing_names_every_entry_and_command():
+    listing = R.listing()
+    for entry in R.GENERATED:
+        assert f"{entry.name} [{entry.merge}]" in listing
+    assert "write: write_attributes() in this script" in listing
+    assert "write: python tools/lean_statements.py\n" in listing
+
+
 def test_entries_run_in_dependency_order():
     order = [entry.name for entry in R.GENERATED]
     for before, after in (("wire-contract", "frozen-inventory"), ("english-grammar", "frozen-inventory"),
