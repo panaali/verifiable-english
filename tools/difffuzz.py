@@ -1581,7 +1581,7 @@ class DocumentSurface(Surface):
     def seeds(self):
         from conformance import document_wrapper as dw
         return [Seed("document", "document@1" if dw.owned(doc) else "document@1:unowned", name, doc,
-                     ("python", "lean")) for name, doc in dw.seeds() if dw.fuzzed(doc)]
+                     ("python", "lean")) for name, doc in dw.seeds() if dw.fuzzed(doc, name)]
 
     def limits(self, seed):
         return list(self.LIMITS)
