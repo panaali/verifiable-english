@@ -533,8 +533,9 @@ def resolve(entries, root: Path = ROOT) -> int:
 def listing() -> str:
     rows = []
     for entry in GENERATED:
-        show = lambda steps: "; ".join(" ".join("python" if part == PY else part for part in step)  # noqa: E731
-                                       for step in steps) if steps else "-"
+        show = lambda steps: "; ".join(  # noqa: E731
+            f"{step}() in this script" if isinstance(step, str) else
+            " ".join("python" if part == PY else part for part in step) for step in steps) if steps else "-"
         rows.append(f"{entry.name} [{entry.merge}] {', '.join(entry.paths) or '(no files)'}\n"
                     f"    write: {show(entry.write)}{'  (cwd ' + entry.cwd + ')' if entry.cwd != '.' else ''}\n"
                     f"    check: {show(entry.check) if entry.check else 'rewrite and compare' if entry.write else '-'}"
