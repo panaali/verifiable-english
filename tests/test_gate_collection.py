@@ -12,7 +12,7 @@ import sys
 import pytest
 
 from subprocesses import HANG_TIMEOUT
-from tools import gate, gate_collection, nested_pytest
+from tools import gate, gate_collection, nested_pytest, rust_build
 
 
 def git(repository, *args):
@@ -326,7 +326,8 @@ def test_the_base_builds_its_own_rust_binary_otherwise(tmp_path, monkeypatch):
     assert args[args.index("--target-dir") + 1] == str(tree / "rust/target")
     # Offline, from the gate's registry, with the tree's paths remapped as every pinned build's are.
     assert kw["env"]["CARGO_NET_OFFLINE"] == "true" and kw["env"]["CARGO_HOME"] == str(tmp_path / "cargo-home")
-    assert f"--remap-path-prefix={tree.resolve()}=/ve" in kw["env"]["CARGO_ENCODED_RUSTFLAGS"].split("\x1f")
+    assert kw["env"]["CARGO_ENCODED_RUSTFLAGS"] == rust_build.encoded_rustflags(
+        root=tree, cargo_home=tmp_path / "cargo-home", target_dir=tree / "rust/target")
 
 
 # --- the gate ------------------------------------------------------------------------------------------------
