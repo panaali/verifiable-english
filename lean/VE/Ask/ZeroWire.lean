@@ -418,6 +418,7 @@ def replayZeroAskCore (j : Json) : Except String { a : ZeroAsked // a.request = 
   let ⟨q, hq⟩ ← strField j "question"
   let case := j.getObjValD "case"
   let (_, L) ← englishOf text (j.getObjValD "lexicon")
+  sameEnvironment text case
   match hr : replayZeroParts case with
   | .error e => throw e
   | .ok ⟨(_, x), _, _, _⟩ =>
