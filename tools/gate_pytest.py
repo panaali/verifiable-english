@@ -3,7 +3,9 @@
 The gate runs pytest twice: once serially with --collect-only, where this plugin records
 the collection (every collected, selected and deselected ID and every collection report),
 and once under xdist, where the controller records each test's result (xdist forwards the
-workers' reports) and the IDs each worker collected. Workers write nothing."""
+workers' reports) and the IDs each worker collected. Workers write nothing. A quarantined test
+that failed runs once more, serially, recorded the same way. No run stops early: the plugin
+refuses --maxfail, -x and --stepwise."""
 from __future__ import annotations
 
 import json
@@ -14,6 +16,12 @@ import pytest
 
 
 def pytest_configure(config):
+    # A gate never stops early: every collected test runs and has a result (docs/TESTING.md).
+    early = [option for option, on in (("--maxfail/-x", config.getoption("maxfail", 0)),
+                                       ("--stepwise", config.getoption("stepwise", False)),
+                                       ("--stepwise-skip", config.getoption("stepwise_skip", False))) if on]
+    if early:
+        raise pytest.UsageError(f"the gate runs every test; it refuses {', '.join(early)}")
     config._ve_gate_events = {"collected": [], "selected": [], "deselected": [],
                               "collection_reports": [], "tests": {}, "workers": {}}
 
