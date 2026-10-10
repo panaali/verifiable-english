@@ -1,10 +1,10 @@
-"""Plant each seeded bug of mutants.json, run its test, restore the file, and record whether the test failed.
+"""Plant each seeded bug of mutants.json, run its test, restore the file, and print whether the test failed.
 
-    uv run python docs/devtime/devtime-1/seed_bugs.py            # check: every bug must fail its test
-    uv run python docs/devtime/devtime-1/seed_bugs.py --write    # also record the outcomes in mutants.json
+    uv run python docs/devtime/devtime-1/seed_bugs.py            # exits 1 when any bug survives its test
 
 Each entry names the file, the exact text replaced (`old`, which must occur once) and its replacement (`new`),
-and the pytest node that must fail. The file is restored from its original bytes whatever happens.
+and the pytest node that must fail. The file is restored from its original bytes whatever happens. The
+`observed` member of each entry is the outcome of the recorded run; this script only prints, it writes no file.
 """
 from __future__ import annotations
 
@@ -39,13 +39,11 @@ def main() -> int:
     data = json.loads(MUTANTS.read_text(encoding="utf-8"))
     survived = []
     for entry in data["mutants"]:
-        entry["observed"] = run(entry)
-        killed = entry["observed"]["exit"] == 1
-        print(f"{'KILLED' if killed else 'SURVIVED'} {entry['id']}: {entry['test']} -> {entry['observed']['summary']}")
+        observed = run(entry)
+        killed = observed["exit"] == 1
+        print(f"{'KILLED' if killed else 'SURVIVED'} {entry['id']}: {entry['test']} -> {observed['summary']}")
         if not killed:
             survived.append(entry["id"])
-    if "--write" in sys.argv:
-        MUTANTS.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     return 1 if survived else 0
 
 
