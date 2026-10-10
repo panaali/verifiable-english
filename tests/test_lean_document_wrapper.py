@@ -99,10 +99,16 @@ def test_gap_and_wrong_status_are_rejected(service):
 # The seeds Lean must decide (no fail-closed answer): its owned profiles, every branch of the wrapper.
 DECIDED = {"usecases/bluedot-grant/document.ve.md", "usecases/bluedot-grant/causal.ve.md", "plain", "mixed",
            "open-terms", "reading-sets", "graph-bridge", "graph-readings", "definitions", "p0-envelope",
-           "alternatives-cells", "alternatives-narrowed", "alternatives-graph", "risk"}
+           "alternatives-cells", "alternatives-narrowed", "alternatives-graph", "risk",
+           "usecases/question-answering/udhr-part07.ve.md",
+           "usecases/question-answering/agent-policy/a-unspecified.ve.md",
+           "usecases/question-answering/agent-policy/a-rules.ve.md",
+           "usecases/question-answering/agent-policy/a-conflict.ve.md"}
 # The seeds it must refuse, each with the reason it names.
 FAIL_CLOSED = {"usecases/news-article/news-w6a.ve.md": "order@0",
                "tests/data/readings_s2/constitution-nd-readings.ve.md": "fenced English or strict content",
+               "usecases/question-answering/group.ve.md": "surface parser",
+               "usecases/question-answering/agent-policy/a-deny.ve.md": "Lean norms route",
                "fence": "surface parser"}
 
 
@@ -514,3 +520,17 @@ def test_python_document_diagnostics_carry_the_code_their_text_names():
                     and isinstance(first.values[0], ast.Constant) else "")
             code = str(text).partition(":")[0]
             assert code == "InvalidInput" or code not in CLASSES, (path, node.lineno, text)
+
+
+def test_large_question_fixtures_are_compared_as_seeds_without_mutants():
+    """The bounded fuzzer skips mutants of the large question fixtures, while the seed test above checks each
+    Lean answer. Every other non-quantity document remains in the mutant corpus."""
+    from conformance import document_wrapper as dw
+    names = [name for name, _ in dw.seeds()]
+    unmutated = [name for name in names if any(name.startswith(p) for p in dw.UNMUTATED)]
+    assert unmutated and set(unmutated) <= DECIDED | set(FAIL_CLOSED)
+    for prefix in dw.UNMUTATED:
+        assert any(name.startswith(prefix) for name in names), prefix
+    for name, doc in dw.seeds():
+        quantity = "unit_schema" in (doc["front"].get("environment") or {})
+        assert dw.fuzzed(doc, name) == (name not in unmutated and not quantity), name
