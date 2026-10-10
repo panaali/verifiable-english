@@ -450,6 +450,7 @@ def test_a_complete_batch_passes_the_check(batch, capsys):
     ("gate", {"commit_sha": BASE}, "did not run on a clean HEAD"),
     ("gate", {"failures": [{"test": "t"}]}, "lists failures"),
     ("gate", {"counts": {**GATE["counts"], "selected": 7}}, "do not add up"),
+    ("gate", {"counts": {**GATE["counts"], "passed": 4, "failed": 1}}, "show a failure"),
     ("gate", {"stages": list(batch_evidence.REQUIRED_STAGES)[:-1]}, "incomplete or failed"),
     ("scope", {"commits": []}, "lists no commits"),
     ("scope", {"commits": [{"hash": BASE}]}, "not its head"),
