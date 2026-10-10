@@ -145,7 +145,9 @@ def rebinds(result):
     out["text not the lines'"] = setting(r, ("text",), r["text"][:-1])
     out["an unused unit not the document's"] = setting(r, ("unused",), r["unused"] + ["zz9"])
     out["an unused unit twice"] = setting(r, ("unused",), r["unused"] + r["unused"][:1]) if r["unused"] else None
-    out["another identity"] = setting(r, ("identities", "document_id"), "0" * 64)
+    for key, value in r["identities"].items():
+        # Build checklist 15: every identity field is bound; a changed one is another request's answer.
+        out[f"another {key}"] = setting(r, ("identities", key), value[:-1] + ("0" if value[-1:] != "0" else "1"))
     for i, row in enumerate(r["rows"]):
         if row["choice"]:
             out[f"row {i}: a set the request lacks"] = setting(r, ("rows", i, "choice", 0, 0), "rs_zz")
