@@ -1017,9 +1017,37 @@
         "vocabulary": {
           "additionalProperties": false,
           "properties": {
-            "constants": {"type": "object", "x-equals": "/environment/vocabulary/constants"},
+            "constants": {
+              "additionalProperties": {
+                "additionalProperties": false,
+                "properties": {
+                  "description": {"type": "string"},
+                  "sort": {"type": "string"},
+                  "verbalisation": {"type": "string"}
+                },
+                "required": ["sort"],
+                "type": "object"
+              },
+              "type": "object"
+            },
             "predicates": {"additionalProperties": {"$ref": "#/$defs/filled_predicate"}, "type": "object"},
-            "sorts": {"type": "object", "x-equals": "/environment/vocabulary/sorts"}
+            "sorts": {
+              "additionalProperties": {
+                "additionalProperties": false,
+                "properties": {
+                  "description": {"type": "string"},
+                  "verbalisation": {
+                    "additionalProperties": false,
+                    "properties": {"plural": {"type": "string"}, "singular": {"type": "string"}},
+                    "required": ["singular", "plural"],
+                    "type": "object"
+                  }
+                },
+                "required": ["description"],
+                "type": "object"
+              },
+              "type": "object"
+            }
           },
           "required": ["sorts", "predicates", "constants"],
           "type": "object"

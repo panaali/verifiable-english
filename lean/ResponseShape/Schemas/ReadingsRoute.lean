@@ -176,10 +176,12 @@ def filledPredicate : Shape :=
         closed [("role", enumS ["permission", "obligation", "plain"]), ("default", enumS ["allow", "deny"]),
           ("act", str), ("permission", .type ["string", "null"])]])]]
 
-/-- The filled environment (review B4 of rd-6b): the request's lower environment with each `unspecified` read as
+/-- The filled environment (review B4 of rd-6b): the case's lower environment with each `unspecified` read as
     `deny`, `norm-defaults@0` removed and every `unsaid__p` added. Its envelope is `Route.Gate.decodeEnvelope`'s four
-    fields, its sorts and constants the request's own, every predicate entry typed; the client binds the profiles
-    and the predicate names and sorts to the request (ve/readings_route.py `_bind_completion`). -/
+    fields and every sort, constant and predicate entry is typed as `Route.Wire.decodeVocabulary` admits it. A
+    companion component's frame merges its readings' sorts (readings-defaults 3), so the entries are not compared
+    with the outer request here; the client binds the names and sorts of the answer it relays to its case
+    (ve/readings_route.py `_bind_completion`). -/
 def filledEnvironment : Shape :=
   copied "UnspecifiedWire.filledJson: placeholderJson and withUnsaid of the request's environment" <| c
     "NormDefaults.Wire.withUnsaid of NormDefaults.Wire.placeholderJson of the request's lower environment." [
@@ -193,8 +195,11 @@ def filledEnvironment : Shape :=
           obj,
           .required ["sorts", "predicates", "constants"],
           closed [
-            ("sorts", n [obj, .equals "/environment/vocabulary/sorts"]),
-            ("constants", n [obj, .equals "/environment/vocabulary/constants"]),
+            ("sorts", n [obj, .object [] (some (n [obj, .required ["description"],
+              closed [("description", str), ("verbalisation", n [obj, .required ["singular", "plural"],
+                closed [("singular", str), ("plural", str)]])]]))]),
+            ("constants", n [obj, .object [] (some (n [obj, .required ["sort"],
+              closed [("sort", str), ("description", str), ("verbalisation", str)]]))]),
             ("predicates", n [obj, .object [] (some (ref "#/$defs/filled_predicate"))])]])]]
 
 def filled : Shape :=

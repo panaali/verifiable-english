@@ -192,7 +192,9 @@ def test_budget_zero_check_says_unknown_for_every_choice(make, tmp_path, zero):
     readings = report["readings"]
     assert readings["conflict"]["status"] == "UNKNOWN"
     assert readings["status"].startswith("UNKNOWN: tableau budget or open branch:")
-    assert readings["conflict"].get("choices") is None
+    # RD-3's per-choice conflict statuses, kept on the superposed route (review B3 of rd-6b); the premise status is
+    # given per reading there (docs/readings-defaults/rd6b/DELTA.md).
+    assert {c["status"] for c in readings["conflict"]["choices"]} == {"UNKNOWN"}
     assert report["premises"]["status"] == "UNKNOWN"
     assert report["premises"].get("choices") is None
     assert {c["status"] for c in report["premises"]["candidates"]} == {"UNKNOWN"}
