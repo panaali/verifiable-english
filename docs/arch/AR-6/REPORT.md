@@ -149,5 +149,8 @@ not read as one string expression; a Python record allowed on a Lean-owned domai
 - `tests/test_ar6_report.py`: the generated block, the census arithmetic, the Lean-domain search and the scope and
   mutants, all from saved files.
 - Not run: `tools/lean_first_diff.py`, `lean/audit.py` and `lean_statements.py --check` (no `ve/` or `lean/` change).
-  The full release gate runs once on the final HEAD; its result is in the batch's handoff report, since recording it
-  in the tree would move HEAD.
+  `tools/gate.py` was started twice on `8a4eea4f` at load 40-62 and was stopped both times by the 2-hour tool limit
+  inside the Python suite, after its toolchain, wire-contract, Lean build, Lean audit, Rust build, Rust test and
+  collection stages had passed. The suite then ran in 16 chunks with `VE_NATIVE_PREBUILT=1` (plan 4.1 item 1). It
+  found one failure (`tests/test_nested_pytest.py`: `seed_faults.py` built its own pytest command), fixed in
+  `a4e873a4`. The chunk counts are in the batch's handoff report.
