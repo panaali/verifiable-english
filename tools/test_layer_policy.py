@@ -491,6 +491,75 @@ class LayerSelectionTests(unittest.TestCase):
             manifest.write_text(manifest.read_text() + 'aid = { package = "helper", path = "../../outside/helper" }\n')
             self.assertEqual(rust_check(root), (1, "path dependency outside the workspace: ve-profile -> aid\n"))
 
+    def test_path_dependencies_must_name_the_crate_their_path_holds(self):
+        # Review F2: cargo metadata --no-deps reports a declared name and a path without resolving
+        # them, so the checker compares the two (cargo's resolver would reject the manifest).
+        for crate, declaration in (("ve-profile", 'wrong = { path = "../ve-kernel" }'),
+                                   ("ve-profile", 'kernel = { package = "wrong", path = "../ve-kernel" }'),
+                                   ("ve-core", 've-kernel = { path = "../ve-profile" }')):
+            with self.subTest(declaration), TemporaryDirectory() as directory:
+                root = rust_workspace(Path(directory), {**RUST_CRATES, crate: []})
+                manifest = root / crate / "Cargo.toml"
+                manifest.write_text(manifest.read_text() + declaration + "\n")
+                key = declaration.split(" ", 1)[0]
+                self.assertEqual(rust_check(root), (1, f"mismatched path dependency: {crate} -> {key}\n"))
+        with TemporaryDirectory() as directory:  # the declared name is judged too: profile -> ve (layer 4)
+            root = rust_workspace(Path(directory))
+            manifest = root / "ve-profile" / "Cargo.toml"
+            manifest.write_text(manifest.read_text() + 'cli = { package = "ve", path = "../ve-kernel" }\n')
+            self.assertEqual(rust_check(root), (1, "mismatched path dependency: ve-profile -> cli\n"
+                                                   "outward crate dependency: ve-profile -> ve\n"))
+
+    def test_a_missing_workspace_dependency_is_named_by_cargo(self):
+        # DELTA T2 (R1): cargo's message keeps the crate's manifest and the key the old message quoted.
+        with TemporaryDirectory() as directory:
+            root = rust_workspace(Path(directory))
+            manifest = root / "ve-profile" / "Cargo.toml"
+            manifest.write_text(manifest.read_text() + "absent.workspace = true\n")
+            code, error = rust_check(root)
+            self.assertEqual(code, 1)
+            self.assertTrue(error.startswith("cannot read the Rust workspace: cargo metadata failed: "), error)
+            self.assertIn(str(manifest), error)
+            self.assertIn("`absent`", error)
+
+    def test_the_facade_holds_only_re_exports(self):
+        # Review F3: an inline module, or any other item, in the facade's lib.rs fails; only `pub use`
+        # items of the facade's own dependencies, their attributes, lint attributes and comments pass.
+        real = (layer_policy.ROOT / "rust/ve-core/src/lib.rs").read_text()
+        kept = ["", real, "// a comment\n\npub use ve_kernel::Document;\n",
+                '#[cfg(feature = "x")]\n#[doc(hidden)]\npub use ve_profile::{evaluate, order_case};\n',
+                "pub use ve_kernel::{\n    Document, Edge,\n    // pub mod hidden {}\n    Term,\n};\n",
+                "//! mod x { } is text here\n#![forbid(unsafe_code)]\npub use ve_kernel::wire::Thing;\n"]
+        rejected = {
+            "pub mod extra {\n    pub fn f() {}\n}\n": 1,
+            "pub use ve_kernel::Document;\nmod extra;\n": 2,
+            '#[path = "../../ve-kernel/src/ast.rs"]\nmod ast;\n': 1,
+            "pub fn f() {}\n": 1, "pub struct S;\n": 1, "pub const C: u8 = 1;\n": 1, "impl S {}\n": 1,
+            "macro_rules! m { () => {} }\n": 1, 'include!("x.rs");\n': 1, "extern crate std;\n": 1,
+            "use ve_kernel::Document;\n": 1, "pub(crate) use ve_kernel::Document;\n": 1,
+            "pub use ve_kernel::*;\n": 1, "pub use ve_kernel::Document as D;\n": 1,
+            "pub use crate::extra::f;\n": 1, "pub use std::fmt;\n": 1, "pub use ve::Thing;\n": 1,
+            "pub use ve_kernel::Document; mod extra {}\n": 1, "pub use ve_kernel::{\n    Document, mod x {}\n};\n": 2,
+            "pub use ve_kernel::{\n    Document,\n": 3, "/* */ pub mod extra {}\n": 1, "/*\npub use ve_kernel::A;\n*/\n": 1,
+            "pub use r#ve_kernel::Document;\n": 1, "pub use ve_kernel::Documеnt;\n": 1,
+            "pub use ve_kernel::Document;\r\nmod extra;\r\n": 1, "﻿pub use ve_kernel::Document;\n": 1,
+            "// \rmod x {}\npub use ve_kernel::Document;\n": 1, "#[doc(hidden)]\n": 2,
+            "pub use ve_kernel::Document;\n#![forbid(unsafe_code)]\n": 2,
+            '#[cfg_attr(all(), path = "x.rs")]\npub use ve_kernel::Document;\n': 1,
+            '#[doc = include_str!("x")]\npub use ve_kernel::Document;\n': 1,
+        }
+        for source in kept + list(rejected):
+            with self.subTest(source), TemporaryDirectory() as directory:
+                root = rust_workspace(Path(directory))
+                (root / "ve-core/src/lib.rs").write_text(source, newline="")
+                code, error = rust_check(root)
+                if source in kept:
+                    self.assertEqual((code, error), (0, ""))
+                else:
+                    self.assertEqual(code, 1)
+                    self.assertTrue(error.startswith(f"line {rejected[source]} of the ve-core facade is not part of a "
+                                                     "re-export: "), error)
+
     def test_unreadable_rust_workspace_fails(self):
         with TemporaryDirectory() as directory:
             root = rust_workspace(Path(directory))
