@@ -449,13 +449,9 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
         active = active_reading_sets(meta.get("reading_sets", []))
         if "norm-defaults@0" in env.profiles:
             from .norm_defaults import UnspecifiedDocument
-            defaults_env = env
-            if "readings@1" in env.profiles:
-                lowered = env.to_dict()
-                lowered["profiles"] = [p for p in lowered["profiles"] if p != "readings@1"]
-                defaults_env = Environment(lowered)
-            norm_defaults = UnspecifiedDocument(defaults_env, [u["content"] for u in compiled
-                                                                if u["kind"] == "norm" and u["content"] is not None])
+            attached = _s1_attached(base_environment(meta), meta)
+            norm_defaults = UnspecifiedDocument(_defaults_environment(env),
+                                                _free_norms(compiled, active, attached))
             norms = None
         else:
             norm_defaults = None
@@ -473,8 +469,7 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
             readings_s2 = elaborate_s2(env.to_dict(), compiled, reading_sets,
                                        couplings=meta.get("couplings", []),
                                        narrowings=meta.get("narrowings", []))
-        reading_plan = plan_choices([r for r in active if r["status"] == "open"],
-                                    couplings=meta.get("couplings", []))
+        reading_plan = _reading_plan(active, meta.get("couplings", []))
     except CheckerUnavailable:
         raise
     except Exception as exc:  # noqa: BLE001 - a document Lean accepted that Python cannot build is a bug
@@ -805,9 +800,8 @@ def _load_document(raw: bytes, path: str | Path, lean):
             if unit.pop("explicit_status") not in (None, unit["status"]):
                 raise VEError("unit status contradicts content, meaning, or active reading set")
     reading_units = {r["unit"] for r in active}
-    norm_units = [u for u in compiled if u["kind"] == "norm"
-                  and type(u["content"]) is dict and "norm" in u["content"]]
-    quoted_norms.extend(u["content"] for u in norm_units if u["id"] in reading_units)
+    quoted_norms.extend(u["content"] for u in compiled if u["kind"] == "norm" and u["id"] in reading_units
+                        and type(u["content"]) is dict and "norm" in u["content"])
     if quoted_norms:
         if not soft_enabled:
             from .norm_admission import _check_quoted
@@ -815,8 +809,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
                 _check_quoted(env, content)
         # Soft quoted norms were checked as single units by decode_rule above;
         # they are not members of the active soft document or its layer premises.
-    # Under readings@1, fixed units attached to an open set are checked in its candidates' documents (S1 1.3).
-    selected_norms = [u["content"] for u in norm_units if u["id"] not in reading_units and u["id"] not in attached]
+    selected_norms = _free_norms(compiled, active, attached)
     norms = (NormDocument(env, selected_norms)
              if not soft_enabled and (selected_norms or any(d.regulated is not None for d in env.predicates.values()))
              else None)
@@ -824,15 +817,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
     if defaults_enabled:
         # norm-defaults 2.3: the layers are those of `fill U`, over E‴ with Fill_T.
         from .norm_defaults import UnspecifiedDocument, validate_completions
-        defaults_env = env
-        if "readings@1" in env.profiles:
-            # The free norms are the lower route's document, read with `readings@1` stripped as Lean's readings
-            # route hands every other kind down (`Readings.Run.runLower`): the W2 route of a non-content-bearing
-            # set, and the norm-defaults document beside content-bearing sets (the readings route admits those).
-            lowered = env.to_dict()
-            lowered["profiles"] = [p for p in lowered["profiles"] if p != "readings@1"]
-            defaults_env = _environment(lowered)
-        norm_defaults = UnspecifiedDocument(defaults_env, selected_norms)
+        norm_defaults = UnspecifiedDocument(_defaults_environment(env), selected_norms)
         validate_completions(norm_defaults, meta.get("completions", {}), unit_ids)
         norms = None
     if "lemmas" in meta and type(meta["lemmas"]) is not list:
@@ -860,15 +845,42 @@ def _load_document(raw: bytes, path: str | Path, lean):
            "reports": reports, "rights_document": rights_document,
            "readings_s1": readings_s1,
            "readings_s2": readings_s2,
-           "reading_plan": plan_choices(active if couplings else
-                                        [r for r in active if r["status"] == "open"],
-                                        couplings=couplings)}
+           "reading_plan": _reading_plan(active, couplings)}
     if meta["format"] == "ve-document@2":
         doc["discourse"] = validate_discourse(doc, lean)
         for unit in compiled:
             if unit.pop("explicit_status") not in (None, unit["status"]):
                 raise VEError("unit status contradicts content, meaning, or active reading set")
     return doc
+
+
+def _free_norms(units, active, attached):
+    """`selected_norms`, for both of `load_document`'s paths: the rules of the free norm document are the units of
+    kind `norm` with norm content, under no active reading set and attached to no open set. A quoted unit, or one
+    under an active set, is checked alone (`_check_quoted`); under `readings@1` an attached unit is checked in its
+    set's candidates' documents (S1 1.3). Lean's document mode reads the same roles (`Service.Document.freeNorms`,
+    over `Norms.Admission.normRole`)."""
+    held = {r["unit"] for r in active}
+    return [u["content"] for u in units if u["kind"] == "norm" and type(u["content"]) is dict
+            and "norm" in u["content"] and u["id"] not in held and u["id"] not in attached]
+
+
+def _defaults_environment(env):
+    """The environment of the free norm-defaults document. Under `readings@1` it is the lower route's, read with
+    the profile stripped as Lean's readings route hands every other kind down (`Readings.Run.runLower`): the W2
+    route of a non-content-bearing set, and the norm-defaults document beside content-bearing sets."""
+    if "readings@1" not in env.profiles:
+        return env
+    lowered = env.to_dict()
+    lowered["profiles"] = [p for p in lowered["profiles"] if p != "readings@1"]
+    return _environment(lowered)
+
+
+def _reading_plan(active, couplings):
+    """The reading plan for both paths: with couplings over every active set (a coupling may name an authored
+    one), else over the open sets."""
+    return plan_choices(active if couplings else [r for r in active if r["status"] == "open"],
+                        couplings=couplings)
 
 
 def _fixed_and_active(doc):

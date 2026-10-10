@@ -539,6 +539,8 @@ structure SourceUnit where
   content : Option UnitContent := none
   meaningId : Option String := none
   explicit : Option String := none
+  /-- The role of norm content by the unit's kind (`Norms.Admission.normRole`), over the decoded node's JSON. -/
+  norm : Option VE.Norms.Admission.NormContent := none
 
 /-! The answer's units are typed (`RowUnit`): each field is rendered from a decoded value, so the response schema
 names every field's domain and the encoder's theorems (`ResponseShape.Encoders.Document.unit_fits`) prove the
@@ -689,7 +691,7 @@ def sourceUnit (E : Env) (source : String) (fences : List (String × String)) (l
     throw "unit spans must partition every source byte in order"
   if Loader.cutsCharacter source a b then throw "unit span cuts a UTF-8 character"
   let kind := u.getObjValD "kind"
-  let _ ← VE.Route.Admission.decodeKind 16 kind
+  let decodedKind ← VE.Route.Admission.decodeKind 16 kind
   let meaning := u.getObjValD "meaning"
   let meaningStatus ← Loader.meaningStatus openNames meaning (python := true)
   let support := (u.getObjValD "support").getStr?.toOption.getD ""
@@ -698,8 +700,9 @@ def sourceUnit (E : Env) (source : String) (fences : List (String × String)) (l
     | .ok .null => pure none
     | .ok content => some <$> contentOf E fences lexicon u id content
     | .error _ => pure none
-  if let some (.norm _) := compiled.map Prod.fst then
-    unless kind == .str "norm" do throw "norm content requires a norm or quoted kind"
+  let norm ← match compiled.map Prod.fst with
+    | some (.norm n) => some <$> VE.Norms.Admission.normRole decodedKind (VE.Alternatives.Wire.encodeNode n)
+    | _ => pure none
   if let .arr xs := kind then
     if xs[0]? == some (.str "unformalised") && meaning != Json.mkObj [("unformalised", xs[1]?.getD .null)] then
       throw s!"InvalidInput: unformalised kind reason does not match meaning of {id}"
@@ -712,7 +715,7 @@ def sourceUnit (E : Env) (source : String) (fences : List (String × String)) (l
     | .ok .null => pure none
     | .ok _ => throw "invalid unit status"
     | .error _ => pure none
-  pure { id, span := (a, b), kind, meaning, support, parent, explicit,
+  pure { id, span := (a, b), kind, meaning, support, parent, explicit, norm,
          content := compiled.map Prod.fst, meaningId := compiled.map Prod.snd,
          status := Loader.w2Status compiled.isSome meaningStatus }
 
@@ -947,8 +950,11 @@ def admitGraph (E : Env) (front graph : Json) (units : List SourceUnit) (all act
             throw "reading choice conflicts with narrowing"
 
 /-- The readings route admits and validates the candidate documents. This projection carries only the W2 wrapper's
-set ids, active statuses and asserted candidate formulas. A norm or pending candidate contributes no W2 formula. -/
-def readingsSets (E : Env) (front : Json) (units : List SourceUnit) : Except String (List (FrontSet × List Bool)) := do
+set ids, active statuses and asserted candidate formulas. A norm or pending candidate contributes no W2 formula.
+Beside the sets: the fixed units attached to an open set (S1 1.3, `Readings.attached` on the route's own decoding of
+the same document, Python `_s1_attached`), which the free document leaves out. -/
+def readingsSets (E : Env) (front : Json) (units : List SourceUnit) :
+    Except String (List (FrontSet × List Bool) × List String) := do
   let rawSets ← match Loader.optionalList front "reading_sets" with
     | .arr xs => pure xs.toList
     | _ => throw "reading_sets must be a list"
@@ -969,7 +975,10 @@ def readingsSets (E : Env) (front : Json) (units : List SourceUnit) : Except Str
     ("reading_sets", Loader.optionalList front "reading_sets")]
   let _ ← VE.Readings.Run.runCase (Json.mkObj [("id", .str "readings"),
     ("kind", .str "readings-validate"), ("environment", E.json), ("document", document)])
-  rawSets.mapM fun setJson => do
+  let re ← VE.Readings.Wire.decodeEnvironment E.json
+  let D := VE.Readings.Wire.docOf re (← VE.Readings.Wire.decodeDocument re document)
+  let attached := (VE.Readings.fixedNames D).filter fun u => !(VE.Readings.attached D u).isEmpty
+  let sets ← rawSets.mapM fun setJson => do
     let set ← VE.Readings.Wire.decodeSet setJson
     if let some found := w2.find? fun (r, _) => r.id == set.id && r.version == set.version then
       return found
@@ -980,6 +989,37 @@ def readingsSets (E : Env) (front : Json) (units : List SourceUnit) : Except Str
       pure (r.id, f)
     let kinds := set.readings.map fun r => r.kind == some "asserted" && r.content != .null
     pure (⟨set.id, set.unit, set.version, set.status, readings⟩, kinds)
+  pure (sets, attached)
+
+/-- `_free_norms` (`ve/document.py`): the rules of the free norm-defaults document are the norm units whose role
+(`Norms.Admission.normRole`) is in force, under no active reading set (`setUnits`) and attached to no open set. The
+rest are checked alone, as `_check_quoted` checks them: the quoted units in source order, then the in-force units
+under an active set. An attached unit is checked in its set's candidate documents (the readings route). -/
+def freeNorms (units : List SourceUnit) (setUnits attached : List String) : List Json × List Json :=
+  let free := units.filterMap fun u => match u.norm with
+    | some (.active c) => if setUnits.contains u.id || attached.contains u.id then none else some c
+    | _ => none
+  let quoted := units.filterMap fun u => match u.norm with
+    | some (.quoted c) => some c
+    | _ => none
+  let held := units.filterMap fun u => match u.norm with
+    | some (.active c) => if setUnits.contains u.id then some c else none
+    | _ => none
+  (free, quoted ++ held)
+
+/-- `load_document`'s norm-defaults steps: each single rule checked over the source environment
+(`NormDefaults.Admission.checkQuoted`, which reads only the environment), then the free document decoded and the
+`completions` block validated against it. -/
+def checkNormDefaults (E : Env) (front : Json) (units : List SourceUnit) (setUnits attached : List String) :
+    Except String Unit := do
+  let environment := if E.profiles.contains "readings@1" then lowerReadings E.json else E.json
+  let (free, single) := freeNorms units setUnits attached
+  unless single.isEmpty do
+    let base ← VE.NormDefaults.Wire.decodeSourceU environment (Json.arr #[])
+    single.forM (VE.NormDefaults.Admission.checkQuoted base)
+  let source ← VE.NormDefaults.Wire.decodeSourceU environment (Json.arr free.toArray)
+  let block := (front.getObjVal? "completions").toOption.getD (Json.mkObj [])
+  let _ ← VE.NormDefaults.Wire.validateCompletions source.U block (units.map (·.id))
 
 /-! ## The case -/
 
@@ -1018,23 +1058,17 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
     if (u.getObjValD "content").getObjValD "fence" == .str (id.getD "") then id else none
   unless (doc.fences.map Prod.fst).all used.contains do throw "unbound VE fence"
   let unitIds := units.map (·.id)
-  if E.profiles.contains "norm-defaults@0" then
-    let normUnits := units.filterMap fun u => match u.content with
-      | some (.norm n) => some (VE.Alternatives.Wire.encodeNode n)
-      | _ => none
-    let source ← VE.NormDefaults.Wire.decodeSourceU
-      (if E.profiles.contains "readings@1" then lowerReadings E.json else E.json)
-      (Json.arr normUnits.toArray)
-    let block := (front.getObjVal? "completions").toOption.getD (Json.mkObj [])
-    let _ ← VE.NormDefaults.Wire.validateCompletions source.U block unitIds
-  let all ← if E.profiles.contains "readings@1" then readingsSets E front units else
-    Loader.compileSets E.rv E.profiles E.envId unitIds (Loader.optionalList front "reading_sets")
+  let (all, attached) ← if E.profiles.contains "readings@1" then readingsSets E front units else do
+    let sets ← Loader.compileSets E.rv E.profiles E.envId unitIds (Loader.optionalList front "reading_sets")
       (python := true) (formula := formulaCheck E)
       (modelRefused := some (unavailable "a distinguishing model the Lean model decoder refuses"))
+    pure (sets, [])
   let active := Loader.activeOf all
   let units := units.map fun u => { u with status := Loader.foldStatus active u.id u.status }
   if units.any (fun u => u.explicit.any (· != u.status)) then
     throw "unit status contradicts content, meaning, or active reading set"
+  if E.profiles.contains "norm-defaults@0" then
+    checkNormDefaults E front units (active.map (·.1.unit)) attached
   Loader.checkLemmas front
   for u in units do
     if u.kind == .str "asserted" && u.content.isNone && !(all.any (·.1.unit == u.id)) then

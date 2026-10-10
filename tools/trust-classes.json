@@ -4700,7 +4700,8 @@
       ],
       "D[V]": [
         "VE.Norms.Admission.checkQuoted",
-        "VE.Norms.Admission.instDecidableLayerLeaf"
+        "VE.Norms.Admission.instDecidableLayerLeaf",
+        "VE.Norms.Admission.normRole"
       ],
       "G[V]": [
         "VE.Norms.Admission.envelopeGate"
@@ -8542,10 +8543,14 @@
         "VE.Service.Document.reasons",
         "VE.Service.Document.rowOf",
         "VE.Service.Document.runCaseReported",
-        "VE.Service.Document.unitJson"
+        "VE.Service.Document.unitJson",
+        "VE.Service.Document.freeNorms"
       ],
       "D[I]": [
         "VE.Service.Document.documentId"
+      ],
+      "G[R]": [
+        "VE.Service.Document.checkNormDefaults"
       ]
     },
     "VE/Service/EnglishRun.lean": {
