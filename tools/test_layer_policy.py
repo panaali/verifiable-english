@@ -485,13 +485,11 @@ class LayerSelectionTests(unittest.TestCase):
             root = rust_workspace(Path(directory), {**RUST_CRATES, "ve-extra": []})
             self.assertEqual(rust_check(root), (1, "unmapped crates: ['ve-extra']\n"))
         with TemporaryDirectory() as directory:
-            root = rust_workspace(Path(directory))
-            rust_workspace(root / "outside", {"ve-kernel": []})  # a crate of another workspace
+            root = rust_workspace(Path(directory) / "workspace")
+            rust_workspace(Path(directory) / "outside", {"helper": []})  # a crate of another workspace
             manifest = root / "ve-profile" / "Cargo.toml"
-            manifest.write_text(manifest.read_text() + 'other = { package = "ve-kernel", '
-                                                       'path = "../outside/ve-kernel" }\n')
-            self.assertEqual(rust_check(root),
-                             (1, "path dependency outside the workspace: ve-profile -> ve-kernel\n"))
+            manifest.write_text(manifest.read_text() + 'helper = { path = "../../outside/helper" }\n')
+            self.assertEqual(rust_check(root), (1, "path dependency outside the workspace: ve-profile -> helper\n"))
 
     def test_unreadable_rust_workspace_fails(self):
         with TemporaryDirectory() as directory:
