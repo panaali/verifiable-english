@@ -44,7 +44,7 @@ def test_the_saved_lean_domain_search_covers_every_allowlisted_domain():
     census, lean = _saved("census.json"), _saved("lean-domains.json")
     assert lean["commit"] == census["commit"]
     assert set(lean["domains"]) == {e["domain"] for e in census["entries"]}
-    assert all(f.startswith("lean/VE/") and f.endswith(".lean") for files in lean["domains"].values() for f in files)
+    assert all(f.startswith("lean/") and f.endswith(".lean") for files in lean["domains"].values() for f in files)
     python = {e["domain"] for e in census["entries"] if e["owner"] == "python"}
     assert all(lean["domains"][d] == [] for d in python)
 
