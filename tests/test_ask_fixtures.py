@@ -132,8 +132,13 @@ def test_a_case_of_another_document_is_not_this_documents():
     g1 = AF.load("G1")
     swapped = copy.deepcopy(g1)
     swapped["case"] = AF.load("U6")["case"]
-    with pytest.raises((CheckerUnavailable, VEError)):
+    with pytest.raises(CheckerUnavailable, match="the case is not this document's"):
         AF.replay(swapped)
+    # An environment the replay could not even decode is refused as another document's, before the replay.
+    undecodable = copy.deepcopy(g1)
+    undecodable["case"]["environment"]["vocabulary"]["constants"]["cy"] = {"sort": "nosuch", "description": "x"}
+    with pytest.raises(CheckerUnavailable, match="another environment"):
+        AF.replay(undecodable)
     edited = copy.deepcopy(g1)
     edited["case"]["document"]["units"][0]["content"] = ["unary", "verified", ["const", "bo"]]
     with pytest.raises(CheckerUnavailable, match="a unit differs"):

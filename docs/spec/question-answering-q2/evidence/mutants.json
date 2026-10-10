@@ -1,0 +1,113 @@
+{
+  "mutants": [
+    {
+      "id": "lean-lead-yes-without-model",
+      "language": "Lean",
+      "file": "lean/VE/Ask/Basic.lean",
+      "behaviour": "answer soundness: yes needs a model of the premises (lead_sound)",
+      "test": [
+        "lake",
+        "build",
+        "VE.Ask.Sound"
+      ],
+      "caught": true,
+      "evidence": [
+        "error: VE/Ask/Sound.lean:15:67: unsolved goals",
+        "error: Lean exited with code 1",
+        "error: build failed"
+      ]
+    },
+    {
+      "id": "lean-cited-reversed",
+      "language": "Lean",
+      "file": "lean/VE/Ask/Run.lean",
+      "behaviour": "citation exactness, in segment order: a row cites its sources in the certificate's order",
+      "test": [
+        "tests/test_ask_fixtures.py::test_a_recorded_answer_replays_and_says_what_the_spec_says[G1]"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_ask_fixtures.py::test_a_recorded_answer_replays_and_says_what_the_spec_says[G1]"
+      ]
+    },
+    {
+      "id": "lean-gaps-dropped",
+      "language": "Lean",
+      "file": "lean/VE/Ask/Run.lean",
+      "behaviour": "not settled: a refuted row names the gaps its countermodel turns on, for the split",
+      "test": [
+        "tests/test_ask_fixtures.py::test_a_recorded_answer_replays_and_says_what_the_spec_says[U3]"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_ask_fixtures.py::test_a_recorded_answer_replays_and_says_what_the_spec_says[U3]"
+      ]
+    },
+    {
+      "id": "lean-evidence-unbound",
+      "language": "Lean",
+      "file": "lean/VE/Ask/Wire.lean",
+      "behaviour": "request binding: every evidence entry names a compatible choice, once",
+      "test": [
+        "tests/test_ask_relay.py::test_lean_refuses_a_request_not_bound_to_its_document"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_ask_relay.py::test_lean_refuses_a_request_not_bound_to_its_document[an evidence entry twice-<lambda>-names no compatible]"
+      ]
+    },
+    {
+      "id": "lean-environment-unbound",
+      "language": "Lean",
+      "file": "lean/VE/Ask/PlainWire.lean",
+      "behaviour": "request binding: the plain case's environment is the document's",
+      "test": [
+        "tests/test_ask_fixtures.py::test_a_case_of_another_document_is_not_this_documents"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_ask_fixtures.py::test_a_case_of_another_document_is_not_this_documents"
+      ]
+    },
+    {
+      "id": "python-choice-unbound",
+      "language": "Python",
+      "file": "ve/ask.py",
+      "behaviour": "relay binding: a row's choice names the request's open sets, each once, in order",
+      "test": [
+        "tests/test_ask_relay.py::test_every_id_rebound_is_refused"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_ask_relay.py::test_every_id_rebound_is_refused[U3] - Assert..."
+      ]
+    },
+    {
+      "id": "python-text-unbound",
+      "language": "Python",
+      "file": "ve/ask.py",
+      "behaviour": "relay binding: the answer's text is its lines' text",
+      "test": [
+        "tests/test_ask_relay.py::test_every_id_rebound_is_refused"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_ask_relay.py::test_every_id_rebound_is_refused[G1] - Assert..."
+      ]
+    },
+    {
+      "id": "python-statement-text-ignored",
+      "language": "Python",
+      "file": "tools/question_statements.py",
+      "behaviour": "statement check: a Q2 statement whose text differs from the approved text fails",
+      "test": [
+        "tests/test_question_statements.py::test_a_changed_statement_or_definition_fails"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_question_statements.py::test_a_changed_statement_or_definition_fails"
+      ]
+    }
+  ],
+  "all_caught": true
+}
