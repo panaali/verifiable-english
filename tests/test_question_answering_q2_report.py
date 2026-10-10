@@ -1,0 +1,97 @@
+"""Question answering Q2's report numbers come from its saved evidence (docs/spec/question-answering-q2/evidence/),
+never from live git: the generated block of REPORT.md is regenerated from the saved files, the prose numbers are
+checked against the same files, and the evidence itself must show what the build checklist asks for (build checklist
+20). The commit list is `main..HEAD --no-merges` as saved at capture, so the tests still hold after syncs with main
+and after the merge."""
+from __future__ import annotations
+
+import json
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+HERE = ROOT / "docs/spec/question-answering-q2"
+sys.path.insert(0, str(HERE))
+
+import report  # noqa: E402
+
+
+def test_generated_block_is_the_saved_evidence():
+    text = (HERE / "REPORT.md").read_text()
+    assert text[text.index(report.BEGIN):text.index(report.END) + len(report.END)] == report.block()
+
+
+def test_scope_is_a_saved_commit_list():
+    scope = report.load("scope.json")
+    assert scope["range"] == "main..HEAD --no-merges" and scope["captured_head"] in scope["commits"]
+    assert all(re.fullmatch(r"[0-9a-f]{40}", c) for c in [scope["base"], *scope["commits"]])
+    assert len(set(scope["commits"])) == len(scope["commits"])
+    assert {row["commit"] for row in scope["numstat"]} <= set(scope["commits"])
+    metrics = report.metrics()
+    assert metrics["Lean"]["added"] > 0 and metrics["Python (product)"]["added"] > 0
+    assert metrics["Rust"]["files"] == 0
+    assert metrics["ask_theorems"] > 0
+
+
+def test_the_prose_numbers_are_the_evidence():
+    """The report's prose cites the same counts the evidence holds."""
+    text = (HERE / "REPORT.md").read_text()
+    prose = text[:text.index(report.BEGIN)]
+    statements = report.load("statements.json")
+    assert statements["exit"] == 0
+    assert "Q2 statements: 27 of 27 implemented; 0 missing; 0 differ in text" in statements["output"]
+    assert any(line.endswith("elaborated against the implementation; PASS") for line in statements["output"])
+    assert "27 approved theorems" in prose and "41 approved statements and signatures" in prose
+    mutants = report.load("mutants.json")["mutants"]
+    assert f"{len(mutants)} seeded bugs" in prose
+    fixtures = report.load("fixtures.json")["fixtures"]
+    assert f"{len(fixtures)} recorded fixtures" in prose
+
+
+def test_every_seeded_bug_was_caught_in_each_changed_language():
+    scope = report.load("scope.json")
+    changed = {row["path"] for row in scope["numstat"]}
+    mutants = report.load("mutants.json")["mutants"]
+    assert len(mutants) >= 3 and all(m["caught"] for m in mutants)
+    assert {m["language"] for m in mutants} == {"Lean", "Python"}
+    assert all(m["file"] in changed for m in mutants)
+    assert len({m["behaviour"] for m in mutants}) == len(mutants)
+
+
+def test_the_fixtures_are_answers_or_leans_refusals():
+    fixtures = report.load("fixtures.json")["fixtures"]
+    leads = {"yes", "no", "notSettled", "notNecessarily", "unknown", "by_reading"}
+    for f in fixtures:
+        if "error" in f:
+            assert f["id"] == "A1d" and f["error"] == "UnsupportedProfile"
+            continue
+        assert f["lead"] in leads and f["rows"] >= 1
+        assert (f["lead"] == "by_reading") == (len(f["row_leads"]) > 1) or f["route"] == "readings"
+        assert ("unknown" in f["row_leads"]) == bool(f["reasons"])
+    assert {f["route"] for f in fixtures if "route" in f} == {"readings", "plain", "norm-defaults"}
+
+
+def test_the_trust_growth_is_the_saved_budget():
+    trust = report.load("trust.json")
+    assert trust["base"]["K"] == trust["head"]["K"]
+    assert trust["head"]["S"] - trust["base"]["S"] == 183 and trust["head"]["V"] - trust["base"]["V"] == 598
+    delta = (HERE / "DELTA.md").read_text()
+    assert "S 9,704 → 9,887 (+183), V 36,289 → 36,887 (+598)" in delta
+
+
+def test_every_delta_row_has_its_status():
+    rows = [line for line in (HERE / "DELTA.md").read_text().splitlines() if re.match(r"\| D\d+ \|", line)]
+    assert len(rows) == 12
+    for row in rows:
+        assert "DRI signature needed" in row or re.search(r"SIGNED by standing ruling R\d+", row), row[:60]
+
+
+def test_the_saved_gate_passed_on_a_clean_tree():
+    gate = report.EVIDENCE / "gate-result.json"
+    if not gate.exists():
+        return  # saved after the gate; the block says so (`report.block`)
+    result = json.loads(gate.read_text())
+    assert result["status"] == "passed" and result["dirty"] is False
+    assert re.fullmatch(r"[0-9a-f]{40}", result["commit_sha"])
+    assert result["counts"]["passed"] > 0 and result["counts"].get("failed", 0) == 0

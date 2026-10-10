@@ -1,7 +1,7 @@
 # Question answering Q2: builder's progress notes (working file)
 
 Branch `question-answering/q2`, base `main` at `f0547468`. This file records decisions and state so the batch can be
-resumed; the final report is `docs/spec/question-answering-q2-report.md`.
+resumed; the final report is `docs/spec/question-answering-q2/REPORT.md`, the deltas `docs/spec/question-answering-q2/DELTA.md`.
 
 ## Decisions
 
@@ -39,12 +39,6 @@ resumed; the final report is `docs/spec/question-answering-q2-report.md`.
 
 ## State
 
-- Q2.1 Lean core: done (`bbbe98a4`).
-- Q2.2 wire: readings (`d2dcdac3`), plain (`67ce1427`), zero-set (`37873d82`).
-- Q2.3 render: done (`d1206f99`, `83181710`), all approved render statements proved.
-- Q2.5 `ve ask`: CLI works on G1, G3, G4, G10, U2, U3, U5, U6, U7 (`37873d82`).
-- To do: typed response schema + fits proof; tests (fixtures, fuzz retype/rebind, binding negatives, Lean
-  `#guard`s); agent evidence builder; registration (Audit.lean, axioms, statements, trust, gate collection, layer
-  policy, relay lint); seeded bugs; DELTA.md; report; gate.
-- Measured fixture outcomes differing from the spec's *derived* ones: U7 (four of six readings X4: the search found
-  no countermodel within its limits).
+- Q2.1, Q2.2 (three routes), Q2.3 and Q2.5: done; all approved statements proved (`tools/question_statements.py --q2`).
+- Tests, schema, relay binding, seeded bugs, report and DELTA: done (`docs/spec/question-answering-q2/`).
+- Not done: Q2.4 (one owner of situation wording), Q2.6's evaluation, latency and W2 agreement (REPORT.md, "Not done").
