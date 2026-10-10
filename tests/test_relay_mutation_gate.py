@@ -56,6 +56,15 @@ def test_every_field_gets_every_mutation_class():
     assert rebound[("id",)]["id"] == G.FRESH and rebound[("count",)]["count"] == 3
 
 
+def test_fields_near_the_top_are_also_replaced_by_a_deep_array():
+    found = G.mutants({"a": {"b": {"c": 1}}}, set(), {}, deep_depth=2)
+    deep = {m.pattern() for m, _ in found if m.value == "deep"}
+    assert deep == {"a", "a/b"}
+    mutant, value = next((m, v) for m, v in found if m.value == "deep" and m.pattern() == "a/b")
+    text = G._text(mutant, value)
+    assert text.startswith('{"a":{"b":' + "[" * G.DEEP_LEVELS) and text.count("]") == G.DEEP_LEVELS
+
+
 def test_a_duplicated_key_is_written_twice_in_the_line():
     found = [(m, value) for m, value in G.mutants({"a": {"x": 1, "y": 2}}, set(), {})
              if m.kind == "duplicate" and m.duplicate_key]

@@ -174,8 +174,8 @@
   {
    "id": "M18",
    "file": "docs/merge-tooling.md",
-   "find": "| mutants | 93939 |",
-   "replace": "| mutants | 93938 |",
+   "find": "| mutants | 103041 |",
+   "replace": "| mutants | 103040 |",
    "tests": [
     "tests/test_merge_tooling_evidence.py::test_gate_numbers_come_from_the_saved_report"
    ],
