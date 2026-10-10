@@ -75,14 +75,6 @@ def _kind(value: object) -> str:
 _MISSING = object()
 
 
-def _fol_entry(declaration: dict) -> bool:
-    """`VE.Core.Layers.folEntry`: a predicate declaration in the FOL projection (at most two
-    arguments; a non-array `arguments` counts as none), the projection every regenerated
-    Background is built from."""
-    arguments = declaration.get("arguments")
-    return len(arguments) <= 2 if isinstance(arguments, list) else True
-
-
 def _resolve(root: object, pointer: str) -> object:
     """The value at a JSON pointer; `*` maps the rest over an array. `_MISSING` if absent."""
     tokens = [t.replace("~1", "/").replace("~0", "~") for t in pointer.split("/")[1:]] if pointer else []
@@ -433,31 +425,17 @@ class Compiler:
                 _fail("steps exceed the request's max_steps")
         return check
 
-    def _x_background_count(self, route, schema, base):
+    def _x_background_bound(self, flag, schema, base):
         def check(value, ctx, fuel):
-            env = _resolve(ctx.value, "/environment")
             predicates = _resolve(ctx.value, "/environment/vocabulary/predicates")
             constants = _resolve(ctx.value, "/environment/vocabulary/constants")
-            if not isinstance(predicates, dict) or not isinstance(constants, dict) or not isinstance(env, dict):
-                _fail("background differs from the request vocabulary")
-            fol = [p for p in predicates.values() if isinstance(p, dict) and _fol_entry(p)]
-            flags = sum(p.get("functional") is True for p in fol) + sum(p.get("total") is True for p in fol)
-            definitions = sum("defined" in p for p in fol)
-            pairs = sum(isinstance(p.get("regulated"), dict) and p["regulated"].get("role") == "obligation" and
-                        isinstance(p["regulated"].get("permission"), str) for p in fol)
-            literals = sum(isinstance(c, dict) and c.get("sort") == "$string" for c in constants.values())
-            profiles = env.get("profiles")
-            order = isinstance(profiles, list) and "order@0" in profiles
-            extra = 0
-            if route == "norms" and ctx.value.get("kind") == "certificate":
-                extra = ctx.value.get("soft_premises", [])
-                if not isinstance(extra, list):
-                    _fail("background differs from the request vocabulary")
-                extra = len(extra)
-            expected = (0 if order else flags + definitions) + literals * (literals - 1) // 2 + (
-                pairs if route == "norms" else 0) + extra
-            if _kind(value) != "integer" or value != expected:
-                _fail("background differs from the request vocabulary")
+            soft = _resolve(ctx.value, "/soft_premises")
+            if not isinstance(predicates, dict) or not isinstance(constants, dict):
+                _fail("background exceeds what the request vocabulary generates")
+            bound = 4 * len(predicates) + len(constants) * (len(constants) - 1) // 2 + (
+                len(soft) if isinstance(soft, list) else 0)
+            if _kind(value) != "integer" or value > bound:
+                _fail("background exceeds what the request vocabulary generates")
         return check
 
     def _x_index(self, flag, schema, base):
@@ -558,7 +536,7 @@ class Compiler:
 _ORDER = ("$ref", "type", "enum", "const", "pattern", "minLength", "maxLength", "minimum", "required",
           "properties", "additionalProperties", "prefixItems", "items", "minItems", "maxItems",
           "contains", "anyOf", "allOf", "not", "if", "x-tagged", "x-echo", "x-equals", "x-length",
-          "x-count", "x-references", "x-claim-nodes", "x-max-steps", "x-background-count",
+          "x-count", "x-references", "x-claim-nodes", "x-max-steps", "x-background-bound",
           "x-index", "x-digest", "x-zip", "x-zip-or-empty", "x-case",
           "x-select", "x-count-where", "x-count-presence", "x-rows",
           "x-row")
