@@ -473,6 +473,12 @@ class LayerSelectionTests(unittest.TestCase):
                 code, error = rust_check(root)
                 self.assertEqual(code, 1)
                 self.assertTrue(error.startswith(f"module in the ve-core facade: {module}; "), error)
+        with TemporaryDirectory() as directory:  # cargo still reads a crate whose only targets are tests
+            root = rust_workspace(Path(directory))
+            (root / "ve-core/src/lib.rs").unlink()
+            (root / "ve-core/tests").mkdir()
+            (root / "ve-core/tests/t.rs").write_text("")
+            self.assertEqual(rust_check(root), (1, "the ve-core facade has no library target\n"))
 
     def test_unmapped_crates_and_outside_path_dependencies_are_rejected(self):
         with TemporaryDirectory() as directory:
