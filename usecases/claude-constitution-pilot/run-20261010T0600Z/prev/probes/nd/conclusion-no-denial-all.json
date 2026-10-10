@@ -1,0 +1,39 @@
+{
+  "choice": [
+    [
+      "force-u0036-s05",
+      0
+    ],
+    [
+      "modal-u0062-s01",
+      0
+    ],
+    [
+      "modal-u0123-s01-p1",
+      0
+    ],
+    [
+      "modal-u0123-s02-p1",
+      0
+    ],
+    [
+      "scope-modal-u0123-s03",
+      0
+    ],
+    [
+      "force-u0125-s04-p2",
+      1
+    ],
+    [
+      "force-u0156-s03",
+      0
+    ],
+    [
+      "force-u0263-s04-p2",
+      0
+    ]
+  ],
+  "route": "enumerated",
+  "verdict": "UNKNOWN",
+  "english": []
+}
