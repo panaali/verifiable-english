@@ -44,8 +44,9 @@ def capture() -> None:
             if added != "-":
                 numstat.append({"commit": commit, "path": path, "added": int(added), "deleted": int(deleted)})
     statements_diff = git("diff", f"{base}..{head}", "--", "lean/statements.txt")
-    new_theorems = sorted(line.split()[2] for line in statements_diff.splitlines()
-                          if line.startswith("+theorem "))
+    added = {line.split()[1] for line in statements_diff.splitlines() if line.startswith("+theorem ")}
+    removed = {line.split()[1] for line in statements_diff.splitlines() if line.startswith("-theorem ")}
+    new_theorems = sorted(added - removed)
     (EVIDENCE / "scope.json").write_text(json.dumps(
         {"range": "main..HEAD --no-merges", "base": base, "captured_head": head, "commits": commits,
          "numstat": numstat, "new_theorems": new_theorems}, indent=1) + "\n")
@@ -97,7 +98,7 @@ def block() -> str:
     for language in LANGUAGES:
         lines.append(f"| {language} | {m[language]['files']} | {m[language]['added']} | {m[language]['deleted']} |")
     lines += ["", "Recorded answers (`tests/fixtures/ask`, replayed by `tests/test_ask_fixtures.py`):", "",
-              "| Fixture | Route | Lead | Rows | Row leads | Reasons | Lean s |", "|---|---|---|---:|---|---|---:|"]
+              "| Fixture | Route | Lead | Rows | Row leads | Reasons | Replay s |", "|---|---|---|---:|---|---|---:|"]
     for f in load("fixtures.json")["fixtures"]:
         if "error" in f:
             lines.append(f"| {f['id']} | — | refused: {f['error']} | 0 | — | — | — |")
