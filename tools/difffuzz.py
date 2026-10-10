@@ -104,6 +104,22 @@ MINIMISE_EVALUATIONS = 3000
 MINIMISE_LIMIT = 40
 MINIMISE_BATCH = 200
 
+# The work one run does, counted where it is done (`spend`): inputs evaluated, Python calls, and the
+# requests and cases sent to each Lean or Rust runner, a batch split after a failure counted again. The
+# count, not the CPU it costs, bounds a run: CPU seconds grow with the machine's load, the count does not
+# (`fuzz` reports both; `tests/test_difffuzz.py` holds the CI run to WORK_LIMIT).
+WORK = {}
+# The CI run's limit on each count: about 1.25 times what the run on the sample of CI_BUDGET did on 2026-10-10
+# (26,676 inputs, 26,680 Python calls, 62 runner requests with 18,829 cases, 33 service requests with 15,255
+# cases), so that a runaway (batches split again and again, inputs evaluated twice, a Python call per engine)
+# fails it. A corpus that outgrows it raises it on purpose, as CI_BUDGET is changed.
+WORK_LIMIT = {"inputs": 33000, "python_calls": 33500, "runner_requests": 78, "runner_cases": 23500,
+              "service_requests": 42, "service_cases": 19000}
+
+
+def spend(kind, amount=1):
+    WORK[kind] = WORK.get(kind, 0) + amount
+
 
 def rust_binary() -> Path:
     if os.environ.get("VE_RUST_PREBUILT"):
@@ -483,6 +499,7 @@ def call_python(function, harness):
     reads is missing or mistyped) means the call cannot be made, and is not applicable. A call that
     spends its CPU budget is a `timeout`, which is a finding."""
     from ve.errors import VEError
+    spend("python_calls")
     try:
         with python_authority(), _cpu_alarm(PYTHON_CPU):
             return function()
@@ -521,6 +538,8 @@ class Refused:
 def _exchange(command, cases):
     """(completed process, None) for one batch, or (None, the reason the runner did not answer): it could
     not be started, it did not finish within HANG_TIMEOUT, or its output is not text."""
+    spend("runner_requests")
+    spend("runner_cases", len(cases))
     try:
         completed, _ = run_cpu_bounded([str(c) for c in command], json.dumps(cases, ensure_ascii=False),
                                        BATCH_CPU, env=CHILD_ENV)
@@ -563,6 +582,8 @@ def service_rows(command, cases):
         return []
     mode = SERVICE_MODES[Path(str(command[0])).name]
     sent = [{**case, "unit": str(command[1])} for case in cases] if mode == "diagnose" else cases
+    spend("service_requests")
+    spend("service_cases", len(cases))
     try:
         if not _SERVICE:
             _SERVICE.append(LeanService())
@@ -1358,6 +1379,8 @@ class EnvironmentSurface(Surface):
         service client against the service schemas; a batch the service does not answer well is split
         until the case is alone, and that case did not answer."""
         from ve.backends.lean_service import LeanService
+        spend("service_requests")
+        spend("service_cases", len(cases))
         try:
             if self._lean_service is None:
                 self._lean_service = LeanService(timeout=HANG_TIMEOUT)
@@ -1605,6 +1628,8 @@ class DocumentSurface(Surface):
     def lean(self, items):
         from conformance import document_wrapper as dw
         texts = [dw.text_of(root) for _, root in items]
+        spend("service_requests")
+        spend("service_cases", len(texts))
         try:
             if self._service is None:
                 from ve.backends.lean_service import LeanService
@@ -1750,6 +1775,7 @@ class Finding:
 def evaluate(surface, items):
     """(classes, projected, answers, signature) for each (seed, root), on its seed's engines."""
     out = []
+    spend("inputs", len(items))
     for (seed, root), answers in zip(items, surface.answers(items)):
         found, projected = classes(surface, seed, answers, root)
         profile = surface.profile(seed, root)
@@ -1936,12 +1962,15 @@ def fuzz(*, scale=1, rng_seed=20261004, surfaces=None, baseline_path=BASELINE, u
     self_cpu, child_cpu = time.process_time(), _children_cpu()
     names = list(surfaces or SURFACES)
     built = {name: SURFACES[name]() for name in SURFACES}
+    WORK.clear()
     try:
         report = _fuzz(built, names, scale, rng_seed, baseline_path, update, log)
     finally:
         for surface in built.values():
             surface.close()
-    # The children's CPU counts the processes that have ended, the Lean service among them.
+    report["work"] = dict(sorted(WORK.items()))
+    # Information only (WORK is the bound): the children's CPU counts the processes that have ended, the
+    # Lean service among them.
     report["cpu_seconds"] = {"python": round(time.process_time() - self_cpu, 1),
                              "children": round(_children_cpu() - child_cpu, 1)}
     return report
@@ -2047,7 +2076,7 @@ def main(argv=None):
     text = json.dumps(report, indent=1, ensure_ascii=False)
     if args.report:
         args.report.write_text(text + "\n")
-    summary = {k: report[k] for k in ("corpus", "mutants", "findings", "cpu_seconds", "passed")}
+    summary = {k: report[k] for k in ("corpus", "mutants", "findings", "work", "cpu_seconds", "passed")}
     summary["new"] = [{k: e[k] for k in ("id", "surface", "profile", "classes", "input", "answers")}
                       for e in report["new"]]
     summary["baseline"] = report["baseline"]
