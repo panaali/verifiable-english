@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from .errors import VEError
 from .readings_route import Wording, _article
+from .readings_s2_english import SITUATION_RESULTS
 
 
 def report_english(doc, route):
@@ -31,13 +32,14 @@ def query_english(doc, conclusion, data):
 class S2Wording:
     """2.1's slots on one document: sentence numbers, reading names, conclusions and pulled situations."""
 
-    def __init__(self, doc, route):
+    def __init__(self, doc, route, numbers=None):
         from . import readings_s2_english as E
         from .environment import wording_reserved_prefixes
         self.E = E
         self.doc, self.route = doc, route
-        self.s1 = Wording(doc)
-        self.numbers = {unit["id"]: n for n, unit in enumerate(doc["units"], 1)}
+        # One case of a split document is numbered as the whole document (readings-defaults RD-4b).
+        self.s1 = Wording(doc, numbers=numbers)
+        self.numbers = numbers or {unit["id"]: n for n, unit in enumerate(doc["units"], 1)}
         self.sets = route.sets
         self.set_number = {R.id: self.numbers[R.unit] for R in self.sets}
         self.names = {R.id: self.s1.reading_names(R.id) for R in self.sets}
@@ -472,6 +474,15 @@ class S2Wording:
                                    f"Under every reading of the {len(self.sets)} open sentences"):
                 raise CheckerUnavailable("ReadingsConformance: Lean's plan names the wrong every-reading frame")
             return text
+        if frame == "E30":
+            # readings-defaults 2.4 item 1: E26 for a sentence checked by itself.
+            [(s, _)] = readings
+            return E.every_result_of_sentence(self.set_number[s], kind, self.slots, conclusion=slot)
+        if frame == "E31":
+            [(s, _)] = readings
+            return E.checked_alone(self.set_number[s], self.slots)
+        if frame == "E32":
+            return E.each_alone(self.slots)
         if frame == "E12":
             return E.named_result(self.readings(readings), kind, self.slots, conclusion=slot)
         if frame == "E29":
@@ -543,7 +554,14 @@ class S2Wording:
 PAIR_LABEL = "unsaid:pair:"
 # The result ids of Lean's plan (`Readings.Line.result`) and the kinds `result_sentence` renders.
 PLAN_RESULTS = {"R1": "conflict_free", "R2": "follows", "R3": "countermodel", "R4": "conflict", "R5": "premise_model",
-                "R6": "inconsistent", "R7": "undecided"}
+                "R6": "inconsistent", "R7": "undecided", "R8": "conflict_unchecked", "R9": "query_unchecked"}
+# The frames of Lean's plan (`Readings.PlanItem.line`) that `S2Wording._plan_line` words; those that carry a result
+# sentence, the results that show a checked model, and the frames whose line carries a label.
+PLAN_FRAMES = frozenset({"E3", "E5", "E7", "E10", "E12", "E13", "E17", "E26", "E27", "E28", "E29", "E30", "E31",
+                         "E32", "P1", "status", "unworded"})
+RESULT_FRAMES = frozenset({"E10", "E12", "E26", "E30"})
+MODEL_RESULTS = frozenset(r for r, kind in PLAN_RESULTS.items() if kind in SITUATION_RESULTS)
+LABELLED_FRAMES = frozenset({"E5", "E7", "P1", "status", "unworded"})
 
 
 def filled_gaps(frame, tables, model):

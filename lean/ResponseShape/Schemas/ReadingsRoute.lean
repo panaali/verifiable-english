@@ -430,7 +430,14 @@ def overBudget : List (String × Shape) := [
   ("budget", n [obj, .required ["max_choices"], closed [("max_choices", ref "common.json#/$defs/nat")]]),
   ("units", ref "common.json#/$defs/strings")]
 
-def shownModel : Shape := c "a shown model, the generator's complete model (Lean checks it extends the checked one)" []
+def shownModel : Shape := copied "the shown model is echoed from checked evidence; the relay binds it to that request" <|
+  c "a shown model, the generator's complete model (Lean checks it extends the checked one)" [
+    obj, .required ["complete", "domains", "constants", "relations"],
+    closed [
+      ("complete", .type ["boolean"]),
+      ("domains", n [obj, .object [] (some (ref "common.json#/$defs/strings"))]),
+      ("constants", n [obj, .object [] (some str)]),
+      ("relations", n [obj, .object [] (some (n [arr, .items (ref "common.json#/$defs/strings")]))])]]
 
 def verdicts_statuses : Shape :=
   c "Readings.Run.statusesJson: each compatible choice and its row." [
@@ -611,8 +618,9 @@ def verdicts : Shape :=
       verdictsFor "premises" "#/$defs/verdicts_premises",
       verdictsFor "query" "#/$defs/verdicts_query"]]
 /-- `readings-validate` or `readings-elaborate` on a document with companion sets: each case of the split, `main`
-    first, with that case's answer (readings-defaults.md 3; plan RD-4a). -/
-def components (answer runner : String) : Shape :=
+    first, with that case's answer (readings-defaults.md 3; plan RD-4a); `readings-elaborate`'s rows also carry the
+    case's environment and the document its answer reads (plan RD-4b). -/
+def components (answer runner : String) (frame : Bool := false) : Shape :=
   c s!"Readings.Run.runComponents ({runner}): per case of Readings.Wire.splitCase, main first, then each companion set in source order, with the case's answer." [
     obj,
     .required ["id", "status", "components"],
@@ -623,8 +631,105 @@ def components (answer runner : String) : Shape :=
         arr,
         .items (n [
           obj,
-          .required ["component", "answer"],
-          closed [("component", str), ("answer", ref answer)]])])]]
+          .required (["component"] ++ (if frame then ["environment", "document", "checked"] else []) ++ ["answer"]),
+          closed ([("component", str)] ++
+            (if frame then [("environment", c "the case's environment (Readings.Wire.splitCase), an object (Readings.Run.asObject)" [obj]),
+              ("document", c "the case's document (Readings.Wire.splitCase), an object (Readings.Run.asObject)" [obj]),
+              ("checked", c "the document the case's answer reads: the case's document, or the main case's checked part (Readings.Run.fixedPart) when it has no content-bearing set; an object (Readings.Run.asObject)" [obj])]
+             else []) ++
+            [("answer", ref answer)])])])]]
+
+/-! The product over a document's components (`Readings.Run.runProduct`, readings-defaults 4.5; plan RD-4b). -/
+
+def verdicts_component_status : Shape :=
+  c "Readings.Run.statusRows: each component's own fold." [
+    arr,
+    .items (n [
+      obj,
+      .required ["component", "status"],
+      closed [("component", str), ("status", ref "#/$defs/verdicts_word")]])]
+
+/-- A product result's fields: exactly `fields`, beside the route. -/
+def productForm (comment : String) (fields : List (String × Shape)) : Shape :=
+  c comment [
+    obj,
+    .required (["route"] ++ fields.map (·.1)),
+    closed ([("route", constS "components")] ++ fields)]
+
+def product_conflict : Shape :=
+  productForm "Readings.Run.productResult conflict: CONFLICT-FREE when every component is, CONFLICT when one has a checked witness" [
+    ("status", enumS ["CONFLICT-FREE", "CONFLICT", "UNKNOWN"]),
+    ("components", ref "#/$defs/verdicts_component_status")]
+
+def product_premises : Shape :=
+  productForm "Readings.Run.productResult premises: model when every component has one" [
+    ("status", enumS ["model", "UNKNOWN"]),
+    ("components", ref "#/$defs/verdicts_component_status")]
+
+def product_query : Shape :=
+  c "Readings.Run.productResult query: the query's component's own fold, gated on every other component (4.5)." [
+    .anyOf [
+      productForm "ALL, SOME or NONE for the document" [("verdict", enumS ["ALL", "SOME", "NONE"]), ("component", str)],
+      productForm "UNKNOWN: another component is not CONFLICT-FREE" [
+        ("verdict", constS "UNKNOWN"),
+        ("component", str),
+        ("status", n [str, .pattern (Re.prefixes ["UNKNOWN (conflict status: "])]),
+        ("conflict_status", enumS ["CONFLICT", "UNKNOWN"]),
+        ("choice", ref "#/$defs/choice"),
+        ("choice_component", str),
+        ("choice_text", str)],
+      productForm "UNKNOWN: another component has no model" [
+        ("verdict", constS "UNKNOWN"),
+        ("component", str),
+        ("reason", constS "another sentence's readings are not all consistent")],
+      productForm "UNKNOWN: the component's own verdict" [("verdict", constS "UNKNOWN"), ("component", str)]]]
+
+def product_component : Shape :=
+  c "Readings.Run.componentJson: one component, its checked units, the sets it leaves on W2 and its own answer (RD-3's on it)." [
+    obj,
+    .required ["component", "route", "units", "unchecked", "answer"],
+    closed [
+      ("component", str),
+      ("route", enumS ["w2", "pending", "abstention", "superposed", "enumerated"]),
+      ("units", ref "common.json#/$defs/strings"),
+      ("unchecked", n [
+        arr,
+        .items (n [
+          obj,
+          .required ["set", "unit", "status"],
+          closed [("set", str), ("unit", str), ("status", constS "UNKNOWN")]])]),
+      ("answer", ref "#/$defs/verdicts")]]
+
+def product_line : Shape :=
+  c "Readings.Run.entryJson: a line of the product's plan and the component it is read in (null: the document)." [
+    obj,
+    .required ["component", "line"],
+    closed [("component", .type ["string", "null"]), ("line", ref "#/$defs/verdicts_line")]]
+
+def productFor (question result : String) : Shape :=
+  n [
+    obj,
+    .required ["id", "status", "route", "question", "component", "sentence", "components", "result", "decided_units",
+      "english"],
+    closed [
+      ("id", ref "common.json#/$defs/id_ok"),
+      ("status", constS "ok"),
+      ("route", constS "components"),
+      ("question", constS question),
+      ("component", if question == "query" then str else .type ["null"]),
+      ("sentence", .type ["string", "null"]),
+      ("components", n [arr, .items (ref "#/$defs/product_component")]),
+      ("result", ref result),
+      ("decided_units", ref "common.json#/$defs/strings"),
+      ("english", n [arr, .items (ref "#/$defs/product_line")])]]
+
+def verdicts_components : Shape :=
+  c
+    "Readings.Run.runProduct (readings-defaults RD-4b): readings-verdicts on a document with companion sets, no component named: each component replayed by itself (RD-3's answer on it), the product's result for the question, the Lean-decided units (1.10) and the English plan, each line with the component it is read in."
+    [.anyOf [
+      productFor "conflict" "#/$defs/product_conflict",
+      productFor "premises" "#/$defs/product_premises",
+      productFor "query" "#/$defs/product_query"]]
 
 def «row» : Shape :=
   .select [
@@ -665,7 +770,8 @@ def «row» : Shape :=
     (ref "#/$defs/kind/readings-verdicts", .anyOf [
       ref "common.json#/$defs/case_error",
       ref "common.json#/$defs/route_path_error",
-      ref "#/$defs/verdicts"]),
+      ref "#/$defs/verdicts",
+      ref "#/$defs/verdicts_components"]),
     ((.bool true), .anyOf [
       ref "rights.json#/row",
       ref "soft-norms.json#/row",
@@ -697,7 +803,7 @@ def file : File where
     ("choice", .schema choice),
     ("elaborate", .schema elaborate),
     ("validate_components", .schema (components "#/$defs/validate" "Readings.Run.validateOne")),
-    ("elaborate_components", .schema (components "#/$defs/elaborate" "Readings.Run.elaborateOne")),
+    ("elaborate_components", .schema (components "#/$defs/elaborate" "Readings.Run.elaborateOne" true)),
     ("gaps", .schema gaps),
     ("conflict", .schema conflict),
     ("certificate", .schema certificate),
@@ -714,6 +820,13 @@ def file : File where
     ("verdicts_row", .schema verdicts_row),
     ("verdicts_line", .schema verdicts_line),
     ("verdicts_dead", .schema verdicts_dead),
-    ("verdicts", .schema verdicts)]
+    ("verdicts", .schema verdicts),
+    ("verdicts_component_status", .schema verdicts_component_status),
+    ("product_conflict", .schema product_conflict),
+    ("product_premises", .schema product_premises),
+    ("product_query", .schema product_query),
+    ("product_component", .schema product_component),
+    ("product_line", .schema product_line),
+    ("verdicts_components", .schema verdicts_components)]
 
 end ResponseShape.Schemas.ReadingsRoute

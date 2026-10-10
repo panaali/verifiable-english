@@ -53,7 +53,9 @@ imports added to them go unnoticed.
 
 To update the frozen inventory after an intended edit, rehash the file from
 `lean/` (`sha256sum VE/Path/File.lean`), replace its line in
-`VE/Route/frozen-sources.sha256`, stage both, and run `python3 VE/Route/frozen.py`.
+`VE/Route/frozen-sources.sha256`, stage both, and run `python3 VE/Route/frozen.py`
+(`python3 VE/Route/frozen.py --write` rehashes every module; `tools/regen_generated.py`
+runs it after a merge, docs/merge-tooling.md).
 
 A deliberate example of a credential in a test or document can carry the marker
 `pragma: allowlist secret` on the same line. Build test credentials at run time

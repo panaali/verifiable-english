@@ -254,12 +254,18 @@ def test_trust_growth_is_rd6b_entry_and_listed_for_signature():
     assert entry["rebaselined_from"] == trust_map.budget(trust_map.totals(parent))
     assert entry["to"] == trust_map.budget(reviewed["totals"])
     assert entry in baseline["history"]
-    merge = baseline["history"][-1]
+    merge = next(row for row in baseline["history"]
+                 if row["change"].startswith(f"Merge ve-integration {MERGED_BASE[:8]} "))
     assert merge["change"].startswith(f"Merge ve-integration {MERGED_BASE[:8]} ")
     assert merge["rebaselined_from"] == trust_map.budget(trust_map.totals(merged))
-    assert merge["to"] == trust_map.budget(trust_map.totals(current))
     for step in (entry, merge):
         growth = {key: step["to"][key] - step["rebaselined_from"][key] for key in ("K", "S", "V")}
         assert growth == {"K": 0, "S": 0, "V": 142}
+    current_merge = baseline["history"][-1]
+    assert current_merge["change"].startswith("Merge ve-integration 7478b23d ")
+    assert current_merge["rebaselined_from"] == merge["to"]
+    assert current_merge["to"] == trust_map.budget(trust_map.totals(current))
+    assert {key: current_merge["to"][key] - current_merge["rebaselined_from"][key]
+            for key in ("K", "S", "V")} == {"K": 0, "S": 87, "V": 471}
     text = (HERE / "DELTA.md").read_text()
     assert "K +0, S +0, V +142" in text and "+16 under R6" in text and "+126 awaiting the DRI's signature" in text

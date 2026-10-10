@@ -227,6 +227,8 @@ def test_fnd2_query_is_gated_by_the_conflict(tmp_path, capsys):
     data = json.loads(capsys.readouterr().out)
     assert (data["verdict"], data["status"], data["choice"]) == (
         "UNKNOWN", "UNKNOWN (conflict status: CONFLICT)", [["rs_2", 0]])
+    # RD-6b's superposed query route has no E12 plan for gated UNKNOWN yet (2.4 scopes E12 to enumeration).
+    assert data["english"] == []
 
 
 def test_fnd2_render(tmp_path):

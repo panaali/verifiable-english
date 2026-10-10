@@ -146,7 +146,7 @@ def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), 
     return {key: value for key, value in row.items() if key not in ("id", "status")}
 
 
-def _completion_elaborate(row, case):
+def _completion_elaborate(row, case, *, checked_part=False):
     """`readings-elaborate` under `norm-defaults@0` (readings-defaults 1.1, 3; plan RD-2b), relayed: Lean's text
     verbatim, else its row bound to the request. Lean owns the route, the choices and their count; nothing of them is
     regenerated here. On the norms chain a content-bearing document takes the pending route when a candidate has no
@@ -161,7 +161,12 @@ def _completion_elaborate(row, case):
         sets = Document(None, case["document"]).sets
         bearing = any(content_bearing(R) for R in sets)
         pending = any(a.content is None for R in sets for a in R.candidates)
-        if not bearing:
+        if checked_part:
+            # readings-defaults RD-4b: the main case's checked part has no open set; Lean reads it under the
+            # completion (its route stays W2's) and gives its filled document.
+            _need(not sets and row["route"] == "w2")
+            _bind_completion(row, case, checked_part=True)
+        elif not bearing:
             _need(row["route"] == "w2" and not {"fill_premises", "filled"} & set(row))
         else:
             _need(row["route"] in (("pending",) if pending else ("enumerated", "superposed")))
@@ -468,7 +473,7 @@ def _bind_set(entry, R):
     _need(order == sorted(set(order)))
 
 
-def _bind_completion(row, case):
+def _bind_completion(row, case, *, checked_part=False):
     """`fill_premises` and `filled` (readings-defaults 3), bound to the request: present exactly under
     `norm-defaults@0` beside a content-bearing set; one `Fill_T` per reading with content, in admission order, each
     label naming a declared obligation and its permission; the filled environment decodes, keeps the request's sorts,
@@ -479,8 +484,10 @@ def _bind_completion(row, case):
     from .environment import Environment
     document = Document(None, case["document"])
     sets = document.sets
+    # A component's checked part (readings-defaults RD-4b: the main case without a content-bearing set, its fixed
+    # units) is under the completion with its environment alone.
     completion = (NORM_DEFAULTS in case["environment"].get("profiles", ())
-                  and any(content_bearing(R) for R in sets))
+                  and (checked_part or any(content_bearing(R) for R in sets)))
     _need(("fill_premises" in row) is completion and ("filled" in row) is completion)
     if not completion:
         return
@@ -612,6 +619,10 @@ def _probe_form(entry):
 
 def report(doc):
     """Section 6 for the content-bearing sets of a loaded document, or None."""
+    if doc.get("readings_components") is not None:
+        from .readings_components import report as components_report
+        with _built():
+            return components_report(doc)
     row = doc.get("readings_s1")
     if row is None or not row.get("content_bearing"):
         return None
@@ -619,8 +630,11 @@ def report(doc):
         return _report(doc, row)
 
 
-def _report(doc, row):
-    english = Wording(doc)
+def s1_sections(doc, row, numbers=None):
+    """The S1 part of section 6 (sets, their pairs' wordings, separations, findings, pending candidates, couplings)
+    from Lean's validation `row` of `doc`; `numbers` are the sentence numbers of the whole document when `doc` is one
+    case of its split (readings-defaults RD-4b)."""
+    english = Wording(doc, numbers=numbers)
     sets = []
     separations = {"outcome": 0, "selects": 0, "holds": 0}
     findings = {"SeparatedByDecisionOnly": 0, "SeparatedByActOnly": 0}
@@ -643,11 +657,15 @@ def _report(doc, row):
                                     for c in entry["candidates"]],
                      "pairs": pairs, "findings": entry["findings"],
                      "not_certified": [f for f in entry["findings"] if f.endswith("(not certified)")]})
-    s2 = doc.get("readings_s2") or {"route": "pending"}
-    result = {"checked_by": CHECKED_BY, "sets": sets, "separations": separations, "findings": findings,
+    return {"checked_by": CHECKED_BY, "sets": sets, "separations": separations, "findings": findings,
             "pending_candidates": pending,
-            "couplings": len({item["axis"] for item in doc["meta"].get("couplings", [])}),
-            "route": s2["route"]}
+            "couplings": len({item["axis"] for item in doc["meta"].get("couplings", [])})}
+
+
+def _report(doc, row):
+    result = s1_sections(doc, row)
+    s2 = doc.get("readings_s2") or {"route": "pending"}
+    result["route"] = s2["route"]
     from .readings_verdicts import context
     route = context(doc)
     if s2["route"] in ("superposed", "enumerated"):
@@ -669,7 +687,7 @@ def _report(doc, row):
 class Wording:
     """The wordings of 2.3 for the pairs of a checked answer, filled from checked data only."""
 
-    def __init__(self, doc):
+    def __init__(self, doc, numbers=None):
         from .english import EnglishVocabulary
         self.doc = doc
         with _built():
@@ -679,7 +697,8 @@ class Wording:
             row = doc.get("readings_s1") or {}
             self.admission = Decoded(self.environment, self.document, row.get("filled"), row.get("fill_premises"))
             self.words = EnglishVocabulary(self.admission.senv.frame)
-            self.numbers = {unit["id"]: n for n, unit in enumerate(doc["units"], 1)}
+            # One case of a split document is numbered as the whole document (readings-defaults RD-4b).
+            self.numbers = numbers or {unit["id"]: n for n, unit in enumerate(doc["units"], 1)}
         self._names = {}
 
     def set_raw(self, set_id):

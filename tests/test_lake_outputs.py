@@ -59,8 +59,9 @@ def test_every_build_entry_point_drops_stale_traces_first():
     """The gate fails when its build leaves a stale executable; the map recorder and the CI fuzz test check too."""
     gate = (ROOT / "tools/gate.py").read_text()
     # in the gate's own allowlisted environment, as its build runs (an ambient LD_PRELOAD never reaches it)
-    assert gate.index("lake_outputs.drop_stale(env=env)") < gate.index('command(["lake", "build"]') < \
-        gate.index("lake_outputs.stale(env=env)")
+    assert gate.index('lake_outputs.drop_stale(ROOT / "lean", env=env)') < \
+        gate.index('command(["lake", "build"]') < \
+        gate.index('lake_outputs.stale(ROOT / "lean", env=env)')
     recorder = (ROOT / "tools/test_map.py").read_text()
     assert recorder.index("lake_outputs.drop_stale()") < recorder.index('(["lake", "build"]')
     assert "lake_outputs.stale() == []" in (ROOT / "tests/test_difffuzz.py").read_text()

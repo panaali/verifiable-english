@@ -5,6 +5,7 @@ import VE.Readings.UnspecifiedWire
 import VE.Readings.SupFillWire
 import VE.Readings.VerdictsWire
 import VE.Readings.Companions
+import VE.Readings.ComponentsWire
 import VE.NormDefaults.Run
 import VE.Rights.Run
 
@@ -461,12 +462,44 @@ def runAdmitted (j : Json) (id kind : String) (ready : ComponentAdmission) : Exc
   | .nd f => runNDKind id kind f j
   | .s1 _ => throw s!"UnsupportedProfile: case kind {kind} is not available on the readings route"
 
-def admitComponents (kind : String) (parts : List (String × Json × Json)) : Except String (List (String × ComponentAdmission)) :=
-  parts.mapM (fun p => do pure (p.1, ← admitComponent kind p.2.1 p.2.2))
+/-- In a split, the kinds that read a case's choices (`readings-elaborate`, `readings-choice`) read the main case's
+    checked part under the completion when it has no content-bearing set, as the product does (`admitPart`): its
+    fixed units, the sets left on W2 unchecked. -/
+def admitChecked (kind : String) (environment document : Json) :
+    Except String (Json × ComponentAdmission) := do
+  if kind == "readings-elaborate" || kind == "readings-choice" then
+    let b ← admitS2 environment document
+    if b.a.re.lower.contains "norm-defaults@0" && b.a.re.chain == .norms && routeOf true b.D == .w2 then
+      return (fixedPart document, .nd (← admitNDFull (← admitS2 environment (fixedPart document))))
+  return (document, ← admitComponent kind environment document)
 
-def runAdmittedComponents (j : Json) (id kind : String) (parts : List (String × ComponentAdmission)) :
-    Except String Json := do
-  let rows ← parts.mapM (fun p => do pure (componentRow p.1 (← runAdmitted j id kind p.2)))
+/-- Each case of the split admitted in source order: its name, environment, document, the document its kind reads
+    (its checked part) and its admission. -/
+def admitComponents (kind : String) (parts : List (String × Json × Json)) :
+    Except String (List (String × Json × Json × Json × ComponentAdmission)) :=
+  parts.mapM (fun p => do
+    let (d, a) ← if p.1 == "main" then admitChecked kind p.2.1 p.2.2 else pure (p.2.2, ← admitComponent kind p.2.1 p.2.2)
+    pure (p.1, p.2.1, p.2.2, d, a))
+
+/-- A JSON object as itself, anything else as the empty object: a case's environment and documents are objects once
+    admitted, and the row says so in its type (`elaborate_components`), so the client never reads another value. -/
+def asObject (j : Json) : Json :=
+  match j with
+  | .obj kvs => .obj kvs
+  | _ => Json.mkObj []
+
+/-- A case's row: its name and answer; for `readings-elaborate` also the case's environment, its document and the
+    document its answer reads (readings-defaults RD-4b: a generator reads each case's own frame from Lean). -/
+def componentRowOf (kind name : String) (environment document checked answer : Json) : Json :=
+  if kind == "readings-elaborate" then
+    Json.mkObj [("component", .str name), ("environment", asObject environment), ("document", asObject document),
+      ("checked", asObject checked), ("answer", answer)]
+  else componentRow name answer
+
+def runAdmittedComponents (j : Json) (id kind : String)
+    (parts : List (String × Json × Json × Json × ComponentAdmission)) : Except String Json := do
+  let rows ← parts.mapM (fun p =>
+    do pure (componentRowOf kind p.1 p.2.1 p.2.2.1 p.2.2.2.1 (← runAdmitted j id kind p.2.2.2.2)))
   pure (VE.Route.Wire.ok id [("components", Json.arr rows.toArray)])
 
 /-- `readings-validate` or `readings-elaborate` per case of the split, `main` first (4.1 step 0): the first error
@@ -474,7 +507,7 @@ def runAdmittedComponents (j : Json) (id kind : String) (parts : List (String ×
 def runComponents (j : Json) (id kind : String) (parts : List (String × Json × Json)) : Except String Json := do
   let rows ← parts.mapM (fun p => do
     let a ← if kind == "readings-validate" then validateOne id p.2.1 p.2.2 else elaborateOne j id p.2.1 p.2.2
-    pure (componentRow p.1 a))
+    pure (componentRowOf kind p.1 p.2.1 p.2.2 p.2.2 a))
   pure (VE.Route.Wire.ok id [("components", Json.arr rows.toArray)])
 
 /-- Every readings kind first splits the case (readings-defaults.md 3, `splitCase`). A document without companion
@@ -491,12 +524,13 @@ def runCase (j : Json) : Except String Json := do
   let parts ← splitCase environment document
   let named ← componentOfCase j
   if parts.length > 1 then
+    if kind == "readings-verdicts" && named.isNone then return ← runProduct j id parts
     let ready ← admitComponents kind parts
     if named.isNone && (kind == "readings-validate" || kind == "readings-elaborate") then
       return ← runAdmittedComponents j id kind ready
     let c := named.getD "main"
     match ready.find? (·.1 == c) with
-    | some p => return ← runAdmitted j id kind p.2
+    | some p => return ← runAdmitted j id kind p.2.2.2.2
     | none => throw (unknownComponent c)
   let c := named.getD "main"
   match parts.find? (·.1 == c) with
