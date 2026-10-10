@@ -2,11 +2,14 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT))
+from tools import nested_pytest  # noqa: E402  (the one builder of a nested pytest command)
 LINT = "tools/identity_lint.py"
 TESTS = "tests/test_identity_lint.py::"
 CASES = [
@@ -48,8 +51,9 @@ def main() -> None:
             raise RuntimeError(f"expected one mutation site for {name}")
         try:
             path.write_text(original.replace(before, after, 1))
-            run = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:xdist", test], cwd=ROOT,
-                                 capture_output=True, text=True, check=False)
+            run = subprocess.run(nested_pytest.command(["-q", test]), cwd=ROOT,
+                                 env=nested_pytest.environment(os.environ), capture_output=True, text=True,
+                                 check=False)
         finally:
             path.write_text(original)
         output = run.stdout + run.stderr
