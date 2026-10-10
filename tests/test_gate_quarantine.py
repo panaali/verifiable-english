@@ -14,7 +14,6 @@ import os
 from pathlib import Path
 import subprocess
 import sys
-import textwrap
 
 import pytest
 
@@ -241,4 +240,4 @@ def test_the_gates_plugin_refuses_to_stop_early(tmp_path, option):
 def test_the_retry_command_is_the_gates_pytest_over_the_node_ids():
     command = gate.retry_command(["python"], [HELD, OTHER])
     assert command == nested_pytest.command([*gate.PYTEST_ARGS[:-1], HELD, OTHER], python=["python"])
-    assert textwrap.shorten(" ".join(command), 400).count("::") == 2
+    assert [argument for argument in command if "::" in argument] == [HELD, OTHER]

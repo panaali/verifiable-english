@@ -8,9 +8,9 @@ and `--stepwise`).
 
 The last failures are this worktree's (`last_failed`): the failed tests of the last selected run, kept
 in the worktree's git directory, and of the worktree's gate record (`gate-result.json`) when the gate
-ran after that run. A unit leaves the list when it runs to the end without a failure. Failures come from each unit's JUnit
-report (`junit_failures`), read with the XML library; a unit that fails without one counts as one
-failed test named by the unit.
+ran after that run. A unit leaves the list when it runs to the end without a failure. Failures come
+from each unit's JUnit report (`read_junit`), read with the XML library; a unit that fails without
+one counts as one failed test named by the unit.
 """
 from __future__ import annotations
 
