@@ -72,24 +72,19 @@ Worked example: the `discourse` mode.
 
 ## Generated files
 
-Never edit a generated file by hand, and never hand-merge one: regenerate it with its own tool. The
-generators on main:
+Never edit a generated file by hand, and never hand-merge one: regenerate it with its own tool.
+`tools/regen_generated.py` is the one inventory of generated files and their generators:
 
-- `ve/backends/lean_service_schema/` from `uv run python tools/response_schemas.py --write`
-  (after `cd lean && PATH=~/.elan/bin:$PATH lake build ve_response_decode`).
-- `lean/statements.txt`, `lean/declarations.txt` and `lean/predicates.txt` from
-  `uv run python tools/lean_statements.py` (after `lake build`; `--check` compares).
-- `lean/axioms.txt` from `python3 lean/audit.py --write`.
-- `tools/gate-collection.json` from `uv run python tools/gate_collection.py --write`, after any test is
-  added, renamed or removed.
-- `ve/english_grammar/codes.json` from `uv run python tools/english_codes.py --write`.
-- `docs/spec/assurance-manifest.md` from `uv run python tools/assurance_manifest.py --write`.
-- `lean/VE/Route/frozen-sources.sha256` from `cd lean && python3 VE/Route/frozen.py --write`.
+- `uv run python tools/regen_generated.py --list` every generated file, its generator and its check.
+- `uv run python tools/regen_generated.py --owner <path>` the entry that owns one file;
+  `uv run python tools/repo_map.py file <path>` prints the same entry as its `generator` line.
+- `uv run python tools/regen_generated.py --check` fails when a generated file is stale;
+  `--write` regenerates them all, in dependency order; `--resolve` finishes a `git merge --no-commit`
+  whose only conflicts are generated files.
+- `tools/gate-collection.json` is one of them: regenerate it after any test is added, renamed or
+  removed.
 - `lean/checkers.lock` pins the built checkers; `python3 tools/rust_build.py --check` fails when the
   Rust binary is not pinned.
-
-`uv run python tools/repo_map.py file <path>` names a file's generator once the repository has a
-generator inventory that answers `--owner`.
 
 ## Standard commands
 
