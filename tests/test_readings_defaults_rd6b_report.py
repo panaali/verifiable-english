@@ -232,7 +232,7 @@ def test_round1_pilots_keep_the_base_statuses_and_the_previous_english():
 def test_trust_growth_is_rd6b_entry_and_listed_for_signature():
     """Review B1 of rd-6b: the current tree is the trust baseline (`tests/test_lean_first_b12_report.py` compares
     them whole), and the growth from the pinned merge base is exactly the baseline's RD-6b entry, as DELTA.md states
-    it: S +0, V +137, of which +16 under R6 and +121 awaiting the DRI's signature."""
+    it: S +0, V +142, of which +16 under R6 and +126 awaiting the DRI's signature."""
     from tools import trust_map
     summary, *_ = saved()
     baseline = json.loads((ROOT / "docs/trust-baseline.json").read_text())
@@ -245,6 +245,6 @@ def test_trust_growth_is_rd6b_entry_and_listed_for_signature():
     assert entry["rebaselined_from"] == trust_map.budget(trust_map.totals(parent))
     assert entry["to"] == trust_map.budget(trust_map.totals(current))
     growth = {key: entry["to"][key] - entry["rebaselined_from"][key] for key in ("K", "S", "V")}
-    assert growth == {"K": 0, "S": 0, "V": 137}
+    assert growth == {"K": 0, "S": 0, "V": 142}
     text = (HERE / "DELTA.md").read_text()
-    assert "K +0, S +0, V +137" in text and "+16 under R6" in text and "+121 awaiting the DRI's signature" in text
+    assert "K +0, S +0, V +142" in text and "+16 under R6" in text and "+126 awaiting the DRI's signature" in text
