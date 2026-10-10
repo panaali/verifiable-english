@@ -1,4 +1,4 @@
-"""Temporarily plant three batch 16d bugs and save the failing test results."""
+"""Temporarily plant each batch 16d bug, run the test meant to catch it, and save every result, caught or not."""
 from __future__ import annotations
 
 import json
@@ -31,13 +31,35 @@ CASES = [
      '  let w2 : List (FrontSet × List Bool) := []  -- seeded fault: pending models are unchecked',
      "test_pending_reading_metadata_is_checked_by_lean"),
     ("coupled reading plan erased", "ve/document.py",
-     '                                    couplings=meta.get("couplings", []))',
-     '                                    couplings=[])  # seeded fault: coupling choices erased',
+     '_reading_plan(active, meta.get("couplings", []))',
+     '_reading_plan(active, [])  # seeded fault: coupling choices erased',
      "test_coupled_pilot_reading_plan_matches_prior_path"),
     ("pending labels refused", "lean/VE/Discourse/Loader.lean",
      '  let optional := if profiles.contains "readings@1" then ["labels"] else []',
      '  let optional : List String := []  -- seeded fault: pending labels refused',
      "test_labeled_pending_pilot_is_lean_decided"),
+    # Review B1 and B2 (the norm unit roles, tests/test_b16d_norm_roles.py).
+    ("quoted norm refused by the role table", "lean/VE/Norms/Admission.lean",
+     '  else if kind.quoted then pure (.quoted content)\n',
+     '',
+     "test_b16d_norm_roles.py::test_quoted_norm_units_are_accepted_and_left_out_of_the_free_document"
+     "[u0165.s01-attributed]"),
+    ("Lean free document keeps a unit under an active set", "lean/VE/Service/Document.lean",
+     'if setUnits.contains u.id || attached.contains u.id then none else some c',
+     'if attached.contains u.id then none else some c',
+     "test_b16d_norm_roles.py::test_norm_content_under_an_open_set_is_not_a_rule"),
+    ("Lean free document keeps an attached unit", "lean/VE/Service/Document.lean",
+     'if setUnits.contains u.id || attached.contains u.id then none else some c',
+     'if setUnits.contains u.id then none else some c',
+     "test_b16d_norm_roles.py::test_attached_norm_unit_is_left_out_of_the_free_document"),
+    ("Python free document keeps a unit under an active set", "ve/document.py",
+     'and "norm" in u["content"] and u["id"] not in held and u["id"] not in attached]',
+     'and "norm" in u["content"] and u["id"] not in attached]',
+     "test_b16d_norm_roles.py::test_norm_content_under_an_open_set_claims_no_coverage"),
+    ("Python free document keeps an attached unit", "ve/document.py",
+     'and "norm" in u["content"] and u["id"] not in held and u["id"] not in attached]',
+     'and "norm" in u["content"] and u["id"] not in held]',
+     "test_b16d_norm_roles.py::test_attached_norm_unit_is_left_out_of_the_free_document"),
 ]
 
 
@@ -61,8 +83,8 @@ def main() -> None:
                                               {hashlib.sha256(SERVICE.read_bytes()).hexdigest()})
                 LOCK.write_text(json.dumps(pinned, indent=2) + "\n")
             env = {**os.environ, "VE_NATIVE_PREBUILT": "1", "UV_CACHE_DIR": "/tmp/uv-b16d-cache"}
-            done = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:xdist",
-                                   f"tests/test_b16d_document.py::{test}"], cwd=ROOT,
+            target = f"tests/{test}" if "::" in test else f"tests/test_b16d_document.py::{test}"
+            done = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:xdist", target], cwd=ROOT,
                                   env=env, capture_output=True, text=True, check=False)
         finally:
             source.write_text(original)
@@ -73,11 +95,10 @@ def main() -> None:
                 if built.returncode:
                     raise RuntimeError((built.stdout + built.stderr)[-1500:])
         output = done.stdout + done.stderr
-        if done.returncode == 0 or "1 failed" not in output:
-            raise RuntimeError(f"seeded bug {bug} did not fail its test: {output[-1200:]}")
-        records.append({"bug": bug, "test": test, "exit_code": done.returncode,
+        caught = done.returncode != 0 and "1 failed" in output
+        records.append({"bug": bug, "test": test, "exit_code": done.returncode, "caught": caught,
                         "failure_excerpt": output[-1800:]})
-        print(f"{bug}: {test} failed as expected", flush=True)
+        print(f"{bug}: {test} {'failed as expected' if caught else 'PASSED: the fault survived'}", flush=True)
     path = Path(__file__).resolve().parent / "evidence/mutants.json"
     path.parent.mkdir(exist_ok=True)
     path.write_text(json.dumps(records, indent=2) + "\n")

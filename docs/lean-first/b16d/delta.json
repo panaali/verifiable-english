@@ -725,44 +725,6 @@
     {
       "corpus": "document",
       "authority": "default",
-      "case": "mutant/15",
-      "op": "document_check",
-      "base": {
-        "raised": {
-          "code": "InvalidInput",
-          "message": "distinguishing model id does not match model"
-        }
-      },
-      "head": {
-        "raised": {
-          "code": "TypeMismatch",
-          "message": "TypeMismatch: Predicate 'mass_casualty_weapon_uplift' expects ('situation',), received ('claude_instance',)"
-        }
-      },
-      "reason": "invalid input is rejected with a different code, text, or diagnostic path"
-    },
-    {
-      "corpus": "document",
-      "authority": "default",
-      "case": "mutant/15",
-      "op": "document_render",
-      "base": {
-        "raised": {
-          "code": "InvalidInput",
-          "message": "distinguishing model id does not match model"
-        }
-      },
-      "head": {
-        "raised": {
-          "code": "TypeMismatch",
-          "message": "TypeMismatch: Predicate 'mass_casualty_weapon_uplift' expects ('situation',), received ('claude_instance',)"
-        }
-      },
-      "reason": "invalid input is rejected with a different code, text, or diagnostic path"
-    },
-    {
-      "corpus": "document",
-      "authority": "default",
       "case": "mutant/1503",
       "op": "document_check",
       "base": {

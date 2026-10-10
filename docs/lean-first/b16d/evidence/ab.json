@@ -1,7 +1,7 @@
 {
   "totals": {
-    "same": 99924,
-    "order": 172,
+    "same": 99926,
+    "order": 170,
     "verdict": 174,
     "wording": 31
   },
@@ -2069,46 +2069,6 @@
         "raised": {
           "code": "InvalidInput",
           "message": "object expected"
-        }
-      },
-      "listed": true
-    },
-    {
-      "corpus": "document",
-      "authority": "default",
-      "case": "mutant/15",
-      "op": "document_check",
-      "class": "order",
-      "base": {
-        "raised": {
-          "code": "InvalidInput",
-          "message": "distinguishing model id does not match model"
-        }
-      },
-      "head": {
-        "raised": {
-          "code": "TypeMismatch",
-          "message": "TypeMismatch: Predicate 'mass_casualty_weapon_uplift' expects ('situation',), received ('claude_instance',)"
-        }
-      },
-      "listed": true
-    },
-    {
-      "corpus": "document",
-      "authority": "default",
-      "case": "mutant/15",
-      "op": "document_render",
-      "class": "order",
-      "base": {
-        "raised": {
-          "code": "InvalidInput",
-          "message": "distinguishing model id does not match model"
-        }
-      },
-      "head": {
-        "raised": {
-          "code": "TypeMismatch",
-          "message": "TypeMismatch: Predicate 'mass_casualty_weapon_uplift' expects ('situation',), received ('claude_instance',)"
         }
       },
       "listed": true
@@ -7762,5 +7722,5 @@
   ],
   "unlisted": 0,
   "base_sha256": "9ff54204deb454770d3b1035ef52c86b5ed3462e41dcc282aa0a1b38f119ac46",
-  "head_sha256": "2ee8d0f2e3f8b6d1ca4600e9556e8b751702f619ca5fdaba1fffbef054aab619"
+  "head_sha256": "195d9757a26307f2fb533cb58e16b7a1b85e233b5488d1230b8196650a9699d2"
 }
