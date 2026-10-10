@@ -3,27 +3,27 @@
  "totals": {
   "K": 997,
   "S": 9633,
-  "D": 13368,
-  "G": 24760,
+  "D": 13367,
+  "G": 24746,
   "C": 8138,
   "P": 66737,
-  "T": 13324,
-  "o": 11471,
-  "D[V]": 12007,
+  "T": 13293,
+  "o": 11475,
+  "D[V]": 12006,
   "D[R]": 862,
   "D[I]": 499,
-  "G[V]": 23125,
+  "G[V]": 23111,
   "G[R]": 1406,
   "G[I]": 229,
   "tied": 171,
   "unclassified": 0,
-  "trusted": 45610,
-  "lines": 148428
+  "trusted": 45595,
+  "lines": 148386
  },
  "budget": {
   "K": 997,
   "S": 9633,
-  "V": 34980
+  "V": 34965
  },
  "signed": [],
  "history": [
@@ -3649,8 +3649,8 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 348,
-   "o": 51,
+   "T": 317,
+   "o": 57,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
@@ -3660,7 +3660,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 399
+   "lines": 374
   },
   "ResponseShape/Audit.lean": {
    "K": 0,
@@ -4550,7 +4550,7 @@
    "C": 0,
    "P": 0,
    "T": 0,
-   "o": 10,
+   "o": 9,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
@@ -4560,7 +4560,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 151,
-   "lines": 161
+   "lines": 160
   },
   "ResponseShape/Schemas/Order.lean": {
    "K": 0,
@@ -4746,7 +4746,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 133,
+   "G": 131,
    "C": 0,
    "P": 0,
    "T": 0,
@@ -4754,13 +4754,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 119,
+   "G[V]": 117,
    "G[R]": 14,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 119,
-   "lines": 140
+   "trusted": 117,
+   "lines": 138
   },
   "ResponseShape/Schemas/SoftNorms.lean": {
    "K": 0,
@@ -4866,21 +4866,21 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 685,
+   "G": 673,
    "C": 0,
    "P": 0,
    "T": 13,
-   "o": 45,
+   "o": 44,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 679,
+   "G[V]": 667,
    "G[R]": 6,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 679,
-   "lines": 743
+   "trusted": 667,
+   "lines": 730
   },
   "SensesMain.lean": {
    "K": 0,
@@ -6065,13 +6065,13 @@
   "VE/Core/Layers.lean": {
    "K": 0,
    "S": 0,
-   "D": 67,
+   "D": 66,
    "G": 53,
    "C": 0,
    "P": 0,
    "T": 0,
    "o": 29,
-   "D[V]": 67,
+   "D[V]": 66,
    "D[R]": 0,
    "D[I]": 0,
    "G[V]": 53,
@@ -6079,8 +6079,8 @@
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 120,
-   "lines": 149
+   "trusted": 119,
+   "lines": 148
   },
   "VE/Core/PathRules.lean": {
    "K": 0,

@@ -43,8 +43,7 @@ def arity (entry : Json) : Nat :=
   | _ => 0
 
 /-- Whether a predicate declaration is in the FOL projection: at most two arguments. The one
-filter of every regenerated Background (`folPredicates`, the norms route's view) and of the
-response schemas' Background count (`ResponseShape.backgroundCount`). -/
+filter of every regenerated Background (`folPredicates`, the norms route's view). -/
 def folEntry (entry : Json) : Bool := arity entry ≤ 2
 
 def withPredicates (environment : Json) (predicates : List (String × Json)) : Except String Json := do
