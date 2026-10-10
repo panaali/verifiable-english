@@ -153,13 +153,17 @@ def test_scratch_theorem_needs_write_and_check_passes_after(scratch, capsys):
     assert audit.recorded_names((lean / 'axioms.txt').read_text()) == [
         'VE.Scratch.Nested.result', instance, 'VE.Scratch.kept', 'root_result', 'ResponseShape.shape_ok']
     audit.main(['--check'])
-    # The statement dump lists the generated manifest's theorems, and the declaration list records the
-    # manifest's hash: one dump after the write leaves every list current.
+    # The dump before the write already listed the generated manifest's theorems as statements and recorded
+    # each manifest's generated hash, so the write leaves every list current: a second dump changes nothing.
+    names = ['VE.Scratch.Nested.result', instance, 'VE.Scratch.kept', 'root_result']
+    assert lean_statements.audited_names(lean.parent) == names
+    assert sorted(lean_statements.parse((lean / 'statements.txt').read_text())) == names
+    recorded = lean_statements.declaration_list(lean / 'declarations.txt')[1]
+    assert [recorded[lean_statements.module_name(m)] for m in audit.MANIFESTS] == \
+        [lean_statements.source_hash(lean / m) for m in audit.MANIFESTS]
+    lists = {name: (lean / name).read_text() for name in ('statements.txt', 'declarations.txt')}
     dump()
-    assert lean_statements.audited_names(lean.parent) == ['VE.Scratch.Nested.result', instance, 'VE.Scratch.kept',
-                                                           'root_result']
-    assert lean_statements.declaration_list(lean / 'declarations.txt')[1]['VE.Audit'] == \
-        lean_statements.source_hash(lean / 'VE/Audit.lean')
+    assert {name: (lean / name).read_text() for name in lists} == lists
     # A new module with a new theorem: stale until the dump, then missing from the manifest until --write.
     (lean / 'VE/Extra.lean').write_text('theorem VE.extra : 2 = 2 := rfl\n')
     (lean / 'VE.lean').write_text('import VE.Scratch\nimport VE.Extra\n')
