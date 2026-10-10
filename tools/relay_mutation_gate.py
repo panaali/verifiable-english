@@ -464,10 +464,11 @@ def record(tests: list[str], out: Path = CASES, per_shape: int = PER_SHAPE) -> i
     """Run `tests` with the recorder, then keep the smallest `per_shape` cases of each answer shape of
     each route (shapes read from the current build's answers)."""
     with tempfile.TemporaryDirectory(prefix="relay-gate-record-") as directory:
-        env = {**os.environ, "VE_RELAY_CASES": directory}
-        done = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "tests.route_case_recorder",
-                               "-p", "no:randomly", "-n", os.environ.get("RELAY_GATE_WORKERS", "8"), *tests],
-                              cwd=ROOT, env=env)
+        sys.path.insert(0, str(ROOT / "tools"))
+        import nested_pytest
+        done = subprocess.run(nested_pytest.command(["-q", "-p", "tests.route_case_recorder", *tests],
+                                                    workers=int(os.environ.get("RELAY_GATE_WORKERS", "8"))),
+                              cwd=ROOT, env=nested_pytest.environment(os.environ, VE_RELAY_CASES=directory))
         if done.returncode not in (0, 1):
             print(f"relay_mutation_gate: recording run failed ({done.returncode})", file=sys.stderr)
             return 2

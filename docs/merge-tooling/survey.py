@@ -1,4 +1,11 @@
-"""Survey: which historical sync merges conflicted only in files tools/regen_generated.py owns."""
+"""Evidence: which historical sync merges on main conflicted only in files tools/regen_generated.py owns.
+
+    uv run python docs/merge-tooling/survey.py docs/merge-tooling/sync-merge-survey.json
+
+Every merge commit of `main` whose subject is "Merge ve-integration into ..." (or main into a branch) is
+re-merged in memory (`git merge-tree --write-tree --name-only`, which changes no ref or file), and its
+conflicted paths are split by `regen_generated.owner`. Recorded once (2026-10-10); the tests read the saved
+file, never a live run."""
 import json, subprocess, sys
 sys.path.insert(0, "tools")
 import regen_generated as R
