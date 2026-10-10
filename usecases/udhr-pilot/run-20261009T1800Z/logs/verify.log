@@ -1,0 +1,3 @@
+load 0.1s {'source_bytes': 10916, 'accounted_bytes': 10916, 'coverage_percent': 100}
+check 0.1s premises={'status': 'UNKNOWN', 'reason': 'non-assertion reading elaboration pending'}
+render 0.3s 26682 chars

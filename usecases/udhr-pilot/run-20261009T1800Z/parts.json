@@ -1,0 +1,50 @@
+[
+ {
+  "label": "part01",
+  "first": "u001",
+  "last": "u046",
+  "span": [
+   0,
+   4724
+  ],
+  "missing": [],
+  "limits": [],
+  "choices": 2
+ },
+ {
+  "label": "part02",
+  "first": "u047",
+  "last": "u071b",
+  "span": [
+   4724,
+   6573
+  ],
+  "missing": [],
+  "limits": [],
+  "choices": 4
+ },
+ {
+  "label": "part03",
+  "first": "u072",
+  "last": "u103",
+  "span": [
+   6573,
+   9577
+  ],
+  "missing": [],
+  "limits": [],
+  "choices": 2
+ },
+ {
+  "label": "part04",
+  "first": "u104",
+  "last": "u114",
+  "span": [
+   9577,
+   10916
+  ],
+  "missing": [],
+  "limits": [],
+  "choices": 8
+ }
+]

@@ -1,0 +1,12 @@
+part01 bytes 0 4724 regulated: 9 sorts: 13
+part01 elaborate: ok enumerated None 0.1 s
+missing: [] limits: []
+part02 bytes 4724 6573 regulated: 6 sorts: 9
+part02 elaborate: ok enumerated None 0.1 s
+missing: [] limits: []
+part03 bytes 6573 9577 regulated: 6 sorts: 7
+part03 elaborate: ok w2 None 0.0 s
+missing: [] limits: []
+part04 bytes 9577 10916 regulated: 4 sorts: 8
+part04 elaborate: ok enumerated None 0.1 s
+missing: [] limits: []
