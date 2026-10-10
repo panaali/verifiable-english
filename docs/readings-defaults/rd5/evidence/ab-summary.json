@@ -10,6 +10,10 @@
   "unavailable": 2,
   "wording": 7
  },
+ "records": {
+  "pilots/default": 469,
+  "readings/default": 1137
+ },
  "differences": [
   {
    "case": "pilot/cc-20261002T0600Z:usecases/bluedot-grant/document.ve.md",
@@ -182,6 +186,19 @@
    ]
   }
  ],
+ "probe_conformance": {
+  "totals": {
+   "same": 58482
+  },
+  "records": {
+   "conformance/lean": 19806,
+   "conformance/python": 19806,
+   "probe/lean": 9435,
+   "probe/python": 9435
+  },
+  "unlisted": 0,
+  "unavailable_both": {}
+ },
  "rerun_settings": {
   "ab-rerun.json.gz": null,
   "ab-rerun-rust600.json.gz": "600"
