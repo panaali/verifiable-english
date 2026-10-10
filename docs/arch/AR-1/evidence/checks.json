@@ -1,0 +1,31 @@
+{
+ "lean_statements_check": [
+  "added: 0",
+  "removed: 0",
+  "changed: 0",
+  "PASS: 5270 statements, the predicate list and the declaration list unchanged"
+ ],
+ "lean_statements_diff_base_to_head": {
+  "added": 515,
+  "removed": 0,
+  "changed": 0,
+  "lines": [
+   "added: 515",
+   "removed: 0",
+   "changed: 0"
+  ]
+ },
+ "audit_check": [
+  "PASS: 479 source files; 5711 theorems of the compiled environment audited (5270 in VE/Audit.lean, 441 in ResponseShape/Audit.lean); only the declared standard axiom allowlist."
+ ],
+ "trust_map_since_base": [
+  "class lines: K 997, S 9791, D 13777, G 26636, C 8329, P 70985, T 14661, o 12170",
+  "tied 178, unclassified 0, trusted 47553 (K + S + untied [V] + unclassified), 157346 lines in 479 files",
+  "against the baseline: K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0",
+  "PASS: K, S and untied [V] within cc534bfc571de0f140fecc7acefee65fcdfb8ad9 and the allowances signed since"
+ ],
+ "frozen": "PASS: frozen Lean sources and Main.lean subcommands unchanged",
+ "check_lean_imports": "Lean layer graph kept (479 modules, 22 reviewed legacy edges)",
+ "manifest_import_build_noop_seconds": 2.4,
+ "audit_check_note": "run on the tree of bf316e30, before the PASS wording was restored to the base's ('named theorem declarations audited'); same counts. The final gate's audit stage is in gate-result.json."
+}

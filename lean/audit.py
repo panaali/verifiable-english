@@ -229,9 +229,8 @@ def main(argv=()):
     elif RECORD.read_text() != output:
         raise AssertionError(f"{RECORD.name} is stale: {len(recorded_names(RECORD.read_text()))} entries, "
                              f"{len(seen)} audited; regenerate with python3 lean/audit.py --write")
-    print(f"PASS: {len(sources)} source files; {len(seen)} theorems of the compiled environment audited "
-          f"({', '.join(f'{len(theorems[m])} in {m}' for m in MANIFESTS)}); "
-          "only the declared standard axiom allowlist.")
+    print(f"PASS: {len(sources)} source files; {len(seen)} named theorem declarations audited "
+          "(headline results and helper lemmas); only the declared standard axiom allowlist.")
 
 
 if __name__ == "__main__":
