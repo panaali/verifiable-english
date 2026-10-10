@@ -62,7 +62,7 @@ Each bug was planted in changed code, failed the named test, then was removed. T
 
 - **AGENT:** The three Lean statements, no-sorry audit, F-ND1/F-ND2/F-ND3 and 200-case differential, saved A/B accounting, latency and clean code-head gate pass. Saved-evidence report tests check numbers, hashes, commit rows, route/status review and mutation records.
 - **HUMAN (DRI):** Review the removed “checked one way at a time” line on the 29 superposed pilot reports. The signed English delta in the DRI note covers the reading’s own sentence, not this new route wording.
-- **HUMAN (DRI):** The trust growth of RD-6b, after review round 1: K +0, S +0, V +137. Of this, +16 under R6 and +121 awaiting the DRI's signature (round 1, B1).
+- **HUMAN (DRI):** The trust growth of RD-6b, after review round 1: K +0, S +0, V +142. Of this, +16 under R6 and +126 awaiting the DRI's signature (round 1, B1).
 - **HUMAN (DRI):** The route wording of the superposed route under the completion, listed line by line in round 1, B3.
 - **AGENT, open:** Pre-existing `Superposed` Python logic still searches and assembles verdicts; the new client binder also checks product sizes and limits. Moving all of that ownership to Lean is still required by the user’s instruction, despite RD-7 scheduling part of it later.
 - **EXTERNAL (English lexicon owner):** Missing sense-pack pilot diagnostics are retained as seven exact scratch-path wording pairs.
@@ -101,9 +101,9 @@ The fixes are on top of the code head above. The saved gate, A/B and latency evi
 | Finding | Fix | Commits |
 |---|---|---|
 | B1: the batch-12 trust test measured an old commit, so nothing compared the tree with `docs/trust-baseline.json` | The test is main's again: the baseline must equal the measured tree. `AuthorLite`, `DecidesByD` and `DecidesBySoftD` are proof-helper predicates that only lemmas mention, so they are P. The baseline is rewritten with an RD-6b entry. `tests/test_readings_defaults_rd6b_report.py` pins that entry to the growth measured from the pinned merge base. | `bd6046f9` |
-| B2: a fuzz-baseline entry came from a stale `ve_conformance` (a trace copied from another checkout) | `tools/lake_outputs.py` compares each executable's trace `outputs` with the pinned toolchain's own hash of the file (`tools/lake_output_hash.lean`) and drops stale traces. The gate and the map recorder drop them before `lake build`, the gate fails if one is left, and the CI fuzz test refuses a stale binary. Rebuilt, `requests-01651c1807526be3` reports fixed and the baseline is main's again. | `ac87e6fd` |
+| B2: a fuzz-baseline entry came from a stale `ve_conformance` (a trace copied from another checkout) | `tools/lake_outputs.py` compares each executable's trace `outputs` with the pinned toolchain's own hash of the file (`tools/lake_output_hash.lean`) and drops stale traces. The gate (in its own allowlisted environment) and the map recorder drop them before `lake build`, the gate fails if one is left, and the CI fuzz test refuses a stale binary. Rebuilt, `requests-01651c1807526be3` reports fixed and the baseline is main's again. | `ac87e6fd` |
 | B3: F-ND1/F-ND2 answers changed without disclosure; tests loosened | Under the completion: `--under` folds over the compatible choices taking the named readings (F-ND1 `rs_1:1` is NONE again). Each choice's conflict status is listed (CONFLICT-FREE under no assumed reading is every choice's, `readings_wire_nd_conflict_sound`). A gated query names its choice. The gaps shown are Lean's: `readings-model` and a witness of `readings-conflict` carry `ndModelGaps`/`gapsOf`, the function the enumerated route uses, bound to the request, in place of Python's list of every filled point. The tests are strict again. The wording guard compares every line with `evidence/wording.json`, chained to RD-3's signed rows, with no line filtered. | `767457cd`, `63765768`, `6c608a47` |
-| B4: `filled.environment` untyped | Its schema is `decodeEnvelope`'s four fields, with language, revision, sorts and constants equal to the request's, and every predicate entry typed as the norms decoder admits it (`filled_predicate`). The client binds the profiles. A test retypes every field and adds a field to every object of a genuine filled environment; the generated schema alone refuses each. The gaps of every readings-route answer are typed too. | `767457cd`, `63765768` |
+| B4: `filled.environment` untyped | Its schema is `decodeEnvelope`'s four fields, with language and revision equal to the request's, and every sort, constant and predicate entry typed as the route's vocabulary decoder admits it (`filled_predicate`). A companion component's frame merges its readings' sorts, so the schema does not compare the entries with the outer request. The client binds the profiles and the sort, constant and predicate names of the answer it relays to its case. A test retypes every field and adds a field to every object of a genuine filled environment; the generated schema alone refuses each. The binding mutants are refused by the client. The gaps of every readings-route answer are typed too. | `767457cd`, `63765768` |
 | B5: the differential used two shapes | 200 seeded documents vary: one or two predicate pairs, one or two open sentences of two or three readings from four templates, and four kinds of fixed unit. Each is compared on both routes: the conflict status of every choice, the premise status of every candidate, and a query with or without `--under`. The test runs in ten chunks. A fast test checks the shapes vary (at least 100 distinct). | `4b11c7b3`, `6c608a47` |
 
 ### B3: what the superposed route says that RD-3 did not
@@ -122,10 +122,10 @@ On the six rows the DRI signed for RD-3, the result lines, their gap sentences a
 
 ### B1: trust growth
 
-`tools/trust_map.py --check` passes against the rewritten baseline. Its RD-6b entry records the growth from the pinned merge base: K +0, S +0, V +137. +16 under R6: `ndModelGaps`, the `gaps` shape and its three uses replace Python's choice of the gaps a superposed model shows (`S2Wording.gaps` listed every point of every filled table), deleted in this round. +121 awaiting the DRI's signature:
+`tools/trust_map.py --check` passes against the rewritten baseline. Its RD-6b entry records the growth from the pinned merge base: K +0, S +0, V +142. +16 under R6: `ndModelGaps`, the `gaps` shape and its three uses replace Python's choice of the gaps a superposed model shows (`S2Wording.gaps` listed every point of every filled table), deleted in this round. +126 awaiting the DRI's signature:
 - the route's wire, +34: `elaborateFieldsND` +25, `supUnitsFrom` +5 net, `ndFillJson` +6, `decodeAssumedND` +5, `ndSlotLabels` +2 and `runElaborateNDWith` +1, less `runElaborateND` −3 and `Run.lean` −7;
 - the typed superposed answer (contents, units, names, labelled premises): +48;
-- the typed filled environment (B4): +39.
+- the typed filled environment (B4): +44.
 
 ### Seeded mutants of this round
 
@@ -136,7 +136,7 @@ Each failed the named tests and was removed:
 
 ### Rulings applied
 
-- R8 (B4): the schema is typed, and the client checks only the binding: profiles, predicate names and sorts, and the gaps' predicates and elements.
+- R8 (B4): the schema is typed, and the client checks only the binding: profiles, sort, constant and predicate names, predicate sorts, and the gaps' predicates and elements.
 - R6: the +16 lines above.
 - R3: the added `gaps` and `choices` members. They add information and remove none, and tests check them against Lean's answer and the theorem.
 - Nothing else is claimed under a standing ruling.
