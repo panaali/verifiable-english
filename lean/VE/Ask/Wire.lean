@@ -273,12 +273,30 @@ def oneReading (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) (q : 
       (VE.Question.ask_one _ _ _ _ _ _ _ _ h).1).2⟩
   | _ => .error "InvalidInput: the question has no one reading"
 
+/-- RD-3's readings case, and no other field: kind `readings-verdicts`, a string id, a list of evidence entries (no
+    value of another type read as no evidence). -/
+def readingsCase (case : Json) : Except String Unit := do
+  let keys ← match VE.Bridge.fields case with
+    | .ok fs => pure (fs.map Prod.fst)
+    | .error _ => throw "InvalidInput: the case is not an object"
+  unless keys.all (["id", "kind", "environment", "document", "premises", "conclusion", "question", "evidence",
+      "assumed"].contains) do
+    throw s!"InvalidInput: the case has a field a readings case does not: {keys}"
+  unless strOf? (case.getObjValD "kind") == some "readings-verdicts" do
+    throw "InvalidInput: the case is not a readings-verdicts case"
+  unless (strOf? (case.getObjValD "id")).isSome do
+    throw "InvalidInput: the case's id is not a string"
+  match case.getObjValD "evidence" with
+  | .arr _ => pure ()
+  | _ => throw "InvalidInput: the case's evidence is a list of entries"
+
 /-- The request replayed, with `request := j`. -/
 def replayAskCore (j : Json) : Except String { a : Asked // a.request = j } := do
   let ⟨text, hd⟩ ← strField j "document"
   let ⟨q, hq⟩ ← strField j "question"
   let case := j.getObjValD "case"
   let (_, L) ← englishOf text (j.getObjValD "lexicon")
+  readingsCase case
   let ⟨E, hbind⟩ ← checkCase text case L
   let ⟨(c, φ), hread⟩ ← oneReading E L q
   if hqs : strOf? (case.getObjValD "question") = some "query" then

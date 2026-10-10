@@ -66,7 +66,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 30871,
+    "total_lines": 30911,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1298,12 +1298,12 @@
       },
       {
         "file": "lean/VE/Ask/Wire.lean",
-        "lines": 335,
-        "sha256": "f28dc58268b1b3c44edd3404f6e2b4689a4e9fde1c148e03f2acfb894a09bc32",
+        "lines": 353,
+        "sha256": "c8764fde3713a97cf1322b8127f7d6eb88400c500b4a934af335afffc2484db4",
         "ranges": [
           [
             1,
-            335
+            353
           ]
         ],
         "declarations": [
@@ -1323,12 +1323,12 @@
       },
       {
         "file": "lean/VE/Ask/PlainWire.lean",
-        "lines": 300,
-        "sha256": "6de863196e9992f7f442453296a98289438adab632abac2d09409a4254f770cc",
+        "lines": 320,
+        "sha256": "f74464e3946f4c0c8e94b25a8876dddb3010c8b274047c8f75566bc7fed5a774",
         "ranges": [
           [
             1,
-            300
+            320
           ]
         ],
         "declarations": [
@@ -1348,12 +1348,12 @@
       },
       {
         "file": "lean/VE/Ask/ZeroWire.lean",
-        "lines": 459,
-        "sha256": "642c8e1e1ec405544bcd9a501e68ef2249e1bc446aea5788af34b582f183b616",
+        "lines": 461,
+        "sha256": "9a62220daa1f04ca7f9e6853e4e3954fdcf9edb10ac0be0d1c7f2fdcfc3cef95",
         "ranges": [
           [
             1,
-            459
+            461
           ]
         ],
         "declarations": [

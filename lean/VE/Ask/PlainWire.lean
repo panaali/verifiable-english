@@ -215,6 +215,24 @@ def sameEnvironment (text : String) (case : Json) : Except String Unit := do
   unless decide (Same (case.getObjValD "environment") (sp.front.getObjValD "environment")) do
     throw "CheckerUnavailable: the case is not this document's (another environment)"
 
+/-- A one-choice route's request names no reading: a document without an open set has no candidate, so its names
+    are the empty list (`decodeNames`'s rule, with no candidate). -/
+def noNames (j : Json) : Except String Unit :=
+  match j.getObjValD "names" with
+  | .arr xs => if xs.isEmpty then pure () else
+      throw "InvalidInput: the names are not one per candidate of every open set, in source order"
+  | _ => throw "InvalidInput: names is a list"
+
+/-- A one-choice route's case: exactly its environment, document, conclusion and an object of evidence pieces (no
+    piece of another type read as no evidence). -/
+def oneChoiceCase (case : Json) : Except String Unit := do
+  match VE.Bridge.exactFields case ["environment", "document", "conclusion", "evidence"] with
+  | .error e => throw s!"InvalidInput: the case's {e}"
+  | .ok () => pure ()
+  match case.getObjValD "evidence" with
+  | .obj _ => pure ()
+  | _ => throw "InvalidInput: the case's evidence is an object of pieces"
+
 /-- `PlainCaseBinding`, decided, with `E` decoded from the front matter. -/
 def checkPlainCase (text : String) (case : Json) (L : VE.EnglishGrammar.Lexicon) (V : VE.Environment) :
     Except String { E : VE.EnglishGrammar.Env // PlainCaseBinding text case E L V } :=
@@ -262,6 +280,8 @@ def replayPlainAskCore (j : Json) : Except String { a : PlainAsked // a.request 
   let case := j.getObjValD "case"
   let (_, L) ← englishOf text (j.getObjValD "lexicon")
   sameEnvironment text case
+  noNames j
+  oneChoiceCase case
   match hr : replayPlainParts case with
   | .error e => throw e
   | .ok ⟨(p, x), hconc, hV, hψx⟩ =>
