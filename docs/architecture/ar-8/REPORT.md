@@ -47,27 +47,32 @@ checker.
 <!-- measured: begin -->
 | Measure | Base | Head |
 |---|---:|---:|
-| `tools/check_rust_deps.py` lines | 648 | 89 |
+| `tools/check_rust_deps.py` lines | 648 | 135 |
 | `tools/rust-module-exceptions.json` lines | 1 | 0 |
-| `tools/test_layer_policy.py` lines | 883 | 559 |
+| `tools/test_layer_policy.py` lines | 883 | 629 |
 
-Diff `c24aeab2..8920ccd6` over 5 commits and 8 files: +177 −1048 lines (net -871).
+Diff `c24aeab2..c966cf4c` (`main..HEAD --no-merges` at the code head) over 14 commits and 15 files: +901 −1052 lines (net -151).
 
 | Seeded bug | File | Test run | Exit | Result |
 |---|---|---|---:|---|
-| M1 outward edges never reported | `tools/check_rust_deps.py` | `LayerSelectionTests::test_outward_crate_dependencies_are_rejected` | 1 | 4 failed, 1 passed in 0.73s |
-| M2 dev and build dependencies skipped | `tools/check_rust_deps.py` | `LayerSelectionTests::test_renamed_and_inherited_rust_dependencies_are_read_as_cargo_resolves_them` | 1 | 2 failed, 1 passed in 0.46s |
-| M3 facade modules ignored | `tools/check_rust_deps.py` | `LayerSelectionTests::test_modules_in_the_facade_are_rejected` | 1 | 2 failed, 1 passed in 0.57s |
-| M4 outside path dependency accepted | `tools/check_rust_deps.py` | `LayerSelectionTests::test_unmapped_crates_and_outside_path_dependencies_are_rejected` | 1 | 1 failed in 0.41s |
-| M5 hook snapshot without Rust sources | `tools/hooks/precommit.py` | `test_staged_rust_workspace_is_read_by_cargo` | 1 | 1 failed in 0.81s |
-| M6 facade without a library accepted | `tools/check_rust_deps.py` | `LayerSelectionTests::test_modules_in_the_facade_are_rejected` | 1 | 1 failed, 2 subtests passed in 0.62s |
-| M7 unmapped crates accepted | `tools/check_rust_deps.py` | `LayerSelectionTests::test_unmapped_crates_and_outside_path_dependencies_are_rejected` | 1 | 1 failed in 0.44s |
+| M1 outward edges never reported | `tools/check_rust_deps.py` | `LayerSelectionTests::test_outward_crate_dependencies_are_rejected` | 1 | 4 failed, 1 passed in 0.79s |
+| M2 dev and build dependencies skipped | `tools/check_rust_deps.py` | `LayerSelectionTests::test_renamed_and_inherited_rust_dependencies_are_read_as_cargo_resolves_them` | 1 | 2 failed, 1 passed in 0.34s |
+| M3 facade modules ignored | `tools/check_rust_deps.py` | `LayerSelectionTests::test_modules_in_the_facade_are_rejected` | 1 | 2 failed, 1 passed in 0.41s |
+| M4 outside path dependency accepted | `tools/check_rust_deps.py` | `LayerSelectionTests::test_unmapped_crates_and_outside_path_dependencies_are_rejected` | 1 | 1 failed in 0.43s |
+| M5 hook snapshot without Rust sources | `tools/hooks/precommit.py` | `test_staged_rust_workspace_is_read_by_cargo` | 1 | 1 failed in 1.16s |
+| M6 facade without a library accepted | `tools/check_rust_deps.py` | `LayerSelectionTests::test_modules_in_the_facade_are_rejected` | 1 | 1 failed, 2 subtests passed in 0.40s |
+| M7 unmapped crates accepted | `tools/check_rust_deps.py` | `LayerSelectionTests::test_unmapped_crates_and_outside_path_dependencies_are_rejected` | 1 | 1 failed in 0.41s |
+| M8 declared name of a path dependency not compared | `tools/check_rust_deps.py` | `LayerSelectionTests::test_path_dependencies_must_name_the_crate_their_path_holds` | 1 | 4 failed in 0.75s |
+| M9 facade lib.rs not read | `tools/check_rust_deps.py` | `LayerSelectionTests::test_the_facade_holds_only_re_exports` | 1 | 33 failed, 1 passed, 6 subtests passed in 6.26s |
+| M10 facade re-exports from any crate | `tools/check_rust_deps.py` | `LayerSelectionTests::test_the_facade_holds_only_re_exports` | 1 | 3 failed, 1 passed, 36 subtests passed in 4.55s |
+| M11 facade may end inside an item | `tools/check_rust_deps.py` | `LayerSelectionTests::test_the_facade_holds_only_re_exports` | 1 | 2 failed, 1 passed, 37 subtests passed in 4.15s |
 <!-- measured: end -->
 
 The seeded bugs ran on the code at the evidence's head, each alone against the named tests, and were removed
 (the tree is clean). An earlier candidate, "a renamed dependency read by its alias", survived: it is
 equivalent, because path dependencies are matched by path, so it was replaced by "dev and build dependencies
-skipped".
+skipped". In the review-fix round M11 survived its first run (no test had a facade `lib.rs` that ends
+inside an item without a final newline); two such cases were added and it now fails a test.
 
 ## Coordination (plan 4.2)
 

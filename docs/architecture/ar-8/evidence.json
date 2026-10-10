@@ -1,7 +1,9 @@
 {
  "batch": "AR-8",
+ "range": "main..HEAD --no-merges",
+ "report_subject": "AR-8: saved evidence and report",
  "base": "c24aeab20ee513e3e1bef310c5e3263fab3998cc",
- "head": "8920ccd642322502a65d9ab5b581de9d2ef55ec1",
+ "head": "c966cf4c5209094244f57d2b1407aa807510f493",
  "commits": [
   {
    "sha": "fd3225e8f03b7860c935c94cd6b803d16ae5b807",
@@ -22,20 +24,84 @@
   {
    "sha": "8920ccd642322502a65d9ab5b581de9d2ef55ec1",
    "subject": "AR-8: name the manifest key of a path dependency outside the workspace"
+  },
+  {
+   "sha": "b283bc6c056e9d8719bb7b11fa74446f70d98458",
+   "subject": "AR-8: report, deltas and saved evidence with a test that re-renders the report from it"
+  },
+  {
+   "sha": "562e42cd9b1deb344ae98f823783202e20fc809d",
+   "subject": "AR-8: gate collection: the hook's cargo test and the evidence tests"
+  },
+  {
+   "sha": "8ddd202c72b69fd0ead25565552026a23610d1c6",
+   "subject": "AR-8: report the gate stages, the chunked suite and its saved results"
+  },
+  {
+   "sha": "b7127df92cbf0971d174d055245a739ccc17098e",
+   "subject": "AR-8: a path dependency names the crate its path holds; the facade's lib.rs holds only re-exports"
+  },
+  {
+   "sha": "623efbf34f7ae971ec68c1a1e603367945618900",
+   "subject": "AR-8: the hook rejects facade code and a mismatched path dependency in the staged workspace"
+  },
+  {
+   "sha": "2271566abb7f5cc609bb37cc8247096800ab33fc",
+   "subject": "AR-8: evidence measured at the code head; a test that it covers every commit before the report commit"
+  },
+  {
+   "sha": "39df608e96d12600ab8220d0baec4cdeaa29adb5",
+   "subject": "AR-8: measure.py builds its seeded-bug runs with the nested pytest builder"
+  },
+  {
+   "sha": "f53d53ff39e8605dd73ec81784c5b2843dc12c16",
+   "subject": "AR-8: report and deltas for the review fixes (gate owner, DRI items, F2, F3, F5)"
+  },
+  {
+   "sha": "c966cf4c5209094244f57d2b1407aa807510f493",
+   "subject": "AR-8: a facade lib.rs that ends inside an item, without a final newline, fails (seeded bug M11 survived)"
   }
  ],
  "numstat": {
+  "docs/architecture/ar-8/DELTA.md": [
+   22,
+   0
+  ],
+  "docs/architecture/ar-8/REPORT.md": [
+   110,
+   0
+  ],
+  "docs/architecture/ar-8/evidence.json": [
+   144,
+   0
+  ],
+  "docs/architecture/ar-8/measure.py": [
+   136,
+   0
+  ],
+  "docs/architecture/ar-8/suite.json": [
+   108,
+   0
+  ],
   "rust/ve-kernel/src/internal.rs": [
    2,
    2
   ],
+  "tests/test_ar8_evidence.py": [
+   65,
+   0
+  ],
   "tests/test_precommit_hook.py": [
-   16,
+   29,
    0
   ],
   "tools/check_rust_deps.py": [
-   59,
-   618
+   109,
+   622
+  ],
+  "tools/gate-collection.json": [
+   6,
+   0
   ],
   "tools/hooks/README.md": [
    1,
@@ -54,18 +120,18 @@
    2
   ],
   "tools/test_layer_policy.py": [
-   87,
+   157,
    411
   ]
  },
  "totals": {
-  "added": 177,
-  "deleted": 1048
+  "added": 901,
+  "deleted": 1052
  },
  "lines": {
   "tools/check_rust_deps.py": {
    "base": 648,
-   "head": 89
+   "head": 135
   },
   "tools/rust-module-exceptions.json": {
    "base": 1,
@@ -73,7 +139,7 @@
   },
   "tools/test_layer_policy.py": {
    "base": 883,
-   "head": 559
+   "head": 629
   }
  },
  "mutants": [
@@ -84,7 +150,7 @@
     "tools/test_layer_policy.py::LayerSelectionTests::test_outward_crate_dependencies_are_rejected"
    ],
    "exit": 1,
-   "summary": "4 failed, 1 passed in 0.73s"
+   "summary": "4 failed, 1 passed in 0.79s"
   },
   {
    "mutant": "M2 dev and build dependencies skipped",
@@ -93,7 +159,7 @@
     "tools/test_layer_policy.py::LayerSelectionTests::test_renamed_and_inherited_rust_dependencies_are_read_as_cargo_resolves_them"
    ],
    "exit": 1,
-   "summary": "2 failed, 1 passed in 0.46s"
+   "summary": "2 failed, 1 passed in 0.34s"
   },
   {
    "mutant": "M3 facade modules ignored",
@@ -102,7 +168,7 @@
     "tools/test_layer_policy.py::LayerSelectionTests::test_modules_in_the_facade_are_rejected"
    ],
    "exit": 1,
-   "summary": "2 failed, 1 passed in 0.57s"
+   "summary": "2 failed, 1 passed in 0.41s"
   },
   {
    "mutant": "M4 outside path dependency accepted",
@@ -111,7 +177,7 @@
     "tools/test_layer_policy.py::LayerSelectionTests::test_unmapped_crates_and_outside_path_dependencies_are_rejected"
    ],
    "exit": 1,
-   "summary": "1 failed in 0.41s"
+   "summary": "1 failed in 0.43s"
   },
   {
    "mutant": "M5 hook snapshot without Rust sources",
@@ -120,7 +186,7 @@
     "tests/test_precommit_hook.py::test_staged_rust_workspace_is_read_by_cargo"
    ],
    "exit": 1,
-   "summary": "1 failed in 0.81s"
+   "summary": "1 failed in 1.16s"
   },
   {
    "mutant": "M6 facade without a library accepted",
@@ -129,7 +195,7 @@
     "tools/test_layer_policy.py::LayerSelectionTests::test_modules_in_the_facade_are_rejected"
    ],
    "exit": 1,
-   "summary": "1 failed, 2 subtests passed in 0.62s"
+   "summary": "1 failed, 2 subtests passed in 0.40s"
   },
   {
    "mutant": "M7 unmapped crates accepted",
@@ -138,7 +204,43 @@
     "tools/test_layer_policy.py::LayerSelectionTests::test_unmapped_crates_and_outside_path_dependencies_are_rejected"
    ],
    "exit": 1,
-   "summary": "1 failed in 0.44s"
+   "summary": "1 failed in 0.41s"
+  },
+  {
+   "mutant": "M8 declared name of a path dependency not compared",
+   "file": "tools/check_rust_deps.py",
+   "tests": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_path_dependencies_must_name_the_crate_their_path_holds"
+   ],
+   "exit": 1,
+   "summary": "4 failed in 0.75s"
+  },
+  {
+   "mutant": "M9 facade lib.rs not read",
+   "file": "tools/check_rust_deps.py",
+   "tests": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_the_facade_holds_only_re_exports"
+   ],
+   "exit": 1,
+   "summary": "33 failed, 1 passed, 6 subtests passed in 6.26s"
+  },
+  {
+   "mutant": "M10 facade re-exports from any crate",
+   "file": "tools/check_rust_deps.py",
+   "tests": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_the_facade_holds_only_re_exports"
+   ],
+   "exit": 1,
+   "summary": "3 failed, 1 passed, 36 subtests passed in 4.55s"
+  },
+  {
+   "mutant": "M11 facade may end inside an item",
+   "file": "tools/check_rust_deps.py",
+   "tests": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_the_facade_holds_only_re_exports"
+   ],
+   "exit": 1,
+   "summary": "2 failed, 1 passed, 37 subtests passed in 4.15s"
   }
  ]
 }
