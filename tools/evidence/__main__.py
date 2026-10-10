@@ -1,4 +1,4 @@
-"""python -m tools.evidence {scope,latency,ab,fuzz_ab,report} ...  (see tools/evidence/__init__.py)."""
+"""python -m tools.evidence {scope,latency,ab,fuzz_ab,mutants,report} ...  (see tools/evidence/__init__.py)."""
 from __future__ import annotations
 
 import argparse
@@ -7,9 +7,11 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from tools.evidence import ROOT, EvidenceError, dump, scope  # noqa: E402
+from tools import mutants  # noqa: E402  (the seeded-mutant harness has one owner, tools/mutants.py)
 from tools.evidence import ab, fuzz_ab, latency, report  # noqa: E402
 
-COMMANDS = {"latency": latency.main, "ab": ab.main, "fuzz_ab": fuzz_ab.main, "report": report.main}
+COMMANDS = {"latency": latency.main, "ab": ab.main, "fuzz_ab": fuzz_ab.main, "mutants": mutants.main,
+            "report": report.main}
 
 
 def scope_main(argv) -> int:
