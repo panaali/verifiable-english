@@ -555,9 +555,11 @@ def _digest_rebind(answer) -> list[tuple[Mutant, object]]:
     return [(Mutant("rebind", ("results", 0, "digest")), _replace(answer, ("results", 0, "digest"), other))]
 
 
-def run_gate(routes_wanted=None) -> dict:
-    cases = load_cases()
-    entries = json.loads(ALLOW.read_text())["entries"]
+def run_gate(routes_wanted=None, cases_path: Path = CASES, allow_path: Path = ALLOW) -> dict:
+    """The gate's report (`--json`): per-route counts, the findings no allow-list entry lists, and every
+    failure. `routes_wanted` limits it to those routes (allow-list entries of other routes are not checked)."""
+    cases = load_cases(cases_path)
+    entries = json.loads(allow_path.read_text())["entries"]
     report = {"routes": {}, "findings": [], "failures": []}
     fixtures: dict[str, list] = defaultdict(list)
     for row in cases:
@@ -604,7 +606,8 @@ def run_gate(routes_wanted=None) -> dict:
                                        "outcome": "untyped", "detail": f"manifest response type {item['type']}"})
     for entry in entries:
         used = entry.pop("_used", set())
-        if routes_wanted and not any(fnmatchcase(route, entry["route"]) for route in routes_wanted):
+        # A partial run checks only the entries of its routes (an entry for every route may list paths of others).
+        if routes_wanted and (entry["route"] not in routes_wanted):
             continue
         for listed in _patterns(entry):
             if listed not in used:
@@ -615,6 +618,9 @@ def run_gate(routes_wanted=None) -> dict:
                                   f"{finding['path']}: {finding['detail']}")
     report["totals"] = dict(sum((Counter({k: v for k, v in s.items() if k != "seconds"})
                                  for s in report["routes"].values()), Counter()))
+    # The inputs the report is of: a saved report holds only for these fixtures and this allow-list.
+    report["inputs"] = {str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
+                        for path in (cases_path, allow_path) if path.is_relative_to(ROOT)}
     return report
 
 
@@ -627,8 +633,10 @@ def _record(stats, findings, entries, route, mutant, outcome, detail, pattern, s
         findings.append({"route": route, "mutation": mutant.kind, "path": pattern, "outcome": outcome,
                          "detail": detail})
         return
-    if _allowed(entries, route, mutant.kind, pattern):
+    entry = _allowed(entries, route, mutant.kind, pattern)
+    if entry:
         stats["allowed"] += 1
+        stats[f"allowed:{entry.get('id', '?')}"] += 1
         return
     key = (route, mutant.kind, pattern, outcome)
     if key not in seen_untyped:
@@ -642,7 +650,10 @@ def _untyped(route, accepted_retypes, entries, findings, stats):
     for pattern, kinds in accepted_retypes.items():
         if len(kinds) >= len(RETYPES) - 1:
             stats["untyped"] += 1
-            if not _allowed(entries, route, "untyped", pattern):
+            entry = _allowed(entries, route, "untyped", pattern)
+            if entry:
+                stats[f"untyped:{entry.get('id', '?')}"] += 1
+            else:
                 findings.append({"route": route, "mutation": "untyped", "path": pattern, "outcome": "untyped",
                                  "detail": "every retype is accepted"})
 
