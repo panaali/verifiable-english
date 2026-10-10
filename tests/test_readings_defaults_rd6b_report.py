@@ -160,3 +160,91 @@ def test_report_check_rejects_mutated_saved_numbers_commits_and_failures():
     altered = copy.deepcopy(mutants)
     altered[0]["exit_code"] = 0
     assert mismatches(report, summary, gate, comparison, bench, altered)
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Review round 1 (rd-6b-review.final.md): the 29 changed pilot records recorded again on the round's head and on
+# the base, one process at a time (tools/lean_first_diff.py `pilot_check`), and the trust growth.
+
+ROUND1_ADDED = {("readings", "conflict", "choices"), ("premises", "gaps")}
+
+
+def round1_records(side):
+    text = gzip.decompress((EVIDENCE / f"round1-pilots-{side}.jsonl.gz").read_bytes()).decode()
+    return {row["case"]: row for row in map(json.loads, text.splitlines())}
+
+
+def members(old, new, path=()):
+    """(path, how) of every member `new` adds, removes or changes against `old`."""
+    if type(old) is dict and type(new) is dict:
+        for key in sorted(set(old) | set(new)):
+            if key not in old:
+                yield path + (key,), "added"
+            elif key not in new:
+                yield path + (key,), "removed"
+            else:
+                yield from members(old[key], new[key], path + (key,))
+    elif old != new:
+        yield path, "changed"
+
+
+def round1_lines():
+    head, base = round1_records("head"), round1_records("base")
+    slower = sorted(case for case in head if head[case]["wall_seconds"] > 1.2 * base[case]["wall_seconds"] + 1)
+    return [f"29 changed pilot records recorded again, one process at a time: {round(sum(r['wall_seconds'] for r in head.values()))} s "
+            f"on this round's head, {round(sum(r['wall_seconds'] for r in base.values()))} s on the base",
+            f"{len(slower)} of them more than 20% slower than the base"], slower
+
+
+def test_round1_pilots_keep_the_base_statuses_and_the_previous_english():
+    """Every changed pilot record, on the round's head: Lean's route, the base's conflict and premise statuses, the
+    previous head's status text and English line for line; against the previous head only the per-choice conflict
+    statuses and Lean's gaps of the shown premise model are added."""
+    _, _, _, delta, _, _, _, _ = saved()
+    previous = {row["case"]: row for row in delta["verdict"]}
+    head, base = round1_records("head"), round1_records("base")
+    assert set(head) == set(base) == set(previous) and len(head) == 29
+    added = set()
+    for case, row in head.items():
+        assert row["source_sha256"] == base[case]["source_sha256"]
+        report, before = row["outcome"]["stdout"], previous[case]["head"]["stdout"]
+        assert row["outcome"]["exit"] == 0 and report["readings"]["route"] == "superposed", case
+        for side in (base[case]["outcome"]["stdout"], previous[case]["base"]["stdout"]):
+            assert report["readings"]["conflict"]["status"] == side["readings"]["conflict"]["status"], case
+            assert report["premises"]["status"] == side["premises"]["status"], case
+        assert (report["readings"]["status"], report["readings"]["english"]) == \
+            (before["readings"]["status"], before["readings"]["english"]), case
+        changes = list(members(before, report))
+        assert all(how == "added" for _, how in changes), (case, changes)
+        added |= {path for path, _ in changes}
+        conflict = report["readings"]["conflict"]
+        if "choices" in conflict:
+            assert len(conflict["choices"]) == report["readings"]["choice_count"]
+            if conflict["status"] == "CONFLICT-FREE":
+                assert {c["status"] for c in conflict["choices"]} == {"CONFLICT-FREE"}
+    assert added == ROUND1_ADDED
+    lines, slower = round1_lines()
+    text = (HERE / "DELTA.md").read_text()
+    assert all(line in text for line in lines), lines
+    assert all(f"`{case.rsplit('/', 1)[-1]}`" in text for case in slower)
+
+
+def test_trust_growth_is_rd6b_entry_and_listed_for_signature():
+    """Review B1 of rd-6b: the current tree is the trust baseline (`tests/test_lean_first_b12_report.py` compares
+    them whole), and the growth from the pinned merge base is exactly the baseline's RD-6b entry, as DELTA.md states
+    it: S +0, V +137, of which +16 under R6 and +121 awaiting the DRI's signature."""
+    from tools import trust_map
+    summary, *_ = saved()
+    baseline = json.loads((ROOT / "docs/trust-baseline.json").read_text())
+    current, problems = trust_map.measure(ROOT, ROOT / "tools/trust-classes.json", ROOT / "lean/statements.txt")
+    parent, parent_problems, _ = trust_map.measure_rev(summary["base_merge_commit"])
+    assert not problems and not parent_problems
+    assert baseline["files"] == current and baseline["signed"] == []
+    entry = baseline["history"][-1]
+    assert entry["change"].startswith("readings-defaults RD-6b: ")
+    assert entry["rebaselined_from"] == trust_map.budget(trust_map.totals(parent))
+    assert entry["to"] == trust_map.budget(trust_map.totals(current))
+    growth = {key: entry["to"][key] - entry["rebaselined_from"][key] for key in ("K", "S", "V")}
+    assert growth == {"K": 0, "S": 0, "V": 137}
+    text = (HERE / "DELTA.md").read_text()
+    assert "K +0, S +0, V +137" in text and "+16 under R6" in text and "+121 awaiting the DRI's signature" in text

@@ -660,7 +660,10 @@
         "ResponseShape.Schemas.ReadingsRoute.fillField",
         "ResponseShape.Schemas.ReadingsRoute.fill_premises",
         "ResponseShape.Schemas.ReadingsRoute.filled",
+        "ResponseShape.Schemas.ReadingsRoute.filledEnvironment",
         "ResponseShape.Schemas.ReadingsRoute.filledFields",
+        "ResponseShape.Schemas.ReadingsRoute.filledPredicate",
+        "ResponseShape.Schemas.ReadingsRoute.gaps",
         "ResponseShape.Schemas.ReadingsRoute.generatedPredicates",
         "ResponseShape.Schemas.ReadingsRoute.key",
         "ResponseShape.Schemas.ReadingsRoute.keys",
@@ -6102,7 +6105,7 @@
       ]
     },
     "VE/Readings/SupFill.lean": {
-      "S": [
+      "P": [
         "VE.Readings.AuthorLite",
         "VE.Readings.DecidesByD",
         "VE.Readings.DecidesBySoftD"
@@ -6130,6 +6133,9 @@
       ],
       "G[R]": [
         "VE.Readings.Wire.ndRefusal"
+      ],
+      "G[V]": [
+        "VE.Readings.Run.ndModelGaps"
       ]
     },
     "VE/Readings/SupRun.lean": {
