@@ -22,17 +22,17 @@ def saved():
     gate = json.loads((EVIDENCE / "gate-code.json").read_text())
     comparison = json.loads((EVIDENCE / "ab-compare.json").read_text())
     delta = json.loads((EVIDENCE / "ab-delta.json").read_text())
-    latency = json.loads((EVIDENCE / "latency.json").read_text())
+    bench = json.loads((EVIDENCE / "latency.json").read_text())
     mutants = json.loads((EVIDENCE / "seeded-bugs.json").read_text())
     retries = json.loads(gzip.decompress((EVIDENCE / "ab-retries.json.gz").read_bytes()))
     records = {
         side: [json.loads(line) for line in gzip.decompress((EVIDENCE / f"ab-{side}.jsonl.gz").read_bytes()).splitlines()]
         for side in ("base", "head")
     }
-    return summary, gate, comparison, delta, latency, mutants, retries, records
+    return summary, gate, comparison, delta, bench, mutants, retries, records
 
 
-def expected_lines(summary, gate, comparison, latency, mutants):
+def expected_lines(summary, gate, comparison, bench, mutants):
     counts = gate["counts"]
     lean = summary["lean"]
     total = sum(comparison["records"].values())
@@ -54,7 +54,7 @@ def expected_lines(summary, gate, comparison, latency, mutants):
     ]
     lines.extend(
         f"| `{name}` | {row['calls_per_side']} | {row['base_cpu_ms']:.3f} | {row['head_cpu_ms']:.3f} |"
-        for name, row in latency["samples"].items()
+        for name, row in bench["samples"].items()
     )
     lines.extend(f"| `{commit['sha'][:8]}` | {commit['subject']} |" for commit in summary["commits_before_report"])
     lines.extend(
@@ -64,15 +64,15 @@ def expected_lines(summary, gate, comparison, latency, mutants):
     return lines
 
 
-def mismatches(report, summary, gate, comparison, latency, mutants):
-    return [line for line in expected_lines(summary, gate, comparison, latency, mutants) if line not in report]
+def mismatches(report, summary, gate, comparison, bench, mutants):
+    return [line for line in expected_lines(summary, gate, comparison, bench, mutants) if line not in report]
 
 
 def test_report_numbers_and_commit_rows_match_saved_evidence():
-    summary, gate, comparison, _, latency, mutants, _, _ = saved()
-    assert mismatches((HERE / "DELTA.md").read_text(), summary, gate, comparison, latency, mutants) == []
+    summary, gate, comparison, _, bench, mutants, _, _ = saved()
+    assert mismatches((HERE / "DELTA.md").read_text(), summary, gate, comparison, bench, mutants) == []
     assert gate["status"] == "passed" and gate["dirty"] is False
-    assert gate["commit_sha"] == summary["code_head"] == latency["head_commit"]
+    assert gate["commit_sha"] == summary["code_head"] == bench["head_commit"]
     assert gate["counts"] == summary["gate_counts"]
     assert gate["counts"]["passed"] + gate["counts"]["skipped"] + gate["counts"]["failed"] == gate["counts"]["selected"]
     assert gate["counts"]["selected"] + gate["counts"]["deselected"] == gate["counts"]["collected"]
@@ -121,11 +121,11 @@ def test_saved_ab_records_are_complete_and_every_delta_is_reviewed():
 
 
 def test_saved_latency_and_seeded_bugs():
-    summary, _, _, _, latency, mutants, _, _ = saved()
-    assert latency["pass"] is summary["latency_pass"] is True
-    assert len(latency["samples"]) == 3
+    summary, _, _, _, bench, mutants, _, _ = saved()
+    assert bench["pass"] is summary["latency_pass"] is True
+    assert len(bench["samples"]) == 3
     assert all(row["calls_per_side"] == 500 and row["head_cpu_ms"] <= 1.2 * row["base_cpu_ms"]
-               for row in latency["samples"].values())
+               for row in bench["samples"].values())
     assert len(mutants) == summary["seeded_bugs"] == 3
     assert len({mutant["mutant"] for mutant in mutants}) == 3
     for mutant in mutants:
@@ -137,26 +137,26 @@ def test_saved_latency_and_seeded_bugs():
 
 
 def test_report_check_rejects_mutated_saved_numbers_commits_and_failures():
-    summary, gate, comparison, _, latency, mutants, _, _ = saved()
+    summary, gate, comparison, _, bench, mutants, _, _ = saved()
     report = (HERE / "DELTA.md").read_text()
     for section, name in (("lean", "build_jobs"), ("lean", "audit_theorems"),
                           ("lean", "statements"), ("lean", "rd6b_declarations")):
         altered = copy.deepcopy(summary)
         altered[section][name] += 1
-        assert mismatches(report, altered, gate, comparison, latency, mutants)
+        assert mismatches(report, altered, gate, comparison, bench, mutants)
     altered = copy.deepcopy(summary)
     altered["commits_before_report"][0]["sha"] = "0" * 40
-    assert mismatches(report, altered, gate, comparison, latency, mutants)
+    assert mismatches(report, altered, gate, comparison, bench, mutants)
     altered = copy.deepcopy(gate)
     altered["counts"]["passed"] += 1
-    assert mismatches(report, summary, altered, comparison, latency, mutants)
+    assert mismatches(report, summary, altered, comparison, bench, mutants)
     altered = copy.deepcopy(comparison)
     altered["totals"]["verdict"] += 1
-    assert mismatches(report, summary, gate, altered, latency, mutants)
-    altered = copy.deepcopy(latency)
+    assert mismatches(report, summary, gate, altered, bench, mutants)
+    altered = copy.deepcopy(bench)
     first = next(iter(altered["samples"].values()))
     first["head_cpu_ms"] += 1
     assert mismatches(report, summary, gate, comparison, altered, mutants)
     altered = copy.deepcopy(mutants)
     altered[0]["exit_code"] = 0
-    assert mismatches(report, summary, gate, comparison, latency, altered)
+    assert mismatches(report, summary, gate, comparison, bench, altered)
