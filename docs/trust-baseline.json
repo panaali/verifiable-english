@@ -3,27 +3,27 @@
  "totals": {
   "K": 997,
   "S": 9674,
-  "D": 13737,
-  "G": 25472,
+  "D": 13831,
+  "G": 25537,
   "C": 8329,
   "P": 68097,
   "T": 13528,
-  "o": 11616,
-  "D[V]": 12214,
-  "D[R]": 996,
+  "o": 11619,
+  "D[V]": 12307,
+  "D[R]": 997,
   "D[I]": 527,
-  "G[V]": 23837,
+  "G[V]": 23902,
   "G[R]": 1406,
   "G[I]": 229,
   "tied": 178,
   "unclassified": 0,
-  "trusted": 46563,
-  "lines": 151450
+  "trusted": 46721,
+  "lines": 151612
  },
  "budget": {
   "K": 997,
   "S": 9674,
-  "V": 35892
+  "V": 36050
  },
  "signed": [],
  "history": [
@@ -412,6 +412,19 @@
     "K": 997,
     "S": 9674,
     "V": 35892
+   }
+  },
+  {
+   "change": "Batch 16d: Lean document wrapper and typed-response code added trusted lines; no K or S growth. DRI review of the wrapper delta is deferred.",
+   "rebaselined_from": {
+    "K": 997,
+    "S": 9674,
+    "V": 35892
+   },
+   "to": {
+    "K": 997,
+    "S": 9674,
+    "V": 36050
    }
   }
  ],
@@ -4365,7 +4378,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 90,
+   "G": 93,
    "C": 0,
    "P": 0,
    "T": 0,
@@ -4373,13 +4386,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 90,
+   "G[V]": 93,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 90,
-   "lines": 101
+   "trusted": 93,
+   "lines": 104
   },
   "ResponseShape/Schemas/English.lean": {
    "K": 0,
@@ -6724,13 +6737,13 @@
   "VE/Discourse/Loader.lean": {
    "K": 0,
    "S": 0,
-   "D": 639,
+   "D": 650,
    "G": 8,
    "C": 0,
    "P": 10,
    "T": 0,
    "o": 31,
-   "D[V]": 606,
+   "D[V]": 617,
    "D[R]": 11,
    "D[I]": 22,
    "G[V]": 8,
@@ -6738,8 +6751,8 @@
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 614,
-   "lines": 688
+   "trusted": 625,
+   "lines": 699
   },
   "VE/Discourse/Manifest.lean": {
    "K": 0,
@@ -11464,22 +11477,22 @@
   "VE/Service/Document.lean": {
    "K": 0,
    "S": 0,
-   "D": 698,
-   "G": 146,
+   "D": 781,
+   "G": 208,
    "C": 0,
    "P": 0,
    "T": 18,
-   "o": 60,
-   "D[V]": 406,
-   "D[R]": 282,
+   "o": 63,
+   "D[V]": 488,
+   "D[R]": 283,
    "D[I]": 10,
-   "G[V]": 146,
+   "G[V]": 208,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 552,
-   "lines": 922
+   "trusted": 696,
+   "lines": 1070
   },
   "VE/Service/EnglishRun.lean": {
    "K": 0,

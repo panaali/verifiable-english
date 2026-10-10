@@ -632,6 +632,8 @@ def contentOf (E : Env) (fences : List (String × String)) (lexicon : Option Jso
       let node ← (VE.Norms.Wire.decodeNorm content).mapError fun e =>
         if e == "Natural number expected" then
           unavailable "a malformed norm formula is outside this document decoder"
+        else if e == "object expected" then
+          "Expected a JSON object"
         else e
       let encoded := VE.Alternatives.Wire.encodeNode node
       return (.norm node, ← VE.Route.Wire.meaningId E.profiles E.envId encoded)
