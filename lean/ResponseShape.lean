@@ -1,5 +1,6 @@
 import Lean.Data.Json
 import VE.CertificateWire
+import VE.Core.Layers
 
 /-! # Response shapes: the one source of the client's response schemas
 
@@ -386,14 +387,16 @@ def sameJson (a b : Json) : Bool := same depth a b
 def claimFields (j : Json) : List (Option Json) :=
   ["name", "ast", "label"].map fun k => (j.getObjVal? k).toOption
 
-/-- Counts from the request declarations, matching the Background generator families. -/
+/-- Counts from the request declarations, matching the Background generator families over
+the FOL projection (`VE.Core.Layers.folEntry`): a declaration with three or more arguments
+contributes no flag, definition or norm pair premise. -/
 def backgroundCount (case : Json) (norms : Bool) : Option Nat := do
   let env ← (case.getObjVal? "environment").toOption
   let vocab ← (env.getObjVal? "vocabulary").toOption
   let predicates ← (vocab.getObjVal? "predicates").toOption
   let constants ← (vocab.getObjVal? "constants").toOption
   if kind predicates != "object" || kind constants != "object" then none else pure ()
-  let entries := members predicates
+  let entries := (members predicates).filter fun (_, p) => VE.Core.Layers.folEntry p
   let flags := entries.foldl (fun n (_, p) => n + (if p.getObjValD "functional" == .bool true then 1 else 0) +
     (if p.getObjValD "total" == .bool true then 1 else 0)) 0
   let definitions := entries.filter fun (_, p) => (p.getObjVal? "defined").toBool

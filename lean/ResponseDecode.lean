@@ -74,12 +74,18 @@ def isTrue (e : Json) (k : String) : Bool :=
 
 def predicates : List String := ["environment", "vocabulary", "predicates"]
 
+/-- The number of the request's predicate declarations in the FOL projection
+(`VE.Core.Layers.folEntry`) that satisfy `f`: every regenerated Background and norms view is
+built from that projection, so a declaration with three or more arguments adds nothing. -/
+def folCount (case : Json) (f : Json → Bool) : Except String Nat :=
+  countWhere case predicates fun e => VE.Core.Layers.folEntry e && f e
+
 /-- `Data.Background.generate`: one premise per functional and one per total flag. -/
 def flagsCount (case : Json) : Except String Nat := do
-  pure ((← countWhere case predicates (isTrue · "functional")) + (← countWhere case predicates (isTrue · "total")))
+  pure ((← folCount case (isTrue · "functional")) + (← folCount case (isTrue · "total")))
 
 /-- `Definitions.expand`: one biconditional per defined predicate. -/
-def definitionsCount (case : Json) : Except String Nat := countWhere case predicates (has · "defined")
+def definitionsCount (case : Json) : Except String Nat := folCount case (has · "defined")
 
 /-- `Background.literals`: one premise per pair of `$string` literals. -/
 def literalsCount (case : Json) : Except String Nat := do
@@ -88,10 +94,10 @@ def literalsCount (case : Json) : Except String Nat := do
   pure (n * (n - 1) / 2)
 
 /-- `Norms.syms`: one layer per regulated predicate. -/
-def regulatedCount (case : Json) : Except String Nat := countWhere case predicates (has · "regulated")
+def regulatedCount (case : Json) : Except String Nat := folCount case (has · "regulated")
 
 /-- `Norms.pairs`: one per obligation with a permission dual. -/
-def pairsCount (case : Json) : Except String Nat := countWhere case predicates fun e =>
+def pairsCount (case : Json) : Except String Nat := folCount case fun e =>
   match e.getObjVal? "regulated" with
   | .ok r => r.getObjValD "role" == .str "obligation" && (match r.getObjVal? "permission" with
       | .ok (.str _) => true
@@ -168,10 +174,10 @@ namespace Invariants
 def distinct (xs : List Json) (what : String) : Check :=
   need (xs.eraseDups.length == xs.length) s!"duplicate {what}"
 
-/-- The request's predicate declarations, by name (`RBNode` order). -/
+/-- The request's predicate declarations in the FOL projection (`folCount`), by name (`RBNode` order). -/
 def declarations (case : Json) : Except String (List (String × Json)) := do
   match ← path case predicates with
-  | .obj kvs => pure (kvs.foldl (fun acc k v => acc ++ [(k, v)]) [])
+  | .obj kvs => pure ((kvs.foldl (fun acc k v => acc ++ [(k, v)]) []).filter (VE.Core.Layers.folEntry ·.2))
   | _ => throw "predicates are not an object"
 
 /-- The regulated predicates the request declares. -/
