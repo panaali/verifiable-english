@@ -3,27 +3,27 @@
  "totals": {
   "K": 997,
   "S": 9674,
-  "D": 13574,
-  "G": 25375,
-  "C": 8329,
-  "P": 68092,
-  "T": 13509,
-  "o": 11611,
-  "D[V]": 12204,
-  "D[R]": 871,
+  "D": 13582,
+  "G": 25536,
+  "C": 8486,
+  "P": 68880,
+  "T": 13567,
+  "o": 11729,
+  "D[V]": 12217,
+  "D[R]": 866,
   "D[I]": 499,
-  "G[V]": 23740,
-  "G[R]": 1406,
+  "G[V]": 23864,
+  "G[R]": 1443,
   "G[I]": 229,
   "tied": 178,
   "unclassified": 0,
-  "trusted": 46456,
-  "lines": 151161
+  "trusted": 46593,
+  "lines": 152451
  },
  "budget": {
   "K": 997,
   "S": 9674,
-  "V": 35785
+  "V": 35922
  },
  "signed": [],
  "history": [
@@ -386,6 +386,19 @@
     "K": 997,
     "S": 9674,
     "V": 35785
+   }
+  },
+  {
+   "change": "readings-defaults RD-6b: the superposed route under the unspecified completion (elaborateFieldsND, supUnitsFrom, ndFillJson, decodeAssumedND, ndSlotLabels), the typed superposed answer and filled environment (review B4) and Lean's filled gaps of a superposed model (review B3: ndModelGaps, the gaps shape and its three uses). S +0: AuthorLite, DecidesByD and DecidesBySoftD are proof helpers (P). V +137: +16 replace Python's choice of the gaps a superposed model shows, deleted in the same change (R6); +121 await the DRI's signature (docs/readings-defaults/rd6b/DELTA.md).",
+   "rebaselined_from": {
+    "K": 997,
+    "S": 9674,
+    "V": 35785
+   },
+   "to": {
+    "K": 997,
+    "S": 9674,
+    "V": 35922
    }
   }
  ],
@@ -3682,7 +3695,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 421,
+   "T": 431,
    "o": 7,
    "D[V]": 0,
    "D[R]": 0,
@@ -3693,7 +3706,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 428
+   "lines": 438
   },
   "ResponseShape/CaseDeciders.lean": {
    "K": 0,
@@ -3961,7 +3974,7 @@
    "D": 0,
    "G": 13,
    "C": 0,
-   "P": 878,
+   "P": 999,
    "T": 0,
    "o": 31,
    "D[V]": 0,
@@ -3973,7 +3986,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 29,
-   "lines": 938
+   "lines": 1059
   },
   "ResponseShape/Encoders/Reports.lean": {
    "K": 0,
@@ -4659,7 +4672,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 606,
+   "G": 702,
    "C": 0,
    "P": 0,
    "T": 0,
@@ -4667,13 +4680,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 606,
+   "G[V]": 702,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 606,
-   "lines": 618
+   "trusted": 702,
+   "lines": 714
   },
   "ResponseShape/Schemas/Reports.lean": {
    "K": 0,
@@ -5482,8 +5495,8 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 4608,
-   "o": 197,
+   "T": 4656,
+   "o": 198,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
@@ -5493,7 +5506,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 4805
+   "lines": 4854
   },
   "VE/Bridge.lean": {
    "K": 22,
@@ -9499,7 +9512,7 @@
    "K": 0,
    "S": 0,
    "D": 4,
-   "G": 243,
+   "G": 248,
    "C": 0,
    "P": 28,
    "T": 0,
@@ -9507,33 +9520,33 @@
    "D[V]": 0,
    "D[R]": 4,
    "D[I]": 0,
-   "G[V]": 243,
+   "G[V]": 248,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 243,
-   "lines": 302
+   "trusted": 248,
+   "lines": 307
   },
   "VE/Readings/Run.lean": {
    "K": 0,
    "S": 0,
    "D": 93,
-   "G": 315,
+   "G": 308,
    "C": 0,
    "P": 67,
    "T": 0,
-   "o": 47,
+   "o": 48,
    "D[V]": 90,
    "D[R]": 3,
    "D[I]": 0,
-   "G[V]": 307,
+   "G[V]": 300,
    "G[R]": 0,
    "G[I]": 8,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 397,
-   "lines": 522
+   "trusted": 390,
+   "lines": 516
   },
   "VE/Readings/RunExamples.lean": {
    "K": 0,
@@ -9761,9 +9774,9 @@
    "D": 0,
    "G": 12,
    "C": 0,
-   "P": 247,
+   "P": 313,
    "T": 37,
-   "o": 31,
+   "o": 35,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
@@ -9773,7 +9786,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 19,
-   "lines": 334
+   "lines": 404
   },
   "VE/Readings/SupExtraExamples.lean": {
    "K": 0,
@@ -9794,6 +9807,46 @@
    "unclassified": 0,
    "trusted": 0,
    "lines": 186
+  },
+  "VE/Readings/SupFill.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 0,
+   "C": 0,
+   "P": 470,
+   "T": 0,
+   "o": 66,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 0,
+   "G[R]": 0,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 0,
+   "lines": 536
+  },
+  "VE/Readings/SupFillWire.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 7,
+   "G": 12,
+   "C": 134,
+   "P": 105,
+   "T": 0,
+   "o": 44,
+   "D[V]": 7,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 7,
+   "G[R]": 5,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 14,
+   "lines": 302
   },
   "VE/Readings/SupFree.lean": {
    "K": 0,
@@ -9978,22 +10031,22 @@
   "VE/Readings/UnspecifiedWire.lean": {
    "K": 0,
    "S": 0,
-   "D": 94,
-   "G": 90,
-   "C": 176,
-   "P": 188,
+   "D": 95,
+   "G": 145,
+   "C": 199,
+   "P": 214,
    "T": 0,
-   "o": 56,
-   "D[V]": 46,
-   "D[R]": 48,
+   "o": 58,
+   "D[V]": 52,
+   "D[R]": 43,
    "D[I]": 0,
-   "G[V]": 90,
-   "G[R]": 0,
+   "G[V]": 113,
+   "G[R]": 32,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 136,
-   "lines": 604
+   "trusted": 165,
+   "lines": 711
   },
   "VE/Readings/UpPremises.lean": {
    "K": 0,
