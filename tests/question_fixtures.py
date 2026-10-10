@@ -48,7 +48,8 @@ def env_json(sorts, preds, consts) -> dict:
 
 
 def environment(frame: str):
-    """The environment a frame's questions are read in: a document's, as `ve ask` builds it, or a base-8 one."""
+    """The environment a frame's questions are read in: a document's, as `ve ask` builds it, a base-8 one, or `Alt`,
+    the alternatives spec's fixture environment with one robot `rob` (for `alternatives@0`'s verb phrases)."""
     from ve import Environment, ask
     if frame in DOCUMENTS:
         return ask.environment((ROOT / DOCUMENTS[frame]).read_bytes())
@@ -56,6 +57,11 @@ def environment(frame: str):
         return Environment(env_json(SORTS_F + [("dservice", "deployed service")], PREDS_F, CONSTS_F))
     if frame == "F-LFv3":
         return Environment(env_json(SORTS_F, PREDS_F, CONSTS_F))
+    if frame == "Alt":
+        from conformance.alternatives import environment as alternatives
+        raw = alternatives()
+        raw["vocabulary"]["constants"] = {"rob": {"sort": "robot", "description": "A robot."}}
+        return Environment(raw)
     raise KeyError(frame)
 
 
@@ -101,7 +107,7 @@ FIXTURES = [
     ('G10', 'G', 'Is Ann eligible?',
      {"ast": ["unary", "eligible", ["const", "ann"]], "form": "fronted", "sentence": "Ann is eligible.", "spans": [[0, 16]], "status": "one", "text": "You asked whether Ann is eligible."}),
     ('G11', 'G', 'Is every member who registered is eligible?',
-     {"class": "SyntaxError", "code": "QuestionWordMoved", "rephrasings": ["Is every member who is registered eligible?"], "span": [0, 43], "status": "moved", "text": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\". English moves a word to the front only from the main sentence. Ask this instead:"}),
+     {"class": "SyntaxError", "code": "QuestionWordMoved", "rephrasings": ["Is every member who is registered eligible?"], "span": [0, 43], "status": "moved", "text": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:"}),
     ('G11c', 'G', 'Is every member who is registered eligible?',
      {"ast": ["forall", "member", ["implies", ["unary", "registered", ["var", 0]], ["unary", "eligible", ["var", 0]]]], "form": "fronted", "sentence": "every member who is registered is eligible.", "spans": [[0, 43]], "status": "one", "text": "You asked whether every member who is registered is eligible."}),
     ('G12', 'G', 'Is every member eligible and?',
@@ -135,21 +141,29 @@ FIXTURES = [
     ('G27', 'G', 'Is a member who registered is eligible?',
      {"advice": {"id": "question-indefinite", "text": "Write \"every\" or \"some\" in place of \"a\"."}, "class": "SyntaxError", "code": "NoDerivation", "span": [3, 4], "status": "none", "text": "The question has no reading with the current vocabulary. Closest sentence tried: \"a is member who registered is eligible.\". Unknown English phrase 'a'. Nearest declared wordings: 'bo'; 'ann'; 'member'."}),
     ('G28', 'G', 'Is every member that registered is eligible?',
-     {"class": "SyntaxError", "code": "QuestionWordMoved", "rephrasings": ["Is every member that is registered eligible?"], "span": [0, 44], "status": "moved", "text": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\". English moves a word to the front only from the main sentence. Ask this instead:"}),
+     {"class": "SyntaxError", "code": "QuestionWordMoved", "rephrasings": ["Is every member that is registered eligible?"], "span": [0, 44], "status": "moved", "text": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:"}),
     ('G29', 'G', 'Is there a member who is eligible?',
      {"ast": ["exists", "member", ["unary", "eligible", ["var", 0]]], "form": "fronted", "sentence": "there is a member who is eligible.", "spans": [[0, 34]], "status": "one", "text": "You asked whether there is a member who is eligible."}),
     ('G30', 'G', 'Is if ann verified, then bo is eligible?',
-     {"class": "SyntaxError", "code": "QuestionWordMoved", "rephrasings": ["Is it the case that if ann is verified, then bo is eligible?"], "span": [0, 40], "status": "moved", "text": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\". English moves a word to the front only from the main sentence. Ask this instead:"}),
+     {"class": "SyntaxError", "code": "QuestionWordMoved", "rephrasings": ["Is it the case that if ann is verified, then bo is eligible?"], "span": [0, 40], "status": "moved", "text": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:"}),
     ('G30c', 'G', 'Is it the case that if ann is verified, then bo is eligible?',
      {"ast": ["implies", ["unary", "verified", ["const", "ann"]], ["unary", "eligible", ["const", "bo"]]], "form": "caseThat", "sentence": "if ann is verified, then bo is eligible.", "spans": [[0, 60]], "status": "one", "text": "You asked whether if ann is verified, then bo is eligible."}),
     ('G31', 'G', 'Is if every member verified, then every member is eligible?',
-     {"class": "SyntaxError", "code": "QuestionWordMoved", "rephrasings": ["Is it the case that if every member is verified, then every member is eligible?"], "span": [0, 59], "status": "moved", "text": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\". English moves a word to the front only from the main sentence. Ask this instead:"}),
+     {"class": "SyntaxError", "code": "QuestionWordMoved", "rephrasings": ["Is it the case that if every member is verified, then every member is eligible?"], "span": [0, 59], "status": "moved", "text": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:"}),
     ('G32', 'G', 'Is both ann eligible and bo is verified?',
-     {"class": "SyntaxError", "code": "QuestionWordMoved", "rephrasings": ["Is it the case that both ann is eligible and bo is verified?"], "span": [0, 40], "status": "moved", "text": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\". English moves a word to the front only from the main sentence. Ask this instead:"}),
+     {"class": "SyntaxError", "code": "QuestionWordMoved", "rephrasings": ["Is it the case that both ann is eligible and bo is verified?"], "span": [0, 40], "status": "moved", "text": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:"}),
     ('G33', 'G', 'Is either ann eligible or bo is verified, or both?',
-     {"class": "SyntaxError", "code": "QuestionWordMoved", "rephrasings": ["Is it the case that either ann is eligible or bo is verified, or both?"], "span": [0, 50], "status": "moved", "text": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\". English moves a word to the front only from the main sentence. Ask this instead:"}),
+     {"class": "SyntaxError", "code": "QuestionWordMoved", "rephrasings": ["Is it the case that either ann is eligible or bo is verified, or both?"], "span": [0, 50], "status": "moved", "text": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:"}),
     ('G34', 'G', 'Is for every member, ann eligible?',
-     {"class": "SyntaxError", "code": "QuestionWordMoved", "rephrasings": ["Is it the case that for every member, ann is eligible?"], "span": [0, 34], "status": "moved", "text": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\". English moves a word to the front only from the main sentence. Ask this instead:"}),
+     {"class": "SyntaxError", "code": "QuestionWordMoved", "rephrasings": ["Is it the case that for every member, ann is eligible?"], "span": [0, 34], "status": "moved", "text": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:"}),
+    ('G35', 'G', 'Is some member is registered and eligible?',
+     {"class": "SyntaxError", "code": "QuestionWordMoved", "rephrasings": ["Is some member registered and eligible?"], "span": [0, 42], "status": "moved", "text": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:"}),
+    ('G35c', 'G', 'Is some member registered and eligible?',
+     {"ast": ["exists", "member", ["and", ["unary", "registered", ["var", 0]], ["unary", "eligible", ["var", 0]]]], "form": "fronted", "sentence": "some member is registered and eligible.", "spans": [[0, 39]], "status": "one", "text": "You asked whether some member is registered and eligible."}),
+    ('G36', 'G', 'Is some member registered and is eligible?',
+     {"class": "SyntaxError", "code": "QuestionWordMoved", "rephrasings": ["Is some member registered and eligible?"], "span": [0, 42], "status": "moved", "text": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:"}),
+    ('G37', 'FD', 'Is every deployed service reviewed and has an owner?',
+     {"class": "SyntaxError", "code": "QuestionWordMoved", "rephrasings": ["Is it the case that every deployed service is reviewed and has an owner?"], "span": [0, 52], "status": "moved", "text": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:"}),
     ('A1', 'A', 'May "a27" be performed?',
      {"ast": ["unary", "permitted", ["const", "a27"]], "form": "fronted", "sentence": "\"a27\" may be performed.", "spans": [[0, 23]], "status": "one", "text": "You asked whether \"a27\" may be performed."}),
     ('A1d', 'Ad', 'May "a27" be performed?',

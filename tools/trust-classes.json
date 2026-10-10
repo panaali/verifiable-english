@@ -5434,7 +5434,8 @@
         "VE.Question.groupLex",
         "VE.Question.isOne",
         "VE.Question.isNone",
-        "VE.Question.isIndefinite"
+        "VE.Question.isIndefinite",
+        "VE.Question.joiningTags"
       ]
     },
     "VE/Question/Fixtures.lean": {
@@ -5484,6 +5485,9 @@
         "VE.Question.ntFormula",
         "VE.Question.readsWord",
         "VE.Question.isSentencePart",
+        "VE.Question.joinWords",
+        "VE.Question.joinsPhrases",
+        "VE.Question.isPhrase",
         "VE.Question.clauses",
         "VE.Question.kidClauses",
         "VE.Question.tokenAt",
@@ -5495,6 +5499,10 @@
         "VE.Question.ask"
       ],
       "G[R]": [
+        "VE.Question.phraseStarts",
+        "VE.Question.joins",
+        "VE.Question.kidJoins",
+        "VE.Question.dropTokens",
         "VE.Question.frontedFrom",
         "VE.Question.movedRephrasings"
       ]

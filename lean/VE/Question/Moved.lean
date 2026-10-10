@@ -9,16 +9,25 @@ both (spec 3.1, plan 4.9), and its fifteen statements are about that reading; `a
 
 The same holds of a sentence inside a sentence (looprecheck of the ruling, B): `Is if ann verified, then bo is
 eligible?` puts the word back inside the `if` part, and English asks `Is it the case that if ann is verified, then
-bo is eligible?`.
+bo is eligible?`. And of one of two joined verb phrases (looprecheck 2, B): `Is some member is registered and
+eligible?` puts the word back inside `is eligible`, one side of `is registered and is eligible`, and English asks
+`Is some member registered and eligible?`.
 
 A *clause* of a derivation is a constituent that a `who`, `that` or `which` of its parent's rule begins (the
 constituent right after that word, or, when the word is followed by words of the rule itself, the rest of the
-rule), or a *part*: a `formula` or `atom` constituent of a rule that reads a word of its own. The parts are the
-sides of `if … , then …`, `both … and …` and `either … or …, or both`, the sentence after `for every … ,`,
-`such that` or `it is not the case that`, a listed clause and reach's condition; a rule that reads only
-nonterminals (`sentence`, a `formula` alternative) passes its sentence through. An F2 candidate is *moved out*
+rule), or a *part*: a `formula` or `atom` constituent of a rule that reads a word of its own, or a verb phrase
+(a constituent of type `relative`, `ty`) of a rule that joins verb phrases (`joinsPhrases`: it reads `and` or `or`
+and two or more of its constituents are verb phrases). The parts are the sides of `if … , then …`, `both … and …`
+and `either … or …, or both`, the sentence after `for every … ,`, `such that` or `it is not the case that`, a
+listed clause, reach's condition, and each joined verb phrase (`some-tail.two`, `natural-tail.both`, the guards,
+the `either`/`both` verb phrases of `alternatives@0`); a rule that reads only nonterminals (`sentence`, a `formula`
+alternative) passes its sentence through. `is registered and eligible` (`some-tail.copula`) joins a verb phrase
+and an adjective, so its `is`, shared by both, is the main sentence's word. An F2 candidate is *moved out*
 when its put-back word is inside a clause of its one derivation; one with no single derivation, or whose put-back
-word is not one of its tokens, counts as moved out, so nothing unchecked is shown. Such a question is refused, with the questions VE does read in its place (`movedRephrasings`). Every
+word is not one of its tokens, counts as moved out, so nothing unchecked is shown. Such a question is refused, with
+the questions VE does read in its place (`movedRephrasings`): the word fronted from another place of the main
+sentence, the word fronted from every phrase of the join it was put back into (when each begins with it and the
+question means the same), and F1's question. Every
 rephrasing `ask` offers is itself shown as one reading (`askable_iff`, `ask_rephrasings`).
 -/
 
@@ -55,24 +64,57 @@ def isSentencePart (G : Grammar Terminal) : Tree Tok → Bool
   | .node r _ => (G.rules[r]?).any fun R => R.lhs == ntFormula || R.lhs == ntAtom
   | .leaf _ => false
 
+/-- The words that join two phrases. -/
+def joinWords : List String := ["and", "or"]
+
+/-- Whether rule `r` of `G` joins verb phrases: it reads `and` or `or`, and two or more of its constituents are
+    verb phrases (type `relative` in the type table `T`). -/
+def joinsPhrases (G : Grammar Terminal) (T : Nat → Ty) (r : Nat) : Bool :=
+  (G.rules[r]?).any fun R =>
+    R.rhs.any (fun | .t (.kw s) => joinWords.contains s | _ => false) &&
+    decide (2 ≤ (R.rhs.filter fun | .n n => T n == .relative | .t _ => false).length)
+
+/-- Whether a tree is a verb phrase: a constituent of type `relative` in the type table `T`. -/
+def isPhrase (G : Grammar Terminal) (T : Nat → Ty) : Tree Tok → Bool
+  | .node r _ => (G.rules[r]?).any fun R => T R.lhs == .relative
+  | .leaf _ => false
+
 mutual
 /-- The token spans `[a, b)` of the clauses of a tree whose first token is token `start` of `w`. -/
-def clauses (G : Grammar Terminal) (w : Array Tok) (start : Nat) : Tree Tok → List (Nat × Nat)
+def clauses (G : Grammar Terminal) (T : Nat → Ty) (w : Array Tok) (start : Nat) : Tree Tok → List (Nat × Nat)
   | .leaf _ => []
-  | .node r kids => kidClauses G w (readsWord G r) start (start + widths kids) start kids
+  | .node r kids => kidClauses G T w (readsWord G r) (joinsPhrases G T r) start (start + widths kids) start kids
 
 /-- The clauses of the children of a node that reads tokens `[first, stop)`, from the child at token `pos`. A child
     right after a clause word of the node is a clause; a word there continues the clause to the node's end. When
-    the node's rule reads a word of its own (`own`), a `formula` or `atom` child is a clause (a part). -/
-def kidClauses (G : Grammar Terminal) (w : Array Tok) (own : Bool) (first stop pos : Nat) :
+    the node's rule reads a word of its own (`own`), a `formula` or `atom` child is a clause (a part); when it joins
+    verb phrases (`join`), each verb phrase child is. -/
+def kidClauses (G : Grammar Terminal) (T : Nat → Ty) (w : Array Tok) (own join : Bool) (first stop pos : Nat) :
     List (Tree Tok) → List (Nat × Nat)
   | [] => []
   | t :: ts =>
     let next := pos + width t
     let opened := decide (first < pos) && ((w[pos - 1]?).map isClauseWord).getD false
     let here := if opened then [match t with | .leaf _ => (pos, stop) | .node .. => (pos, next)]
-      else if own && isSentencePart G t then [(pos, next)] else []
-    here ++ clauses G w pos t ++ kidClauses G w own first stop next ts
+      else if (own && isSentencePart G t) || (join && isPhrase G T t) then [(pos, next)] else []
+    here ++ clauses G T w pos t ++ kidClauses G T w own join first stop next ts
+end
+
+/-- The first token of each verb phrase among a node's children, from the child at token `pos`. -/
+def phraseStarts (G : Grammar Terminal) (T : Nat → Ty) : Nat → List (Tree Tok) → List Nat
+  | _, [] => []
+  | pos, t :: ts => (if isPhrase G T t then [pos] else []) ++ phraseStarts G T (pos + width t) ts
+
+mutual
+/-- For each node of a tree (first token `start`) whose rule joins verb phrases, the first tokens of its phrases. -/
+def joins (G : Grammar Terminal) (T : Nat → Ty) (start : Nat) : Tree Tok → List (List Nat)
+  | .leaf _ => []
+  | .node r kids =>
+    (if joinsPhrases G T r then [phraseStarts G T start kids] else []) ++ kidJoins G T start kids
+
+def kidJoins (G : Grammar Terminal) (T : Nat → Ty) (pos : Nat) : List (Tree Tok) → List (List Nat)
+  | [] => []
+  | t :: ts => joins G T pos t ++ kidJoins G T (pos + width t) ts
 end
 
 /-- The index of the token of a sentence that starts at byte `g`. -/
@@ -80,8 +122,8 @@ def tokenAt (toks : Array Spanned) (g : Nat) : Option Nat :=
   (List.range toks.size).find? fun i => (toks[i]?.map (·.2.1)) == some g
 
 /-- Whether token `k` of `w` is inside a clause of `t`. -/
-def inClause (G : Grammar Terminal) (w : Array Tok) (t : Tree Tok) (k : Nat) : Bool :=
-  (clauses G w 0 t).any fun (a, b) => decide (a ≤ k ∧ k < b)
+def inClause (G : Grammar Terminal) (T : Nat → Ty) (w : Array Tok) (t : Tree Tok) (k : Nat) : Bool :=
+  (clauses G T w 0 t).any fun (a, b) => decide (a ≤ k ∧ k < b)
 
 /-- The one derivation of a one-sentence text with its tokens, or none. -/
 def oneTree (E : Env) (L : Lexicon) (b : Nat) (s : String) : Option (Array Spanned × Tree Tok) :=
@@ -100,7 +142,7 @@ def movedOut (E : Env) (L : Lexicon) (b : Nat) (c : Candidate) : Bool :=
   | .fronted _ g =>
     match oneTree E L b c.sentence with
     | some (toks, t) => match tokenAt toks g with
-      | some k => inClause (grammar E L) (toks.map (·.1)) t k
+      | some k => inClause (grammar E L) (ty E L) (toks.map (·.1)) t k
       | none => true
     | none => true
 
@@ -110,21 +152,37 @@ def askable (auxs : List String) (E : Env) (O : Overlay) (L : Lexicon) (b : Nat)
   | .one c _ => !movedOut E L b c
   | _ => false
 
-/-- The question that fronts token `j` of a sentence (its auxiliary `a` and the space after it removed). -/
-def frontedFrom (a s : String) (toks : Array Spanned) (j : Nat) : Option String := do
-  let (_, x, y) ← toks[j]?
-  pure (capitalise a ++ " " ++ s.extract ⟨0⟩ ⟨x⟩ ++ s.extract ⟨y + 1⟩ ⟨s.utf8ByteSize - 1⟩ ++ "?")
+/-- Sentence `s` without its final period and without its tokens `js`, each with the space after it. -/
+def dropTokens (s : String) (toks : Array Spanned) (js : List Nat) : String :=
+  let cuts := (List.range toks.size).filterMap fun j =>
+    if js.contains j then (toks[j]?).map fun (_, x, y) => (x, y + 1) else none
+  let kept := cuts.foldl (fun (acc : String × Nat) (x, y) => (acc.1 ++ s.extract ⟨acc.2⟩ ⟨x⟩, y)) ("", 0)
+  kept.1 ++ s.extract ⟨kept.2⟩ ⟨s.utf8ByteSize - 1⟩
 
-/-- In place of a moved-out candidate: its sentence with the same auxiliary fronted from each other place outside
-    every clause, then F1's question of the sentence; those VE shows as one reading, each meaning once. -/
-def movedRephrasings (auxs : List String) (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (c : Candidate) :
-    List String :=
+/-- The question that fronts the auxiliary `a` from tokens `js` of a sentence. -/
+def frontedFrom (a s : String) (toks : Array Spanned) (js : List Nat) : String :=
+  capitalise a ++ " " ++ dropTokens s toks js ++ "?"
+
+/-- In place of a moved-out candidate of meaning `φ`: its sentence with the same auxiliary fronted from each other
+    place outside every clause; fronted from every verb phrase of a join at once, when each begins with it, one is
+    the put-back word, and the question means `φ` (`Is some member registered and eligible?` for `some member is
+    registered and is eligible.`); then F1's question of the sentence. Those VE shows as one reading, each meaning
+    once. -/
+def movedRephrasings (auxs : List String) (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (c : Candidate)
+    (φ : EFormula) : List String :=
   let fronted := match c.form, oneTree E L b c.sentence with
     | .fronted a g, some (toks, t) =>
       let w := toks.map (·.1)
-      (List.range toks.size).filterMap fun j =>
-        if (toks[j]?.map (·.2.1)) != some g && w[j]? == some (.word a false) && !inClause (grammar E L) w t j && j != 0
-        then frontedFrom a c.sentence toks j else none
+      let isAux := fun (j : Nat) => w[j]? == some (.word a false)
+      let isGap := fun (j : Nat) => (toks[j]?.map (·.2.1)) == some g
+      let others := (List.range toks.size).filter fun j =>
+        !isGap j && isAux j && !inClause (grammar E L) (ty E L) w t j && j != 0
+      let across := (joins (grammar E L) (ty E L) 0 t).filter fun js => js.all isAux && js.any isGap
+      others.map (fun j => frontedFrom a c.sentence toks [j]) ++
+        (across.map (frontedFrom a c.sentence toks)).filter fun q =>
+          match classify auxs E O L b q with
+          | .one _ ψ => ψ == φ
+          | _ => false
     | _, _ => []
   offered auxs E O L b ((fronted ++ [caseThatQuestion c]).filter (askable auxs E O L b))
 
@@ -137,7 +195,7 @@ inductive Asked
     none of whose rephrasings VE shows is the `none` it was before the rephrasings were tried. -/
 def ask (auxs : List String) (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (q : String) : Asked :=
   match readQuestion auxs E O L b q with
-  | .one c φ => if movedOut E L b c then .moved c (movedRephrasings auxs E O L b c) else .read (.one c φ)
+  | .one c φ => if movedOut E L b c then .moved c (movedRephrasings auxs E O L b c φ) else .read (.one c φ)
   | .indefinite art rs =>
     match rs.filter (askable auxs E O L b) with
     | [] => .read (classify auxs E O L b q)

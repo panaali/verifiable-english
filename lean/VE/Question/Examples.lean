@@ -111,9 +111,9 @@ def isIndefinite (o : Outcome) : Bool := match o with | .indefinite .. => true |
 
 -- The moved-word rule (`VE.Question.Moved`): the clause after `who` in G11's one candidate is tokens [3, 5).
 #guard match oneTree groupEnv groupLex 2100000 "every member who is registered is eligible." with
-  | some (toks, t) => clauses (grammar groupEnv groupLex) (toks.map (·.1)) 0 t == [(3, 5)] &&
-      inClause (grammar groupEnv groupLex) (toks.map (·.1)) t 3 &&
-      !inClause (grammar groupEnv groupLex) (toks.map (·.1)) t 5
+  | some (toks, t) => clauses (grammar groupEnv groupLex) (ty groupEnv groupLex) (toks.map (·.1)) 0 t == [(3, 5)] &&
+      inClause (grammar groupEnv groupLex) (ty groupEnv groupLex) (toks.map (·.1)) t 3 &&
+      !inClause (grammar groupEnv groupLex) (ty groupEnv groupLex) (toks.map (·.1)) t 5
   | none => false
 #guard movedOut groupEnv groupLex 2100000 ⟨.fronted "is" 17, "every member who is registered is eligible."⟩
 #guard !movedOut groupEnv groupLex 2100000 ⟨.fronted "is" 31, "every member who is registered is eligible."⟩
@@ -139,10 +139,10 @@ def isIndefinite (o : Outcome) : Bool := match o with | .indefinite .. => true |
 -- after `for every … ,` or `it is not the case that`. `ntFormula` is the nonterminal `formula`.
 #guard ntNames[ntFormula]? == some "formula" && ntNames[ntAtom]? == some "atom"
 #guard match oneTree groupEnv groupLex 2100000 "if ann is verified, then bo is eligible." with
-  | some (toks, t) => clauses (grammar groupEnv groupLex) (toks.map (·.1)) 0 t == [(1, 4), (6, 9)]
+  | some (toks, t) => clauses (grammar groupEnv groupLex) (ty groupEnv groupLex) (toks.map (·.1)) 0 t == [(1, 4), (6, 9)]
   | none => false
 #guard match oneTree groupEnv groupLex 2100000 "it is not the case that ann is eligible." with
-  | some (toks, t) => clauses (grammar groupEnv groupLex) (toks.map (·.1)) 0 t == [(6, 9)]
+  | some (toks, t) => clauses (grammar groupEnv groupLex) (ty groupEnv groupLex) (toks.map (·.1)) 0 t == [(6, 9)]
   | none => false
 -- The moved questions of the looprecheck: each is refused, and F1's question is offered in its place.
 #guard [("Is if ann verified, then bo is eligible?", "if ann is verified, then bo is eligible"),
@@ -158,5 +158,39 @@ def isIndefinite (o : Outcome) : Bool := match o with | .indefinite .. => true |
 #guard askable auxiliaries groupEnv {} groupLex 2100000 "Is it not the case that ann is eligible?"
 #guard askable auxiliaries groupEnv {} groupLex 2100000 "Is there a member such that ann is eligible?"
 #guard askable auxiliaries groupEnv {} groupLex 2100000 "Is it the case that if ann is verified, then bo is eligible?"
+
+-- A joined verb phrase is a part too (looprecheck 2, B): each side of `is registered and is eligible`
+-- (`some-tail.two`), but not the shared `is` of `is registered and eligible` (`some-tail.copula`, a verb phrase
+-- and an adjective). The rules that join verb phrases, from the rule table and the type table:
+/-- The tags of the rules of `G` that join verb phrases under the type table `T`. -/
+def joiningTags (G : VE.Grammar.Grammar Terminal) (T : Nat → Ty) : List String :=
+  ((List.range G.rules.size).filter (joinsPhrases G T)).filterMap fun r => G.rules[r]?.map (·.tag)
+#guard joiningTags (grammar groupEnv groupLex) (ty groupEnv groupLex) ==
+    ["guard.two", "guard.three-left", "guard.three-right", "some-tail.two", "natural-tail.both"]
+#guard joiningTags ⟨fixedRules ["alternatives@0", "norms@0", "relational-fol@0"], 0, #[]⟩ ntTy ==
+    ["guard.two", "guard.three-left", "guard.three-right", "some-tail.two", "natural-tail.both",
+      "verb-phrase.either", "verb-phrase.either-both", "verb-phrase.both"]
+#guard match oneTree groupEnv groupLex 2100000 "some member is registered and is eligible." with
+  | some (toks, t) => clauses (grammar groupEnv groupLex) (ty groupEnv groupLex) (toks.map (·.1)) 0 t ==
+      [(2, 4), (5, 7)] && joins (grammar groupEnv groupLex) (ty groupEnv groupLex) 0 t == [[2, 5]]
+  | none => false
+#guard match oneTree groupEnv groupLex 2100000 "some member is registered and eligible." with
+  | some (toks, t) => clauses (grammar groupEnv groupLex) (ty groupEnv groupLex) (toks.map (·.1)) 0 t == [] &&
+      joins (grammar groupEnv groupLex) (ty groupEnv groupLex) 0 t == []
+  | none => false
+-- The reviewer's questions: refused, with the word fronted from both joined phrases at once in their place.
+#guard ["Is some member is registered and eligible?", "Is some member registered and is eligible?"].all fun q =>
+  match ask auxiliaries groupEnv {} groupLex 2100000 q with
+  | .moved c rs => c.sentence == "some member is registered and is eligible." &&
+      rs == ["Is some member registered and eligible?"]
+  | _ => false
+#guard match ask auxiliaries groupEnv {} groupLex 2100000 "Is some member is verified and eligible?" with
+  | .moved _ rs => rs == ["Is some member verified and eligible?"]
+  | _ => false
+#guard askable auxiliaries groupEnv {} groupLex 2100000 "Is some member registered and eligible?"
+#guard frontedFrom "is" "some member is registered and is eligible."
+    #[(.word "some" false, 0, 4), (.word "member" false, 5, 11), (.word "is" false, 12, 14),
+      (.word "registered" false, 15, 25), (.word "and" false, 26, 29), (.word "is" false, 30, 32),
+      (.word "eligible" false, 33, 41)] [2, 5] == "Is some member registered and eligible?"
 
 end VE.Question

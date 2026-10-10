@@ -403,9 +403,15 @@ it, and its statements are about that reading; what the mode shows is `ask`'s ou
 constituent right after a `who`, `that` or `which` of its parent's rule, or a *part*: a `formula` or `atom`
 constituent of a rule that reads a word of its own, so the sides of `if … , then …`, `both … and …` and `either …
 or …, or both`, the sentence after `for every … ,`, `such that` or `it is not the case that`, a listed clause and
-reach's condition (looprecheck of the ruling, B: G30 to G34). English fronts only the main sentence's word, so
-`Is if ann verified, then bo is eligible?` is refused, and F1's `Is it the case that if ann is verified, then bo is
-eligible?` is offered. The A0 line shows the sentence actually checked, and Q1.3 counts how often the other odd
+reach's condition (looprecheck of the ruling, B: G30 to G34); or a verb phrase (a nonterminal of type `relative`,
+english-lean-s2 2.4) of a rule that joins verb phrases: it reads `and` or `or`, and two or more of its constituents
+are verb phrases (looprecheck 2, B: G35 to G37). The joins are `some-tail.two`, `natural-tail.both`, the guards and
+`alternatives@0`'s `either`/`both` verb phrases; `some-tail.copula` (`is registered and eligible`) joins a verb
+phrase and an adjective, so its `is` is shared by both and is the main sentence's word. English fronts only the
+main sentence's word, so `Is if ann verified, then bo is eligible?` is refused, and F1's `Is it the case that if
+ann is verified, then bo is eligible?` is offered; `Is some member is registered and eligible?` is refused, and the
+word fronted from every phrase of its join at once, `Is some member registered and eligible?`, is offered, since it
+means the same. The A0 line shows the sentence actually checked, and Q1.3 counts how often the other odd
 readings happen.
 
 ### 3.2 Rephrasings VE offers
@@ -415,6 +421,7 @@ readings happen.
 | two or more meanings | `Is it the case that <the first candidate of that meaning, without its ".">?`, one per meaning, in candidate order | `rephrasings_read`: each reads with its meaning, and no two mean the same |
 | no candidate reads, and the body begins with the token `a` or `an` | the question with `every` in that token's place, then with `some`; only those that read, each meaning once | the same theorem; each is checked by `classify` before it is offered |
 | one candidate with two derivations | nothing | no Lean renderer exists for the two derivations; E2's text and witnesses are relayed |
+| one meaning, but the put-back word is moved out (11a, 3.1) | the candidate with the same word fronted from each other place outside every clause; then fronted from every verb phrase of the join the word was put back into, at once, when each of them begins with the word and the question means the same as the candidate; then F1's question; only those VE shows as one reading, each meaning once | `ask_moved`: each is `askable` |
 
 ### 3.3 The answer's sentences
 
@@ -481,7 +488,7 @@ table in `VE.Question.Run`; the others are E2's, with E2's class. A span is in c
 | 9 | a candidate reaches the work budget | `budget` | `Budget`; `ResourceLimit` | `VE stopped reading this question at its work limit.` | the question |
 | 10 | a candidate has two derivations | `many` | `Ambiguous`; `AmbiguousDerivation` | `The sentence "<candidate>" can be read in more than one way. Two of the ways are shown.`, with E2's two witness trees | the question |
 | 11 | one meaning | `one` | — | — (the answer begins with A0) | — |
-| 11a | one meaning, F2, and the put-back word is inside a clause of the candidate's one derivation (`ask`, 3.1) | `moved` | `QuestionWordMoved`; `SyntaxError` | `VE could read this question only by putting "<aux>" back inside a smaller part of the sentence, such as a part that begins with "who", "that", "which", "if", "both" or "either". English moves a word to the front only from the main sentence.`, then ` Ask this instead:` (or ` Ask one of these instead:`) and the questions VE reads in its place, if any | the question |
+| 11a | one meaning, F2, and the put-back word is inside a clause of the candidate's one derivation (`ask`, 3.1) | `moved` | `QuestionWordMoved`; `SyntaxError` | `VE could read this question only by putting "<aux>" back inside a smaller part of the sentence, such as a part that begins with "who", "that", "which", "if", "both" or "either", or one of the phrases joined by "and" or "or". English moves a word to the front only from the main sentence.`, then ` Ask this instead:` (or ` Ask one of these instead:`) and the questions VE reads in its place, if any | the question |
 | 12 | two or more meanings | `many` | `AmbiguousQuestion`; `AmbiguousDerivation` | `This question can be read in more than one way. Ask one of these instead:`, then the rephrasings | the question |
 | 13 | a refusal: a conclusion mark (`read` gives `.ok [(φ, true)]`) | `rejected` | `QuestionWithMarker`; `SyntaxError` | `A question cannot contain "therefore", "so", "hence" or "it follows that".` | the question |
 | 13 | a refusal: ill-typed | `rejected` | `IllTyped`; `TypeMismatch` | `The question was read, and its formula does not pass the type check.` | the question |
@@ -1235,6 +1242,9 @@ spellings `ann`, `bo`; `policyOk` is true and `grammarFault` is `none`. The sent
 | G32 | `Is both ann eligible and bo is verified?` (G) | **moved**, `QuestionWordMoved` (a part, 3.1): the put-back `is` is inside the first side of `both … and`; rephrasings `Is it the case that both ann is eligible and bo is verified?`. |
 | G33 | `Is either ann eligible or bo is verified, or both?` (G) | **moved**, `QuestionWordMoved` (a part, 3.1): the put-back `is` is inside the first side of `either … or`; rephrasings `Is it the case that either ann is eligible or bo is verified, or both?`. |
 | G34 | `Is for every member, ann eligible?` (G) | **moved**, `QuestionWordMoved` (a part, 3.1): the put-back `is` is inside the sentence after `for every member,`; rephrasings `Is it the case that for every member, ann is eligible?`. |
+| G35 | `Is some member is registered and eligible?` (G) | **moved**, `QuestionWordMoved` (a joined verb phrase, 3.1; looprecheck 2, B): the one candidate is `some member is registered and is eligible.` (`some-tail.two`), and the put-back `is` is inside `is eligible`, the second of the joined verb phrases; rephrasings `Is some member registered and eligible?` (the word fronted from both phrases at once, which means the same). Control: `Is some member registered and eligible?` on `G` is **one**: `some-tail.copula` joins a verb phrase and an adjective, so its `is`, shared by both, is the main sentence's word |
+| G36 | `Is some member registered and is eligible?` (G) | **moved**, `QuestionWordMoved` (a joined verb phrase, 3.1): the same candidate, with the put-back `is` inside `is registered`, the first joined verb phrase; rephrasings `Is some member registered and eligible?`. |
+| G37 | `Is every deployed service reviewed and has an owner?` (FD) | **moved**, `QuestionWordMoved` (a joined verb phrase, 3.1): the put-back `is` is inside `is reviewed`, one side of `natural-tail.both`; the other side begins with `has`, so the word cannot be fronted from both; rephrasings `Is it the case that every deployed service is reviewed and has an owner?`. |
 
 ### 7.4 A: the agent policy (R6)
 

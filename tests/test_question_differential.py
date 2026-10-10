@@ -25,6 +25,11 @@ disagreements on the fixtures (`test_the_comparison_can_fail`).
   every such rule of the grammar sources (`ve/english_grammar/*.json`, so a new rule is covered when it is added),
   fronts each `is` of it, and requires `moved` for a word of a part or a guard and `one` for the rule's own word,
   from Lean and from the reference alike.
+* **Every joined verb phrase.** So is a word put back inside one of the verb phrases a rule joins with `and` or
+  `or` (looprecheck 2, B). `test_every_joined_verb_phrase_is_a_part` writes every such rule of the grammar sources
+  (two or more verb phrases, the nonterminals of type `relative` in the specs' 2.4 tables) inside a sentence of a
+  vocabulary that reads it, fronts each `is`, and requires `moved`, with the word fronted from every phrase at once
+  offered when that reads with the same meaning (`Is some member registered and eligible?`).
 """
 from __future__ import annotations
 
@@ -173,8 +178,8 @@ def test_lean_and_the_reference_reader_agree(compared):
 
 def test_the_comparison_can_fail(readers, monkeypatch):
     """Seeded faults in the reference reader each give a disagreement: the moved-word rule dropped, the rephrasing
-    filter dropped, `that` left out of the clause words, parts not counted as clauses, the indefinite rephrasings
-    dropped, and the lexical refusals checked out of position order. (Spec 7.8's order fault, a refused candidate put before one that reads,
+    filter dropped, `that` left out of the clause words, parts not counted as clauses, joined verb phrases not
+    counted as parts, the indefinite rephrasings dropped, and the lexical refusals checked out of position order. (Spec 7.8's order fault, a refused candidate put before one that reads,
     has no input here: 195,759 random questions over G's vocabulary gave no question with both, and no vocabulary
     the lexicon policy admits was found to give one; the proof of `readQuestion_complete` catches it, seeded bug 3
     of the integration report.)"""
@@ -194,6 +199,7 @@ def test_the_comparison_can_fail(readers, monkeypatch):
         "no indefinite rephrasings": (R.Reader, "read_question", no_indefinite),
         "that is not a clause word": (R, "CLAUSE_WORDS", ("who", "which")),
         "no parts": (R.Reader, "sentence_kinds", lambda self: set()),
+        "no joined verb phrases": (R.Reader, "joined", lambda self, sentence, node: []),
         "spacing before bad characters": (R, "lexical_fault", spacing_first),
     }
     for name, (owner, attribute, replacement) in faults.items():
@@ -294,6 +300,103 @@ def test_every_part_of_every_rule_is_a_clause(readers):
         else:
             assert theirs["status"] == "one", (tag, question, theirs)
     assert moved == read, sorted(read - moved)
+
+
+# ------------------------------------------------------------------ every joined verb phrase
+
+JOIN_WORDS = ("and", "or")
+# Where each nonterminal that joins verb phrases is written: the frame whose vocabulary reads it, and the sentence
+# around it. A new joining nonterminal fails `test_every_joined_verb_phrase_is_a_part` until it is placed here.
+JOIN_CONTEXTS = {"some_tail": ("G", "some member {}"),
+                 "natural_tail": ("FD", "every deployed service {}"),
+                 "guard": ("G", "every member who {} is eligible"),
+                 "alt_verb_phrase": ("Alt", "every action available to rob {}")}
+# What each verb phrase is written as in each frame, in turn.
+PHRASE_FILLS = {"G": {"relative": ("is registered", "is eligible", "is verified"),
+                      "guard_atom": ("is registered", "is eligible", "is verified"),
+                      "guard_relative": ("is verified", "is eligible")},
+                "FD": {"relative": ("is reviewed",), "owner_clause": ("has an owner",)},
+                "Alt": {"alt_verb_atom": ("is taken", "is inaction")}}
+
+
+def join_rules() -> list[dict]:
+    """Every rule of the grammar sources that joins verb phrases: it reads `and` or `or`, and two or more of its
+    nonterminals are verb phrases (type `relative` in the specs' 2.4 tables)."""
+    out = []
+    for path in sorted(GRAMMARS.glob("*@*.json")):
+        for row in json.loads(path.read_text()):
+            rhs = row["rhs"]
+            phrases = [x for x in rhs if isinstance(x, dict) and x.get("n") in R.phrase_kinds()]
+            if row.get("status") != "proposed" and len(phrases) >= 2 and any(x in JOIN_WORDS for x in rhs):
+                out.append(row)
+    return out
+
+
+def write_join(row) -> tuple[str, str, list[int], list[int]]:
+    """The frame, the rule written inside its context sentence, the offset of each `is` inside a joined phrase, and
+    the offset of each `is` of the context (the main sentence's word)."""
+    frame, context = JOIN_CONTEXTS[row["lhs"]]
+    fills = {n: iter(ws * 4) for n, ws in PHRASE_FILLS[frame].items()}
+    text = ""
+    phrases = []
+    for x in row["rhs"]:
+        piece, attached = (x, False) if isinstance(x, str) else (x["p"], x.get("before", False)) if "p" in x else (
+            next(fills[x["n"]]), False)
+        if text and not attached:
+            text += " "
+        if isinstance(x, dict) and "n" in x:
+            phrases.append((len(text), len(text) + len(piece)))
+        text += piece
+    at = context.index("{}")
+    sentence = context.format(text)
+    words = [m.start() for m in re.finditer(r"\bis\b", sentence)]
+    inner = [w for w in words if any(at + a <= w < at + b for a, b in phrases)]
+    return frame, sentence, inner, [w for w in words if w not in inner]
+
+
+def test_every_joined_verb_phrase_is_a_part(readers):
+    rules = join_rules()
+    assert {r["tag"] for r in rules} >= {"some-tail.two", "natural-tail.both", "guard.two", "verb-phrase.either",
+                                         "verb-phrase.either-both", "verb-phrase.both"}, sorted(r["tag"] for r in rules)
+    assert not {r["tag"] for r in rules} & {"some-tail.copula", "compact.and", "coordination.predicate-and"}
+    readers = {**readers, "Alt": R.Reader(F.environment("Alt"), EnglishVocabulary(F.environment("Alt"),
+                                                                                  _defer_overlay_refusals=True))}
+    cases = []
+    for row in rules:
+        frame, sentence, inner, own = write_join(row)
+        assert inner, (row["tag"], sentence)
+        case_that = f"{R.CASE_FRAME}{sentence}?"
+        fronted = lambda ws: f"Is {''.join(sentence[i] for i in range(len(sentence)) if not any(w <= i < w + 3 for w in ws))}?"
+        cases.append((row["tag"], frame, "F1", case_that, None))
+        cases += [(row["tag"], frame, "own", fronted([w]), None) for w in own]
+        cases += [(row["tag"], frame, "inner", fronted([w]), fronted(inner)) for w in inner]
+    results = lean_results([(frame, "join", q) for _, frame, _, q, _ in cases])
+    own, case_that, moved = {}, {t: q for t, _, k, q, _ in cases if k == "F1"}, set()
+    for (tag, frame, kind, question, _), result in zip(cases, results, strict=True):
+        theirs = R.lean_view(result)
+        assert readers[frame].ask(question) == theirs, (tag, question, theirs)
+        assert theirs["status"] == "one" if kind in ("F1", "own") else theirs["status"] == "moved", (tag, question, theirs)
+        if kind == "own":
+            own.setdefault(tag, []).append(question)
+    across = 0
+    for (tag, frame, kind, question, both), result in zip(cases, results, strict=True):
+        if kind != "inner":
+            continue
+        rephrasings = R.lean_view(result).get("rephrasings", [])
+        assert rephrasings and all(readers[frame].askable(r) for r in rephrasings), (tag, question, rephrasings)
+        meaning = next(r["ast"] for (t, _, k, _, _), r in zip(cases, results) if t == tag and k == "F1")
+        reads = readers[frame].ask(both)
+        # The main sentence's word where it has one; else the word fronted from every phrase at once, when that
+        # reads with the same meaning; else F1's question.
+        if tag in own:
+            assert rephrasings == own[tag], (tag, question, rephrasings)
+        elif reads.get("status") == "one" and reads["ast"] == meaning:
+            assert rephrasings == [both], (tag, question, rephrasings)
+            across += 1
+        else:
+            assert rephrasings == [case_that[tag]], (tag, question, rephrasings)
+        moved.add(tag)
+    assert moved == {r["tag"] for r in rules} and across >= 2, (sorted(moved), across)
 
 
 # ------------------------------------------------------------------ the meaning, three ways

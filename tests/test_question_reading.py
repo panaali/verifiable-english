@@ -83,9 +83,9 @@ def render_formula(data) -> str:
     return formula(data)
 
 
-SPEC_ROW = {"G22c": "G22", "G11c": "G11", "G30c": "G30", "A6r": "A6", "A6c": "A6", "A6d": "A6"}
+SPEC_ROW = {"G22c": "G22", "G11c": "G11", "G30c": "G30", "G35c": "G35", "A6r": "A6", "A6c": "A6", "A6d": "A6"}
 # A control question: a fixture its row names after `Control:`.
-CONTROLS = {"G22c", "G11c", "G30c"}
+CONTROLS = {"G22c", "G11c", "G30c", "G35c"}
 
 
 STATUS_WORDS = tuple(english_lean.QUESTION_FIELDS)
