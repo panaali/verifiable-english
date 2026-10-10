@@ -80,7 +80,11 @@ def require_authority(op_id: str, engine: str) -> None:
 
 def semantic_entry(op_id: str, *, engine: str = "python"):
     """Register a verdict-producing function for `op_id` and guard its calls."""
-    operation(op_id)
+    # Registration needs only the id's presence. Reading the whole entry here
+    # would make every importer of a registered function depend on every field.
+    sys.audit("ve.manifest.presence", op_id)
+    if op_id not in OPERATIONS:
+        raise KeyError(f"operation {op_id!r} is not in the assurance manifest")
     if engine not in ENGINES:
         raise ValueError(f"unknown engine {engine!r}")
 

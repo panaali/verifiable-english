@@ -313,6 +313,7 @@ def make_map(edges: dict[str, dict], commit: str = "0" * 40, failed: tuple[str, 
     """A map as the recorder would write it; each unit ran at least its own module."""
     results = {test: {"f": {(test, "<module>"), *map(tuple, e.get("f", ()))}, "r": set(e.get("r", ())),
                       "d": set(e.get("d", ())), "x": set(e.get("x", ())), "m": set(e.get("m", ())),
+                      "p": set(e.get("p", ())),
                       "opaque": [],
                       "exit": 1 if test in failed else 0, "seconds": 1.0}
                for test, e in edges.items()}
@@ -413,13 +414,13 @@ def test_lookups_match_nested_code_but_not_name_prefixes():
 
 def test_map_round_trips_through_its_edges():
     edges = {"t1": {"f": [("a.py", "f")], "r": ["d.json"], "d": ["data"], "x": ["lake"],
-                    "m": ["parse"]},
+                    "m": ["parse"], "p": ["typing"]},
              "t2": {"f": [("a.py", "g"), ("b.py", "<module>")]}}
     data = make_map(edges)
     back = test_map.unit_edges(json.loads(json.dumps(data)))
     assert back == {test: {"f": {(test, "<module>"), *map(tuple, e.get("f", ()))}, "r": set(e.get("r", ())),
                            "d": set(e.get("d", ())), "x": set(e.get("x", ())),
-                           "m": set(e.get("m", ()))}
+                           "m": set(e.get("m", ())), "p": set(e.get("p", ()))}
                     for test, e in edges.items()}
 
 
@@ -432,7 +433,7 @@ def test_five_manifest_edits_select_their_readers(op_id, tmp_path):
     old, new = json.dumps(manifest), json.dumps(changed)
     assert select_tests.changed_manifest_operations(old, new) == {op_id}
     reader, other = "tests/test_reader.py", "tests/test_other.py"
-    edges = {reader: {"m": [op_id]}, other: {"m": ["unrelated"]},
+    edges = {reader: {"m": [op_id]}, other: {"p": [op_id]},
              select_tests.MANIFEST_TEST: {"m": ["*"]}}
     coverage = select_tests.Coverage(make_map(edges))
     graph = make_graph(tmp_path, {"tests/test_reader.py": "", "tests/test_other.py": ""})
@@ -442,6 +443,27 @@ def test_five_manifest_edits_select_their_readers(op_id, tmp_path):
     assert select_tests.MANIFEST_TEST in selection.reasons
     assert other not in selection.reasons
     assert not selection.full
+
+
+def test_removed_manifest_operation_selects_registration(tmp_path):
+    manifest = json.loads((ROOT / select_tests.MANIFEST).read_text())
+    changed = json.loads(json.dumps(manifest))
+    changed["operations"] = [row for row in changed["operations"] if row["id"] != "parse"]
+    old, new = json.dumps(manifest), json.dumps(changed)
+    reader = "tests/test_register.py"
+    edges = {reader: {"p": ["parse"]}, select_tests.MANIFEST_TEST: {"m": ["*"]}}
+    selection = select_tests.Selection(make_graph(tmp_path, {}), select_tests.Coverage(make_map(edges)),
+                                       set(), list(edges))
+    select_tests.manifest_change(selection, select_tests.Change(select_tests.MANIFEST, old, new))
+    assert reader in selection.reasons
+
+
+def test_semantic_registration_reads_only_presence(monkeypatch):
+    from ve import assurance
+    events = []
+    monkeypatch.setattr(assurance.sys, "audit", lambda *args: events.append(args))
+    assurance.semantic_entry("parse")
+    assert events == [("ve.manifest.presence", "parse")]
 
 
 def test_manifest_shared_field_or_missing_map_selects_full(tmp_path):
@@ -667,6 +689,7 @@ def test_recorder_tracks_manifest_operations_without_import_read(tmp_path):
         def _load():
             return json.loads(pathlib.Path(__file__).with_name("assurance-manifest.json").read_text())
         DATA = _load()
+        sys.audit("ve.manifest.presence", "typing")
         def operation(name):
             sys.audit("ve.manifest.operation", name)
             return DATA[name]
@@ -675,6 +698,7 @@ def test_recorder_tracks_manifest_operations_without_import_read(tmp_path):
                           files={"ve/__init__.py": "", "ve/assurance.py": assurance,
                                  "ve/assurance-manifest.json": '{"parse": 1}'})
     assert result["m"] == {"parse"}
+    assert result["p"] == {"typing"}
     assert "ve/assurance-manifest.json" not in result["r"]
 
 

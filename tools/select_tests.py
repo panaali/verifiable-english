@@ -176,6 +176,7 @@ class Coverage:
         self.dirs = data["dirs"]
         self.programs = data["programs"]
         self.operations = data["operations"]
+        self.presence = data["presence"]
         self.status = data["status"]
         self.recorded = {test for test, status in data["status"].items()
                          if status["exit"] in (0, 5) and not status["opaque"]}
@@ -201,6 +202,9 @@ class Coverage:
 
     def operation_readers(self, op_id: str) -> set[str]:
         return self._names(set(self.operations.get(op_id, ())) | set(self.operations.get("*", ())))
+
+    def presence_readers(self, op_id: str) -> set[str]:
+        return self._names(self.presence.get(op_id, ()))
 
     def listers(self, path: str) -> set[str]:
         """Tests that listed any directory above `path`, the root "." included.
@@ -489,6 +493,12 @@ def changed_manifest_operations(old: str | None, new: str | None) -> set[str] | 
         return None
 
 
+def manifest_presence_changes(old: str, new: str) -> set[str]:
+    before = {row["id"] for row in json.loads(old)["operations"]}
+    after = {row["id"] for row in json.loads(new)["operations"]}
+    return before ^ after
+
+
 def manifest_change(sel: Selection, change: Change) -> None:
     sel.code = True
     changed = changed_manifest_operations(change.old, change.new)
@@ -499,6 +509,8 @@ def manifest_change(sel: Selection, change: Change) -> None:
     sel.add(sel.coverage.readers(MANIFEST), "reads the whole manifest")
     for op_id in changed:
         sel.add(sel.coverage.operation_readers(op_id), f"reads manifest operation {op_id}")
+    for op_id in manifest_presence_changes(change.old, change.new):
+        sel.add(sel.coverage.presence_readers(op_id), f"registers manifest operation {op_id}")
     # A unit not covered by the map might read any entry. Include it and all
     # tests it may affect; mapped direct file reads are included above.
     sel.add(sel.unmapped, "unmapped manifest reader")
@@ -589,6 +601,8 @@ def uncertain_units(coverage: Coverage, graph: source_graph.Graph, all_units: se
                 add([MANIFEST_TEST])
                 for op_id in changed:
                     add(coverage.operation_readers(op_id))
+                for op_id in manifest_presence_changes(before, after):
+                    add(coverage.presence_readers(op_id))
             continue
         python = None
         if path in parsed:
@@ -1057,7 +1071,7 @@ def run_recorded(plan: dict, jobs: int) -> int:
         stale = uncertain_units(base, source_graph.load(ROOT), every, status, versions) - set(selected)
         edges = test_map.unit_edges({"tests": base.tests, "functions": base.functions, "reads": base.reads,
                                      "dirs": base.dirs, "programs": base.programs,
-                                     "operations": base.operations})
+                                     "operations": base.operations, "presence": base.presence})
         for unit in sorted(every - set(selected)):
             if unit in edges and unit in base.status:
                 results[unit] = {**edges[unit], **base.status[unit]}

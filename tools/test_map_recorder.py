@@ -14,6 +14,8 @@ code under the root or of infrastructure (import system, site, pytest).
                           when under the root, else its base name
   ["c", pid, python]      a child process id, and whether it runs Python
   ["o", reason]           something the recorder could not see into
+  ["m", operation]        an assurance manifest operation entry was read
+  ["p", operation]        only its presence was checked during registration
 
 Paths are relative to $VE_TESTMAP_ROOT. tools/test_map.py installs a `.pth`
 hook in the project environment that calls `start()` whenever VE_TESTMAP_OUT
@@ -87,6 +89,8 @@ def _audit(event, args):
     try:
         if event == "ve.manifest.operation":
             _emit(["m", args[0]])
+        elif event == "ve.manifest.presence":
+            _emit(["p", args[0]])
         elif event == "ve.manifest.all":
             _emit(["m", "*"])
         elif event == "open":
