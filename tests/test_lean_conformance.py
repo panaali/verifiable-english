@@ -298,13 +298,12 @@ def test_source_audit_rejects_escape_hatches_everywhere(source_audit, tmp_path, 
         source_audit.scan_sources(tmp_path)
 
 
-def test_source_audit_includes_root_and_dotted_theorems(source_audit, tmp_path):
+def test_source_audit_includes_root_and_dotted_modules(source_audit, tmp_path):
     (tmp_path / "Main.lean").write_text(
         '/- comment /- nested -/ comment -/\n-- comment\ndef label := "ordinary"\n'
         'theorem root_result : True := by trivial\nnamespace Demo\n'
         '@[simp] theorem Nested.result : True := by trivial\nend Demo\n')
-    actual, sources = source_audit.scan_sources(tmp_path)
-    assert actual == {"root_result", "Demo.Nested.result"}
+    sources = source_audit.scan_sources(tmp_path)
     assert [p.name for p in sources] == ["Main.lean"]
 
 

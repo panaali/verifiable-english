@@ -214,11 +214,11 @@ def source_hash(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def dump_all(root: Path = ROOT) -> tuple[str, str, str]:
+def dump_all(root: Path = ROOT, *, declarations_only: bool = False) -> tuple[str, str, str]:
     """The statement dump, the predicate list and the declaration list over every module of the
     tree (each built first: a file no target imports has no object file until it is named). One
     Lean run imports `VE`; each module outside it is read by its own run, in parallel."""
-    names = audited_names(root)
+    names = [] if declarations_only else audited_names(root)
     modules = tree_modules(root)
     built = subprocess.run(["lake", "build", *modules], cwd=root / "lean", text=True, capture_output=True,
                            check=False)
@@ -395,13 +395,24 @@ def show(added: list[str], removed: list[str], changed: list[str]) -> None:
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--check", action="store_true", help="compare a fresh dump with lean/statements.txt")
+    parser.add_argument("--declarations-only", action="store_true",
+                        help="write or check declarations.txt before generating the audit manifests")
     parser.add_argument("--diff", nargs=2, type=Path, metavar=("OLD", "NEW"), help="compare two dumps")
     args = parser.parse_args(argv)
     if args.diff:
         added, removed, changed = difference(args.diff[0].read_text(), args.diff[1].read_text())
         show(added, removed, changed)
         return 1 if added or removed or changed else 0
-    fresh, fresh_predicates, fresh_declarations = dump_all()
+    fresh, fresh_predicates, fresh_declarations = dump_all(declarations_only=args.declarations_only)
+    if args.declarations_only:
+        if args.check:
+            if DECLARATIONS.read_text() != fresh_declarations:
+                print(f"{DECLARATIONS.relative_to(ROOT)} is stale", file=sys.stderr)
+                return 1
+            return 0
+        DECLARATIONS.write_text(fresh_declarations)
+        print(f"wrote {DECLARATIONS.relative_to(ROOT)}")
+        return 0
     old = OUTPUT.read_text() if OUTPUT.is_file() else ""
     olds = {path: path.read_text() if path.is_file() else "" for path in (PREDICATES, DECLARATIONS)}
     if args.check:
@@ -417,10 +428,9 @@ def main(argv: list[str]) -> int:
         return 0
     OUTPUT.write_text(fresh)
     PREDICATES.write_text(fresh_predicates)
-    DECLARATIONS.write_text(fresh_declarations)
     show(*difference(old, fresh))
-    print(f"wrote {OUTPUT.relative_to(ROOT)} ({len(parse(fresh))} statements), "
-          f"{PREDICATES.relative_to(ROOT)} ({len(predicates())} predicates) and {DECLARATIONS.relative_to(ROOT)}")
+    print(f"wrote {OUTPUT.relative_to(ROOT)} ({len(parse(fresh))} statements) and "
+          f"{PREDICATES.relative_to(ROOT)} ({len(predicates())} predicates)")
     return 0
 
 

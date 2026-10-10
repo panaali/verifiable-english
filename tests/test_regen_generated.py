@@ -123,7 +123,11 @@ def test_entries_run_in_dependency_order():
     order = [entry.name for entry in R.GENERATED]
     for before, after in (("wire-contract", "frozen-inventory"), ("english-grammar", "frozen-inventory"),
                           ("english-run-copy", "frozen-inventory"), ("frozen-inventory", "lake-build"),
-                          ("lake-build", "lean-axioms"), ("lake-build", "lean-statements"),
+                          ("lake-build", "lean-declarations"),
+                          ("lean-declarations", "lean-axioms"),
+                          ("lean-axioms", "frozen-inventory-refresh"),
+                          ("lean-axioms", "lean-declarations-refresh"),
+                          ("lean-declarations-refresh", "lean-statements"),
                           ("lake-build", "checker-pins"), ("checker-pins", "english-codes"),
                           ("lake-build", "response-schemas"), ("assurance-manifest", "assurance-doc")):
         assert order.index(before) < order.index(after), (before, after)
@@ -269,10 +273,10 @@ def _merged(root):
 
 def _check_merged(root):
     lock, audit, axioms = _merged(root)
-    # Removal of 1111 by ours kept, 3333 and 4444 added by each side; both audit lines; the derived file is
-    # either side's (the writers rebuild it).
+    # Removal of 1111 by ours kept, 3333 and 4444 added by each side. The audit and axiom files
+    # take a side before the generator rebuilds them from the merged declarations.
     assert lock == {"ve_service": ["2222", "3333", "4444"], "rust_jsonl": ["9999"]}
-    assert "#print axioms VE.ours\n" in audit and "#print axioms VE.theirs\n" in audit
+    assert ("#print axioms VE.ours\n" in audit) != ("#print axioms VE.theirs\n" in audit)
     assert audit.count("#print axioms VE.a\n") == 1 and "<<<<<<<" not in audit
     assert axioms == "ours\n"
 
@@ -371,4 +375,3 @@ def test_assurance_doc_check_fails_on_a_stale_table(tmp_path, monkeypatch):
     monkeypatch.setattr(assurance_manifest, "DOC", stale)
     assert assurance_manifest.main(["--check"]) == 1
     assert "stale" in stale.read_text()  # --check writes nothing
-

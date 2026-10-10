@@ -12,8 +12,8 @@ the command that rewrites them and the one that checks them, both owned by the f
 script only runs them, in order), and how a merge combines two sides of the file before regeneration:
 
 * `regenerate`: the file is derived from the tree; a merge takes either side and the writer rebuilds it;
-* `union`: a hand-kept list of lines whose union is the merge (the Lean audit manifests, the import roots);
-  the checks that follow (`lean/audit.py`, `lake build`) catch a wrong union;
+* `union`: a hand-kept list of lines whose union is the merge (the Lean import roots);
+  the checks that follow (`lake build`) catch a wrong union;
 * `json`: a hand-curated JSON ledger (the assurance manifest, trust tables, checker pins, layer ledgers);
   a structural three-way merge (`merge_json`) keeps both sides' additions and removals and fails on a
   value both sides changed differently, which is left to a person or the sync agent.
@@ -86,16 +86,25 @@ GENERATED = (
               ((PY, "VE/Service/english_copy.py"),), ((PY, "VE/Service/english_copy.py", "--check"),), cwd="lean"),
     Generated("route-cases", ("lean/VE/Route/examples/route-cases.json",),
               ((PY, "lean/VE/Route/examples/generate.py"),), None),
-    Generated("lean-audit-manifests", ("lean/VE/Audit.lean", "lean/ResponseShape/Audit.lean"), None, None,
-              merge="union", note="one `#print axioms` line per theorem; lean/audit.py checks the union"),
     Generated("lean-roots", ("lean/VE.lean", "lean/ResponseShape.lean"), None, None, merge="union",
               note="import lists; `lake build` checks the union"),
     Generated("frozen-inventory", ("lean/VE/Route/frozen-sources.sha256",),
               ((PY, "VE/Route/frozen.py", "--write"),), ((PY, "VE/Route/frozen.py"),), cwd="lean"),
     Generated("lake-build", (), (("lake", "build"),), (("lake", "build"),), cwd="lean",
               note="no file of its own: the build every later entry reads"),
-    Generated("lean-axioms", ("lean/axioms.txt",), ((PY, "lean/audit.py", "--write"),), ((PY, "lean/audit.py"),)),
-    Generated("lean-statements", ("lean/statements.txt", "lean/predicates.txt", "lean/declarations.txt"),
+    Generated("lean-declarations", ("lean/declarations.txt",),
+              ((PY, "tools/lean_statements.py", "--declarations-only"),),
+              ((PY, "tools/lean_statements.py", "--declarations-only", "--check"),)),
+    Generated("lean-axioms", ("lean/VE/Audit.lean", "lean/ResponseShape/Audit.lean", "lean/axioms.txt"),
+              ((PY, "lean/audit.py", "--write"),), ((PY, "lean/audit.py", "--check"),)),
+    Generated("frozen-inventory-refresh", (), ((PY, "VE/Route/frozen.py", "--write"),),
+              ((PY, "VE/Route/frozen.py"),), cwd="lean",
+              note="refresh the generated Audit module hash after manifest generation"),
+    Generated("lean-declarations-refresh", (),
+              ((PY, "tools/lean_statements.py", "--declarations-only"),),
+              ((PY, "tools/lean_statements.py", "--declarations-only", "--check"),),
+              note="refresh hashes of generated Audit modules before the final audit check"),
+    Generated("lean-statements", ("lean/statements.txt", "lean/predicates.txt"),
               ((PY, "tools/lean_statements.py"),), ((PY, "tools/lean_statements.py", "--check"),)),
     Generated("trust-tables", ("tools/trust-classes.json", "docs/trust-baseline.json"), None,
               ((PY, "tools/trust_map.py", "--check"),), merge="json",
