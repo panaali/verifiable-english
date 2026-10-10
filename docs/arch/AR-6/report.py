@@ -96,7 +96,8 @@ def render() -> None:
     path = HERE / "REPORT.md"
     head, rest = path.read_text().split("<!-- BEGIN GENERATED AR-6 METRICS -->\n", 1)
     tail = rest.split("<!-- END GENERATED AR-6 METRICS -->", 1)[1]
-    path.write_text(f"{head}<!-- BEGIN GENERATED AR-6 METRICS -->\n{metrics()}\n<!-- END GENERATED AR-6 METRICS -->{tail}")
+    block = f"<!-- BEGIN GENERATED AR-6 METRICS -->\n{metrics()}\n<!-- END GENERATED AR-6 METRICS -->"
+    path.write_text(head + block + tail)
 
 
 if __name__ == "__main__":
