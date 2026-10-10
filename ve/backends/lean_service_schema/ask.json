@@ -1,0 +1,21 @@
+{
+  "$id": "ask.json",
+  "$comment": "Lean question answer (temporary).",
+  "row": {
+    "anyOf": [
+      {"$ref": "common.json#/$defs/case_error"},
+      {
+        "additionalProperties": false,
+        "properties": {"error": {"type": "string"}, "id": true, "status": {"const": "error"}},
+        "required": ["id", "status", "error"],
+        "type": "object"
+      },
+      {
+        "additionalProperties": false,
+        "properties": {"id": true, "result": true, "status": {"const": "ok"}},
+        "required": ["id", "status", "result"],
+        "type": "object"
+      }
+    ]
+  }
+}
