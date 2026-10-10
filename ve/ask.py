@@ -121,7 +121,7 @@ class _Readings:
             raise UnsupportedProfile("UnsupportedProfile: ask answers a readings document on the enumerated route "
                                      "with at most 64 compatible readings")
 
-    def case(self, ast, extra=None):
+    def case(self, ast, extra=None, generate=True):
         route = self.context
         route.premises()
         row = route.query_answer(ast)
@@ -193,7 +193,7 @@ class _Plain:
                                   max_models=BUDGET["max_models"], max_evaluations=BUDGET["max_evaluations"])
         return None if found.status != "Found" else {"model": found.model.to_dict()}
 
-    def case(self, ast, extra=None):
+    def case(self, ast, extra=None, generate=True):
         from .ast import Bottom, Not, formula_from_data
         phi = formula_from_data(self.env, ast)
         evidence = {}
@@ -259,9 +259,14 @@ class _NormDefaults:
         self.doc = doc
         self.gen = _zero_generator(doc)
 
-    def case(self, ast, extra=None):
+    def case(self, ast, extra=None, generate=True):
         gen = self.gen
-        evidence = {"conflict": {"packages": gen._packages()}}
+        extra = dict(extra or {})
+        if not generate:
+            return {"environment": self.doc["environment"].to_dict(), "document": {"units": gen.units},
+                    "conclusion": ast, "evidence": extra}
+        evidence = {"conflict": extra.pop("conflict")} if "conflict" in extra else \
+            {"conflict": {"packages": gen._packages()}}
         if len(evidence["conflict"]["packages"]) < len(gen.targets):
             witness = gen.witness_case()
             if witness is not None:
@@ -282,7 +287,7 @@ class _NormDefaults:
             model = gen.model_case(ast)
             if model is not None:
                 evidence["countermodel"] = model
-        evidence.update(extra or {})
+        evidence.update(extra)
         return {"environment": self.doc["environment"].to_dict(), "document": {"units": gen.units},
                 "conclusion": ast, "evidence": evidence}
 
@@ -465,28 +470,43 @@ def _ask(request: dict, bound: dict, expected: dict) -> dict:
     return row["result"]
 
 
-def answer(path, raw: bytes, question: str, evidence=None) -> dict:
-    """Lean's answer to `question` over the document at `path` (its bytes `raw`), Lean's refusal raised as its
-    class. The question is read first (`read`), so a question VE does not read is refused there, with Lean's
-    text."""
+class Prepared:
+    """A question's request to Lean's `ask`, what the relay binds the answer to, and the route's generator."""
+
+    def __init__(self, request, bound, expected, builder):
+        self.request, self.bound, self.expected, self.builder = request, bound, expected, builder
+
+    def ask(self) -> dict:
+        """Lean's answer, asked again with a split per countermodel whose failure turns on gaps."""
+        result = _ask(self.request, self.bound, self.expected)
+        if self.builder.splits(self.request["case"], result["rows"]):
+            result = _ask(self.request, self.bound, self.expected)
+        return result
+
+
+def prepare(path, raw: bytes, question: str, evidence=None, generate: bool = True) -> Prepared:
+    """The request for `question` over the document at `path` (its bytes `raw`): the question is read first
+    (`read`), so a question VE does not read is refused there with Lean's text; then the route's case and evidence
+    are generated."""
     from .backends.english_lean import export, identities
     from .document import load_document
     from .english import EnglishVocabulary
     reading = read(raw, question)
     doc = load_document(path)
     builder = _builder(doc)
-    case = builder.case(reading["ast"], evidence)
+    case = builder.case(reading["ast"], evidence) if generate else builder.case(reading["ast"], evidence, False)
     env = environment(raw)
     words = EnglishVocabulary(env, _defer_overlay_refusals=True)
     lexicon = export(words)
     request = {"id": MODE, "document": raw.decode("utf-8"), "question": question, "lexicon": lexicon,
                "case": case, "names": builder.names()}
     expected = {**identities(env, question, words, lexicon), "document_id": doc["document_id"]}
-    bound = _context(request, doc, raw, reading, builder.route)
-    result = _ask(request, bound, expected)
-    if builder.splits(case, result["rows"]):
-        result = _ask(request, bound, expected)
-    return result
+    return Prepared(request, _context(request, doc, raw, reading, builder.route), expected, builder)
+
+
+def answer(path, raw: bytes, question: str, evidence=None) -> dict:
+    """Lean's answer to `question` over the document at `path`, Lean's refusal raised as its class."""
+    return prepare(path, raw, question, evidence).ask()
 
 
 def main(argv=None) -> int:
