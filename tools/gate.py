@@ -67,15 +67,25 @@ STAGE_ENVIRONMENT = {
 # is what the gate collects. Plugin autoload is off in the gate, so every plugin is
 # named here or by tools/nested_pytest.py.
 PYTEST_ARGS = ("-q", "-p", "tools.gate_pytest", "-o", "addopts=-ra", "-m", "not live", "tests")
+# The stages a rerun of failed tests (`--rerun-failed`) takes from the failed gate it reruns: on the same
+# tree and toolchains they are the same, and the failed gate passed them before its suite ran.
+REUSED_STAGES = ("lean_audit", "cargo_test")
+# The failures of a gate whose failed tests can be rerun alone: tests that failed or have no result.
+RERUNNABLE = ("pytest", "pytest command")
 
 
-def collection_command(python: list[str]) -> list[str]:
-    return nested_pytest.command(["--collect-only", *PYTEST_ARGS], python=python)
+def pytest_args(files: list[str] | None = None) -> tuple[str, ...]:
+    """PYTEST_ARGS over `files` (test files under tests/) instead of the whole of tests/."""
+    return PYTEST_ARGS if files is None else (*PYTEST_ARGS[:-1], *files)
 
 
-def suite_command(python: list[str], workers: str) -> list[str]:
+def collection_command(python: list[str], files: list[str] | None = None) -> list[str]:
+    return nested_pytest.command(["--collect-only", *pytest_args(files)], python=python)
+
+
+def suite_command(python: list[str], workers: str, files: list[str] | None = None) -> list[str]:
     """The suite on xdist, even on one worker: merge_pytest_events reads each worker's collection."""
-    return nested_pytest.command(PYTEST_ARGS, workers=workers if workers == "auto" else int(workers),
+    return nested_pytest.command(pytest_args(files), workers=workers if workers == "auto" else int(workers),
                                  xdist=True, python=python)
 
 
@@ -92,10 +102,11 @@ def merge_pytest_events(collection: dict, suite: dict) -> dict:
     return {**collection, "tests": suite["tests"], "workers": workers}
 
 
-def collect(env: dict[str, str], result_file: Path, *, python: list[str] | None = None) -> dict:
+def collect(env: dict[str, str], result_file: Path, *, python: list[str] | None = None,
+            files: list[str] | None = None) -> dict:
     """Run the gate's collection in `env` (plugin autoload off) and return its events."""
     env = nested_pytest.environment(env, VE_GATE_PYTEST_RESULT=str(result_file))
-    command(collection_command(python or [sys.executable]), env=env, stage="Python collection")
+    command(collection_command(python or [sys.executable], files), env=env, stage="Python collection")
     return json.loads(result_file.read_text())
 
 
@@ -243,7 +254,9 @@ def collection_difference(added: list[str], removed: list[str]) -> str:
     return "\n".join(lines)
 
 
-def interpret_pytest(result: dict, events: dict, policy: dict, expected: list[str]) -> None:
+def interpret_pytest(result: dict, events: dict, policy: dict, expected: list[str],
+                     families: tuple[str, ...] | None = None) -> None:
+    """Record the suite's counts, skips and failures; `families` (default REQUIRED_FAMILIES) must be collected."""
     tests = events["tests"]
     collected = events["collected"]
     selected = events["selected"]
@@ -269,7 +282,7 @@ def interpret_pytest(result: dict, events: dict, policy: dict, expected: list[st
                                    "reason": "result for test outside final collection"})
     for report in events["collection_reports"]:
         result["failures"].append({"stage": "collection", **report})
-    for family in REQUIRED_FAMILIES:
+    for family in REQUIRED_FAMILIES if families is None else families:
         if not any(node.startswith(f"tests/{family}::") for node in selected):
             result["failures"].append({"stage": "coverage", "reason": f"required family not collected: {family}"})
     for node in selected:
@@ -313,6 +326,65 @@ def source_identity(env: dict[str, str]) -> tuple[str, bool]:
     dirty = bool(command([*git, "status", "--porcelain", "--untracked-files=all"], cwd=ROOT,
                          env=env, stage="worktree status"))
     return sha, dirty
+
+
+def tree_identity(env: dict[str, str]) -> str:
+    """The tree of HEAD: the gated sources, whatever commit carries them (`--rerun-failed` matches on it)."""
+    return command(["git", "--no-optional-locks", "rev-parse", "HEAD^{tree}"], cwd=ROOT, env=env, stage="tree")
+
+
+def read_previous(path: Path) -> dict | None:
+    """The gate record at `path`, read before this gate replaces it, or None."""
+    try:
+        record = json.loads(path.read_text())
+    except (OSError, ValueError):
+        return None
+    return record if isinstance(record, dict) else None
+
+
+def rerun_refusal(previous: dict | None, tree: str, toolchains: dict) -> str | None:
+    """Why the failed tests of `previous` cannot be rerun alone on this gate, or None. Only a gate of this tree,
+    clean, on these toolchains, whose suite ran and whose every failure is a test that failed or has no result
+    (`RERUNNABLE`) can be: anything else needs the full gate."""
+    if previous is None:
+        return "no previous gate record"
+    if previous.get("status") != "failed":
+        return f"the previous gate's status is {previous.get('status')!r}, not 'failed'"
+    if not tree or previous.get("tree_sha") != tree:
+        return f"the previous gate ran on tree {previous.get('tree_sha')!r}, not {tree!r}"
+    if previous.get("dirty") is not False:
+        return "the previous gate did not run on a clean worktree"
+    if not isinstance(previous.get("toolchains"), dict) or \
+            toolchain_identity(previous["toolchains"]) != toolchain_identity(toolchains):
+        return "the previous gate ran on other toolchains"
+    if "pytest" not in previous.get("stages", []):
+        return "the previous gate's suite did not complete"
+    failures = previous.get("failures")
+    if not isinstance(failures, list) or not failures:
+        return "the previous gate records no failure"
+    others = [failure for failure in failures if not isinstance(failure, dict)
+              or failure.get("stage") not in RERUNNABLE
+              or failure.get("stage") == "pytest" and not failed_test(failure.get("nodeid"))]
+    if others:
+        return f"the previous gate failed outside its tests: {others[:3]}"
+    if not failed_tests(previous):
+        return "the previous gate names no failed test"
+    return None
+
+
+def toolchain_identity(toolchains: dict) -> dict:
+    """The recorded toolchains but uv's path, which is in each gate's own scratch directory."""
+    paths = toolchains.get("paths", {})
+    return {**toolchains, "paths": {name: path for name, path in paths.items() if name != "uv"}
+            if isinstance(paths, dict) else paths}
+
+
+def failed_test(nodeid) -> bool:
+    return isinstance(nodeid, str) and nodeid.startswith("tests/") and "::" in nodeid
+
+
+def failed_tests(previous: dict) -> list[str]:
+    return sorted({failure["nodeid"] for failure in previous["failures"] if failure.get("stage") == "pytest"})
 
 
 def gate_environment(scratch: Path) -> dict[str, str]:
@@ -414,15 +486,23 @@ def main() -> int:
                              "tests/conftest.py)")
     parser.add_argument("--write-collection", action="store_true",
                         help="write the gate's collection to the baseline, tools/gate-collection.json, and exit")
+    parser.add_argument("--rerun-failed", nargs="?", const="", type=str, metavar="RECORD",
+                        help="when the gate RECORD (default: --output) failed only on tests, on this tree and these "
+                             "toolchains, rerun only the files of its failed tests (status rerun-passed or failed); "
+                             "otherwise run the full gate. A rerun is never a full gate's evidence (status passed)")
     args = parser.parse_args()
     if not (args.workers == "auto" or args.workers.isdecimal() and int(args.workers) > 0):
         parser.error("--workers is a positive count or auto")
     if args.write_collection:
         return write_collection()
     output = args.output.resolve()
-    result = {"schema_version": 1, "commit_sha": "", "dirty": False,
+    # Read before the record is reset: it is the failed gate a rerun repeats.
+    previous = None if args.rerun_failed is None else read_previous(
+        Path(args.rerun_failed).resolve() if args.rerun_failed else output)
+    result = {"schema_version": 1, "commit_sha": "", "tree_sha": "", "dirty": False, "mode": "full",
               "toolchains": {}, "environment": {}, "stages": [], "counts": {}, "skips": [],
               "failures": [], "status": "failed"}
+    rerun = None  # the failed tests' files, when this gate reruns them alone
     # A killed process must never leave the previous run's passing record intact.
     write_result(output, result)
     started_clean = False
@@ -435,6 +515,7 @@ def main() -> int:
             if result["dirty"]:
                 raise RuntimeError("worktree is dirty at gate start")
             started_clean = True
+            result["tree_sha"] = tree_identity(env)
             policy = json.loads(POLICY.read_text())
             if policy["version"] != 1:
                 raise RuntimeError("unsupported optional-test policy version")
@@ -443,6 +524,18 @@ def main() -> int:
                 raise RuntimeError("invalid test collection baseline")
             check_toolchains(result, env)
             check_python_project(result, env)
+            if args.rerun_failed is not None:
+                refusal = rerun_refusal(previous, result["tree_sha"], result["toolchains"])
+                if refusal is None:
+                    tests = failed_tests(previous)
+                    rerun = sorted({nodeid.split("::", 1)[0] for nodeid in tests})
+                    result["mode"] = "rerun-failed"
+                    result["rerun_failed"] = {
+                        "previous": {key: previous.get(key) for key in ("commit_sha", "tree_sha", "mode", "status")},
+                        "tests": tests, "files": rerun, "reused_stages": list(REUSED_STAGES)}
+                else:
+                    result["rerun_failed"] = {"refused": refusal}
+                    print(f"[gate] --rerun-failed: {refusal}; running the full gate", flush=True)
             command(["uv", "run", "--frozen", "--no-sync", "python",
                      "tools/wire_contract.py", "--check"], env=env,
                     stage="Wire contract check")
@@ -455,9 +548,10 @@ def main() -> int:
                     raise RuntimeError(f"Lean build did not produce {binary}")
             result["stages"].append("lean_build")
 
-            command(["uv", "run", "--frozen", "--no-sync", "python", "lean/audit.py"],
-                    env=env, stage="Lean audit")
-            result["stages"].append("lean_audit")
+            if rerun is None:
+                command(["uv", "run", "--frozen", "--no-sync", "python", "lean/audit.py"],
+                        env=env, stage="Lean audit")
+                result["stages"].append("lean_audit")
 
             # The host build at rust/target/release/ve: the executable the Rust
             # backend loads and checkers.lock pins. An explicit --target would
@@ -478,18 +572,19 @@ def main() -> int:
                     raise RuntimeError(f"Rust build {rust_binary} is not pinned in lean/checkers.lock")
                 result["stages"].append("rust_build")
 
-                rust_tests = command(["cargo", "test", *cargo_options, "--locked", "--release", "--workspace",
-                                      "--manifest-path", str(ROOT / "rust/Cargo.toml")],
-                                     cwd=cargo_cwd, env=cargo_env, stage="native Rust tests")
-                summaries = re.findall(r"test result: ok\. (\d+) passed; (\d+) failed; "
-                                       r"(\d+) ignored;", rust_tests)
-                if not summaries:
-                    raise RuntimeError("cargo test produced no parseable test result")
-                result["counts"]["rust_passed"] = sum(int(row[0]) for row in summaries)
-                result["counts"]["rust_ignored"] = sum(int(row[2]) for row in summaries)
-                if result["counts"]["rust_passed"] == 0 or result["counts"]["rust_ignored"]:
-                    raise RuntimeError("native Rust tests absent or ignored")
-                result["stages"].append("cargo_test")
+                if rerun is None:
+                    rust_tests = command(["cargo", "test", *cargo_options, "--locked", "--release", "--workspace",
+                                          "--manifest-path", str(ROOT / "rust/Cargo.toml")],
+                                         cwd=cargo_cwd, env=cargo_env, stage="native Rust tests")
+                    summaries = re.findall(r"test result: ok\. (\d+) passed; (\d+) failed; "
+                                           r"(\d+) ignored;", rust_tests)
+                    if not summaries:
+                        raise RuntimeError("cargo test produced no parseable test result")
+                    result["counts"]["rust_passed"] = sum(int(row[0]) for row in summaries)
+                    result["counts"]["rust_ignored"] = sum(int(row[2]) for row in summaries)
+                    if result["counts"]["rust_passed"] == 0 or result["counts"]["rust_ignored"]:
+                        raise RuntimeError("native Rust tests absent or ignored")
+                    result["stages"].append("cargo_test")
 
             python = ["uv", "run", "--frozen", "--no-sync", "python"]
             collection_file, events_file = scratch / "pytest-collection.json", scratch / "pytest.json"
@@ -500,16 +595,24 @@ def main() -> int:
                 VE_RUST_BINARY=str(rust_binary)))
             # The collection, serially (xdist workers report no deselection), then the
             # suite on `--workers` xdist workers; a worker must collect that selection.
-            collection = collect(pytest_env, collection_file, python=python)
+            collection = collect(pytest_env, collection_file, python=python, files=rerun)
             try:
-                command(suite_command(python, args.workers),
+                command(suite_command(python, args.workers, rerun),
                         env={**pytest_env, "VE_GATE_PYTEST_RESULT": str(events_file)}, stage="Python suite")
             except RuntimeError as exc:
                 result["failures"].append({"stage": "pytest command", "reason": str(exc)})
             if not events_file.exists():
                 raise RuntimeError("pytest did not write its result events")
-            interpret_pytest(result, merge_pytest_events(collection, json.loads(events_file.read_text())),
-                             policy, expected)
+            events = merge_pytest_events(collection, json.loads(events_file.read_text()))
+            if rerun is None:
+                interpret_pytest(result, events, policy, expected)
+            else:
+                # The baseline's tests of the rerun files, each of the failed tests among them.
+                interpret_pytest(result, events, policy,
+                                 [nodeid for nodeid in expected if nodeid.split("::", 1)[0] in rerun], families=())
+                outcomes = {nodeid: events["tests"].get(nodeid, {}).get("outcome", "no result")
+                            for nodeid in result["rerun_failed"]["tests"]}
+                result["rerun_failed"]["outcomes"] = outcomes
             result["stages"].append("pytest")
             completed = True
         except (OSError, ValueError, KeyError, RuntimeError) as exc:
@@ -526,6 +629,10 @@ def main() -> int:
                     result["failures"].append({"stage": "source identity", "reason": str(exc)})
             if completed and result["stages"] == list(REQUIRED_STAGES) and not result["failures"]:
                 result["status"] = "passed"
+            # A rerun of failed tests is never a full gate: its own status, which no evidence check accepts.
+            elif completed and rerun is not None and not result["failures"] and result["stages"] == [
+                    stage for stage in REQUIRED_STAGES if stage not in REUSED_STAGES]:
+                result["status"] = "rerun-passed"
             write_result(output, result)
             print(f"[gate] {result['status']}: {output}; "
                   f"{result['counts'].get('passed', 0)} passed, "
@@ -537,7 +644,10 @@ def main() -> int:
             for failure in result["failures"]:
                 print(f"[gate] FAILURE: {failure['stage']}: "
                       f"{failure.get('nodeid', '')} {failure['reason']}", file=sys.stderr, flush=True)
-    return 0 if result["status"] == "passed" else 1
+            if result["status"] == "rerun-passed":
+                print("[gate] the failed tests passed on rerun; this is not a full gate: run the full gate "
+                      "for the final evidence", flush=True)
+    return 0 if result["status"] in ("passed", "rerun-passed") else 1
 
 
 if __name__ == "__main__":
