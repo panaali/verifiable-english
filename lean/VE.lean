@@ -119,3 +119,8 @@ import VE.Question.Moved
 import VE.Question.Frames
 import VE.Question.Fixtures
 import VE.Question.Spans
+import VE.Ask.Basic
+import VE.Ask.Sound
+import VE.Ask.Sources
+import VE.Ask.Groups
+import VE.Ask.Plain
