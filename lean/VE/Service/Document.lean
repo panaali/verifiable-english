@@ -18,8 +18,9 @@ composed from that block's own route, as Python composes it: the block route dec
 claim graph and owns the coverage line (`alternatives` and its residual counts, `Alternatives.Wire.coverage`).
 
 What the mode cannot decide yet is `CheckerUnavailable`, never a verdict (`unavailable`): a `ve-document@2`
-document (the discourse route's), a document with `senses` (the senses route's), front matter outside the
-restricted JSON reader (`null`, a negative, fractional or out-of-range number, a duplicate key, `NaN`), an
+document (the discourse route's), a document with `senses` (the senses route's), front matter Python's JSON
+reader reads as other values (`NaN`, `Infinity`, a number other than a natural at most 2^53-1, and `null`
+anywhere but a unit's `content` or `status` or a part's `content`), an
 environment outside the plain `ve.core@0.2` envelope or with a profile outside `ownedProfiles` (each such profile's
 loader adds checks and coverage lines its own Lean route owns), regulated or norm content, fenced English or strict
 content, a distinguishing model the Lean model decoder refuses, and a claim graph the Lean admission route defers.
@@ -60,21 +61,167 @@ def listedProfiles (environment : Json) : List String :=
 
 /-! ## The front matter -/
 
-/-- Whether Python's JSON reader may read a front matter the restricted reader refuses: Lean's own JSON
-parser reads it (`null`, numbers outside the natural numbers, duplicate keys, a lone surrogate), or it names
-one of Python's non-standard constants. An over-approximation: it only turns a rejection into
-`CheckerUnavailable`. -/
+/-- Whether Python's JSON reader may read a front matter Lean.Json.parse refuses: Python's non-standard
+constants. An over-approximation: it only turns a rejection into `CheckerUnavailable`. -/
 def pythonMayRead (front : String) : Bool :=
-  (Json.parse front).isOk || ["NaN", "Infinity"].any fun t => (front.splitOn t).length > 1
+  ["NaN", "Infinity"].any fun t => (front.splitOn t).length > 1
 
-def frontJson (front : String) : Except String Json :=
-  match VE.JsonInput.parse front with
-  | .ok j => .ok j
+/-- The largest number the document mode reads, `VE.JsonInput`'s bound. -/
+def maxNumber : Nat := 9007199254740991
+
+def hexDigit (c : Char) : Option Nat :=
+  if c.isDigit then some (c.toNat - '0'.toNat)
+  else if 'a' ≤ c && c ≤ 'f' then some (c.toNat - 'a'.toNat + 10)
+  else if 'A' ≤ c && c ≤ 'F' then some (c.toNat - 'A'.toNat + 10)
+  else none
+
+def hex4 (a b c d : Char) : Option Nat := do
+  pure ((← hexDigit a) * 4096 + (← hexDigit b) * 256 + (← hexDigit c) * 16 + (← hexDigit d))
+
+def numberChar (c : Char) : Bool := c.isDigit || c == '-' || c == '+' || c == '.' || c == 'e' || c == 'E'
+
+/-- What of a JSON text `Lean.Json.parse` reads that Python's `json.loads` reads as another value. -/
+inductive Foreign
+  /-- A number other than a natural at most `maxNumber`: Python reads `2e0` and `2.0` as floats and `-0` as an
+  integer, where Lean reads naturals or other numbers, so a span, a version or an index would be decided
+  differently. Python decides it (`CheckerUnavailable`). -/
+  | number
+  /-- An unpaired surrogate escape: a Python string no UTF-8 text holds. Both loaders refuse it with the JSON
+  boundary's diagnostic after the metadata and body checks (`loneSurrogate` in `split`; `_no_lone_surrogate`). -/
+  | surrogate
+  /-- The lexer's fuel ran out (fail closed). -/
+  | exhausted
+  deriving DecidableEq
+
+/-- The JSON boundary's diagnostic of a lone surrogate (docs/spec/v0-language.md; `ve.wire.LONE_SURROGATE`). -/
+def loneSurrogate : String := "JSON strings must not contain lone UTF-16 surrogates"
+
+/-- The first lexeme of a JSON text whose kind is `.surrogate` (with `surrogates`) or `.number` (without), or
+`.exhausted`. Read only after `Lean.Json.parse` accepted the text, so its strings and numbers are well formed;
+`quoted` is whether the lexer is inside a string. -/
+def foreignLexeme (surrogates : Bool) : Nat → Bool → List Char → Option Foreign
+  | _, _, [] => none
+  | 0, _, _ :: _ => some .exhausted
+  | fuel + 1, true, '"' :: cs => foreignLexeme surrogates fuel false cs
+  | fuel + 1, true, '\\' :: 'u' :: a :: b :: c :: d :: cs =>
+    -- Whether this escape is a lone surrogate; the lexer then goes on once, past it (a strict `let` of the
+    -- continuation would run it at every escape, exponentially).
+    let paired := match cs with
+      | '\\' :: 'u' :: e :: f :: g :: h :: _ => (hex4 e f g h).any fun w => 0xDC00 ≤ w && w < 0xE000
+      | _ => false
+    match hex4 a b c d with
+    | some v =>
+      if 0xD800 ≤ v && v < 0xDC00 && paired then foreignLexeme surrogates fuel true (cs.drop 6)
+      else if 0xD800 ≤ v && v < 0xE000 && surrogates then some .surrogate
+      else foreignLexeme surrogates fuel true cs
+    | none => foreignLexeme surrogates fuel true cs
+  | fuel + 1, true, '\\' :: _ :: cs => foreignLexeme surrogates fuel true cs
+  | fuel + 1, true, _ :: cs => foreignLexeme surrogates fuel true cs
+  | fuel + 1, false, '"' :: cs => foreignLexeme surrogates fuel true cs
+  | fuel + 1, false, c :: cs =>
+    if c == '-' || c.isDigit then
+      let token := (c :: cs).takeWhile numberChar
+      if surrogates || token.all Char.isDigit && (String.mk token).toNat! ≤ maxNumber then
+        foreignLexeme surrogates fuel false (cs.drop (token.length - 1))
+      else some .number
+    else foreignLexeme surrogates fuel false cs
+
+#guard [("[0, 2]", none), ("[0, 2e0]", some Foreign.number), ("[2.0]", some .number), ("[-0]", some .number),
+  ("[9007199254740991]", none), ("[9007199254740992]", some .number), ("[\"2.0 -1 1e3\"]", none),
+  ("[\"\\ud83d\\ude00\"]", none), ("[\"\\ud800\"]", some .surrogate), ("[\"\\udc00x\"]", some .surrogate),
+  ("[\"\\ud800\\u0041\"]", some .surrogate), ("[\"\\\\ud800\"]", none)].all fun (t, r) =>
+    foreignLexeme (r == some .surrogate) (t.length + 1) false t.toList == r &&
+      foreignLexeme (r != some .surrogate) (t.length + 1) false t.toList == none
+
+-- Linear in the escapes: 4,000 of them (a strict continuation took longer than the service deadline at 200).
+#guard let t := "[\"" ++ String.join (List.replicate 4000 "\\u00e9") ++ "\", 1]"
+  foreignLexeme true (t.length + 1) false t.toList == none && foreignLexeme false (t.length + 1) false t.toList == none
+
+#guard foreignLexeme true 100 false "[\"\\ud800\", 2e0]".toList == some .surrogate &&
+  foreignLexeme false 100 false "[\"\\ud800\", 2e0]".toList == some .number
+
+/-- The members whose `null` the mode reads as Python's loader reads it, as absent (`unit.get(...)`): a unit's or
+a `MIXED` part's `content` and a unit's `status`. -/
+def nullableUnitKeys (part : Bool) : List String := if part then ["content"] else ["content", "status"]
+
+/-- The first `null` of the front matter outside `nullableUnitKeys`. Python's loader reads `null` per field (absent
+for some, a wrong type for others, with its own texts); the mode reads only these, and any other is Python's. -/
+def hasNull : Nat → Json → Bool
+  | 0, _ => true
+  | _, .null => true
+  | fuel + 1, .arr xs => xs.any (hasNull fuel)
+  | fuel + 1, .obj kvs => kvs.toList.any fun (_, v) => hasNull fuel v
+  | _, _ => false
+
+/-- A `MIXED` part holds a `null` outside `nullableUnitKeys true`. -/
+def partHasStrayNull (p : Json) : Bool :=
+  match p with
+  | .obj kvs => kvs.toList.any fun (k, v) =>
+    if v == .null then !(nullableUnitKeys true).contains k else hasNull 257 v
+  | v => hasNull 257 v
+
+/-- A unit holds a `null` outside `nullableUnitKeys false`, or one of its `MIXED` parts does. -/
+def unitHasStrayNull (u : Json) : Bool :=
+  match u with
+  | .obj kvs => kvs.toList.any fun (k, v) =>
+    if v == .null then !(nullableUnitKeys false).contains k
+    else match k, v with
+      | "parts", .arr ps => ps.any partHasStrayNull
+      | _, _ => hasNull 257 v
+  | v => hasNull 257 v
+
+def strayNull (front : Json) : Option String :=
+  match front with
+  | .obj kvs => kvs.toList.findSome? fun (k, v) =>
+    let stray := match k, v with
+      | "units", .arr us => us.any unitHasStrayNull
+      | _, _ => hasNull 257 v
+    if stray then some k else none
+  | v => if hasNull 257 v then some "front matter" else none
+
+/-- Cap nesting before `Lean.Json.parse`, whose recursive parser can overflow the process
+stack on an untrusted document string. Quotes and escapes do not change nesting. -/
+def frontDepth (front : String) : Except String Unit := do
+  let mut depth : Nat := 0
+  let mut quoted := false
+  let mut escaped := false
+  for c in front.toList do
+    if quoted then
+      if escaped then escaped := false
+      else if c == '\\' then escaped := true
+      else if c == '"' then quoted := false
+    else if c == '"' then quoted := true
+    else if c == '[' || c == '{' then
+      depth := depth + 1
+      if depth > 256 then throw "ResourceLimit: JSON depth exceeds 256"
+    else if c == ']' || c == '}' then
+      depth := depth - 1
+
+def frontJson (front : String) : Except String Json := do
+  let _ ← frontDepth front
+  match Json.parse front with
+  | .ok j =>
+    match foreignLexeme false (front.length + 1) false front.toList with
+    | some .number => throw (unavailable
+        "front matter outside the document mode's JSON reader: a number other than a natural at most 2^53-1")
+    | some _ => throw (unavailable "front matter outside the document mode's JSON reader: lexer fuel")
+    | none => pure ()
+    if let some key := strayNull j then
+      throw (unavailable ("front matter outside the document mode's JSON reader: null in " ++ key))
+    pure j
   | .error e =>
     let text := Loader.frontJsonError e
     if text == "invalid JSON front matter" && pythonMayRead front then
-      .error (unavailable "front matter outside the restricted JSON reader (null, a negative, fractional or large number, a duplicate key)")
+      .error (unavailable "front matter outside the restricted JSON reader (Python-only JSON values)")
     else .error text
+
+/-- `_no_lone_surrogate`, which Python's loader runs right after `_split`: a lone surrogate escape anywhere in the
+front matter is the JSON boundary's diagnostic. -/
+def noLoneSurrogate (front : String) : Except String Unit :=
+  match foreignLexeme true (front.length + 1) false front.toList with
+  | some .surrogate => throw loneSurrogate
+  | some _ => throw (unavailable "front matter outside the document mode's JSON reader: lexer fuel")
+  | none => pure ()
 
 /-- `_split` with `is_discourse_text` first: the metadata keys, the couplings and completions gates, then the
 body. -/
@@ -93,12 +240,23 @@ def split (t : String) : Except String Loader.Split := do
   if (fm.getObjVal? "completions").isOk && !listed.contains "norm-defaults@0" then
     throw "UnsupportedProfile: norm-defaults@0 is required for completions"
   let (source, fences) ← Loader.bodyOf (Loader.linesOf body) (python := true)
+  noLoneSurrogate front
   pure ⟨fm, source, fences⟩
 
 /-! ## The environment -/
 
 /-- The block routes' document with no norms and no units, as Python's `coverage` sends it. -/
 def emptySource : Json := Json.mkObj [("norms", Json.arr #[]), ("units", Json.arr #[])]
+
+/-- The @1 document identity includes authored nulls, while certificate identities do not. -/
+def documentId (doc : Loader.Split) : Except String String := do
+  let format ← stringField doc.front "format"
+  let payload := Json.mkObj [("metadata", Loader.identityMetadata doc.front),
+    ("source", .str doc.source), ("fences", Json.mkObj (doc.fences.map fun (u, t) => (u, Json.str t)))]
+  match VE.CertificateWire.documentDigest (format ++ "\n") payload with
+  | .ok digest => pure digest
+  | .error e => throw (if e.startsWith "ResourceLimit" then e else
+      unavailable "document identity contains a JSON number outside the document mode")
 
 /-- The checked environment of a document and what its checks read: the environment as written (its profiles
 and identity bind every meaning id), its typing envelope (a composed block's profile and fields replaced by the
@@ -336,6 +494,75 @@ structure SourceUnit where
   meaningId : Option String := none
   explicit : Option String := none
 
+/-! The answer's units are typed (`RowUnit`): each field is rendered from a decoded value, so the response schema
+names every field's domain and the encoder's theorems (`ResponseShape.Encoders.Document.unit_fits`) prove the
+rendered rows fit it. The value lists are `Loader`'s (`#guard`s below). -/
+
+/-- `Loader.supports`. -/
+inductive Support | assumption | certificate | observation | calculation | statistical | testimony | adapter | none
+  deriving DecidableEq, Repr
+
+def Support.all : List Support :=
+  [.assumption, .certificate, .observation, .calculation, .statistical, .testimony, .adapter, .none]
+
+def Support.name : Support → String
+  | .assumption => "assumption" | .certificate => "certificate" | .observation => "observation"
+  | .calculation => "calculation" | .statistical => "statistical" | .testimony => "testimony"
+  | .adapter => "adapter" | .none => "none"
+
+def Support.ofName? (s : String) : Option Support := Support.all.find? (·.name == s)
+
+#guard Support.all.map Support.name == Loader.supports
+
+/-- `Loader.statuses`: a unit's W2 status. -/
+inductive UnitStatus | checked | opened | labelled | unformalised
+  deriving DecidableEq, Repr
+
+def UnitStatus.all : List UnitStatus := [.checked, .opened, .labelled, .unformalised]
+
+def UnitStatus.name : UnitStatus → String
+  | .checked => "CHECKED" | .opened => "OPEN" | .labelled => "LABELLED" | .unformalised => "UNFORMALISED"
+
+def UnitStatus.ofName? (s : String) : Option UnitStatus := UnitStatus.all.find? (·.name == s)
+
+#guard UnitStatus.all.map UnitStatus.name == Loader.statuses
+
+/-- A meaning `Loader.meaningStatus` accepts: `specified`, or one member `contextual`, `open` or `unformalised`. -/
+inductive Meaning
+  | specified
+  | contextual (detail : String)
+  | openTerms (names : List String)
+  | unformalised (reason : String)
+
+def Meaning.json : Meaning → Json
+  | .specified => .str "specified"
+  | .contextual d => Json.mkObj [("contextual", .str d)]
+  | .openTerms names => Json.mkObj [("open", Json.arr (names.map Json.str).toArray)]
+  | .unformalised r => Json.mkObj [("unformalised", .str r)]
+
+/-- The meaning `Loader.meaningStatus` accepted, typed: `Meaning.json` of it is the meaning as written. -/
+def Meaning.ofJson? (j : Json) : Option Meaning :=
+  match j with
+  | .str "specified" => some .specified
+  | .obj _ => match (fields j).toOption with
+    | some [("contextual", .str d)] => some (.contextual d)
+    | some [("open", .arr xs)] => (xs.toList.mapM fun (x : Json) => x.getStr?.toOption).map .openTerms
+    | some [("unformalised", .str r)] => some (.unformalised r)
+    | _ => none
+  | _ => none
+
+/-- A unit of the answer, typed. -/
+structure RowUnit where
+  id : String
+  span : Nat × Nat
+  kind : VE.Route.Admission.Kind
+  meaning : Meaning
+  support : Support
+  status : UnitStatus
+  parent : Option String
+  content : Option VE.Formula
+  meaningId : Option String
+
 def kindName (kind : Json) : String :=
   match kind with
   | .str s => s
@@ -388,6 +615,7 @@ def sourceUnit (E : Env) (source : String) (fences : List (String × String)) (o
   let support := (u.getObjValD "support").getStr?.toOption.getD ""
   unless Loader.supports.contains support do throw "invalid support"
   let compiled ← match u.getObjVal? "content" with
+    | .ok .null => pure none
     | .ok content => some <$> contentOf E fences u id content
     | .error _ => pure none
   if let .arr xs := kind then
@@ -399,6 +627,7 @@ def sourceUnit (E : Env) (source : String) (fences : List (String × String)) (o
     unless stated == .str mid do throw "unit meaning id does not match content"
   let explicit ← match u.getObjVal? "status" with
     | .ok (.str s) => if Loader.statuses.contains s then pure (some s) else throw "invalid unit status"
+    | .ok .null => pure none
     | .ok _ => throw "invalid unit status"
     | .error _ => pure none
   pure { id, span := (a, b), kind, meaning, support, parent, explicit,
@@ -468,13 +697,26 @@ def residual (front : Json) (units : List SourceUnit) : List (String × Nat) :=
 
 /-- A unit of the answer. A unit with content carries its checked formula and `meaning_id`, so a caller builds its
 document from them and never recomputes an identity (docs/LEAN-FIRST-PLAN.md rules 2 and 5, batch 16b). -/
-def unitJson (u : SourceUnit) : Json :=
+def unitJson (u : RowUnit) : Json :=
   Json.mkObj ([("id", .str u.id), ("span", toJson [u.span.1, u.span.2]),
-    ("kind", u.kind), ("meaning", u.meaning), ("support", .str u.support),
-    ("status", .str u.status)] ++
+    ("kind", VE.Route.Admission.renderKind u.kind), ("meaning", u.meaning.json), ("support", .str u.support.name),
+    ("status", .str u.status.name)] ++
     (u.parent.toList.map fun p => ("parent_id", .str p)) ++
     (u.content.toList.map fun f => ("content", VE.Route.Wire.encodeFormula f)) ++
     (u.meaningId.toList.map fun m => ("meaning_id", .str m)))
+
+/-- The typed answer unit of a checked unit. Its kind and meaning were decoded by `sourceUnit` (`decodeKind 16`,
+`Loader.meaningStatus`) and its support and status are `Loader`'s, so no case refuses; one that did would be
+`CheckerUnavailable`, never another row. `decodeKind_render` and `Meaning.ofJson?` make the rendered kind and
+meaning the ones written, which the receiver also checks (`_bind_document_answer`). -/
+def rowOf (u : SourceUnit) : Except String RowUnit := do
+  let untyped := unavailable s!"unit {u.id} outside the typed answer"
+  let kind ← (VE.Route.Admission.decodeKind 16 u.kind).mapError fun _ => untyped
+  let some meaning := Meaning.ofJson? u.meaning | throw untyped
+  let some support := Support.ofName? u.support | throw untyped
+  let some status := UnitStatus.ofName? u.status | throw untyped
+  pure { id := u.id, span := u.span, kind, meaning, support, status, parent := u.parent,
+         content := u.content, meaningId := u.meaningId }
 
 /-- A composed block's coverage line, as its route computes it (`Alternatives.Wire.coverage` over the block's
 source and the document's units and narrowings). -/
@@ -616,6 +858,7 @@ structure Checked where
   sourceId : String
   source : String
   units : List SourceUnit
+  rows : List RowUnit
   front : Json
   block : Option BlockCoverage
 
@@ -656,12 +899,12 @@ def check (text : String) (withGraph : Bool := true) : Except String Checked := 
   let block ← blockCoverage E front units
   if let .ok graph := front.getObjVal? "graph" then
     if withGraph then admitGraph E front graph units all active openNames narrowings
-  pure ⟨← Loader.documentId (Loader.payload doc (Json.mkObj [])), Loader.sourceId E.profiles doc.source,
-    doc.source, units, front, block⟩
+  pure ⟨← documentId doc, Loader.sourceId E.profiles doc.source,
+    doc.source, units, ← units.mapM rowOf, front, block⟩
 
 def encode (id : String) (c : Checked) : Json :=
   VE.Route.Wire.ok id [("document_id", .str c.documentId), ("source_id", .str c.sourceId),
-    ("source", .str c.source), ("units", toJson (c.units.map unitJson)),
+    ("source", .str c.source), ("units", toJson (c.rows.map unitJson)),
     ("coverage", coverageJson c.front c.units c.source.utf8ByteSize c.block)]
 
 /-- A case `{"id", "document"}`, with `"admit": false` for `load_document` alone. -/

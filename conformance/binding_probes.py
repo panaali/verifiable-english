@@ -183,6 +183,9 @@ def _english_case(mode):
     base = {"id": mode, "environment": env.to_dict(), "lexicon": export(EnglishVocabulary(env))}
     if mode == "english.read":
         return {**base, "source": "Legacy is deployed.", "mode": "authoring", "cap": 2}
+    if mode == "english.question":
+        return {**base, "source": "Is legacy deployed?", "mode": "authoring", "cap": 2,
+                "question": "Is legacy deployed?"}
     if mode == "english.check":
         return {**base, "formulas": [_to_data(Unary("deployed", Const("legacy")))],
                 "marks": [False], "candidates": ["Legacy is deployed."]}
@@ -194,6 +197,7 @@ BUILDERS = {
     ("english.admission", S, "english.read", None): lambda: _english_case("english.read"),
     ("english.admission", S, "english.grammar", None): lambda: _english_case("english.grammar"),
     ("english.admission", S, "english.check", None): lambda: _english_case("english.check"),
+    ("question.read", S, "english.question", None): lambda: _english_case("english.question"),
     ("wire.diagnose", S, "diagnose", "soft-elaborate"):
         lambda: {"id": "wire-soft", "kind": "soft-elaborate", "unit": "soft-norms@0",
                  "environment": _soft_wire_root()["environment"], "norms": []},
