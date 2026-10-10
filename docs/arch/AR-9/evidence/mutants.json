@@ -1,0 +1,132 @@
+{
+ "mutants": [
+  {
+   "bug": "recovery stops re-exporting nearest_wordings",
+   "claim": "names",
+   "files": [
+    "ve/assist/recovery.py"
+   ],
+   "runs": [
+    {
+     "test": "tests/test_assist_split.py::test_every_name_the_module_defined_is_still_importable_from_it[ve.assist.recovery-nearest_wordings]",
+     "exit_code": 1,
+     "failure_excerpt": "F\n=================================== FAILURES ===================================\n_ test_every_name_the_module_defined_is_still_importable_from_it[ve.assist.recovery-nearest_wordings] _\n\nmodule = <module 've.assist.recovery' from '/home/seyran/code/ve-arch-AR-9/ve/assist/recovery.py'>\nname = 'nearest_wordings'\n\n    @pytest.mark.parametrize(\"module,name\", [(m, n) for m, names in DEFINED.items() for n in names],\n                             ids=lambda v: getattr(v, \"__name__\", v))\n    def test_every_name_the_module_defined_is_still_importable_from_it(module, name):\n        family = [module.__name__, *FAMILIES[module]]\n        owners = [m for m in family if name in _bound_names(m, imports=False)]\n        assert len(owners) == 1, owners\n        value = vars(importlib.import_module(owners[0]))[name]\n>       assert getattr(module, name) is value\n               ^^^^^^^^^^^^^^^^^^^^^\nE       AttributeError: module 've.assist.recovery' has no attribute 'nearest_wordings'\n\ntests/test_assist_split.py:69: AttributeError\n=========================== short test summary info ============================\nFAILED tests/test_assist_split.py::test_every_name_the_module_defined_is_still_importable_from_it[ve.assist.recovery-nearest_wordings]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 0.77s\n"
+    },
+    {
+     "test": "tests/test_assist_recovery.py::test_ledger_json_restore_and_revision_guard",
+     "exit_code": 4,
+     "failure_excerpt": "\n==================================== ERRORS ====================================\n________________ ERROR collecting tests/test_assist_recovery.py ________________\nImportError while importing test module '/home/seyran/code/ve-arch-AR-9/tests/test_assist_recovery.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/importlib/__init__.py:88: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntests/test_assist_recovery.py:9: in <module>\n    from ve.assist.recovery import RecoveryService, nearest_wordings\nE   ImportError: cannot import name 'nearest_wordings' from 've.assist.recovery' (/home/seyran/code/ve-arch-AR-9/ve/assist/recovery.py)\n=========================== short test summary info ============================\nERROR tests/test_assist_recovery.py\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 error in 0.70s\n"
+    }
+   ]
+  },
+  {
+   "bug": "session stops re-exporting config_digest",
+   "claim": "names",
+   "files": [
+    "ve/assist/session.py"
+   ],
+   "runs": [
+    {
+     "test": "tests/test_assist_split.py::test_every_name_the_module_defined_is_still_importable_from_it[ve.assist.session-config_digest]",
+     "exit_code": 1,
+     "failure_excerpt": "F\n=================================== FAILURES ===================================\n_ test_every_name_the_module_defined_is_still_importable_from_it[ve.assist.session-config_digest] _\n\nmodule = <module 've.assist.session' from '/home/seyran/code/ve-arch-AR-9/ve/assist/session.py'>\nname = 'config_digest'\n\n    @pytest.mark.parametrize(\"module,name\", [(m, n) for m, names in DEFINED.items() for n in names],\n                             ids=lambda v: getattr(v, \"__name__\", v))\n    def test_every_name_the_module_defined_is_still_importable_from_it(module, name):\n        family = [module.__name__, *FAMILIES[module]]\n        owners = [m for m in family if name in _bound_names(m, imports=False)]\n        assert len(owners) == 1, owners\n        value = vars(importlib.import_module(owners[0]))[name]\n>       assert getattr(module, name) is value\n               ^^^^^^^^^^^^^^^^^^^^^\nE       AttributeError: module 've.assist.session' has no attribute 'config_digest'\n\ntests/test_assist_split.py:69: AttributeError\n=========================== short test summary info ============================\nFAILED tests/test_assist_split.py::test_every_name_the_module_defined_is_still_importable_from_it[ve.assist.session-config_digest]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 0.36s\n"
+    },
+    {
+     "test": "tests/test_assist.py::test_astra6_deleted_propose_event_detected_after_metadata_edit",
+     "exit_code": 1,
+     "failure_excerpt": "F\n=================================== FAILURES ===================================\n________ test_astra6_deleted_propose_event_detected_after_metadata_edit ________\n\n    def test_astra6_deleted_propose_event_detected_after_metadata_edit():\n        from ve.assist import verify_session\n>       from ve.assist.session import config_digest\nE       ImportError: cannot import name 'config_digest' from 've.assist.session' (/home/seyran/code/ve-arch-AR-9/ve/assist/session.py)\n\ntests/test_assist.py:923: ImportError\n=========================== short test summary info ============================\nFAILED tests/test_assist.py::test_astra6_deleted_propose_event_detected_after_metadata_edit\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 0.67s\n"
+    }
+   ]
+  },
+  {
+   "bug": "replay calls its own evaluate, bypassing the seam",
+   "claim": "seams",
+   "files": [
+    "ve/assist/recovery_replay.py"
+   ],
+   "runs": [
+    {
+     "test": "tests/test_assist_split.py::test_moved_code_does_not_bind_the_names_the_facade_owns[ve.assist.recovery_replay]",
+     "exit_code": 1,
+     "failure_excerpt": "================== FAILURES ===================================\n_ test_moved_code_does_not_bind_the_names_the_facade_owns[ve.assist.recovery_replay] _\n\nmodule_name = 've.assist.recovery_replay'\n\n    @pytest.mark.parametrize(\"module_name\", [m for family in FAMILIES.values() for m in family])\n    def test_moved_code_does_not_bind_the_names_the_facade_owns(module_name):\n        facade = next(m for m, family in FAMILIES.items() if module_name in family)\n>       assert not _bound_names(module_name) & set(SEAMED[facade])\nE       AssertionError: assert not ({'Budget', 'DIVERGED', 'FiniteModel', 'VEError', '_Deadline', '_InvalidLedger', ...} & {'OPERATION_SECONDS', 'checked_wording', 'evaluate', 'formula_from_data', 'formula_to_data'})\nE        +  where {'Budget', 'DIVERGED', 'FiniteModel', 'VEError', '_Deadline', '_InvalidLedger', ...} = _bound_names('ve.assist.recovery_replay')\nE        +  and   {'OPERATION_SECONDS', 'checked_wording', 'evaluate', 'formula_from_data', 'formula_to_data'} = set({'OPERATION_SECONDS': '_operation_seconds', 'checked_wording': '_checked_wording', 'evaluate': '_evaluate', 'formula_to_data': '_formula_to_data', ...})\n\ntests/test_assist_split.py:77: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_assist_split.py::test_moved_code_does_not_bind_the_names_the_facade_owns[ve.assist.recovery_replay]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 0.30s\n"
+    },
+    {
+     "test": "tests/test_assist_deadline.py::test_situation_evaluation_is_inside_approval_deadline[evaluate]",
+     "exit_code": 1,
+     "failure_excerpt": "   @pytest.mark.parametrize(\"step\", [\"evaluate\", \"background\", \"validate_background\"])\n    def test_situation_evaluation_is_inside_approval_deadline(monkeypatch, step):\n        import ve.assist.recovery as recovery\n        import ve.background as background_module\n    \n        env = environment()\n        service = RecoveryService(env, grammar_version=\"g1\", glossary_version=\"v1\", reading_set_version=\"r1\")\n        service.add(\"u\", \"Api is safe.\", {})\n        service.start(\"u\")\n        service.classify(\"u\", parse_outcome=\"one\")\n        formula = Unary(\"safe\", Const(\"api\"))\n        situation = find_countermodel(env, (), Not(formula)).model.to_dict()\n        module = recovery if step == \"evaluate\" else background_module\n        original = getattr(module, step)\n        def slow(*args, **kwargs):\n            _busy(0.5)\n            return original(*args, **kwargs)\n        monkeypatch.setattr(module, step, slow)\n        monkeypatch.setattr(recovery, \"OPERATION_SECONDS\", 0.1)\n>       with pytest.raises(ValueError, match=\"approval operation deadline\"):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE ValueError\n\ntests/test_assist_deadline.py:157: Failed\n=========================== short test summary info ============================\nFAILED tests/test_assist_deadline.py::test_situation_evaluation_is_inside_approval_deadline[evaluate]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 1.98s\n"
+    }
+   ]
+  },
+  {
+   "bug": "the deadline seam binds the value at import",
+   "claim": "seams",
+   "files": [
+    "ve/assist/recovery.py"
+   ],
+   "runs": [
+    {
+     "test": "tests/test_assist_split.py::test_each_recovery_seam_reads_the_facade_name_when_called[OPERATION_SECONDS-_operation_seconds]",
+     "exit_code": 1,
+     "failure_excerpt": "F\n=================================== FAILURES ===================================\n_ test_each_recovery_seam_reads_the_facade_name_when_called[OPERATION_SECONDS-_operation_seconds] _\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7a3932ae0510>\nname = 'OPERATION_SECONDS', seam = '_operation_seconds'\n\n    @pytest.mark.parametrize(\"name,seam\", sorted(SEAMED[recovery].items()))\n    def test_each_recovery_seam_reads_the_facade_name_when_called(monkeypatch, name, seam):\n        marker = object()\n        if name == \"OPERATION_SECONDS\":\n            monkeypatch.setattr(recovery, name, marker)\n>           assert RecoveryService._operation_seconds() is marker\nE           assert 8 is <object object at 0x7a3934b83730>\nE            +  where 8 = <function RecoveryService.<lambda> at 0x7a3932aa6fb0>()\nE            +    where <function RecoveryService.<lambda> at 0x7a3932aa6fb0> = RecoveryService._operation_seconds\n\ntests/test_assist_split.py:85: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_assist_split.py::test_each_recovery_seam_reads_the_facade_name_when_called[OPERATION_SECONDS-_operation_seconds]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 0.74s\n"
+    }
+   ]
+  },
+  {
+   "bug": "the facade shadows a journal method",
+   "claim": "one owner",
+   "files": [
+    "ve/assist/recovery.py"
+   ],
+   "runs": [
+    {
+     "test": "tests/test_assist_split.py::test_every_member_has_one_owner[RecoveryService]",
+     "exit_code": 1,
+     "failure_excerpt": "F\n=================================== FAILURES ===================================\n_______________ test_every_member_has_one_owner[RecoveryService] _______________\n\ncls = <class 've.assist.recovery.RecoveryService'>\n\n    @pytest.mark.parametrize(\"cls\", [RecoveryService, AssistSession], ids=lambda c: c.__name__)\n    def test_every_member_has_one_owner(cls):\n        owners = {}\n        for klass in cls.__mro__[:-1]:\n            for name in vars(klass):\n                if not (name.startswith(\"__\") and name.endswith(\"__\")):\n                    owners.setdefault(name, []).append(klass.__name__)\n>       assert {name: where for name, where in owners.items() if len(where) > 1} == {}\nE       AssertionError: assert {'_expect': [..., '_Journal']} == {}\nE         \nE         Left contains 1 more item:\nE         {'_expect': ['RecoveryService', '_Journal']}\nE         Use -v to get more diff\n\ntests/test_assist_split.py:106: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_assist_split.py::test_every_member_has_one_owner[RecoveryService]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 0.51s\n"
+    },
+    {
+     "test": "tests/test_assist_recovery.py::test_ledger_json_restore_and_revision_guard",
+     "exit_code": 1,
+     "failure_excerpt": "F\n=================================== FAILURES ===================================\n_________________ test_ledger_json_restore_and_revision_guard __________________\n\n    def test_ledger_json_restore_and_revision_guard():\n        env = environment()\n        service = RecoveryService(env, grammar_version=\"g1\", glossary_version=\"v1\", reading_set_version=\"r1\")\n        service.add(\"u\", \"Api is safe.\", {})\n        service.start(\"u\")\n        service.classify(\"u\", parse_outcome=\"one\")\n        formula = Unary(\"safe\", Const(\"api\"))\n        situation = find_countermodel(env, (), Not(formula)).model.to_dict()\n        service.approve(\"u\", formula, actor=\"author\", paraphrase=\"Api is safe.\",\n                        presentation=\"Api is safe.\", situation=situation)\n        ledger = json.loads(json.dumps(service.to_ledger()))\n        restored = RecoveryService.from_ledger(env, ledger)\n        assert restored.verify_ledger() and restored.approval_valid(\"u\")\n>       with pytest.raises(ValueError, match=\"stale recovery revision\"):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE ValueError\n\ntests/test_assist_recovery.py:388: Failed\n=========================== short test summary info ============================\nFAILED tests/test_assist_recovery.py::test_ledger_json_restore_and_revision_guard\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 1.73s\n"
+    }
+   ]
+  }
+ ],
+ "restored": [
+  {
+   "test": "tests/test_assist_split.py::test_every_name_the_module_defined_is_still_importable_from_it[ve.assist.recovery-nearest_wordings]",
+   "exit_code": 0
+  },
+  {
+   "test": "tests/test_assist_recovery.py::test_ledger_json_restore_and_revision_guard",
+   "exit_code": 0
+  },
+  {
+   "test": "tests/test_assist_split.py::test_every_name_the_module_defined_is_still_importable_from_it[ve.assist.session-config_digest]",
+   "exit_code": 0
+  },
+  {
+   "test": "tests/test_assist.py::test_astra6_deleted_propose_event_detected_after_metadata_edit",
+   "exit_code": 0
+  },
+  {
+   "test": "tests/test_assist_split.py::test_moved_code_does_not_bind_the_names_the_facade_owns[ve.assist.recovery_replay]",
+   "exit_code": 0
+  },
+  {
+   "test": "tests/test_assist_deadline.py::test_situation_evaluation_is_inside_approval_deadline[evaluate]",
+   "exit_code": 0
+  },
+  {
+   "test": "tests/test_assist_split.py::test_each_recovery_seam_reads_the_facade_name_when_called[OPERATION_SECONDS-_operation_seconds]",
+   "exit_code": 0
+  },
+  {
+   "test": "tests/test_assist_split.py::test_every_member_has_one_owner[RecoveryService]",
+   "exit_code": 0
+  },
+  {
+   "test": "tests/test_assist_recovery.py::test_ledger_json_restore_and_revision_guard",
+   "exit_code": 0
+  }
+ ]
+}
