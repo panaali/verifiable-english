@@ -90,5 +90,31 @@
   "test": "tests/test_lean_audit_record.py::test_committed_manifests_are_the_generated_ones",
   "killed": true,
   "pytest_summary": "1 failed in 4.02s"
+ },
+ {
+  "id": "R1",
+  "language": "Python",
+  "file": "tools/regen_generated.py",
+  "behaviour": "the merge train regenerates the audit manifests (regenerate, not union)",
+  "mutation": {
+   "from": "note=\"generated from lean/declarations.txt, then the axiom audit record\"),",
+   "to": "merge=\"union\", note=\"generated from lean/declarations.txt, then the axiom audit record\"),"
+  },
+  "test": "tests/test_regen_generated.py::test_audit_manifests_are_generated_from_the_declaration_list",
+  "killed": true,
+  "pytest_summary": "1 failed in 0.67s"
+ },
+ {
+  "id": "R2",
+  "language": "Python",
+  "file": "tools/regen_generated.py",
+  "behaviour": "audit.py --write runs after lean_statements.py writes the declaration list",
+  "mutation": {
+   "from": "Generated(\"lean-statements\", (\"lean/statements.txt\", \"lean/predicates.txt\", \"lean/declarations.txt\"),",
+   "to": "Generated(\"lean-audit-manifests\", (\"lean/VE/Audit.lean\", \"lean/ResponseShape/Audit.lean\", \"lean/axioms.txt\"),"
+  },
+  "test": "tests/test_regen_generated.py::test_entries_run_in_dependency_order",
+  "killed": true,
+  "pytest_summary": "1 failed in 0.66s"
  }
 ]
