@@ -48,7 +48,6 @@ def load(environment, units, reading_sets, *, couplings=(), narrowings=(), execu
     any of the three is the document's diagnostic, Lean's text."""
     from .readings_route import _check, _completion_elaborate, document_wire, run_lean
     from .readings_s1 import Document, content_bearing, wire
-    from .backends.service_schema import same_json
     environment = wire(environment)
     document = wire(document_wire(units, reading_sets, couplings=couplings, narrowings=narrowings))
     base = {"environment": environment, "document": document}
@@ -70,23 +69,7 @@ def load(environment, units, reading_sets, *, couplings=(), narrowings=(), execu
         _need(names == ["main", *_companion_sets(document)])
         _need([c["component"] for c in validate["components"]] == names)
         parts = []
-        # Bind the split's names and copied rows to the input. Lean decides where each row belongs; the relay only
-        # refuses an invented, omitted or duplicated source row. A cited unit may be carried without its content.
-        source_units = {u["id"]: u for u in document["units"]}
-        source_sets = list(document.get("reading_sets") or [])
-        source_narrowings = list(document.get("narrowings") or [])
-        source_couplings = list(document.get("couplings") or [])
-        copied_sets, copied_narrowings, copied_couplings = [], [], []
         for row, checked_row in zip(elaborate["components"], validate["components"]):
-            part_doc = row["document"]
-            for unit in part_doc["units"]:
-                _need(unit["id"] in source_units)
-                _need(same_json(unit, source_units[unit["id"]]) or same_json(unit, {"id": unit["id"]}) or
-                      same_json(unit, {k: v for k, v in source_units[unit["id"]].items() if k != "content"}))
-            _need(len({u["id"] for u in part_doc["units"]}) == len(part_doc["units"]))
-            copied_sets.extend(part_doc.get("reading_sets") or [])
-            copied_narrowings.extend(part_doc.get("narrowings") or [])
-            copied_couplings.extend(part_doc.get("couplings") or [])
             _bind_part(row, document, environment, names[1:])
             case = {"environment": row["environment"], "document": row["document"]}
             _check(checked_row["answer"], {"id": "readings-s1", "kind": "readings-validate", **case})
@@ -99,13 +82,6 @@ def load(environment, units, reading_sets, *, couplings=(), narrowings=(), execu
             answer = _completion_elaborate(row["answer"], checked, checked_part=main_fixed)
             parts.append({"name": row["component"], "environment": row["environment"], "document": row["document"],
                           "checked": row["checked"], "elaborate": answer, "validate": checked_row["answer"]})
-
-        def rows_equal(left, right):
-            return sorted(json.dumps(x, sort_keys=True) for x in left) == sorted(json.dumps(x, sort_keys=True)
-                                                                                 for x in right)
-        _need(rows_equal(copied_sets, source_sets))
-        _need(rows_equal(copied_narrowings, source_narrowings))
-        _need(rows_equal(copied_couplings, source_couplings))
         loaded = {"environment": environment, "document": document, "parts": parts}
         route = Components(None, loaded)
         route.check_product(product, cases[2])
@@ -113,33 +89,52 @@ def load(environment, units, reading_sets, *, couplings=(), narrowings=(), execu
     return loaded
 
 
+def _projection(document, name, companions):
+    """The document of case `name` of the split of `document` with companion sets `companions`, every member but a
+    companion case's merged `open_terms` (bound by `_bind_part`): the projection Lean's split makes
+    (`Readings.Wire.mainDoc`, `componentDoc`, pinned by `mainDoc_arr`, `componentDoc_arr` and the units guards of
+    VE/Readings/CompanionsExamples.lean). A row Lean copies is copied whole, in the document's order; no other row is
+    in the case. The main case keeps every member of the document, every unit (a companion set's without its
+    content), the couplings and the sets and narrowings not on a companion set; companion set `name`'s case holds its
+    set's versions, the narrowings on it, and of the units only its set's, as written, and those the narrowings
+    cite, by id alone."""
+    units = document["units"]
+    narrowings = document.get("narrowings") or []
+    sets = document.get("reading_sets") or []
+    if name == "main":
+        own = {x["unit"] for x in sets if x["id"] in companions}
+        return {**document, "couplings": document.get("couplings") or [],
+                "narrowings": [n for n in narrowings if n["set"] not in companions],
+                "reading_sets": [x for x in sets if x["id"] not in companions],
+                "units": [{k: v for k, v in u.items() if k != "content"} if u["id"] in own else u for u in units]}
+    on = [n for n in narrowings if n["set"] == name]
+    entries = [x for x in sets if x["id"] == name]
+    own = {x["unit"] for x in entries}
+    cited = {u for n in on for u in n.get("reason_spans") or []}
+    return {"narrowings": on, "reading_sets": entries,
+            "units": [u if u["id"] in own else {"id": u["id"]} for u in units if u["id"] in own | cited]}
+
+
 def _bind_part(row, document, environment, companions):
-    """One case of Lean's split (`Readings.Wire.splitCase`), bound to the request by its name, never re-split: the
-    main case keeps every unit of the document in order (a companion set's without its content, checked by the
-    caller), the request's environment and every other member of the document, and no companion set or narrowing on
-    one; a companion case holds only its own set, the narrowings on it and the units they name, and its environment
-    and open terms are its readings' companions' united (each declaration and term of every companion, nothing
-    else; `mergeCompanions_extends`, `mergeOpenTerms_identical`). The document its answer reads is its document, or
-    for the main case its fixed part (`Readings.Run.fixedPart`). Any other value is an invalid answer."""
+    """One case of Lean's split (`Readings.Wire.splitCase`), bound to the request by its name: its document is the
+    request's projection on it (`_projection`), member for member and row for row, so no row of the request is
+    invented, dropped, moved, reordered or stripped; the main case's environment is the request's, and a companion
+    case's environment and open terms are its readings' companions' united (each declaration and term of every
+    companion, nothing else; `mergeCompanions_extends`, `mergeOpenTerms_identical`). The document its answer reads is
+    its document, or for the main case its fixed part (`Readings.Run.fixedPart`). Any other value is an invalid
+    answer."""
     from .backends.service_schema import same_json
     name, part_doc, checked = row["component"], row["document"], row["checked"]
-    # Lean writes each of these members, as a list (`mainDoc`, `componentDoc`).
-    lists = ("units", "reading_sets", "narrowings", "couplings" if name == "main" else "open_terms")
-    _need(all(type(part_doc.get(k)) is list for k in lists))
-    sets, narrowings = part_doc["reading_sets"], part_doc["narrowings"]
+    _need(name == "main" or name in companions)
+    expected = _projection(document, name, companions)
+    _need(set(part_doc) == set(expected) | ({"open_terms"} if name != "main" else set()))
+    _need(all(same_json(part_doc[k], expected[k]) for k in expected))
     if name == "main":
-        _need(set(part_doc) == set(document) | {"units", "reading_sets", "narrowings", "couplings"})
-        _need(all(same_json(part_doc[k], document[k]) for k in part_doc
-                  if k not in ("units", "reading_sets", "narrowings", "couplings")))
-        _need([u["id"] for u in part_doc["units"]] == [u["id"] for u in document["units"]])
-        _need(not any(x["id"] in companions for x in sets) and not any(n["set"] in companions for n in narrowings))
         _need(same_json(row["environment"], environment))
         fixed = {**part_doc, "couplings": [], "narrowings": [], "reading_sets": []}
         _need(same_json(checked, part_doc) or same_json(checked, fixed))
         return
-    _need(name in companions and set(part_doc) == {"units", "reading_sets", "narrowings", "open_terms"})
-    _need(sets and all(x["id"] == name for x in sets) and all(n["set"] == name for n in narrowings))
-    _need({x["unit"] for x in sets} <= {u["id"] for u in part_doc["units"]})
+    _need(type(part_doc["open_terms"]) is list and part_doc["reading_sets"])
     _need(same_json(checked, part_doc))
     from .readings_s1 import wire
     own = [wire(r["companion"]) for x in document["reading_sets"] if x["id"] == name for r in x["readings"]]
