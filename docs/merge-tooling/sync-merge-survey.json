@@ -1,0 +1,1739 @@
+{
+ "summary": {
+  "sync_merges": 97,
+  "clean": 28,
+  "only_generated": 16,
+  "with_other": 53
+ },
+ "merges": [
+  {
+   "merge": "8e7f9c9a00",
+   "subject": "Merge ve-integration into lean-first/b16c",
+   "conflicts": [
+    "docs/spec/assurance-manifest.md",
+    "docs/trust-baseline.json",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/VE/Service/Protocol.lean",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "tools/gate-collection.json",
+    "ve/assurance-manifest.json"
+   ],
+   "generated": [
+    "docs/spec/assurance-manifest.md",
+    "docs/trust-baseline.json",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "tools/gate-collection.json",
+    "ve/assurance-manifest.json"
+   ],
+   "other": [
+    "lean/VE/Service/Protocol.lean"
+   ]
+  },
+  {
+   "merge": "9ebf54eab2",
+   "subject": "Merge ve-integration into lean-first/b17",
+   "conflicts": [
+    "tools/gate-collection.json"
+   ],
+   "generated": [
+    "tools/gate-collection.json"
+   ],
+   "other": []
+  },
+  {
+   "merge": "3f30742b66",
+   "subject": "Merge ve-integration into lean-first/b16b",
+   "conflicts": [
+    "conformance/document_wrapper.py",
+    "docs/spec/assurance-manifest.md",
+    "docs/trust-baseline.json",
+    "lean/checkers.lock",
+    "tools/hooks/precommit.py",
+    "tools/trust-classes.json",
+    "ve/assurance-manifest.json"
+   ],
+   "generated": [
+    "docs/spec/assurance-manifest.md",
+    "docs/trust-baseline.json",
+    "lean/checkers.lock",
+    "tools/trust-classes.json",
+    "ve/assurance-manifest.json"
+   ],
+   "other": [
+    "conformance/document_wrapper.py",
+    "tools/hooks/precommit.py"
+   ]
+  },
+  {
+   "merge": "b05b8a1bad",
+   "subject": "Merge ve-integration into lean-first/b12",
+   "conflicts": [
+    "conformance/DIFFFUZZ.md",
+    "conformance/difffuzz-baseline.json",
+    "docs/CONSOLIDATION-PLAN.md",
+    "docs/spec/assurance-manifest.md",
+    "docs/trust-baseline.json",
+    "lean/VE/Route/Wire.lean",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/VE/Service/Protocol.lean",
+    "lean/VE/Service/Standalone.lean",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "tests/test_norm_defaults.py",
+    "tests/test_rust_conformance.py",
+    "tests/test_wire_contract_soft_lean.py",
+    "tools/gate-collection.json",
+    "tools/hooks/precommit.py",
+    "tools/trust-classes.json",
+    "tools/wire_contract.py",
+    "ve/assurance-manifest.json",
+    "ve/environment.py",
+    "ve/profiles.py",
+    "ve/search.py",
+    "ve/softnorms.py"
+   ],
+   "generated": [
+    "docs/spec/assurance-manifest.md",
+    "docs/trust-baseline.json",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "tools/gate-collection.json",
+    "tools/trust-classes.json",
+    "ve/assurance-manifest.json"
+   ],
+   "other": [
+    "conformance/DIFFFUZZ.md",
+    "conformance/difffuzz-baseline.json",
+    "docs/CONSOLIDATION-PLAN.md",
+    "lean/VE/Route/Wire.lean",
+    "lean/VE/Service/Protocol.lean",
+    "lean/VE/Service/Standalone.lean",
+    "tests/test_norm_defaults.py",
+    "tests/test_rust_conformance.py",
+    "tests/test_wire_contract_soft_lean.py",
+    "tools/hooks/precommit.py",
+    "tools/wire_contract.py",
+    "ve/environment.py",
+    "ve/profiles.py",
+    "ve/search.py",
+    "ve/softnorms.py"
+   ]
+  },
+  {
+   "merge": "6e3e4f70e3",
+   "subject": "Merge ve-integration into readings-defaults/rd4a",
+   "conflicts": [
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "tools/gate-collection.json",
+    "tools/hooks/precommit.py",
+    "tools/trust-classes.json",
+    "ve/assurance-manifest.json"
+   ],
+   "generated": [
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "tools/gate-collection.json",
+    "tools/trust-classes.json",
+    "ve/assurance-manifest.json"
+   ],
+   "other": [
+    "tools/hooks/precommit.py"
+   ]
+  },
+  {
+   "merge": "291991baab",
+   "subject": "Merge ve-integration into english-lean/e2-flip",
+   "conflicts": [
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "tests/test_assurance_manifest.py",
+    "ve/assurance-manifest.json"
+   ],
+   "generated": [
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "ve/assurance-manifest.json"
+   ],
+   "other": [
+    "tests/test_assurance_manifest.py"
+   ]
+  },
+  {
+   "merge": "abf0214b12",
+   "subject": "Merge ve-integration into fix/bundle-test",
+   "conflicts": [
+    "tests/test_assurance_manifest.py"
+   ],
+   "generated": [],
+   "other": [
+    "tests/test_assurance_manifest.py"
+   ]
+  },
+  {
+   "merge": "dddeb893cd",
+   "subject": "Merge ve-integration into readings-defaults/rd2b",
+   "conflicts": [
+    "docs/spec/assurance-manifest.md",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "ve/assurance-manifest.json"
+   ],
+   "generated": [
+    "docs/spec/assurance-manifest.md",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "ve/assurance-manifest.json"
+   ],
+   "other": []
+  },
+  {
+   "merge": "ab2d2b569f",
+   "subject": "Merge ve-integration into lean-first/b16a",
+   "conflicts": [
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "tools/gate-collection.json",
+    "ve/assurance-manifest.json",
+    "ve/document.py"
+   ],
+   "generated": [
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "tools/gate-collection.json",
+    "ve/assurance-manifest.json"
+   ],
+   "other": [
+    "ve/document.py"
+   ]
+  },
+  {
+   "merge": "cdaee6b5a2",
+   "subject": "Merge ve-integration into readings-defaults/rd6a",
+   "conflicts": [
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/declarations.txt",
+    "tools/gate-collection.json"
+   ],
+   "generated": [
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/declarations.txt",
+    "tools/gate-collection.json"
+   ],
+   "other": []
+  },
+  {
+   "merge": "80103bef60",
+   "subject": "Merge ve-integration into readings-defaults/rd8",
+   "conflicts": [
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/declarations.txt",
+    "tools/trust-classes.json",
+    "ve/assurance-manifest.json",
+    "ve/document.py"
+   ],
+   "generated": [
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/declarations.txt",
+    "tools/trust-classes.json",
+    "ve/assurance-manifest.json"
+   ],
+   "other": [
+    "ve/document.py"
+   ]
+  },
+  {
+   "merge": "198d7bc653",
+   "subject": "Merge ve-integration into lean-first/b10b",
+   "conflicts": [
+    "conformance/DIFFFUZZ.md",
+    "conformance/difffuzz-baseline.json",
+    "docs/CONSOLIDATION-PLAN.md",
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "tools/gate-collection.json",
+    "tools/hooks/precommit.py",
+    "ve/assurance-manifest.json",
+    "ve/norm_defaults.py",
+    "ve/norm_defaults_english.py"
+   ],
+   "generated": [
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "tools/gate-collection.json",
+    "ve/assurance-manifest.json"
+   ],
+   "other": [
+    "conformance/DIFFFUZZ.md",
+    "conformance/difffuzz-baseline.json",
+    "docs/CONSOLIDATION-PLAN.md",
+    "tools/hooks/precommit.py",
+    "ve/norm_defaults.py",
+    "ve/norm_defaults_english.py"
+   ]
+  },
+  {
+   "merge": "fbbdae8c92",
+   "subject": "Merge ve-integration into lean-first/b6",
+   "conflicts": [
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "ve/readings_route.py",
+    "ve/readings_s1.py"
+   ],
+   "generated": [
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "lean/declarations.txt"
+   ],
+   "other": [
+    "ve/readings_route.py",
+    "ve/readings_s1.py"
+   ]
+  },
+  {
+   "merge": "6f9ea94195",
+   "subject": "Merge ve-integration into readings-defaults/integrate",
+   "conflicts": [
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "lean/declarations.txt"
+   ],
+   "generated": [
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "lean/declarations.txt"
+   ],
+   "other": []
+  },
+  {
+   "merge": "261eebe24f",
+   "subject": "Merge ve-integration into lean-first/b10b",
+   "conflicts": [
+    "docs/CONSOLIDATION-PLAN.md",
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "tools/gate-collection.json",
+    "tools/relay_lint.py",
+    "ve/assurance-manifest.json"
+   ],
+   "generated": [
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "tools/gate-collection.json",
+    "ve/assurance-manifest.json"
+   ],
+   "other": [
+    "docs/CONSOLIDATION-PLAN.md",
+    "tools/relay_lint.py"
+   ]
+  },
+  {
+   "merge": "88b913a07b",
+   "subject": "Merge ve-integration into lean-first/b6",
+   "conflicts": [
+    ".importlinter",
+    "docs/CONSOLIDATION-PLAN.md",
+    "docs/spec/assurance-manifest.md",
+    "docs/trust-baseline.json",
+    "lean/ResponseShape/Audit.lean",
+    "lean/ResponseShape/Encoders/Rights.lean",
+    "lean/ResponseShape/Encoders/SoftNorms.lean",
+    "lean/VE.lean",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/VE/SoftNorms/Once.lean",
+    "lean/axioms.txt",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "lean/statements.txt",
+    "tests/data/route-cases.jsonl",
+    "tests/test_route_row_schemas.py",
+    "tools/gate-collection.json",
+    "tools/inventory_lint.py",
+    "tools/layer-exceptions.json",
+    "tools/layer_policy.py",
+    "tools/trust-classes.json",
+    "ve/assurance-manifest.json",
+    "ve/rights.py",
+    "ve/rights_route.py"
+   ],
+   "generated": [
+    ".importlinter",
+    "docs/spec/assurance-manifest.md",
+    "docs/trust-baseline.json",
+    "lean/ResponseShape/Audit.lean",
+    "lean/VE.lean",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/axioms.txt",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "lean/statements.txt",
+    "tools/gate-collection.json",
+    "tools/layer-exceptions.json",
+    "tools/trust-classes.json",
+    "ve/assurance-manifest.json"
+   ],
+   "other": [
+    "docs/CONSOLIDATION-PLAN.md",
+    "lean/ResponseShape/Encoders/Rights.lean",
+    "lean/ResponseShape/Encoders/SoftNorms.lean",
+    "lean/VE/SoftNorms/Once.lean",
+    "tests/data/route-cases.jsonl",
+    "tests/test_route_row_schemas.py",
+    "tools/inventory_lint.py",
+    "tools/layer_policy.py",
+    "ve/rights.py",
+    "ve/rights_route.py"
+   ]
+  },
+  {
+   "merge": "53a74a0c7e",
+   "subject": "Merge ve-integration into lean-first/b13a",
+   "conflicts": [
+    "docs/CONSOLIDATION-PLAN.md",
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "ve/assurance-manifest.json"
+   ],
+   "generated": [
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "ve/assurance-manifest.json"
+   ],
+   "other": [
+    "docs/CONSOLIDATION-PLAN.md"
+   ]
+  },
+  {
+   "merge": "3e4cb5403a",
+   "subject": "Merge ve-integration into lean-first/b11b",
+   "conflicts": [
+    "docs/spec/assurance-manifest.md",
+    "ve/assurance-manifest.json"
+   ],
+   "generated": [
+    "docs/spec/assurance-manifest.md",
+    "ve/assurance-manifest.json"
+   ],
+   "other": []
+  },
+  {
+   "merge": "403f949b6c",
+   "subject": "Merge ve-integration into lean-first/b11b",
+   "conflicts": [
+    "docs/spec/assurance-manifest.md",
+    "tools/relay_lint.py",
+    "ve/assurance-manifest.json"
+   ],
+   "generated": [
+    "docs/spec/assurance-manifest.md",
+    "ve/assurance-manifest.json"
+   ],
+   "other": [
+    "tools/relay_lint.py"
+   ]
+  },
+  {
+   "merge": "d3be8604f9",
+   "subject": "Merge ve-integration into lean-first/b5",
+   "conflicts": [
+    "docs/CONSOLIDATION-PLAN.md",
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "tests/test_enum_domains.py",
+    "ve/assurance-manifest.json",
+    "ve/backends/service_schema.py"
+   ],
+   "generated": [
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "ve/assurance-manifest.json"
+   ],
+   "other": [
+    "docs/CONSOLIDATION-PLAN.md",
+    "tests/test_enum_domains.py",
+    "ve/backends/service_schema.py"
+   ]
+  },
+  {
+   "merge": "9c94ee4e2c",
+   "subject": "Merge ve-integration into lean-first/b8",
+   "conflicts": [
+    ".importlinter",
+    "docs/CONSOLIDATION-PLAN.md",
+    "docs/spec/assurance-manifest.md",
+    "lean/ResponseShape/Audit.lean",
+    "lean/ResponseShape/Encoders/Reports.lean",
+    "lean/ResponseShape/Skeleton.lean",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/axioms.txt",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "tools/layer-exceptions.json",
+    "tools/layer_policy.py",
+    "tools/relay_lint.py",
+    "ve/assurance-manifest.json"
+   ],
+   "generated": [
+    ".importlinter",
+    "docs/spec/assurance-manifest.md",
+    "lean/ResponseShape/Audit.lean",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/axioms.txt",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "tools/layer-exceptions.json",
+    "ve/assurance-manifest.json"
+   ],
+   "other": [
+    "docs/CONSOLIDATION-PLAN.md",
+    "lean/ResponseShape/Encoders/Reports.lean",
+    "lean/ResponseShape/Skeleton.lean",
+    "tools/layer_policy.py",
+    "tools/relay_lint.py"
+   ]
+  },
+  {
+   "merge": "c75653334d",
+   "subject": "Merge ve-integration into lean-first/shapes",
+   "conflicts": [
+    "docs/CONSOLIDATION-PLAN.md",
+    "docs/spec/assurance-manifest.md",
+    "lean/ResponseShape/Audit.lean",
+    "lean/ResponseShape/Encoders/NormDefaults.lean",
+    "lean/VE/Audit.lean",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/axioms.txt",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "lean/statements.txt",
+    "tests/test_route_row_schemas.py",
+    "tools/trust-classes.json",
+    "ve/assurance-manifest.json"
+   ],
+   "generated": [
+    "docs/spec/assurance-manifest.md",
+    "lean/ResponseShape/Audit.lean",
+    "lean/VE/Audit.lean",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/axioms.txt",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "lean/statements.txt",
+    "tools/trust-classes.json",
+    "ve/assurance-manifest.json"
+   ],
+   "other": [
+    "docs/CONSOLIDATION-PLAN.md",
+    "lean/ResponseShape/Encoders/NormDefaults.lean",
+    "tests/test_route_row_schemas.py"
+   ]
+  },
+  {
+   "merge": "18a3e055cb",
+   "subject": "Merge ve-integration into English Lean S3 integration",
+   "conflicts": [
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "ve/assurance-manifest.json"
+   ],
+   "generated": [
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "lean/declarations.txt",
+    "ve/assurance-manifest.json"
+   ],
+   "other": []
+  },
+  {
+   "merge": "580701d059",
+   "subject": "Merge ve-integration into lean-first/b2",
+   "conflicts": [
+    "docs/ARCHITECTURE-LAYERS.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "lean/declarations.txt"
+   ],
+   "generated": [
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "lean/declarations.txt"
+   ],
+   "other": [
+    "docs/ARCHITECTURE-LAYERS.md"
+   ]
+  },
+  {
+   "merge": "77911665ce",
+   "subject": "Merge ve-integration into lean-first/b11a",
+   "conflicts": [
+    "docs/CONSOLIDATION-PLAN.md",
+    "docs/spec/assurance-manifest.md",
+    "lean/SpeechActsMain.lean",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/declarations.txt",
+    "ve/assurance-manifest.json"
+   ],
+   "generated": [
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/declarations.txt",
+    "ve/assurance-manifest.json"
+   ],
+   "other": [
+    "docs/CONSOLIDATION-PLAN.md",
+    "lean/SpeechActsMain.lean"
+   ]
+  },
+  {
+   "merge": "6f7b1e8c1e",
+   "subject": "Merge ve-integration into infra/consolidate-b2",
+   "conflicts": [
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/declarations.txt"
+   ],
+   "generated": [
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/declarations.txt"
+   ],
+   "other": []
+  },
+  {
+   "merge": "a286ee6e1e",
+   "subject": "Merge ve-integration into lean-first/b1",
+   "conflicts": [
+    "conformance/norm_defaults_differential.py",
+    "conformance/rights_differential.py",
+    "conformance/soft_norms.py",
+    "conformance/wire_contract_gate.py",
+    "docs/spec/assurance-manifest.md",
+    "docs/spec/lean-service.md",
+    "lean/DiagnoseMain.lean",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/audit.py",
+    "lean/lakefile.toml",
+    "tests/contract_input_recorder.py",
+    "tests/test_asimov_extended.py",
+    "tests/test_asimov_laws.py",
+    "tests/test_discourse.py",
+    "tests/test_discourse_lean.py",
+    "tests/test_discourse_three_way.py",
+    "tests/test_environment_field_types.py",
+    "tests/test_lean_first_diff.py",
+    "tests/test_lean_service.py",
+    "tests/test_lean_service_schema.py",
+    "tests/test_news_w6a_fixtures.py",
+    "tests/test_norms_three_way.py",
+    "tests/test_readings_s1_lean.py",
+    "tests/test_reports_lean.py",
+    "tests/test_rights_lean.py",
+    "tests/test_risk_diagnostics.py",
+    "tests/test_risk_differential.py",
+    "tests/test_risk_english.py",
+    "tests/test_risk_every_diagnostic.py",
+    "tests/test_risk_fixtures.py",
+    "tests/test_risk_generated_policies.py",
+    "tests/test_risk_integration.py",
+    "tests/test_risk_lean_route.py",
+    "tests/test_risk_margins.py",
+    "tests/test_risk_profile.py",
+    "tests/test_risk_w6_extension.py",
+    "tests/test_soft_norms_lean.py",
+    "tests/test_speech_acts_conformance.py",
+    "tests/test_speech_acts_lean.py",
+    "tests/test_units_lean_w6a.py",
+    "tests/test_w6a_documents.py",
+    "tests/test_w6a_limit_generator.py",
+    "tests/test_w6a_looprecheck2.py",
+    "tests/test_w6a_route_limits.py",
+    "tests/test_wire_contract_lean.py",
+    "tests/test_wire_contract_precondition.py",
+    "tests/test_wire_contract_s4_lean.py",
+    "tests/test_wire_contract_soft_lean.py",
+    "tests/test_wire_contract_three_way.py",
+    "tools/gate-collection.json",
+    "tools/gate.py",
+    "tools/layer_policy.py",
+    "tools/lean_first_diff.py",
+    "ve/admission.py",
+    "ve/alternatives.py",
+    "ve/assurance-manifest.json",
+    "ve/backends/lean.py",
+    "ve/backends/lean_service.py",
+    "ve/backends/lean_service_schema/norms.json",
+    "ve/discourse.py",
+    "ve/norm_defaults_route.py",
+    "ve/readings_route.py",
+    "ve/reports_route.py",
+    "ve/risk.py"
+   ],
+   "generated": [
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "tools/gate-collection.json",
+    "ve/assurance-manifest.json",
+    "ve/backends/lean_service_schema/norms.json"
+   ],
+   "other": [
+    "conformance/norm_defaults_differential.py",
+    "conformance/rights_differential.py",
+    "conformance/soft_norms.py",
+    "conformance/wire_contract_gate.py",
+    "docs/spec/lean-service.md",
+    "lean/DiagnoseMain.lean",
+    "lean/audit.py",
+    "lean/lakefile.toml",
+    "tests/contract_input_recorder.py",
+    "tests/test_asimov_extended.py",
+    "tests/test_asimov_laws.py",
+    "tests/test_discourse.py",
+    "tests/test_discourse_lean.py",
+    "tests/test_discourse_three_way.py",
+    "tests/test_environment_field_types.py",
+    "tests/test_lean_first_diff.py",
+    "tests/test_lean_service.py",
+    "tests/test_lean_service_schema.py",
+    "tests/test_news_w6a_fixtures.py",
+    "tests/test_norms_three_way.py",
+    "tests/test_readings_s1_lean.py",
+    "tests/test_reports_lean.py",
+    "tests/test_rights_lean.py",
+    "tests/test_risk_diagnostics.py",
+    "tests/test_risk_differential.py",
+    "tests/test_risk_english.py",
+    "tests/test_risk_every_diagnostic.py",
+    "tests/test_risk_fixtures.py",
+    "tests/test_risk_generated_policies.py",
+    "tests/test_risk_integration.py",
+    "tests/test_risk_lean_route.py",
+    "tests/test_risk_margins.py",
+    "tests/test_risk_profile.py",
+    "tests/test_risk_w6_extension.py",
+    "tests/test_soft_norms_lean.py",
+    "tests/test_speech_acts_conformance.py",
+    "tests/test_speech_acts_lean.py",
+    "tests/test_units_lean_w6a.py",
+    "tests/test_w6a_documents.py",
+    "tests/test_w6a_limit_generator.py",
+    "tests/test_w6a_looprecheck2.py",
+    "tests/test_w6a_route_limits.py",
+    "tests/test_wire_contract_lean.py",
+    "tests/test_wire_contract_precondition.py",
+    "tests/test_wire_contract_s4_lean.py",
+    "tests/test_wire_contract_soft_lean.py",
+    "tests/test_wire_contract_three_way.py",
+    "tools/gate.py",
+    "tools/layer_policy.py",
+    "tools/lean_first_diff.py",
+    "ve/admission.py",
+    "ve/alternatives.py",
+    "ve/backends/lean.py",
+    "ve/backends/lean_service.py",
+    "ve/discourse.py",
+    "ve/norm_defaults_route.py",
+    "ve/readings_route.py",
+    "ve/reports_route.py",
+    "ve/risk.py"
+   ]
+  },
+  {
+   "merge": "3c726d07e6",
+   "subject": "Merge ve-integration into lean-first/b3d",
+   "conflicts": [
+    "docs/spec/assurance-manifest.md",
+    "lean/READINGS.md",
+    "lean/VE/Audit.lean",
+    "lean/VE/Readings/Run.lean",
+    "lean/VE/Readings/RunExamples.lean",
+    "lean/VE/Readings/Scan.lean",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/axioms.txt",
+    "tools/gate-collection.json",
+    "ve/assurance-manifest.json"
+   ],
+   "generated": [
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Audit.lean",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/axioms.txt",
+    "tools/gate-collection.json",
+    "ve/assurance-manifest.json"
+   ],
+   "other": [
+    "lean/READINGS.md",
+    "lean/VE/Readings/Run.lean",
+    "lean/VE/Readings/RunExamples.lean",
+    "lean/VE/Readings/Scan.lean"
+   ]
+  },
+  {
+   "merge": "b63e5ef965",
+   "subject": "Merge ve-integration into lean-first/b3d",
+   "conflicts": [
+    "lean/VE/Route/frozen-sources.sha256"
+   ],
+   "generated": [
+    "lean/VE/Route/frozen-sources.sha256"
+   ],
+   "other": []
+  },
+  {
+   "merge": "94ab8d486f",
+   "subject": "Merge ve-integration into lean-first/b3b",
+   "conflicts": [
+    "lean/VE/Route/frozen-sources.sha256"
+   ],
+   "generated": [
+    "lean/VE/Route/frozen-sources.sha256"
+   ],
+   "other": []
+  },
+  {
+   "merge": "82026ba734",
+   "subject": "Merge ve-integration into infra/consolidate-b1",
+   "conflicts": [
+    "docs/ARCHITECTURE-LAYERS.md"
+   ],
+   "generated": [],
+   "other": [
+    "docs/ARCHITECTURE-LAYERS.md"
+   ]
+  },
+  {
+   "merge": "0ca879e560",
+   "subject": "Merge ve-integration into compose-s2/integrate",
+   "conflicts": [
+    "lean/VE/Route/frozen-sources.sha256",
+    "tools/gate-collection.json"
+   ],
+   "generated": [
+    "lean/VE/Route/frozen-sources.sha256",
+    "tools/gate-collection.json"
+   ],
+   "other": []
+  },
+  {
+   "merge": "99163f3922",
+   "subject": "Merge ve-integration into infra/consolidate-b1",
+   "conflicts": [
+    "lean/VE/Route/frozen-sources.sha256"
+   ],
+   "generated": [
+    "lean/VE/Route/frozen-sources.sha256"
+   ],
+   "other": []
+  },
+  {
+   "merge": "517c0c78f0",
+   "subject": "Merge ve-integration into infra/difffuzz",
+   "conflicts": [
+    "ve/backends/lean.py",
+    "ve/backends/lean_service.py"
+   ],
+   "generated": [],
+   "other": [
+    "ve/backends/lean.py",
+    "ve/backends/lean_service.py"
+   ]
+  },
+  {
+   "merge": "ce03ae04cb",
+   "subject": "Merge ve-integration into english-lean/integrate",
+   "conflicts": [
+    "lean/VE/Route/frozen-sources.sha256"
+   ],
+   "generated": [
+    "lean/VE/Route/frozen-sources.sha256"
+   ],
+   "other": []
+  },
+  {
+   "merge": "5949bbc891",
+   "subject": "Merge ve-integration into lean-first/b4",
+   "conflicts": [
+    "lean/checkers.lock",
+    "rust/ve-core/src/lib.rs",
+    "rust/ve-profile/src/discourse.rs",
+    "tests/test_discourse_three_way.py",
+    "tools/check_rust_deps.py",
+    "tools/lean_first_diff.py",
+    "ve/discourse.py"
+   ],
+   "generated": [
+    "lean/checkers.lock"
+   ],
+   "other": [
+    "rust/ve-core/src/lib.rs",
+    "rust/ve-profile/src/discourse.rs",
+    "tests/test_discourse_three_way.py",
+    "tools/check_rust_deps.py",
+    "tools/lean_first_diff.py",
+    "ve/discourse.py"
+   ]
+  },
+  {
+   "merge": "5fd7d35068",
+   "subject": "Merge ve-integration into infra/difffuzz",
+   "conflicts": [
+    "tests/subprocesses.py",
+    "ve/backends/lean.py",
+    "ve/backends/lean_service.py"
+   ],
+   "generated": [],
+   "other": [
+    "tests/subprocesses.py",
+    "ve/backends/lean.py",
+    "ve/backends/lean_service.py"
+   ]
+  },
+  {
+   "merge": "7e861cd9d3",
+   "subject": "Merge ve-integration into infra/testperf",
+   "conflicts": [
+    "conformance/english_mixed.py",
+    "conformance/soft_norms.py",
+    "conformance/wire_contract_gate.py",
+    "docs/TESTING.md",
+    "tests/contract_input_recorder.py",
+    "tests/test_asimov_extended.py",
+    "tests/test_english_evidence.py",
+    "tests/test_gate_integrity.py",
+    "tests/test_soft_review_regressions.py",
+    "tools/gate-collection.json",
+    "tools/gate.py",
+    "tools/mutation_check.py",
+    "tools/select_tests.py",
+    "usecases/asimov-extended/asimov_extended_check.py"
+   ],
+   "generated": [
+    "tools/gate-collection.json"
+   ],
+   "other": [
+    "conformance/english_mixed.py",
+    "conformance/soft_norms.py",
+    "conformance/wire_contract_gate.py",
+    "docs/TESTING.md",
+    "tests/contract_input_recorder.py",
+    "tests/test_asimov_extended.py",
+    "tests/test_english_evidence.py",
+    "tests/test_gate_integrity.py",
+    "tests/test_soft_review_regressions.py",
+    "tools/gate.py",
+    "tools/mutation_check.py",
+    "tools/select_tests.py",
+    "usecases/asimov-extended/asimov_extended_check.py"
+   ]
+  },
+  {
+   "merge": "b2af96c97c",
+   "subject": "Merge ve-integration into infra/consolidate-b1",
+   "conflicts": [
+    "docs/ARCHITECTURE-LAYERS.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "tests/test_risk_differential.py"
+   ],
+   "generated": [
+    "lean/VE/Route/frozen-sources.sha256"
+   ],
+   "other": [
+    "docs/ARCHITECTURE-LAYERS.md",
+    "tests/test_risk_differential.py"
+   ]
+  },
+  {
+   "merge": "f89afde017",
+   "subject": "Merge ve-integration into english-lean/integrate",
+   "conflicts": [
+    "lean/VE/Route/frozen-sources.sha256",
+    "tools/gate-collection.json"
+   ],
+   "generated": [
+    "lean/VE/Route/frozen-sources.sha256",
+    "tools/gate-collection.json"
+   ],
+   "other": []
+  },
+  {
+   "merge": "caafa7a634",
+   "subject": "Merge ve-integration into compose-s2/integrate",
+   "conflicts": [
+    "lean/VE/Audit.lean",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "tools/gate-collection.json"
+   ],
+   "generated": [
+    "lean/VE/Audit.lean",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "tools/gate-collection.json"
+   ],
+   "other": []
+  },
+  {
+   "merge": "8bfbadfa27",
+   "subject": "Merge ve-integration into lean-first/b0",
+   "conflicts": [
+    "tests/test_assurance_manifest.py",
+    "tools/gate-collection.json",
+    "ve/backends/lean.py",
+    "ve/backends/lean_service.py",
+    "ve/backends/rust_jsonl.py",
+    "ve/discourse.py"
+   ],
+   "generated": [
+    "tools/gate-collection.json"
+   ],
+   "other": [
+    "tests/test_assurance_manifest.py",
+    "ve/backends/lean.py",
+    "ve/backends/lean_service.py",
+    "ve/backends/rust_jsonl.py",
+    "ve/discourse.py"
+   ]
+  },
+  {
+   "merge": "6aa0cd5c36",
+   "subject": "Merge ve-integration into infra/testspeed",
+   "conflicts": [
+    "README.md",
+    "docs/ARCHITECTURE-LAYERS.md",
+    "tools/gate-collection.json",
+    "tools/gate.py"
+   ],
+   "generated": [
+    "tools/gate-collection.json"
+   ],
+   "other": [
+    "README.md",
+    "docs/ARCHITECTURE-LAYERS.md",
+    "tools/gate.py"
+   ]
+  },
+  {
+   "merge": "57d560aa69",
+   "subject": "Merge ve-integration into wire-s5/integrate",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "c991f0ccea",
+   "subject": "Merge ve-integration into infra/layers2-b2",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "85908144a7",
+   "subject": "Merge ve-integration into infra/gate-collection",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "14393f7799",
+   "subject": "Merge ve-integration into fix/env-field-types",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "83cff4a01f",
+   "subject": "Merge ve-integration into infra/layers2-b1",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "a0c4144ee7",
+   "subject": "Merge ve-integration into wire-s4/integrate",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "de7280a890",
+   "subject": "Merge ve-integration into compose-s1/integrate",
+   "conflicts": [
+    ".importlinter",
+    "lean/VE/Audit.lean",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/axioms.txt",
+    "lean/lakefile.toml"
+   ],
+   "generated": [
+    ".importlinter",
+    "lean/VE/Audit.lean",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/axioms.txt"
+   ],
+   "other": [
+    "lean/lakefile.toml"
+   ]
+  },
+  {
+   "merge": "1ee960e07d",
+   "subject": "Merge ve-integration into wire/integrate",
+   "conflicts": [
+    "lean/VE/Route/frozen-sources.sha256"
+   ],
+   "generated": [
+    "lean/VE/Route/frozen-sources.sha256"
+   ],
+   "other": []
+  },
+  {
+   "merge": "354390ebe2",
+   "subject": "Merge ve-integration into compose/integrate",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "c8ce24c388",
+   "subject": "Merge ve-integration into usecase/unspecified-defaults",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "e00bf612f8",
+   "subject": "Merge ve-integration into BlueDot use case",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "f40e69f051",
+   "subject": "Merge ve-integration into Asimov extended use case",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "6c81de2b1d",
+   "subject": "Merge ve-integration into safety-framework",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "11d6bc049a",
+   "subject": "Merge ve-integration into norm-defaults/integrate",
+   "conflicts": [
+    ".importlinter",
+    "conformance/binding_probes.py",
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/axioms.txt",
+    "lean/lakefile.toml",
+    "tools/layer_policy.py",
+    "ve/assurance-manifest.json",
+    "ve/norms.py"
+   ],
+   "generated": [
+    ".importlinter",
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/axioms.txt",
+    "ve/assurance-manifest.json"
+   ],
+   "other": [
+    "conformance/binding_probes.py",
+    "lean/lakefile.toml",
+    "tools/layer_policy.py",
+    "ve/norms.py"
+   ]
+  },
+  {
+   "merge": "4541ac76c0",
+   "subject": "Merge ve-integration into risk/c5-wording",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "3dfe0e20a1",
+   "subject": "Merge ve-integration into mig/stage2",
+   "conflicts": [
+    ".importlinter",
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "rust/ve/src/main.rs",
+    "tools/layer-exceptions.json",
+    "tools/lean-layer-exceptions.json",
+    "ve/assurance-manifest.json"
+   ],
+   "generated": [
+    ".importlinter",
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "tools/layer-exceptions.json",
+    "tools/lean-layer-exceptions.json",
+    "ve/assurance-manifest.json"
+   ],
+   "other": [
+    "rust/ve/src/main.rs"
+   ]
+  },
+  {
+   "merge": "725f4eae71",
+   "subject": "Merge ve-integration into fix/discourse-example",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "9a74f54d08",
+   "subject": "Merge ve-integration into infra/layers-entry",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "426e330f60",
+   "subject": "Merge ve-integration into discourse/integrate",
+   "conflicts": [
+    "lean/VE.lean",
+    "lean/VE/Audit.lean",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/lakefile.toml",
+    "ve/document.py",
+    "ve/readings.py"
+   ],
+   "generated": [
+    "lean/VE.lean",
+    "lean/VE/Audit.lean",
+    "lean/VE/Route/frozen-sources.sha256"
+   ],
+   "other": [
+    "lean/lakefile.toml",
+    "ve/document.py",
+    "ve/readings.py"
+   ]
+  },
+  {
+   "merge": "5eac1968df",
+   "subject": "Merge main into mig/stage2 (rights, speech acts, eligibility, agent policy, release gate)",
+   "conflicts": [
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/axioms.txt",
+    "ve/assurance-manifest.json"
+   ],
+   "generated": [
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/axioms.txt",
+    "ve/assurance-manifest.json"
+   ],
+   "other": []
+  },
+  {
+   "merge": "eef0b9bbbf",
+   "subject": "Merge ve-integration into fix/eligibility-r7",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "f4fbe9f50a",
+   "subject": "Merge ve-integration into rights/integrate",
+   "conflicts": [
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/lakefile.toml",
+    "ve/assurance-manifest.json"
+   ],
+   "generated": [
+    "docs/spec/assurance-manifest.md",
+    "lean/VE/Route/frozen-sources.sha256",
+    "ve/assurance-manifest.json"
+   ],
+   "other": [
+    "lean/lakefile.toml"
+   ]
+  },
+  {
+   "merge": "53281d484f",
+   "subject": "Merge branch 've-integration' into fix/flaky-w6a-limits",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "e7ba74e955",
+   "subject": "Merge ve-integration into usecase/agent-policy",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "ef31649fc9",
+   "subject": "Merge ve-integration into usecase/eligibility",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "3aab662647",
+   "subject": "Merge main into mig/stage2",
+   "conflicts": [
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock",
+    "tests/test_assist_deadline.py",
+    "tests/test_lean_service.py",
+    "ve/admission.py",
+    "ve/backends/lean_service_schema/README.md",
+    "ve/background.py",
+    "ve/evaluate.py",
+    "ve/search.py"
+   ],
+   "generated": [
+    "lean/VE/Route/frozen-sources.sha256",
+    "lean/checkers.lock"
+   ],
+   "other": [
+    "tests/test_assist_deadline.py",
+    "tests/test_lean_service.py",
+    "ve/admission.py",
+    "ve/backends/lean_service_schema/README.md",
+    "ve/background.py",
+    "ve/evaluate.py",
+    "ve/search.py"
+   ]
+  },
+  {
+   "merge": "33b7f16cd9",
+   "subject": "Merge ve-integration into speech-acts/integrate",
+   "conflicts": [
+    "lean/VE.lean",
+    "lean/VE/Audit.lean",
+    "lean/lakefile.toml",
+    "ve/environment.py",
+    "ve/profiles.py"
+   ],
+   "generated": [
+    "lean/VE.lean",
+    "lean/VE/Audit.lean"
+   ],
+   "other": [
+    "lean/lakefile.toml",
+    "ve/environment.py",
+    "ve/profiles.py"
+   ]
+  },
+  {
+   "merge": "278dc72eaf",
+   "subject": "Merge ve-integration into infra/gates and compose offline verification",
+   "conflicts": [
+    "tests/test_definitions_differential.py",
+    "tests/test_nary_differential.py",
+    "tests/test_norms_three_way.py",
+    "tests/test_p0_three_way.py",
+    "tests/test_rust_conformance.py"
+   ],
+   "generated": [],
+   "other": [
+    "tests/test_definitions_differential.py",
+    "tests/test_nary_differential.py",
+    "tests/test_norms_three_way.py",
+    "tests/test_p0_three_way.py",
+    "tests/test_rust_conformance.py"
+   ]
+  },
+  {
+   "merge": "43cda55882",
+   "subject": "Merge ve-integration into soft/build",
+   "conflicts": [
+    "lean/VE/Audit.lean",
+    "lean/lakefile.toml",
+    "tests/test_assist_deadline.py",
+    "ve/background.py",
+    "ve/document.py",
+    "ve/norm_english.py",
+    "ve/norms.py"
+   ],
+   "generated": [
+    "lean/VE/Audit.lean"
+   ],
+   "other": [
+    "lean/lakefile.toml",
+    "tests/test_assist_deadline.py",
+    "ve/background.py",
+    "ve/document.py",
+    "ve/norm_english.py",
+    "ve/norms.py"
+   ]
+  },
+  {
+   "merge": "aab81f299b",
+   "subject": "Merge ve-integration into expand/w6a",
+   "conflicts": [
+    "lean/VE/Audit.lean",
+    "lean/lakefile.toml",
+    "rust/ve/src/main.rs",
+    "ve/admission.py",
+    "ve/document.py",
+    "ve/environment.py"
+   ],
+   "generated": [
+    "lean/VE/Audit.lean"
+   ],
+   "other": [
+    "lean/lakefile.toml",
+    "rust/ve/src/main.rs",
+    "ve/admission.py",
+    "ve/document.py",
+    "ve/environment.py"
+   ]
+  },
+  {
+   "merge": "b4f4a74d09",
+   "subject": "Merge ve-integration into usecase/asimov2",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "0ef38aba05",
+   "subject": "Merge ve-integration into attribution/integrate",
+   "conflicts": [
+    "lean/VE/Audit.lean",
+    "lean/lakefile.toml",
+    "tests/test_assist_deadline.py",
+    "ve/document.py",
+    "ve/environment.py"
+   ],
+   "generated": [
+    "lean/VE/Audit.lean"
+   ],
+   "other": [
+    "lean/lakefile.toml",
+    "tests/test_assist_deadline.py",
+    "ve/document.py",
+    "ve/environment.py"
+   ]
+  },
+  {
+   "merge": "8df3ea284b",
+   "subject": "Merge ve-integration into causation/integrate",
+   "conflicts": [
+    "lean/VE/Audit.lean",
+    "lean/lakefile.toml",
+    "tests/test_assist_deadline.py",
+    "ve/environment.py"
+   ],
+   "generated": [
+    "lean/VE/Audit.lean"
+   ],
+   "other": [
+    "lean/lakefile.toml",
+    "tests/test_assist_deadline.py",
+    "ve/environment.py"
+   ]
+  },
+  {
+   "merge": "da1a1a91ee",
+   "subject": "Merge ve-integration into mig/assurance",
+   "conflicts": [
+    "lean/VE/Audit.lean",
+    "ve/backends/__init__.py",
+    "ve/model.py",
+    "ve/search.py"
+   ],
+   "generated": [
+    "lean/VE/Audit.lean"
+   ],
+   "other": [
+    "ve/backends/__init__.py",
+    "ve/model.py",
+    "ve/search.py"
+   ]
+  },
+  {
+   "merge": "f84f43ae53",
+   "subject": "Merge ve-integration into infra/layers",
+   "conflicts": [
+    "pyproject.toml"
+   ],
+   "generated": [],
+   "other": [
+    "pyproject.toml"
+   ]
+  },
+  {
+   "merge": "3bb47efc10",
+   "subject": "Merge ve-integration into stage1 Lean service",
+   "conflicts": [
+    "docs/spec/SEMANTICS-MIGRATION-PLAN.md"
+   ],
+   "generated": [],
+   "other": [
+    "docs/spec/SEMANTICS-MIGRATION-PLAN.md"
+   ]
+  },
+  {
+   "merge": "c15fa50764",
+   "subject": "Merge ve-integration into perf/doc-check",
+   "conflicts": [
+    "tests/test_assist_deadline.py",
+    "tests/test_assist_recovery_replay.py"
+   ],
+   "generated": [],
+   "other": [
+    "tests/test_assist_deadline.py",
+    "tests/test_assist_recovery_replay.py"
+   ]
+  },
+  {
+   "merge": "dea765715a",
+   "subject": "Merge ve-integration into infra/xdist",
+   "conflicts": [
+    "tests/test_assist_recovery_replay.py",
+    "tests/test_norms_three_way.py"
+   ],
+   "generated": [],
+   "other": [
+    "tests/test_assist_recovery_replay.py",
+    "tests/test_norms_three_way.py"
+   ]
+  },
+  {
+   "merge": "07ff732418",
+   "subject": "Merge ve-integration into mig/plan-r3",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "8c91bb6d3d",
+   "subject": "Merge ve-integration into Asimov use case",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "d085cdb62d",
+   "subject": "Merge branch 've-integration' into expand/w1w2-doc-norms",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "5ed1a93a0d",
+   "subject": "Merge ve-integration into expand/w1w2-doc-norms",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "082b806c57",
+   "subject": "Merge ve-integration into fix/flaky-tests",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "f0250721f1",
+   "subject": "Merge ve-integration into zt/z3-assist",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "c19119a433",
+   "subject": "Merge ve-integration into natural view",
+   "conflicts": [
+    "ve/surface/unambiguity.py"
+   ],
+   "generated": [],
+   "other": [
+    "ve/surface/unambiguity.py"
+   ]
+  },
+  {
+   "merge": "57e534e020",
+   "subject": "Merge ve-integration into expand/w1-norms",
+   "conflicts": [
+    "lean/METATHEORY.md",
+    "lean/VE/Audit.lean",
+    "rust/ve-core/src/environment.rs",
+    "rust/ve-core/src/model.rs",
+    "ve/adapters/__init__.py",
+    "ve/background.py",
+    "ve/environment.py"
+   ],
+   "generated": [
+    "lean/VE/Audit.lean"
+   ],
+   "other": [
+    "lean/METATHEORY.md",
+    "rust/ve-core/src/environment.rs",
+    "rust/ve-core/src/model.rs",
+    "ve/adapters/__init__.py",
+    "ve/background.py",
+    "ve/environment.py"
+   ]
+  },
+  {
+   "merge": "3a6931ec0a",
+   "subject": "Merge ve-integration into expand/w5-data",
+   "conflicts": [
+    "lean/VE/Route/Run.lean",
+    "lean/VE/Route/Wire.lean",
+    "lean/VE/Route/examples/route-cases.json",
+    "rust/ve-core/src/environment.rs",
+    "rust/ve-core/src/model.rs",
+    "rust/ve-core/src/search.rs",
+    "tests/test_p0_three_way.py",
+    "ve/__main__.py",
+    "ve/background.py",
+    "ve/entailment.py",
+    "ve/environment.py",
+    "ve/search.py"
+   ],
+   "generated": [
+    "lean/VE/Route/examples/route-cases.json"
+   ],
+   "other": [
+    "lean/VE/Route/Run.lean",
+    "lean/VE/Route/Wire.lean",
+    "rust/ve-core/src/environment.rs",
+    "rust/ve-core/src/model.rs",
+    "rust/ve-core/src/search.rs",
+    "tests/test_p0_three_way.py",
+    "ve/__main__.py",
+    "ve/background.py",
+    "ve/entailment.py",
+    "ve/environment.py",
+    "ve/search.py"
+   ]
+  },
+  {
+   "merge": "d170dbeaa1",
+   "subject": "Merge branch 've-integration' into expand/natural-view",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "9d055ffa36",
+   "subject": "Merge branch 've-integration' into codex/e5",
+   "conflicts": [
+    ".gitignore"
+   ],
+   "generated": [],
+   "other": [
+    ".gitignore"
+   ]
+  },
+  {
+   "merge": "859416c3c9",
+   "subject": "Merge ve-integration into closure and preserve the v0 proof boundary",
+   "conflicts": [
+    "conformance/README.md",
+    "conformance/certificates-report.json",
+    "conformance/certificates.py",
+    "docs/implementation.md",
+    "lean/METATHEORY.md",
+    "lean/Main.lean",
+    "lean/README.md",
+    "ve/entailment.py"
+   ],
+   "generated": [],
+   "other": [
+    "conformance/README.md",
+    "conformance/certificates-report.json",
+    "conformance/certificates.py",
+    "docs/implementation.md",
+    "lean/METATHEORY.md",
+    "lean/Main.lean",
+    "lean/README.md",
+    "ve/entailment.py"
+   ]
+  },
+  {
+   "merge": "01d3a28370",
+   "subject": "Merge ve-integration into closure work branch",
+   "conflicts": [
+    "conformance/README.md"
+   ],
+   "generated": [],
+   "other": [
+    "conformance/README.md"
+   ]
+  },
+  {
+   "merge": "c901f6bea9",
+   "subject": "Merge branch 've-integration' into codex/rust",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  },
+  {
+   "merge": "c660f33887",
+   "subject": "Merge ve-integration into claude/harness",
+   "conflicts": [
+    ".gitignore",
+    "pyproject.toml",
+    "uv.lock"
+   ],
+   "generated": [
+    "uv.lock"
+   ],
+   "other": [
+    ".gitignore",
+    "pyproject.toml"
+   ]
+  },
+  {
+   "merge": "31dee186ae",
+   "subject": "Merge ve-integration into claude/e1",
+   "conflicts": [],
+   "generated": [],
+   "other": []
+  }
+ ]
+}
