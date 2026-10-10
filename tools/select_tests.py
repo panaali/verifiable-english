@@ -1007,8 +1007,12 @@ def run_recorded(plan: dict, jobs: int, maxfail: int = 0) -> int:
     state = test_order.state_path()
     previous, held = test_order.last_failed(state=state), quarantined()
     reports = {unit: work / (unit.replace("/", "__") + ".xml") for unit in selected}
+    ordered = test_order.order(selected, changed=plan["changed"], failed=previous)
+    print(f"order: failed last time {[unit for unit in ordered if unit in previous]}; changed "
+          f"{[unit for unit in ordered if unit in plan['changed'] and unit not in previous]}; then the rest; "
+          f"--maxfail {maxfail or 'off'}", flush=True)
     results = test_map.record_units(
-        test_order.order(selected, changed=plan["changed"], failed=previous), work, jobs, test_map.UNIT_TIMEOUT,
+        ordered, work, jobs, test_map.UNIT_TIMEOUT,
         options=lambda unit: [*([f"--maxfail={maxfail}"] if maxfail else []), *test_order.junit_options(reports[unit])],
         stop_after=maxfail,
         failures=lambda unit, result: len(set(unit_failures(unit, result, reports[unit])) - held))
