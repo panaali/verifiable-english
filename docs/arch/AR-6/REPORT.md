@@ -16,10 +16,13 @@ DRI decisions D1 and D7 (`manage-agents/arch-dri-decisions.md`, standing ruling 
      or their `.encode()`; bytes literals count; docstrings do not.
 - `tools/identity-sites.json`: today's sites, one entry per site, keyed by module, enclosing scope and domain. A
   Lean-owned entry names the batch that removes it (`AR-15`, `lf-16g` or `RD-7`); a Python-owned entry names its D7
-  record (assist, adapters, proposals, argument package, checker build) and may not use a Lean-owned prefix.
-  A site without an entry fails; an entry whose site is gone fails (stale).
-- The ratchet: `--base REV` fails when a module's Lean-owned sites of a domain grew against the allowlist at REV (a
-  site moved to another function of its module is not growth). `--prune` deletes stale entries and adds none.
+  record (assist, adapters, proposals, argument package, checker build). Each domain has one owner (plan T8); a
+  domain with a Lean-owned prefix, or whose text a Lean file holds (Lean computes it), is Lean's and may not be
+  Python-owned. A site without an entry fails; an entry whose site is gone fails (stale).
+- The ratchet: `--base REV` fails when a module's sites of a domain grew against the allowlist at REV, whatever
+  their owner (a site moved to another function of its module is not growth), and when a domain's owner changed. The
+  allowlist only shrinks (plan row AR-6); a new site, Python-owned included, or a new owner needs a DRI signature.
+  `--prune` deletes stale entries and adds none.
   `tests/test_identity_lint.py` runs the lint on the tree with `--base $(git merge-base HEAD main)`.
 - `docs/arch/AR-6/`: this report, `report.py` (evidence and the generated block below), `seed_faults.py`, and
   `evidence/` (census, Lean-domain search, scope, seeded faults). `tests/test_ar6_report.py` checks the report
@@ -124,7 +127,7 @@ against `git diff --name-only main...<branch>` for every `lean-first/*`, `readin
   After its sync the lint names the new site and the stale entry; per module and domain nothing grew, so the fix is
   the entry's `scope`. Collision rule for the allowlist: "conflict in `tools/identity-sites.json`: take `main`'s
   file, run `python3 tools/identity_lint.py --prune`; a site that moved to another function updates its entry's
-  `scope`; a new Lean-owned site is refused (it needs a DRI signature)".
+  `scope`; a new site or a new owner is refused (it needs a DRI signature)".
 - `ve/ask.py` (question answering) and `ve/norm_admission.py` (b13b, already holding one allowlisted site) join the
   relayed modules when those branches merge; neither branch adds a domain literal elsewhere.
 
@@ -138,7 +141,24 @@ standing ruling R1-R10 is claimed. D7 (R11) is applied in the owner classificati
 
 Listed with their test and failure excerpt in `evidence/mutants.json` (`python docs/arch/AR-6/seed_faults.py`):
 rule 1 off in relayed modules; rule 2 limited to relayed modules; stale entries accepted; the ratchet inverted; `+`
-not read as one string expression; a Python record allowed on a Lean-owned domain.
+not read as one string expression; a Python record allowed on a Lean-owned prefix; after review B1, C1 and C2: only
+Lean-owned sites ratcheted; owner changes allowed; two owners allowed; a domain Lean computes allowed as Python's;
+`main` ignoring `--base`; the relay lint's helpers dropped; nested functions of a relayed function not relayed;
+`.encode()` not read inside a `+`.
+
+## Review fixes (`arch-AR-6-review.final.md`)
+
+- B1 (the ratchet only held Lean-owned entries; one domain could have two owners): fixed as stated above. The
+  review's reproduction (a Python-owned `ve-english-vocabulary-v1` site in `ve/backends/speech_source.py`) and the
+  owner flip are tests (`test_review_b1_a_python_entry_for_a_lean_domain_in_a_relayed_module_fails`,
+  `test_no_domain_changes_owner_or_gains_a_second_one[<each allowlisted domain>]`,
+  `test_a_domain_lean_computes_cannot_be_python_owned[<each Lean domain a Lean file holds>]`,
+  `test_the_sites_only_shrink_whatever_their_owner`).
+- B2 (the full gate never finished on the final HEAD): not run by the fixer, by the batch instruction; the merge
+  train's branch verify runs the full gate on the final HEAD before the merge (see Tests and gate).
+- C1, C2 and C4 are fixed (tests above; the commit count is labelled with the commit it was taken at). C3
+  (`ve/document.py` `_document_id`, a domain built from data) and C5 (the four HUMAN owner classifications) stay open
+  for AR-15 and the DRI.
 
 ## Tests and gate
 
@@ -154,3 +174,6 @@ not read as one string expression; a Python record allowed on a Lean-owned domai
   collection stages had passed. The suite then ran in 16 chunks with `VE_NATIVE_PREBUILT=1` (plan 4.1 item 1). It
   found one failure (`tests/test_nested_pytest.py`: `seed_faults.py` built its own pytest command), fixed in
   `a4e873a4`. The chunk counts are in the batch's handoff report.
+- Review fix round: the selected tests (`tools/select_tests.py --base $(git merge-base HEAD main) --run`), the AR-6
+  tests, `lake build` and `lean/audit.py` passed; `tools/gate.py` was not run. The full gate on the final HEAD is the
+  merge train's branch verify (review B2); it has not run yet.

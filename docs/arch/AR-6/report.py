@@ -1,7 +1,8 @@
 """AR-6 evidence and report numbers.
 
-`python docs/arch/AR-6/report.py --collect` saves the census (`tools/identity_lint.py` at HEAD), the Lean files that
-compute each allowlisted domain, and the batch's commits (`main..HEAD --no-merges`). `metrics()` renders REPORT.md's
+`python docs/arch/AR-6/report.py --collect` saves the census (`tools/identity_lint.py` at a clean HEAD), the Lean
+files that compute each allowlisted domain (`identity_lint.lean_holders`, the lint's own owner rule), and the batch's
+commits (`$(git merge-base HEAD main)..HEAD --no-merges`). `metrics()` renders REPORT.md's
 generated block from the saved files only, so the report stays true after syncs with `main` and after the merge.
 """
 from __future__ import annotations
@@ -21,25 +22,18 @@ def _git(*args: str) -> str:
     return subprocess.run(["git", *args], cwd=ROOT, check=True, capture_output=True, text=True).stdout
 
 
-def stem(domain: str) -> str:
-    """The domain as Lean source writes it, up to its first computed part."""
-    return domain.split("{", 1)[0].replace("\n", "\\n")
-
-
 def collect() -> None:
     sys.path.insert(0, str(ROOT))
     from tools import identity_lint
+    if _git("status", "--porcelain"):
+        raise SystemExit("commit first: the evidence is collected at a clean HEAD")
     found = identity_lint.tree_sites()
     entries = json.loads(identity_lint.ALLOWLIST.read_text())
     assert identity_lint.problems(found, entries) == []
     head = _git("rev-parse", "HEAD").strip()
     census = {"commit": head, **identity_lint.census(found, entries), "entries": entries,
               "lines": [[site.path, site.line, site.scope, site.domain] for site in found]}
-    lean = {}
-    for domain in sorted({e["domain"] for e in entries}):
-        listed = subprocess.run(["git", "grep", "-l", "-F", stem(domain), head, "--", "lean/VE"], cwd=ROOT,
-                                capture_output=True, text=True)
-        lean[domain] = sorted(line.split(":", 1)[1] for line in listed.stdout.splitlines())
+    lean = {domain: identity_lint.lean_holders(domain) for domain in sorted({e["domain"] for e in entries})}
     base = _git("merge-base", "HEAD", "main").strip()
     commits = [dict(zip(("hash", "subject"), line.split(" ", 1)))
                for line in _git("log", "--no-merges", "--format=%H %s", f"{base}..HEAD").splitlines()]
@@ -83,7 +77,8 @@ def metrics() -> str:
         "Lean-owned domains that no Lean file holds yet: "
         + (", ".join(f"`{d.encode('unicode_escape').decode()}`" for d in no_lean) or "none") + ".",
         "",
-        f"Commits (`main..HEAD --no-merges`, base `{scope['base'][:8]}`): {len(scope['commits'])}; files changed: "
+        f"Commits (`{scope['base'][:8]}..{scope['head'][:8]} --no-merges`, counted at `{scope['head'][:8]}`; later "
+        f"evidence-only commits are not counted): {len(scope['commits'])}; files changed: "
         f"{len(scope['files'])}, none under `ve/` or `lean/`: "
         f"{'yes' if not any(f.startswith(('ve/', 'lean/')) for f in scope['files']) else 'NO'}.",
         f"Seeded faults: {len(mutants)}, each failing its named test: "
